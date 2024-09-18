@@ -1,234 +1,236 @@
-Return-Path: <linux-kernel+bounces-332231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0DF97B70A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:13:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE3597B70D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2CCDB21711
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:13:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34E701C21EBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03601386D8;
-	Wed, 18 Sep 2024 03:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="Kr8if/If"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2046.outbound.protection.outlook.com [40.107.255.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41FA139587;
+	Wed, 18 Sep 2024 03:14:06 +0000 (UTC)
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0BC2557A;
-	Wed, 18 Sep 2024 03:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726629176; cv=fail; b=QmyLfs/+OO2g1KHcgSmJ3pQqgOE5X29nWcBz3ka7IFjyiwAvi3eUb/D/H/y7nGJV94n+r2FZpiZmksy+lUYOOW0V0x7sXEtmw8yreOmfZzzXXOuFZruhQQy4iIvemjl1oHxNazij2BRtFKSrMYTdWvA4C3ju3kg9rUiElGo1zMg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726629176; c=relaxed/simple;
-	bh=AZT6J6Idv6gteducx5MFhr5nRWoIKeNLPZ66R1B+Maw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=XYzSdgl8VcZoKTYld/x2mxL+K+cT6rnUgFBj5ojTSH6VJxt17dFtKlvb6Id8GJ6l2gioeqUPfjxTd4/dtdm50gMjfNl7M+pO6wdfw40Civ7rk5LXB4uRH4vjJmty8gup4kF3/6vTpFtzb2LXNT8Ki18PQ6SF49AJUlFmZewTepY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=Kr8if/If; arc=fail smtp.client-ip=40.107.255.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ySgyPQdijSdWKgs94Ez5WnKyD16P00qpNWhYoAEwPJCO6gLpzcW3Ifsg3WXRgl8PQ1unRKHmJddcS1guqEUmdtF4+HUOvMxnfrvaksO3PV13WQc3JkKiPSmc/y1JK7m0W3dcdblJ8SAkXVJ7XJ+fiTY/CB1Ie26OSb26AHsCYSzjM2Cm984pnUe/v/TOCbMKVK2x/xoTlXFV/sSIwlRnHdEwpIfyu6SoBW5aTzLSH7q7EwbEJ+38M2Gmk8bO+t4VgpA8szWqwvwuoKJgqGOH1yDrlLfqC+JbMyVZBoTwN05oFhX7KQIfMAx5oryJB8LPJaoQZ+CwKjtwpCKKZX9y7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AZT6J6Idv6gteducx5MFhr5nRWoIKeNLPZ66R1B+Maw=;
- b=OzF6jCjWMKO3zrb+h8XAtPD7iWydHflufQJhzzCcGMQv15IiW8Hy1Y82Mgh0xGU0P9+zNT/u0GBKNxmLxJTGM4JMqT1U6nNev0iqlPZTKZKd2i/r2cDEaoIGZSMt+q2bAG+KkvXRLEwlmp2bItC80TCoVcfVyh3rxq/ZlEiQzkL32V9vvdMpJxuQRuwDogHcseVyDShiDt/v0kU0MzbENMvkQfeJYa8bg2EsCySnxA33lCMcFQ0eprUVqgwvldH1j0dAW8AA2+egYBcLGkBVk4YKIz9mkT6qbic7XpRUzyjEg8Z1AySKVFtq7yDpZiz7xGQ6MqRlucVMCSU/DWbmuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wiwynn.com; dmarc=pass action=none header.from=wiwynn.com;
- dkim=pass header.d=wiwynn.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AZT6J6Idv6gteducx5MFhr5nRWoIKeNLPZ66R1B+Maw=;
- b=Kr8if/IfX4p2vyNhfttEetOK8ADGgPZI8ZPZZwVtL+iP2V9uNOBm5EN80xvTkpoegef/mHwYM0DuzeaPGpRX9xvQ4vfhAyd53Ey6FWKZ5GMOzsym4DUb0ozDrrBUCh1DeOa4VaXqfzCScZzQnpNKliFqwPy6M2saK8keRxBhE1SQZNSEhnYXpuhFLEEI1ENThCSOFi/UeFdOHi9FYghYXRCPbH0F2RdNXH9XStVhhizsAiPpZEYXYv8uyztO8KGVQyfC4uJcAzbAcwzsB1K4UUlQpZyacx7ERtlBSkfbqHSYn1xiiSL3Nzj4goqVLkmNAUq/Ru6CrpAogH8V6K4D5w==
-Received: from TYZPR04MB5853.apcprd04.prod.outlook.com (2603:1096:400:1f3::5)
- by KL1PR04MB7368.apcprd04.prod.outlook.com (2603:1096:820:114::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.21; Wed, 18 Sep
- 2024 03:12:50 +0000
-Received: from TYZPR04MB5853.apcprd04.prod.outlook.com
- ([fe80::ae7d:7486:9319:8d96]) by TYZPR04MB5853.apcprd04.prod.outlook.com
- ([fe80::ae7d:7486:9319:8d96%6]) with mapi id 15.20.7962.022; Wed, 18 Sep 2024
- 03:12:50 +0000
-From: Delphine_CC_Chiu/WYHQ/Wiwynn <Delphine_CC_Chiu@wiwynn.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Delphine_CC_Chiu/WYHQ/Wiwynn
-	<Delphine_CC_Chiu@wiwynn.com>, "patrick@stwcx.xyz" <patrick@stwcx.xyz>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
-	<andrew@codeconstruct.com.au>
-CC: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v1] ARM: dts: aspeed: yosemite4: Enable interrupt setting
- for pca9555
-Thread-Topic: [PATCH v1] ARM: dts: aspeed: yosemite4: Enable interrupt setting
- for pca9555
-Thread-Index: AQHbA0xDBqBHzMeSJ0qlHcI2T1uCCbJQoAuAgAAMc/CACXgngIACw3AA
-Date: Wed, 18 Sep 2024 03:12:50 +0000
-Message-ID:
- <TYZPR04MB58538354F2C7B6C767679308D6622@TYZPR04MB5853.apcprd04.prod.outlook.com>
-References: <20240910063952.3006665-1-Delphine_CC_Chiu@wiwynn.com>
- <42049344-fafb-4aee-8423-fe09a1a977f2@kernel.org>
- <TYZPR04MB5853795FDC6497F7E0114E43D69A2@TYZPR04MB5853.apcprd04.prod.outlook.com>
- <10de03e4-db98-4b5c-9cf6-3f98a5cc0537@kernel.org>
-In-Reply-To: <10de03e4-db98-4b5c-9cf6-3f98a5cc0537@kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wiwynn.com;
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR04MB5853:EE_|KL1PR04MB7368:EE_
-x-ms-office365-filtering-correlation-id: 7fc88c94-ecef-4c7d-e594-08dcd78fc744
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?d09LMktFT3M4Z2dadDR1S3ZkWnk2aDRJUTJFK0tyZmN3S2hlWElBOTdVRlpu?=
- =?utf-8?B?c1BTUlIwYTlycFl1QmJBZmNuVUJMc2NQcHRhZDhVU0ZYQnJwS28zemtEbVRS?=
- =?utf-8?B?WjVNUzJpeTc2L25TcHRTZVNLZnFGekdWWkUyNytKS1pVOExSQUh2R1ZBUmVV?=
- =?utf-8?B?eHJFSlVPeVNieUZuYytGTVhybDgvUkJlWis3TmJRWEpaRXBPRCtXQXRiaEdB?=
- =?utf-8?B?YUZXZlFlZmZkZEUrcDRDY3dnODRMc0Z0OWdzbTNPRjVPQk9NcS9vZ3licVRl?=
- =?utf-8?B?MFlFdURHeERDWnFYdTFKbHY1MWc4U3NGdXhNODZqcFprNE5FVk9OSytCWm9h?=
- =?utf-8?B?TGpyQW5kTnlpcmJZZnhXL0hsNllyTE9BbFdROC9BM1NhZTZUNWJPUEdLcU0r?=
- =?utf-8?B?S0hCN1BHdTBRcnVoRkptRGwxRTFTRGFaL3U5a2VFVHVGWWdzQ2ZaRjdEaC80?=
- =?utf-8?B?N1lVL0hwOW1ieXpjc2VmTGM5R0kxUExhM0JmMFZZcjhvM2N2TUNlK29qVEF0?=
- =?utf-8?B?N3RQalBXM2hnbFFjdkJ5QTdSZ3I5T3ZnT3lsVjhpbFNLSUF2eTBickR6VndH?=
- =?utf-8?B?YnFrKzJCU2J3SFlYWGJtemxJSnc2Nk1oTXZUYXJ3eGUyZjh4Uk5EcGlwL0RH?=
- =?utf-8?B?V0xaWGkvancyNFlGSDMxN3JCTkZTSnRqNHZvZ0hYYVJiRzRTc0NyRmRVbGpD?=
- =?utf-8?B?VGZEbEV5bHVQa1FwRkVwaUNlQ0tGUkY2M2JzYzdic3U4WHpuMjNlT0VvcmJ5?=
- =?utf-8?B?MVFVd1BocGM3TWRNOUNOZHVmWWNXdnhTczlSYzFYSGRtTWRLSVYrcUlQRXNR?=
- =?utf-8?B?K3ExN2tRRlJSbXpVRmFuWHlMS2t4dW4vT0RMNSt4RkRXQkNzRGlCeDJRMldN?=
- =?utf-8?B?emVGZWVMM3F3aDc1SWhIZ3VnYjNXZzVYQ0NuVEpUeDJTcE14bWlvY3UvcTNP?=
- =?utf-8?B?WStrRXpMdFUwZFY2emR5SzgvUGtwWGhGalcrSzJYOUhkRzZzZkhlREN4SjAw?=
- =?utf-8?B?VVloVmh2MldYU2wvWjZTQ21sR0pmTnNQUGgyRm1nSjcwRUQ5RXdISk5QbUcw?=
- =?utf-8?B?NVo0L2dlZVNFWmErdHg3M3N0dkpRaGZHeFNvQTJxOWJoTDFOWm9jMXhLL0tZ?=
- =?utf-8?B?b0FuWjQ4dkxPRFRKc1FGZjZ0ZmlHUlI5eTBFMUwrSzFhOFpNc3dxME53UUNK?=
- =?utf-8?B?VFplY1k1enpsb3JiRmZYYkEvQUgxNWJjZmtMMUtrL0Z6ZjlHQVpYQjRnTjRV?=
- =?utf-8?B?YXFiL0RZcEtBdkl4MjBnZi83U2xUUVBBc01NZERQeVJvbnhFKzJrYy9IQTVO?=
- =?utf-8?B?TXpCM2lsdDBaWG9sMFJHN3laVFc4Mnh2azZFQUsrNG9RNDZRTytDdGJYRnJF?=
- =?utf-8?B?b25XYi9QQVpxWjBURTJUMHlVeHl5M1NwMzFyYS92S2RMSVN3dGxXeVdCOXI4?=
- =?utf-8?B?WnlVbjl3ek84Mk56MG9uMHludTEzMG5yenoxQTNqdTdEb0gwTWVqaEJmaDZQ?=
- =?utf-8?B?V0k5MXJnWG5nd1ZodngwTXROWXBMOXVkWTlYQmduKzJRT0F0QyswZVhTcCto?=
- =?utf-8?B?c1lqK1hXZEJ1Rnk3Mk9BclNPa1BOQVBqWVZEMmpqMjY2amNoRVk4d1NXaTQr?=
- =?utf-8?B?NGQ3Sm8wV2VHczNqbjdDUUVyQ1l5WVVWRTZGNmlkYlBST1RjNEZrNURYTVdo?=
- =?utf-8?B?Qk9INEFaL04wZW5TdHB3b1oyRGpMeWxkVFJpaDFWeWtGMUpua3M2bGJxZHlF?=
- =?utf-8?B?ZVNmakhhQ0ZPa3VDaktBNE9RNGdzWUd5YnAxeW91TFdVRnRnU2lPZ25sVk5E?=
- =?utf-8?B?LzBBQ2c5QkNpQlZrWWhha1hFeWw5Y3BEZ0E4bnZVOWlkdzYvYVIyc0hwdnBp?=
- =?utf-8?B?am92cm9udWVUUjFVKzRHbG82K1AwUkd4VDhNdmY5Z1oyK2c9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR04MB5853.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YlFRVG9GdmxzY09LY09FQzYvdnl6QnZQdGt3aTc5VklXMklsSVJTUWV2NWhU?=
- =?utf-8?B?OWxRQ2hCMk5WdVVHN2M5dURxNkU0OWxjcGVvT3lmWEU0TDNqWk5kenRJd2hs?=
- =?utf-8?B?VXcrU1FKVkkxM0kyVlkrMUtnTXZuNGdMNE41UTY5eFBnNFgrbnBIWnhCVlA3?=
- =?utf-8?B?MGJvNVBNQk14Zy8xMmt5b2YyaHRxWXhPNVdKeEZJSncvNzF4cDBIeTliQm52?=
- =?utf-8?B?dGtxWERrYmNIWktOMCswU3ZLNDc1N0YwVXNmMjJQckV1VzhETERFUlhrVE92?=
- =?utf-8?B?R1RrOG9DSHU3UXB0MXBwYUZIWk5UL3p0dFFyM3ZjU1dXUGlQMHZDWE0wYk02?=
- =?utf-8?B?dXdJQVZOY2hVYkFWQkNpeGhsNzIwc3B6RFpKNmJkTTNjWk5JUUVEbnZ4MXg3?=
- =?utf-8?B?VDV1RG1RSjJEZXdBcVJ3TEQrUi9mSHMyeCs3MzI2SUFnVnVXVHAycjhwUWJx?=
- =?utf-8?B?TkJWYVR3Ui9KVW5hMXpoK1pkNDQrOHJEMTBkUzkwV0ttMEVoM0o0Smtnd3Bj?=
- =?utf-8?B?NG1QejQzaTJDMGdpRTI2b3Q5WUVsbkQwNjhXdW5Sd29DWU8yeGlMb3FJWFNX?=
- =?utf-8?B?TlJuUDJlTWhybVF6Q20rdTZnREF5b01mbThMN2xSLzFmVFJwT2RybHVJZUtp?=
- =?utf-8?B?Wk5kbzQvVjdKekkxcUVaL1VlcUptb29ibkJwZTIzbmVDMDVZdDBpRkV3K0NL?=
- =?utf-8?B?RHZDZWk5M3NWcTBRU0hDWVltY3h1RUFTVTBQSEFpV3FBUEE2WHBrc2I5blh5?=
- =?utf-8?B?bFdYaE5oOG02Z2kzSHcxc1ZnbGxLLzJZM2VjY0RBNytobHBNam5zRDVaU09p?=
- =?utf-8?B?TVU1T1Z0T3JLNE16dVpnS3hpUmYyOFRIVFZ4bXlyZ3B4ZU5MSHBlK3BTQ1Ur?=
- =?utf-8?B?Ry9qN3Z0UWU2ZytudzZEdXgrWTl5Ui9WaTRTUzcyck9XUGJiTld6S0g2bVpW?=
- =?utf-8?B?N0NIQmhZN1l4VFRObjY2TUxJVU8zeHNONVBQTUFxRU5OZERZYmRhd3dKZTc2?=
- =?utf-8?B?Q1FCc2RWZHowRkJyNlc0MWhvNzZvamdEUGUrRW0rN1djZGEzaVF6Z3VWbUFR?=
- =?utf-8?B?NkFpQTdwYmZxOWl5QjZKVFpUeGZmZlZ4aEV6ejlxeWtzT0dxbVB4SXQ4Nk9B?=
- =?utf-8?B?eklCUVVaNElkSjg1TlAvUTdCSTVoaTFxV0Mrbzh2akl2aloxcXF3N2FoK1hz?=
- =?utf-8?B?SWYzT2w4T3BqWFpoN0M4OHcva3lkekFhMVFxRlZaT0p1MFUwckhxWVFMaUF4?=
- =?utf-8?B?eGV0Q29NM2lMSmZvSUx4S1FoYm0xTUpHY3luRzZQdGdmMWM2WW5ybmUwUEx1?=
- =?utf-8?B?OWVVMDgvOUpyc1JSYzNmcHduOWlHYkNERzR2dlVzM213bHJoVU9FNmcwVXc4?=
- =?utf-8?B?QVA3OHl0Vm9kVHhQMGM4MFJVT2g1YTlDd3JzRGdEYzNEbkl1TTFySmxac3N0?=
- =?utf-8?B?MVhlQno5YTVlZWZpV09nMVN5YVppSU1YWC9oUjd1ZHVaaHREcUNhcUwzZldr?=
- =?utf-8?B?eVN2L0RxUXlpTVBYcUtUN2NUSTBBZjNQcWZGRUNpaDVUcGprM3Y2ck9XVGxS?=
- =?utf-8?B?VlZTVDlLUlFITEZYcVM0WnNVSWdnbWswVWhaWEdRRG43TEVDMEJKQS9FU2tn?=
- =?utf-8?B?ZTZLZ3dXbmg0TUgyckNvT0RKaFBGSUFRSHlIMm0rTHc3cmcvd0h2ekNSZU5l?=
- =?utf-8?B?VVNsdzMwM0RyMDQramt2d2NLbDVibktwc3BEMG5CUVRHRktNRVhVSTExTE5I?=
- =?utf-8?B?Sjc0L3pWbXgxWWM5dUdhVjRjR3p1c0ROUUJjNTZ3WmhvMVdDMkI2ZWo0OUJL?=
- =?utf-8?B?TGxvVlFlSzRYZ0U0VStGVWRzSTFJTWxOWGxXczVmV3V4TVBobnFLdVJQVU9Z?=
- =?utf-8?B?THJvNzVLdEFidWFqeFd0a1UxenBqQTdaYjJTM1VyT1BLcUZ6N0o3ZEdqK0xS?=
- =?utf-8?B?N2tOaUZyNW5PL2tnOVVsbUU0LzJmU2N5U016NDQxdG00ZVJ3d2U4ekpmZHh6?=
- =?utf-8?B?SC90UzVSaDlxSXpPSUFXRjJac3F6MlFZd0VsVzVEZVlyWlU2ajhFaTlicUFH?=
- =?utf-8?B?Ukt2QnN1SnhkdkEvdm90Y3ZidkVRWWNQMTEyRDQ0NDV2MDdOTi9ucXJGU0d0?=
- =?utf-8?Q?K0lEyv1CJzBQ5hm6TGZj2KKZE?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD38DF6C;
+	Wed, 18 Sep 2024 03:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726629246; cv=none; b=VDEW+naM8PsSbqhOkRIhiLOKKD+ODUJ4gxmHDbwYgREjoH6IT/8AKKGudL/MlKsPXfu8f3Im8PRNnhcIi2buZ4nzIe1Z2aEdfkaPSAFiRCwdeSulfOgOkTlpWKs41oF8sp7UshNSelD6pSeWZSCF/JdDzHq2nUnRowklFO+/aJ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726629246; c=relaxed/simple;
+	bh=xh+XcUuIMrUpj2yQ8yPIhRLDpHYypWVi6tFGNbA83WE=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=d3uXv1jf0sHbODduf67xMTm56tIJQEVSWqrg/4QBLWIzuz6i9EPCMsi5pvtIv88nWy+JXD3ak5XvdjTmg+dDWtSxveHh+nnzoQTCnZ8mhkG20462z1a8QvQqHKqeTO31UMYDqZxrhPhAQe9aEJPc4bOLo9/jsQuoSx8sdbtkYrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:34848)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sql8d-004Anw-KA; Tue, 17 Sep 2024 21:13:55 -0600
+Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:41268 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sql8c-005NV4-DJ; Tue, 17 Sep 2024 21:13:55 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>,  Breno Leitao
+ <leitao@debian.org>,  Usama Arif <usamaarif642@gmail.com>,
+  linux-efi@vger.kernel.org,  kexec@lists.infradead.org,  bhe@redhat.com,
+  vgoyal@redhat.com,  tglx@linutronix.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  linux-kernel@vger.kernel.org,  rmikey@meta.com,
+  gourry@gourry.net
+References: <20240911104109.1831501-1-usamaarif642@gmail.com>
+	<CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
+	<2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com>
+	<CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
+	<20240912-wealthy-gabby-tamarin-aaba3c@leitao>
+	<d9df5012cd3306afa2eddd5187e643a3bbdfd866.camel@HansenPartnership.com>
+	<20240913-careful-maroon-crab-8a0541@leitao>
+	<5c525fe8f33fffebc0d275086cc7484e309dfae0.camel@HansenPartnership.com>
+	<87o74n5p05.fsf@email.froward.int.ebiederm.org>
+	<CAMj1kXF7EohKai9nyxSnvu32KNdUcNZxxP69Sz-vUZ-6nmvekg@mail.gmail.com>
+	<874j6e482p.fsf@email.froward.int.ebiederm.org>
+	<CAMj1kXEa4DSY8omHGhoTK0U5isvK2G-PJO9go-QK_Mzny=g6ow@mail.gmail.com>
+Date: Tue, 17 Sep 2024 22:13:30 -0500
+In-Reply-To: <CAMj1kXEa4DSY8omHGhoTK0U5isvK2G-PJO9go-QK_Mzny=g6ow@mail.gmail.com>
+	(Ard Biesheuvel's message of "Tue, 17 Sep 2024 17:35:20 +0200")
+Message-ID: <87setx3b8l.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR04MB5853.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7fc88c94-ecef-4c7d-e594-08dcd78fc744
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Sep 2024 03:12:50.2762
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: da6e0628-fc83-4caf-9dd2-73061cbab167
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RNa6Z5l5Xvuno6QjATti+l/z+7amLe3gE6BFFVmgDjq9MAiDejcpOEZM5hDaBQtBhe9UBvDafJBEZk2KQ87RyQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR04MB7368
+Content-Type: text/plain
+X-XM-SPF: eid=1sql8c-005NV4-DJ;;;mid=<87setx3b8l.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1+kvMZT12Ifk9zEW+PAKwuz6Tn0dqFT3Ew=
+X-Spam-Level: *
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4543]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_02 5+ unique symbols in subject
+	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+	*  1.0 T_XMDrugObfuBody_06 obfuscated drug references
+	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Ard Biesheuvel <ardb@kernel.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 576 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 4.1 (0.7%), b_tie_ro: 2.9 (0.5%), parse: 0.80
+	(0.1%), extract_message_metadata: 10 (1.8%), get_uri_detail_list: 2.7
+	(0.5%), tests_pri_-2000: 10 (1.8%), tests_pri_-1000: 2.0 (0.4%),
+	tests_pri_-950: 1.02 (0.2%), tests_pri_-900: 0.79 (0.1%),
+	tests_pri_-90: 82 (14.3%), check_bayes: 81 (14.1%), b_tokenize: 9
+	(1.6%), b_tok_get_all: 12 (2.1%), b_comp_prob: 2.5 (0.4%),
+	b_tok_touch_all: 55 (9.5%), b_finish: 0.68 (0.1%), tests_pri_0: 453
+	(78.7%), check_dkim_signature: 0.43 (0.1%), check_dkim_adsp: 2.9
+	(0.5%), poll_dns_idle: 1.72 (0.3%), tests_pri_10: 1.73 (0.3%),
+	tests_pri_500: 7 (1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in
+ 820_table_firmware
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: gourry@gourry.net, rmikey@meta.com, linux-kernel@vger.kernel.org, x86@kernel.org, dave.hansen@linux.intel.com, tglx@linutronix.de, vgoyal@redhat.com, bhe@redhat.com, kexec@lists.infradead.org, linux-efi@vger.kernel.org, usamaarif642@gmail.com, leitao@debian.org, James.Bottomley@hansenpartnership.com, ardb@kernel.org
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogS3J6eXN6dG9mIEtvemxv
-d3NraSA8a3J6a0BrZXJuZWwub3JnPg0KPiBTZW50OiBNb25kYXksIFNlcHRlbWJlciAxNiwgMjAy
-NCA0OjUxIFBNDQo+IFRvOiBEZWxwaGluZV9DQ19DaGl1L1dZSFEvV2l3eW5uIDxEZWxwaGluZV9D
-Q19DaGl1QHdpd3lubi5jb20+Ow0KPiBwYXRyaWNrQHN0d2N4Lnh5ejsgUm9iIEhlcnJpbmcgPHJv
-YmhAa2VybmVsLm9yZz47IEtyenlzenRvZiBLb3psb3dza2kNCj4gPGtyemsrZHRAa2VybmVsLm9y
-Zz47IENvbm9yIERvb2xleSA8Y29ub3IrZHRAa2VybmVsLm9yZz47IEpvZWwgU3RhbmxleQ0KPiA8
-am9lbEBqbXMuaWQuYXU+OyBBbmRyZXcgSmVmZmVyeSA8YW5kcmV3QGNvZGVjb25zdHJ1Y3QuY29t
-LmF1Pg0KPiBDYzogUmlja3kgQ1ggV3UgPHJpY2t5LmN4Lnd1Lndpd3lubkBnbWFpbC5jb20+Ow0K
-PiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
-YWRlYWQub3JnOw0KPiBsaW51eC1hc3BlZWRAbGlzdHMub3psYWJzLm9yZzsgbGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYxXSBBUk06IGR0czogYXNw
-ZWVkOiB5b3NlbWl0ZTQ6IEVuYWJsZSBpbnRlcnJ1cHQgc2V0dGluZw0KPiBmb3IgcGNhOTU1NQ0K
-PiANCj4gIFtFeHRlcm5hbCBTZW5kZXJdDQo+IA0KPiAgW0V4dGVybmFsIFNlbmRlcl0NCj4gDQo+
-IE9uIDEwLzA5LzIwMjQgMTA6MjAsIERlbHBoaW5lX0NDX0NoaXUvV1lIUS9XaXd5bm4gd3JvdGU6
-DQo+ID4gSSB3aWxsIHJldmlzZSBpbiB2Mi4gVGhhbmtzIQ0KPiA+Pj4gKyAgICAgICAgICAgICBp
-bnRlcnJ1cHQtcGFyZW50ID0gPCZncGlvMD47DQo+ID4+PiArICAgICAgICAgICAgIGludGVycnVw
-dHMgPSA8OTggSVJRX1RZUEVfTEVWRUxfTE9XPjsNCj4gPj4+ICsgICAgICAgICAgICAgZ3Bpby1s
-aW5lLW5hbWVzID0NCj4gPj4+ICsgICAgICAgICAgICAgIlA0OFZfT0NQX0dQSU8xIiwiUDQ4Vl9P
-Q1BfR1BJTzIiLA0KPiA+Pg0KPiA+PiBOb3RoaW5nIGltcHJvdmVkIGhlcmUuIEkgYWxyZWFkeSBj
-b21tZW50ZWQgYWJvdXQgYWJvdmUgYW5kIHRoaXMuDQo+ID4+IEltcGxlbWVudCBmZWVkYmFjayBm
-b3IgYWxsIHlvdXIgcGF0Y2hlcywgbm90IG9ubHkgb25lLg0KPiA+Pg0KPiA+PiBCZXN0IHJlZ2Fy
-ZHMsDQo+ID4+IEtyenlzenRvZg0KPiA+IFNvcnJ5IGFib3V0IHRoYXQuDQo+ID4gSSBzYXcgeW91
-IHNheSAiQnJva2VuIGFsaWdubWVudCIgaW4gdjE1IHBhdGNoLg0KPiA+IFdvdWxkIGxpa2UgdG8g
-YXNrIGlmIHRoZSBmb2xsb3dpbmcgZm9ybWF0IG1lZXRzIHlvdXIgZXhwZWN0YXRpb25zPw0KPiA+
-ICsgICAgICAgICAgICAgICAgICAgICBncGlvLWxpbmUtbmFtZXMgPQ0KPiA+ICsgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICJQNDhWX09DUF9HUElPMSIsDQo+ICJQNDhWX09DUF9HUElPMiIs
-DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIlA0OFZfT0NQX0dQSU8zIiwNCj4g
-PiArICJGQU5fQk9BUkRfMF9SRVZJU0lPTl8wX1IiLA0KPiANCj4gUGxlYXNlIHJlYWQgRFRTIGNv
-ZGluZyBzdHlsZSBiZWZvcmUgcG9zdGluZyBuZXh0IHZlcnNpb24gb2YgdGhlIHBhdGNoIChvciBh
-bnkNCj4gcGF0Y2ggZm9yIERUUykuIFRoaXMgaXMgc3RpbGwgbm90IGFsaWduZWQuIFRoZXJlIGlz
-IChhbG1vc3QpIG5ldmVyIGEgYmxhbmsgbGluZQ0KPiBhZnRlciAnPScuDQo+IA0KPiBCZXN0IHJl
-Z2FyZHMsDQo+IEtyenlzenRvZg0KSGkgS3J6eXN6dG9mLA0KQWZ0ZXIgY2hlY2tpbmcgdGhlIERU
-UyBjb2Rpbmcgc3R5bGUsIEkgZm91bmQgdGhlICJJbmRlbnRhdGlvbiIgc2VjdGlvbiBtZW50aW9u
-ZWQgdGhhdDoNCiJGb3IgYXJyYXlzIHNwYW5uaW5nIGFjcm9zcyBsaW5lcywgaXQgaXMgcHJlZmVy
-cmVkIHRvIGFsaWduIHRoZSBjb250aW51ZWQgZW50cmllcyB3aXRoIG9wZW5pbmcgPCBmcm9tIHRo
-ZSBmaXJzdCBsaW5lLiINCg0KU2hvdWxkIEkgYWxpZ24gdGhlIGNvZGUgd2l0aCBmb2xsb3dpbmcg
-Zm9ybWF0PyAoTm8gYmxhbmsgbGluZSBhZnRlciA9IGFuZCB1c2UgdHdvIHNwYWNlIHRvIGFsaWdu
-IHRoZSAiKQ0KT3Igd291bGQgbGlrZSB0byBhc2sgY291bGQgeW91IGhlbHAgdG8gcHJvdmlkZSB0
-aGUgZHRzIGZpbGUgdGhhdCBJIGNhbiBmb2xsb3c/DQoNCmdwaW8tbGluZS1uYW1lcyA9ICJIU0Mx
-X0FMRVJUMV9SX04iLCAiSFNDMl9BTEVSVDFfUl9OIiwNCgkJCQkgICJIU0MzX0FMRVJUMV9SX04i
-LCAiSFNDNF9BTEVSVDFfUl9OIiwNCgkJCQkgICJIU0M1X0FMRVJUMV9SX04iLCAiSFNDNl9BTEVS
-VDFfUl9OIiwNCgkJCQkgICJIU0M3X0FMRVJUMV9SX04iLCAiSFNDOF9BTEVSVDFfUl9OIiwNCgkJ
-CQkgICJIU0MxX0FMRVJUMl9SX04iLCAiSFNDMl9BTEVSVDJfUl9OIiwNCgkJCQkgICJIU0MzX0FM
-RVJUMl9SX04iLCAiSFNDNF9BTEVSVDJfUl9OIiwNCgkJCQkgICJIU0M1X0FMRVJUMl9SX04iLCAi
-SFNDNl9BTEVSVDJfUl9OIiwNCgkJCQkgICJIU0M3X0FMRVJUMl9SX04iLCAiSFNDOF9BTEVSVDJf
-Ul9OIjsNClRoYW5rcy4NCg==
+Ard Biesheuvel <ardb@kernel.org> writes:
+
+> On Tue, 17 Sept 2024 at 17:24, Eric W. Biederman <ebiederm@xmission.com> wrote:
+>>
+>> Ard Biesheuvel <ardb@kernel.org> writes:
+>>
+>> > Hi Eric,
+>> >
+>> > Thanks for chiming in.
+>>
+>> It just looked like after James gave some expert input the
+>> conversation got stuck, so I am just trying to move it along.
+>>
+>> I don't think anyone knows what this whole elephant looks like,
+>> which makes solving the problem tricky.
+>>
+>> > On Mon, 16 Sept 2024 at 22:21, Eric W. Biederman <ebiederm@xmission.com> wrote:
+>> >>
+> ...
+>> >>
+>> >> This leaves two practical questions if I have been following everything
+>> >> correctly.
+>> >>
+>> >> 1) How to get kexec to avoid picking that memory for the new kernel to
+>> >>    run in before it initializes itself. (AKA the getting stomped by
+>> >>    relocate kernel problem).
+>> >>
+>> >> 2) How to point the new kernel to preserved tpm_log.
+>> >>
+>> >>
+>> >> This recommendation is from memory so it may be a bit off but
+>> >> the general structure should work.  The idea is as follows.
+>> >>
+>> >> - Pass the information between kernels.
+>> >>
+>> >>   It is probably simplest for the kernel to have a command line option
+>> >>   that tells the kernel the address and size of the tpm_log.
+>> >>
+>> >>   We have a couple of mechanisms here.  Assuming you are loading a
+>> >>   bzImage with kexec_file_load you should be able to have the in kernel
+>> >>   loader to add those arguments to the kernel command line.
+>> >>
+>> >
+>> > This shouldn't be necessary, and I think it is actively harmful to
+>> > keep inventing special ways for the kexec kernel to learn about these
+>> > things that deviate from the methods used by the first kernel. This is
+>> > how we ended up with 5 sources of truth for the physical memory map
+>> > (EFI memory map, memblock and 3 different versions of the e820 memory
+>> > map).
+>> >
+>> > We should try very hard to make kexec idempotent, and reuse the
+>> > existing methods where possible. In this case, the EFI configuration
+>> > table is already being exposed to the kexec kernel, which describes
+>> > the base of the allocation. The size of the allocation can be derived
+>> > from the table header.
+>> >
+>> >> - Ensure that when the loader is finding an address to load the new
+>> >>   kernel it treats the address of the tpm_log as unavailable.
+>> >>
+>> >
+>> > The TPM log is a table created by the EFI stub loader, which is part
+>> > of the kernel. So if we need to tweak this for kexec's benefit, I'd
+>> > prefer changing it in a way that can accommodate the first kernel too.
+>> > However, I think the current method already has that property so I
+>> > don't think we need to do anything (modulo fixing the bug)
+>>
+>> I am fine with not inventing a new mechanism, but I think we need
+>> to reuse whatever mechanism the stub loader uses to pass it's
+>> table to the kernel.  Not the EFI table that disappears at
+>> ExitBootServices().
+>>
+>
+> Not sure what you mean here - the EFI table that gets clobbered by
+> kexec *is* the table that is created by the stub loader to pass the
+> TPM log to the kernel. Not sure what alternative you have in mind
+> here.
+
+I was referring to whatever the EFI table that James Bottomley mentioned
+that I presume the stub loader reads from when the stub loader
+constructs the tpm_log that is passed to the kernel.
+
+So I believe we are in agreement of everything except terminology.
+
+>> > That said, I am doubtful that the kexec kernel can make meaningful use
+>> > of the TPM log to begin with, given that the TPM will be out of sync
+>> > at this point. But it is still better to keep it for symmetry, letting
+>> > the higher level kexec/kdump logic running in user space reason about
+>> > whether the TPM log has any value to it.
+>>
+>> Someone seems to think so or there would not be a complaint that it is
+>> getting corrupted.
+>>
+>
+> No. The problem is that the size of the table is *in* the table, and
+> so if it gets corrupted, the code that attempts to memblock_reserve()
+> it goes off into the weeds. But that does not imply there is a point
+> to having access to this table from a kexec kernel in the first place.
+
+If there is no point to having access to it then we should just not
+pass anything to the loaded kernel, so the kernel does not think there
+is anything there.
+
+>> This should not be the kexec-on-panic kernel as that runs in memory
+>> that is reserved solely for it's own use.  So we are talking something
+>> like using kexec as a bootloader.
+>>
+>
+> kexec as a bootloader under TPM based measured boot will need to do a
+> lot more than pass the firmware's event log to the next kernel. I'd
+> expect a properly engineered kexec to replace this table entirely, and
+> include the hashes of the assets it has loaded and measured into the
+> respective PCRs.
+>
+> But let's stick to solving the actual issue here, rather than
+> philosophize on how kexec might work in this context.
+
+
+I am fine with that.  The complaint I had seen was that the table was
+being corrupted and asking how to solve that.  It seems I haven't read
+the part of the conversation where it was made clear that no one wants
+the tpm_log after kexec.
+
+If someone wants the tpm_log then we need to solve this problem.
+
+Eric
 
