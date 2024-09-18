@@ -1,252 +1,86 @@
-Return-Path: <linux-kernel+bounces-332704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0138B97BD66
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:54:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E70197BD69
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33F301C21408
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:54:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12051C215EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA94118B475;
-	Wed, 18 Sep 2024 13:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E3118B471;
+	Wed, 18 Sep 2024 13:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yGxWsKLI"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICZcOT7u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C38018A95C
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE1C18952B;
+	Wed, 18 Sep 2024 13:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726667674; cv=none; b=KSViEO8RUMIX6sODExZIeKHedIqT5Fs568ii1a7VYBJ6v5v7YJVDGRJC3RPUWRJGWgohMZUcC86gLn4dw59GEMjtLcafSHxg0qcqdLeCf7ZDJPtkkZhdbiQ5RKVcvfHgHf+hn1iaUI5pL4EOoFWj0DQfw6vegVZtNSd1VHk8SZ4=
+	t=1726667686; cv=none; b=rmsloMIu3p770YOkNMeY/fF65eCBDoBPvnS1F+1rAiyGkegNiRH0m48SOpweRnVc3TbtQaTG9KRaGVibSl2dBzFTgFGCBjx+G9UmMD55+4DOyXgLmnPVvnwxyKeToM5/P8n872qV0QPc9ydYP7yjWP/+0N7b8mBQNOGCK9oQEbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726667674; c=relaxed/simple;
-	bh=PwjhJ6aL25amCFnR6nPwf/YUl8QTgG+wSy1oaJ2bEvE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YBUL14wd1+4libOKECG20fZFVTqPqerdUduL7mf293TgNbiZI3wbUwxMQqOSKth6tnHAGHwsz4i1wS796FaPUx5ddqiXPxyNBzdMgB+6UaSMsEf9/eAx/L9DdO083hrZ4Omfbp/MFue7hgLnGVFKqTqjLxVyhTPkpeB5xeNIVPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yGxWsKLI; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-846bc75136eso1457320241.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:54:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726667670; x=1727272470; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hIMeCl4bSafLlQW0rWA6MOrP/WItPaBFD6DWuM4YR94=;
-        b=yGxWsKLIhOkgM9OMMmJQouBuQJSbSDepLy0e4Rw/WdGSqDjh8NLBtX/Q1iMyV3cyK0
-         bKfVQ1DwOieouxU7UZrLBMFKPWqOOKdBGsmdOKh5GQz4idUk8bXKIbfZTcgdAIk4G58y
-         SnpnTlRQBJUZ2U5tOovN4w4Q/MYsRXLDB+dB+IqN6Bj7DFPoB1nf/NrlQEfdp8MZLYrd
-         0lCSLwonAcRCSKSh0n7QK0aLHK76+CJxVy5Ok6fTZYJ/fyEBFtOKHtu9GtzXhXlF6I1l
-         zrKzj7WQdH5GlyQlfd4hcQLiSBvIw1QOCz7xBpO2vgKdv1qRt/hmDKtg5HzGhC2aHiqG
-         WZAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726667670; x=1727272470;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hIMeCl4bSafLlQW0rWA6MOrP/WItPaBFD6DWuM4YR94=;
-        b=X34E0ORiNOy0QD2RxkV+JiOYtnsmOFe7CyzfLsyLfhAZIIVNCA7mHaaDuiePh6l5fV
-         7393tA8H7BPxnufk9TP1cRV2LtjxLS39l3VdGvv6fk/VktBtGf7/JovlPtqPnZ7pqvhW
-         J1M6Q32Ll2XuwaE44pDDi3aLYIMZKzbd1CpRCIF738reIV8kASKCbHxIF7ZIZvtKJoS4
-         e7cpTDY7fHw/ZtLJ3bA5s4ixI40k4zB3fwgT7QsDmbIyMFise32kwmMUra4wzo1j28bO
-         QlXQmqdZVoBP0ccEuLvSl90m019eDgPcOsGIV+n2HBVhSWTyJOOl9EFlio0cbqj3Saw3
-         +erw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/CXJDwyCMqgyzXXlK6pqleh2PFpnAX44TRTgCCO9UBjqPoXjhquZ8Dxn/ngI8TF8d0P0Q5ykpuSuJm50=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5eChQ1LF64oQxr6W8+781Kv8mGytecXJZVjZrMyQlCWtO+/W+
-	ZpAiNsaJICF8iECIwhy5KJcmi5hjJwP+B6Jyeo+OiYr8eKl8jZHv2NagBoApi7hHDd5jPMDMuG2
-	YNRf1nwpFpqhW+ffn6K2twnOZIErT3Yog0fm2FA==
-X-Google-Smtp-Source: AGHT+IHsRvjoxv7oG344mOEKI4OydT5RUPtI6fUUmhF8HAW4FEQ3U0a5TaC332VC2FIUrLc2R6/n6smMBWiKHopXJqU=
-X-Received: by 2002:a05:6102:3a0a:b0:49b:c414:8a98 with SMTP id
- ada2fe7eead31-49d4158028fmr16213119137.29.1726667669756; Wed, 18 Sep 2024
- 06:54:29 -0700 (PDT)
+	s=arc-20240116; t=1726667686; c=relaxed/simple;
+	bh=6mfPuW2OrQ3u4Vz8WQRToWHI8ZQ7Z4AAQX9AwXG/BbA=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=TSG4ZJnZ4cM++tfhFjQeU4cMefrTHMBU6tRzYuPPFG4PLVq4UoJRcDXYJ/QHCwTfRz/M7NWqKxIXdjOXUx3G8jXuOk9vWmYp4qgFcwNN0fszNLYHtxftoQbkDpg3xEWhxj5yA4SFOP3eDZjAgT4Xmqb/xjiZecBr9qqXSnpO6oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICZcOT7u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92695C4CEC2;
+	Wed, 18 Sep 2024 13:54:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726667686;
+	bh=6mfPuW2OrQ3u4Vz8WQRToWHI8ZQ7Z4AAQX9AwXG/BbA=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=ICZcOT7uGoKE1x3XEDpa09045Z+xhTXSHUVzcDFX6ofGdHTxJWmwKDWcL9Dj3SqUT
+	 Aq1GRDRVPR014NXSqlQn6UT3L2zosLzKRBUzndDXAt1oj4PyqYPIzEr/7ehLcdI1Eh
+	 FXhNj8atervC01QALjIy+kypgzb08CmMkuGzzPOQsH2kIGtD9iyz4tQ/4wX0JnclRU
+	 OOV/XI+A+JI+Mq6b87UtRAkvvE9Arx1GNuGS/JPem+Kr6V2SZuRi+1qJQzJ6408IJQ
+	 S1PswI+rRQmN6Kl7UKP8RdBGtlZYEAES16C9ixV9XTxRr5O2ieWocKW0Wp+pPBfgRz
+	 Gvtvrj5vo4Tmg==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240916114221.021192667@linuxfoundation.org> <CA+G9fYtsjFtddG8i+k-SpV8U6okL0p4zpsTiwGfNH5GUA8dWAA@mail.gmail.com>
- <b0dfa622-f4f7-4f76-9d67-621544cb2212@kernel.org>
-In-Reply-To: <b0dfa622-f4f7-4f76-9d67-621544cb2212@kernel.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 18 Sep 2024 19:24:17 +0530
-Message-ID: <CA+G9fYtBHgb5m+yv+0bDH0435BMLnmiEHzXb2QP_TdLn43hwXg@mail.gmail.com>
-Subject: Re: [PATCH 6.1 00/63] 6.1.111-rc1 review
-To: Georgi Djakov <djakov@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
-	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
-	pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, 
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org, 
-	Jinjie Ruan <ruanjinjie@huawei.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Srini Kandagatla <srinivas.kandagatla@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, linux-spi@vger.kernel.org, 
-	Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH wireless v2 1/3] wifi: p54: Use IRQF_NO_AUTOEN flag in
+ request_irq()
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20240910124314.698896-2-ruanjinjie@huawei.com>
+References: <20240910124314.698896-2-ruanjinjie@huawei.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: <chunkeey@googlemail.com>, <briannorris@chromium.org>,
+ <francesco@dolcini.it>, <krzysztof.kozlowski@linaro.org>,
+ <leitao@debian.org>, <linville@tuxdriver.com>, <rajatja@google.com>,
+ <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <ruanjinjie@huawei.com>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <172666768193.3996465.10777431378652595060.kvalo@kernel.org>
+Date: Wed, 18 Sep 2024 13:54:43 +0000 (UTC)
 
-On Wed, 18 Sept 2024 at 17:38, Georgi Djakov <djakov@kernel.org> wrote:
->
-> On 17.09.24 17:43, Naresh Kamboju wrote:
-> > On Mon, 16 Sept 2024 at 17:29, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> >>
-> >> This is the start of the stable review cycle for the 6.1.111 release.
-> >> There are 63 patches in this series, all will be posted as a response
-> >> to this one.  If anyone has any issues with these being applied, please
-> >> let me know.
-> >>
-> >> Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
-> >> Anything received after that time might be too late.
-> >>
-> >> The whole patch series can be found in one patch at:
-> >>          https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.111-rc1.gz
-> >> or in the git tree and branch at:
-> >>          git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> >> and the diffstat can be found below.
-> >>
-> >> thanks,
-> >>
-> >> greg k-h
-> >
-> >
-> > The following kernel warnings have been noticed on a Qualcomm db845c device
-> > running stable-rc  6.1.111-rc1, 6.6.52-rc1 and 6.10.11-rc1 at boot time.
-> >
-> > First seen on 6.1.111-rc1
-> >    Good: v6.1.110
-> >    BAD:  6.1.111-rc1
-> >
->
-> Hi Naresh,
->
-> Do you see this warning on every boot or only sometimes?
+Jinjie Ruan <ruanjinjie@huawei.com> wrote:
 
-Today I have found that the frequency of occurrence is low.
+> disable_irq() after request_irq() still has a time gap in which
+> interrupts can come. request_irq() with IRQF_NO_AUTOEN flag will
+> disable IRQ auto-enable when request IRQ.
+> 
+> Fixes: cd8d3d321285 ("p54spi: p54spi driver")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 
+3 patches applied to wireless-next.git, thanks.
 
-> I am not able to
-> reproduce it on my db845c board even with your binaries.
->
-> I see however one geni runtime PM change that very likely triggers this
-> warning, so if you are doing a bisect, maybe try reverting that one first.
+bcd1371bd85e wifi: p54: Use IRQF_NO_AUTOEN flag in request_irq()
+9a98dd48b6d8 wifi: mwifiex: Use IRQF_NO_AUTOEN flag in request_irq()
+5a4d42c1688c wifi: wl1251: Use IRQF_NO_AUTOEN flag in request_irq()
 
-Since this an intermittent issue and the bisection did not end up smooth.
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20240910124314.698896-2-ruanjinjie@huawei.com/
 
-FYI,
-stable-rc /linux-6.10.y:
-----------
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.10.y/build/v6.10.10-122-ge9fde6b546b5/testrun/25159698/suite/log-parser-boot/test/check-kernel-exception-warning-cpu-pid-at-driversinterconnectcorec-__icc_enable/details/
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
-stable-rc /linux-6.1.y:
-----------
-- https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.110-64-gdc7da8d6f263/testrun/25159001/suite/log-parser-boot/test/check-kernel-exception-warning-cpu-pid-at-driversinterconnectcorec-__icc_enable/details/
-
-stable-rc /linux-6.6.y:
-----------
-- https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.51-92-gfd49ddc1e5f8/testrun/25161861/suite/log-parser-boot/test/check-kernel-exception-warning-cpu-pid-at-driversinterconnectcorec-__icc_enable/details/
-
-- Naresh
-
->
-> Thanks,
-> Georgi
->
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> >
-> > Warning log:
-> > --------
-> > [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x517f803c]
-> > [    0.000000] Linux version 6.1.111-rc1 (tuxmake@tuxmake)
-> > (aarch64-linux-gnu-gcc (Debian 13.3.0-5) 13.3.0, GNU ld (GNU Binutils
-> > for Debian) 2.43) #1 SMP PREEMPT @1726489583
-> > [    0.000000] Machine model: Thundercomm Dragonboard 845c
-> > ...
-> > [    7.841428] ------------[ cut here ]------------
-> > [    7.841431] WARNING: CPU: 4 PID: 492 at
-> > drivers/interconnect/core.c:685 __icc_enable
-> > (drivers/interconnect/core.c:685 (discriminator 7))
-> > [    7.841442] Modules linked in: soundwire_bus(+) venus_core(+)
-> > qcom_camss(+) drm_dp_aux_bus bluetooth(+) qcom_stats mac80211(+)
-> > videobuf2_dma_sg drm_display_helper i2c_qcom_geni(+) i2c_qcom_cci
-> > camcc_sdm845(+) v4l2_mem2mem qcom_q6v5_mss(+) videobuf2_memops
-> > reset_qcom_pdc spi_geni_qcom(+) videobuf2_v4l2 phy_qcom_qmp_usb(+)
-> > videobuf2_common gpi(+) qcom_rng cfg80211 phy_qcom_qmp_ufs ufs_qcom(+)
-> > coresight_stm phy_qcom_qmp_pcie stm_core rfkill slim_qcom_ngd_ctrl
-> > qrtr pdr_interface lmh qcom_wdt slimbus icc_osm_l3 qcom_q6v5_pas(+)
-> > icc_bwmon llcc_qcom qcom_pil_info qcom_q6v5 qcom_sysmon qcom_common
-> > qcom_glink_smem qmi_helpers mdt_loader display_connector
-> > drm_kms_helper drm socinfo rmtfs_mem
-> > [    7.841494] CPU: 4 PID: 492 Comm: (udev-worker) Not tainted 6.1.111-rc1 #1
-> > [    7.841497] Hardware name: Thundercomm Dragonboard 845c (DT)
-> > [    7.841499] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > [    7.841502] pc : __icc_enable (drivers/interconnect/core.c:685
-> > (discriminator 7))
-> > [    7.841505] lr : icc_disable (drivers/interconnect/core.c:708)
-> > [    7.841508] sp : ffff800008b23660
-> > [    7.841509] x29: ffff800008b23660 x28: ffff800008b23c20 x27: 0000000000000000
-> > [    7.841513] x26: ffffdd85da6ea1c0 x25: 0000000000000008 x24: 00000000000f4240
-> > [    7.841516] x23: 0000000000000000 x22: ffff46a58b7ca580 x21: 0000000000000001
-> > [    7.841519] x20: ffff46a58b7ca5c0 x19: ffff46a58b54a800 x18: 0000000000000000
-> > [    7.841522] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> > [    7.841525] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
-> > [    7.841528] x11: fefefefefefefeff x10: 0000000000000bf0 x9 : ffffdd85d8c9b0bc
-> > [    7.841531] x8 : ffff800008b22f58 x7 : 0000000000000000 x6 : 0000000000024404
-> > [    7.841535] x5 : 0000000000000000 x4 : ffff46a58b64b180 x3 : ffffdd85daa5e810
-> > [    7.841537] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
-> > [    7.841541] Call trace:
-> > [    7.841542] __icc_enable (drivers/interconnect/core.c:685 (discriminator 7))
-> > [    7.841545] icc_disable (drivers/interconnect/core.c:708)
-> > [    7.841547] geni_icc_disable (drivers/soc/qcom/qcom-geni-se.c:862)
-> > [    7.841553] spi_geni_runtime_suspend+0x3c/0x4c spi_geni_qcom
-> > [    7.841561] pm_generic_runtime_suspend (drivers/base/power/generic_ops.c:28)
-> > [    7.841565] __rpm_callback (drivers/base/power/runtime.c:395)
-> > [    7.841568] rpm_callback (drivers/base/power/runtime.c:532)
-> > [    7.841570] rpm_suspend (drivers/base/power/runtime.c:672)
-> > [    7.841572] rpm_idle (drivers/base/power/runtime.c:504 (discriminator 1))
-> > [    7.841574] update_autosuspend (drivers/base/power/runtime.c:1662)
-> > [    7.841576] pm_runtime_disable_action (include/linux/spinlock.h:401
-> > drivers/base/power/runtime.c:1703 include/linux/pm_runtime.h:599
-> > drivers/base/power/runtime.c:1517)
-> > [    7.841579] devm_action_release (drivers/base/devres.c:720)
-> > [    7.841581] release_nodes (drivers/base/devres.c:503)
-> > [    7.841583] devres_release_all (drivers/base/devres.c:532)
-> > [    7.841585] device_unbind_cleanup (drivers/base/dd.c:531)
-> > [    7.841589] really_probe (drivers/base/dd.c:710)
-> > [    7.841592] __driver_probe_device (drivers/base/dd.c:785)
-> > [    7.841594] driver_probe_device (drivers/base/dd.c:815)
-> > [    7.841596] __driver_attach (drivers/base/dd.c:1202)
-> > [    7.841598] bus_for_each_dev (drivers/base/bus.c:301)
-> > [    7.841600] driver_attach (drivers/base/dd.c:1219)
-> > [    7.841602] bus_add_driver (drivers/base/bus.c:618)
-> > [    7.841604] driver_register (drivers/base/driver.c:246)
-> > [    7.841607] __platform_driver_register (drivers/base/platform.c:868)
-> > [    7.841609] spi_geni_driver_init+0x28/0x1000 spi_geni_qcom
-> > [    7.841615] do_one_initcall (init/main.c:1298)
-> > [    7.841619] do_init_module (kernel/module/main.c:2469)
-> > [    7.841623] load_module (kernel/module/main.c:2878)
-> > [    7.841625] __do_sys_finit_module (kernel/module/main.c:2978
-> > (discriminator 1))
-> > [    7.841627] __arm64_sys_finit_module (kernel/module/main.c:2945)
-> > [    7.841630] invoke_syscall (arch/arm64/include/asm/current.h:19
-> > arch/arm64/kernel/syscall.c:57)
-> > [    7.841633] el0_svc_common.constprop.0
-> > (arch/arm64/include/asm/daifflags.h:28
-> > arch/arm64/kernel/syscall.c:148)
-> > [    7.841637] do_el0_svc (arch/arm64/kernel/syscall.c:205)
-> > [    7.841639] el0_svc (arch/arm64/include/asm/daifflags.h:28
-> > arch/arm64/kernel/entry-common.c:133
-> > arch/arm64/kernel/entry-common.c:142
-> > arch/arm64/kernel/entry-common.c:638)
-> > [    7.841644] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:656)
-> > [    7.841647] el0t_64_sync (arch/arm64/kernel/entry.S:585)
-> > [    7.841649] ---[ end trace 0000000000000000 ]---
->
->
 
