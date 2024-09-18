@@ -1,128 +1,187 @@
-Return-Path: <linux-kernel+bounces-332639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA27F97BC57
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:37:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B88B797BC5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB71D1C22C99
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:37:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F2261F2536C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA8D189B8D;
-	Wed, 18 Sep 2024 12:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8123189B8D;
+	Wed, 18 Sep 2024 12:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EMWYFbLg"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lIyueVcm"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1658A4409
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 12:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FB6176FA7;
+	Wed, 18 Sep 2024 12:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726663050; cv=none; b=i1jjHBeB1fMQy7M47HdTssi4OBgK1pqfZgY1uPEZRvX18iNGSSoUG6uxpwRPMcxTLLserT9WTiczFpFD1FpGWS/9YHB7y9HBx3SEABaqKp4hDcyPo9lSfrMJGXLr0Jsy4/wfbmIMs/HjT8kheQsndFsMsb+u32CB7se6vt6nRQs=
+	t=1726663086; cv=none; b=qohVYSsTiuYsk7qJmV/GPKeiZYE+0gXlv+frLMleo7bvnyd87tbxXhAIVDjZWAL1oOan7/ClyzbXVPyp7HN5OqNXZUmO1qqEHJOMupexGdnLdRw4n7VgzhyJmdnL3IlX3K2YtcsS1FwGnFQW1oNY1oU2u8P7rqi+ncVqqxoA52c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726663050; c=relaxed/simple;
-	bh=qeQMM8Wd0V3o1iMH4h/+ztFrJIMFY1Yml1czY+r0VCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QVUHp65ZL7bC8R5bTBE0PnI4zvb+k48z3PD2cALxUF5x7AV1hTpoGuDgWSFC9MRYPM8+svJkF8emymrFEPnfn6KrZ5M0I6pp0jhSArcs33yxuIYrIJLlThmu60L2HAa5Z0knNKn3xhHF30YPriw3VIc/tLd0kVXHVaUIvsT+JgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EMWYFbLg; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5356ab89665so7697282e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 05:37:27 -0700 (PDT)
+	s=arc-20240116; t=1726663086; c=relaxed/simple;
+	bh=+pVQCjrOS+WDHSyf9VTvTerWzJQfOhje9X0hpJLbZ2w=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=gI8UZV1kXFaatWih7x0dfofTZ3G1ZYBJzCfeolYWirisb6EBt9syXlGqiqa8V/c44TBOUyPFH1/tUaPCyZCCKwWi0nwbvnPwClPN58o5qkEKIoihT3v0dk3glxawkmvGmU3N3j7UvVieQSEsV/jcjv1lNESakZLE5Y4a6OlJFCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lIyueVcm; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a95efbaf49so396362485a.3;
+        Wed, 18 Sep 2024 05:38:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726663046; x=1727267846; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pDqNM7mHosRcM8zPnL70V2acHsNvApt7iBMKoxePkgw=;
-        b=EMWYFbLg3EhmbTm7s8QI3+2T/5Qocf7dlaC5I4BaJfiz/WO9R2Ymp9wm/kX35vFZC8
-         pSZpDHLSN+gqQwYCdsTY9bEFcJa2OgKhgYVJl1N0ussnFS4ejSZ4az3wrcEKlmZocHW3
-         9CZUuv2VFq/9lweeGFo4YKtso/4uzDfcRXuKR1bqt49jFW/rY6ysfFttGl/AL1I5HH5F
-         YSwKo0jnYvXJVqyaN9yQj8CfpTAfd42vHxfD3+zFPbelA2lmrwKZ0Hll1yzIZyQgTd4U
-         rTnFW2ZVrx//3W3CIdCyIa+0difv+uqN63p60O9zxn1OEUa5AtxKQTbnqNpp3LpMeY4h
-         OYIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726663046; x=1727267846;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1726663083; x=1727267883; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pDqNM7mHosRcM8zPnL70V2acHsNvApt7iBMKoxePkgw=;
-        b=iGSKHeqxIG6E21ax6L/9/GOjU3Y73zSDTVq9Xdl8AU8TUO5XZAJ24YaDu3kyET+KzJ
-         eyYCnairL1VhGBwLR6z6t0tLzOZLOevDK8UeG5tuthNvnzt95ghuz7iJ5nwVLcw29j1z
-         /Zj8oblHFwab0D3Me8dsYBi8j41gTEwSg22hNOd7B62n1fNBGV3LJBxYtdNCmzsItS5Y
-         kVUtPqCW5Pfkq3x5VGwRlwq3N1Cu7s2Wl7cjXMRkH9U2H0WT7+bRRlDTT4NJi+ye2jbs
-         eCn9AnuKYaQ4yegBPxtug0rF+j9DKNHPiIZlnygnOmmvjtcbrYLf09MSzpUL6KSAq/l8
-         lhWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbMG5F0wrurTtUxK8ws4OSen/m7W+rjxx/hKEdL8CaV3Nd9gH/zVfJmP8Cb1f6cW1se9Qj4Yi/OWx/PiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0tHCZpOHWEtpr6MMK4nd3ckW7EuVFpZnsaGFkqpGhS3u01T6r
-	c1CsF+0Tb0NSiG7wiNP7lK69tOKoAF2aiyWEfLwEBUMRAr8pIToMA1/D1WiYUq8=
-X-Google-Smtp-Source: AGHT+IFC2Zdmm09y5YnIjyMsIvLGZyaR2o8tST0ToEXrXSsy5qSuhFwc3Wp8ycruRRTus8dd2YhjOw==
-X-Received: by 2002:a05:6512:10ce:b0:533:3fc8:43ee with SMTP id 2adb3069b0e04-53678fba1f0mr12239024e87.13.1726663046217;
-        Wed, 18 Sep 2024 05:37:26 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5368704da94sm1508218e87.89.2024.09.18.05.37.24
+        bh=zKhOII2wzPiXj1Ja0YUua2iCV4SCufJIEwdhDjh9HSM=;
+        b=lIyueVcmYLXVsEP3wf3puUWk6vPqg8VlxBbrkag8vgF/xNkA7LNrETKRpnw3GE919Y
+         8MBHrnYA+kHOPkDh/4gnP1Bk0K3+HhjoVu3GZ71qsQHa8oqvxcE9KwwXg128BNA2wL/6
+         irTBfUxcGJ0HHFgwaTcqq+NjC0gBJl7JFmTj+JH9b4fNGaGWtQ28jo75s0Zuw6JzBSm8
+         M9xJmQIbjOjAWzvAMviBKa73Wl/VSvVf77KXWX7ApmzU/+Q0bGeHbtAPF/VDnt0phjNL
+         TjujbcKZSntFqF67vh/4mAu3XzVZI6DV83l+971PBYhcf2rLxa2b+G4q3W6gZUc62NJ1
+         c7bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726663083; x=1727267883;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zKhOII2wzPiXj1Ja0YUua2iCV4SCufJIEwdhDjh9HSM=;
+        b=E64KFiHVJSxaUrJXPBihrAg6SydaPWY9g4nSIed6rtB5CvKrC9SdWQB/sQ0l/b+DnP
+         vGMbchelZA9nMSvfa6LXv0wvA8LCNaLYcw0lS9MQ6V+P5B7I62Uf9KSHqZIkxeoPxSHD
+         5DacxsT9mxicvPAE8vIbP/Wv2cYlxzeZP3vFKHhF1Lb54Zm3kU2/ysRTpp/WLuXmtYbD
+         8KETkCvneOJvgDeAuUsB0miPffBuGAQg3BpEq5DxdPATLz3VEnhOBB8BoZWBwcYq7O1c
+         MvyTUcqulyv66hQxR4p60kkAxgnVN53GNPjCwwa/3GeVVeWAmPp6NKQXxIYyCJBu8kQR
+         ti9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWKaAz+g0BiJx65rg131VXXn7QhcI3YSKVaw90ZFh7wE87eag3K3Q38ZSB79pgUPzr13F6ktEHwDJ7N73A=@vger.kernel.org, AJvYcCWvF43mSeAxU490pOVrroXYDWxMRYKXW7FpSiCXsxIAudpX8u0SB5TlRHUpiCAbPXO0TvYd3MiTTDhTtl655cMJ@vger.kernel.org, AJvYcCXYyfrWky8cMnSMMuKPHO+jXjIBvetkpJen5YzYHRjLK2/AIn50piYoZdzAkW4KFdfJfxTGmgTB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvGe+KQQsO05N4qx0lgOzyYU9ic4huNENJctf7cnRQs5AEKVVD
+	Hkct5lvry7yZ3XrpwxZWl07j5aPqIiKDl8wXGmlMC/nEXk8gcu+3
+X-Google-Smtp-Source: AGHT+IHgv89Lim0gQxfDI9Ug/kDaYNwzLbOzetDB4QbKuZuFTirvlUtsTj3cfbE9+qdkVlNN9l0lIg==
+X-Received: by 2002:a05:620a:24d5:b0:7a9:b9c6:ab62 with SMTP id af79cd13be357-7ab30d349c3mr2681807185a.28.1726663083232;
+        Wed, 18 Sep 2024 05:38:03 -0700 (PDT)
+Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ab3e95bcaasm450628485a.5.2024.09.18.05.38.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 05:37:25 -0700 (PDT)
-Date: Wed, 18 Sep 2024 15:37:23 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Stephan Gerhold <stephan.gerhold@kernkonzept.com>, Danila Tikhonov <danila@jiaxyga.com>, 
-	Adam Skladowski <a39.skl@gmail.com>, Vladimir Lypak <vladimir.lypak@gmail.com>, 
-	Andrew Halaney <ahalaney@redhat.com>, Odelu Kukatla <quic_okukatla@quicinc.com>, 
-	Mike Tipton <quic_mdtipton@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3 2/2] interconnect: qcom: add QCS8300 interconnect
- provider driver
-Message-ID: <iebfjkoxcbnh3akw2dev7kwj4ae2yazrlhdpw657z53p6exx2f@tj7ol6gix2dy>
-References: <20240910101013.3020-1-quic_rlaggysh@quicinc.com>
- <20240910101013.3020-3-quic_rlaggysh@quicinc.com>
- <3xjvx2kwrlruhhxw4aald26qjf5fzikay2ypzr3mwv75mlmf5q@lmn2o64npfg2>
- <40dd23e7-9ea5-4eb3-bb6b-e1952d746958@quicinc.com>
+        Wed, 18 Sep 2024 05:38:02 -0700 (PDT)
+Date: Wed, 18 Sep 2024 08:38:01 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Mohan Prasad J <mohan.prasad@microchip.com>, 
+ netdev@vger.kernel.org, 
+ davem@davemloft.net, 
+ kuba@kernel.org, 
+ andrew@lunn.ch
+Cc: edumazet@google.com, 
+ pabeni@redhat.com, 
+ shuah@kernel.org, 
+ mohan.prasad@microchip.com, 
+ linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ horms@kernel.org, 
+ brett.creeley@amd.com, 
+ rosenp@gmail.com, 
+ UNGLinuxDriver@microchip.com, 
+ willemb@google.com
+Message-ID: <66eac9a9e3e22_29b986294c7@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20240917023525.2571082-3-mohan.prasad@microchip.com>
+References: <20240917023525.2571082-1-mohan.prasad@microchip.com>
+ <20240917023525.2571082-3-mohan.prasad@microchip.com>
+Subject: Re: [PATCH net-next v2 2/3] selftests: nic_basic_tests: Add selftest
+ case for speed and duplex state checks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <40dd23e7-9ea5-4eb3-bb6b-e1952d746958@quicinc.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 18, 2024 at 03:10:34PM GMT, Raviteja Laggyshetty wrote:
+Mohan Prasad J wrote:
+> Add selftest case for testing the speed and duplex state of
+> local NIC driver and the partner based on the supported
+> link modes obtained from the ethtool. Speed and duplex states
+> are varied and verified using ethtool.
 > 
+> Signed-off-by: Mohan Prasad J <mohan.prasad@microchip.com>
+> ---
+>  .../drivers/net/hw/nic_basic_tests.py         | 46 +++++++++++++++++++
+>  1 file changed, 46 insertions(+)
 > 
-> On 9/11/2024 4:18 PM, Dmitry Baryshkov wrote:
-> > On Tue, Sep 10, 2024 at 10:10:13AM GMT, Raviteja Laggyshetty wrote:
-> >> Add driver for the Qualcomm interconnect buses found in QCS8300
-> >> based platforms. The topology consists of several NoCs that are
-> >> controlled by a remote processor that collects the aggregated
-> >> bandwidth for each master-slave pairs.
-> >>
-> >> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> >> ---
-> >>  drivers/interconnect/qcom/Kconfig   |   11 +
-> >>  drivers/interconnect/qcom/Makefile  |    2 +
-> >>  drivers/interconnect/qcom/qcs8300.c | 2088 +++++++++++++++++++++++++++
-> >>  drivers/interconnect/qcom/qcs8300.h |  177 +++
-> >>  4 files changed, 2278 insertions(+)
-> >>  create mode 100644 drivers/interconnect/qcom/qcs8300.c
-> >>  create mode 100644 drivers/interconnect/qcom/qcs8300.h
-> > 
-> > The driver looks pretty close to sa8775p one. Would it make sense to
-> > have a single driver instead? Or would it complicate things
-> > significantly?
-> > 
-> 
-> Yes, the target is close to sa8775p. but there are differences in the topology and same driver cannot be used for both targets.
+> diff --git a/tools/testing/selftests/drivers/net/hw/nic_basic_tests.py b/tools/testing/selftests/drivers/net/hw/nic_basic_tests.py
+> index 27f780032..ff46f2406 100644
+> --- a/tools/testing/selftests/drivers/net/hw/nic_basic_tests.py
+> +++ b/tools/testing/selftests/drivers/net/hw/nic_basic_tests.py
+> @@ -42,6 +42,14 @@ from lib.py import ethtool
+>  """Global variables"""
+>  common_link_modes = []
+>  
+> +def check_autonegotiation(ifname: str) -> None:
+> +    autoneg = get_ethtool_content(ifname, "Supports auto-negotiation:")
+> +    partner_autoneg = get_ethtool_content(ifname, "Link partner advertised auto-negotiation:")
+> +
+> +    """Check if auto-neg supported by local and partner NIC"""
+> +    if autoneg[0] != "Yes" or partner_autoneg[0] != "Yes":
+> +        raise KsftSkipEx(f"Interface {ifname} or partner does not support auto-negotiation")
+> +
+>  def get_ethtool_content(ifname: str, field: str):
+>      capture = False
+>      content = []
+> @@ -112,6 +120,25 @@ def verify_autonegotiation(ifname: str, expected_state: str) -> None:
+>  
+>      ksft_eq(actual_state, expected_state)
+>  
+> +def set_speed_and_duplex(ifname: str, speed: str, duplex: str) -> None:
+> +    """Set the speed and duplex state for the interface"""
+> +    process = ethtool(f"--change {ifname} speed {speed} duplex {duplex} autoneg on")
+> +
+> +    if process.ret != 0:
+> +        raise KsftFailEx(f"Not able to set speed and duplex parameters for {ifname}")
+> +    ksft_pr(f"Speed: {speed} Mbps, Duplex: {duplex} set for Interface: {ifname}")
+> +
+> +def verify_speed_and_duplex(ifname: str, expected_speed: str, expected_duplex: str) -> None:
+> +    verify_link_up(ifname)
+> +    """Verifying the speed and duplex state for the interface"""
+> +    with open(f"/sys/class/net/{ifname}/speed", "r") as fp:
+> +        actual_speed = fp.read().strip()
+> +    with open(f"/sys/class/net/{ifname}/duplex", "r") as fp:
+> +        actual_duplex = fp.read().strip()
+> +
+> +    ksft_eq(actual_speed, expected_speed)
+> +    ksft_eq(actual_duplex, expected_duplex)
+> +
+>  def test_link_modes(cfg) -> None:
+>      global common_link_modes
+>      link_modes = get_ethtool_content(cfg.ifname, "Supported link modes:")
+> @@ -136,6 +163,25 @@ def test_autonegotiation(cfg) -> None:
+>      else:
+>          raise KsftSkipEx(f"Auto-Negotiation is not supported for interface {cfg.ifname}")
+>  
+> +def test_network_speed(cfg) -> None:
+> +    check_autonegotiation(cfg.ifname)
+> +    if not common_link_modes:
+> +        KsftSkipEx("No common link modes exist")
+> +    speeds, duplex_modes = get_speed_duplex(common_link_modes)
+> +
+> +    if speeds and duplex_modes and len(speeds) == len(duplex_modes):
+> +        for idx in range(len(speeds)):
+> +            speed = speeds[idx]
+> +            duplex = duplex_modes[idx]
+> +            set_speed_and_duplex(cfg.ifname, speed, duplex)
+> +            time.sleep(sleep_time)
+> +            verify_speed_and_duplex(cfg.ifname, speed, duplex)
+> +    else:
+> +        if not speeds or not duplex_modes:
+> +            KsftSkipEx(f"No supported speeds or duplex modes found for interface {cfg.ifname}")
+> +        else:
+> +            KsftSkipEx("Mismatch in the number of speeds and duplex modes")
+> +
 
-Ack
+Do these tests reset configuration to their original state?
 
--- 
-With best wishes
-Dmitry
+More high level: basic test is not very descriptive. Can they have a
+more precise name? Perhaps link layer operations or link layer config?
 
