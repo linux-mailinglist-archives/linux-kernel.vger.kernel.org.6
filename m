@@ -1,181 +1,129 @@
-Return-Path: <linux-kernel+bounces-332825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6978B97BF4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 18:51:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62FBA97BF4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 18:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03DE2B21CAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:51:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 287E9282423
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0339E13AD1C;
-	Wed, 18 Sep 2024 16:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AB41C1736;
+	Wed, 18 Sep 2024 16:51:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fL+DaNfq"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="hbqiIht8"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30891C984E;
-	Wed, 18 Sep 2024 16:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AA213AD1C
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 16:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726678277; cv=none; b=hZD0YwKDf3YyiMjFTxydkZgZDxbWC1FGSldkqmLynucvxhcweR1MLCfq5EE2W2kVoxXv/UWrTzojvSOsw1so4hJzq2mEgFOwsjUbPQPfVHrIl8djiBw9qG490t4Y3Cl/UazKSrjykSxPTfeINmB+clxcftML0UcnQanYMx8oSUg=
+	t=1726678311; cv=none; b=DCDVDLFndFUZD1OZiBnpAbl4rtBWu1s5LJFWt0HUmwgh2Z0OUJFyGOMPW6ziQjuA593MOc4H2Eq4QG3Xjud9ofEUdztOsT8V+ruOtoU60yz/mxSzkHVHlk3wrgIDuV6kNZDDrc3dc974bS+nABRrzNkak94FuPeln9/ssdfx1Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726678277; c=relaxed/simple;
-	bh=Mg8h+rZy43/prN8/ECbzPvtnuPOXK+tXpDSXSZGlPsw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KnxtEOOqs9PPJzIEt1oQ8pBr2eJfX67nC8ERNsPvnv4EQGn4JUUuwMWpWrnftZQL6wcI1XEiZotTpHO/t6Dq3PfJ6N/votrw3mEtGaOCjYXibuPYyTUToey0bM7gLm87UObfuG04s/xnTmESROOylRO1qhoa3CbHAjl5DIiU12c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fL+DaNfq; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2053f72319fso4610915ad.2;
-        Wed, 18 Sep 2024 09:51:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726678275; x=1727283075; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U++sEYJHjnPIVmGmCRlgjOlOobYwKPADlHrAK0bE/t4=;
-        b=fL+DaNfqhS4ZA61CTYK1zwYhIV3YZuqg1Bzf+S7P5qPaDViKNL/sVK3+kGBbwXSBV7
-         iImce4ZKG3nNV7dwFTWkxAFZ3mLEIYCy9qmrGBzNBmr9MQf28r49xO9hKevoTnzC63cg
-         4xVQFNTm96OMJRkXYqWECa3gJGM7LgVauqicGopeGSWbW4WDorSMmdgit7OjyDmDenJ+
-         hyqZzFDmpUcwotXGoK+3oi4cEwUGRthwQgaAY0lN++HE5r38yPAh2Ceb9Et8OQzYwzQU
-         OtID4/EpdHaUwQblF5G8o0xEhxaFzhtLs8ygMkQ9UiNRQB+whhvA/0+aJP8AmH1pBoNd
-         krBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726678275; x=1727283075;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U++sEYJHjnPIVmGmCRlgjOlOobYwKPADlHrAK0bE/t4=;
-        b=VVVfKfDMv0jN5xoZFXuLsbBEJYYXjV9xaDd2EAqhAxF3bkTPU3jT7IIcx+gYAam1MT
-         j4AieQohkVefF33ZZRzOmaSu3z2kJgaVX++yHlxKikdDx9pag2mQq4VsMSMoLDh47r4k
-         /q5Z3AhgMQegSjGZieRpF+e4KFzXVuKr9o1I8H7XpijbydXK3PVx09DTxAZ2NKaU2Mby
-         g3DlYwBbrWZ1ejo1kj8Lag0VRLQolUhWVlx8jHnnDiztooRg2JdFZaG0KSsNC4qGJa7V
-         hEfEUpu4pfy4GfJ4WzRgvgRe5+91niWjmK/CxOvP5N25RZtZcyfwVO+ju1KpbJCZHkoE
-         2aaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlsL3YuJ1JP5qXizh/5rGWWEcnaTFmt5+gGX+kqoN3s4uzTP5DCt5+1jpv2kt8iFBvlOEW69N7+Xn472Gj@vger.kernel.org, AJvYcCXxgEy+pjsWTGzjX0/9lWXDk4pdJmqsEVfJGxaQU0ip+hxEYV9vtIIqdDMumSl3EfCef6E2pvgO6uQbTNP7@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiK0VIfZD8OCbEKcrseuOLkglr3Rh2HV1ZPey+c/kjRF5in77c
-	ET7NKLwRzBTY76NAsIsePKehfBPnO1iYAbNRm9TpH8VfR/hLfeTswXSab6ttUSHvzeFXmMvPG0P
-	GJZOlV4QBTfY8ChKciiVmS1IRhuU=
-X-Google-Smtp-Source: AGHT+IFMOFfvcHxm8ZPKILxS27rcCm6QAstBImzELxxoc8hw0RZl9FJfxgCmoLdAvRasWzjIn9Etkup0MPREc3wSB20=
-X-Received: by 2002:a17:902:c406:b0:207:457f:b8f6 with SMTP id
- d9443c01a7336-2076e318bf1mr145492845ad.2.1726678274938; Wed, 18 Sep 2024
- 09:51:14 -0700 (PDT)
+	s=arc-20240116; t=1726678311; c=relaxed/simple;
+	bh=saqdPERl3pSpSVfQHE19jiKuKxFBbOQYkvI4MJit1vw=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PFfJ9GrCaMWg/8WrgIKmkTaAhHKBjUBWfCewXuVctL785DxHTebFM73pvYYNbWzOjy9LjcX4sEWVFrY01NsIZiV02vuNTmku2d10FguOMQhIe2oyPWLw9kOxJbcGTI2Ew6nnNDztw159tMVtspUXJZpzRswSKsX+ODd0TO4oaf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=hbqiIht8; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1726678306; x=1726937506;
+	bh=fhuNG8zofIGaLi9EHs/Va7YSL8WAW0FXzVZiEsXHJZQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=hbqiIht8AJucWIk1p1fluO8SehCBixY2e2XBgDT+/tLMIktn2JLJdWQn3YYxhfzWJ
+	 xF81AR7An6i9zrwptIvtDeW3L23VkbM4oVPZtsYQk+eA1QSBwoPY8acPhcj/5glYOt
+	 stmVnuYvMmOlixzn/JA76dLTeIzu92rI5FxlHJulXO7k73366+IrX/Lu5sMQ3V5Iae
+	 06Ann1l5sb/ltq6s1Jm+48KoHxA7DmPvqrvXv6TRihvM8XUB0bZANh02Lc3/unxcJY
+	 j29N+AvvTuiGYAm2j90393dtFm4nO6sv+0jIoZbrNBnvHoWJYyr7bOoGveuFBIRPZx
+	 34YvgWHosFSVw==
+Date: Wed, 18 Sep 2024 16:51:40 +0000
+To: philipp.g.hortmann@gmail.com, gregkh@linuxfoundation.org
+From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Subject: [PATCH] staging: vt6655: rxtx.c: Fix too long lines in get_rtscts_time
+Message-ID: <20240918165052.30386-1-dominik.karol.piatkowski@protonmail.com>
+Feedback-ID: 117888567:user:proton
+X-Pm-Message-ID: 3b2a47204c0ee62749925f8167623ebe64cbf87b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913195132.8282-1-robdclark@gmail.com>
-In-Reply-To: <20240913195132.8282-1-robdclark@gmail.com>
-From: Connor Abbott <cwabbott0@gmail.com>
-Date: Wed, 18 Sep 2024 17:51:03 +0100
-Message-ID: <CACu1E7ECxJLH8+GqUuWH=+oM=N=fgkpBBqJ8ShrSwbdZmw+nZQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm/a6xx+: Insert a fence wait before SMMU table update
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, Akhil P Oommen <quic_akhilpo@quicinc.com>, 
-	Rob Clark <robdclark@chromium.org>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 13, 2024 at 8:51=E2=80=AFPM Rob Clark <robdclark@gmail.com> wro=
-te:
->
-> From: Rob Clark <robdclark@chromium.org>
->
-> The CP_SMMU_TABLE_UPDATE _should_ be waiting for idle, but on some
-> devices (x1-85, possibly others), it seems to pass that barrier while
-> there are still things in the event completion FIFO waiting to be
-> written back to memory.
->
-> Work around that by adding a fence wait before context switch.  The
-> CP_EVENT_WRITE that writes the fence is the last write from a submit,
-> so seeing this value hit memory is a reliable indication that it is
-> safe to proceed with the context switch.
->
-> Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/63
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/=
-adreno/a6xx_gpu.c
-> index bcaec86ac67a..ba5b35502e6d 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -101,9 +101,10 @@ static void get_stats_counter(struct msm_ringbuffer =
-*ring, u32 counter,
->  }
->
->  static void a6xx_set_pagetable(struct a6xx_gpu *a6xx_gpu,
-> -               struct msm_ringbuffer *ring, struct msm_file_private *ctx=
-)
-> +               struct msm_ringbuffer *ring, struct msm_gem_submit *submi=
-t)
->  {
->         bool sysprof =3D refcount_read(&a6xx_gpu->base.base.sysprof_activ=
-e) > 1;
-> +       struct msm_file_private *ctx =3D submit->queue->ctx;
->         struct adreno_gpu *adreno_gpu =3D &a6xx_gpu->base;
->         phys_addr_t ttbr;
->         u32 asid;
-> @@ -115,6 +116,13 @@ static void a6xx_set_pagetable(struct a6xx_gpu *a6xx=
-_gpu,
->         if (msm_iommu_pagetable_params(ctx->aspace->mmu, &ttbr, &asid))
->                 return;
->
-> +       /* Wait for previous submit to complete before continuing: */
-> +       OUT_PKT7(ring, CP_WAIT_TIMESTAMP, 4);
+This patch fixes the lines exceeding 100 columns in get_rtscts_time
+function.
 
-CP_WAIT_TIMESTAMP doesn't exist on a6xx, so this won't work there. I
-don't know if the bug exists on a6xx, but I'd be inclined to say it
-has always existed and we just never hit it because it requires some
-very specific timing conditions. We can make it work on a6xx by using
-CP_WAIT_REG_MEM and waiting for it to equal the exact value.
+Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@prot=
+onmail.com>
+---
+ drivers/staging/vt6655/rxtx.c | 27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
 
-Connor
+diff --git a/drivers/staging/vt6655/rxtx.c b/drivers/staging/vt6655/rxtx.c
+index 3705cb1e87b6..1ea17e86e3ee 100644
+--- a/drivers/staging/vt6655/rxtx.c
++++ b/drivers/staging/vt6655/rxtx.c
+@@ -202,20 +202,29 @@ static __le16 get_rtscts_time(struct vnt_private *pri=
+v,
+=20
+ =09data_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, frame_le=
+ngth, current_rate);
+ =09if (rts_rsvtype =3D=3D 0) { /* RTSTxRrvTime_bb */
+-=09=09rts_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 20, pr=
+iv->byTopCCKBasicRate);
+-=09=09ack_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 14, pr=
+iv->byTopCCKBasicRate);
++=09=09rts_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 20,
++=09=09=09=09=09     priv->byTopCCKBasicRate);
++=09=09ack_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 14,
++=09=09=09=09=09     priv->byTopCCKBasicRate);
+ =09=09cts_time =3D ack_time;
+ =09} else if (rts_rsvtype =3D=3D 1) { /* RTSTxRrvTime_ba, only in 2.4GHZ *=
+/
+-=09=09rts_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 20, pr=
+iv->byTopCCKBasicRate);
+-=09=09cts_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 14, pr=
+iv->byTopCCKBasicRate);
+-=09=09ack_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 14, pr=
+iv->byTopOFDMBasicRate);
++=09=09rts_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 20,
++=09=09=09=09=09     priv->byTopCCKBasicRate);
++=09=09cts_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 14,
++=09=09=09=09=09     priv->byTopCCKBasicRate);
++=09=09ack_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 14,
++=09=09=09=09=09     priv->byTopOFDMBasicRate);
+ =09} else if (rts_rsvtype =3D=3D 2) { /* RTSTxRrvTime_aa */
+-=09=09rts_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 20, pr=
+iv->byTopOFDMBasicRate);
+-=09=09ack_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 14, pr=
+iv->byTopOFDMBasicRate);
++=09=09rts_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 20,
++=09=09=09=09=09     priv->byTopOFDMBasicRate);
++=09=09ack_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 14,
++=09=09=09=09=09     priv->byTopOFDMBasicRate);
+ =09=09cts_time =3D ack_time;
+ =09} else if (rts_rsvtype =3D=3D 3) { /* CTSTxRrvTime_ba, only in 2.4GHZ *=
+/
+-=09=09cts_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 14, pr=
+iv->byTopCCKBasicRate);
+-=09=09ack_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 14, pr=
+iv->byTopOFDMBasicRate);
++=09=09cts_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 14,
++=09=09=09=09=09     priv->byTopCCKBasicRate);
++=09=09ack_time =3D bb_get_frame_time(priv->preamble_type, pkt_type, 14,
++=09=09=09=09=09     priv->byTopOFDMBasicRate);
+ =09=09rrv_time =3D cts_time + ack_time + data_time + 2 * priv->uSIFS;
+ =09=09return cpu_to_le16((u16)rrv_time);
+ =09}
+--=20
+2.34.1
 
-> +       OUT_RING(ring, 0);
-> +       OUT_RING(ring, lower_32_bits(rbmemptr(ring, fence)));
-> +       OUT_RING(ring, upper_32_bits(rbmemptr(ring, fence)));
-> +       OUT_RING(ring, submit->seqno - 1);
-> +
->         if (!sysprof) {
->                 if (!adreno_is_a7xx(adreno_gpu)) {
->                         /* Turn off protected mode to write to special re=
-gisters */
-> @@ -193,7 +201,7 @@ static void a6xx_submit(struct msm_gpu *gpu, struct m=
-sm_gem_submit *submit)
->         struct msm_ringbuffer *ring =3D submit->ring;
->         unsigned int i, ibs =3D 0;
->
-> -       a6xx_set_pagetable(a6xx_gpu, ring, submit->queue->ctx);
-> +       a6xx_set_pagetable(a6xx_gpu, ring, submit);
->
->         get_stats_counter(ring, REG_A6XX_RBBM_PERFCTR_CP(0),
->                 rbmemptr_stats(ring, index, cpcycles_start));
-> @@ -283,7 +291,7 @@ static void a7xx_submit(struct msm_gpu *gpu, struct m=
-sm_gem_submit *submit)
->         OUT_PKT7(ring, CP_THREAD_CONTROL, 1);
->         OUT_RING(ring, CP_THREAD_CONTROL_0_SYNC_THREADS | CP_SET_THREAD_B=
-R);
->
-> -       a6xx_set_pagetable(a6xx_gpu, ring, submit->queue->ctx);
-> +       a6xx_set_pagetable(a6xx_gpu, ring, submit);
->
->         get_stats_counter(ring, REG_A7XX_RBBM_PERFCTR_CP(0),
->                 rbmemptr_stats(ring, index, cpcycles_start));
-> --
-> 2.46.0
->
+
 
