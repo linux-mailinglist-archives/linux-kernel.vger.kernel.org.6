@@ -1,149 +1,181 @@
-Return-Path: <linux-kernel+bounces-332264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E3B97B784
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 07:47:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9556C97B789
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 07:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFBBF2887A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:47:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02BBE2870E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5221714A60D;
-	Wed, 18 Sep 2024 05:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F9B1531DC;
+	Wed, 18 Sep 2024 05:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="g3MPvTni"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NmvMj4Vn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0E9132105;
-	Wed, 18 Sep 2024 05:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726638432; cv=pass; b=aLCKDN9b5fWb71RJMgaMrYqflx+QINMJCgFE8ZLbZBY3N5lmnjyNxccsokFJEnzztUmenV8aBohOgyRonPsyAU4FUowYkOsI2kxNlggqfnwzru1nrn8U+7h0fo0XPK8v3eTkx3m5Sv/7GT1Tn7akuxBqXbh/zdULe1UiCkshyyU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726638432; c=relaxed/simple;
-	bh=oSh05CsFO5MynVB0rrnm/ew47ZFVAUxMb1a0D/sUFNU=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=RVqhSVpkC+ssQM7t1ndzQPlSMTJnkyDu/DGB4ob5aYHbkiRYkI0sDsQNsza5Iov51eBZeV8hn8OAZcm6+XGtFXdGBpsbXsVuRaXQceQ70Yg91Mkw9HdWTa2ZDCmIpuSUXkABnyd9ADcOSqrI2AdXcoZRFJmEO0CQ1xPuSHO68iY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=g3MPvTni; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726638415; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=CtvDb63jnSh7rbvw0/3klU52TLpnQFs8yitcqDtFjnJahWGmEYW3C8yEDm86hIkLQ7rJ+DxPxd23vitqgZsr+9Wfk6cLyx+KUUnJKygVM8TPjMu3R+xrol0/4uHTs1/sCxBuZqXnZmSNpDSO2nGDFynCorfr45bUpdfMcyNKaew=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726638415; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=iKJ2Z2LF++Va2+fKB+g4dCwU0h2IjZbNElFAVxljPHo=; 
-	b=mieqEgagifQExr0ga5CipvX+m4jrc0R2tKcKgwfCgq/3fFjOa439/xqGKjkX54MoD4hCR68iSYvZmAVLe3YJPkxzzmemoh2Hf4Z2sbFcL71QroHwOtjHhDpGeF2f1UYEeFdsFxxWt9btftdDYtCfyaNX9kZw7VNzwzwf/Qdhyvo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726638415;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=iKJ2Z2LF++Va2+fKB+g4dCwU0h2IjZbNElFAVxljPHo=;
-	b=g3MPvTniKk5CTLWzjGex0HInh9u1TynnkxifDx4T3cvMYZAbwyWcsTHnEj5qrLtA
-	XQzopDSYrRpIThWLdYXkPx2oeiw+WGwcyXfQKcC3OYLq/yhN6dtg+ROYGmqXh6qyylF
-	xtlQ/DujJH1BirGaTp0DTEvqM+ywCLCw5K2nSAzA=
-Received: by mx.zohomail.com with SMTPS id 1726638414435979.5166100226369;
-	Tue, 17 Sep 2024 22:46:54 -0700 (PDT)
-Message-ID: <b1338345-42a5-4695-a033-c0de1c203594@collabora.com>
-Date: Wed, 18 Sep 2024 10:46:47 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7CD136327;
+	Wed, 18 Sep 2024 05:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726638719; cv=none; b=WkOpL7M19c6tnVJvyD/hPYLoYf+e2eTyDQq26EeHchjFER8/YwIDITdu5x33Ezfsuzh+mDnMw738dN1e3x62lFroVRu81Y/vTDtzMHDX6W+/pG/aUZC+y9TV4kSnRCYiADovgErzbbNTprK/k5D9pUzI+glMiATv+eLYzUCAQp4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726638719; c=relaxed/simple;
+	bh=k4p5yAWG1/S7eqbUX0zVSAQcPzHPeBPvL5Uur8qzQXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ob6ruO1uFjhSGql55rh/a/83K371O6FMUIAR+Hgy+MATdYYA5rLxzV9QJDoSqciQklRIdqbGgAT+8V3j5vNF2dUdjtz3FrVs0oRZJUEXgRoKbgPNccYNLi+laiEphYqFhG73TLPyxDn8VyfQv8TOJeX2eTC7IA+5p2lC+SAZ4sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NmvMj4Vn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10CC3C4CEC3;
+	Wed, 18 Sep 2024 05:51:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726638718;
+	bh=k4p5yAWG1/S7eqbUX0zVSAQcPzHPeBPvL5Uur8qzQXg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NmvMj4Vno/SD/Lxb/VrmunICZNou7xy3jI904aeaU+2RWv/oQAeHzrsUZhlAxnK38
+	 m19Py8rK9HSNtGAlkBKUrp/a5Tw7uyWu+tm2REdoni3IJUK7mstBogdzIOvNyOjAit
+	 ktuxvgC08XvjkcFIvy2iSLfzpfXlvZgasnTM18u0nLEzRP0Hd+O/rXbi0y3yhi8GGE
+	 ilhr1D8N3E+N/1LgwTLzW3gydvbcEd8tFK1r22AcTJZrYpjMQvDZUwLwMjV869m1ec
+	 AJnoOd/Lw+PV2i91v52ltZz0oRyFvpoMsqH5EAh3Cy//GmUX5EKhIJc9a40Q0beMUI
+	 6HNAh4UYf6b7Q==
+Date: Wed, 18 Sep 2024 07:48:54 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Patrick Roy <roypat@amazon.co.uk>
+Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, rostedt@goodmis.org,
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, quic_eberman@quicinc.com,
+	dwmw@amazon.com, david@redhat.com, tabba@google.com,
+	linux-mm@kvack.org, dmatlack@google.com, graf@amazon.com,
+	jgowans@amazon.com, derekmn@amazon.com, kalyazin@amazon.com,
+	xmarcalx@amazon.com
+Subject: Re: [RFC PATCH v2 01/10] kvm: gmem: Add option to remove gmem from
+ direct map
+Message-ID: <Zuppxn_uW5JhDBjR@kernel.org>
+References: <20240910163038.1298452-1-roypat@amazon.co.uk>
+ <20240910163038.1298452-2-roypat@amazon.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, kernel@collabora.com, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 1/2] kselftests: mm: Fix wrong __NR_userfaultfd value
-To: Shuah Khan <skhan@linuxfoundation.org>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>
-References: <20240912103151.1520254-1-usama.anjum@collabora.com>
- <a9ae7dc4-275d-43c3-bf4c-b0090cb6bb12@linuxfoundation.org>
- <3cb9d266-4d4b-4031-8603-da7fd9e3ad47@collabora.com>
- <b3caeb96-2f48-4efd-a56c-e91dae891b48@linuxfoundation.org>
- <0b847784-a95f-4ed5-a0fb-1b7b4023df13@collabora.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <0b847784-a95f-4ed5-a0fb-1b7b4023df13@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910163038.1298452-2-roypat@amazon.co.uk>
 
-On 9/18/24 10:46 AM, Muhammad Usama Anjum wrote:
-> On 9/17/24 6:56 AM, Shuah Khan wrote:
->> On 9/16/24 00:32, Muhammad Usama Anjum wrote:
->>> On 9/12/24 8:44 PM, Shuah Khan wrote:
->>>> On 9/12/24 04:31, Muhammad Usama Anjum wrote:
->>>>> The value of __NR_userfaultfd was changed to 282 when
->>>>> asm-generic/unistd.h was included. It makes the test to fail every time
->>>>> as the correct number of this syscall on x86_64 is 323. Fix the header
->>>>> to asm/unistd.h.
->>>>>
->>>>
->>>> "please elaborate every time" - I just built on my x86_64 and built
->>>> just fine.
->>> The build isn't broken.
->>>
->>>> I am not saying this isn't a problem, it is good to
->>>> understand why and how it is failing before making the change.
->>> I mean to say that the test is failing at run time because the correct
->>> userfaultfd syscall isn't being found with __NR_userfaultfd = 282.
->>> _NR_userfaultfd's value depends on the header. When asm-generic/unistd.h
->>> is included, its value (282) is wrong. I've tested on x86_64.
->>>
->>
->> Okay - how do you know this is wrong? can you provide more details.
->>
->> git grep _NR_userfaultfd
->> include/uapi/asm-generic/unistd.h:#define __NR_userfaultfd 282
->> include/uapi/asm-generic/unistd.h:__SYSCALL(__NR_userfaultfd,
->> sys_userfaultfd)
->> tools/include/uapi/asm-generic/unistd.h:#define __NR_userfaultfd 282
->>
->>> The fix is simple. Add the correct header which has _NR_userfaultfd =
->>> 323.
+On Tue, Sep 10, 2024 at 05:30:27PM +0100, Patrick Roy wrote:
+> Add a flag to the KVM_CREATE_GUEST_MEMFD ioctl that causes gmem pfns
+> to be removed from the host kernel's direct map. Memory is removed
+> immediately after allocation and preparation of gmem folios (after
+> preparation, as the prepare callback might expect the direct map entry
+> to be present). Direct map entries are restored before
+> kvm_arch_gmem_invalidate is called (as ->invalidate_folio is called
+> before ->free_folio), for the same reason.
 > 
-> grep -rnIF "#define __NR_userfaultfd"
-> tools/include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
-> arch/x86/include/generated/uapi/asm/unistd_32.h:374:#define
-> __NR_userfaultfd 374
-> arch/x86/include/generated/uapi/asm/unistd_64.h:327:#define
-> __NR_userfaultfd 323
-> arch/x86/include/generated/uapi/asm/unistd_x32.h:282:#define
-> __NR_userfaultfd (__X32_SYSCALL_BIT + 323)
-> arch/arm/include/generated/uapi/asm/unistd-eabi.h:347:#define
-> __NR_userfaultfd (__NR_SYSCALL_BASE + 388)
-> arch/arm/include/generated/uapi/asm/unistd-oabi.h:359:#define
-> __NR_userfaultfd (__NR_SYSCALL_BASE + 388)
-> include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
+> Use the PG_private flag to indicate that a folio is part of gmem with
+> direct map removal enabled. While in this patch, PG_private does have a
+> meaning of "folio not in direct map", this will no longer be true in
+> follow up patches. Gmem folios might get temporarily reinserted into the
+> direct map, but the PG_private flag needs to remain set, as the folios
+> will have private data that needs to be freed independently of direct
+> map status. This is why kvm_gmem_folio_clear_private does not call
+> folio_clear_private.
 > 
-> The number is dependent on the architecture. The above data shows that:
-> x86	374
-> x86_64	323
+> kvm_gmem_{set,clear}_folio_private must be called with the folio lock
+> held.
 > 
-> I'm unable to find the history of why it is set to 282 in unistd.h and
-> when this problem happened.
-Does anybody has understanding of this?
+> To ensure that failures in kvm_gmem_{clear,set}_private do not cause
+> system instability due to leaving holes in the direct map, try to always
+> restore direct map entries on failure. Pages for which restoration of
+> direct map entries fails are marked as HWPOISON, to prevent the
+> kernel from ever touching them again.
+> 
+> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
+> ---
+>  include/uapi/linux/kvm.h |  2 +
+>  virt/kvm/guest_memfd.c   | 96 +++++++++++++++++++++++++++++++++++++---
+>  2 files changed, 91 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 637efc0551453..81b0f4a236b8c 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -1564,6 +1564,8 @@ struct kvm_create_guest_memfd {
+>  	__u64 reserved[6];
+>  };
+>  
+> +#define KVM_GMEM_NO_DIRECT_MAP			(1ULL << 0)
+> +
+>  #define KVM_PRE_FAULT_MEMORY	_IOWR(KVMIO, 0xd5, struct kvm_pre_fault_memory)
+>  
+>  struct kvm_pre_fault_memory {
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 1c509c3512614..2ed27992206f3 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -4,6 +4,7 @@
+>  #include <linux/kvm_host.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/anon_inodes.h>
+> +#include <linux/set_memory.h>
+>  
+>  #include "kvm_mm.h"
+>  
+> @@ -49,8 +50,69 @@ static int kvm_gmem_prepare_folio(struct inode *inode, pgoff_t index, struct fol
+>  	return 0;
+>  }
+>  
+> +static bool kvm_gmem_test_no_direct_map(struct inode *inode)
+> +{
+> +	return ((unsigned long)inode->i_private & KVM_GMEM_NO_DIRECT_MAP) == KVM_GMEM_NO_DIRECT_MAP;
+> +}
+> +
+> +static int kvm_gmem_folio_set_private(struct folio *folio)
+> +{
+> +	unsigned long start, npages, i;
+> +	int r;
+> +
+> +	start = (unsigned long) folio_address(folio);
+> +	npages = folio_nr_pages(folio);
+> +
+> +	for (i = 0; i < npages; ++i) {
+> +		r = set_direct_map_invalid_noflush(folio_page(folio, i));
+> +		if (r)
+> +			goto out_remap;
+> +	}
 
-> 
->>
->> I need more details on this number.
->>
->> thanks,
->> -- Shuah
-> 
+I feels like we need a new helper that takes care of contiguous pages.
+arm64 already has set_memory_valid(), so it may be something like
+
+	int set_direct_map_valid_noflush(struct page *p, unsigned nr, bool valid);
+
+> +	flush_tlb_kernel_range(start, start + folio_size(folio));
+> +	folio_set_private(folio);
+> +	return 0;
+> +out_remap:
+> +	for (; i > 0; i--) {
+> +		struct page *page = folio_page(folio, i - 1);
+> +
+> +		if (WARN_ON_ONCE(set_direct_map_default_noflush(page))) {
+> +			/*
+> +			 * Random holes in the direct map are bad, let's mark
+> +			 * these pages as corrupted memory so that the kernel
+> +			 * avoids ever touching them again.
+> +			 */
+> +			folio_set_hwpoison(folio);
+> +			r = -EHWPOISON;
+> +		}
+> +	}
+> +	return r;
+> +}
+> +
 
 -- 
-BR,
-Muhammad Usama Anjum
-
+Sincerely yours,
+Mike.
 
