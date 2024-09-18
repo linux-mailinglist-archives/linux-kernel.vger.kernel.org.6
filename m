@@ -1,193 +1,197 @@
-Return-Path: <linux-kernel+bounces-332211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265BB97B6CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:29:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6861C97B6D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB9471F228ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 02:29:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E26BAB2314C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 02:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A765F12B17C;
-	Wed, 18 Sep 2024 02:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963202B2D7;
+	Wed, 18 Sep 2024 02:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="tVHUG1dn"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11020106.outbound.protection.outlook.com [52.101.85.106])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="IZVfUi4q"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2E610A1C
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 02:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.106
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726626534; cv=fail; b=G9+WfXq2lTQqHzM/WuaUyqjawtaEXAQZ6S1CY+fQDkTS5LyoO+V4HefY0XC3/AIbG2vHFdn7YD/CQfwEoPHIqh0E2xqKo7/rcMXDE6mO0267DfIwEekj0LuVIP70JRzs6/LFjW7PWYqVUPH1PzVKKEaDtQ2WWzno2+HDEAiZRy4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726626534; c=relaxed/simple;
-	bh=Hqab7qh8WuQBXuqiFisNAfEWID4x7/kQ+LJugIbhaak=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ILUhVSBRi3kLTXv+/lRhsHnp3fbmTNqhXTm6AdUTYhU0ozc7bWKGskXPEbR1zwTWP3DXHAkILngGpyKREyBjqRLfU3WB4UCsd8DMaNZ29uhfAWorB82I8Eygn8GG+BNKNne11sXDXnXoq97QrY12rbMf5OZTNGX+/XJD++UlMHk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=tVHUG1dn; arc=fail smtp.client-ip=52.101.85.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T44BLxbMKLDnJUCXYQI4Ragv3JO73hvErqSmLLDh7DCxnv+6VCj+5LHMSbNo5YOEU+27bE593r7DZ2Mr5DTSH8C1pPZc3SFlAe+rUGUl3VEg5A4M87wj1Nb3mEWm6r3WlV9JLuKIyVwKQPQj7SFJcasxxKGJRF/95J3zBMkuqbVqhOPunyvK31rc219jF6AMxJhXsCE4PRXfEGsFd9R/RWR6nMk4VO0ykZPdPi763wLAHVF7CirxTDuFhZnE5cLKmzxTtjoYB+Rm8+2YBvww2TKVGxxX/FChU+IMAYW8VJyXl/Occf8mu/qgfQsqf/oZk9rJWN7pVOIHS/+hLVt86A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YDloi8ybtqeOzal7rAU/2dFqTC0AVHKs/wMnTrY0PBI=;
- b=V39JcGiuFVhZNQprIDjYFjNW+i4I6QjbdGBTa8H+rIZ2f3zwAJsGXQa9iyn7iYTxZvYAOnpHskWwZtoWYLFDtAk3/gkSuxtDSnLIvsAbjOKlGxyHsYbGmjX3ba31vZSpefa7kZ+x074QZZ3Q32SV54VdmfuOhnXfhmps8bSydb48wFrnoBpitZxTuONdr9pOFFyXDykfSOtoCVW6gcE8Q+BTsxgNIKgaA+5eWXjz+ueNTVLYdw2ClWW8FoZK1xuqnSMEVkgVE9h39mHpPAPSHUf7SqV+Lxhrm1isFB7KpD/owWfHFJ8jgTTc5R7rE1uUsz33qAkE392FAm1wfCt2zg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YDloi8ybtqeOzal7rAU/2dFqTC0AVHKs/wMnTrY0PBI=;
- b=tVHUG1dnfezfnRxXnpO805ZiX0S+HxQNB/0DFFXycmlW8XIvPWHjWbd83TDMkAhLy0mPD7taMjKfZiVftNlJKsVrcYuTykjXW98QNS0H4oUhhmA7N8gXrzBJ6UxfqHQiyC8uw8zg4OpYl+57c+FRUmdIqMQ9EU0FAbSDYkOjSy0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from PH0PR01MB7975.prod.exchangelabs.com (2603:10b6:510:26d::15) by
- MW6PR01MB8628.prod.exchangelabs.com (2603:10b6:303:248::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7962.24; Wed, 18 Sep 2024 02:28:49 +0000
-Received: from PH0PR01MB7975.prod.exchangelabs.com
- ([fe80::6926:a627:118e:8050]) by PH0PR01MB7975.prod.exchangelabs.com
- ([fe80::6926:a627:118e:8050%6]) with mapi id 15.20.7962.022; Wed, 18 Sep 2024
- 02:28:49 +0000
-From: Huang Shijie <shijie@os.amperecomputing.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com
-Cc: patches@amperecomputing.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	linux-kernel@vger.kernel.org,
-	Huang Shijie <shijie@os.amperecomputing.com>
-Subject: [PATCH] sched/fair: change the comment for vruntime_eligible()
-Date: Wed, 18 Sep 2024 10:28:13 +0800
-Message-Id: <20240918022813.4579-1-shijie@os.amperecomputing.com>
-X-Mailer: git-send-email 2.40.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MA0PR01CA0008.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:80::15) To PH0PR01MB7975.prod.exchangelabs.com
- (2603:10b6:510:26d::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436809443
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 02:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726626817; cv=none; b=a6lmqmH5AoMyC5h0uZ+tooabDqm5AY52NL3eJxT/oR3Molx+zyPFqQWTgt4S4Gu6+WzyYKxBm270dUZLXOoS+0kQ+Eg2p9+hDzDckLlaRGFXO4S6tnhYqwj02etIGJahwKPawzV9e8vANbyA6KJ67WexWVXuoTWn1TngudSrs0k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726626817; c=relaxed/simple;
+	bh=QCufLS+oJMdtqPKHkaChWSRtTdvzumX5dZBA5a9Ei7k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=M3puv2jVJuQ5KVkRRzCTcv0KQTVu8MWJJvGypEPHVX3cpXzEbeac+YKefEARUfkIJZJPtX8XBZg4FLxsD/ITiDuPegOreXcsQqfaEKLTNDK+xeFyzcu7boWitGzzJRAyHrJXZ4QHZg8E0erjfTLWfY0DXvHyk0Pf+xiYBFzAXnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=IZVfUi4q; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1726626811;
+	bh=nTH4cSKPkyYveYR5hN8FWjwVaXptyW8BZiIACU0AG/Y=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=IZVfUi4qsnAdIKkAtZcG2JdzpmXjE6seVDSNsIrrxavUQl0TMF/PfePlH9Ghc+k25
+	 /kbSEW8+RswLDcA4DUdT7T17RW/knaMT4gdH62IOkLtBbivOm+VowCGgsqcaZjehEm
+	 XWfVp5Un8fMU3Is5LrnaOGsvUBGusq7vdChOtsM9UawIVSMuIWbYnPhRjHTe3EehrA
+	 U0Mxs+GzhpdcJ/sslUd9TfsTcI+CtF+wgWIJflTMCiytBTji8WFgWCSbJJTN7ell+b
+	 Uqv8YOONEtyCu66R0ETwREElfA2T2bBc+SQbPmfk72FhxfASHZX1scthO+ZH/F4L9/
+	 Y+sm8drVOroXA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X7jPl1HxQz4wcL;
+	Wed, 18 Sep 2024 12:33:30 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, Nicholas Piggin
+ <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Peter Bergner
+ <bergner@linux.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC PATCH] powerpc/vdso: Should VDSO64 functions be flagged as
+ functions like VDSO32 ?
+In-Reply-To: <6fa86f3de610ffc180ae0f5dbd511453e7473b36.1726208058.git.christophe.leroy@csgroup.eu>
+References: <6fa86f3de610ffc180ae0f5dbd511453e7473b36.1726208058.git.christophe.leroy@csgroup.eu>
+Date: Wed, 18 Sep 2024 12:33:27 +1000
+Message-ID: <875xqtr8qw.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR01MB7975:EE_|MW6PR01MB8628:EE_
-X-MS-Office365-Filtering-Correlation-Id: e628aa91-acfd-455b-49f9-08dcd789a097
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yPjhysL+/WraIUNMermfZg9b7rIHfMYXHW9K3bNcPtWhIumTVwM4Fk4UkkHM?=
- =?us-ascii?Q?lemHYAiWdST0qhh0BkcWNLEAtqd5djioaNpam/E6rvI7FroTAREuHWgfv353?=
- =?us-ascii?Q?gOtH/iTBiky/1KbzS3AQ0btLI4Yh96rosqNbmQmwg5vPo4MvGIBYnwaQpjfI?=
- =?us-ascii?Q?cB9+9nlZE51LHttYM75nXktnytzwniJBmf5gXy030wdBuO0G8bCg0pgffa58?=
- =?us-ascii?Q?lHvliHUKSUBuIG14M0aTkTXlfovhj+RzfnEQ9iUPf4gszSGtZfDsirNqv6AY?=
- =?us-ascii?Q?+o+Vvaxe9WYWUg78itVRoHfoPLhuG0A59m0EioKWK7CL20qkCtR4wZSrBF0E?=
- =?us-ascii?Q?/iE2rs9NQU7gCNtPzp/3tpIjI3pv6ECQdmIgwu70YAdGd1F9q2HU2d+GUKXv?=
- =?us-ascii?Q?Xkvxmme4CjJLjly8I5MFYkrHdSXml6FwCoe7TlzNiif1x6Dbyh7IL5om55Xv?=
- =?us-ascii?Q?Fa1Kt+OeQCK8LWyqUP2pobuNfJPHY4NxXhNnJp2gVlBxouJBPcuGgpVBtbch?=
- =?us-ascii?Q?6AQQR6mjZoX8975AG1i5POnEFiWLwZOChBdBqBB3vWPsxmuH2mnN8CpKdYAz?=
- =?us-ascii?Q?uD8ui8FW6lUlyf5gA59qD4r6k1y1oqmDtjyFz5tHSVuZ8F1YdbEel9ALFO3i?=
- =?us-ascii?Q?HFPQf6lc57W6k/D5WUYT8xdFS/mMiCzQH8C6KwLoyt0uVUoL0m6UUYPQFYj9?=
- =?us-ascii?Q?OM7vtyRlsIP1+0kTN47HOBTUi4x1fmN7+TyCXTg34yfHRDekx8+//jccReA5?=
- =?us-ascii?Q?y10rVlO1Pkk5r/kk/oIHDSeEGSMOIHp+tJFK+dufdfysIt5ROB0Gyqbnqp35?=
- =?us-ascii?Q?v+6IGyjvf48VhBFr4TPy0L0X6JHSafZhLWQRkS+lkECJXuEn6WF64pQvKXvM?=
- =?us-ascii?Q?13YbGxDaNHUin6Po3bKeskzOaB4qctrka3CD2YvLxI86OnVQoXpcF+2T/fiO?=
- =?us-ascii?Q?frwhmaP5Yst3nip+gl4P560PBDn0W/ACWCeGLdtmTUggwU1TasAqlnwqU+K3?=
- =?us-ascii?Q?Ip9sG89mKQTI02S+kxtyF2OtZB7QlUZMt/X8uMBOZpbF1vteZf1oHnAeuSs7?=
- =?us-ascii?Q?ABtnrW0LL50JqLh9A9eXnEtU3YbnoAfgH91uY+r0PUHCi4d8LTQ8YDydPqUS?=
- =?us-ascii?Q?YYpaUXiuMTPhZdMExkzNVLK+6V50WSfgXZr6jj+4Vco+pEPLxOiKVVD71GwT?=
- =?us-ascii?Q?XzVkZC3AsZI7tdVFiuPy4Az5qVusYU81BL54OggZOsCsfiRCoHMUAFvc2ne0?=
- =?us-ascii?Q?KQ/NIAh6aoXJrsWsVRKm2SdZLJ4p0EYRR90yiJUdnNOLwt/+5tkzU1a4nf6E?=
- =?us-ascii?Q?8iQVf8DJo9FX+ODK/breFQ0pGyoE8G38zUSeC4E7YiZpQOx/rbYba6hdafFW?=
- =?us-ascii?Q?9w8YmCJ+bb1FnmoxLYrMmTxtFf+N8Eg/rJxntWUp3v4jm65I/A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR01MB7975.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gDXhKaAOcvPL4gaNmjdLrc5YuGxzDPucs8NvnTujCgovXCB5WHRc4A7grLGf?=
- =?us-ascii?Q?Bj5nnsilzPBU31sKL2OJIW8+uxptudPle4GFvGQKpfDl7zC9lmJbX/y0rudk?=
- =?us-ascii?Q?RE99yX8M4VnUluivVNpSNFtA8Q9PC8CTNxPSjVDJ8VsH0M6mmiDrPvgmmEPj?=
- =?us-ascii?Q?jb69LYV386FckokFnR2tKgzg7plI+w0MafMIEKUEPLoaFDmIGb4sNEoQ03fv?=
- =?us-ascii?Q?UuQDNL+cDE2TAoZkNWwTxz3TXVWBELCyCouLgt63ogXQ0tY4e9dMn08vUJgx?=
- =?us-ascii?Q?2wmK936vuv46Eu1TZSGnDqOiyjNxWqITsNCIFJ+XjeTI9EM3EzjSuXZM1Hpr?=
- =?us-ascii?Q?0WwFfn3W0imH0VAYosnd0k81nicjozzx7pp08I9MB1KJLdlWP5mNQhJUTVIN?=
- =?us-ascii?Q?2y/iuhV/IuONmgv0rgNrArETl4Uh2WahPtMlLEGDoIq+eHhGvH9jE6nMrV9b?=
- =?us-ascii?Q?HnBKW+57i1Qm9NLl6GkGoIIKXS8TgdBokzSPqjOgHjXC8CD9HV1Oq6rx1fmY?=
- =?us-ascii?Q?lPPdNe5OLryRUlGOUYvNpZR6/50rA8tTM2Di+zlPij6OfUg/cFnduMmAKEPP?=
- =?us-ascii?Q?ba1urUOfoshjTHdZOZJlron0Z49IeTXs3bcWKBiqenAUF4cS02imnM5w3IzN?=
- =?us-ascii?Q?64KZHAMMT7gVXNID5vfukaPI7kbIEqKx7b2C7lH1thQP3pkFbyhPMyTwuvfS?=
- =?us-ascii?Q?xK/AAxxfRM+X28FctJJ356uhaiW4SyS3ioeaKDXJILQV4f7zzQBsekM6/UM8?=
- =?us-ascii?Q?WU81rnyWAitJrASEOJQPNvhqOGNN4Z6XoNaQYkSc5DhtJXodS+sQcfk2jNSm?=
- =?us-ascii?Q?5c+QXHtGFKa/CVJr7l+rmCdbRTfbOT2zaThIwmB/tBK13yiYFUVZ64B26utA?=
- =?us-ascii?Q?SarJROgnXQuTwZxEgqBaGL1k2S/k3nzqMFKnD0WFEHTyj82sXOJwht1lXNWd?=
- =?us-ascii?Q?hWFWHOWpMDSXwrg0oidL4yWB+2dh1eZRjO6UGQMvS/Fgl69g5RcsNFblCi2q?=
- =?us-ascii?Q?cDke10+a4yXH3zr/kVjpg71/lTS+PqaXIvbcwI0t7zRfvEW1CNfI7OiWfLuX?=
- =?us-ascii?Q?s+jxw+sVOu+qR2UTfZmKuFTPobQ0fiNwYviyOCqXGrHjI0o6pcd7ao8D44kk?=
- =?us-ascii?Q?uJX4tvXcUGbcyhdflZ19/i7zzdTeupLriWDxfVMY/35c8Ya2zQONRBYU0+lB?=
- =?us-ascii?Q?LJxwIBOWJDfk2PvBYeQZxEDsqaFnI0kh21e7AFUTJS++SGIK3vbXbkXZ1fZ2?=
- =?us-ascii?Q?1p59UQeRVZRPXGFsDrTOJYaT2vY3hpdXolGzkvcsyh8bjPIqiaLYmBvMT8M1?=
- =?us-ascii?Q?H3vlBnoKjPmLAYwhYzVnf1Nioimptb34icODN5GENryWM48EJkn+LQZf37Y2?=
- =?us-ascii?Q?wUpcHcEZ7mgCMDc6sADA0L/P3Pw9LcI+t+pijEg7lgenbEoI08UZSwzRnUoU?=
- =?us-ascii?Q?73cA9q/Vz85z5GpUG1baHlRumw99Ti+7MRsvK28rruDY6qN0koK44F+jL2UW?=
- =?us-ascii?Q?KIdsFpdjTL+aVNRRQgv7SnA4Y3QFZE6DZ3sgP0+Ff0XDkK20rCBhuPxiKbqw?=
- =?us-ascii?Q?NrW7aP5D0CWoNBvtsMzEjTU7ab7Mm5gFtv5EaTQ4DhGfxx23mbHumWoVTpHd?=
- =?us-ascii?Q?xGN2n6v3T3wIqXpwYP59ZTQ=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e628aa91-acfd-455b-49f9-08dcd789a097
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR01MB7975.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 02:28:48.9664
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dhOdnd0J/vDbF/+JKccToENz6mQ+RurkXhiicXGvWu4T1XeDUcmfHm70wCCI1QIxXSP0hc9w+/invH1Zu0ToffbxJQ20yXasUfp4/V/fBvOEmATK44z0nwjZ60UAt/zI
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR01MB8628
+Content-Type: text/plain
 
-Current comment for vruntime_eligible() is confusing.
-Change "v" to "v0" to keep align with avg_vruntime_add():
-        v0 := cfs_rq->min_vruntime
+Christophe Leroy <christophe.leroy@csgroup.eu> writes:
+> On powerpc64 as shown below by readelf, vDSO functions symbols have
+> type NOTYPE.
+>
+> $ powerpc64-linux-gnu-readelf -a arch/powerpc/kernel/vdso/vdso64.so.dbg
+> ELF Header:
+>   Magic:   7f 45 4c 46 02 02 01 00 00 00 00 00 00 00 00 00
+>   Class:                             ELF64
+>   Data:                              2's complement, big endian
+>   Version:                           1 (current)
+>   OS/ABI:                            UNIX - System V
+>   ABI Version:                       0
+>   Type:                              DYN (Shared object file)
+>   Machine:                           PowerPC64
+>   Version:                           0x1
+> ...
+>
+> Symbol table '.dynsym' contains 12 entries:
+>    Num:    Value          Size Type    Bind   Vis      Ndx Name
+> ...
+>      1: 0000000000000524    84 NOTYPE  GLOBAL DEFAULT    8 __[...]@@LINUX_2.6.15
+> ...
+>      4: 0000000000000000     0 OBJECT  GLOBAL DEFAULT  ABS LINUX_2.6.15
+>      5: 00000000000006c0    48 NOTYPE  GLOBAL DEFAULT    8 __[...]@@LINUX_2.6.15
+>
+> Symbol table '.symtab' contains 56 entries:
+>    Num:    Value          Size Type    Bind   Vis      Ndx Name
+> ...
+>     45: 0000000000000000     0 OBJECT  GLOBAL DEFAULT  ABS LINUX_2.6.15
+>     46: 00000000000006c0    48 NOTYPE  GLOBAL DEFAULT    8 __kernel_getcpu
+>     47: 0000000000000524    84 NOTYPE  GLOBAL DEFAULT    8 __kernel_clock_getres
+>
+> To overcome that, commit ba83b3239e65 ("selftests: vDSO: fix vDSO
+> symbols lookup for powerpc64") was proposed to make selftests also
+> look for NOTYPE symbols, but is it the correct fix ?
+>
+> VDSO32 functions are flagged as functions, why not VDSO64 functions ?
+> Is it because VDSO functions are not traditional C functions using
+> the standard API ?
 
-Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
----
- kernel/sched/fair.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Yes. There's some explanation in the original commit:
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 92f7cffe8860..9ed51ac2c16b 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -714,11 +714,11 @@ static void update_entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se)
-  *
-  * lag_i >= 0 -> V >= v_i
-  *
-- *     \Sum (v_i - v)*w_i
-- * V = ------------------ + v
-+ *     \Sum (v_i - v0)*w_i
-+ * V = ------------------ + v0
-  *          \Sum w_i
-  *
-- * lag_i >= 0 -> \Sum (v_i - v)*w_i >= (v_i - v)*(\Sum w_i)
-+ * lag_i >= 0 -> \Sum (v_i - v0)*w_i >= (v_i - v0)*(\Sum w_i)
-  *
-  * Note: using 'avg_vruntime() > se->vruntime' is inaccurate due
-  *       to the loss in precision caused by the division.
--- 
-2.40.1
+    Note that the symbols exposed by the vDSO aren't "normal" function symbols, apps
+    can't be expected to link against them directly, the vDSO's are both seen
+    as if they were linked at 0 and the symbols just contain offsets to the
+    various functions.  This is done on purpose to avoid a relocation step
+    (ppc64 functions normally have descriptors with abs addresses in them).
+    When glibc uses those functions, it's expected to use it's own trampolines
+    that know how to reach them.
 
+From https://github.com/mpe/linux-fullhistory/commit/5f2dd691b62da9d9cc54b938f8b29c22c93cb805
+
+The descriptors it's talking about are the OPD function descriptors used
+on ABI v1 (big endian).
+
+> But it is exactly the same for VDSO32 functions, allthough they are
+> flagged as functions.
+ 
+It's not quite the same because of the function descriptors.
+
+On ppc64/ABIv1 a function pointer for "F" points to an opd, which then
+points to ".F" which has the actual text. It's the ".F" symbol that has
+type "function".
+
+> So lets flag them as functions and revert the selftest change.
+>
+> What's your opinion on that ?
+
+I think it's fine on ppc64le, I worry slightly that it risks breaking
+glibc or something else on big endian.
+
+It is more correct for the text symbol to have type function, even if
+there's no function descriptor for it.
+
+glibc has a special case already for handling the VDSO symbols which
+creates a fake opd pointing at the kernel symbol. So changing the VDSO
+symbol type to function shouldn't affect that AFAICS.
+
+I think the only cause of breakage would be if something is explicitly
+looking for NOTYPE symbols, which seems unlikely, but you never know.
+
+So I think we could attempt to take this change for v6.13, giving it
+lots of time to get some test coverage in next before going to mainline.
+
+cheers
+
+
+
+> It predates git kernel history and both VDSO32 and VDSO64 were brough by
+> arch/ppc64/ with that difference already.
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> ---
+> commit ba83b3239e65 is in random git tree at the moment : https://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git/commit/?id=ba83b3239e657469709d15dcea5f9b65bf9dbf34
+> On the list at : https://lore.kernel.org/lkml/fc1a0862516b1e11b336d409f2cb8aab10a97337.1725020674.git.christophe.leroy@csgroup.eu/T/#u
+> ---
+>  arch/powerpc/include/asm/vdso.h           | 1 +
+>  tools/testing/selftests/vDSO/parse_vdso.c | 3 +--
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/powerpc/include/asm/vdso.h b/arch/powerpc/include/asm/vdso.h
+> index 7650b6ce14c8..8d972bc98b55 100644
+> --- a/arch/powerpc/include/asm/vdso.h
+> +++ b/arch/powerpc/include/asm/vdso.h
+> @@ -25,6 +25,7 @@ int vdso_getcpu_init(void);
+>  #ifdef __VDSO64__
+>  #define V_FUNCTION_BEGIN(name)		\
+>  	.globl name;			\
+> +	.type name,@function; 		\
+>  	name:				\
+>  
+>  #define V_FUNCTION_END(name)		\
+> diff --git a/tools/testing/selftests/vDSO/parse_vdso.c b/tools/testing/selftests/vDSO/parse_vdso.c
+> index d9ccc5acac18..4ae417372e9e 100644
+> --- a/tools/testing/selftests/vDSO/parse_vdso.c
+> +++ b/tools/testing/selftests/vDSO/parse_vdso.c
+> @@ -216,8 +216,7 @@ void *vdso_sym(const char *version, const char *name)
+>  		ELF(Sym) *sym = &vdso_info.symtab[chain];
+>  
+>  		/* Check for a defined global or weak function w/ right name. */
+> -		if (ELF64_ST_TYPE(sym->st_info) != STT_FUNC &&
+> -		    ELF64_ST_TYPE(sym->st_info) != STT_NOTYPE)
+> +		if (ELF64_ST_TYPE(sym->st_info) != STT_FUNC)
+>  			continue;
+>  		if (ELF64_ST_BIND(sym->st_info) != STB_GLOBAL &&
+>  		    ELF64_ST_BIND(sym->st_info) != STB_WEAK)
+> -- 
+> 2.44.0
 
