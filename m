@@ -1,148 +1,184 @@
-Return-Path: <linux-kernel+bounces-332395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D850397B934
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:21:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FE1E97B936
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BCA7B298F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:21:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5A84B29BF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D55174EF0;
-	Wed, 18 Sep 2024 08:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DDE179652;
+	Wed, 18 Sep 2024 08:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yk8vHog2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EGog5r/M"
+Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DAA3A1A8;
-	Wed, 18 Sep 2024 08:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D82179658
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 08:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726647433; cv=none; b=rIlcOok6bqizjY18klXZUP1X6eSjMu79hYcAuAxHceE7sm9f+Ks9jtvJbMHyCKm7OizD8pQFUeFuyPC+pXjIlMRyHiJ6Tc6S/ek7vxAh2Otb5ojTAEqYrqd1xI8hbopB3u3W3BFZLs2IHhagbh1ynQgoPw4NvqAz0uj7+NOGDIE=
+	t=1726647502; cv=none; b=N6TcWXgIKxN4TdeDWxX6p+IjvwlUCBcLowtT/95uonQoWLdJsP8XUi2KW2zqfmVAnCdiy/L71IVlsYUcqIhN1z2vHKwllY6mC3Dvhm5kBYexzxYZvCy8RVoi1d4dPFjeLNgxkblhsnTy9y2sVZSnSEBEvo8cCn32raCyX71L7f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726647433; c=relaxed/simple;
-	bh=vYqA1OPWGAmibzxSpiuC4hbEPhEDOi+6eLPRV4jZDE0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ovTfw+EC99FqHzbyyWVycOt3h8eNJk5nZBoXNCo3W0fr8ZwgRWtgR5oDuitVoUNa/lHok5Yvs8hDNGeLQZ7MRHouxuZa3uxjmKzjg1+xiTCeJyUED6Gly0fDLVtVBPlTkY8+N7Px/n1CuNjICQ/Bp6xO6+wXRqunW/VSVWepsZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yk8vHog2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5696C4CECE;
-	Wed, 18 Sep 2024 08:17:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726647433;
-	bh=vYqA1OPWGAmibzxSpiuC4hbEPhEDOi+6eLPRV4jZDE0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Yk8vHog2JdyXyrULy9Xq6M+f5yxjlZHd4G0Tpk0C7FvlhUINKg0iS3Jx77a1m+/Ts
-	 usc+KGp6xjc3df5flBNLHeoOFtcLJOVprUInZ8MZ4Fck8e/L9dEgUdBhArEeFJwdcY
-	 J9j4G8DCDqIl4m6ECZ9pZUxCgww+zBiPXl0jLhBeb/jTgOzQSdYJM+0hJva9E5Nz8V
-	 QsuU7fl3Av0ofIswx8wXM974WF22KLLVq9WS7sei9XNe/86keFRIvcGrEAmICJ9BEW
-	 2vlB24WcDqUXEeC/cUOfkaC46kw3SpVKfPY2mbeU9h1ZE4Sxz4JN131DZfK5lrWKYh
-	 gEAvtSBuVia9w==
-Message-ID: <3a33370a-4f11-4f19-96e8-95bd1a8a48cb@kernel.org>
-Date: Wed, 18 Sep 2024 10:17:07 +0200
+	s=arc-20240116; t=1726647502; c=relaxed/simple;
+	bh=fl5Szw0BaQjN8co3XgZhzhJhVuUWOHhLQd8bcOW++uw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QvhFLyJXVvrx70yfoChP5it2dPNz0HVEp9he1J/QlQF7scCFgDLja6Q4bdz2t1k/+LdXaF8M0m2/ZDnbojatdzE6z+4gFZS5jaKeJkc2RlKxR7f96mUpASScTZC+nzsK+ju58zZlSENX301BmXBQYwy56+6AqNuqXyI4123YKgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EGog5r/M; arc=none smtp.client-ip=209.85.208.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-5c24c92f699so6975552a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 01:18:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726647499; x=1727252299; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ADDecU6io5qXLPo72Y1njDAmtAkj5Evq/Lc+OmYs5AM=;
+        b=EGog5r/MvVNvyUuv85H1Jf5O0KXZ1NFH1kT+DYGKip184z/PHQw7Vqu2Vuowx2LwyV
+         OtXqXXPUKpdKWruRjXqEQoZ7uFkbPGPqcwe3mD6Ltq8U2NMHGwMNtb9/uVbTSm9OczLK
+         ZpcudoP5ar7gHTUtlmpUipXKXkOoOE2NN0prKrFxmOoZ0cgCbTHbGpLSBRWYv2xvwDS3
+         XlQvhV8vy6r/7zmaq7s7XzVW2ROn6yQ5ex4exOaHi6BuLxTvPNMzGb+BC0tSVViGxTg6
+         o2GKVFLqetZHcK1aQKR0cGNX8KETN+xVzUr500LBc453Q8y/66ZIklJYFwHVBCmuA1zZ
+         zTcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726647499; x=1727252299;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ADDecU6io5qXLPo72Y1njDAmtAkj5Evq/Lc+OmYs5AM=;
+        b=KY5HIW+Ix6NyyjgD8AwHO5kX45Ood7YJGAZfCBtiylgYdTkNJWFHuoUFIQX42XJhCt
+         LgIklpIBeOrJh6AKh/r+eXf/1aqBbCqhF6T2ezEwBKZbxbmmlvzAb1v2HN/bM5mXIjAY
+         tROZOB6icKVPZVu0keqtsn7RP7USe8rd63Gw1K4NSqShiND25vYBicCA3kKswTJWSP+m
+         odyCu5WnX6qw7I7+Vqe6R/ET+XNQf92lP5RVi66P7H5CSisiS/jPVQ3SnqntNbxKqFgF
+         CKB71IeJ9nfpV+aY4vJk1acmYDj0KRwxn/jOVnV7ehbXZBw9Xc3ImgGMMLY44evDffdl
+         O28Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXUCYHTTX02O7ryqKMYjsPH1Ax006zepLxpYQpWEdmgXY5Xj6VTyYoTgx48cNri+Z64JDRQ470DmI20WCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH5y461nTXHg5Uf4WSqtHR9JVQchG3UE6Mm3/bkONEpqC5lQab
+	xy23HYZSezj0nAr3XL31hyot9uELOIAXDq4Fta3QOpLbtt6fn7u6aAB5a8j/cLtWkxpgAV4yIRS
+	aF0tkAA==
+X-Google-Smtp-Source: AGHT+IGQKF2A68DlLQDzcD2GEIWf/ojqOq08unamj88s0l+BssIWLJsicrTzijNPepLnl71COH8BEA==
+X-Received: by 2002:a17:907:e644:b0:a77:b4e3:4fca with SMTP id a640c23a62f3a-a902941e770mr1917846666b.9.1726647499217;
+        Wed, 18 Sep 2024 01:18:19 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:ef80:af58:2647:ac01:c408])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612b4321sm546104566b.113.2024.09.18.01.18.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 01:18:18 -0700 (PDT)
+Date: Wed, 18 Sep 2024 10:18:13 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Elliot Berman <quic_eberman@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Rudraksha Gupta <guptarud@gmail.com>,
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 2/2] firmware: qcom: scm: fall back to kcalloc() for
+ no SCM device bound
+Message-ID: <ZuqMxetUzZ8UCZUx@linaro.org>
+References: <20240911-tzmem-null-ptr-v2-0-7c61b1a1b463@linaro.org>
+ <20240911-tzmem-null-ptr-v2-2-7c61b1a1b463@linaro.org>
+ <ZuhgV1vicIFzPGI-@linaro.org>
+ <CAMRc=MevCNHSs2jMbMXjoFYY7V8NqKha8jd3aDCgGNvuL3LwEw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: display: panel-simple: Document support
- for Microchip AC69T88A
-To: Manikandan.M@microchip.com
-Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, thierry.reding@gmail.com, sam@ravnborg.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240917095330.267397-1-manikandan.m@microchip.com>
- <df51e0ae-a97d-4567-a16e-ef0667aac661@kernel.org>
- <46cb2204-ee5a-4999-b229-ee1282f96a69@microchip.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <46cb2204-ee5a-4999-b229-ee1282f96a69@microchip.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MevCNHSs2jMbMXjoFYY7V8NqKha8jd3aDCgGNvuL3LwEw@mail.gmail.com>
 
-On 18/09/2024 05:08, Manikandan.M@microchip.com wrote:
-> Hi Krzysztof,
+On Tue, Sep 17, 2024 at 12:17:19PM +0200, Bartosz Golaszewski wrote:
+> On Mon, Sep 16, 2024 at 6:44 PM Stephan Gerhold
+> <stephan.gerhold@linaro.org> wrote:
+> > On Wed, Sep 11, 2024 at 11:07:04AM +0200, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > >
+> > > Older platforms don't have an actual SCM device tied into the driver
+> > > model and so there's no struct device which to use with the TZ Mem API.
+> > > We need to fall-back to kcalloc() when allocating the buffer for
+> > > additional SMC arguments on such platforms which don't even probe the SCM
+> > > driver and never create the TZMem pool.
+> > >
+> > > Fixes: 449d0d84bcd8 ("firmware: qcom: scm: smc: switch to using the SCM allocator")
+> > > Reported-by: Rudraksha Gupta <guptarud@gmail.com>
+> > > Closes: https://lore.kernel.org/lkml/692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com/
+> > > Tested-by: Rudraksha Gupta <guptarud@gmail.com>
+> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > ---
+> > >  drivers/firmware/qcom/qcom_scm-smc.c | 28 ++++++++++++++++++++++++----
+> > >  1 file changed, 24 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/drivers/firmware/qcom/qcom_scm-smc.c b/drivers/firmware/qcom/qcom_scm-smc.c
+> > > index 2b4c2826f572..88652c38c9a0 100644
+> > > --- a/drivers/firmware/qcom/qcom_scm-smc.c
+> > > +++ b/drivers/firmware/qcom/qcom_scm-smc.c
+> > > [...]
+> > > @@ -173,9 +182,20 @@ int __scm_smc_call(struct device *dev, const struct qcom_scm_desc *desc,
+> > >               smc.args[i + SCM_SMC_FIRST_REG_IDX] = desc->args[i];
+> > >
+> > >       if (unlikely(arglen > SCM_SMC_N_REG_ARGS)) {
+> > > -             args_virt = qcom_tzmem_alloc(mempool,
+> > > -                                          SCM_SMC_N_EXT_ARGS * sizeof(u64),
+> > > -                                          flag);
+> > > +             /*
+> > > +              * Older platforms don't have an entry for SCM in device-tree
+> > > +              * and so no device is bound to the SCM driver. This means there
+> > > +              * is no struct device for the TZ Mem API. Fall back to
+> > > +              * kcalloc() on such platforms.
+> > > +              */
+> > > +             if (mempool)
+> > > +                     args_virt = qcom_tzmem_alloc(
+> > > +                                     mempool,
+> > > +                                     SCM_SMC_N_EXT_ARGS * sizeof(u64),
+> > > +                                     flag);
+> > > +             else
+> > > +                     args_virt = kcalloc(SCM_SMC_N_EXT_ARGS, sizeof(u64),
+> > > +                                         flag);
+> >
+> > I'm afraid this won't work. For kcalloc, we would need to flush the
+> > cache since it returns cached memory. In v6.10 this was done using the
+> > dma_map_single() call that you removed when moving to the tzmem
+> > allocator.
+> >
 > 
-> On 17/09/24 4:07 pm, Krzysztof Kozlowski wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>
->> On 17/09/2024 11:53, Manikandan Muralidharan wrote:
->>> Add Microchip AC69T88A 5" LVDS interface (800x480) TFT LCD panel
->>> compatible string
->>>
->>> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
->>> ---
->>>   .../devicetree/bindings/display/panel/panel-simple.yaml         | 2 ++
->>>   1 file changed, 2 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
->>> index b89e39790579..09911b89d140 100644
->>> --- a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
->>> +++ b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
->>> @@ -200,6 +200,8 @@ properties:
->>>         - logictechno,lttd800480070-l2rt
->>>           # Logic Technologies LTTD800480070-L6WH-RT 7” 800x480 TFT Resistive Touch Module
->>>         - logictechno,lttd800480070-l6wh-rt
->>> +        # Microchip AC69T88A 5" 800X480 LVDS interface TFT LCD Panel
->>> +      - microchip,ac69t88a-lvds-panel
->>
->> Is this device some sort of multi-function? Why "lvds-panel"? What else
->> could it be?
-> This device does not multi-function, I will rephrase and share a v2
+> Indeed, I missed this but it's not very hard to re-add here.
+> 
+> > Actually, taking only the first patch in this series should be enough to
+> > fix the crash Rudraksha reported. None of the older platforms should
+> > ever reach into this if statement. I think the rough story is:
+> >
+> >  1. The crash Rudraksha reported happens in qcom_scm_set_cold_boot_addr()
+> >     during SMP CPU core boot-up. That code runs very early, AFAIK even
+> >     before the device model is initialized. There is no way to get
+> >     a device pointer at that point. Even if you add the scm node to DT.
+> >
+> >  2. AFAIK all the ARM32 platforms without PSCI support implement the
+> >     legacy calling convention (see qcom_scm-legacy.c). They will only
+> >     reach qcom_scm-smc.c once during convention detection (see
+> >     __get_convention()). This is a SCM call with just a single argument
+> >     that won't go inside the if (unlikely(arglen > SCM_SMC_N_REG_ARGS)).
+> >     And qcom_scm-legacy.c does not use the tzmem allocator (yet?).
+> >
+> 
+> No and I didn't plan to add it. Let me know if I should?
+> 
 
-Then drop lvds-panel, please.
+I'm not sure if there is any advantage aside from slightly more
+consistent code. None of these old platforms will have support for the
+SHM bridge. We would need to test the changes carefully to make sure
+there are no regressions. It's probably easier (and safer) to just leave
+that code as-is.
 
-Best regards,
-Krzysztof
-
+Thanks,
+Stephan
 
