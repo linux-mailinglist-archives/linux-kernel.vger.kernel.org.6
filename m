@@ -1,149 +1,254 @@
-Return-Path: <linux-kernel+bounces-332644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 283BF97BC70
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:45:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0AE797BC71
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DFF01C214AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:45:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6707D1F234E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87745171E65;
-	Wed, 18 Sep 2024 12:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6728A15820F;
+	Wed, 18 Sep 2024 12:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bnOu8vOI"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMWqwqzv"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8001E52D;
-	Wed, 18 Sep 2024 12:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B803C171E65;
+	Wed, 18 Sep 2024 12:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726663526; cv=none; b=KDnx74WMT5DEMq3GCw1OLQNXWhBrNIipAEaVAKJw9PZenI1ZuRtvtKlo2fQDUDaSZDgcYPsQrk8EWaCbSehJ7sevOqdeYbk5zYIA33xeKRQpAmIQMf0kAF48gwE0V51oQg2rJDdFbOIZIQfAXz4HKMjcAsMWjgSmKGP9Gt4nz8A=
+	t=1726663546; cv=none; b=ksqMz1nepe+DkXVPOD+yNkL13PFhNhwi/QuCN7mFmxI+P1ViWyKEpc1VHLCbbCH8ANk4lfayzEHix4ok0l16JvBpL1Ue3zVeDqw90x14E2P4tk6t33rzE4jCdC2RyNvnz0mI5totIkM2tzGO4/AlAQMp8h/NspoisFUcUbHCuvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726663526; c=relaxed/simple;
-	bh=gJimK4u+OdYhTWerVC6/E+iKASyTSilv+ssIfa6bYhQ=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=RpOTMre+r+KO8nf1eE6Zq7POrnC/YPuliIWcKBv5lqve7pabVREjPmfApfeIlg8smkyeNWntY0CBX5CiDQ12Zu6RBYcOvKYOlWyOcxgtBGMLy9mkggwwmcuJ9Zlqf/5Q6CFELYw0V5F6WAlyc36c8sAQm/lRbOGUHMi48CEbM0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bnOu8vOI; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1726663546; c=relaxed/simple;
+	bh=fXyJ35SpCN1FAyPpXAOSyhzad64jsNoR7VARAS9JzD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DLAoNmslTX/l6P8EL8OV1JpUT3seminoLjNDjem+TZWy7qs+lvOMAhwrgJ/JF5wQdkIiBfcLBfsOh3rdUjMR5FBqfqvZ9PPr4HtxLqZgyAKZyROIrnq/vJ6jaAQ+gR2XvRUfEZjyWqyYDEpA90srjfTOuA+d/1BWCCwMvxzLv4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMWqwqzv; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7a99fde9f1dso582358885a.2;
-        Wed, 18 Sep 2024 05:45:25 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374bd0da617so4679956f8f.3;
+        Wed, 18 Sep 2024 05:45:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726663524; x=1727268324; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kb0czGNo2LUTVTshHsi9BPWPL/WT/rjZrenDHrVx5k8=;
-        b=bnOu8vOIrCgjcQkPLUHdbqw3bSFeyCLkhnDJ/X6JozyL5Npj3lr3VPVPj9+KDsWeVH
-         HrtPVSOBaGwPtZg0qovvOk8UFPv64WbMJ6TyqY+PFNN8F+b/QMgGasUQKkaKdoP385sg
-         w5WDSxT+9GIcxW/ZknTYk7LUSEWuVmUAKmmSoicfbCQezo7sKBPpEReLM76GmoBaHcGW
-         TQbAML7bRznkhuOb4TxRKPPnUGuse3j7u14OfuiPEuip/1KE3leG/ef6D2wcYnNiNf5+
-         cA0tGNyMv4InfYcfR16PdNNm327+3j4WVlJDk0oO+jjDKvnX4BT2epvoYUCNcXFTbnwo
-         6iGg==
+        d=gmail.com; s=20230601; t=1726663543; x=1727268343; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=g7pZC+UJuqikd0Axulm78T5NX2CLY7JbLTeL64mHdJY=;
+        b=WMWqwqzvKKXCkL+SlSok0OWh09skzRf1vE4z4Rs7+kOYOd+0V/0DYp4IdI+UUnga6o
+         r1gJ9jTPSslXXdCZgpDg9L0zzKb2vSje9/niEnAOze6WVr1oorGM98RS+gIKUubm28Y/
+         5b0/OnNHhha/5jkblEGceIQsQuU5Z4GoLPSO4Wng1y3WDBER5JWmCOta13DG+3JnYG5H
+         nmDvy/43x2qk5kJYSqguTx6ABQ3LK3dkWEKLenDSYW7dk5IJx38DkiJYvlXZW630wOJU
+         yOJq2s5K5dWicd6wZgtFZGd5ZcXhMevPvyCk1alIEw2mxYYss6j6dpp8NEJWe1+idYBt
+         N7eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726663524; x=1727268324;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kb0czGNo2LUTVTshHsi9BPWPL/WT/rjZrenDHrVx5k8=;
-        b=n9DLcO8vQAmiz9ayfvBfo8xSVcOP6mavqnSDhkJQ+snU9KHjz7pKHU4Yv3KvkVJsGD
-         D+yW1G54WUpq+vD+/orGf/nXKyQ82kogSV/CkBFkQku4ew7G7JZ4xXZMi46IsjOZ2bC3
-         2rjbwsS9xge4e0ZYdN8wS7bHWe3xhA7lsphq8CMxWjHq4Qld5dekSgJfCBAVyYVWJSgh
-         eek25dJDrT3dTzVdd/Xe/Hkf0EPuaDQpeJKZozZZnrvJxtCLnomZpFxyaujdi3VvNzth
-         kDDWw0sBR7cCnVJLZBJGNP7YRjmyistHpq3+knFwY+DQtO4gx+cx4bh38XfF9Yx8CbFV
-         fqsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUK8wqAZIb1uG+6kIa+PBima/71gJchsLxtVOG7waCas5RFfaOoSRGf4oWKB7ftnE6MiNQ0upIIOGX2QOiEybS7@vger.kernel.org, AJvYcCUUzoya7TpRnZc7YoXayZtD0URRpo/aoU1Wp0N3wS+oXR/sQuZGoRVPANrYYT2jWhVR6BDO3zwlNiD5Kx3L@vger.kernel.org, AJvYcCUnFTJQQMdnVTn0sPGdUZAWi1pqzQAG5BmKzkkcJLELujXGRk2ZdI8pmTLJx/c2eIglLvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5+hHzyaB6DowIAOGQ5ojEckO67+hO6uuAapt6rNEOLnQXtXGG
-	eBxeaIS2MKPS7xc7kqp5Id9lrzhdtwWBlADYm4OckweDw2sPfsqV
-X-Google-Smtp-Source: AGHT+IEh6UyP2aN3CnMsNnG7FafI5FXjQHchefKtOgI9tdTf6facLpuLgwYrgSTl68bWYDC86xtx9w==
-X-Received: by 2002:a0c:ed2c:0:b0:6c5:73b1:700a with SMTP id 6a1803df08f44-6c573b17119mr289463676d6.46.1726663524109;
-        Wed, 18 Sep 2024 05:45:24 -0700 (PDT)
-Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c58c69190asm44082076d6.84.2024.09.18.05.45.23
+        d=1e100.net; s=20230601; t=1726663543; x=1727268343;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g7pZC+UJuqikd0Axulm78T5NX2CLY7JbLTeL64mHdJY=;
+        b=RNqUDtQf47S/cYunGFpJX56Z/qJa6N0vaeSBKxNntCqc4Iz9xQFaqLl6JM5tvkKh+S
+         fic8FzGtHAsEtr4fgql/6fnvVKcgXER1Y6DCvN/JZiUV8WXUQx8tXzECxjuS0ns7zxaI
+         Bm5WOgMqi9sPdhuIyiSZjQxtKzJNaDk7AW9u8HXk1i4HhmmHlnFBWFI5h5lzR66HW4VS
+         vv4mLCZrikJfKaQ3vbBZYOu8Ptn18OfVDeIgNFSA7SNEPVnGvqHFUYVnyl4Vk2oWhvyA
+         gZCX1Ssljkc6i1MmoocP/0N+xRlkaCo04LDLnDmaf+1jjKNFGw0XcPSepWDN5M/OLrDl
+         aR3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXsDlLsc7yscVHsWD61DVnSwzaI8nPGf9hwRDhk5u22MS4SD7zAVuXELdftYtu3BIDLebwSU3nBSCD25ix+pdJV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlzrv1dGNgVnMgi+DvdEQj3U55LDFCyuAU+biOJtoHbF97tYGL
+	lcQxC5cFOLPHdhzWZPg7Nf9Q0fzofvhKDWfN4YmRrI2I5jKD0aUD
+X-Google-Smtp-Source: AGHT+IGBX0KUDMIr/jZbBuayUPel3GWDws49CvNTuYKEyrH1HqVlYiuTSb+I7bXF2LysNJXWIzU6ww==
+X-Received: by 2002:a5d:4dc2:0:b0:371:8e8b:39d4 with SMTP id ffacd0b85a97d-378c2d026eamr14060520f8f.28.1726663542376;
+        Wed, 18 Sep 2024 05:45:42 -0700 (PDT)
+Received: from gmail.com (1F2EF419.nat.pool.telekom.hu. [31.46.244.25])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e704f261esm16161805e9.26.2024.09.18.05.45.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 05:45:23 -0700 (PDT)
-Date: Wed, 18 Sep 2024 08:45:23 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Tiago Lam <tiagolam@cloudflare.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- David Ahern <dsahern@kernel.org>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, 
- Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, 
- KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, 
- Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, 
- Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- Jakub Sitnicki <jakub@cloudflare.com>, 
- Tiago Lam <tiagolam@cloudflare.com>, 
- kernel-team@cloudflare.com
-Message-ID: <66eacb6317540_29b986294b5@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20240913-reverse-sk-lookup-v1-1-e721ea003d4c@cloudflare.com>
-References: <20240913-reverse-sk-lookup-v1-0-e721ea003d4c@cloudflare.com>
- <20240913-reverse-sk-lookup-v1-1-e721ea003d4c@cloudflare.com>
-Subject: Re: [RFC PATCH 1/3] ipv4: Run a reverse sk_lookup on sendmsg.
+        Wed, 18 Sep 2024 05:45:41 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Wed, 18 Sep 2024 14:45:39 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Jiri Olsa <jolsa@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [GIT PULL] Performance events changes for v6.12
+Message-ID: <ZurLc9qEjBH9MkvK@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Tiago Lam wrote:
-> In order to check if egress traffic should be allowed through, we run a
-> reverse socket lookup (i.e. normal socket lookup with the src/dst
-> addresses and ports reversed) to check if the corresponding ingress
-> traffic is allowed in.
+Linus,
 
-The subject and this description makes it sound that the change always
-runs a reverse sk_lookup on sendmsg.
+Please pull the latest perf/core Git tree from:
 
-It also focuses on the mechanism, rather than the purpose.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-core-2024-09-18
 
-The feature here adds IP_ORIGDSTADDR as a way to respond from a
-user configured address. With the sk_lookup limited to this new
-special case, as a safety to allow it.
+   # HEAD: 5e645f31139183ac9a282238da18ca6bbc1c6f4a Merge branch 'perf/urgent' into perf/core, to pick up fixes
 
-If I read this correctly, I suggest rewording the cover letter and
-commit to make this intent and behavior more explicit.
+   [ Merge note: this pull request depends on you having pulled perf-urgent-2024-09-18 already. ]
 
-> Thus, if there's a sk_lookup reverse call
-> returns a socket that matches the egress socket, we also let the egress
-> traffic through - following the principle of, allowing return traffic to
-> proceed if ingress traffic is allowed in.  The reverse lookup is only
-> performed in case an sk_lookup ebpf program is attached and the source
-> address and/or port for the return traffic have been modified.
-> 
-> The src address and port can be modified by using ancilliary messages.
-> Up until now, it was possible to specify a different source address to
-> sendmsg by providing it in an IP_PKTINFO anciliarry message, but there's
-> no way to change the source port. This patch also extends the ancilliary
-> messages supported by sendmsg to support the IP_ORIGDSTADDR ancilliary
-> message, reusing the same cmsg and struct used in recvmsg - which
-> already supports specifying a port.
-> 
-> Suggested-by: Jakub Sitnicki <jakub@cloudflare.com>
-> Signed-off-by: Tiago Lam <tiagolam@cloudflare.com>
+Performance events changes for v6.12:
+
+ - Implement per-PMU context rescheduling to significantly improve single-PMU
+   performance, and related cleanups/fixes. (by Peter Zijlstra and Namhyung Kim)
+
+ - Fix ancient bug resulting in a lot of events being dropped erroneously
+   at higher sampling frequencies. (by Luo Gengkun)
+
+ - uprobes enhancements:
+
+     - Implement RCU-protected hot path optimizations for better performance:
+
+         "For baseline vs SRCU, peak througput increased from 3.7 M/s (million uprobe
+          triggerings per second) up to about 8 M/s. For uretprobes it's a bit more
+          modest with bump from 2.4 M/s to 5 M/s.
+
+          For SRCU vs RCU Tasks Trace, peak throughput for uprobes increases further from
+          8 M/s to 10.3 M/s (+28%!), and for uretprobes from 5.3 M/s to 5.8 M/s (+11%),
+          as we have more work to do on uretprobes side.
+
+          Even single-thread (no contention) performance is slightly better: 3.276 M/s to
+          3.396 M/s (+3.5%) for uprobes, and 2.055 M/s to 2.174 M/s (+5.8%)
+          for uretprobes."
+
+          (by Andrii Nakryiko et al)
+
+     - Document mmap_lock, don't abuse get_user_pages_remote(). (by Oleg Nesterov)
+
+     - Cleanups & fixes to prepare for future work:
+
+        - Remove uprobe_register_refctr()
+	- Simplify error handling for alloc_uprobe()
+        - Make uprobe_register() return struct uprobe *
+        - Fold __uprobe_unregister() into uprobe_unregister()
+        - Shift put_uprobe() from delete_uprobe() to uprobe_unregister()
+        - BPF: Fix use-after-free in bpf_uprobe_multi_link_attach()
+
+          (by Oleg Nesterov)
+
+ - New feature & ABI extension: allow events to use PERF_SAMPLE READ with
+   inheritance, enabling sample based profiling of a group of counters over
+   a hierarchy of processes or threads.  (by Ben Gainey)
+
+ - Intel uncore & power events updates:
+
+      - Add Arrow Lake and Lunar Lake support
+      - Add PERF_EV_CAP_READ_SCOPE
+      - Clean up and enhance cpumask and hotplug support
+
+        (by Kan Liang)
+
+      - Add LNL uncore iMC freerunning support
+      - Use D0:F0 as a default device
+
+        (by Zhenyu Wang)
+
+ - Intel PT: fix AUX snapshot handling race. (by Adrian Hunter)
+
+ - Misc fixes and cleanups. (by James Clark, Jiri Olsa, Oleg Nesterov and Peter Zijlstra)
+
+Thanks,
+
+	Ingo
+
+------------------>
+
+Adrian Hunter (1):
+      perf/x86/intel/pt: Fix sampling synchronization
+
+Andrii Nakryiko (7):
+      perf,x86: avoid missing caller address in stack traces captured in uprobe
+      uprobes: simplify error handling for alloc_uprobe()
+      uprobes: revamp uprobe refcounting and lifetime management
+      uprobes: protected uprobe lifetime with SRCU
+      uprobes: get rid of enum uprobe_filter_ctx in uprobe filter callbacks
+      uprobes: travers uprobe's consumer list locklessly under SRCU protection
+      uprobes: perform lockless SRCU-protected uprobes_tree lookup
+
+Ben Gainey (2):
+      perf: Rename perf_event_context.nr_pending to nr_no_switch_fast.
+      perf: Support PERF_SAMPLE_READ with inherit
+
+Ingo Molnar (2):
+      Merge branch 'perf/urgent' into perf/core, to pick up fixes
+      Merge branch 'perf/urgent' into perf/core, to pick up fixes
+
+James Clark (1):
+      perf/x86/intel/bts: Fix comment about default perf_event_paranoid setting
+
+Jiri Olsa (1):
+      selftests/bpf: fix uprobe.path leak in bpf_testmod
+
+Kan Liang (8):
+      perf/x86/intel/uncore: Add Arrow Lake support
+      perf/x86/intel/uncore: Factor out common MMIO init and ops functions
+      perf/x86/intel/uncore: Add Lunar Lake support
+      perf: Generic hotplug support for a PMU with a scope
+      perf: Add PERF_EV_CAP_READ_SCOPE
+      perf/x86/intel/cstate: Clean up cpumask and hotplug
+      iommu/vt-d: Clean up cpumask and hotplug for perfmon
+      dmaengine: idxd: Clean up cpumask and hotplug for perfmon
+
+Luo Gengkun (1):
+      perf/core: Fix small negative period being ignored
+
+Namhyung Kim (1):
+      perf: Really fix event_function_call() locking
+
+Oleg Nesterov (8):
+      uprobes: document the usage of mm->mmap_lock
+      uprobes: is_trap_at_addr: don't use get_user_pages_remote()
+      uprobes: kill uprobe_register_refctr()
+      uprobes: make uprobe_register() return struct uprobe *
+      uprobes: change uprobe_register() to use uprobe_unregister() instead of __uprobe_unregister()
+      uprobes: fold __uprobe_unregister() into uprobe_unregister()
+      uprobes: shift put_uprobe() from delete_uprobe() to uprobe_unregister()
+      bpf: Fix use-after-free in bpf_uprobe_multi_link_attach()
+
+Peter Zijlstra (8):
+      perf/x86: Add hw_perf_event::aux_config
+      perf: Optimize context reschedule for single PMU cases
+      perf: Extract a few helpers
+      perf: Fix event_function_call() locking
+      perf: Add context time freeze
+      perf: Optimize __pmu_ctx_sched_out()
+      perf/uprobe: split uprobe_unregister()
+      rbtree: provide rb_find_rcu() / rb_find_add_rcu()
+
+Zhenyu Wang (2):
+      perf/x86/intel/uncore: Add LNL uncore iMC freerunning support
+      perf/x86/intel/uncore: Use D0:F0 as a default device
+
+ arch/x86/events/core.c                                |  63 +++++++++++++++++++
+ arch/x86/events/intel/bts.c                           |   3 -
+ arch/x86/events/intel/cstate.c                        | 142 ++-----------------------------------------
+ arch/x86/events/intel/pt.c                            |  29 +++++----
+ arch/x86/events/intel/uncore.c                        |   9 +++
+ arch/x86/events/intel/uncore.h                        |   2 +
+ arch/x86/events/intel/uncore_snb.c                    | 185 ++++++++++++++++++++++++++++++++++++++++++++++++++------
+ drivers/dma/idxd/idxd.h                               |   7 ---
+ drivers/dma/idxd/init.c                               |   3 -
+ drivers/dma/idxd/perfmon.c                            |  98 +-----------------------------
+ drivers/iommu/intel/iommu.h                           |   2 -
+ drivers/iommu/intel/perfmon.c                         | 111 +---------------------------------
+ include/linux/cpuhotplug.h                            |   2 -
+ include/linux/perf_event.h                            |  32 +++++++++-
+ include/linux/rbtree.h                                |  67 +++++++++++++++++++++
+ include/linux/uprobes.h                               |  48 ++++++++-------
+ kernel/events/core.c                                  | 586 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-------------------------------------------------
+ kernel/events/uprobes.c                               | 505 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------------------------------------------------------------
+ kernel/trace/bpf_trace.c                              |  38 ++++++------
+ kernel/trace/trace_uprobe.c                           |  44 +++++++-------
+ tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c |  27 +++++----
+ 21 files changed, 1146 insertions(+), 857 deletions(-)
 
