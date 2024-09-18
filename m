@@ -1,128 +1,105 @@
-Return-Path: <linux-kernel+bounces-332499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A41FD97BA83
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:03:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4E797BA87
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AC3E1F2647C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:03:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14EBDB29763
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979A717BEC2;
-	Wed, 18 Sep 2024 10:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F59217BEBA;
+	Wed, 18 Sep 2024 10:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="GFxWfeUp"
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.241.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JEJx++iA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0EE1B5AA;
-	Wed, 18 Sep 2024 10:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.241.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B209F9E4;
+	Wed, 18 Sep 2024 10:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726653816; cv=none; b=H135EcyLrRWkFiVMYVFZrfcJebQ6lmahDHE468LLCpEf+EH5TFqOLjhiniMx9SRO/QiUZgvRZjqS5BsNyy8iWvHG/xx1GMfD8nucsMuEXvOgZVBEgtXvt4tvA6Vmq6jRL+CBt642NRG9IGEuuyKhLHcheHib2ZVRsid399Eohrs=
+	t=1726653963; cv=none; b=HNUDa/4w4zMqDb/rTvyYpycbRkLjfMAJBHWYnXqm33oy7dPHgknSzPfKS4eZnCD9EtxwaoDd6RxBbD555CHQVsvfIZfG4g/b1voZD40YkyvOy4daGSokN6Ffw1MMC0qnTCmg1LSIK6s0T8DPp/xDRdnuCozV0uIa5t14FenA98c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726653816; c=relaxed/simple;
-	bh=hl8gQiNOJ+WDAgbQlfu7CzUnwfdJCS8hNzX+TaNuOhg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TDGg/CuKREGu4eYtO0FIcvr2bDb/vcADru+HTkCwpxWWJ44mHgDJlEUW3tiDHODaGmJJfJwmQvIHyWMnVdWIAz3UwveVG3P6Giv1x97hwR2m2/YmM+OYL88NC6UNM0gJPmR3ImKTKCMnd6Kuse7Hu9Jl2GQHmd65R9hIfNolZr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=GFxWfeUp; arc=none smtp.client-ip=159.100.241.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from relay1.mymailcheap.com (relay1.mymailcheap.com [149.56.97.132])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id 4123420056;
-	Wed, 18 Sep 2024 10:03:32 +0000 (UTC)
-Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
-	by relay1.mymailcheap.com (Postfix) with ESMTPS id 23F1E3E870;
-	Wed, 18 Sep 2024 10:03:24 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf2.mymailcheap.com (Postfix) with ESMTPSA id C29E4400F3;
-	Wed, 18 Sep 2024 10:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1726653802; bh=hl8gQiNOJ+WDAgbQlfu7CzUnwfdJCS8hNzX+TaNuOhg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GFxWfeUpUFGkOOuTUXN545X7t0SczoNbV3t00qr1Xa6zErvgnC+NVJ7ZN5mG4HWJN
-	 7JWsedC+t5iSfrOaHMTFdMTCH/24nylufBwIPB0ZWe7hV69CnZrLfx2i/qZFb3aeUh
-	 Gb1E1X7B4+bhIGO7hU9fzj68xAHciL+cn7tt2ppo=
-Received: from [198.18.0.1] (unknown [58.32.24.203])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id DC69D4141B;
-	Wed, 18 Sep 2024 10:03:13 +0000 (UTC)
-Message-ID: <d4c0e2c4-b5f8-4102-91bf-b07d2b9a585c@aosc.io>
-Date: Wed, 18 Sep 2024 18:03:10 +0800
+	s=arc-20240116; t=1726653963; c=relaxed/simple;
+	bh=b9ubWyNkci8vVhzFdYA9KsCYZugo7cm3IlQEuh6iue0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WyABcLhTpfSwFSYJR09++l2x1U+UoSl4fI5nqJRee1+JNfstzGaTC/QNX9Shnjhsq2mOrHsziYOn1cUuDITWCnjzcNSD6uv+1WLt+mkpI0KvCeod5Aar+5aNtdN1c3IMBuCf/nGSsuk+xBAeXitqeQiTlAElcqEsakLbgtImi9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JEJx++iA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4148EC4CEC3;
+	Wed, 18 Sep 2024 10:06:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726653963;
+	bh=b9ubWyNkci8vVhzFdYA9KsCYZugo7cm3IlQEuh6iue0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JEJx++iAkxnatHlTFHLGHaXqoTECueNrOQcMMlX/zjJgsMyeCZJsBOdEJu518FI3r
+	 fg4AzPtrCdoLe5UmpM0+JV+LuKm1iGDMKhQ1jOW11y/kYMnQtFk5Bf4LSNIvbIRglv
+	 MGUSnG2YtW3q4Zy4nXBZLQhgdk+n+xRyzsCaHO9LrfnHharz7jbh+hag9f3KGCTSMp
+	 zx3Fmw/bDIKBtxx0yxWRG1icj/5uw2RWfuUvoES18G22SAP2gGrUN8SmYXvAYQM4bV
+	 waI4WOurk1DOrqdN6aBRoCL3Uc/+4bQCobP7j/Px+gHkDt9lFgHdMIV7iZ8n1I5HdZ
+	 1MqeZbIQXO1ow==
+Received: from johan by theta with local (Exim 4.98)
+	(envelope-from <johan@kernel.org>)
+	id 1sqrZP-000000001j5-2CWn;
+	Wed, 18 Sep 2024 12:05:59 +0200
+Date: Wed, 18 Sep 2024 12:05:59 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] phy: qcom: edp: Add runtime PM support
+Message-ID: <ZuqmB3Cn7mGfA2PU@hovoldconsulting.com>
+References: <20240907-phy-qcom-edp-enable-runtime-pm-v1-1-8b9ee4210e1e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Thunderbird Daily
-Subject: Re: [PATCH 6.6 00/91] 6.6.52-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240916114224.509743970@linuxfoundation.org>
-Content-Language: en-US
-From: Kexy Biscuit <kexybiscuit@aosc.io>
-In-Reply-To: <20240916114224.509743970@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: C29E4400F3
-X-Rspamd-Server: nf2.mymailcheap.com
-X-Spamd-Result: default: False [1.41 / 10.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_ONE(0.00)[1];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,linux-foundation.org,roeck-us.net,kernel.org,kernelci.org,lists.linaro.org,denx.de,nvidia.com,gmail.com,sladewatkins.net,gmx.de];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Action: no action
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240907-phy-qcom-edp-enable-runtime-pm-v1-1-8b9ee4210e1e@linaro.org>
 
-On 9/16/2024 7:43 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.52 release.
-> There are 91 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.52-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Sat, Sep 07, 2024 at 06:25:21PM +0300, Abel Vesa wrote:
+> Enable runtime PM support by adding proper ops which will handle the
 
-Building passed on amd64, arm64, loongarch64, ppc64el, and riscv64. 
-Smoke testing passed on 9 amd64 and 1 arm64 test systems.
+Avoid words like 'proper' here (what are non-proper runtime PM ops?).
 
-Tested-by: Kexy Biscuit <kexybiscuit@aosc.io>
+> clocks and regulators. These resources will now be handled on power_on and
+> power_off instead of init and exit PHY ops.
 
-https://github.com/AOSC-Dev/aosc-os-abbs/pull/8027
--- 
-Best Regards,
-Kexy Biscuit
+No, this is simply a false claim and indicates that you haven't reviewed
+how PHY runtime PM works. Core will increment the usage count on init()
+and decrement it on exit().
+
+> Also enable these resources on
+> probe in order to balance out the disabling that is happening right after.
+> Prevent runtime PM from being ON by default as well.
+
+And here you just regressed all current systems that do not have udev
+rules to enable runtime PM, and which will now be stuck with these
+resources always-on (e.g. during DPMS off and system suspend).
+
+In fact, you are even regressing systems that would enable runtime PM,
+as the runtime suspend callback would not currently be called when you
+enter system suspend so the regulators and clocks will be left on.
+
+This clearly hasn't been tested and analysed properly.
+
+> +static int __maybe_unused qcom_edp_runtime_suspend(struct device *dev)
+> +{
+> +	struct qcom_edp *edp = dev_get_drvdata(dev);
+> +
+> +	dev_err(dev, "Suspending DP phy\n");
+
+You forgot to drop your development printks (same below).
+
+Johan
 
