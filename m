@@ -1,159 +1,195 @@
-Return-Path: <linux-kernel+bounces-332739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84F2397BE27
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:42:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E09D197BE35
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DDA31F22048
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:42:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5FB028352E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229081BB6BC;
-	Wed, 18 Sep 2024 14:42:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A488C1BF326;
+	Wed, 18 Sep 2024 14:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nb04d4PT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Ek9if8Nt"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66BC1BAEE6;
-	Wed, 18 Sep 2024 14:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77D81BE853;
+	Wed, 18 Sep 2024 14:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726670550; cv=none; b=VvI2LxV2N4lQHRPuhenu3i6EY3+k3KP25iIDkBwDRCb2qCJ5Q9CwtThFxQctbCbJ5JVjzhx8q3dhbY8RgkDFTV5yd1ZQixAGU9XCs47rXz5HBkGaJGZlU5IONwYj6MFDbymyTjDBi/PccwA0LQZ7I/UgVJF0HG2HA0dIz9zFfNY=
+	t=1726670799; cv=none; b=JPb60I323/PLz8syIblyR9ftllBlYWJgWm3zy2oiZGYN+DtvNVrnKsHhkNT+x0ICmHUkqGEaKPRGnDgSE+H0UKnQRJfGyHhd3jmcTgEbGcLpa4VFxhfLJaKrpEF9x+drxFNbYY5f69XB3YLosWvRbLD2/zGocp0pTLTEtmQFpPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726670550; c=relaxed/simple;
-	bh=f6DO9H9tbPadLV/AmMWoIvT7LPqXcop24V18dsnD8vo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FQegAAWmHErJO70EtXZW6w/98bNEswbsYXfU/6vU0ELreebW+CRDcnqeOgpa5KMOerKxFEu0veKvzdb6HtPcsN0rWUMZvhtOA+7i2h4LzlxZ+6Lp51vh2B3xjpVufBegMSbPjwUi8BU3phtC6x3/CaKDyrOBF2Qi1HFnP9t+imY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nb04d4PT; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726670549; x=1758206549;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=f6DO9H9tbPadLV/AmMWoIvT7LPqXcop24V18dsnD8vo=;
-  b=Nb04d4PT/EFuRd22htC3110pJV12b0sP4okNNA/tU8M86F2UpCsJSNtd
-   V29Gnw1c2JR1AzXMTlUlQyeUm1az5JffCP07628uh/yoNr+NGshq6LthB
-   9W2ZEpDhAN96IIoCDhwVj3EG7i4P7K0fFpzy37+TslKpryx6k+WPPCm6K
-   lEFL4RUTT4XF6ZDhlfoRV1hRjKBlGfc9TahQ05u/QzNiW6SdFd0iE0cpg
-   oOiaPot+3R6vBl8SJbiyDfxA4jWRU/qa/4FQ6pWr33pxsVHmWLIMoyQcB
-   YSuCx1DIXuktVBviH6BZf6R6v9PLNj4QIrs5t83+aEl4JAbslYyBXz973
-   Q==;
-X-CSE-ConnectionGUID: 1Nqbf2+wTR+mvS8BVAYn/Q==
-X-CSE-MsgGUID: wQTfSd89SFuKHITLs5ztOA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11199"; a="36255024"
-X-IronPort-AV: E=Sophos;i="6.10,239,1719903600"; 
-   d="scan'208";a="36255024"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 07:42:27 -0700
-X-CSE-ConnectionGUID: 4A/Qk+DiRdul4OYr8AZigA==
-X-CSE-MsgGUID: 6d1nul30RZG2Lo5fGPjqjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,239,1719903600"; 
-   d="scan'208";a="100312619"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 18 Sep 2024 07:42:22 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sqvsp-000CJe-18;
-	Wed, 18 Sep 2024 14:42:19 +0000
-Date: Wed, 18 Sep 2024 22:41:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Liao Chang <liaochang1@huawei.com>, mhiramat@kernel.org,
-	oleg@redhat.com, andrii@kernel.org, peterz@infradead.org,
-	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH] uprobes: Improve the usage of xol slots for better
- scalability
-Message-ID: <202409182246.UMkGsMXl-lkp@intel.com>
-References: <20240918012752.2045713-1-liaochang1@huawei.com>
+	s=arc-20240116; t=1726670799; c=relaxed/simple;
+	bh=BM8hNkRIdH5oUzp/C0nNik0IY4RsXG+YF5a51+mTTyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=loDF4Mzd6MjiqKjdLSLIeNL+6KwWDumJy0JE+twZj0ylDLzA4C/Ly70X9RYY9NBjaD7DgodcZ0Xer7iekbZ0Vv0aRYat5SqgGek/Oo3oXEEngcDqoUYB9DE770x1Oztx8bCXELWOKzNEFAPDZu63ivkVRIArBgIAR1MzpMdxt5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Ek9if8Nt; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48ICZctX017253;
+	Wed, 18 Sep 2024 16:46:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	Ds0wtYkHarzU5Z0GpuaBvBbV3g5NZzHffS5yleTHHoQ=; b=Ek9if8NtFgnioPTi
+	lUeIjqVVQwrHB5LrcoTOXITp5DzP0AM852YMxrLqWSI3iXnGemW8ZoBhqwPAPbWz
+	ThlgQRA0JHR789Oqj/mMTTzF30fO3z5JAWnR37eZdImJJkqEcNaM7Bb07sb+qD6r
+	HW9rJSpjBspcR6oAAKFn0zSTBNmqyE6HGqmMEHGStByRiMUVd3KM+Ua4suiLE6S4
+	vOELQ1Av8TvtRzaj5nSFU8KtSJGSXCRzajM9qFd/K1xaLIn80RGeFjmkOcpusHOI
+	I3rJiyTRRzac9Ll1tp8uosZAhZ4fkoMCwM+NOEzyq/dn7j+/18xDLIC4r97WorcY
+	bjeKrg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41nnehq9gv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Sep 2024 16:46:13 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 33D6340044;
+	Wed, 18 Sep 2024 16:45:03 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 253FB2928B9;
+	Wed, 18 Sep 2024 16:43:34 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 18 Sep
+ 2024 16:43:33 +0200
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 18 Sep
+ 2024 16:43:33 +0200
+Message-ID: <fabec69a-3b3a-4068-8906-7996cf125c0b@foss.st.com>
+Date: Wed, 18 Sep 2024 16:43:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240918012752.2045713-1-liaochang1@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 4/7] remoteproc: core: Add TEE interface support for
+ firmware release
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
+References: <20240830095147.3538047-1-arnaud.pouliquen@foss.st.com>
+ <20240830095147.3538047-5-arnaud.pouliquen@foss.st.com>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <20240830095147.3538047-5-arnaud.pouliquen@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Hi Liao,
+Hello Mathieu,
 
-kernel test robot noticed the following build errors:
+On 8/30/24 11:51, Arnaud Pouliquen wrote:
+> Add support for releasing remote processor firmware through
+> the Trusted Execution Environment (TEE) interface.
+> 
+> The tee_rproc_release_fw() function is called in the following cases:
+> 
+> - An error occurs in rproc_start() between the loading of the segments and
+>   the start of the remote processor.
+> - When rproc_release_fw is called on error or after stopping the remote
+>   processor.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 7694817f25d4..32052dedc149 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -29,6 +29,7 @@
+>  #include <linux/debugfs.h>
+>  #include <linux/rculist.h>
+>  #include <linux/remoteproc.h>
+> +#include <linux/remoteproc_tee.h>
+>  #include <linux/iommu.h>
+>  #include <linux/idr.h>
+>  #include <linux/elf.h>
+> @@ -1258,6 +1259,9 @@ static int rproc_alloc_registered_carveouts(struct rproc *rproc)
+>  
+>  static void rproc_release_fw(struct rproc *rproc)
+>  {
+> +	if (rproc->state == RPROC_OFFLINE && rproc->tee_interface)
+> +		tee_rproc_release_fw(rproc);
 
-[auto build test ERROR on tip/perf/core]
-[cannot apply to perf-tools-next/perf-tools-next perf-tools/perf-tools linus/master acme/perf/core v6.11 next-20240918]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I'm requesting you expertise to fix an issue I'm facing during my test preparing
+the V10.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Liao-Chang/uprobes-Improve-the-usage-of-xol-slots-for-better-scalability/20240918-093915
-base:   tip/perf/core
-patch link:    https://lore.kernel.org/r/20240918012752.2045713-1-liaochang1%40huawei.com
-patch subject: [PATCH] uprobes: Improve the usage of xol slots for better scalability
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20240918/202409182246.UMkGsMXl-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240918/202409182246.UMkGsMXl-lkp@intel.com/reproduce)
+My issue is that here, we can call the tee_rproc_release_fw() function, defined
+in remoteproc_tee built as a remoteproc_tee.ko module.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409182246.UMkGsMXl-lkp@intel.com/
+I tried to use the IS_ENABLED and IS_REACHABLE macros in remoteproc_tee.h, but
+without success:
+- use IS_ENABLED() results in a link error: "undefined reference to
+tee_rproc_release_fw."
+- use IS_REACHABLE() returns false and remoteproc_core calls the inline
+tee_rproc_release_fw function that just call WARN_ON(1).
 
-All errors (new ones prefixed by >>):
+To solve the issue, I can see three alternatives:
 
-   In file included from arch/arm/probes/uprobes/actions-arm.c:10:
->> include/linux/uprobes.h:81:2: error: unknown type name 'refcount_t'
-           refcount_t                      slot_ref;
-           ^
-   1 error generated.
+1) Modify Kconfig and remoteproc_tee.c to support only built-in.
+2) Use symbol_get/symbol_put.
+3) Define a new rproc_ops->release_fw operation that will be initialized to
+tee_rproc_release_fw.
+
+From my perspective, the solution 3 seems to be the cleanest way, as it also
+removes the dependency between remoteproc_core.c and remoteproc_tee.c. But
+regarding previous discussion/series version, it seems that it could not be your
+preferred solution.
+
+Please, could you indicate your preference so that I can directly implement the
+best solution (or perhaps you have another alternative to propose)?
+
+Thanks in advance!
+
+Arnaud
 
 
-vim +/refcount_t +81 include/linux/uprobes.h
-
-    58	
-    59	/*
-    60	 * uprobe_task: Metadata of a task while it singlesteps.
-    61	 */
-    62	struct uprobe_task {
-    63		enum uprobe_task_state		state;
-    64	
-    65		union {
-    66			struct {
-    67				struct arch_uprobe_task	autask;
-    68				unsigned long		vaddr;
-    69			};
-    70	
-    71			struct {
-    72				struct callback_head	dup_xol_work;
-    73				unsigned long		dup_xol_addr;
-    74			};
-    75		};
-    76	
-    77		struct uprobe			*active_uprobe;
-    78		unsigned long			xol_vaddr;
-    79	
-    80		struct list_head		gc;
-  > 81		refcount_t			slot_ref;
-    82		int				insn_slot;
-    83	
-    84		struct arch_uprobe              *auprobe;
-    85	
-    86		struct return_instance		*return_instances;
-    87		unsigned int			depth;
-    88	};
-    89	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +
+>  	/* Free the copy of the resource table */
+>  	kfree(rproc->cached_table);
+>  	rproc->cached_table = NULL;
+> @@ -1348,7 +1352,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+>  	if (ret) {
+>  		dev_err(dev, "failed to prepare subdevices for %s: %d\n",
+>  			rproc->name, ret);
+> -		goto reset_table_ptr;
+> +		goto release_fw;
+>  	}
+>  
+>  	/* power up the remote processor */
+> @@ -1376,7 +1380,9 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+>  	rproc->ops->stop(rproc);
+>  unprepare_subdevices:
+>  	rproc_unprepare_subdevices(rproc);
+> -reset_table_ptr:
+> +release_fw:
+> +	if (rproc->tee_interface)
+> +		tee_rproc_release_fw(rproc);
+>  	rproc->table_ptr = rproc->cached_table;
+>  
+>  	return ret;
 
