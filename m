@@ -1,172 +1,134 @@
-Return-Path: <linux-kernel+bounces-332962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4956F97C189
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:44:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEE4397C18E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03359283A04
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:44:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E9D21C22416
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232E11C9EDD;
-	Wed, 18 Sep 2024 21:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC621CB327;
+	Wed, 18 Sep 2024 21:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="mQGgsCkw"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2uMRqhng"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9ED1C9EC9
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 21:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6C06FB6;
+	Wed, 18 Sep 2024 21:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726695866; cv=none; b=Or4qE/Vrkx9ORAyotkvIn32WPBGlEBsOB5qljSNac9/Yt7BLCkdQIfkErlwmUVtvWKRUdIwXww3xybgHo9W9hSrYEtZOdb/kQtuztUUFKtPkar8mkLnB3gq2kx5hFpaxsGdL616CyB107XpXhxauNZ6skbq9UXbQT2AZJYyAYV0=
+	t=1726695971; cv=none; b=FEKjj+gdp/az5fa+sPZxtWt9KRXLaYGQtDi7BgyMFjXKW+jpisWJIFPePjmq8hiP2HwwLsMBgM3Wxlo2M+6WMJO6pZ9D4iSjX1F64BPfe6u2tJi66XIHSHAmC85qjPXsxCxanSYSJko/sO+bEvi/Qbx1Zzb6TCxoVpS6iZZ7jok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726695866; c=relaxed/simple;
-	bh=FKxeYZYHke3ZZqvbkFKyQa8CuKT+MkxxXC+06ToTxqg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EsilbGlt9sW/+5RtXI7noV64vcTtCskTegdk8xMwBImtsy+0R4ZN78jW/7YdV9/Gqp712YCMa0zWFBYgpm5hf2G/RicgJ+QqOKgDnG8eNqCK5DldeZx7oy9xx2vLiZa2ADNgDp174QhEyFDFtZYI/9PO7s0B6KF4WtQa1xVtZ/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=mQGgsCkw; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 64FDB2C031F;
-	Thu, 19 Sep 2024 09:44:21 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1726695861;
-	bh=v8hRtbYaGnS53ow1QyterGNfThyT+7u5f8l9z8q0xqo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mQGgsCkw6W4Ays9gO8m6qkozkrZ9KnJG92thXrIjJOzoX2GyVcbqUkU1CiNQCvDcV
-	 C6TQZWHL7pzmAz2rltKi/DVQgpFDKSQBPDFXsYESsimpOX4Vu1WLC20s6ZHHXsNSqX
-	 O8nWFAqdVsY6miS/uxlt4pXBn/+J+vEiKMXkm1UUJP6Cd5Zz+s2llvDYUeROdnEvWK
-	 WDe2YhkFXbQLgkCLGkeAB25xrGPerN0YVskOg/Lz3h3q/qKRLvwF1ZqnPpiWeYL2bd
-	 n9FM3cq1RtG4jkcSliR6pjfuhHRu5XwwNs5zsXIuYYqXBHVusPYpK+uhmXPG2FbQTm
-	 XJZF5/uQkY6lA==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B66eb49b50000>; Thu, 19 Sep 2024 09:44:21 +1200
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 45BC613ECCD;
-	Thu, 19 Sep 2024 09:44:21 +1200 (NZST)
-Message-ID: <5ebcd038-a2c7-458d-a04e-31771765ec1f@alliedtelesis.co.nz>
-Date: Thu, 19 Sep 2024 09:44:21 +1200
+	s=arc-20240116; t=1726695971; c=relaxed/simple;
+	bh=2JAVXLbmvY5chR2s5ENXGYmaUDXwiVf9c2ghoNaPybo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q3GtxzaRVBX8dspWD3Og2UTT2LIu2OkpwncXDAJNOH/28fNMdwVbG7lG1XyftTYs9j52Yr475uWPLYj1250DnzvVH/F/Wi13bwCx5l3+mgiiXFe+9J2gexf6QDBRFv4UjKamCWMd+IzQGCrc67Xd6vYI6kT3YiW2aZ1w9b5IGyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2uMRqhng; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=LiTlMU5tNsXM0VVteoP1U3alR033HX1QCn0vzJFq568=; b=2uMRqhng2P9k5kwobap9kfvqLz
+	wWF2oIkz+NWodWiTpWv4fNMB+ZD+vjhwEb1JCMp7/hmmOYZ3LXg5EVZTPD5OoUOpbwEZMI9d81syM
+	HmfIdm6VuG0wkKUPoxcbJovX7ALTqObwkFm+Bhp1nB220NTGYTDGGqirD7Gozilvdp0A=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sr2Uk-007kQk-60; Wed, 18 Sep 2024 23:45:54 +0200
+Date: Wed, 18 Sep 2024 23:45:54 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Brad Griffis <bgriffis@nvidia.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Jon Hunter <jonathanh@nvidia.com>, kernel@quicinc.com
+Subject: Re: [RFC PATCH net v1] net: phy: aquantia: Set phy speed to 2.5gbps
+ for AQR115c
+Message-ID: <473d2830-c7e0-4adf-8279-33b91e112f80@lunn.ch>
+References: <20240913011635.1286027-1-quic_abchauha@quicinc.com>
+ <20240913100120.75f9d35c@fedora.home>
+ <eb601920-c2ea-4ef6-939b-44aa18deed82@quicinc.com>
+ <c6cc025a-ff13-46b8-97ac-3ad9df87c9ff@lunn.ch>
+ <ZulMct3UGzlfxV1T@shell.armlinux.org.uk>
+ <1c58c34e-8845-41f2-8951-68ba5b9ced38@quicinc.com>
+ <1ed3968a-ed7a-4ddf-99bd-3f1a6aa2528f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] i2c: rtl9300: Add multiplexing support
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- tsbogend@alpha.franken.de, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org
-References: <20240917232932.3641992-1-chris.packham@alliedtelesis.co.nz>
- <20240917232932.3641992-6-chris.packham@alliedtelesis.co.nz>
- <2wmlmymzxhf7ytpngbqgubka43rd4ytiwcffvwgaaf6gubvenz@w5gwxarev3r6>
-Content-Language: en-US
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <2wmlmymzxhf7ytpngbqgubka43rd4ytiwcffvwgaaf6gubvenz@w5gwxarev3r6>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=66eb49b5 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=_L8YfPCUr8UlLk-LaaEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1ed3968a-ed7a-4ddf-99bd-3f1a6aa2528f@quicinc.com>
 
-Hi Andi, Rob,
+> Russell and Andrew 
+> 
+> we added prints and understood what the phy is reporting as part of the 
+> genphy_c45_pma_read_abilities 
+> 
+> [   12.041576] MDIO_STAT2: 0xb301
+> 
+> 
+> [   12.050722] MDIO_PMA_EXTABLE: 0x40fc
+> 
+> >From the PMA extensible register we see that the phy is reporting that it supports
+> 
+> #define MDIO_PMA_EXTABLE_10GBT		0x0004	/* 10GBASE-T ability */
+> #define MDIO_PMA_EXTABLE_10GBKX4	0x0008	/* 10GBASE-KX4 ability */
+> #define MDIO_PMA_EXTABLE_10GBKR		0x0010	/* 10GBASE-KR ability */
+> #define MDIO_PMA_EXTABLE_1000BT		0x0020	/* 1000BASE-T ability */
+> #define MDIO_PMA_EXTABLE_1000BKX	0x0040	/* 1000BASE-KX ability */
+> #define MDIO_PMA_EXTABLE_100BTX		0x0080	/* 100BASE-TX ability */
+> #define MDIO_PMA_EXTABLE_NBT		0x4000  /* 2.5/5GBASE-T ability */
+> 
+> [   12.060265] MDIO_PMA_NG_EXTABLE: 0x3
+> 
+> /* 2.5G/5G Extended abilities register. */
+> #define MDIO_PMA_NG_EXTABLE_2_5GBT	0x0001	/* 2.5GBASET ability */
+> #define MDIO_PMA_NG_EXTABLE_5GBT	0x0002	/* 5GBASET ability */
+> 
+> I feel that the phy here is incorrectly reporting all these abilities as 
+> AQR115c supports speeds only upto 2.5Gbps 
+> https://www.marvell.com/content/dam/marvell/en/public-collateral/transceivers/marvell-phys-transceivers-aqrate-gen4-product-brief.pdf
+> 
+> AQR115C / AQR115 Single port, 2.5Gbps / 1Gbps / 100Mbps / 10Mbps 7 x 7 mm / 7 x 11 mm
 
-On 19/09/24 08:36, Andi Shyti wrote:
-> Hi Chris,
->
-> ...
->
->> -module_platform_driver(rtl9300_i2c_driver);
->> +static int rtl9300_i2c_select_chan(struct i2c_mux_core *muxc, u32 chan)
->> +{
->> +	struct i2c_adapter *adap = muxc->parent;
->> +	struct rtl9300_i2c *i2c = i2c_get_adapdata(adap);
->> +	int ret;
->> +
->> +	ret = rtl9300_i2c_config_io(i2c, chan);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return 0;
-> return "rtl9300_i2c_config_io()"?
+One things to check. Are you sure you have the correct firmware? Many
+of the registers which the standards say should be Read Only can be
+influenced by the firmware. So the wrong firmware, or provisioning
+taken from another device could result in the wrong capabilities being
+set.
 
-Ack.
+You might want to report this issue to Marvell, but my guess would be,
+they don't care. I would guess the vendor driver ignores these
+registers and simply uses the product ID to determine what the device
+actually supports.
 
->> +}
-> ...
->
->> +static int rtl9300_i2c_mux_probe_fw(struct rtl9300_i2c_chan *mux, struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct fwnode_handle *fwnode = dev_fwnode(dev);
->> +	struct device_node *np = dev->of_node;
->> +	struct device_node *adap_np;
->> +	struct i2c_adapter *adap = NULL;
->> +	struct fwnode_handle *child;
->> +	unsigned int *chans;
->> +	int i = 0;
->> +
->> +	if (!is_of_node(fwnode))
->> +		return -EOPNOTSUPP;
->> +
->> +	if (!np)
->> +		return -ENODEV;
->> +
->> +	adap_np = of_parse_phandle(np, "i2c-parent", 0);
->> +	if (!adap_np) {
->> +		dev_err(&pdev->dev, "Cannot parse i2c-parent\n");
->> +		return -ENODEV;
-> return dev_err_probe(...)?
+> I am thinking of solving this problem by having 
+> custom .get_features in the AQR115c driver to only set supported speeds 
+> upto 2.5gbps 
 
-Ack.
+Yes, that is the correct solution.
 
->> +	}
->> +	adap = of_find_i2c_adapter_by_node(adap_np);
->> +	of_node_put(adap_np);
-> ...
->
->> +static int __init rtl9300_i2c_init(void)
->> +{
->> +	return platform_register_drivers(drivers, ARRAY_SIZE(drivers));
->> +}
->> +module_init(rtl9300_i2c_init);
->> +
->> +static void __exit rtl9300_i2c_exit(void)
->> +{
->> +	platform_unregister_drivers(drivers, ARRAY_SIZE(drivers));
->> +}
->> +module_exit(rtl9300_i2c_exit);
-> You could use module_platform_driver()
+It would also be good if you could, in a separate patch, change the
+aqcs109_config_init() to not call phy_set_max_speed() and add a custom
+.get_features.
 
-Can I though? I want to support both the simple I2C controller and the 
-MUX mode with the same driver. Which is why I've ended up with two 
-drivers to register.
-
-On the binding patch, Rob made the suggestion that I just make the 
-i2c-mux part of the parent. I did consider that but quickly got tied in 
-knots because I couldn't figure out how to have a device that is both an 
-adapter and a mux. The main problem was that any child nodes of an i2c 
-adapter in the device tree are presumed to be I2C devices and get probed 
-automatically by of_i2c_register_devices(). Equally I can't register a 
-mux without having an adapter that the mux operates over.
-
->
-> Thanks,
-> Andi
->
->>   
->>   MODULE_DESCRIPTION("RTL9300 I2C controller driver");
->>   MODULE_LICENSE("GPL");
->> -- 
->> 2.46.1
->>
+	Andrew
 
