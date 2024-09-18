@@ -1,97 +1,181 @@
-Return-Path: <linux-kernel+bounces-332549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEAB397BB19
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:48:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5643B97BB1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4E11281FB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:48:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B19E1C21EA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34479183CDE;
-	Wed, 18 Sep 2024 10:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740861836D9;
+	Wed, 18 Sep 2024 10:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIdxBIhL"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TQZ8fs+L"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2069.outbound.protection.outlook.com [40.107.244.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E87017B401;
-	Wed, 18 Sep 2024 10:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726656504; cv=none; b=BJRU/O5J8nHsh5pzPq1k/lFP03pJ78aMxIgnaiGgUMdN2zWZhGX2dNHo+llVmRUQ1t9teemLacgN9z0V7kG7F+bYE2FDtcI8Y1t74ZCLTWqbebIBaQC78aOCWs8U+43/Y2AlAPntu8M+czjtJCq/PZM5RZqqtafivjpX7MBdOO8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726656504; c=relaxed/simple;
-	bh=PC0iyZgo1Rmb8B4v4wX//KN99HkB9Bi1PjwxOZYGiPo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dBWcVWZSx5+4T4gyIrI7MrSk8WEVNsZwbP2Eza3FoSmcYY1DgcCEXeirYVaA6Oo7deIlsTir2vQRKmni9b7Of3GCQZ4V/OlyMTI0swFTGRxw07ns3h6dUwBQPjwg7FN/FXOXhfF1iR6oULDLsmh2+/LydtNVNteQOZw7cXumiVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SIdxBIhL; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7c1324be8easo550184a12.1;
-        Wed, 18 Sep 2024 03:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726656503; x=1727261303; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hfzW1pLry60+t0fvh5kw9hU4Fd6lBIA4q/rFKi9crYA=;
-        b=SIdxBIhLlJzwHKiz5aST6HxasiDG0hADLp5eDMPNV9eRj7SktPfMWBk5vkBK5Zs8x1
-         6575CFW1B1rrGB76HpdGTRFq6DA8f2LyTKVuK8qYZ85/aytBq6E4wbctLNrD6ERNQbQQ
-         0u1PwV/aViiUvA6eiPDvOwXwIPe3GB2lzqFnAyn0dbyutzXcpl2LrExyI033NkRH3mGt
-         3ymhH/yKFGtQS0NC1+cA06of6aNlzns2k3JRWw0sEaSHDZVJwqvlce+iy+AvcoZnibJL
-         kBwvRvkVs6y6ezEgOtAxIwsaBy8gSu4vzl1h75obzxEqmk66MsY9mfmbthFxk13IgIDi
-         LVaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726656503; x=1727261303;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hfzW1pLry60+t0fvh5kw9hU4Fd6lBIA4q/rFKi9crYA=;
-        b=pwLhrTKpRJoZY7gZNz1hy/gbCXSflBXU4vkLSo7y5bvhKczoTPEKhYD6UG0+K961I+
-         AeuUgZkHl9FnDesbjupKwhO1w3w3lpztg7wELiejkhURQCjFm2/hz0c81ZcuvBSDtt52
-         Pw9XntfoGEG9z9j0s1E4EGYk7oHPzhylQbS2RUWHb7l4RfeOgZGD1oqKLN7Q2skfMUX9
-         vHscNXRQOcUdMmhoCM0eVWVKSosZeimZNDExzs70elAUQdnLvQWRlF5zX3cPrkzZUs60
-         kENvhyO6oyHxm9OzFAxkdQAa3QW1CRKYGpTID/JVlAtA4luFRlHd6OiG86o28HL1OmN3
-         NzgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEMEfjTgCoTlVLG4OyGpWU4C0y+mTIazZZJxNp6J1fBvnB8/fP2JCz9sqVJf6wenpkjkrwFCwvvAAEWsEn@vger.kernel.org, AJvYcCXq9Xn8uxf49QpMq7+l8GvfkRtMC8T6CIf/ctZiCRuaOVubufSOeBHXHE7cNRJeyjBn1W+Tk1cD5/IJug==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy87bb3zk2fetKiDbUe+caYTHiuAcjQJk7kqHrNvlcizJhG+ATk
-	4KiRJnjNX5luCnRmERp6aA5lRqRUnPw8nS/CoGoMzFgUZ+1zeuIn
-X-Google-Smtp-Source: AGHT+IHH+tk+BBx6l9XDwZ53jPRLIrOnAL/X/Zk+WVqedZxojkeyMgYzvLrNujRVxiEmJ0ugkq364w==
-X-Received: by 2002:a17:90a:2f06:b0:2c9:90fa:b9f8 with SMTP id 98e67ed59e1d1-2db9fc66af5mr32452417a91.10.1726656502451;
-        Wed, 18 Sep 2024 03:48:22 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:e2c3:aae9:be1f:5425])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd609d6eccsm1261531a91.56.2024.09.18.03.48.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 03:48:22 -0700 (PDT)
-Date: Wed, 18 Sep 2024 03:48:19 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Shen Lichuan <shenlichuan@vivo.com>
-Cc: rydberg@bitmath.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] input: Convert comma to semicolon
-Message-ID: <Zuqv81YKzULugn2Y@google.com>
-References: <20240918032246.9147-1-shenlichuan@vivo.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BCC165EFE;
+	Wed, 18 Sep 2024 10:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726656743; cv=fail; b=WQKptUEuKgKUbc+VhCxGbmY5FATreYppnamcA3lQT6H21u9y4/+phxZh+7kIonhG5D1zqCTRxIE4d1/3AOdC579RPD1cFJn5O/H8sW7IJ8mZ4+mtuBKs65qiQJePpQLJzF+2ewjHOW4kEAmN/K0T4nke80VC7WiheiWuWrt7iHQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726656743; c=relaxed/simple;
+	bh=cY/Grf3hBzqNEfOsn+GQRjS0kVX8hC9eC/d8VxFxBuA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F9NZ1mksmk9fA1IW+BzAJzgcUMnS5aqnM3cea4rtvWzcTl13LBP5PD6z/CZpB/mHDO78aFtr83CzUGwKJJCZ6OE7egOWe3u1UipOlBZF9hDeJ0qFe2DRZTeqoUqUMhcERHEOrfn2SmVYwVwhp3a6Ec3eiBkBy6IlUX9R5hTdRWE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TQZ8fs+L; arc=fail smtp.client-ip=40.107.244.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OcCKUmsB5yUWCb/j0ybDYp/RPmXxv0/Jndex/AYvjKFixQhWqih8sgF/sF50bdpG7ddGF49WpjQ04Y2aWbnUZ5HLR3xvLZVAIEct9I/IG7/SDVxk4ph1Eq/sfYAl+q8hg/AYU0nZ6qt3mVQ0EGRN3gSqzHDcMb0aqM+PqAOPiCvtN3zFb36fOfWXniMj/7wLjVZufr+rPlxsLeRj8lAwFPPTR9dfm06R6inImVLzrvDpnduvL/bAaTrqs1SFqv5nghsmtYBfz3a5dIcoWkFPUA0nmiBAgqdjQWBSerlMr+mZ9C5Q0zzHAOEJi9OL+iV0t7bcM9gCCc2AI6zVIHGqkg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=R2rdK+wRgWE4XapvHb46CP21Pum9bwGTE/xiNWb+AbM=;
+ b=ca5mojMS2W9i3zGGcfpZ7va946BaPd4IONABzhH6wnJm5iMnctAeqny22jcTMzLZXeb9LjGpQ6vUXka63x7qaLQUuvaGOJiFXTFx461dtoF6bUVVPMBRlyN4mdi5FKuwODY3iuNvE74ZamYTYpccVmnOkgpLTuFSDW1juLUbDrcp9opc2zUz0PxI0YWAzutes8AZHYcQHEHOkS/z1+CdCHUOsjdjkM1McZf5x2tXHTw6NsGmFlrKMH2Sh1WLhEt6Y++Tc5BZp4QVq+Bv7ZPZ3H6RX9365Zw5eG8kJxEV1Uh1Qv8u5vghSMJ9RFB6cNxRHVjKqc8tol+xw2FLOLUgNQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R2rdK+wRgWE4XapvHb46CP21Pum9bwGTE/xiNWb+AbM=;
+ b=TQZ8fs+Lz9RTs7SQdg6db9vE/xHtMqRG41nQ9EqfaeMAR5gMf3ZxJ9e2UVis8/YgjT02+IhsqB2UVAH72JBABgyJJ8ycDztJcSz8flgVp+lXGOD5MbnScy4redVny36ZT+cq+z5fXXy7SdCYkMMJYBNgtlQQ5LuDHoup2o1dYnM=
+Received: from CH0PR04CA0020.namprd04.prod.outlook.com (2603:10b6:610:76::25)
+ by CH3PR12MB9342.namprd12.prod.outlook.com (2603:10b6:610:1cb::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Wed, 18 Sep
+ 2024 10:52:18 +0000
+Received: from CH1PEPF0000AD82.namprd04.prod.outlook.com
+ (2603:10b6:610:76:cafe::c5) by CH0PR04CA0020.outlook.office365.com
+ (2603:10b6:610:76::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.30 via Frontend
+ Transport; Wed, 18 Sep 2024 10:52:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH1PEPF0000AD82.mail.protection.outlook.com (10.167.244.91) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7918.13 via Frontend Transport; Wed, 18 Sep 2024 10:52:18 +0000
+Received: from airavat.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 18 Sep
+ 2024 05:51:18 -0500
+From: Raju Rangoju <Raju.Rangoju@amd.com>
+To: <broonie@kernel.org>, <linux-spi@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <sanju.mehta@amd.com>,
+	<krishnamoorthi.m@amd.com>, <akshata.mukundshetty@amd.com>,
+	<Raju.Rangoju@amd.com>
+Subject: [PATCH 0/9] spi: spi_amd: Performance Optimization Patch Series
+Date: Wed, 18 Sep 2024 16:20:28 +0530
+Message-ID: <20240918105037.406003-1-Raju.Rangoju@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240918032246.9147-1-shenlichuan@vivo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD82:EE_|CH3PR12MB9342:EE_
+X-MS-Office365-Filtering-Correlation-Id: 93663559-ec8a-464c-cf58-08dcd7cff728
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aVc3K1VXRVU1WHVJYmd5TGJFdjVWM0RjaGFkNDEyU09KOVBNUGhVS3ErNjFE?=
+ =?utf-8?B?NnJ5bElNREN1ZUtFdGEvdmk3L25Qc1orKzZJbWUzODBtVkU1eU1BMkFEZHUx?=
+ =?utf-8?B?SXliMzVnZUN6cndQaEFPMExWRXRDNlRUOFNFV2JHQ2NxUXc4NHBlRnIrU2ps?=
+ =?utf-8?B?U0FQaVVCbHBPVWJ4d25JWnRJbWZzUTNVcFBkM0syOHpFR3g2UXgvbFFKY2Ro?=
+ =?utf-8?B?SFBIK2tnZWtIQm8vdSt2SHFTK09qYTFROXFWZmhqWkRGcDd3eUpRYjg5SlNF?=
+ =?utf-8?B?QmRaTWRWdVN1anE3MTNZOWw4N1Q2YVBpWkZtUUpnM0NMb2VERHhKR085UzRm?=
+ =?utf-8?B?WjNCZkRTSytFM2g0b3VCMkEva3N0ZzUvM2dYcWxMZnFLUktSMjlMcC85VmZE?=
+ =?utf-8?B?dHVodGx4andwOEhmNjlseit5WkVjakFBM0lCdU1hTS9aVDV1aFNYWHhacnY4?=
+ =?utf-8?B?b2h1UFcrYk9CR1R1MW8zL1lrT09DbldkcnFPWHMwN29jK3NhNjc0MTcweldi?=
+ =?utf-8?B?TEtVcElZaEd2bTFJcmR1ZFdrS0UzZnFRcGZFR0FNa1VlRTFXNlNzMStPZW5o?=
+ =?utf-8?B?TWxlUlpLNHVGc01wYmVkdFVQZXJMSFZ6R25KWWczWmwrMnkxZmhhOW85NEdU?=
+ =?utf-8?B?Y0t6eUtaT20wNWVzTnZVVThHRy9keEhzNWg3d2RkbnBHbDkwdkNyR0JZM01F?=
+ =?utf-8?B?VmphQlNBVHlvQ2NaMTVNN3AyVlMzRXZXNmZMWElSWDJxWjJock8yUU9sVVhE?=
+ =?utf-8?B?UTU3QTgyTGlaUmZxSEU4azA0aHZ3c002dXZWWk5qOUUyL2gwM2ZFbVdMRE5z?=
+ =?utf-8?B?ZjNReERlV09MSkxlWDJiSmdOR2ViV3B5aVludWoxVUFjUnJhUVd3T2xvSkNH?=
+ =?utf-8?B?QUVrcC85dlo3dWxkZ09IVzNtZVBPNEJzemVvZjJxMFhVTSszdHBpb1pkZGNM?=
+ =?utf-8?B?ajIwY1M3Y1ZPQzZHVWJYWHRtU2JhcDhtdWtZRTdtWGU1a2FkdE5ZcENmdkY1?=
+ =?utf-8?B?VS92RkNGaXZkMHk0QkNEdEdCRDNweTRYenFIcGtrWTVXY0gzWG5uUFZsMkJL?=
+ =?utf-8?B?Z0l1NFA5TWc3aE85OUduVEIwY1JPcXExekcyQ1RLMTlCeFRZaUM4eUFIQU82?=
+ =?utf-8?B?b0pRUUhMV2dxVXJqSkU1VzFQYmVqNVVjTU5xd0dpTERYZVhRWGZyUDVYbmdy?=
+ =?utf-8?B?QkVXbVE4dEs2M2M0UHlvZGV0YXhZc1pVRVVoVDlyYXJLZndDYWwyc2RvQ1R5?=
+ =?utf-8?B?S2dFdTFURmVScDhrcVF3Y0JaWFVLNk9WMXVDWUlLVlFQK3lXdE9ESzR1K1FV?=
+ =?utf-8?B?aVg5NXJwMCtwV1RDOFJRVnZuaGZXUkROcFlLZ3hYVGdlR0JvMjhZK0ttUmJN?=
+ =?utf-8?B?MXRHRkF3RzhrVGZRd2dNMU5GdGJBeVdhRE45ZUNKZjVDU3BTS1JZelltcEU0?=
+ =?utf-8?B?clR2cUNkYzRRaXJkNmlCdnI1N0R2elFDNktWSWRuNHh1dnAxcERGTzYycFoz?=
+ =?utf-8?B?Q3kzTVB6R1FJYW9RYjRnSGY2aXVWWUwrZ1ByNW1CNGhEcTgra2FaRHlWWnh3?=
+ =?utf-8?B?Y1FRNXM1TjJTcGcrTFFOTkwvaVg3TzVCT20vaFd4OWRQZmFXZkxVUFRyeVVC?=
+ =?utf-8?B?WTVXMkFFNnR2d3JkazZxNWVYOVphY1VNMDUvNm5oY3R1anFtNEhlbGtJTm9o?=
+ =?utf-8?B?U2tRNXA5V0pBenBrWVdQNm9lSjFTRVd4VWRuSFZvcndBNHlMcFRJdHNBTTQr?=
+ =?utf-8?B?dG5TRHc4ajV6d2ZGSFlobE41eUd4djg1ZXk0bWI5RzhyL1pFbUZQeGxHaE9Z?=
+ =?utf-8?B?UFA2ZTV6ZjM0OHd2b2dSbE1wdUYrYVMrVUFTb1hWNzNIZTZoQ25EaFFwRHUr?=
+ =?utf-8?B?UDFTdHRvNS8zclpHNERqeGx1YVVvSkxDeVpuY3pvTFllTUhPUDRWa0F4V3B0?=
+ =?utf-8?Q?sdt0NyBlXnwkKXoXmW40T37borXAOPS4?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 10:52:18.3835
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 93663559-ec8a-464c-cf58-08dcd7cff728
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD82.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9342
 
-On Wed, Sep 18, 2024 at 11:22:46AM +0800, Shen Lichuan wrote:
-> To ensure code clarity and prevent potential errors, it's advisable
-> to employ the ';' as a statement separator, except when ',' are
-> intentionally used for specific purposes.
-> 
-> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+AMD SPI controller’s index mode performance is constrained by the hardware
+limitation of the FIFO queue length. This patch series introduces
+optimizations to the spi_amd driver, aiming to maximize throughput and
+enhance overall performance. The changes includes,
 
-Applied, thank you.
+- Enabling SPI dual and quad I/O modes
+- Optimize I/O operations using efficient kernel APIs
+- Optimize I/O operations by optimizing set tx/rx count functions
+- Optimize I/O operations by reducing the data read calls to fetch the
+data from FIFO queues
+- Add changes to support AMD HID2 SPI controller
+- Add changes to enhance SPI-MEM support functions to reflect hardware
+capabilities
+- Add changes to set SPI controller address mode before initiating the
+commands
+- Add changes to implement HIDDMA read operation support for HID2 SPI
+controller
+
+Raju Rangoju (9):
+  spi: spi_amd: Sort headers alphabetically
+  spi: spi_amd: Enable dual and quad I/O modes
+  spi: spi_amd: Replace ioread/iowrite calls
+  spi: spi_amd: Updates to set tx/rx count functions
+  spi: spi_amd: Optimize IO operations
+  spi: spi_amd: Add support for HID2 SPI controller
+  spi: spi_amd: Enhance SPI-MEM support functions
+  spi: spi_amd: Set controller address mode
+  spi: spi_amd: Add HIDDMA basic read support
+
+ drivers/spi/spi-amd.c | 325 ++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 295 insertions(+), 30 deletions(-)
 
 -- 
-Dmitry
+2.34.1
+
 
