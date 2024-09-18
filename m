@@ -1,93 +1,81 @@
-Return-Path: <linux-kernel+bounces-332885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2526797C04C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:09:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C9297C04F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D830F283800
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:08:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D32EC1F228B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E1C1CA6A1;
-	Wed, 18 Sep 2024 19:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9868B1CA6A1;
+	Wed, 18 Sep 2024 19:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PdAgvYU0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sj02ZxUN"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC72E1C9848;
-	Wed, 18 Sep 2024 19:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D671C9848;
+	Wed, 18 Sep 2024 19:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726686528; cv=none; b=RUabuT9MalgilKzR6+XVQFblbRdWHGbg724xfXYCUSSdto4VI5DMrbDrSsMDw8vxtIRsyCf6BkyXTzb9X1i/b+v06jqPIlyo4yr8VviIZKUBNuxWmdt/dKMZqVED1EV10PMpJmHlK0NAf2otXwUfJUp74mH4sDCFA6Jh3dJWbU8=
+	t=1726686580; cv=none; b=OsDnfX40d/OD0v3nc156LkvX/3zJZefKXHMmVlqEqHLIPT+0WHSv+lOtCcopdSISCI9k9vf+LI9srz8+uq0AT79nIacHpruSrZu6tMvLlydPct0jaNe0XvZyMbc+vM8SO+c5NtXerb8X1hSeMRd2CKZvJHQloRTYQK+DEjjoNG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726686528; c=relaxed/simple;
-	bh=jiSr/3bRQvO46NDAj1FS7wvhNJZPRxUey4jB9tQEUxI=;
+	s=arc-20240116; t=1726686580; c=relaxed/simple;
+	bh=QPpFx0Q3zKnneD2ii8FC7UChFgp+otrhwFBO4M1w0U8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qdfT+6jtD0hqfocUQOxj68DBV1Qb5zguBN3tisUkp6HyiSGR3KxXTp1fT3Wfu08M8zevccFUgCKF15w75gCSiPHcjxa1okQgvti0XbFLlS9rX+t7SIsrGtU+08xiuQ9b8k0fpdiBYrKyk0iiYJTcGI56XQli3zAqL5g4iJp4qew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PdAgvYU0; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726686527; x=1758222527;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jiSr/3bRQvO46NDAj1FS7wvhNJZPRxUey4jB9tQEUxI=;
-  b=PdAgvYU0o3OQGDX68JqjyfnQm/Xpqhb1NCg9cWZ7CXk9A60EkzHgDYbl
-   mwbg/frT7rUViUG9pGe07p/xnFMi9qgzgbucXa5SxBd4sNuWr1yP//MmI
-   f1DB70vx9GH0sWGRVS4YIJuoH5+L/xd0nr54sD/hpOrnaDGKo8+Lp38WA
-   4nAelBsDsJjiPLZzNeI8+ZhfIBzqck7aI9aTQ9KFCNR/idpV3vmpt1xCx
-   Ki0y2MyHmldfU1Qp0GMmDeMG6e16si8CtGYSfToE37Sq1t+FHlrk8mOyy
-   rJEY7hoE6q0ybxG6o7crZExu1mTzQyvR+fzjriNYXISTSv3aEo7i7gOda
-   w==;
-X-CSE-ConnectionGUID: NYGkuzGOQi2TAq8HTRxHeQ==
-X-CSE-MsgGUID: hDOMIjuFRVSyPjxkULzy7g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11199"; a="36194252"
-X-IronPort-AV: E=Sophos;i="6.10,239,1719903600"; 
-   d="scan'208";a="36194252"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 12:08:44 -0700
-X-CSE-ConnectionGUID: E2/7ThRkRaOBRTJVwSLyGw==
-X-CSE-MsgGUID: OO27+qXXTP69v+TQeImesw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,239,1719903600"; 
-   d="scan'208";a="92975592"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 18 Sep 2024 12:08:39 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sr02W-000CXe-0w;
-	Wed, 18 Sep 2024 19:08:36 +0000
-Date: Thu, 19 Sep 2024 03:07:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	David Hildenbrand <david@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
-	linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Naoya Horiguchi <nao.horiguchi@gmail.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH V2 4/7] mm: Use pmdp_get() for accessing PMD entries
-Message-ID: <202409190244.JcrD4CwD-lkp@intel.com>
-References: <20240917073117.1531207-5-anshuman.khandual@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GrByxp7iHkdSXlIEvF2Xebm9XqVi6JHsuF4sXPygiYm8eJ8rp/b7Q3li/bxHcMmEUxmzBPjbcmlRWgl6NNIcSPUFcDa93OSPX6kHmod6YK2H3NdfomymxvUDO5W8U4O4g7Zgb7FabNoXL09NietnfxcGZMZWdy0Yc49zMV93pgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sj02ZxUN; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5365a9574b6so47775e87.1;
+        Wed, 18 Sep 2024 12:09:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726686576; x=1727291376; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iVtVjN7ESleHAw6Xqn4v8byziIaTNLaTeqcfWiwPJ1Q=;
+        b=Sj02ZxUNdW0Rl82JOCNaiSx/cNXaokvjf2dYYoLVh8wNrqJBDi79r39J+nheuhWLYW
+         /DQ9YmI1FbepihCLZ/LoOwmy4Dc638gCsbB0nVgoo95NG/JivizmSMF0bTW05IeFp6cA
+         eq2Bx1CrThZeqrxIIVI91rOtK8LJIQK1Q+FUr/bQZaLjwIX9krGgzh6Yz/cg/YnkQYvY
+         phiiXhvV4fVtliOUaoDAS/WF2K6QvhV/LQy52+Mhp4OS/dKIA26ZPCUb0Cdx9eUV57NN
+         OOrD2Sg8m7HHomxmlAM3Qs3KwfxBx0GEPgC71QcFjQn2C2UMZkl3r+BlhESmbCBmjFDh
+         +Gww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726686576; x=1727291376;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iVtVjN7ESleHAw6Xqn4v8byziIaTNLaTeqcfWiwPJ1Q=;
+        b=qZZw9x1cG6o/xuPdBYDha9meVF7smgjIJMtM+qsnw4mEEoFNs8VGVjL280KOHTgIz3
+         Od9cwHyNdTxt0e+kEyudnVQrxrEsRymKkKvc+BOaEPrsCqIusf+s6gPcxEZ2fx7aTLzJ
+         0x5Yce0ZIkqFxp8CUfsJE1ulSQ+CNkVce+xx+ZrsVGvHBcwbNeIMDHNPTs4tcNmZgIxV
+         OjUBbT3P2t2VFBKhM2wY/eymjNM8UoA+6niKJ2/cUqljOzXe1ea4OxDQwmy2jKUqFsmI
+         vIOVGyglglUnK0Sf3J6jgCHUOEPp/wmj/iKXfg4G+SUCHftZ0V4nT8TxFdW0rucxrdDn
+         GLBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWedwAtIWCAyJfS1EjLMcbt8SZpLTQmaE2XgVeJCG4rLuBUh8TgTfKXCOuml30AY1ZXRTTETuIgQ/wZvWNrfow=@vger.kernel.org, AJvYcCWqnezn7G54mL8gy/FgGkuUlYnoLbR2FNJXGxhvqmHLvaxcYFecWpd+GzEux2e8vs0dRdW0LIkABiccr1aRt5Q=@vger.kernel.org, AJvYcCX4Hi5jiTn32didp/XP7pxuIVW5Efqzx1ryfnwqafpYU48av0FMm/QspCxZ8jmbLSKS4QSJcXrJHiBVEqaQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk0lXasxGeSSMAOAs/ULdKYEagPm4FmXj9Leuvn9Rn3ErhStQf
+	dp7s9JDcljTfLuDbmS8F0Ymxh1ykGPmeYRJ2vTX8VoV7q4MovyZl
+X-Google-Smtp-Source: AGHT+IH4UUvSM6UbmwH34UJUS7NKgR1HZ30Q5WoW8wpvn/NMYyaAkRUvTTcGy8eMHUJH3StbRfSFaw==
+X-Received: by 2002:a05:6512:238b:b0:52e:932d:88ab with SMTP id 2adb3069b0e04-5367fee25a8mr15659135e87.23.1726686576008;
+        Wed, 18 Sep 2024 12:09:36 -0700 (PDT)
+Received: from void.void ([37.46.46.21])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061330d48sm621347066b.207.2024.09.18.12.09.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 12:09:35 -0700 (PDT)
+Date: Wed, 18 Sep 2024 22:09:32 +0300
+From: Andrew Kreimer <algonell@gmail.com>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Loic Poulain <loic.poulain@linaro.org>, wcn36xx@lists.infradead.org,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] wifi: wcn36xx: fix a typo
+Message-ID: <ZuslbC6xlP_fUFfi@void.void>
+References: <20240913094319.13718-1-algonell@gmail.com>
+ <172667909414.4089263.7060582994040911136.kvalo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,77 +84,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240917073117.1531207-5-anshuman.khandual@arm.com>
+In-Reply-To: <172667909414.4089263.7060582994040911136.kvalo@kernel.org>
 
-Hi Anshuman,
+On Wed, Sep 18, 2024 at 05:04:55PM +0000, Kalle Valo wrote:
+> Andrew Kreimer <algonell@gmail.com> wrote:
+> 
+> > Fix a typo in comments.
+> > 
+> > Reported-by: Matthew Wilcox <willy@infradead.org>
+> > Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> > Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> 
+> The subject should be unique so in the pending branch I changed it to:
+> 
+Thank you.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on char-misc/char-misc-testing]
-[also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus brauner-vfs/vfs.all dennis-percpu/for-next linus/master v6.11]
-[cannot apply to akpm-mm/mm-everything next-20240918]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Anshuman-Khandual/m68k-mm-Change-pmd_val/20240917-153331
-base:   char-misc/char-misc-testing
-patch link:    https://lore.kernel.org/r/20240917073117.1531207-5-anshuman.khandual%40arm.com
-patch subject: [PATCH V2 4/7] mm: Use pmdp_get() for accessing PMD entries
-config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240919/202409190244.JcrD4CwD-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240919/202409190244.JcrD4CwD-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409190244.JcrD4CwD-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/asm-generic/bug.h:22,
-                    from arch/openrisc/include/asm/bug.h:5,
-                    from include/linux/bug.h:5,
-                    from include/linux/mmdebug.h:5,
-                    from include/linux/mm.h:6,
-                    from include/linux/pagemap.h:8,
-                    from mm/pgtable-generic.c:10:
-   mm/pgtable-generic.c: In function 'pmd_clear_bad':
->> arch/openrisc/include/asm/pgtable.h:369:36: error: lvalue required as unary '&' operand
-     369 |                __FILE__, __LINE__, &(e), pgd_val(e))
-         |                                    ^
-   include/linux/printk.h:437:33: note: in definition of macro 'printk_index_wrap'
-     437 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                                 ^~~~~~~~~~~
-   arch/openrisc/include/asm/pgtable.h:368:9: note: in expansion of macro 'printk'
-     368 |         printk(KERN_ERR "%s:%d: bad pgd %p(%08lx).\n", \
-         |         ^~~~~~
-   include/asm-generic/pgtable-nop4d.h:25:50: note: in expansion of macro 'pgd_ERROR'
-      25 | #define p4d_ERROR(p4d)                          (pgd_ERROR((p4d).pgd))
-         |                                                  ^~~~~~~~~
-   include/asm-generic/pgtable-nopud.h:32:50: note: in expansion of macro 'p4d_ERROR'
-      32 | #define pud_ERROR(pud)                          (p4d_ERROR((pud).p4d))
-         |                                                  ^~~~~~~~~
-   include/asm-generic/pgtable-nopmd.h:36:50: note: in expansion of macro 'pud_ERROR'
-      36 | #define pmd_ERROR(pmd)                          (pud_ERROR((pmd).pud))
-         |                                                  ^~~~~~~~~
-   mm/pgtable-generic.c:54:9: note: in expansion of macro 'pmd_ERROR'
-      54 |         pmd_ERROR(pmdp_get(pmd));
-         |         ^~~~~~~~~
-
-
-vim +369 arch/openrisc/include/asm/pgtable.h
-
-61e85e367535a7 Jonas Bonn 2011-06-04  363  
-61e85e367535a7 Jonas Bonn 2011-06-04  364  #define pte_ERROR(e) \
-61e85e367535a7 Jonas Bonn 2011-06-04  365  	printk(KERN_ERR "%s:%d: bad pte %p(%08lx).\n", \
-61e85e367535a7 Jonas Bonn 2011-06-04  366  	       __FILE__, __LINE__, &(e), pte_val(e))
-61e85e367535a7 Jonas Bonn 2011-06-04  367  #define pgd_ERROR(e) \
-61e85e367535a7 Jonas Bonn 2011-06-04  368  	printk(KERN_ERR "%s:%d: bad pgd %p(%08lx).\n", \
-61e85e367535a7 Jonas Bonn 2011-06-04 @369  	       __FILE__, __LINE__, &(e), pgd_val(e))
-61e85e367535a7 Jonas Bonn 2011-06-04  370  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> wifi: wcn36xx: fix a typo in struct wcn36xx_sta documentation
+> 
+> -- 
+> https://patchwork.kernel.org/project/linux-wireless/patch/20240913094319.13718-1-algonell@gmail.com/
+> 
+> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+> https://docs.kernel.org/process/submitting-patches.html
+> 
 
