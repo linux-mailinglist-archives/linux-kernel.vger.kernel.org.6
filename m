@@ -1,223 +1,130 @@
-Return-Path: <linux-kernel+bounces-332693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D8597BD48
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:47:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD12297BD4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C9011C22477
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:47:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EFFF2834B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4638118A920;
-	Wed, 18 Sep 2024 13:47:33 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5704F18A920;
+	Wed, 18 Sep 2024 13:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="akTmxwdM"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA28184114
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57084176ABB
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726667252; cv=none; b=igEpOyyilUYyy4l77dzLhAQ82ls+kBHOJX7i4fjcSAdenpiYljz45ww35O80oPH2nNlx+O1mMtDJwgrEyiFc0sGuxczoTZ5fgoj2ruggu93KRmj56aQPjvkzbz6XtGwWgMNdIwVyEMn+rQ0k3P2LN8EJaXH6kilnadV2tsR6Gwc=
+	t=1726667286; cv=none; b=AE3O5Zuqw7OIG9aRRl1RmHIj8j9QqjCuPcRqA3IPrvwsy9VdmNQWKhjxIGqtzXry595BBgZOOK0S3qV+o/v+dmGVLNL9hcG+SgHO0HsaxjQaRcH7hRTJNd9Bj7UMrXZ+fMctlKOpBVbU30N2t7/qsAJifdgkuuP6t10f/zZ5juQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726667252; c=relaxed/simple;
-	bh=VSYoPUDkBCLeeK1AefraDlzO7u9/y4Gr23ZZ4SDCARg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bimitXpQbP0s2OEuRElalFDTNLG20MNSLC/+PL5l/w+6E+3cIIfuj4cxx5X7gv3uJa/BKFa+x0tySl9+qRUht1NXzepgOW3cqzvzrm+tZEYp/ZF2JS2Sy7L8lFrhd877e5J5Qa2iSlApVewvXQ+r5w7c6kTRQ2TrUgobRUJ7gPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4X80MG5tqDz9sVq;
-	Wed, 18 Sep 2024 15:47:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id Ylb4EsR4YRR3; Wed, 18 Sep 2024 15:47:22 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4X80MG4bnGz9sVf;
-	Wed, 18 Sep 2024 15:47:22 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8BECF8B776;
-	Wed, 18 Sep 2024 15:47:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id LVZBc5wuqCZJ; Wed, 18 Sep 2024 15:47:22 +0200 (CEST)
-Received: from [172.25.230.108] (unknown [172.25.230.108])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 573B88B775;
-	Wed, 18 Sep 2024 15:47:22 +0200 (CEST)
-Message-ID: <7f1dfb0f-85ca-4251-96df-c8d4b923c4fd@csgroup.eu>
-Date: Wed, 18 Sep 2024 15:47:22 +0200
+	s=arc-20240116; t=1726667286; c=relaxed/simple;
+	bh=8NzT2njURVAodVDWsNDB2bqu8nvesd7OC/MB8WdRBd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZpB0pnPYUW368BjvIf29Bb6eNu+/NRLt/n8C4PQLxRnVEQipoiDAYJFaLjjvP438++EwTd55DKdzftXXRlxys7wLrPzGDdyn3dk+/2Yn59dngZyK7HcE261g0JHf4i0KbkMSk4zXVDe2dwb5wHxwz8MeNc0IAq+OBJ7+F6vR2iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=akTmxwdM; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7A8041C0013;
+	Wed, 18 Sep 2024 13:48:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726667282;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TvpWoQXAYtUPd9EY76fswMQOKLOSqERrVd3F2SkMjkI=;
+	b=akTmxwdMuiZEErfM02jtFIUMh43UIxfDd11v7OJBJbewtnqjma2PuaxZayXGLiL8Nwg1DL
+	sRNwb+9s9u+p5usq/rRgrWoQDX6+8fhTMMElzqjSPO9g9kbG/gt3zBTApwP5TYtnPyhykM
+	KvJFqRYOfdtQf360fz+Hw2P0hQSLWxE1GhEDAdKWi2+1whnHz1GEHmSLW7EVp/ArGRDuEo
+	jZaaPldqSu/kmvuqygI3/V3l52VfQe1pvwmMeG/IKrjqnfn5oaOSVPpjX09B1Chk+xvsQF
+	b6Z1dwTcU6EV8ZGO2GiQNjASjNjEWC2rIoKTlOs5tfrKzcE+EvT1irnws9rygA==
+Date: Wed, 18 Sep 2024 15:47:59 +0200
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+Cc: airlied@gmail.com, arthurgrillo@riseup.net, daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org, hamohammed.sa@gmail.com,
+	jeremie.dautheribes@bootlin.com, linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com, mairacanal@riseup.net,
+	melissa.srw@gmail.com, miquel.raynal@bootlin.com,
+	mripard@kernel.org, nicolejadeyee@google.com,
+	rodrigosiqueiramelo@gmail.com, seanpaul@google.com,
+	thomas.petazzoni@bootlin.com, tzimmermann@suse.de
+Subject: Re: [PATCH v3 0/4] drm/vkms: Switch all vkms object to DRM managed
+ objects
+Message-ID: <ZuraD0t6KZTGTFng@localhost.localdomain>
+Mail-Followup-To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
+	airlied@gmail.com, arthurgrillo@riseup.net, daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org, hamohammed.sa@gmail.com,
+	jeremie.dautheribes@bootlin.com, linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com, mairacanal@riseup.net,
+	melissa.srw@gmail.com, miquel.raynal@bootlin.com,
+	mripard@kernel.org, nicolejadeyee@google.com,
+	rodrigosiqueiramelo@gmail.com, seanpaul@google.com,
+	thomas.petazzoni@bootlin.com, tzimmermann@suse.de
+References: <20240912-google-vkms-managed-v3-0-7708d6ad262d@bootlin.com>
+ <20240917160242.2959-1-jose.exposito89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] powerpc/entry: convert to common and generic entry
-To: Luming Yu <luming.yu@shingroup.cn>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- mpe@ellerman.id.au, npiggin@gmail.com, jialong.yang@shingroup.cn,
- luming.yu@gmail.com
-References: <B4ABABEA5F13B86A+20240912082500.1469-1-luming.yu@shingroup.cn>
- <fc509bcd-5ca0-4dc2-962e-766a01cbe4fb@csgroup.eu>
- <153FD6B5CE4F97D9+ZuOYDQ-iHIIwJjbh@HX09040029.powercore.com.cn>
- <95ced963-b584-4ccf-ba34-8f2ba99172f4@csgroup.eu>
- <0332BAE1905768B6+ZuPsBvgv0nwmFAjW@HX09040029.powercore.com.cn>
- <854eef54-4779-4233-a958-0c98ae5fcb7e@csgroup.eu>
- <F81D1486B7B82141+ZuQp4YQkAA2cB9Rw@HX09040029.powercore.com.cn>
- <81200b50-eaec-4cfd-9121-f661f3065572@csgroup.eu>
- <9B5E7C0A7C4BFBF0+ZuTzanfk7BcYoFas@HX09040029.powercore.com.cn>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <9B5E7C0A7C4BFBF0+ZuTzanfk7BcYoFas@HX09040029.powercore.com.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240917160242.2959-1-jose.exposito89@gmail.com>
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Hi,
-
-Le 14/09/2024 Ã  04:22, Luming Yu a Ã©critÂ :
-> On Fri, Sep 13, 2024 at 02:15:40PM +0200, Christophe Leroy wrote:
->>
->>
->> Le 13/09/2024 Ã  14:02, Luming Yu a Ã©critÂ :
->>
->>>> ...
->>>> nothing happens after that.
->>> reproduced with ppc64_defconfig
->>> [    0.818972][    T1] Run /init as init process
->>> [    5.851684][  T240] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
->>> [    5.851742][  T240] kworker/u33:18 (240) used greatest stack depth: 13584 bytes left
->>> [    5.860081][  T232] kworker/u33:16 (232) used greatest stack depth: 13072 bytes left
->>> [    5.863145][  T210] kworker/u35:13 (210) used greatest stack depth: 12928 bytes left
->>> [    5.865000][    T1] Failed to execute /init (error -8)
->>> [    5.868897][    T1] Run /sbin/init as init process
->>> [   10.891673][  T315] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
->>> [   10.894036][    T1] Starting init: /sbin/init exists but couldn't execute it (error -8)
->>> [   10.901455][    T1] Run /etc/init as init process
->>> [   10.903154][    T1] Run /bin/init as init process
->>> [   10.904747][    T1] Run /bin/sh as init process
->>> [   15.931679][  T367] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
->>> [   15.934689][    T1] Starting init: /bin/sh exists but couldn't execute it (error -8)
->>
->> That's something different, this is because you built a big-endian kernel
->> and you are trying to run a little-endian userspace.
-> okay
->>
->> Does it work with ppc64le_defconfig ?
-> make ppc64le_defconfig
+Le 17/09/24 - 18:02, José Expósito a écrit :
+> Hi Louis,
 > 
-> yes, it builds && boots just fine.
-> the host is a p8 powernv system , the qemu command line is as below:
-> qemu-system-ppc64 -m 64g -smp 16,cores=4,threads=4 --enable-kvm  -nographic -net nic -net tap,ifname=tap0,script=/etc/qemu-ifup-nat,downscript=/etc/qemu-ifdown-nat  Downloads/Fedora-Cloud-Base-38-1.6.ppc64le.qcow2
+> Thanks for making this change even more atomic.
+> 
+> > To simplify the memory managment this series replace all manual drm 
+> > object managment by drm-managed one. This way the VKMS code don't have to 
+> > manage it directly and the DRM core will handle the object destruction.
+> > 
+> > No functional changes are intended in this series. This series depends on 
+> > [1] (for writeback connector) and [2] (for cleaning code).
+> > 
+> > PATCH 1/4: Migrate connector managment to drmm
+> > PATCH 2/4: Migrate encoder managment to drmm
+> > PATCH 3/4: Migrate connector management to drm
+> > PATCH 4/4: Migrate writeback connector management to drm
+> > 
+> > [1]: https://lore.kernel.org/all/20240906-writeback-drmm-v1-1-01ede328182c@bootlin.com/
+> > [2]: https://lore.kernel.org/all/20240906-vkms-remove-index-v1-1-3cfedd8ccb2f@bootlin.com/
+> > 
+> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> 
+> The 4 patches:
+> Reviewed-by: José Expósito <jose.exposito89@gmail.com>
 
-With that command you don't boot a freshly built kernel, you boot:
-
-Linux version 6.2.9-300.fc38.ppc64le 
-(mockbuild@0e2dbea752814aea985bdc5347ce35da) (gcc (GCC) 13.0.1 20230318 
-(Red Hat 13.0.1-0), GNU ld version 2.39-9.fc38)
-
-Are you sure you tried with the ppc64le_defconfig ? On my side the boot 
-fails as follows when using a ppc64le_defconfig vmlinux with the file 
-Fedora-Cloud-Base-38-1.6.ppc64le.qcow2:
-
-...
-[    2.602758][    T1] md: autorun ...
-[    2.602808][    T1] md: ... autorun DONE.
-[    2.612596][  T189] kworker/u73:0 (189) used greatest stack depth: 
-29008 bytes left
-[    2.617068][    T1] /dev/root: Can't open blockdev
-[    2.618136][    T1] VFS: Cannot open root device "" or 
-unknown-block(0,0): error -6
-[    2.618239][    T1] Please append a correct "root=" boot option; here 
-are the available partitions:
-[    2.618611][    T1] 0100           65536 ram0
-[    2.618768][    T1]  (driver?)
-[    2.619101][    T1] 0101           65536 ram1
-[    2.619120][    T1]  (driver?)
-[    2.619187][    T1] 0102           65536 ram2
-[    2.619199][    T1]  (driver?)
-[    2.619251][    T1] 0103           65536 ram3
-[    2.619261][    T1]  (driver?)
-[    2.619312][    T1] 0104           65536 ram4
-[    2.619322][    T1]  (driver?)
-[    2.619372][    T1] 0105           65536 ram5
-[    2.619382][    T1]  (driver?)
-[    2.619436][    T1] 0106           65536 ram6
-[    2.619447][    T1]  (driver?)
-[    2.619500][    T1] 0107           65536 ram7
-[    2.619519][    T1]  (driver?)
-[    2.619571][    T1] 0108           65536 ram8
-[    2.619581][    T1]  (driver?)
-[    2.619631][    T1] 0109           65536 ram9
-[    2.619641][    T1]  (driver?)
-[    2.619690][    T1] 010a           65536 ram10
-[    2.619700][    T1]  (driver?)
-[    2.619754][    T1] 010b           65536 ram11
-[    2.619764][    T1]  (driver?)
-[    2.619818][    T1] 010c           65536 ram12
-[    2.619827][    T1]  (driver?)
-[    2.619880][    T1] 010d           65536 ram13
-[    2.619889][    T1]  (driver?)
-[    2.619942][    T1] 010e           65536 ram14
-[    2.619952][    T1]  (driver?)
-[    2.620023][    T1] 010f           65536 ram15
-[    2.620036][    T1]  (driver?)
-[    2.620116][    T1] 0b00         1048575 sr0
-[    2.620150][    T1]  driver: sr
-[    2.620221][    T1] 0800         5242880 sda
-[    2.620234][    T1]  driver: sd
-[    2.620310][    T1]   0801            4096 sda1 
-709431c7-74bd-4ec4-bbe8-d4f7e7e3194e
-[    2.620369][    T1]
-[    2.620449][    T1]   0802         1024000 sda2 
-e0b0a6de-ca8f-4e50-808c-121324c94d04
-[    2.620463][    T1]
-[    2.620531][    T1]   0803          102400 sda3 
-8ed2fbf1-fd2c-4ab0-b66f-d31df1d24e3e
-[    2.620544][    T1]
-[    2.620599][    T1]   0804            1024 sda4 
-46dc7fc8-bf10-4166-9bc8-98daabbec06d
-[    2.620610][    T1]
-[    2.620666][    T1]   0805         4109312 sda5 
-8a52b54b-c379-43a5-bf8d-a43fdef4a370
-[    2.620676][    T1]
-[    2.620838][    T1] List of all bdev filesystems:
-[    2.620884][    T1]  ext3
-[    2.620918][    T1]  ext2
-[    2.620947][    T1]  ext4
-[    2.620971][    T1]  msdos
-[    2.620995][    T1]  iso9660
-[    2.621018][    T1]  xfs
-[    2.621050][    T1]
-[    2.621311][    T1] Kernel panic - not syncing: VFS: Unable to mount 
-root fs on unknown-block(0,0)
-[    2.621992][    T1] CPU: 2 UID: 0 PID: 1 Comm: swapper/0 Not tainted 
-6.11.0-06480-gfabc9e955334 #1217
-[    2.622166][    T1] Hardware name: IBM pSeries (emulated by qemu) 
-POWER9 (architected) 0x4e1200 0xf000005 of:SLOF,HEAD pSeries
-[    2.622456][    T1] Call Trace:
-[    2.622574][    T1] [c000000003797ad0] [c000000001189fe8] 
-dump_stack_lvl+0xd8/0xf0 (unreliable)
-[    2.623575][    T1] [c000000003797b00] [c00000000014830c] 
-panic+0x2f8/0x4fc
-[    2.623666][    T1] [c000000003797ba0] [c000000002006858] 
-mount_root_generic+0x2c8/0x474
-[    2.623748][    T1] [c000000003797c70] [c000000002006f40] 
-prepare_namespace+0x94/0x3a4
-[    2.623804][    T1] [c000000003797d00] [c000000002005e7c] 
-kernel_init_freeable+0x4cc/0x530
-[    2.623896][    T1] [c000000003797de0] [c000000000011138] 
-kernel_init+0x34/0x26c
-[    2.623954][    T1] [c000000003797e50] [c00000000000debc] 
-ret_from_kernel_user_thread+0x14/0x1c
-[    2.624025][    T1] --- interrupt: 0 at 0x0
-[    4.502550][    T1] pstore: backend (nvram) writing error (-1)
-qemu-system-ppc64: OS terminated:
-
-
-Christophe
+Thanks!
+Louis Chauvet
+ 
+> > ---
+> > Changes in v3:
+> > - As suggested by Maxime, split the managed and the dynamic allocation 
+> >   parts in different series
+> > - To reduce the diff in this series, extract the "remove crtc index" part, 
+> >   see https://lore.kernel.org/all/20240906-vkms-remove-index-v1-1-3cfedd8ccb2f@bootlin.com/
+> > - Link to v2: https://lore.kernel.org/r/20240827-google-vkms-managed-v2-0-f41104553aeb@bootlin.com
+> > 
+> > Changes in v2:
+> > - Applied comments from José
+> > - Extract the rename vkms_output -> vkms_crtc to avoid useless changes in 
+> >   the last commit
+> > - Extract the rename to_vkms_crtc_state to
+> >   drm_crtc_state_to_vkms_crtc_state to avoid useless changes in last 
+> >   commit
+> > - Extract the drm_mode_crtc_set_gamma_size result check in its own commit
+> > - Rebased on drm-misc/drm-misc-next
+> > - Link to v1: https://lore.kernel.org/r/20240814-google-vkms-managed-v1-0-7ab8b8921103@bootlin.com> 
 
