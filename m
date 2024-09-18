@@ -1,126 +1,157 @@
-Return-Path: <linux-kernel+bounces-332721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB51D97BDB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:10:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA0B97BDB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:10:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 818FB1F231BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:10:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57224B22E1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D71218B47D;
-	Wed, 18 Sep 2024 14:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9955C18B497;
+	Wed, 18 Sep 2024 14:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxedo.de header.i=@tuxedo.de header.b="bPNd6doL"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="gP7FDy/F"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F87F9CB;
-	Wed, 18 Sep 2024 14:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF39F9CB;
+	Wed, 18 Sep 2024 14:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726668607; cv=none; b=fdAd9y4f45ZDEKLJH+Xr8epqBLImrVNBvOJXW9ohB/lDbONjt8gqpCTpOxq1+RipRK3K0a37JY7gJ+l8pGu1sSgcfJEvuUGeKec8wxgC4Sty2J0T57X6GG/PLmwnlU5qRe/6vYA/ACNefLJQHPLQif8PlyQUNiA4JGrjc+mX9/U=
+	t=1726668634; cv=none; b=dPT110NgJnGTGwccv5MW4W53VbOHw8XU/9i2+x3TB9daud1gcoKRQ5BQBz3N5rYX4lVxbjrF0J4ibVr5TtLn7lEv15b3kVsmf/1V3F3uZjAvzG030YKnTopnNGPVXPxsV1ug/aki+YxaQCh5oOOOgYfhFxQvw9HcCOri0OhU0Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726668607; c=relaxed/simple;
-	bh=13VMKhIv2lXRTCy5STsEsl6Vx30Qfx8Efz6mgtaPZwo=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=otspe0VZ7coO/Z35VA+K0i1rYdKplMzjuO8jP08aKh83gIF6wo5JdwOTMvEM4QeaIs+QTOVtkRr3GTC7HL0D3vxa/tvPAbQfk8PWT2R/Nt+PSUipUpG7YrCFa4+5xkMJMLz+gEx5qkkyHT73aWwehF+fCi62+GrVIdwJuYA5eBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tuxedo.de; spf=pass smtp.mailfrom=tuxedo.de; dkim=pass (2048-bit key) header.d=tuxedo.de header.i=@tuxedo.de header.b=bPNd6doL; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tuxedo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedo.de
-Received: from mail.tuxedocomputers.com (localhost [IPv6:::1])
-	(Authenticated sender: cs@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 1B98E2FC0173;
-	Wed, 18 Sep 2024 16:10:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedo.de; s=default;
-	t=1726668600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0n5gawmEzxr38cZdSrO5pp3uPMCaZrV3zJ4YL6eIaL4=;
-	b=bPNd6doLl6+drAkUVWagvecGNXjYiBWcFeoNu1sBezyUoG0Nz4F2jl8cZU8vM30tWG5VnZ
-	QeWO1PCIM986b9W3JH/GW77XX+QBV6NbNWwVkodd6tFh/lekcTOYf46piaYlm0cQ4waXN5
-	AvyWy9wyWeqxzpTamPxE3E+gxGUkqiOIApf1OzO3S7xzXZXfS6Oa9jrPXKwF3YEMCrG30m
-	wVrNUqOuxDaFsUELTtMWc2EaRr3wAtVuuMUbWEPjb+g0WwSdTequTzl9N3TlxmbRfA2S/U
-	mUkcilxp97v2KVeLs4oK96ikoeI+p/DLNe0pLBK9cR6mxqQ7LF6Nd+3CiocVYw==
+	s=arc-20240116; t=1726668634; c=relaxed/simple;
+	bh=3C11Kerkn3JS+3RbT9u+i6u+X/3/5jlEtqqKJ7FtdUM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QT/akZ9UMsV5/YlRh9TpEJcI7zIJDj6z+zkByUthXgJQse5C28PP5wJTmoWSs82Loiq22ZDicy4e6dOMXE6kSmtk4S0ngIrhk+gTBrba9IDBSiqA5I/zS7i0IZKOfMDgN6eA/iKtlW/vqUW44fZ9mK0pFg50ljfrYV105QPHZLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=gP7FDy/F; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726668623; x=1727273423; i=markus.elfring@web.de;
+	bh=xAF+viKco1ExEDRgTKCRdN6qb3Zg2cFwCgxgzdw6C5s=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=gP7FDy/FqBlxA0ipHExjNeeRdZevc8cUBYy25ONkVvC0LvQ4L+OOAdB3e32Yi1Ox
+	 qZ/jvYzZLV2jS4aSh5OXUvZXj9i8T4NlWNH6t7ME4deJk1+NZwG5DNQgrnXnDaxuM
+	 RIzHZoo5FVnmnjMbahdTmRMHQp4yAmEjxijL3RAlXn7rqXDjugm9pVfp0Hg7I/SzG
+	 lMtrwVFdvaCUnNu+zVjplpKS7Igp0YJsTOWk/NtZOwH6zps1adjslKbUioXN1/+57
+	 ZnDDAIFOotFEKKMdRUbPhDZczdEm6iaED775v0uCjJ3/7aOpypiUkHAfOA2Z2rsN/
+	 9DOK1bW1p8eSo1Jmdg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1McIki-1sGTdT0Q4i-00oU3u; Wed, 18
+ Sep 2024 16:10:23 +0200
+Message-ID: <4b4379e6-e341-46da-a951-57b31edf3997@web.de>
+Date: Wed, 18 Sep 2024 16:10:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 18 Sep 2024 16:10:00 +0200
-From: Christoffer Sandberg <cs@tuxedo.de>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Werner Sembach <wse@tuxedocomputers.com>, Jerry Luo
- <jerryluo225@gmail.com>, Christian Heusel <christian@heusel.eu>,
- regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>
-Subject: Re: [REGRESSION][BISECTED] Audio volume issues since 4178d78cd7a8
-In-Reply-To: <87r09hcbr0.wl-tiwai@suse.de>
-References: <c930b6a6-64e5-498f-b65a-1cd5e0a1d733@heusel.eu>
- <87jzfbh5tu.wl-tiwai@suse.de>
- <66dfd536-ae17-4d75-b514-7931a3734e54@gmail.com>
- <20f70c0a92a27db29f188e05c33ba82c@tuxedo.de>
- <1fbba03e-56b8-4e74-adf6-998e3a2d9dac@gmail.com>
- <87setxe68m.wl-tiwai@suse.de> <87r09he63e.wl-tiwai@suse.de>
- <dfb141e8-6afa-4d21-8cd4-f9a53e8a192e@tuxedocomputers.com>
- <87r09hcbr0.wl-tiwai@suse.de>
-User-Agent: Roundcube Webmail/1.4.15
-Message-ID: <cedb8758bb506bf9454b90eebcaaea24@tuxedo.de>
-X-Sender: cs@tuxedo.de
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH 2/2] dm-crypt: Use common error handling code in
+ crypt_set_keyring_key()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: dm-devel@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>, Ondrej Kozina <okozina@redhat.com>,
+ Waiman Long <longman@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <68ee5a00-888c-420f-a3a9-a556c19ee6eb@web.de>
+Content-Language: en-GB
+In-Reply-To: <68ee5a00-888c-420f-a3a9-a556c19ee6eb@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:w5sHG1W3937bh0DSYJK74Szc821M+zZ4Rw2ntxxIeCFCxP87JxB
+ nr7dwCiFo1hcByuH72ANjxTEsIGcTzFKs5SF85MTkYFXTmxCF+8SHv2hBaXDR2/80np7LWx
+ Z6sZXggO3QhkQlhO8BBjpXxAOJTXBD2LK0Ns4FjgX6/ZaDF/6DGSjB15hCKYCPI3TJvE6/G
+ ALq5tXc/+VMo9uOpQuGVQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:IFEZA55noi0=;5rQ29AH+BopRb54oFLdibqhwmv1
+ LDPCdKnhSd5vraldLehnUEWgTq25jQoOzHHTGn3GHUr2iwnIgy3ZHPPVTD1J27ieWrPRlySPJ
+ yV6DE5yKOWuF2iEAoSdkMRpzXGSJjpfdMqTdTYy19UKSafLYqWiKqtbd7x5HJYp5fZ9kvJXRY
+ wuDjnMe8dpuGAifK9BIA6h4j9dLKURdNanY3poflL/WySuY/4g3pylb5P8trw2TZSWbZn5YJw
+ a4nghBe5YC2YX8SLk80HKtxHYWvpLiI0qUTugKBGVpb8hY7RS81LyX4PGf7lmher5U2QFLkJG
+ oHIQGqBuMV4V6IHx7tkfIh69SnBgHBWtkATmkKpHg8qyqY81bKzkxuQhC8E6SlYboToKV9jGL
+ jhMYqSEUDOrr87eZRVYFwpDjekNctJ42NrmuoRYX8eIWQmQYJ4eR9WtXzRaelalBj5tvynWT7
+ JEEFKIl5ZupPMYDrdG8ipz4Q0+7SvwPkXBDzT4O/vlmWDNynmTWoR4YOyz8t4PFZA01fEW2QR
+ 81K+AnNLLTdT7nhhL9qLhIvA1gONtj6plxGwGYJasnMNYx0VY1ExKvmsEDYy2twcoPFgSuerd
+ 5Di3H0JfVj2nz071k8SAQtd5GzHumxGFdbZKLJZ5ym5FIg0hSJQZ8MRDLkFxompXTaDasqN9l
+ s/PB9dvz3xCB5NJJMBMC9+X6ZCPKB2JvoksFdyqwMWjSYn6+1OtKHkepFuKm8RsK/r75M/1/y
+ FCXqv48SzzMAQjgIwz8cSyP41TWqIPW8QqJix6XSGw07okiAhaNq5GmcQ12bOZPvMoqG+82tk
+ Y1lYbEwmlt4hcHHwtrzaT7ag==
 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2024 15:34:45 +0200
 
+Add a jump target so that a bit of exception handling can be better reused
+at the end of this function implementation.
 
-On 18.9.2024 15:49, Takashi Iwai wrote:
-> On Wed, 18 Sep 2024 15:39:28 +0200,
-> Werner Sembach wrote:
->> 
->> Hi
->> 
->> Am 18.09.24 um 10:09 schrieb Takashi Iwai:
->> > On Wed, 18 Sep 2024 10:06:01 +0200,
->> > Takashi Iwai wrote:
->> >> [...]
->> >> I don't see any relevant about the incorrect volumes by the suggested
->> >> commit, but at least we should avoid applying the quirk for a
->> >> non-existing speaker pin.
->> >>
->> >> Jerry, yours is with CX11970 (codec id 0x14f120d0), right?
->> 
->> Yes, at least for the preproduction sample of the Sirius Gen1 I have
->> at hand atm.
->> 
->> pciid is 2782:12c3
->> 
->> @Christoffer: I guess 2782:12c5 is for the Gen2?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/md/dm-crypt.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-Yes the other is for Sirius Gen2
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index dae2fe3cb182..3d2247cfd42b 100644
+=2D-- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -2614,8 +2614,8 @@ static int crypt_set_keyring_key(struct crypt_config=
+ *cc, const char *key_string
 
-> 
-> Hm, and one of those PCI SSID conflicts with System76 Pangolin
-> (pang14)?  All seem to have the very same codec CX11970.
+ 	key =3D request_key(type, key_desc + 1, NULL);
+ 	if (IS_ERR(key)) {
+-		kfree_sensitive(new_key_string);
+-		return PTR_ERR(key);
++		ret =3D PTR_ERR(key);
++		goto free_new_key_string;
+ 	}
 
-I don't think I saw the pci id explicitly listed, but that was the 
-assumption.
+ 	down_read(&key->sem);
+@@ -2623,23 +2623,23 @@ static int crypt_set_keyring_key(struct crypt_conf=
+ig *cc, const char *key_string
+ 	ret =3D set_key(cc, key);
+ 	up_read(&key->sem);
+ 	key_put(key);
+-	if (ret < 0) {
+-		kfree_sensitive(new_key_string);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto free_new_key_string;
 
-> 
-> If they really conflict in both PCI and HD-audio codec IDs, the only
-> way would be to check DMI string, I'm afraid.
-> 
+ 	/* clear the flag since following operations may invalidate previously v=
+alid key */
+ 	clear_bit(DM_CRYPT_KEY_VALID, &cc->flags);
 
-I asked about the volumes since it could be a hint that a second speaker 
-is activated but stuck on a fixed volume. This would make a low general 
-volume setting sound louder but still somewhat adjustable.
+ 	ret =3D crypt_setkey(cc);
++	if (ret)
++		goto free_new_key_string;
 
-However, if we can not verify second speaker pair, then I agree, DMI 
-limit would be the safe choice.
+-	if (!ret) {
+-		set_bit(DM_CRYPT_KEY_VALID, &cc->flags);
+-		kfree_sensitive(cc->key_string);
+-		cc->key_string =3D new_key_string;
+-	} else
+-		kfree_sensitive(new_key_string);
++	set_bit(DM_CRYPT_KEY_VALID, &cc->flags);
++	kfree_sensitive(cc->key_string);
++	cc->key_string =3D new_key_string;
++	return 0;
 
-Christoffer
++free_new_key_string:
++	kfree_sensitive(new_key_string);
+ 	return ret;
+ }
+
+=2D-
+2.46.0
+
 
