@@ -1,184 +1,159 @@
-Return-Path: <linux-kernel+bounces-332737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 429B597BE11
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:40:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84F2397BE27
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 676C51C2101C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:40:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DDA31F22048
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7F91BB6A0;
-	Wed, 18 Sep 2024 14:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229081BB6BC;
+	Wed, 18 Sep 2024 14:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KEfveCb0"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nb04d4PT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4FD1BAEE0;
-	Wed, 18 Sep 2024 14:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66BC1BAEE6;
+	Wed, 18 Sep 2024 14:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726670442; cv=none; b=eNqg+bYEFEKQG4JsM7v/e6eGTSZwO4gbiAqLhqAe1pf/WOu37r2gwk6hRqGE5yuUDKAG6T5uAwXTrSS22sYDcfYJTj+8Fqs8UNKy/x4SFn2sYYQc2yAOwGkQ+2Ssky3/pox3ZNyfcCc3Cc0d94e7gBtsrO3dWDkstEoggsfjgg4=
+	t=1726670550; cv=none; b=VvI2LxV2N4lQHRPuhenu3i6EY3+k3KP25iIDkBwDRCb2qCJ5Q9CwtThFxQctbCbJ5JVjzhx8q3dhbY8RgkDFTV5yd1ZQixAGU9XCs47rXz5HBkGaJGZlU5IONwYj6MFDbymyTjDBi/PccwA0LQZ7I/UgVJF0HG2HA0dIz9zFfNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726670442; c=relaxed/simple;
-	bh=fx9AZM7i/gALnAF5kjoWhjKiRJORX8mQT4bktzADR4g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X0mZqdGOO5d9bgtm7H+76mJWYjlyQMpQqUBgR3TaRQ0s/lAxXb2NpeEfGxcIzEqjffQm0t6ImH3HCFMqfNKcjAPD+bNWBUVjJLTeTC0iyfgV5lNxSpiwgALEqNkqR4wTsRsFcMAXRgd1Zm4OfkC9Hl9DY+ulk+wNTaBDMNqCKG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KEfveCb0; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8a706236bfso381616766b.0;
-        Wed, 18 Sep 2024 07:40:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726670439; x=1727275239; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3uHcaosDH+2kqlFhkf7ltR5bOFuDI1RT/7lxsyCyAUQ=;
-        b=KEfveCb0gEaIvjM5a9lTFdGWxDbKikkLyBAJzI99faRuJLrSTTsF0R9KX/91gKldEP
-         LozIi+8Y5gsKeV9wLrr0e7iQk+aY92gudn8fIvFQDNNzib5M6bKq3fcbQxrk7mbxuc0k
-         u+JBJggecwTrOlKRRfEATXmFga2gw9sK9L4gB+m3kU1xFWunBgQp3bKLYy0ptaXS9C7a
-         w+MLVBNl14z7St+UxbZ8X3WK6h10RckMWnqjJoMul1mCIr119ORt7sBm7TPnBDi/NaRH
-         a3V81Scq0AJuOoVdO3kr7cSi3FIHCVpfOpvxExkE4tEe1d0jXTU9bnb9441B6gEBDnks
-         mEAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726670439; x=1727275239;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3uHcaosDH+2kqlFhkf7ltR5bOFuDI1RT/7lxsyCyAUQ=;
-        b=LxsXDwINoGsnlRRa6UOnDryXkqMB95Tu5xHjn966BBfiEe80LJvHprXfD6va8F0PaH
-         qHZmalBDqpXz5DWUYQv02qDIvX0IrKwXxVJ3CQi36schkyxoiq5htFrc71yc6Pfha3AR
-         95uVCVeDjOAX5Qx6YYIYL7zNNLHKQFeQiESjo+CsrnNyc+jqJCF8ucOj23DtqMjTZK6O
-         eC1U1XaUJMZY143Yjb5xH7HYTZUgRG2pIdsbInY2Ipp4u2HnaTVzNsNBtzcXMy3W5YIs
-         BmdYfg1Xxat4vgzEa4QhCgwAzTEELOXF7Pu604nyKu6pn26jn5q8yFhxOn/PaCElDCwD
-         9iiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlw9kX6HZtw2KDV49NC+2PBlHuEtUIr625oiXhcizgdOltFRFF68VozHdyS3w6w04Cp5R7vecV0KjUu+o=@vger.kernel.org, AJvYcCUnmW4Qbc+iAPAcPiEf7DSSHc984/uGRM9iM3z2Snom9MXCe6UDnpbvgFWia5lYB8bWRya8@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywevc+EIEpD74IW3wHsaY43wixLPWUX4LGnGHiJQckPUejvFrb9
-	Sm//nDlYSzTg2BSzKy9PoKhrkpVBY1VbYFSaKVvcSx+cg2Q4RDbqJ9el5hkOeOoiikTrd5P/Q/4
-	sjxH0lNy+oeFIQ9F2jDf4NQVnDCw=
-X-Google-Smtp-Source: AGHT+IFayqEt3iMxQ5M5A7AnOxm3PGP4C+oLCToDpDYoWFq/yqCfgfhmSsqoJzzq4US7UK2z+G6kC7IkTCIp+kwgaow=
-X-Received: by 2002:a05:6402:50cb:b0:5c3:c4d1:83d with SMTP id
- 4fb4d7f45d1cf-5c41e1b529dmr22239439a12.26.1726670438835; Wed, 18 Sep 2024
- 07:40:38 -0700 (PDT)
+	s=arc-20240116; t=1726670550; c=relaxed/simple;
+	bh=f6DO9H9tbPadLV/AmMWoIvT7LPqXcop24V18dsnD8vo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FQegAAWmHErJO70EtXZW6w/98bNEswbsYXfU/6vU0ELreebW+CRDcnqeOgpa5KMOerKxFEu0veKvzdb6HtPcsN0rWUMZvhtOA+7i2h4LzlxZ+6Lp51vh2B3xjpVufBegMSbPjwUi8BU3phtC6x3/CaKDyrOBF2Qi1HFnP9t+imY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nb04d4PT; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726670549; x=1758206549;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=f6DO9H9tbPadLV/AmMWoIvT7LPqXcop24V18dsnD8vo=;
+  b=Nb04d4PT/EFuRd22htC3110pJV12b0sP4okNNA/tU8M86F2UpCsJSNtd
+   V29Gnw1c2JR1AzXMTlUlQyeUm1az5JffCP07628uh/yoNr+NGshq6LthB
+   9W2ZEpDhAN96IIoCDhwVj3EG7i4P7K0fFpzy37+TslKpryx6k+WPPCm6K
+   lEFL4RUTT4XF6ZDhlfoRV1hRjKBlGfc9TahQ05u/QzNiW6SdFd0iE0cpg
+   oOiaPot+3R6vBl8SJbiyDfxA4jWRU/qa/4FQ6pWr33pxsVHmWLIMoyQcB
+   YSuCx1DIXuktVBviH6BZf6R6v9PLNj4QIrs5t83+aEl4JAbslYyBXz973
+   Q==;
+X-CSE-ConnectionGUID: 1Nqbf2+wTR+mvS8BVAYn/Q==
+X-CSE-MsgGUID: wQTfSd89SFuKHITLs5ztOA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11199"; a="36255024"
+X-IronPort-AV: E=Sophos;i="6.10,239,1719903600"; 
+   d="scan'208";a="36255024"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 07:42:27 -0700
+X-CSE-ConnectionGUID: 4A/Qk+DiRdul4OYr8AZigA==
+X-CSE-MsgGUID: 6d1nul30RZG2Lo5fGPjqjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,239,1719903600"; 
+   d="scan'208";a="100312619"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 18 Sep 2024 07:42:22 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sqvsp-000CJe-18;
+	Wed, 18 Sep 2024 14:42:19 +0000
+Date: Wed, 18 Sep 2024 22:41:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Liao Chang <liaochang1@huawei.com>, mhiramat@kernel.org,
+	oleg@redhat.com, andrii@kernel.org, peterz@infradead.org,
+	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH] uprobes: Improve the usage of xol slots for better
+ scalability
+Message-ID: <202409182246.UMkGsMXl-lkp@intel.com>
+References: <20240918012752.2045713-1-liaochang1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8d6c5d10-5750-4472-858c-eadc105453be@suse.cz> <CAHk-=wjmu93njmUVqfkAbGKqHaOKFrTmgU2O=UkP3OOmpCjo4Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wjmu93njmUVqfkAbGKqHaOKFrTmgU2O=UkP3OOmpCjo4Q@mail.gmail.com>
-From: Uladzislau Rezki <urezki@gmail.com>
-Date: Wed, 18 Sep 2024 16:40:25 +0200
-Message-ID: <CA+KHdyV=0dpJX_v_tcuTQ-_ree-Yb9ch3F_HqfT4YnH8=zyWng@mail.gmail.com>
-Subject: Re: [GIT PULL] slab updates for 6.11
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, David Rientjes <rientjes@google.com>, 
-	Christoph Lameter <cl@linux.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Christian Brauner <brauner@kernel.org>, RCU <rcu@vger.kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240918012752.2045713-1-liaochang1@huawei.com>
 
-Hello, Linus!
+Hi Liao,
 
-On Wed, Sep 18, 2024 at 9:06=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Mon, 16 Sept 2024 at 11:45, Vlastimil Babka <vbabka@suse.cz> wrote:
-> >
-> > There's a small conflict with the rcu tree:
-> > https://lore.kernel.org/lkml/20240812124748.3725011b@canb.auug.org.au/
->
-> Hmm. The conflict resolution is trivial, but the code itself looks buggy.
->
-> Look here, commit 2b55d6a42d14 ("rcu/kvfree: Add kvfree_rcu_barrier()
-> API") makes kvfree_rcu_queue_batch() do this:
->
->         bool queued =3D false;
->         ...
->         for (i =3D 0; i < KFREE_N_BATCHES; i++) {
->                 ...
->                         queued =3D queue_rcu_work(system_wq, &krwp->rcu_w=
-ork);
->         ...
->         return queued;
->
-> and note how that return value is completely nonsensical. It doesn't
-> imply anything got queued. It's returning whether the *last* call to
-> queue_rcu_work() resulted in queued work.
->
-> There is no way the return value is meaningful that I can see, and
-> honestly, that means that the code in kvfree_rcu_barrier() looks
-> actively buggy, and at worst might be an endless loop
->
-> Now, maybe there's some reason why the code works fine, but it looks
-> really really wrong. Please fix.
->
-> The fix might be either a big comment about why it's ok, or making the
-> "queued" assignment be a '|=3D' instead, or perhaps breaking out of the
-> loop on the first successful queueing, or whatever.
->
-> But not this "randomly return _one_ value of many of the queuing success"=
-.
->
-Thank you for valuable feedback! Indeed it is hard to follow, even
-though it works correctly.
-I will add the comment and also break the loop on first queuing as you
-suggested!
+kernel test robot noticed the following build errors:
 
-It does not make sense to loop further because following iterations
-are never successful
-thus never overwrite "queued" variable(it never reaches the
-queue_rcu_work() call).
+[auto build test ERROR on tip/perf/core]
+[cannot apply to perf-tools-next/perf-tools-next perf-tools/perf-tools linus/master acme/perf/core v6.11 next-20240918]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-<snip>
-         bool queued =3D false;
-         ...
-         for (i =3D 0; i < KFREE_N_BATCHES; i++) {
-                if (need_offload_krc(krcp)) {
-                         queued =3D queue_rcu_work(system_wq, &krwp->rcu_wo=
-rk);
-         ...
-         return queued;
-<snip>
+url:    https://github.com/intel-lab-lkp/linux/commits/Liao-Chang/uprobes-Improve-the-usage-of-xol-slots-for-better-scalability/20240918-093915
+base:   tip/perf/core
+patch link:    https://lore.kernel.org/r/20240918012752.2045713-1-liaochang1%40huawei.com
+patch subject: [PATCH] uprobes: Improve the usage of xol slots for better scalability
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20240918/202409182246.UMkGsMXl-lkp@intel.com/config)
+compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240918/202409182246.UMkGsMXl-lkp@intel.com/reproduce)
 
-if we queued, "if(need_offload_krc())" condition is never true anymore.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409182246.UMkGsMXl-lkp@intel.com/
 
-Below refactoring makes it clear. I will send the patch to address it.
+All errors (new ones prefixed by >>):
 
-<snip>
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index a60616e69b66..b1f883fcd918 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3607,11 +3607,12 @@ kvfree_rcu_queue_batch(struct kfree_rcu_cpu *krcp)
-                        }
+   In file included from arch/arm/probes/uprobes/actions-arm.c:10:
+>> include/linux/uprobes.h:81:2: error: unknown type name 'refcount_t'
+           refcount_t                      slot_ref;
+           ^
+   1 error generated.
 
-                        // One work is per one batch, so there are three
--                       // "free channels", the batch can handle. It can
--                       // be that the work is in the pending state when
--                       // channels have been detached following by each
--                       // other.
-+                       // "free channels", the batch can handle. Break
-+                       // the loop since it is done with this CPU thus
-+                       // queuing an RCU work is _always_ success here.
-                        queued =3D queue_rcu_work(system_unbound_wq,
-&krwp->rcu_work);
-+                       WARN_ON_ONCE(!queued);
-+                       break;
-                }
-        }
-<snip>
 
-Thanks!
+vim +/refcount_t +81 include/linux/uprobes.h
 
---=20
-Uladzislau Rezki
+    58	
+    59	/*
+    60	 * uprobe_task: Metadata of a task while it singlesteps.
+    61	 */
+    62	struct uprobe_task {
+    63		enum uprobe_task_state		state;
+    64	
+    65		union {
+    66			struct {
+    67				struct arch_uprobe_task	autask;
+    68				unsigned long		vaddr;
+    69			};
+    70	
+    71			struct {
+    72				struct callback_head	dup_xol_work;
+    73				unsigned long		dup_xol_addr;
+    74			};
+    75		};
+    76	
+    77		struct uprobe			*active_uprobe;
+    78		unsigned long			xol_vaddr;
+    79	
+    80		struct list_head		gc;
+  > 81		refcount_t			slot_ref;
+    82		int				insn_slot;
+    83	
+    84		struct arch_uprobe              *auprobe;
+    85	
+    86		struct return_instance		*return_instances;
+    87		unsigned int			depth;
+    88	};
+    89	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
