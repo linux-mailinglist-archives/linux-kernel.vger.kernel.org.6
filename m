@@ -1,174 +1,126 @@
-Return-Path: <linux-kernel+bounces-332730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA9A97BDF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:24:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8951C97BDF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0972EB2173D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:24:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B59B282ED2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E710918DF6B;
-	Wed, 18 Sep 2024 14:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BCE19ADBB;
+	Wed, 18 Sep 2024 14:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="H3e/5vnn";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="cWr7Q6i+"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K6/xG7jP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C6B18C329;
-	Wed, 18 Sep 2024 14:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4549719AD7B;
+	Wed, 18 Sep 2024 14:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726669464; cv=none; b=X3SSEkPY79djdecU75TMVTpIEBYKfMMnvcvmAB7sADQPBO4JjWDSOMKl4eJb+E8SfNqFPCF6TazlmzppHZp0DV0y4+88+42QndcW91sUpadqQBfaCSOqCF6bJZW4l2cQLgsIb8QMahXMp17iOQN9w1DqttpGM5EjAGVEB18cyIM=
+	t=1726669537; cv=none; b=qi/+Y0kQoTpDJbpN51VBfNK9vLKMqxaNfwfGxgNWMYpcbWXiOOY9Y10cWf8yiuySz2KlutoQJ57g2ZKuIhUN/yRubrMW9T/SZk3egmQfqcxc7R8Ap9yrl/Yvb5oOr7HO2JogaphgkRb0cQJfnlKTAB7lMkATQtWKRkH0BOyX2Zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726669464; c=relaxed/simple;
-	bh=YNvCY+Zx7wxVlO31Wwd1KwGz+kp+q3JhVEx2vhvuT6c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ChrDnE45lVdkaA8WzDTlJhhGLLdZdxF4l8N4D1ho05Mkvy27QF/MLqiBpHjYxd0NJPOAFPX3rRcZa0ITGddaciKD22oP8ssSgZFNcYtzcWuvXg/w2IMAmleFcaE3dFn44XWKsNZ24sR5Td0kPQOy3MLwHMJLWIMPu2UlvJIIFkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=H3e/5vnn; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=cWr7Q6i+ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1726669461; x=1758205461;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=PWE1WWddBGYrp5zOkYncT1llF5E7qQs91V7SUqTNMuM=;
-  b=H3e/5vnn3IxDGNJxmUrqM3kONMZzAa/g/5IawGZQL33+iIsUHjGlOGcZ
-   wNM4N61jVb+J4XTKev8YbB6Fpmrcf0eaZZUJYt468xadZLbQgBf+Oljr6
-   ORDJPBQyyIP+wqY0NAdzbOyIudS4j/AKyu6tMGp7+3banjuEMqi7EZyu5
-   +jGL+WWeGqHnG9ur0oN0Sj2A4hyakwigbNl/6tEiyjhvr1qNTx0nFsBOy
-   xBaOeLc5zQvhdcQZoUjOtMVFbMd4pVQCBh6CvfAuqd+bQwAx2i0zt2dt5
-   2BibAUjixt570ztQ+j3ORHPAUjsaEQ+j0goFynncnAw+RXfCi5Qt3mffP
-   w==;
-X-CSE-ConnectionGUID: SwL9JRFXRIywpb+zoQR9hw==
-X-CSE-MsgGUID: gfa066qPS5+sxdx/r34CnQ==
-X-IronPort-AV: E=Sophos;i="6.10,239,1719871200"; 
-   d="scan'208";a="39006265"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 18 Sep 2024 16:23:09 +0200
-X-CheckPoint: {66EAE24D-D-E520F13A-D17B83D9}
-X-MAIL-CPID: CF6739CD121BEEE37E9C54A24A4BBD1B_2
-X-Control-Analysis: str=0001.0A782F1F.66EAE24D.009B,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C2BFC16CB96;
-	Wed, 18 Sep 2024 16:23:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1726669384;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=PWE1WWddBGYrp5zOkYncT1llF5E7qQs91V7SUqTNMuM=;
-	b=cWr7Q6i+NUL+PAVIJri7DcrBrlSnjTPFYuFcN5jOLNZQfE2yoTOM06AVZfqlti0FESijGf
-	xowKEm+3DsnSmU9wearGNW7PlIRQ+QtLQsQuuuLtwmvZ3WAegmh0bCTcdyvoWuaUgrGSpR
-	OxJVIaqh7T6pH5tun8I2Rj2yx76Bs5Ocj5MX1Cf6vhikyrIJnKWqLVD987sZgP9YHTVlMD
-	9GYdOqxBOQAQXq/Q7hFwBHhTmsrile+Sj3seXe0Cf4LPVQRwddmi9EItDhWTlTwOTTeLf3
-	rJSn/0cTlYneG1QS7bbT2eAr2P3cOYIOEkbc/4ogCxN7oKfcQ3U8A7M3YEeM1g==
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	=?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>,
-	Markus Schneider-Pargmann <msp@baylibre.com>,
-	"Felipe Balbi (Intel)" <balbi@kernel.org>,
-	Raymond Tan <raymond.tan@intel.com>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@ew.tq-group.com,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH 2/2] can: m_can: fix missed interrupts with m_can_pci
-Date: Wed, 18 Sep 2024 16:21:54 +0200
-Message-ID: <f6155510fbea33b0e18030a147b87c04395f7394.1726669005.git.matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <ac8c49fffac582176ba1899a85db84e0f5d5c7a6.1726669005.git.matthias.schiffer@ew.tq-group.com>
-References: <ac8c49fffac582176ba1899a85db84e0f5d5c7a6.1726669005.git.matthias.schiffer@ew.tq-group.com>
+	s=arc-20240116; t=1726669537; c=relaxed/simple;
+	bh=LiIZYaEnf2qPYrXez8fE0c6tVSv28NruGjWFEONPD20=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iCTRmmJlMpHxLzw/qY6MhiS94YklmDvCCW6SK1zIPYp7eWIRlXPCB1zY1Pzgpfr12QPL+av3iM3yXensxWhE5ypb5e1KgpUr/uRrwS4pDKBXIpCFbIBTJuWrYy987gHavrW7hLgrS4tcDsvwiE6bgF7EAUAJT8itZugBS9LAqAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K6/xG7jP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D342C4CEC2;
+	Wed, 18 Sep 2024 14:25:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726669536;
+	bh=LiIZYaEnf2qPYrXez8fE0c6tVSv28NruGjWFEONPD20=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K6/xG7jPJCdshOrc/0Cqrx3rHUjVcjVpCKJjmF3fM3yT9W5fRXkPj/W+If8wLal6S
+	 u+rjtnOjYobThMmsGn59gcypx2goLW/SOg54ivppEOUJb5/3lduoSAOeZjh6o5vhX7
+	 3tKP12qRJUiho7VgZlSNyEjXSpSAxRA5GPSvNjrZeFLJ3sItzKrdR+OcfRm2hCVu7/
+	 KY8Dkyf+3A8aZ+sJIifW4FYMB+UFzGKtXUhD89x5M+lcP3qPz9bYELa/trIrY0Hu8i
+	 ER7KkvGnZ//8SXpAR9UUHisD17RnfPn+2FEoT7CUh5nfbiuxtJT1pPb+aOHRXB9Da+
+	 rW9cJS5CnUYMg==
+Date: Wed, 18 Sep 2024 09:25:35 -0500
+From: Rob Herring <robh@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: andi.shyti@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	tsbogend@alpha.franken.de, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org
+Subject: Re: [PATCH 4/5] dt-bindings: i2c: Add RTL9300 I2C multiplexer
+Message-ID: <20240918142535.GA1519783-robh@kernel.org>
+References: <20240917232932.3641992-1-chris.packham@alliedtelesis.co.nz>
+ <20240917232932.3641992-5-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917232932.3641992-5-chris.packham@alliedtelesis.co.nz>
 
-The interrupt line of PCI devices is interpreted as edge-triggered,
-however the interrupt signal of the m_can controller integrated in Intel
-Elkhart Lake CPUs appears to be generated level-triggered.
+On Wed, Sep 18, 2024 at 11:29:31AM +1200, Chris Packham wrote:
+> An extension of the RTL9300 SoC is to support multiplexing by selecting
+> the SDA pins that are being used dynamically. Add a binding that allows
+> us to describe hardware that makes use of this.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+>  .../bindings/i2c/realtek,rtl9300-i2c-mux.yaml | 82 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 83 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c-mux.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c-mux.yaml b/Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c-mux.yaml
+> new file mode 100644
+> index 000000000000..a64879d0fda7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c-mux.yaml
+> @@ -0,0 +1,82 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/i2c/realtek,rtl9300-i2c-mux.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Realtek RTL I2C Multiplexer
+> +
+> +maintainers:
+> +  - Chris Packham <chris.packham@alliedtelesis.co.nz>
+> +
+> +description: |
+> +  The I2C controllers on the RTL9300 support a level of multiplexing. In the
+> +  simple case the rtl9300-i2c binding can provide a single SDA pin per
+> +  controller. This binding allows a more than one SDA line to be used per
+> +  controller providing a level of multiplexing.
+> +
+> +properties:
+> +  compatible:
+> +    const: realtek,rtl9300-i2c-mux
+> +
+> +  i2c-parent:
+> +    description: phandle of the I2C bus controller that this multiplexer
+> +      operates on.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
 
-Consider the following sequence of events:
+The mux isn't a separate device, so I think this should just be part of 
+the i2c parent:
 
-- IR register is read, interrupt X is set
-- A new interrupt Y is triggered in the m_can controller
-- IR register is written to acknowledge interrupt X. Y remains set in IR
+i2c-mux@36c {
+  i2c@0 {
+    ...
+  };
+  i2c@1 {
+    ...
+  };
+  ...
+};
 
-As at no point in this sequence no interrupt flag is set in IR, the
-m_can interrupt line will never become deasserted, and no edge will ever
-be observed to trigger another run of the ISR. This was observed to
-result in the TX queue of the EHL m_can to get stuck under high load,
-because frames were queued to the hardware in m_can_start_xmit(), but
-m_can_finish_tx() was never run to account for their successful
-transmission.
+And then you can get rid of the SDA pin property. If you only use 1 pin, 
+then there is just 1 'i2c' child node with an address matching the SDA 
+pin.
 
-To fix the issue, repeatedly read and acknowledge interrupts at the
-start of the ISR until no interrupt flags are set, so the next incoming
-interrupt will also result in an edge on the interrupt line.
-
-Fixes: cab7ffc0324f ("can: m_can: add PCI glue driver for Intel Elkhart Lake")
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
- drivers/net/can/m_can/m_can.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index 47481afb9add3..363732517c3c5 100644
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -1207,20 +1207,28 @@ static void m_can_coalescing_update(struct m_can_classdev *cdev, u32 ir)
- static int m_can_interrupt_handler(struct m_can_classdev *cdev)
- {
- 	struct net_device *dev = cdev->net;
--	u32 ir;
-+	u32 ir = 0, ir_read;
- 	int ret;
- 
- 	if (pm_runtime_suspended(cdev->dev))
- 		return IRQ_NONE;
- 
--	ir = m_can_read(cdev, M_CAN_IR);
-+	/* For m_can_pci, the interrupt line is interpreted as edge-triggered,
-+	 * but the m_can controller generates them as level-triggered. We must
-+	 * observe that IR is 0 at least once to be sure that the next
-+	 * interrupt will generate an edge.
-+	 */
-+	while ((ir_read = m_can_read(cdev, M_CAN_IR)) != 0) {
-+		ir |= ir_read;
-+
-+		/* ACK all irqs */
-+		m_can_write(cdev, M_CAN_IR, ir);
-+	}
-+
- 	m_can_coalescing_update(cdev, ir);
- 	if (!ir)
- 		return IRQ_NONE;
- 
--	/* ACK all irqs */
--	m_can_write(cdev, M_CAN_IR, ir);
--
- 	if (cdev->ops->clear_interrupts)
- 		cdev->ops->clear_interrupts(cdev);
- 
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
-
+Rob
 
