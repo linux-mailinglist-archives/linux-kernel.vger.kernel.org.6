@@ -1,213 +1,365 @@
-Return-Path: <linux-kernel+bounces-332430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 271CD97B999
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:50:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8C397B98F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1E5E1F280CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:50:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23F631F25040
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFBA176FDB;
-	Wed, 18 Sep 2024 08:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KxJaZtIw"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2043.outbound.protection.outlook.com [40.107.223.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37245175D48;
+	Wed, 18 Sep 2024 08:47:30 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5013CDF6C;
-	Wed, 18 Sep 2024 08:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D655DF6C
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 08:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726649413; cv=fail; b=gqd6oRwgH/bErfPmzh8+C04ygbxs8NmODwdii/JtGkU3FEoEd6i1larEYkJu/QUkFGIy9iv7UVjwHM2wuiJnf8Pgkudwaiq6/kvPy5KR9bj6SkUnNCdN/5ZEUenio9uOOOKbEvn8aWHgscW2wywGgR9gRWt3VFNj36r6noIXylM=
+	t=1726649249; cv=fail; b=WXrUruASzFrHEe5zP+yjL43EzGYDhSxeB9nz6Dj4XQj4FnszFaPyUi3r4iLyxmUUwY0mNtJnf5ePJvp1/yTaNZUddJ4GnhYPThyKCN8b/gaBpZlc2d70XqQtgFgeWL9nSCBKtQaacxneGNgVeCGgi6BvEhi9jmB52BX+7VjymB0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726649413; c=relaxed/simple;
-	bh=O5wZ2AdMuiT2ZOELt8ckjJF6AbK3a3slUlLckqY8l9U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VFn8MzTRncQmlvy6ZABK0mS8LKjrXo1aanI2/0S6nHriGS7JLNhbW5GofQnmYVM6qMSmebIKl66VRVkrTzFoz4Uaz4THqSBtUwQOW0oSecPBDFMdU0YtTj/yRLyAaNCLKi/0ikQFf6eaaLQg2zIuPOv1vnQjrdB3C5kPV3nv7SQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KxJaZtIw; arc=fail smtp.client-ip=40.107.223.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1726649249; c=relaxed/simple;
+	bh=FWPnv4EtACRnEmF1bOYYFDg8zqLQtJqFbs1SiOfspwo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UzWOywKCsGxGSuLtiEreuKmXHvgcn7YlX6ndXvOpLFvg6bW+DyYUYEEa+86f1flIQRZBsTRTLpEjix0vOBTetdWUxgDUwyAbqlRgbqq8XuSS/7TcILLoi5d8ppUhjWMk1X8X3yvvew09KO7LH5apRnrhQkWK+V13c85hXmtLxi8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48I4u3HE019190;
+	Wed, 18 Sep 2024 08:47:08 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2176.outbound.protection.outlook.com [104.47.55.176])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 41myq1uyk4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Sep 2024 08:47:07 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H7I3/Tn0R5OE2syAMzNLVX+LY2WFrcyRPAqkdibv2LMxfYAb9VHSieOw+r2X8n3NQSgdDmGyjfw04HTVRRxalRs7AF2YrBR5fnu+9fu+WZ9J3k30wBMQct61rlG4DGWoBW77eRhYSgDDmGvyoEp28Bwwv27e+8dNSyjx1eoTZQS78xpJ41dtFzuGVRosQcNYHZ+KZuI27MZSRP/rnOUpzF6FggcdtI6PWOb+hdRVv+a84pe4o65NRsx1WOw7ixzAdlMybmQh7qQFeflo9LfXOa8AadzxjK0KKV6zpXJL24L6HVMpD4iRfK7hKy/S70yhiFZqcM0ldNaDU3UgnLYC3w==
+ b=vbh1kkL56G22akCveaWUw2qQYsDYrWwEuvQ4nZIzniJvJRGwMF0My5SgRMCjy/7dFNm6fr5WScXlwDLrvLSOcJrshCIFjbUX/vx1mVJkh0wm5rE43Fc+4MS0ndxLyMc3P7z0S+o4/s8GxPFQ8H2mSvB6oTC3Os4Ojmhuk10l1y7HvaBffSMSUOJwj4njokXYFgSLRGDTljgKeowWeB+vRjwZrU6CjgSWA0XzTicALXdr5ZsDX4b1H0OZynGwSTIIYCN6PC2+IdzTUrPlabRz12ke52LkpfwhjCWyZAuJ0jCMu4oZxpf74S3n56+BIBYb/4GTr+ivME5j2GP25uopyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XJSqge9l92sdjvbmZ6ZhO57N8RcOFOifU0R2yGpDeOs=;
- b=QDEWPivDQMAUagG8TGrvNEltGVAk8T9b7JPK0LkBCgsYwYEXxAMa/zseUKf7t7hlXnhmuLYRMBdZzVtih1frpbMSlPrhV/1su65U/t1Ru941r7BkKdYE6jiF5IuT9nLs6slMcLNKwGTGw2u/C315UxgEEK62b2ENDtbSom3JyHkk9RgwQ5ra45TDfJniLq6OQT6D9bumcviyPR/QPNO1OJUD+5o/jKHX7le3GOfF8FqqmhO91FcDbFo16J5NuYf8aF04WzWEjOPX+aYzW8o1o+RkSN/fcumnknqYHZ4zE1mwooYZvXtjhYivS0JXZIkacJN1poFnQV8urHPmg7MP2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XJSqge9l92sdjvbmZ6ZhO57N8RcOFOifU0R2yGpDeOs=;
- b=KxJaZtIwiZNrbNZRnmPZeODsWfQWUJQg38+fDlh0uADZmGCW4pv7Iz+MWizVhS2CRNeCIvTvxCc957CAk4p5Ntdu4omlKT0lISxKGfzLFiqRCIQJ5q63CWd6ZGhPJZP9w097TbD70sF0MQ9QgANJYIcWELC9AvMJ0jlqiX1iDfk=
-Received: from SA9P221CA0009.NAMP221.PROD.OUTLOOK.COM (2603:10b6:806:25::14)
- by SA3PR12MB7860.namprd12.prod.outlook.com (2603:10b6:806:307::22) with
+ bh=LeCwyBfnUvE88t7iCwKde9ZBYwxekJy2jZjBYYBrhIk=;
+ b=EnrpOC3xO5pgdtTitWHm/U/x5jhM5F0WO93IyKM1VGiqLCYRUVJIvTiAqYLq0qh6UcF1xZkjgDSk03kbYNHlrh0PHiKpya+JlwYWFm2JwRb4MkhW0APmjzYbHW+BJjmcfpcN6YdLJmtwx3gpHl3vjLibeTDfjDOEEqXkrt8QEGv2Ctwk7YmXVnojLKUVyzDm4XJFp8v6OUADtSsRgJ+GP7gHB1WqZCGZdN2ceRfws9pt9+DPu8ZfnkmPj2HyzWzjg+0YWzrOTWQAgXVmlvlME2GF4fStUggfcizAvs+d2OundkWnjV+VMh3X6NresRhfWdqyI4rqv7Zgc8UfoKNgaQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from SJ0PR11MB5072.namprd11.prod.outlook.com (2603:10b6:a03:2db::18)
+ by CH3PR11MB8708.namprd11.prod.outlook.com (2603:10b6:610:1be::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Wed, 18 Sep
- 2024 08:50:07 +0000
-Received: from SA2PEPF00003F68.namprd04.prod.outlook.com
- (2603:10b6:806:25:cafe::b8) by SA9P221CA0009.outlook.office365.com
- (2603:10b6:806:25::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.29 via Frontend
- Transport; Wed, 18 Sep 2024 08:50:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00003F68.mail.protection.outlook.com (10.167.248.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Wed, 18 Sep 2024 08:50:07 +0000
-Received: from [10.136.32.87] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 18 Sep
- 2024 03:46:42 -0500
-Message-ID: <b4dbc5f4-a379-4824-9898-95271728ab03@amd.com>
-Date: Wed, 18 Sep 2024 14:15:48 +0530
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Wed, 18 Sep
+ 2024 08:46:53 +0000
+Received: from SJ0PR11MB5072.namprd11.prod.outlook.com
+ ([fe80::a14a:e00c:58fc:e4f8]) by SJ0PR11MB5072.namprd11.prod.outlook.com
+ ([fe80::a14a:e00c:58fc:e4f8%4]) with mapi id 15.20.7962.022; Wed, 18 Sep 2024
+ 08:46:52 +0000
+Message-ID: <6b23d060-3973-4bb5-9f28-dae7d68ad971@windriver.com>
+Date: Wed, 18 Sep 2024 16:46:43 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/amdgpu: fix OLAND card ip_init failed during kdump
+ caputrue kernel boot
+To: Lu Yao <yaolu@kylinos.cn>, mario.limonciello@amd.com
+Cc: Hawking.Zhang@amd.com, Jun.Ma2@amd.com, Tim.Huang@amd.com,
+        Xinhui.Pan@amd.com, alexander.deucher@amd.com,
+        amd-gfx@lists.freedesktop.org, andrealmeid@igalia.com,
+        candice.li@amd.com, christian.koenig@amd.com, hamza.mahfooz@amd.com,
+        jesse.zhang@amd.com, kenneth.feng@amd.com, kevinyang.wang@amd.com,
+        lijo.lazar@amd.com, linux-kernel@vger.kernel.org, sunil.khatri@amd.com,
+        victorchengchi.lu@amd.com, dri-devel@lists.freedesktop.org
+References: <5dcd603a-7d62-439d-9a07-9d7d9324e0b6@amd.com>
+ <20240829081141.134471-1-yaolu@kylinos.cn>
+Content-Language: en-US
+From: "Liu, Yongxin" <yongxin.liu@windriver.com>
+In-Reply-To: <20240829081141.134471-1-yaolu@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TYCP286CA0130.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b6::12) To SJ0PR11MB5072.namprd11.prod.outlook.com
+ (2603:10b6:a03:2db::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] perf sched: Introduce stats tool
-Content-Language: en-GB
-To: <20240916164722.1838-1-ravi.bangoria@amd.com>, Ravi Bangoria
-	<ravi.bangoria@amd.com>
-CC: <irogers@google.com>, <namhyung@kernel.org>, <acme@kernel.org>,
-	<peterz@infradead.org>, <yu.c.chen@intel.com>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<rostedt@goodmis.org>, <vincent.guittot@linaro.org>, <bristot@redhat.com>,
-	<adrian.hunter@intel.com>, <james.clark@arm.com>,
-	<kan.liang@linux.intel.com>, <gautham.shenoy@amd.com>,
-	<kprateek.nayak@amd.com>, <juri.lelli@redhat.com>,
-	<yangjihong@bytedance.com>, <void@manifault.com>, <tj@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
-	<santosh.shukla@amd.com>, <ananth.narayan@amd.com>, <sandipan.das@amd.com>,
-	<mingo@redhat.com>, Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <20240916164722.1838-1-ravi.bangoria@amd.com>
- <af4000b6-02c7-4160-8207-57f34239bd49@linux.ibm.com>
-From: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
-In-Reply-To: <af4000b6-02c7-4160-8207-57f34239bd49@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F68:EE_|SA3PR12MB7860:EE_
-X-MS-Office365-Filtering-Correlation-Id: 80215586-3b6f-4661-8419-08dcd7bee5b0
+X-MS-TrafficTypeDiagnostic: SJ0PR11MB5072:EE_|CH3PR11MB8708:EE_
+X-MS-Office365-Filtering-Correlation-Id: e737a9fc-1d31-4591-5e37-08dcd7be70ff
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|82310400026|1800799024|376014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VTlGTkl2YTlpUEN3aURXVGVzcE84S3hOVi9wQmRPampoRURGS3VsOXRPWWl6?=
- =?utf-8?B?OHl4THpxaU1wNTNZdHdwR0xFb3EwN2lzMmx0YW9SVmZ3dXd5YXJ6TFJWYmVR?=
- =?utf-8?B?aGE4U0U3cUc1Z2ZUYWNWS3VLVU5EeDlFTnVJTEswMm5ZdFIvZzFOenpocFhv?=
- =?utf-8?B?QUd1R2wzUG12c2NzVmR6bkRJVmw5KzlNbDJSNFAwYXJGMVliOFpKNG9aSDVQ?=
- =?utf-8?B?Q2lCVTByN0toQkVBQjlpOXRiMHJOR2JmYXVMTHFuV1poRE8rS0pOZmZ0dzdn?=
- =?utf-8?B?eXZlNTNZYjBNbjEzRzl0SUMwN0RFTGxZMU15Sk9LMlA3T1FGMnk1MFNHcWM1?=
- =?utf-8?B?c25sUVhyaWxGd3Mwa0h3a2RlQmNsbE9nYzcvMnc3Y0pOUzBnNiszL2EwYXQ1?=
- =?utf-8?B?UytKMXFIUWNmdGNQbzgveGpBTDhqbmZUYldWNGdndVBWSS9yYWZraHpHOEJ6?=
- =?utf-8?B?QW5KQkx0V3dSSVRlVHJ4OGZwOCtUN2c0S2Y1SzU4TnFMWWN4ZVRUUWFCTnJz?=
- =?utf-8?B?Wld4UC9TRGRxaUNWMlM2VlNRUzg3dGx3NlhralUvcFRpV1BNSzFLUWgvZFN1?=
- =?utf-8?B?NVhFdWFwSDRNbUtMNU50NW92WU1XZzh3WnZKSlpmajlJa3JKSm9nVkRSb3dQ?=
- =?utf-8?B?SWMrMGhveDFhUFM3ZDNkeHV4VUdUUDdRVXRhMXQ4N3pJaW03QkFVVjlwQUJM?=
- =?utf-8?B?SDIvZ3BBSFVwMERtM0ZNV2ZkeU11ZllCWitkVjMyTUVRTXRuODMyTFZKUG1j?=
- =?utf-8?B?SzdYRXZFL3pWdllURDNhbTNLKzF4QmszakFKNmhZKzdpbGZORWRLS2FTR2Z6?=
- =?utf-8?B?ei9zc3NLLy9qd09UTS9uZG1lY1N6TEx6cU4vQ1R0aW9TTTZSOGR1dndKUWQ2?=
- =?utf-8?B?Q1hkKzJBV2JiUTJXUmZDL3g0S09KUGRvZnVKZytudEwrSG5Kbk1ucnNidHlw?=
- =?utf-8?B?d0FNTXpZb0R4V2FZTGFWOFZ6WnZoS0VsVE5QVEtXOXk4YzRkeFNIdkNYbmxw?=
- =?utf-8?B?blNOZHRoVmtPbmpJL3dCVHdFQlNURGdJR282eWk1T2F1ZXhYZXJ0R25XWWRy?=
- =?utf-8?B?Zk42NnU3YTRKMVZqdHZuc3NHaFQzSmhmQ1MyMnhwWWFpRVpMdXRvek8rVklh?=
- =?utf-8?B?MTBmZUZ1aTNtNHRMTW1LVFEreEdObmI0b21Sbmp6ckxFOGJheDZMZW9HN3d2?=
- =?utf-8?B?dlhUZm55bDE1MXJSbHVyS1R5TG5yeDNHTVFQYWxiWVhLaDN6aHlXQXoxV0h5?=
- =?utf-8?B?RXFBUnFDVjZxelFMNUJFZk1Vb2N2R3BXVFVHbWJUZ2IwcCtmQ3F1TUQ1czBJ?=
- =?utf-8?B?M05TVzVWM3EyR1pWaHlSdGlsWWtxL1QxUXJoZlA2eWJiWW5DczNUTVI3c281?=
- =?utf-8?B?blVhZUxRNmEyU0RqRGZvaVhya3I2NkJ3YlJpWjlWMDJHUUlnTDR2UkYzaGdQ?=
- =?utf-8?B?aTZ2UkhkL1N3Znp4S1ZGZERwZHkwR3F6Z0ZCdWFLYVZWcDNwNE1HQ2xqZnNQ?=
- =?utf-8?B?RnlXVFhXTGlSOVBCanZmWjRtL3FYR3ZtdXNMdCtnc3h2bjd5VUwra0VaL2tr?=
- =?utf-8?B?TU16RjJpYXBaUW85S1FIT1gwK2dFMGNGVDV3ZVdJOS9YbjlDQ2dwM0tMWXh5?=
- =?utf-8?B?d3FwV0VPRkhlNFRHOXJweFpjYmdMQi9oUjdVTDRJRjR5RUwvVkVyK3FVeE5r?=
- =?utf-8?B?V2FpYlhOWGYrLzJoRE9KbnREY045b2hxTW11ZDdmUjVrNXVWVTF1NGJ6NmpK?=
- =?utf-8?B?dWNWU3Y3eC9PbkZlMDhZK0poampvbTlCVzZrRWxiLzVSbjdXUmxWdHdGaTI3?=
- =?utf-8?B?YldidkRlUGNSNWdtNEFLWUVFeXpOQXJySllWVDRhUEd3UWFBeXkrRm9UbXNi?=
- =?utf-8?B?VU5pdWRxcXdUcVQwS0tjWVZsT3M0b3hUclpBaHFuSU41R2pRcWxhc2NQWGZt?=
- =?utf-8?Q?LXAn9sXsO9gbSftZvDFX4IgWhwlPn+r/?=
+	=?utf-8?B?d2RKdzF6T3FiUnVVSXZkQzF3S3pKeVV3dzhmOEpnN0FwQUNkTU0xcUg5NFVV?=
+ =?utf-8?B?UndVUzdLaVdla3Rja0J3VVY2NnIrUjZPakRCTk1PRmh6L2lLNjZLTmFJTWlJ?=
+ =?utf-8?B?ZkYrcU9qNG9nejZQajRZcEdoUWhhVGx4eWJXd2p4UVNlZTZYaFErcXhZQnpr?=
+ =?utf-8?B?VkZMYll1aEdSVXo0Qm5uNHI0MEhEV2lRSlpVajJxcnJaVUJYSnJVVHBoUGxk?=
+ =?utf-8?B?ZUlWZzRqWGZld2xuRzJNb3NIQkcrVWh2bDBzb2RQblloUkgyMjdzV05oYnI3?=
+ =?utf-8?B?YjZLbklJclpwVGIrNlREdzRiU3FaK2JUNkxFZEVzc21lNTUzbk5qelROMDlW?=
+ =?utf-8?B?cThTVzRCOG1oRFFHRUdGM01hWjVmZ3ZYRy9QYXBlY3hRSm42MnYvVlp1U0Rj?=
+ =?utf-8?B?VTZXZ05sZHoySk9DZ2xPQVpqcDZYR2VXQ1kvK0dibWVkYUtIVUxZcWppdkFw?=
+ =?utf-8?B?V3pMSzVXclR4VFFpbU9zVXhIakQyRklabGVlbG5ZNFhKWTJzY1FFeEowcEZh?=
+ =?utf-8?B?U3phTlRqbEJxNFl6bEo0cklTdDhjVHU1bmhjWHE3YzlxeFlvdGlBU094Znpw?=
+ =?utf-8?B?N1ZQNFVmUVNLQWd6Z2FuVFloVDdKMVduMDkyVUZnUlhCN3dkOW4waTFzaUgw?=
+ =?utf-8?B?WmxqYmVHWkZHQW4zWnJUZTQwQ1liNEh3TVpKRTFMMkdGaG1aRmJoRTdVOTd4?=
+ =?utf-8?B?ZXV5dWQrNG5ZUEVjQ0p4SGllZnE2dVJLaDhxekxia1Vqb2IvMURORWNnd2di?=
+ =?utf-8?B?aks5OWhoTjg3MGMwenY2Q0RiWkFBVS9KVyswKzQ2c1VpSUVNU0I0UUhibXFB?=
+ =?utf-8?B?cVo4K05oV0pLNDJ5YnZ3ZHQvL3dvcklNOVRRVG02VUNJaFFsYmJaY0R2OTdK?=
+ =?utf-8?B?NlNMMkQ5QXdraWxpblYzT1hpSTRwV2N4cFVldlAzdG1maWxpeEFSSVpHQ1Jk?=
+ =?utf-8?B?OTJvMXZwUlRRcnBpL08yTXpwWXdGRFhKdWRUMDNyNzdoZ05Za1gyZ2RyVFRk?=
+ =?utf-8?B?bWdFRVNNZDVCRUcyaEorNXZEcjNIQW1RYkdVQ1BnQUFPZU16SXNhQnhac3N5?=
+ =?utf-8?B?azY5N0lnV3A0SjJOQjFsdFJ0RUN6YnkyVkxFbWRJZHdhUWpvSi80U2djV0tX?=
+ =?utf-8?B?Mjk4eHlGRFFVWFpOcm9kM3g5Y1NEMjNMR2JrdmdWdXRrd0NIcjEybFp6d0pr?=
+ =?utf-8?B?MDRLSEhOeUJueEpUd1pIYWh5dUR4d2RvVDRBeHRaZnhVY3U2RHQwRHhqM29Y?=
+ =?utf-8?B?aTY4d2ZmUDRXQ3dabndEVGhibC9KVldLaDdPeWtyWXhwQ3ZIRUlLVHhGV25R?=
+ =?utf-8?B?b0t0aGNsRjZuM3RFdmtqUFVBRVd1Q3lMai9rbGtuOWtsL0VYaW1qblZMaHJ4?=
+ =?utf-8?B?R0p5a3graFdWS3FNZ2pYMkRjV3Y4cGdUVElhMHU1djJ3SEN1S0NpTE5QMUNS?=
+ =?utf-8?B?ZU5yR3ora0l5VVQ5QVNKY3NHOEtXN1h1OGpKNU9IZmF1QTY5SUdMRE5pak5L?=
+ =?utf-8?B?YnVlb1Z5Sk5nRlZ2RzQrQUxid20yaTJEbERiYmhydHV3eGlaNzhNQkdSUGxW?=
+ =?utf-8?B?YW95REIzZzFoNDlnaDQrcXY1SXZWNkxJQ3h4Y2xISHJnUjlFWXNVV3BSaXlx?=
+ =?utf-8?B?aXUzYVIvYVkyMUE1Qm1YbUpMRll5SWdTZTk4di81ZmlEajFUUXh5WGlrZ1Z2?=
+ =?utf-8?B?L09OWXdaZ2o3RHVrTTN6eTdyRkhKRHl2Vkw3ODljSGI2azhCcnpkNUp5RHlE?=
+ =?utf-8?B?bHh1VUhNZ1R5RDd0WHpXSWEvNENtKzAvY0FJUlpEcFh5RC9aN2RpbGdOWFMv?=
+ =?utf-8?B?Z3RpTWtia0F6TlpVZndXZz09?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 08:50:07.6295
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5072.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VncwNkRwRnUyRURsT0JMbkFYaDVlUldGZHVxbStHeXM2U3FKaStIZXVuMkgv?=
+ =?utf-8?B?RXNkV3g3UlVCdnRoc3V2MUw2eGUyeWppUWsxZjh2WWEvYmVMTDVmYUsrQ3pU?=
+ =?utf-8?B?b3lvOWpDUXhZY1UxK0ZPNXdQNHBCR00zNEpNcWNSUFBCT2tEOUMzV2dLdWNS?=
+ =?utf-8?B?T2RTUW01Nmxxa0V6VjBKTEZTdytNOUU2em1DRlB6Z3pmcmVnMTVUdFZiaU8r?=
+ =?utf-8?B?NHljVUZWeGpNRW1sdjl5aFZJL0duS0w4QkxLWWFEMUIrc1ZocFVrekw4d0xH?=
+ =?utf-8?B?RHBCT0UrWUdHMkY4Mjd4QnVLU2x3UzladVBxaS8xV2k2UkY4M0Nudk9EN3kv?=
+ =?utf-8?B?cEhWSlBVbDNUOTZxZTF1NVVFTGgyREp5UU15aUhkUlAwV3pLTGlIV0NCTmIz?=
+ =?utf-8?B?U3poeHh1aEh6WTdlOFg3UkZwa3VLYzM1VUhiT0JDT3k5VXl6THp5ZWpHdmxz?=
+ =?utf-8?B?UFE4S3JhdUN3V0xaME9tcC84M2dWWVZOY09qVXlVQUN2a29xZmFOOHZTUUhK?=
+ =?utf-8?B?RVBvNEY3YmdtZUw4RkJDVHEwci91VDkyaDJ5bStLYjNkYkhkbk1pa0JsNFp6?=
+ =?utf-8?B?V3g0dExyd0RFZDBoRTVBUXl4U1NBOWUveWFib3BNeFczQllPNXFmblZiWXhz?=
+ =?utf-8?B?TmtrT05ORTJzeVIwSlJ6SkMvblZBRCtyZmgweEc0WTh2TGEzZVd5eUJrbE8r?=
+ =?utf-8?B?cExRbjY3bUxCRFgzL2U5T3c5czN4Y1Z4c2lVRGNmUDlJUHJrSm8yZGdlMkRx?=
+ =?utf-8?B?SjB1ODhtSGtVMVpNcWdidWt0SmcxeVNZSEZ6QW9pd2NFY0dYTDFqMERNOFIy?=
+ =?utf-8?B?UlNOcWFUcDc5dGVacEhZSkJUd2h0RFFzUU5yaTQrWjFrekhqQ0NQVXRrejB4?=
+ =?utf-8?B?ckptdm9Ka1BxekZaZHMzZGMxaERCaHo0TThsekQ5dGhIQWtIcXI3VWE2NFYv?=
+ =?utf-8?B?WXh4b255V3lOdkQvR2s5c3BrSFNUcUdMTkpENjZyNy9CS3N6M2dhMlg3M3Fk?=
+ =?utf-8?B?RkMrNXZybEYvcEU0ZTRaQlgzU0pOWmxtbVBicjYzVTVUdW5XWGxScXVMUGZo?=
+ =?utf-8?B?UU5kR2w1Tmh6RnVjeWo5SmMzN0pmTkpFTjJ0c3kyQ0lWOFZKSHpyKzM3UjhV?=
+ =?utf-8?B?UXFQd3NqYnN0d2pCaWo3dXlzYktRRW5KOVNHNWFJbVhqdXpTY1BOUFFaMmtY?=
+ =?utf-8?B?ekZ0c2srWWlHUDE1VVNnaGowd3ZpcEtoaGpKK3pxdmg5NUlFcElOakVwQUt5?=
+ =?utf-8?B?eVVuR09CSDRhaklSOHY1TnlGODVQdFYrY3hKTGU5SVJaUGtlOWdOVkN2VXli?=
+ =?utf-8?B?aGtTRjZiZ3JnYkp4bGZiQnVHcWpSYzg2a3VHczQxaG4zWnBlbE83Z1VQOHBG?=
+ =?utf-8?B?VUVNSG1CdXF2TjdhakcvMkZObisvdnlCQWhQUXJzQ0hWV05reitYYkN5VG9h?=
+ =?utf-8?B?QTJNRUZsRUZzQmh2UXkwSktUenh6WmlFb2oyUWFJM3FNT1l1Vm94T1FKMEVm?=
+ =?utf-8?B?OURrVFJQd09nQVRCT3ZzanBqZENCc2pNeVdIRFlFUkF5cisrMmpxbytpeTdO?=
+ =?utf-8?B?NUpNRWxCVXI3aE5NWmtFL1NIckpDcEFBZ2J3ZVRPT0Z0OHUrSTNxaFRTS2hP?=
+ =?utf-8?B?Q1lMZTkvOTNtdFlpWjZPMitmWXh5T25SNkgrZkgxWXpmRU1DWGV2Y0NHTmNk?=
+ =?utf-8?B?d0kxLy9uR3BzM0tUR3NySnZaUXZlN0tqb2xMZktOVUp3QlJLdTRGMkJTV2lU?=
+ =?utf-8?B?Zkg0Wk11MVNYeDg2bk5Hb2wwa0Q1YmxiVGt0VnQxTnhKQjRkV3hDNlljazBu?=
+ =?utf-8?B?WGhTZDlWZThacWdMSW1kVXRUenhib0FLRGZnYnlOVWdaTStEMTJPa0pRVXhT?=
+ =?utf-8?B?ckR1a0J2M2ZYaXBGcjZBRWcreEUrVTBMWU9wMkpleVRIOWdoS1ErYjNxMDZX?=
+ =?utf-8?B?aFZZRnEwOWFGQ3I1KythRlh0aUpHcnJqeHB3YkJ5ZDR5Y0tuWElKNTlkcUt0?=
+ =?utf-8?B?VlpNTHJSemtHYjk0SXZMaDhHeGxRdWJlWDNlYmJsK0VHYTUzRnNhRGhqRW1n?=
+ =?utf-8?B?S25RK1RoYjRndXZIUTN2c1BYKzZsRDBza1h1TDhRQlZwKzFnQURRK0VuVWp6?=
+ =?utf-8?B?b0pRRFljeE9TMUZUOXBSemtmaXV6bHpjUDVaU3A5RGhDVElzeVVZWHBWWUIw?=
+ =?utf-8?B?d1E9PQ==?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e737a9fc-1d31-4591-5e37-08dcd7be70ff
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5072.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 08:46:52.7917
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80215586-3b6f-4661-8419-08dcd7bee5b0
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F68.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7860
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: X8ss4XjGScmCrBkpo+F3MMx6+bWQmyVeRf/lztmxkDJM7dZtzQ4xl3BntaFqJNesDbLlapcuZbsmpe53k6EMlU/iiWFjykMv0BOLq8JqD7A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8708
+X-Authority-Analysis: v=2.4 cv=MYM+uI/f c=1 sm=1 tr=0 ts=66ea938b cx=c_pps a=rPWB9DPlu1VaKM/QD/CSBg==:117 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=bRTqI5nwn0kA:10 a=20KFwNOVAAAA:8 a=zsV8aoxCpfEpN65H77cA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: tRZvUmx3yhsuhEQPayJFOxsGVzHdnwDJ
+X-Proofpoint-ORIG-GUID: tRZvUmx3yhsuhEQPayJFOxsGVzHdnwDJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-18_06,2024-09-16_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ suspectscore=0 priorityscore=1501 phishscore=0 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 clxscore=1011 mlxlogscore=999 adultscore=0
+ spamscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2408220000 definitions=main-2409180055
 
-Hi Vineeth,
 
-Thank you for testing the series.
+On 8/29/2024 16:11, Lu Yao wrote:
+> On 2024/8/22 22:05, Mario Limonciello wrote:
+>> On 7/23/2024 04:42, Lu Yao wrote:
+>>> [Why]
+>>> When running kdump test on a machine with R7340 card, a hang is caused due
+>>> to the failure of 'amdgpu_device_ip_init()', error message as follows:
+>>>
+>>>     '[drm:amdgpu_device_ip_init [amdgpu]] *ERROR* hw_init of IP block <si_dpm> failed -22'
+>>>     '[drm:uvd_v3_1_hw_init [amdgpu]] *ERROR* amdgpu: UVD Firmware validate fail (-22).'
+>>>     '[drm:amdgpu_device_ip_init [amdgpu]] *ERROR* hw_init of IP block <uvd_v3_1> failed -22'
+>>>     'amdgpu 0000:01:00.0: amdgpu: amdgpu_device_ip_init failed'
+>>>     'amdgpu 0000:01:00.0: amdgpu: Fatal error during GPU init'
+>>>
+>>> This is because the caputrue kernel does not power off when it starts,
+>> Presumably you mean:
+>> s/caputrue/capture/
+> Oh, you're right. It's a mistake.
+>>> cause hardware status does not reset.
+>>>
+>>> [How]
+>>> Add 'is_kdump_kernel()' judgment.
+>>> For 'si_dpm' block, use disable and then enable.
+>>> For 'uvd_v3_1' block, skip loading during the initialization phase.
+>>>
+>>> Signed-off-by: Lu Yao <yaolu@kylinos.cn>
+>>> ---
+>>> During test, I first modified the 'amdgpu_device_ip_hw_init_phase*', make
+>>> it does not end directly when a block hw_init failed.
+>>>
+>>> After analysis, 'si_dpm' block failed at 'si_dpm_enable()->
+>>> amdgpu_si_is_smc_running()', calling 'si_dpm_disable()' before can resolve.
+>>> 'uvd_v3_1' block failed at 'uvd_v3_1_hw_init()->uvd_v3_1_fw_validate()',
+>>> read mmUVD_FW_STATUS value is 0x27220102, I didn't find out why. But for
 
-On 9/17/2024 4:27 PM, Madadi Vineeth Reddy wrote:
-> Hi Ravi,
-> 
-> On 16/09/24 22:17, Ravi Bangoria wrote:
->> MOTIVATION
->> ----------
+Hi,
+
+I have a Oland GL [FirePro W2100] card and mmUVD_FW_STATUS was changed 
+from "0x27210102" to "0x27220102",
+
+when system was resuming from suspend-to-idle, with the following error:
+
+     [drm:uvd_v3_1_hw_init [amdgpu]] *ERROR* amdgpu: UVD Firmware 
+validate fail (-22).
+     [drm:amdgpu_device_ip_resume_phase2 [amdgpu]] *ERROR* resume of IP 
+block <uvd_v3_1> failed -22
+     amdgpu 0000:02:00.0: amdgpu: amdgpu_device_ip_resume failed (-22).
+     amdgpu 0000:02:00.0: PM: dpm_run_callback(): 
+pci_pm_resume+0x0/0x140 returns -22
+     amdgpu 0000:02:00.0: PM: failed to resume async: error -22
+
+Does anyone happen to know who changed the value of mmUVD_FW_STATUS? And 
+what's the meaning of "0x27220102"?
+
+
+Thanks,
+
+Yongxin
+
+
+>>> caputrue kernel, UVD is not required. Therefore, don't added this block.
+>> Hmm, a few thoughs.
 >>
->> Existing `perf sched` is quite exhaustive and provides lot of insights
->> into scheduler behavior but it quickly becomes impractical to use for
->> long running or scheduler intensive workload. For ex, `perf sched record`
->> has ~7.77% overhead on hackbench (with 25 groups each running 700K loops
->> on a 2-socket 128 Cores 256 Threads 3rd Generation EPYC Server), and it
->> generates huge 56G perf.data for which perf takes ~137 mins to prepare
->> and write it to disk [1].
+>> 1) Although you used this for the R7340, these concepts you're identifying probably make sense on most AMD GPUs.  SUch checks might be better to uplevel to earlier in IP discovery code.
 >>
->> Unlike `perf sched record`, which hooks onto set of scheduler tracepoints
->> and generates samples on a tracepoint hit, `perf sched stats record` takes
->> snapshot of the /proc/schedstat file before and after the workload, i.e.
->> there is almost zero interference on workload run. Also, it takes very
->> minimal time to parse /proc/schedstat, convert it into perf samples and
->> save those samples into perf.data file. Result perf.data file is much
-> 
-> per.data file is empty after the record.
-> 
-> Error:
-> The perf.data data has no samples!
-
-I am not able to reproduce this error on my system. Can you please share 
-`/proc/schedstat` file from your system? What was the base kernel you 
-applied this on?
-
---
-Thanks And Regards,
-Swapnil
-> 
-> Thanks and Regards
-> Madadi Vineeth Reddy
-> 
->> smaller. So, overall `perf sched stats record` is much more light weight
->> compare to `perf sched record`.
+>> 2) I'd actually argue we don't want to have the kdump capture kernel do ANY hardware init.  You're going to lose hardware state which "could" be valuable information for debugging a problem that caused a panic.
 >>
->> We, internally at AMD, have been using this (a variant of this, known as
->> "sched-scoreboard"[2]) and found it to be very useful to analyse impact
->> of any scheduler code changes[3][4].
+> So, maybe  should skip all the  ip_block hw_init functions when kdump?
+>> That being said, I'm not really sure what framebuffer can drive the display across a kexec if you don't load amdgpu.  What actually happens if you blacklist amdgpu in the capture kernel?
 >>
->> Please note that, this is not a replacement of perf sched record/report.
->> The intended users of the new tool are scheduler developers, not regular
->> users.
-> 
+>> What happens with your patch in place?
+>>
+>> At least for me I'd like to see a kernel log from both cases.
+>>
+> After add 'initcall_blacklist=amdgpu_init' in KDUMP_CMDLINE_APPEND,  kernel logs are as follow:
+>
+> [    4.085602][ 0]   nvme0n1: p1 p2 p3 p4 p5 p6
+> [    4.157927][ 0]  [drm] radeon kernel modesetting enabled.
+> [    4.163383][ 0]  radeon 0000:01:00.0: SI support disabled by module param
+> [    5.387012][ 0]  initcall amdgpu_init blacklisted
+> [    6.613733][ 0]  initcall amdgpu_init blacklisted
+> [    7.859320][ 0]  mtsnd build info: e3fc429
+> [    8.687512][ 0]  EXT4-fs (nvme0n1p3): orphan cleanup on readonly fs
+> [    8.694035][ 0]  EXT4-fs (nvme0n1p3): mounted filesystem 75c1e96b-cef8-4ed3-86ea-45010c7b859c ro with ordered data mode. Quota mode: none.
+> [    9.309862][ 0]  device-mapper: core: CONFIG_IMA_DISABLE_HTABLE is disabled. Duplicate IMA measurements will not be recorded in the IMA log.
+> [    9.325236][ 0]  device-mapper: uevent: version 1.0.3
+> [    9.330946][ 0]  systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
+> [    9.341512][ 0]  device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+> [    9.380944][ 0]  fuse: init (API version 7.39)
+> [    9.390196][ 0]  loop: module loaded
+> [    9.486957][ 0]  lp: driver loaded but no devices found
+> [    9.494904][ 0]  EXT4-fs (nvme0n1p3): re-mounted 75c1e96b-cef8-4ed3-86ea-45010c7b859c r/w. Quota mode: none.
+> [    9.505931][ 0]  systemd[1]: Starting systemd-udev-trigger.service - Coldplug All udev Devices...
+> [    9.518899][ 0]  ppdev: user-space parallel port driver
+> [    9.524908][ 0]  systemd[1]: Started systemd-journald.service - Journal Service.
+> [    9.574209][ 0]  systemd-journald[350]: Received client request to flush runtime journal.
+> [   10.118484][ 0]  snd_hda_intel 0000:00:1f.3: Unknown capability 0
+> [   11.590124][ 0]  hdaudio hdaudioC0D2: Unable to configure, disabling
+> [   23.892640][ 0]  reboot: Restarting system
+>
+> After with my patch in place:
+>
+> [    4.074629][ 0]   nvme0n1: p1 p2 p3 p4 p5 p6
+> [    4.146956][ 0]  [drm] radeon kernel modesetting enabled.
+> [    4.152409][ 0]  radeon 0000:01:00.0: SI support disabled by module param
+> [    5.379207][ 0]  [drm] amdgpu kernel modesetting enabled.
+> [    5.384909][ 0]  amdgpu: Virtual CRAT table created for CPU
+> [    5.390514][ 0]  amdgpu: Topology: Add CPU node
+> [    5.395225][ 0]  [drm] initializing kernel modesetting (OLAND 0x1002:0x6611 0x1642:0x1869 0x87).
+> [    5.404040][ 0]  [drm] register mmio base: 0xA1600000
+> [    5.409118][ 0]  [drm] register mmio size: 262144
+> [    5.413864][ 0]  [drm] add ip block number 0 <si_common>
+> [    5.419207][ 0]  [drm] add ip block number 1 <gmc_v6_0>
+> [    5.424448][ 0]  [drm] add ip block number 2 <si_ih>
+> [    5.429427][ 0]  [drm] add ip block number 3 <gfx_v6_0>
+> [    5.434668][ 0]  [drm] add ip block number 4 <si_dma>
+> [    5.439733][ 0]  [drm] add ip block number 5 <si_dpm>
+> [    5.444803][ 0]  [drm] add ip block number 6 <dce_v6_0>
+> [    5.450051][ 0]  amdgpu 0000:01:00.0: amdgpu: Fetched VBIOS from VFCT
+> [    5.456517][ 0]  amdgpu: ATOM BIOS: 113-RADEONI6910-B03-BT
+> [    5.462023][ 0]  kfd kfd: amdgpu: OLAND  not supported in kfd
+> [    5.467857][ 0]  amdgpu 0000:01:00.0: vgaarb: deactivate vga console
+> [    5.474239][ 0]  amdgpu 0000:01:00.0: amdgpu: Trusted Memory Zone (TMZ) feature not supported
+> [    5.482781][ 0]  amdgpu 0000:01:00.0: amdgpu: PCIE atomic ops is not supported
+> [    5.490242][ 0]  [drm] PCIE gen 3 link speeds already enabled
+> [    5.496017][ 0]  [drm] vm size is 64 GB, 2 levels, block size is 10-bit, fragment size is 9-bit
+> [    5.504778][ 0]  amdgpu 0000:01:00.0: amdgpu: VRAM: 1024M 0x000000F400000000 - 0x000000F43FFFFFFF (1024M used)
+> [    5.514812][ 0]  amdgpu 0000:01:00.0: amdgpu: GART: 1024M 0x000000FF00000000 - 0x000000FF3FFFFFFF
+> [    5.523710][ 0]  [drm] Detected VRAM RAM=1024M, BAR=1024M
+> [    5.529133][ 0]  [drm] RAM width 32bits GDDR5
+> [    5.533532][ 0]  [drm] amdgpu: 1024M of VRAM memory ready
+> [    5.538963][ 0]  [drm] amdgpu: 225M of GTT memory ready.
+> [    5.544293][ 0]  [drm] GART: num cpu pages 262144, num gpu pages 262144
+> [    5.550950][ 0]  amdgpu 0000:01:00.0: amdgpu: PCIE GART of 1024M enabled (table at 0x000000F400E00000).
+> [    5.560859][ 0]  [drm] Internal thermal controller with fan control
+> [    5.567163][ 0]  [drm] amdgpu: dpm initialized
+> [    5.571642][ 0]  [drm] AMDGPU Display Connectors
+> [    5.576278][ 0]  [drm] Connector 0:
+> [    5.579782][ 0]  [drm]   HDMI-A-1
+> [    5.583108][ 0]  [drm]   HPD2
+> [    5.586088][ 0]  [drm]   DDC: 0x1950 0x1950 0x1951 0x1951 0x1952 0x1952 0x1953 0x1953
+> [    5.593937][ 0]  [drm]   Encoders:
+> [    5.597353][ 0]  [drm]     DFP1: INTERNAL_UNIPHY
+> [    5.601985][ 0]  [drm] Connector 1:
+> [    5.605488][ 0]  [drm]   VGA-1
+> [    5.608553][ 0]  [drm]   DDC: 0x194c 0x194c 0x194d 0x194d 0x194e 0x194e 0x194f 0x194f
+> [    5.616400][ 0]  [drm]   Encoders:
+> [    5.619807][ 0]  [drm]     CRT1: INTERNAL_KLDSCP_DAC1
+> [    5.985857][ 0]  amdgpu 0000:01:00.0: amdgpu: SE 1, SH per SE 1, CU per SH 6, active_cu_number 6
+> [    6.346743][ 0]  [drm] Initialized amdgpu 3.54.0 20150101 for 0000:01:00.0 on minor 0
+> [    6.433683][ 0]  fbcon: amdgpudrmfb (fb0) is primary device
+> [    6.439260][ 0]  Console: switching to colour frame buffer device 240x67
+> [    6.454578][ 0]  amdgpu 0000:01:00.0: [drm] fb0: amdgpudrmfb frame buffer device
+> [    6.816426][ 0]  mtsnd build info: e3fc429
+> [    7.827506][ 0]  EXT4-fs (nvme0n1p3): orphan cleanup on readonly fs
+> [    7.834021][ 0]  EXT4-fs (nvme0n1p3): mounted filesystem 75c1e96b-cef8-4ed3-86ea-45010c7b859c ro with ordered data mode. Quota mode: none.
+> [    8.502847][ 0]  device-mapper: core: CONFIG_IMA_DISABLE_HTABLE is disabled. Duplicate IMA measurements will not be recorded in the IMA log.
+> [    8.517899][ 0]  systemd[1]: Starting modprobe@fuse.service - Load Kernel Module fuse...
+> [    8.526044][ 0]  device-mapper: uevent: version 1.0.3
+> [    8.531923][ 0]  systemd[1]: Starting modprobe@loop.service - Load Kernel Module loop...
+> [    8.545910][ 0]  systemd[1]: systemd-fsck-root.service - File System Check on Root Device was skipped because of an unmet condition check (ConditionPathExists=!/run/initramfs/fsck-root).
+> [    8.564367][ 0]  fuse: init (API version 7.39)
+> [    8.568872][ 0]  device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+> [    8.581889][ 0]  systemd[1]: Starting systemd-journald.service - Journal Service...
+> [    8.591857][ 0]  loop: module loaded
+> [    8.639020][ 0]  lp: driver loaded but no devices found
+> [    8.662288][ 0]  systemd[1]: systemd-tpm2-setup-early.service - TPM2 SRK Setup (Early) was skipped because of an unmet condition check (ConditionSecurity=measured-uki).
+> [    8.685851][ 0]  ppdev: user-space parallel port driver
+> [    8.697866][ 0]  EXT4-fs (nvme0n1p3): re-mounted 75c1e96b-cef8-4ed3-86ea-45010c7b859c r/w. Quota mode: none.
+> [    9.362160][ 0]  snd_hda_intel 0000:00:1f.3: Unknown capability 0
+> [    9.716497][ 0]  hdaudio hdaudioC0D2: Unable to configure, disabling
+> [   20.101499][ 0]  reboot: Restarting system
+>
+> Compared with the blacklist method, amdgpu driver initialization can be completed after adding patch.
+> >From the external observation, more startup animation can be shown (of course, this is meaningless, because it will restart immediately).
+>
 
