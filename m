@@ -1,112 +1,227 @@
-Return-Path: <linux-kernel+bounces-332672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D15C97BCDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:13:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A640397BCE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E41C92842AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:13:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C66461C20F48
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF12C18A6C8;
-	Wed, 18 Sep 2024 13:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3DA18A924;
+	Wed, 18 Sep 2024 13:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WG1QDtUk"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IiXQVF+V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703BF189F3C
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F15A1EEFC;
+	Wed, 18 Sep 2024 13:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726665183; cv=none; b=RAL1M8RJ2ZU9Edc6r4JDPB9F4c06mjzJsdsR1l39JoyoI/CiuM4TLul+K+Kq6PWp6I0U2R/RukYltZmKMwIgM4yQKG4iXJ/F8EElqRrTXOV9L+gJrO2nV7Es5mNELJaN/SSOJicCPFpZ2pBL+LHtM7mOn2UkdFC87Ic0fXI5+n0=
+	t=1726665402; cv=none; b=IPQ3V2ot1QKGMzpq5Q0JZyteVUWH6RGgHe0c1HcaHoXZ7fMErawSmnCmwCwC8FrOkX43SonJE5mM/OPp76IhKwKx1oGtEtPHqwTmUKqBp61/PiArTzas+BRUQE7xMGzDJ7zlSe5bGfbX3zRJIv5jv7trXTRtupRm9CgZG9Xj3I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726665183; c=relaxed/simple;
-	bh=/dQvIwB7C6GOBY9sPOH493ERq7mD9MX2ud8ZZgiIyE4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hla3omhrS/QBDvisgkJ0neyuh4FxcOHQazKs0ApekBdYkZLH1S8nnK601yawnNEG1ukScD/aGUhXlPwB3IG57dD7zefIspt2+3vwLBSZrCypb7Z+DEX9Ur9IB12O302LedFOl+Lgei+shE6tBHeH5qFigoJDwocVFpfQHEgwgq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WG1QDtUk; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso6694715276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:13:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1726665180; x=1727269980; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bDbiwY+9v6W/l/Dp0yY8ts7e186+P1Z8FGGOzgOdKCw=;
-        b=WG1QDtUkB6p4UhQd7AuKU9GhpRzr1yr6FxgBrEbdtF7QT1p6JA6zquNsv8HPWiet7p
-         mH2MgFvQ7tl29NvkVo2OUMMd7vxiQ1W34Zw40nnOpkdu4QOUavauGhtsS0BghSb8U85D
-         ITeRePyFjC/IDt6gumZKecDlm8rSh/ZSX7syo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726665180; x=1727269980;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bDbiwY+9v6W/l/Dp0yY8ts7e186+P1Z8FGGOzgOdKCw=;
-        b=VrtOT7kWfNckMb0oH5mrTzYqgkZ2CaG6IEewTmrpyidopmhHtRGsydVXpJH3/NuTcG
-         SeREtNDSRarjO86a39vO7fDwXVFR0RpviNKYO1zRpzIHwH964mL7sM3IreAz4MiutyLe
-         oN6XqZGDsCiqxh5xIW+E5KSDJ2yQL5GIBh69E6OCU41hhXV+h3htSJ42vIP+TMtjETks
-         hBG3IJXMvVgb3A1857bZQ5A+CeoJ4BMYrrV8rcUnmke4kIdjCwZeH7mxcmmUPF2pTUxy
-         NVF2WQVSlOpp/6jKdtq//DbfhxiApfzZqGWieygLKvQbCrtcCptG2qNdb/oKSarC4J/e
-         nwIg==
-X-Gm-Message-State: AOJu0YxLkEsSGR8PDvwj9ChkTphwAElI/2XgB/m41hP00JyoNIa3EeRt
-	FnZO2VhUDgLlTuzJ6HmmfbcBGs/iMLF5elLDlzcddzVPZUju9hpVP9OYkNuvoyYnR1ApHVHsgG9
-	r1jaQctd27NSz7/sr8XtCBNgne+DoViw/Oys1CQ==
-X-Google-Smtp-Source: AGHT+IG9ydQ0Munqm74igbyRIPkxfC8xFAKxQRSKZIGBKbfOv3i8qSAysIoEaKK5iD5Z7skFQQQFI71KH6ffNGSkZb8=
-X-Received: by 2002:a05:690c:3811:b0:6db:dede:ec63 with SMTP id
- 00721157ae682-6dbdedef10emr148891457b3.28.1726665180443; Wed, 18 Sep 2024
- 06:13:00 -0700 (PDT)
+	s=arc-20240116; t=1726665402; c=relaxed/simple;
+	bh=I1WKWjb/1pB6Z+0gQytF8A1x1ayRFI7/3X2gekOAgd4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UjNay01FSAYJaTc42CWUlfHLhyRzYhXzEWBoks0D9Go24BgwIfOMMPrQpNJSK8w5Uk+9CwsaWFq46Q6+M9b7mFvz/2ll4vYyifeUbiQ2crSi7dV9g2/tt9R3U7PEt91BXhs7m6gQ3MwkRepR5v1GIi6j5cbyZDVVZlGPt0GiYaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IiXQVF+V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67577C4CEC3;
+	Wed, 18 Sep 2024 13:16:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726665400;
+	bh=I1WKWjb/1pB6Z+0gQytF8A1x1ayRFI7/3X2gekOAgd4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IiXQVF+VziAkw35mC+OWLIX8iZg6/fPBwEDHfwXKKFZrebtluGnigmqmDfORiXaEq
+	 VQABPQH5qCKwEhk7zZeip+1/0tN1kqKgC/HHcnHaZiABCaBNh9csDkBeAP77nNt6tg
+	 Ifkdkcu9B/qvVBltoOlLhJq4c0qmgItc/aR5rqLrATa+JCwC8MuBkCdbH4vTtVnkGL
+	 0tUL4j2WBuWKfKgi8iiAWqnqQZc4y8q4/xiKag9+bFbmG/amXqh4B6eOiiq0R2GNOT
+	 eSAORFuxyUbnkVKTltLCpK/x38NokFA+2qpV0qB2hAVGluY+P5VFduCoACNJ9JRBq/
+	 lA/98wNDhdnFQ==
+Message-ID: <3ac31595-f596-4960-bba2-0b0b55041193@kernel.org>
+Date: Wed, 18 Sep 2024 15:16:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZurLc9qEjBH9MkvK@gmail.com>
-In-Reply-To: <ZurLc9qEjBH9MkvK@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 18 Sep 2024 15:12:49 +0200
-Message-ID: <CAADWXX_mJr=hDkOWne831Fcm+wRxRnh9VvD2AMJJ5fStodyAgw@mail.gmail.com>
-Subject: Re: [GIT PULL] Performance events changes for v6.12
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>, Jiri Olsa <jolsa@redhat.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Namhyung Kim <namhyung@kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] dt-bindings: usb: Add Diodes Incorporated
+ PI5USB30213A Type-C Controller
+To: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Shawn Guo <shawnguo@kernel.org>, Petr Benes <petr.benes@ysoft.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Herburger <gregor.herburger@ew.tq-group.com>,
+ Hiago De Franco <hiago.franco@toradex.com>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+ Michael Walle <mwalle@kernel.org>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Mathieu Othacehe <m.othacehe@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20240917151001.1289399-1-michal.vokac@ysoft.com>
+ <20240917151001.1289399-4-michal.vokac@ysoft.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240917151001.1289399-4-michal.vokac@ysoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 18, 2024 at 2:45=E2=80=AFPM Ingo Molnar <mingo@kernel.org> wrot=
-e:
->
->  arch/x86/events/core.c                                |  63 ++++++++++++=
-+++++++
->  arch/x86/events/intel/bts.c                           |   3 -
-[...]
->  kernel/events/core.c                                  | 586 ++++++++++++=
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
-+++++++++++++++++++++++++++++++++++++++++----------------------------------=
----------------
->  kernel/events/uprobes.c                               | 505 ++++++++++++=
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---=
------------------------------------------------------------------
+On 17/09/2024 17:10, Michal Vokáč wrote:
+> From: Petr Benes <petr.benes@ysoft.com>
+> 
+> Diodes Incorporated PI5USB30213A Type-C Controller supports host,
+> device, and dual-role mode based on voltage levels detected on CC
+> pin. Supports dual differential channel, 2:1 USB 3.0 Mux/Demux,
+> USB Type-C specification 1.1.
+> 
+> Signed-off-by: Petr Benes <petr.benes@ysoft.com>
+> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+> ---
+>  .../bindings/usb/diodes,pi5usb30213a.yaml     | 95 +++++++++++++++++++
+>  1 file changed, 95 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/diodes,pi5usb30213a.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/diodes,pi5usb30213a.yaml b/Documentation/devicetree/bindings/usb/diodes,pi5usb30213a.yaml
+> new file mode 100644
+> index 000000000000..1cae10724152
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/diodes,pi5usb30213a.yaml
+> @@ -0,0 +1,95 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/usb/diodes,pi5usb30213a.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: PI5USB30213A Type-C port controller
+> +
+> +description:
+> +  Diodes Incorporated PI5USB30213A Type-C Controller supports host,
+> +  device, and dual-role mode based on voltage levels detected on CC
+> +  pin. Dual differential channel, 2:1 USB 3.0 Mux/Demux, USB Type-C
+> +  specification 1.1 compliant.
+> +
+> +maintainers:
+> +  - Petr Benes <petr.benes@ysoft.com>
 
-You seem to be cutting-and-pasting your diffstats from a *very* wide
-terminal window, resulting in a very messy diffstat result.
+Please put maintainers before description: block.
 
-Please either pipe the git request-pull output to some tool (I suggest
-just piping to 'xsel' or similar that does the 'cut' part for you, but
-anything works - you can just do "| cat" to make the stdout not be the
-terminal).
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - diodes,pi5usb30213a
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  connector:
+> +    type: object
+> +    $ref: ../connector/usb-connector.yaml#
 
-Or just use "--stat=3D80" to set the output width to a fixed sane thing,
-instead of that insane 250+ character window width that it seems you
-are using and that causes those overlong diffstat lines and makes it
-all hard to read.
+Full path, so /schemas/connector/usb-....
 
-               Linus
+> +    unevaluatedProperties: false
+> +    description:
+> +      The managed USB Type-C connector.
+
+Description should not be needed.
+> +
+> +    properties:
+> +      compatible:
+> +        const: usb-c-connector
+
+Drop, not needed.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - connector
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      pi5usb30213a: tcpc@d {
+
+typec@d
+
+and drop label
+
+> +        compatible = "diodes,pi5usb30213a";
+> +        reg = <0xd>;
+> +        pinctrl-names = "default";
+> +        pinctrl-0 = <&pinctrl_typec>;
+> +        interrupts-extended = <&gpio1 5 IRQ_TYPE_LEVEL_LOW>;
+> +        status = "okay";
+
+Drop status
+
+Best regards,
+Krzysztof
+
 
