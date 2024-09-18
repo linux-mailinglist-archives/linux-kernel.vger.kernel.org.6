@@ -1,165 +1,179 @@
-Return-Path: <linux-kernel+bounces-333014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1AC997C22F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 01:28:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 577B697C230
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 01:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97C551F227E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:28:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D979B1F229CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145861CB52D;
-	Wed, 18 Sep 2024 23:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OC50h1Cj"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DCD1CB528;
+	Wed, 18 Sep 2024 23:29:27 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84367178363;
-	Wed, 18 Sep 2024 23:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF4B178363
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 23:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726702079; cv=none; b=lUEQjpqRDaQCqZglWUlr7Lb98qY6qZxr23upste8eVZy/1e2eXEuh062QrOMeWSsQXE2Lq+HWwjwB5oQcYNMxG7W0EqUVw3zZSfCqhR+VwPnZ6cXZs2r0IMhjeGuX3bYM+gpT1cbWu/uOcde8ulsjJqGDoyCFMTK2wEJjnzzCEY=
+	t=1726702167; cv=none; b=nCFAPLwF8P1087hCZUxnu3sVJAhfSk3V9DVy5ckoM7e/x5Qhk0yuhxiLsga3JVXcHEWbfaDgijONKl7jfOFxXbIxDGlN0EncaFE7Eq+vgCSi10TtXA5T1Rb1JjG+Z36ZMWn6FUkZslvAotCZOgQZMGccAP+zkZW9trg6y0M+Ubk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726702079; c=relaxed/simple;
-	bh=BN111YqS+cU0rYfWDZbQPk6uZkP7l6o/VpvthgUnC/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AQTAgGYKDFBL2xsCbGMwYx6xHZGH2RP1aH3Xxq14QacT5KlysPfRNWUtxxYWKTmC/oPFIN0MiL7spTbRLqKkFUsOuR8dRmSUwOZ2r3S5PlKmRNg4Pn6qQ8YDgiNsjkKBVokYPBsX7amaTCTeb/7rgUn6t7HfSudMLAAch9ETEr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OC50h1Cj; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726702074;
-	bh=Bt9ELa2GeiYVRmNenmyVyQi+u/04qU1WIiulWlet/f0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OC50h1Cjn2iLle7reaPstl1d2eNvEvbXEkv3WoXagMwHEUMU2yRNEsJH4TR9kmyhE
-	 E6LxGWLGdHr9et6ZTHN/r+9Gr/HEz8MxckVneortLy4o0/U9ZaNKGX0tBhl2Chz+En
-	 ssOg95RimhNmLJSnW+I5rpR8Jp8HDTDvcRXp06HfaHoWGU2FezphjqmXSxNd8VW+if
-	 9EvMBrnal4SSjEF03rPkFP0Wbp2H27Jyd/raikb5iCfM/2H2rpyBRiAVbOejeOHbmW
-	 X1aw7lifYHS63n6n7TzgSfEiqHI/ZlUtyUmWEmWiHkd8PDu0uQBg8abzRzzhM5uFxL
-	 qXJfuMxH6bJ8Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X8FF53JPxz4x8D;
-	Thu, 19 Sep 2024 09:27:53 +1000 (AEST)
-Date: Thu, 19 Sep 2024 09:27:52 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Lucas De Marchi <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0?=
- =?UTF-8?B?csO2bQ==?= <thomas.hellstrom@linux.intel.com>
-Cc: Kees Cook <kees@kernel.org>, Riana Tauro <riana.tauro@intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Michal Wajdeczko
- <michal.wajdeczko@intel.com>, DRM XE List <intel-xe@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Dave Airlie
- <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Message-ID: <20240919092752.5a832aaa@canb.auug.org.au>
-In-Reply-To: <20240909195939.067c1c13@canb.auug.org.au>
-References: <20240909195939.067c1c13@canb.auug.org.au>
+	s=arc-20240116; t=1726702167; c=relaxed/simple;
+	bh=FM1XhAoAvnG8yU8C8slzPxJLsSLErMUxGwaqxk2ETBw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=WdufmGTDREuiGhIff9qrOubNHBpjqkb1wXqSv6M+2kbxuDwEdhl/MQlwCCI8yKYHmGjOsfSR8rDSiObEQvBlPtAs2OjrggIWOwdi3sBUcRCA7n+pqhOoAobmMdSjVsxBJU/cAH8Th8rnANWETily9vsYzEVeQEn4Xscri9skv9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a08d90c938so3737355ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 16:29:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726702164; x=1727306964;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MG4qYuEYgY2F4rb2s1I0pOQ6JfmsY9G6MRD32wvArho=;
+        b=CLpPe6XXMrzQRhD/ri3EL0jZX+bUHRn2S3ZRvOdVl90Hmrn6cBGBODADilKM6J1FKD
+         aagXu0meH25gEyiE1/vGsxBJI1bJgJpWvwcfDSM75yju1tzdMiybyqQa5Qod5/ALtrif
+         UmjzPRaJO3HCJMcdUZ8RPRs3VrpLXlQikcHxlKculRLZssitXC1UtLe2Sk/RbUc9Ri+F
+         UG3Km+fmzsXkVbupoHmpP3XQoPa0YZO0oACClA5iRBZxaSB5sdFVBhf5HiYZEodQ/hRc
+         hXBxEFzxORKuw37QTs5SlVcO9WpMEIRSFJltmCxrz/PZv/rgKX8bVknX+UjZTB7ZQn2p
+         1wtw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ3rLg7dvvoaq17QmBQlpCKdHJ6BlxMmpnpM5zXdnhGTJKtBeWbD3C/7iUpxc1Nz1Mz8tiFwuFxPWq9bI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwywUvd493rSuwABmQPcqGamak8w4NgKFN7WnqUDySmVltn3WWn
+	BfK78zdlYbdk+o+4MgS6NFGQeZa6utTg9mNruXxZtwA9tWumFoErVdL9zuFRPQPVBw6lwC1Z5Lq
+	vgx2FLhbOAHOcHtHSrD0ZJmw34SK0gAITbISoEDvSu3enzriiEw5g06E=
+X-Google-Smtp-Source: AGHT+IGbwLVjTBX7ANQZ5lcTZ+yoLCvdeWrvoH2s22NwC2xSpUgv39hwAs/291harZta38YPqCqToN8lwCX5FR+32KWBb9XWEnD7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/LiyUh+CzuED8EVHPam0+hFK";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Received: by 2002:a05:6e02:b4d:b0:39f:51b8:5e05 with SMTP id
+ e9e14a558f8ab-3a08495477fmr185587325ab.16.1726702164501; Wed, 18 Sep 2024
+ 16:29:24 -0700 (PDT)
+Date: Wed, 18 Sep 2024 16:29:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66eb6254.050a0220.92ef1.0009.GAE@google.com>
+Subject: [syzbot] [bcachefs?] BUG: unable to handle kernel paging request in bch2_opt_to_text
+From: syzbot <syzbot+294f528e56138c357a48@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/LiyUh+CzuED8EVHPam0+hFK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+syzbot found the following issue on:
 
-On Mon, 9 Sep 2024 19:59:39 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the kspp tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> drivers/gpu/drm/xe/xe_gt_idle.c:56:27: error: redefinition of 'str_up_dow=
-n'
->    56 | static inline const char *str_up_down(bool v)
->       |                           ^~~~~~~~~~~
-> In file included from include/linux/string_helpers.h:7,
->                  from drivers/gpu/drm/xe/xe_assert.h:9,
->                  from drivers/gpu/drm/xe/xe_force_wake.h:9,
->                  from drivers/gpu/drm/xe/xe_gt_idle.c:8:
-> include/linux/string_choices.h:62:27: note: previous definition of 'str_u=
-p_down' with type 'const char *(bool)' {aka 'const char *(_Bool)'}
->    62 | static inline const char *str_up_down(bool v)
->       |                           ^~~~~~~~~~~
->=20
-> Caused by commit
->=20
->   a98ae7f045b2 ("lib/string_choices: Add str_up_down() helper")
->=20
-> interacting with commit
->=20
->   0914c1e45d3a ("drm/xe/xe_gt_idle: add debugfs entry for powergating inf=
-o")
->=20
-> from the drm-xe tree.
->=20
-> I have applied the following patch for today.
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 9 Sep 2024 19:40:17 +1000
-> Subject: [PATCH] fix up for "lib/string_choices: Add str_up_down() helper"
->=20
-> interacting wit commit "drm/xe/xe_gt_idle: add debugfs entry for
-> powergating info" from the drm-xe tree.
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/gpu/drm/xe/xe_gt_idle.c | 5 -----
->  1 file changed, 5 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/xe/xe_gt_idle.c b/drivers/gpu/drm/xe/xe_gt_i=
-dle.c
-> index 85a35ed153a3..0f98c1539c64 100644
-> --- a/drivers/gpu/drm/xe/xe_gt_idle.c
-> +++ b/drivers/gpu/drm/xe/xe_gt_idle.c
-> @@ -53,11 +53,6 @@ pc_to_xe(struct xe_guc_pc *pc)
->  	return gt_to_xe(gt);
->  }
-> =20
-> -static inline const char *str_up_down(bool v)
-> -{
-> -	return v ? "up" : "down";
-> -}
-> -
->  static const char *gt_idle_state_to_string(enum xe_gt_idle_state state)
->  {
->  	switch (state) {
-> --=20
-> 2.45.2
+HEAD commit:    5f5673607153 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=16006407980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dedbcb1ff4387972
+dashboard link: https://syzkaller.appspot.com/bug?extid=294f528e56138c357a48
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11006407980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151e1900580000
 
-This is now needed in the merge between Linus' tree and the drm-xe tree.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/40172aed5414/disk-5f567360.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/58372f305e9d/vmlinux-5f567360.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d2aae6fa798f/Image-5f567360.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/b5f17be42aea/mount_0.gz
 
---=20
-Cheers,
-Stephen Rothwell
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+294f528e56138c357a48@syzkaller.appspotmail.com
 
---Sig_/LiyUh+CzuED8EVHPam0+hFK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+loop0: detected capacity change from 0 to 32768
+Unable to handle kernel paging request at virtual address dfff800000000000
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+Mem abort info:
+  ESR = 0x0000000096000005
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x05: level 1 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[dfff800000000000] address between user and kernel address ranges
+Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 UID: 0 PID: 6405 Comm: syz-executor394 Not tainted 6.11.0-rc7-syzkaller-g5f5673607153 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : strlen+0x30/0x70 lib/string.c:402
+lr : prt_str fs/bcachefs/printbuf.h:230 [inline]
+lr : bch2_opt_to_text+0x158/0x6b8 fs/bcachefs/opts.c:424
+sp : ffff8000a38773e0
+x29: ffff8000a38773e0 x28: ffff0000dce00000 x27: 1ffff00011728510
+x26: dfff800000000000 x25: 0000000000000002 x24: 0000000000000002
+x23: ffff0000dce00000 x22: 0000000000000000 x21: dfff800000000000
+x20: 0000000000000000 x19: 0000000000000000 x18: ffff8000a3876d00
+x17: 000000000000ce44 x16: ffff80008b2e26cc x15: 0000000000000001
+x14: 0000000000000000 x13: 0000000000000003 x12: ffff0000cf959e40
+x11: 0000000000ff0100 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : 0000000000000000 x7 : ffff8000a38772e0 x6 : 000000000000003d
+x5 : ffff0000c5ac126f x4 : ffff80008b945083 x3 : ffff80008b2e5714
+x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
+Call trace:
+ strlen+0x30/0x70 lib/string.c:402
+ prt_str fs/bcachefs/printbuf.h:230 [inline]
+ bch2_opt_to_text+0x158/0x6b8 fs/bcachefs/opts.c:424
+ print_mount_opts+0xbbc/0x164c fs/bcachefs/super.c:992
+ bch2_fs_start+0x44/0x53c fs/bcachefs/super.c:1004
+ bch2_fs_get_tree+0x938/0x1030 fs/bcachefs/fs.c:1946
+ vfs_get_tree+0x90/0x28c fs/super.c:1800
+ do_new_mount+0x278/0x900 fs/namespace.c:3472
+ path_mount+0x590/0xe04 fs/namespace.c:3799
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount fs/namespace.c:3997 [inline]
+ __arm64_sys_mount+0x45c/0x5a8 fs/namespace.c:3997
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+Code: f2fbfff5 8b140260 d343fc08 12000809 (38f56908) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	f2fbfff5 	movk	x21, #0xdfff, lsl #48
+   4:	8b140260 	add	x0, x19, x20
+   8:	d343fc08 	lsr	x8, x0, #3
+   c:	12000809 	and	w9, w0, #0x7
+* 10:	38f56908 	ldrsb	w8, [x8, x21] <-- trapping instruction
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbrYfgACgkQAVBC80lX
-0Gyv3wf+LJfbXwQUt38mt6FZfvFVeKG/GC4SVPJFFIVwJP+8Jl30Yk/jJNf6vppD
-w8XOQFY/FGiinjnfMJFkZccll7mF4gAhhfgL7NWoH2mAfRRQ4Ltiw6ecMAi9iK7y
-MsogrW7dprxJFo+HR+nJMmePMceVfUDiiD2LD57eN69VUS+sbiWw1drS/BuZbxFS
-qjOCqPgbR19Y2Ov5aLi6UL/r+o53yWN1l+9WpyosYA4BcJujARauhnWXvqYxUNCV
-jnl7n/dxBQGOz7tjqjxt++uFvy5vbPdCPnk4HrtKdg4lx16YLJefYI6nJRk8qQhN
-ZZ4GJrhMCMFn/CkNCJU7LlFZxouauQ==
-=F3w5
------END PGP SIGNATURE-----
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---Sig_/LiyUh+CzuED8EVHPam0+hFK--
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
