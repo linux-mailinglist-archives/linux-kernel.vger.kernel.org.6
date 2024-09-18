@@ -1,135 +1,176 @@
-Return-Path: <linux-kernel+bounces-332537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C866C97BAF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:35:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F25B797BAF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED2C81C21656
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:35:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 996EE1F22007
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6504817E013;
-	Wed, 18 Sep 2024 10:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0AF183CCE;
+	Wed, 18 Sep 2024 10:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="edEZOw66"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oe8fEsfa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BBD17B4E5
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6588B17E46E;
+	Wed, 18 Sep 2024 10:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726655739; cv=none; b=tNO3yv3rnWp70mhOmUrpzZBR9qMzI8j6cyuEwheyWLZSUiQyUbeY0TKIG8fTQzX8vM3cuUi5sPa6s9wqJoStmKPJB0kRnMX6P1dTPvpHqUCfkUfmxgy6vfX9fODzQFlcu7ccRvjEPF0j62tP1oMY7IEb9lRa+SsIf7G5Ey3uWRU=
+	t=1726655794; cv=none; b=glOrQZUMkADls+2lwYNlB/LinMrd+9wBoaNJRsptIrvVY7z7pDhgHb220BOX8H5Q6kvFN4psN624bUNMKSnXHqhzPtLbPrhcJ2qmnZev3nFAM5uFOfeVFXQbD/CllNiuV2/cLTWaCbtWGokX6rroRl+OinEk0Giul8qoJZFDem0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726655739; c=relaxed/simple;
-	bh=MKojkMtdMLX6s0iPGFzxqvrccWjr566N4dfG+CDfRxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dqHhH6TmLz1bl3/MAHFtmCPoEKmYYqJo+3m6BxNxXQ1mohFPIPdF2PyXdpLN5chTxBMtwO+RrgZ3pnp+A6P8/jcJo94LtgtJZxwuf1WmMRMPPeI0pl9Aw3V3IRJvX4aIFlmcv85U1YH77b7MCdSLjaHTggwj5/qd1p3aH98XI1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=edEZOw66; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb7a2e4d6so55688045e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 03:35:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726655736; x=1727260536; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YJ6iSOFRFIXilBHat53kTfPhBju9nzHneKyM/B5MJoM=;
-        b=edEZOw66m2yRETeqPBfuRq5DVE07OfvplXu9AcYfRlRJG/nVjYGS4GG7BClmgqGOR+
-         FQimoObVAPQkTiwk6FYXtxvRXd7gypBKJhENlcEDFvOsbFg9GGlcM+OtOQWCcCDiHglP
-         9DHiqCqsSdAXdIpvSX8D81jMp+OBy2fYcfuFx2Ae1T6QuSs1a523d9qlPDnlQ3OqsUa0
-         3bsAcXTvhOP7jvsTRMHf8Hk0Z2IRkYn5Z3hj4Xx8/2hbJFaOJ+dPJ7Qc0D3Psv+cLPjD
-         ehuPbFdprhgZ3nAlrxLHsVsr+WJRNZV0JFHXCdNQ/vcLdhExmLooRwbXMc1tj6cFjXZR
-         Vmkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726655736; x=1727260536;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YJ6iSOFRFIXilBHat53kTfPhBju9nzHneKyM/B5MJoM=;
-        b=BeQ/OPGlaqbc6if8Sb4osaSahmRHxQSehFm4v5g+OY+DjCU7EU8Na5H4BqyQUC0DCA
-         Ng2cHGH6iAnfFT5hX8QS4KzyftSjmiqvsGaKNgLRmwiZQfXFu1Q4RMillc1A5mMf63fT
-         pqj0AqTpDJT/Xqb3yC6CgEVXvF5Bz0IREfNnkVhxPGZwE2//Cn/VlgNGx+YDulq0t352
-         2w0ExQjgBJR0h4DSH1FQFryNfdDZIvf/mbJapskz9MxqpkSqXdKnDrBaYOVTG9GjMvdX
-         0Y95IHSf+Gs4cioQzVRJu3hFzeiO74Iyf7ITpsB6y30KVgNZNjHcYt/fc7TN01cbtL5x
-         Xs6A==
-X-Forwarded-Encrypted: i=1; AJvYcCV/wf2w+IPYoJDcrFVB91flDGEE/F8lvszdgLROD8alCjYqXC06ATMqk3aODeLWcu/7ZSuM2Wo18dc719M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJq2Gc/81kp1DN8mbdHqpze4tNfT4M2O1EEJlPoI/1TGdqFGq7
-	X2tp/ICT0QTyqlccyRZbVDbq+wbZnOBL5g0dBK+Ojh8bM4huoBBRUVRZ/1Eo7Yw=
-X-Google-Smtp-Source: AGHT+IE1q6TLLgJdFrxZskiywIgmSX47WLYAFvIvk6rTFMK/4V4rT4AgiNgb5t4ooDomK9lfcGqoxw==
-X-Received: by 2002:a05:600c:35d4:b0:42c:af06:718 with SMTP id 5b1f17b1804b1-42cdb57c0d1mr177198965e9.28.1726655736155;
-        Wed, 18 Sep 2024 03:35:36 -0700 (PDT)
-Received: from localhost ([83.68.141.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e704f2ee4sm13314365e9.28.2024.09.18.03.35.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 03:35:35 -0700 (PDT)
-Date: Wed, 18 Sep 2024 13:35:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: philipp hortmann <philipp.g.hortmann@gmail.com>
-Cc: Tree Davies <tdavies@darkphysics.net>, gregkh@linuxfoundation.org,
-	anjan@momi.ca, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/18] Staging: rtl8192e: Rename variable nDataRate
-Message-ID: <0a8303bc-0c11-4355-87d1-1e4dbe10f376@suswa.mountain>
-References: <20240917053152.575553-1-tdavies@darkphysics.net>
- <20240917053152.575553-2-tdavies@darkphysics.net>
- <ZunfwVt2f5DsAqlb@kernel-710>
+	s=arc-20240116; t=1726655794; c=relaxed/simple;
+	bh=eTS3gc/BmkF4XpBhvFZQ8aG/m3nfMsOJGf7bwOqJ/Q4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FCjzi2I0IFQ4LGYII1WOzMatiK6O0fH69S0zI62osu1RqzXTMRvy/BkHxiosTtMpI7oDwEMySnw0FrpM2UP4r0hEmU+DoO/p4XsErayIifKDIbKGVWimy59Rm78TntRb8zp4ja1EI0Cgb/KS/hP8LTDTh/cURRO/x/Zyo0kcitE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oe8fEsfa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB87BC4CECE;
+	Wed, 18 Sep 2024 10:36:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726655794;
+	bh=eTS3gc/BmkF4XpBhvFZQ8aG/m3nfMsOJGf7bwOqJ/Q4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Oe8fEsfajVU+mpBu5m19PkX0miGKUfcaJX51dE8Uih2n3hLW0rwlfm220XC9pUBAA
+	 riYwCpwjlvDY/1UB2oppP58KVcsEDtygoZRKVE2NrNj8k/K4636+Gbs13bJxqqh+2V
+	 sRHOpBKunYwjFIZ2Sy51h5eryZU0yyaSfMVQ+pKJpn30cg+2Oo1v6eNFWFvQSu4miM
+	 AHUhAyf9w9irvL2iwQQYrZwQIChSTpbFLhGoeFv7I8NyBY7KtJLUZSd2MziBqa+Umh
+	 WNa1P0Q5Cgg/8VvFPKd18VEbOCt6NRDIRkmasD/fNXp/OFBphwTajeQKr8vu5T1HQi
+	 zmmA6R1CZ/pzQ==
+Message-ID: <8406f507-ceb6-42cf-af20-62bdad0255f6@kernel.org>
+Date: Wed, 18 Sep 2024 12:36:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZunfwVt2f5DsAqlb@kernel-710>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] MAINTAINERS: add MAINTAINER for S32G2/S32G3 RTC
+ driver
+To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ NXP S32 Linux Team <s32@nxp.com>
+References: <20240911070028.127659-1-ciprianmarian.costea@oss.nxp.com>
+ <20240911070028.127659-5-ciprianmarian.costea@oss.nxp.com>
+ <56c16398-faeb-4c99-9eaf-66ac5a872072@kernel.org>
+ <85a13ce0-d821-4afa-ae69-6ce8e2e3edf7@oss.nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <85a13ce0-d821-4afa-ae69-6ce8e2e3edf7@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 17, 2024 at 10:00:01PM +0200, philipp hortmann wrote:
-> On Mon, Sep 16, 2024 at 10:31:35PM -0700, Tree Davies wrote:
-> > Rename variable nDataRate to data_rate
-> > to fix checkpatch warning Avoid CamelCase.
-> > 
-> > Signed-off-by: Tree Davies <tdavies@darkphysics.net>
-> > ---
-> >  drivers/staging/rtl8192e/rtllib.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/staging/rtl8192e/rtllib.h b/drivers/staging/rtl8192e/rtllib.h
-> > index d6615f787d53..21d8ea153368 100644
-> > --- a/drivers/staging/rtl8192e/rtllib.h
-> > +++ b/drivers/staging/rtl8192e/rtllib.h
-> > @@ -1743,7 +1743,7 @@ extern u16 MCS_DATA_RATE[2][2][77];
-> >  u8 ht_c_check(struct rtllib_device *ieee, u8 *frame);
-> >  void ht_reset_iot_setting(struct rt_hi_throughput *ht_info);
-> >  bool is_ht_half_nmode_aps(struct rtllib_device *ieee);
-> > -u16  tx_count_to_data_rate(struct rtllib_device *ieee, u8 nDataRate);
-> > +u16  tx_count_to_data_rate(struct rtllib_device *ieee, u8 data_rate);
-> >  int rtllib_rx_add_ba_req(struct rtllib_device *ieee, struct sk_buff *skb);
-> >  int rtllib_rx_add_ba_rsp(struct rtllib_device *ieee, struct sk_buff *skb);
-> >  int rtllib_rx_DELBA(struct rtllib_device *ieee, struct sk_buff *skb);
-> > -- 
-> > 2.30.2
-> >
-> Hi Tree,
+On 18/09/2024 10:13, Ciprian Marian Costea wrote:
+> On 9/17/2024 8:37 PM, Krzysztof Kozlowski wrote:
+>> On 11/09/2024 09:00, Ciprian Costea wrote:
+>>> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+>>>
+>>> Now that a RTC driver was added for S32G2/S32G3 SoC, update
+>>> the mainainters list for it.
+>>
+>> Why? You don't do that alone. You add yourself for entire platform!
+>>
+>>>
+>>> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+>>> ---
+>>>   MAINTAINERS | 2 ++
+>>>   1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>> index f328373463b0..a6d91101ec43 100644
+>>> --- a/MAINTAINERS
+>>> +++ b/MAINTAINERS
+>>> @@ -2686,11 +2686,13 @@ ARM/NXP S32G ARCHITECTURE
+>>>   R:	Chester Lin <chester62515@gmail.com>
+>>>   R:	Matthias Brugger <mbrugger@suse.com>
+>>>   R:	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
+>>
+>> If you are touching someone's maintainer entry, at least you could do is
+>> to CC them.
+>>
+>> And how many reviewers do you want to have in that platform? Are all
+>> entries real or some are stale?
+>>
+>> Best regards,
+>> Krzysztof
+>>
 > 
-> forget the former email.
+> Hello Krzysztof,
 > 
-> so in this commit:
-> commit ad96610acc0eb81f0342fa688e6d42fd530c328b
-> Author: Gary Rookard <garyrookard@fastmail.org>
-> Date:   Tue Nov 28 13:17:27 2023 -0500
-> the variable was changed. But he missed to change the declaration of the function tx_count_to_data_rate().
+> My intention was to add myself as a reviewer for the S32G Architecture 
+> and not as a maintainer.
 > 
-> So you change the variable accordingly in the declaration of the functiont tx_count_to_data_rate()
+> I plan to send more patches targeting this architecture and I would like 
+> to review any other changes to them in the future.
 > 
-> I assume that Greg would want you to use a fixes tag.
+> On the other hand I understand your point, already having a list of 
+> reviewers. If its unacceptable, I can only add myself as a maintainer 
+> for the S32G RTC driver, in V2 of this patchset.
 > 
 
-No, no need to a Fixes tag for this sort of thing.
+Folks:
+1. It is okay to have more maintainers or reviewers
+2. Document the express, be explicit in commit msg, provide some reasoning
+3. Be sure BEFORE you talked with existing maintainers and they are
+onboard, unless they are not responsive
+4. Explain why the list of three has to grow to list of 5 (or you did
+not align it with your colleagues, either). Yes, I see your other emails
+and it is very confusing that two of such events happen independently.
+It is not community task to coordinate your team activities...
 
-regards,
-dan carpenter
+Best regards,
+Krzysztof
 
 
