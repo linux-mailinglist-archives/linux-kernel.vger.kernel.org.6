@@ -1,111 +1,147 @@
-Return-Path: <linux-kernel+bounces-332761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99E797BE83
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D32B697BE8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6796328354D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:21:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97D95283B26
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB96E1C68B4;
-	Wed, 18 Sep 2024 15:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2540D1C8FD0;
+	Wed, 18 Sep 2024 15:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWu/nLbZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AM1AHmAG"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFFE7A15B;
-	Wed, 18 Sep 2024 15:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8391C68B4
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 15:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726672863; cv=none; b=ueNq4LgfzO2FNVgSzK4MDhJfHS6LwHjqRyWPatOF85N0eC+4HLmiK+CXry55XpWit3tXOh2tIPbAVGyr36EDW7dlJUT/h+l//ezIA1dRoaxH5WRENjwrzqXyq0/QtbWPXC0HLznHAjFTWEP6UHDdwWxuOsZceFUNvoR/DjQtoTk=
+	t=1726672977; cv=none; b=cA4CKfRlI2+nJ5BuUQWqDTDxbX0WW4IRxZkhuUoDHttVI36jRlKuodtaUgu7y4/ZAZwSGOetrqhK1tfQdFFbt8/UYz/GVwCHsgojIk66Zr7+Nq+RvVSHcOpM+if849EAlqyVn9lnmx6gqGC+EKRXj7LTSn1BKZ5SiR+1Wr84kGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726672863; c=relaxed/simple;
-	bh=h74MYu0CMAjngiyISC1+qiBUaTaAmY+BF5I44TzOFQk=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=QcDZ4nHV+2zu3TvX7js77NZdnDf3NTFYBCddcf55oayEeVDUIs1gDxwR3BY8ZtJg0yxRuGnewwlL55CcoyF2GU3L7g95o3RzP50Z0XVT6SUoF9Ju0aZmKdI0aPqwYECPDaWOWF7FIzOBLUr5GSD6HyrKnLfASLITwGVyIXgHEk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWu/nLbZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9FE6C4CEC3;
-	Wed, 18 Sep 2024 15:21:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726672862;
-	bh=h74MYu0CMAjngiyISC1+qiBUaTaAmY+BF5I44TzOFQk=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=YWu/nLbZF3y4sdm/3OduIKLe/XT4R7y2ikUHgB9K/VBfEdIy4ceX09gq/1MTt3pSi
-	 /4Re/5YjjHtrwq9+Nta1Tjw3ozq9fHWYv/OaKnVjdm4FMjxB8uLm+hBecPV4EDo/TL
-	 0+GXxGvauyUN5CCvgBjq++XCk7V9Npwl4+hkLiZYlm6sdb/VJR4YsEopLu/NIksnq4
-	 jwJyoV6pV0uH92gt507H9I1YmLL1Tt2yjOzMqTpfXzAnr0IxBsk0gbDDt5TFEm6AoQ
-	 doALZonCIQ0vC6nZjdEFnc1qzuu9Lk7Yrzg/ezWY5Xdi2KN7VccEkvvuhMcEKVldj4
-	 nHRu8GVXCnhSA==
-Date: Wed, 18 Sep 2024 10:21:01 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1726672977; c=relaxed/simple;
+	bh=JAusi96IOkOeOaqTiWtroBN0znKUXRz5D4lIj3kmqzM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o8F68lD2g5BY0JtGS6x9MAJ9Z60ey/yml00GltxGf//8xSFTIb4I3jgnFU2WblqPfF6BIuEqQWEppr++TocVpvqgo4K2idU5q6ju8I9EiUPRnRGFTlBnFPzL1aPS8G+TyE3oN0FMO9zIXwhO47OgzX+hsCGxA0j36F9si0qocsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AM1AHmAG; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-846d741dfdbso1255138241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 08:22:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1726672974; x=1727277774; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lCft1bt8+wTXWG4Mppm6Hwf7BdZO6lyQJ2NgHw2gpEM=;
+        b=AM1AHmAGC128n6peOYF/CJytx1P/Gjyr208sNPhrgFxvC3nC2oNjNkH64NN2BtU2eg
+         Hddwhy3iTeglfJLholo725KTxiOYpepwkVtLk3OUALrz1rat/emWEVi1Gz+60kuvrCHi
+         e4xg29gfhz5/fz6nnZrX9+ZE27Xkr0V+FaocM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726672974; x=1727277774;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lCft1bt8+wTXWG4Mppm6Hwf7BdZO6lyQJ2NgHw2gpEM=;
+        b=vu5HuYEvaKR2Xsz3BBrDjW7tucvcizxZkDJaZ1gEnpRjqINSaixIKn3ixPSGdykhiN
+         sCq4sLtdqYtIiMSgmfUDBRJiw2WlfJvShTQFWI5h9VvNMzpZ2Gyl18y3XRsP5HFUN1Lv
+         Qry4IJuByiWXmLgyBlTF5gaXOOBKc87T401/pDpA+aq7idjNs7Bjlv8wktdCPurqxeGN
+         kIqjOrX6KLtTip9V3wdaMvhJVmb5uOzJzPV+7KGThnolWrQR3nZ0esdmBaQT6hEPo+R5
+         qNmdstXz2dwQvlwv+50BU1XvkaoeYI/Ds1zrTx8FC6n5HvfFKt8Y47iNjLrc5afbD6TA
+         /Kfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDN2pbUlF0gfLKYdxfmHwIXJlRnAU7GznLU12fnJVUsqamjsUIxjxc7lM90HaNeLEW1JAo1YV1lC/ZSO0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0C64qrCl6/17NmKb6FsrtGEkZvgLfJc2hrjOV1x8Pkf0+HG0e
+	NXUPx0ZzmpbtE0KOrRclvRFttxoo2MmCUth1HxK/KLisXbq4Z3YUuk5IJBKvTOXG0xuvwmsnJLJ
+	rZlAUqw==
+X-Google-Smtp-Source: AGHT+IHJlDDw1I5y+vNs5vwyUmrgr05MllV/WHLgnicxc05yUJQlULPYggPZvxOv3GnzXs3xaw3X2A==
+X-Received: by 2002:a05:6102:a49:b0:494:3a8d:c793 with SMTP id ada2fe7eead31-49d4f6f49f8mr12801646137.28.1726672974012;
+        Wed, 18 Sep 2024 08:22:54 -0700 (PDT)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-49e6b44040dsm1350901137.21.2024.09.18.08.22.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2024 08:22:53 -0700 (PDT)
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-502c0ffd07cso1422522e0c.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 08:22:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVuZ0kIrEYKKk3gaUY9LVf2HFxi7K8IRdDeEN1HWfBGlJzS955wcqbA56ZNmQFKiw4CptRGJ46l9gWTNWg=@vger.kernel.org
+X-Received: by 2002:a05:6122:310c:b0:501:be30:2abf with SMTP id
+ 71dfb90a1353d-50344b63a4dmr13070691e0c.1.1726672972559; Wed, 18 Sep 2024
+ 08:22:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: devicetree@vger.kernel.org, wefu@redhat.com, guoren@kernel.org, 
- paul.walmsley@sifive.com, palmer@dabbelt.com, drew@pdp7.com, 
- krzk+dt@kernel.org, aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org, 
- m.szyprowski@samsung.com, conor+dt@kernel.org, linux-kernel@vger.kernel.org, 
- jassisinghbrar@gmail.com
-In-Reply-To: <20240918134901.193033-3-m.wilczynski@samsung.com>
-References: <20240918134901.193033-1-m.wilczynski@samsung.com>
- <CGME20240918134926eucas1p1df23a583b356505939d4c5501bd6c80f@eucas1p1.samsung.com>
- <20240918134901.193033-3-m.wilczynski@samsung.com>
-Message-Id: <172667286158.1610121.8972324212190229160.robh@kernel.org>
-Subject: Re: [PATCH RFC v1 2/3] dt-bindings: mailbox: Add
- thead,th1520-mailbox bindings
+References: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org>
+ <20240917071246.GA27290@willie-the-truck> <4b546151-d5e1-22a3-a6d5-167a82c5724d@gentwo.org>
+In-Reply-To: <4b546151-d5e1-22a3-a6d5-167a82c5724d@gentwo.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 18 Sep 2024 17:22:17 +0200
+X-Gmail-Original-Message-ID: <CAHk-=wgw3UErQuBuUOOfjzejGek6Cao1sSW4AosR9WPZ1dfyZg@mail.gmail.com>
+Message-ID: <CAHk-=wgw3UErQuBuUOOfjzejGek6Cao1sSW4AosR9WPZ1dfyZg@mail.gmail.com>
+Subject: Re: [PATCH v3] Avoid memory barrier in read_seqcount() through load acquire
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 18 Sept 2024 at 13:15, Christoph Lameter (Ampere) <cl@gentwo.org> wrote:
+>
+> Other arches do not have acquire / release and will create additional
+> barriers in the fallback implementation of smp_load_acquire. So it needs
+> to be an arch config option.
 
-On Wed, 18 Sep 2024 15:49:00 +0200, Michal Wilczynski wrote:
-> Add bindings for the mailbox controller. This work is based on the vendor
-> kernel. [1]
-> 
-> Link: https://github.com/revyos/thead-kernel.git [1]
-> 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  .../bindings/mailbox/thead,th1520-mbox.yaml   | 83 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 84 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
-> 
+Actually, I looked at a few cases, and it doesn't really seem to be true.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+For example, powerpc doesn't have a "native" acquire model, but both
+smp_load_acquire() and smp_rmb() end up being  LWSYNC after the load
+(which in the good case is a "lwsync" instruction, in bad case it's a
+heavier "sync" instruction on older cores, but the point is that it's
+the same thing for smp_rmb() and for smp_load_acquire()).
 
-yamllint warnings/errors:
+So on powerpc, smp_load_acquire() isn't any better than
+"READ_ONCE()+smp_rmb()", but it also isn't any worse.
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.example.dts:31.28-29 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [scripts/Makefile.lib:442: Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1432: dt_binding_check] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
+And at least alpha is the same - it doesn't have smp_load_acquire(),
+and it falls back on a full memory barrier for that case - but that's
+what smp_rmb() is too. However, because READ_ONCE() on alpha already
+contains a smp_mb(), it turns out that on alpha having "READ_ONCE +
+smp_rmb()" actually results in *two* barriers, while a
+"smp_load_acquire()" is just one.
 
-doc reference errors (make refcheckdocs):
+And obviously technically x86 doesn't have explicit acquire, but with
+every load being an acquire, it's a no-op either way.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240918134901.193033-3-m.wilczynski@samsung.com
+So on at least three very different architectures, smp_load_acquire()
+is at least no worse than READ_ONCE() followed by a smp_rmb(). And on
+alpha and arm64, it's better.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+So it does look like making it conditional doesn't actually buy us
+anything. We might as well just unconditionally use the
+smp_load_acquire() over "READ_ONCE+smp_rmb".
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+Other random architectures from a quick look:
 
-pip3 install dtschema --upgrade
+RISC-V technically turns smp_rmb() into a "fence r,r", while a
+smp_load_acquire() ends up being a "fence r,rw", so technically the
+fences are different. But honestly, any microarchitecture that makes
+those two be different is just crazy garbage (there's never any valid
+reason to move later writes up before earlier reads).
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Loongarch has acquire and is better off with it.
 
+parisc has acquire and is better off with it.
+
+s390 and sparc64 are like x86, in that it's just a build barrier either way.
+
+End result: let's just simplify the patch and make it entirely unconditional.
+
+                 Linus
 
