@@ -1,125 +1,88 @@
-Return-Path: <linux-kernel+bounces-332453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C678197B9F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:05:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F4097B9FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D0791F228CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:05:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25E41B2908B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C5E177999;
-	Wed, 18 Sep 2024 09:05:11 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB72176FA0;
+	Wed, 18 Sep 2024 09:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TbibdkHC"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD34716D9C2;
-	Wed, 18 Sep 2024 09:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F851139D09
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 09:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726650310; cv=none; b=d/nFGwYMlIA+bPo/gpp2Ttddl3P2rp9AXM+Fb9H6D/m7Cc4MHEBoiSmZ+Ezsr06JoIZV/37B0BkZBuv+0uPiTfXsUz2HP/5nsnrZDHzcoQ1EiaNoRnS4uHXdFAEhWCfb4Uv5ib7MyG+9Mblbm84yNvAPS9pjUyyXKeOoIIja6Zc=
+	t=1726650323; cv=none; b=R8AlvhTwHaEz7r1naK2QoAlqRr+q2zDYy57h1+/Z5p5eg+/Zcs3zeosqfcrkVBbvy4F/tpIWTDIPDdDAbiYubROU1gRMA99XTPCSlclth7FNKMhMoUASprADpYx5I+AHlGLchblfEBZmVnclcVZee5Cm/uwHux3J9fG8DO1lxs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726650310; c=relaxed/simple;
-	bh=9yqqJnr3ATyHJtvtBYPKsXfQp/BUJHv/4yr4gE4/24A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=n7VO5jTHTP47lMQwJndDpeA05GN6xX7phqeuVtnHPLfRW0l04WYhexeTpcFYqrrqXItRmUMWXctv9Q8Di+IlzwvvEc0u9YBgimhrLjk4Sq4gfAQTxXwl3zjdn/J/hZoza1jzK3omnCtgQSFyxEkJtO7mSC/MT7BfUgZlVQ0jTRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.109] (178.176.72.3) by msexch01.omp.ru (10.188.4.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 18 Sep
- 2024 12:05:02 +0300
-Message-ID: <07673b5f-eb7d-167b-d523-230f725e0d11@omp.ru>
-Date: Wed, 18 Sep 2024 12:05:01 +0300
+	s=arc-20240116; t=1726650323; c=relaxed/simple;
+	bh=XRYe6k301hVMrjUu3bWA/ITB1UE99EqwDnjHlWIAJ5k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HvZYQR6EmjpcOjESyHR2mZq2dht0m1QKmtF1tjFwzsnZ3OhiEjVyfldleqVfrKXsTAZDd5d01rjwP1Ep80VQTWRj6dwCx7QkU4BJ157gXR7T8MpCzsGmRtO0owiCAd8D4I3zmnKE+qvSqtF6GYvgBQCJeXtyHPfFdsmDMKp6lDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TbibdkHC; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-717934728adso4982285b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 02:05:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726650321; x=1727255121; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XRYe6k301hVMrjUu3bWA/ITB1UE99EqwDnjHlWIAJ5k=;
+        b=TbibdkHC4fWhIV4NBU45TlMX8mOuubknDKPPj3arhwQSv/7/+LuTkPUNV3GObEgjqV
+         G7QDrYImOKNcyp+UQpFw4vntDzFmPWev8d4lVYIywItDxQM/EezCRUULC/820+f5/AZk
+         BibVO2eAl9oUg1h0Psf059ajeyjuimodFr7fao/dQ+61THd+Pyt/eK9wnXMpZRln6eWQ
+         8XO1l93FXHxjaSre9bzfXdqqDnTHlxU0wRSWuJwoKsQdlb1RYOeYllG4e7ns5DikM/0A
+         zgXTbTm7nBXCPgPp0fj3n2S1ZHgEk8AdxpKIeccu8uffER9NUDVusOIGrjp/srQgu8fP
+         oWSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726650321; x=1727255121;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XRYe6k301hVMrjUu3bWA/ITB1UE99EqwDnjHlWIAJ5k=;
+        b=mYWR7fsTwK3ENRkrTUvPBrGxzRvZmAL3hcwJmXalfJP174pYV+mrq+0YGZHqSZ9lyV
+         BGHbHni7rRaqRUqG97vNJHYj3RyJbtxWNA2TcLNbghJGa4NTDngRnfURQWYO9TfrpQUP
+         QZ2955R4G3vgaz0IfhnEpPgZfZ1MF2VIWdZSlMHoN3kMbOjU1B4LH2fdRkH8JHPY3E5x
+         CvQJxG2VpxQBVxyeItNSDGtMuIpWV8ym9v+BlknxhZb5Box5CdOK3+5WtZxq8AIbU3d8
+         wK3zxHFAketEScvyJHMRPZV7l5xa6klth4iksvDN7kIiKe9xirlso+AcTAnKzx2NivXf
+         Tydg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgV94A1BlazAzZ25AbSzQfPAER6Y2LkMv8bDiLLxjPOc0vgFpLOx6AE7m+ntX2VBl0se1wlqh4ibWJYeg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdsMxwfaDoT+8HdPs3i9LBShH2G0QOdTtsVEHmS35gkhUgiGbM
+	vQ9vRISODhIg7ppshg9I9rnPZXHBO21gduTq9dYoAY8SBlKsMpmD
+X-Google-Smtp-Source: AGHT+IFJy54powQlrfshsQ5xCW79pM2+RP00gVXqOeqEiS584otwA8vWLYrbyi+HnBJp+3U9JvC5KQ==
+X-Received: by 2002:a05:6a00:1953:b0:70d:1b17:3c5e with SMTP id d2e1a72fcca58-71926067e78mr31677438b3a.6.1726650321113;
+        Wed, 18 Sep 2024 02:05:21 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b97608sm6326005b3a.153.2024.09.18.02.05.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 02:05:20 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
+Cc: syzkaller-bugs@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [syzbot] [net?] [s390?] general protection fault in smc_diag_dump_proto
+Date: Wed, 18 Sep 2024 18:05:15 +0900
+Message-Id: <20240918090515.212605-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <000000000000fabef5061f429db7@google.com>
+References: <000000000000fabef5061f429db7@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [lvc-patches] [PATCH] V4L/DVB (13661): rj54n1cb0c: possible
- integer overflow fix
-Content-Language: en-US
-To: Aleksandr Burakov <a.burakov@rosalinux.ru>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-CC: <lvc-project@linuxtesting.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-patches@linuxtesting.org>, <linux-media@vger.kernel.org>
-References: <20240917140454.7880-1-a.burakov@rosalinux.ru>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <20240917140454.7880-1-a.burakov@rosalinux.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/18/2024 08:43:55
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 187815 [Sep 18 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.1.5
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
- 8a1fac695d5606478feba790382a59668a4f0039
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 178.176.72.3
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/18/2024 08:47:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/18/2024 6:30:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Transfer-Encoding: 8bit
 
-On 9/17/24 17:04, Aleksandr Burakov wrote:
-
-> An integer overflow may occur due to arithmetic operation
-> (multiplication) between value '314572800' and variable 'resize',
-> where the value comes from '12 * RJ54N1_MAX_WIDTH * (1 << 14)' 
-> and when 'resize' is equal to 16319.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Fixes: a6b5f2008a3d ("V4L/DVB (13661): rj54n1cb0c: Add cropping, auto white balance, restrict sizes, add platform data")
-> Signed-off-by: Aleksandr Burakov <a.burakov@rosalinux.ru>
-> ---
->  drivers/media/i2c/rj54n1cb0c.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/rj54n1cb0c.c b/drivers/media/i2c/rj54n1cb0c.c
-> index a59db10153cd..a612ec1e7157 100644
-> --- a/drivers/media/i2c/rj54n1cb0c.c
-> +++ b/drivers/media/i2c/rj54n1cb0c.c
-> @@ -776,8 +776,8 @@ static int rj54n1_sensor_scale(struct v4l2_subdev *sd, s32 *in_w, s32 *in_h,
->  	}
->  
->  	/* Antiflicker */
-> -	peak = 12 * RJ54N1_MAX_WIDTH * (1 << 14) * resize / rj54n1->tgclk_mhz /
-> -		10000;
-> +	peak = 12 * RJ54N1_MAX_WIDTH * resize / rj54n1->tgclk_mhz / 10000;
-> +	peak = peak * (1 << 14);
-
-	peak *= 1 << 14;
-
-[...]
-
-MBR, Sergey
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
