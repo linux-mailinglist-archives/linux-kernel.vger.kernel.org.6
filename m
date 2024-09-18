@@ -1,55 +1,101 @@
-Return-Path: <linux-kernel+bounces-332349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D145A97B8AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:46:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7344F97B8A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 107851C2148C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 07:46:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3013B23936
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 07:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F6B176230;
-	Wed, 18 Sep 2024 07:45:49 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412B9170A27;
+	Wed, 18 Sep 2024 07:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="OinEsvUR"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE7F173347;
-	Wed, 18 Sep 2024 07:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CF5482EF
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 07:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726645549; cv=none; b=lS96WGPyvZTTaYOD0UDuAJCl7moDxbr2/YCmvAKOt1tnqCkDJ/cPxRHFNo91sTzTzP5Fnt6BuwrmVSIczjVANaH3bt0NzbWKmCqlIhZv0UNnZZMC5Ev8h8gVW/ktKyejHDdonDYe5qRZuVENT1ljeHJWPpZMW8NBirISEp0d5yg=
+	t=1726645540; cv=none; b=hA9nMNIIlL2+hpGkDw8AtXGfU1tJE/dYtOsMUulQj8Tbj/mvS07H/eDm6AM2loGxEdinioPpDxuqAlD+DMxN6tGHYMeU24MXa5AIzlCaL/3I0jPQee3dVYVCzk8qfHTmN4xiOlygSl6mAhghB/0pAL0h5eHHWmuUzJ1Q0wY4RxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726645549; c=relaxed/simple;
-	bh=F4d7DGoY7oLwoq+KRQNfhkdDARMVIrtWh1tpQuw6P54=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QKwaIkddIrWtGDAZK6UlVPc2HZAdPj1ZLd1QImE+mUmJASu9K5wZDTfm0mQg+26tnM0cQtBGt5ACFOATe9HGoiARWsIQxkGcMLd0daPjoeobrJ95bmPCMwtZH1o1sOh3lTQSbLjHbL2SWR2nDtxyEh5P8sm5Zs6ZJqK9BZkYxzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowAAnLqIOhepmIlxgBA--.15444S2;
-	Wed, 18 Sep 2024 15:45:19 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: lpieralisi@kernel.org,
-	kw@linux.com,
-	manivannan.sadhasivam@linaro.org,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	heiko@sntech.de,
-	cassel@kernel.org,
-	ukleinek@debian.org,
-	dlemoal@kernel.org,
-	yoshihiro.shimoda.uh@renesas.com
-Cc: linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
+	s=arc-20240116; t=1726645540; c=relaxed/simple;
+	bh=8cbZTCDd4mL+ru6kg5Gf3qUptfO0w/oF9SJAxiqHGio=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p1upr7RNPFSQW2fNRyd5ExgIoP3zBGnFIgv6b3hbmyeD7hst/rktZQSakp8t7ZoHL5AlnIHMrV1PStKDzGX7/l31cw0h/ES9ZEDBQTTBuO46wE47k9JWimt7DWKhhYqn5sUDvt5enhZDO5ur4NbFR2ibq3w/nCxzfwdmH5M5ONM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=OinEsvUR; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20688fbaeafso58552335ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 00:45:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1726645538; x=1727250338; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+I7dUgrSuHMQdwaXopkdXCgHbnd+bfTOM+bzbwYhISo=;
+        b=OinEsvUR0ZuftFGWF7ydpG/DYZM77aYld2BTT/0RyB3Goa7YtZNqlBV4S/VC6n6TIP
+         +YBfao6n/EFRllA4w6LGNEgGjafW+EZXDyJQ9qBdY4laL5tvw05GfJSHtrYGx2Cb5nxu
+         FEeKerguC46ur/RGfwQ2Jh8hywu1QHpGdicbX4Khxu2gwtnyaranvRuW6l61dcvhpbU+
+         nABMOHBEQ6DjCyYLbOskA7rDSftrXSi8//lCCfujxpg6M+9y4Dj5LbRAkAlkCuVS4u8V
+         EW/nXW0o7uijBmI7Tgf31GdHFIkOq67Kb1aAKczX6qAuRDZapzIEgvP1DzgJ6shXgnhx
+         N6eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726645538; x=1727250338;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+I7dUgrSuHMQdwaXopkdXCgHbnd+bfTOM+bzbwYhISo=;
+        b=waHyM8k77Ko1Biixhly7aY69OYRAyyW61yQB+GUgme2qIO1hoZI0QLCcJBZMBzW8rq
+         qx2zP9azvSPF4h3LyakRNNCl454lMoL2hCzfnpySkHa+7tb9dKL13KcuM8Or0FEafFvw
+         bUn/yk5qTAqQiC1cZ8c/479lpYHjskeaOCK+ON0mwsXaKhwMzOuxwM1sSav63G61LUDh
+         Fyy3MixSHa35tAtq5jxV+Kzed7qSaNzsMUzNriP2EJFKzi8+DhzXXPVYgpP28hXdgaZj
+         wSgUpsKJlzNjAyTg0Z3kjMjBmibVk+ImGBZ8FY63fDqWwdVVRJ3T43RLwuLkJdDPL6sN
+         X96w==
+X-Forwarded-Encrypted: i=1; AJvYcCWUZLcaOZakRf2q4EpaTTW1flsHcApy1AqOej57+BugF4JsMMNHnVZYUMt83K4de08Siv90WSIAUVFLPyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFPnQY0/4BzHR+WXx4MUS/080iO6ZWqk7pEs3BhOjoXpiKUToU
+	YcxVBl7BQ5RE0FnroV/DYPK7pNbK3O1E/5qWjXfq28Eg0lTZMs7JJm2n9FEeLKk=
+X-Google-Smtp-Source: AGHT+IFpSIeGa39ByCsIFwY+HDxOIoRC8C0L3buusq68sEAHO+OkhE4RObZ1rPjsBZYe0iYf4cPzmQ==
+X-Received: by 2002:a17:902:ec85:b0:205:82d5:2368 with SMTP id d9443c01a7336-20782b7c5f3mr358418875ad.49.1726645537888;
+        Wed, 18 Sep 2024 00:45:37 -0700 (PDT)
+Received: from C02F52LSML85.bytedance.net ([203.208.167.149])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794747379sm60412995ad.288.2024.09.18.00.45.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 00:45:37 -0700 (PDT)
+From: Feng zhou <zhoufeng.zf@bytedance.com>
+To: martin.lau@linux.dev,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	ast@kernel.org,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mykolal@fb.com,
+	shuah@kernel.org,
+	geliang@kernel.org,
+	laoar.shao@gmail.com
+Cc: netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] PCI: dw-rockchip: Remove redundant dev_err()
-Date: Wed, 18 Sep 2024 15:44:01 +0800
-Message-Id: <20240918074401.2221146-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	yangzhenze@bytedance.com,
+	wangdongdong.6@bytedance.com,
+	zhoufeng.zf@bytedance.com
+Subject: [PATCH bpf-next v2 0/2] Cgroup skb add helper to get net_cls's classid
+Date: Wed, 18 Sep 2024 15:45:13 +0800
+Message-Id: <20240918074516.5697-1-zhoufeng.zf@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,52 +103,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAnLqIOhepmIlxgBA--.15444S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrur17Zr13CFy8Ary5JFW5Wrg_yoWDCrbE9r
-	1DuF47urW8Cr9Ikwn2yw43AF98A3ZFgr1jgay0qF9IvFyxJ34UXr97XFn8ZF48Cr1akr97
-	Gryv9r48Ca43AjkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb6xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72
-	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7
-	M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxkIecxEwVAFwVW8Cw
-	CF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j
-	6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64
-	vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0x
-	vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRmjgcUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-There is no need to call the dev_err() function directly to print a
-custom message when handling an error from platform_get_irq_byname()
-function as it is going to display an appropriate error message in case
-of a failure.
+From: Feng Zhou <zhoufeng.zf@bytedance.com>
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/pci/controller/dwc/pcie-dw-rockchip.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+0001: Cgroup skb add bpf_skb_cgroup_classid_proto.
+0002: Add a testcase for it.
 
-diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-index 1170e1107508..3770e566b597 100644
---- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-+++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-@@ -450,10 +450,8 @@ static int rockchip_pcie_configure_ep(struct platform_device *pdev,
- 		return -ENODEV;
- 
- 	irq = platform_get_irq_byname(pdev, "sys");
--	if (irq < 0) {
--		dev_err(dev, "missing sys IRQ resource\n");
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	ret = devm_request_threaded_irq(dev, irq, NULL,
- 					rockchip_pcie_ep_sys_irq_thread,
+Feng Zhou (2):
+  bpf: cg_skb add get classid helper
+  bpf, selftests: Add test case for cgroup skb to get net_cls classid
+    helpers
+
+Changelog:
+v1->v2: Addressed comments from Martin KaFai Lau
+- Just bpf_skb_cgroup_classid_proto.
+- Add a testcase.
+Details in here:
+https://lore.kernel.org/lkml/20240814095038.64523-1-zhoufeng.zf@bytedance.com/T/
+
+ net/core/filter.c                             |  4 +
+ .../bpf/prog_tests/cg_skb_get_classid.c       | 87 +++++++++++++++++++
+ .../selftests/bpf/progs/cg_skb_get_classid.c  | 19 ++++
+ 3 files changed, 110 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/cg_skb_get_classid.c
+ create mode 100644 tools/testing/selftests/bpf/progs/cg_skb_get_classid.c
+
 -- 
-2.25.1
+2.30.2
 
 
