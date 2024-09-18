@@ -1,155 +1,92 @@
-Return-Path: <linux-kernel+bounces-332486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4785A97BA58
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:51:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C84197BA5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1EDC1F234EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:51:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFDA31C2241F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583F817B401;
-	Wed, 18 Sep 2024 09:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC74D17E46E;
+	Wed, 18 Sep 2024 09:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="js5NuPoK"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODkjPOlU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E65616E860
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 09:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4657B16E860;
+	Wed, 18 Sep 2024 09:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726653071; cv=none; b=GrTnXkuKKC2tGSJg1L+l5aoWGXuAdCshJdpUAAGLREmytL82FCi7SpGnUAhG7lsYA6vUi9ep+kZsQwWOLfelmlZ2iFMTHhXp7fkiBHdTqL6bsZYQ+gIKZUDNHD+wAzy5vVTtkfztiGCUv2fmsofAouwlTA0RMDbHkOjzO5LNCbI=
+	t=1726653076; cv=none; b=jyP+xH7H4Ux3b/E2Y+cbFFl9d9m8vEKCgzK7NNWEkTMpTiX59nonS/f+62zBfRz+geKrOpGWBOtewslgup2ppd7HD3sUdeQ+3yZguLLZJ7+tJvc/9oshtGEWZ+YV2MIWApJoNN8glwC8piyFjnPblUY9wfNeiCeOZIKbWmNzAu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726653071; c=relaxed/simple;
-	bh=YYveKDNyLV/O+GuIZezG/H+dg/pEIjQTXZMwxfSjq/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NfcY9aXzlF+dRww3+CDu8YRg8M/Y3WCfqIlGqyueUsiKqnuXjLz/+W5WX6+KTO4z9l2lTIXg2EYkW6vwE9XyClQanE6+Pyu1yXcfeHbX6MNgu+wc3aiOKPWVvGISqYKPy+s0kGfjbpHNw4WCCjzhgmdA3oi4/Tvznm+R1BxYIsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=js5NuPoK; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso102666666b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 02:51:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1726653068; x=1727257868; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U5Lz1QWVFmZd2N1NR4+boEn5JCoZBGXe5wWgia0cON4=;
-        b=js5NuPoKWQ3/7Er/hcnJ06/MjTq1CnwJN0fwvs/Wtell0wWMwxV5iaJDLb3gcroNKj
-         ZJ7sp9EWEhWHfZG9wAuDNeOMUn5UninPRsjKJzL4u8RGacMfsV0dRLQaGeIvlRJfLiSl
-         OrZopnQPbGCK5MtP+YcAAqPP50RmOUOXwCCLfsT1cMmm0OFMg/l9aB3oJpXyamXHeJPw
-         JqvVcQ9q6kZ/hqM1DGrXahR2ZeE90O+Cfz8QlGRMpSiNe5A6eNmdIIc4fgtO38m4a2bl
-         Xx+oP0oB9B416DZnj3VY0uOGodn2k9t+XH1+CvuAqrYSQrL23cS0Rg5maAxbbbmwbIia
-         LmNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726653068; x=1727257868;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U5Lz1QWVFmZd2N1NR4+boEn5JCoZBGXe5wWgia0cON4=;
-        b=mHwDPxwN3pm3Z+cbm4uLvHAWxStcpWPDFrA5DLdZ0GpJnK3dU1+34ljQqQq2uWr3Vg
-         iF521M1NKEWw7qiMyKvyUD1Oq9OBbEKHcZ9AXMyJiMRMaeEGHdAPX1wh4nOo9xHWhOnH
-         0SqbcYoL4GOPF9VGA/mBprqkmKSV2Ju09/zJaHtRMiqYhhdrlcykyxJyxyaKTb74QP70
-         qVbLlbaGsTId1v4gOuTvQMD1IoNxBFkV+/+JdLiL2hQOVXioasYh6zq0g+uy6NyUeVhr
-         jb625361k5pp+jqYzXQ5nYwfNPUAVlrWErFOm3r3uwTG6T89RAHy1RwRBQ0z8q2eNFyb
-         u4/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWv/MwKmdvERlTTqFxxNfIaAPkg8nQVkxVBUbx/Nwceo7Ygb3VHMgV56NUzSQLjvbqaXWM4RL/ozjV5gGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJYYWpozd210wWbZX4t9a1wN0kvlzv4/ndNlbN1F3kgOAI1tEo
-	Dg1DpH/fhxAU6mitM7xet9rdJwXnot2uLQa2c6egChtZQ+3047JaGKl1ANUepus=
-X-Google-Smtp-Source: AGHT+IGh+5daTFsNyDKlbll7KebWFSlnclyKmAwqiRqpM+wguKxxuLaiVoIA7Zfzj5R3BOYGBvdN6A==
-X-Received: by 2002:a17:907:3f91:b0:a8d:5f69:c839 with SMTP id a640c23a62f3a-a8ffabbcc0cmr2879337466b.15.1726653068106;
-        Wed, 18 Sep 2024 02:51:08 -0700 (PDT)
-Received: from [192.168.0.245] ([62.73.69.208])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612df75csm568606066b.149.2024.09.18.02.51.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Sep 2024 02:51:07 -0700 (PDT)
-Message-ID: <ebef9a36-d060-4df3-b139-3dda4a84484a@blackwall.org>
-Date: Wed, 18 Sep 2024 12:51:06 +0300
+	s=arc-20240116; t=1726653076; c=relaxed/simple;
+	bh=L28pSEH2Qs5aYQHvisV8vDOvgSb7Lbzbx9KlpIjyxG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tRQJd9PJMKhAGImuHOVUytCRCp7DcM8mCmeuiun2rnrX90ZNgy/qWPfujy4yvJXZvXP2nN+YnLv11a+IYCMQyp7NOJElrQCgzlr7s/eYDScPG/mAXAjRkNIt74gvEUDxU3m2RKamXZf1dGVv+wj08wjf0Q86ay0KVLaQpLM2Sbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODkjPOlU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E97ABC4CECF;
+	Wed, 18 Sep 2024 09:51:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726653075;
+	bh=L28pSEH2Qs5aYQHvisV8vDOvgSb7Lbzbx9KlpIjyxG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ODkjPOlUTZmXZB+TH1d/ul+Smkw5Y03ibLg63CmNrHfAikVkAyIZoHeYaZv0nfz41
+	 xKWykYRjXfzAUlx0JJC96cScMJRlJWTPVSHPQ5F65+5X0UKu2mVO7CIyz0MiMx2ZdZ
+	 0NzCHkaOmNCQUqSq0Y1qOWBdg30tZtJljrqzUfumiuwojU0uG6VwKovOaq/gjyZyXz
+	 UcisB7Mj5Q/iuAAwFxTxusZaGDD45SRJ6hSiBUoZfzPixhGLOd45PIjAT5TxQiNzp1
+	 CIfHveBHormIvxcZwKNah6l+KQa0tLn9fDDZJ/ioOYT3NYL1k8HxZBJr/SBBQTb97Y
+	 lqB8FQ7fXB1WQ==
+Date: Wed, 18 Sep 2024 11:51:09 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Pankaj Raghav <p.raghav@samsung.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Jens Axboe <axboe@kernel.dk>, Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org, 
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Daniel Dao <dqminh@cloudflare.com>, Dave Chinner <david@fromorbit.com>, clm@meta.com, 
+	regressions@lists.linux.dev, regressions@leemhuis.info
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+Message-ID: <20240918-geordert-bedecken-93c97e15e82e@brauner>
+References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+ <ZuNjNNmrDPVsVK03@casper.infradead.org>
+ <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
+ <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <20240913-ortsausgang-baustart-1dae9a18254d@brauner>
+ <ZugyzR8Ak6hJNlXF@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] bonding: Add net_ratelimit for
- bond_xdp_get_xmit_slave in bond_main.c
-To: Jiwon Kim <jiwonaid0@gmail.com>, jv@jvosburgh.net, andy@greyhouse.net,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
- john.fastabend@gmail.com, joamaki@gmail.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com
-References: <20240918083545.9591-1-jiwonaid0@gmail.com>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20240918083545.9591-1-jiwonaid0@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZugyzR8Ak6hJNlXF@casper.infradead.org>
 
-On 18/09/2024 11:35, Jiwon Kim wrote:
-> Add net_ratelimit to reduce warnings and logs.
-> This addresses the WARNING in bond_xdp_get_xmit_slave reported by syzbot.
+On Mon, Sep 16, 2024 at 02:29:49PM GMT, Matthew Wilcox wrote:
+> On Fri, Sep 13, 2024 at 02:11:22PM +0200, Christian Brauner wrote:
+> > So this issue it new to me as well. One of the items this cycle is the
+> > work to enable support for block sizes that are larger than page sizes
+> > via the large block size (LBS) series that's been sitting in -next for a
+> > long time. That work specifically targets xfs and builds on top of the
+> > large folio support.
+> > 
+> > If the support for large folios is going to be reverted in xfs then I
+> > see no point to merge the LBS work now. So I'm holding off on sending
+> > that pull request until a decision is made (for xfs). As far as I
+> > understand, supporting larger block sizes will not be meaningful without
+> > large folio support.
 > 
+> This is unwarranted; please send this pull request.  We're not going to
+> rip out all of the infrastructure although we might end up disabling it
+> by default.  There's a bunch of other work queued up behind that, and not
+> having it in Linus' tree is just going to make everything more painful.
 
-This commit message is severely lacking. I did the heavy lifting and gave you
-detailed analysis of the problem, please describe the actual issue and why
-this is ok to do. Also the subject is confusing, it should give a concise
-summary of what the patch is trying to do and please don't include filenames in it.
-You can take a look at other commits for examples.
-
-> Setup:
->     # Need xdp_tx_prog with return XDP_TX;
->     ip l add veth0 type veth peer veth1
->     ip l add veth3 type veth peer veth4
->     ip l add bond0 type bond mode 6 # <- BOND_MODE_ALB, unsupported by xdp
->     ip l add bond1 type bond # <- BOND_MODE_ROUNDROBIN by default
->     ip l set veth0 master bond1
->     ip l set bond1 up
->     ip l set dev bond1 xdpdrv object tx_xdp.o section xdp_tx
->     ip l set veth3 master bond0
->     ip l set bond0 up
->     ip l set veth4 up
->     ip l set veth3 xdpgeneric object tx_xdp.o section xdp_tx
-
-Care to explain why this setup would trigger anything?
-
-> 
-> Reported-by: syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=c187823a52ed505b2257
-> Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driver")
-> Signed-off-by: Jiwon Kim <jiwonaid0@gmail.com>
-> ---
-> v2: Change the patch to fix bond_xdp_get_xmit_slave
-> ---
->  drivers/net/bonding/bond_main.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> index b560644ee1b1..91b9cbdcf274 100644
-> --- a/drivers/net/bonding/bond_main.c
-> +++ b/drivers/net/bonding/bond_main.c
-> @@ -5610,9 +5610,12 @@ bond_xdp_get_xmit_slave(struct net_device *bond_dev, struct xdp_buff *xdp)
->  		break;
->  
->  	default:
-> -		/* Should never happen. Mode guarded by bond_xdp_check() */
-> -		netdev_err(bond_dev, "Unknown bonding mode %d for xdp xmit\n", BOND_MODE(bond));
-> -		WARN_ON_ONCE(1);
-> +		/* This might occur when a bond device increases bpf_master_redirect_enabled_key,
-> +		 * and another bond device with XDP_TX and bond slave.
-> +		 */
-
-The comment is confusing and needs to be reworded or dropped altogether.
-
-> +		if (net_ratelimit())
-> +			netdev_err(bond_dev, "Unknown bonding mode %d for xdp xmit\n",
-> +				   BOND_MODE(bond));
->  		return NULL;
->  	}
->  
-
+Now that there's a reproducer and hopefully soon a fix I think we can
+try and merge this next week.
 
