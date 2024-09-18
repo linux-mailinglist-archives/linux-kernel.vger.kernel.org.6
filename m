@@ -1,134 +1,125 @@
-Return-Path: <linux-kernel+bounces-332671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F3897BCD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:13:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF09597BCDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA6FA28252B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:12:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75AAD283C38
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D651E18A937;
-	Wed, 18 Sep 2024 13:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E0E18A92D;
+	Wed, 18 Sep 2024 13:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pg7vMisb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lMrdCGKy"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB3B1E52D;
-	Wed, 18 Sep 2024 13:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B88D186E3E
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726665162; cv=none; b=D+KpXaUmfQlbV5tLjOnIqC5cJje2lj05hcgRur6UAHV4NJcSS1WUBTmsP9DtOlrakwJ1NhhyEsMGCnzIYssAn8wYEwZIIFkZAfosCKA5q3k49lUltV+4kjIf+hLNvFJ6fpegxpVaeS4q8t4UzDvWjjJJtiMZM8EoN0VNMdCNMtA=
+	t=1726665184; cv=none; b=SFtxcUFpKfm8IFA3sDs114dC6FkyIo33b2IyQuu/5O7INsmNIZ7aN2zkEKPkXic7XenVcaURiEbCIXzZiJkiZt8VIv5f9joWRG+fuBmX7/QR2C14yAuXwwY9UkR7mSQdPOfBj1P1Ll2UaAIkIxXZjs3a0KARoBxP8RhYHn2ggFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726665162; c=relaxed/simple;
-	bh=yxYXYlwmteaEMYa8T0wu+hdQ6QPJDt+/p1TX+biQid4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=noWxakwctzA40fO8d9/cjrpCICQuSMOzJgDt+9c3xMVcaICIPnkyKIq1MTrwUhXlFDa7QMJffEG3w5b+u+OyY+m856jB8mARMSS1zKgkxvqnrmrkKaUV/eCTlFQwdNrNTkRRawEWcI6UKI42LDWkjLpGXA+QCE3MFt3I7kk9fqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pg7vMisb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACFF3C4CED9;
-	Wed, 18 Sep 2024 13:12:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726665161;
-	bh=yxYXYlwmteaEMYa8T0wu+hdQ6QPJDt+/p1TX+biQid4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pg7vMisbhkectbMH6ox1OFz08DXxCrNtpyeh8qTisPyO0yAIVygzyR3lwe38iXfxu
-	 WX0+zA0+X1BGKV0CGLa08t9meaVsYA+URodVDfMZDocbeL/rC5XW19kR/FvtQm7VeF
-	 VOZbrrPPs5YS0acQ3ff2MP4zFvTsRht5r49zf0tdcJRtq7GyyRp+7kYmSkIf8CEQZY
-	 BHzTUGuXlHtxnFgZJSE1lD/D3JNUj1t19xMxJmzFDufnZzKChdIMXxOUcjoDWYH075
-	 XjcJyYnoEi2PnT5V4C0gwO3sNbcLJnvga84Ob9v8VwE4BOnY5nvSYV0hwp5qa/Ciw8
-	 WhfwQxWBrBB/Q==
-Message-ID: <c96af8f2-4b06-4e7b-b3ca-d4db67df3137@kernel.org>
-Date: Wed, 18 Sep 2024 15:12:33 +0200
+	s=arc-20240116; t=1726665184; c=relaxed/simple;
+	bh=t1BTgFJSuELqW46e+hZA6MBoAE+CKlGmnWti3rAyLDk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i5b+wY95bhR86FjWcY4keDNNDj4EMhf69jdOncuv6Gv4423Z71HMIogN3Yc5cz+yxCFHT3yUrK74UeP3emyeYamwird16uSbo5qVZT1yk0gvzXmN+lcMPf1iIDOLKDfYFhbXRUzzojyDfBMc2kMxMIIqxcFaav0ENf4Uh3guE5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lMrdCGKy; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f77fe7ccc4so59675021fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:13:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726665180; x=1727269980; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1UIao/Jz5H8HMYQFxpoEYcHdlz/BHFAG+1NToY/M7y4=;
+        b=lMrdCGKy0SRwCTaB5zekixs48dnTZwasXy36Cv4MRBwh1P/ekOaQXyU1MhHedUfYhu
+         JoB2K2G3hBkQjNyfFeiofaqF3XvVP9dlpq1lrhGY/ar9LnHXwo/P/5lQFPvr0YnJXxyp
+         V/GGh9sMRY6r7ZxB4EDib/h3bG4bGpGOsrMfzTznUJBFLGzHRniloGGbPncod1PCtTB0
+         9tVUP3cB48cH/oHq57s+n8nFJRQuCBms+gjWYvSK6C6UkEluiBY7PnUCukXSujsmU4Pc
+         2ptDVKG8D1IHwOa8vtG1mt8dQ5sNttkVMd56sxG1Qx1M9SbmlAGKDrseCI45tMcImdWx
+         x3XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726665180; x=1727269980;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1UIao/Jz5H8HMYQFxpoEYcHdlz/BHFAG+1NToY/M7y4=;
+        b=g2o7Y/sW7mf3UjjGncC6n1BGyyZMq6mTFROnofjxeWvTs35d1x71LY/UNoqUu63IWg
+         LtZKKHKxJYdPFvE2kYB5m8e3ipCHWTWvSAdRcJ/s2WnKkYBaT/BP8zi65o7O3HQZej4d
+         fsfFdas52lyxSXYiweQVA08g7FCYQJKB3xjOg6nkq0S/Py/T8IPwAQBvuLi7Xt3bbpJj
+         GIm5FdP3q3rn/ksXEt4J0PxhG7OJI3x6f9MxvBF7HcOWN8hoTOmkfnhe531lG9ODwqtr
+         IA6njfNdygK+YSy/+TUrCVH4Rcp+t0vg/zBkNNCIfrE+LnzyI12QrE9WbcvncWk/2EYE
+         6PHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2Qcck0FoKmxbp2S/2lEnsDZPEjRExvc7zTFM8WorlZ/1jwukeCOE4ZGpph/C59+EXUE1yK1genE5pRiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTo30p3R0Zgx9yiiOHLdSLtfYNhm3bJyXzet18fDkcysViDa1x
+	+tb/jNGRk5axTnAT36IF16HaAJQOUxN46CYSy47kBGN9yEjw7II3P7SS5imYAjtijOlLHQ+EDZM
+	EKNaJQf10AmNKT9aRmVV0Pc3OEJ7xTEucYCoi5Q==
+X-Google-Smtp-Source: AGHT+IF5izfJa+xhgK0mjYVqlKJIK89IcU1cb1NpZfcXm0pryp2o/BMT6N8z0wfXVAWqfUbW+2JjG7UdxmVTGR7xheE=
+X-Received: by 2002:a05:651c:509:b0:2f3:fd4a:eac6 with SMTP id
+ 38308e7fff4ca-2f7919fe8d6mr81760011fa.18.1726665180209; Wed, 18 Sep 2024
+ 06:13:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: arm: Add i.MX8MP IOTA2 Lumpy board
-To: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Shawn Guo <shawnguo@kernel.org>, Petr Benes <petr.benes@ysoft.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Herburger <gregor.herburger@ew.tq-group.com>,
- Hiago De Franco <hiago.franco@toradex.com>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>,
- Joao Paulo Goncalves <joao.goncalves@toradex.com>,
- Michael Walle <mwalle@kernel.org>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Mathieu Othacehe <m.othacehe@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20240917151001.1289399-1-michal.vokac@ysoft.com>
- <20240917151001.1289399-2-michal.vokac@ysoft.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240917151001.1289399-2-michal.vokac@ysoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240916181633.366449-1-heinrich.schuchardt@canonical.com>
+ <20240917-f45624310204491aede04703@orel> <15c359a4-b3c1-4cb0-be2e-d5ca5537bc5b@canonical.com>
+ <20240917-b13c51d41030029c70aab785@orel> <8b24728f-8b6e-4c79-91f6-7cbb79494550@canonical.com>
+ <20240918-039d1e3bebf2231bd452a5ad@orel> <CAFEAcA-Yg9=5naRVVCwma0Ug0vFZfikqc6_YiRQTrfBpoz9Bjw@mail.gmail.com>
+ <bab7a5ce-74b6-49ae-b610-9a0f624addc0@canonical.com>
+In-Reply-To: <bab7a5ce-74b6-49ae-b610-9a0f624addc0@canonical.com>
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Wed, 18 Sep 2024 14:12:48 +0100
+Message-ID: <CAFEAcA-L7sQfK6MNt1ZbZqUMk+TJor=uD3Jj-Pc6Vy9j9JHhYQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] target/riscv: enable floating point unit
+To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Alistair Francis <alistair.francis@wdc.com>, 
+	Bin Meng <bmeng.cn@gmail.com>, Weiwei Li <liwei1518@gmail.com>, 
+	Daniel Henrique Barboza <dbarboza@ventanamicro.com>, Liu Zhiwei <zhiwei_liu@linux.alibaba.com>, 
+	qemu-riscv@nongnu.org, qemu-devel@nongnu.org, 
+	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Andrew Jones <ajones@ventanamicro.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 17/09/2024 17:09, Michal Vokáč wrote:
-> Add new board from the Y Soft IOTA family. This one is based on the i.MX8MP
-> SoC. It is basically a stripped-down clone of the EVK board with some minor
-> additions.
-> 
-> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+On Wed, 18 Sept 2024 at 14:06, Heinrich Schuchardt
+<heinrich.schuchardt@canonical.com> wrote:
+> Thanks Peter for looking into this.
+>
+> QEMU's cpu_synchronize_all_post_init() and
+> do_kvm_cpu_synchronize_post_reset() both end up in
+> kvm_arch_put_registers() and that is long after Linux
+> kvm_arch_vcpu_create() has been setting some FPU state. See the output
+> below.
+>
+> kvm_arch_put_registers() copies the CSRs by calling
+> kvm_riscv_put_regs_csr(). Here we can find:
+>
+>      KVM_RISCV_SET_CSR(cs, env, sstatus, env->mstatus);
+>
+> This call enables or disables the FPU according to the value of
+> env->mstatus.
+>
+> So we need to set the desired state of the floating point unit in QEMU.
+> And this is what the current patch does both for TCG and KVM.
 
+If it does this for both TCG and KVM then I don't understand
+this bit from the commit message:
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+# Without this patch EDK II with TLS enabled crashes when hitting the first
+# floating point instruction while running QEMU with --accel kvm and runs
+# fine with --accel tcg.
 
-Best regards,
-Krzysztof
+Shouldn't this guest crash the same way with both KVM and TCG without
+this patch, because the FPU state is the same for both?
 
+-- PMM
 
