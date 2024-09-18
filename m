@@ -1,71 +1,61 @@
-Return-Path: <linux-kernel+bounces-332837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60DC97BF7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:13:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F9397BF82
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 657FDB21F19
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:13:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF7DB1C22385
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1A81C9DE7;
-	Wed, 18 Sep 2024 17:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D321C9DEF;
+	Wed, 18 Sep 2024 17:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EqP2DSYW"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LD2wiXrO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1071B1505;
-	Wed, 18 Sep 2024 17:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96241C984E;
+	Wed, 18 Sep 2024 17:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726679589; cv=none; b=Xhirm3gq2NKnKCLd9Gjc+6VVR5nbmO1eDAYPvbD/sy62ft+zMM0EJtZFnQqM0Tpm+oHK84daaH5aHxO6jWtpgXz3C7YdH8sak4qoW2U7oaV8gSTb7zX9vJkAL9R5krtW6QR2urbrTjbSg7XUpgc6haRdroqVd5co3rZ2tc8byLc=
+	t=1726679602; cv=none; b=fhnqleCEUvssd9wO5kghEI2ZCYjc5Z7iF4PruFL4BOnbJp8zCoPQHRbPWVU7YHJos5x8KBnLnUT1RLMUtlROmi8MZ1bnJrGqvTKmLDmTAF2qjaPAJD7Hs9Ge0Dc46CCIM0/Qq0xDcPmZF6RaYoJ98ba0vy5exTDcDxihd2ggDJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726679589; c=relaxed/simple;
-	bh=Ta2j/hqRz3RzDvnQuXxooZ+3akVk5YzTi4y14r2jshM=;
+	s=arc-20240116; t=1726679602; c=relaxed/simple;
+	bh=yyW1aV2ISB/2jXwyRhIGQv2ctjIENPHzxX5fbLQh6Hk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L3Wpt2wGWIUDBQNIAWmVRLaQ7cIa/YoySo3ttxQQvrSAXUQQZniyHHHfU/L7Ho+GSbDgadHd5lS+molfd3t2ZC+vAgpRSAwbXFJ0sxwhKnnPsjXf7g0sxncwBKPRJUd5nAEdQl611xtlB9E5+3jBTvsp+Y5/I0yLTsSmM838TAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EqP2DSYW; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+NxubRC8s/p94iaKYGIJ7mmF/q9E02cnviGlZvwUxeo=; b=EqP2DSYWNYqpMGwTLOV0R4PctG
-	MlOp1T34c76BjT6rkvYxwvZXirWtpLsZlT8I6HJ0vBWWjX2aBjHtz6/Vd5tn4yt4tA+oE+bD5kobs
-	eFfPH3suRCi856xD9ijv+VPuvCLK7YWFCMoQHz49yWJBivmJ0NgTsovEDNC/zKpKNyPtTUffC7aL6
-	oWG8aG/xh5j9U2vRJJAt/ODAuBHpruWMns2k7qel/ltIkcg7eOwf6oF8+XjvHomQ7+FrC67ClYKvo
-	yH1UuQ2I6CPBc/M5DSLxUKYCzOB9E3tOi+3tD4Z1yyi+kOUdLBtKgJb94A8E5yvkvhss9x484kfQZ
-	V5PFrC8Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sqyEa-00000005scz-3Hkh;
-	Wed, 18 Sep 2024 17:12:56 +0000
-Date: Wed, 18 Sep 2024 18:12:56 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Chris Mason <clm@meta.com>, Jens Axboe <axboe@kernel.dk>,
-	Dave Chinner <david@fromorbit.com>,
-	Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Daniel Dao <dqminh@cloudflare.com>, regressions@lists.linux.dev,
-	regressions@leemhuis.info
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-Message-ID: <ZusKGCXhponXOh_l@casper.infradead.org>
-References: <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
- <ZulMlPFKiiRe3iFd@casper.infradead.org>
- <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
- <ZumDPU7RDg5wV0Re@casper.infradead.org>
- <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
- <459beb1c-defd-4836-952c-589203b7005c@meta.com>
- <ZurXAco1BKqf8I2E@casper.infradead.org>
- <CAHk-=wjix8S7_049hd=+9NjiYr90TnT0LLt-HiYvwf6XMPQq6Q@mail.gmail.com>
- <Zurfz7CNeyxGrfRr@casper.infradead.org>
- <CAHk-=whNqXvQywo305oixS-xkofRicUD-D+Nh-mLZ6cc-N3P5w@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dzSZcCl6Ynjcjqr89eeCK1ycRmpo0PyeUOZjpBqGN8HgAvFSPoIZ+91Xv2rb6K5kItTJPqL8LTGUeiXhSnySUmxXhkn4QRN79iR2nR7o1pOFS8nf3p0kYhXO9fjhZLwf0RnydAvXxOgX1/RK7z4kpxztxyXP5D4msCMqdP7NZi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LD2wiXrO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B0C8C4CEC2;
+	Wed, 18 Sep 2024 17:13:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726679602;
+	bh=yyW1aV2ISB/2jXwyRhIGQv2ctjIENPHzxX5fbLQh6Hk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LD2wiXrOT1fVjKP9Kl4zDZR5EECAKIiF2L1PY+skVHOdcuCmODCQObmn4L5jZcgSA
+	 vso49Zb9NWPmLu/vCcRwqdTeswf9EOgquaMEvuTglSCFFCxfHLmrX3/pLDVz4joQQR
+	 Ht9MosMe3afnHJIPaQqaPw+KL58kScX3XFvmHosKpr5NO3u322i8t+qJTjlstJ0xMN
+	 kbr4qrzhK2U7y+hk33DLNx19so5j0LqXID6syc0ROE+5OFPuRef3EaAuChHchkidkm
+	 +VBqjwGcZyK0+9ThngWZCpC5Le1HrUO5b+acav/7h6tb6JWpOKSkOUQZRXOBWTmJk5
+	 BdWKjENaWXOdQ==
+Date: Wed, 18 Sep 2024 12:13:20 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ze Huang <18771902331@163.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Yangyu Chen <cyy@cyyself.name>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [RESEND PATCH 1/3] dt-bindings: pinctrl: Add support for
+ canaan,k230 SoC
+Message-ID: <20240918171320.GA1810164-robh@kernel.org>
+References: <20240916063021.311721-1-18771902331@163.com>
+ <20240916064225.316863-1-18771902331@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,49 +64,165 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whNqXvQywo305oixS-xkofRicUD-D+Nh-mLZ6cc-N3P5w@mail.gmail.com>
+In-Reply-To: <20240916064225.316863-1-18771902331@163.com>
 
-On Wed, Sep 18, 2024 at 04:39:56PM +0200, Linus Torvalds wrote:
-> The fact that this bug was fixed basically entirely by mistake does
-> say "this is much too subtle".
+On Mon, Sep 16, 2024 at 02:42:23PM +0800, Ze Huang wrote:
+> Add device tree binding details for Canaan K230 pinctrl device.
+> 
+> Signed-off-by: Ze Huang <18771902331@163.com>
+> ---
+>  .../bindings/pinctrl/canaan,k230-pinctrl.yaml | 128 ++++++++++++++++++
+>  1 file changed, 128 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..979c5bd71e3d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/canaan,k230-pinctrl.yaml
+> @@ -0,0 +1,128 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/canaan,k230-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Canaan Kendryte K230 Pin Controller
+> +
+> +maintainers:
+> +  - Ze Huang <18771902331@163.com>
+> +
+> +description:
+> +  The Canaan Kendryte K230 platform includes 64 IO pins, each capable of
+> +  multiplexing up to 5 different functions. Pin function configuration is
+> +  performed on a per-pin basis.
+> +
+> +properties:
+> +  compatible:
+> +    const: canaan,k230-pinctrl
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +patternProperties:
+> +  '-pins$':
+> +    type: object
+> +    additionalProperties: false
+> +    description:
+> +      A pinctrl node should contain at least one subnode representing the
+> +      pinctrl groups available on the machine.
+> +
+> +    patternProperties:
+> +      '-cfg$':
+> +        type: object
+> +        $ref: /schemas/pinctrl/pincfg-node.yaml
+> +        additionalProperties: false
+> +        description:
+> +          Each subnode will list the pins it needs, and how they should
+> +          be configured, with regard to muxer configuration, bias, input
+> +          enable/disable, input schmitt trigger, slew-rate enable/disable,
+> +          slew-rate, drive strength.
+> +
+> +        properties:
+> +          pinmux:
+> +            $ref: /schemas/types.yaml#/definitions/uint32-array
 
-Yup.
+Drop. You need to add a $ref to pinmux-node.yaml (alongside 
+pincfg-node.yaml).
 
-> Of course, the fact that an xas_reset() not only resets the walk, but
-> also clears any pending errors (because it's all the same "xa_node"
-> thing), doesn't make things more obvious. Because right now you
-> *could* treat errors as "cumulative", but if a xas_split_alloc() does
-> an xas_reset() on success, that means that it's actually a big
-> conceptual change and you can't do the "cumulative" thing any more.
+> +            description:
+> +              The list of GPIOs and their mux settings that properties in
+> +              the node apply to. This should be set with the macro
+> +              'K230_PINMUX(pin, mode)'
+> +
+> +          bias-disable: true
+> +
+> +          bias-pull-up: true
+> +
+> +          bias-pull-down: true
+> +
+> +          drive-strength:
+> +            minimum: 0
+> +            maximum: 15
+> +
+> +          input-enable: true
+> +
+> +          output-enable: true
+> +
+> +          input-schmitt-enable: true
+> +
+> +          slew-rate:
+> +            $ref: /schemas/types.yaml#/definitions/uint32
 
-So ... the way xas was intended to work is that the first thing we did
-that set an error meant that everything after it was a no-op.  You
-can see that in functions like xas_start() which do:
+Drop. Already has a defined type.
 
-        if (xas_error(xas))
-                return NULL;
+> +            description: |
+> +              slew rate control enable
+> +              0: disable
+> +              1: enable
+> +
+> +            enum: [0, 1]
+> +
+> +          power-source:
+> +            $ref: /schemas/types.yaml#/definitions/uint32
 
-obviously something like xas_unlock() isn't a noop because you still
-want to unlock even if you had an error.
+Drop. Already has a defined type.
 
-The xas_split_alloc() was done in too much of a hurry.  I had thought
-that I wouldn't need it, and then found out that it was a prerequisite
-for something I needed to do, and so I wasn't in the right frame of mind
-when I wrote it.
+> +            description: |
+> +              Specifies the power source voltage for the IO bank that the
+> +              pin belongs to. Each bank of IO pins operate at a specific,
+> +              fixed voltage levels. Incorrect voltage configuration can
+> +              damage the chip. The defined constants represent the
+> +              possible voltage configurations:
+> +
+> +              - K230_MSC_3V3 (value 0): 3.3V power supply
+> +              - K230_MSC_1V8 (value 1): 1.8V power supply
+> +
+> +              The following banks have the corresponding voltage
+> +              configurations:
+> +
+> +              - bank IO0 to IO1: Fixed at 1.8V
+> +              - bank IO2 to IO13: Fixed at 1.8V
+> +              - bank IO14 to IO25: Fixed at 1.8V
+> +              - bank IO26 to IO37: Fixed at 1.8V
+> +              - bank IO38 to IO49: Fixed at 1.8V
+> +              - bank IO50 to IO61: Fixed at 3.3V
+> +              - bank IO62 to IO63: Fixed at 1.8V
+> +
+> +            enum: [0, 1]
+> +
+> +        required:
+> +          - pinmux
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    pinctrl: pinctrl@91105000 {
 
-It's actually a giant pain and I wanted to redo it even before this, as
-well as clear up some pieces from xas_nomem() / __xas_nomem().  The
-restriction on "we can only split to one additional level" is awful,
-and has caused some contortions elsewhere.
+Drop unused labels.
 
-> End result: it would probably make sense to change "xas_split_alloc()"
-> to explicitly *not* have that "check xas_error() afterwards as if it
-> could be cumulative", and instead make it very clearly have no history
-> and change the semantics to
-
-What it really should do is just return if it's already in an error state.
-That makes it consistent with the rest of the API, and we don't have to
-worry about it losing an already-found error.
-
-But also all the other infelicities with it need to be fixed.
+> +        compatible = "canaan,k230-pinctrl";
+> +        reg = <0x91105000 0x100>;
+> +
+> +        uart2_pins: uart2-pins {
+> +            uart2-pins-cfg {
+> +                pinmux = <0x503>, /* uart2 txd */
+> +                         <0x603>; /* uart2 rxd */
+> +                slew-rate = <0>;
+> +                drive-strength = <4>;
+> +                power-source = <1>;
+> +                input-enable;
+> +                output-enable;
+> +                bias-disable;
+> +            };
+> +        };
+> +    };
+> -- 
+> 2.46.1
+> 
 
