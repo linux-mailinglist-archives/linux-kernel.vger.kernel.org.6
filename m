@@ -1,175 +1,139 @@
-Return-Path: <linux-kernel+bounces-332818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A48C497BF34
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 18:43:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD2BB97BF3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 18:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3324F1F21AE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:43:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 934DF1F21BFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3927B1C8FC8;
-	Wed, 18 Sep 2024 16:43:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91811C9867;
+	Wed, 18 Sep 2024 16:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="ccF2I4h/"
+Received: from mail.avm.de (mail.avm.de [212.42.244.119])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385871487F1
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 16:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5A01487F1;
+	Wed, 18 Sep 2024 16:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726677785; cv=none; b=sehUrNVM08VnSTwkvM/TdTtq7xirX4xP2gPUc0d0q3xxoKsXXqyScmJxYZyJyFeJfDMNjnGkuycbyGv2+1ZGF+WF0ZLFt9btZWbHtsYdJxU8FUIYmwWOVUJ8RUb66/94hAtlM2eZS/M4ssDsjmlWLOvtytDzS9bqeiqNPARDzcU=
+	t=1726677885; cv=none; b=Aa9VKVS6RYwR4t2IgKHwemMaZFXHvgxdzm+7icM16OxDaETMmOqlt82RgaMnkph/geFD4PN36lgsd+hwSRbZWwdlQFxqCxQcEvPiS1w1Jm7QbBVecB40nXlfi2a/jrkRX1sH2KzXQck3mUcawGr17Sx53q8cYJCzY2k2edwjKfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726677785; c=relaxed/simple;
-	bh=0aNRNQVoWdbPDaSuZnkNEqAAaXYvqAgutmgnITlzVHk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=LajlYyGWKo5AuTLDfHWhiS5tZyQ0a0WWKhfYdDxIw+0qGu++kq1O0JIZ/7NffNlQtp2g3OpyQSeAWFZ9/p8ghCukVlwRK9y+6JD6iSNf+Xv3Gd7l8LhvKVzuXS8pfbDmqKhS+Ev05ekDmV2auPUgjfY7gbgeXhdWtHRtVTekEPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0a54fb476so39201385ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 09:43:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726677783; x=1727282583;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n40AUz6mSXm75GOX2sI5FTPKY970XkBFErgY+hw5v3I=;
-        b=uRnEn8C+tmDHUN7bi6PNbh8uZxs9jxW8aK2kQQ6px24P06tuBt/7cl5URtS3gbH11b
-         BjzJxksFAb9hOb7BknIp5WvIo0DuKFWRmDKG3e9DFkRlmNU/GChkxCoRUsbtAUVwHTwR
-         Q96uiy3229ynM5Q6VHUEpN3B1Shcy/aH0t0t5ZjWRnwTIooPMv8oLvDu/o1PQLAMjgbc
-         60dWIPpUS7I27tTBV78dogfTBLuZi8NbIFWRq1d0tftbw6oWI/KqMWiTc/kG8avmhqn1
-         WPZ9UCrltJSa2uRSgcQWd7QcJTdySSqiFegSWKUGAL10uaCcAsGfUyh+zm9Da1h3Ookp
-         R1FA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOxSTUVsFRJYnjoFj/FkLsq5WDM4sNXddUkrVunay9YFcVoDkOUgaCyhfu6Pevzhl5wtO62kZX4UipwXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzSKWLtnvw78mpRRW0+mtcHEEt+QnxHu0eAsssPnEK6IDY5OaE
-	Wcv+ckdpF30S6Udzp98V6pXZdNsfovjvLwPZOGZX6lXO1y1wZHkkUyCteZzmleD8tQdd1T3ClOt
-	wZyaNvysdY7rhhoTUp2MNo7j67f11UCn9on7ps9jxNA9qpVM31PqpmR8=
-X-Google-Smtp-Source: AGHT+IEwY4RBAlNT2qlcBTixkxo8ogLoemSK21rrolTmAN3w1D4rDp7A40KE95zEHLCX95vdzcOzIqJJgGW4z62OHTJfMDC/pDHI
+	s=arc-20240116; t=1726677885; c=relaxed/simple;
+	bh=9/VnDkvtrLa7nWwA+GJMS6WzKe6zhrMoxkTBhN3uVDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nCTiYpSRQj7AjG7Wr+tiU+QM+hScAMuf6Ymqcq3Wof6/vYBWbM6XsYBX1lWOlCrUJ4oBNmYneH5q08/uC46/Tc/e0BP5EaLHKlro2i5xuzNTmT99ZEUJhHMEHUoIimxFTshS4AXzp4ZEWndRNdDX/7ZcIYYpfz0ASuZh4O1LRe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=ccF2I4h/; arc=none smtp.client-ip=212.42.244.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
+	t=1726677879; bh=9/VnDkvtrLa7nWwA+GJMS6WzKe6zhrMoxkTBhN3uVDw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ccF2I4h/pj2V2mfpLWn1wn4ED/Cf/pDTEHtIWz7ufMwGMx69x++DcfG2BuEtKvbf7
+	 zh3MRScPDJab676rrVCoIYZSl6RXiFUOy8VdB9D45wt8+eUKnj93/iCWOwCQmk/HUp
+	 EydzJBCQes47GM/q6/TsJH5A99s8rFuS2KsJ0H5k=
+Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Wed, 18 Sep 2024 18:44:39 +0200 (CEST)
+Received: from l-nschier-nb (unknown [83.68.141.146])
+	by mail-auth.avm.de (Postfix) with ESMTPSA id 50EBD807D7;
+	Wed, 18 Sep 2024 18:44:39 +0200 (CEST)
+Date: Wed, 18 Sep 2024 18:44:38 +0200
+From: Nicolas Schier <n.schier@avm.de>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 05/23] kbuild: doc: describe the -C option precisely for
+ external module builds
+Message-ID: <ZusDdv3iCK1MbWDq@l-nschier-nb>
+References: <20240917141725.466514-1-masahiroy@kernel.org>
+ <20240917141725.466514-6-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214a:b0:3a0:bc39:2d7a with SMTP id
- e9e14a558f8ab-3a0bc39352cmr19117945ab.13.1726677783244; Wed, 18 Sep 2024
- 09:43:03 -0700 (PDT)
-Date: Wed, 18 Sep 2024 09:43:03 -0700
-In-Reply-To: <20240918160402.242505-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e983360622677f0a@google.com>
-Subject: Re: [syzbot] [net?] [s390?] general protection fault in smc_diag_dump_proto
-From: syzbot <syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-general protection fault in smc_diag_dump_proto
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc00000a2403: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: probably user-memory-access in range [0x0000000000512018-0x000000000051201f]
-CPU: 0 UID: 0 PID: 6289 Comm: syz.1.16 Not tainted 6.11.0-syzkaller-05319-g4a39ac5b7d62-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
-RIP: 0010:__smc_diag_dump net/smc/smc_diag.c:89 [inline]
-RIP: 0010:smc_diag_dump_proto+0x6d9/0x3270 net/smc/smc_diag.c:217
-Code: 80 3c 2c 00 74 08 48 89 df e8 a3 3a 96 f6 48 89 5c 24 30 48 8b 1b 48 85 db 0f 84 2d 02 00 00 48 83 c3 18 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 78 3a 96 f6 48 8b 44 24 28 4c 8d
-RSP: 0018:ffffc900030beb00 EFLAGS: 00010206
-RAX: 00000000000a2403 RBX: 0000000000512018 RCX: ffff888026420000
-RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
-RBP: ffffc900030bef90 R08: ffffffff89989932 R09: 1ffff1100c1b418b
-R10: dffffc0000000000 R11: ffffed100c1b418c R12: 1ffff1100c1b422b
-R13: dffffc0000000000 R14: ffff888060da0c00 R15: ffff88806f750010
-FS:  00007f5aa99ff6c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5aa99fefa8 CR3: 0000000023558000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- smc_diag_dump+0x59/0xa0 net/smc/smc_diag.c:236
- netlink_dump+0x647/0xd80 net/netlink/af_netlink.c:2325
- __netlink_dump_start+0x5a2/0x790 net/netlink/af_netlink.c:2440
- netlink_dump_start include/linux/netlink.h:339 [inline]
- smc_diag_handler_dump+0x1ab/0x250 net/smc/smc_diag.c:251
- sock_diag_rcv_msg+0x3dc/0x5f0
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- sock_sendmsg+0x134/0x200 net/socket.c:768
- splice_to_socket+0xa10/0x10b0 fs/splice.c:889
- do_splice_from fs/splice.c:941 [inline]
- do_splice+0xd68/0x18e0 fs/splice.c:1354
- __do_splice fs/splice.c:1436 [inline]
- __do_sys_splice fs/splice.c:1652 [inline]
- __se_sys_splice+0x331/0x4a0 fs/splice.c:1634
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5aa9f75f19
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5aa99ff048 EFLAGS: 00000246 ORIG_RAX: 0000000000000113
-RAX: ffffffffffffffda RBX: 00007f5aaa106038 RCX: 00007f5aa9f75f19
-RDX: 0000000000000005 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 00007f5aa9fe4e68 R08: 0000000080000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007f5aaa106038 R15: 00007ffe5e8646f8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
-RIP: 0010:__smc_diag_dump net/smc/smc_diag.c:89 [inline]
-RIP: 0010:smc_diag_dump_proto+0x6d9/0x3270 net/smc/smc_diag.c:217
-Code: 80 3c 2c 00 74 08 48 89 df e8 a3 3a 96 f6 48 89 5c 24 30 48 8b 1b 48 85 db 0f 84 2d 02 00 00 48 83 c3 18 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 78 3a 96 f6 48 8b 44 24 28 4c 8d
-RSP: 0018:ffffc900030beb00 EFLAGS: 00010206
-RAX: 00000000000a2403 RBX: 0000000000512018 RCX: ffff888026420000
-RDX: 0000000000000000 RSI: 0000000080000001 RDI: 0000000000000000
-RBP: ffffc900030bef90 R08: ffffffff89989932 R09: 1ffff1100c1b418b
-R10: dffffc0000000000 R11: ffffed100c1b418c R12: 1ffff1100c1b422b
-R13: dffffc0000000000 R14: ffff888060da0c00 R15: ffff88806f750010
-FS:  00007f5aa99ff6c0(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5aa99fefa8 CR3: 0000000023558000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	80 3c 2c 00          	cmpb   $0x0,(%rsp,%rbp,1)
-   4:	74 08                	je     0xe
-   6:	48 89 df             	mov    %rbx,%rdi
-   9:	e8 a3 3a 96 f6       	call   0xf6963ab1
-   e:	48 89 5c 24 30       	mov    %rbx,0x30(%rsp)
-  13:	48 8b 1b             	mov    (%rbx),%rbx
-  16:	48 85 db             	test   %rbx,%rbx
-  19:	0f 84 2d 02 00 00    	je     0x24c
-  1f:	48 83 c3 18          	add    $0x18,%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 df             	mov    %rbx,%rdi
-  34:	e8 78 3a 96 f6       	call   0xf6963ab1
-  39:	48 8b 44 24 28       	mov    0x28(%rsp),%rax
-  3e:	4c                   	rex.WR
-  3f:	8d                   	.byte 0x8d
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="9eJBiiMknvqp2VUc"
+Content-Disposition: inline
+In-Reply-To: <20240917141725.466514-6-masahiroy@kernel.org>
+X-purgate-ID: 149429::1726677879-A8EC52FF-E8EE556B/0/0
+X-purgate-type: clean
+X-purgate-size: 2828
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
 
 
-Tested on:
+--9eJBiiMknvqp2VUc
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-commit:         4a39ac5b Merge tag 'random-6.12-rc1-for-linus' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=102c269f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5c3b301db2ae9f24
-dashboard link: https://syzkaller.appspot.com/bug?extid=f69bfae0a4eb29976e44
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=125fc4a9980000
+On Tue, Sep 17, 2024 at 11:16:33PM +0900, Masahiro Yamada wrote:
+> Building external modules is typically done using this command:
+>=20
+>   $ make -C <KERNEL_DIR> M=3D<EXTMOD_DIR>
+>=20
+> Here, <KERNEL_DIR> refers to the output directory where the kernel was
+> built, not the kernel source directory.
+>=20
+> When the kernel is built in-tree, there is no ambiguity, as the output
+> directory and the source directory are the same.
+>=20
+> If the kernel was built in a separate build directory, <KERNEL_DIR>
+> should be the kernel output directory. Otherwise, Kbuild cannot locate
+> necessary build artifacts such as the .config file, etc. This has been
+> the method for building external modules based on the kernel compiled in
+> a separate directory for over 20 years. [1]
+>=20
+> If you pass the kernel source directory to the -C option, you must also
+> specify the kernel build directory using the O=3D option. This approach
+> works as well, though it results in a slightly longer command:
+>=20
+>   $ make -C <KERNEL_SOURCE_DIR> O=3D<KERNEL_BUILD_DIR> M=3D<EXTMOD_DIR>
+>=20
+> Some people mistakenly believe that O=3D should point to a separate output
+> directory for external modules when used together with M=3D. This commit
+> adds more clarification to Documentation/kbuild/kbuild.rst.
+>=20
+> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/=
+commit/?id=3De321b2ec2eb2993b3d0116e5163c78ad923e3c54
+>=20
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>=20
+>  Documentation/kbuild/kbuild.rst  | 5 +++++
+>  Documentation/kbuild/modules.rst | 9 ++++++---
+>  2 files changed, 11 insertions(+), 3 deletions(-)
 
+Reviewed-by: Nicolas Schier <n.schier@avm.de>
+
+--9eJBiiMknvqp2VUc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEDv+Fiet06YHnC6RpiMa8nIiabbgFAmbrA3UACgkQiMa8nIia
+bbiRrw//QspnPyl+EcEm+TM4mtr398AHoExac7pNOmEZ/7hcPwZAIbFd1wr3XnuE
+7mgW/Q2MnHeQCqskIkjwIxJEKymj6HcU1ind0SNGmUgj+1+s+3OeFXyv88GGUJ+J
+x267CPjBKVfvrV5yLA5xg9FZlcNLs8SxqmE4JHP2sjvJ5817b+OSGurGDJjdY5on
+lcjqXizlRw1L84jSVxU8sh/3FDuMu584vgf+PxD+OuSc737CjINk9YxIuMMFCuIG
+DAV7zoe8PXsFlQt25+0jEYLqr46aJLcVDWfvIsCvruTiBQfG6ENhzhvoLZqoegHI
+4FMQHxM6SjWyH7EwgMfA3cq6Ak8O9dFj3pIaRvlFuCDjFvpu/MokwguGuim3OTf1
+czU4xEyYyIgr7zLEpCTBNvcUAGpbK9d7QDLOi9LjJTB9kvsSCnTFkP88QlGpnuw3
+IpUUmZRa5rnAWteSwXQsdDFlViwg+7XpiZ/AmTWWsvh6MMi/cvkt2exaxVIudssG
+yra2p1UIsdrZeowah0i26uiWkwoO/GvgS876d4ZFNPMsoLJBfdGxup3Wx/aOcdzW
+1d/ihV4ZinUjoZs+CVxguGV29wcbcSgqlTfrJhoM2HcksmBqcgONmzutuxw6gVGU
+unE4Zu2tk1iZVgs4/5zZCgcpNWWQ/c6DXxcZn/zLs5RHi48PB8c=
+=3FZj
+-----END PGP SIGNATURE-----
+
+--9eJBiiMknvqp2VUc--
 
