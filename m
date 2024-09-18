@@ -1,100 +1,89 @@
-Return-Path: <linux-kernel+bounces-332590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C379F97BB86
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:21:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCB4997BB89
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1E71F23118
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:21:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B268284BE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79659291E;
-	Wed, 18 Sep 2024 11:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RPXWnrZU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038C1188A26;
+	Wed, 18 Sep 2024 11:21:15 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE32D17C98C;
-	Wed, 18 Sep 2024 11:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B8B176248;
+	Wed, 18 Sep 2024 11:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726658461; cv=none; b=g7sWBIWuWwwM99A7Z8A3IyIe/swCPO871n6MeZxfUoFmwGsfr2BlBWP+Q5reLiRma2pqmb11MYmcM311MzGGIzMQ3ZHfr+c3vylf0oSi+mQAHFzWH+VtP/irYTpEV1RZ9AVnpoOLrNDnm8nUmBJc1kL4oICHcabsgJuRtoJMHII=
+	t=1726658474; cv=none; b=XAaH3sNBRh0aEt0vXBbggs0mcEjxT//6YGuG2UTObrq/YpziH+dSY1wYhaeE3cL4sNwzh9oncySk4NeU/RZ1KA2O/lPD7xATcwILjaqXHPfNwDQB2nMgZcNTMIE0G1bGFcThaMLucSRUG7voB7eivnRV8FIx/w1bkkJ7zs5GdvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726658461; c=relaxed/simple;
-	bh=Yj8yguq6fHMKpfy6cIyL/hq3Tishf6iAF3akjLIRzAg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=I5QGbSpbcpuNLnFKaYyDL4raN3rFMQMsVm+kJPiuFVrmOHwDpDRFP7FHSbQu8Thti4d6xgG/o+JudN86/sQk5to4RVm045mVJgiXjG9DwSmLVp15qRJ29ZSuDPTBM74guDnS7NtFSBDaRVf4LKQx8R4L8y94nTwCKSd4fH9NfwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RPXWnrZU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AAE1C4CEC3;
-	Wed, 18 Sep 2024 11:20:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726658461;
-	bh=Yj8yguq6fHMKpfy6cIyL/hq3Tishf6iAF3akjLIRzAg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=RPXWnrZUdCoH7kRrmZTLDcNq69Us/SfDSGuGYdpss6MCaDCz+FWMbG4pYdnV40pIU
-	 kvMFA6NlCbwqGgkAjZDX93glz69CIYYmuU4MIhh+x1RHDmpL6x5bkWEwqwD6wY9NeT
-	 LsFu/HPjU+knmG6EaaFb8WPnlt4na4hlUNe1ssPZ6hA8W0zN403g3vQb7t7uVoHwXs
-	 6Q3T9pLxzn6qpM40Va23Q+hjdM1D2CaMeYRAuSlLccvvKkeoVfln24NcbitzBvn7/O
-	 3AzKWoI/BSP/nvMEzUDbf1dddoi37NfgqxMEjxg/wns9yEggEMhKndxo5fhvjdAXJc
-	 DJaqZK2lLbNLg==
-From: Mark Brown <broonie@kernel.org>
-To: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Cc: alsa-devel@alsa-project.org, pierre-louis.bossart@linux.intel.com, 
- yung-chuan.liao@linux.intel.com, lgirdwood@gmail.com, perex@perex.cz, 
- tiwai@suse.com, Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com, 
- venkataprasad.potturu@amd.com, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240916061318.3147988-1-Vijendar.Mukunda@amd.com>
-References: <20240916061318.3147988-1-Vijendar.Mukunda@amd.com>
-Subject: Re: [PATCH] ASoC: amd: acp: don't set card long_name
-Message-Id: <172665845809.1795214.7985418215228293070.b4-ty@kernel.org>
-Date: Wed, 18 Sep 2024 13:20:58 +0200
+	s=arc-20240116; t=1726658474; c=relaxed/simple;
+	bh=rhyNmR8hAjJ9SSA7CFA1s3XYnMcGfkB27v3q2tu/ZaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H7ewy8gB1QqVVyjQQjNZ/fMDpLOHH7Ng/Z07DdAfnWM47uQStJEtJuzlR2aPo0+MhFqN4v0X2WzEh1G7Ua4aTvmsGeK1F1KS9khoxGvQvrvLjn5KXvos465xTPsX7FGU8hGGEVeV5qn3Rf+EBuZycgGJMWYWZuqJIFOWB5YhEEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=49978 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1sqsk3-001Kge-3o; Wed, 18 Sep 2024 13:21:07 +0200
+Date: Wed, 18 Sep 2024 13:21:02 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, rbc@meta.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org
+Subject: Re: [PATCH nf-next v5 0/2] netfilter: Make IP_NF_IPTABLES_LEGACY
+ selectable
+Message-ID: <Zuq3ns-Ai05Hcooj@calendula>
+References: <20240909084620.3155679-1-leitao@debian.org>
+ <Zuq12avxPonafdvv@calendula>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zuq12avxPonafdvv@calendula>
+X-Spam-Score: -1.9 (-)
 
-On Mon, 16 Sep 2024 11:43:18 +0530, Vijendar Mukunda wrote:
-> UCM can load a board-specific file based on the card long_name. Remove
-> the constant "AMD Soundwire SOF" long_name so that the ASoC core can
-> set the long_name based on DMI information.
+On Wed, Sep 18, 2024 at 01:13:32PM +0200, Pablo Neira Ayuso wrote:
+> On Mon, Sep 09, 2024 at 01:46:17AM -0700, Breno Leitao wrote:
+> > These two patches make IP_NF_IPTABLES_LEGACY and IP6_NF_IPTABLES_LEGACY
+> > Kconfigs user selectable, avoiding creating an extra dependency by
+> > enabling some other config that would select IP{6}_NF_IPTABLES_LEGACY.
 > 
+> This needs a v6. There is also:
 > 
+> BRIDGE_NF_EBTABLES_LEGACY
+> 
+> We have more copy and paste in the bridge.
+> 
+> Would you submit a single patch covering this too?
 
-Applied to
+There is also:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+# ARP tables
+config IP_NF_ARPTABLES
+        tristate
 
-Thanks!
+which has never had a description. Could you also add?
 
-[1/1] ASoC: amd: acp: don't set card long_name
-      commit: 8451a3c7879d8883fd3fbd9dd7cbe7ecc31e89ce
+         arptables is a legacy packet classification.
+         This is not needed if you are using arptables over nftables
+         (iptables-nft).
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+There is no need for _LEGACY in this case.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Single patch to update them all should be fine.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Thanks
 
