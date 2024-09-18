@@ -1,80 +1,84 @@
-Return-Path: <linux-kernel+bounces-332709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4CB497BD7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:58:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE65B97BD84
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DCE0288FB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:58:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D57E1C2376D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B730618D625;
-	Wed, 18 Sep 2024 13:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2746818D655;
+	Wed, 18 Sep 2024 14:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="HBllCe5s"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jTIeW6f6"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303CC18C92A
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73D218C029;
+	Wed, 18 Sep 2024 14:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726667897; cv=none; b=t9vtRi+idcZyKMy0968NmfD3LQ76D3Jo/ljwtoiZ1ShvlvjuaxxzGvAxeX+EzA94gRQoYNL48VAJglriuyu1b+Jd6M5DRhudNCYerCi1WpvRAo1ZyEZBLLVaikCmpPZ6pheTY7deGoaQkQdhqe0X/sSWCW/gjbTda6yrbgYCmJ8=
+	t=1726668027; cv=none; b=Ug0ufV4Q8iNWoujPJP3LFEQNa4CJMav0grPZXKwRZIg34BLXiTQjSGDrnKWfD/C4YrKbDMk7R5zhD/mQvdC7qrv8LQudFxn8OuHK8GYEt1uC/zN6/wFUEkvdca9RMJ1IihK7tmaI3ViKFGtbVT2aqjq1woaQzd14XhVsluQ5QCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726667897; c=relaxed/simple;
-	bh=uRjf76+ialIXRhrRcRnhdzxrLmruMKeJXsltkA5bYqY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T+RLS1/hDlqkgrFKRJEAuYCeEtiAldUHjSA6edb9lhaYQCi6fjrlQ94qa860H3j+emCGPYGwDkLfVwUHV+pr3BsTdVyyyf1NnpHrlpcLEaWkY4OB6jpsbEfgirbtbsF/adwOPqME1n28/WGE6sOCV2Zn1VU28XGG/y/87/fpOkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=HBllCe5s; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d51a7d6f5so796779366b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:58:14 -0700 (PDT)
+	s=arc-20240116; t=1726668027; c=relaxed/simple;
+	bh=KEtGf6HmdMYHaZ9RCRIH2yfhCQ1fDsi0eLvOUTqcDZE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TJkNcJTb5kP1/cJJGh4NDJ2DozmVECmXZBJnJ5GFn+e4bdPBV+cR9RqsUvgn80G1kVsArHlDjCQ85UNV+y9+qn7OUn9wwFZCp+7FFAN5YgjHI2swffWiDKkFGXvLAZqp6MBD0Gvye/Ee5Z6raaPhiY7xZieY0bXWKSqusnZuM0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jTIeW6f6; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cae102702so46868045e9.0;
+        Wed, 18 Sep 2024 07:00:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1726667893; x=1727272693; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726668022; x=1727272822; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SPn7NyA8EvFtDI+rj2RU3nMqRoNcoHgRdtft+sybg/g=;
-        b=HBllCe5sMkM5IkvbFss4nozGoq+z9jbUC079gOJYxhnSsUQt+OQip/BoTa4wzIXAXP
-         3wEZfA65XYUsTvCXshf+hWSPrhKU3KRAvsXmz7f9eSM1v+fhReDoZmD2ewoQzouc4MC0
-         qC7UVRAJt37KNI9a8HDtTlGoOWTqi1H/3F8Y0=
+        bh=B5Xbmpy6v6pWsNREd3+6VoQ9i2+Ug3PNQHxuk+oN7X8=;
+        b=jTIeW6f6X3lYZG02oSVZJ1kaka6aDZFgiDh6/AoK0Wc3ll0jyIamf7J4SoqTa4ymA1
+         Q4eapZQaMkKTN76BlE7m3R2Y3p+S4wAhm7qqMNk8qNgs5OmjpICNzYDUNAs4x6QoJtwb
+         5z+pVohYZSJOkZdhvkkkfAAfq2hujgL9VH760f1kOZ3VWvL3hVk+VDYjmVoY1NwQdZR/
+         +j4KfgNXM51+Wl939aLh/O6lpOk0bkUxnukEKh4DMd+yMKkc7bu9XcgVuLnb3Y4ioHwa
+         p94QWaPcXPQpqvJwY+BtDrGuA5PJ/oFBbcKaGzKwVre1wOrYTALvlB4KOsXXk/a81Pe7
+         BgbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726667893; x=1727272693;
+        d=1e100.net; s=20230601; t=1726668022; x=1727272822;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SPn7NyA8EvFtDI+rj2RU3nMqRoNcoHgRdtft+sybg/g=;
-        b=oG5a5uyvRlw2772g0rAIIW/R9yLaE558GYA+B1fblNdHjK0iBCSTpeihl7l6ZbFIjw
-         pkWT9WifCjnIFeb7HcSwzKiLRDiGzJjZuihtvSDt5JDOgWDhjIeHFuDFRfkzHCcOmrLI
-         jVJct1BshzPRslrtiRCX9xEuwXdY4lvY+kLW7PodRo2GerTNpr9hw+NAlv6TM4i5Y3P0
-         BTQpT7+b9iUPSr3vKL1y8c9s84yZu0gwZugS+fAmbPibWZWy0yQYIqRT8mBP4TLEnMKz
-         TwXFtJap1lautryjXdGCFkTTIuE3erGq/Te0ABfZSWYUi38j+pcCzUQxK7hRTzwlAxIN
-         u+jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzO2G1AIzqlWbeC9Mg/B4Eqat7haTMsd1fUGsJ5WpD2acjPv/7aWIW0QFSuY5sMs7rE4QNm1pwb5mG/nE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn7zo8zZUYbytEb5XzB/srRV3VTEIaNVABmZlgabkKltWdMww/
-	dV3VPUieA6tw4llFlTjPzmnU/ZKM0j6t3kgSyZGW2He/SKzLzNmIMnU2necasVI=
-X-Google-Smtp-Source: AGHT+IFmawmX5JiRVgNf/0L0WpQV3DqIK1N/ZTMHGP5g/mV8702xqodsE7+50nL/fybsbo9t4AkL1Q==
-X-Received: by 2002:a17:906:6a14:b0:a90:4199:2a73 with SMTP id a640c23a62f3a-a9041992ae5mr2018156266b.5.1726667893278;
-        Wed, 18 Sep 2024 06:58:13 -0700 (PDT)
-Received: from localhost.localdomain ([83.68.141.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90613315d8sm595283466b.214.2024.09.18.06.58.12
+        bh=B5Xbmpy6v6pWsNREd3+6VoQ9i2+Ug3PNQHxuk+oN7X8=;
+        b=egyFI8w05RHINLeYDJjzNyVGxDF7HSYLg4EPawZ+Q2UDwSqRcEcF1BVDbEOsunU1dn
+         UEn3o4kUcz198Z7DMXRIAaopsDsbY86Vxx8/JqnnaP69Hr4usbQtUSjZYNaCbsDhFSNC
+         BTy/f41QZxDIhF6AxSrgILUeiv4eVgqtiTYNYf7NtGJlHyHoSZ0ZbdanROsVrnYYHddg
+         NNQ3OoZpgscuRaWJqKXaBXHZUbyCdfrE8nerh7cAGmuHqfHkzZafQ3LdSJuJr+ojb+S3
+         OERxvSjQsgCQzaSug4xrOBudHdovfbxeN2bo54+vcg0F29BK/szqwpqmDHMqG4mynEm2
+         sxUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVklqwDWBeCx+I/xdw+AN4Hv8ncZhqbMbqV6Cs51A1yzIalAlj8OUHAVo7IO4v66qb2wG9RJdWTDLg=@vger.kernel.org, AJvYcCWWbqMHFC9we2v7yIbkKQzAlX7yLUaYzq8qZVDD4aLmis9GdRWgrm0VrW4D6mK3zewX2Ng0x8aR6LPUXqym@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNu/3pxLc0/qYc1P4y82tBg9HiseVhJf4c+U2Koi7pTIpXO0/B
+	yNVl3n3rPP7ahTgek/CwoYMr+EqYUypMX84KpgBe9IYTCFccRSa7
+X-Google-Smtp-Source: AGHT+IHbEqPSMCUcoSqtLPyaZBqlpj5Uvorf2iJ37KTJXr9vai7zfKDCPHObgt39844jCP5qA/sv2w==
+X-Received: by 2002:a05:600c:501f:b0:42c:a7cc:cb64 with SMTP id 5b1f17b1804b1-42d9070d985mr134813735e9.3.1726668021765;
+        Wed, 18 Sep 2024 07:00:21 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7053581csm17765455e9.46.2024.09.18.07.00.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 06:58:13 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: Joe Damato <jdamato@fastly.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [RFC net-next] e1000e: link NAPI instances to queues and IRQs
-Date: Wed, 18 Sep 2024 13:57:26 +0000
-Message-Id: <20240918135726.1330-1-jdamato@fastly.com>
+        Wed, 18 Sep 2024 07:00:21 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: r9a09g057: Add CA55 core clocks
+Date: Wed, 18 Sep 2024 14:59:57 +0100
+Message-Id: <20240918135957.290101-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -84,68 +88,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make e1000e compatible with the newly added netdev-genl APIs.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-$ cat /proc/interrupts | grep ens | cut -f1 --delimiter=':'
- 50
- 51
- 52
+Add CA55 core clocks which are derived from PLLCA55.
 
-While e1000e allocates 3 IRQs (RX, TX, and other), it looks like e1000e
-only has a single NAPI, so I've associated the NAPI with the RX IRQ (50
-on my system, seen above):
-
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                       --dump napi-get --json='{"ifindex": 2}'
-[{'id': 145, 'ifindex': 2, 'irq': 50}]
-
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                       --dump queue-get --json='{"ifindex": 2}'
-[{'id': 0, 'ifindex': 2, 'napi-id': 145, 'type': 'rx'},
- {'id': 0, 'ifindex': 2, 'napi-id': 145, 'type': 'tx'}]
-
-Signed-off-by: Joe Damato <jdamato@fastly.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/net/ethernet/intel/e1000e/netdev.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/clk/renesas/r9a09g057-cpg.c | 16 ++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h     |  5 +++++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
-index f103249b12fa..b527642c3a82 100644
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -4613,6 +4613,7 @@ int e1000e_open(struct net_device *netdev)
- 	struct e1000_hw *hw = &adapter->hw;
- 	struct pci_dev *pdev = adapter->pdev;
- 	int err;
-+	int irq;
+diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
+index 3ee32db5c0af..d7e88550c1db 100644
+--- a/drivers/clk/renesas/r9a09g057-cpg.c
++++ b/drivers/clk/renesas/r9a09g057-cpg.c
+@@ -41,6 +41,14 @@ enum clk_ids {
+ 	MOD_CLK_BASE,
+ };
  
- 	/* disallow open during test */
- 	if (test_bit(__E1000_TESTING, &adapter->state))
-@@ -4676,7 +4677,15 @@ int e1000e_open(struct net_device *netdev)
- 	/* From here on the code is the same as e1000e_up() */
- 	clear_bit(__E1000_DOWN, &adapter->state);
- 
-+	if (adapter->int_mode == E1000E_INT_MODE_MSIX)
-+		irq = adapter->msix_entries[0].vector;
-+	else
-+		irq = adapter->pdev->irq;
++static const struct clk_div_table dtable_1_8[] = {
++	{0, 1},
++	{1, 2},
++	{2, 4},
++	{3, 8},
++	{0, 0},
++};
 +
-+	netif_napi_set_irq(&adapter->napi, irq);
- 	napi_enable(&adapter->napi);
-+	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_RX, &adapter->napi);
-+	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_TX, &adapter->napi);
+ static const struct clk_div_table dtable_2_64[] = {
+ 	{0, 2},
+ 	{1, 4},
+@@ -74,6 +82,14 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
  
- 	e1000_irq_enable(adapter);
+ 	/* Core Clocks */
+ 	DEF_FIXED("sys_0_pclk", R9A09G057_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
++	DEF_DDIV(".ca55_0_coreclk0", R9A09G057_CA55_0_CORE_CLK0,
++		 CLK_PLLCA55, CDDIV1_DIVCTL0, dtable_1_8),
++	DEF_DDIV(".ca55_0_coreclk1", R9A09G057_CA55_0_CORE_CLK1,
++		 CLK_PLLCA55, CDDIV1_DIVCTL1, dtable_1_8),
++	DEF_DDIV(".ca55_0_coreclk2", R9A09G057_CA55_0_CORE_CLK2,
++		 CLK_PLLCA55, CDDIV1_DIVCTL2, dtable_1_8),
++	DEF_DDIV(".ca55_0_coreclk3", R9A09G057_CA55_0_CORE_CLK3,
++		 CLK_PLLCA55, CDDIV1_DIVCTL3, dtable_1_8),
+ 	DEF_FIXED("iotop_0_shclk", R9A09G057_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
+ };
  
-@@ -4735,6 +4744,8 @@ int e1000e_close(struct net_device *netdev)
- 		netdev_info(netdev, "NIC Link is Down\n");
- 	}
+diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
+index 1bd406c69015..819029c81904 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.h
++++ b/drivers/clk/renesas/rzv2h-cpg.h
+@@ -32,8 +32,13 @@ struct ddiv {
+ 	})
  
-+	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_RX, NULL);
-+	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_TX, NULL);
- 	napi_disable(&adapter->napi);
+ #define CPG_CDDIV0		(0x400)
++#define CPG_CDDIV1		(0x404)
  
- 	e1000e_free_tx_resources(adapter->tx_ring);
+ #define CDDIV0_DIVCTL2	DDIV_PACK(CPG_CDDIV0, 8, 3, 2)
++#define CDDIV1_DIVCTL0	DDIV_PACK(CPG_CDDIV1, 0, 2, 4)
++#define CDDIV1_DIVCTL1	DDIV_PACK(CPG_CDDIV1, 4, 2, 5)
++#define CDDIV1_DIVCTL2	DDIV_PACK(CPG_CDDIV1, 8, 2, 6)
++#define CDDIV1_DIVCTL3	DDIV_PACK(CPG_CDDIV1, 12, 2, 7)
+ 
+ /**
+  * Definitions of CPG Core Clocks
 -- 
 2.34.1
 
