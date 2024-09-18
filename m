@@ -1,187 +1,135 @@
-Return-Path: <linux-kernel+bounces-332640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B88B797BC5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:38:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 847A497BC5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F2261F2536C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:38:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F2892827CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8123189B8D;
-	Wed, 18 Sep 2024 12:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C21E189900;
+	Wed, 18 Sep 2024 12:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lIyueVcm"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcx9q3Gg"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FB6176FA7;
-	Wed, 18 Sep 2024 12:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1175A176FA7;
+	Wed, 18 Sep 2024 12:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726663086; cv=none; b=qohVYSsTiuYsk7qJmV/GPKeiZYE+0gXlv+frLMleo7bvnyd87tbxXhAIVDjZWAL1oOan7/ClyzbXVPyp7HN5OqNXZUmO1qqEHJOMupexGdnLdRw4n7VgzhyJmdnL3IlX3K2YtcsS1FwGnFQW1oNY1oU2u8P7rqi+ncVqqxoA52c=
+	t=1726663182; cv=none; b=XhMKfphe0WNRPR7UQCBImWmydJyYQaCPaaTEGV3rGYifNtPdCTTWpOKc7hLFFY8620CMtbJkmqlPIdZFnfdYdnhumw8tBJOHTA/VaPD+jtJitLoC/HRs5UeehYBt9EMtrvFZp7lx+nsW3m5U5RVuqDfB2y9evI8NvewL/NwLu1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726663086; c=relaxed/simple;
-	bh=+pVQCjrOS+WDHSyf9VTvTerWzJQfOhje9X0hpJLbZ2w=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=gI8UZV1kXFaatWih7x0dfofTZ3G1ZYBJzCfeolYWirisb6EBt9syXlGqiqa8V/c44TBOUyPFH1/tUaPCyZCCKwWi0nwbvnPwClPN58o5qkEKIoihT3v0dk3glxawkmvGmU3N3j7UvVieQSEsV/jcjv1lNESakZLE5Y4a6OlJFCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lIyueVcm; arc=none smtp.client-ip=209.85.222.174
+	s=arc-20240116; t=1726663182; c=relaxed/simple;
+	bh=zHSCkLBbHvxeaweQ+w3KKgu2flmd7IQg7nm+C+PPzAo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DXWAzItBnQG8LEW7jB0bBoUfZ7UeNH+y5hulvXimOryl/Mu7A8qtczCo2BpnZTzwsFchkcZVob+w4xXQqmVkOhuLmFySgOd6LItRYp36ixUTqLjjCHuMUKyB9LOG3VCAK+i0/06hkY8Ta9yHUxG45l2zzsuAATCK2qbd55Nr0Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bcx9q3Gg; arc=none smtp.client-ip=209.85.128.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a95efbaf49so396362485a.3;
-        Wed, 18 Sep 2024 05:38:04 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6dddca05a60so7029567b3.0;
+        Wed, 18 Sep 2024 05:39:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726663083; x=1727267883; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zKhOII2wzPiXj1Ja0YUua2iCV4SCufJIEwdhDjh9HSM=;
-        b=lIyueVcmYLXVsEP3wf3puUWk6vPqg8VlxBbrkag8vgF/xNkA7LNrETKRpnw3GE919Y
-         8MBHrnYA+kHOPkDh/4gnP1Bk0K3+HhjoVu3GZ71qsQHa8oqvxcE9KwwXg128BNA2wL/6
-         irTBfUxcGJ0HHFgwaTcqq+NjC0gBJl7JFmTj+JH9b4fNGaGWtQ28jo75s0Zuw6JzBSm8
-         M9xJmQIbjOjAWzvAMviBKa73Wl/VSvVf77KXWX7ApmzU/+Q0bGeHbtAPF/VDnt0phjNL
-         TjujbcKZSntFqF67vh/4mAu3XzVZI6DV83l+971PBYhcf2rLxa2b+G4q3W6gZUc62NJ1
-         c7bQ==
+        d=gmail.com; s=20230601; t=1726663180; x=1727267980; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yohxMWQQzG9Yvh0JnaHxDE74VTtOz+kSVjviSCcxYOM=;
+        b=bcx9q3Gg1ROzHoGbV4QC/2JH01Rj7N/QDrrHSdhODyrQJS+LI7S9fuDyOKJTKAdbcq
+         QPpmKxCuRAAXxRjk+C9VvPzDmSawjE9ilcbTT+537th49Urymy1EFDoHV/W5TNB4NQpU
+         F+bOpOc3yQOYe0tr7+IMc49tnAQ/ecJ1wGJ/XTbhH1dsfBha80yFkB5J/LK9JkwRzBb9
+         7JO9M1lI3qnLatfMLXKwK62GR//DKgzbPrGQCVVmQwSUJxpXSNQkQbNaRs/Psoj+mD9d
+         GK6J5yFHk6IyDvEaRM3zEGvSvHHoS3Eso6EwJX5sgjLOKdOtJ2iJjCKVWVwrJ9PnM6Ie
+         ArGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726663083; x=1727267883;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zKhOII2wzPiXj1Ja0YUua2iCV4SCufJIEwdhDjh9HSM=;
-        b=E64KFiHVJSxaUrJXPBihrAg6SydaPWY9g4nSIed6rtB5CvKrC9SdWQB/sQ0l/b+DnP
-         vGMbchelZA9nMSvfa6LXv0wvA8LCNaLYcw0lS9MQ6V+P5B7I62Uf9KSHqZIkxeoPxSHD
-         5DacxsT9mxicvPAE8vIbP/Wv2cYlxzeZP3vFKHhF1Lb54Zm3kU2/ysRTpp/WLuXmtYbD
-         8KETkCvneOJvgDeAuUsB0miPffBuGAQg3BpEq5DxdPATLz3VEnhOBB8BoZWBwcYq7O1c
-         MvyTUcqulyv66hQxR4p60kkAxgnVN53GNPjCwwa/3GeVVeWAmPp6NKQXxIYyCJBu8kQR
-         ti9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWKaAz+g0BiJx65rg131VXXn7QhcI3YSKVaw90ZFh7wE87eag3K3Q38ZSB79pgUPzr13F6ktEHwDJ7N73A=@vger.kernel.org, AJvYcCWvF43mSeAxU490pOVrroXYDWxMRYKXW7FpSiCXsxIAudpX8u0SB5TlRHUpiCAbPXO0TvYd3MiTTDhTtl655cMJ@vger.kernel.org, AJvYcCXYyfrWky8cMnSMMuKPHO+jXjIBvetkpJen5YzYHRjLK2/AIn50piYoZdzAkW4KFdfJfxTGmgTB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvGe+KQQsO05N4qx0lgOzyYU9ic4huNENJctf7cnRQs5AEKVVD
-	Hkct5lvry7yZ3XrpwxZWl07j5aPqIiKDl8wXGmlMC/nEXk8gcu+3
-X-Google-Smtp-Source: AGHT+IHgv89Lim0gQxfDI9Ug/kDaYNwzLbOzetDB4QbKuZuFTirvlUtsTj3cfbE9+qdkVlNN9l0lIg==
-X-Received: by 2002:a05:620a:24d5:b0:7a9:b9c6:ab62 with SMTP id af79cd13be357-7ab30d349c3mr2681807185a.28.1726663083232;
-        Wed, 18 Sep 2024 05:38:03 -0700 (PDT)
-Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ab3e95bcaasm450628485a.5.2024.09.18.05.38.02
+        d=1e100.net; s=20230601; t=1726663180; x=1727267980;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yohxMWQQzG9Yvh0JnaHxDE74VTtOz+kSVjviSCcxYOM=;
+        b=M+EoN0Otmx7QMfuLKS29phw0me32iunKvSTN9s1iU1E3XHteqsf9rqA3Cdem8ufye7
+         8vh3mTH19SiQxKVLyRDuaTNBV7BtIL6x1y7rVHhKYsucLMwxUrE01Nteq+kfN1WiZDEN
+         5WHb1LZx8Dzj9uiAPd/f+ArSVwIdPXpPkOL0yeGonS1vlX0hlxvWS4W4ijUQdHHevQ4L
+         zMpHBuPgmAt6uoMXZzhE2z1ZGGAtgduo1F+k4NauIdKONMx1g2Ta9eQbklBvbGFUHMYk
+         mSMYDxhv+KPJB8RuF6eW0vLyb197d2EN8Z5pK9dKG+zJYVMBTUMfKu6VHsKwYTQM7bjP
+         MxgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGyVeFaDmqBQEJUboSq+Qr4Pxfi4pihvigydAXrUuX1N2cnhOO01I8CaLXt7H69wKKjZ4O3trmAKA4j+Zk@vger.kernel.org, AJvYcCVoli6515X8qk/X8CU8Ka6Mo3P2bKfLadOyiPwsgcbL9z9DhLzo4D349FRvhNOA0ANHtfoauQngL34=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTOvcTpmzqV3Q44jo9ZllThyER0PgbM9eQADYm6MIQv/YJVIHg
+	4sl8LqJy8AOrOSZP7vEmXzSvibwxEMr0wvQioZTMy+9t+p14c0nnFNpuOg==
+X-Google-Smtp-Source: AGHT+IG002jAs5oeAqIDjeSQ5SV1OXrDk3gre1xyD7dcxrivorEh+vkIJFGBtj6OGra92Wh/VnfZcg==
+X-Received: by 2002:a05:690c:6906:b0:6dd:ba98:5c9b with SMTP id 00721157ae682-6ddba985e7amr87723827b3.22.1726663180021;
+        Wed, 18 Sep 2024 05:39:40 -0700 (PDT)
+Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6dbe2e0da2asm17691817b3.36.2024.09.18.05.39.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 05:38:02 -0700 (PDT)
-Date: Wed, 18 Sep 2024 08:38:01 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Mohan Prasad J <mohan.prasad@microchip.com>, 
- netdev@vger.kernel.org, 
- davem@davemloft.net, 
- kuba@kernel.org, 
- andrew@lunn.ch
-Cc: edumazet@google.com, 
- pabeni@redhat.com, 
- shuah@kernel.org, 
- mohan.prasad@microchip.com, 
- linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- horms@kernel.org, 
- brett.creeley@amd.com, 
- rosenp@gmail.com, 
- UNGLinuxDriver@microchip.com, 
- willemb@google.com
-Message-ID: <66eac9a9e3e22_29b986294c7@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20240917023525.2571082-3-mohan.prasad@microchip.com>
-References: <20240917023525.2571082-1-mohan.prasad@microchip.com>
- <20240917023525.2571082-3-mohan.prasad@microchip.com>
-Subject: Re: [PATCH net-next v2 2/3] selftests: nic_basic_tests: Add selftest
- case for speed and duplex state checks
+        Wed, 18 Sep 2024 05:39:39 -0700 (PDT)
+From: David Hunter <david.hunter.linux@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: David Hunter <david.hunter.linux@gmail.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	javier.carrasco.cruz@gmail.com,
+	shuah@kernel.org
+Subject: [PATCH v3 1/1] clk: clk-qoriq: Replace of_node_put() with __free()
+Date: Wed, 18 Sep 2024 08:39:23 -0400
+Message-ID: <20240918123925.41511-1-david.hunter.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Mohan Prasad J wrote:
-> Add selftest case for testing the speed and duplex state of
-> local NIC driver and the partner based on the supported
-> link modes obtained from the ethtool. Speed and duplex states
-> are varied and verified using ethtool.
-> 
-> Signed-off-by: Mohan Prasad J <mohan.prasad@microchip.com>
-> ---
->  .../drivers/net/hw/nic_basic_tests.py         | 46 +++++++++++++++++++
->  1 file changed, 46 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/drivers/net/hw/nic_basic_tests.py b/tools/testing/selftests/drivers/net/hw/nic_basic_tests.py
-> index 27f780032..ff46f2406 100644
-> --- a/tools/testing/selftests/drivers/net/hw/nic_basic_tests.py
-> +++ b/tools/testing/selftests/drivers/net/hw/nic_basic_tests.py
-> @@ -42,6 +42,14 @@ from lib.py import ethtool
->  """Global variables"""
->  common_link_modes = []
->  
-> +def check_autonegotiation(ifname: str) -> None:
-> +    autoneg = get_ethtool_content(ifname, "Supports auto-negotiation:")
-> +    partner_autoneg = get_ethtool_content(ifname, "Link partner advertised auto-negotiation:")
-> +
-> +    """Check if auto-neg supported by local and partner NIC"""
-> +    if autoneg[0] != "Yes" or partner_autoneg[0] != "Yes":
-> +        raise KsftSkipEx(f"Interface {ifname} or partner does not support auto-negotiation")
-> +
->  def get_ethtool_content(ifname: str, field: str):
->      capture = False
->      content = []
-> @@ -112,6 +120,25 @@ def verify_autonegotiation(ifname: str, expected_state: str) -> None:
->  
->      ksft_eq(actual_state, expected_state)
->  
-> +def set_speed_and_duplex(ifname: str, speed: str, duplex: str) -> None:
-> +    """Set the speed and duplex state for the interface"""
-> +    process = ethtool(f"--change {ifname} speed {speed} duplex {duplex} autoneg on")
-> +
-> +    if process.ret != 0:
-> +        raise KsftFailEx(f"Not able to set speed and duplex parameters for {ifname}")
-> +    ksft_pr(f"Speed: {speed} Mbps, Duplex: {duplex} set for Interface: {ifname}")
-> +
-> +def verify_speed_and_duplex(ifname: str, expected_speed: str, expected_duplex: str) -> None:
-> +    verify_link_up(ifname)
-> +    """Verifying the speed and duplex state for the interface"""
-> +    with open(f"/sys/class/net/{ifname}/speed", "r") as fp:
-> +        actual_speed = fp.read().strip()
-> +    with open(f"/sys/class/net/{ifname}/duplex", "r") as fp:
-> +        actual_duplex = fp.read().strip()
-> +
-> +    ksft_eq(actual_speed, expected_speed)
-> +    ksft_eq(actual_duplex, expected_duplex)
-> +
->  def test_link_modes(cfg) -> None:
->      global common_link_modes
->      link_modes = get_ethtool_content(cfg.ifname, "Supported link modes:")
-> @@ -136,6 +163,25 @@ def test_autonegotiation(cfg) -> None:
->      else:
->          raise KsftSkipEx(f"Auto-Negotiation is not supported for interface {cfg.ifname}")
->  
-> +def test_network_speed(cfg) -> None:
-> +    check_autonegotiation(cfg.ifname)
-> +    if not common_link_modes:
-> +        KsftSkipEx("No common link modes exist")
-> +    speeds, duplex_modes = get_speed_duplex(common_link_modes)
-> +
-> +    if speeds and duplex_modes and len(speeds) == len(duplex_modes):
-> +        for idx in range(len(speeds)):
-> +            speed = speeds[idx]
-> +            duplex = duplex_modes[idx]
-> +            set_speed_and_duplex(cfg.ifname, speed, duplex)
-> +            time.sleep(sleep_time)
-> +            verify_speed_and_duplex(cfg.ifname, speed, duplex)
-> +    else:
-> +        if not speeds or not duplex_modes:
-> +            KsftSkipEx(f"No supported speeds or duplex modes found for interface {cfg.ifname}")
-> +        else:
-> +            KsftSkipEx("Mismatch in the number of speeds and duplex modes")
-> +
+Use __free() to have automatic cleanup instead of calling of_node_put()
+manually.
 
-Do these tests reset configuration to their original state?
+Compiled without errors or warnings.
 
-More high level: basic test is not very descriptive. Can they have a
-more precise name? Perhaps link layer operations or link layer config?
+Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+---
+The following commit has information on _free(device_node):
+9448e55d032d99af8e23487f51a542d51b2f1a48
+
+v3
+	- Changed subject
+v2 -  https://lore.kernel.org/all/20240821010739.15293-1-david.hunter.linux@gmail.com/
+	- Improved message body 
+	- Use change log to give more information about __free()
+v1 - https://lore.kernel.org/all/20240820013550.4906-1-david.hunter.linux@gmail.com/
+---
+ drivers/clk/clk-qoriq.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 4dcde305944c..a560edeb4b55 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -9,6 +9,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <dt-bindings/clock/fsl,qoriq-clockgen.h>
++#include <linux/cleanup.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
+@@ -1065,11 +1066,8 @@ static void __init _clockgen_init(struct device_node *np, bool legacy);
+ static void __init legacy_init_clockgen(struct device_node *np)
+ {
+ 	if (!clockgen.node) {
+-		struct device_node *parent_np;
+-
+-		parent_np = of_get_parent(np);
++		struct device_node *parent_np __free(device_node) = of_get_parent(np);
+ 		_clockgen_init(parent_np, true);
+-		of_node_put(parent_np);
+ 	}
+ }
+ 
+-- 
+2.43.0
+
 
