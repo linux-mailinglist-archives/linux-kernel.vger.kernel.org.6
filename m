@@ -1,73 +1,130 @@
-Return-Path: <linux-kernel+bounces-332932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACDC497C0E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:38:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D2997C0EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33414B21FC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 20:38:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A5E51C2087C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 20:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FB31CB30D;
-	Wed, 18 Sep 2024 20:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A791CA6BE;
+	Wed, 18 Sep 2024 20:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y64MSxR0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+ByRvPh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A3517E019;
-	Wed, 18 Sep 2024 20:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FD214B94A;
+	Wed, 18 Sep 2024 20:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726691836; cv=none; b=GCuLKuc27CTmaZRbbp4nYrbAc9icwcESQuBYkgqkD63neoFeMM8MqPkUVGWGhJnMUz2Xc+C4Y0859x6Jatd1erY8fihhhm/xP5LIoCSX05dxZThgq29JZUCo84ihU2Si/wfwmgA0BTQ9d6M4VNco1br0AtAkCF+RUA/jIM5TJvI=
+	t=1726691933; cv=none; b=VRrusPmc8fHiQsQ/4xUqpM8/D761DC3lMtcDdnuc976VyHx6DDmRY8UP/c2/4TPiu+CAHvwqQ5Kk8kjYP4Rq3OUNsr40cNfplG9C+IODyYCD3KY7Odt74EsSy6jkCXfhB51temB87wSSFc4SSq31F7UKqcfkBW6EnfYuRfGIQxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726691836; c=relaxed/simple;
-	bh=P78vK/IsWZQu9reqUe+AQv4u2RlxkViKpsnZtymZiNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B9Ni2vchNKcpfplMD5S11h9cIfpe7MQoxmg+6E1pWLJGkPgH/LmC6H1R9k+OMKo4dm5vVqE+8s2umtB0izwuIlqY29UHwURdx9/asjt/fJ6hfWGfBAWm2YF5oggQnBTk7vzRvFtlkIQMWU2+DNX2cf1TzVDfYN5P56Sy+wenh8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y64MSxR0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75DA7C4CEC2;
-	Wed, 18 Sep 2024 20:37:15 +0000 (UTC)
+	s=arc-20240116; t=1726691933; c=relaxed/simple;
+	bh=boUgcIfKgwAPas8q5f7eAfrRLxFQ2JNLZrh82hZUHdg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=Mz3QT0uR/LJRjX8pyv9Sod2VIv/aeHQxnY6XK47KTwr9/YFJ3Slcz+HgjEwFkpG+M7x+6jK5ITrFfRx8VgtXo7/ndjkE/03cHJkDFL6CchV9XkWxsUsgfGOLcXscDOIRokZLQOUvgpus1ZuUF4Ej8F0Y5Rro9VQdpSWycmAVcew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+ByRvPh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03DB5C4CEC7;
+	Wed, 18 Sep 2024 20:38:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726691835;
-	bh=P78vK/IsWZQu9reqUe+AQv4u2RlxkViKpsnZtymZiNk=;
+	s=k20201202; t=1726691933;
+	bh=boUgcIfKgwAPas8q5f7eAfrRLxFQ2JNLZrh82hZUHdg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y64MSxR0tHH5NS7qfJclCkouQxlL/KvtiGn53jMwBijoebZID5cb8Y36jB4RcGXod
-	 sfzs4OlIQQOhiUPbwAifRAmYmjVPUYgt/Aq5+8fi+idd2/6mGDyaOJ+aULmWV9nO+i
-	 YZfsfHMPc9akfe5CM9O+PadvepkqZjQdG4NxKJFHv9RsZxwlirlWZeGn7r/1E7+0Lz
-	 KkOL1n4L84KnXwtk8R9Pjd6DsBL1mGg+WrBrjEmodGp8+mPHd8up65nqQIn07IRHmh
-	 r/pscQ3dZ6RTBUqzqoI/3K3E1M8d2iKFhJIE6BbBbNVdqtODCLNMpVMRsM0/7oHp1J
-	 zkZThye7vEgMg==
-Date: Wed, 18 Sep 2024 15:37:14 -0500
-From: Rob Herring <robh@kernel.org>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] dt-bindings: dsp: fix power domain count
-Message-ID: <20240918203714.GA2075709-robh@kernel.org>
-References: <20240918182117.86221-1-laurentiumihalcea111@gmail.com>
- <20240918182117.86221-2-laurentiumihalcea111@gmail.com>
+	b=G+ByRvPhXKW0rwxwIHG40X8E525AzfIehe78XuaCUlI/fdfD0RFPTl1wC1G8WM+gH
+	 U6SxfXdsuhqnCQ6G7Ud1xpYFGsZFyKNh6CN37LFREmzBEd/D/gawl/a9hV9TU7rXvT
+	 L9uN3++f3UzEqG7e43bMzYJgk71GxXZKgasZkpyxCBYjXVj+eZnp9URG7I6z4FtrKh
+	 x8HwQ/LopRUtft3OAqYT1sSI6Vz4IHfLLOo/4cLNIo1W4istSfu6VMQ4uOnJ2hYkIF
+	 rUh0Qtt+hm5Fjw8KITUD1OPltNg/2CRao31wegMTQSWYCm0Zcb6GFo22xvwUvAhuL1
+	 7Y9hCsz1G/1JA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240918182117.86221-2-laurentiumihalcea111@gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 18 Sep 2024 23:38:49 +0300
+Message-Id: <D49P7DT1HDLG.15LBU78Q192XB@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Pengyu Ma" <mapengyu@gmail.com>
+Cc: <linux-integrity@vger.kernel.org>,
+ <James.Bottomley@hansenpartnership.com>, <roberto.sassu@huawei.com>, "Mimi
+ Zohar" <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul
+ Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, <keyrings@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/7] Lazy flush for the auth session
+X-Mailer: aerc 0.18.2
+References: <20240917154444.702370-1-jarkko@kernel.org>
+ <CALSz7m0EvuDmRQHCbmwA=ED-bt7x8mhCS=X69f+yx60SYq7VgA@mail.gmail.com>
+In-Reply-To: <CALSz7m0EvuDmRQHCbmwA=ED-bt7x8mhCS=X69f+yx60SYq7VgA@mail.gmail.com>
 
-On Wed, Sep 18, 2024 at 02:21:13PM -0400, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Wed Sep 18, 2024 at 9:47 AM EEST, Pengyu Ma wrote:
+> Hi Jarkko,
+>
+> After applied this patchset, the boot time become 8.9 secondes, it's
+> more reasonable.
 
-The subject should say this is for fsl,dsp, not *all* dsp's.
+Great! I have some ideas how to further optimize but within context of
+the bug I think we are now in reasonable figures :-)
+
+>
+> But this patchset can't be clean applied to upstream 6.11 kernel.
+> looks like file tpm2-sessions.c is changed in your code base.
+
+Thanks for the feedback. I decided to drop the couple of "cleanup"
+patches and relabel performance fixes also as bug fixes because I
+really think we should backport these to v6.10 and v6.11 trees.
+
+I sent v4 which should be easy to apply on top of v6.11.
+
+>
+> Tested-by: Pengyu Ma <mapengyu@gmail.com>
+
+Thank you!
+>
+> Thanks,
+> Pengyu
+
+BR, Jarkko
+>
+> On Tue, Sep 17, 2024 at 11:44=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.o=
+rg> wrote:
+> >
+> > For the sake of:
+> > https://bugzilla.kernel.org/show_bug.cgi?id=3D219229
+> >
+> > v2:
+> > https://lore.kernel.org/linux-integrity/20240916110714.1396407-1-jarkko=
+@kernel.org/
+> > v1:
+> > https://lore.kernel.org/linux-integrity/20240915180448.2030115-1-jarkko=
+@kernel.org/
+> >
+> > Jarkko Sakkinen (7):
+> >   tpm: Remove the top-level documentation tpm2-sessions.c
+> >   tpm: Return on tpm2_create_null_primary() failure
+> >   tpm: Return on tpm2_create_primary() failure in tpm2_load_null()
+> >   tpm: flush the null key only when /dev/tpm0 is accessed
+> >   tpm: Allocate chip->auth in tpm2_start_auth_session()
+> >   tpm: flush the auth session only when /dev/tpm0 is open
+> >   tpm: open code tpm2_create_null_primary()
+> >
+> >  drivers/char/tpm/tpm-chip.c       |  14 +++
+> >  drivers/char/tpm/tpm-dev-common.c |   8 ++
+> >  drivers/char/tpm/tpm-interface.c  |  10 +-
+> >  drivers/char/tpm/tpm2-cmd.c       |   3 +
+> >  drivers/char/tpm/tpm2-sessions.c  | 196 +++++++++++-------------------
+> >  include/linux/tpm.h               |   2 +
+> >  6 files changed, 109 insertions(+), 124 deletions(-)
+> >
+> > --
+> > 2.46.0
+> >
 
 
