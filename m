@@ -1,229 +1,126 @@
-Return-Path: <linux-kernel+bounces-332905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C64197C071
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:24:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D9497C092
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11DCF1C21423
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:24:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5A3C283137
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B541CA6A6;
-	Wed, 18 Sep 2024 19:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A3D1CA69E;
+	Wed, 18 Sep 2024 19:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ObiNoxMa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EcwQzjPC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC151C9EAB
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 19:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6D312B17C;
+	Wed, 18 Sep 2024 19:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726687482; cv=none; b=sh8cUQJSoqDBVHXs+74MTnvjz8SXygPZIm69bIu4S4Zon/J347COfAIny7kK6lnXfoU6MJxMZ2o2shqaNrDqI82qlS+gD64QHRp9M26qK6CWO4ePOnHA304R+g6I2SlB/psZFKeel418B4o9tF9BvUCHx2tq1/nEm0tDHpcQtNI=
+	t=1726688215; cv=none; b=DYUN3OlgKj5OR2I+GP7XYztflaHPkb5FFnq7Ka/I/8yvKyq3oWsTMb26Qph6mKWVczqP4cfzCtXECzHfxL+lZMoq9frvE620FN+Q9K38BHEhzG8cuoGjFmAOBi7hGY58ff6OY/Ro3xA2tmAr8QQugVzByF0yIe5pvg5/PogBVnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726687482; c=relaxed/simple;
-	bh=YdyFzy1jcfMaY51nnWIzBvWMvrJGWBsGOA35UGZoFfs=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=eVzjU44F6DxXe3473HmQFipURQocmwM7t5gXnmQFE5ZFIQ8V7AiuOR9+mXxJCfK0/1ECeXA3WhwYn3YhGf50ksdiXvSFNKAoL4lHBfaRjDsBd0NszSu3pq61B+kGICht29bYaufT/rePSJe6zT9wkiQwTO8G9vgBmj1sovYyup0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ObiNoxMa; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726687479;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=13NcS5WBCHgSavsJ+5jrwMZ/ERpINeUvrEKrZx5QIkI=;
-	b=ObiNoxMahWStruVydtWogGRX5KFuyVEbiV7NM7rYkkIrxb8HqX0oUTr0mhPrOZyK22ozxq
-	e1AsSS739TnFb8+mq7VOKmG1/UCztGHGSZfN9wGQe4KyqSPBIpctDJd2YhJcxdU2CjIVdN
-	lxGOLPZFh84zCQNBXTiLBi/HuXqG18M=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-390-mbeDwEILOO-ofncEXk_s2g-1; Wed,
- 18 Sep 2024 15:24:30 -0400
-X-MC-Unique: mbeDwEILOO-ofncEXk_s2g-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3F2A91953943;
-	Wed, 18 Sep 2024 19:24:28 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9937F30001A1;
-	Wed, 18 Sep 2024 19:24:25 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Steve French <stfrench@microsoft.com>
-cc: dhowells@redhat.com, Paulo Alcantara (Red Hat) <pc@manguebit.com>,
-    Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Make the write_{enter,done,err} tracepoints display netfs info
+	s=arc-20240116; t=1726688215; c=relaxed/simple;
+	bh=5bZ1Yoj6niUYHDQb1J8phNqCotVR8fsQiObDLwdQHjc=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=X+zRdsYZhnRq0VUmLxJE9CEa7e6Ap04D8m6WFBpNDOh2T5WTrWtEJJCS0LvBaINnhXbu9D8jO8hc+ON9TrNao3q/MdB45J2Nmx0Agh55jVbl4zYZFJqgp+5fV2vk2zrbCgUnk+rS/TsptyBmdyetIX+fn2hdWwnXWUuO71pEkiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EcwQzjPC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C097C4CEC2;
+	Wed, 18 Sep 2024 19:36:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726688214;
+	bh=5bZ1Yoj6niUYHDQb1J8phNqCotVR8fsQiObDLwdQHjc=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=EcwQzjPC9CaubYEDs7x9Z7+tBDpe3i+Nrm0uxqCk3SuHrtamBvgtk1kEfJLyProkR
+	 47AYnWV6xNTd6jJGKmK+RKX+p80hQUOUHeWCLcW/I33Y5PszqlEfI3wf/sz3pjjmtz
+	 Cd9HKm/12ACZwi0IExzyWb1GloGVy5QbzgON5nyw4OuSxCKmzAyveWU58LkOJJ5Cy+
+	 iYEjy+mha63NWJGJv6LKwNptiuf+HCB6UWXkz9FgiUeeumbDoPeQF5AnXHfvNKxzbG
+	 cJkgfW7LpCPCuckLDSeFO9FWUJbHt0qBVXbGs+jv2atpYBeR2NE1bHoQ/Q7/Y/ZD5C
+	 n7v0wQArrrRPQ==
+Date: Wed, 18 Sep 2024 14:36:53 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2390623.1726687464.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 18 Sep 2024 20:24:24 +0100
-Message-ID: <2390624.1726687464@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Daniel Baluta <daniel.baluta@nxp.com>, 
+ Shengjiu Wang <shengjiu.wang@nxp.com>, 
+ Iuliana Prodan <iuliana.prodan@nxp.com>, linux-kernel@vger.kernel.org, 
+ Sascha Hauer <s.hauer@pengutronix.de>, linux-arm-kernel@lists.infradead.org, 
+ imx@lists.linux.dev, Shawn Guo <shawnguo@kernel.org>, 
+ devicetree@vger.kernel.org
+In-Reply-To: <20240918182117.86221-2-laurentiumihalcea111@gmail.com>
+References: <20240918182117.86221-1-laurentiumihalcea111@gmail.com>
+ <20240918182117.86221-2-laurentiumihalcea111@gmail.com>
+Message-Id: <172668821340.2009095.10209806970812964896.robh@kernel.org>
+Subject: Re: [PATCH 1/5] dt-bindings: dsp: fix power domain count
 
-Make the write RPC tracepoints use the same trace macro complexes as the
-read tracepoints and display the netfs request and subrequest IDs where
-available (see commit 519be989717c "cifs: Add a tracepoint to track credit=
-s
-involved in R/W requests").
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <stfrench@microsoft.com>
-cc: Paulo Alcantara (Red Hat) <pc@manguebit.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/smb/client/smb2pdu.c |   22 +++++++++++++++-------
- fs/smb/client/trace.h   |    6 +++---
- 2 files changed, 18 insertions(+), 10 deletions(-)
+On Wed, 18 Sep 2024 14:21:13 -0400, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> 
+> Per the current binding, QM/QXP DSPs are supposed
+> to have 4 power domains, while the rest just 1.
+> For QM/QXP, the 4 power domains are: DSP, DSP_RAM,
+> MU13A, MU13B.
+> 
+> First off, drop MU13A from the count. This is attached
+> to the platform device of lsio_mu13. This decreases the
+> count to 3.
+> 
+> Secondly, drop DSP and DSP_RAM from the count for QXP.
+> These are attached to the platform devices of the lpcgs
+> (used as clock providers for the DSP).
+> 
+> With this in mind, the number of required power domains for
+> QXP is 1 (MU13B), while for QM it's 3 (MU13B, DSP, DSP_RAM).
+> 
+> Additionally, two extra power domains may be required in the
+> case of QM/QXP DSPs. These are IRQSTR_DSP and MU2A. For the nodes
+> using the "-hifi4" compatibles these PDs are optional, while for
+> nodes using the "-dsp" compatibles these are mandatory.
+> 
+> These changes reflect all of this information.
+> 
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> ---
+>  .../devicetree/bindings/dsp/fsl,dsp.yaml      | 62 +++++++++++++++----
+>  1 file changed, 49 insertions(+), 13 deletions(-)
+> 
 
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index bb8ecbbe78af..6544deac8069 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -4865,7 +4865,9 @@ smb2_writev_callback(struct mid_q_entry *mid)
- #endif
- 	if (result) {
- 		cifs_stats_fail_inc(tcon, SMB2_WRITE_HE);
--		trace_smb3_write_err(wdata->xid,
-+		trace_smb3_write_err(wdata->rreq->debug_id,
-+				     wdata->subreq.debug_index,
-+				     wdata->xid,
- 				     wdata->req->cfile->fid.persistent_fid,
- 				     tcon->tid, tcon->ses->Suid, wdata->subreq.start,
- 				     wdata->subreq.len, wdata->result);
-@@ -4873,7 +4875,9 @@ smb2_writev_callback(struct mid_q_entry *mid)
- 			pr_warn_once("Out of space writing to %s\n",
- 				     tcon->tree_name);
- 	} else
--		trace_smb3_write_done(0 /* no xid */,
-+		trace_smb3_write_done(wdata->rreq->debug_id,
-+				      wdata->subreq.debug_index,
-+				      wdata->xid,
- 				      wdata->req->cfile->fid.persistent_fid,
- 				      tcon->tid, tcon->ses->Suid,
- 				      wdata->subreq.start, wdata->subreq.len);
-@@ -4951,7 +4955,9 @@ smb2_async_writev(struct cifs_io_subrequest *wdata)
- 				offsetof(struct smb2_write_req, Buffer));
- 	req->RemainingBytes =3D 0;
- =
+My bot found errors running 'make dt_binding_check' on your patch:
 
--	trace_smb3_write_enter(wdata->xid,
-+	trace_smb3_write_enter(wdata->rreq->debug_id,
-+			       wdata->subreq.debug_index,
-+			       wdata->xid,
- 			       io_parms->persistent_fid,
- 			       io_parms->tcon->tid,
- 			       io_parms->tcon->ses->Suid,
-@@ -5027,7 +5033,9 @@ smb2_async_writev(struct cifs_io_subrequest *wdata)
- 			     wdata, flags, &wdata->credits);
- 	/* Can't touch wdata if rc =3D=3D 0 */
- 	if (rc) {
--		trace_smb3_write_err(xid,
-+		trace_smb3_write_err(wdata->rreq->debug_id,
-+				     wdata->subreq.debug_index,
-+				     xid,
- 				     io_parms->persistent_fid,
- 				     io_parms->tcon->tid,
- 				     io_parms->tcon->ses->Suid,
-@@ -5107,7 +5115,7 @@ SMB2_write(const unsigned int xid, struct cifs_io_pa=
-rms *io_parms,
- 				offsetof(struct smb2_write_req, Buffer));
- 	req->RemainingBytes =3D 0;
- =
+yamllint warnings/errors:
 
--	trace_smb3_write_enter(xid, io_parms->persistent_fid,
-+	trace_smb3_write_enter(0, 0, xid, io_parms->persistent_fid,
- 		io_parms->tcon->tid, io_parms->tcon->ses->Suid,
- 		io_parms->offset, io_parms->length);
- =
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mailbox/arm,mhuv2.example.dtb: dsp@596e8000: power-domains: [[4294967295, 0], [4294967295, 1], [4294967295, 2], [4294967295, 3]] is too long
+	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
 
-@@ -5128,7 +5136,7 @@ SMB2_write(const unsigned int xid, struct cifs_io_pa=
-rms *io_parms,
- 	rsp =3D (struct smb2_write_rsp *)rsp_iov.iov_base;
- =
+doc reference errors (make refcheckdocs):
 
- 	if (rc) {
--		trace_smb3_write_err(xid,
-+		trace_smb3_write_err(0, 0, xid,
- 				     req->PersistentFileId,
- 				     io_parms->tcon->tid,
- 				     io_parms->tcon->ses->Suid,
-@@ -5137,7 +5145,7 @@ SMB2_write(const unsigned int xid, struct cifs_io_pa=
-rms *io_parms,
- 		cifs_dbg(VFS, "Send error in write =3D %d\n", rc);
- 	} else {
- 		*nbytes =3D le32_to_cpu(rsp->DataLength);
--		trace_smb3_write_done(xid,
-+		trace_smb3_write_done(0, 0, xid,
- 				      req->PersistentFileId,
- 				      io_parms->tcon->tid,
- 				      io_parms->tcon->ses->Suid,
-diff --git a/fs/smb/client/trace.h b/fs/smb/client/trace.h
-index 8e9964001e2a..0b52d22a91a0 100644
---- a/fs/smb/client/trace.h
-+++ b/fs/smb/client/trace.h
-@@ -157,6 +157,7 @@ DEFINE_EVENT(smb3_rw_err_class, smb3_##name,    \
- 	TP_ARGS(rreq_debug_id, rreq_debug_index, xid, fid, tid, sesid, offset, l=
-en, rc))
- =
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240918182117.86221-2-laurentiumihalcea111@gmail.com
 
- DEFINE_SMB3_RW_ERR_EVENT(read_err);
-+DEFINE_SMB3_RW_ERR_EVENT(write_err);
- =
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
- /* For logging errors in other file I/O ops */
- DECLARE_EVENT_CLASS(smb3_other_err_class,
-@@ -202,7 +203,6 @@ DEFINE_EVENT(smb3_other_err_class, smb3_##name, \
- 		int	rc),			\
- 	TP_ARGS(xid, fid, tid, sesid, offset, len, rc))
- =
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
--DEFINE_SMB3_OTHER_ERR_EVENT(write_err);
- DEFINE_SMB3_OTHER_ERR_EVENT(query_dir_err);
- DEFINE_SMB3_OTHER_ERR_EVENT(zero_err);
- DEFINE_SMB3_OTHER_ERR_EVENT(falloc_err);
-@@ -370,6 +370,8 @@ DEFINE_EVENT(smb3_rw_done_class, smb3_##name,   \
- =
+pip3 install dtschema --upgrade
 
- DEFINE_SMB3_RW_DONE_EVENT(read_enter);
- DEFINE_SMB3_RW_DONE_EVENT(read_done);
-+DEFINE_SMB3_RW_DONE_EVENT(write_enter);
-+DEFINE_SMB3_RW_DONE_EVENT(write_done);
- =
-
- /* For logging successful other op */
- DECLARE_EVENT_CLASS(smb3_other_done_class,
-@@ -411,11 +413,9 @@ DEFINE_EVENT(smb3_other_done_class, smb3_##name,   \
- 		__u32	len),			\
- 	TP_ARGS(xid, fid, tid, sesid, offset, len))
- =
-
--DEFINE_SMB3_OTHER_DONE_EVENT(write_enter);
- DEFINE_SMB3_OTHER_DONE_EVENT(query_dir_enter);
- DEFINE_SMB3_OTHER_DONE_EVENT(zero_enter);
- DEFINE_SMB3_OTHER_DONE_EVENT(falloc_enter);
--DEFINE_SMB3_OTHER_DONE_EVENT(write_done);
- DEFINE_SMB3_OTHER_DONE_EVENT(query_dir_done);
- DEFINE_SMB3_OTHER_DONE_EVENT(zero_done);
- DEFINE_SMB3_OTHER_DONE_EVENT(falloc_done);
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
