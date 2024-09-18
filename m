@@ -1,239 +1,230 @@
-Return-Path: <linux-kernel+bounces-332312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0547A97B80D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:41:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64C7697B813
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:43:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 570FFB26867
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:41:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2F4C285B88
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966DF16849F;
-	Wed, 18 Sep 2024 06:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E40C166F26;
+	Wed, 18 Sep 2024 06:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YibLITW+"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8SD3xjJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695AB158219
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D228E4405
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726641691; cv=none; b=AHUHRoMpwB/4wPqViLODb1nIQw4rmqubOa1g/MBRxzLUP7vuoToQd9ASSbRFJdgEMvgnUe43GFhHUWj4vaodUwcU+3W/DUxLGlQfdLcCMoXB2bBvHbJSrqu4NWaXCZx/f0CTFgrlYlM8i2YEYK24/zYFqcNm3DRhZARRZ8S4NMU=
+	t=1726641828; cv=none; b=fwnfgCnk1nrsl5HzirK/8n9lHit9kGkWH+hQCLnfyvYkSC3gnfU+eQK/84HA315GG+oPVdMn3CBDM0VsaqPltjPL9LbtiwueG61751SGoqOqVjcJtTCZD0QprZxrudjn5Fky1SMcRX8SQ6AqpLPlF4p7809bJ30KcRnhzeicrDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726641691; c=relaxed/simple;
-	bh=mGAaslFkRh5LorOiXXJPh6pzZ4ixmMNNgegZasnOX5Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NXCtMiaXXDNhy+KO6zUYiwqzK5WXg0G+m4RvEDjOb0sYIHpx666+QEqmV/AEFDBIdzklNfBmOGH3eSFspPrfCGzIGzmqBGHGnsq+x5RoK2FjCnfLEmF8+dB+WOiMfnzHLvlkdM2EO/SSk/abk/Hc/FEl+sBb1pFXeuCHCayC/cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YibLITW+; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2057835395aso74668175ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 23:41:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726641690; x=1727246490; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OIn+FGCYpXlC92Fe5cHA8EosiG+9ahtgnsi9y2oPRZU=;
-        b=YibLITW+xFwsNEIDcMvff7fmGvTKPBLqtCAzqvzgRJxmNGOQVd7dw92symBQ5xZwQp
-         WG0HquM0ETSwpu3M0FKLTtsCOVwSssnoCjsrWdMStLG7Bx9XQXuCIpYpW6Mjm8iB9uP6
-         VXQSNTDdgBZ2UdmxfZoLpkkyUSASi8Kb+DgJu7uCWzYNGcWI5+eBMNNYeP9SWB+pQgdG
-         BeemxDvRfFPMWu+Wtx0DDAj5vpB4Ctt3srFg7+QGj6qfVKHlt07uBCFCgrEtulVEnYCr
-         xFUe88a5nV1M9oQoBa7zGZYLdRsPq0yn2NhFnYDn68vizxzEp7AvPY4ZG7PO97PWdQFq
-         IwrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726641690; x=1727246490;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OIn+FGCYpXlC92Fe5cHA8EosiG+9ahtgnsi9y2oPRZU=;
-        b=gCwV4ZO4Dr5zvyvSPDsqxEvTSVUu8jFahFcZPOa+p9mZ/tTQnQU7+AwdbJFcvTApcI
-         cNxOKKMIJDrO+yDr7yH0/nyfzoOEexKA0xoL268ddx3eIto4KJO9wDTGgfUN6nigrD4y
-         esXBJiCs1T+glincvRzMqr/hUtegWujjOa09c9J7LpLPvqyqUHjMrNz6mvkvX6taR/xe
-         ajKM+BVobV1hoFu+EtW2Jm/Xq3h+YPLZl/GxdWg0GOK/HJf2PTcDGc6MEV65sFCpv8Lb
-         ciQQAouP+IrLCCvKqfxsx92mxfW82heFdnNLbZeukir9It+SK+t8HRUm29U1f8r4kqiJ
-         rdOg==
-X-Gm-Message-State: AOJu0Yz8DAGw4zXl4quA4bdX4UcnAXi64J4PGOepH5eD1F7p26DZMTHP
-	Z0XBPI2+abN1aJiJxRcEFW84psrMeuVir0eiBbsB2C5mkYKpJbob
-X-Google-Smtp-Source: AGHT+IGmdiJXNKzqihPdFSrq2EU5e8sdYC9RBwCBsII7xVRF9j3umcviuoRO7mURHm3lR/C27BCm2w==
-X-Received: by 2002:a17:903:234d:b0:205:7f9b:b84d with SMTP id d9443c01a7336-2076e34d952mr332099735ad.22.1726641689604;
-        Tue, 17 Sep 2024 23:41:29 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794731606sm59082845ad.270.2024.09.17.23.41.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2024 23:41:29 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: syzbot+702361cf7e3d95758761@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] KCSAN: data-race in generic_fillattr / shmem_mknod (2)
-Date: Wed, 18 Sep 2024 15:41:22 +0900
-Message-Id: <20240918064122.202586-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <0000000000007337c705fa1060e2@google.com>
-References: <0000000000007337c705fa1060e2@google.com>
+	s=arc-20240116; t=1726641828; c=relaxed/simple;
+	bh=YDkmVjADAn5ZsljbPwya7Vl8v9ZGj+0kyF+MMrdCVa4=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Sphk6HGhuKmA3MEVvBxMZITIPz9rRoaehLtvjPt3cVf+Etj793cTmtH2urNPfU3L72z9QVjsxlXP1dQCYFE0e1TFVcxUGD6cbtl/SRybUmJGR07uhKqdh9wzSNDb0vy9/+9qrCkEy3/2ZHkqbY1wz6jXpECBt6aCmhQNttYus2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I8SD3xjJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EC09C4CEC3;
+	Wed, 18 Sep 2024 06:43:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726641828;
+	bh=YDkmVjADAn5ZsljbPwya7Vl8v9ZGj+0kyF+MMrdCVa4=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=I8SD3xjJuEUMhOGbAohhBMrXpH2TQh5G+pHIWYeCK7q8IX7NKrzahsPDfjKDmwFK5
+	 YmpUlaDOy20yX7GUh3b/yjxMdtH6xTHIYZUeMlCBhR2RXmV7VU8XhLrU8N1GMr/phY
+	 bOsiiKOw2JDEqAAjuBj5nvZnb/fdRuXSUZ9zJbvEBDxfqun3NAE9k80m0B2sfDiIh3
+	 cOK8QaUQAb2urNJZ03J1ksTSp4ef3qmFezd1B+eGumutUOSGe1Us/KHUJX31GPlqXY
+	 DvSS+RVYIrMuhS/Oj5YmDxVjmRPkpVwu3xXt8DjLvckIigj6ozELVV/FMOpH7WdUiV
+	 Pk0jtTL5IwDTA==
+Message-ID: <17ceed17-b17f-42d9-8c82-79f1f4814c1a@kernel.org>
+Date: Wed, 18 Sep 2024 14:43:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] f2fs: introduce get_section_mtime
+To: liuderong@oppo.com, jaegeuk@kernel.org
+References: <1726123214-208356-1-git-send-email-liuderong@oppo.com>
+ <1726123214-208356-3-git-send-email-liuderong@oppo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <1726123214-208356-3-git-send-email-liuderong@oppo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+On 2024/9/12 14:40, liuderong@oppo.com wrote:
+> From: liuderong <liuderong@oppo.com>
+> 
+> When segs_per_sec is larger than 1, section may contain free segments,
+> mtime should be the mean value of each valid segments,
+> so introduce get_section_mtime to exclude free segments in a section.
+> 
+> Signed-off-by: liuderong <liuderong@oppo.com>
+> ---
+>   fs/f2fs/f2fs.h    |  2 ++
+>   fs/f2fs/gc.c      | 15 ++-------------
+>   fs/f2fs/segment.c | 41 ++++++++++++++++++++++++++++++++++++-----
+>   3 files changed, 40 insertions(+), 18 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 4dcdcdd..d6adf0f 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -3762,6 +3762,8 @@ enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
+>   unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi);
+>   unsigned int f2fs_usable_blks_in_seg(struct f2fs_sb_info *sbi,
+>   			unsigned int segno);
+> +unsigned long long get_section_mtime(struct f2fs_sb_info *sbi,
+> +			unsigned int segno);
 
----
- fs/ext4/super.c | 56 ++++++++++++++++++++++++-------------------------
- 1 file changed, 28 insertions(+), 28 deletions(-)
+Hi Derong,
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index e72145c4ae5a..8cfd43c33480 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -314,113 +314,113 @@ void ext4_superblock_csum_set(struct super_block *sb)
- ext4_fsblk_t ext4_block_bitmap(struct super_block *sb,
- 			       struct ext4_group_desc *bg)
- {
--	return le32_to_cpu(bg->bg_block_bitmap_lo) |
-+	return le32_to_cpu(READ_ONCE(bg->bg_block_bitmap_lo)) |
- 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
--		 (ext4_fsblk_t)le32_to_cpu(bg->bg_block_bitmap_hi) << 32 : 0);
-+		 READ_ONCE((ext4_fsblk_t)le32_to_cpu(bg->bg_block_bitmap_hi)) << 32 : 0);
- }
- 
- ext4_fsblk_t ext4_inode_bitmap(struct super_block *sb,
- 			       struct ext4_group_desc *bg)
- {
--	return le32_to_cpu(bg->bg_inode_bitmap_lo) |
-+	return le32_to_cpu(READ_ONCE(bg->bg_inode_bitmap_lo)) |
- 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
--		 (ext4_fsblk_t)le32_to_cpu(bg->bg_inode_bitmap_hi) << 32 : 0);
-+		 READ_ONCE((ext4_fsblk_t)le32_to_cpu(bg->bg_inode_bitmap_hi)) << 32 : 0);
- }
- 
- ext4_fsblk_t ext4_inode_table(struct super_block *sb,
- 			      struct ext4_group_desc *bg)
- {
--	return le32_to_cpu(bg->bg_inode_table_lo) |
-+	return le32_to_cpu(READ_ONCE(bg->bg_inode_table_lo)) |
- 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
--		 (ext4_fsblk_t)le32_to_cpu(bg->bg_inode_table_hi) << 32 : 0);
-+		 READ_ONCE((ext4_fsblk_t)le32_to_cpu(bg->bg_inode_table_hi)) << 32 : 0);
- }
- 
- __u32 ext4_free_group_clusters(struct super_block *sb,
- 			       struct ext4_group_desc *bg)
- {
--	return le16_to_cpu(bg->bg_free_blocks_count_lo) |
-+	return le16_to_cpu(READ_ONCE(bg->bg_free_blocks_count_lo)) |
- 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
--		 (__u32)le16_to_cpu(bg->bg_free_blocks_count_hi) << 16 : 0);
-+		 READ_ONCE((__u32)le16_to_cpu(bg->bg_free_blocks_count_hi)) << 16 : 0);
- }
- 
- __u32 ext4_free_inodes_count(struct super_block *sb,
- 			      struct ext4_group_desc *bg)
- {
--	return le16_to_cpu(bg->bg_free_inodes_count_lo) |
-+	return le16_to_cpu(READ_ONCE(bg->bg_free_inodes_count_lo)) |
- 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
--		 (__u32)le16_to_cpu(bg->bg_free_inodes_count_hi) << 16 : 0);
-+		 READ_ONCE((__u32)le16_to_cpu(bg->bg_free_inodes_count_hi)) << 16 : 0);
- }
- 
- __u32 ext4_used_dirs_count(struct super_block *sb,
- 			      struct ext4_group_desc *bg)
- {
--	return le16_to_cpu(bg->bg_used_dirs_count_lo) |
-+	return le16_to_cpu(READ_ONCE(bg->bg_used_dirs_count_lo)) |
- 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
--		 (__u32)le16_to_cpu(bg->bg_used_dirs_count_hi) << 16 : 0);
-+		 READ_ONCE((__u32)le16_to_cpu(bg->bg_used_dirs_count_hi)) << 16 : 0);
- }
- 
- __u32 ext4_itable_unused_count(struct super_block *sb,
- 			      struct ext4_group_desc *bg)
- {
--	return le16_to_cpu(bg->bg_itable_unused_lo) |
-+	return le16_to_cpu(READ_ONCE(bg->bg_itable_unused_lo)) |
- 		(EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT ?
--		 (__u32)le16_to_cpu(bg->bg_itable_unused_hi) << 16 : 0);
-+		 READ_ONCE((__u32)le16_to_cpu(bg->bg_itable_unused_hi)) << 16 : 0);
- }
- 
- void ext4_block_bitmap_set(struct super_block *sb,
- 			   struct ext4_group_desc *bg, ext4_fsblk_t blk)
- {
--	bg->bg_block_bitmap_lo = cpu_to_le32((u32)blk);
-+	WRITE_ONCE(bg->bg_block_bitmap_lo, cpu_to_le32((u32)blk));
- 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
--		bg->bg_block_bitmap_hi = cpu_to_le32(blk >> 32);
-+		WRITE_ONCE(bg->bg_block_bitmap_hi, cpu_to_le32(blk >> 32));
- }
- 
- void ext4_inode_bitmap_set(struct super_block *sb,
- 			   struct ext4_group_desc *bg, ext4_fsblk_t blk)
- {
--	bg->bg_inode_bitmap_lo  = cpu_to_le32((u32)blk);
-+	WRITE_ONCE(bg->bg_inode_bitmap_lo, cpu_to_le32((u32)blk));
- 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
--		bg->bg_inode_bitmap_hi = cpu_to_le32(blk >> 32);
-+		WRITE_ONCE(bg->bg_inode_bitmap_hi, cpu_to_le32(blk >> 32));
- }
- 
- void ext4_inode_table_set(struct super_block *sb,
- 			  struct ext4_group_desc *bg, ext4_fsblk_t blk)
- {
--	bg->bg_inode_table_lo = cpu_to_le32((u32)blk);
-+	WRITE_ONCE(bg->bg_inode_table_lo, cpu_to_le32((u32)blk));
- 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
--		bg->bg_inode_table_hi = cpu_to_le32(blk >> 32);
-+		WRITE_ONCE(bg->bg_inode_table_hi, cpu_to_le32(blk >> 32));
- }
- 
- void ext4_free_group_clusters_set(struct super_block *sb,
- 				  struct ext4_group_desc *bg, __u32 count)
- {
--	bg->bg_free_blocks_count_lo = cpu_to_le16((__u16)count);
-+	WRITE_ONCE(bg->bg_free_blocks_count_lo, cpu_to_le16((__u16)count));
- 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
--		bg->bg_free_blocks_count_hi = cpu_to_le16(count >> 16);
-+		WRITE_ONCE(bg->bg_free_blocks_count_hi, cpu_to_le16(count >> 16));
- }
- 
- void ext4_free_inodes_set(struct super_block *sb,
- 			  struct ext4_group_desc *bg, __u32 count)
- {
--	bg->bg_free_inodes_count_lo = cpu_to_le16((__u16)count);
-+	WRITE_ONCE(bg->bg_free_inodes_count_lo, cpu_to_le16((__u16)count));
- 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
--		bg->bg_free_inodes_count_hi = cpu_to_le16(count >> 16);
-+		WRITE_ONCE(bg->bg_free_inodes_count_hi, cpu_to_le16(count >> 16));
- }
- 
- void ext4_used_dirs_set(struct super_block *sb,
- 			  struct ext4_group_desc *bg, __u32 count)
- {
--	bg->bg_used_dirs_count_lo = cpu_to_le16((__u16)count);
-+	WRITE_ONCE(bg->bg_used_dirs_count_lo, cpu_to_le16((__u16)count));
- 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
--		bg->bg_used_dirs_count_hi = cpu_to_le16(count >> 16);
-+		WRITE_ONCE(bg->bg_used_dirs_count_hi, cpu_to_le16(count >> 16));
- }
- 
- void ext4_itable_unused_set(struct super_block *sb,
- 			  struct ext4_group_desc *bg, __u32 count)
- {
--	bg->bg_itable_unused_lo = cpu_to_le16((__u16)count);
-+	WRITE_ONCE(bg->bg_itable_unused_lo, cpu_to_le16((__u16)count));
- 	if (EXT4_DESC_SIZE(sb) >= EXT4_MIN_DESC_SIZE_64BIT)
--		bg->bg_itable_unused_hi = cpu_to_le16(count >> 16);
-+		WRITE_ONCE(bg->bg_itable_unused_hi, cpu_to_le16(count >> 16));
- }
- 
- static void __ext4_update_tstamp(__le32 *lo, __u8 *hi, time64_t now)
---
+It needs to add "f2fs_" prefix for get_section_mtime() to avoid global
+namespace pollution.
+
+>   
+>   #define DEF_FRAGMENT_SIZE	4
+>   #define MIN_FRAGMENT_SIZE	1
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 6299639..03c6117 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -332,20 +332,14 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
+>   static unsigned int get_cb_cost(struct f2fs_sb_info *sbi, unsigned int segno)
+>   {
+>   	struct sit_info *sit_i = SIT_I(sbi);
+> -	unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
+> -	unsigned int start = GET_SEG_FROM_SEC(sbi, secno);
+>   	unsigned long long mtime = 0;
+>   	unsigned int vblocks;
+>   	unsigned char age = 0;
+>   	unsigned char u;
+> -	unsigned int i;
+>   	unsigned int usable_segs_per_sec = f2fs_usable_segs_in_sec(sbi);
+>   
+> -	for (i = 0; i < usable_segs_per_sec; i++)
+> -		mtime += get_seg_entry(sbi, start + i)->mtime;
+> +	mtime = get_section_mtime(sbi, segno);
+>   	vblocks = get_valid_blocks(sbi, segno, true);
+> -
+> -	mtime = div_u64(mtime, usable_segs_per_sec);
+>   	vblocks = div_u64(vblocks, usable_segs_per_sec);
+>   
+>   	u = BLKS_TO_SEGS(sbi, vblocks * 100);
+> @@ -485,10 +479,7 @@ static void add_victim_entry(struct f2fs_sb_info *sbi,
+>   				struct victim_sel_policy *p, unsigned int segno)
+>   {
+>   	struct sit_info *sit_i = SIT_I(sbi);
+> -	unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
+> -	unsigned int start = GET_SEG_FROM_SEC(sbi, secno);
+>   	unsigned long long mtime = 0;
+> -	unsigned int i;
+>   
+>   	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+>   		if (p->gc_mode == GC_AT &&
+> @@ -496,9 +487,7 @@ static void add_victim_entry(struct f2fs_sb_info *sbi,
+>   			return;
+>   	}
+>   
+> -	for (i = 0; i < SEGS_PER_SEC(sbi); i++)
+> -		mtime += get_seg_entry(sbi, start + i)->mtime;
+> -	mtime = div_u64(mtime, SEGS_PER_SEC(sbi));
+> +	mtime = get_section_mtime(sbi, segno);
+>   
+>   	/* Handle if the system time has changed by the user */
+>   	if (mtime < sit_i->min_mtime)
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 6627394..e62e722 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -5389,6 +5389,41 @@ unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi)
+>   	return SEGS_PER_SEC(sbi);
+>   }
+>   
+> +unsigned long long get_section_mtime(struct f2fs_sb_info *sbi,
+> +	unsigned int segno)
+> +{
+> +	unsigned int usable_segs_per_sec = f2fs_usable_segs_in_sec(sbi);
+> +	unsigned int secno = 0, start = 0;
+> +	struct free_segmap_info *free_i = FREE_I(sbi);
+> +	unsigned int valid_seg_count = 0;
+> +	unsigned long long mtime = 0;
+> +	unsigned int i = 0;
+> +
+> +	if (segno == NULL_SEGNO)
+> +		return 0;
+
+No needed.
+
+> +
+> +	secno = GET_SEC_FROM_SEG(sbi, segno);
+> +	start = GET_SEG_FROM_SEC(sbi, secno);
+> +
+> +	if (!__is_large_section(sbi))
+> +		return get_seg_entry(sbi, start + i)->mtime;
+> +
+> +	for (i = 0; i < usable_segs_per_sec; i++) {
+> +		/* for large section, only check the mtime of valid segments */
+> +		spin_lock(&free_i->segmap_lock);
+> +		if (test_bit(start + i, free_i->free_segmap)) {
+> +			mtime += get_seg_entry(sbi, start + i)->mtime;
+> +			valid_seg_count++;
+> +		}
+> +		spin_unlock(&free_i->segmap_lock);
+> +	}
+
+After commit 6f3a01ae9b72 ("f2fs: record average update time of segment"),
+mtime of segment starts to indicate average update time of segment.
+
+So it needs to change like this?
+
+for (i = 0; i < usable_segs_per_sec; i++) {
+	struct seg_entry *se = get_seg_entry(sbi, start + i);
+
+	mtime += se->mtime * se->valid_blocks;
+	total_valid_blocks += se->valid_blocks;
+}
+
+if (total_valid_blocks == 0)
+	return 0;
+
+return div_u64(mtime, total_valid_blocks);
+
+Thanks,
+
+> +
+> +	if (valid_seg_count == 0)
+> +		return 0;
+> +
+> +	return div_u64(mtime, valid_seg_count);
+> +}
+> +
+>   /*
+>    * Update min, max modified time for cost-benefit GC algorithm
+>    */
+> @@ -5402,13 +5437,9 @@ static void init_min_max_mtime(struct f2fs_sb_info *sbi)
+>   	sit_i->min_mtime = ULLONG_MAX;
+>   
+>   	for (segno = 0; segno < MAIN_SEGS(sbi); segno += SEGS_PER_SEC(sbi)) {
+> -		unsigned int i;
+>   		unsigned long long mtime = 0;
+>   
+> -		for (i = 0; i < SEGS_PER_SEC(sbi); i++)
+> -			mtime += get_seg_entry(sbi, segno + i)->mtime;
+> -
+> -		mtime = div_u64(mtime, SEGS_PER_SEC(sbi));
+> +		mtime = get_section_mtime(sbi, segno);
+>   
+>   		if (sit_i->min_mtime > mtime)
+>   			sit_i->min_mtime = mtime;
+
 
