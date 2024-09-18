@@ -1,98 +1,109 @@
-Return-Path: <linux-kernel+bounces-332958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EBB197C166
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:29:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2082597C168
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24254283AAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:29:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 538421C20E4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C031CA6B0;
-	Wed, 18 Sep 2024 21:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309E31CA69E;
+	Wed, 18 Sep 2024 21:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nqBjGHWF"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="2RTVmVRr"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F6619DF51;
-	Wed, 18 Sep 2024 21:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178CC18A95C;
+	Wed, 18 Sep 2024 21:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726694935; cv=none; b=NRjoW944XcDafVDL3dBwGkaUTbqZ93nu8WGt2U+1rD1gyf0LGGILLtHBJP4TYSpCxuK3/2w7NeQKRlBhDTmpdsIcA4u8x6OgUzRBPpunbmAAuvxxCPvejizmDKA2sF8eg02hNH8qHTfLP+EpTXnIGpn89l5W/KDr2d595JleCY0=
+	t=1726694977; cv=none; b=jRWXrGH8Z+MiG2gQUq2mfJNc1epHPoTNZl+1ylCMvIeiGtFwK1Ve7ec3n46p4fcgX4q/1e786tB3n+P514rxFivvFF15OEfpqUAxMuiEDJ/1RcUSW7z9Wpl0wdPH3b9nrEHPs6kft7lYlQJhM0N7FUMiqUeexdIRdVUIJ8Xt8iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726694935; c=relaxed/simple;
-	bh=12MN3zXCEuIYuMlEQNdarBm7eY34ZwL8l8+wqVt/Q5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=bw5mryXZ1Tbfp/nzhN6XoP70pVPWrrWxDNU7qwpkUwm5TWOyJ9rXrimhQjg51I2CGdR/ombBm1tShO3umiluvk7tK3qqK86R3LwCoF4GR8OQeRsvW21bpTnYYvUogWjkT+wYU1KI6fd+FSHbcR0mHK490b7jHzG2eztb9f7/tyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nqBjGHWF; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726694930;
-	bh=fIHr+/1s7xN3faKzKWmrmQAo6E7RPx19pCd5va659zM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nqBjGHWFhnaet1xtsLYadjl3Gg4NjqBT9DcNWF3igTtwA+GFcTokztK/rsPN0MLID
-	 /Siy1BYFTc1XLkF1Ha9i+JuJzgcClyvtmCuCl7X2zZHQbTsCgsb3M2zjvzaPAoC5r0
-	 Tzcufq6C0x/lOGFt1AYi8AY35UxwgOalrxDL36UI+1rz9P64dYWoWLhRkygxD+Obck
-	 M6SqzL2x8L909Dw1W/NbykZuN84Tpy4GhyVqbLObXzXc5pks0qx0j5+y/9RMYGMceN
-	 nSi2fff6PxFABaiPB9QN5UIM+2DXs+O6DSLcr5LmNGeTNluv6pZqfbbgoiP+R4LsNy
-	 21J1dEngZi6qg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X8Bbk3j0Sz4wcL;
-	Thu, 19 Sep 2024 07:28:50 +1000 (AEST)
-Date: Thu, 19 Sep 2024 07:28:49 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the ftrace tree
-Message-ID: <20240919072849.09486807@canb.auug.org.au>
+	s=arc-20240116; t=1726694977; c=relaxed/simple;
+	bh=djuj7d+S75J6vb/tqwefg5muiJ+vFt4qii9br5bwWFk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DrVN3nj1uh5f/sS4T9rATbpmrjOAcNHxSLbpSYmAxU8SxvqRW8vL0RLzPuSbewmasBZOTEc6LSQytMAaPYlJDn9tfYtlJQsBHfp65GU/KgerKI4M+bPKcQkSRHXAEStZZiareH43aHZj3DZm2Zf1ZfVr6hs2uk2CQ1CIkSxG+7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=2RTVmVRr; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=m0zb4s0l/KDjx7wazc9LAz7ShpBy107GIK0Y3rKSEfs=; b=2RTVmVRrWdA9NqvZc/uOTpuj7i
+	JtFY38SdbUpGSX4v2NxTEvRBIj8HNCvYM7o0rOcUehlUiDvL81FE3t1odbfTN9qP9p4kQxy9v15Fd
+	g4JuEgH1Tx52f3ACee9SDFlAqOESM6ZwyRWs9c+UTaLyu7Rzp/GQl6H+PEwLtGITmWZAlKgDH0rVj
+	0nAVIwGxVmPcYwmqsBNeV2Nu01qxf312K0KsDV1yFlTGfAXAUPaJPMG1QWkx/V7snqhUjcreleebt
+	sKHnpvkgDhOdeC5QUxluq/Ny4OUSR7Hxu7AYpVZJI6jD5zhWkTvFH6rf3NtZsq8+aQ3ihqytVgl3H
+	hD1HD/SA==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: wim@linux-watchdog.org,
+	linux@roeck-us.net,
+	linux-watchdog@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH] watchdog: rn5t618: use proper module tables
+Date: Wed, 18 Sep 2024 23:29:25 +0200
+Message-Id: <20240918212925.1191953-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/RKOcy19l3OoRTQ=WqonOzie";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/RKOcy19l3OoRTQ=WqonOzie
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Avoid requiring MODULE_ALIASES by declaring proper device id tables.
 
-Hi all,
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ drivers/watchdog/rn5t618_wdt.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Commit
+diff --git a/drivers/watchdog/rn5t618_wdt.c b/drivers/watchdog/rn5t618_wdt.c
+index 87d06d210ac9..97ef54f01ed9 100644
+--- a/drivers/watchdog/rn5t618_wdt.c
++++ b/drivers/watchdog/rn5t618_wdt.c
+@@ -8,6 +8,7 @@
+ #include <linux/device.h>
+ #include <linux/mfd/rn5t618.h>
+ #include <linux/module.h>
++#include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
+ #include <linux/watchdog.h>
+ 
+@@ -181,16 +182,25 @@ static int rn5t618_wdt_probe(struct platform_device *pdev)
+ 	return devm_watchdog_register_device(dev, &wdt->wdt_dev);
+ }
+ 
++static const struct platform_device_id rn5t618_wdt_id[] = {
++	{
++		.name = "rn5t618-wdt",
++	}, {
++		/* sentinel */
++	}
++};
++MODULE_DEVICE_TABLE(platform, rn5t618_wdt_id);
++
+ static struct platform_driver rn5t618_wdt_driver = {
+ 	.probe = rn5t618_wdt_probe,
+ 	.driver = {
+ 		.name	= DRIVER_NAME,
+ 	},
++	.id_table = rn5t618_wdt_id,
+ };
+ 
+ module_platform_driver(rn5t618_wdt_driver);
+ 
+-MODULE_ALIAS("platform:rn5t618-wdt");
+ MODULE_AUTHOR("Beniamino Galvani <b.galvani@gmail.com>");
+ MODULE_DESCRIPTION("RN5T618 watchdog driver");
+ MODULE_LICENSE("GPL v2");
+-- 
+2.39.2
 
-  ca088d067ebd ("uprobes: make trace_uprobe->nhit counter a per-CPU one")
-
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/RKOcy19l3OoRTQ=WqonOzie
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbrRhEACgkQAVBC80lX
-0Gz0EAf+MmFTAKNBi4CwZQ+Rd9x+dOYl/21+f8tmzJeuiCQe5ORjLs16dQ2tNeSD
-Cw+616s892EblWF4CBEFXzCwuRr+/dLUZP5vmV7m1vnM5q3KLI+KBIzG/TvpNvOA
-T6sHV/FMwwH4zrBzXe8dcyzp5X0bNQCGn0F6aPb2SxyS35aMz1IsOk7+B9BKgQs9
-JTA83Q9CHN+EAVE+KVSTnhO+6X9UcqAG3wy8sy9l7Y/wZjqanDFOkdtHTNbGv5bq
-ylJ4MaD/h4jUQGHNMZpU4GNJIHqxTVj+LvgGlBeJ156NwZYLVdz5NETNd2Wj80HH
-UnlYgr94rLzygBQE6mwAmmzGfZe0FA==
-=8s6Q
------END PGP SIGNATURE-----
-
---Sig_/RKOcy19l3OoRTQ=WqonOzie--
 
