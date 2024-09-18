@@ -1,110 +1,146 @@
-Return-Path: <linux-kernel+bounces-332242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F73997B71F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:47:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1572A97B721
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8A81C2275D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:47:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0700281DD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7445813A3EC;
-	Wed, 18 Sep 2024 03:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CA78248D;
+	Wed, 18 Sep 2024 03:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GapMs7y0"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ig9kuF2k"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC5415A8;
-	Wed, 18 Sep 2024 03:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6302E15A8
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 03:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726631250; cv=none; b=XaM0kRqg1ZrJtzRanjB0MjLImHRV/1N7vAGA5yK2GnBKMXGZD90nevB9sNKF3nupXfgiaGCRgws4uJJWky0o+LZlYaKHiodLflFtJB4nJy22Kv45sMhRoOc/HW/QwjrcQMp1IntrnZJojC1CC1Hrtadr0qYF0kdfODRq9Rwz3ZA=
+	t=1726631380; cv=none; b=GIhvYkzIIYZuxHs+A592VNe+3rR4NdVBhRQfyZ0eQi76j187glvfQIkO2+m15kDvSEqJ6flSVnjkPpqjwolRpk7bpvXHSz0guKy0zpvRLP3dwjt1Ea7o1QpO+jhlo6VdVuu0UtRspblnE/y26yor3gqdR5EZpLMsFmVF+UImFCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726631250; c=relaxed/simple;
-	bh=58X/TgvscsT2tXLBMcF9ubejg4ZfQHhEft4gnCGLXgw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZLCM4XZhEGf1+PWRUHV2VPui4+SzAa0LFg9+XERgn0HhEH64UeOL8ORvZc4X5L3tchqFjr6Qf3WUKyZTV93ctxAl+Q/d6rvUyr4ZNqLeW9n321cAsX8/GrA4JT5INerGGtr+SDE51EmeyipJaL4ILaPhgo3y1hCB2H2eyoodhEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GapMs7y0; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71790ed8c2dso5742575b3a.3;
-        Tue, 17 Sep 2024 20:47:29 -0700 (PDT)
+	s=arc-20240116; t=1726631380; c=relaxed/simple;
+	bh=jFTBrvXiqayWkT6ooMaQbB058hNxSap7Piq/nhT3hmI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bb2fd6rws21RGdVB0iyQc7cBkuP80im389raRLSUNNepX8fScsGPfYv4CQt0ZKX5PUFm178Y1XTuwv8sdKVTWr9iGy+18aU5nBh/iXUMhovwWZ+iW0bXsJwG8wVyy/YQNKlTmx+zzgjZDjnRryXm1ZdREjEzsknYBND8gSm4JuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ig9kuF2k; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e042f4636dso2628184b6e.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 20:49:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726631249; x=1727236049; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rfmZNnGUjcPsKd4I6+4/DU7TrHW57wL+hIatiXkEgWE=;
-        b=GapMs7y0ihle7FwXnnQDE08abrBXhQrQRN0BCiGUHXrIqvbhySMu8LfPQNI/Dn4VNl
-         dVUkwhL9VR1WO6attpxvBc1nXU2z68hluNqs1BJkfHZ0nePXK9xdaElsgcXdALjHO0f4
-         rzzTdmcbST90sxH5QHFS0ZgJv/y997S4Nq7e2Y/6Da39iVd7OnV+EwhQEknk4KnW1LjS
-         torjvFB3iRFByQ3zKT09mlxeoM2gmWu/WTJ+PjEfUai3QsZVi/8FQnE6VL24CHqx+Vlo
-         OihWoU3ccWOO2Lbh8K8Am/7kCmgbmz07ToNCYIifcM8Kd2UG+O1OAIHC+8IiCIVz/GMl
-         Q8FQ==
+        d=bytedance.com; s=google; t=1726631378; x=1727236178; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zE1dJbAWhCPBAK0t0zhX3bNIT7kXRFcGehfITM1od0w=;
+        b=ig9kuF2kR1+2Yyb75Y386uwSPqBkT9v26MnHQ+1V8rJU35+wxtUwdCbsnmuGG9HOep
+         lN8opqQs/SjiqvK/uV4bScRMmcYjk8zNQQHF1CtWF7EyDd+AnXefOEakLQmnjfXpHrEt
+         apzNQw1tctQM4bVz1GO63+Iaai2aM67ixi3o5tp4QEyPtKwN5Us6NVn9HIHs4yIOQfaS
+         NyqMuKo9bqPN7irq9W50yF12wcG/Qgb/oVjbVx39tQ8YqIh//dbNk62PUOZOQ0UMDp/Q
+         pGgnepq51DH0mVtFI9WWEbLAmQLYnyW7hpFhhXiNfnbBJ93333nhrwrwQ9rbhdPTP069
+         oIPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726631249; x=1727236049;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rfmZNnGUjcPsKd4I6+4/DU7TrHW57wL+hIatiXkEgWE=;
-        b=MvdbifiByVPKivm7ZK50iVoKCvw519wy57avyRCwiZuEo2dHT32ec48seqLppW9JWX
-         w2bH1W3vAgODOjvn+5TV+mufYjpfOBRgpbhYd/lq+g2g6JrPmgO0ajrdOxKFSvMufUQg
-         QWzCPadoUkgmT2SKvJ/Z8jDnRiHuTVhKviJFxgqh0L0iBsGaA1nbaMQ9sLH/s91O57gw
-         gmcR8GttAdOsxKy/Q1Jkv2MuXCnwFNMjJIFpfbKzPNt8CYqnC568eOtVwe+kiJqQJCLl
-         vpM749JZkwVqwRvEACUH8E/RQ4a6EDNWHSMha2HGmrthoz0IEvU5SP/yQhjo/ew5jTd2
-         KxKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKWSV5LWU8zQAAb8JfTbrRbtpCVSYuKLieQiGfoDrgykAd+l1PLfQo7kl4H2oq4bnGM9B/GG/1nn2+D9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlaxgsWvSagW4Ybon/DCl27j0bmtnaNgAvU1lkTCB1OATdyijX
-	n5MbpX+Nynj2qDzT1V/lhe4gjWDcdLlkgxJhGr/qt+5TJyLCnhCF
-X-Google-Smtp-Source: AGHT+IE69hNXvpLKjXCCeKPuN4DRnlIE9DiZCWoislIQOQb6yJe5YTwCF/vtg1BivTTOqrbl4ITfHQ==
-X-Received: by 2002:a05:6a21:58d:b0:1cf:5370:3b0 with SMTP id adf61e73a8af0-1cf75f00300mr37076632637.12.1726631248697;
-        Tue, 17 Sep 2024 20:47:28 -0700 (PDT)
-Received: from [192.168.255.10] ([43.132.141.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944a980b4sm5877550b3a.34.2024.09.17.20.47.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2024 20:47:28 -0700 (PDT)
-Message-ID: <a7697015-fb68-49d2-9ed0-4ebb3760ec10@gmail.com>
-Date: Wed, 18 Sep 2024 11:47:24 +0800
+        d=1e100.net; s=20230601; t=1726631378; x=1727236178;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zE1dJbAWhCPBAK0t0zhX3bNIT7kXRFcGehfITM1od0w=;
+        b=N6B7EMOIz/PvYhkjkuJ2Hx06hftnsqr06X+bAjkSaquRhrHLiCmIcnRyTCpG/yAgbI
+         jJwTBRcbErZhFQRQ0CY2oxbJIZubXwuOlbPOkGtaJs8GK3lcXz2dqraHOAlJKLxeCPL0
+         u46xKqzWGPXhCBMx9wXIgYfP3MfvfuoDt5aPThpUT8FPRYeKbK5qdUiv+bnGEcBvKlZE
+         lSpwhRGiK5mEV0uLMDT42LIbLq9uC8/1/QQcG/u35/Tggt59ZkZCqGlzTcSRzT7S6DBW
+         RaggyOKZAgmQrE9yUylOIHckGF6/cFRr5hmA+4Zxk7opynBU0+rlX6tuz4M9F2nsaBGH
+         A2Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCUA73bWkjY51DSfI0ZDB+n8wzu4AK21WDsq+qC8Jr4Ojp39Nu775ZN9M+xfuyPA4udTqx/tKPg8nu9PmEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpgcQksRQq2r8f/Ej/9ZpncpxJgl2bTTYsCI53lNqHnJZthGMO
+	tcuPt3zyxFpvq9zstu98b2Oc/EXmD/TPIVCG0IaODrKCTsF4efKYqoPXn/szWVwdo3ZWMCLpPY+
+	kFdD+Us6T8SDFsBp9ILb7e9tEIonZf1c151bBQQ==
+X-Google-Smtp-Source: AGHT+IHeC3dsKkrJc6ljF9R1rShW49VPA4Ien1gEXCjQwV42Ui98RWbpm6Atdeb+k67hVyRYS7hwlqTZVvQQpFlTolA=
+X-Received: by 2002:a05:6808:3190:b0:3e1:7061:39f7 with SMTP id
+ 5614622812f47-3e170613b17mr7499049b6e.0.1726631378299; Tue, 17 Sep 2024
+ 20:49:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Docs/zh_CN: Translate page_tables.rst to Simplified
- Chinese
-To: Pengyu Zhang <zpenya1314@gmail.com>, alexs@kernel.org,
- siyanteng@loongson.cn, corbet@lwn.net, si.yanteng@linux.dev
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- yaxin_wang_uestc@163.com
-References: <20240917032241.27623-1-zpenya1314@gmail.com>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <20240917032241.27623-1-zpenya1314@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240814062625.19794-1-cuiyunhui@bytedance.com> <afaa4192-da08-4180-a09b-2b953293ba76@ghiti.fr>
+In-Reply-To: <afaa4192-da08-4180-a09b-2b953293ba76@ghiti.fr>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Wed, 18 Sep 2024 11:49:27 +0800
+Message-ID: <CAEEQ3w=S=Gn9qER=qNwUn8+Gs9AN4Y5-0Zg0w8-4Vps4L7n97w@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] riscv: add a warning when physical memory
+ address overflows
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: punit.agrawal@bytedance.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, alexghiti@rivosinc.com, chenjiahao16@huawei.com, 
+	guoren@kernel.org, vishal.moola@gmail.com, stuart.menefy@codasip.com, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Palmer,
 
+A gentle ping for this patch.
 
-On 9/17/24 11:22 AM, Pengyu Zhang wrote:
-> diff --git a/Documentation/translations/zh_CN/mm/index.rst b/Documentation/translations/zh_CN/mm/index.rst
-> index b950dd118be7..0765d4d9758c 100644
-> --- a/Documentation/translations/zh_CN/mm/index.rst
-> +++ b/Documentation/translations/zh_CN/mm/index.rst
-> @@ -53,6 +53,7 @@ Linux内存管理文档
->     page_migration
->     page_owner
->     page_table_check
-> +   page_tables.rst
+On Thu, Aug 15, 2024 at 7:01=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wro=
+te:
+>
+> Hi Yunhui,
+>
+> On 14/08/2024 08:26, Yunhui Cui wrote:
+> > The part of physical memory that exceeds the size of the linear mapping
+> > will be discarded. When the system starts up normally, a warning messag=
+e
+> > will be printed to prevent confusion caused by the mismatch between the
+> > system memory and the actual physical memory.
+> >
+> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> > ---
+> >   arch/riscv/mm/init.c | 8 ++++++--
+> >   1 file changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> > index 52290c9bd04bd..c93164dc51658 100644
+> > --- a/arch/riscv/mm/init.c
+> > +++ b/arch/riscv/mm/init.c
+> > @@ -236,8 +236,12 @@ static void __init setup_bootmem(void)
+> >        */
+> >       if (IS_ENABLED(CONFIG_64BIT)) {
+> >               max_mapped_addr =3D __pa(PAGE_OFFSET) + KERN_VIRT_SIZE;
+> > -             memblock_cap_memory_range(phys_ram_base,
+> > -                                       max_mapped_addr - phys_ram_base=
+);
+> > +             if (memblock_end_of_DRAM() > max_mapped_addr) {
+> > +                     memblock_cap_memory_range(phys_ram_base,
+> > +                                               max_mapped_addr - phys_=
+ram_base);
+> > +                     pr_warn("Physical memory overflows the linear map=
+ping size: region above 0x%llx removed",
+> > +                             max_mapped_addr);
+> > +             }
+> >       }
+> >
+> >
+>
+>
+> A bit weird to review and test my own patch, but here it is anyway :)
+>
+> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>
+> Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>
+> Thanks,
+>
+> Alex
+>
 
-Is this work? Could you change here to follow existing style?
-
-Thanks
->     remap_file_pages
->     split_page_table_lock
->     vmalloced-kernel-stacks
+Thanks,
+Yunhui
 
