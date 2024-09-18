@@ -1,117 +1,105 @@
-Return-Path: <linux-kernel+bounces-332858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB1297BFCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:43:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8620F97BFDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D63CB222D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:43:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFACFB22100
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18CE1C9EAC;
-	Wed, 18 Sep 2024 17:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B711C9EB6;
+	Wed, 18 Sep 2024 17:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gkZwDLs/"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="eerbl3rT"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26AA1C7B83;
-	Wed, 18 Sep 2024 17:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C61F1C8FD0;
+	Wed, 18 Sep 2024 17:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726681417; cv=none; b=i/90sAX+OVeNhgVuUxhMqkuRnIz9SYkxBrpuZSTUiae43FV5Zz8U2UfdK4jyXcE5h9I3/Yi1yKltPof3n8zJLNi1vr2a/GbKC8LNN2MkYQgrCaD7P6EgGYZZVDZq7FfJx6Mi0t3VrfqnxzFcEbuFUTlE9XCxhTTNdux9Y97Y5lU=
+	t=1726681873; cv=none; b=pCx1IllJe3ZPkFoGqnD3VCyA3q84ywSoHRe7nT/gtUgjjRolmRLW0YeZWxRgNbj3aUEeGcVsBkfhtEpjnh6s10vRO4gsEEFMuVGwWw8SkEUdvD/bodNO9znx6LuA60ts0QOC7ZL8RZqMJMXlDriphrHYDAHgvG2QSCAlmJRWh08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726681417; c=relaxed/simple;
-	bh=HZWIUGqAdp5opNvUgcJZvRCFDfEnKj8ueoB3pKFPLrM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EBavdWrVtcz2hbA1/y8eV9lPqmBSoViw82L7Lt4b684EiVFTn/FO2VFnXQk4dNtpQFKgszfHlKo5Fv2/00Xa6+bywTn/68PGx0wDxBc3F3IiTEZqkjVGl92IZO+Ah4jVYupg8iP67mJ6GACLO77mUnYU7w9QP0mYgaLs2L73it4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gkZwDLs/; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7db0fb03df5so5249484a12.3;
-        Wed, 18 Sep 2024 10:43:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726681415; x=1727286215; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NewsmfFD9SNzAw5qXDFX6JZyu6pAwHI8ruQIxxu5ZnI=;
-        b=gkZwDLs/Q4ChCxzZ0UDOrWWMy0sfVIZqHXRys33oJIVTw1O01quSRzC/hNC4rb+bzT
-         0LvH1roHZL/7ZuFhXI/HmLhmGK0bukgF39BL+a8M/4193EwtP5iBXXgZ1A5j+GpfLab7
-         49Fh/mb/1u7gGyQp9a6a5sejC5XXnNnmEhrhkeQibaLR2Q3TxzP0O3wR5uNbWQe96qFI
-         aMmG2K609l7wmMmRyvmeGOzULjsxo6V/ZgzbjaP/VNkpPM1p03P5ZnQEy9I675932gXA
-         wdsJCHrcxfSUY0+0BGt6u8xjaTT3uCr/go9L84ssUobKk0hpH5SZC9BG8H7HdF1jwfDO
-         xDqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726681415; x=1727286215;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NewsmfFD9SNzAw5qXDFX6JZyu6pAwHI8ruQIxxu5ZnI=;
-        b=ZsOFESz0BABZpAV36Cp6Y+bcver85MeYO2AGqCW+Zom2WZOuKC04hWI93Uyt+f0wem
-         wHuzaZHBVWIpnsBbuGOzG7VjDnZLosQ340wFXQp1pcTD1jrvfB+ZemHwM6vwjc6ka9vK
-         CYQ77S/meumx9Iq1TdYdHQXkbWt2JO2oHcERsuHu1b2qTkam2ZGuIC+3auFtmFPJcKOz
-         Ei8i/2GbOvdhteCWJdu+2sMSDk+6uC5GwnTqkk7MCx4cpEd92f/xoN8gATDa8Wserexo
-         Dv+3Acl9wKEc95YNVqVVXVTdSzctv/btVWlXOW0J0+8EGP6G5CoVjump2poYUol8hyrp
-         626w==
-X-Forwarded-Encrypted: i=1; AJvYcCU6EJmjjRm31Mtd6boaZA7d8jPsdzjFku52EYKpjcKqM+TBhKHw921lLNKPkE/tZDXKgKCHQufOKz6cC2A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCCoGlq8vARL6TmMgiOCYkcuRazFufTiSs6Ky67ZRpkzr1KnG0
-	vLWSBl6lIfGyaIKyTNA9KNmhvF9YGhwqVrR9v3oYoAsQ0OWXITMi+lul4VY/ZIo=
-X-Google-Smtp-Source: AGHT+IECRx7460qtzCoGfGmJhASYc+z4HYaeEbdspR9sv/W2BaLtyUS1Y5CgEfGw8H9Agg+4qLz95g==
-X-Received: by 2002:a05:6a21:3a85:b0:1cf:2a35:6d21 with SMTP id adf61e73a8af0-1cf764ae838mr36572984637.45.1726681414691;
-        Wed, 18 Sep 2024 10:43:34 -0700 (PDT)
-Received: from Hridesh-ArchLinux.domain.name ([59.92.195.210])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db4fc846a4sm6286178a12.39.2024.09.18.10.43.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 10:43:34 -0700 (PDT)
-From: Hridesh MG <hridesh699@gmail.com>
-To: linux-iio@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Hridesh MG <hridesh699@gmail.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] staging: iio: Fix alignment warning
-Date: Wed, 18 Sep 2024 23:13:19 +0530
-Message-ID: <20240918174320.614642-1-hridesh699@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726681873; c=relaxed/simple;
+	bh=7B/iHqhbByzLlGQndN/dmYDptGaGPOhuCn4rJOLYm9I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kX+ecpwXTkGzrOiFoPfFZs/3nk5I8PWFok1XLxJH7AggKnK+93tBHg+GTfwIuSll8xWQb227SYF2uxvVa+SRto2W1/6L3vfCY/sdeOZI27NXZcoQ5ivQxLTl0ICm7B5FfgFOuJAr4fyJGssbq5RMRsMhWF4WS3DKiWe6Olqgwt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=eerbl3rT; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4X85mT2QhYzlgMVV;
+	Wed, 18 Sep 2024 17:51:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1726681863; x=1729273864; bh=7hSJKXInXl33D9eUWm0V2yKe
+	+d256sueEpI32nhLwfU=; b=eerbl3rTnadd/Q4K+2VjBuAVw27nyNIEJ0KmmAeI
+	fD/2uZAyHNYD8BFHX54BNJY8BdMEjYKmlJJMYPisprJtHzDTFdThvRUYBhlzdemP
+	LttnZsoLG0+gvo9QvjKxCIjxma+kIeQqHn5Bv4Q3Tk6IqGAZhcXd3EyqYSX/n1A6
+	bcltkQ8pr26cP61Ep6N3LLPxa5Jl11hqVTvEgd/DEtB86ggXxLPdGevooyedem4+
+	HrInYVMZOHpUoZbPmW5/kK5crwpC+XLMRffhZ/6nqr8Lt+Lh6kFA54cIpesHDICd
+	kVNPruv/ZEWaGg59VOhiT+u82LIrRdVCaC3Fp9TIBOMRrQ==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id lxQ9TncDLNTt; Wed, 18 Sep 2024 17:51:03 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4X85mQ65jwzlgMVT;
+	Wed, 18 Sep 2024 17:51:02 +0000 (UTC)
+Message-ID: <6bb14e23-7711-4d27-8efa-4e60cd737fa5@acm.org>
+Date: Wed, 18 Sep 2024 10:51:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] scsi: ufs: Zero utp_upiu_req at the beginning of each
+ command
+To: Avri Altman <Avri.Altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240915074842.4111336-1-avri.altman@wdc.com>
+ <83fed524-a235-493c-81f6-16736027eeb1@acm.org>
+ <DM6PR04MB657549C63703AECEA2169CC4FC612@DM6PR04MB6575.namprd04.prod.outlook.com>
+ <b7a05da9-7a80-42f7-bf95-379d78f3296b@acm.org>
+ <DM6PR04MB6575F0F368FD49B191CAD7D4FC622@DM6PR04MB6575.namprd04.prod.outlook.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <DM6PR04MB6575F0F368FD49B191CAD7D4FC622@DM6PR04MB6575.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Reported by checkpatch:
+On 9/17/24 11:03 PM, Avri Altman wrote:
+> My proposal is making 4 changes, attending the 5 upiu types:
+>   1) Zero query upiu and nop upiu in ufshcd_compose_devman_upiu
+>   2) zero command upiu in ufshcd_comp_scsi_upiu
+>   3) zero raw query upiu in ufshcd_issue_devman_upiu_cmd, and
+>   4) zero rpmb extended header (raw command upiu) in ufshcd_advanced_rpmb_req_handler
+> 
+> Your proposal is making 3 changes:
+>   - zero query upiu in ufshcd_prepare_utp_query_req_upiu
+>   - zero nop upiu in ufshcd_prepare_utp_nop_upiu
+>   - zero command upiu in ufshcd_prepare_utp_scsi_cmd_upiu
+> And you haven't zero the raw query upiu nor the rpmb extended header .
+  Hi Avri,
 
-CHECK: Alignment should match open parenthesis
+Would it be possible to combine our patches in such a way that all UPIU
+types are covered and such that the memset() calls for query, nop and
+command UPIUs occur in the functions that initialize *ucd_req_ptr->header?
 
-Signed-off-by: Hridesh MG <hridesh699@gmail.com>
----
- drivers/staging/iio/impedance-analyzer/ad5933.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks,
 
-diff --git a/drivers/staging/iio/impedance-analyzer/ad5933.c b/drivers/staging/iio/impedance-analyzer/ad5933.c
-index 4ae1a7039418..d5544fc2fe98 100644
---- a/drivers/staging/iio/impedance-analyzer/ad5933.c
-+++ b/drivers/staging/iio/impedance-analyzer/ad5933.c
-@@ -628,9 +628,9 @@ static void ad5933_work(struct work_struct *work)
- 		int scan_count = bitmap_weight(indio_dev->active_scan_mask,
- 					       iio_get_masklength(indio_dev));
- 		ret = ad5933_i2c_read(st->client,
--				test_bit(1, indio_dev->active_scan_mask) ?
--				AD5933_REG_REAL_DATA : AD5933_REG_IMAG_DATA,
--				scan_count * 2, (u8 *)buf);
-+				      test_bit(1, indio_dev->active_scan_mask) ?
-+				      AD5933_REG_REAL_DATA : AD5933_REG_IMAG_DATA,
-+				      scan_count * 2, (u8 *)buf);
- 		if (ret)
- 			return;
- 
--- 
-2.46.0
-
+Bart.
 
