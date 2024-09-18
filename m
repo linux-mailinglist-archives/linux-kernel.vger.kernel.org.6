@@ -1,116 +1,154 @@
-Return-Path: <linux-kernel+bounces-332633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B8B797BC40
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:32:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF95397BC4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA9F285C50
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:32:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA0471C2193D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA694189F32;
-	Wed, 18 Sep 2024 12:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K+2GypYD"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B94218800E;
+	Wed, 18 Sep 2024 12:35:41 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D5718952A
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 12:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381EE4409;
+	Wed, 18 Sep 2024 12:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726662747; cv=none; b=Nv9J6SWPhUIZ9ori80BuSz8YFxdF4tRmgK9AYHaiEWvGYeOP0Oh6G/XmwMw+ucGMY0CA3fF768lFo4XT1JLX2y6V6cgHunxc+uUMKTyueTLAayt5SkkCispqFXLWrj11F56ZkKTznZNg3Dznw8Qn92y2Tgp2CZOQcQIlaSO537k=
+	t=1726662941; cv=none; b=VDzjQ46JIub9goEH0Dmg1IRqlr482b2rxhaltn7qVPPGppkCKqbND6otXPK9Wn4jL+WGU3iFDobXkm502+mXGU2Qru9HXT8AnUiZjNZ3MUAG5z6HiZdtUVSvuIvOngZcd60FNo7zU/E+q/JpU8Xf+AG48AmQryolD2NYJK67Kec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726662747; c=relaxed/simple;
-	bh=3gVQ9JaYTaBdvDz5MGdsXx0ayVEISpaMDfcREkdX9c8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J1qDzE4Fv7BWplJ2BgKKOIDK1JoqFwF3N/Xjxw/04tPBqQmNcI8rN6lveZwDuBaMaz5PYd0LxiSsdTD6lwhHmbq0pk6IqmbOtwrBkkhuHN9IJpoOrasUCcjNUKEezF/4m9HLmTQpwL8QMtydNsbTbZw8tZP1WRY10nyiPLh0PHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K+2GypYD; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so1351907e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 05:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726662743; x=1727267543; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QldvlS8/eJZac6pG0e6NEdXcfsAi5+t2N8DBgSFO8Rk=;
-        b=K+2GypYD3gvqB4wezdF1ONJGmiuElFPIW3MxSawSSrNDMxe3f9v/pSSpnkpq6OXX/Y
-         aWTS3XIpx9iz5CLBWmoUqqMLgB5nJlSU+z2IowwLG928nhWsgldW0u3qFptNAtAEkXa1
-         uqsT6LLb/uVXoypoWodr1Aj3jRT3XuNfXssLoCjPfJ+yq26aWG4Is/lrXbygXj40M7Qs
-         bqAkP0Yz5HtnAS+qWbosrohj1+VED2F8RMgCIGsbkjJD6i91jZvMemNZILZcD1fIuscp
-         b1bZcsUEeFrRkx/mWf55chIaQskhYvl8ymzbHDkPAIH8wU4Xa+FFsstwChP8Kso04Ecu
-         Tb2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726662743; x=1727267543;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QldvlS8/eJZac6pG0e6NEdXcfsAi5+t2N8DBgSFO8Rk=;
-        b=VKyqfwi2H0yC7IaZ2tlTquaJMYoOqZTyQWK/fNuRmOY8mZzTwOAB24+ztZArpwCdNs
-         9eA/nJUTMfKDJhhv0XrsE2S5hU3VNIVjaK+ESxrM1xuwDXt/fPZ8vhpABMMv24Z0ZCR7
-         Ydmt+jHfsp30OotBEOvh94pfDbSesfUFx83v+5HqyF8rSAhqdC7Bst/2sFFeki7zVTRK
-         aNaKAv2fiv/I507oDWlcM0ZxoMVgxZTjtw62zobVbAOjccOx79Axufww7w03So5+Uqvb
-         jOGknaDm7vpfhuaRW6xaQsgzUIV5IFkEy/RbFphQe72Y1tFmhZRwUpxh4Gffg2yhL373
-         MzTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVG41HGx860zCmCNhkGJJj3Kstjfu19YymhRapkIvSM9mdMQm/aj9O6n0pwp0r9YQFgqQXF+Ff6VTLHG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyng2mfAJMcjDUBKtTzvmWMB4CcW5CgKCDW8HVOC+ZH5ZUlnIqA
-	08lviXKvW5/v1CEFbyCp3gK2NdEflZPZT7AWV9NMl87KFk6XSvwt9WoXOZuhr1g=
-X-Google-Smtp-Source: AGHT+IErvjmxyimyd57IGMkKNpdAXZ02gL2PuI7e7vGw8BlqbmJRMt4iCTe0zO0FnjQKvmbmHIhaUw==
-X-Received: by 2002:a05:6512:33d6:b0:536:741a:6bad with SMTP id 2adb3069b0e04-5367feb95bamr9279710e87.12.1726662743277;
-        Wed, 18 Sep 2024 05:32:23 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53698c3dd4esm797163e87.13.2024.09.18.05.32.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 05:32:21 -0700 (PDT)
-Date: Wed, 18 Sep 2024 15:32:19 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sachin Gupta <quic_sachgupt@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quic_cang@quicinc.com, quic_nguyenb@quicinc.com, quic_bhaskarv@quicinc.com, 
-	quic_mapa@quicinc.com, quic_narepall@quicinc.com, quic_nitirawa@quicinc.com, 
-	quic_rampraka@quicinc.com, quic_sartgarg@quicinc.com
-Subject: Re: [PATCH 1/1] arm64: dts: qcom: qcs6490-rb3gen2: Add SD Card node
-Message-ID: <4g6ao5bbt57wdro6sroq7nodxtgdk5ecdxsdkrfvttfrsm2zmw@jik6og3np75z>
-References: <20240917090630.1025-1-quic_sachgupt@quicinc.com>
- <gyasvmb5q3e4pgmfpj7njovclydwhsvsxt4ayfxzbh5njwgwsq@zfhlm6lqfirl>
- <5c0f627b-058d-4213-9c2a-5adb2f174c0d@quicinc.com>
+	s=arc-20240116; t=1726662941; c=relaxed/simple;
+	bh=4r46Tfl8J6HaC2iE0KDuYDIopodUnpAtIdJC1ca/wxQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=NJIUAerQZ/Iou4c2Z7v7ye+wAx7RfARas50ytF5nWZbJGUiMFnbZMmi3zqYsbfJfw2gs75Gu4NbHlf9dbwYzyixcRH5ICnCz+wWsf+nuYGpKBz5defJe5UYgqYtWnNnv2zfLrlF+exms0L4ictsorjUSkSimSbL2tAUbt6mJ3So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.109] (31.173.83.44) by msexch01.omp.ru (10.188.4.12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 18 Sep
+ 2024 15:35:15 +0300
+Message-ID: <f45d5e6d-ab82-f86b-8afc-414e7c1fd28f@omp.ru>
+Date: Wed, 18 Sep 2024 15:35:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c0f627b-058d-4213-9c2a-5adb2f174c0d@quicinc.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH] ata: pata_octeon_cf: Use common error handling code in
+ octeon_cf_probe()
+Content-Language: en-US
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+To: Markus Elfring <Markus.Elfring@web.de>, <linux-ide@vger.kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>
+References: <4ca111f2-9b38-47a1-88d5-7dfaedcc6ea5@web.de>
+ <2e38a924-a68a-8d19-8c3a-c19708f9ab74@omp.ru>
+ <abe87c03-3a73-3f16-92eb-a988a61649d5@omp.ru>
+Organization: Open Mobile Platform
+In-Reply-To: <abe87c03-3a73-3f16-92eb-a988a61649d5@omp.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/18/2024 12:13:10
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 187821 [Sep 18 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.1.5
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
+ 8a1fac695d5606478feba790382a59668a4f0039
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.83.44 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1;31.173.83.44:7.1.2;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.83.44
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/18/2024 12:16:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/18/2024 11:02:00 AM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Wed, Sep 18, 2024 at 03:58:04PM GMT, Sachin Gupta wrote:
+On 9/17/24 23:44, Sergey Shtylyov wrote:
+[...]
+
+>>> From: Markus Elfring <elfring@users.sourceforge.net>
+>>> Date: Tue, 17 Sep 2024 13:43:24 +0200
+>>>
+>>> Add a label so that a bit of exception handling can be better reused
+>>
+>>    s/exception/error/.
+>>
+>>> in a subsequent if branch of this function implementation.
+>>>
+>>> This issue was detected by using the Coccinelle software.
+>>>
+>>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>>> ---
+>>>  drivers/ata/pata_octeon_cf.c | 9 ++++-----
+>>>  1 file changed, 4 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/ata/pata_octeon_cf.c b/drivers/ata/pata_octeon_cf.c
+>>> index 0bb9607e7348..62289f6aef95 100644
+>>> --- a/drivers/ata/pata_octeon_cf.c
+>>> +++ b/drivers/ata/pata_octeon_cf.c
+>>> @@ -848,14 +848,13 @@ static int octeon_cf_probe(struct platform_device *pdev)
+>>>  				struct resource *res_dma;
+>>>  				int i;
+>>>  				res_dma = platform_get_resource(dma_dev, IORESOURCE_MEM, 0);
+>>> -				if (!res_dma) {
+>>> -					put_device(&dma_dev->dev);
+>>> -					of_node_put(dma_node);
+>>> -					return -EINVAL;
+>>> -				}
+>>> +				if (!res_dma)
+>>> +					goto put_device;
+>>> +
+>>>  				cf_port->dma_base = (u64)devm_ioremap(&pdev->dev, res_dma->start,
+>>>  									 resource_size(res_dma));
+>>>  				if (!cf_port->dma_base) {
+>>> +put_device:
+>>
+>>    Ugh... :-/
+>>    Please use the new-fangled *devm_platform_ioremap_resource() instead of those
+
+    Ugh, s/*//...
+
+>> old-fashioned APIs.
 > 
-> 
-> On 9/17/2024 7:08 PM, Dmitry Baryshkov wrote:
-> > On Tue, Sep 17, 2024 at 02:36:30PM GMT, Sachin Gupta wrote:
-> > > Add SD Card node for Qualcomm qcs6490-rb3gen2 Board.
-> > 
-> > Consider adding mmc0 or mmc2 alias for the sdhc_2 node.
-> > 
-> Thank you for your input. However, aliases you mentioned already exists in
-> the sc7280.dtsi header file.
+>    Another option is to place this error patch somewhere at the end
 
-Ack
+   s/patch/path/, of course... :-)
 
-> 
-> > > Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
-> > > ---
-> > >   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 33 ++++++++++++++++++++
-> > >   1 file changed, 33 insertions(+)
+> of this function but I think I prefer the new APIs.
 
--- 
-With best wishes
-Dmitry
+[...]
+
+MBR, Sergey
 
