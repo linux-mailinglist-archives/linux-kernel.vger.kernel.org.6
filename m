@@ -1,178 +1,136 @@
-Return-Path: <linux-kernel+bounces-332719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78C997BDAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:07:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7620097BDAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED0661C213F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:07:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33916285D53
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A1618B47D;
-	Wed, 18 Sep 2024 14:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E3718B494;
+	Wed, 18 Sep 2024 14:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMedvZJR"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iPidPgVw"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6D118A6DB;
-	Wed, 18 Sep 2024 14:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C86C189914;
+	Wed, 18 Sep 2024 14:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726668458; cv=none; b=OQ1ph/K01g9gXEEBiIyMqnS3inQMi2jn8PztEQJInPr3dNY1qe5Z7UwXS9rHXt4zhYbrRDDHNjsm74ZtTeHNx0d4ajEP8d6xYKi6DDaD6PdoDkeN0A1BErNITE8ChbS4Uhd2+7S94wminwaGECoBpF7z2kY0MNhroex9wagz5Xc=
+	t=1726668500; cv=none; b=ezmuE0yZ7U2e63gMPH35PRPGsvHOfBLDGljZj0STlHlUFqKMzkjkO2vqnZ7apAYKkSpgD90es33/j5JXNKG4eUb51YBXBHmDqMxs5iurUCzicLisAXQ971+SmmCQSBYVRxQzWvDXeV3uFpnGJD8vRXeIwriOISjvcwMa7Mjd5G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726668458; c=relaxed/simple;
-	bh=0VL0a3WZNBu3lnikVkXDU/US1Zxg3JW7usdy+pnkQys=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s5DBLZKZtRfiP3M1EjDzi0MhWTEF42em2I++TighCZwScGExuS6SD1JSvEqM6lcA+q+7w+AZ5H8BxtNgVGykEX6Blqu145NyU/z5MJP6RKaMp1R+JGMSc4BjOT8swW/2xVCrsG5yggX8JuySSp7qs+L2ZRR/Wxg2puK7R5kFHts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMedvZJR; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6b747f2e2b7so54835087b3.3;
-        Wed, 18 Sep 2024 07:07:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726668456; x=1727273256; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0jghMkTEcbjlD4OE1ywGj7BxBKpwmV/lECXNj48rxHA=;
-        b=HMedvZJRJjwZYgQSDOlMh3VXVk3AIMEfVAX7ygyZL84jr0dwCEdNe5KcohILtFhvGL
-         GGer+KpvS6hZIAQhnIWnIsbNHO0+G8u6VCt0KdJ7+nLJ2wXXPaRgFZ7HHVriA5/b1ZHS
-         sYvfU3Ja8iE4yIIF7mzFr/4TT44jABFi8jjUEC7zf+IgEOyFoXF+rqm8qxv7rZRJ2d4I
-         RPMNHYQaxOVZdC3casEtNw0S0aoMOp93Rqo0Kfjz/c0pQS57/ONiRHJtt9X44aR5jRn+
-         h2jqFJ5XR9IsXCcecen3U/RiRUOINQBVLhPctE4IBMa/VkKtgPxO/plLXyIezHolS0rM
-         9/xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726668456; x=1727273256;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0jghMkTEcbjlD4OE1ywGj7BxBKpwmV/lECXNj48rxHA=;
-        b=O85VlNMmKbdGWVPp2+y9V8vQt6sjyGo6ai98wPSE28pO8HwaLMFHbzRwY8ygNBPLIU
-         4m1xfJm29kwcngNJTaE7PgjTZTQM4wT4w9MGE+04rbhEh+RDqtgL9zE2R6y+cOsLCtsP
-         fqPVeVjX/y3VeMNoDjhu17hHiTx9TnzxtVGV/g8G6pe3qdp6VtO5kP9F8XLIeXdkGIk1
-         dOKCJ1Sw1EwA5Yl5RS630jUC1QVTN/0XokiFLJ5vZsXzSO3v5CJV69pK+QP9M03PYrpf
-         RPBkcAx3Yty9Q8LZJ/3nKktFWpGKxNgIsqKd1jq47eCEitA84zjuNwCiR4yHlkqB+xIF
-         w78w==
-X-Forwarded-Encrypted: i=1; AJvYcCV4OoKonqTkl077m0wQF1rVv155Tak17hlCqxTUYvxM6THVDY3HF9/ANdsjZl8ZGH08aSE=@vger.kernel.org, AJvYcCWJTNAPNYB2hXInEh9k/OcziqAYLxll5lbVS4PKmkQXO8beYx27Ucd2ijXDtAIhdR9RFEU21PD1l4Uuqvop@vger.kernel.org, AJvYcCWqFpmee7xHRYduMOYZuVwv5To4et/An5ouL3U2LPiJNBSbUx35aDFRyjXcsk2gSR83CKfqi4sV@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkxbEdlepiW4+Hcgk4kB7tVfVeqFSVGRKHuJ+yi5ggLUyu/lA9
-	L1TA6haVh0I1cyokK3n/5Jkqag6f72nNFiCJ3ggEAYqWrFyfka/66tH6EVgJiRHV692EZhBN3G7
-	pNsaQmJz8jXzzlxwIsdA6pobaQX1lC268
-X-Google-Smtp-Source: AGHT+IEPYZ/AGU3WeOEb8yIO/jp0/diGMF4lCbfcmFw62ZeScK7svyOFn5uIVh2cTML4YNoOIYkBwlfIF/cW4XgHBGE=
-X-Received: by 2002:a05:690c:6305:b0:6db:e213:580b with SMTP id
- 00721157ae682-6dbe21359camr105883427b3.36.1726668455897; Wed, 18 Sep 2024
- 07:07:35 -0700 (PDT)
+	s=arc-20240116; t=1726668500; c=relaxed/simple;
+	bh=SR59Zy5+0H2JkKgz/OJzRShajwpCLZ8pjA8HUTdsCYE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=C9vPQl4u91zffKPkwDvU0AErkYjYhe/Yeijo/eB75t1iuzVO8HiqvuHK+fMiNMs00Zp4k5tin2k80ld4x+kDEqlg2Mku9ailqMRwSUJIUeGSxHwUiUXl1JsHeZP/SGSSd7hAQsQ5kVYCtljMi8l75rgwNz5dWFFeFcfaL4+NAZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iPidPgVw; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726668490; x=1727273290; i=markus.elfring@web.de;
+	bh=pEmW+piCbVWV20mN7xgHAtfyqql/eYPfht5wyl2LEeA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=iPidPgVwc7e8j1FxRQuKnWlir0Czsek05Gob4msjleTXKIROzBHhZXKPegE5Ozbz
+	 zVd+l7wEch3nN1fkVT1SQhKSLxeYObrE98gldx4b8ybrdeI+nmsGwHmE4vxlr4kw/
+	 mkA2RfzBgL1RXgPVjFvjXZbh/xDrTG4GnvkCwgTmyt5KxKSgBJ8bVa6JGWXwKls7Q
+	 f16fWfnddFTe40fn6UtSDdUi8LuMqn+5SYdplGBAsLovYF4H1Yw/cSUHiHK8RLM0h
+	 dKa7b4tBFo6f5PSCzgyzBiDTjUDPgsjp26koJBKM843tU7Af+7hYS0RMV2i70j7ED
+	 UjlvQSSfS5mqYWgu8Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mmymp-1s9dvC3wzH-00h69H; Wed, 18
+ Sep 2024 16:08:09 +0200
+Message-ID: <ab7f53e6-128b-4c75-8227-b38a10d134b6@web.de>
+Date: Wed, 18 Sep 2024 16:08:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240918083545.9591-1-jiwonaid0@gmail.com> <ebef9a36-d060-4df3-b139-3dda4a84484a@blackwall.org>
-In-Reply-To: <ebef9a36-d060-4df3-b139-3dda4a84484a@blackwall.org>
-From: Jiwon Kim <jiwonaid0@gmail.com>
-Date: Wed, 18 Sep 2024 23:07:24 +0900
-Message-ID: <CAKaoOqdCh41iBbzuZjx3mJpOXBh0aaLmBRd7Pz9jjwBFLqAifg@mail.gmail.com>
-Subject: Re: [PATCH net v2] bonding: Add net_ratelimit for bond_xdp_get_xmit_slave
- in bond_main.c
-To: Nikolay Aleksandrov <razor@blackwall.org>
-Cc: jv@jvosburgh.net, andy@greyhouse.net, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, 
-	daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com, 
-	joamaki@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH 1/2] dm-crypt: Use up_read() together with key_put() only once
+ in crypt_set_keyring_key()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: dm-devel@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>, Ondrej Kozina <okozina@redhat.com>,
+ Waiman Long <longman@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <68ee5a00-888c-420f-a3a9-a556c19ee6eb@web.de>
+Content-Language: en-GB
+In-Reply-To: <68ee5a00-888c-420f-a3a9-a556c19ee6eb@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:O5jt9HpoSMIFeehshGrf2vDObu39p8RKz1mnqQeYuS08zJaR/Ao
+ C4LWSzrloc+Drx0c72xC8UWRoewf54YhwBgqO1+aGBZAqrrJ+2Hv38H0lZUXu6OHMJn09v+
+ eWwW6IDzVi+n3vYl/USLThX48T/lJW6qljSxj58QfFkJtZt06PwuO0r5RezpRjWk5k/xC0z
+ O/peMe/I/ENH3bggzlTpQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:nuwLnslBJj4=;KwLhJNfMX6ifWY6KIF/utjj9zhF
+ 3TtHHMvyUoxnw22uyS02ywq0aVEPtz0JFtkcPxiTY9UxCQU+QZAqbru2lipl55cZVQhw+CuG6
+ usuA5y0Rcfni41fpzHRSNuzkHH3f01/QKku1BRFNU3m4KHqGfPAeSVEL2ISO27Pnzv0LAxSyi
+ NvGD9HfQtXEsDu+y4YttpTDd7ZYeAIVaAxsQNpriNnGRER6cd6P7UqGvya+lUumLIEPAVo6ak
+ ZhXS4+CRuKzalxtGXT8hJix6FfiQ1qTeNP75yJX7vNL9l+2KgNUfZWBN2ksxpRNwPxZuSpqhl
+ 1cLC4WbZd4sCLtkmmdAiKEOTEpO3zqIa7ouz2nNRdwxkMmgRcZer3RCfVU+DppG2HwoO86hAe
+ 36x1vlwLtU4IsQhOK5Sjrp3klV4HO6OQga4fGhMlq5gJ7uBLlIsAlxoQv4q2LBFPbMWYYzn1A
+ HTycWHgmEJPJ2QVPLIP4K6D9oeCupiUHMu2IaSk7AwgJ1cF/sJXRiD1ho1KTP3VbzGQaRzR4E
+ i/OViMhx2AOQ3p6L4NyeRVDOShrFTHEAsxOiTODyIHHeNAZ9ou5qtsDTakIC6lFZbkveQey/3
+ L1J34nSf9GicTQGp1IJ5M96fQgtIl+sV8ZSdGG1MWVGTThVdhRMUNc45jlPl4JJ1Btd0KX8Up
+ qSyhyOQmhQtkTOKcA2sk91QBER4xzbbIFQ//rACgakMb0x8mzNTehWgEcTtzYfHgk/SVFNruD
+ j69IEMmKBcvehoeq6PlVLAs+PRTzoA5+sSL3QWjdvTySWWUlmcbvYkFXs8k0tyKOmUjkut3rW
+ l3aFd55MyPnkruTtrYyDejKA==
 
-On Wed, Sep 18, 2024 at 6:51=E2=80=AFPM Nikolay Aleksandrov <razor@blackwal=
-l.org> wrote:
->
-> On 18/09/2024 11:35, Jiwon Kim wrote:
-> > Add net_ratelimit to reduce warnings and logs.
-> > This addresses the WARNING in bond_xdp_get_xmit_slave reported by syzbo=
-t.
-> >
->
-> This commit message is severely lacking. I did the heavy lifting and gave=
- you
-> detailed analysis of the problem, please describe the actual issue and wh=
-y
-> this is ok to do. Also the subject is confusing, it should give a concise
-> summary of what the patch is trying to do and please don't include filena=
-mes in it.
-> You can take a look at other commits for examples.
->
-> > Setup:
-> >     # Need xdp_tx_prog with return XDP_TX;
-> >     ip l add veth0 type veth peer veth1
-> >     ip l add veth3 type veth peer veth4
-> >     ip l add bond0 type bond mode 6 # <- BOND_MODE_ALB, unsupported by =
-xdp
-> >     ip l add bond1 type bond # <- BOND_MODE_ROUNDROBIN by default
-> >     ip l set veth0 master bond1
-> >     ip l set bond1 up
-> >     ip l set dev bond1 xdpdrv object tx_xdp.o section xdp_tx
-> >     ip l set veth3 master bond0
-> >     ip l set bond0 up
-> >     ip l set veth4 up
-> >     ip l set veth3 xdpgeneric object tx_xdp.o section xdp_tx
->
-> Care to explain why this setup would trigger anything?
->
-> >
-> > Reported-by: syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3Dc187823a52ed505b2257
-> > Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driv=
-er")
-> > Signed-off-by: Jiwon Kim <jiwonaid0@gmail.com>
-> > ---
-> > v2: Change the patch to fix bond_xdp_get_xmit_slave
-> > ---
-> >  drivers/net/bonding/bond_main.c | 9 ++++++---
-> >  1 file changed, 6 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond=
-_main.c
-> > index b560644ee1b1..91b9cbdcf274 100644
-> > --- a/drivers/net/bonding/bond_main.c
-> > +++ b/drivers/net/bonding/bond_main.c
-> > @@ -5610,9 +5610,12 @@ bond_xdp_get_xmit_slave(struct net_device *bond_=
-dev, struct xdp_buff *xdp)
-> >               break;
-> >
-> >       default:
-> > -             /* Should never happen. Mode guarded by bond_xdp_check() =
-*/
-> > -             netdev_err(bond_dev, "Unknown bonding mode %d for xdp xmi=
-t\n", BOND_MODE(bond));
-> > -             WARN_ON_ONCE(1);
-> > +             /* This might occur when a bond device increases bpf_mast=
-er_redirect_enabled_key,
-> > +              * and another bond device with XDP_TX and bond slave.
-> > +              */
->
-> The comment is confusing and needs to be reworded or dropped altogether.
->
-> > +             if (net_ratelimit())
-> > +                     netdev_err(bond_dev, "Unknown bonding mode %d for=
- xdp xmit\n",
-> > +                                BOND_MODE(bond));
-> >               return NULL;
-> >       }
-> >
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2024 15:05:29 +0200
 
-Hi Nikolay,
+The combination of the calls =E2=80=9Cup_read(&key->sem)=E2=80=9D and =E2=
+=80=9Ckey_put(key)=E2=80=9D
+was immediately used after a return code check for a set_key() call
+in this function implementation.
+Thus use such a function call pair only once instead directly
+before the check.
 
-I have taken the time to review your feedback and have sent [PATCH net
-v3] for your consideration.
-Please take a look when you have a moment.
+This issue was transformed by using the Coccinelle software.
 
-Thank you so much!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/md/dm-crypt.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-Sincerely,
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index d5533b43054e..dae2fe3cb182 100644
+=2D-- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -2621,16 +2621,13 @@ static int crypt_set_keyring_key(struct crypt_conf=
+ig *cc, const char *key_string
+ 	down_read(&key->sem);
 
-Jiwon Kim
+ 	ret =3D set_key(cc, key);
++	up_read(&key->sem);
++	key_put(key);
+ 	if (ret < 0) {
+-		up_read(&key->sem);
+-		key_put(key);
+ 		kfree_sensitive(new_key_string);
+ 		return ret;
+ 	}
+
+-	up_read(&key->sem);
+-	key_put(key);
+-
+ 	/* clear the flag since following operations may invalidate previously v=
+alid key */
+ 	clear_bit(DM_CRYPT_KEY_VALID, &cc->flags);
+
+=2D-
+2.46.0
+
 
