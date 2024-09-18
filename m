@@ -1,130 +1,193 @@
-Return-Path: <linux-kernel+bounces-332251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC5D197B745
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:52:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5C297B747
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22FA61C21253
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:52:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C6671F2402A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C6E1422A8;
-	Wed, 18 Sep 2024 04:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD47513A3F2;
+	Wed, 18 Sep 2024 04:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9aBB5IJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o9Ta53eV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0153D2B2D7;
-	Wed, 18 Sep 2024 04:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406CC22EED
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 04:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726635145; cv=none; b=Qr/7fCfG6Ptp2UIgWKIwJ6n/hh21uU55ts8Yn2oNe4b4VSka0MJIN60HBni6rrU++vDWvZZG0WcmwZ3zUVMsllxbSbtEBb9I4jwEPU64dhT298+SFfa/o3oO0j0icTPAxkVUt94GGzldvJ6rcPeEdIV6esVHX1sl+4olY2xYtLI=
+	t=1726635276; cv=none; b=n0O8tShx5NhLFn3IxrM3wLuSRK8wdwOiUeyZ/82funOTJUjpFTZ60lpUB3c9WQi4UoqX0Z/O/jheOXIqyEDKGBzk35j9lgtwvNdgIKMsFbcgBR5NaxbUxoXCdPpTwyslgIuxEtWYxVosWE12tUaBVbLogif0ytMLsS3ZNBn378o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726635145; c=relaxed/simple;
-	bh=ujButzrmQBfySaN+Xdg8ancXimehUSSrRankT58rsBM=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=vBp+01yyuGz52qLj0cQr3NwIlEQUOIj03OHXZQZZPKSlVsxg0+UwXidTfT5BHmqM8yp14OyyvTB4zfgianqdZgCZdUmo7TpeVi1augq13o338KeYpRpg2sykH/doue3XfU7NyhpFUZo1eiZzpBbgEhcFH/gLNEEeTHGBvj6lwWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9aBB5IJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D316C4CEC3;
-	Wed, 18 Sep 2024 04:52:24 +0000 (UTC)
+	s=arc-20240116; t=1726635276; c=relaxed/simple;
+	bh=zkI3MphARaozn8NdrN54ydRhmNyndHd93oD0qNgaZQk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iilaq3zz09hKU5RbYSJ3fDwcRKAqmXPQf+RCyvSeFGp4JHsHGaSSwVbgQsW01CHorhtkxM3rQpbIsjHf7I16CqbSGR4/Isev1mOu1p5aMsthe8C09tRpy6eFiyRCxJQ9VeqoyPkfyTvYoWIYVtORoX1M+MxmUDms+UqnoSPgqJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o9Ta53eV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15EECC4CEC3;
+	Wed, 18 Sep 2024 04:54:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726635144;
-	bh=ujButzrmQBfySaN+Xdg8ancXimehUSSrRankT58rsBM=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=b9aBB5IJzeq4UwxhVXXbKLNkx2WiXLNEO+AzczMloxtTm4fN2tlDQlfdYy/Z2SFsO
-	 TRkFXsQHbxwrC5G4Gr6DSQOY9OA71JSGw/HHEoQT84QeK8aVbI51D1d0kd+SJ78pVA
-	 wn+V8ko7hYFmPiWkYOERnx/5CVAHxADIjAcYJZUHgVap9PahcUjW5PUJ9IoZ+nG0/m
-	 bHdj3ZjesXzBDjg9gIQR3YWFPueQXvOLgzBP6aPY8ptuGX642yCpjL69Fcrn4l/Csb
-	 d1/zduqCLMjB2hhIga+/kBF6TS6XXOvRocU2TA+Jj91wmrS7PxAMWN3k18EEW2LM5S
-	 LUBKURNn8rGDw==
-Message-ID: <4fb2e38ab5de3be67992c88cc7e9eb3f.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1726635275;
+	bh=zkI3MphARaozn8NdrN54ydRhmNyndHd93oD0qNgaZQk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=o9Ta53eV++98pykwR8v3XLSwpZpt9PVEkE/Jo27kHMo2PanFiVoLhFFU0fb10fYG9
+	 cXnYOWY/QLWUmB78RNVqyT8BdkTt5EwPgRnsLNWxbjSsnDQ328A5hBWUiJ8Q1+f6w0
+	 Vnj0sF9DqVfS71Qp62bHf6iO1ZR7g7Ae0Irwd+qyvbqCor1tP5TznXVERRp2J5qqry
+	 /zsVc49mS56pBfFhg0VCA8/Bg0LNql4vxhT0YYHfjDvT1R3PVMltm52wZb668tTSyE
+	 2iTLv/8ZMuxmhwAAXKZ4/ARJkVuqsLe+7DoXeyhV2Vhq72F4iLArwesO6/ovinaf0o
+	 h0JSXgPUGysnA==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: Michal Simek <monstr@monstr.eu>,
+	linux-kernel@vger.kernel.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH] microblaze: use the common infrastructure to support built-in DTB
+Date: Wed, 18 Sep 2024 13:52:43 +0900
+Message-ID: <20240918045431.607826-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240730-mbly-clk-v3-3-4f90fad2f203@bootlin.com>
-References: <20240730-mbly-clk-v3-0-4f90fad2f203@bootlin.com> <20240730-mbly-clk-v3-3-4f90fad2f203@bootlin.com>
-Subject: Re: [PATCH RESEND v3 3/4] clk: divider: Introduce CLK_DIVIDER_EVEN_INTEGERS flag
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
-To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
-Date: Tue, 17 Sep 2024 21:52:22 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 
-Quoting Th=C3=A9o Lebrun (2024-07-30 09:04:45)
-> @@ -538,7 +544,7 @@ struct clk_hw *__clk_hw_register_divider(struct devic=
-e *dev,
->                 struct device_node *np, const char *name,
->                 const char *parent_name, const struct clk_hw *parent_hw,
->                 const struct clk_parent_data *parent_data, unsigned long =
-flags,
-> -               void __iomem *reg, u8 shift, u8 width, u8 clk_divider_fla=
-gs,
-> +               void __iomem *reg, u8 shift, u8 width, u16 clk_divider_fl=
-ags,
+MicroBlaze is the only architecture that supports a built-in DTB in
+its own way.
 
-It would be better to make this unsigned long instead of u16 (for all
-the registration wrappers) so that if we add more flags we don't have to
-change these lines again. Seems unlikely we'll have more than 32 flags,
-but I could be wrong.
+Other architectures (e.g., ARC, NIOS2, RISC-V, etc.) use the common
+infrastructure introduced by commit aab94339cd85 ("of: Add support for
+linking device tree blobs into vmlinux").
 
->                 const struct clk_div_table *table, spinlock_t *lock)
->  {
->         struct clk_divider *div;
-> @@ -610,7 +616,7 @@ EXPORT_SYMBOL_GPL(__clk_hw_register_divider);
->  struct clk *clk_register_divider_table(struct device *dev, const char *n=
-ame,
->                 const char *parent_name, unsigned long flags,
->                 void __iomem *reg, u8 shift, u8 width,
-> -               u8 clk_divider_flags, const struct clk_div_table *table,
-> +               u16 clk_divider_flags, const struct clk_div_table *table,
->                 spinlock_t *lock)
->  {
->         struct clk_hw *hw;
-> @@ -664,7 +670,7 @@ struct clk_hw *__devm_clk_hw_register_divider(struct =
-device *dev,
->                 struct device_node *np, const char *name,
->                 const char *parent_name, const struct clk_hw *parent_hw,
->                 const struct clk_parent_data *parent_data, unsigned long =
-flags,
-> -               void __iomem *reg, u8 shift, u8 width, u8 clk_divider_fla=
-gs,
-> +               void __iomem *reg, u8 shift, u8 width, u16 clk_divider_fl=
-ags,
->                 const struct clk_div_table *table, spinlock_t *lock)
->  {
->         struct clk_hw **ptr, *hw;
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 4a537260f655..cb348e502e41 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -675,13 +675,15 @@ struct clk_div_table {
->   * CLK_DIVIDER_BIG_ENDIAN - By default little endian register accesses a=
-re used
->   *     for the divider register.  Setting this flag makes the register a=
-ccesses
->   *     big endian.
-> + * CLK_DIVIDER_EVEN_INTEGERS - clock divisor is 2, 4, 6, 8, 10, etc.
-> + *     Formula is 2 * (value read from hardware + 1).
->   */
->  struct clk_divider {
->         struct clk_hw   hw;
->         void __iomem    *reg;
->         u8              shift;
->         u8              width;
-> -       u8              flags;
-> +       u16             flags;
+This commit migrates MicroBlaze to this common infrastructure.
 
-This can stay as u16 to save space of course.
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
->         const struct clk_div_table      *table;
->         spinlock_t      *lock;
->  };
+I do not know why MicroBlaze still adopts its own way.
+Perhaps, because MicroBlaze supports the built-in DTB
+before aab94339cd85 and nobody attempted migration.
+Anyway, I only compile-tested this patch.
+I hope the maintainer can do boot-testing.
+
+ arch/microblaze/boot/Makefile          | 3 +--
+ arch/microblaze/boot/dts/Makefile      | 5 +----
+ arch/microblaze/boot/dts/linked_dtb.S  | 2 --
+ arch/microblaze/include/asm/sections.h | 2 --
+ arch/microblaze/kernel/head.S          | 2 +-
+ arch/microblaze/kernel/setup.c         | 4 ++--
+ arch/microblaze/kernel/vmlinux.lds.S   | 8 --------
+ 7 files changed, 5 insertions(+), 21 deletions(-)
+ delete mode 100644 arch/microblaze/boot/dts/linked_dtb.S
+
+diff --git a/arch/microblaze/boot/Makefile b/arch/microblaze/boot/Makefile
+index 2b42c370d574..23a48e090f93 100644
+--- a/arch/microblaze/boot/Makefile
++++ b/arch/microblaze/boot/Makefile
+@@ -17,8 +17,7 @@ $(obj)/linux.bin.gz: $(obj)/linux.bin FORCE
+ 	$(call if_changed,gzip)
+ 
+ quiet_cmd_strip = STRIP   $< $@$2
+-	cmd_strip = $(STRIP) -K microblaze_start -K _end -K __log_buf \
+-				-K _fdt_start $< -o $@$2
++	cmd_strip = $(STRIP) -K microblaze_start -K _end -K __log_buf $< -o $@$2
+ 
+ UIMAGE_LOADADDR = $(CONFIG_KERNEL_BASE_ADDR)
+ 
+diff --git a/arch/microblaze/boot/dts/Makefile b/arch/microblaze/boot/dts/Makefile
+index b84e2cbb20ee..f168a127bf94 100644
+--- a/arch/microblaze/boot/dts/Makefile
++++ b/arch/microblaze/boot/dts/Makefile
+@@ -4,10 +4,7 @@
+ dtb-y := system.dtb
+ 
+ ifneq ($(DTB),)
+-obj-y += linked_dtb.o
+-
+-# Ensure system.dtb exists
+-$(obj)/linked_dtb.o: $(obj)/system.dtb
++obj-y += system.dtb.o
+ 
+ # Generate system.dtb from $(DTB).dtb
+ ifneq ($(DTB),system)
+diff --git a/arch/microblaze/boot/dts/linked_dtb.S b/arch/microblaze/boot/dts/linked_dtb.S
+deleted file mode 100644
+index 23345af3721f..000000000000
+--- a/arch/microblaze/boot/dts/linked_dtb.S
++++ /dev/null
+@@ -1,2 +0,0 @@
+-.section __fdt_blob,"a"
+-.incbin "arch/microblaze/boot/dts/system.dtb"
+diff --git a/arch/microblaze/include/asm/sections.h b/arch/microblaze/include/asm/sections.h
+index a9311ad84a67..6bc4855757c3 100644
+--- a/arch/microblaze/include/asm/sections.h
++++ b/arch/microblaze/include/asm/sections.h
+@@ -14,7 +14,5 @@
+ extern char _ssbss[], _esbss[];
+ extern unsigned long __ivt_start[], __ivt_end[];
+ 
+-extern u32 _fdt_start[], _fdt_end[];
+-
+ # endif /* !__ASSEMBLY__ */
+ #endif /* _ASM_MICROBLAZE_SECTIONS_H */
+diff --git a/arch/microblaze/kernel/head.S b/arch/microblaze/kernel/head.S
+index ec2fcb545e64..9727aa1934df 100644
+--- a/arch/microblaze/kernel/head.S
++++ b/arch/microblaze/kernel/head.S
+@@ -95,7 +95,7 @@ big_endian:
+ 	bnei	r11, no_fdt_arg			/* No - get out of here */
+ _prepare_copy_fdt:
+ 	or	r11, r0, r0 /* incremment */
+-	ori	r4, r0, TOPHYS(_fdt_start)
++	ori	r4, r0, TOPHYS(__dtb_start)
+ 	ori	r3, r0, (0x10000 - 4)
+ _copy_fdt:
+ 	lw	r12, r7, r11 /* r12 = r7 + r11 */
+diff --git a/arch/microblaze/kernel/setup.c b/arch/microblaze/kernel/setup.c
+index f417333eccae..8e57b490ca9c 100644
+--- a/arch/microblaze/kernel/setup.c
++++ b/arch/microblaze/kernel/setup.c
+@@ -120,7 +120,7 @@ void __init machine_early_init(const char *cmdline, unsigned int ram,
+ 	memset(_ssbss, 0, _esbss-_ssbss);
+ 
+ /* initialize device tree for usage in early_printk */
+-	early_init_devtree(_fdt_start);
++	early_init_devtree(__dtb_start);
+ 
+ 	/* setup kernel_tlb after BSS cleaning
+ 	 * Maybe worth to move to asm code */
+@@ -132,7 +132,7 @@ void __init machine_early_init(const char *cmdline, unsigned int ram,
+ 	if (fdt)
+ 		pr_info("FDT at 0x%08x\n", fdt);
+ 	else
+-		pr_info("Compiled-in FDT at %p\n", _fdt_start);
++		pr_info("Compiled-in FDT at %p\n", __dtb_start);
+ 
+ #ifdef CONFIG_MTD_UCLINUX
+ 	pr_info("Found romfs @ 0x%08x (0x%08x)\n",
+diff --git a/arch/microblaze/kernel/vmlinux.lds.S b/arch/microblaze/kernel/vmlinux.lds.S
+index ae50d3d04a7d..3d4a78aa9ab4 100644
+--- a/arch/microblaze/kernel/vmlinux.lds.S
++++ b/arch/microblaze/kernel/vmlinux.lds.S
+@@ -44,14 +44,6 @@ SECTIONS {
+ 		_etext = . ;
+ 	}
+ 
+-	. = ALIGN (8) ;
+-	__fdt_blob : AT(ADDR(__fdt_blob) - LOAD_OFFSET) {
+-		_fdt_start = . ;		/* place for fdt blob */
+-		*(__fdt_blob) ;			/* Any link-placed DTB */
+-	        . = _fdt_start + 0x10000;	/* Pad up to 64kbyte */
+-		_fdt_end = . ;
+-	}
+-
+ 	. = ALIGN(16);
+ 	RO_DATA(4096)
+ 
+-- 
+2.43.0
+
 
