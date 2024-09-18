@@ -1,145 +1,119 @@
-Return-Path: <linux-kernel+bounces-332987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2CD997C1E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 00:28:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3868797C1E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 00:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 972091F2253D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:28:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E220C282B37
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00241CB334;
-	Wed, 18 Sep 2024 22:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01334179970;
+	Wed, 18 Sep 2024 22:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="DqMCBf/B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LR3nFthj"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B01178CF6
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 22:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35F216DEA5
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 22:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726698485; cv=none; b=eixOxt702XkPG778CvoE8Ajp9l2MfsPROvUtTEys2OjVyFG6Vf4xURwC9pqq6Z8s39Q6mov+XpWnYQ9VlKy6i4BHFUuWvh42Fys1WzkWUTy23U6/zC+Bg1MDKxqc2OJqKIm785pRShU+dWhXGeE2QPcsmp6RogpygIBXH91XtEk=
+	t=1726698682; cv=none; b=LssHjCmV0uekKAHsMWygaxvDZrCXCvI2Euqz88NDdHeDmjesHI82iCjJ7LOK4b254g7uicPaqb5wF3iWjisqqomw4BajloKU3+18Rzhs0MTh8Nuf1P0IKs8PBEfw7/9jwM0kEnhdXJHPvQ+lnCPQ9ek8AtXQC3NJwM6yyEqIl5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726698485; c=relaxed/simple;
-	bh=DviNfOBLBfJtvGzTe4PiwqFhlg1DqqYhA659Mdmix88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=adn51tKVnPXHLKqHRAVgfeBHvouQYrFeTXOYuVaJ+EUt/lfqd+i7X2synRJQMdh3W1QR08oC5rSLoNkOFaYPLnkLI4DW2wNG6tz+eA7U1F1E5D/v2J8eL2d/xXLtod99vkbBMqLNg4tpxBlOEPVB9WoRgSwupizx2iP0BsPH5aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=DqMCBf/B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEFFBC4CEC2;
-	Wed, 18 Sep 2024 22:28:02 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="DqMCBf/B"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1726698481;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zWmjdRBT0ivUDXNAnsZ9bumBL4RE93ccXi0XEeAeoT0=;
-	b=DqMCBf/B5uJIiTmJrKVJFMDkraiFYgXBFcz+QJrZMm3PMEoRiytvqI72S5twJq+Jb1HvEV
-	hzEASuovnk20zW5Jrn7aWqq12gxvM6U1ImGn6rowC8n5kpWGQSw7rwy202a4SGLHB13BTa
-	VNjg8CfPrmqrOaKxaHuQIfX3o04kK7c=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ca5a12b2 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Wed, 18 Sep 2024 22:28:00 +0000 (UTC)
-Date: Thu, 19 Sep 2024 00:27:57 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Alexander Graf <graf@amazon.com>, "Michael S. Tsirkin" <mst@redhat.com>,
-	virtio-dev@lists.oasis-open.org, qemu-devel@nongnu.org
-Cc: Lennart Poettering <mzxreary@0pointer.de>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Babis Chalios <bchalios@amazon.es>, Theodore Ts'o <tytso@mit.edu>,
-	"Cali, Marco" <xmarcalx@amazon.co.uk>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	"Michael Kelley (LINUX)" <mikelley@microsoft.com>,
-	Sean Christopherson <seanjc@google.com>, jann@thejh.net
-Subject: vm events, userspace, the vmgenid driver, and the future [was: the
- uevent revert thread]
-Message-ID: <ZutT7bArzCwW5yyf@zx2c4.com>
-References: <20240418114814.24601-1-Jason@zx2c4.com>
- <e09ce9fd-14cb-47aa-a22d-d295e466fbb4@amazon.com>
- <CAHmME9qKFraYWmzD9zKCd4oaMg6FyQGP5pL9bzZP4QuqV1O_Qw@mail.gmail.com>
- <ZieoRxn-On0gD-H2@gardel-login>
- <b819717c-74ea-4556-8577-ccd90e9199e9@amazon.com>
- <Ziujox51oPzZmwzA@zx2c4.com>
- <Zi9ilaX3254KL3Pp@gardel-login>
- <01d2b24c-a9d2-4be0-8fa0-35d9937eceb4@amazon.com>
- <CAHmME9rxn5KJJBOC3TqTEgotnsFO5r6F-DJn3ekc5ZgW8OaCFw@mail.gmail.com>
- <84c3696d-8108-4a2e-90d7-7830ca6cc3b9@amazon.com>
+	s=arc-20240116; t=1726698682; c=relaxed/simple;
+	bh=IUjiHDKQHx81MlKCsICvRhcoKva7+fvwpy12714dQgk=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=iDeXEp4d8CBKj8cyZNtxmJrMYwApy9dUi0i41jKEJ4DEv/vMOZEbb35N7TGd6FAxplG4tKEHoYhsBE8ohlDZKaxdA9lYxUQB2lSQkN29hg/MxGmOKT4WSlXkA//rnt2YhptRUa7OcGB6AGynCdHNryfgIUNrmvKz1J6GIFhGMUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LR3nFthj; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1cfb9d655eso444636276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 15:31:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726698680; x=1727303480; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2o26eYKFIy4j4OcCh4X158KxqMBJxnfBtjyjzMK/+FM=;
+        b=LR3nFthjl8fu5Xw29fT2V+XBTr2jq2d7rtMrk2o6sSXX2MCIfI5j4Cc6RV+1MLEEp+
+         /RqfuMgnH5jQE5jCiSgNJ+aHm6bDrgDwYnzktpUzfyGAdhZ7TQ/HvtIVYEWOddIxsC2m
+         vQFpMzNk1qda/UcgTthLnGyfXo9hGvqK2QxPxbdkbVY33TKuygzQM76tA8tdg+M/Ry9k
+         NkKMpQ2y4njH9epjmk75De16ojYOR/eDe1LTaNnGa0Rdtkoqfm6960+w4g6CJ2xd167W
+         uBmtIbLyousNutNwJxsImnSvi3ZzSJOAZM5EUHo8+k/CbvXqfTjREJrVkTIoqyHjFgmq
+         P3iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726698680; x=1727303480;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2o26eYKFIy4j4OcCh4X158KxqMBJxnfBtjyjzMK/+FM=;
+        b=X/0+6nLc8VwP4WTQ8ZlmwAyGm9xXmnX81UcaKy5zw9iphAAsJMUKyVxmwGCJoZZ9Ym
+         vLSppkydVf/YerHXRVukc4fpu+RGyGwGmIoLeOHHYBK0TokJto+XLRPWS6a8bk3uYWiy
+         h3DRFID8AMTheLgBOH2Az5yezjHoxqC4kWUPNCFP2nXJmIEqW9iw/XvxIpICLW9ShzI6
+         OqUfxjUqiuf7XAf9m43YjzOGcPJ5QRjGRts2bNSx1uLpBFoDwSx3GmpdlbcO+S6/W7GN
+         H7Mul/xnR3W6OQ3vRhemTie+0fKuNTZactmfqxoXbxDuMYZt5DzUkTlONHoWAa/1GtQ/
+         sHWw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9uEKr2twnnwZdU8E3o8pt1rqZ4vKZ/4OPtLUNTWpIveWP5Oee3L9LNnrmE1+57P9cQtdiBolRd6jcADY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZj6+ugMF/muKvx3Jo4b3fnUe9bHpiEqNUj0/zS4OxHQWm3HTO
+	L82ROIL6yHSbx07o9rzd4EhQqHxVgsSHQdFX7lY07P7NM6pOPLqW5Bl3ufmKjJYj7gtWE4h3HfG
+	pWvRPPA==
+X-Google-Smtp-Source: AGHT+IG/eNQi1SAlUx74EwwOpKn+0X40DoLJQtlS2A4o1ZGW3YtPJNHIr+ZyNtZtVuHFpKP9In8U3+jEHQRq
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:cb6b:1e62:cfd8:bd50])
+ (user=irogers job=sendgmr) by 2002:a25:dfd7:0:b0:e1a:70ed:6ec9 with SMTP id
+ 3f1490d57ef6-e1d9db8c019mr78265276.2.1726698679956; Wed, 18 Sep 2024 15:31:19
+ -0700 (PDT)
+Date: Thu, 19 Sep 2024 00:31:16 +0200
+Message-Id: <20240918223116.127386-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <84c3696d-8108-4a2e-90d7-7830ca6cc3b9@amazon.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
+Subject: [PATCH v1] perf evsel: Reduce a variables scope
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Ze Gao <zegao2021@gmail.com>, 
+	Yang Jihong <yangjihong1@huawei.com>, Dominique Martinet <asmadeus@codewreck.org>, 
+	Weilin Wang <weilin.wang@intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-[broadened subject line and added relevant parties to cc list]
+In __evsel__config_callchain avoid computing arch until code path that
+uses it.
 
-On Tue, Sep 17, 2024 at 10:55:20PM +0200, Alexander Graf wrote:
-> What is still open are user space applications that require event based 
-> notification on VM clone events - and *only* VM clone events. This 
-> mostly caters for tools like systemd which need to execute policy - such 
-> as generating randomly generated MAC addresses - in the event a VM was 
-> cloned.
-> 
-> That's the use case this patch "vmgenid: emit uevent when VMGENID 
-> updates" is about and I think the best path forward is to just revert 
-> the revert. A uevent from the device driver is a well established, well 
-> fitting Linux mechanism for that type of notification.
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/evsel.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-The thing that worries me is that vmgenid is just some weird random
-microsoft acpi driver. It's one sort of particular device, and not a
-very good one at that. There's still room for virtio/qemu to improve on
-it with their own thing, or for vbox or whatever else to have their
-version, and xen theirs, and so forth. That is to say, I'm not sure that
-this virtual hardware is *the* way of doing it.
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index dbf9c8cee3c5..f7e829e96599 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -862,7 +862,6 @@ static void __evsel__config_callchain(struct evsel *evsel, struct record_opts *o
+ {
+ 	bool function = evsel__is_function_event(evsel);
+ 	struct perf_event_attr *attr = &evsel->core.attr;
+-	const char *arch = perf_env__arch(evsel__env(evsel));
+ 
+ 	evsel__set_sample_bit(evsel, CALLCHAIN);
+ 
+@@ -893,6 +892,8 @@ static void __evsel__config_callchain(struct evsel *evsel, struct record_opts *o
+ 
+ 	if (param->record_mode == CALLCHAIN_DWARF) {
+ 		if (!function) {
++			const char *arch = perf_env__arch(evsel__env(evsel));
++
+ 			evsel__set_sample_bit(evsel, REGS_USER);
+ 			evsel__set_sample_bit(evsel, STACK_USER);
+ 			if (opts->sample_user_regs &&
+-- 
+2.46.0.662.g92d0881bb0-goog
 
-Even in terms of the entropy stuff (which I know you no longer care
-about, but I do), mst's original virtio-rng draft mentioned reporting
-events beyond just VM forks, extending it generically to any kind of
-entropy reduction situation. For example, migration or suspend or
-whatever might be interesting things to trigger. Heck, one could imagine
-those coming through vmgenid at some point, which would then change the
-semantics you're after for systemd.
-
-Even in terms of reporting exclusively about external VM events, there's
-a subtle thing to consider between clones/forks and rollbacks, as well
-as migrations. Vmgenid kind of lumps it all together, and hopefully the
-hypervisor notifies in a way consistent with what userspace was hoping
-to learn about. (Right now, maybe we're doing what Hyper-V does, maybe,
-but also maybe not; it's kind of loose.) So at some point, there's a
-question about the limitations of vmgenid and the possible extensions of
-it, or whether this will come in a different driver or virtual hardware,
-and how.
-
-Right now, this is mostly unexplored. The virtio-rng avenue was largest
-step in terms of exploring this problem space, but there are obviously a
-few directions to go, depending on what your primary concern is.
-
-But all of that makes me think that exposing the particulars of this
-virtual hardware driver to userspace is not the best option, or at least
-not an option to rush into (or to trick Greg into), and will both limit
-what we can do with it later, and potentially burden userspace with
-having to check multiple different things with confusing interactions
-down the road. So I think it's worth stepping back a bit and thinking
-about what we actually want from this and what those semantics should
-be.
-
-I'd also love to hear from the QEMU guys on this and get their input. To
-that end, I've added qemu and virtio mailing lists, as well as mst.
-
-Also, I'd be interested to learn specifically what you (Amazon) want
-this for and what the larger picture there is. I get the systemd case,
-but I'm under the assumption you've got a different project in your
-woods.
-
-Jason
 
