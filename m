@@ -1,156 +1,177 @@
-Return-Path: <linux-kernel+bounces-332945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 894C897C129
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:08:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C5A097C12E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3A8E1C20F69
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:08:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 952551F21CD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4D61CA69E;
-	Wed, 18 Sep 2024 21:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47331CA69E;
+	Wed, 18 Sep 2024 21:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UiHp7lZG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxVwG5r+"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775F013A244
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 21:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814FC1CA68C
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 21:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726693687; cv=none; b=naC3qxCOh/MdilimS09gT7GvxWeqbjeyOq+YIwz8EavJj9yNeTSq9GoCIKhJFZezNIe/7ZgcB3LQgbh5utKwlxPiluGabBkWReGpUjyaAoQRBUHRYmz5IzQ2sL3Y1IA1eFSzYYGbJsUlqgi91WAkc3B6OVCEbRWKqHBkbrQ2dg0=
+	t=1726693706; cv=none; b=JVVB4/Dl1TDptHK05YMLJzzTNj2INgJQrPnMXDBe52atTCJyt5Snb08FIq6cMGZLlnSL4GpHca4XDJ6tWWloot+8w+Izlni8kViYob90ZxUrDsuQorzbqnC8dKKyIOw6PFICeId4vuVBte15mixy1mZE7uNYH4ONeVFrlVJZ9Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726693687; c=relaxed/simple;
-	bh=wBM1ofSGNndQ096F+gd6jV81rsbzNDDn5M19SAETclk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZD4iXzAAT9k0tieG4+BIiAUGDVvX+5/bII5pkIEdWYBd4iZRW/1Zka1epV4pwpEa6j7j/YU/kg2GzTzSzbvcKKSgDruTz254L6C4tzY2WmaqVlwKnWQXGcaphjlgkVIKtsAZew+6uCW7Avv1d6BRFnK/CfQ2m2aBZQXexh+52UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UiHp7lZG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726693684;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wBM1ofSGNndQ096F+gd6jV81rsbzNDDn5M19SAETclk=;
-	b=UiHp7lZGbS7fpziVOHLL5zV9N0NqFsf3bff65229knDwA3Rz6xPF1YG5sEtBbGKpClIlkJ
-	iBHDezbdffHeTT/X8GwAq8F3OEP6FTcGq0uQqg5hXD/A73ggQoW89CaBxfksrTXm/w4fBW
-	+BeYcdJ0R4HH4WadFfuV3C7M0AMUXp4=
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
- [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-650-3AoH1m-nPVij8chmhMlPww-1; Wed, 18 Sep 2024 17:08:03 -0400
-X-MC-Unique: 3AoH1m-nPVij8chmhMlPww-1
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82aa4678394so43246339f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 14:08:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726693682; x=1727298482;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+	s=arc-20240116; t=1726693706; c=relaxed/simple;
+	bh=ouui963+aICLxgwY9/zA41gtArKIiNf4aHjyfrJLHAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uiBAzUALQEdaoRsKNNyQve3ceK5uNloemuZCVJqSDY2PhBIQgf1Xgde6XPkODiZTByQtbr8cIYXSkX6kxJ5Cm53998g5Z3CQrg27gzkVmXs3Pgg0Vgn1uyrkgcLmRR2v5I9kEK9S6w0ZJzsBXP4zox7L9NmjNbzytLClmF5nhVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DxVwG5r+; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb60aff1eso895355e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 14:08:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726693703; x=1727298503; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wBM1ofSGNndQ096F+gd6jV81rsbzNDDn5M19SAETclk=;
-        b=pa1egdUHR+Yz0+vqKfoEfWalZFlPHnjLEAtw9zj3OxC36GVfwwdFByaQKAJx5sxWes
-         alQjulsfxaq3TEnhCibXfxs6pCDCLOiTvLxSBvX+iH4hy9m6YEY1lpgUWj067oG57S20
-         qZb+ClzUDjFm8ly9ci8w6+UeQTfI1NMmaOqb4aLQbMJDGgYKbTzAiX63Yc+Hy5wR3d4V
-         3fvAhh794b9ZQiryg7tdgcDEdi8ohnYPAodV15vFbIdWdH76uYBS167BCKyQ+MhSv4S4
-         ApLkY36qCS2F0atZP4TJAq4vuWaGV+GLQYyitlg1TBVslDEBCVVUEDYK7lKPLafxsmy5
-         TZ3g==
-X-Gm-Message-State: AOJu0Yzhyd/TCrzI9g4jCSYODrmPDbqjz39QC/+Cc6BnP81NAF1lOgQg
-	C3bQgaZukoftKpQZimrb642/UosBk/kCUADm4J/HIEc/OoQxOp0YaUl1qDj1STZKCIpYx7aWTg+
-	zp2FSEQbQqMd3MTGYMgHPkBQcVjMXlYTAAuok7V6z5TTH8nKDm/hP9q3uDIaVFw==
-X-Received: by 2002:a05:6602:6413:b0:82a:1f14:997f with SMTP id ca18e2360f4ac-82d1f8bbde6mr2516110239f.4.1726693682481;
-        Wed, 18 Sep 2024 14:08:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEkUVfTAp5Wr13Jqwkm/X1NBX5DOzVnNokAqP7pwBgUyqOhY9E7PXC6BFmhUymoXthcPBuzwg==
-X-Received: by 2002:a05:6602:6413:b0:82a:1f14:997f with SMTP id ca18e2360f4ac-82d1f8bbde6mr2516106839f.4.1726693682141;
-        Wed, 18 Sep 2024 14:08:02 -0700 (PDT)
-Received: from ?IPv6:2600:6c64:4e7f:603b:2613:173:a68a:fce8? ([2600:6c64:4e7f:603b:2613:173:a68a:fce8])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82d4926954asm281046539f.9.2024.09.18.14.07.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 14:07:59 -0700 (PDT)
-Message-ID: <1b5cc9421cfd8dced181335b426646aef2f7309a.camel@redhat.com>
-Subject: Re: [PATCH] driver core: fix async device shutdown hang
-From: Laurence Oberman <loberman@redhat.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stuart hayes
-	 <stuart.w.hayes@gmail.com>
-Cc: linux-kernel@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>, 
- Martin Belanger <Martin.Belanger@dell.com>, Oliver O'Halloran
- <oohall@gmail.com>, Daniel Wagner <dwagner@suse.de>,  Keith Busch
- <kbusch@kernel.org>, Lukas Wunner <lukas@wunner.de>, David Jeffery
- <djeffery@redhat.com>,  Jeremy Allison <jallison@ciq.com>, Jens Axboe
- <axboe@fb.com>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg
- <sagi@grimberg.me>, linux-nvme@lists.infradead.org, Nathan Chancellor
- <nathan@kernel.org>, Jan Kiszka <jan.kiszka@seimens.com>
-Date: Wed, 18 Sep 2024 17:07:57 -0400
-In-Reply-To: <2024091838-keenly-scrabble-8cce@gregkh>
-References: <20240917201517.1145331-1-stuart.w.hayes@gmail.com>
-	 <2024091753-estate-legroom-5d62@gregkh>
-	 <751d4ba8-1e35-47a5-9a94-9873ff2619ae@gmail.com>
-	 <2024091838-keenly-scrabble-8cce@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+        bh=MVe1RHJ36TdPZ0MCm1xGfLwPh1KD8ExatGy+oVbAu6I=;
+        b=DxVwG5r+62cPF6iDWWSHykhlGDBLwoCTocWqSjNYVRrCfL3EKS6wgON0dRTcRW7Rhi
+         cCrOqiOXUk9AKjVq9rQG5TIHCV+K5r0x32sGmMzuZ2Q519TK1lzST8+vd6kUGEkC3rHZ
+         1qYgIkItNsmBmR5QEGHHaUhGJFvV1n933S7Z5TM/MZPLOKd0cv+BqQZJ9To6ObaAGPha
+         uNLOgf0Nn9d3avzh/k4MI/sX1WIkm7yNggUvCgQf62JqHkmtxz9najEftygN6C3xxX20
+         LufNu/w5bcxKpIsYQ9y0x7C77es1QhfSdAwDWAHkQfD4zVtVF3/RCcXvCp3WdsIa6lz6
+         3bFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726693703; x=1727298503;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MVe1RHJ36TdPZ0MCm1xGfLwPh1KD8ExatGy+oVbAu6I=;
+        b=awvsOkP7p9KGU4Fd36FnTBpikh34/UraLFlBcCeu4TaUdBdg74F0SD8LGCMb0CF80c
+         88eytbL4JLpbZ4YsAMHJa8IMtWVuPPEiWuLMCdMabNfT6LGqSg/oYDYgfMYXPVvG23FI
+         kmVHVkNTMfwTrgYR3bDzuMgmgIIltN2HfvFbvJFer36Qn7vUmWbYglabf5xlptwtMctI
+         J4WyUxuj/k/Ie5XnxNc/7W09ocKtfe+/et7wpZhOehEbJl+o8v2MNaAmMvAZRETy0hth
+         JKtmP3Gq0xdC3TvW9zn2TXdJSPUyt5ih7WHyzJzjHpAwWCm6v+1KPnOlN1NZTWorTnwg
+         rQRg==
+X-Forwarded-Encrypted: i=1; AJvYcCW03ciOB21guvWDDmtGpJHhFcaxj9dgkzNbzHYT2kfilPP1X5w1tfNw9CyRip0XqgNeIpgYKE4l3PN+7gI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyfwoun7GjXiA4VKu40BVPRKB3dRtfNMFzwIljI5HVOx/pHREcA
+	s2wK+jAs9AafbNA3KD/4S0IULHQ3rKJlTi7rQls3ysLSOTFX1QjT
+X-Google-Smtp-Source: AGHT+IEj07TGOzKUNv0vYVV7Wj31JNqmb6g5rnW2gUBrVO1CBVS0JrGUlrsQUTvBD8Ze7CtesBb98Q==
+X-Received: by 2002:a05:600c:4709:b0:426:647b:1bfc with SMTP id 5b1f17b1804b1-42cdb59148emr180118345e9.30.1726693702418;
+        Wed, 18 Sep 2024 14:08:22 -0700 (PDT)
+Received: from [192.168.2.100] (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e75468790sm3074335e9.46.2024.09.18.14.08.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2024 14:08:21 -0700 (PDT)
+Message-ID: <34860faf-b4c5-45ff-bbed-370a12c88187@gmail.com>
+Date: Wed, 18 Sep 2024 23:08:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/14] staging: vt6655: Tidy up s_uGetDataDuration
+ function
+To: =?UTF-8?Q?Dominik_Karol_Pi=C4=85tkowski?=
+ <dominik.karol.piatkowski@protonmail.com>, gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240918191959.51539-1-dominik.karol.piatkowski@protonmail.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240918191959.51539-1-dominik.karol.piatkowski@protonmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-09-18 at 08:12 +0200, Greg Kroah-Hartman wrote:
-> On Tue, Sep 17, 2024 at 07:20:41PM -0500, stuart hayes wrote:
-> >=20
-> >=20
-> > On 9/17/2024 3:42 PM, Greg Kroah-Hartman wrote:
-> > > On Tue, Sep 17, 2024 at 03:15:17PM -0500, Stuart Hayes wrote:
-> > > > Modify device_shutdown() so that supplier devices do not wait
-> > > > for
-> > > > consumer devices to be shut down first when the devlink is sync
-> > > > state
-> > > > only, since the consumer is not dependent on the supplier in
-> > > > this case.
-> > > >=20
-> > > > Without this change, a circular dependency could hang the
-> > > > system.
-> > > >=20
-> > > > Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
-> > >=20
-> > > What commit id does this fix?=C2=A0 Should it go to stable?
-> > >=20
-> > > And what driver is causing this problem, is this a regression or
-> > > for
-> > > something new that just got added to the tree?
-> > >=20
-> > > thanks,
-> > >=20
-> > > greg k-h
-> >=20
-> > This fixes commit 8064952c65045f05ee2671fe437770e50c151776, in
-> > driver-core-next & linux-next... it's problem with code that was
-> > just
-> > added to the tree (in drivers/base/core.c).=C2=A0 It is not in stable.
->=20
-> Ah, that wasn't obvious, sorry.
->=20
-> > Apologies, I should have mentioned that from the start.
->=20
-> Can you resend this with a "Fixes:" tag in it so I can just take it
-> that
-> way and not have to edit it by hand?
->=20
-> thanks,
->=20
-> greg k-h
->=20
+On 9/18/24 21:20, Dominik Karol Piątkowski wrote:
+> This series tidies up s_uGetDataDuration function by renaming its parameters and
+> variables from camel case (including Hungarian notation) to snake case, and
+> fixing its declaration formatting.
+> 
+> Signed-off-by: Dominik Karol Piątkowski <dominik.karol.piatkowski@protonmail.com>
+> 
+> Dominik Karol Piątkowski (14):
+>    staging: vt6655: s_uGetDataDuration: Rename pDevice parameter
+>    staging: vt6655: s_uGetDataDuration: Rename byDurType parameter
+>    staging: vt6655: s_uGetDataDuration: Rename cbFrameLength parameter
+>    staging: vt6655: s_uGetDataDuration: Rename byPktType parameter
+>    staging: vt6655: s_uGetDataDuration: Rename wRate parameter
+>    staging: vt6655: s_uGetDataDuration: Rename bNeedAck parameter
+>    staging: vt6655: s_uGetDataDuration: Rename uFragIdx parameter
+>    staging: vt6655: s_uGetDataDuration: Rename cbLastFragmentSize
+>      parameter
+>    staging: vt6655: s_uGetDataDuration: Rename uMACfragNum parameter
+>    staging: vt6655: s_uGetDataDuration: Rename byFBOption parameter
+>    staging: vt6655: s_uGetDataDuration: Rename bLastFrag variable
+>    staging: vt6655: s_uGetDataDuration: Rename uAckTime variable
+>    staging: vt6655: s_uGetDataDuration: Rename uNextPktTime variable
+>    staging: vt6655: s_uGetDataDuration: Fix declaration formatting
+> 
+>   drivers/staging/vt6655/rxtx.c | 110 ++++++++++++++++------------------
+>   1 file changed, 53 insertions(+), 57 deletions(-)
+> 
 
-FYI=C2=A0
-This patch plus the rest of the original Bundle has been tested=20
-at Red Hat on a system with 24 nvme devices.=20
-Improvement was almost 8 times faster to shutdown.
+Hi Dominik,
 
-Tested-by: Laurence Oberman <loberman@redhat.com>
+now you have put quit some afford into this patch series. Thank you.
+
+If we change the camel case variables this way we need thousands of 
+patches to fix this driver. Therefore we typically change always one 
+variable for the entire driver and not for one function.
+
+The following is just my personal opinion:
+You can keep working on this driver and your patches will remain in the 
+git. But I think I will propose to delete this driver. Reason is that it 
+supports maximum 54MBit/s and the connection is always weak. Its form 
+factor is mini PCI that is really old. I use an adapter from mini PCI to 
+PCI to get it into my Desktop PC. It furthermore is not buyable anymore.
+
+I like to focus on the hardware that is really well useable and on the 
+market available:
+
+rtl8192e
+150MBit/s -> 12,5MByte/s real steady transfer.
+buyable for some bugs as miniPCIe Card.
+
+
+rtl8723bs
+150MBit/s -> >3MByte/s can be reached with the Notebook:
+Odys Trendbook Next 14
+(Fedora with xfce) (I would prefer the one with 4GB RAM but I have only 2GB)
+buyable for not to much money.
+We can catch this devices because they run on Windows 10 which will not 
+be supported after fall 2025
+The Driver has 146 Files with 70000 Lines. I think we can remove a lot 
+because the bluetooth part is not used anymore...
+
+There are more device drivers which need our attention...
+
+Thanks
+
+Bye Philipp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
