@@ -1,96 +1,134 @@
-Return-Path: <linux-kernel+bounces-332553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E5997BB22
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:55:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F9797BB26
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4391328467B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:55:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF5A31F24DC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD74E1836D9;
-	Wed, 18 Sep 2024 10:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1805184114;
+	Wed, 18 Sep 2024 10:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="od7TtIhx"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cubQ4nhU"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443DA178376
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD72C158522
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726656941; cv=none; b=HO9AJrCIaFBss8JZI48W3kkUXg+eF0zPtvCs8c65N5Go0uwGyTU/unC6UVszQXJb4HvqK3VWc57GphsXH6re9ktVjrJAub/Mjhcu/JOhWGxHo0UWa/299Jr+cmTgd084fzoRV0du03HSg0lW7eyePDjdOyyCrdlItY7JuoWBSV4=
+	t=1726656977; cv=none; b=mYiJas5zn/Klpyy87dpuR6Kqvh1Q9PMqIVVah71RTIB97GiNyw7RNFCODLlcH+I5y4R8E/quEMPFXV9UUAt5FbBTpsg1yNY5zD812zzvfSN7ye7NfLJsIhBeqp5N95lIqUFvcKVNkLFehMFuS7364V5zja7QalndtcdkcgcfMIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726656941; c=relaxed/simple;
-	bh=Ur2EMeticBjNZ9iJpv7p4pR6Weq5i+AQfz6bvuwlohU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c3Hh2YROIyn23D7G57NG3Ux6j8XHji0i6UtMeEEacF+/9eKW3cCneXwmETdl0ub2JX1zQjjRDQ25LOp2NKkSLChJrEFHQkE+yqyoTI4l4xX8QGxp4MN7D8HLqKriyNtCkk3a4WKlULwn8ApVIA8OqElM3Xjscy1OfyiYAw4i6j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=od7TtIhx; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=yyEXUZ3RQ1qxYBxqZeUIoPgjNl+F/3RttZyZCmpr67o=; b=od7TtIhximjnEzTn
-	kDfajJbC2Be8pV0OF2CqLeoDP4UGYd5EiGc0hFUDi3k7SJ7Rn2SlIDl9AJFV3sJPUhX7M6GZoxFlJ
-	MIE0KNA8PnymqehCTArRi0oYe39LH+HxJ6K3WqyP9MDXlxwZRdAnOEosJe/W5jvu034bNBPKspYLF
-	W1ytyGbpGkWBIzkERwpf8ID4jGsLvoXPaP3OWHI1ahk4AN3NIhI3V80iDIXR1eOqNPHcaW1RSe9Rc
-	qTlxh5UqH6kcZ6NUMMv4Y9KFxTcexd+wbGeQEn2b/a7eSNu4TDUpDiV1hdHX+OKooGMb1GwoSYZr/
-	pCQqI9a8CLRRBVMb+A==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sqsLM-006H06-0p;
-	Wed, 18 Sep 2024 10:55:32 +0000
-Date: Wed, 18 Sep 2024 10:55:32 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-	kees@kernel.org
-Subject: Re: Dead code by symbols
-Message-ID: <ZuqxpBRVSYIk1Hkm@gallifrey>
-References: <ZugliLgw5VFb9yau@gallifrey>
- <d289061d-7dc8-41d7-a166-4b3b8dce886d@redhat.com>
- <ZupwWT5ZEHFmWIXz@infradead.org>
+	s=arc-20240116; t=1726656977; c=relaxed/simple;
+	bh=1GAnHGD26ccjCUphmCxybd5/3JfQEutdlYE5pfnKPlk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fKKRDZfQ92/v0WFtD0qL7u5ubM8MB9GbFzcqrZ0F8WsOrIEZidYE3PHvrzED4sNmw0dTbvzh04Cj1zEaZZ9KJ41T8O0TfcXahxHLAgXuaeFOO6Te25+rmSAWzhiIp5wEQsFFwFsranO/c79sO+r6Tbm3s7k1/wWkxXN46qFJ1EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cubQ4nhU; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7191fb54147so4768500b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 03:56:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1726656975; x=1727261775; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p41HDdPJ9Xqsou/GrXV93VQCKVWaaOB67+1yPY3lbP0=;
+        b=cubQ4nhU/9ePBV9bQev71WQY6TVXsUKLFKEDaJ0IJUgWCLt0i9xDV4uut6eO07vV1O
+         a/+26YmFpK9j65DZKfTF7UW5L9GOfnWVrQMUZQQzoQ6FNn9ENXqYAtjz6Ig+3q7opinf
+         eXquHoDhsSNeivfs/+c8qVVP37hhihhYFN/P4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726656975; x=1727261775;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p41HDdPJ9Xqsou/GrXV93VQCKVWaaOB67+1yPY3lbP0=;
+        b=gYAArWUjr5fGHadUU3b69BQsIoJIw8RL7I/9k9gv5TAhE1GYil1H9Q8PN7cMqt4CY5
+         l7ZKAnnhAxsfsornlgSMRMr0cMz7SoUy+TOlmjhLI+8WGip0aEWfyhf6x+C88iKn7Yzt
+         kpBBuZ1PMh3dSatsjC8JXdO4MRykiuYjS/QAnhA9ZeK/rgJPPTwtMjMIGAbmYB3/eXNR
+         EOacJqvFHSj9RqjeHNDkT+uMavC3kvfCYhDadR9YNaEIrVycXV4ilphvofXyjf28U96F
+         zzymjjY9v8fWGJYUV15uoz2Gw1W2YFioqEpeB5Fp4+QN7NXyL6wTc2WJ3Lh/gUSYevXG
+         o82A==
+X-Forwarded-Encrypted: i=1; AJvYcCXnqA0uuV9OkpjyOQjx8iLsBrFrH8qH3YDPBGxf8cbIqJtZZUizbrdAafmF8zcDDVJ/FQsvMNpITdBaxak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP8LfpaHpBs2t46KAqNPgWc0XevYoO6BJLMfS+KpHVIrP3u9UW
+	MOu3On9xJA5QFZHxkxt78/Ed5u4cO6gatDVgsidegr6fJj7e9aB7Xe28rQ8LLg==
+X-Google-Smtp-Source: AGHT+IFhMb15QzWlbO320Kzkgs8u2zWlJt0MSXq3KFswpzmoxO8x4jWlVrgugevSX5yLlMwZDNzRXw==
+X-Received: by 2002:a05:6a00:1906:b0:70d:2621:5808 with SMTP id d2e1a72fcca58-7192607fcb9mr33427847b3a.9.1726656974863;
+        Wed, 18 Sep 2024 03:56:14 -0700 (PDT)
+Received: from [192.168.0.103] ([103.163.98.64])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b7b754sm6505848b3a.105.2024.09.18.03.56.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2024 03:56:14 -0700 (PDT)
+Message-ID: <110f6583-f76d-4c7c-bd77-cdeb21b78704@chromium.org>
+Date: Wed, 18 Sep 2024 16:26:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <ZupwWT5ZEHFmWIXz@infradead.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 10:53:27 up 132 days, 22:07,  1 user,  load average: 0.00, 0.00,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: display: mediatek: dpi: Add power domain for
+ MT8195 DP_INTF
+To: Rob Herring <robh@kernel.org>
+Cc: chunkuang.hu@kernel.org, krzk+dt@kernel.org, ck.hu@mediatek.com,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kernel test robot <lkp@intel.com>
+References: <20240911071722.558960-1-rohiagar@chromium.org>
+ <20240916171107.GA605353-robh@kernel.org>
+Content-Language: en-US
+From: Rohit Agarwal <rohiagar@chromium.org>
+In-Reply-To: <20240916171107.GA605353-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-* Christoph Hellwig (hch@infradead.org) wrote:
-> On Tue, Sep 17, 2024 at 01:39:35PM +0200, David Hildenbrand wrote:
-> > > Now, it does take some more guesswork, for example an unused function
-> > > which was added a couple of years back, might be something that's
-> > > there for consistency,
-> > 
-> > I know people will find reasons to do something like that, but we really
-> > *shouldn't* be maintaining / dragging along dead code that nobody might ever
-> > use.
-> 
-> There never is any reason to keep dead code around.
 
-Yeh I mostly agree; and indeed I'll be sending many many patches to remove
-the bucket loads of dead code I find; but as I say, there's a really
-big variation from the dead-for-20 years, to relatively new, to 
-functions that seem to make sense next to the file they're part of.
-So I'll get to those later, I'll get rid of the very dead ones first.
+On 16/09/24 10:41 PM, Rob Herring wrote:
+> On Wed, Sep 11, 2024 at 07:17:21AM +0000, Rohit Agarwal wrote:
+>> Add power domain binding for MT8195 DP_INTF that resolves the following
+>> error and many more similar ones:
+>>
+>> arch/arm64/boot/dts/mediatek/mt8195-cherry-dojo-r1.dtb: dp-intf@1c113000:
+>> power-domains: False schema does not allow [[55, 18]]
+>>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes: https://lore.kernel.org/oe-kbuild-all/202409102119.AYvaTjUi-lkp@intel.com/
+> Fixes?
+Will add in the next version.
+>
+>> Signed-off-by: Rohit Agarwal <rohiagar@chromium.org>
+>> ---
+>>   .../devicetree/bindings/display/mediatek/mediatek,dpi.yaml       | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+>> index 3a82aec9021c..07acc8a76bfc 100644
+>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yaml
+>> @@ -89,6 +89,7 @@ allOf:
+>>                   - mediatek,mt6795-dpi
+>>                   - mediatek,mt8173-dpi
+>>                   - mediatek,mt8186-dpi
+>> +                - mediatek,mt8195-dp-intf
+> mt8183 is also missing. There's a patch[1] to fix it, but it's wrong
+> given the recent changes. It would be best to fix both in one
+> patch/series as 2 separate patches will have conflicts.
+>
+> Rob
+>
+>
+> [1] https://lore.kernel.org/all/20240912144430.3161717-2-treapking@chromium.org/
 
-Dave
+Ok, Sure will have a new (separate) patch added here to include the 
+compatible strings. Thanks for pointing out.
 
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Thanks,
+Rohit.
+
+
 
