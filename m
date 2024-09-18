@@ -1,331 +1,412 @@
-Return-Path: <linux-kernel+bounces-332979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95AD997C1CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 00:11:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1B1897C1D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 00:14:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 536E3283B7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:11:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 235EAB2204D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D9F1CB336;
-	Wed, 18 Sep 2024 22:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131101CB50B;
+	Wed, 18 Sep 2024 22:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BflWEmuz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fcHceVoK"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1935F107A0;
-	Wed, 18 Sep 2024 22:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5ED1CB30D;
+	Wed, 18 Sep 2024 22:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726697457; cv=none; b=fa75Wq20dSQOrNf7JFAp7hr5M7b9zaAqIbd1AOvbSREuP0tAPd8gV5bDPgFx/3/AQN82e45/Y+8Wi/dIrL53zE5YAORr4gq4Z5y6xMPDHQFevz0gLG0FOBwJGEaNFJXb8M6mv32/VRD/2y3UizdaZTbu5u1bNSJ+uTq9T/j+W5M=
+	t=1726697629; cv=none; b=XyT/SE4laUUMrVoeviZSfhnw4fRNhmRvqY1EoysKLSU3mEfq2he09lZN2rJ8r8eu44x3Vf6gW1weNVJRQ9OJ/hQ5IThmHHefxORwsXU7twjkQNQ9rS3S296+og1IO9MOpsWWm3KpelCiV0MHXMS9EWyJQqzPKE/qx7EfJKurUlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726697457; c=relaxed/simple;
-	bh=20JtWju5r84jTJ9MYxoesSH3lY/hB9UFeFpAkXa66VA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=TGjxNSklw752vtlRq+GHRby1c6/50lJshMKlI9KWgoJ8h6L1R//rhrzs0qvxI818YUs+rCdCD4EeMnIetJGDEKQtA2ZMmngnOe/7p6PlHyY4j1h3kS9P3N47CtgifEyzncIO553x7iU6wNLx1GKcntqBU0f8tCmio6Er59pa1aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BflWEmuz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60956C4CEC2;
-	Wed, 18 Sep 2024 22:10:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726697456;
-	bh=20JtWju5r84jTJ9MYxoesSH3lY/hB9UFeFpAkXa66VA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=BflWEmuzhD4ePQO3KyHgVBkfZi42uHSBZX/VyDg0a/+wUzuf/dJCvQnHNbO1dtYtH
-	 dLHvd7Xx8B7c+YOGDRFUIHAXaHpGNN4MlIu95OXw3Znkzr/4kOSMOuCgbqr0E2/uLT
-	 5YYuBOY4qzRmZwzL8M3yywoHnWPw2AKY2zN0J+plPtfUYBMB1k2R06TtgknoDH+nJe
-	 DbZPScqhSm4oVJA0NBQc1Eb3D1wOnmS2Au/01WhJAdbF+7w4XmMYyr7WQw+gp0yiPQ
-	 uensMIOKa9nFtmY/4zgCiNP8zOHltM+rw9QSvI9DfBUYC8Cz2Dw3IfDBUC7pBSB0KZ
-	 0DtzrLE4WaYiA==
-Date: Wed, 18 Sep 2024 15:10:53 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: Jiqian Chen <Jiqian.Chen@amd.com>
-cc: Juergen Gross <jgross@suse.com>, 
-    Stefano Stabellini <sstabellini@kernel.org>, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, xen-devel@lists.xenproject.org, 
-    linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-    linux-acpi@vger.kernel.org, Huang Rui <ray.huang@amd.com>
-Subject: Re: [KERNEL PATCH v9 2/3] xen/pvh: Setup gsi for passthrough
- device
-In-Reply-To: <20240912092352.1602724-3-Jiqian.Chen@amd.com>
-Message-ID: <alpine.DEB.2.22.394.2409181510460.1417852@ubuntu-linux-20-04-desktop>
-References: <20240912092352.1602724-1-Jiqian.Chen@amd.com> <20240912092352.1602724-3-Jiqian.Chen@amd.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1726697629; c=relaxed/simple;
+	bh=MYDtXZH5GC+kN+l+1VuhRFHhin6WvjjJmNkW7Zex45k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WwP+UMeDQ6CxpXJO+BYBTF2xY7sYTBVbrId0oT70UGqC7Q6I4CGQXAnRrjcVxU7k3ytul/9LlbhQWh2OPsyel6AWnGCa50wgOim4LNDJKScnnZPFX3X4gZ+UXjJDGtFbSphWG44E+jDw4ZtJlXLZ4EyhsB+2GUUmQEdfxezY1B0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fcHceVoK; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48IJmKGm010047;
+	Wed, 18 Sep 2024 22:12:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=corp-2023-11-20; bh=ktHcNUIpZvm0fh
+	8L1aIpXFWZ779Z5GHASlQSDemViwI=; b=fcHceVoKoXBvUqvsiYVMNWzqSNKVlC
+	F1slFqk0BHtNLa+hG23jx4G8P8VMF6U0PMMVPuTY7N0jTScVlTAxmzH3EFXpGwE4
+	RJcyBck0/vDhvzwXYHRrcC2FJZcEswi9Vht9je3oCDRlciLiMmIUfzDba20TAXHC
+	GQEjeCXbwyQJ6niGxFu6T/+pIyOiNYWO2E3VurwZ2gTIXClogYWpTyhwFJ4LGCZO
+	OfEYPMt+z+lIvR51zZ7ecHNpiMnSawiiwkQYY9VjYfR0KJHgFwyM+MBkGOOiXwGX
+	AOIOVdDDmi2wSgANoDxCsFxJnCn3UY7OBfjud0/T9jP7xsdw6MWsOQqA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41n3rk2cs7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 18 Sep 2024 22:12:46 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48IKqNfH010466;
+	Wed, 18 Sep 2024 22:12:45 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41nyb8x0a4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 18 Sep 2024 22:12:45 +0000
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48IMCiIH038557;
+	Wed, 18 Sep 2024 22:12:44 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 41nyb8x09t-1;
+	Wed, 18 Sep 2024 22:12:44 +0000
+From: Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
+To: 
+Cc: saeed.mirzamohammadi@oracle.com, Florian Westphal <fw@strlen.de>,
+        Eric Dumazet <edumazet@google.com>,
+        xingwei lee <xrivendell7@gmail.com>, yue sun <samsun1006219@gmail.com>,
+        syzbot+e5167d7144a62715044c@syzkaller.appspotmail.com,
+        Paolo Abeni <pabeni@redhat.com>, Sasha Levin <sashal@kernel.org>,
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Subject: [PATCH 5.15.y 1/1] inet: inet_defrag: prevent sk release while still in use
+Date: Wed, 18 Sep 2024 15:12:28 -0700
+Message-ID: <20240918221230.3079874-1-saeed.mirzamohammadi@oracle.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-18_14,2024-09-18_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0
+ adultscore=0 malwarescore=0 suspectscore=0 phishscore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2408220000 definitions=main-2409180147
+X-Proofpoint-ORIG-GUID: L41KKXkU7Z3G-KqMIeF3n8OR9OQ6ySY8
+X-Proofpoint-GUID: L41KKXkU7Z3G-KqMIeF3n8OR9OQ6ySY8
 
-On Thu, 12 Sep 2024, Jiqian Chen wrote:
-> In PVH dom0, the gsis don't get registered, but the gsi of
-> a passthrough device must be configured for it to be able to be
-> mapped into a domU.
-> 
-> When assigning a device to passthrough, proactively setup the gsi
-> of the device during that process.
-> 
-> Signed-off-by: Jiqian Chen <Jiqian.Chen@amd.com>
-> Signed-off-by: Huang Rui <ray.huang@amd.com>
-> Signed-off-by: Jiqian Chen <Jiqian.Chen@amd.com>
+From: Florian Westphal <fw@strlen.de>
 
-Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
+[ Upstream commit 18685451fc4e546fc0e718580d32df3c0e5c8272 ]
 
+ip_local_out() and other functions can pass skb->sk as function argument.
 
-> ---
-> v8->v9 changes:
-> Moved the calling of xen_acpi_get_gsi_info under check "if (xen_initial_domain() && xen_pvh_domain())" to prevent it is called in PV dom0.
-> Removed Reviewed-by of Stefano.
-> 
-> v7->v8 changes:
-> Used CONFIG_XEN_ACPI instead of CONFIG_ACPI to wrap codes.
-> 
-> v6->v7 changes:
-> Moved the implementation of function xen_acpi_get_gsi_info to file drivers/xen/acpi.c, that modification is more convenient for the subsequent patch to obtain gsi.
-> 
-> v5->v6 changes:
-> No.
-> 
-> v4->v5 changes:
-> Added Reviewed-by of Stefano.
-> 
-> v3->v4 changes:
-> Removed map_pirq from xen_pvh_passthrough_gsi since let pvh calls map_pirq here is not right.
-> 
-> v2->v3 changes:
-> Abandoned previous implementations that called unmask_irq, and change to do setup_gsi and map_pirq for passthrough device in pcistub_init_device.
-> ---
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202406090859.KW3eeESv-lkp@intel.com/
-> ---
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202405172132.TazuVpPo-lkp@intel.com/
-> ---
->  arch/x86/xen/enlighten_pvh.c       | 23 ++++++++++++++
->  drivers/acpi/pci_irq.c             |  2 +-
->  drivers/xen/acpi.c                 | 50 ++++++++++++++++++++++++++++++
->  drivers/xen/xen-pciback/pci_stub.c | 20 ++++++++++++
->  include/linux/acpi.h               |  1 +
->  include/xen/acpi.h                 | 18 +++++++++++
->  6 files changed, 113 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/xen/enlighten_pvh.c b/arch/x86/xen/enlighten_pvh.c
-> index 728a4366ca85..bf68c329fc01 100644
-> --- a/arch/x86/xen/enlighten_pvh.c
-> +++ b/arch/x86/xen/enlighten_pvh.c
-> @@ -4,6 +4,7 @@
->  #include <linux/mm.h>
->  
->  #include <xen/hvc-console.h>
-> +#include <xen/acpi.h>
->  
->  #include <asm/bootparam.h>
->  #include <asm/io_apic.h>
-> @@ -28,6 +29,28 @@
->  bool __ro_after_init xen_pvh;
->  EXPORT_SYMBOL_GPL(xen_pvh);
->  
-> +#ifdef CONFIG_XEN_DOM0
-> +int xen_pvh_setup_gsi(int gsi, int trigger, int polarity)
-> +{
-> +	int ret;
-> +	struct physdev_setup_gsi setup_gsi;
-> +
-> +	setup_gsi.gsi = gsi;
-> +	setup_gsi.triggering = (trigger == ACPI_EDGE_SENSITIVE ? 0 : 1);
-> +	setup_gsi.polarity = (polarity == ACPI_ACTIVE_HIGH ? 0 : 1);
-> +
-> +	ret = HYPERVISOR_physdev_op(PHYSDEVOP_setup_gsi, &setup_gsi);
-> +	if (ret == -EEXIST) {
-> +		xen_raw_printk("Already setup the GSI :%d\n", gsi);
-> +		ret = 0;
-> +	} else if (ret)
-> +		xen_raw_printk("Fail to setup GSI (%d)!\n", gsi);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(xen_pvh_setup_gsi);
-> +#endif
-> +
->  /*
->   * Reserve e820 UNUSABLE regions to inflate the memory balloon.
->   *
-> diff --git a/drivers/acpi/pci_irq.c b/drivers/acpi/pci_irq.c
-> index ff30ceca2203..630fe0a34bc6 100644
-> --- a/drivers/acpi/pci_irq.c
-> +++ b/drivers/acpi/pci_irq.c
-> @@ -288,7 +288,7 @@ static int acpi_reroute_boot_interrupt(struct pci_dev *dev,
->  }
->  #endif /* CONFIG_X86_IO_APIC */
->  
-> -static struct acpi_prt_entry *acpi_pci_irq_lookup(struct pci_dev *dev, int pin)
-> +struct acpi_prt_entry *acpi_pci_irq_lookup(struct pci_dev *dev, int pin)
->  {
->  	struct acpi_prt_entry *entry = NULL;
->  	struct pci_dev *bridge;
-> diff --git a/drivers/xen/acpi.c b/drivers/xen/acpi.c
-> index 6893c79fd2a1..9e2096524fbc 100644
-> --- a/drivers/xen/acpi.c
-> +++ b/drivers/xen/acpi.c
-> @@ -30,6 +30,7 @@
->   * IN THE SOFTWARE.
->   */
->  
-> +#include <linux/pci.h>
->  #include <xen/acpi.h>
->  #include <xen/interface/platform.h>
->  #include <asm/xen/hypercall.h>
-> @@ -75,3 +76,52 @@ int xen_acpi_notify_hypervisor_extended_sleep(u8 sleep_state,
->  	return xen_acpi_notify_hypervisor_state(sleep_state, val_a,
->  						val_b, true);
->  }
-> +
-> +struct acpi_prt_entry {
-> +	struct acpi_pci_id      id;
-> +	u8                      pin;
-> +	acpi_handle             link;
-> +	u32                     index;
-> +};
-> +
-> +int xen_acpi_get_gsi_info(struct pci_dev *dev,
-> +						  int *gsi_out,
-> +						  int *trigger_out,
-> +						  int *polarity_out)
-> +{
-> +	int gsi;
-> +	u8 pin;
-> +	struct acpi_prt_entry *entry;
-> +	int trigger = ACPI_LEVEL_SENSITIVE;
-> +	int polarity = acpi_irq_model == ACPI_IRQ_MODEL_GIC ?
-> +				      ACPI_ACTIVE_HIGH : ACPI_ACTIVE_LOW;
-> +
-> +	if (!dev || !gsi_out || !trigger_out || !polarity_out)
-> +		return -EINVAL;
-> +
-> +	pin = dev->pin;
-> +	if (!pin)
-> +		return -EINVAL;
-> +
-> +	entry = acpi_pci_irq_lookup(dev, pin);
-> +	if (entry) {
-> +		if (entry->link)
-> +			gsi = acpi_pci_link_allocate_irq(entry->link,
-> +							 entry->index,
-> +							 &trigger, &polarity,
-> +							 NULL);
-> +		else
-> +			gsi = entry->index;
-> +	} else
-> +		gsi = -1;
-> +
-> +	if (gsi < 0)
-> +		return -EINVAL;
-> +
-> +	*gsi_out = gsi;
-> +	*trigger_out = trigger;
-> +	*polarity_out = polarity;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(xen_acpi_get_gsi_info);
-> diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback/pci_stub.c
-> index 3e162c1753e2..8ce27333f54b 100644
-> --- a/drivers/xen/xen-pciback/pci_stub.c
-> +++ b/drivers/xen/xen-pciback/pci_stub.c
-> @@ -21,6 +21,9 @@
->  #include <xen/events.h>
->  #include <xen/pci.h>
->  #include <xen/xen.h>
-> +#ifdef CONFIG_XEN_ACPI
-> +#include <xen/acpi.h>
-> +#endif
->  #include <asm/xen/hypervisor.h>
->  #include <xen/interface/physdev.h>
->  #include "pciback.h"
-> @@ -367,6 +370,9 @@ static int pcistub_match(struct pci_dev *dev)
->  static int pcistub_init_device(struct pci_dev *dev)
->  {
->  	struct xen_pcibk_dev_data *dev_data;
-> +#ifdef CONFIG_XEN_ACPI
-> +	int gsi, trigger, polarity;
-> +#endif
->  	int err = 0;
->  
->  	dev_dbg(&dev->dev, "initializing...\n");
-> @@ -435,6 +441,20 @@ static int pcistub_init_device(struct pci_dev *dev)
->  			goto config_release;
->  		pci_restore_state(dev);
->  	}
-> +
-> +#ifdef CONFIG_XEN_ACPI
-> +	if (xen_initial_domain() && xen_pvh_domain()) {
-> +		err = xen_acpi_get_gsi_info(dev, &gsi, &trigger, &polarity);
-> +		if (err) {
-> +			dev_err(&dev->dev, "Fail to get gsi info!\n");
-> +			goto config_release;
-> +		}
-> +		err = xen_pvh_setup_gsi(gsi, trigger, polarity);
-> +		if (err)
-> +			goto config_release;
-> +	}
-> +#endif
-> +
->  	/* Now disable the device (this also ensures some private device
->  	 * data is setup before we export)
->  	 */
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index 0687a442fec7..02ded9f53a6b 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -362,6 +362,7 @@ void acpi_unregister_gsi (u32 gsi);
->  
->  struct pci_dev;
->  
-> +struct acpi_prt_entry *acpi_pci_irq_lookup(struct pci_dev *dev, int pin);
->  int acpi_pci_irq_enable (struct pci_dev *dev);
->  void acpi_penalize_isa_irq(int irq, int active);
->  bool acpi_isa_irq_available(int irq);
-> diff --git a/include/xen/acpi.h b/include/xen/acpi.h
-> index b1e11863144d..3bcfe82d9078 100644
-> --- a/include/xen/acpi.h
-> +++ b/include/xen/acpi.h
-> @@ -67,10 +67,28 @@ static inline void xen_acpi_sleep_register(void)
->  		acpi_suspend_lowlevel = xen_acpi_suspend_lowlevel;
->  	}
->  }
-> +int xen_pvh_setup_gsi(int gsi, int trigger, int polarity);
-> +int xen_acpi_get_gsi_info(struct pci_dev *dev,
-> +						  int *gsi_out,
-> +						  int *trigger_out,
-> +						  int *polarity_out);
->  #else
->  static inline void xen_acpi_sleep_register(void)
->  {
->  }
-> +
-> +static inline int xen_pvh_setup_gsi(int gsi, int trigger, int polarity)
-> +{
-> +	return -1;
-> +}
-> +
-> +static inline int xen_acpi_get_gsi_info(struct pci_dev *dev,
-> +						  int *gsi_out,
-> +						  int *trigger_out,
-> +						  int *polarity_out)
-> +{
-> +	return -1;
-> +}
->  #endif
->  
->  #endif	/* _XEN_ACPI_H */
-> -- 
-> 2.34.1
-> 
+If the skb is a fragment and reassembly happens before such function call
+returns, the sk must not be released.
+
+This affects skb fragments reassembled via netfilter or similar
+modules, e.g. openvswitch or ct_act.c, when run as part of tx pipeline.
+
+Eric Dumazet made an initial analysis of this bug.  Quoting Eric:
+  Calling ip_defrag() in output path is also implying skb_orphan(),
+  which is buggy because output path relies on sk not disappearing.
+
+  A relevant old patch about the issue was :
+  8282f27449bf ("inet: frag: Always orphan skbs inside ip_defrag()")
+
+  [..]
+
+  net/ipv4/ip_output.c depends on skb->sk being set, and probably to an
+  inet socket, not an arbitrary one.
+
+  If we orphan the packet in ipvlan, then downstream things like FQ
+  packet scheduler will not work properly.
+
+  We need to change ip_defrag() to only use skb_orphan() when really
+  needed, ie whenever frag_list is going to be used.
+
+Eric suggested to stash sk in fragment queue and made an initial patch.
+However there is a problem with this:
+
+If skb is refragmented again right after, ip_do_fragment() will copy
+head->sk to the new fragments, and sets up destructor to sock_wfree.
+IOW, we have no choice but to fix up sk_wmem accouting to reflect the
+fully reassembled skb, else wmem will underflow.
+
+This change moves the orphan down into the core, to last possible moment.
+As ip_defrag_offset is aliased with sk_buff->sk member, we must move the
+offset into the FRAG_CB, else skb->sk gets clobbered.
+
+This allows to delay the orphaning long enough to learn if the skb has
+to be queued or if the skb is completing the reasm queue.
+
+In the former case, things work as before, skb is orphaned.  This is
+safe because skb gets queued/stolen and won't continue past reasm engine.
+
+In the latter case, we will steal the skb->sk reference, reattach it to
+the head skb, and fix up wmem accouting when inet_frag inflates truesize.
+
+Fixes: 7026b1ddb6b8 ("netfilter: Pass socket pointer down through okfn().")
+Diagnosed-by: Eric Dumazet <edumazet@google.com>
+Reported-by: xingwei lee <xrivendell7@gmail.com>
+Reported-by: yue sun <samsun1006219@gmail.com>
+Reported-by: syzbot+e5167d7144a62715044c@syzkaller.appspotmail.com
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Link: https://lore.kernel.org/r/20240326101845.30836-1-fw@strlen.de
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+(cherry picked from commit 7d0567842b78390dd9b60f00f1d8f838d540e325)
+
+CVE: CVE-2024-26921
+Cc: stable@vger.kernel.org # 5.15
+
+Signed-off-by: Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
+---
+ include/linux/skbuff.h                  |  7 +--
+ net/ipv4/inet_fragment.c                | 70 ++++++++++++++++++++-----
+ net/ipv4/ip_fragment.c                  |  2 +-
+ net/ipv6/netfilter/nf_conntrack_reasm.c |  2 +-
+ 4 files changed, 60 insertions(+), 21 deletions(-)
+
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index b230c422dc3b9..7f52562fac19c 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -660,8 +660,6 @@ typedef unsigned char *sk_buff_data_t;
+  *	@rbnode: RB tree node, alternative to next/prev for netem/tcp
+  *	@list: queue head
+  *	@sk: Socket we are owned by
+- *	@ip_defrag_offset: (aka @sk) alternate use of @sk, used in
+- *		fragmentation management
+  *	@dev: Device we arrived on/are leaving by
+  *	@dev_scratch: (aka @dev) alternate use of @dev when @dev would be %NULL
+  *	@cb: Control buffer. Free for use by every layer. Put private vars here
+@@ -778,10 +776,7 @@ struct sk_buff {
+ 		struct list_head	list;
+ 	};
+ 
+-	union {
+-		struct sock		*sk;
+-		int			ip_defrag_offset;
+-	};
++	struct sock		*sk;
+ 
+ 	union {
+ 		ktime_t		tstamp;
+diff --git a/net/ipv4/inet_fragment.c b/net/ipv4/inet_fragment.c
+index 341096807100c..7e38170111999 100644
+--- a/net/ipv4/inet_fragment.c
++++ b/net/ipv4/inet_fragment.c
+@@ -24,6 +24,8 @@
+ #include <net/ip.h>
+ #include <net/ipv6.h>
+ 
++#include "../core/sock_destructor.h"
++
+ /* Use skb->cb to track consecutive/adjacent fragments coming at
+  * the end of the queue. Nodes in the rb-tree queue will
+  * contain "runs" of one or more adjacent fragments.
+@@ -39,6 +41,7 @@ struct ipfrag_skb_cb {
+ 	};
+ 	struct sk_buff		*next_frag;
+ 	int			frag_run_len;
++	int			ip_defrag_offset;
+ };
+ 
+ #define FRAG_CB(skb)		((struct ipfrag_skb_cb *)((skb)->cb))
+@@ -390,12 +393,12 @@ int inet_frag_queue_insert(struct inet_frag_queue *q, struct sk_buff *skb,
+ 	 */
+ 	if (!last)
+ 		fragrun_create(q, skb);  /* First fragment. */
+-	else if (last->ip_defrag_offset + last->len < end) {
++	else if (FRAG_CB(last)->ip_defrag_offset + last->len < end) {
+ 		/* This is the common case: skb goes to the end. */
+ 		/* Detect and discard overlaps. */
+-		if (offset < last->ip_defrag_offset + last->len)
++		if (offset < FRAG_CB(last)->ip_defrag_offset + last->len)
+ 			return IPFRAG_OVERLAP;
+-		if (offset == last->ip_defrag_offset + last->len)
++		if (offset == FRAG_CB(last)->ip_defrag_offset + last->len)
+ 			fragrun_append_to_last(q, skb);
+ 		else
+ 			fragrun_create(q, skb);
+@@ -412,13 +415,13 @@ int inet_frag_queue_insert(struct inet_frag_queue *q, struct sk_buff *skb,
+ 
+ 			parent = *rbn;
+ 			curr = rb_to_skb(parent);
+-			curr_run_end = curr->ip_defrag_offset +
++			curr_run_end = FRAG_CB(curr)->ip_defrag_offset +
+ 					FRAG_CB(curr)->frag_run_len;
+-			if (end <= curr->ip_defrag_offset)
++			if (end <= FRAG_CB(curr)->ip_defrag_offset)
+ 				rbn = &parent->rb_left;
+ 			else if (offset >= curr_run_end)
+ 				rbn = &parent->rb_right;
+-			else if (offset >= curr->ip_defrag_offset &&
++			else if (offset >= FRAG_CB(curr)->ip_defrag_offset &&
+ 				 end <= curr_run_end)
+ 				return IPFRAG_DUP;
+ 			else
+@@ -432,7 +435,7 @@ int inet_frag_queue_insert(struct inet_frag_queue *q, struct sk_buff *skb,
+ 		rb_insert_color(&skb->rbnode, &q->rb_fragments);
+ 	}
+ 
+-	skb->ip_defrag_offset = offset;
++	FRAG_CB(skb)->ip_defrag_offset = offset;
+ 
+ 	return IPFRAG_OK;
+ }
+@@ -442,13 +445,28 @@ void *inet_frag_reasm_prepare(struct inet_frag_queue *q, struct sk_buff *skb,
+ 			      struct sk_buff *parent)
+ {
+ 	struct sk_buff *fp, *head = skb_rb_first(&q->rb_fragments);
+-	struct sk_buff **nextp;
++	void (*destructor)(struct sk_buff *);
++	unsigned int orig_truesize = 0;
++	struct sk_buff **nextp = NULL;
++	struct sock *sk = skb->sk;
+ 	int delta;
+ 
++	if (sk && is_skb_wmem(skb)) {
++		/* TX: skb->sk might have been passed as argument to
++		 * dst->output and must remain valid until tx completes.
++		 *
++		 * Move sk to reassembled skb and fix up wmem accounting.
++		 */
++		orig_truesize = skb->truesize;
++		destructor = skb->destructor;
++	}
++
+ 	if (head != skb) {
+ 		fp = skb_clone(skb, GFP_ATOMIC);
+-		if (!fp)
+-			return NULL;
++		if (!fp) {
++			head = skb;
++			goto out_restore_sk;
++		}
+ 		FRAG_CB(fp)->next_frag = FRAG_CB(skb)->next_frag;
+ 		if (RB_EMPTY_NODE(&skb->rbnode))
+ 			FRAG_CB(parent)->next_frag = fp;
+@@ -457,6 +475,12 @@ void *inet_frag_reasm_prepare(struct inet_frag_queue *q, struct sk_buff *skb,
+ 					&q->rb_fragments);
+ 		if (q->fragments_tail == skb)
+ 			q->fragments_tail = fp;
++
++		if (orig_truesize) {
++			/* prevent skb_morph from releasing sk */
++			skb->sk = NULL;
++			skb->destructor = NULL;
++		}
+ 		skb_morph(skb, head);
+ 		FRAG_CB(skb)->next_frag = FRAG_CB(head)->next_frag;
+ 		rb_replace_node(&head->rbnode, &skb->rbnode,
+@@ -464,13 +488,13 @@ void *inet_frag_reasm_prepare(struct inet_frag_queue *q, struct sk_buff *skb,
+ 		consume_skb(head);
+ 		head = skb;
+ 	}
+-	WARN_ON(head->ip_defrag_offset != 0);
++	WARN_ON(FRAG_CB(head)->ip_defrag_offset != 0);
+ 
+ 	delta = -head->truesize;
+ 
+ 	/* Head of list must not be cloned. */
+ 	if (skb_unclone(head, GFP_ATOMIC))
+-		return NULL;
++		goto out_restore_sk;
+ 
+ 	delta += head->truesize;
+ 	if (delta)
+@@ -486,7 +510,7 @@ void *inet_frag_reasm_prepare(struct inet_frag_queue *q, struct sk_buff *skb,
+ 
+ 		clone = alloc_skb(0, GFP_ATOMIC);
+ 		if (!clone)
+-			return NULL;
++			goto out_restore_sk;
+ 		skb_shinfo(clone)->frag_list = skb_shinfo(head)->frag_list;
+ 		skb_frag_list_init(head);
+ 		for (i = 0; i < skb_shinfo(head)->nr_frags; i++)
+@@ -503,6 +527,21 @@ void *inet_frag_reasm_prepare(struct inet_frag_queue *q, struct sk_buff *skb,
+ 		nextp = &skb_shinfo(head)->frag_list;
+ 	}
+ 
++out_restore_sk:
++	if (orig_truesize) {
++		int ts_delta = head->truesize - orig_truesize;
++
++		/* if this reassembled skb is fragmented later,
++		 * fraglist skbs will get skb->sk assigned from head->sk,
++		 * and each frag skb will be released via sock_wfree.
++		 *
++		 * Update sk_wmem_alloc.
++		 */
++		head->sk = sk;
++		head->destructor = destructor;
++		refcount_add(ts_delta, &sk->sk_wmem_alloc);
++	}
++
+ 	return nextp;
+ }
+ EXPORT_SYMBOL(inet_frag_reasm_prepare);
+@@ -510,6 +549,8 @@ EXPORT_SYMBOL(inet_frag_reasm_prepare);
+ void inet_frag_reasm_finish(struct inet_frag_queue *q, struct sk_buff *head,
+ 			    void *reasm_data, bool try_coalesce)
+ {
++	struct sock *sk = is_skb_wmem(head) ? head->sk : NULL;
++	const unsigned int head_truesize = head->truesize;
+ 	struct sk_buff **nextp = (struct sk_buff **)reasm_data;
+ 	struct rb_node *rbn;
+ 	struct sk_buff *fp;
+@@ -572,6 +613,9 @@ void inet_frag_reasm_finish(struct inet_frag_queue *q, struct sk_buff *head,
+ 	skb_mark_not_on_list(head);
+ 	head->prev = NULL;
+ 	head->tstamp = q->stamp;
++
++	if (sk)
++		refcount_add(sum_truesize - head_truesize, &sk->sk_wmem_alloc);
+ }
+ EXPORT_SYMBOL(inet_frag_reasm_finish);
+ 
+diff --git a/net/ipv4/ip_fragment.c b/net/ipv4/ip_fragment.c
+index fad803d2d711e..ec2264adf2a6a 100644
+--- a/net/ipv4/ip_fragment.c
++++ b/net/ipv4/ip_fragment.c
+@@ -377,6 +377,7 @@ static int ip_frag_queue(struct ipq *qp, struct sk_buff *skb)
+ 	}
+ 
+ 	skb_dst_drop(skb);
++	skb_orphan(skb);
+ 	return -EINPROGRESS;
+ 
+ insert_error:
+@@ -479,7 +480,6 @@ int ip_defrag(struct net *net, struct sk_buff *skb, u32 user)
+ 	struct ipq *qp;
+ 
+ 	__IP_INC_STATS(net, IPSTATS_MIB_REASMREQDS);
+-	skb_orphan(skb);
+ 
+ 	/* Lookup (or create) queue header */
+ 	qp = ip_find(net, ip_hdr(skb), user, vif);
+diff --git a/net/ipv6/netfilter/nf_conntrack_reasm.c b/net/ipv6/netfilter/nf_conntrack_reasm.c
+index 2e5b090d7c89f..0ec5ec5a5b45a 100644
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -297,6 +297,7 @@ static int nf_ct_frag6_queue(struct frag_queue *fq, struct sk_buff *skb,
+ 	}
+ 
+ 	skb_dst_drop(skb);
++	skb_orphan(skb);
+ 	return -EINPROGRESS;
+ 
+ insert_error:
+@@ -472,7 +473,6 @@ int nf_ct_frag6_gather(struct net *net, struct sk_buff *skb, u32 user)
+ 	hdr = ipv6_hdr(skb);
+ 	fhdr = (struct frag_hdr *)skb_transport_header(skb);
+ 
+-	skb_orphan(skb);
+ 	fq = fq_find(net, fhdr->identification, user, hdr,
+ 		     skb->dev ? skb->dev->ifindex : 0);
+ 	if (fq == NULL) {
+-- 
+2.45.2
+
 
