@@ -1,183 +1,166 @@
-Return-Path: <linux-kernel+bounces-332470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FC1E97BA32
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:37:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C64697BA33
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02E942821D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:37:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22B0A1F21C86
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BC3177999;
-	Wed, 18 Sep 2024 09:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4172178381;
+	Wed, 18 Sep 2024 09:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bfDmmr8N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWheZ4Hu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70E62F2E;
-	Wed, 18 Sep 2024 09:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167C31304BA;
+	Wed, 18 Sep 2024 09:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726652267; cv=none; b=PmyTeGPj+Pz64bJaWSah+43VLqzs0xyy8uLuoqWMB/AsUzkmWUW4ObuW7Zl5mUKioeX/aQmcxls0cyRRviHmDA9LLxGK3/vGL9LMDb4doorUVy1jFe7kP0BFijeslmgBraqspl9AW6uMSP9DBZtZ6lNXe3D9MB6LWw3k9gSD3XA=
+	t=1726652323; cv=none; b=shtke4WiPi8MOqYzfWItwOq1KjpvxRGz0oifm7C/MU4FFleV6uR4NGBh3jQeU/Qmceou6DutPTXpSq1UhT0XsJFu5A56cEhSlzSN7SsYNzL66Xz+Xim0AVhJvSxh9ltTGa2sixNAl81IHbZgLsmWk/o9llfm53PeEISynu0AZEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726652267; c=relaxed/simple;
-	bh=/YXKhttM8zuIxIN2nJwr0w1M7H9NGUcLtOuFqlKqeEA=;
+	s=arc-20240116; t=1726652323; c=relaxed/simple;
+	bh=C3/KtoOjXS3syinX0b/v/9//WNzoLzmE4OE8VTLsAu8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aVphvudnuNLbEam3qI7eUs9L9MHPuNp6CxaKWixlanfC53T4+GRGPyO4XHGzylSAA6uFKUV9FLfap7zOtUWpqtmYNqHzjue+TnvAHwn/7SwSxtadw8nUaEw2aCy3bDRObgjyxStbnt1dCdNkZ11mv1Ke3CLUFErlRA3NG2fXNO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bfDmmr8N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D067C4CECD;
-	Wed, 18 Sep 2024 09:37:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FaNJuGeKAHRkaMns3lkBx/6CobGcXDp1sxz8JG9/QF0Ra/TFWJijZ+3mFMtNG4GcDRT/ybEsijl/la64iDzTbMKGaaJAqZnVmYGXSVUub2ddjOi6XuEJE5LIU99yc7wrWDEbwjKe/pnOIHCJXUorWuzuqAHb1MwKovnmVqh0MaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWheZ4Hu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3797DC4CEC3;
+	Wed, 18 Sep 2024 09:38:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726652267;
-	bh=/YXKhttM8zuIxIN2nJwr0w1M7H9NGUcLtOuFqlKqeEA=;
+	s=k20201202; t=1726652322;
+	bh=C3/KtoOjXS3syinX0b/v/9//WNzoLzmE4OE8VTLsAu8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bfDmmr8NP+uNEGat9zwE4x/mVW1JZYse1XNkUuiEEDbK/cFLPhGCDHt7TKtPJ4NNn
-	 N6XGkK+u3SX0FOpsepD29fY+1TwzPijd5DjvvQcy/HH0MNd3/kP7L5M3JVrbScoUP2
-	 IbDj5kLpSNPP4qaMNv4xWHi70/iFxf2FlysUOqANq1+6bdc/DcBJZMTyU4Qys26y1K
-	 cbOkhtIVXmVqv1VSelR71BnSSscvqB6YBUePi36XDE4MUGc10YMh2vc84fozJJaPUl
-	 g7Q/z5I1RzCPCXrbu/Q6NYcD9H9iEAp84i/UPJ9aBYLhGkZxkkfX+d9K2h5+hf6GiA
-	 kkIEqIMHI8gxw==
-Date: Wed, 18 Sep 2024 11:37:42 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org
-Subject: Re: [PATCH 12/19] kthread: Default affine kthread to its preferred
- NUMA node
-Message-ID: <ZuqfZhvWB5ox4nh3@localhost.localdomain>
-References: <20240916224925.20540-1-frederic@kernel.org>
- <20240916224925.20540-13-frederic@kernel.org>
- <ZukhKXxErPOaXtAL@tiehlicka>
- <ZulbS1MvZVVYe-YO@localhost.localdomain>
- <Zuli7SGxkbEbQraJ@tiehlicka>
+	b=PWheZ4Hue3Uq+r+vaofGUkHffufuRf00EpqkatanUMUYIOxcDDwdP2z0kFFCM3xZH
+	 Z40oNJGXdG5gir/iWdtiSFANT4dZRZ8qOJ40YgMGNHSAHB1BnHfgbHh1JtK8ghn3YA
+	 6YcNmLTMPYkwU3aHvazPJbB5zASOM7+1NEN+TNc4ruMIWGv70qHhLuzQ6If8ahL+IP
+	 Re6gHHUlLI8/7bhfvISUu4tTFr4FeHbY7zCBsLhL+MJEWiblABEnnQ00fBMFMcnOzF
+	 o4OHIbVpJuZTj0rEDykMb3mysqUbh4UzzcIapaq67OGGp1Atqc+e0N3+TIgMEX7iqN
+	 1BIVal3oe2cZw==
+Date: Wed, 18 Sep 2024 02:38:33 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	linux-toolchains@vger.kernel.org
+Subject: Re: [RFC/PATCHSET 0/5] perf tools: Support deferred user callchains
+ (v2)
+Message-ID: <ZuqfmXairuIo_Px4@google.com>
+References: <20240917222820.197594-1-namhyung@kernel.org>
+ <CAP-5=fVV9wzp7L71VJxaqzuURFtr1LAg0Qmk5uqmzs3By1Exow@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zuli7SGxkbEbQraJ@tiehlicka>
+In-Reply-To: <CAP-5=fVV9wzp7L71VJxaqzuURFtr1LAg0Qmk5uqmzs3By1Exow@mail.gmail.com>
 
-Le Tue, Sep 17, 2024 at 01:07:25PM +0200, Michal Hocko a écrit :
-> On Tue 17-09-24 12:34:51, Frederic Weisbecker wrote:
-> > Le Tue, Sep 17, 2024 at 08:26:49AM +0200, Michal Hocko a écrit :
-> > > On Tue 17-09-24 00:49:16, Frederic Weisbecker wrote:
-> > > > Kthreads attached to a preferred NUMA node for their task structure
-> > > > allocation can also be assumed to run preferrably within that same node.
-> > > > 
-> > > > A more precise affinity is usually notified by calling
-> > > > kthread_create_on_cpu() or kthread_bind[_mask]() before the first wakeup.
-> > > > 
-> > > > For the others, a default affinity to the node is desired and sometimes
-> > > > implemented with more or less success when it comes to deal with hotplug
-> > > > events and nohz_full / CPU Isolation interactions:
-> > > > 
-> > > > - kcompactd is affine to its node and handles hotplug but not CPU Isolation
-> > > > - kswapd is affine to its node and ignores hotplug and CPU Isolation
-> > > > - A bunch of drivers create their kthreads on a specific node and
-> > > >   don't take care about affining further.
-> > > > 
-> > > > Handle that default node affinity preference at the generic level
-> > > > instead, provided a kthread is created on an actual node and doesn't
-> > > > apply any specific affinity such as a given CPU or a custom cpumask to
-> > > > bind to before its first wake-up.
-> > > 
-> > > Makes sense.
-> > > 
-> > > > This generic handling is aware of CPU hotplug events and CPU isolation
-> > > > such that:
-> > > > 
-> > > > * When a housekeeping CPU goes up and is part of the node of a given
-> > > >   kthread, it is added to its applied affinity set (and
-> > > >   possibly the default last resort online housekeeping set is removed
-> > > >   from the set).
-> > > > 
-> > > > * When a housekeeping CPU goes down while it was part of the node of a
-> > > >   kthread, it is removed from the kthread's applied
-> > > >   affinity. The last resort is to affine the kthread to all online
-> > > >   housekeeping CPUs.
-> > > 
-> > > But I am not really sure about this part. Sure it makes sense to set the
-> > > affinity to exclude isolated CPUs but why do we care about hotplug
-> > > events at all. Let's say we offline all cpus from a given node (or
-> > > that all but isolated cpus are offline - is this even
-> > > realistic/reasonable usecase?). Wouldn't scheduler ignore the kthread's
-> > > affinity in such a case? In other words how is that different from
-> > > tasksetting an userspace task to a cpu that goes offline? We still do
-> > > allow such a task to run, right? We just do not care about affinity
-> > > anymore.
-> > 
-> > Suppose we have this artificial online set:
-> > 
-> > NODE 0 -> CPU 0
-> > NODE 1 -> CPU 1
-> > NODE 2 -> CPU 2
-> > 
-> > And we have nohz_full=1,2
-> > 
-> > So there is kswapd/2 that is affine to NODE 2 and thus CPU 2 for now.
-> > 
-> > Now CPU 2 goes offline. The scheduler migrates off all
-> > tasks. select_fallback_rq() for kswapd/2 doesn't find a suitable CPU
-> > to run to so it affines kswapd/2 to all remaining online CPUs (CPU 0, CPU 1)
-> > (see the "No more Mr. Nice Guy" comment).
-> > 
-> > But CPU 1 is nohz_full, so kswapd/2 could run on that isolated CPU. Unless we
-> > handle things before, like this patchset does.
+Hi Ian,
+
+On Wed, Sep 18, 2024 at 08:38:22AM +0200, Ian Rogers wrote:
+> On Wed, Sep 18, 2024 at 12:28â€¯AM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > Hello,
+> >
+> > This is a counterpart for Josh's kernel change v2 [1] to support deferred
+> > user callchains.  The change is transparent and users should not notice
+> > anything with the deferred callchains.
+> >
+> >   $ perf record -g sleep 1
+> >
+> > I added --[no-]merge-callchains option to control output of perf script.
+> > You can verify it has the deferred callchains like this:
+> >
+> >   $ perf script --no-merge-callchains
+> >   perf     801 [000]    18.031793:          1 cycles:P:
+> >           ffffffff91a14c36 __intel_pmu_enable_all.isra.0+0x56 ([kernel.kallsyms])
+> >           ffffffff91d373e9 perf_ctx_enable+0x39 ([kernel.kallsyms])
+> >           ffffffff91d36af7 event_function+0xd7 ([kernel.kallsyms])
+> >           ffffffff91d34222 remote_function+0x42 ([kernel.kallsyms])
+> >           ffffffff91c1ebe1 generic_exec_single+0x61 ([kernel.kallsyms])
+> >           ffffffff91c1edac smp_call_function_single+0xec ([kernel.kallsyms])
+> >           ffffffff91d37a9d event_function_call+0x10d ([kernel.kallsyms])
+> >           ffffffff91d33557 perf_event_for_each_child+0x37 ([kernel.kallsyms])
+> >           ffffffff91d47324 _perf_ioctl+0x204 ([kernel.kallsyms])
+> >           ffffffff91d47c43 perf_ioctl+0x33 ([kernel.kallsyms])
+> >           ffffffff91e2f216 __x64_sys_ioctl+0x96 ([kernel.kallsyms])
+> >           ffffffff9265f1ae do_syscall_64+0x9e ([kernel.kallsyms])
+> >           ffffffff92800130 entry_SYSCALL_64+0xb0 ([kernel.kallsyms])
+> >
+> >   perf     801 [000]    18.031814: DEFERRED CALLCHAIN
+> >                   7fb5fc22034b __GI___ioctl+0x3b (/usr/lib/x86_64-linux-gnu/libc.so.6)
+> >
+> >   ...
+> >
+> > When the callchain is merged (it's the default) it'd look like below:
+> >
+> >   $ perf script
+> >   perf     801 [000]    18.031793:          1 cycles:P:
+> >           ffffffff91a14c36 __intel_pmu_enable_all.isra.0+0x56 ([kernel.kallsyms])
+> >           ffffffff91d373e9 perf_ctx_enable+0x39 ([kernel.kallsyms])
+> >           ffffffff91d36af7 event_function+0xd7 ([kernel.kallsyms])
+> >           ffffffff91d34222 remote_function+0x42 ([kernel.kallsyms])
+> >           ffffffff91c1ebe1 generic_exec_single+0x61 ([kernel.kallsyms])
+> >           ffffffff91c1edac smp_call_function_single+0xec ([kernel.kallsyms])
+> >           ffffffff91d37a9d event_function_call+0x10d ([kernel.kallsyms])
+> >           ffffffff91d33557 perf_event_for_each_child+0x37 ([kernel.kallsyms])
+> >           ffffffff91d47324 _perf_ioctl+0x204 ([kernel.kallsyms])
+> >           ffffffff91d47c43 perf_ioctl+0x33 ([kernel.kallsyms])
+> >           ffffffff91e2f216 __x64_sys_ioctl+0x96 ([kernel.kallsyms])
+> >           ffffffff9265f1ae do_syscall_64+0x9e ([kernel.kallsyms])
+> >           ffffffff92800130 entry_SYSCALL_64+0xb0 ([kernel.kallsyms])
+> >                   7fb5fc22034b __GI___ioctl+0x3b (/usr/lib/x86_64-linux-gnu/libc.so.6)
+> >
+> >   ...
+> >
+> > Notice that the last line and it has the __GI___ioctl in the same
+> > callchain.  It should work with other tools like perf report.
 > 
-> But that is equally broken as before, no? CPU2 is isolated as well so it
-> doesn't really make much of a difference.
-
-Right. I should correct my example with nohz_full=1 only.
-
+> Hi Namhyung, I think this is interesting work!
 > 
-> > And note that adding isolcpus=domain,1,2 or setting 1,2 as isolated
-> > cpuset partition (like most isolated workloads should do) is not helping
-> > here. And I'm not sure this last resort scheduler code is the right place
-> > to handle isolated cpumasks.
+> The issue feels similar to leader sampling and some of the unpicking
+> of that we've been dealing with. With leader sampling it was added and
+> then the dispatch of events modified so that tools wouldn't see leader
+> samples, instead new events would be synthesized based on the leader
+> sample data. However, the leader sample event wasn't changed and so
+> now we have multiple repeated events and perf inject wouldn't just
+> pass through a perf data file.
 > 
-> Well, we would have the same situation with userspace tasks, no? Say I
-> have taskset -p 2 (because I want bidning to node2) and that CPU2 goes
-> offline. The task needs to be moved somewhere. And it would be last
-> resort logic to do that unless I am missing anything. Why should kernel
-> threads be any different?
-
-Good point.
-
+> What I'm expecting based on this description is that a deferred call
+> chain will be merged with a regular one, however, perf inject isn't
+> updated to drop the deferred callchain so now we have the deferred
+> callchain event twice.
 > 
-> > So it looks necessary, unless I am missing something else?
-> 
-> I am not objecting to patch per se. I am just not sure this is really
-> needed. It is great to have kernel threads bound to non isolated cpus by
-> default if they have node preferences. But as soon as somebody starts
-> offlining cpus excessively and make the initial cpumask empty then
-> select_fallback_rq sounds like the right thing to do.
-> 
-> Not my call though. I was just curious why this is needed and it seems
-> to me you are looking for some sort of correctness for broken setups.
+> My feeling is that making the dispatch of events to tools "smart" is a
+> false economy. Tools can add handlers for these events easily enough.
+> What's harder is undoing the smartness when it does things that lead
+> to duplicated events and the like. I'm not a fan of how leader
+> sampling was implemented and I still think it odd that with perf
+> script we see invented events when trying to just dump the contents of
+> a perf.data file.
 
-It looks like it makes sense to explore that path. We still need the
-cpu up probe to reaffine when a suitable target comes up. But it seems
-the CPU down part can be handled by select_fallback_rq. I'll try that.
+That's why I added perf_tool.merge_deferred_callchains flag to control
+the behavior.  I haven't implemented it to perf inject because it covers
+a couple of different use cases.  I believe the default behavior is to
+not invoke the callback for deferred callchains during perf inject and
+each sample will get the full callchains.  But you can add a new
+callback and set perf_tool.merge_deferred_callchains to false.
 
-Thanks.
-
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
+Thanks,
+Namhyung
 
