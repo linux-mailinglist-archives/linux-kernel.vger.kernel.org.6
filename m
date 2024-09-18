@@ -1,149 +1,152 @@
-Return-Path: <linux-kernel+bounces-332708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3124D97BD74
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:57:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4CB497BD7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34E681C21F1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:57:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DCE0288FB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7856C18C35A;
-	Wed, 18 Sep 2024 13:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B730618D625;
+	Wed, 18 Sep 2024 13:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="oHrFwWXg"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="HBllCe5s"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3B218C333
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303CC18C92A
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726667823; cv=none; b=uJn25QXZJe6Auou7MztEPi3yqHUtmG7k3iu/9XN0IJb5e0EYuvz7ecXoBJ+eXx8f7OTGRAEDe6NOIXhP6p9UB316uaU746gZFlH0A2ypOnxbBcQkpmOf5wBoNuq7GjSqFqwzJ4+MeEekyprgCyb7U9CaM8Na/kKBPEnP/G3pPFw=
+	t=1726667897; cv=none; b=t9vtRi+idcZyKMy0968NmfD3LQ76D3Jo/ljwtoiZ1ShvlvjuaxxzGvAxeX+EzA94gRQoYNL48VAJglriuyu1b+Jd6M5DRhudNCYerCi1WpvRAo1ZyEZBLLVaikCmpPZ6pheTY7deGoaQkQdhqe0X/sSWCW/gjbTda6yrbgYCmJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726667823; c=relaxed/simple;
-	bh=h4G16277CUKZO25r98W1SYGS+5fOC+uxsWecCkOGJu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G1h+kZVaZsV+5u6R4Xx52tEkaEW7oCScZiZ02m2xLA7fGUWDq9xhNPYTcpVTwcIZRra21dlSOpm8NGFrOnxdGYDjm3DuUVAyJBZF4+m7+8jjg4SiQiOu60/cI+/QuSDr0X2WXrmGV64nqSHGTiv3O5T3o/+jROBzvOvmSOO2FVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=oHrFwWXg; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d64b27c45so902820966b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:57:01 -0700 (PDT)
+	s=arc-20240116; t=1726667897; c=relaxed/simple;
+	bh=uRjf76+ialIXRhrRcRnhdzxrLmruMKeJXsltkA5bYqY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T+RLS1/hDlqkgrFKRJEAuYCeEtiAldUHjSA6edb9lhaYQCi6fjrlQ94qa860H3j+emCGPYGwDkLfVwUHV+pr3BsTdVyyyf1NnpHrlpcLEaWkY4OB6jpsbEfgirbtbsF/adwOPqME1n28/WGE6sOCV2Zn1VU28XGG/y/87/fpOkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=HBllCe5s; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d51a7d6f5so796779366b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:58:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1726667820; x=1727272620; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jw9R7zHcU6wAlHrH9jZChqK3i5AsMOvAHMYccAaAi1I=;
-        b=oHrFwWXgVckNNjSSZWUA00ZIgWHn6alyStqAMQUgpd6mOZJij/c1fKzdRi6HfWjpLY
-         aMkpINcCExm4nqtvsurJcNTgfYdfhgw58uvV93fRHCH8RRQz9VA7s6BW6rbaQByJ+9Ra
-         1q/FIVGhc6KAmPgb5BAP9lk0QKu59+VJ/g7fUmGCXtJs9IZ8cCtyWt4m78KN/IgVg4wc
-         ObgOHLKDmvIdIDu6KJED+8Y9oUEYlEm5HyzczReMgBOujZl2jSPO+W/4CrYzpqpi/Nm4
-         W5BzluCW6EmS8TQz719/RCBaPPEi7lRXABJUQbMg583kOVQtx0ju/Yj4S343qb1z0kpw
-         Fk9g==
+        d=fastly.com; s=google; t=1726667893; x=1727272693; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SPn7NyA8EvFtDI+rj2RU3nMqRoNcoHgRdtft+sybg/g=;
+        b=HBllCe5sMkM5IkvbFss4nozGoq+z9jbUC079gOJYxhnSsUQt+OQip/BoTa4wzIXAXP
+         3wEZfA65XYUsTvCXshf+hWSPrhKU3KRAvsXmz7f9eSM1v+fhReDoZmD2ewoQzouc4MC0
+         qC7UVRAJt37KNI9a8HDtTlGoOWTqi1H/3F8Y0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726667820; x=1727272620;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jw9R7zHcU6wAlHrH9jZChqK3i5AsMOvAHMYccAaAi1I=;
-        b=lEDgqNgMz/Q4hTmsKOS8wHx7qT4fTbB9wmhMs1hijcYirs+jywqalLMUY6BifkmT+6
-         4mPk18YuzfhLVjYf8DTDVgLmE//V/T0P4zD3EEtdC2Zxc7uk+oTRsf9L1Hum7GWUCnlX
-         OrIpDLyJd03W0z+TJfBsEt/19cT5LeM+iuHwVv+EofauKvFbB19V6346zPvWhMVuYh3S
-         Lt5ZjZ5xUsGw4z/XT4sBifDGGYF9uj5+WGC/dgZtrpkgbBxjOpbjk5C/XH/AOAcdt7su
-         smDXacHS/RZFDM5sBXosdKOkODpZ6RChAV/b8rJWrRFuY4/qRWkklzUE+qoextipCa1R
-         Ckzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiS7HnGzZZp+GJIWp6K7WsJQ4iyH2S9ptxLrBlFyKG6vQQEm1l54nh6mHu18Q6JPTJzM1fWazTrHl7URA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWffw4ofS2u+b6qrNzKJZ8gm9pnejzTzwR7B585coBoHN6P6UO
-	V3ch5vY5HoFVJkqA3GwBSgI9/Gn27FBqp+9kV1BdjWUJ8qVeXjn4sTmWDZoaPac=
-X-Google-Smtp-Source: AGHT+IEnUf2BBLrMw6AF9knDQNnY2Bh71rIsr9GcMfumfal10/pMPKRiwjmEtak/OEyud7HuRes7Yg==
-X-Received: by 2002:a17:907:971b:b0:a89:ffd0:352f with SMTP id a640c23a62f3a-a90481045d7mr2005808166b.48.1726667820268;
-        Wed, 18 Sep 2024 06:57:00 -0700 (PDT)
-Received: from localhost ([83.68.141.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a906109662fsm594583266b.38.2024.09.18.06.56.59
+        d=1e100.net; s=20230601; t=1726667893; x=1727272693;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SPn7NyA8EvFtDI+rj2RU3nMqRoNcoHgRdtft+sybg/g=;
+        b=oG5a5uyvRlw2772g0rAIIW/R9yLaE558GYA+B1fblNdHjK0iBCSTpeihl7l6ZbFIjw
+         pkWT9WifCjnIFeb7HcSwzKiLRDiGzJjZuihtvSDt5JDOgWDhjIeHFuDFRfkzHCcOmrLI
+         jVJct1BshzPRslrtiRCX9xEuwXdY4lvY+kLW7PodRo2GerTNpr9hw+NAlv6TM4i5Y3P0
+         BTQpT7+b9iUPSr3vKL1y8c9s84yZu0gwZugS+fAmbPibWZWy0yQYIqRT8mBP4TLEnMKz
+         TwXFtJap1lautryjXdGCFkTTIuE3erGq/Te0ABfZSWYUi38j+pcCzUQxK7hRTzwlAxIN
+         u+jw==
+X-Forwarded-Encrypted: i=1; AJvYcCXzO2G1AIzqlWbeC9Mg/B4Eqat7haTMsd1fUGsJ5WpD2acjPv/7aWIW0QFSuY5sMs7rE4QNm1pwb5mG/nE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn7zo8zZUYbytEb5XzB/srRV3VTEIaNVABmZlgabkKltWdMww/
+	dV3VPUieA6tw4llFlTjPzmnU/ZKM0j6t3kgSyZGW2He/SKzLzNmIMnU2necasVI=
+X-Google-Smtp-Source: AGHT+IFmawmX5JiRVgNf/0L0WpQV3DqIK1N/ZTMHGP5g/mV8702xqodsE7+50nL/fybsbo9t4AkL1Q==
+X-Received: by 2002:a17:906:6a14:b0:a90:4199:2a73 with SMTP id a640c23a62f3a-a9041992ae5mr2018156266b.5.1726667893278;
+        Wed, 18 Sep 2024 06:58:13 -0700 (PDT)
+Received: from localhost.localdomain ([83.68.141.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90613315d8sm595283466b.214.2024.09.18.06.58.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 06:56:59 -0700 (PDT)
-Date: Wed, 18 Sep 2024 15:56:58 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-Cc: Peter Maydell <peter.maydell@linaro.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Alistair Francis <alistair.francis@wdc.com>, 
-	Bin Meng <bmeng.cn@gmail.com>, Weiwei Li <liwei1518@gmail.com>, 
-	Daniel Henrique Barboza <dbarboza@ventanamicro.com>, Liu Zhiwei <zhiwei_liu@linux.alibaba.com>, qemu-riscv@nongnu.org, 
-	qemu-devel@nongnu.org, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] target/riscv: enable floating point unit
-Message-ID: <20240918-4e2df3f0cabdb8002d7315d9@orel>
-References: <20240916181633.366449-1-heinrich.schuchardt@canonical.com>
- <20240917-f45624310204491aede04703@orel>
- <15c359a4-b3c1-4cb0-be2e-d5ca5537bc5b@canonical.com>
- <20240917-b13c51d41030029c70aab785@orel>
- <8b24728f-8b6e-4c79-91f6-7cbb79494550@canonical.com>
- <20240918-039d1e3bebf2231bd452a5ad@orel>
- <CAFEAcA-Yg9=5naRVVCwma0Ug0vFZfikqc6_YiRQTrfBpoz9Bjw@mail.gmail.com>
- <bab7a5ce-74b6-49ae-b610-9a0f624addc0@canonical.com>
- <CAFEAcA-L7sQfK6MNt1ZbZqUMk+TJor=uD3Jj-Pc6Vy9j9JHhYQ@mail.gmail.com>
- <f1e41b95-c499-4e06-91cb-006dcd9d29e6@canonical.com>
+        Wed, 18 Sep 2024 06:58:13 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: Joe Damato <jdamato@fastly.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [RFC net-next] e1000e: link NAPI instances to queues and IRQs
+Date: Wed, 18 Sep 2024 13:57:26 +0000
+Message-Id: <20240918135726.1330-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f1e41b95-c499-4e06-91cb-006dcd9d29e6@canonical.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 18, 2024 at 03:49:39PM GMT, Heinrich Schuchardt wrote:
-> On 18.09.24 15:12, Peter Maydell wrote:
-> > On Wed, 18 Sept 2024 at 14:06, Heinrich Schuchardt
-> > <heinrich.schuchardt@canonical.com> wrote:
-> > > Thanks Peter for looking into this.
-> > > 
-> > > QEMU's cpu_synchronize_all_post_init() and
-> > > do_kvm_cpu_synchronize_post_reset() both end up in
-> > > kvm_arch_put_registers() and that is long after Linux
-> > > kvm_arch_vcpu_create() has been setting some FPU state. See the output
-> > > below.
-> > > 
-> > > kvm_arch_put_registers() copies the CSRs by calling
-> > > kvm_riscv_put_regs_csr(). Here we can find:
-> > > 
-> > >       KVM_RISCV_SET_CSR(cs, env, sstatus, env->mstatus);
-> > > 
-> > > This call enables or disables the FPU according to the value of
-> > > env->mstatus.
-> > > 
-> > > So we need to set the desired state of the floating point unit in QEMU.
-> > > And this is what the current patch does both for TCG and KVM.
-> > 
-> > If it does this for both TCG and KVM then I don't understand
-> > this bit from the commit message:
-> > 
-> > # Without this patch EDK II with TLS enabled crashes when hitting the first
-> > # floating point instruction while running QEMU with --accel kvm and runs
-> > # fine with --accel tcg.
-> > 
-> > Shouldn't this guest crash the same way with both KVM and TCG without
-> > this patch, because the FPU state is the same for both?
-> > 
-> > -- PMM
-> 
-> By default `qemu-system-riscv64 --accel tcg` runs OpenSBI as firmware which
-> enables the FPU.
-> 
-> If you would choose a different SBI implementation which does not enable the
-> FPU you could experience the same crash.
-> 
+Make e1000e compatible with the newly added netdev-genl APIs.
 
-Thanks Heinrich, I had also forgotten that distinction. So the last
-question is whether or not we want to reset mstatus.FS to 1 instead of 3,
-as is done in this patch.
+$ cat /proc/interrupts | grep ens | cut -f1 --delimiter=':'
+ 50
+ 51
+ 52
 
-Thanks,
-drew
+While e1000e allocates 3 IRQs (RX, TX, and other), it looks like e1000e
+only has a single NAPI, so I've associated the NAPI with the RX IRQ (50
+on my system, seen above):
+
+$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+                       --dump napi-get --json='{"ifindex": 2}'
+[{'id': 145, 'ifindex': 2, 'irq': 50}]
+
+$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
+                       --dump queue-get --json='{"ifindex": 2}'
+[{'id': 0, 'ifindex': 2, 'napi-id': 145, 'type': 'rx'},
+ {'id': 0, 'ifindex': 2, 'napi-id': 145, 'type': 'tx'}]
+
+Signed-off-by: Joe Damato <jdamato@fastly.com>
+---
+ drivers/net/ethernet/intel/e1000e/netdev.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
+index f103249b12fa..b527642c3a82 100644
+--- a/drivers/net/ethernet/intel/e1000e/netdev.c
++++ b/drivers/net/ethernet/intel/e1000e/netdev.c
+@@ -4613,6 +4613,7 @@ int e1000e_open(struct net_device *netdev)
+ 	struct e1000_hw *hw = &adapter->hw;
+ 	struct pci_dev *pdev = adapter->pdev;
+ 	int err;
++	int irq;
+ 
+ 	/* disallow open during test */
+ 	if (test_bit(__E1000_TESTING, &adapter->state))
+@@ -4676,7 +4677,15 @@ int e1000e_open(struct net_device *netdev)
+ 	/* From here on the code is the same as e1000e_up() */
+ 	clear_bit(__E1000_DOWN, &adapter->state);
+ 
++	if (adapter->int_mode == E1000E_INT_MODE_MSIX)
++		irq = adapter->msix_entries[0].vector;
++	else
++		irq = adapter->pdev->irq;
++
++	netif_napi_set_irq(&adapter->napi, irq);
+ 	napi_enable(&adapter->napi);
++	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_RX, &adapter->napi);
++	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_TX, &adapter->napi);
+ 
+ 	e1000_irq_enable(adapter);
+ 
+@@ -4735,6 +4744,8 @@ int e1000e_close(struct net_device *netdev)
+ 		netdev_info(netdev, "NIC Link is Down\n");
+ 	}
+ 
++	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_RX, NULL);
++	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_TX, NULL);
+ 	napi_disable(&adapter->napi);
+ 
+ 	e1000e_free_tx_resources(adapter->tx_ring);
+-- 
+2.34.1
+
 
