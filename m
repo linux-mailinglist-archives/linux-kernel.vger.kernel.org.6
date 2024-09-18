@@ -1,239 +1,175 @@
-Return-Path: <linux-kernel+bounces-332624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E80497BC09
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:13:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A3797BBD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E69A01F22FE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:13:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0E7EB2319A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C72189F57;
-	Wed, 18 Sep 2024 12:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C70B1898E1;
+	Wed, 18 Sep 2024 12:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="ZLtE1g1t"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="DQyEe+/6"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC46189B9B
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 12:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3B017837E;
+	Wed, 18 Sep 2024 12:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726661589; cv=none; b=owqkEFxRIOlu5uqDQy2cni1s5Lq+p/n+MCu19j47DGEQtcBtLDh8/O54MP8pgnI1QU7pe3F8+RyXrqWRes8IGjUs+lz9+qxh2sPoaILpLM1TpTGV9zYcVMxa544jslhisV7EpbevRuJiAQ+4gqo3uQQ2PmymnO5uUeKwP8PvZBw=
+	t=1726660839; cv=none; b=oxzoRY3BPoJbhz/tI+rpGiJEmap7Brlr72bVwUphdwgBzexBQLc7XbTthwDjUpdkiCrvTLfgD+p0NNuOvkZyPO/JW/20Q4k+mg6irZOamAXwEFftyQ/xjykzSN6ndZbWIYIjtH9Eh78NiCPNWS9MLvmnHKC5qWmmqGLMKRorr8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726661589; c=relaxed/simple;
-	bh=SPwOWgolRBzcq70Z7OTJv1xyKVRYxY9zSb9rNNXBZJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d8rHih1zl6FtF6l6qSDMrfIaNnJxbNFKYPobqrjPBPzB7jUakTwTh7qD0lxcDTOzS3/29eP5GHe/sUxGOEz4cb/EFBhMCX87gbafazKXxQ/DWZ8aoPmdT/JSkgdJkNB9k3AqFL0e4MBCGCaIYt+f8zzWYXfHyCJS3mcZ5Rv0gG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=ZLtE1g1t; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c4146c7d5dso7504067a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 05:13:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1726661586; x=1727266386; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pbrtlVBBvFqgMH7BAoG+wyciNSBCfqOZjcwermuBKzo=;
-        b=ZLtE1g1tvUH2jbe3L5OrZfpWshx0uty2tyrrPWcCs0AW/bLFOFSeuyctRswI6PeAEX
-         yWik6wDfXQl83nPyBzQXXCJr9Vu80NGmFgydz4q0HgaX373zG94jZ0boMZZT5HrENGlX
-         8RDOORfQnuObV4//HDh2V3gSpaNDdbLEAueqWllyFrRBRTBYTUgsX2qWGK8cX4amXHps
-         Rcub2T8u84Mg7+vjicqVozOEtrycfusplRGhUbi8PaFPudjcydhQ7C7ErY0owiLIxizX
-         UnZdvt/RHyZBmV3ceu2LtCpslaDDP2NV42MAxvAWWwXpBwqyEX0idqvIYhJqAFzC8TFB
-         4rQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726661586; x=1727266386;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pbrtlVBBvFqgMH7BAoG+wyciNSBCfqOZjcwermuBKzo=;
-        b=rdEiubjEEPeEAGJK1dOXlQt/HCV8OHk+6nGAlHIQm9RhUT1U6kSOGvDxfK1NLpN8vT
-         4Lzy01gZ1ob/RodipYj5fR0Be13ncLDlCvX/2tgA993OenN7fjLWhlrqJ4kxc9z0gNJA
-         ydQCdk6912TDH8CBPMk3inNiANd3kgp6dwpDBIPFoQHxU8SGRgKZx+AAGUW2L3SP+5GG
-         Fk1E+AUKooqjKHY559xlRukcpl0usHOFdqc9p0B1uMsejJf6kDV2Q/POIcvtbhHax6Yf
-         DPTDVO2GGAvbrFxFsHCDoO9ricezsXnqjDLlcMPUnNXOX727HpJ94/yTB5M4LT8sfgy7
-         nKAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtCZ6OWIGDcIh3EWxyy1LncwYxTzjaH0tzgPVqL/xpzuSSjobBKBehtUguSxmpeWD4wvJ9dlBf6rHFU8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuOwsHE0v4LCnGjftytdBS6wC+itwtg33wxcfj8nkE6UEdIKzc
-	LAac3Jurjxt2mlYtqehZRaxhlK0wXZJT3FkyiG53g45QoyW/XIAy+GYfyxD5dDs=
-X-Google-Smtp-Source: AGHT+IHREEasO0BbaPIldkkJKabZf8X6ahWCVuU45HlXha/oDliA8XdsYZJPvOjAamhhlsJHnCsvLA==
-X-Received: by 2002:a50:c949:0:b0:5c3:1089:ff3c with SMTP id 4fb4d7f45d1cf-5c41e1b590fmr10516049a12.35.1726661585838;
-        Wed, 18 Sep 2024 05:13:05 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com ([83.68.141.146])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb495b3sm4794844a12.20.2024.09.18.05.13.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 05:13:04 -0700 (PDT)
-Date: Wed, 18 Sep 2024 13:59:07 +0200
-From: Gregory Price <gourry@gourry.net>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dave@stgolabs.net, jonathan.cameron@huawei.com,
-	dave.jiang@intel.com, alison.schofield@intel.com,
-	vishal.l.verma@intel.com, ira.weiny@intel.com, rrichter@amd.com,
-	terry.bowman@amd.com
-Subject: Re: [PATCH] cxl/core/port: defer probe when memdev fails to find
- correct port
-Message-ID: <ZurAiwt7t2WWVrJM@PC2K9PVX.TheFacebook.com>
-References: <20240913183234.17302-1-gourry@gourry.net>
- <66e511eff0c0d_ae212945a@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	s=arc-20240116; t=1726660839; c=relaxed/simple;
+	bh=3tR/IOeSqrpHFyvBhs8OnciF3zB7uP8uP59YMBjOgOE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=I69rgDjt0Moes9YdwA84LxYFTR5MXz1L0LtZTcggzvkfnC3QTZEGnzv+1DFD/m3bdIUF+L3HR1EHLJXDvw7+K4RRiLbWS0JAy/K21YjGLT3YQ3fmjCn/k7W2xfTUD3Jw4a3oWLiyIY9qnAncUMGi2vwd+YBAf4E/WAWEOqNBfLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=DQyEe+/6; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726660820; x=1727265620; i=markus.elfring@web.de;
+	bh=frAse2uYJkdGq/c/XelvrZMT/tRnxPlt0GMx9SfWw9g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=DQyEe+/6dWyb/tIrNge0l5oZV+pS33y82ru/3rUGlEZ5Wsk/u6qtdcW0mTdbYn2k
+	 5AzDAaplbz6Rte+Fh7KzgeH1OGG7iD8nYfh9Hh2WauI39/HoMBiqNBdgy8Mg1J3dx
+	 S6tsqcFs3VlTTY82tY5+ZOM9raNEB6g2sDJ9Uc9R/8/t7esfTkTeb5SVv73+mtFIN
+	 wJiICmIYByo6tspXBrpTpp5HOKV+1I1AU0nrGVAx0F36pezW35mtojVgEygZ+OMLV
+	 ERUBF0JMHndcjm6ULK+nSYsajWxiCw+FlgOrSq5o/NA6kmVR9uYEvNzBV6x6epS3e
+	 kJfj2pIND9ZB3z6J1A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N7xaR-1rvGhL0Khv-00tFEP; Wed, 18
+ Sep 2024 14:00:20 +0200
+Message-ID: <d7dd0c6c-a840-4a90-8b80-b1cb36941bf6@web.de>
+Date: Wed, 18 Sep 2024 14:00:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66e511eff0c0d_ae212945a@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+User-Agent: Mozilla Thunderbird
+To: linux-input@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>,
+ David Rheinsberg <david@readahead.eu>, Jiri Kosina <jikos@kernel.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] HID: wiimote: Improve error handling in two functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:KpOrsgrjp0wkaTr6Rg//Yrv7t60FVGMZLJXkLOmvmnua+w7Qjx2
+ uAY43psf3aKTYSh2vx24C9mPj52G0Yc2WUif1iOlbFV/oVYhYrH3gkR/BOVjLuVy7HuhKKA
+ goqsOFIBIWNuSyw+ghrVTwssNLZFZsGnQkNIIQyWAC89fGDoi35KF01l592Y6dAPXo/N7+S
+ WVBdaZuwRCMFtEmObee9Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:nfc8sSsvyNY=;2HoQQf17aXMW2qIS7Yo3FE2M6JE
+ 2RzPqM5VZ3eZJVn8FVQg7y0Lt4VSIz/Mc8Qi/BVwb4SrZK4h28i0E/AKKa6rZlchccz2hYIos
+ kdvrQogNFqp5AlDfj/P1CwvV4gWIPBRQFdRCfDsElKRCoVno9ymoJ4iAWLXrHCqnd//ooL9Jp
+ cn4boLxqYYMQp/yXxN1CJjdT6hxwD5RKB202eugBGLg0waari8sQ4R7vVUm7WJDp97x0RyxHv
+ egLFRZkgy0upDPBZ5Yd2YW/vYV3CsOiz5yHWB24hk30z7w3e+MN9XC2LLSxYjVbvhjq/XneO8
+ 6aZfTlML1YAwAvhnRGUnBxEkjoLbjOAsTxPtRNMP/O6SSBf7YpFtvvD60hCV8xLTZlmZWZuIe
+ bdvDoEK4An2wT8YTzzdB0PU5Z50Js4pcjP1Z9r6g0wy3FoVHI30cZPGXpX9PmOK5dw48l84kJ
+ I/djwwlJ87h4hI4hq/H8XrnZh9ZJqd+eKf9rnzJKBCn6E+rJz8Sj2LUs3USEEDYEYsuhi6u92
+ 64x3C52y37AnDdylsaWHjcrV6xmxUuUTWTMW13C+RmQP1OWuH8lQVoXugGp+DkBbO82lCdXH8
+ zOMPGcp/KJYrX/sJP3IJfy0JrMjSiskv96zEIEs5xIqO0Kf7ZkQXJkHPnzrg4/NDxMPZiGB6F
+ eWQUFArq4U29ZUi9WCP8DnklORa1xNkGB33K9tLTbn6Q3/BsVCxkHG8eSU2NCqoWadAmBCTEI
+ Rx0DC7QWPDeh6BKPUezOdg4jhx6BSBDNs3csOg10nLuQRcia+pgM0Yk5uG1HycOSupt4nWxgP
+ ZjlNcybYfHQNHVuakan0LvlQ==
 
-On Fri, Sep 13, 2024 at 09:32:48PM -0700, Dan Williams wrote:
-> Gregory Price wrote:
-> > Depending on device/hierarchy readiness, it can be possible for the
-> > async probe process to attempt to register an endpoint before the
-> > entire port hierarchy is ready.  This currently fails with -ENXIO.
-> > 
-> > Return -EPROBE_DEFER to try again later automatically (which is
-> > what the local comments already say we should do anyway).
-> 
-> I want to make sure this is not papering over some other issue. Can you
-> post the final topology when this works (cxl list -BPET)? My working
-> theory is that you have 2 devices that share an intermediate port.
-> Otherwise, I am having a hard time understanding why the
-> cxl_bus_rescan() in cxl_acpi_probe() does not obviate the explicit
-> EPROBE_DEFER.
->
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2024 13:51:29 +0200
 
-Sorry for the delay
+Add jump targets so that a bit of exception handling can be better reused
+at the end of two function implementations.
 
-[
-  {
-    "bus":"root0",
-    "provider":"ACPI.CXL",
-    "nr_dports":4,
-    "dports":[
-      {
-        "dport":"pci0000:e0",
-        "alias":"ACPI0016:00",
-        "id":7
-      },
-      {
-        "dport":"pci0000:00",
-        "alias":"ACPI0016:01",
-        "id":0
-      },
-      {
-        "dport":"pci0000:c0",
-        "alias":"ACPI0016:02",
-        "id":6
-      },
-      {
-        "dport":"pci0000:20",
-        "alias":"ACPI0016:03",
-        "id":1
-      }
-    ],
-    "ports:root0":[
-      {
-        "port":"port1",
-        "host":"pci0000:e0",
-        "depth":1,
-        "decoders_committed":2,
-        "nr_dports":4,
-        "dports":[
-          {
-            "dport":"0000:e0:07.2",
-            "alias":"device:16",
-            "id":114
-          },
-          {
-            "dport":"0000:e0:01.1",
-            "alias":"device:02",
-            "id":0
-          },
-          {
-            "dport":"0000:e0:01.3",
-            "alias":"device:05",
-            "id":2
-          },
-          {
-            "dport":"0000:e0:07.1",
-            "alias":"device:0d",
-            "id":113
-          }
-        ],
-        "endpoints:port1":[
-          {
-            "endpoint":"endpoint5",
-            "host":"mem0",
-            "parent_dport":"0000:e0:01.1",
-            "depth":2,
-            "decoders_committed":1
-          }
-        ]
-      },
-      {
-        "port":"port3",
-        "host":"pci0000:c0",
-        "depth":1,
-        "decoders_committed":2,
-        "nr_dports":1,
-        "dports":[
-          {
-            "dport":"0000:c0:01.1",
-            "alias":"device:c3",
-            "id":0
-          }
-        ],
-        "endpoints:port3":[
-          {
-            "endpoint":"endpoint6",
-            "host":"mem1",
-            "parent_dport":"0000:c0:01.1",
-            "depth":2,
-            "decoders_committed":1
-          }
-        ]
-      },
-      {
-        "port":"port2",
-        "host":"pci0000:00",
-        "depth":1,
-        "decoders_committed":0,
-        "nr_dports":2,
-        "dports":[
-          {
-            "dport":"0000:00:01.3",
-            "alias":"device:55",
-            "id":2
-          },
-          {
-            "dport":"0000:00:07.1",
-            "alias":"device:5d",
-            "id":113
-          }
-        ]
-      },
-      {
-        "port":"port4",
-        "host":"pci0000:20",
-        "depth":1,
-        "decoders_committed":0,
-        "nr_dports":1,
-        "dports":[
-          {
-            "dport":"0000:20:01.1",
-            "alias":"device:d0",
-            "id":0
-          }
-        ]
-      }
-    ]
-  }
-]
- 
-> So, devA is dependendent on devB to create a common port, but devA loses
-> that race after cxl_bus_rescan() has already run. Then EBPROBE_DEFER is
-> the right answer to trigger devA to try again.
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/hid/hid-wiimote-modules.c | 34 ++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/hid/hid-wiimote-modules.c b/drivers/hid/hid-wiimote-m=
+odules.c
+index dbccdfa63916..3c10b1c68984 100644
+=2D-- a/drivers/hid/hid-wiimote-modules.c
++++ b/drivers/hid/hid-wiimote-modules.c
+@@ -1424,15 +1424,12 @@ static ssize_t wiimod_bboard_calib_show(struct dev=
+ice *dev,
+ 		return ret;
+
+ 	ret =3D wiimote_cmd_read(wdata, 0xa40024, buf, 12);
+-	if (ret !=3D 12) {
+-		wiimote_cmd_release(wdata);
+-		return ret < 0 ? ret : -EIO;
+-	}
++	if (ret !=3D 12)
++		goto release_wdata;
++
+ 	ret =3D wiimote_cmd_read(wdata, 0xa40024 + 12, buf + 12, 12);
+-	if (ret !=3D 12) {
+-		wiimote_cmd_release(wdata);
+-		return ret < 0 ? ret : -EIO;
+-	}
++	if (ret !=3D 12)
++		goto release_wdata;
+
+ 	wiimote_cmd_release(wdata);
+
+@@ -1460,6 +1457,10 @@ static ssize_t wiimod_bboard_calib_show(struct devi=
+ce *dev,
+ 	}
+
+ 	return ret;
++
++release_wdata:
++	wiimote_cmd_release(wdata);
++	return ret < 0 ? ret : -EIO;
+ }
+
+ static DEVICE_ATTR(bboard_calib, S_IRUGO, wiimod_bboard_calib_show, NULL)=
+;
+@@ -1473,15 +1474,12 @@ static int wiimod_bboard_probe(const struct wiimod=
+_ops *ops,
+ 	wiimote_cmd_acquire_noint(wdata);
+
+ 	ret =3D wiimote_cmd_read(wdata, 0xa40024, buf, 12);
+-	if (ret !=3D 12) {
+-		wiimote_cmd_release(wdata);
+-		return ret < 0 ? ret : -EIO;
+-	}
++	if (ret !=3D 12)
++		goto release_wdata;
++
+ 	ret =3D wiimote_cmd_read(wdata, 0xa40024 + 12, buf + 12, 12);
+-	if (ret !=3D 12) {
+-		wiimote_cmd_release(wdata);
+-		return ret < 0 ? ret : -EIO;
+-	}
++	if (ret !=3D 12)
++		goto release_wdata;
+
+ 	wiimote_cmd_release(wdata);
+
+@@ -1546,6 +1544,10 @@ static int wiimod_bboard_probe(const struct wiimod_=
+ops *ops,
+ 	input_free_device(wdata->extension.input);
+ 	wdata->extension.input =3D NULL;
+ 	return ret;
++
++release_wdata:
++	wiimote_cmd_release(wdata);
++	return ret < 0 ? ret : -EIO;
+ }
+
+ static void wiimod_bboard_remove(const struct wiimod_ops *ops,
+=2D-
+2.46.0
+
 
