@@ -1,138 +1,323 @@
-Return-Path: <linux-kernel+bounces-332630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EBDB97BC33
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:26:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8A997BC38
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF6941F24DF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:26:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEB6C1C21B79
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B1F18952A;
-	Wed, 18 Sep 2024 12:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BfnZLIWt"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812E7189B94;
+	Wed, 18 Sep 2024 12:28:04 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C5D1CD23
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 12:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CE21CD23;
+	Wed, 18 Sep 2024 12:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726662406; cv=none; b=sH1eTBOmOp0v1PXpmY6Hc6N0ZQFU5wKWhYCTSLPQupIB2DMwE+XBHgAlmmtqsxAsLUP8se1y0WK5qkIJcUBRIXrT7rLN3Vop/Rt3+MYNcST3UGosP8pVTG/7/1/VKbgVSKsZfcRSsNNV7o28KFllrnS5BR0MkI2VqTBHdzs0pCY=
+	t=1726662484; cv=none; b=rkuWxgRP4Lk2oUxonWZoaHLYLfNJBz5v9bNCxpu1BwiRnWwIAUaa7p/93FvPNw3Wba9vEMdMAQ9xjqBKIIY9iyCFD8jicUbMF5Eq7dhMA+mj5qTDKMrPfPR9VxIcQ5UkHRbuY7wRnK97LoN9Kx19iJUxOn4nIuRfPvgFgCa42vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726662406; c=relaxed/simple;
-	bh=owkSPE+N434gd412TfpJW7YM2i6bFDTs176bOwmFdnw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cLQi4nCK21jmTwbFjZP2z3RJXa7JOVMuxKu4zCcQQcWe77I+yTxe+ifjfhVg99uBaP8SC1LWU5SbeuR8GFWkRFpLsIJA3xSvgqUOtjHdeAJQjhRo7cI9UtYekIM3tHN0qCSdPJgdNJ19IT1yvkNq3dJ8d39p2l/EC1T4N3UPNP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BfnZLIWt; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f763e9e759so70186441fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 05:26:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1726662402; x=1727267202; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cgAU7H+QNm1aqh8qRj4zRQupf73QoF2RSPiKY8v8FoM=;
-        b=BfnZLIWtPMVtg8mvdAmSKLG2WigkOeBljbFnHMjcd2y+MjLCkshxzD6oaGTDAUtMeU
-         kRr1erKMaoFslWajD0Ewo/4ifNOH0BHviaiJdWAzVQDfmQ7IhoW3eih8WrzRGrQ+BCdU
-         BOhimVpHisyjAgN90bSWi72Qt+0vtSjRCJGe1NUVHBIFy9jImBi9xACckuNNBcviKcyf
-         wkx169+tgpTyOezoweqGP2dA09gLTWs/hk5BJAhh3Yv1B16vqE1GShhiBiUhVahlFxfw
-         WjYazcawgVUeHmaX05I9yHvdwJIZFLD7sS8YaoL8o5DCpCselCF5qPWXK17MZOzMGABH
-         0j/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726662402; x=1727267202;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cgAU7H+QNm1aqh8qRj4zRQupf73QoF2RSPiKY8v8FoM=;
-        b=dyuU0t6tQe03ig8heSXKwrTS/MRJfUXHs1dG3mUgyLVLG03qRc7WOD7BcOyZCobTpz
-         TrMa4Xsl0n54PwuIFG8kuR8EPsXknTQGbVcb4CbGoPFuL16JjQ0YKiKgPIxq89kGzeKQ
-         STiIwTwI1YUqwCvZHH3wjUTLH4C2Xtwxhjsscvqr6QxLbe9ENu5O4/djUfR8OKW0u7LM
-         kvw7O57s1VSqbC1e58fjln18/ipHiWdZOcLAmtN/+uLIR/0pJ4Hr+GmAvN8H7gHseDoT
-         AKpoMG5vBxQXfkSNZ6ddz0zL4XQu6gHOYVnoiLLN2Kfvo7Nl4PMpRYZmsm9p/rWWUHe0
-         SFDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbRfDQXijX8rj9imPU+bo/BjyjXD/xIXugC/1zx56lMjGrMW0LDQpKs/S8pZDIfuFeaE+fV1J9H4ovjTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZwIjsm0+68hZI+0mCaa/JeDstnbKkAQs52xMkV/UjBOwP6hhE
-	471TM1sFpetnQZ4IDDkK1/8Ox3ZPH8bsQQ53C7SaRxnM8fqbZc6Zw8jprPzks54=
-X-Google-Smtp-Source: AGHT+IEC/F6EZ09kmQx5BVBSXoY98rkEXpb8znml9Z7Ud4EnUNW9fTdlXL3qQ9lBJjSySlTwEV3JKA==
-X-Received: by 2002:a05:651c:2118:b0:2f3:e2fd:7dcd with SMTP id 38308e7fff4ca-2f787dad3f9mr116066101fa.6.1726662401814;
-        Wed, 18 Sep 2024 05:26:41 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd609af18dsm1459973a91.40.2024.09.18.05.26.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 05:26:41 -0700 (PDT)
-Date: Wed, 18 Sep 2024 14:26:25 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Subject: Re: [PATCH next v2 3/4] serial: 8250: Switch to nbcon console
-Message-ID: <ZurG8YMmBmVVxttj@pathway.suse.cz>
-References: <20240913140538.221708-1-john.ogness@linutronix.de>
- <20240913140538.221708-4-john.ogness@linutronix.de>
+	s=arc-20240116; t=1726662484; c=relaxed/simple;
+	bh=QnxbKsMMbpfCIGFJd6cAvTvlWOO0UshcLuYIxorHJ2I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DX6WjUXikuEQqNEUEdZ//66sLkcsaYEbx7lpMjnvdTheo80aYU7AL6UYtLFmtx+WhHmF6N3ONdR1wVroyv+WmT/kRXnC5P5wOSCHurt48qCZaijNuG9n4lRQM7WrlnWmcMIpWFs6E6EdTv5iqe/Mj/YtsjHOWRiOvPAlB2Nq6cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4X7ybH5R4rz4f3jMf;
+	Wed, 18 Sep 2024 20:27:39 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 918EE1A092F;
+	Wed, 18 Sep 2024 20:27:55 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAXTMhJx+pm0zCuBg--.17365S3;
+	Wed, 18 Sep 2024 20:27:55 +0800 (CST)
+Message-ID: <a99e8a54-17ae-432f-bf11-a1e90e082c05@huaweicloud.com>
+Date: Wed, 18 Sep 2024 20:27:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913140538.221708-4-john.ogness@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/10] ext4: write out dirty data before dropping pages
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com
+References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
+ <20240904062925.716856-2-yi.zhang@huaweicloud.com>
+ <20240917165007.j5dywaekvnirfffm@quack3>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20240917165007.j5dywaekvnirfffm@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAXTMhJx+pm0zCuBg--.17365S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3JF1xuw1DJw1fZr15WFWrGrg_yoWfJFW3pr
+	Z8KFy5KF48XayUur12yanrZF10g3sFgrWUuryfWa40934qyrn3Kan0kryruFyUArZrAr40
+	vF4jqr9rWrWjvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
+	DUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Fri 2024-09-13 16:11:37, John Ogness wrote:
-> Implement the necessary callbacks to switch the 8250 console driver
-> to perform as an nbcon console.
+On 2024/9/18 0:50, Jan Kara wrote:
+> On Wed 04-09-24 14:29:16, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Current zero range, punch hole and collapse range have a common
+>> potential data loss problem. In general, ext4_zero_range(),
+>> ext4_collapse_range() and ext4_punch_hold() will discard all page cache
+>> of the operation range before converting the extents status. However,
+>> the first two functions don't write back dirty data before discarding
+>> page cache, and ext4_punch_hold() write back at the very beginning
+>> without holding i_rwsem and mapping invalidate lock. Hence, if some bad
+>> things (e.g. EIO or ENOMEM) happens just after dropping dirty page
+>> cache, the operation will failed but the user's valid data in the dirty
+>> page cache will be lost. Fix this by write all dirty data under i_rwsem
+>> and mapping invalidate lock before discarding pages.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > 
-> Add implementations for the nbcon console callbacks (write_atomic,
-> write_thread, device_lock, device_unlock) and add CON_NBCON to the
-> initial flags.
+> I'm not sure this is the direction we want to go. When zeroing / collapsing
+> / punching writing out all the data we are going to remove seems suboptimal
+> and we can spend significant time doing work that is mostly unnecessary.
+
+Yes, I agree with you that it do bring some performance sacrifices and
+seems not the best solution, but at the moment, I can't find a simple and
+better solution.
+
+I've also checked some other modern disk filesystems. IIUC, it seems that
+each filesystem is different when doing this 3 operations, bcachefs only do
+write back before dropping pagecache when collapsing, f2fs do write back
+when zeroing range and collapsing, btrfs do write back when punching and
+zeroing(it doesn't support collapse), xfs do write back for all of the
+three operations. So, it seems that only btrfs and xfs can survival now.
+
+> After all with truncate we also drop pagecache pages and the do on-disk
+> modification which can fail.
+
+Yeah, right, truncate may have the same problem too, and all of the above
+other 4 filesystems are the same.
+
+> The case of EIO is in my opinion OK - when there are disk errors, we are
+> going to loose data and e2fsck is needed. So protecting with writeout
+> against possible damage is pointless.
+
+Yeah, please forgive me for this not good example.
+
+> For ENOMEM I agree we should better
+> preserve filesystem consistency. Is there some case where we would keep
+> filesystem inconsistent on ENOMEM?
+
+The ENOMEM case were seldom happen on our products, so it hasn't trigger
+any real problem so far. I find it when I was refactoring these fallocate
+functions. Theoretically, I believe it should be a problem, but based on
+current filesystems' implementation, I'm not sure if we really need to
+care about it, maybe xfs and btrfs do write back because they could have
+more opportunity to fail after dropping pagecache when punching/zeroing/
+(collapsing), so they have to write data back?
+
+Thanks,
+Yi.
+
 > 
-> All register access in the callbacks are within unsafe sections.
-> The write_thread() callback allows safe handover/takeover per byte.
-> The write_atomic() callback allows safe handover/takeover per
-> printk record and adds a preceding newline if it took over mid-line.
-> 
-> For the write_atomic() case, a new irq_work is used to defer modem
-> control since it may be a context that does not allow waking up
-> tasks.
+>> ---
+>>  fs/ext4/extents.c | 77 +++++++++++++++++------------------------------
+>>  fs/ext4/inode.c   | 19 +++++-------
+>>  2 files changed, 36 insertions(+), 60 deletions(-)
+>>
+>> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+>> index e067f2dd0335..7d5edfa2e630 100644
+>> --- a/fs/ext4/extents.c
+>> +++ b/fs/ext4/extents.c
+>> @@ -4602,6 +4602,24 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+>>  	if (ret)
+>>  		goto out_mutex;
+>>  
+>> +	/*
+>> +	 * Prevent page faults from reinstantiating pages we have released
+>> +	 * from page cache.
+>> +	 */
+>> +	filemap_invalidate_lock(mapping);
+>> +
+>> +	ret = ext4_break_layouts(inode);
+>> +	if (ret)
+>> +		goto out_invalidate_lock;
+>> +
+>> +	/*
+>> +	 * Write data that will be zeroed to preserve them when successfully
+>> +	 * discarding page cache below but fail to convert extents.
+>> +	 */
+>> +	ret = filemap_write_and_wait_range(mapping, start, end - 1);
+>> +	if (ret)
+>> +		goto out_invalidate_lock;
+>> +
+>>  	/* Preallocate the range including the unaligned edges */
+>>  	if (partial_begin || partial_end) {
+>>  		ret = ext4_alloc_file_blocks(file,
+>> @@ -4610,7 +4628,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+>>  				 round_down(offset, 1 << blkbits)) >> blkbits,
+>>  				new_size, flags);
+>>  		if (ret)
+>> -			goto out_mutex;
+>> +			goto out_invalidate_lock;
+>>  
+>>  	}
+>>  
+>> @@ -4619,37 +4637,9 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+>>  		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN |
+>>  			  EXT4_EX_NOCACHE);
+>>  
+>> -		/*
+>> -		 * Prevent page faults from reinstantiating pages we have
+>> -		 * released from page cache.
+>> -		 */
+>> -		filemap_invalidate_lock(mapping);
+>> -
+>> -		ret = ext4_break_layouts(inode);
+>> -		if (ret) {
+>> -			filemap_invalidate_unlock(mapping);
+>> -			goto out_mutex;
+>> -		}
+>> -
+>>  		ret = ext4_update_disksize_before_punch(inode, offset, len);
+>> -		if (ret) {
+>> -			filemap_invalidate_unlock(mapping);
+>> -			goto out_mutex;
+>> -		}
+>> -
+>> -		/*
+>> -		 * For journalled data we need to write (and checkpoint) pages
+>> -		 * before discarding page cache to avoid inconsitent data on
+>> -		 * disk in case of crash before zeroing trans is committed.
+>> -		 */
+>> -		if (ext4_should_journal_data(inode)) {
+>> -			ret = filemap_write_and_wait_range(mapping, start,
+>> -							   end - 1);
+>> -			if (ret) {
+>> -				filemap_invalidate_unlock(mapping);
+>> -				goto out_mutex;
+>> -			}
+>> -		}
+>> +		if (ret)
+>> +			goto out_invalidate_lock;
+>>  
+>>  		/* Now release the pages and zero block aligned part of pages */
+>>  		truncate_pagecache_range(inode, start, end - 1);
+>> @@ -4657,12 +4647,11 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+>>  
+>>  		ret = ext4_alloc_file_blocks(file, lblk, max_blocks, new_size,
+>>  					     flags);
+>> -		filemap_invalidate_unlock(mapping);
+>>  		if (ret)
+>> -			goto out_mutex;
+>> +			goto out_invalidate_lock;
+>>  	}
+>>  	if (!partial_begin && !partial_end)
+>> -		goto out_mutex;
+>> +		goto out_invalidate_lock;
+>>  
+>>  	/*
+>>  	 * In worst case we have to writeout two nonadjacent unwritten
+>> @@ -4675,7 +4664,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+>>  	if (IS_ERR(handle)) {
+>>  		ret = PTR_ERR(handle);
+>>  		ext4_std_error(inode->i_sb, ret);
+>> -		goto out_mutex;
+>> +		goto out_invalidate_lock;
+>>  	}
+>>  
+>>  	inode_set_mtime_to_ts(inode, inode_set_ctime_current(inode));
+>> @@ -4694,6 +4683,8 @@ static long ext4_zero_range(struct file *file, loff_t offset,
+>>  
+>>  out_handle:
+>>  	ext4_journal_stop(handle);
+>> +out_invalidate_lock:
+>> +	filemap_invalidate_unlock(mapping);
+>>  out_mutex:
+>>  	inode_unlock(inode);
+>>  	return ret;
+>> @@ -5363,20 +5354,8 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
+>>  	 * for page size > block size.
+>>  	 */
+>>  	ioffset = round_down(offset, PAGE_SIZE);
+>> -	/*
+>> -	 * Write tail of the last page before removed range since it will get
+>> -	 * removed from the page cache below.
+>> -	 */
+>> -	ret = filemap_write_and_wait_range(mapping, ioffset, offset);
+>> -	if (ret)
+>> -		goto out_mmap;
+>> -	/*
+>> -	 * Write data that will be shifted to preserve them when discarding
+>> -	 * page cache below. We are also protected from pages becoming dirty
+>> -	 * by i_rwsem and invalidate_lock.
+>> -	 */
+>> -	ret = filemap_write_and_wait_range(mapping, offset + len,
+>> -					   LLONG_MAX);
+>> +	/* Write out all dirty pages */
+>> +	ret = filemap_write_and_wait_range(mapping, ioffset, LLONG_MAX);
+>>  	if (ret)
+>>  		goto out_mmap;
+>>  	truncate_pagecache(inode, ioffset);
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index 941c1c0d5c6e..c3d7606a5315 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -3957,17 +3957,6 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>>  
+>>  	trace_ext4_punch_hole(inode, offset, length, 0);
+>>  
+>> -	/*
+>> -	 * Write out all dirty pages to avoid race conditions
+>> -	 * Then release them.
+>> -	 */
+>> -	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY)) {
+>> -		ret = filemap_write_and_wait_range(mapping, offset,
+>> -						   offset + length - 1);
+>> -		if (ret)
+>> -			return ret;
+>> -	}
+>> -
+>>  	inode_lock(inode);
+>>  
+>>  	/* No need to punch hole beyond i_size */
+>> @@ -4021,6 +4010,14 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>>  	if (ret)
+>>  		goto out_dio;
+>>  
+>> +	/* Write out all dirty pages to avoid race conditions */
+>> +	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY)) {
+>> +		ret = filemap_write_and_wait_range(mapping, offset,
+>> +						   offset + length - 1);
+>> +		if (ret)
+>> +			goto out_dio;
+>> +	}
+>> +
+>>  	first_block_offset = round_up(offset, sb->s_blocksize);
+>>  	last_block_offset = round_down((offset + length), sb->s_blocksize) - 1;
+>>  
+>> -- 
+>> 2.39.2
+>>
 
-It would be fair to mention that it does not longer support fifo in
-the 8250 driver. It basically reverted the commit 8f3631f0f6eb42e5
-("serial/8250: Use fifo in 8250 console driver").
-
-It is not usable in write_thread() because it would not allow
-a safe takeover between emitting particular characters.
-
-It might still be used in write_atomic() but it is probably not
-worth it. This callback is used "only" in emergency and panic
-situations.
-
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
-
-Otherwise, it looks good to me. And it even works fine.
-With an updated commit message:
-
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-
-Best Regards,
-Petr
 
