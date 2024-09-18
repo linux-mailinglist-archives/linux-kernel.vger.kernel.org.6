@@ -1,167 +1,119 @@
-Return-Path: <linux-kernel+bounces-332793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B959697BEE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:58:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E534397BEE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A6FF282E97
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:58:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F571B21F24
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DF61C8FCD;
-	Wed, 18 Sep 2024 15:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524501C9877;
+	Wed, 18 Sep 2024 15:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i92yJnAT"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hrM6Db1K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EC01537B5
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 15:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34291C9860;
+	Wed, 18 Sep 2024 15:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726675124; cv=none; b=LInmt3Ge621hYIoSwTGpoIa3MeSPxl7bYwtCHNQEiJIiaPWO4jOC/qctPxCbEEp/kBMXFb8cZgzs0p/SKy7wodwRL0cRwKk2oO3t3trJkFwYs51G92SJXwj0o+O064il+Lx17xycJrbPTlUz9js/5kdEC4QTEADwWpk1RHg7ikU=
+	t=1726675127; cv=none; b=F+YeC5GhY3efTbbx3RvPUDA9036Ed3F/9ekQWa5oRxcLl7r1lN71NzSfp8rgmsvQBU00edsyqZV67qx0XRKC0+fG2dpcYbuX6HJAmkRbeifeZZ49RrMvZHqiseFPX7DxejrhmrU+aDbBa55y/rYCalEzt6QTVBjs1pSwqVBv9Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726675124; c=relaxed/simple;
-	bh=XTl0akMhLk29+AOFsdWdqvtoDJjo2Zyt/IJFizXRBlY=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VHVVOl0jH5URTW4RuqSw7uFZCOdu14OxV3rjJcacQiCOwv3vk4m7Li99f1uT2XWGkbO5c5I91sYVuCq5tCV1YGjfjfsmqdTMprMAEzfNSlMkhetMZcBnTk9hfEtu4G6jDZNM4GRwRNE09xPBBllyRrvJvnoHkj330UixSk3pZuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i92yJnAT; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5356ab89665so8057022e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 08:58:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726675120; x=1727279920; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/nN4RLUg+rsp0zC2dF8c0G2tRr1/u478Y/JOVZAT/Z0=;
-        b=i92yJnATD90UruszcewWZUZ47cdnGvZeoYki9Wj51h/YucsJLqcc9GombcpiOB2b2s
-         jFCKEsVjpc+8AAFkAnluROk0MFCPGPZcGnFMjcHypRis4hiUdZoHhzjeLSCVwC0ZUWcL
-         rH3SQpPxpilDnSZyR0/h3qiy6EceMiAK6UuRcSA0a749bpKXmT5a0ZReZyX2HH34zYKB
-         6ghX7LMYiU58NMq+uCgEmjSIm8TaagQKqyE20TVJhr+IeRBC033jzcpSG3iIP8f+yZkO
-         jt2E1/fQDfu0vnaueotJFnkirTiV/dXZj+nWdApswd2Wh3aYME0tuDXZjfIdU8U0sClr
-         5bYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726675120; x=1727279920;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/nN4RLUg+rsp0zC2dF8c0G2tRr1/u478Y/JOVZAT/Z0=;
-        b=dotJFlcs6jPOaGITWlP2ru4cR5J0vXZZL51OTVGx+4jx8EQBN1fB5am/idaOHmAqBP
-         vgcND2zQZg+NKDBv4QR5iDlTmnLFDhk2W2loMczh5tNZpMu0/3F8wCTCrrayZpPNyUcj
-         Sl0XvhOPz1DnyxObcVamLd0Wv2tBJdO3AsNR9I38wiNaU7mbnlfhxCulyHI4StHVvGWd
-         P5tPM5RZ1URPUVIIj9q5MFI6vrxnQR/ak9g7wDH9+PXEeozk4HEyMlHMUmsM0aN0te7t
-         l6kgy6Xy+uTsEeRIzvbjfJ49vQONyFKw+AVY+cwPBj/np03dkZVzGjCp89wy9wjZTDcE
-         qpsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTuZguAK9omSGJgHdxBeDncpfSocJn3tSVr/riZPpZA6x/5S9fDAy4NZe3U4EbL0HkJK3VQhBaQSv0SJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNvq5NshaHCVcfWMgdt3lQ/zZPgzZ3uC2HaOTL8GWBHYAYl7Yh
-	HGAUxWNkzH9Klom/CBeuBDgmn+JvG/z6TGul5aByrThSnW/KG7N0
-X-Google-Smtp-Source: AGHT+IH8VOQsJfHDSqWN86iefH7nUBxWL2kMFITGTcXQybMmXDSZE1mijRo3aKboOiGWLXoB8Q9s6w==
-X-Received: by 2002:a05:6512:33ca:b0:52c:dc97:45d1 with SMTP id 2adb3069b0e04-53678fb1db0mr12278687e87.10.1726675119540;
-        Wed, 18 Sep 2024 08:58:39 -0700 (PDT)
-Received: from localhost ([94.19.228.143])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53687096890sm1549135e87.130.2024.09.18.08.58.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 08:58:38 -0700 (PDT)
-Date: Wed, 18 Sep 2024 18:58:38 +0300
-From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-To: Dragan Simic <dsimic@manjaro.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1726675127; c=relaxed/simple;
+	bh=3Ehcf0Muo6/3lqnKcZgCyy7ZYOx4YiAwDNOLa4o7j8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DPc5t3JclfHwX7EzRCUajpXDJdmDyZ1AZwaoVO6mh3rS72C6hiJ4X9/lety1Un8TdateULM1/IqP9wK324yZW00I/yv/bgQBkmbgFdzTBbo6r85KzkcS6vVaV5akrjS7QxG7l11SMZ7keMvjzuPadjqNmBqILNmGaCMZ8eD4pYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hrM6Db1K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0FF5C4CEC2;
+	Wed, 18 Sep 2024 15:58:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726675127;
+	bh=3Ehcf0Muo6/3lqnKcZgCyy7ZYOx4YiAwDNOLa4o7j8k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hrM6Db1K47zLHdsdpHdmo1R/9hYgvC1tQFTpXokO3tUTqKofSIr38rWdD5x/xCUft
+	 2PCtgFN+xbVSj272uKgKPIlTrU7pXb222HKh4idgztpdBDrKQvo4D+5azUmRf3d1H1
+	 +FKLf950P8lQUawqa4B2STQ5d1TIFlnPrXc3IjY8LxJbRgwEDM8c4bIdyAqFP7f6o1
+	 GlgMzzxmHEgEPzBEB0UWWMoP2DFBwtZ44P2/8wWeA4IOYYp8OZdwPmdp0iYMZHXIA1
+	 Mc+jDDQOnM26kIDSkbZA4ZLIvoEhbPwuX5iyPf+LSyYjSIzFmQIT3MZyUkCHYXvyGI
+	 4tGJHl+nzY3Lw==
+Date: Wed, 18 Sep 2024 10:58:45 -0500
+From: Rob Herring <robh@kernel.org>
+To: Mao Jinlong <quic_jinlmao@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@arm.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	=?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-Subject: Re: [PATCH] arm64: dts: sun50i-a64-pinephone: Add mount matrix for
- accelerometer
-Message-ID: <Zur4rhyT50lwxE_v@skv.local>
-Mail-Followup-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
-	Dragan Simic <dsimic@manjaro.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-References: <20240916204521.2033218-1-andrej.skvortzov@gmail.com>
- <6e5d0e9978bff30559c17f30d1495b59@manjaro.org>
- <ZunCysUTSfQU1ylg@skv.local>
- <c7664fda936d36e0d916ae09dd554d2e@manjaro.org>
- <ZuqyuvZ6tdzp5XSW@skv.local>
- <8df5fc79a3e899738aa944a290774c72@manjaro.org>
- <ZurYndjVz7r0U6dz@skv.local>
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: arm: coresight: Update the pattern
+ of ete node name
+Message-ID: <20240918155845.GA1629400-robh@kernel.org>
+References: <20240913092430.31569-1-quic_jinlmao@quicinc.com>
+ <20240913092430.31569-2-quic_jinlmao@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZurYndjVz7r0U6dz@skv.local>
+In-Reply-To: <20240913092430.31569-2-quic_jinlmao@quicinc.com>
 
-Hi Dragan,
+On Fri, Sep 13, 2024 at 02:24:28AM -0700, Mao Jinlong wrote:
+> The device full name is embedded trace extension. There is no good fit
+> in generic names list for the embedded trace extension. ETE is abbreviation
+> of embedded trace extension and the number is the CPU number that ete is
+> associated.
 
+It looks like you've just changed things for all the existing users 
+which would not be okay. However, it looks like there aren't any in 
+tree, so the change is fine, but you need to mention this.
 
-On 24-09-18 16:41, Andrey Skvortsov wrote:
-> On 24-09-18 13:27, Dragan Simic wrote:
-
-> > > In device tree mount-matrix documentation [3] there is
-> > > 
-> > >  users would likely expect a value of 9.81 m/s^2 upwards along the (z)
-> > >  axis, i.e. out of the screen when the device is held with its screen
-> > >  flat on the planets surface.
-> > > 
 > 
-> how I read kernel documentation.
-
-Hm, I think I misunderstand this part in kernel
-documentation and you were correct.
-
-> Picture 2.
+> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+> ---
+>  .../bindings/arm/arm,embedded-trace-extension.yaml          | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> up
+> diff --git a/Documentation/devicetree/bindings/arm/arm,embedded-trace-extension.yaml b/Documentation/devicetree/bindings/arm/arm,embedded-trace-extension.yaml
+> index f725e6940993..0a88e14e7db3 100644
+> --- a/Documentation/devicetree/bindings/arm/arm,embedded-trace-extension.yaml
+> +++ b/Documentation/devicetree/bindings/arm/arm,embedded-trace-extension.yaml
+> @@ -23,7 +23,7 @@ description: |
+>  
+>  properties:
+>    $nodename:
+> -    pattern: "^ete([0-9a-f]+)$"
+> +    pattern: "^ete-[0-9]+$"
+>    compatible:
+>      items:
+>        - const: arm,embedded-trace-extension
+> @@ -55,13 +55,13 @@ examples:
+>  
+>  # An ETE node without legacy CoreSight connections
+>    - |
+> -    ete0 {
+> +    ete-0 {
+>        compatible = "arm,embedded-trace-extension";
+>        cpu = <&cpu_0>;
+>      };
+>  # An ETE node with legacy CoreSight connections
+>    - |
+> -   ete1 {
+> +   ete-1 {
+>        compatible = "arm,embedded-trace-extension";
+>        cpu = <&cpu_1>;
+>  
+> -- 
+> 2.46.0
 > 
->      +--------+ 
->      !        ! 
->      ++++++++++ 
->          !      
->          !      
->          v      
->        gravity, Z
-> 
-> down
-> 
-> Screen (drawn as ++++++++++) is looking downwards ("its screen flat on
-> the planets surface"). Gravity and Z axis point into the same
-> direction and it's expected to read positive value.
-
-
-Sorry, for the noise.
-
-
-> Actually, unless my analysis is proven wrong, perhaps it would
-> be better if I'd submit this patch in its final form, because it
-> has diverged a lot from the original patch.  IIUC, Ondrej only
-> imported the original patch from somewhere, without some kind of
-> proper attribution. [4]
-
-please, submit your version of this patch. I'd be glad to review it (I
-think, I've already did)
-
->> [1] https://rimgo.reallyaweso.me/vrBXQPq.png
->> [2] https://rimgo.reallyaweso.me/uTmT1pr.png
->> [3] https://www.kernel.org/doc/Documentation/devicetree/bindings/iio/mount-matrix.txt
-
-> [4] https://xff.cz/kernels/6.9/patches/0221-arm64-dts-sun50i-a64-pinephone-Add-mount-matrix-for-.patch
-
-
--- 
-Best regards,
-Andrey Skvortsov
 
