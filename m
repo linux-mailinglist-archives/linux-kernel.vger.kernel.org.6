@@ -1,96 +1,86 @@
-Return-Path: <linux-kernel+bounces-332488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E6697BA5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:53:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F6F97BA63
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A18CDB265CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:53:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7F3C1C20972
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B6117A586;
-	Wed, 18 Sep 2024 09:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE6417BB25;
+	Wed, 18 Sep 2024 09:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UG5uqqPU"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="l62ed5r/"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68684158A36
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 09:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC38A148828
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 09:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726653217; cv=none; b=bjZyYAenIMt9T0hciggncmA/PqnQsDCBiKxVRqPa5AdRpguTgNouiWwi3J19TzbLFPBPr6ZA9X2oBOjejcx1UNOZ9s7q1dJKwIb11nbc1xdUX7UsDJt7Rxu7IiABxp+YLeaXCI3lEQMiDY+noBpqomq54xOvbJD+8imdUc1Snf0=
+	t=1726653274; cv=none; b=MhnF8z+9siU3xV/mKMq1JTHKcdHDIAQDp6SjWeXt5gtRE4OcB2gvzfuSs6PUB4ud9PMEzL60qncrdGpzItmMYDgvYUAYWF2ujLPntMh/+2yW2bqC56nz57bc8hM9Yey6nLOiM3rJ4Je/cCTz9v/lRinhSYeQY4psEhoKLNn67HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726653217; c=relaxed/simple;
-	bh=qX3WYQ6+Vf/oHkvyYC7tQqdcfeK8ooGc7TQuG0J4/8g=;
+	s=arc-20240116; t=1726653274; c=relaxed/simple;
+	bh=hczx1B30LddQG5sqoBf/k9U+8Dd8jt5o+N548Etg0bk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rrjsBs3y9J7ymCt/pTtHlDqEbFrrC4dCmf3At69Db5YwcnU76dJbraYR6CmS62Fkw5ORZlpwa3MqfjZvnI1DXtNRQis910RzgHs6lkHH8r/ygEJRT9T2cCnyJ1JbHyOSmA1uz8q9sVR8ovF0CKI/3Cvjy5Zrnv/vHTPLP+W9ph4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UG5uqqPU; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53660856a21so4803751e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 02:53:33 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OQpOPACjTkIWysLzEs5LA1rB53dorBvAYQJXJrM4wSgNKSKIvKudoMoDRfSlCjzmNILZJ2FTczad/Ck/sAdP75oT0lLD5GemXI4TkWk+WqhzSQbKFsKgPD3DI9OL8FpCyPX98Q9TbGto+GSOa3BHbE3nR3m0I+Ez7ZnRhvYXEg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=l62ed5r/; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20792913262so49249555ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 02:54:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1726653211; x=1727258011; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726653272; x=1727258072; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=upynp3eGtaZUvy8FwKmWHNrTSvjQZK+dz1216GoCigI=;
-        b=UG5uqqPUAAKks/48aphmRg6pW8eGj0PYXA8UNzrGuQSZDFTEKx/4l+DhAZfUSBHUKN
-         l05E2ZqqzDHiS/DPiUqxaFNqHl1cbDUOZ1l7ORZ72Y81Pp0BNsSesEK6ZGCDivu6c6y1
-         5hhRNfuobukU9dhjxQayGxDsxycpK9S7/XVXmPv2FeMY9E+XhWCeYD7PXHObeTJ2SknF
-         k8zq7TPP5yTdnm+8cSt631YXy6jNppLAJFHenmJhqSMSZmBDXMOc6fE3p7QdVydahug3
-         XIntAojmfJA+MXFxWzFlZiYSVqI5vN2jegbPyw9nqE4und4kQLSt++/4XDHOd1PhZXon
-         qAfQ==
+        bh=Q/VCafIfAu4TzVmJWk9ey780TGQnXStCJMuHQdcUPmI=;
+        b=l62ed5r/f23GDyGeClGFYQuRq8E4gzEdCSl0zidvhsjbIQk8ObEJlrquxq3ehtp6jg
+         lOSDMKLT+z1VrpxZq8jEY4m/7gXiMTKpsJEYGywY5N3FUeFRB7sF8IHVGUN9CtVjY56a
+         QUzF+O5v1IK/YDQaJsWqzztsyVnbRbjmWlbLKRel8cKci/7Dg5ZBpp474Hjp50juBhep
+         s0AytMSDjsGDE0lun59gvhrxCf3K4p7kXIlJcj8u8K0SeRE+hEWatntravoeVVo5Su+8
+         cn2rgoIi5lyclOQSylz/s3c7MrEz2AgM6I3kcpau4RqdB2shbgBgKaooAi9QJtggq19q
+         /Rcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726653211; x=1727258011;
+        d=1e100.net; s=20230601; t=1726653272; x=1727258072;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=upynp3eGtaZUvy8FwKmWHNrTSvjQZK+dz1216GoCigI=;
-        b=cimnAJcjZAH/rHUA+eMg5km8mkvjFPRLrjHKkAM1Bz/5NdqGA7LyjK3jfq2ewESDIl
-         yYhGZJiTprzNWg+35BbIIZ0dxiGmmayxiyddn942cZ/iR0fLYSyEoPw/IYclH9yOETrM
-         XripcXgOBHDbtN4/H5r9SQeYmQYxny/6a8NMOxpc/nkcV01ofvfzax6gURjszJ9frF4c
-         FlYyxbfPkU+ZW0T6WPlF6bbmxkYkmt1zWmyeY/gzBxmUOPDthA/1mdxYuYZjmCW2DVPQ
-         WlzAxw/aDg1E8wGRlHLIoc320cETjGpIMUDWqZXC2h2hPAAEkUX3Nwoh8btBdWKU0s4u
-         QM2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUwlFmLx5gSvJr6CrTCsyxfiYplNUNWABxyAiD4lT4Kq6O5NkEysJ+9sCiJRbJoFA3FGwf8k7w+x1UJG/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLZNRLj5FLyvN1hefpeSM9/4e1rovHpVEt+w+kJ2dg+Cei/syl
-	Rbn+2FvxB4pviztiF0Ts/g70bS38rX3XYg6qQ3TcxkBg9dPIgLBrqxvWwafW4gc=
-X-Google-Smtp-Source: AGHT+IHpLFVaei2ayXOSJPg4gOV/F1ms9cHgsY6XrAy2tPIaJLJ7WLMBOrHs/jINB0vWDzucU8A1WA==
-X-Received: by 2002:a05:6512:6c3:b0:533:4652:983a with SMTP id 2adb3069b0e04-5367fef1846mr10734532e87.35.1726653211318;
-        Wed, 18 Sep 2024 02:53:31 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d19cfsm61744945ad.157.2024.09.18.02.53.17
+        bh=Q/VCafIfAu4TzVmJWk9ey780TGQnXStCJMuHQdcUPmI=;
+        b=thWiY+PMT1lVk6WLzWB79sLWBf+Xsf6w/njoLPaa3qctI4NRpk/fCDlzkR+s0OM2Ev
+         3zv50xch1RpHCfaLiySFN5lg/eiHs/u0aAPR2gIyWOQuFmi9f/Hlo5LlL4H5ZtCEvF3t
+         PEboqt10kss1v96xI2gGTqGg9TfMDpV+tvnXx8wvIkRSsJIZzpBVaTpKu4eA6e9DDdZI
+         zaCdE4tVeBCVjWlyLQkj31wGxxRT8LrGgrzfqmoUkfOWTConAd+B5Iey+Q0McLxv4D7U
+         peox2N+V3ceCycjxiGShkkglwCrcUDqx8idKpSrD/3X0zDucPVzZLqaWrKPR01g9kyVz
+         Stbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhjrsxVL2lo64ydx4yshvybuLFoDrmgRumbPiteQ8yAITS5pojTyXC48Pm/X/osqS3t+mH9rQnYtIP9lE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVntSlBln7VARgiZqOw22+8Otbfx0fYYL3CqnBCts532h6IaYA
+	hCyxp3regv6RQDXNF5vG1zIITAjjgVsbX82Tw+aDJHsvpvD4/OfmxlE/Ji4DwZ8=
+X-Google-Smtp-Source: AGHT+IEI7yiEk5IiJcitmWeLLauSS6dqRLSeWVvDsuHj1ewoa+0LxE0UBx6ziJqrtHINodWPpK3v3w==
+X-Received: by 2002:a17:90a:aa0b:b0:2d8:8920:771c with SMTP id 98e67ed59e1d1-2dbb9f3a6ccmr21926575a91.32.1726653272024;
+        Wed, 18 Sep 2024 02:54:32 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd608dceabsm1141103a91.28.2024.09.18.02.54.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 02:53:30 -0700 (PDT)
-Date: Wed, 18 Sep 2024 11:53:12 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
+        Wed, 18 Sep 2024 02:54:31 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sqrOF-006kam-2U;
+	Wed, 18 Sep 2024 19:54:27 +1000
+Date: Wed, 18 Sep 2024 19:54:27 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Ritesh Harjani <ritesh.list@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Sunil V L <sunilvl@ventanamicro.com>, Arnd Bergmann <arnd@arndb.de>,
-	Tony Lindgren <tony@atomide.com>, Udit Kumar <u-kumar1@ti.com>,
-	Ronald Wahl <ronald.wahl@raritan.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Thomas Richard <thomas.richard@bootlin.com>,
-	Griffin Kroah-Hartman <griffin@kroah.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Rengarajan S <rengarajan.s@microchip.com>,
-	Serge Semin <fancer.lancer@gmail.com>
-Subject: Re: [PATCH next v2 2/4] serial: 8250: Split out IER from
- rs485_stop_tx()
-Message-ID: <ZuqjCN18dSUDEa0d@pathway.suse.cz>
-References: <20240913140538.221708-1-john.ogness@linutronix.de>
- <20240913140538.221708-3-john.ogness@linutronix.de>
+	"Darrick J . Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, John Garry <john.g.garry@oracle.com>,
+	dchinner@redhat.com
+Subject: Re: [RFC 0/5] ext4: Implement support for extsize hints
+Message-ID: <ZuqjU0KcCptQKrFs@dread.disaster.area>
+References: <cover.1726034272.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,145 +89,208 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240913140538.221708-3-john.ogness@linutronix.de>
+In-Reply-To: <cover.1726034272.git.ojaswin@linux.ibm.com>
 
-On Fri 2024-09-13 16:11:36, John Ogness wrote:
-> Move IER handling out of rs485_stop_tx() callback and into a new
-> wrapper serial8250_rs485_stop_tx(). Replace all callback call sites
-> with wrapper, except for the console write() callback, where it is
-> inappropriate to modify IER.
+On Wed, Sep 11, 2024 at 02:31:04PM +0530, Ojaswin Mujoo wrote:
+> This patchset implements extsize hint feature for ext4. Posting this RFC to get
+> some early review comments on the design and implementation bits. This feature
+> is similar to what we have in XFS too with some differences.
+> 
+> extsize on ext4 is a hint to mballoc (multi-block allocator) and extent
+> handling layer to do aligned allocations. We use allocation criteria 0
+> (CR_POWER2_ALIGNED) for doing aligned power-of-2 allocations. With extsize hint
+> we try to align the logical start (m_lblk) and length(m_len) of the allocation
+> to be extsize aligned. CR_POWER2_ALIGNED criteria in mballoc automatically make
+> sure that we get the aligned physical start (m_pblk) as well. So in this way
+> extsize can make sure that lblk, len and pblk all are aligned for the allocated
+> extent w.r.t extsize.
+> 
+> Note that extsize feature is just a hinting mechanism to ext4 multi-block
+> allocator. That means that if we are unable to get an aligned allocation for
+> some reason, than we drop this flag and continue with unaligned allocation to
+> serve the request. However when we will add atomic/untorn writes support, then
+> we will enforce the aligned allocation and can return -ENOSPC if aligned
+> allocation was not successful.
+> 
+> Comparison with XFS extsize feature -
+> =====================================
+> 1. extsize in XFS is a hint for aligning only the logical start and the lengh
+>    of the allocation v/s extsize on ext4 make sure the physical start of the
+>    extent gets aligned as well.
 
-It would be great to provide more details:
+What happens when you can't align the physical start of the extent?
+It fails the allocation with ENOSPC?
 
-  + why it is done (IER modification requires port lock?)
+For XFS, the existing extent size behaviour is a hint, and so we
+ignore the hint if we cannot perform the allocation with the
+suggested alignment. i.e. We should not fail an allocation with an
+extent size hint until we are actually very near ENOSPC.
 
-  + why it is suddenly safe to call serial8250_em485_handle_stop_tx()
-    without holding &p->port.lock
+With the new force-align feature, the physical alignment within an
+AG gets aligned to the extent size. In this case, if we can't find
+an aligned free extent to allocate, we fail the allocation (ENOSPC).
+Hence with forced alignment, we can have ENOSPC occur when there are
+large amounts of free space available in the filesystem.
 
+This is almost certainly what most people -don't want-, but it is a
+requirement for atomic writes. To make matters worse, this behaviour
+will almost certainly get worst as filesystem ages and free space
+slowly fragments over time.
 
-> --- a/drivers/tty/serial/8250/8250_port.c
-> +++ b/drivers/tty/serial/8250/8250_port.c
-> @@ -558,7 +558,7 @@ static int serial8250_em485_init(struct uart_8250_port *p)
->  
->  deassert_rts:
->  	if (p->em485->tx_stopped)
-> -		p->rs485_stop_tx(p);
-> +		serial8250_rs485_stop_tx(p);
+IOWs, by making the ext4 extsize have forced alignment semantics by
+default, it means users will see ENOSPC at lot more frequently and
+in situations where it is most definitely not expected.
 
-This would keep the same functionality only when
+We also have to keep in mind that there are applications out there
+that set and use extent size hints, and so enabling extsize in ext4
+will result in those applications silently starting to use them. If
+ext4 supporting extsize hints drastically changes the behaviour of
+the filesystem then that is going to cause significant unexpected
+regressions for users as they upgrade kernels and filesystems.
 
-	p->rs485_stop_tx == serial8250_em485_stop_tx
+Hence I strongly suggest that ext4 implements extent size hints in
+the same way that XFS does. i.e. unless forced alignment has been
+enabled for the inode, extsize is just a hint that gets discarded if
+aligned allocation does not succeed.
 
-Is it always the case?
-Is it OK when it is not the case?
+Behaviour such as extent size hinting *should* be the same across
+all filesystems that provide this functionality.  This makes using
+extent size hints much easier for users, admins and application
+developers. The last thing I want to hear is application devs tell
+me at conferences that "we don't use extent size hints anymore
+because ext4..."
 
-For example, serial8250_em485_init() is involved in bcm2835aux driver
-probe which uses another rs485_stop_tx() callback, see below.
+> 2. eof allocation on XFS trims the blocks allocated beyond eof with extsize
+>    hint. That means on XFS for eof allocations (with extsize hint) only logical
+>    start gets aligned.
 
->  
->  	return 0;
->  }
-> @@ -1397,16 +1396,29 @@ void serial8250_em485_stop_tx(struct uart_8250_port *p)
->  	/*
->  	 * Empty the RX FIFO, we are not interested in anything
->  	 * received during the half-duplex transmission.
-> -	 * Enable previously disabled RX interrupts.
->  	 */
-> -	if (!(p->port.rs485.flags & SER_RS485_RX_DURING_TX)) {
-> +	if (!(p->port.rs485.flags & SER_RS485_RX_DURING_TX))
->  		serial8250_clear_and_reinit_fifos(p);
-> +}
-> +EXPORT_SYMBOL_GPL(serial8250_em485_stop_tx);
-> +
-> +/**
-> + * serial8250_rs485_stop_tx() - stop rs485 transmission, restore RX interrupts
-> + * @p: uart 8250 port
-> + */
-> +void serial8250_rs485_stop_tx(struct uart_8250_port *p)
-> +{
-> +	/* Port locked to synchronize UART_IER access against the console. */
-> +	lockdep_assert_held_once(&p->port.lock);
-> +
-> +	p->rs485_stop_tx(p);
->  
-> +	/* Enable previously disabled RX interrupts. */
-> +	if (!(p->port.rs485.flags & SER_RS485_RX_DURING_TX)) {
->  		p->ier |= UART_IER_RLSI | UART_IER_RDI;
->  		serial_port_out(&p->port, UART_IER, p->ier);
->  	}
->  }
-> -EXPORT_SYMBOL_GPL(serial8250_em485_stop_tx);
->  
->  static enum hrtimer_restart serial8250_em485_handle_stop_tx(struct hrtimer *t)
->  {
-> @@ -1418,7 +1430,7 @@ static enum hrtimer_restart serial8250_em485_handle_stop_tx(struct hrtimer *t)
->  	serial8250_rpm_get(p);
->  	uart_port_lock_irqsave(&p->port, &flags);
->  	if (em485->active_timer == &em485->stop_tx_timer) {
-> -		p->rs485_stop_tx(p);
-> +		serial8250_rs485_stop_tx(p);
+I'm not sure I understand what you are saying here. XFS does extsize
+alignment of both the start and end of post-eof extents the same as
+it does for extents within EOF. For example:
 
-This causes that UART_IER is manipulated for all p->rs485_stop_tx()
-callbacks. Is that correct, please?
+# xfs_io -fdc "truncate 0" -c "extsize 16k" -c "pwrite 0 4k" -c "bmap -vvp" foo
+wrote 4096/4096 bytes at offset 0
+4 KiB, 1 ops; 0.0308 sec (129.815 KiB/sec and 32.4538 ops/sec)
+foo:
+EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
+   0: [0..7]:          256504..256511    0 (256504..256511)     8 000000
+   1: [8..31]:         256512..256535    0 (256512..256535)    24 010000
+ FLAG Values:
+    0100000 Shared extent
+    0010000 Unwritten preallocated extent
 
-For example, it seems serial8250_em485_handle_stop_tx() might be used
-also by bcm2835aux driver. It set by:
+There's a 4k written extent at 0, and a 12k unwritten extent
+beyond EOF at 4k. I.e. we have an extent of 16kB as the hint
+required that is correctly aligned beyond EOF.
 
-static int serial8250_em485_init(struct uart_8250_port *p)
-{
-	[...]
-	p->em485->stop_tx_timer.function = &serial8250_em485_handle_stop_tx;
-	[...]
-}
+If I then write another 4k at 20k (beyond both EOF and the unwritten
+extent beyond EOF:
 
-which is called via
+# xfs_io -fdc "truncate 0" -c "extsize 16k" -c "pwrite 0 4k" -c "pwrite 20k 4k" -c "bmap -vvp" foo
+wrote 4096/4096 bytes at offset 0
+4 KiB, 1 ops; 0.0210 sec (190.195 KiB/sec and 47.5489 ops/sec)
+wrote 4096/4096 bytes at offset 20480
+4 KiB, 1 ops; 0.0001 sec (21.701 MiB/sec and 5555.5556 ops/sec)
+foo:
+ EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
+   0: [0..7]:          180000..180007    0 (180000..180007)     8 000000
+   1: [8..39]:         180008..180039    0 (180008..180039)    32 010000
+   2: [40..47]:        180040..180047    0 (180040..180047)     8 000000
+   3: [48..63]:        180048..180063    0 (180048..180063)    16 010000
+ FLAG Values:
+    0100000 Shared extent
+    0010000 Unwritten preallocated extent
 
-int serial8250_em485_config(struct uart_port *port, struct ktermios *termios,
-			    struct serial_rs485 *rs485)
-{
-	[...]
-	if (rs485->flags & SER_RS485_ENABLED)
-		return serial8250_em485_init(up);
-	[...]
-}
+You can see we did contiguous allocation of another 16kB at offset
+16kB, and then wrote to 20k for 4kB.. i.e. the new extent was
+correctly aligned at both sides as the extsize hint says it should
+be....
 
-which is set by:
+>    However extsize hint in ext4 for eof allocation is not
+>    supported in this version of the series.
 
-static int bcm2835aux_serial_probe(struct platform_device *pdev)
-{
-	[...]
-	up.port.rs485_config = serial8250_em485_config;		<--------
-	[...]
-	up.rs485_stop_tx = bcm2835aux_rs485_stop_tx;
-	[...]
-}
+If you can't do extsize aligned allocations for EOF extension, then
+how to applications use atomic writes to atomically extend the file?
 
-But this same _probe() call sets
+> 3. XFS allows extsize to be set on file with no extents but delayed data.
 
-	up.rs485_stop_tx = bcm2835aux_rs485_stop_tx;
+It does?
 
-which does not manipulate UART_IER.
+<looks>
 
->  		em485->active_timer = NULL;
->  		em485->tx_stopped = true;
->  	}
-> @@ -1450,7 +1462,7 @@ static void __stop_tx_rs485(struct uart_8250_port *p, u64 stop_delay)
->  		em485->active_timer = &em485->stop_tx_timer;
->  		hrtimer_start(&em485->stop_tx_timer, ns_to_ktime(stop_delay), HRTIMER_MODE_REL);
->  	} else {
-> -		p->rs485_stop_tx(p);
-> +		serial8250_rs485_stop_tx(p);
+Yep, it doesn't check ip->i_delayed_blks is zero when changing
+extsize.
 
-I can't find easily whether serial8250_em485_stop_tx() is always set
-as p->rs485_stop_tx callback here. I would expect that it might be
-another callback. It is a callback after all.
+I think that's simply a bug, not intended behaviour, because
+delalloc will not have reserved space for the extsize hint rounding
+needed when writeback occurs. Can you send a patch to add this
+check?
 
-Is it always safe?
+>    However, ext4 don't allow that for simplicity. The user is expected to set
+>    it on a file before changing it's i_size.
 
->  		em485->active_timer = NULL;
->  		em485->tx_stopped = true;
->  	}
+We don't actually care about i_size in XFS - the determining factor
+is whether there are extents allocated on disk. i.e. we can truncate
+up and then set the extent size hint because there are no extents
+allocated even though the size is non-zero. 
 
-Best Regards,
-Petr
+There are almost certainly applications out there that change extent
+size after truncating to a non-zero size, so this needs to work on
+ext4 the same way it does on XFS. Otherwise people are going to
+complain that their applications suddenly stop working properly on
+ext4....
+
+> 4. XFS allows non-power-of-2 values for extsize but ext4 does not, since we
+>    primarily would like to support atomic writes with extsize.
+
+Yes, ext4 can make that restriction if desired.
+
+Keep in mind that the XFS atomic write support is still evolving,
+and I think the way we are using extent size hints isn't fully
+solidified yet.
+
+Indeed, I think that we can allow non-power-of-2 extent sizes for
+atomic writes, because integer multiples of the atomic write unit
+will still ensure that physical extents are properly aligned for
+atomic writes to succeed.  e.g. 24kB extent size is compatible with
+8kB atomic write sizes.
+
+To make that work efficiently unwritten extent boundaries need to be
+maintained at atomic write alignments (8kB), not extent size
+alignment (24kB), but other than that I don't think anything else is
+needed....
+
+This is desirable because it will allow extent size hints to remain
+usable for their original purposes even with atomic writes on XFS.
+i.e. fragmentation minimisation for small random DIO write worklaods
+(exactly the sort of IO you'd consider using atomic writes for!),
+alignment of extents to [non-power-of-2] RAID stripe geometry, etc.
+
+> 5. In ext4 we chose to store the extsize value in SYSTEM_XATTR rather than an
+>    inode field as it was simple and most flexible, since there might be more
+>    features like atomic/untorn writes coming in future.
+
+Does that mean you can query and set it through the user xattr
+interfaces? If so, how do you enforce the values users set are
+correct?
+
+> 6. In buffered-io path XFS switches to non-delalloc allocations for extsize hint.
+>    The same has been kept for EXT4 as well.
+
+That's an internal XFS implementation detail that you don't need to
+replicate. Historically speaking, we didn't use unwritten extents
+for delayed allocation and so we couldn't do within-EOF extsize
+unaligned writes without adding special additional zero-around code to
+ensure that we never exposed stale data to userspace from the extra
+allocation that the data write did not cover.
+
+We now use unwritten extents for delalloc conversion, so this istale
+data exposure issue no longer exists. We should really switch this
+code back to using delalloc because it is much faster and less
+fragmentation prone than direct extsize allocation....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
