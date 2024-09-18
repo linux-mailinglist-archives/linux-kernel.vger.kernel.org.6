@@ -1,137 +1,116 @@
-Return-Path: <linux-kernel+bounces-332636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83BCD97BC46
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:33:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B8B797BC40
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C4A1C21E6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA9F285C50
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5214118A6B4;
-	Wed, 18 Sep 2024 12:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA694189F32;
+	Wed, 18 Sep 2024 12:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2/VUG48w"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K+2GypYD"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68C118A6BF
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 12:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D5718952A
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 12:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726662767; cv=none; b=YCt7fqL7YzFQ1CGDz84rHiRnaTMZPR/r+DgRb0xoE8xlX6KckO+FranSq4nzoFiiBaYNYLb8jk6wxgGjFUzX5W+y+YZshs5MB/qmHelw0uFMZo8MaLK0dZcPZ8IicpKW6boYSOTn2pCCrvQouz0EJsYvNZoZgpLl9tYwjexmUB4=
+	t=1726662747; cv=none; b=Nv9J6SWPhUIZ9ori80BuSz8YFxdF4tRmgK9AYHaiEWvGYeOP0Oh6G/XmwMw+ucGMY0CA3fF768lFo4XT1JLX2y6V6cgHunxc+uUMKTyueTLAayt5SkkCispqFXLWrj11F56ZkKTznZNg3Dznw8Qn92y2Tgp2CZOQcQIlaSO537k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726662767; c=relaxed/simple;
-	bh=vKJnZkWWS80Qtmju8Q/9wyDHuf8ljsMViMpaXgjgy/0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pThNlF8DUp2NlYUay4m8wNegLGmR+mUe1cCg4KHWKgV51/X/S2TE0PU4F0N8PfpsVGChPTFrojJuwR9hTPzY9zYae6kaais6DK8yOvYwEEpBHMi+7t03TmAWE9B1UoST8/2mfVTaeNR/sxHy+mIy+FF+RkMBbiGhJRPrjSGgcqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2/VUG48w; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c3cdba33b0so8559387a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 05:32:45 -0700 (PDT)
+	s=arc-20240116; t=1726662747; c=relaxed/simple;
+	bh=3gVQ9JaYTaBdvDz5MGdsXx0ayVEISpaMDfcREkdX9c8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J1qDzE4Fv7BWplJ2BgKKOIDK1JoqFwF3N/Xjxw/04tPBqQmNcI8rN6lveZwDuBaMaz5PYd0LxiSsdTD6lwhHmbq0pk6IqmbOtwrBkkhuHN9IJpoOrasUCcjNUKEezF/4m9HLmTQpwL8QMtydNsbTbZw8tZP1WRY10nyiPLh0PHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K+2GypYD; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so1351907e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 05:32:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726662764; x=1727267564; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hZhliqxgyY7Mq8AOL7Bnvj0uEwOcI/YT63YI4qZtzkU=;
-        b=2/VUG48wos5nwvTghv2tYXSIhK9338T4qt85FGhCIK8kHweLkTIMk17i6uMUnFQh9P
-         XcIa76XrLmN5OB2OyueeMQs05Jt7nWxVfZrF0h4Xr5dF1dx3c7M0Dc0Ic+snD3GVvB+m
-         Ef8jnXRiPzclW1KGaXjlYEbLM1g07joZ4aFMS4qv0JNCymyO4KMwkt3dJ8hc5r/4T+54
-         QTpKyW9l8RzBBPDO/2e/l9H6kfWU2wsgkrsF7U10DFOxFn0SYpga/1FlW+sulRT0/HXM
-         H866GEKeIG02Qfo9qtx5D7ogKurPG2oLdtDf7W4GqWD7j5oPU2BjA6RgqFFLT4P3P3q8
-         qMRQ==
+        d=linaro.org; s=google; t=1726662743; x=1727267543; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QldvlS8/eJZac6pG0e6NEdXcfsAi5+t2N8DBgSFO8Rk=;
+        b=K+2GypYD3gvqB4wezdF1ONJGmiuElFPIW3MxSawSSrNDMxe3f9v/pSSpnkpq6OXX/Y
+         aWTS3XIpx9iz5CLBWmoUqqMLgB5nJlSU+z2IowwLG928nhWsgldW0u3qFptNAtAEkXa1
+         uqsT6LLb/uVXoypoWodr1Aj3jRT3XuNfXssLoCjPfJ+yq26aWG4Is/lrXbygXj40M7Qs
+         bqAkP0Yz5HtnAS+qWbosrohj1+VED2F8RMgCIGsbkjJD6i91jZvMemNZILZcD1fIuscp
+         b1bZcsUEeFrRkx/mWf55chIaQskhYvl8ymzbHDkPAIH8wU4Xa+FFsstwChP8Kso04Ecu
+         Tb2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726662764; x=1727267564;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hZhliqxgyY7Mq8AOL7Bnvj0uEwOcI/YT63YI4qZtzkU=;
-        b=RqRwN6Flb/HDtV9YoEneCvvMvxulPUG9YunkubasDPcvKumNnQ5iLcQLWh0UmcdfIp
-         o9Wi9QBr5cMtbcV0UJeX5pbhIt/lx4BITNLn5c2OHooz7GaYzyMLxhYxb0ZKJGdE6LOp
-         gfZWw5bdskOhFhYJl6S8DPBrxadu0075dGMcEy0Qt95JsfZKmm/UxJ3AwBrActTVr4qs
-         Dn0W/O5Ze3g4k3FMv3FM1E8ZHpIokjHGxBKP6UMEuXmC1+1y97eJ1EwwRvTFuOd/CwLv
-         As5LN+yZGej+67+TuEvfnXOe4d9VAzw1RjsqZkrkwdsChmOZf1GtHI1KfciM2inVos1S
-         bbyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUE5vBct+RT1t9fq60KRYB8Gw0gWmkU3UGdsA+H/Bck4yG+2OQcMMfn+yaZn9xL5SVOazqG+pDAkrvRY1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV/PiVsdKAr1fzNV8Td18T3e+2vyAUl8z74SIJj4UrASpzInXz
-	p3oah8Sw3oPJBIIHQ6+MjF/tftxZeJ1TYrHbVT+BmJxyOhvdduqWuLCcfjTUEuc=
-X-Google-Smtp-Source: AGHT+IEEDVpwRhC6Scvjb+H97Br0hyyr92G4Ib/fmF+/0i4P6aqXZzcuKxCynYAv7kEBWVtqeg7aiw==
-X-Received: by 2002:a05:6402:40c4:b0:5c4:23ba:95c4 with SMTP id 4fb4d7f45d1cf-5c423ba9733mr16448765a12.9.1726662763852;
-        Wed, 18 Sep 2024 05:32:43 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:a2bb:f619:b5e9:672f])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb89e07sm4851775a12.76.2024.09.18.05.32.43
+        d=1e100.net; s=20230601; t=1726662743; x=1727267543;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QldvlS8/eJZac6pG0e6NEdXcfsAi5+t2N8DBgSFO8Rk=;
+        b=VKyqfwi2H0yC7IaZ2tlTquaJMYoOqZTyQWK/fNuRmOY8mZzTwOAB24+ztZArpwCdNs
+         9eA/nJUTMfKDJhhv0XrsE2S5hU3VNIVjaK+ESxrM1xuwDXt/fPZ8vhpABMMv24Z0ZCR7
+         Ydmt+jHfsp30OotBEOvh94pfDbSesfUFx83v+5HqyF8rSAhqdC7Bst/2sFFeki7zVTRK
+         aNaKAv2fiv/I507oDWlcM0ZxoMVgxZTjtw62zobVbAOjccOx79Axufww7w03So5+Uqvb
+         jOGknaDm7vpfhuaRW6xaQsgzUIV5IFkEy/RbFphQe72Y1tFmhZRwUpxh4Gffg2yhL373
+         MzTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVG41HGx860zCmCNhkGJJj3Kstjfu19YymhRapkIvSM9mdMQm/aj9O6n0pwp0r9YQFgqQXF+Ff6VTLHG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyng2mfAJMcjDUBKtTzvmWMB4CcW5CgKCDW8HVOC+ZH5ZUlnIqA
+	08lviXKvW5/v1CEFbyCp3gK2NdEflZPZT7AWV9NMl87KFk6XSvwt9WoXOZuhr1g=
+X-Google-Smtp-Source: AGHT+IErvjmxyimyd57IGMkKNpdAXZ02gL2PuI7e7vGw8BlqbmJRMt4iCTe0zO0FnjQKvmbmHIhaUw==
+X-Received: by 2002:a05:6512:33d6:b0:536:741a:6bad with SMTP id 2adb3069b0e04-5367feb95bamr9279710e87.12.1726662743277;
+        Wed, 18 Sep 2024 05:32:23 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53698c3dd4esm797163e87.13.2024.09.18.05.32.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 05:32:43 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: Drop explicit initialization of struct i2c_device_id::driver_data to 0
-Date: Wed, 18 Sep 2024 14:31:52 +0200
-Message-ID: <20240918123150.1540161-10-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+        Wed, 18 Sep 2024 05:32:21 -0700 (PDT)
+Date: Wed, 18 Sep 2024 15:32:19 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sachin Gupta <quic_sachgupt@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_cang@quicinc.com, quic_nguyenb@quicinc.com, quic_bhaskarv@quicinc.com, 
+	quic_mapa@quicinc.com, quic_narepall@quicinc.com, quic_nitirawa@quicinc.com, 
+	quic_rampraka@quicinc.com, quic_sartgarg@quicinc.com
+Subject: Re: [PATCH 1/1] arm64: dts: qcom: qcs6490-rb3gen2: Add SD Card node
+Message-ID: <4g6ao5bbt57wdro6sroq7nodxtgdk5ecdxsdkrfvttfrsm2zmw@jik6og3np75z>
+References: <20240917090630.1025-1-quic_sachgupt@quicinc.com>
+ <gyasvmb5q3e4pgmfpj7njovclydwhsvsxt4ayfxzbh5njwgwsq@zfhlm6lqfirl>
+ <5c0f627b-058d-4213-9c2a-5adb2f174c0d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1525; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=vKJnZkWWS80Qtmju8Q/9wyDHuf8ljsMViMpaXgjgy/0=; b=owGbwMvMwMXY3/A7olbonx/jabUkhrRXJ1w8dDpM8y8z5jDwORyTZn4WmPqhwennjICZHXItE hlHjrt0MhqzMDByMciKKbLYN67JtKqSi+xc++8yzCBWJpApDFycAjAR5kfs/6smq/sGl/Xlab2J sP/LE3yI1/l2v/WrgFcqNY6m7/wXOBn87Shg/NEpfd3IptDEe0HP8Xu3kzi6z62JFXjxlimp71w hv+7irQ+SAxY7pN1fdXtVblhl88520YW29++c2++2SjBoq8/P9OKGjcyml6KUtsXammo5JH2W4P osJDJNr9RtiXyBlMRGidg4xgo3nmXmSWIbzdoT9Nm4Zt54Z7BQz3+nlFzmqqeKr34ceNiUqHO0d lVRMNPeHl/DJ5G220/k2mn/O58ky/Yqmpml/TVT+ByNgGa1LQoLH/28nlK51LTY0tyH+3lJ9IPf +tlej757Bt1O+rjj2ORfrP51sWdF0qynXH/64+vGaaEA
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5c0f627b-058d-4213-9c2a-5adb2f174c0d@quicinc.com>
 
-These drivers don't use the driver_data member of struct i2c_device_id,
-so don't explicitly initialize this member.
+On Wed, Sep 18, 2024 at 03:58:04PM GMT, Sachin Gupta wrote:
+> 
+> 
+> On 9/17/2024 7:08 PM, Dmitry Baryshkov wrote:
+> > On Tue, Sep 17, 2024 at 02:36:30PM GMT, Sachin Gupta wrote:
+> > > Add SD Card node for Qualcomm qcs6490-rb3gen2 Board.
+> > 
+> > Consider adding mmc0 or mmc2 alias for the sdhc_2 node.
+> > 
+> Thank you for your input. However, aliases you mentioned already exists in
+> the sc7280.dtsi header file.
 
-This prepares putting driver_data in an anonymous union which requires
-either no initialization or named designators. But it's also a nice
-cleanup on its own.
+Ack
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
- drivers/crypto/atmel-ecc.c     | 2 +-
- drivers/crypto/atmel-sha204a.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> > > Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
+> > > ---
+> > >   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 33 ++++++++++++++++++++
+> > >   1 file changed, 33 insertions(+)
 
-diff --git a/drivers/crypto/atmel-ecc.c b/drivers/crypto/atmel-ecc.c
-index 590ea984c622..0d48e64d28b1 100644
---- a/drivers/crypto/atmel-ecc.c
-+++ b/drivers/crypto/atmel-ecc.c
-@@ -379,7 +379,7 @@ MODULE_DEVICE_TABLE(of, atmel_ecc_dt_ids);
- #endif
- 
- static const struct i2c_device_id atmel_ecc_id[] = {
--	{ "atecc508a", 0 },
-+	{ "atecc508a" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, atmel_ecc_id);
-diff --git a/drivers/crypto/atmel-sha204a.c b/drivers/crypto/atmel-sha204a.c
-index a02d496f4c41..75bebec2c757 100644
---- a/drivers/crypto/atmel-sha204a.c
-+++ b/drivers/crypto/atmel-sha204a.c
-@@ -202,8 +202,8 @@ static const struct of_device_id atmel_sha204a_dt_ids[] __maybe_unused = {
- MODULE_DEVICE_TABLE(of, atmel_sha204a_dt_ids);
- 
- static const struct i2c_device_id atmel_sha204a_id[] = {
--	{ "atsha204", 0 },
--	{ "atsha204a", 0 },
-+	{ "atsha204" },
-+	{ "atsha204a" },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(i2c, atmel_sha204a_id);
-
-base-commit: 55bcd2e0d04c1171d382badef1def1fd04ef66c5
 -- 
-2.45.2
-
+With best wishes
+Dmitry
 
