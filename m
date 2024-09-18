@@ -1,105 +1,90 @@
-Return-Path: <linux-kernel+bounces-332500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4E797BA87
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:06:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C51897BA88
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14EBDB29763
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:06:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046941F278CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F59217BEBA;
-	Wed, 18 Sep 2024 10:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94F417C7BF;
+	Wed, 18 Sep 2024 10:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JEJx++iA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WPPeRgyH"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B209F9E4;
-	Wed, 18 Sep 2024 10:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F055175D54
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726653963; cv=none; b=HNUDa/4w4zMqDb/rTvyYpycbRkLjfMAJBHWYnXqm33oy7dPHgknSzPfKS4eZnCD9EtxwaoDd6RxBbD555CHQVsvfIZfG4g/b1voZD40YkyvOy4daGSokN6Ffw1MMC0qnTCmg1LSIK6s0T8DPp/xDRdnuCozV0uIa5t14FenA98c=
+	t=1726653996; cv=none; b=cQ2feY0rBfser/BIJKTZQkBFpKKRj88dy5W1ERlOnKOf6JWX0d6qA+ubYtY7nE/rzZUCpg85OY3jGzNtMmeF6E3oR2ntDtukgP05OIF7gqhQbEft6Yotk/XMsd4qPlISbP/ve/2Q8GigpEf9pZmtYXRtJwPU9Q+SIVweLeYDgR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726653963; c=relaxed/simple;
-	bh=b9ubWyNkci8vVhzFdYA9KsCYZugo7cm3IlQEuh6iue0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WyABcLhTpfSwFSYJR09++l2x1U+UoSl4fI5nqJRee1+JNfstzGaTC/QNX9Shnjhsq2mOrHsziYOn1cUuDITWCnjzcNSD6uv+1WLt+mkpI0KvCeod5Aar+5aNtdN1c3IMBuCf/nGSsuk+xBAeXitqeQiTlAElcqEsakLbgtImi9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JEJx++iA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4148EC4CEC3;
-	Wed, 18 Sep 2024 10:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726653963;
-	bh=b9ubWyNkci8vVhzFdYA9KsCYZugo7cm3IlQEuh6iue0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JEJx++iAkxnatHlTFHLGHaXqoTECueNrOQcMMlX/zjJgsMyeCZJsBOdEJu518FI3r
-	 fg4AzPtrCdoLe5UmpM0+JV+LuKm1iGDMKhQ1jOW11y/kYMnQtFk5Bf4LSNIvbIRglv
-	 MGUSnG2YtW3q4Zy4nXBZLQhgdk+n+xRyzsCaHO9LrfnHharz7jbh+hag9f3KGCTSMp
-	 zx3Fmw/bDIKBtxx0yxWRG1icj/5uw2RWfuUvoES18G22SAP2gGrUN8SmYXvAYQM4bV
-	 waI4WOurk1DOrqdN6aBRoCL3Uc/+4bQCobP7j/Px+gHkDt9lFgHdMIV7iZ8n1I5HdZ
-	 1MqeZbIQXO1ow==
-Received: from johan by theta with local (Exim 4.98)
-	(envelope-from <johan@kernel.org>)
-	id 1sqrZP-000000001j5-2CWn;
-	Wed, 18 Sep 2024 12:05:59 +0200
-Date: Wed, 18 Sep 2024 12:05:59 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: qcom: edp: Add runtime PM support
-Message-ID: <ZuqmB3Cn7mGfA2PU@hovoldconsulting.com>
-References: <20240907-phy-qcom-edp-enable-runtime-pm-v1-1-8b9ee4210e1e@linaro.org>
+	s=arc-20240116; t=1726653996; c=relaxed/simple;
+	bh=ks/I8Rft33hUuiHWwdweAz1/NAcXILGYy4txuTbhcBw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R5DPRsKUCrMLMBS/WD+x4nJejmdkfW1Z0wHCp+OVB2tOfMsF+m5b0vaqrLK5um2o3SfJamws1BaclRLVv7p5tkbbsGLhIYxIlmQ1Qz0z8gcLoqHSFyg2Jg3ErXuqOMGlqnjYxS5SuGERuivf5VushU1aGBWPsmqL4yA0yn/8C8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WPPeRgyH; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1726653992;
+	bh=ks/I8Rft33hUuiHWwdweAz1/NAcXILGYy4txuTbhcBw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WPPeRgyHQ5qEqoiD9QZHz4FyvmYBM98QY9ys4ZWshHtJMJeatPcokKbtjC8kF9P/G
+	 Z9iTOQsR9C0PcDEkPrl5hRWljwjR8icYagEVqTTf7Vh3j2fNBcslIZJJF4JcMEJPRe
+	 xW8rTo7496RGtJ7J0xzmx6wR7Joc25VuwVjiqwNR0JlxzJ+kcBKzLBlZttGthPRoT4
+	 ppY+NzUajxGqD4EI3fs68XY4tCUsgtDaqyHsZt/JY2VjK32TgPsG6hHnK5RKffYyQ7
+	 VjcJNFMQL5RapLiBf1/ZDto2VpuQ1/1BkyEF7+5uWNoPFscVPn/azWgYY0Rr+UXtQJ
+	 cnl87owaem+zw==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 482B517E1097;
+	Wed, 18 Sep 2024 12:06:32 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: linux-mediatek@lists.infradead.org
+Cc: matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH v1 0/3] soc: mediatek: mtk-cmdq-helper: Various cleanups
+Date: Wed, 18 Sep 2024 12:06:17 +0200
+Message-ID: <20240918100620.103536-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240907-phy-qcom-edp-enable-runtime-pm-v1-1-8b9ee4210e1e@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 07, 2024 at 06:25:21PM +0300, Abel Vesa wrote:
-> Enable runtime PM support by adding proper ops which will handle the
+This series performs various cleanups to the MediaTek CMDQ Helper lib,
+reducing code duplication and enhancing human readability.
 
-Avoid words like 'proper' here (what are non-proper runtime PM ops?).
+This also avoids double initialization struct cmdq_instruction as,
+in some cases, it was stack-initialized to zero and then overwritten
+completely anyway a bit later.
+I'd expect compilers to be somehow smart about that, but still, while
+at it ... why not :-)
 
-> clocks and regulators. These resources will now be handled on power_on and
-> power_off instead of init and exit PHY ops.
+Tested on MT8192 Asurada, MT8195 Tomato Chromebooks.
 
-No, this is simply a false claim and indicates that you haven't reviewed
-how PHY runtime PM works. Core will increment the usage count on init()
-and decrement it on exit().
+AngeloGioacchino Del Regno (3):
+  soc: mediatek: mtk-cmdq: Move mask build and append to function
+  soc: mediatek: mtk-cmdq: Mark very unlikely branches as such
+  soc: mediatek: mtk-cmdq: Move cmdq_instruction init to declaration
 
-> Also enable these resources on
-> probe in order to balance out the disabling that is happening right after.
-> Prevent runtime PM from being ON by default as well.
+ drivers/soc/mediatek/mtk-cmdq-helper.c | 241 ++++++++++++-------------
+ 1 file changed, 112 insertions(+), 129 deletions(-)
 
-And here you just regressed all current systems that do not have udev
-rules to enable runtime PM, and which will now be stuck with these
-resources always-on (e.g. during DPMS off and system suspend).
+-- 
+2.46.0
 
-In fact, you are even regressing systems that would enable runtime PM,
-as the runtime suspend callback would not currently be called when you
-enter system suspend so the regulators and clocks will be left on.
-
-This clearly hasn't been tested and analysed properly.
-
-> +static int __maybe_unused qcom_edp_runtime_suspend(struct device *dev)
-> +{
-> +	struct qcom_edp *edp = dev_get_drvdata(dev);
-> +
-> +	dev_err(dev, "Suspending DP phy\n");
-
-You forgot to drop your development printks (same below).
-
-Johan
 
