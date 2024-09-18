@@ -1,176 +1,196 @@
-Return-Path: <linux-kernel+bounces-332234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B9B97B712
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:23:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C863E97B713
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C833EB21799
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:23:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351CA1F22730
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E39C13699B;
-	Wed, 18 Sep 2024 03:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D8B135417;
+	Wed, 18 Sep 2024 03:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="nPiteInV"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2065.outbound.protection.outlook.com [40.107.117.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="JdJW0cTy"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AB2B658;
-	Wed, 18 Sep 2024 03:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726629784; cv=fail; b=IXU512xxrNFSDCc6NTOzj5nwFhqcF6ERQx/PuBsp1W6f0VRBAODbUwhYJPMOIfIa302Uongc7XPvLU+BMIh6/tPmlWauCGM6ku2r0MfdgSHFjL0J/Lys1dPQcT3WDFlOoibD/UTrkI2tKpjSF9MG1Iz6/BHqIE2n1j4x9AsJU80=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726629784; c=relaxed/simple;
-	bh=APznGLQAUzguzTB2Tt/oS4U/n7hSWaKb6oUF6jqrWos=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ZCDO+eJ68YgJZ7Z8uERA/Gd01XJBVplt32VzrjhPjYHhFIMG6Y7PV+6QgrKoBLjHTJ1N2kzAMpTumauG63166q9IjuVPvKTjDWTryhyRBUVJMeB+yTgWK5DTK2rakDS6Nx6G4k4nvqBF2fie7P04Py3Hk+hwylKCgCfj9CyZLns=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=nPiteInV; arc=fail smtp.client-ip=40.107.117.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VgHzZ4zXWZPOk6l4Nojq3z9DUWHovK1xvbTHA4NQins6urjHwEjzdWQ12+W+Kqgf/neXNdtp16xmiHN+CgpndyeODXeZa5Ct2zVUoIEHjREkeQhoTHCnn81tyHG61NGFo7PWn/uyCBo2eQSlItC9yuHdkGPhU+3WBDU7UclkM1RHsx9ogv91kmJAiTcp3t8HWNdPIokk97wq0KeMzEPIk1ZB5ayK8hqAyCLqd5+EkuhZMN+BOVwJVIZR0hFwFm4NPC4zNd6IbhekTITlAyaJda3yESQfdJkeXGkgMVoBlFIPuHQjV5K3N2ZEhNxFghd8zNrhv7ECYxWE8rrtxuFSww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N5vITygCQNsczM1GtrjR+e+dl5NU4ieByUGkM6mWtlE=;
- b=c4D/Jrs2M74oDaWKB6Fa3vXjLHoPEsLKgqfUPgPc2OjOKmobuv65iCaSCimDJhkINJ0RUicC9MQz3NgNxdfffwrdj1lrNdbdd/K41EIenni2pVAXxjKQh+vRe/qe6WWJENPja8fFhS9l+cxUnqi51re9oqj9jdMB3/mrUoza4f0E5cOq0o1FKsZJuj8+aFL7vOX5NlN/xmCvFE8G7NzKId3pi/2d8uwRFORB2BtV5WRu2ZvYugbVwHzc8X7UDgTcwU5dfgJiwAHZ5bQjTU0n+zJGQiZ0RgvISMZ+xX3fc/wu1CTPnZ9qLyG12mKPPU0lbpEV4CyTK/tHNnFnlu0jkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N5vITygCQNsczM1GtrjR+e+dl5NU4ieByUGkM6mWtlE=;
- b=nPiteInVQodftj1GUul3yt96S/AFADxroSw0hd+YxVNXI/1/4FGIp/qp6ue9i8asjjfw8if7CfYzm2JDUxegGGswccTCo96v4QzcnVR3gyqw539jSdySJWZlbUVZIskDRZWRTrFvYYVLI5wlgQVhbTXdiBvzWIHbQ3+Eu3PMUIm+VIvoLTSsNoQwy4dYAv+HCEQQe9n3ptOIfmBnHDmHfSxwK03XePNzvwMyTJzN9o8pxMEGVHvn3fRxSTCzCNrk2+YDw8DVEjHNMxjjcmE4KO2keyHD5GhdksxKJODSzGltYQh0uVfayUKl9xASKVUE1wn4x+6Obi4nbYDbI0/1tQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
- by TY0PR06MB5209.apcprd06.prod.outlook.com (2603:1096:400:21d::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Wed, 18 Sep
- 2024 03:22:58 +0000
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7962.022; Wed, 18 Sep 2024
- 03:22:58 +0000
-From: Shen Lichuan <shenlichuan@vivo.com>
-To: dmitry.torokhov@gmail.com
-Cc: rydberg@bitmath.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Shen Lichuan <shenlichuan@vivo.com>
-Subject: [PATCH v1] input: Convert comma to semicolon
-Date: Wed, 18 Sep 2024 11:22:46 +0800
-Message-Id: <20240918032246.9147-1-shenlichuan@vivo.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: SGBP274CA0010.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::22)
- To SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136A2B658
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 03:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726630040; cv=none; b=srpMQgIPv25MQ88LLCLTeOrY59H9/MRovrqSWQat2IXGtx0Xo1TKoBDo+8qGhOMBeplSbUzh8S9Jxgm1A1w1rCQhBF2ks3LQri7Rr56AZIoa5dM8XtnBF8rOyqR2UHi2MExM8qj/YeMob8/9Ma+HxNoe+QCK0vZ+PyIPQpzo09Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726630040; c=relaxed/simple;
+	bh=X2VFSOzw5sWNKx3ZtFgiEIRTlQnV8b18MWp0/ja7qeo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GYjx6hz1jlThRPTXtRHPrX7J3z9ytKTEv8BCVbcBrw8hwJUQv+4SuplT6oGP6QKsIQS7kySN2FnAthgeY0KqOviSXILIXRbvR1KvA7HC2OykZ0864kNPJUAS5buXAVtlx3dJOAL9e5Mc3w8cxDUqkUGiTH9w0xwPswtQbtpXi3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=JdJW0cTy; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-710e1a47b40so1266417a34.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 20:27:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1726630037; x=1727234837; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TYbvktLigUAMTePHROfk7Jv5OlFqQlOacIqWxghUJRY=;
+        b=JdJW0cTy3DBY87xjhwAf771UiFEI1/LnHcv8VrFguUUoL4SDoOEAOFkB8eJgiJwUfW
+         KcZISOPLEgPuqPgewR/o7CViBfoUy+tzEcQG9mCsiFgtYFxFNpHlw5kCWgVm7Q/GB5OV
+         0v7ODdZHfPeovuigG64BBaa+R3x9Gg4ZAJK69VxYfMm1EWd3FVKU59v+eKkR/q0/Rv5g
+         Yk0KHtMMvtsch0hk1mzyhPf/p4QrnGCt++41Sft7sIshdIeCdKbfdhZuVDtj0ltUuJ8w
+         cWXcrdkcKq0Rmcx6jI45KrFkcR1aG+eeINsmahoYE7nh3AL1ENCA7HjemtcfstQFJ3nP
+         t3LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726630037; x=1727234837;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TYbvktLigUAMTePHROfk7Jv5OlFqQlOacIqWxghUJRY=;
+        b=DnFLtSYOIJT4Yh+hZcXVjkGYE3Ri+d2JyZBkzOeaKCVQF2Pt0x3Fl1YsuWx3upJLUj
+         KSA1dkhz1SuDwvBpJnI9DniVjZLUa4A4NRfjsQ2iqnEx7n0W5eQvfnQ2xVDMzq3kfH99
+         GnsiDhR/HKUAhe6WyB6ZGDHiFM9h40IN+KfGImGKC0LCfKFuIU5Wwo7nhtqXULZbLp0o
+         PxJBpYqtQg3jgwmUxwSBYQpE63+BSaQbEcnrfYU5Kmq4/6z5Hq2gkkDp43gWUyuGgB9+
+         +L0NeOnRU3pxYVfzEmF1WKWpItLVAPkLLWzkegre3oydyjJfeY8e4UNL4MkAH6Tq04Nb
+         WfiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVY5LnOByY+jx9Qe/OW7UW9XzND9XAj9p9UqrpJX9MhbvrR4qjP7yYuPWahoBc/jfAXvO6WNjpeD8WL1wU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOxH39Z4lO5fk5zFfp5dioDPMTULayFN6vSVxx23F1EkbS4fzh
+	IKx1CCKpjflv/V2f2ux+ZE6fHybblSYs/rzr9edRqv84+rvmmA5OMFL1nUX3AuKrejBj7zEGdoI
+	B/cbjopjBMCETEDofMWUhhwOK5v6CorT6jVsEJA==
+X-Google-Smtp-Source: AGHT+IGnWsj7m6M03RuqK5J3Evla2on7+gi75SF/oTkeVo0Do/aPuvXYeH6pKmpjg/5K6bHn/XUas+a8J1zUo6DQYR8=
+X-Received: by 2002:a05:6830:6586:b0:710:db4f:8ee2 with SMTP id
+ 46e09a7af769-71116bf700dmr10718380a34.16.1726630037010; Tue, 17 Sep 2024
+ 20:27:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|TY0PR06MB5209:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7f3b843f-eb7d-4b8c-97ff-08dcd79131bd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?swm/v2k/bA2AbZH7/k8pPG0MAfAcSmh+GDLTBsjT7ugpgEfzwbKOVgxKAMld?=
- =?us-ascii?Q?I5kDvz+yXpjmss7sLHaJ8kLAJkDo0fugXojgWtcLchueVWrQl5yKfRfon1ZQ?=
- =?us-ascii?Q?lXwL4R18oeIQsfXOgLLCQ/PPoEDZ7j8yu5b6OMKL+BwnlMhKevdD4cp9dA3y?=
- =?us-ascii?Q?UTW9fvH45xb11kYQCPFl+9SlvLdsvbmQwklcJ6NvBe21TWljQ+QQPPJVr05A?=
- =?us-ascii?Q?LXggNUVuRTOrylDtbBhPk86MvsufESvSGEZLDge9ru2061iI2lPyzcDALivE?=
- =?us-ascii?Q?HCkUHCmaBmoFVoUV0R4ffQz3fvzmx6P8r3UITtDS7LaK8Hc9GxCxsT9fM0yh?=
- =?us-ascii?Q?ACfbI5N5IjQsUvb2QFfc0BynWqdet+r96oQT3H+ocHbHAGmi4b+hIs+WTlYv?=
- =?us-ascii?Q?MsSB2czoWg8RpTieGx2ZbPS22koAG/d7HfvP0OBq+8XLivMXeqecaXNgGXn4?=
- =?us-ascii?Q?a/4A/EwSdoUyoLlOGj6C/Shrbi4qU/jHN4LHIThmPyVzJPxC1fWcTKoTSjbx?=
- =?us-ascii?Q?Dmht/dsZ8+ioSvL1k4X0GdNg5KWD49TqiFV9cea5nEgfLwWcV+K/YtPM0kbH?=
- =?us-ascii?Q?mOb1QwIR3QEbn2zOG0qrVI1hHgK7wHYOmN3gvGpf+jDYuVHDqdcvc6E/5k+1?=
- =?us-ascii?Q?lRkgDJ4TsgiANVoXiaE644NWaLCWA9biqhUQYgSe9KGO1pxviaFzQQwUHo6m?=
- =?us-ascii?Q?nMtsnVG+Qm+XEaBoMcS7CCppYgPd6OW5cR9foD0DeMGCz1rU7ZcWMHJLdfOz?=
- =?us-ascii?Q?G7mgW4H9V/ms7B4mvBuMesmMlmkPgof2cC8j0VRStCHIMgcUcsl/smbsNBBS?=
- =?us-ascii?Q?wIh9mdOZHb6jfeelHVNtI3bVlHsOc1WPDC9kTJNNsPzs4onzNrfQeHl59m0q?=
- =?us-ascii?Q?5rR9UvO47adMlm2MTFWz3MGm8qSPFWSaHZfx0k/HAM6q+eGShqa8jpC9h1d3?=
- =?us-ascii?Q?QUnFguP02+2s5D5b+JIo4pS+e5iMRT6Bc51/Y9nVcLW4VUcvV5WQPcwNjS/l?=
- =?us-ascii?Q?/uajVYk0J7596WmNd4qbIlSe2DaDxhmmyBSVY9Ys21o8QmI03Hi/bajZnbL6?=
- =?us-ascii?Q?+4VOLd9Quv3pw0N3I2wiFaRLH8Imzhd/3iqaKu/PiprpZsTj/Csin4yjHJpJ?=
- =?us-ascii?Q?5lryuNq3QaP2WoGBtBZnXvtbmPGPmVuS7Oz4hZ946Cj4yKECtwJRE5XsBlfG?=
- =?us-ascii?Q?zZtevOE+7fWLts3Xndvb5qp61SBdbldYlc1tJYi+Ks7ieIwhm9ZLzI1chKNk?=
- =?us-ascii?Q?cKStOMEyqlyEwYQWYVfCa6HL408MDTwUOfxOTHVMGYRgheUkGyYUkvJlO4cG?=
- =?us-ascii?Q?EIXSi+IJo3ZeJl+HfDai3daWQA24ChzqUr9VJi6Kb/TWkg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vqJ2MZ6B3nxLU4zv9QlNLxzPa02eNNMnsXWS7cAhKNLiiJeVKEOskaRHyJhN?=
- =?us-ascii?Q?lbrHMsAh5jfcrBcCabQL7zvlJjJMb8fT4UJUxICuvNrkOdtjfMmdLE6IhiDf?=
- =?us-ascii?Q?0tySzdwPUHNuHOd1nvixHJyPBiQv1DQg4Tf3GLTQBECj7XyPc1ouBF1uKYK4?=
- =?us-ascii?Q?ouNl4Y+hGJ2NuS+D0lobyax/nBNaShhgwaMsknY68skmguOteT6DqwTAb/5v?=
- =?us-ascii?Q?XFIl0gBOowJTV8X4VkfzvLom+NL8Di0Ju1A5UaGOrPXQjmEPaEUDZpoo/Su5?=
- =?us-ascii?Q?tD+5qXGQLvqREKqeSyX5WIU2EDz8iRb4CEBg+m5k00TPV855vTsOT8y3AaSi?=
- =?us-ascii?Q?CLcgis5qJVubNv/SBoTvP/5H5yHN7hcHKF+7QQwClGNodaSxWQpj2z40Vr/u?=
- =?us-ascii?Q?jQgswjQ9XvaDenV/aB+4+bd0PSU0Xplpjebv67jqosKV/vzIn4U99WCKMPVg?=
- =?us-ascii?Q?i4TTxCDLCdhKBuR4V+S8G9slZcGUkOA4yQQVrKEV/B1rJ/mrO4Xz0Tj5mkKm?=
- =?us-ascii?Q?H158D+75a4daU2iWUc+Te4VbqeRnUZlOpGcySKtJlapb7vOq3zH7jIXmpB3F?=
- =?us-ascii?Q?Lf9ff+GZc+myO2ChhW/E33TfcG37f7+znytMf3QrP/Oxh+/PUlEAMUSN0Usj?=
- =?us-ascii?Q?nbWiPy3Wo5/fJztwaJ8DooOuyRJIig/yy6UlB+wzL5LZqljkOM9stwNwFv+I?=
- =?us-ascii?Q?VUC1JeogAIYtNqZ4nMjodVpHo9QoRoQ+jt39SQl5AFmiIetxuipBKSSo5FSB?=
- =?us-ascii?Q?P+OIWOAysfXcee3udw835pEA7pkygmHMkZPl8H3iWnnTS5tQlZ1SNp4b258K?=
- =?us-ascii?Q?EvfjN0QsCRjyx6dRv9sfnJsusSCcU0iefVTU7RY2BiKp8dlmFcZWrBDONBDW?=
- =?us-ascii?Q?RebL1AULm313RyCNLufR94ICyHsGILBrliPMX/SoyVCtHnXIXl9V6XyPhxCW?=
- =?us-ascii?Q?vdW2CNne6XUMHfThv7MerWu48b9nLmuldJIQQ86Lbmi+gABff2lmiTXd1qKP?=
- =?us-ascii?Q?xeECbL7EGJyj3PUwDFNtQDuACur6oy+k6LyJEAjUquOwWJK5Z5m0FRKTB7lS?=
- =?us-ascii?Q?40L4Upwgt9d2B+y6pDzccgYPyTwL/1gqs0fxaSNDqRML84DLQfREr6Ix+ZOr?=
- =?us-ascii?Q?kojKP4ETqvBlH5adHoKRA6s9xUMwRzjC+6RuxRQHbjlm2z5nyKA2i8vvUNQr?=
- =?us-ascii?Q?f/Yq0NYauGD3SjiIw3ECdWCurKcF7nXBgf+OppX60z8LdcHZauDfUa6eS/V8?=
- =?us-ascii?Q?uqPrbdYtLy7KkqF90kP+L2wuBmUL6v7F9fZPgBidISreuCOkmjch+fmfndbe?=
- =?us-ascii?Q?wcgs2J89eRMFs2gxachqZt71JCBKJKRvDxG4MWquLkhGemg5asnjALgy75PW?=
- =?us-ascii?Q?ERUfpcyYZzaSx+z2NT0JfPh8lffdeJoHEgVklkPFGC9fPzqJJ1IgyPkQ1nzt?=
- =?us-ascii?Q?333ha+x6zYiTUmjasMbsDtPUp1JaoBR5jxpSL8IPy2j4m73j8mawrjKheWMg?=
- =?us-ascii?Q?CT5S4j6ztHvnN7S4ND741xBPQExdstVuWqXxKSEWnHcbOGBHY7OZcnCCcBap?=
- =?us-ascii?Q?dTf082cqUW4Gf3ZYK6NzQS5tcEqp7fLtch31Q0aa?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f3b843f-eb7d-4b8c-97ff-08dcd79131bd
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 03:22:58.6829
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iIV73moZZmOyMEr5XGmFVPaR4GctsvcEPwDBN20EVNcep4xLu2OoDjJhmd3unoLznVLZLAcWwWRqmIaYTqdOEg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5209
+References: <874j8hku51.fsf@gmail.com> <mhng-7b39a06f-bf26-4bc0-beef-45bd4b5312e1@palmer-ri-x1c9>
+In-Reply-To: <mhng-7b39a06f-bf26-4bc0-beef-45bd4b5312e1@palmer-ri-x1c9>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Wed, 18 Sep 2024 11:27:05 +0800
+Message-ID: <CAEEQ3wkMY-gfvVo9LqrQUGXibKaBf9vmBjtN+AsRVG5-e1fv0A@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH v2] RISC-V: cmdline: Add support for
+ 'memmap' parameter
+To: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: punit.agrawal@bytedance.com, rppt@kernel.org, 
+	Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, alexghiti@rivosinc.com, 
+	akpm@linux-foundation.org, bhe@redhat.com, dawei.li@shingroup.cn, 
+	jszhang@kernel.org, namcao@linutronix.de, chenjiahao16@huawei.com, 
+	Bjorn Topel <bjorn@rivosinc.com>, vishal.moola@gmail.com, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Charlie Jenkins <charlie@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To ensure code clarity and prevent potential errors, it's advisable
-to employ the ';' as a statement separator, except when ',' are
-intentionally used for specific purposes.
+Hi Palmer,
 
-Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
----
- drivers/input/input.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sat, Sep 14, 2024 at 4:21=E2=80=AFPM Palmer Dabbelt <palmer@dabbelt.com>=
+ wrote:
+>
+> On Mon, 22 Jul 2024 14:13:14 PDT (-0700), punit.agrawal@bytedance.com wro=
+te:
+> > Hi Palmer,
+> >
+> > Charlie Jenkins <charlie@rivosinc.com> writes:
+> >
+> >> On Mon, Jun 24, 2024 at 08:37:39PM +0800, Yunhui Cui wrote:
+> >>> Add parsing of 'memmap' to use or reserve a specific region of memory=
+.
+> >>>
+> >>> Implement the following memmap variants:
+> >>> - memmap=3Dnn[KMG]@ss[KMG]: force usage of a specific region of memor=
+y;
+> >>> - memmap=3Dnn[KMG]$ss[KMG]: mark specified memory as reserved;
+> >>>
+> >>> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> >>> ---
+> >>>  arch/riscv/mm/init.c | 46 ++++++++++++++++++++++++++++++++++++++++++=
+++
+> >>>  1 file changed, 46 insertions(+)
+> >>>
+> >>> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> >>> index e3405e4b99af..8e1d93ae5cb2 100644
+> >>> --- a/arch/riscv/mm/init.c
+> >>> +++ b/arch/riscv/mm/init.c
+> >>> @@ -208,6 +208,52 @@ static int __init early_mem(char *p)
+> >>>  }
+> >>>  early_param("mem", early_mem);
+> >>>
+> >>> +static void __init parse_memmap_one(char *p)
+> >>> +{
+> >>> +   char *oldp;
+> >>> +   unsigned long start_at, mem_size;
+> >>> +
+> >>> +   if (!p)
+> >>> +           return;
+> >>> +
+> >>> +   oldp =3D p;
+> >>> +   mem_size =3D memparse(p, &p);
+> >>> +   if (p =3D=3D oldp)
+> >>> +           return;
+> >>> +
+> >>> +   switch (*p) {
+> >>> +   case '@':
+> >>> +           start_at =3D memparse(p + 1, &p);
+> >>> +           memblock_add(start_at, mem_size);
+> >>> +           break;
+> >>> +
+> >>> +   case '$':
+> >>> +           start_at =3D memparse(p + 1, &p);
+> >>> +           memblock_reserve(start_at, mem_size);
+> >>> +           break;
+> >>> +
+> >>> +   default:
+> >>> +           pr_warn("Unrecognized memmap syntax: %s\n", p);
+> >>> +           break;
+> >>> +   }
+> >>> +}
+> >>> +
+> >>> +static int __init parse_memmap_opt(char *str)
+> >>> +{
+> >>> +   while (str) {
+> >>> +           char *k =3D strchr(str, ',');
+> >>> +
+> >>> +           if (k)
+> >>> +                   *k++ =3D 0;
+> >>> +
+> >>> +           parse_memmap_one(str);
+> >>> +           str =3D k;
+> >>> +   }
+> >>> +
+> >>> +   return 0;
+> >>> +}
+> >>> +early_param("memmap", parse_memmap_opt);
+> >>> +
+> >>>  static void __init setup_bootmem(void)
+> >>>  {
+> >>>     phys_addr_t vmlinux_end =3D __pa_symbol(&_end);
+> >>> --
+> >>> 2.20.1
+> >>>
+> >>
+> >> Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+> >
+> > Another patch that looks good to get merged if there are no further
+> > comments.
+> >
+> > Any chance this can be picked up for this cycle?
+>
+> Sorry for being slow here, but I don't understand the use case for this:
+> we already get the memory map from the firmware, it seems like
+> overriding that is just asking for issues.
 
-diff --git a/drivers/input/input.c b/drivers/input/input.c
-index 19ea1888da9f..47fac29cf7c3 100644
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -2221,7 +2221,7 @@ static unsigned int input_estimate_events_per_packet(struct input_dev *dev)
- 		mt_slots = dev->mt->num_slots;
- 	} else if (test_bit(ABS_MT_TRACKING_ID, dev->absbit)) {
- 		mt_slots = dev->absinfo[ABS_MT_TRACKING_ID].maximum -
--			   dev->absinfo[ABS_MT_TRACKING_ID].minimum + 1,
-+			   dev->absinfo[ABS_MT_TRACKING_ID].minimum + 1;
- 		mt_slots = clamp(mt_slots, 2, 32);
- 	} else if (test_bit(ABS_MT_POSITION_X, dev->absbit)) {
- 		mt_slots = 2;
--- 
-2.17.1
+Without modifying the firmware, it is more convenient to complete the
+reservation of the memory block in this way.
+This parameter is also mentioned in Documentation/admin - guide/kernel
+- parameters.txt.
 
+Thanks,
+Yunhui
 
