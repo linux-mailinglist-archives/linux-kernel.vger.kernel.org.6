@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-332936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9A897C104
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:54:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2256197C109
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACDA11C2155F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 20:54:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54D7D1C21990
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 20:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 130061CB31E;
-	Wed, 18 Sep 2024 20:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69EEA1CB509;
+	Wed, 18 Sep 2024 20:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4fcEdtn9"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aTlvEM/I"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0057A1CA6AA
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 20:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A52A1CA6A5
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 20:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726692840; cv=none; b=BQ0BPYtTZH3QUp0r2OWXc1ZN3eKgiu026BIgIqSfwGnhyKrHAtyZL13A63Dy+jghNAwpnE35KhOWrKPEp/tj0GtcvQEbEWTHPdrxwjtULTS5ggDFed3Z8k0oiVPo2coPbS7LZYrWBoYPmWpTil1fR7WX8PMo75uLONvWhdWqEZI=
+	t=1726692841; cv=none; b=W8mjEa5vZ2EYhgPaZE6Uqxh+0I21bTpjR8wLG8XOTN7M7SfEEDIzlzOY865H86jkvf4Ws3RRgDgKK3gSfP+jYhioaq6VNJbcl5fct7UMlXjMNvZg1PRe5W1YqGJ/k6tUkq1pPooqTX1dPkOadOLdzBmszTihOyX/bO23up+wyV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726692840; c=relaxed/simple;
-	bh=I0pmbmvVr6aVjOWkLeghyK73dRYtjeotDrFl5n0BGJg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=BMWCSS9eqVmc+4CPDwzg1fLPfHAB3TVtORMebE+Zj7T6086JxI7NRTuR9x2gkvAwUuogAlb3jEgQElk89t9BJ61UQiYD0mrRYtvGaz3k4RFImrYknhmcrtxqiLMcEMk1LlG3o4WzhgoQoGBEMQ4lOg3CfHDNHA6mjIIF5p5L6J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4fcEdtn9; arc=none smtp.client-ip=209.85.219.201
+	s=arc-20240116; t=1726692841; c=relaxed/simple;
+	bh=7LFbPeFjkQq1UTJ8lEzVj85jrHSO5Ur9v/Y+l3mM/6A=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CHC5PRhM4ZJONpaSfMG+fSPWXpLu//KythAR/CmAEE0ld1usy0vNQozvlVIo2xJvclnOp8G9Ca63ji1zE3cRXi2BwJzZUKAWjPdehN7sgBI5S0+QCped3rtk1rBM8AV3rYXNo00hErfAdEYeXQ4h/LU+7l9nj++eudQjdr2m2Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aTlvEM/I; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e1cefe6afc4so290334276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:53:58 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0b3d35ccfbso289728276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:53:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726692838; x=1727297638; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=CA6hUqY6qi77ambz+EsLwuKLN+krduAZlXqGe9OZvKs=;
-        b=4fcEdtn9t/wf30vZjSwqTaBEcN4MmOYrd+3GAeAToQBpOnhYqTluCgwEPSH2FlKpzd
-         pvcYVE29597ZOUjWqGE8ugh3F3La8ZWbXMVLCfbLKIkDpH1by9ezn4JfisN+m8PKCxCM
-         TdDdvkBDZ4l9T9E9CrkbBRIHdzdPyclZmsaESEI8S9lQZn78oXrdU9XFf1k41k9LpiRW
-         nptJiX7/gOkiLYBBCSniDONjYRVHyUJAbR8n6GL2M5+aUureTkHaiPJWwUZgpE8gsCoU
-         VZWh20T3S3EMn6li8P6aUSD9NtVgZgOzqIOe9l7dQxgkFBFlS1Ddb/VFO590TN/GxHhB
-         Jb9w==
+        d=google.com; s=20230601; t=1726692839; x=1727297639; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8rJ/KpP7ZLjH/baI+Q4VTgii8fM80xVyJoccolaGcXA=;
+        b=aTlvEM/I8pCaQl8i/1OmC4g4gkSXYcpZlslWxUhWtYTDfGfjGRQb1zxEyVl6KgEk+k
+         VfTE69P1955Qkmyc/WQHANhsb8ujWKbDFrmbIBv3BKH3Wfa/2MZAe7Zx632BfbUCRCTZ
+         or/OHZq1VxZO0cbT8PrMFjedQJqKwX4DFFZ3SKlG/ns7rj44sbv4k9nz6lnpZ0cr9Hks
+         L41kaJeehLWKjfjGoIyZCOEHHHnZo6Acdu3xCiop+kpIzG5FdYiLIHuASpTv0p/BQbT1
+         Jx9F9Fi7PAw1lLP8SJA/FHwT1eABd6neOJ6qBAonXdyD9IU6+4wlJwM967qkBCIyzKjg
+         VkIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726692838; x=1727297638;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CA6hUqY6qi77ambz+EsLwuKLN+krduAZlXqGe9OZvKs=;
-        b=l5dQcUoGWZBZKIfofxr7i7zWihpOfO7Uc0cylUKnrUK+7oGvxKaLMyBKaFMkQyvxsu
-         TUgxyBrOAM6lSko+M16fGvDplJDU7VZYeYzXZtNlphm9kXfctbc2b/0fG9PcBG8Oi18C
-         TICyGSRcrfWjcH87hY816CMJFT5pElpp+6Z45YUgwc9X8d2vpTpd+yMzxDegXtUFr+9E
-         h1IH+l2kTzGh/fYStGtVP4PdBfuQp/xpnslS6egdhYVrImJ+iVuXsPBHapkb6k7Ei8br
-         89A7V+zjOxV2fdssLyMTObXZ6wgn9X8RZNEOahzv+lQNlt89jt+Irqtf+KIediAMzylc
-         wI2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUXoYkOGIGQOWweoHZUpCbW1LstXUF73Ut7HkZ12Y+7/HeNgNa0Vwgj6M1lSmfHQS8C+mRHlZs82GR890s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeQiwjorC8zMMD1eL1nFRWZ5ULmWSSqVrT4/q+gveFK52EIsGH
-	KKmOs5kn8qctQfo66uV89qqNoYDmQmpXMtMTRHngWLwKBCxQb/zlq8mRFsLeh0afecWtHu+33E+
-	NnBUGgNtESVCDw1/SM07xPg==
-X-Google-Smtp-Source: AGHT+IFCO0PcuLwNxHuDHXibkKk117xEQMYckf/X/31GvTsVERSFJBaexcoRDcoOq7AGt7ymvntaTnKDNUlLeAcNjw==
+        d=1e100.net; s=20230601; t=1726692839; x=1727297639;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8rJ/KpP7ZLjH/baI+Q4VTgii8fM80xVyJoccolaGcXA=;
+        b=fRNmycY+Xlvs9WO5q2wjzv4MPQAeiK9RhCo6IdTo9HJPuh7CI0qVkQlChCgqhZt8NJ
+         n3j/wTKLL98sdfcunJS7ze1dQT0c3jBnVVVyA9eqpSXPWqNhSoNkhapqYMsvOUIFaaM2
+         42ZJWufPcUWvAPs0+XYbtyT4TwUXdwvBK593N+3iPApKPYSHGsAiFzqncqQv3UGyhs9D
+         YLDm+Qm0Dds3RYcOAwZJpglJtRVOkaPLWCQ2pk/3TSmi4k8e/pZpKb08bKnFgmFPQqg0
+         2Sb6hweHpR+xyUv2ILmA9weokMWVFYyg/EYNAwZqUvEzjH1/9Vwc+TwRGVU35lwPT7oy
+         cDvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXVSxvnhtu4iCLZfXn2EQWCtCxhdocR1IL251NIzK+nvY428e/l5+kD8nwnsCtvhz/3tgeCm6SaD48VEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrTdRXXFTDL+bKcETbf1asCuBoA69SOy43T2DuCr9G+bZXHuQp
+	SOPuW426fQEB+p15eCsaOjsAgnJpL5fUNKyPVY7UHSaIEMZILemcxIdGeg8272WVR6BHGxrnrWj
+	jMhWwjnJATKWCY6hBdsI06w==
+X-Google-Smtp-Source: AGHT+IE19c7uHgFQDSF5lDBOr6e84MO4hTZGPdwklurCeZKa3gXSTOztaJSR5dLNDju6LDGeGsq93ws0AB9ttpRl9Q==
 X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:11b:3898:ac11:fa18])
- (user=coltonlewis job=sendgmr) by 2002:a25:8051:0:b0:e0b:bd79:3077 with SMTP
- id 3f1490d57ef6-e1db00f4576mr29350276.9.1726692838045; Wed, 18 Sep 2024
- 13:53:58 -0700 (PDT)
-Date: Wed, 18 Sep 2024 20:53:13 +0000
+ (user=coltonlewis job=sendgmr) by 2002:a25:f304:0:b0:e11:7105:956a with SMTP
+ id 3f1490d57ef6-e1d9db9c23fmr34188276.3.1726692839006; Wed, 18 Sep 2024
+ 13:53:59 -0700 (PDT)
+Date: Wed, 18 Sep 2024 20:53:14 +0000
+In-Reply-To: <20240918205319.3517569-1-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240918205319.3517569-1-coltonlewis@google.com>
 X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
-Message-ID: <20240918205319.3517569-1-coltonlewis@google.com>
-Subject: [PATCH v2 0/6] Extend pmu_counters_test to AMD CPUs
+Message-ID: <20240918205319.3517569-2-coltonlewis@google.com>
+Subject: [PATCH v2 1/6] KVM: x86: selftests: Fix typos in macro variable use
 From: Colton Lewis <coltonlewis@google.com>
 To: kvm@vger.kernel.org
 Cc: Mingwei Zhang <mizhang@google.com>, Jinrong Liang <ljr.kernel@gmail.com>, 
@@ -81,51 +84,42 @@ Cc: Mingwei Zhang <mizhang@google.com>, Jinrong Liang <ljr.kernel@gmail.com>,
 	Colton Lewis <coltonlewis@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Extend pmu_counters_test to AMD CPUs.
+Without the leading underscore, these variables are referencing a
+variable in the calling scope. It only worked before by accident
+because all calling scopes had a variable with the right name.
 
-As the AMD PMU is quite different from Intel with different events and
-feature sets, this series introduces a new code path to test it,
-specifically focusing on the core counters including the
-PerfCtrExtCore and PerfMonV2 features. Northbridge counters and cache
-counters exist, but are not as important and can be deferred to a
-later series.
+Fixes: cd34fd8c758e ("KVM: selftests: Test PMC virtualization with forced emulation")
+Signed-off-by: Colton Lewis <coltonlewis@google.com>
+---
+ tools/testing/selftests/kvm/x86_64/pmu_counters_test.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-The first patch is a bug fix that could be submitted separately.
-
-The series has been tested on both Intel and AMD machines, but I have
-not found an AMD machine old enough to lack PerfCtrExtCore. I have
-made efforts that no part of the code has any dependency on its
-presence.
-
-I am aware of similar work in this direction done by Jinrong Liang
-[1]. He told me he is not working on it currently and I am not
-intruding by making my own submission.
-
-[1] https://lore.kernel.org/kvm/20231121115457.76269-1-cloudliang@tencent.com/
-
-v2:
-* Test all combinations of VM setup rather than only the maximum
-  allowed by hardware
-* Add fixes tag to bug fix in patch 1
-* Refine some names
-
-v1:
-https://lore.kernel.org/kvm/20240813164244.751597-1-coltonlewis@google.com/
-
-Colton Lewis (6):
-  KVM: x86: selftests: Fix typos in macro variable use
-  KVM: x86: selftests: Define AMD PMU CPUID leaves
-  KVM: x86: selftests: Set up AMD VM in pmu_counters_test
-  KVM: x86: selftests: Test read/write core counters
-  KVM: x86: selftests: Test core events
-  KVM: x86: selftests: Test PerfMonV2
-
- .../selftests/kvm/include/x86_64/processor.h  |   7 +
- .../selftests/kvm/x86_64/pmu_counters_test.c  | 304 ++++++++++++++++--
- 2 files changed, 277 insertions(+), 34 deletions(-)
-
-
-base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
---
+diff --git a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+index 698cb36989db..0e305e43a93b 100644
+--- a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
++++ b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+@@ -174,7 +174,7 @@ do {										\
+ 
+ #define GUEST_TEST_EVENT(_idx, _event, _pmc, _pmc_msr, _ctrl_msr, _value, FEP)	\
+ do {										\
+-	wrmsr(pmc_msr, 0);							\
++	wrmsr(_pmc_msr, 0);							\
+ 										\
+ 	if (this_cpu_has(X86_FEATURE_CLFLUSHOPT))				\
+ 		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt .", FEP);	\
+@@ -331,9 +331,9 @@ __GUEST_ASSERT(expect_gp ? vector == GP_VECTOR : !vector,			\
+ 	       expect_gp ? "#GP" : "no fault", msr, vector)			\
+ 
+ #define GUEST_ASSERT_PMC_VALUE(insn, msr, val, expected)			\
+-	__GUEST_ASSERT(val == expected_val,					\
++	__GUEST_ASSERT(val == expected,					\
+ 		       "Expected " #insn "(0x%x) to yield 0x%lx, got 0x%lx",	\
+-		       msr, expected_val, val);
++		       msr, expected, val);
+ 
+ static void guest_test_rdpmc(uint32_t rdpmc_idx, bool expect_success,
+ 			     uint64_t expected_val)
+-- 
 2.46.0.662.g92d0881bb0-goog
+
 
