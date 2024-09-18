@@ -1,62 +1,44 @@
-Return-Path: <linux-kernel+bounces-332483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F1397BA4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:44:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AAF297BA50
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ED2028128A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:44:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22030282C0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B4C1891B5;
-	Wed, 18 Sep 2024 09:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hGe4/q9e"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD81117B401;
+	Wed, 18 Sep 2024 09:44:57 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5833F188A2F;
-	Wed, 18 Sep 2024 09:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79A816C84B;
+	Wed, 18 Sep 2024 09:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726652603; cv=none; b=NZUD07rG8bO5b/QMtCJzzu57dGXCPw+jBrGskVyoCvkXd3mXs6hXOiWycumzFKQoc32bw802MPtynTrZbMMLZYLU76IFKDYP298PwmtwhQJxPvYrBW5aAMMQsNEpn6mLAmq02Nv/SlPcJ8I5t4GxpgKMkrUBHUpTFwabGLJ3cQg=
+	t=1726652697; cv=none; b=Fj7BKd5EkMZZwTHPao508soXzZCFV/So6lPFteR0ESKZg0dKxVEDzDhqtdCYnNN6C47ved/uyRUmas0LhFkOurNs18/X05S+QP5d+WMktDqfRfN2niDm1n0b73QovDLNzmH/E9S+427INrfr4Jaiui42KH1nyyC7E4AVBsn+IQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726652603; c=relaxed/simple;
-	bh=wfENwdPTOSnpks1YE1na4JDWh+0LgtfZCKP55/kYojg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=loCtG1u+LSa5aUv2hxC3D2aQxN75Kd/SIosOBkQNHeb8PKgvik3Ov4S0pfzFqz8KNZoUFbZGNpAZ/z5wU1yuLikIQMJN++fP3Bbw7BgpcHylaD0TlRDeufeaetakzQylPWvUVxWsj8lAltxJ7DYGlwcChvRHQAf0BV7pxIQFA8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hGe4/q9e; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48I8wr4d032430;
-	Wed, 18 Sep 2024 09:43:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	abgv+TJeo6d097LQLTf+yfLZj9xzro7h+12orvMbBTY=; b=hGe4/q9egkcsNPFm
-	K+OXIget1CR66/KuopyWmbCMtZebaGh+52CVruhFvztACjMOq87uoewh+rxuGtWS
-	RAbgUakBdO2BurZUnZENs1eBGwopn/BHhRUlhyTCUuPJh/P/TLONz4KrkisNdhpB
-	kFG46PVGehQRPNGq2mQMcikJtpp6barDKXPW+kZQeomQhYEyx0idpLSCBSmsswKv
-	Tyht+fgacgRpMoMKWfEOVWnky9RVyMFOPa2/R2PHW/yap4Z/yp6JxsDEQlC3aKtf
-	3zcTXLSaQCOIVYcybE/iTw7BGg15TfDSi0VrI/MFNDV2iEjkhFTjOUSH9mnmGHrY
-	et3fiA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4jesjnt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Sep 2024 09:43:14 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48I9hCTa015652
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Sep 2024 09:43:12 GMT
-Received: from [10.217.219.148] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 18 Sep
- 2024 02:43:06 -0700
-Message-ID: <e2ff397e-b6a2-4991-8431-73aac7356e2b@quicinc.com>
-Date: Wed, 18 Sep 2024 15:13:03 +0530
+	s=arc-20240116; t=1726652697; c=relaxed/simple;
+	bh=J+xlb3JjU3ObgVrsDkpQPTfkjVcFKet5vIWJwjciZsU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ubrpz0ZOPBYFo9mPgjJK6cGtqn7yoTcuySVBU+Q8PbKCnK2l+KAumhTqeSN4sW1Hkfbt8E+sSp402De6awTCdlNkfU5QrRGkCS37ORpsV4VJ1g9q3i0kIOSffHc9HR75s4m/YfyOynat83+FKJqlnQV0RoKDw/wJvhyB3+f3uD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4X7tz70z37z4f3jMf;
+	Wed, 18 Sep 2024 17:44:35 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id EA8391A018D;
+	Wed, 18 Sep 2024 17:44:50 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP4 (Coremail) with SMTP id gCh0CgAHiMQPoepmcYGjBg--.10672S2;
+	Wed, 18 Sep 2024 17:44:48 +0800 (CST)
+Message-ID: <eaa664da-8d88-486c-9793-09a97d8c607a@huaweicloud.com>
+Date: Wed, 18 Sep 2024 17:44:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,152 +46,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] usb: dwc3: gadget: Refine the logic for resizing Tx
- FIFOs
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi
-	<balbi@kernel.org>, Jack Pham <quic_jackp@quicinc.com>,
-        "kernel@quicinc.com"
-	<kernel@quicinc.com>,
-        Wesley Cheng <quic_wcheng@quicinc.com>,
-        "Laurent
- Pinchart" <laurent.pinchart@ideasonboard.com>,
-        Daniel Scally
-	<dan.scally@ideasonboard.com>,
-        Vijayavardhan Vennapusa
-	<quic_vvreddy@quicinc.com>,
-        Krishna Kurapati <quic_kriskura@quicinc.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240917101355.15580-1-quic_akakum@quicinc.com>
- <20240917224026.qsewm3epwaubcgs6@synopsys.com>
+Subject: Re: [PATCH v4 0/3] Fix deadlock caused by cgroup_mutex and
+ cpu_hotplug_lock
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@google.com, haoluo@google.com, jolsa@kernel.org, tj@kernel.org,
+ lizefan.x@bytedance.com, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240913131720.1762188-1-chenridong@huawei.com>
 Content-Language: en-US
-From: AKASH KUMAR <quic_akakum@quicinc.com>
-In-Reply-To: <20240917224026.qsewm3epwaubcgs6@synopsys.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <20240913131720.1762188-1-chenridong@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: zsUyu87XCBNOY4_wgtRvpjxKwulTtMuh
-X-Proofpoint-GUID: zsUyu87XCBNOY4_wgtRvpjxKwulTtMuh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
- mlxscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
- mlxlogscore=986 adultscore=0 impostorscore=0 spamscore=0
- lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2408220000 definitions=main-2409180061
+X-CM-TRANSID:gCh0CgAHiMQPoepmcYGjBg--.10672S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtr4UXryDZw13Aw4DZw1DJrb_yoWDKFb_C3
+	yxuF9Y9ryfJr12vanakFn3uF40kr45C3WFkr1UtrZIqFnxXrn3WFs2gryYvwsru3Z7Xry0
+	yasIyw4vvFn8XjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
+	0PDUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-Hi Thinh,
 
-On 9/18/2024 4:10 AM, Thinh Nguyen wrote:
-> On Tue, Sep 17, 2024, Akash Kumar wrote:
->> The current logic is rigid, setting num_fifos to fixed values:
->>
->> 3 for any maxburst greater than 1.
->> tx_fifo_resize_max_num for maxburst greater than 6.
->> Additionally, it did not differentiate much between bulk and
->> isochronous transfers, applying similar logic to both.
->>
->> The new logic is more dynamic and tailored to the specific needs of
->> bulk and isochronous transfers:
->>
->> Bulk Transfers: Ensures that num_fifos is optimized by considering
->> both the maxburst value and the maximum allowed number of FIFOs
->> based on the DT property tx_fifo_resize_max_num and the maximum
->> packet multiplier for HS.
->>
->> Isochronous Transfers: Ensures that num_fifos is sufficient by
->> considering the maximum packet multiplier for HS and maxburst for SS,
->> along with a constraint with the DT property tx_fifo_resize_max_num.
->>
->> This change aims to optimize the allocation of Tx FIFOs for both bulk
->> and isochronous endpoints, potentially improving data transfer
->> efficiency and overall performance. It also enhances support for all
->> use cases, which can be tweaked with DT parameters and the
-> You should clarify that this is only verified on your specific platform
-> and specific application. It may not be applicable to all cases.
-> However, we try our best to make it so. Please reword as such. The
-> commit message makes it seems that this will work for all cases.
-Sure will rephrase it, but i believe since it can be customized based on 
-maxpacket and
-maxburst , anyone can choose his desired fifo size and since we will be 
-get maxp as 1 (for any streaming packet < 2048)  and additional +1 which 
-we are appending which
-makes minimum 2k fifo size for HS which should be  sufficient for HS 
-transfers and it can increased with maxpacket when increased to 2k or 3k.
-Similar with  maxburst for >= SS.
->
->> endpoint’s maxburst and maxpacket
->>
->> Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
->> ---
->>   Changes for v3:
->>   Redefine logic for resizing tx fifos,added check based on
->>   operating speed and used maxp for HS and maxburst for SS
->>   and defined max allocation based on dt property.
->>
->>   Changes for v2:
->>   Redefine logic for resizing tx fifos, handled fifo based on
->>   minimum of maxp and maxburts.
->>
->>   Changes for v1:
->>   Added additional condition to allocate tx fifo for hs isoc
->>   eps, keeping the other resize logic same.
->> ---
->>   drivers/usb/dwc3/gadget.c | 18 +++++++++++-------
->>   1 file changed, 11 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
->> index 89fc690fdf34..7557bd0053a7 100644
->> --- a/drivers/usb/dwc3/gadget.c
->> +++ b/drivers/usb/dwc3/gadget.c
->> @@ -778,15 +778,19 @@ static int dwc3_gadget_resize_tx_fifos(struct dwc3_ep *dep)
->>   
->>   	ram1_depth = DWC3_RAM1_DEPTH(dwc->hwparams.hwparams7);
->>   
->> -	if ((dep->endpoint.maxburst > 1 &&
->> -	     usb_endpoint_xfer_bulk(dep->endpoint.desc)) ||
->> -	    usb_endpoint_xfer_isoc(dep->endpoint.desc))
->> -		num_fifos = 3;
->> +	if (dwc->gadget->speed <= USB_SPEED_HIGH &&
->> +	    (usb_endpoint_xfer_bulk(dep->endpoint.desc) ||
->> +	     usb_endpoint_xfer_isoc(dep->endpoint.desc)))
->> +		num_fifos = min_t(unsigned int,
->> +				  usb_endpoint_maxp_mult(dep->endpoint.desc) + 1,
-> This logic looks wrong. This implies maxp_mult is applicable to bulk and
-> that it's also applicable to speed below highspeed, which it isn't.
-This is to make it generic as 2k fifo should be suffiecient for bulk eps 
-in HS as explained above
-and we can increase maxpacket size when required which will incresse 
-fifo size as well.
->
->> +				  dwc->tx_fifo_resize_max_num);
->>   
->> -	if (dep->endpoint.maxburst > 6 &&
->> +	if (dwc->gadget->speed > USB_SPEED_HIGH &&
->>   	    (usb_endpoint_xfer_bulk(dep->endpoint.desc) ||
->> -	     usb_endpoint_xfer_isoc(dep->endpoint.desc)) && DWC3_IP_IS(DWC31))
->> -		num_fifos = dwc->tx_fifo_resize_max_num;
->> +	     usb_endpoint_xfer_isoc(dep->endpoint.desc)))
->> +		num_fifos = min_t(unsigned int,
->> +				  dep->endpoint.maxburst,
-> maxburst can be 0 right?
-At composite layer we are incrementing maxburst by 1 so while allocating 
-fifo maxburst can be as minimum as 1,
-which is required and can be changed anytime with exposed configfs 
-attribute.
->
->> +				  dwc->tx_fifo_resize_max_num);
->>   
->>   	/* FIFO size for a single buffer */
->>   	fifo = dwc3_gadget_calc_tx_fifo_size(dwc, 1);
->> -- 
->> 2.17.1
-Thanks,
-Akash
+
+On 2024/9/13 21:17, Chen Ridong wrote:
+> The patch 1 have been reviewed by Michal Koutný.
+> Add two patches as follow.
+> 
+> v4:
+> - add a patch to document that saturating the system_wq is not permitted.
+> - add a patch to adjust WQ_MAX_ACTIVE from 512 to 2048.
+> 
+> v3:
+> - optimize commit msg.
+> 
+> Link v1: https://lore.kernel.org/cgroups/20240607110313.2230669-1-chenridong@huawei.com/
+> Link v2: https://lore.kernel.org/cgroups/20240719025232.2143638-1-chenridong@huawei.com/
+> Link v3: https://lore.kernel.org/cgroups/20240817093334.6062-1-chenridong@huawei.com/
+> 
+> 
+> Chen Ridong (3):
+>    cgroup: fix deadlock caused by cgroup_mutex and cpu_hotplug_lock
+>    workqueue: doc: Add a note saturating the system_wq is not permitted
+>    workqueue: Adjust WQ_MAX_ACTIVE from 512 to 2048
+> 
+>   Documentation/core-api/workqueue.rst | 8 ++++++--
+>   include/linux/workqueue.h            | 2 +-
+>   kernel/bpf/cgroup.c                  | 2 +-
+>   kernel/cgroup/cgroup-internal.h      | 1 +
+>   kernel/cgroup/cgroup.c               | 2 +-
+>   5 files changed, 10 insertions(+), 5 deletions(-)
+> 
+Friendly ping.
+
 
