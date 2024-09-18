@@ -1,90 +1,158 @@
-Return-Path: <linux-kernel+bounces-332706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8DE097BD6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:55:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E3CC97BD56
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FDC11F24D6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:55:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 610E11C21926
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DA518B464;
-	Wed, 18 Sep 2024 13:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51AF18B48D;
+	Wed, 18 Sep 2024 13:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QGdI/Vgl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dhWCbYBH"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="YLI0UQKN"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC03718A6BE
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E956E18A924
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726667701; cv=none; b=hLvanm4Mg7BS8BMi1ytp3AByEOPrL7LWQC/Z5l20hrUzMMIngoo35LzwVCJkYwmn66zq3BA/GTT1P5aCjxND99a0ua8lGyJJNJRDfhNwvsl6ig0Unb4n9uSS0YMk1hE0FWKJoOaANO5DVRCq8ANDT9nTKr3QWMv/uoHRQNtxu+I=
+	t=1726667388; cv=none; b=OfiWWsQYi+DULEejsvFXZ+zbDy/9sgrn3BdRN+Hg7GwyIj3KOEzJX0UMAZQhV18a30TopMzU5aQorZits7+GjUeR67HNxFLl4lNCKvzMxnjDMRg1jWcO27tk7A86gKAhB6fqcxL0p87kdmu4K5WJUMrzgahnYhegfMiSLw5Unus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726667701; c=relaxed/simple;
-	bh=4BiH2WSnNWrVvXUzGBq4cludUNmSdM2fBU8FODDQxK4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Y/zAR6hWNz9ec9J1pM5PT3/PrUkRx/RIw4uT0s4zLMwXTaewqwOHrLVw5toAh2jFWngbYMMw4cjwAdXdQf0SDHDT57gGsAMAFLQmSZSfblm8XIqY0svUZNIDdxs47DocY+k7a2Cdt6StlRxggrf/f8vkZYhzOzDQqFyVlDrXHjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QGdI/Vgl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dhWCbYBH; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726667363;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n+ryrZ6mh1g8NEbQJQ7CU06rybmREAahYSmXN/YU9Wg=;
-	b=QGdI/VglpbjvOb6Q4iPm4bgnbd0LwW8G+3hT4bQXigfqTqhLLE/x9UouIgvHoogANcnL7V
-	UpSiL0PI4kUTti9wLfsaBBw426NNuRAKPv2e/NhditRRskNRbEYQsUCjd4YLK6ZSvl+7Dp
-	5G4qMx2tSunaaDvCHZxRE5kMrfHAh4fyjZOlCam05MNLAM05nLLwki/ZgyfHwHhjPy6N4H
-	B5AylG5hgoDWz3CzGs3UGuQENJyXNPKqk4ojUcBMvPBwxBKlTNI0tB5SndkKOiamCggN2u
-	SnHViK+LcPBNfOmT5Cb5ZY2Orzy1tRefUjevWnH9fUlH6gWd6A2a2NRjR1KQVw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726667363;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n+ryrZ6mh1g8NEbQJQ7CU06rybmREAahYSmXN/YU9Wg=;
-	b=dhWCbYBHTefstsCNis6uTgPRVJnjDnl6oWVbkrTg2R9Y8H+J1UDwXPmv/7UL8mRrOvKXM+
-	9p7DfKk8b6Cx9cAg==
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [GIT pull] irq/domain for v6.12-rc1
-In-Reply-To: <CAHk-=wi3MKD9_FQaKijkFLJhUmZCzat+uuswoWeG-NMemjdsVg@mail.gmail.com>
-References: <172656366281.2473758.10766953231775492818.tglx@xen13>
- <CAHk-=wi3MKD9_FQaKijkFLJhUmZCzat+uuswoWeG-NMemjdsVg@mail.gmail.com>
-Date: Wed, 18 Sep 2024 15:49:22 +0200
-Message-ID: <87ikut138d.ffs@tglx>
+	s=arc-20240116; t=1726667388; c=relaxed/simple;
+	bh=bbOAp5d+ehb8zo4ooCO/9tviCfPTLnOaPm0MT9ZE1jI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q7YaJNUGAAHjytP02An9UWBK5wUnEBwGRHiw0f3RF1bCYUvCpTlPhKc/zoeXrB30E5df8f8DbzuV4Dm4mJ3if6l94Rx3xNFO22Sk5/pu24oW6vTFc6PM+RMAp9cI1K90k4dI4IYyDVXE6m1Bpi7SJsIxY7i2scNfcqPdNrTXkzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=YLI0UQKN; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 817993F45F
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:49:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1726667382;
+	bh=DRPOUgnzyEYA3nZ43EginjRlwFYjkpOPaT3U4/1W7+E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=YLI0UQKNiJa/qfTntn0CBtmd+9YK/g075paVLKDNJiUvMHqs5o/HYFSC7y70BkEtQ
+	 j6fb8M/XksFMQdbh+/537lb44Z4KxbOQwywFjuhvOANfSl3BSDeMxxVM+LD1sHIWDv
+	 D3wDEYReUgTwL4nzsEPVM4mx7Dv2/iIXOse+dm2dxsXmMVglGSLvxKZlHs99OFdS8x
+	 Lc/3+tInkdgVhI5ViGEvP4CwwHqHIYQnRkHB2l2YlYcqU6wlvmT2KNiv/JZ2B4GaXD
+	 mtOouyzoBbp6HsCiJwMgirowJpXE+X1qyVZl91qr8/VQTcWsHh7CcccBT/f385rJlV
+	 +X1PjL/FYl9xw==
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cb998fd32so48460725e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:49:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726667382; x=1727272182;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DRPOUgnzyEYA3nZ43EginjRlwFYjkpOPaT3U4/1W7+E=;
+        b=mHeC8rZTiqvqKllxXsNKUxWggNwVTYcWvNEM4u8Uduu3LVKU1RgPdX+4iwiZzL91aw
+         kMa4HDW+VAFZRg/dbWXA75d9Xz1iPGecLkxelDUHEL0k3TMf+MTgajrR2qqRbuHZjskK
+         swCR/Q14/d93S6SuVkKmz4SJJqA2RUc9IrwPqISZu6kEIuTDdq9lnoeXxAurR4YJ9DF6
+         Ih+Vkp2t6LntsGNZbTkrbSoNtsWzQnJdnq1sYbCyNphyZPql39ldL0B1gDtBFf497vsS
+         3HRvGEWhCGE4i+M9zRiM9oOdSRLybxmuXUhkmSw+ITCl0aetSeWGZzZz5xSDdv6y59/J
+         A6jA==
+X-Forwarded-Encrypted: i=1; AJvYcCXAYyNi0TlqDxmZjdTLM46lPFKQ1/zVgWne2r/8iDLCl8ZvWEEnRQYVAlTmZBuN5elKwel9MMpitO9Or10=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzff7W0i6y0YSm4FqTvZYebh/4eMDIG6n2yFiP7riPRuQr17txD
+	pvFXQgEJ56hs/cfts6xtioTiGSho1W6E0Sx/2xMEZjU9khTE5IasCqKH+2Wyb8xU4DaSQ8cNfn0
+	h576lpVVNe8ZJ4qIF8k2rSgbHe91o9YFwM7JtJjspVpd424Lx3Lu/mKtB9hJr8askLRoLi1+kYY
+	1gew==
+X-Received: by 2002:a05:600c:251:b0:42c:b1f0:f67 with SMTP id 5b1f17b1804b1-42cdb66c968mr131499475e9.27.1726667382043;
+        Wed, 18 Sep 2024 06:49:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGBOsqcqK7DIjaRwTLHJ9k04jg0yeHQj80Lyu8/abqW0i9TY/peT/h53jDVVzNmlDEM5SNbxg==
+X-Received: by 2002:a05:600c:251:b0:42c:b1f0:f67 with SMTP id 5b1f17b1804b1-42cdb66c968mr131499145e9.27.1726667381488;
+        Wed, 18 Sep 2024 06:49:41 -0700 (PDT)
+Received: from [192.168.103.101] (ip-005-147-080-091.um06.pools.vodafone-ip.de. [5.147.80.91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7053856esm17475835e9.33.2024.09.18.06.49.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2024 06:49:41 -0700 (PDT)
+Message-ID: <f1e41b95-c499-4e06-91cb-006dcd9d29e6@canonical.com>
+Date: Wed, 18 Sep 2024 15:49:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] target/riscv: enable floating point unit
+To: Peter Maydell <peter.maydell@linaro.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+ Alistair Francis <alistair.francis@wdc.com>, Bin Meng <bmeng.cn@gmail.com>,
+ Weiwei Li <liwei1518@gmail.com>,
+ Daniel Henrique Barboza <dbarboza@ventanamicro.com>,
+ Liu Zhiwei <zhiwei_liu@linux.alibaba.com>, qemu-riscv@nongnu.org,
+ qemu-devel@nongnu.org, Anup Patel <anup@brainfault.org>,
+ Atish Patra <atishp@atishpatra.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Andrew Jones <ajones@ventanamicro.com>
+References: <20240916181633.366449-1-heinrich.schuchardt@canonical.com>
+ <20240917-f45624310204491aede04703@orel>
+ <15c359a4-b3c1-4cb0-be2e-d5ca5537bc5b@canonical.com>
+ <20240917-b13c51d41030029c70aab785@orel>
+ <8b24728f-8b6e-4c79-91f6-7cbb79494550@canonical.com>
+ <20240918-039d1e3bebf2231bd452a5ad@orel>
+ <CAFEAcA-Yg9=5naRVVCwma0Ug0vFZfikqc6_YiRQTrfBpoz9Bjw@mail.gmail.com>
+ <bab7a5ce-74b6-49ae-b610-9a0f624addc0@canonical.com>
+ <CAFEAcA-L7sQfK6MNt1ZbZqUMk+TJor=uD3Jj-Pc6Vy9j9JHhYQ@mail.gmail.com>
+Content-Language: en-US
+From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+In-Reply-To: <CAFEAcA-L7sQfK6MNt1ZbZqUMk+TJor=uD3Jj-Pc6Vy9j9JHhYQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 17 2024 at 15:33, Linus Torvalds wrote:
-> On Tue, 17 Sept 2024 at 11:01, Thomas Gleixner <tglx@linutronix.de> wrote:
+On 18.09.24 15:12, Peter Maydell wrote:
+> On Wed, 18 Sept 2024 at 14:06, Heinrich Schuchardt
+> <heinrich.schuchardt@canonical.com> wrote:
+>> Thanks Peter for looking into this.
 >>
->> Two small updates for interrupt domains:
+>> QEMU's cpu_synchronize_all_post_init() and
+>> do_kvm_cpu_synchronize_post_reset() both end up in
+>> kvm_arch_put_registers() and that is long after Linux
+>> kvm_arch_vcpu_create() has been setting some FPU state. See the output
+>> below.
 >>
->>   - Remove a stray '-' in the domain name
+>> kvm_arch_put_registers() copies the CSRs by calling
+>> kvm_riscv_put_regs_csr(). Here we can find:
 >>
->>   - Consolidate and clarify the bus token checks so they explicitely check
->>     for DOMAIN_BUS_ANY instead of unspecified checks for zero.
->
-> Both of these were in my tree with other commit IDs (and both came in from you):
->
->   7b9414cb2d37 irqdomain: Remove stray '-' in the domain name
->   c0ece6449799 irqdomain: Clarify checks for bus_token
->
-> so you should just drop this branch.
+>>       KVM_RISCV_SET_CSR(cs, env, sstatus, env->mstatus);
+>>
+>> This call enables or disables the FPU according to the value of
+>> env->mstatus.
+>>
+>> So we need to set the desired state of the floating point unit in QEMU.
+>> And this is what the current patch does both for TCG and KVM.
+> 
+> If it does this for both TCG and KVM then I don't understand
+> this bit from the commit message:
+> 
+> # Without this patch EDK II with TLS enabled crashes when hitting the first
+> # floating point instruction while running QEMU with --accel kvm and runs
+> # fine with --accel tcg.
+> 
+> Shouldn't this guest crash the same way with both KVM and TCG without
+> this patch, because the FPU state is the same for both?
+> 
+> -- PMM
 
-Clearly my scripts scanning the branches went sideways.
+By default `qemu-system-riscv64 --accel tcg` runs OpenSBI as firmware 
+which enables the FPU.
 
-Sorry for the noise.
+If you would choose a different SBI implementation which does not enable 
+the FPU you could experience the same crash.
+
+Best regards
+
+Heinrich
 
