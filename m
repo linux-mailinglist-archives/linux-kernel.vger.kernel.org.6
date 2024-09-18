@@ -1,246 +1,169 @@
-Return-Path: <linux-kernel+bounces-332534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC5397BAED
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:33:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C410E97BAEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B19181C2153D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:33:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 521621F22171
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBAB18787B;
-	Wed, 18 Sep 2024 10:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219851836D9;
+	Wed, 18 Sep 2024 10:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="tEajA30l"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2064.outbound.protection.outlook.com [40.107.94.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O41byaSe"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5CE17C9B8;
-	Wed, 18 Sep 2024 10:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726655565; cv=fail; b=cxy/R9Jz93m6gcGqItKimpdeWC0I7WlukGtSH9JdizIbWCa46Bg3v943YFxkqaPcehbIQYoJpzIw09DVB4JlkP1KINgoFsI1X08FCb85t0Fy1MDv0cSARsPJc7TpDeCwz6/JxL9fJ9QWda5bKK8izYYN5DKiyPvqk7zvRcREy2k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726655565; c=relaxed/simple;
-	bh=2WkumeZBmv3emv4gdp7b6WYyon9ilbIq7izvyHULXEc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nxIU5PRla3eEytHf/U0Si9PyMYsmSyvgUo9rfzDWSFgUI1k4xG0dbTvwbBKkFrEQIPzQVCYDJduWuHoxSexdthSBJSU4EP8kccYRUkSgcvJnmDn1zZ/M5UK004AnAg+gr6GtBSPOkpc4jcFC5dbNH3mLPfIcSfv9BYPbjdAiny0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=tEajA30l; arc=fail smtp.client-ip=40.107.94.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k/nNJJt5seDa1dET+1Y0S7+FI9nOh809v92wC6rUJmWgNKYhM/TA3yIpifeOnxp9N5CeDhfhg3lY8IHQU08uBfFrP6AJ9/Ubl8YrgjyG+up040O/5z+cldMlxglVVOYzUY10ZHzo+J4b0ONcensV51JzQSt+fKxeTEGeyTbp1dbkY6zxEAjVNPIqlsQtT07AXNOaLYmd5e7st/g2NfHk+iN6EN6iVW4abjZnDATXr0t9iBCsV0EhYC7OLyUt3n6REbZjhnL8rGgHpjbGqfqtqRKL7JBijTqUYFhTA2D+eKgxe7dWO7BKm8xok8J9MsA5rDJI9XJTQ3nB5Xo3jsKEVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/Y4Bx58Jc6VWxq6CCsCKLKNJuHkGIu85ln3M9X90AUI=;
- b=xfPEiCeo1LMohBEzB1oWzj+YDW4nT5Yc0Hp7uJ37t/kUDyW0ysNjxHBlECFIvfS2DKWZt3PLkBjCJnfWkk/i7vHWlpPdateTrSl/lLzJ/NEqdGUOiA4b48/H0waHlLXtKavEOVowr0rprIYM3V9h7OH5VwOpxMBN/5MHkem+9encGHL1G6yHJGWcx6ESZSnM/MoMIvQDBULd4Tp1ibdpWfMqFX0+hwZVUI/OphTwVtykdOP7Bek9WxUy045oqI2xhPCf2RwMNCZCb1AaZNFjN7QiN/770SlE870QANDu82VXNE+A2n65m9XRZllz8E/f5EguAWO73m7Tx2vC9DdRaw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/Y4Bx58Jc6VWxq6CCsCKLKNJuHkGIu85ln3M9X90AUI=;
- b=tEajA30l1AORSYGliO+8eyYH2LjuRSmzXNgqUTo0YSHv/nvsf7bcfFFtJZ9wYML+eZ5Cmwn/AeHRYQMwIPntF7dOAeto+EitYj70M1ns19UvLfO3OfPu0ug12KUh9/Pj8FURPNoEMtcHLfXx3ZMVrwChUzWViq3UlveHlNBwEJ0zrOm+6QfWyEFy1MGfJPpF1zE8N/JuT4++JnOacyEqgVcWccaaqCq5H0I83xaifKEOcyNJU5ZMio6v5MAZEl4l9FLaM6SpH2ZCGkE24q+jgykNN1YLCtsNkpWlu+9QDhkhh/HNOv29SxBSjLnVgWYjLtDJXArWYACFfVLsOxOS2A==
-Received: from DM6PR11MB4236.namprd11.prod.outlook.com (2603:10b6:5:1d9::20)
- by DS7PR11MB6077.namprd11.prod.outlook.com (2603:10b6:8:87::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Wed, 18 Sep
- 2024 10:32:41 +0000
-Received: from DM6PR11MB4236.namprd11.prod.outlook.com
- ([fe80::ea6a:8f25:ead5:8dfb]) by DM6PR11MB4236.namprd11.prod.outlook.com
- ([fe80::ea6a:8f25:ead5:8dfb%6]) with mapi id 15.20.7962.022; Wed, 18 Sep 2024
- 10:32:41 +0000
-From: <Mohan.Prasad@microchip.com>
-To: <andrew@lunn.ch>
-CC: <netdev@vger.kernel.org>, <davem@davemloft.net>, <kuba@kernel.org>,
-	<edumazet@google.com>, <pabeni@redhat.com>, <shuah@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<horms@kernel.org>, <brett.creeley@amd.com>, <rosenp@gmail.com>,
-	<UNGLinuxDriver@microchip.com>, <willemb@google.com>
-Subject: RE: [PATCH net-next v2 1/3] selftests: nic_basic_tests: Add selftest
- file for basic tests of NIC
-Thread-Topic: [PATCH net-next v2 1/3] selftests: nic_basic_tests: Add selftest
- file for basic tests of NIC
-Thread-Index: AQHbCOSaqY6jyq2GfkWTIKzaGCAXv7JcIDIAgAE5nAA=
-Date: Wed, 18 Sep 2024 10:32:40 +0000
-Message-ID:
- <DM6PR11MB4236FE8CEF8EC610B2525EF283622@DM6PR11MB4236.namprd11.prod.outlook.com>
-References: <20240917023525.2571082-1-mohan.prasad@microchip.com>
- <20240917023525.2571082-2-mohan.prasad@microchip.com>
- <0dd4130e-b06e-42e1-8f36-2589c18c4762@lunn.ch>
-In-Reply-To: <0dd4130e-b06e-42e1-8f36-2589c18c4762@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR11MB4236:EE_|DS7PR11MB6077:EE_
-x-ms-office365-filtering-correlation-id: 7e582f5f-72dd-4a8f-6bce-08dcd7cd395e
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4236.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?XvBEvK/mfXjEMH349ac75qWhbRCiMKtxkIS+7EUgjcPuVw4zkuHLjKpkMgDJ?=
- =?us-ascii?Q?Vxlbje9zatJEqv9JGL/gOqIEZfQyliDx3g4N5T46JDubFJfnwN9TfwWPubRO?=
- =?us-ascii?Q?IS9PHQv/4laPZ8JMdFyaKlTRF/PLHuZMWMtTRqKZHSR5ZBEYb5K1uee4slG3?=
- =?us-ascii?Q?wNMBr3IJlV8DMCWW1nyAYaQl48Rh93jzl7XxF28QkT5KsUmKdZVDQeYy+/Eq?=
- =?us-ascii?Q?ed4aX179gd5rIRBwPe0+dBeTOtS6KHg5LppSmVlSf5mp49k8mWfV7d4qygzp?=
- =?us-ascii?Q?3skodsSsq8nX8+PJdZjqap0gvy+Ew6v9+8x9zLZXh4Mq8vLV4cnlh4cnOHmt?=
- =?us-ascii?Q?kaWFkzXrhqB5hRbUkEKPLuith0BnXZuy/OaQYt2I/iX1IRK1LCzd+5EvzIE9?=
- =?us-ascii?Q?wESU9JFQC6vbFpu5LZB72evvRXrXeHq/LOf/Nj26fHFfJStntn8nEltuN6Jf?=
- =?us-ascii?Q?c/JddEFLR1WInYr22TuMXcnO+UCNYWE5Fnmr9+4CClsy6Ce9z8es0Sn3DeJf?=
- =?us-ascii?Q?3y5s3D43n2VA+0Nuc07otUq0oiIWyluTmsEwNCw6Xx69m1DdBfSnJVmI46SC?=
- =?us-ascii?Q?p6NNFt8HQNXTBr1soFtztRVuaCfjtjXosm6XaRT89BQNs1R1Bw1F+vxG/weF?=
- =?us-ascii?Q?Y1Pin3bXQDEVDpemS3YzmNiqXGKkUDkEQK2jdK0kxCUTi0NN/o/ifqCWIuYS?=
- =?us-ascii?Q?vDJ73J5yu4jzr7PCdUUESk5F4BiaZxxwDFHdWh8H6RO89RAvADzpkdRDjC5x?=
- =?us-ascii?Q?YFDKv1S6EN5xyUnQA+WL1gkwkGdm10xZKvRXgRe1rIa+fzP6RlshU5sthR1a?=
- =?us-ascii?Q?LKbsKn23pVyrICJ0xjCR4U4gYs3UaUwwsQCsdrPT+MqxDjNO41YBJlM55u77?=
- =?us-ascii?Q?oK/9VaB9+VH65zrWvoAj4YcwVO7CQ0umSv/3IPtpBfHslB2fbPRowGTG7pDC?=
- =?us-ascii?Q?SILfa5uX6JhtHtozXivRbQkgL9QlZC6fTfNIkGWZ7QvBzuoSD7TkQGqjH8ja?=
- =?us-ascii?Q?19gYURh9v1s28WZyfTDd6CdOAz35H8TJJMTHUvwNWUuz5jC15hOMO/O/6H+P?=
- =?us-ascii?Q?nTYaIYH9FxsXO+Qe18EhMahhanYZVqoPPat8bh/aQwHlklwesOgF7Hrdk5uv?=
- =?us-ascii?Q?YXCY+WBGfG96ZMNma7JPkuIsLpyUcwPt3Yi+D0xdXxYkHOXcJoTr4D4hTl8W?=
- =?us-ascii?Q?Ljxz54UKq/xZsbXW0fIioCaNBCNeNtu1k9MWMdw1EOEEUxqnHzR5Z+KiFGSb?=
- =?us-ascii?Q?fPeVIWfcjA8dc5GhhIRo5Rv0IlaiE8wqM0IkqNGuE5ypORg1YkqqR+uK7Ik2?=
- =?us-ascii?Q?qLSdBxjAabf1DOu0pSETGpRVZkHl/4Hkpw5S3EOxDNs2zSwSuFK+8rpE5Lpn?=
- =?us-ascii?Q?B6scSX0p0ASwwfe/EWqXbPjEN7/GXgSFxkWkrqUQ+FBBZ7B7SA=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?zHLCFmrQ42KW/+no7njuwcPKeB3qY1O+AUuWAtMMxUIM8kYwqHToHZSoLLbW?=
- =?us-ascii?Q?UUgb3n5TjyWIQv15e+X/BWo8TrRPcJyBZ0rZlNqtKVpSuKGalgf3fcGcmdzU?=
- =?us-ascii?Q?HX0VjWahZRZ3P8L/qH5qZ6fBNE+1F6K4QrtV9E8nUxKKPZI7re6jD5ViCnaL?=
- =?us-ascii?Q?xxbFWqtsKOZ6rQuq/pO1pXxAh+jOyKsf1OXRowpcYwNZOKu8FAhU5KeLwDkz?=
- =?us-ascii?Q?zto5qI3ym1PJuSSpcJhvdnAEMzYe3gCueIcdHC6eMq7bNcH1x1qbEiTcT6s6?=
- =?us-ascii?Q?bpE2m0tZxFtA3SN4FtiU25m2cl3eQruKUxT5UFTdZeAeEQ44iNP1e+X4qEil?=
- =?us-ascii?Q?EH15GSYNylavCPWNrppbV5FsOmgffpXCMrwe5v8Pa8eHeD6zdAeLMsnso6+u?=
- =?us-ascii?Q?bjtxCXG2ANpUggL2WPatsKa5ERQ9K83IkdOBiAtAp9DeZ5u+YKZp4Tg3Fiyb?=
- =?us-ascii?Q?63YBDo25Q9C8z6w9bUBiIvhsDdVqXi6XbhWEHZyeMN682JZZXVeesqqkUGr+?=
- =?us-ascii?Q?zymCyLC//wYDDFViwtOpW4oTm1NsxYaJKzbByWKmdvvTLsSG0N9CiFyCkx5V?=
- =?us-ascii?Q?rs4UeLcTGzNnSngMYcI5PZikvU1I40wD2NMvK1WayHQHYy+aw0NovKZRpwVY?=
- =?us-ascii?Q?O2moURUMm+WLVFxbKeGuHMjmXyOTX6R6phpDMdFSMPm71ICCze1W1vgAu00R?=
- =?us-ascii?Q?Mz2e7xQ2emtUTLrlPoV/TFIPc716WZK2wMaprzpy1FUXYVWnxSjNx5wkYNIB?=
- =?us-ascii?Q?Nax+zHGm7QsxjNuxGN17TTQVVtIEDeIEE4lBMZhitkXT+qfuQZzG0WPjnSKW?=
- =?us-ascii?Q?wnmmojWLu725s8S0yomdsg906i8/1b9aTd1++AUkUV3zezvUiuGHTIAcDymS?=
- =?us-ascii?Q?etabhj4dXIqP/TerKbD0u3f/1451gPj/g9hRwgEeD/BEoqPuKN3lRNuMW/Je?=
- =?us-ascii?Q?bB1TP/OWOvW93OepTrsO6W0yz6FPrko1X9ISrhkBaQw9FxlmH49RJoJ8iTme?=
- =?us-ascii?Q?y5ucWASo/aYlE+7QlPfz+38RaUZLMtN2CwznojtwdS5jYQ+X0m3Pad54+Kos?=
- =?us-ascii?Q?XgQQg2e+3qyApOGyxyRhwRTachDePxq4fvUO92R3rafSG5Xg3DN91E8lFQWN?=
- =?us-ascii?Q?jK0S3Ky0h/eTtkFHtb4Sqr0cretPFuw/49avfHhIgGiS75Xd+Z9fO1I7Td4F?=
- =?us-ascii?Q?Cv0XH47UG7r3kz5WR4a86AyIZ32H+qI7X3XdbQnpd3bnZoIkFitD4eKoj+v2?=
- =?us-ascii?Q?6uP+w1C0x94gSxEGR00GwC/SHvnxoP7myQsqbBV6esiXxYFZs5YPujfRQYKE?=
- =?us-ascii?Q?2zJ98pyKmShLBDO02neAYc8dph0L3J0HGv+e4bRenMHr2DCvg4ISMEYO2DzE?=
- =?us-ascii?Q?Dg0+tuN2/z23qhAI6j3HitDfm0uvHeCVmfmENehpkHilDj0etsKM5fy6DrdY?=
- =?us-ascii?Q?xsa7/A7L4V570i6+s3vkGfdIRWDwz3vv7o+LACclYkuKg5eM6vfT9n/BoXEc?=
- =?us-ascii?Q?MeKJ0Al9zbZERVI7t1sCSauyqTZS7ZUdx1lRJDFYPVH6soUgScmXc1mQw9K+?=
- =?us-ascii?Q?duN2fnopsH7asYHBqXpGnAxym3+QsOD6uX9kMy9+?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D8317C9B8
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726655667; cv=none; b=a65aXBKLcpLi07eWBBRlv8uJ5JSY4EJqy+1FZ+ePZK3KkjN0CEJxPLJ3P4knPa4OAnb1hEBtvtWzlwdcRsBM5RCf0dVGWkWkRjGibVTIZgvvohwY8wtWqbc0ihTkKV5kYaPoKinFozLWs4Uq0xtfSt+MZLeJ7+x1HMqAjCZrQxw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726655667; c=relaxed/simple;
+	bh=/O6DlyybLlXWfSWwnwV5RQBtFaKboK8lm6EQb8R2/cw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=V3Okexu7JW3ttPD1YihT6HgMcTH2dCh5EKbfGCkN6iJMuzGnsTiW8fMffh9hCNgSD2D3WzoMh7On6htq/9lC+evs9paOdRQ4KfL1SS9/Ia0umAZeT4f5qg/MINM0toSYSou4XWrmu20S3E+O+wV6U8A+Vigx1XfSlnXpsS9D8T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O41byaSe; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37747c1d928so3468292f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 03:34:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726655664; x=1727260464; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Yhv6au6+BMMuSCn4gH7YR+GWvforwWtmSXKV5oKbYG0=;
+        b=O41byaSecUsiaNmh5Lato3q25FnUHC1gNM5C0IEB5qXKr4NZ4nxmczscpUGWfcTnkT
+         0vdvc+FfrhiJrqqrAvpQH6xwalBxeM9dPHKbLxtpOvsu4CisOESi0gCIZhm85INbx+O1
+         dscw4FOWEeZ23qjwHTgebEENpEoiWk5YHLqQu7bru+ZBVqWRZQn0i7Tu96lzK92WPwWy
+         1cuzUTCYA8gPoC5SnS5m+A7jhF8x/vGUAri+YsIAh1eDiKZBYEQArSIv/CYFPSzeSIP4
+         LtEExLlh5LFt9P4VhH3OZ9c8PUF1JokTIJYCljHh/VQJOwKqxPNjqvI1dJPTYRaa9dz6
+         qXow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726655664; x=1727260464;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Yhv6au6+BMMuSCn4gH7YR+GWvforwWtmSXKV5oKbYG0=;
+        b=ZljPAHylbP/YI+R97CIlcBMbxST3QuIFinMj2jPcZYhc44CLWZGFERBnrzZkzP5T2z
+         yqkKv7RE2THwDTxMJ1ogSRHV/NWh9VI29WOzpRXBRBPCLPdWpBREssYqLhWnUEcNfTM5
+         i/AgAleKRwFHeXfg/Nw63lq1sKsugDCNEW+FBHF8NMvKkyMIodWFwrq0rrV88bX1bG/U
+         ri3QMdsTN82pwXL7BchfBhx7IHQmWp56Ccel5l671/Sfs1c25Z6j2e0UlYwh7o+nrlZy
+         q2v7YrjjlcYtBFoLyTae+rFwAQcAtndAgRFcGkuFWdif4bGB5MO4o+t8mDEU5Yy214Zc
+         jmmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXL4Srn+4Stf6WdrOd7ZKtPrdCZb2hVU0KZFSWsdwAmR4itFHknqoJl0yr8IYFDXojbJc/WFVinqdX5+30=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8axJVBwoYE+fOt02ltym/yWUQKEnwsXbmzF5PxCuAXqQ4stJU
+	fAY+/FtE+ySm7TK8mDHkvLDFzio4UWJPXWynDsv8RvqXZ7zvWXuQUw1l0cwy7pI=
+X-Google-Smtp-Source: AGHT+IEyqcWtBSDcanJ0r21CbblfIqL9+DPRLgNJ8aBlTro3Q2HnHsyj9xJ3yRk7ecOioh7AK4K7rQ==
+X-Received: by 2002:adf:e891:0:b0:366:f8e7:d898 with SMTP id ffacd0b85a97d-378d625a40dmr9932285f8f.50.1726655663507;
+        Wed, 18 Sep 2024 03:34:23 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:2782:e782:f1c:dcad? ([2a01:e0a:982:cbb0:2782:e782:f1c:dcad])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e780007dsm11989799f8f.82.2024.09.18.03.34.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2024 03:34:23 -0700 (PDT)
+Message-ID: <d9e0ade6-8a7e-4ba4-974f-142ad246ce5d@linaro.org>
+Date: Wed, 18 Sep 2024 12:34:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4236.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e582f5f-72dd-4a8f-6bce-08dcd7cd395e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Sep 2024 10:32:41.0137
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ewQ67qanV/2q8Smq1bZWJxDuDaUdbmr7t/zAjT8NPgNSnWg2+ucXZ2cwDD3tLeVm2I5v36ST0YoEtvYm3OsWhhxOEiWzSHmBvkUxK47AReY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6077
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: drivers/spmi/spmi-pmic-arb.c:1782 spmi_pmic_arb_register_buses()
+ error: uninitialized symbol 'ret'.
+To: Dan Carpenter <dan.carpenter@linaro.org>, oe-kbuild@lists.linux.dev,
+ Abel Vesa <abel.vesa@linaro.org>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+References: <67cf80cf-d96d-4249-ac34-6085d4b32948@suswa.mountain>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <67cf80cf-d96d-4249-ac34-6085d4b32948@suswa.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Andrew,
+On 18/09/2024 12:29, Dan Carpenter wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   adfc3ded5c33d67e822525f95404ef0becb099b8
+> commit: 9799873717398e8fa1727482e578b9d777da645e spmi: pmic-arb: Add multi bus support
+> config: mips-randconfig-r072-20240916 (https://download.01.org/0day-ci/archive/20240916/202409162313.TnpH4qKB-lkp@intel.com/config)
+> compiler: mips64-linux-gcc (GCC) 14.1.0
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> | Closes: https://lore.kernel.org/r/202409162313.TnpH4qKB-lkp@intel.com/
+> 
+> smatch warnings:
+> drivers/spmi/spmi-pmic-arb.c:1782 spmi_pmic_arb_register_buses() error: uninitialized symbol 'ret'.
+> 
+> vim +/ret +1782 drivers/spmi/spmi-pmic-arb.c
+> 
+> 9799873717398e8 Abel Vesa 2024-05-07  1762  static int spmi_pmic_arb_register_buses(struct spmi_pmic_arb *pmic_arb,
+> 9799873717398e8 Abel Vesa 2024-05-07  1763  					struct platform_device *pdev)
+> 9799873717398e8 Abel Vesa 2024-05-07  1764  {
+> 9799873717398e8 Abel Vesa 2024-05-07  1765  	struct device *dev = &pdev->dev;
+> 9799873717398e8 Abel Vesa 2024-05-07  1766  	struct device_node *node = dev->of_node;
+> 9799873717398e8 Abel Vesa 2024-05-07  1767  	struct device_node *child;
+> 9799873717398e8 Abel Vesa 2024-05-07  1768  	int ret;
+> 9799873717398e8 Abel Vesa 2024-05-07  1769
+> 9799873717398e8 Abel Vesa 2024-05-07  1770  	/* legacy mode doesn't provide child node for the bus */
+> 9799873717398e8 Abel Vesa 2024-05-07  1771  	if (of_device_is_compatible(node, "qcom,spmi-pmic-arb"))
+> 9799873717398e8 Abel Vesa 2024-05-07  1772  		return spmi_pmic_arb_bus_init(pdev, node, pmic_arb);
+> 9799873717398e8 Abel Vesa 2024-05-07  1773
+> 9799873717398e8 Abel Vesa 2024-05-07  1774  	for_each_available_child_of_node(node, child) {
+> 9799873717398e8 Abel Vesa 2024-05-07  1775  		if (of_node_name_eq(child, "spmi")) {
+> 9799873717398e8 Abel Vesa 2024-05-07  1776  			ret = spmi_pmic_arb_bus_init(pdev, child, pmic_arb);
+> 9799873717398e8 Abel Vesa 2024-05-07  1777  			if (ret)
+> 9799873717398e8 Abel Vesa 2024-05-07  1778  				return ret;
+> 9799873717398e8 Abel Vesa 2024-05-07  1779  		}
+> 9799873717398e8 Abel Vesa 2024-05-07  1780  	}
+> 9799873717398e8 Abel Vesa 2024-05-07  1781
+> 9799873717398e8 Abel Vesa 2024-05-07 @1782  	return ret;
+> 
+> Is it possible to not have an spmi node?
 
-Thanks for the review comments.
+It's possible but not allowed per the bindings.
 
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
-e
-> content is safe
->=20
-> > +def verify_link_up(ifname: str) -> None:
-> > +    """Verify whether the link is up"""
-> > +    with open(f"/sys/class/net/{ifname}/operstate", "r") as fp:
-> > +        link_state =3D fp.read().strip()
-> > +
-> > +    if link_state =3D=3D "down":
-> > +        raise KsftSkipEx(f"Link state of interface {ifname} is DOWN")
-> > +
-> > +def set_autonegotiation_state(ifname: str, state: str) -> None:
-> > +    content =3D get_ethtool_content(ifname, "Supported link modes:")
-> > +    speeds, duplex_modes =3D get_speed_duplex(content)
-> > +    speed =3D speeds[0]
-> > +    duplex =3D duplex_modes[0]
-> > +    if not speed or not duplex:
-> > +        KsftSkipEx("No speed or duplex modes found")
-> > +    """Set the autonegotiation state for the interface"""
-> > +    process =3D ethtool(f"-s {ifname} speed {speed} duplex {duplex}
-> > +autoneg {state}")
->=20
-> > +def verify_autonegotiation(ifname: str, expected_state: str) -> None:
-> > +    verify_link_up(ifname)
-> > +    """Verifying the autonegotiation state"""
-> > +    output =3D get_ethtool_content(ifname, "Auto-negotiation:")
-> > +    actual_state =3D output[0]
-> > +
-> > +    ksft_eq(actual_state, expected_state)
-> > +
-> > +def test_link_modes(cfg) -> None:
-> > +    global common_link_modes
-> > +    link_modes =3D get_ethtool_content(cfg.ifname, "Supported link mod=
-es:")
-> > +    partner_link_modes =3D get_ethtool_content(cfg.ifname, "Link
-> > +partner advertised link modes:")
-> > +
-> > +    if link_modes and partner_link_modes:
-> > +        for idx1 in range(len(link_modes)):
-> > +            for idx2 in range(len(partner_link_modes)):
-> > +                if link_modes[idx1] =3D=3D partner_link_modes[idx2]:
-> > +                    common_link_modes.append(link_modes[idx1])
-> > +                    break
-> > +    else:
-> > +        raise KsftFailEx("No link modes available")
-> > +
-> > +def test_autonegotiation(cfg) -> None:
-> > +    autoneg =3D get_ethtool_content(cfg.ifname, "Supports auto-
-> negotiation:")
-> > +    if autoneg[0] =3D=3D "Yes":
-> > +        for state in ["off", "on"]:
-> > +            set_autonegotiation_state(cfg.ifname, state)
-> > +            time.sleep(sleep_time)
-> > +            verify_autonegotiation(cfg.ifname, state)
->=20
-> If i'm understanding this correctly, you test with autoneg off, and expec=
-t the
-> link to come up. That only works reliably if the link peer also has auton=
-eg off,
-> and is using the same speed/duplex.
->=20
-> What i guess is happening in your test setup is that the link peer is fai=
-ling
-> autoneg and defaulting to 10/Half. But i don't think that is guaranteed b=
-y
-> 802.3. There are also a small number of devices which no longer support
-> 10/Half, they are likely to default to something higher. This is especial=
-ly true
-> for datacenter NICs, they may start at 10G and go up from there.
->=20
-> So i don't think this is a valid test. To really test autoneg off, you ne=
-ed to
-> configure both ends of the link.
+Neil
 
-I will change the implementation to configure both the ends of the link app=
-ropriately in the next version.
+> 
+> 9799873717398e8 Abel Vesa 2024-05-07  1783  }
+> 
+
 
