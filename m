@@ -1,235 +1,462 @@
-Return-Path: <linux-kernel+bounces-332507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ECC297BA90
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:07:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C9A97BA8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9393E1F2793F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:07:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DECC41C22431
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FCE18952F;
-	Wed, 18 Sep 2024 10:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA64188584;
+	Wed, 18 Sep 2024 10:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="buHHb1PE"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2051.outbound.protection.outlook.com [40.107.215.51])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lQoaoIs/"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2072188CC8
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726654002; cv=fail; b=iimNBPE1AHiEN64mmLdlASgNSe7X8n7IzDdOpsT4YID5ayY/2EFyZMgXpISCjgEYFKgqa3fjJuBHWW/pnYdQkJCWz3HgIk5S9NywGrb7z5tFMqQChVE8kVI+GptboIjYn4NzkrUDbXCXZ9+gPulY6MP0Ezw1g0syW3zhC/6f0lw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726654002; c=relaxed/simple;
-	bh=qEgahzjHZGsfCNARlNA70pHSoNxcUWEgRjZ+QUiEF0s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ESLsLw6jJ6Bw5v/Dqa12Hvx3L+XrIrX0mXEL+qnCfb83/MA55c2EsB43aNFsdKnffREXtRKAMtj9dbSr8h/hlDILTVNPFGIPcVbJ9a1pWBTcxUbKR3PlRFeifWIqVorPFMwt/B5NH9JAZcB2znjZiDhzsVzgAsZO2dO6wLmGtW4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=buHHb1PE; arc=fail smtp.client-ip=40.107.215.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G0Y8BhshT9hq3+thbQKz7GwpoyYCOlAQgMRTOgU4OLNBCl562w7fKePXPIwJ2swrbOA5DXKwS/5W3kdomJ4GUjYTaEqRAXJd/kv/9W1qNMSgcf0uFHdp0FB7wDsbGHqeRaXmmyz6+48hgvBu+epesYxhCrQTqMve5LDuQPnXj2AsmZER5zcPOfGiAPn1RLuIzXPgzlkNRmdfySV1+whpODOBXsuF5ofdpfWUngIgprTHA0vs7pyhgdIbUwBhaatQ56hiHS65A154C7NfiIGzt8G/BGADdKN758s95fQ43QUAF+p0TtNW2XSqKejplFgFj5Y64O38Co/2JRRiFuLKQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UvjIKAs63k4GEfsyoW2G7eL76dNHG88P32YxnjAylLU=;
- b=f7Q1Igl7TDgc0bzWug4Lc01ZUYYvLJdJNkhplsIM0gFxyMXVkkkPqJar55oTerOsWBWFsoqjxIHVhNxHVMwepMeKQjIN4qq9Kjj7YKC0tsjJZmatmp4y5eGT1JwB3PPB2sIWLsW6dIpPXPy3LSqBvn8bI4XP/vNG81MrEbEiWHTsex/IL/p+NrASOWssI2XY4VA+vv2kmRP7fIkkkrrSqDmrgmGmFQkUrd0B5iGVeVJBLbeIlwNQPK1wtL9zLtQpLAIMuzUGX1RN9Jv0KspH6onjY6Df5i1Puw03GyR5rYWUQGBKeaYfEBSOqrDrlSKU9ECW5faRw/lPEUL8h6dmfg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=kernel.org smtp.mailfrom=oppo.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UvjIKAs63k4GEfsyoW2G7eL76dNHG88P32YxnjAylLU=;
- b=buHHb1PEN3Sdkl7bfjWkf1j/QWMWSjBAHzvhFdz3AsjD+gu6HbpXza+2WhPtM4QofZ73+ce9muVfiCR17+yuKO8cYbzGTk6KEskmBytFYl4mjsmI5Ucft2zt1pgmeyWF5x0AGJV6+/q9WwkW7irD+xN7tFH0wd9b+J7v2Xozidg=
-Received: from PUZP153CA0008.APCP153.PROD.OUTLOOK.COM (2603:1096:301:c2::23)
- by JH0PR02MB6544.apcprd02.prod.outlook.com (2603:1096:990:17::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Wed, 18 Sep
- 2024 10:06:36 +0000
-Received: from HK3PEPF0000021E.apcprd03.prod.outlook.com
- (2603:1096:301:c2:cafe::53) by PUZP153CA0008.outlook.office365.com
- (2603:1096:301:c2::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.7 via Frontend
- Transport; Wed, 18 Sep 2024 10:06:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- HK3PEPF0000021E.mail.protection.outlook.com (10.167.8.40) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Wed, 18 Sep 2024 10:06:34 +0000
-Received: from cndgdcavdu0c-218-29.172.16.40.114 (172.16.40.118) by
- mailappw30.adc.com (172.16.56.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 18 Sep 2024 18:06:32 +0800
-From: <liuderong@oppo.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-	liuderong <liuderong@oppo.com>
-Subject: [PATCH v3 1/2] f2fs: remove unused parameters
-Date: Wed, 18 Sep 2024 18:06:19 +0800
-Message-ID: <1726653980-590956-2-git-send-email-liuderong@oppo.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1726653980-590956-1-git-send-email-liuderong@oppo.com>
-References: <1726653980-590956-1-git-send-email-liuderong@oppo.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB6517A586
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726653999; cv=none; b=GGsz3QrvZI0X6MfyLrT04X1qGaCh7U8GwEQNS7KLmTQsS+HZCeuOwrJnzCLEaEhKuzZ+RT+qq6Fv01A1vyTy6VAn6uEW0uvgLl5YGBVlQ8t2L4xuEbFbuilEFKXQYT/+87vTXDkQt/lLD3M8iosOJI6VjDv6nNpWe/+xKHbf4Mw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726653999; c=relaxed/simple;
+	bh=oQOnfwsjdUWCC5mJL+lquIf7uyFH9YrXYXAl2LUYApw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=P6Upd/68rfkUmMiMkG898z+ODXmh1p7BHdh8EeVr27ILAiC8JZB2k7INJJ28Xd69KLlWbLTvN+7GKxK83cKnZSE+kwXuKA4xqYmfkGu+bC+cTT7NuDlOeOF7ANQstKk+Wx7iSosE0NghTZUhSyV0jLZ3qCO4Fja9xazFAjEwOs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lQoaoIs/; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1726653993;
+	bh=oQOnfwsjdUWCC5mJL+lquIf7uyFH9YrXYXAl2LUYApw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=lQoaoIs/x96njIYg71YCnVd3TrIcdPXQkblg8hVHArgJAANpjdqDxC7ApRnY2w/tp
+	 fFtZGCZftubxmlWxWf5VDpRWQUfp7g8pgMVIvENfPPT0iLeXh/3t2UWSnWQRnDonwK
+	 ugWKXt6Kdi937ePf///4/Mhw8rymTet/xgA0egPqjMGRi6xeyXB2XUR/gi/MAU3l+U
+	 ftk0cL3A+hQ86r2zzxUGOYQCl4Q2B4dh+0feEuKnvSeMJZvvYyFFuLtTWyKayRcULi
+	 3vm1iRI/m6cRkbIq/hwN5j50sMjIr8LRK0pHRiwOAURP5OFZVMy3qWDVi4waCQYSx5
+	 uSGPZPrYl7gsA==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 99D4817E10D2;
+	Wed, 18 Sep 2024 12:06:33 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: linux-mediatek@lists.infradead.org
+Cc: matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH v1 3/3] soc: mediatek: mtk-cmdq: Move cmdq_instruction init to declaration
+Date: Wed, 18 Sep 2024 12:06:20 +0200
+Message-ID: <20240918100620.103536-4-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240918100620.103536-1-angelogioacchino.delregno@collabora.com>
+References: <20240918100620.103536-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw30.adc.com
- (172.16.56.197)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK3PEPF0000021E:EE_|JH0PR02MB6544:EE_
-X-MS-Office365-Filtering-Correlation-Id: a53f9e70-c2bd-4e09-5145-08dcd7c993fd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1kOFA+OAv0zdS9ta93GJM2pQMSWBdziWxSr+aefpJ5jSvOcVUrbMY5cUy2Po?=
- =?us-ascii?Q?EAJ8a5Z/fTNUWJQwn3X5R51P16GTOXcA/Wip3VJmpg47P74cI4kn5hmgxUVI?=
- =?us-ascii?Q?/C6rtqhmCrDqNEX9C+WFW0XB4lseNbjJTqPg7S6O/bs+ji61KuB5jEWWyBc/?=
- =?us-ascii?Q?MHBuAuCFZBiqFi617n0DKshoeKFaWdGQl3+QVrb8z43wng5BCFKnjzhvTV4s?=
- =?us-ascii?Q?nE5JGJXNxpnCsXtdy419lRiQeI3iX5gQttqYa0KNwV+koEfV2A51DPvLvu/v?=
- =?us-ascii?Q?ZywX/knk/zAHX9KGdR7jSRp3lqVbX4XIPin7WIUoaujhMW7i6Fx0TG0/TB7X?=
- =?us-ascii?Q?tJLkd60ba83/TLlazHWP2IMieEgez10Ek3EphIEcyL5Jx/LI8sUYR8Ift8G5?=
- =?us-ascii?Q?mPPfLMo/7RQchGlztd1WkNmRxBorkgTNeAqB/AOr9WBBb/oIs1iLtql8pvZ8?=
- =?us-ascii?Q?M1D7LFjZa/o8EgWVxICJdK08Hn1w31L+5jIddQZ1SLX7tKO3BLCfO313gmVq?=
- =?us-ascii?Q?ZkszD54u9Seudw41gTNqG20dl01klHyOkxpMy8SaYQm5is7fllJzgV7iU5KA?=
- =?us-ascii?Q?DR86u//ydh23/d54UA0q7TtuxF9kBglJ1F5Y4eSBarcdeJxTDGuuHn1TaA7l?=
- =?us-ascii?Q?1HfeEN/5plGfP3ZsfTNBoPbI+4CE16qv63Zc1qSJeBMI/c7NkOuLmU9JEWEc?=
- =?us-ascii?Q?olyI346QKkY/k55rUmFqavxi+FZAYDlYhuUFAQQP5cRQIaPBLdUHDHDzweKr?=
- =?us-ascii?Q?+iNHgEwleqs+QBmmkPhVGuPFqhbWZrKNilzc9+rof/Mvhp/TST20hueM/Pg2?=
- =?us-ascii?Q?XyskjeAzwSWOYMtYnWiYadwN2dbWaJqymycvQPHj5z0SFahUOFeZJ1W8qxOG?=
- =?us-ascii?Q?OODMkY+94CFfLl1kL/WiYTDTIehAzKlwBaibrWheBUfpesCIDrb647LJuD/E?=
- =?us-ascii?Q?sdQGZvJfCEEQh8+l8Yl2DpGKdHricpNi4or7ZKYV0cYZz5iSH2yfPYySnU+k?=
- =?us-ascii?Q?r7SOp4d2UqbdecIwmgDlm30u8YvmrXjXvnPLGvV8WiUuM2vAyrBpEabqCuZp?=
- =?us-ascii?Q?4YEig4VSAXXUxWeoomci0DXF/QqzBulCawaubt4l0QY10wegAeZNtnX5R6UT?=
- =?us-ascii?Q?LouES75//aBnu8Ot8v/5RcOfsTkwrl/BFxxN92uZ7AcjWleSxh+YE/jh4o9k?=
- =?us-ascii?Q?XkgkBx8U57D+dkbvMyVcG6AouozmKSN43LuoMZiCfgQ4EOLM+SNcr7Cfxhds?=
- =?us-ascii?Q?zyz/uGL8ttK8lbB3p+WKjow/HB/8iwHIMuepUi3tW+1zMMpR1XGEQhwnLJ75?=
- =?us-ascii?Q?obsPqaM1l3ks0SotQglbCzDdnbxJuD0WO2oJ0SIebymqHxtCILTidcEC5PoI?=
- =?us-ascii?Q?3MBmH7Q=3D?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 10:06:34.3830
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a53f9e70-c2bd-4e09-5145-08dcd7c993fd
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK3PEPF0000021E.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR02MB6544
+Content-Transfer-Encoding: 8bit
 
-From: liuderong <liuderong@oppo.com>
+Move, where possible, the initialization of struct cmdq_instruction
+variables to their declaration to compress the code.
 
-Remove unused parameter segno from f2fs_usable_segs_in_sec.
+While at it, also change an instance of open-coded mask to use the
+GENMASK() macro instead, and instances of `ret = func(); return ret;`
+to the equivalent (but shorter) `return func()`.
 
-Reviewed-by: Chao Yu <chao@kernel.org>
-Signed-off-by: liuderong <liuderong@oppo.com>
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- fs/f2fs/f2fs.h    | 3 +--
- fs/f2fs/gc.c      | 6 +++---
- fs/f2fs/segment.c | 3 +--
- fs/f2fs/segment.h | 4 ++--
- 4 files changed, 7 insertions(+), 9 deletions(-)
+ drivers/soc/mediatek/mtk-cmdq-helper.c | 200 ++++++++++++-------------
+ 1 file changed, 93 insertions(+), 107 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ac19c61..4dcdcdd 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3759,8 +3759,7 @@ void f2fs_destroy_segment_manager_caches(void);
- int f2fs_rw_hint_to_seg_type(struct f2fs_sb_info *sbi, enum rw_hint hint);
- enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
- 			enum page_type type, enum temp_type temp);
--unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi,
--			unsigned int segno);
-+unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi);
- unsigned int f2fs_usable_blks_in_seg(struct f2fs_sb_info *sbi,
- 			unsigned int segno);
+diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
+index 4ffd1a35df87..0b274b0fb44f 100644
+--- a/drivers/soc/mediatek/mtk-cmdq-helper.c
++++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
+@@ -191,13 +191,12 @@ static int cmdq_pkt_mask(struct cmdq_pkt *pkt, u32 mask)
  
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 724bbcb..6299639 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -339,7 +339,7 @@ static unsigned int get_cb_cost(struct f2fs_sb_info *sbi, unsigned int segno)
- 	unsigned char age = 0;
- 	unsigned char u;
- 	unsigned int i;
--	unsigned int usable_segs_per_sec = f2fs_usable_segs_in_sec(sbi, segno);
-+	unsigned int usable_segs_per_sec = f2fs_usable_segs_in_sec(sbi);
- 
- 	for (i = 0; i < usable_segs_per_sec; i++)
- 		mtime += get_seg_entry(sbi, start + i)->mtime;
-@@ -1707,7 +1707,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 	 */
- 	if (f2fs_sb_has_blkzoned(sbi))
- 		end_segno -= SEGS_PER_SEC(sbi) -
--					f2fs_usable_segs_in_sec(sbi, segno);
-+					f2fs_usable_segs_in_sec(sbi);
- 
- 	sanity_check_seg_type(sbi, get_seg_entry(sbi, segno)->type);
- 
-@@ -1881,7 +1881,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, struct f2fs_gc_control *gc_control)
- 
- 	total_freed += seg_freed;
- 
--	if (seg_freed == f2fs_usable_segs_in_sec(sbi, segno)) {
-+	if (seg_freed == f2fs_usable_segs_in_sec(sbi)) {
- 		sec_freed++;
- 		total_sec_freed++;
- 	}
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 78c3198..6627394 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -5381,8 +5381,7 @@ unsigned int f2fs_usable_blks_in_seg(struct f2fs_sb_info *sbi,
- 	return BLKS_PER_SEG(sbi);
- }
- 
--unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi,
--					unsigned int segno)
-+unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi)
+ int cmdq_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset, u32 value)
  {
- 	if (f2fs_sb_has_blkzoned(sbi))
- 		return CAP_SEGS_PER_SEC(sbi);
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index bfc01a5..9e61ded 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -430,7 +430,7 @@ static inline void __set_free(struct f2fs_sb_info *sbi, unsigned int segno)
- 	unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
- 	unsigned int start_segno = GET_SEG_FROM_SEC(sbi, secno);
- 	unsigned int next;
--	unsigned int usable_segs = f2fs_usable_segs_in_sec(sbi, segno);
-+	unsigned int usable_segs = f2fs_usable_segs_in_sec(sbi);
+-	struct cmdq_instruction inst;
+-
+-	inst.op = CMDQ_CODE_WRITE;
+-	inst.value = value;
+-	inst.offset = offset;
+-	inst.subsys = subsys;
+-
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_WRITE,
++		.value = value,
++		.offset = offset,
++		.subsys = subsys
++	};
+ 	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_write);
+@@ -208,30 +207,27 @@ int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u8 subsys,
+ 	u16 offset_mask = offset;
+ 	int err;
  
- 	spin_lock(&free_i->segmap_lock);
- 	clear_bit(segno, free_i->free_segmap);
-@@ -464,7 +464,7 @@ static inline void __set_test_and_free(struct f2fs_sb_info *sbi,
- 	unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
- 	unsigned int start_segno = GET_SEG_FROM_SEC(sbi, secno);
- 	unsigned int next;
--	unsigned int usable_segs = f2fs_usable_segs_in_sec(sbi, segno);
-+	unsigned int usable_segs = f2fs_usable_segs_in_sec(sbi);
+-	if (mask != 0xffffffff) {
++	if (mask != GENMASK(31, 0)) {
+ 		err = cmdq_pkt_mask(pkt, mask);
+ 		if (err < 0)
+ 			return err;
  
- 	spin_lock(&free_i->segmap_lock);
- 	if (test_and_clear_bit(segno, free_i->free_segmap)) {
+ 		offset_mask |= CMDQ_WRITE_ENABLE_MASK;
+ 	}
+-	err = cmdq_pkt_write(pkt, subsys, offset_mask, value);
+-
+-	return err;
++	return cmdq_pkt_write(pkt, subsys, offset_mask, value);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_write_mask);
+ 
+ int cmdq_pkt_read_s(struct cmdq_pkt *pkt, u16 high_addr_reg_idx, u16 addr_low,
+ 		    u16 reg_idx)
+ {
+-	struct cmdq_instruction inst = {};
+-
+-	inst.op = CMDQ_CODE_READ_S;
+-	inst.dst_t = CMDQ_REG_TYPE;
+-	inst.sop = high_addr_reg_idx;
+-	inst.reg_dst = reg_idx;
+-	inst.src_reg = addr_low;
+-
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_READ_S,
++		.dst_t = CMDQ_REG_TYPE,
++		.sop = high_addr_reg_idx,
++		.reg_dst = reg_idx,
++		.src_reg = addr_low
++	};
+ 	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_read_s);
+@@ -239,14 +235,14 @@ EXPORT_SYMBOL(cmdq_pkt_read_s);
+ int cmdq_pkt_write_s(struct cmdq_pkt *pkt, u16 high_addr_reg_idx,
+ 		     u16 addr_low, u16 src_reg_idx)
+ {
+-	struct cmdq_instruction inst = {};
+-
+-	inst.op = CMDQ_CODE_WRITE_S;
+-	inst.src_t = CMDQ_REG_TYPE;
+-	inst.sop = high_addr_reg_idx;
+-	inst.offset = addr_low;
+-	inst.src_reg = src_reg_idx;
+-
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_WRITE_S,
++		.mask = 0,
++		.src_t = CMDQ_REG_TYPE,
++		.sop = high_addr_reg_idx,
++		.offset = addr_low,
++		.src_reg = src_reg_idx
++	};
+ 	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_write_s);
+@@ -254,20 +250,19 @@ EXPORT_SYMBOL(cmdq_pkt_write_s);
+ int cmdq_pkt_write_s_mask(struct cmdq_pkt *pkt, u16 high_addr_reg_idx,
+ 			  u16 addr_low, u16 src_reg_idx, u32 mask)
+ {
+-	struct cmdq_instruction inst = {};
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_WRITE_S_MASK,
++		.src_t = CMDQ_REG_TYPE,
++		.sop = high_addr_reg_idx,
++		.offset = addr_low,
++		.src_reg = src_reg_idx,
++	};
+ 	int err;
+ 
+ 	err = cmdq_pkt_mask(pkt, mask);
+ 	if (err < 0)
+ 		return err;
+ 
+-	inst.mask = 0;
+-	inst.op = CMDQ_CODE_WRITE_S_MASK;
+-	inst.src_t = CMDQ_REG_TYPE;
+-	inst.sop = high_addr_reg_idx;
+-	inst.offset = addr_low;
+-	inst.src_reg = src_reg_idx;
+-
+ 	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_write_s_mask);
+@@ -275,13 +270,12 @@ EXPORT_SYMBOL(cmdq_pkt_write_s_mask);
+ int cmdq_pkt_write_s_value(struct cmdq_pkt *pkt, u8 high_addr_reg_idx,
+ 			   u16 addr_low, u32 value)
+ {
+-	struct cmdq_instruction inst = {};
+-
+-	inst.op = CMDQ_CODE_WRITE_S;
+-	inst.sop = high_addr_reg_idx;
+-	inst.offset = addr_low;
+-	inst.value = value;
+-
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_WRITE_S,
++		.sop = high_addr_reg_idx,
++		.offset = addr_low,
++		.value = value
++	};
+ 	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_write_s_value);
+@@ -289,18 +283,18 @@ EXPORT_SYMBOL(cmdq_pkt_write_s_value);
+ int cmdq_pkt_write_s_mask_value(struct cmdq_pkt *pkt, u8 high_addr_reg_idx,
+ 				u16 addr_low, u32 value, u32 mask)
+ {
+-	struct cmdq_instruction inst = {};
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_WRITE_S_MASK,
++		.sop = high_addr_reg_idx,
++		.offset = addr_low,
++		.value = value
++	};
+ 	int err;
+ 
+ 	err = cmdq_pkt_mask(pkt, mask);
+ 	if (err < 0)
+ 		return err;
+ 
+-	inst.op = CMDQ_CODE_WRITE_S_MASK;
+-	inst.sop = high_addr_reg_idx;
+-	inst.offset = addr_low;
+-	inst.value = value;
+-
+ 	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_write_s_mask_value);
+@@ -333,61 +327,61 @@ EXPORT_SYMBOL(cmdq_pkt_mem_move);
+ 
+ int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u16 event, bool clear)
+ {
+-	struct cmdq_instruction inst = { {0} };
+ 	u32 clear_option = clear ? CMDQ_WFE_UPDATE : 0;
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_WFE,
++		.value = CMDQ_WFE_OPTION | clear_option,
++		.event = event
++	};
+ 
+ 	if (unlikely(event >= CMDQ_MAX_EVENT))
+ 		return -EINVAL;
+ 
+-	inst.op = CMDQ_CODE_WFE;
+-	inst.value = CMDQ_WFE_OPTION | clear_option;
+-	inst.event = event;
+-
+ 	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_wfe);
+ 
+ int cmdq_pkt_acquire_event(struct cmdq_pkt *pkt, u16 event)
+ {
+-	struct cmdq_instruction inst = {};
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_WFE,
++		.value = CMDQ_WFE_UPDATE | CMDQ_WFE_UPDATE_VALUE | CMDQ_WFE_WAIT,
++		.event = event
++	};
+ 
+ 	if (unlikely(event >= CMDQ_MAX_EVENT))
+ 		return -EINVAL;
+ 
+-	inst.op = CMDQ_CODE_WFE;
+-	inst.value = CMDQ_WFE_UPDATE | CMDQ_WFE_UPDATE_VALUE | CMDQ_WFE_WAIT;
+-	inst.event = event;
+-
+ 	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_acquire_event);
+ 
+ int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u16 event)
+ {
+-	struct cmdq_instruction inst = { {0} };
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_WFE,
++		.value = CMDQ_WFE_UPDATE,
++		.event = event
++	};
+ 
+ 	if (unlikely(event >= CMDQ_MAX_EVENT))
+ 		return -EINVAL;
+ 
+-	inst.op = CMDQ_CODE_WFE;
+-	inst.value = CMDQ_WFE_UPDATE;
+-	inst.event = event;
+-
+ 	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_clear_event);
+ 
+ int cmdq_pkt_set_event(struct cmdq_pkt *pkt, u16 event)
+ {
+-	struct cmdq_instruction inst = {};
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_WFE,
++		.value = CMDQ_WFE_UPDATE | CMDQ_WFE_UPDATE_VALUE,
++		.event = event
++	};
+ 
+ 	if (unlikely(event >= CMDQ_MAX_EVENT))
+ 		return -EINVAL;
+ 
+-	inst.op = CMDQ_CODE_WFE;
+-	inst.value = CMDQ_WFE_UPDATE | CMDQ_WFE_UPDATE_VALUE;
+-	inst.event = event;
+-
+ 	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_set_event);
+@@ -395,16 +389,13 @@ EXPORT_SYMBOL(cmdq_pkt_set_event);
+ int cmdq_pkt_poll(struct cmdq_pkt *pkt, u8 subsys,
+ 		  u16 offset, u32 value)
+ {
+-	struct cmdq_instruction inst = { {0} };
+-	int err;
+-
+-	inst.op = CMDQ_CODE_POLL;
+-	inst.value = value;
+-	inst.offset = offset;
+-	inst.subsys = subsys;
+-	err = cmdq_pkt_append_command(pkt, inst);
+-
+-	return err;
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_POLL,
++		.value = value,
++		.offset = offset,
++		.subsys = subsys
++	};
++	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_poll);
+ 
+@@ -418,9 +409,7 @@ int cmdq_pkt_poll_mask(struct cmdq_pkt *pkt, u8 subsys,
+ 		return err;
+ 
+ 	offset = offset | CMDQ_POLL_ENABLE_MASK;
+-	err = cmdq_pkt_poll(pkt, subsys, offset, value);
+-
+-	return err;
++	return cmdq_pkt_poll(pkt, subsys, offset, value);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_poll_mask);
+ 
+@@ -474,11 +463,12 @@ int cmdq_pkt_logic_command(struct cmdq_pkt *pkt, u16 result_reg_idx,
+ 			   enum cmdq_logic_op s_op,
+ 			   struct cmdq_operand *right_operand)
+ {
+-	struct cmdq_instruction inst = { {0} };
++	struct cmdq_instruction inst;
+ 
+ 	if (unlikely(!left_operand || !right_operand || s_op >= CMDQ_LOGIC_MAX))
+ 		return -EINVAL;
+ 
++	inst.value = 0;
+ 	inst.op = CMDQ_CODE_LOGIC;
+ 	inst.dst_t = CMDQ_REG_TYPE;
+ 	inst.src_t = cmdq_operand_get_type(left_operand);
+@@ -494,43 +484,43 @@ EXPORT_SYMBOL(cmdq_pkt_logic_command);
+ 
+ int cmdq_pkt_assign(struct cmdq_pkt *pkt, u16 reg_idx, u32 value)
+ {
+-	struct cmdq_instruction inst = {};
+-
+-	inst.op = CMDQ_CODE_LOGIC;
+-	inst.dst_t = CMDQ_REG_TYPE;
+-	inst.reg_dst = reg_idx;
+-	inst.value = value;
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_LOGIC,
++		.dst_t = CMDQ_REG_TYPE,
++		.reg_dst = reg_idx,
++		.value = value
++	};
+ 	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_assign);
+ 
+ int cmdq_pkt_jump_abs(struct cmdq_pkt *pkt, dma_addr_t addr, u8 shift_pa)
+ {
+-	struct cmdq_instruction inst = {};
+-
+-	inst.op = CMDQ_CODE_JUMP;
+-	inst.offset = CMDQ_JUMP_ABSOLUTE;
+-	inst.value = addr >> shift_pa;
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_JUMP,
++		.offset = CMDQ_JUMP_ABSOLUTE,
++		.value = addr >> shift_pa
++	};
+ 	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_jump_abs);
+ 
+ int cmdq_pkt_jump_rel(struct cmdq_pkt *pkt, s32 offset, u8 shift_pa)
+ {
+-	struct cmdq_instruction inst = { {0} };
+-
+-	inst.op = CMDQ_CODE_JUMP;
+-	inst.value = (u32)offset >> shift_pa;
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_JUMP,
++		.value = (u32)offset >> shift_pa
++	};
+ 	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_jump_rel);
+ 
+ int cmdq_pkt_eoc(struct cmdq_pkt *pkt)
+ {
+-	struct cmdq_instruction inst = { {0} };
+-
+-	inst.op = CMDQ_CODE_EOC;
+-	inst.value = CMDQ_EOC_IRQ_EN;
++	struct cmdq_instruction inst = {
++		.op = CMDQ_CODE_EOC,
++		.value = CMDQ_EOC_IRQ_EN
++	};
+ 	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_eoc);
+@@ -541,9 +531,7 @@ int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
+ 	int err;
+ 
+ 	/* insert EOC and generate IRQ for each command iteration */
+-	inst.op = CMDQ_CODE_EOC;
+-	inst.value = CMDQ_EOC_IRQ_EN;
+-	err = cmdq_pkt_append_command(pkt, inst);
++	err = cmdq_pkt_eoc(pkt);
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -551,9 +539,7 @@ int cmdq_pkt_finalize(struct cmdq_pkt *pkt)
+ 	inst.op = CMDQ_CODE_JUMP;
+ 	inst.value = CMDQ_JUMP_PASS >>
+ 		cmdq_get_shift_pa(((struct cmdq_client *)pkt->cl)->chan);
+-	err = cmdq_pkt_append_command(pkt, inst);
+-
+-	return err;
++	return cmdq_pkt_append_command(pkt, inst);
+ }
+ EXPORT_SYMBOL(cmdq_pkt_finalize);
+ 
 -- 
-2.7.4
+2.46.0
 
 
