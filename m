@@ -1,301 +1,256 @@
-Return-Path: <linux-kernel+bounces-332402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6899297B94A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:23:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B97897B943
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C51D2822AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:23:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C02171C20D5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41937176FAB;
-	Wed, 18 Sep 2024 08:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BE8175D2E;
+	Wed, 18 Sep 2024 08:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="THUK2y5w"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nyYAmWdk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B46132105;
-	Wed, 18 Sep 2024 08:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726647773; cv=none; b=s8+LuRS0/DFqUYtLOMG+QzNWPC6kZAmzxrK0GoXp8B5lCGAax1igiE312S05sKKyeW+JceBakjPcGEaHtWUMmq4GUQ3lhnlqL1pMlpOdBOjMOG8WczhKUEGwWkYCtgLywkPuW+lz9i+J7gFLjlJYdijtPZiMEXA5mtNKs35riq8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726647773; c=relaxed/simple;
-	bh=LojxUU3x/uZccgFR5R3AeUdTvX07sQhrz1DVu2meqJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eAFiiNjIPmkrCcQQi0D2oZh64gATX1sd28fu6Di/oKS+S61UAj8UClegHfZjfYUls3Rhh6TTCP0qjS6P1L53WMTrLDW5bbS+nCVNLbbzB+sC1lk/RWJHq1/WjUGgMZwZjARhiOtLsCRZsNKn2Aruh7CQrcOJQ3ZAxWEzbrUbkWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=THUK2y5w; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86884A1D
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 08:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726647653; cv=fail; b=Ka/TPfipPiNAFAq9kOv4npo734+da6dOBdJE5dme7E35+MtU9DW3r/VCxpELCCmPoUIyuHrya8hOEsuFn7TrYiLOKtQdOwh9+/NIwWwgtHwpUcS/kcuG5sh/EtzHHtR9OvV9qY2kkvcTH9k/cAgfhgnGzHpL3WYJ2mvaj9jXKm0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726647653; c=relaxed/simple;
+	bh=c7UCQ0d5cHagAyFcVmDw892C5kiVDwaje3qY521C0yo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MzdoMs83x0oOUghhmScTHkV89ifyI8XA6ZbhZucGOYa/KdGg00ZhpwgTIJ2xo+tUgBYXu/14wIwGhGztbOYb1sGXiDjbQA6OmQSEHAODYBhBfxynr9z7TJ1V75dSB3meuEKQTtRUom8ycTxSbZfiNVvUEasKK+5jf3p2fJYUrSA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nyYAmWdk; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726647771; x=1758183771;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LojxUU3x/uZccgFR5R3AeUdTvX07sQhrz1DVu2meqJ0=;
-  b=THUK2y5wKyEgI5MRXwn2e3nOhtuugkwuW5IIDA/ddcqZcQ16l9FM5Wfi
-   5xQ8X+k5tBW/3gpIFBRjfROjoi9/GYO0gObuQe3wF6bL/rXvYW7btJyNI
-   jpJiBVNQlw9DLKZQj0Ac9bDX3B/FIHrDecdPtB8w/hcX8ptMf0lkLPXGp
-   40rW/P+QL543e7G+WualTnAyHwSA7vouXhDc7dGPCGz/Jsh7qo8ADB8Ve
-   +mtF1cZ4ZYPuYLiVNt5PAlBL9RGU1Lwgh2IzE6q6OrWQ3haceAq/408xF
-   R1jmQQc1opXplzafz5orr95oAGL+LRAtmYlk2l9mTI5vPHacuoaB5KxHs
-   w==;
-X-CSE-ConnectionGUID: tdnGr8piTn6EbNag3Pt3LA==
-X-CSE-MsgGUID: NYohTC/2TLqdvcTcMRS3dg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="25363808"
+  t=1726647652; x=1758183652;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=c7UCQ0d5cHagAyFcVmDw892C5kiVDwaje3qY521C0yo=;
+  b=nyYAmWdkkYf1StBqOzkcTmF5o8DXZp9lQs2lkVtH4TwIc21GbEBNinMy
+   T/Qf2G8CbYCieXMSJvArneX0y93UZi7WsU4BN8n1PZ/qlAvhpE/YyoVsp
+   zDRSm/lrY9/Eoo8zWzu2rcIuVAfSu3rhkFliYYqbfu3BQXxX7MDycvL41
+   1u9PmabQq/Mn0WVV8i8WMwlst1Jhz/rDga4M0IZLBm1uabKnjLoF3i90S
+   B+//8vL0b4dKKDP8gVX/1CHxY/1BQUqm5fYe9N0e8N+nxpPn1O/nqV3HK
+   ZYDffCD0DrRPrjugSxqyLHT01+m2qgQXHvjzAWoUcSMO2FizWlgjjg5XU
+   g==;
+X-CSE-ConnectionGUID: Wo3rsjAoTiaczd+K6HBCUQ==
+X-CSE-MsgGUID: ksrXgBfQR1mg6kZ7i/cArw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="29289264"
 X-IronPort-AV: E=Sophos;i="6.10,238,1719903600"; 
-   d="scan'208";a="25363808"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 01:22:50 -0700
-X-CSE-ConnectionGUID: 0ow3PrdfRbuhqk6+bYw64g==
-X-CSE-MsgGUID: jKoubgzwTsCXxY6F61BcGg==
+   d="scan'208";a="29289264"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 01:20:51 -0700
+X-CSE-ConnectionGUID: tD/qHOsGRUqgUPPCduC2DA==
+X-CSE-MsgGUID: PfiEr5grTM+R8gw5Hh2MvQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,238,1719903600"; 
-   d="scan'208";a="69463985"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa009.fm.intel.com with ESMTP; 18 Sep 2024 01:22:47 -0700
-Date: Wed, 18 Sep 2024 16:19:59 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: "Manne, Nava kishore" <nava.kishore.manne@amd.com>
-Cc: "git (AMD-Xilinx)" <git@amd.com>, "mdf@kernel.org" <mdf@kernel.org>,
-	"hao.wu@intel.com" <hao.wu@intel.com>,
-	"yilun.xu@intel.com" <yilun.xu@intel.com>,
-	"trix@redhat.com" <trix@redhat.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"saravanak@google.com" <saravanak@google.com>,
-	"linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [RFC 1/1] of-fpga-region: Add sysfs interface support for FPGA
- configuration
-Message-ID: <ZuqNL41bgpPZ9QQ7@yilunxu-OptiPlex-7050>
-References: <20240726063819.2274324-1-nava.kishore.manne@amd.com>
- <20240726063819.2274324-2-nava.kishore.manne@amd.com>
- <Zqe7yoAMIJ+Qv8YC@yilunxu-OptiPlex-7050>
- <DS7PR12MB6070C9991ED88DFFADA7EC3CCDB22@DS7PR12MB6070.namprd12.prod.outlook.com>
- <ZrEX9HlAOlUtgnTj@yilunxu-OptiPlex-7050>
- <DS7PR12MB60702067EE3B40A4256F90D3CD612@DS7PR12MB6070.namprd12.prod.outlook.com>
+   d="scan'208";a="74302440"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Sep 2024 01:20:51 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 18 Sep 2024 01:20:50 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 18 Sep 2024 01:20:50 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 18 Sep 2024 01:20:50 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=le2280850IsjlrP73T33qz6LIaasKQXDGZVR+2q+en4ct0VBMwI9/5Isrpg3yKrO0SaMk1iQXZyO4JiEmkO5/eL35gurlhJl1qlzVBx1WKTshIuatgUi3SO5SkHbnVtDMe5jSqlaF6y4Ii6BDiDHowf4KwhrSHLpv+wi4Br9dcaaF39z9vY0iu+0SqRBk6RqbaNY1XM+GXFGqCEN+B0kPZ89GV3rRVhO/WMdfeOgiMe6s1mj5+IK/jt0br1xqsoX6pMU1EfNzSLOv+Si9y9FaU1s7jnwlWXTFIPglwV2XpeMY5g08bSrXnhWaQwLVPNN5QplqdpHiFEFx2lp5nKOTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c7UCQ0d5cHagAyFcVmDw892C5kiVDwaje3qY521C0yo=;
+ b=NiAICtNl1lM9uMEe1w6iVrHSUw4JN/20/ckpejAg9pXE4U39hax6Wi4mJLhtH29+t4/3wz0oencdJgn9e7oDh+VUMQhhA2PK2NjU/tmShj5nEi7eMociqd7hBbE5CZjjowyc8GljxCCymy82Yt7Zrft5qF1rHTnID1m5kz933h97K9vR3zG+Y1sj0Z7C5pIaKcNzObJ888fmB9fbR/lJtoc+tzqZujyhlR6KT8GfNFnrB8gJgMZhnhy1KgRrHUdzAJ/XBoBMQ15KXXzkhrwHt4D/gjra03PL1h9iqn+jO9wEb+T2ITcWWEJ+8FfgFnjhJnGU9u3ChO0ajKYbD/e6yQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by LV2PR11MB5976.namprd11.prod.outlook.com (2603:10b6:408:17c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Wed, 18 Sep
+ 2024 08:20:48 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7962.025; Wed, 18 Sep 2024
+ 08:20:48 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Baolu Lu <baolu.lu@linux.intel.com>, "j.granados@samsung.com"
+	<j.granados@samsung.com>, David Woodhouse <dwmw2@infradead.org>, Joerg Roedel
+	<joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
+	<robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Klaus Jensen
+	<its@irrelevant.dk>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>
+Subject: RE: [PATCH v2 1/5] iommu/vt-d: Separate page request queue from SVM
+Thread-Topic: [PATCH v2 1/5] iommu/vt-d: Separate page request queue from SVM
+Thread-Index: AQHbBdJ7/7CTtQp+20SlGBvfhvfxtbJWdAEQgAAIWoCAABlWQIAAMnYAgAZxEDA=
+Date: Wed, 18 Sep 2024 08:20:48 +0000
+Message-ID: <BN9PR11MB52769D1D1FEA9BAF0E6D19718C622@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20240913-jag-iopfv8-v2-0-dea01c2343bc@samsung.com>
+ <20240913-jag-iopfv8-v2-1-dea01c2343bc@samsung.com>
+ <BL1PR11MB52713D3D5947C66AE463FA4B8C662@BL1PR11MB5271.namprd11.prod.outlook.com>
+ <e0a1347f-877e-445c-9158-7584ae200bff@linux.intel.com>
+ <BN9PR11MB527611131A808B78C8E0E8388C662@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <c8708b95-14b9-4545-84f7-6f45161456cc@linux.intel.com>
+In-Reply-To: <c8708b95-14b9-4545-84f7-6f45161456cc@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|LV2PR11MB5976:EE_
+x-ms-office365-filtering-correlation-id: 17c16d55-58d2-455a-d8e3-08dcd7baccfc
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?RUJBbkoyVVVudzNJOWpoeklrcnc3NHRlL2RRcm5EUU5Td2pESG5tcHROUWd6?=
+ =?utf-8?B?ZE1laVU3UUV3SFYxMkNFTlJKV0RpZFlJWWthNkk4MlQ1ZTQ5UHcvQm4vZnNI?=
+ =?utf-8?B?enBjYTZ2OG9OaE45VlFST2lvQ0tTMkc3cVhrQ3hQZTVMVGc2Q0huZFBpV0sy?=
+ =?utf-8?B?NDVrTEtqYXNGd1BnMEUvNGloSFc0VGlIWHE0YmdPcktoSGM4ZXdldzV2ODdv?=
+ =?utf-8?B?Kzg2eXRkRlFjaUlSa0VwYkU1eG5yTFZEM05FS05CbWY1dzIxRkxjTVBVNGQ5?=
+ =?utf-8?B?aEJ2WUdXMTJkb2gzRnBLNVdZZ1VKNHYzRDFCTWxBYWFiazl5NXE5bTBacTFV?=
+ =?utf-8?B?S0NpbDc3QUF3alkxSEFzYXg5TmRsalVFQVBnb2FoNkp4S1V3ajlVZC9USTBz?=
+ =?utf-8?B?ak41dVhTUHM2V0VkYk0yTGV4bkJJVGZOZWVVaVl6eW8weTFZUjdSVDhDR2RB?=
+ =?utf-8?B?QXVEZk9kYW8rWjduUGhsL3hGMm16R052TGRpWUwrczdMaUIzdkJwd2p6am4v?=
+ =?utf-8?B?Z3pPcTMxcTdDN0lBL0ZkdWo4ZzFzZzZpZDFBdTZSM3NyNGM3NmVQTlJJVExZ?=
+ =?utf-8?B?MU5VMEk3ejJjTmRwMDA3T1gyeTFyQ2tSdHpJMmFhM2I3cE44am4vOUxnUVNM?=
+ =?utf-8?B?MGhOVXdJeVVOWW9YbnlKcUlFY3ZYOHpuUU9PMjZORkM5cDIxM28zV3BIZ2w5?=
+ =?utf-8?B?UWdPTFJwYnVvdkpGbDdFYWtDVzZHV0RhOVNwUzJYNko4UEFjdmV4aDFScU43?=
+ =?utf-8?B?NEFSRld1RWRibVgrdjBraEIwMk9XQmwxemcyNDlkcXR6bDRNSi95SG5hYk9S?=
+ =?utf-8?B?Zno2dXJ3TzZpVDcwUE40QnNsZ1c0enNFSHRIRDUzMGNLOUtKS1NqWUUrcU9F?=
+ =?utf-8?B?cTJadkw5QU5wcEZCSy9ESWVkZzIxRkpIWXBnbjRpQlkxQXhNUW9abkw2bm1V?=
+ =?utf-8?B?RkdIUWcrS0FQMSsvTXI5N0diMGRpNDNmTi92d3U4bEFyWi9jcW44cGFWNm0r?=
+ =?utf-8?B?U2gwbUJzcFdVdmluVktGd3dCNitza3ZPbFNsSXdPR1hSY3RTdGZmYmlGK3NI?=
+ =?utf-8?B?WEZqajIxbGNGeUNxeXdqb0F6Ly8wcTQ5Snp0SndzTWtvUEFQUW5kN1o5VGU4?=
+ =?utf-8?B?VVdvZzRDblNxaTN4dk8zc3oyTHFVdmtWajdXbCtrSVpvWWdYMHYyNXFXSUlU?=
+ =?utf-8?B?ZkkwVkNuSng1eW1aY0hyb1Y2MU9yNU9WTVBtRjZYc1oxMDRScG1XQ1c2R2RZ?=
+ =?utf-8?B?SHF3WE1SUVZEWTJxN1BZZGNCVXhYalowTCs4Zm5KNVZMVWpxR1hSNjc4WGcz?=
+ =?utf-8?B?Z2ZmVkpFQkYraGMzZXZVYk9xV1pCOWZPcWc2ejFnZHAwT2JPNXBvZUZvQXlm?=
+ =?utf-8?B?Slp2VEZHTE42UUx4OGFCcXBIQzJxekV3dEZGRlpDTjRTZ2JGRW9OSUkwY1FN?=
+ =?utf-8?B?YTlDSnA0dlkxWVprNjI1R21KZ1NESGM4L0FaNWNQc3pBQk55WEJUaVpFTGFn?=
+ =?utf-8?B?czU4UXl4MWsxYnZ1NkhtdnRlT2Frb2pqNFhtQytzaEN6VjdjNlJCUG9nR2Yy?=
+ =?utf-8?B?NnBUSG16bGhUUXJrZnl2aTgzOUdTTnI2Ukx0MERsWVQvQUtnYjE5SExRYytu?=
+ =?utf-8?B?OFg3R29pakljVm5WcFQ4bXl3U2xxOTNYbDIrMXNSK05jd1daeS84WndMbzVx?=
+ =?utf-8?B?Z1Uzc1dQd1UzNFVGRW5vTXRtRmdlRWQ0NHpRRHNvaEtnR0NueVBUbGI1NmEx?=
+ =?utf-8?B?OGd6SHJRbUlDMlpmRjFJZVNHRFNTdXhsMXFLOHNLUEtkRmVQMEpyd1pMdnk3?=
+ =?utf-8?B?SEtsYVBqNUllMTB0UDlrSUpGWjU3c0dBcG9oQ2lTT2dhRldHVjNWdG9nTzho?=
+ =?utf-8?B?cVMwSEowQUU4UGhxenpXdmU0dDRQcjhQTU15WUlMNmJLTGc9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?eGx5R2tKejN0TDFnc1lsRGR4MmJ1bXVCckl0TmZrQXdyNExnV0Fvcy9MQTF4?=
+ =?utf-8?B?bWI0aXg1RmJvbFRqWGFzZy8yOXMyTzJlNTZJTGJldkZlS3gvbUdHZGZFNUxp?=
+ =?utf-8?B?bUFoS3d5UXBSRG5CN29KTHlOR1RPV2o3dU94LzJIQ2FBVmxZZzhhM0laRUVs?=
+ =?utf-8?B?TFdKbWR0SGR2OEgyUWJ0VnVEOW5lRHdDRzAxaE5vVm45dXdjTTQ2SzNQMmhK?=
+ =?utf-8?B?RXFHdjNSNStHSm9IMmY1QUs4eTB0ZWRSblBzUHNSeko0VnJKWExtK1dxRXRp?=
+ =?utf-8?B?RHQyRU5vQjk2aTFsTWljK2ZOZ0VwVFFWRTRneDBpaFhXM3p5THZOT2t0Qjlp?=
+ =?utf-8?B?YUEwb0FPNHdKYVBHYXl0Z2dhOVVQMkE3S0M2QVNpbVRhMlJvU0RVYUpORkdQ?=
+ =?utf-8?B?UG1vNXNJZlMrUEtDVDBvaG5GSVFkbkcxZFFFY2VGSndtTE8vdzdjOXFZVUhr?=
+ =?utf-8?B?OGF2S1JlOUNPWlE2YWhsc2tqMXY2QnZId1RteTdMLzU2WmpQYm56WldYMURT?=
+ =?utf-8?B?OEhFL2YxdjRyS0RyRHU1RUIzYjBEMVcyZ2xzYzVxV3g3RHdsTHNnam0rVCtD?=
+ =?utf-8?B?cndEM25jQ25DL0JuSnYycCtEMTludm15d25ZS0FBMWNyNFpqVTMvQW1pNkdX?=
+ =?utf-8?B?N1JOdjdBUk1qRVRTMG5aazh6K0ZnUndQSkFZdGdIMHhvckE2YS92bFhmWTNo?=
+ =?utf-8?B?WXppWnRLYzd3WW1KUjhVWjgyaHVBOXFRY21CT0taaHFjZXM5bkJCNjhxMVBk?=
+ =?utf-8?B?SzI4T0NuaTE1WXRub255b0o2TndOaTFjUm9XSEJNMSsyZHdrWkJvY3o5L3Iy?=
+ =?utf-8?B?cXVxNTROczZWT0t6cEIrUks4QkRMcGxXSzhzMXIrZDNHR2Y1TTNlSFdDcVYy?=
+ =?utf-8?B?U1NZNmROYnB1em9YcjlzV0tXcEJRaGU1TG13OVlVeWpQUVhzNGF6ODM1SzJT?=
+ =?utf-8?B?Y3BaV1dQN1dGQ25PbXdVQUpOd1ZZREI2TlJMclIyNVptOGthNkkvK3E1TFdN?=
+ =?utf-8?B?ZDJ6REFxZjFQV1dzUWJ6WHA2KzFNUTlZTkV4Z2VqZ2MyQ25CelNEYU5uRkc0?=
+ =?utf-8?B?UmpsNGNFaEFHeVF0azNYK2QwRkdkd1BQRGdLYUFzSkJZeTN3QkNTQjRWa25n?=
+ =?utf-8?B?SFdVMCtrUkJzWTNMWjdxQzJQTEY3UjkrdmN2Nm03cENZR2FaNnFTMElmRzhL?=
+ =?utf-8?B?V29DcFdoNnUvcnBkR1RqSFdVV01lSmxuUkRRMVNIYTUya1RyQS9sODNaQ3Fq?=
+ =?utf-8?B?YjVWcHMwZEdNYkw5NG11Z0FYS3hrVGpKUHFrU0VoRFVscFo0RDZZUnhsdHZp?=
+ =?utf-8?B?WmtZTTkvQVNqLzRYTDgvUWFEbnRkdEo4b3BjV3FXSkJVOFc0cFNHdmRaNlZj?=
+ =?utf-8?B?cjEzMzFlcXZEZGtSeHJCVnNZVlo4dzNqSURWV1NCL3R0TGc2aXlpN3dFWThT?=
+ =?utf-8?B?dUM2T3hFeHhtVlYxdWE3Q1k3clZWenVGYWdPSml2ZGg0WDVia1Q2a0FWd1Uw?=
+ =?utf-8?B?YUV3KzJDREppSlNHOWNUNUFqUVpWL1RpRGk5ZmJ4MTRJOGFkeW15cVFOK0t1?=
+ =?utf-8?B?anFqK2FWSG1PR2tUVXI0OU40a1dsemd5VXkzM0JySHZ1ZUkwRzdnbnpjazIw?=
+ =?utf-8?B?aS9LNlFJcFQ4L2JsOWZxR0NRZHd5elpBMzAxUklzNTgzYjVxMFhBb01OajZG?=
+ =?utf-8?B?MUFDRW8yWTlsYVdnNmh5VjFra0xkcVNSNjhYMUNZTFNjYm9paVlzNnBGY1Nj?=
+ =?utf-8?B?RGhkNFJJNldjUGtOaDByUWlGeHpTOUhhcEVyMUxFZ3FwY0o1azcxOCtYazJ3?=
+ =?utf-8?B?eld2VXBUak43OFU1Sm5iUmpmTmI0Q0wrSjVLQkxQZUVwdEdlM0pqUXE5REJt?=
+ =?utf-8?B?d1BrMDRKZ29NUjNHQ3FiSW9tU2lUMlFoVkNzb01Ya1lEUEJsNUpHRVNDcS83?=
+ =?utf-8?B?aTV4KzE3cjJqQTdmNlJtcVpIdzJ3YXpkRENpL1JJOS9DUVo5NzVmVStHdjJG?=
+ =?utf-8?B?VVExS2ErR0ZGVHFzN09RWGVGYWQwa0VkQ0Z2RS9kQ3Z2RTFiMFpoY2Rqd05B?=
+ =?utf-8?B?TFkwZHN5STBjUit2ajdBdHVxN1ljWnoxSDZZOVBsbnhKbWhmT1NCRU9XOXh6?=
+ =?utf-8?Q?EJYQXP0EB4UiJZLRkzoIF073R?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DS7PR12MB60702067EE3B40A4256F90D3CD612@DS7PR12MB6070.namprd12.prod.outlook.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17c16d55-58d2-455a-d8e3-08dcd7baccfc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Sep 2024 08:20:48.2511
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ypf7IDpQ3MHcCq2rKk2xxvlt30Pg0X18wPFvxcUSWo9pcPSPv4coeqmLTUo2zUMgXoMrJRHsUR9FfYM7sWTcQg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR11MB5976
+X-OriginatorOrg: intel.com
 
-On Tue, Sep 17, 2024 at 11:16:08AM +0000, Manne, Nava kishore wrote:
-> > -----Original Message-----
-> > From: Xu Yilun <yilun.xu@linux.intel.com>
-> > Sent: Monday, August 5, 2024 11:51 PM
-> > To: Manne, Nava kishore <nava.kishore.manne@amd.com>
-> > Cc: git (AMD-Xilinx) <git@amd.com>; mdf@kernel.org; hao.wu@intel.com;
-> > yilun.xu@intel.com; trix@redhat.com; robh@kernel.org; saravanak@google.com;
-> > linux-fpga@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > devicetree@vger.kernel.org
-> > Subject: Re: [RFC 1/1] of-fpga-region: Add sysfs interface support for FPGA
-> > configuration
-> > 
-> > On Thu, Aug 01, 2024 at 04:25:42AM +0000, Manne, Nava kishore wrote:
-> > > Hi Yilun,
-> > >
-> > > > -----Original Message-----
-> > > > From: Xu Yilun <yilun.xu@linux.intel.com>
-> > > > Sent: Monday, July 29, 2024 9:27 PM
-> > > > To: Manne, Nava kishore <nava.kishore.manne@amd.com>
-> > > > Cc: git (AMD-Xilinx) <git@amd.com>; mdf@kernel.org;
-> > > > hao.wu@intel.com; yilun.xu@intel.com; trix@redhat.com;
-> > > > robh@kernel.org; saravanak@google.com; linux-fpga@vger.kernel.org;
-> > > > linux- kernel@vger.kernel.org; devicetree@vger.kernel.org
-> > > > Subject: Re: [RFC 1/1] of-fpga-region: Add sysfs interface support
-> > > > for FPGA configuration
-> > > >
-> > > > On Fri, Jul 26, 2024 at 12:08:19PM +0530, Nava kishore Manne wrote:
-> > > > > Adds sysfs interface as part of the of-fpga-region. This newly
-> > > > > added sysfs interface uses Device Tree Overlay (DTO) files to
-> > > > > configure/reprogram an FPGA while an operating system is
-> > > > > running.This solution will not change the existing sequence When a
-> > > > > DT overlay that targets an FPGA Region is applied.
-> > > > > 	- Disable appropriate FPGA bridges.
-> > > > > 	- Program the FPGA using the FPGA manager.
-> > > > > 	- Enable the FPGA bridges.
-> > > > > 	- The Device Tree overlay is accepted into the live tree.
-> > > > > 	- Child devices are populated.
-> > > > >
-> > > > > When the overlay is removed, the child nodes will be removed, and
-> > > > > the FPGA Region will disable the bridges.
-> > > > >
-> > > > > Usage:
-> > > > > To configure/reprogram an FPGA region:
-> > > > > echo "fpga.dtbo" > /sys/class/fpga_region/<region>/device/load
-> > > >
-> > > > IIRC, last time we are considering some generic interface for both
-> > > > OF & non- OF FPGA region, but this is still OF specific.
-> > > >
-> > > At AMD, we exclusively use OF for FPGA configuration/reconfiguration, utilizing
-> > overlay files as outlined in the fpga-region.txt documentation.
-> > > However, some devices, like dfl.c those relying solely on the FPGA region, do not
-> > use OF.
-> > > For these non-OF devices, should we expect them to follow the fpga-region.txt
-> > guidelines for FPGA configuration/reconfiguration?
-> > 
-> > I assume it is Documentation/devicetree/bindings/fpga/fpga-region.yaml.
-> > 
-> > No, Non-OF devices don't have to follow the DT binding.
-> > 
-> > > If so, it may be advantageous to develop a common interface for both OF and
-> > non-OF.
-> > > If not, it might be more appropriate to establish distinct interfaces to cater to their
-> > specific requirements.
-> > 
-> > I think each vendor may have specific way for device enumeration, but that doesn't
-> > mean we need distinct user interfaces. For all FPGA devices, we should avoid the
-> > situation that the HW is changed but system SW knows nothing. So the common
-> > needs are:
-> > 
-> >  - Find out and remove all devices within the fpga region before
-> >    reprograming.
-> >  - Re-enumerate devices in fpga region after reprograming.
-> > 
-> > I expect the fpga region class could generally enforce a flow for the reprograming
-> > interface. And of-fpga-region could specifically implement it using DT overlay.
-> > 
-> 
-> To address the vendor-specific nature(either of or non-of) of device enumeration
-> in FPGA regions, As you suggested, we can develop a common programming
-> interface that abstracts these vendor-specifc differences. This can be achieved
-> by integrating vendor-specific callbacks(ex: of and non-of) for device configuration,
-> enumeration and removal to fpga-region. 
-> 
-> I have outlined the top-level framework changes here:
-> 
-> diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c index b364a929425c..7d4b755dc8e0 100644
-> --- a/drivers/fpga/fpga-region.c
-> +++ b/drivers/fpga/fpga-region.c
-> @@ -213,6 +213,7 @@ fpga_region_register_full(struct device *parent, const struct fpga_region_info *
->  	region->compat_id = info->compat_id;
->  	region->priv = info->priv;
->  	region->get_bridges = info->get_bridges;
-> +	region->region_ops = info->region_ops;
->  
->  	mutex_init(&region->mutex);
->  	INIT_LIST_HEAD(&region->bridge_list);
-> @@ -257,17 +258,46 @@ EXPORT_SYMBOL_GPL(fpga_region_register_full);
->   */
->  struct fpga_region *
->  fpga_region_register(struct device *parent, struct fpga_manager *mgr,
-> +		     struct fpga_region_ops *region_ops,
->  		     int (*get_bridges)(struct fpga_region *))  {
->  	struct fpga_region_info info = { 0 };
->  
->  	info.mgr = mgr;
->  	info.get_bridges = get_bridges;
-> +	info.region_ops = region_ops;
->  
->  	return fpga_region_register_full(parent, &info);  }  EXPORT_SYMBOL_GPL(fpga_region_register);
->  
-> +static int fpga_region_device_open(struct inode *inode, struct file *file) {
-> +	struct miscdevice *miscdev = file->private_data;
-> +	struct fpga_region *region = container_of(miscdev, struct fpga_region, 
-> +miscdev);
-> +
-> +	file->private_data = region;
-> +
-> +	return 0;
-> +}
-> +
-> +static long fpga_region_device_ioctl(struct file *file, unsigned int cmd, unsigned long arg) {
-> +	char __user *argp = (char __user *)arg;
-> +	struct fpga_region *region =  (struct fpga_region *)(file->private_data);
-> +	int err;
-> +
-> +	switch (cmd) {
-> +	case FPGA_REGION_IOCTL_LOAD:
-> +		err = region->region_ops->fpga_region_config_enumerate (region, argp);
-
-Not sure "void *args" is a proposal or something yet to be decided.
-I think we should try best not to give up parameter type and have a clear API
-definition.
-
-> +		break;
-> +	case FPGA_REGION_IOCTL_REMOVE:
-> +		err = region->region_ops->fpga_region_remove(region, argp);
-> +		break;
-> +	case FPGA_REGION_IOCTL_STATUS:
-> +		err = region->region_ops->fpga_region_status(region, argp);
-> +	default:
-> +		err = -ENOTTY;
-> +}
-> +
->  /**
->   * fpga_region_unregister - unregister an FPGA region
->   * @region: FPGA region
-> diff --git a/include/linux/fpga/fpga-region.h b/include/linux/fpga/fpga-region.h
-> index 9d4d32909340..725fdcbab3d8 100644
-> --- a/include/linux/fpga/fpga-region.h
-> +++ b/include/linux/fpga/fpga-region.h
-> @@ -9,6 +9,20 @@
->  
->  struct fpga_region;
->  
-> +/**
-> + * struct fpga_region_ops - ops for low level FPGA region ops for 
-> +device
-> + * enumeration/removal
-> + * @region_status: returns the FPGA region status
-> + * @region_config_enumeration: Configure and enumerate the FPGA region.
-
-region config could be a common existing operation, fpga_region_program_fpga().
-So maybe only enumeration is needed?
-
-> + * @region_remove: Remove all devices within the fpga region
-> + * (which are added as part of the enumeration).
-> + */
-> +struct fpga_region_ops {
-> +	int (*region_status)(struct fpga_region *bridge);
-> +	int (*region_config_enumeration)(struct fpga_region *region, void *args);
-> +	void (*region_remove)(struct fpga_region *region, void *args); };
-> +
->  /**
->   * struct fpga_region_info - collection of parameters an FPGA Region
->   * @mgr: fpga region manager
-> @@ -26,6 +40,7 @@ struct fpga_region_info {
->  	struct fpga_compat_id *compat_id;
->  	void *priv;
->  	int (*get_bridges)(struct fpga_region *region);
-> +	struct fpga_region_ops *region_ops;
->  };
->  
->  /**
-> @@ -48,6 +63,7 @@ struct fpga_region {
->  	struct fpga_compat_id *compat_id;
->  	void *priv;
->  	int (*get_bridges)(struct fpga_region *region);
-> +	struct fpga_region_ops *region_ops;
->  };
->  
->  #define to_fpga_region(d) container_of(d, struct fpga_region, dev)
-> 
-> In this approach, we utilized an IOCTL-based user interface, but it doesn't have
-> to be confined to IOCTL. We can also use sysfs or configfs, or other appropriate
-> options as we finalized on it.
-> 
-> This call-backs approach works for both OF and non-OF devices. 
-> If this aligns with your expectations, I can do the necessary changes
-
-There are still much to discuss, but yes this is a good start.
-
-Thanks,
-Yilun
-
-> for one vendor specific interface (of-fpga-region.c) devices and submit
-> the RFC patch shortly.
-> 
-> 
-> Regards,
-> Navakishore.
+PiBGcm9tOiBCYW9sdSBMdSA8YmFvbHUubHVAbGludXguaW50ZWwuY29tPg0KPiBTZW50OiBTYXR1
+cmRheSwgU2VwdGVtYmVyIDE0LCAyMDI0IDE6NTAgUE0NCj4gDQo+IE9uIDIwMjQvOS8xNCAxMDo1
+MywgVGlhbiwgS2V2aW4gd3JvdGU6DQo+ID4+IEZyb206IEJhb2x1IEx1PGJhb2x1Lmx1QGxpbnV4
+LmludGVsLmNvbT4NCj4gPj4gU2VudDogU2F0dXJkYXksIFNlcHRlbWJlciAxNCwgMjAyNCA5OjE4
+IEFNDQo+ID4+DQo+ID4+IE9uIDkvMTQvMjQgODo1MiBBTSwgVGlhbiwgS2V2aW4gd3JvdGU6DQo+
+ID4+Pj4gRnJvbTogSm9lbCBHcmFuYWRvcyB2aWEgQjQgUmVsYXkNCj4gPj4+PiA8ZGV2bnVsbCtq
+LmdyYW5hZG9zLnNhbXN1bmcuY29tQGtlcm5lbC5vcmc+DQo+ID4+Pj4NCj4gPj4+PiBGcm9tOiBK
+b2VsIEdyYW5hZG9zPGouZ3JhbmFkb3NAc2Ftc3VuZy5jb20+DQo+ID4+Pj4NCj4gPj4+PiBJTyBw
+YWdlIGZhdWx0cyBhcmUgbm8gbG9uZ2VyIGRlcGVuZGVudCBvbg0KPiBDT05GSUdfSU5URUxfSU9N
+TVVfU1ZNLg0KPiA+Pj4+IE1vdmUNCj4gPj4+PiBhbGwgUGFnZSBSZXF1ZXN0IFF1ZXVlIChQUlEp
+IGZ1bmN0aW9ucyB0aGF0IGhhbmRsZSBwcnEgZXZlbnRzIHRvIGENCj4gbmV3DQo+ID4+Pj4gZmls
+ZSBpbiBkcml2ZXJzL2lvbW11L2ludGVsL3BycS5jLiBUaGUgcGFnZV9yZXFfZGVzIHN0cnVjdCBp
+cyBub3cNCj4gPj4+PiBkZWNsYXJlZCBpbiBkcml2ZXJzL2lvbW11L2ludGVsL3BycS5jLg0KPiA+
+Pj4+DQo+ID4+Pj4gTm8gZnVuY3Rpb25hbCBjaGFuZ2VzIGFyZSBpbnRlbmRlZC4gVGhpcyBpcyBh
+IHByZXBhcmF0aW9uIHBhdGNoIHRvDQo+ID4+Pj4gZW5hYmxlIHRoZSB1c2Ugb2YgSU8gcGFnZSBm
+YXVsdHMgb3V0c2lkZSB0aGUgU1ZNL1BBU0lEIHVzZSBjYXNlcy4NCj4gPj4+IERvIHdlIHdhbnQg
+dG8gZ3VhcmQgaXQgdW5kZXIgYSBuZXcgY29uZmlnIG9wdGlvbiBlLmcuDQo+ID4+PiBDT05GSUdf
+SU5URUxfSU9NTVVfSU9QRj8gaXQncyB1bm5lY2Vzc2FyeSB0byBhbGxvY2F0ZSByZXNvdXJjZXMN
+Cj4gPj4+IGZvciB0aGUgbWFqb3JpdHkgdXNhZ2VzIHdoaWNoIGRvbid0IHJlcXVpcmUgSU9QRi4N
+Cj4gPj4+DQo+ID4+PiBCYW9sdT8NCj4gPj4gVGhlIE9TIGJ1aWxkZXIgZG9lc24ndCBrbm93IGlm
+IExpbnV4IHdpbGwgcnVuIG9uIGEgcGxhdGZvcm0gd2l0aCBQUkktDQo+ID4+IGNhcGFibGUgZGV2
+aWNlcy4gVGhleSdsbCBwcm9iYWJseSBhbHdheXMgZW5hYmxlIHRoaXMgb3B0aW9uIGlmIHdlDQo+
+ID4+IHByb3ZpZGUgaXQuDQo+ID4gaG1tIHRoZW4gd2h5IGRvIHdlIG5lZWQgYSBTVk0gb3B0aW9u
+PyBJbiByZWFsaXR5IEkgaGF2ZW4ndCBzZWVuDQo+ID4gYSBwbGF0Zm9ybSB3aGljaCBzdXBwb3J0
+cyBJT1BGIGJ1dCBubyBwYXNpZC9TVk0uIHNvIHRoZSByZWFzb24NCj4gPiBmb3Igd2hldGhlciB0
+byBoYXZlIGFuIG9wdGlvbiBzaG91bGQgYmUgc2FtZSBiZXR3ZWVuIElPUEYvU1ZNLg0KPiA+DQo+
+ID4gSU1ITyB0aGUgcG9pbnQgb2Ygb3B0aW9ucyBpcyB0byBhbGxvdyByZWR1Y2luZyBmb290cHJp
+bnQgb2YgdGhlIGtlcm5lbA0KPiA+IGltYWdlIGFuZCBtYW55IG9wdGlvbnMgYXJlIHByb2JhYmx5
+IGFsd2F5cyBlbmFibGVkIGluIGRpc3RyaWJ1dGlvbnMuLi4NCj4gDQo+IFRvIGJlIGhvbmVzdCwg
+SSB3b3VsZCBob3BlIHRvIHJlbW92ZSB0aGUgU1ZNIG9wdGlvbiBzb21lIGRheS4gSXQncw0KPiBu
+b3RoaW5nIHNwZWNpYWwgZXhjZXB0IGxpc3RlbmluZyB0byBhbiBleHRlcm5hbCBub3RpZmljYXRp
+b24gYW5kDQo+IHN5bmNocm9uaXplIHRoZSBjYWNoZXMgd2hlbiB0aGUgcGFnZSB0YWJsZSBpcyB1
+cGRhdGVkLiANCg0KbW9yZSB0aGFuIHRoYXQuLi4gZm9yIGVhY2ggSU9NTVUgdGhlIGN1cnJlbnQg
+Y29kZSBhbGxvY2F0ZXMgMTYgcGFnZXMNCmFuZCAxIGh3aXJxLiBUaG9zZSBhcmUgdW5uZWNlc3Nh
+cnkgYnVyZGVucyBpbiBtYWpvcml0eSBkZXBsb3ltZW50cw0Kd2hpY2ggZG9uJ3Qgc3VwcG9ydC9y
+ZXF1aXJlIEkvTyBwYWdlIGZhdWx0cy4NCg0KPiBJdCdzIGNvbW1vbiB0bw0KPiBhbGwgY2FzZXMg
+d2hlcmUgYSBwYWdlIHRhYmxlIGlzIHNoYXJlZCBiZXR3ZWVuIHRoZSBJT01NVSBhbmQgYW5vdGhl
+cg0KPiBjb21wb25lbnQuDQoNCmJ1dCAiYWxsIGNhc2VzIiB3aXRoIHNoYXJlZCBwYWdlIHRhYmxl
+IGlzIGFjdHVhbGx5IGEgc21hbGwgZ3JvdXAgbm93Lg0KDQo+IA0KPiBBcyBmb3IgQ09ORklHX0lO
+VEVMX0lPTU1VX0lPUEYsIG15IHN1Z2dlc3Rpb24gaXMgdGhhdCB3ZSBkb24ndCBuZWVkIHRvDQo+
+IGFkZCBhbnkgdW5uZWNlc3Nhcnkgb3B0aW9ucyB1bmxlc3Mgd2Ugc2VlIGEgcmVhbCBuZWVkLg0K
+PiANCg0Kc28gSSB3YXMgdGhpbmtpbmcgdGhlIG9wcG9zaXRlLCBpLmUuIGtlZXBpbmcgdGhlIG9w
+dGlvbiB1bnRpbCBkb2luZyBzbw0KYmVjb21lcyBhIHJlYWwgYnVyZGVuLvCfmIoNCg==
 
