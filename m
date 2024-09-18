@@ -1,139 +1,152 @@
-Return-Path: <linux-kernel+bounces-332492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2337997BA6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:55:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F86297BA75
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98D96B21AEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:55:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1A281F23604
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1530F180A6A;
-	Wed, 18 Sep 2024 09:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A983176FA0;
+	Wed, 18 Sep 2024 09:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Np/Y5Moz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b="pWjsrlsV"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C730D17E44F
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 09:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806E717995B
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 09:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726653300; cv=none; b=Z0nlDOUBxjt89QRInOg+GTf7GunaVaApzORs8MgXNdwq8qLvtto9Uw/OhF0E66OQOIj7Elwif7l69s3ssZ+kEr46x472nXjm5JZ1L66JaKtTxgutIp5Akx5VXUVbTi4NMjcmebC6LYFS88nydiwMDW1Ce8Qu00YtBdBNpXnvWOY=
+	t=1726653438; cv=none; b=GikuU/0Ig2Q69GI2vkQeK7/XerdGcIjSU7ZYEu8A1o2lbHicDoabadKvs9CgXNdaTsN9X+T2VZHW/1a9SxouYqj6EvBBEsRNmr1/rCEsypGxGnGwqhiiHNGbhqguKPimV3ffm5NE2SLSneBOpZIEbPn+sTf2+PrH9KyJ2HI2ar0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726653300; c=relaxed/simple;
-	bh=+zr7tNMOR3efLGHCn2JGk9O1Z2BpOM4E+d/bDLkml7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EeqUOYwHwSNhO9MfOfmfp6uwJOMhJSIXnRfMj/eIvci+Chfbuaika0ld3cv6U0mE+EGNZEirRt7A0XFvBve5KQ20d7nD4FIxBIgtze5PtNeJYLwRc5B2F5NLX55CoTdWcNvv8yL0yxUHcFFZj06e6gG5NceD40NXcqF1UoAT5Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Np/Y5Moz; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726653299; x=1758189299;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=+zr7tNMOR3efLGHCn2JGk9O1Z2BpOM4E+d/bDLkml7c=;
-  b=Np/Y5MozoTNADhU3MMzRqtR8tYe9olFXP7eRwVhyldsxvpD8BwgWmZPL
-   RrgOizhzcmt+ahp4EF1jAATPNkMSt6UfCB03lGGKYuh0EaPxk6TOG060X
-   6Nc6YFnkrMEwZoV9vn31x86hYn70ea4ujrnzxxQj4m8ExDjqJfzA29yuW
-   C0lKyARLChWaBBZBtDgdUy7HYxN6jyWhXN4Ub9jvbJYYhcmgfjuk4zFNk
-   jDQEVNa7oS7oe/C3GUGEtrXJ6yWNUwckF7eLf05v/+jxgCmYBLlsQ5U2B
-   J0Aw4ffwzvAs3aKb4wK0KD0272PQfa6ONDY5AjEb3xmJBQ80+SGKcVbVG
-   w==;
-X-CSE-ConnectionGUID: qhKILtPZTLq8VSIsdG6KQA==
-X-CSE-MsgGUID: BeFdZk2PTAyUyL2msl44qw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="29340986"
-X-IronPort-AV: E=Sophos;i="6.10,238,1719903600"; 
-   d="scan'208";a="29340986"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 02:54:53 -0700
-X-CSE-ConnectionGUID: Ys9dOQQWQRKrrsvLg/Yukw==
-X-CSE-MsgGUID: uTLtbHumSBqatuvZgxlmfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,238,1719903600"; 
-   d="scan'208";a="69821590"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 02:54:50 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sqrOY-0000000A8O2-3SeS;
-	Wed, 18 Sep 2024 12:54:46 +0300
-Date: Wed, 18 Sep 2024 12:54:46 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jerome Forissier <jerome.forissier@linaro.org>
-Cc: Rijo Thomas <Rijo-john.Thomas@amd.com>,
-	Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
-	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] tee: amdtee: Use %pUl printk() format specifier
- to print GUIDs
-Message-ID: <ZuqjZswbhLY1iEfr@smile.fi.intel.com>
-References: <20240911204136.2887858-1-andriy.shevchenko@linux.intel.com>
- <CAHUa44G4O0JgqN=BwvshRXzUeEE1oXD1o8Yn-5X6p5qY8vkDQA@mail.gmail.com>
- <ZuQF_w7G1A90tYG3@smile.fi.intel.com>
- <5c95cbc6-48b6-9cf4-8682-fc6469cb9c81@amd.com>
- <Zuf8fw1MM0jaisUh@smile.fi.intel.com>
- <94e37138-ae66-4336-93ac-79683f2058aa@linaro.org>
+	s=arc-20240116; t=1726653438; c=relaxed/simple;
+	bh=aEqJqQ0vfTH55PbtK6DICNgoEj/MVMbz7QyQlBQBPKg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uQ4xfuNsF6GFbDNTdiUIL6agY4SxbH7APyOYxFoKNe9q69gdHo0cOXAKKAJHTv6WAY2aQ9hIgpW0Uk57olO0BpDB7SKKFu9rxLPS/2LeeapnevRC/iGDlR5JxY0fQCdUecUzFcJbCCH/UxtpPQ9d4WChy4BlMGepsSrkI03h2ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com; spf=pass smtp.mailfrom=linbit.com; dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b=pWjsrlsV; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linbit.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6ddcce88701so31598977b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 02:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linbit-com.20230601.gappssmtp.com; s=20230601; t=1726653434; x=1727258234; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KIx4pdRT/KSGss++ze3hxTvzw9zHVXZXZfsOwRj2D3Y=;
+        b=pWjsrlsVcXWVVoMWDu4OlsK82ij14Xjz6KR6kLzYE6CLGE480rv+DvQd6Iqf7L29KC
+         28gjeaPgHSSXn6WPpuH7ZDuYCZkbK1dUkTe6e8CgR3OmrtwBILqRPdfHOnckchevvyOc
+         p+s/3nx5B2QTIowzNX4OuUX0S/D4KVt3jU/3LFJ8wJs0BeANr65l8EsmqKHRgf4xWSw7
+         WbnoYQZoDcVlcsaWl9tkyBcoZUFcI8O2l434GqknSfKHUg2Cj8MFjiTALahIQt4VMAJO
+         3/bigMpUNakJVJFU2arqJ28ZHCb8oy68gPcBlF/uvzFGenAoeQJtJtXKGVaORVQ95fqH
+         57cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726653434; x=1727258234;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KIx4pdRT/KSGss++ze3hxTvzw9zHVXZXZfsOwRj2D3Y=;
+        b=fMy7rUaIoMvTZD5Tve3ZZiCAXTn/gBfqtzDIR9QkG0KNEuYQPgKqbNSY2sEIAhw9Oh
+         HLmenp4T3iJwogeKSjYsIVaa1YtjDeYBEaJ/gBMl6FI+GJqeURVdMYMOR5MalVMcn+vZ
+         Z1bbfLHFMwGobMR9pGDnMVgtXDUIoYrb6ie0I17bCMJ0x3//OxeXzccMls9QgwA8h/ju
+         G+N79UcSHkqZzL9oIwtz7wqZufUT7rqQhrHknLN7SeFtoJmkAjuPwMxnKTK10lEtiXOp
+         vv4Ozty2S8TQVQ8HC/+iynuLbVtbrExN5qD1bXh7D5Qh4m3QNDYuOTRXaUe7+ZdIpPhG
+         hyrw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+uewLuw3gjyWCdEdf6eKWoBg7jX4kKyH67J9Q3qJ5rX0T4K24O+oZVrDJ6Q9YHTBcqUT4RFKGMX4WqnA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoTNUHAszSs3bJRlsssjYpeYGO5kSA79s/9xvgZvfR3ds0o9AQ
+	4mb4cB4ejg+ANW/Z889aYXNj64ueyJiHTcY9xd0XEUhCJRLb7WTI8QOFXSj0NmzClPqoQUgzA+s
+	4RxEicFcE1w6SYiFWJz1kypByp3pIEBRILoLs+A==
+X-Google-Smtp-Source: AGHT+IHKpu7IV4bd4CPt8Iw9ri5vOZYDoXO50FkG8TLq2+PTVeUoLayDJEH63zGUtyeaY5AvRD4j8/cMEDxNpzcidho=
+X-Received: by 2002:a05:6902:200c:b0:e0e:cd17:610a with SMTP id
+ 3f1490d57ef6-e1d9db98c4fmr19075343276.6.1726653434435; Wed, 18 Sep 2024
+ 02:57:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <94e37138-ae66-4336-93ac-79683f2058aa@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240913083504.10549-1-chenqiuji666@gmail.com>
+In-Reply-To: <20240913083504.10549-1-chenqiuji666@gmail.com>
+From: Philipp Reisner <philipp.reisner@linbit.com>
+Date: Wed, 18 Sep 2024 11:57:03 +0200
+Message-ID: <CADGDV=Vhx79JmTSzSJ+KN_236vKD0mZD6u3_23WRmte2wXW3fg@mail.gmail.com>
+Subject: Re: [PATCH] drbd: Fix atomicity violation in drbd_uuid_set_bm()
+To: Qiu-ji Chen <chenqiuji666@gmail.com>
+Cc: lars.ellenberg@linbit.com, christoph.boehmwalder@linbit.com, 
+	axboe@kernel.dk, drbd-dev@lists.linbit.com, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 17, 2024 at 09:22:19AM +0200, Jerome Forissier wrote:
-> On 9/16/24 11:38, Andy Shevchenko wrote:
-> > On Mon, Sep 16, 2024 at 01:38:27PM +0530, Rijo Thomas wrote:
-> >> On 9/13/2024 2:59 PM, Andy Shevchenko wrote:
-> >>> On Thu, Sep 12, 2024 at 07:50:08AM +0200, Jens Wiklander wrote:
-> >>>> On Wed, Sep 11, 2024 at 10:41 PM Andy Shevchenko
-> >>>> <andriy.shevchenko@linux.intel.com> wrote:
-> >>>>>
-> >>>>> Replace the custom approach with the %pUl printk() format specifier.
-> >>>>> No functional change intended.
-> >>>
-> >>>> Thanks, the patch looks like a nice simplificatrion.
-> >>>
-> >>> Thank you for the review.
-> >>>
-> >>>> Rijo, Devaraj, does this work for you?
-> >>>
-> >>> Yes, please test, because seems others use uuid_t (UUID BE) for TEE,
-> >>> but in this driver IIUC it's guid_t (UUID LE).
-> >>
-> >> No, this does not work for us. I tested this patch, it does not work as expected.
-> >>
-> >> %pUl gives output in uuid format (%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x).
-> >> But, what we need, is a name with the format %08x-%04x-%04x-%02x%02x%02x%02x%02x%02x%02x%02x.
-> >>
-> >> Endian-ness is not an issue here. uuid generates name with 4 hypens (-).
-> >> While, in our TA naming we are using 3 hyphens (-).
-> > 
-> > Ah, good catch! Can somebody add a comment there to explain that this uses
-> > non-standard human-readable representation of GUID/UUID?
-> 
-> Could this be due to some copying/pasting from the OP-TEE code base which had
-> a similar mistake prior to v2.3.0 [1][2][3]?
-> 
-> [1] https://github.com/OP-TEE/optee_os/blob/2.3.0/CHANGELOG.md?plain=1#L40-L45
-> [2] https://github.com/OP-TEE/optee_client/commit/a5b1ffcd26e3
-> [3] https://github.com/OP-TEE/optee_client/commit/365657667f89
+Hello Qiu-ji Chen,
 
-Interesting... Is somebody going to update this to follow the proper format?
-(yes, I understand that the old one has still to be supported)
+The code change looks okay to me.
 
-> > P.S. Thank you for testing!
+Reviewed-by: Philipp Reisner <philipp.reisner@linbit.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+On Fri, Sep 13, 2024 at 10:35=E2=80=AFAM Qiu-ji Chen <chenqiuji666@gmail.co=
+m> wrote:
+>
+> The violation of atomicity occurs when the drbd_uuid_set_bm function is
+> executed simultaneously with modifying the value of
+> device->ldev->md.uuid[UI_BITMAP]. Consider a scenario where, while
+> device->ldev->md.uuid[UI_BITMAP] passes the validity check when its value
+> is not zero, the value of device->ldev->md.uuid[UI_BITMAP] is written to
+> zero. In this case, the check in drbd_uuid_set_bm might refer to the old
+> value of device->ldev->md.uuid[UI_BITMAP] (before locking), which allows
+> an invalid value to pass the validity check, resulting in inconsistency.
+>
+> To address this issue, it is recommended to include the data validity che=
+ck
+> within the locked section of the function. This modification ensures that
+> the value of device->ldev->md.uuid[UI_BITMAP] does not change during the
+> validation process, thereby maintaining its integrity.
+>
+> This possible bug is found by an experimental static analysis tool
+> developed by our team. This tool analyzes the locking APIs to extract
+> function pairs that can be concurrently executed, and then analyzes the
+> instructions in the paired functions to identify possible concurrency bug=
+s
+> including data races and atomicity violations.
+>
+> Fixes: 9f2247bb9b75 ("drbd: Protect accesses to the uuid set with a spinl=
+ock")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+> ---
+>  drivers/block/drbd/drbd_main.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_mai=
+n.c
+> index a9e49b212341..abafc4edf9ed 100644
+> --- a/drivers/block/drbd/drbd_main.c
+> +++ b/drivers/block/drbd/drbd_main.c
+> @@ -3399,10 +3399,12 @@ void drbd_uuid_new_current(struct drbd_device *de=
+vice) __must_hold(local)
+>  void drbd_uuid_set_bm(struct drbd_device *device, u64 val) __must_hold(l=
+ocal)
+>  {
+>         unsigned long flags;
+> -       if (device->ldev->md.uuid[UI_BITMAP] =3D=3D 0 && val =3D=3D 0)
+> +       spin_lock_irqsave(&device->ldev->md.uuid_lock, flags);
+> +       if (device->ldev->md.uuid[UI_BITMAP] =3D=3D 0 && val =3D=3D 0) {
+> +               spin_unlock_irqrestore(&device->ldev->md.uuid_lock, flags=
+);
+>                 return;
+> +       }
+>
+> -       spin_lock_irqsave(&device->ldev->md.uuid_lock, flags);
+>         if (val =3D=3D 0) {
+>                 drbd_uuid_move_history(device);
+>                 device->ldev->md.uuid[UI_HISTORY_START] =3D device->ldev-=
+>md.uuid[UI_BITMAP];
+> --
+> 2.34.1
+>
 
