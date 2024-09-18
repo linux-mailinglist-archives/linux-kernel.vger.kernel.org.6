@@ -1,160 +1,232 @@
-Return-Path: <linux-kernel+bounces-332387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309C597B91E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:18:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBA597B922
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DE36B22AEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:18:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E168F285C62
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:18:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA75719309A;
-	Wed, 18 Sep 2024 08:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCC6165F01;
+	Wed, 18 Sep 2024 08:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HDeqSBgK"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="iS/wcAkX"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2066.outbound.protection.outlook.com [40.107.241.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B564192B8C;
-	Wed, 18 Sep 2024 08:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726647196; cv=none; b=L6i3imsuKK9m+8JJKucgTtjnbuJPvvs6GR3MG4RP1rZ/d0F7ZEmI9JK1NilF8lmVmU6WLnGooXckcy2U4bJ5G1JyH2nM1haZBE8ZDykKKSj5b9Y1hGm/b7O+rRxefZdc7Dagwui4Ae53iAHbyxCq/Hp2EiCe6A6i1rTL7H09RbU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726647196; c=relaxed/simple;
-	bh=hanknEKqGzrT3mPnV0cueYnM3TV4BgNLJUCxOnB8qt8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LKmD152Z83wCCoqQ7Whw6/JqE2EOJ/aJK+xGyTNql1N3B/IQfomZw/EsW8IYibgO0ZnNaH7ZecsdqsK5jeCovkhpfx1211xP/btVxxYqlqRwjD223XnsCSJYuEn4QtjEZumpUlZK6pLvzVzinTfGk+QvQE0BiXRlu4fpKR0/Qmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HDeqSBgK; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1726647192;
-	bh=hanknEKqGzrT3mPnV0cueYnM3TV4BgNLJUCxOnB8qt8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HDeqSBgKvgwjgbPSwk9fOl4FbkkWUEQKBYYPy3EKoteJf/92e5z/PRt8oV25VnNd+
-	 R+l5yNBXq26kQH4sISngW6642stjUfbny02YuX0Z09zESXkPAzeZ5oSYcV3A3JjTFa
-	 Awq5rPY/VVHxDNsCey6D9/6FpzKcd5mW72V+5V4ewDsYfP0ruL+PxoIWXx5jJ8DcFo
-	 vlAShk5Rqki8yjNcKt1WRjk1AOzv2Yi2EFiw4TGqvM3N/W6Xb351DoRwmo14lieHkk
-	 FYu2MWttb75O3de5d3R6nyLP65tRl50GaAaIQxi2NG/RpmeViedrLhhIv8qokBt1uA
-	 awKZ9SyQwT7CA==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0E3E717E1003;
-	Wed, 18 Sep 2024 10:13:12 +0200 (CEST)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: linux-pci@vger.kernel.org
-Cc: ryder.lee@mediatek.com,
-	jianjun.wang@mediatek.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com,
-	fshao@chromium.org
-Subject: [PATCH v3 2/2] PCI: mediatek-gen3: Add support for restricting link width
-Date: Wed, 18 Sep 2024 10:13:07 +0200
-Message-ID: <20240918081307.51264-3-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240918081307.51264-1-angelogioacchino.delregno@collabora.com>
-References: <20240918081307.51264-1-angelogioacchino.delregno@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BF01940AB;
+	Wed, 18 Sep 2024 08:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726647202; cv=fail; b=ZDqe+d7ORfX/JARjH+eawGAPbDtECz3c+7ZZsw66q9E/6loKYwq7eq+vmp9PYGPdStgfqO+4Fo+pC+BWu9y+pJ9/QuLu2nmPQ6w90+SARypKW/8Yd8zproTyPFx/PjOFGm+C088m3R5E9F4V/sGUuguGrriaGu9P9cRFQZa2moI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726647202; c=relaxed/simple;
+	bh=PeN5m4dqEacrZQqE7z8p2Q1Or8d/pdSrrz7j7keCYqE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ChHyTix8PSgCYExhnBg7hJKZxxP/JJIHAEyT4RcCTCqPK8iDpkSX5ZNAy8IwVnjgcvBdKkKOWQRm1bwdWfdfiC1XdGMQkv/RUAlmcKRAfjUnDctgOtr/cPdLOqh5T4C+LoXqP2mwxIw2TjBqtvMRWl9RuiSMpzgnN2vLT0YCRd0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=iS/wcAkX; arc=fail smtp.client-ip=40.107.241.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Gws24rDS1Bl+EuRAWmD1qWU35dcyueNfnoFJzB7aTX5t5UW6AubbdElyZcMKDsS2H0VU9PoSKIqZ5RYphsn2yU5p6MojmcE/F0xq70F54kpAycX68E/3MhD4o5k7h8c8ez1P+hbSIm3ghG2t/KmDOE14cYIwP+EjvGK3fE77hve1j+v4q2/eHLbJCk0WwH0XgHbY57XZ5bLcJT9qzUHvleIGV35yuC+0YF0mU2PynstD4FOhTtzJ0gg3NSpZiTPR8phn9l52wEbDnloci7to/LFBkn2Bi1pctEd0h7x5kPT2dNv64UJ35m9bmHtPkXjcM6utZj8STZ5JYlAyAbvpTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=O2915Mbh3NGRxBpNU6XzJNwRpn+07sfzU9fWd9U1Cdw=;
+ b=PsVoIxRrl6Lt6s39C37kMJhml+pZhYYFvqZyb2Etpk5UvaqWfh+YMsjreCVVv/Ik8Og4rLUN48UOXZJ8e8gYRdDsq4xE4DCzuKsCbN3VNR6v49MIBc84+0UtR7cfGuIzlo3FBUOEJmDaxM9vX+DJ1RgO7xlgX6fe8s8Df+B2lPU5l5nEaX7MpBQXH3dwBZAFqx8KebpLqpl7p0IyQJ7l7jXL+IPKbpdU7U96RJX+AFDY/a7PirzSjBeyysOk53kme7zq0RvY3iTLYSdcumCGYW0JWs+JEMvAEjKlRHCMGF9PjuCQbxSwzJ21HOSKOxrOcGpUKC9qw060ELzprt0Oig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O2915Mbh3NGRxBpNU6XzJNwRpn+07sfzU9fWd9U1Cdw=;
+ b=iS/wcAkXW8bldmx0D62r/4b2Vr9acMBhfk4qVBnbwmDJkQ74+c8SBM1qj+jVVOCjwXQFRComjrtUs78bbKI1lI772B7GBYjrNpYv26VTq2S8ZhM/Pir9ZowIIOClUlOwqTD4Wfr1UQiqHeMJEMy3/cPDw5wP42vpa32hjGdSOf0vlYQ1s3nmDBFrORdD3GXakzBmAxDyW+GhAxQLM/I17dwHB29blrRrNPQtlKHZA2oqEyoX8PKIS+Ve5+y2VMpFgfeqiS/MCd1dPwYmVos31qDWWpteSfJMEgiOxRXY9n9ZoCNN/j/J3v2/1pEmS/Wv+d2c11XyCk5g9nlmZoxI3Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
+ by DB9PR04MB9723.eurprd04.prod.outlook.com (2603:10a6:10:4ce::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Wed, 18 Sep
+ 2024 08:13:17 +0000
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd%7]) with mapi id 15.20.7962.022; Wed, 18 Sep 2024
+ 08:13:17 +0000
+Message-ID: <85a13ce0-d821-4afa-ae69-6ce8e2e3edf7@oss.nxp.com>
+Date: Wed, 18 Sep 2024 11:13:13 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] MAINTAINERS: add MAINTAINER for S32G2/S32G3 RTC
+ driver
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ NXP S32 Linux Team <s32@nxp.com>
+References: <20240911070028.127659-1-ciprianmarian.costea@oss.nxp.com>
+ <20240911070028.127659-5-ciprianmarian.costea@oss.nxp.com>
+ <56c16398-faeb-4c99-9eaf-66ac5a872072@kernel.org>
+Content-Language: en-US
+From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+In-Reply-To: <56c16398-faeb-4c99-9eaf-66ac5a872072@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM8P189CA0023.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:20b:218::28) To DU0PR04MB9251.eurprd04.prod.outlook.com
+ (2603:10a6:10:352::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|DB9PR04MB9723:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0622500b-a09f-485c-7bd8-08dcd7b9c01c
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VDl1TmE0U3cxRmtiQU51QW81eUtxL201d3BkcjFCTFg0UlpCQ1ZuY0Q4cGpz?=
+ =?utf-8?B?aE1tODM5dlRWMVloSGlVOE0reW9Nc0p6WFdFZytsY0FyYnF3b0x5MEZwWW83?=
+ =?utf-8?B?dDBwaHB1b0lDVlRlYVJvdlhyY3lpczBpckZSVHo2K1Z4NDBVOU1tOWtmNTFm?=
+ =?utf-8?B?RjZNc1ZZWWg1eENzMURRQXlSbTVNQ0hBZUcvN0luTW1hK1VxQWxyY3g1U21N?=
+ =?utf-8?B?TVRqN1dsQWZPWHBKRE9zSHdNMUVoMnBQczY3NmRvQ0FvQWZhMzhOL1A5d3RO?=
+ =?utf-8?B?OTJ1dG1LZER0YlhWYVBjTGJZbGtiUmNralpicWVCNFhHY3VuZWNCOXVUYjY3?=
+ =?utf-8?B?VlY4YzlmMU44RUpwdU1SQzEwdFYrZkMyaHJUcmprT0VDWWpVaDFnMndIekVO?=
+ =?utf-8?B?L2J1MUVmekM3UVpYSXk2OTZRZFhwRkxhbkF4TXFOZFU1VGVJS1UrdmZ3R05p?=
+ =?utf-8?B?eVVHdUZYZWZ0c3liQzNrUWhTUjJyeW1zMGNCOTB5QzhFNmNWMDdjWEtBYnkz?=
+ =?utf-8?B?VWphaytUVm5LR0UvQmZGdUJoNVdHYTM2bysrR3A3a2Mvamd6blhKVHp6MDho?=
+ =?utf-8?B?ZlI0a0psQ3BERlZEbU9rTVNidytYNFpSeHUvOHU4UnRaVkUwOENGWlFodG5P?=
+ =?utf-8?B?bWM0NzFQYllDcmpCTTNZR09sYmlNUkRFcEQ4OTJOYUpGVUV2eUJYZWptL0Nw?=
+ =?utf-8?B?OVc1TGdWZ1lSZk1OL05SYVpaRUhIRGwzekh3MnR3MURHSythMFgxWEZEaGR0?=
+ =?utf-8?B?S3BTQUw1WXVHWGk0VFE4Sm80K3ZUUDdtVmhQZHJXUUVXWGJnZy9ycFlma2Fw?=
+ =?utf-8?B?YzZkQit2M05XNHNMYzUwZDBwUEFKb3lQUXlvR0ZxOUJyeWJxbEkrQ2RCQ1Ns?=
+ =?utf-8?B?OEFuWjBUWVZqenBFb1ZIUTd4cXlPZE1lUks2ay9NTW1qL0VIWFp1QitYMU8z?=
+ =?utf-8?B?VGk0QmJGYStvZFFlN0oyWi9yR0lpTFRWKzI1cHkxYXBCNkEzYmVXTWw5Rko5?=
+ =?utf-8?B?ejhMQ01nNjJqNmk4OE5Wa2RSUXBCZWppaXZPVjJXQWtNK2xuNDhpRTRlWkVB?=
+ =?utf-8?B?aWswaCtUQTdEczkxVUJXc3p6WEpzWEhnMElMNi81Z2ZVTll5Qm5RcHFJWSs1?=
+ =?utf-8?B?bGM1YWxlR3hMTEdWUHNlcFBHRmVMdU9CRkZMeXVoTUsyWFNaVWtCTm9raHBN?=
+ =?utf-8?B?a2laNjZDZ2lqT3ZoSjV6MlRsWC9CZHdNSVhnV2lxSk9jZVV6RHFkTDlpWnpI?=
+ =?utf-8?B?ajJuVE05VWhFLzhacGFwcE5CZENnOVorV0RVMG5iS1RQNld3SHY3cTZIUnRO?=
+ =?utf-8?B?UmlTVndZNGNVQjl6R0Rub3RBTWhFdXJrV3RpTFZDK21mMlpkbmFzZkdONkZI?=
+ =?utf-8?B?T2tlRUNhdjJOVHdRS3kyUVNlREJhM1h4amNKYU45eWZNdmJmbEdzOE8ydGcx?=
+ =?utf-8?B?alg0WWRnUWNMSDd4Q0ZSZTZmKzNjVVB2T2lDSGJtcWg0ZThqNURzajBwbXhH?=
+ =?utf-8?B?RndjcS9LcjlPK01ralo2eGdBZ0JxeHlyM1JVK2xPUHhqL1dyRDJCVmtmdVVu?=
+ =?utf-8?B?MzdmbENJZjNOd2p2UTQ1YmZhUnc1STVGa2J3TEQvbStTNkR0OWZFK0dhQTNO?=
+ =?utf-8?B?WjBFMDBmU3ZqU0RHQjNabDU5NmhFZks0UEVWRGhxVVZxdW1tYTUxY0JUaUlH?=
+ =?utf-8?B?dnNNSi9KMDFtOVQyd3IrWTBLeFFDckNSQTFLbWFScE44VHlWVDhKZjBQTzB6?=
+ =?utf-8?B?NTl5WGE2VU5xZnVaVzdZcXhiTUJRaUpuUGhNaFBZTVBzUjlPVnNOYmoyb1R3?=
+ =?utf-8?B?WDFhWVo4bnpmdEp0d1Awdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WE0yYjJPK0FRTVVCS2FvRVJ4bUV5UjlTdG5mcHVJaVMyNVQ1Ui85ZVMrTHpQ?=
+ =?utf-8?B?NzhlbDNUUVNqMlFVR3hEZTF4MG9udzRvU28xenVLSVdrRFRMZzVlYTJDdWtE?=
+ =?utf-8?B?d2NwZ3RmZEFKUmZDOG1aMUVsdytwdlhmNWFHNW15Q1BiZjlIWjlkYzRtcXFK?=
+ =?utf-8?B?ZndyR2ZWbnRya2dHTlE1cUN1WU1COS80MjdnTjI1clJPZUZ4enAxUWNGak04?=
+ =?utf-8?B?SFlqUEJKNkRjRGk2WUttREV4dnZRRkVWT0dzMkNONGc5TlBJblpKUVFmWENQ?=
+ =?utf-8?B?MFBxSU00b25JVUd6aUdBQnBoUm9ONW16K2ZKNDROeEthZkhyVDJsZzRFWHJY?=
+ =?utf-8?B?M2c0Mk1SajczSWNmMmZrRUNyT3g2TENjVHFZd0EwQ082NzkyMzA5UUVkemZ5?=
+ =?utf-8?B?OXA0R0VTM0pZVlhwRmhCazFDMjZwY0N5UEFqTXIxbDc1bUphZ0ZwdFRBUmpr?=
+ =?utf-8?B?NHJUYzlGY3lBNmllQUlZNkcxWHRrRmNZV0R4aENnN0MxT0dDOFQvMG1SSDg4?=
+ =?utf-8?B?NEJTL1lKUEx4VUZ0MmFlSDlXd21RZlRLR0QxNk9BbzdlVklGTm02a3lGU2ZG?=
+ =?utf-8?B?bFZCamVzbStGdTdKV1JJc3pWbVQwemRFS0NTWnZSVFFzNnZnYnNqOGJTcFhz?=
+ =?utf-8?B?aU9SalYyRm5CakwrNXlob3I3NnlhR0JOSldiTmJEdXE0NnF4MEcwbnYwQnpF?=
+ =?utf-8?B?SkZmRG42dCtlTXA5TlZSODYxY21vY2plYlJmeUJEdGgvakg5Q0w5c05iUlZl?=
+ =?utf-8?B?d3RPN3NRTjJrdmhuMTJHaEpxWnpjVEdIUXNISGJrWjFtNXJ3VXJiRUpsMGZV?=
+ =?utf-8?B?VEV2TitvbE1NNWMzSjh0RHMvODF1K1JKeFdKT01lYXlHd0FyOEU2S2c3ejRk?=
+ =?utf-8?B?M2ZyMVprQlFxRE1ZejdDZDNzSkZoWGxUQW9Sb1VlWmVScUZqKytWMTc4SFpD?=
+ =?utf-8?B?NFk2NHJMWFd5K01NcnBLeVR0dGhiRXd5Tmw4b3BjZEo1RXBrSDVKTTg3cTNp?=
+ =?utf-8?B?dGxDcTN6elN2cHF1NUw4M1JLZThLcDhRRFNPdk9qWWVzMUVwcmhyakhxdnBO?=
+ =?utf-8?B?QzdsdTVGRnh5LzF4aXdyTXNhL01uRTFRMGNSNEs4dUdXcE51azhJOWZvU0Za?=
+ =?utf-8?B?alNtSWRtYW1QSmNKcXUzUHVTVXZoN2Q5TXNubmdRcm1TRE5xN3BvdmFVM0N6?=
+ =?utf-8?B?ZVpKZXVvUlZCYVhvdG0xKzRFdmluVVVvWFZVWm1VN3hFMVdHVnRuMndQajZp?=
+ =?utf-8?B?QjJnMGZGaExIcUFzdkJkMUozU0l2a2FoNXJsNDFyVGFkSzNiYXJ6RWRTVS9N?=
+ =?utf-8?B?MytpWkJYQUE2OTI1VVZ4Y0xEWjZOQ25RRG44L1pwZ0lIUHNWVkJXM0hjRWxw?=
+ =?utf-8?B?aklyOGwvSWlDbVhLTStEUVBHRVNSendJSCtTVG4yWWhHNVhWbWpEMGxiOXBl?=
+ =?utf-8?B?SnJsTHZWaGRKU1NUZGdLVUd5NjFRNkQrbTc5S1V3V2lvQ1hSQzlVdXBWUmZ1?=
+ =?utf-8?B?SHhYUHVIa1BTa1BDZ3l6MWZ5REdiMFFtMHVRWFNNOUFSVkViYmlSRnh5VDFa?=
+ =?utf-8?B?REVwcWZSWFVsSlBvT2UvazYvNk5tY3RRdmJtbG0wWXpaSWZha09RelU0d3V1?=
+ =?utf-8?B?VFl6OFNIQXZkUUY2OWZQQlVLd3BPMWt5QTdCRlMvMHdCbDJPNEswV0paeGp6?=
+ =?utf-8?B?TmxQUm9TcmQyRGNONjErMnBRYy9GK1Y0T1JONWd6bFB2OUZoalRmT0oxMnp5?=
+ =?utf-8?B?U2FsU3FnNXp3ZDlRdkVaRlBuTUFhVXp3bisxVU1HYnY4V2RQbTdoRncwVHdt?=
+ =?utf-8?B?b3Mxa1JMdzdYcThtUThnY2U3WHR0SGlDWkwzY3R5VEplTkppeEZpWU5BZG9q?=
+ =?utf-8?B?VVZjaExrdVdtU2RHdHVsMXFzTERZM2I1cU1vV2drSjhBZkErWGJhMlVjSkpX?=
+ =?utf-8?B?eFhMS0E2ZkNiUEo2SGhKUDVQQUVKOEZiR1RWNEpLRGYvQUp3eWRmZjl4dUtW?=
+ =?utf-8?B?Sm5iTlAvU0dnMVFKMXdTNms3VUN2YkxRc2RVSG15ZGo3ZHlGUjJueUhVL2NO?=
+ =?utf-8?B?dVIwWUF4NkF1ZWhESG9mdnRVZE5iNlVlVzg4N0czRWo1OXQ1R25nM3FRRVRt?=
+ =?utf-8?B?QnZId0I1V1NBT3A4dEw3TkROTlQwUFQ0WkRkUE9mcjVreEhSaXVLeU94MDBR?=
+ =?utf-8?Q?mAWPvrYk5SsG5ClLXIpiza4=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0622500b-a09f-485c-7bd8-08dcd7b9c01c
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 08:13:17.3553
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 15myyVV1AMz8g+E5xr/4JojIMf9x1+suQswQOHUc0qmgd2O8OYfkFf5z0/TfzzxOGLV5wuIVZvBoKz2CPoKxNEigOqARe3UIjrVWdPWr3ic=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9723
 
-Add support for restricting the port's link width by specifying
-the num-lanes devicetree property in the PCIe node.
+On 9/17/2024 8:37 PM, Krzysztof Kozlowski wrote:
+> On 11/09/2024 09:00, Ciprian Costea wrote:
+>> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+>>
+>> Now that a RTC driver was added for S32G2/S32G3 SoC, update
+>> the mainainters list for it.
+> 
+> Why? You don't do that alone. You add yourself for entire platform!
+> 
+>>
+>> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+>> ---
+>>   MAINTAINERS | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index f328373463b0..a6d91101ec43 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -2686,11 +2686,13 @@ ARM/NXP S32G ARCHITECTURE
+>>   R:	Chester Lin <chester62515@gmail.com>
+>>   R:	Matthias Brugger <mbrugger@suse.com>
+>>   R:	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
+> 
+> If you are touching someone's maintainer entry, at least you could do is
+> to CC them.
+> 
+> And how many reviewers do you want to have in that platform? Are all
+> entries real or some are stale?
+> 
+> Best regards,
+> Krzysztof
+> 
 
-The setting is done in the GEN_SETTINGS register (in the driver
-named as PCIE_SETTING_REG), where each set bit in [11:8] activates
-a set of lanes (from bits 11 to 8 respectively, x16/x8/x4/x2).
+Hello Krzysztof,
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/pci/controller/pcie-mediatek-gen3.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+My intention was to add myself as a reviewer for the S32G Architecture 
+and not as a maintainer.
 
-diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
-index 8d4b045633da..8dd2e5135b01 100644
---- a/drivers/pci/controller/pcie-mediatek-gen3.c
-+++ b/drivers/pci/controller/pcie-mediatek-gen3.c
-@@ -32,6 +32,7 @@
- #define PCIE_BASE_CFG_SPEED		GENMASK(15, 8)
- 
- #define PCIE_SETTING_REG		0x80
-+#define PCIE_SETTING_LINK_WIDTH		GENMASK(11, 8)
- #define PCIE_SETTING_GEN_SUPPORT	GENMASK(14, 12)
- #define PCIE_PCI_IDS_1			0x9c
- #define PCI_CLASS(class)		(class << 8)
-@@ -168,6 +169,7 @@ struct mtk_msi_set {
-  * @clks: PCIe clocks
-  * @num_clks: PCIe clocks count for this port
-  * @max_link_speed: Maximum link speed (PCIe Gen) for this port
-+ * @num_lanes: Number of PCIe lanes for this port
-  * @irq: PCIe controller interrupt number
-  * @saved_irq_state: IRQ enable state saved at suspend time
-  * @irq_lock: lock protecting IRQ register access
-@@ -189,6 +191,7 @@ struct mtk_gen3_pcie {
- 	struct clk_bulk_data *clks;
- 	int num_clks;
- 	u8 max_link_speed;
-+	u8 num_lanes;
- 
- 	int irq;
- 	u32 saved_irq_state;
-@@ -401,6 +404,14 @@ static int mtk_pcie_startup_port(struct mtk_gen3_pcie *pcie)
- 			val |= FIELD_PREP(PCIE_SETTING_GEN_SUPPORT,
- 					  GENMASK(pcie->max_link_speed - 2, 0));
- 	}
-+	if (pcie->num_lanes) {
-+		val &= ~PCIE_SETTING_LINK_WIDTH;
-+
-+		/* Zero means one lane, each bit activates x2/x4/x8/x16 */
-+		if (pcie->num_lanes > 1)
-+			val |= FIELD_PREP(PCIE_SETTING_LINK_WIDTH,
-+					  GENMASK(pcie->num_lanes >> 1, 0));
-+	};
- 	writel_relaxed(val, pcie->base + PCIE_SETTING_REG);
- 
- 	/* Set Link Control 2 (LNKCTL2) speed restriction, if any */
-@@ -838,6 +849,7 @@ static int mtk_pcie_parse_port(struct mtk_gen3_pcie *pcie)
- 	struct device *dev = pcie->dev;
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct resource *regs;
-+	u32 num_lanes;
- 
- 	regs = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pcie-mac");
- 	if (!regs)
-@@ -883,6 +895,14 @@ static int mtk_pcie_parse_port(struct mtk_gen3_pcie *pcie)
- 		return pcie->num_clks;
- 	}
- 
-+	ret = of_property_read_u32(dev->of_node, "num-lanes", &num_lanes);
-+	if (ret == 0) {
-+		if (num_lanes == 0 || num_lanes > 16 || (num_lanes != 1 && num_lanes % 2))
-+			dev_warn(dev, "Invalid num-lanes, using controller defaults\n");
-+		else
-+			pcie->num_lanes = num_lanes;
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.46.0
+I plan to send more patches targeting this architecture and I would like 
+to review any other changes to them in the future.
+
+On the other hand I understand your point, already having a list of 
+reviewers. If its unacceptable, I can only add myself as a maintainer 
+for the S32G RTC driver, in V2 of this patchset.
+
+Best Regards,
+Ciprian
+
 
 
