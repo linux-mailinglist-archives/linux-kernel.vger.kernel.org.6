@@ -1,119 +1,110 @@
-Return-Path: <linux-kernel+bounces-332601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3805297BBB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:36:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E711C97BC9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C164B23933
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:36:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72E77B23B41
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262361891C0;
-	Wed, 18 Sep 2024 11:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA47189F5D;
+	Wed, 18 Sep 2024 12:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="aB4sLtY8"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="De46/YqL"
+Received: from smtp103.iad3b.emailsrvr.com (smtp103.iad3b.emailsrvr.com [146.20.161.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAC1282E5;
-	Wed, 18 Sep 2024 11:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD914409
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 12:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726659356; cv=none; b=o+hJWUIx7dqvr036pSe5U0KqRdDrEOboRhJeQxDvemtccWnCN3A5z3dX0PKBfyhB+nrzGFd6gveJURdKLloIrndpGw9p6p+upG4xMtg25krVXsLBJRcxdEqulP9SEN8viWgJdQsJB6EJpDMneD2KzUCcmzhoRPANMpaqANx/Q5g=
+	t=1726664199; cv=none; b=UuDGiwwlARU4pBhHmbDjV4+VXAhES1skE46nvd5HfD75V7/Qur2K5xL57RDLJqBc/PGwYnaNxkMiPoiqjylxTg4Y+NgRWliWzLZv6nWCS9mc1iJSikcF1Im929CRz8BoW+e8rM3nlPINMGYKo84EJqNl+IygJSbNfanxPo7hm68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726659356; c=relaxed/simple;
-	bh=PPDrz82lIfrteE+dEjEqvbG0bP+PLJJgb9hsrt8OMl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Aws+d+2TUygEap33mcJJsQW0VIbD91LdtKQPKmbVj78o/ufIdrr0OpEChTVj7K02i2iZ0/IISXbbeEa+wia3CEGwW8zxb4/LKuR7dNFacpT334sBnmhHO4V8DWC1b4xVNHxQSRQ94c0YN4He1nlicyfBewDQVrjw0BPJgbVxtJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=aB4sLtY8; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=c+4wISZpTBZ5pFb7R+0lordsy6M0zdVfp3Wwwcoc6g4=; b=aB4sLtY8ju6ohBMuN3AV9zX8TM
-	3F4E1iB+yGNMjguydi/Akd6s9lRhMiXsWALCyq9WH0wvHNyGlsk1xcUnQjthvySuaGtoTs9xGIYpD
-	/cV/Z7zU9jknjL/ASjyez8+PY+sEs+Ij0NuxZtra+Fo/W/737JPZCbyjle2o13cJ3Xs7oWDtwElCw
-	oizzrpcGkBeSvDDaDPaEQeTYXafcDEQOFHzncVUh91ww7dFUTN+SJAO0j2Hx5BclczEj6DhHcRSPy
-	TtwueghTfLIt8oMFKUKVKAmch8k25EGf7pOVeocYOFHbwn4WCKzIAHY+aTv5Jk2oRn5nXp5PVmFtz
-	qvSD6nlA==;
-Date: Wed, 18 Sep 2024 13:35:46 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: tony@atomide.com, Sebastian Reichel <sre@kernel.org>,
- linux-omap@vger.kernel.org, devicetree@vger.kernel.org, Lee Jones
- <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, Conor Dooley
- <conor+dt@kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: mfd: twl: add charger node also for
- TWL603x
-Message-ID: <20240918133546.33cb6d68@akair>
-In-Reply-To: <c38c9ada-e054-4a14-9265-25065048ae54@kernel.org>
-References: <20240918084132.928295-1-andreas@kemnade.info>
-	<20240918084132.928295-3-andreas@kemnade.info>
-	<c38c9ada-e054-4a14-9265-25065048ae54@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726664199; c=relaxed/simple;
+	bh=swbAZGp8UeNGo9xKZhobTwGg6AWx2SX3Ix6yY+8Fvdw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RQUuemS7WkGCRg/19IlGKLI9MKOHi0nWHxt9GtjwzGF1ARdN8FERY9v/NoEA7k4WCxpzg9HgvMervce49rjws8jnZHQLvaKS9vamy3IJgkQg92/jBwTjRYKo4klbaZpoT4Ca+pJ4ReGaVTULSW9OJ+wB5J7s7ju7ypHmDm9RBBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=De46/YqL; arc=none smtp.client-ip=146.20.161.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1726659662;
+	bh=swbAZGp8UeNGo9xKZhobTwGg6AWx2SX3Ix6yY+8Fvdw=;
+	h=Date:Subject:To:From:From;
+	b=De46/YqLq9FJeQLGhVQSjCApgBnFgJIvS0FUU3qA8rb7X5ICFhm+5VPdibUoRBj/A
+	 pNDoTfYvkj+BbekNInwjthy52/63U/Nqq/8EcucvYjo/oFLT9WN73ww2ZON4DOwCgQ
+	 +7SBBeJttRjc2Df0i/2hPitW1eTPJO7O9LlH1A50=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp21.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 5874320103;
+	Wed, 18 Sep 2024 07:41:01 -0400 (EDT)
+Message-ID: <4f46343a-a1f9-4082-8ef2-50cdb3d74f31@mev.co.uk>
+Date: Wed, 18 Sep 2024 12:41:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] comedi: adl_pci9111: Fix possible division by zero in
+ pci9111_ai_do_cmd_test()
+To: Aleksandr Mishin <amishin@t-argos.ru>,
+ H Hartley Sweeten <hsweeten@visionengravers.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <20240918104304.15772-1-amishin@t-argos.ru>
+Content-Language: en-GB
+From: Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+In-Reply-To: <20240918104304.15772-1-amishin@t-argos.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Classification-ID: 6c29a785-62d1-41a1-a4d9-6a0662f318fb-1-1
 
-Am Wed, 18 Sep 2024 12:47:22 +0200
-schrieb Krzysztof Kozlowski <krzk@kernel.org>:
+On 18/09/2024 11:43, Aleksandr Mishin wrote:
+> Division by zero is possible in pci9111_ai_do_cmd_test() in case of scan
+> begin trigger source is TRIG_TIMER and either 'chanlist_len' or
+> 'convert_arg' is zero.
+> 
+> Add zero value check to prevent division by zero.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: f1c51faabc4d ("staging: comedi: adl_pci9111: tidy up (*do_cmdtest) Step 4")
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> ---
+>   drivers/comedi/drivers/adl_pci9111.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/comedi/drivers/adl_pci9111.c b/drivers/comedi/drivers/adl_pci9111.c
+> index 086d93f40cb9..ec1fb570b98c 100644
+> --- a/drivers/comedi/drivers/adl_pci9111.c
+> +++ b/drivers/comedi/drivers/adl_pci9111.c
+> @@ -312,6 +312,8 @@ static int pci9111_ai_do_cmd_test(struct comedi_device *dev,
+>   	 */
+>   	if (cmd->scan_begin_src == TRIG_TIMER) {
+>   		arg = cmd->chanlist_len * cmd->convert_arg;
+> +		if (!arg)
+> +			return 4;
+>   
+>   		if (arg < cmd->scan_begin_arg)
+>   			arg *= (cmd->scan_begin_arg / arg);
 
-> On 18/09/2024 10:41, Andreas Kemnade wrote:
-> > Also the TWL603X devices have a charger, so allow to specify it
-> > here.
-> > 
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > ---
-> >  .../devicetree/bindings/mfd/ti,twl.yaml        | 18
-> > ++++++++++++++++++ 1 file changed, 18 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> > b/Documentation/devicetree/bindings/mfd/ti,twl.yaml index
-> > e94b0fd7af0f8..4064a228cb0fc 100644 ---
-> > a/Documentation/devicetree/bindings/mfd/ti,twl.yaml +++
-> > b/Documentation/devicetree/bindings/mfd/ti,twl.yaml @@ -105,6
-> > +105,11 @@ allOf: regulator-initial-mode: false
-> >  
-> >        properties:
-> > +        bci:  
-> 
-> charger
-> 
-> > +          type: object  
-> 
-> additionalProperties: true
-> 
-> Each node must end with additionalProperties or unevaluated. I think
-> you never tested it, because dtschema reports this.
-> 
-I did run it, no complaints:
+Nice catch!  `cmd->convert_arg` will be non-zero due to earlier checks, 
+but `cmd->chanlist_len` could be zero for the `COMEDI_CMDTEST` ioctl. 
+(The function is called for the `COMEDI_CMDTEST` and `COMEDI_CMD` 
+ioctls, but only `COMEDI_CMD` checks that `chanlist_len` is non-zero 
+before calling the function.)
 
-andi@aktux:~/kernel$ touch Documentation/devicetree/bindings/mfd/ti,twl.yaml 
-andi@aktux:~/kernel$ touch Documentation/devicetree/bindings/power/supply/ti,twl6030-charger.yaml 
-andi@aktux:~/kernel$ make ARCH=arm dt_binding_check DT_SCHEMA_FILES=twl
-  SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-/home/andi/kernel/Documentation/devicetree/bindings/net/snps,dwmac.yaml: mac-mode: missing type definition
-  CHKDT   Documentation/devicetree/bindings
-  LINT    Documentation/devicetree/bindings
-  DTC [C] Documentation/devicetree/bindings/power/supply/twl4030-charger.example.dtb
-  DTEX    Documentation/devicetree/bindings/power/supply/ti,twl6030-charger.example.dts
-  DTC [C] Documentation/devicetree/bindings/power/supply/ti,twl6030-charger.example.dtb
-  DTC [C] Documentation/devicetree/bindings/iio/adc/ti,twl6030-gpadc.example.dtb
-  DTC [C] Documentation/devicetree/bindings/iio/adc/ti,twl4030-madc.example.dtb
-  DTEX    Documentation/devicetree/bindings/mfd/ti,twl.example.dts
-  DTC [C] Documentation/devicetree/bindings/mfd/ti,twl.example.dtb
-andi@aktux:~/kernel$
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 
-Regards,
-Andreas
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
+-=( registered in England & Wales.  Regd. number: 02862268.  )=-
+-=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
+-=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
+
 
