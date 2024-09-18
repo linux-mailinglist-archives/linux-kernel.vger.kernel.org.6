@@ -1,127 +1,106 @@
-Return-Path: <linux-kernel+bounces-332913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D6C97C0A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:52:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC5B97C0AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C8D81C20EA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:52:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E59081F22072
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 20:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4271CA6AF;
-	Wed, 18 Sep 2024 19:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FEA1CA6B1;
+	Wed, 18 Sep 2024 20:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dh8ChTs0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ab4D6i2t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DA51C8FB4;
-	Wed, 18 Sep 2024 19:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C01A273DC;
+	Wed, 18 Sep 2024 20:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726689146; cv=none; b=Bc3Wu62vHYBQoO33eeDLitiyq2cOzAgIXuznYdD/yQCkmwSWtHNHM5zw2nO6cHrZvYi9tTTZPhzZ87EAnXdTIMj1fDmbdd6N70RmgSFwCXnqo9r6LztTMAKKuLvvg2c+yInEcjigPMieE+0Shb+yR54eCwqeeiYjdELoN2hvQ10=
+	t=1726690210; cv=none; b=fmLG2RIIYkBmBo70UmHh+LLv5aQ7RN6zYsYjjbfG5x3dZ0ioqYGcYE3cRV9S/HGXyVi4RRwVW9+d2NYq4C4O+FPXbbJSlDxt+KfLL83p196oskb8/9r2219Gpn3wMV6XQ3KwYrIn9VM3OkleneU5dZQtXJz6JIvTBNZFVOVF1IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726689146; c=relaxed/simple;
-	bh=KVQTJmUOix5X3CgjVBPJhTZmYLzmRscSQ3BbyC6k5WY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xyl0Jf5lejQblvY0hSwE9XRxpjHkO4McGyZbq4njb0ymEy2yurM1tjwoW3FtBdgdd+sRpazKpmIw66tvyU90BS9soaAuHxlUpu6hfrMrDtV86D5txu7/2ixfkvcLQog85ojQbyQjP1ahaQR5DgnPVCjZ7iqvCmlNoj/x9eCxsiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dh8ChTs0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA1F8C4CEC2;
-	Wed, 18 Sep 2024 19:52:25 +0000 (UTC)
+	s=arc-20240116; t=1726690210; c=relaxed/simple;
+	bh=HP/zRaWLm37a0O/YnwD/z87FqywELzKP69C1iP96//k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OPkJA57Lc3Q58QtC9v+ahIzeIfc9n4xR5cX6LQdrgFbETHYWxof2bxYjBpfh8zqlYU+TJ3rJGBG4Z5rY9JCDPM1IhIfZkVpzi23axPON2tD5QEvMTIjWOJ8zoYZI02CmlYD0+UcTNtPhbnVqFTU+1K5M/WJteOa82DvnK4qx9HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ab4D6i2t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C73A7C4CEC2;
+	Wed, 18 Sep 2024 20:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726689146;
-	bh=KVQTJmUOix5X3CgjVBPJhTZmYLzmRscSQ3BbyC6k5WY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dh8ChTs0bvjKDyoK6+3sLNk8nKwYSKPl47Hzef6NvRHXzqxV0LsdqJlrlkAn85ZZA
-	 SpcxtsopWZj/wIP3KE4HC8Dc3Xnf1XSIlbk3Rfszp2KXX4iDZCmb6s5PXGBEl3xfxu
-	 /W646X3yUIHpivBnXXUAHppOPX2/Ev9868ks+LzxVfynUjpCMGr3HUBmK3iffplL7w
-	 cCVvZEcpZ8pQmtv5SdSqi4wLSiBJAxCuvNcs6NIgixyH5ViuXOLxjWgow8chKDRJwc
-	 oDvD2GW0uBlrhJZb+MAYS7JpGq4cSU73i4XiZ0TbvI99xUMnZrPCgWggcAn2ShLvR9
-	 uTo2RTf4IStFQ==
+	s=k20201202; t=1726690210;
+	bh=HP/zRaWLm37a0O/YnwD/z87FqywELzKP69C1iP96//k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ab4D6i2t1X8aYzasuMglH+8lIcj884En9JvHGqiJKCssXAyYDvgusG7KW/oQdp3bo
+	 2rvibPnGOg/5tO6Yh+uoiJQSy+vWkregpERB2YcXHJux/E4hwcjhvZbUxVbI7O3rJ0
+	 jojYEpuNO4DC7gb2zSdlCBH5Ffmx3RPGX0FnOIJBSi2dm9Cs8QVcZSySqewnPZ5S5l
+	 m5pVhJRlYTf0VeSdqjP0za6numHxK/9wyjS9y3vYp9a3T3FbW9KcwG97f+gOT9Pc6Z
+	 1+KprkgDs0slZmTyvMm9eC/AA1brksiHPZ5vzUWj6d4CnlTYyFPYLttA42Ht+u2RRw
+	 MCgNSIH5L3mLQ==
+Date: Wed, 18 Sep 2024 15:10:07 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] dt-bindings: writing-schema: Add details on YAML text blocks
-Date: Wed, 18 Sep 2024 14:51:30 -0500
-Message-ID: <20240918195130.2024205-2-robh@kernel.org>
-X-Mailer: git-send-email 2.45.2
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: devicetree@vger.kernel.org, Elaine Zhang <zhangqing@rock-chips.com>,
+	Yifeng Zhao <yifeng.zhao@rock-chips.com>, kernel@collabora.com,
+	Jamie Iles <jamie@jamieiles.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-watchdog@vger.kernel.org,
+	linux-serial@vger.kernel.org, Dragan Simic <dsimic@manjaro.org>,
+	linux-kernel@vger.kernel.org,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jagan Teki <jagan@edgeble.ai>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Elon Zhang <zhangzj@rock-chips.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Michael Riesch <michael.riesch@wolfvision.net>,
+	Alexey Charkov <alchark@gmail.com>, dri-devel@lists.freedesktop.org,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Mark Brown <broonie@kernel.org>, Andy Yan <andyshrk@163.com>,
+	Muhammed Efe Cetin <efectn@protonmail.com>,
+	Finley Xiao <finley.xiao@rock-chips.com>,
+	Tim Lunn <tim@feathertop.org>, David Airlie <airlied@gmail.com>,
+	Ondrej Jirman <megi@xff.cz>, Liang Chen <cl@rock-chips.com>,
+	linux-spi@vger.kernel.org, Jimmy Hon <honyuenkwun@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>, Jonas Karlman <jonas@kwiboo.se>
+Subject: Re: [PATCH v4 6/9] dt-bindings: watchdog: Add rockchip,rk3576-wdt
+ compatible
+Message-ID: <172669020548.2047533.8189624285795132059.robh@kernel.org>
+References: <20240903152308.13565-1-detlev.casanova@collabora.com>
+ <20240903152308.13565-7-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903152308.13565-7-detlev.casanova@collabora.com>
 
-The YAML format has a couple of different forms for multi-line text
-blocks which control allowed characters and handling of line-breaks.
-Getting this wrong is a common review issue. Either a literal block is
-used when there's no formatting needed or a folded/literal block is
-not used when there is formatting to maintain.
 
-Add some descriptions of the different forms to point folks to in
-reviews.
+On Tue, 03 Sep 2024 11:22:36 -0400, Detlev Casanova wrote:
+> It is compatible with the other rockchip SoCs.
+> 
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Acked-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>  Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
-I have a prototype yamllint addition to check this for us. Not sure
-if it will be upstreamable given something that works for us is quite
-easier than supporting any possible YAML.
-
-Digging into this more, I had not realized that plain style can support
-paragraphs with a blank line nor that folded (">") style maintains
-indented lines. That probably means we could use those 2 just about
-everywhere. Or maybe it's just easier to say use ">" everywhere (or
-everywhere with more than 1 line).
----
- .../devicetree/bindings/writing-schema.rst    | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/writing-schema.rst b/Documentation/devicetree/bindings/writing-schema.rst
-index 7e71cdd1d6de..eb8ced400c7e 100644
---- a/Documentation/devicetree/bindings/writing-schema.rst
-+++ b/Documentation/devicetree/bindings/writing-schema.rst
-@@ -43,6 +43,36 @@ description
-   or device does, standards the device conforms to, and links to datasheets for
-   more information.
- 
-+  The YAML format has several options for defining the formatting of the text
-+  block. The options are controlled with indicator characters following the key
-+  (e.g. "description: \|"). The minimum formatting needed for a block should be
-+  used. The formatting controls can not only affect whether the YAML can be
-+  parsed correctly, but are important when the text blocks are rendered to
-+  another form. The options are as follows.
-+
-+  The default without any indicators is flowed, plain scalar style where single
-+  line breaks and leading whitespace are stripped. Paragraphs are delimited by
-+  blank lines (i.e. double line break). This style cannot contain ": " in it as
-+  it will be interpretted as a key. Any " #" sequence will be interpretted as
-+  a comment. There's other restrictions on characters as well. Most
-+  restrictions are on what the first character can be.
-+
-+  The second style is folded which is indicated by ">" character. In addition
-+  to maintaining line breaks on double line breaks, the folded style also
-+  maintains leading whitespace beyond indentation of the first line. The line
-+  breaks on indented lines are also maintained.
-+
-+  The third style is literal which is indicated by "\|" character. The literal
-+  style maintains all line breaks and whitespace (beyond indentation of the
-+  first line).
-+
-+  The above is not a complete description of YAML text blocks. More details on
-+  multi-line YAML text blocks can be found online:
-+
-+  https://yaml-multiline.info/
-+
-+  https://www.yaml.info/learn/quote.html
-+
- select
-   Optional. A json-schema used to match nodes for applying the
-   schema. By default, without 'select', nodes are matched against their possible
--- 
-2.45.2
+Applied, thanks!
 
 
