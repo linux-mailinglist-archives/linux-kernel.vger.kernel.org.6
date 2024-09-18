@@ -1,153 +1,139 @@
-Return-Path: <linux-kernel+bounces-332931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0B797C0E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:37:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CF2697C0D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B0141C212BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 20:37:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB2251F22779
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 20:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B901CC15B;
-	Wed, 18 Sep 2024 20:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E841CB30E;
+	Wed, 18 Sep 2024 20:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jSunCmaX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipDVaOhL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45471CB32C;
-	Wed, 18 Sep 2024 20:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159681CB518;
+	Wed, 18 Sep 2024 20:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726691795; cv=none; b=Ze3UrMDRzG6GgtWRm63HeDU4XVGN2ZjU2w/0kOoFIu57f9if1QG2TprK0ovBFzTE8Ua44VEsVnvWw3LShW42IuSGPZjzJRD2CT0tzjD1b7a3eAB8uMNk4buH85ErCP3UBbeZjWUdQ3OpeZFhElFDWVdh45sFtWIC7Br/zZ0MAKo=
+	t=1726691782; cv=none; b=M3vPYL6VJybRYdWgwnmvKt7C2nL65j12OdargIo12mMi89vqM8CK2v90Hpkyf4P5cSom/LdA7WB/jJXj1S4hPk+vLyPuSKgSNXQCkyhDFTflGxSf+C0W5o3L5F++jR8KLiytmN39narwEtoYg3NMjNVND18p7j+fwX9WJn15u8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726691795; c=relaxed/simple;
-	bh=a6hjHtAXEMh6b1R8nEW38A6SmJBF8Y73m7GYMb7SEdk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SRTjRxsXW8LBm40kGRzjxCb6wqNsQSzJ9ryek7u5M4fslZBZvosKfAZ/Mne4TjZlMEHaAPFjlaOnCLTPTTU0Stjxhv1oGlx4D5ac0jjoOZ8nrk9OIonBhy/vtCULEjkfVfUhkwugOQ4+HaHIe5++PLErhHcVHgC+swT/xtQkYig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jSunCmaX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 551BCC4CEC2;
-	Wed, 18 Sep 2024 20:36:34 +0000 (UTC)
+	s=arc-20240116; t=1726691782; c=relaxed/simple;
+	bh=EgCYCV4YQKaoczQpbXvAZ23VpQV+ciVf9YulnDCegFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMe8RFszAu+QH6/W1UOjhDRsVJ+94IhH8BxChR47NT20IDaTwvov//ZAdERQUDpFxqKrmPaZKt/P2xHAu/z+R3u7zKxKQOHZ/qqE3qcPr5xrAl9uov1ZhsFrScLG6ghBqXsGjYsMTQ/VwHEgcVl3pf9bFnYIPaWP73twvBCUS8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipDVaOhL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E85D8C4AF0B;
+	Wed, 18 Sep 2024 20:36:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726691794;
-	bh=a6hjHtAXEMh6b1R8nEW38A6SmJBF8Y73m7GYMb7SEdk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jSunCmaXzik1WBkT7BnosXXdNSAG8dSg8J4fYJe/OPFdvCXWxbin/ZDf+jrmVed4u
-	 KhEMVsVrGbGOMp81NLGk0jLKiny68b7GiUjjK44HSVvSnZf/fbG5Q/uJ9PJ1w0O8RG
-	 z3vdhksIxLMNBzyKPqdGl9nR81EzlUDqRQW1Bgr9iVpzbwMe0fVeSeSFQU/3VyHGqf
-	 zCFektkS76ZAnhVytu0kHX8DAa84IZDs2gko/ZXjqDXtpLrY3WZsqtvKR8KlvOG7OM
-	 YW4buY5ncuMwhj0wfwGUboWr/NFIWJuJASDS86xl0BlNmTJLOSyueH9Y/HeET6sr18
-	 Q1a2YvJ7KD8+g==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: James.Bottomley@HansenPartnership.com,
-	roberto.sassu@huawei.com,
-	mapengyu@gmail.com,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	stable@vger.kernel.org,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 5/5] tpm: flush the auth session only when /dev/tpm0 is open
-Date: Wed, 18 Sep 2024 23:35:49 +0300
-Message-ID: <20240918203559.192605-6-jarkko@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240918203559.192605-1-jarkko@kernel.org>
-References: <20240918203559.192605-1-jarkko@kernel.org>
+	s=k20201202; t=1726691781;
+	bh=EgCYCV4YQKaoczQpbXvAZ23VpQV+ciVf9YulnDCegFw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ipDVaOhLfHJH+tCs1g83lZyNFgv04+MPQxEhF/JIvyyl80DIwxSnuDB+et1VhbThl
+	 BmRkRDgVrV32hbNvVJq6PUWPZDN8gWfBzEwg+KpfOUgT3/t6LQaT7uE8qmb1k1ca4D
+	 r3AYxI4g59Bm8vFiI+voehfZs2a9rQV+kauKAA3yN8sj/L6s+zFMDdcfZzTJBVWMuT
+	 M4NfepkIkMBwalwzZ5dV0KoBusbtqxMPttwYbdRd64Ngim7UrTp/upv0plDwV+6MHL
+	 /VPClCjTwq7CJWC9YhngfiXETilDVSn2Q9qwMUtMr3woRIL7I0QUfSI2Q5n7OEMrno
+	 TmPN5w2u217Lg==
+Date: Wed, 18 Sep 2024 22:36:17 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	tsbogend@alpha.franken.de, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+Subject: Re: [PATCH 5/5] i2c: rtl9300: Add multiplexing support
+Message-ID: <2wmlmymzxhf7ytpngbqgubka43rd4ytiwcffvwgaaf6gubvenz@w5gwxarev3r6>
+References: <20240917232932.3641992-1-chris.packham@alliedtelesis.co.nz>
+ <20240917232932.3641992-6-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917232932.3641992-6-chris.packham@alliedtelesis.co.nz>
 
-Instead of flushing and reloading the auth session for every single
-transaction, keep the session open unless /dev/tpm0 is used. In practice
-this means applying TPM2_SA_CONTINUE_SESSION to the session attributes.
-Flush the session always when /dev/tpm0 is written.
+Hi Chris,
 
-Reported-by: Pengyu Ma <mapengyu@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219229
-Cc: stable@vger.kernel.org # v6.10+
-Fixes: 7ca110f2679b ("tpm: Address !chip->auth in tpm_buf_append_hmac_session*()")
-Tested-by: Pengyu Ma <mapengyu@gmail.com>
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v4:
-- Changed as bug.
-v3:
-- Refined the commit message.
-- Removed the conditional for applying TPM2_SA_CONTINUE_SESSION only when
-  /dev/tpm0 is open. It is not required as the auth session is flushed,
-  not saved.
-v2:
-- A new patch.
----
- drivers/char/tpm/tpm-chip.c       | 1 +
- drivers/char/tpm/tpm-dev-common.c | 1 +
- drivers/char/tpm/tpm-interface.c  | 1 +
- drivers/char/tpm/tpm2-sessions.c  | 3 +++
- 4 files changed, 6 insertions(+)
+...
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 0ea00e32f575..7a6bb30d1f32 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -680,6 +680,7 @@ void tpm_chip_unregister(struct tpm_chip *chip)
- 	rc = tpm_try_get_ops(chip);
- 	if (!rc) {
- 		if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-+			tpm2_end_auth_session(chip);
- 			tpm2_flush_context(chip, chip->null_key);
- 			chip->null_key = 0;
- 		}
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index 4eaa8e05c291..a3ed7a99a394 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -29,6 +29,7 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 
- #ifdef CONFIG_TCG_TPM2_HMAC
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-+		tpm2_end_auth_session(chip);
- 		tpm2_flush_context(chip, chip->null_key);
- 		chip->null_key = 0;
- 	}
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index bfa47d48b0f2..2363018fa8fb 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -381,6 +381,7 @@ int tpm_pm_suspend(struct device *dev)
- 	if (!rc) {
- 		if (chip->flags & TPM_CHIP_FLAG_TPM2) {
- #ifdef CONFIG_TCG_TPM2_HMAC
-+			tpm2_end_auth_session(chip);
- 			tpm2_flush_context(chip, chip->null_key);
- 			chip->null_key = 0;
- #endif
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index 6371e0ee88b0..e9d3a6a9d397 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -333,6 +333,9 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
- 	}
- 
- #ifdef CONFIG_TCG_TPM2_HMAC
-+	/* The first write to /dev/tpm{rm0} will flush the session. */
-+	attributes |= TPM2_SA_CONTINUE_SESSION;
-+
- 	/*
- 	 * The Architecture Guide requires us to strip trailing zeros
- 	 * before computing the HMAC
--- 
-2.46.0
+> -module_platform_driver(rtl9300_i2c_driver);
+> +static int rtl9300_i2c_select_chan(struct i2c_mux_core *muxc, u32 chan)
+> +{
+> +	struct i2c_adapter *adap = muxc->parent;
+> +	struct rtl9300_i2c *i2c = i2c_get_adapdata(adap);
+> +	int ret;
+> +
+> +	ret = rtl9300_i2c_config_io(i2c, chan);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
 
+return "rtl9300_i2c_config_io()"?
+
+> +}
+
+...
+
+> +static int rtl9300_i2c_mux_probe_fw(struct rtl9300_i2c_chan *mux, struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct fwnode_handle *fwnode = dev_fwnode(dev);
+> +	struct device_node *np = dev->of_node;
+> +	struct device_node *adap_np;
+> +	struct i2c_adapter *adap = NULL;
+> +	struct fwnode_handle *child;
+> +	unsigned int *chans;
+> +	int i = 0;
+> +
+> +	if (!is_of_node(fwnode))
+> +		return -EOPNOTSUPP;
+> +
+> +	if (!np)
+> +		return -ENODEV;
+> +
+> +	adap_np = of_parse_phandle(np, "i2c-parent", 0);
+> +	if (!adap_np) {
+> +		dev_err(&pdev->dev, "Cannot parse i2c-parent\n");
+> +		return -ENODEV;
+
+return dev_err_probe(...)?
+
+> +	}
+> +	adap = of_find_i2c_adapter_by_node(adap_np);
+> +	of_node_put(adap_np);
+
+...
+
+> +static int __init rtl9300_i2c_init(void)
+> +{
+> +	return platform_register_drivers(drivers, ARRAY_SIZE(drivers));
+> +}
+> +module_init(rtl9300_i2c_init);
+> +
+> +static void __exit rtl9300_i2c_exit(void)
+> +{
+> +	platform_unregister_drivers(drivers, ARRAY_SIZE(drivers));
+> +}
+> +module_exit(rtl9300_i2c_exit);
+
+You could use module_platform_driver()
+
+Thanks,
+Andi
+
+>  
+>  MODULE_DESCRIPTION("RTL9300 I2C controller driver");
+>  MODULE_LICENSE("GPL");
+> -- 
+> 2.46.1
+> 
 
