@@ -1,244 +1,113 @@
-Return-Path: <linux-kernel+bounces-332297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538A397B7E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:23:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 043F497B7C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27FA32823D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:23:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 376A01C21EC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDEE16F824;
-	Wed, 18 Sep 2024 06:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B15B339A0;
+	Wed, 18 Sep 2024 06:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UTmN8FCh"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2059.outbound.protection.outlook.com [40.107.243.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="lN4/S6z7"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CA5161916;
-	Wed, 18 Sep 2024 06:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726640569; cv=fail; b=FN5G8hUwbet3VRVl7C636HKAgPjrKnVJj6ZVkANQfvow11fL1dHo93rtgeMShCAST38ndF0+2s8MftdGaUjmFPqBy/RZ0T6PGmqtR4XdiCwlnjCdYGBz7zy6TpieFZiuQ7nvlTVfuHyQlkShCTFJ9Qm0fhPzwylYcKbeQv3+kHY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726640569; c=relaxed/simple;
-	bh=loQzfQmJhsQ0pWkbcGsa188ZKhzzVpYxkEQOWXeanRE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dT/vILO8FwWqHrYceDEYS4/mDdrDsjuawcVhfF8ErnGQXPEXHYyW1GAlAHp534DHzK/MZlnSP6ZtMc5cyR9V9NJwScM96OaIOwxc2GW8gQ/QHTfyHob2twjqTKtx6jM83bJfVQwr0Ogv0Ynu8LiiU6zo4ALf0yVK2PhGIVlwgLo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UTmN8FCh; arc=fail smtp.client-ip=40.107.243.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fmOlIY+EANwaWFRBkz5AMZsPVbod4oJFSqWMO2mqA3yiCj+iF5NIpQr53tnL12Gnzue67wyV6Bs8LYqwJYz8Pq/7rBCNFTfa84s6c4erg9mDe0hxbXb7YpSyspZTQc+7L3NgISHVMkWR9vHJ0leTbsXnM4cYrIYwA7OkmodclqiVqx3QgziwEuIM71JqTufV9y2cFksbWbh1Y2oZcgjXbPwmiC28pkgjWMTVlnbrfcOb7beaIiww/Jk0NOgfx6e18ZY+CW9SNb1qYQa6uBYHvw6CFZVfypFEwAAxClo20m/H/xOBkS/+sKhdrxu5zCFydfpwaA+kG80d4fKbNgMpmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cf4LILkITo6sRTgwpXVGJGnK3u/PXFXhO0mgTbTkqgE=;
- b=ciGPPY3KMi85D8DQohDGb3qkMiIWZd6R4BChjCQlJqiTyEhQKXMwomxZAv+mQ7pnNnxECtHL+GPfU5Ub/h3QiAOtcIctYQ9Uhnn9zE9Su5U5Tms6CgDgWnZ+MaIDJpGJ8DUlMSd52Ekyctq2LL/5aiOa1nguluWI3Mwn1vOIb1BGTFJnrFRQJwYr6JNJ6VBbefu99Og5fSraMjazUCkBHIKu9OgvuARVlos20cf75ujqtwNjQxVMEoxACKVlUBY2he9hi/qU1Bceb+96Qnq7wVsI4Q5h4jjP1hQ1RwJWMAEJkp9QUXJlv5K1qMln3ZOFVEhgvI1nH8VDI8fCqC2Fig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cf4LILkITo6sRTgwpXVGJGnK3u/PXFXhO0mgTbTkqgE=;
- b=UTmN8FChJnQoVvmL2KF/eIf5eNyjCHnkyWw0SsbCbo900fVdEsnj62FP1oBFarsFKtOSe/V+Ulkak14DDpmZ55oSUbnmq24Z0HilMPLxfxnkuJ0Y06UU3F2YTxxALK9GLS+HtIczER9foE2iLT6fW/tyKB1MLenuCUL4WSgMpBo=
-Received: from BN0PR02CA0009.namprd02.prod.outlook.com (2603:10b6:408:e4::14)
- by DS0PR12MB6581.namprd12.prod.outlook.com (2603:10b6:8:d3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Wed, 18 Sep
- 2024 06:22:43 +0000
-Received: from BN1PEPF00004682.namprd03.prod.outlook.com
- (2603:10b6:408:e4:cafe::5e) by BN0PR02CA0009.outlook.office365.com
- (2603:10b6:408:e4::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.25 via Frontend
- Transport; Wed, 18 Sep 2024 06:22:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN1PEPF00004682.mail.protection.outlook.com (10.167.243.88) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Wed, 18 Sep 2024 06:22:42 +0000
-Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 18 Sep 2024 01:22:23 -0500
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: <broonie@kernel.org>
-CC: <alsa-devel@alsa-project.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
-	<tiwai@suse.com>, <Basavaraj.Hiregoudar@amd.com>,
-	<Sunil-kumar.Dommati@amd.com>, <venkataprasad.potturu@amd.com>,
-	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Vijendar
- Mukunda" <Vijendar.Mukunda@amd.com>
-Subject: [PATCH 8/8] ASoC: amd: acp: remove unused variable from acp platform driver
-Date: Wed, 18 Sep 2024 11:45:40 +0530
-Message-ID: <20240918061540.685579-9-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240918061540.685579-1-Vijendar.Mukunda@amd.com>
-References: <20240918061540.685579-1-Vijendar.Mukunda@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F1E14A4EA
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726640207; cv=none; b=IsBON2bHPhKo6bhsnTf/XyGsmJro76M+Tkh9ZlkHJd7nfeb34g4cK+nXk4/v/Hjxnx/ZPtuSo3apSAo31V+/mKs0p4U5eC/WUVRov2R1YTRwJ99FjRG+fXpZGkDiDfkWO29JuuS5z3m4uv2p0sRMV/FCl9izScsIRXJcGiRrGDA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726640207; c=relaxed/simple;
+	bh=h1x8IJe7lN71i2zcyIYHpbVMlL8euNj1bt8GoLm/poc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rSeb55eePdMBgygkUWw6wYMDt27xe1uNWZp9AJXtc6462BdnEWlEtwfD1IVkCPdkpzzwJVqup+a78YVWRIOFAPQJo4mB2Q7AIU1LQaXbVXKLSwW7KZdaZ+/+IGtimdM7JcAqLxwgtYsWMCZCDwCQY0bePEsOD7laY2CO9RNcQL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=lN4/S6z7; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-374c6187b6eso4686142f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 23:16:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726640203; x=1727245003; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mIPhQLcvTE4j+71hp94TpiU+POERqSJhs24nbUaj6GI=;
+        b=lN4/S6z7mQaK5vKh8F0fZmMOk4JaEwrDg4Omu4frLz9GvDPu7IMYiGPEJ5bPQna6+x
+         CDxUFpuVxy6vJxpZcXFW223jat3nFVyADDoEwA1hr+A7mnPi9b1oSuCJCicFlghsCLn1
+         H1wgc0GbRfw59taNgl9saqQMaXd6eDdvuwB2+5fgzkVkc5hFL0HOQNAxaR95J8ZPv7pu
+         LHD4YWNgwN4cezYLGN5Bha29o4AWwedPH4fORVkoZt4/DaTNpYASsubOqapz5zq0z6RO
+         HJhir+X6/gJWNBGAU3HyBJOh0jeudh+t7AjaM7xYBewuEWu8vy7hNSc0SqyGKh8gDvqu
+         jRag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726640203; x=1727245003;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mIPhQLcvTE4j+71hp94TpiU+POERqSJhs24nbUaj6GI=;
+        b=qtcxDR1VYTdwcgRUyn87H57DHYvmjqbWIcy3VPMnR6c32KFXzEKvh1EJTq/SMoLrkD
+         bEAPaE/mpWp0m9XZZQFpXbDLCKzphIH7s210gCqd6BZdoFVUdl7jI6KJwXhTbCqjEtQ7
+         hmmxqYK3Ilo+wEDbiHK8b1q/75TTQrZLdNc7z0NsRoc9F+SD97T9uujEigtNblpuw6cp
+         h8vWbgCNRL8JI5G8L9URP/oaBrTQch8pLRBwifYKNiWR/TTIFKUYfhx3vRXwWugKnwwH
+         IQbpHQTTPgg3Q6RaNfZeZSv6kQhanyiTxWjtx957DAq4RrA3TL9Eeu19ynTvhjqceT/v
+         m22Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXpRUJaDc/pwrl2PkrIFTUlGw1pXIVpUY7xdZwc0kDSj5Dqf+JV8+hySNQCyynAM36MXTbsupjM8yJXW58=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9DYCRMb5rofc5FyfvhrFe7vQ2uW8SHBR6YxZsWVNrfu6AkiQV
+	8/Nh+U+6tibHx74bovBNQgy9tcYsznFBGLpMhj0X9jF1LUVGgzGmBxQZ9+rRyAI=
+X-Google-Smtp-Source: AGHT+IF482qm71OBg3dA9iPtz3GXklywXbZ8iO2oGy5tKPfIAb/pGMdrJk3Kh+CMA8pz8uQTeQT01Q==
+X-Received: by 2002:adf:9c09:0:b0:374:c3a2:2b5e with SMTP id ffacd0b85a97d-378c2d5b1cbmr10327577f8f.37.1726640203319;
+        Tue, 17 Sep 2024 23:16:43 -0700 (PDT)
+Received: from [192.168.0.216] ([185.44.53.103])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e78044easm11411043f8f.91.2024.09.17.23.16.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2024 23:16:42 -0700 (PDT)
+Message-ID: <5237b4c0-973f-44cc-a6ee-08302871fd19@kernel.dk>
+Date: Wed, 18 Sep 2024 00:16:41 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00004682:EE_|DS0PR12MB6581:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4994a2e8-e3c4-4d61-9345-08dcd7aa4dbf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MqG937KLzLhQIuyUfXrcK8HWV27Vpi9kWrU3F6nHRr7s3ujckApmH13TOhdC?=
- =?us-ascii?Q?TUaXG5D6vYTuYZV7KLwUc+rF4Mzl/NSJTKhmBdKm2hn2HUlsawAXy3MYtmLj?=
- =?us-ascii?Q?IV6AvsfdavVl+OUYtL5mgnP61woAH+JpYJaKmKnNWgYDLDqRZcd8lS1Npgl4?=
- =?us-ascii?Q?Lbv2no+mbpfXgyf1++6+zZ+S2J6WobHj0MKwCwAUzrPuBSdICEw7hvSDp/aO?=
- =?us-ascii?Q?3nPNTDUdxJMyEtkSa9b6YLaX4XWIKc5e5SYCuaHGTwj7y2LnxGiFSlUyrxel?=
- =?us-ascii?Q?QO+sA8EBCmooaYU6PKOUzQLnO/6n9OHr8mWdYCMbjhspEwK9qjNT4k56lrlA?=
- =?us-ascii?Q?j/TFKWacjRvGboUGI30mP85o5TosKZXaboFV1FRgTn3dv4xSsNiwn+DnQSut?=
- =?us-ascii?Q?G1Ycvg1cZr5N06s90QbMKkiwEsC7UZI3IZkyXhpkyxed/oP3qvrsCXQPjb/L?=
- =?us-ascii?Q?UX03PWxs/D8/QBbGOPmcQ0z0GykiBrRFjq8c/PWbkdZ+pK8IFnq7eUbjk5M5?=
- =?us-ascii?Q?cVA9OK0gngBskq+QVaKur3PBm0X9mJIQ5WGtPKiw8SFMB4VZoTMw6mMy2DPx?=
- =?us-ascii?Q?jIo16yh7T3y9gqDSRGYAvZZfD8c+bPqu5JddIYNog1sG8GN7z2t1+gwETKBi?=
- =?us-ascii?Q?6zg9WPpCKhcRcYPUxNnSwNKLm30lJMlvEDHlDJUFFVKBlahnqBcF/0ZklUzs?=
- =?us-ascii?Q?OOv2EX2b6XddGMPj+priIXoQMbyZlYba21w/xsmq4pA2w39woH1En0pBdTAe?=
- =?us-ascii?Q?xiT1dt+DDG/uTghfwvI29q7ACNRKdGahzz8fX/Xwwe1/AVfETc1I/aEGfXpn?=
- =?us-ascii?Q?hGrsSB/oTtepYJvLOWWaf3na5+DhqmbQeznQP160tgcpzeg6WA/xbzo3zI/Y?=
- =?us-ascii?Q?E08NjriKAX1TYUmQLEkc1RR0q908Hqm1ZEfhNM+Yk12Ik9NzupwOCYHrDch1?=
- =?us-ascii?Q?5M0nSZ4aOIwF9CEv88nDTi8sFYovBgzu6SHT9wauR5XFGy2LKj13fLplsJCZ?=
- =?us-ascii?Q?thPH/rNXsHOsGVdQwd9gcHQceCbepxXgAZ+JY5PK7hMpmH3P7sn2oJ8gIPJT?=
- =?us-ascii?Q?VGPVbU8SczInAxqXiFOr3MaNBbxKUxwD3yYRer/joEK1ugWiSFyb4cN/CfTM?=
- =?us-ascii?Q?ksLJnp0db2aq2HHvSur0+83zaWrqCNtp2q3Tlb3o5gkpsJKyAVJQP+dqDJf+?=
- =?us-ascii?Q?EXb8N3WJ+ymq3AjshJYY26rLDFKoOcwt60gO2QKmZVKg+cK91mdw5kQeZCnx?=
- =?us-ascii?Q?GuzJVBFTIuauhnFquoQIPEdoH89yFRtFQwGt48Y6C9bszaxAMFKPQGEFDQML?=
- =?us-ascii?Q?2DioJrplsozZYWTbr/vynW3HK3xkiO9uS4Eegd6V5djLx0pkJcyrUcwGFgPk?=
- =?us-ascii?Q?4y6pQjdRVxvHH66K0uNSCt4+ugcq8MQybCann5y9qsu9X+y0kniDR68CWRbW?=
- =?us-ascii?Q?XZ0aVZM6DcBcORjFBH32FXNWpQNLVTeO?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 06:22:42.7799
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4994a2e8-e3c4-4d61-9345-08dcd7aa4dbf
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00004682.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6581
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] io_uring/sqpoll: do not allow pinning outside of
+ cpuset
+To: "Lai, Yi" <yi1.lai@linux.intel.com>,
+ Felix Moessbauer <felix.moessbauer@siemens.com>
+Cc: asml.silence@gmail.com, linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org, cgroups@vger.kernel.org, dqminh@cloudflare.com,
+ longman@redhat.com, adriaan.schmidt@siemens.com,
+ florian.bezdeka@siemens.com, stable@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, pengfei.xu@intel.com, yi1.lai@intel.com
+References: <20240909150036.55921-1-felix.moessbauer@siemens.com>
+ <ZupPb3OH3tnM2ARj@ly-workstation>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZupPb3OH3tnM2ARj@ly-workstation>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Remove 'platform' variable from acp platform driver private data
-structure. For platform differentiation, ACP pci revision id being
-used through out the code. As platform variable is no longer used in
-code, drop the code corresponding to 'platform' variable.
+On 9/17/24 9:56 PM, Lai, Yi wrote:
+> Hi Felix Moessbauer,
+> 
+> Greetings!
+> 
+> I used Syzkaller and found that there is KASAN: use-after-free Read in io_sq_offload_create in Linux-next tree - next-20240916.
+> 
+> After bisection and the first bad commit is:
+> "
+> f011c9cf04c0 io_uring/sqpoll: do not allow pinning outside of cpuset
+> "
 
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
----
- sound/soc/amd/acp/acp-mach.h      | 8 --------
- sound/soc/amd/acp/acp-rembrandt.c | 1 -
- sound/soc/amd/acp/acp-renoir.c    | 1 -
- sound/soc/amd/acp/acp63.c         | 1 -
- sound/soc/amd/acp/acp70.c         | 5 -----
- sound/soc/amd/acp/amd.h           | 1 -
- 6 files changed, 17 deletions(-)
+This is known and fixed:
 
-diff --git a/sound/soc/amd/acp/acp-mach.h b/sound/soc/amd/acp/acp-mach.h
-index 414d0175988b..f94c30c20f20 100644
---- a/sound/soc/amd/acp/acp-mach.h
-+++ b/sound/soc/amd/acp/acp-mach.h
-@@ -53,14 +53,6 @@ enum codec_endpoints {
- 	ES83XX,
- };
- 
--enum platform_end_point {
--	RENOIR = 0,
--	REMBRANDT,
--	ACP63,
--	ACP70,
--	ACP71,
--};
--
- struct acp_mach_ops {
- 	int (*probe)(struct snd_soc_card *card);
- 	int (*configure_link)(struct snd_soc_card *card, struct snd_soc_dai_link *dai_link);
-diff --git a/sound/soc/amd/acp/acp-rembrandt.c b/sound/soc/amd/acp/acp-rembrandt.c
-index 065ac13b2220..008d97598b62 100644
---- a/sound/soc/amd/acp/acp-rembrandt.c
-+++ b/sound/soc/amd/acp/acp-rembrandt.c
-@@ -227,7 +227,6 @@ static int rembrandt_audio_probe(struct platform_device *pdev)
- 	adata->dai_driver = acp_rmb_dai;
- 	adata->num_dai = ARRAY_SIZE(acp_rmb_dai);
- 	adata->rsrc = &rsrc;
--	adata->platform = REMBRANDT;
- 	adata->acp_rev = chip->acp_rev;
- 	adata->flag = chip->flag;
- 	adata->is_i2s_config = chip->is_i2s_config;
-diff --git a/sound/soc/amd/acp/acp-renoir.c b/sound/soc/amd/acp/acp-renoir.c
-index f372a56a0a17..166f1efacf1d 100644
---- a/sound/soc/amd/acp/acp-renoir.c
-+++ b/sound/soc/amd/acp/acp-renoir.c
-@@ -185,7 +185,6 @@ static int renoir_audio_probe(struct platform_device *pdev)
- 	adata->dai_driver = acp_renoir_dai;
- 	adata->num_dai = ARRAY_SIZE(acp_renoir_dai);
- 	adata->rsrc = &rsrc;
--	adata->platform = RENOIR;
- 	adata->acp_rev = chip->acp_rev;
- 	adata->flag = chip->flag;
- 
-diff --git a/sound/soc/amd/acp/acp63.c b/sound/soc/amd/acp/acp63.c
-index f0c516ccf96b..e0b86132eb95 100644
---- a/sound/soc/amd/acp/acp63.c
-+++ b/sound/soc/amd/acp/acp63.c
-@@ -237,7 +237,6 @@ static int acp63_audio_probe(struct platform_device *pdev)
- 	adata->dai_driver = acp63_dai;
- 	adata->num_dai = ARRAY_SIZE(acp63_dai);
- 	adata->rsrc = &rsrc;
--	adata->platform = ACP63;
- 	adata->acp_rev = chip->acp_rev;
- 	adata->flag = chip->flag;
- 	adata->is_i2s_config = chip->is_i2s_config;
-diff --git a/sound/soc/amd/acp/acp70.c b/sound/soc/amd/acp/acp70.c
-index db5dd64969b0..3e4fd113a8a4 100644
---- a/sound/soc/amd/acp/acp70.c
-+++ b/sound/soc/amd/acp/acp70.c
-@@ -210,11 +210,6 @@ static int acp_acp70_audio_probe(struct platform_device *pdev)
- 	adata->rsrc = &rsrc;
- 	adata->machines = snd_soc_acpi_amd_acp70_acp_machines;
- 	adata->acp_rev = chip->acp_rev;
--	if (chip->acp_rev == ACP70_PCI_ID)
--		adata->platform = ACP70;
--	else
--		adata->platform = ACP71;
--
- 	adata->flag = chip->flag;
- 	acp_machine_select(adata);
- 
-diff --git a/sound/soc/amd/acp/amd.h b/sound/soc/amd/acp/amd.h
-index dcfc29b2f072..ee69dfb10cb8 100644
---- a/sound/soc/amd/acp/amd.h
-+++ b/sound/soc/amd/acp/amd.h
-@@ -201,7 +201,6 @@ struct acp_dev_data {
- 	u32 xfer_tx_resolution[3];
- 	u32 xfer_rx_resolution[3];
- 	unsigned int flag;
--	unsigned int platform;
- };
- 
- enum acp_config {
+https://git.kernel.dk/cgit/linux/commit/?h=for-6.12/io_uring&id=a09c17240bdf2e9fa6d0591afa9448b59785f7d4
+
 -- 
-2.34.1
-
+Jens Axboe
 
