@@ -1,391 +1,158 @@
-Return-Path: <linux-kernel+bounces-332188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B4497B697
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:38:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD3A497B693
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E8ADB29CA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 01:38:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 713A12849F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 01:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37841DDC7;
-	Wed, 18 Sep 2024 01:38:17 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7130DAD55;
+	Wed, 18 Sep 2024 01:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WgB3+jiO"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9565723B0;
-	Wed, 18 Sep 2024 01:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A94723B0;
+	Wed, 18 Sep 2024 01:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726623496; cv=none; b=r/NEiPVnO7W72Z68WGRpW29C3yhg0aBt3XxsCtbLmKaqyXU1yxlhYmgfxj3uBgWb01iXDg67IHM7rFWIaB7hcDjCRwBlUlB5GccH5X4QS0C7I9v5bFWefKVUzQniaYLfBPehWqMtVfIpEW6kwqvXUw8o8rOL76AkZWyK0SNtL0c=
+	t=1726623041; cv=none; b=TSVNf4tTmCZmJ6N2WlTinEEge1kZSeFX94pXvj7d/6qQYDehd+yH9OJhOpP7bKd1cbCpUVnTpbOHIGjfcg0hxRTwEZzHcwgT8q8RbIbDRivH5kIvNPiHPwXalC7XjSVwKbZmuBToHudI2rwZUua3IpwsuIaSUgn78Tj3VUmIRxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726623496; c=relaxed/simple;
-	bh=6h/5sh8g6PzXThSEboHpnwPsFdNAKItWhvM2XS4n8Xo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RPW2E+ce3IKqsSI2A/uraCSTMBVsW5BnPQk9w7am/H3eq6GehTIitI4iHmefhVQBmRmFeQRcPEKs5vO0UC6k7B8UbEGb2zglkEFXEMBpu6Rwdoz/tQDkGaWh9wgecex27Tj0KVbnIYCJ0XEceeEczHIfBPByvoqYEV2AR4Yis0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X7h9W0CFlzFqn6;
-	Wed, 18 Sep 2024 09:37:51 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 726961800A0;
-	Wed, 18 Sep 2024 09:38:04 +0800 (CST)
-Received: from huawei.com (10.67.174.28) by kwepemd200013.china.huawei.com
- (7.221.188.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Wed, 18 Sep
- 2024 09:38:01 +0800
-From: Liao Chang <liaochang1@huawei.com>
-To: <mhiramat@kernel.org>, <oleg@redhat.com>, <andrii@kernel.org>,
-	<peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>
-Subject: [PATCH] uprobes: Improve the usage of xol slots for better scalability
-Date: Wed, 18 Sep 2024 01:27:52 +0000
-Message-ID: <20240918012752.2045713-1-liaochang1@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726623041; c=relaxed/simple;
+	bh=6sLG32ZEqRTa06GTyFt9bywhw1ZzJ1zgq3wy8VSnph8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s56Ey43VU0Az5Mmv9Wgo23lMeCtRtzUAF6vugVMZdxYAw12j1l0m/iCx+PGfIosOgbOtI4pFkyaAUPCmTsEZ7+wo+towj0tEDfl1Iy0bPRGORfosKazh3qzskVOYn419QV7PqGfEXV3f3ONbbUnhfPB2pFODCd+s/1Q+SK4lVYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WgB3+jiO; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-82aa8c36eefso294956339f.3;
+        Tue, 17 Sep 2024 18:30:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726623039; x=1727227839; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CsmNn5dg++oFHFAezsus4TU+AssoseH+2pzEpTsEOgA=;
+        b=WgB3+jiOxU8/yWJj9mVERETzJtn6wF3hChBsts5PKFZQvg5IYNTG9HsF6vc+LNpMW6
+         Nz7UkCatxF3XJ+znSPz+S4qi/OVRpuyVLWc3QLgj9r5ch4ZnlskoLNPYtkcXyjHApxWh
+         kVoIkAZljv9l0TqJtiAoa43l9TuEjbXnQwdyeP665VuAoTPgEvOXCv8j+ePsbvcasBHG
+         mw2kXlxlCRLH9eL8qQ0GQmkBihGw9gn3kAU6S3AxrG+uZz1YAPzZOe9adg6bShrr+yA1
+         icfYDNmPpEcQ6/o8t9/ic58rw0Ea1Iic/uEAlOu7rzjQwdXzryaPbSPsj6b0dga3+Y12
+         +Wng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726623039; x=1727227839;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CsmNn5dg++oFHFAezsus4TU+AssoseH+2pzEpTsEOgA=;
+        b=mi8gCr3YPIEH6WwhnPAkiam2SZNsRwCBifU/JTjWhZq6devaqnfWX0kmkUXIbheHon
+         Bjr47qw9p0Mm//CPqNukVskLdqEOl367IP+IlNtyAaXsNwZEkPWHXGN3QA80pSk+juNF
+         1mJzqg40v83FKgxAIhscf5Hbjk9H0/nLUkVb06PYefTU/2gw9ECii5fOeLRB5cqiG8qj
+         aGQTbSaMibjPCJvAHyT14draAIP5glN6iAUqwKqIlj3iWIrTeEHiVwc+w/HAi4tuIB2m
+         DnwzUizf0UfkMcO2gYF1zS0K09mdAa3Zu42ENcbGSb4SiBlJnRX/4T9Jf+V3Lrcl/1r4
+         nKVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVybBLnWBVtCT99ItWsRgyn+nE0L+vUrPA6ZnGvIn9jKPT0Erjanj9bAfu6BMul9vZ2iD3cZtGdg5G5IwJ8@vger.kernel.org, AJvYcCWFhHS2VUHD1XWyXMgB1lEo1pd99pLmRX1JnNfCFw1+BgxyOao2rO+tq6/2c1hqodbwowfXAptRMncr70wM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHylGGSz28Np7jAvGt7TVBQPZ5VHRD0kL0OwZlvy69rC74OdQI
+	+lWMHLyZ3PnDIpTW+BBV9Wo9GA7o2lIj9fAmAbIBEawtRmeelF20oCMRCxivy7eOKGzSBbhqKK6
+	DfZBfi3CjmZv5xjU265gC/v4Bq2k=
+X-Google-Smtp-Source: AGHT+IH+arwrYMMUiRQ7iDz1p8MmtCk5NY5GioMSJMKylZrwRZMJBVsiVdg6t3RHmGzslQrpXww0oOTa8SFimw7P4Zw=
+X-Received: by 2002:a05:6e02:b2c:b0:3a0:978b:e6b with SMTP id
+ e9e14a558f8ab-3a0978b112bmr104763985ab.21.1726623039436; Tue, 17 Sep 2024
+ 18:30:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+References: <20240913195132.8282-1-robdclark@gmail.com> <e6991910-5058-4ef0-bfdf-6d33953535dd@kernel.org>
+ <CAF6AEGvgS-DD0+qGX_Mud75aES4AQQjmWx2j2gyz7uakTpnp0w@mail.gmail.com> <59974e61-13f8-4080-850a-55e599c41cb5@kernel.org>
+In-Reply-To: <59974e61-13f8-4080-850a-55e599c41cb5@kernel.org>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 17 Sep 2024 18:30:27 -0700
+Message-ID: <CAF6AEGsVaq33wJzfnuvLWSPbmecx-j8a8FoCenKkBLMuqBTwdg@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/a6xx+: Insert a fence wait before SMMU table update
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, Akhil P Oommen <quic_akhilpo@quicinc.com>, 
+	Connor Abbott <cwabbott0@gmail.com>, Rob Clark <robdclark@chromium.org>, 
+	Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The kprobe handler allocates xol slot from xol_area and quickly release
-it in the single-step handler. The atomic operations on the xol bitmap
-and slot_count lead to expensive cache line bouncing between multiple
-CPUs. Given the xol slot is on the hot path for kprobe and kretprobe
-handling, the profiling results on some Arm64 machine show that nearly
-80% of cycles are spent on this. So optimizing xol slot usage will
-become important to scalability after the Andrii's series land.
+On Tue, Sep 17, 2024 at 4:37=E2=80=AFPM Konrad Dybcio <konradybcio@kernel.o=
+rg> wrote:
+>
+> On 17.09.2024 5:30 PM, Rob Clark wrote:
+> > On Tue, Sep 17, 2024 at 6:47=E2=80=AFAM Konrad Dybcio <konradybcio@kern=
+el.org> wrote:
+> >>
+> >> On 13.09.2024 9:51 PM, Rob Clark wrote:
+> >>> From: Rob Clark <robdclark@chromium.org>
+> >>>
+> >>> The CP_SMMU_TABLE_UPDATE _should_ be waiting for idle, but on some
+> >>> devices (x1-85, possibly others), it seems to pass that barrier while
+> >>> there are still things in the event completion FIFO waiting to be
+> >>> written back to memory.
+> >>
+> >> Can we try to force-fault around here on other GPUs and perhaps
+> >> limit this workaround?
+> >
+> > not sure what you mean by "force-fault"...
+>
+> I suppose 'reproduce' is what I meant
 
-This patch address this scalability issues from two perspectives:
+I haven't _noticed_ it yet.. if you want to try on devices you have,
+glmark2 seems to be good at reproducing..
 
-- Allocated xol slot is now saved in the thread associated utask data.
-  It allows to reuse it throughout the therad's lifetime. This avoid
-  the frequent atomic operation on the slot bitmap and slot_count of
-  xol_area data, which is the major negative impact on scalability.
+I think the reason is combo of high fps (on x1-85 most scenes are
+north of 8k fps) so you get a lot of context switches btwn compositor
+and glmark2.  Most scenes are just a clear plus single draw, and I
+guess the compositor is just doing a single draw/blit.  A6xx can be
+two draws/blits deep in it's pipeline, a7xx can be four, which maybe
+exacerbates this.
 
-- A garbage collection routine xol_recycle_insn_slot() is introduced to
-  reclaim unused xol slots. utask instances that own xol slot but
-  haven't reclaimed them are linked in a linked list. When xol_area runs
-  out of slots, the garbage collection routine travel the list to free
-  one slot. Allocated xol slots is marked as unused in single-step
-  handler. While the marking relies on the refcount of utask instance,
-  due to thread can't run on multiple CPUs at same time, therefore, it
-  is unlikely CPUs take the refcount of same utask, minimizing cache
-  line bouncing.
+> > we could probably limit
+> > this to certain GPUs, the only reason I didn't is (a) it should be
+> > harmless when it is not needed,
+>
+> Do we have any realistic perf hits here?
 
-  Upon thread exit, the utask is deleted from the linked-list, and the
-  associated xol slot will be free.
+I don't think so, we can't switch ttbr0 while the gpu is still busy so
+what the sqe does for CP_SMMU_TABLE_UPDATE _should_ be equivalent.
+Maybe it amounts to some extra CP cycles and memory read, but I think
+that should be negligible given that the expensive thing is that we
+are stalling the gpu until it is idle.
 
-Signed-off-by: Liao Chang <liaochang1@huawei.com>
----
- include/linux/uprobes.h |   4 +
- kernel/events/uprobes.c | 173 ++++++++++++++++++++++++++++++----------
- 2 files changed, 135 insertions(+), 42 deletions(-)
+> > and (b) I have no real good way to get
+> > an exhaustive list of where it is needed.  Maybe/hopefully it is only
+> > x1-85, but idk.
+> >
+> > It does bring up an interesting question about preemption, though
+>
+> Yeah..
 
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index e6f4e73125ff..87fa24c74eb8 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -77,6 +77,10 @@ struct uprobe_task {
- 	struct uprobe			*active_uprobe;
- 	unsigned long			xol_vaddr;
- 
-+	struct list_head		gc;
-+	refcount_t			slot_ref;
-+	int				insn_slot;
-+
- 	struct arch_uprobe              *auprobe;
- 
- 	struct return_instance		*return_instances;
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 86fcb2386ea2..5ba1bd3ad27f 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -111,6 +111,12 @@ struct xol_area {
- 	 * the vma go away, and we must handle that reasonably gracefully.
- 	 */
- 	unsigned long 			vaddr;		/* Page(s) of instruction slots */
-+	struct list_head		gc_list;	/* The list for the
-+							   garbage slots */
-+	spinlock_t			list_lock;	/* Hold for
-+							   list_add_rcu() and
-+							   list_del_rcu() on
-+							   gc_list */
- };
- 
- static void uprobe_warn(struct task_struct *t, const char *msg)
-@@ -1557,6 +1563,8 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
- 
- 	area->vaddr = vaddr;
- 	init_waitqueue_head(&area->wq);
-+	INIT_LIST_HEAD(&area->gc_list);
-+	spin_lock_init(&area->list_lock);
- 	/* Reserve the 1st slot for get_trampoline_vaddr() */
- 	set_bit(0, area->bitmap);
- 	atomic_set(&area->slot_count, 1);
-@@ -1613,37 +1621,91 @@ void uprobe_dup_mmap(struct mm_struct *oldmm, struct mm_struct *newmm)
- 	}
- }
- 
-+static __always_inline
-+struct uprobe_task *test_and_get_task_slot(struct uprobe_task *utask)
-+{
-+	return refcount_inc_not_zero(&utask->slot_ref) ? utask : NULL;
-+}
-+
-+static __always_inline
-+struct uprobe_task *test_and_put_task_slot(struct uprobe_task *utask)
-+{
-+	return refcount_dec_if_one(&utask->slot_ref) ? utask : NULL;
-+}
-+
-+static __always_inline
-+void put_task_slot(struct uprobe_task *utask)
-+{
-+	refcount_dec(&utask->slot_ref);
-+}
-+
-+static __always_inline
-+void get_task_slot(struct uprobe_task *utask)
-+{
-+	refcount_inc(&utask->slot_ref);
-+}
-+
-+/*
-+ * xol_recycle_insn_slot - recycle a slot from the garbage collection list.
-+ */
-+static int xol_recycle_insn_slot(struct xol_area *area)
-+{
-+	struct uprobe_task *utask;
-+	int slot = UINSNS_PER_PAGE;
-+
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(utask, &area->gc_list, gc) {
-+		/*
-+		 * The utask associated slot is in-use or recycling when
-+		 * utask associated slot_ref is not one.
-+		 */
-+		if (test_and_put_task_slot(utask)) {
-+			slot = utask->insn_slot;
-+			utask->insn_slot = UINSNS_PER_PAGE;
-+			clear_bit(slot, area->bitmap);
-+			atomic_dec(&area->slot_count);
-+			get_task_slot(utask);
-+			break;
-+		}
-+	}
-+	rcu_read_unlock();
-+
-+	return slot;
-+}
-+
- /*
-  *  - search for a free slot.
-  */
--static unsigned long xol_take_insn_slot(struct xol_area *area)
-+static int xol_take_insn_slot(struct xol_area *area)
- {
--	unsigned long slot_addr;
- 	int slot_nr;
- 
- 	do {
- 		slot_nr = find_first_zero_bit(area->bitmap, UINSNS_PER_PAGE);
--		if (slot_nr < UINSNS_PER_PAGE) {
--			if (!test_and_set_bit(slot_nr, area->bitmap))
--				break;
-+		if (slot_nr == UINSNS_PER_PAGE)
-+			slot_nr = xol_recycle_insn_slot(area);
-+
-+		if (slot_nr == UINSNS_PER_PAGE)
-+			wait_event(area->wq,
-+				   (atomic_read(&area->slot_count) <
-+				    UINSNS_PER_PAGE));
-+		else if (!test_and_set_bit(slot_nr, area->bitmap))
-+			break;
- 
--			slot_nr = UINSNS_PER_PAGE;
--			continue;
--		}
--		wait_event(area->wq, (atomic_read(&area->slot_count) < UINSNS_PER_PAGE));
-+		slot_nr = UINSNS_PER_PAGE;
- 	} while (slot_nr >= UINSNS_PER_PAGE);
- 
--	slot_addr = area->vaddr + (slot_nr * UPROBE_XOL_SLOT_BYTES);
- 	atomic_inc(&area->slot_count);
- 
--	return slot_addr;
-+	return slot_nr;
- }
- 
- /*
-  * xol_get_insn_slot - allocate a slot for xol.
-  * Returns the allocated slot address or 0.
-  */
--static unsigned long xol_get_insn_slot(struct uprobe *uprobe)
-+static unsigned long xol_get_insn_slot(struct uprobe_task *utask,
-+				       struct uprobe *uprobe)
- {
- 	struct xol_area *area;
- 	unsigned long xol_vaddr;
-@@ -1652,16 +1714,45 @@ static unsigned long xol_get_insn_slot(struct uprobe *uprobe)
- 	if (!area)
- 		return 0;
- 
--	xol_vaddr = xol_take_insn_slot(area);
--	if (unlikely(!xol_vaddr))
-+	/*
-+	 * The utask associated slot is recycling when utask associated
-+	 * slot_ref is zero.
-+	 */
-+	if (!test_and_get_task_slot(utask))
- 		return 0;
- 
-+	if (utask->insn_slot == UINSNS_PER_PAGE) {
-+		utask->insn_slot = xol_take_insn_slot(area);
-+		spin_lock(&area->list_lock);
-+		list_add_rcu(&utask->gc, &area->gc_list);
-+		spin_unlock(&area->list_lock);
-+	}
-+
-+	xol_vaddr = area->vaddr + (utask->insn_slot * UPROBE_XOL_SLOT_BYTES);
-+
- 	arch_uprobe_copy_ixol(area->pages[0], xol_vaddr,
- 			      &uprobe->arch.ixol, sizeof(uprobe->arch.ixol));
- 
- 	return xol_vaddr;
- }
- 
-+/*
-+ * xol_delay_free_insn_slot - Make the slot available for garbage collection
-+ */
-+static void xol_delay_free_insn_slot(void)
-+{
-+	struct xol_area *area = current->mm->uprobes_state.xol_area;
-+
-+	/*
-+	 * This refcount would't cause expensive cache line bouncing
-+	 * between CPUs, as it is unlikely that multiple CPUs take the
-+	 * slot_ref of same utask.
-+	 */
-+	put_task_slot(current->utask);
-+	if (waitqueue_active(&area->wq))
-+		wake_up(&area->wq);
-+}
-+
- /*
-  * xol_free_insn_slot - If slot was earlier allocated by
-  * @xol_get_insn_slot(), make the slot available for
-@@ -1670,35 +1761,31 @@ static unsigned long xol_get_insn_slot(struct uprobe *uprobe)
- static void xol_free_insn_slot(struct task_struct *tsk)
- {
- 	struct xol_area *area;
--	unsigned long vma_end;
--	unsigned long slot_addr;
-+	unsigned long flags;
-+	int slot_nr;
- 
- 	if (!tsk->mm || !tsk->mm->uprobes_state.xol_area || !tsk->utask)
- 		return;
- 
--	slot_addr = tsk->utask->xol_vaddr;
--	if (unlikely(!slot_addr))
--		return;
--
- 	area = tsk->mm->uprobes_state.xol_area;
--	vma_end = area->vaddr + PAGE_SIZE;
--	if (area->vaddr <= slot_addr && slot_addr < vma_end) {
--		unsigned long offset;
--		int slot_nr;
--
--		offset = slot_addr - area->vaddr;
--		slot_nr = offset / UPROBE_XOL_SLOT_BYTES;
--		if (slot_nr >= UINSNS_PER_PAGE)
--			return;
- 
--		clear_bit(slot_nr, area->bitmap);
--		atomic_dec(&area->slot_count);
--		smp_mb__after_atomic(); /* pairs with prepare_to_wait() */
--		if (waitqueue_active(&area->wq))
--			wake_up(&area->wq);
-+	spin_lock_irqsave(&area->list_lock, flags);
-+	list_del_rcu(&tsk->utask->gc);
-+	spin_unlock_irqrestore(&area->list_lock, flags);
-+	synchronize_rcu();
- 
--		tsk->utask->xol_vaddr = 0;
--	}
-+	slot_nr = tsk->utask->insn_slot;
-+	if (unlikely(slot_nr == UINSNS_PER_PAGE))
-+		return;
-+
-+	tsk->utask->insn_slot = UINSNS_PER_PAGE;
-+	clear_bit(slot_nr, area->bitmap);
-+	atomic_dec(&area->slot_count);
-+	smp_mb__after_atomic(); /* pairs with prepare_to_wait() */
-+	if (waitqueue_active(&area->wq))
-+		wake_up(&area->wq);
-+
-+	tsk->utask->xol_vaddr = 0;
- }
- 
- void __weak arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
-@@ -1779,8 +1866,12 @@ void uprobe_free_utask(struct task_struct *t)
-  */
- static struct uprobe_task *get_utask(void)
- {
--	if (!current->utask)
-+	if (!current->utask) {
- 		current->utask = kzalloc(sizeof(struct uprobe_task), GFP_KERNEL);
-+		current->utask->insn_slot = UINSNS_PER_PAGE;
-+		INIT_LIST_HEAD(&current->utask->gc);
-+		refcount_set(&current->utask->slot_ref, 1);
-+	}
- 	return current->utask;
- }
- 
-@@ -1978,7 +2069,7 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
- 	if (!try_get_uprobe(uprobe))
- 		return -EINVAL;
- 
--	xol_vaddr = xol_get_insn_slot(uprobe);
-+	xol_vaddr = xol_get_insn_slot(utask, uprobe);
- 	if (!xol_vaddr) {
- 		err = -ENOMEM;
- 		goto err_out;
-@@ -1988,10 +2079,8 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
- 	utask->vaddr = bp_vaddr;
- 
- 	err = arch_uprobe_pre_xol(&uprobe->arch, regs);
--	if (unlikely(err)) {
--		xol_free_insn_slot(current);
-+	if (unlikely(err))
- 		goto err_out;
--	}
- 
- 	utask->active_uprobe = uprobe;
- 	utask->state = UTASK_SSTEP;
-@@ -2340,7 +2429,7 @@ static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
- 	put_uprobe(uprobe);
- 	utask->active_uprobe = NULL;
- 	utask->state = UTASK_RUNNING;
--	xol_free_insn_slot(current);
-+	xol_delay_free_insn_slot();
- 
- 	spin_lock_irq(&current->sighand->siglock);
- 	recalc_sigpending(); /* see uprobe_deny_signal() */
--- 
-2.34.1
+The KMD does setup an xAMBLE to clear the perfcntrs on context switch.
+We could maybe piggy back on that, but I guess we'd have to patch in
+the fence value to wait for?
 
+> Do we know what windows does here?
+
+not sure, maybe akhil has some way to check.  Whether a similar
+scenario comes up with windows probably depends on how the winsys
+works.  If it dropped frames when rendering >vblank rate, you'd get
+fewer context switches.
+
+BR,
+-R
+
+> Konrad
 
