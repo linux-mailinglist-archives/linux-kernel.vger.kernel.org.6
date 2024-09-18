@@ -1,75 +1,55 @@
-Return-Path: <linux-kernel+bounces-332535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C410E97BAEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:34:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C19397BAF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 521621F22171
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:34:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF1D6B2988D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219851836D9;
-	Wed, 18 Sep 2024 10:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A487188589;
+	Wed, 18 Sep 2024 10:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O41byaSe"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="p5ZHG/z2"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D8317C9B8
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB43B187868;
+	Wed, 18 Sep 2024 10:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726655667; cv=none; b=a65aXBKLcpLi07eWBBRlv8uJ5JSY4EJqy+1FZ+ePZK3KkjN0CEJxPLJ3P4knPa4OAnb1hEBtvtWzlwdcRsBM5RCf0dVGWkWkRjGibVTIZgvvohwY8wtWqbc0ihTkKV5kYaPoKinFozLWs4Uq0xtfSt+MZLeJ7+x1HMqAjCZrQxw=
+	t=1726655745; cv=none; b=WbLl1a+Cy5iiA4++HHc2hXL7zX7COGKRWVNzQf9+KTnKPEsxEvLsUGuARupORTmyuA+V1p5dWBvZF3Bl/0TWjqjLCqEJN4HSBdImtfNyWASmK/fyDP+KtoGwC5jUnWecz/+uDmIV/45cKbZVP5fVSCM/aPkJP7629dbgCkjBTB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726655667; c=relaxed/simple;
-	bh=/O6DlyybLlXWfSWwnwV5RQBtFaKboK8lm6EQb8R2/cw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=V3Okexu7JW3ttPD1YihT6HgMcTH2dCh5EKbfGCkN6iJMuzGnsTiW8fMffh9hCNgSD2D3WzoMh7On6htq/9lC+evs9paOdRQ4KfL1SS9/Ia0umAZeT4f5qg/MINM0toSYSou4XWrmu20S3E+O+wV6U8A+Vigx1XfSlnXpsS9D8T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O41byaSe; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37747c1d928so3468292f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 03:34:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726655664; x=1727260464; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Yhv6au6+BMMuSCn4gH7YR+GWvforwWtmSXKV5oKbYG0=;
-        b=O41byaSecUsiaNmh5Lato3q25FnUHC1gNM5C0IEB5qXKr4NZ4nxmczscpUGWfcTnkT
-         0vdvc+FfrhiJrqqrAvpQH6xwalBxeM9dPHKbLxtpOvsu4CisOESi0gCIZhm85INbx+O1
-         dscw4FOWEeZ23qjwHTgebEENpEoiWk5YHLqQu7bru+ZBVqWRZQn0i7Tu96lzK92WPwWy
-         1cuzUTCYA8gPoC5SnS5m+A7jhF8x/vGUAri+YsIAh1eDiKZBYEQArSIv/CYFPSzeSIP4
-         LtEExLlh5LFt9P4VhH3OZ9c8PUF1JokTIJYCljHh/VQJOwKqxPNjqvI1dJPTYRaa9dz6
-         qXow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726655664; x=1727260464;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Yhv6au6+BMMuSCn4gH7YR+GWvforwWtmSXKV5oKbYG0=;
-        b=ZljPAHylbP/YI+R97CIlcBMbxST3QuIFinMj2jPcZYhc44CLWZGFERBnrzZkzP5T2z
-         yqkKv7RE2THwDTxMJ1ogSRHV/NWh9VI29WOzpRXBRBPCLPdWpBREssYqLhWnUEcNfTM5
-         i/AgAleKRwFHeXfg/Nw63lq1sKsugDCNEW+FBHF8NMvKkyMIodWFwrq0rrV88bX1bG/U
-         ri3QMdsTN82pwXL7BchfBhx7IHQmWp56Ccel5l671/Sfs1c25Z6j2e0UlYwh7o+nrlZy
-         q2v7YrjjlcYtBFoLyTae+rFwAQcAtndAgRFcGkuFWdif4bGB5MO4o+t8mDEU5Yy214Zc
-         jmmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXL4Srn+4Stf6WdrOd7ZKtPrdCZb2hVU0KZFSWsdwAmR4itFHknqoJl0yr8IYFDXojbJc/WFVinqdX5+30=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8axJVBwoYE+fOt02ltym/yWUQKEnwsXbmzF5PxCuAXqQ4stJU
-	fAY+/FtE+ySm7TK8mDHkvLDFzio4UWJPXWynDsv8RvqXZ7zvWXuQUw1l0cwy7pI=
-X-Google-Smtp-Source: AGHT+IEyqcWtBSDcanJ0r21CbblfIqL9+DPRLgNJ8aBlTro3Q2HnHsyj9xJ3yRk7ecOioh7AK4K7rQ==
-X-Received: by 2002:adf:e891:0:b0:366:f8e7:d898 with SMTP id ffacd0b85a97d-378d625a40dmr9932285f8f.50.1726655663507;
-        Wed, 18 Sep 2024 03:34:23 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:2782:e782:f1c:dcad? ([2a01:e0a:982:cbb0:2782:e782:f1c:dcad])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e780007dsm11989799f8f.82.2024.09.18.03.34.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Sep 2024 03:34:23 -0700 (PDT)
-Message-ID: <d9e0ade6-8a7e-4ba4-974f-142ad246ce5d@linaro.org>
-Date: Wed, 18 Sep 2024 12:34:22 +0200
+	s=arc-20240116; t=1726655745; c=relaxed/simple;
+	bh=lDiruJDIeozpCeyH256sz0XdudyQC5N+y56SHyYBa34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V54fsgaH0PxPL+QzMH/pRRWa05Tfnajdq1uS5BawApGBDDUbNYN7mQKUTYgqWzrnoMkDKkRvrReWE9gFQ+78bM0Fu2S2GCyMIMhsX1XvzHFvGCvQWPBpiutjDZr6aDGadrIs9mXGDI1u3ToMRVM1b5xTF/MMVhUqvm5wNssrbMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=p5ZHG/z2; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1726655710; x=1727260510; i=quwenruo.btrfs@gmx.com;
+	bh=OOTkpPvPxh7IrDhvEwb49//8qX+njeKLw2F5MGSIajQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=p5ZHG/z230mWALmn7YaaHwU4YcuQg19GGrE71lriWhKzokW467ucciq7UvZIK3Nk
+	 W3g2pjv03Ak60T8MT8eSshzzneOT5lIgxCRf99NK3BBXY3jZesIJJI2g89XWaX9/a
+	 lwVfv9lpiCtx+NlTWoRJoAsx9QB75byHfK+hBtKbW4qhMlym2Z3iU10T8Mu+EVaBF
+	 C4nga941jdbahoJHEvy5Dv7QMrZ50Sb9apkZ6rsRRcUPMyipMzwsqAY/5I2rgJ1ff
+	 SveR+23/lxANL+6qBH9tUDl9I8ThNhGIoNEjfY/3nl6FoUJ1BZAUVK5OJZZWirCTo
+	 s+wucqdB9d9gtuo67w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx004
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MGz1V-1smBKf0G3v-004Fm3; Wed, 18
+ Sep 2024 12:35:10 +0200
+Message-ID: <50a3b32c-137b-4781-9e56-91f74c44eb66@gmx.com>
+Date: Wed, 18 Sep 2024 20:05:05 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,93 +57,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: drivers/spmi/spmi-pmic-arb.c:1782 spmi_pmic_arb_register_buses()
- error: uninitialized symbol 'ret'.
-To: Dan Carpenter <dan.carpenter@linaro.org>, oe-kbuild@lists.linux.dev,
- Abel Vesa <abel.vesa@linaro.org>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
- linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
-References: <67cf80cf-d96d-4249-ac34-6085d4b32948@suswa.mountain>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <67cf80cf-d96d-4249-ac34-6085d4b32948@suswa.mountain>
+Subject: Re: [syzbot] [btrfs?] general protection fault in write_all_supers
+To: Lizhi Xu <lizhi.xu@windriver.com>,
+ syzbot+56360f93efa90ff15870@syzkaller.appspotmail.com
+Cc: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <0000000000008c5d090621cb2770@google.com>
+ <20240914064158.75664-1-lizhi.xu@windriver.com>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <20240914064158.75664-1-lizhi.xu@windriver.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:XpFjl0qtLbSh6p+LQZjs7xyka0QLtJG6Y/6XOV8aEBTnM11yZ+m
+ y+C8bXDHwO+JFOgEDcBHs95hZ4Tfiki4BDGoUW16QOCWwMJuZ3hlFl2C4IFIvR2KCFuznpB
+ oA4S++110zEethLSxVYl9BrovXND65vrRXffhthm/IJOhVxUO6+wWxgjv7hsvwlnIbjSG1+
+ MpkBKDTQXBsVnTf9iwLmg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:caYQX6sF+Fg=;wXG2WlI5D0KyglbWlKf+2fg2G7U
+ lfEbJ0N1KP/aarP4qj7XGhuS38IULV0U9+LLPTtM+fxvSektn3j9/KjKMU9lWjIDxdFtuth66
+ 76+CUKw7lyOsDQ99QwHkuFaxxdGv9RRiQ2Yw0J75GsjHxtNhl+d3dPENZ6ZuEK6TTBFSE3mN+
+ ZLVoHQk9y9AAktv2+YOo+jPY4f+dghFtZtM6CQuIAwlUmYfjGEPEJZr1LG384VboUEZXgMtd6
+ aRGXVf4tzqkll5pZg3TkU5La7/RIGd4CMfaBoCCMSRVRyeKbtywa9gVnQ6cObA0Ew9eQXQIPN
+ khcbYrWpPKpdDOJ8CTVsnyp+De3ffMHfHlxGluqfkK3LoXi4X4YhFQE/wdLRWQ7XWQnp425tX
+ 1s08sg83aHlbvohx4Rb/mwxmQu1z7sxa5Oc19bhd4akEePdp0KQ5Y+4bgPGZ2xPV89NjwYOnI
+ eeuD0L1F8xS44fcBUNZ19Lgziu7nLyFVsOpVdfWnxD6qULoIg0sJFhZKs9A2TJd2MrNCV418O
+ E4+ea+TpuXHEmeBjDG7SJdmk0QCyzjnR1SEmsdGsamTk/mYFOqVDVdoakHK0G0j2IUghOkOpe
+ W0zMPCIQWJOfbqk4cVw/PkD/AK9jTfltpkdzvSTW+HabrdNVMZqa5vwtCOhBq+BIcAhfaB1kS
+ clYpvAX61ZfAait0g1GPZx4dEOFyHGXYjRF3myuWjK/kWsDCcMIRFllTaVzbvHjt3wNjsyP/l
+ mbTWpUFR6bARddGsbSlxctKpYRKMjfvJfmM3YiSwgP7mAkLjRLBRunnglmoBbD3iodCGjGcCG
+ V6XD39Fh9oboWYDV0ZoYew/w==
 
-On 18/09/2024 12:29, Dan Carpenter wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   adfc3ded5c33d67e822525f95404ef0becb099b8
-> commit: 9799873717398e8fa1727482e578b9d777da645e spmi: pmic-arb: Add multi bus support
-> config: mips-randconfig-r072-20240916 (https://download.01.org/0day-ci/archive/20240916/202409162313.TnpH4qKB-lkp@intel.com/config)
-> compiler: mips64-linux-gcc (GCC) 14.1.0
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202409162313.TnpH4qKB-lkp@intel.com/
-> 
-> smatch warnings:
-> drivers/spmi/spmi-pmic-arb.c:1782 spmi_pmic_arb_register_buses() error: uninitialized symbol 'ret'.
-> 
-> vim +/ret +1782 drivers/spmi/spmi-pmic-arb.c
-> 
-> 9799873717398e8 Abel Vesa 2024-05-07  1762  static int spmi_pmic_arb_register_buses(struct spmi_pmic_arb *pmic_arb,
-> 9799873717398e8 Abel Vesa 2024-05-07  1763  					struct platform_device *pdev)
-> 9799873717398e8 Abel Vesa 2024-05-07  1764  {
-> 9799873717398e8 Abel Vesa 2024-05-07  1765  	struct device *dev = &pdev->dev;
-> 9799873717398e8 Abel Vesa 2024-05-07  1766  	struct device_node *node = dev->of_node;
-> 9799873717398e8 Abel Vesa 2024-05-07  1767  	struct device_node *child;
-> 9799873717398e8 Abel Vesa 2024-05-07  1768  	int ret;
-> 9799873717398e8 Abel Vesa 2024-05-07  1769
-> 9799873717398e8 Abel Vesa 2024-05-07  1770  	/* legacy mode doesn't provide child node for the bus */
-> 9799873717398e8 Abel Vesa 2024-05-07  1771  	if (of_device_is_compatible(node, "qcom,spmi-pmic-arb"))
-> 9799873717398e8 Abel Vesa 2024-05-07  1772  		return spmi_pmic_arb_bus_init(pdev, node, pmic_arb);
-> 9799873717398e8 Abel Vesa 2024-05-07  1773
-> 9799873717398e8 Abel Vesa 2024-05-07  1774  	for_each_available_child_of_node(node, child) {
-> 9799873717398e8 Abel Vesa 2024-05-07  1775  		if (of_node_name_eq(child, "spmi")) {
-> 9799873717398e8 Abel Vesa 2024-05-07  1776  			ret = spmi_pmic_arb_bus_init(pdev, child, pmic_arb);
-> 9799873717398e8 Abel Vesa 2024-05-07  1777  			if (ret)
-> 9799873717398e8 Abel Vesa 2024-05-07  1778  				return ret;
-> 9799873717398e8 Abel Vesa 2024-05-07  1779  		}
-> 9799873717398e8 Abel Vesa 2024-05-07  1780  	}
-> 9799873717398e8 Abel Vesa 2024-05-07  1781
-> 9799873717398e8 Abel Vesa 2024-05-07 @1782  	return ret;
-> 
-> Is it possible to not have an spmi node?
 
-It's possible but not allowed per the bindings.
 
-Neil
+=E5=9C=A8 2024/9/14 16:11, Lizhi Xu =E5=86=99=E9=81=93:
+> if we have IGNOREDATACSUMS then don't need to backup csum root
+>
+> #syz test
+>
+> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+> index a6f5441e62d1..415ad3b07032 100644
+> --- a/fs/btrfs/disk-io.c
+> +++ b/fs/btrfs/disk-io.c
+> @@ -1679,7 +1679,6 @@ static void backup_super_roots(struct btrfs_fs_inf=
+o *info)
+>
+>   	if (!btrfs_fs_compat_ro(info, BLOCK_GROUP_TREE)) {
+>   		struct btrfs_root *extent_root =3D btrfs_extent_root(info, 0);
+> -		struct btrfs_root *csum_root =3D btrfs_csum_root(info, 0);
+>
+>   		btrfs_set_backup_extent_root(root_backup,
+>   					     extent_root->node->start);
+> @@ -1688,11 +1687,15 @@ static void backup_super_roots(struct btrfs_fs_i=
+nfo *info)
+>   		btrfs_set_backup_extent_root_level(root_backup,
+>   					btrfs_header_level(extent_root->node));
+>
+> -		btrfs_set_backup_csum_root(root_backup, csum_root->node->start);
+> -		btrfs_set_backup_csum_root_gen(root_backup,
+> -					       btrfs_header_generation(csum_root->node));
+> -		btrfs_set_backup_csum_root_level(root_backup,
+> -						 btrfs_header_level(csum_root->node));
+> +		if (!btrfs_test_opt(info, IGNOREDATACSUMS)) {
 
-> 
-> 9799873717398e8 Abel Vesa 2024-05-07  1783  }
-> 
+This doesn't looks sane to me.
 
+IGNOREDATACSUMS is only set with rescue=3Didatacsums mount option, which
+relies the fs to be fully RO (not any writeback, including any log
+replay), and it's not allowed to be remounted RW.
+
+If we're hitting a missing csum root, and IGNOREDATACSUMS is applied
+here, I'm wondering why we're even writing a super block.
+
+This looks like a deeper problem, not just a NULL pointer dereference,
+but some logic problem.
+
+Thanks,
+Qu
+
+> +			struct btrfs_root *csum_root =3D btrfs_csum_root(info, 0);
+> +
+> +			btrfs_set_backup_csum_root(root_backup, csum_root->node->start);
+> +			btrfs_set_backup_csum_root_gen(root_backup,
+> +						       btrfs_header_generation(csum_root->node));
+> +			btrfs_set_backup_csum_root_level(root_backup,
+> +							 btrfs_header_level(csum_root->node));
+> +		}
+>   	}
+>
+>   	/*
+>
 
