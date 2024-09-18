@@ -1,110 +1,207 @@
-Return-Path: <linux-kernel+bounces-332417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE0E497B96F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:36:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E46D897B979
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39BDEB21F7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:36:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5974282D70
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0E5176FA0;
-	Wed, 18 Sep 2024 08:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D4E17166E;
+	Wed, 18 Sep 2024 08:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lH/May/h"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="iifoiFoa"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A9F14D6E6;
-	Wed, 18 Sep 2024 08:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5353317798F;
+	Wed, 18 Sep 2024 08:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726648571; cv=none; b=Hespwo7uJ4i1JrPcXbTz3c1qOgQlHq9CWxJ4aFdKTGmgTrivhoHXtMkDzc0RJ3ZZGaGFOaiEDpITKc98/DO7NC5czjdzx4EbwLDpCeIY1USp5UVmkCIl2PBf3Qv1pQJmCr+Vv1xOG/nHDXXSI41dZ4COf+vRwAauREpVT22JG7g=
+	t=1726648603; cv=none; b=OTg1Z6PZCGdw4Rm+rYupLakLA4UzGQxpkmGNpyT29IoTvhWHmRCIHakqMrOxBicRTOAdcfJ1rCShH02Qt3pjucsKR1GYWEzsVBHqC8QsU72j+wqGJF50xsVUkmFbw1htNVGOVns65x8edSvEfQ52pqIYssg4OVCPPuovvm3ge8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726648571; c=relaxed/simple;
-	bh=dfSnH0Yclqt/UhS8gXqBY0B33tPXDhXZ/PpPQRDjFjk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eEon27dvodQX579Y8jIfNLqR0Uc1vNFZtgrLHHe4hGFd1I8o3pYfDRFRllhl0gJp3fKq6sFo5ydGsre+6dgIi39AhTQP6qaOL64cdAyDxAbWhZYnc/EddPVASw/iD15GC/hZuswmv4zkIY6P0/OIkiUYjYqg7pC9cmaEqrV1u6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=lH/May/h; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48I7tfcD012633;
-	Wed, 18 Sep 2024 08:35:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:mime-version:content-type
-	:content-transfer-encoding; s=corp-2023-11-20; bh=txkwLOI4wL6wdg
-	kEojth4TMSyAyDul66S+5Qvppat+4=; b=lH/May/hTkNANBJa/jX/smac6dbQue
-	BsUTDvRFfKUJ/asY5N355r1TKEZgMxseABTNvKJ19MZHs1uO2RGXa/r1Txj13SHj
-	32sCYkEXytM3hyQcCl1Mj5dVCt/yQipSOtasQeGgT2qhd5vq9Q13GQBdgp+MOvmS
-	G3e83DBXOOFKRbyCsemZuFRGoA3CtOyPyZz45E6lEPEyaOKLyWPrwTMyDfcW47D/
-	vKlNEBSzqEftCKKdJp9I4mS6TOkf1+OAKEofG+1qav1zBXLe3ftKBiTxzBG1UToC
-	YjPAKjRenO+ffHV8ZP8cNU//zPTg2zbBoBqkMmhPRwCAi5IoZzZgEVLA==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41n3pdrdhk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 18 Sep 2024 08:35:57 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48I8W3xF011242;
-	Wed, 18 Sep 2024 08:35:56 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41nyb7ysy4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 18 Sep 2024 08:35:56 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48I8Zu45022467;
-	Wed, 18 Sep 2024 08:35:56 GMT
-Received: from lab61.no.oracle.com (lab61.no.oracle.com [10.172.144.82])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 41nyb7ystx-1;
-	Wed, 18 Sep 2024 08:35:56 +0000
-From: =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-        Allison Henderson <allison.henderson@oracle.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, rds-devel@oss.oracle.com
-Subject: [MAINLINE 0/2] Enable DIM for legacy ULPs and use it in RDS
-Date: Wed, 18 Sep 2024 10:35:50 +0200
-Message-ID: <20240918083552.77531-1-haakon.bugge@oracle.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1726648603; c=relaxed/simple;
+	bh=SPlYo2wbVPtywFZJvGZL5i8i+ocFuBwmMn6s5v97xHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gbpA+aeVes0xDbMdMQC35PPLtA2zo9scLPQX1HktqNOfHblRwXr8ASRqVfKJt+9PtzdNM0OycdmQJAEVCaF7oZLHLnU6/ZEUoXo72eNe5Ux+IEI8PFGELD9CWvvSRmVdqZItuZQ3kdOVQUFxKGK70WlSrQaRcSyFlGnQG91he2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=iifoiFoa; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 48I8ZpZx1114904
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 18 Sep 2024 01:35:52 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 48I8ZpZx1114904
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024091601; t=1726648555;
+	bh=x2GclNT1jGzmcwnuPezDBelGlqN1/8ggygWx7Pfpj6A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iifoiFoays4n2azeZw/XhgYRM2pwAMUNJTTSYdaIl+wLZlRFZye+Ff6YDMk8jblpR
+	 FCMuZZEJzGngGPObV982xZ8nFfvP+GkfHvPiLkPDOzwCrXdyKO6Zt2b1FdZaLYA6d0
+	 4yIJlgFYqG7Ew/MdHaW1bDCBYU8PztXl0uwwRFTqbGIF8DKXVBwympsBtbeURKIIut
+	 W9w4bnV1Q50Zs4ZV138U7SjEk4oklNRFCOHuLnBQnUwiRTt3umeYpoRPI6lCJj1czi
+	 3xz6v9eutDFpTTn4Dswsg5z8gRav0GmzEheCza9k6KMYunAb33RLiOFqyz6yip0tAN
+	 lE4zIHGzntXmw==
+Message-ID: <d65e62d2-ca64-4b29-8656-bb8411fe837d@zytor.com>
+Date: Wed, 18 Sep 2024 01:35:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/25] KVM: VMX: Set intercept for FRED MSRs
+To: Sean Christopherson <seanjc@google.com>
+Cc: Chao Gao <chao.gao@intel.com>, Xin Li <xin3.li@intel.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        pbonzini@redhat.com, corbet@lwn.net, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+        x86@kernel.org, hpa@zytor.com, shuah@kernel.org, vkuznets@redhat.com,
+        peterz@infradead.org, ravi.v.shankar@intel.com
+References: <20240207172646.3981-1-xin3.li@intel.com>
+ <20240207172646.3981-8-xin3.li@intel.com> <ZiJzFsoHR41Sd8lE@chao-email>
+ <ZmoT0jaX_3Ww3Uzu@google.com>
+ <feefa9d1-f266-414f-bb7b-b770ef0d8ec6@zytor.com>
+ <ZuNJlzXntREQVb3n@google.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <ZuNJlzXntREQVb3n@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-18_06,2024-09-16_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=513 bulkscore=0
- adultscore=0 malwarescore=0 suspectscore=0 phishscore=0 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2408220000 definitions=main-2409180053
-X-Proofpoint-GUID: muVxEvSj4GGiDQq0Str0D8K6DEwSQLes
-X-Proofpoint-ORIG-GUID: muVxEvSj4GGiDQq0Str0D8K6DEwSQLes
 
-The Dynamic Interrupt Moderation mechanism can only be used by ULPs
-using ib_alloc_cq() and family. We extend DIM to also cover legacy
-ULPs using ib_create_cq(). The last commit takes advantage of this end
-uses DIM in RDS.
+>> MSR_IA32_FRED_SSP0 is an alias of the CET MSR_IA32_PL0_SSP and likely to
+>> be used in the same way as FRED RSP0, i.e., host FRED SSP0 _should_ be
+>> restored in arch_exit_to_user_mode_prepare().  However as of today Linux
+>> has no plan to utilize kernel shadow stack thus no one cares host FRED
+>> SSP0 (no?).  But lets say anyway it is host's responsibility to manage
+>> host FRED SSP0, then KVM only needs to take care of guest FRED SSP0
+>> (just like how KVM should handle guest FRED RSP0) even before the
+>> supervisor shadow stack feature is advertised to guest.
+> 
+> Heh, I'm not sure what your question is, or if there even is a question.  KVM
+> needs to context switch FRED SSP0 if FRED is exposed to the guest, but presumably
+> that will be done through XSAVE state?  If that's the long term plan, I would
+> prefer to focus on merging CET virtualization first, and then land FRED virtualization
+> on top so that KVM doesn't have to carry intermediate code to deal with the aliased
+> MSR.
 
-Håkon Bugge (2):
-  RDMA/core: Enable legacy ULPs to use RDMA DIM
-  rds: ib: Add Dynamic Interrupt Moderation to CQs
+You mean the following patch set, right?
 
- drivers/infiniband/core/cq.c    |  7 +++++--
- drivers/infiniband/core/cq.h    | 16 ++++++++++++++++
- drivers/infiniband/core/verbs.c |  6 ++++++
- net/rds/ib_cm.c                 | 10 ++++++++++
- 4 files changed, 37 insertions(+), 2 deletions(-)
- create mode 100644 drivers/infiniband/core/cq.h
+https://lore.kernel.org/kvm/20240531090331.13713-1-weijiang.yang@intel.com/
 
---
-2.43.5
+I think it's probably better to do so.  Otherwise a patch to explicitly
+save/restore FRED SSP0 would be needed before the CET patch set lands
+and then reverted immediately after:
+
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index f828f03d48ab..c790cb7a7d6b 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -1343,8 +1343,10 @@ void vmx_prepare_switch_to_guest(struct kvm_vcpu 
+*vcpu)
+
+         wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
+
+-       if (cpu_feature_enabled(X86_FEATURE_FRED) && guest_can_use(vcpu, 
+X86_FEATURE_FRED))
++       if (cpu_feature_enabled(X86_FEATURE_FRED) && guest_can_use(vcpu, 
+X86_FEATURE_FRED)) {
+                 wrmsrns(MSR_IA32_FRED_RSP0, vmx->msr_guest_fred_rsp0);
++               wrmsrns(MSR_IA32_FRED_SSP0, vmx->msr_guest_fred_ssp0);
++       }
+  #else
+         savesegment(fs, fs_sel);
+         savesegment(gs, gs_sel);
+@@ -1393,6 +1395,8 @@ static void vmx_prepare_switch_to_host(struct 
+vcpu_vmx *vmx)
+         if (cpu_feature_enabled(X86_FEATURE_FRED) && 
+guest_can_use(&vmx->vcpu, X86_FEATURE_FRED)) {
+                 vmx->msr_guest_fred_rsp0 = read_msr(MSR_IA32_FRED_RSP0);
+                 fred_sync_rsp0(vmx->msr_guest_fred_rsp0);
++
++               vmx->msr_guest_fred_ssp0 = read_msr(MSR_IA32_FRED_SSP0);
+         }
+  #endif
+         load_fixmap_gdt(raw_smp_processor_id());
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index 9012428984de..d1b9352f56c7 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -282,6 +282,7 @@ struct vcpu_vmx {
+         u64                   msr_host_kernel_gs_base;
+         u64                   msr_guest_kernel_gs_base;
+         u64                   msr_guest_fred_rsp0;
++       u64                   msr_guest_fred_ssp0;
+  #endif
+
+         u64                   spec_ctrl;
+
+> 
+> Ugh, but what happens if a CPU (or the host kernel) supports FRED but not CET SS?
+> Or is that effectively an illegal combination?
+
+The FRED Spec says:
+
+IA32_FRED_SSP1, IA32_FRED_SSP2, and IA32_FRED_SSP3 (MSR indices 1D1H–
+1D3H). Together with the existing MSR IA32_PL0_SSP (MSR index 6A4H), 
+these are the FRED SSP MSRs.
+
+The FRED SSP MSRs are supported by any processor that enumerates
+CPUID.(EAX=7,ECX=1):EAX.FRED[bit 17] as 1. If such a processor does not 
+support CET, FRED transitions will not use the MSRs (because shadow 
+stacks are not enabled), but the MSRs would still be accessible using 
+RDMSR and WRMSR.
+
+
+So they are independent, just that FRED SSP MSRs are NOT used if
+supervisor shadow stacks are not enabled (obviously Qemu can be
+configured to not advertise CET but FRED).
+
+When FRED is advertised to a guest, KVM should allow FRED SSP MSRs
+accesses through disabling FRED SSP MSRs interception no matter whether
+supervisor shadow stacks are enabled or not.
+
+Thanks!
+     Xin
 
 
