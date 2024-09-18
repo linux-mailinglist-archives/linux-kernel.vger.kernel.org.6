@@ -1,146 +1,143 @@
-Return-Path: <linux-kernel+bounces-332216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C776997B6E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:44:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBFE97B6FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0683A1C21E12
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 02:44:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59CFC2812C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 02:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBF41386D8;
-	Wed, 18 Sep 2024 02:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909A8524B0;
+	Wed, 18 Sep 2024 02:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="DC5q6J7Y"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qa1I5ZYI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD359443;
-	Wed, 18 Sep 2024 02:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D35E184F
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 02:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726627467; cv=none; b=DiA52yepS2boZVsXe8GX86ae8PZHfLOHzLOAldwz9XkWQHxagRpTtswh4Bg8GBiXiT9JYtAD+qqoTHCUbVSHdUwYVD3CQBxiXvgSOM7iyMmk6yeISLGELATisGxYuEjgS/ThdeqUmLuUuAWCv4FbjnkWtJhV8yKucHVIhj9Gr74=
+	t=1726628189; cv=none; b=XUdMmwxmFGQ142SxCNOnHUyKox5e/2eMTd345Fh4bDAHF53Pg4sRreQ2Xp4bluLjYs95aHQkvK/D8zAwEByIkgLFJNpA6dujP2H1XLUOrLaurh0eZK0Pz7w5T9OeGnthu32AId+shK+p0OgikG2RUAl0aR061ag6Bn28wIx+GTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726627467; c=relaxed/simple;
-	bh=gUf+bO349HypZdQuDEBPLI9WPsgqDVm+lcuiUQhUEL0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pQIG+0Sxkl2Jz+KmocdwwDY1a2efTE4jHPxzzdPZYMSo6aekRPzUh4xRDq2GUsjdI6m9KFHhT+jSTfyedKTteBvU0r3IFrQUPGBxOYomZ2hq4vTrYHdqzGxrwnTmNxSMDyF4kZueVKTdnl6LciPVkb1avoMruIIa9nkS+czeZ2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=DC5q6J7Y; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: e66e2080756711ef8b96093e013ec31c-20240918
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=ZBNvO1VXvf6r4zj/Yom0yxKi6CLuHylMg/ERkYUCU1s=;
-	b=DC5q6J7YdjWtksDTcMuXLY60dZ2U1BH7tGcfJORXYW2sl7hv8BdtHrsQFrjN9L2kownijtRXfKrXTdLqZb+0BSkcDhB46H4LrMQNcwuiwgFzm3PbKH9F4LXZVbuupGYbQMgx5GSziMP/wmiSNI4YV29IWHGKdYt2xnSpF6u20Yw=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:53a19405-38ed-4346-9670-25a95d397bb6,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:bdf41bc0-d7af-4351-93aa-42531abf0c7b,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: e66e2080756711ef8b96093e013ec31c-20240918
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1160952256; Wed, 18 Sep 2024 10:44:17 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 18 Sep 2024 10:44:15 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Wed, 18 Sep 2024 10:44:10 +0800
-Message-ID: <9caff3d5-22af-3481-d2af-6afb4abd49d7@mediatek.com>
-Date: Wed, 18 Sep 2024 10:44:10 +0800
+	s=arc-20240116; t=1726628189; c=relaxed/simple;
+	bh=jfV1RhFfuwcL2DBL7JBs5X8V0JAe8SDgKzVTqryCgYM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=kJOEazKfA5RNX0+VRLTBb6DujOgQLreY0OPJ9NfBn/j1Mq8WW91ontoAdk2X452/PKsThCYvWrP7lD+QB1pQY5lDJcVlikSHDYSX7ps3vsPJAcgsXPEbgvQ+Et9XZbLDF8K2ZiZJFkp7lFuVvZX0A4VeVDainPZufFo4j62asa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qa1I5ZYI; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726628188; x=1758164188;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=jfV1RhFfuwcL2DBL7JBs5X8V0JAe8SDgKzVTqryCgYM=;
+  b=Qa1I5ZYIK11vGHeS33FMqsjCmJh0O7Bm2xHEpbO3qd29JQPEMsHkdpOr
+   UFmSEXXX9aWey0Wb1gZc95/D2O3o63LtZbLa4RYht5gfxJ/rKHYLuXMs7
+   sK2fxr9Ob2KSOuDKBh6oUZh93UmQzUD0qXDeY+7IJVt18zZVWB5bPCzGa
+   dcO3LCI9QwyB+TxbJiUE6lOj0R1YsHkGfypDbCmQ1XsGRccGHxGJXNjJB
+   fII0l47UboRlZjFbOD3EiJpGnCmStyYv9g3MMR6rTGzC9oaD2qDrwoxhE
+   In8qkAGrB+TWn4q1C9Z7y4QohBKDBhzN1O0PAuAMuqSZx4l+bgeIUxLo7
+   A==;
+X-CSE-ConnectionGUID: +oB5Sfa7RuO3NEogvYFn6Q==
+X-CSE-MsgGUID: CjWdMim6Se+kPULleKc8+A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="25402803"
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="25402803"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 19:56:27 -0700
+X-CSE-ConnectionGUID: Pioonrk5QvSloefnrV7rng==
+X-CSE-MsgGUID: YJTNIi/uQ/WvYq4MZWjlrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="69622982"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa010.fm.intel.com with ESMTP; 17 Sep 2024 19:56:24 -0700
+Message-ID: <a5e0ff3c-a48f-4f2f-bf6a-551ebec21559@linux.intel.com>
+Date: Wed, 18 Sep 2024 10:52:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v5 3/3] regulator: dt-bindings: mt6397: move examples to
- parent PMIC mt6397
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, "Tian, Kevin" <kevin.tian@intel.com>,
+ "j.granados@samsung.com" <j.granados@samsung.com>,
+ David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Klaus Jensen <its@irrelevant.dk>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v2 1/5] iommu/vt-d: Separate page request queue from SVM
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <20240913-jag-iopfv8-v2-0-dea01c2343bc@samsung.com>
+ <20240913-jag-iopfv8-v2-1-dea01c2343bc@samsung.com>
+ <BL1PR11MB52713D3D5947C66AE463FA4B8C662@BL1PR11MB5271.namprd11.prod.outlook.com>
+ <e0a1347f-877e-445c-9158-7584ae200bff@linux.intel.com>
+ <BN9PR11MB527611131A808B78C8E0E8388C662@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <c8708b95-14b9-4545-84f7-6f45161456cc@linux.intel.com>
+ <20240915134928.GD869260@ziepe.ca>
 Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>, "David S . Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "Liam
- Girdwood" <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Sean Wang
-	<sean.wang@mediatek.com>, Sen Chu <sen.chu@mediatek.com>,
-	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Dmitry Torokhov
-	<dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Lee Jones
-	<lee@kernel.org>, Sebastian Reichel <sre@kernel.org>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Chen Zhong <chen.zhong@mediatek.com>,
-	<linux-input@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-	<linux-sound@vger.kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>,
-	Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
-	MediaTek Chromebook Upstream
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
-	<wenst@chromium.org>
-References: <20240916151132.32321-1-macpaul.lin@mediatek.com>
- <20240916151132.32321-3-macpaul.lin@mediatek.com>
- <ev4kqtbjwglrti3mk2cnayilj4muy7ll7ux2uwlekcwu73dy5e@h4wvpucmyepw>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <ev4kqtbjwglrti3mk2cnayilj4muy7ll7ux2uwlekcwu73dy5e@h4wvpucmyepw>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240915134928.GD869260@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--8.937100-8.000000
-X-TMASE-MatchedRID: 9zTThWtzImsOwH4pD14DsPHkpkyUphL9meN8m2FdGic3xO2R3boBWFbu
-	qIY+/skQkABPgKBt/0rgeVsWtxJp0U/qpx4DtjGJU+OjsPhIWDjBktdLSE3ynT6IXkgHUCXL+Hm
-	BPyReSgy7Npc3la9ezKmHQUK9UMGAvRezSnFjJZVQ1o+KC+IpH54IbsXmum7GmyiLZetSf8nJ4y
-	0wP1A6AAOkBnb8H8GWDV8DVAd6AO/dB/CxWTRRu4as+d5/8j56+yCiKOZBNSTBl6oIRYjdQ0gBO
-	bHRHd/EzDPL9QjVnyFW4YAcfB4u2w==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--8.937100-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	298EDE46A95067340BB747C06C83C35738F004CAE18886807EF42ECC803D897E2000:8
 
-
-On 9/17/24 15:01, Krzysztof Kozlowski wrote:
-> 	
+On 9/15/24 9:49 PM, Jason Gunthorpe wrote:
+> On Sat, Sep 14, 2024 at 01:49:44PM +0800, Baolu Lu wrote:
+>> On 2024/9/14 10:53, Tian, Kevin wrote:
+>>>> From: Baolu Lu<baolu.lu@linux.intel.com>
+>>>> Sent: Saturday, September 14, 2024 9:18 AM
+>>>>
+>>>> On 9/14/24 8:52 AM, Tian, Kevin wrote:
+>>>>>> From: Joel Granados via B4 Relay
+>>>>>> <devnull+j.granados.samsung.com@kernel.org>
+>>>>>>
+>>>>>> From: Joel Granados<j.granados@samsung.com>
+>>>>>>
+>>>>>> IO page faults are no longer dependent on CONFIG_INTEL_IOMMU_SVM.
+>>>>>> Move
+>>>>>> all Page Request Queue (PRQ) functions that handle prq events to a new
+>>>>>> file in drivers/iommu/intel/prq.c. The page_req_des struct is now
+>>>>>> declared in drivers/iommu/intel/prq.c.
+>>>>>>
+>>>>>> No functional changes are intended. This is a preparation patch to
+>>>>>> enable the use of IO page faults outside the SVM/PASID use cases.
+>>>>> Do we want to guard it under a new config option e.g.
+>>>>> CONFIG_INTEL_IOMMU_IOPF? it's unnecessary to allocate resources
+>>>>> for the majority usages which don't require IOPF.
+>>>>>
+>>>>> Baolu?
+>>>> The OS builder doesn't know if Linux will run on a platform with PRI-
+>>>> capable devices. They'll probably always enable this option if we
+>>>> provide it.
+>>> hmm then why do we need a SVM option? In reality I haven't seen
+>>> a platform which supports IOPF but no pasid/SVM. so the reason
+>>> for whether to have an option should be same between IOPF/SVM.
+>>>
+>>> IMHO the point of options is to allow reducing footprint of the kernel
+>>> image and many options are probably always enabled in distributions...
+>> To be honest, I would hope to remove the SVM option some day. It's
+>> nothing special except listening to an external notification and
+>> synchronize the caches when the page table is updated. It's common to
+>> all cases where a page table is shared between the IOMMU and another
+>> component.
+>>
+>> As for CONFIG_INTEL_IOMMU_IOPF, my suggestion is that we don't need to
+>> add any unnecessary options unless we see a real need.
+> You could possibly bundle the SVA and IOPF options together
 > 
-> External email : Please do not click links or open attachments until you 
-> have verified the sender or the content.
-> 
-> On Mon, Sep 16, 2024 at 11:11:32PM +0800, Macpaul Lin wrote:
->> Since the DT schema of multiple function PMIC mt6397 has been converted,
->> move the examples in "mediatek,mt6397-regulator.yaml" to the parent schema
->> "mediatek,mt6397.yaml".
-> 
-> Is there any error otherwise? Why this cannot stay here, since it is
-> already there?
-> 
-> Best regards,
-> Krzysztof
-> 
+> I called the new option on the ARM side CONFIG_ARM_SMMU_V3_IOMMUFD
+> which seems like a reasonable cut point against embedded vs server.
 
-I previously thought that all regulator examples needed to have a 
-complete version placed centrally in the main MFD. In that case, this 
-patch 3/3 should not need to be required. This will be dropped in the 
-next version.
+Probably I will consider this after this series. This is not intel iommu
+specific, hence it's better to make it consistent for all drivers.
 
-Best regards,
-Macpaul Lin
-
-
+Thanks,
+baolu
 
