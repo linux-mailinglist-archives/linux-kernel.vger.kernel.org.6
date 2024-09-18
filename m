@@ -1,135 +1,113 @@
-Return-Path: <linux-kernel+bounces-332749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 172E297BE4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDA4497BE5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89E22B20E9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:03:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 482FAB2207B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE2B1C8FC7;
-	Wed, 18 Sep 2024 15:03:27 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D92F1C8FBB;
+	Wed, 18 Sep 2024 15:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u8Dv+xMf"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462EB1C8FB9
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 15:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49901C3F1E
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 15:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726671806; cv=none; b=c+uz/PXyyBYoKXxDRxsw80r3HNIhQ2j7l+Y9ipzyOzkaZydvNdkTM+LB0f3mAcuBWAMEOIq+frJal2Wq3+VpeX9xw6kP5/xMQz/54UFosj8et+0qh535vOe6L3je1t+Q8I8r/mSQhr1wBoVj0MnEU69zpEKLKTqkn4q6yc6BT1w=
+	t=1726671888; cv=none; b=NeuIwDhrSXgb2+20hRqcOO7SvA/gVcp67HOmNl7tM7x3/LHqSQdQukdhOGE5OyyrzvqLyzMBfnyZLuVv+Vw0qXTZnWVXN0Xwa2KQgcdXiNU3xyvVojrd/bgqYfbgPQoyRt85DBxm/Swx0ExrRdf13SoexJnXUYM8ORapQ252QEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726671806; c=relaxed/simple;
-	bh=BhzpLIq6Vxfl5iUIGMXzekYXB+e52TdqSnfp5qidmWE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Ldz4EPJTxtgY3U0l9d3ughKHf6P93yCe3154BaPsYuZMwDdyx3lta+rhD8QSPGt1wpkOuPdBWQ6oSmRkyjMqqji+kmkGXisOM7pxXq2JrFB0E3axIGsQRuSwsMG0vDtW9vz1U8nC1VTbar8ZiieoSQUGep+xvbjMzmyMYlT34fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d49576404so98145925ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 08:03:25 -0700 (PDT)
+	s=arc-20240116; t=1726671888; c=relaxed/simple;
+	bh=L1NHWyy0NjF2dTP/ARc8BHAy85ATCfvirgTS6lcHILE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pxy/Q6HYW0rK8sfaKHJfe/V5gBHdKVQPGEyfL5HPpCah2HK0RQt45pT3BVAZy4wFuXANGxoVZBylcjMr6tADHVR/3ecvJ4f9x0DApGn4YkimjWoOw8mF2SlnWnpzEYcEMHfn7MP0d9Kpu3zIfP9T0QmNsIrevEqiRK+IG7P65pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u8Dv+xMf; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8a837cec81so402997966b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 08:04:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726671885; x=1727276685; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rAUj5z86FV+d6rAd4UOajymFlz61iSG2wpZ0JHsQ42s=;
+        b=u8Dv+xMf99nDwj/LZ89SRX6Xtt13al6gnFfD0R/U3FVBL1KkmkDugiCKEYXojPa7mr
+         G1ZIW3zCHcawyA+3x1oDERVpGMRdV2PTp/jJsxAJMOKH4w8/3msA9R6L7BbSw1DP5J1g
+         v6Y73KwvrQNac5MjcFyzVQShlLqBlyyfQnJPhOXkwDbMJJA5wjcFCQueLQrqDtrGsutT
+         Luj3xbjdcH30wbUxn0XXmxUAfC/R4EFK4KGBlK9tlH2caOOLqlf8nDdg+YIN2j8xhD8f
+         zdRJ09fs1H+2CSEpdxtpgWYghSZjaZISIqkEr2UlS/85RWDr6nPzdwPNIEK2l5LN+R26
+         bG0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726671804; x=1727276604;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+UC6Mc3Avq1l/u0KK21V2/bnbzcYLVONph6/3dO9HTk=;
-        b=Bug3A7FMjbKErpuo+7BnELk6HdkrrZwa/c2Xx+dI/rB3wvtH1ndiDUfbZGhQgIH29K
-         aJH7k3G1vLD4ToWb/auKIJEbnu37spc9ES5NKKy6/C99iRi5CkKsuQaMgYS0QlcEH3Cf
-         gThBP9cZOK/QV12wGStR6qlKcc7zuIWFwFgjz36KxyN8+9q1vi5xECa/qqs1vchgkGPk
-         txi8qf2Wl7CuVmHJY9ieofF1hIjtg5vNjHg0dCYkMnoVEzHSydQ8gLbJjfoLZewHGanX
-         WKxYmWnxT4g5b8fjyZunp2Y+HW6jwjnAw/vJCq+Er0eLKol2VlHKuCusARY45B1YrHDA
-         WEjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaXfoxmSTXyHRKuArCozvboNVG9lLYQ33vLbO5xNCzbp37kZkjxUrvKGjcNAeNxEUFPz03+uqs6IBs5Fg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZNuHa+vKGQYBKykCB8X1tFd2IDF7ayuqjvVdARY87ZZTHRtBU
-	udi556ZjRXLWorwXuXP7BhjUi8vRHB7vwDiOyZX8BGb/c+0/kTxitjqmbgGkxF1OMrKG5BRcV7q
-	/IWT1e5aCuxL772/uuGFZCO2q+FhMXsZUjMiD2AsXnv+tYgfBtIZPJn8=
-X-Google-Smtp-Source: AGHT+IGhaa35gFQtE7Vu6kAqFod34bDr20BPHRMrc2dgJZosDloT+LS7bv0hMwlqO3aSKOat4cDUUzLJfcHG+Xzj1r6MMSb7kWtL
+        d=1e100.net; s=20230601; t=1726671885; x=1727276685;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rAUj5z86FV+d6rAd4UOajymFlz61iSG2wpZ0JHsQ42s=;
+        b=M8Sp5/YoFLCk3eIjt4bMIGBk7znMiDvZO0NqTm+Sut7kXKhGO8zQk80eUIkwxHPtuA
+         VH72I7MSZjjENuJB8SHvC6ExsT/pqnU3Kwt619PPfZ/wyRbcOM+aUd8rkYbnje+zCvHI
+         cG3wYQOh54a4a2JOxQdogZ5kAFpowGMpVQv8jl3G5luxu1G6/6Q7xrv7caBtxRUKW7Hn
+         5P8mNGmAx7VMDpefTUnK0EJQDkUx55WYw8ul9vs8tcnTJD6pV7AUutw5pLPw2ZF+koew
+         9Tx/rdyz2cTrZB2n/O+uoOZ4USFwWGATEMYAzEGM3202UMiZVXAbOrkOcZk8lVFX0IQf
+         jmqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzQPIDoaJKd1/SBUewYMss+zlUdh+Tg0EIuF72KxZlFiUcLOeabWTpJIeVBslIW7tT8Q0jIeyHe/nF/NQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7mWUNJr/V2M4lOuFRgOzVeipvNl1MwVOuJK92bG9+eMjwRQCI
+	8H5gghb+PqhvaBCSbu/fptRaO9ecdQyIMYh1ez6Q6Hz7zPvoAT7GjCdD74pov/RPkKY0OELILfX
+	dm17OtgvkMh2C7foE8Pd+zvhl1EbRERDil7mkP4wCuVXs2ogwaRw=
+X-Google-Smtp-Source: AGHT+IGEa1MCEaD0bdULC6b+TJ4wo1e1Num6uxETKpo/Rg0Pz+70M8LeHhF+ZrzyZIixLx67E+kqWhsRXxF1Divl44g=
+X-Received: by 2002:a05:6402:5108:b0:5c2:6311:c9d1 with SMTP id
+ 4fb4d7f45d1cf-5c41e1b5325mr25680316a12.22.1726671885023; Wed, 18 Sep 2024
+ 08:04:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:5a9:b0:3a0:8c68:7705 with SMTP id
- e9e14a558f8ab-3a08c6877c6mr146178425ab.21.1726671804203; Wed, 18 Sep 2024
- 08:03:24 -0700 (PDT)
-Date: Wed, 18 Sep 2024 08:03:24 -0700
-In-Reply-To: <66e55308.050a0220.1f4381.0004.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66eaebbc.050a0220.252d9a.0015.GAE@google.com>
-Subject: Re: [syzbot] [btrfs?] BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low! (7)
-From: syzbot <syzbot+74f79df25c37437e4d5a@syzkaller.appspotmail.com>
-To: chao@kernel.org, clm@fb.com, dsterba@suse.com, jaegeuk@kernel.org, 
-	josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20240909095529.2325103-1-marcin.juszkiewicz@linaro.org>
+In-Reply-To: <20240909095529.2325103-1-marcin.juszkiewicz@linaro.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Wed, 18 Sep 2024 20:34:32 +0530
+Message-ID: <CAKohpokMUqaMUJaSfdyY39idmh_ycYj+hi5sMSBmZV1CQ511qA@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: use proper units for frequency
+To: Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"Rafael J . Wysocki" <rafael@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has found a reproducer for the following issue on:
+On Mon, 9 Sept 2024 at 15:25, Marcin Juszkiewicz
+<marcin.juszkiewicz@linaro.org> wrote:
+>
+> When I booted my RK3588 based system I noticed that cpufreq complained
+> about system clock:
+>
+> [  +0.007211] cpufreq: cpufreq_online: CPU0: Running at unlisted initial frequency: 816000 KHz, changing to: 1008000 KHz
+>
+> Then I realized that unit is displayed wrong: "KHz" instead of "kHz".
+>
+> Signed-off-by: Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+> ---
+>  drivers/cpufreq/cpufreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index 04fc786dd2c0..76da29c2bd3f 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -1539,7 +1539,7 @@ static int cpufreq_online(unsigned int cpu)
+>                          * frequency for longer duration. Hence, a BUG_ON().
+>                          */
+>                         BUG_ON(ret);
+> -                       pr_info("%s: CPU%d: Running at unlisted initial frequency: %u KHz, changing to: %u KHz\n",
+> +                       pr_info("%s: CPU%d: Running at unlisted initial frequency: %u kHz, changing to: %u kHz\n",
+>                                 __func__, policy->cpu, old_freq, policy->cur);
+>                 }
+>         }
 
-HEAD commit:    5f5673607153 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=137fc69f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dedbcb1ff4387972
-dashboard link: https://syzkaller.appspot.com/bug?extid=74f79df25c37437e4d5a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12b8f500580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10dbc4a9980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/40172aed5414/disk-5f567360.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/58372f305e9d/vmlinux-5f567360.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d2aae6fa798f/Image-5f567360.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/e4b8f51425ac/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+74f79df25c37437e4d5a@syzkaller.appspotmail.com
-
-BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low!
-turning off the locking correctness validator.
-CPU: 0 UID: 0 PID: 137 Comm: kworker/u8:4 Not tainted 6.11.0-rc7-syzkaller-g5f5673607153 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: btrfs-endio-write btrfs_work_helper
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:319
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:326
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
- dump_stack+0x1c/0x28 lib/dump_stack.c:128
- lookup_chain_cache_add kernel/locking/lockdep.c:3815 [inline]
- validate_chain kernel/locking/lockdep.c:3836 [inline]
- __lock_acquire+0x1fa0/0x779c kernel/locking/lockdep.c:5142
- lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x48/0x60 kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:351 [inline]
- btrfs_block_rsv_size fs/btrfs/block-rsv.h:136 [inline]
- btrfs_use_block_rsv+0x184/0x73c fs/btrfs/block-rsv.c:495
- btrfs_alloc_tree_block+0x16c/0x12d4 fs/btrfs/extent-tree.c:5130
- btrfs_force_cow_block+0x4e4/0x1c9c fs/btrfs/ctree.c:573
- btrfs_cow_block+0x318/0xa28 fs/btrfs/ctree.c:754
- btrfs_search_slot+0xba0/0x2a08
- btrfs_lookup_file_extent+0x124/0x1bc fs/btrfs/file-item.c:267
- btrfs_drop_extents+0x370/0x2ad8 fs/btrfs/file.c:251
- insert_reserved_file_extent+0x2b4/0xa6c fs/btrfs/inode.c:2911
- insert_ordered_extent_file_extent+0x348/0x508 fs/btrfs/inode.c:3016
- btrfs_finish_one_ordered+0x6a0/0x129c fs/btrfs/inode.c:3124
- btrfs_finish_ordered_io+0x120/0x134 fs/btrfs/inode.c:3266
- finish_ordered_fn+0x20/0x30 fs/btrfs/ordered-data.c:331
- btrfs_work_helper+0x340/0xd28 fs/btrfs/async-thread.c:314
- process_one_work+0x79c/0x15b8 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x978/0xec4 kernel/workqueue.c:3389
- kthread+0x288/0x310 kernel/kthread.c:389
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
