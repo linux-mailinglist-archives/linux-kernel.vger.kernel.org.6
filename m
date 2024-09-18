@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-332614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 340B797BBE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:08:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A7997BBE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 670951C213C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:08:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3008F1C218E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D72189BBE;
-	Wed, 18 Sep 2024 12:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9A2189901;
+	Wed, 18 Sep 2024 12:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="Y5BZR5yX"
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="oGHM76aF"
 Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5770417C98C;
-	Wed, 18 Sep 2024 12:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7BD17C9BA;
+	Wed, 18 Sep 2024 12:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726661286; cv=none; b=EkXXvkjpUSma3QZE81WM08xvEmAIwy0u7Fuk+9JNwBAfJBriFMGnIbehgRqWSkyeDnsrXp1lANPsAkeIsuFdmFkPj1hjg1gNmN977WRFUlZUM/OMEzN5E22HsNt8hc8sE8H9Xg2b/ABBJW6T3xN33ItJPV/wMhFeslx80deJ2qs=
+	t=1726661285; cv=none; b=dZsNntlJV8pgIh34gh45DQzvPLifX6impUhd+4vdmpSPSkbbfJXfpeZ7q4rxddu9sHNNw91QiUP6OaVYPulmBRy9Vm9IbzjTOvMi3z61a6ClGz3P0rHk9DAGyD5xyCivGspHUc1hJ5OFukv9uU0zEUpPVXc4BRCiBMY16eTtbx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726661286; c=relaxed/simple;
-	bh=BMWcxuuYadRj1cmSNDSsvmmpyRSWUl3YEex9rlXeUPE=;
+	s=arc-20240116; t=1726661285; c=relaxed/simple;
+	bh=e+grsrw7X10ZOPlPc72sgvxinJrP6CJB5urz+D13ZJA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J0ped2I3Ec9KGRAn5u2DNlKxmNhoJ7bOBekQKH+jwOspd5gp+YfOP1KKk2hy8rSjyE2vcoQPZTp/9yRS+mwkMwoNV909mN3IrY7KjbnNocWojaBp9HK0AcJv9XQ0sMgNbWVh+1Vcp9ml4neqqFd7aPHymbEKMLBPD+zDhAFLvg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=Y5BZR5yX; arc=none smtp.client-ip=188.40.30.78
+	 In-Reply-To:To:Cc; b=D6g6I5AO5bI8uqEazypJFcCVU+8sks6BjKod9hvTvUPRRLZpfY73gWOrWlhhlk7WkFDjKan/U675zPJT18NkzWgLejo96LoPTfzs454SXGeV1ifGvIlo3+sCuFRekvr1enBpISL+kwJ8g2fuy9NUBCklP0F9bSAQTyjcEPxDoLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=oGHM76aF; arc=none smtp.client-ip=188.40.30.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
@@ -35,26 +35,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
 	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
 	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
 	:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=HdxkpAhtUoAhJMQeArjLrrrlHbN0R0p+W+58ksBNDKQ=; b=Y5BZR5yXrICc6yVE5EnSVFBTpJ
-	UCwOaPGRR+va9fObbX3+Vl/iLsy1pbvdGMhUC3wHlWTQW97O+MTsWCEVSTwoTwNcEZU51J0psMmEJ
-	Y2xkbVUFOF3BUAAHo5SyhjtjHR1E1yPxTLJWNM9wwynR4Trp5dFfrjmdGpvBExdDxV2bU/IzHX5OZ
-	EHfDYS98NkUk65vbFn3hNUN4vmymJIF0+XBnuwA/sZrvdavNi8Fvc2ZKUPSZuKvlYudnVI/9SZZhk
-	MEoJKBhP2tAR5Z90cj4LUhUgLxsAjZyMh95CfRW4nI4C+nr7VkezL10rofhLJGCKT3IAQuFfOl/Ut
-	0zzSqrAA==;
+	bh=ryG+DpEEYzpFDZHslmtvAz+CY1MLuD8QWuWHWwZLF1k=; b=oGHM76aFDy7jcPV83YF5sxSDK2
+	xIdYCCNMmYegzplnPHkMwW9F5KSM1CvuWWTHJN42T5cLZrQyVGZ7MBADEyy04MReatKy4eY2SkftD
+	l5LBMYcdnEVmI/ebPxbwzSHlVBoYK6/bVffUMImsqRAe19RyaESgStJ3s5eqz1sUBTpEgpc/SvEcm
+	SBYDJ4DIXHRsYV8XdhV93cYShuQwNQLKJjeCZ7tN8lSj2tj99nVK0GxTFkFXkWlx3w4QPPdm7yvOY
+	yZeNd5H5ZEULNDj3qD3KDgKzuc4KL34yVaAkwV2gpX0ZR9oroDVzMkEnMKJqzwO4vH4VVzSkylbLj
+	63z22aCQ==;
 Received: from sslproxy05.your-server.de ([78.46.172.2])
 	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <sean@geanix.com>)
-	id 1sqtTE-000Nl5-Vx; Wed, 18 Sep 2024 14:07:45 +0200
+	id 1sqtTF-000Nl7-9J; Wed, 18 Sep 2024 14:07:45 +0200
 Received: from [185.17.218.86] (helo=zen.localdomain)
 	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <sean@geanix.com>)
-	id 1sqtTF-000Fv4-0D;
+	id 1sqtTF-000Fv4-13;
 	Wed, 18 Sep 2024 14:07:44 +0200
 From: Sean Nyekjaer <sean@geanix.com>
-Date: Wed, 18 Sep 2024 14:07:42 +0200
-Subject: [PATCH 1/2] ARM: dts: nxp: imx6ul: add dma support for all uarts
+Date: Wed, 18 Sep 2024 14:07:43 +0200
+Subject: [PATCH 2/2] ARM: dts: nxp: imx6ull: add dma support for uart8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240918-imx6ul-sdma-v1-1-d25abd56e65c@geanix.com>
+Message-Id: <20240918-imx6ul-sdma-v1-2-d25abd56e65c@geanix.com>
 References: <20240918-imx6ul-sdma-v1-0-d25abd56e65c@geanix.com>
 In-Reply-To: <20240918-imx6ul-sdma-v1-0-d25abd56e65c@geanix.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -78,85 +78,22 @@ X-Mailer: b4 0.13.0
 X-Authenticated-Sender: sean@geanix.com
 X-Virus-Scanned: Clear (ClamAV 0.103.10/27402/Wed Sep 18 12:32:17 2024)
 
-Add dma support on uart1, uart2, uart3, uart4, uart5, uart6 and uart7.
+Add dma support on uart8.
 
 Signed-off-by: Sean Nyekjaer <sean@geanix.com>
 ---
- arch/arm/boot/dts/nxp/imx/imx6ul.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm/boot/dts/nxp/imx/imx6ull.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6ul.dtsi b/arch/arm/boot/dts/nxp/imx/imx6ul.dtsi
-index 235aa676618b..6de224dd2bb9 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6ul.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6ul.dtsi
-@@ -274,6 +274,8 @@ uart7: serial@2018000 {
- 					clocks = <&clks IMX6UL_CLK_UART7_IPG>,
- 						 <&clks IMX6UL_CLK_UART7_SERIAL>;
- 					clock-names = "ipg", "per";
-+					dmas = <&sdma 43 4 0>, <&sdma 44 4 0>;
-+					dma-names = "rx", "tx";
- 					status = "disabled";
- 				};
- 
-@@ -285,6 +287,8 @@ uart1: serial@2020000 {
- 					clocks = <&clks IMX6UL_CLK_UART1_IPG>,
- 						 <&clks IMX6UL_CLK_UART1_SERIAL>;
- 					clock-names = "ipg", "per";
-+					dmas = <&sdma 25 4 0>, <&sdma 26 4 0>;
-+					dma-names = "rx", "tx";
- 					status = "disabled";
- 				};
- 
-@@ -296,6 +300,8 @@ uart8: serial@2024000 {
- 					clocks = <&clks IMX6UL_CLK_UART8_IPG>,
- 						 <&clks IMX6UL_CLK_UART8_SERIAL>;
- 					clock-names = "ipg", "per";
-+					dmas = <&sdma 45 4 0>, <&sdma 46 4 0>;
-+					dma-names = "rx", "tx";
- 					status = "disabled";
- 				};
- 
-@@ -1075,6 +1081,8 @@ uart2: serial@21e8000 {
- 				clocks = <&clks IMX6UL_CLK_UART2_IPG>,
- 					 <&clks IMX6UL_CLK_UART2_SERIAL>;
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6ull.dtsi b/arch/arm/boot/dts/nxp/imx/imx6ull.dtsi
+index 8a1776067ecc..db0c339022ac 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6ull.dtsi
++++ b/arch/arm/boot/dts/nxp/imx/imx6ull.dtsi
+@@ -88,6 +88,8 @@ uart8: serial@2288000 {
+ 				clocks = <&clks IMX6UL_CLK_UART8_IPG>,
+ 					 <&clks IMX6UL_CLK_UART8_SERIAL>;
  				clock-names = "ipg", "per";
-+				dmas = <&sdma 27 4 0>, <&sdma 28 4 0>;
-+				dma-names = "rx", "tx";
- 				status = "disabled";
- 			};
- 
-@@ -1086,6 +1094,8 @@ uart3: serial@21ec000 {
- 				clocks = <&clks IMX6UL_CLK_UART3_IPG>,
- 					 <&clks IMX6UL_CLK_UART3_SERIAL>;
- 				clock-names = "ipg", "per";
-+				dmas = <&sdma 29 4 0>, <&sdma 30 4 0>;
-+				dma-names = "rx", "tx";
- 				status = "disabled";
- 			};
- 
-@@ -1097,6 +1107,8 @@ uart4: serial@21f0000 {
- 				clocks = <&clks IMX6UL_CLK_UART4_IPG>,
- 					 <&clks IMX6UL_CLK_UART4_SERIAL>;
- 				clock-names = "ipg", "per";
-+				dmas = <&sdma 31 4 0>, <&sdma 32 4 0>;
-+				dma-names = "rx", "tx";
- 				status = "disabled";
- 			};
- 
-@@ -1108,6 +1120,8 @@ uart5: serial@21f4000 {
- 				clocks = <&clks IMX6UL_CLK_UART5_IPG>,
- 					 <&clks IMX6UL_CLK_UART5_SERIAL>;
- 				clock-names = "ipg", "per";
-+				dmas = <&sdma 33 4 0>, <&sdma 34 4 0>;
-+				dma-names = "rx", "tx";
- 				status = "disabled";
- 			};
- 
-@@ -1129,6 +1143,8 @@ uart6: serial@21fc000 {
- 				clocks = <&clks IMX6UL_CLK_UART6_IPG>,
- 					 <&clks IMX6UL_CLK_UART6_SERIAL>;
- 				clock-names = "ipg", "per";
-+				dmas = <&sdma 0 4 0>, <&sdma 47 4 0>;
++				dmas = <&sdma 45 4 0>, <&sdma 46 4 0>;
 +				dma-names = "rx", "tx";
  				status = "disabled";
  			};
