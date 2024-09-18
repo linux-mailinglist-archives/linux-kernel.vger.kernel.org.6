@@ -1,81 +1,101 @@
-Return-Path: <linux-kernel+bounces-332834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F2C97BF75
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:08:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B86F97BF76
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 190C4B220EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:08:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50B881F21F51
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8E71C9DEC;
-	Wed, 18 Sep 2024 17:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9611C9DDD;
+	Wed, 18 Sep 2024 17:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bORxtch+"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="o5wvbk1e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE37CA2D;
-	Wed, 18 Sep 2024 17:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E97F1C8FD6;
+	Wed, 18 Sep 2024 17:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726679286; cv=none; b=D+MQajM74Kh1CJKeED9pP3DvytguzHFKmQqeI6oPF3A9NLsRsAH4xcQEAnBDTGJIOpWkRCXs3oqptSepezVob4a9Gg1UszAWPQZM6te0S2YsxUz8Bvpjprfl1TMXv7LKlS3lmDbjBl05WAmQ4gIDdTAYvCkpeQ+Xe/iblknWeiY=
+	t=1726679367; cv=none; b=HZCdg/SOcJHc/qczCndzELFdWhWIZEERwInCdUULAOKimSxmoiwd75q2Pj9cDysgJXhKo+3xxJmyxUh+mHqODr+ZYU7Ai7LN0aX33uFl3c/CUX8vKF63GSzL5g1+dSjRqDrs6ku+dTtH0o6Gk5ikC840rd7zsesrG09/bbOBliA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726679286; c=relaxed/simple;
-	bh=DPziPLKzDdbmRMPxT3R1WxheB5wFFJjSGfR2eBNoZEo=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=S3wQFhi8euehbhcnS612FZDwQa4HdeS4JjhDzmSXBhUhEanPK+7i3F8nFOyPZ8rr6Ah2JbOGDGmWhzdxXCxSsk314bIXz87ydj/k+rEDbF1LAUQxchoWH8C0VJpf0gPWpW+8c4Ehu80+6gKHvUp/HfLXY4KKEOAQ8rgHoUDMAvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bORxtch+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2971EC4CEC2;
-	Wed, 18 Sep 2024 17:08:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726679285;
-	bh=DPziPLKzDdbmRMPxT3R1WxheB5wFFJjSGfR2eBNoZEo=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=bORxtch+rcHih8RJb0w/K3hG5sh1rx7+6efTEwoIT4sBOJNtvs5kP2HmWygpuPSDN
-	 akLiEoiFaXCKivKqsgql/QkQw9KJWsh8vtsw0lYHpGjC7YZXlhzQ38+EI9kvZw0EMp
-	 zq9/h4sKzIzunJ8Bu2VtI2sx5XVOOhcBDAJBf6Eu9tdVaHWxRabOM1VJ3XwQKt9xo5
-	 bdR3QyuJ0jxuL6AfjPn9P+B9HNAxqNpGjcURCY3uREXetGRhQESz6DIMlT9kIblyMN
-	 PiPLeWMfhCOSBJnbuRo3uICWHxLes/YvbJlzIofdLacvAkuh/P18KIHyVCCxbnKN+a
-	 GMGonaoqFeeiQ==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1726679367; c=relaxed/simple;
+	bh=FjdzQixOrS4xco7SjipZFJ0Xmm9C+Bz6r1mwO7Pw+Y4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SWIbNbjod4uMZHYsYKUsYZKKMS0ZzNc47qQf4ggF7MEgTT2rDrc1Nevx9wgzHrk/1hg36fjOCQeJEqBHLCDXPCnUgVGkz0ud/Z/3zSXFU+1T1iKPQwtpLaS8CED+O05ZAGiMuhtiI5QOqU0qyOFRs5Y1J8OQYTcqSEVyCL0qh50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=o5wvbk1e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 474F1C4CEC6;
+	Wed, 18 Sep 2024 17:09:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726679366;
+	bh=FjdzQixOrS4xco7SjipZFJ0Xmm9C+Bz6r1mwO7Pw+Y4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o5wvbk1e6XvoXZbaNeYLCwVF8Qvhzh9ijZpMWH+AZwcEQjZij5nPNvvzhwkMOps6O
+	 GYz2q1lQ3VjgOnBXblrnX3k/FehTsRxafJw3DtNSZMwJpFpdvjlXzFrDaOnY0rE2dd
+	 4x+Dhm8dUwaW5lF+MvCxiwZWZM6jVqE6WQt85ZHg=
+Date: Wed, 18 Sep 2024 19:09:24 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Simona Vetter <simona.vetter@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] rust: add untrusted data abstraction
+Message-ID: <2024091858-surrender-broadcast-e11f@gregkh>
+References: <20240913112643.542914-1-benno.lossin@proton.me>
+ <20240913112643.542914-2-benno.lossin@proton.me>
+ <ZuRbSxwlz1xWT1pG@phenom.ffwll.local>
+ <cf0d6189-e81c-4b7c-ab50-7a297c69b132@proton.me>
+ <ZuhTdwCqz61bQEgq@phenom.ffwll.local>
+ <26534d80-989d-4b77-9720-84575275890f@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wifi: ath6kl: fix typos
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240913094818.14456-1-algonell@gmail.com>
-References: <20240913094818.14456-1-algonell@gmail.com>
-To: Andrew Kreimer <algonell@gmail.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Andrew Kreimer <algonell@gmail.com>,
- Matthew Wilcox <willy@infradead.org>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172667928257.4089263.8301674737892934391.kvalo@kernel.org>
-Date: Wed, 18 Sep 2024 17:08:03 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <26534d80-989d-4b77-9720-84575275890f@proton.me>
 
-Andrew Kreimer <algonell@gmail.com> wrote:
-
-> Fix typos in comments.
+On Wed, Sep 18, 2024 at 03:40:54PM +0000, Benno Lossin wrote:
+> >> Yeah, we need more users of this to know the full way to express this
+> >> correctly. I would like to avoid huge refactorings in the future.
+> > 
+> > I think adding it to the copy_*_user functions we already have in
+> > upstream, and then asking Alice to rebase binder should be a really solid
+> > real-world testcase. And I think currently for the things in-flight
+> > copy*user is going to be the main source of untrusted data anyway, not so
+> > much page cache folios.
 > 
-> Reported-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
-> Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Sure. I chose tarfs as the use-case, because Greg mentioned to me that
+> it would benefit from adding this API. (I have no prior linux kernel
+> experience, so you giving me some pointers where this will be useful is
+> very helpful!)
 
-Changed the title to:
+I just had tarfs as an easy example where we were reading data off the
+disk and acting on it, in a way just like C where if the data is
+corrupted we can do "not normal" things.  Sorry it got tied up with
+folios, that is not the normal way drivers work, they either get data
+from userspace through a char device node (ioctls) or from hardware
+(memory copies/reads/something) and for them the "untrusted data"
+abstraction should be much simpler than dealing with a folio.
 
-wifi: ath6kl: fix typos in struct wmi_rssi_threshold_params_cmd and wmi_snr_threshold_params_cmd comments
+We don't really have any other good examples of drivers in rust yet that
+I could find other than maybe binder, but Alice has already posted her
+solution for how to handle untrusted data there (comes in through a char
+device node and/or a filesystem entry point) but it's much more complex
+and possibly harder to use as a simple example of the api ideas.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240913094818.14456-1-algonell@gmail.com/
+thanks,
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-https://docs.kernel.org/process/submitting-patches.html
-
+greg k-h
 
