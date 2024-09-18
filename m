@@ -1,240 +1,223 @@
-Return-Path: <linux-kernel+bounces-332691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5B097BD36
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:42:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D8597BD48
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D34651F2208B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:42:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C9011C22477
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED61818A931;
-	Wed, 18 Sep 2024 13:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZNIZrAB"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4638118A920;
+	Wed, 18 Sep 2024 13:47:33 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870A41714B8
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEA28184114
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726666914; cv=none; b=qKzBLG545REq8s+ykmFwdM9gRedC7tMP4cQjEXC/v5yg9zt1ZEuBLfgV6PIvD39AcIsw9t3znKuS1GuBNKr0jQ5L3bEpxcqW0ADF7+4W1N6ClZyKqjO7rTgb6/lt3+lHhNJ/lrZluAgTKh3uu2QNrp+u33ASgdoEOO0MAhrWBKc=
+	t=1726667252; cv=none; b=igEpOyyilUYyy4l77dzLhAQ82ls+kBHOJX7i4fjcSAdenpiYljz45ww35O80oPH2nNlx+O1mMtDJwgrEyiFc0sGuxczoTZ5fgoj2ruggu93KRmj56aQPjvkzbz6XtGwWgMNdIwVyEMn+rQ0k3P2LN8EJaXH6kilnadV2tsR6Gwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726666914; c=relaxed/simple;
-	bh=QZGcPNXNweSx5DVUBRxDur4dFEPKdFU2/eDI0Xx0uMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R45J6ploAjyq7uLgg7lsyWtB4A5I1BB4Kl4osvEcM8UrbuP44cg5i0qA+t6py2IV300P1JzbOhNtlDigpyMsJVEz/VxfmKJfH08ROU1Dwl5dY7Vy0rkwpc8xFQamlleYE8RZ1+dOgJSU8eCa7ebOHE2Z7N5MVKnf4oYtLbfDLkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZNIZrAB; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5365aa568ceso6738076e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726666911; x=1727271711; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YY5fjMhugvxOtRn3XdK4oMNzOo7yd5YBOQwW46C1SFU=;
-        b=JZNIZrABiFC8fPdQrYEbiuRdON4yeFMzCeB0VyT/oUhdNdyQvezR+PBfm8PEXuABut
-         M1CfX7QUP9AiXSxA/yh/X3R0oIIYwSamxgojoEZOu4mIbGfICz96yaRa0uJmz5KlVXeF
-         CssRUyZQVK5ee6O3/S/Ge/AWoySNWy0EPd+oFqKzM2dXZ00C+GlpeZ/a+vpw75v/RUy5
-         y9RnNbl3pLzK5aapOmbsGiCv90T90E0YooSjqkYhsYiKGqoRiB5p2OgA0hUPjuISvMdP
-         2Dd5x9jouEAPeP8a1ckV69iHFDyFCy8v4K3HCC2QuB7RvEw03LnUZof5Vkz1w9WqeHml
-         85rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726666911; x=1727271711;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YY5fjMhugvxOtRn3XdK4oMNzOo7yd5YBOQwW46C1SFU=;
-        b=vFnSHDmS7KFASZlKPpW/Sg98LjCSfUhwRG8gw9V5YG1BMRkG/7OepysfID4wMoYo39
-         igI80r+ubwCJUMRGhOeQHeKMpUyw/nOgohWwmi64wpKnIXQkgjiXLeX49u/VGYfzET7D
-         KOP+DKAElFJ2Y2THEzuUeBl8Rn80mTzzR8qgLvfl1hzsex4oGog1Ps2ke90hD2kzqAHm
-         Q918B+bcCV/Lfn2clUqA+BAkeL/EdjIbIUNM/6/P00Dwp2jr0Hn+PbaaKJsgI7+tMIU6
-         73YkiOUjM7y1f0I5oVAXHZgl98Ce8nc80ACPuPAXbi9Mi8EQBKvN1gFc4BuDFkEpWBSJ
-         4sDw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/mBysl3MGUXDigqgzwAGj7gxJG3X3WMqcwe9ZqgVsUnmm0Xg2M443oWDUZ2iFH2U0aY3RK//dlE271lM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK91CZd4gaIpvBkZWS0HKqJSLNyCmuIiFC3clSrCnbIFrGo8CW
-	w9hUIEBha0nFUZaRGEO1YbWbDHBI2Mv+aWQWWVzEjNM65BRUnjb5AR/J/XQX
-X-Google-Smtp-Source: AGHT+IGJPlDhWmbSrgnN5jY/pQxEpLZg/M92xSm/3MhX8NPG55UAA6a1JTCbvH8r3kBfigS6vtTIew==
-X-Received: by 2002:a05:6512:32c7:b0:533:4620:ebec with SMTP id 2adb3069b0e04-5367feb9639mr15152534e87.3.1726666910279;
-        Wed, 18 Sep 2024 06:41:50 -0700 (PDT)
-Received: from localhost ([94.19.228.143])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870bb955sm1514485e87.301.2024.09.18.06.41.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 06:41:49 -0700 (PDT)
-Date: Wed, 18 Sep 2024 16:41:49 +0300
-From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-Subject: Re: [PATCH] arm64: dts: sun50i-a64-pinephone: Add mount matrix for
- accelerometer
-Message-ID: <ZurYndjVz7r0U6dz@skv.local>
-Mail-Followup-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
-	Dragan Simic <dsimic@manjaro.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-References: <20240916204521.2033218-1-andrej.skvortzov@gmail.com>
- <6e5d0e9978bff30559c17f30d1495b59@manjaro.org>
- <ZunCysUTSfQU1ylg@skv.local>
- <c7664fda936d36e0d916ae09dd554d2e@manjaro.org>
- <ZuqyuvZ6tdzp5XSW@skv.local>
- <8df5fc79a3e899738aa944a290774c72@manjaro.org>
+	s=arc-20240116; t=1726667252; c=relaxed/simple;
+	bh=VSYoPUDkBCLeeK1AefraDlzO7u9/y4Gr23ZZ4SDCARg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bimitXpQbP0s2OEuRElalFDTNLG20MNSLC/+PL5l/w+6E+3cIIfuj4cxx5X7gv3uJa/BKFa+x0tySl9+qRUht1NXzepgOW3cqzvzrm+tZEYp/ZF2JS2Sy7L8lFrhd877e5J5Qa2iSlApVewvXQ+r5w7c6kTRQ2TrUgobRUJ7gPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4X80MG5tqDz9sVq;
+	Wed, 18 Sep 2024 15:47:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id Ylb4EsR4YRR3; Wed, 18 Sep 2024 15:47:22 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4X80MG4bnGz9sVf;
+	Wed, 18 Sep 2024 15:47:22 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 8BECF8B776;
+	Wed, 18 Sep 2024 15:47:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id LVZBc5wuqCZJ; Wed, 18 Sep 2024 15:47:22 +0200 (CEST)
+Received: from [172.25.230.108] (unknown [172.25.230.108])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 573B88B775;
+	Wed, 18 Sep 2024 15:47:22 +0200 (CEST)
+Message-ID: <7f1dfb0f-85ca-4251-96df-c8d4b923c4fd@csgroup.eu>
+Date: Wed, 18 Sep 2024 15:47:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8df5fc79a3e899738aa944a290774c72@manjaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] powerpc/entry: convert to common and generic entry
+To: Luming Yu <luming.yu@shingroup.cn>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ mpe@ellerman.id.au, npiggin@gmail.com, jialong.yang@shingroup.cn,
+ luming.yu@gmail.com
+References: <B4ABABEA5F13B86A+20240912082500.1469-1-luming.yu@shingroup.cn>
+ <fc509bcd-5ca0-4dc2-962e-766a01cbe4fb@csgroup.eu>
+ <153FD6B5CE4F97D9+ZuOYDQ-iHIIwJjbh@HX09040029.powercore.com.cn>
+ <95ced963-b584-4ccf-ba34-8f2ba99172f4@csgroup.eu>
+ <0332BAE1905768B6+ZuPsBvgv0nwmFAjW@HX09040029.powercore.com.cn>
+ <854eef54-4779-4233-a958-0c98ae5fcb7e@csgroup.eu>
+ <F81D1486B7B82141+ZuQp4YQkAA2cB9Rw@HX09040029.powercore.com.cn>
+ <81200b50-eaec-4cfd-9121-f661f3065572@csgroup.eu>
+ <9B5E7C0A7C4BFBF0+ZuTzanfk7BcYoFas@HX09040029.powercore.com.cn>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <9B5E7C0A7C4BFBF0+ZuTzanfk7BcYoFas@HX09040029.powercore.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 24-09-18 13:27, Dragan Simic wrote:
-> > > 
-> > > After going through the InvenSense MPU-6050 datasheet, [1] the
-> > > MPU-6050 evaluation board user guide, the PinePhone schematic,
-> > > the PinePhone mainboard component placement, [2] and the kernel
-> > > bindings documentation for mount-matrix, [3] I can conslude that
-> > > only the direction of the accelerometer's y-axis is inverted,
-> > > while the direction of the z-axis remain unchanged, according
-> > > to the right-hand rule.
-> > 
-> > yes, it looks so on the first glance, but in MPU-6050 datasheet there
-> > is also following information:
-> > 
-> >  7.8 Three-Axis MEMS Accelerometer with 16-bit ADCs and Signal
-> >  Conditioning
-> > 
-> >  When the device is placed on a flat surface, it will measure
-> >  0g on the X- and Y-axes and +1g on the Z-axis.
+Hi,
 
-I'll try to explain how I read sensor's documentation and what bothers me.
-
-Picture 1.
-
-up
-
-         ^ Z
-         !      
-         ! X=Y=0
-     ++++++++++ 
-     !        ! 
-     +--------+ 
-         !      
-         !      
-         v      
-       gravity 
-
-down
-
-Screen (drawn as ++++++++++) is looking upwards. Device is on the flat
-surface. Sensor returns +1g, although gravity points into *apposite* direction.
-
-Experiment:
-
-When I put PinePhone like in the sensor's documentation with the screen
-upwards (Picture 1), gravity and Z axis point into different
-directions, I read positive values from the sensor. So sensor works as
-it's described in the documentation.
-
-
-> > 
-> > So sensors reports positive acceleration values for Z-axis, when
-> > the gravity points to Z-minus. I see the same on device. positive
-> > values are returned, when screen and IC point upwards (not the center
-> > for gravity).
-
-
-
-> > In device tree mount-matrix documentation [3] there is
-> > 
-> >  users would likely expect a value of 9.81 m/s^2 upwards along the (z)
-> >  axis, i.e. out of the screen when the device is held with its screen
-> >  flat on the planets surface.
-> > 
-
-how I read kernel documentation.
-
-Picture 2.
-
-up
-
-     +--------+ 
-     !        ! 
-     ++++++++++ 
-         !      
-         !      
-         v      
-       gravity, Z
-
-down
-
-Screen (drawn as ++++++++++) is looking downwards ("its screen flat on
-the planets surface"). Gravity and Z axis point into the same
-direction and it's expected to read positive value.
-
-Notice, that Z-axis on Picture 1 and Picture 2 point into different
-directions to get positive values.
-
-
-Experiment: 
-Now, I go to the real device and check how the sensor actually works.
-
-When I put PinePhone like is described in the kernel documentation
-with the screen downwards, "screen flat on the planets surface"
-(Picture 2), gravity and Z axis point into the same direction, but I
-read negative values from the sensor. So the sensor works not as
-expected by kernel documentation, when I understand documentation
-correctly. Z-axis inversion comes from this.
-
-> > According to that, it looks like Z-axis here has to be inverted.
+Le 14/09/2024 à 04:22, Luming Yu a écrit :
+> On Fri, Sep 13, 2024 at 02:15:40PM +0200, Christophe Leroy wrote:
+>>
+>>
+>> Le 13/09/2024 à 14:02, Luming Yu a écrit :
+>>
+>>>> ...
+>>>> nothing happens after that.
+>>> reproduced with ppc64_defconfig
+>>> [    0.818972][    T1] Run /init as init process
+>>> [    5.851684][  T240] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
+>>> [    5.851742][  T240] kworker/u33:18 (240) used greatest stack depth: 13584 bytes left
+>>> [    5.860081][  T232] kworker/u33:16 (232) used greatest stack depth: 13072 bytes left
+>>> [    5.863145][  T210] kworker/u35:13 (210) used greatest stack depth: 12928 bytes left
+>>> [    5.865000][    T1] Failed to execute /init (error -8)
+>>> [    5.868897][    T1] Run /sbin/init as init process
+>>> [   10.891673][  T315] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
+>>> [   10.894036][    T1] Starting init: /sbin/init exists but couldn't execute it (error -8)
+>>> [   10.901455][    T1] Run /etc/init as init process
+>>> [   10.903154][    T1] Run /bin/init as init process
+>>> [   10.904747][    T1] Run /bin/sh as init process
+>>> [   15.931679][  T367] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
+>>> [   15.934689][    T1] Starting init: /bin/sh exists but couldn't execute it (error -8)
+>>
+>> That's something different, this is because you built a big-endian kernel
+>> and you are trying to run a little-endian userspace.
+> okay
+>>
+>> Does it work with ppc64le_defconfig ?
+> make ppc64le_defconfig
 > 
-> Yes, reporting +1 g on the z-axis with the device remaining stationary
-> on a level surface is the normal behavior, and the returned positive
-> value actually goes along with the quoted description from the kernel
-> documentation.  The z-axis of the MPU-6050 goes upward and out of the
-> screen, the way the MPU-6050 is placed inside the PinePhone.
+> yes, it builds && boots just fine.
+> the host is a p8 powernv system , the qemu command line is as below:
+> qemu-system-ppc64 -m 64g -smp 16,cores=4,threads=4 --enable-kvm  -nographic -net nic -net tap,ifname=tap0,script=/etc/qemu-ifup-nat,downscript=/etc/qemu-ifdown-nat  Downloads/Fedora-Cloud-Base-38-1.6.ppc64le.qcow2
 
-> > It applies to other axes as well. And because of that I came from
-> > (only Y-axis is inverted)
-> > 
-> > x' = -y
-> > y' =  x
-> > z' =  z
-> > 
-> > to inverted solution (Y-axis is kept, but X and Z are inverted).
-> > 
-> > x' =  y
-> > y' = -x
-> > z' = -z
-> > 
-> > probably should put this information into commit description.
-> 
-> Wouldn't inverting the direction of the z-axis go against the
-> above-quoted description from the kernel documentation?
-See my comments above.
+With that command you don't boot a freshly built kernel, you boot:
+
+Linux version 6.2.9-300.fc38.ppc64le 
+(mockbuild@0e2dbea752814aea985bdc5347ce35da) (gcc (GCC) 13.0.1 20230318 
+(Red Hat 13.0.1-0), GNU ld version 2.39-9.fc38)
+
+Are you sure you tried with the ppc64le_defconfig ? On my side the boot 
+fails as follows when using a ppc64le_defconfig vmlinux with the file 
+Fedora-Cloud-Base-38-1.6.ppc64le.qcow2:
+
+...
+[    2.602758][    T1] md: autorun ...
+[    2.602808][    T1] md: ... autorun DONE.
+[    2.612596][  T189] kworker/u73:0 (189) used greatest stack depth: 
+29008 bytes left
+[    2.617068][    T1] /dev/root: Can't open blockdev
+[    2.618136][    T1] VFS: Cannot open root device "" or 
+unknown-block(0,0): error -6
+[    2.618239][    T1] Please append a correct "root=" boot option; here 
+are the available partitions:
+[    2.618611][    T1] 0100           65536 ram0
+[    2.618768][    T1]  (driver?)
+[    2.619101][    T1] 0101           65536 ram1
+[    2.619120][    T1]  (driver?)
+[    2.619187][    T1] 0102           65536 ram2
+[    2.619199][    T1]  (driver?)
+[    2.619251][    T1] 0103           65536 ram3
+[    2.619261][    T1]  (driver?)
+[    2.619312][    T1] 0104           65536 ram4
+[    2.619322][    T1]  (driver?)
+[    2.619372][    T1] 0105           65536 ram5
+[    2.619382][    T1]  (driver?)
+[    2.619436][    T1] 0106           65536 ram6
+[    2.619447][    T1]  (driver?)
+[    2.619500][    T1] 0107           65536 ram7
+[    2.619519][    T1]  (driver?)
+[    2.619571][    T1] 0108           65536 ram8
+[    2.619581][    T1]  (driver?)
+[    2.619631][    T1] 0109           65536 ram9
+[    2.619641][    T1]  (driver?)
+[    2.619690][    T1] 010a           65536 ram10
+[    2.619700][    T1]  (driver?)
+[    2.619754][    T1] 010b           65536 ram11
+[    2.619764][    T1]  (driver?)
+[    2.619818][    T1] 010c           65536 ram12
+[    2.619827][    T1]  (driver?)
+[    2.619880][    T1] 010d           65536 ram13
+[    2.619889][    T1]  (driver?)
+[    2.619942][    T1] 010e           65536 ram14
+[    2.619952][    T1]  (driver?)
+[    2.620023][    T1] 010f           65536 ram15
+[    2.620036][    T1]  (driver?)
+[    2.620116][    T1] 0b00         1048575 sr0
+[    2.620150][    T1]  driver: sr
+[    2.620221][    T1] 0800         5242880 sda
+[    2.620234][    T1]  driver: sd
+[    2.620310][    T1]   0801            4096 sda1 
+709431c7-74bd-4ec4-bbe8-d4f7e7e3194e
+[    2.620369][    T1]
+[    2.620449][    T1]   0802         1024000 sda2 
+e0b0a6de-ca8f-4e50-808c-121324c94d04
+[    2.620463][    T1]
+[    2.620531][    T1]   0803          102400 sda3 
+8ed2fbf1-fd2c-4ab0-b66f-d31df1d24e3e
+[    2.620544][    T1]
+[    2.620599][    T1]   0804            1024 sda4 
+46dc7fc8-bf10-4166-9bc8-98daabbec06d
+[    2.620610][    T1]
+[    2.620666][    T1]   0805         4109312 sda5 
+8a52b54b-c379-43a5-bf8d-a43fdef4a370
+[    2.620676][    T1]
+[    2.620838][    T1] List of all bdev filesystems:
+[    2.620884][    T1]  ext3
+[    2.620918][    T1]  ext2
+[    2.620947][    T1]  ext4
+[    2.620971][    T1]  msdos
+[    2.620995][    T1]  iso9660
+[    2.621018][    T1]  xfs
+[    2.621050][    T1]
+[    2.621311][    T1] Kernel panic - not syncing: VFS: Unable to mount 
+root fs on unknown-block(0,0)
+[    2.621992][    T1] CPU: 2 UID: 0 PID: 1 Comm: swapper/0 Not tainted 
+6.11.0-06480-gfabc9e955334 #1217
+[    2.622166][    T1] Hardware name: IBM pSeries (emulated by qemu) 
+POWER9 (architected) 0x4e1200 0xf000005 of:SLOF,HEAD pSeries
+[    2.622456][    T1] Call Trace:
+[    2.622574][    T1] [c000000003797ad0] [c000000001189fe8] 
+dump_stack_lvl+0xd8/0xf0 (unreliable)
+[    2.623575][    T1] [c000000003797b00] [c00000000014830c] 
+panic+0x2f8/0x4fc
+[    2.623666][    T1] [c000000003797ba0] [c000000002006858] 
+mount_root_generic+0x2c8/0x474
+[    2.623748][    T1] [c000000003797c70] [c000000002006f40] 
+prepare_namespace+0x94/0x3a4
+[    2.623804][    T1] [c000000003797d00] [c000000002005e7c] 
+kernel_init_freeable+0x4cc/0x530
+[    2.623896][    T1] [c000000003797de0] [c000000000011138] 
+kernel_init+0x34/0x26c
+[    2.623954][    T1] [c000000003797e50] [c00000000000debc] 
+ret_from_kernel_user_thread+0x14/0x1c
+[    2.624025][    T1] --- interrupt: 0 at 0x0
+[    4.502550][    T1] pstore: backend (nvram) writing error (-1)
+qemu-system-ppc64: OS terminated:
 
 
-> > > [1] https://rimgo.reallyaweso.me/vrBXQPq.png
-> > > [2] https://rimgo.reallyaweso.me/uTmT1pr.png
-> > > [3] https://www.kernel.org/doc/Documentation/devicetree/bindings/iio/mount-matrix.txt
-
--- 
-Best regards,
-Andrey Skvortsov
+Christophe
 
