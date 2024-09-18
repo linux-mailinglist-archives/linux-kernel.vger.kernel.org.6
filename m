@@ -1,89 +1,175 @@
-Return-Path: <linux-kernel+bounces-332804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EBC997BF08
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 18:14:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB7297BF13
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 18:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 782AA1C21674
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:14:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 817C71F21F6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FDB1C9876;
-	Wed, 18 Sep 2024 16:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CBB1C9867;
+	Wed, 18 Sep 2024 16:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIejEd4n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="Kd0G40gn"
+Received: from mail.avm.de (mail.avm.de [212.42.244.94])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E6F1C9850;
-	Wed, 18 Sep 2024 16:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D43EAC6;
+	Wed, 18 Sep 2024 16:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726676055; cv=none; b=ld78WwQAzTyjAz3ywgKmUI81MvKX9lPdLZtXnVOjKNhidEL3X4XiZMxGd6N79xPzIwk39SdVMaqBoSPe+gj2C51dLjKL8UnFWm7WodWxTjKTEWaa8oRVSOI09fhP35ALl6LJxunyNuofuXZ6syDXNluNlK6EXTMCiF1b3a+RCG0=
+	t=1726676652; cv=none; b=hkXZdP8qLvyuwJ4QN/rnE8xWwD/KygBdz0OlvLBMuhOi21074QiZjgXhaGV+4odPx7t2SCZ5GgAS5rXC3yNzAE+t6bdDrqo1rT8YhaTPJV5AodFTK06gZ+RCpyAQLDnp3CuaXGDGcD619Wp1GQZqa1MC9Il+m8lo0imG5FJZPW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726676055; c=relaxed/simple;
-	bh=3rznRPdygQNZ3lygq9QAApBHw9Wr9Jz6m6ljd6J0fpE=;
+	s=arc-20240116; t=1726676652; c=relaxed/simple;
+	bh=v4srWa54wrNGyko4K4u56hrNP/STbrE3QgoWOwtwKtQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mfkpDqDfJJHMmwE+24ZG9p/aGjKgoR4T+M3oJ6QT4qUdOCUxQOE+IExlOL55XwhcToUmq6/DxmtEsCHhReBxQYVuYoyOTQmmYeBZA58+EWiIJ1j3Z50VXsWqmqjJmDeDpujMbdp7n8VwqesoobHHYjmNSXkEXEZbGOkIlQFVIRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIejEd4n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFE68C4CEC2;
-	Wed, 18 Sep 2024 16:14:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726676055;
-	bh=3rznRPdygQNZ3lygq9QAApBHw9Wr9Jz6m6ljd6J0fpE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=QznLqRCHfkcg7PIDtpQVPZK3MOr4kSP8BBFSqrEOp07r72evdHm+Xrr24kn/U+Jt1S4ULpdW0g0UZqN3BLT9hEaMeMqWm9FJJenXQuEBTCwwiuGeDFyML/TL425kKEbLNAnrhBLa2Q+wyZECTvNymW646uDmJdwLr+cKPVgoczk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=Kd0G40gn; arc=none smtp.client-ip=212.42.244.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
+	t=1726676647; bh=v4srWa54wrNGyko4K4u56hrNP/STbrE3QgoWOwtwKtQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MIejEd4n3jKs72DbigX6AovTlZzCspSJj2JtC2g+edq7i3EgSgZBuyPwnYGLMjFik
-	 BanmUmNP3k1eew7YZIazc/0EPDShFdjtvoxUfYBDYXsUCDXPLHIrZdgY8VJ5+Dg1zX
-	 NpSY+1QIVKOWL6Ty5DXSYo6haOjcfkthxSfDtYint7s7X3qpnfqDA9ce1kP4Zulicl
-	 gkhqrh30IgP+WbyycL/Y9CfsCKPSKbx8YrywS7Kj+zfIqfv1v9I4yhq6Mm6nTbg6x/
-	 b9+NQEkUhX5yvNTwP+tO7912htXd9E7sAO32216HVS14IV0YhCtroaSycKpo1nQdOd
-	 JLz5gJkVdNWoQ==
-Date: Wed, 18 Sep 2024 11:14:14 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org,
-	Fu Wei <wefu@redhat.com>, Guo Ren <guoren@kernel.org>,
-	linux-riscv@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
-	Drew Fustini <drew@pdp7.com>, linux-kernel@vger.kernel.org,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-gpio@vger.kernel.org,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Subject: Re: [PATCH v2 1/8] dt-bindings: pinctrl: Add thead,th1520-pinctrl
- bindings
-Message-ID: <172667605295.1715920.4448907447516770093.robh@kernel.org>
-References: <20240914-th1520-pinctrl-v2-0-3ba67dde882c@tenstorrent.com>
- <20240914-th1520-pinctrl-v2-1-3ba67dde882c@tenstorrent.com>
+	b=Kd0G40gnoRASQ1t+WuqSE9ke0KAeP2nU5/LvLCoo+5DpwyxNkvzBlLO+u91vFntRz
+	 BEsBZB6MWjNreLb87KQDeTfD9D7+HWfK6oRdW19/PecNoANh611INIIzGueoECXgIE
+	 4YC33N3EegTY89ExI8hbBOhboEYpqTFTxe7LdR90=
+Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Wed, 18 Sep 2024 18:24:07 +0200 (CEST)
+Received: from l-nschier-nb (unknown [83.68.141.146])
+	by mail-auth.avm.de (Postfix) with ESMTPSA id 42F9280130;
+	Wed, 18 Sep 2024 18:24:07 +0200 (CEST)
+Date: Wed, 18 Sep 2024 18:24:05 +0200
+From: Nicolas Schier <n.schier@avm.de>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 04/23] kbuild: doc: remove the description about shipped
+ files
+Message-ID: <Zur-pVW_2oBJdjgy@l-nschier-nb>
+References: <20240917141725.466514-1-masahiroy@kernel.org>
+ <20240917141725.466514-5-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="09H9jjuh+dXBHf1Q"
 Content-Disposition: inline
-In-Reply-To: <20240914-th1520-pinctrl-v2-1-3ba67dde882c@tenstorrent.com>
+In-Reply-To: <20240917141725.466514-5-masahiroy@kernel.org>
+X-purgate-ID: 149429::1726676647-E1626DC4-09DE9648/0/0
+X-purgate-type: clean
+X-purgate-size: 3876
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
 
 
-On Sat, 14 Sep 2024 19:40:49 -0700, Drew Fustini wrote:
-> From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> 
-> Add bindings for the pin controllers on the T-Head TH1520 RISC-V SoC.
-> 
-> Tested-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> [dfustini: add thead,pad-group to select the pin controller instance]
-> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+--09H9jjuh+dXBHf1Q
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Sep 17, 2024 at 11:16:32PM +0900, Masahiro Yamada wrote:
+> The use of shipped files is discouraged in the upstream kernel these
+> days. [1]
+>=20
+> Downstream Makefiles have the freedom to use shipped files or other
+> options to handle binaries, but this is not what should be advertised
+> in the upstream document.
+>=20
+> [1]: https://lore.kernel.org/all/CAHk-=3DwgSEi_ZrHdqr=3D20xv+d6dr5G895CbO=
+Ai8ok+7-CQUN=3DfQ@mail.gmail.com/
+>=20
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 > ---
->  .../bindings/pinctrl/thead,th1520-pinctrl.yaml     | 176 +++++++++++++++++++++
->  MAINTAINERS                                        |   1 +
->  2 files changed, 177 insertions(+)
-> 
+>=20
+>  Documentation/kbuild/modules.rst | 35 +++-----------------------------
+>  1 file changed, 3 insertions(+), 32 deletions(-)
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Do you want to remove the TODO point refering to *_shipped files from
+Documentation/kbuild/makefiles.rst as well?
 
+$ git grep -Hrne _shipped Documentation/
+Documentation/kbuild/makefiles.rst:1668:- Describe how kbuild supports ship=
+ped files with _shipped.
+
+>=20
+> diff --git a/Documentation/kbuild/modules.rst b/Documentation/kbuild/modu=
+les.rst
+> index 7eceb9a65e9c..1afa6b1b4090 100644
+> --- a/Documentation/kbuild/modules.rst
+> +++ b/Documentation/kbuild/modules.rst
+[...]
+> @@ -240,35 +235,11 @@ module 8123.ko, which is built from the following f=
+iles::
+>  		default:
+>  			$(MAKE) -C $(KDIR) M=3D$$PWD
+> =20
+> -		# Module specific targets
+> -		genbin:
+> -			echo "X" > 8123_bin.o_shipped
+> -
+>  	The split in example 2 is questionable due to the simplicity of
+>  	each file; however, some external modules use makefiles
+>  	consisting of several hundred lines, and here it really pays
+>  	off to separate the kbuild part from the rest.
+> =20
+> -3.3 Binary Blobs
+> -----------------
+> -
+> -	Some external modules need to include an object file as a blob.
+> -	kbuild has support for this, but requires the blob file to be
+> -	named <filename>_shipped. When the kbuild rules kick in, a copy
+> -	of <filename>_shipped is created with _shipped stripped off,
+> -	giving us <filename>. This shortened filename can be used in
+> -	the assignment to the module.
+> -
+> -	Throughout this section, 8123_bin.o_shipped has been used to
+> -	build the kernel module 8123.ko; it has been included as
+> -	8123_bin.o::
+> -
+> -		8123-y :=3D 8123_if.o 8123_pci.o 8123_bin.o
+> -
+> -	Although there is no distinction between the ordinary source
+> -	files and the binary file, kbuild will pick up different rules
+> -	when creating the object file for the module.
+> -
+
+I think renumbering the following sections would provide a more consistent =
+document.  If you think that keeping the numbering constant:  would you min=
+d adding a note about section 3.3 being removed?
+(And possibly as well in the table of contents?)
+
+Either way,
+
+Reviewed-by: Nicolas Schier <n.schier@avm.de>
+
+--09H9jjuh+dXBHf1Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEDv+Fiet06YHnC6RpiMa8nIiabbgFAmbq/qUACgkQiMa8nIia
+bbgtRQ/8CVG4VeA5XKboBTYzhHtk92dYGJWO3WCgIESOPICa6lq/mRnGOJTUQSqX
+yjXIUgv29yxF0tjmoQ1PBHR1yrUMRvtMNc80RGuYUc5JOprQDLq2tW6PXvmwjL1/
+N3KxuNzNp3fz9DTNaIKs6BBgHMely4Wnzu/sSx2ZLIk1mN7sdTdbRyh8XRHo1t7O
+Qb0fCUddbk+CqluyNhbfOkMU5H6JmZ+MJTYYF97v2dBjoDdI/ohnrdDXKw8M0gYY
+YXJwtalcXsEk/kS5YUUCrexgtzPfbOpkjhqFqpT0PAgVeMKI/8luc3lDBX7jjE4O
+5gnSF1ivjqmR6aBTJJJFqsOC6ZYji8xry2IHosLpMdwHT7UYiWDMN1POJITlSGhu
+jGqcPUReb05tSXepKxMENoweIudjEXLY6ghXOVi1W5+H8nFFT3yIQ3DaDrGhKlz6
+ECaVZBivIHjHrV6swVFh0H1rWJCyZoBZ4hpNYfiuZ0zl/1KToRTYGarm4pvK9o0v
+5BG775NJEVAP9YHF20nFzg/LieVmMrV578Yw9UL7vY7FcvmJpx9LY3fy3PyOUutT
+MhZTCdByJOMif6uSgckNDQVJcgdc/Q6zz3SJvYOmnwRMg2iNqdZ14Pj8c3Tncs/G
+BM3l5r1RoVh9eBbKJz+KDJ1LgNL/MXXNYBCV8Y/oj1ot+9riEs4=
+=dewM
+-----END PGP SIGNATURE-----
+
+--09H9jjuh+dXBHf1Q--
 
