@@ -1,117 +1,217 @@
-Return-Path: <linux-kernel+bounces-332335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DF297B87D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:20:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E70497B7FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A16E31C21300
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 07:20:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3BC4285A88
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B569A17967F;
-	Wed, 18 Sep 2024 07:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2E116BE0B;
+	Wed, 18 Sep 2024 06:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFlFh7mx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CRXEfWNE"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126E816C852;
-	Wed, 18 Sep 2024 07:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D77165F17
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726643923; cv=none; b=ajwVexT6yBjuxVVZ3mmpwK58DymitWEnwYf+hh7tf/BG865x369zukjeQ+6SVSmxawTzydmXu+b5g5lThg7rOs5EXQFJ5MTt5U3cSl+1x20unNy216I5d4iX6PkohdDDjXHzvXge95BXJYV2gzwmDwdxxOi4GFahFZCcDjmO6m0=
+	t=1726641428; cv=none; b=Tr7BwaLMxDaalSUJL5Bc8NqosZjIJurs76LvBirl20BJ5HA9UaLr8Yfs5mR4B6Mcly9vpRvA7bLLapcWo2y0deBCpLQgZVz8uKtJ2zzLFIAkrhsjClatAx1Bf+4U+JfAtC/CDygNymv1wIaRjOVy1DQvLi4P8qHP88j0Tqtvdu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726643923; c=relaxed/simple;
-	bh=mDUm5HnuT8XAIWwSA2FsYNYxm7HOA0+SdLfLadWOtQ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t1PPLKht3QQanL3W1k4ckvQMf1K5l8XTxln18xA1gtXxqLDCAwTAWaHpJ8p2QE0YePdP8mBhQSSimif10G9Zk3aBSIltOphDE30sANdtsGgAAnMzaWhjecC0IrQ6TRpSprPq7Vsrb5gU55i6asJvqIxUg/A+t5heLgip+9aA8o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFlFh7mx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 912F8C4CED1;
-	Wed, 18 Sep 2024 07:18:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726643922;
-	bh=mDUm5HnuT8XAIWwSA2FsYNYxm7HOA0+SdLfLadWOtQ8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=UFlFh7mxQSimASiTpj0jSP/v75dr6jLz+prn+1QUvtY7VmmHQS2AnGdQJbQ5J4gKG
-	 jmR3kkv8azxm8AgIFJ7fJboG3v1nj9BDSFic0gLf84acGdl41jRv4WCKGf9hgXx99g
-	 7k/BVA6n3ZVgXB/Oc8d2ba46kezg4LzfavcOsTtwOBeFJPBnwlNBUBeN5mDYPto3gc
-	 VG5y1vX1ixSmgjUrc/kUI9X854Co5qhrjPebTbzpaRiY0kCoUbQ+OdhJ1e0gd22yq2
-	 Syn3IOOnN4vtLuoAOQQ6z/xoSU+i9bAWY77qxhx+sh1AQuxYVCNZSQRxNIh2wKtTQN
-	 zsCzy1/UEMljg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Michael Kelley <mhklinux@outlook.com>,
-	Roman Kisel <romank@linux.microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	kys@microsoft.com,
-	haiyangz@microsoft.com,
-	sthemmin@microsoft.com,
-	decui@microsoft.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	linux-hyperv@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4] x86/hyperv: Set X86_FEATURE_TSC_KNOWN_FREQ when Hyper-V provides frequency
-Date: Wed, 18 Sep 2024 02:37:01 -0400
-Message-ID: <20240918063701.239061-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726641428; c=relaxed/simple;
+	bh=04wFRTmhaMNLEIfkaR4jRwa5fJu4Gu8BgBWpgBSxiTA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s/jVskTtm1/dHPOltKEuSPmrniRkjmHLOEKCECrHBRATwwoEVz8hnjI3/oABPAqoyNwTCigbACypUdeJpZxmXC34EMpMRrmiKj2vr71HmuVx2ASQA+u4C8aWyeJ2BzC+D8PkX7oyz+LO8bPuTLwBIK1hZ/kFJOQx04ik48/6SKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CRXEfWNE; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cde6b5094so52372195e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 23:37:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726641424; x=1727246224; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ONBa+excFFO7rQj3mSGSspHjsKaP6ICID9dssfbxrK8=;
+        b=CRXEfWNEXvQs7ImCG6MHdU9GC0DDp184/WUnzRV1MipdN1FBmPZAANC0hm8YK2ncIH
+         9vL06xcgUGOONXoVXBZl+h30C0FRCG/pJLTcTZ7CDHWRa9876tDusnRxetPNViK2hOna
+         pbU6HzKsyP73jbXTVSZrgkx4mapUslY27UhejR36ZQKU28CbjEbg1Gbf3Z1v1JKXUohz
+         hZvzQ2FDBGAyh1U9BQGT2OIODlGaNfqGMwhGqyDeFAnBLib9cjvMpoKFZV865Vpkijd8
+         zDRaItIg909HW62F/80MRHou4+yHJwxorQvvTIHYiHqSTGW/kNMiub4LedgchFpCKWft
+         fASg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726641424; x=1727246224;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ONBa+excFFO7rQj3mSGSspHjsKaP6ICID9dssfbxrK8=;
+        b=DE4ekQ4GOu65u8X39jqWukypYO1wZ1/iAkI+2HWs2uS1EGBqB2olUivIu/KRb+/WZS
+         RfmhEPMTwQ5grMeANuJNdsyGSBxtcz2LF7/1cq2wPVbem1X4sT4I2wVs/NirFQiRvsse
+         v95e/afX2cP+zwAAdNI4xddVVOxuU0qAQVVVYgCAueMpR0SA4tZ0z6fEt7ptNVHPtFdA
+         UPm8dzdu+r/qbBiH4DLz2K+6xSnjCGc9DKFKqTrxwXGvBgUUfkPEnZT2aaC1+g5POAdP
+         FqOGTru/nXH1iFqFbm6tP+3oDwf3uqpCpxSz/CouL7VGR9M0rNLsxrPk2EfVZclltk8l
+         hIzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuUuY/7QocKGkApkpqyoZJPgIKFXyESPMfwvR3SAhIVq2R93DdlScLAXwN4UzCoEangly6Qcbto2TKx8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyov1MKgBLhTXyXoyu4q5sFD5tMcwgKMcL3O8aRh971B4lXeukP
+	WX4vEqPhGblBLf6qL26eVGk5LrwKK7gfuJagUM1CtT4UihUbmlZrNuPLjpul2Ag=
+X-Google-Smtp-Source: AGHT+IFuyOiC/XvUY4Wd1OtS/NrMuj2AqikvELaUO76m0bhp4vCBZtJUmcPgp8JUIdbzh/H1w+GxiA==
+X-Received: by 2002:a05:600c:1e0f:b0:42c:bc04:58a5 with SMTP id 5b1f17b1804b1-42cdb58e4b1mr140112675e9.33.1726641423740;
+        Tue, 17 Sep 2024 23:37:03 -0700 (PDT)
+Received: from [192.168.0.216] ([185.44.53.103])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7054c580sm7966815e9.45.2024.09.17.23.37.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Sep 2024 23:37:02 -0700 (PDT)
+Message-ID: <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
+Date: Wed, 18 Sep 2024 00:37:02 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.284
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+To: Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@meta.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Dave Chinner <david@fromorbit.com>, Christian Theune <ct@flyingcircus.io>,
+ linux-mm@kvack.org, "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Daniel Dao <dqminh@cloudflare.com>, regressions@lists.linux.dev,
+ regressions@leemhuis.info
+References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+ <ZuNjNNmrDPVsVK03@casper.infradead.org>
+ <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
+ <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <Zud1EhTnoWIRFPa/@dread.disaster.area>
+ <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
+ <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
+ <ZulMlPFKiiRe3iFd@casper.infradead.org>
+ <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
+ <ZumDPU7RDg5wV0Re@casper.infradead.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZumDPU7RDg5wV0Re@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Michael Kelley <mhklinux@outlook.com>
+On 9/17/24 7:25 AM, Matthew Wilcox wrote:
+> On Tue, Sep 17, 2024 at 01:13:05PM +0200, Chris Mason wrote:
+>> On 9/17/24 5:32 AM, Matthew Wilcox wrote:
+>>> On Mon, Sep 16, 2024 at 10:47:10AM +0200, Chris Mason wrote:
+>>>> I've got a bunch of assertions around incorrect folio->mapping and I'm
+>>>> trying to bash on the ENOMEM for readahead case.  There's a GFP_NOWARN
+>>>> on those, and our systems do run pretty short on ram, so it feels right
+>>>> at least.  We'll see.
+>>>
+>>> I've been running with some variant of this patch the whole way across
+>>> the Atlantic, and not hit any problems.  But maybe with the right
+>>> workload ...?
+>>>
+>>> There are two things being tested here.  One is whether we have a
+>>> cross-linked node (ie a node that's in two trees at the same time).
+>>> The other is whether the slab allocator is giving us a node that already
+>>> contains non-NULL entries.
+>>>
+>>> If you could throw this on top of your kernel, we might stand a chance
+>>> of catching the problem sooner.  If it is one of these problems and not
+>>> something weirder.
+>>>
+>>
+>> This fires in roughly 10 seconds for me on top of v6.11.  Since array seems
+>> to always be 1, I'm not sure if the assertion is right, but hopefully you
+>> can trigger yourself.
+> 
+> Whoops.
+> 
+> $ git grep XA_RCU_FREE
+> lib/xarray.c:#define XA_RCU_FREE        ((struct xarray *)1)
+> lib/xarray.c:   node->array = XA_RCU_FREE;
+> 
+> so you walked into a node which is currently being freed by RCU.  Which
+> isn't a problem, of course.  I don't know why I do that; it doesn't seem
+> like anyone tests it.  The jetlag is seriously kicking in right now,
+> so I'm going to refrain from saying anything more because it probably
+> won't be coherent.
 
-[ Upstream commit 8fcc514809de41153b43ccbe1a0cdf7f72b78e7e ]
+Based on a modified reproducer from Chris (N threads reading from a
+file, M threads dropping pages), I can pretty quickly reproduce the
+xas_descend() spin on 6.9 in a vm with 128 cpus. Here's some debugging
+output with a modified version of your patch too, that ignores
+XA_RCU_FREE:
 
-A Linux guest on Hyper-V gets the TSC frequency from a synthetic MSR, if
-available. In this case, set X86_FEATURE_TSC_KNOWN_FREQ so that Linux
-doesn't unnecessarily do refined TSC calibration when setting up the TSC
-clocksource.
+node ffff8e838a01f788 max 59 parent 0000000000000000 shift 0 count 0 values 0 array ffff8e839dfa86a0 list ffff8e838a01f7a0 ffff8e838a01f7a0 marks 0 0 0
+WARNING: CPU: 106 PID: 1554 at lib/xarray.c:405 xas_alloc.cold+0x26/0x4b
 
-With this change, a message such as this is no longer output during boot
-when the TSC is used as the clocksource:
+which is:
 
-[    1.115141] tsc: Refined TSC clocksource calibration: 2918.408 MHz
+XA_NODE_BUG_ON(node, memchr_inv(&node->slots, 0, sizeof(void *) * XA_CHUN  K_SIZE));
 
-Furthermore, the guest and host will have exactly the same view of the
-TSC frequency, which is important for features such as the TSC deadline
-timer that are emulated by the Hyper-V host.
+and:
 
-Signed-off-by: Michael Kelley <mhklinux@outlook.com>
-Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20240606025559.1631-1-mhklinux@outlook.com
-Signed-off-by: Wei Liu <wei.liu@kernel.org>
-Message-ID: <20240606025559.1631-1-mhklinux@outlook.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/x86/kernel/cpu/mshyperv.c | 1 +
- 1 file changed, 1 insertion(+)
+node ffff8e838a01f788 offset 59 parent ffff8e838b0419c8 shift 0 count 252 values 0 array ffff8e839dfa86a0 list ffff8e838a01f7a0 ffff8e838a01f7a0 marks 0 0 0
 
-diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-index 51d95c4b692c..cebbcc6c36ae 100644
---- a/arch/x86/kernel/cpu/mshyperv.c
-+++ b/arch/x86/kernel/cpu/mshyperv.c
-@@ -256,6 +256,7 @@ static void __init ms_hyperv_init_platform(void)
- 	    ms_hyperv.misc_features & HV_FEATURE_FREQUENCY_MSRS_AVAILABLE) {
- 		x86_platform.calibrate_tsc = hv_get_tsc_khz;
- 		x86_platform.calibrate_cpu = hv_get_tsc_khz;
-+		setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
- 	}
- 
- 	if (ms_hyperv.hints & HV_X64_ENLIGHTENED_VMCS_RECOMMENDED) {
+which is:
+
+XA_NODE_BUG_ON(node, node->count > XA_CHUNK_SIZE);
+
+and for this particular run, 2 threads spinning:
+
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-1 rcu_node (CPUs 16-31): P1555
+rcu: 	Tasks blocked on level-1 rcu_node (CPUs 64-79): P1556
+rcu: 	(detected by 97, t=2102 jiffies, g=7821, q=293800 ncpus=128)
+task:reader          state:R  running task     stack:0     pid:1555  tgid:1551  ppid:1      flags:0x00004006
+Call Trace:
+ <TASK>
+ ? __schedule+0x37f/0xaa0
+ ? sysvec_apic_timer_interrupt+0x96/0xb0
+ ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+ ? xas_load+0x74/0xe0
+ ? xas_load+0x10/0xe0
+ ? xas_find+0x162/0x1b0
+ ? find_lock_entries+0x1ac/0x360
+ ? find_lock_entries+0x76/0x360
+ ? mapping_try_invalidate+0x5d/0x130
+ ? generic_fadvise+0x110/0x240
+ ? xfd_validate_state+0x1e/0x70
+ ? ksys_fadvise64_64+0x50/0x90
+ ? __x64_sys_fadvise64+0x18/0x20
+ ? do_syscall_64+0x5d/0x180
+ ? entry_SYSCALL_64_after_hwframe+0x4b/0x53
+ </TASK>
+task:reader          state:R  running task     stack:0     pid:1556  tgid:1551  ppid:1      flags:0x00004006
+
+The reproducer takes ~30 seconds, and will lead to anywhere from 1..N
+threads spinning here.
+
+Now for the kicker - this doesn't reproduce in 6.10 and onwards. There
+are only a few changes here that are relevant, seemingly, and the prime
+candidates are:
+
+commit a4864671ca0bf51c8e78242951741df52c06766f
+Author: Kairui Song <kasong@tencent.com>
+Date:   Tue Apr 16 01:18:55 2024 +0800
+
+    lib/xarray: introduce a new helper xas_get_order
+
+and the followup filemap change:
+
+commit 6758c1128ceb45d1a35298912b974eb4895b7dd9
+Author: Kairui Song <kasong@tencent.com>
+Date:   Tue Apr 16 01:18:56 2024 +0800
+
+    mm/filemap: optimize filemap folio adding
+
+and reverting those two on 6.10 hits it again almost immediately. Didn't
+look into these commit, but looks like they inadvertently also fixed
+this corruption issue.
+
 -- 
-2.43.0
-
+Jens Axboe
 
