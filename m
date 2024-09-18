@@ -1,133 +1,167 @@
-Return-Path: <linux-kernel+bounces-332523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF05197BACF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:29:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD1A97BAD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1CE81C2140D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:29:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 933CAB218FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC7E17C9FA;
-	Wed, 18 Sep 2024 10:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC9C17B401;
+	Wed, 18 Sep 2024 10:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kqFzINYt"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gbf1E5bc"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD06176ADA
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1DE1741C3;
+	Wed, 18 Sep 2024 10:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726655354; cv=none; b=L3E5yPI9sDD8qkoQYLsqilPebemF3b439J56pG0yQCGtaAuOBsAGwV3ztl6NaV3ZrUVoplvAVzg2WcXrWrXBs5+iSnAJLHBpPlBvi7YNPS0HKwN7BZyCbgGlAewqdkUIJ6le98S53maiDAJhkojB0qpSQPGrta/JYv8I7jIE+vo=
+	t=1726655401; cv=none; b=njYeVBr7jFKeaubhsLFEPZl7ms/FPtdAYTfmsQaS/eiJNEyn3B5AXtUGnWjGZ+da2KLUQrWmCFbg9vPzCQIYrnZ9Yclh53yUMqe7ZmaYkQk+dmb+UgSRbMpe90awPDaZ0Wh3A95RW37j70uEhK/54If6AyTDKWyhzv6rLdcfw2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726655354; c=relaxed/simple;
-	bh=a39yEU1qDSiQyVMeMKgLFZWZA/fQbvNEV7y3RlMGOEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=siBEJOner2dkbZ3ntuSGcS6b5WmlANc8R3ZvjRGfM9Y/oBIrHqC9BgkZ5JVLm2GeqMy4ItTGs+2/2aRux9JrXfgGu1dGRGWiekTRkSWAWuD604dBmfRz04fvbOBMKX4jrY2+7RNWrsyPtjPLd/v+1A452Igz21NgM8fPHfOsePA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kqFzINYt; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-374b9761eecso5343403f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 03:29:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726655350; x=1727260150; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y8IGZ+UsOwDU5vfEwL536cwU6b6ARkEcblXO7Gz1AB8=;
-        b=kqFzINYtzWheM9vW3R+CL1T0bEv41MCM949d6BTWJ/5CK2mCWtKzseh03xpZlfHx9J
-         1saziFhbRJrOnpwCZIHWq6gTfK4Pp8AlcEI41QgIbEsbzmrCZXVNq0pbd6U7vUolA8Jw
-         SbUbV5KBg8MVaESEJ1oBuvqmwk3TiOFDC+UMkG5u54LTPyZjYQQRzzCCEzpy27pfV7Jp
-         6Y8RNmHadIAtIZCGubfc5bABWt2yhNZoZFmb3eisO3j3abqQnZdVLWVCJTo3r56JtTK0
-         X/sYr0AsDUtMP4mbM3RWelfm6pzZxMeAq2BmK8+CzO+8lkuTEU7Hlt2V8TSyiXUllW6u
-         FTqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726655350; x=1727260150;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y8IGZ+UsOwDU5vfEwL536cwU6b6ARkEcblXO7Gz1AB8=;
-        b=I6e28zc5PnhBR2CAmGSz+kxzgbXMup23oD+4kYQ7kx6JsTBUhCnnywE5NbWYsXJfEb
-         PiE5G9Afrl6daVBfNBh8r0IlPeEHOC7buu3ME7E4lstrbQzWuvjCa0WA9G6GdIGSRsj7
-         f8d6GJlPeCo+rK495nIjTt3Tlp+zOMyI1EnXat3QVU/JdKDsA/vJg5eT/hBxpAmfmQYR
-         wHs1TRNVyODuvon399nlNG1GKrbJj4hc42Eiz2cZAu9qdd6KBC9wcrJZKqpe9QwaaD1h
-         DvjTSwzyHdfwPh2TYtuYl48+2dPc4RxG9YR4Aqi9t6HLwgT8T5LxkqXZaz95eL8mBgGu
-         qGLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWiScBqPeVXh4teyOnewrnACMrVSkDlmabVTFS9VJkMl6RhAUHiTwC5RzbvaZslcfFGruloP96dnLE4m7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx3pBEH3/NXDXcMjDPc4ja+A8avM9BKp80VKgrZl2lOI/SVrcF
-	sTjLS8cS2HiEv4gcduW2+lZIGykgvC7SGbiJPtmoRIz2aCRxiLn0k/LbfBsML1Y=
-X-Google-Smtp-Source: AGHT+IGQN8g2sl5By/J4Z6wbJcgvZ3+TfEIn9bnlnNSVQu1J1Ze76BIcCUMXLkt5CXINpC2Ume6xYw==
-X-Received: by 2002:a5d:65c9:0:b0:368:3731:1613 with SMTP id ffacd0b85a97d-378c2cf3f1emr12714688f8f.13.1726655350454;
-        Wed, 18 Sep 2024 03:29:10 -0700 (PDT)
-Received: from localhost ([83.68.141.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e7805179sm11876344f8f.100.2024.09.18.03.29.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 03:29:10 -0700 (PDT)
-Date: Wed, 18 Sep 2024 13:29:07 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Abel Vesa <abel.vesa@linaro.org>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: drivers/spmi/spmi-pmic-arb.c:1782 spmi_pmic_arb_register_buses()
- error: uninitialized symbol 'ret'.
-Message-ID: <67cf80cf-d96d-4249-ac34-6085d4b32948@suswa.mountain>
+	s=arc-20240116; t=1726655401; c=relaxed/simple;
+	bh=tUuALn5ehxlNDWSv25T4l7vlKGj0FmVP4lN29YTyaTo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I6hV3gR0D++rWyG0JuCD+uQuKWl4qP9pYa8JkBwdBzTbcBxSooIlQUE4torOvN5ngVn9H+PtP2h2U8XDtPPj5SW1F9HpdFGjoyg9vX6mfg8d7An2Azt2DUgMaVZLGPoGekMkAYwEshxB3+hWWN6UFTd4+mUx/9yK4AYEX+B4c64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gbf1E5bc; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48I8iIId012612;
+	Wed, 18 Sep 2024 10:29:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=ifynQdRVvINRhkbByRD63oWSvNW1uNbqnQlGfESNpBI=; b=gb
+	f1E5bcIM8gAMxgjcQzYJofjl0WCfaIvrYV0CqrsoWweu6GmTRWwnWAol5oWzU8+s
+	AB2DZLIkwWCumk+MRtsTAvqeLiO+xYouWwbtoo7D46I3m5l0LFbtLAytQkT+M1a8
+	n2/guXIdbvuv41esKtMVHESaTGXQ+UyBHTID6xkooWy942mPtSV3898uEDs7rOsK
+	nX6KIM95V8aVzaGYiPmIkW5L9oYioXqyNoC8l+i5Jt36B1ZBVsqypo4ES2e2TOXT
+	jMhEzwxkj+hJ0eckBnhnDG+D/1SYon1JKGVTYXj36ASCPViAWStyHEWstxMlO/Iw
+	cz0jEOKoLPBWNIb5Bf1g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4gd1m7s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Sep 2024 10:29:42 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48IATgpl006216
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Sep 2024 10:29:42 GMT
+Received: from hu-sachgupt-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 18 Sep 2024 03:29:36 -0700
+From: Sachin Gupta <quic_sachgupt@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_cang@quicinc.com>,
+        <quic_nguyenb@quicinc.com>, <quic_bhaskarv@quicinc.com>,
+        <quic_mapa@quicinc.com>, <quic_narepall@quicinc.com>,
+        <quic_nitirawa@quicinc.com>, <quic_rampraka@quicinc.com>,
+        <quic_sachgupt@quicinc.com>, <quic_sartgarg@quicinc.com>
+Subject: [PATCH V2] arm64: dts: qcom: qcs6490-rb3gen2: Add SD Card node
+Date: Wed, 18 Sep 2024 15:59:21 +0530
+Message-ID: <20240918102921.23334-1-quic_sachgupt@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: RGMIyHjOYGp_a9o2goip3HVQMttdPDvR
+X-Proofpoint-GUID: RGMIyHjOYGp_a9o2goip3HVQMttdPDvR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ bulkscore=0 clxscore=1015 spamscore=0 adultscore=0 lowpriorityscore=0
+ mlxlogscore=790 impostorscore=0 mlxscore=0 priorityscore=1501 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409180066
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   adfc3ded5c33d67e822525f95404ef0becb099b8
-commit: 9799873717398e8fa1727482e578b9d777da645e spmi: pmic-arb: Add multi bus support
-config: mips-randconfig-r072-20240916 (https://download.01.org/0day-ci/archive/20240916/202409162313.TnpH4qKB-lkp@intel.com/config)
-compiler: mips64-linux-gcc (GCC) 14.1.0
+Add SD Card node for Qualcomm qcs6490-rb3gen2 Board.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202409162313.TnpH4qKB-lkp@intel.com/
+Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
+---
 
-smatch warnings:
-drivers/spmi/spmi-pmic-arb.c:1782 spmi_pmic_arb_register_buses() error: uninitialized symbol 'ret'.
+Changes from v1:
+ - Addressed Dmitry's comment.
+ - moved pinctrl-related nodes below the PINCTRL comment.
+ - moved sd-cd node in PINCRTL_related TLMM.
+---
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 33 ++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-vim +/ret +1782 drivers/spmi/spmi-pmic-arb.c
-
-9799873717398e8 Abel Vesa 2024-05-07  1762  static int spmi_pmic_arb_register_buses(struct spmi_pmic_arb *pmic_arb,
-9799873717398e8 Abel Vesa 2024-05-07  1763  					struct platform_device *pdev)
-9799873717398e8 Abel Vesa 2024-05-07  1764  {
-9799873717398e8 Abel Vesa 2024-05-07  1765  	struct device *dev = &pdev->dev;
-9799873717398e8 Abel Vesa 2024-05-07  1766  	struct device_node *node = dev->of_node;
-9799873717398e8 Abel Vesa 2024-05-07  1767  	struct device_node *child;
-9799873717398e8 Abel Vesa 2024-05-07  1768  	int ret;
-9799873717398e8 Abel Vesa 2024-05-07  1769  
-9799873717398e8 Abel Vesa 2024-05-07  1770  	/* legacy mode doesn't provide child node for the bus */
-9799873717398e8 Abel Vesa 2024-05-07  1771  	if (of_device_is_compatible(node, "qcom,spmi-pmic-arb"))
-9799873717398e8 Abel Vesa 2024-05-07  1772  		return spmi_pmic_arb_bus_init(pdev, node, pmic_arb);
-9799873717398e8 Abel Vesa 2024-05-07  1773  
-9799873717398e8 Abel Vesa 2024-05-07  1774  	for_each_available_child_of_node(node, child) {
-9799873717398e8 Abel Vesa 2024-05-07  1775  		if (of_node_name_eq(child, "spmi")) {
-9799873717398e8 Abel Vesa 2024-05-07  1776  			ret = spmi_pmic_arb_bus_init(pdev, child, pmic_arb);
-9799873717398e8 Abel Vesa 2024-05-07  1777  			if (ret)
-9799873717398e8 Abel Vesa 2024-05-07  1778  				return ret;
-9799873717398e8 Abel Vesa 2024-05-07  1779  		}
-9799873717398e8 Abel Vesa 2024-05-07  1780  	}
-9799873717398e8 Abel Vesa 2024-05-07  1781  
-9799873717398e8 Abel Vesa 2024-05-07 @1782  	return ret;
-
-Is it possible to not have an spmi node?
-
-9799873717398e8 Abel Vesa 2024-05-07  1783  }
-
+diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+index 0d45662b8028..c9f4c6812b71 100644
+--- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
++++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+@@ -716,6 +716,18 @@
+ 	status = "okay";
+ };
+ 
++&sdhc_2 {
++	status = "okay";
++
++	pinctrl-0 = <&sdc2_clk>, <&sdc2_cmd>, <&sdc2_data>, <&sd_cd>;
++	pinctrl-1 = <&sdc2_clk_sleep>, <&sdc2_cmd_sleep>, <&sdc2_data_sleep>, <&sd_cd>;
++
++	vmmc-supply = <&vreg_l9c_2p96>;
++	vqmmc-supply = <&vreg_l6c_2p96>;
++
++	cd-gpios = <&tlmm 91 GPIO_ACTIVE_LOW>;
++};
++
+ &tlmm {
+ 	gpio-reserved-ranges = <32 2>, /* ADSP */
+ 			       <48 4>; /* NFC */
+@@ -812,6 +824,21 @@
+ 	};
+ };
+ 
++&sdc2_clk {
++	bias-disable;
++	drive-strength = <16>;
++};
++
++&sdc2_cmd {
++	bias-pull-up;
++	drive-strength = <10>;
++};
++
++&sdc2_data {
++	bias-pull-up;
++	drive-strength = <10>;
++};
++
+ &tlmm {
+ 	lt9611_irq_pin: lt9611-irq-state {
+ 		pins = "gpio24";
+@@ -819,4 +846,10 @@
+ 		drive-strength = <2>;
+ 		bias-disable;
+ 	};
++
++	sd_cd: sd-cd-state {
++		pins = "gpio91";
++		function = "gpio";
++		bias-pull-up;
++	};
+ };
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.17.1
 
 
