@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-332530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62DE597BAE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:32:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E169997BAE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:32:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9675B1C20E63
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A92B3282F50
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9ED18893D;
-	Wed, 18 Sep 2024 10:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9622C1891D1;
+	Wed, 18 Sep 2024 10:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="YwR5b4Ot"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Iuj5aQTm"
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8409917C9BB;
-	Wed, 18 Sep 2024 10:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B9E17E44F;
+	Wed, 18 Sep 2024 10:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726655543; cv=none; b=M02QQyZdBK9by4G9bKUeL2XvnI8CSu/Gmd1AbbGFRBxGaK9OMxD1kCkKl3xd/Tb/5YKETEqFXpDJibNXs8Gx4xgsJY4TlUtycSkMrLINyQgNAskIfIC70M8/uGo2VhxqKOL39D/Nvb+aH349tWLG23YsptLV9FbB/KBZb3/Gk3k=
+	t=1726655544; cv=none; b=twpBsvXClgG5LZP5DgRx/1wI0Z8lhQo2H48jpTsJGssPGxEwAu6d1nlaG0GYMtFEDyEqAiVxws4PM4o4Qw41437gnVNIhuWNSIKVJE0ZpC8ircs+MzCGLwFcuf9SruEH+6xC3NaKZ5Qh+rWjWIz0Sf4a553k3AH4TMqg9oDrGZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726655543; c=relaxed/simple;
-	bh=aneck0p7nY/G/FoVB3Oq8sKnXIBqstZG0l7fh3E4DHM=;
+	s=arc-20240116; t=1726655544; c=relaxed/simple;
+	bh=wvyHmjI+aAqhTfrRSAqnJLQFzafV4/TL9UG+yqpNN24=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LR1t0fDex43Eyg6utYkFstG/5RsdbZSe2FL88Sb07SQoytXS8ecw+zdOnKR3y2+W0taGhSGmKh22VBJDU5m96he/fmoX16QnhpdF8SRf3L9vWDFwZINTYfUoFO6D6FCHEpKkcFrD8c8eRsNDsMKX2EIxa4fN5ah5ank6YNMgKcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=YwR5b4Ot; arc=none smtp.client-ip=68.232.154.123
+	 MIME-Version:Content-Type; b=fYh5A37GQrSXL8Vp0Zpc8qlEAGoTpdP5bhiWxypPRghxE99DOSc5wNKcQ+TefcDILp54ETz93ABsbx8PVSpPSyNOyJIjNIHJNS6H5xBMFMFZmj8wDZ0Wpj46iVTP0mExg/UUCl9cZjLR6aC7Sljz+H7xQAq1IrQI3OZSFkUj+40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Iuj5aQTm; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726655541; x=1758191541;
+  t=1726655542; x=1758191542;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=aneck0p7nY/G/FoVB3Oq8sKnXIBqstZG0l7fh3E4DHM=;
-  b=YwR5b4OtIJrsSg5ZqHkVTb26ENSmDHvKcMpg0uDwlUPAIGUwAcqLzsz+
-   DvvCllINlW5J1bXCond02lRuZFWFX9qg8NVZrpoPV9HBfOUxNX9UF/a4E
-   +xIK0pKsaBTaajdhfwgWZlEVZvMk55E9NF4FgdkriuFLnUflbfgPPmX0K
-   VTvz9r5xfmYBPFgtvnN1coe0eY2xm/k/faZu6RE5/DASPOh3svsc6cWkj
-   Lj33cHjh1eelEZnWHjng9131GvbDFIar38X2EK5C1E3dIcT6cr+k0q9j8
-   K9X/t6jWzfYimKVEpWUo0JVUF/9JoSWE4dECjR6ZOSdKGsNLDJuAO7LCX
+  bh=wvyHmjI+aAqhTfrRSAqnJLQFzafV4/TL9UG+yqpNN24=;
+  b=Iuj5aQTmyXpyrcLQHIyrunjfgBSRbUe6/0phAGjz6Ft2tBl18MBJXDjl
+   GXch88Le3q/NdtppeFo1Ctr/uai0RQoBRUzKoFKaHsmJ64B+f1gO293Cn
+   ZP7OVAhN/o0nTJ7sBCkvYzjPkOvyk5XU56gvfgL8nnLmPfcRYn53ShLrR
+   qTbt4fFefdtHZ70CUfqa+ymUJfgypcjXBL+wNvZ3OvhJBV9fjNkLRkzMN
+   FlfScZEvEQT4fjAkdwkVP4GiQF5Xt4sleG6pFPe5YJTkUKUIijDrNF3Pw
+   8FzLAKZBNIgU755aKocX7SOy7E3OMGwK5pnXc2XL5OACVcBZYNqiBQ06X
    A==;
 X-CSE-ConnectionGUID: u1rM2jTbQye/0AWlcIXYhg==
-X-CSE-MsgGUID: UiGWGq4+Q5SsZ1s1JENHjA==
+X-CSE-MsgGUID: O24Xg+zoSa2sxbU5TcEbzg==
 X-IronPort-AV: E=Sophos;i="6.10,238,1719903600"; 
-   d="scan'208";a="32558784"
+   d="scan'208";a="32558785"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Sep 2024 03:32:18 -0700
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Sep 2024 03:32:19 -0700
 Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 18 Sep 2024 03:31:52 -0700
+ 15.1.2507.35; Wed, 18 Sep 2024 03:32:00 -0700
 Received: from che-lt-i67131.microchip.com (10.10.85.11) by
  chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 18 Sep 2024 03:31:45 -0700
+ 15.1.2507.35 via Frontend Transport; Wed, 18 Sep 2024 03:31:53 -0700
 From: Manikandan Muralidharan <manikandan.m@microchip.com>
 To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
 	<rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
@@ -70,9 +70,9 @@ To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>
 CC: <manikandan.m@microchip.com>
-Subject: [PATCH v4 3/4] MAINTAINERS: add SAM9X7 SoC's Microchip's MIPI DSI host wrapper driver
-Date: Wed, 18 Sep 2024 16:01:18 +0530
-Message-ID: <20240918103119.385597-4-manikandan.m@microchip.com>
+Subject: [PATCH v4 4/4] ARM: configs: at91: Enable Microchip's MIPI DSI Host Controller support
+Date: Wed, 18 Sep 2024 16:01:19 +0530
+Message-ID: <20240918103119.385597-5-manikandan.m@microchip.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240918103119.385597-1-manikandan.m@microchip.com>
 References: <20240918103119.385597-1-manikandan.m@microchip.com>
@@ -85,36 +85,26 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Add the Microchip's DSI controller wrapper driver that uses the
-Synopsys DesignWare MIPI DSI host controller bridge for the SAM9X7
-SoC series to the MAINTAINERS entry.
+Enable the Microchip's DSI controller wrapper driver that uses
+the Synopsys DesignWare MIPI DSI host controller bridge.
 
 Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
 ---
-changes in v3:
-- Drop T: section
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/configs/at91_dt_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 333ed0718175..10b3a2b99717 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15103,6 +15103,13 @@ S:	Supported
- F:	Documentation/devicetree/bindings/display/bridge/microchip,sam9x75-lvds.yaml
- F:	drivers/gpu/drm/bridge/microchip-lvds.c
- 
-+DRM DRIVER FOR MICROCHIP SAM9X7-COMPATIBLE MIPI DSI HOST CONTROLLER
-+M:	Manikandan Muralidharan <manikandan.m@microchip.com>
-+L:	dri-devel@lists.freedesktop.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/display/bridge/microchip,sam9x75-mipi-dsi.yaml
-+F:	drivers/gpu/drm/bridge/dw-mipi-dsi-mchp.c
-+
- MICROCHIP SAMA5D2-COMPATIBLE ADC DRIVER
- M:	Eugen Hristev <eugen.hristev@microchip.com>
- L:	linux-iio@vger.kernel.org
+diff --git a/arch/arm/configs/at91_dt_defconfig b/arch/arm/configs/at91_dt_defconfig
+index 6eabe2313c9a..beb29c4832ce 100644
+--- a/arch/arm/configs/at91_dt_defconfig
++++ b/arch/arm/configs/at91_dt_defconfig
+@@ -144,6 +144,7 @@ CONFIG_VIDEO_OV7740=m
+ CONFIG_DRM=y
+ CONFIG_DRM_ATMEL_HLCDC=y
+ CONFIG_DRM_MICROCHIP_LVDS_SERIALIZER=y
++CONFIG_DRM_MICROCHIP_DW_MIPI_DSI=y
+ CONFIG_DRM_PANEL_SIMPLE=y
+ CONFIG_DRM_PANEL_EDP=y
+ CONFIG_FB_ATMEL=y
 -- 
 2.25.1
 
