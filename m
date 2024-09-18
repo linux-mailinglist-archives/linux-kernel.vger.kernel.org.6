@@ -1,146 +1,224 @@
-Return-Path: <linux-kernel+bounces-332243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1572A97B721
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:49:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4496397B723
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0700281DD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:49:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1621F24A02
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CA78248D;
-	Wed, 18 Sep 2024 03:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ig9kuF2k"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80ADA13A244;
+	Wed, 18 Sep 2024 03:57:15 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6302E15A8
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 03:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9829B27442
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 03:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726631380; cv=none; b=GIhvYkzIIYZuxHs+A592VNe+3rR4NdVBhRQfyZ0eQi76j187glvfQIkO2+m15kDvSEqJ6flSVnjkPpqjwolRpk7bpvXHSz0guKy0zpvRLP3dwjt1Ea7o1QpO+jhlo6VdVuu0UtRspblnE/y26yor3gqdR5EZpLMsFmVF+UImFCM=
+	t=1726631835; cv=none; b=m05Nf/H6f8pZwcRLM//yk30xYKFgY3SgMDBCyttS7YrV38UIPMuzHnNegofhLsF12/30DiGdWLSQlFqBso2sHOntVIwaCocyaTl/MpKO8nSK3OUbhFTQEmacWJAe+ekz5dOUCUb/syL2LfxyxIgSdyLdBeMxz9iGW5CidttZr2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726631380; c=relaxed/simple;
-	bh=jFTBrvXiqayWkT6ooMaQbB058hNxSap7Piq/nhT3hmI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bb2fd6rws21RGdVB0iyQc7cBkuP80im389raRLSUNNepX8fScsGPfYv4CQt0ZKX5PUFm178Y1XTuwv8sdKVTWr9iGy+18aU5nBh/iXUMhovwWZ+iW0bXsJwG8wVyy/YQNKlTmx+zzgjZDjnRryXm1ZdREjEzsknYBND8gSm4JuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ig9kuF2k; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e042f4636dso2628184b6e.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 20:49:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1726631378; x=1727236178; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zE1dJbAWhCPBAK0t0zhX3bNIT7kXRFcGehfITM1od0w=;
-        b=ig9kuF2kR1+2Yyb75Y386uwSPqBkT9v26MnHQ+1V8rJU35+wxtUwdCbsnmuGG9HOep
-         lN8opqQs/SjiqvK/uV4bScRMmcYjk8zNQQHF1CtWF7EyDd+AnXefOEakLQmnjfXpHrEt
-         apzNQw1tctQM4bVz1GO63+Iaai2aM67ixi3o5tp4QEyPtKwN5Us6NVn9HIHs4yIOQfaS
-         NyqMuKo9bqPN7irq9W50yF12wcG/Qgb/oVjbVx39tQ8YqIh//dbNk62PUOZOQ0UMDp/Q
-         pGgnepq51DH0mVtFI9WWEbLAmQLYnyW7hpFhhXiNfnbBJ93333nhrwrwQ9rbhdPTP069
-         oIPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726631378; x=1727236178;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zE1dJbAWhCPBAK0t0zhX3bNIT7kXRFcGehfITM1od0w=;
-        b=N6B7EMOIz/PvYhkjkuJ2Hx06hftnsqr06X+bAjkSaquRhrHLiCmIcnRyTCpG/yAgbI
-         jJwTBRcbErZhFQRQ0CY2oxbJIZubXwuOlbPOkGtaJs8GK3lcXz2dqraHOAlJKLxeCPL0
-         u46xKqzWGPXhCBMx9wXIgYfP3MfvfuoDt5aPThpUT8FPRYeKbK5qdUiv+bnGEcBvKlZE
-         lSpwhRGiK5mEV0uLMDT42LIbLq9uC8/1/QQcG/u35/Tggt59ZkZCqGlzTcSRzT7S6DBW
-         RaggyOKZAgmQrE9yUylOIHckGF6/cFRr5hmA+4Zxk7opynBU0+rlX6tuz4M9F2nsaBGH
-         A2Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCUA73bWkjY51DSfI0ZDB+n8wzu4AK21WDsq+qC8Jr4Ojp39Nu775ZN9M+xfuyPA4udTqx/tKPg8nu9PmEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpgcQksRQq2r8f/Ej/9ZpncpxJgl2bTTYsCI53lNqHnJZthGMO
-	tcuPt3zyxFpvq9zstu98b2Oc/EXmD/TPIVCG0IaODrKCTsF4efKYqoPXn/szWVwdo3ZWMCLpPY+
-	kFdD+Us6T8SDFsBp9ILb7e9tEIonZf1c151bBQQ==
-X-Google-Smtp-Source: AGHT+IHeC3dsKkrJc6ljF9R1rShW49VPA4Ien1gEXCjQwV42Ui98RWbpm6Atdeb+k67hVyRYS7hwlqTZVvQQpFlTolA=
-X-Received: by 2002:a05:6808:3190:b0:3e1:7061:39f7 with SMTP id
- 5614622812f47-3e170613b17mr7499049b6e.0.1726631378299; Tue, 17 Sep 2024
- 20:49:38 -0700 (PDT)
+	s=arc-20240116; t=1726631835; c=relaxed/simple;
+	bh=CMcvX/gL39+5jucoujvBO7dSLHUYcbE6sS5WaCvk7q4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q4PDBRkHj9O8qKWGAH7RIXPKs8kS2MEYzK9ZuHz1aAyNZyhdoBI7n2BW57SNN5BSElhJU/sRJcufbS+u2AKAhzlJvRFtG+/A2gloOwUsiFF3UotyD1A5LQokaPUdDJ5lJSqhliuebP7kss8qzyLqMsGIT+yAV229tvRTKfOG7Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4X7lG75Xg0z1ym25;
+	Wed, 18 Sep 2024 11:57:03 +0800 (CST)
+Received: from dggpeml500002.china.huawei.com (unknown [7.185.36.158])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9DE8E18001B;
+	Wed, 18 Sep 2024 11:57:03 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.56) by
+ dggpeml500002.china.huawei.com (7.185.36.158) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 18 Sep 2024 11:57:03 +0800
+From: Junhao He <hejunhao3@huawei.com>
+To: <suzuki.poulose@arm.com>, <james.clark@arm.com>,
+	<anshuman.khandual@arm.com>
+CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<jonathan.cameron@huawei.com>, <yangyicong@huawei.com>,
+	<prime.zeng@hisilicon.com>, <hejunhao3@huawei.com>
+Subject: [PATCH] coresight: Fixes device's owner field for registered using coresight_init_driver()
+Date: Wed, 18 Sep 2024 11:53:27 +0800
+Message-ID: <20240918035327.9710-1-hejunhao3@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814062625.19794-1-cuiyunhui@bytedance.com> <afaa4192-da08-4180-a09b-2b953293ba76@ghiti.fr>
-In-Reply-To: <afaa4192-da08-4180-a09b-2b953293ba76@ghiti.fr>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Wed, 18 Sep 2024 11:49:27 +0800
-Message-ID: <CAEEQ3w=S=Gn9qER=qNwUn8+Gs9AN4Y5-0Zg0w8-4Vps4L7n97w@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] riscv: add a warning when physical memory
- address overflows
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: punit.agrawal@bytedance.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, alexghiti@rivosinc.com, chenjiahao16@huawei.com, 
-	guoren@kernel.org, vishal.moola@gmail.com, stuart.menefy@codasip.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500002.china.huawei.com (7.185.36.158)
 
-Hi Palmer,
+The coresight_init_driver() of the coresight-core module is called from
+the sub coresgiht device (such as tmc/stm/funnle/...) module. It calls
+amba_driver_register() and Platform_driver_register(), which are macro
+functions that use the coresight-core's module to initialize the caller's
+owner field.  Therefore, when the sub coresight device calls
+coresight_init_driver(), an incorrect THIS_MODULE value is captured.
 
-A gentle ping for this patch.
+The sub coesgiht modules can be removed while their callbacks are
+running, resulting in a general protection failure.
 
-On Thu, Aug 15, 2024 at 7:01=E2=80=AFPM Alexandre Ghiti <alex@ghiti.fr> wro=
-te:
->
-> Hi Yunhui,
->
-> On 14/08/2024 08:26, Yunhui Cui wrote:
-> > The part of physical memory that exceeds the size of the linear mapping
-> > will be discarded. When the system starts up normally, a warning messag=
-e
-> > will be printed to prevent confusion caused by the mismatch between the
-> > system memory and the actual physical memory.
-> >
-> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> > ---
-> >   arch/riscv/mm/init.c | 8 ++++++--
-> >   1 file changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> > index 52290c9bd04bd..c93164dc51658 100644
-> > --- a/arch/riscv/mm/init.c
-> > +++ b/arch/riscv/mm/init.c
-> > @@ -236,8 +236,12 @@ static void __init setup_bootmem(void)
-> >        */
-> >       if (IS_ENABLED(CONFIG_64BIT)) {
-> >               max_mapped_addr =3D __pa(PAGE_OFFSET) + KERN_VIRT_SIZE;
-> > -             memblock_cap_memory_range(phys_ram_base,
-> > -                                       max_mapped_addr - phys_ram_base=
-);
-> > +             if (memblock_end_of_DRAM() > max_mapped_addr) {
-> > +                     memblock_cap_memory_range(phys_ram_base,
-> > +                                               max_mapped_addr - phys_=
-ram_base);
-> > +                     pr_warn("Physical memory overflows the linear map=
-ping size: region above 0x%llx removed",
-> > +                             max_mapped_addr);
-> > +             }
-> >       }
-> >
-> >
->
->
-> A bit weird to review and test my own patch, but here it is anyway :)
->
-> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
->
-> Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
->
-> Thanks,
->
-> Alex
->
+Add module parameter to coresight_init_driver() so can be called
+with the module of the callback.
 
-Thanks,
-Yunhui
+Fixes: 075b7cd7ad7d ("coresight: Add helpers registering/removing both AMBA and platform drivers")
+Signed-off-by: Junhao He <hejunhao3@huawei.com>
+---
+ drivers/hwtracing/coresight/coresight-catu.c       | 2 +-
+ drivers/hwtracing/coresight/coresight-core.c       | 6 +++---
+ drivers/hwtracing/coresight/coresight-cpu-debug.c  | 3 ++-
+ drivers/hwtracing/coresight/coresight-funnel.c     | 3 ++-
+ drivers/hwtracing/coresight/coresight-replicator.c | 3 ++-
+ drivers/hwtracing/coresight/coresight-stm.c        | 2 +-
+ drivers/hwtracing/coresight/coresight-tmc-core.c   | 2 +-
+ drivers/hwtracing/coresight/coresight-tpiu.c       | 2 +-
+ include/linux/coresight.h                          | 2 +-
+ 9 files changed, 14 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
+index bfea880d6dfb..337668f9cfd4 100644
+--- a/drivers/hwtracing/coresight/coresight-catu.c
++++ b/drivers/hwtracing/coresight/coresight-catu.c
+@@ -702,7 +702,7 @@ static int __init catu_init(void)
+ {
+ 	int ret;
+ 
+-	ret = coresight_init_driver("catu", &catu_driver, &catu_platform_driver);
++	ret = coresight_init_driver("catu", &catu_driver, &catu_platform_driver, THIS_MODULE);
+ 	tmc_etr_set_catu_ops(&etr_catu_buf_ops);
+ 	return ret;
+ }
+diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+index 9fc6f6b863e0..c546a417836c 100644
+--- a/drivers/hwtracing/coresight/coresight-core.c
++++ b/drivers/hwtracing/coresight/coresight-core.c
+@@ -1399,17 +1399,17 @@ module_init(coresight_init);
+ module_exit(coresight_exit);
+ 
+ int coresight_init_driver(const char *drv, struct amba_driver *amba_drv,
+-			  struct platform_driver *pdev_drv)
++			  struct platform_driver *pdev_drv, struct module *owner)
+ {
+ 	int ret;
+ 
+-	ret = amba_driver_register(amba_drv);
++	ret = __amba_driver_register(amba_drv, owner);
+ 	if (ret) {
+ 		pr_err("%s: error registering AMBA driver\n", drv);
+ 		return ret;
+ 	}
+ 
+-	ret = platform_driver_register(pdev_drv);
++	ret = __platform_driver_register(pdev_drv, owner);
+ 	if (!ret)
+ 		return 0;
+ 
+diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+index 75962dae9aa1..cc599c5ef4b2 100644
+--- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
++++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+@@ -774,7 +774,8 @@ static struct platform_driver debug_platform_driver = {
+ 
+ static int __init debug_init(void)
+ {
+-	return coresight_init_driver("debug", &debug_driver, &debug_platform_driver);
++	return coresight_init_driver("debug", &debug_driver, &debug_platform_driver,
++				     THIS_MODULE);
+ }
+ 
+ static void __exit debug_exit(void)
+diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
+index 5a819c8970fb..8f451b051ddc 100644
+--- a/drivers/hwtracing/coresight/coresight-funnel.c
++++ b/drivers/hwtracing/coresight/coresight-funnel.c
+@@ -433,7 +433,8 @@ static struct amba_driver dynamic_funnel_driver = {
+ 
+ static int __init funnel_init(void)
+ {
+-	return coresight_init_driver("funnel", &dynamic_funnel_driver, &funnel_driver);
++	return coresight_init_driver("funnel", &dynamic_funnel_driver, &funnel_driver,
++				     THIS_MODULE);
+ }
+ 
+ static void __exit funnel_exit(void)
+diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
+index 3e55be9c8418..f7607c72857c 100644
+--- a/drivers/hwtracing/coresight/coresight-replicator.c
++++ b/drivers/hwtracing/coresight/coresight-replicator.c
+@@ -438,7 +438,8 @@ static struct amba_driver dynamic_replicator_driver = {
+ 
+ static int __init replicator_init(void)
+ {
+-	return coresight_init_driver("replicator", &dynamic_replicator_driver, &replicator_driver);
++	return coresight_init_driver("replicator", &dynamic_replicator_driver, &replicator_driver,
++				     THIS_MODULE);
+ }
+ 
+ static void __exit replicator_exit(void)
+diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+index 117dbb484543..403eea8f95d4 100644
+--- a/drivers/hwtracing/coresight/coresight-stm.c
++++ b/drivers/hwtracing/coresight/coresight-stm.c
+@@ -1046,7 +1046,7 @@ static struct platform_driver stm_platform_driver = {
+ 
+ static int __init stm_init(void)
+ {
+-	return coresight_init_driver("stm", &stm_driver, &stm_platform_driver);
++	return coresight_init_driver("stm", &stm_driver, &stm_platform_driver, THIS_MODULE);
+ }
+ 
+ static void __exit stm_exit(void)
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
+index b54562f392f3..e31e36635394 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-core.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+@@ -742,7 +742,7 @@ static struct platform_driver tmc_platform_driver = {
+ 
+ static int __init tmc_init(void)
+ {
+-	return coresight_init_driver("tmc", &tmc_driver, &tmc_platform_driver);
++	return coresight_init_driver("tmc", &tmc_driver, &tmc_platform_driver, THIS_MODULE);
+ }
+ 
+ static void __exit tmc_exit(void)
+diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c b/drivers/hwtracing/coresight/coresight-tpiu.c
+index b048e146fbb1..f9ecd05cbe5c 100644
+--- a/drivers/hwtracing/coresight/coresight-tpiu.c
++++ b/drivers/hwtracing/coresight/coresight-tpiu.c
+@@ -318,7 +318,7 @@ static struct platform_driver tpiu_platform_driver = {
+ 
+ static int __init tpiu_init(void)
+ {
+-	return coresight_init_driver("tpiu", &tpiu_driver, &tpiu_platform_driver);
++	return coresight_init_driver("tpiu", &tpiu_driver, &tpiu_platform_driver, THIS_MODULE);
+ }
+ 
+ static void __exit tpiu_exit(void)
+diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+index f09ace92176e..e6c26952ddc2 100644
+--- a/include/linux/coresight.h
++++ b/include/linux/coresight.h
+@@ -660,7 +660,7 @@ coresight_find_output_type(struct coresight_platform_data *pdata,
+ 			   union coresight_dev_subtype subtype);
+ 
+ int coresight_init_driver(const char *drv, struct amba_driver *amba_drv,
+-			  struct platform_driver *pdev_drv);
++			  struct platform_driver *pdev_drv, struct module *owner);
+ 
+ void coresight_remove_driver(struct amba_driver *amba_drv,
+ 			     struct platform_driver *pdev_drv);
+-- 
+2.33.0
+
 
