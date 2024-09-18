@@ -1,788 +1,327 @@
-Return-Path: <linux-kernel+bounces-332790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0C8A97BED9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:50:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CDE797BEDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F000281A8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:50:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0FDD1F21C79
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2DE1C8FD2;
-	Wed, 18 Sep 2024 15:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D721C8FDC;
+	Wed, 18 Sep 2024 15:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="O+R0TPqL"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2043.outbound.protection.outlook.com [40.107.223.43])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="fRIHHysE"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2087.outbound.protection.outlook.com [40.107.220.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB8CEAC6;
-	Wed, 18 Sep 2024 15:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73352EAC6;
+	Wed, 18 Sep 2024 15:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.87
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726674624; cv=fail; b=jeoEykvftQaj6e/N2jcc2oakeVThexPeTETwLl5e6035BT32vLK3ZIk/A/v8BULc/2l8hsFHUdGBQS6BF+HfCzXqpIBtqS1BgFCw7fTX4P8dJRGgoudPpTC7rQ/YiLuupXW2zbP0TgfFPll8O0cWj5dYAR9IN+pfT4DwUVhsYso=
+	t=1726674721; cv=fail; b=oqd4SzzdjuBrj1Bsr/SupWN0sCfkezh2vH5zx9rrT/SjbsuYdZqPCxhQdS+pwOeruG0kpacMjDOuU1lqz65JL1WL60xQpUJSPPJrzy1tJonZr/chbiW8KdGJWGEcmjUBwUBySDBNGshJ0Z217fhQYV9IEr69+g1K/AYDh1Ll1UM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726674624; c=relaxed/simple;
-	bh=RoLQ/3Sl/ZZ8GlAPLohhCWszHbXi7VWU4xIg4tLEJKg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IdBgiwfpTrAQgnfX4k6thmbJanL9zKZPb6Sw1hqnif87aZmyHv2RFapnL7qmHMt7yj2WroRjgAueJyYMhaMWupO2uUQHg6CR1uO48ltqfw88v+q6nvUXA2ji/wsUTqwlCSPHJwgL1orATuUoYIpN+I4iJ6Zxp7SJ41MurTfs3k0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=O+R0TPqL; arc=fail smtp.client-ip=40.107.223.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1726674721; c=relaxed/simple;
+	bh=PhgRN7QYs6/suck5PHuvIC+n6IIiVm+hYsrxhS2gNiA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MSIVMW+SRWA5vZF2FDZdy0YGybPANyY68P1kiN1SL1SHBsXBlbNG/NMMLSvfvlMbxyUwX/CoI1Akov/PLEskWNjhLRQgaftvORheCuT7SxivyfBSPkw+mU6UYANBYKyqF0raoTQz8FKadtD+Gm/lbAHEC5TOapdD8iIYlcjBiUo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=fRIHHysE; arc=fail smtp.client-ip=40.107.220.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V0YxzDg9ak+mnDL1KyulDH2CXehwP5NGwRVy6n39wIsUbzV5ag42B+4K+BOCs5x5LLo0nvEckBr7+CcvoHY5+J6DD++qiOX26+SJWZ0b214O4sJElXpxnhOmuwJaYJ6ZyxWcbnpjwfSRTVNaDVxXEYDSSjmzPIl62ZdqBXhrdnBVp4eAlCr7WOi4apQ5SxVtjlOf31itC1cuPHiM4egmFIu2JlyOb/40G+xmGBL5jKULLpQqs/tnYkDvC95Y+YZH8oJSwPMiAaaB7azT9ac2fh9F47KBC+/hE1cxRYQQSDDCrFmaENMtm8vpihElfo4oHttXD1em/toG0wyjbTsYBQ==
+ b=eTV7FcDlCn0AErEUq8S7A6KDYpTs0mK741YR9S+8pkglEm/+tynrev/wYp7F1bwvJDvJ9O8T1Jh13s2cpiX0j2UXEZPiiQ56t1+n4Z45IXcETK5qRYKKXa96wGRlOwYURj5/PQEtHubIjboWLpAp8I4ImxrRJSy3vGMaYMIlG1Gn8T8/FaKWfShpYp7dxBl+b4jMIyKOYYjJEgbPRvbzNIUgCfYym1xcxHUusv5yFY8Fz2w3tSQedoyEBFq4AdOVX+YaQ8TNAF4wggMl+1jR5y9guCiasWGSJimHCse6HWEjuWsajH9fW0xAl1ANnYHSIFKFOjaEkeVVziy6ImzDhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H6yx9S09Va5DYy89EwfT+apO0VkQFcX46RboT6Hm3jg=;
- b=Hm0IX3UAPp1j9sCG31KCNf0j0GILUbc/wUNizKPsH5vNh9zPIA21YVJ34L4ZVYhDsUGAR+ExmIV/Bs6XrfNevsjGDVmVkMyEC8jM3dRRqjBjpJlj4DqOVsjHF8QrTmmOnBqdq7jvDNHqvjKyOgjgXpfVNM/3nUceIuZXZXP0DXocsFj3Xl3uU+cb4PQCLUjn7VIJL+608yvWTXLH4eTBI/Dqnj0puoJLHJszYUVFOZmK5NYaxlpRWDNt5Ljf6dwhca9tdR00usSny081txUQJSXeMgoJTsxli3LZN2FdTdhISvaBZAO7uMTSw6waCt4WP7OOCHbOUX7xf5BG9WsFvw==
+ bh=PhgRN7QYs6/suck5PHuvIC+n6IIiVm+hYsrxhS2gNiA=;
+ b=iE0NJOt2QSG9UZNslHAQkdFX1BfNKHP4yVbO1QVkaR4hJbcPIfd33DLBXhavk3272kAlbBXDQX/ZX1WYyV/jUm13FFT/6tQ6PFtMAoM2nhJSH21l45DH+b3GCy8dbBuTWNcTCXJKnX7K5IQwPkFIs3sDyKT66/rNnYg4mSSC96nEkCpVdvCCStSIOSZmVYwUYNCxvsgrvNEQz+7yz0YoOPhnXMZCt36lGZ18vQegCGbWo5pk1NBY7+hm5PsH07qKOWdX2BmPgimQ/d5ojj6vSLdkSofIYwemiyFunqvFT7bGGEvtokRk1zmsIQ3UgIKQ7SVw51j/OjgsoEKrOpltcA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=H6yx9S09Va5DYy89EwfT+apO0VkQFcX46RboT6Hm3jg=;
- b=O+R0TPqLrElOcuEeX5Brf3rGrfz9iHdn+9dFaHCgbvCUdLYXRA8bXHUaN530JYKlmTIlNxcnVZgPT+UgqBDenmGPrLmH1ESXHtsu5RMv1mvDW7zBT3/Y5Lrva8VlN3C41Oxv8woUQ94pUiJBPgw94QyQHW9Dh+C0VH/yvI1nvkw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by SA1PR12MB8947.namprd12.prod.outlook.com (2603:10b6:806:386::7) with
+ bh=PhgRN7QYs6/suck5PHuvIC+n6IIiVm+hYsrxhS2gNiA=;
+ b=fRIHHysESyOXpA2dQ1R3Ot5YYO7/74BnJp68XkirM271VnM/azbA6E31P1VUm60yC/QaCElhtm9o42EgC5ReKGAl/16PdmpXZPwwME6Vblo2hWJrgX73eE/kYDvqc7XF9jeOIDFxjKm8ZzpiICOKuWaMIys3jYD61SBbUhSoFWoeur7plcpVIgAJKQl3iM+V7y92iuwxef7oTWAG9esOSbE3FMoL3Po0mm++8QV0jIJlvB8UDCZRDeQOAd+g0dh+ISvzmo5eXgdn5Iz0yqjYBL/DaM3++NXxDzOOm0iUJqLNQuYvjZcS0382f4s4AQnUI0MnMB1+G9/CG/1YSoQBSg==
+Received: from DS0PR11MB8739.namprd11.prod.outlook.com (2603:10b6:8:1bb::19)
+ by LV8PR11MB8607.namprd11.prod.outlook.com (2603:10b6:408:1ec::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.17; Wed, 18 Sep
- 2024 15:50:20 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%6]) with mapi id 15.20.7982.016; Wed, 18 Sep 2024
- 15:50:20 +0000
-Message-ID: <f521c423-62fd-4c03-91d3-3bf292ad1714@amd.com>
-Date: Wed, 18 Sep 2024 10:50:17 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] platform/x86: asus-wmi: deprecate bios features
-To: "Luke D. Jones" <luke@ljones.dev>, platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com, corentin.chary@gmail.com
-References: <20240918094250.82430-1-luke@ljones.dev>
- <20240918094250.82430-6-luke@ljones.dev>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Wed, 18 Sep
+ 2024 15:51:51 +0000
+Received: from DS0PR11MB8739.namprd11.prod.outlook.com
+ ([fe80::f0f:4a3f:e3a3:d3ad]) by DS0PR11MB8739.namprd11.prod.outlook.com
+ ([fe80::f0f:4a3f:e3a3:d3ad%3]) with mapi id 15.20.7982.016; Wed, 18 Sep 2024
+ 15:51:50 +0000
+From: <Valentina.FernandezAlanis@microchip.com>
+To: <krzk@kernel.org>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
+	<aou@eecs.berkeley.edu>, <peterlin@andestech.com>, <dminus@andestech.com>,
+	<Conor.Dooley@microchip.com>, <conor+dt@kernel.org>, <ycliang@andestech.com>,
+	<jassisinghbrar@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+Subject: Re: [PATCH v1 5/5] remoteproc: add support for Microchip IPC
+ remoteproc platform driver
+Thread-Topic: [PATCH v1 5/5] remoteproc: add support for Microchip IPC
+ remoteproc platform driver
+Thread-Index: AQHbBTOMAThP7UqY/0y2Xfue4ElVkbJa4LkAgALaOQA=
+Date: Wed, 18 Sep 2024 15:51:50 +0000
+Message-ID: <1ece2f4b-6f2d-452f-b2af-18d0895f9443@microchip.com>
+References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
+ <20240912170025.455167-6-valentina.fernandezalanis@microchip.com>
+ <6f1fa401-e9ca-466f-990a-52bc37899bf4@kernel.org>
+In-Reply-To: <6f1fa401-e9ca-466f-990a-52bc37899bf4@kernel.org>
+Accept-Language: en-US
 Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20240918094250.82430-6-luke@ljones.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7PR04CA0041.namprd04.prod.outlook.com
- (2603:10b6:806:120::16) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Mozilla Thunderbird
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS0PR11MB8739:EE_|LV8PR11MB8607:EE_
+x-ms-office365-filtering-correlation-id: 76cf9406-4480-45ab-0509-08dcd7f9cf95
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8739.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(38070700018)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|366016|376014|1800799024|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?VkFlWVArRUhLNmU1S3JOMjNMSUZoN1RwVjl3aGR0RVFwODBSelhYRUJobDZ6?=
+ =?utf-8?B?N0lEVkM1MEczN0tyelpKRGtMRXR3Rnkyb0gwZG5maWxza25oRC9QZlZCK1Z1?=
+ =?utf-8?B?NkNtUkF0VWZLVERzQWZ5RllQZWJjcVEwcXpPMDlxeHNQN0cyRlFLVk91WDk0?=
+ =?utf-8?B?RnVkdlJKckZsOHFrQjBWR3AvbHJuVFdycHZsbVdyMXJMK0RsQWZkSWJBc25a?=
+ =?utf-8?B?RTNKY0hDb0Z0Q09wdGYrSmtlb3JOTnVSeG9OVlNIc0VwWXB0MERjNFZYV0hT?=
+ =?utf-8?B?Sjc0M2VnTnd5OG9ZYTd0cUhiNE1ZMFZUV2I1NXowT1VLSTdQenFGU3l2TzRs?=
+ =?utf-8?B?dXl4cWVvaGJISU9kVGdqS2NxQzhvbGl3TWJkL2p6eVcxM0NkVDZUV3JuaFJp?=
+ =?utf-8?B?eGp1Zjh3TG1OQ29lWCtvTEpvc20wTHNWak1WUU9uNVNBcHp6dHNZTkJqRTNZ?=
+ =?utf-8?B?MmhDTGdYemN5WkZzYU9OSDhCYS8ybWVPRWFYbWNFWjhYNkVieDRiKzRublhn?=
+ =?utf-8?B?VVVLYWUzT3Npa3ZCcVZVYWZYMlJTZWRnekI1dWQzeVVsdnNpcUY4ejNBaU1s?=
+ =?utf-8?B?M0lKdTl5YjlpMC9kY3BFY20vck9yZXVlU0ZFcmgrWDN6b29iS2Y2d08rM1lX?=
+ =?utf-8?B?TlQrQzRSbDV6K3B6dmxDSGtwSzR5dG5qUGMyVlk5THk4R25ib3lDMlpKdllO?=
+ =?utf-8?B?dW5tTGN6OTFRSmRhZGlsaGM2RVZZcUdiZkpvWEwrdVBONGJvbFBZcEpXYnoz?=
+ =?utf-8?B?dk80YVhnOHF3NzFwTEcwaFYzRmFoelQzd1dFWFE1K2VCa3Rnb0h3RktOaC93?=
+ =?utf-8?B?TGZRc2dUK2NWVEl4TVVqMkRwaGgvV0tnY01tMUp5SFlvdDdvdWNXZEE4Z1Ja?=
+ =?utf-8?B?QzlaNFpNV1c2SThFZG9lZkJBODBQYW0xL2l5WVU4SitzQ0JjbytYTXhHendE?=
+ =?utf-8?B?UkZ0QUpSYmloVisrcXJ6cTgzZWZETlRmdGtreU0zVTM0Ti82ZVdlL1FxdTJM?=
+ =?utf-8?B?a3Q4RDhsQnc5VVhNNmEwdkVORnI2dEdiZnNKZ2JVdm1jNk83NWNBeW1oWTI5?=
+ =?utf-8?B?MERqd3RJV2dkRmh5dlhBZ2VndGpMUVJBWEoyRGFlbExNc21Ia3dmRzgvVWkv?=
+ =?utf-8?B?WUFWNmtHSm9reFFxeldmdzRBRTR4VzV0dTdpT2xuWWQ3NUNFWFpQd0M1T0pz?=
+ =?utf-8?B?TjNOL3RQMUF3TE9YY2NZY0Mya2hpbG1QSm5xY0JpVEQxSm1MaXJHbndISWZq?=
+ =?utf-8?B?SjZ1NWdhNWlIVS9mOTJwcldnZVJ1S1Nsci83S2dSR2REVy9PcE9zaGtRL28z?=
+ =?utf-8?B?TkxLOVpETzg5RUhyNDk0SEcwMm5NMHFDTFdZakMrMVZqOWJkTGVVZFhqdmVw?=
+ =?utf-8?B?ckpFNlNJN0hURVpha2c5RWVsRWpPMVdiVjBwbDAyL0lCT3ppNmcyTjdpMVIy?=
+ =?utf-8?B?a3RzY05jbEtiaDNRTEJoVFBiZW1tNk5xbDE2T2hjaG9sSjlGMG85dkJYRmx1?=
+ =?utf-8?B?VUJIQnRMc3hrSzhCN0NuUVYvQ1lNR2VKWXZ4MFJqVU1KQ0xuZ2k2dTYwd3oz?=
+ =?utf-8?B?cWczUm03WXkxYkRidEkycEFHUThyMlJzeFphZ0EySVFvNCtiWUZ0cm5DMkwv?=
+ =?utf-8?B?R2xhYlpCRk5iVHRmMzBoanpSbDVHM0lNSXZZYThaZzNxeVBKTkNHZ3FOeXFn?=
+ =?utf-8?B?RWdQUXEvUXZKeHBLN0l1N1NpZ0lmTVFkRS94Nm03eHMvb2pFK2kwYTlrMS9O?=
+ =?utf-8?B?bjg2ZnovckE3ZVZxQktialcremMzSTFYSUVOa1g1WWZzUWJZai9SWlY0cENh?=
+ =?utf-8?B?NHVqV2tMK1FQRjNDVUdxaEJsS3I5Z1ZncWh3TEJ5dEQwYVNNUnRGZnBGeWZn?=
+ =?utf-8?B?NEpmUm9aeHZRSFdpVnROdmc1Tm5oREp4b2hTa1dkT1lsMFZwL2ozWjZKWWNy?=
+ =?utf-8?Q?X1TbdRjzNBQ=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?QlFvc0ova0xsNXdqRVRmUEJEVmxBV01GSUlzSEZIaS9SWDZtMzJZUVh2dDEx?=
+ =?utf-8?B?UittTFY2ZnV6WDQwcHhmSjRWSzlrQ2ZERmxWUVFFSkxkZ0tRaHZ3a2o3ZzBY?=
+ =?utf-8?B?TXhrSkVRenBmRGxrRklqcGxBVlp6YUt5dTVPV1VVR3RvYXRsR3czcGFnZVNF?=
+ =?utf-8?B?eUhzV0ZPL2FQNSsrL1dIYURpNERLREdFZkFCZ3ExUWpjTENmV2I0RXBrT3Ra?=
+ =?utf-8?B?S0xJWXViZ1N6ZURoQU1vNm84b3hncmY0clc0dVdFRFk2RWVCWk16U2ZSZllE?=
+ =?utf-8?B?bDdwcW40OTFPcVk2dG8xaDJBdENLL0NvTm13Q0pDdzlDdzVHYmlNcHl2MGp6?=
+ =?utf-8?B?MUl5ZC9BdmdXaG1PNUVCRWUza1Y5eXhLRVV5aURLVWM3TEN6REhoSE51ckUx?=
+ =?utf-8?B?dmNwbXk0dEcySmNNRWpub3laN0NpdS9BdktzVHJ0eHR2MGRJRUJDeFp1Zm5z?=
+ =?utf-8?B?RXhrU2kzSXBrQmlXSTVpUmQyaTdJQU9oeDlCbVNkUHdsVnpBdndXV1VReVVq?=
+ =?utf-8?B?ajBQVHpGZTBCRERCSU54emdoWlI4L1FUbG13aW00dTJSdUtmVy8vUFR5aG5z?=
+ =?utf-8?B?cW4zajhVVXV4ZHArSCtMWUNwMzJJa1YwbFUzcSs3MFNOZFNDZ3hVenhvWW5K?=
+ =?utf-8?B?Q1NOSEJCQUtlc1ZYVkFEK0N1Z0hwZGFJMk9TVG0zVGhzNVhNU24zbSsva1Va?=
+ =?utf-8?B?MFhLRlRvSDNyYWc5cDdPNzM4ZjdEZXZIZG1neUNQeWxyYjRwWlBHNjhFQ3dV?=
+ =?utf-8?B?OTFSL1NhSHJ1NmJKSmdadHVOTXhzZ3pLSEJZYXdHZGEvVStiWCtsbVFvYVE4?=
+ =?utf-8?B?cjF6REc4dVJZQzNZUWxwZFlYeGNocW5qRDhkN0ZMTVFJM3krdzM4UEJSY0R5?=
+ =?utf-8?B?MDdkUGRXZGdGNjFZZTBESHIyS1JxNWhlbXdId0c3Y3dEQzhTRkNNS0JkclVl?=
+ =?utf-8?B?aEl2RWdJSmd2aUM2eTJQbDJpZHBqQnVZMEtBK3k4TUdkRWMvMXdUS3FVNXNT?=
+ =?utf-8?B?SXFxTjZhUmswSEcvUlp4eFRYM0N2OFIrUnRIclM0VXVNUHNyM1I3eDVreGdW?=
+ =?utf-8?B?WEZkVEpxR0I4RWhTelRteWlud21FaEJnNnNuRjFHMVRYQjBHTEIvWjZxYkNF?=
+ =?utf-8?B?czN2akUrOUFIN3hoNnlCVVR5NW9FTUw1Z3JIMExobUJpZmVGMXNKN096Szh1?=
+ =?utf-8?B?ai9XcVY4ZEFaTlltUXh0YnhpSHc0aDBZaHEza1U1Y09hakVCL1F1MEpGVW80?=
+ =?utf-8?B?S0drL0xZUml2Z1gvNjFiRHoyaHpMT0NhREs3SjVzVkdiS1FES1ZwVXk0QTVQ?=
+ =?utf-8?B?ZERwRjE3cmRTVXpHcUs4Z3pDUWhsS0U3aGM0c2gxeWxJLzhKbnlMTW1rNmI1?=
+ =?utf-8?B?dmE1Nmo4SHlOWWZGTlF0UUxMYlhLdU9Vc2tFOVlOdU1CYUpWQ0NXOUtBN3dv?=
+ =?utf-8?B?andESTV6Z2RqRTZ0L2hFZ1lLdmI4VFFiYWxycVo4MFV4QUZmUmYzYTgvVFVl?=
+ =?utf-8?B?UnlEOHYwQTRjRWEyd1pEOFp0STR6NnlqMVdZMmhYeUZBT3lydGtwQjFXd09w?=
+ =?utf-8?B?Ui9VQTNxVC83QnVFZCtadWJZWjR6NXdzRUhyaThGdDMrSzFYc2t0TVJxVitk?=
+ =?utf-8?B?YmFTc0I4aHJWYjFpTDJjUnN3bnlSNmVyT2lrYnc3Z0FGRTdVZ1JQNlNmZ1pr?=
+ =?utf-8?B?ZU5rTlFTaGJ5bjk4bGduUXVhZURIazFNQVF0YUFPajBKVnBYaDBxb0E4YlJL?=
+ =?utf-8?B?QUsybVpPZjR4Q3cwczRIVTRzVUpESWRxZXJhNloxaElFenVKVkwxbzNIMFZG?=
+ =?utf-8?B?dDlnUEFESHN5ZWZRa0tRVW54TmUySGZ0dDB6cVNZWFkzcis4TFh3eERCdUh2?=
+ =?utf-8?B?UEM1dHJPaGRJR0ZaVmt3a2NXMTdkT2FqalUvU29hbE1aZmtnU3F1c1pyU0xE?=
+ =?utf-8?B?Q1JKWEcwYmZiWUc3WEFpN09OR0lTMDg4VU9vdWpLMWJMQzdNcm95Wko4Mk9G?=
+ =?utf-8?B?WEY3NmQxcUVUTXo4ajNlSmtUYnZ1dUlQN0QxMWwyRWJ4dkprTDUrYUV2cU9w?=
+ =?utf-8?B?MmNySXMxbVhhV1hqSUl3cFM3d3FKUGJVdHBnQkNDZjM1NnMrakt5Zi9ZdC84?=
+ =?utf-8?B?R3hEZnA4djBmNE1IenRkTUVIUTNKanZ4cXdEOUVJaGpYRmt4SlJZQU4wKzZF?=
+ =?utf-8?Q?ziT8Sk3dCMg3vfgmiVIjUe4=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <858BF4395BBF44428EC1FC5407077468@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SA1PR12MB8947:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1f57560b-3c9c-40ff-b522-08dcd7f99942
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QU5ZOEtudVcyY2hkcVgzT2RwcXZiNG9qUzU5NjBwaGZiRGY0MEJYK2xnQmxs?=
- =?utf-8?B?VVNGSENPWUw4Q1BqeGhmWjR3TlJhR0pyQXByam9TWmVqczRnTHZBUkZ5d0lq?=
- =?utf-8?B?NVFSS1BuK1FTdVRzZHZFbmJ4ZHBaTHlCVWlWbnNHN3RFVDJvWndIeUhWcU5v?=
- =?utf-8?B?R3hhZVpNOTBJQ21kWGJVZWV5azRWWkRZV1NTN2F5OGRXSysyYlNTUW40dHM4?=
- =?utf-8?B?d003cU8ycCtFalo5dWo0KzZXS0RMUXB0RW1VeFJ4bzhZUEF5MldycmpTc3VG?=
- =?utf-8?B?bEZOdnl4Z1R1QVFjUFFVSm1DUjIzZGJWWmlrUGhlMzVJOUtkTnFnSlI2cEU2?=
- =?utf-8?B?cEJ4RThvZXhOSlplbG01L09wSGVFNUZCU0lyby92RnBwTlV4ZG83c01rZmJr?=
- =?utf-8?B?LzdreVY3TUQ2ekk0YkovdW53SnI0MW1aUmVBTXVOanlNdElVVTdDMXZ6VDZ4?=
- =?utf-8?B?ZUd4ZTNMb0pJc1hsR29xNzJvQzd2VzVWa0xDMk5FWGY1QzNHaHJlZ2tsd2xv?=
- =?utf-8?B?N216Yk53ZkEwNDVXOGlBM0xHSHhmT0hRVWZ3ZFd3UEZSWG1TMi82TnRDSGFX?=
- =?utf-8?B?VHpzL1Z1NTQxdlYxeHkvUzJGamlKbVlsOTFTYmZIeHVUT0U3M2pUc1NQMVdB?=
- =?utf-8?B?YmRteFUxMnFkc1NMVzVQaUdLSFJiT3FyNUVyMnFpTVR4Y0M4VmNlanp0SnpI?=
- =?utf-8?B?TTd5Q1RRTHVlOSt4V3c5OUY0NHNYdUNPOHhRUFMrOG00ODV6c2wyUGJQT0w2?=
- =?utf-8?B?UmcwOGFIR20vSEVVWExLalBldWJqYVkvakZSbnJGSEdxSkUreFZnM2VMeXdG?=
- =?utf-8?B?bnkzbHE0cEU4dC9RWDhYSnVIUHhxMlA4c0EvL3FwOEZPc3VqRHFrQndNRnFP?=
- =?utf-8?B?V1hiRERtby9FUUxOcEYvbDJZQUhvYzJjMHJBdFZSMzl2T2tNd01sSEw1ckF0?=
- =?utf-8?B?UFJrYzRzY2tJRHh4bEF2YWVSWEVxaCt1Sjl4SWVSM0ZOQloyemkxVlNiWXNQ?=
- =?utf-8?B?cUc5dVN0d2xPRzZXTjNTQWlSQm9yRG4zZTdhMlNYVnV4K0pXVmNMTEhWU1Ri?=
- =?utf-8?B?eGc2OHVFS0hKNVU5c2tRNGVhREE4MFVocVpUSUlJeXFqbDZmQ0lJVkFMYktF?=
- =?utf-8?B?bWJ3UXFyai8zcG4zbVIydGFBSXFWVWdRUmZJV2tKU1dwUmgzQmFaT3lTbmNy?=
- =?utf-8?B?VExwb25Fb0d3ZU1qNXpoWmtrZVphM0NPY1U1L1NBODQzRkxMU0V2WDBYd0to?=
- =?utf-8?B?c2s4UmxhRTNXcXJiT1lLNmNPb2FhVXBOR2Y1RG5GRFA1aXBKczJ5SjhRS0ps?=
- =?utf-8?B?U21XUnRucXJ1QytNKzZzSWdwMFNqTjg2TVJJdXRIcGpXa0JqUnF3c3UzRDJy?=
- =?utf-8?B?KzZqTTJGVkNINFZGZXVNN3ZvL3dUb0xqZ3lya0R5TzNlcDJSVEpPZHg5ZkU1?=
- =?utf-8?B?OTNmd1IrUHhqbWdKa09QZW1xamltQ1RoVDdCNVJQRUJGVHZIYUd6MWFRcUhZ?=
- =?utf-8?B?dWVUMjlXSHgwQnNVc3IzV3dsQ1JqTHg5eklueTZaams2bDlnLzVhak9vZnVW?=
- =?utf-8?B?LzgxeWtJQUNkZ2dhOXNEWmhoSGtGNW9nMEllYzJJZElQV2VVSTgvNTFUcFIz?=
- =?utf-8?B?czAyNkZVTS9GYkNnSFYySXBpWEQ1Uis3VnFjZjJCM29uS3U5MU9vSXhhMFZF?=
- =?utf-8?B?bFBrak5tZFQ3b1VueTVKNDFNY0NrWnB1aFZDZjkyWlMyLzV4S3RKRm1Jcisw?=
- =?utf-8?B?QUdWeE85NEhwMTh4VkVFVzRBY25WeDVFbllLazNvNFYxdzAyVjVMTkNvNzJJ?=
- =?utf-8?B?TmYzTnRObHg2ZVk0bHNQUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NXBjNXQwUExSZ1VyQ2g0ZjJXZDFFMGVvdFNsU29jT1lZcVhnaEdvVTVpOVU3?=
- =?utf-8?B?VTkzRndIdFI1Ry9YODRnZnlKN0hlSTN2QzhaYVNINHFmUDROVWkwb2Q4R0xD?=
- =?utf-8?B?bVVqeksvSm1SWTM1VXA2UFE0Zy8xc2RqYW9GYkRDU25iTDdpZFhib0Zub1ZL?=
- =?utf-8?B?MGkzUDBXaStvdTdVT1huQUdBK2VTRGlKZDZJZUlBNW1ScThLYk9aVHgvZ1oy?=
- =?utf-8?B?K3o2ZGJsSVNjcFdyOW5MY2NHeUNoR3R6aXB0WnJ4Z2daSnk0R0IrbWQ4UVFz?=
- =?utf-8?B?eWFnSkQyY2o2MkhXZ1FFbGsrKzlMVUpCWU9GQWhKYXQwTjZXa0g1QjdCelJx?=
- =?utf-8?B?dzhqdzE5elNrVVVIbWZncEt5K1pFeHI4c082MGFTdG1tWk16b2pQQUJIWXNo?=
- =?utf-8?B?QWdjVGlqWkxnbUd6SHlPN3p0MXVxTlhRdXJSNVZPQ1ZxUTlOam9yMHRxd2hL?=
- =?utf-8?B?Sk5pNHA0ZFU0NTJMcTZnbG9uUXVwMm94cDQ0cFhGZzU3bXhQak85b0ptdWZV?=
- =?utf-8?B?Vks0b1A1ck0xemluQUo2aU9zYUh0TkZOZ3VRVVVuVkwzY3RsMnF1NjNGYWp2?=
- =?utf-8?B?T1drOXBQWVJVVG5hbm9oQlUrRG1CN2hJaklJWHJoWnhCb0dKS1FubW56QVE2?=
- =?utf-8?B?LzZzbjQySGdCUkhUVFhUekxzRnJmWmdpU0QvZTJpaDZvTkc2ZGIrOTNiWSto?=
- =?utf-8?B?eXkrbmQzYllTQTc3N0RKaGRYd1RRbnVhNlVjMGhiUmdpSE9oeGNTN21neHJU?=
- =?utf-8?B?V25id0JKOXN2MjJKQWJuMlFmdjlEMkp2cEFKcHZYV1U2T1BhZE9tK3Q1NXBX?=
- =?utf-8?B?UU5OZENLbGZjK1A0YUVEQXZTTHViN0xUV0g4R2ljazQyVVdqaVFJZUx6UlhE?=
- =?utf-8?B?bXhIYTZXYW5VeVZZQWcxN3IzalVuK1lXdW91dGdlY0o4cFBCaUJWUEFzT3JP?=
- =?utf-8?B?SHdRcGZ4eVIrbFpxbUtWZFErOFpwM0c4Qldhc3Jxd05ER2VqZ1Z0Ni8vLzlS?=
- =?utf-8?B?R2Vncit2NkpmNmtFaXgxemljQSswcklXUEp1UnZVQUNwclpkaXM5NVNEYWpP?=
- =?utf-8?B?YkM1QmZRWW0rNlY4MzhFeVBRejNJWFp0bWZFNTd2UjVhZlJJd29WS0NIZXJW?=
- =?utf-8?B?aUV5Ymp3NERoQm14Y0hnbzhuZHd3Wk5EcEFGN3MxVG5aWDFlVlF2M01aODBN?=
- =?utf-8?B?ckRPTmNMTUZMQjM5ZTBjZTkzOThTdmJMeGNENWtXd3oyaWtiamVrTURjN2xR?=
- =?utf-8?B?RGVodzNMMVFHUHdkeTc4bUhKYXhWZmcxNGhoa2xUTEptOUJMZGhydGtmbFND?=
- =?utf-8?B?QTBWVkxsQUNUcHRYYmIzNldCUVhqTkpNRjVMNlhyd0tCbzhxNE1hbC9kYWRW?=
- =?utf-8?B?Q1FJL050c2U3RUdpRFJueWkwU0pjU2c0Z3cwNXlZLzNLWE0rVGlvemxpOHly?=
- =?utf-8?B?UWZieWt6VTF0ZUxaNVkwT0lwd1l4ZW42WHpOR3ZFYjVCMjl6cUFOcGJoWDRZ?=
- =?utf-8?B?VFZubkMydzA5ZkZ6VzVBK0VXbDNnKy9IakxxREZMN2F3MHdERE9qbUlCRXpq?=
- =?utf-8?B?L21HNnBERC8vak5SZytQQ3gvendoZTZDQkNZd2l6VlR6SGNyMm9VQ0RIUWRC?=
- =?utf-8?B?SUlDK2NaUFBWU09POXA5QnNaMFZYQlY2TmpxNERxRGs1dG02c1RINmgrUk9T?=
- =?utf-8?B?MWpwWnVKNC9zaWRtZWZBcVVHWHRnelBTZC9aOGdYNUt2cGtyc1FrQ2l0dmsr?=
- =?utf-8?B?S1NLVU93Vm4vUHBOaWtybHl5RysyNi9LMHlxRHgyWVRIR0dVZWovdnlIVUZN?=
- =?utf-8?B?ZXhQb2NmcER6cTZGOGdtYVdIT0w3OFhoWjIvdUcybFJrL2xlZ3J4Yk1vRjJj?=
- =?utf-8?B?R29VcFdBdE81VThLblgzb2tCMnZKcVFrZXV1Tk1XaFhJb3JtMnhXMjl4aEhr?=
- =?utf-8?B?d3VGVm5qZGlHNEh2dnZFM3FYNTBmT0xWd3VRcXg0ZStFVUNEUzdWR0x2QVhR?=
- =?utf-8?B?Q2R4WFpQNGhicXpqWXErdlhxZWhPWkpqMkRwNUoxUG81ZW81ZzVzUC9JbXJu?=
- =?utf-8?B?bzB6OURHcUlCd25RK1ZHakxiV0JuRWZPOUxwZ2l0Um9EeEJEWTl4azk3SlRK?=
- =?utf-8?Q?ibh/9wZ0VE+lfmM9D3l2OVA50?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f57560b-3c9c-40ff-b522-08dcd7f99942
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-OriginatorOrg: microchip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 15:50:19.9595
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8739.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76cf9406-4480-45ab-0509-08dcd7f9cf95
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Sep 2024 15:51:50.8731
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sAyeaqyEEqDnW8bDOPweTWuGavjaBh4K1wm/u7EuiPk3uf34Or8tEdSo6sPcG9D1XRe0PM9WrqQgt0VTR2ue3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8947
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WJGCEqTJRAA3CFNovAo0RBC1+jdhzmRdabuxBJqmGxLow2Ufm8RmZENT/CqmO+Gm/AFvkVBOVtmqCyyf9YWWXl0A+/bpuBpAULhGyE8hRRnBFBD6lxQVKiGTzfv0Tg0O
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8607
 
-On 9/18/2024 04:42, Luke D. Jones wrote:
-> With the existence of the asus-bioscfg module the attributes no-longer
-> need to live under the /sys/devices/platform/asus-nb-wmi/ path.
-> 
-> Deprecate all those that were implemented in asus-bioscfg with the goal
-> of removing them fully in the next LTS cycle.
-> 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
-> ---
->   .../ABI/testing/sysfs-platform-asus-wmi       |  17 +++
->   drivers/platform/x86/Kconfig                  |   8 ++
->   drivers/platform/x86/asus-wmi.c               | 134 ++++++++++++++----
->   3 files changed, 129 insertions(+), 30 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-platform-asus-wmi b/Documentation/ABI/testing/sysfs-platform-asus-wmi
-> index 28144371a0f1..765d50b0d9df 100644
-> --- a/Documentation/ABI/testing/sysfs-platform-asus-wmi
-> +++ b/Documentation/ABI/testing/sysfs-platform-asus-wmi
-> @@ -63,6 +63,7 @@ Date:		Aug 2022
->   KernelVersion:	6.1
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Switch the GPU hardware MUX mode. Laptops with this feature can
->   		can be toggled to boot with only the dGPU (discrete mode) or in
->   		standard Optimus/Hybrid mode. On switch a reboot is required:
-> @@ -75,6 +76,7 @@ Date:		Aug 2022
->   KernelVersion:	5.17
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Disable discrete GPU:
->   			* 0 - Enable dGPU,
->   			* 1 - Disable dGPU
-> @@ -84,6 +86,7 @@ Date:		Aug 2022
->   KernelVersion:	5.17
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Enable the external GPU paired with ROG X-Flow laptops.
->   		Toggling this setting will also trigger ACPI to disable the dGPU:
->   
-> @@ -95,6 +98,7 @@ Date:		Aug 2022
->   KernelVersion:	5.17
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Enable an LCD response-time boost to reduce or remove ghosting:
->   			* 0 - Disable,
->   			* 1 - Enable
-> @@ -104,6 +108,7 @@ Date:		Jun 2023
->   KernelVersion:	6.5
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Get the current charging mode being used:
->   			* 1 - Barrel connected charger,
->   			* 2 - USB-C charging
-> @@ -114,6 +119,7 @@ Date:		Jun 2023
->   KernelVersion:	6.5
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Show if the egpu (XG Mobile) is correctly connected:
->   			* 0 - False,
->   			* 1 - True
-> @@ -123,6 +129,7 @@ Date:		Jun 2023
->   KernelVersion:	6.5
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Change the mini-LED mode:
->   			* 0 - Single-zone,
->   			* 1 - Multi-zone
-> @@ -133,6 +140,7 @@ Date:		Apr 2024
->   KernelVersion:	6.10
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		List the available mini-led modes.
->   
->   What:		/sys/devices/platform/<platform>/ppt_pl1_spl
-> @@ -140,6 +148,7 @@ Date:		Jun 2023
->   KernelVersion:	6.5
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Set the Package Power Target total of CPU: PL1 on Intel, SPL on AMD.
->   		Shown on Intel+Nvidia or AMD+Nvidia based systems:
->   
-> @@ -150,6 +159,7 @@ Date:		Jun 2023
->   KernelVersion:	6.5
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Set the Slow Package Power Tracking Limit of CPU: PL2 on Intel, SPPT,
->   		on AMD. Shown on Intel+Nvidia or AMD+Nvidia based systems:
->   
-> @@ -160,6 +170,7 @@ Date:		Jun 2023
->   KernelVersion:	6.5
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Set the Fast Package Power Tracking Limit of CPU. AMD+Nvidia only:
->   			* min=5, max=250
->   
-> @@ -168,6 +179,7 @@ Date:		Jun 2023
->   KernelVersion:	6.5
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Set the APU SPPT limit. Shown on full AMD systems only:
->   			* min=5, max=130
->   
-> @@ -176,6 +188,7 @@ Date:		Jun 2023
->   KernelVersion:	6.5
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Set the platform SPPT limit. Shown on full AMD systems only:
->   			* min=5, max=130
->   
-> @@ -184,6 +197,7 @@ Date:		Jun 2023
->   KernelVersion:	6.5
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Set the dynamic boost limit of the Nvidia dGPU:
->   			* min=5, max=25
->   
-> @@ -192,6 +206,7 @@ Date:		Jun 2023
->   KernelVersion:	6.5
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Set the target temperature limit of the Nvidia dGPU:
->   			* min=75, max=87
->   
-> @@ -200,6 +215,7 @@ Date:		Apr 2024
->   KernelVersion:	6.10
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Set if the BIOS POST sound is played on boot.
->   			* 0 - False,
->   			* 1 - True
-> @@ -209,6 +225,7 @@ Date:		Apr 2024
->   KernelVersion:	6.10
->   Contact:	"Luke Jones" <luke@ljones.dev>
->   Description:
-> +        DEPRECATED, WILL BE REMOVED SOON
->   		Set if the MCU can go in to low-power mode on system sleep
->   			* 0 - False,
->   			* 1 - True
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index d13c4085c228..01f780d53793 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -301,6 +301,14 @@ config ASUS_WMI
->   	  To compile this driver as a module, choose M here: the module will
->   	  be called asus-wmi.
->   
-> +config ASUS_WMI_BIOS
-
-Elsewhere in the kernel they add _DEPRECATED to the Kconfig name.  Thoughts?
-
-> +	bool "BIOS option support in WMI platform (DEPRECATED)"
-> +	depends on ASUS_WMI
-> +	help
-> +	  Say Y to expose the configurable BIOS options through the asus-wmi
-> +	  driver. This can be used with or without the new asus-bios driver as
-
-Isn't it asus-armoury?
-
-> +	  the options are the same but the asus-bios driver has more features.
-> +
->   config ASUS_NB_WMI
->   	tristate "Asus Notebook WMI Driver"
->   	depends on ASUS_WMI
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index d265ef0d7aba..edb00485e8c3 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -276,11 +276,12 @@ struct asus_wmi {
->   	u8 fan_boost_mode_mask;
->   	u8 fan_boost_mode;
->   
-> +
-> +	/* Tunables provided by ASUS for gaming laptops */
-> +	#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
->   	bool egpu_enable_available;
->   	bool dgpu_disable_available;
->   	u32 gpu_mux_dev;
-> -
-> -	/* Tunables provided by ASUS for gaming laptops */
->   	u32 ppt_pl2_sppt;
->   	u32 ppt_pl1_spl;
->   	u32 ppt_apu_sppt;
-> @@ -288,6 +289,9 @@ struct asus_wmi {
->   	u32 ppt_fppt;
->   	u32 nv_dynamic_boost;
->   	u32 nv_temp_target;
-> +	bool panel_overdrive_available;
-> +	u32 mini_led_dev_id;
-> +	#endif
->   
->   	u32 kbd_rgb_dev;
->   	bool kbd_rgb_state_available;
-> @@ -306,9 +310,6 @@ struct asus_wmi {
->   	// The RSOC controls the maximum charging percentage.
->   	bool battery_rsoc_available;
->   
-> -	bool panel_overdrive_available;
-> -	u32 mini_led_dev_id;
-> -
->   	struct hotplug_slot hotplug_slot;
->   	struct mutex hotplug_lock;
->   	struct mutex wmi_lock;
-> @@ -322,6 +323,15 @@ struct asus_wmi {
->   	struct asus_wmi_driver *driver;
->   };
->   
-> +#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
-> +static void asus_wmi_show_deprecated(void)
-> +{
-> +	pr_notice_once("Accessing attributes through /sys/bus/platform/asus_wmi "
-> +		"is deprecated and will be removed in a future release. Please "
-> +		"switch over to /sys/class/firmware_attributes.\n");
-> +}
-> +#endif
-> +
->   /* WMI ************************************************************************/
->   
->   static int asus_wmi_evaluate_method3(u32 method_id,
-> @@ -720,6 +730,7 @@ static void asus_wmi_tablet_mode_get_state(struct asus_wmi *asus)
->   }
->   
->   /* Charging mode, 1=Barrel, 2=USB ******************************************/
-> +#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
->   static ssize_t charge_mode_show(struct device *dev,
->   				   struct device_attribute *attr, char *buf)
->   {
-> @@ -730,12 +741,16 @@ static ssize_t charge_mode_show(struct device *dev,
->   	if (result < 0)
->   		return result;
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%d\n", value & 0xff);
->   }
->   
->   static DEVICE_ATTR_RO(charge_mode);
-> +#endif
->   
->   /* dGPU ********************************************************************/
-> +#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
->   static ssize_t dgpu_disable_show(struct device *dev,
->   				   struct device_attribute *attr, char *buf)
->   {
-> @@ -746,6 +761,8 @@ static ssize_t dgpu_disable_show(struct device *dev,
->   	if (result < 0)
->   		return result;
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%d\n", result);
->   }
->   
-> @@ -799,8 +816,10 @@ static ssize_t dgpu_disable_store(struct device *dev,
->   	return count;
->   }
->   static DEVICE_ATTR_RW(dgpu_disable);
-> +#endif
->   
->   /* eGPU ********************************************************************/
-> +#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
->   static ssize_t egpu_enable_show(struct device *dev,
->   				   struct device_attribute *attr, char *buf)
->   {
-> @@ -811,6 +830,8 @@ static ssize_t egpu_enable_show(struct device *dev,
->   	if (result < 0)
->   		return result;
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%d\n", result);
->   }
->   
-> @@ -867,8 +888,10 @@ static ssize_t egpu_enable_store(struct device *dev,
->   	return count;
->   }
->   static DEVICE_ATTR_RW(egpu_enable);
-> +#endif
->   
->   /* Is eGPU connected? *********************************************************/
-> +#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
->   static ssize_t egpu_connected_show(struct device *dev,
->   				   struct device_attribute *attr, char *buf)
->   {
-> @@ -879,12 +902,16 @@ static ssize_t egpu_connected_show(struct device *dev,
->   	if (result < 0)
->   		return result;
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%d\n", result);
->   }
->   
->   static DEVICE_ATTR_RO(egpu_connected);
-> +#endif
->   
->   /* gpu mux switch *************************************************************/
-> +#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
->   static ssize_t gpu_mux_mode_show(struct device *dev,
->   				 struct device_attribute *attr, char *buf)
->   {
-> @@ -895,6 +922,8 @@ static ssize_t gpu_mux_mode_show(struct device *dev,
->   	if (result < 0)
->   		return result;
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%d\n", result);
->   }
->   
-> @@ -953,6 +982,7 @@ static ssize_t gpu_mux_mode_store(struct device *dev,
->   	return count;
->   }
->   static DEVICE_ATTR_RW(gpu_mux_mode);
-> +#endif
->   
->   /* TUF Laptop Keyboard RGB Modes **********************************************/
->   static ssize_t kbd_rgb_mode_store(struct device *dev,
-> @@ -1076,6 +1106,7 @@ static const struct attribute_group *kbd_rgb_mode_groups[] = {
->   };
->   
->   /* Tunable: PPT: Intel=PL1, AMD=SPPT *****************************************/
-> +#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
->   static ssize_t ppt_pl2_sppt_store(struct device *dev,
->   				    struct device_attribute *attr,
->   				    const char *buf, size_t count)
-> @@ -1114,6 +1145,8 @@ static ssize_t ppt_pl2_sppt_show(struct device *dev,
->   {
->   	struct asus_wmi *asus = dev_get_drvdata(dev);
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%u\n", asus->ppt_pl2_sppt);
->   }
->   static DEVICE_ATTR_RW(ppt_pl2_sppt);
-> @@ -1156,6 +1189,8 @@ static ssize_t ppt_pl1_spl_show(struct device *dev,
->   {
->   	struct asus_wmi *asus = dev_get_drvdata(dev);
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%u\n", asus->ppt_pl1_spl);
->   }
->   static DEVICE_ATTR_RW(ppt_pl1_spl);
-> @@ -1199,6 +1234,8 @@ static ssize_t ppt_fppt_show(struct device *dev,
->   {
->   	struct asus_wmi *asus = dev_get_drvdata(dev);
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%u\n", asus->ppt_fppt);
->   }
->   static DEVICE_ATTR_RW(ppt_fppt);
-> @@ -1242,6 +1279,8 @@ static ssize_t ppt_apu_sppt_show(struct device *dev,
->   {
->   	struct asus_wmi *asus = dev_get_drvdata(dev);
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%u\n", asus->ppt_apu_sppt);
->   }
->   static DEVICE_ATTR_RW(ppt_apu_sppt);
-> @@ -1285,6 +1324,8 @@ static ssize_t ppt_platform_sppt_show(struct device *dev,
->   {
->   	struct asus_wmi *asus = dev_get_drvdata(dev);
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%u\n", asus->ppt_platform_sppt);
->   }
->   static DEVICE_ATTR_RW(ppt_platform_sppt);
-> @@ -1328,6 +1369,8 @@ static ssize_t nv_dynamic_boost_show(struct device *dev,
->   {
->   	struct asus_wmi *asus = dev_get_drvdata(dev);
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%u\n", asus->nv_dynamic_boost);
->   }
->   static DEVICE_ATTR_RW(nv_dynamic_boost);
-> @@ -1371,11 +1414,15 @@ static ssize_t nv_temp_target_show(struct device *dev,
->   {
->   	struct asus_wmi *asus = dev_get_drvdata(dev);
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%u\n", asus->nv_temp_target);
->   }
->   static DEVICE_ATTR_RW(nv_temp_target);
-> +#endif
->   
->   /* Ally MCU Powersave ********************************************************/
-> +#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
->   static ssize_t mcu_powersave_show(struct device *dev,
->   				   struct device_attribute *attr, char *buf)
->   {
-> @@ -1386,6 +1433,8 @@ static ssize_t mcu_powersave_show(struct device *dev,
->   	if (result < 0)
->   		return result;
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%d\n", result);
->   }
->   
-> @@ -1421,6 +1470,7 @@ static ssize_t mcu_powersave_store(struct device *dev,
->   	return count;
->   }
->   static DEVICE_ATTR_RW(mcu_powersave);
-> +#endif
->   
->   /* Battery ********************************************************************/
->   
-> @@ -2294,6 +2344,7 @@ static int asus_wmi_rfkill_init(struct asus_wmi *asus)
->   }
->   
->   /* Panel Overdrive ************************************************************/
-> +#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
->   static ssize_t panel_od_show(struct device *dev,
->   				   struct device_attribute *attr, char *buf)
->   {
-> @@ -2304,6 +2355,8 @@ static ssize_t panel_od_show(struct device *dev,
->   	if (result < 0)
->   		return result;
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%d\n", result);
->   }
->   
-> @@ -2340,9 +2393,10 @@ static ssize_t panel_od_store(struct device *dev,
->   	return count;
->   }
->   static DEVICE_ATTR_RW(panel_od);
-> +#endif
->   
->   /* Bootup sound ***************************************************************/
-> -
-> +#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
->   static ssize_t boot_sound_show(struct device *dev,
->   			     struct device_attribute *attr, char *buf)
->   {
-> @@ -2353,6 +2407,8 @@ static ssize_t boot_sound_show(struct device *dev,
->   	if (result < 0)
->   		return result;
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%d\n", result);
->   }
->   
-> @@ -2388,8 +2444,10 @@ static ssize_t boot_sound_store(struct device *dev,
->   	return count;
->   }
->   static DEVICE_ATTR_RW(boot_sound);
-> +#endif
->   
->   /* Mini-LED mode **************************************************************/
-> +#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
->   static ssize_t mini_led_mode_show(struct device *dev,
->   				   struct device_attribute *attr, char *buf)
->   {
-> @@ -2420,6 +2478,8 @@ static ssize_t mini_led_mode_show(struct device *dev,
->   		}
->   	}
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "%d\n", value);
->   }
->   
-> @@ -2490,10 +2550,13 @@ static ssize_t available_mini_led_mode_show(struct device *dev,
->   		return sysfs_emit(buf, "0 1 2\n");
->   	}
->   
-> +	asus_wmi_show_deprecated();
-> +
->   	return sysfs_emit(buf, "0\n");
->   }
->   
->   static DEVICE_ATTR_RO(available_mini_led_mode);
-> +#endif
->   
->   /* Quirks *********************************************************************/
->   
-> @@ -3792,6 +3855,7 @@ static int throttle_thermal_policy_switch_next(struct asus_wmi *asus)
->   	return 0;
->   }
->   
-> +#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
->   static ssize_t throttle_thermal_policy_show(struct device *dev,
->   				   struct device_attribute *attr, char *buf)
->   {
-> @@ -3835,6 +3899,7 @@ static ssize_t throttle_thermal_policy_store(struct device *dev,
->    * Throttle thermal policy: 0 - default, 1 - overboost, 2 - silent
->    */
->   static DEVICE_ATTR_RW(throttle_thermal_policy);
-> +#endif
->   
->   /* Platform profile ***********************************************************/
->   static int asus_wmi_platform_profile_to_vivo(struct asus_wmi *asus, int mode)
-> @@ -4475,27 +4540,29 @@ static struct attribute *platform_attributes[] = {
->   	&dev_attr_camera.attr,
->   	&dev_attr_cardr.attr,
->   	&dev_attr_touchpad.attr,
-> -	&dev_attr_charge_mode.attr,
-> -	&dev_attr_egpu_enable.attr,
-> -	&dev_attr_egpu_connected.attr,
-> -	&dev_attr_dgpu_disable.attr,
-> -	&dev_attr_gpu_mux_mode.attr,
->   	&dev_attr_lid_resume.attr,
->   	&dev_attr_als_enable.attr,
->   	&dev_attr_fan_boost_mode.attr,
-> -	&dev_attr_throttle_thermal_policy.attr,
-> -	&dev_attr_ppt_pl2_sppt.attr,
-> -	&dev_attr_ppt_pl1_spl.attr,
-> -	&dev_attr_ppt_fppt.attr,
-> -	&dev_attr_ppt_apu_sppt.attr,
-> -	&dev_attr_ppt_platform_sppt.attr,
-> -	&dev_attr_nv_dynamic_boost.attr,
-> -	&dev_attr_nv_temp_target.attr,
-> -	&dev_attr_mcu_powersave.attr,
-> -	&dev_attr_boot_sound.attr,
-> -	&dev_attr_panel_od.attr,
-> -	&dev_attr_mini_led_mode.attr,
-> -	&dev_attr_available_mini_led_mode.attr,
-> +	#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
-> +		&dev_attr_charge_mode.attr,
-> +		&dev_attr_egpu_enable.attr,
-> +		&dev_attr_egpu_connected.attr,
-> +		&dev_attr_dgpu_disable.attr,
-> +		&dev_attr_gpu_mux_mode.attr,
-> +		&dev_attr_ppt_pl2_sppt.attr,
-> +		&dev_attr_ppt_pl1_spl.attr,
-> +		&dev_attr_ppt_fppt.attr,
-> +		&dev_attr_ppt_apu_sppt.attr,
-> +		&dev_attr_ppt_platform_sppt.attr,
-> +		&dev_attr_nv_dynamic_boost.attr,
-> +		&dev_attr_nv_temp_target.attr,
-> +		&dev_attr_mcu_powersave.attr,
-> +		&dev_attr_boot_sound.attr,
-> +		&dev_attr_panel_od.attr,
-> +		&dev_attr_mini_led_mode.attr,
-> +		&dev_attr_available_mini_led_mode.attr,
-> +		&dev_attr_throttle_thermal_policy.attr,
-> +	#endif
->   	NULL
->   };
->   
-> @@ -4517,7 +4584,11 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
->   		devid = ASUS_WMI_DEVID_LID_RESUME;
->   	else if (attr == &dev_attr_als_enable.attr)
->   		devid = ASUS_WMI_DEVID_ALS_ENABLE;
-> -	else if (attr == &dev_attr_charge_mode.attr)
-> +	else if (attr == &dev_attr_fan_boost_mode.attr)
-> +		ok = asus->fan_boost_mode_available;
-> +
-> +	#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
-> +	if (attr == &dev_attr_charge_mode.attr)
->   		devid = ASUS_WMI_DEVID_CHARGE_MODE;
->   	else if (attr == &dev_attr_egpu_enable.attr)
->   		ok = asus->egpu_enable_available;
-> @@ -4555,6 +4626,7 @@ static umode_t asus_sysfs_is_visible(struct kobject *kobj,
->   		ok = asus->mini_led_dev_id != 0;
->   	else if (attr == &dev_attr_available_mini_led_mode.attr)
->   		ok = asus->mini_led_dev_id != 0;
-> +	#endif
->   
->   	if (devid != -1) {
->   		ok = !(asus_wmi_get_devstate_simple(asus, devid) < 0);
-> @@ -4795,6 +4867,7 @@ static int asus_wmi_add(struct platform_device *pdev)
->   		goto fail_platform;
->   
->   	/* ensure defaults for tunables */
-> +	#if IS_ENABLED(CONFIG_ASUS_WMI_BIOS)
->   	asus->ppt_pl2_sppt = 5;
->   	asus->ppt_pl1_spl = 5;
->   	asus->ppt_apu_sppt = 5;
-> @@ -4818,16 +4891,17 @@ static int asus_wmi_add(struct platform_device *pdev)
->   	else if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_GPU_MUX_VIVO))
->   		asus->gpu_mux_dev = ASUS_WMI_DEVID_GPU_MUX_VIVO;
->   
-> -	if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_TUF_RGB_MODE))
-> -		asus->kbd_rgb_dev = ASUS_WMI_DEVID_TUF_RGB_MODE;
-> -	else if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_TUF_RGB_MODE2))
-> -		asus->kbd_rgb_dev = ASUS_WMI_DEVID_TUF_RGB_MODE2;
-> -
-> +	#endif /* CONFIG_ASUS_WMI_BIOS */
->   	if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY))
->   		asus->throttle_thermal_policy_dev = ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY;
->   	else if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY_VIVO))
->   		asus->throttle_thermal_policy_dev = ASUS_WMI_DEVID_THROTTLE_THERMAL_POLICY_VIVO;
->   
-> +	if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_TUF_RGB_MODE))
-> +		asus->kbd_rgb_dev = ASUS_WMI_DEVID_TUF_RGB_MODE;
-> +	else if (asus_wmi_dev_is_present(asus, ASUS_WMI_DEVID_TUF_RGB_MODE2))
-> +		asus->kbd_rgb_dev = ASUS_WMI_DEVID_TUF_RGB_MODE2;
-> +
->   	err = fan_boost_mode_check_present(asus);
->   	if (err)
->   		goto fail_fan_boost_mode;
-
+T24gMTYvMDkvMjAyNCAyMToxOCwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4gRVhURVJO
+QUwgRU1BSUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5
+b3Uga25vdyB0aGUgY29udGVudCBpcyBzYWZlDQo+IA0KPiBPbiAxMi8wOS8yMDI0IDE5OjAwLCBW
+YWxlbnRpbmEgRmVybmFuZGV6IHdyb3RlOg0KPj4gVGhlIE1pY3JvY2hpcCBmYW1pbHkgb2YgUklT
+Qy1WIFNvQ3MgdHlwaWNhbGx5IGhhcyBvbmUgb3IgbW9yZSBjbHVzdGVycy4NCj4+IFRoZXNlIGNs
+dXN0ZXJzIGNhbiBiZSBjb25maWd1cmVkIHRvIHJ1biBpbiBBc3ltbWV0cmljIE11bHRpLVByb2Nl
+c3NpbmcNCj4+IChBTVApIG1vZGUuDQo+Pg0KPj4gQWRkIGEgcmVtb3RlcHJvYyBwbGF0Zm9ybSBk
+cml2ZXIgdG8gYmUgYWJsZSB0byBsb2FkIGFuZCBib290IGZpcm13YXJlDQo+PiB0byB0aGUgcmVt
+b3RlIHByb2Nlc3NvcihzKS4NCj4gDQo+IC4uLg0KPiANCj4+ICsNCj4+ICtzdGF0aWMgaW50IG1j
+aHBfaXBjX3Jwcm9jX3ByZXBhcmUoc3RydWN0IHJwcm9jICpycHJvYykNCj4+ICt7DQo+PiArICAg
+ICBzdHJ1Y3QgbWNocF9pcGNfcnByb2MgKnByaXYgPSBycHJvYy0+cHJpdjsNCj4+ICsgICAgIHN0
+cnVjdCBkZXZpY2Vfbm9kZSAqbnAgPSBwcml2LT5kZXYtPm9mX25vZGU7DQo+PiArICAgICBzdHJ1
+Y3QgcnByb2NfbWVtX2VudHJ5ICptZW07DQo+PiArICAgICBzdHJ1Y3QgcmVzZXJ2ZWRfbWVtICpy
+bWVtOw0KPj4gKyAgICAgc3RydWN0IG9mX3BoYW5kbGVfaXRlcmF0b3IgaXQ7DQo+PiArICAgICB1
+NjQgZGV2aWNlX2FkZHJlc3M7DQo+PiArDQo+PiArICAgICByZWluaXRfY29tcGxldGlvbigmcHJp
+di0+c3RhcnRfZG9uZSk7DQo+PiArDQo+PiArICAgICBvZl9waGFuZGxlX2l0ZXJhdG9yX2luaXQo
+Jml0LCBucCwgIm1lbW9yeS1yZWdpb24iLCBOVUxMLCAwKTsNCj4+ICsgICAgIHdoaWxlIChvZl9w
+aGFuZGxlX2l0ZXJhdG9yX25leHQoJml0KSA9PSAwKSB7DQo+PiArICAgICAgICAgICAgIC8qDQo+
+PiArICAgICAgICAgICAgICAqIElnbm9yZSB0aGUgZmlyc3QgbWVtb3J5IHJlZ2lvbiB3aGljaCB3
+aWxsIGJlIHVzZWQgdmRldg0KPj4gKyAgICAgICAgICAgICAgKiBidWZmZXIuIE5vIG5lZWQgdG8g
+ZG8gZXh0cmEgaGFuZGxpbmdzLCBycHJvY19hZGRfdmlydGlvX2Rldg0KPj4gKyAgICAgICAgICAg
+ICAgKiB3aWxsIGhhbmRsZSBpdC4NCj4+ICsgICAgICAgICAgICAgICovDQo+PiArICAgICAgICAg
+ICAgIGlmICghc3RyY21wKGl0Lm5vZGUtPm5hbWUsICJ2ZGV2MGJ1ZmZlciIpKQ0KPiANCj4gV2hh
+dD8gSWYgeW91IGlnbm9yZSB0aGUgZmlyc3QsIHRoZW4gd2h5IGFyZSB5b3UgY2hlY2tpbmcgbmFt
+ZXM/IFRoaXMNCj4gZG9lcyBub3QgbWFrZSBzZW5zZS4gRXNwZWNpYWxseSB0aGF0IHlvdXIgYmlu
+ZGluZyBkaWQgbm90IHNheSBhbnl0aGluZw0KPiBhYm91dCB0aGVzZSBwaGFuZGxlcyBiZWluZyBz
+b21laG93IHNwZWNpYWwuDQoNClRoZSBpZGVhIGluIHRoZSBjb2RlIGFib3ZlIGlzIHRvIHNraXAg
+dGhlIHZkZXYgYnVmZmVyIGFsbG9jYXRpb24gYW5kIA0KY2FydmVvdXQgcmVnaXN0cmF0aW9uLiBM
+YXRlciwgd2hlbiB0aGUgcmVtb3RlcHJvYyB2aXJ0aW8gZHJpdmVyIA0KcmVnaXN0ZXJzIHRoZSB2
+aXJ0aW8gZGV2aWNlIChycHJvY19hZGRfdmlydGlvX2RldiksIGl0IHdpbGwgYXR0ZW1wdCB0byAN
+CmZpbmQgdGhlIGNhcnZlb3V0LiBTaW5jZSB0aGUgY2FydmVvdXQgd2FzbuKAmXQgcmVnaXN0ZXJl
+ZCwgaXQgd2lsbCB1c2UgdGhlIA0KZmlyc3QgbWVtb3J5IHJlZ2lvbiBmcm9tIHRoZSBwYXJlbnQg
+YnkgY2FsbGluZyANCm9mX3Jlc2VydmVkX21lbV9kZXZpY2VfaW5pdF9ieV9pZHguDQoNClRoaXMg
+YmVoYXZpb3IgaXMgYmFzZWQgb24gc29tZSBleGlzdGluZyBwbGF0Zm9ybSBkcml2ZXJzLiBIb3dl
+dmVyLCB1cG9uIA0KZnVydGhlciBpbnNwZWN0aW9uLCBpdCBzZWVtcyB0aGF0IHNvbWUgbmV3ZXIg
+ZHJpdmVycyB1c2UgDQpycHJvY19vZl9yZXNtX21lbV9lbnRyeV9pbml0IHRvIGFsbG9jYXRlIHZk
+ZXYgYnVmZmVycy4NCg0KSSB3aWxsIHJlc3RydWN0dXJlIHRoaXMgc2VjdGlvbiBhbmQgcmVwaGFz
+ZS9kcm9wIHRoZSBjb21tZW50Lg0KDQpXaXRoIHJlZ2FyZHMgdGhlIGJpbmRpbmdzLCBJJ2xsIGV4
+cGxhaW4gYmV0dGVyIGFsbCB0aGUgbWVtb3J5IHJlZ2lvbnMgDQpmb3IgdjIuDQoNCkp1c3QgZm9y
+IGV2ZXJ5b25l4oCZcyBpbmZvcm1hdGlvbiwgd2UgaGF2ZSB0aGUgZm9sbG93aW5nIHVzZSBjYXNl
+czoNCg0KRWFybHkgYm9vdDogUmVtb3RlIHByb2Nlc3NvcnMgYXJlIGJvb3RlZCBieSBhbm90aGVy
+IGVudGl0eSBiZWZvcmUgTGludXgsIA0Kc28gd2Ugb25seSBuZWVkIHRvIGF0dGFjaC4gRm9yIHRo
+aXMgbW9kZSwgd2UgcmVxdWlyZSB0aGUgcmVzb3VyY2UgdGFibGUgDQphcyBhIG1lbW9yeSByZWdp
+b24gaW4gdGhlIGRldmljZSB0cmVlLg0KDQpMYXRlIGJvb3QgLSBMaW51eCBpcyByZXNwb25zaWJs
+ZSBmb3IgbG9hZGluZyB0aGUgZmlybXdhcmUgYW5kIHN0YXJ0aW5nIA0KaXQgb24gdGhlIHJlbW90
+ZSBwcm9jZXNzb3JzLiBGb3IgdGhpcywgd2UgbmVlZCB0aGUgcmVnaW9uIHVzZWQgZm9yIHRoZSAN
+CmZpcm13YXJlIGltYWdlLg0KDQpJbiBib3RoIGNhc2VzLCBycG1zZyBjb21tdW5pY2F0aW9uIGlz
+IG9wdGlvbmFsLiBUaGlzIG1lYW5zIHRoYXQgdGhlIHZkZXYgDQpidWZmZXJzIGFuZCB2cmluZ3Mg
+bWVtb3J5IHJlZ2lvbnMgYXJlIGFsc28gb3B0aW9uYWwuDQoNClRoZXJlIGNvdWxkIGFsc28gYmUg
+YSBtaXhlZCBjYXNlIHdoZXJlIHdlIHN0YXJ0IHdpdGggZWFybHkgYm9vdCBtb2RlIGJ5IA0KYXR0
+YWNoaW5nIHRvIGFuIGV4aXN0aW5nIHJlbW90ZXByb2MsIGFuZCB0aGVuIHN0b3AsIHN0YXJ0LCBh
+bmQgbG9hZCANCmFub3RoZXIgZmlybXdhcmUgb25jZSBMaW51eCBoYXMgYm9vdGVkLiBJbiB0aGlz
+IGNhc2UsIHdlIHdvdWxkIHJlcXVpcmUgDQp0aGUgcmVzb3VyY2UgdGFibGUgYW5kIGZpcm13YXJl
+IGltYWdlIHJlZ2lvbiwgYW5kIG9wdGlvbmFsbHksIHZkZXYgDQpidWZmZXJzIGFuZCB2cmluZ3Mu
+DQoNCj4gDQo+PiArICAgICAgICAgICAgICAgICAgICAgY29udGludWU7DQo+PiArDQo+PiArICAg
+ICAgICAgICAgIGlmICghc3RyY21wKGl0Lm5vZGUtPm5hbWUsICJyc2MtdGFibGUiKSkNCj4gDQo+
+IE5vcGUuDQpTaW5jZSB0aGUgcmVzb3VyY2UgdGFibGUgaXMgb25seSBuZWVkZWQgZm9yIGVhcmx5
+IGJvb3QgbW9kZSBhbmQgZG9lcyBub3QgDQpuZWVkIHRvIGJlIGEgY2FydmVvdXQgcmVnaW9uLCB3
+ZSBhcmUgc2tpcHBpbmcgdGhhdC4NCg0KSSB3aWxsIHdvcmsgb24gbWFraW5nIHRoZSByZXNvdXJj
+ZSB0YWJsZSBhIGZpeGVkIGluZGV4IGluIHRoZSANCm1lbW9yeS1yZWdpb24gcHJvcGVydHkgc28g
+dGhhdCBpdCBkb2Vzbid0IGhhdmUgYSBmaXhlZCBuYW1lLg0KDQpUaGFua3MsDQpWYWxlbnRpbmEN
+Cg0KPiANCj4+ICsgICAgICAgICAgICAgICAgICAgICBjb250aW51ZTsNCj4+ICsNCj4+ICsgICAg
+ICAgICAgICAgcm1lbSA9IG9mX3Jlc2VydmVkX21lbV9sb29rdXAoaXQubm9kZSk7DQo+PiArICAg
+ICAgICAgICAgIGlmICghcm1lbSkgew0KPj4gKyAgICAgICAgICAgICAgICAgICAgIG9mX25vZGVf
+cHV0KGl0Lm5vZGUpOw0KPj4gKyAgICAgICAgICAgICAgICAgICAgIGRldl9lcnIocHJpdi0+ZGV2
+LCAidW5hYmxlIHRvIGFjcXVpcmUgbWVtb3J5LXJlZ2lvblxuIik7DQo+PiArICAgICAgICAgICAg
+ICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQo+PiArICAgICAgICAgICAgIH0NCj4+ICsNCj4+ICsg
+ICAgICAgICAgICAgZGV2aWNlX2FkZHJlc3MgPSBybWVtLT5iYXNlOw0KPj4gKw0KPj4gKyAgICAg
+ICAgICAgICBtZW0gPSBycHJvY19tZW1fZW50cnlfaW5pdChwcml2LT5kZXYsIE5VTEwsIChkbWFf
+YWRkcl90KXJtZW0tPmJhc2UsDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIHJtZW0tPnNpemUsIGRldmljZV9hZGRyZXNzLCBtY2hwX2lwY19ycHJvY19tZW1fYWxs
+b2MsDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG1jaHBfaXBj
+X3Jwcm9jX21lbV9yZWxlYXNlLCBpdC5ub2RlLT5uYW1lKTsNCj4+ICsNCj4+ICsgICAgICAgICAg
+ICAgaWYgKCFtZW0pIHsNCj4+ICsgICAgICAgICAgICAgICAgICAgICBvZl9ub2RlX3B1dChpdC5u
+b2RlKTsNCj4+ICsgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVOT01FTTsNCj4+ICsgICAg
+ICAgICAgICAgfQ0KPj4gKw0KPj4gKyAgICAgICAgICAgICBycHJvY19hZGRfY2FydmVvdXQocnBy
+b2MsIG1lbSk7DQo+PiArICAgICB9DQo+PiArDQo+PiArICAgICByZXR1cm4gMDsNCj4+ICt9DQo+
+PiArDQo+PiArc3RhdGljIGludCBtY2hwX2lwY19ycHJvY19wYXJzZV9mdyhzdHJ1Y3QgcnByb2Mg
+KnJwcm9jLCBjb25zdCBzdHJ1Y3QgZmlybXdhcmUgKmZ3KQ0KPj4gK3sNCj4+ICsgICAgIGludCBy
+ZXQ7DQo+PiArDQo+PiArICAgICByZXQgPSBycHJvY19lbGZfbG9hZF9yc2NfdGFibGUocnByb2Ms
+IGZ3KTsNCj4+ICsgICAgIGlmIChyZXQpDQo+PiArICAgICAgICAgICAgIGRldl9pbmZvKCZycHJv
+Yy0+ZGV2LCAiTm8gcmVzb3VyY2UgdGFibGUgaW4gZWxmXG4iKTsNCj4+ICsNCj4+ICsgICAgIHJl
+dHVybiAwOw0KPj4gK30NCj4+ICsNCj4+ICtzdGF0aWMgdm9pZCBtY2hwX2lwY19ycHJvY19raWNr
+KHN0cnVjdCBycHJvYyAqcnByb2MsIGludCB2cWlkKQ0KPj4gK3sNCj4+ICsgICAgIHN0cnVjdCBt
+Y2hwX2lwY19ycHJvYyAqcHJpdiA9IChzdHJ1Y3QgbWNocF9pcGNfcnByb2MgKilycHJvYy0+cHJp
+djsNCj4+ICsgICAgIHN0cnVjdCBtY2hwX2lwY19tc2cgbXNnOw0KPj4gKyAgICAgaW50IHJldDsN
+Cj4+ICsNCj4+ICsgICAgIG1zZy5idWYgPSAodm9pZCAqKSZ2cWlkOw0KPj4gKyAgICAgbXNnLnNp
+emUgPSBzaXplb2YodnFpZCk7DQo+PiArDQo+PiArICAgICByZXQgPSBtYm94X3NlbmRfbWVzc2Fn
+ZShwcml2LT5tYm94X2NoYW5uZWwsICh2b2lkICopJm1zZyk7DQo+PiArICAgICBpZiAocmV0IDwg
+MCkNCj4+ICsgICAgICAgICAgICAgZGV2X2Vycihwcml2LT5kZXYsDQo+PiArICAgICAgICAgICAg
+ICAgICAgICAgImZhaWxlZCB0byBzZW5kIG1ib3ggbWVzc2FnZSwgc3RhdHVzID0gJWRcbiIsIHJl
+dCk7DQo+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyBpbnQgbWNocF9pcGNfcnByb2NfYXR0YWNoKHN0
+cnVjdCBycHJvYyAqcnByb2MpDQo+PiArew0KPj4gKyAgICAgcmV0dXJuIDA7DQo+PiArfQ0KPj4g
+Kw0KPj4gK3N0YXRpYyBzdHJ1Y3QgcmVzb3VyY2VfdGFibGUNCj4+ICsqbWNocF9pcGNfcnByb2Nf
+Z2V0X2xvYWRlZF9yc2NfdGFibGUoc3RydWN0IHJwcm9jICpycHJvYywgc2l6ZV90ICp0YWJsZV9z
+eikNCj4+ICt7DQo+PiArICAgICBzdHJ1Y3QgbWNocF9pcGNfcnByb2MgKnByaXYgPSBycHJvYy0+
+cHJpdjsNCj4+ICsNCj4+ICsgICAgIGlmICghcHJpdi0+cnNjX3RhYmxlKQ0KPj4gKyAgICAgICAg
+ICAgICByZXR1cm4gTlVMTDsNCj4+ICsNCj4+ICsgICAgICp0YWJsZV9zeiA9IFNaXzFLOw0KPj4g
+KyAgICAgcmV0dXJuIChzdHJ1Y3QgcmVzb3VyY2VfdGFibGUgKilwcml2LT5yc2NfdGFibGU7DQo+
+PiArfQ0KPj4gKw0KPj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgcnByb2Nfb3BzIG1jaHBfaXBjX3Jw
+cm9jX29wcyA9IHsNCj4+ICsgICAgIC5wcmVwYXJlID0gbWNocF9pcGNfcnByb2NfcHJlcGFyZSwN
+Cj4+ICsgICAgIC5zdGFydCA9IG1jaHBfaXBjX3Jwcm9jX3N0YXJ0LA0KPj4gKyAgICAgLmdldF9s
+b2FkZWRfcnNjX3RhYmxlID0gbWNocF9pcGNfcnByb2NfZ2V0X2xvYWRlZF9yc2NfdGFibGUsDQo+
+PiArICAgICAuYXR0YWNoID0gbWNocF9pcGNfcnByb2NfYXR0YWNoLA0KPj4gKyAgICAgLnN0b3Ag
+PSBtY2hwX2lwY19ycHJvY19zdG9wLA0KPj4gKyAgICAgLmtpY2sgPSBtY2hwX2lwY19ycHJvY19r
+aWNrLA0KPj4gKyAgICAgLmxvYWQgPSBycHJvY19lbGZfbG9hZF9zZWdtZW50cywNCj4+ICsgICAg
+IC5wYXJzZV9mdyA9IG1jaHBfaXBjX3Jwcm9jX3BhcnNlX2Z3LA0KPj4gKyAgICAgLmZpbmRfbG9h
+ZGVkX3JzY190YWJsZSA9IHJwcm9jX2VsZl9maW5kX2xvYWRlZF9yc2NfdGFibGUsDQo+PiArICAg
+ICAuc2FuaXR5X2NoZWNrID0gcnByb2NfZWxmX3Nhbml0eV9jaGVjaywNCj4+ICsgICAgIC5nZXRf
+Ym9vdF9hZGRyID0gcnByb2NfZWxmX2dldF9ib290X2FkZHIsDQo+PiArfTsNCj4+ICsNCj4+ICtz
+dGF0aWMgaW50IG1jaHBfaXBjX3Jwcm9jX2FkZHJfaW5pdChzdHJ1Y3QgbWNocF9pcGNfcnByb2Mg
+KnByaXYsDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IHBsYXRm
+b3JtX2RldmljZSAqcGRldikNCj4+ICt7DQo+PiArICAgICBzdHJ1Y3QgZGV2aWNlICpkZXYgPSAm
+cGRldi0+ZGV2Ow0KPj4gKyAgICAgc3RydWN0IGRldmljZV9ub2RlICpucCA9IGRldi0+b2Zfbm9k
+ZTsNCj4+ICsgICAgIGludCBpLCBlcnIsIHJtZW1fbnA7DQo+PiArDQo+PiArICAgICBybWVtX25w
+ID0gb2ZfY291bnRfcGhhbmRsZV93aXRoX2FyZ3MobnAsICJtZW1vcnktcmVnaW9uIiwgTlVMTCk7
+DQo+PiArICAgICBpZiAocm1lbV9ucCA8PSAwKQ0KPj4gKyAgICAgICAgICAgICByZXR1cm4gMDsN
+Cj4+ICsNCj4+ICsgICAgIGZvciAoaSA9IDA7IGkgPCBybWVtX25wOyBpKyspIHsNCj4+ICsgICAg
+ICAgICAgICAgc3RydWN0IGRldmljZV9ub2RlICpub2RlOw0KPj4gKyAgICAgICAgICAgICBzdHJ1
+Y3QgcmVzb3VyY2UgcmVzOw0KPj4gKw0KPj4gKyAgICAgICAgICAgICBub2RlID0gb2ZfcGFyc2Vf
+cGhhbmRsZShucCwgIm1lbW9yeS1yZWdpb24iLCBpKTsNCj4+ICsgICAgICAgICAgICAgaWYgKCFu
+b2RlKQ0KPj4gKyAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOw0KPj4gKw0KPj4gKyAgICAg
+ICAgICAgICBpZiAoIXN0cm5jbXAobm9kZS0+bmFtZSwgInZkZXYiLCBzdHJsZW4oInZkZXYiKSkp
+IHsNCj4gDQo+IFVoPyBXaHkgZG8geW91IGxvb2sgZm9yIG5vZGUgbmFtZXM/IFdoYXQgaWYgSSBj
+YWxsIHRoZSBuYW1lIGRpZmZlcmVudGx5Pw0KPiBXaHkgd291bGQgdGhhdCBtYXR0ZXI/DQo+IA0K
+Pj4gKyAgICAgICAgICAgICAgICAgICAgIG9mX25vZGVfcHV0KG5vZGUpOw0KPj4gKyAgICAgICAg
+ICAgICAgICAgICAgIGNvbnRpbnVlOw0KPj4gKyAgICAgICAgICAgICB9DQo+PiArDQo+PiArICAg
+ICAgICAgICAgIGlmICghc3RyY21wKG5vZGUtPm5hbWUsICJyc2MtdGFibGUiKSkgew0KPiANCj4g
+Tm8sIHJlYWxseS4gV2h5IGFyZSB5b3UgY2hlY2tpbmcgZm9yIHRoZXNlPw0KPiANCj4gTkFLDQo+
+IA0KPiANCj4+ICsgICAgICAgICAgICAgICAgICAgICBlcnIgPSBvZl9hZGRyZXNzX3RvX3Jlc291
+cmNlKG5vZGUsIDAsICZyZXMpOw0KPj4gKyAgICAgICAgICAgICAgICAgICAgIGlmIChlcnIpIHsN
+Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgIG9mX25vZGVfcHV0KG5vZGUpOw0KPj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGRldl9lcnJfcHJvYmUoZGV2LCBl
+cnIsDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAidW5hYmxlIHRvIHJlc29sdmUgbWVtb3J5IHJlZ2lvblxuIik7DQo+PiArICAgICAgICAgICAg
+ICAgICAgICAgfQ0KPj4gKyAgICAgICAgICAgICAgICAgICAgIHByaXYtPnJzY190YWJsZSA9IGRl
+dm1faW9yZW1hcCgmcGRldi0+ZGV2LA0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICByZXMuc3RhcnQsIHJlc291cmNlX3NpemUoJnJlcykpOw0K
+Pj4gKyAgICAgICAgICAgICAgICAgICAgIG9mX25vZGVfcHV0KG5vZGUpOw0KPj4gKyAgICAgICAg
+ICAgICB9DQo+PiArICAgICB9DQo+PiArDQo+PiArICAgICByZXR1cm4gMDsNCj4+ICt9DQo+IA0K
+PiANCj4gQmVzdCByZWdhcmRzLA0KPiBLcnp5c3p0b2YNCj4gDQoNCg==
 
