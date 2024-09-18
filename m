@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-332664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE0897BCC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:08:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC29497BCC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50BD628475F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:08:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8569B284CDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF54F18A6D9;
-	Wed, 18 Sep 2024 13:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D327D189F43;
+	Wed, 18 Sep 2024 13:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="mIfddKlX"
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Z/nlijjs"
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA1217C9A7
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C9718A6D8
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726664873; cv=none; b=Z8WzbqWKizaUuZelkm75l/GqwggK19vOygCOXBR8cOT3Cu/6INSG5RoTaQk7aos2cXfZ00vw+4i8qaPQMXK6ZqwV0xw9ycuuHGEr3ekHIdMdf4F0IqsHKii4SNEQkDfkuBj9ML79nzqW+/O+cpzAZzjA6lEDVjVnsLIy4M6zvrk=
+	t=1726664877; cv=none; b=POvED0wmnkCWlAB0e7qW/Z0JNFFovgY7i9e6Z9DoRIedYCui2owaoMvWvHcLMHreqZJbedOI39JJyUjzd1Va/00znZGFZrTyCPboUMjWJMvVUqm5gLso2QFFH/efLIYIB78daxZPSNCfGC0PIzdlSJ5wruoKKbXclWlVJRuugMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726664873; c=relaxed/simple;
-	bh=ghvE1wlUXx4GjU/Xz4moJ71Jpvavrq77P4YSow58dtc=;
+	s=arc-20240116; t=1726664877; c=relaxed/simple;
+	bh=FheUAec7IZrrKH4+pc1ScbmLFr0EFfoZVGSVTBU6VbY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tViZJT4/ElLzQqMxiyt0pnuV1AKpW203FudiIREdPkNA2z9mfOgO9iSKzixnlK1/9dQ6RmAmjpmcIdcUmlDBwE9wN9D3uwymK6jMq3+FiUCvsP1oETTV3I3HeW6cuREEYo07D+sVI7caenn6uRJSfTCCAjt4SoPeNOdlbV7QdJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=mIfddKlX; arc=none smtp.client-ip=54.254.200.128
+	 MIME-Version; b=RB6lmtY818fHWJEmXpOjF0SYfJo/cA6HkkN4+j7oaZYxrwaxgHLbSS8u/psssqz+lrQsJWnNtEHKOYajrEy86aaDUhEhKJ81eTtO+YPKHsIuzqdT9ouGwcKvFoJAHn+S8cbfX6ZnrWoX174GmNOagqwnlpDhkEhWxvjey4Wg5LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Z/nlijjs; arc=none smtp.client-ip=18.132.163.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1726664860;
-	bh=/TNrOWNbUPEthzfhqHJKmziu43+uHykeH5RpYdRgBZo=;
+	s=onoh2408; t=1726664864;
+	bh=+/DdLbFCN3x83oxAHHqnPnAEM1hgWNumW7T/6E5yt74=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=mIfddKlXO6Ay9KBsnqEZ/KINBykzLkH2G+UWZrE582fnWHafSS7yEoJYnqX25hY95
-	 yLr+7TlLj0KKM0yXd6nyXLe9FivHcB+HPxR5R6qYWQJrlgJxLcs7PCvzaQc9VxPoMi
-	 fOEmysGktVCHa/RumWHF7EGMYtV/ai54POE1fedQ=
-X-QQ-mid: bizesmtp89t1726664856tpxoq0ub
-X-QQ-Originating-IP: TcS6ew3UVzNulMyjCAog1ndwGNkkrzCS8uXs46wt2io=
+	b=Z/nlijjsIPVYfoQ6a59DNrs8PKxLojV+05bztVAkKuFI0yQdKA+BdSHxRWoxkM02y
+	 r8PYArD1aocmjWuCG4KjpPoeLCy7KW9vWckPBX5avVwYKBPIxt6LGY5FN/CYveuVgK
+	 9CYckwFXkqyHIKiOHkCcwK8b7pwbvcAr8i52VGSE=
+X-QQ-mid: bizesmtp89t1726664860t19rzamf
+X-QQ-Originating-IP: 2zu9pDuYwD3Ysa5lHmxqXSm3b9oArIDcCu9nUlMvo/o=
 Received: from localhost.localdomain ( [113.57.152.160])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 18 Sep 2024 21:07:35 +0800 (CST)
+	id ; Wed, 18 Sep 2024 21:07:39 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 13190950233677462238
+X-BIZMAIL-ID: 14238727235013610136
 From: WangYuli <wangyuli@uniontech.com>
 To: helen.koike@collabora.com,
 	maarten.lankhorst@linux.intel.com,
@@ -58,9 +58,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	guanwentao@uniontech.com,
 	zhanjun@uniontech.com
-Subject: [PATCH 1/4] drm/ci: Upgrade urllib3 requirement to 2.2.2
-Date: Wed, 18 Sep 2024 21:06:40 +0800
-Message-ID: <AE44DC1999A1FDF9+20240918130725.448656-2-wangyuli@uniontech.com>
+Subject: [PATCH 2/4] drm/ci: Upgrade requests requirement to 2.32.0
+Date: Wed, 18 Sep 2024 21:06:41 +0800
+Message-ID: <DDD9CA844EBE782F+20240918130725.448656-3-wangyuli@uniontech.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240918130725.448656-1-wangyuli@uniontech.com>
 References: <20240918130725.448656-1-wangyuli@uniontech.com>
@@ -76,62 +76,51 @@ Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
 GitHub Dependabot has issued the following alert:
 
-"build(deps): bump urllib3 from 2.0.7 to 2.2.2 in
+"build(deps): bump requests from 2.31.0 to 2.32.2 in
  /drivers/gpu/drm/ci/xfails.
 
- When using urllib3's proxy support with, the header is only sent
- to the configured proxy, as expected.
+ When making requests through a Requests Session, if the first
+ request is made with verify=False to disable cert verification,
+ all subsequent requests to the same origin will continue to ignore
+ cert verification regardless of changes to the value of verify.
+ This behavior will continue for the lifecycle of the connection in
+ the connection pool.
 
- However, when sending HTTP requests without using urllib3's proxy
- support, it's possible to accidentally configure the header even
- though it won't have any effect as the request is not using a
- forwarding proxy or a tunneling proxy. In those cases, urllib3
- doesn't treat the HTTP header as one carrying authentication
- material and thus doesn't strip the header on cross-origin redirects.
-
- Because this is a highly unlikely scenario, we believe the severity
- of this vulnerability is low for almost all users. Out of an
- abundance of caution urllib3 will automatically strip the header
- during cross-origin redirects to avoid the small chance that users
- are doing this on accident.
-
- Users should use urllib3's proxy support or disable automatic
- redirects to achieve safe processing of the header, but we still
- decided to strip the header by default in order to further protect
- users who aren't using the correct approach.
-
- Severity: 4.4 / 10 (Moderate)
- Attack vector:        Network
+ Severity: 5.6 / 10 (Moderate)
+ Attack vector:          Local
  Attack complexity:       High
  Privileges required:     High
- User interaction:        None
+ User interaction:    Required
  Scope:              Unchanged
  Confidentiality:         High
- Integrity:               None
+ Integrity:               High
  Availability:            None
- CVE ID:        CVE-2024-37891"
+ CVE ID:        CVE-2024-35195"
 
 To avoid disturbing everyone with the kernel repo hosted on GitHub,
 I suggest we upgrade our python dependencies once again to appease
 GitHub Dependabot.
 
 Link: https://github.com/dependabot
+Link: https://github.com/psf/requests/pull/6655
 Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
  drivers/gpu/drm/ci/xfails/requirements.txt | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/ci/xfails/requirements.txt b/drivers/gpu/drm/ci/xfails/requirements.txt
-index 5e6d48d98e4e..2fae1299e07b 100644
+index 2fae1299e07b..f69b58356a37 100644
 --- a/drivers/gpu/drm/ci/xfails/requirements.txt
 +++ b/drivers/gpu/drm/ci/xfails/requirements.txt
-@@ -13,5 +13,5 @@ ruamel.yaml==0.17.32
+@@ -7,7 +7,7 @@ charset-normalizer==3.2.0
+ idna==3.4
+ pip==23.3
+ python-gitlab==3.15.0
+-requests==2.31.0
++requests==2.32.0
+ requests-toolbelt==1.0.0
+ ruamel.yaml==0.17.32
  ruamel.yaml.clib==0.2.7
- setuptools==70.0.0
- tenacity==8.2.3
--urllib3==2.0.7
-+urllib3==2.2.2
- wheel==0.41.1
 -- 
 2.45.2
 
