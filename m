@@ -1,120 +1,137 @@
-Return-Path: <linux-kernel+bounces-332666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4945997BCC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:08:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF7E97BCD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA656B24D9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:08:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7066B1C21179
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6863A18B461;
-	Wed, 18 Sep 2024 13:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998B2189F5B;
+	Wed, 18 Sep 2024 13:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="fziZ1m9u"
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWm/vk8j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D4518A932
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1211CD3F;
+	Wed, 18 Sep 2024 13:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726664878; cv=none; b=SI7O7pzJeDhcBWpqx0IjqLMMoIRRIs1L3oYAzCEdanj1+1xqljekqPOdZsw6eCIbqvtzzmz5WzV1EczreWbIN/Yd7LveykN0JVVb5HhlScrDrgNY/nodDRgLKcw0DQ2Auwy2couZlySxcgGDzkoHbew95rxILlYwq5B6+v9c4m8=
+	t=1726664971; cv=none; b=gfcvOBvch0xJqKFyPFCdtgfMXelPuMz71ugxqdQRiRLotGMwSYXXnwb/PmcJwnenp2ROI8fzQ09uc8khbMaxI0iJXNgsuMWUdWDf5LP8ar2l0GgoZsPlp0AyxEvB05jKD3DYS5Q9Db05BUd23LhF+ixUETP4jlOwjwb4oI/qebk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726664878; c=relaxed/simple;
-	bh=1A4VyPidRPzjffgEHunRjqNWTKRofBYCMgXWPZ31zPQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Vb0chx4c4YwmS1SikcBHeGMiUzaBaN8VTQwiCzXYH1WL0DHbaBPZY+axKzKWYmbcvUzSPvzQXceTOlEYc85CFRkzJKW9jRlKbRTJjO0zZSZnRVaAdw1rNJrtbbfOqcrEn6T04o54ieI+Ct/r9T6cSEcwTojgThp6oj8iIpzNyy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=fziZ1m9u; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1726664872;
-	bh=RC2PbTe+FDm7zLc+8APOYm4+AzjmOpO3efPzB4XXvWM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=fziZ1m9uZILg6iORRnPQo9DcXUhjnMaWsNygK2O8m9Er+I9Aq3ScqvexpG81Nttmw
-	 KMQmdKJd33u3mjRfxJhi6XGnYSgqccB00RD57sENIYXs3AQi6ugHR+LMlPsDFb5gEd
-	 QIeXGB8CNFgZ8gXq4DthvFXFgaqfEOPmkeHxc0Sk=
-X-QQ-mid: bizesmtp89t1726664868tv5pwabb
-X-QQ-Originating-IP: 9lq6EIop9cgRFN5fQlSY/DQxz5cESd8ppts3gi20zuk=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 18 Sep 2024 21:07:47 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 5552265885235446597
-From: WangYuli <wangyuli@uniontech.com>
-To: helen.koike@collabora.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	wangyuli@uniontech.com,
-	david.heidelberg@collabora.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com
-Subject: [PATCH 4/4] drm/ci: Upgrade certifi requirement to 2024.07.04
-Date: Wed, 18 Sep 2024 21:06:43 +0800
-Message-ID: <EE4F19CBA2D3EB87+20240918130725.448656-5-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240918130725.448656-1-wangyuli@uniontech.com>
-References: <20240918130725.448656-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1726664971; c=relaxed/simple;
+	bh=mkprWbpT2wGxmF/c5R7sG5Fz3VUnN6uka/jY6PobMjM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bngIsGnf+RCFGBFU3a0qCGQ1gS09b0/x0Xf4psrtx7l/L1xbqOO7LzuChkRH33UqruYrJgXKIxNLR12hz5xucYTCZ1P3aEb2BXqRVbTyCOpmlnEdJcOOWHrJLZd7x5QsbmVr3vjnftFoPx2VfFyNyLJaawMpfkfESQ/Zjs8aMPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWm/vk8j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E996FC4CEC3;
+	Wed, 18 Sep 2024 13:09:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726664969;
+	bh=mkprWbpT2wGxmF/c5R7sG5Fz3VUnN6uka/jY6PobMjM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PWm/vk8j+r6e0JzKTmxDKxKo1ODwqGwQafB91zxuZqWJg7cVwzvswsOiduJJYZmzq
+	 5mdOOCBa5eOXD6Uke7i0wuLLRCGBPtIxnrx0feAI6mxdThZ5cw0TDdqh/OqQzcQV4l
+	 RVYks6naXnxAxZkBCD+LODhvvj/hWmsPO3+W4c4Ng2statwIWLNNwzhsT5Iqqh7h9s
+	 PM9Yc+TmZumz2cL7co6qfa5gZ4POnrJn3F7RDTy1fZZJhk5UG7cHSEgU4Lj6Yk6hwJ
+	 /GubvRlIVEZoAHys6mvUGfoJ52e+7H4okTnpYGPfCDdEAshiawhx97ufz00wAwLBCY
+	 rL61OKpdq57Fg==
+Message-ID: <bc13d8fd-4f03-4445-bc4a-1e0ca7c23ef7@kernel.org>
+Date: Wed, 18 Sep 2024 15:09:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: hwmon: Add adt7462
+To: Chanh Nguyen <chanh@os.amperecomputing.com>,
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+ Open Source Submission <patches@amperecomputing.com>
+Cc: Phong Vo <phong@os.amperecomputing.com>,
+ Thang Nguyen <thang@os.amperecomputing.com>,
+ Quan Nguyen <quan@os.amperecomputing.com>,
+ Khanh Pham <khpham@amperecomputing.com>
+References: <20240918103212.591204-1-chanh@os.amperecomputing.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240918103212.591204-1-chanh@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-GitHub Dependabot has issued the following alert:
+On 18/09/2024 12:32, Chanh Nguyen wrote:
+> Add device tree binding and example for adt7462 device.
+> 
+> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
+> ---
+>  .../bindings/hwmon/onnn,adt7462.yaml          | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
 
-"build(deps): bump certifi from 2023.7.22 to 2024.7.4 in
- /drivers/gpu/drm/ci/xfails.
+Where is any user? This is supposed to be sent along driver change
+implementing this compatible.
 
- Certifi 2024.07.04 removes root certificates from "GLOBALTRUST"
- from the root store. These are in the process of being removed from
- Mozilla's trust store.
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/onnn,adt7462.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/hwmon/onnn,adt7462.yaml b/Documentation/devicetree/bindings/hwmon/onnn,adt7462.yaml
+> new file mode 100644
+> index 000000000000..4a980cca419a
 
- GLOBALTRUST's root certificates are being removed pursuant to an
- investigation which identified "long-running and unresolved compliance
- issues".
+Binding looks ok.
 
- Severity:          Low
- CVE ID: CVE-2024-39689"
 
-To avoid disturbing everyone with the kernel repo hosted on GitHub,
-I suggest we upgrade our python dependencies once again to appease
-GitHub Dependabot.
-
-Link: https://github.com/dependabot
-Link: https://groups.google.com/a/mozilla.org/g/dev-security-policy/c/XpknYMPO8dI
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/gpu/drm/ci/xfails/requirements.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/ci/xfails/requirements.txt b/drivers/gpu/drm/ci/xfails/requirements.txt
-index 8b2b1fa16614..4f7ac688d448 100644
---- a/drivers/gpu/drm/ci/xfails/requirements.txt
-+++ b/drivers/gpu/drm/ci/xfails/requirements.txt
-@@ -2,7 +2,7 @@ git+https://gitlab.freedesktop.org/gfx-ci/ci-collate@09e7142715c16f54344ddf97013
- termcolor==2.3.0
- 
- # ci-collate dependencies
--certifi==2023.7.22
-+certifi==2024.07.04
- charset-normalizer==3.2.0
- idna==3.7
- pip==23.3
--- 
-2.45.2
+Best regards,
+Krzysztof
 
 
