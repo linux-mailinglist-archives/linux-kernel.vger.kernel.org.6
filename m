@@ -1,126 +1,156 @@
-Return-Path: <linux-kernel+bounces-332906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33D9497C092
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:37:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5030697C096
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5A3C283137
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:37:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 753E91C20FB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A3D1CA69E;
-	Wed, 18 Sep 2024 19:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94D91CA6AB;
+	Wed, 18 Sep 2024 19:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EcwQzjPC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PxgwLGGo"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6D312B17C;
-	Wed, 18 Sep 2024 19:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637C812B17C;
+	Wed, 18 Sep 2024 19:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726688215; cv=none; b=DYUN3OlgKj5OR2I+GP7XYztflaHPkb5FFnq7Ka/I/8yvKyq3oWsTMb26Qph6mKWVczqP4cfzCtXECzHfxL+lZMoq9frvE620FN+Q9K38BHEhzG8cuoGjFmAOBi7hGY58ff6OY/Ro3xA2tmAr8QQugVzByF0yIe5pvg5/PogBVnw=
+	t=1726688252; cv=none; b=kDUKIVdNIbq+kF1z3Hln7R6B5CXESD6BNnNqDco6HrWGrIWdMUbOoVj7cE8hTGH5FWMKzNzVnDr6KMRR3YWsNKpdmgkCKpp+/HfjyFOkM+uWazSnehUtEkSKzge2pC8b4HPbqx92+F4+5m6xbvRnuyG+vMpdnItRNEsVPLkgMOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726688215; c=relaxed/simple;
-	bh=5bZ1Yoj6niUYHDQb1J8phNqCotVR8fsQiObDLwdQHjc=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=X+zRdsYZhnRq0VUmLxJE9CEa7e6Ap04D8m6WFBpNDOh2T5WTrWtEJJCS0LvBaINnhXbu9D8jO8hc+ON9TrNao3q/MdB45J2Nmx0Agh55jVbl4zYZFJqgp+5fV2vk2zrbCgUnk+rS/TsptyBmdyetIX+fn2hdWwnXWUuO71pEkiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EcwQzjPC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C097C4CEC2;
-	Wed, 18 Sep 2024 19:36:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726688214;
-	bh=5bZ1Yoj6niUYHDQb1J8phNqCotVR8fsQiObDLwdQHjc=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=EcwQzjPC9CaubYEDs7x9Z7+tBDpe3i+Nrm0uxqCk3SuHrtamBvgtk1kEfJLyProkR
-	 47AYnWV6xNTd6jJGKmK+RKX+p80hQUOUHeWCLcW/I33Y5PszqlEfI3wf/sz3pjjmtz
-	 Cd9HKm/12ACZwi0IExzyWb1GloGVy5QbzgON5nyw4OuSxCKmzAyveWU58LkOJJ5Cy+
-	 iYEjy+mha63NWJGJv6LKwNptiuf+HCB6UWXkz9FgiUeeumbDoPeQF5AnXHfvNKxzbG
-	 cJkgfW7LpCPCuckLDSeFO9FWUJbHt0qBVXbGs+jv2atpYBeR2NE1bHoQ/Q7/Y/ZD5C
-	 n7v0wQArrrRPQ==
-Date: Wed, 18 Sep 2024 14:36:53 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1726688252; c=relaxed/simple;
+	bh=zDYQWTIhiMYMR0EoY4sA61Ow0Qr/uf931f6PnGZyfDA=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tktm5S1GfsWzXIrtmxa/wFkwAhIJDtW6kMmVPgq71SzUaOsYOU6oI98xMAVTGXeYBjXcpKGxsyApsBfq2z3ceIX7bTGsmZ2dei3GC31pv6AZj/KdQ/O3XDtSvQwB7/xCX57C0/wGGPmsHpH9krDcCvpJELnzt1AiQx3CBQINJ2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PxgwLGGo; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c43003a667so98643a12.3;
+        Wed, 18 Sep 2024 12:37:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726688249; x=1727293049; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+ujqP7vqwBnjKwxl4b+luXJQe0AwUfMaVjEiTFXQJ9s=;
+        b=PxgwLGGomFKpbXxgWiXDCdJKyfh6sD7gxJ9aValQEJdFcQ0OPcNaxILf5gmYm0vGEs
+         NsftEYMZbl81z2T/rVO9SeXebA9X53pyacBsoUYuuVLl4a+GAf2P3qMBAVy1PBtR+UAF
+         EYjXNSKKqscv8/YBjxlMI5YQLKeW0nLInTNYbxMvX/vuTXGx99gwe/e47fdy0RNyrIeJ
+         CxkeZ9NNEfPZddfvZGw8mcdosnxnXLN8JetBYvhzgebm5iL1SXoj+pO3qpvv9vt037nu
+         jZppz/D/LmQBxFLdUqkW/DZukwOBPHo+L0sqEYax+L003qQuEoQv1DYZQ1q3TkNIjOkl
+         +IXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726688249; x=1727293049;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+ujqP7vqwBnjKwxl4b+luXJQe0AwUfMaVjEiTFXQJ9s=;
+        b=Qe317vol9dcVs0V0adMO+OwVAyz5pKAret5omZEKJ6SMQwzH24dReeeihr1Uum8IBE
+         aOkNDtOeFjjpwF3RubCIcoWHs7U5ykJil5K2eX4gSSGPSr4FNrp4hnKyCsUCrMVOC/0c
+         eMQcNit05Vcwqb6yiD0qE1IsUzbICDVVuAenGKbT6CVDCNo5J3h7aNoubLxWfx8XoikG
+         VxELjth5Owd/zNwGQf1HGIPToGCxi1Hu1hOaKI4mzQASy61p4fqKIgIWBb037bR8ibNj
+         Me3V3sIRCoPQ9VVsq5aWBeToXcQjJ2zi/SK2PGqlNRZufnLiWCp21Nhlpn/H6GE81bd0
+         e0fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbd+lFeP7yEEzwfBMDbcR35LXz1FbGQgKOBo1AVfqw3dmbDRohPE9KNr0toE4LGeV0uBKdtumX71cx@vger.kernel.org, AJvYcCW9yJoafTKl4vnrA+7HegGrqW8jP1G/MHN7TDcLAQtx/BqB8SrL6nq0QQfPsjDBKKCi0b5pTvW5A2dhVc/K@vger.kernel.org, AJvYcCX/p4KQmaLBdgjHUYb8lVp9LNsxi3nppBz4h/FowVbbzIZGIr3V8Kinc5NUqme95ZJhJKsmahSXCbIS@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCUppi1YcMwMX1tInxWznZGrOZsIcdElDIp3VG5KtP/V37N4VC
+	JC9E4+dCzJnVyaKMnP4YaxDCP/TGFTwHYCBsrvRtx14gU9k1oTLZ
+X-Google-Smtp-Source: AGHT+IE6MwOYmrR5JAvsCAMsqZ5wy8jRYmQKd4xqJ2jgpqcvWiS/qqeLD5b/WOYHFfzpCY/wc5fS8Q==
+X-Received: by 2002:a05:6402:3549:b0:5c0:b793:df4e with SMTP id 4fb4d7f45d1cf-5c41e1b25afmr12822139a12.22.1726688248213;
+        Wed, 18 Sep 2024 12:37:28 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:13df:f4c:7014:ee36])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb60aecsm5542028a12.55.2024.09.18.12.37.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 12:37:26 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Wed, 18 Sep 2024 21:37:24 +0200
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v7 0/4] pressure: bmp280: Minor cleanup and interrupt
+ support
+Message-ID: <20240918193724.GA6917@vamoiridPC>
+References: <20240914002900.45158-1-vassilisamir@gmail.com>
+ <20240914153617.3f816e5a@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Daniel Baluta <daniel.baluta@nxp.com>, 
- Shengjiu Wang <shengjiu.wang@nxp.com>, 
- Iuliana Prodan <iuliana.prodan@nxp.com>, linux-kernel@vger.kernel.org, 
- Sascha Hauer <s.hauer@pengutronix.de>, linux-arm-kernel@lists.infradead.org, 
- imx@lists.linux.dev, Shawn Guo <shawnguo@kernel.org>, 
- devicetree@vger.kernel.org
-In-Reply-To: <20240918182117.86221-2-laurentiumihalcea111@gmail.com>
-References: <20240918182117.86221-1-laurentiumihalcea111@gmail.com>
- <20240918182117.86221-2-laurentiumihalcea111@gmail.com>
-Message-Id: <172668821340.2009095.10209806970812964896.robh@kernel.org>
-Subject: Re: [PATCH 1/5] dt-bindings: dsp: fix power domain count
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240914153617.3f816e5a@jic23-huawei>
 
-
-On Wed, 18 Sep 2024 14:21:13 -0400, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Sat, Sep 14, 2024 at 03:36:17PM +0100, Jonathan Cameron wrote:
+> On Sat, 14 Sep 2024 02:28:56 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 > 
-> Per the current binding, QM/QXP DSPs are supposed
-> to have 4 power domains, while the rest just 1.
-> For QM/QXP, the 4 power domains are: DSP, DSP_RAM,
-> MU13A, MU13B.
+> > Depends on this: https://lore.kernel.org/linux-iio/20240823172017.9028-1-vassilisamir@gmail.com
+> > 
+> This looks fine, but given outstanding comments on that patch I can't
+> take it quite yet.
 > 
-> First off, drop MU13A from the count. This is attached
-> to the platform device of lsio_mu13. This decreases the
-> count to 3.
+> Jonathan
+
+Hi Jonathan,
+
+Thanks for the review. I will fix the other patch and poke you again on
+this one, you don't have to keep a note. In case, I could rebase this
+patch-series, without the depended patch since they are not related
+functionally in order for you to be able to pick up this series while
+we still review the depended patch. Let me know how you feel.
+
+Cheers,
+Vasilis
+
 > 
-> Secondly, drop DSP and DSP_RAM from the count for QXP.
-> These are attached to the platform devices of the lpcgs
-> (used as clock providers for the DSP).
+> > Changes in v7:
+> > 
+> > [PATCH 1/4]:
+> > 	- Use 5ms instead of 5000us in comment
+> > 	- Use USEC_PER_MSEC
+> > 	- Move parenthesis to make checkpatch.pl --strict happy
+> > 
+> > [PATCH 2/4]:
+> > 	- Remove interrupt description since enforcement was added.
+> > 
+> > Added also review tags for patches 1,3 and ack tag for patch 2.
+> > 
+> > ---
+> > v6: https://lore.kernel.org/linux-iio/20240912233234.45519-1-vassilisamir@gmail.com
+> > v5: https://lore.kernel.org/linux-iio/20240902184222.24874-1-vassilisamir@gmail.com
+> > v4: https://lore.kernel.org/linux-iio/20240828205128.92145-1-vassilisamir@gmail.com
+> > v3: https://lore.kernel.org/linux-iio/20240823181714.64545-1-vassilisamir@gmail.com
+> > v2: https://lore.kernel.org/linux-iio/20240725231039.614536-1-vassilisamir@gmail.com
+> > v1: https://lore.kernel.org/linux-iio/20240711211558.106327-1-vassilisamir@gmail.com
+> > 
+> > Vasileios Amoiridis (4):
+> >   iio: pressure: bmp280: Use sleep and forced mode for oneshot captures
+> >   dt-bindings: iio: pressure: bmp085: Add interrupts for BMP3xx and
+> >     BMP5xx devices
+> >   iio: pressure: bmp280: Add data ready trigger support
+> >   iio: pressure: bmp280: Move bmp085 interrupt to new configuration
+> > 
+> >  .../bindings/iio/pressure/bmp085.yaml         |  22 +-
+> >  drivers/iio/pressure/bmp280-core.c            | 580 ++++++++++++++++--
+> >  drivers/iio/pressure/bmp280-i2c.c             |   4 +-
+> >  drivers/iio/pressure/bmp280-spi.c             |   4 +-
+> >  drivers/iio/pressure/bmp280.h                 |  43 ++
+> >  5 files changed, 612 insertions(+), 41 deletions(-)
+> > 
+> > 
+> > base-commit: fec496684388685647652ab4213454fbabdab099
+> > prerequisite-patch-id: e4f81f31f4fbb2aa872c0c74ed4511893eee0c9a
 > 
-> With this in mind, the number of required power domains for
-> QXP is 1 (MU13B), while for QM it's 3 (MU13B, DSP, DSP_RAM).
-> 
-> Additionally, two extra power domains may be required in the
-> case of QM/QXP DSPs. These are IRQSTR_DSP and MU2A. For the nodes
-> using the "-hifi4" compatibles these PDs are optional, while for
-> nodes using the "-dsp" compatibles these are mandatory.
-> 
-> These changes reflect all of this information.
-> 
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> ---
->  .../devicetree/bindings/dsp/fsl,dsp.yaml      | 62 +++++++++++++++----
->  1 file changed, 49 insertions(+), 13 deletions(-)
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mailbox/arm,mhuv2.example.dtb: dsp@596e8000: power-domains: [[4294967295, 0], [4294967295, 1], [4294967295, 2], [4294967295, 3]] is too long
-	from schema $id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240918182117.86221-2-laurentiumihalcea111@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
 
