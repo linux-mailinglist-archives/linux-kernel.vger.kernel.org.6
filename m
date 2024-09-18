@@ -1,101 +1,174 @@
-Return-Path: <linux-kernel+bounces-332835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B86F97BF76
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:09:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6216797BF7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50B881F21F51
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:09:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EEC8B21F35
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9611C9DDD;
-	Wed, 18 Sep 2024 17:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B731C9DE0;
+	Wed, 18 Sep 2024 17:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="o5wvbk1e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DSmAuUc6"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E97F1C8FD6;
-	Wed, 18 Sep 2024 17:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748401B1505;
+	Wed, 18 Sep 2024 17:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726679367; cv=none; b=HZCdg/SOcJHc/qczCndzELFdWhWIZEERwInCdUULAOKimSxmoiwd75q2Pj9cDysgJXhKo+3xxJmyxUh+mHqODr+ZYU7Ai7LN0aX33uFl3c/CUX8vKF63GSzL5g1+dSjRqDrs6ku+dTtH0o6Gk5ikC840rd7zsesrG09/bbOBliA=
+	t=1726679416; cv=none; b=nYE95VHJwZaVBBW+D3XaZvt6+bHHL9L1IU8u/P7GtQx7MSMt0brpjM+kYjTvL9QiBhcUyiWR9Ivwry9hPn3lGIA/0nTbC8u3On/gc6q2GMisdGIGBDmHe7w501EYv3m1TAxdpptBaqgZTLhrm9Sh+GZCfZnfm5t7kLi1xtW7Gi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726679367; c=relaxed/simple;
-	bh=FjdzQixOrS4xco7SjipZFJ0Xmm9C+Bz6r1mwO7Pw+Y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWIbNbjod4uMZHYsYKUsYZKKMS0ZzNc47qQf4ggF7MEgTT2rDrc1Nevx9wgzHrk/1hg36fjOCQeJEqBHLCDXPCnUgVGkz0ud/Z/3zSXFU+1T1iKPQwtpLaS8CED+O05ZAGiMuhtiI5QOqU0qyOFRs5Y1J8OQYTcqSEVyCL0qh50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=o5wvbk1e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 474F1C4CEC6;
-	Wed, 18 Sep 2024 17:09:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726679366;
-	bh=FjdzQixOrS4xco7SjipZFJ0Xmm9C+Bz6r1mwO7Pw+Y4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o5wvbk1e6XvoXZbaNeYLCwVF8Qvhzh9ijZpMWH+AZwcEQjZij5nPNvvzhwkMOps6O
-	 GYz2q1lQ3VjgOnBXblrnX3k/FehTsRxafJw3DtNSZMwJpFpdvjlXzFrDaOnY0rE2dd
-	 4x+Dhm8dUwaW5lF+MvCxiwZWZM6jVqE6WQt85ZHg=
-Date: Wed, 18 Sep 2024 19:09:24 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Simona Vetter <simona.vetter@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] rust: add untrusted data abstraction
-Message-ID: <2024091858-surrender-broadcast-e11f@gregkh>
-References: <20240913112643.542914-1-benno.lossin@proton.me>
- <20240913112643.542914-2-benno.lossin@proton.me>
- <ZuRbSxwlz1xWT1pG@phenom.ffwll.local>
- <cf0d6189-e81c-4b7c-ab50-7a297c69b132@proton.me>
- <ZuhTdwCqz61bQEgq@phenom.ffwll.local>
- <26534d80-989d-4b77-9720-84575275890f@proton.me>
+	s=arc-20240116; t=1726679416; c=relaxed/simple;
+	bh=L4yLwIoVt4BSHIH1bxNEN/Cr/3eewtWIwpTxo4CyP2k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B2TOo0yZJBdLiYs5Jt1+MVLzagEHaZqZby/o6KkCs+/PbFWUHkG8QsO0/+XCOjqsYhuRRGJ4cA/ZgIWQyHpHaG0Truv1nLx026FAGlVK7QHCBps0cR/zqQFSihuf5u0098i7VStaspScGgVLdToh1LP9sz54yDzTx0spr0zbmoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DSmAuUc6; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-205722ba00cso145455ad.0;
+        Wed, 18 Sep 2024 10:10:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726679415; x=1727284215; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q9vYLjiVwTBRNkEh1sg4rE4Yh0l+ekkx9H32x9BbROM=;
+        b=DSmAuUc6ajQ+qXwe2TiwOQNPK7aqd4Zu61Kupr2Gxe2D45jds5Y2e5KNd3kyEZVjAg
+         S5xPqCB4W8NL/eMw5MJGkYxiGFkkPnsACKmQhVLmRuDZhemvhT2in6J5OX1sn0GhvQvY
+         HLSlB876c6RUZPTuUS5QTA9svGYiPh5DlJkHZu02vciMKitg4vqnhJRO8856FQ9Fgrvn
+         1H4kNb9ReJ4XPaivfo34F8MIE7NyQwAomDTk594976Y1IsHOgKpbZAkOw28yGeBoEGr+
+         Pav967xu9oMWMkTX9HlDiVqfuk8cYEIQVPp9Kg6xl6DNxr8hLI7Vb2vG3PJFK4bxPty3
+         GB1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726679415; x=1727284215;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q9vYLjiVwTBRNkEh1sg4rE4Yh0l+ekkx9H32x9BbROM=;
+        b=nmO/lUgcaeEdCp+ZQ23FiMy5MnV41qO+LiVL9NPBSndcev7Du1PUuZGhRewwc7v9q7
+         xP1AG/KyECpZ+DLeMBgHQ89qBhEd51nNqekQTf9UKVwvSBWnBBL3xRtUFjYT7C8n3zcS
+         /0Zo5UbKdjcP+I8RDx9hqfZF2nY+J1ejkMxduPnXaQGAqVTxaBZpfMHAHK3gBLKleq80
+         iQt6pq2FSwg3zo1YMyEcBsmw9GyCfwu3osz6yMM4HH4kNlPf9DBUot958O24FXPGa1Vz
+         RIpqgBnvVsVsyGR9JbxAI17bT8YZ7sfIhJpIPCBhv/Q+00QGGDFt+Vkd0uuJmQFv5g+d
+         6Zuw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgOhww+DZMmZnCmfaLUtpNBQQKm9qczOwBRhkZlqh6aB5TQWbw6o1bNOrsN+lX/uLFtEhCem1sy8IE@vger.kernel.org, AJvYcCUr/icG4zU9JvTSbH/mIz1lavM9Yd6TCI1cW1qJbbNUrK+AxWzOzycmW+2Mc6risZnnyMdjxsOGhHzzhjU/@vger.kernel.org, AJvYcCWUSWyWk/P+FkH8vX6w7moln0bIS7T6nlbZSZNOdGrOb+AMir0DHObj7VU7ulM7wzDCZ1J9IpcPHs8OU28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygTX6FbolYFEOTUsIHHvDWQwVPXfT0XPYKhgDmB/vmmlAhZdwa
+	qcfXQueoffuXcykeWvBjDdQRV6vujVCk0MUHifb8milOM9Ic/+KA
+X-Google-Smtp-Source: AGHT+IG7GNSvr8+amUbtoVcCNV1j4OWJUtz3aEZS7UZH2lE7/JoEJJo29C7TH56J0oLyU/dh9yhRNQ==
+X-Received: by 2002:a17:902:f78d:b0:205:968b:31cf with SMTP id d9443c01a7336-2076e3f6207mr359427765ad.33.1726679414695;
+        Wed, 18 Sep 2024 10:10:14 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2079475df17sm67301865ad.298.2024.09.18.10.10.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2024 10:10:14 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <981f64c0-4625-4af1-8132-7dcae32a457d@roeck-us.net>
+Date: Wed, 18 Sep 2024 10:10:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26534d80-989d-4b77-9720-84575275890f@proton.me>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: hwmon: Add adt7462
+To: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Chanh Nguyen <chanh@os.amperecomputing.com>, Jean Delvare
+ <jdelvare@suse.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+ Open Source Submission <patches@amperecomputing.com>
+Cc: Thang Nguyen <thang@os.amperecomputing.com>,
+ Phong Vo <phong@os.amperecomputing.com>,
+ Khanh Pham <khpham@amperecomputing.com>,
+ Quan Nguyen <quan@os.amperecomputing.com>
+References: <20240918103212.591204-1-chanh@os.amperecomputing.com>
+ <bc13d8fd-4f03-4445-bc4a-1e0ca7c23ef7@kernel.org>
+ <6b1fd95a-ef4f-4d2f-af27-6c70a60754fa@amperemail.onmicrosoft.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <6b1fd95a-ef4f-4d2f-af27-6c70a60754fa@amperemail.onmicrosoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 18, 2024 at 03:40:54PM +0000, Benno Lossin wrote:
-> >> Yeah, we need more users of this to know the full way to express this
-> >> correctly. I would like to avoid huge refactorings in the future.
-> > 
-> > I think adding it to the copy_*_user functions we already have in
-> > upstream, and then asking Alice to rebase binder should be a really solid
-> > real-world testcase. And I think currently for the things in-flight
-> > copy*user is going to be the main source of untrusted data anyway, not so
-> > much page cache folios.
+On 9/18/24 09:07, Chanh Nguyen wrote:
 > 
-> Sure. I chose tarfs as the use-case, because Greg mentioned to me that
-> it would benefit from adding this API. (I have no prior linux kernel
-> experience, so you giving me some pointers where this will be useful is
-> very helpful!)
+> 
+> On 18/09/2024 20:09, Krzysztof Kozlowski wrote:
+>> On 18/09/2024 12:32, Chanh Nguyen wrote:
+>>> Add device tree binding and example for adt7462 device.
+>>>
+>>> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
+>>> ---
+>>>   .../bindings/hwmon/onnn,adt7462.yaml          | 51 +++++++++++++++++++
+>>>   1 file changed, 51 insertions(+)
+>>
+>> Where is any user? This is supposed to be sent along driver change
+>> implementing this compatible.
+>>
+> 
+> I'm using this device on my platform, and I'm preparing upstream my device tree. So, I pushed the dt binding before.
+> 
+> I'm also quite surprised that there aren't any platforms using adt7462 yet.
+> 
 
-I just had tarfs as an easy example where we were reading data off the
-disk and acting on it, in a way just like C where if the data is
-corrupted we can do "not normal" things.  Sorry it got tied up with
-folios, that is not the normal way drivers work, they either get data
-from userspace through a char device node (ioctls) or from hardware
-(memory copies/reads/something) and for them the "untrusted data"
-abstraction should be much simpler than dealing with a folio.
+I am sure there are (or used to be) platforms using it, only there are possibly
+no _devicetree_ based platforms using it. After all, the chip is old. The driver
+was added back in 2008, and the first version of the datasheet was published
+in 2006.
 
-We don't really have any other good examples of drivers in rust yet that
-I could find other than maybe binder, but Alice has already posted her
-solution for how to handle untrusted data there (comes in through a char
-device node and/or a filesystem entry point) but it's much more complex
-and possibly harder to use as a simple example of the api ideas.
+Guenter
 
-thanks,
-
-greg k-h
 
