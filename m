@@ -1,65 +1,112 @@
-Return-Path: <linux-kernel+bounces-332257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B2A897B767
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 07:22:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D9C297B76A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 07:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C7481C22462
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:22:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48EF01F2252E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A3513CFBC;
-	Wed, 18 Sep 2024 05:22:34 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A087313DDA3;
+	Wed, 18 Sep 2024 05:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NlF2hxSx"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8325613792B;
-	Wed, 18 Sep 2024 05:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEDA13792B;
+	Wed, 18 Sep 2024 05:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726636954; cv=none; b=gkuaAxf3Iqg5V3rykmFcrlL/sQosqxLPDPqprAuFRsKJY1TpgrnOVFkCHN8gw/895Mdih5oaYBLx5SkLbzuFSdOycgpxOQ0KN715mtYLbJSyc+jrz1QaLyMt3Tw79j9Z+WkHPbSebCWTTGB/fb1EANRrs/uij1O2sArB3C/+VAc=
+	t=1726637073; cv=none; b=aO3VVrFfCyYyJlsLdZoRxQ1NP51zXyAGR45iQDrRfr7IwlMSXhiVxeUQ0nKlXHyaD98jcuqG3LYXGuswjaPTmPvbR0Y/PePcHekeFlyko2im4vjQAzWPRtHyy1iahyAIwg11RScYSBVafVKK+eDA0LdEL/PB/Voj6sC2kQS/aow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726636954; c=relaxed/simple;
-	bh=O9D+abRsVOL06/TXyEWQHDA+B9N9Oi4o2O6IDGpO8gI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QoIh2cvipAk3BRVhe3taWHxJ7m9BnLlLxNorbvyxnJPY9RxAUtMjkAW6Mxk9P1x5znkOoMNOETYmAn7rpluwjeuRyEOSRn17nDBqhxD7uyWj+jmXcklMj13+Q+1237jSiHXP7Ndb7Bq3F2HXnFdW00cNfSh/eo73X7gYbcPhBDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id AB657227A88; Wed, 18 Sep 2024 07:22:28 +0200 (CEST)
-Date: Wed, 18 Sep 2024 07:22:28 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Lizhi Hou <lizhi.hou@amd.com>
-Cc: vkol@kernel.org, hch@lst.de, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nishads@amd.com
-Subject: Re: [PATCH 1/1] dmaengine: amd: qdma: Remove using the private get
- and set dma_ops APIs
-Message-ID: <20240918052228.GA31381@lst.de>
-References: <20240917161740.2111871-1-lizhi.hou@amd.com>
+	s=arc-20240116; t=1726637073; c=relaxed/simple;
+	bh=VKtOTZ5lZAeheWyDbrmkp1q1kp9qNBmhyHIxOhHbE4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TStrN6FIucCaYLkts9q0EZb2vHkYtODrvJ3/I5kLbV1K+ayNOA+tOksgzQ4F4CzUe2cnkW7yGuXBZXfOZKpX0xZLKfD4jwMuEE3KhlmK6Qg3Pdl/+UVzAQIdZJwm4QVvdmgzggIDwoZiisDX3qXMOVBhFZ4ivOUZccjNr6y47Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NlF2hxSx; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726637066;
+	bh=2Uor/CLd+qjYaZGS5fdgWJuPAiaLK61kIXSp7zhsC68=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NlF2hxSxufpFD9JZYQQ4CFk8iGvWAdEZOyO1ydxGKjUeAEakMHyOZzE2gU/5Z0bBR
+	 0g1tWprxDbcW1Y4B2yre0I+BUR85G+UAepDFMCsNfHo+23gqv9Sz36ZTUtIhFNHaPa
+	 F8qaYVTrf9qpgrL6iZ5fVoc7/Vo+EBMASkkmObCIYityyHDJco5xWjLSf63CkgoalT
+	 Cne9tn7DxM69EpidXABL4MONU53RD6PnTLGvFY7wSzGxw+iFVvPsvOBUKb6pI1gYH+
+	 3mnwA5rvkBrZ51O5tpYPl6wG+XnmFVchRsa2wZZqdeTe6r3IIymAkA4HrXalvyelaR
+	 BPpXOgBLx7WeQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X7nBy1rgVz4xPc;
+	Wed, 18 Sep 2024 15:24:26 +1000 (AEST)
+Date: Wed, 18 Sep 2024 15:24:25 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: David Howells <dhowells@redhat.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the vfs-brauner tree
+Message-ID: <20240918152425.3105d1d1@canb.auug.org.au>
+In-Reply-To: <20240906182906.54527fbf@canb.auug.org.au>
+References: <20240906182906.54527fbf@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917161740.2111871-1-lizhi.hou@amd.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: multipart/signed; boundary="Sig_/C6Tdt.6.TyMAeT.EgzXJkr+";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Sep 17, 2024 at 09:17:40AM -0700, Lizhi Hou wrote:
-> The get_dma_ops and set_dma_ops APIs were never for driver to use. Remove
-> these calls from QDMA driver. Instead, pass the DMA device pointer from the
-> qdma_platdata structure.
-> 
-> Fixes: 73d5fc92a11c ("dmaengine: amd: qdma: Add AMD QDMA driver")
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+--Sig_/C6Tdt.6.TyMAeT.EgzXJkr+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-From the DMA point of view this looks good:
+Hi all,
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+On Fri, 6 Sep 2024 18:29:06 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> After merging the vfs-brauner tree, today's linux-next build (htmldocs)
+> produced this warning:
+>=20
+> Error: Cannot open file /home/sfr/next/next/fs/netfs/io.c
+>=20
+> Introduced by commit
+>=20
+>   550bc501ff91 ("netfs: Remove fs/netfs/io.c")
+>=20
+> $ git grep -w fs/netfs/io.c
+> Documentation/filesystems/netfs_library.rst:.. kernel-doc:: fs/netfs/io.c
 
+That commit is now in Linus' tree, but I am still getting this warning.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/C6Tdt.6.TyMAeT.EgzXJkr+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbqZAkACgkQAVBC80lX
+0GwoAQf+NXtv6w0ED0ovgecd/PnKYforTz5W2krbe/wgH6qdqi6lJAidaIbpe0jY
+LR7B0hmo74Sxj90lZEe2flJF4FmmBji0fnGzzJ7h67L4xf/Ccr1tdx2Cv0Ec6zB4
+RIWYcha6+oLr0nrIdlZfuayPeEnVOEmqiNsg19DSKL9XKqgmBLFs9AXKIM3kjnis
+WLQwztLjN5CzgSNEqECPgY1+muFC1iBusV5G+xcP87lmlFdU6z1ntscPd4UiCgFR
+Wcq4PukOgxNoQNfsVEJ5TTlkMiulMuWvzSMKTSJdjR/5cyhvYVl8XvWD6OwzY5JO
+QegKVe2oY8GOXA9ybIzqHSnoFjurwA==
+=koFl
+-----END PGP SIGNATURE-----
+
+--Sig_/C6Tdt.6.TyMAeT.EgzXJkr+--
 
