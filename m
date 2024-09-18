@@ -1,177 +1,82 @@
-Return-Path: <linux-kernel+bounces-332830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C3D97BF66
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:03:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63DC497BF68
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B127FB22139
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F1211C20E5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BE11C9866;
-	Wed, 18 Sep 2024 17:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982A01C9DCC;
+	Wed, 18 Sep 2024 17:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lsa+qU29"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjPYsi5a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520EA10A1C;
-	Wed, 18 Sep 2024 17:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E7710A1C;
+	Wed, 18 Sep 2024 17:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726678997; cv=none; b=TvLiB8w3lrPQuWAcCvTswAhc7+ykf6Zu679YwwPxg5SYC4vMznCaS2LNztCcJy/08lrrZO898bUYQ1BrPFzrBB9ctDpKSHDZvUeoZ5FIqZ0EcKCM+nFfmonJe3vvalaJPcYB65adZIu9/WR7JRS0vy2pVoe8/7h/k9+Rz85tlqI=
+	t=1726679098; cv=none; b=Ymm2QBGamYwyo5C4jghZCPBKddH7y1RA9/YwsJBISuwmz81Nr1I/8JGFcgezWPLecDB3u7aXl9i0tUpUxESLUfUIXNUjqIwJZreJ5jWuT6iDnpm8ry0tjxaZakUQepituEGaWqkJQ0n2ba2cCIRkX2aJxVOAiZFgqtzDbIdD/JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726678997; c=relaxed/simple;
-	bh=7Bm6YYpbYacPnkSdouuFXqtsLgbXV3+G8KG/QnHbllg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ED0vhXbLxRVMZLWsKILA8KPGdUJgSi/FLecKx9G+BnYTskMXM8yjC6eQSsA3kQuQDGJ4gLHxwR9Uh18mbU16PFr1mFdlP+NnPXpv+RwYfC3oSU4R0YTiEsV7YpWJgy2oM5vf3vnt+Fwa9cJlUF18xuS8Bg5FqrjqHVeNlHE9QGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lsa+qU29; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726678996; x=1758214996;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7Bm6YYpbYacPnkSdouuFXqtsLgbXV3+G8KG/QnHbllg=;
-  b=Lsa+qU29s8u/42oLxdg6HdGm0HWXik8aZjB1iM50P5phJSPc6auzmH/3
-   sSJp1Six0gQzGLvjuYE4U2tdlY+yGL3tX3P/nWcXBFhiPjgtJ7rcz/sNL
-   FcALABj5YCF4jlms1d6JJrDXIH8rdiqeD4Y9hLYbPNUeHsI3n/wdWQdjQ
-   HstmjLofbnn+M08nmaiYIq24BGF90xzVlwJtZ6W0SsOUdAtfQ1QnXTgSd
-   0Mgw5rYB5DUMvpcGSlCliVastWaqKIwnsXRNq2uAtBAgEceuEPzh8acm+
-   9SovH0il38rbKT/Lbmi0GDz78PWJBTxcQORN5o4q33sdQmG8m0/MWn7r/
-   w==;
-X-CSE-ConnectionGUID: MhV4LHheRM2C77T2YHVGqQ==
-X-CSE-MsgGUID: /1u25JrnSJ+eEIeNZTuQ4g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11199"; a="25091375"
-X-IronPort-AV: E=Sophos;i="6.10,239,1719903600"; 
-   d="scan'208";a="25091375"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 10:03:12 -0700
-X-CSE-ConnectionGUID: x4d7AHz3Q0y2AvaBMlF6wg==
-X-CSE-MsgGUID: 2Xi0IePWSuitWqYxxLX3JA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,239,1719903600"; 
-   d="scan'208";a="74637804"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 10:03:07 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sqy51-0000000AFKw-24Ag;
-	Wed, 18 Sep 2024 20:03:03 +0300
-Date: Wed, 18 Sep 2024 20:03:03 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Petr Mladek <pmladek@suse.com>
-Cc: John Ogness <john.ogness@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Subject: Re: [PATCH next v2 3/4] serial: 8250: Switch to nbcon console
-Message-ID: <ZusHx53h5H9JhJVt@smile.fi.intel.com>
-References: <20240913140538.221708-1-john.ogness@linutronix.de>
- <20240913140538.221708-4-john.ogness@linutronix.de>
- <ZurG8YMmBmVVxttj@pathway.suse.cz>
- <ZurdNw6lRYwClbuf@smile.fi.intel.com>
- <ZurlGqIdCbeSjYDj@pathway.suse.cz>
+	s=arc-20240116; t=1726679098; c=relaxed/simple;
+	bh=KnB4EQHrwjJxDvJe54tg1tcHnSgfSx3LnvsC0siunAE=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=PgTcrgLkXZSXaYbWszRT+OWuaLatMKy+fEL1m/VNQK6t3Hwv1wnbSsuODRHifitkPC3IGDYn5Q7FSVk20neSa/1NzAQjPOsFayp/3Mu3Ta4BsJBwsiIVeUyOVeW2H/AX7ShAiXlt2w4FC9WRW8cOx+W+fvifWb27t7vyOL5pkFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jjPYsi5a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC1DFC4CEC2;
+	Wed, 18 Sep 2024 17:04:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726679097;
+	bh=KnB4EQHrwjJxDvJe54tg1tcHnSgfSx3LnvsC0siunAE=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=jjPYsi5aTjrC7NDThFBZHIx3rJ6LJqqA91FlrHL1zHL79lItxmKnjDquA67dcKnkt
+	 CDeFTcTmSxTuEgGR9mKL+2BEtEgrAUYDEIxQIB3M+RRwobKNuzujoFDgSyyKV82TBx
+	 27bjWqOaM37eTwxAhohWrEgBfp+4gUQK3vviEIv5C722cJs+1e+mFpUNt1zCV89piY
+	 dQUKR3dHXt6pGuIZTDnLjkvTb2ksbXhozNLUl6XRLXyDdWt5l+f8JkazNR2t4OetlC
+	 nn/eak6UFbwv+xfpdNYrivj6oeGzb3PTajE7IEK5ngTat8RrZKa+l55ROHLJW9BYUh
+	 zrCeXK5DwEV1A==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZurlGqIdCbeSjYDj@pathway.suse.cz>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wifi: wcn36xx: fix a typo
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20240913094319.13718-1-algonell@gmail.com>
+References: <20240913094319.13718-1-algonell@gmail.com>
+To: Andrew Kreimer <algonell@gmail.com>
+Cc: Loic Poulain <loic.poulain@linaro.org>, wcn36xx@lists.infradead.org,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Andrew Kreimer <algonell@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <172667909414.4089263.7060582994040911136.kvalo@kernel.org>
+Date: Wed, 18 Sep 2024 17:04:55 +0000 (UTC)
 
-On Wed, Sep 18, 2024 at 04:35:06PM +0200, Petr Mladek wrote:
-> On Wed 2024-09-18 17:01:27, Andy Shevchenko wrote:
-> > On Wed, Sep 18, 2024 at 02:26:25PM +0200, Petr Mladek wrote:
-> > > On Fri 2024-09-13 16:11:37, John Ogness wrote:
-> > > > Implement the necessary callbacks to switch the 8250 console driver
-> > > > to perform as an nbcon console.
-> > > > 
-> > > > Add implementations for the nbcon console callbacks (write_atomic,
-> > > > write_thread, device_lock, device_unlock) and add CON_NBCON to the
-> > > > initial flags.
-> > > > 
-> > > > All register access in the callbacks are within unsafe sections.
-> > > > The write_thread() callback allows safe handover/takeover per byte.
-> > > > The write_atomic() callback allows safe handover/takeover per
-> > > > printk record and adds a preceding newline if it took over mid-line.
-> > > > 
-> > > > For the write_atomic() case, a new irq_work is used to defer modem
-> > > > control since it may be a context that does not allow waking up
-> > > > tasks.
-> > > 
-> > > It would be fair to mention that it does not longer support fifo in
-> > > the 8250 driver. It basically reverted the commit 8f3631f0f6eb42e5
-> > > ("serial/8250: Use fifo in 8250 console driver").
-> > > 
-> > > It is not usable in write_thread() because it would not allow
-> > > a safe takeover between emitting particular characters.
-> > > 
-> > > It might still be used in write_atomic() but it is probably not
-> > > worth it. This callback is used "only" in emergency and panic
-> > > situations.
-> > 
-> > This is unfortunate. It will drop down the efficiency of printing.
-> 
-> The FIFO mode has been added by the commit 8f3631f0f6eb42e5
-> ("serial/8250: Use fifo in 8250 console driver"). The interesting
-> parts are:
-> 
-> <paste>
->   While investigating a bug in the RHEL kernel, I noticed that the serial
->   console throughput is way below the configured speed of 115200 bps in
->   a HP Proliant DL380 Gen9. I was expecting something above 10KB/s, but
->   I got 2.5KB/s.
-> 
->   In another machine, I measured a throughput of 11.5KB/s, with the serial
->   controller taking between 80-90us to send each byte. That matches the
->   expected throughput for a configuration of 115200 bps.
-> 
->   This patch changes the serial8250_console_write to use the 16550 fifo
->   if available. In my benchmarks I got around 25% improvement in the slow
->   machine, and no performance penalty in the fast machine.
-> </paste>
-> 
-> I would translate it:
-> 
-> The FIFO mode helped with some buggy serial console. But it helped to gain
-> only small portion of the expected speed. The commit message does not
-> mention any gain with the normally working system.
-> 
-> It has been added in 2022. It was considered only because of a
-> "broken" system. Nobody cared enough before.
-> 
-> > I think it should be done differently, i.e. the takeover the code
-> > has to drop FIFO (IIRC it's easy to achieve by disabling it or so)
-> > and switch to printing the panic/emergency message. But still at
-> > some baud rate speeds draining the FIFO to the other end may be
-> > not a bad idea as it takes a few dozens of microseconds.
-> 
-> Sure. it is doable. But I am not convinced that it is really worth it.
+Andrew Kreimer <algonell@gmail.com> wrote:
 
-Fair enough. But perhaps Cc to the author to at least notify them about
-this change?
+> Fix a typo in comments.
+> 
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+> Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+
+The subject should be unique so in the pending branch I changed it to:
+
+wifi: wcn36xx: fix a typo in struct wcn36xx_sta documentation
 
 -- 
-With Best Regards,
-Andy Shevchenko
+https://patchwork.kernel.org/project/linux-wireless/patch/20240913094319.13718-1-algonell@gmail.com/
 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+https://docs.kernel.org/process/submitting-patches.html
 
 
