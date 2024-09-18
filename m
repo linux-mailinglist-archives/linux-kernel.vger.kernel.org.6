@@ -1,127 +1,88 @@
-Return-Path: <linux-kernel+bounces-332409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F4797B95B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:28:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D609697B953
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DD7C1F2178C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:28:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D56228458D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9397B1741D9;
-	Wed, 18 Sep 2024 08:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBF317109B;
+	Wed, 18 Sep 2024 08:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="nMmmJ7Bt"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="Fum7bn6M"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EB0139CF2;
-	Wed, 18 Sep 2024 08:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A4E8175B;
+	Wed, 18 Sep 2024 08:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726648097; cv=none; b=aTlCDcqqU8eNwlSa3gm3jjwtbvf5UScz/P6ypoz+66zM+1JN0Qw3DIzmEx7OhjvVz8YGK2ltV9XnDwaJQs0JUngrJnKqkli1qKbrdQ6bKONl06DPAQ1Sj+u1b/U0q3EgC1us+KzGwVT3mLPhN+k/1hzYI7oxDN0B9fbnxtzHlHg=
+	t=1726648080; cv=none; b=PB5jwvlsqQNoOF1Q+og7CJxZRk/rSeydGVT8pXcv7KgR6KqbABrCR21MWvZPrvlYEVzUW6AyFPqc5viEBSZ+NNlS1ZsozSzXPcppmQpunKjdBuW1PxQhiDbiP3/ZmycfExBvjcRXJkMk3BzECcHn5vW+rLg3BqQ2Rrx/XIxghh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726648097; c=relaxed/simple;
-	bh=gj+snmJa6J2gK8ly7gvfAw16z7opi86SetN3fVDwwUY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z4oypyOxkFhOKYM/FqK1IOtiMkVNCO6JzHyyxMBXhiwSZFp5p8e9o3vlNZ4SMXuaiEB+UD5HdpyvlmnqCGlcBMBUZjsO8XttpcfcR/roVPvc1xFo3hdnt8FPwIYaV2UKXnIss7MmKpiEfZRbvBXA9OFg3OITylzdqJlbcOH2qng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=nMmmJ7Bt; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1726648093;
-	bh=gj+snmJa6J2gK8ly7gvfAw16z7opi86SetN3fVDwwUY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nMmmJ7BtqPmuSmMdtrDlyApSjl0y9HM3tLOIMDRPJJpkTD9cFcM7ZPkA3FxSzC0x/
-	 Waf9avlGmiwTe1lKuKFEvPwKGE8d3XGvPHvP0Dk9oOLMDZQBs/UiEljpbgTFJ7THMg
-	 d/7tja34AtLpEnc4nznn6qVNb/N3lgkLzJ/0qQKtu+3fgR5YPuLdQqif5soy31iHRI
-	 Bj0+0mD5XCVYWpttdOiGQCdLKACDPqG/Q6nBwQS1PHfsqIabaXjc3//zQf0Bg87NHi
-	 rEsG3OYuDSZH1iVa9e6CSqvCUWEVne1IgLR/zc6BEI8KdDO2RahuysAbYNvxhr/QY1
-	 vPp1kk3Dx7bIw==
-Received: from [10.134.0.250] (unknown [83.68.141.146])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4X7sGh5m0Bz1LFT;
-	Wed, 18 Sep 2024 04:27:56 -0400 (EDT)
-Message-ID: <fb85f280-a5b1-487e-a8fa-5e97441991fb@efficios.com>
-Date: Wed, 18 Sep 2024 10:27:01 +0200
+	s=arc-20240116; t=1726648080; c=relaxed/simple;
+	bh=CFfUmRPQwZhTl/QMEhpHt8vit3wcbVNrrNrBXAmt5og=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cJWpCstQrNNQ6NQsM8YRAEhh0z86w527/jsEynjx+80Tb3lxvnc6R9WUB5wm++aaxMiUQ63+9DIrw45m17PiaoaVSrYOxcVEInjzJfwZU1pwsYOWVs/RKkPJqUzo0mvihjOFnR95eqQqIr9RZ2dq/eT/A+lB6oBE/0OtkMpqIIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=Fum7bn6M; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A36E31489733;
+	Wed, 18 Sep 2024 10:27:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1726648069; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=drhLJCJD3fUeKeawJioBxbhjso2XLDpGbCh0ZnyLvyQ=;
+	b=Fum7bn6MLQl7l3LIUsKq5vwrr9um5QJnUAgKK8SGNr7n3m98Mca85sjPytr8nWqhoSSSKc
+	IbwmkPp6Mq/YEojLULxgLuREjdzqB48LMmxA1Ojd1XIh+k6QiZYu1yzQJOIRPz1imfSxeN
+	+p0r5bmqkefSKK6tj+bIeZ4ysHZMT79Pgmu9c34FfFMBR0U92dItTWnzgg1plasLq37/fG
+	2dmmozuSgVf6L8mnvdFpdUwvsbMaOmmFfQPftphjevZSXSX9z6rjgq8WPcmu7O0kbF0Lev
+	fDWU4Bgqb34uJhOPKkn/SseAtdPySuFIZDIZoboUI1JCLE5bgeA0ROArY5NT9Q==
+From: Alexander Dahl <ada@thorsis.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	linux-spi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] spi: atmel-quadspi: Fix and add full CS delay support
+Date: Wed, 18 Sep 2024 10:27:42 +0200
+Message-Id: <20240918082744.379610-1-ada@thorsis.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-To: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
- rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@vger.kernel.org
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Kent Overstreet <kent.overstreet@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Neeraj Upadhyay <neeraj.upadhyay@amd.com>
-References: <20240917143402.930114-1-boqun.feng@gmail.com>
- <20240917143402.930114-2-boqun.feng@gmail.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20240917143402.930114-2-boqun.feng@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 2024-09-17 16:33, Boqun Feng wrote:
-[...]
-> 
-> The synchronization between readers and updaters is built around "hazard
-> pointer slots": a slot readers can use to store a pointer value.
-> 
-> Reader side protection:
-> 
-> 1.	Read the value of a pointer to the target data element.
-> 2.	Store it to a hazard pointer slot.
-> 3.	Enforce full ordering (e.g. smp_mb()).
-> 4.	Re-read the original pointer, reset the slot and retry if the
-> 	value changed.
-> 5.	Otherwise, the continued existence of the target data element
-> 	is guaranteed.
-> 
-> Updater side check:
-> 
-> 1.	Unpublish the target data element (e.g. setting the pointer
-> 	value to NULL).
-> 2.	Enforce full ordering.
-> 3.	Read the value from a hazard pointer slot.
-> 4.	If the value doesn't match the target data element, then this
-> 	slot doesn't represent a reference to it.
-> 5.	Otherwise, updater needs to re-check (step 3).
+Hello everyone,
 
-Cool! I look forward to see where this is meant to be used. I would
-expect it to be a useful tool to speed up reference counting of
-things like the mm_struct and for TLB flush IPIs.
+when testing on a SAM9X60 based board with an FPGA implementing a custom
+SPI-MEM protocol, we found the need to fully control the delay settings
+the atmel/microchip QSPI controller offers.
 
-On a related note, with a userspace port in mind, the membarrier(2)
-syscall can be useful to turn the smp_mb() in (3) from the reader
-side into a simple compiler barrier, assuming (2) from the updater
-is using membarrier. If IPIs are acceptable (or already required) for
-some kernel use-cases, this means a similar asymmetric fence scheme
-could be used to speed up readers.
+Greets
+Alex
 
-Thanks,
+(series based on v6.11, tested on top of v6.6.44)
 
-Mathieu
+Cc: linux-spi@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
 
+Alexander Dahl (2):
+  spi: atmel-quadspi: Avoid overwriting delay register settings
+  spi: atmel-quadspi: Add cs_hold and cs_inactive setting support
+
+ drivers/spi/atmel-quadspi.c | 50 +++++++++++++++++++++++++++++--------
+ 1 file changed, 40 insertions(+), 10 deletions(-)
+
+
+base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+2.39.5
 
 
