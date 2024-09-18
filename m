@@ -1,131 +1,140 @@
-Return-Path: <linux-kernel+bounces-332413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1518197B964
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:31:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5C0797B967
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97BEAB2222B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:31:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72725283F90
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E2F17277F;
-	Wed, 18 Sep 2024 08:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84F31741C8;
+	Wed, 18 Sep 2024 08:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="Rd5vvMao"
-Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="gtTqPTWV"
+Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF58A1509AB;
-	Wed, 18 Sep 2024 08:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EDA1509AB;
+	Wed, 18 Sep 2024 08:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726648298; cv=none; b=ZICOavf9tTZTibQpHfuuDS2WJxzSZlFAmWTfrLBhIuhk682+15VAB+l9syFrVeONw0/OUUXw3FDS+H9yyOTBbQkSvKUSM031Ke28z6NxmCIl80sTZuoJq9lWYntV2LAiS+Q+5shuFOEE6F0rbFCw9i+YeO6oRXPvGpUwKlBzML0=
+	t=1726648363; cv=none; b=c8dav+Awe5YE6JczAWPo0JsivrY+ZvP2ekyH6aOpZuxHHu+guCdR3215irAznRBrX2vMV7p9CfhmVgymXeeCiqJCWLADLwODYNope2eGKWr2Q9+zfdS6EtatJqfYprBmr7+qd+j4zy+m9u5wqWJ04yIhFBSJiW/x+zDh3cmMdfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726648298; c=relaxed/simple;
-	bh=Fzn1aEdw/yxhbLMFY9G3xd1Gy61G7ncfaBdVHUMisvY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=CHx3ziIlmoX3a1vU8eSeNrCIC5PyBDCXVqhGUjiEeB7jH1Cm+dy4yKtV59uLRGtrr0dZ7TkQr+SxJKANYYukzYF34WK76smwdL3ud6iAdF1BIf64XwQ4YoS+VKSbQbeduZ7hzck4CJ+P6zFpCj50Hos7XGMDAQYL9tg6Axe1VaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=Rd5vvMao; arc=none smtp.client-ip=212.122.41.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
-	s=mail; t=1726648291;
-	bh=me6yhkQ1Qf7Nz+9dw5lt1yO15V7nP5XWT/aS4UjahWA=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=Rd5vvMaolEmrl1l2z1ggs+5be2/6j4K964x7uMBLhVcPO2gEU/eYonbL1WLMHsp2+
-	 QT8qbQk0uFrMQew4heoH4gNpduUY/4ziQ8d6f9V2MVqoQat69ad6Vx9Eghq6wD66pw
-	 LS293864SUaoed/IsnRGnQ8RKO7SFKGBlbrR9QzE=
+	s=arc-20240116; t=1726648363; c=relaxed/simple;
+	bh=4bdcaWigprfYvBVzSps/LxeQRSmCfy9YoxxwSIdXq2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HsbNv26qcxLOnmIPp2GEh1ulEkZ7QAOvGMivEiZFzf2k6GwHRpjNjaBY9pPvvL5vLdwEDFPv/yCGZlDYWvZ7HoNYK5mo7TjFP6MS3fT5mON4/HkTbzHc5169V6fOxeQPNkU5qzPendP/y0/vgrd9lcdTVk9wxzVbfCmOBSK5zf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=gtTqPTWV; arc=none smtp.client-ip=81.19.3.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+	s=20160406-ysoft-com; t=1726648359;
+	bh=Y6OULQl6Ue3orcYsxG9AXjPiGVo+Zb0pbCMaMnhulC8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gtTqPTWVle/Hnqk+/UsZ5sGyHLenCiRzDxJgz0bNIUW3j7YymUZCb3uKf2ot9Le06
+	 TSnlO5Tp0TEMq2Y7MPI1PyUhQVHyHoWFACpsCRkVpYsFCUyUxDADQT/itSt0aOSrKb
+	 AsB4C/WwxTDSg5eSQdSa6GF8rMOBmlpyfJN70j4w=
+Received: from [10.1.8.111] (unknown [10.1.8.111])
+	by uho.ysoft.cz (Postfix) with ESMTP id 32E4FA0419;
+	Wed, 18 Sep 2024 10:32:39 +0200 (CEST)
+Message-ID: <9c8410cb-cae4-458c-ac08-0fbe30956414@ysoft.com>
+Date: Wed, 18 Sep 2024 10:32:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-From: Christian Theune <ct@flyingcircus.io>
-In-Reply-To: <686D222E-3CA3-49BE-A9E5-E5E2F5AFD5DA@flyingcircus.io>
-Date: Wed, 18 Sep 2024 10:31:09 +0200
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Jens Axboe <axboe@kernel.dk>,
- Matthew Wilcox <willy@infradead.org>,
- linux-mm@kvack.org,
- "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Daniel Dao <dqminh@cloudflare.com>,
- clm@meta.com,
- regressions@lists.linux.dev,
- regressions@leemhuis.info
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0C392D79-DAB1-4730-B2AB-B2B8CF100F11@flyingcircus.io>
-References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
- <ZuNjNNmrDPVsVK03@casper.infradead.org>
- <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
- <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <Zud1EhTnoWIRFPa/@dread.disaster.area>
- <686D222E-3CA3-49BE-A9E5-E5E2F5AFD5DA@flyingcircus.io>
-To: Dave Chinner <david@fromorbit.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] arm64: dts: imx: Add imx8mp-iota2-lumpy board
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Shawn Guo <shawnguo@kernel.org>, Petr Benes <petr.benes@ysoft.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Herburger <gregor.herburger@ew.tq-group.com>,
+ Hiago De Franco <hiago.franco@toradex.com>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+ Michael Walle <mwalle@kernel.org>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Mathieu Othacehe <m.othacehe@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20240917151001.1289399-1-michal.vokac@ysoft.com>
+ <20240917151001.1289399-3-michal.vokac@ysoft.com>
+ <ZunTWqY6oLZibZXj@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
+In-Reply-To: <ZunTWqY6oLZibZXj@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 17. 09. 24 21:07, Frank Li wrote:
+> On Tue, Sep 17, 2024 at 05:09:59PM +0200, Michal Vokáč wrote:
+>> The IOTA2 Lumpy board is based on the i.MX8MPlus EVK.
+>>
+>> Basic features are:
+>> - 4GB LPDDR4
+>> - 64GB eMMC
+>> - 2x 1GB Ethernet
+>> - USB 3.0 Type-C dual role port, without power delivery
+>> - USB 3.0 Type-A host port
+>> - RGB LED - PWM driven
+>> - speaker - PWM driven
+>> - RTC with super capacitor backup
+>>
+>> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+>> ---
+> 
+> Suggest you try tools https://github.com/lznuaa/dt-format
+> 
+> Any issue let me know.
 
+Hi Frank,
+I was aware of some non-written rules how the nodes
+and properties should be sorted but this will definitely help!
 
-> On 16. Sep 2024, at 09:14, Christian Theune <ct@flyingcircus.io> =
-wrote:
->=20
->>=20
->> On 16. Sep 2024, at 02:00, Dave Chinner <david@fromorbit.com> wrote:
->>=20
->> I don't think this is a data corruption/loss problem - it certainly
->> hasn't ever appeared that way to me.  The "data loss" appeared to be
->> in incomplete postgres dump files after the system was rebooted and
->> this is exactly what would happen when you randomly crash the
->> system. i.e. dirty data in memory is lost, and application data
->> being written at the time is in an inconsistent state after the
->> system recovers. IOWs, there was no clear evidence of actual data
->> corruption occuring, and data loss is definitely expected when the
->> page cache iteration hangs and the system is forcibly rebooted
->> without being able to sync or unmount the filesystems=E2=80=A6
->> All the hangs seem to be caused by folio lookup getting stuck
->> on a rogue xarray entry in truncate or readahead. If we find an
->> invalid entry or a folio from a different mapping or with a
->> unexpected index, we skip it and try again.  Hence this does not
->> appear to be a data corruption vector, either - it results in a
->> livelock from endless retry because of the bad entry in the xarray.
->> This endless retry livelock appears to be what is being reported.
->>=20
->> IOWs, there is no evidence of real runtime data corruption or loss
->> from this pagecache livelock bug.  We also haven't heard of any
->> random file data corruption events since we've enabled large folios
->> on XFS. Hence there really is no evidence to indicate that there is
->> a large folio xarray lookup bug that results in data corruption in
->> the existing code, and therefore there is no obvious reason for
->> turning off the functionality we are already building significant
->> new functionality on top of.
+I will try it for v2.
+Thanks a lot.
 
-I=E2=80=99ve been chewing more on this and reviewed the tickets I have. =
-We did see a PostgreSQL database ending up reporting "ERROR: invalid =
-page in block 30896 of relation base/16389/103292=E2=80=9D.=20
+>>   arch/arm64/boot/dts/freescale/Makefile        |   1 +
+>>   .../boot/dts/freescale/imx8mp-iota2-lumpy.dts | 425 ++++++++++++++++++
+>>   2 files changed, 426 insertions(+)
+>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
+>>
+>> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+>> index f04c22b7de72..421c36c5ae68 100644
+>> --- a/arch/arm64/boot/dts/freescale/Makefile
+>> +++ b/arch/arm64/boot/dts/freescale/Makefile
+>> @@ -171,6 +171,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk2.dtb
+>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-dhcom-pdk3.dtb
+>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-evk.dtb
+>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-icore-mx8mp-edimm2.2.dtb
+>> +dtb-$(CONFIG_ARCH_MXC) += imx8mp-iota2-lumpy.dtb
+>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-msc-sm2s-ep1.dtb
+>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-navqp.dtb
+>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk.dtb
+>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
+>> new file mode 100644
+...
+[snip]
+...
+>> +
+>> +&pwm4 {
+>> +	pinctrl-names = "default";
+>> +	pinctrl-0 = <&pinctrl_pwm4>;
+>> +	pwm-gpios = <&gpio5 2 GPIO_ACTIVE_HIGH>;
 
-My understanding of the argument that this bug does not corrupt data is =
-that the error would only lead to a crash-consistent state. So =
-applications that can properly recover from a crash-consistent state =
-would only experience data loss to the point of the crash (which is fine =
-and expected) but should not end up in a further corrupted state.
+^^^ The pwm-gpios property should not be here. I will remove it in v2.
 
-PostgreSQL reporting this error indicates - to my knowledge - that it =
-did not see a crash consistent state of the file system.
-
-Christian
-
---=20
-Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
-Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
-Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
-HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
-Christian Zagrodnick
+>> +	status = "okay";
+>> +};
 
 
