@@ -1,151 +1,103 @@
-Return-Path: <linux-kernel+bounces-332716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E7597BD99
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:03:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C16597BDA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 875451C209E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:03:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62EF2285F54
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4215E18A6CD;
-	Wed, 18 Sep 2024 14:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B2218B478;
+	Wed, 18 Sep 2024 14:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sg62eVdc"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mrshMlgt"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485B9176230
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 14:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0066A176230;
+	Wed, 18 Sep 2024 14:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726668217; cv=none; b=O5eEGQXXl2X8Jjq+FmcH3g3XKApBkFflszitWeWqqHBrsUcXz/UYFAYQtl9ILhAp0pDSHsnR2qx/7OREJ5EeFkl5h/afR6GqPPDwQJAff1rmiVSX9BYGs3X0AcE6jtfF5FATm+VPjEXBrul38+QnExCvu4338FF8JySzM1U+Koc=
+	t=1726668341; cv=none; b=f8P/8Su7c4Z0K2FNxh9Q/rYWh/cs+jhl0wOQcnSoTKRuj37nLAFkhyf2TGLlBgBhAl+oPvbWR0iz9HqNvYa0R7syEuDso8D+CC8yGP7qZeHpaUEgLz0RSjH11ExKB8PuNzuUQzwcHua6yZBBDKN0afizfEYS60DHgN4hlER+NO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726668217; c=relaxed/simple;
-	bh=ev0JKR+Ki+wZ1gWeV2zx+R894flbiGpCVAZDVgS9PqU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ny4lxMwBUl5cUbAHOUeFmAqmWrOLx/SXP4HQWlmnyJ6FNdrM4NrWHXrSOxZZERPID/LTFgelRxH2aaVil4sdUQbbNCGCVKTvmzU9tAQlzHj/+7Q9V0AN95izbxCNOA6Un5UabhuNIGOwdkzWDMgd2gfA5iUTDspkYZJySZOF9Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sg62eVdc; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-718e55bca81so614662b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 07:03:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726668215; x=1727273015; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rWbJgztcoceFfFThLVY5wbXfQyLhn8o8Q6POCrLxBDM=;
-        b=Sg62eVdcP1U6tbHdRipUazkrqNt/3TKVTybU5Zpd1LHJNhQ287h/88DzYzFQBjvAG1
-         Nw2t46+JPl4v3scQXeYyZTyZD/3+amU54oTZC0ds5oJ1otyPiuWui+1u9RG9CMNf2W14
-         zq6gaQUOM/C2tVRzgY4KHHVMx97LdJapg8RCOgQisBttNiqlC2DHti9o8V652ynPGafe
-         1dMwXrECefThqU/qbwzXosunFLFQ1zIeX4L1mj46LxKLJXexSjitzu8GtqtgETAasAk3
-         C4Qb7F45U7KCom4E2HEC4Q2+YhXyeLP8MS9lUU5/bN09varyWJgZx3Ui8NH7vikdAj6z
-         xwAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726668215; x=1727273015;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rWbJgztcoceFfFThLVY5wbXfQyLhn8o8Q6POCrLxBDM=;
-        b=Id5ywVKA3lbwPVO9L6KnRFVDyHmLQfQmoBX+/dBQu9AszqXW3mQJ0vRV+zTDSRGWhA
-         3EGPZyqdAmZ/DRay3j/7FjDDwZtnidnlFF+dulAXybYunobdxNMocS8abjIzXUKTsq/p
-         FClPt8kFMgw1Fu3cvNjKgGJtOP7Ud43SlCtITUV4UVUmfVzaip59xv1EiLGkiuQQ2aQe
-         nVpiQd6ZbrXuPhUNaL7tkpHH5s4M1Mr2mqaWRLMOXwqLaAC9lod+UrEQ/YxG0PV38cUr
-         3MHBiDH1g+HVbzX/Zrg1ZSZoVy1wV6ctm8KZAlCMv9gyauM23NNhDz/DsONZ99hQB/1f
-         WHdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULCoGz8z2Q5RyydXtNSsRowVM8ITtqc5fH3VY0vD4ErTRnCGQlmCY1f77II29akgfng4Q+9WPSmIWvFhg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTUoakTVLE7enEvj0YAuVHinnhhW2UTUfk0r4ZV+6T5cSaWEJC
-	1X+lfuzNZJ7l8K2AXIml5JFvuxI8xklVetVpTGrAV0TdUKvPclrrxP0CDw2IvC3qxCSqRQgD8lm
-	Afjapwu+hHKbdQCJGoguRx29/eyQ=
-X-Google-Smtp-Source: AGHT+IHDEMiQCcUgd0quuVe6+gHogtqzPU+y9sOiiTdAPQGGpUctqLcMyAdRZYLEQDqTWWmP+4jGGqEYoYG6oIHKK6k=
-X-Received: by 2002:a05:6a00:1256:b0:70d:2289:4c55 with SMTP id
- d2e1a72fcca58-7192633889cmr13505341b3a.5.1726668215320; Wed, 18 Sep 2024
- 07:03:35 -0700 (PDT)
+	s=arc-20240116; t=1726668341; c=relaxed/simple;
+	bh=6zBAQ17LZQR9zBcfVlgt0Uw/0T/zok1IojabaDHGmvE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=DhoWes8TdltocBCEtD7bEfm2aI5uSa2VmPrOlo88SrCzkj3Odc4TX4iTcBTCHpLfbX8o8n6ufTwM0S8g+0MtqHX2k73krjy9lVstJITvv9bAbs8hB0uczcL/3fTkfc/qY5lwd1BPLrM/s4qEQSOUGJVNvbssuc41uPrT1ZXWbFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mrshMlgt; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726668326; x=1727273126; i=markus.elfring@web.de;
+	bh=183N5FFu+mvhtVZf8+8emO6n1S0+rQzAD7UWVL5EAn0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=mrshMlgt/yXyEnm4CVa5vshO1ikrs7mngi9nH7AgL59jIXT9SzwZFc6hLHuctWKx
+	 p3vCvxqZSUi3MnVILE3ebMX//Kl1sJbkbN6r7bqbTVNNRXiCJNRMD3ncKxLxG8jLb
+	 CIn2J33Wj0miJ9l5nI+Gk9PzjcWHDlY1fYswQ98jlCZ50Zv91w/5Qg+a+a+Q+pvAx
+	 tyZktCtrUrpZNktbQ5ptieBOdImCEMTNmm4OSkcbvRJFsnnZGAuFfJnyIPTZgWNHc
+	 XYBVvK5yKY4+w29Z+Laewy7DwaT6nATikLQXIVq9neoZ81bBH+VmnLqKgssuFc/G3
+	 w89MpdDfitiN9FPBLA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MCoku-1si9ri3Ajg-007UDT; Wed, 18
+ Sep 2024 16:05:26 +0200
+Message-ID: <68ee5a00-888c-420f-a3a9-a556c19ee6eb@web.de>
+Date: Wed, 18 Sep 2024 16:05:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917163119.890276-1-roheetchavan@gmail.com>
-In-Reply-To: <20240917163119.890276-1-roheetchavan@gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 18 Sep 2024 10:03:21 -0400
-Message-ID: <CADnq5_MXmSYf0=Lfb5-bsmuK6m2UEgyeVOMp4hjZcpxU82_Z2A@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: Fix unnecessary cast warnings from checkpatch
-To: Rohit Chavan <roheetchavan@gmail.com>
-Cc: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: dm-devel@lists.linux.dev, kernel-janitors@vger.kernel.org,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>, Ondrej Kozina <okozina@redhat.com>,
+ Waiman Long <longman@redhat.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/2] dm-crypt: Adjustments for crypt_set_keyring_key()
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:wZPZJzhPw2YNK/b7ALwOzH9Z/GxeCgmAbFC720VQttf8jZzkZo8
+ v0JG8GUsAMy42/ayyVzX19oQSVIkfUXMTQkhGXbYc/R7KNQcRRt9/LL/p4fKGhFpHj2C6j6
+ IJL/OXSV7PPmMERnbhPQ6F2A8uyXnXXG6eVrxj12ZR95aU8LcjdJamRYjTrj6BOnkA4Zidv
+ WqfQ9Wih1GFn07TK8aS9A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:SKQMyh4ffik=;8mcWZ3wwSzu9PyfdykXM1fsG+cg
+ OOaCTMgIv1OEa2lyzic10kTaGdAE9WPXtHYT7BEfAA7Frkh/psVmVzY434xvCHKmkB3hHAsGK
+ wiDXAfbIqhTJD0B8XTb7qmigEEs8g1Yl0k8B1OpQSX0m8NawiAGYrFRePWRA95TqXit+slJYd
+ PqkxkwLF7CDJGIPkrSnisoKykt/u7UbYNNVetEzGJMUtzJLIwAvoIsmxgE5F9QynTtuIbwwm9
+ noC6hcBl2IKkGwXxq64bu1gykz15Qe+zC6hLHiZWk5c/540Le9e95NNgsR3A4hdYrjGC10lP3
+ WO7j5gntKeRHtxzj5kXc6AzPuqMeiRtEE4zP5iwv/JiIenvEIloGGMmLLWB/7a740XMNYstJB
+ 4yB7glDKzQsQjvWjLf2nhpEXCHb3u1aAx44INICq/5TqN7oev9zJlzaDbWL8Wc8xhVFwlYARm
+ FQfu9QgUuLODoFtvMOkKU0N6ZoXai745xSWnTxVQBGmICXk7shNW9sZL/8Ui0vKscXKqQaHZY
+ KFl5COZBrFL66PV2hjZ1T2JZyPCRYmmx6VSQysTauXLpVMr7dqSavEyVACBZXbisdU12SNHxR
+ abnhHV8Baf1lplTcfnq1HGBZlXv9ZzrL7jd5S3OMMlDv7K4lzQZ8sTvZykYB/Af/jbWLf+ehG
+ c0WtC+QEl3ReYs9hmBhehrJT1y7gKzdUbFLKG65yTNvQO9vL6mEcVK9QyNQkHytvSg7WvAiam
+ 2d9/+Ys7QyovFIoyjvkehL7sZqsWjwrYEAvI6bq/FplFvjxWUEMV2Yq9hmoVpaUuPMgh0dulf
+ pRECMlO8QCXM3uHpXpIqnIqw==
 
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 18 Sep 2024 15:48:05 +0200
 
-Applied.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Thanks!
+Markus Elfring (2):
+  Use up_read() together with key_put() only once
+  Use common error handling code
 
-On Tue, Sep 17, 2024 at 5:58=E2=80=AFPM Rohit Chavan <roheetchavan@gmail.co=
-m> wrote:
->
-> This patch addresses warnings produced by the checkpatch script
-> related to unnecessary casts that could potentially hide bugs.
->
-> The specific warnings are as follows:
-> - Warning at drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c:16
-> - Warning at drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c:20
-> - Warning at drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c:30
->
-> Signed-off-by: Rohit Chavan <roheetchavan@gmail.com>
-> ---
->  drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c b/=
-drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c
-> index 41ecf00ed196..3ab401729f9b 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c
-> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/dml21_wrapper.c
-> @@ -13,11 +13,11 @@
->
->  static bool dml21_allocate_memory(struct dml2_context **dml_ctx)
->  {
-> -       *dml_ctx =3D (struct dml2_context *)kzalloc(sizeof(struct dml2_co=
-ntext), GFP_KERNEL);
-> +       *dml_ctx =3D kzalloc(sizeof(struct dml2_context), GFP_KERNEL);
->         if (!(*dml_ctx))
->                 return false;
->
-> -       (*dml_ctx)->v21.dml_init.dml2_instance =3D (struct dml2_instance =
-*)kzalloc(sizeof(struct dml2_instance), GFP_KERNEL);
-> +       (*dml_ctx)->v21.dml_init.dml2_instance =3D kzalloc(sizeof(struct =
-dml2_instance), GFP_KERNEL);
->         if (!((*dml_ctx)->v21.dml_init.dml2_instance))
->                 return false;
->
-> @@ -27,7 +27,7 @@ static bool dml21_allocate_memory(struct dml2_context *=
-*dml_ctx)
->         (*dml_ctx)->v21.mode_support.display_config =3D &(*dml_ctx)->v21.=
-display_config;
->         (*dml_ctx)->v21.mode_programming.display_config =3D (*dml_ctx)->v=
-21.mode_support.display_config;
->
-> -       (*dml_ctx)->v21.mode_programming.programming =3D (struct dml2_dis=
-play_cfg_programming *)kzalloc(sizeof(struct dml2_display_cfg_programming),=
- GFP_KERNEL);
-> +       (*dml_ctx)->v21.mode_programming.programming =3D kzalloc(sizeof(s=
-truct dml2_display_cfg_programming), GFP_KERNEL);
->         if (!((*dml_ctx)->v21.mode_programming.programming))
->                 return false;
->
-> --
-> 2.34.1
->
+ drivers/md/dm-crypt.c | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
+
+=2D-
+2.46.0
+
 
