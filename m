@@ -1,244 +1,139 @@
-Return-Path: <linux-kernel+bounces-332494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C46AD97BA70
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:55:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2337997BA6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 573C81F278A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:55:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98D96B21AEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D94188A2E;
-	Wed, 18 Sep 2024 09:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1530F180A6A;
+	Wed, 18 Sep 2024 09:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="NVx/Be0j"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2050.outbound.protection.outlook.com [40.107.255.50])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Np/Y5Moz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C98018786C;
-	Wed, 18 Sep 2024 09:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726653304; cv=fail; b=imsj6hEUinj1e19/kIptj6NJ1q/TyY7QidltBcvFmuKNifxBVSv3WwWiRnOgHGj/87vOTVEkrYZcrKL4vGPIgvdWd7E7IISGSbe6e4nRQFeinz/jEd2PUw9Hn2Cdf2ncIX2O8ARub3Hik+azt2Cd0DlD6oRqSQiM2wg36to5MUQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726653304; c=relaxed/simple;
-	bh=mIsFmPNF1WsQ90uQuJHjT8XHiotMUZdUbTD19LPGRVU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jSfHuItvUVs0Ow2g7BNhN7jAv4e+IBC+QCIf9mNkqOrFwsH6gFlBhdI6vg0UkzY+ALq3QGEaSzgUy3bVxELs+mYhc6m/WvU3MZ4sLv3Rn/R1sg/Yr7EJmQdffTS37l6meASfcSZDJ3LjCKArxsSr1/q+KmjBUNx4H/8ale22Ew8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=NVx/Be0j; arc=fail smtp.client-ip=40.107.255.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EoShRBzApfqe6hvPlsSp7J49HBHHkD2tyVRqtwR+oOEumBkLXvkrh1CofDK2Rjcs0BDcZhofMfb54uzy2mzX7uZ7bgUo3v/pmyl2g6gi/mb3b8TPfzki/4mUZasPR50YpuhE8tqdhWym6Sdphg6T99ZiTSALsrX0DAIrapZvA1XFXnZtuvxYuxrArTZUHKmBgvX/LdY1fxr3K31VuvjJy1vDtdXAlPOm6lXFnr9B3PWBCpvWjKoL2YHyvRLj3oMwp5XJBBAe9USaWjWIkWg4zwHNyJkG4e9QQdy9uh2QWCjJarPzvbt0rTxrejkMca3/D5DlOmtEMXy5Tz/xxT+0RQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=82UjMnDviUCfoXJpruXdvSFIJEpdlnWeojGSnk0G3CI=;
- b=sVIftR+mVjKQwdgTGylNGnpLnpNJGAOTJIIS3c8RWCXi+pqpm7rlkAoNU5ZB1a7N3kYX9W4c/0FMT4z7DrvU2loTOkVdDeWYF3KWAhPCV5PlFyqivDCXnJBY9+KkC4GVJNJbCEI7RI/e6dTq/xCDF88WixGYSRhKjO+LieJS2AQhC+b/Die5AvcaeaZr40OVJmP834T7Xmzwo9fLys086yGGKqgFmf0NlpH0KGpGh9KiYxSE83NRGP4wJByQDPx7t8un8PJSqi+bPFtfKPHmLtFpM0x14YXTk8tHLROg18yhLiNgXB/2v16ggOMbsXbMJJvywPO6IhH6auJItw3iig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
- (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=82UjMnDviUCfoXJpruXdvSFIJEpdlnWeojGSnk0G3CI=;
- b=NVx/Be0jCVjU2EJ3DlppFWKvQiHb3LAbi66f3E3ScF3r/TSQ87wG1pqqbeEe77GYhZXRNNpdIshc/wDFFlGfDJc3rFLf3/8NCx3oeFLzHOjXNC4Gniz7nrC0zj8lZOtlAkQiIdZ5Lhk3D0jeSJkGmvjruSoh+SYn4GUiz9pF9b/i5nAw+bYjm+2cGXi6QZU5XWEjjKB9awd9lUuVUPXiTTzI5G0cfW4xE0ApKmTSzceDLGV6NrF6StEGA922Ii4DNl1IFaitWxpNegpPIltbFeWjWHHSIIqAE8U354wQGuI4PEnVUK7lSWRcmNBtIMOWdiUALXSugT2INE/O6g6iMQ==
-Received: from SG2PR01CA0115.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::19) by TYZPR04MB5608.apcprd04.prod.outlook.com
- (2603:1096:400:1cc::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Wed, 18 Sep
- 2024 09:54:55 +0000
-Received: from SG1PEPF000082E4.apcprd02.prod.outlook.com
- (2603:1096:4:40:cafe::14) by SG2PR01CA0115.outlook.office365.com
- (2603:1096:4:40::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.30 via Frontend
- Transport; Wed, 18 Sep 2024 09:54:55 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
- smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
-Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
- designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
- client-ip=211.20.1.79; helo=localhost.localdomain;
-Received: from localhost.localdomain (211.20.1.79) by
- SG1PEPF000082E4.mail.protection.outlook.com (10.167.240.7) with Microsoft
- SMTP Server id 15.20.7918.13 via Frontend Transport; Wed, 18 Sep 2024
- 09:54:54 +0000
-From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-To: patrick@stwcx.xyz,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Noah Wang <noahwang.wang@outlook.com>,
-	Peter Yin <peteryin.openbmc@gmail.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org
-Subject: [PATCH v2 3/3] ARM: dts: aspeed: yosemite4: Add power module and ADC on Medusa Board
-Date: Wed, 18 Sep 2024 17:54:36 +0800
-Message-Id: <20240918095438.1345886-4-Delphine_CC_Chiu@wiwynn.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240918095438.1345886-1-Delphine_CC_Chiu@wiwynn.com>
-References: <20240918095438.1345886-1-Delphine_CC_Chiu@wiwynn.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C730D17E44F
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 09:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726653300; cv=none; b=Z0nlDOUBxjt89QRInOg+GTf7GunaVaApzORs8MgXNdwq8qLvtto9Uw/OhF0E66OQOIj7Elwif7l69s3ssZ+kEr46x472nXjm5JZ1L66JaKtTxgutIp5Akx5VXUVbTi4NMjcmebC6LYFS88nydiwMDW1Ce8Qu00YtBdBNpXnvWOY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726653300; c=relaxed/simple;
+	bh=+zr7tNMOR3efLGHCn2JGk9O1Z2BpOM4E+d/bDLkml7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EeqUOYwHwSNhO9MfOfmfp6uwJOMhJSIXnRfMj/eIvci+Chfbuaika0ld3cv6U0mE+EGNZEirRt7A0XFvBve5KQ20d7nD4FIxBIgtze5PtNeJYLwRc5B2F5NLX55CoTdWcNvv8yL0yxUHcFFZj06e6gG5NceD40NXcqF1UoAT5Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Np/Y5Moz; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726653299; x=1758189299;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=+zr7tNMOR3efLGHCn2JGk9O1Z2BpOM4E+d/bDLkml7c=;
+  b=Np/Y5MozoTNADhU3MMzRqtR8tYe9olFXP7eRwVhyldsxvpD8BwgWmZPL
+   RrgOizhzcmt+ahp4EF1jAATPNkMSt6UfCB03lGGKYuh0EaPxk6TOG060X
+   6Nc6YFnkrMEwZoV9vn31x86hYn70ea4ujrnzxxQj4m8ExDjqJfzA29yuW
+   C0lKyARLChWaBBZBtDgdUy7HYxN6jyWhXN4Ub9jvbJYYhcmgfjuk4zFNk
+   jDQEVNa7oS7oe/C3GUGEtrXJ6yWNUwckF7eLf05v/+jxgCmYBLlsQ5U2B
+   J0Aw4ffwzvAs3aKb4wK0KD0272PQfa6ONDY5AjEb3xmJBQ80+SGKcVbVG
+   w==;
+X-CSE-ConnectionGUID: qhKILtPZTLq8VSIsdG6KQA==
+X-CSE-MsgGUID: BeFdZk2PTAyUyL2msl44qw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="29340986"
+X-IronPort-AV: E=Sophos;i="6.10,238,1719903600"; 
+   d="scan'208";a="29340986"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 02:54:53 -0700
+X-CSE-ConnectionGUID: Ys9dOQQWQRKrrsvLg/Yukw==
+X-CSE-MsgGUID: uTLtbHumSBqatuvZgxlmfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,238,1719903600"; 
+   d="scan'208";a="69821590"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 02:54:50 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sqrOY-0000000A8O2-3SeS;
+	Wed, 18 Sep 2024 12:54:46 +0300
+Date: Wed, 18 Sep 2024 12:54:46 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jerome Forissier <jerome.forissier@linaro.org>
+Cc: Rijo Thomas <Rijo-john.Thomas@amd.com>,
+	Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
+	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] tee: amdtee: Use %pUl printk() format specifier
+ to print GUIDs
+Message-ID: <ZuqjZswbhLY1iEfr@smile.fi.intel.com>
+References: <20240911204136.2887858-1-andriy.shevchenko@linux.intel.com>
+ <CAHUa44G4O0JgqN=BwvshRXzUeEE1oXD1o8Yn-5X6p5qY8vkDQA@mail.gmail.com>
+ <ZuQF_w7G1A90tYG3@smile.fi.intel.com>
+ <5c95cbc6-48b6-9cf4-8682-fc6469cb9c81@amd.com>
+ <Zuf8fw1MM0jaisUh@smile.fi.intel.com>
+ <94e37138-ae66-4336-93ac-79683f2058aa@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E4:EE_|TYZPR04MB5608:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: f6c87104-e1bd-43a7-a5e0-08dcd7c7f2e1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|32650700017|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?riBDxNBfuY6P+HW0MJCzSZvDWwb2yoUQH5AJV3+HnJkUg5Qp2NQEoybUn+1m?=
- =?us-ascii?Q?84gPcrXLxUQHOc/A84ZHO4ff7Tb6hlNCNL2NOImUFbQHlTg2OMONTikPUqZA?=
- =?us-ascii?Q?/MW0XIxCaxuuwW/Yxh/YRRfFL5KZjr9vLX3239zXTEeky2lYXepi4PC2T1at?=
- =?us-ascii?Q?/vL7rNcZycvY5pCq+F2z0KcyGgFk6nMZRnxOrxuddPXKY5m+0Azo5qqIW9lV?=
- =?us-ascii?Q?9ugKtwtEgC6ynuD0Xdonvvq1WoMJvpAkfTa/ShDWO65lKS6mdonthDvA0gi9?=
- =?us-ascii?Q?d8fwSgR01X8IRqD3tqeDwCSLsCCpACErK1kz/9tus8gx24UVUCuv9moYRuHo?=
- =?us-ascii?Q?UwB8M7meU2KrfZ6zZyWwD+9r4e6KL3O53oIt6V5Z1118mbeuNGv9LvWJwgxl?=
- =?us-ascii?Q?gkjIQ4+9R0nPItWmzeVVntfL6dYlBmTJZLlsAMt2HDyT69pUxa6Eob18bM2b?=
- =?us-ascii?Q?hqicHw1c8vw6u8866q6NRAzw9OyLbr9VriiO6JuRw9890N20aW6/nCu3aE//?=
- =?us-ascii?Q?ZCctluYOeMopEaMZbWz2jj+3SZIhnOk7aSZAH2XsfLTPCmurNhdqtCk/utD4?=
- =?us-ascii?Q?EzqduVFFS+ir6bdnZf67PRiKTu7LQ8xCQOaWi7ZenqIIlcGZChA8hiUK+rr+?=
- =?us-ascii?Q?iA0ZjLJpdj3No+xpo94ghEYAsylgo3d08H2Tt22ZT9UPfmaSbn3gYCdCNZSd?=
- =?us-ascii?Q?eV/g4lbYYUBeNIXLwNYauMp6OlFWsWCMzRlyYD/8tDdsmF/ZURdBdVP7V0tD?=
- =?us-ascii?Q?KFF08pwYovURm861ztxvHe+WYhWleI0YKrUVox4PcwoHRqeXJQCT5tQXhphz?=
- =?us-ascii?Q?g87G1BrfI7gkev5fpw7ygV9G6Mt7MLu01bSDdHGakEvowrPFznhIj/opWUyY?=
- =?us-ascii?Q?ChyNC/qvj+UCKUnOQ1qL6+inUg33ugVHEZGnTqfqthJpa3IggsuSFuB1t7+J?=
- =?us-ascii?Q?1ZTvGbsBFmBU/t/t/7L+FS21rst+zxfJhyUiPeHzg8q2/zIFEsHEK3J5WpBZ?=
- =?us-ascii?Q?SKj7OR0c777sSk4O4QHFHpQoqSBT5y8GgyV7UPxNGVdLQO2nlJ1KcRRxkHh1?=
- =?us-ascii?Q?/5z18JiJM9dPvDUNigvk+MUSj88X2PMatAIjq1GVOmmjvP45TfE1eV2FN7Nh?=
- =?us-ascii?Q?7PvpxybWQS1kAHYq9iMsX3kQn7OhFsaiF0C/qmLOujKZlHKX3dmA2O9oaaj+?=
- =?us-ascii?Q?LrWaNxQIK1Yqo09FNJ3QRhngr3eofGYhJkxmZsSruviJEu/Dg5XKSHvsU6xI?=
- =?us-ascii?Q?lbSwY1D5RtgOA0TSET+6C1DH053qQ5UrUOOZguelLaWSPbgZ/LRyRZaJ5MWk?=
- =?us-ascii?Q?LhcJjPMN4JVybPjfKcdOCtoUDai1ocb/ULdq0UmAx9MW0Q4NhKmM8UjHqMSZ?=
- =?us-ascii?Q?MqhZ6qDmCYb7lOjjfYyqyUxfQiEUeCr0UGtyIKlAVCr067Qk/7xbNrkLxkYP?=
- =?us-ascii?Q?Fz5luEZDo3keq+ZA06VZ3JUWr6cl6jF7?=
-X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(32650700017)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 09:54:54.3262
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6c87104-e1bd-43a7-a5e0-08dcd7c7f2e1
-X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E4.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR04MB5608
+In-Reply-To: <94e37138-ae66-4336-93ac-79683f2058aa@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+On Tue, Sep 17, 2024 at 09:22:19AM +0200, Jerome Forissier wrote:
+> On 9/16/24 11:38, Andy Shevchenko wrote:
+> > On Mon, Sep 16, 2024 at 01:38:27PM +0530, Rijo Thomas wrote:
+> >> On 9/13/2024 2:59 PM, Andy Shevchenko wrote:
+> >>> On Thu, Sep 12, 2024 at 07:50:08AM +0200, Jens Wiklander wrote:
+> >>>> On Wed, Sep 11, 2024 at 10:41 PM Andy Shevchenko
+> >>>> <andriy.shevchenko@linux.intel.com> wrote:
+> >>>>>
+> >>>>> Replace the custom approach with the %pUl printk() format specifier.
+> >>>>> No functional change intended.
+> >>>
+> >>>> Thanks, the patch looks like a nice simplificatrion.
+> >>>
+> >>> Thank you for the review.
+> >>>
+> >>>> Rijo, Devaraj, does this work for you?
+> >>>
+> >>> Yes, please test, because seems others use uuid_t (UUID BE) for TEE,
+> >>> but in this driver IIUC it's guid_t (UUID LE).
+> >>
+> >> No, this does not work for us. I tested this patch, it does not work as expected.
+> >>
+> >> %pUl gives output in uuid format (%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x).
+> >> But, what we need, is a name with the format %08x-%04x-%04x-%02x%02x%02x%02x%02x%02x%02x%02x.
+> >>
+> >> Endian-ness is not an issue here. uuid generates name with 4 hypens (-).
+> >> While, in our TA naming we are using 3 hyphens (-).
+> > 
+> > Ah, good catch! Can somebody add a comment there to explain that this uses
+> > non-standard human-readable representation of GUID/UUID?
+> 
+> Could this be due to some copying/pasting from the OP-TEE code base which had
+> a similar mistake prior to v2.3.0 [1][2][3]?
+> 
+> [1] https://github.com/OP-TEE/optee_os/blob/2.3.0/CHANGELOG.md?plain=1#L40-L45
+> [2] https://github.com/OP-TEE/optee_client/commit/a5b1ffcd26e3
+> [3] https://github.com/OP-TEE/optee_client/commit/365657667f89
 
-Add RTQ6056 as 2nd source ADC sensor on Medusa Board.
-Add power sensors on Medusa board:
-- Add XDP710 as 2nd source HSC to monitor P48V PSU power.
-- Add MP5023 as P12V efuse (Driver exists but un-documented).
-- Add PMBUS sensors as P12V Delta Module.
+Interesting... Is somebody going to update this to follow the proper format?
+(yes, I understand that the old one has still to be supported)
 
-Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
-Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
----
- .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 45 ++++++++++++++++++-
- 1 file changed, 43 insertions(+), 2 deletions(-)
+> > P.S. Thank you for testing!
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-index 98477792aa00..e486b9d78f61 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-@@ -284,15 +284,25 @@ &i2c10 {
- &i2c11 {
- 	status = "okay";
- 	power-sensor@10 {
--		compatible = "adi, adm1272";
-+		compatible = "adi,adm1272";
- 		reg = <0x10>;
- 	};
- 
-+	power-sensor@11 {
-+		compatible = "infineon,xdp710";
-+		reg = <0x11>;
-+	};
-+
- 	power-sensor@12 {
--		compatible = "adi, adm1272";
-+		compatible = "adi,adm1272";
- 		reg = <0x12>;
- 	};
- 
-+	power-sensor@13 {
-+		compatible = "infineon,xdp710";
-+		reg = <0x13>;
-+	};
-+
- 	gpio@20 {
- 		compatible = "nxp,pca9555";
- 		reg = <0x20>;
-@@ -321,6 +331,17 @@ gpio@23 {
- 		#gpio-cells = <2>;
- 	};
- 
-+	power-sensor@40 {
-+		compatible = "mps,mp5023";
-+		reg = <0x40>;
-+	};
-+
-+	adc@41 {
-+		compatible = "richtek,rtq6056";
-+		reg = <0x41>;
-+		#io-channel-cells = <1>;
-+	};
-+
- 	temperature-sensor@48 {
- 		compatible = "ti,tmp75";
- 		reg = <0x48>;
-@@ -345,6 +366,26 @@ eeprom@54 {
- 		compatible = "atmel,24c256";
- 		reg = <0x54>;
- 	};
-+
-+	power-sensor@62 {
-+		compatible = "pmbus";
-+		reg = <0x62>;
-+	};
-+
-+	power-sensor@64 {
-+		compatible = "pmbus";
-+		reg = <0x64>;
-+	};
-+
-+	power-sensor@65 {
-+		compatible = "pmbus";
-+		reg = <0x65>;
-+	};
-+
-+	power-sensor@68 {
-+		compatible = "pmbus";
-+		reg = <0x68>;
-+	};
- };
- 
- &i2c12 {
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
 
