@@ -1,1089 +1,265 @@
-Return-Path: <linux-kernel+bounces-332451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA1C97B9D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:03:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B3D97B9F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF259288473
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:03:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E09821F22479
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A92117CA02;
-	Wed, 18 Sep 2024 09:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB223176FDB;
+	Wed, 18 Sep 2024 09:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JN6whrNy"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IWwIr0ng"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFE817C7BB;
-	Wed, 18 Sep 2024 09:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46A9139D09;
+	Wed, 18 Sep 2024 09:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726650203; cv=none; b=YlXHB5HnKZB3wHFPjyAtIyru7u5JxVq7rwciCC7YK5hmI2c+OcSABfTwJtyfkAPkqnK00zH5DdBLMAKe5UVKmpbZ457DLRd7IoAowkoD2rm7NoJcIXJBSWr8FA3SXLpxKmJ1QnCw1fET0Xp/OR8OSFr4+0s3U58uDIj4k2N/ynI=
+	t=1726650274; cv=none; b=EbfLTXr/8b+O0tZYFZxCYZEy4O5i+1CRbkGcYfjwgvacF85EPJI7HhnKITOTLTcFZuOUM2Z3bIdd9DSkGDz5msSSzXQp3R8ZTiUcxsYb0l2HrP7CVJjcFuFz99zN8kJ125Cq+raUd4/nglcK3h46VEdNKNTVP3gTV3k69fB8I7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726650203; c=relaxed/simple;
-	bh=zAtx6vH91VfNm4spqv2Lo6L9jKCX1m1busbgrYxsQGg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i6ykvMDEa5p+VvOg0sSOK6rr192uZK2mZvKAvM2oKGpK8/vUSKuE5cGuAkdatLBqM8boQjqclUl4JKr7rNao49miAbrNuEMmla6X3QGtUzP4pVaQtXt3l9H/ISzREiHO0+2B/WEHfks3FH0gjTrNPK6+8hozm9EijLrEVC1O31k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JN6whrNy; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-206f9b872b2so59294725ad.3;
-        Wed, 18 Sep 2024 02:03:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726650200; x=1727255000; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hNtbC7DlCoR/OUToXi/QcEm3enZRPjoUdTSvBrwT24M=;
-        b=JN6whrNyiznXZRGEEwWg8MQykRK8HTKAKTrV7ynnyFnf4LpRoehzHUvgjCyRu1NzEv
-         ObFMvAInp8f7Qacsx2tYXV64kO0rLK4jYSePLIGPK/V+qcM8pG5zOB1s70IuIgEoJhYp
-         HymxRKWfx0eJASOKp2VEcGG4kOJHxzC+xCz9EngacF8H8jt4ppavxHz3T1nzD/BVFE/N
-         ZedGQFcf8ZMSssW2z7iwCoSgPqsu8Zl+AoTcR6EJLf1B03thldFFzhsZ4xeYJrfVmsR0
-         evsskUin3ZXKQXYeKmPUwuLQ7lbyKtXMCcfpjJzFyKg9+71DNSb3zsn4kLVdUDycyBBb
-         be+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726650200; x=1727255000;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hNtbC7DlCoR/OUToXi/QcEm3enZRPjoUdTSvBrwT24M=;
-        b=pMBbqrz1Qvu80rgaOGluztLowimVlr840EHQBg8L8vh1hsuk5UCJt7dphm56dFMb5m
-         FonFDxDY2+lvkY7zvRm1PPhOM+k9YpR+VOTdilwi+9Ashx6VjwFLUp/qxaDlx+5Y5Pi4
-         AcxVj/toAdx6hD1qkqfFRuyaz69d9YOq0KfeCO97h7dYPC2p35VxC1iBcL4IhAHCjvss
-         8H7UXnnGphNMy9DG5vvKj5aCfqzc3fTGC2laQg4IHKB6ItD9C3EM3us0sf4QtpAaW+mb
-         N/GHvoDZTud0LbIXYp2nR6aQPdrJNGPkMxv/mScLUIdovA+C/p8OA2N0xTnhR9dqrFXv
-         zFmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzGH5AVcjlc2yzyHC2TOTInsPT0ElV77JUKLnDz0H4Q3/yJ1HODtY8LUf+D65uShex1BW5R8gwZi3IfRs=@vger.kernel.org, AJvYcCVX7dYVj2wCyui5+nAPtZV/LnJAKoIBJl2A3f5kycO5YhEf1uGctBDf6VrAeTAHNlPcHTjpktRu6/IG@vger.kernel.org, AJvYcCXN1iX6Wrbbl2mKKGEdfAs1JItZzyAHsZG+V4GOHPWktj3xftODoEOeYmJCCEezNxCyUKjQoLcDROf0cx89@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ3yH7Wr5HRwTq+XupeVpC9S6OsVoBdDJzXqZEtXjENj5mwydU
-	4TeDnf8ivhc+ih18AHOT1yGkFS1C8JvyjlWrIoyApQyRQGkGzPTL
-X-Google-Smtp-Source: AGHT+IFaCMyEEjZKFwncs35JRly0dOAsAxqkLNSDFIRH74lsexQMxCdfKZgvqoOhs6XswXqONBYhpw==
-X-Received: by 2002:a17:902:d491:b0:205:56e8:4a4c with SMTP id d9443c01a7336-2076e3d584bmr309537635ad.26.1726650200100;
-        Wed, 18 Sep 2024 02:03:20 -0700 (PDT)
-Received: from localhost.localdomain (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946010f9sm61021875ad.84.2024.09.18.02.03.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 02:03:19 -0700 (PDT)
-From: Hui-Ping Chen <hpchen0nvt@gmail.com>
-To: miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	sumit.semwal@linaro.org,
-	christian.koenig@amd.com,
-	esben@geanix.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-mtd@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	Hui-Ping Chen <hpchen0nvt@gmail.com>
-Subject: [PATCH v4 2/2] mtd: rawnand: nuvoton: add new driver for the Nuvoton MA35 SoC
-Date: Wed, 18 Sep 2024 09:03:08 +0000
-Message-Id: <20240918090308.292617-3-hpchen0nvt@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240918090308.292617-1-hpchen0nvt@gmail.com>
-References: <20240918090308.292617-1-hpchen0nvt@gmail.com>
+	s=arc-20240116; t=1726650274; c=relaxed/simple;
+	bh=CmFZzQI3YutkouFh6JjtCjCs7WLLz/CgKJDtUz9T2nQ=;
+	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=CNF/rBXXfLUmd88nDhdHa5JPbM7V7SlgMuue5/g6QyPXG3QfEp6JGYs8eV/HtMeKO/UiwnjHlPvi2li72rRvZB/HEXI84h7aJ8TUW23GmVAWSpCV3DCrOFC0paun/oUyUWTXNb83L/zbOPIRT3WqzLYqhjZUbhhXLjcocphG6Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IWwIr0ng; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48I7VhI6030209;
+	Wed, 18 Sep 2024 09:04:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:date:subject:content-type:message-id:to:cc
+	:content-transfer-encoding:mime-version; s=pp1; bh=uIZEulEggDzH1
+	/wp03fYzxvgOu8tl7wxppWtrY9bPII=; b=IWwIr0ng1wBn7pWRQxUrlZ5eyUAai
+	CNnaGlxe9WedaK+d90nBhaAfXs55pKpMIs0l8wRIq+LkCkCYkz3Y6LIpQWZmjg5l
+	yQQGhjNRztr5BZx7/GMTMtLbxl32l1K224ZeOmMFvHK9i9mI7yDk5959xgcTCs7A
+	52GMxkQMPerKbnBJQsPPC5XxltSm25SkWzD1CE66ylZekRNftJPjVQeSbK7+HAE+
+	eC7h+lkuveppsGPym6nNdU+FM9Hgvqhcih3NiObdXd3HV8/J7FmytV0TLEpooaju
+	O5HtAPR8eUtTxOOfiv5BMVdNsGFoUEvSYowwaVGpE1qWmrxHReHviyDtw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41pht8kym4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Sep 2024 09:04:29 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48I8vN1N014187;
+	Wed, 18 Sep 2024 09:04:28 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41pht8kym1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Sep 2024 09:04:28 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48I7YhmS031056;
+	Wed, 18 Sep 2024 09:04:28 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41npana02g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Sep 2024 09:04:28 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48I94QBZ25035278
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 18 Sep 2024 09:04:26 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C779E58055;
+	Wed, 18 Sep 2024 09:04:26 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B03655804E;
+	Wed, 18 Sep 2024 09:04:24 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 18 Sep 2024 09:04:24 +0000 (GMT)
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+Date: Wed, 18 Sep 2024 11:04:22 +0200
+Subject: [PATCH v2] PCI: s390: Handle ARI on bus without associated struct
+ pci_dev
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20240918-ari_no_bus_dev-v2-1-83cfa991082f@linux.ibm.com>
+X-B4-Tracking: v=1; b=H4sIAJWX6mYC/13MywqDMBCF4VeRWTdiRpvQrvoeRcTLpA7URJIaL
+ OK7N5WuuvwPnG+DQJ4pwDXbwFPkwM6mwFMG/djaBwkeUgMWWBUaK9F6bqxruiU0A0Vxxg5b1Ka
+ slIJ0mj0ZXg/wXqceObycfx9+lN/1R5XFPxWlkEIPJLXSylwM3Z5slzXnbsp7N0G97/sHsiyM6
+ bAAAAA=
+To: Bjorn Helgaas <bhelgaas@google.com>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Gerd Bayer <gbayer@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, Niklas Schnelle <schnelle@linux.ibm.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5602;
+ i=schnelle@linux.ibm.com; h=from:subject:message-id;
+ bh=CmFZzQI3YutkouFh6JjtCjCs7WLLz/CgKJDtUz9T2nQ=;
+ b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGNJeTZ+hHbGw8NDkj28/3PTccjzi2wWZtXM3f7Zkvc0et
+ b93mVXPno5SFgYxLgZZMUWWRV3OfusKppjuCervgJnDygQyhIGLUwAmkiLHyLDub+nxkiojveqL
+ f5b8qe9v32QyW53Z7GBh3IVXPRuLLE8w/LNNZLIXmWuo62/07VC3QeaRJj9hWcvW2woZJjMtz7D
+ 1sQEA
+X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
+ fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: YIhaOUbJKQ8HvUARi3VhisEOVSSuJrkS
+X-Proofpoint-ORIG-GUID: b-p4DsvQp9N17SfN841MghWEGaB7FGvA
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-18_07,2024-09-16_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 bulkscore=0 suspectscore=0 priorityscore=1501 adultscore=0
+ mlxlogscore=985 mlxscore=0 clxscore=1011 malwarescore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409180054
 
-Nuvoton MA35 SoCs NAND Flash Interface Controller
-supports 2kiB, 4kiB and 8kiB page size, and up to
-8-bit, 12-bit, and 24-bit hardware ECC calculation
-circuit to protect data.
+On s390 PCI busses are virtualized and the downstream ports are
+invisible to the OS and struct pci_bus::self is NULL. This associated
+struct pci_dev is however relied upon in pci_ari_enabled() to check
+whether ARI is enabled for the bus. ARI is therefor always detected as
+disabled.
 
-Signed-off-by: Hui-Ping Chen <hpchen0nvt@gmail.com>
+At the same time firmware on s390 always enables and relies upon ARI
+thus causing a mismatch. Moreover with per-PCI function pass-through
+there may exist busses with no function with devfn 0. For example
+a SR-IOV capable device with two PFs may have separate function
+dependency link chains for each of the PFs and their child VFs. In this
+case the OS may only see the second PF and its child VFs on a bus
+without a devfn 0 function. A situation which is also not supported by
+the common pci_configure_ari() code.
+
+Dispite simply being a mismatch this causes problems as some PCI devices
+present a different SR-IOV topology depending on PCI_SRIOV_CTRL_ARI.
+
+A similar mismatch may occur with SR-IOV when virtfn_add_bus() creates new
+busses with no associated struct pci_dev. Here too pci_ari_enabled()
+on these busses would return false even if ARI is actually used.
+
+Prevent both mismatches by moving the ari_enabled flag from struct
+pci_dev to struct pci_bus making it independent from struct pci_bus::
+self. Let the bus inherit the ari_enabled state from its parent bus when
+there is no bridge device such that busses added by virtfn_add_bus()
+match their parent. For s390 set ari_enabled when the device supports
+ARI in the awareness that all PCIe ports on s390 systems are ARI
+capable.
+
+Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
 ---
- drivers/mtd/nand/raw/Kconfig               |   8 +
- drivers/mtd/nand/raw/Makefile              |   1 +
- drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c | 935 +++++++++++++++++++++
- 3 files changed, 944 insertions(+)
- create mode 100644 drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c
+Note: In a comment of the v1 thread I discussed an alternative idea for
+a generic solution that would include the Jailhouse hypervisor via
+hypervisor_isolated_pci_functions(). As Bjorn correctly pointed out this
+more generic solution however lacks a way to indicate that ARI is really
+enabled in the hardware. So instead for now I propose to stick with this
+patch which only enables this unconditionally on s390x and SR-IOV
+virtual busses where the ARI is inherited.
+---
+Changes in v2:
+- Rebased on v6.11
+- Link to v1: https://lore.kernel.org/r/20240730-ari_no_bus_dev-v1-1-7de17676f9fe@linux.ibm.com
+---
+ arch/s390/pci/pci_bus.c | 12 ++++++++++++
+ drivers/pci/pci.c       |  4 ++--
+ drivers/pci/probe.c     |  1 +
+ include/linux/pci.h     |  4 ++--
+ 4 files changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
-index 614257308516..a95d91e61c42 100644
---- a/drivers/mtd/nand/raw/Kconfig
-+++ b/drivers/mtd/nand/raw/Kconfig
-@@ -448,6 +448,14 @@ config MTD_NAND_RENESAS
- 	  Enables support for the NAND controller found on Renesas R-Car
- 	  Gen3 and RZ/N1 SoC families.
+diff --git a/arch/s390/pci/pci_bus.c b/arch/s390/pci/pci_bus.c
+index daa5d7450c7d..021319438dad 100644
+--- a/arch/s390/pci/pci_bus.c
++++ b/arch/s390/pci/pci_bus.c
+@@ -278,6 +278,18 @@ void pcibios_bus_add_device(struct pci_dev *pdev)
+ {
+ 	struct zpci_dev *zdev = to_zpci(pdev);
  
-+config MTD_NAND_NUVOTON_MA35
-+	tristate "Nuvoton MA35 SoC NAND controller"
-+	depends on ARCH_MA35 || COMPILE_TEST
-+	depends on OF
-+	help
-+	  Enables support for the NAND controller found on
-+	  the Nuvoton MA35 series SoCs.
-+
- comment "Misc"
- 
- config MTD_SM_COMMON
-diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
-index 25120a4afada..b8e1b3af6942 100644
---- a/drivers/mtd/nand/raw/Makefile
-+++ b/drivers/mtd/nand/raw/Makefile
-@@ -57,6 +57,7 @@ obj-$(CONFIG_MTD_NAND_INTEL_LGM)	+= intel-nand-controller.o
- obj-$(CONFIG_MTD_NAND_ROCKCHIP)		+= rockchip-nand-controller.o
- obj-$(CONFIG_MTD_NAND_PL35X)		+= pl35x-nand-controller.o
- obj-$(CONFIG_MTD_NAND_RENESAS)		+= renesas-nand-controller.o
-+obj-$(CONFIG_MTD_NAND_NUVOTON_MA35)	+= nuvoton_ma35d1_nand.o
- 
- nand-objs := nand_base.o nand_legacy.o nand_bbt.o nand_timings.o nand_ids.o
- nand-objs += nand_onfi.o
-diff --git a/drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c b/drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c
-new file mode 100644
-index 000000000000..30cbcb999f1a
---- /dev/null
-+++ b/drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c
-@@ -0,0 +1,935 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Nuvoton Technology Corp.
-+ */
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/dmaengine.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/module.h>
-+#include <linux/mtd/mtd.h>
-+#include <linux/mtd/partitions.h>
-+#include <linux/mtd/rawnand.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+
-+/* NFI Registers */
-+#define MA35_NFI_REG_DMACTL		0x400
-+#define   DMA_EN				BIT(0)
-+#define   DMA_RST				BIT(1)
-+#define   DMA_BUSY				BIT(9)
-+
-+#define MA35_NFI_REG_DMASA		0x408
-+#define MA35_NFI_REG_GCTL		0x800
-+#define   NAND_EN				BIT(3)
-+
-+#define MA35_NFI_REG_NANDCTL		0x8A0
-+#define   SWRST				BIT(0)
-+#define   DMA_R_EN				BIT(1)
-+#define   DMA_W_EN				BIT(2)
-+#define   ECC_CHK				BIT(7)
-+#define   PROT3BEN				BIT(8)
-+#define   PSIZE_2K				(1 << 16)
-+#define   PSIZE_4K				(2 << 16)
-+#define   PSIZE_8K				(3 << 16)
-+#define   PSIZE_MASK				(3 << 16)
-+#define   BCH_T24				BIT(18)
-+#define   BCH_T8				BIT(20)
-+#define   BCH_T12				BIT(21)
-+#define   BCH_NONE				(0x0)
-+#define   BCH_MASK				(0x1f << 18)
-+#define   ECC_EN				BIT(23)
-+#define   DISABLE_CS0				BIT(25)
-+
-+#define MA35_NFI_REG_NANDINTEN	0x8A8
-+#define MA35_NFI_REG_NANDINTSTS	0x8AC
-+#define   INT_DMA				BIT(0)
-+#define   INT_ECC				BIT(2)
-+#define   INT_RB0				BIT(10)
-+#define   INT_RB0_STS				BIT(18)
-+
-+#define MA35_NFI_REG_NANDCMD		0x8B0
-+#define MA35_NFI_REG_NANDADDR		0x8B4
-+#define   ENDADDR				BIT(31)
-+
-+#define MA35_NFI_REG_NANDDATA		0x8B8
-+#define MA35_NFI_REG_NANDRACTL	0x8BC
-+#define MA35_NFI_REG_NANDECTL		0x8C0
-+#define   ENABLE_WP				0x0
-+#define   DISABLE_WP				BIT(0)
-+
-+#define MA35_NFI_REG_NANDECCES0	0x8D0
-+#define   ECC_STATUS_MASK			0x3
-+#define   ECC_ERR_CNT_MASK			0x1f
-+
-+#define MA35_NFI_REG_NANDECCEA0	0x900
-+#define MA35_NFI_REG_NANDECCED0	0x960
-+#define MA35_NFI_REG_NANDRA0		0xA00
-+
-+#define SKIP_SPARE_BYTES	4
-+
-+
-+/* Define for the BCH hardware ECC engine */
-+/* define the total padding bytes for 512/1024 data segment */
-+#define MA35_BCH_PADDING_512	32
-+#define MA35_BCH_PADDING_1024	64
-+/* define the BCH parity code length for 512 bytes data pattern */
-+#define MA35_PARITY_BCH8	15
-+#define MA35_PARITY_BCH12	23
-+/* define the BCH parity code length for 1024 bytes data pattern */
-+#define MA35_PARITY_BCH24	45
-+
-+
-+struct ma35_nand_info {
-+	struct nand_controller controller;
-+	struct nand_chip chip;
-+	struct device *dev;
-+	void __iomem *regs;
-+	int irq;
-+	struct clk *clk;
-+	struct completion complete;
-+
-+	u32 bch;
-+	u8 *dma_buf;
-+	u8 *ecc_buf;
-+	spinlock_t dma_lock;
-+	dma_addr_t dma_addr;
-+};
-+
-+static int ma35_ooblayout_ecc(struct mtd_info *mtd, int section,
-+			      struct mtd_oob_region *oobregion)
-+{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+
-+	if (section)
-+		return -ERANGE;
-+
-+	oobregion->length = chip->ecc.total;
-+	oobregion->offset = mtd->oobsize - oobregion->length;
-+
-+	return 0;
-+}
-+
-+static int ma35_ooblayout_free(struct mtd_info *mtd, int section,
-+			       struct mtd_oob_region *oobregion)
-+{
-+	struct nand_chip *chip = mtd_to_nand(mtd);
-+
-+	if (section)
-+		return -ERANGE;
-+
-+	oobregion->length = mtd->oobsize - chip->ecc.total - 2;
-+	oobregion->offset = 2;
-+
-+	return 0;
-+}
-+
-+static const struct mtd_ooblayout_ops ma35_ooblayout_ops = {
-+	.free = ma35_ooblayout_free,
-+	.ecc = ma35_ooblayout_ecc,
-+};
-+
-+static inline void ma35_clear_spare(struct nand_chip *chip, int size)
-+{
-+	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-+	int i;
-+
-+	for (i = 0; i < size/4; i++)
-+		writel(0xff, nand->regs + MA35_NFI_REG_NANDRA0);
-+}
-+
-+static inline void read_remaining_bytes(struct ma35_nand_info *nand, u32 *buf,
-+						u32 offset, int size)
-+{
-+	u32 value = readl(nand->regs + MA35_NFI_REG_NANDRA0 + offset);
-+	u8 *ptr = (u8 *)buf;
-+	int i;
-+
-+	for (i = 0; i < size; i++)
-+		ptr[i] = (value >> (i * 8)) & 0xff;
-+}
-+
-+
-+static inline void ma35_read_spare(struct nand_chip *chip, int size, u32 *buf, u32 offset)
-+{
-+	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-+	int i, j;
-+
-+	if ((offset % 4) == 0) {
-+		for (i = 0, j = 0; i < size / 4; i++, j += 4)
-+			*buf++ = readl(nand->regs + MA35_NFI_REG_NANDRA0 + offset + j);
-+
-+		read_remaining_bytes(nand, buf, offset + j, size % 4);
-+	} else {
-+		read_remaining_bytes(nand, buf, offset, 4 - (offset % 4));
-+		offset += 4;
-+		size -= (4 - (offset % 4));
-+
-+		for (i = 0, j = 0; i < size / 4; i++, j += 4)
-+			*buf++ = readl(nand->regs + MA35_NFI_REG_NANDRA0 + offset + j);
-+
-+		read_remaining_bytes(nand, buf, offset + j, size % 4);
-+	}
-+}
-+
-+static inline void ma35_write_spare(struct nand_chip *chip, int size, u32 *buf)
-+{
-+	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-+	u32 value;
-+	int i, j;
-+	u8 *ptr;
-+
-+	for (i = 0, j = 0; i < size / 4; i++, j += 4)
-+		writel(*buf++, nand->regs + MA35_NFI_REG_NANDRA0 + j);
-+
-+	ptr = (u8 *)buf;
-+	switch (size % 4) {
-+	case 1:
-+		writel(*ptr, nand->regs + MA35_NFI_REG_NANDRA0 + j);
-+		break;
-+	case 2:
-+		value = *ptr | (*(ptr+1) << 8);
-+		writel(value, nand->regs + MA35_NFI_REG_NANDRA0 + j);
-+		break;
-+	case 3:
-+		value = *ptr | (*(ptr+1) << 8) | (*(ptr+2) << 16);
-+		writel(value, nand->regs + MA35_NFI_REG_NANDRA0 + j);
-+		break;
-+	default:
-+		break;
-+	}
-+}
-+
-+static inline void ma35_nand_target_enable(struct ma35_nand_info *nand)
-+{
-+	writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) & (~DISABLE_CS0),
-+		nand->regs+MA35_NFI_REG_NANDCTL);
-+}
-+
-+static inline void ma35_nand_target_disable(struct ma35_nand_info *nand)
-+{
-+	writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) | DISABLE_CS0,
-+		nand->regs + MA35_NFI_REG_NANDCTL);
-+}
-+
-+/*
-+ * Initialize hardware ECC
-+ */
-+static void ma35_nand_hwecc_init(struct ma35_nand_info *nand)
-+{
-+	struct mtd_info *mtd = nand_to_mtd(&nand->chip);
-+	u32 reg;
-+
-+	/* resets the internal state machine and counters */
-+	reg = readl(nand->regs + MA35_NFI_REG_NANDCTL);
-+	reg |= SWRST;
-+	writel(reg, nand->regs + MA35_NFI_REG_NANDCTL);
-+	while (readl(nand->regs + MA35_NFI_REG_NANDCTL) & SWRST)
-+		;
-+
-+	/* Redundant area size */
-+	writel(mtd->oobsize, nand->regs + MA35_NFI_REG_NANDRACTL);
-+
-+	/* Protect redundant 3 bytes */
-+	reg = readl(nand->regs + MA35_NFI_REG_NANDCTL);
-+	reg |= (PROT3BEN | ECC_CHK);
-+	writel(reg, nand->regs + MA35_NFI_REG_NANDCTL);
-+
-+	if (nand->bch == BCH_NONE) {
-+		/* Disable H/W ECC, ECC parity check enable bit during read page */
-+		writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) & (~ECC_EN),
-+			nand->regs + MA35_NFI_REG_NANDCTL);
-+	} else {
-+		/* Set BCH algorithm */
-+		writel((readl(nand->regs + MA35_NFI_REG_NANDCTL) & (~BCH_MASK)) |
-+			nand->bch, nand->regs + MA35_NFI_REG_NANDCTL);
-+
-+		/* Enable H/W ECC, ECC parity check enable bit during read page */
-+		writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) | ECC_EN,
-+			nand->regs + MA35_NFI_REG_NANDCTL);
-+	}
-+	spin_lock_init(&nand->dma_lock);
-+}
-+
-+
-+/* Correct data by BCH alrogithm */
-+static void ma35_nfi_correct(struct ma35_nand_info *nand, u8 index,
-+				 u8 err_cnt, u8 *addr)
-+{
-+	u32 temp_data[24], temp_addr[24];
-+	u32 padding_len, parity_len;
-+	u32 value, offset, remain;
-+	u32 err_data[6];
-+	u8  i, j;
-+
-+	/* configurations */
-+	switch (nand->bch) {
-+	case BCH_T24:
-+		parity_len = MA35_PARITY_BCH24;
-+		padding_len = MA35_BCH_PADDING_1024;
-+		break;
-+	case BCH_T12:
-+		parity_len = MA35_PARITY_BCH12;
-+		padding_len = MA35_BCH_PADDING_512;
-+		break;
-+	case BCH_T8:
-+		parity_len = MA35_PARITY_BCH8;
-+		padding_len = MA35_BCH_PADDING_512;
-+		break;
-+	default:
-+		dev_warn(nand->dev, "NAND ERROR: invalid SMCR_BCH_TSEL = 0x%08X\n",
-+			(u32)(readl(nand->regs + MA35_NFI_REG_NANDCTL) & BCH_MASK));
-+		return;
-+	}
-+
-+	/* got valid BCH_ECC_DATAx and parse them to temp_data[]
-+	 * got the valid register number of BCH_ECC_DATAx since
-+	 * one register include 4 error bytes
++	/*
++	 * On s390 PCI busses are virtualized and the bridge
++	 * devices are invisible to the OS. Furthermore busses
++	 * may exist without a devfn 0 function. Thus the normal
++	 * ARI detection does not work. At the same time fw/hw
++	 * has always enabled ARI when possible. Reflect the actual
++	 * state by setting ari_enabled whenever a device on the bus
++	 * supports it.
 +	 */
-+	j = (err_cnt + 3) / 4;
-+	j = (j > 6) ? 6 : j;
-+	for (i = 0; i < j; i++)
-+		err_data[i] = readl(nand->regs + MA35_NFI_REG_NANDECCED0 + i * 4);
-+
-+	for (i = 0; i < j; i++) {
-+		temp_data[i*4+0] = err_data[i] & 0xff;
-+		temp_data[i*4+1] = (err_data[i] >> 8) & 0xff;
-+		temp_data[i*4+2] = (err_data[i] >> 16) & 0xff;
-+		temp_data[i*4+3] = (err_data[i] >> 24) & 0xff;
-+	}
-+
-+	/* got valid REG_BCH_ECC_ADDRx and parse them to temp_addr[]
-+	 * got the valid register number of REG_BCH_ECC_ADDRx since
-+	 * one register include 2 error addresses
-+	 */
-+	j = (err_cnt + 1) / 2;
-+	j = (j > 12) ? 12 : j;
-+	for (i = 0; i < j; i++) {
-+		temp_addr[i*2+0] = readl(nand->regs + MA35_NFI_REG_NANDECCEA0 + i * 4)
-+					& 0x07ff;
-+		temp_addr[i*2+1] = (readl(nand->regs + MA35_NFI_REG_NANDECCEA0 + i * 4) >> 16)
-+					& 0x07ff;
-+	}
-+
-+	/* pointer to begin address of field that with data error */
-+	addr += index * nand->chip.ecc.steps;
-+
-+	/* correct each error bytes */
-+	for (i = 0; i < err_cnt; i++) {
-+		u32 corrected_index = temp_addr[i];
-+
-+		/* for wrong data in field */
-+		if (corrected_index < nand->chip.ecc.steps)
-+			*(addr + corrected_index) ^= temp_data[i];
-+
-+		/* for wrong first-3-bytes in redundancy area */
-+		else if (corrected_index < (nand->chip.ecc.steps + 3)) {
-+			corrected_index -= nand->chip.ecc.steps;
-+			temp_addr[i] += (parity_len * index);	/* field offset */
-+
-+			value = readl(nand->regs + MA35_NFI_REG_NANDRA0);
-+			value ^= temp_data[i] << (8 * corrected_index);
-+			writel(value, nand->regs + MA35_NFI_REG_NANDRA0);
-+		}
-+		/* for wrong parity code in redundancy area
-+		 * BCH_ERR_ADDRx = [data in field] + [3 bytes] + [xx] + [parity code]
-+		 *                                   |<--     padding bytes      -->|
-+		 * The BCH_ERR_ADDRx for last parity code always = field size + padding size.
-+		 * So, the first parity code = field size + padding size - parity code length.
-+		 * For example, for BCH T12, the first parity code = 512 + 32 - 23 = 521.
-+		 * That is, error byte address offset within field is
-+		 */
-+		else {
-+			corrected_index -= (nand->chip.ecc.steps + padding_len - parity_len);
-+
-+			/* final address = first parity code of first field +
-+			 *                 offset of fields +
-+			 *                 offset within field
-+			 */
-+			offset = (readl(nand->regs+MA35_NFI_REG_NANDRACTL) & 0x1ff) -
-+				(parity_len * nand->chip.ecc.steps) +
-+				(parity_len * index) + corrected_index;
-+
-+			remain = offset % 4;
-+			value = readl(nand->regs + MA35_NFI_REG_NANDRA0 + offset - remain);
-+			value ^= temp_data[i] << (8 * remain);
-+			writel(value, nand->regs + MA35_NFI_REG_NANDRA0 + offset - remain);
-+		}
-+	}
-+}
-+
-+static int ma35_nfi_ecc_check(struct nand_chip *chip, unsigned long addr)
-+{
-+	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-+	struct mtd_info *mtd = nand_to_mtd(chip);
-+	int status, i, j, nchunks = 0;
-+	int report_err = 0;
-+	int err_cnt = 0;
-+
-+	nchunks = mtd->writesize / chip->ecc.steps;
-+	if (nchunks < 4)
-+		nchunks = 1;
-+	else
-+		nchunks /= 4;
-+
-+	for (j = 0; j < nchunks; j++) {
-+		status = readl(nand->regs + MA35_NFI_REG_NANDECCES0 + j*4);
-+		if (!status)
-+			continue;
-+
-+		for (i = 0; i < 4; i++) {
-+			if (!(status & ECC_STATUS_MASK)) {
-+				/* No error */
-+				status >>= 8;
-+				continue;
-+
-+			} else if ((status & ECC_STATUS_MASK) == 0x01) {
-+				/* Correctable error */
-+				err_cnt = (status >> 2) & ECC_ERR_CNT_MASK;
-+				dev_warn(nand->dev, "nchunks (%d, %d) have %d error!\n",
-+					j, i, err_cnt);
-+				ma35_nfi_correct(nand, j*4+i, err_cnt, (u8 *)addr);
-+				report_err += err_cnt;
-+
-+			} else {
-+				/* uncorrectable error */
-+				dev_warn(nand->dev, "uncorrectable error! 0x%4x\n", status);
-+				return -1;
-+			}
-+			status >>= 8;
-+		}
-+	}
-+	return report_err;
-+}
-+
-+
-+/*
-+ * Initialize DMA
-+ */
-+static void ma35_nand_dmac_init(struct ma35_nand_info *nand)
-+{
-+	/* DMAC reset and enable */
-+	writel(DMA_RST | DMA_EN, nand->regs + MA35_NFI_REG_DMACTL);
-+	writel(DMA_EN, nand->regs + MA35_NFI_REG_DMACTL);
-+
-+	/* Clear DMA finished flag */
-+	writel(INT_DMA | INT_ECC, nand->regs + MA35_NFI_REG_NANDINTSTS);
-+
-+	init_completion(&nand->complete);
-+}
-+
-+
-+/*
-+ * configure and start dma transfer
-+ */
-+static int ma35_nand_do_write(struct nand_chip *chip, const u8 *addr, u32 len)
-+{
-+	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-+	struct mtd_info *mtd = nand_to_mtd(chip);
-+	dma_addr_t dma_addr;
-+	int ret = 0, i;
-+	u32 val, reg;
-+
-+	ma35_nand_target_enable(nand);
-+
-+	if (len != mtd->writesize) {
-+		for (i = 0; i < len; i++)
-+			writel(addr[i], nand->regs + MA35_NFI_REG_NANDDATA);
-+		ma35_nand_target_disable(nand);
-+		return ret;
-+	}
-+
-+	/* Check the DMA status before enabling the DMA */
-+	ret = readl_poll_timeout(nand->regs + MA35_NFI_REG_DMACTL, val,
-+				 !(val & DMA_BUSY), 50, HZ/2);
-+	if (ret)
-+		dev_warn(nand->dev, "dma busy\n");
-+
-+	/* Reinitial dmac */
-+	ma35_nand_dmac_init(nand);
-+
-+	writel(mtd->oobsize, nand->regs + MA35_NFI_REG_NANDRACTL);
-+
-+	/* setup and start DMA using dma_addr */
-+	writel(INT_DMA, nand->regs + MA35_NFI_REG_NANDINTEN);
-+	/* To mark this page as dirty. */
-+	reg = readl(nand->regs + MA35_NFI_REG_NANDRA0);
-+	if (reg & 0xffff0000)
-+		writel(reg & 0xffff, nand->regs + MA35_NFI_REG_NANDRA0);
-+
-+	/* Fill dma_addr */
-+	dma_addr = dma_map_single(nand->dev, (void *)addr, len, DMA_TO_DEVICE);
-+	dma_sync_single_for_device(nand->dev, dma_addr, len, DMA_TO_DEVICE);
-+	ret = dma_mapping_error(nand->dev, dma_addr);
-+	if (ret) {
-+		dev_err(nand->dev, "dma mapping error\n");
-+		return -EINVAL;
-+	}
-+
-+	writel((unsigned long)dma_addr, nand->regs + MA35_NFI_REG_DMASA);
-+	writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) | DMA_W_EN,
-+		nand->regs + MA35_NFI_REG_NANDCTL);
-+	ret = wait_for_completion_timeout(&nand->complete, msecs_to_jiffies(1000));
-+	if (!ret) {
-+		dev_err(nand->dev, "write timeout\n");
-+		ret = -ETIMEDOUT;
-+	}
-+
-+	dma_unmap_single(nand->dev, dma_addr, len, DMA_TO_DEVICE);
-+
-+	ma35_nand_target_disable(nand);
-+
-+	return ret;
-+}
-+
-+static int ma35_nand_do_read(struct nand_chip *chip, const u8 *addr, u32 len)
-+{
-+	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-+	struct mtd_info *mtd = nand_to_mtd(chip);
-+	u8 *ptr = (u8 *)addr;
-+	dma_addr_t dma_addr;
-+	int ret = 0, i;
-+	u32 val;
-+
-+	ma35_nand_target_enable(nand);
-+
-+	if (len != mtd->writesize) {
-+		for (i = 0; i < len; i++)
-+			*(ptr+i) = (u8)readl(nand->regs + MA35_NFI_REG_NANDDATA);
-+		ma35_nand_target_disable(nand);
-+		return ret;
-+	}
-+
-+	/* Check the DMA status before enabling the DMA */
-+	ret = readl_poll_timeout(nand->regs + MA35_NFI_REG_DMACTL, val,
-+				 !(val & DMA_BUSY), 50, HZ/2);
-+	if (ret)
-+		dev_warn(nand->dev, "dma busy\n");
-+
-+	/* Reinitial dmac */
-+	ma35_nand_dmac_init(nand);
-+
-+	writel(mtd->oobsize, nand->regs + MA35_NFI_REG_NANDRACTL);
-+
-+	/* setup and start DMA using dma_addr */
-+	dma_addr = dma_map_single(nand->dev, (void *)addr, len, DMA_FROM_DEVICE);
-+	ret = dma_mapping_error(nand->dev, dma_addr);
-+	if (ret) {
-+		dev_err(nand->dev, "dma mapping error\n");
-+		return -EINVAL;
-+	}
-+	nand->dma_buf = (u8 *)addr;
-+	nand->dma_addr = dma_addr;
-+
-+	writel((unsigned long)dma_addr, nand->regs + MA35_NFI_REG_DMASA);
-+	writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) | DMA_R_EN,
-+		nand->regs + MA35_NFI_REG_NANDCTL);
-+	ret = wait_for_completion_timeout(&nand->complete, msecs_to_jiffies(1000));
-+	if (!ret) {
-+		dev_err(nand->dev, "read timeout\n");
-+		ret = -ETIMEDOUT;
-+	}
-+
-+	dma_sync_single_for_cpu(nand->dev, dma_addr, len, DMA_FROM_DEVICE);
-+	dma_unmap_single(nand->dev, dma_addr, len, DMA_FROM_DEVICE);
-+
-+	ma35_nand_target_disable(nand);
-+
-+	return ret;
-+}
-+
-+
-+static int ma35_nand_write_page_hwecc(struct nand_chip *chip, const u8 *buf,
-+				      int oob_required, int page)
-+{
-+	struct mtd_info *mtd = nand_to_mtd(chip);
-+	u8 *ecc_calc = chip->ecc.calc_buf;
-+
-+	ma35_clear_spare(chip, mtd->oobsize);
-+	ma35_write_spare(chip, mtd->oobsize - chip->ecc.total, (u32 *)chip->oob_poi);
-+
-+	nand_prog_page_begin_op(chip, page, 0, buf, mtd->writesize);
-+	nand_prog_page_end_op(chip);
-+
-+	/* Copy parity code in NANDRA to calc */
-+	ma35_read_spare(chip, chip->ecc.total, (u32 *)ecc_calc,
-+			mtd->oobsize - chip->ecc.total);
-+
-+	/* Copy parity code in calc to oob_poi */
-+	memcpy((void *)(chip->oob_poi + (mtd->oobsize - chip->ecc.total)),
-+		(void *)ecc_calc, chip->ecc.total);
-+
-+	return 0;
-+}
-+
-+static int ma35_nand_read_page_hwecc(struct nand_chip *chip, u8 *buf,
-+					int oob_required, int page)
-+{
-+	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-+	struct mtd_info *mtd = nand_to_mtd(chip);
-+	u32 reg;
-+
-+	/* read the OOB area  */
-+	nand_read_oob_op(chip, page, 0, chip->oob_poi, mtd->oobsize);
-+
-+	/* copy OOB data to NANDRA for page read */
-+	ma35_write_spare(chip, mtd->oobsize, (u32 *)chip->oob_poi);
-+
-+	reg = readl(nand->regs + MA35_NFI_REG_NANDRA0);
-+	if (reg & 0xffff0000)
-+		memset((void *)buf, 0xff, mtd->writesize);
-+	else {
-+		/* read data from nand */
-+		nand_read_page_op(chip, page, 0, buf, mtd->writesize);
-+
-+		/* restore OOB data from SMRA */
-+		ma35_read_spare(chip, mtd->oobsize, (u32 *)chip->oob_poi, 0);
-+	}
-+
-+	return 0;
-+}
-+
-+
-+static int ma35_nand_read_oob_hwecc(struct nand_chip *chip, int page)
-+{
-+	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-+	struct mtd_info *mtd = nand_to_mtd(chip);
-+	u32 reg;
-+
-+	nand_read_oob_op(chip, page, 0, chip->oob_poi, mtd->oobsize);
-+
-+	/* copy OOB data to NANDRA for page read */
-+	ma35_write_spare(chip, mtd->oobsize, (u32 *)chip->oob_poi);
-+
-+	reg = readl(nand->regs + MA35_NFI_REG_NANDRA0);
-+	if (reg & 0xffff0000)
-+		memset((void *)chip->oob_poi, 0xff, mtd->oobsize);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t ma35_nand_irq(int irq, void *id)
-+{
-+	struct ma35_nand_info *nand = (struct ma35_nand_info *)id;
-+	struct mtd_info *mtd = nand_to_mtd(&nand->chip);
-+	int stat = 0;
-+	u32 isr;
-+
-+	spin_lock(&nand->dma_lock);
-+
-+	isr = readl(nand->regs + MA35_NFI_REG_NANDINTSTS);
-+	if (isr & INT_ECC) {
-+		dma_sync_single_for_cpu(nand->dev, nand->dma_addr, mtd->writesize,
-+					DMA_FROM_DEVICE);
-+		stat = ma35_nfi_ecc_check(&nand->chip, (unsigned long)nand->dma_buf);
-+		if (stat < 0) {
-+			mtd->ecc_stats.failed++;
-+			writel(DMA_RST | DMA_EN, nand->regs + MA35_NFI_REG_DMACTL);
-+			writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) | SWRST,
-+				nand->regs + MA35_NFI_REG_NANDCTL);
-+		} else if (stat > 0) {
-+			mtd->ecc_stats.corrected += stat;   /* Add corrected bit count */
-+		}
-+		writel(INT_ECC, nand->regs + MA35_NFI_REG_NANDINTSTS);
-+	}
-+	if (isr & INT_DMA) {
-+		writel(INT_DMA, nand->regs + MA35_NFI_REG_NANDINTSTS);
-+		complete(&nand->complete);
-+	}
-+	spin_unlock(&nand->dma_lock);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int ma35_nand_attach_chip(struct nand_chip *chip)
-+{
-+	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-+	struct mtd_info *mtd = nand_to_mtd(chip);
-+	unsigned int reg;
-+
-+	if (chip->options & NAND_BUSWIDTH_16) {
-+		dev_err(nand->dev, "16 bits bus width not supported");
-+		return -EINVAL;
-+	}
-+
-+	/* support only ecc hw mode */
-+	if (chip->ecc.engine_type != NAND_ECC_ENGINE_TYPE_ON_HOST) {
-+		dev_err(nand->dev, "ecc.engine_type not supported\n");
-+		return -EINVAL;
-+	}
-+
-+	nand->ecc_buf = devm_kzalloc(nand->dev, mtd->writesize + mtd->oobsize, GFP_KERNEL);
-+	if (!nand->ecc_buf)
-+		return  -ENOMEM;
-+	chip->ecc.calc_buf = nand->ecc_buf;
-+
-+	/* Set PSize */
-+	reg = readl(nand->regs + MA35_NFI_REG_NANDCTL) & (~PSIZE_MASK);
-+	if (mtd->writesize == 2048)
-+		writel(reg | PSIZE_2K, nand->regs + MA35_NFI_REG_NANDCTL);
-+	else if (mtd->writesize == 4096)
-+		writel(reg | PSIZE_4K, nand->regs + MA35_NFI_REG_NANDCTL);
-+	else if (mtd->writesize == 8192)
-+		writel(reg | PSIZE_8K, nand->regs + MA35_NFI_REG_NANDCTL);
-+
-+	chip->ecc.steps = mtd->writesize / chip->ecc.size;
-+	if (chip->ecc.strength == 0) {
-+		nand->bch = BCH_NONE; /* No ECC */
-+		chip->ecc.total = 0;
-+
-+	} else if (chip->ecc.strength <= 8) {
-+		nand->bch = BCH_T8; /* T8 */
-+		chip->ecc.total = chip->ecc.steps * MA35_PARITY_BCH8;
-+
-+	} else if (chip->ecc.strength <= 12) {
-+		nand->bch = BCH_T12; /* T12 */
-+		chip->ecc.total = chip->ecc.steps * MA35_PARITY_BCH12;
-+
-+	} else if (chip->ecc.strength <= 24) {
-+		nand->bch = BCH_T24; /* T24 */
-+		chip->ecc.total = chip->ecc.steps * MA35_PARITY_BCH24;
-+
-+	} else {
-+		dev_warn(nand->dev, "NAND Controller is not support this flash. (%d, %d)\n",
-+			mtd->writesize, mtd->oobsize);
-+	}
-+
-+	chip->ecc.bytes = chip->ecc.total / chip->ecc.steps;
-+	mtd_set_ooblayout(mtd, &ma35_ooblayout_ops);
-+
-+	/* add mtd-id. The string should same as uboot definition */
-+	mtd->name = "nand0";
-+
-+	ma35_nand_hwecc_init(nand);
-+
-+	writel(DISABLE_WP, nand->regs + MA35_NFI_REG_NANDECTL);
-+
-+	return 0;
-+}
-+
-+
-+
-+static int ma35_nfc_exec_instr(struct nand_chip *chip,
-+			      const struct nand_op_instr *instr)
-+{
-+	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-+	unsigned int i;
-+	u32 status;
-+
-+	switch (instr->type) {
-+	case NAND_OP_CMD_INSTR:
-+		writel(instr->ctx.cmd.opcode, nand->regs + MA35_NFI_REG_NANDCMD);
-+		return 0;
-+
-+	case NAND_OP_ADDR_INSTR:
-+		for (i = 0; i < instr->ctx.addr.naddrs; i++) {
-+			if (i == (instr->ctx.addr.naddrs - 1))
-+				writel(instr->ctx.addr.addrs[i] | ENDADDR,
-+					nand->regs + MA35_NFI_REG_NANDADDR);
-+			else
-+				writel(instr->ctx.addr.addrs[i],
-+					nand->regs + MA35_NFI_REG_NANDADDR);
-+		}
-+		return 0;
-+
-+	case NAND_OP_DATA_IN_INSTR:
-+		ma35_nand_do_read(chip, instr->ctx.data.buf.in, instr->ctx.data.len);
-+		return 0;
-+
-+	case NAND_OP_DATA_OUT_INSTR:
-+		ma35_nand_do_write(chip, instr->ctx.data.buf.out, instr->ctx.data.len);
-+		return 0;
-+
-+	case NAND_OP_WAITRDY_INSTR:
-+		return readl_poll_timeout(nand->regs + MA35_NFI_REG_NANDINTSTS, status,
-+					  status & INT_RB0, 20,
-+					  instr->ctx.waitrdy.timeout_ms * 1000);
-+	default:
-+		break;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+
-+static int ma35_nfc_exec_op(struct nand_chip *chip,
-+			  const struct nand_operation *op,
-+			  bool check_only)
-+{
-+	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-+	u32 i, reg;
-+	int ret = 0;
-+
-+	if (check_only)
-+		return 0;
-+
-+	ma35_nand_target_enable(nand);
-+	reg = readl(nand->regs + MA35_NFI_REG_NANDINTSTS);
-+	reg |= INT_RB0;
-+	writel(reg, nand->regs + MA35_NFI_REG_NANDINTSTS);
-+
-+	for (i = 0; i < op->ninstrs; i++) {
-+		ret = ma35_nfc_exec_instr(chip, &op->instrs[i]);
-+		if (ret)
-+			break;
-+	}
-+
-+	return ret;
-+}
-+
-+
-+static const struct nand_controller_ops ma35_nfc_ops = {
-+	.attach_chip = ma35_nand_attach_chip,
-+	.exec_op = ma35_nfc_exec_op,
-+};
-+
-+static int ma35_nand_probe(struct platform_device *pdev)
-+{
-+	struct ma35_nand_info *nand;
-+	struct nand_chip *chip;
-+	struct mtd_info *mtd;
-+	int ret = 0;
-+
-+	nand = devm_kzalloc(&pdev->dev, sizeof(*nand), GFP_KERNEL);
-+	if (!nand)
-+		return -ENOMEM;
-+
-+	nand_controller_init(&nand->controller);
-+	nand->controller.ops = &ma35_nfc_ops;
-+
-+	nand->regs = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(nand->regs))
-+		return PTR_ERR(nand->regs);
-+
-+	nand->dev = &pdev->dev;
-+	chip = &nand->chip;
-+	nand_set_controller_data(chip, nand);
-+	nand_set_flash_node(chip, pdev->dev.of_node);
-+
-+	nand->clk = devm_clk_get_enabled(&pdev->dev, "nand_gate");
-+	if (IS_ERR(nand->clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(nand->clk),
-+				     "failed to find nand clock\n");
-+
-+	nand->irq = platform_get_irq(pdev, 0);
-+	if (nand->irq < 0)
-+		return dev_err_probe(&pdev->dev, nand->irq,
-+				     "failed to get platform irq\n");
-+
-+	ret = devm_request_irq(&pdev->dev, nand->irq, ma35_nand_irq,
-+				  IRQF_TRIGGER_HIGH, "ma35d1-nand", nand);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to request NAND irq\n");
-+		clk_disable_unprepare(nand->clk);
-+		return -ENXIO;
-+	}
-+
-+	nand->chip.controller = &nand->controller;
-+	platform_set_drvdata(pdev, nand);
-+
-+	chip->options |= NAND_NO_SUBPAGE_WRITE | NAND_USES_DMA;
-+
-+	/* set default mode in case dt entry is missing */
-+	chip->ecc.engine_type = NAND_ECC_ENGINE_TYPE_ON_HOST;
-+
-+	chip->ecc.write_page = ma35_nand_write_page_hwecc;
-+	chip->ecc.read_page  = ma35_nand_read_page_hwecc;
-+	chip->ecc.read_oob   = ma35_nand_read_oob_hwecc;
-+
-+	mtd = nand_to_mtd(chip);
-+	mtd->priv = chip;
-+	mtd->owner = THIS_MODULE;
-+	mtd->dev.parent = &pdev->dev;
-+
-+	writel(NAND_EN, nand->regs + MA35_NFI_REG_GCTL);
-+
-+	ret = nand_scan(chip, 1);
-+	if (ret)
-+		return ret;
-+
-+	ret = mtd_device_register(mtd, NULL, 0);
-+	if (ret) {
-+		nand_cleanup(chip);
-+		devm_kfree(&pdev->dev, nand);
-+		return ret;
-+	}
-+
-+	return ret;
-+}
-+
-+static void ma35_nand_remove(struct platform_device *pdev)
-+{
-+	struct ma35_nand_info *nand = platform_get_drvdata(pdev);
-+	int ret;
-+
-+	devm_free_irq(&pdev->dev, nand->irq, nand);
-+	ret = mtd_device_unregister(nand_to_mtd(&nand->chip));
-+	WARN_ON(ret);
-+	nand_cleanup(&nand->chip);
-+	clk_disable_unprepare(nand->clk);
-+}
-+
-+/* PM Support */
-+#ifdef CONFIG_PM
-+static int ma35_nand_suspend(struct platform_device *pdev, pm_message_t pm)
-+{
-+	struct ma35_nand_info *nand = platform_get_drvdata(pdev);
-+	int ret = 0;
-+	u32 val;
-+
-+	/* wait DMAC to ready */
-+	ret = readl_poll_timeout(nand->regs + MA35_NFI_REG_DMACTL, val,
-+				 !(val & DMA_BUSY), 50, HZ/2);
-+	if (ret)
-+		dev_warn(&pdev->dev, "dma busy\n");
-+
-+	clk_disable(nand->clk);
-+
-+	return ret;
-+}
-+
-+static int ma35_nand_resume(struct platform_device *pdev)
-+{
-+	struct ma35_nand_info *nand = platform_get_drvdata(pdev);
-+
-+	clk_enable(nand->clk);
-+	ma35_nand_hwecc_init(nand);
-+	ma35_nand_dmac_init(nand);
-+
-+	return 0;
-+}
-+
-+#else
-+#define ma35_nand_suspend NULL
-+#define ma35_nand_resume NULL
-+#endif
-+
-+static const struct of_device_id ma35_nfi_of_match[] = {
-+	{ .compatible = "nuvoton,ma35d1-nand" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, ma35_nfi_of_match);
-+
-+static struct platform_driver ma35_nand_driver = {
-+	.driver = {
-+		.name = "ma35d1-nand",
-+		.of_match_table = ma35_nfi_of_match,
-+	},
-+	.probe = ma35_nand_probe,
-+	.remove = ma35_nand_remove,
-+	.suspend = ma35_nand_suspend,
-+	.resume = ma35_nand_resume,
-+};
-+
-+module_platform_driver(ma35_nand_driver);
-+
-+MODULE_DESCRIPTION("Nuvoton ma35 NAND driver");
-+MODULE_AUTHOR("Hui-Ping Chen <hpchen0nvt@gmail.com>");
-+MODULE_LICENSE("GPL");
++	if (pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ARI))
++		zdev->zbus->bus->ari_enabled = 1;
++
+ 	/*
+ 	 * With pdev->no_vf_scan the common PCI probing code does not
+ 	 * perform PF/VF linking.
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index ffaaca0978cb..f94a96a6cb30 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -3537,11 +3537,11 @@ void pci_configure_ari(struct pci_dev *dev)
+ 	if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ARI)) {
+ 		pcie_capability_set_word(bridge, PCI_EXP_DEVCTL2,
+ 					 PCI_EXP_DEVCTL2_ARI);
+-		bridge->ari_enabled = 1;
++		dev->bus->ari_enabled = 1;
+ 	} else {
+ 		pcie_capability_clear_word(bridge, PCI_EXP_DEVCTL2,
+ 					   PCI_EXP_DEVCTL2_ARI);
+-		bridge->ari_enabled = 0;
++		dev->bus->ari_enabled = 0;
+ 	}
+ }
+ 
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index b14b9876c030..c318929438c1 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1143,6 +1143,7 @@ static struct pci_bus *pci_alloc_child_bus(struct pci_bus *parent,
+ 
+ 	if (!bridge) {
+ 		child->dev.parent = parent->bridge;
++		child->ari_enabled = parent->ari_enabled;
+ 		goto add_dev;
+ 	}
+ 
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 4cf89a4b4cbc..3d1f4a392dd6 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -429,7 +429,6 @@ struct pci_dev {
+ 	unsigned int	irq_reroute_variant:2;	/* Needs IRQ rerouting variant */
+ 	unsigned int	msi_enabled:1;
+ 	unsigned int	msix_enabled:1;
+-	unsigned int	ari_enabled:1;		/* ARI forwarding */
+ 	unsigned int	ats_enabled:1;		/* Address Translation Svc */
+ 	unsigned int	pasid_enabled:1;	/* Process Address Space ID */
+ 	unsigned int	pri_enabled:1;		/* Page Request Interface */
+@@ -679,6 +678,7 @@ struct pci_bus {
+ 	struct bin_attribute	*legacy_mem;	/* Legacy mem */
+ 	unsigned int		is_added:1;
+ 	unsigned int		unsafe_warn:1;	/* warned about RW1C config write */
++	unsigned int		ari_enabled:1;	/* ARI forwarding enabled */
+ };
+ 
+ #define to_pci_bus(n)	container_of(n, struct pci_bus, dev)
+@@ -2637,7 +2637,7 @@ static inline bool pci_is_dev_assigned(struct pci_dev *pdev)
+  */
+ static inline bool pci_ari_enabled(struct pci_bus *bus)
+ {
+-	return bus->self && bus->self->ari_enabled;
++	return bus->ari_enabled;
+ }
+ 
+ /**
+
+---
+base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+change-id: 20240724-ari_no_bus_dev-52b2a27f3466
+
+Best regards,
 -- 
-2.25.1
+Niklas Schnelle
 
 
