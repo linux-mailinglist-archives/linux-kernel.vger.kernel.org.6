@@ -1,126 +1,117 @@
-Return-Path: <linux-kernel+bounces-332302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1EB597B7FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:33:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F6597B85D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23877282982
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:33:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E17E01F22A2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 07:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16CB169AE6;
-	Wed, 18 Sep 2024 06:33:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0AF1487C8;
-	Wed, 18 Sep 2024 06:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6192166F32;
+	Wed, 18 Sep 2024 07:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="myFs5mmJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AEA15B0F2;
+	Wed, 18 Sep 2024 07:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726641180; cv=none; b=CS0lIHHzpYulCOlCCncdVjfw4IUDcjOCgJ+U0VRreInBzkcOIfz027nsxUQH5MrfVnVUk5MQRi3e0IT4MCPx8MVfdSDixbdAb0s9ZXViJbaanB1O7bf6LlOVifalb2VOIG23hZlWzgQBKM//SHKctrLnULumidemuwIxk2rps6M=
+	t=1726643876; cv=none; b=CHATjMus2jjtIwWVgJfakWuDyCOo2Y4ep4MFVJP61/Ezuirp9GE7XqG2wNakFAGWO4+uAuCI3sAVT2r8NA61rvbIusSazjYg+8JoW9hVZz2yRmI+icMFEL76yfvu0QHIIlrgZ3EQI+ijjaM/1wiE39tXHSx2lx8j83J1G2Gv4jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726641180; c=relaxed/simple;
-	bh=TryCCA1ZWWAttn4FkLibmn0nSAOSRu1FKRZqsZOjeT0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tCZmEaAQoDpwNmeXoAd9h4HXerOaRB43JpHm64FEgOdGPSBqVaocAhyd2S0vfS4X6YGv/7hjhhrMkQc7Yi5Zec8F7U31lxrxkL1nMY9I8gZzWEwI6jnC3Fa2snuBTUzS8cwCyqaakVVgv96UZ01nbKmPm5lCjLFq4FAEkBydnhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 36FB4FEC;
-	Tue, 17 Sep 2024 23:33:21 -0700 (PDT)
-Received: from [10.162.16.84] (a077893.blr.arm.com [10.162.16.84])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E5633F64C;
-	Tue, 17 Sep 2024 23:32:48 -0700 (PDT)
-Message-ID: <8cafe140-35cf-4e9d-8218-dfbfc156ca69@arm.com>
-Date: Wed, 18 Sep 2024 12:02:45 +0530
+	s=arc-20240116; t=1726643876; c=relaxed/simple;
+	bh=mkiRjtjab9a+5gPBHZUJp8eiyvFsih6ItF8U9OmClko=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cgj3J57gXF8OGpeteBAFyvkR2kKbspInPZQhEh+SX4tXCn+0sdHqeivXFiXJR99ThLRWLmMzU03eh1USGILIPwLbErdgo87v5kVLO4bgNFtaTtZkbbG99r81ZHAdN929VsLNW3NH4Pwdc4ZupAj4FbijGvI5YbUcSdVBAY88Yqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=myFs5mmJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 607DEC4CEC3;
+	Wed, 18 Sep 2024 07:17:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726643875;
+	bh=mkiRjtjab9a+5gPBHZUJp8eiyvFsih6ItF8U9OmClko=;
+	h=From:To:Cc:Subject:Date:From;
+	b=myFs5mmJEwLzvCiObKYbYs+JYJYBcH01gF+AG0njhvL9V9/7RBB7lTBiL8bjBrOOf
+	 Gvq0rexR4S5p5UQFEocQNiZqR+wNOVO3BxytATDmScuCnPHGb1kGAnZblA+hI0BLqM
+	 GoNbjCrE3eU5dEM+Z21Ksar+E1j6uLqkvzAeBkIT6QymnRcbdeDbxtWkW/9bIhsRh0
+	 mthSdG7irDtAcMeRDLhTAGHPdQ8ojAarNfZXoydC7eWBhuXUjb9f30OMHa84OM9j7F
+	 VrI8B8uvaqN+kFRfzSWYib990jIPRxccgU0zMsQkd4+ab0yAw0XdwhKM6iLg6Y8wWw
+	 fg2qBkZ3/S1Yw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Michael Kelley <mhklinux@outlook.com>,
+	Roman Kisel <romank@linux.microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	kys@microsoft.com,
+	haiyangz@microsoft.com,
+	sthemmin@microsoft.com,
+	decui@microsoft.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	linux-hyperv@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.10 1/3] x86/hyperv: Set X86_FEATURE_TSC_KNOWN_FREQ when Hyper-V provides frequency
+Date: Wed, 18 Sep 2024 02:36:09 -0400
+Message-ID: <20240918063614.238807-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 3/7] mm: Use ptep_get() for accessing PTE entries
-To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Ryan Roberts <ryan.roberts@arm.com>, "Mike Rapoport (IBM)"
- <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
- linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
- kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-References: <20240917073117.1531207-1-anshuman.khandual@arm.com>
- <20240917073117.1531207-4-anshuman.khandual@arm.com>
- <f9a7ebb4-3d7c-403e-b818-29a6a3b12adc@redhat.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <f9a7ebb4-3d7c-403e-b818-29a6a3b12adc@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.10.10
 Content-Transfer-Encoding: 8bit
 
+From: Michael Kelley <mhklinux@outlook.com>
 
+[ Upstream commit 8fcc514809de41153b43ccbe1a0cdf7f72b78e7e ]
 
-On 9/17/24 15:58, David Hildenbrand wrote:
-> On 17.09.24 09:31, Anshuman Khandual wrote:
->> Convert PTE accesses via ptep_get() helper that defaults as READ_ONCE() but
->> also provides the platform an opportunity to override when required. This
->> stores read page table entry value in a local variable which can be used in
->> multiple instances there after. This helps in avoiding multiple memory load
->> operations as well possible race conditions.
->>
-> 
-> Please make it clearer in the subject+description that this really only involves set_pte_safe().
+A Linux guest on Hyper-V gets the TSC frequency from a synthetic MSR, if
+available. In this case, set X86_FEATURE_TSC_KNOWN_FREQ so that Linux
+doesn't unnecessarily do refined TSC calibration when setting up the TSC
+clocksource.
 
-I will update the commit message with some thing like this.
+With this change, a message such as this is no longer output during boot
+when the TSC is used as the clocksource:
 
-mm: Use ptep_get() in set_pte_safe()
+[    1.115141] tsc: Refined TSC clocksource calibration: 2918.408 MHz
 
-This converts PTE accesses in set_pte_safe() via ptep_get() helper which
-defaults as READ_ONCE() but also provides the platform an opportunity to
-override when required. This stores read page table entry value in a local
-variable which can be used in multiple instances there after. This helps
-in avoiding multiple memory load operations as well as some possible race
-conditions.
+Furthermore, the guest and host will have exactly the same view of the
+TSC frequency, which is important for features such as the TSC deadline
+timer that are emulated by the Hyper-V host.
 
-> 
-> 
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
->> Cc: linux-mm@kvack.org
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>   include/linux/pgtable.h | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
->> index 2a6a3cccfc36..547eeae8c43f 100644
->> --- a/include/linux/pgtable.h
->> +++ b/include/linux/pgtable.h
->> @@ -1060,7 +1060,8 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
->>    */
->>   #define set_pte_safe(ptep, pte) \
->>   ({ \
->> -    WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
->> +    pte_t __old = ptep_get(ptep); \
->> +    WARN_ON_ONCE(pte_present(__old) && !pte_same(__old, pte)); \
->>       set_pte(ptep, pte); \
->>   })
->>   
-> 
-> I don't think this is necessary. PTE present cannot flip concurrently, that's the whole reason of the "safe" part after all.
+Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+Link: https://lore.kernel.org/r/20240606025559.1631-1-mhklinux@outlook.com
+Signed-off-by: Wei Liu <wei.liu@kernel.org>
+Message-ID: <20240606025559.1631-1-mhklinux@outlook.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/x86/kernel/cpu/mshyperv.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Which is not necessary ? Converting de-references to ptep_get() OR caching
-the page table read value in a local variable ? ptep_get() conversion also
-serves the purpose providing an opportunity for platform to override.
+diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+index e0fd57a8ba84..c3e38eaf6d2f 100644
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -424,6 +424,7 @@ static void __init ms_hyperv_init_platform(void)
+ 	    ms_hyperv.misc_features & HV_FEATURE_FREQUENCY_MSRS_AVAILABLE) {
+ 		x86_platform.calibrate_tsc = hv_get_tsc_khz;
+ 		x86_platform.calibrate_cpu = hv_get_tsc_khz;
++		setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
+ 	}
+ 
+ 	if (ms_hyperv.priv_high & HV_ISOLATION) {
+-- 
+2.43.0
 
-> 
-> Can we just move these weird set_pte/pmd_safe() stuff to x86 init code and be done with it? Then it's also clear *where* it is getting used and for which reason.
-> 
-set_pte/pmd_safe() can be moved to x86 platform - as that is currently the
-sole user for these helpers. But because set_pgd_safe() gets used in riscv
-platform, just wondering would it be worth moving only the pte/pmd helpers
-but not the pgd one ?
 
