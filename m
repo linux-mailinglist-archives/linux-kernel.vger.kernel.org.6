@@ -1,84 +1,103 @@
-Return-Path: <linux-kernel+bounces-332841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD1097BF96
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:17:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 163E797BF97
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69F501C21D58
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:17:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79C93B21EF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828591C9DE7;
-	Wed, 18 Sep 2024 17:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8E11C9DDA;
+	Wed, 18 Sep 2024 17:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtoLPaq7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mbQrMZet"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D683D1AD3F8;
-	Wed, 18 Sep 2024 17:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EABD1AD3F8
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 17:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726679868; cv=none; b=fqbvZQ9fdysEOU0djvfVhRv26/BHLOZnvdrD1MjfiLh5IeKLhVsmPFO+J9iXu7RWJ6YgdHmY3Pj6r1TyunOj3JYfk8AhV3x2JM2apRMoSz/jYBzBkNHGJvV7tae4h8ztAltGaM5ZWAtFpPIfj1gzYwSzJ0azBJlP/hULnSPSGK4=
+	t=1726680040; cv=none; b=WN3bPNOLPhvN9nqjKtETig4obvpYltv4JRsBjbu9HAy1J2gydv2n5gePaDeL66/xzND2ZvGSZaoq60V5SQf6A+MnGgZNQMtx0XA0Fh3bA5MTczP4JEq3nctKDBcO3aFNkvtzOd7Uf3pHtXL4zlQhtChsMk0mej13X/zOxavUpbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726679868; c=relaxed/simple;
-	bh=rF59NlVc8RdVfJ1BvQvUzd07bfrQYtLfcHPmONHYpGs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dd/nBnS/O6LjYDA2kZ4BiY6JMik/bqpynBDfLsgb4Z7UwREt0bnuNJV3pSPZTqZ0P2umWhkR1Up4lftQEN6IOGezt2edXOCZQ0IebtS7wr27PvaZ/PGoNDiYFR0yKIPtFLH7oTuMJgjvqAoQhDJMgcpRrgHy/qXYMpZxrWQzEZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtoLPaq7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F865C4CEC2;
-	Wed, 18 Sep 2024 17:17:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726679867;
-	bh=rF59NlVc8RdVfJ1BvQvUzd07bfrQYtLfcHPmONHYpGs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RtoLPaq7qufGYckdBFCgTUn8u95FViuUhtLsCxwPFPZ1TgLZC2oNCakgAqqDMjqSL
-	 EVhY8lL3ZqKHmR5f2i+tnkvH2ifmJl0PuuMStSsQic/whvK5SZf2skRuHV3iKA5Tfj
-	 l6ABgqD/1McUwZMc1npsOs/C6k0pEDH9c9q7QiVrRq6FRNhlbSXDj7n6itCj/cEytS
-	 z/JfeQ6WBM/TrZKUwWtZVKeIUOIktYwTmQCJxCft0ItDUCNWn3KkuIuMN6tLmQ1CXy
-	 JLsM6d6l/yXwhT3+9h24SttkQzbFPJWrIMTo88Ot1GihYXr4re9kotTAfsdnnI5cqm
-	 Am+7pAz5mcJtQ==
-Date: Wed, 18 Sep 2024 12:17:46 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Inbaraj E <inbaraj.e@samsung.com>
-Cc: linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, krzk@kernel.org,
-	conor+dt@kernel.org, sboyd@kernel.org,
-	linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com,
-	linux-clk@vger.kernel.org, cw00.choi@samsung.com,
-	gost.dev@samsung.com, devicetree@vger.kernel.org,
-	mturquette@baylibre.com, pankaj.dubey@samsung.com
-Subject: Re: [PATCH 2/2] dt-bindings: clock: samsung: remove define with
- number of clocks for FSD
-Message-ID: <172667986572.1820528.6558113024982582816.robh@kernel.org>
-References: <20240917094355.37887-1-inbaraj.e@samsung.com>
- <CGME20240917094454epcas5p22a75e3bb5a09b12eb269f1dcde573741@epcas5p2.samsung.com>
- <20240917094355.37887-3-inbaraj.e@samsung.com>
+	s=arc-20240116; t=1726680040; c=relaxed/simple;
+	bh=fp0kfU9JJXj3JXg6Kmhe3J26EnAG57gHBH6CHIYIU6c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JaAyxSsd/We022NU3Vb6knE8FrKTN6Mv5KkdeRb/CI0bAi9IgSE92SnQquVhobfrqpQ0AROAl5y7M5oNYIooQTMCjvSVqXnqm+0G5bSPkCau1aSf4quY0mtGYKXWXHK3838VeTCR2vbTRRCyiVeXk1owpPEUeeXLe+9giiopYBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mbQrMZet; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71798a15ce5so867885b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:20:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726680038; x=1727284838; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WCjQaYHdb+9akkF4GNDfGIZ6sEnEG+5xP5QyLjg07+g=;
+        b=mbQrMZetXec83bcLsN1iZ3GuyUkRoHbjC6/h8/Z5xIgH/rgzdit3h848vs77dK8WdV
+         pxJtQK5hxPflU3UgwmN8yku2IPSgvNCUumFMZGiyjGRbkMamhD5gR5/bwBvYMhbQPvbD
+         CvlcznfL6m7M7Nsv3bfhwGEEse2oRIMYy1Uxhtrw+U5xtFdGzQ1m94nCdK/v2lnqoJP/
+         QCn40iDTeI6kElT1jHPFdKEL3C6J47V3Gs5mCT3hZGQU48ki6+D9W6KS/nlDd9M1UtP1
+         Utc6WjfiepacL7bSdhQCetNh5nrhTHVyyWF2/rXu1OBqKju/dvVI59G58fDIQMVXtZth
+         G6CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726680038; x=1727284838;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WCjQaYHdb+9akkF4GNDfGIZ6sEnEG+5xP5QyLjg07+g=;
+        b=sJrBa5UQ2GLGMW+FRGaRe1kJuriti83CX7Qg9eEcczArHkfAuUinnJnQIHDhrYyjDI
+         /H5gO+mEvnUv8In9iQ7xAI/TAh9zhhVJ59gWLiycZtRBXFbIxrF/YXIyGq0NhG5+QYF3
+         xHGq5oXOqYa0X8NlN1YwGfeV3XPWsutWgrf7CZpn3GZO+nyAtfQBa7JNEOlh9q3W+nAy
+         EmNpcatGzv1qPXFDx8ZIB9K3IiIQP8onaZevAuCtuADaBGsyjDE/7WE0dyk9+L9R75sf
+         1eAEJpqDLctwa36LHIZgkAk13NSlC/DmESKL2WC/S4DqjFgBkTxJbybh7aRcvym0cQQi
+         gc9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUO/63AmtNkcSfH7IlfaNhxb9PXSSrRhyEuInTLVIGdYgPyVNpzQSL9u0TKNPHNP0z8gZ/WleQsUF+gHiE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMXWmVtoc0KPP95xoUTDeonFZjjt9jXRsLGOZAI6A2MepxeUjO
+	mDcjStOl1hwgbFBJlDceVnsLBds6Of3x+D42S+tknVI9H9yyCfm8
+X-Google-Smtp-Source: AGHT+IFZVBIM7leYgR1FuSjCuamUv2TO9TcnN1QImS+vNJUsnHx5FI5MEArsnr4YCOk+f+LXTrVIbQ==
+X-Received: by 2002:a05:6a00:6513:b0:717:92d8:ca5c with SMTP id d2e1a72fcca58-7198e24346emr477163b3a.3.1726680037871;
+        Wed, 18 Sep 2024 10:20:37 -0700 (PDT)
+Received: from archlinux.. ([2405:201:e00c:517f:5e87:9cff:fe63:6000])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71944b7aeafsm7186476b3a.99.2024.09.18.10.20.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 10:20:37 -0700 (PDT)
+From: Mohammed Anees <pvmohammedanees2003@gmail.com>
+To: ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Mark Fasheh <mark@fasheh.com>,
+	Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	Mohammed Anees <pvmohammedanees2003@gmail.com>
+Subject: [PATCH 0/2] ocfs2: Fix deadlock in extent_map and handle zero
+Date: Wed, 18 Sep 2024 17:20:24 +0000
+Message-ID: <20240918172026.2532-1-pvmohammedanees2003@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917094355.37887-3-inbaraj.e@samsung.com>
+Content-Transfer-Encoding: 8bit
 
+This patch series addresses two distinct issues within the OCFS2 file
+system:
+1. A potential deadlock occuring in ocfs2_read_virt_blocks due to
+contention on the lock.
+2. Handle block conversion with value 0 in ocfs2_add_clusters_in_btree
 
-On Tue, 17 Sep 2024 15:13:55 +0530, Inbaraj E wrote:
-> Number of clocks supported by Linux drivers might vary - sometimes we
-> add new clocks, not exposed previously.  Therefore these numbers of
-> clocks should not be in the bindings, as that prevents changing them.
-> Remove it entirely from the bindings, once Linux drivers stopped using
-> them.
-> 
-> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
-> ---
->  include/dt-bindings/clock/fsd-clk.h | 7 -------
->  1 file changed, 7 deletions(-)
-> 
+Mohammed Anees (2):
+  ocfs2: Fix deadlock in ocfs2_read_virt_blocks
+  osfs2: Fix kernel BUG in ocfs2_write_cluster
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+ fs/ocfs2/alloc.c      |  7 +++++++
+ fs/ocfs2/extent_map.c | 16 +++++++++++++++-
+ 2 files changed, 22 insertions(+), 1 deletion(-)
+
+-- 
+2.46.0
 
 
