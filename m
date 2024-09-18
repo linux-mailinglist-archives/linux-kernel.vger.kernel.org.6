@@ -1,174 +1,122 @@
-Return-Path: <linux-kernel+bounces-332836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6216797BF7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:10:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E60DC97BF7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EEC8B21F35
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:10:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 657FDB21F19
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B731C9DE0;
-	Wed, 18 Sep 2024 17:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1A81C9DE7;
+	Wed, 18 Sep 2024 17:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DSmAuUc6"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EqP2DSYW"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748401B1505;
-	Wed, 18 Sep 2024 17:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1071B1505;
+	Wed, 18 Sep 2024 17:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726679416; cv=none; b=nYE95VHJwZaVBBW+D3XaZvt6+bHHL9L1IU8u/P7GtQx7MSMt0brpjM+kYjTvL9QiBhcUyiWR9Ivwry9hPn3lGIA/0nTbC8u3On/gc6q2GMisdGIGBDmHe7w501EYv3m1TAxdpptBaqgZTLhrm9Sh+GZCfZnfm5t7kLi1xtW7Gi0=
+	t=1726679589; cv=none; b=Xhirm3gq2NKnKCLd9Gjc+6VVR5nbmO1eDAYPvbD/sy62ft+zMM0EJtZFnQqM0Tpm+oHK84daaH5aHxO6jWtpgXz3C7YdH8sak4qoW2U7oaV8gSTb7zX9vJkAL9R5krtW6QR2urbrTjbSg7XUpgc6haRdroqVd5co3rZ2tc8byLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726679416; c=relaxed/simple;
-	bh=L4yLwIoVt4BSHIH1bxNEN/Cr/3eewtWIwpTxo4CyP2k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B2TOo0yZJBdLiYs5Jt1+MVLzagEHaZqZby/o6KkCs+/PbFWUHkG8QsO0/+XCOjqsYhuRRGJ4cA/ZgIWQyHpHaG0Truv1nLx026FAGlVK7QHCBps0cR/zqQFSihuf5u0098i7VStaspScGgVLdToh1LP9sz54yDzTx0spr0zbmoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DSmAuUc6; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-205722ba00cso145455ad.0;
-        Wed, 18 Sep 2024 10:10:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726679415; x=1727284215; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q9vYLjiVwTBRNkEh1sg4rE4Yh0l+ekkx9H32x9BbROM=;
-        b=DSmAuUc6ajQ+qXwe2TiwOQNPK7aqd4Zu61Kupr2Gxe2D45jds5Y2e5KNd3kyEZVjAg
-         S5xPqCB4W8NL/eMw5MJGkYxiGFkkPnsACKmQhVLmRuDZhemvhT2in6J5OX1sn0GhvQvY
-         HLSlB876c6RUZPTuUS5QTA9svGYiPh5DlJkHZu02vciMKitg4vqnhJRO8856FQ9Fgrvn
-         1H4kNb9ReJ4XPaivfo34F8MIE7NyQwAomDTk594976Y1IsHOgKpbZAkOw28yGeBoEGr+
-         Pav967xu9oMWMkTX9HlDiVqfuk8cYEIQVPp9Kg6xl6DNxr8hLI7Vb2vG3PJFK4bxPty3
-         GB1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726679415; x=1727284215;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q9vYLjiVwTBRNkEh1sg4rE4Yh0l+ekkx9H32x9BbROM=;
-        b=nmO/lUgcaeEdCp+ZQ23FiMy5MnV41qO+LiVL9NPBSndcev7Du1PUuZGhRewwc7v9q7
-         xP1AG/KyECpZ+DLeMBgHQ89qBhEd51nNqekQTf9UKVwvSBWnBBL3xRtUFjYT7C8n3zcS
-         /0Zo5UbKdjcP+I8RDx9hqfZF2nY+J1ejkMxduPnXaQGAqVTxaBZpfMHAHK3gBLKleq80
-         iQt6pq2FSwg3zo1YMyEcBsmw9GyCfwu3osz6yMM4HH4kNlPf9DBUot958O24FXPGa1Vz
-         RIpqgBnvVsVsyGR9JbxAI17bT8YZ7sfIhJpIPCBhv/Q+00QGGDFt+Vkd0uuJmQFv5g+d
-         6Zuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgOhww+DZMmZnCmfaLUtpNBQQKm9qczOwBRhkZlqh6aB5TQWbw6o1bNOrsN+lX/uLFtEhCem1sy8IE@vger.kernel.org, AJvYcCUr/icG4zU9JvTSbH/mIz1lavM9Yd6TCI1cW1qJbbNUrK+AxWzOzycmW+2Mc6risZnnyMdjxsOGhHzzhjU/@vger.kernel.org, AJvYcCWUSWyWk/P+FkH8vX6w7moln0bIS7T6nlbZSZNOdGrOb+AMir0DHObj7VU7ulM7wzDCZ1J9IpcPHs8OU28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygTX6FbolYFEOTUsIHHvDWQwVPXfT0XPYKhgDmB/vmmlAhZdwa
-	qcfXQueoffuXcykeWvBjDdQRV6vujVCk0MUHifb8milOM9Ic/+KA
-X-Google-Smtp-Source: AGHT+IG7GNSvr8+amUbtoVcCNV1j4OWJUtz3aEZS7UZH2lE7/JoEJJo29C7TH56J0oLyU/dh9yhRNQ==
-X-Received: by 2002:a17:902:f78d:b0:205:968b:31cf with SMTP id d9443c01a7336-2076e3f6207mr359427765ad.33.1726679414695;
-        Wed, 18 Sep 2024 10:10:14 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2079475df17sm67301865ad.298.2024.09.18.10.10.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Sep 2024 10:10:14 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <981f64c0-4625-4af1-8132-7dcae32a457d@roeck-us.net>
-Date: Wed, 18 Sep 2024 10:10:12 -0700
+	s=arc-20240116; t=1726679589; c=relaxed/simple;
+	bh=Ta2j/hqRz3RzDvnQuXxooZ+3akVk5YzTi4y14r2jshM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L3Wpt2wGWIUDBQNIAWmVRLaQ7cIa/YoySo3ttxQQvrSAXUQQZniyHHHfU/L7Ho+GSbDgadHd5lS+molfd3t2ZC+vAgpRSAwbXFJ0sxwhKnnPsjXf7g0sxncwBKPRJUd5nAEdQl611xtlB9E5+3jBTvsp+Y5/I0yLTsSmM838TAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EqP2DSYW; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+NxubRC8s/p94iaKYGIJ7mmF/q9E02cnviGlZvwUxeo=; b=EqP2DSYWNYqpMGwTLOV0R4PctG
+	MlOp1T34c76BjT6rkvYxwvZXirWtpLsZlT8I6HJ0vBWWjX2aBjHtz6/Vd5tn4yt4tA+oE+bD5kobs
+	eFfPH3suRCi856xD9ijv+VPuvCLK7YWFCMoQHz49yWJBivmJ0NgTsovEDNC/zKpKNyPtTUffC7aL6
+	oWG8aG/xh5j9U2vRJJAt/ODAuBHpruWMns2k7qel/ltIkcg7eOwf6oF8+XjvHomQ7+FrC67ClYKvo
+	yH1UuQ2I6CPBc/M5DSLxUKYCzOB9E3tOi+3tD4Z1yyi+kOUdLBtKgJb94A8E5yvkvhss9x484kfQZ
+	V5PFrC8Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sqyEa-00000005scz-3Hkh;
+	Wed, 18 Sep 2024 17:12:56 +0000
+Date: Wed, 18 Sep 2024 18:12:56 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Chris Mason <clm@meta.com>, Jens Axboe <axboe@kernel.dk>,
+	Dave Chinner <david@fromorbit.com>,
+	Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Daniel Dao <dqminh@cloudflare.com>, regressions@lists.linux.dev,
+	regressions@leemhuis.info
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+Message-ID: <ZusKGCXhponXOh_l@casper.infradead.org>
+References: <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
+ <ZulMlPFKiiRe3iFd@casper.infradead.org>
+ <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
+ <ZumDPU7RDg5wV0Re@casper.infradead.org>
+ <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
+ <459beb1c-defd-4836-952c-589203b7005c@meta.com>
+ <ZurXAco1BKqf8I2E@casper.infradead.org>
+ <CAHk-=wjix8S7_049hd=+9NjiYr90TnT0LLt-HiYvwf6XMPQq6Q@mail.gmail.com>
+ <Zurfz7CNeyxGrfRr@casper.infradead.org>
+ <CAHk-=whNqXvQywo305oixS-xkofRicUD-D+Nh-mLZ6cc-N3P5w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: hwmon: Add adt7462
-To: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Chanh Nguyen <chanh@os.amperecomputing.com>, Jean Delvare
- <jdelvare@suse.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- OpenBMC Maillist <openbmc@lists.ozlabs.org>,
- Open Source Submission <patches@amperecomputing.com>
-Cc: Thang Nguyen <thang@os.amperecomputing.com>,
- Phong Vo <phong@os.amperecomputing.com>,
- Khanh Pham <khpham@amperecomputing.com>,
- Quan Nguyen <quan@os.amperecomputing.com>
-References: <20240918103212.591204-1-chanh@os.amperecomputing.com>
- <bc13d8fd-4f03-4445-bc4a-1e0ca7c23ef7@kernel.org>
- <6b1fd95a-ef4f-4d2f-af27-6c70a60754fa@amperemail.onmicrosoft.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <6b1fd95a-ef4f-4d2f-af27-6c70a60754fa@amperemail.onmicrosoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whNqXvQywo305oixS-xkofRicUD-D+Nh-mLZ6cc-N3P5w@mail.gmail.com>
 
-On 9/18/24 09:07, Chanh Nguyen wrote:
-> 
-> 
-> On 18/09/2024 20:09, Krzysztof Kozlowski wrote:
->> On 18/09/2024 12:32, Chanh Nguyen wrote:
->>> Add device tree binding and example for adt7462 device.
->>>
->>> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
->>> ---
->>>   .../bindings/hwmon/onnn,adt7462.yaml          | 51 +++++++++++++++++++
->>>   1 file changed, 51 insertions(+)
->>
->> Where is any user? This is supposed to be sent along driver change
->> implementing this compatible.
->>
-> 
-> I'm using this device on my platform, and I'm preparing upstream my device tree. So, I pushed the dt binding before.
-> 
-> I'm also quite surprised that there aren't any platforms using adt7462 yet.
-> 
+On Wed, Sep 18, 2024 at 04:39:56PM +0200, Linus Torvalds wrote:
+> The fact that this bug was fixed basically entirely by mistake does
+> say "this is much too subtle".
 
-I am sure there are (or used to be) platforms using it, only there are possibly
-no _devicetree_ based platforms using it. After all, the chip is old. The driver
-was added back in 2008, and the first version of the datasheet was published
-in 2006.
+Yup.
 
-Guenter
+> Of course, the fact that an xas_reset() not only resets the walk, but
+> also clears any pending errors (because it's all the same "xa_node"
+> thing), doesn't make things more obvious. Because right now you
+> *could* treat errors as "cumulative", but if a xas_split_alloc() does
+> an xas_reset() on success, that means that it's actually a big
+> conceptual change and you can't do the "cumulative" thing any more.
 
+So ... the way xas was intended to work is that the first thing we did
+that set an error meant that everything after it was a no-op.  You
+can see that in functions like xas_start() which do:
+
+        if (xas_error(xas))
+                return NULL;
+
+obviously something like xas_unlock() isn't a noop because you still
+want to unlock even if you had an error.
+
+The xas_split_alloc() was done in too much of a hurry.  I had thought
+that I wouldn't need it, and then found out that it was a prerequisite
+for something I needed to do, and so I wasn't in the right frame of mind
+when I wrote it.
+
+It's actually a giant pain and I wanted to redo it even before this, as
+well as clear up some pieces from xas_nomem() / __xas_nomem().  The
+restriction on "we can only split to one additional level" is awful,
+and has caused some contortions elsewhere.
+
+> End result: it would probably make sense to change "xas_split_alloc()"
+> to explicitly *not* have that "check xas_error() afterwards as if it
+> could be cumulative", and instead make it very clearly have no history
+> and change the semantics to
+
+What it really should do is just return if it's already in an error state.
+That makes it consistent with the rest of the API, and we don't have to
+worry about it losing an already-found error.
+
+But also all the other infelicities with it need to be fixed.
 
