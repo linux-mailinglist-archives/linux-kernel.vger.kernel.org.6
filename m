@@ -1,168 +1,155 @@
-Return-Path: <linux-kernel+bounces-332249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E3F997B741
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:47:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C71797B743
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 06:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89C43288273
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:47:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F18F1F24CEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B3713C914;
-	Wed, 18 Sep 2024 04:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FgXzLo3B"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2D213C914;
+	Wed, 18 Sep 2024 04:50:26 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CE2DF6C;
-	Wed, 18 Sep 2024 04:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE17DF6C
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 04:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726634843; cv=none; b=Z0aRv0jjtcZFrVytsw8FNf/p1akXrDJSWkK0c+JHsnkLKUbZtZQpdmMzZdLgLiIMSLHjqp34jTG/UutYfj1GrVAmgpYhnElAIi4DAa4cIjgCmbcyXY8fUZtFrtLpgDVKl3ehwqfNHIJoMrr7KudA2cXfa0+Ec1meVt+EZl4ZL18=
+	t=1726635026; cv=none; b=eyjNC9kqldAfbIDWkDLV6lktboOKv3o8kgQW99k0uvWmZqVLDb3OLxjkL9UFZ1j48wLlyOfGBuAxWAz6LVIvYIRrBgSict5TRj948CLgyVOJgawOgw3+jAnMq2wUJBE+L5+wB/oPTfC67e0UUMU6WzTWG8T07LKb5WPEjJ41Me0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726634843; c=relaxed/simple;
-	bh=lfe6CIfsEmIhyxvtIKmf4VMGfqsG/BCrr0mgzjINUGg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OWlclMzZSVTuacTAAhx+86fASPRZASdTn9I00sChq0LtDRFrwIyLa2EdfhdRH4FfDxxIw4xo2ViJDOiNGW+X3qbLcqjxSp0THvVQLe60I5flrE7dzZ+Xa1S98b4Wvzj/IlqxQh+1UeOubgr9PluMn8YQmklP/yuxldPeI1VmJzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FgXzLo3B; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726634842; x=1758170842;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=lfe6CIfsEmIhyxvtIKmf4VMGfqsG/BCrr0mgzjINUGg=;
-  b=FgXzLo3BrRwz0qEV+ZXXnorGVisUsMQHaZesWG9b6uGtgwEUTWweSBxs
-   hCxt3wespuxx19SAoIlieWvVJ5jrS6/23dY0QZNfR9SNUJzMHvpzE/e5n
-   TdXbPBTfrddKQcbVtklXBDOEGnAkFmVCa/Ht2CVlrQJX/kXOdBEGSgyRy
-   CJ2+43iuTnnhXlsY2ncIRVtjlVvDPG1MLFM2z2JuGMioVt3lD/twkSWOA
-   LjdxrBhT2OIIlW3qFScMLVpT2dzagICLzVQMszYOUKGz3EInrRtpfSK5B
-   HTPuF43cmf31uE3OFl3D89h5IV2JwPCJlo0tgvkukFz+W+zKqGNdKUK3+
-   A==;
-X-CSE-ConnectionGUID: SksGDqzvT/egTCuj3xMQqw==
-X-CSE-MsgGUID: c9vvA5XtSNSt6f7kNIwwbg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="29270354"
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="29270354"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 21:47:21 -0700
-X-CSE-ConnectionGUID: Qc0nLWXrTpW1wpXlQiI0rA==
-X-CSE-MsgGUID: y+21O7oWTeK2JR19Ufk3BA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
-   d="scan'208";a="70216233"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 21:47:17 -0700
-Message-ID: <dfde5172-c1b7-4c22-94ab-87a1d5d5ee9d@intel.com>
-Date: Wed, 18 Sep 2024 07:47:12 +0300
+	s=arc-20240116; t=1726635026; c=relaxed/simple;
+	bh=BoxUpSCPngrY2sJbiNIrXqsmF2cJ70ktieZJOF9we2E=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ol11tgkP8lNf88VbDxQ6OmlyOcdJs8UeepBBuh5HvBS1GXICFvjWoCc9se7N69uI7OGbh63fzva/4L7ISX1ki5waf46hpj/RiBTlqv62wJkMEooZrJD8y4uzOtiMgsVqzMv6rqvQSFVVAtbbNhIi048D2EDKbbVBI4+n5K6YrB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a09d8ee141so33591235ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 21:50:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726635024; x=1727239824;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D6cMvyGRah0zmyP/FS/bLHhfL/2sIxnCnkoejgKKoZA=;
+        b=WhbvLt9aqFvUBE8tKQTTdqW8gQVpMbUejpDSAXp2GS5s1nzHH1bAGp46dNTI9QIQgy
+         jsH6Oxg6ws4kMfHj7rRQqkApzb9T1EceF2CxqxwpdkQ3aBhhVIOIs6dQsEJJci4tF9BW
+         ENaAh27WoCXIhmEgnx0CvZn3DRkld7C2wAOJX3VDdSh+SmZ3pBuu53DqFi4A8DIsEuam
+         ljEmxEduFw4beKhUWVomloNcgAdRgygsFqjwTURs9yMNv9J88i10Y7zbz/u5wBVpXsFb
+         N7SCToHt2yggL6rAUjGwTULWN1nIeJxbp9ppc/taWvEjzo9x64US9RSaJt5vrOLq0TtL
+         6s8w==
+X-Forwarded-Encrypted: i=1; AJvYcCU6PHjTjqBf4b4nieT+r08JXpG/zoacEJ9Lo7m1Qa+3VtR7R+0gavgDzpEpKfysX2H1vqeke9qX9O7qv70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR1d7diZgjgRSO7jWSPRlHNJEiKt9WCrflyQNU9QofV9aUBoB8
+	3iyU2cvuoI1TaVDhKby7ZT/F7cWEgX9rq4MPwumu5kOKlFI4IkOtUVYYpNsUoIR9rXJydzhZ6/Y
+	YXHcXYWR60YPfd8ZCiHeKh10gNKNkukjePxyxHiqFmcwPsWsR+5Gqnts=
+X-Google-Smtp-Source: AGHT+IGx6xekz9dBy7KyvLqiSonuN4bnePX8E1WfOkWexihRUoF/5MBPIUOCbaoeGw6qptNCwiyFS8dnhs2NtDJeTGvrr5keMm1O
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V22 00/22] Add support UHS-II for GL9755 and GL9767
-To: Victor Shih <victorshihgli@gmail.com>, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
- benchuanggli@gmail.com, Lucas.Lai@genesyslogic.com.tw,
- HL.Liu@genesyslogic.com.tw, Greg.tu@genesyslogic.com.tw,
- dlunev@chromium.org, Victor Shih <victor.shih@genesyslogic.com.tw>
-References: <20240913102836.6144-1-victorshihgli@gmail.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240913102836.6144-1-victorshihgli@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:214b:b0:3a0:378a:884b with SMTP id
+ e9e14a558f8ab-3a08b6f87c3mr136149505ab.3.1726635023955; Tue, 17 Sep 2024
+ 21:50:23 -0700 (PDT)
+Date: Tue, 17 Sep 2024 21:50:23 -0700
+In-Reply-To: <0000000000008c97fd06202ece3b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000428af806225d8bf6@google.com>
+Subject: Re: [syzbot] [pm?] WARNING in enable_work
+From: syzbot <syzbot+7053fbd8757fecbbe492@syzkaller.appspotmail.com>
+To: daniel.lezcano@linaro.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, lukasz.luba@arm.com, rafael@kernel.org, 
+	rui.zhang@intel.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 13/09/24 13:28, Victor Shih wrote:
-> From: Victor Shih <victor.shih@genesyslogic.com.tw>
-> 
-> Summary
-> =======
-> These patches[1] support UHS-II and fix GL9755 and GL9767
-> UHS-II compatibility.
-> 
-> About UHS-II, roughly deal with the following three parts:
-> 1) A UHS-II detection and initialization:
-> - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
->   Sequence[2]).
-> - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
->   [2]).
-> - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
->   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
->   Setting Register Setup Sequence.
-> 
-> 2) Send Legacy SD command through SD-TRAN
-> - Encapsulated SD packets are defined in SD-TRAN in order to ensure Legacy
->   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.1
->   Packet Types and Format Overview[3]).
-> - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-II
->   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2]).
-> 
-> 3) UHS-II Interrupt
-> - Except for UHS-II error interrupts, most interrupts share the original
->   interrupt registers.
-> 
-> Patch structure
-> ===============
-> patch#1-#7:  for core
-> patch#8-#20: for sdhci
-> patch#21:    for GL9755
-> patch#22:    for GL9767
-> 
-> Tests
-> =====
-> Ran 'dd' command to evaluate the performance 3 times:
-> (SanDisk UHS-II card on GL9755 controller)
->                              Read    Write
-> UHS-II disabled (UHS-I): 85.5MB/s 56.3MB/s
-> UHS-II enabled         :  182MB/s 75.5MB/s
->                              Read    Write
-> UHS-II disabled (UHS-I): 86.7MB/s 52.1MB/s
-> UHS-II enabled         :  179MB/s 77.6MB/s
->                              Read    Write
-> UHS-II disabled (UHS-I): 85.8MB/s 49.1MB/s
-> UHS-II enabled         :  181MB/s 89.8MB/s
-> (SanDisk UHS-II card on GL9767 controller)
->                              Read    Write
-> UHS-II disabled (UHS-I): 81.9MB/s 49.0MB/s
-> UHS-II enabled         :  186MB/s 87.9MB/s
->                              Read    Write
-> UHS-II disabled (UHS-I): 80.8MB/s 53.5MB/s
-> UHS-II enabled         :  192MB/s 87.3MB/s
->                              Read    Write
-> UHS-II disabled (UHS-I): 81.0MB/s 53.9MB/s
-> UHS-II enabled         :  199MB/s 73.6MB/s
-> 
-> Test command
-> =====
-> Read: dd if=/dev/mmcxxx of=/dev/null bs=4096k count=2000 iflag=direct
-> Write:dd if=/dev/zero of=/dev/mmcxxx bs=4096k count=2000 oflag=direct
-> 
-> Changes in v22 (September. 13, 2024)
-> * Rebase on latest mmc/next.
-> * Adjust patch order to avoid defined but nt used warnings:
->   v21 patch#18 to v22 patch#14.
->   v21 patch#14 to v22 patch#15.
->   v21 patch#15 to v22 patch#16.
->   v21 patch#16 to v22 patch#18.
-> * Patch#14: Remove unnecessary code to avoid defined but not used warnings.
-> * Patch#15: Add necessary code to avoid defined but not used warnings.
-> * Patch#16: Remove unnecessary code to avoid defined but not used warnings.
->             Modify commit message.
-> * Patch#17: Remove unnecessary code to avoid defined but not used warnings.
-> * Patch#18: Add necessary code to avoid defined but not used warnings.
+syzbot has found a reproducer for the following issue on:
 
-For SDHCI:
+HEAD commit:    a940d9a43e62 Merge tag 'soc-arm-6.12' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1236bfc7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=44d46e514184cd24
+dashboard link: https://syzkaller.appspot.com/bug?extid=7053fbd8757fecbbe492
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=144a9207980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=124a9207980000
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-a940d9a4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e9929bfe422c/vmlinux-a940d9a4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a6c74ee261ed/bzImage-a940d9a4.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7053fbd8757fecbbe492@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+workqueue: work disable count underflowed
+WARNING: CPU: 1 PID: 56 at kernel/workqueue.c:4298 work_offqd_enable kernel/workqueue.c:4298 [inline]
+WARNING: CPU: 1 PID: 56 at kernel/workqueue.c:4298 enable_work+0x2fa/0x340 kernel/workqueue.c:4469
+Modules linked in:
+CPU: 1 UID: 0 PID: 56 Comm: kworker/1:1 Not tainted 6.11.0-syzkaller-03917-ga940d9a43e62 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: usb_hub_wq hub_event
+RIP: 0010:work_offqd_enable kernel/workqueue.c:4298 [inline]
+RIP: 0010:enable_work+0x2fa/0x340 kernel/workqueue.c:4469
+Code: 89 ee e8 f9 4d 35 00 45 84 ed 0f 85 28 fe ff ff e8 0b 4c 35 00 c6 05 50 81 af 0e 01 90 48 c7 c7 80 dc 4b 8b e8 47 32 f7 ff 90 <0f> 0b 90 90 e9 05 fe ff ff 48 89 ef e8 05 09 94 00 e9 a9 fe ff ff
+RSP: 0018:ffffc90000a87448 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff814e2c49
+RDX: ffff88802052c880 RSI: ffffffff814e2c56 RDI: 0000000000000001
+RBP: ffff888027663718 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff92000150e8a
+R13: 0000000000000000 R14: ffffffff8f5ed040 R15: ffffffff8f5ed040
+FS:  0000000000000000(0000) GS:ffff88806a700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc995722e18 CR3: 000000000db7c000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __cancel_work_sync+0xe7/0x130 kernel/workqueue.c:4339
+ thermal_zone_device_unregister drivers/thermal/thermal_core.c:1599 [inline]
+ thermal_zone_device_unregister+0x27c/0x460 drivers/thermal/thermal_core.c:1569
+ psy_unregister_thermal drivers/power/supply/power_supply_core.c:1333 [inline]
+ power_supply_unregister+0x10a/0x150 drivers/power/supply/power_supply_core.c:1610
+ thunderstrike_destroy drivers/hid/hid-nvidia-shield.c:927 [inline]
+ shield_remove+0x75/0x130 drivers/hid/hid-nvidia-shield.c:1104
+ hid_device_remove+0xce/0x260 drivers/hid/hid-core.c:2730
+ device_remove+0xc8/0x170 drivers/base/dd.c:566
+ __device_release_driver drivers/base/dd.c:1272 [inline]
+ device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1295
+ bus_remove_device+0x22f/0x420 drivers/base/bus.c:574
+ device_del+0x396/0x9f0 drivers/base/core.c:3871
+ hid_remove_device drivers/hid/hid-core.c:2914 [inline]
+ hid_destroy_device+0xe5/0x150 drivers/hid/hid-core.c:2934
+ usbhid_disconnect+0xa0/0xe0 drivers/hid/usbhid/hid-core.c:1458
+ usb_unbind_interface+0x1e8/0x970 drivers/usb/core/driver.c:461
+ device_remove drivers/base/dd.c:568 [inline]
+ device_remove+0x122/0x170 drivers/base/dd.c:560
+ __device_release_driver drivers/base/dd.c:1272 [inline]
+ device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1295
+ bus_remove_device+0x22f/0x420 drivers/base/bus.c:574
+ device_del+0x396/0x9f0 drivers/base/core.c:3871
+ usb_disable_device+0x36c/0x7f0 drivers/usb/core/message.c:1418
+ usb_disconnect+0x2e1/0x920 drivers/usb/core/hub.c:2304
+ hub_port_connect drivers/usb/core/hub.c:5361 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x1da5/0x4e10 drivers/usb/core/hub.c:5903
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3393
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
 
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
