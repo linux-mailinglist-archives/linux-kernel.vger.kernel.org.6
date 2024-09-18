@@ -1,293 +1,169 @@
-Return-Path: <linux-kernel+bounces-332920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C6397C0BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:27:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B2297C0BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 970DD1C214E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 20:27:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E365B2110B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 20:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 445641CA6B3;
-	Wed, 18 Sep 2024 20:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158281CA68E;
+	Wed, 18 Sep 2024 20:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nAIoCU4/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="loEJqjYK"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714941C9EBF;
-	Wed, 18 Sep 2024 20:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3576135417
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 20:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726691263; cv=none; b=d0umvdN36QzIzzqMfLXMLllGmduylfnDA9vkiC45xMLq5CTxJEIwJBI/mftmdJoztwcNVNgfL1QTqcQEUSMxg92BWRH7+v+6OlhIFMunuSqKZlyN57xUS/5Q7xxu5LnB2eRk8p7PPmGMIyhGbkx0PUursQHo2tFHsiyXE8fQ+fI=
+	t=1726691388; cv=none; b=T98ZYroJdWxQFjy22rQ0fGILbu0a5s+DFANf3z2i07dTm95b2vDNcmq4Wc52QXgWt98wsgpUNdM7IJSoCfsIgHDae8eIVdxYHj1zT2FUI5dNOHCKGHTdI6NwozKGJA2GHLf3WKofqz5vlXcbSx+H/jG6O37X6qGhX2aoP0TFJ6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726691263; c=relaxed/simple;
-	bh=slXnhnFIqTwaXqPB2hmVKRpVnOfftcaem0Vt6vv3B+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KS5dBvKZ8dmV1dqyRvEVYajM3ej4bvCTtxV2QUypHmANBYirHMHr5Q6WsuMIuoQl6CwIRwOxgCMg7QvSZN05zURqZYLdAASn2M6oioQmFh+fbYF3yL8BIn7J5SMsYkNi2yTjShGatvUGFWhomYgLoP11R1bA2Hd99D/sRpqiEyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nAIoCU4/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F621C4CEC2;
-	Wed, 18 Sep 2024 20:27:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726691262;
-	bh=slXnhnFIqTwaXqPB2hmVKRpVnOfftcaem0Vt6vv3B+A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nAIoCU4/z+F4w48NjA0EJK8uGEVP5cJD9nk3nnC86FaJE1M2csMZCPNWd64rxhkS8
-	 VTZx3IwAjCJu/tON+KKwmVClUFSmxCY8ml4FDlXONBqHwMkLeNuoaQ8eCSe+0y+cd+
-	 u9O2aCPaLIZubRz6SiFj3FeyV+llrULzaBn8Jnunx3gFqRbJffwpbHTMPwEVEL9e/d
-	 8aL3uPoV24rqzQtPxU2WWzLVJnsYi068IEzS6hQqFf1sl3i4cC8aBz5LGes9U5EpbO
-	 eSbRHaCqtCdxHE9PDyETZsn0Hrs+aTzIAjaghaQb/U6PVv1HY4fxd1fjHHKYdTE40Q
-	 iUjPfa6QxJTWA==
-Date: Wed, 18 Sep 2024 22:27:39 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	tsbogend@alpha.franken.de, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Subject: Re: [PATCH 2/5] i2c: Add driver for the RTL9300 I2C controller
-Message-ID: <xrr66tlsrqdpasnnz5dmburbotoftrsipnvsfubfyveykhqxob@rqhr5uzfo5fn>
-References: <20240917232932.3641992-1-chris.packham@alliedtelesis.co.nz>
- <20240917232932.3641992-3-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1726691388; c=relaxed/simple;
+	bh=qfziQGIDdI9Vsv6F5w/gesgrncqGYldLl3toi32XYOU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=Mqn0JCdHrQkzPvyjLPSDG+ptkI2Dzgr6iJEL5YloCGljwljSCkJb2OLD1h9PX7kTfnw1rjTUF7Do6M6RUx82urJOh018F9BcbCtAQGUiFiE8clAWYzRl3n9qecNUZsUJ+xHqIQop0gjA2rHoRTCKZFoEriRJ3NYfIYfuPaaydTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=loEJqjYK; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-49bd27b3507so38133137.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:29:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726691385; x=1727296185; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z0+Veg0ajsYwcOQjqw+fgqS5nYmrOd6UXKJLeJklo8Q=;
+        b=loEJqjYKQcmUG9EktZ5jpxOEPREca56b5B7niQkpou6V7HmOPSAduZaHtEu09AaJhK
+         Q2fTQFKxyv8FNYML9vRoWEXVsm2w+dNv4Rm9Q6Hjx2t0qHXvcczYzE8e5Jj59BSh19/5
+         TDV93xzXDEvA62468W+tluua3auu7hCNQFNUNRNKljgJbj0vakEnRu8Kwm16xmufj0v0
+         v3yTDAaK8ALLK8bMiuQEXu9R+8JP2nYPx9oevi1PDXJi45EERlLZyKBvQjqnJ6HJyUdu
+         FnrhlniWcaZUyKukl/SIUseDYAGc/MZe8jv7vPBf31mviv4pl92+QUNxn5ETxAYmgMzA
+         UkBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726691385; x=1727296185;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z0+Veg0ajsYwcOQjqw+fgqS5nYmrOd6UXKJLeJklo8Q=;
+        b=Um7fyOS+Cre++LCVtdgLNEfcNaLYmhNXGVCM8OLVAmOAz6e+JCBIRHsqG6JlRHZ3kU
+         tqkIJOTHR3nlBp6AqEARPdDp1d1xMH3oNnomOnEELCHsc8loD4Z+AnshEW+t88TPSIg+
+         m071a2oBSoYRLvr0FStxBi2e9qepwwaeSKkim/SSJdCvTeCz+QPOFJ01BbbGqjkLxBGl
+         mcerPjNrmyrgWoM3JLfAOWJyCogXdRcuRJKpD2bz9vW7dE3qoOqCkKWw8sZKMahRLFJB
+         jeqSvTyoIjlT3wNBQxfpPx8EBuTnTYzIE7aGhc3OOrUrhFHMpvun4JJvoBmoPrtsrCMk
+         Libw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+VHor+YptBxx+JkocHlFVNxYHWpECkv2OI8ECbHKKUCP6hFoaM5fF6eF6QWI5LqHRB8fEBKtUvd1QrCg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK++Z7rQG0yoBsa5yhYerHqs9zz4UyFM0oOIJMZzK9k0+dALeG
+	oj2+OuMwjvwW+WeWDboHxDLVFUGWrpJw2tEtmR9KNv3VVyQjzFrzV18RGP9rqKcptikvBZHwKNu
+	Xy0elSKUBIMIh7NBwMiEnGlmE/Dc=
+X-Google-Smtp-Source: AGHT+IEVrC+ErbrSJv9jeauTLrJtajhjtGNAO2ZDnBfXorHFZ062AREFhdCHG4ssi+Vfk/BSL/g1/dDRj/uTYjW9/78=
+X-Received: by 2002:a05:6102:38d1:b0:49b:f5ed:4bcb with SMTP id
+ ada2fe7eead31-49d4157db8cmr16663527137.24.1726691385640; Wed, 18 Sep 2024
+ 13:29:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917232932.3641992-3-chris.packham@alliedtelesis.co.nz>
+References: <CALjAwxidmwCT5ZwbZRhf9GwshYbzQZ4N8K3B8KGLi5DnRzj8wQ@mail.gmail.com>
+In-Reply-To: <CALjAwxidmwCT5ZwbZRhf9GwshYbzQZ4N8K3B8KGLi5DnRzj8wQ@mail.gmail.com>
+From: Sitsofe Wheeler <sitsofe@gmail.com>
+Date: Wed, 18 Sep 2024 21:29:19 +0100
+Message-ID: <CALjAwxiytz=FUy4Fu8j-hOa2BKXpYL0ZyjMHyOGRE0OdsfKDkA@mail.gmail.com>
+Subject: Re: Kernel hang when amdgpu driver is loaded on old radeon card
+To: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Chris,
+(CC'ing Hans de Goede who recently wrote a blog post
+(https://hansdegoede.dreamwidth.org/28552.html ) which sounds like the
+same issue I'm seeing)
 
-On Wed, Sep 18, 2024 at 11:29:29AM GMT, Chris Packham wrote:
-> Add support for the I2C controller on the RTL9300 SoC. This is based on
-> the openwrt implementation[1] but cleaned up to make use of the regmap
-> APIs.
+On Sun, 15 Sept 2024 at 21:30, Sitsofe Wheeler <sitsofe@gmail.com> wrote:
+>
+> Hello,
+>
+> (Apologies if I have CC'd the wrong people/places - I just went by
+> what get_maintainer.pl -f drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+> said)
+>
+> I recently upgraded from Ubuntu 20.04 (5.15.0-119.129~20.04.1-generic
+> kernel) to Ubuntu 24.04 (6.8.0-44-generic kernel) and found that while
+> booting the kernel hangs for around 15 seconds just before the amdgpu
+> driver is loaded:
+>
+> [    4.459519] radeon 0000:01:05.0: [drm] Cannot find any crtc or sizes
+> [    4.460118] probe of 0000:01:05.0 returned 0 after 902266 usecs
+> [    4.460184] initcall radeon_module_init+0x0/0xff0 [radeon] returned
+> 0 after 902473 usecs
+> [    4.465797] calling  drm_buddy_module_init+0x0/0xff0 [drm_buddy] @ 122
+> [    4.465853] initcall drm_buddy_module_init+0x0/0xff0 [drm_buddy]
+> returned 0 after 29 usecs
+> [    4.469419] radeon 0000:01:05.0: [drm] Cannot find any crtc or sizes
+> [    4.473831] calling  drm_sched_fence_slab_init+0x0/0xff0 [gpu_sched] @ 122
+> [    4.473892] initcall drm_sched_fence_slab_init+0x0/0xff0
+> [gpu_sched] returned 0 after 31 usecs
+> [   18.724442] calling  amdgpu_init+0x0/0xff0 [amdgpu] @ 122
+> [   18.726303] [drm] amdgpu kernel modesetting enabled.
+> [   18.726576] amdgpu: Virtual CRAT table created for CPU
+> [   18.726609] amdgpu: Topology: Add CPU node
+> [   18.726787] initcall amdgpu_init+0x0/0xff0 [amdgpu] returned 0
+> after 528 usecs
+>
+> I've checked and the problem still exists in 6.11.0-061100rc7-generic
+> (which is close to vanilla upstream).
+>
+> The graphics card I have is:
+> 01:05.0 VGA compatible controller: Advanced Micro Devices, Inc.
+> [AMD/ATI] RS880M [Mobility Radeon HD 4225/4250] (prog-if 00 [VGA
+> controller])
+> 01:05.0 0300: 1002:9712 (prog-if 00 [VGA controller])
+> Subsystem: 103c:1609
+>
+> At first I thought the problem was related to the change
+> https://github.com/torvalds/linux/commit/eb4fd29afd4aa1c98d882800ceeee7d1f5262803
+> ("drm/amdgpu: bind to any 0x1002 PCI diplay [sic] class device") which
+> now means my card is claimed by two drivers (radeon and amdgpu). That
+> change complicated things because:
+> - The amdgpu module and its dependencies remain permanently present (which
+>   never used to happen)
+> - It took some time for me to realise that the amdgpu driver hadn't suddenly
+>   grown the ability to support this old card :-) There is a nice table on
+>   https://www.x.org/wiki/RadeonFeature/#decoderringforengineeringvsmarketingnames
+>   that shows it is part of the R600 family and
+>   https://www.x.org/wiki/RadeonFeature/#featurematrixforfreeradeondrivers shows
+>   that R600 is only supported by the radeon driver.
+>
+> However, testing a 5.16.20-051620-generic kernel showed that while the
+> amdgpu module is loaded, there is no 15 second hang... So far my
+> testing has the following results:
+> - 5.16.20-051620-generic - amdgpu loaded, no hang
+> - 5.18.19-051819-generic - amdgpu loaded, no hang
+> - 6.0.0-060000-generic - amdgpu loaded, hang
+> - 6.2.0-060200-generic - amdgpu loaded, hang
+> - 6.8.0-44-generic - amdgpu loaded, hang
+> - 6.11.0-061100rc7-generic - amdgpu loaded, hang
+>
+> To work around the problem I've taken to blacklisting amdgpu in
+> /etc/modprobe.d/ which makes the hang disappear.
+>
+> Does anyone else see this issue? Is there something better than my
+> current workaround? What do other drivers that want to bind to such a
+> large set of devices do? Further, while I'm already using
+> initcall_debug, is there any other kernel boot parameter to make
+> what's happening more visible?
+>
+> --
+> Sitsofe
 
-Can you please add a few more words to describe the device?
 
-> [1] - https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=target/linux/realtek/files-5.15/drivers/i2c/busses/i2c-rtl9300.c
-> 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-...
-
-> +#define I2C_MST_CTRL1		0x0
-> +#define  MEM_ADDR_OFS		8
-> +#define  MEM_ADDR_MASK		0xffffff
-> +#define  SDA_OUT_SEL_OFS	4
-> +#define  SDA_OUT_SEL_MASK	0x7
-> +#define  GPIO_SCL_SEL		BIT(3)
-> +#define  RWOP			BIT(2)
-> +#define  I2C_FAIL		BIT(1)
-> +#define  I2C_TRIG		BIT(0)
-> +#define I2C_MST_CTRL2		0x4
-> +#define  RD_MODE		BIT(15)
-> +#define  DEV_ADDR_OFS		8
-> +#define  DEV_ADDR_MASK		0x7f
-> +#define  DATA_WIDTH_OFS		4
-> +#define  DATA_WIDTH_MASK	0xf
-> +#define  MEM_ADDR_WIDTH_OFS	2
-> +#define  MEM_ADDR_WIDTH_MASK	0x3
-
-can we have these masked already shifted? You could use
-GENMASK().
-
-> +#define  SCL_FREQ_OFS		0
-> +#define  SCL_FREQ_MASK		0x3
-> +#define I2C_MST_DATA_WORD0	0x8
-> +#define I2C_MST_DATA_WORD1	0xc
-> +#define I2C_MST_DATA_WORD2	0x10
-> +#define I2C_MST_DATA_WORD3	0x14
-
-Can we use a prefix for all these defines?
-
-> +
-> +#define RTL9300_I2C_STD_FREQ		0
-> +#define RTL9300_I2C_FAST_FREQ		1
-
-This can also be an enum.
-
-> +
-> +DEFINE_MUTEX(i2c_lock);
-
-...
-
-> +static int rtl9300_i2c_write(struct rtl9300_i2c *i2c, u8 *buf, int len)
-> +{
-> +	u32 vals[4] = {};
-> +	int i, ret;
-> +
-> +	if (len > 16)
-> +		return -EIO;
-> +
-> +	for (i = 0; i < len; i++) {
-> +		if (i % 4 == 0)
-> +			vals[i/4] = 0;
-> +		vals[i/4] <<= 8;
-> +		vals[i/4] |= buf[i];
-> +	}
-> +
-> +	ret = regmap_bulk_write(i2c->regmap, i2c->i2c_mst_ofs + I2C_MST_DATA_WORD0,
-> +				vals, ARRAY_SIZE(vals));
-> +	if (ret)
-> +		return ret;
-> +
-> +	return len;
-
-why returning "len"? And in any case this is ignored.
-
-> +}
-> +
-> +static int rtl9300_i2c_writel(struct rtl9300_i2c *i2c, u32 data)
-> +{
-> +	int ret;
-> +
-> +	ret = regmap_write(i2c->regmap, i2c->i2c_mst_ofs + I2C_MST_DATA_WORD0, data);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-
-return regmap_write(...) ?
-
-In any case, the returned value of these functions is completely
-ignored, not even printed. Should we either:
-
- - condier the return value in the _xfer() functions
- or
- - make all these functions void?
-
-> +}
-> +
-> +static int rtl9300_i2c_execute_xfer(struct rtl9300_i2c *i2c, char read_write,
-> +				int size, union i2c_smbus_data *data, int len)
-> +{
-> +	u32 val, mask;
-> +	int ret;
-> +
-> +	if (read_write == I2C_SMBUS_READ)
-> +		val = 0;
-> +	else
-> +		val = RWOP;
-> +	mask = RWOP;
-> +
-> +	val |= I2C_TRIG;
-> +	mask |= I2C_TRIG;
-
-how about "mask = RWOP | I2C_TRIG" to make it in one line?
-
-Also val can be simplified as:
-
-	val = I2C_TRIG;
-	if (read_write == I2C_SMBUS_WRITE)
-		val |= RWOP;
-
-Not a binding commeent, as you wish.
-
-> +
-> +	ret = regmap_update_bits(i2c->regmap, i2c->i2c_mst_ofs + I2C_MST_CTRL1, mask, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_read_poll_timeout(i2c->regmap, i2c->i2c_mst_ofs + I2C_MST_CTRL1,
-> +				       val, !(val & I2C_TRIG), 100, 2000);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (val & I2C_FAIL)
-
-where is val taking taking this bit?
-
-> +		return -EIO;
-> +
-
-...
-
-> +	switch (size) {
-> +	case I2C_SMBUS_QUICK:
-...
-> +	case I2C_SMBUS_BYTE:
-...
-> +	case I2C_SMBUS_BYTE_DATA:
-...
-> +	case I2C_SMBUS_WORD_DATA:
-...
-> +	case I2C_SMBUS_BLOCK_DATA:
-...
-> +	default:
-> +		dev_warn(&adap->dev, "Unsupported transaction %d\n", size);
-
-dev_err() ?
-
-> +		ret = -EOPNOTSUPP;
-> +		goto out_unlock;
-> +	}
-
-...
-
-> +	switch (clock_freq) {
-> +	case I2C_MAX_STANDARD_MODE_FREQ:
-...
-> +	case I2C_MAX_FAST_MODE_FREQ:
-...
-> +	default:
-> +		dev_warn(i2c->dev, "clock-frequency %d not supported\n", clock_freq);
-> +		return -EINVAL;
-
-If we are returning an error we should print an error, let's make
-it a "return dev_err_probe()"
-
-But, I was thinking that by default we can assign
-I2C_MAX_STANDARD_MODE_FREQ and if the DTS defines a different
-frequency we could just print an error and stick to the default
-value. Makes sense?
-
-> +	}
-
-...
-
-> +	return i2c_add_adapter(adap);
-
-return devm_i2c_add_adapter(adap);
-
-and the remove function is not needed.
-
-> +}
-> +
-> +static void rtl9300_i2c_remove(struct platform_device *pdev)
-> +{
-> +	struct rtl9300_i2c *i2c = platform_get_drvdata(pdev);
-> +
-> +	i2c_del_adapter(&i2c->adap);
-> +}
-> +
-> +static const struct of_device_id i2c_rtl9300_dt_ids[] = {
-> +	{ .compatible = "realtek,rtl9300-i2c" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, i2c_rtl9300_dt_ids);
-> +
-> +static struct platform_driver rtl9300_i2c_driver = {
-> +	.probe = rtl9300_i2c_probe,
-> +	.remove = rtl9300_i2c_remove,
-> +	.driver = {
-> +		.name = "i2c-rtl9300",
-> +		.of_match_table = i2c_rtl9300_dt_ids,
-> +	},
-> +};
-> +
-> +module_platform_driver(rtl9300_i2c_driver);
-> +
-> +MODULE_DESCRIPTION("RTL9300 I2C controller driver");
-> +MODULE_LICENSE("GPL");
-> +
-
-Just a trailing blank line here.
-
-Thanks,
-Andi
+-- 
+Sitsofe
 
