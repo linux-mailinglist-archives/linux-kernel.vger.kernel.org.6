@@ -1,167 +1,127 @@
-Return-Path: <linux-kernel+bounces-332912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C96797C0A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:49:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D6C97C0A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:52:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF8E31C2128F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:49:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C8D81C20EA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 19:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11931CA6A5;
-	Wed, 18 Sep 2024 19:49:18 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4271CA6AF;
+	Wed, 18 Sep 2024 19:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dh8ChTs0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282BA1C68AB;
-	Wed, 18 Sep 2024 19:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DA51C8FB4;
+	Wed, 18 Sep 2024 19:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726688958; cv=none; b=AeoZ1gzEZ1QMNleJFY5JPP17fyOAIkg7qywBxxOj5z7sINgtEeIIcNPsMxeiAFcgw1EZdl/ZcLsPD95ljw43ZZ8n366c9rPqKaVpJyY2hX/2J7QdEylZ2OzhWyddfWH48tbnxJog2Tr/XfwwqpqDvagfEPPLfP/e4ssBMjOi77g=
+	t=1726689146; cv=none; b=Bc3Wu62vHYBQoO33eeDLitiyq2cOzAgIXuznYdD/yQCkmwSWtHNHM5zw2nO6cHrZvYi9tTTZPhzZ87EAnXdTIMj1fDmbdd6N70RmgSFwCXnqo9r6LztTMAKKuLvvg2c+yInEcjigPMieE+0Shb+yR54eCwqeeiYjdELoN2hvQ10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726688958; c=relaxed/simple;
-	bh=WExMYyNGt9y9Ex94lL0h//oJecQB+e8gT88UZyGJPe8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:Content-Type; b=eaEA3zfi4r6hZIW6hP5ffs3GVDH5AVy+CMmAZi6uZo/J/l7J0ekw+9SD3C6U9OqziLUobvGAa+ifXkyXr3MJKvbUSzUnYPyt48jVWA02M0GuPoa3fP9R75NE+5Y2IhXd4YlLQm+sO3JLj93qgKEFfKG3ord8LFow5WoGQALPQgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.109] (31.173.87.200) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 18 Sep
- 2024 22:49:10 +0300
-Message-ID: <62f7666d-0a66-9ba5-61fd-a998e4169867@omp.ru>
-Date: Wed, 18 Sep 2024 22:49:09 +0300
+	s=arc-20240116; t=1726689146; c=relaxed/simple;
+	bh=KVQTJmUOix5X3CgjVBPJhTZmYLzmRscSQ3BbyC6k5WY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xyl0Jf5lejQblvY0hSwE9XRxpjHkO4McGyZbq4njb0ymEy2yurM1tjwoW3FtBdgdd+sRpazKpmIw66tvyU90BS9soaAuHxlUpu6hfrMrDtV86D5txu7/2ixfkvcLQog85ojQbyQjP1ahaQR5DgnPVCjZ7iqvCmlNoj/x9eCxsiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dh8ChTs0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA1F8C4CEC2;
+	Wed, 18 Sep 2024 19:52:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726689146;
+	bh=KVQTJmUOix5X3CgjVBPJhTZmYLzmRscSQ3BbyC6k5WY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dh8ChTs0bvjKDyoK6+3sLNk8nKwYSKPl47Hzef6NvRHXzqxV0LsdqJlrlkAn85ZZA
+	 SpcxtsopWZj/wIP3KE4HC8Dc3Xnf1XSIlbk3Rfszp2KXX4iDZCmb6s5PXGBEl3xfxu
+	 /W646X3yUIHpivBnXXUAHppOPX2/Ev9868ks+LzxVfynUjpCMGr3HUBmK3iffplL7w
+	 cCVvZEcpZ8pQmtv5SdSqi4wLSiBJAxCuvNcs6NIgixyH5ViuXOLxjWgow8chKDRJwc
+	 oDvD2GW0uBlrhJZb+MAYS7JpGq4cSU73i4XiZ0TbvI99xUMnZrPCgWggcAn2ShLvR9
+	 uTo2RTf4IStFQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] dt-bindings: writing-schema: Add details on YAML text blocks
+Date: Wed, 18 Sep 2024 14:51:30 -0500
+Message-ID: <20240918195130.2024205-2-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: [PATCH 5.10.y] udf: Fold udf_getblk() into udf_bread()
-To: Jan Kara <jack@suse.cz>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>
-CC: <lvc-project@linuxtesting.org>
-Content-Language: en-US
-Organization: Open Mobile Platform
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/18/2024 19:34:26
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 187837 [Sep 18 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.1.5
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
- 8a1fac695d5606478feba790382a59668a4f0039
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info:
-	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.87.200
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/18/2024 19:37:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/18/2024 4:23:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Transfer-Encoding: 8bit
 
-From: Jan Kara <jack@suse.cz>
+The YAML format has a couple of different forms for multi-line text
+blocks which control allowed characters and handling of line-breaks.
+Getting this wrong is a common review issue. Either a literal block is
+used when there's no formatting needed or a folded/literal block is
+not used when there is formatting to maintain.
 
-udf_getblk() has a single call site. Fold it there.
+Add some descriptions of the different forms to point folks to in
+reviews.
 
-[Sergey: moved back to using udf_get_block() and buffer_{mapped|new}().]
-
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
-This patch prevents NULL pointer dereference in case sb_getblk() fails...
+I have a prototype yamllint addition to check this for us. Not sure
+if it will be upstreamable given something that works for us is quite
+easier than supporting any possible YAML.
 
- fs/udf/inode.c |   45 +++++++++++++++++++--------------------------
- 1 file changed, 19 insertions(+), 26 deletions(-)
+Digging into this more, I had not realized that plain style can support
+paragraphs with a blank line nor that folded (">") style maintains
+indented lines. That probably means we could use those 2 just about
+everywhere. Or maybe it's just easier to say use ">" everywhere (or
+everywhere with more than 1 line).
+---
+ .../devicetree/bindings/writing-schema.rst    | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-Index: linux-stable/fs/udf/inode.c
-===================================================================
---- linux-stable.orig/fs/udf/inode.c
-+++ linux-stable/fs/udf/inode.c
-@@ -458,30 +458,6 @@ abort:
- 	return err;
- }
+diff --git a/Documentation/devicetree/bindings/writing-schema.rst b/Documentation/devicetree/bindings/writing-schema.rst
+index 7e71cdd1d6de..eb8ced400c7e 100644
+--- a/Documentation/devicetree/bindings/writing-schema.rst
++++ b/Documentation/devicetree/bindings/writing-schema.rst
+@@ -43,6 +43,36 @@ description
+   or device does, standards the device conforms to, and links to datasheets for
+   more information.
  
--static struct buffer_head *udf_getblk(struct inode *inode, udf_pblk_t block,
--				      int create, int *err)
--{
--	struct buffer_head *bh;
--	struct buffer_head dummy;
--
--	dummy.b_state = 0;
--	dummy.b_blocknr = -1000;
--	*err = udf_get_block(inode, block, &dummy, create);
--	if (!*err && buffer_mapped(&dummy)) {
--		bh = sb_getblk(inode->i_sb, dummy.b_blocknr);
--		if (buffer_new(&dummy)) {
--			lock_buffer(bh);
--			memset(bh->b_data, 0x00, inode->i_sb->s_blocksize);
--			set_buffer_uptodate(bh);
--			unlock_buffer(bh);
--			mark_buffer_dirty_inode(bh, inode);
--		}
--		return bh;
--	}
--
--	return NULL;
--}
--
- /* Extend the file with new blocks totaling 'new_block_bytes',
-  * return the number of extents added
-  */
-@@ -1197,10 +1173,27 @@ struct buffer_head *udf_bread(struct ino
- 			      int create, int *err)
- {
- 	struct buffer_head *bh = NULL;
-+	struct buffer_head dummy;
++  The YAML format has several options for defining the formatting of the text
++  block. The options are controlled with indicator characters following the key
++  (e.g. "description: \|"). The minimum formatting needed for a block should be
++  used. The formatting controls can not only affect whether the YAML can be
++  parsed correctly, but are important when the text blocks are rendered to
++  another form. The options are as follows.
 +
-+	dummy.b_state = 0;
-+	dummy.b_blocknr = -1000;
-+	*err = udf_get_block(inode, block, &dummy, create);
-+	if (*err || !buffer_mapped(&dummy))
-+		return NULL;
- 
--	bh = udf_getblk(inode, block, create, err);
--	if (!bh)
-+	bh = sb_getblk(inode->i_sb, dummy.b_blocknr);
-+	if (!bh) {
-+		*err = -ENOMEM;
- 		return NULL;
-+	}
-+	if (buffer_new(&dummy)) {
-+		lock_buffer(bh);
-+		memset(bh->b_data, 0x00, inode->i_sb->s_blocksize);
-+		set_buffer_uptodate(bh);
-+		unlock_buffer(bh);
-+		mark_buffer_dirty_inode(bh, inode);
-+		return bh;
-+	}
- 
- 	if (buffer_uptodate(bh))
- 		return bh;
++  The default without any indicators is flowed, plain scalar style where single
++  line breaks and leading whitespace are stripped. Paragraphs are delimited by
++  blank lines (i.e. double line break). This style cannot contain ": " in it as
++  it will be interpretted as a key. Any " #" sequence will be interpretted as
++  a comment. There's other restrictions on characters as well. Most
++  restrictions are on what the first character can be.
++
++  The second style is folded which is indicated by ">" character. In addition
++  to maintaining line breaks on double line breaks, the folded style also
++  maintains leading whitespace beyond indentation of the first line. The line
++  breaks on indented lines are also maintained.
++
++  The third style is literal which is indicated by "\|" character. The literal
++  style maintains all line breaks and whitespace (beyond indentation of the
++  first line).
++
++  The above is not a complete description of YAML text blocks. More details on
++  multi-line YAML text blocks can be found online:
++
++  https://yaml-multiline.info/
++
++  https://www.yaml.info/learn/quote.html
++
+ select
+   Optional. A json-schema used to match nodes for applying the
+   schema. By default, without 'select', nodes are matched against their possible
+-- 
+2.45.2
+
 
