@@ -1,224 +1,304 @@
-Return-Path: <linux-kernel+bounces-332244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4496397B723
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:57:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E683597B727
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 05:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1621F24A02
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:57:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 143361C21DF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80ADA13A244;
-	Wed, 18 Sep 2024 03:57:15 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4715A13CA81;
+	Wed, 18 Sep 2024 03:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i/ql75D1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9829B27442
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 03:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EE627442;
+	Wed, 18 Sep 2024 03:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726631835; cv=none; b=m05Nf/H6f8pZwcRLM//yk30xYKFgY3SgMDBCyttS7YrV38UIPMuzHnNegofhLsF12/30DiGdWLSQlFqBso2sHOntVIwaCocyaTl/MpKO8nSK3OUbhFTQEmacWJAe+ekz5dOUCUb/syL2LfxyxIgSdyLdBeMxz9iGW5CidttZr2o=
+	t=1726631866; cv=none; b=IFdUuC0ydlarFfbzV4T69xIoVX6Ah+9IIrowKx7RWFW+8RMiU8lFkIvNf0ee8noDDLY1DltbW4wR9NnGwjO1VG7hkaajQQsrXuAL6ZME+IHq5p/j5be0PyFhoAm8608MMTngGlDm0dZhdi0nU+1NrdnLroNLpT8OBxj1qLUVobg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726631835; c=relaxed/simple;
-	bh=CMcvX/gL39+5jucoujvBO7dSLHUYcbE6sS5WaCvk7q4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q4PDBRkHj9O8qKWGAH7RIXPKs8kS2MEYzK9ZuHz1aAyNZyhdoBI7n2BW57SNN5BSElhJU/sRJcufbS+u2AKAhzlJvRFtG+/A2gloOwUsiFF3UotyD1A5LQokaPUdDJ5lJSqhliuebP7kss8qzyLqMsGIT+yAV229tvRTKfOG7Nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4X7lG75Xg0z1ym25;
-	Wed, 18 Sep 2024 11:57:03 +0800 (CST)
-Received: from dggpeml500002.china.huawei.com (unknown [7.185.36.158])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9DE8E18001B;
-	Wed, 18 Sep 2024 11:57:03 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.56) by
- dggpeml500002.china.huawei.com (7.185.36.158) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 18 Sep 2024 11:57:03 +0800
-From: Junhao He <hejunhao3@huawei.com>
-To: <suzuki.poulose@arm.com>, <james.clark@arm.com>,
-	<anshuman.khandual@arm.com>
-CC: <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <yangyicong@huawei.com>,
-	<prime.zeng@hisilicon.com>, <hejunhao3@huawei.com>
-Subject: [PATCH] coresight: Fixes device's owner field for registered using coresight_init_driver()
-Date: Wed, 18 Sep 2024 11:53:27 +0800
-Message-ID: <20240918035327.9710-1-hejunhao3@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1726631866; c=relaxed/simple;
+	bh=frD+K5HzGjuUq0/TH8Nj5H7UMFbyFlSEUpgkRZX7OQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kooUeU1gxR/VOXVHKzAYomd3vEqoGGdcUvvaN2BpjONEtbnHwubg26CBLq6FlwErHA6cy8t0XnCH7o2Vk7UZFbxqwykrZOgr8hTdMOZnJ/0IOmQEPqKcHNZv0cE+zWbRC/GqXyFlkQjXVZ+9N2HV7uXuV6xUzUw1W3p/Kr5tmkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i/ql75D1; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726631863; x=1758167863;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=frD+K5HzGjuUq0/TH8Nj5H7UMFbyFlSEUpgkRZX7OQU=;
+  b=i/ql75D1kEiMZnBNJ0tupLx4EFrVgamasnK0EMjBeH8hnCvCzscKGJrs
+   VABMSkIsbaOcA3WF6qZ5hHqB4tHIlv38aPwYS7ohFJ4ajmXrUYLwCXvJ1
+   vg3nqdg0Rj/vKKdL1Qc0mvngxRPhLohA6G2DleMfzZNVj6A8YD1G5Us3J
+   /KCzk5S/0Yt6egxezZrlM2XaAjmPozB5OEImJ+PRpIVRp9hogvCkJtD7p
+   zD+4gL3fhY6MrKghhxqMw0hhQRzeSJfMVzKN0zWNygeYQuW667RP51ka9
+   w1ZN/TTQrdiHlD2PAx9bGH1TFzciO6koLY7CCcTpqM4Q5jC9LiCWhENR7
+   g==;
+X-CSE-ConnectionGUID: TLvtrn6fQcuUg0IpV/wEYw==
+X-CSE-MsgGUID: fid2O0s6RlKRSnh+58Nyiw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11198"; a="25398610"
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="25398610"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 20:57:43 -0700
+X-CSE-ConnectionGUID: 97MOeXxuQZe8qSWGXtTPYQ==
+X-CSE-MsgGUID: AeWhu8umTt6Qh9MrwCDOPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,235,1719903600"; 
+   d="scan'208";a="73962877"
+Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.161.23])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2024 20:57:39 -0700
+Date: Wed, 18 Sep 2024 11:56:31 +0800
+From: "Lai, Yi" <yi1.lai@linux.intel.com>
+To: Felix Moessbauer <felix.moessbauer@siemens.com>
+Cc: axboe@kernel.dk, asml.silence@gmail.com, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org, cgroups@vger.kernel.org,
+	dqminh@cloudflare.com, longman@redhat.com,
+	adriaan.schmidt@siemens.com, florian.bezdeka@siemens.com,
+	stable@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	pengfei.xu@intel.com, yi1.lai@intel.com
+Subject: Re: [PATCH 1/1] io_uring/sqpoll: do not allow pinning outside of
+ cpuset
+Message-ID: <ZupPb3OH3tnM2ARj@ly-workstation>
+References: <20240909150036.55921-1-felix.moessbauer@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpeml500002.china.huawei.com (7.185.36.158)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909150036.55921-1-felix.moessbauer@siemens.com>
 
-The coresight_init_driver() of the coresight-core module is called from
-the sub coresgiht device (such as tmc/stm/funnle/...) module. It calls
-amba_driver_register() and Platform_driver_register(), which are macro
-functions that use the coresight-core's module to initialize the caller's
-owner field.  Therefore, when the sub coresight device calls
-coresight_init_driver(), an incorrect THIS_MODULE value is captured.
+Hi Felix Moessbauer,
 
-The sub coesgiht modules can be removed while their callbacks are
-running, resulting in a general protection failure.
+Greetings!
 
-Add module parameter to coresight_init_driver() so can be called
-with the module of the callback.
+I used Syzkaller and found that there is KASAN: use-after-free Read in io_sq_offload_create in Linux-next tree - next-20240916.
 
-Fixes: 075b7cd7ad7d ("coresight: Add helpers registering/removing both AMBA and platform drivers")
-Signed-off-by: Junhao He <hejunhao3@huawei.com>
+After bisection and the first bad commit is:
+"
+f011c9cf04c0 io_uring/sqpoll: do not allow pinning outside of cpuset
+"
+
+All detailed into can be found at:
+https://github.com/laifryiee/syzkaller_logs/tree/main/240917_135250_io_sq_offload_create
+Syzkaller repro code:
+https://github.com/laifryiee/syzkaller_logs/blob/main/240917_135250_io_sq_offload_create/repro.c
+Syzkaller repro syscall steps:
+https://github.com/laifryiee/syzkaller_logs/blob/main/240917_135250_io_sq_offload_create/repro.prog
+Syzkaller report:
+https://github.com/laifryiee/syzkaller_logs/blob/main/240917_135250_io_sq_offload_create/repro.report
+Kconfig(make olddefconfig):
+https://github.com/laifryiee/syzkaller_logs/blob/main/240917_135250_io_sq_offload_create/kconfig_origin
+Bisect info:
+https://github.com/laifryiee/syzkaller_logs/blob/main/240917_135250_io_sq_offload_create/bisect_info.log
+bzImage:
+https://github.com/laifryiee/syzkaller_logs/raw/main/240917_135250_io_sq_offload_create/bzImage_7083504315d64199a329de322fce989e1e10f4f7
+Issue dmesg:
+https://github.com/laifryiee/syzkaller_logs/blob/main/240917_135250_io_sq_offload_create/7083504315d64199a329de322fce989e1e10f4f7_dmesg.log
+
+"
+[   23.564898] ==================================================================
+[   23.565444] BUG: KASAN: use-after-free in io_sq_offload_create+0xcaa/0x11d0
+[   23.565971] Read of size 8 at addr ffff888036377898 by task repro/729
+[   23.566459] 
+[   23.566593] CPU: 0 UID: 0 PID: 729 Comm: repro Not tainted 6.11.0-next-20240916-7083504315d6 #1
+[   23.567271] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
+[   23.568066] Call Trace:
+[   23.568252]  <TASK>
+[   23.568417]  dump_stack_lvl+0xea/0x150
+[   23.568718]  print_report+0xce/0x610
+[   23.569001]  ? io_sq_offload_create+0xcaa/0x11d0
+[   23.569340]  ? kasan_addr_to_slab+0x11/0xb0
+[   23.569651]  ? io_sq_offload_create+0xcaa/0x11d0
+[   23.569992]  kasan_report+0xcc/0x110
+[   23.570277]  ? io_sq_offload_create+0xcaa/0x11d0
+[   23.570621]  kasan_check_range+0x3e/0x1c0
+[   23.570917]  __kasan_check_read+0x15/0x20
+[   23.571212]  io_sq_offload_create+0xcaa/0x11d0
+[   23.571540]  ? __pfx_io_sq_offload_create+0x10/0x10
+[   23.571893]  ? __pfx___lock_acquire+0x10/0x10
+[   23.572228]  ? __this_cpu_preempt_check+0x21/0x30
+[   23.572580]  ? lock_acquire.part.0+0x152/0x390
+[   23.572910]  ? __this_cpu_preempt_check+0x21/0x30
+[   23.573254]  ? lock_release+0x441/0x870
+[   23.573541]  ? __pfx_lock_release+0x10/0x10
+[   23.573846]  ? trace_lock_acquire+0x139/0x1b0
+[   23.574180]  ? debug_smp_processor_id+0x20/0x30
+[   23.574524]  ? rcu_is_watching+0x19/0xc0
+[   23.574826]  ? __alloc_pages_noprof+0x517/0x710
+[   23.575171]  ? __pfx___alloc_pages_noprof+0x10/0x10
+[   23.575526]  ? mod_objcg_state+0x42c/0x9c0
+[   23.575838]  ? lockdep_hardirqs_on+0x89/0x110
+[   23.576159]  ? __sanitizer_cov_trace_switch+0x58/0xa0
+[   23.576534]  ? policy_nodemask+0xf9/0x450
+[   23.576835]  ? __sanitizer_cov_trace_const_cmp2+0x1c/0x30
+[   23.577220]  ? alloc_pages_mpol_noprof+0x35d/0x580
+[   23.577575]  ? __pfx_alloc_pages_mpol_noprof+0x10/0x10
+[   23.577950]  ? __kmalloc_node_noprof+0x3a3/0x4e0
+[   23.578302]  ? __kvmalloc_node_noprof+0x7f/0x240
+[   23.578645]  ? alloc_pages_noprof+0xa9/0x180
+[   23.578963]  ? __sanitizer_cov_trace_const_cmp8+0x1c/0x30
+[   23.579347]  ? io_pages_map+0x244/0x5c0
+[   23.579631]  io_uring_setup+0x18df/0x3950
+[   23.579936]  ? __pfx_io_uring_setup+0x10/0x10
+[   23.580263]  ? __audit_syscall_entry+0x39c/0x500
+[   23.580602]  __x64_sys_io_uring_setup+0xa4/0x160
+[   23.580939]  x64_sys_call+0x17f5/0x20d0
+[   23.581224]  do_syscall_64+0x6d/0x140
+[   23.581498]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[   23.581872] RIP: 0033:0x7efd9fa3ee5d
+[   23.582140] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 93 af 1b 00 f7 d8 64 89 01 48
+[   23.583404] RSP: 002b:00007ffdd4400858 EFLAGS: 00000202 ORIG_RAX: 00000000000001a9
+[   23.583938] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007efd9fa3ee5d
+[   23.584430] RDX: 00007efd9fb3f247 RSI: 0000000020000080 RDI: 0000000000005230
+[   23.584927] RBP: 00007ffdd4400860 R08: 00007ffdd44002d0 R09: 00007ffdd4400890
+[   23.585419] R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffdd44009b8
+[   23.585914] R13: 0000000000401730 R14: 0000000000403e08 R15: 00007efd9fcb5000
+[   23.586424]  </TASK>
+[   23.586589] 
+[   23.586709] The buggy address belongs to the physical page:
+[   23.587094] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x36377
+[   23.587644] flags: 0xfffffc0000000(node=0|zone=1|lastcpupid=0x1fffff)
+[   23.588103] raw: 000fffffc0000000 ffffea0000d8ddc8 ffffea0000d8ddc8 0000000000000000
+[   23.588636] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+[   23.589167] page dumped because: kasan: bad access detected
+[   23.589551] 
+[   23.589670] Memory state around the buggy address:
+[   23.590007]  ffff888036377780: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[   23.590514]  ffff888036377800: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[   23.591011] >ffff888036377880: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[   23.591508]                             ^
+[   23.591794]  ffff888036377900: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[   23.592292]  ffff888036377980: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+[   23.592789] ==================================================================
+[   23.593344] Disabling lock debugging due to kernel taint
+"
+
+I hope you find it useful.
+
+Regards,
+Yi Lai
+
 ---
- drivers/hwtracing/coresight/coresight-catu.c       | 2 +-
- drivers/hwtracing/coresight/coresight-core.c       | 6 +++---
- drivers/hwtracing/coresight/coresight-cpu-debug.c  | 3 ++-
- drivers/hwtracing/coresight/coresight-funnel.c     | 3 ++-
- drivers/hwtracing/coresight/coresight-replicator.c | 3 ++-
- drivers/hwtracing/coresight/coresight-stm.c        | 2 +-
- drivers/hwtracing/coresight/coresight-tmc-core.c   | 2 +-
- drivers/hwtracing/coresight/coresight-tpiu.c       | 2 +-
- include/linux/coresight.h                          | 2 +-
- 9 files changed, 14 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
-index bfea880d6dfb..337668f9cfd4 100644
---- a/drivers/hwtracing/coresight/coresight-catu.c
-+++ b/drivers/hwtracing/coresight/coresight-catu.c
-@@ -702,7 +702,7 @@ static int __init catu_init(void)
- {
- 	int ret;
- 
--	ret = coresight_init_driver("catu", &catu_driver, &catu_platform_driver);
-+	ret = coresight_init_driver("catu", &catu_driver, &catu_platform_driver, THIS_MODULE);
- 	tmc_etr_set_catu_ops(&etr_catu_buf_ops);
- 	return ret;
- }
-diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-index 9fc6f6b863e0..c546a417836c 100644
---- a/drivers/hwtracing/coresight/coresight-core.c
-+++ b/drivers/hwtracing/coresight/coresight-core.c
-@@ -1399,17 +1399,17 @@ module_init(coresight_init);
- module_exit(coresight_exit);
- 
- int coresight_init_driver(const char *drv, struct amba_driver *amba_drv,
--			  struct platform_driver *pdev_drv)
-+			  struct platform_driver *pdev_drv, struct module *owner)
- {
- 	int ret;
- 
--	ret = amba_driver_register(amba_drv);
-+	ret = __amba_driver_register(amba_drv, owner);
- 	if (ret) {
- 		pr_err("%s: error registering AMBA driver\n", drv);
- 		return ret;
- 	}
- 
--	ret = platform_driver_register(pdev_drv);
-+	ret = __platform_driver_register(pdev_drv, owner);
- 	if (!ret)
- 		return 0;
- 
-diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-index 75962dae9aa1..cc599c5ef4b2 100644
---- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
-+++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-@@ -774,7 +774,8 @@ static struct platform_driver debug_platform_driver = {
- 
- static int __init debug_init(void)
- {
--	return coresight_init_driver("debug", &debug_driver, &debug_platform_driver);
-+	return coresight_init_driver("debug", &debug_driver, &debug_platform_driver,
-+				     THIS_MODULE);
- }
- 
- static void __exit debug_exit(void)
-diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
-index 5a819c8970fb..8f451b051ddc 100644
---- a/drivers/hwtracing/coresight/coresight-funnel.c
-+++ b/drivers/hwtracing/coresight/coresight-funnel.c
-@@ -433,7 +433,8 @@ static struct amba_driver dynamic_funnel_driver = {
- 
- static int __init funnel_init(void)
- {
--	return coresight_init_driver("funnel", &dynamic_funnel_driver, &funnel_driver);
-+	return coresight_init_driver("funnel", &dynamic_funnel_driver, &funnel_driver,
-+				     THIS_MODULE);
- }
- 
- static void __exit funnel_exit(void)
-diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
-index 3e55be9c8418..f7607c72857c 100644
---- a/drivers/hwtracing/coresight/coresight-replicator.c
-+++ b/drivers/hwtracing/coresight/coresight-replicator.c
-@@ -438,7 +438,8 @@ static struct amba_driver dynamic_replicator_driver = {
- 
- static int __init replicator_init(void)
- {
--	return coresight_init_driver("replicator", &dynamic_replicator_driver, &replicator_driver);
-+	return coresight_init_driver("replicator", &dynamic_replicator_driver, &replicator_driver,
-+				     THIS_MODULE);
- }
- 
- static void __exit replicator_exit(void)
-diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
-index 117dbb484543..403eea8f95d4 100644
---- a/drivers/hwtracing/coresight/coresight-stm.c
-+++ b/drivers/hwtracing/coresight/coresight-stm.c
-@@ -1046,7 +1046,7 @@ static struct platform_driver stm_platform_driver = {
- 
- static int __init stm_init(void)
- {
--	return coresight_init_driver("stm", &stm_driver, &stm_platform_driver);
-+	return coresight_init_driver("stm", &stm_driver, &stm_platform_driver, THIS_MODULE);
- }
- 
- static void __exit stm_exit(void)
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
-index b54562f392f3..e31e36635394 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-core.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
-@@ -742,7 +742,7 @@ static struct platform_driver tmc_platform_driver = {
- 
- static int __init tmc_init(void)
- {
--	return coresight_init_driver("tmc", &tmc_driver, &tmc_platform_driver);
-+	return coresight_init_driver("tmc", &tmc_driver, &tmc_platform_driver, THIS_MODULE);
- }
- 
- static void __exit tmc_exit(void)
-diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c b/drivers/hwtracing/coresight/coresight-tpiu.c
-index b048e146fbb1..f9ecd05cbe5c 100644
---- a/drivers/hwtracing/coresight/coresight-tpiu.c
-+++ b/drivers/hwtracing/coresight/coresight-tpiu.c
-@@ -318,7 +318,7 @@ static struct platform_driver tpiu_platform_driver = {
- 
- static int __init tpiu_init(void)
- {
--	return coresight_init_driver("tpiu", &tpiu_driver, &tpiu_platform_driver);
-+	return coresight_init_driver("tpiu", &tpiu_driver, &tpiu_platform_driver, THIS_MODULE);
- }
- 
- static void __exit tpiu_exit(void)
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index f09ace92176e..e6c26952ddc2 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -660,7 +660,7 @@ coresight_find_output_type(struct coresight_platform_data *pdata,
- 			   union coresight_dev_subtype subtype);
- 
- int coresight_init_driver(const char *drv, struct amba_driver *amba_drv,
--			  struct platform_driver *pdev_drv);
-+			  struct platform_driver *pdev_drv, struct module *owner);
- 
- void coresight_remove_driver(struct amba_driver *amba_drv,
- 			     struct platform_driver *pdev_drv);
--- 
-2.33.0
+If you don't need the following environment to reproduce the problem or if you
+already have one reproduced environment, please ignore the following information.
 
+How to reproduce:
+git clone https://gitlab.com/xupengfe/repro_vm_env.git
+cd repro_vm_env
+tar -xvf repro_vm_env.tar.gz
+cd repro_vm_env; ./start3.sh  // it needs qemu-system-x86_64 and I used v7.1.0
+  // start3.sh will load bzImage_2241ab53cbb5cdb08a6b2d4688feb13971058f65 v6.2-rc5 kernel
+  // You could change the bzImage_xxx as you want
+  // Maybe you need to remove line "-drive if=pflash,format=raw,readonly=on,file=./OVMF_CODE.fd \" for different qemu version
+You could use below command to log in, there is no password for root.
+ssh -p 10023 root@localhost
+
+After login vm(virtual machine) successfully, you could transfer reproduced
+binary to the vm by below way, and reproduce the problem in vm:
+gcc -pthread -o repro repro.c
+scp -P 10023 repro root@localhost:/root/
+
+Get the bzImage for target kernel:
+Please use target kconfig and copy it to kernel_src/.config
+make olddefconfig
+make -jx bzImage           //x should equal or less than cpu num your pc has
+
+Fill the bzImage file into above start3.sh to load the target kernel in vm.
+
+Tips:
+If you already have qemu-system-x86_64, please ignore below info.
+If you want to install qemu v7.1.0 version:
+git clone https://github.com/qemu/qemu.git
+cd qemu
+git checkout -f v7.1.0
+mkdir build
+cd build
+yum install -y ninja-build.x86_64
+yum -y install libslirp-devel.x86_64
+../configure --target-list=x86_64-softmmu --enable-kvm --enable-vnc --enable-gtk --enable-sdl --enable-usb-redir --enable-slirp
+make
+make install 
+
+On Mon, Sep 09, 2024 at 05:00:36PM +0200, Felix Moessbauer wrote:
+> The submit queue polling threads are userland threads that just never
+> exit to the userland. When creating the thread with IORING_SETUP_SQ_AFF,
+> the affinity of the poller thread is set to the cpu specified in
+> sq_thread_cpu. However, this CPU can be outside of the cpuset defined
+> by the cgroup cpuset controller. This violates the rules defined by the
+> cpuset controller and is a potential issue for realtime applications.
+> 
+> In b7ed6d8ffd6 we fixed the default affinity of the poller thread, in
+> case no explicit pinning is required by inheriting the one of the
+> creating task. In case of explicit pinning, the check is more
+> complicated, as also a cpu outside of the parent cpumask is allowed.
+> We implemented this by using cpuset_cpus_allowed (that has support for
+> cgroup cpusets) and testing if the requested cpu is in the set.
+> 
+> Fixes: 37d1e2e3642e ("io_uring: move SQPOLL thread io-wq forked worker")
+> Cc: stable@vger.kernel.org # 6.1+
+> Signed-off-by: Felix Moessbauer <felix.moessbauer@siemens.com>
+> ---
+> Hi,
+> 
+> that's hopefully the last fix of cpu pinnings of the sq poller threads.
+> However, there is more to come on the io-wq side. E.g the syscalls for
+> IORING_REGISTER_IOWQ_AFF that can be used to change the affinites are
+> not yet protected. I'm currently just lacking good reproducers for that.
+> I also have to admit that I don't feel too comfortable making changes to
+> the wq part, given that I don't have good tests.
+> 
+> While fixing this, I'm wondering if it makes sense to add tests for the
+> combination of pinning and cpuset. If yes, where should these tests be
+> added?
+> 
+> Best regards,
+> Felix Moessbauer
+> Siemens AG
+> 
+>  io_uring/sqpoll.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+> index 713be7c29388..b8ec8fec99b8 100644
+> --- a/io_uring/sqpoll.c
+> +++ b/io_uring/sqpoll.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/audit.h>
+>  #include <linux/security.h>
+> +#include <linux/cpuset.h>
+>  #include <linux/io_uring.h>
+>  
+>  #include <uapi/linux/io_uring.h>
+> @@ -459,10 +460,12 @@ __cold int io_sq_offload_create(struct io_ring_ctx *ctx,
+>  			return 0;
+>  
+>  		if (p->flags & IORING_SETUP_SQ_AFF) {
+> +			struct cpumask allowed_mask;
+>  			int cpu = p->sq_thread_cpu;
+>  
+>  			ret = -EINVAL;
+> -			if (cpu >= nr_cpu_ids || !cpu_online(cpu))
+> +			cpuset_cpus_allowed(current, &allowed_mask);
+> +			if (!cpumask_test_cpu(cpu, &allowed_mask))
+>  				goto err_sqpoll;
+>  			sqd->sq_cpu = cpu;
+>  		} else {
+> -- 
+> 2.39.2
+> 
 
