@@ -1,157 +1,103 @@
-Return-Path: <linux-kernel+bounces-332722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA0B97BDB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:10:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F7D97BDC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57224B22E1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:10:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831DC1F21C22
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9955C18B497;
-	Wed, 18 Sep 2024 14:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D546718B47C;
+	Wed, 18 Sep 2024 14:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="gP7FDy/F"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HNeVUv6i"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF39F9CB;
-	Wed, 18 Sep 2024 14:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F106F9CB;
+	Wed, 18 Sep 2024 14:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726668634; cv=none; b=dPT110NgJnGTGwccv5MW4W53VbOHw8XU/9i2+x3TB9daud1gcoKRQ5BQBz3N5rYX4lVxbjrF0J4ibVr5TtLn7lEv15b3kVsmf/1V3F3uZjAvzG030YKnTopnNGPVXPxsV1ug/aki+YxaQCh5oOOOgYfhFxQvw9HcCOri0OhU0Dk=
+	t=1726668759; cv=none; b=hb3wxdFPXXwKgjefU7oansjuMsYOPaCntp4iSvQNJE25R9duYpH42HHDDMtxEqARrhy1EXjz0Xzqf3mjy2UfRYJ44wORPWIlOPuNm1/NzBjA4Lsk7rXT+iuSi8zG/PKeMxhjvDQ5W76ekYSxgzJ1xHpr10mdJnaHXY9jQqyD/tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726668634; c=relaxed/simple;
-	bh=3C11Kerkn3JS+3RbT9u+i6u+X/3/5jlEtqqKJ7FtdUM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=QT/akZ9UMsV5/YlRh9TpEJcI7zIJDj6z+zkByUthXgJQse5C28PP5wJTmoWSs82Loiq22ZDicy4e6dOMXE6kSmtk4S0ngIrhk+gTBrba9IDBSiqA5I/zS7i0IZKOfMDgN6eA/iKtlW/vqUW44fZ9mK0pFg50ljfrYV105QPHZLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=gP7FDy/F; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726668623; x=1727273423; i=markus.elfring@web.de;
-	bh=xAF+viKco1ExEDRgTKCRdN6qb3Zg2cFwCgxgzdw6C5s=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=gP7FDy/FqBlxA0ipHExjNeeRdZevc8cUBYy25ONkVvC0LvQ4L+OOAdB3e32Yi1Ox
-	 qZ/jvYzZLV2jS4aSh5OXUvZXj9i8T4NlWNH6t7ME4deJk1+NZwG5DNQgrnXnDaxuM
-	 RIzHZoo5FVnmnjMbahdTmRMHQp4yAmEjxijL3RAlXn7rqXDjugm9pVfp0Hg7I/SzG
-	 lMtrwVFdvaCUnNu+zVjplpKS7Igp0YJsTOWk/NtZOwH6zps1adjslKbUioXN1/+57
-	 ZnDDAIFOotFEKKMdRUbPhDZczdEm6iaED775v0uCjJ3/7aOpypiUkHAfOA2Z2rsN/
-	 9DOK1bW1p8eSo1Jmdg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1McIki-1sGTdT0Q4i-00oU3u; Wed, 18
- Sep 2024 16:10:23 +0200
-Message-ID: <4b4379e6-e341-46da-a951-57b31edf3997@web.de>
-Date: Wed, 18 Sep 2024 16:10:22 +0200
+	s=arc-20240116; t=1726668759; c=relaxed/simple;
+	bh=6NlMDn6G8FUuzCdG6WBURoTQNIUtKbtdI6OB1EeRH+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NHOzfZts4/L2f7mKTj7FSkDIMDyzATx3dpOeMMSzsG+YaNJrKyLt6EJ7zLyYkaSydAvodUAOeH6uFB6zgbN0+wXe2Tb+WcbYmhDF+BkIdkC6UTcRWUq7C/Ug4cK2hy9cOcVAXyPoI7M5x/JOfXZFImfq4/gMlmGUD0vqi3jq2IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HNeVUv6i; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Ni/akaMESxhEbLiyAWV6aj2aPhfND/QItwuWAkzArog=; b=HNeVUv6iwFCo/iQBMWywvV3X+F
+	3k8CBU7k+sHoZOahkAZyNNbUcNMseYbno1kbdALrlcNhSr/fCjzk3TsjYfdRIPDxo27yzb0MQkU8/
+	wp6Owt6JTPKWq/29Bq043kYpK2LYzWP5Fnhkjo6IDmh5F8mxnzc8Rx/7oFcblMJyoThQbntw9OzFm
+	vOaHlGQ3WX3a2FFku+S2m8JTnFl72JNv1dYquzJE/weqFVE3iymBho4wx0cCrugR+pTvMrY0km8m6
+	85Jdk2A4+J/L+RznjV0ud0aPOudzZfKoiLAA9BzrHCZuV/CggzefYbZaEETK2RWCWygnhfDfVJlmO
+	sYLL9rOQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sqvQ0-00000005cxD-0wKA;
+	Wed, 18 Sep 2024 14:12:32 +0000
+Date: Wed, 18 Sep 2024 15:12:31 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Chris Mason <clm@meta.com>, Jens Axboe <axboe@kernel.dk>,
+	Dave Chinner <david@fromorbit.com>,
+	Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Daniel Dao <dqminh@cloudflare.com>, regressions@lists.linux.dev,
+	regressions@leemhuis.info
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+Message-ID: <Zurfz7CNeyxGrfRr@casper.infradead.org>
+References: <Zud1EhTnoWIRFPa/@dread.disaster.area>
+ <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
+ <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
+ <ZulMlPFKiiRe3iFd@casper.infradead.org>
+ <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
+ <ZumDPU7RDg5wV0Re@casper.infradead.org>
+ <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
+ <459beb1c-defd-4836-952c-589203b7005c@meta.com>
+ <ZurXAco1BKqf8I2E@casper.infradead.org>
+ <CAHk-=wjix8S7_049hd=+9NjiYr90TnT0LLt-HiYvwf6XMPQq6Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH 2/2] dm-crypt: Use common error handling code in
- crypt_set_keyring_key()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: dm-devel@lists.linux.dev, kernel-janitors@vger.kernel.org,
- Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>, Ondrej Kozina <okozina@redhat.com>,
- Waiman Long <longman@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <68ee5a00-888c-420f-a3a9-a556c19ee6eb@web.de>
-Content-Language: en-GB
-In-Reply-To: <68ee5a00-888c-420f-a3a9-a556c19ee6eb@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:w5sHG1W3937bh0DSYJK74Szc821M+zZ4Rw2ntxxIeCFCxP87JxB
- nr7dwCiFo1hcByuH72ANjxTEsIGcTzFKs5SF85MTkYFXTmxCF+8SHv2hBaXDR2/80np7LWx
- Z6sZXggO3QhkQlhO8BBjpXxAOJTXBD2LK0Ns4FjgX6/ZaDF/6DGSjB15hCKYCPI3TJvE6/G
- ALq5tXc/+VMo9uOpQuGVQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:IFEZA55noi0=;5rQ29AH+BopRb54oFLdibqhwmv1
- LDPCdKnhSd5vraldLehnUEWgTq25jQoOzHHTGn3GHUr2iwnIgy3ZHPPVTD1J27ieWrPRlySPJ
- yV6DE5yKOWuF2iEAoSdkMRpzXGSJjpfdMqTdTYy19UKSafLYqWiKqtbd7x5HJYp5fZ9kvJXRY
- wuDjnMe8dpuGAifK9BIA6h4j9dLKURdNanY3poflL/WySuY/4g3pylb5P8trw2TZSWbZn5YJw
- a4nghBe5YC2YX8SLk80HKtxHYWvpLiI0qUTugKBGVpb8hY7RS81LyX4PGf7lmher5U2QFLkJG
- oHIQGqBuMV4V6IHx7tkfIh69SnBgHBWtkATmkKpHg8qyqY81bKzkxuQhC8E6SlYboToKV9jGL
- jhMYqSEUDOrr87eZRVYFwpDjekNctJ42NrmuoRYX8eIWQmQYJ4eR9WtXzRaelalBj5tvynWT7
- JEEFKIl5ZupPMYDrdG8ipz4Q0+7SvwPkXBDzT4O/vlmWDNynmTWoR4YOyz8t4PFZA01fEW2QR
- 81K+AnNLLTdT7nhhL9qLhIvA1gONtj6plxGwGYJasnMNYx0VY1ExKvmsEDYy2twcoPFgSuerd
- 5Di3H0JfVj2nz071k8SAQtd5GzHumxGFdbZKLJZ5ym5FIg0hSJQZ8MRDLkFxompXTaDasqN9l
- s/PB9dvz3xCB5NJJMBMC9+X6ZCPKB2JvoksFdyqwMWjSYn6+1OtKHkepFuKm8RsK/r75M/1/y
- FCXqv48SzzMAQjgIwz8cSyP41TWqIPW8QqJix6XSGw07okiAhaNq5GmcQ12bOZPvMoqG+82tk
- Y1lYbEwmlt4hcHHwtrzaT7ag==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjix8S7_049hd=+9NjiYr90TnT0LLt-HiYvwf6XMPQq6Q@mail.gmail.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Sep 2024 15:34:45 +0200
+On Wed, Sep 18, 2024 at 03:51:39PM +0200, Linus Torvalds wrote:
+> On Wed, 18 Sept 2024 at 15:35, Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > Oh god, that's it.
+> >
+> > there should have been an xas_reset() after calling xas_split_alloc().
+> 
+> I think it is worse than that.
+> 
+> Even *without* an xas_split_alloc(), I think the old code was wrong,
+> because it drops the xas lock without doing the xas_reset.
 
-Add a jump target so that a bit of exception handling can be better reused
-at the end of this function implementation.
+That's actually OK.  The first time around the loop, we haven't walked the
+tree, so we start from the top as you'd expect.  The only other reason to
+go around the loop again is that memory allocation failed for a node, and
+in that case we call xas_nomem() and that (effectively) calls xas_reset().
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/md/dm-crypt.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+So in terms of the expected API for xa_state users, it would be consistent
+for xas_split_alloc() to call xas_reset().
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index dae2fe3cb182..3d2247cfd42b 100644
-=2D-- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -2614,8 +2614,8 @@ static int crypt_set_keyring_key(struct crypt_config=
- *cc, const char *key_string
-
- 	key =3D request_key(type, key_desc + 1, NULL);
- 	if (IS_ERR(key)) {
--		kfree_sensitive(new_key_string);
--		return PTR_ERR(key);
-+		ret =3D PTR_ERR(key);
-+		goto free_new_key_string;
- 	}
-
- 	down_read(&key->sem);
-@@ -2623,23 +2623,23 @@ static int crypt_set_keyring_key(struct crypt_conf=
-ig *cc, const char *key_string
- 	ret =3D set_key(cc, key);
- 	up_read(&key->sem);
- 	key_put(key);
--	if (ret < 0) {
--		kfree_sensitive(new_key_string);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto free_new_key_string;
-
- 	/* clear the flag since following operations may invalidate previously v=
-alid key */
- 	clear_bit(DM_CRYPT_KEY_VALID, &cc->flags);
-
- 	ret =3D crypt_setkey(cc);
-+	if (ret)
-+		goto free_new_key_string;
-
--	if (!ret) {
--		set_bit(DM_CRYPT_KEY_VALID, &cc->flags);
--		kfree_sensitive(cc->key_string);
--		cc->key_string =3D new_key_string;
--	} else
--		kfree_sensitive(new_key_string);
-+	set_bit(DM_CRYPT_KEY_VALID, &cc->flags);
-+	kfree_sensitive(cc->key_string);
-+	cc->key_string =3D new_key_string;
-+	return 0;
-
-+free_new_key_string:
-+	kfree_sensitive(new_key_string);
- 	return ret;
- }
-
-=2D-
-2.46.0
-
+You might argue that this API is too subtle, but it was intended to
+be easy to use.  The problem was that xas_split_alloc() got added much
+later and I forgot to maintain the invariant that makes it work as well
+as be easy to use.
 
