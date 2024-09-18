@@ -1,115 +1,91 @@
-Return-Path: <linux-kernel+bounces-332436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19B9A97B9A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:56:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63B4597B982
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B1061C23710
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:56:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C88F1F23D63
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0F418858E;
-	Wed, 18 Sep 2024 08:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79EF1779BD;
+	Wed, 18 Sep 2024 08:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="CgU0y1q+"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5DE176259;
-	Wed, 18 Sep 2024 08:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="EdJ80ahG"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A947D17109B;
+	Wed, 18 Sep 2024 08:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726649739; cv=none; b=hShsGOARppzZ/X8T6GSn2aq9Dug2bGXBNefcMwn9eggcqvsAhLDyslALLHgOZX9E0ohPwekA8k3OCeOlKw3lGGmJmTGW/5R6hQLS1nWX+AqVdxTVJ72GEmJmglawUL91QV3j777B/JfVTUz/wBWiwGaCsj86xmns9F/Fiq3u1bU=
+	t=1726648905; cv=none; b=ZrdA9vJ0Hy/9VFi9jDF5bQcHyZHkNIt00Qq82wJXgezecXf7P91uA4zjolbesrOG+7VLFC9rGxCCnvklZjNtntX3SWnbpfHc0auOSRyjCY6maoV/1xje7BCzXwzujUdpYUmMBHuOoKAB8KvevnEoNheYck5kZ/VIdNfx46wyLTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726649739; c=relaxed/simple;
-	bh=p4BtcUQEMRuKzAnWnDWhnr8TgQuevzPI5xRDhaISlsA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i+GB23I8usYiTUT8aPnm81X0H2ikQip8cMYdGknThA6oF0JgZcRetFPTUNv130dKX0M+UXpB/qHubBdryzUZaaKp59fNOrAsXFTUi2gW92oMlMvk/cLYm0zhVpNt4V3B44oWwrSYHQIDgigmdL86z30euLDgwN+DPHTOUhEfDdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=CgU0y1q+; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=kndYrYYqDkcp0197Z0G5UQyfDrIiCK/y6NU5mK/gTYQ=;
-	b=CgU0y1q+nDKb6SY1S+EW7QzMKUFSwVH/gQMUgNJ+ex/NexpfQTJ6EnKeEhUwNC
-	zGUJwLAih+oCxfm/DJIzWJ3Ut9W/UzxLI2nGKbEMbSCJ5jUMOPnaGE3bl7+5QsuC
-	3PhlsFtV8wEB5azw9pGls207mzXTzXbMReehhU5p5ent4=
-Received: from [192.168.31.242] (unknown [27.18.168.209])
-	by gzga-smtp-mta-g2-4 (Coremail) with SMTP id _____wD3n2PBkepmzEcuCA--.53176S2;
-	Wed, 18 Sep 2024 16:39:32 +0800 (CST)
-Message-ID: <33e64928-0939-434a-9e6c-5f1af57992b2@163.com>
-Date: Wed, 18 Sep 2024 16:39:29 +0800
+	s=arc-20240116; t=1726648905; c=relaxed/simple;
+	bh=mn9mI2S8mSXs15GtSFvObBCc+jT1sPtxxW/LFo4PTK8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=OYB2g5hYbtcXieL9YBZuTD0yRXYMq4xq+JoEf2Qu+cfMtP9ECB98fDJ5zumbkorPU84Fr+INZODUvwF8bqL++1rxuD6qIPGzLfNgGv3pE+NQyfp2RdfRPMMjcXvShGaOjj8moNb8We258j1GFxsKUE1QsgrVblBxsH5CVcQlnvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=EdJ80ahG; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=RClJr09uffgbAvKnsR2grPgxRk7TIWAd2Kn+++S3YLc=; b=EdJ80ahGGnVU8byvsPD00QqmsQ
+	nH0XZM8KnLGWkBpnWuFHvRkpiPubo8Eb56tqHNc2p9hrefOmSV8iTQvdixD5Fi74Zh2dwnnkaYBLk
+	gIrQiV/sGFOTDHPMvV/ddbhz4tL0QN2zAc4EdBLbQgkvYv3YJftWhJnFDnSqheCJNDvTfwWBRYXhl
+	aIhhWpKrzPNeC6Wn4rNt8KzDl2uMOxE8zgyrb166ogqyiMGB78bYjg7AWfFVbNVwWmQ4GP1HlxxSG
+	dya0yWseB//7wifWKDo38d4/xcNWWuQYFcQ+HDZXNoOxSYzWhQED54UoaoBsTz1e+6XwsnPgAeXB9
+	QGBo6GuQ==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: tony@atomide.com,
+	Sebastian Reichel <sre@kernel.org>,
+	linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-pm@vger.kernel.org
+Cc: Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH 0/3] power: supply: twl6030/32 charger
+Date: Wed, 18 Sep 2024 10:41:29 +0200
+Message-Id: <20240918084132.928295-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.2
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 3/3] riscv: dts: canaan: Add k230's pinctrl node
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Yangyu Chen <cyy@cyyself.name>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20240916063021.311721-1-18771902331@163.com>
- <20240916064706.318793-2-18771902331@163.com>
- <1d57b766-0db1-4266-9aa5-11c131a636df@linaro.org>
-Content-Language: en-US
-From: Ze Huang <18771902331@163.com>
-In-Reply-To: <1d57b766-0db1-4266-9aa5-11c131a636df@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wD3n2PBkepmzEcuCA--.53176S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZrWxWF43CryxJFykJw13urg_yoW8XFWxpw
-	4a9FZxCr1xursIyryaqF90gr13uan7uF4jgw1ak34UJr43XryYkwnYqrW8XryDWF4Sq3y0
-	9r4Fq34I9r1jyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRrb15UUUUU=
-X-CM-SenderInfo: zpryllqrzqjjitr6il2tof0z/1tbiJwheomXAn32U0AAAsQ
+Content-Transfer-Encoding: 8bit
 
-On 9/16/24 11:52 PM, Krzysztof Kozlowski wrote:
-> On 16/09/2024 08:47, Ze Huang wrote:
->> Add pinctrl device, containing default config for uart, pwm, iis, iic and
->> mmc.
->>
->> Signed-off-by: Ze Huang <18771902331@163.com>
->> ---
->>   arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi | 316 +++++++++++++++++++
->>   arch/riscv/boot/dts/canaan/k230-pinctrl.h    |  18 ++
->>   arch/riscv/boot/dts/canaan/k230.dtsi         |   2 +
->>   3 files changed, 336 insertions(+)
->>   create mode 100644 arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi
->>   create mode 100644 arch/riscv/boot/dts/canaan/k230-pinctrl.h
->>
->> diff --git a/arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi b/arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi
->> new file mode 100644
->> index 000000000000..0737f50d2868
->> --- /dev/null
->> +++ b/arch/riscv/boot/dts/canaan/k230-pinctrl.dtsi
->> @@ -0,0 +1,316 @@
->> +// SPDX-License-Identifier: GPL-2.0 OR MIT
->> +/*
->> + * Copyright (C) 2024 Ze Huang <18771902331@163.com>
->> + */
->> +#include "k230-pinctrl.h"
->> +
->> +/ {
->> +	soc {
->> +		pinctrl: pinctrl@91105000 {
-> That's odd style - defining SoC nodes outside of SoC DTSI. Are you sure
-> that's preferred coding style in RISC-V or Canaan?
+Add basic support for the charger in the TWL6030/32. Supported is the USB
+path. AC path is not handled yet, also there is no entry yet
+in /sys/class/power_supply with type battery yet.
 
-Pinctrl-related nodes were separated the for ease of maintenance, but the
-convention in Canaan is to place them in the board-level DTS file. Would it
-be better to stay consistent with their approach?
+Without this series, devices will happily drain battery when running
+on mainline.
 
->> +			compatible = "canaan,k230-pinctrl";
->> +			reg = <0x0 0x91105000 0x0 0x100>;
->> +
-> Best regards,
-> Krzysztof
+Andreas Kemnade (3):
+  dt-bindings: power: supply: Add TI TWL603X charger
+  dt-bindings: mfd: twl: add charger node also for TWL603x
+  power: supply: initial support for TWL6030/32
+
+ .../devicetree/bindings/mfd/ti,twl.yaml       |  18 +
+ .../power/supply/ti,twl6030-charger.yaml      |  62 ++
+ drivers/power/supply/Kconfig                  |  10 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/twl6030_charger.c        | 566 ++++++++++++++++++
+ 5 files changed, 657 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/ti,twl6030-charger.yaml
+ create mode 100644 drivers/power/supply/twl6030_charger.c
+
+-- 
+2.39.2
 
 
