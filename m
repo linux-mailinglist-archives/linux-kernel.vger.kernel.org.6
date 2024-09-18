@@ -1,251 +1,122 @@
-Return-Path: <linux-kernel+bounces-332971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D6197C1BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 00:00:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A622197C1C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 00:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96C361C219BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:00:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68D3428200C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34AA1CB50D;
-	Wed, 18 Sep 2024 22:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF911CA6AB;
+	Wed, 18 Sep 2024 22:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iJy/Iut+"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2079.outbound.protection.outlook.com [40.107.212.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l9ntip/d"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A3C1CB323;
-	Wed, 18 Sep 2024 22:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726696816; cv=fail; b=kT/r0J0yPVhmYc7xzYRB1pR6yOdmeV8I345KVOiIsXtxydes3HCxoagb5ySeYsUAZRlhYFi541oGijo4cExg91u8pwgQU1DttxCYxZGICamMPAU5XhFns/fTbv68WRRx761h0ik8Xv/wMw2yuVDZ6DwG022nhvSWN93cpnkHo8c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726696816; c=relaxed/simple;
-	bh=UOVmMtV36+YOMuc8DxUy++3kGJ6A317ygQ5YBsz/VKU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aHWEvrzPg4i04JqTSmbdxnOvyuQe1iO8KgSGuLUhzYsxR45xbVlYUxUmckIGUBpLxA9vc0AOlzVAN/R6fCalltyZl5Xipyna7gZmH/WBc0I8PR8WCsp5FUqn+zqA0FIGjS6jNdhrrZSNWRKOPaGx/xffuIkvY+iWLhCjfdNSDU4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iJy/Iut+; arc=fail smtp.client-ip=40.107.212.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nXCdIa1BXr/2CvUQrh0XdgF6fc0FTkafJzwyYVbC0lXB5QusRbifZSBB5ZHqIfCvh/IAhgAIpbY4EVyqS0393Mfr9K34SmwqK/gMzZI9o02zs8W4dufCE7NH/Zq5jXOnLz6tQ+Bb1OFLrhvBJvJqclbeyE0Xh5wXjRLRZf+ur2Xwft2THfT3DBjLI6tgtxGUnosRqVLk3Bi7N9dlanBL7X9V23bERymeYjMzKIpLPWCvyQJ8G/uL31sVOb0iymikvd2Ord7HGpjNWP0y3KSrZqtf/TLTCLjTriJNK+p4AiFRzf+qlVUGaOa/fJHr/Oy4oWrJM17lyWDbL6mo9WCkyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G+hmWxIw18PO6EwUT+jSNVXeARBSgUr8w1IjUIZbq3Q=;
- b=cmwSq/FwVsIZIiy7OJgMhqtvviERx8WG7z9kM7kkNa1m0VEHtco9cFI3GPbkDDlVL4vT90MIm3GzJC09RLfenxdwKE+YpiLoka6Rz8OGZkywSRv4FCfGh9gqyO9fLi8+UvITmbWNEyshUYNi/pp4xSnI+y5WAxbxvc0Sbrhl8wHLBEVBdLhsILzNn/JayhW2Rz3lFkAESvPlTOvSfmdi1fVCg2O+aZqidhQBu97T5lA0MBuH7r62eiGwKIu2tzvitEEmk9iqVQ5uU/JVimK4b2Q3OavIa08JqkDHqIecB0+TnyxjETooRQ6uPSaQpxWeGsbvtubEH36dJ71UuvCQlA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G+hmWxIw18PO6EwUT+jSNVXeARBSgUr8w1IjUIZbq3Q=;
- b=iJy/Iut+hHFfE5j456O9xiEbGDs55nI1lZX0/hYxAeB12rPdPkQvX0ua1iKCEtIbC6aYpoBiXmQhrxvQgME2HWXi6lAaay1exxOQp6A/TVxXGMl8RHwYSL1rmw05/q9NqbI/xVGyGTD1twv2RI1vBZv95lmt45Zr9qc4hAP4nWOx5451aqsfV0Kwys9vl2RPospiHOsquTG6BkRLIbQ/ZzxCHAtEGEyhGmiL3EUkWhrmK4VU2jurWFujNzbzOzD45AUmFEaATiVQhcLIcZB3o0OdTiPzKqAqqYxJIKJapAPR0Ezb87FF0OE61vEhXBNjGcP0J2x5QLKaIS0pCXK4Xg==
-Received: from CH2PR11CA0022.namprd11.prod.outlook.com (2603:10b6:610:54::32)
- by CH3PR12MB7762.namprd12.prod.outlook.com (2603:10b6:610:151::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.24; Wed, 18 Sep
- 2024 22:00:10 +0000
-Received: from CH3PEPF00000009.namprd04.prod.outlook.com
- (2603:10b6:610:54:cafe::48) by CH2PR11CA0022.outlook.office365.com
- (2603:10b6:610:54::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.30 via Frontend
- Transport; Wed, 18 Sep 2024 22:00:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CH3PEPF00000009.mail.protection.outlook.com (10.167.244.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.13 via Frontend Transport; Wed, 18 Sep 2024 22:00:09 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 18 Sep
- 2024 15:00:01 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 18 Sep 2024 15:00:00 -0700
-Received: from build-bwicaksono-20240327T112120892.internal (10.127.8.12) by
- mail.nvidia.com (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.4
- via Frontend Transport; Wed, 18 Sep 2024 15:00:00 -0700
-From: Besar Wicaksono <bwicaksono@nvidia.com>
-To: <suzuki.poulose@arm.com>, <robin.murphy@arm.com>,
-	<catalin.marinas@arm.com>, <will@kernel.org>, <mark.rutland@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
-	<vsethi@nvidia.com>, <rwiley@nvidia.com>, <rknight@nvidia.com>, "Besar
- Wicaksono" <bwicaksono@nvidia.com>
-Subject: [PATCH 3/3] perf: arm_cspmu: nvidia: enable NVLINK-C2C port filtering
-Date: Wed, 18 Sep 2024 21:58:46 +0000
-Message-ID: <20240918215846.1424282-4-bwicaksono@nvidia.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20240918215846.1424282-1-bwicaksono@nvidia.com>
-References: <20240918215846.1424282-1-bwicaksono@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CAF107A0
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 22:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726696911; cv=none; b=ORrbcda49eu+74q4d9OsJr0XZEPWXVKXvp/Q9o1FeVGciqDPpcv1DU0vpfRtvjor8wg93Lo3QXXjX++ps4NtpwsNWpxu+4vQADeCPbHYdBzbQot1QoeV6zWO1CNue68ZRTu8hc9yewmrXUzVzFZz2zjx9/9AklyTOWnQcA2HRxg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726696911; c=relaxed/simple;
+	bh=Gv+o3ZbA4E2DAwxQITxbmZcZD0OAyd7iBeB4r8n9hTY=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=oMCRrZ8rzXmvjrxJyIf0mxV3boTZgbcLOr3S+I55jmT9GpGJOSXG1GeOGZD51d1FkRHRBYtJZThWZ/iJh4H84QM6p9c2qVFgq7Svn6Fz12pgjAC8/aiAP0rAYUOTAgpI82FvCShEdBvO2MIRHCp9dB/ndk0criXVvLG686haHdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l9ntip/d; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ddbcc96984so3197807b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 15:01:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726696908; x=1727301708; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vzq+ZiQjxwGjt2wTYxeHA2liyw6Vv7Vj8czqWzpAvsQ=;
+        b=l9ntip/dqrtc23fy317IxG88VC54aXSBPYMfeKz/BIcarNLJ4mJW9C1hSwSutOkr3p
+         fHQEEWIVJmNDPzPVnmENFSuXQTypxrLedS2DfLQNrMMnSXuJYuuOBpsT1FAiPadiaRPx
+         7d0JQyJ0yuAGIz862Ez4yAtHfK0iJvVSxWMXZKMEdrJBbUZOTheoqVXA2sqFVx2Iq0OM
+         TJIToLWnNOXXMN1Qfra857Qt3cmXE9TlmIPGWhWHOyzzyxvX0gcxLEIB5ScOTV2RnpIB
+         9kkW2fzqCqbzBt6zqlEXYEZXe0TiqtCckZ1dbbJrDrWk+R+JIQ0iOr/K9bqoxAN5LNRt
+         ePFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726696908; x=1727301708;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vzq+ZiQjxwGjt2wTYxeHA2liyw6Vv7Vj8czqWzpAvsQ=;
+        b=xHIIEhZ/X/Akt99s5LbJHsHwK4zssmYylkY5Tte2QPEEoC46VPn+80Ci7Ze6Oq5ial
+         LkG875RTCWMBz9B6QVIDnTq9jwapxEq7/05zz2xv5jqKLoXmw8nXntty7XdVWweuBCWe
+         A70zkCh0wTyfwea67tqW5zWzzbJN/1ZjOn9ZRed/RH70fwwGsxIsBvLlpVK9nZSzX4zy
+         ksuxaO0wUC3CS7Jo+uuQF+LicBsh76FEzpwd5ljJbqp/d1LS80jL9N0AoAUQWMi8KFge
+         +h+pdgZPOpEmUHJOOeRaok4dEcc+KC3afp3tUXBfZQolJv7xfaw8rzR683MdxKBPgrtw
+         ggvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUicFEEK2LMLvQqxki7uN/psOeGTx+tmuyenfTLgupwZ1iHpeQqAlzqyJ/gB1rrRjee5V9Bb+KJgtsRNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWYhqNxGyBFxIeT1I02kWlDYp5W7uqoFU7qbW99GOidVos9P4k
+	WP6LKoxabUlv6+r5OpDY05PBQzNGX9xw56/8MiOG9JuyriOVU5OqjT8SmzNu18PjM026D7NHOZM
+	gXmpP3w==
+X-Google-Smtp-Source: AGHT+IEdz4mPkmorE1yDLYhDjmI14NId23qkjFGWYXr+JOq+n9Z0o7brbKHek6dsBk0xDdKffXJ12bgCiIxx
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:cb6b:1e62:cfd8:bd50])
+ (user=irogers job=sendgmr) by 2002:a25:d0d5:0:b0:e1a:8195:3c1b with SMTP id
+ 3f1490d57ef6-e1db00d2c06mr24256276.6.1726696908220; Wed, 18 Sep 2024 15:01:48
+ -0700 (PDT)
+Date: Thu, 19 Sep 2024 00:01:30 +0200
+Message-Id: <20240918220133.102964-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF00000009:EE_|CH3PR12MB7762:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d112fcf-c67c-4593-f781-08dcd82d43ae
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zgQ+WSy9lBRNDZ7vTWBr8oPlLNSF/1Kti24rCGumtwRbCMy3bRtWIOG66SJw?=
- =?us-ascii?Q?yTQ2mihavv9Zso7pyEZkykEKB2YYdDy8DYIJo4kqpkSQ7o6/rWcyRJy+EtPr?=
- =?us-ascii?Q?skRI7fp6uI4enizJYCrru3EP/nCVO2214yQ7y2gkw0/jBWMdeW2BH+lqcJRh?=
- =?us-ascii?Q?zz1UOsQ8HRu/RYITquVTLe9rzYPb7+FxbqKjEX7yS2+n6zWSk7F/wDMtIlMz?=
- =?us-ascii?Q?Oiag3TK8M3uEcqNomzQQeBMktcRI9asoDDqdNPa3K2KwXzdma3q7r71/pzFG?=
- =?us-ascii?Q?ioraBodWurngxrUcXznR+chap0LRK7E1V2BO/QqDNxyc/P8FmCuNF9ldfGEv?=
- =?us-ascii?Q?8o7Y3Gdjc5hZyp4dvPijTBrjVDg3O567I4d8JexeyAqF/MImyEiusfJlwn2G?=
- =?us-ascii?Q?lHvC1kRG0/ofJYpm/o6gEXCzbfBD+zEyqhTDUKcvugBxcu31czVhdlwWO8M2?=
- =?us-ascii?Q?C9b9HVkfhv1CQc4YnoHpClp6VaGIucJMq/IqS5nGh2rmui/eVVWZ/Egqv8MT?=
- =?us-ascii?Q?bgiDXy3i9UkVEkL34VTsblozFoAcATipoYBI4C87vvHqWXDQKKRw1IEZrPqp?=
- =?us-ascii?Q?ZIawMlGnFx3Li7rVJgw6RORZoYQYYxsHyWKT5qInNcEwU67T/gZwLkTAxmb+?=
- =?us-ascii?Q?61K5XkPa2eUyB7V5wGiE+iRt7J8nZNXyo2M2p3Psh2ZxEdJJMEabCZBTqP4Y?=
- =?us-ascii?Q?2cj0MXbHcPuS1lwHM3FKpLcav9N2e/EPFrnbella2W0nCAy7GOg19UjoDW05?=
- =?us-ascii?Q?iArLGa+9ffp/tMWAyF1TyUdVNTf0xE1jMtvKbsZWg2NYlMNA0Qe6Nekiy3In?=
- =?us-ascii?Q?AJcc5kkYQ0pcSvbXKgZ9U7uOBlZTPZ9hqFOv6TruTIQHe8xWaen1Ll5UC/qB?=
- =?us-ascii?Q?ecN83ntetIlSkv9S2pHYLrTDFnNhT5ygHWdtskq6WixLL4JTOR2lgRICv+kW?=
- =?us-ascii?Q?dv9jDtqeyC70uJUG71uWKjPNl/Hz9AsWhckBjl8fnWGGSMRPUE5HPAzLvlV8?=
- =?us-ascii?Q?P5ygggURyNR2BiDdSzVNEdh7uNp4fTikkxlCdcSbJ54M+JwU8GCnBpskngVr?=
- =?us-ascii?Q?0MfcFNNHaFspqi+g+CucrRxVYoGj/uhS/CFIH0PyEdFccXy5m5ApxdgrFrXT?=
- =?us-ascii?Q?e2HVhm42V3h7xLwEKL+uwLTnzcgxAdkxctpxS3tyXJOadNgGO5L/0/5kfAtU?=
- =?us-ascii?Q?bkCO/oP1eQiWiSTIkF68wdp0RzE4tlWDkeNmPnD1d+N3GQFLpe4qi8KoZc6K?=
- =?us-ascii?Q?dI4P2Ixh9Ktjv1MwQxOKflDZkFrEVJ2sF5UQUvFV8A1wB0SC3oXaIg2qwkgF?=
- =?us-ascii?Q?Pev30MbTN1Em3oBbWTXHsPEYCOHLt6W1mJ0iNysApMO0tUpbxH2r+SeT3dIq?=
- =?us-ascii?Q?p/Fk3+QN7/BO9cVzSSgsu4iyEDsnqYNC7u6EKHLml98Qggj9JCCs9g3cB4wQ?=
- =?us-ascii?Q?sCAx8dtla9XwfwhDrN3c+RW3vTHn7Ig8?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 22:00:09.8873
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d112fcf-c67c-4593-f781-08dcd82d43ae
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF00000009.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7762
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
+Subject: [PATCH v3 0/3] Add support for cpu event term
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Dominique Martinet <asmadeus@codewreck.org>, Jing Zhang <renyu.zj@linux.alibaba.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Enable NVLINK-C2C port filtering to distinguish traffic from
-different GPUs connected to NVLINK-C2C.
+Being able to set the cpu mask per event was discussed in the context
+of a sysfs event.cpus file is discussed here:
+https://lore.kernel.org/lkml/CAP-5=fXXuWchzUK0n5KTH8kamr=DQoEni+bUoo8f-4j8Y+eMBg@mail.gmail.com/
+Ultimately Kan preferred to have multiple PMUs with a cpumask each
+rather than an event.cpus file per event. It is still useful to have
+the cpu event term and so the sysfs part of the original patch series
+is dropped.
 
-Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
----
- Documentation/admin-guide/perf/nvidia-pmu.rst | 32 +++++++++++++++++++
- drivers/perf/arm_cspmu/nvidia_cspmu.c         |  7 ++--
- 2 files changed, 36 insertions(+), 3 deletions(-)
+v3: Drop sysfs event.cpus file support patch from series.  Reference
+    to using cpu to modify uncore events is dropped from the commit
+    message. Reference counting issues on the cpumap are addressed.
+v2: Add support for multiple cpu terms on an event that are
+    merged. For example, an event of "l1d-misses/cpu=4,cpu=5/" will
+    now be opened on both CPU 4 and 5 rather than just CPU 4.
 
-diff --git a/Documentation/admin-guide/perf/nvidia-pmu.rst b/Documentation/admin-guide/perf/nvidia-pmu.rst
-index 2e0d47cfe7ea..6d1d3206b4ad 100644
---- a/Documentation/admin-guide/perf/nvidia-pmu.rst
-+++ b/Documentation/admin-guide/perf/nvidia-pmu.rst
-@@ -86,6 +86,22 @@ Example usage:
- 
-    perf stat -a -e nvidia_nvlink_c2c0_pmu_3/event=0x0/
- 
-+The NVLink-C2C has two ports that can be connected to one GPU (occupying both
-+ports) or to two GPUs (one GPU per port). The user can use "port" bitmap
-+parameter to select the port(s) to monitor. Each bit represents the port number,
-+e.g. "port=0x1" corresponds to port 0 and "port=0x3" is for port 0 and 1. The
-+PMU will monitor both ports by default if not specified.
-+
-+Example for port filtering:
-+
-+* Count event id 0x0 from the GPU connected with socket 0 on port 0::
-+
-+   perf stat -a -e nvidia_nvlink_c2c0_pmu_0/event=0x0,port=0x1/
-+
-+* Count event id 0x0 from the GPUs connected with socket 0 on port 0 and port 1::
-+
-+   perf stat -a -e nvidia_nvlink_c2c0_pmu_0/event=0x0,port=0x3/
-+
- NVLink-C2C1 PMU
- -------------------
- 
-@@ -116,6 +132,22 @@ Example usage:
- 
-    perf stat -a -e nvidia_nvlink_c2c1_pmu_3/event=0x0/
- 
-+The NVLink-C2C has two ports that can be connected to one GPU (occupying both
-+ports) or to two GPUs (one GPU per port). The user can use "port" bitmap
-+parameter to select the port(s) to monitor. Each bit represents the port number,
-+e.g. "port=0x1" corresponds to port 0 and "port=0x3" is for port 0 and 1. The
-+PMU will monitor both ports by default if not specified.
-+
-+Example for port filtering:
-+
-+* Count event id 0x0 from the GPU connected with socket 0 on port 0::
-+
-+   perf stat -a -e nvidia_nvlink_c2c1_pmu_0/event=0x0,port=0x1/
-+
-+* Count event id 0x0 from the GPUs connected with socket 0 on port 0 and port 1::
-+
-+   perf stat -a -e nvidia_nvlink_c2c1_pmu_0/event=0x0,port=0x3/
-+
- CNVLink PMU
- ---------------
- 
-diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-index d1cd9975e71a..cd51177347e5 100644
---- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
-+++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-@@ -149,6 +149,7 @@ static struct attribute *pcie_pmu_format_attrs[] = {
- 
- static struct attribute *nvlink_c2c_pmu_format_attrs[] = {
- 	ARM_CSPMU_FORMAT_EVENT_ATTR,
-+	ARM_CSPMU_FORMAT_ATTR(port, "config1:0-1"),
- 	NULL,
- };
- 
-@@ -193,7 +194,7 @@ static u32 nv_cspmu_event_filter(const struct perf_event *event)
- 	const struct nv_cspmu_ctx *ctx =
- 		to_nv_cspmu_ctx(to_arm_cspmu(event->pmu));
- 
--	if (ctx->filter_mask == 0)
-+	if (ctx->filter_mask == 0 || event->attr.config1 == 0)
- 		return ctx->filter_default_val;
- 
- 	return event->attr.config1 & ctx->filter_mask;
-@@ -229,7 +230,7 @@ static const struct nv_cspmu_match nv_cspmu_match[] = {
- 	{
- 	  .prodid = 0x104,
- 	  .prodid_mask = NV_PRODID_MASK,
--	  .filter_mask = 0x0,
-+	  .filter_mask = NV_NVL_C2C_FILTER_ID_MASK,
- 	  .filter_default_val = NV_NVL_C2C_FILTER_ID_MASK,
- 	  .name_pattern = "nvidia_nvlink_c2c1_pmu_%u",
- 	  .name_fmt = NAME_FMT_SOCKET,
-@@ -239,7 +240,7 @@ static const struct nv_cspmu_match nv_cspmu_match[] = {
- 	{
- 	  .prodid = 0x105,
- 	  .prodid_mask = NV_PRODID_MASK,
--	  .filter_mask = 0x0,
-+	  .filter_mask = NV_NVL_C2C_FILTER_ID_MASK,
- 	  .filter_default_val = NV_NVL_C2C_FILTER_ID_MASK,
- 	  .name_pattern = "nvidia_nvlink_c2c0_pmu_%u",
- 	  .name_fmt = NAME_FMT_SOCKET,
+Ian Rogers (3):
+  libperf cpumap: Add ability to create CPU from a single CPU number
+  perf parse-events: Set is_pmu_core for legacy hardware events
+  perf parse-events: Add "cpu" term to set the CPU an event is recorded
+    on
+
+ tools/lib/perf/cpumap.c                |  10 +++
+ tools/lib/perf/include/perf/cpumap.h   |   2 +
+ tools/perf/Documentation/perf-list.txt |   9 +++
+ tools/perf/tests/event_update.c        |   1 +
+ tools/perf/util/evsel_config.h         |   1 +
+ tools/perf/util/parse-events.c         | 108 +++++++++++++++++++------
+ tools/perf/util/parse-events.h         |   3 +-
+ tools/perf/util/parse-events.l         |   1 +
+ tools/perf/util/pmu.c                  |   1 +
+ 9 files changed, 110 insertions(+), 26 deletions(-)
+
 -- 
-2.34.1
+2.46.0.662.g92d0881bb0-goog
 
 
