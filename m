@@ -1,126 +1,169 @@
-Return-Path: <linux-kernel+bounces-332983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B4597C1E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 00:21:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB6B697C1E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 00:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 260B11F21B84
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:21:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 964DCB21C6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDA11CB334;
-	Wed, 18 Sep 2024 22:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="vBjv8JFl"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2C21CB30A;
+	Wed, 18 Sep 2024 22:23:27 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F082B135417;
-	Wed, 18 Sep 2024 22:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46F8178CF6
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 22:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726698087; cv=none; b=GEwQljWLCaObjWB5FY8rLXd8oTIkNlu2lbYlQaq4daQi1SKQb3oxZes0nO3RvpOj7nEz2c0gUJPfqb1OdDPTEUA4BkCiOgIVQYmnfNFtAFiosQpn68Id0tiNGL1kJs644ASaQ2yJ6Rwf86dG1gb5M+h/+4PS/Bw/9SPw30sLUd8=
+	t=1726698207; cv=none; b=m7QWJ5fl5tDK6tI//3ZRlQZ03kbBLlFeIs/oBZmP/7UZOP8m9tEXufB9rQX3beAQHdbc9uduan4K/UzwYGUXmkX/tzxODaEyGpy9Uc9OfGUvdUEHnUQnTm6nM+B+/J40LetBHbB4GaBdU2iKEpRy7ycK4kSZ/xQHogmjE/briUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726698087; c=relaxed/simple;
-	bh=7xxtcRpF4R66w2NfdU0SK8nXAs9BUflMxIdh+H7lVVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZCGh7CMvqE296xjIJWlrwYIvMZK+BZ7nsKAAM/0F3RU2LbKUE4/V7Bdsn2W1i+Gk3ULwnNhlSJYhasY9EQQQw1/GwZZJtEVe/CQ5WI7bs3Aagxqg9sw4uHs4UzzlHh8u5d6Llif908wUMR7v1vkCZeKYY5zmWving4BjuyO/qcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=vBjv8JFl; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726698081;
-	bh=5lCtcuCkhi/lgem1awfWyx6ufZyO7pMFNsOkMnt053M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vBjv8JFl4iSqVemH+1y4+q5TQZbw3A4jcbylrzAOH74uHY5cVEOdOecL8DrUXu6yG
-	 /trV8qEevzOJbERt6tkhrNCZu7vjI6Ad8oNuaOQDyj9s0bTo5vyVykdBAzMCDxhVIO
-	 1Z8xvVGGx0sDSUWGB4QISjjzywEpJwSrLb1MTBZSdXbA1lfPAhAYSBewYZijWzZQs1
-	 BUh8NMjzI4wcuw8otN2VWHD0KvoygBKcdFfneJekjA/ftI7otWquadDZb4HEQ3yors
-	 7qjSn2Ol2GPupCJd0SO4awoOtJpGD52opkAeAqGOtD7tNod0zOF3C2sahSzg+zk8sg
-	 Cf/lYTPsBnwrw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X8CmJ4MYrz4xZg;
-	Thu, 19 Sep 2024 08:21:20 +1000 (AEST)
-Date: Thu, 19 Sep 2024 08:21:19 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Message-ID: <20240919082119.62324e11@canb.auug.org.au>
-In-Reply-To: <20240911153854.240bbc1f@canb.auug.org.au>
-References: <20240911153854.240bbc1f@canb.auug.org.au>
+	s=arc-20240116; t=1726698207; c=relaxed/simple;
+	bh=bt5Y9Zq2Aubhd33F/e9LT0kLJ0XiYr166lnE61O2gVk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DLOW9eNee+6THYhgNgUpLOCYEaiNR7ij7vHAO/g429ppthYjMd42JWjr/lYbxbjdYm7nllsNdrQcNShmvcj7bbmYiCi1w/9tWx2U9IsAv0tOCj7i+Rj24xls4TaG4mGOZjZdeFrLmcyG8Xed/KAhDxOyjz8K6ZzFgdaERZgkIkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a04af50632so3398305ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 15:23:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726698205; x=1727303005;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IXSTMnfbUZ8RYfjmftrAsUTnKI7IlQ58ScrWqouQmKE=;
+        b=o7uNKosLLSRPJum7/FIzuIhnapZpiBi1FKYdlCby8r6p/Cjcyk3mPA32fdk22Ah2Hm
+         HMl7YH5XfPN5Kc+A2G6YHBWzqP1Fs/4+0XhPBGGgfQOjW10NUZVZMxvudodMNLNOBmqB
+         DPJG86p36WwXX+VKMXGMiUIbv5sWsBrc2m1QVpLGdYBix0F4wzGZTRnZy8uSghAePYHT
+         kKYpni/dKoTYwvkOxc5CGRtAXwDCtLSnqt+ufjpBoo3M4rLAQ2u74QinHa12nddh/O7m
+         U5gCxAjF6Mq2Ahcjrrzrop5LsqCGXZNg0H1WRKV1/Nx+jv3gjP2jQ7IN54Q+vtcgWjYc
+         uiFQ==
+X-Gm-Message-State: AOJu0YxKytBC95uPqTi80lzY1ch5YKQJz4lR2DZ2ArVbdMzD+dBLKgWc
+	bDteebTkkd0WzLpXEO1MmxLOJOr0bIDKyd5ISlsr9n7ZT51c0RN+/w6B2H6N1SvlohaSO632M7L
+	e8iBmgrBFSH9DGtf2TDlnAdPbNu32GbE6NbJToD2XCsN0LP9VGXdzqIg=
+X-Google-Smtp-Source: AGHT+IGlhzJbduMuROvITQHEhp8mQNjc/MtKUh4FAg5DOdLHl8W1Cj6jQbPR5I2nGO8TKlvUJQhuRU9T7QsNxOokvsfPRG8L9ews
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BTQau+RYdUMM3KU93.YKo1p";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Received: by 2002:a05:6e02:1a49:b0:3a0:9f71:c6e with SMTP id
+ e9e14a558f8ab-3a09f711033mr111117475ab.22.1726698204808; Wed, 18 Sep 2024
+ 15:23:24 -0700 (PDT)
+Date: Wed, 18 Sep 2024 15:23:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66eb52dc.050a0220.92ef1.0006.GAE@google.com>
+Subject: [syzbot] upstream test error: BUG: stack guard page was hit in corrupted
+From: syzbot <syzbot+d5db198a0f40411f24c3@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/BTQau+RYdUMM3KU93.YKo1p
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+syzbot found the following issue on:
 
-On Wed, 11 Sep 2024 15:38:54 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the tip tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
->=20
-> kernel/events/core.c: In function 'perf_event_setup_cpumask':
-> kernel/events/core.c:14012:13: warning: the comparison will always evalua=
-te as 'true' for the address of 'thread_sibling' will never be NULL [-Waddr=
-ess]
-> 14012 |         if (!topology_sibling_cpumask(cpu)) {
->       |             ^
-> In file included from include/linux/topology.h:30,
->                  from include/linux/gfp.h:8,
->                  from include/linux/xarray.h:16,
->                  from include/linux/list_lru.h:14,
->                  from include/linux/fs.h:13,
->                  from kernel/events/core.c:11:
-> include/linux/arch_topology.h:78:19: note: 'thread_sibling' declared here
->    78 |         cpumask_t thread_sibling;
->       |                   ^~~~~~~~~~~~~~
->=20
-> Introduced by commit
->=20
->   4ba4f1afb6a9 ("perf: Generic hotplug support for a PMU with a scope")
+HEAD commit:    4a39ac5b7d62 Merge tag 'random-6.12-rc1-for-linus' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=153e7fc7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c78e7c8f41d443e6
+dashboard link: https://syzkaller.appspot.com/bug?extid=d5db198a0f40411f24c3
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-This commit is now in Linus' tree and the warning is till there :-(  In
-fact this is a build failure for some configurations.   A fix was
-posted on Sep 13 (12?), please get it to Linus as soon as possible.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f4127f9a9466/disk-4a39ac5b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/23dcf778c269/vmlinux-4a39ac5b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/386c61739e91/bzImage-4a39ac5b.xz
 
---=20
-Cheers,
-Stephen Rothwell
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d5db198a0f40411f24c3@syzkaller.appspotmail.com
 
---Sig_/BTQau+RYdUMM3KU93.YKo1p
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+BUG: TASK stack guard page was hit at ffffc9000005fff8 (stack is ffffc90000060000..ffffc90000068000)
+Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-syzkaller-05319-g4a39ac5b7d62 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:error_entry+0xd/0x140 arch/x86/entry/entry_64.S:1007
+Code: fd ff ff 85 db 0f 85 8e fd ff ff 0f 01 f8 e9 86 fd ff ff 66 2e 0f 1f 84 00 00 00 00 00 56 48 8b 74 24 08 48 89 7c 24 08 52 51 <50> 41 50 41 51 41 52 41 53 53 55 41 54 41 55 41 56 41 57 56 31 f6
+RSP: 0000:ffffc90000060000 EFLAGS: 00010046
+RAX: 0000000000000002 RBX: ffffc90000060088 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8b20128d RDI: ffffffff8bb130e0
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc9000005fff8 CR3: 000000000dd7c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <#DF>
+ </#DF>
+ <TASK>
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:error_entry+0xd/0x140 arch/x86/entry/entry_64.S:1007
+Code: fd ff ff 85 db 0f 85 8e fd ff ff 0f 01 f8 e9 86 fd ff ff 66 2e 0f 1f 84 00 00 00 00 00 56 48 8b 74 24 08 48 89 7c 24 08 52 51 <50> 41 50 41 51 41 52 41 53 53 55 41 54 41 55 41 56 41 57 56 31 f6
+RSP: 0000:ffffc90000060000 EFLAGS: 00010046
+RAX: 0000000000000002 RBX: ffffc90000060088 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8b20128d RDI: ffffffff8bb130e0
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc9000005fff8 CR3: 000000000dd7c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 3 bytes skipped:
+   0:	85 db                	test   %ebx,%ebx
+   2:	0f 85 8e fd ff ff    	jne    0xfffffd96
+   8:	0f 01 f8             	swapgs
+   b:	e9 86 fd ff ff       	jmp    0xfffffd96
+  10:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
+  17:	00 00 00
+  1a:	56                   	push   %rsi
+  1b:	48 8b 74 24 08       	mov    0x8(%rsp),%rsi
+  20:	48 89 7c 24 08       	mov    %rdi,0x8(%rsp)
+  25:	52                   	push   %rdx
+  26:	51                   	push   %rcx
+* 27:	50                   	push   %rax <-- trapping instruction
+  28:	41 50                	push   %r8
+  2a:	41 51                	push   %r9
+  2c:	41 52                	push   %r10
+  2e:	41 53                	push   %r11
+  30:	53                   	push   %rbx
+  31:	55                   	push   %rbp
+  32:	41 54                	push   %r12
+  34:	41 55                	push   %r13
+  36:	41 56                	push   %r14
+  38:	41 57                	push   %r15
+  3a:	56                   	push   %rsi
+  3b:	31 f6                	xor    %esi,%esi
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbrUl8ACgkQAVBC80lX
-0Gz9eAgAiVtKDkXJ3YcxqLgPevwMe62P9hQRkfaJcx5tsNYWS6s6dLTO4HbOq5dF
-E9o0ZqWf4y1nDAmP5k/6LRNgm2/k22w2P93brMMoGq3SxMfdBlcxD1ctZkyvyRVf
-I260FjxYlES10JInZnTQP+lRjEELdiIzHvAnrGyIEK7qowo+zrePnIWgjdzQJ7fp
-flSxUA2Ayqfl8uJVmt33nXaG6kwrdfH505MQYKEHDpZhUr421YjKEWuzhI48PvKv
-E9R7K2PdKAQDEIak66wQp3L7X8triuf84Lb3YKyzlP1cgglLizFLBNGaax0PF1dV
-4fvuxlE5O0LPAVRAl4JXr6vPeS1wGw==
-=VLe8
------END PGP SIGNATURE-----
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---Sig_/BTQau+RYdUMM3KU93.YKo1p--
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
