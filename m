@@ -1,97 +1,152 @@
-Return-Path: <linux-kernel+bounces-332198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F4397B6B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:06:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7A697B6AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 04:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92ACC1C218E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 02:06:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F39D71F2326A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 02:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A491386D8;
-	Wed, 18 Sep 2024 02:05:57 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F92A5733A;
+	Wed, 18 Sep 2024 02:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="F5J4qpko"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DE319A;
-	Wed, 18 Sep 2024 02:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B075619A;
+	Wed, 18 Sep 2024 02:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726625157; cv=none; b=ljmJFww6IZt2rQt7oUIeHu9iuB792ukgPNgQX0LNj/dHVwxmxef6Amuw2dj+nA79JMNoc51fOfJZEBfOaDgVb1dkJQp3TMUQm26LhMbuF1Y2bsjKzxur/05gs3ltBujaqwTkOW9WIShpI4O6BbLumExvkyg3LggqRxMoOVoVtAs=
+	t=1726625151; cv=none; b=hYpjHVVkY40gamFqEDreJXsruxQrhEJO6PVigkF2CX7IJ6p5FlyONJ6PxjPQTPUS9feNc105HxGDE0xtbhuHwwDPQtdfSIUS7/xfP0DGQywtzdBkCw58OsuhMCbEdmqwHrUjXh10LSpUQmr9sDQ6Q+ptVQ7VwbVtTPkdW9VHA5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726625157; c=relaxed/simple;
-	bh=4+dJGOUZsRjxMOAMGxk+Fyd3gqVY6VFGfS7+fKcuSCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rGgCDGqnyC1seuwcrfQUJgDJ9mWr4lMYq9EjOstXZYRUfJKvMbcMDuCefLgpN7xN0YUUd1ohSqn3fw152opcSpgqHQ+ybBZJowuANrxz3H9Lq0n5/a9uVO6GIZgy+AFZS73Xahb0nVg1hVH07lBwbLJ8S3mqUr5RC923w6+36n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X7hn43vGqzFqnF;
-	Wed, 18 Sep 2024 10:05:12 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 048951402E0;
-	Wed, 18 Sep 2024 10:05:26 +0800 (CST)
-Received: from [10.67.110.108] (10.67.110.108) by
- kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 18 Sep 2024 10:05:25 +0800
-Message-ID: <c5765c03-a584-3527-8ca4-54b646f49433@huawei.com>
-Date: Wed, 18 Sep 2024 10:05:24 +0800
+	s=arc-20240116; t=1726625151; c=relaxed/simple;
+	bh=Ab2/LOxhpE5niCrUzSebbWT+ZOyvaTATKYrALwMKywI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jIuz/v7pu+95scc9qSZNYommj8UE46FB2tiaRJ1U82Z5TDfqmzC5MJOOARmDGdNpHuETeuq9+I+rXzB3LoBN1bLWTI/upBB55N5r7ySe4ns6B8hYmjs6jMM0jjqaijyGmsCSKY6GLp47kiyipPV/yx2cKHg93Wst2zc6WeL6qtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=F5J4qpko; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726625145;
+	bh=JFR3RgugFq1YfT4esI9HKKUJ1Z9NhqOrhmEOzHZXTdk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=F5J4qpkoeqRlVODclqY0e3gIYcNYzIcZB3Q87vY7qkVw4wAetclSnZKqEUEDFM01V
+	 7z8e0IfbhJ6TRgQvS37s778Edp6zd2ZnVIYxBMh5k255tVGb83cfuH7ONqnfBIFELz
+	 elzhkbg25JtQKurGt8/zieWA+Hc78TlvNC9EvuUkNe9jQC52jyo++D2v++aYmXfSnX
+	 vRl/8/x9sZ27cShcpF3abWurBOnHB+r8UDVs4TOaNFeq60nN1ac2wS7TovhjrlupHc
+	 zA2Q0FszENavgpWkRi7Hea0zOP1a4VmxKIu9e6K3gC92JqnzEAMvSzBStnmrS291ot
+	 JJQ7doc/qhGsQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X7hnh677hz4xWZ;
+	Wed, 18 Sep 2024 12:05:44 +1000 (AEST)
+Date: Wed, 18 Sep 2024 12:05:44 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Lee Jones <lee@kernel.org>
+Cc: Andre Przywara <andre.przywara@arm.com>, Chris Morgan
+ <macromorgan@hotmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the regulator tree with the mfd
+ tree
+Message-ID: <20240918120544.0150c844@canb.auug.org.au>
+In-Reply-To: <20240910125101.4057d8f7@canb.auug.org.au>
+References: <20240910125101.4057d8f7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v3 0/2] uprobes: Improve scalability by reducing the
- contention on siglock
-To: Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
-	<peterz@infradead.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>, Andrii Nakryiko
-	<andrii@kernel.org>, Oleg Nesterov <oleg@redhat.com>
-References: <20240815014629.2685155-1-liaochang1@huawei.com>
- <cfa88a34-617b-9a24-a648-55262a4e8a4c@huawei.com>
- <20240915151803.GD27726@redhat.com>
-From: "Liao, Chang" <liaochang1@huawei.com>
-In-Reply-To: <20240915151803.GD27726@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd200013.china.huawei.com (7.221.188.133)
+Content-Type: multipart/signed; boundary="Sig_/pINKJaHHiIeFY9KtkAwQTF6";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi, Peter and Masami
+--Sig_/pINKJaHHiIeFY9KtkAwQTF6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I look forward to your inputs on these series. Andrii has proven they are
-hepful for uprobe scalability.
+Hi all,
 
-Thanks.
+On Tue, 10 Sep 2024 12:51:01 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the regulator tree got conflicts in:
+>=20
+>   drivers/mfd/axp20x.c
+>   include/linux/mfd/axp20x.h
+>=20
+> between commit:
+>=20
+>   2e1a57d5b0ad ("mfd: axp20x: Add ADC, BAT, and USB cells for AXP717")
+>=20
+> from the mfd tree and commit:
+>=20
+>   bb2ac59f8205 ("mfd: axp20x: AXP717: Add support for boost regulator")
+>=20
+> from the regulator tree.
+>=20
+> The latter change to  include/linux/mfd/axp20x.h is a subset of the
+> former change.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> diff --cc drivers/mfd/axp20x.c
+> index 4051551757f2,16950c3206d7..000000000000
+> --- a/drivers/mfd/axp20x.c
+> +++ b/drivers/mfd/axp20x.c
+> @@@ -209,15 -209,11 +209,17 @@@ static const struct regmap_access_tabl
+>   };
+>  =20
+>   static const struct regmap_range axp717_writeable_ranges[] =3D {
+>  +	regmap_reg_range(AXP717_PMU_FAULT, AXP717_MODULE_EN_CONTROL_1),
+>  +	regmap_reg_range(AXP717_MIN_SYS_V_CONTROL, AXP717_BOOST_CONTROL),
+> + 	regmap_reg_range(AXP717_MODULE_EN_CONTROL_2, AXP717_MODULE_EN_CONTROL_=
+2),
+> + 	regmap_reg_range(AXP717_BOOST_CONTROL, AXP717_BOOST_CONTROL),
+>  +	regmap_reg_range(AXP717_VSYS_V_POWEROFF, AXP717_VSYS_V_POWEROFF),
+>   	regmap_reg_range(AXP717_IRQ0_EN, AXP717_IRQ4_EN),
+>   	regmap_reg_range(AXP717_IRQ0_STATE, AXP717_IRQ4_STATE),
+>  +	regmap_reg_range(AXP717_ICC_CHG_SET, AXP717_CV_CHG_SET),
+>   	regmap_reg_range(AXP717_DCDC_OUTPUT_CONTROL, AXP717_CPUSLDO_CONTROL),
+>  +	regmap_reg_range(AXP717_ADC_CH_EN_CONTROL, AXP717_ADC_CH_EN_CONTROL),
+>  +	regmap_reg_range(AXP717_ADC_DATA_SEL, AXP717_ADC_DATA_SEL),
+>   };
+>  =20
+>   static const struct regmap_range axp717_volatile_ranges[] =3D {
 
-在 2024/9/15 23:18, Oleg Nesterov 写道:
-> Hi Liao,
-> 
-> On 09/14, Liao, Chang wrote:
->>
->> Hi, Oleg
->>
->> Kindly ping.
->>
->> This series have been pending for a month. Is thre any issue I overlook?
-> 
-> Well, I have already acked both patches.
-> 
-> Please resend them to Peter/Masami, with my acks included.
-> 
-> Oleg.
-> 
-> 
+This is now a conflict between the mfd tree and Linus' tree.
 
--- 
-BR
-Liao, Chang
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/pINKJaHHiIeFY9KtkAwQTF6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbqNXgACgkQAVBC80lX
+0Gxi5gf8DFtVz2eIcXHU6elV4TNiRfi2bNHYkuh4HuCKXpRcYh5RETu82oKFyubo
+HbRrRKwyMG+i+Fm91lfMv+LFRIsvdJdzKuaFBgisJcPPdzUCOoKb8LXT1aENKuhT
+dXifb8djdwTy3gyvl7TQjKlOCGu1nychJ6+iYX/kWVPDWc4CaM0bag+/6JqiGazm
+rEmdBVByzpnBQTHQ4suO0SNxLoJZs43IwLaFM4puz+/XYGXm5R3dUrCmwJdXthCj
+Cpfkb7ZxBscgpCDaov/jI6Mt2Zo5Dqxa04SYLWHSGt+yqRV/H44o1e2msNjU7Z6I
+HSYbgicyeo3oLbMi44TAD42JiIRIkw==
+=fsbN
+-----END PGP SIGNATURE-----
+
+--Sig_/pINKJaHHiIeFY9KtkAwQTF6--
 
