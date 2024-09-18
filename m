@@ -1,241 +1,162 @@
-Return-Path: <linux-kernel+bounces-332943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF6A97C11F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 22:57:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8780397C123
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77EFD282B50
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 20:57:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25582282D0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289471CB30B;
-	Wed, 18 Sep 2024 20:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642801CA69E;
+	Wed, 18 Sep 2024 21:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dU+x1z73"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VdElycyT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6921B17E019;
-	Wed, 18 Sep 2024 20:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A98014D6E6
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 21:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726693067; cv=none; b=sL3ZfQnqsrug1V6oIGn8TWM7lGp+WE3KxTqYYXQUCLWEjeYBnXTU9LK1OpUzE5UuV72gonF5OD6ANSMkfIclfsWmvOgOBlThwcfCDJ5WIdQTd0DRiA7DdxrDiDLxqk8VDE6dWA9AP6SVzXh1aY9McUxwgj2BTTKzLn30I3lmfr4=
+	t=1726693316; cv=none; b=XZr7YzTsE17D3rlXaMup6oMVPf6hEtyqWuhwbI/gURECGydOTMmWQ+i50AHZwN7Rvx9TcilqGG+7H5e9eeWcx4LiTSgTGZkNwkp7NCcPhrKp+5hTNCCVvvIFBaD2hJGpezIDsOJgM4iuvKyIzipfBfwA7vA2hFtpZ9aFvmhzdyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726693067; c=relaxed/simple;
-	bh=TtUVSbWnkZDmRjZByD6OwGNHt8dNi+VAQtbRHJxuvIw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=j4kqvZAfSCgd2gg/ixRev5lik6ch3xG6e5zqMahFN2M0h3d1A7qVVbUkxeWSPgro3AXDDgbDiJbqtW/Wvhl6Ao2S4Ifmgh+Lt9bxewHg8solnCodjIZhE4yHKRucImwHyBTnbqrHGDL3m1IkJNbbcnzTB/eCl/TClYGGVGOqtSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dU+x1z73; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC5B0C4CEC2;
-	Wed, 18 Sep 2024 20:57:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726693067;
-	bh=TtUVSbWnkZDmRjZByD6OwGNHt8dNi+VAQtbRHJxuvIw=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=dU+x1z73gtS3ZrP0Vzo6deR8WT0zwFRJxc/KxynAHjX/fvT96VH9E1M6Y60sDGCHg
-	 gIrAbsrCpZQEjlM3D8hKnuP31zMZ81rhfm3cwg9fXsfdVY4lyiiNtHvUIRuYWy/btW
-	 9wiK1byI2uma9jrYWTR+pHQswTsfKbJ7div9Zwyqzt5zhDdgrTull7VY7IPfXdc9BV
-	 jqC0BUmO7e8kJoQzPcplzrg0+iPHLMaSJVex4+E44z9DTkTqLaShXXjJ4wH49xT0jN
-	 6iKc2kL92MOGnxYRdC1iZxqLMv1m0RTuCN5eHn24mBUUVRfl06MiHGVwB6mf/z3WhV
-	 pVZiLK0fOg9hA==
+	s=arc-20240116; t=1726693316; c=relaxed/simple;
+	bh=mP0UQuMeE4aT8P8yDhPZX1+uNY2tnPXLkGTfwOMs9/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vaa4tFwNEJyLmmNBbQIotkY+j2aoOejNqQgeRkdjahmNfeQBn3OqMKJRqvXuyT9jrHPc3U9y/RSEb38DugBjvhxCBRcP05hcoXlO76Znj7rEB/q7W8zQeFqo3SCSACkpHUKby6ATlVvHEEnVbWASf6jlyJ6NDImRHpAkE2H3n+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VdElycyT; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726693315; x=1758229315;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mP0UQuMeE4aT8P8yDhPZX1+uNY2tnPXLkGTfwOMs9/E=;
+  b=VdElycyTsT5rCXLTATQNkiYzDU3UZyY2XezIPeECj3iE5qi4QALCtNjA
+   gcUiq36f8cED7tt+vkkYbpCZoZMRCX0GwaplpuleBYPqz5lc8CKA0XXSD
+   YRxsOpncsKVRNiGQ9Fo0izBGv/azDlLMMgQFJx2rX0VXQP/k+DDvVNzpT
+   ngu4pOKWnXxvtta0qLPWKgyvCDvPzGGy2RERVED1aOND9m9sGzjiW7RPo
+   TpEl03QC44dTAAngms2Vej7lgf267SegFgGFLNG9d+XfMA5RbRuwHVNlC
+   Ut/ojVeZ3/kVk66y4fm3IzS80Mvm53clKdXl7RyfS3+/+qkPH2Oumie5w
+   w==;
+X-CSE-ConnectionGUID: H/12HPUAT/CzBAJa4DFCTg==
+X-CSE-MsgGUID: NTfNwvdOR2iprRQp/OfoLA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11199"; a="29370639"
+X-IronPort-AV: E=Sophos;i="6.10,239,1719903600"; 
+   d="scan'208";a="29370639"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 14:01:54 -0700
+X-CSE-ConnectionGUID: UzXge7D0T6G3o7i4y9EBiQ==
+X-CSE-MsgGUID: a02/E3R9RZO8fMfCrg/Qcg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,239,1719903600"; 
+   d="scan'208";a="70005166"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 18 Sep 2024 14:01:51 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sr1o5-000CdM-02;
+	Wed, 18 Sep 2024 21:01:49 +0000
+Date: Thu, 19 Sep 2024 05:01:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Wang <00107082@163.com>, surenb@google.com,
+	kent.overstreet@linux.dev, akpm@linux-foundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, David Wang <00107082@163.com>
+Subject: Re: [PATCH v2] lib/alloc_tag: Add accumulative call counter for
+ memory allocation profiling
+Message-ID: <202409190453.pe1HrGL0-lkp@intel.com>
+References: <20240913055729.7208-1-00107082@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 18 Sep 2024 23:57:42 +0300
-Message-Id: <D49PLU7VOREK.3UZFD499C96FB@kernel.org>
-To: "Chen Ridong" <chenridong@huaweicloud.com>, "Chen Ridong"
- <chenridong@huawei.com>, <dhowells@redhat.com>, <paul@paul-moore.com>,
- <jmorris@namei.org>, <serge@hallyn.com>
-Cc: <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] security/keys: fix slab-out-of-bounds in
- key_task_permission
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20240913070928.1670785-1-chenridong@huawei.com>
- <D45Z3J2E2MPX.4SDWNGAP3D41@kernel.org>
- <4079d020-edcc-4e27-9815-580f83a6c0ca@huaweicloud.com>
- <D46WU24OP9O4.1Y7EGDV8ZN7NR@kernel.org>
- <1cfa878e-8c7b-4570-8606-21daf5e13ce7@huaweicloud.com>
-In-Reply-To: <1cfa878e-8c7b-4570-8606-21daf5e13ce7@huaweicloud.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913055729.7208-1-00107082@163.com>
 
-On Wed Sep 18, 2024 at 10:30 AM EEST, Chen Ridong wrote:
->
->
-> On 2024/9/15 21:59, Jarkko Sakkinen wrote:
-> > On Sun Sep 15, 2024 at 3:55 AM EEST, Chen Ridong wrote:
-> >>
-> >>
-> >> On 2024/9/14 19:33, Jarkko Sakkinen wrote:
-> >>> On Fri Sep 13, 2024 at 10:09 AM EEST, Chen Ridong wrote:
-> >>>> We meet the same issue with the LINK, which reads memory out of boun=
-ds:
-> >>>
-> >>> Nit: don't use "we" anywhere".
-> >>>
-> >>> Tbh, I really don't understand the sentence above. I don't what
-> >>> "the same issue with the LINK" really is.
-> >>>
-> >>
-> >> Hello, Jarkko.
-> >> I apologize for any confusion caused.
-> >>
-> >> I've encountered a bug reported by syzkaller. I also found the same bu=
-g
-> >> reported at this LINK:
-> >> https://syzkaller.appspot.com/bug?id=3D68a5e206c2a8e08d317eb83f05610c0=
-484ad10b9.
-> >>
-> >>>> BUG: KASAN: slab-out-of-bounds in __kuid_val include/linux/uidgid.h:=
-36
-> >>>> BUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.h:63 [=
-inline]
-> >>>> BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410
-> >>>> security/keys/permission.c:54
-> >>>> Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
-> >>>>
-> >>>> CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-gafbffd6c3=
-ede #15
-> >>>> Call Trace:
-> >>>>    __dump_stack lib/dump_stack.c:82 [inline]
-> >>>>    dump_stack+0x107/0x167 lib/dump_stack.c:123
-> >>>>    print_address_description.constprop.0+0x19/0x170 mm/kasan/report.=
-c:400
-> >>>>    __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
-> >>>>    kasan_report+0x3a/0x50 mm/kasan/report.c:585
-> >>>>    __kuid_val include/linux/uidgid.h:36 [inline]
-> >>>>    uid_eq include/linux/uidgid.h:63 [inline]
-> >>>>    key_task_permission+0x394/0x410 security/keys/permission.c:54
-> >>>>    search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793
-> >>>>    keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:922
-> >>>>    search_cred_keyrings_rcu+0x111/0x2e0 security/keys/process_keys.c=
-:459
-> >>>>    search_process_keyrings_rcu+0x1d/0x310 security/keys/process_keys=
-.c:544
-> >>>>    lookup_user_key+0x782/0x12e0 security/keys/process_keys.c:762
-> >>>>    keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:434
-> >>>>    __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
-> >>>>    __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
-> >>>>    do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
-> >>>>    entry_SYSCALL_64_after_hwframe+0x67/0xd1
-> >>>>
-> >>>> However, we can't reproduce this issue.
-> >>>
-> >>> "The issue cannot be easily reproduced but by analyzing the code
-> >>> it can be broken into following steps:"
-> >>
-> >> Thank you for your correction.
-> >> Does this patch address the issue correctly? Is this patch acceptable?
-> >=20
-> > I only comment new patch versions so not giving any promises but I can
-> > say that it is I think definitely in the correct direction :-)
-> >=20
-> > BR, Jarkko
->
-> Hello, Jarkko. I have reproduced this issue. It can be reproduced by=20
-> following these steps:
->
-> 1. Add the helper patch.
->
-> @@ -205,6 +205,9 @@ static void hash_key_type_and_desc(struct=20
-> keyring_index_key *index_key)
->          else if (index_key->type =3D=3D &key_type_keyring && (hash &=20
-> fan_mask) !=3D 0)
->                  hash =3D (hash + (hash << level_shift)) & ~fan_mask;
->          index_key->hash =3D hash;
-> +       if ((index_key->hash & 0xff) =3D=3D 0xe6) {
-> +                       pr_err("hash_key_type_and_desc: type %s %s=20
-> 0x%x\n",  index_key->type->name, index_key->description, index_key->hash)=
-;
-> +       }
->   }
->
-> 2. Pick up the inputs whose hash is xxe6 using the following cmd. If a=20
-> key's hash is xxe6, it will be printed.
->
-> for ((i=3D0; i<=3D10000; i++)); do ./test_key user user$i "Some payload";=
- done
->
-> You have complile test_key whith following code.
->
-> #include <sys/types.h>
-> #include <keyutils.h>
-> #include <stdint.h>
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <string.h>
->
-> int
-> main(int argc, char *argv[])
-> {
->     key_serial_t key;
->
->     if (argc !=3D 4) {
-> 	   fprintf(stderr, "Usage: %s type description payload\n",
-> 			   argv[0]);
-> 	   exit(EXIT_FAILURE);
->     }
->
->     key =3D add_key(argv[1], argv[2], argv[3], strlen(argv[3]),
-> 			   KEY_SPEC_SESSION_KEYRING);
->     if (key =3D=3D -1) {
-> 	   perror("add_key");
-> 	   exit(EXIT_FAILURE);
->     }
->
->     printf("Key ID is %jx\n", (uintmax_t) key);
->
->     exit(EXIT_SUCCESS);
-> }
->
->
-> 3. Have more than 32 inputs now. their hashes are xxe6.
-> eg.
-> hash_key_type_and_desc: type user user438 0xe3033fe6
-> hash_key_type_and_desc: type user user526 0xeb7eade6
-> ...
-> hash_key_type_and_desc: type user user9955 0x44bc99e6
->
-> 4. Reboot and add the keys obtained from step 3.
-> When adding keys to the ROOT that their hashes are all xxe6, and up to=20
-> 16, the ROOT has keys with hashes that are not xxe6 (e.g., slot 0), so=20
-> the keys are dissimilar. The ROOT will then split NODE A without using a=
-=20
-> shortcut. When NODE A is filled with keys that have hashes of xxe6, the=
-=20
-> keys are similar. NODE A will split with a shortcut.
->
-> As my analysis, if a slot of the root is a shortcut(slot 6), it may be=20
-> mistakenly be transferred to a key*, leading to an read out-of-bounds rea=
-d.
->
->                        NODE A
->                +------>+---+
->        ROOT    |       | 0 | xxe6
->        +---+   |       +---+
->   xxxx | 0 | shortcut  :   : xxe6
->        +---+   |       +---+
->   xxe6 :   :   |       |   | xxe6
->        +---+   |       +---+
->        | 6 |---+       :   : xxe6
->        +---+           +---+
->   xxe6 :   :           | f | xxe6
->        +---+           +---+
->   xxe6 | f |
->        +---+
->
-> 5. cat /proc/keys. and the issue is reproduced.
+Hi David,
 
-Hi, I'll try to run through your procedure next week and give my comments.=
-=20
-Thanks for doing this.
+kernel test robot noticed the following build warnings:
 
-BR, Jarkko
+[auto build test WARNING on akpm-mm/mm-nonmm-unstable]
+[also build test WARNING on linus/master v6.11 next-20240918]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Wang/lib-alloc_tag-Add-accumulative-call-counter-for-memory-allocation-profiling/20240913-140040
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
+patch link:    https://lore.kernel.org/r/20240913055729.7208-1-00107082%40163.com
+patch subject: [PATCH v2] lib/alloc_tag: Add accumulative call counter for memory allocation profiling
+config: arm-randconfig-002-20240919 (https://download.01.org/0day-ci/archive/20240919/202409190453.pe1HrGL0-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 8663a75fa2f31299ab8d1d90288d9df92aadee88)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240919/202409190453.pe1HrGL0-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409190453.pe1HrGL0-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/hwtracing/coresight/coresight-tpiu.c:8:
+   In file included from include/linux/acpi.h:13:
+   In file included from include/linux/resource_ext.h:11:
+   In file included from include/linux/slab.h:16:
+   In file included from include/linux/gfp.h:7:
+   In file included from include/linux/mmzone.h:22:
+   In file included from include/linux/mm_types.h:21:
+   In file included from include/linux/percpu_counter.h:14:
+   In file included from include/linux/percpu.h:5:
+>> include/linux/alloc_tag.h:108:39: warning: missing field 'accu_calls' initializer [-Wmissing-field-initializers]
+     108 |         struct alloc_tag_counters v = { 0, 0 };
+         |                                              ^
+   In file included from drivers/hwtracing/coresight/coresight-tpiu.c:9:
+   In file included from include/linux/amba/bus.h:19:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   2 warnings generated.
+
+
+vim +/accu_calls +108 include/linux/alloc_tag.h
+
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  105  
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  106  static inline struct alloc_tag_counters alloc_tag_read(struct alloc_tag *tag)
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  107  {
+22d407b164ff79 Suren Baghdasaryan 2024-03-21 @108  	struct alloc_tag_counters v = { 0, 0 };
+38770cdc292e9e David Wang         2024-09-13  109  #ifdef CONFIG_MEM_ALLOC_PROFILING_ACCUMULATIVE_CALL_COUNTER
+38770cdc292e9e David Wang         2024-09-13  110  	v.accu_calls = 0;
+38770cdc292e9e David Wang         2024-09-13  111  #endif
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  112  	struct alloc_tag_counters *counter;
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  113  	int cpu;
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  114  
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  115  	for_each_possible_cpu(cpu) {
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  116  		counter		= per_cpu_ptr(tag->counters, cpu);
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  117  		v.bytes		+= counter->bytes;
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  118  		v.calls		+= counter->calls;
+38770cdc292e9e David Wang         2024-09-13  119  #ifdef CONFIG_MEM_ALLOC_PROFILING_ACCUMULATIVE_CALL_COUNTER
+38770cdc292e9e David Wang         2024-09-13  120  		v.accu_calls	+= counter->accu_calls;
+38770cdc292e9e David Wang         2024-09-13  121  #endif
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  122  	}
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  123  
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  124  	return v;
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  125  }
+22d407b164ff79 Suren Baghdasaryan 2024-03-21  126  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
