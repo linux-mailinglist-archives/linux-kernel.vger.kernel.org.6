@@ -1,471 +1,228 @@
-Return-Path: <linux-kernel+bounces-332560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E599297BB36
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:59:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7EF97BB3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7446288624
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:59:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73A33B2359A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A7918786C;
-	Wed, 18 Sep 2024 10:58:54 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9317717BEB4;
+	Wed, 18 Sep 2024 11:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZSPZ7zWn"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61BD184528
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3EA172BD6
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 11:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726657134; cv=none; b=qiAcnnFdRVs7E+wswScCh47cURDIULzJ0vd+sMqWGQoWlT7/KvtfbWSnYzswrY+nDU4WISGU7X6WVB2829LEYCg7CNEffoBKnn8qE6Frtj9YvOdWawpSQSF3NyGJ1A9BKayJ+BKrLC/5ciabDapkUI3ihQiqMZjNGFl2r59rgN0=
+	t=1726657216; cv=none; b=HhjUkxQI6wL4ig2pEEhuAQ8RTCEO1cQpMVsS2a+u0ba+8ezP5hzNIjkj3feJV0CftuiRlU+sCsgXzF1/XXdW8uUnCg4OVrPuod74MOCVWOr0ETY0a7UgDs+7X0+uP9couczouOGIV50qpCmf9M0S2w1VOeoQlCELuuxPPjf4n3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726657134; c=relaxed/simple;
-	bh=PbxBhHN7vN+kkxE4URxlvwkZX9VcUD7bmsJwMbHPftw=;
+	s=arc-20240116; t=1726657216; c=relaxed/simple;
+	bh=fFDG2O6uVfN5BabQK+bFRTLg6JogWoNvGo3M5U/0W38=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EfLY7bp7xWHOYxlrE7Pq5bAZr3GBc7gj0tz5LQAGiyPqOOTvgfV92RoOAY1SNin3fdz/tdcYQSgkzS3RqlXNeSUUJ2kYC6qDD+JZmMy8ou5djtVMCDlApWktjOBpm4d2OzeynnWXUr7eOVhfzaRrcqU5c1sKWIrOKMlXNJqU4Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sqsNz-0004yv-FL; Wed, 18 Sep 2024 12:58:15 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sqsNx-008nPU-TV; Wed, 18 Sep 2024 12:58:13 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1sqsNx-00F7vT-2Y;
-	Wed, 18 Sep 2024 12:58:13 +0200
-Date: Wed, 18 Sep 2024 12:58:13 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Hui-Ping Chen <hpchen0nvt@gmail.com>
-Cc: miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	sumit.semwal@linaro.org, christian.koenig@amd.com, esben@geanix.com,
-	linux-arm-kernel@lists.infradead.org, linux-mtd@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v4 2/2] mtd: rawnand: nuvoton: add new driver for the
- Nuvoton MA35 SoC
-Message-ID: <ZuqyRXi-LWZ7-Qgw@pengutronix.de>
-References: <20240918090308.292617-1-hpchen0nvt@gmail.com>
- <20240918090308.292617-3-hpchen0nvt@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ST9dzXfkmkxGrqiFdWqRPlHjvtTiRTPdKzk+ZyVUALskm863YEzV4qDR4GzNjTsXxJ8i3perKHQDUNg15LBSLxTOCYC1zt8DLvs5N0l503jUnJMqIdkLHddCHwV8O/rSauR2IJ57YR4/gUqxr2XfWht6C4BWAFylzOTsbV7lA90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZSPZ7zWn; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53659c8d688so523896e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 04:00:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726657212; x=1727262012; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wyoz+r3z2fTtTxOXwV3PfYzr+O9ELMQOoDfKks2rgks=;
+        b=ZSPZ7zWnh1ujlU18jHG2Cgu1+s6/ZCvdDINC3TrdiL8b5vFIClnUyH3BbsfAtFgJD/
+         7bfcozJR7lJHc2etGq98afTWDLeaeDDzoQMuJLjgk6LQEOvvxyBvpeB6D3maK+lyelUR
+         y9qXU0wDi+KduYCerwc/XH4cwY2zMB2j60Vgf2i25RDEnkleSryu79yg9lvDpanFNTew
+         7C3WhVZ05oOw7pvqsiuzG/bDyOUmqZAMwbm/ZIeblURmaPzJkZFabDZDlMZRBfLAlB1E
+         Cfv6KEfa6SoLPk5zu694qv+6spE0pRhs3OSvHKJiFr4CbDBHqBFme2V7al6Ts2SSp/Hu
+         bfXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726657212; x=1727262012;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wyoz+r3z2fTtTxOXwV3PfYzr+O9ELMQOoDfKks2rgks=;
+        b=KQ2pgGN8v1TkqpqfkoeHK/Q76cdBsyllpKssTVh+eablTPehcA7GijovWQ87nbJSx6
+         GFBKsHMO5LE+D13l/X9QfDQHC+TA31f3XC3nT4+a1Ry5CXssZZOGUWQGSbG9a2iR+yOP
+         8vFIRKROMIIWH6k2Cei9joRH1n6Gh3VcmUVgk8k67yVrBJwZBauK6uoNZTigEje66Bdo
+         YTvWyS3bhLDmYE1B7Eog6O5ge63n6kCDgnXa6Fch/JkO2ahpi4gUJQ9lceDbeMXXM8md
+         qRL/erYdr/i58B8kuFEirt2ikCO0ZXzoO0IeB60dk9KTLN/wDBTSAwvGpyVkmGSqsscU
+         +pNA==
+X-Forwarded-Encrypted: i=1; AJvYcCXceeTcuYabgUjr/a/zSm/A78CvxQYiHXWPnMDoWbCDdenfz3rKS9DAPJX8s4Ehbjl1tJZCULEeB5BEPz4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxanO1j4U0pTBRC3IGEPZK7d2unLkw6ZQX93OvvsUg2WCZtA6YT
+	MOfioBXiTMRh1Vl2ZARVyhoA4kAPo7XAijPl3bBT1xN3JDRIiU7C
+X-Google-Smtp-Source: AGHT+IFlJ2O1ZZMm0urEG0PIruAPf3kfHMNdT/Jxt4BdRNZGgUDCk9cJYsWZo8HwEHhRbUhpLyeHCw==
+X-Received: by 2002:a05:6512:3051:b0:52f:441:bdd6 with SMTP id 2adb3069b0e04-5366b7d4cdcmr9419364e87.0.1726657211673;
+        Wed, 18 Sep 2024 04:00:11 -0700 (PDT)
+Received: from localhost ([94.19.228.143])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53687046f7bsm1482259e87.35.2024.09.18.04.00.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 04:00:10 -0700 (PDT)
+Date: Wed, 18 Sep 2024 14:00:10 +0300
+From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+Subject: Re: [PATCH] arm64: dts: sun50i-a64-pinephone: Add mount matrix for
+ accelerometer
+Message-ID: <ZuqyuvZ6tdzp5XSW@skv.local>
+Mail-Followup-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+	Dragan Simic <dsimic@manjaro.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+References: <20240916204521.2033218-1-andrej.skvortzov@gmail.com>
+ <6e5d0e9978bff30559c17f30d1495b59@manjaro.org>
+ <ZunCysUTSfQU1ylg@skv.local>
+ <c7664fda936d36e0d916ae09dd554d2e@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240918090308.292617-3-hpchen0nvt@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <c7664fda936d36e0d916ae09dd554d2e@manjaro.org>
 
-Hi,
+Hi Dragan,
 
-The driver has a few minor whitespace issues, please run through
-checkpatch.pl to catch them.
-
-Some more things inline.
-
-On Wed, Sep 18, 2024 at 09:03:08AM +0000, Hui-Ping Chen wrote:
-> Nuvoton MA35 SoCs NAND Flash Interface Controller
-> supports 2kiB, 4kiB and 8kiB page size, and up to
-> 8-bit, 12-bit, and 24-bit hardware ECC calculation
-> circuit to protect data.
+On 24-09-18 11:27, Dragan Simic wrote:
+> Hello Andrey,
 > 
-> Signed-off-by: Hui-Ping Chen <hpchen0nvt@gmail.com>
-> ---
->  drivers/mtd/nand/raw/Kconfig               |   8 +
->  drivers/mtd/nand/raw/Makefile              |   1 +
->  drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c | 935 +++++++++++++++++++++
->  3 files changed, 944 insertions(+)
->  create mode 100644 drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c
 > 
-> +#define SKIP_SPARE_BYTES	4
+>   arm64: dts: allwinner: pinephone: Add mount matrix to accelerometer
+> 
+> The patch description should be reworded like this, reflown into
+> proper line lengths, of course:
+> 
+>   The way InvenSense MPU-6050 accelerometer is mounted on the
+>   user-facing side of the Pine64 PinePhone mainboard requires
+>   the accelerometer's x- and y-axis to be swapped, and the
+>   direction of the accelerometer's y-axis to be inverted.
+> 
+>   Rectify this by adding a mount-matrix to the accelerometer
+>   definition in the PinePhone dtsi file.
+> 
+>   [andrey: Picked the patch description provided by dsimic]
+>   Fixes: 91f480d40942 ("arm64: dts: allwinner: Add initial support for
+> Pine64 PinePhone")
+>   Cc: stable@vger.kernel.org
 
-Unused, please drop.
+Thanks for the commit description, it's much better, than original
+one.
 
-> +static int ma35_nfi_ecc_check(struct nand_chip *chip, unsigned long addr)
-> +{
-> +	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-> +	struct mtd_info *mtd = nand_to_mtd(chip);
-> +	int status, i, j, nchunks = 0;
+> Please note the Fixes tag, which will submit this bugfix patch
+> for inclusion into the long-term/stable kernels.
+> 
+> Also note that the patch description corrects the way inversion
+> of the axis direction is described, which should also be corrected
+> in the patch itself, as described further below.
+> 
+> After going through the InvenSense MPU-6050 datasheet, [1] the
+> MPU-6050 evaluation board user guide, the PinePhone schematic,
+> the PinePhone mainboard component placement, [2] and the kernel
+> bindings documentation for mount-matrix, [3] I can conslude that
+> only the direction of the accelerometer's y-axis is inverted,
+> while the direction of the z-axis remain unchanged, according
+> to the right-hand rule.
 
-status should be unsigned.
+yes, it looks so on the first glance, but in MPU-6050 datasheet there
+is also following information:
 
-> +	int report_err = 0;
-> +	int err_cnt = 0;
-> +
-> +	nchunks = mtd->writesize / chip->ecc.steps;
-> +	if (nchunks < 4)
-> +		nchunks = 1;
-> +	else
-> +		nchunks /= 4;
-> +
-> +	for (j = 0; j < nchunks; j++) {
-> +		status = readl(nand->regs + MA35_NFI_REG_NANDECCES0 + j*4);
-> +		if (!status)
-> +			continue;
-> +
-> +		for (i = 0; i < 4; i++) {
-> +			if (!(status & ECC_STATUS_MASK)) {
-> +				/* No error */
-> +				status >>= 8;
-> +				continue;
-> +
-> +			} else if ((status & ECC_STATUS_MASK) == 0x01) {
-> +				/* Correctable error */
-> +				err_cnt = (status >> 2) & ECC_ERR_CNT_MASK;
-> +				dev_warn(nand->dev, "nchunks (%d, %d) have %d error!\n",
-> +					j, i, err_cnt);
+ 7.8 Three-Axis MEMS Accelerometer with 16-bit ADCs and Signal
+ Conditioning
 
-Correctable bitflips are expected. Please don't spam the log with it.
+ When the device is placed on a flat surface, it will measure
+ 0g on the X- and Y-axes and +1g on the Z-axis.
 
-> +				ma35_nfi_correct(nand, j*4+i, err_cnt, (u8 *)addr);
-> +				report_err += err_cnt;
-> +
-> +			} else {
-> +				/* uncorrectable error */
-> +				dev_warn(nand->dev, "uncorrectable error! 0x%4x\n", status);
-> +				return -1;
-> +			}
-> +			status >>= 8;
-> +		}
-> +	}
-> +	return report_err;
+So sensors reports positive acceleration values for Z-axis, when
+the gravity points to Z-minus. I see the same on device. positive
+values are returned, when screen and IC point upwards (not the center
+for gravity). 
 
-There are a few things wrong here. Your chip->ecc.read_page op must
-return the maximum number of bitflips occured on a subpage while
-reading a page.
+In device tree mount-matrix documentation [3] there is
 
-To archieve this I suggest you fix the return value of this function
-accordingly and call it from chip->ecc.read_page rather than from the
-interrupt handler.
+ users would likely expect a value of 9.81 m/s^2 upwards along the (z)
+ axis, i.e. out of the screen when the device is held with its screen
+ flat on the planets surface.
 
-Nevertheless mtd->ecc_stats.corrected counts the total number of
-bitflips, so you must handle this counter in this function.
+According to that, it looks like Z-axis here has to be inverted.
 
-See rk_nfc_read_page_hwecc() as an example of a driver which gets it
-right.
+It applies to other axes as well. And because of that I came from (only Y-axis is inverted)
 
-The background is that we have to rewrite the page once one ECC block
-hits a critical bitflip limit. A whole page might be fine when the
-bitflips are evenly distributed across the subpages, but it's not when
-all bitflips are occur in a single subpage.
+x' = -y
+y' =  x
+z' =  z
 
-> +static int ma35_nand_do_write(struct nand_chip *chip, const u8 *addr, u32 len)
-> +{
-> +	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-> +	struct mtd_info *mtd = nand_to_mtd(chip);
-> +	dma_addr_t dma_addr;
-> +	int ret = 0, i;
-> +	u32 val, reg;
-> +
-> +	ma35_nand_target_enable(nand);
-> +
-> +	if (len != mtd->writesize) {
-> +		for (i = 0; i < len; i++)
-> +			writel(addr[i], nand->regs + MA35_NFI_REG_NANDDATA);
-> +		ma35_nand_target_disable(nand);
-> +		return ret;
-> +	}
-> +
-> +	/* Check the DMA status before enabling the DMA */
-> +	ret = readl_poll_timeout(nand->regs + MA35_NFI_REG_DMACTL, val,
-> +				 !(val & DMA_BUSY), 50, HZ/2);
-> +	if (ret)
-> +		dev_warn(nand->dev, "dma busy\n");
-> +
-> +	/* Reinitial dmac */
-> +	ma35_nand_dmac_init(nand);
+to inverted solution (Y-axis is kept, but X and Z are inverted).
 
-The function name already says it and the comment doesn't offer any
-additional information. Please drop such comments.
+x' =  y
+y' = -x
+z' = -z
 
-> +
-> +	writel(mtd->oobsize, nand->regs + MA35_NFI_REG_NANDRACTL);
-> +
-> +	/* setup and start DMA using dma_addr */
-> +	writel(INT_DMA, nand->regs + MA35_NFI_REG_NANDINTEN);
-> +	/* To mark this page as dirty. */
-> +	reg = readl(nand->regs + MA35_NFI_REG_NANDRA0);
-> +	if (reg & 0xffff0000)
-> +		writel(reg & 0xffff, nand->regs + MA35_NFI_REG_NANDRA0);
-> +
-> +	/* Fill dma_addr */
-> +	dma_addr = dma_map_single(nand->dev, (void *)addr, len, DMA_TO_DEVICE);
-> +	dma_sync_single_for_device(nand->dev, dma_addr, len, DMA_TO_DEVICE);
-> +	ret = dma_mapping_error(nand->dev, dma_addr);
-> +	if (ret) {
-> +		dev_err(nand->dev, "dma mapping error\n");
-> +		return -EINVAL;
-> +	}
+probably should put this information into commit description.
 
-Call dma_sync_single_for_device() after you have checked for an error
-with dma_mapping_error().
+> > > > Signed-off-by: Ondrej Jirman <megi@xff.cz>
+> > > > Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+> > > > ---
+> > > >  arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > >
+> > > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+> > > > b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+> > > > index bc6af17e9267a..1da7506c38cd0 100644
+> > > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+> > > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+> > > > @@ -229,6 +229,9 @@ accelerometer@68 {
+> > > >  		interrupts = <7 5 IRQ_TYPE_EDGE_RISING>; /* PH5 */
+> > > >  		vdd-supply = <&reg_dldo1>;
+> > > >  		vddio-supply = <&reg_dldo1>;
+> > > > +		mount-matrix = "0", "1", "0",
+> > > > +				"-1", "0", "0",
+> > > > +				"0", "0", "-1";
+> > > >  	};
+> > > >  };
+> 
+> With the above-described analysis in mind, the mount-matrix
+> should be defined like this instead:
+> 
+> 		mount-matrix = "0", "1", "0",
+> 			       "-1", "0", "0",
+> 			       "0", "0", "1";
 
-That said, I think calling dma_sync_single_for_device() after
-dma_map_single() is unnecessary.
 
-> +
-> +	writel((unsigned long)dma_addr, nand->regs + MA35_NFI_REG_DMASA);
-> +	writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) | DMA_W_EN,
-> +		nand->regs + MA35_NFI_REG_NANDCTL);
-> +	ret = wait_for_completion_timeout(&nand->complete, msecs_to_jiffies(1000));
-> +	if (!ret) {
-> +		dev_err(nand->dev, "write timeout\n");
-> +		ret = -ETIMEDOUT;
-> +	}
-> +
-> +	dma_unmap_single(nand->dev, dma_addr, len, DMA_TO_DEVICE);
-> +
-> +	ma35_nand_target_disable(nand);
-> +
-> +	return ret;
-> +}
-> +
-> +static int ma35_nand_do_read(struct nand_chip *chip, const u8 *addr, u32 len)
+x' =  0 * x + 1 * y + 0 * z =  y
+y' = -1 * x + 1 * y + 0 * z = -x
+z' =  0 * z + 0 * y + 1 * z =  z
 
-The addr argument shouldn't be const. You are supposed to write to this
-buffer and you actually do so.
+your description says, that only Y-axis is inverted, but this matrix,
+imho, inverts original X axis as it was in original description.
 
-> +{
-> +	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-> +	struct mtd_info *mtd = nand_to_mtd(chip);
-> +	u8 *ptr = (u8 *)addr;
-> +	dma_addr_t dma_addr;
-> +	int ret = 0, i;
-> +	u32 val;
-> +
-> +	ma35_nand_target_enable(nand);
-> +
-> +	if (len != mtd->writesize) {
-> +		for (i = 0; i < len; i++)
-> +			*(ptr+i) = (u8)readl(nand->regs + MA35_NFI_REG_NANDDATA);
-> +		ma35_nand_target_disable(nand);
-> +		return ret;
-
-Just return 0 here. It's easier to read than having to look up the
-initialization value.
-
-> +	}
-> +
-> +	/* Check the DMA status before enabling the DMA */
-> +	ret = readl_poll_timeout(nand->regs + MA35_NFI_REG_DMACTL, val,
-> +				 !(val & DMA_BUSY), 50, HZ/2);
-> +	if (ret)
-> +		dev_warn(nand->dev, "dma busy\n");
-> +
-> +	/* Reinitial dmac */
-> +	ma35_nand_dmac_init(nand);
-> +
-> +	writel(mtd->oobsize, nand->regs + MA35_NFI_REG_NANDRACTL);
-> +
-> +	/* setup and start DMA using dma_addr */
-> +	dma_addr = dma_map_single(nand->dev, (void *)addr, len, DMA_FROM_DEVICE);
-> +	ret = dma_mapping_error(nand->dev, dma_addr);
-> +	if (ret) {
-> +		dev_err(nand->dev, "dma mapping error\n");
-> +		return -EINVAL;
-> +	}
-> +	nand->dma_buf = (u8 *)addr;
-> +	nand->dma_addr = dma_addr;
-> +
-> +	writel((unsigned long)dma_addr, nand->regs + MA35_NFI_REG_DMASA);
-> +	writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) | DMA_R_EN,
-> +		nand->regs + MA35_NFI_REG_NANDCTL);
-> +	ret = wait_for_completion_timeout(&nand->complete, msecs_to_jiffies(1000));
-> +	if (!ret) {
-> +		dev_err(nand->dev, "read timeout\n");
-> +		ret = -ETIMEDOUT;
-> +	}
-> +
-> +	dma_sync_single_for_cpu(nand->dev, dma_addr, len, DMA_FROM_DEVICE);
-> +	dma_unmap_single(nand->dev, dma_addr, len, DMA_FROM_DEVICE);
-
-No need to call dma_sync_single_for_cpu() before dma_unmap_single().
-
-> +
-> +	ma35_nand_target_disable(nand);
-> +
-> +	return ret;
-> +}
-> +
-> +
-> +static int ma35_nand_write_page_hwecc(struct nand_chip *chip, const u8 *buf,
-> +				      int oob_required, int page)
-> +{
-> +	struct mtd_info *mtd = nand_to_mtd(chip);
-> +	u8 *ecc_calc = chip->ecc.calc_buf;
-
-Make this a void * to get rid of the explicit casting below.
-
-> +
-> +	ma35_clear_spare(chip, mtd->oobsize);
-> +	ma35_write_spare(chip, mtd->oobsize - chip->ecc.total, (u32 *)chip->oob_poi);
-> +
-> +	nand_prog_page_begin_op(chip, page, 0, buf, mtd->writesize);
-> +	nand_prog_page_end_op(chip);
-> +
-> +	/* Copy parity code in NANDRA to calc */
-> +	ma35_read_spare(chip, chip->ecc.total, (u32 *)ecc_calc,
-> +			mtd->oobsize - chip->ecc.total);
-> +
-> +	/* Copy parity code in calc to oob_poi */
-> +	memcpy((void *)(chip->oob_poi + (mtd->oobsize - chip->ecc.total)),
-> +		(void *)ecc_calc, chip->ecc.total);
-> +
-> +	return 0;
-> +}
-> +
-> +static irqreturn_t ma35_nand_irq(int irq, void *id)
-> +{
-> +	struct ma35_nand_info *nand = (struct ma35_nand_info *)id;
-> +	struct mtd_info *mtd = nand_to_mtd(&nand->chip);
-> +	int stat = 0;
-> +	u32 isr;
-> +
-> +	spin_lock(&nand->dma_lock);
-> +
-> +	isr = readl(nand->regs + MA35_NFI_REG_NANDINTSTS);
-> +	if (isr & INT_ECC) {
-> +		dma_sync_single_for_cpu(nand->dev, nand->dma_addr, mtd->writesize,
-> +					DMA_FROM_DEVICE);
-> +		stat = ma35_nfi_ecc_check(&nand->chip, (unsigned long)nand->dma_buf);
-
-nand->dma_buf already is a pointer which you cast to unisgned long here
-and back to a pointer in ma35_nfi_ecc_check(). ma35_nfi_ecc_check()
-should take a poiner instead.
-
-> +		if (stat < 0) {
-> +			mtd->ecc_stats.failed++;
-> +			writel(DMA_RST | DMA_EN, nand->regs + MA35_NFI_REG_DMACTL);
-> +			writel(readl(nand->regs + MA35_NFI_REG_NANDCTL) | SWRST,
-> +				nand->regs + MA35_NFI_REG_NANDCTL);
-> +		} else if (stat > 0) {
-> +			mtd->ecc_stats.corrected += stat;   /* Add corrected bit count */
-> +		}
-> +		writel(INT_ECC, nand->regs + MA35_NFI_REG_NANDINTSTS);
-> +	}
-> +	if (isr & INT_DMA) {
-> +		writel(INT_DMA, nand->regs + MA35_NFI_REG_NANDINTSTS);
-> +		complete(&nand->complete);
-> +	}
-> +	spin_unlock(&nand->dma_lock);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int ma35_nfc_exec_op(struct nand_chip *chip,
-> +			  const struct nand_operation *op,
-> +			  bool check_only)
-> +{
-> +	struct ma35_nand_info *nand = nand_get_controller_data(chip);
-> +	u32 i, reg;
-> +	int ret = 0;
-> +
-> +	if (check_only)
-> +		return 0;
-> +
-> +	ma35_nand_target_enable(nand);
-> +	reg = readl(nand->regs + MA35_NFI_REG_NANDINTSTS);
-> +	reg |= INT_RB0;
-> +	writel(reg, nand->regs + MA35_NFI_REG_NANDINTSTS);
-> +
-> +	for (i = 0; i < op->ninstrs; i++) {
-> +		ret = ma35_nfc_exec_instr(chip, &op->instrs[i]);
-> +		if (ret)
-> +			break;
-> +	}
-
-The way ma35_nand_target_[en|dis]able() is called looks inconsistent.
-
-This function calls ma35_nand_target_enable(), so I would expect that
-the corresponding ma35_nand_target_disable() should be called here as
-well.
-
-ma35_nand_do_read() is called from here which has its own call to
-ma35_nand_target_enable(), but it doesn't call ma35_nand_target_disable()
-from all of its return pathes.
-
-> +
-> +	ret = devm_request_irq(&pdev->dev, nand->irq, ma35_nand_irq,
-> +				  IRQF_TRIGGER_HIGH, "ma35d1-nand", nand);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to request NAND irq\n");
-> +		clk_disable_unprepare(nand->clk);
-
-You used devm_clk_get_enabled(), so this will be done automatically.
-
-> +		return -ENXIO;
-> +	}
-> +
-> +	nand->chip.controller = &nand->controller;
-> +	platform_set_drvdata(pdev, nand);
-> +
-> +	chip->options |= NAND_NO_SUBPAGE_WRITE | NAND_USES_DMA;
-> +
-> +	/* set default mode in case dt entry is missing */
-> +	chip->ecc.engine_type = NAND_ECC_ENGINE_TYPE_ON_HOST;
-> +
-> +	chip->ecc.write_page = ma35_nand_write_page_hwecc;
-> +	chip->ecc.read_page  = ma35_nand_read_page_hwecc;
-> +	chip->ecc.read_oob   = ma35_nand_read_oob_hwecc;
-> +
-> +	mtd = nand_to_mtd(chip);
-> +	mtd->priv = chip;
-> +	mtd->owner = THIS_MODULE;
-> +	mtd->dev.parent = &pdev->dev;
-> +
-> +	writel(NAND_EN, nand->regs + MA35_NFI_REG_GCTL);
-> +
-> +	ret = nand_scan(chip, 1);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = mtd_device_register(mtd, NULL, 0);
-> +	if (ret) {
-> +		nand_cleanup(chip);
-> +		devm_kfree(&pdev->dev, nand);
-
-Unnecessary free. Drop it.
-
-> +		return ret;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void ma35_nand_remove(struct platform_device *pdev)
-> +{
-> +	struct ma35_nand_info *nand = platform_get_drvdata(pdev);
-> +	int ret;
-> +
-> +	devm_free_irq(&pdev->dev, nand->irq, nand);
-
-devm_ is a mechanism to let resources be freed automatically. There's
-normally no need to do this manually.
-
-Sascha
+> Please also note the line indentation that was changed a bit.
+> 
+> [1] https://rimgo.reallyaweso.me/vrBXQPq.png
+> [2] https://rimgo.reallyaweso.me/uTmT1pr.png
+> [3] https://www.kernel.org/doc/Documentation/devicetree/bindings/iio/mount-matrix.txt
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Best regards,
+Andrey Skvortsov
 
