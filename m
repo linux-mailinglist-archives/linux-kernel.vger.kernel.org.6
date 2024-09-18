@@ -1,154 +1,138 @@
-Return-Path: <linux-kernel+bounces-332637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF95397BC4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:35:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A11197BC53
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA0471C2193D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:35:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27AF61F240F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B94218800E;
-	Wed, 18 Sep 2024 12:35:41 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFD618990E;
+	Wed, 18 Sep 2024 12:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EgKi8xsB"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381EE4409;
-	Wed, 18 Sep 2024 12:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C0C4409
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 12:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726662941; cv=none; b=VDzjQ46JIub9goEH0Dmg1IRqlr482b2rxhaltn7qVPPGppkCKqbND6otXPK9Wn4jL+WGU3iFDobXkm502+mXGU2Qru9HXT8AnUiZjNZ3MUAG5z6HiZdtUVSvuIvOngZcd60FNo7zU/E+q/JpU8Xf+AG48AmQryolD2NYJK67Kec=
+	t=1726663030; cv=none; b=p7jCQQyUOsJssMabLJsS77x+0OhtjbUgmWIPlS+iekEVNqHXQ3RptMsaqYpo+w3xWLFxRLtXPfglQthzrFSID3m2LvXFvREGhpo8uXTamvG2oMO+iO1iHVnWINiIgCFdhou2+oz1+7IncIwmpguWD/R+O3otMmmghX02a8d114A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726662941; c=relaxed/simple;
-	bh=4r46Tfl8J6HaC2iE0KDuYDIopodUnpAtIdJC1ca/wxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=NJIUAerQZ/Iou4c2Z7v7ye+wAx7RfARas50ytF5nWZbJGUiMFnbZMmi3zqYsbfJfw2gs75Gu4NbHlf9dbwYzyixcRH5ICnCz+wWsf+nuYGpKBz5defJe5UYgqYtWnNnv2zfLrlF+exms0L4ictsorjUSkSimSbL2tAUbt6mJ3So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.109] (31.173.83.44) by msexch01.omp.ru (10.188.4.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Wed, 18 Sep
- 2024 15:35:15 +0300
-Message-ID: <f45d5e6d-ab82-f86b-8afc-414e7c1fd28f@omp.ru>
-Date: Wed, 18 Sep 2024 15:35:14 +0300
+	s=arc-20240116; t=1726663030; c=relaxed/simple;
+	bh=zuikOUiCStkWfIyp50XAs1iEDDnX3j8rAK4EbG29k/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MZLPSPeWcwnFqZ8w5pPeLNtJwAszsd80Np0Jc7EJyYYjnhnneuY8IB2Gl053grqCr8H7D/pYiepuRkTF6tkYBx67Bd9xp56YlSRwDBiSN/02e00NGy4GITW/6j12ZQaRBBtzkCe3KKlV+D2vATVRqyvWqtCFdM/rbAsmWnNh51Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EgKi8xsB; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f66423686bso62074661fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 05:37:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726663026; x=1727267826; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mM4xuZfDECsmdWvFjhmgD+BpJEKhoUr3CHqYNfTZlfs=;
+        b=EgKi8xsB+U1M6sjlH+SVrMav4HI53SfTpyTr5LCgYDOgIFU+DW+iPaz474fMFoRhwr
+         aZvjr/cAtLWPs1qGfYw4kGqKwNA5w2hRjkX4/ckLcAv0GlJSDvvtcAyxt1UnH2xo7fyh
+         9I9lkMut7dOaXSV1mV+XX6zs8EwbXyAV5jms3a0jReXTh/ZC2k7JIPqcctB7+k1VkPMR
+         xDKFpG2PrGF5SXTxmhsVVqOETVt1jvFMPSKyig6GV8v40IZNwVwmWgLTO/H0ZdNEJqjw
+         l0XIw/0cKJZcyM2I0GFcu6hXAcZy/cfaKnXAU6Wx4URtb5/APqQBaZPrt5RMqk2Y+fXG
+         2y4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726663026; x=1727267826;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mM4xuZfDECsmdWvFjhmgD+BpJEKhoUr3CHqYNfTZlfs=;
+        b=j8uY0l4GWHY2gtr0l4BtdjggaMl13Si74czVsDEM8AUwqg7882nHuFOhYNVkYxZ1SY
+         mNmBZmAYyUTEdiFTgS/g3i2PrWZhBCW3TvhaEdzAN3WdzHJRHE40VnXEMO02WbTAs+RZ
+         MsPvyfZxau6ZtlztNoBB65xU0HZ01dmSyM4Am9oLWF+vfmMheT8blcAk7kVgeFDc+iTR
+         QbKcjPdqhKc/uhz5ja4BkShLXo0jmVvp9EcH9OTHxkBY3UOGpa/tlJMbMR0VrXnOTQWp
+         DQzonmnfp572RSXs8BABNWKe3u2cI/H9dYRhs57ked1ei6knMpy7TSVIAcHDFMI34OU+
+         olhg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGxiySEmzd3GmO+00tYEMFq92TcF5OKKLen+aMNjvhazxD1WX2XcaokK6vboa2iRXd2IJwTPQOBk1bKuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbqO0sZ6k2ov2cpB9vVCWWI174FCj4jajNjCEHoVkLXxR+p0Mj
+	wiYhbdSFWre8VbqOmoxigzme+Ns5lIfdHfsCxS5vbD6MpX26b9jImLEG7YwhTRQ=
+X-Google-Smtp-Source: AGHT+IEB5Ofi2pPkK2q4Q+ADWhOk5w+/qe893H2cKWvOMMT5LUeKzbEOlLYgbjUh+PcuNJFQrfsNgA==
+X-Received: by 2002:a05:651c:1544:b0:2f7:4c9d:7a83 with SMTP id 38308e7fff4ca-2f787f432a5mr118305621fa.40.1726663025313;
+        Wed, 18 Sep 2024 05:37:05 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d2e1e80sm13499561fa.6.2024.09.18.05.37.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 05:37:04 -0700 (PDT)
+Date: Wed, 18 Sep 2024 15:37:03 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sachin Gupta <quic_sachgupt@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_cang@quicinc.com, quic_nguyenb@quicinc.com, quic_bhaskarv@quicinc.com, 
+	quic_mapa@quicinc.com, quic_narepall@quicinc.com, quic_nitirawa@quicinc.com, 
+	quic_rampraka@quicinc.com, quic_sartgarg@quicinc.com
+Subject: Re: [PATCH V2] arm64: dts: qcom: qcs6490-rb3gen2: Add SD Card node
+Message-ID: <w74j2huiyk52dqtusatctygfdu2xq24kpirc3w4iyhwmpaxlpp@nt644j4gpnhv>
+References: <20240918102921.23334-1-quic_sachgupt@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH] ata: pata_octeon_cf: Use common error handling code in
- octeon_cf_probe()
-Content-Language: en-US
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-To: Markus Elfring <Markus.Elfring@web.de>, <linux-ide@vger.kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>
-CC: LKML <linux-kernel@vger.kernel.org>
-References: <4ca111f2-9b38-47a1-88d5-7dfaedcc6ea5@web.de>
- <2e38a924-a68a-8d19-8c3a-c19708f9ab74@omp.ru>
- <abe87c03-3a73-3f16-92eb-a988a61649d5@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <abe87c03-3a73-3f16-92eb-a988a61649d5@omp.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/18/2024 12:13:10
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 187821 [Sep 18 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.1.5
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
- 8a1fac695d5606478feba790382a59668a4f0039
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.83.44 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1;31.173.83.44:7.1.2;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.83.44
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/18/2024 12:16:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/18/2024 11:02:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240918102921.23334-1-quic_sachgupt@quicinc.com>
 
-On 9/17/24 23:44, Sergey Shtylyov wrote:
-[...]
-
->>> From: Markus Elfring <elfring@users.sourceforge.net>
->>> Date: Tue, 17 Sep 2024 13:43:24 +0200
->>>
->>> Add a label so that a bit of exception handling can be better reused
->>
->>    s/exception/error/.
->>
->>> in a subsequent if branch of this function implementation.
->>>
->>> This issue was detected by using the Coccinelle software.
->>>
->>> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->>> ---
->>>  drivers/ata/pata_octeon_cf.c | 9 ++++-----
->>>  1 file changed, 4 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/ata/pata_octeon_cf.c b/drivers/ata/pata_octeon_cf.c
->>> index 0bb9607e7348..62289f6aef95 100644
->>> --- a/drivers/ata/pata_octeon_cf.c
->>> +++ b/drivers/ata/pata_octeon_cf.c
->>> @@ -848,14 +848,13 @@ static int octeon_cf_probe(struct platform_device *pdev)
->>>  				struct resource *res_dma;
->>>  				int i;
->>>  				res_dma = platform_get_resource(dma_dev, IORESOURCE_MEM, 0);
->>> -				if (!res_dma) {
->>> -					put_device(&dma_dev->dev);
->>> -					of_node_put(dma_node);
->>> -					return -EINVAL;
->>> -				}
->>> +				if (!res_dma)
->>> +					goto put_device;
->>> +
->>>  				cf_port->dma_base = (u64)devm_ioremap(&pdev->dev, res_dma->start,
->>>  									 resource_size(res_dma));
->>>  				if (!cf_port->dma_base) {
->>> +put_device:
->>
->>    Ugh... :-/
->>    Please use the new-fangled *devm_platform_ioremap_resource() instead of those
-
-    Ugh, s/*//...
-
->> old-fashioned APIs.
+On Wed, Sep 18, 2024 at 03:59:21PM GMT, Sachin Gupta wrote:
+> Add SD Card node for Qualcomm qcs6490-rb3gen2 Board.
 > 
->    Another option is to place this error patch somewhere at the end
+> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
+> ---
+> 
+> Changes from v1:
+>  - Addressed Dmitry's comment.
 
-   s/patch/path/, of course... :-)
+Please don't use such wording. It doesn't tell, which comments were
+fixed. If you want to give the reviewer a sign of appreciation, just
+mention the name in the line which describes your actual change.
 
-> of this function but I think I prefer the new APIs.
+>  - moved pinctrl-related nodes below the PINCTRL comment.
+>  - moved sd-cd node in PINCRTL_related TLMM.
+> ---
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 33 ++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> index 0d45662b8028..c9f4c6812b71 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> @@ -716,6 +716,18 @@
+>  	status = "okay";
+>  };
+>  
+> +&sdhc_2 {
+> +	status = "okay";
 
-[...]
+Status should be the last one. Excuse me, I probably missed that
+earlier. The rest LGTM.
 
-MBR, Sergey
+> +
+> +	pinctrl-0 = <&sdc2_clk>, <&sdc2_cmd>, <&sdc2_data>, <&sd_cd>;
+> +	pinctrl-1 = <&sdc2_clk_sleep>, <&sdc2_cmd_sleep>, <&sdc2_data_sleep>, <&sd_cd>;
+> +
+> +	vmmc-supply = <&vreg_l9c_2p96>;
+> +	vqmmc-supply = <&vreg_l6c_2p96>;
+> +
+> +	cd-gpios = <&tlmm 91 GPIO_ACTIVE_LOW>;
+> +};
+> +
+
+-- 
+With best wishes
+Dmitry
 
