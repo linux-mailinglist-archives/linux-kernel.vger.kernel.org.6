@@ -1,102 +1,114 @@
-Return-Path: <linux-kernel+bounces-332509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE2D297BA9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:15:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE0397BAA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D0341F22FA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:15:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B4241C223DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4665D17AE0C;
-	Wed, 18 Sep 2024 10:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CDB17A92E;
+	Wed, 18 Sep 2024 10:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="g7h4R+JP"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="g/0RNlEh"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90B6178378
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1D117AE0C
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726654524; cv=none; b=sMe42qiNF+c6yckKT0RN++UypHRu5TWE86yITyG0WkP3xPIm3bBPtbKEY86kU/v7RAT4dml1MD2qUyMfvbOO+nZtENauqLvHwoNdT8qmMD4WuK38njFPZ+kVzDjjvrhKARGsdxSgLU5CPsmLoVcZgI6R55xu4gWBEWSbf2qTw1I=
+	t=1726654633; cv=none; b=s3lLEPcpne+IbxbEz80e3OtRJV+TqqZ48+815+v8fLQ8rgRh4KaMRR+vadh9L+h2CzMcCBBYrv9jqNP/mHT6bC44EShWB1859VUwi2ImecfRgd1FGguNszKZjSTAISanFWGq6/oIL8odrQGns3Y9HVNENDSuU8R9x6Jak5H2740=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726654524; c=relaxed/simple;
-	bh=ngZrcRDlM5CWBR80rje1RK9nTLokmmBXmMbbHkuM5P0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CawuhAj77GuBogwecpYI0hq0VJxgO59rI/5HLU4gmn0Bpwn/JfckNj2GnLKeKcfugVqihtjNB9bz29KksmRsjbHtmKAVbdSmfFqoxo//Tut+InU/g53W1WB0vx9KBozwcN1liEm9ZE70RKRJTHEhJKgiUfGH5V0Qk/d2tcW6LBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=g7h4R+JP; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1726654521;
-	bh=ngZrcRDlM5CWBR80rje1RK9nTLokmmBXmMbbHkuM5P0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=g7h4R+JPJFvG4wo1gZY7K4fOAOoEr3AxH6k0hlsP107hvZuoX1yw40g28rTlRMLAN
-	 WrMwDCBsKpC6YBCS6pdHcSDj2039i+wY8tlhox3wumHROkpM2QIFLnJA6F3ubh6ofZ
-	 AOX/MIr13YAAHxA0O/LKMCr1HDR3K5wHnVuQcgVWe3exr60QqdcGuTl55e+I9wwg1I
-	 VK0e25qb0YzPKbNRZRxXsMKSx/IP2D1pvgCH3l8vW9AaTOIMT0Qdvo77Hkyu0kpY6M
-	 fwx9hxH0scgNWr+4weo+1aFK8+DLQ1sk+cdUpeFmy6wPeTKNvZ/90DvMDr31VZXm5y
-	 HyJgXpMIkZqpw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B497917E10AE;
-	Wed, 18 Sep 2024 12:15:20 +0200 (CEST)
-Message-ID: <92a8d48f-e109-461b-bb6a-29da98a444ad@collabora.com>
-Date: Wed, 18 Sep 2024 12:15:20 +0200
+	s=arc-20240116; t=1726654633; c=relaxed/simple;
+	bh=+tpJnY909VM1M+m1CMhX0xl6c3hIZ9gIwNHSsoAD8J4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=E2GoyimmtO9mK/tInIM9OJGt0LIc1yi7SyNKpSmm3fV8lI/YmyNz3+VI4eB0xo7eASBTn5v7sU49oWrr/cJ7fJV6ontVCAM9K0QM5k0La2CGVPPquoivLVK09fqLnGFYPYOenqUcvn8g8Lqk60zA+ARIjx3Vz9IUQu7m64QPeDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=g/0RNlEh; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374c1e5fe79so4927167f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 03:17:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726654628; x=1727259428; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9xmRlfgY58bu3lgrbHWfq1PnhjWfcGquoMknYxltLHw=;
+        b=g/0RNlEhZ8yqQd2ys9yx4Rbl/rjCpXGI0ubNLOYG6dPrAmwB34cNeVodCV2XkAvBhj
+         2b6D3UZVaihlE6VmUQsDWPPKQklE/zTCdJuZZEUkz756pmoxio3ugq8AsZL4BCR2jyxI
+         2mNAzCJo2Qa+kiIFIqNBpk4fN1YV33iumDo8jVe3Kwb6kH6ctvGn0w6QZv4Qzh5CfCgf
+         AdHCXa9zEs3/3iZ3TEPsN8NH/bzgd/0gamP8W7xlbeSzvdf1D+CiJFS8MeV591McvmVi
+         sc6WCOvaQ4Fr6M6xO0Kbp4ovTzlIc7N/0NbFWycbqTl5ea7E1epqYzpOhHbiLieuP0CW
+         +vyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726654628; x=1727259428;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9xmRlfgY58bu3lgrbHWfq1PnhjWfcGquoMknYxltLHw=;
+        b=ZLZq1KrGMUXQq9v66WU0zPaEaoL1AVeOqckS6DEWGnb17HzBDSWyqGO6r2UMmLY0aU
+         Ln9HCEI9/i13bD+RlCxc5u3Y/Sb44HihRDrc/3rAHfmevmjG0drpDFXuX2W3Xlnawsk3
+         /hqih9P4EMkF/72he8FSzk4HoiK70U1iOCsVIlHooK85ML6JSm9ttIyWkcoeyzCA2LCc
+         m1F6LKIalpigT/sJXuqvBt/ukutjTVVFWjntz4iSHP1aDZW8aZiTCYz+svxToKsgZapg
+         chCR7Cq0hoQdCBG46DsgTQGAM7AQ/KkfF+x49afoLlxh7d3kLJdKFZIIBL9WPnnl6MPe
+         BnFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZe2t24Z9u6kH7KC30xwduH/PfcCrfgwpJ5622byTmHndLXP4UtRjEKCglFN3Mqj3h6xWGDEQTOvpyQ/I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuzemRqDdattjTVfFZoA/GYrOiEgdjNH9A1Qy4mNxNKl+C13UI
+	214t/Ytspn65khgvEI3o0uGyMLNY6RPSHq4EF5o0VfrRRLy72uAa7cs7OccjvnU=
+X-Google-Smtp-Source: AGHT+IEt+88MOqjxAvT4BA2X407wtBcTy4RsMgu6zlhxdOqsfDfTg/sRarmUG6UIBwTVkHUeUeJlPg==
+X-Received: by 2002:a05:6000:128c:b0:374:cd3e:7d98 with SMTP id ffacd0b85a97d-378c2d062fcmr12084591f8f.19.1726654627726;
+        Wed, 18 Sep 2024 03:17:07 -0700 (PDT)
+Received: from [127.0.0.1] ([185.44.53.103])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e7feesm11837758f8f.29.2024.09.18.03.17.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 03:17:07 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: philipp.reisner@linbit.com, lars.ellenberg@linbit.com, 
+ christoph.boehmwalder@linbit.com, Qiu-ji Chen <chenqiuji666@gmail.com>
+Cc: drbd-dev@lists.linbit.com, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, baijiaju1990@gmail.com, 
+ stable@vger.kernel.org
+In-Reply-To: <20240913083504.10549-1-chenqiuji666@gmail.com>
+References: <20240913083504.10549-1-chenqiuji666@gmail.com>
+Subject: Re: [PATCH] drbd: Fix atomicity violation in drbd_uuid_set_bm()
+Message-Id: <172665462666.8208.13856585668352326031.b4-ty@kernel.dk>
+Date: Wed, 18 Sep 2024 04:17:06 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] drm/mediatek: ovl: Add fmt_convert function pointer to
- driver data
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
- Alper Nebi Yasak <alpernebiyasak@gmail.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: Shawn Sung <shawn.sung@mediatek.com>, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Singo Chang
- <singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20240917164434.17794-1-jason-jh.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240917164434.17794-1-jason-jh.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2-dev-648c7
 
-Il 17/09/24 18:44, Jason-JH.Lin ha scritto:
-> OVL_CON_CLRFMT_MAN is a configuration for extending color format
-> settings of DISP_REG_OVL_CON(n).
-> It will change some of the original color format settings.
-> 
-> Take the settings of (3 << 12) for example.
-> - If OVL_CON_CLRFMT_MAN = 0 means OVL_CON_CLRFMT_RGBA8888.
-> - If OVL_CON_CLRFMT_MAN = 1 means OVL_CON_CLRFMT_PARGB8888.
-> 
-> Since OVL_CON_CLRFMT_MAN is not supported on previous SoCs,
-> It breaks the OVL color format setting of MT8173.
-> 
-> Therefore, the fmt_convert function pointer is added to the driver data
-> and mtk_ovl_fmt_convert_with_blend is implemented for MT8192 and MT8195
-> that support OVL_CON_CLRFMT_MAN, and mtk_ovl_fmt_convert is implemented
-> for other SoCs that do not support it to solve the degradation problem.
-> 
-> Fixes: a3f7f7ef4bfe ("drm/mediatek: Support "Pre-multiplied" blending in OVL")
-> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-> Tested-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
 
-Awesome.
+On Fri, 13 Sep 2024 16:35:04 +0800, Qiu-ji Chen wrote:
+> The violation of atomicity occurs when the drbd_uuid_set_bm function is
+> executed simultaneously with modifying the value of
+> device->ldev->md.uuid[UI_BITMAP]. Consider a scenario where, while
+> device->ldev->md.uuid[UI_BITMAP] passes the validity check when its value
+> is not zero, the value of device->ldev->md.uuid[UI_BITMAP] is written to
+> zero. In this case, the check in drbd_uuid_set_bm might refer to the old
+> value of device->ldev->md.uuid[UI_BITMAP] (before locking), which allows
+> an invalid value to pass the validity check, resulting in inconsistency.
+> 
+> [...]
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Applied, thanks!
+
+[1/1] drbd: Fix atomicity violation in drbd_uuid_set_bm()
+      commit: 2f02b5af3a4482b216e6a466edecf6ba8450fa45
+
+Best regards,
+-- 
+Jens Axboe
+
 
 
 
