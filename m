@@ -1,127 +1,130 @@
-Return-Path: <linux-kernel+bounces-332177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2363F97B66D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 02:21:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D985797B674
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 02:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5631B1C23308
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 00:20:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B4F5B21C64
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 00:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A70A4A23;
-	Wed, 18 Sep 2024 00:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58B8848C;
+	Wed, 18 Sep 2024 00:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mJ+gguvq"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VMUomP5x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEC723CB
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 00:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FC84C74;
+	Wed, 18 Sep 2024 00:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726618853; cv=none; b=g7f8FQguZyANueKsH5b63izUMKkUbC8UNNM5v6ZJDcijSX8XX4DG+cqFQQbiyT9aoQL38O8Xp6uN/vAfCpySDx4RAwME45fwwA9aw9E/FO8SPXtUQf887Lucjx+4jiSMd5PiaSZwXpTjpHVCTP6Llzp0TfeYrML3jXvZ5rx4NBU=
+	t=1726619575; cv=none; b=Yt3Ie8ZN+qZrYLjrlhs0oOECgScS7zpORcheYh4p83lDi3c6deogQYLF19XLia2bh6LDo++LwtrdYxLQ3sLlQ7d7HuMb4O8FnUCqwEbdASpipdq8xdbigRWbjbQF8ZDVtmymB1+NNVTtnQWvWV70sifpPmTAUrUa5A8mZTVyOhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726618853; c=relaxed/simple;
-	bh=ywoOVRONUdJVX0JaMGy0S7pNuycGrSVTQddwU1Xi2hc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=adPdwuW0I95MWzWMj3bOlEIyMZcbybzIOVVZVGAS+qPQj5adZdnsig1il65R2LJU3NzcAkE8HrIWvnDA2GsCGzrRe5sd2ArzI8yRS8dnznqEdb93FQdsMpejg/xM04wVouSkDigpJOvI24+/I/+C3UigMPLZFnoSH03lkzjUFww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mJ+gguvq; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3e0379a8d96so1768440b6e.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Sep 2024 17:20:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726618851; x=1727223651; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LqWiWz/3Q/QL5GdvcfeJQoC6itwwR8nh7kyhVsUqNbY=;
-        b=mJ+gguvqT+0aIninMRa/pUOyfZTGwyhbmfYl8GYlo/LP+KCyhQmmvy5vbE4cQ13Jcm
-         8y73wO2icz8lyqUGr1RfM3eeJK0lMnEbNSBCiW8u4rLQapLFMvGCc+q2X+gRLkBq9h/H
-         WPbhRRyyG+hHfygqiW2v31G+0jrI+AuXWBcuoq4wocEplF30xugiUkPoi4GUt/MYaVH0
-         mzLPdQHSwfDVdADatZlsQQXNMKpvsdqev616oa20OzMOT4XJqyA6b7dQf6yb4kt1qa52
-         SHRIia2YQtShIS0dcKlADiPQAdGc6SDP8eo9qYdcO2H23YSlXvHZQsnErWF3RgktvypS
-         oTug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726618851; x=1727223651;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LqWiWz/3Q/QL5GdvcfeJQoC6itwwR8nh7kyhVsUqNbY=;
-        b=J3XD8+HtwrR5hnywXs1Glu73dG+dM0FFbT01lpE3NwjpMnHQo+TirWsexnBkoPiWyt
-         ZNRXVXXl5UHMgRZCabN0tHv2DEA8UVisspKFqijNhV0uhErV3PopuyVba2FGw42zbTxU
-         FjONrqDliSF0NWwFv4q4pFe4dmF898d6dTT+XvarRraU144eEM+RrDJnpZhKleBI5I/F
-         2Igs1SNcS+fDZFtVK2Lo6F5PTbP0YeWJa1C0f2txq6sKESi7DG2CPTR5hD0YWcLVN2SO
-         zqUSeToBR75eMC6jdOzUU/quAQc9Wg9y1pXqOgyLwS5DYp+f9ozNjc7dLkqmcAdEQV9f
-         pBMA==
-X-Gm-Message-State: AOJu0Yx5UMhKwpz2ihrzCU3bGnTSrVE7C9z7gTpjTJE1w2nvav23q1M4
-	Ef+tmAxoQTjKKNXNgDeYFr5miaC6rMUy5msJ4Kfcj5pHHOVbIxUM
-X-Google-Smtp-Source: AGHT+IHU5iG9yyO7j+6a1zICs4U4cy/+cqrMCAnH11yBCKuqKS6+7NuNHCoH6dNhLI1L46BiFFtaIw==
-X-Received: by 2002:a05:6808:2009:b0:3e0:4ecb:e90b with SMTP id 5614622812f47-3e07a0ed95cmr10499932b6e.1.1726618851372;
-        Tue, 17 Sep 2024 17:20:51 -0700 (PDT)
-Received: from [192.168.1.224] (syn-067-048-091-116.res.spectrum.com. [67.48.91.116])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e166cfb847sm1719398b6e.22.2024.09.17.17.20.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Sep 2024 17:20:50 -0700 (PDT)
-Message-ID: <751d4ba8-1e35-47a5-9a94-9873ff2619ae@gmail.com>
-Date: Tue, 17 Sep 2024 19:20:41 -0500
+	s=arc-20240116; t=1726619575; c=relaxed/simple;
+	bh=VX89jGGqe8LcFZfqS1+w6fGYFBiKFfWaYF5DbCUvMyw=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=k4bT6g3GiPGUINLqwmVUDZEnUOXdkqiBiXMw8fQ99MZmF3coT5lJZ+UaiVM9QJIBrTwIcLMcmM5Gn6qTwkzcxhxXQqhMkOAW++ujWP6whFNCIrd1EyMKWS+QlHhE8nhurmklrTrF/EdU0zuQwPvZWIgQiWd95bA+RG0BE7S+ZAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VMUomP5x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 638E5C4CEC5;
+	Wed, 18 Sep 2024 00:32:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726619574;
+	bh=VX89jGGqe8LcFZfqS1+w6fGYFBiKFfWaYF5DbCUvMyw=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=VMUomP5x9WGZphszjZYW61EpqSk/N//fiarc78qqmjz0l/EVrEk1Lz+v4XmVcz5PY
+	 AgNTFdZPcczAqTJ2GFwqkm5nBuMuyVv3xLwjcDE2QtIWL0pOYfsHY6M/5dr/vz8su0
+	 vc29PVIO7LcR8bXDhKO5Jntbi0xsBBvreX7XGuiUprMxeMANX0IB2tCDpYsYCRHZJO
+	 Q2ABRsLzmH/KhmXNZXxyDw3dIqHR8nho8cjF5ZdZ1egYsk4vHHqpe8hCWGDZ+IAm7X
+	 Jex0P24OVOEUdb3tcu7DWoGTMjtEUoJpxFNq+gJAd/1n6iCGGxhkQaf4e1mfQfebVx
+	 UjNAovr3JpPqQ==
+Date: Tue, 17 Sep 2024 19:32:53 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] driver core: fix async device shutdown hang
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
- Martin Belanger <Martin.Belanger@dell.com>,
- Oliver O'Halloran <oohall@gmail.com>, Daniel Wagner <dwagner@suse.de>,
- Keith Busch <kbusch@kernel.org>, Lukas Wunner <lukas@wunner.de>,
- David Jeffery <djeffery@redhat.com>, Jeremy Allison <jallison@ciq.com>,
- Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org,
- Nathan Chancellor <nathan@kernel.org>, Jan Kiszka <jan.kiszka@seimens.com>
-References: <20240917201517.1145331-1-stuart.w.hayes@gmail.com>
- <2024091753-estate-legroom-5d62@gregkh>
-Content-Language: en-US
-From: stuart hayes <stuart.w.hayes@gmail.com>
-In-Reply-To: <2024091753-estate-legroom-5d62@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: conor+dt@kernel.org, krzk+dt@kernel.org, linux-mips@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, tsbogend@alpha.franken.de, 
+ linux-i2c@vger.kernel.org, andi.shyti@kernel.org, 
+ devicetree@vger.kernel.org
+In-Reply-To: <20240917232932.3641992-2-chris.packham@alliedtelesis.co.nz>
+References: <20240917232932.3641992-1-chris.packham@alliedtelesis.co.nz>
+ <20240917232932.3641992-2-chris.packham@alliedtelesis.co.nz>
+Message-Id: <172661957208.22701.3209125488509586374.robh@kernel.org>
+Subject: Re: [PATCH 1/5] dt-bindings: i2c: Add RTL9300 I2C controller
 
 
-
-On 9/17/2024 3:42 PM, Greg Kroah-Hartman wrote:
-> On Tue, Sep 17, 2024 at 03:15:17PM -0500, Stuart Hayes wrote:
->> Modify device_shutdown() so that supplier devices do not wait for
->> consumer devices to be shut down first when the devlink is sync state
->> only, since the consumer is not dependent on the supplier in this case.
->>
->> Without this change, a circular dependency could hang the system.
->>
->> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+On Wed, 18 Sep 2024 11:29:28 +1200, Chris Packham wrote:
+> Add dtschema for the I2C controller on the RTL9300 SoC. The I2C
+> controllers on this SoC are part of the "switch" block which is
+> represented here as a syscon node. The SCL pins are dependent on the I2C
+> controller (GPIO8 for the first controller, GPIO 17 for the second). The
+> SDA pins can be assigned to either one of the I2C controllers (but not
+> both).
 > 
-> What commit id does this fix?  Should it go to stable?
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
 > 
-> And what driver is causing this problem, is this a regression or for
-> something new that just got added to the tree?
+> Notes:
+>     This does hit generate the following dt_binding_check warning
 > 
-> thanks,
+>     realtek,rtl9300-i2c.example.dts:22.19-30.13: Warning (unit_address_vs_reg): /example-0/switch@1b000000/i2c@36c: node has a unit name, but no reg or ranges property
 > 
-> greg k-h
+>     Which is totally correct. I haven't given this thing a reg property
+>     because I'm using an offset from the parent syscon node. I'm also not
+>     calling the first offset "offset" but I don't think that'd help.
+> 
+>     I looked at a couple of other examples of devices that are children of
+>     syscon nodes (e.g. armada-ap806-thermal, ap806-cpu-clock) these do have
+>     a reg property in the dts but as far as I can see from the code it's not
+>     actually used, instead the register offsets are in the code looked up
+>     from the driver data (in at least one-case the reg offset is for a
+>     legacy usage).
+> 
+>     So I'm a little unsure what to do here. I can add a reg property and
+>     update the driver to use that to get the offset for the first set of
+>     registers (or just not use it). Or I could drop the @36c from the node
+>     names but then I coudn't distinguish the two controllers without failing
+>     the $nodename: requirement from i2c-controller.yaml.
+> 
+>  .../bindings/i2c/realtek,rtl9300-i2c.yaml     | 73 +++++++++++++++++++
+>  MAINTAINERS                                   |  6 ++
+>  2 files changed, 79 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.yaml
+> 
 
-This fixes commit 8064952c65045f05ee2671fe437770e50c151776, in
-driver-core-next & linux-next... it's problem with code that was just
-added to the tree (in drivers/base/core.c).  It is not in stable.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Apologies, I should have mentioned that from the start.
+yamllint warnings/errors:
 
-The issue was found using qemu... a pl061 device (supplier) and
-gpio-keys device (consumer), from a qemu-generated device tree with
-the aarch64 architecture.  I don't know why the devlink is in the
-sync_state_only state in this case.  I didn't dig into that, because
-I figured the shutdown code shouldn't hang regardless.
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.example.dts:22.19-30.13: Warning (unit_address_vs_reg): /example-0/switch@1b000000/i2c@36c: node has a unit name, but no reg or ranges property
+Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.example.dts:32.19-38.13: Warning (unit_address_vs_reg): /example-0/switch@1b000000/i2c@388: node has a unit name, but no reg or ranges property
+Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.example.dtb: /example-0/switch@1b000000: failed to match any schema with compatible: ['realtek,rtl9302c-switch', 'syscon', 'simple-mfd']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240917232932.3641992-2-chris.packham@alliedtelesis.co.nz
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
