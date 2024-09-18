@@ -1,266 +1,298 @@
-Return-Path: <linux-kernel+bounces-332660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7982B97BCBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:05:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 217F397BCBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:05:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A5FB283BF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:05:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 467F81C2191E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFC418A6C2;
-	Wed, 18 Sep 2024 13:05:37 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8585187FE6;
-	Wed, 18 Sep 2024 13:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090CD189F43;
+	Wed, 18 Sep 2024 13:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZutlTol"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D4C187FE6
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726664736; cv=none; b=nhLeBfBvpPV8IbUt5uGnlzycn4BAAve+bc9g++lMBV1zhp8hBBHaWoBRk2FpCcVCl97qLp3LJQeSBKc03BnWllBkrYlRgp/qFRdmjCxaJMaJcEyp5TAJ49bQzPk6Hq1+Ua6Ka0QklY8uDEejgiNMjIRK5KmQw+ZqtTiedFIsRuM=
+	t=1726664694; cv=none; b=Me2H/kMHRhrzVWb/GTA87vuR5ZnnytxNUe4YsRGuBiQr4OVJhh05e/G7woX3LxW/YnXmi4e7R8a+12t5QpLXBYi9sfYF/p2bLyJ8v0zqd4r7DJZFO5Q8XlTFRTRc6mu/rFTXDMR6jG4w897QjbNFi2CevVZ2Wmbf1mmmvYqeB1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726664736; c=relaxed/simple;
-	bh=afX4bkpPEcf8jyT8KIj1mim62akw0BvMOjBFscO0oxk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qIjgpLB6ZGm41xlxXJUOYfShRri2bJMd+X6LP1d+peSeJD6woCZ2fJ2rtTOz4Py6ATj1og92RKm3907FjwkRTD8MRrH7eRHSx18A6u8XEfsqtZ5MNbFZHsEehytkjQAXqonSbu5Knc+zgeZfFR5/CsRKEaNsFuWODXZCwBUhZZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: 4+WXDfC1T5eqhrCrZUvxPA==
-X-CSE-MsgGUID: rdQq/ww4TyqOpKT4uhEetA==
-X-IronPort-AV: E=Sophos;i="6.10,238,1719849600"; 
-   d="scan'208";a="96676329"
-From: Huang Jianan <huangjianan@xiaomi.com>
-To: Yiyang Wu <toolmanp@tlmp.cc>, "linux-erofs@lists.ozlabs.org"
-	<linux-erofs@lists.ozlabs.org>
-CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, "rust-for-linux@vger.kernel.org"
-	<rust-for-linux@vger.kernel.org>
-Subject: Re: [External Mail][RFC PATCH 05/24] erofs: add inode data structure
- in Rust
-Thread-Topic: [External Mail][RFC PATCH 05/24] erofs: add inode data structure
- in Rust
-Thread-Index: AQHbCEBKRNg1ub5CFEOhxt8swuAy2bJc/+0A
-Date: Wed, 18 Sep 2024 13:04:21 +0000
-Message-ID: <753cd249-e90e-4473-a576-dc0cc44eae34@xiaomi.com>
-References: <20240916135634.98554-1-toolmanp@tlmp.cc>
- <20240916135634.98554-6-toolmanp@tlmp.cc>
-In-Reply-To: <20240916135634.98554-6-toolmanp@tlmp.cc>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <649DA2524C3D524FAFEAEF2005E05E5D@xiaomi.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1726664694; c=relaxed/simple;
+	bh=U9TRi1NngSMZJgZaHmW7qjo4mB7BN2H6t4P0rb+Y7Bc=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=SYCYKUo6JEsS5E5/C5E3muXGepIco1ll1+MV7OF2Nw5r8U2j2BUK3/QFkBYRQxHjLRyUtHGPpWugzIGYDWJxQchTuFLCTxC4vEmZs/a3XQoTo8e+cH9huH+ZoY2Jv3cVYLXGgEpjuAh0cCROpWn0iEVuMyYXx8EfA6D3gnIGm9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oZutlTol; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62F5EC4CEC3;
+	Wed, 18 Sep 2024 13:04:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726664693;
+	bh=U9TRi1NngSMZJgZaHmW7qjo4mB7BN2H6t4P0rb+Y7Bc=;
+	h=Date:From:To:cc:Subject:From;
+	b=oZutlTolA8G1a8bfFqBogqThIyMmDzmwcphNtVL7JTik49YIKVXilLq70TZdi8BVh
+	 eoYAVLRsW6RgmEDdqSvo9QTAsAy7zj2PgUs9Npc84fadk+12i7xze0Eey1JJZxKPP/
+	 0GBAIgdXq8bL/ZGb6EotB6DWJ/KKLuCJf1JSx1xP7CCftqbGMWUo3ruSIjhGOVPKDo
+	 n/u94yaqQoaEPZRp6GfoAC534waUSMkfnqf8kTGTIzbb91kh/xVdr8hXSCOmhSrP40
+	 e0x4nfdMLrWiuTLb5wOqC6FGHIa06HRa/syPWpTr42YPTZaDY2H/KeRB+9QcHr3sb3
+	 eViz5+udvEQ7Q==
+Date: Wed, 18 Sep 2024 15:04:51 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>
+Subject: [GIT PULL] HID for 6.12
+Message-ID: <nycvar.YFH.7.76.2409181132240.31206@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-T24gMjAyNC85LzE2IDIxOjU2LCBZaXlhbmcgV3UgdmlhIExpbnV4LWVyb2ZzIHdyb3RlOg0KPiAN
-Cj4gVGhpcyBwYXRjaCBpbnRyb2R1Y2VzIHRoZSBzYW1lIG9uLWRpc2sgZXJvZnMgZGF0YSBzdHJ1
-Y3R1cmUNCj4gaW4gcnVzdCBhbmQgYWxzbyBpbnRyb2R1Y2VzIG11bHRpcGxlIGhlbHBlcnMgZm9y
-IGlub2RlIGlfZm9ybWF0DQo+IGFuZCBjaHVua19pbmRleGluZyBhbmQgbGF0ZXIgY2FuIGJlIHVz
-ZWQgdG8gaW1wbGVtZW50IG1hcF9ibG9ja3MuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBZaXlhbmcg
-V3UgPHRvb2xtYW5wQHRsbXAuY2M+DQo+IC0tLQ0KPiAgIGZzL2Vyb2ZzL3J1c3QvZXJvZnNfc3lz
-LnJzICAgICAgIHwgICAxICsNCj4gICBmcy9lcm9mcy9ydXN0L2Vyb2ZzX3N5cy9pbm9kZS5ycyB8
-IDI5MSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ICAgMiBmaWxlcyBjaGFuZ2Vk
-LCAyOTIgaW5zZXJ0aW9ucygrKQ0KPiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBmcy9lcm9mcy9ydXN0
-L2Vyb2ZzX3N5cy9pbm9kZS5ycw0KPiANCj4gZGlmZiAtLWdpdCBhL2ZzL2Vyb2ZzL3J1c3QvZXJv
-ZnNfc3lzLnJzIGIvZnMvZXJvZnMvcnVzdC9lcm9mc19zeXMucnMNCj4gaW5kZXggNmYzYzEyNjY1
-ZWQ2Li4zNDI2N2VjNzc3MmQgMTAwNjQ0DQo+IC0tLSBhL2ZzL2Vyb2ZzL3J1c3QvZXJvZnNfc3lz
-LnJzDQo+ICsrKyBiL2ZzL2Vyb2ZzL3J1c3QvZXJvZnNfc3lzLnJzDQo+IEBAIC0yNCw2ICsyNCw3
-IEBADQo+ICAgcHViKGNyYXRlKSB0eXBlIFBvc2l4UmVzdWx0PFQ+ID0gUmVzdWx0PFQsIEVycm5v
-PjsNCj4gDQo+ICAgcHViKGNyYXRlKSBtb2QgZXJybm9zOw0KPiArcHViKGNyYXRlKSBtb2QgaW5v
-ZGU7DQo+ICAgcHViKGNyYXRlKSBtb2Qgc3VwZXJibG9jazsNCj4gICBwdWIoY3JhdGUpIG1vZCB4
-YXR0cnM7DQo+ICAgcHViKGNyYXRlKSB1c2UgZXJybm9zOjpFcnJubzsNCj4gZGlmZiAtLWdpdCBh
-L2ZzL2Vyb2ZzL3J1c3QvZXJvZnNfc3lzL2lub2RlLnJzIGIvZnMvZXJvZnMvcnVzdC9lcm9mc19z
-eXMvaW5vZGUucnMNCj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gaW5kZXggMDAwMDAwMDAwMDAw
-Li4xNzYyMDIzZTk3ZjgNCj4gLS0tIC9kZXYvbnVsbA0KPiArKysgYi9mcy9lcm9mcy9ydXN0L2Vy
-b2ZzX3N5cy9pbm9kZS5ycw0KPiBAQCAtMCwwICsxLDI5MSBAQA0KPiArdXNlIHN1cGVyOjp4YXR0
-cnM6Oio7DQo+ICt1c2Ugc3VwZXI6Oio7DQo+ICt1c2UgY29yZTo6ZmZpOjoqOw0KPiArdXNlIGNv
-cmU6Om1lbTo6c2l6ZV9vZjsNCj4gKw0KPiArLy8vIFJlcHJlc2VudHMgdGhlIGNvbXBhY3QgYml0
-ZmllbGQgb2YgdGhlIEVyb2ZzIElub2RlIGZvcm1hdC4NCj4gKyNbcmVwcih0cmFuc3BhcmVudCld
-DQo+ICsjW2Rlcml2ZShDbG9uZSwgQ29weSldDQo+ICtwdWIoY3JhdGUpIHN0cnVjdCBGb3JtYXQo
-dTE2KTsNCj4gKw0KPiArcHViKGNyYXRlKSBjb25zdCBJTk9ERV9WRVJTSU9OX01BU0s6IHUxNiA9
-IDB4MTsNCj4gK3B1YihjcmF0ZSkgY29uc3QgSU5PREVfVkVSU0lPTl9CSVQ6IHUxNiA9IDA7DQo+
-ICsNCj4gK3B1YihjcmF0ZSkgY29uc3QgSU5PREVfTEFZT1VUX0JJVDogdTE2ID0gMTsNCj4gK3B1
-YihjcmF0ZSkgY29uc3QgSU5PREVfTEFZT1VUX01BU0s6IHUxNiA9IDB4NzsNCj4gKw0KPiArLy8v
-IEhlbHBlciBtYWNybyB0byBleHRyYWN0IHByb3BlcnR5IGZyb20gdGhlIGJpdGZpZWxkLg0KPiAr
-bWFjcm9fcnVsZXMhIGV4dHJhY3Qgew0KPiArICAgICgkbmFtZTogZXhwciwgJGJpdDogZXhwciwg
-JG1hc2s6IGV4cHIpID0+IHsNCj4gKyAgICAgICAgKCRuYW1lID4+ICRiaXQpICYgKCRtYXNrKQ0K
-PiArICAgIH07DQo+ICt9DQo+ICsNCj4gKy8vLyBUaGUgVmVyc2lvbiBvZiB0aGUgSW5vZGUgd2hp
-Y2ggcmVwcmVzZW50cyB3aGV0aGVyIHRoaXMgaW5vZGUgaXMgZXh0ZW5kZWQgb3IgY29tcGFjdC4N
-Cj4gKy8vLyBFeHRlbmRlZCBpbm9kZXMgaGF2ZSBtb3JlIGluZm9zIGFib3V0IG5saW5rcyArIG10
-aW1lLg0KPiArLy8vIFRoaXMgaXMgZG9jdW1lbnRlZCBpbiBodHRwczovL2Vyb2ZzLmRvY3Mua2Vy
-bmVsLm9yZy9lbi9sYXRlc3QvY29yZV9vbmRpc2suaHRtbCNpbm9kZXMNCj4gKyNbcmVwcihDKV0N
-Cj4gKyNbZGVyaXZlKENsb25lLCBDb3B5KV0NCj4gK3B1YihjcmF0ZSkgZW51bSBWZXJzaW9uIHsN
-Cj4gKyAgICBDb21wYXQsDQo+ICsgICAgRXh0ZW5kZWQsDQo+ICsgICAgVW5rbm93biwNCj4gK30N
-Cj4gKw0KPiArLy8vIFJlcHJlc2VudHMgdGhlIGRhdGEgbGF5b3V0IGJhY2tlZCBieSB0aGUgSW5v
-ZGUuDQo+ICsvLy8gQXMgRG9jdW1lbnRlZCBpbiBodHRwczovL2Vyb2ZzLmRvY3Mua2VybmVsLm9y
-Zy9lbi9sYXRlc3QvY29yZV9vbmRpc2suaHRtbCNpbm9kZS1kYXRhLWxheW91dHMNCj4gKyNbcmVw
-cihDKV0NCj4gKyNbZGVyaXZlKENsb25lLCBDb3B5LCBQYXJ0aWFsRXEpXQ0KPiArcHViKGNyYXRl
-KSBlbnVtIExheW91dCB7DQo+ICsgICAgRmxhdFBsYWluLA0KPiArICAgIENvbXByZXNzZWRGdWxs
-LA0KPiArICAgIEZsYXRJbmxpbmUsDQo+ICsgICAgQ29tcHJlc3NlZENvbXBhY3QsDQo+ICsgICAg
-Q2h1bmssDQo+ICsgICAgVW5rbm93biwNCj4gK30NCj4gKw0KPiArI1tyZXByKEMpXQ0KPiArI1th
-bGxvdyhub25fY2FtZWxfY2FzZV90eXBlcyldDQo+ICsjW2Rlcml2ZShDbG9uZSwgQ29weSwgRGVi
-dWcsIFBhcnRpYWxFcSldDQo+ICtwdWIoY3JhdGUpIGVudW0gVHlwZSB7DQo+ICsgICAgUmVndWxh
-ciwNCj4gKyAgICBEaXJlY3RvcnksDQo+ICsgICAgTGluaywNCj4gKyAgICBDaGFyYWN0ZXIsDQo+
-ICsgICAgQmxvY2ssDQo+ICsgICAgRmlmbywNCj4gKyAgICBTb2NrZXQsDQo+ICsgICAgVW5rbm93
-biwNCj4gK30NCj4gKw0KPiArLy8vIFRoaXMgaXMgZm9ybWF0IGV4dHJhY3RlZCBmcm9tIGlfZm9y
-bWF0IGJpdCByZXByZXNlbnRhdGlvbi4NCj4gKy8vLyBUaGlzIGluY2x1ZGVzIHZhcmlvdXMgaW5m
-b3MgYW5kIHNwZWNzIGFib3V0IHRoZSBpbm9kZS4NCj4gK2ltcGwgRm9ybWF0IHsNCj4gKyAgICBw
-dWIoY3JhdGUpIGZuIHZlcnNpb24oJnNlbGYpIC0+IFZlcnNpb24gew0KPiArICAgICAgICBtYXRj
-aCBleHRyYWN0IShzZWxmLjAsIElOT0RFX1ZFUlNJT05fQklULCBJTk9ERV9WRVJTSU9OX01BU0sp
-IHsNCj4gKyAgICAgICAgICAgIDAgPT4gVmVyc2lvbjo6Q29tcGF0LA0KPiArICAgICAgICAgICAg
-MSA9PiBWZXJzaW9uOjpFeHRlbmRlZCwNCj4gKyAgICAgICAgICAgIF8gPT4gVmVyc2lvbjo6VW5r
-bm93biwNCj4gKyAgICAgICAgfQ0KPiArICAgIH0NCj4gKw0KPiArICAgIHB1YihjcmF0ZSkgZm4g
-bGF5b3V0KCZzZWxmKSAtPiBMYXlvdXQgew0KPiArICAgICAgICBtYXRjaCBleHRyYWN0IShzZWxm
-LjAsIElOT0RFX0xBWU9VVF9CSVQsIElOT0RFX0xBWU9VVF9NQVNLKSB7DQo+ICsgICAgICAgICAg
-ICAwID0+IExheW91dDo6RmxhdFBsYWluLA0KPiArICAgICAgICAgICAgMSA9PiBMYXlvdXQ6OkNv
-bXByZXNzZWRGdWxsLA0KPiArICAgICAgICAgICAgMiA9PiBMYXlvdXQ6OkZsYXRJbmxpbmUsDQo+
-ICsgICAgICAgICAgICAzID0+IExheW91dDo6Q29tcHJlc3NlZENvbXBhY3QsDQo+ICsgICAgICAg
-ICAgICA0ID0+IExheW91dDo6Q2h1bmssDQo+ICsgICAgICAgICAgICBfID0+IExheW91dDo6VW5r
-bm93biwNCj4gKyAgICAgICAgfQ0KPiArICAgIH0NCj4gK30NCj4gKw0KPiArLy8vIFJlcHJlc2Vu
-dHMgdGhlIGNvbXBhY3QgaW5vZGUgd2hpY2ggcmVzaWRlcyBvbi1kaXNrLg0KPiArLy8vIFRoaXMg
-aXMgZG9jdW1lbnRlZCBpbiBodHRwczovL2Vyb2ZzLmRvY3Mua2VybmVsLm9yZy9lbi9sYXRlc3Qv
-Y29yZV9vbmRpc2suaHRtbCNpbm9kZXMNCj4gKyNbcmVwcihDKV0NCj4gKyNbZGVyaXZlKENsb25l
-LCBDb3B5KV0NCj4gK3B1YihjcmF0ZSkgc3RydWN0IENvbXBhY3RJbm9kZUluZm8gew0KPiArICAg
-IHB1YihjcmF0ZSkgaV9mb3JtYXQ6IEZvcm1hdCwNCj4gKyAgICBwdWIoY3JhdGUpIGlfeGF0dHJf
-aWNvdW50OiB1MTYsDQo+ICsgICAgcHViKGNyYXRlKSBpX21vZGU6IHUxNiwNCj4gKyAgICBwdWIo
-Y3JhdGUpIGlfbmxpbms6IHUxNiwNCj4gKyAgICBwdWIoY3JhdGUpIGlfc2l6ZTogdTMyLA0KPiAr
-ICAgIHB1YihjcmF0ZSkgaV9yZXNlcnZlZDogW3U4OyA0XSwNCj4gKyAgICBwdWIoY3JhdGUpIGlf
-dTogW3U4OyA0XSwNCj4gKyAgICBwdWIoY3JhdGUpIGlfaW5vOiB1MzIsDQo+ICsgICAgcHViKGNy
-YXRlKSBpX3VpZDogdTE2LA0KPiArICAgIHB1YihjcmF0ZSkgaV9naWQ6IHUxNiwNCj4gKyAgICBw
-dWIoY3JhdGUpIGlfcmVzZXJ2ZWQyOiBbdTg7IDRdLA0KPiArfQ0KPiArDQo+ICsvLy8gUmVwcmVz
-ZW50cyB0aGUgZXh0ZW5kZWQgaW5vZGUgd2hpY2ggcmVzaWRlcyBvbi1kaXNrLg0KPiArLy8vIFRo
-aXMgaXMgZG9jdW1lbnRlZCBpbiBodHRwczovL2Vyb2ZzLmRvY3Mua2VybmVsLm9yZy9lbi9sYXRl
-c3QvY29yZV9vbmRpc2suaHRtbCNpbm9kZXMNCj4gKyNbcmVwcihDKV0NCj4gKyNbZGVyaXZlKENs
-b25lLCBDb3B5KV0NCj4gK3B1YihjcmF0ZSkgc3RydWN0IEV4dGVuZGVkSW5vZGVJbmZvIHsNCj4g
-KyAgICBwdWIoY3JhdGUpIGlfZm9ybWF0OiBGb3JtYXQsDQo+ICsgICAgcHViKGNyYXRlKSBpX3hh
-dHRyX2ljb3VudDogdTE2LA0KPiArICAgIHB1YihjcmF0ZSkgaV9tb2RlOiB1MTYsDQo+ICsgICAg
-cHViKGNyYXRlKSBpX3Jlc2VydmVkOiBbdTg7IDJdLA0KPiArICAgIHB1YihjcmF0ZSkgaV9zaXpl
-OiB1NjQsDQo+ICsgICAgcHViKGNyYXRlKSBpX3U6IFt1ODsgNF0sDQo+ICsgICAgcHViKGNyYXRl
-KSBpX2lubzogdTMyLA0KPiArICAgIHB1YihjcmF0ZSkgaV91aWQ6IHUzMiwNCj4gKyAgICBwdWIo
-Y3JhdGUpIGlfZ2lkOiB1MzIsDQo+ICsgICAgcHViKGNyYXRlKSBpX210aW1lOiB1NjQsDQo+ICsg
-ICAgcHViKGNyYXRlKSBpX210aW1lX25zZWM6IHUzMiwNCj4gKyAgICBwdWIoY3JhdGUpIGlfbmxp
-bms6IHUzMiwNCj4gKyAgICBwdWIoY3JhdGUpIGlfcmVzZXJ2ZWQyOiBbdTg7IDE2XSwNCj4gK30N
-Cj4gKw0KPiArLy8vIFJlcHJlc2VudHMgdGhlIGlub2RlIGluZm8gd2hpY2ggaXMgZWl0aGVyIGNv
-bXBhY3Qgb3IgZXh0ZW5kZWQuDQo+ICsjW2Rlcml2ZShDbG9uZSwgQ29weSldDQo+ICtwdWIoY3Jh
-dGUpIGVudW0gSW5vZGVJbmZvIHsNCj4gKyAgICBFeHRlbmRlZChFeHRlbmRlZElub2RlSW5mbyks
-DQo+ICsgICAgQ29tcGFjdChDb21wYWN0SW5vZGVJbmZvKSwNCj4gK30NCj4gKw0KPiArcHViKGNy
-YXRlKSBjb25zdCBDSFVOS19CTEtCSVRTX01BU0s6IHUxNiA9IDB4MWY7DQo+ICtwdWIoY3JhdGUp
-IGNvbnN0IENIVU5LX0ZPUk1BVF9JTkRFWF9CSVQ6IHUxNiA9IDB4MjA7DQo+ICsNCj4gKy8vLyBS
-ZXByZXNlbnRzIG9uLWRpc2sgY2h1bmsgaW5kZXggb2YgdGhlIGZpbGUgYmFja2luZyBpbm9kZS4N
-Cj4gKyNbcmVwcihDKV0NCj4gKyNbZGVyaXZlKENsb25lLCBDb3B5LCBEZWJ1ZyldDQo+ICtwdWIo
-Y3JhdGUpIHN0cnVjdCBDaHVua0luZGV4IHsNCj4gKyAgICBwdWIoY3JhdGUpIGFkdmlzZTogdTE2
-LA0KPiArICAgIHB1YihjcmF0ZSkgZGV2aWNlX2lkOiB1MTYsDQo+ICsgICAgcHViKGNyYXRlKSBi
-bGthZGRyOiB1MzIsDQo+ICt9DQo+ICsNCj4gK2ltcGwgRnJvbTxbdTg7IDhdPiBmb3IgQ2h1bmtJ
-bmRleCB7DQo+ICsgICAgZm4gZnJvbSh1OiBbdTg7IDhdKSAtPiBTZWxmIHsNCj4gKyAgICAgICAg
-bGV0IGFkdmlzZSA9IHUxNjo6ZnJvbV9sZV9ieXRlcyhbdVswXSwgdVsxXV0pOw0KPiArICAgICAg
-ICBsZXQgZGV2aWNlX2lkID0gdTE2Ojpmcm9tX2xlX2J5dGVzKFt1WzJdLCB1WzNdXSk7DQo+ICsg
-ICAgICAgIGxldCBibGthZGRyID0gdTMyOjpmcm9tX2xlX2J5dGVzKFt1WzRdLCB1WzVdLCB1WzZd
-LCB1WzddXSk7DQo+ICsgICAgICAgIENodW5rSW5kZXggew0KPiArICAgICAgICAgICAgYWR2aXNl
-LA0KPiArICAgICAgICAgICAgZGV2aWNlX2lkLA0KPiArICAgICAgICAgICAgYmxrYWRkciwNCj4g
-KyAgICAgICAgfQ0KPiArICAgIH0NCj4gK30NCj4gKw0KPiArLy8vIENodW5rIGZvcm1hdCB1c2Vk
-IGZvciBpbmRpY2F0aW5nIHRoZSBjaHVua2JpdHMgYW5kIGNodW5raW5kZXguDQo+ICsjW3JlcHIo
-QyldDQo+ICsjW2Rlcml2ZShDbG9uZSwgQ29weSwgRGVidWcpXQ0KPiArcHViKGNyYXRlKSBzdHJ1
-Y3QgQ2h1bmtGb3JtYXQocHViKGNyYXRlKSB1MTYpOw0KPiArDQo+ICtpbXBsIENodW5rRm9ybWF0
-IHsNCj4gKyAgICBwdWIoY3JhdGUpIGZuIGlzX2NodW5raW5kZXgoJnNlbGYpIC0+IGJvb2wgew0K
-PiArICAgICAgICBzZWxmLjAgJiBDSFVOS19GT1JNQVRfSU5ERVhfQklUICE9IDANCj4gKyAgICB9
-DQo+ICsgICAgcHViKGNyYXRlKSBmbiBjaHVua2JpdHMoJnNlbGYpIC0+IHUxNiB7DQo+ICsgICAg
-ICAgIHNlbGYuMCAmIENIVU5LX0JMS0JJVFNfTUFTSw0KPiArICAgIH0NCg0KSXQgaXMgcmVjb21t
-ZW5kZWQgdG8gYWRkIGJsYW5rIGxpbmVzIGJldHdlZW4gY29kZSBibG9ja3MuIFRoaXMgcHJvYmxl
-bSANCmV4aXN0cyBpbiBtYW55IHBsYWNlcyBpbiB0aGlzIHBhdGNoIHNldC4NCg0KPiArfQ0KPiAr
-DQo+ICsvLy8gUmVwcmVzZW50cyB0aGUgaW5vZGUgc3BlYyB3aGljaCBpcyBlaXRoZXIgZGF0YSBv
-ciBkZXZpY2UuDQo+ICsjW2Rlcml2ZShDbG9uZSwgQ29weSwgRGVidWcpXQ0KPiArI1tyZXByKHUz
-MildDQo+ICtwdWIoY3JhdGUpIGVudW0gU3BlYyB7DQo+ICsgICAgQ2h1bmsoQ2h1bmtGb3JtYXQp
-LA0KPiArICAgIFJhd0Jsayh1MzIpLA0KPiArICAgIERldmljZSh1MzIpLA0KPiArICAgIENvbXBy
-ZXNzZWRCbG9ja3ModTMyKSwNCj4gKyAgICBVbmtub3duLA0KPiArfQ0KPiArDQo+ICsvLy8gQ29u
-dmVydCB0aGUgc3BlYyBmcm9tIHRoZSBmb3JtYXQgb2YgdGhlIGlub2RlIGJhc2VkIG9uIHRoZSBs
-YXlvdXQuDQo+ICtpbXBsIEZyb208KCZbdTg7IDRdLCBMYXlvdXQpPiBmb3IgU3BlYyB7DQo+ICsg
-ICAgZm4gZnJvbSh2YWx1ZTogKCZbdTg7IDRdLCBMYXlvdXQpKSAtPiBTZWxmIHsNCj4gKyAgICAg
-ICAgbWF0Y2ggdmFsdWUuMSB7DQo+ICsgICAgICAgICAgICBMYXlvdXQ6OkZsYXRJbmxpbmUgfCBM
-YXlvdXQ6OkZsYXRQbGFpbiA9PiBTcGVjOjpSYXdCbGsodTMyOjpmcm9tX2xlX2J5dGVzKCp2YWx1
-ZS4wKSksDQo+ICsgICAgICAgICAgICBMYXlvdXQ6OkNvbXByZXNzZWRGdWxsIHwgTGF5b3V0OjpD
-b21wcmVzc2VkQ29tcGFjdCA9PiB7DQo+ICsgICAgICAgICAgICAgICAgU3BlYzo6Q29tcHJlc3Nl
-ZEJsb2Nrcyh1MzI6OmZyb21fbGVfYnl0ZXMoKnZhbHVlLjApKQ0KPiArICAgICAgICAgICAgfQ0K
-PiArICAgICAgICAgICAgTGF5b3V0OjpDaHVuayA9PiBTZWxmOjpDaHVuayhDaHVua0Zvcm1hdCh1
-MTY6OmZyb21fbGVfYnl0ZXMoW3ZhbHVlLjBbMF0sIHZhbHVlLjBbMV1dKSkpLA0KPiArICAgICAg
-ICAgICAgLy8gV2UgZG9uJ3Qgc3VwcG9ydCBjb21wcmVzc2VkIGlubGluZXMgb3IgY29tcHJlc3Nl
-ZCBjaHVua3MgY3VycmVudGx5Lg0KPiArICAgICAgICAgICAgXyA9PiBTcGVjOjpVbmtub3duLA0K
-PiArICAgICAgICB9DQo+ICsgICAgfQ0KPiArfQ0KPiArDQo+ICsvLy8gSGVscGVyIGZ1bmN0aW9u
-cyBmb3IgSW5vZGUgSW5mby4NCj4gK2ltcGwgSW5vZGVJbmZvIHsNCj4gKyAgICBjb25zdCBTX0lG
-TVQ6IHUxNiA9IDBvMTcwMDAwOw0KPiArICAgIGNvbnN0IFNfSUZTT0NLOiB1MTYgPSAwbzE0MDAw
-MDsNCj4gKyAgICBjb25zdCBTX0lGTE5LOiB1MTYgPSAwbzEyMDAwMDsNCj4gKyAgICBjb25zdCBT
-X0lGUkVHOiB1MTYgPSAwbzEwMDAwMDsNCj4gKyAgICBjb25zdCBTX0lGQkxLOiB1MTYgPSAwbzYw
-MDAwOw0KPiArICAgIGNvbnN0IFNfSUZESVI6IHUxNiA9IDBvNDAwMDA7DQo+ICsgICAgY29uc3Qg
-U19JRkNIUjogdTE2ID0gMG8yMDAwMDsNCj4gKyAgICBjb25zdCBTX0lGSUZPOiB1MTYgPSAwbzEw
-MDAwOw0KPiArICAgIGNvbnN0IFNfSVNVSUQ6IHUxNiA9IDBvNDAwMDsNCj4gKyAgICBjb25zdCBT
-X0lTR0lEOiB1MTYgPSAwbzIwMDA7DQo+ICsgICAgY29uc3QgU19JU1ZUWDogdTE2ID0gMG8xMDAw
-Ow0KPiArICAgIHB1YihjcmF0ZSkgZm4gaW5vKCZzZWxmKSAtPiB1MzIgew0KPiArICAgICAgICBt
-YXRjaCBzZWxmIHsNCj4gKyAgICAgICAgICAgIFNlbGY6OkV4dGVuZGVkKGV4dGVuZGVkKSA9PiBl
-eHRlbmRlZC5pX2lubywNCj4gKyAgICAgICAgICAgIFNlbGY6OkNvbXBhY3QoY29tcGFjdCkgPT4g
-Y29tcGFjdC5pX2lubywNCj4gKyAgICAgICAgfQ0KPiArICAgIH0NCj4gKw0KPiArICAgIHB1Yihj
-cmF0ZSkgZm4gZm9ybWF0KCZzZWxmKSAtPiBGb3JtYXQgew0KPiArICAgICAgICBtYXRjaCBzZWxm
-IHsNCj4gKyAgICAgICAgICAgIFNlbGY6OkV4dGVuZGVkKGV4dGVuZGVkKSA9PiBleHRlbmRlZC5p
-X2Zvcm1hdCwNCj4gKyAgICAgICAgICAgIFNlbGY6OkNvbXBhY3QoY29tcGFjdCkgPT4gY29tcGFj
-dC5pX2Zvcm1hdCwNCj4gKyAgICAgICAgfQ0KPiArICAgIH0NCj4gKw0KPiArICAgIHB1YihjcmF0
-ZSkgZm4gZmlsZV9zaXplKCZzZWxmKSAtPiBPZmYgew0KPiArICAgICAgICBtYXRjaCBzZWxmIHsN
-Cj4gKyAgICAgICAgICAgIFNlbGY6OkV4dGVuZGVkKGV4dGVuZGVkKSA9PiBleHRlbmRlZC5pX3Np
-emUsDQo+ICsgICAgICAgICAgICBTZWxmOjpDb21wYWN0KGNvbXBhY3QpID0+IGNvbXBhY3QuaV9z
-aXplIGFzIHU2NCwNCj4gKyAgICAgICAgfQ0KPiArICAgIH0NCj4gKw0KPiArICAgIHB1YihjcmF0
-ZSkgZm4gaW5vZGVfc2l6ZSgmc2VsZikgLT4gT2ZmIHsNCj4gKyAgICAgICAgbWF0Y2ggc2VsZiB7
-DQo+ICsgICAgICAgICAgICBTZWxmOjpFeHRlbmRlZChfKSA9PiA2NCwNCj4gKyAgICAgICAgICAg
-IFNlbGY6OkNvbXBhY3QoXykgPT4gMzIsDQoNClNlbGY6OkV4dGVuZGVkKF8pID0+IHNpemVfb2Y6
-OjxFeHRlbmRlZElub2RlSW5mbz4oKSBhcyBPZmYsDQpTZWxmOjpDb21wYWN0KF8pID0+IHNpemVf
-b2Y6OjxDb21wYWN0SW5vZGVJbmZvPigpIGFzIE9mZiwNCg0KPiArICAgICAgICB9DQo+ICsgICAg
-fQ0KPiArDQo+ICsgICAgcHViKGNyYXRlKSBmbiBzcGVjKCZzZWxmKSAtPiBTcGVjIHsNCj4gKyAg
-ICAgICAgbGV0IG1vZGUgPSBtYXRjaCBzZWxmIHsNCj4gKyAgICAgICAgICAgIFNlbGY6OkV4dGVu
-ZGVkKGV4dGVuZGVkKSA9PiBleHRlbmRlZC5pX21vZGUsDQo+ICsgICAgICAgICAgICBTZWxmOjpD
-b21wYWN0KGNvbXBhY3QpID0+IGNvbXBhY3QuaV9tb2RlLA0KPiArICAgICAgICB9Ow0KPiArDQo+
-ICsgICAgICAgIGxldCB1ID0gbWF0Y2ggc2VsZiB7DQo+ICsgICAgICAgICAgICBTZWxmOjpFeHRl
-bmRlZChleHRlbmRlZCkgPT4gJmV4dGVuZGVkLmlfdSwNCj4gKyAgICAgICAgICAgIFNlbGY6OkNv
-bXBhY3QoY29tcGFjdCkgPT4gJmNvbXBhY3QuaV91LA0KPiArICAgICAgICB9Ow0KPiArDQo+ICsg
-ICAgICAgIG1hdGNoIG1vZGUgJiAwbzE3MDAwMCB7DQo+ICsgICAgICAgICAgICAwbzQwMDAwIHwg
-MG8xMDAwMDAgfCAwbzEyMDAwMCA9PiBTcGVjOjpmcm9tKCh1LCBzZWxmLmZvcm1hdCgpLmxheW91
-dCgpKSksDQoNCm1hdGNoIG1vZGUgJiBTZWxmOjpTX0lGTVQgew0KICAgICBTZWxmOjpTX0lGRElS
-IHwgU2VsZjo6U19JRlJFRyB8IFNlbGY6OlNfSUZMTksgPT4gU3BlYzo6ZnJvbSgodSwgDQpzZWxm
-LmZvcm1hdCgpLmxheW91dCgpKSksDQoNCj4gKyAgICAgICAgICAgIC8vIFdlIGRvbid0IHN1cHBv
-cnQgZGV2aWNlIGlub2RlcyBjdXJyZW50bHkuDQo+ICsgICAgICAgICAgICBfID0+IFNwZWM6OlVu
-a25vd24sDQo+ICsgICAgICAgIH0NCj4gKyAgICB9DQo+ICsNCj4gKyAgICBwdWIoY3JhdGUpIGZu
-IGlub2RlX3R5cGUoJnNlbGYpIC0+IFR5cGUgew0KPiArICAgICAgICBsZXQgbW9kZSA9IG1hdGNo
-IHNlbGYgew0KPiArICAgICAgICAgICAgU2VsZjo6RXh0ZW5kZWQoZXh0ZW5kZWQpID0+IGV4dGVu
-ZGVkLmlfbW9kZSwNCj4gKyAgICAgICAgICAgIFNlbGY6OkNvbXBhY3QoY29tcGFjdCkgPT4gY29t
-cGFjdC5pX21vZGUsDQo+ICsgICAgICAgIH07DQo+ICsgICAgICAgIG1hdGNoIG1vZGUgJiBTZWxm
-OjpTX0lGTVQgew0KPiArICAgICAgICAgICAgU2VsZjo6U19JRkRJUiA9PiBUeXBlOjpEaXJlY3Rv
-cnksIC8vIERpcmVjdG9yeQ0KPiArICAgICAgICAgICAgU2VsZjo6U19JRlJFRyA9PiBUeXBlOjpS
-ZWd1bGFyLCAgIC8vIFJlZ3VsYXIgRmlsZQ0KPiArICAgICAgICAgICAgU2VsZjo6U19JRkxOSyA9
-PiBUeXBlOjpMaW5rLCAgICAgIC8vIFN5bWJvbGljIExpbmsNCj4gKyAgICAgICAgICAgIFNlbGY6
-OlNfSUZJRk8gPT4gVHlwZTo6RmlmbywgICAgICAvLyBGSUZPDQo+ICsgICAgICAgICAgICBTZWxm
-OjpTX0lGU09DSyA9PiBUeXBlOjpTb2NrZXQsICAgLy8gU29ja2V0DQo+ICsgICAgICAgICAgICBT
-ZWxmOjpTX0lGQkxLID0+IFR5cGU6OkJsb2NrLCAgICAgLy8gQmxvY2sNCj4gKyAgICAgICAgICAg
-IFNlbGY6OlNfSUZDSFIgPT4gVHlwZTo6Q2hhcmFjdGVyLCAvLyBDaGFyYWN0ZXINCj4gKyAgICAg
-ICAgICAgIF8gPT4gVHlwZTo6VW5rbm93biwNCj4gKyAgICAgICAgfQ0KPiArICAgIH0NCj4gKw0K
-PiArICAgIHB1YihjcmF0ZSkgZm4geGF0dHJfc2l6ZSgmc2VsZikgLT4gT2ZmIHsNCj4gKyAgICAg
-ICAgbWF0Y2ggc2VsZiB7DQo+ICsgICAgICAgICAgICBTZWxmOjpFeHRlbmRlZChleHRlbmRlZCkg
-PT4gew0KDQppZiBleHRlbmRlZC5pX3hhdHRyX2ljb3VudCA9PSAwIHsNCiAgICAgcmV0dXJuIDA7
-DQp9DQoNCnRvIGF2b2lkIHN1YnRyYWN0IHdpdGggb3ZlcmZsb3cuDQoNClRoYW5rcywNCkppYW5h
-bg0KDQo+ICsgICAgICAgICAgICAgICAgc2l6ZV9vZjo6PFhBdHRyU2hhcmVkRW50cnlTdW1tYXJ5
-PigpIGFzIE9mZg0KPiArICAgICAgICAgICAgICAgICAgICArIChzaXplX29mOjo8Y19pbnQ+KCkg
-YXMgT2ZmKSAqIChleHRlbmRlZC5pX3hhdHRyX2ljb3VudCBhcyBPZmYgLSAxKQ0KPiArICAgICAg
-ICAgICAgfQ0KPiArICAgICAgICAgICAgU2VsZjo6Q29tcGFjdChfKSA9PiAwLA0KPiArICAgICAg
-ICB9DQo+ICsgICAgfQ0KPiArDQo+ICsgICAgcHViKGNyYXRlKSBmbiB4YXR0cl9jb3VudCgmc2Vs
-ZikgLT4gdTE2IHsNCj4gKyAgICAgICAgbWF0Y2ggc2VsZiB7DQo+ICsgICAgICAgICAgICBTZWxm
-OjpFeHRlbmRlZChleHRlbmRlZCkgPT4gZXh0ZW5kZWQuaV94YXR0cl9pY291bnQsDQo+ICsgICAg
-ICAgICAgICBTZWxmOjpDb21wYWN0KGNvbXBhY3QpID0+IGNvbXBhY3QuaV94YXR0cl9pY291bnQs
-DQo+ICsgICAgICAgIH0NCj4gKyAgICB9DQo+ICt9DQo+ICsNCj4gK3B1YihjcmF0ZSkgdHlwZSBD
-b21wYWN0SW5vZGVJbmZvQnVmID0gW3U4OyBzaXplX29mOjo8Q29tcGFjdElub2RlSW5mbz4oKV07
-DQo+ICtwdWIoY3JhdGUpIHR5cGUgRXh0ZW5kZWRJbm9kZUluZm9CdWYgPSBbdTg7IHNpemVfb2Y6
-OjxFeHRlbmRlZElub2RlSW5mbz4oKV07DQo+ICtwdWIoY3JhdGUpIGNvbnN0IERFRkFVTFRfSU5P
-REVfQlVGOiBFeHRlbmRlZElub2RlSW5mb0J1ZiA9IFswOyBzaXplX29mOjo8RXh0ZW5kZWRJbm9k
-ZUluZm8+KCldOw0KPiAtLQ0KPiAyLjQ2LjANCj4gDQoNCg==
+Linus,
+
+please pull from
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-li=
+nus-2024091602
+
+
+to receive HID subsystem queue for 6.12 merge window, namely:
+
+=3D=3D=3D=3D=3D
+
+- New HID over SPI driver for Goodix devices that don't follow Microsoft's=
+=20
+  HID-over-SPI specification, so a separate driver is needed. Currently=20
+  supported device is GT7986U touchscreen (Charles Wang)
+
+- support for new hardware features in Wacom driver (high-res wheel=20
+  scrolling, touchstrings with relative motions, support for two=20
+  touchrings) (Jason Gerecke)
+
+- support for customized vendor firmware loading in intel-ish driver=20
+  (Zhang Lixu)
+
+- fix for theoretical race condition in i2c-hid (Dmitry Torokhov)
+
+- support for HIDIOCREVOKE -- evdev's EVIOCREVOKE equivalent in hidraw=20
+  (Peter Hutterer)
+
+- initial hidraw selftest implementation (Benjamin Tissoires)
+
+- constification of device-specific report descriptors (Thomas Wei=DFschuh)
+
+- other small assorted fixes and device ID / quirk additions
+
+=3D=3D=3D=3D=3D
+
+Thanks.
+
+----------------------------------------------------------------
+Benjamin Tissoires (4):
+      HID: samples: fix the 2 struct_ops definitions
+      selftests/hid: extract the utility part of hid_bpf.c into its own hea=
+der
+      selftests/hid: Add initial hidraw tests skeleton
+      selftests/hid: Add HIDIOCREVOKE tests
+
+Charles Wang (2):
+      HID: hid-goodix: Add Goodix HID-over-SPI driver
+      dt-bindings: input: Goodix SPI HID Touchscreen
+
+Chen Ni (2):
+      HID: amd_sfh: Convert comma to semicolon
+      HID: hid-sensor-custom: Convert comma to semicolon
+
+Dan Carpenter (1):
+      HID: hid-goodix: Fix type promotion bug in goodix_hid_get_raw_report(=
+)
+
+Dmitry Torokhov (1):
+      HID: i2c-hid: ensure various commands do not interfere with each othe=
+r
+
+Hans de Goede (1):
+      HID: Ignore battery for all ELAN I2C-HID devices
+
+He Lugang (1):
+      HID: multitouch: Add support for lenovo Y9000P Touchpad
+
+Jason Gerecke (6):
+      HID: wacom: Improve warning for tablets falling back to default resol=
+ution
+      HID: wacom: Support touchrings with relative motion
+      HID: wacom: Add preliminary support for high-resolution wheel scrolli=
+ng
+      HID: wacom: Support devices with two touchrings
+      HID: wacom: Support sequence numbers smaller than 16-bit
+      HID: wacom: Do not warn about dropped packets for first packet
+
+Jinjie Ruan (1):
+      hid: cp2112: Use irq_get_trigger_type() helper
+
+Kerem Karabay (1):
+      HID: core: add helper for finding a field with a certain usage
+
+Max Staudt (1):
+      HID: hid-playstation: DS4: Update rumble and lightbar together
+
+Peter Hutterer (1):
+      HID: hidraw: add HIDIOCREVOKE ioctl
+
+Thomas Wei=DFschuh (22):
+      HID: bpf: constify parameter rdesc of call_hid_bpf_rdesc_fixup()
+      HID: constify parameter rdesc of hid_parse_report()
+      HID: constify hid_device::rdesc
+      HID: constify params and return value of fetch_item()
+      HID: constify hid_device::dev_rdesc
+      HID: change return type of report_fixup() to const
+      HID: cmedia: constify fixed up report descriptor
+      HID: winwing: constify read-only structs
+      HID: bigbenff: constify fixed up report descriptor
+      HID: dr: constify fixed up report descriptor
+      HID: holtek-kbd: constify fixed up report descriptor
+      HID: keytouch: constify fixed up report descriptor
+      HID: maltron: constify fixed up report descriptor
+      HID: xiaomi: constify fixed up report descriptor
+      HID: vrc2: constify fixed up report descriptor
+      HID: viewsonic: constify fixed up report descriptor
+      HID: steelseries: constify fixed up report descriptor
+      HID: pxrc: constify fixed up report descriptor
+      HID: sony: constify fixed up report descriptor
+      HID: waltop: constify fixed up report descriptor
+      HID: uclogic: constify fixed up report descriptor
+      HID: lg: constify fixed up report descriptor
+
+Thomas Zimmermann (1):
+      HID: picoLCD: Use backlight power constants
+
+Vishnu Sankar (1):
+      HID: multitouch: Add support for Thinkpad X12 Gen 2 Kbd Portfolio
+
+Yue Haibing (2):
+      HID: intel-ish-hid: Remove unused declarations
+      HID: amd_sfh: Remove unused declarations
+
+Zhang Lixu (3):
+      Documentation: hid: intel-ish-hid: Add vendor custom firmware loading
+      HID: intel-ish-hid: Use CPU generation string in driver_data
+      hid: intel-ish-hid: Add support for vendor customized firmware loadin=
+g
+
+Zhaoxiong Lv (2):
+      dt-bindings: HID: i2c-hid: elan: Introduce Elan ekth6a12nay
+      HID: i2c-hid: elan: Add elan-ekth6a12nay timing
+
+tammy tseng (1):
+      HID: add patch for sis multitouch format
+
+ .../devicetree/bindings/input/elan,ekth6915.yaml   |   4 +-
+ .../devicetree/bindings/input/goodix,gt7986u.yaml  |  71 ++
+ Documentation/hid/intel-ish-hid.rst                |  29 +
+ drivers/hid/Kconfig                                |   6 +
+ drivers/hid/Makefile                               |   1 +
+ drivers/hid/amd-sfh-hid/amd_sfh_hid.h              |   2 -
+ drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c      |   4 +-
+ drivers/hid/bpf/hid_bpf_dispatch.c                 |   6 +-
+ drivers/hid/hid-apple.c                            |   2 +-
+ drivers/hid/hid-asus.c                             |   2 +-
+ drivers/hid/hid-aureal.c                           |   2 +-
+ drivers/hid/hid-bigbenff.c                         |   6 +-
+ drivers/hid/hid-cherry.c                           |   2 +-
+ drivers/hid/hid-chicony.c                          |   4 +-
+ drivers/hid/hid-cmedia.c                           |   6 +-
+ drivers/hid/hid-core.c                             |  39 +-
+ drivers/hid/hid-corsair.c                          |   4 +-
+ drivers/hid/hid-cougar.c                           |   4 +-
+ drivers/hid/hid-cp2112.c                           |   7 +-
+ drivers/hid/hid-cypress.c                          |   2 +-
+ drivers/hid/hid-dr.c                               |   8 +-
+ drivers/hid/hid-elecom.c                           |   2 +-
+ drivers/hid/hid-gembird.c                          |   2 +-
+ drivers/hid/hid-glorious.c                         |   2 +-
+ drivers/hid/hid-goodix-spi.c                       | 818 +++++++++++++++++=
+++++
+ drivers/hid/hid-google-hammer.c                    |  27 +-
+ drivers/hid/hid-holtek-kbd.c                       |   6 +-
+ drivers/hid/hid-holtek-mouse.c                     |   4 +-
+ drivers/hid/hid-ids.h                              |  18 +-
+ drivers/hid/hid-input.c                            |  37 +-
+ drivers/hid/hid-ite.c                              |   2 +-
+ drivers/hid/hid-keytouch.c                         |   8 +-
+ drivers/hid/hid-kye.c                              |   2 +-
+ drivers/hid/hid-lenovo.c                           |   2 +-
+ drivers/hid/hid-lg.c                               |  30 +-
+ drivers/hid/hid-logitech-hidpp.c                   |   4 +-
+ drivers/hid/hid-macally.c                          |   4 +-
+ drivers/hid/hid-magicmouse.c                       |   4 +-
+ drivers/hid/hid-maltron.c                          |   8 +-
+ drivers/hid/hid-microsoft.c                        |   2 +-
+ drivers/hid/hid-monterey.c                         |   2 +-
+ drivers/hid/hid-multitouch.c                       |  30 +-
+ drivers/hid/hid-nti.c                              |   2 +-
+ drivers/hid/hid-ortek.c                            |   2 +-
+ drivers/hid/hid-petalynx.c                         |   2 +-
+ drivers/hid/hid-picolcd_backlight.c                |   5 +-
+ drivers/hid/hid-playstation.c                      |  20 +
+ drivers/hid/hid-prodikeys.c                        |   2 +-
+ drivers/hid/hid-pxrc.c                             |   6 +-
+ drivers/hid/hid-redragon.c                         |   2 +-
+ drivers/hid/hid-saitek.c                           |   2 +-
+ drivers/hid/hid-samsung.c                          |   2 +-
+ drivers/hid/hid-semitek.c                          |   4 +-
+ drivers/hid/hid-sensor-custom.c                    |   2 +-
+ drivers/hid/hid-sensor-hub.c                       |   2 +-
+ drivers/hid/hid-sigmamicro.c                       |   4 +-
+ drivers/hid/hid-sony.c                             |  14 +-
+ drivers/hid/hid-steelseries.c                      |   8 +-
+ drivers/hid/hid-sunplus.c                          |   2 +-
+ drivers/hid/hid-topre.c                            |   4 +-
+ drivers/hid/hid-uclogic-core.c                     |   4 +-
+ drivers/hid/hid-uclogic-params.c                   |   4 +-
+ drivers/hid/hid-uclogic-params.h                   |  10 +-
+ drivers/hid/hid-uclogic-rdesc.c                    |  20 +-
+ drivers/hid/hid-uclogic-rdesc.h                    |  20 +-
+ drivers/hid/hid-viewsonic.c                        |   8 +-
+ drivers/hid/hid-vrc2.c                             |   6 +-
+ drivers/hid/hid-waltop.c                           |  30 +-
+ drivers/hid/hid-winwing.c                          |   8 +-
+ drivers/hid/hid-xiaomi.c                           |   8 +-
+ drivers/hid/hid-zydacron.c                         |   2 +-
+ drivers/hid/hidraw.c                               |  39 +-
+ drivers/hid/i2c-hid/i2c-hid-core.c                 |  42 +-
+ drivers/hid/i2c-hid/i2c-hid-of-elan.c              |   8 +
+ drivers/hid/intel-ish-hid/ipc/pci-ish.c            |  10 +-
+ drivers/hid/intel-ish-hid/ishtp/bus.h              |   1 -
+ drivers/hid/intel-ish-hid/ishtp/client.h           |   1 -
+ drivers/hid/intel-ish-hid/ishtp/ishtp-dev.h        |   8 +-
+ drivers/hid/intel-ish-hid/ishtp/loader.c           | 121 ++-
+ drivers/hid/wacom_wac.c                            |  87 ++-
+ drivers/hid/wacom_wac.h                            |   6 +-
+ include/linux/hid.h                                |  12 +-
+ include/linux/hid_bpf.h                            |   2 +-
+ include/linux/hidraw.h                             |   1 +
+ include/uapi/linux/hidraw.h                        |   1 +
+ tools/testing/selftests/hid/.gitignore             |   1 +
+ tools/testing/selftests/hid/Makefile               |   2 +-
+ tools/testing/selftests/hid/hid_bpf.c              | 437 +----------
+ tools/testing/selftests/hid/hid_common.h           | 436 +++++++++++
+ tools/testing/selftests/hid/hidraw.c               | 237 ++++++
+ 90 files changed, 2150 insertions(+), 732 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/goodix,gt7986u.=
+yaml
+ create mode 100644 drivers/hid/hid-goodix-spi.c
+ create mode 100644 tools/testing/selftests/hid/hid_common.h
+ create mode 100644 tools/testing/selftests/hid/hidraw.c
+
+--=20
+Jiri Kosina
+SUSE Labs
+
 
