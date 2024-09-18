@@ -1,129 +1,171 @@
-Return-Path: <linux-kernel+bounces-332497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D61DE97BA7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:01:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1DC97BA80
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 12:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 107D81C224AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:01:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7667C1C2239D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0765617BEBA;
-	Wed, 18 Sep 2024 10:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B0417A586;
+	Wed, 18 Sep 2024 10:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="fia+ftqE"
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="mPKghpKe"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2747D156F3C;
-	Wed, 18 Sep 2024 10:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.248.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50721607A4
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 10:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726653681; cv=none; b=Wb1IW/oVdOswwUg9BKyt9iXKJNnyXWsVzByNIwjmnFjrc+UlvbjBsFrlrfVL2DA7o6uWn8g0Ejlwxa4fUBSx9Drzr1s58O5r3zuHmvY9o/+6HHgDq7sd4EOnOTYuWS/eKLzIs2mXcp59E4RHqk7w8ElIsx9zYIG8FBL0cTPTxGU=
+	t=1726653779; cv=none; b=bfyv4bIRk80d6WUroJZxGY0zVMxJLAFFIh0OKsMctZ9TcAhqOpNBaebjRmwm41fJrPOsfS6LYShoAkaD4Ja26WDchDzejyzHgryd1Y+XW1rS9SdMwtcKXXXbGQVNYk2a4x3nAxpUD0l+k/jmdRhZscHpjCpQ9dJid1lM5oUHugI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726653681; c=relaxed/simple;
-	bh=Z3UM2w+t+c4vDw6AMzenAuCA4hgGUdJJwHwnYpIPhfw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p8xXs8OhZ03tabv+TE1DfOvBx4O4LkF1fYuli7rHCnwgZI6CpQ3Wr4Mfp72WBfRFb8V9owRfpoaX61XuGRORqvRV8s87k5A0jEQ6vXOpcDZlAm+xE+S+bULwLcJi0jTrzDOrDHLWNKgokaPldNof+hch0Ix2fyvdjSNjRZv+u9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=fia+ftqE; arc=none smtp.client-ip=159.100.248.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from relay2.mymailcheap.com (relay2.mymailcheap.com [217.182.66.162])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id B2E5F2619F;
-	Wed, 18 Sep 2024 10:01:10 +0000 (UTC)
-Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
-	by relay2.mymailcheap.com (Postfix) with ESMTPS id 39FAE3E8AF;
-	Wed, 18 Sep 2024 12:01:03 +0200 (CEST)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf1.mymailcheap.com (Postfix) with ESMTPSA id EC27D4075C;
-	Wed, 18 Sep 2024 10:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1726653661; bh=Z3UM2w+t+c4vDw6AMzenAuCA4hgGUdJJwHwnYpIPhfw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fia+ftqEbP5Xv/sDWX59ftQYN7MJqcO6cy0ezCM3YKQYyI47nVcw1VJWWt3S2fhJM
-	 hPez8gfPcmnlb9Z7DSt1WVZ0Ep2t+Kqagq3CBy59DUB41Cg0SMCaMFUptaMrcakBLr
-	 u+M4qWq7bSFRFwx2i/ZBXunX1L9H7O7ODChFLo1M=
-Received: from [198.18.0.1] (unknown [58.32.24.203])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 60C924141B;
-	Wed, 18 Sep 2024 10:00:57 +0000 (UTC)
-Message-ID: <7a924389-c10b-4f01-be94-28c96c28879a@aosc.io>
-Date: Wed, 18 Sep 2024 18:00:54 +0800
+	s=arc-20240116; t=1726653779; c=relaxed/simple;
+	bh=dKZ9Lq1IyOTqi1zrlsjL1cDpRz8wcei72OpY1hhOytc=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=CHKPUU0auLf28izTeClFBSm0jb0qoO7XAOyTEJM9Z0LxvjauCx6RqVGsOr/c2icCRW83vHWhI6QpVm9uJuTpVagz+ErQe+QXDS8OupRY7sme7ulQU/fzyDtU0uIa+cR2ulz3E6Mzbynoqv34pUmb853yTQ/C39ra4prcSmYXmxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=mPKghpKe; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Thunderbird Daily
-Subject: Re: [PATCH 6.10 000/121] 6.10.11-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240916114228.914815055@linuxfoundation.org>
-Content-Language: en-US
-From: Kexy Biscuit <kexybiscuit@aosc.io>
-In-Reply-To: <20240916114228.914815055@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: nf1.mymailcheap.com
-X-Rspamd-Queue-Id: EC27D4075C
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [1.29 / 10.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	BAYES_HAM(-0.12)[66.67%];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	RCVD_COUNT_ONE(0.00)[1];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[lists.linux.dev,vger.kernel.org,linux-foundation.org,roeck-us.net,kernel.org,kernelci.org,lists.linaro.org,denx.de,nvidia.com,gmail.com,sladewatkins.net,gmx.de];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	TO_DN_SOME(0.00)[]
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1726653773;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m/8lONfZx+FNIG6iiP8W/GCBkEVHBI2sFN2P8FB9u3g=;
+	b=mPKghpKewlIiFRrA2nq/WkbEY+k5/KEcn4TeT/fVE8FMl9WBQq9buha7xO/uXkI7a7X7KK
+	EG2ATNC31Ehm5S7iV3RR/gO0ia3+c1h2K9KJ5v0vdYyVKshBNwEmDdvHB3Dh6wlB1Y7Ccn
+	umCo3Q78jicZVMF/reFLq4hDqb1ukGFLJILrUJ0HvBeXm1yotIfG0hpKC3FupkJFV6rF48
+	w9YHBvnvsGjDnGS9Xj6mmVT3zAHYYkFi0JAlYQKb+7vXZdiHFz8J7JjrxxGU1nHgw4Y0Sp
+	1QWhedTyCsNBj9UPbxCbQtn+tSPSC4DdtbXnykLNcotFpDbJa1iU2RJVTKqtag==
+Date: Wed, 18 Sep 2024 12:02:53 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megi@xff.cz>
+Subject: Re: [PATCH] arm64: dts: sun50i-a64-pinephone: Add mount matrix for
+ accelerometer
+In-Reply-To: <c7664fda936d36e0d916ae09dd554d2e@manjaro.org>
+References: <20240916204521.2033218-1-andrej.skvortzov@gmail.com>
+ <6e5d0e9978bff30559c17f30d1495b59@manjaro.org> <ZunCysUTSfQU1ylg@skv.local>
+ <c7664fda936d36e0d916ae09dd554d2e@manjaro.org>
+Message-ID: <64a2bf8f1491e510e93cc4c121975fd9@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 9/16/2024 7:42 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.11 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2024-09-18 11:27, Dragan Simic wrote:
+> Hello Andrey,
 > 
-> Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
-> Anything received after that time might be too late.
+> On 2024-09-17 19:56, Andrey Skvortsov wrote:
+>> On 24-09-16 23:08, Dragan Simic wrote:
+>>> On 2024-09-16 22:45, Andrey Skvortsov wrote:
+>>> > From: Ondřej Jirman <megi@xff.cz>
+>>> >
+>>> > accelerometer is mounted the way x and z-axis are invereted, x and y
+>>> > axis have to be spawed to match device orientation.
+>>> > The mount matrix is based on PCB drawing and was tested on the device.
+>>> 
+>>> This commit summary should be copyedited for grammar and style.  If
+>>> you want, I can provide a copyedited version?
+>> 
+>> It would be helpful to avoid further grammar/style problems in the
+>> commit message. Thanks in advance.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
+> Alright, here's how it could be worded...  First, the patch summary
+> should use the common prefix, together with a bit of rewording, so
+> the patch summary should read like this:
 > 
-> thanks,
+>   arm64: dts: allwinner: pinephone: Add mount matrix to accelerometer
 > 
-> greg k-h
+> The patch description should be reworded like this, reflown into
+> proper line lengths, of course:
+> 
+>   The way InvenSense MPU-6050 accelerometer is mounted on the
+>   user-facing side of the Pine64 PinePhone mainboard requires
+>   the accelerometer's x- and y-axis to be swapped, and the
+>   direction of the accelerometer's y-axis to be inverted.
+> 
+>   Rectify this by adding a mount-matrix to the accelerometer
+>   definition in the PinePhone dtsi file.
+> 
+>   [andrey: Picked the patch description provided by dsimic]
+>   Fixes: 91f480d40942 ("arm64: dts: allwinner: Add initial support for
+> Pine64 PinePhone")
+>   Cc: stable@vger.kernel.org
+> 
+> Please note the Fixes tag, which will submit this bugfix patch
+> for inclusion into the long-term/stable kernels.
+> 
+> Also note that the patch description corrects the way inversion
+> of the axis direction is described, which should also be corrected
+> in the patch itself, as described further below.
+> 
+> After going through the InvenSense MPU-6050 datasheet, [1] the
+> MPU-6050 evaluation board user guide, the PinePhone schematic,
+> the PinePhone mainboard component placement, [2] and the kernel
+> bindings documentation for mount-matrix, [3] I can conslude that
+> only the direction of the accelerometer's y-axis is inverted,
+> while the direction of the z-axis remain unchanged, according
+> to the right-hand rule.
+> 
+>>> > Signed-off-by: Ondrej Jirman <megi@xff.cz>
+>>> > Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+>>> > ---
+>>> >  arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi | 3 +++
+>>> >  1 file changed, 3 insertions(+)
+>>> >
+>>> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+>>> > b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+>>> > index bc6af17e9267a..1da7506c38cd0 100644
+>>> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+>>> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+>>> > @@ -229,6 +229,9 @@ accelerometer@68 {
+>>> >  		interrupts = <7 5 IRQ_TYPE_EDGE_RISING>; /* PH5 */
+>>> >  		vdd-supply = <&reg_dldo1>;
+>>> >  		vddio-supply = <&reg_dldo1>;
+>>> > +		mount-matrix = "0", "1", "0",
+>>> > +				"-1", "0", "0",
+>>> > +				"0", "0", "-1";
+>>> >  	};
+>>> >  };
+> 
+> With the above-described analysis in mind, the mount-matrix
+> should be defined like this instead:
+> 
+> 		mount-matrix = "0", "1", "0",
+> 			       "-1", "0", "0",
+> 			       "0", "0", "1";
+> 
+> Please also note the line indentation that was changed a bit.
 
-Building passed on amd64, arm64, loongarch64, ppc64el, and riscv64. 
-Smoke testing passed on 9 amd64 and 1 arm64 test systems.
+Actually, unless my analysis is proven wrong, perhaps it would
+be better if I'd submit this patch in its final form, because it
+has diverged a lot from the original patch.  IIUC, Ondrej only
+imported the original patch from somewhere, without some kind of
+proper attribution. [4]
 
-Tested-by: Kexy Biscuit <kexybiscuit@aosc.io>
+> [1] https://rimgo.reallyaweso.me/vrBXQPq.png
+> [2] https://rimgo.reallyaweso.me/uTmT1pr.png
+> [3] 
+> https://www.kernel.org/doc/Documentation/devicetree/bindings/iio/mount-matrix.txt
 
-https://github.com/AOSC-Dev/aosc-os-abbs/pull/8026
--- 
-Best Regards,
-Kexy Biscuit
+[4] 
+https://xff.cz/kernels/6.9/patches/0221-arm64-dts-sun50i-a64-pinephone-Add-mount-matrix-for-.patch
 
