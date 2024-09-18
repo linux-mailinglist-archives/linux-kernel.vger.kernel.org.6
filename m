@@ -1,51 +1,54 @@
-Return-Path: <linux-kernel+bounces-332185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9CD97B68E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:28:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B4497B697
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 03:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A0671C232CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 01:28:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E8ADB29CA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 01:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C42AAD2D;
-	Wed, 18 Sep 2024 01:28:46 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37841DDC7;
+	Wed, 18 Sep 2024 01:38:17 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A477D6FC5;
-	Wed, 18 Sep 2024 01:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9565723B0;
+	Wed, 18 Sep 2024 01:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726622925; cv=none; b=fp9tMne4sMnxdMq99xLTu9csw1MZ2mRrZN4eU7iwHe/fPJyo4npvtpObnfDVQG8qnWfkdUqcJs7keqPuC0WrL6GnOEwrfSaJ3hnA4xz+1Sn0nw9R8RzMxjB1myFdoKC/hkb2MR+iYqbvdwv/BHCPvRgoZYEPWVZd+d82zSJD0ow=
+	t=1726623496; cv=none; b=r/NEiPVnO7W72Z68WGRpW29C3yhg0aBt3XxsCtbLmKaqyXU1yxlhYmgfxj3uBgWb01iXDg67IHM7rFWIaB7hcDjCRwBlUlB5GccH5X4QS0C7I9v5bFWefKVUzQniaYLfBPehWqMtVfIpEW6kwqvXUw8o8rOL76AkZWyK0SNtL0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726622925; c=relaxed/simple;
-	bh=h6uqLKA0bM7Qsdxx/tRPyXPx0R9jRJ9lBRgpxGwPhAk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TyeZ+lwTHhPxplcShpao/laOTcSxXpEtHi0/tFYIUbHjEh/iFtRFeeSBJRVkmnUtva3sBK5M2qEXpsscCzLLwy97m4Am4FFGA8vAe7wTSnr4H0kbTK1CzlBrVbT1qkxOuXWjDu0itKGvin86AUxnU+mgyYCW91RAd/oFfzm0r7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 48I1Qmi0082303;
-	Wed, 18 Sep 2024 09:26:48 +0800 (+08)
-	(envelope-from zhaoyang.huang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4X7gm55Yjfz2QRv88;
-	Wed, 18 Sep 2024 09:19:17 +0800 (CST)
-Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
- BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 18 Sep 2024 09:26:45 +0800
-From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-To: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jan Kara <jack@suse.cz>, <linux-ext4@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
-Subject: [Resend PATCHv3 1/1] fs: ext4: Don't use CMA for buffer_head
-Date: Wed, 18 Sep 2024 09:26:36 +0800
-Message-ID: <20240918012636.1320016-1-zhaoyang.huang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1726623496; c=relaxed/simple;
+	bh=6h/5sh8g6PzXThSEboHpnwPsFdNAKItWhvM2XS4n8Xo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RPW2E+ce3IKqsSI2A/uraCSTMBVsW5BnPQk9w7am/H3eq6GehTIitI4iHmefhVQBmRmFeQRcPEKs5vO0UC6k7B8UbEGb2zglkEFXEMBpu6Rwdoz/tQDkGaWh9wgecex27Tj0KVbnIYCJ0XEceeEczHIfBPByvoqYEV2AR4Yis0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X7h9W0CFlzFqn6;
+	Wed, 18 Sep 2024 09:37:51 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 726961800A0;
+	Wed, 18 Sep 2024 09:38:04 +0800 (CST)
+Received: from huawei.com (10.67.174.28) by kwepemd200013.china.huawei.com
+ (7.221.188.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Wed, 18 Sep
+ 2024 09:38:01 +0800
+From: Liao Chang <liaochang1@huawei.com>
+To: <mhiramat@kernel.org>, <oleg@redhat.com>, <andrii@kernel.org>,
+	<peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>
+Subject: [PATCH] uprobes: Improve the usage of xol slots for better scalability
+Date: Wed, 18 Sep 2024 01:27:52 +0000
+Message-ID: <20240918012752.2045713-1-liaochang1@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,85 +57,335 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL:SHSQR01.spreadtrum.com 48I1Qmi0082303
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+The kprobe handler allocates xol slot from xol_area and quickly release
+it in the single-step handler. The atomic operations on the xol bitmap
+and slot_count lead to expensive cache line bouncing between multiple
+CPUs. Given the xol slot is on the hot path for kprobe and kretprobe
+handling, the profiling results on some Arm64 machine show that nearly
+80% of cycles are spent on this. So optimizing xol slot usage will
+become important to scalability after the Andrii's series land.
 
-cma_alloc() keep failed in our system which thanks to a jh->bh->b_page
-can not be migrated out of CMA area[1] as the jh has one cp_transaction
-pending on it because of j_free > j_max_transaction_buffers[2][3][4][5][6].
-We temporarily solve this by launching jbd2_log_do_checkpoint forcefully
-somewhere. Since journal is common mechanism to all JFSs and
-cp_transaction has a little fewer opportunity to be launched, the
-cma_alloc() could be affected under the same scenario. This patch
-would like to have buffer_head of ext4 not use CMA pages when doing
-sb_getblk.
+This patch address this scalability issues from two perspectives:
 
-[1]
-crash_arm64_v8.0.4++> kmem -p|grep ffffff808f0aa150(sb->s_bdev->bd_inode->i_mapping)
-fffffffe01a51c00  e9470000 ffffff808f0aa150        3  2 8000000008020 lru,private
-fffffffe03d189c0 174627000 ffffff808f0aa150        4  2 2004000000008020 lru,private
-fffffffe03d88e00 176238000 ffffff808f0aa150      3f9  2 2008000000008020 lru,private
-fffffffe03d88e40 176239000 ffffff808f0aa150        6  2 2008000000008020 lru,private
-fffffffe03d88e80 17623a000 ffffff808f0aa150        5  2 2008000000008020 lru,private
-fffffffe03d88ec0 17623b000 ffffff808f0aa150        1  2 2008000000008020 lru,private
-fffffffe03d88f00 17623c000 ffffff808f0aa150        0  2 2008000000008020 lru,private
-fffffffe040e6540 183995000 ffffff808f0aa150      3f4  2 2004000000008020 lru,private
+- Allocated xol slot is now saved in the thread associated utask data.
+  It allows to reuse it throughout the therad's lifetime. This avoid
+  the frequent atomic operation on the slot bitmap and slot_count of
+  xol_area data, which is the major negative impact on scalability.
 
-[2] page -> buffer_head
-crash_arm64_v8.0.4++> struct page.private fffffffe01a51c00 -x
-      private = 0xffffff802fca0c00
+- A garbage collection routine xol_recycle_insn_slot() is introduced to
+  reclaim unused xol slots. utask instances that own xol slot but
+  haven't reclaimed them are linked in a linked list. When xol_area runs
+  out of slots, the garbage collection routine travel the list to free
+  one slot. Allocated xol slots is marked as unused in single-step
+  handler. While the marking relies on the refcount of utask instance,
+  due to thread can't run on multiple CPUs at same time, therefore, it
+  is unlikely CPUs take the refcount of same utask, minimizing cache
+  line bouncing.
 
-[3] buffer_head -> journal_head
-crash_arm64_v8.0.4++> struct buffer_head.b_private 0xffffff802fca0c00
-  b_private = 0xffffff8041338e10,
+  Upon thread exit, the utask is deleted from the linked-list, and the
+  associated xol slot will be free.
 
-[4] journal_head -> b_cp_transaction
-crash_arm64_v8.0.4++> struct journal_head.b_cp_transaction 0xffffff8041338e10 -x
-  b_cp_transaction = 0xffffff80410f1900,
-
-[5] transaction_t -> journal
-crash_arm64_v8.0.4++> struct transaction_t.t_journal 0xffffff80410f1900 -x
-  t_journal = 0xffffff80e70f3000,
-
-[6] j_free & j_max_transaction_buffers
-crash_arm64_v8.0.4++> struct journal_t.j_free,j_max_transaction_buffers 0xffffff80e70f3000 -x
-  j_free = 0x3f1,
-  j_max_transaction_buffers = 0x100,
-
-Suggested-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+Signed-off-by: Liao Chang <liaochang1@huawei.com>
 ---
-v3: switch to use getblk_unmoveable as suggested by Theodore Ts'o
----
----
- fs/ext4/inode.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ include/linux/uprobes.h |   4 +
+ kernel/events/uprobes.c | 173 ++++++++++++++++++++++++++++++----------
+ 2 files changed, 135 insertions(+), 42 deletions(-)
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 941c1c0d5c6e..a0f48840c5c1 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -869,7 +869,14 @@ struct buffer_head *ext4_getblk(handle_t *handle, struct inode *inode,
- 	if (nowait)
- 		return sb_find_get_block(inode->i_sb, map.m_pblk);
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index e6f4e73125ff..87fa24c74eb8 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -77,6 +77,10 @@ struct uprobe_task {
+ 	struct uprobe			*active_uprobe;
+ 	unsigned long			xol_vaddr;
  
--	bh = sb_getblk(inode->i_sb, map.m_pblk);
-+	/*
-+	 * Since bh could introduce extra ref count such as referred by
-+	 * journal_head etc. Try to avoid using __GFP_MOVABLE here
-+	 * as it may fail the migration when journal_head remains.
-+	 */
-+	bh = getblk_unmovable(inode->i_sb->s_bdev, map.m_pblk,
-+				inode->i_sb->s_blocksize);
++	struct list_head		gc;
++	refcount_t			slot_ref;
++	int				insn_slot;
 +
- 	if (unlikely(!bh))
- 		return ERR_PTR(-ENOMEM);
- 	if (map.m_flags & EXT4_MAP_NEW) {
+ 	struct arch_uprobe              *auprobe;
+ 
+ 	struct return_instance		*return_instances;
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 86fcb2386ea2..5ba1bd3ad27f 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -111,6 +111,12 @@ struct xol_area {
+ 	 * the vma go away, and we must handle that reasonably gracefully.
+ 	 */
+ 	unsigned long 			vaddr;		/* Page(s) of instruction slots */
++	struct list_head		gc_list;	/* The list for the
++							   garbage slots */
++	spinlock_t			list_lock;	/* Hold for
++							   list_add_rcu() and
++							   list_del_rcu() on
++							   gc_list */
+ };
+ 
+ static void uprobe_warn(struct task_struct *t, const char *msg)
+@@ -1557,6 +1563,8 @@ static struct xol_area *__create_xol_area(unsigned long vaddr)
+ 
+ 	area->vaddr = vaddr;
+ 	init_waitqueue_head(&area->wq);
++	INIT_LIST_HEAD(&area->gc_list);
++	spin_lock_init(&area->list_lock);
+ 	/* Reserve the 1st slot for get_trampoline_vaddr() */
+ 	set_bit(0, area->bitmap);
+ 	atomic_set(&area->slot_count, 1);
+@@ -1613,37 +1621,91 @@ void uprobe_dup_mmap(struct mm_struct *oldmm, struct mm_struct *newmm)
+ 	}
+ }
+ 
++static __always_inline
++struct uprobe_task *test_and_get_task_slot(struct uprobe_task *utask)
++{
++	return refcount_inc_not_zero(&utask->slot_ref) ? utask : NULL;
++}
++
++static __always_inline
++struct uprobe_task *test_and_put_task_slot(struct uprobe_task *utask)
++{
++	return refcount_dec_if_one(&utask->slot_ref) ? utask : NULL;
++}
++
++static __always_inline
++void put_task_slot(struct uprobe_task *utask)
++{
++	refcount_dec(&utask->slot_ref);
++}
++
++static __always_inline
++void get_task_slot(struct uprobe_task *utask)
++{
++	refcount_inc(&utask->slot_ref);
++}
++
++/*
++ * xol_recycle_insn_slot - recycle a slot from the garbage collection list.
++ */
++static int xol_recycle_insn_slot(struct xol_area *area)
++{
++	struct uprobe_task *utask;
++	int slot = UINSNS_PER_PAGE;
++
++	rcu_read_lock();
++	list_for_each_entry_rcu(utask, &area->gc_list, gc) {
++		/*
++		 * The utask associated slot is in-use or recycling when
++		 * utask associated slot_ref is not one.
++		 */
++		if (test_and_put_task_slot(utask)) {
++			slot = utask->insn_slot;
++			utask->insn_slot = UINSNS_PER_PAGE;
++			clear_bit(slot, area->bitmap);
++			atomic_dec(&area->slot_count);
++			get_task_slot(utask);
++			break;
++		}
++	}
++	rcu_read_unlock();
++
++	return slot;
++}
++
+ /*
+  *  - search for a free slot.
+  */
+-static unsigned long xol_take_insn_slot(struct xol_area *area)
++static int xol_take_insn_slot(struct xol_area *area)
+ {
+-	unsigned long slot_addr;
+ 	int slot_nr;
+ 
+ 	do {
+ 		slot_nr = find_first_zero_bit(area->bitmap, UINSNS_PER_PAGE);
+-		if (slot_nr < UINSNS_PER_PAGE) {
+-			if (!test_and_set_bit(slot_nr, area->bitmap))
+-				break;
++		if (slot_nr == UINSNS_PER_PAGE)
++			slot_nr = xol_recycle_insn_slot(area);
++
++		if (slot_nr == UINSNS_PER_PAGE)
++			wait_event(area->wq,
++				   (atomic_read(&area->slot_count) <
++				    UINSNS_PER_PAGE));
++		else if (!test_and_set_bit(slot_nr, area->bitmap))
++			break;
+ 
+-			slot_nr = UINSNS_PER_PAGE;
+-			continue;
+-		}
+-		wait_event(area->wq, (atomic_read(&area->slot_count) < UINSNS_PER_PAGE));
++		slot_nr = UINSNS_PER_PAGE;
+ 	} while (slot_nr >= UINSNS_PER_PAGE);
+ 
+-	slot_addr = area->vaddr + (slot_nr * UPROBE_XOL_SLOT_BYTES);
+ 	atomic_inc(&area->slot_count);
+ 
+-	return slot_addr;
++	return slot_nr;
+ }
+ 
+ /*
+  * xol_get_insn_slot - allocate a slot for xol.
+  * Returns the allocated slot address or 0.
+  */
+-static unsigned long xol_get_insn_slot(struct uprobe *uprobe)
++static unsigned long xol_get_insn_slot(struct uprobe_task *utask,
++				       struct uprobe *uprobe)
+ {
+ 	struct xol_area *area;
+ 	unsigned long xol_vaddr;
+@@ -1652,16 +1714,45 @@ static unsigned long xol_get_insn_slot(struct uprobe *uprobe)
+ 	if (!area)
+ 		return 0;
+ 
+-	xol_vaddr = xol_take_insn_slot(area);
+-	if (unlikely(!xol_vaddr))
++	/*
++	 * The utask associated slot is recycling when utask associated
++	 * slot_ref is zero.
++	 */
++	if (!test_and_get_task_slot(utask))
+ 		return 0;
+ 
++	if (utask->insn_slot == UINSNS_PER_PAGE) {
++		utask->insn_slot = xol_take_insn_slot(area);
++		spin_lock(&area->list_lock);
++		list_add_rcu(&utask->gc, &area->gc_list);
++		spin_unlock(&area->list_lock);
++	}
++
++	xol_vaddr = area->vaddr + (utask->insn_slot * UPROBE_XOL_SLOT_BYTES);
++
+ 	arch_uprobe_copy_ixol(area->pages[0], xol_vaddr,
+ 			      &uprobe->arch.ixol, sizeof(uprobe->arch.ixol));
+ 
+ 	return xol_vaddr;
+ }
+ 
++/*
++ * xol_delay_free_insn_slot - Make the slot available for garbage collection
++ */
++static void xol_delay_free_insn_slot(void)
++{
++	struct xol_area *area = current->mm->uprobes_state.xol_area;
++
++	/*
++	 * This refcount would't cause expensive cache line bouncing
++	 * between CPUs, as it is unlikely that multiple CPUs take the
++	 * slot_ref of same utask.
++	 */
++	put_task_slot(current->utask);
++	if (waitqueue_active(&area->wq))
++		wake_up(&area->wq);
++}
++
+ /*
+  * xol_free_insn_slot - If slot was earlier allocated by
+  * @xol_get_insn_slot(), make the slot available for
+@@ -1670,35 +1761,31 @@ static unsigned long xol_get_insn_slot(struct uprobe *uprobe)
+ static void xol_free_insn_slot(struct task_struct *tsk)
+ {
+ 	struct xol_area *area;
+-	unsigned long vma_end;
+-	unsigned long slot_addr;
++	unsigned long flags;
++	int slot_nr;
+ 
+ 	if (!tsk->mm || !tsk->mm->uprobes_state.xol_area || !tsk->utask)
+ 		return;
+ 
+-	slot_addr = tsk->utask->xol_vaddr;
+-	if (unlikely(!slot_addr))
+-		return;
+-
+ 	area = tsk->mm->uprobes_state.xol_area;
+-	vma_end = area->vaddr + PAGE_SIZE;
+-	if (area->vaddr <= slot_addr && slot_addr < vma_end) {
+-		unsigned long offset;
+-		int slot_nr;
+-
+-		offset = slot_addr - area->vaddr;
+-		slot_nr = offset / UPROBE_XOL_SLOT_BYTES;
+-		if (slot_nr >= UINSNS_PER_PAGE)
+-			return;
+ 
+-		clear_bit(slot_nr, area->bitmap);
+-		atomic_dec(&area->slot_count);
+-		smp_mb__after_atomic(); /* pairs with prepare_to_wait() */
+-		if (waitqueue_active(&area->wq))
+-			wake_up(&area->wq);
++	spin_lock_irqsave(&area->list_lock, flags);
++	list_del_rcu(&tsk->utask->gc);
++	spin_unlock_irqrestore(&area->list_lock, flags);
++	synchronize_rcu();
+ 
+-		tsk->utask->xol_vaddr = 0;
+-	}
++	slot_nr = tsk->utask->insn_slot;
++	if (unlikely(slot_nr == UINSNS_PER_PAGE))
++		return;
++
++	tsk->utask->insn_slot = UINSNS_PER_PAGE;
++	clear_bit(slot_nr, area->bitmap);
++	atomic_dec(&area->slot_count);
++	smp_mb__after_atomic(); /* pairs with prepare_to_wait() */
++	if (waitqueue_active(&area->wq))
++		wake_up(&area->wq);
++
++	tsk->utask->xol_vaddr = 0;
+ }
+ 
+ void __weak arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
+@@ -1779,8 +1866,12 @@ void uprobe_free_utask(struct task_struct *t)
+  */
+ static struct uprobe_task *get_utask(void)
+ {
+-	if (!current->utask)
++	if (!current->utask) {
+ 		current->utask = kzalloc(sizeof(struct uprobe_task), GFP_KERNEL);
++		current->utask->insn_slot = UINSNS_PER_PAGE;
++		INIT_LIST_HEAD(&current->utask->gc);
++		refcount_set(&current->utask->slot_ref, 1);
++	}
+ 	return current->utask;
+ }
+ 
+@@ -1978,7 +2069,7 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
+ 	if (!try_get_uprobe(uprobe))
+ 		return -EINVAL;
+ 
+-	xol_vaddr = xol_get_insn_slot(uprobe);
++	xol_vaddr = xol_get_insn_slot(utask, uprobe);
+ 	if (!xol_vaddr) {
+ 		err = -ENOMEM;
+ 		goto err_out;
+@@ -1988,10 +2079,8 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
+ 	utask->vaddr = bp_vaddr;
+ 
+ 	err = arch_uprobe_pre_xol(&uprobe->arch, regs);
+-	if (unlikely(err)) {
+-		xol_free_insn_slot(current);
++	if (unlikely(err))
+ 		goto err_out;
+-	}
+ 
+ 	utask->active_uprobe = uprobe;
+ 	utask->state = UTASK_SSTEP;
+@@ -2340,7 +2429,7 @@ static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
+ 	put_uprobe(uprobe);
+ 	utask->active_uprobe = NULL;
+ 	utask->state = UTASK_RUNNING;
+-	xol_free_insn_slot(current);
++	xol_delay_free_insn_slot();
+ 
+ 	spin_lock_irq(&current->sighand->siglock);
+ 	recalc_sigpending(); /* see uprobe_deny_signal() */
 -- 
-2.25.1
+2.34.1
 
 
