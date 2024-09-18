@@ -1,99 +1,135 @@
-Return-Path: <linux-kernel+bounces-332953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204A297C159
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:22:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B006597C15C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 23:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D863D282F07
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:22:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71FB2283075
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 21:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB2818B48D;
-	Wed, 18 Sep 2024 21:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93CA1CA6BB;
+	Wed, 18 Sep 2024 21:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="IQC91YB1"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T4VQSuOf"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F9915853D;
-	Wed, 18 Sep 2024 21:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D116B172BDE;
+	Wed, 18 Sep 2024 21:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726694534; cv=none; b=eVeEpqZQLCEhXHgIZhnBVIYQE5q6bysBknZT93iswYK7GkZY9G3ao/M2VABk15z2mpvIBvwn20+QRSSMYuBynSZKy8NHRIPOo0i+awrtbJI+UjCl5lhzVTLkiXnhecardsg39vtHnNXQZ9E6vp9mWC6pjdAqG0zyCFHiScS9jig=
+	t=1726694576; cv=none; b=hIhXPz7pBR3OSk2peZBNYDeqOTlPLC7Ba+K90IuJmPuX/ReVehWYt7QL9L2d3hLVVM/Q0at1n4qhr94HVz2ICMUBy+hhSg1r66GfUrrofH08eawWYW4X51oDJvnJ5DnFg5M7Ny/1b68bdqbEyyBUcpSRyqp2NQqnX3Ddfqzs/Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726694534; c=relaxed/simple;
-	bh=iVycWfR4xJRkWVCjsEBSXiz6ESvrHs61SGDmRu1+Grw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=k4Tsw056wbNzaMrYPHtmImHEfcdZEWrpBW7iTCEV4EdyR75XjFyvKq6x1twrerCD+oHMnPzqX7tai3C72ZkBhUqsa0oVJlqibFTbKc+J90jEni/0rejoHSEd23+UcX+SZTV38KnWw2Q6kLehIjJgskNzw3iy91BiBplZnOABvJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=IQC91YB1; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=mwc6ebWioCgeWz0QZ7Mw5ijqvCT+qQorOR7T1FVkDWk=; b=IQC91YB1sF4h/i+v5SCU5nLETM
-	BJAbXSyOZzI4OMfw1GwTNrEaKsZZbzaX8iPOg9mmteN7FO8ubCEmEWGDmsAx5FJTqxfiiVHiGMQKT
-	wqF9pTwNyyb4lkfd8q4UE5K2K27Xgpv+De0RmGXFYIk8JVWeJsBTg27WM5gkOh4kDKIFf+yPF7utY
-	J/UGlSt0UTvAqxskj+MAoAI7o2Nn7rIyqpnwhX+LBv7Mr8zG18KVVWTO9DtL9526buLQrnUxQ1w7u
-	grARnMpx/KUqyVb+q+Bf0fdgqbN8Zp2XQ98z4BqrBedwWlQnDMftn0T63FiUj0wNhqd8mw3cw3tAX
-	jigEM8IQ==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: alexandre.belloni@bootlin.com,
-	linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH] rtc: rc5t619: use proper module tables
-Date: Wed, 18 Sep 2024 23:21:59 +0200
-Message-Id: <20240918212159.1191637-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1726694576; c=relaxed/simple;
+	bh=AxTxj99dIVccR7LN4Pl4VKcLuuOVdN43YIHzdQiko2M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aIr8TZK48vT+JrFfrEXsKwm0Q+Mdx16AQPJuH5aCMvrsuckQ0ZYnTHrQuErctE0vxm9vs4DnZmvQct63lzPjBjIFlBOMegua1JMI7frmdQmXiW6thnO20HdX04RPWndMD/5t9jYz8DeS4+GIaHrDrXuQX909tojXUceJZV7ZBR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T4VQSuOf; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2da55ea8163so136410a91.1;
+        Wed, 18 Sep 2024 14:22:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726694574; x=1727299374; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kOdXjoeQ4nEmJ8UMVlYl/8AvhkHTD6zkaDk+W7dD8fI=;
+        b=T4VQSuOfHLgxhyqYp8xvV4WkfzM1vqhzqxi9610vRCJhl4EsmfD8LEnymKv5QDxnj1
+         HfbvHRaNGcQ43ZZazg8synIlanfYJC1m2XLfxhJN//48pu7Mr3hmPwq4Hbn6ucMqc0K4
+         qEvvLb1KX9+Wno5KrxORP504dGwLJXpJawThqS9px7cvOul6Xob6FDKXvQocOdGbrZgS
+         gCu8Cskn1wkSA8BkOLPc3Rl3t3yqED+HnY0JVFR/71N4mnTDc60ZA74CGAN6x97Ie1UQ
+         9j/0Je3cCPLV3GFeAllU9fAVcFbhTmHslyXUEFsI/OrzUwxo5HwyrgU2WighjRg2YD8Q
+         LrjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726694574; x=1727299374;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kOdXjoeQ4nEmJ8UMVlYl/8AvhkHTD6zkaDk+W7dD8fI=;
+        b=XankQ8KbTKhbBPVKVePr4qwRSZRqKpjsN9H7ipagbKwNINGEyYZrsCCgtb6ImpFgvf
+         zx5rBLMjehgATEc7/6L/tul5ercUGZN5JhPhDsObKNtzHdfILxO5amawqnsVRjCsEiK8
+         HD+cCrbIWlVBTsyzc7vKtijeu9dmSMcLfjGf+mkBpo26bZmhF/XSqJyqDxYoGWVbhAnk
+         Xv6xl55oMA2V9VZQPgVDjWoe6jO9CSSCov/rjT4MPCfAqCPIm1m5KObV5u5s8stnt7wK
+         ltaY8AHSD04Cg5PHm8TXhP33asIz8McNBg+v8k+3+LDtamyhGolMsbSXKYR/9lOtqUHc
+         IbrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzaaqEG1ODqhnZ+kg+r7z+3Jj7idkYrtXuwOcTMb/0aSnjFzyRIXYz8SjQHGLvzXyWyXvPKE4m3/enuW9j@vger.kernel.org, AJvYcCVbz56OPDKQ0ZgoPKS0tfFcVY4othw8RTCruOnXn4h9KySpH3qZZwWLSIIeQVVWlUph+Zg=@vger.kernel.org, AJvYcCVlR7etx48nGG8doOM1wiuZhC6vFVJVs8wMj2OxZiaqTENccDkDnNpaQNDtCP0Fjq8ENanYoXsf1YwNJw==@vger.kernel.org, AJvYcCXstS1ST/ST7/MLmLfCw2W8YvbQld+xkcZA4rfgnMhN/dTN5FEHbtin6btfdovOtJCv/nH/64gvle6B6m6mNrUothY6@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzojm1mcPEQRYumjRbBjjE1DqkaH0+XHTWF88zC5676mIGZ4laz
+	xOoqe0InIIrBx2cQdrIcS4NSa/p2Usd2ZhCViR5q0nLWqcV38wWwnnxfQXxioiYNDrj47BDFxZb
+	4HLKwOlasSS2f7vS4c4xgDFbI7yU=
+X-Google-Smtp-Source: AGHT+IEGPQsCbfwy2x9UpqhHd4Kkjvl2bDFZeUZSzoulljt4aDiYCy2c2rxCKPyVUcQL6nh9Hkk7/uOcSXl9fewAuK8=
+X-Received: by 2002:a17:90b:4c41:b0:2c9:3370:56e3 with SMTP id
+ 98e67ed59e1d1-2dba008304amr26880812a91.34.1726694574055; Wed, 18 Sep 2024
+ 14:22:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <172639136989.366111.11359590127009702129.stgit@devnote2>
+In-Reply-To: <172639136989.366111.11359590127009702129.stgit@devnote2>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 18 Sep 2024 23:22:41 +0200
+Message-ID: <CAEf4BzZAPjZEZR9m66hPr6srzJwuu=B8zu6cNhxe-7__5+LpHw@mail.gmail.com>
+Subject: Re: [PATCH v15 00/19] tracing: fprobe: function_graph: Multi-function
+ graph and fprobe on fgraph
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Florent Revest <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	bpf <bpf@vger.kernel.org>, Sven Schnelle <svens@linux.ibm.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Alan Maguire <alan.maguire@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>, 
+	linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Avoid requiring MODULE_ALIASES by declaring proper device id tables.
+On Sun, Sep 15, 2024 at 11:09=E2=80=AFAM Masami Hiramatsu (Google)
+<mhiramat@kernel.org> wrote:
+>
+> Hi,
+>
+> Here is the 15th version of the series to re-implement the fprobe on
+> function-graph tracer. The previous version is;
+>
+> https://lore.kernel.org/all/172615368656.133222.2336770908714920670.stgit=
+@devnote2/
+>
+> This version rebased on Steve's calltime change[1] instead of the last
+> patch in the previous series, and adds a bpf patch to add get_entry_ip()
+> for arm64. Note that [1] is not included in this series, so please use
+> the git branch[2].
+>
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- drivers/rtc/rtc-rc5t619.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+With LPC and Kernel Recipes back-to-back I won't have time to look
+through the code, but I did manage to run some benchmarks tonight, and
+they look pretty good now, thanks! Seems like the kprobe regression is
+gone, and kretprobes are a bit faster. So, nice work, thanks!
 
-diff --git a/drivers/rtc/rtc-rc5t619.c b/drivers/rtc/rtc-rc5t619.c
-index e73102a39f1b..711f62eecd79 100644
---- a/drivers/rtc/rtc-rc5t619.c
-+++ b/drivers/rtc/rtc-rc5t619.c
-@@ -429,14 +429,23 @@ static int rc5t619_rtc_probe(struct platform_device *pdev)
- 	return devm_rtc_register_device(rtc->rtc);
- }
- 
-+static const struct platform_device_id rc5t619_rtc_id[] = {
-+	{
-+		.name = "rc5t619-rtc",
-+	}, {
-+		/* sentinel */
-+	}
-+};
-+MODULE_DEVICE_TABLE(platform, rc5t619_rtc_id);
-+
- static struct platform_driver rc5t619_rtc_driver = {
- 	.driver	= {
- 		.name	= "rc5t619-rtc",
- 	},
- 	.probe	= rc5t619_rtc_probe,
-+	.id_table = rc5t619_rtc_id,
- };
--
- module_platform_driver(rc5t619_rtc_driver);
--MODULE_ALIAS("platform:rc5t619-rtc");
-+
- MODULE_DESCRIPTION("RICOH RC5T619 RTC driver");
- MODULE_LICENSE("GPL");
--- 
-2.39.2
+BEFORE
+=3D=3D=3D=3D=3D=3D
+kprobe         :   25.052 =C2=B1 0.032M/s
+kprobe-multi   :   28.102 =C2=B1 0.167M/s
+kretprobe      :   10.724 =C2=B1 0.008M/s
+kretprobe-multi:   11.337 =C2=B1 0.054M/s
 
+AFTER
+=3D=3D=3D=3D=3D
+kprobe         :   25.206 =C2=B1 0.026M/s
+kprobe-multi   :   30.167 =C2=B1 0.148M/s
+kretprobe      :   10.714 =C2=B1 0.016M/s
+kretprobe-multi:   13.436 =C2=B1 0.328M/s
+
+> [1] https://lore.kernel.org/all/20240914214805.779822616@goodmis.org/
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/lo=
+g/?h=3Dtopic/fprobe-on-fgraph
+>
+
+[...]
 
