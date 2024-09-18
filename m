@@ -1,112 +1,111 @@
-Return-Path: <linux-kernel+bounces-332771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C315A97BE90
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:24:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A99E797BE83
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84009283975
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:24:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6796328354D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21538188A13;
-	Wed, 18 Sep 2024 15:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB96E1C68B4;
+	Wed, 18 Sep 2024 15:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="hddctL80"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWu/nLbZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99731C8FD2
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 15:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFFE7A15B;
+	Wed, 18 Sep 2024 15:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726672990; cv=none; b=eylZDWD6m821RBX47XytV5YjsJxeh+TPWcTUw9QphMUBH0s5LIKfsT4OtYfPBRyvS3oHQCXDVydLMSgCLwg37Aq5PsSqI5aHhsZShCOHD0M6R9NlWoAWwuZQdmNT1iQIxG6bT3KXrCwnjQpWLKjAq9+eHtBxKyr2QWUer8bkqls=
+	t=1726672863; cv=none; b=ueNq4LgfzO2FNVgSzK4MDhJfHS6LwHjqRyWPatOF85N0eC+4HLmiK+CXry55XpWit3tXOh2tIPbAVGyr36EDW7dlJUT/h+l//ezIA1dRoaxH5WRENjwrzqXyq0/QtbWPXC0HLznHAjFTWEP6UHDdwWxuOsZceFUNvoR/DjQtoTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726672990; c=relaxed/simple;
-	bh=M2A49kfdqyAWZvRJrIP5wKhFHwSlLuqKRlxMXsj6zv8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OcOUu+qY9mqLRyU4bRGVHRRsHyTzWGkWCGF5XT4OuZR08eZYKquE91rMYOOzSJE3mmDH4PTIYk43bK6R5Obvxk8hdZMuA5bpqf2zs0aDclC4TYe7adyQDRSAm2i2oPss/pKsIX2MwmbsXYrWxFV7VSv6mFCXPfRCigwKyQytFFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=hddctL80; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7a843bef98so753077566b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 08:23:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1726672987; x=1727277787; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/GKGe/hWzpQA7CxmPNU6MTXkgQYFW9SlpLsnQTn498s=;
-        b=hddctL80jV9O+aCO+lTJPRfR2Wjm9G717TtSU6wIyG4zJD/Rnn8KaC6w+Ocr/ZbEwd
-         q68v8rbsDj43sFx0zsGdzcSyF9PKIjP65n1RWMiryaSvydzLSQ/SbHX+pfb/r6BzUU/S
-         wP5mZjQGpZrV0dDULezu9QfmdaL3p8cpbgVt/JQ7rtkTYCuLF825YO8MoKTYHNGj5IYJ
-         SVpy6X3lm0nLx22Yg+j19O4qjyP6uhsBiFP/bo/Cn3NzK82ywDTwBcURcDhQ0PLoLg1m
-         WRz1vguu1ntNG/kd6gi8Ra5UXefwCSZzEtWgt4rR+pDND3M8Lhg/j0GuwfzuadcRJO6p
-         85XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726672987; x=1727277787;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/GKGe/hWzpQA7CxmPNU6MTXkgQYFW9SlpLsnQTn498s=;
-        b=apKP0DKUfRzS+vK34vgvjff4Gc7raouc92KdnKsM3HeryzEz3upHe4jNErwkXkviSK
-         FUVv8jBQoGz4Ir68RJ4o6UwlZSUd3ePVygP2TrLrNSHP6pvN6suMpPprhZYvZgJICZZ+
-         gFbvrDUiOnVuafpqRcuemcQGfBGE1FnTUzggo6CvbEq+7IyzQrXjZ71LgkYqZI19VYh/
-         /6MG03OC9r5oIcezB+Chh9mED39uCpg86hDk47/1qMO5ic4NIIlm5TMG8ElYB8JHtpVx
-         nhNHsSdNPkW83tkYvUxdh4EDeOaE5TSK73W45vKgFMy/1sUwpMXtLs2aJRXDyFmQGXCJ
-         wEFA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+1vRZLRNJ2J/j5lJAPe3i6rCfxJNGDqrHli0baFqQS8slmn9ABZPiPwpyUFn3dINQ5HLGQpy82YL4W8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+hF8sRVxqkM3JIe9fTQoKDgozduRTrFQSL92aKPwpZ2DUCoCX
-	AL7FRmezl9h/l4Tx/UdLBItLLLDH8MjykS5gPJvRoVqRjRtNoSr1j73I/7Ym9+g=
-X-Google-Smtp-Source: AGHT+IF27oxPM4gwWIjWaGLhEuTY+DzoBkiUWe7zvlHUcynBEODFEkD9+WkQ+qhTyttimMbGk2RgrQ==
-X-Received: by 2002:a17:907:e9f:b0:a86:8953:e1fe with SMTP id a640c23a62f3a-a904810755dmr2029019966b.47.1726672986922;
-        Wed, 18 Sep 2024 08:23:06 -0700 (PDT)
-Received: from fedora.sec.9e.network (ip-037-049-067-221.um09.pools.vodafone-ip.de. [37.49.67.221])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610967b0sm599791266b.42.2024.09.18.08.23.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 08:23:06 -0700 (PDT)
-From: Patrick Rudolph <patrick.rudolph@9elements.com>
-To: u-boot@lists.denx.de,
-	linux-kernel@vger.kernel.org
-Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Tom Rini <trini@konsulko.com>
-Subject: [PATCH v4 34/35] bloblist: Fix use of uninitialized variable
-Date: Wed, 18 Sep 2024 17:20:38 +0200
-Message-ID: <20240918152136.3395170-35-patrick.rudolph@9elements.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240918152136.3395170-1-patrick.rudolph@9elements.com>
-References: <20240918152136.3395170-1-patrick.rudolph@9elements.com>
+	s=arc-20240116; t=1726672863; c=relaxed/simple;
+	bh=h74MYu0CMAjngiyISC1+qiBUaTaAmY+BF5I44TzOFQk=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=QcDZ4nHV+2zu3TvX7js77NZdnDf3NTFYBCddcf55oayEeVDUIs1gDxwR3BY8ZtJg0yxRuGnewwlL55CcoyF2GU3L7g95o3RzP50Z0XVT6SUoF9Ju0aZmKdI0aPqwYECPDaWOWF7FIzOBLUr5GSD6HyrKnLfASLITwGVyIXgHEk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWu/nLbZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9FE6C4CEC3;
+	Wed, 18 Sep 2024 15:21:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726672862;
+	bh=h74MYu0CMAjngiyISC1+qiBUaTaAmY+BF5I44TzOFQk=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=YWu/nLbZF3y4sdm/3OduIKLe/XT4R7y2ikUHgB9K/VBfEdIy4ceX09gq/1MTt3pSi
+	 /4Re/5YjjHtrwq9+Nta1Tjw3ozq9fHWYv/OaKnVjdm4FMjxB8uLm+hBecPV4EDo/TL
+	 0+GXxGvauyUN5CCvgBjq++XCk7V9Npwl4+hkLiZYlm6sdb/VJR4YsEopLu/NIksnq4
+	 jwJyoV6pV0uH92gt507H9I1YmLL1Tt2yjOzMqTpfXzAnr0IxBsk0gbDDt5TFEm6AoQ
+	 doALZonCIQ0vC6nZjdEFnc1qzuu9Lk7Yrzg/ezWY5Xdi2KN7VccEkvvuhMcEKVldj4
+	 nHRu8GVXCnhSA==
+Date: Wed, 18 Sep 2024 10:21:01 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: devicetree@vger.kernel.org, wefu@redhat.com, guoren@kernel.org, 
+ paul.walmsley@sifive.com, palmer@dabbelt.com, drew@pdp7.com, 
+ krzk+dt@kernel.org, aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org, 
+ m.szyprowski@samsung.com, conor+dt@kernel.org, linux-kernel@vger.kernel.org, 
+ jassisinghbrar@gmail.com
+In-Reply-To: <20240918134901.193033-3-m.wilczynski@samsung.com>
+References: <20240918134901.193033-1-m.wilczynski@samsung.com>
+ <CGME20240918134926eucas1p1df23a583b356505939d4c5501bd6c80f@eucas1p1.samsung.com>
+ <20240918134901.193033-3-m.wilczynski@samsung.com>
+Message-Id: <172667286158.1610121.8972324212190229160.robh@kernel.org>
+Subject: Re: [PATCH RFC v1 2/3] dt-bindings: mailbox: Add
+ thead,th1520-mailbox bindings
 
-Initialize addr to zero which allows to build on the CI
-which is more strict.
 
-Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
----
- common/bloblist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 18 Sep 2024 15:49:00 +0200, Michal Wilczynski wrote:
+> Add bindings for the mailbox controller. This work is based on the vendor
+> kernel. [1]
+> 
+> Link: https://github.com/revyos/thead-kernel.git [1]
+> 
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  .../bindings/mailbox/thead,th1520-mbox.yaml   | 83 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 84 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
+> 
 
-diff --git a/common/bloblist.c b/common/bloblist.c
-index 2008ab4d25..cf1a3b8b62 100644
---- a/common/bloblist.c
-+++ b/common/bloblist.c
-@@ -499,7 +499,7 @@ int bloblist_init(void)
- {
- 	bool fixed = IS_ENABLED(CONFIG_BLOBLIST_FIXED);
- 	int ret = -ENOENT;
--	ulong addr, size;
-+	ulong addr = 0, size;
- 	/*
- 	 * If U-Boot is not in the first phase, an existing bloblist must be
- 	 * at a fixed address.
--- 
-2.46.0
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.example.dts:31.28-29 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.lib:442: Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1432: dt_binding_check] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240918134901.193033-3-m.wilczynski@samsung.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
