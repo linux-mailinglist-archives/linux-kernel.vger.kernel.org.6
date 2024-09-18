@@ -1,160 +1,155 @@
-Return-Path: <linux-kernel+bounces-332485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C5E97BA53
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:47:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4785A97BA58
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 11:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 426232816C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:47:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1EDC1F234EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 09:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747D717AE0B;
-	Wed, 18 Sep 2024 09:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583F817B401;
+	Wed, 18 Sep 2024 09:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfn7z9Am"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="js5NuPoK"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D9D6FCC;
-	Wed, 18 Sep 2024 09:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E65616E860
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 09:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726652848; cv=none; b=KjDWOjf1zKmx0CT0NAkKCi++TJeWtsxSIJ0l0bH1UsHjpnlFGIW/91QU+rvMuSHBPVQ1WvHPTRFvYPSHSej0xarVVG76WW1lMGWq06ne+xK4M7XQ+ZalYtKhMot2oLIDZ73IKNLDRlX53YScDBrS7n4eENxku/hnl2MHLBR5iBM=
+	t=1726653071; cv=none; b=GrTnXkuKKC2tGSJg1L+l5aoWGXuAdCshJdpUAAGLREmytL82FCi7SpGnUAhG7lsYA6vUi9ep+kZsQwWOLfelmlZ2iFMTHhXp7fkiBHdTqL6bsZYQ+gIKZUDNHD+wAzy5vVTtkfztiGCUv2fmsofAouwlTA0RMDbHkOjzO5LNCbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726652848; c=relaxed/simple;
-	bh=KYURACM8Ml+oXgLpSqcW4uefRW+H9KKlh2+cTgne97g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HI0e8J2NvJGUWRHq5biVjKrR3E2h9H6a8ls/qEW+uATi1T2bbNZlQau4Uz/y5kKqZpYHU6wq+mtMmQIW5rAIuHTq7EIhqxoLj0+vaivvtA3D+oLHXJnd3koG0mnbvVaZYM3sep0rJTnxWxpYcILZMVq86+eZLAbTwvIga3LQXso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gfn7z9Am; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-536748c7e9aso7920067e87.0;
-        Wed, 18 Sep 2024 02:47:26 -0700 (PDT)
+	s=arc-20240116; t=1726653071; c=relaxed/simple;
+	bh=YYveKDNyLV/O+GuIZezG/H+dg/pEIjQTXZMwxfSjq/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NfcY9aXzlF+dRww3+CDu8YRg8M/Y3WCfqIlGqyueUsiKqnuXjLz/+W5WX6+KTO4z9l2lTIXg2EYkW6vwE9XyClQanE6+Pyu1yXcfeHbX6MNgu+wc3aiOKPWVvGISqYKPy+s0kGfjbpHNw4WCCjzhgmdA3oi4/Tvznm+R1BxYIsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=js5NuPoK; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso102666666b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 02:51:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726652845; x=1727257645; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TY2rYPGlE0vWg6gT7yYeg30ZK7sblLGMWQMlgB7ozqM=;
-        b=gfn7z9Am3fNm0mo1CsUabIc9pQWnjBleHxfgvqjMhAb95R8GxEK7jrVCJLuNxOHrQA
-         otClPwmARAxDquwJNQK4ZPwr8XZi7GEAdsePOgR0YBALYr2+37MDHxI302b9tLYdG3mp
-         jVakJXW5m1NG4IrG2EAFx8syzS1rDZbBprrfnWleJ/FlEVwqhF52ii8Qm1UYpYlXdksy
-         4dNekd3IeyWq2c/jpOFPADnda8aqLGL5dInJfCDOVrmwljK0H7sqgQA1ZVhyGroSjYmU
-         b6/E82gdKVfO4eGfq3ClkRrq/ysDAg98p+EetZ81QyMnRXbhtVVb3BL+b/1a0ZFLSQau
-         N7dw==
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1726653068; x=1727257868; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U5Lz1QWVFmZd2N1NR4+boEn5JCoZBGXe5wWgia0cON4=;
+        b=js5NuPoKWQ3/7Er/hcnJ06/MjTq1CnwJN0fwvs/Wtell0wWMwxV5iaJDLb3gcroNKj
+         ZJ7sp9EWEhWHfZG9wAuDNeOMUn5UninPRsjKJzL4u8RGacMfsV0dRLQaGeIvlRJfLiSl
+         OrZopnQPbGCK5MtP+YcAAqPP50RmOUOXwCCLfsT1cMmm0OFMg/l9aB3oJpXyamXHeJPw
+         JqvVcQ9q6kZ/hqM1DGrXahR2ZeE90O+Cfz8QlGRMpSiNe5A6eNmdIIc4fgtO38m4a2bl
+         Xx+oP0oB9B416DZnj3VY0uOGodn2k9t+XH1+CvuAqrYSQrL23cS0Rg5maAxbbbmwbIia
+         LmNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726652845; x=1727257645;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TY2rYPGlE0vWg6gT7yYeg30ZK7sblLGMWQMlgB7ozqM=;
-        b=SaT7efm7xRCzURvLXyjTQ+fLtIfNw4Nett2iagKO1a25OwHfcZiCVriOepjFhJ9KOG
-         Fouyh/iW7dEEFwXpcYshDijIA/gC7joqdXwXGggPo2dNBThR9vtlWiQ8G3EBQ4OBlVEZ
-         5A3tOpwnzXC7fN+0CLhL0skcoPV1EHYzetYJA57zTum5u62JEjRKrfbip6oPfki50/5f
-         IPdAW38ESe3jZH4oQpo+kYm0haTNB813DOgHladOhxNBffwTdp4KdSByFKfEbXsJlowW
-         Wg8i0876phZ+75MLL5a8hSVR4B3pIvrAaxY59FhLS0lKoagJWJ1DqVLVkLj4sH/SYUvZ
-         xZ0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUo0JLMZC048fxgl72/tYVE9g7VAzlZUW6iEdhRULRQnFgU/pKTAFTTaPFsFyRBBH0vIydr0RtGnIuFEhN4@vger.kernel.org, AJvYcCUuaJSVB6tPZ4oITVd4wesmegc+lH7f6F2ATe3aW4Q+PnchmWniLDoVD6a9lWgoK84l2PrltuvY0saP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFR59DX3hrXKoSNX0Kk0sn3BkgqJ3sXMDQPZWCu2piQByAvsgj
-	13Qoxp7nzn7UyEmckbrzZBO1ubEdZTQKeJA4eGPZzc8Qo+CCI85wtlUgl5TI5uhx7myXyQtOcGC
-	aZZd/cal9QF3oOEoHrhWiGGE+rw==
-X-Google-Smtp-Source: AGHT+IE8mSq9PP7PwdXQaB8swlr8wM6nQTvYf7oqaQMdaVQ5EDeydZlbEtu51pTvRiG7d2NjtJwikQ1Y/YBCFxmQE7A=
-X-Received: by 2002:a05:6512:280d:b0:536:5413:2d47 with SMTP id
- 2adb3069b0e04-53678feb11fmr12885649e87.41.1726652844767; Wed, 18 Sep 2024
- 02:47:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726653068; x=1727257868;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U5Lz1QWVFmZd2N1NR4+boEn5JCoZBGXe5wWgia0cON4=;
+        b=mHwDPxwN3pm3Z+cbm4uLvHAWxStcpWPDFrA5DLdZ0GpJnK3dU1+34ljQqQq2uWr3Vg
+         iF521M1NKEWw7qiMyKvyUD1Oq9OBbEKHcZ9AXMyJiMRMaeEGHdAPX1wh4nOo9xHWhOnH
+         0SqbcYoL4GOPF9VGA/mBprqkmKSV2Ju09/zJaHtRMiqYhhdrlcykyxJyxyaKTb74QP70
+         qVbLlbaGsTId1v4gOuTvQMD1IoNxBFkV+/+JdLiL2hQOVXioasYh6zq0g+uy6NyUeVhr
+         jb625361k5pp+jqYzXQ5nYwfNPUAVlrWErFOm3r3uwTG6T89RAHy1RwRBQ0z8q2eNFyb
+         u4/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWv/MwKmdvERlTTqFxxNfIaAPkg8nQVkxVBUbx/Nwceo7Ygb3VHMgV56NUzSQLjvbqaXWM4RL/ozjV5gGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJYYWpozd210wWbZX4t9a1wN0kvlzv4/ndNlbN1F3kgOAI1tEo
+	Dg1DpH/fhxAU6mitM7xet9rdJwXnot2uLQa2c6egChtZQ+3047JaGKl1ANUepus=
+X-Google-Smtp-Source: AGHT+IGh+5daTFsNyDKlbll7KebWFSlnclyKmAwqiRqpM+wguKxxuLaiVoIA7Zfzj5R3BOYGBvdN6A==
+X-Received: by 2002:a17:907:3f91:b0:a8d:5f69:c839 with SMTP id a640c23a62f3a-a8ffabbcc0cmr2879337466b.15.1726653068106;
+        Wed, 18 Sep 2024 02:51:08 -0700 (PDT)
+Received: from [192.168.0.245] ([62.73.69.208])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612df75csm568606066b.149.2024.09.18.02.51.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2024 02:51:07 -0700 (PDT)
+Message-ID: <ebef9a36-d060-4df3-b139-3dda4a84484a@blackwall.org>
+Date: Wed, 18 Sep 2024 12:51:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917094956.437078-1-erezgeva@nwtime.org> <20240917094956.437078-4-erezgeva@nwtime.org>
- <9c273945-5a70-408e-a9da-a0797aa6d935@kernel.org> <CANeKEMN+ZUAGKGsqnaToDB3AxX9NN_JeCBWHwd-wwnTWLU3R+g@mail.gmail.com>
- <64ef46b1-7908-4b15-866d-9cabe2e5dc9e@kernel.org> <CANeKEMPwgtECfksgz6jXkR+bjVFwCB9DOh1q7t_3WeojReqxbA@mail.gmail.com>
- <e0db2f62-b2fd-4b61-932c-cc2caf5dd647@kernel.org> <CANeKEMNCFKX2thq+Ws0vy9ovbQ7dve3YPh_FbRaoOEgL+7c_Mw@mail.gmail.com>
- <fe98e49d-96d1-462f-99ac-93d8a53e55fd@kernel.org> <CANeKEMNg_hPcVHVo2c9u1Vdzaso0ODT+2uLmip6sd26uK8d_FQ@mail.gmail.com>
- <20240917-taps-applied-6c0d411bbe08@squawk> <CANeKEMOXZjgLm-Wb8+9RMJYNN1a2Oy81P3MXZiLxNaAerLhYEA@mail.gmail.com>
- <a74cf534-b8ce-4d06-b15b-3df349b48c4e@kernel.org>
-In-Reply-To: <a74cf534-b8ce-4d06-b15b-3df349b48c4e@kernel.org>
-From: Erez <erezgeva2@gmail.com>
-Date: Wed, 18 Sep 2024 11:46:47 +0200
-Message-ID: <CANeKEMMGChm54BNJL6P+-K6OoD6U=OVXo8ss9JgxCQMY+_roqA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/5] dt-bindings: mtd: spi-nor: add OTP parameters
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Conor Dooley <conor@kernel.org>, Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Pratyush Yadav <pratyush@kernel.org>, 
-	Michael Walle <mwalle@kernel.org>, linux-kernel@vger.kernel.org, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Esben Haabendal <esben@geanix.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] bonding: Add net_ratelimit for
+ bond_xdp_get_xmit_slave in bond_main.c
+To: Jiwon Kim <jiwonaid0@gmail.com>, jv@jvosburgh.net, andy@greyhouse.net,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+ john.fastabend@gmail.com, joamaki@gmail.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com
+References: <20240918083545.9591-1-jiwonaid0@gmail.com>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20240918083545.9591-1-jiwonaid0@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 18 Sept 2024 at 10:23, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 17/09/2024 23:29, Erez wrote:
-> >>>
-> >>> I install dt-schema_2023.11-3_all.deb
-> >>> with Debian trixie
-> >>> I get:
-> >>>
-> >>> l
-> >>>   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
-> >>> Traceback (most recent call last):
-> >>>   File "/usr/bin/dt-mk-schema", line 8, in <module>
-> >>>     sys.exit(main())
-> >>>              ^^^^^^
-> >>>   File "/usr/lib/python3/dist-packages/dtschema/mk_schema.py", line 28, in main
-> >>>     schemas = dtschema.DTValidator(args.schemas).schemas
-> >>>               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> >>>   File "/usr/lib/python3/dist-packages/dtschema/validator.py", line
-> >>> 363, in __init__
-> >>>     self.make_property_type_cache()
-> >>>   File "/usr/lib/python3/dist-packages/dtschema/validator.py", line
-> >>> 420, in make_property_type_cache
-> >>>     self.props, self.pat_props = get_prop_types(self.schemas)
-> >>>                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> >>>   File "/usr/lib/python3/dist-packages/dtschema/validator.py", line
-> >>> 187, in get_prop_types
-> >>>     del props[r'^[a-z][a-z0-9\-]*$']
-> >>>         ~~~~~^^^^^^^^^^^^^^^^^^^^^^^
-> >>> KeyError: '^[a-z][a-z0-9\\-]*$'
-> >>> make[2]: *** [Documentation/devicetree/bindings/Makefile:64:
-> >>> Documentation/devicetree/bindings/processed-schema.json] Error 1
-> >>> make[2]: *** Deleting file
-> >>> 'Documentation/devicetree/bindings/processed-schema.json'
-> >>> make[1]: *** [/home/builder/kernel/Makefile:1435: dt_binding_schemas] Error 2
-> >>
-> >> Have you considered that this might be because of the invalid types you
-> >> used?
-> >
-> > I remove the types.
-> > Anyway, scripts should report on errors, not crash.
-> > This is the purpose of syntax scripts, to help us, developers find out errors.
->
-> Yeah, things can be improved. Help in that is always welcomed.
->
-> The package you installed is very old (almost a year old!). I suggest
+On 18/09/2024 11:35, Jiwon Kim wrote:
+> Add net_ratelimit to reduce warnings and logs.
+> This addresses the WARNING in bond_xdp_get_xmit_slave reported by syzbot.
+> 
 
-Debian tend to be old and stable (althguh this packages comes from sid).
+This commit message is severely lacking. I did the heavy lifting and gave you
+detailed analysis of the problem, please describe the actual issue and why
+this is ok to do. Also the subject is confusing, it should give a concise
+summary of what the patch is trying to do and please don't include filenames in it.
+You can take a look at other commits for examples.
 
-> using pip or pipx (or virtualenv or whatever Python setup you have).
+> Setup:
+>     # Need xdp_tx_prog with return XDP_TX;
+>     ip l add veth0 type veth peer veth1
+>     ip l add veth3 type veth peer veth4
+>     ip l add bond0 type bond mode 6 # <- BOND_MODE_ALB, unsupported by xdp
+>     ip l add bond1 type bond # <- BOND_MODE_ROUNDROBIN by default
+>     ip l set veth0 master bond1
+>     ip l set bond1 up
+>     ip l set dev bond1 xdpdrv object tx_xdp.o section xdp_tx
+>     ip l set veth3 master bond0
+>     ip l set bond0 up
+>     ip l set veth4 up
+>     ip l set veth3 xdpgeneric object tx_xdp.o section xdp_tx
 
-I'll try.
-Though I am not a python developer. I usually do not use pip.
+Care to explain why this setup would trigger anything?
 
-I did see a version checking:
+> 
+> Reported-by: syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=c187823a52ed505b2257
+> Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driver")
+> Signed-off-by: Jiwon Kim <jiwonaid0@gmail.com>
+> ---
+> v2: Change the patch to fix bond_xdp_get_xmit_slave
+> ---
+>  drivers/net/bonding/bond_main.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+> index b560644ee1b1..91b9cbdcf274 100644
+> --- a/drivers/net/bonding/bond_main.c
+> +++ b/drivers/net/bonding/bond_main.c
+> @@ -5610,9 +5610,12 @@ bond_xdp_get_xmit_slave(struct net_device *bond_dev, struct xdp_buff *xdp)
+>  		break;
+>  
+>  	default:
+> -		/* Should never happen. Mode guarded by bond_xdp_check() */
+> -		netdev_err(bond_dev, "Unknown bonding mode %d for xdp xmit\n", BOND_MODE(bond));
+> -		WARN_ON_ONCE(1);
+> +		/* This might occur when a bond device increases bpf_master_redirect_enabled_key,
+> +		 * and another bond device with XDP_TX and bond slave.
+> +		 */
 
-$ make dt_binding_check
-sort: -:2: disorder: 2022.08.2
-ERROR: dtschema minimum version is v2023.9
+The comment is confusing and needs to be reworded or dropped altogether.
 
-Thanks
-Erez
+> +		if (net_ratelimit())
+> +			netdev_err(bond_dev, "Unknown bonding mode %d for xdp xmit\n",
+> +				   BOND_MODE(bond));
+>  		return NULL;
+>  	}
+>  
 
->
-> Best regards,
-> Krzysztof
->
 
