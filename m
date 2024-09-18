@@ -1,298 +1,237 @@
-Return-Path: <linux-kernel+bounces-332659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217F397BCBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:05:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2343697BCC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 467F81C2191E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:04:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9DBB1F214D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090CD189F43;
-	Wed, 18 Sep 2024 13:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046B4189F43;
+	Wed, 18 Sep 2024 13:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZutlTol"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="PG7SvGYR"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D4C187FE6
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAA11741C8
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726664694; cv=none; b=Me2H/kMHRhrzVWb/GTA87vuR5ZnnytxNUe4YsRGuBiQr4OVJhh05e/G7woX3LxW/YnXmi4e7R8a+12t5QpLXBYi9sfYF/p2bLyJ8v0zqd4r7DJZFO5Q8XlTFRTRc6mu/rFTXDMR6jG4w897QjbNFi2CevVZ2Wmbf1mmmvYqeB1U=
+	t=1726664803; cv=none; b=V1HchZXR3tottv2p/aqZWsuqQdI839cbBecqtiBtbxWtOh9G9jh/JbG/vR7pXTiovwVc0x/gGD2ELq8zJS/PzXZst+M2mnlbhuH/aiRjcNW8BiDK+RWUUVratksO4RRIrdUSNGCOGiabH47UvK2egMsmbFyLvL6EcGoonNJ/wRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726664694; c=relaxed/simple;
-	bh=U9TRi1NngSMZJgZaHmW7qjo4mB7BN2H6t4P0rb+Y7Bc=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=SYCYKUo6JEsS5E5/C5E3muXGepIco1ll1+MV7OF2Nw5r8U2j2BUK3/QFkBYRQxHjLRyUtHGPpWugzIGYDWJxQchTuFLCTxC4vEmZs/a3XQoTo8e+cH9huH+ZoY2Jv3cVYLXGgEpjuAh0cCROpWn0iEVuMyYXx8EfA6D3gnIGm9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oZutlTol; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62F5EC4CEC3;
-	Wed, 18 Sep 2024 13:04:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726664693;
-	bh=U9TRi1NngSMZJgZaHmW7qjo4mB7BN2H6t4P0rb+Y7Bc=;
-	h=Date:From:To:cc:Subject:From;
-	b=oZutlTolA8G1a8bfFqBogqThIyMmDzmwcphNtVL7JTik49YIKVXilLq70TZdi8BVh
-	 eoYAVLRsW6RgmEDdqSvo9QTAsAy7zj2PgUs9Npc84fadk+12i7xze0Eey1JJZxKPP/
-	 0GBAIgdXq8bL/ZGb6EotB6DWJ/KKLuCJf1JSx1xP7CCftqbGMWUo3ruSIjhGOVPKDo
-	 n/u94yaqQoaEPZRp6GfoAC534waUSMkfnqf8kTGTIzbb91kh/xVdr8hXSCOmhSrP40
-	 e0x4nfdMLrWiuTLb5wOqC6FGHIa06HRa/syPWpTr42YPTZaDY2H/KeRB+9QcHr3sb3
-	 eViz5+udvEQ7Q==
-Date: Wed, 18 Sep 2024 15:04:51 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>
-Subject: [GIT PULL] HID for 6.12
-Message-ID: <nycvar.YFH.7.76.2409181132240.31206@cbobk.fhfr.pm>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1726664803; c=relaxed/simple;
+	bh=n7Rs+MNwO+iNDoYIWw7rq+GmfD7F4sZFMUb1/TktftI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H5Hwb37IYPJ9jgj6pKaAM8fUzvbl0254F175DX558ovDlIpxJO5pOTdlHinVNrMyI7DTm0fgyLhIMTPa+uW/moEWjtZVe/7oMn8mAXJ3dNvoSLdbo5jXRgNCCF2pPrjwp2T0YzYv/g16ZpPXuXBsMvb+0SldNRdimJmYZgLqqY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=PG7SvGYR; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 6F2CE3F748
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 13:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1726664792;
+	bh=8l2x542gYIchymchoFuMWg32uMUCoYpfBV/jXlvRWAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=PG7SvGYRuAHjL/d5F0CeYdwgdrZJZ09hIvIBF+xe6dHYse1SZgAFUxvqeUJJgoxrF
+	 xHEbXKid76HeNo1FkhEYH7sFO6+zlwpmzprUmE2C7BQpfZe6kovI6RiF99D1K0pOnM
+	 MKO1QLYKvvJE4y/c/HyzLtIc6y8vBjoA0c+rnAJwve8U4ChL6ClZYsWZ+lk7O7bxic
+	 dAKzXY9o0rRbfornP+y0jlcI0qaYcAsxbSMp8Mfviq/+ircRLev6zCxJUdJbXdAYUJ
+	 VE/sBDEsbFu+GnFHlmOgrOYSJpGHgp65bdMy/fAhnQlv+n7w3VN3IfNVpPLjghgNrU
+	 aXNLWxfu2KYLw==
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cb236ad4aso44199415e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 06:06:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726664792; x=1727269592;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8l2x542gYIchymchoFuMWg32uMUCoYpfBV/jXlvRWAk=;
+        b=P3OdjceOqBMlpfJeykiEysq8uwMqposRBi8FN6+g5xXmt9lbVx2FpOIL1+9X1LbfTX
+         9HQTgRg6ayoDcx2bf4YVUdv5JEO924RcANi/nJTn3WUYVH1C0oZ55cdblCAf8ze0ZU4r
+         vbvjzcK1Aq64aoQjv5MQHYVfqtYmUf/YrrxJoqsuGphO2PkwR/hgivtCaUfQzURmRQhQ
+         I8G3wLNQjzvCCqg28vIqQfOMIwUtrpbBS1+6FkC4bEouyrFN7UPpwP1kZQ2Es6So7T1Q
+         o70uL7Ynj0WpMvUlWCsVtSeExtiD0Uvxct2HSMf+O1chiK36XGeoVU4isFU3BzkBmZvE
+         16TA==
+X-Forwarded-Encrypted: i=1; AJvYcCUp9HTs/PQUF7af5rQZ8UQA3VOiJnYgrCWNECFeXVIyWHBAC118uyu9Twy7Ty20CGbBOFnPepkxq3ISZeo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy8Dwf8VmWXY9f5OUxon2fPtfE3AXYCTIW2gaQAxqQ6qJyBBmA
+	bYcfTf0DVW6cCNHa2dwQ1yEZIdaDFa5MAnIUPeLRnJ3N7P29OCz3H+oX5ZIuHDxFDEKM/GMSVqv
+	EwQMKGVBIm7Ubikv7FzF21WnwFHnHZdrq0OnXAPBzSGEIyFGj0xrw6aKNIHPRhRFh7rUUd1PzG6
+	1DtA==
+X-Received: by 2002:a05:600c:511b:b0:42c:a72a:e8f4 with SMTP id 5b1f17b1804b1-42cdb5317cbmr172610005e9.14.1726664791862;
+        Wed, 18 Sep 2024 06:06:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IENUt5bat+VyuH/X8ftjxUcPkWydjb9viwhSYt5aRmGL/qmuhxrHiMPPpyLNd/r+qN+rQ2zTw==
+X-Received: by 2002:a05:600c:511b:b0:42c:a72a:e8f4 with SMTP id 5b1f17b1804b1-42cdb5317cbmr172609685e9.14.1726664791267;
+        Wed, 18 Sep 2024 06:06:31 -0700 (PDT)
+Received: from [192.168.103.101] (dynamic-046-114-111-082.46.114.pool.telefonica.de. [46.114.111.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f99b0sm12303634f8f.60.2024.09.18.06.06.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2024 06:06:30 -0700 (PDT)
+Message-ID: <bab7a5ce-74b6-49ae-b610-9a0f624addc0@canonical.com>
+Date: Wed, 18 Sep 2024 15:06:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] target/riscv: enable floating point unit
+To: Peter Maydell <peter.maydell@linaro.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+ Alistair Francis <alistair.francis@wdc.com>, Bin Meng <bmeng.cn@gmail.com>,
+ Weiwei Li <liwei1518@gmail.com>,
+ Daniel Henrique Barboza <dbarboza@ventanamicro.com>,
+ Liu Zhiwei <zhiwei_liu@linux.alibaba.com>, qemu-riscv@nongnu.org,
+ qemu-devel@nongnu.org, Anup Patel <anup@brainfault.org>,
+ Atish Patra <atishp@atishpatra.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Andrew Jones <ajones@ventanamicro.com>
+References: <20240916181633.366449-1-heinrich.schuchardt@canonical.com>
+ <20240917-f45624310204491aede04703@orel>
+ <15c359a4-b3c1-4cb0-be2e-d5ca5537bc5b@canonical.com>
+ <20240917-b13c51d41030029c70aab785@orel>
+ <8b24728f-8b6e-4c79-91f6-7cbb79494550@canonical.com>
+ <20240918-039d1e3bebf2231bd452a5ad@orel>
+ <CAFEAcA-Yg9=5naRVVCwma0Ug0vFZfikqc6_YiRQTrfBpoz9Bjw@mail.gmail.com>
+Content-Language: en-US
+From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+In-Reply-To: <CAFEAcA-Yg9=5naRVVCwma0Ug0vFZfikqc6_YiRQTrfBpoz9Bjw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Linus,
+On 18.09.24 13:10, Peter Maydell wrote:
+> On Wed, 18 Sept 2024 at 07:06, Andrew Jones <ajones@ventanamicro.com> wrote:
+>>
+>> On Tue, Sep 17, 2024 at 06:45:21PM GMT, Heinrich Schuchardt wrote:
+>> ...
+>>> When thinking about the migration of virtual machines shouldn't QEMU be in
+>>> control of the initial state of vcpus instead of KVM?
+>>>
+>>
+>> Thinking about this more, I'm inclined to agree. Initial state and reset
+>> state should be traits of the VMM (potentially influenced by the user)
+>> rather than KVM.
+> 
+> Mmm. IIRC the way this works on Arm at least is that at some point
+> post-reset and before running the VM we do a QEMU->kernel state
+> sync, which means that whatever the kernel does with the CPU state
+> doesn't matter, only what QEMU's idea of reset is. Looking at the
+> source I think the way this happens is that kvm_cpu_synchronize_post_reset()
+> arranges to do a kvm_arch_put_registers(). (For Arm we have to do
+> some fiddling around to make sure our CPU state is in the right
+> place for that put_registers to DTRT, which is what kvm_arm_reset_vcpu()
+> is doing, but that's a consequence of the way we chose to handle
+> migration and in particular migration of system registers rather than
+> something necessarily every architecture wants to be doing.)
+> 
+> This also works for reset of the vCPU on a guest-reboot. We don't
+> tell KVM to reset the vCPU, we just set up the vCPU state on the
+> QEMU side and then do a QEMU->kernel state sync of it.
+> 
+> -- PMM
 
-please pull from
+Thanks Peter for looking into this.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-li=
-nus-2024091602
+QEMU's cpu_synchronize_all_post_init() and 
+do_kvm_cpu_synchronize_post_reset() both end up in 
+kvm_arch_put_registers() and that is long after Linux 
+kvm_arch_vcpu_create() has been setting some FPU state. See the output 
+below.
+
+kvm_arch_put_registers() copies the CSRs by calling 
+kvm_riscv_put_regs_csr(). Here we can find:
+
+     KVM_RISCV_SET_CSR(cs, env, sstatus, env->mstatus);
+
+This call enables or disables the FPU according to the value of 
+env->mstatus.
+
+So we need to set the desired state of the floating point unit in QEMU. 
+And this is what the current patch does both for TCG and KVM.
+
+Best regards
+
+Heinrich
 
 
-to receive HID subsystem queue for 6.12 merge window, namely:
+$ qemu-system-riscv64 -M virt -accel kvm -nographic -kernel payload.bin
+QEMU qemu_init: Entry
+QEMU qmp_x_exit_preconfig: Entry
+[ 3503.369249] kvm_arch_vcpu_create: Entry
+[ 3503.369669] kvm_riscv_vcpu_fp_reset: At entry FS=0
+[ 3503.369966] kvm_riscv_vcpu_fp_reset: At exit FS=8192
+[ 3503.370256] kvm_arch_vcpu_create: Exit
+[ 3503.378620] kvm_arch_vcpu_create: Entry
+[ 3503.379123] kvm_riscv_vcpu_fp_reset: At entry FS=0
+[ 3503.379610] kvm_riscv_vcpu_fp_reset: At exit FS=8192
+[ 3503.380111] kvm_arch_vcpu_create: Exit
+[ 3503.394837] kvm_arch_vcpu_create: Entry
+[ 3503.395238] kvm_riscv_vcpu_fp_reset: At entry FS=0
+[ 3503.395585] kvm_riscv_vcpu_fp_reset: At exit FS=8192
+[ 3503.395947] kvm_arch_vcpu_create: Exit
+[ 3503.397023] kvm_riscv_vcpu_set_reg_config:
+[ 3503.398066] kvm_riscv_vcpu_set_reg_config:
+[ 3503.398430] kvm_riscv_vcpu_set_reg_config:
+QEMU riscv_cpu_reset_hold: Entry
+QEMU kvm_riscv_reset_vcpu: Entry
+QEMU kvm_riscv_reset_vcpu: Exit
+QEMU riscv_cpu_reset_hold: Exit
+QEMU qemu_machine_creation_done: Entry
+QEMU qdev_machine_creation_done: Entry
+QEMU cpu_synchronize_all_post_init: Entry
+QEMU cpu_synchronize_post_init: Entry
+QEMU kvm_cpu_synchronize_post_init: Entry
+QEMU do_kvm_cpu_synchronize_post_init: Entry
+QEMU kvm_arch_put_registers: Entry
+QEMU kvm_riscv_put_regs_csr: Entry
+QEMU kvm_riscv_put_regs_csr: Exit
+QEMU kvm_arch_put_registers: Exit
+QEMU do_kvm_cpu_synchronize_post_init: Exit
+QEMU kvm_cpu_synchronize_post_init: Exit
+QEMU cpu_synchronize_post_init: Exit
+QEMU cpu_synchronize_all_post_init: Exit
+QEMU qemu_system_reset: Entry
+QEMU kvm_arch_get_registers: Entry
+QEMU riscv_cpu_reset_hold: Entry
+QEMU kvm_riscv_reset_vcpu: Entry
+QEMU kvm_riscv_reset_vcpu: Exit
+QEMU riscv_cpu_reset_hold: Exit
+QEMU cpu_synchronize_all_post_reset: Entry
+QEMU cpu_synchronize_post_reset: Entry
+QEMU do_kvm_cpu_synchronize_post_reset: Entry
+QEMU kvm_arch_put_registers: Entry
+QEMU kvm_riscv_put_regs_csr: Entry
+QEMU kvm_riscv_put_regs_csr: Exit
+QEMU kvm_riscv_sync_mpstate_to_kvm: Entry
+QEMU kvm_riscv_sync_mpstate_to_kvm: Exit
+QEMU kvm_arch_put_registers: Exit
+QEMU do_kvm_cpu_synchronize_post_reset: Exit
+QEMU cpu_synchronize_post_reset: Exit
+QEMU cpu_synchronize_all_post_reset: Exit
+QEMU qemu_system_reset: Exit
+QEMU qdev_machine_creation_done: Exit
+QEMU qmp_x_exit_preconfig: Exit
+QEMU qemu_init: Exit
+QEMU kvm_cpu_exec: Entry
+[ 3503.566493] kvm_arch_vcpu_ioctl_run: run->ext_reason 0
+QEMU kvm_cpu_exec: Exit
+QEMU kvm_cpu_exec: Entry
+[ 3503.568338] kvm_arch_vcpu_ioctl_run: run->ext_reason 0
+[ 3503.568740] kvm_riscv_check_vcpu_requests: Entry
+[ 3503.569534] kvm_riscv_check_vcpu_requests: Entry
 
-=3D=3D=3D=3D=3D
-
-- New HID over SPI driver for Goodix devices that don't follow Microsoft's=
-=20
-  HID-over-SPI specification, so a separate driver is needed. Currently=20
-  supported device is GT7986U touchscreen (Charles Wang)
-
-- support for new hardware features in Wacom driver (high-res wheel=20
-  scrolling, touchstrings with relative motions, support for two=20
-  touchrings) (Jason Gerecke)
-
-- support for customized vendor firmware loading in intel-ish driver=20
-  (Zhang Lixu)
-
-- fix for theoretical race condition in i2c-hid (Dmitry Torokhov)
-
-- support for HIDIOCREVOKE -- evdev's EVIOCREVOKE equivalent in hidraw=20
-  (Peter Hutterer)
-
-- initial hidraw selftest implementation (Benjamin Tissoires)
-
-- constification of device-specific report descriptors (Thomas Wei=DFschuh)
-
-- other small assorted fixes and device ID / quirk additions
-
-=3D=3D=3D=3D=3D
-
-Thanks.
-
-----------------------------------------------------------------
-Benjamin Tissoires (4):
-      HID: samples: fix the 2 struct_ops definitions
-      selftests/hid: extract the utility part of hid_bpf.c into its own hea=
-der
-      selftests/hid: Add initial hidraw tests skeleton
-      selftests/hid: Add HIDIOCREVOKE tests
-
-Charles Wang (2):
-      HID: hid-goodix: Add Goodix HID-over-SPI driver
-      dt-bindings: input: Goodix SPI HID Touchscreen
-
-Chen Ni (2):
-      HID: amd_sfh: Convert comma to semicolon
-      HID: hid-sensor-custom: Convert comma to semicolon
-
-Dan Carpenter (1):
-      HID: hid-goodix: Fix type promotion bug in goodix_hid_get_raw_report(=
-)
-
-Dmitry Torokhov (1):
-      HID: i2c-hid: ensure various commands do not interfere with each othe=
-r
-
-Hans de Goede (1):
-      HID: Ignore battery for all ELAN I2C-HID devices
-
-He Lugang (1):
-      HID: multitouch: Add support for lenovo Y9000P Touchpad
-
-Jason Gerecke (6):
-      HID: wacom: Improve warning for tablets falling back to default resol=
-ution
-      HID: wacom: Support touchrings with relative motion
-      HID: wacom: Add preliminary support for high-resolution wheel scrolli=
-ng
-      HID: wacom: Support devices with two touchrings
-      HID: wacom: Support sequence numbers smaller than 16-bit
-      HID: wacom: Do not warn about dropped packets for first packet
-
-Jinjie Ruan (1):
-      hid: cp2112: Use irq_get_trigger_type() helper
-
-Kerem Karabay (1):
-      HID: core: add helper for finding a field with a certain usage
-
-Max Staudt (1):
-      HID: hid-playstation: DS4: Update rumble and lightbar together
-
-Peter Hutterer (1):
-      HID: hidraw: add HIDIOCREVOKE ioctl
-
-Thomas Wei=DFschuh (22):
-      HID: bpf: constify parameter rdesc of call_hid_bpf_rdesc_fixup()
-      HID: constify parameter rdesc of hid_parse_report()
-      HID: constify hid_device::rdesc
-      HID: constify params and return value of fetch_item()
-      HID: constify hid_device::dev_rdesc
-      HID: change return type of report_fixup() to const
-      HID: cmedia: constify fixed up report descriptor
-      HID: winwing: constify read-only structs
-      HID: bigbenff: constify fixed up report descriptor
-      HID: dr: constify fixed up report descriptor
-      HID: holtek-kbd: constify fixed up report descriptor
-      HID: keytouch: constify fixed up report descriptor
-      HID: maltron: constify fixed up report descriptor
-      HID: xiaomi: constify fixed up report descriptor
-      HID: vrc2: constify fixed up report descriptor
-      HID: viewsonic: constify fixed up report descriptor
-      HID: steelseries: constify fixed up report descriptor
-      HID: pxrc: constify fixed up report descriptor
-      HID: sony: constify fixed up report descriptor
-      HID: waltop: constify fixed up report descriptor
-      HID: uclogic: constify fixed up report descriptor
-      HID: lg: constify fixed up report descriptor
-
-Thomas Zimmermann (1):
-      HID: picoLCD: Use backlight power constants
-
-Vishnu Sankar (1):
-      HID: multitouch: Add support for Thinkpad X12 Gen 2 Kbd Portfolio
-
-Yue Haibing (2):
-      HID: intel-ish-hid: Remove unused declarations
-      HID: amd_sfh: Remove unused declarations
-
-Zhang Lixu (3):
-      Documentation: hid: intel-ish-hid: Add vendor custom firmware loading
-      HID: intel-ish-hid: Use CPU generation string in driver_data
-      hid: intel-ish-hid: Add support for vendor customized firmware loadin=
-g
-
-Zhaoxiong Lv (2):
-      dt-bindings: HID: i2c-hid: elan: Introduce Elan ekth6a12nay
-      HID: i2c-hid: elan: Add elan-ekth6a12nay timing
-
-tammy tseng (1):
-      HID: add patch for sis multitouch format
-
- .../devicetree/bindings/input/elan,ekth6915.yaml   |   4 +-
- .../devicetree/bindings/input/goodix,gt7986u.yaml  |  71 ++
- Documentation/hid/intel-ish-hid.rst                |  29 +
- drivers/hid/Kconfig                                |   6 +
- drivers/hid/Makefile                               |   1 +
- drivers/hid/amd-sfh-hid/amd_sfh_hid.h              |   2 -
- drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c      |   4 +-
- drivers/hid/bpf/hid_bpf_dispatch.c                 |   6 +-
- drivers/hid/hid-apple.c                            |   2 +-
- drivers/hid/hid-asus.c                             |   2 +-
- drivers/hid/hid-aureal.c                           |   2 +-
- drivers/hid/hid-bigbenff.c                         |   6 +-
- drivers/hid/hid-cherry.c                           |   2 +-
- drivers/hid/hid-chicony.c                          |   4 +-
- drivers/hid/hid-cmedia.c                           |   6 +-
- drivers/hid/hid-core.c                             |  39 +-
- drivers/hid/hid-corsair.c                          |   4 +-
- drivers/hid/hid-cougar.c                           |   4 +-
- drivers/hid/hid-cp2112.c                           |   7 +-
- drivers/hid/hid-cypress.c                          |   2 +-
- drivers/hid/hid-dr.c                               |   8 +-
- drivers/hid/hid-elecom.c                           |   2 +-
- drivers/hid/hid-gembird.c                          |   2 +-
- drivers/hid/hid-glorious.c                         |   2 +-
- drivers/hid/hid-goodix-spi.c                       | 818 +++++++++++++++++=
-++++
- drivers/hid/hid-google-hammer.c                    |  27 +-
- drivers/hid/hid-holtek-kbd.c                       |   6 +-
- drivers/hid/hid-holtek-mouse.c                     |   4 +-
- drivers/hid/hid-ids.h                              |  18 +-
- drivers/hid/hid-input.c                            |  37 +-
- drivers/hid/hid-ite.c                              |   2 +-
- drivers/hid/hid-keytouch.c                         |   8 +-
- drivers/hid/hid-kye.c                              |   2 +-
- drivers/hid/hid-lenovo.c                           |   2 +-
- drivers/hid/hid-lg.c                               |  30 +-
- drivers/hid/hid-logitech-hidpp.c                   |   4 +-
- drivers/hid/hid-macally.c                          |   4 +-
- drivers/hid/hid-magicmouse.c                       |   4 +-
- drivers/hid/hid-maltron.c                          |   8 +-
- drivers/hid/hid-microsoft.c                        |   2 +-
- drivers/hid/hid-monterey.c                         |   2 +-
- drivers/hid/hid-multitouch.c                       |  30 +-
- drivers/hid/hid-nti.c                              |   2 +-
- drivers/hid/hid-ortek.c                            |   2 +-
- drivers/hid/hid-petalynx.c                         |   2 +-
- drivers/hid/hid-picolcd_backlight.c                |   5 +-
- drivers/hid/hid-playstation.c                      |  20 +
- drivers/hid/hid-prodikeys.c                        |   2 +-
- drivers/hid/hid-pxrc.c                             |   6 +-
- drivers/hid/hid-redragon.c                         |   2 +-
- drivers/hid/hid-saitek.c                           |   2 +-
- drivers/hid/hid-samsung.c                          |   2 +-
- drivers/hid/hid-semitek.c                          |   4 +-
- drivers/hid/hid-sensor-custom.c                    |   2 +-
- drivers/hid/hid-sensor-hub.c                       |   2 +-
- drivers/hid/hid-sigmamicro.c                       |   4 +-
- drivers/hid/hid-sony.c                             |  14 +-
- drivers/hid/hid-steelseries.c                      |   8 +-
- drivers/hid/hid-sunplus.c                          |   2 +-
- drivers/hid/hid-topre.c                            |   4 +-
- drivers/hid/hid-uclogic-core.c                     |   4 +-
- drivers/hid/hid-uclogic-params.c                   |   4 +-
- drivers/hid/hid-uclogic-params.h                   |  10 +-
- drivers/hid/hid-uclogic-rdesc.c                    |  20 +-
- drivers/hid/hid-uclogic-rdesc.h                    |  20 +-
- drivers/hid/hid-viewsonic.c                        |   8 +-
- drivers/hid/hid-vrc2.c                             |   6 +-
- drivers/hid/hid-waltop.c                           |  30 +-
- drivers/hid/hid-winwing.c                          |   8 +-
- drivers/hid/hid-xiaomi.c                           |   8 +-
- drivers/hid/hid-zydacron.c                         |   2 +-
- drivers/hid/hidraw.c                               |  39 +-
- drivers/hid/i2c-hid/i2c-hid-core.c                 |  42 +-
- drivers/hid/i2c-hid/i2c-hid-of-elan.c              |   8 +
- drivers/hid/intel-ish-hid/ipc/pci-ish.c            |  10 +-
- drivers/hid/intel-ish-hid/ishtp/bus.h              |   1 -
- drivers/hid/intel-ish-hid/ishtp/client.h           |   1 -
- drivers/hid/intel-ish-hid/ishtp/ishtp-dev.h        |   8 +-
- drivers/hid/intel-ish-hid/ishtp/loader.c           | 121 ++-
- drivers/hid/wacom_wac.c                            |  87 ++-
- drivers/hid/wacom_wac.h                            |   6 +-
- include/linux/hid.h                                |  12 +-
- include/linux/hid_bpf.h                            |   2 +-
- include/linux/hidraw.h                             |   1 +
- include/uapi/linux/hidraw.h                        |   1 +
- tools/testing/selftests/hid/.gitignore             |   1 +
- tools/testing/selftests/hid/Makefile               |   2 +-
- tools/testing/selftests/hid/hid_bpf.c              | 437 +----------
- tools/testing/selftests/hid/hid_common.h           | 436 +++++++++++
- tools/testing/selftests/hid/hidraw.c               | 237 ++++++
- 90 files changed, 2150 insertions(+), 732 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/input/goodix,gt7986u.=
-yaml
- create mode 100644 drivers/hid/hid-goodix-spi.c
- create mode 100644 tools/testing/selftests/hid/hid_common.h
- create mode 100644 tools/testing/selftests/hid/hidraw.c
-
---=20
-Jiri Kosina
-SUSE Labs
+Test payload
+============
 
 
