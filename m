@@ -1,103 +1,152 @@
-Return-Path: <linux-kernel+bounces-332717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C16597BDA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:05:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2463F97BDA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62EF2285F54
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:05:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0C3F1C22032
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B2218B478;
-	Wed, 18 Sep 2024 14:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676AC18B463;
+	Wed, 18 Sep 2024 14:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mrshMlgt"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OtigpoJ/"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0066A176230;
-	Wed, 18 Sep 2024 14:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67318F9CB;
+	Wed, 18 Sep 2024 14:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726668341; cv=none; b=f8P/8Su7c4Z0K2FNxh9Q/rYWh/cs+jhl0wOQcnSoTKRuj37nLAFkhyf2TGLlBgBhAl+oPvbWR0iz9HqNvYa0R7syEuDso8D+CC8yGP7qZeHpaUEgLz0RSjH11ExKB8PuNzuUQzwcHua6yZBBDKN0afizfEYS60DHgN4hlER+NO0=
+	t=1726668425; cv=none; b=dqOCQQWsC+CLhwvxXEr7NTYU8ItaRBHxqGAUds3PFTgme4IHpTU6FvWGKwzn8mBZHzHUP2zSWLLBCs9tuTZbgpc+a5O87bqwgRKKYX18Db1RYVldGfNPLRFtdwG1JkuREV+5BgZPsYxDQt/j6F4ejNAmGQVuhkHUn3r4/8tfRA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726668341; c=relaxed/simple;
-	bh=6zBAQ17LZQR9zBcfVlgt0Uw/0T/zok1IojabaDHGmvE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=DhoWes8TdltocBCEtD7bEfm2aI5uSa2VmPrOlo88SrCzkj3Odc4TX4iTcBTCHpLfbX8o8n6ufTwM0S8g+0MtqHX2k73krjy9lVstJITvv9bAbs8hB0uczcL/3fTkfc/qY5lwd1BPLrM/s4qEQSOUGJVNvbssuc41uPrT1ZXWbFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mrshMlgt; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726668326; x=1727273126; i=markus.elfring@web.de;
-	bh=183N5FFu+mvhtVZf8+8emO6n1S0+rQzAD7UWVL5EAn0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=mrshMlgt/yXyEnm4CVa5vshO1ikrs7mngi9nH7AgL59jIXT9SzwZFc6hLHuctWKx
-	 p3vCvxqZSUi3MnVILE3ebMX//Kl1sJbkbN6r7bqbTVNNRXiCJNRMD3ncKxLxG8jLb
-	 CIn2J33Wj0miJ9l5nI+Gk9PzjcWHDlY1fYswQ98jlCZ50Zv91w/5Qg+a+a+Q+pvAx
-	 tyZktCtrUrpZNktbQ5ptieBOdImCEMTNmm4OSkcbvRJFsnnZGAuFfJnyIPTZgWNHc
-	 XYBVvK5yKY4+w29Z+Laewy7DwaT6nATikLQXIVq9neoZ81bBH+VmnLqKgssuFc/G3
-	 w89MpdDfitiN9FPBLA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MCoku-1si9ri3Ajg-007UDT; Wed, 18
- Sep 2024 16:05:26 +0200
-Message-ID: <68ee5a00-888c-420f-a3a9-a556c19ee6eb@web.de>
-Date: Wed, 18 Sep 2024 16:05:22 +0200
+	s=arc-20240116; t=1726668425; c=relaxed/simple;
+	bh=XuCxGnJG+zi3UmAWqngWjE4roHl+w9KBZapm7VtUZWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kkX48dNLS8JMa+BAC1++VpMr8N3Zoo2OLOVQkJO9JIwn3RgmUQqiLjRcHRQdoj/1iptA/kJUNGyxI2HBvYeXKAHyImTSE23ZZNUqETeMbTkpKZ2DaEGixyUhukSUQMXGi8pLIH5lHnfLy9KjSiJXNX2rYPbC4w20JSYSZk4wQ3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OtigpoJ/; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d877dab61fso3966314a91.3;
+        Wed, 18 Sep 2024 07:07:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726668423; x=1727273223; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5zNbZ3iK+d9MmrvjS34MI5K0Xrdneb5ZWJpCqS0KhPU=;
+        b=OtigpoJ/iHFtq5YgHLc+rt6tm6o6BVGdPJqLKR9wBX2ALx3NZVJDuIyuMpuqRDisBk
+         lexN15AVDNxAC5Rbp6jgbF//AhJ2JG2gEltVo4lly4PXHY0pewhlSutYl7hdHpOoWlL+
+         +uR7ya4w0TTKMkOu/S75iF3Jjt6OIkCToj2qikfdy2hgMyk6BGh4fy47DMUNQUPr5eYc
+         Dqa7xYLqYQxdHB9cRoRWXgPzPS5Os+n4SMsAtqIFlDnWZlQeWvijTdYNtSuRkdklR5Df
+         jEHKx0Z9vRgLaYw44jVCs13y5LI7BmmRHHXSkgj5QtU+WJ/ybmZI2DtGbz673y3qScD1
+         XBwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726668423; x=1727273223;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5zNbZ3iK+d9MmrvjS34MI5K0Xrdneb5ZWJpCqS0KhPU=;
+        b=UmN1Sk+2YbUciucf0ZdjlNo78RJs0kEROz4oSUlNqdHpZS7sQhJw5xY90mVxnIhsFs
+         ipZQ3F/WW/4fECX6CqJV4VSi3c4wfXSdCHaxmbgbxyh1+H84cHi51a/73n5xgHhblDGm
+         e5dbgzY7uXvX0kzMmAef4msjKS25Q9VilABuMu9cib9/d1ygbYuvNCO5u1y7b44I1ZL8
+         gCFM+BT2QTVwHxSdhEGLUrEqQ/fqUIMXQ1pZmfCRyjtXeTblY77DX23CERYNhNLxz4pe
+         HJS76WtYnoMXDMESAuPgK1qI61hAylBU99FvsJSd6nnNdAHz8DUiQVUGiz6MR9W5bmnW
+         G+Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0E6//sJKMCtTLoqAkKjMfIdFkom872jAKHJ839p3jLJ8yOLb/nUrDZjnTqRekRyahz4rfcGeWAjjG9oXg@vger.kernel.org, AJvYcCW3/X4gb6L83teYswv9e+IWLjBNovjeiXs2853TAkB12drP/21AX9vG2WVpJtuvyQVI2aM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydmFRlwucjItKGKH0mKvLeInbYTGcp3r9AofByYilpC8SdMehN
+	PmaQ1CXu2NJP+fdokOvymgBcIl55Fp0RDjNc8I6U8lx7aTg/vsjg
+X-Google-Smtp-Source: AGHT+IHENPcqu/F4PpDEXGc3pUAud4cUD9u2o2sNrXrADC7JkXrlYY4cCxBNx7pjUQo0vIgeUVC2WQ==
+X-Received: by 2002:a17:90a:68ce:b0:2c9:61ad:dcd9 with SMTP id 98e67ed59e1d1-2dbb9ee0450mr22717857a91.27.1726668422351;
+        Wed, 18 Sep 2024 07:07:02 -0700 (PDT)
+Received: from x64.ju1vahqoe01uzkzduuiatpjzgc.syx.internal.cloudapp.net ([52.231.91.142])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd608dceabsm1666169a91.28.2024.09.18.07.06.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 07:07:01 -0700 (PDT)
+From: Jiwon Kim <jiwonaid0@gmail.com>
+To: razor@blackwall.org,
+	jv@jvosburgh.net,
+	andy@greyhouse.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	hawk@kernel.org,
+	john.fastabend@gmail.com,
+	joamaki@gmail.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Jiwon Kim <jiwonaid0@gmail.com>,
+	syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com
+Subject: [PATCH net v3] bonding: Fix unnecessary warnings and logs from bond_xdp_get_xmit_slave()
+Date: Wed, 18 Sep 2024 14:06:02 +0000
+Message-ID: <20240918140602.18644-1-jiwonaid0@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: dm-devel@lists.linux.dev, kernel-janitors@vger.kernel.org,
- Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>, Ondrej Kozina <okozina@redhat.com>,
- Waiman Long <longman@redhat.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH 0/2] dm-crypt: Adjustments for crypt_set_keyring_key()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wZPZJzhPw2YNK/b7ALwOzH9Z/GxeCgmAbFC720VQttf8jZzkZo8
- v0JG8GUsAMy42/ayyVzX19oQSVIkfUXMTQkhGXbYc/R7KNQcRRt9/LL/p4fKGhFpHj2C6j6
- IJL/OXSV7PPmMERnbhPQ6F2A8uyXnXXG6eVrxj12ZR95aU8LcjdJamRYjTrj6BOnkA4Zidv
- WqfQ9Wih1GFn07TK8aS9A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:SKQMyh4ffik=;8mcWZ3wwSzu9PyfdykXM1fsG+cg
- OOaCTMgIv1OEa2lyzic10kTaGdAE9WPXtHYT7BEfAA7Frkh/psVmVzY434xvCHKmkB3hHAsGK
- wiDXAfbIqhTJD0B8XTb7qmigEEs8g1Yl0k8B1OpQSX0m8NawiAGYrFRePWRA95TqXit+slJYd
- PqkxkwLF7CDJGIPkrSnisoKykt/u7UbYNNVetEzGJMUtzJLIwAvoIsmxgE5F9QynTtuIbwwm9
- noC6hcBl2IKkGwXxq64bu1gykz15Qe+zC6hLHiZWk5c/540Le9e95NNgsR3A4hdYrjGC10lP3
- WO7j5gntKeRHtxzj5kXc6AzPuqMeiRtEE4zP5iwv/JiIenvEIloGGMmLLWB/7a740XMNYstJB
- 4yB7glDKzQsQjvWjLf2nhpEXCHb3u1aAx44INICq/5TqN7oev9zJlzaDbWL8Wc8xhVFwlYARm
- FQfu9QgUuLODoFtvMOkKU0N6ZoXai745xSWnTxVQBGmICXk7shNW9sZL/8Ui0vKscXKqQaHZY
- KFl5COZBrFL66PV2hjZ1T2JZyPCRYmmx6VSQysTauXLpVMr7dqSavEyVACBZXbisdU12SNHxR
- abnhHV8Baf1lplTcfnq1HGBZlXv9ZzrL7jd5S3OMMlDv7K4lzQZ8sTvZykYB/Af/jbWLf+ehG
- c0WtC+QEl3ReYs9hmBhehrJT1y7gKzdUbFLKG65yTNvQO9vL6mEcVK9QyNQkHytvSg7WvAiam
- 2d9/+Ys7QyovFIoyjvkehL7sZqsWjwrYEAvI6bq/FplFvjxWUEMV2Yq9hmoVpaUuPMgh0dulf
- pRECMlO8QCXM3uHpXpIqnIqw==
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Sep 2024 15:48:05 +0200
+syzbot reported a WARNING in bond_xdp_get_xmit_slave. To reproduce
+this[1], one bond device (bond1) has xdpdrv, which increases
+bpf_master_redirect_enabled_key. Another bond device (bond0) which is
+unsupported by XDP but its slave (veth3) has xdpgeneric that returns
+XDP_TX. This triggers WARN_ON_ONCE() from the xdp_master_redirect().
+To reduce unnecessary warnings and improve log management, we need to
+delete the WARN_ON_ONCE() and add ratelimit to the netdev_err().
 
-A few update suggestions were taken into account
-from static source code analysis.
+[1] Steps to reproduce:
+    # Needs tx_xdp with return XDP_TX;
+    ip l add veth0 type veth peer veth1
+    ip l add veth3 type veth peer veth4
+    ip l add bond0 type bond mode 6 # BOND_MODE_ALB, unsupported by XDP
+    ip l add bond1 type bond # BOND_MODE_ROUNDROBIN by default
+    ip l set veth0 master bond1
+    ip l set bond1 up
+    # Increases bpf_master_redirect_enabled_key
+    ip l set dev bond1 xdpdrv object tx_xdp.o section xdp_tx
+    ip l set veth3 master bond0
+    ip l set bond0 up
+    ip l set veth4 up
+    # Triggers WARN_ON_ONCE() from the xdp_master_redirect()
+    ip l set veth3 xdpgeneric object tx_xdp.o section xdp_tx
 
-Markus Elfring (2):
-  Use up_read() together with key_put() only once
-  Use common error handling code
+Reported-by: syzbot+c187823a52ed505b2257@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=c187823a52ed505b2257
+Fixes: 9e2ee5c7e7c3 ("net, bonding: Add XDP support to the bonding driver")
+Signed-off-by: Jiwon Kim <jiwonaid0@gmail.com>
+---
+v3: Fix subject and description
+v2: Change the patch to fix bond_xdp_get_xmit_slave
+---
+ drivers/net/bonding/bond_main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/md/dm-crypt.c | 27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
-
-=2D-
-2.46.0
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index b560644ee1b1..b1bffd8e9a95 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -5610,9 +5610,9 @@ bond_xdp_get_xmit_slave(struct net_device *bond_dev, struct xdp_buff *xdp)
+ 		break;
+ 
+ 	default:
+-		/* Should never happen. Mode guarded by bond_xdp_check() */
+-		netdev_err(bond_dev, "Unknown bonding mode %d for xdp xmit\n", BOND_MODE(bond));
+-		WARN_ON_ONCE(1);
++		if (net_ratelimit())
++			netdev_err(bond_dev, "Unknown bonding mode %d for xdp xmit\n",
++				   BOND_MODE(bond));
+ 		return NULL;
+ 	}
+ 
+-- 
+2.43.0
 
 
