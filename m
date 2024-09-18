@@ -1,178 +1,510 @@
-Return-Path: <linux-kernel+bounces-332676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C387C97BCE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:17:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9D597BCEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E9F71F26B94
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:17:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B88C1C21652
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 13:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFC718A93C;
-	Wed, 18 Sep 2024 13:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9C318BC17;
+	Wed, 18 Sep 2024 13:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p2HXQyf1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZ0s5E00"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B9B18A920;
-	Wed, 18 Sep 2024 13:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1237189B9F;
+	Wed, 18 Sep 2024 13:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726665447; cv=none; b=DUfIha9d9fCwSlDBA6EcGoh1QgtPVBWyyp7KR5D8AHJDxAZDdxhfBT7oraezwzS34k0AoEB+0BjgD6vaDweqVhU7I9vopNEkDBsICrIUNYL5AlypU2H73Y2nHfPGzgDml+YhqQv7G4z05KwJ/9RINcuFf1Ae2PP/HQjKmn6tleE=
+	t=1726665457; cv=none; b=UjOUgYTz2jtxcJq+x1jL1TbcsKz16CBsGD0MMD3VU0Qsp9vGURHqXkAbXVL9FgPkF5BSSL2bUqjHT3o9G9zA6PW8Aw7O3GCtk2004L8Lnm72pU3K2Y6IjAlG7m5f2k8jpi/mN1iTU3/wE0tZUAuBBumf5TRlsprU8rL9ylBNbE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726665447; c=relaxed/simple;
-	bh=TuziZi0l9Czwaf09HEiC9oPsYPMowg2ApmqPSFpQzwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k8fWRXZ/RkRbMGlfp84+G2gbvPKGOpkoXylb6+10hFVe46OtYaNfCXYalwc4ohqHA0VfjGty6ecKw21/B9mKySMkOUaRJ13RgfdD9r3oqBtk/yA92UrK5a+mVbYjEn0JsZjEE3g3MHQVpNBbE1B+hswRBcIE4wtzFB5s4T+dylg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p2HXQyf1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5B1CC4CEC3;
-	Wed, 18 Sep 2024 13:17:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726665447;
-	bh=TuziZi0l9Czwaf09HEiC9oPsYPMowg2ApmqPSFpQzwA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p2HXQyf12U89qd8XgEeMzlAB7pRx0QZx47rmNMA7AOyqYdKIRwFu76+9RjKcQfaIp
-	 cjtfWd3xuIdUKeEtVb+3d128+3D3sZJPkfGkLghAvI8+76V/jLRO1o1pMfOClyDFPp
-	 eiMP/hqnscwGZdmWh2ARQZqb81Vi3tqa9R/sZLpYdrQ2ylUDm9DUOUeBvLOhakkxLx
-	 3EmU09668mOFrCBIRFtEEaVh0hNHZO7fK+iGWU/tey9A/J784l8z0/geTHoVuDIeuS
-	 3O62Mpxi/Yk4AEl2nYBEQipN09CyuSDFLsnWkRZ/AaxKtcJl2i2prW/1LcUomBdIjo
-	 BtuWG6Wo9jZ6A==
-Message-ID: <91d26ba6-01cd-4b45-8cca-689475285463@kernel.org>
-Date: Wed, 18 Sep 2024 15:17:20 +0200
+	s=arc-20240116; t=1726665457; c=relaxed/simple;
+	bh=ddiVg/ZCof9Fc8Z6/UQWstr/Rfs/55bGs9nMmSabZqk=;
+	h=Date:From:To:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=gP0dJbBPFGCDCksp2MQWJ7t8EAxGn3AQS3UuWfvToLhzhbBYlW+zAL4/pc4bLep4aWMhNl/BRf3LKLUZYqhTYjXrACF5g9uV5d144dIvpKfL1h9n2fAKBRv+kvJ1Zfn3M6bwwKKJuzI9n6idqPEhwFnAiJR2RnfyC1XAG/lCLF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZ0s5E00; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5e1c65eb5bbso3603925eaf.1;
+        Wed, 18 Sep 2024 06:17:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726665454; x=1727270254; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W+AjcnUWrTvMalvFIvUO/yMFteny0ikqJRqvvIOwdmY=;
+        b=JZ0s5E00h24RCxQi37G+ew1Ra19TvMhzL3/XUg1DwjczpbsndKAyu0YgDBg5YobJ7D
+         57r+TivNcuFho13Nmxs8eV1FFnSy57yIDi7pJuQfb8h9UL6PQLwhez/PTqeXyhypOHrG
+         K71q8YEmJPBnj5VqySc8niCaaOyFkhNEajMs8WQDSq+h2mS57pfQQgeIkl07kB8KJSTq
+         tc8wly204NPlu6v4O6CbF6LNxmpLLBgNgXMEmolRDD34XF4R4UWBC6bBkYj/0bIqsmfa
+         i4uRQKlOQbkvV22mI3UxZaRebsk7ZYYf1hBbZQ+tfYXiJl+CfNvBzNR64WwBVTUux04m
+         uCiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726665454; x=1727270254;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W+AjcnUWrTvMalvFIvUO/yMFteny0ikqJRqvvIOwdmY=;
+        b=cV+A3PLcWY96HpXV0Cl58J3oTXOiipI8oqyUVrofItH1N8lSc8ASmoEHTjUAfuG67C
+         2ZwzlNk5ChAJzlYgZmZ+6TnNBum6/hjxsG9qD4ufq4o7LkTvJ981Fx4jQy9U8oKdQgoN
+         +hXbaAlP110QYWKU7yOMvXFYy219EwmEJoENUZB5vO1IDOjb3ba/pauyfZyevNFjuFz6
+         FSsdZYXPe/rD0/+vMq3wjj1RR3kk60YOE9nbxtBjHURisl7X05GzCocBR7cR4lkwmKOe
+         SvLGYCDys1iDke90Z9nBRrnIgew7JKUGgENnn4ac0bqaPHtbLoO/piKu7ztmhtkI8c0j
+         0YyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1ndqP51duX05RO1OJijLaucN4zbvaS40av10KVzr2G6RMsmNSrMDC/+X8OWd5jBx9s34AJh4A@vger.kernel.org, AJvYcCV1qcLYprCGCi3Ift61Y10+Ys1ZZ5wD5MS8M0/DZdwXIZ01gc0YyTXVkKZt+cI/JB57tdtHHlmR0gfDRKbE@vger.kernel.org, AJvYcCViXL6lhlRrXwzKOK/IFZOJjiExNNDYrEoWbNVfSA60eQdysvQaChevtwwrlKYZ0BNOltU=@vger.kernel.org, AJvYcCW84KZek0uMI/5wEy40JoWxWc2zxx5118+lmcGtf6QZZlzeb2iNifrJCeybJx1Gmm6sTNk0X6rBI1TA8If6XaJo@vger.kernel.org, AJvYcCWvlcXNBfzT3HGt4R/DEAiwNwtsSiI3KB2ahj3fxDOR5K/i32hbmQPxFhgf9fMpPA+4H/pRQE0Kuqqo@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh6/fTxFGDdCnJBi0uJHL3hbhXHSDbfdjIJSZc3G9ASpGX0PO0
+	3f7AvY2R/i/jA34DGHTbTRZYc9d2UZuCMGYVKVD2/DT9GL/25Y90
+X-Google-Smtp-Source: AGHT+IEt2gQ+5dsw6SHDyvOzeq6o0BOI0FdXwXlSspRz1PzHxr5y+AkqJhqweY9iUcUOU8bkua4aPA==
+X-Received: by 2002:a05:6358:7247:b0:1b1:ac7f:51d5 with SMTP id e5c5f4694b2df-1bb23dd2f6bmr937437755d.22.1726665453816;
+        Wed, 18 Sep 2024 06:17:33 -0700 (PDT)
+Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ab3e95bce0sm456519385a.3.2024.09.18.06.17.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 06:17:33 -0700 (PDT)
+Date: Wed, 18 Sep 2024 09:17:32 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Akihiko Odaki <akihiko.odaki@daynix.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Jason Wang <jasowang@redhat.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ Shuah Khan <shuah@kernel.org>, 
+ linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ kvm@vger.kernel.org, 
+ virtualization@lists.linux-foundation.org, 
+ linux-kselftest@vger.kernel.org, 
+ Yuri Benditovich <yuri.benditovich@daynix.com>, 
+ Andrew Melnychenko <andrew@daynix.com>, 
+ Akihiko Odaki <akihiko.odaki@daynix.com>
+Message-ID: <66ead2ecddf14_29b986294d5@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20240915-rss-v3-6-c630015db082@daynix.com>
+References: <20240915-rss-v3-0-c630015db082@daynix.com>
+ <20240915-rss-v3-6-c630015db082@daynix.com>
+Subject: Re: [PATCH RFC v3 6/9] tun: Introduce virtio-net hash reporting
+ feature
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: imx8mp-iota2: Enable the USB Type-C port
-To: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Shawn Guo <shawnguo@kernel.org>, Petr Benes <petr.benes@ysoft.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Herburger <gregor.herburger@ew.tq-group.com>,
- Hiago De Franco <hiago.franco@toradex.com>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>,
- Joao Paulo Goncalves <joao.goncalves@toradex.com>,
- Michael Walle <mwalle@kernel.org>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Mathieu Othacehe <m.othacehe@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20240917151001.1289399-1-michal.vokac@ysoft.com>
- <20240917151001.1289399-5-michal.vokac@ysoft.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240917151001.1289399-5-michal.vokac@ysoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On 17/09/2024 17:10, Michal Vokáč wrote:
-> From: Petr Benes <petr.benes@ysoft.com>
+Akihiko Odaki wrote:
+> Allow the guest to reuse the hash value to make receive steering
+> consistent between the host and guest, and to save hash computation.
 > 
-> Enable the USB Type-C port with the Diodes PI5USB30213A port controller.
-> The port supports dual role data but can operate only in source power role
-> and PD is not supported.
-> 
-> Signed-off-by: Petr Benes <petr.benes@ysoft.com>
-> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
 > ---
->  .../boot/dts/freescale/imx8mp-iota2-lumpy.dts | 96 +++++++++++++++++++
->  1 file changed, 96 insertions(+)
+>  Documentation/networking/tuntap.rst |   7 ++
+>  drivers/net/Kconfig                 |   1 +
+>  drivers/net/tun.c                   | 146 +++++++++++++++++++++++++++++++-----
+>  include/uapi/linux/if_tun.h         |  44 +++++++++++
+>  4 files changed, 180 insertions(+), 18 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
-> index 21d0899cabd5..b15d211e8667 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
-> @@ -38,6 +38,17 @@ memory@40000000 {
->  		      <0x1 0x00000000 0 0x80000000>;
->  	};
+> diff --git a/Documentation/networking/tuntap.rst b/Documentation/networking/tuntap.rst
+> index 4d7087f727be..86b4ae8caa8a 100644
+> --- a/Documentation/networking/tuntap.rst
+> +++ b/Documentation/networking/tuntap.rst
+> @@ -206,6 +206,13 @@ enable is true we enable it, otherwise we disable it::
+>        return ioctl(fd, TUNSETQUEUE, (void *)&ifr);
+>    }
 >  
-> +	reg_typec: regulator-typec {
-> +		compatible = "regulator-fixed";
-> +		enable-active-high;
-> +		gpio = <&gpio1 12 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_usbc_vbus>;
-> +		regulator-max-microvolt = <5000000>;
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-name = "typec";
-> +	};
+> +3.4 Reference
+> +-------------
 > +
->  	reg_usb_host: regulator-usb-host {
->  		compatible = "regulator-fixed";
->  		enable-active-high;
-> @@ -218,6 +229,47 @@ &i2c2 {
->  	pinctrl-0 = <&pinctrl_i2c2>;
->  	status = "okay";
+> +``linux/if_tun.h`` defines the interface described below:
+> +
+> +.. kernel-doc:: include/uapi/linux/if_tun.h
+> +
+>  Universal TUN/TAP device driver Frequently Asked Question
+>  =========================================================
 >  
-> +	tcpc@d {
+> diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+> index 9920b3a68ed1..e2a7bd703550 100644
+> --- a/drivers/net/Kconfig
+> +++ b/drivers/net/Kconfig
+> @@ -395,6 +395,7 @@ config TUN
+>  	tristate "Universal TUN/TAP device driver support"
+>  	depends on INET
+>  	select CRC32
+> +	select SKB_EXTENSIONS
+>  	help
+>  	  TUN/TAP provides packet reception and transmission for user space
+>  	  programs.  It can be viewed as a simple Point-to-Point or Ethernet
+> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> index 9d93ab9ee58f..b8fcd71becac 100644
+> --- a/drivers/net/tun.c
+> +++ b/drivers/net/tun.c
+> @@ -173,6 +173,10 @@ struct tun_prog {
+>  	struct bpf_prog *prog;
+>  };
+>  
+> +struct tun_vnet_hash_container {
+> +	struct tun_vnet_hash common;
+> +};
+> +
+>  /* Since the socket were moved to tun_file, to preserve the behavior of persist
+>   * device, socket filter, sndbuf and vnet header size were restore when the
+>   * file were attached to a persist device.
+> @@ -210,6 +214,7 @@ struct tun_struct {
+>  	struct bpf_prog __rcu *xdp_prog;
+>  	struct tun_prog __rcu *steering_prog;
+>  	struct tun_prog __rcu *filter_prog;
+> +	struct tun_vnet_hash_container __rcu *vnet_hash;
 
-typec@d
+This is just
 
-> +		compatible = "diodes,pi5usb30213a";
-> +		reg = <0xd>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pinctrl_typec>;
-> +		interrupts-extended = <&gpio1 5 IRQ_TYPE_LEVEL_LOW>;
-> +		status = "okay";
++struct tun_vnet_hash {
++       u32 value;
++       u16 report;
++};
 
-Drop
+Can just be fields in the struct directly.
 
+Also, only one bit really used for report, so probably can be
+condensed further.
 
+>  	struct ethtool_link_ksettings link_ksettings;
+>  	/* init args */
+>  	struct file *file;
+> @@ -221,6 +226,11 @@ struct veth {
+>  	__be16 h_vlan_TCI;
+>  };
+>  
+> +static const struct tun_vnet_hash tun_vnet_hash_cap = {
+> +	.flags = TUN_VNET_HASH_REPORT,
+> +	.types = VIRTIO_NET_SUPPORTED_HASH_TYPES
+> +};
+> +
+>  static void tun_flow_init(struct tun_struct *tun);
+>  static void tun_flow_uninit(struct tun_struct *tun);
+>  
+> @@ -322,10 +332,17 @@ static long tun_set_vnet_be(struct tun_struct *tun, int __user *argp)
+>  	if (get_user(be, argp))
+>  		return -EFAULT;
+>  
+> -	if (be)
+> +	if (be) {
+> +		struct tun_vnet_hash_container *vnet_hash = rtnl_dereference(tun->vnet_hash);
+> +
+> +		if (!(tun->flags & TUN_VNET_LE) &&
+> +		    vnet_hash && (vnet_hash->flags & TUN_VNET_HASH_REPORT))
+> +			return -EBUSY;
+> +
 
-Best regards,
-Krzysztof
+Doesn't be here imply !tun->flags & TUN_VNET_LE? Same again below.
+
+>  		tun->flags |= TUN_VNET_BE;
+> -	else
+> +	} else {
+>  		tun->flags &= ~TUN_VNET_BE;
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -522,14 +539,20 @@ static inline void tun_flow_save_rps_rxhash(struct tun_flow_entry *e, u32 hash)
+>   * the userspace application move between processors, we may get a
+>   * different rxq no. here.
+>   */
+> -static u16 tun_automq_select_queue(struct tun_struct *tun, struct sk_buff *skb)
+> +static u16 tun_automq_select_queue(struct tun_struct *tun, struct sk_buff *skb,
+> +				   const struct tun_vnet_hash_container *vnet_hash)
+>  {
+> +	struct tun_vnet_hash_ext *ext;
+> +	struct flow_keys keys;
+>  	struct tun_flow_entry *e;
+>  	u32 txq, numqueues;
+>  
+>  	numqueues = READ_ONCE(tun->numqueues);
+>  
+> -	txq = __skb_get_hash_symmetric(skb);
+> +	memset(&keys, 0, sizeof(keys));
+> +	skb_flow_dissect(skb, &flow_keys_dissector_symmetric, &keys, 0);
+> +
+> +	txq = flow_hash_from_keys(&keys);
+>  	e = tun_flow_find(&tun->flows[tun_hashfn(txq)], txq);
+>  	if (e) {
+>  		tun_flow_save_rps_rxhash(e, txq);
+> @@ -538,6 +561,16 @@ static u16 tun_automq_select_queue(struct tun_struct *tun, struct sk_buff *skb)
+>  		txq = reciprocal_scale(txq, numqueues);
+>  	}
+>  
+> +	if (vnet_hash && (vnet_hash->common.flags & TUN_VNET_HASH_REPORT)) {
+> +		ext = skb_ext_add(skb, SKB_EXT_TUN_VNET_HASH);
+> +		if (ext) {
+> +			u32 types = vnet_hash->common.types;
+> +
+> +			ext->report = virtio_net_hash_report(types, keys.basic);
+> +			ext->value = skb->l4_hash ? skb->hash : txq;
+> +		}
+> +	}
+> +
+>  	return txq;
+>  }
+>  
+> @@ -565,10 +598,13 @@ static u16 tun_select_queue(struct net_device *dev, struct sk_buff *skb,
+>  	u16 ret;
+>  
+>  	rcu_read_lock();
+> -	if (rcu_dereference(tun->steering_prog))
+> +	if (rcu_dereference(tun->steering_prog)) {
+>  		ret = tun_ebpf_select_queue(tun, skb);
+> -	else
+> -		ret = tun_automq_select_queue(tun, skb);
+> +	} else {
+> +		struct tun_vnet_hash_container *vnet_hash = rcu_dereference(tun->vnet_hash);
+> +
+> +		ret = tun_automq_select_queue(tun, skb, vnet_hash);
+
+Already passing tun, no need to pass tun->vnet_hash separately.
+> +	}
+>  	rcu_read_unlock();
+>  
+>  	return ret;
+> @@ -2120,33 +2156,63 @@ static ssize_t tun_put_user(struct tun_struct *tun,
+>  	}
+>  
+>  	if (vnet_hdr_sz) {
+> -		struct virtio_net_hdr gso;
+> +		struct tun_vnet_hash_ext *ext;
+> +		size_t vnet_hdr_content_sz = sizeof(struct virtio_net_hdr);
+> +		union {
+> +			struct virtio_net_hdr hdr;
+> +			struct virtio_net_hdr_v1_hash hdr_v1_hash;
+> +		} vnet_hdr;
+> +		int ret;
+>  
+>  		if (iov_iter_count(iter) < vnet_hdr_sz)
+>  			return -EINVAL;
+>  
+> -		if (virtio_net_hdr_from_skb(skb, &gso,
+> -					    tun_is_little_endian(tun), true,
+> -					    vlan_hlen)) {
+> +		ext = vnet_hdr_sz < sizeof(vnet_hdr.hdr_v1_hash) ?
+> +		      NULL : skb_ext_find(skb, SKB_EXT_TUN_VNET_HASH);
+> +
+> +		if (ext) {
+> +			struct virtio_net_hash hash = {
+> +				.value = ext->value,
+> +				.report = ext->report,
+> +			};
+> +
+> +			vnet_hdr_content_sz = sizeof(vnet_hdr.hdr_v1_hash);
+> +			ret = virtio_net_hdr_v1_hash_from_skb(skb,
+> +							      &vnet_hdr.hdr_v1_hash,
+> +							      true,
+> +							      vlan_hlen,
+> +							      &hash);
+> +		} else {
+> +			vnet_hdr_content_sz = sizeof(struct virtio_net_hdr);
+> +			ret = virtio_net_hdr_from_skb(skb,
+> +						      &vnet_hdr.hdr,
+> +						      tun_is_little_endian(tun),
+> +						      true,
+> +						      vlan_hlen);
+> +		}
+> +
+
+This is why just setting the fields directly rather than adding
+virtio_net_hdr_v1_hash_from_skb is actually simpler.
+
+> +		if (ret) {
+>  			struct skb_shared_info *sinfo = skb_shinfo(skb);
+>  
+>  			if (net_ratelimit()) {
+>  				netdev_err(tun->dev, "unexpected GSO type: 0x%x, gso_size %d, hdr_len %d\n",
+> -					   sinfo->gso_type, tun16_to_cpu(tun, gso.gso_size),
+> -					   tun16_to_cpu(tun, gso.hdr_len));
+> +					   sinfo->gso_type,
+> +					   tun16_to_cpu(tun, vnet_hdr.hdr.gso_size),
+> +					   tun16_to_cpu(tun, vnet_hdr.hdr.hdr_len));
+>  				print_hex_dump(KERN_ERR, "tun: ",
+>  					       DUMP_PREFIX_NONE,
+>  					       16, 1, skb->head,
+> -					       min((int)tun16_to_cpu(tun, gso.hdr_len), 64), true);
+> +					       min(tun16_to_cpu(tun, vnet_hdr.hdr.hdr_len), 64),
+> +					       true);
+>  			}
+>  			WARN_ON_ONCE(1);
+>  			return -EINVAL;
+>  		}
+>  
+> -		if (copy_to_iter(&gso, sizeof(gso), iter) != sizeof(gso))
+> +		if (copy_to_iter(&vnet_hdr, vnet_hdr_content_sz, iter) != vnet_hdr_content_sz)
+>  			return -EFAULT;
+>  
+> -		iov_iter_zero(vnet_hdr_sz - sizeof(gso), iter);
+> +		iov_iter_zero(vnet_hdr_sz - vnet_hdr_content_sz, iter);
+>  	}
+>  
+>  	if (vlan_hlen) {
+> @@ -3094,6 +3160,8 @@ static long __tun_chr_ioctl(struct file *file, unsigned int cmd,
+>  	int le;
+>  	int ret;
+>  	bool do_notify = false;
+> +	struct tun_vnet_hash vnet_hash_common;
+> +	struct tun_vnet_hash_container *vnet_hash;
+>  
+>  	if (cmd == TUNSETIFF || cmd == TUNSETQUEUE ||
+>  	    (_IOC_TYPE(cmd) == SOCK_IOC_TYPE && cmd != SIOCGSKNS)) {
+> @@ -3115,6 +3183,9 @@ static long __tun_chr_ioctl(struct file *file, unsigned int cmd,
+>  		if (!ns_capable(net->user_ns, CAP_NET_ADMIN))
+>  			return -EPERM;
+>  		return open_related_ns(&net->ns, get_net_ns);
+> +	} else if (cmd == TUNGETVNETHASHCAP) {
+> +		return copy_to_user(argp, &tun_vnet_hash_cap, sizeof(tun_vnet_hash_cap)) ?
+> +		       -EFAULT : 0;
+>  	}
+>  
+>  	rtnl_lock();
+> @@ -3314,6 +3385,13 @@ static long __tun_chr_ioctl(struct file *file, unsigned int cmd,
+>  			break;
+>  		}
+>  
+> +		vnet_hash = rtnl_dereference(tun->vnet_hash);
+> +		if (vnet_hash && (vnet_hash->common.flags & TUN_VNET_HASH_REPORT) &&
+> +		    vnet_hdr_sz < (int)sizeof(struct virtio_net_hdr_v1_hash)) {
+> +			ret = -EBUSY;
+> +			break;
+> +		}
+> +
+>  		tun->vnet_hdr_sz = vnet_hdr_sz;
+>  		break;
+>  
+> @@ -3328,10 +3406,18 @@ static long __tun_chr_ioctl(struct file *file, unsigned int cmd,
+>  			ret = -EFAULT;
+>  			break;
+>  		}
+> -		if (le)
+> +		if (le) {
+>  			tun->flags |= TUN_VNET_LE;
+> -		else
+> +		} else {
+> +			vnet_hash = rtnl_dereference(tun->vnet_hash);
+> +			if (vnet_hash && (vnet_hash->common.flags & TUN_VNET_HASH_REPORT) &&
+> +			    !tun_legacy_is_little_endian(tun)) {
+> +				ret = -EBUSY;
+> +				break;
+> +			}
+> +
+>  			tun->flags &= ~TUN_VNET_LE;
+> +		}
+>  		break;
+>  
+>  	case TUNGETVNETBE:
+> @@ -3396,6 +3482,30 @@ static long __tun_chr_ioctl(struct file *file, unsigned int cmd,
+>  		ret = open_related_ns(&net->ns, get_net_ns);
+>  		break;
+>  
+> +	case TUNSETVNETHASH:
+> +		if (copy_from_user(&vnet_hash_common, argp, sizeof(vnet_hash_common))) {
+> +			ret = -EFAULT;
+> +			break;
+> +		}
+> +		argp = (struct tun_vnet_hash __user *)argp + 1;
+> +
+> +		if ((vnet_hash_common.flags & TUN_VNET_HASH_REPORT) &&
+> +		    (tun->vnet_hdr_sz < sizeof(struct virtio_net_hdr_v1_hash) ||
+> +		     !tun_is_little_endian(tun))) {
+> +			ret = -EBUSY;
+> +			break;
+> +		}
+> +
+> +		vnet_hash = kmalloc(sizeof(vnet_hash->common), GFP_KERNEL);
+> +		if (!vnet_hash) {
+> +			ret = -ENOMEM;
+> +			break;
+> +		}
+> +
+> +		vnet_hash->common = vnet_hash_common;
+> +		kfree_rcu_mightsleep(rcu_replace_pointer_rtnl(tun->vnet_hash, vnet_hash));
+> +		break;
+> +
+>  	default:
+>  		ret = -EINVAL;
+>  		break;
+> diff --git a/include/uapi/linux/if_tun.h b/include/uapi/linux/if_tun.h
+> index 287cdc81c939..1561e8ce0a0a 100644
+> --- a/include/uapi/linux/if_tun.h
+> +++ b/include/uapi/linux/if_tun.h
+> @@ -62,6 +62,30 @@
+>  #define TUNSETCARRIER _IOW('T', 226, int)
+>  #define TUNGETDEVNETNS _IO('T', 227)
+>  
+> +/**
+> + * define TUNGETVNETHASHCAP - ioctl to get virtio_net hashing capability.
+> + *
+> + * The argument is a pointer to &struct tun_vnet_hash which will store the
+> + * maximal virtio_net hashing configuration.
+> + */
+> +#define TUNGETVNETHASHCAP _IOR('T', 228, struct tun_vnet_hash)
+> +
+> +/**
+> + * define TUNSETVNETHASH - ioctl to configure virtio_net hashing
+> + *
+> + * The argument is a pointer to &struct tun_vnet_hash.
+> + *
+> + * %TUNSETVNETHDRSZ ioctl must be called with a number greater than or equal to
+> + * the size of &struct virtio_net_hdr_v1_hash before calling this ioctl with
+> + * %TUN_VNET_HASH_REPORT.
+> + *
+> + * The virtio_net header must be configured as little-endian before calling this
+> + * ioctl with %TUN_VNET_HASH_REPORT.
+> + *
+> + * This ioctl currently has no effect on XDP packets.
+> + */
+> +#define TUNSETVNETHASH _IOW('T', 229, struct tun_vnet_hash)
+> +
+>  /* TUNSETIFF ifr flags */
+>  #define IFF_TUN		0x0001
+>  #define IFF_TAP		0x0002
+> @@ -115,4 +139,24 @@ struct tun_filter {
+>  	__u8   addr[][ETH_ALEN];
+>  };
+>  
+> +/**
+> + * define TUN_VNET_HASH_REPORT - Request virtio_net hash reporting for vhost
+> + */
+> +#define TUN_VNET_HASH_REPORT	0x0001
+> +
+> +/**
+> + * struct tun_vnet_hash - virtio_net hashing configuration
+> + * @flags:
+> + *		Bitmask consists of %TUN_VNET_HASH_REPORT and %TUN_VNET_HASH_RSS
+> + * @pad:
+> + *		Should be filled with zero before passing to %TUNSETVNETHASH
+> + * @types:
+> + *		Bitmask of allowed hash types
+> + */
+> +struct tun_vnet_hash {
+> +	__u16 flags;
+> +	__u8 pad[2];
+> +	__u32 types;
+> +};
+> +
+
+The values for flags and types should probably be defined here.
+
+>  #endif /* _UAPI__IF_TUN_H */
+> 
+> -- 
+> 2.46.0
+> 
+
 
 
