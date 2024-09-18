@@ -1,132 +1,209 @@
-Return-Path: <linux-kernel+bounces-332366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CBF697B8ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:01:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F23297B8F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 260A21F2166C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:01:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 202071C215D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C3E16E89B;
-	Wed, 18 Sep 2024 08:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F57117109B;
+	Wed, 18 Sep 2024 08:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIdJRJWZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="QS3ujdQF"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2057.outbound.protection.outlook.com [40.107.21.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3C83D8E;
-	Wed, 18 Sep 2024 08:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726646502; cv=none; b=X2hZQ8Weu7Zjtk3bzlBLDxmIQmH2YTs0y8RytPkN5dWNzjxqTRmhNyCBUJ6zKlRXbRYbtxEbuxpL57JspzAD0rjuJne1o3GxgLNv/L0r/1a6hKrxtXoJW6K5HgZeNgo5OjujkyhLqDLQyv+M7oGhUU7ivCXxOCNKWNu3oJi3TyY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726646502; c=relaxed/simple;
-	bh=d/mNhRT2jbPpZjm3XFtiSJ/CpRq/tuV7or+IN8D2Kc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QbKKQlXM6XmH+IgfS03/NbiAidthxVwH8BLN2pMfptCM72+9rgB//eZLKjdjnOJx2EiYBZ2hv8WhYQwhiByodAc99JPJ0d8XuhKp/X9lB8ipP7wCs6+SlJVHXAVnYQ5Mg8QrlrcesTJPqNhHd0cBjNQCUw3/MnaDbsx/SVYSGzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIdJRJWZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA670C4CEC3;
-	Wed, 18 Sep 2024 08:01:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726646501;
-	bh=d/mNhRT2jbPpZjm3XFtiSJ/CpRq/tuV7or+IN8D2Kc4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lIdJRJWZIEe70hqBRVKP35K+nKGGEDiDalTfZlNCCJpmmTuE3p2sapOgATZqNDHA9
-	 0z0SsozHzbAlenbZZabAQKjwpPDvoZW8xH2B1yRZtkNUIVXYYdjssmMgZYlWYqfXti
-	 NwzV75IGdrY9YHGABj7fgg/iIbfQUp6nqrfjdh7ArZt2BID5Ye4LQvTcWCwW4E1Fid
-	 xXzG+GJWX9rpV6AlXoShB9/mAIrteZKKrBHOSkfPMXuE9fB22hKiEzKnv6PKbVtiEz
-	 nUH0rC2+MIKMGqRpyN5LjzxNMTA5ew+lFE5pMxFz2ZEwvv5ifWDgPS0Wz/I02koETb
-	 4rJy0itsPLRQg==
-Date: Wed, 18 Sep 2024 09:01:44 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: zelong dong <zelong.dong@amlogic.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	kelvin.zhang@amlogic.com, Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: reset: Add compatible for Amlogic
- A4/A5 Reset Controller
-Message-ID: <20240918-delirious-skiing-224172be96d4@squawk>
-References: <20240918074211.8067-1-zelong.dong@amlogic.com>
- <20240918074211.8067-2-zelong.dong@amlogic.com>
- <a5d9b775dd860d8f2bbf174300a2e3161b654035.camel@pengutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B7F34CDD;
+	Wed, 18 Sep 2024 08:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726646597; cv=fail; b=cPh04NlJhgFDAyDJi/ev5Nh/aG7g4IlF1BC1ceRpKYbCGG9t/+JYbA5u9Ea2c3hAR/wWtqiiZbEhTpROPkbswdCY5jzPmqQS2QGg5j/lVrOF0E4MfLrYHevOSXqQ/uJxU66uJ3BU+P72fgS3tD07YW5BmwTlVGe450CRU7Uf5v4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726646597; c=relaxed/simple;
+	bh=rm0FQdf7H56TGSSI2f6AP4QBobdfPE+m4N9KkhN/VHc=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ciBSq+42PoC+VF6E48i00awh5IeFDNLfbgYYQIu2S/OgEXLmmNUZUNsxhgoUn7pdT871HPJZKWfbccTSgJCFqXDLDSR3/zvBo70x4PyT2q/FVs5Icw/VKTyVQSCufA2CKFlAyDrFqfuCAWfGMJ/jRTlxd6B8Pw3ZmFD52kIbPD8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=QS3ujdQF; arc=fail smtp.client-ip=40.107.21.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cp52E+F068H2Frz+tC3z6TahOOr6zvoPIbo3M/4PKCYNxV2O2XlCte1VgXa/u6cwRfsDZ37FWMwfaANhpD/NxaF60LraIgwa7d/rgE3VGPDsSRPxFwnCDFfm7e+rzIO/FX9gWGjKezJ0J3THcEpEgh/rvaMUgtiQJqLgDQSqeF5d/CXeNaxh0B5uTVMMNU7Abxj/hKIjL6dEDHPUjSJ1xnXnJ1q4IT+m6aGSHKJo++XTMAes354vUPIRAEFtIccFq58ZVr9sE3rJzrvyQTUfDARf+aqJ8KKRe2vjZ+/JpraKewKr1GwFlMBJCCKPTfYwhim0Lw4+EFCqJYKIVREjPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GvIT4gCbtwLCx73B1CU2OJ0Fb4cfrTSudUw4eE5MOqg=;
+ b=SmCLzGLjMyOQARX08ubpszSzsmlT1Y+n8jCtPlZ/cbh7108VWrriEV97zRNfw8G41u1Gkv21+9D4ArBFe8ET2qsCd5LQgqTFfQ1HPEa+IlwZy2WnoSJjTe6J7HwzQPWlCl3AFTzAQmpZX7WHyusgX9zkxMWp16j9Pjt5z/Jr9yNCMRLUOpBffuV3YPqo1giUfevpFUxLsnBxb4NPIp2hSyDrjvVfvelB5CxWJqkb68VE5lk5V92GcLy3QkAUWA0qyvhHhK3xr1hHRrVx0ytIzkjLUc82qSPMIuFzzPtEQSBfkpDgQi0YAB8LGVQhgsdQ6G1/5ahuSHVZdSPOCDUMlA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GvIT4gCbtwLCx73B1CU2OJ0Fb4cfrTSudUw4eE5MOqg=;
+ b=QS3ujdQFhceCPr0nxRdvmEDzlRVoKIxaAY/7iNUWSBhEVWaC4gUW62MPXE1eD7NH5XDSE/Fp2i0pasmfuvZHqgMrj0IuwIC2dtFA2hfexzE8n4kTuUR40i8AvEFkc+7jUXC+AFW96fQQS5TXjwc07BW2B/yxcAG8V1BVSvi261uil9pQ9c5eymHc0l5VHlsdE0PGsg4pS0FgZ2LJWDgmD1Bd1vuqDyctgHr2I25LGwTYPAVOITmbOzyjR/Au1x16UbUG49KOu1stVvOOSHLA3YYOfIxj7HU7pmJSA3tKQnmAqqrfT5XMd0SWh+C5elHFE3wHFTM4aln1pWTYhL17HQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
+ by VI0PR04MB10103.eurprd04.prod.outlook.com (2603:10a6:800:24c::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.23; Wed, 18 Sep
+ 2024 08:03:12 +0000
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd%7]) with mapi id 15.20.7962.022; Wed, 18 Sep 2024
+ 08:03:11 +0000
+Message-ID: <1dffa158-0608-4480-9281-3b891acc8c6b@oss.nxp.com>
+Date: Wed, 18 Sep 2024 11:02:45 +0300
+User-Agent: Mozilla Thunderbird
+From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Subject: Re: [PATCH 3/4] arm64: defconfig: add S32G RTC module support
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ NXP S32 Linux Team <s32@nxp.com>
+References: <20240911070028.127659-1-ciprianmarian.costea@oss.nxp.com>
+ <20240911070028.127659-4-ciprianmarian.costea@oss.nxp.com>
+ <f39900f0-f99a-4a31-88bc-13d459392ffc@kernel.org>
+Content-Language: en-US
+In-Reply-To: <f39900f0-f99a-4a31-88bc-13d459392ffc@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM9P195CA0001.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21f::6) To DU0PR04MB9251.eurprd04.prod.outlook.com
+ (2603:10a6:10:352::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1OdrIj4eisHBYHwH"
-Content-Disposition: inline
-In-Reply-To: <a5d9b775dd860d8f2bbf174300a2e3161b654035.camel@pengutronix.de>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|VI0PR04MB10103:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0b00382e-844f-4124-1538-08dcd7b85742
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Sk9wRUNpMEFIZWMzZ05FL1JIZWJrb0tybGxGb25Qa1c5ZzhjKzgrUStoZXdO?=
+ =?utf-8?B?VUxLQVRqc1g2T3JvQmFrUW1xR1hxcTdFZ0pnV3R6ZzE5R1hTSWlwUVhQSGdk?=
+ =?utf-8?B?bFpYc0dqbSs3YVM2aU04cDNrUk9sNzc2S3FQNVN5WFM3MjA1TzFiZXMxa2la?=
+ =?utf-8?B?N091YnBoS1h0NW5OVEM1UlA2NmsyV3NwOGx6Y2IrRFVZUXM3d0k4TzZyUkdS?=
+ =?utf-8?B?WSt6YnJlNng3ZTBQUzNna3V6eFJOblFhK1lNVlc1NGJkVmFtZ1RDR2RjWWdu?=
+ =?utf-8?B?NHIwaHY2dWlSd2ZrUnB2S1c2UkZ6bzE2SWVybVZ0ZVI2R2VvVEw3dWNRNktm?=
+ =?utf-8?B?TWwrQ1pVT1JXZkFBQjRIVzUyaGd6U1dTdnZKRkRwSU1va3dnQmRqTzQ1MlBj?=
+ =?utf-8?B?dmF3c25Ib3RnRHpCcVR4bkVCYngzVFJHeFdlQzR3L2RLU291U3V1UmxVekxm?=
+ =?utf-8?B?UnpjTURiaEtGaUZXVlhhSm5oVVNLK05FL3Z0dEhObEtqdGd1THpUWUtVRzVI?=
+ =?utf-8?B?UnlkVEphSDh0eEZZeThuczUwTmt5Ui85enlIMUlvakZ1eVFzcWlGY0xSNnVL?=
+ =?utf-8?B?MXhpN0VJQk82TjVYU0tzbTFzZ1dJQlY5SFRVNEFmeXpVQ3lRQzZETy9BazR4?=
+ =?utf-8?B?TmIzQ1Zmck92RndBZGNZYWRsSlY3ZFd3SHpGOE5abEN2OWRUbVZjcWtLRWNC?=
+ =?utf-8?B?MEszeVByZlpZbFZMZTBzLzc3cmlQdXc3amVNOGFEUitIY3UxK1U4eEZvSnNB?=
+ =?utf-8?B?YnlwSGJQT1liRFZSK3l1MFBEK3htWHJwNVpqSDNxaUZzWGgwL0tIUXV3MkxT?=
+ =?utf-8?B?bGVtQzI2SkJwTWNsV0JldUhPMlhUMXl6NjgrTzJXNVgzY01TMnJ4UXRlVmRv?=
+ =?utf-8?B?VHErVit1Zjd1M1BtcXhKZmRNa084TmFvRGR3N3laUWlhamtqZFNxRjhkTmx0?=
+ =?utf-8?B?YWtaLzdoMVB4dmU3Z1VpOGYweGgzeTl1dkppczNoWE9oUEx5VnVnUkJTV1pU?=
+ =?utf-8?B?bXFYU0J0d0huTlJNcnVoRUVORkQ5Ym1PclFlQW5GTWlaeHd1TjJYVitlbE9w?=
+ =?utf-8?B?eWVXTi9QeVp1S1YzaHI2ZzdqSVVsOU0yREpPZHNVSXF2aVZOV2lMb0xpU0VR?=
+ =?utf-8?B?Rkp6Mys0dkxxUXlvQlJUbHh3VURlZitWWTZCOFVGckwxak84MUFrWjY5dElW?=
+ =?utf-8?B?SG5jOGZ5QzBNZkg1cXEvblZ1WjJTbW8wa3cyT0Ftd1k4bElGUVZkLytQeFB1?=
+ =?utf-8?B?SGtVWVdxdWowV3BxRzFLWVpUaG91Q2txOHAvVXBxMXliUWlvcFdlQ1B6QUxF?=
+ =?utf-8?B?QXhLWlhEZW53bEF3eVlRMUgvRGZMcERVNXV2K2JTd3NyZTNzSUZ6Uy95NWRx?=
+ =?utf-8?B?ZzVGK29OMXcvSW5MeVVqSitTdWRYa21HUHl2SDd4cWhZaGRHdTVRb00vSENy?=
+ =?utf-8?B?bDNmYW1WK3hiKzl1cTJxQ1htS21yQ29aclRMcGx5OEdiTTBNMXAvRW5oOXJ5?=
+ =?utf-8?B?MUVyaXY2VFZrQ2FYMkdwT3EvdmZWblRrVlVPY1FxQ2J6WXloSVV0bWcwVkdr?=
+ =?utf-8?B?YWxJeEZ4RVUxQkNoUkZIMHNkZDhZNU5YcXpWSnZydHZtcUlVeDFTV3R1L041?=
+ =?utf-8?B?WGptMmhEbEthOHc2MWFMV2F6amlzNEYwdDNaamVFY0oxWFA0b2Q5WWdqZ3dh?=
+ =?utf-8?B?bEF1NHd5NW10RjNPdVlBVTljakxEMzAraW1TMXV2TUVLT0FGU2FGMnlDVEJ2?=
+ =?utf-8?B?SlZCdnVoRHFacERCY3VuQzNBN1VEM1Y3VWIrYktORzVRRTVrV3VaNjVkbFdV?=
+ =?utf-8?B?TFlDZHRKRWFGclJNZ1BTQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?N3kydFVVbFdKSERiTXB5d2N3Mjk5cVY1b0dBRmExRWNjWEM1MHdrTmtPMFEx?=
+ =?utf-8?B?dXhDVThTM3NpVkd4cDJCUVNvYXVuT3NDQk5XV21IbTA2cXJjUDlKMFM5QmFR?=
+ =?utf-8?B?ZVdtSVVBSHFwdThVRStHMjQrVzlXUk9BSHp4RjBtV25ZRVEzcE1VTmFZczVT?=
+ =?utf-8?B?K256bUJiMnBvZkg0Vm9ybmwvdzJpeFA5aUdDN1VMSFNORy9neHN6UjZKRVpx?=
+ =?utf-8?B?SUo3TGF2OVJmM0VOZFNmd1J4eVZ1dHBQRzVid0k0N01lR3pzUzQ1c0IvOElq?=
+ =?utf-8?B?U2EvZ1Y3VU9GOFlndTdzSVRzUjh2UTJOY04rWTV4bnRPdUM5NGVDZ1YzMmJB?=
+ =?utf-8?B?bzd4Zmd4cU1CZzlrQkJwamIza1ZIRFJMaDNiR3JnMiswd0NIRXExeFBHeGhY?=
+ =?utf-8?B?VmNkMmQvbytDaHNqNTV5dnppYUVETVZZVlVFRTgxcUhxNnAxQXllb3ZMa0kz?=
+ =?utf-8?B?MEc5UXpKUERhSHY2YWVLOE9DVUhCdkdLTVZ1bFBEeTFoT0s2ejFvcjlRa2V4?=
+ =?utf-8?B?bU9USjdKN0lVVkJFSHBJcEhoeGpBbDRIWVFRT2o1aU9ZMXFaL3JZWGMrNmts?=
+ =?utf-8?B?U0dqQ3Fia2dEMkdTZDFWQnZwcTRVdVJubkRHcXhNTkZhVzZGNFRhb1liZEw0?=
+ =?utf-8?B?NVNYekFRdEVScWNPTTBsSlg2SVBpOE5Wd0dVNEdZY2g5MGFOVm1TZWhxWnVu?=
+ =?utf-8?B?TXRyOTlKaVJoR0pEQTZjbWFodzBiZXpUTG94N3NZbFJpWldpd3BodWFndWdq?=
+ =?utf-8?B?YUdTL1F5aTE4b1R3b3BSek9KOTNROG1RbERNN1lnNTJFVFhIN29aUDJGQVZo?=
+ =?utf-8?B?MUdNT1M4eXhEcTIveWRweWw4bEt4NlZiRS80dFNBL1paMXZWZjRud2gwTHly?=
+ =?utf-8?B?cEhURjFtbXV4ZGZnL3B2Y2lKblN5cnI4ZGRNU2U4bW1jQjRJaGJtUU9jSEpo?=
+ =?utf-8?B?QW9OdHZpdm03SXIzVndKNFRVSWZUQkxIOG1ubjJ0Q09jb3J0RWhTSGoxK2U5?=
+ =?utf-8?B?VndKb1JSOHdaRUdkZU5nSXNMcHBiN2xXM0NaNFpubDBFV3c2bEluNWZXNFBZ?=
+ =?utf-8?B?V3RzNTZaK1ZlRFJLMFNnS3RncjFvNldDK0lzL0hxTHBUQi94dVprOFRmOFNm?=
+ =?utf-8?B?UmhWaGlsbDBoRUNuSEZOZ1NBckxtd3ZmbVJmZVoyWitmeFFBZGUzZHlDZGs2?=
+ =?utf-8?B?bS9PSytXZjBOc3J2UlpNUUMrOHNUdnFiWC9aNkxlYWxUOC9VWFR5eUx3RjlB?=
+ =?utf-8?B?SUwvM1UwV2hDYysxU3ZaQ3ZvTnZETVY2QldwTUVtK2xUZk1NWlQwZTUyYVda?=
+ =?utf-8?B?MnBrRkcrVHlzY2Mza2hTdTY2SDlFWnBzUHN0M2s4OWxNRWFlTGp4aE41S2lh?=
+ =?utf-8?B?clRTRmNrRWU0ZTB2bUN3WkRVS1JySDgzRWIwekI2dUFGYmg2Y0dnSzVNaTI2?=
+ =?utf-8?B?bE1FNGNoalRvZ21hb1JpQ0dVak9DUEl0YnZSenJOaGl2cHRHWTkwRTNOT2pJ?=
+ =?utf-8?B?WHh1QWtDdGVmQWFjc1pLaEl3N0J3T3ZDc0J5dk1rTzhQTjZXOTljeXlJelJT?=
+ =?utf-8?B?MUhXY0FSQUlmRUtZczdTaFBmUHVXend4TXBjNVVpeThHYWRqbWpIZUd4TDF4?=
+ =?utf-8?B?N25qNnVLT1ZKOGJTRU9FMmV4TUQrS29ic05FRDRIUTMrc216R2diTFNSYUli?=
+ =?utf-8?B?TUdLZjZpbHVrUWxWWlg2bEViQitmZXZMYXFlSGVWZU5QclRCZitzWlU0ZUJM?=
+ =?utf-8?B?MHlSdkRpcHVkMzNabUFSOEJOUVZORmJyT1dhTHpXQzRPaWxsRHlMYnpxMnUw?=
+ =?utf-8?B?NGtaK0dsQzFSamgrN1o5R2hleHlGRHUyV2J6bWJ6NWtveHZJa04wU2xka0Fx?=
+ =?utf-8?B?cHFWVUF2cENEeW5kYXlPcmhlQmhOUUwvYzQwYVVYU0psWjNMZHFQL2ZHSjVn?=
+ =?utf-8?B?T29oY2I3b2t2TnhEUkJrMk91WHJ6andwcTU4ZjZoaWtJYjI3ajQyU0Z2Tmpp?=
+ =?utf-8?B?ZUZqSkVLMG5lWE11L1gvb215WUVqd1pZNHVkc01FQm9pZjJaWlpXNTBkSkNK?=
+ =?utf-8?B?TXp6VlJWYXMvMHArZW00L2kvMXgzYzd4RFJ2UlZtdmh5VTdPaTkvNk1MK29E?=
+ =?utf-8?B?ZlRmNVlNb0xmZmQ4aFFpS0hZbENNZlNqVCswN2ZxcHRNQjlJUkFlaFJNTjRh?=
+ =?utf-8?Q?fQ/kBjg/7Jdfeam190CvEyQ=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b00382e-844f-4124-1538-08dcd7b85742
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 08:03:11.9454
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3VCKvq2tFoYz929vVJ2MkEZZZOLOFp7hLCqI2vvcXN4J1AiGoJce8hMNK8aWA6rmTmOzlbsdWab/eLSzK+1yYGq6zwInUd/tOGHNJS1Z7vI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10103
 
+On 9/17/2024 8:36 PM, Krzysztof Kozlowski wrote:
+> On 11/09/2024 09:00, Ciprian Costea wrote:
+>> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+>>
+>> This patch enables CONFIG_RTC_DRV_S32G as module by default.
+> 
+> We see this from the diff. We do not see why we would like this.
+> 
+> Best regards,
+> Krzysztof
+> 
 
---1OdrIj4eisHBYHwH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Krzysztof,
 
-On Wed, Sep 18, 2024 at 09:51:28AM +0200, Philipp Zabel wrote:
-> On Mi, 2024-09-18 at 15:42 +0800, zelong dong wrote:
-> > From: Zelong Dong <zelong.dong@amlogic.com>
-> >=20
-> > Add new compatible for Amlogic A4/A5 Reset Controller
-> >=20
-> > Signed-off-by: Zelong Dong <zelong.dong@amlogic.com>
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > ---
-> >  .../bindings/reset/amlogic,meson-reset.yaml   | 23 ++++++++++++-------
-> >  1 file changed, 15 insertions(+), 8 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/reset/amlogic,meson-rese=
-t.yaml b/Documentation/devicetree/bindings/reset/amlogic,meson-reset.yaml
-> > index 695ef38a7bb3..0ad81fe7b629 100644
-> > --- a/Documentation/devicetree/bindings/reset/amlogic,meson-reset.yaml
-> > +++ b/Documentation/devicetree/bindings/reset/amlogic,meson-reset.yaml
-> > @@ -12,14 +12,21 @@ maintainers:
-> > =20
-> >  properties:
-> >    compatible:
-> > -    enum:
-> > -      - amlogic,meson8b-reset # Reset Controller on Meson8b and compat=
-ible SoCs
-> > -      - amlogic,meson-gxbb-reset # Reset Controller on GXBB and compat=
-ible SoCs
-> > -      - amlogic,meson-axg-reset # Reset Controller on AXG and compatib=
-le SoCs
-> > -      - amlogic,meson-a1-reset # Reset Controller on A1 and compatible=
- SoCs
-> > -      - amlogic,meson-s4-reset # Reset Controller on S4 and compatible=
- SoCs
-> > -      - amlogic,c3-reset # Reset Controller on C3 and compatible SoCs
-> > -      - amlogic,t7-reset
-> > +    oneOf:
-> > +      - items:
->=20
-> I'm not well versed in preferred dt-bindings style, but this items
-> looks superfluous to me. It only contains a single enum.
+Thanks for your feedback.
 
-Oh, ye. Good spot.
+I can see how not providing any information in the commit message 
+regarding why this config is important for S32G2/S32G3 SoCs is not ideal.
 
---1OdrIj4eisHBYHwH
-Content-Type: application/pgp-signature; name="signature.asc"
+Considering this, if I would add such information, would it be 
+acceptable to enable this config as module ? Or should I drop this 
+commit instead ?
 
------BEGIN PGP SIGNATURE-----
+My decision to enable it as module by default was also influenced by 
+other similar RTC related configs, which are present in 'defconfig'.
 
-iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuqI5QAKCRB4tDGHoIJi
-0oRfAQC14rdH8axKMoQQHMpS4dcHTaZa/tZa3EPK4RdqiD+vzQEAgz5WGX3k9kGY
-EV3ERmLmeSSRCW0DYza8jgbDPMC5tgQ=
-=IxkZ
------END PGP SIGNATURE-----
-
---1OdrIj4eisHBYHwH--
+Best Regards,
+Ciprian
 
