@@ -1,76 +1,167 @@
-Return-Path: <linux-kernel+bounces-332792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CF697BEDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:53:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B959697BEE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 17:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D049028240C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:53:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A6FF282E97
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 15:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D211C9843;
-	Wed, 18 Sep 2024 15:53:20 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DF61C8FCD;
+	Wed, 18 Sep 2024 15:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i92yJnAT"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0BE135417
-	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 15:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EC01537B5
+	for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 15:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726674800; cv=none; b=oTiBxYKcHAe1VLNGqBuQUVUrVutB71xWYPZ/bKW5OLs4h/hjxvHheIgyp1FQ2NzGLYbTYyPcfcVXkisjZyOGS2QSPkGkKAbC8SmY88caQaNyQ7J/2ngd0BTwjwf4Wn0IsmpZ5mDpLL7CAUnSdWK1pHuPxGtbH725RGNGCQqniW8=
+	t=1726675124; cv=none; b=LInmt3Ge621hYIoSwTGpoIa3MeSPxl7bYwtCHNQEiJIiaPWO4jOC/qctPxCbEEp/kBMXFb8cZgzs0p/SKy7wodwRL0cRwKk2oO3t3trJkFwYs51G92SJXwj0o+O064il+Lx17xycJrbPTlUz9js/5kdEC4QTEADwWpk1RHg7ikU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726674800; c=relaxed/simple;
-	bh=eUkNUaswIa8P7UVmusL8ktZjfYKFFrALf17jGP5Uc7c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=R6NZWGFhA850ww9wuehY49QofpRkbJcYaNJU6+w08r3TwaVRVZcGndZu8+dsi5pbo76Jut3tUNhmfHQ7xj0ETElnH0Mrmmyk5toAluXK71eylgtYMyfRH/oU9r0ZSec+szPJ31XyjmrMVAbK9I5wt8l37yVl/V0Cj5VPKhH61+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a080ae776eso105166385ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 08:53:18 -0700 (PDT)
+	s=arc-20240116; t=1726675124; c=relaxed/simple;
+	bh=XTl0akMhLk29+AOFsdWdqvtoDJjo2Zyt/IJFizXRBlY=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VHVVOl0jH5URTW4RuqSw7uFZCOdu14OxV3rjJcacQiCOwv3vk4m7Li99f1uT2XWGkbO5c5I91sYVuCq5tCV1YGjfjfsmqdTMprMAEzfNSlMkhetMZcBnTk9hfEtu4G6jDZNM4GRwRNE09xPBBllyRrvJvnoHkj330UixSk3pZuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i92yJnAT; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5356ab89665so8057022e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 08:58:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726675120; x=1727279920; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/nN4RLUg+rsp0zC2dF8c0G2tRr1/u478Y/JOVZAT/Z0=;
+        b=i92yJnATD90UruszcewWZUZ47cdnGvZeoYki9Wj51h/YucsJLqcc9GombcpiOB2b2s
+         jFCKEsVjpc+8AAFkAnluROk0MFCPGPZcGnFMjcHypRis4hiUdZoHhzjeLSCVwC0ZUWcL
+         rH3SQpPxpilDnSZyR0/h3qiy6EceMiAK6UuRcSA0a749bpKXmT5a0ZReZyX2HH34zYKB
+         6ghX7LMYiU58NMq+uCgEmjSIm8TaagQKqyE20TVJhr+IeRBC033jzcpSG3iIP8f+yZkO
+         jt2E1/fQDfu0vnaueotJFnkirTiV/dXZj+nWdApswd2Wh3aYME0tuDXZjfIdU8U0sClr
+         5bYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726674798; x=1727279598;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eUkNUaswIa8P7UVmusL8ktZjfYKFFrALf17jGP5Uc7c=;
-        b=TOM0JJON7aEv3K6cSDaZfyKCmxaejjrTox7pStRD2bv3e/yvoXRoDir8UVk0RJsvQd
-         xD/gThoN5htA6hdk4h48OkwqYnoI64ZtW8W5a4LyhcMvCWymgW9TKFUFSSWLAsy2A4vR
-         +O9bocj3xiiiekCKpY/Hda/4Lj79UuKyL4T9k8Y06QGLh26iW2MGj+iyFhuMfXZKmUwU
-         /O4sFERgxye/O/WzetiZdV3HD/bYZLQ0ZN2EOK9jYm5ZrxwlEY977brSuekbIs4tQ4Kd
-         C4TU1mW213w3qaD01CqqhKwjRxSvexTCmdJf/DAl3yCTx5A/ZI2mdUnludXR4kVoLRxk
-         BUZw==
-X-Gm-Message-State: AOJu0YzrSp/+xMVYzmx+P8LHBAGg0++dyhxTfL7OgsedxR8svWhNwPVV
-	Z8S1nayRktoPDbBLQLayfVoxK35ZPWw3kFwcs2Re7idxu2Qm65/vwpDTcxQVnwyeoWwwIQHRlZS
-	qGh4PEguOZjrOOPnXJdpgXUoV6IOSosDgAHCMDMT+pWtfeFhkODhrAHE=
-X-Google-Smtp-Source: AGHT+IElLY3l1f+0Z6fJM0k6+okkyI0cXoOLHfsc+3TK1yha6AwmW356I9EAzoXZa+S89Nbl/ZVN8uEKcqrijyAvYdjA4N8o2QSa
+        d=1e100.net; s=20230601; t=1726675120; x=1727279920;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/nN4RLUg+rsp0zC2dF8c0G2tRr1/u478Y/JOVZAT/Z0=;
+        b=dotJFlcs6jPOaGITWlP2ru4cR5J0vXZZL51OTVGx+4jx8EQBN1fB5am/idaOHmAqBP
+         vgcND2zQZg+NKDBv4QR5iDlTmnLFDhk2W2loMczh5tNZpMu0/3F8wCTCrrayZpPNyUcj
+         Sl0XvhOPz1DnyxObcVamLd0Wv2tBJdO3AsNR9I38wiNaU7mbnlfhxCulyHI4StHVvGWd
+         P5tPM5RZ1URPUVIIj9q5MFI6vrxnQR/ak9g7wDH9+PXEeozk4HEyMlHMUmsM0aN0te7t
+         l6kgy6Xy+uTsEeRIzvbjfJ49vQONyFKw+AVY+cwPBj/np03dkZVzGjCp89wy9wjZTDcE
+         qpsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTuZguAK9omSGJgHdxBeDncpfSocJn3tSVr/riZPpZA6x/5S9fDAy4NZe3U4EbL0HkJK3VQhBaQSv0SJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNvq5NshaHCVcfWMgdt3lQ/zZPgzZ3uC2HaOTL8GWBHYAYl7Yh
+	HGAUxWNkzH9Klom/CBeuBDgmn+JvG/z6TGul5aByrThSnW/KG7N0
+X-Google-Smtp-Source: AGHT+IH8VOQsJfHDSqWN86iefH7nUBxWL2kMFITGTcXQybMmXDSZE1mijRo3aKboOiGWLXoB8Q9s6w==
+X-Received: by 2002:a05:6512:33ca:b0:52c:dc97:45d1 with SMTP id 2adb3069b0e04-53678fb1db0mr12278687e87.10.1726675119540;
+        Wed, 18 Sep 2024 08:58:39 -0700 (PDT)
+Received: from localhost ([94.19.228.143])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53687096890sm1549135e87.130.2024.09.18.08.58.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 08:58:38 -0700 (PDT)
+Date: Wed, 18 Sep 2024 18:58:38 +0300
+From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+To: Dragan Simic <dsimic@manjaro.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+Subject: Re: [PATCH] arm64: dts: sun50i-a64-pinephone: Add mount matrix for
+ accelerometer
+Message-ID: <Zur4rhyT50lwxE_v@skv.local>
+Mail-Followup-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+	Dragan Simic <dsimic@manjaro.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+References: <20240916204521.2033218-1-andrej.skvortzov@gmail.com>
+ <6e5d0e9978bff30559c17f30d1495b59@manjaro.org>
+ <ZunCysUTSfQU1ylg@skv.local>
+ <c7664fda936d36e0d916ae09dd554d2e@manjaro.org>
+ <ZuqyuvZ6tdzp5XSW@skv.local>
+ <8df5fc79a3e899738aa944a290774c72@manjaro.org>
+ <ZurYndjVz7r0U6dz@skv.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fec:b0:3a0:9244:191d with SMTP id
- e9e14a558f8ab-3a092441aecmr132117785ab.16.1726674798319; Wed, 18 Sep 2024
- 08:53:18 -0700 (PDT)
-Date: Wed, 18 Sep 2024 08:53:18 -0700
-In-Reply-To: <0000000000005ef449062240d69c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ff3050062266cd16@google.com>
-Subject: Re: [syzbot] kernel BUG in ocfs2_write_cluster_by_desc
-From: syzbot <syzbot+18a87160c7d64ba2e2f6@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZurYndjVz7r0U6dz@skv.local>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Hi Dragan,
 
-***
 
-Subject: kernel BUG in ocfs2_write_cluster_by_desc
-Author: pvmohammedanees2003@gmail.com
+On 24-09-18 16:41, Andrey Skvortsov wrote:
+> On 24-09-18 13:27, Dragan Simic wrote:
 
-#syz test
+> > > In device tree mount-matrix documentation [3] there is
+> > > 
+> > >  users would likely expect a value of 9.81 m/s^2 upwards along the (z)
+> > >  axis, i.e. out of the screen when the device is held with its screen
+> > >  flat on the planets surface.
+> > > 
+> 
+> how I read kernel documentation.
+
+Hm, I think I misunderstand this part in kernel
+documentation and you were correct.
+
+> Picture 2.
+> 
+> up
+> 
+>      +--------+ 
+>      !        ! 
+>      ++++++++++ 
+>          !      
+>          !      
+>          v      
+>        gravity, Z
+> 
+> down
+> 
+> Screen (drawn as ++++++++++) is looking downwards ("its screen flat on
+> the planets surface"). Gravity and Z axis point into the same
+> direction and it's expected to read positive value.
+
+
+Sorry, for the noise.
+
+
+> Actually, unless my analysis is proven wrong, perhaps it would
+> be better if I'd submit this patch in its final form, because it
+> has diverged a lot from the original patch.  IIUC, Ondrej only
+> imported the original patch from somewhere, without some kind of
+> proper attribution. [4]
+
+please, submit your version of this patch. I'd be glad to review it (I
+think, I've already did)
+
+>> [1] https://rimgo.reallyaweso.me/vrBXQPq.png
+>> [2] https://rimgo.reallyaweso.me/uTmT1pr.png
+>> [3] https://www.kernel.org/doc/Documentation/devicetree/bindings/iio/mount-matrix.txt
+
+> [4] https://xff.cz/kernels/6.9/patches/0221-arm64-dts-sun50i-a64-pinephone-Add-mount-matrix-for-.patch
+
+
+-- 
+Best regards,
+Andrey Skvortsov
 
