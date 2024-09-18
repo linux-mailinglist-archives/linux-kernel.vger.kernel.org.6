@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-332438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4592597B9AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:57:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D15197B9AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 10:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7910C1C23B99
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D411F2869E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 08:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3453C188CD1;
-	Wed, 18 Sep 2024 08:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71946189917;
+	Wed, 18 Sep 2024 08:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JaPztvCV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTea15gU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FE317E44F;
-	Wed, 18 Sep 2024 08:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0D917E44F;
+	Wed, 18 Sep 2024 08:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726649830; cv=none; b=lCZQLPhaQEBD9UeL1JT0+QcRCLySDVcqByYnpueAdX5KC69LxzYwInUQU4ijPkhhSZye0iokv8I5ijMlALWZukM7gfVge31tmW3FxNqkdbqrHMwJq62+kCkPVjHUFLQqLIhMskfh8bzAbxmHrY2cWItrV3Z3Bik9vuQNap0HjV0=
+	t=1726649833; cv=none; b=MY7p8qywpIzeKY6ToFduGekYMvOqVdJwL2NhXt0sdRMMjpdoRkH6LHcH62MSHyLhxdHl0bsa16EF1VrclFiJPrRmv/2wZy0OjthsEsMNxMpMVPOxddSMm+GQtodgfuzcu+F7QOULEfIT1L8ExLB6Y9vOgIcOWCT00UBnNBd2Tj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726649830; c=relaxed/simple;
-	bh=SU3UZfABhydEKjqSydN99OKW+Tck+MllDzQbQU3ZgSA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=KPXdkGmAa8jscCWmosBTbA4dm+VcgjnMTb3PNGGgdPgvjJA+nY6huqxU5mpC8CbavlvtdtTTiCpjM6mpQSuEaOZW87wpQ7sjYd2vactZE/9z2ZGeRm4ntW6XNDN1oGfU77BVLyPBqtvAKILG50TSdYQHZQ0nSqJoXyViq3cV7lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JaPztvCV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7536EC4CEC3;
-	Wed, 18 Sep 2024 08:57:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726649830;
-	bh=SU3UZfABhydEKjqSydN99OKW+Tck+MllDzQbQU3ZgSA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=JaPztvCV4XQNl7jGO6dHt4joYFwf2LBIrkszdkB73OhUUteZKSoEEvoZZkIVW/GFb
-	 mRciWZazfMVjUdVUrvUTA7WA57OgOnDJFPZM91TAlFkj8C3G+4qGU0Ivs1G/IG1PE5
-	 vdixW2955Mfme2lOKBfe1xYl9cPB6qwqzQMhhFnurDVmXarx2Bf2k7PkZwDwicRRwb
-	 zk97NfqKrInL9XdtfW3l5n2pkL3gnQqRXWvG0/3clkzhrLWuoGiHsMiDDaUuYGbPqO
-	 LUfEw7imvvuxPWYJfRdN42e6w+5LbbwKkTXwpEhEv3ITiPbg+xwPeAUbDMF37Fi4oU
-	 H2UBZEEIL87SA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EBD3806655;
+	s=arc-20240116; t=1726649833; c=relaxed/simple;
+	bh=UTxj8vuCMB1ru676BOaJabnV1LTuk+LYZM9c+fS0doc=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=qIZEMS7SytUEZVsjR5MFz4icZNuEBD4ds/jkDsCQCAjP2q3pPptp6CS/LzI7vzdAQdE3g9u6Ba/hTupzXEcYubfFQo/NwlwsEUuk0ge2tdXBFiQlRswqki5ly9RDfJKUHzWCCBuitj2hVd50ua2G+N7eZy3AdjnOIjcgFDXoAE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YTea15gU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0FAFC4CEC3;
 	Wed, 18 Sep 2024 08:57:13 +0000 (UTC)
-Subject: Re: [GIT PULL] pwm: Changes for 6.12-rc1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726649833;
+	bh=UTxj8vuCMB1ru676BOaJabnV1LTuk+LYZM9c+fS0doc=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=YTea15gU9uo/vt0rso8dV5JqkZOWGmK6/PRVLe7AvDv7VF65a5rvuwRKcEK+0Ljhh
+	 Lv5wSsaxgFpKjX0Cv4nWVNYVS4aupvjK2CDp9R0rBcgMaSzcrN05Yva3lb/aZOd5g9
+	 rQ9rgcakP2wP+6uQ48ENSjiUQTBnOJC5up/A6E1aexvfO+qnf/EC/oZw14zHZPtpm4
+	 u3Qr4jeoW+21l9z/GYdJ89tHk24YrkKk3HxL6f5L3S2bujNxUAJO+WotIwiGm71ySd
+	 sSqzuWpRbzbSbpDVAk3TnqbY/gUBBwBFEfuzSRwWvVFMm9cTnHpgsetqKQyeb+i03I
+	 0k8b+W+qZ+i8A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE4853806655;
+	Wed, 18 Sep 2024 08:57:16 +0000 (UTC)
+Subject: Re: [GIT PULL] power-supply changes for 6.12
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <b4pdalox2xlrrwontj7ceesyko6v3atbtgoa4fcbe52ei4kqe3@yw7yfwl7zz5o>
-References: <b4pdalox2xlrrwontj7ceesyko6v3atbtgoa4fcbe52ei4kqe3@yw7yfwl7zz5o>
-X-PR-Tracked-List-Id: <linux-pwm.vger.kernel.org>
-X-PR-Tracked-Message-Id: <b4pdalox2xlrrwontj7ceesyko6v3atbtgoa4fcbe52ei4kqe3@yw7yfwl7zz5o>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git tags/pwm/for-6.12-rc1
-X-PR-Tracked-Commit-Id: d242feaf81d63b25d8c1fb1a68738dc33966a376
+In-Reply-To: <yzvnkktljfia7cuatut6nzbgt3rl2sxrewxfvufs3bffipqru7@owejanrgjppt>
+References: <yzvnkktljfia7cuatut6nzbgt3rl2sxrewxfvufs3bffipqru7@owejanrgjppt>
+X-PR-Tracked-List-Id: <linux-pm.vger.kernel.org>
+X-PR-Tracked-Message-Id: <yzvnkktljfia7cuatut6nzbgt3rl2sxrewxfvufs3bffipqru7@owejanrgjppt>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git tags/for-v6.12
+X-PR-Tracked-Commit-Id: e50a57d16f897e45de1112eb6478577b197fab52
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: cc52dc2fe39ff5dee9916ac2d9381ec3cbf650c0
-Message-Id: <172664983213.725883.14252501098707325070.pr-tracker-bot@kernel.org>
-Date: Wed, 18 Sep 2024 08:57:12 +0000
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-PR-Merge-Commit-Id: 288cb34ead03c0d09932317b239f1f4d38fc9d4f
+Message-Id: <172664983532.725883.8218840254823307863.pr-tracker-bot@kernel.org>
+Date: Wed, 18 Sep 2024 08:57:15 +0000
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Mon, 16 Sep 2024 15:54:44 +0200:
+The pull request you sent on Sun, 15 Sep 2024 22:41:02 +0200:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git tags/pwm/for-6.12-rc1
+> https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git tags/for-v6.12
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cc52dc2fe39ff5dee9916ac2d9381ec3cbf650c0
+https://git.kernel.org/torvalds/c/288cb34ead03c0d09932317b239f1f4d38fc9d4f
 
 Thank you!
 
