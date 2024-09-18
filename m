@@ -1,136 +1,126 @@
-Return-Path: <linux-kernel+bounces-332720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-332721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7620097BDAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:08:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB51D97BDB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 16:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33916285D53
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:08:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 818FB1F231BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Sep 2024 14:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E3718B494;
-	Wed, 18 Sep 2024 14:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D71218B47D;
+	Wed, 18 Sep 2024 14:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iPidPgVw"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxedo.de header.i=@tuxedo.de header.b="bPNd6doL"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C86C189914;
-	Wed, 18 Sep 2024 14:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F87F9CB;
+	Wed, 18 Sep 2024 14:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726668500; cv=none; b=ezmuE0yZ7U2e63gMPH35PRPGsvHOfBLDGljZj0STlHlUFqKMzkjkO2vqnZ7apAYKkSpgD90es33/j5JXNKG4eUb51YBXBHmDqMxs5iurUCzicLisAXQ971+SmmCQSBYVRxQzWvDXeV3uFpnGJD8vRXeIwriOISjvcwMa7Mjd5G8=
+	t=1726668607; cv=none; b=fdAd9y4f45ZDEKLJH+Xr8epqBLImrVNBvOJXW9ohB/lDbONjt8gqpCTpOxq1+RipRK3K0a37JY7gJ+l8pGu1sSgcfJEvuUGeKec8wxgC4Sty2J0T57X6GG/PLmwnlU5qRe/6vYA/ACNefLJQHPLQif8PlyQUNiA4JGrjc+mX9/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726668500; c=relaxed/simple;
-	bh=SR59Zy5+0H2JkKgz/OJzRShajwpCLZ8pjA8HUTdsCYE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=C9vPQl4u91zffKPkwDvU0AErkYjYhe/Yeijo/eB75t1iuzVO8HiqvuHK+fMiNMs00Zp4k5tin2k80ld4x+kDEqlg2Mku9ailqMRwSUJIUeGSxHwUiUXl1JsHeZP/SGSSd7hAQsQ5kVYCtljMi8l75rgwNz5dWFFeFcfaL4+NAZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iPidPgVw; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726668490; x=1727273290; i=markus.elfring@web.de;
-	bh=pEmW+piCbVWV20mN7xgHAtfyqql/eYPfht5wyl2LEeA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=iPidPgVwc7e8j1FxRQuKnWlir0Czsek05Gob4msjleTXKIROzBHhZXKPegE5Ozbz
-	 zVd+l7wEch3nN1fkVT1SQhKSLxeYObrE98gldx4b8ybrdeI+nmsGwHmE4vxlr4kw/
-	 mkA2RfzBgL1RXgPVjFvjXZbh/xDrTG4GnvkCwgTmyt5KxKSgBJ8bVa6JGWXwKls7Q
-	 f16fWfnddFTe40fn6UtSDdUi8LuMqn+5SYdplGBAsLovYF4H1Yw/cSUHiHK8RLM0h
-	 dKa7b4tBFo6f5PSCzgyzBiDTjUDPgsjp26koJBKM843tU7Af+7hYS0RMV2i70j7ED
-	 UjlvQSSfS5mqYWgu8Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mmymp-1s9dvC3wzH-00h69H; Wed, 18
- Sep 2024 16:08:09 +0200
-Message-ID: <ab7f53e6-128b-4c75-8227-b38a10d134b6@web.de>
-Date: Wed, 18 Sep 2024 16:08:09 +0200
+	s=arc-20240116; t=1726668607; c=relaxed/simple;
+	bh=13VMKhIv2lXRTCy5STsEsl6Vx30Qfx8Efz6mgtaPZwo=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=otspe0VZ7coO/Z35VA+K0i1rYdKplMzjuO8jP08aKh83gIF6wo5JdwOTMvEM4QeaIs+QTOVtkRr3GTC7HL0D3vxa/tvPAbQfk8PWT2R/Nt+PSUipUpG7YrCFa4+5xkMJMLz+gEx5qkkyHT73aWwehF+fCi62+GrVIdwJuYA5eBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tuxedo.de; spf=pass smtp.mailfrom=tuxedo.de; dkim=pass (2048-bit key) header.d=tuxedo.de header.i=@tuxedo.de header.b=bPNd6doL; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tuxedo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedo.de
+Received: from mail.tuxedocomputers.com (localhost [IPv6:::1])
+	(Authenticated sender: cs@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 1B98E2FC0173;
+	Wed, 18 Sep 2024 16:10:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedo.de; s=default;
+	t=1726668600;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0n5gawmEzxr38cZdSrO5pp3uPMCaZrV3zJ4YL6eIaL4=;
+	b=bPNd6doLl6+drAkUVWagvecGNXjYiBWcFeoNu1sBezyUoG0Nz4F2jl8cZU8vM30tWG5VnZ
+	QeWO1PCIM986b9W3JH/GW77XX+QBV6NbNWwVkodd6tFh/lekcTOYf46piaYlm0cQ4waXN5
+	AvyWy9wyWeqxzpTamPxE3E+gxGUkqiOIApf1OzO3S7xzXZXfS6Oa9jrPXKwF3YEMCrG30m
+	wVrNUqOuxDaFsUELTtMWc2EaRr3wAtVuuMUbWEPjb+g0WwSdTequTzl9N3TlxmbRfA2S/U
+	mUkcilxp97v2KVeLs4oK96ikoeI+p/DLNe0pLBK9cR6mxqQ7LF6Nd+3CiocVYw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH 1/2] dm-crypt: Use up_read() together with key_put() only once
- in crypt_set_keyring_key()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: dm-devel@lists.linux.dev, kernel-janitors@vger.kernel.org,
- Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>, Ondrej Kozina <okozina@redhat.com>,
- Waiman Long <longman@redhat.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <68ee5a00-888c-420f-a3a9-a556c19ee6eb@web.de>
-Content-Language: en-GB
-In-Reply-To: <68ee5a00-888c-420f-a3a9-a556c19ee6eb@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:O5jt9HpoSMIFeehshGrf2vDObu39p8RKz1mnqQeYuS08zJaR/Ao
- C4LWSzrloc+Drx0c72xC8UWRoewf54YhwBgqO1+aGBZAqrrJ+2Hv38H0lZUXu6OHMJn09v+
- eWwW6IDzVi+n3vYl/USLThX48T/lJW6qljSxj58QfFkJtZt06PwuO0r5RezpRjWk5k/xC0z
- O/peMe/I/ENH3bggzlTpQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nuwLnslBJj4=;KwLhJNfMX6ifWY6KIF/utjj9zhF
- 3TtHHMvyUoxnw22uyS02ywq0aVEPtz0JFtkcPxiTY9UxCQU+QZAqbru2lipl55cZVQhw+CuG6
- usuA5y0Rcfni41fpzHRSNuzkHH3f01/QKku1BRFNU3m4KHqGfPAeSVEL2ISO27Pnzv0LAxSyi
- NvGD9HfQtXEsDu+y4YttpTDd7ZYeAIVaAxsQNpriNnGRER6cd6P7UqGvya+lUumLIEPAVo6ak
- ZhXS4+CRuKzalxtGXT8hJix6FfiQ1qTeNP75yJX7vNL9l+2KgNUfZWBN2ksxpRNwPxZuSpqhl
- 1cLC4WbZd4sCLtkmmdAiKEOTEpO3zqIa7ouz2nNRdwxkMmgRcZer3RCfVU+DppG2HwoO86hAe
- 36x1vlwLtU4IsQhOK5Sjrp3klV4HO6OQga4fGhMlq5gJ7uBLlIsAlxoQv4q2LBFPbMWYYzn1A
- HTycWHgmEJPJ2QVPLIP4K6D9oeCupiUHMu2IaSk7AwgJ1cF/sJXRiD1ho1KTP3VbzGQaRzR4E
- i/OViMhx2AOQ3p6L4NyeRVDOShrFTHEAsxOiTODyIHHeNAZ9ou5qtsDTakIC6lFZbkveQey/3
- L1J34nSf9GicTQGp1IJ5M96fQgtIl+sV8ZSdGG1MWVGTThVdhRMUNc45jlPl4JJ1Btd0KX8Up
- qSyhyOQmhQtkTOKcA2sk91QBER4xzbbIFQ//rACgakMb0x8mzNTehWgEcTtzYfHgk/SVFNruD
- j69IEMmKBcvehoeq6PlVLAs+PRTzoA5+sSL3QWjdvTySWWUlmcbvYkFXs8k0tyKOmUjkut3rW
- l3aFd55MyPnkruTtrYyDejKA==
+Date: Wed, 18 Sep 2024 16:10:00 +0200
+From: Christoffer Sandberg <cs@tuxedo.de>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Werner Sembach <wse@tuxedocomputers.com>, Jerry Luo
+ <jerryluo225@gmail.com>, Christian Heusel <christian@heusel.eu>,
+ regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>
+Subject: Re: [REGRESSION][BISECTED] Audio volume issues since 4178d78cd7a8
+In-Reply-To: <87r09hcbr0.wl-tiwai@suse.de>
+References: <c930b6a6-64e5-498f-b65a-1cd5e0a1d733@heusel.eu>
+ <87jzfbh5tu.wl-tiwai@suse.de>
+ <66dfd536-ae17-4d75-b514-7931a3734e54@gmail.com>
+ <20f70c0a92a27db29f188e05c33ba82c@tuxedo.de>
+ <1fbba03e-56b8-4e74-adf6-998e3a2d9dac@gmail.com>
+ <87setxe68m.wl-tiwai@suse.de> <87r09he63e.wl-tiwai@suse.de>
+ <dfb141e8-6afa-4d21-8cd4-f9a53e8a192e@tuxedocomputers.com>
+ <87r09hcbr0.wl-tiwai@suse.de>
+User-Agent: Roundcube Webmail/1.4.15
+Message-ID: <cedb8758bb506bf9454b90eebcaaea24@tuxedo.de>
+X-Sender: cs@tuxedo.de
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Sep 2024 15:05:29 +0200
 
-The combination of the calls =E2=80=9Cup_read(&key->sem)=E2=80=9D and =E2=
-=80=9Ckey_put(key)=E2=80=9D
-was immediately used after a return code check for a set_key() call
-in this function implementation.
-Thus use such a function call pair only once instead directly
-before the check.
 
-This issue was transformed by using the Coccinelle software.
+On 18.9.2024 15:49, Takashi Iwai wrote:
+> On Wed, 18 Sep 2024 15:39:28 +0200,
+> Werner Sembach wrote:
+>> 
+>> Hi
+>> 
+>> Am 18.09.24 um 10:09 schrieb Takashi Iwai:
+>> > On Wed, 18 Sep 2024 10:06:01 +0200,
+>> > Takashi Iwai wrote:
+>> >> [...]
+>> >> I don't see any relevant about the incorrect volumes by the suggested
+>> >> commit, but at least we should avoid applying the quirk for a
+>> >> non-existing speaker pin.
+>> >>
+>> >> Jerry, yours is with CX11970 (codec id 0x14f120d0), right?
+>> 
+>> Yes, at least for the preproduction sample of the Sirius Gen1 I have
+>> at hand atm.
+>> 
+>> pciid is 2782:12c3
+>> 
+>> @Christoffer: I guess 2782:12c5 is for the Gen2?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/md/dm-crypt.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Yes the other is for Sirius Gen2
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index d5533b43054e..dae2fe3cb182 100644
-=2D-- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -2621,16 +2621,13 @@ static int crypt_set_keyring_key(struct crypt_conf=
-ig *cc, const char *key_string
- 	down_read(&key->sem);
+> 
+> Hm, and one of those PCI SSID conflicts with System76 Pangolin
+> (pang14)?  All seem to have the very same codec CX11970.
 
- 	ret =3D set_key(cc, key);
-+	up_read(&key->sem);
-+	key_put(key);
- 	if (ret < 0) {
--		up_read(&key->sem);
--		key_put(key);
- 		kfree_sensitive(new_key_string);
- 		return ret;
- 	}
+I don't think I saw the pci id explicitly listed, but that was the 
+assumption.
 
--	up_read(&key->sem);
--	key_put(key);
--
- 	/* clear the flag since following operations may invalidate previously v=
-alid key */
- 	clear_bit(DM_CRYPT_KEY_VALID, &cc->flags);
+> 
+> If they really conflict in both PCI and HD-audio codec IDs, the only
+> way would be to check DMI string, I'm afraid.
+> 
 
-=2D-
-2.46.0
+I asked about the volumes since it could be a hint that a second speaker 
+is activated but stuck on a fixed volume. This would make a low general 
+volume setting sound louder but still somewhat adjustable.
 
+However, if we can not verify second speaker pair, then I agree, DMI 
+limit would be the safe choice.
+
+Christoffer
 
