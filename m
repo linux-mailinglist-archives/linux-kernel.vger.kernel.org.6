@@ -1,105 +1,78 @@
-Return-Path: <linux-kernel+bounces-333345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A4797C730
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:40:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D73F97C732
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9978AB2642B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:40:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 053611F24A46
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3335919D066;
-	Thu, 19 Sep 2024 09:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34ECA18E04D;
+	Thu, 19 Sep 2024 09:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="v0KQpTRn"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6cYRWK5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2307E19ABAF
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AD419D09D;
+	Thu, 19 Sep 2024 09:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726738790; cv=none; b=qlnBah6Rp4GFgeD2A+IsBSETqrnkm0s2runDxxrpqj23FNd/eUL3wK16viRofajZhgryeM49J9CjajW4CQtlv7T+YzQC/1zG6t97T3Z1TN3+bQqfeB5xk8AMb/VauC2bioJ7vHkQMXllAYigCpebcNxt5vWRs/0whVBm6p55qfA=
+	t=1726738801; cv=none; b=mr9E77RoDOcBwpsM8tUw9BVeJkI2WIdxml+dHm9xYD9s8AYc93g/MumEhpDpLZNDPLaDhkxD4jRFYzlQyWKuUI9KJnoO+LVRXk8OJXtpoI4MLiy3VK5QqmlbIEiGnApFrUu2NT486Jb6Ax3zO2EGiPpnBONXOHcg+ff40hUKY8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726738790; c=relaxed/simple;
-	bh=quLF4r0BPg/Lg56Pq4mAL3T/2KzHzxOAJO26kJYaM1I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iC+cfKFt3Xt2SBswcIgtFsj8V4hSGmf5APSGbjkTrWYSddBikKp/GeTKj8nNvXvfo4hePd2DaCDJq+J35ZgJsgDHUTYd66b8EfadU+p8BjCWRTO0+9BBDc6EonvK0NhbxsniV2Q6Il0ENtppqhQH8iXweqMV4DXD9Eargiv63MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=v0KQpTRn; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726738762;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kgS97rYBis0paBZDtTgvMBnKTKUqe4gMl/tKEtgKQec=;
-	b=v0KQpTRn2bRSXJivoqD9JMO2Q9lUFHzTQyCzC5w+u87Jh2qV5aM3Esc6c5/9GoPGdEt4cg
-	LlYjyQ1IAm8iYoN6rl+cYuCgvJeomPWZk4J5uUx2aCoXo4RhEAQsoaMj/sR/1Ws/mFWUW6
-	+18yvQZYF2vb47Q7yhNBARS7WN8chLk=
-From: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
-To: Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger@dilger.ca>,
-	Jan Kara <jack@suse.cz>,
-	Harshad Shirwadkar <harshadshirwadkar@gmail.com>
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Luis Henriques (SUSE)" <luis.henriques@linux.dev>
-Subject: [PATCH 2/2] ext4: mark fc as ineligible using an handle in ext4_xattr_set()
-Date: Thu, 19 Sep 2024 10:38:48 +0100
-Message-ID: <20240919093848.2330-3-luis.henriques@linux.dev>
-In-Reply-To: <20240919093848.2330-1-luis.henriques@linux.dev>
-References: <20240919093848.2330-1-luis.henriques@linux.dev>
+	s=arc-20240116; t=1726738801; c=relaxed/simple;
+	bh=pXFh0HRlI+qnpwBSbTyFva7eUNJi6tvx27w8helXoO4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ixdGPdvnUBlfTMj8C+CKoUrCvVED4CeXgi+rk2igrQj3bKFjjBe5eCyEi5QUoqp6EG9YMi94Oj82sRacJ2iPPXnKyS8qcWXUExf5EC+FFL3mk28PWPqRO155HcJLlc4/VxSVz8YHXKKd8jgQ2aW8NFD6zFT0GCmHVu37PsBDyj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6cYRWK5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 396B9C4CEC6;
+	Thu, 19 Sep 2024 09:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726738801;
+	bh=pXFh0HRlI+qnpwBSbTyFva7eUNJi6tvx27w8helXoO4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=P6cYRWK5WcfAS/HvfPeRDxh9NRI0bb1+iUkhdItOPkHCtnrtzYjWBx5GIh2apcADW
+	 E2C49hi1PLJNJPT/N/FdacoERJzQRKv1AABm1fVQkH0jgEv4XzEN72AAArYpqP9Qdy
+	 DDNATEbD+8y72TDlrK7rVYa797CzLGOhCZHeIgm6qaD3oMkPzGSQvIfrO2S8osTS/A
+	 cAbye/aTtcVkz7r3V/U3oMzw38BFC2iQj+bYFaCpihWboQ7NHyfetKkn6485Cm2KmR
+	 /CummS01Ka58aPoAd9MakcRGdtMxljqE6sdERoQq5n/vlgA02ogbMdG2Ata4JFHI/R
+	 61926UhiUWulw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 5163E3809A81;
+	Thu, 19 Sep 2024 09:40:04 +0000 (UTC)
+Subject: Re: [GIT PULL] dma-mapping updates for Linux 6.12
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZuvYnXzbM2qfXQPT@infradead.org>
+References: <ZuvYnXzbM2qfXQPT@infradead.org>
+X-PR-Tracked-List-Id: <iommu.lists.linux.dev>
+X-PR-Tracked-Message-Id: <ZuvYnXzbM2qfXQPT@infradead.org>
+X-PR-Tracked-Remote: git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.12-2024-09-19
+X-PR-Tracked-Commit-Id: a5fb217f13f74b2af2ab366ffad522bae717f93c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 726e2d0cf2bbc14e3bf38491cddda1a56fe18663
+Message-Id: <172673880309.1462306.5201479198069833055.pr-tracker-bot@kernel.org>
+Date: Thu, 19 Sep 2024 09:40:03 +0000
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Calling ext4_fc_mark_ineligible() with a NULL handle is racy and may result
-in a fast-commit being done before the filesystem is effectively marked as
-ineligible.  This patch reduces the risk of this happening in function
-ext4_xattr_set() by using an handle if one is available.
+The pull request you sent on Thu, 19 Sep 2024 09:54:05 +0200:
 
-Suggested-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
----
- fs/ext4/xattr.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+> git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.12-2024-09-19
 
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 46ce2f21fef9..dbe4d11cd332 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -2554,11 +2554,15 @@ ext4_xattr_set(struct inode *inode, int name_index, const char *name,
- 	handle = ext4_journal_start(inode, EXT4_HT_XATTR, credits);
- 	if (IS_ERR(handle)) {
- 		error = PTR_ERR(handle);
-+		ext4_fc_mark_ineligible(inode->i_sb, EXT4_FC_REASON_XATTR,
-+					NULL);
- 	} else {
- 		int error2;
- 
- 		error = ext4_xattr_set_handle(handle, inode, name_index, name,
- 					      value, value_len, flags);
-+		ext4_fc_mark_ineligible(inode->i_sb, EXT4_FC_REASON_XATTR,
-+					handle);
- 		error2 = ext4_journal_stop(handle);
- 		if (error == -ENOSPC &&
- 		    ext4_should_retry_alloc(sb, &retries))
-@@ -2566,7 +2570,6 @@ ext4_xattr_set(struct inode *inode, int name_index, const char *name,
- 		if (error == 0)
- 			error = error2;
- 	}
--	ext4_fc_mark_ineligible(inode->i_sb, EXT4_FC_REASON_XATTR, NULL);
- 
- 	return error;
- }
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/726e2d0cf2bbc14e3bf38491cddda1a56fe18663
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
