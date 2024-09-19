@@ -1,140 +1,133 @@
-Return-Path: <linux-kernel+bounces-333088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A78DD97C350
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:31:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE72E97C354
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:32:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B48C61C216C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 04:31:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B8C11F2261A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 04:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FB2179BB;
-	Thu, 19 Sep 2024 04:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57ED51B7FD;
+	Thu, 19 Sep 2024 04:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mE7h8y6m"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gieE/7yW"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8E023AB
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 04:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC56E1804F
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 04:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726720313; cv=none; b=B+8ejTlRyM/Vlrv49o5tFUetypAEKCa0YCfjaOuFKm/c7O5mrSCaUudIbG+nbLkt45lF3Wi4/LqwgwhEDBGbeNpthFX9DsHy3QtbgmhQ2oWxqwsEifUPEUIY29BTGOu5cPtE3jygwmAJaWkNpwsBIrEvaD85/g16WiBctSU2+Gk=
+	t=1726720363; cv=none; b=XBvyPwTffRl5eVkwkCifSSfkCjQ1HxDQZDu8TDqTP3mYreaOa3tP+HXrt6ntdDGr9YWNaJQDGkfzX8qmfScKGzTrSUwLwXNhcM1xI54YI55JXLE3hf0kLg7VLO8gs9sW0yFi8qfMwGa3AyHmR3TudjrRHtJ8QodFu+1Mc769RtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726720313; c=relaxed/simple;
-	bh=EcEbpoT4Yi23+De7VvqDSLDM9LsvEFlD/sABkkZCJpw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VopyLxxNvvmaT7LcV2lOBNcUSJL6CDpQy9v6Y2eCo2etv7li7pLyWyqyh7G28ueHLItPasdQdXgMeh3vmNvQ+3ZdjkDHK+CJepSOOk8ba94uw6pyNtloOykRuau01/G+hhJO+gbU9fnPVN/VzG2S960TewGaOQKG98EdsIPuEKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mE7h8y6m; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e0438e81aaso301180b6e.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 21:31:51 -0700 (PDT)
+	s=arc-20240116; t=1726720363; c=relaxed/simple;
+	bh=fzixIv7mDCApwoPr19Yl5C0aFP9P4Wj7HGNtS5Rhh7U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MpUyeD/4WbWmh+qvxGx4OBECceLqyj3YeB9uUSvdrQqMrOiYFQmIShJU63NlPtk1xvaVYwUTHfMUOOrbZeQu3xLUpbW0993hLTlAQkZY0MlIlh3bO5BSg18biY4oBiG5acnyh4kpHtE2ksRz1ETdYTq0i55Fxzevs9THsoNJq5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gieE/7yW; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53567b4c3f4so371123e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 21:32:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726720311; x=1727325111; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jnEOZ1pExE6GXIP1uo6O5xxRyy89O+vheaw1Do4bDlo=;
-        b=mE7h8y6mQZWOfcR3XB/eXaZZqWT/BtO0WObmP/glPS/BXXVnzsRLrDEbHKrtXFC7W3
-         j89ohHPrycjF7x+lFb4Xijfpz0//dkkv7CB5R8jIprEiohg8hkgYX48qyZmWquXL/qS1
-         WSHM0qLTJHtLNhQZeO6e9dhtLebdjde53D4GvrwnKlbFaV+rwwgDpe/5LouO99grKZ5V
-         biNkslj28uWGyG4PvBUTm/Et9KGA9t6pigxiIjGFffWcgTXAYwg/CaBuu5cUL03kEqZk
-         ahlni2m5c5+xtJvsbZ820vu+ghbVUF+xLa8G6Ax/3Nvhl1yR3m7NVK8IPhb7gJlFkEuQ
-         WCiQ==
+        d=linux-foundation.org; s=google; t=1726720360; x=1727325160; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=l9yFEfRvpp3RBfmF+3PJrVEwQqIIGgrTWijYjV6RGF0=;
+        b=gieE/7yWndLUNQNHFyjg62RsFEFjLi2iWM3Nzf41KG6Xz8MYeYFmjPuxjaDslLW2h3
+         EuMhLTxVU8hxUB6U8zVhQgaGKQ8IAEsMYyXST4hxI6uvQtUtjLIDGFoc1JVAbL2CqZse
+         f2S0I01Ka/xwo6TuM82t56xJuKDxZ54AueH7A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726720311; x=1727325111;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1726720360; x=1727325160;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jnEOZ1pExE6GXIP1uo6O5xxRyy89O+vheaw1Do4bDlo=;
-        b=NBtlX4quRdJoYNL6BUCEhNSz/7YzmZwudvSrmP53+buEjaO8WlUzSz8hWFtNbnrAe2
-         6rRCLWEtcBy+cHyNsrAulPnSVrzJR+Twc23jmFQd98RLb4myoolMMWq25emMY5Gt1lb+
-         ZKreKVNruznh1asFsoF/lBThEAs2eCcyAsl2D4fITJ+za5XJqR3QaIWS0V01zeSXu5TT
-         92YMRiFIHhJj/MRMQrPkxpc9jWy5HJWfxJ+VF55lpMJoM6vtay49aTRGdoR4WcFupEfK
-         zw+xjMB6mHKaKeEpGYhExYX7l+aJz4qE1TUWDAZgiqLKzdcJ0Eae7fiN1V4kGt0Q/TGH
-         O7Ag==
-X-Gm-Message-State: AOJu0Yyzm3Pp4rUg3VeBB97qfTd53H8DkVXUkJrKRptlCMe0blRLUGRM
-	8FLnRdhbZ0NaT5vYd70FZtxtvI0r8bXCBAJ8GniDEpcNTJuvTFkTj2QaIo4S
-X-Google-Smtp-Source: AGHT+IFPY1p11K7SNgnXsHQAZuSMJj8nXShqm/KTnmJE87uRTzNxmpFc9IFDksQCU3rAM51H34Q8Mw==
-X-Received: by 2002:a05:6808:1821:b0:3e0:6b72:f324 with SMTP id 5614622812f47-3e07a125223mr12371571b6e.20.1726720310623;
-        Wed, 18 Sep 2024 21:31:50 -0700 (PDT)
-Received: from localhost.localdomain ([143.166.81.254])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e26b6ac829sm207305b6e.18.2024.09.18.21.31.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 21:31:49 -0700 (PDT)
-From: Stuart Hayes <stuart.w.hayes@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Martin Belanger <Martin.Belanger@dell.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Daniel Wagner <dwagner@suse.de>,
-	Keith Busch <kbusch@kernel.org>,
-	Lukas Wunner <lukas@wunner.de>,
-	David Jeffery <djeffery@redhat.com>,
-	Jeremy Allison <jallison@ciq.com>,
-	Jens Axboe <axboe@fb.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	linux-nvme@lists.infradead.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Jan Kiszka <jan.kiszka@seimens.com>
-Cc: Stuart Hayes <stuart.w.hayes@gmail.com>
-Subject: [PATCH] driver core: fix async device shutdown hang
-Date: Wed, 18 Sep 2024 23:31:43 -0500
-Message-Id: <20240919043143.1194950-1-stuart.w.hayes@gmail.com>
-X-Mailer: git-send-email 2.39.3
+        bh=l9yFEfRvpp3RBfmF+3PJrVEwQqIIGgrTWijYjV6RGF0=;
+        b=dHDiN7V96pYPLBvaadqLMLQU2bi9UoIOdDCmBE2K2pen3v8sz4TrUb9rPXF8YW9Gfi
+         sqlFylBYSx6TXkcfVLKtXWL+uXJIZlMn1NbohnuPv1KXhM9byjc4QD3B33EiMJTx/y6e
+         fQpYv171x9xoKFWTiRvDJBYL91lyL50gt/0tidMlLlqrfcN7Dhl6SRwNDe8VNjNV7Wih
+         4cBlHzBI00MYHWqhwV6qWsJMx/hoO8E59Am3G/EtpmQVuY1Kddp5BxrHfSNnZODlnc0D
+         dZr3jRB3a/EaMPyUppQfKxLBKe05C+F0ppMUonARfWde4zjBilTwYcpvQoUfl/NNq46K
+         jVqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+w1zWKfB1c93KRN8bpxJ9sBDeC4DUP80RlfnLba0aGpMCUjkhOotVNEIUaBx7v5C3EagxRST+NOFcKGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLzgzfMzxd870RnTemWZ+Tj9ezpdDxc78dY0waUVy27fG1NLCD
+	kSwtzL4PvooNoyRuT8Yib32WpQzmpE9+25mt4W4FUt2uhMhfllszwNfVt0pMJFe/94+eksHbSPf
+	j9lfUeQ==
+X-Google-Smtp-Source: AGHT+IHz2/AvOVa35wsoC+RCFmUr3RhGTF+ciV7J1IMKeSEAKqqwC1SbsO+yolAs8CLCfh8QaSS5Cg==
+X-Received: by 2002:a05:6512:1106:b0:52e:9619:e26a with SMTP id 2adb3069b0e04-53678fcd182mr14296530e87.26.1726720359518;
+        Wed, 18 Sep 2024 21:32:39 -0700 (PDT)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com. [209.85.208.47])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb89d5bsm5587838a12.74.2024.09.18.21.32.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Sep 2024 21:32:37 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c4226a5af8so576590a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 21:32:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWYm5do3ClykzUkAInkG+MdcYw98kQpNtfLVRIaGpvI9RCuSkWjWZrBi9oKtSWDnt05IaMeKrLk2g/LJ+A=@vger.kernel.org
+X-Received: by 2002:a17:907:f766:b0:a8a:8d81:97b1 with SMTP id
+ a640c23a62f3a-a90295a2171mr2279810366b.27.1726720356520; Wed, 18 Sep 2024
+ 21:32:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <Zud1EhTnoWIRFPa/@dread.disaster.area> <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
+ <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com> <ZulMlPFKiiRe3iFd@casper.infradead.org>
+ <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com> <ZumDPU7RDg5wV0Re@casper.infradead.org>
+ <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk> <459beb1c-defd-4836-952c-589203b7005c@meta.com>
+ <ZurXAco1BKqf8I2E@casper.infradead.org> <ZuuBs762OrOk58zQ@dread.disaster.area>
+ <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
+ <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com> <8697e349-d22f-43a0-8469-beb857eb44a1@kernel.dk>
+In-Reply-To: <8697e349-d22f-43a0-8469-beb857eb44a1@kernel.dk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 19 Sep 2024 06:32:19 +0200
+X-Gmail-Original-Message-ID: <CAHk-=wjsf9eAsKf-s6Vcif8wHPFj3iycaJ89ei=K1hQPPAojEg@mail.gmail.com>
+Message-ID: <CAHk-=wjsf9eAsKf-s6Vcif8wHPFj3iycaJ89ei=K1hQPPAojEg@mail.gmail.com>
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>, Chris Mason <clm@meta.com>, 
+	Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org, 
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Daniel Dao <dqminh@cloudflare.com>, 
+	regressions@lists.linux.dev, regressions@leemhuis.info
+Content-Type: text/plain; charset="UTF-8"
 
-Modify device_shutdown() so that supplier devices do not wait for
-consumer devices to be shut down first when the devlink is sync state
-only, since the consumer is not dependent on the supplier in this case.
+On Thu, 19 Sept 2024 at 05:38, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> I kicked off a quick run with this on 6.9 with my debug patch as well,
+> and it still fails for me... I'll double check everything is sane. For
+> reference, below is the 6.9 filemap patch.
 
-Without this change, a circular dependency could hang the system.
+Ok, that's interesting. So it's *not* just about "that code didn't do
+xas_reset() after xas_split_alloc()".
 
-Fixes: 8064952c6504 ("driver core: shut down devices asynchronously")
+Now, another thing that commit 6758c1128ceb ("mm/filemap: optimize
+filemap folio adding") does is that it now *only* calls xa_get_order()
+under the xa lock, and then it verifies it against the
+xas_split_alloc() that it did earlier.
 
-Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
----
-The patch this fixes is in driver-core-next and linux-next.
+The old code did "xas_split_alloc()" with one order (all outside the
+lock), and then re-did the xas_get_order() lookup inside the lock. But
+if it changed in between, it ended up doing the "xas_split()" with the
+new order, even though "xas_split_alloc()" was done with the *old*
+order.
 
-Please let me know if this needs to be a V2 or if it needs anything
-else... it is the identical patch I sent in yesterday, except I added
-a "Fixes:" tag and the comments.  Thank you for the help!
+That seems dangerous, and maybe the lack of xas_reset() was never the
+*major* issue?
 
- drivers/base/core.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Willy? You know this code much better than I do. Maybe we should just
+back-port 6758c1128ceb in its entirety.
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index b69b82da8837..76513e360496 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -4898,8 +4898,16 @@ void device_shutdown(void)
- 
- 		idx = device_links_read_lock();
- 		list_for_each_entry_rcu(link, &dev->links.suppliers, c_node,
--				device_links_read_lock_held())
-+				device_links_read_lock_held()) {
-+			/*
-+			 * sync_state_only suppliers don't need to wait,
-+			 * aren't reordered on devices_kset, so making them
-+			 * wait could result in a hang
-+			 */
-+			if (device_link_flag_is_sync_state_only(link->flags))
-+				continue;
- 			link->supplier->p->shutdown_after = cookie;
-+		}
- 		device_links_read_unlock(idx);
- 		put_device(dev);
- 
--- 
-2.39.3
+Regardless, I'd want to make sure that we really understand the root
+cause. Because it certainly looks like *just* the lack of xas_reset()
+wasn't it.
 
+                Linus
 
