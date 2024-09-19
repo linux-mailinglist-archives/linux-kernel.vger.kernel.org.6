@@ -1,114 +1,168 @@
-Return-Path: <linux-kernel+bounces-333225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D90897C59F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:13:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 707A997C5A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 551DF284927
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:13:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3142628496A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398B0194C6F;
-	Thu, 19 Sep 2024 08:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FA0198A32;
+	Thu, 19 Sep 2024 08:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NyCVHHTf"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UEHYjqTW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F801957F8
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 08:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 769D429A5
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 08:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726733581; cv=none; b=AEQPL90gkpRYL+n7EqVao4uyfi+rDMGLLwMwag9ZyCB4rbnM8epvFkIm1UUKJydAZEjOW61S/WilVyK3pRPYLoGgfXo299rZzhvCprptBdvbhw3VZeSBGx8Vrw0yD43A/L5cwZya1Sv8wC3JXBiBNdLYVoD0LZeJ77rAEB5GH0w=
+	t=1726733613; cv=none; b=g5V3bqG9wevjSd6Q10TjWC6KFDk6EAW+YKNQC/WGArqbnZd3z/U6PBOdCZk+KHgEEymSKCcjWd0RjbVd5Z/ph01iS2H5ysfFvjS4xmv4gvqDnZ3QsTKzRYGMYai+TdgCxrWQvxtZYajq5GlCngvatWFyiDSnWLBGECdFq2rlkm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726733581; c=relaxed/simple;
-	bh=8++AqMweBbkmqDHX9rOihZ8bcW016Ktg1n2544cUB/M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lTLGoG29ZdfZL+JK88DPIU93OYz0Gj8fBc1KUwCuYUvIS5xEitBwa+q1EP21BfDMxiIa1qvNjgK1C7qIwhw+vf3CHiw72anO7bf3Xyn030Gsmr5aDVmKLYM0HOc0Mr8YhqNNIJNX3ui8kX/0td5h2w0F4OI48oI3Y4KGa9jNxSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NyCVHHTf; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7a81bd549eso62215866b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:12:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1726733577; x=1727338377; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KjKbo64eBMjHdfY2ACi/vcyd2Cv3t2sINOQkVbosqlo=;
-        b=NyCVHHTft56VUe/fZHV2hoMe4PfwE4LoNAX2XPXWYUBtOIXu9dBUg3TQE922ZJq7BR
-         hLgv+SYTev0aip5PumDMMO5n27zvTI6vlNxZ87o9esOWeEy+TZztrr+ZYsAdtdf/OWXQ
-         jM71a3OUERNEaLSFmcrdioO9iuMxummzYZTvI=
+	s=arc-20240116; t=1726733613; c=relaxed/simple;
+	bh=DI6/qH1S5aikN63XgcXmTCl3V1nikksLdSm2YKnap84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DlQ8b1mnHQdz2z05Nr+qxnpQ/GBolXLau9e3CBZ2zTT+M8r+hvCO/w0TQ/vKNaMtipieDtMkwG/ZIpzop36WUxbR9WBsLP9jspxh+Lm2yveHy+nYQ15ufXW5f6rrBLCjDglFAISRd9sOW4rR0A5YynKp9lBxXl0j3uMja9jt8KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UEHYjqTW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726733610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ju8uGUotL3MMnDPuqZc89VHrFfkdgofJnaEl6/OCg9c=;
+	b=UEHYjqTWuc2Ew0+QGw4j0DEwTDR/rLftPEFaOPPMYh9g0ZqGKGZZIiB4hp6rN5MpRa+68l
+	39161KssvMBy2mn9xlHSmjCSWqVDBbWMoNZ+0ESTZtaqONFr4iIrnUHibS9TOSEJUv8Z4m
+	VPNGefMknJ/DpJiw4CW5V5uFHytjwd0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-114-ShWRRos_OBef33u39Jq6Pg-1; Thu, 19 Sep 2024 04:13:28 -0400
+X-MC-Unique: ShWRRos_OBef33u39Jq6Pg-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cb050acc3so2646775e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:13:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726733577; x=1727338377;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KjKbo64eBMjHdfY2ACi/vcyd2Cv3t2sINOQkVbosqlo=;
-        b=AkHoaEh9N7hiEd9rbLZSQ9Yc0ZnmP2IKDqVKeTgeIiDJvQbaiCwVbgUGnu0cz5ZI9E
-         oAaUJAsfKR72GiZ1BliRThBw00inHWplEjVshFwAqUuvy0WV6nlhEupRvDd8kPgXa/th
-         mQEJNUmQjuWMABsR5p0bqjc4bbon5b0IgUaqqpRcxlQu9CpqKbjfMx2poK4cioCKy5KX
-         +GXBYyW2HpUFjFM5KTsWcWPZu5LJhhMliHAtRa0O0lywp2gE3Ybzf5xDhBv8nwBd9n5B
-         lADnjzJySwag8yxO9n/cZYiitxpaW8zF93yb4wxeZo2lgbJ2MlauWJ2giYngvildQZeD
-         W0jw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/adfUw62JIWmDvo1oDRAeEnK5F0k8HZ5DrowSDxrP8g1cSfH6WY432iL+62WwttUPC7NEil8YPP36GFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2UL36DBKWcRoZnJIWjjAaKrBY/0c5fG+HdHWsBQvq3qYO9GMS
-	rtj5O1jS9TTiuHHosU/4yFeAXh/tm8hhdgJtzkJ7lehTiXW+PK/7j2/HaOghU+OTkjX7gJ1iKX2
-	zffU3wg==
-X-Google-Smtp-Source: AGHT+IGkACDD9t14RtU1lAl8/g3mvvAeDnUiWnCRfdGmbNhDU2kaVuPiDuivIP/jFR3oqPHf7xYL6Q==
-X-Received: by 2002:a17:907:f185:b0:a8a:85af:7ae8 with SMTP id a640c23a62f3a-a90294aac0emr2425361866b.11.1726733577448;
-        Thu, 19 Sep 2024 01:12:57 -0700 (PDT)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612df579sm687360466b.164.2024.09.19.01.12.56
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1726733607; x=1727338407;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ju8uGUotL3MMnDPuqZc89VHrFfkdgofJnaEl6/OCg9c=;
+        b=rw/VWpYwJ6ShhxLCluMSyR3lcPLAY8BXko87/eqJpf/lrOBCzkAVHXyRUgiTzcp7ff
+         hJoXfRLeYU3Y3rleB3SIGvf8f6n/o9p3V0kfd98sYcfZsMz5tHlItw3VkcqvmnSLKBSm
+         YpP/rDbPGlY7KNR/WUsGIMMBHEJ3/O/qlMYI4/xijhPiPgxb54TekT1fEStfeQrjm5d6
+         cazXbQbeA6BUq3bX2eLcXBY/6RiWEihE6vHP5sC8tSlDuckufTlc0ORF1rU6OQaFy6Ge
+         h7Q6zNLGHduAOWfHgBV65/n19dykWI1QxyOp32/FZMpbdeWR2nehtBsSEAiTeI24brXw
+         usVw==
+X-Gm-Message-State: AOJu0YyUKNffB5roFTr5aiVNWF/vLkUCVOtccNvBEdk31HUnp61/DxZg
+	hDGWhrE59l6J1jgLxyiziK8GDvpv3SIOH2L3T8msDcccFrK6ACqZ9Ddx7V8S1kjXd+02xFQ8xNI
+	9EeFr2CHS7dixHXwgtV4Mhp0KYwe8M9KDNG4l6krYJp6ehQFtAgV27T9GDRV2VjECEh7V8+Ig
+X-Received: by 2002:a05:600c:1e01:b0:42c:b7e1:a9c with SMTP id 5b1f17b1804b1-42e7440d3f6mr13092935e9.5.1726733607539;
+        Thu, 19 Sep 2024 01:13:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFLivpIBGl7jd65QmDUFhOCeeZ/YuorRqR4yDXWXEyGkPlp0fpbgnHUyRZG06WldlkzImZr3w==
+X-Received: by 2002:a05:600c:1e01:b0:42c:b7e1:a9c with SMTP id 5b1f17b1804b1-42e7440d3f6mr13092795e9.5.1726733607187;
+        Thu, 19 Sep 2024 01:13:27 -0700 (PDT)
+Received: from [10.131.4.59] ([83.68.141.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e754091desm15484215e9.8.2024.09.19.01.13.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Sep 2024 01:12:56 -0700 (PDT)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c251ba0d1cso752889a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:12:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWEYdSYMYr18eLKquAX8pwm/pFzjE1EL+MgJiIQSULpov54Ko81/6BvYvVCKbC+YIl2l8AhKMarGrC74EA=@vger.kernel.org
-X-Received: by 2002:a17:906:478a:b0:a8a:8c04:ce9f with SMTP id
- a640c23a62f3a-a90296eabbemr2749579766b.52.1726733576020; Thu, 19 Sep 2024
- 01:12:56 -0700 (PDT)
+        Thu, 19 Sep 2024 01:13:26 -0700 (PDT)
+Message-ID: <e81d1f66-4ca7-4792-b505-581874c4c155@redhat.com>
+Date: Thu, 19 Sep 2024 10:13:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9txujwc-GoV6qB1DpKjbDi-8uDcJLnJFSY4OBgPu=ZAVBw@mail.gmail.com>
-In-Reply-To: <CAPM=9txujwc-GoV6qB1DpKjbDi-8uDcJLnJFSY4OBgPu=ZAVBw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 19 Sep 2024 10:12:39 +0200
-X-Gmail-Original-Message-ID: <CAHk-=wiehYLXmbf8eZ080n7LEeS9=O5kEpGKjeP-01dj0EAYbA@mail.gmail.com>
-Message-ID: <CAHk-=wiehYLXmbf8eZ080n7LEeS9=O5kEpGKjeP-01dj0EAYbA@mail.gmail.com>
-Subject: Re: [git pull] drm for 6.12-rc1
-To: Dave Airlie <airlied@gmail.com>
-Cc: Sima Vetter <sima@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Dead code by symbols
+To: "Dr. David Alan Gilbert" <linux@treblig.org>,
+ Christoph Hellwig <hch@infradead.org>
+Cc: linux-kernel@vger.kernel.org, kees@kernel.org
+References: <ZugliLgw5VFb9yau@gallifrey>
+ <d289061d-7dc8-41d7-a166-4b3b8dce886d@redhat.com>
+ <ZupwWT5ZEHFmWIXz@infradead.org> <ZuqxpBRVSYIk1Hkm@gallifrey>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZuqxpBRVSYIk1Hkm@gallifrey>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 19 Sept 2024 at 09:48, Dave Airlie <airlied@gmail.com> wrote:
->
-> There are some minor conflicts with your tree but none seemed too
-> difficult to solve, let me know if there is any problems on your end.
+On 18.09.24 12:55, Dr. David Alan Gilbert wrote:
+> * Christoph Hellwig (hch@infradead.org) wrote:
+>> On Tue, Sep 17, 2024 at 01:39:35PM +0200, David Hildenbrand wrote:
+>>>> Now, it does take some more guesswork, for example an unused function
+>>>> which was added a couple of years back, might be something that's
+>>>> there for consistency,
+>>>
+>>> I know people will find reasons to do something like that, but we really
+>>> *shouldn't* be maintaining / dragging along dead code that nobody might ever
+>>> use.
+>>
+>> There never is any reason to keep dead code around.
+> 
+> Yeh I mostly agree; and indeed I'll be sending many many patches to remove
+> the bucket loads of dead code I find; but as I say, there's a really
+> big variation from the dead-for-20 years, to relatively new, to
+> functions that seem to make sense next to the file they're part of.
+> So I'll get to those later, I'll get rid of the very dead ones first.
 
-Christ. One of them is due to you guys being horrible at merging.
+Makes sense to me. Thanks for doing that work, Dave!
 
-Your tree had
+-- 
+Cheers,
 
-    drm/xe/gt: Remove double include
+David / dhildenb
 
-which removed (surprise surprise) a double instance of
-
-  #include <generated/xe_wa_oob.h>
-
-but then in merge commit 4461e9e5c374 ("Merge v6.11-rc5 into
-drm-next") it got added back in!
-
-Please be more careful with your merges. You can't just look at the
-file contents, you have to look at the actual history of it to see
-what the *cause* of the conflict is.
-
-                    Linus
 
