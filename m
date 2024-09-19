@@ -1,161 +1,207 @@
-Return-Path: <linux-kernel+bounces-333340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B25B997C723
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:31:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294B497C726
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F0EA284C6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:31:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA3C1F2453E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509EF199943;
-	Thu, 19 Sep 2024 09:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9bb98nG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006D519994B;
+	Thu, 19 Sep 2024 09:32:35 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37031DA23;
-	Thu, 19 Sep 2024 09:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D2D19925A
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726738300; cv=none; b=aT2WOfcLRpM/41hMV0XNN+nsR1WpJUBYZujFYdlw+1FGrQyzMPaWQV/zlJGzbwFCR6u+MFVBT4VBzY385xkNDrmF2RBH9BTV7SqMGT7W0afziwjLcPBQ/B+Jwa34JwsOrqTHYpWS8hM37tFHxTl9vl8hWqRN+fHkbl/Pigoi53c=
+	t=1726738354; cv=none; b=CHZuA3iNPk4xFzveEZnuq+PRxnEaXGNkplMMDKk7fVk5xjgy4IiDfIh9f87t9kwEtkUiL8R7wK5wpeOpCO9h0lgqqH79rj/tghcR0F8746uvKNX3h0aUw772fYtYS6sMbfRf1pxE3CKXdmIkdFFMxSPYDYbuQHqa7FZLWGZ6BmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726738300; c=relaxed/simple;
-	bh=Vn6J6AI434FtwrwKdYgEf25rwvP7VugwRdrFZznXxKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pk8I0SAApOiZNLCJIA0fYwEJ2uXx3tYKTAetTdWH0jlZIRdd05bj7oh74zg6Dgrd5s4t2yr4PpVjhZnCyzKQoYPKomRr7SPlihs9eL8ZZd6rGzgU4ZelDrgqZR6yN2+YrxSKaofaJNGUaudblTP+1EqBbEh+Bclxt9FdG7XwT6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9bb98nG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88ED1C4CEC4;
-	Thu, 19 Sep 2024 09:31:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726738300;
-	bh=Vn6J6AI434FtwrwKdYgEf25rwvP7VugwRdrFZznXxKQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=f9bb98nGGQVMMKr0OePZRGoI3EtaaUD2FMl1ZH3/arLzhdrhGYnQ5ZDb4FNmG0CCT
-	 4Ol7fi7kev4spRVvRDC1zMxj9h/lMHkFPQDvfM2NHBHeGNV08U47qrnubiPe3cXpNr
-	 RRaEjFCYv3FyWU877rOhZZlYIDfZvzrymE8g34ukMawg/4kaDJm4whA0/FUNwda8lh
-	 i0guD7iKfN49F6Fp0QoqGq1w12kTkX19cBZV/dzOSYeZwTmsZDALC+z7LGEkCN9Kl5
-	 Ut2B7E22zxG2SsoHeH1ywIUtM19rVZrdXcB77n+cE5BMFCWiWG7Vy0tAjY7k10MB85
-	 M6bvqo4RJLYtQ==
-Date: Thu, 19 Sep 2024 11:31:35 +0200
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.11-final-but-missed-it
-Message-ID: <Zuvvd4kJRv8XGQPT@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
+	s=arc-20240116; t=1726738354; c=relaxed/simple;
+	bh=kNR5zcZJ7VAsittlht678O2zXJum1rcG9XJRdXLFG70=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZmKFRbN76xloSZd57wRydD4Pa+JkRaG+jPMhIB100h6KFhhYPMUYhgYNWYBWIiWrKZXgn5fCbbLe/bCbq9rFPjQqfgD84hL3NkHjH3VDouaNUozf1RWmNTaPrcQCwKN9kU1jMJEB8HDXd/oxzleXnT9J8tdLj0LgfP42sWN44vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0a3f10064so7322635ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 02:32:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726738350; x=1727343150;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1SnQjl4GXF3+K986YiWwl9LstGzvH12H+/t0TktR+1o=;
+        b=mMcIFAu3aEnJa4JZxkoHhxn0Yf+OQcq6Vr42E/Wy5DLea5n/sxmp4umkTiovEDIHtK
+         2N6iUsFFCoc7/v35IYvYe6hP5oc1sUcDKs5Fzv05dj19fh0gW5KDzmxolO7hNIuoVNUu
+         gKAbca2KDRJTatnp139fq6YCcEl85PBpelJfEN6mJo2Sqqmw9IrAr6e+Z7hdZ+6uMBJb
+         /W5bzBzmp0hS4n7geppvmSv4Q4CiCh7+1eAt83/37G30N9G5N7ImhC1VuDFKANZfrXxd
+         5zQcwJjMQYuR8kwRNU0/TkBeSS3jvPSLgygzSU56NECWg1zZNTcGQAv3piBhcM8HjOrH
+         r3dg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+XqWadvd1Fx6tLiqGJFdoRX0xOnmYtLhsWCryCoQnRlS9a3YTA3jHnLSNoyddVVqVh3n/tK2N9NRWpaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKDcp3QPAkWi3R11kU76GmMd/RIMzRNu7mizunhXQNLpBfvFMD
+	ckmgXb9qaDM/6PpeDd0Onnle/HIvj0tOLyr+Y33PKd4jXXV44fZ7kvDNYOoJx4GiSyQby4sANA0
+	hudbjhZRy1AE3q1dbB5s1+QMwML5gfmeUSRIdUKcGvUYYnjYe4T7xKX4=
+X-Google-Smtp-Source: AGHT+IGKiiRrVoIB5e3NoKbWyw/dEC7eY/92Mgjfy8vQgUCOoTZVl1ELnxd6VUPzI59KzUrD9kFEjcKB9eL1by3QYY1iSl7Tp9Nu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1hPKzSjkPqTv1RD6"
-Content-Disposition: inline
+X-Received: by 2002:a05:6e02:20ee:b0:3a0:ac5a:2015 with SMTP id
+ e9e14a558f8ab-3a0ac5a2062mr89354135ab.6.1726738349977; Thu, 19 Sep 2024
+ 02:32:29 -0700 (PDT)
+Date: Thu, 19 Sep 2024 02:32:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ebefad.050a0220.92ef1.0019.GAE@google.com>
+Subject: [syzbot] [ntfs3?] INFO: trying to register non-static key in
+ ntfs3_setattr (2)
+From: syzbot <syzbot+2e842ec1beb075a25865@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    0babf683783d Merge tag 'pinctrl-v6.11-4' of git://git.kern..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1417bc77980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1c9e296880039df9
+dashboard link: https://syzkaller.appspot.com/bug?extid=2e842ec1beb075a25865
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b9b0a9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=155e9900580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/aab0f0b09dd6/disk-0babf683.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b97896b7812c/vmlinux-0babf683.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/340ce283efd3/bzImage-0babf683.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/282ca00a7cb2/mount_0.gz
+
+The issue was bisected to:
+
+commit 24c5100aceedcd47af89aaa404d4c96cd2837523
+Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Date:   Tue Jun 4 07:41:39 2024 +0000
+
+    fs/ntfs3: Fix getting file type
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12b748a9980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=11b748a9980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16b748a9980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2e842ec1beb075a25865@syzkaller.appspotmail.com
+Fixes: 24c5100aceed ("fs/ntfs3: Fix getting file type")
+
+ntfs3: loop0: ino=0, ntfs_iget5
+ntfs3: loop0: Mark volume as dirty due to NTFS errors
+ntfs3: loop0: failed to convert "046c" to maccroatian
+INFO: trying to register non-static key.
+The code is fine but needs lockdep annotation, or maybe
+you didn't initialize this object before use?
+turning off the locking correctness validator.
+CPU: 0 UID: 0 PID: 5224 Comm: syz-executor352 Not tainted 6.11.0-rc7-syzkaller-00149-g0babf683783d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ assign_lock_key+0x238/0x270 kernel/locking/lockdep.c:975
+ register_lock_class+0x1cf/0x980 kernel/locking/lockdep.c:1288
+ __lock_acquire+0xf0/0x2040 kernel/locking/lockdep.c:5019
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+ down_write+0x99/0x220 kernel/locking/rwsem.c:1579
+ ntfs_truncate fs/ntfs3/file.c:458 [inline]
+ ntfs3_setattr+0x6d3/0xb80 fs/ntfs3/file.c:775
+ notify_change+0xbca/0xe90 fs/attr.c:503
+ do_truncate+0x220/0x310 fs/open.c:65
+ vfs_truncate+0x2e1/0x3b0 fs/open.c:111
+ do_sys_truncate+0xdb/0x190 fs/open.c:134
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f43d7bf8779
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffda6ccac8 EFLAGS: 00000246 ORIG_RAX: 000000000000004c
+RAX: ffffffffffffffda RBX: 00007fffda6ccc98 RCX: 00007f43d7bf8779
+RDX: 00007f43d7bf8779 RSI: 0000000000000000 RDI: 0000000020000000
+RBP: 00007f43d7c8b610 R08: 00007fffda6ccc98 R09: 00007fffda6ccc98
+R10: 00007fffda6ccc98 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fffda6ccc88 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+------------[ cut here ]------------
+DEBUG_RWSEMS_WARN_ON(sem->magic != sem): count = 0x1, magic = 0x0, owner = 0xffff88802f4f9e00, curr 0xffff88802f4f9e00, list not empty
+WARNING: CPU: 0 PID: 5224 at kernel/locking/rwsem.c:1364 __up_write kernel/locking/rwsem.c:1364 [inline]
+WARNING: CPU: 0 PID: 5224 at kernel/locking/rwsem.c:1364 up_write+0x412/0x590 kernel/locking/rwsem.c:1632
+Modules linked in:
+CPU: 0 UID: 0 PID: 5224 Comm: syz-executor352 Not tainted 6.11.0-rc7-syzkaller-00149-g0babf683783d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:__up_write kernel/locking/rwsem.c:1364 [inline]
+RIP: 0010:up_write+0x412/0x590 kernel/locking/rwsem.c:1632
+Code: c7 c7 a0 c8 ea 8b 48 c7 c6 80 ca ea 8b 48 89 da 48 8b 4c 24 20 4c 8b 44 24 30 4c 8b 4c 24 28 50 e8 63 9c e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 b6 fc ff ff 90 0f 0b 90 e9 2a fd ff ff 48 89 5c 24
+RSP: 0018:ffffc9000346fa00 EFLAGS: 00010296
+RAX: cfd9eb2aab6fe000 RBX: 0000000000000001 RCX: ffff88802f4f9e00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc9000346fad0 R08: ffffffff8155b292 R09: fffffbfff1cba0e0
+R10: dffffc0000000000 R11: fffffbfff1cba0e0 R12: ffff88807b7288f0
+R13: ffff88807b728898 R14: 1ffff9200068df48 R15: dffffc0000000000
+FS:  000055556efe7380(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020001000 CR3: 0000000078130000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ntfs_truncate fs/ntfs3/file.c:461 [inline]
+ ntfs3_setattr+0x7b5/0xb80 fs/ntfs3/file.c:775
+ notify_change+0xbca/0xe90 fs/attr.c:503
+ do_truncate+0x220/0x310 fs/open.c:65
+ vfs_truncate+0x2e1/0x3b0 fs/open.c:111
+ do_sys_truncate+0xdb/0x190 fs/open.c:134
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f43d7bf8779
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffda6ccac8 EFLAGS: 00000246 ORIG_RAX: 000000000000004c
+RAX: ffffffffffffffda RBX: 00007fffda6ccc98 RCX: 00007f43d7bf8779
+RDX: 00007f43d7bf8779 RSI: 0000000000000000 RDI: 0000000020000000
+RBP: 00007f43d7c8b610 R08: 00007fffda6ccc98 R09: 00007fffda6ccc98
+R10: 00007fffda6ccc98 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fffda6ccc88 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
 
 
---1hPKzSjkPqTv1RD6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-The following changes since commit da3ea35007d0af457a0afc87e84fddaebc4e0b63:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-  Linux 6.11-rc7 (2024-09-08 14:50:28 -0700)
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-are available in the Git repository at:
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.11-final-but-missed-it
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-for you to fetch changes up to e03ad65cea610b24c6991aebf432d5c6824cd002:
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-  Merge tag 'i2c-host-fixes-6.11-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2024-09-16 14:06:04 +0200)
-
-----------------------------------------------------------------
-i2c-for-6.11-final-but-missed-it
-
-These are only fixes originally meant for 6.11 final. Because of serious
-travel problems, I could not send them in time and so this is my first
-PR for 6.12.
-
-The Aspeed driver tracks the controller's state (stop, pending,
-start, etc.). Previously, when the stop command was sent, the
-state was not updated. The fix in this pull request ensures the
-driver's state is aligned with the device status.
-
-The Intel SCH driver receives a new look, and among the cleanups,
-there is a fix where, due to an oversight, an if/else statement
-was missing the else, causing it to move forward instead of
-exiting the function in case of an error.
-
-The Qualcomm GENI I2C driver adds the IRQF_NO_AUTOEN flag to the
-IRQ setup to prevent unwanted interrupts during probe.
-
-The Xilinx XPS controller fixes TX FIFO handling to avoid missed
-NAKs. Another fix ensures the controller is reinitialized when
-the bus appears busy.
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      i2c: isch: Add missed 'else'
-
-Jinjie Ruan (1):
-      i2c: qcom-geni: Use IRQF_NO_AUTOEN flag in request_irq()
-
-Robert Hancock (2):
-      i2c: xiic: Wait for TX empty to avoid missed TX NAKs
-      i2c: xiic: Try re-initialization on bus busy timeout
-
-Tommy Huang (1):
-      i2c: aspeed: Update the stop sw state when the bus recovery occurs
-
-Wolfram Sang (1):
-      Merge tag 'i2c-host-fixes-6.11-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Manikanta Guntupalli (2):
-      (Rev.) i2c: xiic: Try re-initialization on bus busy timeout
-      (Rev.) i2c: xiic: Wait for TX empty to avoid missed TX NAKs
-
-Vladimir Zapolskiy (1):
-      (Rev.) i2c: qcom-geni: Use IRQF_NO_AUTOEN flag in request_irq()
-
- drivers/i2c/busses/i2c-aspeed.c    | 16 +++++-----
- drivers/i2c/busses/i2c-isch.c      |  3 +-
- drivers/i2c/busses/i2c-qcom-geni.c |  4 +--
- drivers/i2c/busses/i2c-xiic.c      | 60 ++++++++++++++++++++++----------------
- 4 files changed, 45 insertions(+), 38 deletions(-)
-
---1hPKzSjkPqTv1RD6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbr73cACgkQFA3kzBSg
-KbZeCw/+MxNvxS23CC3geCrlDklBymA1G+kvwpBtqwMumCjvTQQsGxNjUcKVYKPR
-LgyVdubPsT1gtlX8vL28AyyDeK147tTj5K4Q2WP47TdJnOitAuQUO9gronzJ3q5M
-2J38ueOyFpcsEFOKBWeo+CWu6VWX3vivWuBtpKLwT+ajM5uU+H9Mb/MWmPAK9zdw
-lBJI+81/us2qZ0CYJTrr5VJ4uXaC7KetTWPFGbN9XQ1rG84FgKqyr/11SaI/Hg/V
-7cjkJcNtJ+ELzaLd+cNtc4pgXSPwwMq9Ffgq6jr3IDih/4BiDvZhzHaASigyP/u2
-nKt04o99wxmIHYtjUeIBs8NBROPdvm70shsHbJS2Ft0ZIW6FH5Ezi9/Wu4IfMfRr
-xqseLN1o5j2Si5h4Tr6Wr69somKqUXmg+Qb/gofVtnQ6G+2+vSkqRWp9joHGA3E3
-AbWf5UK/jRhhzE8NyiG4TbRg1DAN+kQiffjJPzxK3PEdEd6kbwTQsIxDJwdMf09d
-5G03QdMhwUlFMoE1N1Eh5B0eafGrJtPtcvJffstbiDRmjLfBJ1+mP4DHbMcauAUA
-Sw10VarZylqT32j1yLQWJq1DPb2G8bSqxu5A+D3oyo+1gd78BWicMOMAj8QdAD/M
-vit3YH1bLiI2up6UNfetrEWmABJaFbYKgZawzKoH0WxXtb97LTU=
-=8hRB
------END PGP SIGNATURE-----
-
---1hPKzSjkPqTv1RD6--
+If you want to undo deduplication, reply with:
+#syz undup
 
