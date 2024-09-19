@@ -1,205 +1,97 @@
-Return-Path: <linux-kernel+bounces-333400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA8397C805
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:34:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5716497C809
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C7E11F21F8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:34:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044CC1F29BD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30F619ADBA;
-	Thu, 19 Sep 2024 10:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CB2199FC9;
+	Thu, 19 Sep 2024 10:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QX76XeTl"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jWRLgADh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4D93C0C;
-	Thu, 19 Sep 2024 10:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B4E18A6C5;
+	Thu, 19 Sep 2024 10:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726742053; cv=none; b=B5KhFfzBxUCru3S3xgC6t+ne72Z2isOj3Hun1fCBZIl06GVE+jIJvLaJgVXTfR9eRaAmh2BF6EaJdmJuKW7QmFGxN/oMCVfypo4+a+4f4AG6O070fIrfEyGpIxB8VP1TdqSc+Z+LGQ5u2kGpsdCuuKvsOaFtgj8cfOognr2Pnps=
+	t=1726742122; cv=none; b=XpMhWw7xpD47OtQRLFPPB7WrJpSWZeFrWGZpMHVe3xm9vqvBJLpKUhpC6lAXeSH9Cp48DRzItB2U2UleUXCITPZIgCEWy/46P7GNd+o6Abrpzm1iRQatcCMbgPPc2v5X1Br2JpLqojOfAGp4Zya3twz5168yalAUap4NC2rXirk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726742053; c=relaxed/simple;
-	bh=kLNoi9PeYfT8beehybcUvKc+rFcI1JgvN9vyNUUyUyg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dWhhqGzFEctEqH/9jNnYZRjOZxuiaVmhRclCf8n+B/AQm7GJ2udAW8jvS9lyBLsp0x2yls3DhNSPhPfKnx0qCi/VHGj/+lZn9+gq0vxHDSLkowkbUA1uBx61BUopsKCyWXXGWh46k2Y9ibMEpG1yOo/6V0Az2D3Q6JSuay5FShI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QX76XeTl; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7197970e2aeso464229b3a.2;
-        Thu, 19 Sep 2024 03:34:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726742051; x=1727346851; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=W8PsRMOFT2KRjjX91OQvWnXM7VKXooK07fcRHIqQtSE=;
-        b=QX76XeTl8luepMGHle+bjUkiPVWGBsoa4ZHyi9ClCf1CCLyQ/hhk4+sZuawl8gMz8r
-         MrMioKEGWbfcuyh/KIyxCIuGrLJ5NI8LRKOqZQEBe8+sOXo5Wm2PdFxKU2OFKNj7b7eN
-         nN9SklhI3c6cQ17NqQNVC6WuWMF6hrpwFfJMgiZo+Plh0NBiY9PTRJ52glME7A5muMEb
-         Gda068HhAUXp4BY7TiP95eUnIlI23I6ht781dufwo9P/+M+Jq1CSmZMMZr8PeGzdSpDt
-         1jM7Wc611K5JBnRJgNdjhrR1cHpK4+pOjNvGcwZnbdx3GJ5I4yGvOwCZ6DYHPm3gRJac
-         bbyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726742051; x=1727346851;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W8PsRMOFT2KRjjX91OQvWnXM7VKXooK07fcRHIqQtSE=;
-        b=YHA4Q0e/7WVr9bP3jjjF4sDrioHToezUSHUkslRnj9kab0L76KWP3DZr3iEh9PX6Wh
-         2ERCIIrKo0G/6E7ZvvmVlbBqvU5EkRXhIat4bggKnzJOLmbZ2ftS2P6FxfSCdcMa+M8o
-         QBfxRCYf7vKP915OGT+KPECsk3IUI6hzm13VWxd7GhRLPI4hQnKHhxEvbWaEc2Lni2BG
-         rpbW0u3hilQhYaxH2P4uxxpxioHxLVgRUQjG3EGrvupB/lmm0qUG+joGU9w0mrH2Onkg
-         iMy1jyhR6UAuj/+cz+8ZFnWw+eZGonot/vitkmQnODg7F0lxxEqgk+qCHEUwCJ3lvCZ9
-         E6Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQu/zxzMosoFwV07zkF5PSprQC9U0ufLz9KdFxsRAtA0G3q/eHeJiwTgAJwdvRkp+6748KAyMd@vger.kernel.org, AJvYcCWrhq0qcu4X5cmDL/iRQ8Bc359U1JRSitICZtUjQzuukmlnxCVTJujimi25Nw9FdB+pvDJVrD7Pi6L+@vger.kernel.org, AJvYcCXRfz0elGew7Rs42iU4iOqYZzCKPElrQetzPymId59IyOCwUS0mAjrzBAdpdjtv4EkIsUecCzh7fvvcDg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgg+Ih7r0OYqb/GR3f8IXmVvUXu6S4f8Ziq5W7+z1ggF758Mpp
-	jRzaVnHlB3A4E34VGgaO7vdLry6kM71XJpzzefJvfdtjEhGFHAWXBfL5HWVo
-X-Google-Smtp-Source: AGHT+IGHhX6h39WMZEkbI3vczVhHJZCNIaMGh+VTghScqUJK0x1mKw8GfMHsZqmKh4/8QMee0cHr4A==
-X-Received: by 2002:a05:6a21:58b:b0:1d2:f0e2:4ad6 with SMTP id adf61e73a8af0-1d2f0e24f38mr7613958637.18.1726742050729;
-        Thu, 19 Sep 2024 03:34:10 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b9ad0esm8232597b3a.175.2024.09.19.03.34.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 03:34:10 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: gregkh@linuxfoundation.org,
-	oneukum@suse.com
-Cc: colin.i.king@gmail.com,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH v2] usb: using mutex lock and supporting O_NONBLOCK flag in iowarrior_read()
-Date: Thu, 19 Sep 2024 19:34:03 +0900
-Message-Id: <20240919103403.3986-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726742122; c=relaxed/simple;
+	bh=ssSF/Fjtq/MJa/8CBQ4lgeI0tJWHkUOC2ndKMEAfP9U=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=SduAxtwKauBm37199s4lnDvT8fO1hh5gcDEJFL1YiEF/WnvEQdhLpal7MGqy9lIDj1QSVf23hn3y0Yv//U7EAJf5m2baznTrJXFsg0FexVJHTPbMZJGpUV2poC+hv4rjFcll0g2zbCw1NpMJOxQdXAR9kMSo73C/D6dIJ4zp8YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jWRLgADh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51F2CC4CEC4;
+	Thu, 19 Sep 2024 10:35:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726742122;
+	bh=ssSF/Fjtq/MJa/8CBQ4lgeI0tJWHkUOC2ndKMEAfP9U=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=jWRLgADh8rrWfzvxokRb7brT50ZgBEQlB6RmpvopHNyfGhzynHz1nBtgs+/Gyrmsf
+	 1I+UiCrGCmecghVKJ3jaup06zkXy+OgCGU9SI5ABti7MbiXkCqus57N7cqeWZbLkaF
+	 2hBHGMMZAZdKmAaApkNqmEjCV9Rv+LeJ5oxbOnqh0L/aa4SofyqhZMNcHEhaDUmkEG
+	 tjhn6MZngMuXfQhEVeJusTKr4yMmFklJ9Hg+NAjfi+RbQGvx4Yy9Ar91/lu2tpJaE5
+	 WTgzh+ekNMNK/oomXhIsjPZdc+GLDHOE3cPssBETfEFioutMQ35JM8iUuXhEEzAQyx
+	 pr+LYa77lzehw==
+Message-ID: <53f1cb2aefeb360002cd840cb8997ae3.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240917075250.19333-1-amishin@t-argos.ru>
+References: <20240917075250.19333-1-amishin@t-argos.ru>
+Subject: Re: [PATCH] clk: si5341: Prevent division by zero in si5341_output_clk_determine_rate()
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Aleksandr Mishin <amishin@t-argos.ru>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, Maxime Ripard <mripard@kernel.org>
+To: Aleksandr Mishin <amishin@t-argos.ru>, Mike Looijmans <mike.looijmans@topic.nl>
+Date: Thu, 19 Sep 2024 03:35:20 -0700
+User-Agent: alot/0.10
 
-iowarrior_read() uses the iowarrior dev structure, but does not use any 
-lock on the structure. This can cause various bugs including data-races,
-so it is more appropriate to use a mutex lock to safely protect the 
-iowarrior dev structure. When using a mutex lock, you should split the
-branch to prevent blocking when the O_NONBLOCK flag is set.
+Quoting Aleksandr Mishin (2024-09-17 00:52:50)
+> In si5341_output_clk_determine_rate() division by zero is possible if the
+> following conditions are met:
+> - rate > (parent_rate / 2);
+> - (parent_rate / 2) is not multiple of rate;
+> - CLK_SET_RATE_PARENT flag is not set.
+>=20
+> Add zero value check to prevent division by zero.
+>=20
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>=20
+> Fixes: 61c34af50c5f ("clk: si5341: Switch to determine_rate")
 
-In addition, it is unnecessary to check for NULL on the iowarrior dev 
-structure obtained by reading file->private_data. Therefore, it is 
-better to remove the check.
+Nope. The problem was there before this commit.
 
-Cc: stable@vger.kernel.org
-Fixes: 946b960d13c1 ("USB: add driver for iowarrior devices.")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
-v1 -> v2: Added cc tag and change log
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+> ---
+>  drivers/clk/clk-si5341.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
+> index 6e8dd7387cfd..d0d68a5bba74 100644
+> --- a/drivers/clk/clk-si5341.c
+> +++ b/drivers/clk/clk-si5341.c
+> @@ -855,7 +855,7 @@ static int si5341_output_clk_determine_rate(struct cl=
+k_hw *hw,
+>         } else {
+>                 /* We cannot change our parent's rate, report what we can=
+ do */
+>                 r /=3D rate;
+> -               rate =3D req->best_parent_rate / (r << 1);
+> +               rate =3D (r << 1) ? req->best_parent_rate / (r << 1) : 0;
 
- drivers/usb/misc/iowarrior.c | 46 ++++++++++++++++++++++++++++--------
- 1 file changed, 36 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
-index 6d28467ce352..a513766b4985 100644
---- a/drivers/usb/misc/iowarrior.c
-+++ b/drivers/usb/misc/iowarrior.c
-@@ -277,28 +277,45 @@ static ssize_t iowarrior_read(struct file *file, char __user *buffer,
- 	struct iowarrior *dev;
- 	int read_idx;
- 	int offset;
-+	int retval;
- 
- 	dev = file->private_data;
- 
-+	if (file->f_flags & O_NONBLOCK) {
-+		retval = mutex_trylock(&dev->mutex);
-+		if (!retval)
-+			return -EAGAIN;
-+	} else {
-+		retval = mutex_lock_interruptible(&dev->mutex);
-+		if (retval)
-+			return -ERESTARTSYS;
-+	}
-+
- 	/* verify that the device wasn't unplugged */
--	if (!dev || !dev->present)
--		return -ENODEV;
-+	if (!dev->present) {
-+		retval = -ENODEV;
-+		goto exit;
-+	}
- 
- 	dev_dbg(&dev->interface->dev, "minor %d, count = %zd\n",
- 		dev->minor, count);
- 
- 	/* read count must be packet size (+ time stamp) */
- 	if ((count != dev->report_size)
--	    && (count != (dev->report_size + 1)))
--		return -EINVAL;
-+	    && (count != (dev->report_size + 1))) {
-+		retval = -EINVAL;
-+		goto exit;
-+	}
- 
- 	/* repeat until no buffer overrun in callback handler occur */
- 	do {
- 		atomic_set(&dev->overflow_flag, 0);
- 		if ((read_idx = read_index(dev)) == -1) {
- 			/* queue empty */
--			if (file->f_flags & O_NONBLOCK)
--				return -EAGAIN;
-+			if (file->f_flags & O_NONBLOCK) {
-+				retval = -EAGAIN;
-+				goto exit;
-+			}
- 			else {
- 				//next line will return when there is either new data, or the device is unplugged
- 				int r = wait_event_interruptible(dev->read_wait,
-@@ -309,28 +326,37 @@ static ssize_t iowarrior_read(struct file *file, char __user *buffer,
- 								  -1));
- 				if (r) {
- 					//we were interrupted by a signal
--					return -ERESTART;
-+					retval = -ERESTART;
-+					goto exit;
- 				}
- 				if (!dev->present) {
- 					//The device was unplugged
--					return -ENODEV;
-+					retval = -ENODEV;
-+					goto exit;
- 				}
- 				if (read_idx == -1) {
- 					// Can this happen ???
--					return 0;
-+					retval = 0;
-+					goto exit;
- 				}
- 			}
- 		}
- 
- 		offset = read_idx * (dev->report_size + 1);
- 		if (copy_to_user(buffer, dev->read_queue + offset, count)) {
--			return -EFAULT;
-+			retval = -EFAULT;
-+			goto exit;
- 		}
- 	} while (atomic_read(&dev->overflow_flag));
- 
- 	read_idx = ++read_idx == MAX_INTERRUPT_BUFFER ? 0 : read_idx;
- 	atomic_set(&dev->read_idx, read_idx);
-+	mutex_unlock(&dev->mutex);
- 	return count;
-+
-+exit:
-+	mutex_unlock(&dev->mutex);
-+	return retval;
- }
- 
- /*
---
+This is too ugly. Also, I assume it would be better to provide a higher
+rate if the rate request allows it. Returning 0 should basically never
+happen.
 
