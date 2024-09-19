@@ -1,234 +1,177 @@
-Return-Path: <linux-kernel+bounces-333539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9FF97CA7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:50:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFD897CA81
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A11B5B23960
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:50:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DD63B23663
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC4A19EED7;
-	Thu, 19 Sep 2024 13:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBD419EED0;
+	Thu, 19 Sep 2024 13:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTzKHJqa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="v4gZkMSE"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D4019CD01;
-	Thu, 19 Sep 2024 13:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EF819CD17
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 13:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726753841; cv=none; b=Vzw8nF22fq/cNY5iIluleA4lR3qx078Xy67klJpH5wlREZU0nqHjhGQ40DUa7njPxwhJCDx7fhh5w63AZHMnNeYd0Z8pM3rRn+VVEaH0oODZWfuuGJZshTvF6l0saFZEzdIcrGvJwbev6q9AzgVg0PTyStMfbDNRRl0McWbyY+g=
+	t=1726753872; cv=none; b=JrNVSR3IriqEPHTK6C4hAoYhJ6ClgMIhXVU7G5kCFcTC9B9TjBRIY9wjs88b/AnPn9aDmUaZl2XBIiQgd46AcTAfqHL6Js7PdXqtUIaND0y0RRRBnA0qmNLWrJb8EB+w0JWCX4O8pBLYg6jXVqsoCi4TxQBJ3phPbVBmb1grvGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726753841; c=relaxed/simple;
-	bh=qU+wcOKBKgsxvhJNNpEX2XBS2YUu0drdapf3EnUG7v0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cgszc8Dx0dBuhAwEiJHGHlbJ67mphZOHMDW0c19jtwuImG3t2rn24iWMtZC3liBUKGK+ms8b7O8la66FdKhpb+t3uPP1u1+8d5x1Ol96vzbhR5oFJSueHbZL2CNaUGhjFcvlzBebE03g28zHjWusi+pLZMd6M9avF4gtPgdbp24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTzKHJqa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EF1BC4CEC4;
-	Thu, 19 Sep 2024 13:50:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726753840;
-	bh=qU+wcOKBKgsxvhJNNpEX2XBS2YUu0drdapf3EnUG7v0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hTzKHJqaCSzXlOjknpHRwf2Fb7Fs/HQCISGXQ177dpGicQae9gR1idtN6AIOlYWSJ
-	 siU1JaIKtYvNCWBK7M5pYF4GkVa3V6P2mes8XnY1lNENqhU7OPLl4+Sf09sxTFLpWX
-	 2nn2dfWg1mn5xL6RIgluGfLAXaGGB6eFi5mtsqfLGtRAx4Bp56u+lAvBvQgGQBchrR
-	 7mUWrO/ltJO3khLT9wws4jzZokxKBEzDdUJhy3ZC0gvC5lCIgaSzwxBYFD3fvTqYsE
-	 +iCC9nMFE9cThsaAsadAIQOaxoDYklGh24K+iI1IF+JLN18lOCxQMKmc62cmKCzogE
-	 GImOLXQtYpa7w==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs blocksize
-Date: Thu, 19 Sep 2024 15:49:53 +0200
-Message-ID: <20240913-vfs-blocksize-ab40822b2366@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1726753872; c=relaxed/simple;
+	bh=Kpz1+usHgjJU/8VmgUtQ8ArrQyQsIl8J4vMP1G7iaYY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NH+MrpU53k++J2jChsJwf6a2UnTKJWjT56ttZ0njV8AUiYkpeUuR8TBWnrUSMWCBeey0arxcGq1+w83HI2mIulEYHH6Vxp872q3tbN0oEjXBQLZ/2C8/NxG9V6g8kADNmMz4zDn2MzC6LeyM7+SL7t/rhyfvwciqaQjMa0zWLUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=v4gZkMSE; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cba6cdf32so7418835e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 06:51:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1726753868; x=1727358668; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0PslU454aJ3lD1WuDQmVWdwungDho/+ZyzmQbd/e50g=;
+        b=v4gZkMSE/8WW3/oskhlmt7GV1L4yKOMc2nkAntcV3yOmd4nC+DGTNDoaPELlKxO3XB
+         0VLi4wHEljPuYE4ynuVKJEfmtalPKLmVijM5NQwijH2Qmymwagnxz9R36q0YcwZF7i07
+         6ZHZOi1dBfFChs5cLXPR/9bPBYPjfmDIoJw4VxA7XSucFYfAYgDEcnGHb5xFaFBGydYK
+         BBt76JilgpGP7WZ8Z9X+rPeH0jiHqyQPHUQNtdzTPiPr920iZA0JQA+9yZFqjYCX3BwI
+         mqVNe62oB8yn1l9Pm8rVMevUDsoqnzgw2zj59WXMBeyYc7UlIfXetckR5cW1IPV5Qqsv
+         Rzfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726753868; x=1727358668;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0PslU454aJ3lD1WuDQmVWdwungDho/+ZyzmQbd/e50g=;
+        b=KAd4YmddWKbD0ae0UJ023+YU7tKQyh1VOxUePvs4EflHK53FPLejzkq6VfgPnPHzB2
+         xKfIebYrnbs0PkkCvpYNSaQ9i99KIQLkqAthY+7dlj3ZONEVFTX+9Ln5yZ73zWPaowD1
+         sAOxc1iowfz01SwuOzSbgJg4YZ9acifaHvJwH7TMr57oN04IWboLH5L7oLJrvbqhWype
+         M/0TPYpIW9v7KW68n4iKgRzlUjZRx/PKOav319pUtq+/gokv7E9wTCXRRSjWO7ZlYH5r
+         mE2WTmiGQKmzipGNkr1rc8qq/vSxINcKApqtjI9bI9CTWO8Meey4xpami/JI88a8rwKH
+         vTJw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/ndsbjUHiNt559EZlWdqiyeAa+OIOnI+GaDCuTqOQdttWZ98bJXerTyN5iHbPwdbM+OjUr9GZBTbwfSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza4DL3wW8nad7ICwaD2PfllSmHl/uLGazGpJFsWXZtKwp/t2qz
+	tvFDVIPLei4Jv1g5VvfKVBWmiiIIWoQO/4V2Qp2/HzfVkVbHsWPFnvhQoP0IheE=
+X-Google-Smtp-Source: AGHT+IHcEYpRlGgX+oWQx+eeC3m7K7Or5mirALPBtvRtHLw8dsmINQWFi4rbEZudPYl9jNXi14ScEQ==
+X-Received: by 2002:a05:600c:1c85:b0:42c:c003:edd8 with SMTP id 5b1f17b1804b1-42cdb531938mr208074395e9.6.1726753868332;
+        Thu, 19 Sep 2024 06:51:08 -0700 (PDT)
+Received: from brgl-uxlite.. ([185.44.53.103])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e75408abasm22767005e9.6.2024.09.19.06.51.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 06:51:07 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Herve Codina <herve.codina@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v2] gpio: free irqs that are still requested when the chip is being removed
+Date: Thu, 19 Sep 2024 15:51:04 +0200
+Message-ID: <20240919135104.3583-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7183; i=brauner@kernel.org; h=from:subject:message-id; bh=qU+wcOKBKgsxvhJNNpEX2XBS2YUu0drdapf3EnUG7v0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS90dHI+ZH7fYMyZ+Js3d0aDBrG3rvX5TvvTE/yCbn/r mOec8jGjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk8Xc7IsKdI/ekjHY1SxRWf 4gJaedgiy+Pkry6Sf/Zh8cL/jnsbmBj++16Yszy76LjRhmjLek/GF92323haru87NWey78+HQiG FXAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Hey Linus,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Now that the large folio/xarry bug is sorted this one seems ready.
+If we remove a GPIO chip that is also an interrupt controller with users
+not having freed some interrupts, we'll end up leaking resources as
+indicated by the following warning:
 
-/* Summary */
-This contains the vfs infrastructure as well as the xfs bits to enable
-support for block sizes (bs) larger than page sizes (ps) plus a few
-fixes to related infrastructure.
+  remove_proc_entry: removing non-empty directory 'irq/30', leaking at least 'gpio'
 
-There has been efforts over the last 16 years to enable enable Large
-Block Sizes (LBS), that is block sizes in filesystems where bs > page
-size. Through these efforts we have learned that one of the main
-blockers to supporting bs > ps in filesystems has been a way to allocate
-pages that are at least the filesystem block size on the page cache
-where bs > ps.
+As there's no way of notifying interrupt users about the irqchip going
+away and the interrupt subsystem is not plugged into the driver model and
+so not all cases can be handled by devlinks, we need to make sure to free
+all interrupts before the complete the removal of the provider.
 
-Thanks to various previous efforts it is possible to support bs > ps in
-XFS with only a few changes in XFS itself. Most changes are to the page
-cache to support minimum order folio support for the target block size
-on the filesystem.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+v1 -> v2:
+- we should actually take the request_mutex to protect the irqaction from being
+  freed while we dereference it and keep the actual dereferencing under the lock
+- add some comments to explain what we're doing
 
-A motivation for Large Block Sizes today is to support high-capacity
-(large amount of Terabytes) QLC SSDs where the internal Indirection Unit
-(IU) are typically greater than 4k to help reduce DRAM and so in turn
-cost and space. In practice this then allows different architectures to
-use a base page size of 4k while still enabling support for block sizes
-aligned to the larger IUs by relying on high order folios on the page
-cache when needed.
+ drivers/gpio/gpiolib.c | 41 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-It also allows to take advantage of the drive's support for atomics
-larger than 4k with buffered IO support in Linux. As described this year
-at LSFMM, supporting large atomics greater than 4k enables databases to
-remove the need to rely on their own journaling, so they can disable
-double buffered writes, which is a feature different cloud providers are
-already enabling through custom storage solutions.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index c6afbf434366..16c16414f721 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -14,6 +14,7 @@
+ #include <linux/idr.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
++#include <linux/irqdesc.h>
+ #include <linux/kernel.h>
+ #include <linux/list.h>
+ #include <linux/lockdep.h>
+@@ -713,6 +714,45 @@ bool gpiochip_line_is_valid(const struct gpio_chip *gc,
+ }
+ EXPORT_SYMBOL_GPL(gpiochip_line_is_valid);
+ 
++static void gpiod_free_irqs(struct gpio_desc *desc)
++{
++	int irq = gpiod_to_irq(desc);
++	struct irq_desc *irqd = irq_to_desc(irq);
++	void *cookie;
++
++	for (;;) {
++		/*
++		 * Make sure the action doesn't go away while we're
++		 * dereferencing it. Retrieve and store the cookie value.
++		 * If the irq is freed after we release the lock, that's
++		 * alright - the underlying maple tree lookup will return NULL
++		 * and nothing will happen in free_irq().
++		 */
++		scoped_guard(mutex, &irqd->request_mutex) {
++			if (!irq_desc_has_action(irqd))
++				return;
++
++			cookie = irqd->action->dev_id;
++		}
++
++		free_irq(irq, cookie);
++	}
++}
++
++/*
++ * The chip is going away but there may be users who had requested interrupts
++ * on its GPIO lines who have no idea about its removal and have no way of
++ * being notified about it. We need to free any interrupts still in use here or
++ * we'll leak memory and resources (like procfs files).
++ */
++static void gpiochip_free_remaining_irqs(struct gpio_chip *gc)
++{
++	struct gpio_desc *desc;
++
++	for_each_gpio_desc_with_flag(gc, desc, FLAG_USED_AS_IRQ)
++		gpiod_free_irqs(desc);
++}
++
+ static void gpiodev_release(struct device *dev)
+ {
+ 	struct gpio_device *gdev = to_gpio_device(dev);
+@@ -1125,6 +1165,7 @@ void gpiochip_remove(struct gpio_chip *gc)
+ 	/* FIXME: should the legacy sysfs handling be moved to gpio_device? */
+ 	gpiochip_sysfs_unregister(gdev);
+ 	gpiochip_free_hogs(gc);
++	gpiochip_free_remaining_irqs(gc);
+ 
+ 	scoped_guard(mutex, &gpio_devices_lock)
+ 		list_del_rcu(&gdev->list);
+-- 
+2.30.2
 
-/* Testing */
-
-gcc version 14.2.0 (Debian 14.2.0-3)
-Debian clang version 16.0.6 (27+b1)
-
-All patches are based on v6.11-rc1 and have been sitting in linux-next.
-No build failures or warnings were observed.
-
-A lot of emphasis has been put on testing using kdevops, starting with
-an XFS baseline [1]. The testing has been split into regression and
-progression.
-
-The whole test suite was run to check for regressions on existing
-profiles due to the page cache changes.
-
-The split_huge_page_test selftest on XFS filesystem was also run to
-check for huge page splits in min order chunks is done correctly.
-
-No regressions were found with these patches added on top.
-
-8k, 16k, 32k and 64k block sizes were used during feature testing. To
-compare it with existing support, an ARM VM with 64k base page system
-without the patches was used as a reference to check for actual failures
-due to LBS support in a 4k base page size system.
-
-No new failures were found with the LBS support.
-
-Some preliminary performance tests with fio on XFS on 4k block size
-against pmem and NVMe with buffered IO and Direct IO on vanilla vs these
-patches applied was done. There were no regressions detected.
-
-sysbench on postgres and mysql for several hours was run on LBS XFS
-without any issues.
-
-There's also an eBPF tool called blkalgn [2] to see if IO sent to the
-device is aligned and at least filesystem block size in length.
-
-[1] https://github.com/linux-kdevops/kdevops/blob/master/docs/xfs-bugs.md
-[2] https://github.com/iovisor/bcc/pull/4813
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12.blocksize
-
-for you to fetch changes up to 71fdfcdd0dc8344ce6a7887b4675c7700efeffa6:
-
-  Documentation: iomap: fix a typo (2024-09-12 14:07:17 +0200)
-
-Please consider pulling these changes from the signed vfs-6.12.blocksize tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.12.blocksize
-
-----------------------------------------------------------------
-Brian Foster (2):
-      iomap: fix handling of dirty folios over unwritten extents
-      iomap: make zero range flush conditional on unwritten mappings
-
-Christian Brauner (2):
-      Merge patch series "enable bs > ps in XFS"
-      Merge patch series "iomap: flush dirty cache over unwritten mappings on zero range"
-
-Christoph Hellwig (5):
-      iomap: handle a post-direct I/O invalidate race in iomap_write_delalloc_release
-      iomap: improve shared block detection in iomap_unshare_iter
-      iomap: pass flags to iomap_file_buffered_write_punch_delalloc
-      iomap: pass the iomap to the punch callback
-      iomap: remove the iomap_file_buffered_write_punch_delalloc return value
-
-Dave Chinner (1):
-      xfs: use kvmalloc for xattr buffers
-
-Dennis Lam (1):
-      docs:filesystems: fix spelling and grammar mistakes in iomap design page
-
-Josef Bacik (1):
-      iomap: add a private argument for iomap_file_buffered_write
-
-Luis Chamberlain (2):
-      mm: split a folio in minimum folio order chunks
-      iomap: remove set_memor_ro() on zero page
-
-Matthew Wilcox (Oracle) (1):
-      fs: Allow fine-grained control of folio sizes
-
-Pankaj Raghav (9):
-      filemap: allocate mapping_min_order folios in the page cache
-      readahead: allocate folios with mapping_min_order in readahead
-      filemap: cap PTE range to be created to allowed zero fill in folio_map_range()
-      iomap: fix iomap_dio_zero() for fs bs > system page size
-      xfs: expose block size in stat
-      xfs: make the calculation generic in xfs_sb_validate_fsb_count()
-      xfs: enable block size larger than page size support
-      filemap: fix htmldoc warning for mapping_align_index()
-      Documentation: iomap: fix a typo
-
- Documentation/filesystems/iomap/design.rst |   8 +-
- block/fops.c                               |   2 +-
- fs/gfs2/file.c                             |   2 +-
- fs/iomap/buffered-io.c                     | 199 ++++++++++++++++++-----------
- fs/iomap/direct-io.c                       |  42 +++++-
- fs/xfs/libxfs/xfs_attr_leaf.c              |  15 +--
- fs/xfs/libxfs/xfs_ialloc.c                 |   5 +
- fs/xfs/libxfs/xfs_shared.h                 |   3 +
- fs/xfs/xfs_file.c                          |   2 +-
- fs/xfs/xfs_icache.c                        |   6 +-
- fs/xfs/xfs_iomap.c                         |  19 +--
- fs/xfs/xfs_iops.c                          |  12 +-
- fs/xfs/xfs_mount.c                         |   8 +-
- fs/xfs/xfs_super.c                         |  28 ++--
- fs/zonefs/file.c                           |   2 +-
- include/linux/huge_mm.h                    |  28 +++-
- include/linux/iomap.h                      |  13 +-
- include/linux/pagemap.h                    | 124 ++++++++++++++++--
- mm/filemap.c                               |  36 ++++--
- mm/huge_memory.c                           |  65 +++++++++-
- mm/readahead.c                             |  83 +++++++++---
- 21 files changed, 506 insertions(+), 196 deletions(-)
 
