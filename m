@@ -1,180 +1,164 @@
-Return-Path: <linux-kernel+bounces-333479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B995E97C95D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:40:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC3D497CFC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 03:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A0B12846A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:40:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C7901C233C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 01:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9347919DF82;
-	Thu, 19 Sep 2024 12:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B37AD51;
+	Fri, 20 Sep 2024 01:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="oPe/FfHh"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ptjc7yWj"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991C419D894;
-	Thu, 19 Sep 2024 12:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BC3625
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726749595; cv=none; b=Vwk4eosJivM1WOCs8XrqwT57f2T9+aKAYJYRsGPXcso1KgHebDwXXj0tPVoiyOF9jsdMKsAHYFZw11avY53stYaMPvliATJSWRFpw26FM8+XqOz9GH6ppwrQje2R03N28xIyao6nsdZIo0DI6OJ9V2FmtobQYuDSQlCLw9th0QM=
+	t=1726795128; cv=none; b=TQ4KLwHEFoJYGAvBNgGaObu3m7/tiuNPFMRqnlJtRv/KlEWD67r+5/4oJqdXji5M+Pj63+kFbQR/oYy9R8YA21iQPzSU7kwmW8qwO+vxxwWLmu2pMOcU0kwCnGzvKhclDPtknUeqpn5ys5Rg3jNu0kypMTZuw/VC3+SvqzxAGAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726749595; c=relaxed/simple;
-	bh=iT/z+gt7N6FCrIsgjLpdKSk3oGQDEb+Vb2nnmn2Yo5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l2cdDPbQqH3159tLKjNstdr1454MioHNnCcyPhFVdP9kKP7LceDfESPaAUL6eGUZTTsgMe7PhkOD2YhAM6kvMdIlJNEa6B7IUbwwbo5E+Jw/y4nsLQW3Dw8IK41pY0dZmgGwJ/g68Kjxy7ajK3Jvxz1dpV79yuG5c6PI5J5FRw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=oPe/FfHh; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 786EF14858E0;
-	Thu, 19 Sep 2024 14:39:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1726749584; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=UBmm9nbuKx5Az853ydHco1hV3oceAC7ff+CGGG7c6PU=;
-	b=oPe/FfHh+kitawSCJxXOgsPXhXaYJ8QQyigAOrqiMEIuoCyJPR0RWMcUjLMycD+FaE+pVA
-	oFC1AyMeBNONTzV0FXu3GIQUjm5TCrphFzMYWFV74/WLLyuSjjP0evNpg8kIW4ZauVes75
-	q3bNFAuOd1WzniHiyFtOfzRAocbnPcyAZyB4t+9DC4d5qi6EKOU7t22zzT/Sj+xkLqLJPo
-	MG2zIMyy0ufJ+kO0+aGgYUp6JBOuU0MgKirc/x8Ey47HmNKD2s6gXhI+SoTSGuhtyAZ1z2
-	f7F5FdEgKzVbNsPkTnZDyWat7rNrfTYWx9lcn9Ore08B1YOaK6xSZNG5LSCRgg==
-Date: Thu, 19 Sep 2024 14:39:40 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: Christian Melki <christian.melki@t2data.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v1 09/12] clk: at91: sam9x60: Allow enabling main_rc_osc
- through DT
-Message-ID: <20240919-outsider-extending-e0a926bd23fa@thorsis.com>
-Mail-Followup-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Christian Melki <christian.melki@t2data.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-References: <20240821105943.230281-1-ada@thorsis.com>
- <20240821105943.230281-10-ada@thorsis.com>
+	s=arc-20240116; t=1726795128; c=relaxed/simple;
+	bh=nnPQA1TNM+RltKD2pQrG01zPT9OXUDBu7rskPBIpMxg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=JZ1mpmHk5c+lFLLQQcBZYRYWIfrSyR8e7jZInHoN+Rhtb/nY+TVLXk4hbws7sCndh0GB7b3lGbyRpw3ESM+ArvAVZkKzp8eet7O517s51KzTARDbsnXrtrOwKIhAY4S8Zr2jXw1Z+PCoJUbPUASiFX9ZcakCzIXGBWIGmM/r+w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ptjc7yWj; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240920010931epoutp0392469a65fd2783f2b7ec4bf19d6a5ad9~2zoOVJVLu0997009970epoutp03j
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:09:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240920010931epoutp0392469a65fd2783f2b7ec4bf19d6a5ad9~2zoOVJVLu0997009970epoutp03j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1726794571;
+	bh=vJ6d2crePsjwSE+nLTL32vmvyRkr1dlnHUKC/c4G4PU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=Ptjc7yWj4wMYYnx9Con7KX4qeXHBLXO4t6ab8cuddt2KYiSvjEEpquuPZXSnCikti
+	 YS7ndWsnQoroQe+MQ5jFs6ajMpu4ifBPHx5KUfbdsFA3fm99H0M6tV+rqunmoMBk+S
+	 xB5jU+nZbK6ydy/XPiSuD5n9KpW5a6He5mgsucbA=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240920010931epcas5p268ee6b4192c5eaa8ba2ca0d2dabcad96~2zoNyWVpy2863728637epcas5p2D;
+	Fri, 20 Sep 2024 01:09:31 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4X8vRs48kpz4x9Pr; Fri, 20 Sep
+	2024 01:09:29 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	14.BA.08855.94BCCE66; Fri, 20 Sep 2024 10:09:29 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240919124112epcas5p1527a15ea137d853dee5625902769580e~2pa2-imHw3129031290epcas5p14;
+	Thu, 19 Sep 2024 12:41:12 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240919124112epsmtrp1776aaeeb2e136b4fa5c8cf8f5d6b728f~2pa2_Ecnj2997129971epsmtrp1R;
+	Thu, 19 Sep 2024 12:41:12 +0000 (GMT)
+X-AuditID: b6c32a44-15fb870000002297-38-66eccb499210
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E7.61.19367.8EB1CE66; Thu, 19 Sep 2024 21:41:12 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240919124110epsmtip215d9c22f47441d8ece44df0eb8635c1b~2pa1T2but2903029030epsmtip2-;
+	Thu, 19 Sep 2024 12:41:10 +0000 (GMT)
+From: Inbaraj E <inbaraj.e@samsung.com>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com, Inbaraj E
+	<inbaraj.e@samsung.com>
+Subject: [PATCH v2] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+Date: Thu, 19 Sep 2024 18:09:54 +0530
+Message-Id: <20240919123954.33000-1-inbaraj.e@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGKsWRmVeSWpSXmKPExsWy7bCmhq7n6TdpBn9eSFk8mLeNzeL6l+es
+	FjcP7GSyuPtnEpvF+fMb2C0+9txjtbi8aw6bxYzz+5gsLp5ytVi09Qu7xeE37awW/65tZHHg
+	8Xh/o5XdY9OqTjaPvi2rGD0+b5ILYInKtslITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0
+	tDBXUshLzE21VXLxCdB1y8wBukxJoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BS
+	oFecmFtcmpeul5daYmVoYGBkClSYkJ3xb94vloIVPBWPWp6zNTBu5+pi5OSQEDCRePl2H3sX
+	IxeHkMBuRok5nw9DOZ8YJV68XscIUgXm/O0RhOlY276NGaJoJ6PEurv/oDpamSRezVnHBlLF
+	JqAusaH7OxtIQkTgBdCoZR2sIAlmgXCJc9MvgtnCAs4Srx4+YwexWQRUJY5Nfwlm8wpYSbye
+	9oQFYp28xOoNB8DWSQgcYpdo2HeVESLhItG1qQ+qSFji1fEt7BC2lMTL/jYo20di/5xfUPUZ
+	Ese2L2eFsO0lDlyZA9TLAXSQpsT6XfoQYVmJqafWMUHcySfR+/sJE0ScV2LHPBhbWWLmkfts
+	ELakxM7LO8HGSAh4SOz5VAsJrViJ83tWMk5glJ2FsGABI+MqRsnUguLc9NRk0wLDvNRyeEQl
+	5+duYgQnOC2XHYw35v/TO8TIxMF4iFGCg1lJhFf8w8s0Id6UxMqq1KL8+KLSnNTiQ4ymwCCb
+	yCwlmpwPTLF5JfGGJpYGJmZmZiaWxmaGSuK8r1vnpggJpCeWpGanphakFsH0MXFwSjUwZbbx
+	BKY+lumY+kr33M96g0meX5qeXqieM/l2nZj+1X0tpSdnWfW++qJqVFDfIdFSUyxinOxT6cTk
+	lf5R2eVe6zkjm8f9f3QPxcg9UJjOW/Ik4aqadlXimYv8yzeI8EvU1RydWPZRSWw1i6uq2e15
+	ceEl9yYvPdYcLBBip3T2/6FN3M0pV6Oq9kvuOr92udTML6c3Kh/UtGr6tfXv3hZDQQbNbf2b
+	itnNlQRfCu2u4voUkWxZ8n6trodO0QbnhfJn53c4d99Y8E70+ORpLLw3jcte6kWEvunaHP7r
+	Rknsm13O/ZEnHtsqmJsXJ/80btexNWit8d10Y1Vp5e9Nc9Ke77T1enL+YzazxYu8RgUlluKM
+	REMt5qLiRACBXLhI+QMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnluLIzCtJLcpLzFFi42LZdlhJXveF9Js0gyfXtSwezNvGZnH9y3NW
+	i5sHdjJZ3P0zic3i/PkN7BYfe+6xWlzeNYfNYsb5fUwWF0+5Wiza+oXd4vCbdlaLf9c2sjjw
+	eLy/0crusWlVJ5tH35ZVjB6fN8kFsERx2aSk5mSWpRbp2yVwZfyb94ulYAVPxaOW52wNjNu5
+	uhg5OSQETCTWtm9j7mLk4hAS2M4oMf/DayaIhKTE7N/T2SFsYYmV/56zQxQ1M0k0tPxkBUmw
+	CahLbOj+zgaSEBH4xCjx7esfsA5mgUiJH+1bwWxhAWeJVw+fgdksAqoSx6a/BLN5BawkXk97
+	wgKxQV5i9YYDzBMYeRYwMqxiFE0tKM5Nz00uMNQrTswtLs1L10vOz93ECA4zraAdjMvW/9U7
+	xMjEwXiIUYKDWUmEV/zDyzQh3pTEyqrUovz4otKc1OJDjNIcLErivMo5nSlCAumJJanZqakF
+	qUUwWSYOTqkGppiMJfXnNWf/b8mf6sjKcS7xk3V46S97j+zXz9TO/Lb1bufqWyAofkegXdNB
+	+uvizxm+cZueuQVv9Ti64/SyOTd8U4tkublLNDuCt7i9ENm/VuS9VuxZx4mpM7gnrEi9+Onv
+	NZsVaVO/rEqweP3rLa/A3W2xeb8FzA7I7T3IqMdxV2dnQ/Kn5M4Udd9fcUUnXF/HyZ/9vKS5
+	QcJfWM5KMMTwfMjEG2o3ebUkv5+X6old9Kcouc+MUWnria7Tk8OquX6/ZlDiturNYloVlil9
+	XsVoCvvZx6vOOvk7ZyScvWKmrzd7/sXTk1eItx6rWePL83+/acu+ustxfRyKl6vCw8xd1y/W
+	mzmLs/YAk+R+JZbijERDLeai4kQARVzhJKICAAA=
+X-CMS-MailID: 20240919124112epcas5p1527a15ea137d853dee5625902769580e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240919124112epcas5p1527a15ea137d853dee5625902769580e
+References: <CGME20240919124112epcas5p1527a15ea137d853dee5625902769580e@epcas5p1.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240821105943.230281-10-ada@thorsis.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Claudiu,
+PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the CMU_CAM_CSI
+block. When we gate ACLK or PCLK, the clock framework will subsequently
+disables the parent clocks(PLL_CAM_CSI). Disabling PLL_CAM_CSI is causing
+system level halt.
 
-after being busy with other things, I'm back looking at this series.
-As Nicolas pointed out [1], we need three clocks for the OTPC to work,
-quote:
+It was observed on FSD SoC, when we gate the ACLK and PCLK during CSI stop
+streaming through pm_runtime_put system is getting halted. So marking
+PLL_CAM_CSI as critical to prevent disabling.
 
-  "for all the products, the main RC oscillator, the OTPC peripheral
-  clock and the MCKx clocks associated to OTP must be enabled."
+Fixes: b826c3e4de1a ("clk: samsung: fsd: Add cam_csi block clock information")
+Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
+---
+ drivers/clk/samsung/clk-fsd.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-I have a problem with making the main_rc_osc accessible for both
-SAM9X60 and SAMA7G5 here, see below.
+diff --git a/drivers/clk/samsung/clk-fsd.c b/drivers/clk/samsung/clk-fsd.c
+index 6f984cfcd33c..d62981e4b1d6 100644
+--- a/drivers/clk/samsung/clk-fsd.c
++++ b/drivers/clk/samsung/clk-fsd.c
+@@ -1637,8 +1637,13 @@ static const struct samsung_pll_rate_table pll_cam_csi_rate_table[] __initconst
+ };
+ 
+ static const struct samsung_pll_clock cam_csi_pll_clks[] __initconst = {
+-	PLL(pll_142xx, 0, "fout_pll_cam_csi", "fin_pll",
+-	    PLL_LOCKTIME_PLL_CAM_CSI, PLL_CON0_PLL_CAM_CSI, pll_cam_csi_rate_table),
++	/*
++	 * PLL_CAM_CSI will never be turned off because PLL_CAM_CSI is
++	 * supplying clock to CMU SFR of CAM_CSI block.
++	 */
++	__PLL(pll_142xx, 0, "fout_pll_cam_csi", "fin_pll",
++		CLK_GET_RATE_NOCACHE | CLK_IS_CRITICAL, PLL_LOCKTIME_PLL_CAM_CSI,
++		PLL_CON0_PLL_CAM_CSI, pll_cam_csi_rate_table),
+ };
+ 
+ PNAME(mout_cam_csi_pll_p) = { "fin_pll", "fout_pll_cam_csi" };
+-- 
+2.17.1
 
-Am Wed, Aug 21, 2024 at 12:59:40PM +0200 schrieb Alexander Dahl:
-> SAM9X60 Datasheet (DS60001579G) Section "23.4 Product Dependencies"
-> says:
-> 
->     "The OTPC is clocked through the Power Management Controller (PMC).
->     The user must power on the main RC oscillator and enable the
->     peripheral clock of the OTPC prior to reading or writing the OTP
->     memory."
-> 
-> The code for enabling/disabling that clock is already present, it was
-> just not possible to hook into DT anymore, after at91 clk devicetree
-> binding rework back in 2018 for kernel v4.19.
-> 
-> Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> ---
->  drivers/clk/at91/sam9x60.c       | 3 ++-
->  include/dt-bindings/clock/at91.h | 1 +
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
-> index e309cbf3cb9a..4d5ee20b8fc4 100644
-> --- a/drivers/clk/at91/sam9x60.c
-> +++ b/drivers/clk/at91/sam9x60.c
-> @@ -207,7 +207,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
->  	if (IS_ERR(regmap))
->  		return;
->  
-> -	sam9x60_pmc = pmc_data_allocate(PMC_PLLACK + 1,
-> +	sam9x60_pmc = pmc_data_allocate(PMC_MAIN_RC + 1,
->  					nck(sam9x60_systemck),
->  					nck(sam9x60_periphck),
->  					nck(sam9x60_gck), 8);
-> @@ -218,6 +218,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
->  					   50000000);
->  	if (IS_ERR(hw))
->  		goto err_free;
-> +	sam9x60_pmc->chws[PMC_MAIN_RC] = hw;
->  
->  	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NULL, 0);
->  	if (IS_ERR(hw))
-> diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
-> index 3e3972a814c1..f957625cb3ac 100644
-> --- a/include/dt-bindings/clock/at91.h
-> +++ b/include/dt-bindings/clock/at91.h
-> @@ -25,6 +25,7 @@
->  #define PMC_PLLBCK		8
->  #define PMC_AUDIOPLLCK		9
->  #define PMC_AUDIOPINCK		10
-> +#define PMC_MAIN_RC		11
->  
->  /* SAMA7G5 */
->  #define PMC_CPUPLL		(PMC_MAIN + 1)
-
-There are IDs defined in the devicetree bindings here, which are used
-both in dts and in driver code as array indexes.  In v1 of the patch
-series I just added a new last element in the end of the generic list
-and used that for SAM9X60.
-
-For SAMA7G5 those IDs are branched of from PMC_MAIN in between, making
-SAMA7G5 using a different last element, and different values after
-PMC_MAIN.
-
-Now we need a new ID for main rc osc, but not only for SAM9X60, but
-also for SAMA7G5.  I'm not sure what the implications would be, if the
-new ID would be added in between before PMC_MAIN, so all values would
-change?  Adding it to the end of the lists would probably be safe, but
-then you would need a diffently named variant for SAMA7G5's different
-IDs.  I find the current status somewhat unfortunate for future
-extensions.  How should this new ID be added here?  What would be the
-way forward?
-
-Greets
-Alex
-
-[1] https://lore.kernel.org/linux-clk/ec34efc2-2051-4b8a-b5d8-6e2fd5e08c28@microchip.com/T/#u
-
-> -- 
-> 2.39.2
-> 
-> 
 
