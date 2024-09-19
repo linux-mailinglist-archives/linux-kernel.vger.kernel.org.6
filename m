@@ -1,105 +1,109 @@
-Return-Path: <linux-kernel+bounces-333526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB2F97CA49
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:42:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0AA797CA4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899F21F2479F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:42:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 778BB1F245D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B4619F110;
-	Thu, 19 Sep 2024 13:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6208719EECA;
+	Thu, 19 Sep 2024 13:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLDsHw0C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YCjgspAW"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AD319D8BB;
-	Thu, 19 Sep 2024 13:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498A319E7ED;
+	Thu, 19 Sep 2024 13:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726753325; cv=none; b=KwP6XFuR67bnEBudFw800TNOHzek52HpMnHIb/eciP2nQgLaPWwf+9PGvSlfaGhNgvt7KulSVobgQfrxOMz0KRHRfA9syoq9qyPcRe/bSxBMgb9Wjkwhv0GpVAF2uGMZqNjJFCcGTYrLfcoCvi8jJeUlZHaMXkq8lWP6rprPWOg=
+	t=1726753502; cv=none; b=QuIUz6+Lyusg0HArQ71ozby75X12xXJSLJGN6mEBGLG6VjJXtJ1nwU5NjOK12zUOXmNoXFNG5KyEeV5ubdD4jVbbLpFQxbW7EZbWefiDgsBZzDxG6cbMfolp6hQnDCK6oKPmy+EQsjxkqLaL8PJQFrasXtW7D8D/13dsIA1imYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726753325; c=relaxed/simple;
-	bh=jQxDy751b9YjhDzWie/8758VZV89mHLnI1lsChkCIxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fczqfyrnu3OunZ11PpS8VvWPhEDLVwJRW5jYDwqd8tzq1iXtn0znuh8ooahLXCUKDaZshltutre29AJfImcg5geTunyAIJ7/X5i1C/2Pv/tD6rsjG+rbz0lgWW9vkn0ggI6kpu7DAGmBU+9Fzo5jdF/SPk/dNsMtI/P9MC95FPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLDsHw0C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A797C4CEC6;
-	Thu, 19 Sep 2024 13:42:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726753324;
-	bh=jQxDy751b9YjhDzWie/8758VZV89mHLnI1lsChkCIxY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PLDsHw0Cik3DgcQ0IeiK0t5A0uNB19Nz4rjAr7D4wakqScR5BQ9cD+MWZESwXM9iZ
-	 HWQ6D35iff5mGdK9rxiJw2S7JjcbCBJxp3YO2qDfflNOY81IAR5NZl2HkIOImIV09L
-	 +rRtCO+3olAi03hNlb4OazXfrUrP+mcQg9w0bl1xZIg8m518iU8XopuiJ52dxdJcul
-	 XjVaHSoNcUdtTrcIGSiUy4sUYIzZKxPDfihxUTU87ej9hLya5v9z4SMtDzpCDhys1A
-	 tZyGIy6BCAy8TQydf/jb3sVIZHxRqARlCmfL6LRqOSEkMI85/GqAFXcY87cC48a9Px
-	 4sv9sPdKjt1aA==
-Date: Thu, 19 Sep 2024 14:41:59 +0100
-From: Simon Horman <horms@kernel.org>
-To: Jamie Bainbridge <jamie.bainbridge@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Ido Schimmel <idosch@nvidia.com>, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2] selftests: forwarding: Avoid false MDB
- delete/flush failures
-Message-ID: <20240919134159.GA1571683@kernel.org>
-References: <c92569919307749f879b9482b0f3e125b7d9d2e3.1726480066.git.jamie.bainbridge@gmail.com>
+	s=arc-20240116; t=1726753502; c=relaxed/simple;
+	bh=psvQz2dED1bhhkY0oVCQI2DuwGiG1OXRGKYEY+hKdRk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YyVWDTyk0VwFuaZXrCP+xZ9AJerkMnvIQgWF2vlepIbdbXXb0LLVTzyI6ZLQ9DyVEBu7hr0c3rNsMQmvYmG+jwRgvqSvj4NbRx8yoRvxTbV6E5EIEwKztWI42mbWHPwWyJbJ1UIkbG0/nYmyKDrxoKG/GUnnIustQPBWrYnaOoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YCjgspAW; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso1461851e87.2;
+        Thu, 19 Sep 2024 06:45:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726753499; x=1727358299; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/rQVkFCVKw33hiK0FCSyNe/XCfvtPWegqsSK5IvOrt8=;
+        b=YCjgspAWUZYntmivXLTJkZiBUK9MNcOvozT/uysWGjxNogijMCS6qO+0LniPdYRo1I
+         y60vRTp+L2eFp2sakmy5dSDw3cEO99BNJiPIQioCkNTKSyod7cAdf4eB7r8tlpun5jtv
+         tSlqFj2k34dX+uVdfIz1VW712b2kNCmWdeepgP78k2i6y4yLqknjtOvfSmgNz5rer3ZO
+         rK3ntfl4HFeC+KvMs7pUtreTJN8DWjy5lQia1eh2dQOhXnpSU1s4hpuK2+lVrTIYg3vj
+         9kjf9eola/WxMOjxJk1CaAiGn4KkLCHu2+8N1KLHebDo5PZ7aoqT/tPc3OjcQzUKKGNb
+         UJtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726753499; x=1727358299;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/rQVkFCVKw33hiK0FCSyNe/XCfvtPWegqsSK5IvOrt8=;
+        b=WjZj5HyWWGSsIN6D8nAdR+LRQG1k7fiZGVsQLkTdbCwO8Mz46gOIZcDRW6/KzbsFDW
+         3A1Y8fuXfHEP00i330Q8EsQ76TL6VXGN9p/KN3BouRsbDkK/+ZNpN4J2jDfko9Yuk5Gp
+         5ChWJfry8oC4nymVU2jM25gRQ2PdL0g1xcT/UE+SRt+Uy/wmWrbUbZOkeoiZ8a8Q7YcS
+         LWNEomwvj88C4z5Ew7Y7+fn8A96RKW6oqZkZ6EB/LraErvvrttoHYs8y8AQTpzqh1khK
+         i//5ytz2EEqm1UxgZ5RkQ6i56LSvHm4JE+qcfrEybn5G7aUqYl5P2/6ZCqUWYSIv9v3d
+         bHvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzbyt95Xp7KONiXfH6WowsYL+GwI4OQEJ60hRInDDL9ZRhaae4X1iBLR7iP/G0Qer6Q79CUmvmZA1Kvksy@vger.kernel.org, AJvYcCXse97uLgSzzYQlqfBAtn/z6FD0uakjADrVc40Jlk2qN3HO7GAcMo5dZqaA2prfr8ZGcU76v6fecpWlktcG@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvsS7k7BwncyjdoQv49hZRlGMMZRae0EhKaVfSFwEbO4HnvLFz
+	dR+zMOFSYTpZfM3zSHpvjnFn4zH/oHBITxPtJ5/OX+uv+ap1Ewl8
+X-Google-Smtp-Source: AGHT+IHmx5v/1ZZXawpDvL1brfzo6OLiQFiR7R3myflK4xF/bPp52IPFVssGrJXF8qiwCzgiDlR4Dg==
+X-Received: by 2002:a05:6512:39c4:b0:530:ab68:25c5 with SMTP id 2adb3069b0e04-5367feb95a4mr16574104e87.2.1726753498986;
+        Thu, 19 Sep 2024 06:44:58 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:a311:80b0:1c80:8b8c:29e6:5e60:f70e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612e5675sm723286966b.169.2024.09.19.06.44.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 06:44:58 -0700 (PDT)
+From: Maya Matuszczyk <maccraft123mc@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: Maya Matuszczyk <maccraft123mc@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] firmware: qcom: enable qseecom on Lenovo Yoga Slim 7x
+Date: Thu, 19 Sep 2024 15:44:21 +0200
+Message-ID: <20240919134421.112643-2-maccraft123mc@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c92569919307749f879b9482b0f3e125b7d9d2e3.1726480066.git.jamie.bainbridge@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 16, 2024 at 07:49:05PM +1000, Jamie Bainbridge wrote:
-> Running this test on a small system produces different failures every
-> test checking deletions, and some flushes. From different test runs:
-> 
-> TEST: Common host entries configuration tests (L2)                [FAIL]
->   Failed to delete L2 host entry
-> 
-> TEST: Common port group entries configuration tests (IPv4 (S, G)) [FAIL]
->   IPv4 (S, G) entry with VLAN 10 not deleted when VLAN was not specified
-> 
-> TEST: Common port group entries configuration tests (IPv6 (*, G)) [FAIL]
->   IPv6 (*, G) entry with VLAN 10 not deleted when VLAN was not specified
-> 
-> TEST: Flush tests                                                 [FAIL]
->   Entry not flushed by specified VLAN ID
-> 
-> TEST: Flush tests                                                 [FAIL]
->   IPv6 host entry not flushed by "nopermanent" state
-> 
-> Add a short sleep after deletion and flush to resolve this.
-> 
-> Create a delay variable just for this test to allow short sleep, the
-> lib.sh WAIT_TIME of 5 seconds makes the test far longer than necessary.
-> 
-> Tested on several weak systems with 0.1s delay:
-> - Ivy Bridge Celeron netbook (2014 x86_64)
-> - Raspberry Pi 3B (2016 aarch64)
-> - Small KVM VM on Intel 10th gen (2020 x86_64)
-> All these systems ran 25 test runs in a row with 100% pass OK.
-> 
-> Fixes: b6d00da08610 ("selftests: forwarding: Add bridge MDB test")
-> Signed-off-by: Jamie Bainbridge <jamie.bainbridge@gmail.com>
-> ---
-> v2: Avoid false check failures as seen by Jakub Kicinski.
-> ---
+I'm not sure how to test it beyond checking if efivars work fine, and
+reading and writing them works, persisting after reboot - adding a new
+boot option with efibootmgr works perfectly.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Maya Matuszczyk <maccraft123mc@gmail.com>
+---
+ drivers/firmware/qcom/qcom_scm.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+index 10986cb11ec0..e11f3f325414 100644
+--- a/drivers/firmware/qcom/qcom_scm.c
++++ b/drivers/firmware/qcom/qcom_scm.c
+@@ -1734,6 +1734,7 @@ static const struct of_device_id qcom_scm_qseecom_allowlist[] __maybe_unused = {
+ 	{ .compatible = "lenovo,flex-5g" },
+ 	{ .compatible = "lenovo,thinkpad-t14s" },
+ 	{ .compatible = "lenovo,thinkpad-x13s", },
++	{ .compatible = "lenovo,yoga-slim7x" },
+ 	{ .compatible = "microsoft,romulus13", },
+ 	{ .compatible = "microsoft,romulus15", },
+ 	{ .compatible = "qcom,sc8180x-primus" },
+-- 
+2.46.1
 
 
