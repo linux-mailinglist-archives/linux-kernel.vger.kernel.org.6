@@ -1,210 +1,151 @@
-Return-Path: <linux-kernel+bounces-333286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9B097C667
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:58:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E99AD97C671
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 933381C2143F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:58:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1F851F274F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D964E199943;
-	Thu, 19 Sep 2024 08:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283F7199254;
+	Thu, 19 Sep 2024 08:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qiaLlNA1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8WgXI4ra";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qiaLlNA1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8WgXI4ra"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="wATe4rx+"
+Received: from mail.avm.de (mail.avm.de [212.42.244.120])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6E91991AB;
-	Thu, 19 Sep 2024 08:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11491991AB;
+	Thu, 19 Sep 2024 08:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726736224; cv=none; b=WVbrjidILCY4CxO3emxTiuVn6Ky1MuDgccJNwOWmNMMknDHJEfaOsSdQsLmsEbz1zdv7hXO3MUCz7kErFkZzaY8zGe6atDZ9bF9fdyj31lxQYwx3aBD7lTRfgrzaq6+PYiKPf5apEBaSAVugGYTdLS67HyGHevR0wt0zgbXoVoI=
+	t=1726736343; cv=none; b=CWTQUkhSNLBVfSYCULIhG7rLNSO3vTqjkMZIE0nioK+jspPpxvJYkJUmFSVs/E/g/gNMxOGOvBSl0jNRxy647CXe0DZLRgVvvuRXOEuuSUWmak/mrcBUdy2c7F0WlxS6t5QTuRzwn3BKJhYE9zKbyqCvWLu6JJw2NEFp8kYcSIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726736224; c=relaxed/simple;
-	bh=a3imPDKU4F8x26aj5GR4LklMpGZycrHBarNWJaSxQoQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QcDDGR9U3xF4ODQBShWXw45vaobYQ8W8+jjEKeTgBAozq3WkIdCSr/Uoa468mVN5/s45EH/CnfwFhIN270GGb61ZN6NbsbeHkvGMYRwvRbmFvXEp8T/9uLF+DZMFNGRu7iBXPoYysOLuKCICqtfY5xC1espCSo6ZenORApGNdZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qiaLlNA1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8WgXI4ra; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qiaLlNA1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8WgXI4ra; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7A3D820863;
-	Thu, 19 Sep 2024 08:56:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726736214; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=96dUAEKZsvERcAjWDxiPW5H6Y1CxOvpbvlwAXEDik30=;
-	b=qiaLlNA1zzNSj9Fizg+ztYaxIjAGol+v+u6s4cs6biDNsED8tF1pm36FlbqN2Ynb4krIJ4
-	yyN8aeWJsr0SgdVci8mY7+iSVqtsY7IY/vBaxOiqAXDK33aKrZVMUXAl34BeJeZ4OVggkc
-	9dRByhb6zDHkr9FXzKOHVQImCUH/4+Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726736214;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=96dUAEKZsvERcAjWDxiPW5H6Y1CxOvpbvlwAXEDik30=;
-	b=8WgXI4ramYSSL9qgxGB/v05W4Lj5eNPF/c1jgS4YK/CQupYKqbbATjxXO8G9xMXxrh7wkd
-	AgEEhPIsUVbWLVAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qiaLlNA1;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=8WgXI4ra
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726736214; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=96dUAEKZsvERcAjWDxiPW5H6Y1CxOvpbvlwAXEDik30=;
-	b=qiaLlNA1zzNSj9Fizg+ztYaxIjAGol+v+u6s4cs6biDNsED8tF1pm36FlbqN2Ynb4krIJ4
-	yyN8aeWJsr0SgdVci8mY7+iSVqtsY7IY/vBaxOiqAXDK33aKrZVMUXAl34BeJeZ4OVggkc
-	9dRByhb6zDHkr9FXzKOHVQImCUH/4+Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726736214;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=96dUAEKZsvERcAjWDxiPW5H6Y1CxOvpbvlwAXEDik30=;
-	b=8WgXI4ramYSSL9qgxGB/v05W4Lj5eNPF/c1jgS4YK/CQupYKqbbATjxXO8G9xMXxrh7wkd
-	AgEEhPIsUVbWLVAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3BA2913AAA;
-	Thu, 19 Sep 2024 08:56:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lRzGDFbn62amZwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 19 Sep 2024 08:56:54 +0000
-Date: Thu, 19 Sep 2024 10:57:44 +0200
-Message-ID: <874j6cc96f.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Christoffer Sandberg <cs@tuxedo.de>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Werner Sembach <wse@tuxedocomputers.com>,
-	Jerry Luo
- <jerryluo225@gmail.com>,
-	Christian Heusel <christian@heusel.eu>,
-	regressions@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	Jaroslav Kysela <perex@perex.cz>
-Subject: Re: [REGRESSION][BISECTED] Audio volume issues since 4178d78cd7a8
-In-Reply-To: <cedb8758bb506bf9454b90eebcaaea24@tuxedo.de>
-References: <c930b6a6-64e5-498f-b65a-1cd5e0a1d733@heusel.eu>
-	<87jzfbh5tu.wl-tiwai@suse.de>
-	<66dfd536-ae17-4d75-b514-7931a3734e54@gmail.com>
-	<20f70c0a92a27db29f188e05c33ba82c@tuxedo.de>
-	<1fbba03e-56b8-4e74-adf6-998e3a2d9dac@gmail.com>
-	<87setxe68m.wl-tiwai@suse.de>
-	<87r09he63e.wl-tiwai@suse.de>
-	<dfb141e8-6afa-4d21-8cd4-f9a53e8a192e@tuxedocomputers.com>
-	<87r09hcbr0.wl-tiwai@suse.de>
-	<cedb8758bb506bf9454b90eebcaaea24@tuxedo.de>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1726736343; c=relaxed/simple;
+	bh=L7QGvSkLKo+9WVpQ8DHQ2y3WVAdH+jWwUDMJ6EiZ+Vo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YmXnnbXYNiGgLk0b06qiJ7STAU8fJEuEzobRRKmkYeqrtytoCyEO7i87cvsfEARJp4duVP7uQCbRWd3x0zfnb6Se1R3LQrNId3IzNV0TiITT3KPlyrSwGKk+zOuhzTe3Qr7qHyeG9BBygr9G9/7QmF/fdvh9DErfb3L/80tQR9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=wATe4rx+; arc=none smtp.client-ip=212.42.244.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
+	t=1726736337; bh=L7QGvSkLKo+9WVpQ8DHQ2y3WVAdH+jWwUDMJ6EiZ+Vo=;
+	h=From:To:Cc:Subject:Date:Reply-To:From;
+	b=wATe4rx+Aih0Dii7vZhdiFZUwjBRoTDyhQ2PcHNBdNIHyGbCdOL3NgbzuLcGWmZc2
+	 7+wEgQdJLNSRWc6YS1goHMp5mw2oAeH1nZPio2zjWe4NlImFJyWcJgIbmhVqwDGC02
+	 p/ooeKM/QYvB3OB3oacaCmGLgqNMF35TjziS/Fy0=
+Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Thu, 19 Sep 2024 10:58:57 +0200 (CEST)
+From: Thomas Martitz <tmartitz-oss@avm.de>
+To: Roopa Prabhu <roopa@nvidia.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Johannes Nixdorf <jnixdorf-oss@avm.de>,
+	Thomas Martitz <tmartitz-oss@avm.de>,
+	bridge@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH net-next] net: bridge: drop packets with a local source
+Date: Thu, 19 Sep 2024 10:58:02 +0200
+Message-ID: <20240919085803.105430-1-tmartitz-oss@avm.de>
+Reply-To: <20240911125820.471469-1-tmartitz-oss@avm.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 7A3D820863
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[suse.de,tuxedocomputers.com,gmail.com,heusel.eu,lists.linux.dev,vger.kernel.org,perex.cz];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -5.51
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-purgate-ID: 149429::1726736337-70AC7E44-6E73E10B/0/0
+X-purgate-type: clean
+X-purgate-size: 3382
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
 
-On Wed, 18 Sep 2024 16:10:00 +0200,
-Christoffer Sandberg wrote:
-> 
-> 
-> 
-> On 18.9.2024 15:49, Takashi Iwai wrote:
-> > On Wed, 18 Sep 2024 15:39:28 +0200,
-> > Werner Sembach wrote:
-> >> 
-> >> Hi
-> >> 
-> >> Am 18.09.24 um 10:09 schrieb Takashi Iwai:
-> >> > On Wed, 18 Sep 2024 10:06:01 +0200,
-> >> > Takashi Iwai wrote:
-> >> >> [...]
-> >> >> I don't see any relevant about the incorrect volumes by the suggested
-> >> >> commit, but at least we should avoid applying the quirk for a
-> >> >> non-existing speaker pin.
-> >> >>
-> >> >> Jerry, yours is with CX11970 (codec id 0x14f120d0), right?
-> >> 
-> >> Yes, at least for the preproduction sample of the Sirius Gen1 I have
-> >> at hand atm.
-> >> 
-> >> pciid is 2782:12c3
-> >> 
-> >> @Christoffer: I guess 2782:12c5 is for the Gen2?
-> 
-> Yes the other is for Sirius Gen2
-> 
-> > 
-> > Hm, and one of those PCI SSID conflicts with System76 Pangolin
-> > (pang14)?  All seem to have the very same codec CX11970.
-> 
-> I don't think I saw the pci id explicitly listed, but that was the
-> assumption.
-> 
-> > 
-> > If they really conflict in both PCI and HD-audio codec IDs, the only
-> > way would be to check DMI string, I'm afraid.
-> > 
-> 
-> I asked about the volumes since it could be a hint that a second
-> speaker is activated but stuck on a fixed volume. This would make a
-> low general volume setting sound louder but still somewhat adjustable.
-> 
-> However, if we can not verify second speaker pair, then I agree, DMI
-> limit would be the safe choice.
+Currently, there is only a warning if a packet enters the bridge
+that has the bridge's or one port's MAC address as source.
 
-So, just to make clear: the device reported for a regression and the
-device you tried to tweak are different models?  The former is
-Pangolin and the latter Sirius Gen 2.  I'm confused by models.
+Clearly this indicates a network loop (or even spoofing) so we
+generally do not want to process the packet. Therefore, move the check
+already done for 802.1x scenarios up and do it unconditionally.
 
-With the quirk, you'll get an individual mixer element controlling the
-top speaker volume?
+For example, a common scenario we see in the field:
+In a accidental network loop scenario, if an IGMP join
+loops back to us, it would cause mdb entries to stay indefinitely
+even if there's no actual join from the outside. Therefore
+this change can effectively prevent multicast storms, at least
+for simple loops.
 
+Signed-off-by: Thomas Martitz <tmartitz-oss@avm.de>
+---
+ net/bridge/br_fdb.c   |  4 +---
+ net/bridge/br_input.c | 17 ++++++++++-------
+ 2 files changed, 11 insertions(+), 10 deletions(-)
 
-Takashi
+diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
+index ad7a42b505ef..f97203c56394 100644
+--- a/net/bridge/br_fdb.c
++++ b/net/bridge/br_fdb.c
+@@ -900,9 +900,7 @@ void br_fdb_update(struct net_bridge *br, struct net_bridge_port *source,
+ 	if (likely(fdb)) {
+ 		/* attempt to update an entry for a local interface */
+ 		if (unlikely(test_bit(BR_FDB_LOCAL, &fdb->flags))) {
+-			if (net_ratelimit())
+-				br_warn(br, "received packet on %s with own address as source address (addr:%pM, vlan:%u)\n",
+-					source->dev->name, addr, vid);
++			return;
+ 		} else {
+ 			unsigned long now = jiffies;
+ 			bool fdb_modified = false;
+diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
+index ceaa5a89b947..06db92d03dd3 100644
+--- a/net/bridge/br_input.c
++++ b/net/bridge/br_input.c
+@@ -77,7 +77,7 @@ int br_handle_frame_finish(struct net *net, struct sock *sk, struct sk_buff *skb
+ {
+ 	struct net_bridge_port *p = br_port_get_rcu(skb->dev);
+ 	enum br_pkt_type pkt_type = BR_PKT_UNICAST;
+-	struct net_bridge_fdb_entry *dst = NULL;
++	struct net_bridge_fdb_entry *fdb_src, *dst = NULL;
+ 	struct net_bridge_mcast_port *pmctx;
+ 	struct net_bridge_mdb_entry *mdst;
+ 	bool local_rcv, mcast_hit = false;
+@@ -108,10 +108,14 @@ int br_handle_frame_finish(struct net *net, struct sock *sk, struct sk_buff *skb
+ 				&state, &vlan))
+ 		goto out;
+ 
+-	if (p->flags & BR_PORT_LOCKED) {
+-		struct net_bridge_fdb_entry *fdb_src =
+-			br_fdb_find_rcu(br, eth_hdr(skb)->h_source, vid);
+-
++	fdb_src = br_fdb_find_rcu(br, eth_hdr(skb)->h_source, vid);
++	if (fdb_src && test_bit(BR_FDB_LOCAL, &fdb_src->flags)) {
++		/* Spoofer or short-curcuit on the network. Drop the packet. */
++		if (net_ratelimit())
++			br_warn(br, "received packet on %s with own address as source address (addr:%pM, vlan:%u)\n",
++				p->dev->name, eth_hdr(skb)->h_source, vid);
++		goto drop;
++	} else if (p->flags & BR_PORT_LOCKED) {
+ 		if (!fdb_src) {
+ 			/* FDB miss. Create locked FDB entry if MAB is enabled
+ 			 * and drop the packet.
+@@ -120,8 +124,7 @@ int br_handle_frame_finish(struct net *net, struct sock *sk, struct sk_buff *skb
+ 				br_fdb_update(br, p, eth_hdr(skb)->h_source,
+ 					      vid, BIT(BR_FDB_LOCKED));
+ 			goto drop;
+-		} else if (READ_ONCE(fdb_src->dst) != p ||
+-			   test_bit(BR_FDB_LOCAL, &fdb_src->flags)) {
++		} else if (READ_ONCE(fdb_src->dst) != p) {
+ 			/* FDB mismatch. Drop the packet without roaming. */
+ 			goto drop;
+ 		} else if (test_bit(BR_FDB_LOCKED, &fdb_src->flags)) {
+-- 
+2.46.1
+
 
