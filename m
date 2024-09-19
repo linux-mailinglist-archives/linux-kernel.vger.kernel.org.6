@@ -1,152 +1,98 @@
-Return-Path: <linux-kernel+bounces-333261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775A297C616
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:43:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3343497C618
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C3BB1C22847
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:43:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECA20284485
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1C31991A3;
-	Thu, 19 Sep 2024 08:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE201990D8;
+	Thu, 19 Sep 2024 08:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KW7sQShs"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dhyb38Zt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DEE61990C1;
-	Thu, 19 Sep 2024 08:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D351922DF;
+	Thu, 19 Sep 2024 08:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726735381; cv=none; b=R0xeqp0BvHfFb0z3lSVpfsYVOjnCdqM6Jj98q2jxBHrNSG80bDCbkxtT/hl1RG1FXDWaTug1fH9FGO1ryV1Sw4qldG2UgwGDBCrLne1rllLa9XxsZz5k8kGnVZXBBIWGtb6+caW+fhXByuk4Jh4lTfyV6Fwik5na8WNp4XQBCug=
+	t=1726735421; cv=none; b=Jci704orh0DqZYqUxtNPwi1ycQ0DyYjm/sSpC1kSSqKAak9KqpzzSeEZCUBFUjWKB74h51RV5QfhW40bto740eXs3pBqRfAwdbFkDE2PW2W+EAZ4yvbqdqPcy41GE2WJr+hZE8iwVdhYLQZLokI28gf0LrbjCmagRECoTXJuovg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726735381; c=relaxed/simple;
-	bh=PZHFfX6Xs1Wwf4eFstQVoFBA9GOOqkY/Qkh3mRZPtkI=;
+	s=arc-20240116; t=1726735421; c=relaxed/simple;
+	bh=qiCxtb7Z2/w/OjjdM+HeN2cTSbtkI5mDJpWRnGYCdic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qUOOQ98z8/MKv9LEldsRQTghzl5T9OjWj/1qNcAOBW0HNP+vKYLI16C/7JVwOYuDG7Vybuiu/KhZsN7kcRu200ETfmpu702rH+4CHF0WKpwMrA5iOFo7cHOyRMeycbYJzKJMsYzQ/QIz4ZZcCN2eoQvYzaGRyEuc7zRjfuTdTPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KW7sQShs; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f75aa08a96so6223001fa.1;
-        Thu, 19 Sep 2024 01:42:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726735377; x=1727340177; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q56oYwZIP3a9bwlxelu0mZMcpO1Ir/bJeTvgLeroy9A=;
-        b=KW7sQShsGCtXb98Sq7ZYZnXkL+ElmhR9zzbGFVnJplGSYaA4XhX0zDOsjI4j5ivD8m
-         9/j2LpqbKOCKygBcq2oDg6kBwmMH5JDnDF5wY3GH6XUUlgOrv9s2szdPp1Hhr1/jHx3Q
-         tbDYOoe6c8vMmpVr7BatDD5z74IY3svWB/Pc6obkyaXI+lue+IeZ7w0yer4giRZxmdUl
-         1O9YY1g0mMAoMtVnmsOMHHYMRQF4IY1wfF/d8pxTbCpJvV4khbwmqxcvZSasxJbM8afz
-         h8nHVfeZZWhpFuCcr740NIkxc6gciOT2iM/acsVKYeaSmZRMeiuua5KiammvJFAyYGrj
-         FMKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726735377; x=1727340177;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q56oYwZIP3a9bwlxelu0mZMcpO1Ir/bJeTvgLeroy9A=;
-        b=SnOhBZcxeDQ1HoASvRgEtN4+PAIPR9VHgKBUhR7IrLAVLgYbjvmrp1YEDrD7BvXD5/
-         3uw+9CdnBp7PFvGFLFVywQ7O5NGR/fBPX5mXUHVGv0NXC0IapHXFCx4Vr/k/1XQAbRBK
-         CUMxtWcmocTCfSIHZwsUI96PtJ/cSDMBAradajRQb7X0C0+FMhGpAsqB8oOrbhSZsDcs
-         IM5KlTqEmTxpn+YRKFLnKEOnN/WEzCqvjIMAv0h3StJhob6Vn2MnOUqatVFehW5aUeiv
-         oBZgWwgflcQmG7k3uBI+vKfoiUQ3K22QlL50Y3xzNS+dDoRBJ9l5MuWJOBptcvaaZC6l
-         azog==
-X-Forwarded-Encrypted: i=1; AJvYcCX3XKRf+Jo9npwqqCwtnc0zRlO66C/9lyF2rLmi39kJKNa3UwjLAjtRW/5//RXuNlEwbVucdOvfDMpcQa7bQFbf@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF/j3bTG2W9lP90YOIdU+PXfh2IoxkhkXYdniVC7Y9In/zEhqQ
-	4kfxASwleC9xYCW3nC+WaQwHoL5teThfimGNCO/ItG/1Wqxxkk+C
-X-Google-Smtp-Source: AGHT+IEIA29X7ytBf2XZTAYRstHeHQBGG9sL4jdwDiKrlg4ZacATpccZMEL9VWgX7vDj/spHfVxjjA==
-X-Received: by 2002:a2e:b8c6:0:b0:2ef:2855:533f with SMTP id 38308e7fff4ca-2f787dbf632mr140713931fa.16.1726735377071;
-        Thu, 19 Sep 2024 01:42:57 -0700 (PDT)
-Received: from gmail.com (1F2EF419.nat.pool.telekom.hu. [31.46.244.25])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e754ce37bsm15719855e9.48.2024.09.19.01.42.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 01:42:56 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Thu, 19 Sep 2024 10:42:54 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Jiri Olsa <jolsa@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [GIT PULL] Performance events changes for v6.12
-Message-ID: <ZuvkDlws6xvijIuc@gmail.com>
-References: <ZurLc9qEjBH9MkvK@gmail.com>
- <CAADWXX_mJr=hDkOWne831Fcm+wRxRnh9VvD2AMJJ5fStodyAgw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4aovvDZTBp8GdzWu56VnxWXAzoTa175MKshS4i4vVEjgN5nm8BJMYA06zjyetIlXJfC22g47ax9t7BtyVA6fNkEo7ifWq/XCGqyW5L6c9yF9qsN9f3/krVOVaI1NueLb8pM4ie/0UxrEqaCcewP6K9wzfFF+5cw6M5C7TTDk2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dhyb38Zt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD668C4CEC4;
+	Thu, 19 Sep 2024 08:43:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726735421;
+	bh=qiCxtb7Z2/w/OjjdM+HeN2cTSbtkI5mDJpWRnGYCdic=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dhyb38Zt3xv9jfcCWC7qq+tWDSTVccbnzrHm294NqO6xzmAcZOZEbXAwgoqWUUvtL
+	 6na6nH6CbN0EOF0HE1tb4AAt0I3M3dCs8126lNpkHw5IAVquEi0zf1/eEx3jdeoSFI
+	 P2PhbsWh2F1flTWY+5SjBxRUCFSzmqgfWf/t+WAwjeNag1CfHALsajmLsXzjw7XEQd
+	 r9VvnyUaHhXtyDZiiCv46u0Sd0hb6lWxwmrjvDLInP4XcuVt93Ozb/3pPkuquOUBku
+	 jHDrJZXwjcbq7wq3tEzaL4nX10KqrPpMz6S3y2xtABk+d57WyGJr8NUcuT2p8QktXF
+	 rabxaWrD/oBqA==
+Date: Thu, 19 Sep 2024 10:43:38 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Raju Rangoju <Raju.Rangoju@amd.com>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sanju.mehta@amd.com, krishnamoorthi.m@amd.com,
+	akshata.mukundshetty@amd.com
+Subject: Re: [PATCH 2/9] spi: spi_amd: Enable dual and quad I/O modes
+Message-ID: <ZuvkOohXSzLZZAw7@finisterre.sirena.org.uk>
+References: <20240918105037.406003-1-Raju.Rangoju@amd.com>
+ <20240918105037.406003-3-Raju.Rangoju@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Dn7ZpxzI3RYOl+ue"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADWXX_mJr=hDkOWne831Fcm+wRxRnh9VvD2AMJJ5fStodyAgw@mail.gmail.com>
+In-Reply-To: <20240918105037.406003-3-Raju.Rangoju@amd.com>
+X-Cookie: Editing is a rewording activity.
 
 
-* Linus Torvalds <torvalds@linux-foundation.org> wrote:
+--Dn7ZpxzI3RYOl+ue
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> On Wed, Sep 18, 2024 at 2:45 PM Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> >  arch/x86/events/core.c                                |  63 +++++++++++++++++++
-> >  arch/x86/events/intel/bts.c                           |   3 -
-> [...]
-> >  kernel/events/core.c                                  | 586 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-------------------------------------------------
-> >  kernel/events/uprobes.c                               | 505 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------------------------------------------------------------
-> 
-> You seem to be cutting-and-pasting your diffstats from a *very* wide
-> terminal window, resulting in a very messy diffstat result.
+On Wed, Sep 18, 2024 at 04:20:30PM +0530, Raju Rangoju wrote:
 
-Yeah, sorry about that - it was a one-off manual diffstat due to the merge 
-order between perf/urgent and perf/core, and indeed my terminal is ~240 
-characters wide and I didn't notice the diffstat width-scaling weirdness.
+>  {
+>  	/* bus width is number of IO lines used to transmit */
+> -	if (op->cmd.buswidth > 1 || op->addr.buswidth > 1 ||
+> -	    op->data.buswidth > 1 || op->data.nbytes > AMD_SPI_MAX_DATA)
+> +	if (op->cmd.buswidth > 1 || op->addr.buswidth > 4 ||
+> +	    op->data.buswidth > 4 || op->data.nbytes > AMD_SPI_MAX_DATA)
+>  		return false;
 
-> Please either pipe the git request-pull output to some tool (I suggest 
-> just piping to 'xsel' or similar that does the 'cut' part for you, but 
-> anything works - you can just do "| cat" to make the stdout not be the 
-> terminal).
-> 
-> Or just use "--stat=80" to set the output width to a fixed sane thing, 
-> instead of that insane 250+ character window width that it seems you are 
-> using and that causes those overlong diffstat lines and makes it all hard 
-> to read.
+I'm not seeing anything where we tell the hardware about the width?
 
-Will do next time it happens. Below is a belated diffstat with the correct 
-width.
+--Dn7ZpxzI3RYOl+ue
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
+-----BEGIN PGP SIGNATURE-----
 
-	Ingo
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbr5DkACgkQJNaLcl1U
+h9BxVgf8Dy5y4hyw4JHqH+u9kKjOE5l9c4uXdQ6Z78HMY/1oWHIJmdZxEDc+rnNY
+T+NFgGao/v1hBsg+8wSnLu9NITwCDhqJ/u3gipw+WJkPCEHzM9V3pJWd7PvwfM5K
+YocRBm8aHSQc+p7HDi4ybOU0pKhkCCBHcympjpFiKmYpAkeRKYkid8aRj9S89mwR
+MzDOOWAyBX8hYQsZsOf6RJ7zNmIyNmLftJUeZoAWiuZ8ghOx0VL6fjijlaTiexyB
+Ml1VIDXWRFGSC3PIgReTCSatY92v7U1y3d6AkMD4kMaNa5IvZOq1pcgf/AND8+3p
+DlO4usVMT6Oz3NII2m5/qewLn7y9aA==
+=83N2
+-----END PGP SIGNATURE-----
 
- arch/x86/events/core.c                             |  63 +++
- arch/x86/events/intel/bts.c                        |   3 -
- arch/x86/events/intel/cstate.c                     | 142 +----
- arch/x86/events/intel/pt.c                         |  29 +-
- arch/x86/events/intel/uncore.c                     |   9 +
- arch/x86/events/intel/uncore.h                     |   2 +
- arch/x86/events/intel/uncore_snb.c                 | 185 ++++++-
- drivers/dma/idxd/idxd.h                            |   7 -
- drivers/dma/idxd/init.c                            |   3 -
- drivers/dma/idxd/perfmon.c                         |  98 +---
- drivers/iommu/intel/iommu.h                        |   2 -
- drivers/iommu/intel/perfmon.c                      | 111 +---
- include/linux/cpuhotplug.h                         |   2 -
- include/linux/perf_event.h                         |  32 +-
- include/linux/rbtree.h                             |  67 +++
- include/linux/uprobes.h                            |  48 +-
- kernel/events/core.c                               | 586 +++++++++++++++------
- kernel/events/uprobes.c                            | 505 ++++++++++--------
- kernel/trace/bpf_trace.c                           |  38 +-
- kernel/trace/trace_uprobe.c                        |  44 +-
- .../selftests/bpf/bpf_testmod/bpf_testmod.c        |  27 +-
- 21 files changed, 1146 insertions(+), 857 deletions(-)
+--Dn7ZpxzI3RYOl+ue--
 
