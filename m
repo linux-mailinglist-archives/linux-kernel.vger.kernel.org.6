@@ -1,100 +1,87 @@
-Return-Path: <linux-kernel+bounces-333492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF24497C992
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:55:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E1597C996
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D42511C22964
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:55:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21CEE1C21A67
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B1019DFB5;
-	Thu, 19 Sep 2024 12:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361FB19DF69;
+	Thu, 19 Sep 2024 12:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mvWpO0Po";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R+yPHDBI";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mvWpO0Po";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R+yPHDBI"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Hq6aECeD"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B90419AD8D;
-	Thu, 19 Sep 2024 12:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E6E19CCF4
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 12:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726750537; cv=none; b=To1auZVCs6HUj68BSddLaFgqsucbaJdSUTi8Qq+XtLSw+IBmGx3vhos0IulO00B77pNYTSiumuxY2PbYwIqIYdFb1Yd0Cf2SjhAcW+bWEGefMhM5282Tyu/rObzH0N4dZANd8UQvh8AWEq9lxpfBBEJZdV/wRTq/xO/jCLf8fGk=
+	t=1726750675; cv=none; b=HG/yedplyJ+jRJwvo9vlarkM91FL0nCuj0KUoA83yHmpEerf0xsaQZbCQB/jtRPtaQKTuS3AJ5DacXWlZ4OZm8qfcJeuqi8gxxXjsk1exTqX5mgyZudMXVTqJKE9NhSTFyWzy9afiSd12XJ6hZ5OjqblTVkRPWmNRlScCXeyoKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726750537; c=relaxed/simple;
-	bh=uPk7QPnox1EKt4Oc2lIbYdayFzNPigxxINMuiljTa+U=;
+	s=arc-20240116; t=1726750675; c=relaxed/simple;
+	bh=76ELJO2trC1AW62eOoSKaxfwlQZw6rut1Tua7Zv1+cQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Em4n0MnX+IxgT51rNLkrBC5TrVOKWcNwUm2RaMxVJscPAn3/BSjoGY2Kz+bCY8jvHuSnEyezSbzh53dC+hq5qtvY9LmlbnsiDgEoTqvD/Xj7Jev2HeqYjXCkz3piUYDfTWISypCQUnHgTvKyl3WgPuIrjUg8CV95hJIGqSsfae8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mvWpO0Po; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R+yPHDBI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mvWpO0Po; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R+yPHDBI; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 32B9F20922;
-	Thu, 19 Sep 2024 12:55:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726750533;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J035lXz9NqS2T7rqPIx+v9m10/fpl5HiwgmW9zEOxDQ=;
-	b=mvWpO0PoJvQa/GgqpFIRNNRh1hddqeLTEahw+JwzJsCgXy5jESa520Hq33eo6UC0d4lU6y
-	8HxDLbHF5Tmrxv0q/7UM460XvqXY8qRC1CCobXBN7XChY+bvDSRDdtOuvFP9wV15OWV0Wf
-	Iegk9ElaJfdkOmi+fFmEly/YP8GFuV4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726750533;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J035lXz9NqS2T7rqPIx+v9m10/fpl5HiwgmW9zEOxDQ=;
-	b=R+yPHDBIGnvUjbSeN57UebxkIBNmiIGc1hj7+FSRIMQnEjoBwKWNEaOn4oapqQb3BJTeTz
-	DXSwg+A1JD8KgYBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726750533;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J035lXz9NqS2T7rqPIx+v9m10/fpl5HiwgmW9zEOxDQ=;
-	b=mvWpO0PoJvQa/GgqpFIRNNRh1hddqeLTEahw+JwzJsCgXy5jESa520Hq33eo6UC0d4lU6y
-	8HxDLbHF5Tmrxv0q/7UM460XvqXY8qRC1CCobXBN7XChY+bvDSRDdtOuvFP9wV15OWV0Wf
-	Iegk9ElaJfdkOmi+fFmEly/YP8GFuV4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726750533;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J035lXz9NqS2T7rqPIx+v9m10/fpl5HiwgmW9zEOxDQ=;
-	b=R+yPHDBIGnvUjbSeN57UebxkIBNmiIGc1hj7+FSRIMQnEjoBwKWNEaOn4oapqQb3BJTeTz
-	DXSwg+A1JD8KgYBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1329E13A1E;
-	Thu, 19 Sep 2024 12:55:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OimABEUf7GZCMwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 19 Sep 2024 12:55:33 +0000
-Date: Thu, 19 Sep 2024 14:55:31 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Luca Stefani <luca.stefani.ge1@gmail.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 0/2] btrfs: Don't block system suspend during fstrim
-Message-ID: <20240919125531.GL2920@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240917203346.9670-1-luca.stefani.ge1@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJ4DDzKcOcATsuOdEOwlMGVXpACxzhNs3rKuE78iwzDVxFZ2zShdPQbvd9VuEK7hCoiklLqQUXXryUjwxFsJAFqu8wPyXT57wkaXJi4BL1GG3pb2Ecu5Sr6wKTm+T2XLVU0uBWzt6a5pBS1IAw+wlWtDUQy6rDInLzrEfQSCB2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Hq6aECeD; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f759688444so6624241fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 05:57:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1726750672; x=1727355472; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fpL5nrSfWFIRQTaDmvo3b1v9flOhJaDZgUF3bcUIUyc=;
+        b=Hq6aECeDvaTnhEO3mmxdMBndV33kFS9r3tIOjTPHKJhYr8F5fkIr+Mq6pQrzKyla2z
+         EHruX7MZthDo9INLHrVQt68rbnPBdFS4NatQvpLxdM6KjI3iFRuX3QheXxj+gju5WIxF
+         j8pUQb34ZpsrZNZbZ7fYFzf11wgamM9+AdArUeQ55CgjkbHgATbYLKbnMEvYf5hSjIKr
+         mUgy9OwKkd7xDDtD2c5UB3+V9tvKpka/49blNKvhFknQEvZpiMyMLgqr1zl+rX14X0vM
+         O2PpJ0u/4q61UajfvVS3BADj3lHRxLuVrasJHI3r6OgaZwahYWq4pySaDtFif7RmtKVA
+         EjPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726750672; x=1727355472;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fpL5nrSfWFIRQTaDmvo3b1v9flOhJaDZgUF3bcUIUyc=;
+        b=thy9Q7BPgOPH+VW3MN7E6Q/bXY63FZLnxCfoJvp+GWr0Hl8mQlh0j3Skyv1UNbyo8A
+         7orc3ktSkBoe+Ol7CLgBV+S/Wv6zR/pMJ+/Tl2fXiFGiSfwF7L8uo5NdqxoVD9jPNzKu
+         uTddLbkrAOHFimN9Kjku500AOewKdYr4YQJSdtoOvWol6EygBaFVjj3C1s5wUB14eoPu
+         C4PZmzD2e4rAVd/hGblJn2UJv+5Bed8I6HeNZlng10OEnuEmXeAayJCVCRReWo+eLQF+
+         +LdEZBE1U4vK9GqFUE2F3nliTapig5UXQ4Wu8vmTs7yE8Kdixpjv9/qoIXJwoFzNMhta
+         IvoA==
+X-Gm-Message-State: AOJu0YwxFxaxVvwzPk95oKQzIHbKa7mlgn8I2g5hOGaBPt6hwTLpcXc8
+	DfXe5IppOtRhk5XCzLdhKJ/jV8PCGEPgL1eW3PUXxHwbAp13wy9FOS5olTd3bmQ=
+X-Google-Smtp-Source: AGHT+IG4h95qe6GKSksmnJpvKJM8XOEJO8HMQY3bFlHGG7ixgB+TFNte/YhFDrha1wGPiRsX+C3SXQ==
+X-Received: by 2002:a2e:bea6:0:b0:2ef:22ad:77b5 with SMTP id 38308e7fff4ca-2f787f447c9mr138932411fa.29.1726750671610;
+        Thu, 19 Sep 2024 05:57:51 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794601017sm79331225ad.85.2024.09.19.05.57.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 05:57:50 -0700 (PDT)
+Date: Thu, 19 Sep 2024 14:57:35 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Raul E Rangel <rrangel@chromium.org>
+Cc: linux-kernel@vger.kernel.org, Raul E Rangel <rrangel@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Huang Shijie <shijie@os.amperecomputing.com>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Yuntao Wang <ytcoode@gmail.com>, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2] init: Don't proxy `console=` to earlycon
+Message-ID: <ZuwfvyiOMAzciZX2@pathway.suse.cz>
+References: <20240911123507.v2.1.Id08823b2f848237ae90ce5c5fa7e027e97c33ad3@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,77 +90,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240917203346.9670-1-luca.stefani.ge1@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.50 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Score: -2.50
-X-Spam-Flag: NO
+In-Reply-To: <20240911123507.v2.1.Id08823b2f848237ae90ce5c5fa7e027e97c33ad3@changeid>
 
-On Tue, Sep 17, 2024 at 10:33:03PM +0200, Luca Stefani wrote:
-> Changes since v5:
-> * Make chunk size a define
-> * Remove superfluous trim_interrupted checks
->   after moving them to trim_no_bitmap/trim_bitmaps
+On Wed 2024-09-11 12:35:14, Raul E Rangel wrote:
+> Today we are proxying the `console=` command line args to the
+> `param_setup_earlycon()` handler. This is done because the following are
+> equivalent:
 > 
-> Changes since v4:
-> * Set chunk size to 1G
-> * Set proper error return codes in case of interruption
-> * Dropped fstrim_range fixup as pulled in -next
+>     console=uart[8250],mmio,<addr>[,options]
+>     earlycon=uart[8250],mmio,<addr>[,options]
 > 
-> Changes since v3:
-> * Went back to manual chunk size
+> Both invocations enable an early `bootconsole`. `console=uartXXXX` is
+> just an alias for `earlycon=uartXXXX`.
 > 
-> Changes since v2:
-> * Use blk_alloc_discard_bio directly
-> * Reset ret to ERESTARTSYS
+> In addition, when `earlycon=` (empty value) or just `earlycon`
+> (no value) is specified on the command line, we enable the earlycon
+> `bootconsole` specified by the SPCR table or the DT.
 > 
-> Changes since v1:
-> * Use bio_discard_limit to calculate chunk size
-> * Makes use of the split chunks
+> The problem arises when `console=` (empty value) is specified on the
+> command line. It's intention is to disable the `console`, but what
+> happens instead is that the SPRC/DT console gets enabled.
 > 
-> Original discussion: https://lore.kernel.org/lkml/20240822164908.4957-1-luca.stefani.ge1@gmail.com/
-> v1: https://lore.kernel.org/lkml/20240902114303.922472-1-luca.stefani.ge1@gmail.com/
-> v2: https://lore.kernel.org/lkml/20240902205828.943155-1-luca.stefani.ge1@gmail.com/
-> v3: https://lore.kernel.org/lkml/20240903071625.957275-4-luca.stefani.ge1@gmail.com/
-> v4: https://lore.kernel.org/lkml/20240916101615.116164-1-luca.stefani.ge1@gmail.com/
-> v5: https://lore.kernel.org/lkml/20240916125707.127118-1-luca.stefani.ge1@gmail.com/
+> This happens because we are proxying the `console=` (empty value)
+> parameter to the `earlycon` handler. The `earlycon` handler then sees
+> that the parameter value is empty, so it enables the SPCR/DT
+> `bootconsole`.
 > 
-> ---
+> This change makes it so that the `console` or `console=` parameters no
+> longer enable the SPCR/DT `bootconsole`. I also cleans up the hack in
+> `main.c` that would forward the `console` parameter to the `earlycon`
+> handler.
 > 
-> NB: I didn't change btrfs_discard_workfn yet to add error checks
-> as I don't know what semantics we should have in that case.
-> The work queue is always re-scheduled and created with WQ_FREEZABLE
-> so it should be automatically frozen. Shall I simply add some logs?
-> 
-> ---
-> 
-> Luca Stefani (2):
->   btrfs: Split remaining space to discard in chunks
->   btrfs: Don't block system suspend during fstrim
+> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
 
-Added to for-next, with some minor updates to changelogs. Thanks.
+It like this approach. It works well:
+
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Tested-by: Petr Mladek <pmladek@suse.com>
+
+I could take it via the printk tree for 6.13. From my POV, it is too
+late for 6.12. I am sorry I have been busy with the printk rework :-(
+
+I am going to wait few days for another eventual review or taker.
+
+Best Regards,
+Petr
 
