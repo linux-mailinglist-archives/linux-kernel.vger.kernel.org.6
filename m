@@ -1,173 +1,139 @@
-Return-Path: <linux-kernel+bounces-333210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5BB597C563
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:54:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAEB697C567
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17C9CB20C4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:54:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5521D1F227FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB9E1953A3;
-	Thu, 19 Sep 2024 07:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CbSHQyFK"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63986194C65;
-	Thu, 19 Sep 2024 07:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951BA198A38;
+	Thu, 19 Sep 2024 07:55:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD2C19884B;
+	Thu, 19 Sep 2024 07:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726732478; cv=none; b=fUFWPAKwxOZhVHjp+foZxAgg8c/D6Od/EAY/O3VWmYhZBJWtryvR0a1SQLiCjj3UG3xzVXibn1vEyGlDzFiYf90CsPElVFN+M3ihHvfHTrkQPOg8wWg1ZK+VsDZCCG0SwKIRJcso9FL+5OXX/Vybd+DelGmhMFRaBJpQCUIGfbg=
+	t=1726732522; cv=none; b=UZBsnWd7jNJSdtnYj9cysALATVqaxIndPOaAujHHm6E0qXmo4O2fnyH6KLsq4WWQbv2/BTnOymilDAWa5k/K8RzAXZvhl1z2FIWhU3QBzkycYptWY8PEXFjcKnHGRCYJycUfc7NhwPCKSm1ffoEQtjqUOmRN8y+rJV5dtD1tsHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726732478; c=relaxed/simple;
-	bh=QqRxWzgp15BviLllbfSY1mp7jXqkbdNL+8LzmwSNstU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GkOP95ZDW1Ofp5Chf7AF5FSSu1VkRuurnnJygp7riuyLnKBQe3u4MXYU2+1PBfP1Nuf+GQZ4t+T4Lb8wgpJzoA39F2XqkQ/8atNKfUZZBvzBrvmb3aBAI9oI/TuHVHYuOn3lKnk3R70vMIN2etn6jhKcagxQywXmTB3GY9/B4xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CbSHQyFK; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Type:MIME-Version:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=BDPUx770ruE0a07XK3iQ1bQ7vxJsCBOZDgJ2x6Gx7p8=; b=CbSHQyFKRTjCHEsME9G/slkL6X
-	ENeUUQcfGLRGcMguy3o/pYreJfuXMZjVTIuN83y7kgq/KcOOxJuL7bG/7Q4bhv7JcJ0CLL75UrxdE
-	so1RXdTCJ2Ti46x1pdxASLTjdfSm7TwVdJ5JNUxDtas1mjpk2JXWA//WD7hDmm6XOdyajHNSYmkuY
-	snbtsbYlcZbAnFzdzZ42YhqaRYIRvdZkftFozwPSVctg/NRROFJzjKnS2I/AHdIsaZyQN6ZxmbPew
-	Byj4rsodStrYyv+NW5XzHJRMNaLO5EKQMMTLC+8RO+81iu+oOni+T31b2ahcbphD4PKsIe+o2PThU
-	8JmOhtTg==;
-Received: from [62.218.44.93] (helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1srBzL-00000009icQ-453m;
-	Thu, 19 Sep 2024 07:54:08 +0000
-Date: Thu, 19 Sep 2024 09:54:05 +0200
-From: Christoph Hellwig <hch@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Subject: [GIT PULL] dma-mapping updates for Linux 6.12
-Message-ID: <ZuvYnXzbM2qfXQPT@infradead.org>
+	s=arc-20240116; t=1726732522; c=relaxed/simple;
+	bh=vcFB/ifStaTfpFcCwe3/ujVWgWHMMcWMbHSX2N+2PTc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oMn+FcyLVEgYLKSn+KUkqfsl1EGzSAt8P9NIvuTdm7RjLNhTDkhPKWuW99SXR8qRhJcOE/J8R3CURvWBV0IfJCWVH4X1ghxF+TY7woeWCaKfqujxur0SoOJp4Fibz2J7uWLHW8TWt5/+inDx0n2HQxQKSuAgpMiQKoEg1aKGUqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 157351007;
+	Thu, 19 Sep 2024 00:55:49 -0700 (PDT)
+Received: from [10.163.34.169] (unknown [10.163.34.169])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D82B3F71A;
+	Thu, 19 Sep 2024 00:55:10 -0700 (PDT)
+Message-ID: <8f43251a-5418-4c54-a9b0-29a6e9edd879@arm.com>
+Date: Thu, 19 Sep 2024 13:25:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 7/7] mm: Use pgdp_get() for accessing PGD entries
+To: kernel test robot <lkp@intel.com>, linux-mm@kvack.org,
+ "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ "Mike Rapoport (IBM)" <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ x86@kernel.org, linux-m68k@lists.linux-m68k.org,
+ linux-fsdevel@vger.kernel.org, kasan-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Muchun Song
+ <muchun.song@linux.dev>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Miaohe Lin <linmiaohe@huawei.com>, Dennis Zhou <dennis@kernel.org>,
+ Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>
+References: <20240917073117.1531207-8-anshuman.khandual@arm.com>
+ <202409190310.ViHBRe12-lkp@intel.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <202409190310.ViHBRe12-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+On 9/19/24 02:00, kernel test robot wrote:
+> Hi Anshuman,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on char-misc/char-misc-testing]
+> [also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus brauner-vfs/vfs.all dennis-percpu/for-next linus/master v6.11]
+> [cannot apply to akpm-mm/mm-everything next-20240918]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Anshuman-Khandual/m68k-mm-Change-pmd_val/20240917-153331
+> base:   char-misc/char-misc-testing
+> patch link:    https://lore.kernel.org/r/20240917073117.1531207-8-anshuman.khandual%40arm.com
+> patch subject: [PATCH V2 7/7] mm: Use pgdp_get() for accessing PGD entries
+> config: arm-footbridge_defconfig (https://download.01.org/0day-ci/archive/20240919/202409190310.ViHBRe12-lkp@intel.com/config)
+> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 8663a75fa2f31299ab8d1d90288d9df92aadee88)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240919/202409190310.ViHBRe12-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202409190310.ViHBRe12-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    In file included from arch/arm/kernel/asm-offsets.c:12:
+>    In file included from include/linux/mm.h:30:
+>>> include/linux/pgtable.h:1245:18: error: use of undeclared identifier 'pgdp'; did you mean 'pgd'?
+>     1245 |         pgd_t old_pgd = pgdp_get(pgd);
+>          |                         ^
+>    arch/arm/include/asm/pgtable.h:154:36: note: expanded from macro 'pgdp_get'
+>      154 | #define pgdp_get(pgpd)          READ_ONCE(*pgdp)
+>          |                                            ^
+>    include/linux/pgtable.h:1243:48: note: 'pgd' declared here
+>     1243 | static inline int pgd_none_or_clear_bad(pgd_t *pgd)
+>          |                                                ^
 
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+arm (32) platform currently overrides pgdp_get() helper in the platform but
+defines that like the exact same version as the generic one, albeit with a
+typo which can be fixed with something like this.
 
-are available in the Git repository at:
+diff --git a/arch/arm/include/asm/pgtable.h b/arch/arm/include/asm/pgtable.h
+index be91e376df79..aedb32d49c2a 100644
+--- a/arch/arm/include/asm/pgtable.h
++++ b/arch/arm/include/asm/pgtable.h
+@@ -151,7 +151,7 @@ extern pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
+ 
+ extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
+ 
+-#define pgdp_get(pgpd)         READ_ONCE(*pgdp)
++#define pgdp_get(pgdp)         READ_ONCE(*pgdp)
+ 
+ #define pud_page(pud)          pmd_page(__pmd(pud_val(pud)))
+ #define pud_write(pud)         pmd_write(__pmd(pud_val(pud)))
 
-  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.12-2024-09-19
+Regardless there is another problem here. On arm platform there are multiple
+pgd_t definitions available depending on various configs but some are arrays
+instead of a single data element, although platform pgdp_get() helper remains
+the same for all.
 
-for you to fetch changes up to a5fb217f13f74b2af2ab366ffad522bae717f93c:
+arch/arm/include/asm/page-nommu.h:typedef unsigned long pgd_t[2];
+arch/arm/include/asm/pgtable-2level-types.h:typedef struct { pmdval_t pgd[2]; } pgd_t;
+arch/arm/include/asm/pgtable-2level-types.h:typedef pmdval_t pgd_t[2];
+arch/arm/include/asm/pgtable-3level-types.h:typedef struct { pgdval_t pgd; } pgd_t;
+arch/arm/include/asm/pgtable-3level-types.h:typedef pgdval_t pgd_t;
 
-  dma-mapping: reflow dma_supported (2024-09-12 16:28:00 +0200)
-
-----------------------------------------------------------------
-dma-mapping updates for linux 6.12
-
- - support DMA zones for arm64 systems where memory starts at > 4GB
-   (Baruch Siach, Catalin Marinas)
- - support direct calls into dma-iommu and thus obsolete dma_map_ops for
-   many common configurations (Leon Romanovsky)
- - add DMA-API tracing (Sean Anderson)
- - remove the not very useful return value from various dma_set_* APIs
-   (Christoph Hellwig)
- - misc cleanups and minor optimizations (Chen Y, Yosry Ahmed,
-   Christoph Hellwig)
-
-----------------------------------------------------------------
-Baruch Siach (2):
-      arm64: mm: fix DMA zone when dma-ranges is missing
-      arm64: mm: keep low RAM dma zone
-
-Catalin Marinas (2):
-      dma-mapping: replace zone_dma_bits by zone_dma_limit
-      arm64: support DMA zone above 4GB
-
-Chen Yu (1):
-      dma-direct: optimize page freeing when it is not addressable
-
-Christoph Hellwig (7):
-      scsi: check that busses support the DMA API before setting dma parameters
-      dma-mapping: don't return errors from dma_set_min_align_mask
-      dma-mapping: don't return errors from dma_set_seg_boundary
-      dma-mapping: don't return errors from dma_set_max_seg_size
-      vdpa_sim: don't select DMA_OPS
-      dma-mapping: clearly mark DMA ops as an architecture feature
-      dma-mapping: reflow dma_supported
-
-Leon Romanovsky (4):
-      dma-mapping: call ->unmap_page and ->unmap_sg unconditionally
-      dma-mapping: direct calls for dma-iommu
-      dma-mapping: use IOMMU DMA calls for common alloc/free page calls
-      dma-mapping: reliably inform about DMA support for IOMMU
-
-Sean Anderson (1):
-      dma-mapping: add tracing for dma-mapping API calls
-
-Yosry Ahmed (1):
-      dma-mapping: use bit masking to check VM_DMA_COHERENT
-
- MAINTAINERS                                        |   1 +
- arch/Kconfig                                       |   9 +
- arch/alpha/Kconfig                                 |   2 +-
- arch/arm/Kconfig                                   |   2 +-
- arch/arm64/Kconfig                                 |   1 +
- arch/arm64/mm/init.c                               |  39 ++-
- arch/mips/Kconfig                                  |   2 +-
- arch/parisc/Kconfig                                |   2 +-
- arch/powerpc/Kconfig                               |   2 +-
- arch/powerpc/mm/mem.c                              |   5 +-
- arch/s390/Kconfig                                  |   2 +-
- arch/s390/mm/init.c                                |   2 +-
- arch/sparc/Kconfig                                 |   2 +-
- arch/x86/Kconfig                                   |   2 +-
- drivers/accel/qaic/qaic_drv.c                      |   4 +-
- drivers/dma/idma64.c                               |   4 +-
- drivers/dma/pl330.c                                |   5 +-
- drivers/dma/qcom/bam_dma.c                         |   6 +-
- drivers/dma/sh/rcar-dmac.c                         |   4 +-
- drivers/dma/ste_dma40.c                            |   6 +-
- drivers/gpu/drm/mediatek/mtk_drm_drv.c             |   6 +-
- drivers/iommu/Kconfig                              |   2 +-
- drivers/iommu/dma-iommu.c                          | 104 +++----
- drivers/iommu/intel/Kconfig                        |   1 -
- drivers/macintosh/macio_asic.c                     |   4 +-
- .../media/common/videobuf2/videobuf2-dma-contig.c  |   3 +-
- drivers/media/pci/intel/ipu6/Kconfig               |   7 +-
- drivers/media/pci/intel/ipu6/ipu6.c                |   4 +-
- drivers/mmc/host/mmci_stm32_sdmmc.c                |   3 +-
- drivers/net/ethernet/microsoft/mana/gdma_main.c    |   6 +-
- drivers/scsi/lpfc/lpfc_init.c                      |   7 +-
- drivers/scsi/scsi_lib.c                            |  11 +-
- drivers/vdpa/Kconfig                               |  10 +-
- drivers/xen/Kconfig                                |   4 +-
- include/linux/device.h                             |   7 +-
- include/linux/dma-direct.h                         |   2 +-
- include/linux/dma-map-ops.h                        |  19 +-
- include/linux/dma-mapping.h                        |  25 +-
- include/linux/iommu-dma.h                          | 155 ++++++++++
- include/trace/events/dma.h                         | 341 +++++++++++++++++++++
- kernel/dma/Kconfig                                 |   7 +-
- kernel/dma/Makefile                                |   4 +-
- kernel/dma/direct.c                                |   8 +-
- kernel/dma/dummy.c                                 |  21 ++
- kernel/dma/mapping.c                               | 115 ++++++-
- kernel/dma/ops_helpers.c                           |  14 +-
- kernel/dma/pool.c                                  |   4 +-
- kernel/dma/remap.c                                 |   6 +-
- kernel/dma/swiotlb.c                               |   6 +-
- 49 files changed, 782 insertions(+), 226 deletions(-)
- create mode 100644 include/linux/iommu-dma.h
- create mode 100644 include/trace/events/dma.h
+I guess it might need different pgdp_get() variants depending applicable pgd_t
+definition. Will continue looking into this further but meanwhile copied Russel
+King in case he might be able to give some direction.
 
