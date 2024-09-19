@@ -1,173 +1,83 @@
-Return-Path: <linux-kernel+bounces-333180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36E897C4FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:40:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9590397C500
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35CB1C227D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:40:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9E41F21C4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F097194C6E;
-	Thu, 19 Sep 2024 07:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAA4194C6B;
+	Thu, 19 Sep 2024 07:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8fKW7ZT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nS/18fNU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D32C166F31;
-	Thu, 19 Sep 2024 07:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA732194AE6;
+	Thu, 19 Sep 2024 07:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726731607; cv=none; b=hSf3gwGA3/UyWkrOZIkm42JPwHA1l+y+GVfJ+po0CEUSltTTHehGxndbk1qKcHRmJ1PTVVpWTy24C8z2rnfQCZM16A7YsUMLqHIkhLEIdZiLltOH+n+Ab6EIBWpf52Te9QErEDuD0+jAzlfnVXGm5EGGcEEp9xLNDevhB8K6teo=
+	t=1726731651; cv=none; b=rjyWnXpi2okYeB3lU5mVprWMuXD7yCCbDyl0jG+2MhZ2SfXyPE3xN1uy5iHZHKpXWrMMcXGfgjeEdWraXPLWd8/1T8FILhWV72HV3lnmmHTjUuqQFKUDr1TvsVCNgxZ1IN6kt504MR1n8xBiMRVS618niaQHbhya92PaJzORW3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726731607; c=relaxed/simple;
-	bh=SKHiWuT9os4iwt/8Rac5rB767h2DJnB/vbFf5fmwPGk=;
+	s=arc-20240116; t=1726731651; c=relaxed/simple;
+	bh=gQRmcFYRoZm4qHxTTfbTBJ7+y1B2sC1lIyz//eggaQ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PXelOo03sr6NacBhaF0v80KVRr5cskiSU5PgnkXt1xxr1VjIQFOgXko5PkyLXmWyDR9ArmtrwFH6bcTGSu1Sl7jVrEo4UB9l63htpH49H8EYsSexXXu/t4H6VR3c7D1GnTl853EOwBzDi+pvTkr5oogluy0lAQjEHQqzwV/C94A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8fKW7ZT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3113DC4CEC4;
-	Thu, 19 Sep 2024 07:40:02 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=adihu1kTgkqWpqZuZAV0j78Fuyfw6N8vnKPnhu+9HpYb5uO+NgahqQUly9FhylXos8Je9N0m4XHPADZsYSWmo3X3dmvxpVMYlmJ6jKz9tUYhjNV53EjXlmCsF0kKNS9beDhlqNCW0wekUX93bMCxXmAG/bU1+oI1ZfAIadrzMWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nS/18fNU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5344DC4CEC4;
+	Thu, 19 Sep 2024 07:40:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726731607;
-	bh=SKHiWuT9os4iwt/8Rac5rB767h2DJnB/vbFf5fmwPGk=;
+	s=k20201202; t=1726731651;
+	bh=gQRmcFYRoZm4qHxTTfbTBJ7+y1B2sC1lIyz//eggaQ0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F8fKW7ZTcay47pT/vW9S0y+4lE0fuNphqZeE6IY6af3wozhlOnLetyr4/nf7jP7Zy
-	 TETUSuGjCDJI9V2aSBGrSLKgUtEdgTmovhu6BQGjhkIZSBOe7PubY2Pt+4my0tnPz3
-	 n6G1KDycUbajtzn0Nk9jzpB/JN42orDcCQqv5ZLw2axJjYpaL2s1TURRZvP7WAWPjW
-	 t7XS/y5z2RljkHluIhYezKh/Ns5ZMNXJHWDYWJatsGATCdcdLUUwDuCp4iTrPMJFEe
-	 SL+Hqb6B9fwmgw/fgMyRq8sw36XZz4WHHZzTUUGCAeYqZXOTglrKA3/s+hvhKcTdWO
-	 EkJDusAOtJy7A==
-Date: Thu, 19 Sep 2024 08:40:09 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Samuel Holland <samuel.holland@sifive.com>,
-	Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	peterlin@andestech.com, dminus@andestech.com, ycliang@andestech.com,
-	jassisinghbrar@gmail.com, krzk+dt@kernel.org, andersson@kernel.org,
-	mathieu.poirier@linaro.org, conor+dt@kernel.org,
-	conor.dooley@microchip.com
-Subject: Re: [PATCH v1 2/5] dt-bindings: mailbox: add binding for Microchip
- IPC mailbox driver
-Message-ID: <20240919-useable-margarine-d6eefae9485c@squawk>
-References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
- <20240912170025.455167-3-valentina.fernandezalanis@microchip.com>
- <b4acc0a7-b7da-4947-904d-8406aa5ba95b@sifive.com>
- <20240916-palpable-flock-7217424ed8db@spud>
- <20240918153558.GA1567736-robh@kernel.org>
+	b=nS/18fNUL1PdRlVmyNDtvYHS6AhOhe/5hxZcv94zW9lArDJrF3hccwdRBbRkmbSMR
+	 6A/znhPYqZguTWq1T/6AV3NZvXH9DjltxK2Fd76kh5VJNHbEOMqW36YjK6xevXx/uq
+	 KSRbfk88WMjgBj6ESfCMB0Z5ObyrVXqrbyHgf85UGyyRARxi8WZkRlUZ4g1yk6hYBi
+	 UctfmLg4Fa8Ta0HJf18F0uJ5XfEOizbSNVCDIIovKagdAoASh5gYpXKKBBT4sylrGD
+	 GAvHs1NXe0BhAcDDONy8ZOWejRyKyL6yCQJojIjFaG679RwGObnjzdVrzI0TnDR+AD
+	 b0ngA2VutG0mA==
+Date: Thu, 19 Sep 2024 07:40:47 +0000
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+	dri-devel@lists.freedesktop.org, Borislav Petkov <bp@alien8.de>,
+	Julius Werner <jwerner@chromium.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	chrome-platform@lists.linux.dev, intel-gfx@lists.freedesktop.org,
+	Hugues Bruant <hugues.bruant@gmail.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Helge Deller <deller@gmx.de>, Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH v4 0/2] firmware: Avoid coreboot and sysfb to register a
+ pdev for same framebuffer
+Message-ID: <ZuvVf5XRMqjD8G9T@google.com>
+References: <20240916110040.1688511-1-javierm@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XW5QfXNOZ95nX152"
-Content-Disposition: inline
-In-Reply-To: <20240918153558.GA1567736-robh@kernel.org>
-
-
---XW5QfXNOZ95nX152
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240916110040.1688511-1-javierm@redhat.com>
 
-On Wed, Sep 18, 2024 at 10:35:58AM -0500, Rob Herring wrote:
-> On Mon, Sep 16, 2024 at 05:31:36PM +0100, Conor Dooley wrote:
-> > On Thu, Sep 12, 2024 at 04:23:44PM -0500, Samuel Holland wrote:
-> > > Hi Valentina,
-> > >=20
-> > > On 2024-09-12 12:00 PM, Valentina Fernandez wrote:
-> > > > Add a dt-binding for the Microchip Inter-Processor Communication (I=
-PC)
-> > > > mailbox controller.
-> > > >=20
-> > > > Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@micro=
-chip.com>
-> > > > ---
-> > > >  .../bindings/mailbox/microchip,sbi-ipc.yaml   | 115 ++++++++++++++=
-++++
-> > > >  1 file changed, 115 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/mailbox/micro=
-chip,sbi-ipc.yaml
-> > > >=20
-> > > > diff --git a/Documentation/devicetree/bindings/mailbox/microchip,sb=
-i-ipc.yaml b/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.ya=
-ml
-> > > > new file mode 100644
-> > > > index 000000000000..dc2cbd5eb28f
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.y=
-aml
-> > > > @@ -0,0 +1,115 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/mailbox/microchip,sbi-ipc.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: Microchip Inter-processor communication (IPC) mailbox contr=
-oller
-> > > > +
-> > > > +maintainers:
-> > > > +  - Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-> > > > +
-> > > > +description:
-> > > > +  The Microchip Inter-processor Communication (IPC) facilitates
-> > > > +  message passing between processors using an interrupt signaling
-> > > > +  mechanism.
-> > > > +  This SBI interface is compatible with the Mi-V Inter-hart
-> > > > +  Communication (IHC) IP.
-> > > > +  The microchip,sbi-ipc compatible string is inteded for use by so=
-ftware
-> > > > +  running in supervisor privileged mode (s-mode). The SoC-specific
-> > > > +  compatibles are inteded for use by the SBI implementation in mac=
-hine
-> > > > +  mode (m-mode).
-> > >=20
-> > > There is a lot of conditional logic in this binding for how small it =
-is. Would
-> > > it make sense to split this into two separate bindings? For example, =
-with the
-> > > current binding microchip,ihc-chan-disabled-mask is allowed for the S=
-BI
-> > > interface, but doesn't look like it belongs there.
-> >=20
-> > I dunno. Part of me says that because this is two compatibles for the
-> > same piece of hardware (the choice depending on which programming model
-> > you use) they should be documented together. The other part of me is of
-> > the opinion that they effectively describe different things, given one
-> > describes the hardware and the other describes a firmware interface that
-> > may have any sort of hardware backing it.
-> >=20
-> > I suppose it's more of a problem for "us" (that being me/Rob/Krzysztof)
-> > than for Valentina, and how to handle firmware interfaces to hardware
-> > like this is one of the topics that's planned for Krzysztof's devicetree
-> > BoF session at LPC.
->=20
-> If how the client interacts with the device is fundamentally different,=
-=20
-> then I think different compatibles is fine.
+On Mon, Sep 16, 2024 at 01:00:24PM +0200, Javier Martinez Canillas wrote:
+> The patches have only been compiled tested because I don't have access to
+> a coreboot machine. Please let me know if you plan to merge both patches
+> through the chrome-platforms tree or if you prefer to get merged through
+> the drm-misc tree.
+> 
+> [...]
+> Javier Martinez Canillas (2):
+>   firmware: sysfb: Add a sysfb_handles_screen_info() helper function
+>   firmware: coreboot: Don't register a pdev if screen_info data is
+>     present
 
-It wasn't about different compatibles (which I think are non-debatable
-here) it's whether or not the different compatibles should be in their
-own binding files.
-
---XW5QfXNOZ95nX152
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuvVVgAKCRB4tDGHoIJi
-0ogwAP9aQ00DhFSZtkfdD4M6IsRJi3SNUC6DmPJlEz0PltPCegD9FJcnmg8ZE6Dm
-4HbBn/9l40PyHree8TdGYaQazOxWIwU=
-=QgG+
------END PGP SIGNATURE-----
-
---XW5QfXNOZ95nX152--
+I'll queue both patches through the chrome-platform tree for v6.13 if there is
+no objections.
 
