@@ -1,163 +1,204 @@
-Return-Path: <linux-kernel+bounces-333423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C8E97C862
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:14:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D90097C864
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AC4CB244FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:14:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E40C81F254D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9A919D09C;
-	Thu, 19 Sep 2024 11:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C964A19D8AC;
+	Thu, 19 Sep 2024 11:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="OLCLioOR"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HLl02lb6"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CFA19D080
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 11:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7182219D093;
+	Thu, 19 Sep 2024 11:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726744429; cv=none; b=fzdIdMZDK+T17dqW8+Wp/jnQln+pDX8kN04pYBDkhYSMS1xThmPNOHi8MyvjtJcJXaJkn9CMz4DJQ2WORAmN1Zd6jKktY9L6KvJQK34oNc7pWOvwOBBohlN0F6fxkFuWDK2pIgmyey8bs4j4EmP9Ug0A/j0Yg7slkjnk813lios=
+	t=1726744433; cv=none; b=ds3SQhRmutAr8Muh6w+rNEwP5AL3w58oIfxp47CygllElOJW0NvD6sdDXSKHmblw9qxFhWIsLEubZphRSbpFSs5kcuK194ZVtHJlhrUgXSad4GH+z993/19JO5cx9QXYeyf88518TRaq6V24RWa4iypyXa4eF/dvqaChZPHUW7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726744429; c=relaxed/simple;
-	bh=3y23dO6Y97nYE8X9deL/nLK64ZbbD+O9Zzo6y5MiCYE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eCmC9ZHIrg4j93+7x/NhZTODpbpJuQq9iCcjBnzIN7W9dizz9q13rVXUC6kNZ85UTW06qDza9OZVTaZXBD+kXARpXFp6HeQfAk8wlfP9PVz3eROhCIWVccX90mqO3hObjWMof73fqHDIAyLt6eOCvpeAnrow9tvd1qEpO1LHqJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=OLCLioOR; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c26311c6f0so992509a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 04:13:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1726744426; x=1727349226; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tKd7DzEQ/yD2d5V4p1DBW5zYkDlE5EaHoPjh/5HNDEc=;
-        b=OLCLioORh+J40zJg/bdjnCSfYzxg5NN/jcOSjmPUOM7GPYcTmGYJp8jKfK0eqgfJoW
-         daBcYx8xE0tcVvivEG1cd6DC6fbPSWw0qKRhYhdbQSaUAEs4KYbEJLwswg0DgZ5A5TuL
-         2NldY5t53sDFbwJAGjU3LWjnQt3KWQfI+mtuAp1BXG8iUsQfSxbzeEMDiKTq0qb5bF1k
-         LUm7HZMbyfJNOcFYu+EGHSDCHytLQ/dFURvF+3wzc0DwvYwYeqMF200im968kYH2fSN5
-         64lZaPmTiFZlfeLGb/1CJmkZvMGQihzmDIrTfcjA6gmksJMKArNG+/U/sPvrrR0zjvpp
-         zXtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726744426; x=1727349226;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tKd7DzEQ/yD2d5V4p1DBW5zYkDlE5EaHoPjh/5HNDEc=;
-        b=OksM8PZEFLYAyclpnq1FhmVXxKTZCAMVe5Z6tPjBv1/jct32HBPrgsnFIPb8qclgyJ
-         fE+wljodHYk/mCrq0yFh4COhYMlixy1hL7QBR/OOHIfOe9RD0O8eQxnMV8Abcx/6hbXI
-         Isz0wFlWk/oYJLpJ1cyUsnn4Os29vm2ozcerbX2iTUcX7MyEsXD7gTkHLsDAjlPsUM2o
-         caTi/4VTNpJR7LsINHQ1qHjE/hJebSykPTC5zr44x5c5Vk4IQxLIUGVtawliMy4W7KRo
-         TXDSDK2X5dcn9hZEygQxrJSJkLVUvzmq7yPTiNjDADEbrT4Ff0A/Iu+MehwHiJL+k3vv
-         cqDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVP4ozcJLRstPTNwshXfnqflKcwZUefmd2UY5a5rurLgbQqV0w3OdxvXg+y3vZUem1qnkwmGGV9rWFmptg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq2x7rn+zkmqkRFM9Z6oP/zreh9+m8R5K8KDAEYSyy79/LRlDL
-	2wpR7o0dEOb6bIGcyQp9Ek17bsOsF5uKnenp4MIBaAyuRldOkws99eOgfx53OGE=
-X-Google-Smtp-Source: AGHT+IEyILjoL31IaN9SqNI+ApYRmX5ZeF5PTsMtbYjTdQJfDNg5sTBgRiWoFp0Hq7prO7zQaGrkEw==
-X-Received: by 2002:a05:6402:2551:b0:5c0:ad76:f6d5 with SMTP id 4fb4d7f45d1cf-5c413e06c29mr22930677a12.5.1726744425536;
-        Thu, 19 Sep 2024 04:13:45 -0700 (PDT)
-Received: from brgl-uxlite.pool3009.local ([83.68.141.146])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb5dcf7sm5933777a12.45.2024.09.19.04.13.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 04:13:44 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Herve Codina <herve.codina@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] gpio: free irqs that are still requested when the chip is being removed
-Date: Thu, 19 Sep 2024 13:13:24 +0200
-Message-ID: <20240919111324.10117-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726744433; c=relaxed/simple;
+	bh=nQLrwtEvPD2RIIWNzQpKhc6xQPqQQ1ILaBmagJ3VLpc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=E5rr0y9rxeHbJXcI7+KoirXCtSQV/j12c7tQ3BUOrIFkyUvRIJ4+ymZ8n/xgcuVfmUk35XJBjAe3A8nnSKJ9VPsGKR8m5KVlXB4sb+7AI1XsYF7UcNWanddn+K20GVS+7niZFN+ubA4IrzojLFzm8HkcB3y6MY2xpT/XA7dnBXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HLl02lb6; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=NeI2rUXnLzjpOtYnknN4FnM+omBAMRqLA336G57YcoI=; b=HLl02lb6kHfUPOArY6JJlLmUfO
+	zFsXAspjCR4SgKGMRtcBFd21Cr1nlzpiDNaa5UsqVuOw52ne10PWmQEsnox7Y1Ee5m0Z7IcXkhrkO
+	NIdHoEhUnB9ZYVQgd76IdS+1hasPLsdsMuK/x2w0btnm7RxmxBJlJi6NFiewHgErUKUB5zb1Xuo3d
+	CjaAoiXkVD40ZN2nXrRVW0GfHzPbl7hT985K9pFD7HbNCkIc5Fih1Qx6uszsG9YNnrRlt624UNt2S
+	ee2UDG83JjdmjfhE70NdgdaZDfDxT/j91auEXzbHqCkYpbTPpE44/v0BLCFog6+aKevMv5CN5Rx/W
+	WyWEtSVg==;
+Received: from [83.68.141.146] (helo=[127.0.0.1])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1srF6G-00000000zDq-0RV5;
+	Thu, 19 Sep 2024 11:13:28 +0000
+Date: Thu, 19 Sep 2024 13:13:25 +0200
+From: David Woodhouse <dwmw2@infradead.org>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ "Hussain, Mushahid" <hmushi@amazon.co.uk>
+CC: Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>,
+ Jim Mattson <jmattson@google.com>, Joerg Roedel <joro@8bytes.org>,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mingwei Zhang <mizhang@google.com>, Maxim Levitsky <mlevitsk@redhat.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_1/5=5D_KVM=3A_pfncache=3A_Add_ne?=
+ =?US-ASCII?Q?eds=5Finvalidation_flag_to_gfn=5Fto=5Fpfn=5Fcache?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240821202814.711673-1-dwmw2@infradead.org>
+References: <20240821202814.711673-1-dwmw2@infradead.org>
+Message-ID: <30CC6DCB-DF32-4FE5-A600-14CE242CBA61@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 21 August 2024 22:28:09 CEST, David Woodhouse <dwmw2@infradead=2Eorg> wr=
+ote:
+>From: David Woodhouse <dwmw@amazon=2Eco=2Euk>
+>
+>This will be used to allow hva_to_pfn_retry() to be more selective about
+>its retry loop, which is currently extremely pessimistic=2E
+>
+>It allows for invalidations to occur even while the PFN is being mapped
+>(which happens with the lock dropped), before the GPC is fully valid=2E
+>
+>No functional change yet, as the existing mmu_notifier_retry_cache()
+>function will still return true in all cases where the invalidation
+>may have triggered=2E
+>
+>Signed-off-by: David Woodhouse <dwmw@amazon=2Eco=2Euk>
+>---
+> include/linux/kvm_types=2Eh |  1 +
+> virt/kvm/pfncache=2Ec       | 29 ++++++++++++++++++++++++-----
+> 2 files changed, 25 insertions(+), 5 deletions(-)
+>
+>diff --git a/include/linux/kvm_types=2Eh b/include/linux/kvm_types=2Eh
+>index 827ecc0b7e10=2E=2E4d8fbd87c320 100644
+>--- a/include/linux/kvm_types=2Eh
+>+++ b/include/linux/kvm_types=2Eh
+>@@ -69,6 +69,7 @@ struct gfn_to_pfn_cache {
+> 	void *khva;
+> 	kvm_pfn_t pfn;
+> 	bool active;
+>+	bool needs_invalidation;
+> 	bool valid;
+> };
+>=20
+>diff --git a/virt/kvm/pfncache=2Ec b/virt/kvm/pfncache=2Ec
+>index f0039efb9e1e=2E=2E7007d32d197a 100644
+>--- a/virt/kvm/pfncache=2Ec
+>+++ b/virt/kvm/pfncache=2Ec
+>@@ -32,7 +32,7 @@ void gfn_to_pfn_cache_invalidate_start(struct kvm *kvm,=
+ unsigned long start,
+> 		read_lock_irq(&gpc->lock);
+>=20
+> 		/* Only a single page so no need to care about length */
+>-		if (gpc->valid && !is_error_noslot_pfn(gpc->pfn) &&
+>+		if (gpc->needs_invalidation && !is_error_noslot_pfn(gpc->pfn) &&
+> 		    gpc->uhva >=3D start && gpc->uhva < end) {
+> 			read_unlock_irq(&gpc->lock);
+>=20
+>@@ -45,9 +45,11 @@ void gfn_to_pfn_cache_invalidate_start(struct kvm *kvm=
+, unsigned long start,
+> 			 */
+>=20
+> 			write_lock_irq(&gpc->lock);
+>-			if (gpc->valid && !is_error_noslot_pfn(gpc->pfn) &&
+>-			    gpc->uhva >=3D start && gpc->uhva < end)
+>+			if (gpc->needs_invalidation && !is_error_noslot_pfn(gpc->pfn) &&
+>+			    gpc->uhva >=3D start && gpc->uhva < end) {
+>+				gpc->needs_invalidation =3D false;
+> 				gpc->valid =3D false;
+>+			}
+> 			write_unlock_irq(&gpc->lock);
+> 			continue;
+> 		}
+>@@ -93,6 +95,9 @@ bool kvm_gpc_check(struct gfn_to_pfn_cache *gpc, unsign=
+ed long len)
+> 	if (!gpc->valid)
+> 		return false;
+>=20
+>+	/* If it's valid, it needs invalidation! */
+>+	WARN_ON_ONCE(!gpc->needs_invalidation);
+>+
+> 	return true;
+> }
+>=20
+>@@ -175,6 +180,17 @@ static kvm_pfn_t hva_to_pfn_retry(struct gfn_to_pfn_=
+cache *gpc)
+> 		mmu_seq =3D gpc->kvm->mmu_invalidate_seq;
+> 		smp_rmb();
+>=20
+>+		/*
+>+		 * The translation made by hva_to_pfn() below could be made
+>+		 * invalid as soon as it's mapped=2E But the uhva is already
+>+		 * known and that's all that gfn_to_pfn_cache_invalidate()
+>+		 * looks at=2E So set the 'needs_invalidation' flag to allow
+>+		 * the GPC to be marked invalid from the moment the lock is
+>+		 * dropped, before the corresponding PFN is even found (and,
+>+		 * more to the point, immediately afterwards)=2E
+>+		 */
+>+		gpc->needs_invalidation =3D true;
+>+
+> 		write_unlock_irq(&gpc->lock);
+>=20
+> 		/*
+>@@ -224,7 +240,8 @@ static kvm_pfn_t hva_to_pfn_retry(struct gfn_to_pfn_c=
+ache *gpc)
+> 		 * attempting to refresh=2E
+> 		 */
+> 		WARN_ON_ONCE(gpc->valid);
+>-	} while (mmu_notifier_retry_cache(gpc->kvm, mmu_seq));
+>+	} while (!gpc->needs_invalidation ||
+>+		 mmu_notifier_retry_cache(gpc->kvm, mmu_seq));
+>=20
+> 	gpc->valid =3D true;
+> 	gpc->pfn =3D new_pfn;
+>@@ -339,6 +356,7 @@ static int __kvm_gpc_refresh(struct gfn_to_pfn_cache =
+*gpc, gpa_t gpa, unsigned l
+> 	 */
+> 	if (ret) {
+> 		gpc->valid =3D false;
+>+		gpc->needs_invalidation =3D false;
+> 		gpc->pfn =3D KVM_PFN_ERR_FAULT;
+> 		gpc->khva =3D NULL;
+> 	}
+>@@ -383,7 +401,7 @@ void kvm_gpc_init(struct gfn_to_pfn_cache *gpc, struc=
+t kvm *kvm)
+> 	gpc->pfn =3D KVM_PFN_ERR_FAULT;
+> 	gpc->gpa =3D INVALID_GPA;
+> 	gpc->uhva =3D KVM_HVA_ERR_BAD;
+>-	gpc->active =3D gpc->valid =3D false;
+>+	gpc->active =3D gpc->valid =3D gpc->needs_invalidation =3D false;
+> }
+>=20
+> static int __kvm_gpc_activate(struct gfn_to_pfn_cache *gpc, gpa_t gpa, u=
+nsigned long uhva,
+>@@ -453,6 +471,7 @@ void kvm_gpc_deactivate(struct gfn_to_pfn_cache *gpc)
+> 		write_lock_irq(&gpc->lock);
+> 		gpc->active =3D false;
+> 		gpc->valid =3D false;
+>+		gpc->needs_invalidation =3D false;
+>=20
+> 		/*
+> 		 * Leave the GPA =3D> uHVA cache intact, it's protected by the
 
-If we remove a GPIO chip that is also an interrupt controller with users
-not having freed some interrupts, we'll end up leaking resources as
-indicated by the following warning:
-
-  remove_proc_entry: removing non-empty directory 'irq/30', leaking at least 'gpio'
-
-As there's no way of notifying interrupt users about the irqchip going
-away and the interrupt subsystem is not plugged into the driver model and
-so not all cases can be handled by devlinks, we need to make sure to free
-all interrupts before the complete the removal of the provider.
-
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-Herve: if I say I'll do something, then I'll do it, no need to remind me every
-six months. :) Anyway, this is a proposition of fixing the resource leak you
-reported with gpiomon in a more generic way so we also address the same issue
-for in-kernel users.
-
- drivers/gpio/gpiolib.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index c6afbf434366..f336fd608d58 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -14,6 +14,7 @@
- #include <linux/idr.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
-+#include <linux/irqdesc.h>
- #include <linux/kernel.h>
- #include <linux/list.h>
- #include <linux/lockdep.h>
-@@ -713,6 +714,31 @@ bool gpiochip_line_is_valid(const struct gpio_chip *gc,
- }
- EXPORT_SYMBOL_GPL(gpiochip_line_is_valid);
- 
-+/*
-+ * The chip is going away but there may be users who had requested interrupts
-+ * on its GPIO lines who have no idea about its removal and have no way of
-+ * being notified about it. We need to free any interrupts still in use here or
-+ * we'll leak memory and resources (like procfs files).
-+ */
-+static void gpiochip_free_remaining_irqs(struct gpio_chip *gc)
-+{
-+	struct gpio_desc *desc;
-+	struct irq_desc *irqd;
-+	void *dev_id;
-+	int irq;
-+
-+	for_each_gpio_desc_with_flag(gc, desc, FLAG_USED_AS_IRQ) {
-+		irq = gpiod_to_irq(desc);
-+		irqd = irq_to_desc(irq);
-+
-+		while (irq_desc_has_action(irqd)) {
-+			scoped_guard(raw_spinlock_irqsave, &irqd->lock)
-+				dev_id = irqd->action->dev_id;
-+			free_irq(irq, dev_id);
-+		}
-+	}
-+}
-+
- static void gpiodev_release(struct device *dev)
- {
- 	struct gpio_device *gdev = to_gpio_device(dev);
-@@ -1125,6 +1151,7 @@ void gpiochip_remove(struct gpio_chip *gc)
- 	/* FIXME: should the legacy sysfs handling be moved to gpio_device? */
- 	gpiochip_sysfs_unregister(gdev);
- 	gpiochip_free_hogs(gc);
-+	gpiochip_free_remaining_irqs(gc);
- 
- 	scoped_guard(mutex, &gpio_devices_lock)
- 		list_del_rcu(&gdev->list);
--- 
-2.30.2
-
+Ping?
 
