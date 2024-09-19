@@ -1,94 +1,94 @@
-Return-Path: <linux-kernel+bounces-333584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D445A97CB00
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:29:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8119597CB04
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6110A28527B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:29:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B457E1C224E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1D31A00CB;
-	Thu, 19 Sep 2024 14:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37141A00EC;
+	Thu, 19 Sep 2024 14:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="ngGKABLq"
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="tGA0UHve"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7765219B59D;
-	Thu, 19 Sep 2024 14:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA01419E96D;
+	Thu, 19 Sep 2024 14:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726756162; cv=none; b=PzlEi6ZUsAssztw5RX1n+pDdWkMXCJdW2Cfjm3ubIXcNZOCcAEGwvSwI4gSZY9mA8JmZj05SdExpQlQzaztjCCsEqRja+TWit5zYOLhMhgs7CIaiur+swhAxXsKy9l7rMe7rg/2kX7mfAEy5p159QJhI8wrc/XsWqDOfxPfnOLE=
+	t=1726756260; cv=none; b=VZd1AZ40a7xW/p+vCKPaftfOpRKVY4714itv/sRM50a1CPFqTxOsNvywLB3FVIk1dqV1KSxj8LE3LCVPcPXbdrf4ZsCjVZcdiDwfu9EiFdsqxHyR01PT+i4fg8rgTtcYVS+C6gdirJ0G54ysXi4ZRtg1IHiVMx5IvaQKlipOpTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726756162; c=relaxed/simple;
-	bh=dEim+1ctxtagkbl+oGq/0XtscAlXznSuyl1GSgBREzg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pv9SfHf7aETs5+DfJUDMuRB3IouR8GIpUNkJJ7W7RnaXr1B8P5Z9kx8v8p8bTLwnzY5q0mu8xz6d1LNDIDlJbiaValhtPOww7vOkgezVxLZykkxBACd7F684NbY1AuKv228Lkv4hAG73siUwptIThMZCAm2eXw+LkRyeS+jpfHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=ngGKABLq; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
-From: Denis Arefev <arefev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1726756155;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=YA659z4YWAtrDo7+8ziQ0grbGRsnS0px4OMQ2HtoYw0=;
-	b=ngGKABLqQia64371BWnSepwRmodugz6xhk7L2BHMr1onzABxAL5KUW5cy4ncIXxI0cOtms
-	dQa7GZvZ75SOIAj74DG1fOOxHbq7W3aOrAo8bqRJCo1crIuDwXoCWeP+vLak8Nn4I0tvCB
-	Kuvpb4MSsQTh2Js7U6LMehDj85W0/fw=
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org,
+	s=arc-20240116; t=1726756260; c=relaxed/simple;
+	bh=foWJGF9Syy/Vlth7lYEXcUrbgAZ2aX5QNh+VsxHNGQ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CivW1S58xApxYS2t8bcVyUMZpVkqB5n5syNymlZvlj/Kl0joBSJAL6AFpYngQi6tpryJaBX00lwQEWG+3aYp0gR9d+9Lwe0+YXVSkl9/I21Is/15QWx5hguxg4F6HyD+TH1VAvA+22AhdSJ4SsyPrXdlnEx+5RMHG3ORJciQ7rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=tGA0UHve; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=m1kKdtQcHJV23d4r0PzJxxLgP4SECr7H28gdaL/ivo8=; b=tGA0UHveyFNjTcySmyThcr+q3L
+	mKPBKAzU2vvK6UgTV5y1lvRZmnI4bAgALqqUjEWDRxAxwpRKWqxpnPEuneJYOgceW+BRYOANgkMUZ
+	RGl3Uzsa5iJY2+seBz9WyefH4EgHAHg6vWuOUWhDIeiU9dKOwU2UD1aONAd+U/oOz9XRQT/gy1hZ/
+	zDg0UBEA7G0qEQ1R3FB7HtlUAVv0d7Pq82PPxIrATd07UuNI+JWUsfyMvPuSLfH5mVbk6TXyZkEXt
+	swjvuVqpRM840gd1vtz+mEzTrOC+K77TCTx+r2kg4CN86hpPOPQo4F2upTEeUkcjx06sfEdSf8v/T
+	Y0aAPmmA==;
+Received: from ip092042140082.rev.nessus.at ([92.42.140.82] helo=phil.sntech)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1srIB1-0003XD-KQ; Thu, 19 Sep 2024 16:30:35 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Maxime Ripard <mripard@kernel.org>,
+	Sandy Huang <hjc@rock-chips.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Andrew Kreimer <algonell@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH 5/10] Input: adp5588-keys - added a check key_val
-Date: Thu, 19 Sep 2024 17:29:14 +0300
-Message-Id: <20240919142914.100609-1-arefev@swemel.ru>
+	linux-rockchip@lists.infradead.org,
+	Matthew Wilcox <willy@infradead.org>,
+	kernel-janitors@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] drm/rockchip: Fix a typo
+Date: Thu, 19 Sep 2024 16:30:23 +0200
+Message-ID: <172675621368.1213843.17065893095023530764.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240915123943.105118-1-algonell@gmail.com>
+References: <20240915123943.105118-1-algonell@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-No upstream commit exists for this commit.
+On Sun, 15 Sep 2024 15:39:43 +0300, Andrew Kreimer wrote:
+> Fix a typo in comments.
+> 
+> 
 
-If the adp5588_read function returns 0, then there will be an
-overflow of the kpad->keycode[key_val - 1] buffer.
+Applied, thanks!
 
-If the adp5588_read function returns a negative value, then the
-logic is broken - the wrong value is used as an index of
-the kpad->keycode array.
+[1/1] drm/rockchip: Fix a typo
+      commit: 87d45979140e49611696e97e2b33df572bf4fa24
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: 69a4af606ed4 ("Input: adp5588-keys - support GPI events for ADP5588 devices")
-Cc: stable@vger.kernel.org
-Signed-off-by: Denis Arefev <arefev@swemel.ru>
----
- drivers/input/keyboard/adp5588-keys.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/input/keyboard/adp5588-keys.c b/drivers/input/keyboard/adp5588-keys.c
-index 90a59b973d00..19be8054eb5f 100644
---- a/drivers/input/keyboard/adp5588-keys.c
-+++ b/drivers/input/keyboard/adp5588-keys.c
-@@ -272,6 +272,8 @@ static void adp5588_report_events(struct adp5588_kpad *kpad, int ev_cnt)
- 		int key = adp5588_read(kpad->client, Key_EVENTA + i);
- 		int key_val = key & KEY_EV_MASK;
- 
-+		if (key_val <= 0)
-+			continue;
- 		if (key_val >= GPI_PIN_BASE && key_val <= GPI_PIN_END) {
- 			for (j = 0; j < kpad->gpimapsize; j++) {
- 				if (key_val == kpad->gpimap[j].pin) {
+Best regards,
 -- 
-2.25.1
-
+Heiko Stuebner <heiko@sntech.de>
 
