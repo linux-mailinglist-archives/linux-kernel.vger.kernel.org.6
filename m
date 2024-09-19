@@ -1,201 +1,125 @@
-Return-Path: <linux-kernel+bounces-333445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4596D97C8B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:35:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17AF797C8BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B2371C229C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:35:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB22B2865FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EC0193432;
-	Thu, 19 Sep 2024 11:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD3419D083;
+	Thu, 19 Sep 2024 11:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Bh6du5e4"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ojXqOjCb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA3B179BB
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 11:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4AD193432;
+	Thu, 19 Sep 2024 11:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726745741; cv=none; b=UpPZ/3bQeNyn8XFi9lF3rVJnU899XiFkxrnAa3ZXPZSuxkpi0Low6AAvHjHat9i2Vxkm+aYlLjcYuDUZSmPFUEuYwsRN8TKo4sthSVvXsKyumbR/F4BBGaqhNdDHkiocYbyCVzqyMTbBV/tZoo6TaAg2l3+svHG+K9Gh1RtEuM4=
+	t=1726746133; cv=none; b=owCFj4iuOLg+2OQl47BbZ0roKlOLKgV0fGIQkBjIfkula0uymk/mJJMuultzfjPPPJFUUOML8VItSEJnmonYwlLpNE9/NoQWqLt4BfQGZGNvG5l47rZvOzJonc99pYAvT/SqxRDb31cFVXV3CcEdlw2WdnVP0qWgWooF7uWbwME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726745741; c=relaxed/simple;
-	bh=v1yp+g/83s6wGogaspPIvIwCmzCR/Tg0nLpzkLi6XYE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=MRzONVCPiqE3Fq/MEBgps5vQ4M/uttnVJtqvPsyAObJOFOwRJlXVHtYXd0GP6npHP0x2b3hOxmN1e+b78aEPo/R6dDntBVO+VVF23gF0edUQGon+0v0DE+R6PbBKPTAascfh8+mEVDJ2D/vLkmuVWUpOotDQXPA/cjJ0s9YFIBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Bh6du5e4; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240919113536epoutp0272a15d49f0ec6e55924d10ae7397b8cf~2ohlaR6Lt1450514505epoutp027
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 11:35:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240919113536epoutp0272a15d49f0ec6e55924d10ae7397b8cf~2ohlaR6Lt1450514505epoutp027
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726745736;
-	bh=K3y0TmJ0KOSMe1B71qo5P4/JWi2UBjrMDsg+uKZuw04=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=Bh6du5e4JNBTU73uMJC6BpXkGz/QrsQU6VhoZooGFBJ+WmdINXKDZfQEclg9yjtBW
-	 kL67d7jH6vHKtsluomn81AZqFOWbPFcu1S3Z6iUqWxCs8y+jiMFSB+K9sw4vVc0Ku8
-	 MDNmII0vH3pARRgLNsnTInJBJphtEYJQnnBRox8c=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240919113535epcas5p2121a9a5215c8f5c4fa9fb669322d2c0d~2ohkCLq9H1461514615epcas5p2b;
-	Thu, 19 Sep 2024 11:35:35 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4X8YNj4rJ2z4x9Pv; Thu, 19 Sep
-	2024 11:35:33 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	1C.8A.08855.58C0CE66; Thu, 19 Sep 2024 20:35:33 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240919113352epcas5p38ddc91967f3922f4639a3453a14f2822~2ogEeTn5q0552905529epcas5p3j;
-	Thu, 19 Sep 2024 11:33:52 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240919113352epsmtrp227f001d01e63d327a5c44a1e596e7e1e~2ogEdkIcw2761427614epsmtrp2g;
-	Thu, 19 Sep 2024 11:33:52 +0000 (GMT)
-X-AuditID: b6c32a44-15fb870000002297-1e-66ec0c859edf
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7E.59.08456.02C0CE66; Thu, 19 Sep 2024 20:33:52 +0900 (KST)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240919113351epsmtip2e8166dc69401aca149da2ee5aa51a6f6~2ogC0UNE02111021110epsmtip2l;
-	Thu, 19 Sep 2024 11:33:50 +0000 (GMT)
-From: "Inbaraj E" <inbaraj.e@samsung.com>
-To: "'Stephen Boyd'" <sboyd@kernel.org>, <alim.akhtar@samsung.com>,
-	<cw00.choi@samsung.com>, <krzk@kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-	<mturquette@baylibre.com>, <s.nawrocki@samsung.com>
-Cc: <pankaj.dubey@samsung.com>, <gost.dev@samsung.com>
-In-Reply-To: <0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
-Subject: RE: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-Date: Thu, 19 Sep 2024 17:03:49 +0530
-Message-ID: <00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
+	s=arc-20240116; t=1726746133; c=relaxed/simple;
+	bh=rru9U71LlZqwPY0JY1GK2L/XSmtbmZoDialzHi1gztQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QQeAGCLZkRZvbAtDxPpmdubSkaAgjHolwDaFZ1p7+vNVeVTfrBTL4DJX98PYVbZh+qQkKMVKVSX1OSCQQiGs+eVLaYPt8/UYQf5cY9R+ZBn5j6mNC0Oe6/X+RHfZ8wH7KYJmLNFrkQNa/7m/5t0er45JyTR4qqK+Ic5CuR9QUWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ojXqOjCb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48JA0LOj032380;
+	Thu, 19 Sep 2024 11:36:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=QteISjsPvSYtQj+xdyh7B2a2F3
+	0QM/xnGWrnO7sCxH0=; b=ojXqOjCbLu3PN/O3M+WKEPeiXcsNM7mgOfb5Vo2E/I
+	fegUkrgrXj+OUFo5W+rojY7rZnjkXz8fSyAGKpC3LDTyX9Anb3vWdYUk5/465yrb
+	KCrjvlKBZmGcWyrQpH9X84rmpXHAfpekob+YfeDteu8I/QmWpQ6jWIYbf1UOsZ77
+	9gDC7wD4u1FHvqjkX5ktOIjIgYWH3dCF8be+DHZ5py+uFZ7YgqmqZTbpIfstVxvJ
+	owtqyeocvFlrMnbFhQsle/nGRgnBkFetDb7iEal/agcWcssTENJxsfZNU6smq4a6
+	pzdIchvuHgjLKaeLf0jlF2TGBC8ZcCGhhMMemnbhFkLw==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3vp4av4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Sep 2024 11:36:51 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48JAHWqu030656;
+	Thu, 19 Sep 2024 11:36:50 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41npanh1y1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Sep 2024 11:36:50 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48JBanNS46268824
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 19 Sep 2024 11:36:49 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2C60C58052;
+	Thu, 19 Sep 2024 11:36:49 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C866658064;
+	Thu, 19 Sep 2024 11:36:48 +0000 (GMT)
+Received: from ltcden12-lp3.aus.stglabs.ibm.com (unknown [9.40.195.53])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 19 Sep 2024 11:36:48 +0000 (GMT)
+From: Danny Tsen <dtsen@linux.ibm.com>
+To: linux-crypto@vger.kernel.org
+Cc: stable@vger.kernel.org, herbert@gondor.apana.org.au, leitao@debian.org,
+        nayna@linux.ibm.com, appro@cryptogams.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        mpe@ellerman.id.au, ltcgcw@linux.vnet.ibm.com, dtsen@us.ibm.com,
+        Danny Tsen <dtsen@linux.ibm.com>
+Subject: [PATCH v3] crypto: Removing CRYPTO_AES_GCM_P10.
+Date: Thu, 19 Sep 2024 07:36:37 -0400
+Message-ID: <20240919113637.144343-1-dtsen@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMYu0UT7KgXFJ9p8WqzYl/+4ytJPAKVNCMjAc9ECZmvwHNJIA==
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJJsWRmVeSWpSXmKPExsWy7bCmum4rz5s0g713lS0ezNvGZnH9y3NW
-	i5sHdjJZnD+/gd3iY889VovLu+awWcw4v4/J4uIpV4tFW7+wWxx+085q8e/aRhYHbo/3N1rZ
-	PTat6mTz6NuyitHj8ya5AJaobJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8
-	xNxUWyUXnwBdt8wcoKOUFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnF
-	pXnpenmpJVaGBgZGpkCFCdkZU9auZSz4KVxx6dUMxgbG7QJdjBwcEgImEts/mHYxcnEICexm
-	lHj5sZ8RwvnEKHFx4gM2COcbo8SyXU1ADidYx+I7y1khEnsZJf5+fMoE4bxklLh28T8jSBWb
-	gKbEzaP/wGwRgW4mic5VISA2s4CZxJa791lBbE4BB4mup1dYQGxhAReJGf8uMYPYLAKqEkuP
-	3wWzeQUsJe6/m8MCYQtKnJz5hAVijrbEsoWvmSEuUpD4+XQZK8QuJ4lX55qhasQljv7sYQY5
-	TkJgKYfEtGtX2CEaXCSWnOqFsoUlXh3fAmVLSXx+txfqTR+J/XN+MULYGRLHti9nhbDtJQ5c
-	ATmIA2iBpsT6XfoQYVmJqafWMUHs5ZPo/f2ECSLOK7FjHoytLDHzyH2o8ZISOy/vZJnAqDQL
-	yWuzkLw2C8kLsxC2LWBkWcUomVpQnJuemmxaYJiXWg6P8OT83E2M4DSr5bKD8cb8f3qHGJk4
-	GA8xSnAwK4nwin94mSbEm5JYWZValB9fVJqTWnyI0RQY3hOZpUST84GJPq8k3tDE0sDEzMzM
-	xNLYzFBJnPd169wUIYH0xJLU7NTUgtQimD4mDk6pBqapqrVOrNpLhBndxFz4XnQ919+92lZZ
-	eVXErdi5inlqgt4qOxbd1Uu0fRl7ZqWXpILidTUz09MqcaqJcs/vB/Y8K/z1XIPD+Mmr8+ZS
-	8/VSTMOSU0VCj4Y81eG/wpolXafwTkTM61Tg/9y3m0p3/w3x+NdQo77kENfEg/Eyhdw31h03
-	PtBm9dLthvHdagHuXC0lk0ffl9iqGDdaVgbWrXpzq/zoLNm1ZptrGJ/0nr0re+X7H7GGQJd7
-	jGd8ONcde3Fru87jNkUT3T7RfbvyJtv1XTtkHfbpa4yS7uZwwV/bQ9awHj3+S+ClqZqg8IZr
-	QfMVumvLa7O/p/fcXyH+PJ99ypcrDWv37JFekHe/XImlOCPRUIu5qDgRAH6IrCk8BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsWy7bCSvK4Cz5s0g7svNS0ezNvGZnH9y3NW
-	i5sHdjJZnD+/gd3iY889VovLu+awWcw4v4/J4uIpV4tFW7+wWxx+085q8e/aRhYHbo/3N1rZ
-	PTat6mTz6NuyitHj8ya5AJYoLpuU1JzMstQifbsErowpe58wFmwRrth/r5+9gfEDfxcjJ4eE
-	gInE4jvLWbsYuTiEBHYzSrz52sYIkZCUmP17OjuELSyx8t9zMFtI4DmjxPblnCA2m4CmxM2j
-	/xhBmkUEpjJJXHu6DqyZWcBCYvmf62wQDQcYJXaucAexOQUcJLqeXmEBsYUFXCRm/LvEDGKz
-	CKhKLD1+F8zmFbCUuP9uDguELShxcuYTFoiZ2hK9D1sZYexlC18zQxynIPHz6TJWEFtEwEni
-	1blmqHpxiaM/e5gnMArPQjJqFpJRs5CMmoWkZQEjyypGydSC4tz03GLDAqO81HK94sTc4tK8
-	dL3k/NxNjOBY09Lawbhn1Qe9Q4xMHIyHGCU4mJVEeMU/vEwT4k1JrKxKLcqPLyrNSS0+xCjN
-	waIkzvvtdW+KkEB6YklqdmpqQWoRTJaJg1OqgSmKV49ZXfzscaPkqI0S/S/kOQXD756Sd5vb
-	xR/346TEeZd5Zf/WZn4W2nyzf0aT0KTnqU4lWr++BF15ltEV8ZAhILJzV29F2fJ5Esq+vZMi
-	S1eo7VxoYXfVQfLcrv6UK32PDl5+z25tznHRQcQpy3CXoaLh/qPP1ove6zK7suIWb96/yiW9
-	S3/q2AinXDc5ZKHhmHewneMKW6FXbxC3d3p33Pxjmp5F16d5OHhuir6lVh5e9XX6McnbjMyM
-	i39ETeQuMt2q9E/FqFvoqk3oX76X1XmGiiaH1mTtnnP6v+L3jTyZUy9cawu8af544uHzqrW/
-	j32wUNmmmDJRVM56913RrbKPr1TJNfTISPC2KrEUZyQaajEXFScCAAAM9ZokAwAA
-X-CMS-MailID: 20240919113352epcas5p38ddc91967f3922f4639a3453a14f2822
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300
-References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com>
-	<20240917101016.23238-1-inbaraj.e@samsung.com>
-	<0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: qAO453QM_JcoyMgrevBjlyXeYulnrA0z
+X-Proofpoint-GUID: qAO453QM_JcoyMgrevBjlyXeYulnrA0z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-19_08,2024-09-18_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=837
+ priorityscore=1501 phishscore=0 clxscore=1015 malwarescore=0 bulkscore=0
+ impostorscore=0 spamscore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409190071
 
+Data mismatch found when testing ipsec tunnel with AES/GCM crypto.
+Disabling CRYPTO_AES_GCM_P10 in Kconfig for this feature.
 
+Fixes: fd0e9b3e2ee6 ("crypto: p10-aes-gcm - An accelerated AES/GCM stitched implementation")
+Fixes: cdcecfd9991f ("crypto: p10-aes-gcm - Glue code for AES/GCM stitched implementation")
+Fixes: 45a4672b9a6e2 ("crypto: p10-aes-gcm - Update Kconfig and Makefile")
 
-> -----Original Message-----
-> From: Stephen Boyd <sboyd=40kernel.org>
-> Sent: 19 September 2024 15:51
-> To: Inbaraj E <inbaraj.e=40samsung.com>; alim.akhtar=40samsung.com;
-> cw00.choi=40samsung.com; krzk=40kernel.org; linux-clk=40vger.kernel.org; =
-linux-
-> kernel=40vger.kernel.org; linux-samsung-soc=40vger.kernel.org;
-> mturquette=40baylibre.com; s.nawrocki=40samsung.com
-> Cc: pankaj.dubey=40samsung.com; gost.dev=40samsung.com; Inbaraj E
-> <inbaraj.e=40samsung.com>
-> Subject: Re: =5BPATCH=5D clk: samsung: fsd: Mark PLL_CAM_CSI as critical
->=20
-> Quoting Inbaraj E (2024-09-17 03:10:16)
-> > PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the
-> > CMU_CAM_CSI block. When we gate ACLK or PCLK, the clock framework
-> will
-> > subsequently disables the parent clocks(PLL_CAM_CSI). Disabling
-> > PLL_CAM_CSI is causing sytem level halt.
-> >
-> > It was observed on FSD SoC, when we gate the ACLK and PCLK during CSI
-> > stop streaming through pm_runtime_put system is getting halted. So
-> > marking PLL_CAM_CSI as critical to prevent disabling.
-> >
-> > Signed-off-by: Inbaraj E <inbaraj.e=40samsung.com>
-> > ---
->=20
-> Please add a fixes tag. Although this is likely a band-aid fix because ma=
-rking
-> something critical leaves it enabled forever.
+Signed-off-by: Danny Tsen <dtsen@linux.ibm.com>
+---
+ arch/powerpc/crypto/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Sure, will add fixes tag. As per HW manual, this PLL_CAM_CSI is
-supplying clock even for CMU SFR access of CSI block, so we can't
-gate this.
-
->=20
-> >  drivers/clk/samsung/clk-fsd.c =7C 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/clk/samsung/clk-fsd.c
-> > b/drivers/clk/samsung/clk-fsd.c index 6f984cfcd33c..b1764aab9429
-> > 100644
-> > --- a/drivers/clk/samsung/clk-fsd.c
-> > +++ b/drivers/clk/samsung/clk-fsd.c
-> > =40=40 -1637,8 +1637,9 =40=40 static const struct samsung_pll_rate_tabl=
-e
-> > pll_cam_csi_rate_table=5B=5D __initconst  =7D;
-> >
-> >  static const struct samsung_pll_clock cam_csi_pll_clks=5B=5D __initcon=
-st =3D =7B
-> > -       PLL(pll_142xx, 0, =22fout_pll_cam_csi=22, =22fin_pll=22,
-> > -           PLL_LOCKTIME_PLL_CAM_CSI, PLL_CON0_PLL_CAM_CSI,
-> pll_cam_csi_rate_table),
-> > +       __PLL(pll_142xx, 0, =22fout_pll_cam_csi=22, =22fin_pll=22,
-> > +               CLK_GET_RATE_NOCACHE =7C CLK_IS_CRITICAL,
-> > + PLL_LOCKTIME_PLL_CAM_CSI,
->=20
-> Please add a comment indicating that this clk can never turn off because
-> <insert reason here>.
-
-Sure, will post v2 after adding comment explaining reason behind
-marking this clock as critical.
-
-Regards,
-Inbaraj E
+diff --git a/arch/powerpc/crypto/Kconfig b/arch/powerpc/crypto/Kconfig
+index 09ebcbdfb34f..46a4c85e85e2 100644
+--- a/arch/powerpc/crypto/Kconfig
++++ b/arch/powerpc/crypto/Kconfig
+@@ -107,6 +107,7 @@ config CRYPTO_AES_PPC_SPE
+ 
+ config CRYPTO_AES_GCM_P10
+ 	tristate "Stitched AES/GCM acceleration support on P10 or later CPU (PPC)"
++	depends on BROKEN
+ 	depends on PPC64 && CPU_LITTLE_ENDIAN && VSX
+ 	select CRYPTO_LIB_AES
+ 	select CRYPTO_ALGAPI
+-- 
+2.43.0
 
 
