@@ -1,206 +1,109 @@
-Return-Path: <linux-kernel+bounces-333439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF0297C89F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:28:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15A297C8A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B07EB24497
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:28:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87F8C1F267DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D40B19DF45;
-	Thu, 19 Sep 2024 11:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1616119D897;
+	Thu, 19 Sep 2024 11:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="YnhkgPOC";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="hc6LgLd9"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UDFjTjTy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA35A19D09A;
-	Thu, 19 Sep 2024 11:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BA619D083
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 11:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726745286; cv=none; b=uFqlDKu1WjobeQw+8yC/3BZbuPuN29mQpZTy9j4v2V3aRWUYt0d6MJxGmggyIhFyItCxsFk8U2Pe5BMvZqZvO3ZYTmCVur2vwYYz1aGgCpp6QpQKHut8kD79Tp5DGnTH9WG+XS7KVF1Vk/I+JQ4x6CdtMcqAV0ZXwuyKpEChfts=
+	t=1726745294; cv=none; b=GBvxAWKCGc/hEKuqJcsocWp8pI8u0qK4+kt5TVyROc2wjkL05UhyN5KbiGHRKUnkxbx8tIGRhze2TW9vWik2F1KsG8f/pOIXh8tBdyIEFfHO/fE2TKrEcuzOdvjrAkkg4B6qmVhIaztGxXuZptvBjrWZsFHdA6YaSt8+WLtzURs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726745286; c=relaxed/simple;
-	bh=cKzUXBMP9VehwhFr06UK2lAVaz7tvHIM2Qaz8xG7PoM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IBjIUt8fn4fiU3udZMUJX/woPx0j2bVJigPdLVog+W8Vbrcvczryru+n70/O+G4nnEdLecL840h+T2BXZUnK6q21wbPEXRITd8mc8n3ctIS4635g3rBDFTG3fHuTpQ0gnkwJPOBiNfWyEg+X2NKJ/AbZS0mhv2zXPrcIQfeGVcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=YnhkgPOC; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=hc6LgLd9 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1726745283; x=1758281283;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=lINmIHjvxhQs7AENiCWXeF3hOHhLu4x7Fu0GoAbZYbs=;
-  b=YnhkgPOCiXu5XlJ/yLnzkeArwKuP6NmbLrh3MMtWg/EmBvzeCAyZbGqi
-   LcUb5qcGroMaokQAZsn35W6PbGtohQwGREJg2b+pBnInh9eDrtJSx52mL
-   JcgEjeIWxZlnh2+Q7agSl1t4N49CGsmQYBmxFy88sFg2rdgrkKtRZZasX
-   eMMT3ZKB9pZalTKTM6R5lrpPvtuh1FSsM2BOJ1qE9d5nzWTYNOlQWNVcR
-   gsVnt32nS7uS0KYWvdaGn3CdKw5XqVtXsI+14+LSprvJMy0trui4PB3k6
-   5mpn1ZubihUvCJvGXBucxaTZtO21NS+t9dvvCPYcxZ49jEZLPkJUa40Hk
-   w==;
-X-CSE-ConnectionGUID: A5Gufbq5RS+iSVHVhTP34Q==
-X-CSE-MsgGUID: sZjwhtoFSLWZrVAMqivX1Q==
-X-IronPort-AV: E=Sophos;i="6.10,241,1719871200"; 
-   d="scan'208";a="39024129"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 19 Sep 2024 13:28:00 +0200
-X-CheckPoint: {66EC0AC0-1E-C661815F-E221238E}
-X-MAIL-CPID: B857DD0E7DE91C7858A551AC0ABE4933_1
-X-Control-Analysis: str=0001.0A682F25.66EC0AC1.0055,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 876B916CDC0;
-	Thu, 19 Sep 2024 13:27:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1726745276;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=lINmIHjvxhQs7AENiCWXeF3hOHhLu4x7Fu0GoAbZYbs=;
-	b=hc6LgLd9G8cuOaDIFu+XMl0eVNYhQ3f6rAQvWSe1obibd7dhhEBUWu7zHrns8kKv5rpTv7
-	wTdDiNz4lQ7GJ4o0SbVRykbEvo0jXc4SZemZ330xAFzcIk9E2fFLkKqf6sui9T2Fi/8CXn
-	Uym3czgzmxARcDgQzGSyFfdTdvzNkCLPjxBbdqg5BWrce3YHG1hitNxVJ0qJ5jBAqW03Eo
-	IYDKIsr/DW0dFYk7gBO4Tl+Z8jkb6gpUg63+gCdQPgcSEhUO1Cew1qiZj55SINe4oa1Ocy
-	6kc2TlPtiyS3BQi64FRz2/K9uw50hpIg+iyE9/yA11P7bHIviebsHtDyxNLjnw==
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	=?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>,
-	Markus Schneider-Pargmann <msp@baylibre.com>,
-	"Felipe Balbi (Intel)" <balbi@kernel.org>,
-	Raymond Tan <raymond.tan@intel.com>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@ew.tq-group.com,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH v2 2/2] can: m_can: fix missed interrupts with m_can_pci
-Date: Thu, 19 Sep 2024 13:27:28 +0200
-Message-ID: <861164dfe6d95fd69ab2f82528306db6be94351a.1726745009.git.matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <ac8c49fffac582176ba1899a85db84e0f5d5c7a6.1726745009.git.matthias.schiffer@ew.tq-group.com>
-References: <ac8c49fffac582176ba1899a85db84e0f5d5c7a6.1726745009.git.matthias.schiffer@ew.tq-group.com>
+	s=arc-20240116; t=1726745294; c=relaxed/simple;
+	bh=7E/aKuA10vsrgIoeRITsYMjgG8AfcFZ6JbLGuuiwGj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A7gnfKfw1kHNZYKABa2L7OQnf0ZE6axXboQ2z0Rkc4Z/CSWJePF6ZjkLC3j5wW6tTJUPB6r6x3SC+WTQ0spdew2ZA47jpTscnWTTQ2Mw2Q4b9IcLcQkTqzprGU7LXptniAZrJtU9VxdTtbsR6d+Vw/3qnOc+AWajzuz1C+7TzlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UDFjTjTy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726745291;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RxU24VtiUEKEFJ7Y05B5EkL0g7nR51AqwbBlViZYyMs=;
+	b=UDFjTjTy7yWUM5Spf7FzCtVlOjL9WZTo/m1hztSBBTA1kyhFf0dYbecxqYkoMdF5S7vMxC
+	Qh/wFVcyVKmnsL0ITQ5ZTecBfrhU/Upomuh3mhcbaw/pCN8D3VB9e7Mi4Mdcok9SBcqrRL
+	lfXZJf5owsAzS0nMqv8AzbEyyWcu2iE=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-364-OLW5ehlnNfWrKx-DNEKzww-1; Thu,
+ 19 Sep 2024 07:28:08 -0400
+X-MC-Unique: OLW5ehlnNfWrKx-DNEKzww-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7E6DC1956080;
+	Thu, 19 Sep 2024 11:28:06 +0000 (UTC)
+Received: from [10.2.16.55] (unknown [10.2.16.55])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 11B4E19560AF;
+	Thu, 19 Sep 2024 11:28:01 +0000 (UTC)
+Message-ID: <9836c30e-4ee1-485a-83f2-b38630dd7c21@redhat.com>
+Date: Thu, 19 Sep 2024 07:28:00 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] locking/osq_lock: The numa-aware lock memory prepare,
+ assign and cleanup.
+To: yongli-os <yongli-oc@zhaoxin.com>, peterz@infradead.org,
+ mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
+Cc: linux-kernel@vger.kernel.org, yongli@zhaoxin.com, louisqi@zhaoxin.com,
+ cobechen@zhaoxin.com, jiangbowang@zhaoxin.com
+References: <20240914085327.32912-1-yongli-oc@zhaoxin.com>
+ <20240914085327.32912-5-yongli-oc@zhaoxin.com>
+ <5045fb8b-4968-4b5a-9d9e-1def94308426@redhat.com>
+ <1d9b40ac-f5d8-4242-bb12-92b7a50a3d05@zhaoxin.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <1d9b40ac-f5d8-4242-bb12-92b7a50a3d05@zhaoxin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-The interrupt line of PCI devices is interpreted as edge-triggered,
-however the interrupt signal of the m_can controller integrated in Intel
-Elkhart Lake CPUs appears to be generated level-triggered.
 
-Consider the following sequence of events:
+On 9/19/24 05:41, yongli-os wrote:
+> BTW, your patch series lacks performance data to justify the addition of
+>
+>> quite a lot of complexity to the core locking code. We are unlikely to
+>> take this without sufficient justification.
+>>
+> In the cover letter,  these is performance test result for AMD EPYC 
+> 7551 and
+>
+> Zhaoxin KH40000. I listed the perf epoll, locktorture mutex, unixbench 
+> and fxmark.
+>
+> What test do you think is important for the Lock performance?
+>
+> I will do more test in next submission.
 
-- IR register is read, interrupt X is set
-- A new interrupt Y is triggered in the m_can controller
-- IR register is written to acknowledge interrupt X. Y remains set in IR
+Ah, I was not sent to/cc on the cover-letter. I only got your patches 
+1-4. Yes, you did sent out a cover letter with some performance numbers 
+after checking the LKML list. I will take a closer look at these 
+performance numbers later as I am attending the LPC conference this week.
 
-As at no point in this sequence no interrupt flag is set in IR, the
-m_can interrupt line will never become deasserted, and no edge will ever
-be observed to trigger another run of the ISR. This was observed to
-result in the TX queue of the EHL m_can to get stuck under high load,
-because frames were queued to the hardware in m_can_start_xmit(), but
-m_can_finish_tx() was never run to account for their successful
-transmission.
-
-To fix the issue, repeatedly read and acknowledge interrupts at the
-start of the ISR until no interrupt flags are set, so the next incoming
-interrupt will also result in an edge on the interrupt line.
-
-Fixes: cab7ffc0324f ("can: m_can: add PCI glue driver for Intel Elkhart Lake")
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
-
-v2: introduce flag is_edge_triggered, so we can avoid the loop on !m_can_pci
-
- drivers/net/can/m_can/m_can.c     | 21 ++++++++++++++++-----
- drivers/net/can/m_can/m_can.h     |  1 +
- drivers/net/can/m_can/m_can_pci.c |  1 +
- 3 files changed, 18 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index 47481afb9add3..2e182c3c98fed 100644
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -1207,20 +1207,31 @@ static void m_can_coalescing_update(struct m_can_classdev *cdev, u32 ir)
- static int m_can_interrupt_handler(struct m_can_classdev *cdev)
- {
- 	struct net_device *dev = cdev->net;
--	u32 ir;
-+	u32 ir = 0, ir_read;
- 	int ret;
- 
- 	if (pm_runtime_suspended(cdev->dev))
- 		return IRQ_NONE;
- 
--	ir = m_can_read(cdev, M_CAN_IR);
-+	/* For m_can_pci, the interrupt line is interpreted as edge-triggered,
-+	 * but the m_can controller generates them as level-triggered. We must
-+	 * observe that IR is 0 at least once to be sure that the next
-+	 * interrupt will generate an edge.
-+	 */
-+	while ((ir_read = m_can_read(cdev, M_CAN_IR)) != 0) {
-+		ir |= ir_read;
-+
-+		/* ACK all irqs */
-+		m_can_write(cdev, M_CAN_IR, ir);
-+
-+		if (!cdev->is_edge_triggered)
-+			break;
-+	}
-+
- 	m_can_coalescing_update(cdev, ir);
- 	if (!ir)
- 		return IRQ_NONE;
- 
--	/* ACK all irqs */
--	m_can_write(cdev, M_CAN_IR, ir);
--
- 	if (cdev->ops->clear_interrupts)
- 		cdev->ops->clear_interrupts(cdev);
- 
-diff --git a/drivers/net/can/m_can/m_can.h b/drivers/net/can/m_can/m_can.h
-index 92b2bd8628e6b..8c17eb94d2f98 100644
---- a/drivers/net/can/m_can/m_can.h
-+++ b/drivers/net/can/m_can/m_can.h
-@@ -99,6 +99,7 @@ struct m_can_classdev {
- 	int pm_clock_support;
- 	int pm_wake_source;
- 	int is_peripheral;
-+	bool is_edge_triggered;
- 
- 	// Cached M_CAN_IE register content
- 	u32 active_interrupts;
-diff --git a/drivers/net/can/m_can/m_can_pci.c b/drivers/net/can/m_can/m_can_pci.c
-index d72fe771dfc7a..f98527981402a 100644
---- a/drivers/net/can/m_can/m_can_pci.c
-+++ b/drivers/net/can/m_can/m_can_pci.c
-@@ -127,6 +127,7 @@ static int m_can_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
- 	mcan_class->pm_clock_support = 1;
- 	mcan_class->pm_wake_source = 0;
- 	mcan_class->can.clock.freq = id->driver_data;
-+	mcan_class->is_edge_triggered = true;
- 	mcan_class->ops = &m_can_pci_ops;
- 
- 	pci_set_drvdata(pci, mcan_class);
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
+Cheers,
+Longman
 
 
