@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-333020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B106F97C246
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 02:09:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57CF697C24A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 02:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5EF71C21232
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 00:09:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2960E283ACD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 00:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3746D3C0B;
-	Thu, 19 Sep 2024 00:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBF012E75;
+	Thu, 19 Sep 2024 00:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xJvUEwJ2"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="obZob/GU"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3520C23AB
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 00:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDAA4A01
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 00:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726704578; cv=none; b=b8Tt4qlRG4ptP38HA/+9LSk2BWIDW6b+KPb99cFueNvErDeriylfEp25y9OhFAxADb7SD4Wlj7a2vci73QsBCZhBUpb/ZYmNrLnhjDtyK0aL6/7K/0jPFY4h6Bw79AwLz6WWDE1RpfJfrtyACx5WJogHlJvkFE5SeEBF7BT/PN0=
+	t=1726704582; cv=none; b=JA+sbJfy2XCrnyY1A91tUBkaq8W5usKBkwiatImwlUXWH0/5dpIRbxrRVQ1mSoYRb/aKTTDNxfwwVDk74uJf5DGSDHVA5MxnDxACkQO+EDxjdUFllmc6A9u/ECViY61I8bkZ4qwVytfqngVDlmxV/uRvOH8lcRp5DzatSeOQtlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726704578; c=relaxed/simple;
-	bh=Huv0x6+QG2qOapzzUdKLlmio3uZBmfCnkYe9sj0+0Yg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=XmqU9Um9qqJwgPAgfwxAachdCL2XEFp9xdXVswJ/JpLZUe93ifLFoFG9K8VE5wNYmVWa5sxaUrIbFhpU5+kWEEiQKakgn5+ueWFnVJ4JXDuQ2Wtl7FijJLbCINW6soJyFGuvWr4tNKsLjcitnhYDs4mEhchi/A3ZZ5I3wfRgwzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidai.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xJvUEwJ2; arc=none smtp.client-ip=209.85.128.202
+	s=arc-20240116; t=1726704582; c=relaxed/simple;
+	bh=bwyLYrDa8bFEuDqOlNmqgY5kTo/+gQDs/+NfbJ4fOpk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=QKRwKuPhqHYEZFsHspatVCbz07Xr0T7NZnTX206DULdG7+FIZHNDeIXk/VDwLMc6M2DZeoTPI9/iCphBWEUFx5MFdhuc6VgLt9h91cZlw3kMmWXcRVQKdtfz6nSVXz/Fik4QdK0GSUGHFGei+uEpWQFvEKLfmtRDOG2CR5ebMhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidai.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=obZob/GU; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidai.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d73c1c8356so6572697b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 17:09:35 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e02fff66a83so676968276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 17:09:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726704574; x=1727309374; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u+7PtONO3VwleHUu34WIbs8aPi11pqgDJAjNB4ofJaQ=;
-        b=xJvUEwJ2+X1mM0ttCuoOHDWeFTho5rYaJwwc1ocp6X1cjrCZPZN0pekwwVi50OnwOx
-         g/hecv3ETyzHwQ/i8STFovkoGCM806zFfNX/7AoPMxDgJFHuRuyKFciLEMVjh71L8I/T
-         UN235b0j+b+5BhDTwB1OfdtAQg7Pppjgk5XvoXmC9O3aalm+bs9i2V6vAYercvjKV4B4
-         WkXQBDR/cPxoSlPVBoSZPek1pC09G7zK20nw72Nkty8ubkvo2y91nrjJyBX6HCJlujED
-         u46ocukpeJy5iBSFqS2NrEWCFJ4dJ8dnLIqH4V+zvsu43BlKGbv0BN4GlHfzlQKq5PCF
-         xMnQ==
+        d=google.com; s=20230601; t=1726704579; x=1727309379; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=i3NxGwHKiPartzkPCOrFEH3MzGEQYYqX3F8NtYxKTlM=;
+        b=obZob/GUn4yGqxFb+yKwX7+evVXoksmuVCLddIXpcMlSxTgkDav9jkrIWwKrlZF1KS
+         Gq8vVxdwJ/auUEXRA3BEKIsJeupoDWXNDeHXziXBNTJj2KMDlGlf/fKoNkTjjAW0a2Op
+         Ad65tE00djWGga2wT2xz/5A2X42d0TVT6E6xC0IXGaJvPmzCZ9sua3UHSzbdzICBB22m
+         EClBQqXE1thxQ8utI5GPnW7qSvosgcObgHFn+zTqXCWMy7gljrgtlKVxnANaPzut2NDQ
+         3AbkJ6MR1Af/M778E/3W5x+lqCHb1teQtj929vxRI5VqcKdguzH1kxCqXdL+Uw2r+mLJ
+         vtJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726704574; x=1727309374;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u+7PtONO3VwleHUu34WIbs8aPi11pqgDJAjNB4ofJaQ=;
-        b=YkQM4Pi6bgx/sxn7CmHsocFraqC3uFkpq6tyKMQgFUBTqRgCymXIXbj/Vwz+CKLXIy
-         1WQdvR9LO3du9OcyOJLAthKAgj2NG8W9QjOUAV3gdRe180PovPzSbZHf+tJBV9RncTgo
-         EBovTq1wa33+WFDX9xQhehst3voU5nSsFUZ6iU11zApG3AJmU8eUQSPr79ym5Kl3KWOq
-         08e+4Ik6w5w/Kk92wSraPxsWdW9g0kYNniN8MYsOB4QFIKOqTXLr15Fw2K1LSFSAZuum
-         NQXj3FENSTWu3GlL85D34w44zc70qVC1A/mB/ccG5N41jJ4v6L5vrn90mIr4FVUXo0Oo
-         emNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+P5DH0l8FxHo01CbNaK7Gb0H8eIsdxhWUQTzpd3fJZzlnQ7+ujBUuD8Lz9eVQpiIBhrVZY/eK3ENg9Gc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziH0VywJFQUn/5YoOKq4TxC1tcHz13y8jKcyTHVDBp/mqU6UF2
-	4CJlflewwoY4W2WgTuOiBBA37DnxjN8m7UoKBGyU3iRN4J6UOwL0y9ub+1FAaIQZbBqRcp2RO7X
-	s9lsJig==
-X-Google-Smtp-Source: AGHT+IFJ3iIzuhiJ1YMdN17al8AnvhkF64stCXR6W18hgdxUqpEtE/A1379elmO+/RZzxrA27mVFgwTJFOrg
+        d=1e100.net; s=20230601; t=1726704579; x=1727309379;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i3NxGwHKiPartzkPCOrFEH3MzGEQYYqX3F8NtYxKTlM=;
+        b=h3O0Bt9Yz78iy+YYIomHzUxO7KyKdzGDs8+IuN9Vqdv0P4K+J8djL5PJmMdO9VHMwa
+         nJpV+z2X+cw3Jp4nH6K+GCqaHCBHJsdCXlRPEjp9gxfVYF1V3qdJnd1+mzMjb4P50zlh
+         aRMvF1CvrH1zkbEbQwKpYBxUMWWz4kTjW/hw2XwY6hR3+Wkl1xzfKqObHLxlC+7vpHHA
+         JGfNYOojoQ5akPCYKJ+13cmtKbV9+qZp5PaWKI4OMRNZu5nIJ8R8Rgljdo90DH9B+CJz
+         AIGlKA1jhqtuKjUHkQO3JHutvKKR44Pg0OQdzHU1AnsQzax93PjoGbqTyEzTniTXIKj5
+         kSMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRJv5bqFIWkoW10184W/2j/nltStln9XJCdHyNkOAN6xM07Z/M57wAMr3BY199WXeeN0hPzvYgZy+i8e4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+n75Ef/BOiKUUlgRAJxOdCjBBEMWybCR7CHaR9Wy58+dOxaQM
+	vY1XePOTTKXxaW44l2p6gOrT1B84u2r2UBBfsCRI5PWlRRycv+AuBDl0rnToVcxGMlXiys1Wvaz
+	CjYTBTQ==
+X-Google-Smtp-Source: AGHT+IHl1XmPQy3MUFnAY/RXegJ7drfzK6UvnB8cgxFfQj0i1CCiVinITS0VD+GkKMQKcoH+CWo2Mh+vGxxh
 X-Received: from davidai2.mtv.corp.google.com ([2620:15c:211:201:2985:f9c1:f5a3:ad7a])
- (user=davidai job=sendgmr) by 2002:a25:9bc5:0:b0:e20:205b:5372 with SMTP id
- 3f1490d57ef6-e20205b550cmr5653276.11.1726704574085; Wed, 18 Sep 2024 17:09:34
+ (user=davidai job=sendgmr) by 2002:a25:d895:0:b0:e11:44fb:af26 with SMTP id
+ 3f1490d57ef6-e1d9db88758mr28547276.2.1726704579142; Wed, 18 Sep 2024 17:09:39
  -0700 (PDT)
-Date: Wed, 18 Sep 2024 17:08:31 -0700
+Date: Wed, 18 Sep 2024 17:08:32 -0700
+In-Reply-To: <20240919000837.1004642-1-davidai@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240919000837.1004642-1-davidai@google.com>
 X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
-Message-ID: <20240919000837.1004642-1-davidai@google.com>
-Subject: [PATCH v7 0/2] Improve VM CPUfreq and task placement behavior
+Message-ID: <20240919000837.1004642-2-davidai@google.com>
+Subject: [PATCH v7 1/2] dt-bindings: cpufreq: add virtual cpufreq device
 From: David Dai <davidai@google.com>
 To: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -86,242 +88,80 @@ Cc: Quentin Perret <qperret@google.com>, Masami Hiramatsu <mhiramat@google.com>,
 	Mel Gorman <mgorman@suse.de>, kernel-team@android.com, linux-pm@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Adding bindings to represent a virtual cpufreq device.
 
-This patch series is a continuation of the talk Saravana gave at LPC 2022
-titled "CPUfreq/sched and VM guest workload problems" [1][2][3]. The gist
-of the talk is that workloads running in a guest VM get terrible task
-placement and CPUfreq behavior when compared to running the same workload
-in the host. Effectively, no EAS(Energy Aware Scheduling) for threads
-inside VMs. This would make power and performance terrible just by running
-the workload in a VM even if we assume there is zero virtualization
-overhead.
+Virtual machines may expose MMIO regions for a virtual cpufreq device
+for guests to read performance information or to request performance
+selection. The virtual cpufreq device has an individual controller for
+each performance domain. Performance points for a given domain can be
+normalized across all domains for ease of allowing for virtual machines
+to migrate between hosts.
 
-With this series, a workload running in a VM gets the same task placement
-and CPUfreq behavior as it would when running in the host.
+Co-developed-by: Saravana Kannan <saravanak@google.com>
+Signed-off-by: Saravana Kannan <saravanak@google.com>
+Signed-off-by: David Dai <davidai@google.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../cpufreq/qemu,virtual-cpufreq.yaml         | 48 +++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/qemu,virtual-cpufreq.yaml
 
-The idea is to improve VM CPUfreq/sched behavior by:
-- Having guest kernel do accurate load tracking by taking host CPU
-  arch/type and frequency into account.
-- Sharing vCPU frequency requirements with the host so that the
-  host can do proper frequency scaling and task placement on the host side.
-
-Based on feedback from RFC v1 proposal[4], we've revised our
-implementation to using MMIO reads and writes to pass information
-from/to host instead of using hypercalls. In our example, the
-VMM(Virtual Machine Manager) translates the frequency requests into
-Uclamp_min and applies it to the vCPU thread as a hint to the host
-kernel.
-
-To achieve the results below, configure the host to:
-- Affine vCPUs to specific clusters.
-- Set vCPU capacity to match the host CPU they are running on.
-
-To make it easy for folks to try this out with CrosVM, we have put up
-userspace patches[5][6]. With those patches, you can configure CrosVM
-correctly by adding the options "--host-cpu-topology" and "--virt-cpufreq".
-
-Results:
-=3D=3D=3D=3D=3D=3D=3D=3D
-
-Here are some side-by-side comparisons of RFC v1 proposal vs the current
-patch series and are labelled as follows.
-
-- (RFC v1) UtilHyp =3D hypercall + util_guest
-- (current) UClampMMIO =3D MMIO + UClamp_min
-
-Use cases running a minimal system inside a VM on a Pixel 6:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-FIO
-Higher is better
-+-------------------+----------+---------+--------+------------+--------+
-| Usecase(avg MB/s) | Baseline | UtilHyp | %delta | UClampMMIO | %delta |
-+-------------------+----------+---------+--------+------------+--------+
-| Seq Write         |     13.3 |    16.4 |   +23% |       13.6 |    +2% |
-+-------------------+----------+---------+--------+------------+--------+
-| Rand Write        |     11.2 |    12.9 |   +15% |       11.8 |    +8% |
-+-------------------+----------+---------+--------+------------+--------+
-| Seq Read          |      100 |     168 |   +68% |        138 |   +38% |
-+-------------------+----------+---------+--------+------------+--------+
-| Rand Read         |     20.5 |    35.6 |   +74% |       31.0 |   +51% |
-+-------------------+----------+---------+--------+------------+--------+
-
-CPU-based ML Inference Benchmark
-Lower is better
-+----------------+----------+------------+--------+------------+--------+
-| Test Case (ms) | Baseline | UtilHyp    | %delta | UClampMMIO | %delta |
-+----------------+----------+------------+--------+------------+--------+
-| Cached Sample  |          |            |        |            |        |
-| Inference      |     3.40 |       2.37 |   -30% |       2.99 |   -12% |
-+----------------+----------+------------+--------+------------+--------+
-| Small Sample   |          |            |        |            |        |
-| Inference      |     9.87 |       6.78 |   -31% |       7.65 |   -22% |
-+----------------+----------+------------+--------+------------+--------+
-| Large Sample   |          |            |        |            |        |
-| Inference      |    33.35 |      26.74 |   -20% |      31.05 |    -7% |
-+----------------+----------+------------+--------+------------+--------+
-
-Use cases running Android inside a VM on a Chromebook:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-
-PCMark (Emulates real world usecases)
-Higher is better
-+-------------------+----------+---------+--------+------------+--------+
-| Test Case (score) | Baseline | UtilHyp | %delta | UClampMMIO | %delta |
-+-------------------+----------+---------+--------+------------+--------+
-| Weighted Total    |     6190 |    7442 |   +20% |       7171 |   +16% |
-+-------------------+----------+---------+--------+------------+--------+
-| Web Browsing      |     5461 |    6620 |   +21% |       6284 |   +15% |
-+-------------------+----------+---------+--------+------------+--------+
-| Video Editing     |     4891 |    5376 |   +10% |       5344 |    +9% |
-+-------------------+----------+---------+--------+------------+--------+
-| Writing           |     6929 |    8791 |   +27% |       8457 |   +22% |
-+-------------------+----------+---------+--------+------------+--------+
-| Photo Editing     |     7966 |   12057 |   +51% |      11881 |   +49% |
-+-------------------+----------+---------+--------+------------+--------+
-| Data Manipulation |     5596 |    6057 |    +8% |       5694 |    +2% |
-+-------------------+----------+---------+--------+------------+--------+
-
-PCMark Performance/mAh
-Higher is better
-+-------------------+----------+---------+--------+------------+--------+
-|                   | Baseline | UtilHyp | %delta | UClampMMIO | %delta |
-+-------------------+----------+---------+--------+------------+--------+
-| Score/mAh         |       87 |     100 |   +15% |         92 |    +5% |
-+-------------------+----------+---------+--------+------------+--------+
-
-Roblox
-Higher is better
-+-------------------+----------+---------+--------+------------+--------+
-|                   | Baseline | UtilHyp | %delta | UClampMMIO | %delta |
-+-------------------+----------+---------+--------+------------+--------+
-| FPS               |    17.92 |   21.82 |   +22% |      20.02 |   +12% |
-+-------------------+----------+---------+--------+------------+--------+
-
-Roblox Frames/mAh
-Higher is better
-+-------------------+----------+---------+--------+------------+--------+
-|                   | Baseline | UtilHyp | %delta | UClampMMIO | %delta |
-+-------------------+----------+---------+--------+------------+--------+
-| Frames/mAh        |    77.91 |   84.46 |    +8% |     81.71  |     5% |
-+-------------------+----------+---------+--------+------------+--------+
-
-We've simplified our implementation based on community feedback to make
-it less intrusive and to use a more generic MMIO interface for
-communication with the host. The results show that the current design
-still has tangible improvements over baseline. We'll continue looking
-into ways to reduce the overhead of the MMIO read/writes and submit
-separate and generic patches for that if we find any good optimizations.
-
-Thanks,
-David & Saravana
-
-Cc: Saravana Kannan <saravanak@google.com>
-Cc: Quentin Perret <qperret@google.com>
-Cc: Masami Hiramatsu <mhiramat@google.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Pavan Kondeti <quic_pkondeti@quicinc.com>
-Cc: Gupta Pankaj <pankaj.gupta@amd.com>
-Cc: Mel Gorman <mgorman@suse.de>
-
-v6 -> v7:
--Updated .exit and .remove function type from int to void to match
- required types
--Added Reviewed-by tag from Rob on dt-bindings patch
--Dropped "depends on OF" as the driver doesn't depend on it
-
-v5 -> v6:
--Renamed dt-binding documentation file to match compatible string
--Removed opp bindings from dt-binding examples
--Added register interface description as a comment in driver
--Performance info now initialized from the device via MMIO instead
- of opp bindings
--Updated driver to use perf tables or max perf depending on VMM
--Added initialization for sharing perf domain
--Updated driver to use .target instead of .target_index
--Updated .verify to handle both perf tables and max perf case
--Updated Kconfig dependencies
-
-v4 -> v5:
--Added dt-binding description to allow for normalized frequencies
--Updated dt-binding examples with normalized frequency values
--Updated cpufreq exit to use dev_pm_opp_free_cpufreq_table to free tables
--Updated fast_switch and target_index to use entries from cpufreq tables
--Refreshed benchmark numbers using indexed frequencies
--Added missing header that was indirectly being used
-
-v3 -> v4:
--Fixed dt-binding formatting issues
--Added additional dt-binding descriptions for =E2=80=9CHW interfaces=E2=80=
-=9D
--Changed dt-binding to =E2=80=9Cqemu,virtual-cpufreq=E2=80=9D
--Fixed Kconfig formatting issues
--Removed frequency downscaling when requesting frequency updates
--Removed ops and cpufreq driver data
--Added check to limit freq_scale to 1024
--Added KHZ in the register offset naming
--Added comments to explain FIE and not allowing dvfs_possible_from_any_cpu
-
-v2 -> v3:
-- Dropped patches adding new hypercalls
-- Dropped patch adding util_guest in sched/fair
-- Cpufreq driver now populates frequency using opp bindings
-- Removed transition_delay_us=3D1 cpufreq setting as it was configured too
-  agressively and resulted in poor I/O performance
-- Modified guest cpufreq driver to read/write MMIO regions instead of
-  using hypercalls to communicate with the host
-- Modified guest cpufreq driver to pass frequency info instead of
-  utilization of the current vCPU's runqueue which now takes
-  iowait_boost into account from the schedutil governor
-- Updated DT bindings for a virtual CPU frequency device
-Userspace changes:
-- Updated CrosVM patches to emulate a virtual cpufreq device
-- Updated to newer userspace binaries when collecting more recent
-  benchmark data
-
-v1 -> v2:
-- No functional changes.
-- Added description for EAS and removed DVFS in coverletter.
-- Added a v2 tag to the subject.
-- Fixed up the inconsistent "units" between tables.
-- Made sure everyone is To/Cc-ed for all the patches in the series.
-
-[1] - https://lpc.events/event/16/contributions/1195/
-[2] - https://lpc.events/event/16/contributions/1195/attachments/970/1893/L=
-PC%202022%20-%20VM%20DVFS.pdf
-[3] - https://www.youtube.com/watch?v=3DhIg_5bg6opU
-[4] - https://lore.kernel.org/all/20230331014356.1033759-1-davidai@google.c=
-om/
-[5] - https://chromium-review.googlesource.com/c/crosvm/crosvm/+/4208668
-[6] - https://chromium-review.googlesource.com/q/topic:%22virtcpufreq-v6%22
-
-David Dai (2):
-  dt-bindings: cpufreq: add virtual cpufreq device
-  cpufreq: add virtual-cpufreq driver
-
- .../cpufreq/qemu,virtual-cpufreq.yaml         |  48 +++
- drivers/cpufreq/Kconfig                       |  14 +
- drivers/cpufreq/Makefile                      |   1 +
- drivers/cpufreq/virtual-cpufreq.c             | 333 ++++++++++++++++++
- include/linux/arch_topology.h                 |   1 +
- 5 files changed, 397 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/cpufreq/qemu,virtual-=
-cpufreq.yaml
- create mode 100644 drivers/cpufreq/virtual-cpufreq.c
-
---=20
+diff --git a/Documentation/devicetree/bindings/cpufreq/qemu,virtual-cpufreq.yaml b/Documentation/devicetree/bindings/cpufreq/qemu,virtual-cpufreq.yaml
+new file mode 100644
+index 000000000000..018d98bcdc82
+--- /dev/null
++++ b/Documentation/devicetree/bindings/cpufreq/qemu,virtual-cpufreq.yaml
+@@ -0,0 +1,48 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/cpufreq/qemu,virtual-cpufreq.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Virtual CPUFreq
++
++maintainers:
++  - David Dai <davidai@google.com>
++  - Saravana Kannan <saravanak@google.com>
++
++description:
++  Virtual CPUFreq is a virtualized driver in guest kernels that sends performance
++  selection of its vCPUs as a hint to the host through MMIO regions. Each vCPU
++  is associated with a performance domain which can be shared with other vCPUs.
++  Each performance domain has its own set of registers for performance controls.
++
++properties:
++  compatible:
++    const: qemu,virtual-cpufreq
++
++  reg:
++    maxItems: 1
++    description:
++      Address and size of region containing performance controls for each of the
++      performance domains. Regions for each performance domain is placed
++      contiguously and contain registers for controlling DVFS(Dynamic Frequency
++      and Voltage) characteristics. The size of the region is proportional to
++      total number of performance domains.
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    soc {
++      #address-cells = <1>;
++      #size-cells = <1>;
++
++      cpufreq@1040000 {
++        compatible = "qemu,virtual-cpufreq";
++        reg = <0x1040000 0x2000>;
++      };
++    };
+-- 
 2.46.0.792.g87dc391469-goog
 
 
