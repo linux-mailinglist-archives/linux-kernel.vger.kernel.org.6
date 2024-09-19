@@ -1,99 +1,126 @@
-Return-Path: <linux-kernel+bounces-333427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B715A97C871
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:16:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A088197C86B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7C01B24EFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:16:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC9228726D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDD119D078;
-	Thu, 19 Sep 2024 11:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="M1Hy8zEQ"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8089719D8A9;
+	Thu, 19 Sep 2024 11:15:19 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF4219CD07;
-	Thu, 19 Sep 2024 11:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C91319D88C;
+	Thu, 19 Sep 2024 11:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726744583; cv=none; b=ElgIjaCZ0cfS+FlPQ6mKATR4PQtQFyVfIppCV8mIqKSZQaLJaHeT/vok6ij7DL84H6cZrMR2fXmZdihIiNCDeZwrXnpAoKZqch/38dq5U30Jf4TQnzKu9SPrA4TDpzI4fy+9yKcvLmVcV5D18XoAv2QguWmvaoqFWNTvN2PhrBo=
+	t=1726744519; cv=none; b=fv8ApJ+36r9H5oyWVI7U5dlDoRGe6N9w8/wdB6Kwaf9Aj0AZuGpdSB9Nk2XyWwut3Gl971Ap2Gs6jNtqGCAJavY1VNMFxZjD3snH/azwZd4YvUkUYH2/ogrMjpPX/UwkNQYS8l+nUj96BPZ4IdQc0HqS4KSExsPYLz1a2iPhPSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726744583; c=relaxed/simple;
-	bh=trcBH8zzl6PsP1oY6MIhqNhFu0NHretoyOUcqxJsYhU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KofDfz3FSsw4Spfy7J3jHOuWTixeO8JtacKNsVuh69FftZHOmsLLokS9Tpp3kgUkhTAjClgxhv7zDvIPT08giWCs2ZOeTV16u3QASgb2NBQx9HzdpKNCbbrU9t226o5r95WFYUjtz84Oh4QNbSN9mNTIAppFhO+sBXTSLca70zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=M1Hy8zEQ; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 25EF223D9E;
-	Thu, 19 Sep 2024 13:16:19 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id qqxPeLJWN-RH; Thu, 19 Sep 2024 13:16:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1726744578; bh=trcBH8zzl6PsP1oY6MIhqNhFu0NHretoyOUcqxJsYhU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=M1Hy8zEQcZ1qgc1TNFfp+Rz1+hUyYlFxv1HxA6YE1C+os4GqVMqyEXv/XAqibpt1s
-	 D+IggyDrXYR/DSlI+LD36Kv1guDD4985gOECFUNzTp/q++8V/UKaZBBi771XgXLAt0
-	 QY0bOZ1mRK+3dciCUFTeto1BC+JUSWF2cZ9BSAHLaXkcR/nhb2wcooYAQyisF/+dSO
-	 l48sTNfRaLFAjjnSRm4bNNYQqzw6N3srY3jrGns0BvY7eCjQD9KmodSw39b70ujem2
-	 dxarZuYmxtvv7x06ZHYCrYw2Y0eD0UzfLATaRkiXGwcNAGVUJsfM5kAhiR7cEx+GAW
-	 FXt55BA81hHlw==
-From: Yao Zi <ziyao@disroot.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Yao Zi <ziyao@disroot.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [RESEND PATCH v4 1/1] dt-bindings: serial: snps-dw-apb-uart: Document Rockchip RK3528
-Date: Thu, 19 Sep 2024 11:14:15 +0000
-Message-ID: <20240919111413.45413-4-ziyao@disroot.org>
-In-Reply-To: <20240919111413.45413-3-ziyao@disroot.org>
-References: <20240919111413.45413-3-ziyao@disroot.org>
+	s=arc-20240116; t=1726744519; c=relaxed/simple;
+	bh=RbDtzFY4xR7hRu6Pf3a1C6ue6w6zG+4Zddlf2w/ZKJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RF8EFl6HhyI6J43zTf7oCZLC/15LLxZ20AQtsd9gUJPyZlRqAEYE+sGvJipyCdF014anUyVx1RfdiUVH04wIA9vld5jJ46zVoOm3I4+Bl1dQcRosPKEvCTbd76JfaR8P0JKM15fbe721tFqjDp5zeczckzyjIzDUJoWVvfT3E9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X8XwS0qCqz2DcFV;
+	Thu, 19 Sep 2024 19:14:32 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id BC8361A016C;
+	Thu, 19 Sep 2024 19:15:11 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 19 Sep 2024 19:15:11 +0800
+Message-ID: <cdfecd37-31d7-42d2-a8d8-92008285b42e@huawei.com>
+Date: Thu, 19 Sep 2024 19:15:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 2/2] page_pool: fix IOMMU crash when driver has
+ already unbound
+To: Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
+	<ilias.apalodimas@linaro.org>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<liuyonglong@huawei.com>, <fanghaiqing@huawei.com>, <zhangkun09@huawei.com>,
+	Robin Murphy <robin.murphy@arm.com>, Alexander Duyck
+	<alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Wei Fang
+	<wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang
+	<xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>, Tony Nguyen
+	<anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov
+	<ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
+	<john.fastabend@gmail.com>, Saeed Mahameed <saeedm@nvidia.com>, Leon
+ Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Felix Fietkau
+	<nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee
+	<ryder.lee@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>, Sean Wang
+	<sean.wang@mediatek.com>, Kalle Valo <kvalo@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Andrew Morton
+	<akpm@linux-foundation.org>, <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <intel-wired-lan@lists.osuosl.org>,
+	<bpf@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+	<linux-wireless@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-mm@kvack.org>
+References: <20240918111826.863596-1-linyunsheng@huawei.com>
+ <20240918111826.863596-3-linyunsheng@huawei.com>
+ <CAC_iWjK=G7Oo5=pN2QunhasgDC6NyC1L+96jigX7u9ad+PbYng@mail.gmail.com>
+ <894a3c2c-22f9-45b9-a82b-de7320066b42@kernel.org>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <894a3c2c-22f9-45b9-a82b-de7320066b42@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Rockchip RK3528 comes with a snps-dw-apb-uart compatible UART. Document
-it in dt-bindings.
+On 2024/9/19 17:42, Jesper Dangaard Brouer wrote:
+> 
+> On 18/09/2024 19.06, Ilias Apalodimas wrote:
+>>> In order not to do the dma unmmapping after driver has already
+>>> unbound and stall the unloading of the networking driver, add
+>>> the pool->items array to record all the pages including the ones
+>>> which are handed over to network stack, so the page_pool can
+>>> do the dma unmmapping for those pages when page_pool_destroy()
+>>> is called.
+>>
+>> So, I was thinking of a very similar idea. But what do you mean by
+>> "all"? The pages that are still in caches (slow or fast) of the pool
+>> will be unmapped during page_pool_destroy().
+> 
+> I really dislike this idea of having to keep track of all outstanding pages.
+> 
+> I liked Jakub's idea of keeping the netdev around for longer.
+> 
+> This is all related to destroying the struct device that have points to
+> the DMA engine, right?
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Yes, the problem seems to be that when device_del() is called, there is
+no guarantee hw behind the 'struct device ' will be usable even if we
+call get_device() on it.
 
-diff --git a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-index 4cdb0dcaccf3..4573044be189 100644
---- a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-+++ b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-@@ -48,6 +48,7 @@ properties:
-               - rockchip,rk3328-uart
-               - rockchip,rk3368-uart
-               - rockchip,rk3399-uart
-+              - rockchip,rk3528-uart
-               - rockchip,rk3568-uart
-               - rockchip,rk3588-uart
-               - rockchip,rv1108-uart
--- 
-2.46.0
+> 
+> Why don't we add an API that allow netdev to "give" struct device to
+> page_pool.  And then the page_poll will take over when we can safely
+> free the stuct device?
 
+By 'allow netdev to "give" struct device to page_pool', does it mean
+page_pool become the driver for the device?
+If yes, it seems that is similar to jakub's idea, as both seems to stall
+the calling of device_del() by not returning when the driver unloading.
+If no, it seems that the problem is still existed when the driver for
+the device has unbound after device_del() is called.
+
+> 
+> --Jesper
 
