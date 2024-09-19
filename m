@@ -1,202 +1,145 @@
-Return-Path: <linux-kernel+bounces-333128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52CB897C452
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:31:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC7C97C455
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8977DB210D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:31:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E719F28371D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA7018D645;
-	Thu, 19 Sep 2024 06:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JB0n8yFk"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB9C18D647;
+	Thu, 19 Sep 2024 06:33:28 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC2A2D611;
-	Thu, 19 Sep 2024 06:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7902E7345B;
+	Thu, 19 Sep 2024 06:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726727454; cv=none; b=agQBobTPce1AC7tBvp204t4+5TV1HV4JTzIfM0lFoIw+7//bL+Ub9+yafzzEK25I7vxKB7xNyCvHUP3Jha452D18gpZ/8uotR1GOses/T0yxTjTFry9w/F+piz1uKy9YP2r6GFrzPZH1zkOCyr2nz/fM4yUNHrBiWSyLHbQNqmg=
+	t=1726727608; cv=none; b=FGxxVO+Yv6/Aq2puteI5mrWyVuDljE0OJR8mzJX4wbS5bgwVdF+e7ObSJXdHDDbuoPOYXbmgHQlZLEF0+aab1wlOZ/VkN60S9PkNB54iMxA4uPNRwcbvkcCOPdsdQTqGpWRpq4xy6FFnCpL+czFNAkYWe7FLbiOC/TrDY27xpWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726727454; c=relaxed/simple;
-	bh=9E1Dj8+Rtvk4CsMbA5zBO+6mpKq1iMvge6SlBi4g6Fg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XQNa1RNCAJvPwN4MHP12PkJWtT3WoIYtT6OYCOI0/U9oVaWDfDVnvnRVSF1s6/5Hsxerj/qIPu8RLrMXUw/gwAW8j7/Gx94dP3G2Z06Qz2UTuiDKIh/v6TfAetykHp9xn1DMSSYTAA3Vi14k4gVSGhj6GoAgtOeJh5XdNMqhe00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JB0n8yFk; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48IJI7tY012612;
-	Thu, 19 Sep 2024 06:30:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2CMh2NDjOinI+rhXcFElY+FQUwnwc3oYqXqP3e8yjhE=; b=JB0n8yFkCU6TMunz
-	A/7o6G2jKTvQXt9zCVmhb1Szuhk2sA9kDLGqwg7O7+f/n9YBuqyWYojZXA1WHFEu
-	w2DebHoSeyX94WZRAYHjBwjPi6d61NgwP3AFCSI+u/Mv5+KjWPjEc+DEwZnzDmhg
-	MZ5R5ISm/2nFhvwu3BElmTEnlp7L8DOJ9JjjVCX9Gf+mNhENgi52sRPG7vxQQCl6
-	GtgQv3aL2Ctgmj8cMe2uanvUC2swOJMe+0fqWhm5oKirFsGx9OuZu65xceF41UMY
-	OKyDw5N9fXx3HppudXT9ka+b8zB7QM1qVKqGtubirZdAOyxzeyVa/YoaLXMwWu+e
-	7ukJQA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4gd4ade-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 06:30:39 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48J6UdlK027082
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 06:30:39 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 18 Sep
- 2024 23:30:35 -0700
-Message-ID: <27ed94a1-eb60-43b1-b181-2b8270015a37@quicinc.com>
-Date: Thu, 19 Sep 2024 12:00:33 +0530
+	s=arc-20240116; t=1726727608; c=relaxed/simple;
+	bh=/qOykdb7Slk9hqgZWIdmfjaTAxzZPv9Pt5wMu3ABVM8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=thoHm7y2jrrQOvLWMxHLnxaf1mU5ywo+d5RMEP3Z4yIjDE0kYzQw0/zcfYiyk4E1RyfExAbUPgGUJpdjnViXpxd/75J3VtcSEmhVQ5G7spBqozFUDRjKPxInFUU/NSzNNa6DleMJ+qTJKRyhHLHFGdWJ6nQ1n9/QnNq/4P5DoU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4X8Qgb2vKqz4f3jJ3;
+	Thu, 19 Sep 2024 14:32:59 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 472871A092F;
+	Thu, 19 Sep 2024 14:33:15 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgAnXMipxetm9E31Bg--.40694S4;
+	Thu, 19 Sep 2024 14:33:15 +0800 (CST)
+From: linan666@huaweicloud.com
+To: song@kernel.org,
+	yukuai3@huawei.com
+Cc: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linan666@huaweicloud.com,
+	yi.zhang@huawei.com,
+	houtao1@huawei.com,
+	yangerkun@huawei.com,
+	zhangxiaoxu5@huawei.com
+Subject: [PATCH] md: ensure child flush IO does not affect origin bio->bi_status
+Date: Thu, 19 Sep 2024 14:30:48 +0800
+Message-Id: <20240919063048.2887579-1-linan666@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] misc: fastrpc: Skip reference for DMA handles
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
-        stable
-	<stable@kernel.org>
-References: <20240822105933.2644945-1-quic_ekangupt@quicinc.com>
- <20240822105933.2644945-4-quic_ekangupt@quicinc.com>
- <7q7rar7ssvzlkol46e5e4yecgt6n4b4oqueam4ywlxjeasx2dl@oydthy337t6i>
-Content-Language: en-US
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <7q7rar7ssvzlkol46e5e4yecgt6n4b4oqueam4ywlxjeasx2dl@oydthy337t6i>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: sFzpdocpkrE2omDSeZ2UUeT0-RqyU-dm
-X-Proofpoint-GUID: sFzpdocpkrE2omDSeZ2UUeT0-RqyU-dm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- bulkscore=0 clxscore=1015 spamscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=999 impostorscore=0 mlxscore=0 priorityscore=1501 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409190040
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAnXMipxetm9E31Bg--.40694S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7urWfWFy8uFyfAr47JrW8WFg_yoW8uF48pa
+	yfW3Z8J398Ja1IvanxZrZrGa4Yqws7KFWqyFy3C34fZF13CFn8Ka1aq340vF98GF4furZr
+	Jw1jyw4UuayUAFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9m14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
+	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I
+	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
+	xVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
+	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8I
+	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
+	1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUBrWrUUUUU=
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
+From: Li Nan <linan122@huawei.com>
 
+When a flush is issued to an RAID array, a child flush IO is created and
+issued for each member disk in the RAID array. Since commit b75197e86e6d
+("md: Remove flush handling"), each child flush IO has been chained with
+the original bio. As a result, the failure of any child IO could modify
+the bi_status of the original bio, potentially impacting the upper-layer
+filesystem.
 
-On 8/30/2024 3:03 PM, Dmitry Baryshkov wrote:
-> On Thu, Aug 22, 2024 at 04:29:33PM GMT, Ekansh Gupta wrote:
->> If multiple dma handles are passed with same fd over a remote call
->> the kernel driver takes a reference and expects that put for the
->> map will be called as many times to free the map.
->> But DSP only
->> updates the fd one time in the fd list when the DSP refcount
->> goes to zero
-> I'm sorry, I couldn't understand this phrase. Could you plese clarify
-> what do you mean here?
-DMA handle are buffers passed to DSP which are only unmapped when DSP updated
-the buffer fd in fdlist.
-fdlist implementation: misc: fastrpc: Add fdlist implementation - kernel/git/next/linux-next.git - The linux-next integration testing tree <https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/misc/fastrpc.c?id=8f6c1d8c4f0cc316b0456788fff8373554d1d99d>
+Fix the issue by preventing child flush IO from altering the original
+bio->bi_status as before. However, this design introduces a known
+issue: in the event of a power failure, if a flush IO on a member
+disk fails, the upper layers may not be informed. This issue is not easy
+to fix and will not be addressed for the time being in this issue.
 
-A remote call payload carries both input/output buffers and dma handles. The lifetime
-of input/output buffer is a remote call which means that any buffer allocated or mapped
-for a remote call will be freed or unmapped when the remote call is completing. Whereas,
-dma handles can get freed over some other remote call whenever the DSP will update
-fdlist. So if a remote call passed multiple dma handles with same fd to DSP, on driver, ref
-count will be incremented, but DSP can update fdlist only 1 time for the same fd as DSP also
-has a ref counting happening for the dma handle and fdlist is updated when the DSP ref
-count goes to 0. In this case, the map will not get freed even though it is no longer in use.
->
->> and hence kernel make put call only once for the
->> fd. This can cause SMMU fault issue as the same fd can be used
->> in future for some other call.
->>
->> Fixes: 35a82b87135d ("misc: fastrpc: Add dma handle implementation")
->> Cc: stable <stable@kernel.org>
->> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
->> ---
->>  drivers/misc/fastrpc.c | 13 ++++++++-----
->>  1 file changed, 8 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
->> index ebe828770a8d..ad56e918e1f8 100644
->> --- a/drivers/misc/fastrpc.c
->> +++ b/drivers/misc/fastrpc.c
->> @@ -755,7 +755,7 @@ static const struct dma_buf_ops fastrpc_dma_buf_ops = {
->>  
->>  static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
->>  				u64 va, u64 len, u32 attr,
->> -				struct fastrpc_map **ppmap)
->> +				struct fastrpc_map **ppmap, bool take_ref)
->>  {
->>  	struct fastrpc_session_ctx *sess = fl->sctx;
->>  	struct fastrpc_map *map = NULL;
->> @@ -763,7 +763,7 @@ static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
->>  	struct scatterlist *sgl = NULL;
->>  	int err = 0, sgl_index = 0;
->>  
->> -	if (!fastrpc_map_lookup(fl, fd, va, len, ppmap, true))
->> +	if (!fastrpc_map_lookup(fl, fd, va, len, ppmap, take_ref))
->>  		return 0;
->>  
->>  	map = kzalloc(sizeof(*map), GFP_KERNEL);
->> @@ -917,14 +917,17 @@ static int fastrpc_create_maps(struct fastrpc_invoke_ctx *ctx)
->>  	int i, err;
->>  
->>  	for (i = 0; i < ctx->nscalars; ++i) {
->> +		bool take_ref = true;
->>  
->>  		if (ctx->args[i].fd == 0 || ctx->args[i].fd == -1 ||
->>  		    ctx->args[i].length == 0)
->>  			continue;
->>  
->> +		if (i >= ctx->nbufs)
->> +			take_ref = false;
-> Please clarify too.
-nbufs -> total input/output buffers
-nscalars -> nbufs + dma handles
-So here, avoiding ref increment for dma handles.
->
->>  		err = fastrpc_map_create(ctx->fl, ctx->args[i].fd,
->>  				(u64)ctx->args[i].ptr, ctx->args[i].length,
->> -				ctx->args[i].attr, &ctx->maps[i]);
->> +				ctx->args[i].attr, &ctx->maps[i], take_ref);
->>  		if (err) {
->>  			dev_err(dev, "Error Creating map %d\n", err);
->>  			return -EINVAL;
->> @@ -1417,7 +1420,7 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
->>  
->>  	if (init.filelen && init.filefd) {
->>  		err = fastrpc_map_create(fl, init.filefd, init.file,
->> -				init.filelen, 0, &map);
->> +				init.filelen, 0, &map, true);
->>  		if (err)
->>  			goto err;
->>  	}
->> @@ -2040,7 +2043,7 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
->>  
->>  	/* create SMMU mapping */
->>  	err = fastrpc_map_create(fl, req.fd, req.vaddrin, req.length,
->> -			0, &map);
->> +			0, &map, true);
->>  	if (err) {
->>  		dev_err(dev, "failed to map buffer, fd = %d\n", req.fd);
->>  		return err;
->> -- 
->> 2.34.1
->>
+Fixes: b75197e86e6d ("md: Remove flush handling")
+Signed-off-by: Li Nan <linan122@huawei.com>
+---
+ drivers/md/md.c | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 179ee4afe937..67108c397c5a 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -546,6 +546,26 @@ static int mddev_set_closing_and_sync_blockdev(struct mddev *mddev, int opener_n
+ 	return 0;
+ }
+ 
++/*
++ * The only difference from bio_chain_endio() is that the current
++ * bi_status of bio does not affect the bi_status of parent.
++ */
++static void md_end_flush(struct bio *bio)
++{
++	struct bio *parent = bio->bi_private;
++
++	/*
++	 * If any flush io error before the power failure,
++	 * disk data may be lost.
++	 */
++	if (bio->bi_status)
++		pr_err("md: %pg flush io error %d\n", bio->bi_bdev,
++			blk_status_to_errno(bio->bi_status));
++
++	bio_put(bio);
++	bio_endio(parent);
++}
++
+ bool md_flush_request(struct mddev *mddev, struct bio *bio)
+ {
+ 	struct md_rdev *rdev;
+@@ -565,7 +585,9 @@ bool md_flush_request(struct mddev *mddev, struct bio *bio)
+ 		new = bio_alloc_bioset(rdev->bdev, 0,
+ 				       REQ_OP_WRITE | REQ_PREFLUSH, GFP_NOIO,
+ 				       &mddev->bio_set);
+-		bio_chain(new, bio);
++		new->bi_private = bio;
++		new->bi_end_io = md_end_flush;
++		bio_inc_remaining(bio);
+ 		submit_bio(new);
+ 	}
+ 
+-- 
+2.39.2
 
 
