@@ -1,110 +1,89 @@
-Return-Path: <linux-kernel+bounces-333880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6612B97CF57
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 01:08:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2303D97CF52
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 01:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E0221C21D2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:08:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C16981C2189E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678D31509AE;
-	Thu, 19 Sep 2024 23:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="NllGs2yc"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAC518E053;
+	Thu, 19 Sep 2024 23:04:04 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41101B2EE8;
-	Thu, 19 Sep 2024 23:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBD71802E
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 23:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726787289; cv=none; b=m8NS3INP+Exy7uaWYFWTYnKUo2McLn3MPV/SzMAKDy+0H7hP0ud6KlaaD01qvObRpjUIgOSpJEDmKOUnHTuJvgQA7vgDjJXKLfu3KcSJxnr/xQMKQeqEKkxQfxjr4gw/An7epz1hxUawekO6rekTXjYE3hxHDMqXs9MBE3UAuwM=
+	t=1726787044; cv=none; b=QKeorOgBo6uxrBLuqkyWMSSGu9wIRnpPKtDj0KrTxtGNC3VYzMkItukMxnF2MIurZbRFVfBfE9bjJrClbIRsEoJf+S89hsYZn/7jqeFPkg5abh6/9zDiQxEYC3dcZFB17RcMSxwKJ+a4EOiJooFstEQzF+za5EDcBWW7XONrz1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726787289; c=relaxed/simple;
-	bh=kcJ9FPniXK4XD8DzmXUs15e7MYhkDa5d8MZGQterbsM=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=W6fVY3FKpEZ5hiHrBahih9y3O3sSR/u7JipYH8s9QIjgYrgnuZiXDXiXk8dNWRs+446S8yvGzMr/IFEAPsEC2mCQwvCO+qDC4fd99+RH9hrptLudylN6vYBl/m8Ce16D3kh2HLPKkEUwaedo2JOisKtPHRkM3dwz3lwaDzZUGWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=NllGs2yc; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1726787281; bh=ngiiRcFr65QAmddM4leUiyajDxrmIaKOksZVmxw1F7Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=NllGs2ycb58+mFgM81FQ7umxCNCitRQ8iHaj44Mw+S2El8mvSUFTfUb6ZbRFfVbjJ
-	 qDGdJ7nUifQEb92h+hoNy8LRJmnHIkLtKdArZAGGyyYo+DDaBXnrmdGH0BJlUnFxSe
-	 brpnWLzgLZvxs3KyDpykRaSXkJ5oz7gYCgDkwvOs=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id DD09BEB8; Fri, 20 Sep 2024 06:55:16 +0800
-X-QQ-mid: xmsmtpt1726786516tgwp9pijj
-Message-ID: <tencent_C2F02EF16C089514EB32EFFECC707A726F0A@qq.com>
-X-QQ-XMAILINFO: MOpJcPT3Yy241ULNy4rFne4SDy2fD0+wUx0zPNP+MOs+jX+LMbglc8aYpdk+Sh
-	 WYujE6cDAEbzzv7r8WPv/fCGiD9VzHE0L2sFGJFa6xsHzktW1mHJ4hY5/yZZLUOqNm500zgC/Geb
-	 QDJW4ty385wrywyXf7es2mQXNOukLeqbKs4ze+/21PmHQmlKHdPWnxBHyJMgvBZHEj9+VWZxU+0a
-	 K2uceNUwV+4kppz5bK64fMtCJLaYoPX8MMJXd60FLbwCahxYZ+OWkKL0Kcws9GISHbqaHciFl7e1
-	 8ArI0sIuDXDKdzYTBWt9P6OCxrdbuMBMMMaVyGO5O6NBYZ9e0doPnusnsdrA/dd1aEbJTbb5AY4B
-	 z0IM3OJo6Mcz5K13njajtmDaExLjlRPFobyVg5QncII6g4dopBlxeRsHWFRP9WcH0Qgsugm+/IHo
-	 XH+iHoxphnoE1/OfnVsb2Xv/SzQADZu21ayj8C5VzYfQUyjilxl0Umu6+Bv4CB44eG2hkNeQWqMp
-	 +Nw/a4WVpWAR5PQTuECFHCOeXt36hpzPRihh5yPmra8nXI/UnlulTGFeFGXJAhabc8buKjOWJ6UF
-	 lHOsatG0nI5JnsTdvWsNuUcBdN6QZxQjiR1K/rXLDDVjeuJIZMc3sqRNnSpeaoehVmaPqhLNSAjs
-	 qlm2YbwGJbVVhRxuuk2nYI1JrUDVFuYnlcf0+FSwniuNMopIXwll9TFwvRi2yLJ1z/COH2JzFdAB
-	 pHfW1XxqqJWuB8TE4nITP8U2qJOpy1AD4bv7i/kEgfXvWztSY2abkr6m/Deh1+rr9zdzHzaJJFwb
-	 ULlkWP3u575sHYx7Y8TeOyZKYdH1aPqP5DKrIQGmZet8LBDb2TF2MQTBRHzizLhvlQAx6jrJF2RT
-	 /9Hh7xgHbdJ4uboniVUKSONF5sttjT8r3mKZtlswaN0VghhuurHPjm5BsvAiCz0A==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+294f528e56138c357a48@syzkaller.appspotmail.com
-Cc: kent.overstreet@linux.dev,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] bcachefs: Fix null-ptr-deref in bch2_opt_to_text
-Date: Fri, 20 Sep 2024 06:55:17 +0800
-X-OQ-MSGID: <20240919225516.228808-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <66eb6254.050a0220.92ef1.0009.GAE@google.com>
-References: <66eb6254.050a0220.92ef1.0009.GAE@google.com>
+	s=arc-20240116; t=1726787044; c=relaxed/simple;
+	bh=S+xaMHpRzSmwKl+xnSmMA+1rbDdDSSqhrETfd38to5s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ps4hpP2FZmfB5uO3t+vIh4o5OibaulEZonLhKAU9QBLA2kMYoC0SfFmA/k2kJusJ/sHF3Z07aTv/nl1YCkotapXLTRE1vPDBC4aJKmKZYwJhgvxvUxGCoBInyDFJwVeAggD/XQc6nj66/1iLITf2olh/5/g2p6HkBI76/ezy9pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82aa94d4683so191246539f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 16:04:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726787042; x=1727391842;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OWJz9uQb72/vEZbHa2crnNKcS8EkbVeNZXJ4aWGfF1U=;
+        b=UvvErLxJuvaYVif0sTgftuDk6jW9f4OFbhF2yowyU16C2otNlPD53fR/CITAo/CH6X
+         g5rvbGnmG/Nk+kFjYgsM4Xr7TfgqSDMKgXMrhCWEJhcwWB4rbgjHrdQoCFu7zwu4K3+n
+         y36danDlRiRT/a1Plho3nMMOKpwQUVl5zjKSrAN9j5sX+xgL1KsOfNjMH/a4cCdg6wWR
+         kDZfPZqGsdpZ7vdI5ohsgR3fv5Rd4h/gnYYxI3GzPWuOZsK6xK6w4rnzN4l6GRsavK0C
+         PFPCA3Y+gcVCRVEd0w12QDuifB+3PGtF/ZdRN6GHfhukuiuzOWAS5kNyNJdX7zpDINbv
+         FMEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUspKyc65sD2L6Zkwi5eBqWDtvlyCXnVDuwvy9MjKPAR6QAIpVd+3D66+M5Sy+/llo3uxSBUtm50oB+ZkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz24ToAYax61mcHUmshP6phqL72vQZDpEyKFSJvrYb1LQuj4i3k
+	YPRdZiDk68ZVEbvSGLBut1PoOr4p4tlNq2T60Q01vXE7MQ0hq0mHMVOf2RLe4tRqiK/ZSAvCFWK
+	wX/dU3yE7CW/65nXVAywBSQCtC4obtJXqn9Zm7ROyu4iZG5d0IxHrKNY=
+X-Google-Smtp-Source: AGHT+IGUnyFeMqou91gbt1FJ9NiZ111uTDbMyen86xCUbASIebuCzc7eghPfyRyWtoDKYYnqMvMs9h/eGV3ocurQzcFme/qgSaZX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2162:b0:3a0:8c5f:90c0 with SMTP id
+ e9e14a558f8ab-3a0c8cbf020mr12612215ab.10.1726787042095; Thu, 19 Sep 2024
+ 16:04:02 -0700 (PDT)
+Date: Thu, 19 Sep 2024 16:04:02 -0700
+In-Reply-To: <d2c7c140-5c07-4071-b9c3-28eab1e3f462@gmx.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ecade2.050a0220.29194.004b.GAE@google.com>
+Subject: Re: [syzbot] [btrfs?] kernel BUG in btrfs_recover_relocation
+From: syzbot <syzbot+4be543bf197a0325c7d9@syzkaller.appspotmail.com>
+To: brauner@kernel.org, clm@fb.com, dsterba@suse.com, 
+	johannes.thumshirn@wdc.com, josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quwenruo.btrfs@gmx.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The mounting option values passed in by syzbot are:
-"metadata_checksum=crc64, errors=continue, obj_user={^, subj_user=obj_ur,
-approve", which does not meet the "key1=value1,key2=value2,..." requirement
-of the bcachefs.
+Hello,
 
-Reported-and-tested-by: syzbot+294f528e56138c357a48@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=294f528e56138c357a48
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/bcachefs/opts.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/fs/bcachefs/opts.c b/fs/bcachefs/opts.c
-index e10fc1da71b1..78307e092075 100644
---- a/fs/bcachefs/opts.c
-+++ b/fs/bcachefs/opts.c
-@@ -472,6 +472,12 @@ int bch2_parse_one_mount_opt(struct bch_fs *c, struct bch_opts *opts,
- 	u64 v;
- 	int ret, id;
- 
-+	if (!val) {
-+		pr_err("Bad mount option, value is NULL");
-+		ret = -BCH_ERR_option_value;
-+		goto out;
-+	}
-+
- 	id = bch2_mount_opt_lookup(name);
- 
- 	/* Check for the form "noopt", negation of a boolean opt: */
--- 
-2.43.0
+Reported-by: syzbot+4be543bf197a0325c7d9@syzkaller.appspotmail.com
+Tested-by: syzbot+4be543bf197a0325c7d9@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         e309734b btrfs: reject ro->rw reconfiguration if there..
+git tree:       https://github.com/adam900710/linux.git syzbot_rorw
+console output: https://syzkaller.appspot.com/x/log.txt?x=167fb69f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1c9e296880039df9
+dashboard link: https://syzkaller.appspot.com/bug?extid=4be543bf197a0325c7d9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
