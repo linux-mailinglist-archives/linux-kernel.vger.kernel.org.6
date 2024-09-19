@@ -1,304 +1,309 @@
-Return-Path: <linux-kernel+bounces-333784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 831DE97CE0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:10:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138CF97CE11
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 331541F236CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 19:10:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 895291F24902
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 19:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3CF139CFA;
-	Thu, 19 Sep 2024 19:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0930F1EF01;
+	Thu, 19 Sep 2024 19:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fs44Ohqa"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fzvLBANY"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE1E6CDC8
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 19:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17D2208D0;
+	Thu, 19 Sep 2024 19:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726772892; cv=none; b=BA34PqmEQE4D7xcgu3CA+owMvZ+ZtckIjmykeWunwuA9o4R4exLNT3TxbI3Y1QA0iKrB4erT1OwKHZMq2NN7MLtaupeaG0G3t+cToAiFGJp7pUFfrJVGycQDjXSW2qZNOK35NqzX0uzENWVKq9ydJB5PIpoRCP4fZwhdEOYj3W8=
+	t=1726773148; cv=none; b=L/dcH7/BJdZ23yKS2CHhhAcuGGNlQnPBIBqH9SUxt5cdNoyjdmojmXknBPEP+onrVn04RfGWmEKHkQxYClCwOVQYWIXdpGKMIj88DSF1uRDlKfWHB3vjKsnc2WXd79GeToz0OpE4ELCPe+u4xUcgt+KYyjN5Jcg4i0DGpNS1Nb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726772892; c=relaxed/simple;
-	bh=89Zm4mmpvjM/U+CUZDYBSu7yanpawEalqKF+fM/U4wY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=n/C7OVhdB1aD3StJQ09hR9ZgIJxyJ4eLkuD8wSr9EqvevRt4vizr3SqjXL4XxXchZF609eVyxWPoy+r6fmzmYfeOBcX+2EAenvl/YN2cIfYyl58bvhJoNls3FwjgL7lb62seWijxfeP59M3tUDqchNX4YxyI09VoQr50bIaq6rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fs44Ohqa; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e035949cc4eso2157271276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 12:08:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726772889; x=1727377689; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=09zZtsyjNKU34RxIAdYq19fo4EG569yh76FDw7B839k=;
-        b=Fs44Ohqai4CeB17KKJ+bXMLSxTCuDkBJz96QZX00zzOIHb72UjEOn+tYXE0rj4QiCU
-         /9bP20Z4RkBIOY048M83vu7v7p1F4gI/HYJZIE29Sbfi6PX6Gk0lL+LyNih+kK3AvAMx
-         XY1glDl1qO/wWHuXJipl6Rg1Ok3fLSOrkk2NTQ7B8X7RfhKHITMjG8KW7suZ9a9+KOtb
-         0ddbRxjtMLF6ONelOTcmv2l956R8YYkoLIzyzz9QSQarBoTUGAZqn70d5shQRoUoyweT
-         odPhChSS5edW2x61/yR0ewPlSBbEnvF42AZVkfG85KjOS8JSV98hXRCSFauCJaCWBf9h
-         Q+9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726772889; x=1727377689;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=09zZtsyjNKU34RxIAdYq19fo4EG569yh76FDw7B839k=;
-        b=kge+ic9BkMhVMjD6m8v4ZNcCnbo4YJi47CDq/jEiy9dvaz+4fLAvVyg6QD3v3f6aZG
-         y6Zbsm5VCt5bOQ05RD7x1IAjDk3HS6WVHCl7oLguJCSf8pc7ZJqmV7qC/A+NNzobXVlx
-         uJQ6nzdbg8DPeTVcPEGIFPKOplhksfGZqs7EGrio69KumwRu7Zfld4pUi32HKOggjkMI
-         biivX/bsPwy2XORLWDQl7h2FpZ4cNSqQNfNmmaSrgX3v4T/3dx+3wEL4dtV7RFvKqUCI
-         Hl/PgvtGtNipWSiymL3gvrEHVEZwez9bNZ2aPhl+h4r1uE9X4D1hoz485/VxZ+FUzOkB
-         5KWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcN/CEEfWUZzq0TItIpq8Uob1W0slZnbB1zkKztzjpgV6zmVT21HM0xwgLnoMjfN9o5f62kfUv+NiScYc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk+dt7q8PKEToTRxODTHRZJhx0j3cfJRCXN+EaNtCLTZ9F4W/I
-	y5cG4OIa+pKf4l7Y7ZpXcxX6OSqCuSl6ZCLaVTRGYvicT8niJViUT37uaJOIQel35NPHj2NTUc9
-	/g2dhhAjaNod5C1cyGS7ACQ==
-X-Google-Smtp-Source: AGHT+IH7DS+SKBUjwFhvlyrXRx7BdcWzXxigrbQzKIYP4oeDJso13ZKWEUISE2cE3y2zWZHTyZIEgxGF1DgagD7KPQ==
-X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:11b:3898:ac11:fa18])
- (user=coltonlewis job=sendgmr) by 2002:a05:6902:1347:b0:e0b:958a:3344 with
- SMTP id 3f1490d57ef6-e2250cd2f53mr3552276.10.1726772889473; Thu, 19 Sep 2024
- 12:08:09 -0700 (PDT)
-Date: Thu, 19 Sep 2024 19:07:50 +0000
-In-Reply-To: <20240919190750.4163977-1-coltonlewis@google.com>
+	s=arc-20240116; t=1726773148; c=relaxed/simple;
+	bh=zGHRtNH0HtiNux6L2M1nTJQ42ddSQcZjRws0nmEhOqk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:From:In-Reply-To:
+	 Content-Type:References; b=UhmPOrLv0G3ZzYzNbbEDA93qeZURnfIZUpy2KYxDNGevMiRyzao6KNPijLmf0E1a7OdFXb+3uFzoHiu0KqAJRIYRbxu+p4yCmwr91cJ13EVR/sJ3QPYPD9pQT1tsN1xwwXeIguEHog8Fu8Rzk2YCjP6N7mz2bZ0hCy+QCBW/dD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fzvLBANY; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240919191221euoutp010ddd44cc9e7483f2de1362b72161a6e4~2uwYTi6ct2616526165euoutp01c;
+	Thu, 19 Sep 2024 19:12:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240919191221euoutp010ddd44cc9e7483f2de1362b72161a6e4~2uwYTi6ct2616526165euoutp01c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1726773141;
+	bh=5wMWZ+g85x3/VQ4fe0nCOsxCOPo6Ph9ygPWjlPbrfW0=;
+	h=Date:Subject:To:CC:From:In-Reply-To:References:From;
+	b=fzvLBANYeCN29tswLwUd47pXXc6AIHl4SdOotmBcpN7h4RgkQuES0RWvwTyB+1PqY
+	 l6fR+qZymcrJAUga1SRkwi8ZqVPiz8MlXoCeBIAsBlKEdUKM91n2A8+xvmdQxxaeiC
+	 HXq/LEs57wGuy/k0nXaH8BWMs//KbjyFOD+WNJ8w=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240919191221eucas1p17631c52c12e9eac528029fc313e0de7c~2uwX8PxpR2404624046eucas1p1A;
+	Thu, 19 Sep 2024 19:12:21 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 7C.44.09624.5977CE66; Thu, 19
+	Sep 2024 20:12:21 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240919191220eucas1p23f207681d0268c632f46323fd5ac9107~2uwXFO6tm3227632276eucas1p2i;
+	Thu, 19 Sep 2024 19:12:20 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240919191220eusmtrp2b6213760a633a6ab532f5875087dc3ab~2uwXCvxYJ2424224242eusmtrp2m;
+	Thu, 19 Sep 2024 19:12:20 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-0c-66ec7795e51c
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 13.E4.14621.4977CE66; Thu, 19
+	Sep 2024 20:12:20 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240919191220eusmtip26823cf362cdfc852c6290fd3d6148856~2uwWtZnoN2388723887eusmtip2S;
+	Thu, 19 Sep 2024 19:12:20 +0000 (GMT)
+Received: from [106.110.32.87] (106.110.32.87) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Thu, 19 Sep 2024 20:12:17 +0100
+Message-ID: <d2726a61-37fa-4c39-aad6-08bf99d8d14b@samsung.com>
+Date: Thu, 19 Sep 2024 21:12:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240919190750.4163977-1-coltonlewis@google.com>
-X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
-Message-ID: <20240919190750.4163977-6-coltonlewis@google.com>
-Subject: [PATCH v4 5/5] perf: Correct perf sampling with guest VMs
-From: Colton Lewis <coltonlewis@google.com>
-To: kvm@vger.kernel.org
-Cc: Oliver Upton <oliver.upton@linux.dev>, Sean Christopherson <seanjc@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Will Deacon <will@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	Colton Lewis <coltonlewis@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/8] drm/xe: xe_gen_wa_oob: fix
+ program_invocation_short_name for macos
+Content-Language: en-GB
+To: Masahiro Yamada <masahiroy@kernel.org>
+CC: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier
+	<nicolas@fjasle.eu>, Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	William Hubbs <w.d.hubbs@gmail.com>, Chris Brannon <chris@the-brannons.com>,
+	Kirk Reiser <kirk@reisers.ca>, Samuel Thibault
+	<samuel.thibault@ens-lyon.org>, Paul Moore <paul@paul-moore.com>, "Stephen
+ Smalley" <stephen.smalley.work@gmail.com>, Ondrej Mosnacek
+	<omosnace@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
+	Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
+	<oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, Suzuki K
+	Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, Jiri Slaby
+	<jirislaby@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, "Bill
+ Wendling" <morbo@google.com>, Justin Stitt <justinstitt@google.com>, "Simona
+ Vetter" <simona.vetter@ffwll.ch>, <linux-kernel@vger.kernel.org>,
+	<linux-kbuild@vger.kernel.org>, <intel-xe@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <speakup@linux-speakup.org>,
+	<selinux@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<kvmarm@lists.linux.dev>, <linux-serial@vger.kernel.org>,
+	<llvm@lists.linux.dev>, Finn Behrens <me@kloenk.dev>, "Daniel Gomez
+ (Samsung)" <d+samsung@kruces.com>, <gost.dev@samsung.com>
+From: Daniel Gomez <da.gomez@samsung.com>
+In-Reply-To: <CAK7LNAQDxVGOa5g3f_dqZ5nD_u8_a++T+ussL+AWuOXs-XOsow@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format="flowed"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Ta0yTVxjHPe+1INWXStejEIldumUQmCboziZBt/DhXYKJlw8ys0y68YJM
+	bmkpbm5GRO7gxkUodNAhlFtlQysgV3HAWjpAQBCRy2CRu1ynjovMjlLM+PZ/nvP7P8/5n+Tw
+	cMFrag8vIDiMkwVLA8WUNVGpX+lwSb8w47d/6qUQtTzOw9B8YRJAeu0kjmpNQzjqeTlPoav5
+	ZRRavjOJoeF7RRiay3FAGTfzKaTuMhJouryJQLqnvSRaq6nCUHdNNoXa8q/RaPR6A4XGnhZS
+	6MZiBYH+GukjUXW2kUT1Zd0U0nU/J1FMfCGJYkvGKLSQbMLQeH0LidJXZig0m/w7jQZSlQRq
+	UPXSqHhZCVCHQU8jU8NeVFnVDtBERxpAWQMDAD2rWh9cPpNCoryYD1DU4EH0pOAWfdSJLVWX
+	ArZO306x9f/kEmxN4x2KrVYN0WyuTsFGNc+SbH7dFMbqtPEUq45XY6zp2gjJNpvyaPZGRDrO
+	qo0n2IacUpodTjRgx+EZa3dfLjAgnJO97+FjfS6mNpMOnd77TcTN7RFgUpQArHiQcYPKSTVI
+	ANY8AVMMYFNsBW0pXgAYvZyHmykB8xzAfzMlbxxZtRGUBSoCcHC2ebNYh14tpW0W1QDqO1oI
+	s4XPeEDdgyVg1gQjgbdq50hL3xYas0Y3GCHjCIf7M2mz3sX4wIIE5QaPMyIY+aJkg7djnOBg
+	QRxpXoAzUzZwIrVzw0wx78F7Rt2G2Yo5AdVRf65r3jr0EVS2fGqZ4wivVvyEWyLsg5kpJYRF
+	X4J/lPdj5pmQqd0OC283kpYDTzg3ZtyEdsFpQzlt0Q7QVP0zZtH+UPOrapMJhXUDKtK8FzKH
+	4Q9tgZb2x7BszYBZ2jtg36yt5To7YGqlEk8GEtWWl1BtSaz6P4BqS4BcQGiBiFPIg/w5+YFg
+	7oKrXBokVwT7u34VEqQD61+k9bXh7yqQM73o2ggwHmgEkIeL7fiihSk/Ad9X+u1FThZyVqYI
+	5OSNwJ5HiEV8ia8jJ2D8pWHceY4L5WRvTjGe1Z4IjBdx+rvVw5rVDLfOZ6aetyQtXp2/ZPu8
+	i+mzT43f9r4c03vSTubYcX/V9vShhVFh/nzSqZNj9p454R9OdOFKr6b6ZEnrl5ELS2ekI3e1
+	ogRx0aL7F9ijT74XeOAZLp2XNCkhjo8Mv7Xv65OIAxTuV8Z3DmmOK1wOKdWSh86Ul+agzcP4
+	aFrS/06c/2fO2kjC/ZV18f36Rd+gNJFwjZdUW9fNVwjHghyWcx7HSJOqekabvS+mGBShsZrG
+	bd47n5iOxF05u63ncrhNtN+K9q7n1yFt9keDAj8vSuZnHdv99phDz/Wu+dYmbX54lPD8j4nO
+	6snoBjc2/kHskd1FiWGD5ftnmsSE/Jz0gBMuk0v/A5xW+OaRBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0yTVxjGPV+/S0GYHxXCgRHFJixCYqFA8WCAbQmZ3xYzZWK2wQAb+bhf
+	TEsFXYzNIHUUMSAqUKFiG1Aum65cLJTLYKzIGJLRwZgIuClyEUEGKjiwA8oS/vud8z7v87zn
+	5Bwuh3eXdObGp6SxkhRxEp+0xnvedo3uu5w+E+NlGnBA9/7QYGiu4gJAxqpJDjKYRzjo95dz
+	JMrU3ibRUu0khsZab2JottQFXa3Wkkj9WzeOput+wpHu8SCBVpr0GDI1lZDoV20uhZ5cbiPR
+	+OMKEt2Yr8fRX4+GCNRY0k2gltsmEulMCwRSZFcQ6HzlOIle5Jkx9LTlHoGuLM+Q6HnezxQa
+	vlSIozbVIIVuLRUC1NdlpJC5bRdq0PcCNNFXAFDx8DBAz/RrxnUz+QTSKPajrIci9Gf5HeoD
+	D6ZGXQOYZmMvybS8KsOZpo5akmlUjVBMmU7GZHU+Jxht8xTG6KqySUadrcYYc+4jguk0ayjm
+	hvwKh1F3hzBtpTUUM5bThR2BYYIASaosjXWNS5WmBfLDhchbIPRHAm9ff4HQZ3/EAW8R3zMo
+	IJpNij/FSjyDjgviFIYi6uT0rgx59XY5mHRUAisupH1hsUFOKoE1l0eXA9hfqsEsBRf4w+IA
+	YeGdcGVQuSmaB7BCn7O5aASwaDxzo8OWDoK6+6/BOuO0G7xjmCUs+3awu/gJvs4O9G449qCI
+	Wued9HFYrizc0HNoR/jNYuWG3p72gA/LvyXWAzj0hA08f0uHWdI0GOzXjm6kkbQ7bO3WbThZ
+	0SFQnTVKWZwQ1M60b/JumFl/jWM5wx5YlF+JW/gsXFh9CvKAg2rLgKotg6i2WKm2WJUBvArY
+	szJpcmyyVCiQipOlspRYwYnUZB1Ye8ENxuVaPVBPzws6AMYFHQByOXx7W8cXUzE822jx6TOs
+	JDVKIktipR1AtHZL+RxnhxOpa18gJS1K6OclEvr6+XuJ/P18+I62H5n6Ynh0rDiNTWTZk6zk
+	/z6Ma+Usx04lMZ9mlX14eDl0OXdHztRLyvcXm72dE831nzXyE2Nmffr1wW6ai1czMkcC4NeG
+	g4PtxRE20ZENipCDRVYXI123lZTWykP6icaZQNPNdCv3c70GP55LwqF/ek43/AgJuGB0c7Ie
+	0r/zSWhynsLp+6++e/8s7RmGuEcH4qvD/9W/MkGdKGT2820KLLp9X/r2yXEZqZrLiFsNi+ap
+	90TefYZlX3fvNKY05a944b0fc5WH/r7+4FigwT3qrS48tL4kaNU1ZuTI/OuFa+L77znWti6t
+	RPRgb84l2CgTqYL6gpwCWH3mSx/jgPldwZtFeztZwiWe3URZ3Y4+py8OD104EBx8lI9L48RC
+	D45EKv4P8XlwBEoEAAA=
+X-CMS-MailID: 20240919191220eucas1p23f207681d0268c632f46323fd5ac9107
+X-Msg-Generator: CA
+X-RootMTR: 20240906144003eucas1p1b8c2be4807e04ced52c4902bfbfb9783
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240906144003eucas1p1b8c2be4807e04ced52c4902bfbfb9783
+References: <20240906-macos-build-support-v2-0-06beff418848@samsung.com>
+	<20240906-macos-build-support-v2-3-06beff418848@samsung.com>
+	<CGME20240906144003eucas1p1b8c2be4807e04ced52c4902bfbfb9783@eucas1p1.samsung.com>
+	<CAK7LNAQDxVGOa5g3f_dqZ5nD_u8_a++T+ussL+AWuOXs-XOsow@mail.gmail.com>
 
-Previously any PMU overflow interrupt that fired while a VCPU was
-loaded was recorded as a guest event whether it truly was or not. This
-resulted in nonsense perf recordings that did not honor
-perf_event_attr.exclude_guest and recorded guest IPs where it should
-have recorded host IPs.
+On 9/6/2024 4:39 PM, Masahiro Yamada wrote:
+> On Fri, Sep 6, 2024 at 8:01 PM Daniel Gomez via B4 Relay
+> <devnull+da.gomez.samsung.com@kernel.org> wrote:
+>>
+>> From: Daniel Gomez <da.gomez@samsung.com>
+>>
+>> Use getprogname() [1] instead of program_invocation_short_name() [2]
+>> for macOS hosts.
+>>
+>> [1]:
+>> https://www.gnu.org/software/gnulib/manual/html_node/
+>> program_005finvocation_005fshort_005fname.html
+>>
+>> [2]:
+>> https://developer.apple.com/library/archive/documentation/System/
+>> Conceptual/ManPages_iPhoneOS/man3/getprogname.3.html
+>>
+>> Fixes build error for macOS hosts:
+>>
+>> drivers/gpu/drm/xe/xe_gen_wa_oob.c:34:3: error: use of
+>> undeclared identifier 'program_invocation_short_name'    34 |
+>> program_invocation_short_name);       |                 ^ 1 error
+>> generated.
+>>
+>> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+>> Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
+>> ---
+>>   drivers/gpu/drm/xe/xe_gen_wa_oob.c | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+>> index 904cf47925aa..0d933644d8a0 100644
+>> --- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+>> +++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+>> @@ -8,6 +8,7 @@
+>>   #include <errno.h>
+>>   #include <stdbool.h>
+>>   #include <stdio.h>
+>> +#include <stdlib.h>
+>>   #include <string.h>
+>>
+>>   #define HEADER \
+>> @@ -30,6 +31,9 @@
+>>
+>>   static void print_usage(FILE *f)
+>>   {
+>> +#ifdef __APPLE__
+>> +       const char *program_invocation_short_name = getprogname();
+>> +#endif
+>>          fprintf(f, "usage: %s <input-rule-file> <generated-c-source-file> <generated-c-header-file>\n",
+>>                  program_invocation_short_name);
+>>   }
+>>
+>> --
+>> 2.46.0
+>>
+>>
+> 
+> 
+> 
+> Before adding such #ifdef, you should check how other programs do.
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> Solution 1 : hard-code the program name
+> 
+> 
+> diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> index 106ee2b027f0..9e9a29e2cecf 100644
+> --- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> +++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> @@ -30,8 +30,7 @@
+> 
+>   static void print_usage(FILE *f)
+>   {
+> -       fprintf(f, "usage: %s <input-rule-file>
+> <generated-c-source-file> <generated-c-header-file>\n",
+> -               program_invocation_short_name);
+> +       fprintf(f, "usage: xe_gen_wa_oob <input-rule-file>
+> <generated-c-source-file> <generated-c-header-file>\n");
+>   }
+> 
+>   static void print_parse_error(const char *err_msg, const char *line,
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> Solution 2: use argv[0]
+> 
+> 
+> diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> index 106ee2b027f0..600c63e88e46 100644
+> --- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> +++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+> @@ -28,10 +28,10 @@
+>          "\n" \
+>          "#endif\n"
+> 
+> -static void print_usage(FILE *f)
+> +static void print_usage(FILE *f, const char *progname)
+>   {
+>          fprintf(f, "usage: %s <input-rule-file>
+> <generated-c-source-file> <generated-c-header-file>\n",
+> -               program_invocation_short_name);
+> +               progname);
+>   }
+> 
+>   static void print_parse_error(const char *err_msg, const char *line,
+> @@ -136,7 +136,7 @@ int main(int argc, const char *argv[])
+> 
+>          if (argc < 3) {
+>                  fprintf(stderr, "ERROR: wrong arguments\n");
+> -               print_usage(stderr);
+> +               print_usage(stderr, argv[0]);
+>                  return 1;
+>          }
 
-Rework the sampling logic to only record guest samples for events with
-exclude_guest = 0. This way any host-only events with exclude_guest
-set will never see unexpected guest samples. The behaviour of events
-with exclude_guest = 0 is unchanged.
 
-Note that events configured to sample both host and guest may still
-misattribute a PMI that arrived in the host as a guest event depending
-on KVM arch and vendor behavior.
+This approach looks good to me. I will drop Lucas' tag in favor to this. 
+Please, Lucas let me know if you disagree any of the proposals here or 
+if you have any preference. Otherwise, I'll resend this with solution 2.
 
-Signed-off-by: Colton Lewis <coltonlewis@google.com>
----
- arch/arm64/include/asm/perf_event.h |  4 ----
- arch/arm64/kernel/perf_callchain.c  | 28 ----------------------------
- arch/x86/events/core.c              | 16 ++++------------
- include/linux/perf_event.h          | 21 +++++++++++++++++++--
- kernel/events/core.c                | 21 +++++++++++++++++----
- 5 files changed, 40 insertions(+), 50 deletions(-)
 
-diff --git a/arch/arm64/include/asm/perf_event.h b/arch/arm64/include/asm/perf_event.h
-index 31a5584ed423..ee45b4e77347 100644
---- a/arch/arm64/include/asm/perf_event.h
-+++ b/arch/arm64/include/asm/perf_event.h
-@@ -10,10 +10,6 @@
- #include <asm/ptrace.h>
- 
- #ifdef CONFIG_PERF_EVENTS
--struct pt_regs;
--extern unsigned long perf_arch_instruction_pointer(struct pt_regs *regs);
--extern unsigned long perf_arch_misc_flags(struct pt_regs *regs);
--#define perf_arch_misc_flags(regs)	perf_misc_flags(regs)
- #define perf_arch_bpf_user_pt_regs(regs) &regs->user_regs
- #endif
- 
-diff --git a/arch/arm64/kernel/perf_callchain.c b/arch/arm64/kernel/perf_callchain.c
-index 01a9d08fc009..9b7f26b128b5 100644
---- a/arch/arm64/kernel/perf_callchain.c
-+++ b/arch/arm64/kernel/perf_callchain.c
-@@ -38,31 +38,3 @@ void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
- 
- 	arch_stack_walk(callchain_trace, entry, current, regs);
- }
--
--unsigned long perf_arch_instruction_pointer(struct pt_regs *regs)
--{
--	if (perf_guest_state())
--		return perf_guest_get_ip();
--
--	return instruction_pointer(regs);
--}
--
--unsigned long perf_arch_misc_flags(struct pt_regs *regs)
--{
--	unsigned int guest_state = perf_guest_state();
--	int misc = 0;
--
--	if (guest_state) {
--		if (guest_state & PERF_GUEST_USER)
--			misc |= PERF_RECORD_MISC_GUEST_USER;
--		else
--			misc |= PERF_RECORD_MISC_GUEST_KERNEL;
--	} else {
--		if (user_mode(regs))
--			misc |= PERF_RECORD_MISC_USER;
--		else
--			misc |= PERF_RECORD_MISC_KERNEL;
--	}
--
--	return misc;
--}
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index d51e5d24802b..3c5f512d2bcf 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2942,9 +2942,6 @@ static unsigned long code_segment_base(struct pt_regs *regs)
- 
- unsigned long perf_arch_instruction_pointer(struct pt_regs *regs)
- {
--	if (perf_guest_state())
--		return perf_guest_get_ip();
--
- 	return regs->ip + code_segment_base(regs);
- }
- 
-@@ -2971,17 +2968,12 @@ unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
- 
- unsigned long perf_arch_misc_flags(struct pt_regs *regs)
- {
--	unsigned int guest_state = perf_guest_state();
- 	unsigned long misc = common_misc_flags(regs);
- 
--	if (guest_state) {
--		misc |= perf_arch_guest_misc_flags(regs);
--	} else {
--		if (user_mode(regs))
--			misc |= PERF_RECORD_MISC_USER;
--		else
--			misc |= PERF_RECORD_MISC_KERNEL;
--	}
-+	if (user_mode(regs))
-+		misc |= PERF_RECORD_MISC_USER;
-+	else
-+		misc |= PERF_RECORD_MISC_KERNEL;
- 
- 	return misc;
- }
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index d061e327ad54..968f3edd95e4 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1633,8 +1633,9 @@ extern void perf_tp_event(u16 event_type, u64 count, void *record,
- 			  struct task_struct *task);
- extern void perf_bp_event(struct perf_event *event, void *data);
- 
--extern unsigned long perf_misc_flags(struct pt_regs *regs);
--extern unsigned long perf_instruction_pointer(struct pt_regs *regs);
-+extern unsigned long perf_misc_flags(struct perf_event *event, struct pt_regs *regs);
-+extern unsigned long perf_instruction_pointer(struct perf_event *event,
-+					      struct pt_regs *regs);
- 
- #ifndef perf_arch_misc_flags
- # define perf_arch_misc_flags(regs) \
-@@ -1645,6 +1646,22 @@ extern unsigned long perf_instruction_pointer(struct pt_regs *regs);
- # define perf_arch_bpf_user_pt_regs(regs) regs
- #endif
- 
-+#ifndef perf_arch_guest_misc_flags
-+static inline unsigned long perf_arch_guest_misc_flags(struct pt_regs *regs)
-+{
-+	unsigned long guest_state = perf_guest_state();
-+
-+	if (guest_state & PERF_GUEST_USER)
-+		return PERF_RECORD_MISC_GUEST_USER;
-+
-+	if (guest_state & PERF_GUEST_ACTIVE)
-+		return PERF_RECORD_MISC_GUEST_KERNEL;
-+
-+	return 0;
-+}
-+# define perf_arch_guest_misc_flags(regs)	perf_arch_guest_misc_flags(regs)
-+#endif
-+
- static inline bool has_branch_stack(struct perf_event *event)
- {
- 	return event->attr.sample_type & PERF_SAMPLE_BRANCH_STACK;
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index eeabbf791a8c..c5e57c024d9a 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -6921,13 +6921,26 @@ void perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *cbs)
- EXPORT_SYMBOL_GPL(perf_unregister_guest_info_callbacks);
- #endif
- 
--unsigned long perf_misc_flags(struct pt_regs *regs)
-+static bool should_sample_guest(struct perf_event *event)
- {
-+	return !event->attr.exclude_guest && perf_guest_state();
-+}
-+
-+unsigned long perf_misc_flags(struct perf_event *event,
-+			      struct pt_regs *regs)
-+{
-+	if (should_sample_guest(event))
-+		return perf_arch_guest_misc_flags(regs);
-+
- 	return perf_arch_misc_flags(regs);
- }
- 
--unsigned long perf_instruction_pointer(struct pt_regs *regs)
-+unsigned long perf_instruction_pointer(struct perf_event *event,
-+				       struct pt_regs *regs)
- {
-+	if (should_sample_guest(event))
-+		return perf_guest_get_ip();
-+
- 	return perf_arch_instruction_pointer(regs);
- }
- 
-@@ -7743,7 +7756,7 @@ void perf_prepare_sample(struct perf_sample_data *data,
- 	__perf_event_header__init_id(data, event, filtered_sample_type);
- 
- 	if (filtered_sample_type & PERF_SAMPLE_IP) {
--		data->ip = perf_instruction_pointer(regs);
-+		data->ip = perf_instruction_pointer(event, regs);
- 		data->sample_flags |= PERF_SAMPLE_IP;
- 	}
- 
-@@ -7907,7 +7920,7 @@ void perf_prepare_header(struct perf_event_header *header,
- {
- 	header->type = PERF_RECORD_SAMPLE;
- 	header->size = perf_sample_data_size(data, event);
--	header->misc = perf_misc_flags(regs);
-+	header->misc = perf_misc_flags(event, regs);
- 
- 	/*
- 	 * If you're adding more sample types here, you likely need to do
--- 
-2.46.0.792.g87dc391469-goog
+
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> 
 
 
