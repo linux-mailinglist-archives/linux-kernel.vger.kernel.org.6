@@ -1,102 +1,161 @@
-Return-Path: <linux-kernel+bounces-333339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634F097C721
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:31:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B25B997C723
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 946A51C2187E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:31:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F0EA284C6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3BF199956;
-	Thu, 19 Sep 2024 09:31:19 +0000 (UTC)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509EF199943;
+	Thu, 19 Sep 2024 09:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9bb98nG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2361DA23;
-	Thu, 19 Sep 2024 09:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37031DA23;
+	Thu, 19 Sep 2024 09:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726738279; cv=none; b=ZXF9/2IIS0svKr2tHoNEsL1rFGnmWUyuu1VUnHEmdnwF339BhKWGKxi4bgGCN8QA0eH2OFaUofBKW6llT8E8doZLQ5UnZn1PObqxrgTJIATB7eyy79fdKiEDKyQMsmK4mxS+MCPxgY8TJfR03m6iOz+wDpQ364eztiJnRRkR+sg=
+	t=1726738300; cv=none; b=aT2WOfcLRpM/41hMV0XNN+nsR1WpJUBYZujFYdlw+1FGrQyzMPaWQV/zlJGzbwFCR6u+MFVBT4VBzY385xkNDrmF2RBH9BTV7SqMGT7W0afziwjLcPBQ/B+Jwa34JwsOrqTHYpWS8hM37tFHxTl9vl8hWqRN+fHkbl/Pigoi53c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726738279; c=relaxed/simple;
-	bh=nQ3lqo1I2CKZ30nxb/1kHVqsvS/ncqJgiZKU/ul0xTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TD6yOYZ9jfBGBgsxyCMr7lgPWyEdx8kiTl2sDoDwTgss3EJEH1P3X98VYvYRHOilhECPZeylihh+rkV9MQvtJwsa/gtlwKnPJjHBUqGmTDEO+8OEQMvEDGIQC7jSrWXEv8ogd2aPUMXN6IzHCbFOrQWv+00Cd0PDVvWGD1cTI2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c40aea5c40so1218925a12.0;
-        Thu, 19 Sep 2024 02:31:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726738276; x=1727343076;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ST7vrp03N+o606LQWEMLeEB588qIp24tdnToE5qhzcQ=;
-        b=oiKSECT4u0noSGq2SBoardxPZ28y2jSg+lhjtNI0VzyRg/APxpwaioCtIbAiSjDoYR
-         8H+/VV6gB+IJ8SLQsrVayaPw75xgx/9KEWcWtSarsZl5tXKjeD2oWpTDSSEiR5qVQIae
-         olFhnLZ7jLGkMj1K6KjySmdGhxUvA1GQEyU8y4EUGxe4haisbzkssKJC08gOLOp1ycpF
-         pCRKitXuJT/qjwYeQV8BMUigVn1VND6ZpW0lFk6QUMLI7PYpGyOVtcwrB43NlNvC7IC2
-         tEoghpR1tXybidmM0TSGjesDQg2jrob+h8J5cpMeFz9UfIN4ZkQxOFP8yRcs4slszTM2
-         wsGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJODsf4mNGB6tKsuQPp2zt6dOO6GyKj+HQee1KPW+EYeivZ8uTDEkhPBeLTSosw7mza6UAeTM+igYHsnc=@vger.kernel.org, AJvYcCVVlFGh7q0z+YHNWA7Ul3Qqk7fnMs/VToE6je6f3lamoX2YeRGg2O2IPzE4jiM4hKhmGe+O4km2@vger.kernel.org, AJvYcCXJCXxMdxyLzpM5SRkJU2SJ205dtDBOr3gO/aZVHi3MFvxtnuwLGX8agdtMtv/Te7lLoS17gCcpUX2I0tVZkxBP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9yauNYe2Bl5tYEO4b4SHYuHVp0pUbUWpsmE9YoeDWyp/dJLWL
-	44Bx3S/rheh5pV6coRez7mhWRcnO+1j7rexCGKwtJA1qcmxGSyG0
-X-Google-Smtp-Source: AGHT+IHTuCSYj/XYHQKqTneOv6VMVN5wrhYxzrHoKIwTzfFbGo75cCNBZV0kPWcUqTCsrIGiWagHzw==
-X-Received: by 2002:a05:6402:909:b0:5c4:30fd:abf5 with SMTP id 4fb4d7f45d1cf-5c45921ce37mr2731986a12.7.1726738275797;
-        Thu, 19 Sep 2024 02:31:15 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb5e86asm6134727a12.46.2024.09.19.02.31.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 02:31:15 -0700 (PDT)
-Date: Thu, 19 Sep 2024 02:31:12 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, rbc@meta.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org
-Subject: Re: [PATCH nf-next v5 0/2] netfilter: Make IP_NF_IPTABLES_LEGACY
- selectable
-Message-ID: <20240919-refreshing-grinning-leopard-8f8ca7@leitao>
-References: <20240909084620.3155679-1-leitao@debian.org>
- <Zuq12avxPonafdvv@calendula>
+	s=arc-20240116; t=1726738300; c=relaxed/simple;
+	bh=Vn6J6AI434FtwrwKdYgEf25rwvP7VugwRdrFZznXxKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pk8I0SAApOiZNLCJIA0fYwEJ2uXx3tYKTAetTdWH0jlZIRdd05bj7oh74zg6Dgrd5s4t2yr4PpVjhZnCyzKQoYPKomRr7SPlihs9eL8ZZd6rGzgU4ZelDrgqZR6yN2+YrxSKaofaJNGUaudblTP+1EqBbEh+Bclxt9FdG7XwT6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9bb98nG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88ED1C4CEC4;
+	Thu, 19 Sep 2024 09:31:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726738300;
+	bh=Vn6J6AI434FtwrwKdYgEf25rwvP7VugwRdrFZznXxKQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=f9bb98nGGQVMMKr0OePZRGoI3EtaaUD2FMl1ZH3/arLzhdrhGYnQ5ZDb4FNmG0CCT
+	 4Ol7fi7kev4spRVvRDC1zMxj9h/lMHkFPQDvfM2NHBHeGNV08U47qrnubiPe3cXpNr
+	 RRaEjFCYv3FyWU877rOhZZlYIDfZvzrymE8g34ukMawg/4kaDJm4whA0/FUNwda8lh
+	 i0guD7iKfN49F6Fp0QoqGq1w12kTkX19cBZV/dzOSYeZwTmsZDALC+z7LGEkCN9Kl5
+	 Ut2B7E22zxG2SsoHeH1ywIUtM19rVZrdXcB77n+cE5BMFCWiWG7Vy0tAjY7k10MB85
+	 M6bvqo4RJLYtQ==
+Date: Thu, 19 Sep 2024 11:31:35 +0200
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.11-final-but-missed-it
+Message-ID: <Zuvvd4kJRv8XGQPT@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="1hPKzSjkPqTv1RD6"
+Content-Disposition: inline
+
+
+--1hPKzSjkPqTv1RD6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zuq12avxPonafdvv@calendula>
 
-Hello Pablo,
+The following changes since commit da3ea35007d0af457a0afc87e84fddaebc4e0b63:
 
-On Wed, Sep 18, 2024 at 01:13:29PM +0200, Pablo Neira Ayuso wrote:
-> On Mon, Sep 09, 2024 at 01:46:17AM -0700, Breno Leitao wrote:
-> > These two patches make IP_NF_IPTABLES_LEGACY and IP6_NF_IPTABLES_LEGACY
-> > Kconfigs user selectable, avoiding creating an extra dependency by
-> > enabling some other config that would select IP{6}_NF_IPTABLES_LEGACY.
-> 
-> This needs a v6. There is also:
-> 
-> BRIDGE_NF_EBTABLES_LEGACY
-> 
-> We have more copy and paste in the bridge.
-> 
-> Would you submit a single patch covering this too?
+  Linux 6.11-rc7 (2024-09-08 14:50:28 -0700)
 
-Sure, I am more than happy to work on this one and also on
-IP_NF_ARPTABLES.
+are available in the Git repository at:
 
-Would you like a v6 with all the four changes, or, two extra patches and
-keep this thread ready for merge?
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.11-final-but-missed-it
 
-PS: I am in LPC and in Kernel Recipes next week, I might not be able to
-do it until next week.
+for you to fetch changes up to e03ad65cea610b24c6991aebf432d5c6824cd002:
 
-Thanks
+  Merge tag 'i2c-host-fixes-6.11-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2024-09-16 14:06:04 +0200)
+
+----------------------------------------------------------------
+i2c-for-6.11-final-but-missed-it
+
+These are only fixes originally meant for 6.11 final. Because of serious
+travel problems, I could not send them in time and so this is my first
+PR for 6.12.
+
+The Aspeed driver tracks the controller's state (stop, pending,
+start, etc.). Previously, when the stop command was sent, the
+state was not updated. The fix in this pull request ensures the
+driver's state is aligned with the device status.
+
+The Intel SCH driver receives a new look, and among the cleanups,
+there is a fix where, due to an oversight, an if/else statement
+was missing the else, causing it to move forward instead of
+exiting the function in case of an error.
+
+The Qualcomm GENI I2C driver adds the IRQF_NO_AUTOEN flag to the
+IRQ setup to prevent unwanted interrupts during probe.
+
+The Xilinx XPS controller fixes TX FIFO handling to avoid missed
+NAKs. Another fix ensures the controller is reinitialized when
+the bus appears busy.
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      i2c: isch: Add missed 'else'
+
+Jinjie Ruan (1):
+      i2c: qcom-geni: Use IRQF_NO_AUTOEN flag in request_irq()
+
+Robert Hancock (2):
+      i2c: xiic: Wait for TX empty to avoid missed TX NAKs
+      i2c: xiic: Try re-initialization on bus busy timeout
+
+Tommy Huang (1):
+      i2c: aspeed: Update the stop sw state when the bus recovery occurs
+
+Wolfram Sang (1):
+      Merge tag 'i2c-host-fixes-6.11-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Manikanta Guntupalli (2):
+      (Rev.) i2c: xiic: Try re-initialization on bus busy timeout
+      (Rev.) i2c: xiic: Wait for TX empty to avoid missed TX NAKs
+
+Vladimir Zapolskiy (1):
+      (Rev.) i2c: qcom-geni: Use IRQF_NO_AUTOEN flag in request_irq()
+
+ drivers/i2c/busses/i2c-aspeed.c    | 16 +++++-----
+ drivers/i2c/busses/i2c-isch.c      |  3 +-
+ drivers/i2c/busses/i2c-qcom-geni.c |  4 +--
+ drivers/i2c/busses/i2c-xiic.c      | 60 ++++++++++++++++++++++----------------
+ 4 files changed, 45 insertions(+), 38 deletions(-)
+
+--1hPKzSjkPqTv1RD6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbr73cACgkQFA3kzBSg
+KbZeCw/+MxNvxS23CC3geCrlDklBymA1G+kvwpBtqwMumCjvTQQsGxNjUcKVYKPR
+LgyVdubPsT1gtlX8vL28AyyDeK147tTj5K4Q2WP47TdJnOitAuQUO9gronzJ3q5M
+2J38ueOyFpcsEFOKBWeo+CWu6VWX3vivWuBtpKLwT+ajM5uU+H9Mb/MWmPAK9zdw
+lBJI+81/us2qZ0CYJTrr5VJ4uXaC7KetTWPFGbN9XQ1rG84FgKqyr/11SaI/Hg/V
+7cjkJcNtJ+ELzaLd+cNtc4pgXSPwwMq9Ffgq6jr3IDih/4BiDvZhzHaASigyP/u2
+nKt04o99wxmIHYtjUeIBs8NBROPdvm70shsHbJS2Ft0ZIW6FH5Ezi9/Wu4IfMfRr
+xqseLN1o5j2Si5h4Tr6Wr69somKqUXmg+Qb/gofVtnQ6G+2+vSkqRWp9joHGA3E3
+AbWf5UK/jRhhzE8NyiG4TbRg1DAN+kQiffjJPzxK3PEdEd6kbwTQsIxDJwdMf09d
+5G03QdMhwUlFMoE1N1Eh5B0eafGrJtPtcvJffstbiDRmjLfBJ1+mP4DHbMcauAUA
+Sw10VarZylqT32j1yLQWJq1DPb2G8bSqxu5A+D3oyo+1gd78BWicMOMAj8QdAD/M
+vit3YH1bLiI2up6UNfetrEWmABJaFbYKgZawzKoH0WxXtb97LTU=
+=8hRB
+-----END PGP SIGNATURE-----
+
+--1hPKzSjkPqTv1RD6--
 
