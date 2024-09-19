@@ -1,159 +1,109 @@
-Return-Path: <linux-kernel+bounces-333429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFD797C87A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:19:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0229E97C88A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 308F51C21B42
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:19:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1BB1F2511F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:22:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43ACD19CD07;
-	Thu, 19 Sep 2024 11:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685AD19B3C3;
+	Thu, 19 Sep 2024 11:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HdFpUA5f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iaYVu8xi"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86646194083;
-	Thu, 19 Sep 2024 11:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8E1199FD2
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 11:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726744771; cv=none; b=MfkWeSwOPXfEk/eW2jGSSPjHgDUYnEtNCm6EA9tPVwgOm2vQO7EW36t9iTurEAX4PHpLXoQRCexN6kfi1z+r1cz/BKSkmoKfDfoRfiNRqjXSPeNYmhbsRgtqXSOPXX0KngqjSXyO7hpcYjqI1DUkdizUJ6JmNbc4Hsx/AITc9JU=
+	t=1726744924; cv=none; b=gYFXqrHbinoiGqFKuE/nFJ1QJi/G2lwMXhpyaSrVd0oqSDYfLiC+byYnTCiYVmF4OUgw1p27dJf2mE7THCndz0jK5RhCZFg7gHv9sDCBV6tIC9N0DRUfHEpyqfu7u9v75AA7UsHKRScERXdCAjjwojgdDkeLYlAeAxvdzkr1prg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726744771; c=relaxed/simple;
-	bh=jYG/+bOihbZ56Cfv+boYkIkhcJCD3pB8io/W06rCRq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GRecYbzZyjAL627oxATAS8iuwzV1bOfDaLcauGMFPMPATtfw1CzBLXnjjtLYvbemSPa5fAxG0GBs/o4mvtJ4a0iKkV7DozCQ8qB6o0y+6DxnFWhLhC3OAC2EX60UbDyIxVpMNJIR8VbQMIq2w0LcAxJP+617cGf5tEyZL7Kft9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HdFpUA5f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 752BFC4CECD;
-	Thu, 19 Sep 2024 11:19:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726744771;
-	bh=jYG/+bOihbZ56Cfv+boYkIkhcJCD3pB8io/W06rCRq0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HdFpUA5fFXnr0uduODX0yzlyu6InN/ClAbTrmPJYhVKEPBwTii5XzveqLWRwVqkJv
-	 FgQaB7sFpuuns3YAJcol5rRIQoFZYJRNePncII5exa4MoIR38T19hMWy0niOxPSezk
-	 gX/gwwL09NCOjLzxBKzvVGZlsyBjw1eJ1DcF7ElM=
-Date: Thu, 19 Sep 2024 13:19:27 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: "Zhang, Rui" <rui.zhang@intel.com>
-Cc: "regressions@leemhuis.info" <regressions@leemhuis.info>,
-	"Neri, Ricardo" <ricardo.neri@intel.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"Gupta, Pawan Kumar" <pawan.kumar.gupta@intel.com>,
-	"regressions@lists.linux.dev" <regressions@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Luck, Tony" <tony.luck@intel.com>,
-	"thomas.lindroth@gmail.com" <thomas.lindroth@gmail.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [STABLE REGRESSION] Possible missing backport of x86_match_cpu()
- change in v6.1.96
-Message-ID: <2024091900-unimpeded-catalyst-b09f@gregkh>
-References: <eb709d67-2a8d-412f-905d-f3777d897bfa@gmail.com>
- <a79fa3cc-73ef-4546-b110-1f448480e3e6@leemhuis.info>
- <2024081217-putt-conform-4b53@gregkh>
- <05ced22b5b68e338795c8937abb8141d9fa188e6.camel@intel.com>
+	s=arc-20240116; t=1726744924; c=relaxed/simple;
+	bh=E3fam2nEpgQzk4mj7Jf0hyrFh3Llx37Dri8WoDHeVQE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZjUTt1PM+rCEYYn/niUHK5vMPQS5OvQOSqg/sRrvxWjDMsgqJkeUp77i1PqO82prmXNBCBuYr88sYq3+tHeJLDp/Qaj19tm3OPLs3EujJ+FG7Opy/l8wd1fWo0i6deluhn7Ww8v8QQ2CBqn9fRKPMrG65r15ExzE/W1/usbrTe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iaYVu8xi; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-206f9b872b2so6394995ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 04:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1726744923; x=1727349723; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aQ260cFU2n88Cs877yJ03XX6qLLyk2MUT6bBvDZ2hiY=;
+        b=iaYVu8xickTGbHuSavGgtA8NLH6xjSTRx4Hn6XQVYPXqtehtiJvqYs718Z3QHVAbzW
+         DMgE6wY586f5HfHiO/shvK2drweWZcJr8qTFVhespv0lGBPGguJcjNWHHuJwVeNM5Nhf
+         m+Qniw1i0lE7H/mdriBt/EU45tDhSRbnD4qOQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726744923; x=1727349723;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aQ260cFU2n88Cs877yJ03XX6qLLyk2MUT6bBvDZ2hiY=;
+        b=PBQcoWudcDe1eGGQx2wd9sg7yOWPkYFV9JdrC1K4HfBCeWr/NAqwlZ0wiiQE1KZofK
+         ctIuXGniPar3+AD0JRhEnUj4szR36GTp5Vvz4U6JW4g+yQNgcTOx0Tkc1NptejwpeD3R
+         M4FkiuWWv86vfGSqaCf/mFHsm/jlRN5rvEql9+8wSEE/vYMxLDk4CAmGzUOU4Hp/wXJr
+         BIzPX2LiwR34RWaZeAzlrz4C7kvjpLkdbVKuNYsEoXJK7h7nMmeq37QQVwVII/D/MJpK
+         C2hndt/qK9oure4dibZIf0alynNzJ2rNr0bsDDuf6+aCW3Io9As+Ap0maEcyM+VfcgBK
+         YrwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYqZByC5aXck96nVgtXuAXo5zssDtHDicjf9SBcQNRf4N0lOKOdEHmjGArCsJcPjcZWDf1YDm5ykBx0CE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLtYcuCadPeaUlPtg4qCks2nWIb6HDkDHmJRN8/S/6Xi+uQKvv
+	R9WdYopiEykQ/Ak9CVKHiKg+0RGdxqLe3JMx9rYyK07s27VUmdY7gRasvIiwEA==
+X-Google-Smtp-Source: AGHT+IFNsO6MH0t+u0d8Ht9omXf78SvBayyrpr2wZEpgMs/or4L27Xoz4HWkGuqF+rbIf1Jcb0XKuA==
+X-Received: by 2002:a17:902:ecc5:b0:205:43d8:710f with SMTP id d9443c01a7336-2076e4df8efmr329353275ad.58.1726744922721;
+        Thu, 19 Sep 2024 04:22:02 -0700 (PDT)
+Received: from localhost (117.196.142.34.bc.googleusercontent.com. [34.142.196.117])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-207946010d9sm78452115ad.65.2024.09.19.04.22.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Sep 2024 04:22:02 -0700 (PDT)
+From: Rohit Agarwal <rohiagar@chromium.org>
+To: chunkuang.hu@kernel.org,
+	krzk+dt@kernel.org,
+	ck.hu@mediatek.com,
+	robh@kernel.org
+Cc: linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Rohit Agarwal <rohiagar@chromium.org>
+Subject: [PATCH v2 0/2] Add power domain bindings for MT8183 and MT8195
+Date: Thu, 19 Sep 2024 11:21:50 +0000
+Message-ID: <20240919112152.2829765-1-rohiagar@chromium.org>
+X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <05ced22b5b68e338795c8937abb8141d9fa188e6.camel@intel.com>
 
-On Wed, Sep 18, 2024 at 06:54:33AM +0000, Zhang, Rui wrote:
-> On Mon, 2024-08-12 at 14:11 +0200, Greg KH wrote:
-> > On Wed, Aug 07, 2024 at 10:15:23AM +0200, Thorsten Leemhuis wrote:
-> > > [CCing the x86 folks, Greg, and the regressions list]
-> > > 
-> > > Hi, Thorsten here, the Linux kernel's regression tracker.
-> > > 
-> > > On 30.07.24 18:41, Thomas Lindroth wrote:
-> > > > I upgraded from kernel 6.1.94 to 6.1.99 on one of my machines and
-> > > > noticed that
-> > > > the dmesg line "Incomplete global flushes, disabling PCID" had
-> > > > disappeared from
-> > > > the log.
-> > > 
-> > > Thomas, thx for the report. FWIW, mainline developers like the x86
-> > > folks
-> > > or Tony are free to focus on mainline and leave stable/longterm
-> > > series
-> > > to other people -- some nevertheless help out regularly or
-> > > occasionally.
-> > > So with a bit of luck this mail will make one of them care enough
-> > > to
-> > > provide a 6.1 version of what you afaics called the "existing fix"
-> > > in
-> > > mainline (2eda374e883ad2 ("x86/mm: Switch to new Intel CPU model
-> > > defines") [v6.10-rc1]) that seems to be missing in 6.1.y. But if
-> > > not I
-> > > suspect it might be up to you to prepare and submit a 6.1.y variant
-> > > of
-> > > that fix, as you seem to care and are able to test the patch.
-> > 
-> > Needs to go to 6.6.y first, right?  But even then, it does not apply
-> > to
-> > 6.1.y cleanly, so someone needs to send a backported (and tested)
-> > series
-> > to us at stable@vger.kernel.org and we will be glad to queue them up
-> > then.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> There are three commits involved.
-> 
-> commit A:
->    4db64279bc2b (""x86/cpu: Switch to new Intel CPU model defines"") 
->    This commit replaces
->       X86_MATCH_INTEL_FAM6_MODEL(ANY, 1),             /* SNC */
->    with
->       X86_MATCH_VFM(INTEL_ANY,         1),    /* SNC */
->    This is a functional change because the family info is replaced with
-> 0. And this exposes a x86_match_cpu() problem that it breaks when the
-> vendor/family/model/stepping/feature fields are all zeros.
-> 
-> commit B:
->    93022482b294 ("x86/cpu: Fix x86_match_cpu() to match just
-> X86_VENDOR_INTEL")
->    It addresses the x86_match_cpu() problem by introducing a valid flag
-> and set the flag in the Intel CPU model defines.
->    This fixes commit A, but it actually breaks the x86_cpu_id
-> structures that are constructed without using the Intel CPU model
-> defines, like arch/x86/mm/init.c.
-> 
-> commit C:
->    2eda374e883a ("x86/mm: Switch to new Intel CPU model defines")
->    arch/x86/mm/init.c: broke by commit B but fixed by using the new
-> Intel CPU model defines
-> 
-> In 6.1.99,
-> commit A is missing
-> commit B is there
-> commit C is missing
-> 
-> In 6.6.50,
-> commit A is missing
-> commit B is there
-> commit C is missing
-> 
-> Now we can fix the problem in stable kernel, by converting
-> arch/x86/mm/init.c to use the CPU model defines (even the old style
-> ones). But before that, I'm wondering if we need to backport commit B
-> in 6.1 and 6.6 stable kernel because only commit A can expose this
-> problem.
+Hi,
 
-If so, can you submit the needed backports for us to apply?  That's the
-easiest way for us to take them, thanks.
+Changes in v2:
+ - Added a Fixes tag in the patch 2/2
+ - Also added the missing compatible string of MT8183
+ - Link to v1: https://lore.kernel.org/all/20240911071722.558960-1-rohiagar@chromium.org/
 
-greg k-h
+Some of the compatible strings were missed to document in the dpi
+controller bindings. This series adds those missing compatible strings
+of MT8183 and MT8195 DP_INTF.
+
+Thanks,
+Rohit.
+
+Rohit Agarwal (2):
+  dt-bindings: display: mediatek: dpi: Add power domain for MT8183
+  dt-bindings: display: mediatek: dpi: Add power domain for MT8195
+    DP_INTF
+
+ .../devicetree/bindings/display/mediatek/mediatek,dpi.yaml      | 2 ++
+ 1 file changed, 2 insertions(+)
+
+-- 
 
