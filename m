@@ -1,177 +1,272 @@
-Return-Path: <linux-kernel+bounces-333605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DB397CB3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:00:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33F497CB43
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12D001C20E1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:00:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEE4EB228EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A41919FA8C;
-	Thu, 19 Sep 2024 15:00:27 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75031190477;
+	Thu, 19 Sep 2024 15:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OjMeDP3F"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1791A01DE
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 15:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38781DDC9
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 15:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726758026; cv=none; b=nxDuTp2HV9JLJzQ7GdOuQIjm89zKERy0bo+KHquMck93vOTk7ku2X/VEy55f7t7fknLqdVBu5PS6KgJ7EU82Fym5sADIMZazSNCAshE3kd4MMfBdlYQDmukGdja0JwES9q8tBYL8MbS8MFjE/xaStY8U9cJJu2DiiU31boFVSaE=
+	t=1726758115; cv=none; b=BPrhZ2xF1RsDOBQ15mqMXKXJ2G20Xbk87JGUKM3V7A/UC7hlnU2J4aE5Xqgp2V2SYxDjyrRgdDiPohWhq7odQlduE44rZe9WfibFQrsIJTvz7IY5Pd2G84ykGGA7tLT+xkvkiDRcrjMRe3KgTzuw25K0yWud1P1+6qWx2s6cJHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726758026; c=relaxed/simple;
-	bh=RtZAc11JkGkK0nfVsT/wk1fA1akbQA0MuHauWDlMoiw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=m5eceFAafBt8MI1NKS466nzN2zCC0QOi3FOgAlXlfnr8eGDTwVFzYrSdhilq3jx8c7Q55jtW1hNJQETpb5r8NDu8CC2oTgPs0av+qaJS+I8u+faaheaPKETnFEAdYysbEIdxJMTvwhWdtbhAyaBw9i7Ae25iu9q5AsQEBf+k2sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82aa94d4683so138856339f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 08:00:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726758020; x=1727362820;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KWsfqOtP48O9v6SvCaxtO2hK13tGEa5J1JaeeZpFiK8=;
-        b=Vlew/49gZ7JpXqxKqH0b2CEbEwpyvtk5NcnnzXB4zW6sGFzby7r85yr+ouqkiI8BiB
-         3/W7IWSq19XMrB3UlRINgou4u9F792RIjPyeR9Ub4iiGwGXVC/7FN32TOfvOY3vcxT68
-         NaE8Vd3Fz2bCfgaEhKytKtik0a7P4RMlCbZvq/3CriQxWXTFY0MZYAE7aHLLXjmWesBT
-         FZBK/66z884ar4xkB2lbKuWVJA0/yLFq/r740L2l66hg5t+1Hkz0Mc8zvQ9PgGPrjHfx
-         tGVjmxEPVi06skENR7fPqgz3Om2+pS844Loe2CdCRcRf8tLS59MGEtSPg9Pu//fTLpEk
-         uc4Q==
-X-Gm-Message-State: AOJu0YyEEEXZdzVOp8J1zkWegHFrE5OzbMYJyXIz8mIgNt0iOstN1rMN
-	ARvpTBlPirjvM3so2NXVkNnMWpXI/Z9GkzGDpWinZfq7zUx45UaDd1fBXoSYCdJWnkKHJ/IbJfU
-	HGxzsD1aK1xvx8hTJPnqqhxqjcP2/ELBEmSVcCMFEqvhV0jwYdgaHqws=
-X-Google-Smtp-Source: AGHT+IGM5vjFQeR3W6EpU71z3i9kaPjqxbZeyMhXaVCV3nccHXXUarWSRUyivSb+p47FA1K6y6A6Hb9t+KAZaNAxjA5OS3ws8ID9
+	s=arc-20240116; t=1726758115; c=relaxed/simple;
+	bh=gfFYAX8Wkw7xR3ohBQ7tGjWvt51dgudj/WdKi801p70=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 Content-Type:MIME-Version; b=ORKHoR8BTv6oQbHcLzyxDQagyj8lU1kqIwEK9/Um1dGbiEj8bAb8R2r2fuCbcurEweqWPrlgHxhQkvqkgiDTnDPenRlbofRb0kpg16GT0BFiSgu5cEf7n8jvLTqgOjz3XJ6PeOHSzZa5uNrsuOdPHAG883+l6JBA5J7kID9MSLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OjMeDP3F; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48JEMfDr027076;
+	Thu, 19 Sep 2024 15:01:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:in-reply-to:references:date:message-id
+	:content-type:mime-version; s=pp1; bh=3/QMlVBloIHFi2ohshUULd/kYl
+	48od3sFeUczC9S+jg=; b=OjMeDP3FZsUMyGHmRwBILr8JXdCBKMj4VASxMVG+pa
+	cd+5w2uKmhJuo1KsGmyIajJuD0dd4pNeyfhc5J7fmV3rt+eDk/JZiG+2+iaGby1U
+	3wF0KBldgT/ReaoOQSzAIDhBxQYp9W7vKysGv9LprFrgXggXUSRGgHe6ADxnJVyJ
+	NsiT58ejfKJqBM9T7/tQ4pJklw4piRKY9rPlJxA4iBMxHs9aBUNTbptgIDGJRl5+
+	0qjfjgXC2AnMDhbPBAVthlxoSGLVqIpgctYUvNph/FlD+1GVmBaPOgKAda+yfdHr
+	ubMUJ+qNhIep1w3nz0yrd/M+q/9e5pi8gZMz9BbhOuaA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3udmaxf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Sep 2024 15:01:25 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48JF1P5L032265;
+	Thu, 19 Sep 2024 15:01:25 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3udmaub-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Sep 2024 15:01:24 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48JD1QAb001187;
+	Thu, 19 Sep 2024 15:00:57 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41nntqj1se-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Sep 2024 15:00:57 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48JF0rkw54788396
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 19 Sep 2024 15:00:53 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9861F2004F;
+	Thu, 19 Sep 2024 15:00:53 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EBFE32004E;
+	Thu, 19 Sep 2024 15:00:49 +0000 (GMT)
+Received: from vaibhav?linux.ibm.com (unknown [9.39.30.22])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Thu, 19 Sep 2024 15:00:49 +0000 (GMT)
+Received: by vaibhav@linux.ibm.com (sSMTP sendmail emulation); Thu, 19 Sep 2024 20:30:48 +0530
+From: Vaibhav Jain <vaibhav@linux.ibm.com>
+To: Ritesh Harjani <ritesh.list@gmail.com>,
+        Narayana Murty N
+ <nnmlinux@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
+        linux-kernel@vger.kernel.org
+Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, naveen@kernel.org, ganeshgr@linux.ibm.com,
+        sbhat@linux.ibm.com
+Subject: Re: [PATCH] powerpc/pseries/eeh: move pseries_eeh_err_inject()
+ outside CONFIG_DEBUG_FS block
+In-Reply-To: <871q1hbsh7.fsf@gmail.com>
+References: <20240917132445.3868016-1-nnmlinux@linux.ibm.com>
+ <871q1hbsh7.fsf@gmail.com>
+Date: Thu, 19 Sep 2024 20:30:48 +0530
+Message-ID: <87bk0jbsdb.fsf@vajain21.in.ibm.com>
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Rb4gT66GOt97oYcD8pdorqZDXA2fElrU
+X-Proofpoint-ORIG-GUID: lj7VS7Tl7p8Rj5GEgCqR_hmiEBJfYDf2
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3419:b0:82d:1cf:5e0c with SMTP id
- ca18e2360f4ac-82d376aa563mr2426125839f.4.1726758019636; Thu, 19 Sep 2024
- 08:00:19 -0700 (PDT)
-Date: Thu, 19 Sep 2024 08:00:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ec3c83.050a0220.29194.002f.GAE@google.com>
-Subject: [syzbot] [media?] KASAN: use-after-free Read in em28xx_close_extension
- (2)
-From: syzbot <syzbot+a11c46f37ee083a73deb@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-usb@vger.kernel.org, mchehab@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-19_12,2024-09-19_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
+ phishscore=0 impostorscore=0 spamscore=0 priorityscore=1501 suspectscore=0
+ adultscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=932
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409190099
 
-Hello,
+Hi Ritesh,
 
-syzbot found the following issue on:
+Thanks for looking into this patch. My responses your review inline
+below:
 
-HEAD commit:    68d4209158f4 sub: cdns3: Use predefined PCI vendor ID cons..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=139b97c7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cb61872d4d8c5df9
-dashboard link: https://syzkaller.appspot.com/bug?extid=a11c46f37ee083a73deb
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1571e797980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11166200580000
+Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c69290425359/disk-68d42091.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/caf4f26a3e85/vmlinux-68d42091.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3acdec4b62e6/bzImage-68d42091.xz
+> Narayana Murty N <nnmlinux@linux.ibm.com> writes:
+>
+>> Makes pseries_eeh_err_inject() available even when debugfs
+>> is disabled (CONFIG_DEBUG_FS=n). It moves eeh_debugfs_break_device()
+>> and eeh_pe_inject_mmio_error() out of the CONFIG_DEBUG_FS block
+>> and renames it as eeh_break_device().
+>>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes: https://lore.kernel.org/oe-kbuild-all/202409170509.VWC6jadC-lkp@intel.com/
+>> Fixes: b0e2b828dfca ("powerpc/pseries/eeh: Fix pseries_eeh_err_inject")
+>> Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
+>> ---
+>>  arch/powerpc/kernel/eeh.c | 198 +++++++++++++++++++-------------------
+>>  1 file changed, 99 insertions(+), 99 deletions(-)
+>
+> Ok, so in your original patch you implemented eeh_inject ops for pseries
+> using mmio based eeh error injection (eeh_pe_inject_mmio_error()), which
+> uses the functions defined under debugfs -> eeh_debugfs_break_device(). 
+>
+> This was failing when CONFIG_DEBUGFS is not defined, thus referring to
+> undefined function definition. 
+>
+> Minor nit below.
+>
+>>
+>> diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
+>> index 49ab11a287a3..0fe25e907ea6 100644
+>> --- a/arch/powerpc/kernel/eeh.c
+>> +++ b/arch/powerpc/kernel/eeh.c
+>> @@ -1574,6 +1574,104 @@ static int proc_eeh_show(struct seq_file *m, void *v)
+>>  }
+>>  #endif /* CONFIG_PROC_FS */
+>>  
+>> +static int eeh_break_device(struct pci_dev *pdev)
+>> +{
+>> +	struct resource *bar = NULL;
+>> +	void __iomem *mapped;
+>> +	u16 old, bit;
+>> +	int i, pos;
+>> +
+>> +	/* Do we have an MMIO BAR to disable? */
+>> +	for (i = 0; i <= PCI_STD_RESOURCE_END; i++) {
+>> +		struct resource *r = &pdev->resource[i];
+>> +
+>> +		if (!r->flags || !r->start)
+>> +			continue;
+>> +		if (r->flags & IORESOURCE_IO)
+>> +			continue;
+>> +		if (r->flags & IORESOURCE_UNSET)
+>> +			continue;
+>> +
+>> +		bar = r;
+>> +		break;
+>> +	}
+>> +
+>> +	if (!bar) {
+>> +		pci_err(pdev, "Unable to find Memory BAR to cause EEH with\n");
+>> +		return -ENXIO;
+>> +	}
+>> +
+>> +	pci_err(pdev, "Going to break: %pR\n", bar);
+>> +
+>> +	if (pdev->is_virtfn) {
+>> +#ifndef CONFIG_PCI_IOV
+>> +		return -ENXIO;
+>> +#else
+>> +		/*
+>> +		 * VFs don't have a per-function COMMAND register, so the best
+>> +		 * we can do is clear the Memory Space Enable bit in the PF's
+>> +		 * SRIOV control reg.
+>> +		 *
+>> +		 * Unfortunately, this requires that we have a PF (i.e doesn't
+>> +		 * work for a passed-through VF) and it has the potential side
+>> +		 * effect of also causing an EEH on every other VF under the
+>> +		 * PF. Oh well.
+>> +		 */
+>> +		pdev = pdev->physfn;
+>> +		if (!pdev)
+>> +			return -ENXIO; /* passed through VFs have no PF */
+>> +
+>> +		pos  = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_SRIOV);
+>> +		pos += PCI_SRIOV_CTRL;
+>> +		bit  = PCI_SRIOV_CTRL_MSE;
+>> +#endif /* !CONFIG_PCI_IOV */
+>> +	} else {
+>> +		bit = PCI_COMMAND_MEMORY;
+>> +		pos = PCI_COMMAND;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Process here is:
+>> +	 *
+>> +	 * 1. Disable Memory space.
+>> +	 *
+>> +	 * 2. Perform an MMIO to the device. This should result in an error
+>> +	 *    (CA  / UR) being raised by the device which results in an EEH
+>> +	 *    PE freeze. Using the in_8() accessor skips the eeh detection hook
+>> +	 *    so the freeze hook so the EEH Detection machinery won't be
+>> +	 *    triggered here. This is to match the usual behaviour of EEH
+>> +	 *    where the HW will asynchronously freeze a PE and it's up to
+>> +	 *    the kernel to notice and deal with it.
+>> +	 *
+>> +	 * 3. Turn Memory space back on. This is more important for VFs
+>> +	 *    since recovery will probably fail if we don't. For normal
+>> +	 *    the COMMAND register is reset as a part of re-initialising
+>> +	 *    the device.
+>> +	 *
+>> +	 * Breaking stuff is the point so who cares if it's racy ;)
+>> +	 */
+>> +	pci_read_config_word(pdev, pos, &old);
+>> +
+>> +	mapped = ioremap(bar->start, PAGE_SIZE);
+>> +	if (!mapped) {
+>> +		pci_err(pdev, "Unable to map MMIO BAR %pR\n", bar);
+>> +		return -ENXIO;
+>> +	}
+>> +
+>> +	pci_write_config_word(pdev, pos, old & ~bit);
+>> +	in_8(mapped);
+>> +	pci_write_config_word(pdev, pos, old);
+>> +
+>> +	iounmap(mapped);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +int eeh_pe_inject_mmio_error(struct pci_dev *pdev)
+>> +{
+>> +	return eeh_break_device(pdev);
+>> +}
+>> +
+>
+> Why have an extra eeh_pe_inject_mmio_error() function which only calls
+> eeh_break_device()?
+>
+> Maybe we can rename eeh_break_device() to eeh_mmio_break_device() and use
+> this function itself at both call sites?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a11c46f37ee083a73deb@syzkaller.appspotmail.com
+Fair suggestion,
 
-list_del corruption. next->prev should be ffff888112424250, but was 0000000000000000. (next=ffff888112acc250)
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:65!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 42 Comm: kworker/0:2 Not tainted 6.11.0-rc7-syzkaller-00152-g68d4209158f4 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:__list_del_entry_valid_or_report+0x141/0x1c0 lib/list_debug.c:65
-Code: e1 fe 90 0f 0b 48 89 c2 48 c7 c7 a0 9e 46 87 e8 05 b1 e1 fe 90 0f 0b 48 89 d1 48 c7 c7 20 9f 46 87 48 89 c2 e8 f0 b0 e1 fe 90 <0f> 0b 48 89 34 24 e8 d4 2e 57 ff 48 8b 34 24 e9 d5 fe ff ff 48 89
-RSP: 0018:ffffc900004d76f0 EFLAGS: 00010282
-RAX: 000000000000006d RBX: ffffffff89df37a0 RCX: ffffffff813560b9
-RDX: 0000000000000000 RSI: ffffffff8135f4f6 RDI: 0000000000000005
-RBP: ffff888112424250 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: dffffc0000000000
-R13: ffff888112424000 R14: ffffffff89e0d908 R15: ffff888121f0c000
-FS:  0000000000000000(0000) GS:ffff8881f5800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055853d6842e0 CR3: 0000000111614000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __list_del_entry_valid include/linux/list.h:124 [inline]
- __list_del_entry include/linux/list.h:215 [inline]
- list_del include/linux/list.h:229 [inline]
- em28xx_close_extension+0x10e/0x2b0 drivers/media/usb/em28xx/em28xx-core.c:1137
- em28xx_usb_disconnect+0x19d/0x610 drivers/media/usb/em28xx/em28xx-cards.c:4197
- usb_unbind_interface+0x1e8/0x970 drivers/usb/core/driver.c:461
- device_remove drivers/base/dd.c:568 [inline]
- device_remove+0x122/0x170 drivers/base/dd.c:560
- __device_release_driver drivers/base/dd.c:1272 [inline]
- device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1295
- bus_remove_device+0x22f/0x420 drivers/base/bus.c:574
- device_del+0x396/0x9f0 drivers/base/core.c:3871
- usb_disable_device+0x36c/0x7f0 drivers/usb/core/message.c:1418
- usb_disconnect+0x2e1/0x920 drivers/usb/core/hub.c:2304
- hub_port_connect drivers/usb/core/hub.c:5361 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x1bed/0x4f40 drivers/usb/core/hub.c:5903
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__list_del_entry_valid_or_report+0x141/0x1c0 lib/list_debug.c:65
-Code: e1 fe 90 0f 0b 48 89 c2 48 c7 c7 a0 9e 46 87 e8 05 b1 e1 fe 90 0f 0b 48 89 d1 48 c7 c7 20 9f 46 87 48 89 c2 e8 f0 b0 e1 fe 90 <0f> 0b 48 89 34 24 e8 d4 2e 57 ff 48 8b 34 24 e9 d5 fe ff ff 48 89
-RSP: 0018:ffffc900004d76f0 EFLAGS: 00010282
-RAX: 000000000000006d RBX: ffffffff89df37a0 RCX: ffffffff813560b9
-RDX: 0000000000000000 RSI: ffffffff8135f4f6 RDI: 0000000000000005
-RBP: ffff888112424250 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: dffffc0000000000
-R13: ffff888112424000 R14: ffffffff89e0d908 R15: ffff888121f0c000
-FS:  0000000000000000(0000) GS:ffff8881f5800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055853d6842e0 CR3: 0000000111614000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+However we want to keep the method debugfs interface uses
+to inject EEH (thats ppc platform agonistic), decoupled from what pseries
+uses. Right now to support as initial work VFIO EEH injection on
+pseries, we are piggy backing on eeh_debugfs_break_device().
 
+This will change in future as we add more capabilities to pseries EEH
+injection and this will change working of eeh_pe_inject_mmio_error()
+without impacting the semantics of existing eeh_break_device().
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Cheers
+~ Vaibhav
 
