@@ -1,47 +1,45 @@
-Return-Path: <linux-kernel+bounces-333412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439CA97C839
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:51:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC7C597C842
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68C041C25432
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:51:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C7FAB22FC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EDB19B3D7;
-	Thu, 19 Sep 2024 10:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4CNbEoV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E69119D064;
+	Thu, 19 Sep 2024 10:54:33 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE7C194C8D;
-	Thu, 19 Sep 2024 10:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175F81991BB;
+	Thu, 19 Sep 2024 10:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726743068; cv=none; b=RC3eolAYCKdx2/ep9C64bI4ZCSgkKHqrca50PVfE4alSqW5Pm6AjyQyk7ilyCsGz05QPHU1dmZaj0m3L8ytRZig0znkDpP8b6TBedCZSR3NlXaoa3tP88eVuaYvomekqCMzIi74l2rTjZHpy8BUZCMFL0j5Sw9w+evl0tg5JDdo=
+	t=1726743272; cv=none; b=P+BklievmXXGgd9IOlxw2dH5f/iGfJEjChqOMzi6oJjwkBL+i2A3FjCO2e25x9rtRWQZCS0k3cBC9bPHSpLSfjnxAg3EDKFnMsjVIFu1hlmi864K5Si3OgGiTsTKqW1TJc5OjEShF/nDNovvRnXukjYYPdphKgCzwGFVp/K9V7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726743068; c=relaxed/simple;
-	bh=vRwpMKZt9ZplwSy5/zsgP0nk3xy0m6gt/UUjwakWm5M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=npXlw5fuG5cml6o6rzqdTvaDrtKugBVwYp9X/RxvUoIi2I3Ab1oIVqcDsvbzrVIWxODJNz1SpVufGip4Q1S0x0zOFfpa3el5GbICSGksquE+w1Af0t/OyU5XPeVSbgw2X29hG5CUPhWIB2ZPGTK8NBZVYQwAhCwiMHdRSj9Ls70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4CNbEoV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67A63C4CEC4;
-	Thu, 19 Sep 2024 10:51:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726743068;
-	bh=vRwpMKZt9ZplwSy5/zsgP0nk3xy0m6gt/UUjwakWm5M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p4CNbEoVy6npotGjwlVfBh2vI2umMvEbSsJVkE8DgCbP8zfbCgvRdH1g3z6P/K3hc
-	 USl8O0nLGtxUMK2yhE5elf5pz6wey8a7KaahniLUTKPz6hgdDWZxDDu9D1X+vtoo3p
-	 RH5hDrQipiAJSx8CZHOVtjlah0J49Vjjf+C1gWsyZOIFvAUyONJj3G1kOSEDuL+5hN
-	 ZFt2Zhq6teiwZoJ/dl4AOCqe+ZjBE4kZv16vDslTYQZsO9yARIsqNURQIEgEHM18Ru
-	 LFRh6NNVLpR+fhccwVrWtg96sOO0ybZhAgDqUbvweGB82e5sVYvBoLHagOBtvZdGm3
-	 ej+4rpzUbGl8A==
-Message-ID: <f27ba6ce-aa29-4a27-bbca-ea1a5324070f@kernel.org>
-Date: Thu, 19 Sep 2024 12:51:01 +0200
+	s=arc-20240116; t=1726743272; c=relaxed/simple;
+	bh=179KZODs82XAGe7kcRGJWGjFsfPBODprwgHk3DQ83L8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=U2TGW+WLqLUKmA1q4H/QVtGIyz+YucwdW1uHxuMJF3jdaX4JRVBq6FNDr+OtgqgQFjw4YNQYAZB/qaXAFsTtW/+xPwCVS+y3S5LMNpbxJ3kA8AoMkmjyG7UY9OSduYd055WPS6Bz30tyDygdPg7GGW6WsZNmhT1ON2Bu8/1oPhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X8XQv3YptzmYlT;
+	Thu, 19 Sep 2024 18:52:23 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5515E140390;
+	Thu, 19 Sep 2024 18:54:27 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 19 Sep 2024 18:54:26 +0800
+Message-ID: <50a463d5-a5a1-422f-a4f7-d3587b12c265@huawei.com>
+Date: Thu, 19 Sep 2024 18:54:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,166 +47,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add ArmSoM W3 board
-To: Jianfeng Liu <liujianfeng1994@gmail.com>,
- linux-rockchip@lists.infradead.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Rob Herring <robh@kernel.org>,
- linux-kernel@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20240918165008.169917-1-liujianfeng1994@gmail.com>
- <20240918165008.169917-4-liujianfeng1994@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH net 2/2] page_pool: fix IOMMU crash when driver has
+ already unbound
+To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<liuyonglong@huawei.com>, <fanghaiqing@huawei.com>, <zhangkun09@huawei.com>,
+	Robin Murphy <robin.murphy@arm.com>, Alexander Duyck
+	<alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Wei Fang
+	<wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang
+	<xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>, Tony Nguyen
+	<anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov
+	<ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard
+ Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, Saeed
+ Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Tariq Toukan
+	<tariqt@nvidia.com>, Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi
+	<lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, Shayne Chen
+	<shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, Kalle Valo
+	<kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Andrew
+ Morton <akpm@linux-foundation.org>, <imx@lists.linux.dev>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<intel-wired-lan@lists.osuosl.org>, <bpf@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-mm@kvack.org>
+References: <20240918111826.863596-1-linyunsheng@huawei.com>
+ <20240918111826.863596-3-linyunsheng@huawei.com>
+ <CAC_iWjK=G7Oo5=pN2QunhasgDC6NyC1L+96jigX7u9ad+PbYng@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240918165008.169917-4-liujianfeng1994@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAC_iWjK=G7Oo5=pN2QunhasgDC6NyC1L+96jigX7u9ad+PbYng@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On 18/09/2024 18:50, Jianfeng Liu wrote:
-> W3 is the carrier board for LM7 System on Module.
+On 2024/9/19 1:06, Ilias Apalodimas wrote:
+> Hi Yunsheng,
 > 
-> W3 features:
-> - 1x 2.5GbE Realtek RTL8125 Ethernet
-> - 2x HDMI Type A out
-> - 1x HDMI Type A in
-> - 1x USB 3.1 Type C
-> - 2x USB 2.0 Type A
-> - 2x USB 3.0 Type A
-> - 1x PCIE 2.0 M.2 E Key (1 lane)
-> - 1x PCIE 3.0 PCIe (4 lanes)
-> - 1x TF scard slot
-> - 1x MIPI CSI
-> - 1x MIPI DSI
-> - 1x ES8316 audio jack
-> - 1x FAN connector
-> - 1x RTC
-> - 40-pin expansion header
+> Thanks for looking into this!
 > 
-> Add support for ArmSoM LM7 board.
+> On Wed, 18 Sept 2024 at 14:24, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>
+>> Networking driver with page_pool support may hand over page
+>> still with dma mapping to network stack and try to reuse that
+>> page after network stack is done with it and passes it back
+>> to page_pool to avoid the penalty of dma mapping/unmapping.
 > 
-> Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
-> ---
+> I think you can shorten this to "If recycling and DMA mapping are
+> enabled during the pool creation"
+
+I am not sure if I understand the 'recycling' part here. Is the
+'recycling' part referring to whether skb_mark_for_recycle() is
+called to enable recycling for the skb? Is there still any driver
+with page_pool support but doesn't call skb_mark_for_recycle()
+when handing over page to network stack?
+
+For the 'DMA mapping' part, as there is no space in 'struct
+page' to track the inflight pages, so 'pp' in 'struct page'
+is renamed to 'pp_item' to enable the tracking of inflight
+page. I tried shortening this for 'pool->dma_map being false'
+when coding, but it seems differentiating the same field in
+'struct page' doesn't make much sense according to 'pool->dma_map'
+as it means we might need to add an union in 'struct page' for
+that to work and add additional checking to decide if it is 'pp'
+or 'pp_item'.
+
 > 
->  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
->  .../boot/dts/rockchip/rk3588-armsom-w3.dts    | 408 ++++++++++++++++++
->  2 files changed, 409 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-armsom-w3.dts
+>> With all the caching in the network stack, some pages may be
+>> held in the network stack without returning to the page_pool
+>> soon enough, and with VF disable causing the driver unbound,
+>> the page_pool does not stop the driver from doing it's
+>> unbounding work, instead page_pool uses workqueue to check
+>> if there is some pages coming back from the network stack
+>> periodically, if there is any, it will do the dma unmmapping
+>> related cleanup work.
+>>
+>> As mentioned in [1], attempting DMA unmaps after the driver
+>> has already unbound may leak resources or at worst corrupt
+>> memory. Fundamentally, the page pool code cannot allow DMA
+>> mappings to outlive the driver they belong to.
+>>
+>> Currently it seems there are at least two cases that the page
+>> is not released fast enough causing dma unmmapping done after
+>> driver has already unbound:
+>> 1. ipv4 packet defragmentation timeout: this seems to cause
+>>    delay up to 30 secs:
+>>
+>> 2. skb_defer_free_flush(): this may cause infinite delay if
+>>    there is no triggering for net_rx_action().
+>>
+>> In order not to do the dma unmmapping after driver has already
+>> unbound and stall the unloading of the networking driver, add
+>> the pool->items array to record all the pages including the ones
+>> which are handed over to network stack, so the page_pool can
+>> do the dma unmmapping for those pages when page_pool_destroy()
+>> is called.
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-> index 09423070c99..b0ed12f41f0 100644
-> --- a/arch/arm64/boot/dts/rockchip/Makefile
-> +++ b/arch/arm64/boot/dts/rockchip/Makefile
-> @@ -125,6 +125,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-display-vz.dtbo
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-io-expander.dtbo
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-sige7.dtb
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-w3.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-coolpi-cm5-evb.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-coolpi-cm5-genbook.dtb
->  dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-edgeble-neu6a-io.dtb
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-armsom-w3.dts b/arch/arm64/boot/dts/rockchip/rk3588-armsom-w3.dts
-> new file mode 100644
-> index 00000000000..321a44f081c
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588-armsom-w3.dts
-> @@ -0,0 +1,408 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/leds/common.h>
-> +#include "rk3588-armsom-lm7.dtsi"
-> +
-> +/ {
-> +	model = "ArmSoM W3";
-> +	compatible = "armsom,w3", "armsom,lm7", "rockchip,rk3588";
-> +
-> +	aliases {
-> +		mmc1 = &sdmmc;
-> +		mmc2 = &sdio;
-> +	};
-> +
-> +	analog-sound {
-> +		compatible = "audio-graph-card";
-> +		label = "rk3588-es8316";
-> +
-> +		widgets = "Microphone", "Mic Jack",
-> +			  "Headphone", "Headphones";
-> +
-> +		routing = "MIC2", "Mic Jack",
-> +			  "Headphones", "HPOL",
-> +			  "Headphones", "HPOR";
-> +
-> +		dais = <&i2s0_8ch_p0>;
-> +		hp-det-gpio = <&gpio1 RK_PD5 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&hp_detect>;
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&led_rgb_b>;
-> +
-> +		led_rgb_b {
+> So, I was thinking of a very similar idea. But what do you mean by
+> "all"? The pages that are still in caches (slow or fast) of the pool
+> will be unmapped during page_pool_destroy().
 
-Please no underscores in node names.
+Yes, it includes the one in pool->alloc and pool->ring.
 
-> +			function = LED_FUNCTION_STATUS;
-> +			color = <LED_COLOR_ID_BLUE>;
-> +			gpios = <&gpio0 RK_PB7 GPIO_ACTIVE_HIGH>;
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +
+> Don't we 'just' need a list of the inflight packets and their pages or
+> fragments? What we could do is go through that list and unmap these
+> pages during page_pool_destroy().
 
+The main reason for that is to avoid the overhead of page_pool_item_del()
+and page_pool_item_add() when allocing/freeing page from/to pool->alloc
+and pool->ring.
 
+Yes, including the pages in pool->ring seems to make the pool->ring
+somewhat duplicated, maybe we can remove pool->ring if we can make
+and prove 'pool->items' is performing better than pool->ring in the
+future?
 
-Best regards,
-Krzysztof
+> 
+> I'll have a closer look at the patch tomorrow
 
+Thanks for the reviewing.
+
+> 
+> Thanks!
+> /Ilias
+> 
 
