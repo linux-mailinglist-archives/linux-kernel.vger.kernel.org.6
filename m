@@ -1,132 +1,126 @@
-Return-Path: <linux-kernel+bounces-333691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B5CC97CC73
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:21:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961A297CC0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5240C1F23BDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:21:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56E8C284294
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197E61AB6F3;
-	Thu, 19 Sep 2024 16:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="debNizYv"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5071AAE1A;
-	Thu, 19 Sep 2024 16:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3F01A01BA;
+	Thu, 19 Sep 2024 16:08:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A0C12E4A;
+	Thu, 19 Sep 2024 16:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726762627; cv=none; b=IL9RO8iUHqVo+p+cpylzLZnhnDrsa11eaW1KcVK4PtKKeu2z//MmiXryg3P9DxO8b2psU6TWKvgrAWjooksykA1Dpp9RxXNQM24+30Vylw2Z0yC8QLSpZqXvXjkh6fVgTcXuA6pMibFAWygMcnwbe1ykTywGo+dhLKAsIPpIZNM=
+	t=1726762100; cv=none; b=SRdq0Nl5/JV0Anl3q6bJY6xQOt+lkxqa0NFZ0Pp4Kv2lQTEKbtYlU/4VYnklt6CQgZgyGO6AEEQbyhbab8E1js2+DhACI7GgbspN88JLBBkR5rDnm5274od6pI1+L4qLHoNxOs9OAEUDFUmxjO1KrGrlukV/cVAlDKvxDvNYYhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726762627; c=relaxed/simple;
-	bh=IlwfpKeYG1A6lmRpl2J8Js+0dUrkM33rNMIVVPeLcso=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f3eEQ2cTnYrppNxOrx6xvG6WEdmuz5s6X3btBDalO9mH7p9S3X/l1s5QoI4wqLqXCgPBbWEB1Kd2WmNbmCBFZ1ZrcoOhCGLBo4NPTRoIEYpqR8pa9e/L2R5olRtusdyJidf1lv1uU9clfEU3U54YKUEjK8Qa2dU/SHaSOg5/OQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=debNizYv; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2da55ea8163so752281a91.1;
-        Thu, 19 Sep 2024 09:17:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726762625; x=1727367425; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zy0C2tn+S+ad9UGMaUozuLH5nIPIOY9VH2lYfYG3DPM=;
-        b=debNizYvgO7i/uJMevdLLyqmDBnsYmkeyv5bz9uw45LtMOZIzQJzfZFNoWqR5o7N1g
-         PeMMUx8+S/2oyqcObDkWsoauyZEdR/GKvF/pPuryzreQ3B4iBRZ19Xd3fGLsj8QlhRwQ
-         h639yXY6bEIG5pP+AXA9BME2M4xv6v9V1iGFywEvxiJvFPfWsQnMA7ohLL+NpOdilf0v
-         w1XeCzcX0uJ4WBbF3capIDiWks2ir0JI4YYJN86ZK1jPFKJhqKVj9fjv5wuEZ2fTTlPh
-         QR7VD/JFoOg7iEsmbqmaeLzzwNBUjr4dnA3c/eAO7gRaqMBc/O23vMnCDKOW9QlXvXRE
-         wPrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726762625; x=1727367425;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zy0C2tn+S+ad9UGMaUozuLH5nIPIOY9VH2lYfYG3DPM=;
-        b=kE3fLUM1+TZC9P0X/BZK7sGdctPR/ga5Jk8N4a1LeL4DnrC20h+oxHLZmsVknwsTJF
-         zHw8MLy5b09/uq8fbJxzuOGRnVklX3aKBjpMEmjIvJV+uDiEngrb4ijYam+i2j5BWjTI
-         BaJcE14ki9mi1HGcZjDaZSnXMCsDRGiE4j+MHoUZz+zgZgFOA7SJnh7wXFaVYUkeBQ4i
-         YeJWRbUVFaxUQz7e1Be9bq4zMLxAwLyqnTRCS61wdkBTLYxOhg6wpH+MDjuXXmvCdyBy
-         FPwrsU75CD502SPC5so0SeNtS75AbQck3597Obug0R6y0P8Mvb2R4++fsYbMjlVi/X7x
-         HL7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUcztaeAW7BtdsS0mswMtZMb5dJOIaL6slnN1UPUK4slWIv8Il4Y+vxCjBrAuczN/aALJz9VF08absR6Bad@vger.kernel.org, AJvYcCVGOOLiwiJT8apetcyM0E7DQ3uM267VvIxT2cjP7Dpp5kkq4xiO6kgPRCwrBfuDKlybTE/H2wjjD9JO@vger.kernel.org, AJvYcCXBF6w5LB+dZlhZTu9Esp6UajezLi4gH2tq6Z0VbbypBINHZtpiwueGGKN/tkTUcQr+g8AoaMX952W91x/RLaE=@vger.kernel.org, AJvYcCXcySVEB7KGTmSVNDPEOdJwHmREDc+/8y1Yc67pCVZ36gFB6g4mCbhjdr/sBbyWXccwJYQOSal+pUS9MQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpfMVxvO6bsVYC2LvOX+kyuV7dUQEABVDxWXdbJOlxU4ICkVIM
-	ahREtU6tl1wk0i/GmqrMelnwFazcSmEwYYZg/xvz899y9558oSboDxXQ10ZF
-X-Google-Smtp-Source: AGHT+IGRF92p4WUX3sebubNh4Ll+ZX5ut0xjvjFQrZyc8PPhy8mSH/poADCmKduZBnqxmWGKnJBn+A==
-X-Received: by 2002:a17:90a:68c5:b0:2c9:6cd2:1732 with SMTP id 98e67ed59e1d1-2db9fec89a1mr30095674a91.0.1726762625354;
-        Thu, 19 Sep 2024 09:17:05 -0700 (PDT)
-Received: from localhost.localdomain ([59.188.211.160])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2dd6eed1865sm2084674a91.34.2024.09.19.09.17.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 09:17:05 -0700 (PDT)
-From: Nick Chan <towinchenmi@gmail.com>
-To: Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Mark Kettenis <kettenis@openbsd.org>,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-watchdog@vger.kernel.org
-Cc: konradybcio@kernel.org,
-	ivo.ivanov.ivanov1@gmail.com,
-	towinchenmi@gmail.com
-Subject: [PATCH v4 20/20] arm64: Kconfig: Update help text for CONFIG_ARCH_APPLE
-Date: Fri, 20 Sep 2024 00:06:09 +0800
-Message-ID: <20240919161443.10340-21-towinchenmi@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240919161443.10340-1-towinchenmi@gmail.com>
-References: <20240919161443.10340-1-towinchenmi@gmail.com>
+	s=arc-20240116; t=1726762100; c=relaxed/simple;
+	bh=dOd9scNVhOFHzv5AzvwVvWrCZQN/bKmXb1v4ZQjOXaU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UWJsNOZYP2TSSIZqNBYVhJLnWk1NGk5W4QhESHDqhWxs3DAPEQ0lo26F/sAMUplcqD7hEcN/pJp7sgMWbwUNs8t17/d+3d0g8mHHT1GaOeM6gdgK3nHceKNrzNyseiDloe2VzAxWt2KSXci5v0EMQ06Jpuyl1vD1i/h0kLVcB7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B810A1007;
+	Thu, 19 Sep 2024 09:08:47 -0700 (PDT)
+Received: from [10.57.78.149] (unknown [10.57.78.149])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4B1B73F64C;
+	Thu, 19 Sep 2024 09:08:17 -0700 (PDT)
+Message-ID: <6c6ef251-814d-45c8-bbad-3096b9265397@arm.com>
+Date: Thu, 19 Sep 2024 17:08:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] cpuidle/menu: avoid prioritizing physical state over
+ polling state
+To: Aboorva Devarajan <aboorvad@linux.ibm.com>, rafael@kernel.org,
+ daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: gautam@linux.ibm.com
+References: <20240809073120.250974-1-aboorvad@linux.ibm.com>
+ <20240809073120.250974-2-aboorvad@linux.ibm.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20240809073120.250974-2-aboorvad@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Apple's A7-A11 SoC is now supported, so the original help text is no longer
-accurate.
+On 8/9/24 08:31, Aboorva Devarajan wrote:
+> Update the cpuidle menu governor to avoid prioritizing physical states
+> over polling states when predicted idle duration is lesser than the
+> physical states target residency duration for performance gains.
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
----
- arch/arm64/Kconfig.platforms | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I would use something like this as wording:
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 6c6d11536b42..370a9d2b6919 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -37,8 +37,8 @@ config ARCH_APPLE
- 	bool "Apple Silicon SoC family"
- 	select APPLE_AIC
- 	help
--	  This enables support for Apple's in-house ARM SoC family, starting
--	  with the Apple M1.
-+	  This enables support for Apple's in-house ARM SoC family, such
-+	  as the Apple M1.
- 
- menuconfig ARCH_BCM
- 	bool "Broadcom SoC Support"
--- 
-2.46.0
+[PATCH] cpuidle: menu: Select polling on short predicted idle
+Select a shallow state matching our predicted_ns even if it is a
+polling one.
+
+Additionally to querying the next timer event, menu also employs an
+interval tracking strategy of most recent idle durations for workloads
+that aren't woken up by predictable timer events. The logic predicts
+the next wakeup as predicted_ns, but the logic handling that skipped
+any polling states.
+In the worst-case on POWER we might only have snooze as polling and
+CEDE. This makes the entire logic around it a NOP as it never let's
+predicted_ns choose an appropriate idle state since it requires a
+non-polling one.
+To actually enforce predicted_ns for idle state selection actually use
+states even though they are polling ones.
+
+Even for a perfect recent intervals of
+[1, 1, 1, 1, 1, 1, 1, 1]
+menu previously chose the first non-idle state.
+
+
+-----
+
+To mitigate potential side-effects since most platforms have a
+shallower idle state we could add something based on that, but
+really your patch would be the only consistent IMO.
+
+I'm not quite sure why this was put there in the first place.
+It was essentially introduced in
+commit ("69d25870f20c cpuidle: fix the menu governor to boost IO performance")
+with a 20us lower limit.
+
+> 
+> Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+> ---
+>  drivers/cpuidle/governors/menu.c | 11 -----------
+>  1 file changed, 11 deletions(-)
+> 
+> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors/menu.c
+> index f3c9d49f0f2a..cf99ca103f9b 100644
+> --- a/drivers/cpuidle/governors/menu.c
+> +++ b/drivers/cpuidle/governors/menu.c
+> @@ -354,17 +354,6 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
+>  			idx = i; /* first enabled state */
+>  
+>  		if (s->target_residency_ns > predicted_ns) {
+> -			/*
+> -			 * Use a physical idle state, not busy polling, unless
+> -			 * a timer is going to trigger soon enough.
+> -			 */
+> -			if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
+> -			    s->exit_latency_ns <= latency_req &&
+> -			    s->target_residency_ns <= data->next_timer_ns) {
+> -				predicted_ns = s->target_residency_ns;
+> -				idx = i;
+> -				break;
+> -			}
+>  			if (predicted_ns < TICK_NSEC)
+>  				break;
+>  
 
 
