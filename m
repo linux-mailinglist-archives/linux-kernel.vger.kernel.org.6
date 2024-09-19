@@ -1,272 +1,231 @@
-Return-Path: <linux-kernel+bounces-333606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33F497CB43
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:02:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 180C997CB44
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEE4EB228EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:02:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8118285DAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75031190477;
-	Thu, 19 Sep 2024 15:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E57B190477;
+	Thu, 19 Sep 2024 15:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OjMeDP3F"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V5gxiNxS"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38781DDC9
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 15:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824F21E522
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 15:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726758115; cv=none; b=BPrhZ2xF1RsDOBQ15mqMXKXJ2G20Xbk87JGUKM3V7A/UC7hlnU2J4aE5Xqgp2V2SYxDjyrRgdDiPohWhq7odQlduE44rZe9WfibFQrsIJTvz7IY5Pd2G84ykGGA7tLT+xkvkiDRcrjMRe3KgTzuw25K0yWud1P1+6qWx2s6cJHI=
+	t=1726758132; cv=none; b=ispPWZVhM3oRJ/pNFEN7ftvOTFY8KLZw9IKMTk9A05RyjY/bJYli6HrzLtZaoNp1xOOhvpofi/ro7eLiFIW0iIMn7I+xEps0s36eoWOJsjvlAIDtlAcEAfXvipeAaUkSbEzGehqi2hVzNDPVJmhnimNlvn637kXrKvltVXtfSBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726758115; c=relaxed/simple;
-	bh=gfFYAX8Wkw7xR3ohBQ7tGjWvt51dgudj/WdKi801p70=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=ORKHoR8BTv6oQbHcLzyxDQagyj8lU1kqIwEK9/Um1dGbiEj8bAb8R2r2fuCbcurEweqWPrlgHxhQkvqkgiDTnDPenRlbofRb0kpg16GT0BFiSgu5cEf7n8jvLTqgOjz3XJ6PeOHSzZa5uNrsuOdPHAG883+l6JBA5J7kID9MSLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OjMeDP3F; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48JEMfDr027076;
-	Thu, 19 Sep 2024 15:01:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:in-reply-to:references:date:message-id
-	:content-type:mime-version; s=pp1; bh=3/QMlVBloIHFi2ohshUULd/kYl
-	48od3sFeUczC9S+jg=; b=OjMeDP3FZsUMyGHmRwBILr8JXdCBKMj4VASxMVG+pa
-	cd+5w2uKmhJuo1KsGmyIajJuD0dd4pNeyfhc5J7fmV3rt+eDk/JZiG+2+iaGby1U
-	3wF0KBldgT/ReaoOQSzAIDhBxQYp9W7vKysGv9LprFrgXggXUSRGgHe6ADxnJVyJ
-	NsiT58ejfKJqBM9T7/tQ4pJklw4piRKY9rPlJxA4iBMxHs9aBUNTbptgIDGJRl5+
-	0qjfjgXC2AnMDhbPBAVthlxoSGLVqIpgctYUvNph/FlD+1GVmBaPOgKAda+yfdHr
-	ubMUJ+qNhIep1w3nz0yrd/M+q/9e5pi8gZMz9BbhOuaA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3udmaxf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 15:01:25 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48JF1P5L032265;
-	Thu, 19 Sep 2024 15:01:25 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3udmaub-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 15:01:24 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48JD1QAb001187;
-	Thu, 19 Sep 2024 15:00:57 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41nntqj1se-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 15:00:57 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48JF0rkw54788396
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 19 Sep 2024 15:00:53 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9861F2004F;
-	Thu, 19 Sep 2024 15:00:53 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EBFE32004E;
-	Thu, 19 Sep 2024 15:00:49 +0000 (GMT)
-Received: from vaibhav?linux.ibm.com (unknown [9.39.30.22])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Thu, 19 Sep 2024 15:00:49 +0000 (GMT)
-Received: by vaibhav@linux.ibm.com (sSMTP sendmail emulation); Thu, 19 Sep 2024 20:30:48 +0530
-From: Vaibhav Jain <vaibhav@linux.ibm.com>
-To: Ritesh Harjani <ritesh.list@gmail.com>,
-        Narayana Murty N
- <nnmlinux@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
-        linux-kernel@vger.kernel.org
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, ganeshgr@linux.ibm.com,
-        sbhat@linux.ibm.com
-Subject: Re: [PATCH] powerpc/pseries/eeh: move pseries_eeh_err_inject()
- outside CONFIG_DEBUG_FS block
-In-Reply-To: <871q1hbsh7.fsf@gmail.com>
-References: <20240917132445.3868016-1-nnmlinux@linux.ibm.com>
- <871q1hbsh7.fsf@gmail.com>
-Date: Thu, 19 Sep 2024 20:30:48 +0530
-Message-ID: <87bk0jbsdb.fsf@vajain21.in.ibm.com>
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Rb4gT66GOt97oYcD8pdorqZDXA2fElrU
-X-Proofpoint-ORIG-GUID: lj7VS7Tl7p8Rj5GEgCqR_hmiEBJfYDf2
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1726758132; c=relaxed/simple;
+	bh=YpUk7QNqAoJUkAbDvBnTy3VZp3BINGaqpAaOyQTJMqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JWM8og3aDP0xv4u7mXHNT4Kecq4rbyDLDMssvsKEJ2G9slPBxsUcesySMaWlsOerVwAAzJIfHMcrxdOOH8Dyfbi9YAv5lakI19Oi+wKAQ9E93B1rCFU0whkwdMlnTw4k6nq5oS/mL+Bwh5jaSJl992Z2oOD+ehlkeeuw0I6Zmlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V5gxiNxS; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5365aec6fc1so1187146e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 08:02:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1726758129; x=1727362929; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uCm2GzzK+q+0wa6+stISbobtFnZrzd/LjiQZU2jYSWs=;
+        b=V5gxiNxSUp0+xSFLz7LiQtg8HtpnxGvBDU6aE60/CbhUQJGbC9PJxvG0fhFf8xX5RR
+         4vDdyE78H9xK1yBV1Cz2duZ2j6h1OXFbsFS+/Dc8GiH4gcdKBts4b/JGdBaSSWWgzOdp
+         Hra/oo8hbgMwbPuVT9D2Ygj5H2oXluxgJ0Kaa950UNyHYTwpzS/1ST1RvoaQyGo25Tl0
+         wKY0xLkPSzUi3331n7tA+odUTQS66VnjN6NoPFOaHsxd32iQA1uHvu+r6EX6FE6FejwM
+         2JLFATCDfa4eibeq3ywoAfmSOuEpdrnMfGyLq4m2ygTskI9nPeoKWdn2n9SXGxgpysRN
+         cINg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726758129; x=1727362929;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uCm2GzzK+q+0wa6+stISbobtFnZrzd/LjiQZU2jYSWs=;
+        b=aVbHgFmCgAuC7cHIz32ZfrtkhF0yBdUK9flUAlI/27uoX7UK5Jr0/mneHMn3oJ5v0+
+         jLTBKthc4iC7eb+pbI2oC7M6rMjiB+GgzlAMSRM28BMic6T06xlIuxedwHhSjE0iaXAr
+         RTxlajTonjRFpdRkoY8lNdcoKzRdNdJUT8ud4Yfo8PyqGzz42mhF7lYGFpCe3orQWsX0
+         OzM/ipMXSRiysfIOK7RrMw2Sba5tp/eVlvVty0G7QJY92qndOeGTsk8+h0kObLVXGWzH
+         gp89V3v53BR75WEpSrjdjJv+5pdLBbEZQtnBadUyzCPNd6OKfLploeHo/7nggRP97H+Q
+         z8TA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqNs59QlzospFn0Atc8/1f9GHWUSXhH0yjCxbGswoBY4i3Av20aP0qiInwGm/tZbSVW7+kjD5J6TDafT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1FQD8bo355jkcqw2dBAWeyfheSF+Y/pM8/Dk4aDZArTU2F40r
+	jHOjXJufme3TA8ca8z0Il8/yl6pq7WyI6rwvrW6WCPrnt0UKy4BWgJsop5WSPhE=
+X-Google-Smtp-Source: AGHT+IFRQsoIHdcvjt2JIpniZeK8k6MPo4O04rrl7ltLpXb2c258J/bIcA534MWSbuTQYrLAiz5l1Q==
+X-Received: by 2002:a05:6512:3b0e:b0:52e:9fe0:bee4 with SMTP id 2adb3069b0e04-53678fb731bmr14420533e87.9.1726758128411;
+        Thu, 19 Sep 2024 08:02:08 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd6ef978besm1958074a91.57.2024.09.19.08.01.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 08:02:06 -0700 (PDT)
+Date: Thu, 19 Sep 2024 17:01:49 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Sunil V L <sunilvl@ventanamicro.com>, Arnd Bergmann <arnd@arndb.de>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+	Rengarajan S <rengarajan.s@microchip.com>,
+	Serge Semin <fancer.lancer@gmail.com>
+Subject: Re: [PATCH next v2 1/4] serial: 8250: Split out IER from
+ rs485_start_tx()
+Message-ID: <Zuw83ZyzeKxA6RmE@pathway.suse.cz>
+References: <20240913140538.221708-1-john.ogness@linutronix.de>
+ <20240913140538.221708-2-john.ogness@linutronix.de>
+ <ZumWuketXcGQNw49@pathway.suse.cz>
+ <84ldzproiy.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-19_12,2024-09-19_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
- phishscore=0 impostorscore=0 spamscore=0 priorityscore=1501 suspectscore=0
- adultscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=932
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409190099
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84ldzproiy.fsf@jogness.linutronix.de>
 
-Hi Ritesh,
+On Wed 2024-09-18 17:10:53, John Ogness wrote:
+> On 2024-09-17, Petr Mladek <pmladek@suse.com> wrote:
+> > Sigh, I am trying to review this patch but I am not familiar with the
+> > code. Feel free to ignore me when the questions are completely off.
+> 
+> I appreciate you researching where the code came from. I made my changes
+> based on what I see the code doing now.
+> 
+> >> --- a/drivers/tty/serial/8250/8250_port.c
+> >> +++ b/drivers/tty/serial/8250/8250_port.c
+> >>  void serial8250_em485_start_tx(struct uart_8250_port *up)
+> >>  {
+> >>  	unsigned char mcr = serial8250_in_MCR(up);
+> >>  
+> >> +	/*
+> >> +	 * Some chips set the UART_LSR_DR bit even when UART_IER_RDI is
+> >> +	 * disabled, so explicitly mask it.
+> >> +	 */
+> >>  	if (!(up->port.rs485.flags & SER_RS485_RX_DURING_TX))
+> >> -		serial8250_stop_rx(&up->port);
+> >> +		up->port.read_status_mask &= ~UART_LSR_DR;
+> >
+> > This change is related to disabling UART_IER_RDI but we do not longer
+> > disable it in this code path.
+> 
+> Correct. It will be disabled in the new wrapper
+> serial8250_em485_start_tx(). For the console write() callback, RDI is
+> already being disabled (IER is cleared). It will not use the wrapper.
+> 
+> > Why do we need to do it here, please?
+> 
+> Because the console write() callback also needs to clear LSR_DR. That
+> part of the callback needs to stay.
+> 
+> > Why is it needed only in the em485-specific path, please?
+> 
+> Only RS485 deals with controlling TX/RX directions.
+> 
+> > On one hand, the comment talks about UART_LSR_DR and UART_IER_RDI
+> > so seems to be relater.
+> 
+> I do not know if the LSR_DR modify is strictly necessary. I am just
+> preserving the existing behavior (and related comment). The disabling of
+> IER_RDI will still happen (via wrapper or explicitly as in the console
+> write() callback).
+> 
+> >>  static bool start_tx_rs485(struct uart_port *port)
+> >>  {
+> >> @@ -1585,7 +1600,7 @@ static bool start_tx_rs485(struct uart_port *port)
+> >>  	if (em485->tx_stopped) {
+> >>  		em485->tx_stopped = false;
+> >>  
+> >> -		up->rs485_start_tx(up);
+> >> +		serial8250_rs485_start_tx(up);
+> >
+> > If I get this correctly then this keeps the existing behavior when
+> >
+> >     up->rs485_start_tx == serial8250_em485_start_tx
+> 
+> Correct.
+> 
+> > Is this always the case, please?
+> 
+> Yes.
+> 
+> > Can start_tx_rs485() be called for the 8250_bcm2835aux.c driver?
+> 
+> Yes.
 
-Thanks for looking into this patch. My responses your review inline
-below:
+IMHO, the answer "Yes" to both last questions can't be valid.
+The 8250_bcm2835aux driver does:
 
-Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
+static int bcm2835aux_serial_probe(struct platform_device *pdev)
+{
+	[...]
+	up.rs485_start_tx = bcm2835aux_rs485_start_tx;
+	[...]
+}
 
-> Narayana Murty N <nnmlinux@linux.ibm.com> writes:
->
->> Makes pseries_eeh_err_inject() available even when debugfs
->> is disabled (CONFIG_DEBUG_FS=n). It moves eeh_debugfs_break_device()
->> and eeh_pe_inject_mmio_error() out of the CONFIG_DEBUG_FS block
->> and renames it as eeh_break_device().
->>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Closes: https://lore.kernel.org/oe-kbuild-all/202409170509.VWC6jadC-lkp@intel.com/
->> Fixes: b0e2b828dfca ("powerpc/pseries/eeh: Fix pseries_eeh_err_inject")
->> Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
->> ---
->>  arch/powerpc/kernel/eeh.c | 198 +++++++++++++++++++-------------------
->>  1 file changed, 99 insertions(+), 99 deletions(-)
->
-> Ok, so in your original patch you implemented eeh_inject ops for pseries
-> using mmio based eeh error injection (eeh_pe_inject_mmio_error()), which
-> uses the functions defined under debugfs -> eeh_debugfs_break_device(). 
->
-> This was failing when CONFIG_DEBUGFS is not defined, thus referring to
-> undefined function definition. 
->
-> Minor nit below.
->
->>
->> diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
->> index 49ab11a287a3..0fe25e907ea6 100644
->> --- a/arch/powerpc/kernel/eeh.c
->> +++ b/arch/powerpc/kernel/eeh.c
->> @@ -1574,6 +1574,104 @@ static int proc_eeh_show(struct seq_file *m, void *v)
->>  }
->>  #endif /* CONFIG_PROC_FS */
->>  
->> +static int eeh_break_device(struct pci_dev *pdev)
->> +{
->> +	struct resource *bar = NULL;
->> +	void __iomem *mapped;
->> +	u16 old, bit;
->> +	int i, pos;
->> +
->> +	/* Do we have an MMIO BAR to disable? */
->> +	for (i = 0; i <= PCI_STD_RESOURCE_END; i++) {
->> +		struct resource *r = &pdev->resource[i];
->> +
->> +		if (!r->flags || !r->start)
->> +			continue;
->> +		if (r->flags & IORESOURCE_IO)
->> +			continue;
->> +		if (r->flags & IORESOURCE_UNSET)
->> +			continue;
->> +
->> +		bar = r;
->> +		break;
->> +	}
->> +
->> +	if (!bar) {
->> +		pci_err(pdev, "Unable to find Memory BAR to cause EEH with\n");
->> +		return -ENXIO;
->> +	}
->> +
->> +	pci_err(pdev, "Going to break: %pR\n", bar);
->> +
->> +	if (pdev->is_virtfn) {
->> +#ifndef CONFIG_PCI_IOV
->> +		return -ENXIO;
->> +#else
->> +		/*
->> +		 * VFs don't have a per-function COMMAND register, so the best
->> +		 * we can do is clear the Memory Space Enable bit in the PF's
->> +		 * SRIOV control reg.
->> +		 *
->> +		 * Unfortunately, this requires that we have a PF (i.e doesn't
->> +		 * work for a passed-through VF) and it has the potential side
->> +		 * effect of also causing an EEH on every other VF under the
->> +		 * PF. Oh well.
->> +		 */
->> +		pdev = pdev->physfn;
->> +		if (!pdev)
->> +			return -ENXIO; /* passed through VFs have no PF */
->> +
->> +		pos  = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_SRIOV);
->> +		pos += PCI_SRIOV_CTRL;
->> +		bit  = PCI_SRIOV_CTRL_MSE;
->> +#endif /* !CONFIG_PCI_IOV */
->> +	} else {
->> +		bit = PCI_COMMAND_MEMORY;
->> +		pos = PCI_COMMAND;
->> +	}
->> +
->> +	/*
->> +	 * Process here is:
->> +	 *
->> +	 * 1. Disable Memory space.
->> +	 *
->> +	 * 2. Perform an MMIO to the device. This should result in an error
->> +	 *    (CA  / UR) being raised by the device which results in an EEH
->> +	 *    PE freeze. Using the in_8() accessor skips the eeh detection hook
->> +	 *    so the freeze hook so the EEH Detection machinery won't be
->> +	 *    triggered here. This is to match the usual behaviour of EEH
->> +	 *    where the HW will asynchronously freeze a PE and it's up to
->> +	 *    the kernel to notice and deal with it.
->> +	 *
->> +	 * 3. Turn Memory space back on. This is more important for VFs
->> +	 *    since recovery will probably fail if we don't. For normal
->> +	 *    the COMMAND register is reset as a part of re-initialising
->> +	 *    the device.
->> +	 *
->> +	 * Breaking stuff is the point so who cares if it's racy ;)
->> +	 */
->> +	pci_read_config_word(pdev, pos, &old);
->> +
->> +	mapped = ioremap(bar->start, PAGE_SIZE);
->> +	if (!mapped) {
->> +		pci_err(pdev, "Unable to map MMIO BAR %pR\n", bar);
->> +		return -ENXIO;
->> +	}
->> +
->> +	pci_write_config_word(pdev, pos, old & ~bit);
->> +	in_8(mapped);
->> +	pci_write_config_word(pdev, pos, old);
->> +
->> +	iounmap(mapped);
->> +
->> +	return 0;
->> +}
->> +
->> +int eeh_pe_inject_mmio_error(struct pci_dev *pdev)
->> +{
->> +	return eeh_break_device(pdev);
->> +}
->> +
->
-> Why have an extra eeh_pe_inject_mmio_error() function which only calls
-> eeh_break_device()?
->
-> Maybe we can rename eeh_break_device() to eeh_mmio_break_device() and use
-> this function itself at both call sites?
+As a result, the 1st "Yes" was not correct:
 
-Fair suggestion,
+	up->rs485_start_tx != serial8250_em485_start_tx
 
-However we want to keep the method debugfs interface uses
-to inject EEH (thats ppc platform agonistic), decoupled from what pseries
-uses. Right now to support as initial work VFIO EEH injection on
-pseries, we are piggy backing on eeh_debugfs_break_device().
+and this patch would change the behavior for the 8250_bcm2835aux driver.
+Before, start_tx_rs485() called directly:
 
-This will change in future as we add more capabilities to pseries EEH
-injection and this will change working of eeh_pe_inject_mmio_error()
-without impacting the semantics of existing eeh_break_device().
+	up->rs485_start_tx(up);
 
--- 
-Cheers
-~ Vaibhav
+Newly, it would call:
+
+	void serial8250_rs485_start_tx(struct uart_8250_port *up)
+	{
+		if (!(up->port.rs485.flags & SER_RS485_RX_DURING_TX))
+			serial8250_stop_rx(&up->port);
+
+		up->rs485_start_tx(up);
+	}
+
+It means that it could call serial8250_stop_rx() even when it was not
+called by the original code.
+
+And SER_RS485_RX_DURING_TX seems to be checked even in
+drivers/tty/serial/8250/8250_bcm2835aux.c. So, it looks like it
+might be (un)set even for this driver.
+
+Or is this code path prevented in start_tx_rs485()? I mean that
+em485->tx_stopped could never be true for the 8250_bcm2835aux
+driver?
+
+But I see
+
+	static int bcm2835aux_serial_probe(struct platform_device *pdev)
+	{
+		[...]
+		up.port.rs485_config = serial8250_em485_config;
+		up.port.rs485_supported = serial8250_em485_supported;
+		[...]
+	}
+
+=> It looks like even bcm2835aux driver could have the em485 thing.
+   But it obviously wanted to something special in
+   up->rs485_start_tx().
+
+It looks to me that the change might either cause regression.
+Or it would deserve a comment unless the validity is obvious for people
+familiar with the code.
+
+Best Regards,
+Petr
 
