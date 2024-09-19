@@ -1,151 +1,127 @@
-Return-Path: <linux-kernel+bounces-333033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 168FC97C274
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 03:34:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B5D97C275
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 03:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7FE3B21C22
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 01:34:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 287C81C215B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 01:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A2B14A82;
-	Thu, 19 Sep 2024 01:34:15 +0000 (UTC)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447B312E48;
+	Thu, 19 Sep 2024 01:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="FX06LFe5"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8EA81E
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D225EB673
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726709655; cv=none; b=Ri5mioiu+5YdrvjtXw8Bc0UL8mFtOqHy394r+Aeignyil0TaK9VoVQsIRiPwoaAJVfsh6w/MYTZgBnOX3ybi69lj8hak8FPkY1huuXavDQhLcHNubDZD7k5jIWgsjK4jG+YM/xMahCQrbJMF+aJ9ZxmBg7tVWtwTofYs4jZnpGo=
+	t=1726709736; cv=none; b=EiaaBWVGmUdR+SFythmCbIfS5iq235A15Z9dBWRHGnU+A9Z5zmsRkfXMXOUQAEzICx6xI0jjV3FaFfODbZutW7zOsmLV3KXitzpCFXjGxJMbmGamr3qEmJTVVTXm18f+VHxnHj07ji+JUE/mUJK/b9FDluMQ8a5AgwbuFPbQJDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726709655; c=relaxed/simple;
-	bh=ykOTfw5zso1+0VIQV5rtCpBpA3CaAiBzq75mFIuOssw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bYoptQzAb55JMPO1rS20pjEJcw8FlBP54suFNOVuTpJ4POM7VQW5JFAdmOZGk6PtdzU5/HQT3/yE+wXGFktrUFzlLMjsmVbjO7r3Pe0Xldk4BK5FQRyxsv8dKOhQlZApHWU7qZIM9mHvjVkG7g+8ZDckNccLgI9TtluALsj4+jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-49bcfbc732eso109861137.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 18:34:13 -0700 (PDT)
+	s=arc-20240116; t=1726709736; c=relaxed/simple;
+	bh=+BfpS3KEqyEFGD4EVRK0cm8e+bH48T32ouVTTydTMQY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eK3wKFxXGVZQldfEuWntk3BVl1AvPNS/Gfdxrb8WI+MW/rtfQtgmSc1uwT3BxaFYfXA8i/ODFNxrcXR4tYs6+yjRKPvHoIY31Y4Q4rkrAyr17Vn2wjxeknTYpVL5pxBODOnn6bm4zI/p/soWpG/5nnkxHqheD7kUP4lm7P4Bilg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=FX06LFe5; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7d4f8a1626cso222274a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 18:35:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1726709734; x=1727314534; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=r1e3S9pWTm/lEVJSPmr9Y58STRzRcLqR0sL+KSgVD4Q=;
+        b=FX06LFe57QP1po872zLLPVt84oVA1axhqFaN0ukg53GnVvdDGZMLhZSt0CseIZKnMR
+         4sq2QjClBqXGadJl4l7tcrWCZg7iLByQxlEcY4bI73lhPukOzl7+SQQBzQLZdin77Q9K
+         1hm53XDsj+qrxVpRTaBXYbqQvvIJQKR0FORuUjyubaB1O3gGJ3nP4qgdoC3AHEGsB+Et
+         Bz4R6Or+PLshab2aNvuXchRw6Ecsug1aDhFk9Mkq4DUZ5+Zrm4c8tKr5kJsi+gcC4THZ
+         WkV1YEyK9RXXlnhBPSqNebWog/g8Hq6AE9TtXviW692zg+c1ZUoCSkWbITe0CRsnXVDY
+         1w7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726709652; x=1727314452;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tBad09+wpx5AmVzF0EpKxcrxl3VCINq6sl7VTRT01To=;
-        b=AniOXR8/icl8cPJb6zB28WP8EqhH42rN84RGzWYnBtbvqEMj9EO2Kl9uWf/ymVOf2l
-         2CV8mG6++j+qE5Pmbb1oswnmu4fM/04CjNULSFTabXQZ959DNt2/7EKJKt0WVBNuTo1e
-         ywETtggAbduVY2oEEWqnkXf5oftbTGrB5MJo6MM3aCkVgJYJPmsvLsZh0k7ZKQcNzsZ+
-         FCBhor4qdIh9VEIWmFY2ytnKlbG3XrAqzLl23NSorRiLgI2R5DnhYIrFFOau9mfCN0KD
-         ok5IdjZgoLWht4Q7lX8YsjTH53bJMH7UBsuQBQL+EBfWvLHfORxqnLKIwz1sLVgTXzJ7
-         3s2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXn4lW1MStciyutM3xi5klNpABrAX5pe5q7vchyt4SQ0Q6WD8U88UWEBmNFamhAcAxEXFNrRIOgn0niv/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI2pyuOFAqxtwXcy/HnbZNVXWvKNdAoG/7AkcVJx4GhZNF2d+V
-	iIJV7FiJZSDwChpme4M2KZ2n11Q5ZeZyhE+M6HkxyvS/wOdZnPahIqGrt5CPMjG95ezkHWn2pxY
-	JqWUB9GVZsY+UULxxk56ybFr2ZwE=
-X-Google-Smtp-Source: AGHT+IFpxDivPgV0RcZZM7jjnKj7YzNnBdRJMbkQFPtAH+YGnBAqnYoheQ8i+U1mH8m2BW0Q2HIjg8xzhcYGdt6x7Bo=
-X-Received: by 2002:a05:6102:3a0e:b0:49b:f52d:4922 with SMTP id
- ada2fe7eead31-49d4f6f4a03mr14422220137.27.1726709652294; Wed, 18 Sep 2024
- 18:34:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726709734; x=1727314534;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r1e3S9pWTm/lEVJSPmr9Y58STRzRcLqR0sL+KSgVD4Q=;
+        b=eC9757CJ46xtGDtDknMnGzAI9Mb8FrBUGfATKmFYQ1VqiwuArj1p+/52ySLrd4o8We
+         y4R4H/MuOj3njq5UdU/2IFkzrkhWiEhPdveqCxCE5WxDvjR9VfuvQnlWKc8GjRaDZffQ
+         sseVhO228qBZhcwiXNzWK+9nXDOXh1ZJYYl9dGueJKOO/GKwTtWQFL+MFGM5RKQprhhC
+         VLObKvYiHvqPo2i2tOUjrA4kKag0ra+kZmOjtoqpPHbCGvIV4NRejvL6KDtaZjnG7AFT
+         Iduj2GOun2hUCtnPGs7emgSFUpcssyv6uVZhyC8vbo7Qr6Yvk7NMiEBeCg1SYwZaGGlQ
+         rIgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUc7Zt7t9id1gNfkLwTIONUjgLWrjajrQxYN7Ni1x5mEGfTTugYhERek0ws9umXFGSPOhXUuKf/MgViaBc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpO6+vH+M9M0hoUnjZtEfvhd/nx03c/MMvmAZRcWTu9tOv5EJC
+	3AiDNu88WHcZQZTmZtocWa9Q+il290FVJKMvgmO8btAoxgEjbWcY3MoqszIWx7YBd9Uq6aD/A9h
+	4
+X-Google-Smtp-Source: AGHT+IHQSQLaTaoG8epxHCgtggUQaJH8zELCvKB6tmSjd6xX6jo/pz1O8xhjQg3WkdHnuLbwgbf0Eg==
+X-Received: by 2002:a05:6a21:164a:b0:1cf:3461:2970 with SMTP id adf61e73a8af0-1d112eaaf50mr32036486637.41.1726709734103;
+        Wed, 18 Sep 2024 18:35:34 -0700 (PDT)
+Received: from ubuntu20.04 ([203.208.189.11])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944bc9ed9sm7282482b3a.209.2024.09.18.18.35.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 18:35:33 -0700 (PDT)
+From: Yang Jihong <yangjihong@bytedance.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	james.clark@arm.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	leo.yan@arm.com
+Cc: yangjihong@bytedance.com
+Subject: [PATCH RESEND v3 0/3] perf: build: Minor fixes for build failures
+Date: Thu, 19 Sep 2024 09:35:10 +0800
+Message-Id: <20240919013513.118527-1-yangjihong@bytedance.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240916110754.1236200-1-dev.jain@arm.com> <20240916110754.1236200-3-dev.jain@arm.com>
-In-Reply-To: <20240916110754.1236200-3-dev.jain@arm.com>
-From: Barry Song <baohua@kernel.org>
-Date: Thu, 19 Sep 2024 13:34:01 +1200
-Message-ID: <CAGsJ_4wuSqA8vzHCTH6rnVrppQ4k0FUcSu-=6HfAf+oYqz15bQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mm: Compute first_set_pte to eliminate evaluating
- redundant ranges
-To: Dev Jain <dev.jain@arm.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, willy@infradead.org, 
-	ryan.roberts@arm.com, anshuman.khandual@arm.com, hughd@google.com, 
-	ioworker0@gmail.com, wangkefeng.wang@huawei.com, 
-	baolin.wang@linux.alibaba.com, gshan@redhat.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 16, 2024 at 11:08=E2=80=AFPM Dev Jain <dev.jain@arm.com> wrote:
->
-> For an mTHP allocation, we need to check, for every order, whether for
-> that order, we have enough number of contiguous PTEs empty. Instead of
-> iterating the while loop for every order, use some information, which
-> is the first set PTE found, from the previous iteration to eliminate
-> some cases. The key to understanding the correctness of the patch
-> is that the ranges we want to examine form a strictly decreasing
-> sequence of nested intervals.
+Changes since v3:
+ - Add reviewed-by tag from Leo. (see Link[1])
+ - Resend the patchset with no code changes.
 
-Could we include some benchmark data here, as suggested by Ryan in this thr=
-ead?
+Link[1]: https://lore.kernel.org/all/b5688d4a-9389-4998-8031-3f002302311e@arm.com/
 
-https://lore.kernel.org/linux-mm/58f91a56-890a-45d0-8b1f-47c4c70c9600@arm.c=
-om/
+Changes since v2:
+ - patch1: change LIBDW_VERSION to follow up the style of
+   LIBTRACEEVENT_VERSION. (by Leo's suggestion)
+ - patch2: Use a new line for the -ldl dependency and with comment,
+   synchronize tools/perf/Makefile.config. (by Leo's suggestion)
+ - patch3: include header files in alphabetical order,
+   add reviewed-by tag from Leo. (by Leo's suggestion)
 
->
-> Suggested-by: Ryan Roberts <ryan.roberts@arm.com>
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
+Changes since v1:
+ - patch3: Remove UTF-8 characters from build failure logs
 
-> ---
->  mm/memory.c | 20 ++++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
->
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 8bb1236de93c..e81c6abe09ce 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4633,10 +4633,11 @@ static struct folio *alloc_anon_folio(struct vm_f=
-ault *vmf)
->  {
->         struct vm_area_struct *vma =3D vmf->vma;
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> +       pte_t *first_set_pte =3D NULL, *align_pte, *pte;
->         unsigned long orders;
->         struct folio *folio;
->         unsigned long addr;
-> -       pte_t *pte;
-> +       int max_empty;
->         gfp_t gfp;
->         int order;
->
-> @@ -4671,8 +4672,23 @@ static struct folio *alloc_anon_folio(struct vm_fa=
-ult *vmf)
->         order =3D highest_order(orders);
->         while (orders) {
->                 addr =3D ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
-> -               if (pte_range_none(pte + pte_index(addr), 1 << order) =3D=
-=3D 1 << order)
-> +               align_pte =3D pte + pte_index(addr);
-> +
-> +               /* Range to be scanned known to be empty */
-> +               if (align_pte + (1 << order) <=3D first_set_pte)
-> +                       break;
-> +
-> +               /* Range to be scanned contains first_set_pte */
-> +               if (align_pte <=3D first_set_pte)
-> +                       goto repeat;
-> +
-> +               /* align_pte > first_set_pte, so need to check properly *=
-/
-> +               max_empty =3D pte_range_none(align_pte, 1 << order);
-> +               if (max_empty =3D=3D 1 << order)
->                         break;
-> +
-> +               first_set_pte =3D align_pte + max_empty;
-> +repeat:
->                 order =3D next_order(&orders, order);
->         }
->
-> --
-> 2.30.2
->
+Yang Jihong (3):
+  perf: build: Fix static compilation error when libdw is not installed
+  perf: build: Fix build feature-dwarf_getlocations fail for old libdw
+  perf dwarf-aux: Fix build fail when HAVE_DWARF_GETLOCATIONS_SUPPORT
+    undefined
 
-Thanks
-barry
+ tools/build/feature/Makefile | 5 ++++-
+ tools/perf/Makefile.config   | 7 +++++--
+ tools/perf/util/dwarf-aux.h  | 1 +
+ 3 files changed, 10 insertions(+), 3 deletions(-)
+
+-- 
+2.25.1
+
 
