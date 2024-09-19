@@ -1,260 +1,210 @@
-Return-Path: <linux-kernel+bounces-333287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 035B597C669
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:58:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E9B097C667
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D3981F25F1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:58:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 933381C2143F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81461199243;
-	Thu, 19 Sep 2024 08:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D964E199943;
+	Thu, 19 Sep 2024 08:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K4SxDi89"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qiaLlNA1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8WgXI4ra";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qiaLlNA1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8WgXI4ra"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336281991BE
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 08:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6E91991AB;
+	Thu, 19 Sep 2024 08:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726736274; cv=none; b=MwxGjdXmyDL/EHNFGJ8+hAvgiljY+162dvGjkbFsyaCyjwGjD10hWkw7sLTx3qe/QKZxytcd24dyZdVeH+rYpZkPwB9Lixkq8Kt+e0tugaHYd6BrGyXq25UDX+e9zdp57rBSLbOUmdWHqK5/Y1mj0iffogm08FDMPLVeak+Lsm4=
+	t=1726736224; cv=none; b=WVbrjidILCY4CxO3emxTiuVn6Ky1MuDgccJNwOWmNMMknDHJEfaOsSdQsLmsEbz1zdv7hXO3MUCz7kErFkZzaY8zGe6atDZ9bF9fdyj31lxQYwx3aBD7lTRfgrzaq6+PYiKPf5apEBaSAVugGYTdLS67HyGHevR0wt0zgbXoVoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726736274; c=relaxed/simple;
-	bh=utz/dY5zsReaS5YlYeVxZKjTohFSqFfS7eKrKs+zJuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N8SEer9UaU38+KqQwYKp7peNSLMU1KiAtHLA4rca+UGLNF3k+ZpcbXBTdbyaxgjXXMFfQFOdXyHTURleetWgMUQwn6fMoYH2A9lvEKi4d6//JjVyfMM7MxGjM6IGhaG5JqPJobyO3C/vq7Nd+T3v2VuSYVcJTIkgGlbW/GzL/aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K4SxDi89; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726736272;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YDlb9HHKZ7ppggUTFJeczVT++JQqxU+9AUY020deop4=;
-	b=K4SxDi89fcfMvZTSygD2ngminr0rIyGJGrOBTOD9fjT/j0ZG4zG5kreQG/XOajcUqSbYwW
-	MwoJZXmWMpOCNLWf/Qdw0TBKoSfMbUcvJZK2GLXHVWJ6oPNA6V5Su0XoR61KaTs+Je9cGK
-	5pQBf77AM+h99vMz8HamjCSIxWAoC1s=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-518-PHncvciHNp20_laqddd98Q-1; Thu,
- 19 Sep 2024 04:57:48 -0400
-X-MC-Unique: PHncvciHNp20_laqddd98Q-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	s=arc-20240116; t=1726736224; c=relaxed/simple;
+	bh=a3imPDKU4F8x26aj5GR4LklMpGZycrHBarNWJaSxQoQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QcDDGR9U3xF4ODQBShWXw45vaobYQ8W8+jjEKeTgBAozq3WkIdCSr/Uoa468mVN5/s45EH/CnfwFhIN270GGb61ZN6NbsbeHkvGMYRwvRbmFvXEp8T/9uLF+DZMFNGRu7iBXPoYysOLuKCICqtfY5xC1espCSo6ZenORApGNdZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qiaLlNA1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8WgXI4ra; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qiaLlNA1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8WgXI4ra; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4E13C1956083;
-	Thu, 19 Sep 2024 08:57:46 +0000 (UTC)
-Received: from localhost (unknown [10.45.226.3])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5F9C819560AA;
-	Thu, 19 Sep 2024 08:57:44 +0000 (UTC)
-Date: Thu, 19 Sep 2024 10:57:41 +0200
-From: Baoquan He <bhe@redhat.com>
-To: Dave Vasilevsky <dave@vasilevsky.ca>
-Cc: akpm@linux-foundation.org, glaubitz@physik.fu-berlin.de,
-	linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
-	mpe@ellerman.id.au, kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org, ebiederm@xmission.com,
-	Reimar =?iso-8859-1?Q?D=F6ffinger?= <Reimar.Doeffinger@gmx.de>
-Subject: Re: [PATCH v2] crash, powerpc: Default to CRASH_DUMP=n on
- PPC_BOOK3S_32
-Message-ID: <ZuvnhSvVMIGgAVNj@fedora>
-References: <20240917163720.1644584-1-dave@vasilevsky.ca>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7A3D820863;
+	Thu, 19 Sep 2024 08:56:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726736214; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=96dUAEKZsvERcAjWDxiPW5H6Y1CxOvpbvlwAXEDik30=;
+	b=qiaLlNA1zzNSj9Fizg+ztYaxIjAGol+v+u6s4cs6biDNsED8tF1pm36FlbqN2Ynb4krIJ4
+	yyN8aeWJsr0SgdVci8mY7+iSVqtsY7IY/vBaxOiqAXDK33aKrZVMUXAl34BeJeZ4OVggkc
+	9dRByhb6zDHkr9FXzKOHVQImCUH/4+Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726736214;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=96dUAEKZsvERcAjWDxiPW5H6Y1CxOvpbvlwAXEDik30=;
+	b=8WgXI4ramYSSL9qgxGB/v05W4Lj5eNPF/c1jgS4YK/CQupYKqbbATjxXO8G9xMXxrh7wkd
+	AgEEhPIsUVbWLVAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qiaLlNA1;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=8WgXI4ra
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726736214; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=96dUAEKZsvERcAjWDxiPW5H6Y1CxOvpbvlwAXEDik30=;
+	b=qiaLlNA1zzNSj9Fizg+ztYaxIjAGol+v+u6s4cs6biDNsED8tF1pm36FlbqN2Ynb4krIJ4
+	yyN8aeWJsr0SgdVci8mY7+iSVqtsY7IY/vBaxOiqAXDK33aKrZVMUXAl34BeJeZ4OVggkc
+	9dRByhb6zDHkr9FXzKOHVQImCUH/4+Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726736214;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=96dUAEKZsvERcAjWDxiPW5H6Y1CxOvpbvlwAXEDik30=;
+	b=8WgXI4ramYSSL9qgxGB/v05W4Lj5eNPF/c1jgS4YK/CQupYKqbbATjxXO8G9xMXxrh7wkd
+	AgEEhPIsUVbWLVAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3BA2913AAA;
+	Thu, 19 Sep 2024 08:56:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lRzGDFbn62amZwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 19 Sep 2024 08:56:54 +0000
+Date: Thu, 19 Sep 2024 10:57:44 +0200
+Message-ID: <874j6cc96f.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Christoffer Sandberg <cs@tuxedo.de>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Werner Sembach <wse@tuxedocomputers.com>,
+	Jerry Luo
+ <jerryluo225@gmail.com>,
+	Christian Heusel <christian@heusel.eu>,
+	regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	Jaroslav Kysela <perex@perex.cz>
+Subject: Re: [REGRESSION][BISECTED] Audio volume issues since 4178d78cd7a8
+In-Reply-To: <cedb8758bb506bf9454b90eebcaaea24@tuxedo.de>
+References: <c930b6a6-64e5-498f-b65a-1cd5e0a1d733@heusel.eu>
+	<87jzfbh5tu.wl-tiwai@suse.de>
+	<66dfd536-ae17-4d75-b514-7931a3734e54@gmail.com>
+	<20f70c0a92a27db29f188e05c33ba82c@tuxedo.de>
+	<1fbba03e-56b8-4e74-adf6-998e3a2d9dac@gmail.com>
+	<87setxe68m.wl-tiwai@suse.de>
+	<87r09he63e.wl-tiwai@suse.de>
+	<dfb141e8-6afa-4d21-8cd4-f9a53e8a192e@tuxedocomputers.com>
+	<87r09hcbr0.wl-tiwai@suse.de>
+	<cedb8758bb506bf9454b90eebcaaea24@tuxedo.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240917163720.1644584-1-dave@vasilevsky.ca>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: 7A3D820863
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[suse.de,tuxedocomputers.com,gmail.com,heusel.eu,lists.linux.dev,vger.kernel.org,perex.cz];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -5.51
+X-Spam-Flag: NO
 
-On 09/17/24 at 12:37pm, Dave Vasilevsky wrote:
-> Fixes boot failures on 6.9 on PPC_BOOK3S_32 machines using
-> Open Firmware. On these machines, the kernel refuses to boot
-> from non-zero PHYSICAL_START, which occurs when CRASH_DUMP is on.
+On Wed, 18 Sep 2024 16:10:00 +0200,
+Christoffer Sandberg wrote:
 > 
-> Since most PPC_BOOK3S_32 machines boot via Open Firmware, it should
-> default to off for them. Users booting via some other mechanism
-> can still turn it on explicitly.
 > 
-> Does not change the default on any other architectures for the
-> time being.
 > 
-> Signed-off-by: Dave Vasilevsky <dave@vasilevsky.ca>
-> Reported-by: Reimar Döffinger <Reimar.Doeffinger@gmx.de>
-> Closes: https://lists.debian.org/debian-powerpc/2024/07/msg00001.html
-> Fixes: 75bc255a7444 ("crash: clean up kdump related config items")
-> ---
->  arch/arm/Kconfig       | 3 +++
->  arch/arm64/Kconfig     | 3 +++
->  arch/loongarch/Kconfig | 3 +++
->  arch/mips/Kconfig      | 3 +++
->  arch/powerpc/Kconfig   | 4 ++++
->  arch/riscv/Kconfig     | 3 +++
->  arch/s390/Kconfig      | 3 +++
->  arch/sh/Kconfig        | 3 +++
->  arch/x86/Kconfig       | 3 +++
->  kernel/Kconfig.kexec   | 2 +-
->  10 files changed, 29 insertions(+), 1 deletion(-)
+> On 18.9.2024 15:49, Takashi Iwai wrote:
+> > On Wed, 18 Sep 2024 15:39:28 +0200,
+> > Werner Sembach wrote:
+> >> 
+> >> Hi
+> >> 
+> >> Am 18.09.24 um 10:09 schrieb Takashi Iwai:
+> >> > On Wed, 18 Sep 2024 10:06:01 +0200,
+> >> > Takashi Iwai wrote:
+> >> >> [...]
+> >> >> I don't see any relevant about the incorrect volumes by the suggested
+> >> >> commit, but at least we should avoid applying the quirk for a
+> >> >> non-existing speaker pin.
+> >> >>
+> >> >> Jerry, yours is with CX11970 (codec id 0x14f120d0), right?
+> >> 
+> >> Yes, at least for the preproduction sample of the Sirius Gen1 I have
+> >> at hand atm.
+> >> 
+> >> pciid is 2782:12c3
+> >> 
+> >> @Christoffer: I guess 2782:12c5 is for the Gen2?
+> 
+> Yes the other is for Sirius Gen2
+> 
+> > 
+> > Hm, and one of those PCI SSID conflicts with System76 Pangolin
+> > (pang14)?  All seem to have the very same codec CX11970.
+> 
+> I don't think I saw the pci id explicitly listed, but that was the
+> assumption.
+> 
+> > 
+> > If they really conflict in both PCI and HD-audio codec IDs, the only
+> > way would be to check DMI string, I'm afraid.
+> > 
+> 
+> I asked about the volumes since it could be a hint that a second
+> speaker is activated but stuck on a fixed volume. This would make a
+> low general volume setting sound louder but still somewhat adjustable.
+> 
+> However, if we can not verify second speaker pair, then I agree, DMI
+> limit would be the safe choice.
 
-Thanks for the effort.
+So, just to make clear: the device reported for a regression and the
+device you tried to tweak are different models?  The former is
+Pangolin and the latter Sirius Gen 2.  I'm confused by models.
 
-Acked-by: Baoquan He <bhe@redhat.com>
+With the quirk, you'll get an individual mixer element controlling the
+top speaker volume?
 
-> 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 0ec034933cae..4cc31467298b 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -1598,6 +1598,9 @@ config ATAGS_PROC
->  config ARCH_SUPPORTS_CRASH_DUMP
->  	def_bool y
->  
-> +config ARCH_DEFAULT_CRASH_DUMP
-> +	def_bool y
-> +
->  config AUTO_ZRELADDR
->  	bool "Auto calculation of the decompressed kernel image address" if !ARCH_MULTIPLATFORM
->  	default !(ARCH_FOOTBRIDGE || ARCH_RPC || ARCH_SA1100)
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index ed15b876fa74..8c67b76347d3 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -1559,6 +1559,9 @@ config ARCH_DEFAULT_KEXEC_IMAGE_VERIFY_SIG
->  config ARCH_SUPPORTS_CRASH_DUMP
->  	def_bool y
->  
-> +config ARCH_DEFAULT_CRASH_DUMP
-> +	def_bool y
-> +
->  config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
->  	def_bool CRASH_RESERVE
->  
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index 0e3abf7b0bd3..7ba3baee859e 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -600,6 +600,9 @@ config ARCH_SUPPORTS_KEXEC
->  config ARCH_SUPPORTS_CRASH_DUMP
->  	def_bool y
->  
-> +config ARCH_DEFAULT_CRASH_DUMP
-> +	def_bool y
-> +
->  config ARCH_SELECTS_CRASH_DUMP
->  	def_bool y
->  	depends on CRASH_DUMP
-> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-> index 60077e576935..b547f4304d0c 100644
-> --- a/arch/mips/Kconfig
-> +++ b/arch/mips/Kconfig
-> @@ -2881,6 +2881,9 @@ config ARCH_SUPPORTS_KEXEC
->  config ARCH_SUPPORTS_CRASH_DUMP
->  	def_bool y
->  
-> +config ARCH_DEFAULT_CRASH_DUMP
-> +	def_bool y
-> +
->  config PHYSICAL_START
->  	hex "Physical address where the kernel is loaded"
->  	default "0xffffffff84000000"
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 8a4ee57cd4ef..c04f7bb543cc 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -682,6 +682,10 @@ config RELOCATABLE_TEST
->  config ARCH_SUPPORTS_CRASH_DUMP
->  	def_bool PPC64 || PPC_BOOK3S_32 || PPC_85xx || (44x && !SMP)
->  
-> +config ARCH_DEFAULT_CRASH_DUMP
-> +	bool
-> +	default y if !PPC_BOOK3S_32
-> +
->  config ARCH_SELECTS_CRASH_DUMP
->  	def_bool y
->  	depends on CRASH_DUMP
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 86d1f1cea571..341ef759870a 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -882,6 +882,9 @@ config ARCH_SUPPORTS_KEXEC_PURGATORY
->  config ARCH_SUPPORTS_CRASH_DUMP
->  	def_bool y
->  
-> +config ARCH_DEFAULT_CRASH_DUMP
-> +	def_bool y
-> +
->  config ARCH_HAS_GENERIC_CRASHKERNEL_RESERVATION
->  	def_bool CRASH_RESERVE
->  
-> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-> index c60e699e99f5..fff371b89e41 100644
-> --- a/arch/s390/Kconfig
-> +++ b/arch/s390/Kconfig
-> @@ -275,6 +275,9 @@ config ARCH_SUPPORTS_CRASH_DUMP
->  	  This option also enables s390 zfcpdump.
->  	  See also <file:Documentation/arch/s390/zfcpdump.rst>
->  
-> +config ARCH_DEFAULT_CRASH_DUMP
-> +	def_bool y
-> +
->  menu "Processor type and features"
->  
->  config HAVE_MARCH_Z10_FEATURES
-> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-> index e9103998cca9..04ff5fb9242e 100644
-> --- a/arch/sh/Kconfig
-> +++ b/arch/sh/Kconfig
-> @@ -550,6 +550,9 @@ config ARCH_SUPPORTS_KEXEC
->  config ARCH_SUPPORTS_CRASH_DUMP
->  	def_bool BROKEN_ON_SMP
->  
-> +config ARCH_DEFAULT_CRASH_DUMP
-> +	def_bool y
-> +
->  config ARCH_SUPPORTS_KEXEC_JUMP
->  	def_bool y
->  
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index d1fe732979d4..7f39db779574 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2092,6 +2092,9 @@ config ARCH_SUPPORTS_KEXEC_JUMP
->  config ARCH_SUPPORTS_CRASH_DUMP
->  	def_bool X86_64 || (X86_32 && HIGHMEM)
->  
-> +config ARCH_DEFAULT_CRASH_DUMP
-> +	def_bool y
-> +
->  config ARCH_SUPPORTS_CRASH_HOTPLUG
->  	def_bool y
->  
-> diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-> index 6c34e63c88ff..4d111f871951 100644
-> --- a/kernel/Kconfig.kexec
-> +++ b/kernel/Kconfig.kexec
-> @@ -97,7 +97,7 @@ config KEXEC_JUMP
->  
->  config CRASH_DUMP
->  	bool "kernel crash dumps"
-> -	default y
-> +	default ARCH_DEFAULT_CRASH_DUMP
->  	depends on ARCH_SUPPORTS_CRASH_DUMP
->  	depends on KEXEC_CORE
->  	select VMCORE_INFO
-> -- 
-> 2.43.0
-> 
 
+Takashi
 
