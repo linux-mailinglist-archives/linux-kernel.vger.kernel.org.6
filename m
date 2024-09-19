@@ -1,212 +1,290 @@
-Return-Path: <linux-kernel+bounces-333582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C794797CAF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:28:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C29A97CAFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84CA9285344
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9BAD285425
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E62194083;
-	Thu, 19 Sep 2024 14:28:25 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8870319FA9F;
+	Thu, 19 Sep 2024 14:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwSeo4nQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498D019E7F0
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 14:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C0A19EEC5;
+	Thu, 19 Sep 2024 14:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726756104; cv=none; b=sRWEvhfKc/9/jgDKbByOzV9GK0JCg87yXa/Q4psLVuCqd2wN1U8AZOV7qywUyP7+XFxBM+ncr4KM1Kk5+R8+0FxYbE4+mJHy+h4Q28fSytgQPkzdzB+yYrKTEvI6adFfk50liXTHefGwMSoxi0wryC1R5yYdhRKPmxPCQ+HMNrc=
+	t=1726756162; cv=none; b=J4MClP5+BLXROQFDcJMCq183gMOXgQyOcnWJROKEhqODCQfKhErIsocGA2g7Pbs17/9JwYr2TmCwRcjfsZWMa+ds8nk5PhL6jkbooeJh/OFM8t2LBovQUGVtMnpJDwBfvQrjNd0yoGDgHZjgqnROZqFGC+CnjB0nB9iK5JFcByI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726756104; c=relaxed/simple;
-	bh=ARkS/TdRTX1quJ/+KneNXaNfoRa+gSBSyw6INjFOF/Y=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=geLa7lsrv9F0gIkSI+tplKGenpBCQl1qofdjyTH+0+EFE7ndPqjg63Ks/ABZPmSxOe+Md+RbY9jh1SUTbvlMncpglscqOMcm0/JMg6Wi1XehUVtWw44SsbNgkXukpW4dPl50bNC03JhQq+MMDEe/hesCXPN4qiEwziYLysva+Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0a71b7d90so12871175ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 07:28:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726756102; x=1727360902;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VhoKh0X8PkzpeoULm+kGqj4f92k1O+QVQGRIZuxdXLg=;
-        b=MyzQaVvd6B6iuAB+U1JunZgeUfJkHAvGfbp+hRw8CJUije6S0Ka367inKpV6HjAXsw
-         REpXKg6qtHh5HxeP9f3xDLCfC35I3zpN/u9a7/3or0BIj1XQA8O10Xb6cUHMfaaRUjXq
-         ljMa+1ACEanLm1sjPUFona2+NjyZ5ByqdO6ENPDoQSvBHDvez826c9UnvWiKLDBZUEDM
-         tzo709cjCeD8PqTR4xlcMY5MKa+GkfcxsYFPGq85Neoj/qPeihPh8yFasSC8ZonxCirc
-         VZMDMOrr8AlElspaDSnp9Ap1y1sypR1mVwgFolcz44gTTSWCxTJijAMnfGqWmIC2B1Xq
-         68dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfMEUn9q5vUD/Aqm+gybpEIsP0+g/1WqFbScWeM1TLTlQVOZTwuzDW1shx+crrSKDKs3cYTgYLXBIuBRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznCG+5/81cLo+1YTvXmEVqkNmqwdBJZrgMfwJppltpfjadlbC9
-	gN+ljp8wbyAWcf1kvYz7FBVZyCLniO8eSm4SMpCXc/YdzEmSfQxwrROZdRzPoz3iZzoLv3P9SyT
-	iuEEuQ2I5FZx8r/pFig0CUOuDda2CrSD2NvMypY6AOhBCPLnKdCMnoNg=
-X-Google-Smtp-Source: AGHT+IEmWmlkU6TQc0eoIUQ2KVbgxtgRCiNv5E2vZEYIy31oMVG2AdhxLIjyKZOYLzsw5eIEbk6JaDkSir0WnjIE2Y9OOozyx7Hd
+	s=arc-20240116; t=1726756162; c=relaxed/simple;
+	bh=ht263jlSlLmPBUbNBH4X+2pqoE5N7JgdCaCxHMiA680=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lGZVdFGctD21M+L3HSLP/wdF1G+k0XOv9L+sLEu1AKmnpvjBkLZLumEyYexuW4V1n7JMR5izjtJangy70tpanHVZTJv6T13O2akjn7GJXs2eijFMBcgR/RAsVCVc77o2Bm8Vei5K2QjLe5w2Td0I7zAJ0Wme2GMhrCYq9yCAGzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwSeo4nQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26BC9C4AF0B;
+	Thu, 19 Sep 2024 14:29:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726756162;
+	bh=ht263jlSlLmPBUbNBH4X+2pqoE5N7JgdCaCxHMiA680=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JwSeo4nQv6wsJpX50zt8TA+/O7DM/Hb1tmPHM2dqcbpcT301dBE9M24pnKoir2xz3
+	 SCMH2KfbWQoMelwk40tE1LPOkrH1QquCAzJuH+oAwU1jN09ei5RsPrBvQZZdxABuRq
+	 7Fr3jSqIQcGDfNlvHihArsZkaxyMNczbj5W4XSa4s64qtJJBLxXtyBPJBJo8iyAS+P
+	 1GN9T9j+h5U4G2g+yjUEP3Artyo44SwShktCww8UU6JeY/QB+0nHopbIt4nMNzASsA
+	 wV1m+3KUy4xWAyWNb7P0WzCY9ALWK8kxGpRvSffSIqizgfQUL66wSz1VRf7WoMNIsU
+	 /EJoZ2qiVoD6w==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f75e5f3debso8862601fa.1;
+        Thu, 19 Sep 2024 07:29:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUEKm65sK1YnwkYZx/4SIKx3Loxyt3LO+gLOpfwVhHUTIuaJIrg4/Nk783jrfCWT8q2uWL57rPIhP1GIzE=@vger.kernel.org, AJvYcCW9mQ/qLhGQvd+Zoq1xmfToSQcqje8z9aM5oK+ppj+GHReQXTObwBPADw+T1wHjkzqzAlNCKfS8Xy0VzaxzJkwQuBE2@vger.kernel.org, AJvYcCWB6VIy6ItbDgYtx/LvPpEluSW1Rr6G9XSzekfcV/tPbDfYwXksiTaysqyGKiIhm8tI9/IViTfRVca4uxjY1g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+HRcRjssaN8vOTY4B81toKJKBZQbG6keU8KY3dEBfOgbqZDNd
+	1bwf7SJR9YKaXHN04Vv6GI6wll0pkvJ6ERBkBtE5+PgVgplyi3PsUtqVYJwVR4S5DV20ODUJIf8
+	GM9wFfK/bf6y49ZiEZ2fHVbdauWw=
+X-Google-Smtp-Source: AGHT+IFVE6zY9FexSl6ynBperG/EYYCzhp2OXZ/SQ3f6zr5+ijPUDF95zfWUkbGG96JaS2DY97+xiVz7Ooy+2mYL4rg=
+X-Received: by 2002:a2e:bc09:0:b0:2f6:4cc0:5438 with SMTP id
+ 38308e7fff4ca-2f791a57ea7mr132240961fa.29.1726756160737; Thu, 19 Sep 2024
+ 07:29:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:194e:0:b0:3a0:979d:843 with SMTP id
- e9e14a558f8ab-3a0979d0a06mr126255195ab.9.1726756102390; Thu, 19 Sep 2024
- 07:28:22 -0700 (PDT)
-Date: Thu, 19 Sep 2024 07:28:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ec3506.050a0220.29194.002c.GAE@google.com>
-Subject: [syzbot] [cgroups?] [mm?] INFO: rcu detected stall in shmem_fault (6)
-From: syzbot <syzbot+4145b11cdf925264bff4@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, cgroups@vger.kernel.org, hughd@google.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240906144506.1151789-1-kris.van.hees@oracle.com>
+ <20240906144506.1151789-3-kris.van.hees@oracle.com> <CAK7LNAQtuqBwheX6SLWMyKE0h2wLzApii1xyMBqNs3ge_JSUvg@mail.gmail.com>
+ <Zt9P5p6XGBp2Uwde@oracle.com>
+In-Reply-To: <Zt9P5p6XGBp2Uwde@oracle.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 19 Sep 2024 23:28:44 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS53tB708sRSbCA=_2GP_sAoNYHtLzhYMV=5U-+FfcR3Q@mail.gmail.com>
+Message-ID: <CAK7LNAS53tB708sRSbCA=_2GP_sAoNYHtLzhYMV=5U-+FfcR3Q@mail.gmail.com>
+Subject: Re: [PATCH v10 2/4] kbuild: generate offset range data for builtin modules
+To: Kris Van Hees <kris.van.hees@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Nick Alcock <nick.alcock@oracle.com>, Alan Maguire <alan.maguire@oracle.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Sam James <sam@gentoo.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Jiri Olsa <olsajiri@gmail.com>, 
+	Elena Zannoni <elena.zannoni@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    0babf683783d Merge tag 'pinctrl-v6.11-4' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=162de407980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1c9e296880039df9
-dashboard link: https://syzkaller.appspot.com/bug?extid=4145b11cdf925264bff4
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5d6146edacfa/disk-0babf683.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2593d4fb261a/vmlinux-0babf683.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a5e44e1e0eba/bzImage-0babf683.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4145b11cdf925264bff4@syzkaller.appspotmail.com
-
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P9592/1:b..l
-rcu: 	(detected by 1, t=10502 jiffies, g=41797, q=358 ncpus=2)
-task:syz.1.962       state:R  running task     stack:24176 pid:9592  tgid:9589  ppid:9183   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5188 [inline]
- __schedule+0x17ae/0x4a10 kernel/sched/core.c:6529
- preempt_schedule_irq+0xfb/0x1c0 kernel/sched/core.c:6851
- irqentry_exit+0x5e/0x90 kernel/entry/common.c:354
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:lock_acquire+0x264/0x550 kernel/locking/lockdep.c:5763
-Code: 2b 00 74 08 4c 89 f7 e8 ea e1 87 00 f6 44 24 61 02 0f 85 85 01 00 00 41 f7 c7 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 44 25 00 00 00 00 00 43 c7 44 25 09 00 00 00 00 43 c7 44 25
-RSP: 0018:ffffc90003d47020 EFLAGS: 00000206
-RAX: 0000000000000001 RBX: 1ffff920007a8e10 RCX: baa91729e815a300
-RDX: dffffc0000000000 RSI: ffffffff8beae6e0 RDI: ffffffff8c3fbb00
-RBP: ffffc90003d47168 R08: ffffffff93fa6847 R09: 1ffffffff27f4d08
-R10: dffffc0000000000 R11: fffffbfff27f4d09 R12: 1ffff920007a8e0c
-R13: dffffc0000000000 R14: ffffc90003d47080 R15: 0000000000000246
- rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- rcu_read_lock include/linux/rcupdate.h:838 [inline]
- filemap_get_entry+0x144/0x3b0 mm/filemap.c:1837
- shmem_get_folio_gfp+0x29a/0x2370 mm/shmem.c:2104
- shmem_fault+0x252/0x6f0 mm/shmem.c:2388
- __do_fault+0x135/0x460 mm/memory.c:4672
- do_read_fault mm/memory.c:5078 [inline]
- do_fault mm/memory.c:5208 [inline]
- do_pte_missing mm/memory.c:3964 [inline]
- handle_pte_fault+0x321f/0x6fc0 mm/memory.c:5538
- __handle_mm_fault mm/memory.c:5681 [inline]
- handle_mm_fault+0x1056/0x1ad0 mm/memory.c:5849
- faultin_page mm/gup.c:1194 [inline]
- __get_user_pages+0x6ec/0x16a0 mm/gup.c:1493
- populate_vma_page_range+0x264/0x330 mm/gup.c:1932
- __mm_populate+0x27a/0x460 mm/gup.c:2035
- mm_populate include/linux/mm.h:3430 [inline]
- vm_mmap_pgoff+0x2c3/0x3d0 mm/util.c:593
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f848877def9
-RSP: 002b:00007f848949c038 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 00007f8488936058 RCX: 00007f848877def9
-RDX: b635773f06ebbeee RSI: 0000000000b36000 RDI: 0000000020000000
-RBP: 00007f84887f0b76 R08: ffffffffffffffff R09: 0000000000000000
-R10: 0000000000008031 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f8488936058 R15: 00007ffd36b2c578
- </TASK>
-rcu: rcu_preempt kthread starved for 10184 jiffies! g41797 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R  running task     stack:26448 pid:17    tgid:17    ppid:2      flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5188 [inline]
- __schedule+0x17ae/0x4a10 kernel/sched/core.c:6529
- __schedule_loop kernel/sched/core.c:6606 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6621
- schedule_timeout+0x1be/0x310 kernel/time/timer.c:2581
- rcu_gp_fqs_loop+0x2df/0x1330 kernel/rcu/tree.c:2034
- rcu_gp_kthread+0xa7/0x3b0 kernel/rcu/tree.c:2236
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-CPU: 1 UID: 0 PID: 9590 Comm: syz.4.963 Not tainted 6.11.0-rc7-syzkaller-00149-g0babf683783d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:__bpf_trace_run kernel/trace/bpf_trace.c:2397 [inline]
-RIP: 0010:bpf_trace_run2+0x159/0x540 kernel/trace/bpf_trace.c:2447
-Code: 08 42 80 3c 30 00 74 08 48 89 df e8 81 a7 58 00 48 89 5c 24 38 48 8b 03 bb 01 00 00 00 65 0f c1 18 31 ff 89 de e8 f7 87 f4 ff <85> db 0f 85 b4 02 00 00 49 83 c5 70 4c 89 e8 48 c1 e8 03 42 80 3c
-RSP: 0018:ffffc9000318fde0 EFLAGS: 00000297
-RAX: 0000000000000002 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffff888026beda00 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000318fec8 R08: ffffffff819f08a9 R09: 0000000000000000
-R10: ffffc9000318fe40 R11: fffff52000631fca R12: ffffc90003b05000
-R13: ffff888033723100 R14: dffffc0000000000 R15: ffffc9000318fe40
-FS:  00007fc00c8a16c0(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c3f657a CR3: 0000000088454000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- </IRQ>
- <TASK>
- trace_sys_enter+0x93/0xd0 include/trace/events/syscalls.h:18
- syscall_trace_enter+0xf8/0x150 kernel/entry/common.c:61
- syscall_enter_from_user_mode_work include/linux/entry-common.h:168 [inline]
- syscall_enter_from_user_mode include/linux/entry-common.h:198 [inline]
- do_syscall_64+0xcc/0x230 arch/x86/entry/common.c:79
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc00bb19869
-Code: 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 0f 1f 40 00 90 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 c7 c0 0f 00 00 00 0f 05 <0f> 1f 80 00 00 00 00 48 81 ec 48 01 00 00 49 89 d0 64 48 8b 04 25
-RSP: 002b:00007fc00c8a0b40 EFLAGS: 00000246 ORIG_RAX: 000000000000000f
-RAX: ffffffffffffffda RBX: 00007fc00bd35f88 RCX: 00007fc00bb19869
-RDX: 00007fc00c8a0b40 RSI: 00007fc00c8a0c70 RDI: 0000000000000011
-RBP: 00007fc00bd35f80 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc00bd35f8c
-R13: 0000000000000000 R14: 00007ffc51e12cf0 R15: 00007ffc51e12dd8
- </TASK>
+Hi Kris,
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On Tue, Sep 10, 2024 at 4:43=E2=80=AFAM Kris Van Hees <kris.van.hees@oracle=
+.com> wrote:
+>
+> On Sun, Sep 08, 2024 at 11:50:51AM +0900, Masahiro Yamada wrote:
+> > On Fri, Sep 6, 2024 at 11:45???PM Kris Van Hees <kris.van.hees@oracle.c=
+om> wrote:
+> > >
+> > > Create file module.builtin.ranges that can be used to find where
+> > > built-in modules are located by their addresses. This will be useful =
+for
+> > > tracing tools to find what functions are for various built-in modules=
+.
+> > >
+> > > The offset range data for builtin modules is generated using:
+> > >  - modules.builtin: associates object files with module names
+> > >  - vmlinux.map: provides load order of sections and offset of first m=
+ember
+> > >     per section
+> > >  - vmlinux.o.map: provides offset of object file content per section
+> > >  - .*.cmd: build cmd file with KBUILD_MODFILE
+> > >
+> > > The generated data will look like:
+> > >
+> > > .text 00000000-00000000 =3D _text
+> > > .text 0000baf0-0000cb10 amd_uncore
+> > > .text 0009bd10-0009c8e0 iosf_mbi
+> > > ...
+> > > .text 00b9f080-00ba011a intel_skl_int3472_discrete
+> > > .text 00ba0120-00ba03c0 intel_skl_int3472_discrete intel_skl_int3472_=
+tps68470
+> > > .text 00ba03c0-00ba08d6 intel_skl_int3472_tps68470
+> > > ...
+> > > .data 00000000-00000000 =3D _sdata
+> > > .data 0000f020-0000f680 amd_uncore
+> > >
+> > > For each ELF section, it lists the offset of the first symbol.  This =
+can
+> > > be used to determine the base address of the section at runtime.
+> > >
+> > > Next, it lists (in strict ascending order) offset ranges in that sect=
+ion
+> > > that cover the symbols of one or more builtin modules.  Multiple rang=
+es
+> > > can apply to a single module, and ranges can be shared between module=
+s.
+> > >
+> > > The CONFIG_BUILTIN_MODULE_RANGES option controls whether offset range=
+ data
+> > > is generated for kernel modules that are built into the kernel image.
+> > >
+> > > How it works:
+> > >
+> > >  1. The modules.builtin file is parsed to obtain a list of built-in
+> > >     module names and their associated object names (the .ko file that
+> > >     the module would be in if it were a loadable module, hereafter
+> > >     referred to as <kmodfile>).  This object name can be used to
+> > >     identify objects in the kernel compile because any C or assembler
+> > >     code that ends up into a built-in module will have the option
+> > >     -DKBUILD_MODFILE=3D<kmodfile> present in its build command, and t=
+hose
+> > >     can be found in the .<obj>.cmd file in the kernel build tree.
+> > >
+> > >     If an object is part of multiple modules, they will all be listed
+> > >     in the KBUILD_MODFILE option argument.
+> > >
+> > >     This allows us to conclusively determine whether an object in the
+> > >     kernel build belong to any modules, and which.
+> > >
+> > >  2. The vmlinux.map is parsed next to determine the base address of e=
+ach
+> > >     top level section so that all addresses into the section can be
+> > >     turned into offsets.  This makes it possible to handle sections
+> > >     getting loaded at different addresses at system boot.
+> > >
+> > >     We also determine an 'anchor' symbol at the beginning of each
+> > >     section to make it possible to calculate the true base address of
+> > >     a section at runtime (i.e. symbol address - symbol offset).
+> > >
+> > >     We collect start addresses of sections that are included in the t=
+op
+> > >     level section.  This is used when vmlinux is linked using vmlinux=
+.o,
+> > >     because in that case, we need to look at the vmlinux.o linker map=
+ to
+> > >     know what object a symbol is found in.
+> > >
+> > >     And finally, we process each symbol that is listed in vmlinux.map
+> > >     (or vmlinux.o.map) based on the following structure:
+> > >
+> > >     vmlinux linked from vmlinux.a:
+> > >
+> > >       vmlinux.map:
+> > >         <top level section>
+> > >           <included section>  -- might be same as top level section)
+> > >             <object>          -- built-in association known
+> > >               <symbol>        -- belongs to module(s) object belongs =
+to
+> > >               ...
+> > >
+> > >     vmlinux linked from vmlinux.o:
+> > >
+> > >       vmlinux.map:
+> > >         <top level section>
+> > >           <included section>  -- might be same as top level section)
+> > >             vmlinux.o         -- need to use vmlinux.o.map
+> > >               <symbol>        -- ignored
+> > >               ...
+> > >
+> > >       vmlinux.o.map:
+> > >         <section>
+> > >             <object>          -- built-in association known
+> > >               <symbol>        -- belongs to module(s) object belongs =
+to
+> > >               ...
+> > >
+> > >  3. As sections, objects, and symbols are processed, offset ranges ar=
+e
+> > >     constructed in a straight-forward way:
+> > >
+> > >       - If the symbol belongs to one or more built-in modules:
+> > >           - If we were working on the same module(s), extend the rang=
+e
+> > >             to include this object
+> > >           - If we were working on another module(s), close that range=
+,
+> > >             and start the new one
+> > >       - If the symbol does not belong to any built-in modules:
+> > >           - If we were working on a module(s) range, close that range
+> > >
+> > > Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
+> > > Reviewed-by: Nick Alcock <nick.alcock@oracle.com>
+> > > Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
+> > > Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > > Tested-by: Sam James <sam@gentoo.org>
+> > > ---
+> >
+> >
+> > If v10 is the final version, I offer to locally squash the following:
+>
+> Thanks!  That would be great!  v10 is indeed the final version (see bwlow=
+).
+>
+> > diff --git a/.gitignore b/.gitignore
+> > index c06a3ef6d6c6..625bf59ad845 100644
+> > --- a/.gitignore
+> > +++ b/.gitignore
+> > @@ -69,6 +69,7 @@ modules.order
+> >  /Module.markers
+> >  /modules.builtin
+> >  /modules.builtin.modinfo
+> > +/modules.builtin.ranges
+> >  /modules.nsdeps
+> >
+> >  #
+> > diff --git a/Documentation/dontdiff b/Documentation/dontdiff
+> > index 3c399f132e2d..a867aea95c40 100644
+> > --- a/Documentation/dontdiff
+> > +++ b/Documentation/dontdiff
+> > @@ -180,6 +180,7 @@ modpost
+> >  modules-only.symvers
+> >  modules.builtin
+> >  modules.builtin.modinfo
+> > +modules.builtin.ranges
+> >  modules.nsdeps
+> >  modules.order
+> >  modversions.h*
+>
+> > If Sami reports more errors and you end up with v11,
+> > please remember to fold it.
+>
+> Sami confirmed v10 [0].  Can you squash his reviewed-by and tested-by as =
+well?
+>
+> Thanks for all the help!
+>
+>         Kris
+>
+> [0] https://lore.kernel.org/lkml/20240909191801.GA398180@google.com/
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
 
-If you want to undo deduplication, reply with:
-#syz undup
+
+Can you please add a small explanation to
+Documentation/kbuild/kbuild.rst ?
+
+
+It documents modules.order, modules.builtin, modules.builtin.modinfo.
+
+Having modules.builtin.ranges there will keep the consistency.
+
+
+
+You do not need to re-submit the entire patch.
+
+If you provide a diff in a few days,
+I will locally squash it.
+
+
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
