@@ -1,90 +1,50 @@
-Return-Path: <linux-kernel+bounces-333456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF73197C8E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:11:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB5CF97C921
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5A7D1F228EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:11:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78797B2219C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7779C19D891;
-	Thu, 19 Sep 2024 12:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BvxYye7o"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B4319DF82;
+	Thu, 19 Sep 2024 12:27:41 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B26A38DD6;
-	Thu, 19 Sep 2024 12:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A48919DF65;
+	Thu, 19 Sep 2024 12:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726747856; cv=none; b=sb3QfF+MPIrorlGEgPzQxOXL6tBl7WLW0VhkCDQtEWeNNxlXmmwkhbyJMjHSD3QdbAvlc/qdOvqU24J5sI58dcorzJMogHdV/7VcniuRmW8J1fb25+XgAQhOp3yGhiRh3kgEJmgu2zVPfX4lrE5bcrK4zAB4oWtRg4TjUmDMLrk=
+	t=1726748861; cv=none; b=r29MWvhNkwyk0Hqq1drKXNCns9mh+N7XO8U3QYaQ6S4eq1bgW6NLIDIorPoWoUMPtj/BT/G7P7oypWsa00v1YcNp3zS6YKKdDfyD0JoHuTZ7q9XnMmbgOuGHXCXUnuwuHeIj3KEM81COET+7+4HssFh/hH9p155jdUzpzh7AvD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726747856; c=relaxed/simple;
-	bh=fbD60ODl32TKXvojAtsP1tfik+n0hoD0w4wsFhDC2Zk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HbPFqgjyuulF3eXBNqvtqiRF2psS/jmXPB9kCSMzKplxBzddx7boErNPg7ysfVoMbED4AnMQl5BAPh/HD/RQHB6nheGRr78j8LRCLK2+1jvUxNy/oywN1g4rCrHPkI95zVN0C1zeI4WPGLLDOFMkLFzvXq1rQpsDTsG/7CB+0bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BvxYye7o; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2057835395aso9577135ad.3;
-        Thu, 19 Sep 2024 05:10:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726747855; x=1727352655; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=o32/nc+Dqjrsv+Sp5j6ph6epltryoYejvMuSKLYsEsQ=;
-        b=BvxYye7o1BqGqcxEJlgUyZv31+IGLYEf0LQZK7Ou7gi2ABsN8oeM7/G2nQxEieAv9m
-         Tzt+/SZPY9o8gq5jIaU3c9Wuut72lCA9/TUjT4yx0mbJKvY69Lxaqd9g6Wv2BmawOvYK
-         /H27qhQyPe8ZMWX3PnnzCd0+zRMrejiwk6vFh0+BCxY6XdY1qQ+gM1UXB4KRTEm6wXb2
-         Bk9i5vQnt20DZGcOU+R7zAaU2wd/Va6WV5c9T8kG64z3e50AjzBcSTx58bNmXHENQc02
-         S5wXxMGyDItwPuQPn/1rJhEh1HTvgo71PYfKGkxq+93A6ctvhANgKO2HZpFSNQkXxo8l
-         FXzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726747855; x=1727352655;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o32/nc+Dqjrsv+Sp5j6ph6epltryoYejvMuSKLYsEsQ=;
-        b=RvPV7WSJ50ul7VQj2H6Q5/9YNIZSC8arwZD8ZxvLv8sPLIwDrRGuhCs+poMCgW+E0l
-         D3mR7MoFxv/bVknbgvQXaxm7r4rs4EhDOGSI2nJeAcX/M1b1owGCnKdG7q+8OwVSoPWt
-         FSkj0kH2v9BbqmrsmkmtvE4Q0+SQsOZdAcLQ9zD0ufqzgePS4ZAZTUw+EjLoq9kYvAz2
-         Jjhm0/mcEvarVOdiSaYI1sFXBforCHzEIRqXdJCC+DTTj0958HJ2wEwhiTqZve1ROhea
-         ksJjXHR70Ax1GWH7W7l6rDMmKhU+gwYMaG/1KNxbaAmIESo6CqROPGP84HnhI3f13TVa
-         yG1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUWAN1GDNcK2tileDmEZZTclxNrHJPZD/UWCP5GwoX2dBpk2ezsR9mKBMBntDEKsKxIZzirz9v0CukUYJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDxKTyhVchONv7NLE8Txb984GWWMOLrbwFB4rCb2Cmhk7HlY9E
-	0NVXbnZQwb68eTu/5ikq8Jg/gxvmykQN3giHIRkc49lp9XMRB7L7
-X-Google-Smtp-Source: AGHT+IGZREsj4SQwgdJITtOEHoTSJHe60c5soOhc/Mx1CbgeWx979RO8pm0n67220rUA8Tpw/0tJSQ==
-X-Received: by 2002:a17:902:f54c:b0:1fb:a1cb:cb25 with SMTP id d9443c01a7336-2076e3eaabcmr356890015ad.40.1726747854563;
-        Thu, 19 Sep 2024 05:10:54 -0700 (PDT)
-Received: from localhost.localdomain ([129.146.253.192])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2079460327bsm78691445ad.103.2024.09.19.05.10.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 05:10:54 -0700 (PDT)
-From: Furong Xu <0x1207@gmail.com>
-To: Ong Boon Leong <boon.leong.ong@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	rmk+kernel@armlinux.org.uk,
-	linux@armlinux.org.uk,
-	xfr@outlook.com,
-	Furong Xu <0x1207@gmail.com>
-Subject: [PATCH net v2] net: stmmac: set PP_FLAG_DMA_SYNC_DEV only if XDP is enabled
-Date: Thu, 19 Sep 2024 20:10:28 +0800
-Message-Id: <20240919121028.1348023-1-0x1207@gmail.com>
+	s=arc-20240116; t=1726748861; c=relaxed/simple;
+	bh=sVdW3pEklIiiGVIPV681lRhmKdKVdMgyfeS8voww1y8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=im+25ycbyGigOr35z7Bmu1LWgMe3N2fqKVcpOeDv42+O3e2MqtMY7EYOfbkPEbbpzdZyuLVszfEgyxo8+OARB/TwJ8FLZmZ7n5QOSxProGigjWieOclzEm39nzsPqCYRRpynDlXVpoJpTUaxKzkPQRrgg8Gv6KHuXNIgKuBhjoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X8ZXM4Ww2zFqnX;
+	Thu, 19 Sep 2024 20:27:15 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id A132A18010F;
+	Thu, 19 Sep 2024 20:27:30 +0800 (CST)
+Received: from huawei.com (10.67.174.28) by kwepemd200013.china.huawei.com
+ (7.221.188.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 19 Sep
+ 2024 20:27:30 +0800
+From: Liao Chang <liaochang1@huawei.com>
+To: <mhiramat@kernel.org>, <oleg@redhat.com>, <peterz@infradead.org>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <mark.rutland@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH] arm64: uprobes: Optimize cache flushes for xol slot
+Date: Thu, 19 Sep 2024 12:17:19 +0000
+Message-ID: <20240919121719.2148361-1-liaochang1@huawei.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -92,41 +52,68 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-Commit 5fabb01207a2 ("net: stmmac: Add initial XDP support") sets
-PP_FLAG_DMA_SYNC_DEV flag for page_pool unconditionally,
-page_pool_recycle_direct() will call page_pool_dma_sync_for_device()
-on every page even the page is not going to be reused by XDP program.
+The profiling of single-thread selftests bench reveals a bottlenect in
+caches_clean_inval_pou() on ARM64. On my local testing machine, this
+function takes approximately 34% of CPU cycles for trig-uprobe-nop and
+trig-uprobe-push.
 
-When XDP is not enabled, the page which holds the received buffer
-will be recycled once the buffer is copied into new SKB by
-skb_copy_to_linear_data(), then the MAC core will never reuse this
-page any longer. Always setting PP_FLAG_DMA_SYNC_DEV wastes CPU cycles
-on unnecessary calling of page_pool_dma_sync_for_device().
+This patch add a check to avoid unnecessary cache flush when writing
+instruction to the xol slot. If the instruction is same with the
+existing instruction in slot, there is no need to synchronize D/I cache.
+Since xol slot allocation and updates occur on the hot path of uprobe
+handling, The upstream kernel running on Kunpeng916 (Hi1616), 4 NUMA
+nodes, 64 cores@ 2.4GHz reveals this optimization has obvious gain for
+nop and push testcases.
 
-After this patch, up to 9% noticeable performance improvement was observed
-on certain platforms.
+Before (next-20240918)
+----------------------
+uprobe-nop      ( 1 cpus):    0.418 ± 0.001M/s  (  0.418M/s/cpu)
+uprobe-push     ( 1 cpus):    0.411 ± 0.005M/s  (  0.411M/s/cpu)
+uprobe-ret      ( 1 cpus):    2.052 ± 0.002M/s  (  2.052M/s/cpu)
+uretprobe-nop   ( 1 cpus):    0.350 ± 0.000M/s  (  0.350M/s/cpu)
+uretprobe-push  ( 1 cpus):    0.353 ± 0.000M/s  (  0.353M/s/cpu)
+uretprobe-ret   ( 1 cpus):    1.074 ± 0.001M/s  (  1.074M/s/cpu)
 
-Fixes: 5fabb01207a2 ("net: stmmac: Add initial XDP support")
-Signed-off-by: Furong Xu <0x1207@gmail.com>
+After
+-----
+uprobe-nop      ( 1 cpus):    0.926 ± 0.000M/s  (  0.926M/s/cpu)
+uprobe-push     ( 1 cpus):    0.910 ± 0.001M/s  (  0.910M/s/cpu)
+uprobe-ret      ( 1 cpus):    2.056 ± 0.001M/s  (  2.056M/s/cpu)
+uretprobe-nop   ( 1 cpus):    0.653 ± 0.001M/s  (  0.653M/s/cpu)
+uretprobe-push  ( 1 cpus):    0.645 ± 0.000M/s  (  0.645M/s/cpu)
+uretprobe-ret   ( 1 cpus):    1.093 ± 0.001M/s  (  1.093M/s/cpu)
+
+Signed-off-by: Liao Chang <liaochang1@huawei.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/kernel/probes/uprobes.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index f3a1b179aaea..95d3d1081727 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2022,7 +2022,7 @@ static int __alloc_dma_rx_desc_resources(struct stmmac_priv *priv,
- 	rx_q->queue_index = queue;
- 	rx_q->priv_data = priv;
+diff --git a/arch/arm64/kernel/probes/uprobes.c b/arch/arm64/kernel/probes/uprobes.c
+index d49aef2657cd..5ee27509d6f6 100644
+--- a/arch/arm64/kernel/probes/uprobes.c
++++ b/arch/arm64/kernel/probes/uprobes.c
+@@ -17,12 +17,16 @@ void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
+ 	void *xol_page_kaddr = kmap_atomic(page);
+ 	void *dst = xol_page_kaddr + (vaddr & ~PAGE_MASK);
  
--	pp_params.flags = PP_FLAG_DMA_MAP | PP_FLAG_DMA_SYNC_DEV;
-+	pp_params.flags = PP_FLAG_DMA_MAP | (xdp_prog ? PP_FLAG_DMA_SYNC_DEV : 0);
- 	pp_params.pool_size = dma_conf->dma_rx_size;
- 	num_pages = DIV_ROUND_UP(dma_conf->dma_buf_sz, PAGE_SIZE);
- 	pp_params.order = ilog2(num_pages);
++	if (!memcmp(dst, src, len))
++		goto done;
++
+ 	/* Initialize the slot */
+ 	memcpy(dst, src, len);
+ 
+ 	/* flush caches (dcache/icache) */
+ 	sync_icache_aliases((unsigned long)dst, (unsigned long)dst + len);
+ 
++done:
+ 	kunmap_atomic(xol_page_kaddr);
+ }
+ 
 -- 
 2.34.1
 
