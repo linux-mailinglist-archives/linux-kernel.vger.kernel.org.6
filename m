@@ -1,141 +1,107 @@
-Return-Path: <linux-kernel+bounces-333405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E5D97C81A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:42:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E48BA97C81D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9910E1C246B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:42:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 229051C24E27
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA8919ABB4;
-	Thu, 19 Sep 2024 10:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDB519ADBF;
+	Thu, 19 Sep 2024 10:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGzX053/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Oee0lfBa"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECE0168BD
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 10:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4212168BD;
+	Thu, 19 Sep 2024 10:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726742539; cv=none; b=fnEVz9vPuDsl0YVqQXp63nueGMtO5amtoN3jQYnCugUi/oRQ77XqLvm3E1iZl4FPV2UPhZ6vGoBjQb/SJy18Usqr32vd7rtybEeCnBKuee6z8eb2QYCels0nEG51UTBZmcujPiOnxdbnz8uSdNE+HqjKAnlEZ6xz05TAwiUgN10=
+	t=1726742589; cv=none; b=CGmE7Y5iSLD3lFIaOSZAeuUaA+LQdTbKM/ctowepWDLr2YX5F+ClkpGTOKxb2kMsS0x7v4i5GKGLe+CRWgxFSf9Ih92nXVBxZGrsZkUN7oyi+oZJ6fJrtcoGaUT3T9Brp1TpYHppZT6mkx7kaWbhp4xPjc0KnfA8c1vqKIe1ab0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726742539; c=relaxed/simple;
-	bh=dsGKreUhg585i1GMTCc1aIriMbL6tNeRAhG/pt1htz8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=E2T/MxYMgA3kH2LZSFGVc+0wGtS9bbCY3yzPI30MoS98Zf5x5tGxOy23wjbcsQSVvVatJVHD5zofepN9brFFx1zQpA/uVTaUV8UG0gyMXSVzj+b7IeLdmYtHj7ugxAqxlYdxsUKfxI+VnW2D/R8vPr2xiavK8tLLIFR/DVQ89Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGzX053/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0D1F5C4CEC4;
-	Thu, 19 Sep 2024 10:42:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726742539;
-	bh=dsGKreUhg585i1GMTCc1aIriMbL6tNeRAhG/pt1htz8=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=AGzX053/cx7BdD2Gye0lP7CEysrcBA3KdIgYP9/5ZZl5pvgKaPE3v1yKuzLVALsTk
-	 gyEv6TLW0x5uhRg2e2DnPv4p1ReIyxX9Q5gG+A051nhRGGoJGcW3ttoaUaRxz62oep
-	 AxAeOoix/Z4ONflljooLGtQle+je3gwc1IF0x5noqWYp6My1LU6MGqhCpgS2f3U+6c
-	 rS52xhW9LkePtQPRCVmfKq9Yf22BUJZpYfF0Yrnyqf3gwJLz5oEFLHNLAl5lGl8b3J
-	 7/NSJuGcEpvOaxvkrXeqkm9+vQsxzOgKykeXLAEV7WkToMVQ+6hWnLTlMCfON3R9HZ
-	 NFS18dgRu03Gg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E68AACE8D79;
-	Thu, 19 Sep 2024 10:42:18 +0000 (UTC)
-From: =?utf-8?q?T=C3=B3th_J=C3=A1nos_via_B4_Relay?= <devnull+gomba007.gmail.com@kernel.org>
-Date: Thu, 19 Sep 2024 12:42:00 +0200
-Subject: [PATCH] scripts: checkpatch: Check spaces in Makefiles.
+	s=arc-20240116; t=1726742589; c=relaxed/simple;
+	bh=6axibghGWXnK0cm5vXDImFDbKRCElFsoUa7lpol6vJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z2CSEZaP+1ST4UXzzuczXNhSCw87/2sr1sIZzpbwZ7/2aGVRy36qpRLAnl5GLQA9b5Z8Z2Sg8wpSl2sJUFLbg/XhtDks3lDjEG92vs/mtgsQ0cl2a6WdP0fUbNDoeaWh5herSo3sJqKaIu7LQ0UpNmRx60NFHj1NzZ/+E2TfocM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Oee0lfBa; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726742582;
+	bh=6axibghGWXnK0cm5vXDImFDbKRCElFsoUa7lpol6vJ8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Oee0lfBaZwbiKRb+fb9McJIF5rAXlgqsNoGO1JMGVHKCI4qffUdGYUDT4RDWe8wBP
+	 C22mm+1R3S9DT7n07qlj8ksBiXiNnb3Oklyreaqof3gLh6LybNqJQfrUzzOTJ88o4Z
+	 SuPJRpoqDmVNKHd13+T3pcO6puntRF5vajv2k4jRU+1gLSKpAOZdeTcxk6Quk88Gq2
+	 edUMEk0qBbbFxSSep2WkkNn8GR0urGP3ThNfb0lgZ9p9GfgrjjyC6eHPfx0QjBkNTs
+	 J/bJGgByToxQyetGzZGdaC76ato2lbS4gJZLMsrA4U87trllYHIMRkdDy2fxl7t763
+	 0RZz8PW7y2jrw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X8XD43PKYz4wbr;
+	Thu, 19 Sep 2024 20:43:00 +1000 (AEST)
+Date: Thu, 19 Sep 2024 20:42:59 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Arnaldo Carvalho de Melo <acme@redhat.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
+ Namhyung Kim <namhyung@kernel.org>, linux-perf-users@vger.kernel.org
+Subject: Re: [GIT PULL] Performance events changes for v6.12
+Message-ID: <20240919204259.3d19a6b9@canb.auug.org.au>
+In-Reply-To: <Zuv0kA-um9ZT-Tjd@gmail.com>
+References: <ZurLc9qEjBH9MkvK@gmail.com>
+	<20240919082624.05ca5fd6@canb.auug.org.au>
+	<Zuv0kA-um9ZT-Tjd@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240919-checkpatch-makefile-spaces-v1-1-f247fd2ba4cf@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAPf/62YC/x3MQQqEMAxA0atI1gZsEbRzFXFRY7RBR0sjIoh3t
- 7h8fPg3KCdhhV9xQ+JTVPYtw5QFUPDbzChjNtjK1pUzDikwLdEfFPDvF55kZdToiRWbmsxAo22
- tI8iDmHK+vnnXP88LqSXOx2wAAAA=
-To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
- Dwaipayan Ray <dwaipayanray1@gmail.com>, 
- Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: linux-kernel@vger.kernel.org, 
- =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726742538; l=1959;
- i=gomba007@gmail.com; s=20230706; h=from:subject:message-id;
- bh=cj6gu4/UTXFzy6OsqnaOr/hYFlv40OHqBGK224ZRoTY=;
- b=6NtY27pxl6eurNqMk3Nvy0KrRMsJSNpoJaZdHfi8EJQAHiHbIxaMLrMPx5VDPQnPu34NEMeVQ
- o9QTsTXClT+AH7eafe5Yw8hFOgd/BxfLK6b6LlhKbifGe2RP+v8JLYq
-X-Developer-Key: i=gomba007@gmail.com; a=ed25519;
- pk=iY9MjPCbud82ULS2PQJIq3QwjKyP/Sg730I6T2M8Y5U=
-X-Endpoint-Received: by B4 Relay for gomba007@gmail.com/20230706 with
- auth_id=60
-X-Original-From: =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
-Reply-To: gomba007@gmail.com
+Content-Type: multipart/signed; boundary="Sig_/.6AQDKVlYLiDpuNqFc13f1X";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Tóth János <gomba007@gmail.com>
+--Sig_/.6AQDKVlYLiDpuNqFc13f1X
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I've found a Makefile that looked like this:
-    obj-$(X)<tab><tab>+=<space>X.o
-    obj-$(Y)<space><space>+=<space>Y.o
+Hi Ingo,
 
-This patch allows checkpatch to detect this type of style error
-in Makefiles. The check is disabled for the comment-only lines.
+On Thu, 19 Sep 2024 11:53:20 +0200 Ingo Molnar <mingo@kernel.org> wrote:
+>
+> Thanks: I've queued up the fix for this ARM warning in perf/urgent and wi=
+ll=20
+> get it to Linus later today.
 
-Signed-off-by: Tóth János <gomba007@gmail.com>
----
- scripts/checkpatch.pl | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Excellent, thanks.
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 4427572b2477..25b6f5b024c0 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -6,6 +6,7 @@
- # (c) 2007,2008, Andy Whitcroft <apw@uk.ibm.com> (new conditions, test suite)
- # (c) 2008-2010 Andy Whitcroft <apw@canonical.com>
- # (c) 2010-2018 Joe Perches <joe@perches.com>
-+# (c) 2024 Tóth János <gomba007@gmail.com>
- 
- use strict;
- use warnings;
-@@ -3718,6 +3719,26 @@ sub process {
- 			     "Use of $flag is deprecated, please use \`$replacement->{$flag} instead.\n" . $herecurr) if ($replacement->{$flag});
- 		}
- 
-+		if ($realfile =~ /Makefile.*/ && $rawline !~ /^\+\#/) {
-+			if ($rawline =~ /  /) {
-+				my $herevet = "$here\n" . cat_vet($rawline) . "\n";
-+				WARN("MULTIPLE_SPACES",
-+				     "please, use tabs\n" . $herevet)
-+			}
-+
-+			if ($rawline =~ / \t/) {
-+				my $herevet = "$here\n" . cat_vet($rawline) . "\n";
-+				WARN("SPACE_BEFORE_TAB",
-+				     "please, no space before tabs, use tabs\n" . $herevet)
-+			}
-+
-+			if ($rawline =~ /\t /) {
-+				my $herevet = "$here\n" . cat_vet($rawline) . "\n";
-+				WARN("TAB_BEFORE_SPACE",
-+				     "please, no tab before spaces, use tabs\n" . $herevet)
-+			}
-+		}
-+
- # check for DT compatible documentation
- 		if (defined $root &&
- 			(($realfile =~ /\.dtsi?$/ && $line =~ /^\+\s*compatible\s*=\s*\"/) ||
+--=20
+Cheers,
+Stephen Rothwell
 
----
-base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
-change-id: 20240919-checkpatch-makefile-spaces-74c1bcd2829c
+--Sig_/.6AQDKVlYLiDpuNqFc13f1X
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Best regards,
--- 
-Tóth János <gomba007@gmail.com>
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbsADMACgkQAVBC80lX
+0GwPowf/brfJY12Xscub4zL+fzY9hwiTvUhAY8mC+OX55U5eCq3Q3Pfpug1QsYCG
+mS6nuP+YbmuFTS+n4U9x0z9aRvOGRjmE7v1w4fqqMdk0cEsxbm+0HUnSiCHnHtGk
+sq/beRORrnYzI6IxVaADqhYzW1LDHmveh1bGHkQSdfGZQ0YXx8zMKFaQhrkiqE/n
+tsmLiaMwkVAbvuyEZnJoIEhmkRKzgYP8s7sC851pYyOik4uOJrluA0Jy2nDlG8Oq
+deZyp5FKDz2YNJ/HOv7g8jDJC9f0Y8uUoZXeuJWZHukIuy2JalrKQ0k47dJ7YNQI
+i8xCqLORnZWrMDrumngrEA9I4nyB6A==
+=cXph
+-----END PGP SIGNATURE-----
 
+--Sig_/.6AQDKVlYLiDpuNqFc13f1X--
 
