@@ -1,207 +1,130 @@
-Return-Path: <linux-kernel+bounces-333882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87EAD97CF5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 01:28:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2374097CF61
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 01:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378661F23081
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:28:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7A21F2190F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972B11B2EC1;
-	Thu, 19 Sep 2024 23:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFB41B2EE2;
+	Thu, 19 Sep 2024 23:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="datHRy11"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjEPNxsU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EB179D2;
-	Thu, 19 Sep 2024 23:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08492F28;
+	Thu, 19 Sep 2024 23:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726788496; cv=none; b=giKlDZ2SeSdHXYdqqxFXmRwfxHGpGleFfQzCEr4NwwU7gQRbKSvmmK7K9/OmZBjm/XXNUgVe/6km81FMGShSj/NN/aT1mKQG0R0PShf7CqLlBOg4brZxQhcvsrEpRwPtU00hd34eBQMVJuVQMto/XIeuuE1X9ocn7a2gJOcJFOE=
+	t=1726789308; cv=none; b=kW66ksIpjOpUxf9vq1GBYQVtASHB2NHhnjuFFybfGJI5xc+j7h7M+bSicXsYKd2X51oKyUXSPFGSHoVzHCPHzJeu1/g1VRmNCnnyBXZP/gRr9doMP9vSlUNm3U4Jd+DcCO8zA90vYD6pkTebA4TyGrLDRLSEj7gaOC4UG5DYAL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726788496; c=relaxed/simple;
-	bh=SbYRn+1SOvkifxhYhZLFaO/OR1bLhdC+MwYBznDkotk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FNUmZWNp2B1iw8uDLSN//SlkaVTxhAtZ/y0w3r2WwmZR06MUODifEi8qq8nj1rxDNlg5EuX79s3ivW2oZ3rYaIjKRuJfxr7JDISADV5FE9JGlghgL6zAcYyYXeiFmJ2ui1SMXzk6SZhK0KAuqHnqFz9za9z+P+MTpYdtxkfR4gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=datHRy11; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=oTOh19krILulKkG9jqW7QDHJep+Klu2h7yyfBqgsdO0=; b=datHRy11REAvGdl/
-	xYgPhXvIYPJ6d3EhEpDrJ9Itm4VYrebp3qTadgr08IGlJ8SRToFcdon6ZwL471gPFvl8I5qMw2ZOO
-	2p01GJ9rVgLl23BRyWnropm/iBN2L4/hKXyprSqxIdU7IBagD+lNzwp6nOGISkTryoNlGVS+KcCiK
-	PZlMOleYDjabgz8U2eTgNc4rthHg2LaJr3K2nJhdqj/M/RenDd/EUdecTRhJFqK/3bj33DWnde0rr
-	200MD/+34dwHyViCfryVlFQIS/mrRYq80+V4ZeSVghrzbrjOU29yXwQYXVabnTMPZxEJTkpLryBCe
-	/U3Ixwg1BVqxYm0W0A==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1srQZ5-006U9f-0L;
-	Thu, 19 Sep 2024 23:27:59 +0000
-From: linux@treblig.org
-To: lee@kernel.org,
-	daniel.thompson@linaro.org,
-	jingoohan1@gmail.com,
-	hdegoede@redhat.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] backlight: Remove notifier
-Date: Fri, 20 Sep 2024 00:27:58 +0100
-Message-ID: <20240919232758.639925-1-linux@treblig.org>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1726789308; c=relaxed/simple;
+	bh=vz/QIZDB47L93JWTsoRjr27Dol6C67qi2DrzrtiaLPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dCUxCaiwPOGbXYtcpScEl/4iEt765hAQn6Mz7Z3NLkecwCpsD20KbG1akbs5/ZTxzfMa29c1or3qSkOcdi9e2Lr4/0Eqf1ElmtJBMFlXCNygij5OjjfeyWhVu9AU+fUsFdqAtCiYwqVz9E7U4mVr60SR9NXt0w3k18SGsy7diN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BjEPNxsU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 399D2C4CEC5;
+	Thu, 19 Sep 2024 23:41:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726789308;
+	bh=vz/QIZDB47L93JWTsoRjr27Dol6C67qi2DrzrtiaLPw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BjEPNxsU2EAHVeelpw9uycRMHeln01mG9DBbcO7HUYJVYDsHHZjh83g8LZMrwBd93
+	 bH+4FhJ4HFvRA2sKid7WgTQydB4t4y6JCxE+NM6BQcImT1/3x4ZJpHDQFuyJ15Q6tB
+	 xAuvrIXgNYn5Ur3aawTuu3quwbduJgGzY+dFMwcAP1eri9+zqYxeUSe7Db3/ByrXjS
+	 eeogUXERW2ouBk5o7dRINrJISxdhZBCbTDckbLIW1ha2owy8IuTpfy7edJwtVpJHdH
+	 qM1AfpMNbRxF43f9j27z2n9cZUNfLgr8rZk4O5YeML4r702pPdCdu7sns/467N30gH
+	 ZkqZIevq/r86g==
+Date: Thu, 19 Sep 2024 16:41:46 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Chandan Babu R <chandanbabu@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	xfs <linux-xfs@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org
+Subject: Re: Are jump labels broken on 6.11-rc1?
+Message-ID: <20240919234146.GH182177@frogsfrogsfrogs>
+References: <20240806094413.GS37996@noisy.programming.kicks-ass.net>
+ <20240806103808.GT37996@noisy.programming.kicks-ass.net>
+ <875xsc4ehr.ffs@tglx>
+ <20240807143407.GC31338@noisy.programming.kicks-ass.net>
+ <87wmks2xhi.ffs@tglx>
+ <20240807150503.GF6051@frogsfrogsfrogs>
+ <20240827033506.GH865349@frogsfrogsfrogs>
+ <20240905081241.GM4723@noisy.programming.kicks-ass.net>
+ <20240905091605.GE4928@noisy.programming.kicks-ass.net>
+ <20240916160801.GA182194@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240916160801.GA182194@frogsfrogsfrogs>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Mon, Sep 16, 2024 at 09:08:01AM -0700, Darrick J. Wong wrote:
+> On Thu, Sep 05, 2024 at 11:16:05AM +0200, Peter Zijlstra wrote:
+> > On Thu, Sep 05, 2024 at 10:12:41AM +0200, Peter Zijlstra wrote:
+> > > On Mon, Aug 26, 2024 at 08:35:06PM -0700, Darrick J. Wong wrote:
+> > 
+> > > > [33965.988873] ------------[ cut here ]------------
+> > > > [33966.013870] WARNING: CPU: 1 PID: 8992 at kernel/jump_label.c:295 __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
+> > 
+> > > > [33966.040184] pc : __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
+> > > > [33966.042845] lr : __static_key_slow_dec_cpuslocked.part.0+0x48/0xc0
+> > 
+> > > > [33966.072840] Call trace:
+> > > > [33966.073838]  __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
+> > > > [33966.076105]  static_key_slow_dec+0x48/0x88
+> > 
+> > > > This corresponds to the:
+> > > > 
+> > > > 	WARN_ON_ONCE(!static_key_slow_try_dec(key));
+> > > 
+> > > But but but,... my patch killed that function. So are you sure it is
+> > > applied ?!
+> > > 
+> > > Because this sounds like exactly that issue again.
+> > > 
+> > > Anyway, it appears I had totally forgotten about this issue again due to
+> > > holidays, sorry. Let me stare hard at Thomas' patch and make a 'pretty'
+> > > one that does boot.
+> > 
+> > I've taken tglx's version with a small change (added comment) and boot
+> > tested it and queued it here:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git locking/urgent
+> > 
+> > Could you please double check on both x86_64 and arm64?
+> 
+> Will send this out on the test farm tonight, thanks for the patch.
+> 
+> > If green by with the build robots and your own testing I'll push this
+> > into tip/locking/urgent to be sent to Linus on Sunday. Hopefully finally
+> > resolving this issue.
+> 
+> Sorry I didn't get to this earlier; I've been on vacation since the end
+> of August.  Now to get to the ~1300 fsdevel emails... ;)
 
-backlight_register_notifier and backlight_unregister_notifier have
-been unused since
-  commit 6cb634d0dc85 ("ACPI: video: Remove code to unregister acpi_video
-backlight when a native backlight registers")
+After 3.5 days of continuous pounding on the jump labels I haven't seen
+any complaints from the kernel, so consider commit 6b01e5a8c11611
+("jump_label: Fix static_key_slow_dec() yet again")
 
-With those not being called, it means that the backlight_notifier
-list is always empty.
+Tested-by: Darrick J. Wong <djwong@kernel.org>
 
-Remove the functions, the list itself and the enum used in the
-notifications.
+Thanks for your help!
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/video/backlight/backlight.c | 42 -----------------------------
- include/linux/backlight.h           | 20 --------------
- 2 files changed, 62 deletions(-)
+--D
 
-diff --git a/drivers/video/backlight/backlight.c b/drivers/video/backlight/backlight.c
-index a82934694d05..f699e5827ccb 100644
---- a/drivers/video/backlight/backlight.c
-+++ b/drivers/video/backlight/backlight.c
-@@ -65,7 +65,6 @@
- 
- static struct list_head backlight_dev_list;
- static struct mutex backlight_dev_list_mutex;
--static struct blocking_notifier_head backlight_notifier;
- 
- static const char *const backlight_types[] = {
- 	[BACKLIGHT_RAW] = "raw",
-@@ -467,9 +466,6 @@ struct backlight_device *backlight_device_register(const char *name,
- 	list_add(&new_bd->entry, &backlight_dev_list);
- 	mutex_unlock(&backlight_dev_list_mutex);
- 
--	blocking_notifier_call_chain(&backlight_notifier,
--				     BACKLIGHT_REGISTERED, new_bd);
--
- 	return new_bd;
- }
- EXPORT_SYMBOL(backlight_device_register);
-@@ -539,9 +535,6 @@ void backlight_device_unregister(struct backlight_device *bd)
- 	mutex_unlock(&pmac_backlight_mutex);
- #endif
- 
--	blocking_notifier_call_chain(&backlight_notifier,
--				     BACKLIGHT_UNREGISTERED, bd);
--
- 	mutex_lock(&bd->ops_lock);
- 	bd->ops = NULL;
- 	mutex_unlock(&bd->ops_lock);
-@@ -566,40 +559,6 @@ static int devm_backlight_device_match(struct device *dev, void *res,
- 	return *r == data;
- }
- 
--/**
-- * backlight_register_notifier - get notified of backlight (un)registration
-- * @nb: notifier block with the notifier to call on backlight (un)registration
-- *
-- * Register a notifier to get notified when backlight devices get registered
-- * or unregistered.
-- *
-- * RETURNS:
-- *
-- * 0 on success, otherwise a negative error code
-- */
--int backlight_register_notifier(struct notifier_block *nb)
--{
--	return blocking_notifier_chain_register(&backlight_notifier, nb);
--}
--EXPORT_SYMBOL(backlight_register_notifier);
--
--/**
-- * backlight_unregister_notifier - unregister a backlight notifier
-- * @nb: notifier block to unregister
-- *
-- * Register a notifier to get notified when backlight devices get registered
-- * or unregistered.
-- *
-- * RETURNS:
-- *
-- * 0 on success, otherwise a negative error code
-- */
--int backlight_unregister_notifier(struct notifier_block *nb)
--{
--	return blocking_notifier_chain_unregister(&backlight_notifier, nb);
--}
--EXPORT_SYMBOL(backlight_unregister_notifier);
--
- /**
-  * devm_backlight_device_register - register a new backlight device
-  * @dev: the device to register
-@@ -767,7 +726,6 @@ static int __init backlight_class_init(void)
- 
- 	INIT_LIST_HEAD(&backlight_dev_list);
- 	mutex_init(&backlight_dev_list_mutex);
--	BLOCKING_INIT_NOTIFIER_HEAD(&backlight_notifier);
- 
- 	return 0;
- }
-diff --git a/include/linux/backlight.h b/include/linux/backlight.h
-index ea9c1bc8148e..f5652e5a9060 100644
---- a/include/linux/backlight.h
-+++ b/include/linux/backlight.h
-@@ -66,24 +66,6 @@ enum backlight_type {
- 	BACKLIGHT_TYPE_MAX,
- };
- 
--/**
-- * enum backlight_notification - the type of notification
-- *
-- * The notifications that is used for notification sent to the receiver
-- * that registered notifications using backlight_register_notifier().
-- */
--enum backlight_notification {
--	/**
--	 * @BACKLIGHT_REGISTERED: The backlight device is registered.
--	 */
--	BACKLIGHT_REGISTERED,
--
--	/**
--	 * @BACKLIGHT_UNREGISTERED: The backlight revice is unregistered.
--	 */
--	BACKLIGHT_UNREGISTERED,
--};
--
- /** enum backlight_scale - the type of scale used for brightness values
-  *
-  * The type of scale used for brightness values.
-@@ -421,8 +403,6 @@ void devm_backlight_device_unregister(struct device *dev,
- 				      struct backlight_device *bd);
- void backlight_force_update(struct backlight_device *bd,
- 			    enum backlight_update_reason reason);
--int backlight_register_notifier(struct notifier_block *nb);
--int backlight_unregister_notifier(struct notifier_block *nb);
- struct backlight_device *backlight_device_get_by_name(const char *name);
- struct backlight_device *backlight_device_get_by_type(enum backlight_type type);
- int backlight_device_set_brightness(struct backlight_device *bd,
--- 
-2.46.1
-
+> --D
+> 
 
