@@ -1,319 +1,118 @@
-Return-Path: <linux-kernel+bounces-333199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B104E97C54C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A0097C54D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35AF81F216AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:50:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 922291F236D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFF719581F;
-	Thu, 19 Sep 2024 07:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E561A1974FA;
+	Thu, 19 Sep 2024 07:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="UeX5ED/j"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11020138.outbound.protection.outlook.com [52.101.61.138])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="h55JzmvB"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5B71957E2
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 07:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726732168; cv=fail; b=TixfNpRvZiS/Vhu7QmZrZ2FQqtMD0FyXu5NSRfHeDeM2JBBWLg1vzWY4mDqvDuzviGgAAMgLlNlEUsz4eASj8k/JXQCtQZDP8ugehCXYiw7EynJ7QI5TZG/KoUiWKQYVP/5UNHVxGYZXrsf7QDH8KqpYcg3uoyi/AF2j6Tqy3LM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726732168; c=relaxed/simple;
-	bh=SXpAuYoUP70fqEhc/BsJC2a5xTRb0JRhQyy/wqtdFEk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WBWv+vSoc48tISlTIlyLrYYjwreY3zuE4tyN8DUnEDEdYr6N3kVG1dtdQ6oyyHVpZ6eeSWAp9+xE8SZk+1sfu2Mhd/vu4s8thT96JcTRvVD5fL0n3gjvydgfD6Z1HmIWnicm5EijPATKRCA30iT4mANIEzJjaVShDQcuz6J/Itk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=UeX5ED/j; arc=fail smtp.client-ip=52.101.61.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ywTnUzF2lZmZ/zwxivLvDV7URLAxMF2zdCb0MlRdQa5Buj+HDf8kDLw5f1TbrlV26L3+rrIAgLHVtwbVrItuXdVKA4ty5NWpHsRfElwvsEwdRiD8apx2wIoGzeZgEU8qwDXn9cLRUeTtMAt38+YsHNTZOjcXF7q4qiO5Y0/2EZdrDBf/gkFswqydiay6Utp3TcIPrdpjmpIMvQVzVFCCe2WYWpzqn+tjuBjZhKBZt9ISt0RxnXjEch7p9W0fgUu0YjW7SJD9bkFyKJZv7zEyGWEOSXDk6a6GMVEXi8OBa/YNjM7OMQn6c5MqJCSeA0jSxAjlEmU44xuyyyw+uZEcUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oEj1yi8WLHHOgLOrPscFRNtt3trAmTCi8HqJ6Dv/EgI=;
- b=ZRUf7cMVxZqVgZbCm7SHu89hbM0370HBhH5WS85saArGB6bCS+lRxYoiYZBb4V+JagBgnvnDZrqYKJV9l1ky8zUvfYNLdDsFihIJ1yhpzZ8NtVdUUSRsoKR3IGQYjx2LsQbphnJDvCrpirChukkutzVRXU8nUOXgsllvoa8gl1D3GKUSVF0FW1Acql0o868ifWDgC3O6Tss9Y89VEFfWLqFZ5kyCzJZvZ7+6g2LglPBwfHP+IW5AmVppgewoCaDtP78Cyv5XeJDBfwDHBFRsgxzvXffUfIjxOOcVgpIhlWyYR7l/kriEx90NzCt3r2I14MWomtqcON03rtCfz3/IMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oEj1yi8WLHHOgLOrPscFRNtt3trAmTCi8HqJ6Dv/EgI=;
- b=UeX5ED/jFntf0O2yJrEoEAxhd1cs8u76qzOBYLdYhtm55PtjGsxnhSJmpN+2tspzqTSwQ1sRFIReWAYyWE8t2oh6eZC9FWbW0vYQyhPeZ+d0/7+zbs81vQIRfCVsrzcX7sWagDeuWt/y+WX5tWVXki6d9o1lhVDMa9wGoicRk6o=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
- MN0PR01MB7681.prod.exchangelabs.com (2603:10b6:208:378::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7962.23; Thu, 19 Sep 2024 07:49:22 +0000
-Received: from CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460%5]) with mapi id 15.20.7982.018; Thu, 19 Sep 2024
- 07:49:22 +0000
-Message-ID: <eb995fae-1436-49bf-917a-beab3ccb3761@os.amperecomputing.com>
-Date: Thu, 19 Sep 2024 09:49:18 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v5 PATCH 1/2] hugetlb: arm64: add mte support
-To: David Hildenbrand <david@redhat.com>, catalin.marinas@arm.com,
- will@kernel.org, muchun.song@linux.dev, akpm@linux-foundation.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240913183404.3517556-1-yang@os.amperecomputing.com>
- <51dd74c3-5da9-4ea0-8298-3ac843c6a843@redhat.com>
-Content-Language: en-US
-From: Yang Shi <yang@os.amperecomputing.com>
-In-Reply-To: <51dd74c3-5da9-4ea0-8298-3ac843c6a843@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: VI1PR07CA0298.eurprd07.prod.outlook.com
- (2603:10a6:800:130::26) To CH0PR01MB6873.prod.exchangelabs.com
- (2603:10b6:610:112::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15311922FC;
+	Thu, 19 Sep 2024 07:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726732179; cv=none; b=eBGEesw+nA6KulNSZrbQpM24HMjvkT6HFHotVXoqcWc+eTL3cRKWuZO6Gc7PPX/rBjQstwE4lva/76Pe2S2B7psHQkhFtwMC7z44iDYNFsOkfgPm2c0a/1WYONr1ARk+++JjUyOJgxPKpcPrwCxjCu1P0M7P1euNbziKn1Wowxw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726732179; c=relaxed/simple;
+	bh=7Cr9VhPMDwnRNLiIL7+m8/3rWzCM49GIUfzF/MBixIE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tfR2nllFnNLcPpO+ADpe30XEYqnwrVWY4HtTVPWi1cWcHwORWvfjiIVDikQGMRtwfmDYsUUFRk2lv5xpk6RiWSvAx7aS14uEuneVfcYf/mYSZODzq0ytMSAuvCwHWkwSbVCrPAW6Zc77nq7/olnoi7Z3vpvf7inr/7ohgPY3P2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=h55JzmvB; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: b38604cc765b11ef8b96093e013ec31c-20240919
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=O4TdeVTUr7HCvk3t4yV7pe/FuldFzTHqn08P93ET+3E=;
+	b=h55JzmvB48JKLJT9CQV9OZCqus8PB7KxukOmptQkVSQCNnMEkLTxOoEUoRTtbY0DFkVm9emcrxuiw45zWVSKBAEY1eOtcJC60tKqMtKuarKdD9y08OpM5vuqBlDtfX1YBYTGgVAB6OHvDBS2Rc9/ZsaANZJ/WMwdlS2tVZQm/DE=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:f34ad53a-6b7f-4e58-aa22-a6adbe531ffc,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-25
+X-CID-META: VersionHash:6dc6a47,CLOUDID:7fdb3a9e-8e9a-4ac1-b510-390a86b53c0a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:1,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: b38604cc765b11ef8b96093e013ec31c-20240919
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 530432070; Thu, 19 Sep 2024 15:49:29 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 19 Sep 2024 15:49:27 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 19 Sep 2024 15:49:27 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>,
+	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH v2 0/4] Bluetooth: btusb: Mediatek ISO interface claim/release adjustment
+Date: Thu, 19 Sep 2024 15:49:21 +0800
+Message-ID: <20240919074925.22860-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|MN0PR01MB7681:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f88861c-9dbb-450f-0bf9-08dcd87f9368
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MHpoT282YndVT2V2UWlhOXFXV0tIcFZDeW9WbFB6VUUvUnBKY3RoMzFyV0dB?=
- =?utf-8?B?eVdIWmJyMlgxTnVjdGVBVzZVYXlzQzk4ME9aSW5Cb2dqQzBIdU1sbUVNcnBo?=
- =?utf-8?B?TnBVRzlpNlRwaVdWVXBDOUhOS3YyZ1BOcEZGUkFUN0FkenJNT2VNQzZqVHF3?=
- =?utf-8?B?T01wZFVEZmZTdk5uYTU4RUMvRlZidndZR1NvVnZMZ0Jaa2VBQVVOUDFDS0RV?=
- =?utf-8?B?MGdiS3BhVWpjYzZtOHlNNVZ3bkcwQmlYUDZLa20vK2FIaUFhUWROUXFGQ3ZT?=
- =?utf-8?B?Mm9FRDNJZGVGTnBWaWhqY2xGVUZZU2JMSEVwcW1jSDFVRXBxdHhiUGZjdHhh?=
- =?utf-8?B?Y3FqMk9QYU9vZE9zNHl2clExeXB5UnVOZHRQM0dhRktpT0NUQXl5V2VpeUpD?=
- =?utf-8?B?ZjZtcGREdHU2MXdpaUxZenE0SWZyMzZRSnhQK1cyT2pJWVV6MkZpbkxpY3lT?=
- =?utf-8?B?OE9oTHFRb09NcGdDc0Vsai9TZUZQS3hVOTZhNVh6OFV5dmNaZi9BaVB3SVBV?=
- =?utf-8?B?VWYzRG96UDFFc0wyVkFxdlRMSjhva01UU1M5bExmQ3pkc2JzdXdVU1hxN25j?=
- =?utf-8?B?emRkbG50TWhuY21lcGZtVVlqNUFQbFNHU3lPdXg3MnNHTEpTV2RWM2xPV1hV?=
- =?utf-8?B?cVVEbm0xeXljQ1dGaWdHNU80STcwUlFXSHozMjRzR3BiZTQ2V1FlVHV6ZzR2?=
- =?utf-8?B?WUxvNCtvcGw2a3NxUGlNajE0ZSsxL3JDQ09POUwxVmR0Kzl0RlM1VXdKdWNB?=
- =?utf-8?B?WkUvYkxMWjN2bUFQOGtzdkROMTZqeUtKdXB4eTRCem5iRDRqV2wvMWtidjBM?=
- =?utf-8?B?blNiS05HVENCQnR6dTdNc1BRVmVxKzJCU0ZZWmVJMGhUYnhnK1g3c3pGUGlW?=
- =?utf-8?B?ZGpuc0h2dTlnOGJjYjZ2UE1aTHJNNDFpYmF1UC9pUFh0Z0lDQnZDdnh0Z3VT?=
- =?utf-8?B?eWFHVFh6cHkvRWJYc1V6V0ZuazcyeXhIU1BDSUJUYm9mSTRSMUxZMWZDakJR?=
- =?utf-8?B?YTFjYUdIY01NeUN0SGc1RmNyZmdmNVlXelBvZEJqWTNLaTV4UXp0cGE2bmE4?=
- =?utf-8?B?U0pZZTBpS2ZjekFLRUdoekRuVVN0b1hrYTFxd0FNOXpNMm41MFc0Vkw5MllZ?=
- =?utf-8?B?bzVzS2RPRHNGbzMyUUhLVHNsdW83ZGNsN0pRTkkyWHpRWVZMa1ZJam1ORFdW?=
- =?utf-8?B?dDJ3Q28vQzljL1RqaWRGd1Y1K05tNHdrQ3ZidTQ3ZWpzNVlQdjFzTm5OSkZS?=
- =?utf-8?B?VW1XN1V1UGZ3U21xb3p3K3VvWkxVLzVTVGlHV05qYzhqc2hCNHhGTmtzQjNr?=
- =?utf-8?B?NGE4YVJjNzNWaUl4RmdyejRYeVVUbEwxWVNsNjJZbGNCY21RYnNsV1lNenVY?=
- =?utf-8?B?eWFxc3lVbEMvMko5Y3p4ZGxsTGFGMFcyS2FWUkpLb1Z0ZnNwWWdwRlhHMVc4?=
- =?utf-8?B?dkRhRkxtZFFlaUpzOG5NbkozVmNuYTVCQytESGRicnI1ZzA2aFJDRnJGMXVn?=
- =?utf-8?B?YXhjQWQzWDFHbXlOTjA4Q1k2aGo5QmhPMjV6OGdoNTJzbFZKYUwrZDBIZ1RT?=
- =?utf-8?B?a2RJbXZqdERCcE1wcktSWjRwR21mOENwdW5Nc09rOFFkYjhMNVJFV3R3d1d0?=
- =?utf-8?B?a1lqcmFSOGJ5S3pSRGFnWnYzMHNCN1NPUHlzaWdKc0RwMTYzVnFyeGdUd2No?=
- =?utf-8?B?c2xodFZzN0dZY2tVdE1Ea0wvd29lR3JPTjJnYkY2c2tGaW5CUWw0U3BDTW45?=
- =?utf-8?B?eGg2VnFsUDU5WHRjd1lBc1RhVjNCVEdnKzF2VDNtOExSSEFnMTVJQmpXMzlT?=
- =?utf-8?B?d3R4dHEwazA0eWpPWk5Zdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VjcxSkdYR0d2NVFFdlZaSUxBRytFVXRoTFRpSDZBOUR2ZW9XTUJBRVRXNDNV?=
- =?utf-8?B?S2Jpc3Myc2NFNmxRU00xMG1TaDg5RnRpYllqTkwrNC9OVFRwQzdGOWJSZlVi?=
- =?utf-8?B?Zmd6NXpHTGljMkUyTkx6WDlLd3JINWx5OTg3ajFDVi9hLzl2bXgwRWhwS21k?=
- =?utf-8?B?NHowbm5tL1IxOGRILzBIeFRQYkQwV1dxakpqczlhMFZzMVlOVVlRc0wvV1dm?=
- =?utf-8?B?eG1ONlVVOHFxRFBBQVJkY2ZoT2FSazFwOXJqamVUMmhGRy9nWmRHbmFmSFpT?=
- =?utf-8?B?WTBFTlI1N3NndllmZ2hxbHJrRmhXVmRCaVllK3NWaGRxUkUrLzRoYXU5dTVu?=
- =?utf-8?B?dUhpV0FnSkwyd2tHQXphcGtJdTE4Tm1YMkEzVm93bHVNT2w3ZjNYV1FPK3VY?=
- =?utf-8?B?Ym56OCtNUm55WUZwN1RsOVpXeSsyYUMzU2gxQlJhSkhzMTh1VUVCTGZRSmdX?=
- =?utf-8?B?c08zYVpKb0JmWGd5UDgxKytIYnF4MEZhSlJTelVWY3pKNm9PckZNYVg5ZFla?=
- =?utf-8?B?cXNmMThZS25lTisxb0JIV3FnTXNzSlI4ZWhRbW5Pa2JveFdXM2ltMmdUQW9I?=
- =?utf-8?B?bUdydk9nZ3hGeFA4K3g2OHQzY09uNXMzWnBnWWF5YXY0Z2l5bFQyRTNlWFdk?=
- =?utf-8?B?MkJMOXNFZzZTb25uYzBENDlLSkFKZ2Q3dG50SEFOWDk5VWhmRkJHZFVLS0hj?=
- =?utf-8?B?Y2VzcEErdTcrWG5qOUJoMkdUK2dWOVIweGFLc08yUncwY2h1QTF0aDE1Y3NO?=
- =?utf-8?B?ekIxV1FvZDJ4T2JPRkFTaEJubjR0WFVsT2FzUVBjSWIxSVdpaXFTYXYzVmx4?=
- =?utf-8?B?UjVoL1hjZ3A0clE4ZmdsUG82djZrVTVkWDdrYVU1QldJVUk4OTFGU1Rrc2Jm?=
- =?utf-8?B?OGdjeW5YZS9jblRtRGN6Q1ZzUFlDb1V4RjF1Y2pMdjNNWjIwYWxSVVFoTWdl?=
- =?utf-8?B?Mm9MUENnQnN2d0ZTaU44cGZVdk5ZQmxSa3pTQTVtR3BHVzg5Q3M2MHovSEtM?=
- =?utf-8?B?ZWpVb09IdDFJa2NzUW9lQ2Z3eGZReEFjRVpWZzFjQmlGeWhXTDRKS2ltVW9y?=
- =?utf-8?B?anNPWWtqNzU4OGlkclpIMFVaUEFxanV4cFdLK08rVXM3M0F1TEhJVmdhV3h2?=
- =?utf-8?B?aHljSkJKdHBZdDJYN1A2dnlKU213Sk9kT0JPdjZBKy9XM1lIOWkraE9zN3hw?=
- =?utf-8?B?NjR4Mkdla1ExdWJBZEdSUXRDcElNbFR2SmF1cVpWenluOCt5MTh4SUYwYllB?=
- =?utf-8?B?SUxWVnFSUG1hYVFGRG1hY2pqV09NVUtQUnY5bHpFYk1KSis5alhsU2YzenJ4?=
- =?utf-8?B?T0FURUE0czEvcGV3NjhlaDdmSFFNbWlLc1ZqSlRxSkJNODVqRWtHZGFMblZU?=
- =?utf-8?B?aXVidlJEb2J0YnVxTFAzTmN3MVZpUVlVU29sODA3bHVpQ2RYVVFkUW5BSmF1?=
- =?utf-8?B?RUl0SVgvVWpEeFM5dC9CSUI0Y09GYmdLY1BGSVVScGs0cEgyZkNVSzgwWk5p?=
- =?utf-8?B?WUpMQ0FaaElhdVhTQzZxMXpQbEpNUzRUbDY5WjBYUFI2Y2VIM0srQ050VVJz?=
- =?utf-8?B?RFFBM2tDOUxpa2Q5U3Rna1BGSHA0MGE1VjlRcnp0dTRzaHRQYlhXL3lGemxx?=
- =?utf-8?B?YkVIeHQ4TGN1dkNJWkVHL1B6U0RZNGNrMFdjVDV0dk4ydVdDaXJCazcxNEZG?=
- =?utf-8?B?aHhyN00vWGdBNnZUd2tlQ2YxK08yWURnVW1CTzRhbnR2YTNRNWxYZWtrS2pM?=
- =?utf-8?B?WUhUdHVlaDdmNU5UMC94blkrblJtdXV6bm1LNE9HWmxQVVVHMWZZb2ZiR0d4?=
- =?utf-8?B?OUhMNE5XMHErWkhJQUI3UjlBV2x5bUdpKzRNamhJMkViWWNDdEFZaldhRkp5?=
- =?utf-8?B?QkpDL3hTbWhMOEtrSGg1NjhCQXAwQUZ4NFJGcHdzRFFDR1QyQ2VuK1BuV1pr?=
- =?utf-8?B?dkVMenlwczhDbDUwa2R1eFpMT3lNbGtYd3Bmdy93eGxIZHpPeDVWVmk1S3Bo?=
- =?utf-8?B?U0dBMEt3cWxYUDRMc0ZGSGdCcWRaQk1jemlBeHNiOXJuS2xZS04xeW1Oc0Ex?=
- =?utf-8?B?cnVIWEs4R0ViRlhMOVJDczQvbUplYXZKZGdONzdDZk1oSldhaUNsdlFTWTZG?=
- =?utf-8?B?Tkk4cExzV3UzcW5QU1I4cGxGbEJCMFVncjJoNFFWc0ppRGpkUllHV0RHNWxV?=
- =?utf-8?B?ZXc9PQ==?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f88861c-9dbb-450f-0bf9-08dcd87f9368
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2024 07:49:22.7195
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zowfcnvhyon14hjJYS3NFQyUEkEGBPoyevAr5bwde2Z1tf15TXx3O0rpFySj9HM4mszyEwQZ33inWv0AV6tj8uS1y/iFgXI46ryKGk72Q6w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR01MB7681
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--5.751400-8.000000
+X-TMASE-MatchedRID: 6FmBHFM7d0n1c76/u1t0kEj2sPWKvtn0KFFZAe4nyZ77efdnqtsaE1UR
+	GqiTsOWOCPoQvKo1bz0e8agj4OvcJXnYsjCinlm9cfsdX+Y7hRMrHkgIan9a0VO5j251EiYgMH1
+	xx17eFtSpB8l8zTGMcnPdr6zR5iwi+uobhwVz9gBPuMJi/ZAk8e+aBTJJYa54wA2tjhGpvsYzvr
+	CMQwONiqqs7oCmmNfOgDLqnrRlXrZ8nn9tnqel2LI7zVffJqTzvWUyOoXuNL+SJhCgyxh1ZWUif
+	23WVRfSzqgzstWZKO+czQmXJSxDGH7cGd19dSFd
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--5.751400-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	07C2037D0F73455F3A943E6A55D24A843399C1CAA9788BDA70181087A5A186532000:8
 
+MediaTek performs some test on the platform which can support LE audio and
+ISO data transmission with kernel driver. We found the additional interface
+claim and release flow issue need some adjustment.
 
+These patches mainly add a callback function within the usb_disconnect
+function to prevent a kernel panic caused by interfaces not being released
+when the BT USB dongle is physically removed. Additionally, the condition
+for claiming/releasing ISO usb interface have also been adjusted to make
+driver works as expected.
 
-On 9/17/24 3:36 AM, David Hildenbrand wrote:
-> On 13.09.24 20:34, Yang Shi wrote:
->> Enable MTE support for hugetlb.
->>
->> The MTE page flags will be set on the folio only.  When copying
->> hugetlb folio (for example, CoW), the tags for all subpages will be 
->> copied
->> when copying the first subpage.
->>
->> When freeing hugetlb folio, the MTE flags will be cleared.
->>
->> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
->> ---
->>   arch/arm64/include/asm/hugetlb.h |  8 ++++
->>   arch/arm64/include/asm/mman.h    |  3 +-
->>   arch/arm64/include/asm/mte.h     | 67 ++++++++++++++++++++++++++++++++
->>   arch/arm64/kernel/hibernate.c    |  6 +++
->>   arch/arm64/kernel/mte.c          | 27 ++++++++++++-
->>   arch/arm64/kvm/guest.c           | 16 ++++++--
->>   arch/arm64/kvm/mmu.c             | 11 ++++++
->>   arch/arm64/mm/copypage.c         | 27 ++++++++++++-
->>   fs/hugetlbfs/inode.c             |  2 +-
->>   9 files changed, 159 insertions(+), 8 deletions(-)
->>
->> v5: * Indentation fix and renaming per Catalin.
->> v4: * Fixed the comment from David.
->> v3: * Fixed the build error when !CONFIG_ARM64_MTE.
->>      * Incorporated the comment from David to have hugetlb folio
->>        specific APIs for manipulating the page flags.
->>      * Don't assume the first page is the head page since huge page copy
->>        can start from any subpage.
->> v2: * Reimplemented the patch to fix the comments from Catalin.
->>      * Added test cases (patch #2) per Catalin.
->>
->> diff --git a/arch/arm64/include/asm/hugetlb.h 
->> b/arch/arm64/include/asm/hugetlb.h
->> index 293f880865e8..c6dff3e69539 100644
->> --- a/arch/arm64/include/asm/hugetlb.h
->> +++ b/arch/arm64/include/asm/hugetlb.h
->> @@ -11,6 +11,7 @@
->>   #define __ASM_HUGETLB_H
->>     #include <asm/cacheflush.h>
->> +#include <asm/mte.h>
->>   #include <asm/page.h>
->>     #ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
->> @@ -21,6 +22,13 @@ extern bool 
->> arch_hugetlb_migration_supported(struct hstate *h);
->>   static inline void arch_clear_hugetlb_flags(struct folio *folio)
->>   {
->>       clear_bit(PG_dcache_clean, &folio->flags);
->> +
->> +#ifdef CONFIG_ARM64_MTE
->> +    if (system_supports_mte()) {
->> +        clear_bit(PG_mte_tagged, &folio->flags);
->> +        clear_bit(PG_mte_lock, &folio->flags);
->> +    }
->> +#endif
->>   }
->>   #define arch_clear_hugetlb_flags arch_clear_hugetlb_flags
->>   diff --git a/arch/arm64/include/asm/mman.h 
->> b/arch/arm64/include/asm/mman.h
->> index 5966ee4a6154..304dfc499e68 100644
->> --- a/arch/arm64/include/asm/mman.h
->> +++ b/arch/arm64/include/asm/mman.h
->> @@ -28,7 +28,8 @@ static inline unsigned long 
->> arch_calc_vm_flag_bits(unsigned long flags)
->>        * backed by tags-capable memory. The vm_flags may be 
->> overridden by a
->>        * filesystem supporting MTE (RAM-based).
->>        */
->> -    if (system_supports_mte() && (flags & MAP_ANONYMOUS))
->> +    if (system_supports_mte() &&
->> +        (flags & (MAP_ANONYMOUS | MAP_HUGETLB)))
->>           return VM_MTE_ALLOWED;
->>         return 0;
->> diff --git a/arch/arm64/include/asm/mte.h b/arch/arm64/include/asm/mte.h
->> index 0f84518632b4..03dc43636aba 100644
->> --- a/arch/arm64/include/asm/mte.h
->> +++ b/arch/arm64/include/asm/mte.h
->> @@ -41,6 +41,8 @@ void mte_free_tag_storage(char *storage);
->>     static inline void set_page_mte_tagged(struct page *page)
->>   {
->> +    VM_WARN_ON_ONCE(folio_test_hugetlb(page_folio(page)));
->> +
->>       /*
->>        * Ensure that the tags written prior to this function are visible
->>        * before the page flags update.
->> @@ -51,6 +53,8 @@ static inline void set_page_mte_tagged(struct page 
->> *page)
->>     static inline bool page_mte_tagged(struct page *page)
->>   {
->> +    VM_WARN_ON_ONCE(folio_test_hugetlb(page_folio(page)));
->> +
->>       bool ret = test_bit(PG_mte_tagged, &page->flags);
->>         /*
->> @@ -76,6 +80,8 @@ static inline bool page_mte_tagged(struct page *page)
->>    */
->>   static inline bool try_page_mte_tagging(struct page *page)
->>   {
->> +    VM_WARN_ON_ONCE(folio_test_hugetlb(page_folio(page)));
->> +
->>       if (!test_and_set_bit(PG_mte_lock, &page->flags))
->>           return true;
->>   @@ -157,6 +163,67 @@ static inline int mte_ptrace_copy_tags(struct 
->> task_struct *child,
->>     #endif /* CONFIG_ARM64_MTE */
->>   +#if defined(CONFIG_HUGETLB_PAGE) && defined(CONFIG_ARM64_MTE)
->> +static inline void folio_set_hugetlb_mte_tagged(struct folio *folio)
->> +{
->> +    VM_WARN_ON_ONCE(!folio_test_hugetlb(folio));
->> +
->> +    /*
->> +     * Ensure that the tags written prior to this function are visible
->> +     * before the folio flags update.
->> +     */
->> +    smp_wmb();
->> +    set_bit(PG_mte_tagged, &folio->flags);
->> +
->> +}
->> +
->> +static inline bool folio_test_hugetlb_mte_tagged(struct folio *folio)
->> +{
->> +    VM_WARN_ON_ONCE(!folio_test_hugetlb(folio));
->> +
->> +    bool ret = test_bit(PG_mte_tagged, &folio->flags);
->
-> Nit: VM_WARN_ should come after "bool ret" ...
->
->> +
->> +    /*
->> +     * If the folio is tagged, ensure ordering with a likely subsequent
->> +     * read of the tags.
->> +     */
->> +    if (ret)
->> +        smp_rmb();
->> +    return ret;
->> +}
->> +
->
-> Reviewed-by: David Hildenbrand <david@redhat.com>
+---
+v2: fix commit message typo and over maximum chars per line warning.
+---
 
-Thanks. Will fix the nit when I rebase the patch after the merge window.
+Chris Lu (4):
+  Bluetooth: btusb: mediatek: move Bluetooth power off command position
+  Bluetooth: btusb: mediatek: add callback function in btusb_disconnect
+  Bluetooth: btusb: mediatek: add intf release flow when usb disconnect
+  Bluetooth: btusb: mediatek: change the conditions for ISO interface
+
+ drivers/bluetooth/btusb.c | 32 +++++++++++++++++++++-----------
+ 1 file changed, 21 insertions(+), 11 deletions(-)
+
+-- 
+2.18.0
 
 
