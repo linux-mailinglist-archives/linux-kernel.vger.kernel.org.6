@@ -1,91 +1,88 @@
-Return-Path: <linux-kernel+bounces-333386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14C597C7C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:08:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC7D97C7C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EEF128FFF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:08:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5372F2900D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1955A19B5B8;
-	Thu, 19 Sep 2024 10:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5hBkpfm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90D219A28B;
+	Thu, 19 Sep 2024 10:08:19 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702E5168BD;
-	Thu, 19 Sep 2024 10:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E9C199956;
+	Thu, 19 Sep 2024 10:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726740455; cv=none; b=tYLghYyn7RJLWN2IfowdQaUPbEDszUvuImQeHDXODXQbtftT0yKhFB1KQLnPIglq2s2H8IUSbkD7Xa92NfZA6L3YFE+Uwvsm3kATJS7XfBb3dWD5i36HxjHTi0AZ7IzDJSN14FaQIerfkveo8mDbCYAeLKIWmqp/g2+Gkk7PBmU=
+	t=1726740499; cv=none; b=FAwv4CDLFzxoMObhOMNNR4GVB2CpSIrHY9GaW+nAfSJ99EfQShrlLbdbRrPpy/42DPUsrssrxA1+SxMcWmYn9X06TRTi60EItRTV1/QfEE3kfWzXqX/y8/qtvha7z2oWN7Unh1p2i8DXWnmA4itDKSNl+x8/Oiz952yNWn0gkVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726740455; c=relaxed/simple;
-	bh=tBBR7+8ZF6X4adQNOfOlakRM+GK+OiRN3rw2J04b8gA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AsnuzMeV8PNDDMgITIA4VTSzJwx9z7yRN19jiTlGI9ZdOlu7QWKaWQDe0/q1pLPyoNvOr9wYCcG075wqtwD8Q7gkCiczoWBvDKrU39J2KanL8aykqoqPaooMQeVGt+d0Tig5N1g15htlvuGuNWIspcfz7gnhNJbUzTnVEQXI/7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5hBkpfm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40830C4CEC5;
-	Thu, 19 Sep 2024 10:07:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726740455;
-	bh=tBBR7+8ZF6X4adQNOfOlakRM+GK+OiRN3rw2J04b8gA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=F5hBkpfmKRrSDFCRO6Jgr9IB7kbStucmIHlrz1W4BQ36EouETMuhv+WvdST/c0JTD
-	 OOqP3eLjOR617dglTjEe81tVunJZtK3VJ2tgj29lAXhtZt37sh8Zns/WHDGGDvB8nN
-	 EBeu7ncJ7A6FY6CZoAeb0EKrq480ZIkPE0sSoM1/oFhRHDS96MMcSSoGi2vlZZ1dRP
-	 cUWGboKxdsN6FjcD/2jNWJQDiu2rAo/RzcLKp5+sV4NGOMyNIRONg5voCebnXDm9bO
-	 6MXcrWlsOwoy3MLxTrOHeL32Fj6WZ1KQ5DkHTpoOJboOg0Ck7G2dR497eUj84kxn4z
-	 eZgLMK+tJHTFA==
-Message-ID: <2fb16b35-e6c5-4239-a745-a9dd7412539a@kernel.org>
-Date: Thu, 19 Sep 2024 12:07:29 +0200
+	s=arc-20240116; t=1726740499; c=relaxed/simple;
+	bh=iQHq5X10ZfpzHxsR132EfJBHxX3P8U3sauM6BcLU8Ko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JyTx6CM2Y48jtVesnTWN2qmvy+Pwtnft0nX6b7wSeGsXNWBFbtsrbF/6FjUk1r5zbJGCX70MKgQcETVSrq0r1Y0n0MZwbmcwk0SIYnEqUCXJ/MFo5NaPpP5tqPi97kwZnP0jYy0gLm+CXpyo3tVJZSTt/Ifs1B4v862ifvT+46Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=48768 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1srE52-003A0F-GJ; Thu, 19 Sep 2024 12:08:10 +0200
+Date: Thu, 19 Sep 2024 12:08:07 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, rbc@meta.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org
+Subject: Re: [PATCH nf-next v5 0/2] netfilter: Make IP_NF_IPTABLES_LEGACY
+ selectable
+Message-ID: <Zuv4B89z3YUOU0rj@calendula>
+References: <20240909084620.3155679-1-leitao@debian.org>
+ <Zuq12avxPonafdvv@calendula>
+ <20240919-refreshing-grinning-leopard-8f8ca7@leitao>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 00/11] Affirm SMMU coherent pagetable walker
- capability on RPMh SoCs
-To: Luca Weiss <luca.weiss@fairphone.com>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Konrad Dybcio <quic_kdybcio@quicinc.com>
-References: <20240919-topic-apps_smmu_coherent-v1-0-5b3a8662403d@quicinc.com>
- <D4A2FKPTXHS5.3AHU7ZEKFVMGG@fairphone.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <D4A2FKPTXHS5.3AHU7ZEKFVMGG@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240919-refreshing-grinning-leopard-8f8ca7@leitao>
+X-Spam-Score: -1.9 (-)
 
-On 19.09.2024 9:00 AM, Luca Weiss wrote:
-> On Thu Sep 19, 2024 at 12:57 AM CEST, Konrad Dybcio wrote:
->> I only read back the SMMU config on X1E & 7280, but I have it on good
->> authority that this concerns all RPMh SoCs. Sending as RFC just in case.
->>
->> Lacking coherency can hurt performance, but claiming coherency where it's
->> absent would lead to a kaboom.
+On Thu, Sep 19, 2024 at 02:31:12AM -0700, Breno Leitao wrote:
+> Hello Pablo,
 > 
-> Hi Konrad!
+> On Wed, Sep 18, 2024 at 01:13:29PM +0200, Pablo Neira Ayuso wrote:
+> > On Mon, Sep 09, 2024 at 01:46:17AM -0700, Breno Leitao wrote:
+> > > These two patches make IP_NF_IPTABLES_LEGACY and IP6_NF_IPTABLES_LEGACY
+> > > Kconfigs user selectable, avoiding creating an extra dependency by
+> > > enabling some other config that would select IP{6}_NF_IPTABLES_LEGACY.
+> > 
+> > This needs a v6. There is also:
+> > 
+> > BRIDGE_NF_EBTABLES_LEGACY
+> > 
+> > We have more copy and paste in the bridge.
+> > 
+> > Would you submit a single patch covering this too?
 > 
-> You want people with the affected SoCs to test this I imagine?
-
-Yeah, would be nice to confirm
-
+> Sure, I am more than happy to work on this one and also on
+> IP_NF_ARPTABLES.
 > 
-> Just boot it and see if it doesn't implode, or do you have any more
-> elaborate test plan for this?
+> Would you like a v6 with all the four changes, or, two extra patches and
+> keep this thread ready for merge?
 
-No, booting should be enough of a test
+One single patch is fine, thanks.
 
-Konrad
+> PS: I am in LPC and in Kernel Recipes next week, I might not be able to
+> do it until next week.
+> 
+> Thanks
 
