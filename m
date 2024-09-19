@@ -1,256 +1,89 @@
-Return-Path: <linux-kernel+bounces-333572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE14497CAE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:19:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2612D97CAE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F3DE1F22EE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:19:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2334B22EF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B94619F408;
-	Thu, 19 Sep 2024 14:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0D619EED6;
+	Thu, 19 Sep 2024 14:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/r3Aw6n"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ch2d5Ar1"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C739920B04;
-	Thu, 19 Sep 2024 14:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6694199FCD
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 14:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726755566; cv=none; b=OTkPxhSPc5oSrivHpYifhUuAd+qjmoKR/KK5uemHoHC7vOz5l/RGfjsqLJyzm2LPxH+BB37CCf8cMWp8B/U9m3MZcazwqe+KnxniExb0L4jibAd6bG7wYCedaQdN1E5F7LjjtPl/lLarkWV2BxXwb3STurPZCrKe4BvpCVoxhAM=
+	t=1726755707; cv=none; b=F54OUav/U/kePuuBEgu+L7b6vQrBgOddHjmU3vppuS1gL3n+XPWv32Kow5MtyKMefUSE8mnx0aER7y+2s7r8jupSLdn6QEzssfEbnuJTY9Zxf1jTnN6R54X0mP54RcolBHU+O4nKcE8M/A2s4+I37bFlAdNjKsZ+Pg+35842mlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726755566; c=relaxed/simple;
-	bh=f9V1VxYelbL1NGhd4FOXVxKNM7r5zJ9eTYY9lsW/Mb0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JUifzp68dkQXKY+hOcvHC9U3CLa0xI6vJc/6jjNqTxrvIkTKrD2a61pTCkAWVNHLKWQ5fCefS4fh3pYCLztygEljppCWDNsQeu5RJ8YW7uf1cYMPe0n88VB3TtDO2Eg9aZgf/qbVqDChocVGxr+SiGUqQi8hd+Kvu3+uhVN92+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/r3Aw6n; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2d87182874fso152262a91.3;
-        Thu, 19 Sep 2024 07:19:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726755564; x=1727360364; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sHYxkPLt4ajy19nCaZr7Axd94HmMZBYZd5MEyptfvOw=;
-        b=c/r3Aw6n4UICIBkRUhVOyFB4z4DZtuNJBpJcAeUD0dH7TOyCVsrQ01gTQznOh3N8YV
-         oafe3EQ6Kj5nS+VoMdfWjClE7e6x1YXYD+jipC5GKfhgXaTycT78459CZkyfQaR7IIeP
-         0tcHYZYvhlELX59y2GHdlg56NGcbbHnoM58qtyfF4nJIomLeB591kUCJ7wLfx7Njjfq7
-         LUNKCbaYL8OphiBb44tdgs1jAWUDbkwRoGyFCG1PFGZLlZCUaXzHBbpoN56sVy6gZGrd
-         WeYFr/biB1K3zUaobE5XHyAw52MfcXxVu8YD0G3Ru8GN04/PUCXjqKgouHFuUeLnCq51
-         cX0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726755564; x=1727360364;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sHYxkPLt4ajy19nCaZr7Axd94HmMZBYZd5MEyptfvOw=;
-        b=EqzOoEIg5vL6k0aER/JhoFnQjp+MbCAMrgKTTZ8eBdPyIuYZySwYHbcPgXwYXtnluf
-         N1p40tVD1xMohCGyMPXatzhq7T/NkeGhf8SiakHnJRDJ3Pxq/LzZVvMcSP4jtCOSey79
-         HEEhfXaOs0WOJxMrBSIDTtFB770wFC9RpkqgGwW+RPtkydPSsG3PB1WWWTO/QZ6+BWvj
-         21alxf+b/1kCyBlcmBQMVTqwnumS87Ws/qzqAUJi6EggDuV8hTmd08pkH+VETWiff1/1
-         ZPbivWritUtNEbhMsqJuYMd6BjcGvIkvfhlBYY2XtmBfbgCz+A4XXHhf293SSeInsCyp
-         ySpw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8EOIa6KH0BrPatORKMgpow3oskGY+p6WkPaVrUp7gnbx2PO2ouHu4TGYILHYrSZ3K+HJl9uhny/N2aJzr@vger.kernel.org, AJvYcCVeCd+IFrAu+O6FkLHljP/7O1Ltaum5GemAoPymq1iMg4J9RgLTBoOW7G7aeE5QX1k0DbIesYvxLk+p@vger.kernel.org, AJvYcCVrDq0af1nmIV4TAnAHvCzJIDaLxPZWN7Uno6OZoHu9mzGaTe/X3gbECx4h5+gPePMuqOXOWzSnJ8SwywcY@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL3IR5DIi9VW5QZTNgTkxSa+PJDVwS5gY1ESlbywrNqC0oEVeY
-	76VLtk6zfz7rgGynLBpXpe7oXy6AyJIVOcEGlqCrfJCgmstZTsvsXWI2MKlOxHhZF0L723bwbz6
-	imhgSBbbDJcsJsh1VY/sejn/xhSE=
-X-Google-Smtp-Source: AGHT+IEbN7vWGlcZoIzv8CKISKCr4kqfoAxCOlrrLvlJ89KrkmmNd7BvZ1WSVx1ZWKgZ29MhSyOH0c8GzTRIXoIdZfc=
-X-Received: by 2002:a17:90a:a893:b0:2dd:5137:a9ca with SMTP id
- 98e67ed59e1d1-2dd5137ab65mr4431975a91.8.1726755563867; Thu, 19 Sep 2024
- 07:19:23 -0700 (PDT)
+	s=arc-20240116; t=1726755707; c=relaxed/simple;
+	bh=B/XcRagZj3rNQkkOOHw9npSb84lhCdxcCogl6Bp/SBo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h5OL2cZ08GwH0TH9X5HwyRcf4RxRqnoEuYejwN6pXNkIMLKIxYbubJbRRkT2wZY4W38X5gM9Zy6jaqVnXOzHTPP1wHQmICGqiNzxypE1bXHqoJd94Q++AQ1G0Nbdw9nh5YZ+NoO+6z6TMO+VP7rPPCIBf4g2UXUM9zSIvbJW9rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ch2d5Ar1; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from umang.jain (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C8424220;
+	Thu, 19 Sep 2024 16:20:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1726755620;
+	bh=B/XcRagZj3rNQkkOOHw9npSb84lhCdxcCogl6Bp/SBo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ch2d5Ar1Utu+/HCXDq+iKrdW27+invce5Ry9B3CF95TkSeHSWY6t/40+ankA5YEEP
+	 /WqQkdThWvHPDfl5IF5r5JC7N/hrxGuYrhANVbUu09Jnc5B4/72MX27s4O88VDb6dX
+	 JIQbf1jzNAqCdyFOaDI+K9tm3T8aWRYxL0A4fb20=
+From: Umang Jain <umang.jain@ideasonboard.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Umang Jain <umang.jain@ideasonboard.com>
+Subject: [PATCH 0/3] staging: vchiq_core: Consolidate bulk xfer helper
+Date: Thu, 19 Sep 2024 19:51:27 +0530
+Message-ID: <20240919142130.1331495-1-umang.jain@ideasonboard.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917-preemption-a750-t-v4-0-95d48012e0ac@gmail.com> <20240917-preemption-a750-t-v4-11-95d48012e0ac@gmail.com>
-In-Reply-To: <20240917-preemption-a750-t-v4-11-95d48012e0ac@gmail.com>
-From: Connor Abbott <cwabbott0@gmail.com>
-Date: Thu, 19 Sep 2024 15:19:11 +0100
-Message-ID: <CACu1E7HgVBJgin5R8ZgsqrCzEbSZHg9djjg0o1Nuq9h1ebBNNg@mail.gmail.com>
-Subject: Re: [PATCH v4 11/11] Documentation: document adreno preemption
-To: Antonino Maniscalco <antomani103@gmail.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 17, 2024 at 12:14=E2=80=AFPM Antonino Maniscalco
-<antomani103@gmail.com> wrote:
->
-> Add documentation about the preemption feature supported by the msm
-> driver.
->
-> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
-> ---
->  Documentation/gpu/msm-preemption.rst | 98 ++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 98 insertions(+)
->
-> diff --git a/Documentation/gpu/msm-preemption.rst b/Documentation/gpu/msm=
--preemption.rst
-> new file mode 100644
-> index 000000000000..c1203524da2e
-> --- /dev/null
-> +++ b/Documentation/gpu/msm-preemption.rst
-> @@ -0,0 +1,98 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +:orphan:
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +MSM Preemtion
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Preemption allows Adreno GPUs to switch to an higher priority ring when =
-work is
-> +pushed to it, reducing latency for high priority submissions.
-> +
-> +When preemption is enabled 4 rings are initialized, corresponding to dif=
-ferent
-> +priority levels. Having multiple rings is purely a software concept as t=
-he GPU
-> +only has registers to keep track of one graphics ring.
-> +The kernel is able to switch which ring is currently being processed by
-> +requesting preemption. When certain conditions are met, depending on the
-> +priority level, the GPU will save its current state in a series of buffe=
-rs,
-> +then restores state from a similar set of buffers specified by the kerne=
-l. It
-> +then resumes execution and fires an IRQ to let the kernel know the conte=
-xt
-> +switch has completed.
-> +
-> +This mechanism can be used by the kernel to switch between rings. Whenev=
-er a
-> +submission occurs the kernel finds the highest priority ring which isn't=
- empty
-> +and preempts to it if said ring is not the one being currently executed.=
- This is
-> +also done whenever a submission completes to make sure execution resumes=
- on a
-> +lower priority ring when a higher priority ring is done.
-> +
-> +Preemption levels
-> +-----------------
-> +
-> +Preemption can only occur at certain boundaries. The exact conditions ca=
-n be
-> +configured by changing the preemption level, this allows to compromise b=
-etween
-> +latency (ie. the time that passes between when the kernel requests preem=
-ption
-> +and when the SQE begins saving state) and overhead (the amount of state =
-that
-> +needs to be saved).
-> +
-> +The GPU offers 3 levels:
-> +
-> +Level 0
-> +  Preemption only occurs at the submission level. This requires the leas=
-t amount
-> +  of state to be saved as the execution of userspace submitted IBs is ne=
-ver
-> +  interrupted, however it offers very little benefit compared to not ena=
-bling
-> +  preemption of any kind.
-> +
-> +Level 1
-> +  Preemption occurs at either bin level, if using GMEM rendering, or dra=
-w level
-> +  in the sysmem rendering case.
-> +
-> +Level 2
-> +  Preemption occurs at draw level.
-> +
-> +Level 1 is the mode that is used by the msm driver.
-> +
-> +Additionally the GPU allows to specify a `skip_save_restore` option. Thi=
-s
-> +disables the saving and restoring of certain registers which lowers the
-> +overhead. When enabling this userspace is expected to set the state that=
- isn't
-> +preserved whenever preemption occurs which is done by specifying preambl=
-e and
-> +postambles. Those are IBs that are executed before and after
-> +preemption.
+Few functions were identified were their declaration, definition
+and usage were spread (incorrectly) across vchiq_core and vchiq_arm.
 
-This should mention that `skip_save_restore` only works with level 1
-preemption and only if using GMEM rendering. Also, be a bit more
-specific than "certain registers" - maybe something like "all
-registers except those relating to the operation of the SQE itself."
+These are being consolidated into vchiq_core in this series.
+Please look at individual patches for details.
 
-> +
-> +Preemption buffers
-> +------------------
-> +
-> +A series of buffers are necessary to store the state of rings while they=
- are not
-> +being executed. There are different kinds of preemption records and most=
- of
-> +those require one buffer per ring. This is because preemption never occu=
-rs
-> +between submissions on the same ring, which always run in sequence when =
-the ring
-> +is active. This means that only one context per ring is effectively acti=
-ve.
-> +
-> +SMMU_INFO
-> +  This buffer contains info about the current SMMU configuration such as=
- the
-> +  ttbr0 register. The SQE firmware isn't actually able to save this reco=
-rd.
-> +  As a result SMMU info must be saved manually from the CP to a buffer a=
-nd the
-> +  SMMU record updated with info from said buffer before triggering
-> +  preemption.
-> +
-> +NON_SECURE
-> +  This is the main preemption record where most state is saved. It is mo=
-stly
-> +  opaque to the kernel except for the first few words that must be initi=
-alized
-> +  by the kernel.
-> +
-> +SECURE
-> +  This saves state related to the GPU's secure mode.
-> +
-> +NON_PRIV
-> +  The intended purpose of this record is unknown. The SQE firmware actua=
-lly
-> +  ignores it and therefore msm doesn't handle it.
-> +
-> +COUNTER
-> +  This record is used to save and restore performance counters.
-> +
-> +Handling the permissions of those buffers is critical for security. All =
-but the
-> +NON_PRIV records need to be inaccessible from userspace, so they must be=
- mapped
-> +in the kernel address space with the MSM_BO_MAP_PRIV flag.
-> +For example, making the NON_SECURE record accessible from userspace woul=
-d allow
-> +any process to manipulate a saved ring's RPTR which can be used to skip =
-the
-> +execution of some packets in a ring and execute user commands with highe=
-r
-> +privileges.
->
-> --
-> 2.46.0
->
+2/3 is in particular a big one. The code is just a move, but
+seems big - as it was diffcult to split it into smaller, compilable
+hunks of individual patches.
+
+Umang Jain (3):
+  staging: vchiq_core: Move remote_event_signal() vchiq_core
+  staging: vchiq_core: Move bulk data functions in vchiq_core
+  staging: vchiq_core: Drop vchiq_pagelist.h
+
+ .../interface/vchiq_arm/vchiq_arm.c           | 356 ------------------
+ .../interface/vchiq_arm/vchiq_core.c          | 350 +++++++++++++++++
+ .../interface/vchiq_arm/vchiq_core.h          |  30 +-
+ .../interface/vchiq_arm/vchiq_pagelist.h      |  21 --
+ 4 files changed, 373 insertions(+), 384 deletions(-)
+ delete mode 100644 drivers/staging/vc04_services/interface/vchiq_arm/vchiq_pagelist.h
+
+-- 
+2.45.2
+
 
