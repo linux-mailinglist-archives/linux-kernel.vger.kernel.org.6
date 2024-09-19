@@ -1,119 +1,124 @@
-Return-Path: <linux-kernel+bounces-333577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C891497CAE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:22:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F65597CAE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06DDB1C2314D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:22:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90881B2328E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FA81A0711;
-	Thu, 19 Sep 2024 14:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C5419F470;
+	Thu, 19 Sep 2024 14:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fBPcRq2S"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SdJsdLqL"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE8E1A070D
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 14:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEF419E83E;
+	Thu, 19 Sep 2024 14:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726755720; cv=none; b=l9qMD8XB7Eywx+jtvmpyD2njqeJIh3NgOh+HSBzfFKYlHSKO9XoA31mHDWYr4t+B1FFQqFqjIyKMLxI2xNkELu4pLCx8Pqw3KA14vaC8DhqEMiFvDrRsgmntaZM5YoIf40CnJdasoOwdQmlS1yKlw7lEKFWz8TD5VrRJtWzbMcw=
+	t=1726755777; cv=none; b=KVI/ymmmasqydAOqQM2h3i2JPjV9oWtu27LklAv+K3K8YlHA7VM8QvN7OPA0V04a+U1jDmPIAuT0sAE0VUyJPEbJSV2e8Y2IlFt+0PF0rEJ6qP8EMWSoKCvp2UaqQmbaDwbV3er8BGhx+Z/nJEMLaT4dcBmr2JW8MrcziagxbSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726755720; c=relaxed/simple;
-	bh=EG19uk4anwjgPAwhmxOvnDB/r3ED91HytRD3gv6bjK8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ImPyBrw0bifrBcOaxhSyxVgZ7w4oHdNtdy+plFQQ+dU5TdMkXSmNh9dMFTLDmwyG+EGuh4AjHCRtimH/i3auPIcU9HeMNU7I7fxtxe988cCYWmkaHjuPWSpBQEcHA3FqEmBprpVg+ByEnfnIvOS4rpZlxAtocvYXdg0PejM14rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fBPcRq2S; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso1551721e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 07:21:57 -0700 (PDT)
+	s=arc-20240116; t=1726755777; c=relaxed/simple;
+	bh=1qEUXToOlEMPlWTxyafhAWZzs5byWw1rjWUSwvJMJ7s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CnoywV1m7CZ0aSKALNW7X3RaGImxU04hzvQQ+GL2eUoSkhoJbPtoY851pjpFRT2p75yKe74Av5L9SzbnQW/xL8uvX+b5lDnINeY5IyglZRZHt+vYO+Yz6+D7V/3gZU035PuNbvg/wFSZr2FCLIksORxSgmCfQKfVICvWGf+XEwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SdJsdLqL; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20573eb852aso13801635ad.1;
+        Thu, 19 Sep 2024 07:22:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1726755716; x=1727360516; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cMMz1PNX68fmg9+skh8c5Nu7ndZ0JGeQo3cBldmTxJE=;
-        b=fBPcRq2SRsdveeY/epVJ63XT94PGlH/GITPRrho20eNIFCh2BlZni6KM85xT2zQ0mx
-         W8Jl2AP3tCgHboJ95SFClnaiYtz666jzVJJx/0Ax+n0jLwLJv7v7dLTWCqc0YzazG4TG
-         MHGQQcWkkxeTvwMkmHsEjXsIoztozNQ3AQ68k=
+        d=gmail.com; s=20230601; t=1726755775; x=1727360575; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WyB2UEn6mFhEk7w1MJXgZ0FKzV3A1wAqVCGm/9lpJoM=;
+        b=SdJsdLqLkRKiZ8unUeKzfXwv1Px+FhtG5UJ8lyTGvYkApuWXlXvdhIIz/sjtY7xVFA
+         sckaDv1JQ3z0KwgcKXy1V2YI1yVKQQd/rQghJMg+UEVFksSUGMD70NEeTmkrjgzGQexY
+         KcNbTK7q24hGlWMj/zqCWzSP9pWEvnOInNcmjfBT3Z8/3eQeSeJZQYJ0mQztGzWGmtHD
+         cpJKlF+SrTekgqHKDv8onBoibZWSD+O6RnGg7lJB6V6fVwKeMmKZeo9fnXmgiWzzKkm2
+         wYGRMAmzfpRlb1KIfmDsURcy7NEmaZtBx4VIhDuBmjnM7O2FAmHM8XBjPaQeloLw7Zwf
+         6JQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726755716; x=1727360516;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1726755775; x=1727360575;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cMMz1PNX68fmg9+skh8c5Nu7ndZ0JGeQo3cBldmTxJE=;
-        b=ngQGbmX2VjM2A+n7JiWwGx3mk4KC02NPg5DYnqyfqqsYQeviuxqW3D2wfv07Bwb6dH
-         +YcCm+yYwDVl0d/ZFI/4ROS3c4j11o9mo8tSb5RXpeMbz6efcfdblFkyoIDhOL/5/ePf
-         1YWFMXfp1XaLM8mGP6K03cTPtkyEzbk5uau2srO87D3/leR4WWV1Zhott0Drbwb3qNK/
-         20nsHLGKf8Py5g1THPcglZ/LtW1U+DKPRiQlUlsVN4eWE+tzyNoMhfx+m7VK/vV78PG5
-         2BJKv1C4HuXZFiED+CteMbJ/tK7TzfEzCnPuNOdEhlY3mXJ5eCTLV/FJFRZUHKaElPJq
-         R4oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5pXkDA5JN4lWkbhJdtXsVgVkTHERPL+1GF9Bsd5QVavRTzC1kCG7BmPIGj36l4qrIp+8lPCaitt3h/wM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz7rpRkKfNAY5sJ43J9dY14ut0d5malpN0r5eLBAFXToC/Xzwd
-	TDZ31R9XwyEtcr0ucoUMgKXBRYz6P4T8OJbmLQvaKGQeIfQWFvW+3qoAlRdGDvsJ3m0gTIeniQ2
-	ekxTk3A==
-X-Google-Smtp-Source: AGHT+IG70cC7/9/HY6VikCXuI7HvG41zz0dwmnGwg49FScHQV6NUBU4vLAoVuey9Je+QNc+0eMbb6g==
-X-Received: by 2002:a05:6512:ad5:b0:536:54bd:8374 with SMTP id 2adb3069b0e04-5367ff399dfmr15353378e87.60.1726755715770;
-        Thu, 19 Sep 2024 07:21:55 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5368704671esm1845998e87.49.2024.09.19.07.21.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Sep 2024 07:21:55 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f761461150so12505431fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 07:21:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVBmwyNaX7PBcidRTfMmLRQWX/Q3Mn04LC8UxZyJ72LucmfTbC9xIUK6d6BGSiKWM6u9gnKEUXqZJf6ZHE=@vger.kernel.org
-X-Received: by 2002:a05:651c:543:b0:2ef:17ee:62a2 with SMTP id
- 38308e7fff4ca-2f791906358mr165636051fa.14.1726755713557; Thu, 19 Sep 2024
- 07:21:53 -0700 (PDT)
+        bh=WyB2UEn6mFhEk7w1MJXgZ0FKzV3A1wAqVCGm/9lpJoM=;
+        b=OwAycCI/h0umu2tUjShXykgrjnr475Vbj65+5qWT3J27hylJTcGFYoXBkOaz0rvW3n
+         PzMQ+G0t0gCf4iBh//R6DNQtTh3GQz6IKTiKf7eod58JkLZM2VD1rtzWgMTwmc8gohZ4
+         caGdifSnUr8IHI1noM8CWSxBSohLeX2xJU0gtO88bAgojFM0dQ8BZtorGIHm7yaF+2/2
+         uMy/SFI9l94mV4rfIYZmIDiA83t8htFVk9fUZkONZd2Wir+aNwQC7tUFsQg40vcnhB74
+         j1lwRHz+XNzPGJOTAdQ6jLbjIs3pcrnO1ty8YkhUdbC8jeJOepoLoeycRgix6Pqs+CY7
+         L+YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpYCjZJ2uFEXbdWDlxQhzMthZzD6kU7j4gwab1b/fOvOWtTCNuO3Jcuw2XakV1wkbw2RgAYVR1m8veXq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtIeEOMjrabWbuiFbokVmxhZQZOw6bRNB0xlQKpGQTAW1FHyBw
+	Oidx67jguXkOi6SOuZ3zj0lTTi5dSMh7ZbSVjLWnv0Zuq4CZXrQE
+X-Google-Smtp-Source: AGHT+IERziNT+qkzkTLbTq37VNvWjLGIjwiVMvTLigr4YS8nv+wNmMeLS49leoBHRrXvuKWhA9nLzw==
+X-Received: by 2002:a17:903:230e:b0:207:60f4:a3bf with SMTP id d9443c01a7336-208cb8a340emr47863715ad.2.1726755775459;
+        Thu, 19 Sep 2024 07:22:55 -0700 (PDT)
+Received: from localhost.localdomain ([218.150.196.174])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946f7ab7sm80535865ad.189.2024.09.19.07.22.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 07:22:55 -0700 (PDT)
+From: Moon Yeounsu <yyyynoom@gmail.com>
+To: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Moon Yeounsu <yyyynoom@gmail.com>
+Subject: [PATCH net] net: add inline annotation to fix the build warning
+Date: Thu, 19 Sep 2024 23:21:49 +0900
+Message-ID: <20240919142149.282175-1-yyyynoom@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917143402.930114-1-boqun.feng@gmail.com> <CAHk-=wi76E2xxvOaZtgN2FK9YKmbK1ru_1atL8eBCs34z7UigA@mail.gmail.com>
- <Zuwx409kgivi1G5T@infradead.org>
-In-Reply-To: <Zuwx409kgivi1G5T@infradead.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 19 Sep 2024 16:21:36 +0200
-X-Gmail-Original-Message-ID: <CAHk-=wgLrENN2JFZf8j9TDXcfmnZ8BNU_u=6QrEOti-s6aMrbg@mail.gmail.com>
-Message-ID: <CAHk-=wgLrENN2JFZf8j9TDXcfmnZ8BNU_u=6QrEOti-s6aMrbg@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] Add hazard pointers to kernel
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
-	linux-mm@kvack.org, lkmm@vger.kernel.org, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, 
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>, 
-	Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Kent Overstreet <kent.overstreet@gmail.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 19 Sept 2024 at 16:15, Christoph Hellwig <hch@infradead.org> wrote:
->
-> Agreed.  From the description this would seem like a good fit for
-> q_usage_counter in the block layer, which currently makes creative use
-> of percpu counters.
+This patch fixes two sparse warnings (`make C=1`):
+net/ipv6/icmp.c:103:20: warning: context imbalance in 'icmpv6_xmit_lock' - wrong count at exit
+net/ipv6/icmp.c:119:13: warning: context imbalance in 'icmpv6_xmit_unlock' - unexpected unlock
 
-Yes, if this actually could simplify code that currently used percpu
-counters, that might be lovely.
+Since `icmp6_xmit_lock()` and `icmp6_xmit_unlock()` are designed as they
+are named, entering/returning the function without lock/unlock doesn't
+matter.
 
-The percpu counters often perform very well, but then have huge pain
-in either managing the percpu allocation, or in trying to synchronize
-across CPU's.
+Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
+---
+ net/ipv6/icmp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I'd be a lot more interested in "we can fix complex code" than in "we
-have crappy code in bad subsystems where we can hide the performance
-impact of the subsystem not having been done right".
+diff --git a/net/ipv6/icmp.c b/net/ipv6/icmp.c
+index 071b0bc1179d..d8cc3d63c942 100644
+--- a/net/ipv6/icmp.c
++++ b/net/ipv6/icmp.c
+@@ -101,6 +101,7 @@ static const struct inet6_protocol icmpv6_protocol = {
+ 
+ /* Called with BH disabled */
+ static struct sock *icmpv6_xmit_lock(struct net *net)
++	__acquires(&sk->sk_lock.slock)
+ {
+ 	struct sock *sk;
+ 
+@@ -117,6 +118,7 @@ static struct sock *icmpv6_xmit_lock(struct net *net)
+ }
+ 
+ static void icmpv6_xmit_unlock(struct sock *sk)
++	__releases(&sk->sk_lock.slock)
+ {
+ 	sock_net_set(sk, &init_net);
+ 	spin_unlock(&sk->sk_lock.slock);
+-- 
+2.46.1
 
-               Linus
 
