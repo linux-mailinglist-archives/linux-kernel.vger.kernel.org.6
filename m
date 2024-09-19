@@ -1,173 +1,201 @@
-Return-Path: <linux-kernel+bounces-333660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD28097CBFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:04:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3713897CBFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44F23B20B54
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:04:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BDE31C20D62
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D29F19FA8C;
-	Thu, 19 Sep 2024 16:04:21 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E975B1A01B9;
+	Thu, 19 Sep 2024 16:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bNZs5mgy"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2143012E4A
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 16:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA1B12E4A
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 16:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726761860; cv=none; b=twEUAyq5sGf0cRUfaKi1h4Tbyr34CzF7GAM2qTCbNVS56+m9H5hyiCSUFJWvxQvEtV3Hi70lOhaVXaqbntsZXG1zwmLgu3u7CrgfDSsCHW15X7EYdJocO6YApEzbLyksHOhAI0O3cVrKigfjjeqlTkcJauyuSdcKYKmZKJQQu1o=
+	t=1726761944; cv=none; b=U1mynS0ZaEqRFU9zvzlmzHGYI2yNljyIyA88C/XeK0psSCAjDGOv7vfJ6m5tbJtxtb858/8XR4tIz/+msVD+D+xUZie8cZwPE/JYTL/e1A3uwHqYefcqqmYVSdRbjOMbgI+q+7NpZnfuoXFDre7Zl5aJAoeQFrQd954KaO+h8ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726761860; c=relaxed/simple;
-	bh=oghDEmJMbkUFMDsV5uzXHkBcrTmkIAOK51Mr1BzLENQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GPE8QBmZ2U850Td8NN9EL/QPqaYTQN0p6UJenSH9mo6F/Oq5ulJtxXLcDxBLx4zgToInqBfo9CR9Xd9Vaa+9L+ReoPdXebbtEoFBym2hJYYMi9HW5Um9OYWBAf4KkDi6wjdxs+tmzgZBL8z6jeacqSvVkfkb6qlAGvtozkWNWtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39f56ac8d88so14038955ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:04:18 -0700 (PDT)
+	s=arc-20240116; t=1726761944; c=relaxed/simple;
+	bh=YuGyoFlR3zsbYKdnvpdwmpjvDsWB5PPm0aXY6r9+KtA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GWZuTSjzgl8C7tr6MrPUxfM77Lt0bZqltGkkAJvBOwcxCPL6ZEDxWdLGbmVS7ndKubudJt7G0UcPlwQN2Vv0lH1kf4A2DBYFnLlLGdFOhy2ERcBrpYPARe9XdtbVQLrfjAas3zuQuro+6zObG5rWN8J27IK5ef5gXVHnMqLYu+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bNZs5mgy; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e03caab48a2so902005276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:05:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1726761941; x=1727366741; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HdUdhIPwwI6AU/7Ra680ydg6oDI8v4ajBh4UcdHCeXo=;
+        b=bNZs5mgy9dFzZ/mWanHF1KqJB70V5B0LAtEP1sAdTMW3aXptpIJZJSB+Qpw/bQSG4N
+         7Aq7uFC74smuR4bEfrV1O0ith88CgbcXn4Y+jg6qpDIHN7XC2t/Q+dCSO/PdLSYqdC9+
+         IVE7UWq2isHST5wsJvQAH2siA/ENdaeQg8vdAk9LijqVXwpWIZoZMXm05QNd32G/vuND
+         33LoiOn3WGFCx+ybozZ4Vc7caFMaOpc8lR8dFdy80kDKrFQyRo3voEx0Ajwoh8MFMrRN
+         JxwSWve+EJNHZl5+FEfewffqCgVudhO2zpY1BUvS5b5l40KfVhMnZbhkR5N3qFiKLXVm
+         Triw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726761858; x=1727366658;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=moODkLfxeH3Ela0pL2+4wISEbEj0GOPL//CoQYpM8l8=;
-        b=iUDI0PZGTnYEUabNCMitXW02vUSkOFoPULT3OC3Jztx61un1LmooYLqlZuzyBqzPkl
-         iQM72OwUvLl9AuVtIsW375Jo5HgyxIeqPoAFo9P0JSgLTMKrk9UcA8LRv5gxVZHeXVK+
-         Cre9QIhYeIolm1V/j/5EA4wKDvT/JzmXNoTxcfNGlvyeFapHKgetU7Vh2JDJb611Hx2j
-         YF1U7lzln732z+fA7AaNU3SPG629z+pm5DyZ/WeUim6WqVpEq2R+8yNzOXa4hvP5YY1o
-         CffElrA3nQHM0J9V7V12lxSygWzDFfWgcmXgTf8jDAfC2B/ysErNLwYxBTVO+WU22VFQ
-         r2fw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdW4jESe9ZpoHBRLAhUqwWx0OgN5sVp0pXrSD3OQWKlNne5JdUtP4B0LrLQilbG3WvJsfBcL4s4gkgc7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGjdd0uGaIuIkiHaTFIdZJfZHTEpSnTpo1F0QPKgK7gAPD/JFl
-	lEblDLCylwKU5wnHMfKmd3EcZFYCXDFgNXIvTt4rUcRCdFrj3E2ruOam/ne3wbYK9XeVRzJvYYY
-	8WapcIaPh2Hj51rwDQGqqPnEZ5O8OQ4orjaCjOaw24IMc8ljDSVldDN0=
-X-Google-Smtp-Source: AGHT+IGhROLuZJ976Wkfgl8lJFrhg7WGf4ViJpyFipCXPxLTDic6YrvvsMKE238+B1POXv3+2Aa6v/qVH1znyGp543cXOVm1UnH6
+        d=1e100.net; s=20230601; t=1726761941; x=1727366741;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HdUdhIPwwI6AU/7Ra680ydg6oDI8v4ajBh4UcdHCeXo=;
+        b=EPYYC4OFPIWWfoCGkiD25DFrynB5lafKXSmtkpwbmHO7iYn8XogUaldOFyNEAWnOrl
+         hcqEJarMP4ejKulo5MXl0+HGXS8Qtr1CtwboY3/pYoqGUGULAnifG/Z+mBxQFbanK7kU
+         pr4CUwplZEQrzsnnOhfZkNAU0gfa+jYnNh9FayPSjuKAin3Yvie4Uto+0K8St/x6y3w6
+         etrlH0TocpHPPR6GcoyzRJa84+lf1AJpkGlhYTlb3RYuzm5DXgrhomaJfNJgoj4UrNSP
+         eS3dawgvgY3yPyE1AAPapAs+tf7v/RqgkZw/7FwanYcERtSiD6zgDPnnCzOIKp1I2smI
+         381g==
+X-Forwarded-Encrypted: i=1; AJvYcCU32ZneQOHj5qKTeL9Sk9LmSoC+J9Gy8nc0W9xDRymgqI1VT0dNF6VikBf+Wwkr6Qwy2RGMtDkbq+tPx+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6Zs5byTPpsTQLmRReL98a7KdRFFFsX9g362JxT+hmqya6+qWQ
+	UQHkXBWAWF2fdUKdRehGhlhBSKd+N8BizPsnBJM3MRQPRaJyE2RyIvLoOSp+P4kiPweeKOlH3Qi
+	grG7iDOAZR1BIjkVMoHh1cupgcbHIXEtH2CEd
+X-Google-Smtp-Source: AGHT+IGFfsCLFlXzIE4WL4lQnY+XmKm9FIKr65q8ol/AeEEWv1q+PbbdIPzm2vHXkvsahYdpARV3nr7pGfpfrshTuL0=
+X-Received: by 2002:a25:a282:0:b0:e20:1e5f:bc9a with SMTP id
+ 3f1490d57ef6-e202769c379mr3068158276.11.1726761940768; Thu, 19 Sep 2024
+ 09:05:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:160e:b0:3a0:a3cd:f239 with SMTP id
- e9e14a558f8ab-3a0a3cdf40emr159322295ab.8.1726761858013; Thu, 19 Sep 2024
- 09:04:18 -0700 (PDT)
-Date: Thu, 19 Sep 2024 09:04:17 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ec4b81.050a0220.29194.0034.GAE@google.com>
-Subject: [syzbot] [jfs?] kernel BUG in txCommit
-From: syzbot <syzbot+49e4cb6cf207d61b5afc@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+References: <66ec25cb.050a0220.92ef1.001e.GAE@google.com>
+In-Reply-To: <66ec25cb.050a0220.92ef1.001e.GAE@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 19 Sep 2024 12:05:29 -0400
+Message-ID: <CAHC9VhRpDPTopxgOEbDt1d_XyDVNzaA7++6UojWXidbpBHjeVA@mail.gmail.com>
+Subject: Re: [syzbot] [audit?] general protection fault in smack_log_callback
+To: syzbot <syzbot+044fdf24e96093584232@syzkaller.appspotmail.com>
+Cc: audit@vger.kernel.org, casey@schaufler-ca.com, eparis@redhat.com, 
+	jmorris@namei.org, john.johansen@canonical.com, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: multipart/mixed; boundary="00000000000017a5ae06227b1880"
+
+--00000000000017a5ae06227b1880
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Sep 19, 2024 at 9:23=E2=80=AFAM syzbot
+<syzbot+044fdf24e96093584232@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    bdf56c7580d2 Merge tag 'slab-for-6.12' of git://git.kerne=
+l..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D12584b0058000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D4540f5bcdd31e=
+3de
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D044fdf24e960935=
+84232
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D155cffc7980=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16ad24a998000=
+0
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/cec9f3c675f1/dis=
+k-bdf56c75.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/21e06ae5b159/vmlinu=
+x-bdf56c75.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/1e936c954b8b/b=
+zImage-bdf56c75.xz
+>
+> The issue was bisected to:
+>
+> commit 5f8d28f6d7d568dbbc8c5bce94894474c07afd4f
+> Author: Casey Schaufler <casey@schaufler-ca.com>
+> Date:   Wed Jul 10 21:32:26 2024 +0000
+>
+>     lsm: infrastructure management of the key security blob
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1124d69f98=
+0000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D1324d69f98=
+0000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1524d69f98000=
+0
 
-syzbot found the following issue on:
+I just posted a patch which I believe should fix the problem, but I'd
+like to get Casey's ACK on it before submitting upstream as it does
+touch Smack code; lore link below:
 
-HEAD commit:    d42f7708e27c Merge tag 'for-linus-6.11' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16ff9900580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1c9e296880039df9
-dashboard link: https://syzkaller.appspot.com/bug?extid=49e4cb6cf207d61b5afc
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+https://lore.kernel.org/linux-security-module/20240919155740.29539-2-paul@p=
+aul-moore.com
 
-Unfortunately, I don't have any reproducer for this issue yet.
+... in the meantime, I'm attaching the patch here so syzbot can verify
+that it solves the problem.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b879ea3b7dd4/disk-d42f7708.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/812a7fb7bfcc/vmlinux-d42f7708.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/806a22d4adbf/bzImage-d42f7708.xz
+#syz test
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+49e4cb6cf207d61b5afc@syzkaller.appspotmail.com
+--=20
+paul-moore.com
 
-loop0: detected capacity change from 0 to 32768
-BUG at fs/jfs/jfs_txnmgr.c:2209 assert(mp->xflag & COMMIT_PAGE)
-------------[ cut here ]------------
-kernel BUG at fs/jfs/jfs_txnmgr.c:2209!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 6866 Comm: syz.0.200 Not tainted 6.11.0-rc7-syzkaller-00151-gd42f7708e27c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:txForce fs/jfs/jfs_txnmgr.c:2209 [inline]
-RIP: 0010:txCommit+0x6b29/0x6b80 fs/jfs/jfs_txnmgr.c:1315
-Code: 86 08 90 0f 0b e8 27 f7 6b fe 48 c7 c7 a0 05 23 8c 48 c7 c6 99 01 23 8c ba a1 08 00 00 48 c7 c1 a0 11 23 8c e8 68 84 86 08 90 <0f> 0b e8 10 84 89 08 e8 fb f6 6b fe 48 8b 7c 24 10 48 c7 c6 00 13
-RSP: 0018:ffffc90002fbf560 EFLAGS: 00010246
-RAX: 000000000000003f RBX: 0000000000000000 RCX: 0a4c9e0a19d3dd00
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc90002fbf7d0 R08: ffffffff8174016c R09: 1ffff920005f7e4c
-R10: dffffc0000000000 R11: fffff520005f7e4d R12: ffff888057cddc98
-R13: 00000000000000bd R14: 0000000000000000 R15: ffffc90002852000
-FS:  00007f0b40edb6c0(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 00000000644ba000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- duplicateIXtree+0x33f/0x550 fs/jfs/jfs_imap.c:3019
- diNewIAG fs/jfs/jfs_imap.c:2597 [inline]
- diAllocExt fs/jfs/jfs_imap.c:1905 [inline]
- diAllocAG+0x17dc/0x1e50 fs/jfs/jfs_imap.c:1669
- diAlloc+0x1d3/0x1760 fs/jfs/jfs_imap.c:1590
- ialloc+0x8f/0x900 fs/jfs/jfs_inode.c:56
- jfs_mkdir+0x1c5/0xba0 fs/jfs/namei.c:225
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4210
- do_mkdirat+0x264/0x3a0 fs/namei.c:4233
- __do_sys_mkdir fs/namei.c:4253 [inline]
- __se_sys_mkdir fs/namei.c:4251 [inline]
- __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4251
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0b4017def9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f0b40edb038 EFLAGS: 00000246 ORIG_RAX: 0000000000000053
-RAX: ffffffffffffffda RBX: 00007f0b40335f80 RCX: 00007f0b4017def9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000640
-RBP: 00007f0b401f0b76 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f0b40335f80 R15: 00007ffd5b250568
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:txForce fs/jfs/jfs_txnmgr.c:2209 [inline]
-RIP: 0010:txCommit+0x6b29/0x6b80 fs/jfs/jfs_txnmgr.c:1315
-Code: 86 08 90 0f 0b e8 27 f7 6b fe 48 c7 c7 a0 05 23 8c 48 c7 c6 99 01 23 8c ba a1 08 00 00 48 c7 c1 a0 11 23 8c e8 68 84 86 08 90 <0f> 0b e8 10 84 89 08 e8 fb f6 6b fe 48 8b 7c 24 10 48 c7 c6 00 13
-RSP: 0018:ffffc90002fbf560 EFLAGS: 00010246
-RAX: 000000000000003f RBX: 0000000000000000 RCX: 0a4c9e0a19d3dd00
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc90002fbf7d0 R08: ffffffff8174016c R09: 1ffff920005f7e4c
-R10: dffffc0000000000 R11: fffff520005f7e4d R12: ffff888057cddc98
-R13: 00000000000000bd R14: 0000000000000000 R15: ffffc90002852000
-FS:  00007f0b40edb6c0(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055d4714cc080 CR3: 00000000644ba000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+--00000000000017a5ae06227b1880
+Content-Type: text/x-patch; charset="US-ASCII"; name="01-lsm-key_blob_fix.patch"
+Content-Disposition: attachment; filename="01-lsm-key_blob_fix.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m19hg97b0>
+X-Attachment-Id: f_m19hg97b0
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+c2VsaW51eCxzbWFjazogcHJvcGVybHkgcmVmZXJlbmNlIHRoZSBMU00gYmxvYiBpbiBzZWN1cml0
+eV93YXRjaF9rZXkoKQoKRnJvbTogUGF1bCBNb29yZSA8cGF1bEBwYXVsLW1vb3JlLmNvbT4KClVu
+Zm9ydHVuYXRlbHkgd2hlbiB3ZSBtaWdyYXRlZCB0aGUgbGlmZWN5Y2xlIG1hbmFnZW1lbnQgb2Yg
+dGhlIGtleSBMU00KYmxvYiB0byB0aGUgTFNNIGZyYW1ld29yayB3ZSBmb3Jnb3QgdG8gY29udmVy
+dCB0aGUgc2VjdXJpdHlfd2F0Y2hfa2V5KCkKY2FsbGJhY2tzIGZvciBTRUxpbnV4IGFuZCBTbWFj
+ay4gIFRoaXMgcGF0Y2ggY29ycmVjdHMgdGhpcyBieSBtYWtpbmcgdXNlCm9mIHRoZSBzZWxpbnV4
+X2tleSgpIGFuZCBzbWFja19rZXkoKSBoZWxwZXIgZnVuY3Rpb25zIHJlc3BlY3RpdmVseS4KClRo
+aXMgcGF0Y2ggYWxzbyByZW1vdmVzIHNvbWUgaW5wdXQgY2hlY2tpbmcgaW4gdGhlIFNtYWNrIGNh
+bGxiYWNrIGFzIGl0CmlzIG5vIGxvbmdlciBuZWVkZWQuCgpSZXBvcnRlZC1ieTogc3l6Ym90KzA0
+NGZkZjI0ZTk2MDkzNTg0MjMyQHN5emthbGxlci5hcHBzcG90bWFpbC5jb20KRml4ZXM6IDVmOGQy
+OGY2ZDdkNSAoImxzbTogaW5mcmFzdHJ1Y3R1cmUgbWFuYWdlbWVudCBvZiB0aGUga2V5IHNlY3Vy
+aXR5IGJsb2IiKQpTaWduZWQtb2ZmLWJ5OiBQYXVsIE1vb3JlIDxwYXVsQHBhdWwtbW9vcmUuY29t
+PgotLS0KIHNlY3VyaXR5L3NlbGludXgvaG9va3MuYyAgIHwgICAgMiArLQogc2VjdXJpdHkvc21h
+Y2svc21hY2tfbHNtLmMgfCAgIDEzICsrKy0tLS0tLS0tLS0KIDIgZmlsZXMgY2hhbmdlZCwgNCBp
+bnNlcnRpb25zKCspLCAxMSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9zZWN1cml0eS9zZWxp
+bnV4L2hvb2tzLmMgYi9zZWN1cml0eS9zZWxpbnV4L2hvb2tzLmMKaW5kZXggODFmYmZhNWI4MGQ0
+Li42N2JhYTQ4N2NmN2EgMTAwNjQ0Ci0tLSBhL3NlY3VyaXR5L3NlbGludXgvaG9va3MuYworKysg
+Yi9zZWN1cml0eS9zZWxpbnV4L2hvb2tzLmMKQEAgLTY3MjAsNyArNjcyMCw3IEBAIHN0YXRpYyBp
+bnQgc2VsaW51eF9rZXlfZ2V0c2VjdXJpdHkoc3RydWN0IGtleSAqa2V5LCBjaGFyICoqX2J1ZmZl
+cikKICNpZmRlZiBDT05GSUdfS0VZX05PVElGSUNBVElPTlMKIHN0YXRpYyBpbnQgc2VsaW51eF93
+YXRjaF9rZXkoc3RydWN0IGtleSAqa2V5KQogewotCXN0cnVjdCBrZXlfc2VjdXJpdHlfc3RydWN0
+ICprc2VjID0ga2V5LT5zZWN1cml0eTsKKwlzdHJ1Y3Qga2V5X3NlY3VyaXR5X3N0cnVjdCAqa3Nl
+YyA9IHNlbGludXhfa2V5KGtleSk7CiAJdTMyIHNpZCA9IGN1cnJlbnRfc2lkKCk7CiAKIAlyZXR1
+cm4gYXZjX2hhc19wZXJtKHNpZCwga3NlYy0+c2lkLCBTRUNDTEFTU19LRVksIEtFWV9fVklFVywg
+TlVMTCk7CmRpZmYgLS1naXQgYS9zZWN1cml0eS9zbWFjay9zbWFja19sc20uYyBiL3NlY3VyaXR5
+L3NtYWNrL3NtYWNrX2xzbS5jCmluZGV4IGRhMGMyYmZmYmQwOC4uNTYzZmI0MDRmNjU5IDEwMDY0
+NAotLS0gYS9zZWN1cml0eS9zbWFjay9zbWFja19sc20uYworKysgYi9zZWN1cml0eS9zbWFjay9z
+bWFja19sc20uYwpAQCAtNDYyOSwxNiArNDYyOSw5IEBAIHN0YXRpYyBpbnQgc21hY2tfd2F0Y2hf
+a2V5KHN0cnVjdCBrZXkgKmtleSkKIHsKIAlzdHJ1Y3Qgc21rX2F1ZGl0X2luZm8gYWQ7CiAJc3Ry
+dWN0IHNtYWNrX2tub3duICp0a3AgPSBzbWtfb2ZfY3VycmVudCgpOworCXN0cnVjdCBzbWFja19r
+bm93biAqKmJsb2IgPSBzbWFja19rZXkoa2V5KTsKIAlpbnQgcmM7CiAKLQlpZiAoa2V5ID09IE5V
+TEwpCi0JCXJldHVybiAtRUlOVkFMOwotCS8qCi0JICogSWYgdGhlIGtleSBoYXNuJ3QgYmVlbiBp
+bml0aWFsaXplZCBnaXZlIGl0IGFjY2VzcyBzbyB0aGF0Ci0JICogaXQgbWF5IGRvIHNvLgotCSAq
+LwotCWlmIChrZXktPnNlY3VyaXR5ID09IE5VTEwpCi0JCXJldHVybiAwOwogCS8qCiAJICogVGhp
+cyBzaG91bGQgbm90IG9jY3VyCiAJICovCkBAIC00NjUzLDggKzQ2NDYsOCBAQCBzdGF0aWMgaW50
+IHNtYWNrX3dhdGNoX2tleShzdHJ1Y3Qga2V5ICprZXkpCiAJYWQuYS51LmtleV9zdHJ1Y3Qua2V5
+ID0ga2V5LT5zZXJpYWw7CiAJYWQuYS51LmtleV9zdHJ1Y3Qua2V5X2Rlc2MgPSBrZXktPmRlc2Ny
+aXB0aW9uOwogI2VuZGlmCi0JcmMgPSBzbWtfYWNjZXNzKHRrcCwga2V5LT5zZWN1cml0eSwgTUFZ
+X1JFQUQsICZhZCk7Ci0JcmMgPSBzbWtfYnVfbm90ZSgia2V5IHdhdGNoIiwgdGtwLCBrZXktPnNl
+Y3VyaXR5LCBNQVlfUkVBRCwgcmMpOworCXJjID0gc21rX2FjY2Vzcyh0a3AsICpibG9iLCBNQVlf
+UkVBRCwgJmFkKTsKKwlyYyA9IHNta19idV9ub3RlKCJrZXkgd2F0Y2giLCB0a3AsICpibG9iLCBN
+QVlfUkVBRCwgcmMpOwogCXJldHVybiByYzsKIH0KICNlbmRpZiAvKiBDT05GSUdfS0VZX05PVElG
+SUNBVElPTlMgKi8K
+--00000000000017a5ae06227b1880--
 
