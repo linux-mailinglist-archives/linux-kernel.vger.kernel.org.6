@@ -1,135 +1,141 @@
-Return-Path: <linux-kernel+bounces-333876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA88397CF4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 00:43:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B334A97CF4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 00:50:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A09F8284A0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 22:43:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA403B228BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 22:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626251B29D4;
-	Thu, 19 Sep 2024 22:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4951B2EE8;
+	Thu, 19 Sep 2024 22:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CG1S2h1O"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dFBX17cB"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDA4125A9
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 22:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9501119ABAF
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 22:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726785830; cv=none; b=Ep1hQY7VUAepn3GwQF9EEAZBCT94xGOl5dSumLFfoGnMeR8lthuGzMUDBgFHvuxQNsS+6r6FSdkpMpgPWAFRTuL0lyvD6K7QcWZXyHsOuXa3FJ+25it7Yc0/XsytrbMdnSKXThh65rOsp/kw8es/6oCf7lYCrIHrdt8bGeqOElQ=
+	t=1726786210; cv=none; b=SWDWWTG0akhzbcACJGeffQHpG5ZnXyl/09NLcVSozScdjNROBZHPL/rBeuACSywWr8OJesH6cwID7BMCddBWmBfiJyomJhesQcxmILF2s6rhimrgvSKCiDkJpq5V/1FhYfxUzSiKTyUilqgawFa++MmHZdNMWG8s3C65qzLVMbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726785830; c=relaxed/simple;
-	bh=Fhu7YT+CCTUlhDgFevdRmHSSmqXS6RBEGTbuJJwSf0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c2astVvTg7Rkl4lPzY5GD/WLwYELIVggYrwXYkT94m1h+1jtjGNZULRgTWZ6f1xQYcGJZ8bA/YYVuYb0hFYZdBE5+71SSm/z16TNIb+nlYXvPwN4G+Mz/ijZ1mIGlgFIg56M9hxhgqxt2CT6t6ekK1kVsU0l50sXHFnHKvT/EL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CG1S2h1O; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726785829; x=1758321829;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Fhu7YT+CCTUlhDgFevdRmHSSmqXS6RBEGTbuJJwSf0w=;
-  b=CG1S2h1OdvPNNzemARCr0zNSGHAqWxVXUTtKxNQ0xnrEtsNSusvU6Qkf
-   EZe1NL439ChSy+V47bWiD94c8641RRk+0lXkN6q5jeP7R1NWvAJj2p9rt
-   rDAEhljrX2q45EXxKL4l3WokNIK43t+gGjcHtg+zcDlOoR2Us3FtP7Gen
-   /5NRMp37s/+g/tKRdW8P7KXt98xolJVdDu1yA+Oo6mHSIOuJcbOkbJtxR
-   PxU/2a8+Usbj4AWBU0DL19/K9uQtkCWTfAkwb6cJI812w5nA8jiWBIjuy
-   lGpxvLbjYwjuFRIkbiWzwSjR6j7JEUFA4HM1o0PY2dBSQfE22G18SQBOK
-   A==;
-X-CSE-ConnectionGUID: bUcnnnHJRgmgmS7qqF4Gbg==
-X-CSE-MsgGUID: mB+N9k0vTca/BRk/vo+kWQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="48310044"
-X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
-   d="scan'208";a="48310044"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2024 15:43:48 -0700
-X-CSE-ConnectionGUID: pfgdMEkRRHWQFN7rXW35lA==
-X-CSE-MsgGUID: BMmpoMYiSsq7itvgF/dNkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
-   d="scan'208";a="70335641"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 19 Sep 2024 15:43:47 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1srPsG-000DlX-2c;
-	Thu, 19 Sep 2024 22:43:44 +0000
-Date: Fri, 20 Sep 2024 06:43:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-mediatek@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com
-Subject: Re: [PATCH v1 3/3] soc: mediatek: mtk-cmdq: Move cmdq_instruction
- init to declaration
-Message-ID: <202409200659.IVYRJ33l-lkp@intel.com>
-References: <20240918100620.103536-4-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1726786210; c=relaxed/simple;
+	bh=jcdO1Ws/371xc2rjJWhRW7rSMSnWdXQGzGvNQUoQN3k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oxk75TcxY6HBe+qrsyUDIH+pXUVo9d5ka0RPG2nDJxEh2T1bBVEsuiv5hPXWKkk1U1gYfyGZ8h+VM+XG4oFF8Qpm3nkCq+vb4l9wzVaHe9Fxk1siq4VKJYh/x9ISPLb0ugrR2yPOHiULW1L/JatRDSlWbNzjp/rdyFWW1UNEX5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dFBX17cB; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2059204f448so13625145ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 15:50:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726786208; x=1727391008; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5wz5lXmuEfJrsdnRfJzjlfMUt5hIQmRZ+lBgO7w7oV4=;
+        b=dFBX17cBk36OABk6LPvevHRygX5mSAabB7hlLMKBWh9m6Uvc25nNT10iuz/6HH+pZr
+         y//iJ2Zs1NeuCTvWeSVKovFgFMGXyHz3SJxWk12+GAwzcKVUKixbmuhqTduYNeGFC3Su
+         4f7+CmkTnT2cm4/ISay4RlfWBL9UxNweaD1qTFSd04CoYTfGNmY/ownx6KkpXsvmwEGe
+         X+flQ68CZm3uxpRMXhIZ5xgVBT2aY2QjLhfe4oCIWSnb86fPxfKkqr/Ln4/o3DZ4JT8A
+         AB60fXrmmNqKpGW7CNqZvkWazjkncjUo7HMvQA3E9miP7IfKKfSrGiF83MpwI5YUMs+f
+         YW1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726786208; x=1727391008;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5wz5lXmuEfJrsdnRfJzjlfMUt5hIQmRZ+lBgO7w7oV4=;
+        b=BHR2UCKyDk/g0tZ8NKj7wkqvefwT02omGXiUy2wWnorD9Pq2Xmsm1+GzjI0+WUh3jJ
+         subTvIyntyMsGhtJW1oeucGVlcT/T0HynfTp7REg8TwyJAHJXb6R6cX/+qqM4B1iF63n
+         gU7Rd/9DqkGSSqGX6IcqEu2fdawwSYgSzzreaGAkHyqI+mZaY+hacBq92uFeplapPss6
+         YftyYLHIKYv3bbyDZ/8SV6twKLqiK9rdV8hmemzrWDPGEDjVXrIdq8k3yEQbx/zNrItw
+         ghPOSDoNf3hfktxcBnlnCZYg0Qw6pt2rjHjyMBQDRYg9ss7GkhxKP1XnB2iSlgT0wwPX
+         4VIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWeUiaMfmNBdrKhN38ifTIu/dzNqCxDgc7usEf55IXF1dVEPH7gvVeK44dkFzyG2NWehXbx2+s1Drl4Pns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR4KoTohcXgXjvzZ0UCbyynfRYP2hB/1z06tTzqGknAnIH3FcB
+	MsM1ZgubVGJk9f3hCJc7AP3OOQL5TBkPvLjpDWOWhT+d3x/FNCGH4CFJJrPN5A==
+X-Google-Smtp-Source: AGHT+IEFTOdkTTfdrN+O9bFF4XZIaLF1A6VxLZ7fwhnPT6zj9SxeESvTNX2h3OI6/0yS5WhmbqNNQA==
+X-Received: by 2002:a17:902:d511:b0:205:7574:3b87 with SMTP id d9443c01a7336-208d980bb34mr4901005ad.15.1726786207484;
+        Thu, 19 Sep 2024 15:50:07 -0700 (PDT)
+Received: from ?IPV6:2a00:79e0:2e14:7:f9c5:155b:ca02:2b70? ([2a00:79e0:2e14:7:f9c5:155b:ca02:2b70])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946fb724sm84806845ad.200.2024.09.19.15.50.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Sep 2024 15:50:07 -0700 (PDT)
+Message-ID: <ad1e9554-ebec-483f-90e0-d0c63fc07b86@google.com>
+Date: Thu, 19 Sep 2024 15:50:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240918100620.103536-4-angelogioacchino.delregno@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] usb: typec: Fix arg check for
+ usb_power_delivery_unregister_capabilities
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Greg KH <gregkh@linuxfoundation.org>
+Cc: heikki.krogerus@linux.intel.com, badhri@google.com, kyletso@google.com,
+ rdbabiera@google.com, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, stable@vger.kernel.org
+References: <20240919075815.332017-1-amitsd@google.com>
+ <2024091956-premiere-given-c496@gregkh>
+ <gkyzytmvcaefbfvu6ryss7zq5cm3t3mcjgtugsryhxl7aglpkk@gi2fgjnyidgi>
+Content-Language: en-US
+From: Amit Sunil Dhamne <amitsd@google.com>
+In-Reply-To: <gkyzytmvcaefbfvu6ryss7zq5cm3t3mcjgtugsryhxl7aglpkk@gi2fgjnyidgi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi AngeloGioacchino,
+Hi Greg, Dmitry,
 
-kernel test robot noticed the following build warnings:
+Thanks for the review!
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on soc/for-next linus/master v6.11 next-20240919]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 9/19/24 3:03 AM, Dmitry Baryshkov wrote:
+> On Thu, Sep 19, 2024 at 10:11:37AM GMT, Greg KH wrote:
+>> On Thu, Sep 19, 2024 at 12:58:12AM -0700, Amit Sunil Dhamne wrote:
+>>> usb_power_delivery_register_capabilities() returns ERR_PTR in case of
+>>> failure. usb_power_delivery_unregister_capabilities() we only check
+>>> argument ("cap") for NULL. A more robust check would be checking for
+>>> ERR_PTR as well.
+>>>
+>>> Cc: stable@vger.kernel.org
+>>> Fixes: 662a60102c12 ("usb: typec: Separate USB Power Delivery from USB Type-C")
+>>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+>>> Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
+>>> ---
+>>>   drivers/usb/typec/pd.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/usb/typec/pd.c b/drivers/usb/typec/pd.c
+>>> index d78c04a421bc..761fe4dddf1b 100644
+>>> --- a/drivers/usb/typec/pd.c
+>>> +++ b/drivers/usb/typec/pd.c
+>>> @@ -519,7 +519,7 @@ EXPORT_SYMBOL_GPL(usb_power_delivery_register_capabilities);
+>>>    */
+>>>   void usb_power_delivery_unregister_capabilities(struct usb_power_delivery_capabilities *cap)
+>>>   {
+>>> -	if (!cap)
+>>> +	if (IS_ERR_OR_NULL(cap))
+>> This feels like there's a wrong caller, why would this be called with an
+>> error value in the first place?  Why not fix that?  And why would this
+>> be called with NULL as well in the first place?
+> I think passing NULL matches the rest of the kernel, it removes
+> unnecessary if(!NULL) statements from the caller side.
+>
+The reason for this patch was just to be a little more defensive in case 
+things slip through cracks and be
+consistent with the rest of the PD class. For example 
+usb_power_delivery_unregister() &
+usb_power_delivery_unlink_device() has similar arg checks.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/soc-mediatek-mtk-cmdq-Move-mask-build-and-append-to-function/20240918-180757
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20240918100620.103536-4-angelogioacchino.delregno%40collabora.com
-patch subject: [PATCH v1 3/3] soc: mediatek: mtk-cmdq: Move cmdq_instruction init to declaration
-config: parisc-randconfig-r123-20240920 (https://download.01.org/0day-ci/archive/20240920/202409200659.IVYRJ33l-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20240920/202409200659.IVYRJ33l-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409200659.IVYRJ33l-lkp@intel.com/
+Regards,
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/soc/mediatek/mtk-cmdq-helper.c:240:18: sparse: sparse: Initializer entry defined twice
-   drivers/soc/mediatek/mtk-cmdq-helper.c:244:18: sparse:   also defined here
+Amit
 
-vim +240 drivers/soc/mediatek/mtk-cmdq-helper.c
-
-   234	
-   235	int cmdq_pkt_write_s(struct cmdq_pkt *pkt, u16 high_addr_reg_idx,
-   236			     u16 addr_low, u16 src_reg_idx)
-   237	{
-   238		struct cmdq_instruction inst = {
-   239			.op = CMDQ_CODE_WRITE_S,
- > 240			.mask = 0,
-   241			.src_t = CMDQ_REG_TYPE,
-   242			.sop = high_addr_reg_idx,
-   243			.offset = addr_low,
-   244			.src_reg = src_reg_idx
-   245		};
-   246		return cmdq_pkt_append_command(pkt, inst);
-   247	}
-   248	EXPORT_SYMBOL(cmdq_pkt_write_s);
-   249	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
