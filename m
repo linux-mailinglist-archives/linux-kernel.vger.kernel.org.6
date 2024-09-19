@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-333467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F8397C92A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:28:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B4E397C939
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:31:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 173021C213B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:28:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 453C71F2368C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7230D19DF5C;
-	Thu, 19 Sep 2024 12:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA4419D8BD;
+	Thu, 19 Sep 2024 12:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="du1W/Xmw"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="xyDzsdw2"
+Received: from out203-205-221-149.mail.qq.com (out203-205-221-149.mail.qq.com [203.205.221.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486E61957F8;
-	Thu, 19 Sep 2024 12:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1620C19B3C5;
+	Thu, 19 Sep 2024 12:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726748926; cv=none; b=CoRh2hOEix6cDKODRzDKIpRnM2Dmunrg9i+XF+KnU7ya7p7eMG/Y/PY+SBgmBfVGeBAcCFHH6Ub7sWB4GYpLYz+rSsMlb5ZOZ4NnIYIi6Bl2VGX34TkHh3n38iSzvs7gYSXZ0z4jIBcmMDuRo1dPYkSzCirnz6u195ACkuJViN4=
+	t=1726749093; cv=none; b=BOs54p1jUE4CQTaXwYYd632uJ44+T2K+ICOMiISxUDQ6Ohq3p4bjm5+msGPG1Mtr3NXPu44M3snewmmMemVPmoKLHfDiPxF/TQm2evx6G5l429zZvekiSmSPgZd0ZGXApi81EWMVoUD3a8VbHIuOQDn4InUdkV+Hyr8tLAEuuvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726748926; c=relaxed/simple;
-	bh=yYlI6tTus0ZiU3Ar9IfNHE31m1w2Fawm/zJ9bxgzhQg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=b4j703gFapTO/uU8tPDC9zmkqwRgKd1Eed8qYWQVQT7z2xFQwQcnIn1F0CbOGavEnHHnKrDstPfRIlISfiz9T/oRh20zxmaOrGrZh6ocPaOS3PcvY2zjNrjrfvvnMnr0detJF1QrwjNtURj/v39wZeXvxCHZ2oXQbjFgon116Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=du1W/Xmw; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cbaf9bfdbso6936595e9.0;
-        Thu, 19 Sep 2024 05:28:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726748924; x=1727353724; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJ9vLOIwefl3iNMuVxcYqoEs8VcLhp7ZSQofYSHIYJU=;
-        b=du1W/XmwmMeA596nJHe0MPYjPAbpDMmaYNa0L+qos6IqfIH6jzneeSddECUqZ+M/yN
-         qNKRjMUCdoJgFe10bi8aToblceXEEgTc9Hj+EiRxFRek1ptc9qYhjTlOv4CaQyyTu+Dk
-         9uz0zGgcbvJQOeI/2pdYoL170Rc9Xza/P/M4XqpPKMTYnL2X7BGEY/TF6eI9Gj1qDeA4
-         KPlDPAKnASFW4qTb91ljgvaT9ez8BYDFnHJkVvorz6jZCOCrCabuiJfE+pTGn2/Ya1LJ
-         kOGb/d6La8/FnBXRS8f+bfkGDI76SLiLg8k9m2/gwUnNlF0qPjrzaIzfauNEZPkC/ULX
-         vO5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726748924; x=1727353724;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJ9vLOIwefl3iNMuVxcYqoEs8VcLhp7ZSQofYSHIYJU=;
-        b=KPwTDAPqzcaGMTX20mh7OkpSjFDF67zXn9uu6zU5EL4gCA7V+O5HxzOg3jH/XBtzvw
-         ZKAT9c0S+48Mv7FGLXE2SzbfLVMy7akwQRJe++VjCL4mOr0EmDxyrkuJWA2/Ws7Q5RrI
-         HOgqe6TnB5S5WiAdom0wFByQipBbmex7iLtSLO9MfjW0SVj2/MDqg9KoViz4b/hOVuE+
-         G/IsZJT+NwHeNs+WmgEodzOoTqoEwWnaW/bneILPucOuLRZx04hFAELNTQW84CoGOLdP
-         pH+K2qeedHgcc1y72f+n0i7p2Bt9MhtaFenEO3jaV+t6M5D3l6zQTquDiCnCPkPHPcvq
-         s2yA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpmE6NIBCqwnP+WXoLHyCeijeyfWUO5Kk40eKW+zuB66VmEywCX2o295uirOafID3hhC0U8Dg+h3/Rd5nl@vger.kernel.org, AJvYcCVPqixIggjebsi3Cm1nfT0LB0xnYZGYfhJ+OTATj2tbrzZ7F5dgQKmkaltXbyCiAdk1qL63OsooE9X+@vger.kernel.org, AJvYcCXJfYSWdYnPXPtYBU4kEUNND+Ts91Ag/uFe0w+kFFJEofxwIN8+/LBvg2wlywoiBUtQD3pZ0TqEn9w1by9W8sA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhZ3GEnwUMhH74nHf0N4o4FpFy5QGYE04dTf6DjRH3E4SKn9Bb
-	zwHxQfqqB5EjNv1IRSrQVeRQB890u8CU9od7sCSiw2tjlXnrGtTq
-X-Google-Smtp-Source: AGHT+IE/Io2i6GSdXSw+/wIr/wc5aJW3eYk5lzU37goMz09UdJc4IALbDWG79muCgWJFt7Z4DxwA3A==
-X-Received: by 2002:a05:600c:34c2:b0:42c:bad0:6c16 with SMTP id 5b1f17b1804b1-42d9070baa1mr144760475e9.2.1726748923270;
-        Thu, 19 Sep 2024 05:28:43 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42e754ce37bsm20509115e9.48.2024.09.19.05.28.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 05:28:42 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1726749093; c=relaxed/simple;
+	bh=V+T0Pu2P42+FAOgyBvdWJNXdBMvCqGs3O9XO4cJXROk=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=goD7s9UOZTKJchDFYiAmOwJ/dD9beuVYLbKDweA6W1M0eOAd0Q8AztA+4v2ffDGzLEKqaXa3DOcqlucTYe2lXyE8Dk/mXLkPluCerbi7BSbtd90wF3ZXxFCgtOcaQW5oWYPdBnoHoGbB3/dtMGWFJeftjw4MfxNSbbmWGwYkQa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=xyDzsdw2; arc=none smtp.client-ip=203.205.221.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1726748781;
+	bh=Ugf04+8SH5clAs9zJB1Rtjp8akqAeiWsHmjBZsQxOh8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=xyDzsdw2RNezgXbpb8Vx3CdYNcdvcW4Shk0pwOdY6LX2tf4OV0kwU8JbcedTb1VpO
+	 91Wk//OIgZMNdNSaqR7wjr83daZvTu00Bkhzx4NNZ6TM5pqo5zsjhlYfWd1hUuqxJj
+	 7eaTjPFVTwLC/z5O39d8z5AO5M1RT4/8lfU5B6vw=
+Received: from localhost.localdomain ([114.246.200.160])
+	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
+	id 69205012; Thu, 19 Sep 2024 20:26:18 +0800
+X-QQ-mid: xmsmtpt1726748778tiu3ik25l
+Message-ID: <tencent_8C653C3534893CF0BC88A43A2831CDA2260A@qq.com>
+X-QQ-XMAILINFO: NA8WCMn5GQiMadq4APsyVXge7vikEiAl3jr0qOtnpDBMuNQJ+ZbuMqXIuW2m3H
+	 ER1FQ2M7I/+VDzgxrkXACFvVyrWc7NM9Z14uepgwGPefC1ZH7AEI/Zhizsp60JWO4+FRvCDQi8QK
+	 uy7sGLbsCbiHTxdeLkE8E93FuayyiYVVc0LO68AtzxdiReJZzUrA9LIFjtnbVF3ktqFFLugWuLL/
+	 7jZ8SMMydnC0gHQrZut4lf13xDQMftQqX1lSr0rx9UR5A5eELqGtsKhrihloNBJmwsXRvcOVhdvz
+	 iZOuKN2laS+nPlntMe0nXWAnoAmpvSKO348ZIQ+sIH1xASzttzc5XZ6ViidkFw/UaqYB53960Nc9
+	 RQNZ3slH0swhCxfZn6S2xqV8F+DWkqTMXE3IEpp2nQw9FjTMKAvDakAIQlSRlJo0vSNp7hrlhnHj
+	 YXGhTTkRBYn0CxK01d/y9S7tT5w2tky5s5+lpwBnk/5WcoabuFMv/qG4hCMBTl4imY0IFw7eBV9O
+	 ypP/xQHypRnWa5yEeVHOVaRtgvc9y2LLd+GG+TDMN/NZDZsfpqHGYQgMaLm4uqnGlAJ5wAhw+5yU
+	 FedszXGKJ9HmzUpsATJchdYo1ANXSHhlpY1CW6gWjg/MdeoK8AxA/R31QlY9EqEHIyNUqv3SnpFl
+	 X+0h7kBPwKR6Ju4B+ibUiybaGV3bVB2l0wUD3/XmsklyCAKgTiyW6b10XWSHUdscHmKoIs4/FIsK
+	 5ZPC2Szrkh7zveexzliLUrMNZ/apTGOnKv2FAB2B1kWtO4VsVbRYxp7Z0t9CigU5zs++MB4E55cl
+	 KksHkRz3BZuHF6MLUVrTAUT3T31ghDHVYeGhaT0JoJWsDM78KxgvcSzVU044+9Geb70Nmdp2B5h6
+	 Q835+fLgXTHFx2kgY3vQJSweJ3odaWzZrU15F4CagKPbTvZBvWwX+/DoVP43TJJ2yA/Ojrx7jfTI
+	 AgqyoK58GvYZRYdRZpoQUOGFr2PgZ56jovIGLLIk+vn2oFqJ551EqLzq3D3Ja2q+gt1fScARbdEw
+	 vWbfqJS2oQNsrF+lDxb/H6WaE2MIESMvRTKT62SCScSWLoafLYt48H1Jd3Z8IFeOeqa0ig/3E9bM
+	 NcTeFDvptQDND5gtxXya9A6y3uzw==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Jiawei Ye <jiawei.ye@foxmail.com>
+To: przemyslaw.kitszel@intel.com
+Cc: alex.aring@gmail.com,
+	davem@davemloft.net,
+	david.girault@qorvo.com,
+	edumazet@google.com,
+	jiawei.ye@foxmail.com,
+	kuba@kernel.org,
 	linux-kernel@vger.kernel.org,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	upstream@airoha.com
-Subject: [PATCH 1/2] dt-bindings: watchdog: airoha: document watchdog for Airoha EN7581
-Date: Thu, 19 Sep 2024 14:26:17 +0200
-Message-ID: <20240919122759.10456-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	linux-wpan@vger.kernel.org,
+	miquel.raynal@bootlin.com,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	stefan@datenfreihafen.org
+Subject: Re: [PATCH] Fix the RCU usage in mac802154_scan_worker
+Date: Thu, 19 Sep 2024 12:26:17 +0000
+X-OQ-MSGID: <20240919122617.1169865-1-jiawei.ye@foxmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <f3c26426-7ebb-4b8b-9443-f604292a53a9@intel.com>
+References: <f3c26426-7ebb-4b8b-9443-f604292a53a9@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,64 +87,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document watchdog for Airoha EN7581. This SoC implement a simple
-watchdog that supports a max timeout of 28 seconds.
+On 9/19/24 17:01, Przemek Kitszel wrote:
+> > In the `mac802154_scan_worker` function, the `scan_req->type` field was
+> > accessed after the RCU read-side critical section was unlocked. According
+> > to RCU usage rules, this is illegal and can lead to unpredictable
+> > behavior, such as accessing memory that has been updated or causing
+> > use-after-free issues.
+> > 
+> > This possible bug was identified using a static analysis tool developed
+> > by myself, specifically designed to detect RCU-related issues.
+> > 
+> > To address this, the `scan_req->type` value is now stored in a local
+> > variable `scan_req_type` while still within the RCU read-side critical
+> > section. The `scan_req_type` is then used after the RCU lock is released,
+> > ensuring that the type value is safely accessed without violating RCU
+> > rules.
+> > 
+> > Fixes: e2c3e6f53a7a ("mac802154: Handle active scanning")
+> > Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
+> > ---
+> >   net/mac802154/scan.c | 4 +++-
+> >   1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/net/mac802154/scan.c b/net/mac802154/scan.c
+> > index 1c0eeaa76560..29cd84c9f69c 100644
+> > --- a/net/mac802154/scan.c
+> > +++ b/net/mac802154/scan.c
+> > @@ -180,6 +180,7 @@ void mac802154_scan_worker(struct work_struct *work)
+> >   	unsigned int scan_duration = 0;
+> >   	struct wpan_phy *wpan_phy;
+> >   	u8 scan_req_duration;
+> > +	enum nl802154_scan_types scan_req_type;
+> 
+> this line violates the reverse X-mass tree rule of code formatting
 
-The watchdog ticks on half the BUS clock and require the BUS frequency
-to be provided.
+Thank you for pointing out the concern regarding the violation of the
+reverse Christmas tree rule. I will adjust the placement of 
+`enum nl802154_scan_types scan_req_type` to be between 
+`struct cfg802154_scan_request *scan_req` and 
+`struct ieee802154_sub_if_data *sdata`. If this change is suitable,
+should I resend the patch as a v2 patch?
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- .../bindings/watchdog/airoha,en7581-wdt.yaml  | 39 +++++++++++++++++++
- 1 file changed, 39 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/watchdog/airoha,en7581-wdt.yaml
+> 
+> >   	u8 page, channel;
+> >   	int ret;
+> >   
+> > @@ -210,6 +211,7 @@ void mac802154_scan_worker(struct work_struct *work)
+> >   
+> >   	wpan_phy = scan_req->wpan_phy;
+> 
+> this line (not yours) just saves the first level of pointer, but then
+> accesses wpan_phy->... outside of the rcu_read_lock() section, for me
+> it's very similar case to what you are fixing here
+> 
 
-diff --git a/Documentation/devicetree/bindings/watchdog/airoha,en7581-wdt.yaml b/Documentation/devicetree/bindings/watchdog/airoha,en7581-wdt.yaml
-new file mode 100644
-index 000000000000..47210a5990ee
---- /dev/null
-+++ b/Documentation/devicetree/bindings/watchdog/airoha,en7581-wdt.yaml
-@@ -0,0 +1,39 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/watchdog/airoha,en7581-wdt.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Airoha EN7581 Watchdog Timer
-+
-+maintainers:
-+  - Christian Marangi <ansuelsmth@gmail.com>
-+
-+allOf:
-+  - $ref: watchdog.yaml#
-+
-+properties:
-+  compatible:
-+    const: airoha,en7581-wdt
-+
-+  reg:
-+    maxItems: 1
-+
-+  clock-frequency:
-+    description: BUS frequency in Hz (timer ticks at half the BUS freq)
-+    const: 300000000
-+
-+required:
-+  - compatible
-+  - reg
-+  - clock-frequency
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    watchdog@1fbf0100 {
-+        compatible = "airoha,en7581-wdt";
-+        reg = <0x1fbf0100 0x3c>;
-+        clock-frequency = <300000000>;
-+    };
--- 
-2.45.2
+According to the RCU usage rules, the value returned by `rcu_dereference()`
+should be safely dereferenced only within the RCU read-side critical
+section. It is important to note that `wpan_phy` is not obtained through
+`rcu_dereference()`, so in this context, it may not be sufficient to infer
+whether it is protected by RCU.
+
+> >   	scan_req_duration = scan_req->duration;
+> > +	scan_req_type = scan_req->type;
+> >   
+> >   	/* Look for the next valid chan */
+> >   	page = local->scan_page;
+> > @@ -246,7 +248,7 @@ void mac802154_scan_worker(struct work_struct *work)
+> >   		goto end_scan;
+> >   	}
+> >   
+> > -	if (scan_req->type == NL802154_SCAN_ACTIVE) {
+> > +	if (scan_req_type == NL802154_SCAN_ACTIVE) {
+> >   		ret = mac802154_transmit_beacon_req(local, sdata);
+> >   		if (ret)
+> >   			dev_err(&sdata->dev->dev,
 
 
