@@ -1,97 +1,149 @@
-Return-Path: <linux-kernel+bounces-333401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5716497C809
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:35:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D7597C810
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044CC1F29BD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:35:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A52F01C2555C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CB2199FC9;
-	Thu, 19 Sep 2024 10:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCAA19ADA4;
+	Thu, 19 Sep 2024 10:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jWRLgADh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNEVWHlK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B4E18A6C5;
-	Thu, 19 Sep 2024 10:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE930194C61;
+	Thu, 19 Sep 2024 10:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726742122; cv=none; b=XpMhWw7xpD47OtQRLFPPB7WrJpSWZeFrWGZpMHVe3xm9vqvBJLpKUhpC6lAXeSH9Cp48DRzItB2U2UleUXCITPZIgCEWy/46P7GNd+o6Abrpzm1iRQatcCMbgPPc2v5X1Br2JpLqojOfAGp4Zya3twz5168yalAUap4NC2rXirk=
+	t=1726742353; cv=none; b=dJQAdPsNT52Nn890eWmtXa8yeaw4hPxZlnee5u26ZYz0QGGne/NCwbeamG9zoHPj3zof3IWAnYlQ4dOpI0odP2JRLwsPTERiXXVRNdtNHXlzvkPOWnQ9rRFNyItnwt8xC1TX4JvLH1CBnRRSj8tCf0tbqE7vMXeppunz3wXVh3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726742122; c=relaxed/simple;
-	bh=ssSF/Fjtq/MJa/8CBQ4lgeI0tJWHkUOC2ndKMEAfP9U=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=SduAxtwKauBm37199s4lnDvT8fO1hh5gcDEJFL1YiEF/WnvEQdhLpal7MGqy9lIDj1QSVf23hn3y0Yv//U7EAJf5m2baznTrJXFsg0FexVJHTPbMZJGpUV2poC+hv4rjFcll0g2zbCw1NpMJOxQdXAR9kMSo73C/D6dIJ4zp8YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jWRLgADh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51F2CC4CEC4;
-	Thu, 19 Sep 2024 10:35:22 +0000 (UTC)
+	s=arc-20240116; t=1726742353; c=relaxed/simple;
+	bh=InLdzXxiqcdiaSOfy+6xEmWcnOnKYBZZixeTK3dsjNw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M60lhI597kDHXq486Y+fisYNDpx9dar+LJ1B8rn60EJZ1rqs/0c5NqnvKsvbA1uqVv0kLraSk1++O5a8a3Si4ypb+mn9M4UROv8Joyk3Dr5uwQ0m8Kaff7yYELFcseePFajK8fc4Vigx3m/tey0IHxmBbqlOpLBjg+T9kdCa92I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNEVWHlK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA452C4CEC4;
+	Thu, 19 Sep 2024 10:39:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726742122;
-	bh=ssSF/Fjtq/MJa/8CBQ4lgeI0tJWHkUOC2ndKMEAfP9U=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=jWRLgADh8rrWfzvxokRb7brT50ZgBEQlB6RmpvopHNyfGhzynHz1nBtgs+/Gyrmsf
-	 1I+UiCrGCmecghVKJ3jaup06zkXy+OgCGU9SI5ABti7MbiXkCqus57N7cqeWZbLkaF
-	 2hBHGMMZAZdKmAaApkNqmEjCV9Rv+LeJ5oxbOnqh0L/aa4SofyqhZMNcHEhaDUmkEG
-	 tjhn6MZngMuXfQhEVeJusTKr4yMmFklJ9Hg+NAjfi+RbQGvx4Yy9Ar91/lu2tpJaE5
-	 WTgzh+ekNMNK/oomXhIsjPZdc+GLDHOE3cPssBETfEFioutMQ35JM8iUuXhEEzAQyx
-	 pr+LYa77lzehw==
-Message-ID: <53f1cb2aefeb360002cd840cb8997ae3.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1726742352;
+	bh=InLdzXxiqcdiaSOfy+6xEmWcnOnKYBZZixeTK3dsjNw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vNEVWHlKRx739nBoyNcg8IBVt3muv42eketL9Iz526J4kIokN7x+Mi5BeGuWCdqlA
+	 8LpebvZlOfL1m7zGGAMt2YOOpUoBY6POw4jkbBP2WSqszAnpNmf+OQLzL44pJAf31j
+	 /EXFnQ0mJ5uOcImQfCLDARlBaCT4rG9O4o8wSeMIG5f6b7mYtZFb+8OPMMaM7Zry/G
+	 wE6xsNcHHMp3FZi8WHmiVA0FKSGz+KmTcLbxEN581aLpa48MuEns++tfe5xsLEsc7n
+	 Nx+C0cX06CqnL0FByeNThlahYrEu7L2IBztyKqN6QZZChzH4Qgu8zuYIB4Z0OkR8Q1
+	 vhzFHlUgNarIw==
+Message-ID: <2229b659-c753-4f56-a1ab-7e8984f9147f@kernel.org>
+Date: Thu, 19 Sep 2024 12:39:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240917075250.19333-1-amishin@t-argos.ru>
-References: <20240917075250.19333-1-amishin@t-argos.ru>
-Subject: Re: [PATCH] clk: si5341: Prevent division by zero in si5341_output_clk_determine_rate()
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Aleksandr Mishin <amishin@t-argos.ru>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org, Maxime Ripard <mripard@kernel.org>
-To: Aleksandr Mishin <amishin@t-argos.ru>, Mike Looijmans <mike.looijmans@topic.nl>
-Date: Thu, 19 Sep 2024 03:35:20 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: hwmon: Add adt7462
+To: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>,
+ Rob Herring <robh@kernel.org>, Chanh Nguyen <chanh@os.amperecomputing.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+ Open Source Submission <patches@amperecomputing.com>,
+ Phong Vo <phong@os.amperecomputing.com>,
+ Thang Nguyen <thang@os.amperecomputing.com>,
+ Quan Nguyen <quan@os.amperecomputing.com>,
+ Khanh Pham <khpham@amperecomputing.com>
+References: <20240918103212.591204-1-chanh@os.amperecomputing.com>
+ <20240918220553.GA2216504-robh@kernel.org>
+ <d825a93f-be5c-45b9-a8d4-5c412ddec232@amperemail.onmicrosoft.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <d825a93f-be5c-45b9-a8d4-5c412ddec232@amperemail.onmicrosoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Quoting Aleksandr Mishin (2024-09-17 00:52:50)
-> In si5341_output_clk_determine_rate() division by zero is possible if the
-> following conditions are met:
-> - rate > (parent_rate / 2);
-> - (parent_rate / 2) is not multiple of rate;
-> - CLK_SET_RATE_PARENT flag is not set.
->=20
-> Add zero value check to prevent division by zero.
->=20
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->=20
-> Fixes: 61c34af50c5f ("clk: si5341: Switch to determine_rate")
+On 19/09/2024 11:43, Chanh Nguyen wrote:
+>>> +properties:
+>>> +  compatible:
+>>> +    const: onnn,adt7462
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  resets:
+>>> +    maxItems: 1
+>>
+>> How would this work? 'resets' generally is used for on-chip devices and
+>> a reset controller. That doesn't exist at the board level. A standalone
+>> device typically uses a GPIO lines if there's a s/w controlled reset.
+>> That would be the 'reset-gpios' property.
+>>
+> 
+> Thank Rob for your comments! The ADT7462 includes an active low reset 
+> pin (Pin #14).
+> 
+> I'll change 'resets' into the 'reset-gpios' property.
+> 
+> The example in the binding will be
 
-Nope. The problem was there before this commit.
+The question how did it work in the first place is still valid... I
+think we might benefit from asking people to post their upstreamed DTS.
+Otherwise we will take broken or half-baked bindings, because we never
+saw the bigger picture. :(
 
-> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
-> ---
->  drivers/clk/clk-si5341.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
-> index 6e8dd7387cfd..d0d68a5bba74 100644
-> --- a/drivers/clk/clk-si5341.c
-> +++ b/drivers/clk/clk-si5341.c
-> @@ -855,7 +855,7 @@ static int si5341_output_clk_determine_rate(struct cl=
-k_hw *hw,
->         } else {
->                 /* We cannot change our parent's rate, report what we can=
- do */
->                 r /=3D rate;
-> -               rate =3D req->best_parent_rate / (r << 1);
-> +               rate =3D (r << 1) ? req->best_parent_rate / (r << 1) : 0;
+Best regards,
+Krzysztof
 
-This is too ugly. Also, I assume it would be better to provide a higher
-rate if the rate request allows it. Returning 0 should basically never
-happen.
 
