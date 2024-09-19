@@ -1,83 +1,123 @@
-Return-Path: <linux-kernel+bounces-333435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A6D97C894
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:23:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B673897C899
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 533872881D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:23:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42972B2191F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8B919D093;
-	Thu, 19 Sep 2024 11:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B016F19D096;
+	Thu, 19 Sep 2024 11:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="V9FR4baU"
-Received: from mail.avm.de (mail.avm.de [212.42.244.120])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="parP+bag"
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D93119D075;
-	Thu, 19 Sep 2024 11:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3668A19995D;
+	Thu, 19 Sep 2024 11:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.141.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726744987; cv=none; b=L3g8PehvyeGMH5fDrsZ0DI6VWID9xJtRHFfVnnv2FLNfg9f0UHQRQhdwkVio25kmHkef85dMmYQ8opRtETgYQ1vA6RmcZC8gWEP2QLjxzE013ExBHfaMXLlOzX5PYzYAa2ygy9Yg4zRtLf9d52+JQ9+F+Fn4tx2Un2Be+yRtJMI=
+	t=1726745267; cv=none; b=LJ0Ery2E+5nw0dHqJsO5psT/Rur3dXfAiPsRLPA4J5yApx8NjCJP1nw1YGLJKag3wMRrbMnRqPB534gwfSMpJ6EfJ3WwaWY+tBSFNRuM/dzxaW60XdhLw4lpKKxfblmxdeL6026/oIHaAWhJRmxbg0b8GXMk2ydue7Nwv0OvrnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726744987; c=relaxed/simple;
-	bh=2GcU97FWBzcutfhJlOlsgw8NOSC3pVOmgDLZMGtqtCA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WWdu/iysDxrsehaCiDbnBJb6p9enrNPJktYX0lGniEN9AEogT7JoGIHof7oCXZmS2motcCnRZoAc8G/BNPBQsei9Cm2T5Ncv+Mx6WkS3jx1vf5EPx7snTazy+n2lSxUgIV7rF7vBs3a5M8kWZHpjiN60lre7K96j/me7l+dURKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=V9FR4baU; arc=none smtp.client-ip=212.42.244.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
-	t=1726744982; bh=2GcU97FWBzcutfhJlOlsgw8NOSC3pVOmgDLZMGtqtCA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V9FR4baUo+eGIGwGcTm9cL5MOtiaoW1TQbbuXugV3FzcmvoA+pM8FArQZfkLbOglR
-	 +lgen5s7MqtAsNAr+CroAciJ/TEzMeiqgdNRHPtcVOQYgcRWoy8zU/15ThS9cIjfAd
-	 DqZ6+cuYyar0EbSfg2vU38optsdFCHYC4OHF0HBU=
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Thu, 19 Sep 2024 13:23:02 +0200 (CEST)
-Received: from l-nschier-nb (unknown [83.68.141.146])
-	by mail-auth.avm.de (Postfix) with ESMTPSA id 112D8807BC;
-	Thu, 19 Sep 2024 13:23:03 +0200 (CEST)
-Date: Thu, 19 Sep 2024 13:23:01 +0200
-From: Nicolas Schier <n.schier@avm.de>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 07/23] kbuild: remove unnecessary prune of rust/alloc for
- rustfmt
-Message-ID: <ZuwJlaeFfo7CW5dC@l-nschier-nb>
-References: <20240917141725.466514-1-masahiroy@kernel.org>
- <20240917141725.466514-8-masahiroy@kernel.org>
+	s=arc-20240116; t=1726745267; c=relaxed/simple;
+	bh=DDH/DI2Jt9ccazDdm9IeMlRwDdSX7Mww3EN7pjQqztw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LQIrSLATGVzD0huV9XNzP2qzKT0kwUhFfBW18cAdYTwPRga4C2+TveKgeZZKZ4ODpQB//4XuaUgMvPayIFvg3UtTRxmZu/T6yqf0+JBXcs67Am4xl93KyS+Yefbcgg3NijWBJD3B1VXyg5BKGE+mxN53G5Od5nz7aSOxIlzttoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=parP+bag; arc=none smtp.client-ip=68.232.141.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1726745265; x=1758281265;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DDH/DI2Jt9ccazDdm9IeMlRwDdSX7Mww3EN7pjQqztw=;
+  b=parP+bagyokKQ1pfghCwKa9O3lBPe6IaTmTGn+aHE/a5EAVGi7IwQOQV
+   UKI6U7XMmzXVX4n5guafjhox8XBAzZ2OF2VCs5pzs59SXroBNdFT8H8YG
+   YT8keWIWjGeJFVRx1IxSFXOj47HhVoGR/gcDxdwQveQUpmm9SmTywnHXT
+   DMNbltiJQXnix4dhnJ0bLdok9/9TeVGomPNnDQVZ7nymrz4u0AIlLnjc+
+   j8s1yzLMjIDIs94bXS2V0MbliKFkCvwmhR4DukYiOikuMbuVg+k0/l6Wa
+   j0cAYa0S/VltqLOFL89vGzpRQMjYeeyRP1aXHsftM746zufjcoze3+QIx
+   g==;
+X-CSE-ConnectionGUID: xm+01op2SLiQ/Oa5/DTylg==
+X-CSE-MsgGUID: HRYGNOdgTd2PsrNGONqphQ==
+X-IronPort-AV: E=Sophos;i="6.10,241,1719849600"; 
+   d="scan'208";a="27917707"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 19 Sep 2024 19:26:42 +0800
+IronPort-SDR: 66ebfc43_Mvjnij0wQp/Cv611QBdtx42VKY7PEyFVGOnYkSW/1Z6mAy3
+ KNTbO037SgVzSLCbzMCQUbrmq4BOPtRNlCvQbmA==
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Sep 2024 03:26:12 -0700
+WDCIronportException: Internal
+Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Sep 2024 04:26:41 -0700
+From: Avri Altman <avri.altman@wdc.com>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bart Van Assche <bvanassche@acm.org>,
+	Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH] scsi: ufs: Do not open code read_poll_timeout
+Date: Thu, 19 Sep 2024 14:24:42 +0300
+Message-Id: <20240919112442.48491-1-avri.altman@wdc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240917141725.466514-8-masahiroy@kernel.org>
-X-purgate-ID: 149429::1726744982-91B09E44-B3F29078/0/0
-X-purgate-type: clean
-X-purgate-size: 357
-X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate: clean
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 17, 2024 at 11:16:35PM +0900, Masahiro Yamada wrote:
-> Commit 9d0441bab775 ("rust: alloc: remove our fork of the `alloc`
-> crate") removed the rust/alloc/ directory.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  Makefile | 2 --
->  1 file changed, 2 deletions(-)
+ufshcd_wait_for_register practically does just that - replace with
+read_poll_timeout.
 
-Reviewed-by: Nicolas Schier <n.schier@avm.de>
+Signed-off-by: Avri Altman <avri.altman@wdc.com>
+---
+ drivers/ufs/core/ufshcd.c | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 8ea5a82503a9..e9d06fab5f45 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -739,25 +739,15 @@ EXPORT_SYMBOL_GPL(ufshcd_delay_us);
+  * Return: -ETIMEDOUT on error, zero on success.
+  */
+ static int ufshcd_wait_for_register(struct ufs_hba *hba, u32 reg, u32 mask,
+-				u32 val, unsigned long interval_us,
+-				unsigned long timeout_ms)
++				    u32 val, unsigned long interval_us,
++				    unsigned long timeout_ms)
+ {
+-	int err = 0;
+-	unsigned long timeout = jiffies + msecs_to_jiffies(timeout_ms);
+-
+-	/* ignore bits that we don't intend to wait on */
+-	val = val & mask;
++	u32 v;
+ 
+-	while ((ufshcd_readl(hba, reg) & mask) != val) {
+-		usleep_range(interval_us, interval_us + 50);
+-		if (time_after(jiffies, timeout)) {
+-			if ((ufshcd_readl(hba, reg) & mask) != val)
+-				err = -ETIMEDOUT;
+-			break;
+-		}
+-	}
++	val &= mask; /* ignore bits that we don't intend to wait on */
+ 
+-	return err;
++	return read_poll_timeout(ufshcd_readl, v, (v & mask) == val,
++				 interval_us, timeout_ms * 1000, false, hba, reg);
+ }
+ 
+ /**
+-- 
+2.25.1
+
 
