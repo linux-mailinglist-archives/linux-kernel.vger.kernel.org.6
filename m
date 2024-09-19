@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel+bounces-333614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A421097CB69
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:12:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8116097CB6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18D34B218B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:12:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAE7FB230C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DC21A3BB0;
-	Thu, 19 Sep 2024 15:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DA21A08A6;
+	Thu, 19 Sep 2024 15:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="cnDZBoqY"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Z8QZNb6p"
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D22F1A2542;
-	Thu, 19 Sep 2024 15:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1491A38FD;
+	Thu, 19 Sep 2024 15:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726758727; cv=none; b=fqx9DlUJTBZTlYJ9AxOLQ3JaIv/lNL9zEsl17nt6tlg1MmfmSILvI4CWrk5T4zPHIVrFczePRzZ4ZohvbYUce6MU1r+H8I2eeVrSwcraWI9yv0OJPzVddi2R5NHOm3L2qwH8hXAoIofwlTmBO8a80z6QnfiIYCa6ZQ7DIbwf46E=
+	t=1726758736; cv=none; b=ba4+Fzy1x+H/agKoKtKu8BKUtfYTey0Gu+LJ1ePnvIFnkgFOXBxa8B0OQIB0qbD+X5CgyNqCqU5TKWnEcZMh3BXtuAcnauoCE6Nxn5HVlYbxVBVbnJrN8zrPEou9WAR9jQF12eS5rTQySb+mRrzP+jXbAUxqG3T836R+XUtSP+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726758727; c=relaxed/simple;
-	bh=qVoHmsRHGg98zFI6pqJncNtKRVJtC5MUzrba+bc+fqE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XGxUl5XC4+SGd23RzREhNkLCDLZe/0aDWVW5EQ+rktucKh+HiFP/8deZDKSJ2tptm8ndR2sFOzIKnPvtWhBVtC5nBzBpOl/5HTUQs4ehTXvKRVswThd/DOYZui4xd57b9f70/x9YI5vtn9AAMUtg/8YnxoQTeWoHoN8AM3Li5M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=cnDZBoqY; arc=none smtp.client-ip=178.21.23.139
+	s=arc-20240116; t=1726758736; c=relaxed/simple;
+	bh=vtqJW4WoUdJcxU3RW65FntLJKHSrz+r77iQWDTkRUAg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=MsZfD76ARn51Zm2T3l34obrZdhgGNPdxFdQCqhXWuAjeCp5cMRh7pQUu54kYsHJ9Ok6+rHJ+QF4cI7v+P6oyVt+y8z4EkRQeFD2IDG9yfxsIUq+Xl3mn7ejuVbtaU8WsuKNkOiT/nIHaDKpnj5lVtUsGzJbIdSZAvpe43SQTyRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Z8QZNb6p; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 0CE3623D30;
-	Thu, 19 Sep 2024 17:11:26 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 5E2BA23C84;
+	Thu, 19 Sep 2024 17:11:29 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id oyXPdYhAlJud; Thu, 19 Sep 2024 17:11:25 +0200 (CEST)
+ id C22g_44K2jCi; Thu, 19 Sep 2024 17:11:28 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1726758681; bh=qVoHmsRHGg98zFI6pqJncNtKRVJtC5MUzrba+bc+fqE=;
-	h=From:Subject:Date:To:Cc;
-	b=cnDZBoqYnyKfzaZrq9f3KL+S/i45kM/FIo9Kl3pW/xs6wx9KLeaCeR1g0jDxp2K2u
-	 0UHsQoHE0aS6TuSzMa4yHtyChXb3TEpisyxNUjGCS+JDwPCwvtXqNIn5wN5A1wCqRO
-	 84onX7kELKXyIGr+tIA1TGCzyboiBh9t4UAv5aOf/P2/XrzBEHZ5Fxa7f/OoooFjLx
-	 PslShWcaVjfeNR0fGrewR3LXCtQiawBM0UQ+7KwAZqsaagHXVO0S50SgWTN92Rz+V+
-	 B2mcR/ZhFyJBO6ba5TGIH4HkUTczWwhiKTEmwfTNk/nbc74Zbz6XJygYZVHMJsuiZ6
-	 VY8jXNLe3RDrw==
+	t=1726758688; bh=vtqJW4WoUdJcxU3RW65FntLJKHSrz+r77iQWDTkRUAg=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=Z8QZNb6p6RID89WXQnJeGWWbD9a9lgxAaXxrg3vO+S9gRVFSvO1j88l+7OTuvqBNa
+	 leX1+EguSnOiHgsB2G/SxQAd5kx/eVtcwLPKJxwVfQ0x/qs/d4GiHj2eui1r/cb/tQ
+	 2H7foP02Jy0PRTUqkLrrDCN3pFs4uqehqt5Nwqt40clxUghJy1gFvI8h0O5lgxCVyj
+	 WznF6VnhNUEBCd/V572JzsGzB6HqsDJ8MiUNIr3pEsWqFl8jyjLq0+gDpP6ahvwbV3
+	 UdlhQVwMOp2dH2RmBM/gVs9LgZ+jbHDI87yEF9hhtJIZGMMyyONYl7L7xqUIe96/Zi
+	 PNl777QQ66hpQ==
 From: Kaustabh Chakraborty <kauschluss@disroot.org>
-Subject: [PATCH 0/6] Samsung Exynos 7870 DECON driver support
-Date: Thu, 19 Sep 2024 20:40:59 +0530
-Message-Id: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
+Date: Thu, 19 Sep 2024 20:41:00 +0530
+Subject: [PATCH 1/6] drm/exynos: exynos7_drm_decon: fix uninitialized crtc
+ reference in functions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,9 +58,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAM/7GYC/x3MTQqAIBBA4avErBN0EPq5SrQoZ6xZpKEQhXT3p
- OW3eK9A5iScYWwKJL4kSwwVpm3A7UvYWAlVA2q0ejCd4vsJMVM6FLGLQVmH2BMZwtVDrc7EXu7
- /OM3v+wFWuUAIYQAAAA==
+Message-Id: <20240919-exynosdrm-decon-v1-1-6c5861c1cb04@disroot.org>
+References: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
+In-Reply-To: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
 To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
  Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
  Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -71,35 +72,66 @@ Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
  linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
  devicetree@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
 
-This patch series aims at adding support for Exynos7870's DECON in the
-Exynos7 DECON driver. It introduces a driver data struct so that support
-for DECON on other SoCs can be added to it in the future.
+decon_clear_channels() and decon_wait_for_vblank() accept a pointer to
+struct exynos_drm_crtc. However, these functions are called when the
+crtc is still uninitialized. Moreover, both functions use the pointer to
+retrieve and use struct decon_context, which is initialized.
 
-It also fixes a few bugs in the driver, such as functions recieving bad
-pointers.
-
-Tested on Samsung Galaxy J7 Prime and Samsung Galaxy A2 Core.
+Modify the functions to accept a pointer to struct decon_context
+instead.
 
 Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
-Kaustabh Chakraborty (6):
-      drm/exynos: exynos7_drm_decon: fix uninitialized crtc reference in functions
-      drm/exynos: exynos7_drm_decon: fix suspended condition in decon_commit()
-      drm/exynos: exynos7_drm_decon: fix ideal_clk by converting it to Hz
-      drm/exynos: exynos7_drm_decon: properly clear channels during bind
-      drm/exynos: exynos7_drm_decon: add driver data and support for Exynos7870
-      dt-bindings: display: samsung,exynos7-decon: add exynos7870 compatible
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
- .../display/samsung/samsung,exynos7-decon.yaml     |   4 +-
- drivers/gpu/drm/exynos/exynos7_drm_decon.c         | 124 +++++++++++++--------
- drivers/gpu/drm/exynos/regs-decon7.h               |  15 ++-
- 3 files changed, 90 insertions(+), 53 deletions(-)
----
-base-commit: 4f3e012d4cfd1d9bf837870c961f462ca9f23ebe
-change-id: 20240917-exynosdrm-decon-4c228dd1d2bf
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index 0d185c0564b9..e994779694f0 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -81,10 +81,8 @@ static const enum drm_plane_type decon_win_types[WINDOWS_NR] = {
+ 	DRM_PLANE_TYPE_CURSOR,
+ };
+ 
+-static void decon_wait_for_vblank(struct exynos_drm_crtc *crtc)
++static void decon_wait_for_vblank(struct decon_context *ctx)
+ {
+-	struct decon_context *ctx = crtc->ctx;
+-
+ 	if (ctx->suspended)
+ 		return;
+ 
+@@ -100,9 +98,8 @@ static void decon_wait_for_vblank(struct exynos_drm_crtc *crtc)
+ 		DRM_DEV_DEBUG_KMS(ctx->dev, "vblank wait timed out.\n");
+ }
+ 
+-static void decon_clear_channels(struct exynos_drm_crtc *crtc)
++static void decon_clear_channels(struct decon_context *ctx)
+ {
+-	struct decon_context *ctx = crtc->ctx;
+ 	unsigned int win, ch_enabled = 0;
+ 
+ 	/* Check if any channel is enabled. */
+@@ -118,7 +115,7 @@ static void decon_clear_channels(struct exynos_drm_crtc *crtc)
+ 
+ 	/* Wait for vsync, as disable channel takes effect at next vsync */
+ 	if (ch_enabled)
+-		decon_wait_for_vblank(ctx->crtc);
++		decon_wait_for_vblank(ctx);
+ }
+ 
+ static int decon_ctx_initialize(struct decon_context *ctx,
+@@ -126,7 +123,7 @@ static int decon_ctx_initialize(struct decon_context *ctx,
+ {
+ 	ctx->drm_dev = drm_dev;
+ 
+-	decon_clear_channels(ctx->crtc);
++	decon_clear_channels(ctx);
+ 
+ 	return exynos_drm_register_dma(drm_dev, ctx->dev, &ctx->dma_priv);
+ }
 
-Best regards,
 -- 
-Kaustabh Chakraborty <kauschluss@disroot.org>
+2.46.1
 
 
