@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-333393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7504C97C7DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:21:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E8A97C7E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36753288178
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:21:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 785EE288D65
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55232199FC2;
-	Thu, 19 Sep 2024 10:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE16199FC2;
+	Thu, 19 Sep 2024 10:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qlJeoNSQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJBEZZbL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB98233D8;
-	Thu, 19 Sep 2024 10:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63816168BD;
+	Thu, 19 Sep 2024 10:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726741264; cv=none; b=SIqamRuq7RWjcQRXG/N9soTmLbk5IPpUTUUXj9YiToeMvZ32CGB7FF39DnurVQzt8QZH3eMNhBU/Cxv8gysGYN1QXdU8QSfcyzCYPZMHM7G07Ry2A/28oTsjQI9w+6zzMd2Pab6yBgNUyIgx9r6AWOTCcxSn7nkfElvI3OzCEHs=
+	t=1726741457; cv=none; b=DMUQDK4NGep3rVpG5W8Scg+QXSN39hmhT84mbEjxfElqvJQKf3SCdvzrx9clvG3KST2TlBS9moZqLLkXakjtVo1t17cENcTRXx9cfTYkoRFFagjmVVypo6W+zpiDUq+ZIdbqPtKVeXvjVanGrzsCGXkb+u30X0hXLJBVjmy529I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726741264; c=relaxed/simple;
-	bh=7yVbot+N/CeVkiDlQIKv8CrioNBnIRJgLn3YppEiVBg=;
+	s=arc-20240116; t=1726741457; c=relaxed/simple;
+	bh=GfU6BSfobe/pnJnguAQFwBRmWzOKDn8vaRJUwo6cZhY=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=qEZLtDyZuHN3TN7Z85QJQnWFEtY9XPqyffvZsaXx4KywfJSTSdykJW/+SpRpgaypr6dV1r4WjeIxZZTuXZgp/zPbijTH1K7FCq8p84cZut9NJrS7VKqJBfwbj5WTZTn9BIvs5HAIG+jVIl/ZRPIVHixfm60x9XeyHVmi/MMtKvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qlJeoNSQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 667C1C4CEC4;
-	Thu, 19 Sep 2024 10:21:04 +0000 (UTC)
+	 Subject:From:Cc:To:Date; b=bQsxmBY5+gVs4PrOnuSnYl61xDgoaj5PMO2qelXNW13zoRlcWdvQpL5j+N+A2aIbUxVJyXP3sSgEimCeQoDO2xdDjHNUtxidz2adHAitYcAyC8hQpXeGOIa1FeFZlPgBoHbZGEfeeiAQIFLv8boVRAQxHkzMzd4aeG/bgQ6RxHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJBEZZbL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 326D7C4CEC4;
+	Thu, 19 Sep 2024 10:24:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726741264;
-	bh=7yVbot+N/CeVkiDlQIKv8CrioNBnIRJgLn3YppEiVBg=;
+	s=k20201202; t=1726741457;
+	bh=GfU6BSfobe/pnJnguAQFwBRmWzOKDn8vaRJUwo6cZhY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=qlJeoNSQ59Vg3rRloBWA2IJdP5+o6EilofG92u3vVkgFWmRhLjUgiPNczv91WghqM
-	 pykkRQGSdPwTd0QeLKqbqX/FsF5wBizJZevZ2cxGd+JG3M8/HLeu40w9jDmD0YRlYw
-	 1vzvrZEQiz5nguJzeJSCUVzsPVZHww5ggi28ICpPydS2K2x3RHm5+uT1Je46cHs3o9
-	 kGdyvPtNJdSCCnBDw3r7sDq4PTv+7AtVvmtk9rLd9YzlOAZ2r0NdTfqTxwHM0kLHg9
-	 rETCpPevrVM5XZvR0bzcR8lyPjedIiDkETycZpltCsLFpF2vPXHjayw+kYu0tCIqvF
-	 aT/doqJzq6iUw==
-Message-ID: <0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
+	b=UJBEZZbLcbb66fSRC47dgcPslISfqkDKAGzTyk03h3J5E/+WdQ32EBgOen+MSjrdK
+	 TzakDFI0MZSvcp7F0uTm5K8I+MdRBmyYWB1DVQDY5FRzCmBjCrzyTsT0R+zRnK3PlZ
+	 b/ToY+qYz2ZdrbYv9kGqb7aIaTOJz0bdJClheFgD5nFBqmZHcyWOfth0AxOBi+eC0c
+	 fvugpFNiTo/+JJsXApEzVH2wyDAR65VOlLuuAlFUz0m2Y69fz1AUHdB+8fh8w2DAKX
+	 ptLsGU2MwOPqIUEUSDSfKvDhfL83+50xPh8nskc+3n3wSwS4j0XnmgsYbx1wTWQT4n
+	 dqloVROYjUBOQ==
+Message-ID: <af7dc028ced22413210701a5e2e05990.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -49,51 +49,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240917101016.23238-1-inbaraj.e@samsung.com>
-References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com> <20240917101016.23238-1-inbaraj.e@samsung.com>
-Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+In-Reply-To: <20240917132201.17513-1-adiupina@astralinux.ru>
+References: <20240917132201.17513-1-adiupina@astralinux.ru>
+Subject: Re: [PATCH v3] clk: mvebu: Prevent division by zero in clk_double_div_recalc_rate()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com, Inbaraj E <inbaraj.e@samsung.com>
-To: Inbaraj E <inbaraj.e@samsung.com>, alim.akhtar@samsung.com, cw00.choi@samsung.com, krzk@kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com, s.nawrocki@samsung.com
-Date: Thu, 19 Sep 2024 03:21:02 -0700
+Cc: Alexandra Diupina <adiupina@astralinux.ru>, Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+To: Alexandra Diupina <adiupina@astralinux.ru>, Andrew Lunn <andrew@lunn.ch>
+Date: Thu, 19 Sep 2024 03:24:15 -0700
 User-Agent: alot/0.10
 
-Quoting Inbaraj E (2024-09-17 03:10:16)
-> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the CMU_CAM_CSI
-> block. When we gate ACLK or PCLK, the clock framework will subsequently
-> disables the parent clocks(PLL_CAM_CSI). Disabling PLL_CAM_CSI is causing
-> sytem level halt.
+Quoting Alexandra Diupina (2024-09-17 06:22:01)
+> get_div() may return zero, so it is necessary to check
+> before calling DIV_ROUND_UP_ULL().
 >=20
-> It was observed on FSD SoC, when we gate the ACLK and PCLK during CSI stop
-> streaming through pm_runtime_put system is getting halted. So marking
-> PLL_CAM_CSI as critical to prevent disabling.
+> Return value of get_div() depends on reg1, reg2, shift1, shift2
+> fields of clk_double_div structure which are filled using the
+> PERIPH_DOUBLEDIV macro. This macro is called from the
+> PERIPH_CLK_FULL_DD and PERIPH_CLK_MUX_DD macros (the last 4 arguments).
 >=20
-> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
+> It is not known exactly what values can be contained in the registers
+> at the addresses DIV_SEL0, DIV_SEL1, DIV_SEL2, so the final value of
+> div can be zero. Print an error message and return 0 in this case.
+>=20
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>=20
+> Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Arm=
+ada 3700")
+> Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
 > ---
+> v3: fix indentation
+> v2: added explanations to the commit message and printing=20
+> of an error message when div=3D=3D0
 
-Please add a fixes tag. Although this is likely a band-aid fix because
-marking something critical leaves it enabled forever.
+Please stop sending as replies to previous patches.
 
->  drivers/clk/samsung/clk-fsd.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  drivers/clk/mvebu/armada-37xx-periph.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/drivers/clk/samsung/clk-fsd.c b/drivers/clk/samsung/clk-fsd.c
-> index 6f984cfcd33c..b1764aab9429 100644
-> --- a/drivers/clk/samsung/clk-fsd.c
-> +++ b/drivers/clk/samsung/clk-fsd.c
-> @@ -1637,8 +1637,9 @@ static const struct samsung_pll_rate_table pll_cam_=
-csi_rate_table[] __initconst
->  };
+> diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/a=
+rmada-37xx-periph.c
+> index 8701a58a5804..b32c6d4d7ee5 100644
+> --- a/drivers/clk/mvebu/armada-37xx-periph.c
+> +++ b/drivers/clk/mvebu/armada-37xx-periph.c
+> @@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(stru=
+ct clk_hw *hw,
+>         div =3D get_div(double_div->reg1, double_div->shift1);
+>         div *=3D get_div(double_div->reg2, double_div->shift2);
 > =20
->  static const struct samsung_pll_clock cam_csi_pll_clks[] __initconst =3D=
- {
-> -       PLL(pll_142xx, 0, "fout_pll_cam_csi", "fin_pll",
-> -           PLL_LOCKTIME_PLL_CAM_CSI, PLL_CON0_PLL_CAM_CSI, pll_cam_csi_r=
-ate_table),
-> +       __PLL(pll_142xx, 0, "fout_pll_cam_csi", "fin_pll",
-> +               CLK_GET_RATE_NOCACHE | CLK_IS_CRITICAL, PLL_LOCKTIME_PLL_=
-CAM_CSI,
+> -       return DIV_ROUND_UP_ULL((u64)parent_rate, div);
+> +       if (!div) {
+> +               pr_err("Can't recalculate the rate of clock %s\n", hw->in=
+it->name);
 
-Please add a comment indicating that this clk can never turn off because
-<insert reason here>.
+hw->init is set to NULL after registration (see clk_register() code). If
+div is 0 what does the hardware do?
+
+> +               return 0;
+> +       } else {
+> +               return DIV_ROUND_UP_ULL((u64)parent_rate, div);
+> +       }
+>  }
+>
 
