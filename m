@@ -1,66 +1,86 @@
-Return-Path: <linux-kernel+bounces-333883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2374097CF61
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 01:41:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4516197CF64
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 01:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7A21F2190F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:41:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 388921C21802
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFB41B2EE2;
-	Thu, 19 Sep 2024 23:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8089319B586;
+	Thu, 19 Sep 2024 23:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BjEPNxsU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ioCMVkuH"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08492F28;
-	Thu, 19 Sep 2024 23:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0298817C8B;
+	Thu, 19 Sep 2024 23:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726789308; cv=none; b=kW66ksIpjOpUxf9vq1GBYQVtASHB2NHhnjuFFybfGJI5xc+j7h7M+bSicXsYKd2X51oKyUXSPFGSHoVzHCPHzJeu1/g1VRmNCnnyBXZP/gRr9doMP9vSlUNm3U4Jd+DcCO8zA90vYD6pkTebA4TyGrLDRLSEj7gaOC4UG5DYAL8=
+	t=1726789564; cv=none; b=FBfHcJuXb9CiDVTydU+d325uy9cuMVqSslBK/4VSVNUU2du8sU+kcz7+yxxYGA5ITHegslTrFIf/O2thRlkZD4HsTUz/ZdMKfA9lzxHaO8aJLQArT8OXZSgxYbqTwe2YRzzHcsf+qjG1e4S1zO5Nlixrh156VgMhmzbnBv7t2Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726789308; c=relaxed/simple;
-	bh=vz/QIZDB47L93JWTsoRjr27Dol6C67qi2DrzrtiaLPw=;
+	s=arc-20240116; t=1726789564; c=relaxed/simple;
+	bh=vqzZy1A0o5mc5on3eFpuxUagpwrWUON52Xd0/KhOSRw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dCUxCaiwPOGbXYtcpScEl/4iEt765hAQn6Mz7Z3NLkecwCpsD20KbG1akbs5/ZTxzfMa29c1or3qSkOcdi9e2Lr4/0Eqf1ElmtJBMFlXCNygij5OjjfeyWhVu9AU+fUsFdqAtCiYwqVz9E7U4mVr60SR9NXt0w3k18SGsy7diN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BjEPNxsU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 399D2C4CEC5;
-	Thu, 19 Sep 2024 23:41:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726789308;
-	bh=vz/QIZDB47L93JWTsoRjr27Dol6C67qi2DrzrtiaLPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BjEPNxsU2EAHVeelpw9uycRMHeln01mG9DBbcO7HUYJVYDsHHZjh83g8LZMrwBd93
-	 bH+4FhJ4HFvRA2sKid7WgTQydB4t4y6JCxE+NM6BQcImT1/3x4ZJpHDQFuyJ15Q6tB
-	 xAuvrIXgNYn5Ur3aawTuu3quwbduJgGzY+dFMwcAP1eri9+zqYxeUSe7Db3/ByrXjS
-	 eeogUXERW2ouBk5o7dRINrJISxdhZBCbTDckbLIW1ha2owy8IuTpfy7edJwtVpJHdH
-	 qM1AfpMNbRxF43f9j27z2n9cZUNfLgr8rZk4O5YeML4r702pPdCdu7sns/467N30gH
-	 ZkqZIevq/r86g==
-Date: Thu, 19 Sep 2024 16:41:46 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Chandan Babu R <chandanbabu@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	xfs <linux-xfs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, x86@kernel.org
-Subject: Re: Are jump labels broken on 6.11-rc1?
-Message-ID: <20240919234146.GH182177@frogsfrogsfrogs>
-References: <20240806094413.GS37996@noisy.programming.kicks-ass.net>
- <20240806103808.GT37996@noisy.programming.kicks-ass.net>
- <875xsc4ehr.ffs@tglx>
- <20240807143407.GC31338@noisy.programming.kicks-ass.net>
- <87wmks2xhi.ffs@tglx>
- <20240807150503.GF6051@frogsfrogsfrogs>
- <20240827033506.GH865349@frogsfrogsfrogs>
- <20240905081241.GM4723@noisy.programming.kicks-ass.net>
- <20240905091605.GE4928@noisy.programming.kicks-ass.net>
- <20240916160801.GA182194@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTRtvkQn86s3SHKXaFG3nVg/R8gBcWu9raXYk+Ed1p9XEJeHtLFpXxFKGY4JUho7vPWm3Plt4OytRvneiK5JnrpbFFOhQUmFk5bkbZpu9E9i6UuVVColj8yUti2z0cVCuSDnazZ8uTAg1lNmSdf05c3bvoWas8NzKOzvlLDp23c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ioCMVkuH; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a83562f9be9so161382266b.0;
+        Thu, 19 Sep 2024 16:46:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726789561; x=1727394361; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oNw+KwgX5BU49QjrEyk+XQBLcn1osmOHz4x6fiYtEnU=;
+        b=ioCMVkuHwNBaP3NNTXvTV8+HuJtle2tYihQ33XbvmUxiSeHCVC1F1Qq7EZZf2cnSf4
+         ZMAE2vgZBjBL2ntCFISNuzTV6lwxpEI9Y2fBCcOaDqKyM+zCF/kv+3V4Wdj6ej4sR2AI
+         gQJWwHZ8A14JTCLOOUVTzoYPXlMLln9MzQWg03sor3n8Rkpa5qwS1xqfrK4PWGEUZayL
+         tE9UKXmJObyXpgrryRl+YupCWZA/SQs4Tv01w2xoMSGt9KeZoKE6dRQFVmtiOpWJIIJF
+         Zv/Nd84H3+p2WNFVHbtg4NW2n8Vdh3NNMUn1W9YaKV68iB5Ba3LLbMRvF1MHkFuMsfwI
+         qsCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726789561; x=1727394361;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=oNw+KwgX5BU49QjrEyk+XQBLcn1osmOHz4x6fiYtEnU=;
+        b=BOKOLeB35SzNyLRHciXOLyuI6Oj/fdZNbsoyTWfHlePpgA5UAO0neY1JCMnf+KoKlN
+         reYoWQzf1OGEtZ3E+sqHJNLYg107KI2srRXZHgyneYGd0cnBIvmal2It0dDV/wa0Vg0b
+         sXYlYSsXQ6EyImbhXx2UNCSSG2DS9gLj0o2GkrGM3c0917jetCVjEqCeaM/ZQ6mqkG23
+         FeG2JjHVG+WO0zBLvM7wKfz+VFMmnHUjfQwYIuuScwDCR2naNXVS9Jt5CzjLkn7TMohS
+         /6cA6XORQSsibYcEPYNRprpcDAV65dCgKM32ya5QB2ye+hrRelgdanY+0b4Ev/+hizPJ
+         ia3A==
+X-Forwarded-Encrypted: i=1; AJvYcCU3R1DGe3z2j2M7uccoYrOba8CfHTptnSqyO23gtuMNlLkCLdNTIyUHixd9BD1H7yptAvG5QpEcOfAfTA==@vger.kernel.org, AJvYcCWVb70xNc1VYq5wOgXy4lomDQGymv4eVwy0hjApldY06LT3/a26l/1gEPXkWDR3zN3qRGy0XqqSDQAS7nE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpcGo3g6kOV1wyJ8BHJWb4dVZy3gjrsKDakXfWgrFkpT399N8L
+	T2dOPBG1cQ1Wz/QTthkjIMwTerShihqqprEFqypCyrbkDQjTcHOE
+X-Google-Smtp-Source: AGHT+IFuVKoQTQFMny/yuT3vo0BKylSf06Z3BFNJPHcSsPHHr+ulRz3bWS+YDcPD3QlRd8POiTtjIg==
+X-Received: by 2002:a17:907:97c1:b0:a90:d1e1:eed0 with SMTP id a640c23a62f3a-a90d4fc8432mr65030866b.9.1726789561062;
+        Thu, 19 Sep 2024 16:46:01 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f42a6sm773046166b.70.2024.09.19.16.45.57
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 19 Sep 2024 16:45:59 -0700 (PDT)
+Date: Thu, 19 Sep 2024 23:45:57 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mike Rapoport <rppt@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Wei Yang <richard.weiyang@gmail.com>
+Subject: Re: linux-next: manual merge of the random tree with the memblock
+ tree
+Message-ID: <20240919234557.hsvajq4qp4u3mhtg@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240827150453.26bff4c3@canb.auug.org.au>
+ <20240919145356.2f205696@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,62 +89,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240916160801.GA182194@frogsfrogsfrogs>
+In-Reply-To: <20240919145356.2f205696@canb.auug.org.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Mon, Sep 16, 2024 at 09:08:01AM -0700, Darrick J. Wong wrote:
-> On Thu, Sep 05, 2024 at 11:16:05AM +0200, Peter Zijlstra wrote:
-> > On Thu, Sep 05, 2024 at 10:12:41AM +0200, Peter Zijlstra wrote:
-> > > On Mon, Aug 26, 2024 at 08:35:06PM -0700, Darrick J. Wong wrote:
-> > 
-> > > > [33965.988873] ------------[ cut here ]------------
-> > > > [33966.013870] WARNING: CPU: 1 PID: 8992 at kernel/jump_label.c:295 __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
-> > 
-> > > > [33966.040184] pc : __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
-> > > > [33966.042845] lr : __static_key_slow_dec_cpuslocked.part.0+0x48/0xc0
-> > 
-> > > > [33966.072840] Call trace:
-> > > > [33966.073838]  __static_key_slow_dec_cpuslocked.part.0+0xb0/0xc0
-> > > > [33966.076105]  static_key_slow_dec+0x48/0x88
-> > 
-> > > > This corresponds to the:
-> > > > 
-> > > > 	WARN_ON_ONCE(!static_key_slow_try_dec(key));
-> > > 
-> > > But but but,... my patch killed that function. So are you sure it is
-> > > applied ?!
-> > > 
-> > > Because this sounds like exactly that issue again.
-> > > 
-> > > Anyway, it appears I had totally forgotten about this issue again due to
-> > > holidays, sorry. Let me stare hard at Thomas' patch and make a 'pretty'
-> > > one that does boot.
-> > 
-> > I've taken tglx's version with a small change (added comment) and boot
-> > tested it and queued it here:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git locking/urgent
-> > 
-> > Could you please double check on both x86_64 and arm64?
-> 
-> Will send this out on the test farm tonight, thanks for the patch.
-> 
-> > If green by with the build robots and your own testing I'll push this
-> > into tip/locking/urgent to be sent to Linus on Sunday. Hopefully finally
-> > resolving this issue.
-> 
-> Sorry I didn't get to this earlier; I've been on vacation since the end
-> of August.  Now to get to the ~1300 fsdevel emails... ;)
+On Thu, Sep 19, 2024 at 02:53:56PM +1000, Stephen Rothwell wrote:
+>Hi all,
+>
+>On Tue, 27 Aug 2024 15:04:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> Today's linux-next merge of the random tree got a conflict in:
+>> 
+>>   tools/include/linux/linkage.h
+>> 
+>> between commit:
+>> 
+>>   d68c08173b70 ("memblock tests: include export.h in linkage.h as kernel dose")
+>> 
+>> from the memblock tree and commit:
+>> 
+>>   9fcce2aaea8a ("selftests/vDSO: fix include order in build of test_vdso_chacha")
+>> 
+>> from the random tree.
+>> 
+>> I fixed it up (see below) and can carry the fix as necessary. This
+>> is now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your tree
+>> is submitted for merging.  You may also want to consider cooperating
+>> with the maintainer of the conflicting tree to minimise any particularly
+>> complex conflicts.
+>> 
+>> diff --cc tools/include/linux/linkage.h
+>> index 20dee24d7e1b,a48ff086899c..000000000000
+>> --- a/tools/include/linux/linkage.h
+>> +++ b/tools/include/linux/linkage.h
+>> @@@ -1,6 -1,8 +1,10 @@@
+>>   #ifndef _TOOLS_INCLUDE_LINUX_LINKAGE_H
+>>   #define _TOOLS_INCLUDE_LINUX_LINKAGE_H
+>>   
+>>  +#include <linux/export.h>
+>>  +
+>> + #define SYM_FUNC_START(x) .globl x; x:
+>> + 
+>> + #define SYM_FUNC_END(x)
+>> + 
+>>   #endif /* _TOOLS_INCLUDE_LINUX_LINKAGE_H */
+>
+>This is now a conflict between the memblock tree and Linus' tree.
+>
 
-After 3.5 days of continuous pounding on the jump labels I haven't seen
-any complaints from the kernel, so consider commit 6b01e5a8c11611
-("jump_label: Fix static_key_slow_dec() yet again")
+Do I need to send a new version? 
 
-Tested-by: Darrick J. Wong <djwong@kernel.org>
+>-- 
+>Cheers,
+>Stephen Rothwell
 
-Thanks for your help!
 
---D
 
-> --D
-> 
+-- 
+Wei Yang
+Help you, Help me
 
