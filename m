@@ -1,244 +1,228 @@
-Return-Path: <linux-kernel+bounces-333812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716AC97CE75
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 22:29:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE2497CE76
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 22:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1A8E1F23796
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:29:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6D191F237A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84669143866;
-	Thu, 19 Sep 2024 20:29:23 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0993713BC02;
+	Thu, 19 Sep 2024 20:31:01 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0638B13A878
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 20:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BE136B11;
+	Thu, 19 Sep 2024 20:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726777762; cv=none; b=Zzhv5bl9BGlR1z1trjFvpmJLewIt3KxoFIGfBU8N58I0jI7R8W/Sb/QG0IdcGF0LWTXCaQpVMCwvg/92McGPwaVoPwOd+b30JbHs2p+QFcNqzgWa46aqb6xO04gikC1Cb4j+6piot/7vzb9rkp0D2/RUVs77FnLFnU3PpwzmzdM=
+	t=1726777860; cv=none; b=LBAK1nrfySYTJsgSoqulgMRAbMkeNmpxo9EI/rLsUatDCOPX0WmrCpGTdmoT2cwxoBYq56p9vg/dy3o0EA9aqyI8+Pm29cPmBdH1osrIbRfnJrY0oCqGdnb7k5V4vnkiFxFk3DrJK2LyPsibhD6HGNygH3RYGjbNBqWYQ3k0c9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726777762; c=relaxed/simple;
-	bh=DAJqHls5Z0Gh1+rOswdQCFx5R8rtot6DM8V0KKD9u4k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dcPDcIlGg/u1HXleLZuhylcq7uo/GyuX9IPMWroCQTesnTTjozTeyhzJPCw01Yb89B8DlNm2DCBWNzYzWkWiZfrchQfur7TKX8Dhc+P13ZHxh8gxC4bozSz+swLTvUq6c5QmwLcswnOUojZW1geLvl40MH1j7fAP/unKF2R2VQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a08d4ada12so15327455ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 13:29:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726777760; x=1727382560;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6DN2914apgWymUOCk6lZsIDS6FL9SL9oIBlj62IVcVU=;
-        b=M7zXBim7mLPd0SZAVzeKvhBoGTmk9qnYrF9byold0GeiMpPhDcdbEjhet8tQWqrAC6
-         42UZoKA+HmNgU9z+A3di0vTpISzpy/h/F2Uv1KRzfBoWbdIOnbYmtbmlezV3r1vTP669
-         dRWaEfFYOTB+4K8IoFoPQv6q/m8bwnDyZGAB1g9htG9uN/Z25Yx2/dwyrSIgAUbDxuho
-         RbeoInsflx8TDcrMwrVE8lX+CoSsX9X1D+3dyWrqnTX8m3frotg6HLvpY2g6SWPldhZK
-         1AgCLM4Uc8Ar6HJ080eFN8t0iy/DO/4VLE7D9faJC/ZxPBQxtqhpw4b6hvD3AYcwLqZO
-         RG/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXHVmCtU/2iqULUmZqx9idQo+wBrVZH0UgLC8qchjCEKA0NqCTJznQQC0oy21x3coYNdJjoPfZPsU4qnfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0MFb5GB3OeYU3gRaW8oehGPivfIff864fUAZ6oGUoMGj9jLby
-	9poJzBE81zL3oAXQv/kwNF4tmpNZAbJ8kmcMBliH9FYAv8i6Ex0PSa1cz6UqlFCJLegn4X3Iz+5
-	FBj0Otkpus24T7029pFA8AQkKwwVv5fVzGEaHHboVjEtswOH/yook4T0=
-X-Google-Smtp-Source: AGHT+IHt8Wj47NWZOei2ttjIMadLl4DpZswtTAYAvyIz4+slOz8Scr0KIqmTQb5pCEQRNc5yaXG/eW3K7MTQipobsj3PtnrqluoZ
+	s=arc-20240116; t=1726777860; c=relaxed/simple;
+	bh=QOg9SSVk+762Jv4vk+oIinpIn6nCAa6YYARFpckLiEs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mMSrMSD6oVkrJiRt7UoI0y9Plvv1azJRQBg9O2bwnA1yxrYmkSLg5nBexSgWtmw6BpIOOQi7PZNyGuIBC9/A9j/t3sBWCTMixJqfLGFqS+no64/H+3sNESGN57tZBuOMDQPoZKFZm9uRB6iDaEMYVDnNIT01jeNSLri9lKKfnzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4X8mqk5nMBz9v7Hv;
+	Fri, 20 Sep 2024 04:11:14 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 417F51401F1;
+	Fri, 20 Sep 2024 04:30:54 +0800 (CST)
+Received: from [10.81.207.148] (unknown [10.81.207.148])
+	by APP1 (Coremail) with SMTP id LxC2BwAXqTDsiexm4cs+AQ--.1103S2;
+	Thu, 19 Sep 2024 21:30:53 +0100 (CET)
+Message-ID: <abf4a899-e53e-41ac-91d6-1865ffeff5c6@huaweicloud.com>
+Date: Thu, 19 Sep 2024 22:30:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180d:b0:3a0:8c83:91fb with SMTP id
- e9e14a558f8ab-3a0c8d09198mr8524195ab.20.1726777760081; Thu, 19 Sep 2024
- 13:29:20 -0700 (PDT)
-Date: Thu, 19 Sep 2024 13:29:20 -0700
-In-Reply-To: <000000000000aefb4d061e34a346@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ec89a0.050a0220.29194.0044.GAE@google.com>
-Subject: Re: [syzbot] [net?] INFO: task hung in linkwatch_event (4)
-From: syzbot <syzbot+2ba2d70f288cf61174e4@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-syzbot has found a reproducer for the following issue on:
-
-HEAD commit:    932d2d1fcb2b Merge tag 'dlm-6.12' of git://git.kernel.org/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=120d6607980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c208b3605ba9ec44
-dashboard link: https://syzkaller.appspot.com/bug?extid=2ba2d70f288cf61174e4
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1069b69f980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-932d2d1f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fbcb7198214b/vmlinux-932d2d1f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/418eaebf4817/bzImage-932d2d1f.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2ba2d70f288cf61174e4@syzkaller.appspotmail.com
-
-INFO: task kworker/u4:3:5245 blocked for more than 143 seconds.
-      Not tainted 6.11.0-syzkaller-05442-g932d2d1fcb2b #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u4:3    state:D stack:23120 pid:5245  tgid:5245  ppid:2      flags:0x00004000
-Workqueue: events_unbound linkwatch_event
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5188 [inline]
- __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
- __schedule_loop kernel/sched/core.c:6606 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6621
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
- linkwatch_event+0xe/0x60 net/core/link_watch.c:276
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Showing all locks held in the system:
-3 locks held by kworker/0:1/9:
- #0: ffff88801ac75948 ((wq_completion)events_power_efficient){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac75948 ((wq_completion)events_power_efficient){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc900003b7d00 ((reg_check_chans).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc900003b7d00 ((reg_check_chans).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcc4d08 (rtnl_mutex){+.+.}-{3:3}, at: reg_check_chans_work+0x99/0xfd0 net/wireless/reg.c:2480
-2 locks held by kworker/u4:0/11:
- #0: ffff88801ac79148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac79148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc900003d7d00 ((work_completion)(&sub_info->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc900003d7d00 ((work_completion)(&sub_info->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
-1 lock held by khungtaskd/25:
- #0: ffffffff8e938b60 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e938b60 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e938b60 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6701
-2 locks held by kworker/u4:10/2886:
-2 locks held by dhcpcd/4810:
- #0: ffff88801ca91c40 (&vma->vm_lock->lock){++++}-{3:3}, at: vma_start_read include/linux/mm.h:700 [inline]
- #0: ffff88801ca91c40 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x2f9/0x6e0 mm/memory.c:6015
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:3898 [inline]
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:3923 [inline]
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath+0xcfb/0x2390 mm/page_alloc.c:4329
-1 lock held by dhcpcd/4811:
- #0: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:3898 [inline]
- #0: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:3923 [inline]
- #0: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath+0xcfb/0x2390 mm/page_alloc.c:4329
-2 locks held by getty/4894:
- #0: ffff88801dfa10a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000039b2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-2 locks held by syz-execprog/5124:
- #0: ffff88803fe4bc40 (&vma->vm_lock->lock){++++}-{3:3}, at: vma_start_read include/linux/mm.h:700 [inline]
- #0: ffff88803fe4bc40 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x2f9/0x6e0 mm/memory.c:6015
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:3898 [inline]
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:3923 [inline]
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath+0xcfb/0x2390 mm/page_alloc.c:4329
-1 lock held by syz-executor/5122:
- #0: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:3898 [inline]
- #0: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:3923 [inline]
- #0: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath+0xcfb/0x2390 mm/page_alloc.c:4329
-3 locks held by kworker/u4:1/5157:
- #0: ffff888035d58948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff888035d58948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc90002ddfd00 ((work_completion)(&(&net->ipv6.addr_chk_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc90002ddfd00 ((work_completion)(&(&net->ipv6.addr_chk_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcc4d08 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_verify_work+0x19/0x30 net/ipv6/addrconf.c:4736
-3 locks held by kworker/u4:3/5245:
- #0: ffff88801ac79148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac79148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc9000246fd00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc9000246fd00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcc4d08 (rtnl_mutex){+.+.}-{3:3}, at: linkwatch_event+0xe/0x60 net/core/link_watch.c:276
-2 locks held by kworker/u4:5/5250:
- #0: ffff88801ac79148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac79148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc9000249fd00 ((work_completion)(&sub_info->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc9000249fd00 ((work_completion)(&sub_info->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
-2 locks held by kworker/u4:7/5252:
- #0: ffff88801fe3e998 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:560
- #1: ffff88801fe28948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x441/0x770 kernel/sched/psi.c:989
-2 locks held by syz-executor/5732:
- #0: ffff888035e21070 (&vma->vm_lock->lock){++++}-{3:3}, at: vma_start_read include/linux/mm.h:700 [inline]
- #0: ffff888035e21070 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x2f9/0x6e0 mm/memory.c:6015
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:3898 [inline]
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:3923 [inline]
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath+0xcfb/0x2390 mm/page_alloc.c:4329
-2 locks held by udevd/5760:
- #0: ffff8880119e8658 (&vma->vm_lock->lock){++++}-{3:3}, at: vma_start_read include/linux/mm.h:700 [inline]
- #0: ffff8880119e8658 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x2f9/0x6e0 mm/memory.c:6015
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:3898 [inline]
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:3923 [inline]
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath+0xcfb/0x2390 mm/page_alloc.c:4329
-8 locks held by syz-executor/5784:
- #0: ffff88801ed72420 (sb_writers#8){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2930 [inline]
- #0: ffff88801ed72420 (sb_writers#8){.+.+}-{0:0}, at: vfs_write+0x224/0xc90 fs/read_write.c:679
- #1: ffff888046575888 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x1ea/0x500 fs/kernfs/file.c:325
- #2: ffff8880354e4968 (kn->active#59){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x20e/0x500 fs/kernfs/file.c:326
- #3: ffffffff8f561ca8 (nsim_bus_dev_list_lock){+.+.}-{3:3}, at: new_device_store+0x1b4/0x890 drivers/net/netdevsim/bus.c:166
- #4: ffff8880441160e8 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1009 [inline]
- #4: ffff8880441160e8 (&dev->mutex){....}-{3:3}, at: __device_attach+0x8e/0x520 drivers/base/dd.c:1004
- #5: ffff888044110250 (&devlink->lock_key#23){+.+.}-{3:3}, at: nsim_drv_probe+0xcb/0xb80 drivers/net/netdevsim/dev.c:1534
- #6: ffffffff8fcc4d08 (rtnl_mutex){+.+.}-{3:3}, at: nsim_init_netdevsim drivers/net/netdevsim/netdev.c:678 [inline]
- #6: ffffffff8fcc4d08 (rtnl_mutex){+.+.}-{3:3}, at: nsim_create+0x408/0x890 drivers/net/netdevsim/netdev.c:750
- #7: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:3898 [inline]
- #7: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:3923 [inline]
- #7: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath+0xcfb/0x2390 mm/page_alloc.c:4329
-2 locks held by udevd/5785:
- #0: ffff8880122dd148 (&vma->vm_lock->lock){++++}-{3:3}, at: vma_start_read include/linux/mm.h:700 [inline]
- #0: ffff8880122dd148 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x2f9/0x6e0 mm/memory.c:6015
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:3898 [inline]
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:3923 [inline]
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath+0xcfb/0x2390 mm/page_alloc.c:4329
-2 locks held by udevd/5788:
- #0: ffff888011dcd8e0 (&vma->vm_lock->lock){++++}-{3:3}, at: vma_start_read include/linux/mm.h:700 [inline]
- #0: ffff888011dcd8e0 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x2f9/0x6e0 mm/memory.c:6015
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:3898 [inline]
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:3923 [inline]
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath+0xcfb/0x2390 mm/page_alloc.c:4329
-1 lock held by modprobe/5813:
- #0: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:3898 [inline]
- #0: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:3923 [inline]
- #0: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath+0xcfb/0x2390 mm/page_alloc.c:4329
-2 locks held by modprobe/5814:
- #0: ffff88804c225df0 (&vma->vm_lock->lock){++++}-{3:3}, at: vma_start_read include/linux/mm.h:700 [inline]
- #0: ffff88804c225df0 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x2f9/0x6e0 mm/memory.c:6015
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:3898 [inline]
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:3923 [inline]
- #1: ffffffff8ea300e0 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath+0xcfb/0x2390 mm/page_alloc.c:4329
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 25 Comm: khungtaskd Not tainted 6.11.0-syzkaller-05442-g932d2d1fcb2b #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xff4/0x1040 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+To: Jann Horn <jannh@google.com>, Boqun Feng <boqun.feng@gmail.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
+ lkmm@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Neeraj Upadhyay <neeraj.upadhyay@amd.com>, lkmm@lists.linux.dev
+References: <20240917143402.930114-1-boqun.feng@gmail.com>
+ <20240917143402.930114-2-boqun.feng@gmail.com>
+ <CAG48ez0VN8oZcqhdzkWQgNv6bwUN=MUu5EacLg5iPvMQL+R-Qg@mail.gmail.com>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <CAG48ez0VN8oZcqhdzkWQgNv6bwUN=MUu5EacLg5iPvMQL+R-Qg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwAXqTDsiexm4cs+AQ--.1103S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxur18XrW3urWxZw4ftFyDtrb_yoWrAF48pr
+	WUKF1jyF4vywn2k34DZw42q3s7Gr1fZFy5G3s5K34UA3y5uF1SvFy3KrWa9FWkur4vyw10
+	vrsxZas7tr98JFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
+	jxCztUUUUU=
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+
+
+Am 9/19/2024 um 2:12 AM schrieb Jann Horn:
+> On Tue, Sep 17, 2024 at 4:33 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+>> Hazard pointers [1] provide a way to dynamically distribute refcounting
+>> and can be used to improve the scalability of refcounting without
+>> significant space cost.
+> 
+>> +static inline void *__hazptr_tryprotect(hazptr_t *hzp,
+>> +                                       void *const *p,
+>> +                                       unsigned long head_offset)
+>> +{
+>> +       void *ptr;
+>> +       struct callback_head *head;
+>> +
+>> +       ptr = READ_ONCE(*p);
+>> +
+>> +       if (ptr == NULL)
+>> +               return NULL;
+>> +
+>> +       head = (struct callback_head *)(ptr + head_offset);
+>> +
+>> +       WRITE_ONCE(*hzp, head);
+>> +       smp_mb();
+>> +
+>> +       ptr = READ_ONCE(*p); // read again
+>> +
+>> +       if (ptr + head_offset != head) { // pointer changed
+>> +               WRITE_ONCE(*hzp, NULL);  // reset hazard pointer
+>> +               return NULL;
+>> +       } else
+>> +               return ptr;
+>> +}
+> 
+> I got nerdsniped by the Plumbers talk. So, about that smp_mb()...
+> 
+> I think you should be able to avoid the smp_mb() using relaxed atomics
+> (on architectures that have those), at the cost of something like a
+> cmpxchg-acquire sandwiched between a load-acquire and a relaxed load?
+> I'm not sure how their cost compares to an smp_mb() though.
+
+
+
+We have done a similar scheme before, and on some architectures (not 
+x86) the RMW is slightly cheaper than the mb.
+
+Your reasoning is a bit simplified because it seems to assume a stronger 
+concept of ordering than LKMM has, but even with LKMM's ordering your 
+code seems fine.
+
+I feel it can even be simplified a little, the hazard bit does not seem 
+necessary.
+
+Assuming atomic operations for everything racy, relaxed unless stated 
+otherwise:
+
+(R)eader:
+
+    old = read p // I don't think this needs acq, because of address 
+dependencies (*)
+    haz ||=_acq old
+    if (read p != old) retry;
+    *old
+
+(W)riter:
+
+    p =_??? ... // assuming we don't set it to null this needs a rel
+    --- mb ---
+    haz ||= 0
+    while (read_acq haz == old) retry;
+    delete old
+
+
+In order to get a use-after-free, both of the  R:read p  need to read 
+before  W:p = ... , so because of the W:mb, they execute before  W:haz||=0 .
+
+Also, for the use-after-free,  W:read_acq haz  needs to read before (the 
+write part of)  R:haz||=_acq old .
+
+
+Then the  W:haz ||= 0  also needs to read before (the write part of) 
+R:haz||=_acq old  because of coherence on the same location.
+
+Since both of them are atomic RMW, the  W:haz||= 0  also needs to write 
+before (the write part of)  R:haz||=_acq old , and in the absence of 
+non-RMW writes (so assuming no thread will just store to the hazard 
+pointer), this implies that the latter reads-from an rmw-sequence-later 
+store than  W:haz||=0 , which therefore executes before  R:haz||=_acq old .
+
+But because of the acquire barrier,  R:haz||=_acq old  executes before 
+the second  R:read p .
+
+
+This gives a cycle
+    (2nd)R:read p  ->xb  W:haz||=0  ->xb  R:haz||=_acq  ->xb  (2nd)R:read p
+
+and therefore is forbidden.
+
+Note that in this argument, the two  R:read p  are not necessarily 
+reading from the same store. Because of ABA, it can happen that they 
+read from distinct stores and see the same value.
+
+It does require clearing hazard pointers with an RMW like atomic_and(0) 
+(**). The combination of the two RMW (for setting & clearing the hazard 
+pointer) might in total be slower again than an mb.
+
+
+(I took the liberty to add an acquire barrier in the writer's while loop 
+for the case where we read from the (not shown) release store of the 
+reader that clears the hazard pointer. It's arguable whether that acq is 
+needed since one could argue that a delete is a kind of store, in which 
+case control dependency would handle it.)
+
+have fun,
+   jonas
+
+
+(*
+   you talk about sandwiching, and the data dependency does guarantee 
+some weaker form of sandwiching than the acq, but I don't think 
+sandwiching is required at all. If you happened to be able to set the 
+hazard pointer before reading the pointer, that would just extend the 
+protected area, wouldn't it?
+)
+
+(**
+I think if you clear the pointer with a store, the hazard bit does not 
+help. You could be overwriting the hazard bit, and the RMWs that set the 
+hazard bit might never propagate to your CPU.
+
+Also in your code you probably meant to clear the whole hazard pointer 
+in the retry code of the reader, not just the hazard bit.)
+
 
