@@ -1,166 +1,169 @@
-Return-Path: <linux-kernel+bounces-333146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD8997C482
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:57:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E605C97C485
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B22C61C228C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:57:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EEBA284746
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A62818F2F1;
-	Thu, 19 Sep 2024 06:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB2E18FC72;
+	Thu, 19 Sep 2024 06:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bNpi5FaN"
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4wHwNxD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0F718E36C;
-	Thu, 19 Sep 2024 06:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A4E18F2E8;
+	Thu, 19 Sep 2024 06:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726729020; cv=none; b=rRi/QGxecFNTQuW/oI3z04uAdAq7W6wlticX4m9XgYnyEOcReLulmy0OE/ZXvYpmIdKZP1vGtXcNHW7PBPmxx/sOV3q/5PyDVUChdwg+YeVgD/ieNO0xoiRFg+50gaOo9IQSkLnjorkM+2x+IL5rQsLM23x+ZY21Ms+InsPdtJM=
+	t=1726729037; cv=none; b=MSGuUsfiCt7vO7auOF6+WyvJxEUdRl1vE6ebuH7k1F3tS5xtrxlOCJGYEG8AdxsM/CWWEJ+3kCYDPbaOsyh+Tq7JeOXCO5Uwfhiq2DegkvqHf2lh3e/zS4Yaru45ZvPvKBL1NftrUYQQcc7+xWxxhgWDcSQGnzz9b0yih4V8BwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726729020; c=relaxed/simple;
-	bh=GfMtiwPE+51iEN55DmgtKun5udcA+FmpKBvyQAJtiY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pFrTV/3zQ9qj7gKyRz9zLYVRnWdOgu0fIZB5URddHB2igzOXPUF++AzevhJ+DLT3+fbPPleG28y/+HzZaqqXUylFJVfZZ22/iPxTzjpOMLpJlUkeVLLpugFZnhKmk/fg4J4VjLiUSn0vNO0CcUvKWqlvHCHs8GNyriCWT4YStCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bNpi5FaN; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-49bcfbc732eso172157137.3;
-        Wed, 18 Sep 2024 23:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726729018; x=1727333818; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LjyqInDSlrYo8BNK/yoqNN/E2zQvq1ceUZAN9Ivf1Ww=;
-        b=bNpi5FaNaeVbaemka+wdBKONz7KbTG9DHRjA9nCZ9vWWzHXTX9CjJefEtYo4vmKbRt
-         zGP2cyxdnd4/qTg0D+mii0wAURP1zKGcnNyubKC9V+cSwNTbBIPCO0qo1olOECosQ0KH
-         cgaZp+itLL1czeDahXRTG+MBoH7/QLZqRkh+oHnxyKlfX3g46sJX5aGjj56g6jh4Kjin
-         AL1Ui1wKnznFdC5uGHegG6c3FfJzOswKqshdZdTkqDWa1EtWFz3aoS5EWsp/8UAEfC7y
-         RhdNbzwgKLiNYvr33oEUr3KUqNZdo3IYCVD70LufxA/A8yqTLBQKF7bD/nfci37I89HS
-         nMdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726729018; x=1727333818;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LjyqInDSlrYo8BNK/yoqNN/E2zQvq1ceUZAN9Ivf1Ww=;
-        b=F/sez8UpMFeckcaFIytuE7+UjjRO85okpo1tgmtFvk03SpA3LzLYiwBqt2rmS5Xbqf
-         BUo8do5y/qldAQYZl14I4LW7GdMxRmGjvdzmwlCaZgCrFcZLdIVe28CTxKg2GoDcgWPU
-         xz9X4EpToQ/kZjjhuNn9n1Ji+JoYUII+QAeatXSiD7KlG2i3Qlw258hPqGk9vmKjsDJz
-         DgyaMQzGpiSFqmRDGFd4DcplQR+laqNhqmvCb9hQEmBrOiNUP103jic67chtaAxP51hj
-         ele6xhIa6T2v8v/JHVyH8VBD7lGm/fcr92dOwz6tjdL1z+YZlOVihhDPq43pL/A8FaTS
-         r9nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXExlqm20WfKcwpl+PiIcJTeGdV9XP0yDcpn0UQ3JkNatbl/LLgEeGL9ZF97pkm345W/Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWhPIcv6KNbj00YK0QpenoNdfO2Pns+F4IoMeKmIbZWdPuW9z4
-	/Y7rgA+q8B/wqyvqU87LEz2krIQf5GMi4C04pwUqG9AHUbYYi/Xe
-X-Google-Smtp-Source: AGHT+IGC2ng+ioGsscrlsntuIBMM5WTvaUWY7204GDLi7nIUdEs4TTLE54L89LjhuWEcoax5U440Bg==
-X-Received: by 2002:a05:6102:3a0e:b0:49b:f52d:4922 with SMTP id ada2fe7eead31-49d4f6f4a03mr14575335137.27.1726729017873;
-        Wed, 18 Sep 2024 23:56:57 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c75e494ac0sm4288096d6.66.2024.09.18.23.56.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 23:56:57 -0700 (PDT)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id A0B96120006C;
-	Thu, 19 Sep 2024 02:56:56 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 19 Sep 2024 02:56:56 -0400
-X-ME-Sender: <xms:OMvrZsjQuzR8LjcH1fyxPi4DCGk_4aGdtcfdQb2dcEEe3JmUjiewhw>
-    <xme:OMvrZlCx4WE572S8TNm0gmi5axMT2XV-YSkW-GBe8ilUU14VK3ZLbdw90B9oj39Dl
-    aH7m3SZO-xn8-XMiw>
-X-ME-Received: <xmr:OMvrZkG3hj_ipRls2R8vHpeTQKV548Mtgq74FH6jYxO5x4XBL4Qif90Qna4P7Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeltddgudduiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedvjedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhmphhgohhurhhiuggvsehgmhgrihhlrd
-    gtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtoheprhgtuhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlkhhmmhes
-    lhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehprghulhhmtghksehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehfrhgvuggvrhhitgeskhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtohepnhgvvghrrghjrdhuphgrughhhigrhieskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepjhhovghlsehjohgvlhhfvghrnhgrnhguvghsrdhorhhg
-X-ME-Proxy: <xmx:OMvrZtTYz6eTeNpSPaGUUnR0mZ27PrY_kxLNod_4kdp1GIndii5Alw>
-    <xmx:OMvrZpyOASirtdrlWDwgjkutllJxiyOOUPRmSe5y0joX5m3wS-I3EA>
-    <xmx:OMvrZr58gK9PZZmQ3W9-QIsyvB_iWjo0RV0XKTqhQZzKygh1Cy_ZdA>
-    <xmx:OMvrZmxijV_v_TYpb5r0TV-G7mOrhjbwTfMYMIS2LoznL82NeV7ayA>
-    <xmx:OMvrZti84CHJOGT8SKPcpSSsg7YzO9X45gid7lVgfGx-NoNwR1RUw37b>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 19 Sep 2024 02:56:55 -0400 (EDT)
-Date: Wed, 18 Sep 2024 23:56:31 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Alan Huang <mmpgouride@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, RCU <rcu@vger.kernel.org>,
-	linux-mm@kvack.org, lkmm@lists.linux.dev,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
-	Neeraj upadhyay <neeraj.upadhyay@amd.com>
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-Message-ID: <ZuvLHxH33-p8ki1d@boqun-archlinux>
-References: <20240917143402.930114-1-boqun.feng@gmail.com>
- <20240917143402.930114-2-boqun.feng@gmail.com>
- <CA757E86-2AE4-4077-A07A-679E3BFDBC34@gmail.com>
+	s=arc-20240116; t=1726729037; c=relaxed/simple;
+	bh=ReX0gUnQa9Tc3D01oSqR+Mnv6+e7INrFCrJR6sjtNUU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gGBxTZ99vbMKb41wYTlEz7s8qkIRIPSvBdQ7vb6RRZiCCIEZ3bb+gvs3zoBK806U8jEnr8eHOYKf2n1ufSwg5Q3WVUIkk+5infbEaklCH8m3CpNOt7k9KfLs9aRztCzHpgp8aLTITcQ5CNPpDBehOxHh7jGvgE5ipR9gq3xok+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4wHwNxD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0D8EC4CEC4;
+	Thu, 19 Sep 2024 06:57:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726729037;
+	bh=ReX0gUnQa9Tc3D01oSqR+Mnv6+e7INrFCrJR6sjtNUU=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=A4wHwNxDXZ2hhwRVpJKiCEW0UimU+AsiGkbMpkv62Skw5290PbQuKEE3m5DtGn8zF
+	 RZqscj6XsBSf8B/1YG8ZbXkT3bs6YuOHBZuUH3dz+pYlNbwncjdO1cFlvxmFXb+o+5
+	 fSsfvo4/0fRkDWiaUir3KyG+JMdkRMz01FpbJe2yv/ZtGQKQXLfmVkz8e+MNpbB8ie
+	 FXgNArQ0EHoRBX1XIo22SEn4Dwsb1jo+gK2zFqoM5rS7C+52/7YnZy5XW+scDIM66l
+	 LUYsmqFmkENV8lbbPaWVT5V0M7BkumSfaPSisTJdEPxP493m3TOW7qRokHM9aNmrKH
+	 BRetyFC/qkLGg==
+Message-ID: <f79a48e6-e0ff-453f-98c1-1c5acbe6467d@kernel.org>
+Date: Thu, 19 Sep 2024 08:57:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA757E86-2AE4-4077-A07A-679E3BFDBC34@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: mfd: aspeed: support for AST2700
+To: Ryan Chen <ryan_chen@aspeedtech.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
+ <joel@jms.id.au>, "andrew@codeconstruct.com.au"
+ <andrew@codeconstruct.com.au>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>
+References: <20240916091039.3584505-1-ryan_chen@aspeedtech.com>
+ <20240916091039.3584505-2-ryan_chen@aspeedtech.com>
+ <9b356379-907c-4112-8e24-1810cfa40ef6@kernel.org>
+ <OS8PR06MB75416C23247B7AC64260C0AFF2632@OS8PR06MB7541.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <OS8PR06MB75416C23247B7AC64260C0AFF2632@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 18, 2024 at 11:17:37PM +0800, Alan Huang wrote:
-[...]
-> > +#define hazptr_tryprotect(hzp, gp, field) (typeof(gp))__hazptr_tryprotect(hzp, (void **)&(gp), offsetof(typeof(*gp), field))
-> > +#define hazptr_protect(hzp, gp, field) ({ \
-> > + typeof(gp) ___p; \
-> > + \
-> > + ___p = hazptr_tryprotect(hzp, gp, field); \
-> > + BUG_ON(!___p); \
+On 19/09/2024 08:05, Ryan Chen wrote:
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+>>> b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+>>> index 86ee69c0f45b..127a357051cd 100644
+>>> --- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+>>> +++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+>>> @@ -9,6 +9,8 @@ title: Aspeed System Control Unit
+>>>  description:
+>>>    The Aspeed System Control Unit manages the global behaviour of the
+>> SoC,
+>>>    configuring elements such as clocks, pinmux, and reset.
+>>> +  In AST2700 SOC which has two soc connection, each soc have its own
+>>> + scu  register control, ast2700-scu0 for soc0, ast2700-scu1 for soc1.
+>>>
+>>>  maintainers:
+>>>    - Joel Stanley <joel@jms.id.au>
+>>> @@ -21,6 +23,8 @@ properties:
+>>>            - aspeed,ast2400-scu
+>>>            - aspeed,ast2500-scu
+>>>            - aspeed,ast2600-scu
+>>> +          - aspeed,ast2700-scu0
+>>> +          - aspeed,ast2700-scu1
+>>>        - const: syscon
+>>>        - const: simple-mfd
+>>>
+>>> @@ -30,10 +34,12 @@ properties:
+>>>    ranges: true
+>>>
+>>>    '#address-cells':
+>>> -    const: 1
+>>> +    minimum: 1
+>>> +    maximum: 2
+>>>
+>>>    '#size-cells':
+>>> -    const: 1
+>>> +    minimum: 1
+>>> +    maximum: 2
+>>
+>> Why do the children have 64 bit addressing?
 > 
-> hazptr_tryprotect might return NULL, do you need a loop here?
-> 
+> AST2700 is 64bit address, so it also.
 
-Thanks for the review. It's me who didn't do a good job here on the
-documentation. hazptr_protect() is supposed to use for the case where
-readers know the gp won't change.
+But why do they need it?
 
-Regards,
-Boqun
 
-> > + ___p; \
-> > +})
-> > +
+Best regards,
+Krzysztof
+
 
