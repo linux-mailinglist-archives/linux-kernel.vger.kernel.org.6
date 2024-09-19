@@ -1,110 +1,193 @@
-Return-Path: <linux-kernel+bounces-333586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB9297CB03
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:31:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C2497CB06
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7570F282224
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:31:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61B70281E7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FC719D8BB;
-	Thu, 19 Sep 2024 14:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886301A01D3;
+	Thu, 19 Sep 2024 14:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="wQVp6ZQz"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lo3f/eQf"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BB01DFF7
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 14:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550F91A01A9;
+	Thu, 19 Sep 2024 14:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726756257; cv=none; b=BMWc0Br9CY+HcMV8IhHWNfoPnKEqAx3hCloml6Rh+vFzSC/hbeoj0JSa1wcCY/7S9LFMucAcfRvZ/rZnnhNQZ+aRTgSiwMdmnsvMMzQ+uWNd37t73bqDx3j213b7UDNZcl+QxnISXTi8OVHYVcnFHxxhIXCa7yC0Rk9EEZrECI0=
+	t=1726756262; cv=none; b=o4MFnIPndUmQFwQYIeTQBZTmNgm5iwoxXcVogm4QfkmiLyyUf/r2o5p4jf67pQ69BQQkpC8/x0gYN40GoJ0aVNnn9I7Rq8sAsC4F2qTJvZH413ef8dB85JOQ0nY1udpy/F6VhY6UCrpy+WceCBxXNAJ2ykqJmS5TQZil0ceqn4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726756257; c=relaxed/simple;
-	bh=PyG/LcArhwLxmgbrFEBAoGa9uNhjSk18IJ6o4wpsnFI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kuu8Q6JRww3tnTS08Eh40J3gwV7JZ7He93NkJb2gerIUaNbzzhYN29A+TF/uOzxfYCRZvuZDVR29aMzk6CVusfuoIOLIZAiEn1nQ/v2MmFIcMW98rQvXs9M+APBmTzwX71oPvMn6vONDzjkRWKBZojGCSgeIl2X9gYi+5E8/6pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=wQVp6ZQz; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=D9eVR5g8ZB7Jd+uzUOp2vC0WRbdOZROeW1n8Lscu0yA=; b=wQVp6ZQz6wvZtmI6Mh410E5Ao4
-	RLEYEs47iIHWohzdAdrygUI1kUFnRyfSt2EExcVITVCOLEVWFIOuW/S7byCuE52pqeZZMsIex+qhy
-	GtE3jyUwbCn4dz4EDjqNn6eQDyySBACq3utg+2iVNkNN1qhiEMfoEVgjQ3Spv1WXFdI0eyYglTs5G
-	wYRcoIxCBW8PVWSOomITiy0OPLOcgaBHKLQzKgMRz4RufdD6h2lwgLZdKVgL5MBlRFdihFN7Kzl/f
-	N5/sIVDSn4vMdzGe7bupDBJxQX9eOpgoMBS0wOrpgllQg+n4Ot7/4FpBqhqr19x9G2FVXQlykxmbk
-	7Hm+rSIA==;
-Received: from ip092042140082.rev.nessus.at ([92.42.140.82] helo=phil.sntech)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1srIB3-0003XD-3R; Thu, 19 Sep 2024 16:30:37 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Maxime Ripard <mripard@kernel.org>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org,
-	Diederik de Haas <didi.debian@cknow.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/7] rockchip: Enable 4K60Hz mode on RK3228, RK3328, RK3399 and RK356x
-Date: Thu, 19 Sep 2024 16:30:24 +0200
-Message-ID: <172675621369.1213843.2178006732332922667.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240908145511.3331451-1-jonas@kwiboo.se>
-References: <20240908145511.3331451-1-jonas@kwiboo.se>
+	s=arc-20240116; t=1726756262; c=relaxed/simple;
+	bh=zyDZrAsm2q4pAS7d5/oZXpjb1vnYbGyUykOVuGRGg/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QLojb9sPzG+40+fV2wU6P283DV9GXdql0kGKaVNbNV4ZTlKtmU/JiURF+V5joGZYNVW+Vlp96+EgCENj/M6OlUjs7CcShhs8sU7S21cqOBvOmDWoAFzvb9LjpAAoaiSlZuVEQoRSjG8RSYEJfpl7sCc8xW9HVagKbKih+G/BgJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lo3f/eQf; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5df9433ac0cso476446eaf.3;
+        Thu, 19 Sep 2024 07:31:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726756260; x=1727361060; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZiPyQtok24yVSzumHz7/j5nUGPIHzy2zjNQ4k/nbsBA=;
+        b=Lo3f/eQfDIqhX6lbjDjS74KoyxXcUS9IwOQkkRNMJBYWJfaHRHoaGZXKPcl0uvnhH7
+         vIEtKv+8alzU1poBW5vKJIwaXxK/Mfb4wQxdWSkFzjzGxFy6STPFLXtf7w4DpoAWFDFp
+         Add29pgLgAuo8DnJE/30xEsPtJrN96ygLItMXnxxPC9cBl6OGTd7Ojv9utx5/norHF4c
+         P8JBXVsJeADoohbSHC8HArEr4X4hPotYcLLGRLJwy0IcoJnCMGiuYVEaCO4qo3q8Atfg
+         Jr0AgNUBdYlVn+QilThioQWq7vG0XGfdQXYhGt9/DggK0WgerX7tmov2lCD5iWRncxAE
+         j1pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726756260; x=1727361060;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZiPyQtok24yVSzumHz7/j5nUGPIHzy2zjNQ4k/nbsBA=;
+        b=F3YSmqVw0lqDHHVbD4tp8G9cCAjc9XGa7j5gVn+b8HFMLkFKV1QS5emhSjsHc6sKzy
+         4ic3b9yZzogwMnbpxKUVZpXvu9tbW2d0Ugi5ZoSyAtKqZwpC/HViIKQ9gaqWrW5n1Kyg
+         nWyZt8OeoToxznzEBLMUpUkzNCKoPFkO5c0cxW+kmKf36pJCn/tIrSQSOX6vnoAqkZc8
+         1semuTJz3dA5CKtgx1ZHIBJODHkSvk3Vf7f7Ewg2g5G7qISs5VUrVRG8WWR2rLGQJlKJ
+         ALkQx11nW8HSLTWndNXA8+mOkYKKN8LqRn2Z4M+thbzbSG/ufZc7xsiS6Dm5Dj+xBwca
+         NEXA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3aQzGeEURSaXCxxxrukLprninRJnXZHupX7MUeYrxhIrn1g+vFu7FwVca4ptneyhVkEF/9fm7c6j0SKs=@vger.kernel.org, AJvYcCVRoyKERV8DEkZK3LW6upRewifeQV702NR7McgNqxc9+eQIs7Gbeif3pFgCBK4jF/xeC6eN@vger.kernel.org, AJvYcCVs41AOhOgeqZoyaFASETFf8gMy1bLJQGMF1PeyRaIvD7T4XrbZixm67JcPw80BgL9i7nsp8A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXBkP2nDoolYDI3e8cl2JnbC0mcp5RhbY+FKrFYfnMMRI+Ax8K
+	VqDZoYibGKhs8+v93E1ZODq4Ybye81HuPntaqXFJXZCxN7g1CCJQ
+X-Google-Smtp-Source: AGHT+IHFCCX3zwh0AEuYYEJIlgTq/4aYBTceJd7qLehHaLQIROmZ4+w37oqZqU3UN2mwapakGnh1aA==
+X-Received: by 2002:a05:6358:2492:b0:1b8:6074:b5a with SMTP id e5c5f4694b2df-1bb14dca507mr765456255d.1.1726756260257;
+        Thu, 19 Sep 2024 07:31:00 -0700 (PDT)
+Received: from f (cst-prg-94-182.cust.vodafone.cz. [46.135.94.182])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c75e46f29asm7947046d6.36.2024.09.19.07.30.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 07:30:59 -0700 (PDT)
+Date: Thu, 19 Sep 2024 16:30:42 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+	linux-mm@kvack.org, lkmm@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Joel Fernandes <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, 
+	Uladzislau Rezki <urezki@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Zqiang <qiang.zhang1211@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Kent Overstreet <kent.overstreet@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com
+Subject: Re: [RFC PATCH 0/4] Add hazard pointers to kernel
+Message-ID: <j3scdl5iymjlxavomgc6u5ndg3svhab6ga23dr36o4f5mt333w@7xslvq6b6hmv>
+References: <20240917143402.930114-1-boqun.feng@gmail.com>
+ <CAHk-=wi76E2xxvOaZtgN2FK9YKmbK1ru_1atL8eBCs34z7UigA@mail.gmail.com>
+ <050d17f6-7db4-4a05-b4a5-6d5ab4f361cf@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <050d17f6-7db4-4a05-b4a5-6d5ab4f361cf@amd.com>
 
-On Sun, 8 Sep 2024 14:54:57 +0000, Jonas Karlman wrote:
-> This prepares and enable use of HDMI2.0 modes, e.g. 4K@60Hz, on RK3228,
-> RK3328, RK3399 and RK356x. Support for 10-bit and/or YUV output modes is
-> not part of this series.
+On Thu, Sep 19, 2024 at 04:14:05AM +0530, Neeraj Upadhyay wrote:
+> On 9/18/2024 12:48 PM, Linus Torvalds wrote:
+> > On Tue, 17 Sept 2024 at 16:34, Boqun Feng <boqun.feng@gmail.com> wrote:
+> >>
+> >> This series introduces hazard pointers [1] to kernel space. A TL;DR
+> >> description of hazard pointers is "a scalable refcounting mechanim
+> >> with RCU-like API". More information can be found at [2].
+> > 
+> > Please give actual "this is useful for X, and here is an actual real
+> > load with numbers showing why it matters".
+> > 
 > 
-> Patch 1 add hdmiphy rate validation in mode_valid so that HDMI2.0 modes
-> can be enabled on RK3228 and RK3328.
+> One of the use case where we had seen improvement is - Nginx
+> web server throughput scalability with AppArmor enabled. For this use
+> case we see refcount scalability problem when kref operations
+> are done for AppArmor label object in Nginx worker's context. More
+> details about this are captured @ [1] [2].
 > 
-> [...]
+> When we switch from kref to hazard pointer in apparmor_file_open(),
+> we see ~7% improvement in Nginx throughput for this use case.
+> 
+> While we were working on this problem, this refcount scalability issue got
+> resolved  recently with conditional ref acquisition [3] (however, there are new
+> developments in apparmor code which might bring back the refcount problem [4]).
+> 
 
-Applied, thanks!
+The open/close thing is still serializing across different processes,
+the slowdown just got lower. As in apparmor *as is* continues to be a
+problem at big enough scale.
 
-[1/7] drm/rockchip: dw_hdmi: Filter modes based on hdmiphy_clk
-      commit: 3303a206ae7474b2f8a5d17d8df9de08bac16ca5
-[2/7] drm/rockchip: dw_hdmi: Adjust cklvl & txlvl for RF/EMI
-      commit: 6e94e2871eb706a17692acf7ef85ecf2789f6433
-[3/7] drm/rockchip: dw_hdmi: Add phy_config for 594Mhz pixel clock
-      commit: b60c86d305f46483d3ed0743e9ec97a76addcabc
-[4/7] drm/rockchip: dw_hdmi: Set cur_ctr to 0 always
-      commit: 7d324630f3515bd6e11cadeb1d748bd74ecc9664
-[5/7] drm/rockchip: dw_hdmi: Use auto-generated tables
-      commit: 7595c7ef17ffe70d0f4fdda01f87f105a12de66b
-[6/7] drm/rockchip: dw_hdmi: Enable 4K@60Hz mode on RK3399 and RK356x
-      commit: 28f0ae48e7fdbd6cdcf3972c8d8686a529ae1ede
-[7/7] drm/rockchip: Load crtc devices in preferred order
-      commit: 0c4558a1bc2df9b6e6fb311de9cab192b0943426
+Per my messages in the area in the past, I'm confident this is fixable
+with changing the refcount model to cache ref changes per-thread. I
+employed this very scheme $elsewhere.
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+Since equivalent mechanism is applicable to creds this may want to be
+implemented as something under lib/. I even started to work on it for
+Linux, but real life got in the way and then I could not be arsed to
+finish. 
+
+It is a little reminiscenet of per-cpu refs. Here is the outline again:
+
+kref usage gets replaced with a touple of { kref users; s64 refs; }
+
+task_struct grows a pointer to the cached label and refs counter on it
+
+when a new thread is created it bumps users and stores the pointer. on
+destruction it decrements users and rolls up the local changes.
+Similarly, if it turns out the label has to change during thread's
+lifetime, the same thing happens.
+
+In pseudo-code for apparmor_file_open():
+	if (unlikely(current->aa_cached_label != check_label())) {
+		/* do a replacement here */
+	}
+	/* just bump the local counter, no synchronisation with other
+	 * cpus in the common case */
+	current->aa_cached_label_refs++;
+
+In apparmor_file_close():
+	/* common case fast path */
+	if (file->aa_label == current->aa_cached_label) {
+		current->aa_cached_label_refs--;
+		return;
+	}
+	/* we get here if apparmor got reconfigured or this is a file we
+	 * inherited from another proc which had a different label and
+	 * this is the last fput */
+	kref_put(file->aa_label);
+
+Conceptually there is almost nothing to see here.
+
+As outlined above stale labels would clear themselves out as threads
+open files. However, a thread which stubborly refuses to call allocate a
+new file obj may hold on to a stale label indefinitely.
+
+One way to sort it out:
+I presume there is a spot somewhere in user<->kernel transition handling
+which updates the credentials pointer, should it have changed.
+
+$elsewhere I patched it up with a "cow" generation counter. If not
+matching with the real task struct you know you need to take the fast
+path and check creds, apparmor and whatever else. No extra branches in
+the fast path, but a new int does have to be read. Given that
+task_struct is a little bit of a cluster fuck I don't think it's a
+problem.
+
+That would be a rough sketch, anyone interested can fill in the details.
+This still performs serializing atomics in *certain* cases, but avoids
+them in almost all cases and there is nothing complicated about this
+that I see, just some effort to implement.
+
+So I don't believe patching up RCU with hazard pointers is warranted if
+apparmor is the only justification.
+
+Anyway no ETA from my end, anyone interested is free to take the idea or
+do better.
 
