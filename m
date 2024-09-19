@@ -1,128 +1,141 @@
-Return-Path: <linux-kernel+bounces-333115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5645C97C417
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:01:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDE697C413
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DA221F22C2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:01:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 890C21F22A75
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6426414B083;
-	Thu, 19 Sep 2024 06:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626B614A4D2;
+	Thu, 19 Sep 2024 06:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QxGtmo3N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4Ayshrwd"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BD63BB47;
-	Thu, 19 Sep 2024 06:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F9614B064
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 06:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726725690; cv=none; b=eahr1V1kNnrgdK3bE4ErT/BxpXWuLuNB3bWDs8epvmLbCa5vx4R6Qzfw0GJ/wgl2OshOLXh+bpCD4x6e9g4rsrvWhZnWQkFj4h6oGw4x5DHwPBxxRAqS1gEs9sXZREAUsznBmmLlpP3RemLYKEpgh6jFKpiztF9gXKZ8wec8Rvw=
+	t=1726725621; cv=none; b=ooYulArhGdlDH12rIZLHg3EHJQ8epmDcOLKf1AWmnKDb3iq7xtDMTGOiG5T+n/zDG3r00DMZ9ijGiazKt1zmMDxhfsAU3zjwuaYOZZVUweVm9VR42qM7JWdDOTzqaoDy96yRX6eiUq1pQvUF20Rj71GCSlFXQkkof8uErq6MlIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726725690; c=relaxed/simple;
-	bh=sz+NdboBq3WW4iSwz34dxky2Tt2p6pPpiZJ85/hXboQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pRXadmFTHMjekOSTgMo4zYvQL5py5mH54utEkBwyulZ7IJ1qceopitdEKATdGydS/TEyPjrbMWzW40/gt5CjjwykzekLPL0Cm2Isqjl2mD1DNGWQrLqw16lzSwzyUotHC6KuTXIp+0coI/REWRxvU7yT/+en/G1ohgG4Zb2t2L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QxGtmo3N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99CD5C4CEC4;
-	Thu, 19 Sep 2024 06:01:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726725690;
-	bh=sz+NdboBq3WW4iSwz34dxky2Tt2p6pPpiZJ85/hXboQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=QxGtmo3NskYaVczjodFaX5sPXcNZuNtrnzhnmUgmSBmnHLueAfxsLeEYHkt+Ts5bU
-	 9ad9wjD+SK5rflq4dI/ThCGfN9wUjdhM+hcGFw3NfSea8rrlOrZmEGCG69umHzyHAB
-	 YtT38gYIZNh+hjgcZ7mnvHLKB+Hg0vQRmB9i6V76F4yOlJwG9YpgDwx5gbnHf6REvZ
-	 XY2iluqlxEYlrUvyCaegcfxFX1fqX+Y5O6crIbzbZAxKC67hIzB7k0j6l6PnUAW4XR
-	 BNUiCKyoRGRI7WENz03vBFIcrXIatQiXPM6Hnvk6XX13p+lszZ3JkM3G2iRFqbhIct
-	 8gycgdNAF2QUw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
-  "Frederic Weisbecker" <frederic@kernel.org>,  "Thomas Gleixner"
- <tglx@linutronix.de>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 04/14] rust: sync: add `Arc::clone_from_raw`
-In-Reply-To: <43b9bc9b-f64c-4421-8cf2-795f1f0ec94a@proton.me> (Benno Lossin's
-	message of "Wed, 18 Sep 2024 18:19:20 +0000")
-References: <20240917222739.1298275-1-a.hindborg@kernel.org>
-	<20240917222739.1298275-5-a.hindborg@kernel.org>
-	<uQyhqKNsbshVFUyAbdqOai1BfuYEl6ygcM8T-tTRf2rvmh6yIVNKqODmQavLegAedRUKVZ8JZoe7O-obhoz3Uw==@protonmail.internalid>
-	<43b9bc9b-f64c-4421-8cf2-795f1f0ec94a@proton.me>
-Date: Thu, 19 Sep 2024 07:54:06 +0200
-Message-ID: <874j6cjiip.fsf@kernel.org>
+	s=arc-20240116; t=1726725621; c=relaxed/simple;
+	bh=wZY0B8uClIPnS+4rX2HGmW/x3INl9lgkVOi/Ss4oZ2M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vh6po9gb3opgTuR8q7R4n2Y5GlbiiXni/ozN3qZTzS0jWwwVHEG6Obv3izzgzEO0dq5DjJH1a5Ni4YPlNoKcYyBYRXiZX+JAwP3SlMJMHg9R7KW3hbNn8yrQXI1eRcRLBIOwSuzrX69UN5jIZFS2C5uzJPTP3Amy7eO1Zo+xX2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4Ayshrwd; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-710f388621fso221131a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 23:00:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726725619; x=1727330419; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wZY0B8uClIPnS+4rX2HGmW/x3INl9lgkVOi/Ss4oZ2M=;
+        b=4AyshrwdbpAXlUxilhsN45bvwYX5zOXrhP27mkukq11Jv8zjpGPeIxujyGVPDxqjYx
+         fLGnY8CP0Tpv0f+ED7rkveeCzypM8Dfq1ncnvYQPS0Nl/4n9QjXX0NsT9iB8gqi+LNeE
+         1D3muTa76n8y/9pXWGEvwIDro7fgpJdGUEQcNIu2W4fzuNcPrpgbbNnLKaH2m234nCcg
+         qLrn/0pYbH1XbXd7Yg1SnKOyF/AUEXYsAkP592jplTHnqYYfUa5b344a8pqG1ACIscj6
+         /r3e8d0DX65FHfAxlS1wU0bydIy3LgffoOoofoeVvbey6A2mnuuKB6Q3BGIcaKbgi47Z
+         26fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726725619; x=1727330419;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wZY0B8uClIPnS+4rX2HGmW/x3INl9lgkVOi/Ss4oZ2M=;
+        b=di+H66IU3061bugHRaNulc8U4jIs4+ZEiaBKOaLFUmnMUuA1s2jCJLb1KXs4ptNMU0
+         wlc22ewTP+wr+5BqH9M36y4pfGx0lwDeWSzhP4cKywTtx4YcDIqsJI/xE6ksuTFMKAmx
+         5GdOrG+tAbff0rJfhaS0sPIxttLkyfksTVDcV8ZmV2XynUAnFp4IofzJaFpozP+o0reK
+         pFiI/dhmIqs7zCOn2opDseaGQ4+4E+faqiITO5V+0vhusS0bxQ7MABIi0x8g0wjAwo/2
+         EmbQ+qTg0reKgITNMfDkkNppUqHqq0RWuQ03PWWMeemZGYVYApGvePLN0FIL3IkSwmDM
+         Ulkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUt7AWdB+OVwf7OGfM9BOYB8uCvh+HkfAmPVMoZi3o6l/wonUl39d+IhCY3/8c9IC5pBh8VHcKjmeLVwIk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcFqjQSgLadeh1saQiMCgbWPG1MO4Q+jp2mHmlOdwGP0UKGYRz
+	XDMjt6K/ByZmO+60zN5tukCS5y+qkQAnc1/NuQ0kJM1SNaNRVAdHSPlLIpn+jfuhG6cwFyXdufo
+	tsqkcbvsvuSKdxiJcdWY3FeE3ryEsZdvUHkYz
+X-Google-Smtp-Source: AGHT+IEnAs2aCz8JyONyy/WuuYLnmkZnOS5WuzPFbZIPIIeHWx4iKe/LYNTIJ9dBscjH/HFJnxc5Keli2GenKhkHrvk=
+X-Received: by 2002:a05:6870:854a:b0:261:2072:7b5d with SMTP id
+ 586e51a60fabf-27c3f6469c8mr14147636fac.29.1726725619042; Wed, 18 Sep 2024
+ 23:00:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240909211506.326648-1-mathieu.desnoyers@efficios.com>
+ <20240909211506.326648-2-mathieu.desnoyers@efficios.com> <CANpmjNMjndyBAO3HKHkC+v7zNZv1XHvH5Fjd9S5q0Jj-sEkx-w@mail.gmail.com>
+ <0edc398e-d193-4c2d-907e-f5db93143f79@efficios.com> <CANpmjNOPJm7nfzuF2VXLmixBZ0ygQ84AkxG8jH0E79XzWPu8xQ@mail.gmail.com>
+ <5cf2c0a5-7a99-4294-b316-eee07896ddf6@efficios.com>
+In-Reply-To: <5cf2c0a5-7a99-4294-b316-eee07896ddf6@efficios.com>
+From: Marco Elver <elver@google.com>
+Date: Thu, 19 Sep 2024 08:00:00 +0200
+Message-ID: <CANpmjNM0TGU9qtS35dHBxQ_TZdSnaJviK=sGqY9kiH049AJXXQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] sched: Improve cache locality of RSEQ concurrency
+ IDs for intermittent workloads
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
+	Valentin Schneider <vschneid@redhat.com>, Mel Gorman <mgorman@suse.de>, 
+	Steven Rostedt <rostedt@goodmis.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
+	Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
-
-> On 18.09.24 00:27, Andreas Hindborg wrote:
->> Add a method to clone an arc from a pointer to the data managed by the
->> `Arc`.
->>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> ---
->>  rust/kernel/sync/arc.rs | 20 ++++++++++++++++++++
->>  1 file changed, 20 insertions(+)
->>
->> diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
->> index a57ea3e2b44c..2c95712d12a2 100644
->> --- a/rust/kernel/sync/arc.rs
->> +++ b/rust/kernel/sync/arc.rs
->> @@ -282,6 +282,26 @@ pub unsafe fn from_raw(ptr: *const T) -> Self {
->>          unsafe { Self::from_inner(ptr) }
->>      }
->>
->> +    /// Clones an [`Arc`] instance from a pointer to the contained data.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// `ptr` must point to an allocation that is contained within a live [`Arc<T>`].
->> +    pub unsafe fn clone_from_raw(ptr: *const T) -> Self {
->> +        // SAFETY: The caller promises that this pointer points to data
->> +        // contained in an `Arc` that is still valid.
->> +        let inner = unsafe { ArcInner::container_of(ptr).as_ref() };
->> +
->> +        // INVARIANT: C `refcount_inc` saturates the refcount, so it cannot
->> +        // overflow to zero. SAFETY: By the function safety requirement, there
->> +        // is necessarily a reference to the object, so it is safe to increment
->> +        // the refcount.
->> +        unsafe { bindings::refcount_inc(inner.refcount.get()) };
->> +
->> +        // SAFETY: We just incremented the refcount. This increment is now owned by the new `Arc`.
->> +        unsafe { Self::from_inner(inner.into()) }
+On Mon, 16 Sept 2024 at 12:12, Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
+[...]
+> > Either migrate it along, _or_ pick a CID from a different thread that
+> > ran on a CPU that shares this L3. E.g. if T1 is migrated from CPU2 to
+> > CPU3, and T2 ran on CPU3 before, then it would be ok for T1 to get its
+> > previous CID or T2's CID from when it ran on CPU3. Or more simply,
+> > CIDs aren't tied to particular threads, but tied to a subset of CPUs
+> > based on topology. If the user could specify that topology / CID
+> > affinity would be nice.
 >
-> The implementation of this function looks a bit strange to me, how about
-> this?:
+> There is probably something to improve there, but I suspect this
+> is beyond the scope of this patch, and would prefer tackling this
+> topology-aware CID stealing as a separate effort. I fear that attempting
+> to be too aggressive in keeping the CID allocation compact on migration
+> may require us to set/clear bits in the mm_cidmask more often, which may
+> impact some workloads. If we look into this we need to be careful about
+> regressions.
+
+As discussed at LPC, narrowing down a generically optimal policy is
+hard. It's easy to overfit for any one particular workload, system,
+etc. So the current approach certainly works. One step at a time. :-)
+
+To cater better to different systems or workloads, it might make sense
+to consider giving user space more control over the policy. Various
+options exist, from tweaking sysctl knobs to eBPF hooks. My preference
+here would be towards eBPF hooks that can influence CID partitioning
+dynamically. But that's probably something to think about for the
+future - I have no good answer, only that some way to experiment more
+rapidly would help to narrow down what's optimal.
+
+> >> When the number of threads is < number of mm allowed cpus, the
+> >> migrate hooks steal the concurrency ID from CPU 2 and moves it to
+> >> CPU 3 if there is only a single thread from that mm on CPU 2, which
+> >> does what you wish.
+> >
+> > Only if the next CPU shares the cache. What if it moves the thread to
+> > a CPU where that CPU's L3 cache != the previous CPU's L3 cache. In
+> > that case, it'd be preferable to pick a last-used CID from the set of
+> > CPUs that are grouped under that L3 cache.
 >
->     // SAFETY: this function has the same safety requirements as `from_raw`.
->     let arc = unsafe { Self::from_raw(ptr) };
->     let clone = arc.clone();
->     // Prevent decrementing the refcount.
->     mem::forget(arc);
->     clone
->
+> Without going all the way towards making this topology-aware, one
+> improvement I would do for the next version of this patch is to
+> prevent moving the src CID to the destination cpu (on migration)
+> when the dst cpu has a recent_cid set. Basically this:
 
-We do not own
-a refcount on the Arc. For a short duration you will have a wrong
-refcount. If you have two Arcs and the refcount is 1, the ArcInner might
-be dropped after the first line of this suggestion, before you do clone,
-and then this is not sound.
+I think that makes sense.
 
-Best regards,
-Andreas
-
+Thanks,
+-- Marco
 
