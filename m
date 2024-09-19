@@ -1,116 +1,143 @@
-Return-Path: <linux-kernel+bounces-333773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31C8197CDDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:55:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DABE897CCC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62A6B1C22149
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:55:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2110E1C21DA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3BC2F86E;
-	Thu, 19 Sep 2024 18:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9221A0B0F;
+	Thu, 19 Sep 2024 16:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=internode.on.net header.i=@internode.on.net header.b="aBjBiQxO"
-Received: from omr000.pc5.atmailcloud.com (omr000.pc5.atmailcloud.com [103.150.252.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jojTEVFX"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C433C25624
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 18:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.150.252.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5026619F433;
+	Thu, 19 Sep 2024 16:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726772131; cv=none; b=II8uZzekwUODM3ERJ5Dbp7W/DroVci0N1vT0kQK0dbEhRLxK/fG8NwCypMZykD5Ra883V9XAvtJktIizyHKxq8NBe8LAN9/DRe+yxC/6Aq7hueE3o/v/6Wm15gI8kmf2ccrT1juj0Tjom5IQPOp7L58M4gryIlcP/sc77FqPZbA=
+	t=1726765139; cv=none; b=JAM/AsBgahMGS2jJxdlGEZWh3hO/AjX7v1LJzH/rKL3AMOzn7eN7NhL9t0+fEXtYifYHmVqrZvIKK8d7YZvoHypV77+H/z2AEmQ6cWs/3456LHiOUr2HLjn9PNRP1G9/+RgdSv96IKXhxermA0+Ztv0eZkDBDIfeU0XB/qjoVeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726772131; c=relaxed/simple;
-	bh=chaRijaW/4ADbHv2b3PNvl3AH4FWg2/8ru69hKxIMng=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mO4zMsA6VJ2Q+XZ3nPaR/SJ6cwOVHDWhdMsyoNeV8w9I4isqG/IDLMr9YV84dQidv1SkCrcvN2VUcfknqi3ZyI5/JZpZGR4UtALpx/7B1EIFWchFulOfps88UJ4JHfpl0cC3v4JpfwKMq3k5+R9osMnOhbzecmoFkR2GhuyyBxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=internode.on.net; spf=pass smtp.mailfrom=internode.on.net; dkim=pass (2048-bit key) header.d=internode.on.net header.i=@internode.on.net header.b=aBjBiQxO; arc=none smtp.client-ip=103.150.252.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=internode.on.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=internode.on.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=internode.on.net; s=202309; h=MIME-Version:Message-ID:Date:Subject:To:From:
-	content-type; bh=CNvzFe9fGd98RlReCYS+NNkkhCDG6VKvF/0EOMmVuWw=; b=aBjBiQxONcG+
-	WStWCQNFMDyM5XL8L1jEzI2qqij749Gda8n53drz+derd8HA4XwjKNa1vC5DUQSy7cyHzmZZFGv/i
-	G+nnprzZT7RD0myzz/ZaRUj4YYxRhCBLVjgZZyFZH7sAmglhQi35Q18txbtpwAK2d1sga2+NtVtzS
-	cvf6N0YJ+WBlWG4v4QV8JyCDTRXH0LecxI/++lVRzLSvTsqUs+EBwPtRX2Zm+RnIrG47s2/xXCkbM
-	7f9S5CEcTO7E09RwZmIP6KPW0RQrpHSGLZy77sAn0GMAh3vSQjJqElpc4FhJRUPPtZP1sMvxuFBXa
-	1em9/3Q+IyV26dom6HPYbw==;
-Received: from CMR-KAKADU01.i-02175a00542f9bb7e
-	 by OMR.i-011229ae50fa0cd71 with esmtps
-	(envelope-from <arthur.marsh@internode.on.net>)
-	id 1srKST-000000006NL-2t4y;
-	Thu, 19 Sep 2024 16:56:45 +0000
-Received: from [203.173.7.72] (helo=localhost)
-	 by CMR-KAKADU01.i-02175a00542f9bb7e with esmtpsa
-	(envelope-from <arthur.marsh@internode.on.net>)
-	id 1srKST-000000004vD-06HQ;
-	Thu, 19 Sep 2024 16:56:45 +0000
-Received: from amarsh04 by localhost with local (Exim 4.98)
-	(envelope-from <arthur.marsh@internode.on.net>)
-	id 1srKSP-000000001Cq-1EPo;
-	Fri, 20 Sep 2024 02:26:41 +0930
-From: Arthur Marsh <arthur.marsh@internode.on.net>
-To: wuhoipok@gmail.com
-Cc: Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	alexander.deucher@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	christian.koenig@amd.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	tzimmermann@suse.de,
-	arthur.marsh@internode.on.net
-Subject: drm/radeon: remove load callback from kms_driver
-Date: Fri, 20 Sep 2024 02:26:40 +0930
-Message-ID: <20240919165641.4632-1-user@am64>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240630165949.117634-3-wuhoipok@gmail.com>
-References: <20240630165949.117634-3-wuhoipok@gmail.com>
+	s=arc-20240116; t=1726765139; c=relaxed/simple;
+	bh=PfR3/HmcUIVzXWSn7odYFMbCiH4SxtzEjt0v2ntShuM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k7PzlNuAeotPaqktqit63ZXhKfCtcxVLD1hwuDs5666A3TaK0VcuVo9oqrRxQ4GprKg35QfRXNtcbIU9TsXOJ+MOI1fDmP68ZDW/xHjBNDzfdpwnM9LNi9TId7Cqooo49SsmMFzzEuJhy9w5uq8MCxVLQs2CTvZC8r63pl89B4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jojTEVFX; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cb806623eso9307565e9.2;
+        Thu, 19 Sep 2024 09:58:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726765135; x=1727369935; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G+tzXQdEW/38DDu5IJpN7fDMm3pCd35uJLpLMmrIQi8=;
+        b=jojTEVFXYmw2oJ2D54NgqOXYGmbETyONbHmuWcGex0OzaK4SrAZQEUKsza1PBRc5g/
+         RpnTaE+LI5ariL+zZFCV9nxHPUUvepZNlzihWGVrpDuTZqXrb0jWxY0BuHMfY33Hw/7z
+         vLSGbSTZSeyjVJRFUUpGh2cWg58K7vjPUCVgPpbTgcU3EdOrcgUtrKwi1PTe6YtlI6G6
+         D6Nu3Paip6t83Sji9RblI0RoelT74YEy62wikEZRZzPGxuy/Q4KoNpSU0V6NrKEP9Bmn
+         owF9qpMOGARBDeBfHV+rA4cgfu10wzeRtkbS/iLOFKoekNZ+lAK+7a9CVW8m9V5aU/2Z
+         m51w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726765135; x=1727369935;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G+tzXQdEW/38DDu5IJpN7fDMm3pCd35uJLpLMmrIQi8=;
+        b=Y1bm4CCpTHJhmZzjW1y/B3ppyAG/zPqQwTDrbz70MBsW1/yS+EJoyKsvkB7wMoO3PW
+         /0NXCN4QnSZZal/MOLEEcnT5cCZf+TA0L8I1yn2d7JrG1iBGVeolN7aAhZVRn2Ny7Qhl
+         GnnXz2sZa7GN/Gw48f5ym3mi/VqxdLkexpaBmwbJEup4G9tP/uKsQtbdlvyBFBXIuqVM
+         AhXbxHQxYSDW+8Ac4RqXtEkvL+z5I4VT227Qg4IRZID/rWli3VePjfqiFBz7+8/YOP5G
+         OOhFM9MpfuxvPESdxs9KzkJ8hnd5rzm0+spsiHLjeFCV+jPlF/6MhQm0liJkX4YBmmpc
+         KTRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbjRh2ki0uji/oaWLx2BOV2o+TKs+2LPNK5O4o1D+Vux5Mp5a6CcS2YcYTeOLO0MiUWQL+BFgEg2rsZIM=@vger.kernel.org, AJvYcCWJPJRRg4OD7V6fr4IIJ9DrnQft8O+oz1x1iUDuL9ocDabGtjiCN/2fHdZOxFdw3ZESMRoFXSNo10ix5qW+Wes=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5M7hhbVydn0PyULmVTokJf0pd25JJKo3a10ZkalNTqIeyf1Mt
+	bhQW8vTpdBHfaUDKp5GMrkeWBhtml6TzOsd1Ecwi7/HONqGN6z01
+X-Google-Smtp-Source: AGHT+IGJFVk86mlf2W401chCJXvIoaCpIV3Fsk4yvGGJ7oiuCp4IoqAzIgS4kYMXhhLjuyU+iYnwew==
+X-Received: by 2002:adf:e7d1:0:b0:375:c4c7:c7ac with SMTP id ffacd0b85a97d-378c2d6165amr13847582f8f.49.1726765135285;
+        Thu, 19 Sep 2024 09:58:55 -0700 (PDT)
+Received: from ?IPV6:2001:871:22a:452::1ad1? ([2001:871:22a:452::1ad1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f9b10sm15630208f8f.59.2024.09.19.09.58.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Sep 2024 09:58:54 -0700 (PDT)
+Message-ID: <f994bff3-6e0a-4d57-9c86-257c304f513c@gmail.com>
+Date: Thu, 19 Sep 2024 18:58:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Atmail-Id: arthur.marsh@internode.on.net
-X-atmailcloud-spam-action: no action
-X-Cm-Analysis: v=2.4 cv=S/DfwpsP c=1 sm=1 tr=0 ts=66ec57cd a=q73fGBFtUWUW5y4nvQjQTA==:117 a=q73fGBFtUWUW5y4nvQjQTA==:17 a=EaEq8P2WXUwA:10 a=x7bEGLp0ZPQA:10 a=pGLkceISAAAA:8 a=aIJAOKreiCTeCyBpU-sA:9
-X-Cm-Envelope: MS4xfHYppumKWIUnyI2Ju0M49vhnvlI5I58KLh4+FPPY2NoGJ2kbZEMp8UJ0GP5RcBj4Y7lrVRzdx8vKa/zkhB+xX2yttGtN9cY+gbgwMpCjdJRG9KUiZfoW mgFQnH+Gory5lpvGZtlBfdI/y0NdXfFypS6yxqGrTmIK0ZplfmRYhuA0wyzStGh3shfYwSgojx+DgA==
-X-atmailcloud-route: unknown
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rust: fix `ARCH_SLAB_MINALIGN` multiple definition error
+To: Gary Guo <gary@garyguo.net>, lkp@intel.com,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
+ <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
+Cc: conor.dooley@microchip.com, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, palmer@rivosinc.com,
+ rust-for-linux@vger.kernel.org
+References: <202409160804.eSg9zh1e-lkp@intel.com>
+ <20240916003347.1744345-1-gary@garyguo.net>
+Content-Language: en-US
+From: Christian Schrefl <chrisi.schrefl@gmail.com>
+In-Reply-To: <20240916003347.1744345-1-gary@garyguo.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Recent kernels resulted in a blank screen, with Xorg.0.log reporting:
+On 16.09.24 2:33 AM, Gary Guo wrote:
+> We use const helpers in form of
+> 
+>     const size_t RUST_CONST_HELPER_ARCH_SLAB_MINALIGN = ARCH_SLAB_MINALIGN;
+> 
+> to aid generation of constants by bindgen because it is otherwise a
+> macro definition of an expression and bindgen doesn't expand the
+> constant. The helpers are then have `RUST_CONST_HELPER` prefix stripped
+> and exposed to Rust code as if `ARCH_SLAB_MISALIGN` is generated
+> natively by bindgen.
+> 
+> This works well for most constants, but on RISC-V, `ARCH_SLAB_MINALIGN`
+> is defined directly as literal constant if `!CONFIG_MMU`, and bindgen
+> would generate `ARCH_SLAB_MINALIGN` directly, thus conflict with the
+> one generated through the helper.
+> 
+> To fix this, we simply need to block bindgen from generating directly
+> without going through helper.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202409160804.eSg9zh1e-lkp@intel.com/
+> Signed-off-by: Gary Guo <gary@garyguo.net>
+> ---
+>  rust/bindgen_parameters | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/rust/bindgen_parameters b/rust/bindgen_parameters
+> index a721d466bee4b..b7c7483123b7a 100644
+> --- a/rust/bindgen_parameters
+> +++ b/rust/bindgen_parameters
+> @@ -24,3 +24,8 @@
+>  # These functions use the `__preserve_most` calling convention, which neither bindgen
+>  # nor Rust currently understand, and which Clang currently declares to be unstable.
+>  --blocklist-function __list_.*_report
+> +
+> +# These constants are sometimes not recognized by bindgen depending on config.
+> +# We use const helpers to aid bindgen, to avoid conflicts when constants are
+> +# recognized, block generation of the non-helper constants.
+> +--blocklist-item ARCH_SLAB_MINALIGN
+> 
+> base-commit: d077242d68a31075ef5f5da041bf8f6fc19aa231
 
-(II) [KMS] drm report modesetting isn't supported.
+This is also needed for 32-bit ARM support.
 
-Sometimes while bisecting the pc came to a complete lockup (magic Sysreq 
-unresponsive).
+Reviewed-by: Christian Schrefl <chrisi.schrefl@gmail.com>
 
-At the end of bisecting I had:
-
-90985660ba488cd3428706e7d53d6c9cdbbf3101 is the first bad commit
-commit 90985660ba488cd3428706e7d53d6c9cdbbf3101
-Author: Wu Hoi Pok <wuhoipok@gmail.com>
-Date:   Sun Jun 30 12:59:18 2024 -0400
-
-    drm/radeon: remove load callback from kms_driver
-    
-    The ".load" callback in "struct drm_driver" is deprecated. In order to remove
-    the callback, we have to manually call "radeon_driver_load_kms" instead.
-
-This machine reports having:
-
-AMD A10-6800K APU with Radeon HD Graphics
-
-with the gpu appearing as 
-
-Advanced Micro Devices [AMD/ATI] Richland [Radeon HD 8670D] 1002:990c
-
-Regards,
-
-Arthur Marsh.
 
