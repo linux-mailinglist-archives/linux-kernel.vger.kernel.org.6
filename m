@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-333396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7749C97C7F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:26:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C46E97C7F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA9481C25BF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:26:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D3001C23C58
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597F119CC18;
-	Thu, 19 Sep 2024 10:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878B6199928;
+	Thu, 19 Sep 2024 10:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G21MlpYA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q6SjzyQl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5851199FAB;
-	Thu, 19 Sep 2024 10:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7253C0C;
+	Thu, 19 Sep 2024 10:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726741562; cv=none; b=OAgZyQEm/qF7xaEf6340hrMxNW7wtHhyDI7REKgd+kSfHp0tSFp9FOaTabDF9jRoLPZEzAyR03bsS07uD+84eaxHz3J3ihCpM7apEJI5zn1SXwGT4N8ZlFJZifcDOa3p+FOF83KfGl3/SJtXAeOFT3/sh0jgmdxU+ZlAK148Kvg=
+	t=1726741852; cv=none; b=ex68cUFeZRy8Z5v+frZLTPTiUsyvJ5fl4SaWrsPpbZmSyDOge/m+YtPIW+BG4ozn8MR8BBTsH4I2uyLWkfc5jIFekFidhunZj8S+AXht2dKM44uOiSmA+4bSX/DFWxVnR8Q8dgIRgKTvU1QaEeRo+OaVdSwk9KO00m/NP5NQu/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726741562; c=relaxed/simple;
-	bh=KEFt1oFo19jE9sxNEVuuRlx+WDgNLtCsTevNidI3PVs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kf3CyoDMueWuXQrgdXtdcwCDq4l5RMJA65mLUQFbwxskD0UZ7TWcw3O/k1eyct5BQfM2PwczbMjYhgaqx+ApeQb2bUdx9JM4PDzSldV579ZAWXXXrlozY/89Y0McGYJkQOKkTeJ9wRW8rc2T5TWAUXJZH4Fp2Yb+U6RTxJ8ENks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G21MlpYA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9471EC4CEC4;
-	Thu, 19 Sep 2024 10:25:58 +0000 (UTC)
+	s=arc-20240116; t=1726741852; c=relaxed/simple;
+	bh=btPx1qd3LQ+mxnt4YoJ740rHG/uxqVHdIte2Ap/57bI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=bYlsFjjtQ385ZrlPYat0Gmjja7h3EdIyua6NZiKL4NE1Xa4E0CTi9p7QCdafDeB8I0DgVe3/QVC+kP8AXQg84q77yN8eg/c0iUQoN0cUhg1XeNRU16yoSX9p7Cpf7zzm7JoOOJsEt+AbqE0S9/ZTRCWX99eXYgotSPQHux1ZBHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q6SjzyQl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B88AC4CEC4;
+	Thu, 19 Sep 2024 10:30:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726741562;
-	bh=KEFt1oFo19jE9sxNEVuuRlx+WDgNLtCsTevNidI3PVs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G21MlpYAqJSseevJLE1SGNU3PXOve1CeGtZVkFGTCkK9hoL00WQidsMJE4IzQp0Dz
-	 LdLhDwdckuBeWaoJCG2bbWcMS6fmYQ95chStaUFhyohegeX6LMxYOlb2ZPVifFUFj+
-	 R5aj9EZ+bRo3LoN8syipFeqLrxqRoPboZQeD3ET61vt4CC8zaZbvXsveCydfvfgyu7
-	 X6LMqkeaT5nzjYCV2SpQw6TZbgCy2Edhaizgrv4g5X9hfeyUFiVNAQf8y+wS3sgjcu
-	 IQfnaU4OhmgcAqcBX+zGzgDMdfkj+CxwgtsDiIiWobHzQlVXAx2r9AfUicuaeAyRfo
-	 8ol2w2brMElAw==
-Message-ID: <b926c116-7d5b-4bb6-8199-b7653fc5794b@kernel.org>
-Date: Thu, 19 Sep 2024 12:25:55 +0200
+	s=k20201202; t=1726741851;
+	bh=btPx1qd3LQ+mxnt4YoJ740rHG/uxqVHdIte2Ap/57bI=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=Q6SjzyQlbVDBe0HipqxZZi5WTeZnoTMWKGo4D6Y2WCrVitvKtmMoI7zlDsuI8gJh1
+	 ecj7TnIguz6QDx3VjJAFs7oOQZ5wDtSknXtuHfLF/bUvpgvvJ/Z0CCI4zZUFMgTlVh
+	 ePSOspMmEh1oOjp9Tq7KvLw2fw2Vw5fYVc7xBpuO8Lg6aO3hhzwOmJ7fvRdFldA6rf
+	 EFyr+lo3mmlr77BLHmz1yRa2uofyO8has8jWCQyAJkuFGM5YDYEJimq4rWpn+NmnOC
+	 WUEDJD/9S8jqPHwNSWa/1jOBO/prEVflVmCWNZEsJL2+AaEhZRXdXfqLGjF5A7tWkb
+	 lbTCJ9BGO6TKw==
+Message-ID: <d076275a-ff71-43e2-8a30-969a7d062acd@kernel.org>
+Date: Thu, 19 Sep 2024 12:30:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/10] arm64: dts: exynos: Add initial support for
- exynos8895 SoC
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240909110017.419960-1-ivo.ivanov.ivanov1@gmail.com>
- <20240909110017.419960-9-ivo.ivanov.ivanov1@gmail.com>
- <ylxrbde4kafbos3qmx54w2d6hpv26ngxgkkpnbdynjj2wfce32@fyzr4jxzn6z4>
- <ddda4f98-2402-04ab-108d-a1ee4beb33bd@gmail.com>
+Subject: Re: [PATCH v3 2/4] dt-bindings: Add AST2700 bindings
+To: Ryan Chen <ryan_chen@aspeedtech.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
+ <joel@jms.id.au>, "andrew@codeconstruct.com.au"
+ <andrew@codeconstruct.com.au>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>
+References: <20240916091039.3584505-1-ryan_chen@aspeedtech.com>
+ <20240916091039.3584505-3-ryan_chen@aspeedtech.com>
+ <b9bf19af-0c3c-4622-9124-a66d9df649b2@kernel.org>
+ <OS8PR06MB754148AD165538D3D6B6C3DDF2632@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <195a8bfe-e4d7-4140-9635-b86a6ce3c663@kernel.org>
+ <OS8PR06MB7541F08D97EC0CF83F8B36ACF2632@OS8PR06MB7541.apcprd06.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,44 +115,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <ddda4f98-2402-04ab-108d-a1ee4beb33bd@gmail.com>
+In-Reply-To: <OS8PR06MB7541F08D97EC0CF83F8B36ACF2632@OS8PR06MB7541.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/09/2024 19:54, Ivaylo Ivanov wrote:
->>> +		cpu3: cpu@103 {
->>> +			device_type = "cpu";
->>> +			compatible = "arm,cortex-a53";
->>> +			reg = <0x103>;
->>> +			enable-method = "psci";
->>> +		};
->>> +
->>> +		cpu4: cpu@0 {
->> Why cpu@0 is cpu4 not cpu0? Anyway, these should be ordered by unit
->> address.
+On 19/09/2024 09:15, Ryan Chen wrote:
+>>>>
+>>>>>  create mode 100644 include/dt-bindings/clock/aspeed,ast2700-clk.h
+>>>>>  create mode 100644 include/dt-bindings/reset/aspeed,ast2700-reset.h
+>>>>>
+>>>>> diff --git a/include/dt-bindings/clock/aspeed,ast2700-clk.h
+>>>>> b/include/dt-bindings/clock/aspeed,ast2700-clk.h
+>>>>> new file mode 100644
+>>>>> index 000000000000..63021af3caf5
+>>>>> --- /dev/null
+>>>>> +++ b/include/dt-bindings/clock/aspeed,ast2700-clk.h
+>>>>
+>>>> Use compatible as filename.
+>>> Modify from aspeed,ast2700-clk.h to aspeed, clk-ast2700.h, is it ok?
+>>> How about the aspeed,ast2700-reset.h file name is ok ?
+>>
+>> No. For both use the same filename, so the full compatible. FULL.
 > 
-> cpu@100 is the boot core of the first cluster consisting of cortex-a53
-> 
-> cores, hence why it's labelled as cpu0. The second cluster contains
-> 
-> the Mongoose cores, labelled and ordered after the first cluster.
-> 
-> 
-> It's ordered like so on a lot of SoCs for sanity's sake, hence why I
-> 
-> believe it should stay like that.
+> Do you mean remove aspeed,ast2700-reset.h?
+> And move reset information into "aspeed, clk-ast2700.h"
+>>
 
-I tend to switch to style expressed in DTS coding style, especially that
-we might use at some point sorting tool which would then need exception
-for CPUs. Keep existing labels, assuming they reflect reality, but order
-by unit address.
-
-> 
-> 
-> If you still think that they must be ordered by unit address, please
-> 
-> explicitly let me know so that I include that change in the v5.
-> 
+I did not say that. "For both" means for both files, so you can keep
+both files.
 
 
 Best regards,
