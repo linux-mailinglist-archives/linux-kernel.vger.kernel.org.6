@@ -1,87 +1,113 @@
-Return-Path: <linux-kernel+bounces-333186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D43B697C50E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:46:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C691D97C536
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39DC1B21991
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:46:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67687B216AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CE2194C6A;
-	Thu, 19 Sep 2024 07:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D08194C8B;
+	Thu, 19 Sep 2024 07:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IrFsYpbx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="AtKbkD5l"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB5C23A6;
-	Thu, 19 Sep 2024 07:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD92194C78
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 07:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726731960; cv=none; b=InTYMOPzPOgzJdcSlrTAqaKLy96hKI5ux6ay3YcU6OSwpBRifgU8jP2peA2mTQc5dpoV1wIbuf39o1u4Z6VHTTBzwquxVjjYgGXdhUjlu7wa3A9Y9NrKB92i2uRdizfM/UnJ8EnVUDRFIROhSuYUrnxXbnSG/glQ7ib0ZOfnER8=
+	t=1726732091; cv=none; b=hQRWTdMaItiU4Cy2O+OS3AnWv2CjL9Ixk+zYTUP9L9Uj970ACjj6ItRNSlejinQnnikCZ1D7cltXdpuoatwt8LY24bwn2euHEE5SeGwXMgj1jNbhA6u50Ej0+lmqqCUqVpAXxR70fVslX1phKvr/A7A15B3Aac7qFvKsYVvXXgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726731960; c=relaxed/simple;
-	bh=qEMMGKMY3GETYdqOm3V9vI9ZoJfC7eDMAGarWiM29K0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=srjoNCKNKN8yYenunSXKIkiXbnZY15e/ojWo111s8UYQhbsbZ4iDvGuAyAlQCFGbegvKTCd9b4iNIkX/MIpseEdBh2/MQpjv417sayoAl9D0QtraqsswOhRQejpDtrtbdvYMJWXEWbpjpNLuXLn1AIbyoh1twErt8VRaQRQdiO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IrFsYpbx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76CE3C4CEC4;
-	Thu, 19 Sep 2024 07:45:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726731959;
-	bh=qEMMGKMY3GETYdqOm3V9vI9ZoJfC7eDMAGarWiM29K0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IrFsYpbxMy35Es+LTwzPeFkyDIKQDOdt/OXY31hQbpdLFUjFb+ctXB7lpotvh6XwO
-	 0w0KBhgdIfVoGWksf6+T6/Ir+8cbFslQ52gqKckjrH81M8zVCoN6YFz8spLBeOdhY6
-	 eBkbMHfs0/CxTUMUWCjQTOgpBuuUaXakWrffOcqVyhKC/6NARq4gQs5jwxDFYasQLx
-	 rekX1hcOgQPZieCIZESLlXdzQcaS/Ken9/eXLHs08mgCTwKvVfB9omdGgMLx+GKPeO
-	 M9ySPvzTLNDFZBMaKae5lkfBcRzUu+EFx/xStfFTs+sUjikqW5wx+cmXKaiIHC0t56
-	 Ogv/O1zvWR2Fw==
-Date: Thu, 19 Sep 2024 09:45:53 +0200
-From: Jakub Kicinski <kuba@kernel.org>
-To: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Erni Sri Satya Vennela <ernis@linux.microsoft.com>, KY Srinivasan
- <kys@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>, Dexuan Cui
- <decui@microsoft.com>, "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>, "pabeni@redhat.com"
- <pabeni@redhat.com>, "shradhagupta@linux.microsoft.com"
- <shradhagupta@linux.microsoft.com>, "ahmed.zaki@intel.com"
- <ahmed.zaki@intel.com>, "colin.i.king@gmail.com" <colin.i.king@gmail.com>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: mana: Add get_link and get_link_ksettings in
- ethtool
-Message-ID: <20240919094553.1ee7776c@kernel.org>
-In-Reply-To: <PH7PR21MB32606C49F796ED9E7AD0E5ABCA612@PH7PR21MB3260.namprd21.prod.outlook.com>
-References: <1726127083-28538-1-git-send-email-ernis@linux.microsoft.com>
-	<20240913202347.2b74f75e@kernel.org>
-	<PH7PR21MB3260F88970A04FDB9C0ACCC4CA612@PH7PR21MB3260.namprd21.prod.outlook.com>
-	<20240917170406.6a9d6e27@kernel.org>
-	<PH7PR21MB32606C49F796ED9E7AD0E5ABCA612@PH7PR21MB3260.namprd21.prod.outlook.com>
+	s=arc-20240116; t=1726732091; c=relaxed/simple;
+	bh=fMK2vHKt72NaOxlFFmitjq9xSEOHIXJsPivzWFZb4T0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TuaEwCaF7OxikvEIoBLtifc7TFnbV2iswelml/hj2m5Q3Q9A6ps9ClwlhNOQORMORYAXWSW771KYIcD1EHNjBH3ig4OQawGEUbAVvVC3YrtlO3HaCbr6C6EijSMqqii5T6OdBNzNYqMDl7dzlHn1RUBc1PlgOxlcvx1Uh26dK5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=AtKbkD5l; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48J6KVN0031226;
+	Thu, 19 Sep 2024 00:47:41 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=fis1F+2vLYA5jjS4Brh0rDa
+	ABLlMjF6lNOqFy5q0M6s=; b=AtKbkD5lWp0cKTtVpnIUp0hjd2xsAoWcgk27C0h
+	BY9mYltROSklDlTMVdAU1f8dl9nuQNoBDtwBgZtjltni+NR6bHOYVr8+H5XAwTrV
+	TNH5wknJePcpok3lYEQRtL1V6mLsY7JAzkM2pLNW5R4FnKGxjZYlharG5CUgxh7c
+	ixztE5kkftpTc4fP3kVvYvR4VQ8b3KF+ver+8AhiEpseXUEyI5+rBJzSOSg2FPWg
+	mZYgHfQUWylKDfudoXPJXbEzkWBXgzoAgW7YzUCbHKkOUCh4m3PMO251m+5FpFpN
+	AY0hysvBaknhcQF1/yGoFgIox1t3oy33jgkNadzt8CV/cUQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 41qdwgg7um-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Sep 2024 00:47:41 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 19 Sep 2024 00:47:22 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 19 Sep 2024 00:47:22 -0700
+Received: from IPBU-BLR-SERVER1.marvell.com (IPBU-BLR-SERVER1.marvell.com [10.28.8.41])
+	by maili.marvell.com (Postfix) with ESMTP id 4C9AE3F7082;
+	Thu, 19 Sep 2024 00:47:20 -0700 (PDT)
+From: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+To: <will@kernel.org>, <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <gcherian@marvell.com>, <bbhushan2@marvell.com>, <sgoutham@marvell.com>,
+        Gowthami Thiagarajan <gthiagarajan@marvell.com>
+Subject: [PATCH v8 0/6] Marvell Odyssey uncore performance monitor support
+Date: Thu, 19 Sep 2024 13:17:11 +0530
+Message-ID: <20240919074717.3276854-1-gthiagarajan@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: EW4bdoqcaSomDFz09W3jh7kl71zgbiiA
+X-Proofpoint-ORIG-GUID: EW4bdoqcaSomDFz09W3jh7kl71zgbiiA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Tue, 17 Sep 2024 20:34:40 +0000 Haiyang Zhang wrote:
-> > Unless I'm misreading I don't see the answer to the "why?" in your
-> > reply.
-> > 
-> > What benefit does reporting duplex on a virtual device bring?
-> > What kind of SW need this current patch?
-> > etc.  
-> 
-> I'm not aware of any SW has such requirement either.
-> We just want the "ethtool <nic>" cmd can output something we already know.
-> Is this acceptable?
+Odyssey is a 64 bit ARM based SoC with multiple performance monitor
+units for various blocks.
 
-Yeah, that's fine, I was just curious. 
+This series of patches introduces support for uncore performance monitor
+units (PMUs) on the Marvell Odyssey platform. The PMUs covered in this
+series include the DDR PMU and LLC-TAD PMU.
+
+v7->v8:
+- Fixed the warning reported by kernel test robot
+
+Gowthami Thiagarajan (6):
+  perf/marvell: Refactor to extract platform data - no functional change
+  perf/marvell: Refactor to extract platform specific ops - no
+    functional change
+  perf/marvell: Refactor to add version - no functional change
+  perf/marvell: Odyssey DDR Performance monitor support
+  perf/marvell : Refactor to extract platform data - no functional
+    change
+  perf/marvell : Odyssey LLC-TAD performance monitor support
+
+ Documentation/admin-guide/perf/index.rst      |   2 +
+ .../admin-guide/perf/mrvl-odyssey-ddr-pmu.rst |  80 +++
+ .../admin-guide/perf/mrvl-odyssey-tad-pmu.rst |  37 ++
+ drivers/perf/marvell_cn10k_ddr_pmu.c          | 535 +++++++++++++++---
+ drivers/perf/marvell_cn10k_tad_pmu.c          |  66 ++-
+ 5 files changed, 644 insertions(+), 76 deletions(-)
+ create mode 100644 Documentation/admin-guide/perf/mrvl-odyssey-ddr-pmu.rst
+ create mode 100644 Documentation/admin-guide/perf/mrvl-odyssey-tad-pmu.rst
+
+-- 
+2.25.1
+
 
