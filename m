@@ -1,209 +1,100 @@
-Return-Path: <linux-kernel+bounces-333308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5934E97C6BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:17:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFD0897C6DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C0561C21EBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:17:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EE301C2350B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A113D19923A;
-	Thu, 19 Sep 2024 09:17:32 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F324199FA6;
+	Thu, 19 Sep 2024 09:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="Ydd7ddqK"
+Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3EA18B480
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F06F199E8D
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726737452; cv=none; b=EiqhAw7sDHl8a7ywuvEKLaHEtrSFCjfUwlF37o4WJpDFWEeZSbci5URMAX7mqPzQgyKgOzZRkAqR9XfoOY9hQYv1JcB43IRV42EdZp9ccojx0R/Hxh5ktvwPmyXRJgdaVkRCFZxa6d1JR12yi04Sm6CjExl5ZFKfaLaGdjVzDsI=
+	t=1726737615; cv=none; b=QcqSEKR0fciliFoaw5cB3I45xc0hcN96BgAEpdO0a4X4CmfNJwrvxLzxZx39nZqbcoiINCad8tgEZUEu/Z8cfaNoIy+wRUMEbk3j5t3X5NFNnwoIBjNJGxi7D04hVvo/cRFOBW1fbRFT7OvesnDb0U5wLnVep+P5ITipdGZt8ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726737452; c=relaxed/simple;
-	bh=6rJ+Y1F5oXqTCG6kXlPKCP+27zvwmWQfn63Zo0OlV2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kLOtRx4o4HaibI7U5ywMCnAVicCPGupKtSkF4LHE+oxNWh7OdB7ZBqIxkJ7/X5TA6fyKIZ8MrjdEWVhhBNImHOkgzQ8NJNDHQhpyZySNbxmphvJTT6Ka4BT2nl05po4AJnkpFqAa2+I6nZifIC/y5QbpNzd280N96C+gNNes5K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1srDHg-0003W6-RT; Thu, 19 Sep 2024 11:17:08 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1srDHe-0091Cd-24; Thu, 19 Sep 2024 11:17:06 +0200
-Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 3606733F5C2;
-	Thu, 19 Sep 2024 09:17:05 +0000 (UTC)
-Date: Thu, 19 Sep 2024 11:17:04 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>, 
-	Markus Schneider-Pargmann <msp@baylibre.com>, "Felipe Balbi (Intel)" <balbi@kernel.org>, 
-	Raymond Tan <raymond.tan@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux@ew.tq-group.com
-Subject: Re: [PATCH 2/2] can: m_can: fix missed interrupts with m_can_pci
-Message-ID: <20240919-colorful-gorilla-of-defense-3c2da3-mkl@pengutronix.de>
-References: <ac8c49fffac582176ba1899a85db84e0f5d5c7a6.1726669005.git.matthias.schiffer@ew.tq-group.com>
- <f6155510fbea33b0e18030a147b87c04395f7394.1726669005.git.matthias.schiffer@ew.tq-group.com>
- <20240919-tourmaline-jaguar-of-reverence-4875d2-mkl@pengutronix.de>
- <0ebdf87729fba276b1ff4a06a5f4dad4a3768e8a.camel@ew.tq-group.com>
+	s=arc-20240116; t=1726737615; c=relaxed/simple;
+	bh=5wMDB4OPz3COGTuM93h1ILfXitqkNNaHdStkIY1/6/Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kPzju4NhYF8pNMVh2ccPnhUmevLUALHZok+gegxDFvWDDdK6g4Ktu0pqq35fivXDtML8jsd/6R1LjpeqHwjVrZMrDJ3K9D5fiGwLQNcrhVxhjsLERYJS3Q0i/PL1TA0uyTJbZYuYJQNpAjfLOpuITwIuD1dv1weYMlPpgNCGGJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=Ydd7ddqK reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=ite.com.tw; s=dkim;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vPt+To74DmgnbmEWmfloIsf609b19hv6wfExzjJ4nZ4=;
+  b=Ydd7ddqKjYj3n2S07UPez4wHhS4zZF3iqe92rnPHXYtgfeTFUzdgOFP0
+   e1cuOGPFHKB7WR+dTnLut0EIakgrbcTUbvHnhnmBnoaWJy34X7E1Zb+wh
+   qPrjg1i89uKWCYe++SW1Pk21AAJUB0rgD+aXnmBhSaCLcIYCZ+jhB2s/N
+   d9c1nTpN7d20XqS0dQsazAzQKC7nsFZYQ1qKMk0CoRyOw9tqW1MCgoJ70
+   L6JNUxheAubE/6zCZZ8NLmDEFoHqQm6crkmRpHwKyhHVI3mLN2oX0eojO
+   IOwXvjmN+8Ovlfljl9lwPodfu+CQ1mEMK6MqOclBY3gNY62r955lPcLxa
+   A==;
+X-CSE-ConnectionGUID: RAeOzic4S0q53+pWpFKmAQ==
+X-CSE-MsgGUID: dlSz94oyQpSJGhD2MegUCA==
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 19 Sep 2024 17:20:10 +0800
+Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
+	by mse.ite.com.tw with ESMTP id 48J9K4AY051461;
+	Thu, 19 Sep 2024 17:20:04 +0800 (GMT-8)
+	(envelope-from Hermes.Wu@ite.com.tw)
+Received: from LAPTOP-C4GM1L3U.localdomain (192.168.82.6) by
+ TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 19 Sep 2024 17:20:04 +0800
+From: Hermes Wu <Hermes.Wu@ite.com.tw>
+To: Pin-yen Lin <treapking@chromium.org>,
+        "open list:DRM DRIVERS"
+	<dri-devel@lists.freedesktop.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        open list <linux-kernel@vger.kernel.org>
+CC: Kenneth Hung <Kenneth.hung@ite.com.tw>, "Hermes.Wu" <Hermes.wu@ite.com.tw>
+Subject: [PATCH v1 0/2] drm/bridge: it6505: update dp aux function
+Date: Thu, 19 Sep 2024 17:19:14 +0800
+Message-ID: <20240919091916.1484-1-Hermes.Wu@ite.com.tw>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xjxmyvj32vfads4c"
-Content-Disposition: inline
-In-Reply-To: <0ebdf87729fba276b1ff4a06a5f4dad4a3768e8a.camel@ew.tq-group.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TPEMAIL1.internal.ite.com.tw (192.168.15.58) To
+ TPEMAIL1.internal.ite.com.tw (192.168.15.58)
+X-TM-SNTS-SMTP:
+	ED49CCEF2B8117D7D54482B1CBE584045A64E892F10997E0EC16F39FC91376582002:8
+X-MAIL:mse.ite.com.tw 48J9K4AY051461
 
+From: "Hermes.Wu" <Hermes.wu@ite.com.tw>
 
---xjxmyvj32vfads4c
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series change aux function to support MCCS and fix HDCP CTS
 
-On 19.09.2024 10:58:46, Matthias Schiffer wrote:
-> On Thu, 2024-09-19 at 10:47 +0200, Marc Kleine-Budde wrote:
-> > On 18.09.2024 16:21:54, Matthias Schiffer wrote:
-> > > The interrupt line of PCI devices is interpreted as edge-triggered,
-> > > however the interrupt signal of the m_can controller integrated in In=
-tel
-> > > Elkhart Lake CPUs appears to be generated level-triggered.
-> > >=20
-> > > Consider the following sequence of events:
-> > >=20
-> > > - IR register is read, interrupt X is set
-> > > - A new interrupt Y is triggered in the m_can controller
-> > > - IR register is written to acknowledge interrupt X. Y remains set in=
- IR
-> > >=20
-> > > As at no point in this sequence no interrupt flag is set in IR, the
-> > > m_can interrupt line will never become deasserted, and no edge will e=
-ver
-> > > be observed to trigger another run of the ISR. This was observed to
-> > > result in the TX queue of the EHL m_can to get stuck under high load,
-> > > because frames were queued to the hardware in m_can_start_xmit(), but
-> > > m_can_finish_tx() was never run to account for their successful
-> > > transmission.
-> > >=20
-> > > To fix the issue, repeatedly read and acknowledge interrupts at the
-> > > start of the ISR until no interrupt flags are set, so the next incomi=
-ng
-> > > interrupt will also result in an edge on the interrupt line.
-> > >=20
-> > > Fixes: cab7ffc0324f ("can: m_can: add PCI glue driver for Intel Elkha=
-rt Lake")
-> > > Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> > > ---
-> > >  drivers/net/can/m_can/m_can.c | 18 +++++++++++++-----
-> > >  1 file changed, 13 insertions(+), 5 deletions(-)
-> > >=20
-> > > diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_=
-can.c
-> > > index 47481afb9add3..363732517c3c5 100644
-> > > --- a/drivers/net/can/m_can/m_can.c
-> > > +++ b/drivers/net/can/m_can/m_can.c
-> > > @@ -1207,20 +1207,28 @@ static void m_can_coalescing_update(struct m_=
-can_classdev *cdev, u32 ir)
-> > >  static int m_can_interrupt_handler(struct m_can_classdev *cdev)
-> > >  {
-> > >  	struct net_device *dev =3D cdev->net;
-> > > -	u32 ir;
-> > > +	u32 ir =3D 0, ir_read;
-> > >  	int ret;
-> > > =20
-> > >  	if (pm_runtime_suspended(cdev->dev))
-> > >  		return IRQ_NONE;
-> > > =20
-> > > -	ir =3D m_can_read(cdev, M_CAN_IR);
-> > > +	/* For m_can_pci, the interrupt line is interpreted as edge-trigger=
-ed,
-> > > +	 * but the m_can controller generates them as level-triggered. We m=
-ust
-> > > +	 * observe that IR is 0 at least once to be sure that the next
-> > > +	 * interrupt will generate an edge.
-> > > +	 */
-> > > +	while ((ir_read =3D m_can_read(cdev, M_CAN_IR)) !=3D 0) {
-> > > +		ir |=3D ir_read;
-> > > +
-> > > +		/* ACK all irqs */
-> > > +		m_can_write(cdev, M_CAN_IR, ir);
-> > > +	}
-> >=20
-> > This probably causes a measurable overhead on peripheral devices, think
-> > about limiting this to !peripheral devices or introduce a new quirk that
-> > is only set for the PCI devices.
+Hermes.Wu (1):
+  drm/bridge: it6505:  Add MSSC suport
 
-> I did consider introducing a flag like that, but is the overhead
-> really significant? In the regular case (where no new interrupt comes
-> in between reading, writing and re-reading IR), the only added
-> overhead is one additional register read. On m_can_pci, I've seen the
-> race condition that causes a second loop iteration to be taken only
-> once in several 100k frames on avarage.
+allen chen (1):
+  drm/bridge:  it6505: HDCP CTS fail on repeater items
 
-A register read via SPI is quite costly compared to mmio. And Marcus has
-optimized the peripheral case quite good, and I don't want any
-performance regressions.
+ drivers/gpu/drm/bridge/ite-it6505.c | 343 +++++++++++++++++++++++-----
+ 1 file changed, 292 insertions(+), 51 deletions(-)
 
-> Or are register reads and writes that much slower on peripheral
-> devices that it is more likely to receive a new interrupt inbetween?
-> If that is the case, it would indeed make sense to limit this to
-> instances with edge-triggered IRQ.
+-- 
+2.34.1
 
-The mcp251xfd driver actually loops [1] the whole handling until there
-are no IRQ pending:
-
-https://elixir.bootlin.com/linux/v6.11/source/drivers/net/can/spi/mcp251xfd=
-/mcp251xfd-core.c#L1466
-
-But the m_can driver doesn't.
-
-[1] I don't have measurements how often the driver actually loops.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---xjxmyvj32vfads4c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbr7A0ACgkQKDiiPnot
-vG+P7wf/bY5m4qLcECs+4hJbJAyLo63e2qk3wRpv2w78Tyxxy588C2apyme79dDE
-izqcomSc2J++eWqZTfF3Yg87PupRIUUuiiHoaiut1+YWYw55B7eTfvEe8ASLLTd6
-JtDPbolQ5LOAyLllu1tMx4KRB7vI21DPsRtkaJrexl3U3aNl8knR8tPkHnuCtwxW
-qJIerMS0stYvA4lNGkPOeUBH1gYIGrPQRgSdV7GwDpprZ88UlIM148jLj8H1CX4Y
-bKlKBw2oF4uCsKgOG79VMfqat/HHFZEc8iFg6NDZ9MTi9QRT+KYMB2U8k2OZFDwM
-Gkniox4gMne7atjgnffhTqX+PbqQ5g==
-=ft3C
------END PGP SIGNATURE-----
-
---xjxmyvj32vfads4c--
 
