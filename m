@@ -1,121 +1,165 @@
-Return-Path: <linux-kernel+bounces-333278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D00897C649
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:53:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3EE97C666
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E71A2281B6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:53:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B8181F273B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1B61991B8;
-	Thu, 19 Sep 2024 08:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B003E19B3E3;
+	Thu, 19 Sep 2024 08:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lyIw5EWk"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PfqaLzg8"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318581990C1
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 08:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51073199381
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 08:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726735986; cv=none; b=Ze/Jo4kPK1cSLS8snKFtPQ/xRiDl5l+tufPRjX4xwC261zUrhLC4VutTWtgiFdOut67A4xDlcnRzsliTeUMbII9qZ83WThLa27t2yg+cYaJaETlJHaJ4kxanA2T7ri1IqoaDiLOElhLQtuHx3/1lRaEZ3HUfeBZZWz4Rnd5kUyQ=
+	t=1726736209; cv=none; b=skZVOxUAHXnt8M0XQYWJznX+mGLM3Nn6xfR/MrA4Xt74h/zKOL25FiBot6F3M4ZVewjYtXTF+2iaRcHUMLdFkc8uNhi75yUUWSFOQWkfVJc3MwgMIWEMpGaoq7+wx/0OmgM++X/EGh/OSGeRJpUyXrdVuBSjQvIOCUZK+Fr5IxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726735986; c=relaxed/simple;
-	bh=KXXXVOaStjkjtjFYBvHdl9l56tsx6I+SAZkMd3/Rp64=;
+	s=arc-20240116; t=1726736209; c=relaxed/simple;
+	bh=Kg6qWDVTVJC9Yu0YXI44B93jdutxj4y/cCo0bwD8peg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lT1tfroRFz1FZUPAxxTmaJWJ5QQAYzBbBNuVjoT1JXur1yAHicK3PY2r1AyAcOxy0ifhQRR4nwQrDqlAO9EBKtALe0aVG9EWH8YkERp4ZM0SoqVnplAZ3NANCjsxjWpgYxGLau9bp713fegqjAVZteBm2MzwqTLNeIm75XGBCWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lyIw5EWk; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53660856a21so524489e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:53:04 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qosg1UenGRhsdZm6y4+8p2qq9rDPEMRLRO8LVffZbjyW823mtQzHiywBmVEoYMUnVmChmot/uyXDQvng3TIPuin7sl15vUV+C7pqh3PfL0mAovc4SpFqluhAPH8721358Mdw0u7kHYTO/ATlTfU1ABcddNH1AUhda53Uf+5JtH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PfqaLzg8; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5367ae52a01so658422e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:56:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726735983; x=1727340783; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1726736205; x=1727341005; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KXXXVOaStjkjtjFYBvHdl9l56tsx6I+SAZkMd3/Rp64=;
-        b=lyIw5EWkaYB8DuJe/hKLWliZnDoeT1yGwhpN3fLAxPw2DW61taKvKjpvh7u4NqFJlJ
-         fsDHjDOPKdZ4PGxLfGBgzTq784w4/DlU4Xp0NWyH9PrAUYsCyLEmRiGTU9yD10bwj191
-         OMcGCLrWtgN/LquVHIk2t/oR/VEBqIILSOV/ZHoXlCmJoFBMC0wVAZtar1ewoGVaAfQY
-         tkweJk81lpp3oegGTJwi/opZamD1HidEoJS0BSr58GKb2nYJW8N23N94jCY3yUp2wdvd
-         tu9Ps8dD5uA0QZv2xumEn1RJ55LOdd0P1jd6vGIJs+ontDtSh36dE4zd05FnDkTt6mG7
-         hTLA==
+        bh=0fjrFt8H0uQ2396C/wLSUJ2SYMrzOJLqihwcUbz0SRo=;
+        b=PfqaLzg8OpAoyUekTAnQnEp241xMHmr+U1JbkhMOeyQGZ7DzO9nVoUgsFbld4tCp7W
+         Bzql4O3+/VUCw+vvpxw4POrrt+rEqiGlzyY5mk/zzX59hW64gUujLHUVzSWlbQNfLWrg
+         2pR+/qX3Vmow1BhLQnroh4LhAaZ7xo9+fyKe4pT9vuVod1F56Sb1YwuMs0PYKevDtjgv
+         AU6iviSlQWPuhivYDd4bjYv3903IRPHo6rICwGYJcfsWfmH3neMEHLnLLJzmoIPU8lXu
+         dd+1La7ZN6xzlExjeHVlEf46Y8vj3zM3sGCFn5qrQIZU5sR1TyVpiMryXaoam40O8ia6
+         Izqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726735983; x=1727340783;
+        d=1e100.net; s=20230601; t=1726736205; x=1727341005;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KXXXVOaStjkjtjFYBvHdl9l56tsx6I+SAZkMd3/Rp64=;
-        b=F/vZA1SL8U2P5NWxfPOqx5jeDOnejlTLTM+9fZG7GgNKIv2eT0fwx5LaSxZkf7+gCl
-         DYJkMydZ6otgpH8dCXrDbMmTLbii0JOV9redukJwmbDBNuopshcwx9D6ZkbaSPkjsinC
-         yw1sMPQFI2gFVSp7m1xjHg3V/VWaShf7VL0Sh8gtGODo487jJfxUlZKnP1Qzg7geAq7t
-         EBDiO61Ipm/lLdTYUZzMFtbK6NmPMTzZrg57alqleWDNx2UwyOK5dTBIorZDDq4OdEQg
-         NMs2FoFoQmNtpr8cFFbyBjRaArFHMQPNCM+4B7S/fKxHXSsTAA5iwkBJHYuUL3rEYDYT
-         HRTg==
-X-Gm-Message-State: AOJu0YzUte5BBjTZKhg5XPHaZ3SAknB7cM9V1z93KRXT8b2DvEZbAc6K
-	RgE3WoViFz2eeDTlsicsk+ca4utP4Zd74BI6kWnRDXAD9MVwFLjbeszi/XGO
-X-Google-Smtp-Source: AGHT+IF+hrgnRckzHf+HnoNKufelcSpbQeDJUihvwA5K0fDg2B3OG+tv0ErBZPRKVhbqTlhciMhK0Q==
-X-Received: by 2002:a05:6512:12d1:b0:536:5827:8778 with SMTP id 2adb3069b0e04-5367ff3382bmr11100237e87.53.1726735982797;
-        Thu, 19 Sep 2024 01:53:02 -0700 (PDT)
-Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870b41a8sm1765235e87.252.2024.09.19.01.52.59
+        bh=0fjrFt8H0uQ2396C/wLSUJ2SYMrzOJLqihwcUbz0SRo=;
+        b=AYoj26YQ5azhLJXemzfWrat6E61R2OiEdvu6lqszBXnFhDr/V9s45w+esCSzGhGATN
+         fusHi/SvlQuqpPNujLyVoVPpqlpqMS3ldV/IACdtFeN0qdYDzCrvOwC6f3gp3eeXDyVO
+         +KGMMN9LdZYPMnD1div/bTQtt24CrTkCT5TSVKoYYyyHIAO45xXXgBOvRl/Zo/VACshY
+         PerZNL0idjgvXxK/WvQqRmIlUweY3S7vxN1T1AcBBrwP3gznwhtqGzVYu5whp1ey9S8H
+         F+OyE3GlUHjuIyVcxU2vrIaB96x9rtRSv6B46XKs2+HnnXAp3oXMUqCjI+B0l48m/yZv
+         COsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYG7aVH8Ib30im9Nc3XSKf/wSbsZ1XdAAdb148c+mlQ/QG/vpVsNzTyRn31Ph9mD05QKDpQvZuKM5ieCw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxONh2S/CVapUC7gLcNDbLx9DDCHXaXsIPWhOVKvScGNjnODfH8
+	O5WTC7RpOEpfxIc0CsmHEHw0wEnxL08WZQ3a98Lpx5sHyQXtE5KMWnAmuTWvg9s=
+X-Google-Smtp-Source: AGHT+IGSUyWSIkrQHPaIEg5b3XpczZ+FNNwzNt7fLl6oCke2oHX26DGoxX3XhtU9zxbn5ENhD80UTw==
+X-Received: by 2002:a05:6512:12d1:b0:536:5827:8778 with SMTP id 2adb3069b0e04-5367ff3382bmr11105969e87.53.1726736205331;
+        Thu, 19 Sep 2024 01:56:45 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870a465esm1762422e87.198.2024.09.19.01.56.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 01:53:01 -0700 (PDT)
-Date: Thu, 19 Sep 2024 10:52:58 +0200
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Support Opensource <support.opensource@diasemi.com>,
-	Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: da9052-spi: change read-mask to write-mask
-Message-ID: <Zuvmaq9-BddwM2Pc@gmail.com>
-References: <20240918-da9052-v1-1-ce7e7024e48c@gmail.com>
+        Thu, 19 Sep 2024 01:56:43 -0700 (PDT)
+Date: Thu, 19 Sep 2024 11:56:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Amit Sunil Dhamne <amitsd@google.com>
+Cc: gregkh@linuxfoundation.org, robh@kernel.org, 
+	heikki.krogerus@linux.intel.com, badhri@google.com, kyletso@google.com, rdbabiera@google.com, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [RFC v2 2/2] usb: typec: tcpm: Add support for parsing time dt
+ properties
+Message-ID: <kjscycfgp7kxlrrdvfszzmhvxxql7y6gs6jpfcgebvtj5qwhxp@zayctjtma2cx>
+References: <20240919075120.328469-1-amitsd@google.com>
+ <20240919075120.328469-3-amitsd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="r7/2rueX74cQKBP8"
-Content-Disposition: inline
-In-Reply-To: <20240918-da9052-v1-1-ce7e7024e48c@gmail.com>
-
-
---r7/2rueX74cQKBP8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240919075120.328469-3-amitsd@google.com>
 
-On Wed, Sep 18, 2024 at 11:12:22AM +0200, Marcus Folkesson wrote:
-> Actually, the LSB bit is set on write rather than read.
-> Change it to avoid nasty things to happen.
->=20
-Fixes: e9e9d3973594 ("mfd: da9052: Avoid setting read_flag_mask for da9052-=
-i2c driver")
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+On Thu, Sep 19, 2024 at 12:51:14AM GMT, Amit Sunil Dhamne wrote:
+> Add support for DT time properties to allow users to define platform
+> specific timing deadlines of certain timers rather than using hardcoded
+> ones. For values that have not been explicitly defined in DT using this
+> property, default values will be set therefore, making this change
+> backward compatible.
+> 
+> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+> ---
+>  drivers/usb/typec/tcpm/tcpm.c | 81 ++++++++++++++++++++++++++++-------
+>  1 file changed, 65 insertions(+), 16 deletions(-)
 
---r7/2rueX74cQKBP8
-Content-Type: application/pgp-signature; name="signature.asc"
+> @@ -7053,6 +7068,35 @@ static int tcpm_port_register_pd(struct tcpm_port *port)
+>  	return ret;
+>  }
+>  
+> +static int tcpm_fw_get_timings(struct tcpm_port *port, struct fwnode_handle *fwnode)
+> +{
+> +	int ret;
+> +	u32 val;
+> +
+> +	if (!fwnode)
+> +		return -EINVAL;
 
------BEGIN PGP SIGNATURE-----
+I think this check isn't really necessary here. Other than that:
 
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmbr5mQACgkQiIBOb1ld
-UjJaGBAApI/GWa4b/HaBuCD2D9iGJwb8LcGgWl4Q5/CWxA+MbsF9fC1KQnk9MNgc
-sBwCc5oYFK2Izev5UWU+Y/CFcoBpzkO4X1ZYyjpq2yM53jpnXNkFtAYeII4UPTVk
-GHm4cVotmGdFPQsfUK0jAvTR1SJsPPJxJipeC077k3ZSla5BXSjhmNQ2vH17pqdT
-K6fdl/qpOfZDnWfqDl1NPQU0/amn8HJvmemMoUh5cftJWpFcks5OnJcKhVGAhpXG
-H8+5rI/MYxvHBkBVYi0+YKfiwActgI77F+JAh6UgZli7Gu1WiUrW/y9sD16mSaQe
-Md1CdVVefuWnXZ9wXLHSCb9dLW0tVNuR53UQsVyAwpGjpJaNzFjhjUMOzg1w3Fro
-HDtmvnFadsvP5CO4IPEemIkZv6mjEziKQUb0qI+TP0R+OS4Gh0zQ5CZG9KcME0JL
-PjpXm2CfuGmmBvyR7WeGn2pvEHmr4QmAHeYJSpno/iF2qsVKrx0Hq1v9jE0uBGvi
-ilcTn1MULkPptuKkHApblv2H1K3V6OtA4cY2DuybmxWFyFXMxLgFHx5uHS7GqQ7T
-7ZOslZedOVellROAE9CAp7pa5fViobmW4AcLMz1s3Zf0I/e8BxTI1O51UnY5gbwT
-Fqihf0XiancEhCXI2JjeLMpvIoPZ6U301/PUaGcVQpXfJbPdfhQ=
-=4efv
------END PGP SIGNATURE-----
+Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
---r7/2rueX74cQKBP8--
+
+> +
+> +	ret = fwnode_property_read_u32(fwnode, "sink-wait-cap-time-ms", &val);
+> +	if (!ret)
+> +		port->timings.sink_wait_cap_time = val;
+> +	else
+> +		port->timings.sink_wait_cap_time = PD_T_SINK_WAIT_CAP;
+> +
+> +	ret = fwnode_property_read_u32(fwnode, "ps-source-off-time-ms", &val);
+> +	if (!ret)
+> +		port->timings.ps_src_off_time = val;
+> +	else
+> +		port->timings.ps_src_off_time = PD_T_PS_SOURCE_OFF;
+> +
+> +	ret = fwnode_property_read_u32(fwnode, "cc-debounce-time-ms", &val);
+> +	if (!ret)
+> +		port->timings.cc_debounce_time = val;
+> +	else
+> +		port->timings.cc_debounce_time = PD_T_CC_DEBOUNCE;
+> +
+> +	return 0;
+> +}
+> +
+>  static int tcpm_fw_get_caps(struct tcpm_port *port, struct fwnode_handle *fwnode)
+>  {
+>  	struct fwnode_handle *capabilities, *child, *caps = NULL;
+> @@ -7608,9 +7652,14 @@ struct tcpm_port *tcpm_register_port(struct device *dev, struct tcpc_dev *tcpc)
+>  	init_completion(&port->pps_complete);
+>  	tcpm_debugfs_init(port);
+>  
+> +	err = tcpm_fw_get_timings(port, tcpc->fwnode);
+> +	if (err < 0)
+> +		goto out_destroy_wq;
+> +
+>  	err = tcpm_fw_get_caps(port, tcpc->fwnode);
+>  	if (err < 0)
+>  		goto out_destroy_wq;
+> +
+>  	err = tcpm_fw_get_snk_vdos(port, tcpc->fwnode);
+>  	if (err < 0)
+>  		goto out_destroy_wq;
+> -- 
+> 2.46.0.792.g87dc391469-goog
+> 
+
+-- 
+With best wishes
+Dmitry
 
