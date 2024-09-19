@@ -1,125 +1,84 @@
-Return-Path: <linux-kernel+bounces-333447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17AF797C8BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:42:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7CA97C8B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB22B2865FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:42:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B17DB2131C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD3419D083;
-	Thu, 19 Sep 2024 11:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5DD19D070;
+	Thu, 19 Sep 2024 11:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ojXqOjCb"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pd65Nbhp"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4AD193432;
-	Thu, 19 Sep 2024 11:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2A918A6C5;
+	Thu, 19 Sep 2024 11:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726746133; cv=none; b=owCFj4iuOLg+2OQl47BbZ0roKlOLKgV0fGIQkBjIfkula0uymk/mJJMuultzfjPPPJFUUOML8VItSEJnmonYwlLpNE9/NoQWqLt4BfQGZGNvG5l47rZvOzJonc99pYAvT/SqxRDb31cFVXV3CcEdlw2WdnVP0qWgWooF7uWbwME=
+	t=1726745869; cv=none; b=pyJNyhTNavVLvD17W130AxZorlm/QqGUaaVwMFjzSqhp3y+jsovWXuMgASe0m3TmcJmaLn74zwFENvmLNiX2fEi/p73m95XRzTK/d8WJ5Df5K1PvzECs/GrsLCkRyLKV/uqlqCJfQR4Uwr0Ko6AJcvfT+CkYYIG+frdWvZ/Tuak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726746133; c=relaxed/simple;
-	bh=rru9U71LlZqwPY0JY1GK2L/XSmtbmZoDialzHi1gztQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QQeAGCLZkRZvbAtDxPpmdubSkaAgjHolwDaFZ1p7+vNVeVTfrBTL4DJX98PYVbZh+qQkKMVKVSX1OSCQQiGs+eVLaYPt8/UYQf5cY9R+ZBn5j6mNC0Oe6/X+RHfZ8wH7KYJmLNFrkQNa/7m/5t0er45JyTR4qqK+Ic5CuR9QUWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ojXqOjCb; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48JA0LOj032380;
-	Thu, 19 Sep 2024 11:36:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=QteISjsPvSYtQj+xdyh7B2a2F3
-	0QM/xnGWrnO7sCxH0=; b=ojXqOjCbLu3PN/O3M+WKEPeiXcsNM7mgOfb5Vo2E/I
-	fegUkrgrXj+OUFo5W+rojY7rZnjkXz8fSyAGKpC3LDTyX9Anb3vWdYUk5/465yrb
-	KCrjvlKBZmGcWyrQpH9X84rmpXHAfpekob+YfeDteu8I/QmWpQ6jWIYbf1UOsZ77
-	9gDC7wD4u1FHvqjkX5ktOIjIgYWH3dCF8be+DHZ5py+uFZ7YgqmqZTbpIfstVxvJ
-	owtqyeocvFlrMnbFhQsle/nGRgnBkFetDb7iEal/agcWcssTENJxsfZNU6smq4a6
-	pzdIchvuHgjLKaeLf0jlF2TGBC8ZcCGhhMMemnbhFkLw==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3vp4av4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 11:36:51 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48JAHWqu030656;
-	Thu, 19 Sep 2024 11:36:50 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41npanh1y1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 11:36:50 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48JBanNS46268824
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 19 Sep 2024 11:36:49 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2C60C58052;
-	Thu, 19 Sep 2024 11:36:49 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C866658064;
-	Thu, 19 Sep 2024 11:36:48 +0000 (GMT)
-Received: from ltcden12-lp3.aus.stglabs.ibm.com (unknown [9.40.195.53])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 19 Sep 2024 11:36:48 +0000 (GMT)
-From: Danny Tsen <dtsen@linux.ibm.com>
-To: linux-crypto@vger.kernel.org
-Cc: stable@vger.kernel.org, herbert@gondor.apana.org.au, leitao@debian.org,
-        nayna@linux.ibm.com, appro@cryptogams.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        mpe@ellerman.id.au, ltcgcw@linux.vnet.ibm.com, dtsen@us.ibm.com,
-        Danny Tsen <dtsen@linux.ibm.com>
-Subject: [PATCH v3] crypto: Removing CRYPTO_AES_GCM_P10.
-Date: Thu, 19 Sep 2024 07:36:37 -0400
-Message-ID: <20240919113637.144343-1-dtsen@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726745869; c=relaxed/simple;
+	bh=/QwzbUtjn0JVsLE53dxj+9O1VYVnrHWhgyHOajQf6gM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G5VOD4Cg4Cqa0jTx8mHbW0OZauDuqmA3xKvO5uUV1VyXZ15TshKPvjWKEhCLJaoC6PhuPHW1hatnB3hrk6rLTtq+IWmYvouyJLByp7uFotsy5MnC+3aMNVe5E/RJYQClobCEG0oTpLVBGvQHR+mj4b3mCc5O1ItW4/fY6TyXF0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pd65Nbhp; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/QwzbUtjn0JVsLE53dxj+9O1VYVnrHWhgyHOajQf6gM=; b=pd65NbhphS1nHSii4UtGmEI+Bw
+	G7Yxc7bykIPjG7NWv6NUA+rq+rrseadCpelHDT54tZ/TUijFYJoWIoHRU77CxbHJKmZyqEaUTul6x
+	j+EHT1R3NYNRYPiDRlrFStSdpFbJmT9EZdfaGuLg/WT6t+k9SYUmI+BZqjUhlnpOtoXGCJBtid75Q
+	tIzrF9I5uVX+CeGNhjsL0OAwuCNljwgidunEyjyhjolE9vvoWIxy1p02skaFyS+z26BxTPLIZVd3x
+	E1L06M4wWFUtT7/3/CAt9GQkTuGEitdHv9O+0Ib2mTfG728DrvKUm4Gpy7BYtcLL+JwtA3ziU/AIP
+	B84Bfpqg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1srFTV-0000000AAxh-30TU;
+	Thu, 19 Sep 2024 11:37:29 +0000
+Date: Thu, 19 Sep 2024 04:37:29 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Qun-Wei Lin <qun-wei.lin@mediatek.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	David Hildenbrand <david@redhat.com>, Chris Li <chrisl@kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Kairui Song <kasong@tencent.com>, Barry Song <baohua@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-block@vger.kernel.org,
+	Casper Li <casper.li@mediatek.com>,
+	Chinwen Chang <chinwen.chang@mediatek.com>,
+	Andrew Yang <andrew.yang@mediatek.com>,
+	John Hsu <john.hsu@mediatek.com>, wsd_upstream@mediatek.com
+Subject: Re: [PATCH 0/2] Add BLK_FEAT_READ_SYNCHRONOUS and
+ SWP_READ_SYNCHRONOUS_IO
+Message-ID: <ZuwM-aEEo7DE-qXw@infradead.org>
+References: <20240919112952.981-1-qun-wei.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: qAO453QM_JcoyMgrevBjlyXeYulnrA0z
-X-Proofpoint-GUID: qAO453QM_JcoyMgrevBjlyXeYulnrA0z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-19_08,2024-09-18_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=837
- priorityscore=1501 phishscore=0 clxscore=1015 malwarescore=0 bulkscore=0
- impostorscore=0 spamscore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409190071
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240919112952.981-1-qun-wei.lin@mediatek.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Data mismatch found when testing ipsec tunnel with AES/GCM crypto.
-Disabling CRYPTO_AES_GCM_P10 in Kconfig for this feature.
-
-Fixes: fd0e9b3e2ee6 ("crypto: p10-aes-gcm - An accelerated AES/GCM stitched implementation")
-Fixes: cdcecfd9991f ("crypto: p10-aes-gcm - Glue code for AES/GCM stitched implementation")
-Fixes: 45a4672b9a6e2 ("crypto: p10-aes-gcm - Update Kconfig and Makefile")
-
-Signed-off-by: Danny Tsen <dtsen@linux.ibm.com>
----
- arch/powerpc/crypto/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/powerpc/crypto/Kconfig b/arch/powerpc/crypto/Kconfig
-index 09ebcbdfb34f..46a4c85e85e2 100644
---- a/arch/powerpc/crypto/Kconfig
-+++ b/arch/powerpc/crypto/Kconfig
-@@ -107,6 +107,7 @@ config CRYPTO_AES_PPC_SPE
- 
- config CRYPTO_AES_GCM_P10
- 	tristate "Stitched AES/GCM acceleration support on P10 or later CPU (PPC)"
-+	depends on BROKEN
- 	depends on PPC64 && CPU_LITTLE_ENDIAN && VSX
- 	select CRYPTO_LIB_AES
- 	select CRYPTO_ALGAPI
--- 
-2.43.0
+Well, you're not actually setting your new flags anywhere, which -
+as you might know - is an reson for an insta-NAK.
 
 
