@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-333511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A782A97C9D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:14:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1864297C9DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B814285AE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:14:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF25FB2215D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB5019DF86;
-	Thu, 19 Sep 2024 13:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B212519E831;
+	Thu, 19 Sep 2024 13:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PP9AZA9+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BMfBjYxS"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4EB41746
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 13:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED721E4B0;
+	Thu, 19 Sep 2024 13:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726751647; cv=none; b=q08HXcB7L4tINdgnTCriN889qtuMGf1HyMdHBDv8cFLwSgWy8NDCUhJvjU6oUpDcdekwpgUkfScPkbNNwYzWo/ZEmszQhkIRNmj8Z77DlbCJSXHFHoBOdNA9azU91kMYKeh25y02ecZcELbcYHd4tKB192+M2D+fJmm3uIgjvjI=
+	t=1726751649; cv=none; b=CoKM4YLucrxVo8QAFCTlBGQJcdmztlSh4ulbup/xrQBFqHjwaSa1oy3zY2uJ95k4ijWHK+H4gldJj0rbug17/7+OEZtBJHjlZgNR0sHVqinRe+pH3X3d3iIXvn8nnElmLpgogPQR5Xj+QBkbthi98UG9UqDJFnXYKar/jI8BUkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726751647; c=relaxed/simple;
-	bh=lCCsv1hhjyh6eQu1BkQj5yv2U8sy/3kZdPI/S2GMWBE=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=F5Xk7f60mhbwnr3h8O7v+cA7gZYZUgY7YOrkLKfq2MdNpqTBHN3xNlAtPRyamEa6T58dfLepOv2H5IWayAxefuMSrmluXzv+6b6q4SIykiZ9k67t5EeWZCn+tujkVjNLEOasxvpLgvGoMO00/Vc3iuYsmrO33UcGcT+IeKnYQnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PP9AZA9+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61E1AC4CED1;
-	Thu, 19 Sep 2024 13:14:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726751647;
-	bh=lCCsv1hhjyh6eQu1BkQj5yv2U8sy/3kZdPI/S2GMWBE=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=PP9AZA9+84eC+z00z0eD649s2F6/GfWQKbi4joDlV6xgTfrIwX+Aaqn+6jo4HPCDt
-	 jwO3s57HZrBThQRjQqrM4ePBR3MaTve53enrm/zf47+9xA6y7aRHTazqPpnDB/aEbv
-	 hTHJX+56N9CoCoqJtk4vZSeZekUepY2CFh/YvgiScOTA54SKUzlR90yzKYWjWpnRf3
-	 A6sMw1bYqlE27k6A0pQhFM23oiHpxpYYcxlqJ4u6aAwzpVDXNnpCBqNBdltouxsbf0
-	 HTFIIhRff54bB8/j4mo4SiW5Cslveihyxk0cQ1lJibPL7AFLKYP4yxN0cQ34ckyST3
-	 T+oIGM13YSIqg==
-Message-ID: <cef0eeba-6089-44c6-b08e-308f8ee36f6a@kernel.org>
-Date: Thu, 19 Sep 2024 21:14:02 +0800
+	s=arc-20240116; t=1726751649; c=relaxed/simple;
+	bh=lVpBhjn/lwbFw1fgMeadNurIObhRHR8S3Xp7BExSnJc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NF64T8tiy0KATi3BB2/SOrgq2nYzaggNx3KCUd7WoyupaFVPzv114jkiOlBTvoElM0FTCloNAtXo8K+s9EWfkWhMkY1lR9qkaDpfz1ngjngbiSShmJxckCHTTesIdkNrmxjvl14wlxiqU7Sx8u5Po5pPOGpT2+BViFNzFryBjpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BMfBjYxS; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1726751645;
+	bh=lVpBhjn/lwbFw1fgMeadNurIObhRHR8S3Xp7BExSnJc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BMfBjYxSZUtylya1Dy1KCbuAOar8fp3lQNYaP5lzmtN4ADZ5OFMoSwyvV66BvUwUJ
+	 FO0F0Lc/2v3lnr7zQYj0a1L7+kTvgKNcWWhejqNlFPQUU6QvdWuSVnZBR6zz51USIw
+	 YkFQkysbTl/ZYYKPea7zEPvtp6yJqY3zQfOyUXGVzE+Yul9rXGk9YYauef8bXfrz9N
+	 qnu5u1pqUYGMyVGRPcB4wMpd28Ncd/f75prTefG5Ktxd8O42LnunbWmwt6B6DvI4j9
+	 T2ynEQIIJaS8O6f4kxFjiEiuN84HhwFB4f48vBMOiCEkRJmWBPO+5A0CTHzgSqltwy
+	 LpVqf06RQ8vRQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id F1D8D17E1516;
+	Thu, 19 Sep 2024 15:14:04 +0200 (CEST)
+Message-ID: <0a78959a-2d72-47a0-83f1-89065ff48d0a@collabora.com>
+Date: Thu, 19 Sep 2024 15:14:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,318 +56,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, Daeho Jeong <daehojeong@google.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: introduce device aliasing file
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20240913212810.912171-1-daeho43@gmail.com>
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8183-kukui: Disable DPI display
+ interface
+To: Alper Nebi Yasak <alpernebiyasak@gmail.com>,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org
+Cc: Pi-Hsun Shih <pihsun@chromium.org>, linux-arm-kernel@lists.infradead.org,
+ Chen-Yu Tsai <wenst@chromium.org>, Fabien Parent <fparent@baylibre.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Jitao Shi
+ <jitao.shi@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Pin-yen Lin <treapking@chromium.org>, linux-kernel@vger.kernel.org,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <20240916162956.267340-1-alpernebiyasak@gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-Autocrypt: addr=chao@kernel.org; keydata=
- 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
-In-Reply-To: <20240913212810.912171-1-daeho43@gmail.com>
+In-Reply-To: <20240916162956.267340-1-alpernebiyasak@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2024/9/14 5:28, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
+Il 16/09/24 18:29, Alper Nebi Yasak ha scritto:
+> Commit 009d855a26fd ("arm64: dts: mt8183: add dpi node to mt8183") adds
+> a device-tree node for the DPI display interface that feeds the external
+> display pipeline, to enable HDMI support on the Pumpkin board.
 > 
-> F2FS should understand how the device aliasing file works and support
-> deleting the file after use. A device aliasing file can be created by
-> mkfs.f2fs tool and it can map the whole device with an extrent, not
-> using node blocks. The file space should be pinned and normally used for
-> read-only usages.
+> However, the external display is not fully described on Chrome devices,
+> blocked by further work on DP / USB-C muxing graph bindings. This
+> incomplete description currently breaks internal display at least on the
+> Cozmo board. The same issue was found and fixed on MT8186 devices with
+> commit 3079fb09ddac ("arm64: dts: mediatek: mt8186-corsola: Disable DPI
+> display interface"), but the MT8183 change wasn't merged until then.
 > 
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> ---
->   fs/f2fs/data.c         |  5 +++++
->   fs/f2fs/extent_cache.c | 10 ++++++++++
->   fs/f2fs/f2fs.h         |  5 +++++
->   fs/f2fs/file.c         | 36 ++++++++++++++++++++++++++++++++----
->   fs/f2fs/inode.c        | 10 ++++++++--
->   fs/f2fs/sysfs.c        |  2 ++
->   6 files changed, 62 insertions(+), 6 deletions(-)
+> Disable the external display interface for the Kukui device family until
+> the necessary work is done, like in the MT8186 Corsola case.
 > 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 6457e5bca9c9..9ce92093ba1e 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -3423,6 +3423,11 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
->   
->   	if (!f2fs_lookup_read_extent_cache_block(inode, index,
->   						 &dn.data_blkaddr)) {
-> +		if (IS_DEVICE_ALIASING(inode)) {
-> +			err = -ENODATA;
-> +			goto out;
-> +		}
-> +
->   		if (locked) {
->   			err = f2fs_reserve_block(&dn, index);
->   			goto out;
-> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> index fd1fc06359ee..03883963b991 100644
-> --- a/fs/f2fs/extent_cache.c
-> +++ b/fs/f2fs/extent_cache.c
-> @@ -401,6 +401,11 @@ void f2fs_init_read_extent_tree(struct inode *inode, struct page *ipage)
->   	if (atomic_read(&et->node_cnt) || !ei.len)
->   		goto skip;
->   
-> +	if (IS_DEVICE_ALIASING(inode)) {
-> +		et->largest = ei;
-> +		goto skip;
-> +	}
-> +
->   	en = __attach_extent_node(sbi, et, &ei, NULL,
->   				&et->root.rb_root.rb_node, true);
->   	if (en) {
-> @@ -463,6 +468,11 @@ static bool __lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
->   		goto out;
->   	}
->   
-> +	if (IS_DEVICE_ALIASING(inode)) {
-> +		ret = false;
-> +		goto out;
-> +	}
-> +
->   	en = __lookup_extent_node(&et->root, et->cached_en, pgofs);
->   	if (!en)
->   		goto out;
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index ac19c61f0c3e..59179b9b3a83 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -208,6 +208,7 @@ struct f2fs_mount_info {
->   #define F2FS_FEATURE_CASEFOLD			0x00001000
->   #define F2FS_FEATURE_COMPRESSION		0x00002000
->   #define F2FS_FEATURE_RO				0x00004000
-> +#define F2FS_FEATURE_DEVICE_ALIAS		0x00008000
->   
->   #define __F2FS_HAS_FEATURE(raw_super, mask)				\
->   	((raw_super->feature & cpu_to_le32(mask)) != 0)
-> @@ -3001,6 +3002,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
->   #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
->   #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
->   #define F2FS_CASEFOLD_FL		0x40000000 /* Casefolded file */
-> +#define F2FS_DEVICE_ALIAS_FL		0x80000000 /* File for aliasing a device */
->   
->   #define F2FS_QUOTA_DEFAULT_FL		(F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL)
->   
-> @@ -3016,6 +3018,8 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
->   /* Flags that are appropriate for non-directories/regular files. */
->   #define F2FS_OTHER_FLMASK	(F2FS_NODUMP_FL | F2FS_NOATIME_FL)
->   
-> +#define IS_DEVICE_ALIASING(inode)	(F2FS_I(inode)->i_flags & F2FS_DEVICE_ALIAS_FL)
-> +
->   static inline __u32 f2fs_mask_flags(umode_t mode, __u32 flags)
->   {
->   	if (S_ISDIR(mode))
-> @@ -4478,6 +4482,7 @@ F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
->   F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
->   F2FS_FEATURE_FUNCS(compression, COMPRESSION);
->   F2FS_FEATURE_FUNCS(readonly, RO);
-> +F2FS_FEATURE_FUNCS(device_alias, DEVICE_ALIAS);
->   
->   #ifdef CONFIG_BLK_DEV_ZONED
->   static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 168f08507004..0f4af6b303ff 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -727,6 +727,11 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
->   
->   	trace_f2fs_truncate_blocks_enter(inode, from);
->   
-> +	if (IS_DEVICE_ALIASING(inode) && from) {
-> +		err = -EINVAL;
-> +		goto out_err;
-> +	}
-> +
->   	free_from = (pgoff_t)F2FS_BLK_ALIGN(from);
->   
->   	if (free_from >= max_file_blocks(inode))
-> @@ -741,6 +746,21 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
->   		goto out;
->   	}
->   
-> +	if (IS_DEVICE_ALIASING(inode)) {
-> +		struct extent_tree *et = F2FS_I(inode)->extent_tree[EX_READ];
-> +		struct extent_info ei = et->largest;
-> +		unsigned int i;
-> +
-> +		for (i = 0; i < ei.len; i++)
-> +			f2fs_invalidate_blocks(sbi, ei.blk + i);
-> +
-> +		dec_valid_block_count(sbi, inode, ei.len);
-> +		f2fs_update_time(sbi, REQ_TIME);
-> +
-> +		f2fs_put_page(ipage, 1);
-> +		goto out;
-> +	}
-> +
->   	if (f2fs_has_inline_data(inode)) {
->   		f2fs_truncate_inline_inode(inode, ipage, from);
->   		f2fs_put_page(ipage, 1);
-> @@ -776,7 +796,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
->   	/* lastly zero out the first data page */
->   	if (!err)
->   		err = truncate_partial_data_page(inode, from, truncate_page);
-> -
-> +out_err:
->   	trace_f2fs_truncate_blocks_exit(inode, err);
->   	return err;
->   }
-> @@ -994,7 +1014,8 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
->   		return -EPERM;
->   
->   	if ((attr->ia_valid & ATTR_SIZE)) {
-> -		if (!f2fs_is_compress_backend_ready(inode))
-> +		if (!f2fs_is_compress_backend_ready(inode) ||
-> +				IS_DEVICE_ALIASING(inode))
->   			return -EOPNOTSUPP;
->   		if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
->   			!IS_ALIGNED(attr->ia_size,
-> @@ -1855,7 +1876,7 @@ static long f2fs_fallocate(struct file *file, int mode,
->   		return -EIO;
->   	if (!f2fs_is_checkpoint_ready(F2FS_I_SB(inode)))
->   		return -ENOSPC;
-> -	if (!f2fs_is_compress_backend_ready(inode))
-> +	if (!f2fs_is_compress_backend_ready(inode) || IS_DEVICE_ALIASING(inode))
->   		return -EOPNOTSUPP;
->   
->   	/* f2fs only support ->fallocate for regular file */
-> @@ -3264,6 +3285,9 @@ int f2fs_pin_file_control(struct inode *inode, bool inc)
->   	struct f2fs_inode_info *fi = F2FS_I(inode);
->   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->   
-> +	if (IS_DEVICE_ALIASING(inode))
-> +		return -EINVAL;
-> +
->   	if (fi->i_gc_failures >= sbi->gc_pin_file_threshold) {
->   		f2fs_warn(sbi, "%s: Enable GC = ino %lx after %x GC trials",
->   			  __func__, inode->i_ino, fi->i_gc_failures);
-> @@ -3294,6 +3318,9 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
->   	if (f2fs_readonly(sbi->sb))
->   		return -EROFS;
->   
-> +	if (!pin && IS_DEVICE_ALIASING(inode))
-> +		return -EOPNOTSUPP;
-> +
->   	ret = mnt_want_write_file(filp);
->   	if (ret)
->   		return ret;
-> @@ -4711,7 +4738,8 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter,
->   	else
->   		return 0;
->   
-> -	map.m_may_create = true;
-> +	if (!IS_DEVICE_ALIASING(inode))
-> +		map.m_may_create = true;
->   	if (dio) {
->   		map.m_seg_type = f2fs_rw_hint_to_seg_type(sbi,
->   						inode->i_write_hint);
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index aef57172014f..f118e955ba88 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -367,6 +367,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
->   		return false;
->   	}
->   
-> +	if ((fi->i_flags & F2FS_DEVICE_ALIAS_FL) && !f2fs_sb_has_device_alias(sbi)) {
-> +		f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but the feature is off",
-> +			  __func__, inode->i_ino);
-> +		return false;
-> +	}
+> Fixes: 009d855a26fd ("arm64: dts: mt8183: add dpi node to mt8183")
+> Link: https://lore.kernel.org/linux-mediatek/20240821042836.2631815-1-wenst@chromium.org/
+> Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
 
-Do we need to do sanity check device_alias feature flag w/
-sb.devs[].path format? and related inode?
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-> +
->   	return true;
->   }
->   
-> @@ -818,8 +824,6 @@ void f2fs_evict_inode(struct inode *inode)
->   	f2fs_bug_on(sbi, get_dirty_pages(inode));
->   	f2fs_remove_dirty_inode(inode);
->   
-> -	f2fs_destroy_extent_tree(inode);
-
-For hardlink inode, it missed to call f2fs_destroy_extent_tree()?
-
-Thanks,
-
-> -
->   	if (inode->i_nlink || is_bad_inode(inode))
->   		goto no_delete;
->   
-> @@ -874,6 +878,8 @@ void f2fs_evict_inode(struct inode *inode)
->   		goto retry;
->   	}
->   
-> +	f2fs_destroy_extent_tree(inode);
-> +
->   	if (err) {
->   		f2fs_update_inode_page(inode);
->   		if (dquot_initialize_needed(inode))
-> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> index fee7ee45ceaa..bf64f4cc3522 100644
-> --- a/fs/f2fs/sysfs.c
-> +++ b/fs/f2fs/sysfs.c
-> @@ -1281,6 +1281,7 @@ F2FS_SB_FEATURE_RO_ATTR(sb_checksum, SB_CHKSUM);
->   F2FS_SB_FEATURE_RO_ATTR(casefold, CASEFOLD);
->   F2FS_SB_FEATURE_RO_ATTR(compression, COMPRESSION);
->   F2FS_SB_FEATURE_RO_ATTR(readonly, RO);
-> +F2FS_SB_FEATURE_RO_ATTR(device_alias, DEVICE_ALIAS);
->   
->   static struct attribute *f2fs_sb_feat_attrs[] = {
->   	ATTR_LIST(sb_encryption),
-> @@ -1297,6 +1298,7 @@ static struct attribute *f2fs_sb_feat_attrs[] = {
->   	ATTR_LIST(sb_casefold),
->   	ATTR_LIST(sb_compression),
->   	ATTR_LIST(sb_readonly),
-> +	ATTR_LIST(sb_device_alias),
->   	NULL,
->   };
->   ATTRIBUTE_GROUPS(f2fs_sb_feat);
 
 
