@@ -1,198 +1,151 @@
-Return-Path: <linux-kernel+bounces-333609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C4F97CB4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:06:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81D397CB2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 038B6B23560
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:06:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BDD91F22E51
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCBA1A070E;
-	Thu, 19 Sep 2024 15:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5797F19FA68;
+	Thu, 19 Sep 2024 14:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="DUBj3G8F"
-Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="6WtTGwOH"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30101A08C2
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 15:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF7D19B59D;
+	Thu, 19 Sep 2024 14:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726758341; cv=none; b=oGYM9h5JI9fePzdVyxdmxWUynoI6rRw1nfW8ygrL0dl2z8XeLamtSH/gP8+VRY5qHmW4T0qfBS82Lo0Dy1QsJnX6k0aarjSnQSdH4amCBjhB+Cm/7VVhinzDzL51bZhnrUalUaTvdr9mLYvs17gO3fShTtlxhgkiurDNZAyuKtI=
+	t=1726757493; cv=none; b=ciFawbDpS0Coxd3vQWbLw90nd0OCh7KaoP7FIt6ZrEYDzdVJctvgHbkwKoe25PkO51OMT1+2SNIBAX6F0GVecwa5etgCK04h3GCFL0NpEYGXuGgLHyq1nH+VWLEqlCsVdweuZaWTD2owevLl17kS2gM87kE2uNoVbZ5CGwKDZKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726758341; c=relaxed/simple;
-	bh=FbVnODCWpuz/f/B2t1kMnQKdFEpGmKe69gEWRkKYW18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mwByVDrUzoOdDAmmMEbP1HyjTT+lrYI4b7RxnysJBuRFln9k/V1d+WgabPpdUBiKmbra0bymH8/TrYHBg1FOz1dsaqUa2TDGZs2IDFQbkoIBDiRnj4PJjk50NN6QWuC7qbhK2MZ3BHA7QWZAhtkVuTmGko+8EDMZFNsZPaoRXnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=DUBj3G8F; arc=none smtp.client-ip=72.215.153.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-X-ASG-Debug-ID: 1726757536-1cf43946de32800001-xx1T2L
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id iAvlkS9sj23Pj4OZ; Thu, 19 Sep 2024 10:52:39 -0400 (EDT)
-X-Barracuda-Envelope-From: cbing@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=gaZVIDVew6wagJ6FS+IpTt+gEV/lh5zxCO+z784EoB0=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:Content-Language:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID; b=DUBj3G8FQDZlN2rHUh93
-	RLfYvP7Ji5KFp5bns1trL77YwJQx6SHPyuXk8RwSE3n4ZUXAGZnALtF0KoAG8rvwCVcCBIzb+U7B7
-	7iTuZWpEsWOOfaXk78HEG+eBhteQxvsr8ZsbhBr5ZsvBEvVMBJKAI6giZFFaCKssLwzVij0MHA=
-Received: from [10.157.1.18] (HELO [192.168.184.100])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 13588950; Thu, 19 Sep 2024 10:50:31 -0400
-Message-ID: <17b25a86-2a0a-463a-8934-2607f75fedd5@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.1.18
-Date: Thu, 19 Sep 2024 10:50:31 -0400
+	s=arc-20240116; t=1726757493; c=relaxed/simple;
+	bh=gjmxknBAv7FJKj12gBxsUHfcRVcOIzHZjvAbLvF2YcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fPdT1bxKAljaYyfb1J+b6u3sPyb4sNx5UQ/EW2eF6dh4l4iOf/zKLpnufvB+9hawZh7QyCsmq3sICKYp2F2QEv0qwoUVdiUpr1j5VKRiV/7mLU3G0M8qlTra8lvgF42mNcHFLWa9BVL3NVWcKlhcHSHRCn0VzQnjJaJ9W5qmO3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=6WtTGwOH; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=mRc9mlRvqxgEF26tCg7xDtkX37mQJMNMslM2tmjmTvI=; b=6WtTGwOHCa/qFYKfyF0yE8HGXP
+	zcpkqS/sjWrQWc0QwZDGYx6/pJ3O1Uq4JzMVRIc80m07mFqVRSLhjnfwtuwZkFh/BUhKn+VDZW1OR
+	GpowjjLAXh96YRveh6E9bzkxHQHH1Xz4JkCFESNpTzl1d11suLh9D0QgE9hywGbVNU9Y=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1srIV4-007ohD-4m; Thu, 19 Sep 2024 16:51:18 +0200
+Date: Thu, 19 Sep 2024 16:51:18 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Mohan.Prasad@microchip.com
+Cc: netdev@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
+	edumazet@google.com, pabeni@redhat.com, shuah@kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	horms@kernel.org, brett.creeley@amd.com, rosenp@gmail.com,
+	UNGLinuxDriver@microchip.com, willemb@google.com
+Subject: Re: [PATCH net-next v2 1/3] selftests: nic_basic_tests: Add selftest
+ file for basic tests of NIC
+Message-ID: <55037ff4-aa06-4cd4-bbc1-b1e714fa1fd4@lunn.ch>
+References: <20240917023525.2571082-1-mohan.prasad@microchip.com>
+ <20240917023525.2571082-2-mohan.prasad@microchip.com>
+ <5c8779db-31c4-4b93-986a-bd489720fa4b@lunn.ch>
+ <DM6PR11MB4236AE79E97B4CBBA1A9812F83622@DM6PR11MB4236.namprd11.prod.outlook.com>
+ <0d6c225e-358b-401e-a4aa-a1f7ea0f2652@lunn.ch>
+ <DM6PR11MB42363E9DC481B09277369B5A83632@DM6PR11MB4236.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/numa: Bump NR_NODE_MEMBLKS to MAX_NUMNODES * 4
-To: Nikolay Kuratov <kniv@yandex-team.ru>, linux-kernel@vger.kernel.org
-X-ASG-Orig-Subj: Re: [PATCH] x86/numa: Bump NR_NODE_MEMBLKS to MAX_NUMNODES * 4
-Cc: x86@kernel.org, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>
-References: <20240520145021.1528151-1-kniv@yandex-team.ru>
-Content-Language: en-US
-From: Claude Bing <cbing@cybernetics.com>
-In-Reply-To: <20240520145021.1528151-1-kniv@yandex-team.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1726757559
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 5328
-X-Barracuda-BRTS-Status: 1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM6PR11MB42363E9DC481B09277369B5A83632@DM6PR11MB4236.namprd11.prod.outlook.com>
 
-On 5/20/24 10:50, Nikolay Kuratov wrote:
-> With modern AMD EPYC platform we're able to spot 3
-> memblocks per NUMA, so bump MAX_NUMNODES multiplier
-> from 2 to 4. Problem becomes apparent if MAX_NUMNODES
-> close enough to real amount of nodes and leaves us with
-> `too many memblk ranges` dmesg error.
+On Thu, Sep 19, 2024 at 10:44:11AM +0000, Mohan.Prasad@microchip.com wrote:
+> Hello Andrew,
 > 
-> Bump also maximal count of immovable regions accordingly.
+> Thank you for the suggestion.
 > 
-> Signed-off-by: Nikolay Kuratov <kniv@yandex-team.ru>
-> ---
->  If overhead related to doubled arrays is too undesirable
->  maybe we should consider config option for this? It appears that
->  NR_NODE_MEMBLKS used only on LoongArch and x86 (macro in asm-generic
->  is orphane).
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the
+> > content is safe
+> > 
+> > > > Since you have batteries included python:
+> > > >
+> > > > ethtool --json enp2s0
+> > > > [sudo] password for andrew:
+> > > > [ {
+> > > >         "ifname": "enp2s0",
+> > > >         "supported-ports": [ "TP","MII" ],
+> > > >         "supported-link-modes": [
+> > > > "10baseT/Half","10baseT/Full","100baseT/Half","100baseT/Full","1000b
+> > > > aseT/
+> > > > Full" ],
+> > > >         "supported-pause-frame-use": "Symmetric Receive-only",
+> > > >         "supports-auto-negotiation": true,
+> > > >         "supported-fec-modes": [ ],
+> > > >         "advertised-link-modes": [
+> > > > "10baseT/Half","10baseT/Full","100baseT/Half","100baseT/Full","1000b
+> > > > aseT/
+> > > > Full" ],
+> > > >         "advertised-pause-frame-use": "Symmetric Receive-only",
+> > > >         "advertised-auto-negotiation": true,
+> > > >         "advertised-fec-modes": [ ],
+> > > >         "auto-negotiation": false,
+> > > >         "master-slave-cfg": "preferred slave",
+> > > >         "master-slave-status": "unknown",
+> > > >         "port": "Twisted Pair",
+> > > >         "phyad": 0,
+> > > >         "transceiver": "external",
+> > > >         "supports-wake-on": "pumbg",
+> > > >         "wake-on": "d",
+> > > >         "link-detected": false
+> > > >     } ]
+> > > >
+> > > > You can use a json library to do all the parsing for you.
+> > >
+> > > I tried running the --json option with the ethtool ("ethtool --json enp9s0"),
+> > however I am not getting the above output.
+> > > Instead it always throws "ethtool: bad command line argument(s)"
+> > > I am figuring out what might be missing (or any suggestions would be
+> > helpful).
+> > 
+> > Are you using real ethtool, or busybox? What version of ethtool? I'm using
+> > 6.10, but it looks like JSON support was added somewhere around 5.10.
 > 
->  arch/x86/boot/compressed/acpi.c | 6 +++---
->  arch/x86/boot/compressed/misc.h | 2 +-
->  arch/x86/include/asm/numa.h     | 2 +-
->  3 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-> index f196b1d1ddf8..74575a900924 100644
-> --- a/arch/x86/boot/compressed/acpi.c
-> +++ b/arch/x86/boot/compressed/acpi.c
-> @@ -17,9 +17,9 @@
->  
->  /*
->   * Immovable memory regions representation. Max amount of memory regions is
-> - * MAX_NUMNODES*2.
-> + * MAX_NUMNODES*4.
->   */
-> -struct mem_vector immovable_mem[MAX_NUMNODES*2];
-> +struct mem_vector immovable_mem[MAX_NUMNODES*4];
->  
->  static acpi_physical_address
->  __efi_get_rsdp_addr(unsigned long cfg_tbl_pa, unsigned int cfg_tbl_len)
-> @@ -305,7 +305,7 @@ int count_immovable_mem_regions(void)
->  				num++;
->  			}
->  
-> -			if (num >= MAX_NUMNODES*2) {
-> +			if (num >= ARRAY_SIZE(immovable_mem)) {
->  				debug_putstr("Too many immovable memory regions, aborting.\n");
->  				return 0;
->  			}
-> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
-> index b353a7be380c..a756569852e5 100644
-> --- a/arch/x86/boot/compressed/misc.h
-> +++ b/arch/x86/boot/compressed/misc.h
-> @@ -174,7 +174,7 @@ static inline acpi_physical_address get_rsdp_addr(void) { return 0; }
->  #endif
->  
->  #if defined(CONFIG_RANDOMIZE_BASE) && defined(CONFIG_MEMORY_HOTREMOVE) && defined(CONFIG_ACPI)
-> -extern struct mem_vector immovable_mem[MAX_NUMNODES*2];
-> +extern struct mem_vector immovable_mem[MAX_NUMNODES*4];
->  int count_immovable_mem_regions(void);
->  #else
->  static inline int count_immovable_mem_regions(void) { return 0; }
-> diff --git a/arch/x86/include/asm/numa.h b/arch/x86/include/asm/numa.h
-> index ef2844d69173..057eafe6fed5 100644
-> --- a/arch/x86/include/asm/numa.h
-> +++ b/arch/x86/include/asm/numa.h
-> @@ -10,7 +10,7 @@
->  
->  #ifdef CONFIG_NUMA
->  
-> -#define NR_NODE_MEMBLKS		(MAX_NUMNODES*2)
-> +#define NR_NODE_MEMBLKS		(MAX_NUMNODES*4)
->  
->  extern int numa_off;
->  
-Our testing confirms this patch resolves at least one case where a
-quad-CPU system (Supermicro X11QPH+) only registers a single NUMA node.
-Would it be possible to have this patch merged after a review?
+> I have been using ethtool 6.7, updating to ethtool 6.10 solved the problem.
 
-Debug messages seen prior to applying the patch:
+It would be good to gracefully handle this. Have the test fail with a
+human readable error indicating ethtool is too old, rather than just
+throwing an exception etc.
 
-  ACPI: SRAT: Node 0 PXM 0 [mem 0x00000000-0x7fffffff]
-  ACPI: SRAT: Node 0 PXM 0 [mem 0x100000000-0x207fffffff]
-  ACPI: SRAT: Node 0 PXM 0 [mem 0x2080000000-0x407fffffff]
-  ACPI: SRAT: Node 1 PXM 1 [mem 0x4080000000-0x607fffffff]
-  ACPI: SRAT: Node 1 PXM 1 [mem 0x6080000000-0x807fffffff]
-  ACPI: SRAT: Node 2 PXM 2 [mem 0x8080000000-0xa07fffffff]
-  ACPI: SRAT: Node 2 PXM 2 [mem 0xa080000000-0xc07fffffff]
-  ACPI: SRAT: Node 3 PXM 3 [mem 0xc080000000-0xe07fffffff]
-  too many memblk ranges
-  ACPI: SRAT: Failed to add memblk to node 3 [mem
-  0xe080000000-0x1007fffffff]
-  ACPI: SRAT: SRAT not used.
-  NUMA: Initialized distance table, cnt=4
-  No NUMA configuration found
-  Faking a node at [mem 0x0000000000000000-0x000001007fffffff]
-  NODE_DATA(0) allocated [mem 0x1007fffa000-0x1007fffbfff]
+Digging through the git history, it seems like 6.10 was actually the
+first version that supported this:
 
-After the patch, all four nodes were recognized:
+commit bd1341cd2146bfb89e1239546299102339acbf4d
+Author: Fabian Pfitzner <f.pfitzner@pengutronix.de>
+Date:   Fri Jul 19 10:55:44 2024 +0200
 
-  ACPI: SRAT: Node 0 PXM 0 [mem 0x00000000-0x7fffffff]
-  ACPI: SRAT: Node 0 PXM 0 [mem 0x100000000-0x207fffffff]
-  ACPI: SRAT: Node 0 PXM 0 [mem 0x2080000000-0x407fffffff]
-  ACPI: SRAT: Node 1 PXM 1 [mem 0x4080000000-0x607fffffff]
-  ACPI: SRAT: Node 1 PXM 1 [mem 0x6080000000-0x807fffffff]
-  ACPI: SRAT: Node 2 PXM 2 [mem 0x8080000000-0xa07fffffff]
-  ACPI: SRAT: Node 2 PXM 2 [mem 0xa080000000-0xc07fffffff]
-  ACPI: SRAT: Node 3 PXM 3 [mem 0xc080000000-0xe07fffffff]
-  ACPI: SRAT: Node 3 PXM 3 [mem 0xe080000000-0x1007fffffff]
-  NUMA: Initialized distance table, cnt=4
-  NUMA: Node 0 [mem 0x00000000-0x7fffffff] + [mem
-  0x100000000-0x207fffffff] -> [mem 0x00000000-0x207fffffff]
-  NUMA: Node 0 [mem 0x00000000-0x207fffffff] + [mem
-  0x2080000000-0x407fffffff] -> [mem 0x00000000-0x407fffffff]
-  NUMA: Node 1 [mem 0x4080000000-0x607fffffff] + [mem
-  0x6080000000-0x807fffffff] -> [mem 0x4080000000-0x807fffffff]
-  NUMA: Node 2 [mem 0x8080000000-0xa07fffffff] + [mem
-  0xa080000000-0xc07fffffff] -> [mem 0x8080000000-0xc07fffffff]
-  NUMA: Node 3 [mem 0xc080000000-0xe07fffffff] + [mem
-  0xe080000000-0x1007fffffff] -> [mem 0xc080000000-0x1007fffffff]
-  NODE_DATA(0) allocated [mem 0x407fffe000-0x407fffffff]
-  NODE_DATA(1) allocated [mem 0x807fffe000-0x807fffffff]
-  NODE_DATA(2) allocated [mem 0xc07fffe000-0xc07fffffff]
-  NODE_DATA(3) allocated [mem 0x1007fff9000-0x1007fffafff]
+    add json support for base command
+    
+    Most subcommands already implement json support for their output. The
+    base command (without supplying any subcommand) still lacks this
+    option. This patch implments the needed changes to get json output,
+    which is printed via "ethtool --json [iface]"
+    
+    The following design decision were made during implementation:
+    - json values like Yes/No are printed as true/false
+    - values that are "Unknown" are not printed at all
+    - all other json values are not changed
+    - keys are printed in lowercase with dashes in between
+    
+    Signed-off-by: Fabian Pfitzner <f.pfitzner@pengutronix.de>
 
-Tested-by: Claude Bing <cbing@cybernetics.com>
+	Andrew
 
