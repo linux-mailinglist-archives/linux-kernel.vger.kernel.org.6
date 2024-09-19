@@ -1,256 +1,177 @@
-Return-Path: <linux-kernel+bounces-333476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89F5097C94B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:35:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 458E697C9EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7921F237BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:35:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 736771C217D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A496D19DFB5;
-	Thu, 19 Sep 2024 12:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A87119DF77;
+	Thu, 19 Sep 2024 13:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="CxgGwm8n";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Ir6SVbs6"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="HI0g3EbW"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E923F1EB2F;
-	Thu, 19 Sep 2024 12:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3969B179AE
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 13:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726749333; cv=none; b=MbRk1/84iiI5BKRO4YYGdIiivUkRx/PjM2yN2V902LX2fDCfH8YOha9/afajmmockPrQJl8K71ENu2JeROlBqLYiMuPMasu6edKc5Taf/5BA7PHqMfL8+0u3ViWxNV5imTUYIpbb1mdsu7QexjX6AFQGVB71skd6fpPdLJnpwIg=
+	t=1726751773; cv=none; b=WoR/9fAaZWcfbg+GGGsEDn7+BgyLIUQ5dVoD2Yg5trHV0pFMvK7tLglgIEPr/iyp92tZAcoSyuWcpMhUrbAY3fwikpbXhhyxKbIM67ONDRXAAEoDjT00ZFB0ieWL13/3qmmozYpFqtnZ0TJWbJOJqBaL2q3+ag+VGbU2j+zYMZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726749333; c=relaxed/simple;
-	bh=C0qiYBjh7+JNE6dSxlKxI/K2eGBbcQXB5lUFPJMb3nw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sx4LO1WhO9Bnp+bcwRLn+goIYbzhsFLT0pbfPjgN5W3DEog/CByvVqyjRP3XDwToTFxUhDc/2IlS+8AmVh5gux8qAuok74nS54BKd/GAoUHLQujWsgh5FWgN3R4tlV0d6QdAp9pyohL8ojAP5SdSRPig+f/PZSvbqRIElxVcj1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=CxgGwm8n; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Ir6SVbs6; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1726751773; c=relaxed/simple;
+	bh=FZCHOlzoPNDTM+K/dIu0m/V2QVNrmRgr1vPWK0Yi7hQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mOWjBBnqSgAh4ev/28DsMS4ggjhe+QEmUxtqZCehdmnFDBNuVZDCLAvgKxZJGa/YwsqvQ8zk97lCLd9+UAdpzin0Oqfts0U5jaIULX03dK6u+Jw+a+yxEYAuTPGKNbctIWzAZGMRWG3n36H4c9h9M8RzwrSXnVJCkZh2ueDROjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=unknown smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=HI0g3EbW; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=tempfail smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0150241.ppops.net [127.0.0.1])
+	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48J732Ht020244;
+	Thu, 19 Sep 2024 12:34:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=date
+	:from:to:cc:subject:message-id:mime-version:content-type; s=
+	pps0720; bh=r94TunqcIa3DXvjGd99z5cw77wZNtQZXebDwEsUnhIU=; b=HI0g
+	3EbWPNKWtoaKLgCTuTM4muQ2GDcGi65xAlGKHh+e+kuTrgd8+oWOeSQDfHZeZ4tk
+	G8q/wI4X3BghlPNJBqdmnH9uDAls0dpDxxuCMHkxxav1lQzTqLuh9McaQTKG7883
+	ujkyb9i755Jw9h17QbAj40e090gKTwnot8WoZNDwQRf6cYDchzSSpNZ/lbWJIzBG
+	RSEYh/bZTXiD2eE/mxpk0NJICFH7WmiiKR149ZQibbTWVzxG/+qFPWkxIsQMJ5uO
+	VkNKJpRUiyRMtxg03uJnwwtvabq3nSI67CZKPNj8n7jB6FebrTezFVYu1bZqHQxJ
+	vDgNDv4CZhiqkrfp5g==
+Received: from p1lg14878.it.hpe.com ([16.230.97.204])
+	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 41r1457f4c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Sep 2024 12:34:57 +0000 (GMT)
+Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D1D24338D2;
-	Thu, 19 Sep 2024 12:35:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1726749329; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=03iIXrm2d6dZ3mz5HP9AK7PKZOvrRHH8k/30bsSSODc=;
-	b=CxgGwm8nkJYm6CYU6iU5ojIwjv22TMnywi+UwUX9DXbFQcGx7GyI2HWP8XtA/Va//dfqCE
-	Oy27u7aWmDIrr/yOjee0yxRFjMlvlEO5KF4VYFw7ONf+VL7G3Z+CsUAufo7Qh+SmqM6lko
-	+mORCRUoHAkahsrpyp/flJHqmIdPgKI=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=Ir6SVbs6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1726749328; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=03iIXrm2d6dZ3mz5HP9AK7PKZOvrRHH8k/30bsSSODc=;
-	b=Ir6SVbs6Gq/S2XQPoEb/UJFdcLES5VQxult3+ncWDxzDEzG7e07FnwBzWGQw6POGjAkykW
-	tpFjoSr3VnXCgs+2cu719G0EBDhupHssvKD4/dRo3hpM6+rE0VVwOOmSapMw4uuRh4XIFT
-	ZlS0DevOVM3iwwGOwHkdtIAo0KmMiZE=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	by p1lg14878.it.hpe.com (Postfix) with ESMTPS id CCC98D279;
+	Thu, 19 Sep 2024 12:34:54 +0000 (UTC)
+Received: from hpe.com (unknown [16.231.227.39])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9649913A5F;
-	Thu, 19 Sep 2024 12:35:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id okdEI5Aa7GblLAAAD6G6ig
-	(envelope-from <oneukum@suse.com>); Thu, 19 Sep 2024 12:35:28 +0000
-From: Oliver Neukum <oneukum@suse.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Oliver Neukum <oneukum@suse.com>,
-	stable@vger.kernel.org
-Subject: [PATCHv3] usbnet: fix cyclical race on disconnect with work queue
-Date: Thu, 19 Sep 2024 14:33:42 +0200
-Message-ID: <20240919123525.688065-1-oneukum@suse.com>
-X-Mailer: git-send-email 2.46.0
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id 6DAFB801AFD;
+	Thu, 19 Sep 2024 12:34:52 +0000 (UTC)
+Date: Thu, 19 Sep 2024 07:34:50 -0500
+From: Dimitri Sivanich <sivanich@hpe.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Dimitri Sivanich <sivanich@hpe.com>
+Subject: [PATCH] misc: sgi-gru: Don't disable preemption in GRU driver
+Message-ID: <ZuwaasSf0ZzcYHiN@hpe.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: D1D24338D2
-X-Spam-Score: -5.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-5.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Proofpoint-GUID: -rgovnn5tEpUyXJgKCGNAAI8wvARF4Wg
+X-Proofpoint-ORIG-GUID: -rgovnn5tEpUyXJgKCGNAAI8wvARF4Wg
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-19_08,2024-09-19_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=727
+ phishscore=0 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1011 impostorscore=0 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409190081
 
-The work can submit URBs and the URBs can schedule the work.
-This cycle needs to be broken, when a device is to be stopped.
-Use a flag to do so.
-This is a design issue as old as the driver.
+Disabling preemption in the GRU driver is unnecessary, and clashes with
+sleeping locks in several code paths.  Remove preempt_disable and
+preempt_enable from the GRU driver.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-CC: stable@vger.kernel.org
+Signed-off-by: Dimitri Sivanich <sivanich@hpe.com>
 ---
+ drivers/misc/sgi-gru/grukservices.c | 2 --
+ drivers/misc/sgi-gru/grumain.c      | 4 ----
+ drivers/misc/sgi-gru/grutlbpurge.c  | 2 --
+ 3 files changed, 8 deletions(-)
 
-v2: fix PM reference issue
-v3: drop unneeded memory ordering primitives
-
- drivers/net/usb/usbnet.c   | 37 ++++++++++++++++++++++++++++---------
- include/linux/usb/usbnet.h | 15 +++++++++++++++
- 2 files changed, 43 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
-index 18eb5ba436df..2506aa8c603e 100644
---- a/drivers/net/usb/usbnet.c
-+++ b/drivers/net/usb/usbnet.c
-@@ -464,10 +464,15 @@ static enum skb_state defer_bh(struct usbnet *dev, struct sk_buff *skb,
- void usbnet_defer_kevent (struct usbnet *dev, int work)
+diff --git a/drivers/misc/sgi-gru/grukservices.c b/drivers/misc/sgi-gru/grukservices.c
+index 37e804bbb1f2..205945ce9e86 100644
+--- a/drivers/misc/sgi-gru/grukservices.c
++++ b/drivers/misc/sgi-gru/grukservices.c
+@@ -258,7 +258,6 @@ static int gru_get_cpu_resources(int dsr_bytes, void **cb, void **dsr)
+ 	int lcpu;
+ 
+ 	BUG_ON(dsr_bytes > GRU_NUM_KERNEL_DSR_BYTES);
+-	preempt_disable();
+ 	bs = gru_lock_kernel_context(-1);
+ 	lcpu = uv_blade_processor_id();
+ 	*cb = bs->kernel_cb + lcpu * GRU_HANDLE_STRIDE;
+@@ -272,7 +271,6 @@ static int gru_get_cpu_resources(int dsr_bytes, void **cb, void **dsr)
+ static void gru_free_cpu_resources(void *cb, void *dsr)
  {
- 	set_bit (work, &dev->flags);
--	if (!schedule_work (&dev->kevent))
--		netdev_dbg(dev->net, "kevent %s may have been dropped\n", usbnet_event_names[work]);
--	else
--		netdev_dbg(dev->net, "kevent %s scheduled\n", usbnet_event_names[work]);
-+	if (!usbnet_going_away(dev)) {
-+		if (!schedule_work(&dev->kevent))
-+			netdev_dbg(dev->net,
-+				   "kevent %s may have been dropped\n",
-+				   usbnet_event_names[work]);
-+		else
-+			netdev_dbg(dev->net,
-+				   "kevent %s scheduled\n", usbnet_event_names[work]);
-+	}
+ 	gru_unlock_kernel_context(uv_numa_blade_id());
+-	preempt_enable();
  }
- EXPORT_SYMBOL_GPL(usbnet_defer_kevent);
  
-@@ -535,7 +540,8 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
- 			tasklet_schedule (&dev->bh);
- 			break;
- 		case 0:
--			__usbnet_queue_skb(&dev->rxq, skb, rx_start);
-+			if (!usbnet_going_away(dev))
-+				__usbnet_queue_skb(&dev->rxq, skb, rx_start);
- 		}
- 	} else {
- 		netif_dbg(dev, ifdown, dev->net, "rx: stopped\n");
-@@ -843,9 +849,18 @@ int usbnet_stop (struct net_device *net)
+ /*
+diff --git a/drivers/misc/sgi-gru/grumain.c b/drivers/misc/sgi-gru/grumain.c
+index 0f5b09e290c8..3036c15f3689 100644
+--- a/drivers/misc/sgi-gru/grumain.c
++++ b/drivers/misc/sgi-gru/grumain.c
+@@ -937,10 +937,8 @@ vm_fault_t gru_fault(struct vm_fault *vmf)
  
- 	/* deferred work (timer, softirq, task) must also stop */
- 	dev->flags = 0;
--	del_timer_sync (&dev->delay);
--	tasklet_kill (&dev->bh);
-+	del_timer_sync(&dev->delay);
-+	tasklet_kill(&dev->bh);
- 	cancel_work_sync(&dev->kevent);
-+
-+	/* We have cyclic dependencies. Those calls are needed
-+	 * to break a cycle. We cannot fall into the gaps because
-+	 * we have a flag
-+	 */
-+	tasklet_kill(&dev->bh);
-+	del_timer_sync(&dev->delay);
-+	cancel_work_sync(&dev->kevent);
-+
- 	if (!pm)
- 		usb_autopm_put_interface(dev->intf);
+ again:
+ 	mutex_lock(&gts->ts_ctxlock);
+-	preempt_disable();
  
-@@ -1171,7 +1186,8 @@ usbnet_deferred_kevent (struct work_struct *work)
- 					   status);
- 		} else {
- 			clear_bit (EVENT_RX_HALT, &dev->flags);
--			tasklet_schedule (&dev->bh);
-+			if (!usbnet_going_away(dev))
-+				tasklet_schedule(&dev->bh);
- 		}
+ 	if (gru_check_context_placement(gts)) {
+-		preempt_enable();
+ 		mutex_unlock(&gts->ts_ctxlock);
+ 		gru_unload_context(gts, 1);
+ 		return VM_FAULT_NOPAGE;
+@@ -949,7 +947,6 @@ vm_fault_t gru_fault(struct vm_fault *vmf)
+ 	if (!gts->ts_gru) {
+ 		STAT(load_user_context);
+ 		if (!gru_assign_gru_context(gts)) {
+-			preempt_enable();
+ 			mutex_unlock(&gts->ts_ctxlock);
+ 			set_current_state(TASK_INTERRUPTIBLE);
+ 			schedule_timeout(GRU_ASSIGN_DELAY);  /* true hack ZZZ */
+@@ -965,7 +962,6 @@ vm_fault_t gru_fault(struct vm_fault *vmf)
+ 				vma->vm_page_prot);
  	}
  
-@@ -1196,7 +1212,8 @@ usbnet_deferred_kevent (struct work_struct *work)
- 			usb_autopm_put_interface(dev->intf);
- fail_lowmem:
- 			if (resched)
--				tasklet_schedule (&dev->bh);
-+				if (!usbnet_going_away(dev))
-+					tasklet_schedule(&dev->bh);
- 		}
- 	}
+-	preempt_enable();
+ 	mutex_unlock(&gts->ts_ctxlock);
  
-@@ -1559,6 +1576,7 @@ static void usbnet_bh (struct timer_list *t)
- 	} else if (netif_running (dev->net) &&
- 		   netif_device_present (dev->net) &&
- 		   netif_carrier_ok(dev->net) &&
-+		   !usbnet_going_away(dev) &&
- 		   !timer_pending(&dev->delay) &&
- 		   !test_bit(EVENT_RX_PAUSED, &dev->flags) &&
- 		   !test_bit(EVENT_RX_HALT, &dev->flags)) {
-@@ -1606,6 +1624,7 @@ void usbnet_disconnect (struct usb_interface *intf)
- 	usb_set_intfdata(intf, NULL);
- 	if (!dev)
- 		return;
-+	usbnet_mark_going_away(dev);
+ 	return VM_FAULT_NOPAGE;
+diff --git a/drivers/misc/sgi-gru/grutlbpurge.c b/drivers/misc/sgi-gru/grutlbpurge.c
+index 10921cd2608d..1107dd3e2e9f 100644
+--- a/drivers/misc/sgi-gru/grutlbpurge.c
++++ b/drivers/misc/sgi-gru/grutlbpurge.c
+@@ -65,7 +65,6 @@ static struct gru_tlb_global_handle *get_lock_tgh_handle(struct gru_state
+ 	struct gru_tlb_global_handle *tgh;
+ 	int n;
  
- 	xdev = interface_to_usbdev (intf);
- 
-diff --git a/include/linux/usb/usbnet.h b/include/linux/usb/usbnet.h
-index 9f08a584d707..0b9f1e598e3a 100644
---- a/include/linux/usb/usbnet.h
-+++ b/include/linux/usb/usbnet.h
-@@ -76,8 +76,23 @@ struct usbnet {
- #		define EVENT_LINK_CHANGE	11
- #		define EVENT_SET_RX_MODE	12
- #		define EVENT_NO_IP_ALIGN	13
-+/* This one is special, as it indicates that the device is going away
-+ * there are cyclic dependencies between tasklet, timer and bh
-+ * that must be broken
-+ */
-+#		define EVENT_UNPLUG		31
- };
- 
-+static inline bool usbnet_going_away(struct usbnet *ubn)
-+{
-+	return test_bit(EVENT_UNPLUG, &ubn->flags);
-+}
-+
-+static inline void usbnet_mark_going_away(struct usbnet *ubn)
-+{
-+	set_bit(EVENT_UNPLUG, &ubn->flags);
-+}
-+
- static inline struct usb_driver *driver_of(struct usb_interface *intf)
+-	preempt_disable();
+ 	if (uv_numa_blade_id() == gru->gs_blade_id)
+ 		n = get_on_blade_tgh(gru);
+ 	else
+@@ -79,7 +78,6 @@ static struct gru_tlb_global_handle *get_lock_tgh_handle(struct gru_state
+ static void get_unlock_tgh_handle(struct gru_tlb_global_handle *tgh)
  {
- 	return to_usb_driver(intf->dev.driver);
+ 	unlock_tgh_handle(tgh);
+-	preempt_enable();
+ }
+ 
+ /*
 -- 
-2.46.0
+2.35.3
 
 
