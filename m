@@ -1,161 +1,147 @@
-Return-Path: <linux-kernel+bounces-333458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA0F97C8F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:19:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5823797C906
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4566B218C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:19:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AEF71C21F29
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6EB019DF4B;
-	Thu, 19 Sep 2024 12:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JpA94uZW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9822719DF4C;
+	Thu, 19 Sep 2024 12:20:54 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3393D19C57B;
-	Thu, 19 Sep 2024 12:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2751B18893D;
+	Thu, 19 Sep 2024 12:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726748375; cv=none; b=rDGXbNY+uaGaxlqluuPjQ42PyhdjoRArHpbIkJbsBgiCNPa+DwT+ebcBD6ENxzZDXkuCCBE8pTcCFm84pqc8iib34gdEETvU3TEG88DsBMnF7GX3SQ8eaDracvf2PkJwWFWdam5GIPPHgHjwJVQxvlQXHEQkFXrHsOFyuhTd5HE=
+	t=1726748454; cv=none; b=kIj/pMLTI1cUE4GMYVz7i6/fbwKk1zNuMW34PU/DPlo1DD64o+PNMRRKlj/U2rc5TeUgDz4lXmGPH5oeHQtWquX9JSqnhjynmkaplECT2KBcDcd/v6OZCv/Ne/tQtKx/VDojOdCPvBKH9Q/Hd0LTx7dhTY926RI6lSjuPzAkM0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726748375; c=relaxed/simple;
-	bh=oQGxpz7igw8FUAUX8lkzht6ogzt4MFkMiazInDcQ55E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F2BWb3He71qGysgTNe9H0+04ZQGmSR5ChUa+gH1BJjwLjijqMjj5tjkRUO79D7zCp0yriJFmdp/oKYcTBCYpCqU8xaUoJwY9cw8XYt6n5e6ce/Xr9u90lLncmk35NXah3AIdjkKj3KyzQPvOFXJ5YZTNnbrpEMXsZ0RkzcWuLhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JpA94uZW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F32C4CEC6;
-	Thu, 19 Sep 2024 12:19:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726748374;
-	bh=oQGxpz7igw8FUAUX8lkzht6ogzt4MFkMiazInDcQ55E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JpA94uZWj9bAMjiTnxgR4gV6xClNGiRwOV7ziOQ1I8f9aE5flGFjAlYAx4yg44Gbz
-	 k9a9YL9hUVOewC12yvb+6XLiZ60eTErpBJpFfKAblisBYcYWyTUwtobN9seDfK6I00
-	 u5aDBJzmRDO5ygpuELLIS7KuLxjXcg8ajOKfO03oQ08gMUk3Fx4kSGN5BuIcsmsKsc
-	 +RiUkAhQEhxA1jpjx7GZsyI9pMrCAHZNhv78n4zEn5WC2gjNKEvP1bKPgFYF0fFWIS
-	 XU4x6cTteH7y5EV7KFfTIzluxVlfCRm0NinwovS/09gWdAMWXxneA3fMmsfPVEaIRx
-	 impA0JLowyVAg==
-Message-ID: <86758559-3fd4-4f2f-bf40-818ac1410f0a@kernel.org>
-Date: Thu, 19 Sep 2024 14:19:28 +0200
+	s=arc-20240116; t=1726748454; c=relaxed/simple;
+	bh=oTYc/p2t/iTSK5+cXS3Sc0LDuFrjEIBTQIdwaJDT9C4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HeQ7Xj1sKNDad7xQZh7R4OJFBCvhflj4xPFz9GgkvWbjYGi6a0VsDo//VJC0Kz1MbpRZqvzOS0wLeWbt+XvygMIvKmbIN6zfvvUHtesppCZm3ep+CveeeX8h4ZfqegPCsfrne+gTnKsNYnITCGv114I69n0tbi3lGunvnrNdG9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X8ZLT5NVFzpVsg;
+	Thu, 19 Sep 2024 20:18:41 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8EC1218010F;
+	Thu, 19 Sep 2024 20:20:45 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 19 Sep 2024 20:20:44 +0800
+Message-ID: <7a6ba3f3-dffa-cdac-73c7-074505ea4b44@huawei.com>
+Date: Thu, 19 Sep 2024 20:20:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] clk: qcom: rpmhcc: Add support for QCS615 Clocks
-To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240919-qcs615-clock-driver-v1-0-51c0cc92e3a2@quicinc.com>
- <20240919-qcs615-clock-driver-v1-2-51c0cc92e3a2@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240919-qcs615-clock-driver-v1-2-51c0cc92e3a2@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH] uprobes: Improve the usage of xol slots for better
+ scalability
+To: Andi Kleen <ak@linux.intel.com>
+CC: <mhiramat@kernel.org>, <oleg@redhat.com>, <andrii@kernel.org>,
+	<peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <bpf@vger.kernel.org>
+References: <20240918012752.2045713-1-liaochang1@huawei.com>
+ <87jzf9b12w.fsf@linux.intel.com>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <87jzf9b12w.fsf@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On 19/09/2024 09:32, Taniya Das wrote:
-> Add the RPMHCC clocks required for QCS615 SoC.
+
+
+在 2024/9/18 20:25, Andi Kleen 写道:
+> Liao Chang <liaochang1@huawei.com> writes:
+>> +
+>> +/*
+>> + * xol_recycle_insn_slot - recycle a slot from the garbage collection list.
+>> + */
+>> +static int xol_recycle_insn_slot(struct xol_area *area)
+>> +{
+>> +	struct uprobe_task *utask;
+>> +	int slot = UINSNS_PER_PAGE;
+>> +
+>> +	rcu_read_lock();
+>> +	list_for_each_entry_rcu(utask, &area->gc_list, gc) {
+>> +		/*
+>> +		 * The utask associated slot is in-use or recycling when
+>> +		 * utask associated slot_ref is not one.
+>> +		 */
+>> +		if (test_and_put_task_slot(utask)) {
+>> +			slot = utask->insn_slot;
+>> +			utask->insn_slot = UINSNS_PER_PAGE;
+>> +			clear_bit(slot, area->bitmap);
+>> +			atomic_dec(&area->slot_count);
+>> +			get_task_slot(utask);
 > 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  drivers/clk/qcom/clk-rpmh.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
+> Doesn't this need some annotation to make ThreadSanitizer happy?
+
+Hi, Andi
+
+Sorry, I know nothing about the ThreadSanitizer and related annotation,
+could you provide some information about it, thanks.
+
+> Would be good to have some commentary why doing so
+> many write operations with merely a rcu_read_lock as protection is safe.
+> It might be safer to put some write type operations under a real lock. 
+> Also it is unclear how the RCU grace period for utasks is enforced.
+
+You are right, but I think using atomic refcount routine might be a more
+suitable apprach for this scenario. The slot_ret field of utask instance
+is used to track the status of insn_slot. slot_ret supports three values.
+A value of 2 means the utask associated insn_slot is currently in use by
+uprobe. A value of 1 means the slot is no being used by uprobe. A value
+of 0 means the slot has been reclaimed. So in some term, the atomic refcount
+routine test_and_pout_task_slot() also avoid the racing when writing to
+the utask instance, providing additional status information about insn_slot.
+
+BTW, You reminded me that since it might recycle the slot after deleting the
+utask from the garbage collection list, so it's necessary to use
+test_and_put_task_slot() to avoid the racing on the stale utask. the correct
+code might be something like this:
+
+@@ -1771,16 +1783,16 @@ static void xol_free_insn_slot(struct task_struct *tsk)
+
+        spin_lock_irqsave(&area->list_lock, flags);
+        list_del_rcu(&tsk->utask->gc);
++       /* Ensure the slot is not in use or reclaimed on other CPU */
++       if (test_and_put_task_slot(tsk->utask)) {
++               clear_bit(tsk->utask->insn_slot, area->bitmap);
++               atomic_dec(&area->slot_count);
++               tsk->utask->insn_slot = UINSNS_PER_PAGE;
++               get_task_slot(tsk->utask);
++       }
+        spin_unlock_irqrestore(&area->list_lock, flags);
+        synchronize_rcu();
+
+If I've made any mistakes about RCU usage, please don't hesitate to corret me.
+Thank you in advance.
+
 > 
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index 4acde937114a..96600aba9bf2 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -795,6 +795,24 @@ static const struct clk_rpmh_desc clk_rpmh_x1e80100 = {
->  	.num_clks = ARRAY_SIZE(x1e80100_rpmh_clocks),
->  };
->  
-> +static struct clk_hw *qcs615_rpmh_clocks[] = {
-> +	[RPMH_CXO_CLK]		= &clk_rpmh_bi_tcxo_div2.hw,
-> +	[RPMH_CXO_CLK_A]	= &clk_rpmh_bi_tcxo_div2_ao.hw,
-> +	[RPMH_LN_BB_CLK2]	= &clk_rpmh_ln_bb_clk2_a2.hw,
-> +	[RPMH_LN_BB_CLK2_A]	= &clk_rpmh_ln_bb_clk2_a2_ao.hw,
-> +	[RPMH_LN_BB_CLK3]	= &clk_rpmh_ln_bb_clk3_a2.hw,
-> +	[RPMH_LN_BB_CLK3_A]	= &clk_rpmh_ln_bb_clk3_a2_ao.hw,
-> +	[RPMH_RF_CLK1]		= &clk_rpmh_rf_clk1_a.hw,
-> +	[RPMH_RF_CLK1_A]	= &clk_rpmh_rf_clk1_a_ao.hw,
-> +	[RPMH_RF_CLK2]		= &clk_rpmh_rf_clk2_a.hw,
-> +	[RPMH_RF_CLK2_A]	= &clk_rpmh_rf_clk2_a_ao.hw,
-> +};
-> +
-> +static const struct clk_rpmh_desc clk_rpmh_qcs615 = {
-> +	.clks = qcs615_rpmh_clocks,
-> +	.num_clks = ARRAY_SIZE(qcs615_rpmh_clocks),
-> +};
-> +
->  static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
->  					 void *data)
->  {
-> @@ -879,6 +897,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
->  
->  static const struct of_device_id clk_rpmh_match_table[] = {
->  	{ .compatible = "qcom,qdu1000-rpmh-clk", .data = &clk_rpmh_qdu1000},
-> +	{ .compatible = "qcom,qcs615-rpmh-clk", .data = &clk_rpmh_qcs615},
+> 
+> -Andi
+> 
 
-Keep alphabetical order, by compatible.
-
-Best regards,
-Krzysztof
-
+-- 
+BR
+Liao, Chang
 
