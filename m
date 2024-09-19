@@ -1,136 +1,127 @@
-Return-Path: <linux-kernel+bounces-333558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EDDC97CAC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:10:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCBB897CAC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B761C21CA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:10:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4994AB21D5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDA119D06C;
-	Thu, 19 Sep 2024 14:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D341A01BC;
+	Thu, 19 Sep 2024 14:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UIDwn7dd"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cB+nuR01"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB8A19F473
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 14:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C625B1A00DE
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 14:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726755005; cv=none; b=pdQlQKGGidwImqYOQighsGjM2xRaNt9rX0fbBDNaebcQskeuGfM2Yebj8hlBfHuPTDpJu61Tewk7Vn+HdPqNXXbVn4fogTSmAp0mnnk6q5gAG6wRXf0lQKJ0Umvg1WdPnnmBpZLmObTvceDyfjJNu1HPAbw7b8GQEbz8xBYkb80=
+	t=1726755008; cv=none; b=pK+Un02Pb6LdvNce8Lef6T3SdrIyEHqXbhWZzr879NQsjApsv4N6j3z+fn5h8bo4y27JdItUvF5QAGSzXzGY9gPKmNcdlynelGsbD7422UvjUT2u6Qs3VdbFKnxqjaSUXSdoAQxEBZxL8pENDPX/br6trBKiSDAY+0lsDOx9LdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726755005; c=relaxed/simple;
-	bh=GctlgkbVG46a73opTCwRpXS+1tw1jNGhHzO8oVHvc78=;
+	s=arc-20240116; t=1726755008; c=relaxed/simple;
+	bh=E5KGchCQCnd6NKgwkAOHCbqrXhD0jjreojUyU6SkJqc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nMuPPyixBNCbmLT7n2v6g/ULKO/aZLXS/aK4rTRZYLKRO4pxXKcJYEO2pLtNOYAJZuK/VljL4/Zzwr4Qdwf8tUiTte99N2Lradl/NjOoAxrB8cvlQTp5b0lxBEal2N+wPlH6zqzMWuUbm9kej+MVU5hqftOu03wrlWr/vj7pZ+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UIDwn7dd; arc=none smtp.client-ip=209.85.222.173
+	 To:Cc:Content-Type; b=N6d3GfJFRK/99UeFf/TDho++LX/nBMO5SG45wEGsNap1GjgaYDAHm5klI+vLYrzhaolFsCewHWf+3hTWFZC50vnyfuXO82mKYmfg+8tDdYYhHJlozz1gBv4942F9AtmBehtt16rl2LrGuzFcWsU255HmVvP5LaHVYAuQTG4JllA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cB+nuR01; arc=none smtp.client-ip=209.85.219.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a9ad8a7c63so86514985a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 07:10:03 -0700 (PDT)
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6c358b72615so7313146d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 07:10:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726755003; x=1727359803; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1726755005; x=1727359805; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NChGShmu/A2FFo9w9p27EZY1uREvTdNv88+MNztbS5o=;
-        b=UIDwn7dd5uTgaNNDA3ULF7ID8muC+wT08mOGD1kUMsZXfRrnTvVQ2bUvG8RLmWIVv5
-         2TRBARXy8wBl4iM6Uayh/rVxssjIRNLRMRony1osfEgz3TOmR2jzc4WVkFLBpF6TbUiu
-         wSQzd4C9M27RNCkm4wpu7bdPB+hJ4hM11KhtQ=
+        bh=u5yKwD6iSxVK6iOcdb9iFxqHmMv1z9+9s1JQS8QSMS4=;
+        b=cB+nuR01L4qSBVgoMRX6lrkZynkNkwqKvz/dG3w2f/IL7BrJPqAp/6etkYOl9TDF6v
+         rERNBWwtLRCC0Y2CDgnqNSBbfbGOSKXn4Jw8CQugK4GCqh9GV25H2M7/LSDMX1y99jAr
+         JRFX2TlByqPXBxR5FMZGPH1sD4VXWnfvPjLOc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726755003; x=1727359803;
+        d=1e100.net; s=20230601; t=1726755005; x=1727359805;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NChGShmu/A2FFo9w9p27EZY1uREvTdNv88+MNztbS5o=;
-        b=pa10WbC+d3g9d7h28VDOHXVe/ix8LQmRSMCmp0J5G4jm7JdjuTBu+wYJEgZ8Z9lLmU
-         rU8DDYxlOSh79kgkQXTOpu1ScZ3aQopr9PUtAOa3zQrEkrIu0GM082YuuxDvKpu9adTD
-         bvubyz/5bUS4Kj/NBpdH10nxmLoWh28ef2AH+/9BJ1SBoBFQzusfdPGc4dU8Y0Kn7Dro
-         JLoT2mqC8tOEoVuWdN8qPv65r6P6B3vRzuh9+A3etSBcmYSlcibPbU+6a5fb128v7yl5
-         n7YutFiNFUYOc6uEb722ukH4k1hwrSUHLvDrlgyRARPB+nlfDkVm9sWKCb3BpHa2j+Wp
-         AhWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGRrUu3diGy5ZZBpCinbUau10GwvyHPjO99go0NBjRJHirzwGJR2PGsfZZu39daiyVz+6oOBs9QQMv7lM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJv93gPlRHkWscpaJIvmcaH0OqFGLgRlJ9a50Xk3wxCkD7OXG6
-	ltgrO9RZ2mhgQcCwam6XC5P541SdBhSCsIq/htCID6urUDXtDlu9aClVIB6ql1s05z6xv2Y9T9m
-	EMPm/vkHwAB1KmDflENHOOXsZU90ZwXmmiXgX
-X-Google-Smtp-Source: AGHT+IFK1tgtdbQ0YRwAA0XigHbB1+9JueK0tJ+8LKCJRAeASOrptA6a4tgi1fTAWUlyUCcT/WZYNa+6LVuxG2baft4=
-X-Received: by 2002:a05:6214:419e:b0:6c1:7d85:d151 with SMTP id
- 6a1803df08f44-6c57dfa2882mr326966066d6.15.1726755002992; Thu, 19 Sep 2024
- 07:10:02 -0700 (PDT)
+        bh=u5yKwD6iSxVK6iOcdb9iFxqHmMv1z9+9s1JQS8QSMS4=;
+        b=PsJL4Y3ChjsK78eaaGH5q3srQkP8j5Qs5Z2qpOCscBx20Q905Lmt2TdF034TEYAI5j
+         sa0/Jv5xXBLhulJxLDu51eAxRJifIUZbIaz95EGpHz11FR4cXEIw2PdjkF54CpCp+3+b
+         sUbSM5tlj9aNjFAZ8yHB2rT3XMA4lclMX1w6JtL+Y2uhihj73VBE9NKfboGxxv7f0/gB
+         JZsPd5betLKHNlvJHS/BxXC5ztTehqjOJYtiMcawfPlCH6hGr4rmmHIWmSuYgAeoPWGC
+         H+yYMbLdTOxAPipz/vBFR5P6tZA2oUOHCEz49BhftZ9ckdQjlCemp3TIP60NobtZ9Wib
+         AKnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXH80MxCS61hkdIYyxCqjbMdFa7e/eYj6nNv9SlwjWa2F2v/bH6YWpp3rfEB/zpGtPLHWjivoPmgowbIj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc8O8GK4+a/HAL07YTuuitI9izEyMZwGWpIsEaj5i9LTz89JSv
+	0/dOhhKd/ZukxzhtnieCzu376wCYcdWPEZniQ0QEkon/4ZsSlw8lsxmmBhXSpzW4kyqxDsGWX+s
+	HgO9Ac/HGylTa1N0l9+vgxG9FlVrbz2hbg0yJ
+X-Google-Smtp-Source: AGHT+IGQ3avyxha5SRR4L/3mE4y1D8VFFMUrfimuvv2d6bcrMQC9MK1d3izsS/bqJlC1G3ZSpD/jKXGOFa33Id6qDno=
+X-Received: by 2002:a05:6214:2e49:b0:6c5:aaca:a48d with SMTP id
+ 6a1803df08f44-6c5aacaa50fmr212995276d6.13.1726755005487; Thu, 19 Sep 2024
+ 07:10:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240918152136.3395170-1-patrick.rudolph@9elements.com> <20240918152136.3395170-25-patrick.rudolph@9elements.com>
-In-Reply-To: <20240918152136.3395170-25-patrick.rudolph@9elements.com>
+References: <20240918152136.3395170-1-patrick.rudolph@9elements.com> <20240918152136.3395170-32-patrick.rudolph@9elements.com>
+In-Reply-To: <20240918152136.3395170-32-patrick.rudolph@9elements.com>
 From: Simon Glass <sjg@chromium.org>
-Date: Thu, 19 Sep 2024 16:09:52 +0200
-Message-ID: <CAFLszTjsoN36dOa8NKfCvcvxFKkzOQRVs85-AfDRZ-waOJNr7w@mail.gmail.com>
-Subject: Re: [PATCH v4 24/35] common: Enable BLOBLIST_TABLES on arm
+Date: Thu, 19 Sep 2024 16:09:54 +0200
+Message-ID: <CAFLszTgYwRc+1c3p+bg13T3Jz4r3=ZCuwioc3vcNS3CR9FUqyA@mail.gmail.com>
+Subject: Re: [PATCH v4 31/35] armv8: cpu: Enable ACPI parking protocol
 To: Patrick Rudolph <patrick.rudolph@9elements.com>
 Cc: u-boot@lists.denx.de, linux-kernel@vger.kernel.org, 
 	Tom Rini <trini@konsulko.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 18 Sept 2024 at 17:26, Patrick Rudolph
+On Wed, 18 Sept 2024 at 17:27, Patrick Rudolph
 <patrick.rudolph@9elements.com> wrote:
 >
-> Allow to use BLOBLIST_TABLES on arm to store ACPI or other tables.
+> Update the generic entry point code to support the ACPI parking protocol.
+> The ACPI parking protocol can be used when PSCI is not available to bring
+> up secondary CPU cores.
+>
+> When enabled secondary CPUs will enter U-Boot proper and spin in their own
+> 4KiB reserved memory page, which also acts as mailbox with the OS to
+> release the CPU.
+>
+> TEST: Boots all CPUs on qemu-system-aarch64 -machine raspi4b
 >
 > Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
-> Cc: Tom Rini <trini@konsulko.com>
 > ---
->  common/Kconfig |  1 +
->  lib/Kconfig    | 15 +++++++++------
->  2 files changed, 10 insertions(+), 6 deletions(-)
+>  arch/arm/cpu/armv8/start.S | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 >
 
 Reviewed-by: Simon Glass <sjg@chromium.org>
 
 
-> diff --git a/common/Kconfig b/common/Kconfig
-> index e1b8557e0c..09ead61817 100644
-> --- a/common/Kconfig
-> +++ b/common/Kconfig
-> @@ -1076,6 +1076,7 @@ config BLOBLIST_SIZE_RELOC
->         hex "Size of bloblist after relocation"
->         default BLOBLIST_SIZE if BLOBLIST_FIXED || BLOBLIST_ALLOC
->         default 0x0 if BLOBLIST_PASSAGE
-> +       default 0x20000 if (ARM && EFI_LOADER && GENERATE_ACPI_TABLE)
->         help
->           Sets the size of the bloblist in bytes after relocation. Since U-Boot
->           has a lot more memory available then, it is possible to use a larger
-> diff --git a/lib/Kconfig b/lib/Kconfig
-> index 2059219a12..ea444354eb 100644
-> --- a/lib/Kconfig
-> +++ b/lib/Kconfig
-> @@ -983,12 +983,15 @@ menu "System tables"
+> diff --git a/arch/arm/cpu/armv8/start.S b/arch/arm/cpu/armv8/start.S
+> index 7461280261..544a4a5364 100644
+> --- a/arch/arm/cpu/armv8/start.S
+> +++ b/arch/arm/cpu/armv8/start.S
+> @@ -178,6 +178,18 @@ pie_fixup_done:
+>         branch_if_master x0, master_cpu
+>         b       spin_table_secondary_jump
+>         /* never return */
+> +#elif defined(CONFIG_ACPI_PARKING_PROTOCOL) && !defined(CONFIG_SPL_BUILD)
+> +       branch_if_master x0, master_cpu
+> +       /*
+> +        * Waits for ACPI parking protocol memory to be allocated and the spin-table
+> +        * code to be written. Once ready the secondary CPUs will jump and spin in
+> +        * their own 4KiB memory region, which is also used as mailbox, until released
+> +        * by the OS.
+> +        * The mechanism is similar to the DT enable-method = "spin-table", but works
+> +        * with ACPI enabled platforms.
+> +        */
+> +       b       acpi_pp_secondary_jump
+> +       /* never return */
+>  #elif defined(CONFIG_ARMV8_MULTIENTRY)
+>         branch_if_master x0, master_cpu
 >
->  config BLOBLIST_TABLES
->         bool "Put tables in a bloblist"
-> -       depends on X86 && BLOBLIST
-> -       help
-> -         Normally tables are placed at address 0xf0000 and can be up to 64KB
-> -         long. With this option, tables are instead placed in the bloblist
-> -         with a pointer from 0xf0000. The size can then be larger and the
-> -         tables can be placed high in memory.
-> +       depends on BLOBLIST
-> +       default y if (ARM && EFI_LOADER && GENERATE_ACPI_TABLE)
-> +       default n
-> +       help
-> +         On x86 normally tables are placed at address 0xf0000 and can be up
-> +         to 64KB long. With this option, tables are instead placed in the
-> +         bloblist with a pointer from 0xf0000. The size can then be larger
-> +         and the tables can be placed high in memory.
-> +         On other architectures the tables are always placed in high memory.
->
->  config GENERATE_SMBIOS_TABLE
->         bool "Generate an SMBIOS (System Management BIOS) table"
 > --
 > 2.46.0
 >
