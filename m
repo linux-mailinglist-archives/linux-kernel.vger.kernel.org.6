@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-333395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 532D497C7EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:26:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7749C97C7F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F18701F25802
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:26:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA9481C25BF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3097F19ABB7;
-	Thu, 19 Sep 2024 10:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597F119CC18;
+	Thu, 19 Sep 2024 10:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KAid2qNR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G21MlpYA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAB5168BD
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 10:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5851199FAB;
+	Thu, 19 Sep 2024 10:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726741558; cv=none; b=q6T7RANgI3+bqiWw8y2fTID/e+Dhc9vk5C+L4gWkMZ+DoQUkwzPdBpa27abrt0GD0I0FgSTzvHQoY0sSaRnwBOzpZVv5vo7PK2ca9X4sRECrAII5NZ8G5qwzxo9jIGHFKvdcTmqmeJw7Kz33FyFKLLqljIuj9/kDSPLCF7Ydto8=
+	t=1726741562; cv=none; b=OAgZyQEm/qF7xaEf6340hrMxNW7wtHhyDI7REKgd+kSfHp0tSFp9FOaTabDF9jRoLPZEzAyR03bsS07uD+84eaxHz3J3ihCpM7apEJI5zn1SXwGT4N8ZlFJZifcDOa3p+FOF83KfGl3/SJtXAeOFT3/sh0jgmdxU+ZlAK148Kvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726741558; c=relaxed/simple;
-	bh=dh5zZ67iZsKWQUM5ux2qEPzByYk5k3zqWIy2lvo59n0=;
+	s=arc-20240116; t=1726741562; c=relaxed/simple;
+	bh=KEFt1oFo19jE9sxNEVuuRlx+WDgNLtCsTevNidI3PVs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FhblQiWWnCrHacKRiaN7WMTr4Jw9hb8Sv0NoKKE6Zb+N1IjBfbba8O61eyVnrTyKvhFbsWOKZ/BN2OhZOcl3yZghKon0C2JqLT7DeAtmxf2Sm+VR1huLhW9ZL8QbgaA0EWQyx1T7gRp04akRebMTMTj19qfRMhKRGFGFfewBDAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KAid2qNR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726741554;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iU37wya+IdTRVawKsRg1bySPViVfaBomPKDjH3Cb2/o=;
-	b=KAid2qNRgXPDw51QaXJEa8IJ0aXMQdUPSsHjsm7xJgB2EQkRg+hWLYCtpi5+Gbq+/TQOro
-	hVECKYLlFUz9K+LyElhmU2fD9vP3LmGUykGhPpr2NeT5yWyt9quA3PI+q0aAxjCZJdiYrF
-	0gq+D07H42US7UCaTqo1zBrhFYmBo1c=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-677-pIx0RyICNdC2UzX3HX4oUA-1; Thu, 19 Sep 2024 06:25:53 -0400
-X-MC-Unique: pIx0RyICNdC2UzX3HX4oUA-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2f7593fbcecso5569871fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 03:25:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726741552; x=1727346352;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iU37wya+IdTRVawKsRg1bySPViVfaBomPKDjH3Cb2/o=;
-        b=EGRTXOQnQ0js0OlRq44LO5Hkg5j+wc7h5Dwb412mS0iD2ZaDgji0klpdQBRmvW6RWs
-         4WziQWMugn42BZG+DiBIhdIXqK1a/5jLkgSo/ob+U1uyGTRSMqdl4bumyLgnuqULYI6t
-         L2IpnjGE1AiAdRqL7ysVsPRAauuSaJTvbcRRJtAluZ1y7UF/17eL765ruO43HQ2mqI/Z
-         ZgtUp3rveFj2NOEcVRdFAXyzmbHpe5Rxxf9dhJrTlGRE3p/0th4Ks7eEHBSR5uV+emz4
-         /csROQzYz/Si9H0KQpQkbX7M6nJ1td69i4awckdfDf+JL0uFuLJdyurPyUCj151Flyyv
-         NvtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiJRDLHxyUMhdjBTD5Lptm/qGcO83W6aTtsUkk8HI7rVfQ/L4nWdhU9/ZJ35bhWIy5ryPUBRy2RlEDJGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRFXlzcyfd0fEtGLL56PqTd3WCryFZinBfOp6qdSyK4BkPUxge
-	L+fRtY9LGahHDKUjLLGk4BtvZcOraCCkU8cI4ukg7xmOKrJZRadH0xBADbEVxdflPCqeCOA1UWU
-	QwXe9ydgoRSxiM3XES5sfW7n7mSY9HxTF5KY+3Dd+ALNnCR72RkQmYt3CTm8g2w==
-X-Received: by 2002:a05:6512:10d0:b0:536:5339:35a6 with SMTP id 2adb3069b0e04-5367ff32b6amr13726382e87.53.1726741551651;
-        Thu, 19 Sep 2024 03:25:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFD+DJ5YDiNMnKzQb29hvyFQu3OUsT/R6K216mf/QQcWtGw4xhgMjTdU+zmbzcZtq1IeizPpQ==
-X-Received: by 2002:a05:6512:10d0:b0:536:5339:35a6 with SMTP id 2adb3069b0e04-5367ff32b6amr13726362e87.53.1726741551232;
-        Thu, 19 Sep 2024 03:25:51 -0700 (PDT)
-Received: from [192.168.88.100] (146-241-67-136.dyn.eolo.it. [146.241.67.136])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f4375sm704469466b.73.2024.09.19.03.25.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Sep 2024 03:25:50 -0700 (PDT)
-Message-ID: <7bbeed88-5ad1-41c1-a742-8a1737eb7ffa@redhat.com>
-Date: Thu, 19 Sep 2024 12:25:48 +0200
+	 In-Reply-To:Content-Type; b=Kf3CyoDMueWuXQrgdXtdcwCDq4l5RMJA65mLUQFbwxskD0UZ7TWcw3O/k1eyct5BQfM2PwczbMjYhgaqx+ApeQb2bUdx9JM4PDzSldV579ZAWXXXrlozY/89Y0McGYJkQOKkTeJ9wRW8rc2T5TWAUXJZH4Fp2Yb+U6RTxJ8ENks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G21MlpYA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9471EC4CEC4;
+	Thu, 19 Sep 2024 10:25:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726741562;
+	bh=KEFt1oFo19jE9sxNEVuuRlx+WDgNLtCsTevNidI3PVs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G21MlpYAqJSseevJLE1SGNU3PXOve1CeGtZVkFGTCkK9hoL00WQidsMJE4IzQp0Dz
+	 LdLhDwdckuBeWaoJCG2bbWcMS6fmYQ95chStaUFhyohegeX6LMxYOlb2ZPVifFUFj+
+	 R5aj9EZ+bRo3LoN8syipFeqLrxqRoPboZQeD3ET61vt4CC8zaZbvXsveCydfvfgyu7
+	 X6LMqkeaT5nzjYCV2SpQw6TZbgCy2Edhaizgrv4g5X9hfeyUFiVNAQf8y+wS3sgjcu
+	 IQfnaU4OhmgcAqcBX+zGzgDMdfkj+CxwgtsDiIiWobHzQlVXAx2r9AfUicuaeAyRfo
+	 8ol2w2brMElAw==
+Message-ID: <b926c116-7d5b-4bb6-8199-b7653fc5794b@kernel.org>
+Date: Thu, 19 Sep 2024 12:25:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,45 +49,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v1] net: stmmac: set PP_FLAG_DMA_SYNC_DEV only if XDP
- is enabled
-To: Furong Xu <0x1207@gmail.com>, Ong Boon Leong <boon.leong.ong@intel.com>,
- "David S. Miller" <davem@davemloft.net>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Joao Pinto <jpinto@synopsys.com>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- rmk+kernel@armlinux.org.uk, linux@armlinux.org.uk, xfr@outlook.com
-References: <20240913110259.1220314-1-0x1207@gmail.com>
+Subject: Re: [PATCH v4 08/10] arm64: dts: exynos: Add initial support for
+ exynos8895 SoC
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240909110017.419960-1-ivo.ivanov.ivanov1@gmail.com>
+ <20240909110017.419960-9-ivo.ivanov.ivanov1@gmail.com>
+ <ylxrbde4kafbos3qmx54w2d6hpv26ngxgkkpnbdynjj2wfce32@fyzr4jxzn6z4>
+ <ddda4f98-2402-04ab-108d-a1ee4beb33bd@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240913110259.1220314-1-0x1207@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ddda4f98-2402-04ab-108d-a1ee4beb33bd@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/13/24 13:02, Furong Xu wrote:
-> When XDP is not enabled, the page which holds the received buffer
-> will be recycled once the buffer is copied into SKB by
-> skb_copy_to_linear_data(), then the MAC core will never reuse this
-> page any longer. Set PP_FLAG_DMA_SYNC_DEV wastes CPU cycles.
+On 18/09/2024 19:54, Ivaylo Ivanov wrote:
+>>> +		cpu3: cpu@103 {
+>>> +			device_type = "cpu";
+>>> +			compatible = "arm,cortex-a53";
+>>> +			reg = <0x103>;
+>>> +			enable-method = "psci";
+>>> +		};
+>>> +
+>>> +		cpu4: cpu@0 {
+>> Why cpu@0 is cpu4 not cpu0? Anyway, these should be ordered by unit
+>> address.
 > 
-> This patch brings up to 9% noticeable performance improvement on
-> certain platforms.
+> cpu@100 is the boot core of the first cluster consisting of cortex-a53
 > 
-> Fixes: 5fabb01207a2 ("net: stmmac: Add initial XDP support")
-> Signed-off-by: Furong Xu <0x1207@gmail.com>
+> cores, hence why it's labelled as cpu0. The second cluster contains
+> 
+> the Mongoose cores, labelled and ordered after the first cluster.
+> 
+> 
+> It's ordered like so on a lot of SoCs for sanity's sake, hence why I
+> 
+> believe it should stay like that.
 
-I'm quite unconvinced that every performance improvement would be 
-eligible to be considered a fix.
+I tend to switch to style expressed in DTS coding style, especially that
+we might use at some point sorting tool which would then need exception
+for CPUs. Keep existing labels, assuming they reflect reality, but order
+by unit address.
 
-Reading the code it looks like this change actually addresses a 
-regression introduced by the blamed commit, is that correct? If so 
-please re-phrase the commit message accordingly.
+> 
+> 
+> If you still think that they must be ordered by unit address, please
+> 
+> explicitly let me know so that I include that change in the v5.
+> 
 
-Thanks,
 
-Paolo
+Best regards,
+Krzysztof
 
 
