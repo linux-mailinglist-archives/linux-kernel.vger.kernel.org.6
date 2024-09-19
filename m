@@ -1,271 +1,294 @@
-Return-Path: <linux-kernel+bounces-333052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E1097C2D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 04:20:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FD4297C2D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 04:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73BEF1F2201E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 02:20:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68F351C2161E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 02:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC271DA4C;
-	Thu, 19 Sep 2024 02:20:18 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4A41EA84;
+	Thu, 19 Sep 2024 02:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dFieFpKt"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1259022F1E
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 02:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3191381E
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 02:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726712418; cv=none; b=tHQKf9C7aBk1keXEr+lW/YzOY/jeIxyX0+sNUG42mcuJ+cu0tyxtJoN8rCDY7xEWN8OwXKhfaaUn7OHn2FUD9OSQ78lA9gStuJtM7ndIj89iE7lNGuSt/MD4XguCQ9xM50pNnd4gyFG6eZFaTkg9uH1qThXzFn0KpmFgOSkg978=
+	t=1726712612; cv=none; b=uHk8ryYQj68S6A500bkVTiw24MvrR+BDVFtbHq2cwF++SVLPii8IZKhA0B/RDhrGUnz97qv7RfUlcId+mxKxFbUcQMbKmd99OZ8GGOe+onrDSkaJYo6MhTHAOkh6PNWaEfGeR+XPB0PLYdJgGZ11i4/Q9r+BrJtcfagf4DEzfK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726712418; c=relaxed/simple;
-	bh=05pRkrF69KXBMwg+RZnz0ikYtjO+1YuUU4GoZPlHmGI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bNj/vT0EykMJPX9gerwEWmkoLKuD4juFwfPVLmwmqP/JTOjJWlky9CIKhr0G7P35x66JiirUKBaZJONFQa9qkuU0PEe3Kq9WF3Eux3wE9hNZMG6sPq5+T90BqGs5myRX4Owfq3Cl38lAFWYmzvwYDHim2cv9JodDERlmfOL8J3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: f7f9a12e762c11efa216b1d71e6e1362-20240919
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_TXT
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
-	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD
-	CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1
-	AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:fa1cbd8c-61d1-438d-bbef-fdf271132602,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:-5
-X-CID-INFO: VERSION:1.1.38,REQID:fa1cbd8c-61d1-438d-bbef-fdf271132602,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:82c5f88,CLOUDID:fa047362ea64576b5100683b8211021d,BulkI
-	D:240919101459KGNNRF1N,BulkQuantity:0,Recheck:0,SF:44|66|24|17|19|102,TC:n
-	il,Content:1,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,CO
-	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: f7f9a12e762c11efa216b1d71e6e1362-20240919
-X-User: liuye@kylinos.cn
-Received: from localhost.localdomain [(223.70.160.255)] by mailgw.kylinos.cn
-	(envelope-from <liuye@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 2029575759; Thu, 19 Sep 2024 10:14:58 +0800
-From: liuye <liuye@kylinos.cn>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	liuye@kylinos.cn
-Subject: [PATCH v2] mm/vmscan: Fix hard LOCKUP in function isolate_lru_folios
-Date: Thu, 19 Sep 2024 10:14:43 +0800
-Message-Id: <20240919021443.9170-1-liuye@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240814142743.c8227d72be4c5fd9777a4717@linux-foundation.org>
-References: <20240814142743.c8227d72be4c5fd9777a4717@linux-foundation.org>
+	s=arc-20240116; t=1726712612; c=relaxed/simple;
+	bh=fvk7+7I1gV1sxwJ0HYyzs/2LgEKMQ6rHHQ3R1DNUQ4s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LeKxRlatoHxQNVHylhQvaoNRGWctl1rK768NLvH4pP4JfMrujCAHQ9XY+txDvk6Zc6p/i5jJH3z+0kM2g/Zv/BaOagDHt1IQqIFxSZuund6WUNOa6QMiPkeFcRnVGyRMCgjKSFzHImLkjQ3SrRZGU0CMswAeHSmVCXIBiSbREfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dFieFpKt; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cdefe9ae8so470485e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 19:23:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726712608; x=1727317408; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qhLFHkcyTLaLAQFd6owrvSOx6913wgzUyjCt8LLZGTw=;
+        b=dFieFpKtmYaP+xmJKfSLr2+z1BIpUGsuxR6rdyO3BL/8vQLuIdufnvgmdegKu2zgcy
+         q2hGb16wso+a1rC/nJDQQrgQO1pGhbPADDl/tKX7jnti2RdoKMJaNxBkh2jKDZKjTpTF
+         LTWF210VEKBr841LoahCa9fBwPTylHHxXf7dmlWyQko/BvuNt7iXlYTzfYUp4h5ouM+V
+         0pkYTpT2tZiEWrmgVUbu5+UZRytHHwaX0fTHfHHMy7V4L48v4PBszZSdrWq1U/qAVx0p
+         E/9G9JQHGKFO9eM/PRG1jJP6GtAQsoTDjhlrx9C+8N+tB7LiH68orXqrwpp5FMccZ3Lc
+         jUZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726712608; x=1727317408;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qhLFHkcyTLaLAQFd6owrvSOx6913wgzUyjCt8LLZGTw=;
+        b=bU96/rBN8dIa4bkEy+oj6N+p8j+wOaWQ1Aje5+XvqocavUVEPTjGY3SgfqAbVa7SWb
+         7Ay7Lnq0uAacjxPypwUNLeUX99gV4bbNWWb0a6si3LpcsXlca9ln0ai5mU0tYY7D6HwJ
+         r2XDEA/pASYDZJdrDiECH/oZg3XEKywlSUPlwRcGaLDYGcLbIJHEOBwNoNJXBvfjuKML
+         fcDQGNuY7q3obQWva5BHmvminkjwONHwkW7xfaCt4PriWZIqXxftm0e7vZh1CTCvW/fZ
+         ona5WFvdpUlzZbGM83BzC5bnjr0DGDsIPAOUuNQ32hQBAKNsJI/sz+ELg7cUpc4RTTjG
+         ONwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzrsGar4aQMnzQMKeceehLlZBWAXnuNQmtx6mr1oPa1ie1fTzAJizFPK/+EcrkoFlrzCfLNcVcliiwrJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuOxlMs+5Hsic47W+L/B5yVPngnhaaI57Kwuu+0KQSKJnEjCvm
+	PtQi7P/Ga+wpYsPUC1jGsQ8JOm1nVzXg0WqJkjWH3bapwNLpbaIIV2JtxeEVpHu5dplST05YgWd
+	gZYWvFb4cmD+a7MzC4pcJgfmnZWY=
+X-Google-Smtp-Source: AGHT+IEQwE+ThE/YOYpbVVYE+8FMAFtPY47RuCYrjbUPt+edKMJfmiWw86bn75YFfVDR9A3zwT5W2FyPgC7RrlnITEc=
+X-Received: by 2002:a05:6000:1f89:b0:376:b7e4:c53d with SMTP id
+ ffacd0b85a97d-378c2a4ae79mr7568845f8f.0.1726712608016; Wed, 18 Sep 2024
+ 19:23:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1726123214-208356-1-git-send-email-liuderong@oppo.com>
+ <1726123214-208356-3-git-send-email-liuderong@oppo.com> <17ceed17-b17f-42d9-8c82-79f1f4814c1a@kernel.org>
+In-Reply-To: <17ceed17-b17f-42d9-8c82-79f1f4814c1a@kernel.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Thu, 19 Sep 2024 10:23:16 +0800
+Message-ID: <CAHJ8P3LNpZamiva_Ktck+tRKXvyAAYK0dg_z2Mwjiq41aeMF0Q@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH v2 2/2] f2fs: introduce get_section_mtime
+To: Chao Yu <chao@kernel.org>
+Cc: liuderong@oppo.com, jaegeuk@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This fixes the following hard lockup in function isolate_lru_folios
-when memory reclaim.If the LRU mostly contains ineligible folios
-May trigger watchdog.
-
-watchdog: Watchdog detected hard LOCKUP on cpu 173
-RIP: 0010:native_queued_spin_lock_slowpath+0x255/0x2a0
-Call Trace:
-	_raw_spin_lock_irqsave+0x31/0x40
-	folio_lruvec_lock_irqsave+0x5f/0x90
-	folio_batch_move_lru+0x91/0x150
-	lru_add_drain_per_cpu+0x1c/0x40
-	process_one_work+0x17d/0x350
-	worker_thread+0x27b/0x3a0
-	kthread+0xe8/0x120
-	ret_from_fork+0x34/0x50
-	ret_from_fork_asm+0x1b/0x30
-
-lruvec->lru_lock owner：
-
-PID: 2865     TASK: ffff888139214d40  CPU: 40   COMMAND: "kswapd0"
- #0 [fffffe0000945e60] crash_nmi_callback at ffffffffa567a555
- #1 [fffffe0000945e68] nmi_handle at ffffffffa563b171
- #2 [fffffe0000945eb0] default_do_nmi at ffffffffa6575920
- #3 [fffffe0000945ed0] exc_nmi at ffffffffa6575af4
- #4 [fffffe0000945ef0] end_repeat_nmi at ffffffffa6601dde
-    [exception RIP: isolate_lru_folios+403]
-    RIP: ffffffffa597df53  RSP: ffffc90006fb7c28  RFLAGS: 00000002
-    RAX: 0000000000000001  RBX: ffffc90006fb7c60  RCX: ffffea04a2196f88
-    RDX: ffffc90006fb7c60  RSI: ffffc90006fb7c60  RDI: ffffea04a2197048
-    RBP: ffff88812cbd3010   R8: ffffea04a2197008   R9: 0000000000000001
-    R10: 0000000000000000  R11: 0000000000000001  R12: ffffea04a2197008
-    R13: ffffea04a2197048  R14: ffffc90006fb7de8  R15: 0000000003e3e937
-    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
-    <NMI exception stack>
- #5 [ffffc90006fb7c28] isolate_lru_folios at ffffffffa597df53
- #6 [ffffc90006fb7cf8] shrink_active_list at ffffffffa597f788
- #7 [ffffc90006fb7da8] balance_pgdat at ffffffffa5986db0
- #8 [ffffc90006fb7ec0] kswapd at ffffffffa5987354
- #9 [ffffc90006fb7ef8] kthread at ffffffffa5748238
-crash>
-
-Scenario:
-User processe are requesting a large amount of memory and keep page active.
-Then a module continuously requests memory from ZONE_DMA32 area.
-Memory reclaim will be triggered due to ZONE_DMA32 watermark alarm reached.
-However pages in the LRU(active_anon) list are mostly from
-the ZONE_NORMAL area.
-
-Reproduce:
-Terminal 1: Construct to continuously increase pages active(anon).
-mkdir /tmp/memory
-mount -t tmpfs -o size=1024000M tmpfs /tmp/memory
-dd if=/dev/zero of=/tmp/memory/block bs=4M
-tail /tmp/memory/block
-
-Terminal 2:
-vmstat -a 1
-active will increase.
-procs ---memory--- ---swap-- ---io---- -system-- ---cpu--- ...
- r  b   swpd   free  inact active   si   so    bi    bo
- 1  0   0 1445623076 45898836 83646008    0    0     0
- 1  0   0 1445623076 43450228 86094616    0    0     0
- 1  0   0 1445623076 41003480 88541364    0    0     0
- 1  0   0 1445623076 38557088 90987756    0    0     0
- 1  0   0 1445623076 36109688 93435156    0    0     0
- 1  0   0 1445619552 33663256 95881632    0    0     0
- 1  0   0 1445619804 31217140 98327792    0    0     0
- 1  0   0 1445619804 28769988 100774944    0    0     0
- 1  0   0 1445619804 26322348 103222584    0    0     0
- 1  0   0 1445619804 23875592 105669340    0    0     0
-
-cat /proc/meminfo | head
-Active(anon) increase.
-MemTotal:       1579941036 kB
-MemFree:        1445618500 kB
-MemAvailable:   1453013224 kB
-Buffers:            6516 kB
-Cached:         128653956 kB
-SwapCached:            0 kB
-Active:         118110812 kB
-Inactive:       11436620 kB
-Active(anon):   115345744 kB
-Inactive(anon):   945292 kB
-
-When the Active(anon) is 115345744 kB, insmod module triggers
-the ZONE_DMA32 watermark.
-
-perf record -e vmscan:mm_vmscan_lru_isolate -aR
-perf script
-isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=2
-nr_skipped=2 nr_taken=0 lru=active_anon
-isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=0
-nr_skipped=0 nr_taken=0 lru=active_anon
-isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=28835844
-nr_skipped=28835844 nr_taken=0 lru=active_anon
-isolate_mode=0 classzone=1 order=1 nr_requested=32 nr_scanned=28835844
-nr_skipped=28835844 nr_taken=0 lru=active_anon
-isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=29
-nr_skipped=29 nr_taken=0 lru=active_anon
-isolate_mode=0 classzone=1 order=0 nr_requested=32 nr_scanned=0
-nr_skipped=0 nr_taken=0 lru=active_anon
-
-See nr_scanned=28835844.
-28835844 * 4k = 115343376KB approximately equal to 115345744 kB.
-
-If increase Active(anon) to 1000G then insmod module triggers
-the ZONE_DMA32 watermark. hard lockup will occur.
-
-In my device nr_scanned = 0000000003e3e937 when hard lockup.
-Convert to memory size 0x0000000003e3e937 * 4KB = 261072092 KB.
-
-   [ffffc90006fb7c28] isolate_lru_folios at ffffffffa597df53
-    ffffc90006fb7c30: 0000000000000020 0000000000000000
-    ffffc90006fb7c40: ffffc90006fb7d40 ffff88812cbd3000
-    ffffc90006fb7c50: ffffc90006fb7d30 0000000106fb7de8
-    ffffc90006fb7c60: ffffea04a2197008 ffffea0006ed4a48
-    ffffc90006fb7c70: 0000000000000000 0000000000000000
-    ffffc90006fb7c80: 0000000000000000 0000000000000000
-    ffffc90006fb7c90: 0000000000000000 0000000000000000
-    ffffc90006fb7ca0: 0000000000000000 0000000003e3e937
-    ffffc90006fb7cb0: 0000000000000000 0000000000000000
-    ffffc90006fb7cc0: 8d7c0b56b7874b00 ffff88812cbd3000
-
-About the Fixes:
-Why did it take eight years to be discovered?
-
-The problem requires the following conditions to occur:
-1. The device memory should be large enough.
-2. Pages in the LRU(active_anon) list are mostly from the ZONE_NORMAL area.
-3. The memory in ZONE_DMA32 needs to reach the watermark.
-
-If the memory is not large enough, or if the usage design of ZONE_DMA32
-area memory is reasonable, this problem is difficult to detect.
-
-notes:
-The problem is most likely to occur in ZONE_DMA32 and ZONE_NORMAL,
-but other suitable scenarios may also trigger the problem.
-
-Fixes: b2e18757f2c9 ("mm, vmscan: begin reclaiming pages on a per-node basis")
-Signed-off-by: liuye <liuye@kylinos.cn>
-
----
-V1->V2 : Adjust code format and add scenario description, reproduction method.
----
----
- include/linux/swap.h | 1 +
- mm/vmscan.c          | 6 +++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index ba7ea95d1c57..afb3274c90ef 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -223,6 +223,7 @@ enum {
- };
- 
- #define SWAP_CLUSTER_MAX 32UL
-+#define SWAP_CLUSTER_MAX_SKIPPED (SWAP_CLUSTER_MAX << 10)
- #define COMPACT_CLUSTER_MAX SWAP_CLUSTER_MAX
- 
- /* Bit flag in swap_map */
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index bd489c1af228..d2e436a4f47d 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1636,6 +1636,7 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
- 	unsigned long nr_skipped[MAX_NR_ZONES] = { 0, };
- 	unsigned long skipped = 0;
- 	unsigned long scan, total_scan, nr_pages;
-+	unsigned long max_nr_skipped = 0;
- 	LIST_HEAD(folios_skipped);
- 
- 	total_scan = 0;
-@@ -1650,9 +1651,12 @@ static unsigned long isolate_lru_folios(unsigned long nr_to_scan,
- 		nr_pages = folio_nr_pages(folio);
- 		total_scan += nr_pages;
- 
--		if (folio_zonenum(folio) > sc->reclaim_idx) {
-+		/* Using max_nr_skipped to prevent hard LOCKUP*/
-+		if (max_nr_skipped < SWAP_CLUSTER_MAX_SKIPPED &&
-+		    (folio_zonenum(folio) > sc->reclaim_idx)) {
- 			nr_skipped[folio_zonenum(folio)] += nr_pages;
- 			move_to = &folios_skipped;
-+			max_nr_skipped++;
- 			goto move;
- 		}
- 
--- 
-2.25.1
-
+Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+=E4=BA=8E2024=E5=B9=B49=E6=9C=8818=E6=97=A5=E5=91=A8=E4=B8=89 14:45=E5=86=
+=99=E9=81=93=EF=BC=9A
+>
+> On 2024/9/12 14:40, liuderong@oppo.com wrote:
+> > From: liuderong <liuderong@oppo.com>
+> >
+> > When segs_per_sec is larger than 1, section may contain free segments,
+> > mtime should be the mean value of each valid segments,
+> > so introduce get_section_mtime to exclude free segments in a section.
+> >
+> > Signed-off-by: liuderong <liuderong@oppo.com>
+> > ---
+> >   fs/f2fs/f2fs.h    |  2 ++
+> >   fs/f2fs/gc.c      | 15 ++-------------
+> >   fs/f2fs/segment.c | 41 ++++++++++++++++++++++++++++++++++++-----
+> >   3 files changed, 40 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 4dcdcdd..d6adf0f 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -3762,6 +3762,8 @@ enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_=
+sb_info *sbi,
+> >   unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi);
+> >   unsigned int f2fs_usable_blks_in_seg(struct f2fs_sb_info *sbi,
+> >                       unsigned int segno);
+> > +unsigned long long get_section_mtime(struct f2fs_sb_info *sbi,
+> > +                     unsigned int segno);
+>
+> Hi Derong,
+>
+> It needs to add "f2fs_" prefix for get_section_mtime() to avoid global
+> namespace pollution.
+>
+> >
+> >   #define DEF_FRAGMENT_SIZE   4
+> >   #define MIN_FRAGMENT_SIZE   1
+> > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > index 6299639..03c6117 100644
+> > --- a/fs/f2fs/gc.c
+> > +++ b/fs/f2fs/gc.c
+> > @@ -332,20 +332,14 @@ static unsigned int check_bg_victims(struct f2fs_=
+sb_info *sbi)
+> >   static unsigned int get_cb_cost(struct f2fs_sb_info *sbi, unsigned in=
+t segno)
+> >   {
+> >       struct sit_info *sit_i =3D SIT_I(sbi);
+> > -     unsigned int secno =3D GET_SEC_FROM_SEG(sbi, segno);
+> > -     unsigned int start =3D GET_SEG_FROM_SEC(sbi, secno);
+> >       unsigned long long mtime =3D 0;
+> >       unsigned int vblocks;
+> >       unsigned char age =3D 0;
+> >       unsigned char u;
+> > -     unsigned int i;
+> >       unsigned int usable_segs_per_sec =3D f2fs_usable_segs_in_sec(sbi)=
+;
+> >
+> > -     for (i =3D 0; i < usable_segs_per_sec; i++)
+> > -             mtime +=3D get_seg_entry(sbi, start + i)->mtime;
+> > +     mtime =3D get_section_mtime(sbi, segno);
+> >       vblocks =3D get_valid_blocks(sbi, segno, true);
+> > -
+> > -     mtime =3D div_u64(mtime, usable_segs_per_sec);
+> >       vblocks =3D div_u64(vblocks, usable_segs_per_sec);
+> >
+> >       u =3D BLKS_TO_SEGS(sbi, vblocks * 100);
+> > @@ -485,10 +479,7 @@ static void add_victim_entry(struct f2fs_sb_info *=
+sbi,
+> >                               struct victim_sel_policy *p, unsigned int=
+ segno)
+> >   {
+> >       struct sit_info *sit_i =3D SIT_I(sbi);
+> > -     unsigned int secno =3D GET_SEC_FROM_SEG(sbi, segno);
+> > -     unsigned int start =3D GET_SEG_FROM_SEC(sbi, secno);
+> >       unsigned long long mtime =3D 0;
+> > -     unsigned int i;
+> >
+> >       if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+> >               if (p->gc_mode =3D=3D GC_AT &&
+> > @@ -496,9 +487,7 @@ static void add_victim_entry(struct f2fs_sb_info *s=
+bi,
+> >                       return;
+> >       }
+> >
+> > -     for (i =3D 0; i < SEGS_PER_SEC(sbi); i++)
+> > -             mtime +=3D get_seg_entry(sbi, start + i)->mtime;
+> > -     mtime =3D div_u64(mtime, SEGS_PER_SEC(sbi));
+> > +     mtime =3D get_section_mtime(sbi, segno);
+> >
+> >       /* Handle if the system time has changed by the user */
+> >       if (mtime < sit_i->min_mtime)
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 6627394..e62e722 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -5389,6 +5389,41 @@ unsigned int f2fs_usable_segs_in_sec(struct f2fs=
+_sb_info *sbi)
+> >       return SEGS_PER_SEC(sbi);
+> >   }
+> >
+> > +unsigned long long get_section_mtime(struct f2fs_sb_info *sbi,
+> > +     unsigned int segno)
+> > +{
+> > +     unsigned int usable_segs_per_sec =3D f2fs_usable_segs_in_sec(sbi)=
+;
+> > +     unsigned int secno =3D 0, start =3D 0;
+> > +     struct free_segmap_info *free_i =3D FREE_I(sbi);
+> > +     unsigned int valid_seg_count =3D 0;
+> > +     unsigned long long mtime =3D 0;
+> > +     unsigned int i =3D 0;
+> > +
+> > +     if (segno =3D=3D NULL_SEGNO)
+> > +             return 0;
+>
+> No needed.
+>
+> > +
+> > +     secno =3D GET_SEC_FROM_SEG(sbi, segno);
+> > +     start =3D GET_SEG_FROM_SEC(sbi, secno);
+> > +
+> > +     if (!__is_large_section(sbi))
+> > +             return get_seg_entry(sbi, start + i)->mtime;
+> > +
+> > +     for (i =3D 0; i < usable_segs_per_sec; i++) {
+> > +             /* for large section, only check the mtime of valid segme=
+nts */
+> > +             spin_lock(&free_i->segmap_lock);
+> > +             if (test_bit(start + i, free_i->free_segmap)) {
+> > +                     mtime +=3D get_seg_entry(sbi, start + i)->mtime;
+> > +                     valid_seg_count++;
+> > +             }
+> > +             spin_unlock(&free_i->segmap_lock);
+> > +     }
+>
+> After commit 6f3a01ae9b72 ("f2fs: record average update time of segment")=
+,
+> mtime of segment starts to indicate average update time of segment.
+>
+> So it needs to change like this?
+>
+> for (i =3D 0; i < usable_segs_per_sec; i++) {
+>         struct seg_entry *se =3D get_seg_entry(sbi, start + i);
+>
+>         mtime +=3D se->mtime * se->valid_blocks;
+>         total_valid_blocks +=3D se->valid_blocks;
+> }
+hi Chao,
+after I read this patch from Derong and base on your this comment,
+I have some doubts=EF=BC=9A
+mtime is update in update_segment_mtime, and this API is called by
+more than one path=EF=BC=8C such as f2fs_invalidate_blocks and f2fs_allocat=
+e_data_block,
+and se->mtime is calculated by the following  flow if se->mtime is not null=
+.
+--------------------------------
+se->mtime =3D div_u64(se->mtime * se->valid_blocks + mtime,
+se->valid_blocks + 1);
+--------------------------------
+if this is called from f2fs_invalidate_blocks, se->mtime is still calculate=
+d by
+mtime / se->valid_blocks + 1, but the real value of se->valid_blocks will
+will be reduced  1=EF=BC=8CSo isn=E2=80=99t it a bit inaccurate just calcul=
+ating valid
+blocks in this patch?
+thanks!
+>
+> if (total_valid_blocks =3D=3D 0)
+>         return 0;
+>
+> return div_u64(mtime, total_valid_blocks);
+>
+> Thanks,
+>
+> > +
+> > +     if (valid_seg_count =3D=3D 0)
+> > +             return 0;
+> > +
+> > +     return div_u64(mtime, valid_seg_count);
+> > +}
+> > +
+> >   /*
+> >    * Update min, max modified time for cost-benefit GC algorithm
+> >    */
+> > @@ -5402,13 +5437,9 @@ static void init_min_max_mtime(struct f2fs_sb_in=
+fo *sbi)
+> >       sit_i->min_mtime =3D ULLONG_MAX;
+> >
+> >       for (segno =3D 0; segno < MAIN_SEGS(sbi); segno +=3D SEGS_PER_SEC=
+(sbi)) {
+> > -             unsigned int i;
+> >               unsigned long long mtime =3D 0;
+> >
+> > -             for (i =3D 0; i < SEGS_PER_SEC(sbi); i++)
+> > -                     mtime +=3D get_seg_entry(sbi, segno + i)->mtime;
+> > -
+> > -             mtime =3D div_u64(mtime, SEGS_PER_SEC(sbi));
+> > +             mtime =3D get_section_mtime(sbi, segno);
+> >
+> >               if (sit_i->min_mtime > mtime)
+> >                       sit_i->min_mtime =3D mtime;
+>
+>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
