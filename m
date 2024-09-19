@@ -1,94 +1,169 @@
-Return-Path: <linux-kernel+bounces-333271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A7797C631
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:48:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF6697C634
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24A0628278F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:48:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09FE1281C80
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B5B1991AD;
-	Thu, 19 Sep 2024 08:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7151991B5;
+	Thu, 19 Sep 2024 08:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eofXfxqn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FVFJlCOS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D811990A1;
-	Thu, 19 Sep 2024 08:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2652FC0E;
+	Thu, 19 Sep 2024 08:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726735698; cv=none; b=ABy6ZMw3i2rEIRigDoPQpJeW6nyeWe2YnC9l8gPmK4XER4fwUtX44bYiw9+DjipU+QBSY66P3wehpsE+nJoXXBjWsOoArT+ehfsXN247CT8oB7d25xcYjwIlLXf7ucd32zLJQQ48OC7QubqWp/v9Tm3LRlhAxPVNcSG2VPJocbE=
+	t=1726735742; cv=none; b=QGzS8/Ejr6fAyfhXmL5/ypuFt18o4W2ZZC5JKffRu+vxe5wX2Y22jfj7Sa8SlL3WVH5q001JebxZ3dryI7JMFgLJ3ww+WjovFwCPujyixhm6lStBbnRA2s8Y+FgiznwWfeepRV5Dzq/QTLLsv4yM28JZAakeIhKZ4vv/O8ERanI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726735698; c=relaxed/simple;
-	bh=brUGRPagFDoC2hg0hqT+CGDG53HNbe00WCE0NisuZfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aen8ssDLxhnVQ8ZvqRddP/1CqKnPK16Kts/73oZ5ZS0b4AQNNVTqivQHV2cGBOejr3O5YsTWoi8RtSUchl7l3l5GnBjS96JlaXFN8ERwGxnzd1ztTNkALw2XPDbgw8rO3ZMU+fXyPwSFyBEzPKEkCysC4qS7IJGM8/Ub4KR1XoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eofXfxqn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39B15C4CEC4;
-	Thu, 19 Sep 2024 08:48:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726735697;
-	bh=brUGRPagFDoC2hg0hqT+CGDG53HNbe00WCE0NisuZfE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eofXfxqnadNTFE7vY28rXSXTF5hdsSxfgMAKo4f3jXZGdtCCAIg4FvipNnB2clNg3
-	 7LMYX3fJCYJaWGI8IhzUvpYZPkbFVbKPiMDPZVfF4sqf5561QkcwjzvWHyGZDINuvV
-	 cFnI/Y3MV/cNEUW8J7PxtXTTeKz+iu9G156UzJDOIzQn9ZIs32WPIHXu0ip/vmhLZn
-	 RAsZgAx/JEuUfi8nvVwwWojuaNBkuXSf3kkcbgQ88AHTdL0c95gPT1TTTalOtjD+ua
-	 1+q8iMEK2nzKb6PPXoRvabRF8mMA3kbTVxNgG+WeSta3/KvURhXWCyidvavIAdEb7Z
-	 2WcNUd21jQJkA==
-Date: Thu, 19 Sep 2024 10:48:12 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Jiri Olsa <jolsa@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [GIT PULL] Performance events changes for v6.12
-Message-ID: <ZuvlTLMflCigipCr@gmail.com>
-References: <ZurLc9qEjBH9MkvK@gmail.com>
- <CAADWXX-xNBRC8yAUmCdPxe3W==Dxa_Xi6P_ceYDAEAeKYiqC4Q@mail.gmail.com>
- <ZuvhwjNgDmpmReUl@gmail.com>
- <CAADWXX-Mu=h7hh1KmiWMPoDoVSTb=oQ5Huat+2=hsm59g4R6YA@mail.gmail.com>
+	s=arc-20240116; t=1726735742; c=relaxed/simple;
+	bh=Xycib8bl7thCGbYvoJLXnNtbcDi/AIgIEqbrTsj8i9A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G4x+esgU5pYosta/Wd2Z4Rf1u2czw7ChCwxQbebNXb66CQ/EG4Ui2BX/R1mQGLzXTTrLOysVhUMRGe4Xnbeho6SdXT/eFwPrIl5l1V3Ux15+QdwvhircGvo6L0U8GQsKuPXoHCkghAkBCUlsNjQu5CdXZsFB5QH8x1zMvjjYMzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FVFJlCOS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48J11feT006768;
+	Thu, 19 Sep 2024 08:48:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=8P8jp37VuVHU6HERyHf8csPpU1ieS8Rj655puJrSMSs=; b=FV
+	FJlCOSrAppaCHBjwT91n9yjSP26iYeBz+o6em5dwAbdu0XCmdn/MDTdFIqHzircd
+	zAg8zD4sZmg2xFCESp36ToGWq2AxFMmllq7AaKnOx1pw8wfBsTcX0+rQqSGEUlmr
+	L7znY2bzjuY7IzW3Bq6pSNiiBsMGDC/YVVclLHPEyL2NTihC728PRPrcUSFSbDTn
+	RoUcvsGv1aLkTCVdr+mpxSEiY+xFzqfTY5idieBh13dpxpx3gxAuaFrWL+1QrHhc
+	wxgP/o1gcTqhKA83t2nyg+GCWl0UHaR8cuxeil98bGWjasT60U+Zn4SqdJFXXZZl
+	G8G8v+M3nZNF9lVuky7g==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4j6vren-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Sep 2024 08:48:55 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48J8mrvW008190
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Sep 2024 08:48:53 GMT
+Received: from hu-sachgupt-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 19 Sep 2024 01:48:48 -0700
+From: Sachin Gupta <quic_sachgupt@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_cang@quicinc.com>,
+        <quic_nguyenb@quicinc.com>, <quic_bhaskarv@quicinc.com>,
+        <quic_mapa@quicinc.com>, <quic_narepall@quicinc.com>,
+        <quic_nitirawa@quicinc.com>, <quic_rampraka@quicinc.com>,
+        <quic_sachgupt@quicinc.com>, <quic_sartgarg@quicinc.com>
+Subject: [PATCH V3] arm64: dts: qcom: qcs6490-rb3gen2: Add SD Card node
+Date: Thu, 19 Sep 2024 14:18:26 +0530
+Message-ID: <20240919084826.1117-1-quic_sachgupt@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADWXX-Mu=h7hh1KmiWMPoDoVSTb=oQ5Huat+2=hsm59g4R6YA@mail.gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 8vBpyNYwEwu2CLIa_WaECk3L3PDpYlCo
+X-Proofpoint-GUID: 8vBpyNYwEwu2CLIa_WaECk3L3PDpYlCo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=768
+ mlxscore=0 malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1015
+ adultscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409190056
 
+Add SD Card node for Qualcomm qcs6490-rb3gen2 Board.
 
-* Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
+---
 
-> On Thu, Sep 19, 2024 at 10:33 AM Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > Thanks a lot - I fixed up my SMTP sending path, so starting with this mail
-> > it shouldn't go to your spam folder anymore.
-> 
-> Well, that didn't work at all. It's still marked as spam, and the
-> headers of your email still say you go through gmail:
+Changes from v2:
+ - Moved status "okay" at the last. (Thanks Dmitry)
 
-Because I'm a moron:
+Changes from v1:
+ - Moving the pinctrl-related nodes below the PINCTRL comment and relocating
+   the sd-cd node within the PINCTRL-related TLMM section. (Thanks Dmitry)
+---
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 33 ++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-I fixed my setup, tested that it's working fine:
+diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+index 0d45662b8028..5d81fa2ce86a 100644
+--- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
++++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+@@ -716,6 +716,18 @@
+ 	status = "okay";
+ };
+ 
++&sdhc_2 {
++	pinctrl-0 = <&sdc2_clk>, <&sdc2_cmd>, <&sdc2_data>, <&sd_cd>;
++	pinctrl-1 = <&sdc2_clk_sleep>, <&sdc2_cmd_sleep>, <&sdc2_data_sleep>, <&sd_cd>;
++
++	vmmc-supply = <&vreg_l9c_2p96>;
++	vqmmc-supply = <&vreg_l6c_2p96>;
++
++	cd-gpios = <&tlmm 91 GPIO_ACTIVE_LOW>;
++
++	status = "okay";
++};
++
+ &tlmm {
+ 	gpio-reserved-ranges = <32 2>, /* ADSP */
+ 			       <48 4>; /* NFC */
+@@ -812,6 +824,21 @@
+ 	};
+ };
+ 
++&sdc2_clk {
++	bias-disable;
++	drive-strength = <16>;
++};
++
++&sdc2_cmd {
++	bias-pull-up;
++	drive-strength = <10>;
++};
++
++&sdc2_data {
++	bias-pull-up;
++	drive-strength = <10>;
++};
++
+ &tlmm {
+ 	lt9611_irq_pin: lt9611-irq-state {
+ 		pins = "gpio24";
+@@ -819,4 +846,10 @@
+ 		drive-strength = <2>;
+ 		bias-disable;
+ 	};
++
++	sd_cd: sd-cd-state {
++		pins = "gpio91";
++		function = "gpio";
++		bias-pull-up;
++	};
+ };
+-- 
+2.17.1
 
-      Received: from nyc.source.kernel.org (nyc.source.kernel.org. [147.75.193.91])
-
-... and then I sent you the email from a Mutt session I started yesterday. :-/
-
-This mail should be fine. I hope.
-
-Thanks,
-
-	Ingo
 
