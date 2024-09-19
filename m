@@ -1,190 +1,252 @@
-Return-Path: <linux-kernel+bounces-333193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB86197C540
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:49:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A0697C543
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B56B1F224EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:49:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DDC91C227BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBA71957F9;
-	Thu, 19 Sep 2024 07:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="XIbC1LWI"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5076A197A7B;
+	Thu, 19 Sep 2024 07:48:42 +0000 (UTC)
+Received: from MSK-MAILEDGE.securitycode.ru (msk-mailedge.securitycode.ru [195.133.217.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501CE196450;
-	Thu, 19 Sep 2024 07:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DC119597F;
+	Thu, 19 Sep 2024 07:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.133.217.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726732111; cv=none; b=ZJqFot5RJTJLPTZG0WZR+0Yp0rZx7N0xvLpu4SXiBZMn25Opun6g9xhjwi3lNGcUz8MFktw/kehdLpzZFlTX5Cp2XkSmSvOvTdm0gpH1CW8jD7itsIeiqDiIHd67cfTTtUHsKrbtD0AJVFK7if/QddwVCiIANJvUNYIK4VkC65g=
+	t=1726732121; cv=none; b=dCplOxAjJjmJAu3xHuWWmwRwZX8ef5BU/qy9yekuTUX0ZXBff5usPhJ6iqGOrxra9vd/DOCzd1dBL2olbpf3hyZ+5u/UQsgyixLfD+A1Z0hgecT9vPJyWU6MBtQH3hQjtY+JjwmHJXSv18F1o0mupPCeadvVbgkqWWCk7YfNXdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726732111; c=relaxed/simple;
-	bh=I8i0PtYzbp5/3UHNuCLN6I1UE1MX9/TvaUsV0muqxv4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jLhdGXrS5YwQHJeuOSOBpNXMu5YE95Aoj1PR0qQLGZsfzAGJ3b55UQajWgP8X37wo2dGtYyflQDKA6vFKRzgjxi5LlWfjPZmQwFFHV6OmVRU2d34+qpm1xvdrGGE6uDii0Gybhi5N6LHL6XpVeuefLYQHdOToyFQejbtFxn+2zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=XIbC1LWI; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1726732088; x=1727336888; i=w_armin@gmx.de;
-	bh=Ivu6pNMFNDdzz9NzA2QR63kAY+I41GjtOQX8rtxsG/8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=XIbC1LWILdwoDD14/xthaHpnOcTENEi2sB8flsfU1vsnq0k7blLbVeSlf9TWepxK
-	 4e3jS07u8xpG8T2waaLS81LVwir8bJ2534RsH+n2545XuYypTjF63o1HljkPcdF+r
-	 HRk8xwaTuUGNDnE7q9agU18f9mbUKAQ8VT0uOChs3GOqSPcZiDrnyA0vl+0YK+Gj4
-	 DcpamDW4y1/MUztladk+HuipCNtzyPa3TJwa67NsL+fXZUTVGGrBDYvluoQxoUv6r
-	 xDBgP2GOe1ly6b59vaWNZxaB/zPG8uJIydvSJc5NwjLl1+IzEoLydjph7zb/SU8FE
-	 kWsF9tyJSdxT2l1AtQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M3UZ6-1sqdfG28nK-00Buff; Thu, 19
- Sep 2024 09:48:08 +0200
-Message-ID: <115271db-b7dd-4490-9f24-9e0a99dbf133@gmx.de>
-Date: Thu, 19 Sep 2024 09:48:02 +0200
+	s=arc-20240116; t=1726732121; c=relaxed/simple;
+	bh=ZUIY1bTq7tcStG9n2brMp/RAUcRJFzU/Eqq1FFpE2NQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oaV3/M8NiUhQUkTFRYCzaLlTGL6eIX/tyYdAHIt6/q15s3nL9EHWxedNj16M4KiLKya7I5LkpAN9fQuqktzWFeOooaqSvVyrejzq+WiMcErbk+NzWdlelAN/AZBfM1it59ZYOVvdD7v143FjLmx1My8LF8nvhewX26JyGicQx54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=securitycode.ru; spf=pass smtp.mailfrom=securitycode.ru; arc=none smtp.client-ip=195.133.217.143
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=securitycode.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=securitycode.ru
+From: George Rurikov <g.ryurikov@securitycode.ru>
+To: Kashyap Desai <kashyap.desai@broadcom.com>
+CC: George Rurikov <g.ryurikov@securitycode.ru>, Sumit Saxena
+	<sumit.saxena@broadcom.com>, Shivasharan S
+	<shivasharan.srikanteshwara@broadcom.com>, Chandrakanth patil
+	<chandrakanth.patil@broadcom.com>, "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+	<martin.petersen@oracle.com>, <megaraidlinux.pdl@broadcom.com>,
+	<linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: [PATCH] scsi: megaraid: Remove redundant check in megasas_init_fw()
+Date: Thu, 19 Sep 2024 10:48:07 +0300
+Message-ID: <20240919074807.930749-1-g.ryurikov@securitycode.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: dell-laptop: Fix crash when unregistering
- battery hook
-To: Andres Salomon <dilinger@queued.net>
-Cc: mjg59@srcf.ucam.org, pali@kernel.org, rafael@kernel.org, lenb@kernel.org,
- hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
- platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240919063332.362201-1-W_Armin@gmx.de>
- <20240919031329.3e0f76d0@5400>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20240919031329.3e0f76d0@5400>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:vpecjAySGrq5pw6epyOpemsGkmdivEr4qpldfmRmrscnK/W2DIt
- jIBK5rPBR+KO33JuVA8iaXDc5CZIQYSP02ttm+wgOJsq58BE6RivY+OHm3JHwVtkYjlomS3
- 9QtHTPA1slc+EZ/AM8+Lb/oYpT5hp+6+1TmHs0PKJetbievYp7wZztPzVTGogBYzHpqGA1i
- 3U4hIceW9ZpkH+O0jQkBw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:EoIFML1Xr9c=;TbYs4bi3J/5bfsQW7mVyymklksm
- Z4jnWaazsWymMXaV238/1MCmVzv6kmof0aVlLPLdPnC/Ly3X0sY+kSnd/aRjQ312xSAzyZCFa
- ie937XYZzy1ZRG5PKnJwMUiAEvJmnngIjGNpnkZ2InPzGNX6qe+2uBlGVpn1f3gZ+W1h9F9Iy
- tm+tqHTixskcvmXwKm3KuwAWzwqzoXEmOlNaIgJVXztM7kAhNXiBbRy1Z4vhSv9+FqWu1mAjd
- AdPjilOGwlvQlXjXMKjOzVsPZAAo1jPiR6yLlKP/hLbEcupRWt2mwOrp1s2RFj5Cazf80ahU3
- tyK0funDR96BcRmiB/XqjdwE6x6nJNoqByc3itbnSmgqbLP59cUvA+H3oW4vWw3egUsvcI23S
- 2JWs/DWtcEjX7z8wnlYZn8fGWu/uVeKHddIQiXQ9dNqWHhIsHbbVO7dy8KncV3Zvn6vfWTsxV
- h2IV9wL5Fo5hREDS3CYsp/AOaG736GBCHICTCAAJcrjo1hg0MtE/YlZiBop7RtbJyLGdTdlak
- 8dIl3QMVAtuHuP68i/cd7G49LqeDZ+UvnOrjnzsG5Gao055HNeN4HwFBKF242p/DNBqn8GQVR
- QjGpe/RClUiLzBETyNCv+RVcp32+mvyaJ+EUrnFQdGsaubvjxYIrp2M7rBqM1/pj9e9S9EVJe
- DEyLXUdWcHXtwDRuDE1Fss6oX4OLqTmOYvORpQAVT8pms4MXPuO0oHCpMDW5FaQ4RqDzcWQrO
- x1myDk+CKEQOsW2cUyuhAIOFpUvuPMX3bJlH7EOiOuoY2nGsX+RoSOaNRdFGHRZoWiAA+OhQH
- ByFZY0XiKVOjGsd9wQvZwt3g==
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: SPB-EX2.Securitycode.ru (172.16.24.92) To
+ MSK-EX2.Securitycode.ru (172.17.8.92)
 
-Am 19.09.24 um 09:13 schrieb Andres Salomon:
+This is cosmetic fix.
 
-> On Thu, 19 Sep 2024 08:33:32 +0200
-> Armin Wolf <W_Armin@gmx.de> wrote:
->
->> If the battery hook encounters a unsupported battery, it will
->> return an error. This in turn will cause the battery driver to
->> automatically unregister the battery hook.
->>
->> However as soon as the driver itself attempts to unregister the
->> already unregistered battery hook, a crash occurs due to a
->> corrupted linked list.
->>
->> Fix this by simply ignoring unsupported batteries.
->>
->> Tested on a Dell Inspiron 3505.
->>
->> Fixes: ab58016c68cc ("platform/x86:dell-laptop: Add knobs to change bat=
-tery charge settings")
->> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
->> ---
->> I CCed the maintainers of the ACPI battery driver since i believe
->> that this patch highlights a general issue inside the battery hook
->> mechanism.
->>
->> This is because the same crash will be triggered should for example
->> device_add_groups() fail.
->>
->> Any ideas on how to solve this problem?
->> ---
-> Hm, I see that when battery_hook_register() has the add_battery hook fai=
-l,
-> then __battery_hook_unregister() calls the remove_battery hook. Does
-> something like the following fix it?
->
-> (note: not any kind of final patch, just a test.)
+The memory for 'fusion' (instance->ctrl_context) is allocated in
+megasas_alloc_ctrl_mem() in a call to megasas_alloc_fusion_context().
+A possible allocation error is handled after megasas_alloc_ctrl_mem()
+with a fail_alloc_dma_buf label transition.
 
-Not really, since the error can happen even while a new battery is being a=
-dded,
-which can happen anytime (even during battery hook removal). This means th=
-at using
-a global variable would be prone to race conditions.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-The issue can only be solved inside the ACPI battery driver itself, that i=
-s the reason
-why i CCed the ACPI maintainers.
+Cc: stable@vger.kernel.org
+Signed-off-by: George Rurikov <g.ryurikov@securitycode.ru>
+---
+ drivers/scsi/megaraid/megaraid_sas_base.c | 111 +++++++++++-----------
+ 1 file changed, 54 insertions(+), 57 deletions(-)
 
-Aside from that, ignoring unsupported batteries allows the driver to work =
-on
-machines with multiple batteries.
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megar=
+aid/megaraid_sas_base.c
+index 6c79c350a4d5..e4823680e009 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -6149,68 +6149,65 @@ static int megasas_init_fw(struct megasas_instance =
+*instance)
 
-Thanks,
-Armin Wolf
+                scratch_pad_1 =3D megasas_readl
+                        (instance, &instance->reg_set->outbound_scratch_pad=
+_1);
+-               /* Check max MSI-X vectors */
+-               if (fusion) {
+-                       if (instance->adapter_type =3D=3D THUNDERBOLT_SERIE=
+S) {
+-                               /* Thunderbolt Series*/
+-                               instance->msix_vectors =3D (scratch_pad_1
+-                                       & MR_MAX_REPLY_QUEUES_OFFSET) + 1;
+-                       } else {
+-                               instance->msix_vectors =3D ((scratch_pad_1
+-                                       & MR_MAX_REPLY_QUEUES_EXT_OFFSET)
+-                                       >> MR_MAX_REPLY_QUEUES_EXT_OFFSET_S=
+HIFT) + 1;
+-
+-                               /*
+-                                * For Invader series, > 8 MSI-x vectors
+-                                * supported by FW/HW implies combined
+-                                * reply queue mode is enabled.
+-                                * For Ventura series, > 16 MSI-x vectors
+-                                * supported by FW/HW implies combined
+-                                * reply queue mode is enabled.
+-                                */
+-                               switch (instance->adapter_type) {
+-                               case INVADER_SERIES:
+-                                       if (instance->msix_vectors > 8)
+-                                               instance->msix_combined =3D=
+ true;
+-                                       break;
+-                               case AERO_SERIES:
+-                               case VENTURA_SERIES:
+-                                       if (instance->msix_vectors > 16)
+-                                               instance->msix_combined =3D=
+ true;
+-                                       break;
+-                               }
 
->
-> ---
->   drivers/platform/x86/dell/dell-laptop.c | 12 ++++++++++--
->   1 file changed, 10 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/platform/x86/dell/dell-laptop.c b/drivers/platform/=
-x86/dell/dell-laptop.c
-> index a9de19799f01..c7b92b2f7ed2 100644
-> --- a/drivers/platform/x86/dell/dell-laptop.c
-> +++ b/drivers/platform/x86/dell/dell-laptop.c
-> @@ -2390,21 +2390,29 @@ static struct attribute *dell_battery_attrs[] =
-=3D {
->   	NULL,
->   };
->   ATTRIBUTE_GROUPS(dell_battery);
-> +static bool bgroup_registered =3D false;
->
->   static int dell_battery_add(struct power_supply *battery,
->   		struct acpi_battery_hook *hook)
->   {
-> +	int err;
-> +
->   	/* this currently only supports the primary battery */
->   	if (strcmp(battery->desc->name, "BAT0") !=3D 0)
->   		return -ENODEV;
->
-> -	return device_add_groups(&battery->dev, dell_battery_groups);
-> +	err =3D device_add_groups(&battery->dev, dell_battery_groups);
-> +	if (!err)
-> +		bgroup_registered =3D true;
-> +
-> +	return err;
->   }
->
->   static int dell_battery_remove(struct power_supply *battery,
->   		struct acpi_battery_hook *hook)
->   {
-> -	device_remove_groups(&battery->dev, dell_battery_groups);
-> +	if (bgroup_registered)
-> +		device_remove_groups(&battery->dev, dell_battery_groups);
->   	return 0;
->   }
->
+-                               if (rdpq_enable)
+-                                       instance->is_rdpq =3D (scratch_pad_=
+1 & MR_RDPQ_MODE_OFFSET) ?
+-                                                               1 : 0;
++               if (instance->adapter_type =3D=3D THUNDERBOLT_SERIES) {
++                       /* Thunderbolt Series*/
++                       instance->msix_vectors =3D (scratch_pad_1
++                               & MR_MAX_REPLY_QUEUES_OFFSET) + 1;
++               } else {
++                       instance->msix_vectors =3D ((scratch_pad_1
++                               & MR_MAX_REPLY_QUEUES_EXT_OFFSET)
++                               >> MR_MAX_REPLY_QUEUES_EXT_OFFSET_SHIFT) + =
+1;
+
+-                               if (instance->adapter_type >=3D INVADER_SER=
+IES &&
+-                                   !instance->msix_combined) {
+-                                       instance->msix_load_balance =3D tru=
+e;
+-                                       instance->smp_affinity_enable =3D f=
+alse;
+-                               }
++                       /*
++                               * For Invader series, > 8 MSI-x vectors
++                               * supported by FW/HW implies combined
++                               * reply queue mode is enabled.
++                               * For Ventura series, > 16 MSI-x vectors
++                               * supported by FW/HW implies combined
++                               * reply queue mode is enabled.
++                               */
++                       switch (instance->adapter_type) {
++                       case INVADER_SERIES:
++                               if (instance->msix_vectors > 8)
++                                       instance->msix_combined =3D true;
++                               break;
++                       case AERO_SERIES:
++                       case VENTURA_SERIES:
++                               if (instance->msix_vectors > 16)
++                                       instance->msix_combined =3D true;
++                               break;
++                       }
+
+-                               /* Save 1-15 reply post index address to lo=
+cal memory
+-                                * Index 0 is already saved from reg offset
+-                                * MPI2_REPLY_POST_HOST_INDEX_OFFSET
+-                                */
+-                               for (loop =3D 1; loop < MR_MAX_MSIX_REG_ARR=
+AY; loop++) {
+-                                       instance->reply_post_host_index_add=
+r[loop] =3D
+-                                               (u32 __iomem *)
+-                                               ((u8 __iomem *)instance->re=
+g_set +
+-                                               MPI2_SUP_REPLY_POST_HOST_IN=
+DEX_OFFSET
+-                                               + (loop * 0x10));
+-                               }
++                       if (rdpq_enable)
++                               instance->is_rdpq =3D (scratch_pad_1 & MR_R=
+DPQ_MODE_OFFSET) ?
++                                                       1 : 0;
++
++                       if (instance->adapter_type >=3D INVADER_SERIES &&
++                               !instance->msix_combined) {
++                               instance->msix_load_balance =3D true;
++                               instance->smp_affinity_enable =3D false;
+                        }
+
+-                       dev_info(&instance->pdev->dev,
+-                                "firmware supports msix\t: (%d)",
+-                                instance->msix_vectors);
+-                       if (msix_vectors)
+-                               instance->msix_vectors =3D min(msix_vectors=
+,
+-                                       instance->msix_vectors);
+-               } else /* MFI adapters */
+-                       instance->msix_vectors =3D 1;
++                       /* Save 1-15 reply post index address to local memo=
+ry
++                               * Index 0 is already saved from reg offset
++                               * MPI2_REPLY_POST_HOST_INDEX_OFFSET
++                               */
++                       for (loop =3D 1; loop < MR_MAX_MSIX_REG_ARRAY; loop=
+++) {
++                               instance->reply_post_host_index_addr[loop] =
+=3D
++                                       (u32 __iomem *)
++                                       ((u8 __iomem *)instance->reg_set +
++                                       MPI2_SUP_REPLY_POST_HOST_INDEX_OFFS=
+ET
++                                       + (loop * 0x10));
++                       }
++               }
++
++               dev_info(&instance->pdev->dev,
++                               "firmware supports msix\t: (%d)",
++                               instance->msix_vectors);
++               if (msix_vectors)
++                       instance->msix_vectors =3D min(msix_vectors,
++                               instance->msix_vectors);
+
+
+                /*
+--
+2.34.1
+
+=D0=97=D0=B0=D1=8F=D0=B2=D0=BB=D0=B5=D0=BD=D0=B8=D0=B5 =D0=BE =D0=BA=D0=BE=
+=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D0=
+=BE=D1=81=D1=82=D0=B8
+
+=D0=94=D0=B0=D0=BD=D0=BD=D0=BE=D0=B5 =D1=8D=D0=BB=D0=B5=D0=BA=D1=82=D1=80=
+=D0=BE=D0=BD=D0=BD=D0=BE=D0=B5 =D0=BF=D0=B8=D1=81=D1=8C=D0=BC=D0=BE =D0=B8 =
+=D0=BB=D1=8E=D0=B1=D1=8B=D0=B5 =D0=BF=D1=80=D0=B8=D0=BB=D0=BE=D0=B6=D0=B5=
+=D0=BD=D0=B8=D1=8F =D0=BA =D0=BD=D0=B5=D0=BC=D1=83 =D1=8F=D0=B2=D0=BB=D1=8F=
+=D1=8E=D1=82=D1=81=D1=8F =D0=BA=D0=BE=D0=BD=D1=84=D0=B8=D0=B4=D0=B5=D0=BD=
+=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D1=8B=D0=BC=D0=B8 =D0=B8 =D0=BF=D1=80=
+=D0=B5=D0=B4=D0=BD=D0=B0=D0=B7=D0=BD=D0=B0=D1=87=D0=B5=D0=BD=D1=8B =D0=B8=
+=D1=81=D0=BA=D0=BB=D1=8E=D1=87=D0=B8=D1=82=D0=B5=D0=BB=D1=8C=D0=BD=D0=BE =
+=D0=B4=D0=BB=D1=8F =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=B0. =D0=95=
+=D1=81=D0=BB=D0=B8 =D0=92=D1=8B =D0=BD=D0=B5 =D1=8F=D0=B2=D0=BB=D1=8F=D0=B5=
+=D1=82=D0=B5=D1=81=D1=8C =D0=B0=D0=B4=D1=80=D0=B5=D1=81=D0=B0=D1=82=D0=BE=
+=D0=BC =D0=B4=D0=B0=D0=BD=D0=BD=D0=BE=D0=B3=D0=BE =D0=BF=D0=B8=D1=81=D1=8C=
+=D0=BC=D0=B0, =D0=BF=D0=BE=D0=B6=D0=B0=D0=BB=D1=83=D0=B9=D1=81=D1=82=D0=B0,=
+ =D1=83=D0=B2=D0=B5=D0=B4=D0=BE=D0=BC=D0=B8=D1=82=D0=B5 =D0=BD=D0=B5=D0=BC=
+=D0=B5=D0=B4=D0=BB=D0=B5=D0=BD=D0=BD=D0=BE =D0=BE=D1=82=D0=BF=D1=80=D0=B0=
+=D0=B2=D0=B8=D1=82=D0=B5=D0=BB=D1=8F, =D0=BD=D0=B5 =D1=80=D0=B0=D1=81=D0=BA=
+=D1=80=D1=8B=D0=B2=D0=B0=D0=B9=D1=82=D0=B5 =D1=81=D0=BE=D0=B4=D0=B5=D1=80=
+=D0=B6=D0=B0=D0=BD=D0=B8=D0=B5 =D0=B4=D1=80=D1=83=D0=B3=D0=B8=D0=BC =D0=BB=
+=D0=B8=D1=86=D0=B0=D0=BC, =D0=BD=D0=B5 =D0=B8=D1=81=D0=BF=D0=BE=D0=BB=D1=8C=
+=D0=B7=D1=83=D0=B9=D1=82=D0=B5 =D0=B5=D0=B3=D0=BE =D0=B2 =D0=BA=D0=B0=D0=BA=
+=D0=B8=D1=85-=D0=BB=D0=B8=D0=B1=D0=BE =D1=86=D0=B5=D0=BB=D1=8F=D1=85, =D0=
+=BD=D0=B5 =D1=85=D1=80=D0=B0=D0=BD=D0=B8=D1=82=D0=B5 =D0=B8 =D0=BD=D0=B5 =
+=D0=BA=D0=BE=D0=BF=D0=B8=D1=80=D1=83=D0=B9=D1=82=D0=B5 =D0=B8=D0=BD=D1=84=
+=D0=BE=D1=80=D0=BC=D0=B0=D1=86=D0=B8=D1=8E =D0=BB=D1=8E=D0=B1=D1=8B=D0=BC =
+=D1=81=D0=BF=D0=BE=D1=81=D0=BE=D0=B1=D0=BE=D0=BC.
 
