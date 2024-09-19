@@ -1,124 +1,89 @@
-Return-Path: <linux-kernel+bounces-333767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBDCC97CDC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:39:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D4C597CDC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF0561C21976
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:39:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5347F1F234E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961681F95A;
-	Thu, 19 Sep 2024 18:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PRQ8Vrjq"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C5322638;
+	Thu, 19 Sep 2024 18:43:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6690E200AE
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 18:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AB5200AF
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 18:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726771146; cv=none; b=jd5wpxKCLDSlX3nzWQxTG2CE/OJgQjO7lu3/bB0He1ujkzZHD/W3dfjRnjxJn4lUFVNouU/QPYYK2kJjKtDbjw/Vs6iaJKJdd33gP/6E0Yd0qRlmD6PUc30dDUNOz4lM7EQJ4PjsFesTz/A9Arfqnx5CGMYNm80+NmMTNHYw+WA=
+	t=1726771384; cv=none; b=RK0ekMhUYddS08VdUEhPUaojGdssWtJwReFSl/L7Ty9GKOFccxLMq4juGkfkTal16oKCChq6ODu4JDm1uRT3vY6+ZZkOAVcy/BngCYekG0JuX+2oPFAiwNmf3qGx20vMAmi73iUAx5OnLP7w8hRsGDfGMDFlRtjp5rWml1+nv20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726771146; c=relaxed/simple;
-	bh=11xZIjKNQ0UVk03B85El9Ld2IY8eytZtUo4DOnK/XRs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I6dLC+2OYGha7lNzudkNluyt1SkvWNX2umdBRqmOplD2cbhN+ymwDLvnz4KBkmo09LzcdtZKeo0rDkxdA/4tk0IPETNzCadVmx2yGIErIrIGMbHkXMEpNxr1MXUOcDe2QT5K/XHrWqxljKYOVHcH54QqO694bXchTHeptFD+L54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PRQ8Vrjq; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-82cdada0f21so55880939f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 11:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1726771143; x=1727375943; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WRyKNx2jUNgKj4rHJ3yEyyNhXDGHWD1bthxzVxSAiQg=;
-        b=PRQ8VrjqhCNMVKhDbeNHS4X4gaUMGWNJ2NrASoTB+qif2NBz4dhL2RhkBLAsTLysTi
-         ftlpQ4gRItDZtiZAw8BngYJtaX9vm6ctyVA++I+JLZEsOzirKhwUcFBQekpJVw3MQGC8
-         t+JggG/LaICTynD8Yl4iN+j61+aksk7Vti3y8=
+	s=arc-20240116; t=1726771384; c=relaxed/simple;
+	bh=17v9D7ewN9kAL3cNO0vf9+Ecs7x5/yWbSuqDJSadNTs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=JpxwkKaisa8WCnkG8O1iTG3bbFrclQxQnSsRjmK02yO93sH9uCpUS2Her0CI2J+wX4Zt2YeeleTjLBb74wekUq4B7cokrzlkYwqCZmIvBCkgA2mZavs1pW5D6K0uFSbr1KwPVx2Eaa0br/FDdB8bNsEAxceE19nWr83W472HC0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39f5605c674so16492655ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 11:43:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726771143; x=1727375943;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1726771382; x=1727376182;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WRyKNx2jUNgKj4rHJ3yEyyNhXDGHWD1bthxzVxSAiQg=;
-        b=pOQp1apfOKZ/VKNCYWR6j3hbm4+fpIFhwhM1PjnPjotxrFUMM7/LLJ64vA9Q/vv1Ot
-         kYhJQf6DQM8UV/c4N/iWcIA+NJcbW21s9IB86Q9JdHqnABtqINlAiYOuyN4fv8t2jCQv
-         LrBhu+uOP6CaC3HmSr968LOf4wwIf6lPwOqIXdLOyn+2gji4MT0u6gDAqxN0mBBzK0F1
-         mMesbmu00Rde5Al1uzW8f2G6wlG+ldR46NJJtEdh//eUPcXEMIDiPRa/rGTVzrXyJoFb
-         gZRJBrcbYWJ1Zs18YrCML88pZYXNulW7DjEAFB8vnqYUfyQVTyQ4aANl07DKabe4/UES
-         Mn4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWCrjZL5ciL6Xgmw/T4oc2YYY7Ztq5a3alZx2vWqIxk9uAmYC8wschlnOuDKyuGlfLLQu7dUJFbUEc28X8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbLrrvgbEwNxzLUpkqKQo9/mV8+jRxLitr3YNoTnP7k4hkq9hI
-	4Nakd9HbO4tkTUqnMwF6q46mmz4n9ysYwhbjyJ/KWZeYTvniZ9f66DOvrhNzrBM=
-X-Google-Smtp-Source: AGHT+IFiLbB7COufygh2ZrdMKfDaWHmEzlqXMoaF0ODyh+JInGc9s5TK3WvqOPyzSjOegwr5CjfbEw==
-X-Received: by 2002:a05:6602:6016:b0:82b:c712:cc0d with SMTP id ca18e2360f4ac-83209e8d53emr40192539f.15.1726771143404;
-        Thu, 19 Sep 2024 11:39:03 -0700 (PDT)
-Received: from [10.212.145.178] ([12.216.155.19])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d37ec17e90sm3101385173.52.2024.09.19.11.39.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Sep 2024 11:39:03 -0700 (PDT)
-Message-ID: <272b9839-f2a0-4090-be41-cf0ff8721808@linuxfoundation.org>
-Date: Thu, 19 Sep 2024 12:39:01 -0600
+        bh=o7lIsnCpfZQSVA6F2fRePR9yCTuruPmP5F+EBeyS/UE=;
+        b=JVp7vPMD+V2PjPfN4ThdXoyX2pBI8qbLVKbZLtg7huf19oI5lMcQOB1oiAB7YnnDUv
+         ebnMXKPiZZXIcj+P1St8p34yv7jxEExCxOU8reIlD+ig2OAz2yHAyOed+bn183D5prSv
+         fID8L/KDboFyO4n1/q39OAVeJx8iodo4zHqpd0FzUR6EXsoG9KRjK+wItUNHooa2qwvk
+         bM4L/O3BNOKAwkph0Mp1aa14O1zQss7Aw4S/wBfo3Uppg/WWvVzxc93cmL/zYzDkMDY9
+         Vs8V1qoTez8XWm/di2ZrwperM35/SB+rDnfEAZZ6EgYjYjD2DbErDNueCNr2VqFKx8H9
+         g8fA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwZUIV4pIJmdUg7YvB0kuLacZpN5Hh5zV26ibByLzTlGXtqOHitlQ1Z+nBIx57u4sN2MrBqDjIjzaubd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWUCV/nMTjhUbRl5CD1WNxRkHiI98XyKbyptn6qWkLccRUa5iJ
+	Nwry43Zu+sKWF2OmXZ1Jo3oXoClt515yBzbctZ97EVjDRolPKfsUvur6O3HS0Mb9lAJ/g0iwaZX
+	a2okVv5A5RycoQOqhkbi4Tvwsx77ayS2VAiyqfdVgU6ak2w8cVMtpN9s=
+X-Google-Smtp-Source: AGHT+IENVGnXGP/szTaOFF3l8ixExEmfJzeszZrzEhNQFtrf0zBmFjgffCW64RLFf/aFcQsEEXsez6wa/Qx4m0ea8LQt6sj57l/5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pm: cpupower: Clean up bindings gitignore
-To: "John B. Wyatt IV" <jwyatt@redhat.com>
-Cc: linux-pm@vger.kernel.org, Thomas Renninger <trenn@suse.com>,
- Shuah Khan <shuah@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- linux-kernel@vger.kernel.org, John Kacur <jkacur@redhat.com>,
- "John B. Wyatt IV" <sageofredondo@gmail.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240919180102.20675-1-jwyatt@redhat.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240919180102.20675-1-jwyatt@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:180f:b0:3a0:98b2:8f3b with SMTP id
+ e9e14a558f8ab-3a0c8ca77d2mr5551235ab.7.1726771382551; Thu, 19 Sep 2024
+ 11:43:02 -0700 (PDT)
+Date: Thu, 19 Sep 2024 11:43:02 -0700
+In-Reply-To: <tencent_50B5A5988DAD922A5D9B5DC9190C4FB08D07@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ec70b6.050a0220.29194.003f.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] BUG: unable to handle kernel paging request
+ in bch2_opt_to_text
+From: syzbot <syzbot+294f528e56138c357a48@syzkaller.appspotmail.com>
+To: eadavis@qq.com, kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/19/24 12:01, John B. Wyatt IV wrote:
-> * Add SPDX identifier to the gitignore
-> * Remove the comment and .i file since it was removed in another patch
-> and therefore no longer needed.
+Hello,
 
-Don't use the * in the changelogs. There is no need to write this like a
-itemized list. Simply write it as a paragraph.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> 
-> This patch depends on Min-Hua Chen's 'pm: cpupower: rename
-> raw_pylibcpupower.i'
-> 
-> Signed-off-by: John B. Wyatt IV <jwyatt@redhat.com>
-> Signed-off-by: John B. Wyatt IV <sageofredondo@gmail.com>
-> ---
->   tools/power/cpupower/bindings/python/.gitignore | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/tools/power/cpupower/bindings/python/.gitignore b/tools/power/cpupower/bindings/python/.gitignore
-> index 5c9a1f0212dd..51cbb8799c44 100644
-> --- a/tools/power/cpupower/bindings/python/.gitignore
-> +++ b/tools/power/cpupower/bindings/python/.gitignore
-> @@ -1,8 +1,7 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
->   __pycache__/
->   raw_pylibcpupower_wrap.c
->   *.o
->   *.so
->   *.py
->   !test_raw_pylibcpupower.py
-> -# git keeps ignoring this file, use git add -f raw_libcpupower.i
-> -!raw_pylibcpupower.i
+Reported-by: syzbot+294f528e56138c357a48@syzkaller.appspotmail.com
+Tested-by: syzbot+294f528e56138c357a48@syzkaller.appspotmail.com
 
-thanks,
--- Shuah
+Tested on:
+
+commit:         5f567360 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=17c8bb00580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dedbcb1ff4387972
+dashboard link: https://syzkaller.appspot.com/bug?extid=294f528e56138c357a48
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11886607980000
+
+Note: testing is done by a robot and is best-effort only.
 
