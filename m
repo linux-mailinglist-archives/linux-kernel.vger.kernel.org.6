@@ -1,119 +1,80 @@
-Return-Path: <linux-kernel+bounces-333569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54EC97CAD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA81997CAD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6D6A1C22187
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:17:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F14B41C2292F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8239D19D098;
-	Thu, 19 Sep 2024 14:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E0019F466;
+	Thu, 19 Sep 2024 14:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leFwDVN+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3fa7bGMC"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51F71E520
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 14:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7E420B04;
+	Thu, 19 Sep 2024 14:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726755422; cv=none; b=ssFhHXyBsD0Jby29xnNwQOGkXW3S6mq4a8DxmJQvkIX9+UdBsY+Skyt5w+2vYQXF/K5kNBeFAWmDsn7W40y1CRsJN88TFr8d8dl5ELaF4I4lFup2u32eSHofm0kgNb0j6MqLMlUrLpKhkx6VZgUCKPI1UwupCHxtkKlCJRtx0wg=
+	t=1726755461; cv=none; b=EOWRuhC3WuVru2YlNYTcsduXzB6M7QSIOM7xt1NF2SyFRxn6BXxd8cgjr8xszfZlfZhbpoQozK+HzjZKEEtGftXqAuTH2092AbPNpXiNRPpjo80kPOTBE0xhYtdosxkMcPB6L+IZQuJRnPAhpirYHviiGHtE4/lGIzXtcq5eHC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726755422; c=relaxed/simple;
-	bh=FlNDW5bPW8BWDMVEN7jqfSs7j6g8jfrFGDuO3tlJ0wo=;
+	s=arc-20240116; t=1726755461; c=relaxed/simple;
+	bh=vRsq37cyFsnMCRJWk08SutfAhz42ipMp2Yw5nEOlxaw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dSNued4R6FxiyTuGwuaSSX/fUo2TszlNZp6871xrb5gJOWvdhUOrkqCIYlZ51sXSlHFVVddP7rzTIBu5Lidc8TqvSbIZYEmL3Xcnmh8iZDm4zquKnmi1T6SkoEy5Z7PsMkSOd6GHJpzoHG50zyw/EUgqQhZMdfbKJ3oZkekoy+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leFwDVN+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D68BC4CEC4;
-	Thu, 19 Sep 2024 14:17:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726755421;
-	bh=FlNDW5bPW8BWDMVEN7jqfSs7j6g8jfrFGDuO3tlJ0wo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=leFwDVN+4OMZdlwlSETl2m2UU/PWNkHzMhnM2FmP/ysAXV601rdZuZpNd0pp/s+Hk
-	 2jOQZw8XwYcHULhIunASNjnbXbYnnSKv6H46YK9Rm++SHtHeyy4sOteR9Upj4G61G5
-	 yWfuhK7w1vHfq82YA5NPDjJKBt+oLJdHNhl6xcAfFG1zI5uKxIbzBeI8JT4qjuzaA4
-	 MFEmsH96oNPD+JCfS/qaVKSdRpjvtWTu5jOZ9jxtLFcBZBb9WeHacQpgXb+4sVpCEc
-	 aOKjyxYwRvrOk0kqIi+qA3W2sd7sqR+GhyGtawF6QN8O6h2FhIzEj296AXXhYpQPaK
-	 k/Pg8BWSEICsQ==
-Date: Thu, 19 Sep 2024 07:16:58 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Stuart Hayes <stuart.w.hayes@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Martin Belanger <Martin.Belanger@dell.com>,
-	Oliver O'Halloran <oohall@gmail.com>,
-	Daniel Wagner <dwagner@suse.de>, Keith Busch <kbusch@kernel.org>,
-	Lukas Wunner <lukas@wunner.de>, David Jeffery <djeffery@redhat.com>,
-	Jeremy Allison <jallison@ciq.com>, Jens Axboe <axboe@fb.com>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	linux-nvme@lists.infradead.org, Jan Kiszka <jan.kiszka@seimens.com>
-Subject: Re: [PATCH] driver core: fix async device shutdown hang
-Message-ID: <20240919141658.GA3737785@thelio-3990X>
-References: <20240919043143.1194950-1-stuart.w.hayes@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BF8Cq5S3KxbIHOe3ldjHhW5quBh0gOIBFw8WisIZV23ui8qayxE910gMuwtsEcazsry175lOFAkGdAB7d3F/VqwuFw2O1S6O/1zhaV9mKbk/uaFNQCbGMR7fNMWQjq1HNLk3EW4RxXFOExFJq6I94QCSvBFyqMheW0IJXusOShU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3fa7bGMC; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=vRsq37cyFsnMCRJWk08SutfAhz42ipMp2Yw5nEOlxaw=; b=3fa7bGMC4PvUTU5hEXpH7tFiZ/
+	F003lTIjZNWpChSRjQZ07bBk54UxrKOMGMeXEGDpRg/QOOakXjryc703OYvHMeC36AISjSLzfpqD+
+	cm9vKilNvw4IErn56QRmet9iMyDphEan4n2dWEMmL/JNBRhm+Gt8uTZQFAswHuXEwPP4G18wlCqu3
+	RHCOAYygRsTwGG0zGICHpJwA3Vi4f2dlKOB61JAIaKF4XyEnh5i511BncKWgr9QPW9WXv2h9URw+t
+	gnU/uMFQTYTDhwJHRqa1xr2Sqp/qGs9VmSJ0ajUnjhLcbC7WdviMT0MfeMhpZDMQdxCWQGXPRIdN6
+	dryUqQJQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1srHyR-0000000AQfa-3oDX;
+	Thu, 19 Sep 2024 14:17:35 +0000
+Date: Thu, 19 Sep 2024 07:17:35 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: =?iso-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Allison Henderson <allison.henderson@oracle.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, rds-devel@oss.oracle.com
+Subject: Re: [MAINLINE 0/2] Enable DIM for legacy ULPs and use it in RDS
+Message-ID: <Zuwyf0N_6E6Alx-H@infradead.org>
+References: <20240918083552.77531-1-haakon.bugge@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240919043143.1194950-1-stuart.w.hayes@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240918083552.77531-1-haakon.bugge@oracle.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Sep 18, 2024 at 11:31:43PM -0500, Stuart Hayes wrote:
-> Modify device_shutdown() so that supplier devices do not wait for
-> consumer devices to be shut down first when the devlink is sync state
-> only, since the consumer is not dependent on the supplier in this case.
-> 
-> Without this change, a circular dependency could hang the system.
-> 
-> Fixes: 8064952c6504 ("driver core: shut down devices asynchronously")
-> 
-> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+On Wed, Sep 18, 2024 at 10:35:50AM +0200, Håkon Bugge wrote:
+> The Dynamic Interrupt Moderation mechanism can only be used by ULPs
+> using ib_alloc_cq() and family. We extend DIM to also cover legacy
+> ULPs using ib_create_cq(). The last commit takes advantage of this end
+> uses DIM in RDS.
 
-All of my virtual testing seems happy with this change.
+I would much prefer if you could move RDS off that horrible API finally
+instead of investing more effort into it and making it more complicated.
 
-Tested-by: Nathan Chancellor <nathan@kernel.org>
-
-> ---
-> The patch this fixes is in driver-core-next and linux-next.
-> 
-> Please let me know if this needs to be a V2 or if it needs anything
-> else... it is the identical patch I sent in yesterday, except I added
-> a "Fixes:" tag and the comments.  Thank you for the help!
-> 
->  drivers/base/core.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index b69b82da8837..76513e360496 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -4898,8 +4898,16 @@ void device_shutdown(void)
->  
->  		idx = device_links_read_lock();
->  		list_for_each_entry_rcu(link, &dev->links.suppliers, c_node,
-> -				device_links_read_lock_held())
-> +				device_links_read_lock_held()) {
-> +			/*
-> +			 * sync_state_only suppliers don't need to wait,
-> +			 * aren't reordered on devices_kset, so making them
-> +			 * wait could result in a hang
-> +			 */
-> +			if (device_link_flag_is_sync_state_only(link->flags))
-> +				continue;
->  			link->supplier->p->shutdown_after = cookie;
-> +		}
->  		device_links_read_unlock(idx);
->  		put_device(dev);
->  
-> -- 
-> 2.39.3
-> 
 
