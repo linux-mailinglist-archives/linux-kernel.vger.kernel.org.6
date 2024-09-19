@@ -1,221 +1,256 @@
-Return-Path: <linux-kernel+bounces-333474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712C797C941
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:34:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F5097C94B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93A58B224EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:34:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7921F237BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF8D19E7C8;
-	Thu, 19 Sep 2024 12:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A496D19DFB5;
+	Thu, 19 Sep 2024 12:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULlr4A5u"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="CxgGwm8n";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Ir6SVbs6"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C848199FCD;
-	Thu, 19 Sep 2024 12:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E923F1EB2F;
+	Thu, 19 Sep 2024 12:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726749237; cv=none; b=nmEwDgEfjygF4bfytAcvVpK2M11k1XoCZNQiL0Pu60j7VvaKhziwGsDtDsYqTIJH1azAb5s4GurNKN24u25zZL4HqcWYJwhiGwvTSEW3qFUIgu+lsrzvJziMCSGziTyQwneo8w9uEcS9CkmKB5yG1fXtZyTMRa0TiCERG7cz9Eg=
+	t=1726749333; cv=none; b=MbRk1/84iiI5BKRO4YYGdIiivUkRx/PjM2yN2V902LX2fDCfH8YOha9/afajmmockPrQJl8K71ENu2JeROlBqLYiMuPMasu6edKc5Taf/5BA7PHqMfL8+0u3ViWxNV5imTUYIpbb1mdsu7QexjX6AFQGVB71skd6fpPdLJnpwIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726749237; c=relaxed/simple;
-	bh=V/jzswor5s1CzAW0ZUtaQ2xScydnXC/HzCHeyQzuX6s=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=elHwsxy6PZ0hOhBDbD5qzdPKwiXxturAotjHOA4mLdmlCc555cCsCB0NfAKzSv6quMJ8uW3IcFoglXAxRQBESucoG4KQrmIaXiguNDVN70uejcY1kyBdqEPj8iuC/FbdyPyIVvTcTFJy7/Vqdkmlln1Gr8eTNRm7eM4vKH4SpK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ULlr4A5u; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-710d8cab1c3so510060a34.0;
-        Thu, 19 Sep 2024 05:33:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726749235; x=1727354035; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QmKwDE+vQbJFZKx1pG1WdGf3eu6TWhTPyNHtYBECpZw=;
-        b=ULlr4A5uPnQvv8zuJeMhQNsPS5XKbuj1Su36sJlvASYInu8BqSaDNossxb3iZTanFz
-         6Q4nl+NJE49cELVxRjq9fe0n48nqMrKzclrwQuRtFg6WSgZOs3bIAMP0+crozSq2c5fb
-         Uu0devGoK4hOQQbEp9C9GVWjoX+JP4gXfjQ1maHp3NtPhNyMK4/0fUUt+ckGqlFAMGwv
-         8GAZ4SYXwkhz9KU16qHqlyEEY6X6GqrDysazm4P0C9Rj0UkyOYW0W15mhyK13Mj86HCT
-         mPAgX4lJvJhsYCT95HpVIl4VFNzZKXDtJkFwhz2ZbZVjBO9/LU0NwR+p3D4aC0ou7w5s
-         BXVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726749235; x=1727354035;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QmKwDE+vQbJFZKx1pG1WdGf3eu6TWhTPyNHtYBECpZw=;
-        b=xOTPz1qvffttZnvOf+m1d03bsheH9ot3qroUuRWWMi8ecDLTrysqrvdlHvZor6ZijM
-         6pK7ZUJoB0BQxlBbC55iOwnwOT4aReqTTthQRHiJiI3uPC8DrLL/WRiFtfGMNN7Ks54K
-         ENaDQf5QFxfrLaIBjDEn9fyXGoKWlghq4LRcfyNTgE013xlf9tUXZUpLhcXkys2bX1fG
-         lhHIh/3/4lr0I2DLKAedq3bkTNMgbMtJ4Yq6REV6XX0oPaZ+mZYHaUxdNwBTEkqWYEVP
-         OzyG7I+DLl3w+eyqOfpPAru7bw4VrLWjiCxKcZtxOPOCHWpNn5Czt8oakAnCNFrEgEgR
-         dzjg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3tYiGEJhwP2YAUPbyYZ9UtCGWK1z1iWJhSMm8v4bwynArKsd1clhYKX3xf7BcZpH6dw7L@vger.kernel.org, AJvYcCV6TxCDRyVpKoVwvY94ULqEOj/ZNsvi37brjb4zaqzL5F5gliQ2u2see/9piO35luZBzsDChJW6g6uRDj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5pWzkmVARbPJHGM5AMbN9gbJsmeRIl2DvR1/gpm6KwVKMYDSC
-	A5nYgqyeuBEv5bHrm5nsT8C0LgDgmCmuPOdtCAftTFvvKp8vtvq/
-X-Google-Smtp-Source: AGHT+IFYmsj/MGU6Jlxx2Ke3WulIat+zjVsJBv8UiM/Yd9cMtImuZ4YQ0EKuwcSVkOnsvQodCYParQ==
-X-Received: by 2002:a05:6830:258e:b0:709:4556:fafc with SMTP id 46e09a7af769-71109464466mr16949079a34.2.1726749235048;
-        Thu, 19 Sep 2024 05:33:55 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db49924501sm9208146a12.53.2024.09.19.05.33.47
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Sep 2024 05:33:54 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1726749333; c=relaxed/simple;
+	bh=C0qiYBjh7+JNE6dSxlKxI/K2eGBbcQXB5lUFPJMb3nw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sx4LO1WhO9Bnp+bcwRLn+goIYbzhsFLT0pbfPjgN5W3DEog/CByvVqyjRP3XDwToTFxUhDc/2IlS+8AmVh5gux8qAuok74nS54BKd/GAoUHLQujWsgh5FWgN3R4tlV0d6QdAp9pyohL8ojAP5SdSRPig+f/PZSvbqRIElxVcj1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=CxgGwm8n; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Ir6SVbs6; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D1D24338D2;
+	Thu, 19 Sep 2024 12:35:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1726749329; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=03iIXrm2d6dZ3mz5HP9AK7PKZOvrRHH8k/30bsSSODc=;
+	b=CxgGwm8nkJYm6CYU6iU5ojIwjv22TMnywi+UwUX9DXbFQcGx7GyI2HWP8XtA/Va//dfqCE
+	Oy27u7aWmDIrr/yOjee0yxRFjMlvlEO5KF4VYFw7ONf+VL7G3Z+CsUAufo7Qh+SmqM6lko
+	+mORCRUoHAkahsrpyp/flJHqmIdPgKI=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=Ir6SVbs6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1726749328; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=03iIXrm2d6dZ3mz5HP9AK7PKZOvrRHH8k/30bsSSODc=;
+	b=Ir6SVbs6Gq/S2XQPoEb/UJFdcLES5VQxult3+ncWDxzDEzG7e07FnwBzWGQw6POGjAkykW
+	tpFjoSr3VnXCgs+2cu719G0EBDhupHssvKD4/dRo3hpM6+rE0VVwOOmSapMw4uuRh4XIFT
+	ZlS0DevOVM3iwwGOwHkdtIAo0KmMiZE=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9649913A5F;
+	Thu, 19 Sep 2024 12:35:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id okdEI5Aa7GblLAAAD6G6ig
+	(envelope-from <oneukum@suse.com>); Thu, 19 Sep 2024 12:35:28 +0000
+From: Oliver Neukum <oneukum@suse.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Oliver Neukum <oneukum@suse.com>,
+	stable@vger.kernel.org
+Subject: [PATCHv3] usbnet: fix cyclical race on disconnect with work queue
+Date: Thu, 19 Sep 2024 14:33:42 +0200
+Message-ID: <20240919123525.688065-1-oneukum@suse.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <ZuvOWM5c8tZotHFL@boqun-archlinux>
-Date: Thu, 19 Sep 2024 20:33:27 +0800
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
- LKML <linux-kernel@vger.kernel.org>,
- RCU <rcu@vger.kernel.org>,
- linux-mm@kvack.org,
- lkmm@lists.linux.dev,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>,
- "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Zqiang <qiang.zhang1211@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Kent Overstreet <kent.overstreet@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>,
- maged.michael@gmail.com,
- Neeraj upadhyay <neeraj.upadhyay@amd.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <6B551C0A-3E09-45E2-9A00-03DEDB1EFEA7@gmail.com>
-References: <20240917143402.930114-1-boqun.feng@gmail.com>
- <20240917143402.930114-2-boqun.feng@gmail.com>
- <CAJhGHyD8MzUssfuKSGnu1arnayNOyBnUA03vYB0WWwbE3WzoZg@mail.gmail.com>
- <ZuvOWM5c8tZotHFL@boqun-archlinux>
-To: Boqun Feng <boqun.feng@gmail.com>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: D1D24338D2
+X-Spam-Score: -5.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-5.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-2024=E5=B9=B49=E6=9C=8819=E6=97=A5 15:10=EF=BC=8CBoqun Feng =
-<boqun.feng@gmail.com> wrote=EF=BC=9A
->=20
-> On Thu, Sep 19, 2024 at 02:39:13PM +0800, Lai Jiangshan wrote:
->> On Tue, Sep 17, 2024 at 10:34=E2=80=AFPM Boqun Feng =
-<boqun.feng@gmail.com> wrote:
->>=20
->>> +static void hazptr_context_snap_readers_locked(struct =
-hazptr_reader_tree *tree,
->>> +                                              struct hazptr_context =
-*hzcp)
->>> +{
->>> +       lockdep_assert_held(hzcp->lock);
->>> +
->>> +       for (int i =3D 0; i < HAZPTR_SLOT_PER_CTX; i++) {
->>> +               /*
->>> +                * Pairs with smp_store_release() in =
-hazptr_{clear,free}().
->>> +                *
->>> +                * Ensure
->>> +                *
->>> +                * <reader>             <updater>
->>> +                *
->>> +                * [access protected pointers]
->>> +                * hazptr_clear();
->>> +                *   smp_store_release()
->>> +                *                      // in reader scan.
->>> +                *                      smp_load_acquire(); // is =
-null or unused.
->>> +                *                      [run callbacks] // all =
-accesses from
->>> +                *                                      // reader =
-must be
->>> +                *                                      // observed.
->>> +                */
->>> +               hazptr_t val =3D smp_load_acquire(&hzcp->slots[i]);
->>> +
->>> +               if (!is_null_or_unused(val)) {
->>> +                       struct hazptr_slot_snap *snap =3D =
-&hzcp->snaps[i];
->>> +
->>> +                       // Already in the tree, need to remove =
-first.
->>> +                       if (!is_null_or_unused(snap->slot)) {
->>> +                               reader_del(tree, snap);
->>> +                       }
->>> +                       snap->slot =3D val;
->>> +                       reader_add(tree, snap);
->>> +               }
->>> +       }
->>> +}
->>=20
->> Hello
->>=20
->> I'm curious about whether there are any possible memory leaks here.
->>=20
->> It seems that call_hazptr() never frees the memory until the slot is
->> set to another valid value.
->>=20
->> In the code here, the snap is not deleted when hzcp->snaps[i] is =
-null/unused
->> and snap->slot is not which I think it should be.
->>=20
->> And it can cause unneeded deletion and addition of the snap if the =
-slot
->> value is unchanged.
->>=20
->=20
-> I think you're right. (Although the node will be eventually deleted at
-> cleanup_hazptr_context(), however there could be a long-live
-> hazptr_context). It should be:
->=20
-> hazptr_t val =3D smp_load_acquire(&hzcp->slots[i]);
-> struct hazptr_slot_snap *snap =3D &hzcp->snaps[i];
->=20
-> if (val !=3D snap->slot) { // val changed, need to update the tree =
-node.
-> // Already in the tree, need to remove first.
-> if (!is_null_or_unused(snap->slot)) {
-> reader_del(tree, snap);
-> }
->=20
-> // use the latest snapshot.
-> snap->slot =3D val;
->=20
-> // Add it into tree if there is a reader
-> if (!is_null_or_unused(val))
-> reader_add(tree, snap);
-> }
+The work can submit URBs and the URBs can schedule the work.
+This cycle needs to be broken, when a device is to be stopped.
+Use a flag to do so.
+This is a design issue as old as the driver.
 
-With this changed, and force users call hazptr_clear() like =
-rcu_read_unlock(), we could remove
-the reader_del() in cleanup_hazptr_context(), then remove the =
-tree->lock?
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+CC: stable@vger.kernel.org
+---
 
->=20
-> Regards,
-> Boqun
->=20
->> I'm not so sure...
->>=20
->> Thanks
->> Lai
+v2: fix PM reference issue
+v3: drop unneeded memory ordering primitives
 
+ drivers/net/usb/usbnet.c   | 37 ++++++++++++++++++++++++++++---------
+ include/linux/usb/usbnet.h | 15 +++++++++++++++
+ 2 files changed, 43 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index 18eb5ba436df..2506aa8c603e 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -464,10 +464,15 @@ static enum skb_state defer_bh(struct usbnet *dev, struct sk_buff *skb,
+ void usbnet_defer_kevent (struct usbnet *dev, int work)
+ {
+ 	set_bit (work, &dev->flags);
+-	if (!schedule_work (&dev->kevent))
+-		netdev_dbg(dev->net, "kevent %s may have been dropped\n", usbnet_event_names[work]);
+-	else
+-		netdev_dbg(dev->net, "kevent %s scheduled\n", usbnet_event_names[work]);
++	if (!usbnet_going_away(dev)) {
++		if (!schedule_work(&dev->kevent))
++			netdev_dbg(dev->net,
++				   "kevent %s may have been dropped\n",
++				   usbnet_event_names[work]);
++		else
++			netdev_dbg(dev->net,
++				   "kevent %s scheduled\n", usbnet_event_names[work]);
++	}
+ }
+ EXPORT_SYMBOL_GPL(usbnet_defer_kevent);
+ 
+@@ -535,7 +540,8 @@ static int rx_submit (struct usbnet *dev, struct urb *urb, gfp_t flags)
+ 			tasklet_schedule (&dev->bh);
+ 			break;
+ 		case 0:
+-			__usbnet_queue_skb(&dev->rxq, skb, rx_start);
++			if (!usbnet_going_away(dev))
++				__usbnet_queue_skb(&dev->rxq, skb, rx_start);
+ 		}
+ 	} else {
+ 		netif_dbg(dev, ifdown, dev->net, "rx: stopped\n");
+@@ -843,9 +849,18 @@ int usbnet_stop (struct net_device *net)
+ 
+ 	/* deferred work (timer, softirq, task) must also stop */
+ 	dev->flags = 0;
+-	del_timer_sync (&dev->delay);
+-	tasklet_kill (&dev->bh);
++	del_timer_sync(&dev->delay);
++	tasklet_kill(&dev->bh);
+ 	cancel_work_sync(&dev->kevent);
++
++	/* We have cyclic dependencies. Those calls are needed
++	 * to break a cycle. We cannot fall into the gaps because
++	 * we have a flag
++	 */
++	tasklet_kill(&dev->bh);
++	del_timer_sync(&dev->delay);
++	cancel_work_sync(&dev->kevent);
++
+ 	if (!pm)
+ 		usb_autopm_put_interface(dev->intf);
+ 
+@@ -1171,7 +1186,8 @@ usbnet_deferred_kevent (struct work_struct *work)
+ 					   status);
+ 		} else {
+ 			clear_bit (EVENT_RX_HALT, &dev->flags);
+-			tasklet_schedule (&dev->bh);
++			if (!usbnet_going_away(dev))
++				tasklet_schedule(&dev->bh);
+ 		}
+ 	}
+ 
+@@ -1196,7 +1212,8 @@ usbnet_deferred_kevent (struct work_struct *work)
+ 			usb_autopm_put_interface(dev->intf);
+ fail_lowmem:
+ 			if (resched)
+-				tasklet_schedule (&dev->bh);
++				if (!usbnet_going_away(dev))
++					tasklet_schedule(&dev->bh);
+ 		}
+ 	}
+ 
+@@ -1559,6 +1576,7 @@ static void usbnet_bh (struct timer_list *t)
+ 	} else if (netif_running (dev->net) &&
+ 		   netif_device_present (dev->net) &&
+ 		   netif_carrier_ok(dev->net) &&
++		   !usbnet_going_away(dev) &&
+ 		   !timer_pending(&dev->delay) &&
+ 		   !test_bit(EVENT_RX_PAUSED, &dev->flags) &&
+ 		   !test_bit(EVENT_RX_HALT, &dev->flags)) {
+@@ -1606,6 +1624,7 @@ void usbnet_disconnect (struct usb_interface *intf)
+ 	usb_set_intfdata(intf, NULL);
+ 	if (!dev)
+ 		return;
++	usbnet_mark_going_away(dev);
+ 
+ 	xdev = interface_to_usbdev (intf);
+ 
+diff --git a/include/linux/usb/usbnet.h b/include/linux/usb/usbnet.h
+index 9f08a584d707..0b9f1e598e3a 100644
+--- a/include/linux/usb/usbnet.h
++++ b/include/linux/usb/usbnet.h
+@@ -76,8 +76,23 @@ struct usbnet {
+ #		define EVENT_LINK_CHANGE	11
+ #		define EVENT_SET_RX_MODE	12
+ #		define EVENT_NO_IP_ALIGN	13
++/* This one is special, as it indicates that the device is going away
++ * there are cyclic dependencies between tasklet, timer and bh
++ * that must be broken
++ */
++#		define EVENT_UNPLUG		31
+ };
+ 
++static inline bool usbnet_going_away(struct usbnet *ubn)
++{
++	return test_bit(EVENT_UNPLUG, &ubn->flags);
++}
++
++static inline void usbnet_mark_going_away(struct usbnet *ubn)
++{
++	set_bit(EVENT_UNPLUG, &ubn->flags);
++}
++
+ static inline struct usb_driver *driver_of(struct usb_interface *intf)
+ {
+ 	return to_usb_driver(intf->dev.driver);
+-- 
+2.46.0
 
 
