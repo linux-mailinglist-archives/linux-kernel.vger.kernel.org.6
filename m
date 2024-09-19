@@ -1,167 +1,93 @@
-Return-Path: <linux-kernel+bounces-333422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A06097C861
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:13:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B4197C855
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C02201F23258
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:13:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B1DA2862E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C5719C54A;
-	Thu, 19 Sep 2024 11:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B983819CD07;
+	Thu, 19 Sep 2024 11:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nfNp3Jat"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LY1Qt6y1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48574178378;
-	Thu, 19 Sep 2024 11:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F64E198E93;
+	Thu, 19 Sep 2024 11:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726744418; cv=none; b=rUik3U59R6Tls9NYSdK3y8RhPQGXdca57o2dcMOAvmpF95X31p/fbDhcM3wP5EsmEfvmPrt3naiWPwWuwkJYyYJDpYph5nTIzO41Q7FBeGgbkgKqhFjscFVwbQgUsK4HZsEoz8GivPDVh7R2nPM707ABBsgwJdAjEj8BRlFiBb4=
+	t=1726744231; cv=none; b=fsHmgNorpi0dRyb/OEtQTyuj3QWHzz5p4jmNZvKGJEmfo3wklJX6BNIMSdbc3m1gt4lXt4a6aRKa04WvZUT9VHzwmX5cpQLLCAdZ8s5xRBYntSqKZ6KHlHxrvD2nAZH4+wKtNs6wmmKBi6tg+TdSMpQwZQHGQiA5wFkrcMIGHqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726744418; c=relaxed/simple;
-	bh=+ybNVxibXRIh3nqxbEaGvkG8dJLz9hZXiA4MTb9SMBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CuQu6NiS0NMoAljT8j8x01c7lE+ggS7pFOhpN9OHxRvieInVHg+quIgCVqO5p7ffWDQGw80hBx/HCzOAUqsHbN/6jZHBqfkjs98aYOOAkBwdKhBejxa89FARi3IGVfb7HeNRee8d1LMl4YCauR19HyebxFZt9wmIigy955Chi7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nfNp3Jat; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48J6GKgl030026;
-	Thu, 19 Sep 2024 11:06:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=r
-	fTOEAXZNZarvbG2AF5ajeIf7S3tcYldEG1+ILtAxS8=; b=nfNp3JatxK7CrVZdh
-	1tRJiujGQ7yVv6IiviOr2r/96PFplZzRo9ChwyZ3cU9FXinTUiJ1ptvLOkQazj1I
-	U2fszw8SaodAhIB+XqHTgpFl4ZNQmuylN8adkkM9nm6AZzmncsOiYnFw/dgedJTG
-	xMHAJg6g8dCJO1xOpxzCSL++XYZiIj/4hlG5NluPk19bYT6LZT62IXD1Z28pxIVh
-	izV7HvHOI2jJ/wbQWZ7pQaaImFnVkIB7IXgpEduiPiesEXLJKBtVxnGG6+9q2LOt
-	YRFKnyrEct/weRVyovRNk6qd/QlUP0sEjnXGHt/qWgoqOmj6X7M5Nj+VBR4DEgIX
-	pI1Hw==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3udk82x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 11:06:57 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48JA3but001187;
-	Thu, 19 Sep 2024 11:06:56 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41nntqgxbh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 11:06:56 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48JB6sRd45220240
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 19 Sep 2024 11:06:55 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C14225805E;
-	Thu, 19 Sep 2024 11:06:54 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3741958059;
-	Thu, 19 Sep 2024 11:06:54 +0000 (GMT)
-Received: from [9.61.250.246] (unknown [9.61.250.246])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 19 Sep 2024 11:06:54 +0000 (GMT)
-Message-ID: <1d8bb55a-a498-44b8-a29a-f0916518e483@linux.ibm.com>
-Date: Thu, 19 Sep 2024 06:06:53 -0500
+	s=arc-20240116; t=1726744231; c=relaxed/simple;
+	bh=lUS6jub6SYk7XF6Pwfa5cPwXHtlVrvZ/xDHRvc92Si8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=GqFIEAqDAyMuNlUm3VwckgccKn2kSbg//uRqgjFmB+NXT5BPCmVB3a4kLD3MXOhDojz/NImfMFFwLLT5wIDZG2GdDu3VVi5nMSirn5qfvU/SfDTqxRCYyKauDRohIZnQMnwKpi8r5dUEx7tIvShmi9dX8NmkSzx7Q6DSm4lDD/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LY1Qt6y1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EDACC4CEC4;
+	Thu, 19 Sep 2024 11:10:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726744230;
+	bh=lUS6jub6SYk7XF6Pwfa5cPwXHtlVrvZ/xDHRvc92Si8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=LY1Qt6y1Tqwq5U0NvAyl3Ww1I4tw8uJIuSqSQRmgdspVBTMfdcreAXsjNWnhJTAzl
+	 eY6rqazeVGqdWMTP/5RHlH3MVNXWCFehiST2xS9ENQ59DIJ3uVMahIFBe0/bEg/dwH
+	 QQOUN6oGpYPL4Qrl8hkrZqISe2mMrgxPivo6VqZvBLgA/EchoDNjnIeHawzLZXfnEH
+	 dBaWOZypCnG8dtNa3Ii+lnTFu8SoCN0EQ/8a6yf9mkFzjMLebBkpdG7BJrK/uWiaJG
+	 A7JtCcl98gpypsjAAMWuQ3cwRd2Cx6XJP3MvAVwA56U5qOPmi8rRo9BE3iKvXTN3L9
+	 kFu3v+iaHzTgg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEC03809A80;
+	Thu, 19 Sep 2024 11:10:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto: Removing CRYPTO_AES_GCM_P10.
-To: Michael Ellerman <mpe@ellerman.id.au>, linux-crypto@vger.kernel.org
-Cc: herbert@gondor.apana.org.au, leitao@debian.org, nayna@linux.ibm.com,
-        appro@cryptogams.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, ltcgcw@linux.vnet.ibm.com,
-        dtsen@us.ibm.com
-References: <20240913123043.1636183-1-dtsen@linux.ibm.com>
- <87r09gp7ho.fsf@mail.lhotse>
-Content-Language: en-US
-From: Danny Tsen <dtsen@linux.ibm.com>
-In-Reply-To: <87r09gp7ho.fsf@mail.lhotse>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: oB3dgjWHfI2Hj--1h9fBAB0_MbHmV2Ho
-X-Proofpoint-ORIG-GUID: oB3dgjWHfI2Hj--1h9fBAB0_MbHmV2Ho
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-19_08,2024-09-18_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- phishscore=0 impostorscore=0 spamscore=0 priorityscore=1501 suspectscore=0
- adultscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409190071
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v3] net: xilinx: axienet: Fix packet counting
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172674423252.1512499.8344281762968477248.git-patchwork-notify@kernel.org>
+Date: Thu, 19 Sep 2024 11:10:32 +0000
+References: <20240913145156.2283067-1-sean.anderson@linux.dev>
+In-Reply-To: <20240913145156.2283067-1-sean.anderson@linux.dev>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: radhey.shyam.pandey@amd.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ daniel@iogearbox.net, michal.simek@amd.com, Suraj.Gupta2@amd.com,
+ harini.katakam@amd.com, andy.chiu@sifive.com, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 
-Thanks Michael.
+Hello:
 
-On 9/18/24 11:55 PM, Michael Ellerman wrote:
-> Danny Tsen <dtsen@linux.ibm.com> writes:
->> Removing CRYPTO_AES_GCM_P10 in Kconfig first so that we can apply the
->> subsequent patches to fix data mismatch over ipsec tunnel.
-> This change log needs to stand on its own. ie. it needs to explain what
-> the problem is and why the feature is being disabled, without reference
-> to subsequent patches (which will probably be merged separately).
->
-> It should also have a Fixes/stable tag.
->
-> And as Christophe said, just adding a dependency on BROKEN is
-> sufficient.
->
-> cheers
->
->
->> diff --git a/arch/powerpc/crypto/Kconfig b/arch/powerpc/crypto/Kconfig
->> index 09ebcbdfb34f..96ca2c4c8827 100644
->> --- a/arch/powerpc/crypto/Kconfig
->> +++ b/arch/powerpc/crypto/Kconfig
->> @@ -105,22 +105,22 @@ config CRYPTO_AES_PPC_SPE
->>   	  architecture specific assembler implementations that work on 1KB
->>   	  tables or 256 bytes S-boxes.
->>   
->> -config CRYPTO_AES_GCM_P10
->> -	tristate "Stitched AES/GCM acceleration support on P10 or later CPU (PPC)"
->> -	depends on PPC64 && CPU_LITTLE_ENDIAN && VSX
->> -	select CRYPTO_LIB_AES
->> -	select CRYPTO_ALGAPI
->> -	select CRYPTO_AEAD
->> -	select CRYPTO_SKCIPHER
->> -	help
->> -	  AEAD cipher: AES cipher algorithms (FIPS-197)
->> -	  GCM (Galois/Counter Mode) authenticated encryption mode (NIST SP800-38D)
->> -	  Architecture: powerpc64 using:
->> -	    - little-endian
->> -	    - Power10 or later features
->> -
->> -	  Support for cryptographic acceleration instructions on Power10 or
->> -	  later CPU. This module supports stitched acceleration for AES/GCM.
->> +#config CRYPTO_AES_GCM_P10
->> +#	tristate "Stitched AES/GCM acceleration support on P10 or later CPU (PPC)"
->> +#	depends on PPC64 && CPU_LITTLE_ENDIAN && VSX
->> +#	select CRYPTO_LIB_AES
->> +#	select CRYPTO_ALGAPI
->> +#	select CRYPTO_AEAD
->> +#	select CRYPTO_SKCIPHER
->> +#	help
->> +#	  AEAD cipher: AES cipher algorithms (FIPS-197)
->> +#	  GCM (Galois/Counter Mode) authenticated encryption mode (NIST SP800-38D)
->> +#	  Architecture: powerpc64 using:
->> +#	    - little-endian
->> +#	    - Power10 or later features
->> +#
->> +#	  Support for cryptographic acceleration instructions on Power10 or
->> +#	  later CPU. This module supports stitched acceleration for AES/GCM.
->>   
->>   config CRYPTO_CHACHA20_P10
->>   	tristate "Ciphers: ChaCha20, XChacha20, XChacha12 (P10 or later)"
->> -- 
->> 2.43.0
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Fri, 13 Sep 2024 10:51:56 -0400 you wrote:
+> axienet_free_tx_chain returns the number of DMA descriptors it's
+> handled. However, axienet_tx_poll treats the return as the number of
+> packets. When scatter-gather SKBs are enabled, a single packet may use
+> multiple DMA descriptors, which causes incorrect packet counts. Fix this
+> by explicitly keepting track of the number of packets processed as
+> separate from the DMA descriptors.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net,v3] net: xilinx: axienet: Fix packet counting
+    https://git.kernel.org/netdev/net/c/5a6caa2cfabb
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
