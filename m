@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-333201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F2B97C54F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:51:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7757597C556
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AAD628160E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:51:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 306DF1F23BF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6597A197A68;
-	Thu, 19 Sep 2024 07:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15421991B3;
+	Thu, 19 Sep 2024 07:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="pxAS+aDA"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="bi8L07pN"
 Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D292195B18;
-	Thu, 19 Sep 2024 07:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA015198E81;
+	Thu, 19 Sep 2024 07:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726732179; cv=none; b=ddScAB5XEooe6V4eoz878zgboXufoIdfvTiYI4ovG8HGhfMxCBvXB0C2C2G7QMpBaO2e6LOVdeAERJrMdtNKTsYzimiM1H+8OHkWhyokM+NVQYfgK/VHz+0WvbPk2OcCxPYpF216pNpWI8HwR0QqQSipZqm0Kd+y+AqJvMjUugc=
+	t=1726732183; cv=none; b=WP5anyCsirRYUPKtsxz7ZqrQ0na4dCY8Y/jR3Be8blCHM75XNPJ6SL1q1loe/nCvvDajjqX+ET81FeE68hqu8GK/CxqNU7z93IRWV2y+skk9cUx7Jn3Fd/BQy/LwGMACh8nFWZ6dV5/hgR1corT8iUSO8uES/eOb86mpJ1g5JXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726732179; c=relaxed/simple;
-	bh=jR4pNNMrVF5eHW9z98Mx+XRPXtc83p/n+p1TIJ2o0P8=;
+	s=arc-20240116; t=1726732183; c=relaxed/simple;
+	bh=ErlmQATV3KUxZ0pNDbOp/Z8kjpZtkw+CDEdk+T4exgE=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nkl/ljMo8lJdm7zdpq35dhNd779OZn7iikakHDbS3n1JZaZlNoSyfpU+CqTFKhj4dfl5ycUJp3p3xYfduiCZVV9UvdTg0HbhKlKzNbvPGr3JRiLy+4++qqe1W4Ha2vFu0SkjGdjGxxPifD6XMhC7vwHa9WJlzywwnRiuGuJMcAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=pxAS+aDA; arc=none smtp.client-ip=60.244.123.138
+	 MIME-Version:Content-Type; b=TBHbgM2iMRPPsSPeWSTTqkhlSTKL/pMqRqnGvDkN+rzmGbZEI0+n+OAEQaEvw8sZJqY9r9mu/uIqyaEJ3AawwCF3BztUnw99pevTnA3Dburp25tJdpbobKyPJwh2sagTD/4sD9RviCqs47rH91r5PP7nKRfC2h58EFWTMwdkTts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=bi8L07pN; arc=none smtp.client-ip=60.244.123.138
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: b3100ff6765b11efb66947d174671e26-20240919
+X-UUID: b3b820e2765b11efb66947d174671e26-20240919
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=R7PfRKskVGwT9r2F1Yqlbbe6a3JQ6+g4PrqqXljQYNI=;
-	b=pxAS+aDADa5XdR+KPJ7AWXje7zK+jOlJBb7iDupMH8NvSvhc0z6yhhHq41LO0YyiFwSwKvb/8QteN7Wz5w7dIVBrCHwD3Si+KXrr3+LHYqYO6uQbHR88n9XExbglrZJwv1ui4SEN6qdGdzhBbTlCitfVhmokmvV0VzKUur8k6Js=;
+	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=XipE8K6FG5ApXm17jslcvcuiOVDMbsFWv6YXb7+IIOc=;
+	b=bi8L07pNLHSysGcsDEpN1VIN1mDF2ZvYWCg6Nllnf4tNyxjS0jyWWCCbv4IRSwbV90YhpoI1DmgrgueHGdXn6sQF1YsjRjnOaHOo+d5nL6vPIr3aPcrycDXFAKKM32QtiEk402tKlu0naMWjh/uVp39xvl83ztYldd/KzwLZKrI=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:ae3bfb59-9043-41a8-b3f2-039d049dd607,IP:0,U
+X-CID-O-INFO: VERSION:1.1.41,REQID:b7a8ac71-c1a6-4746-af2e-d3805202cd19,IP:0,U
 	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
 	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:63db3a9e-8e9a-4ac1-b510-390a86b53c0a,B
+X-CID-META: VersionHash:6dc6a47,CLOUDID:9fda6ed0-7921-4900-88a1-3aef019a55ce,B
 	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
 	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
 	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
 X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: b3100ff6765b11efb66947d174671e26-20240919
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
+X-UUID: b3b820e2765b11efb66947d174671e26-20240919
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
 	(envelope-from <chris.lu@mediatek.com>)
 	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1343040907; Thu, 19 Sep 2024 15:49:29 +0800
+	with ESMTP id 665664720; Thu, 19 Sep 2024 15:49:30 +0800
 Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 19 Sep 2024 00:49:27 -0700
+ 15.2.1118.26; Thu, 19 Sep 2024 15:49:27 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
  mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
  15.2.1118.26 via Frontend Transport; Thu, 19 Sep 2024 15:49:27 +0800
@@ -65,9 +65,9 @@ CC: Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>,
 	<linux-bluetooth@vger.kernel.org>, linux-kernel
 	<linux-kernel@vger.kernel.org>, linux-mediatek
 	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
-Subject: [PATCH v2 1/4] Bluetooth: btusb: mediatek: move Bluetooth power off command position
-Date: Thu, 19 Sep 2024 15:49:22 +0800
-Message-ID: <20240919074925.22860-2-chris.lu@mediatek.com>
+Subject: [PATCH v2 2/4] Bluetooth: btusb: mediatek: add callback function in btusb_disconnect
+Date: Thu, 19 Sep 2024 15:49:23 +0800
+Message-ID: <20240919074925.22860-3-chris.lu@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20240919074925.22860-1-chris.lu@mediatek.com>
 References: <20240919074925.22860-1-chris.lu@mediatek.com>
@@ -78,35 +78,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--4.331900-8.000000
+X-TMASE-MatchedRID: y/MOm6ldwRI1vivz3L6ga8LPXKYZysJR9l9p8mNlkgm0ObdxMohq2ICu
+	qghmtWfXXj+G1I2Cld+xpBP9Oramp2Vnjx+sD6KyngIgpj8eDcAZ1CdBJOsoY9mzcdRxL+xwKra
+	uXd3MZDUo5EQfqvblfre1p4GsFJbVsIc0+IeBu7qxuSf5TeAQ1D/t1QR3QKuETaQP2XYPQ2kaQs
+	z7R1kd2F9TyrSZzhrbyUQ/Y5AoRrhBLAb/FTpmUnQE0HbT5LEft/yYljnuhl10loENhqV3WYc7S
+	1VgNXhPQwymtxuJ6y0=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--4.331900-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: FF418458DD37296C8B691E6333DE9605397CF74A140DDE005066AB14311AC2F62000:8
 
-Move MediaTek Bluetooth power off command before releasing
-usb ISO interface.
+Add disconnect callback function in btusb_disconnect which is reserved
+for vendor specific usage before deregister hci in btusb_disconnect.
 
 Signed-off-by: Chris Lu <chris.lu@mediatek.com>
 ---
- drivers/bluetooth/btusb.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/bluetooth/btusb.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 6c9c761d5b93..6cf1729a8225 100644
+index 6cf1729a8225..dfc42bdc8aaf 100644
 --- a/drivers/bluetooth/btusb.c
 +++ b/drivers/bluetooth/btusb.c
-@@ -2704,11 +2704,14 @@ static int btusb_mtk_shutdown(struct hci_dev *hdev)
- {
- 	struct btusb_data *data = hci_get_drvdata(hdev);
- 	struct btmtk_data *btmtk_data = hci_get_priv(hdev);
-+	int ret;
+@@ -846,6 +846,7 @@ struct btusb_data {
+ 
+ 	int (*suspend)(struct hci_dev *hdev);
+ 	int (*resume)(struct hci_dev *hdev);
++	int (*disconnect)(struct hci_dev *hdev);
+ 
+ 	int oob_wake_irq;   /* irq for out-of-band wake-on-bt */
+ 	unsigned cmd_timeout_cnt;
+@@ -4011,6 +4012,9 @@ static void btusb_disconnect(struct usb_interface *intf)
+ 	if (data->diag)
+ 		usb_set_intfdata(data->diag, NULL);
+ 
++	if (data->disconnect)
++		data->disconnect(hdev);
 +
-+	ret = btmtk_usb_shutdown(hdev);
+ 	hci_unregister_dev(hdev);
  
- 	if (test_bit(BTMTK_ISOPKT_RUNNING, &btmtk_data->flags))
- 		btusb_mtk_release_iso_intf(data);
- 
--	return btmtk_usb_shutdown(hdev);
-+	return ret;
- }
- 
- #ifdef CONFIG_PM
+ 	if (intf == data->intf) {
 -- 
 2.18.0
 
