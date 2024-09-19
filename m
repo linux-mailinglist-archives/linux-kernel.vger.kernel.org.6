@@ -1,141 +1,110 @@
-Return-Path: <linux-kernel+bounces-333877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B334A97CF4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 00:50:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6612B97CF57
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 01:08:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA403B228BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 22:50:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E0221C21D2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4951B2EE8;
-	Thu, 19 Sep 2024 22:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678D31509AE;
+	Thu, 19 Sep 2024 23:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dFBX17cB"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="NllGs2yc"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9501119ABAF
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 22:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41101B2EE8;
+	Thu, 19 Sep 2024 23:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726786210; cv=none; b=SWDWWTG0akhzbcACJGeffQHpG5ZnXyl/09NLcVSozScdjNROBZHPL/rBeuACSywWr8OJesH6cwID7BMCddBWmBfiJyomJhesQcxmILF2s6rhimrgvSKCiDkJpq5V/1FhYfxUzSiKTyUilqgawFa++MmHZdNMWG8s3C65qzLVMbw=
+	t=1726787289; cv=none; b=m8NS3INP+Exy7uaWYFWTYnKUo2McLn3MPV/SzMAKDy+0H7hP0ud6KlaaD01qvObRpjUIgOSpJEDmKOUnHTuJvgQA7vgDjJXKLfu3KcSJxnr/xQMKQeqEKkxQfxjr4gw/An7epz1hxUawekO6rekTXjYE3hxHDMqXs9MBE3UAuwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726786210; c=relaxed/simple;
-	bh=jcdO1Ws/371xc2rjJWhRW7rSMSnWdXQGzGvNQUoQN3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oxk75TcxY6HBe+qrsyUDIH+pXUVo9d5ka0RPG2nDJxEh2T1bBVEsuiv5hPXWKkk1U1gYfyGZ8h+VM+XG4oFF8Qpm3nkCq+vb4l9wzVaHe9Fxk1siq4VKJYh/x9ISPLb0ugrR2yPOHiULW1L/JatRDSlWbNzjp/rdyFWW1UNEX5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dFBX17cB; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2059204f448so13625145ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 15:50:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726786208; x=1727391008; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5wz5lXmuEfJrsdnRfJzjlfMUt5hIQmRZ+lBgO7w7oV4=;
-        b=dFBX17cBk36OABk6LPvevHRygX5mSAabB7hlLMKBWh9m6Uvc25nNT10iuz/6HH+pZr
-         y//iJ2Zs1NeuCTvWeSVKovFgFMGXyHz3SJxWk12+GAwzcKVUKixbmuhqTduYNeGFC3Su
-         4f7+CmkTnT2cm4/ISay4RlfWBL9UxNweaD1qTFSd04CoYTfGNmY/ownx6KkpXsvmwEGe
-         X+flQ68CZm3uxpRMXhIZ5xgVBT2aY2QjLhfe4oCIWSnb86fPxfKkqr/Ln4/o3DZ4JT8A
-         AB60fXrmmNqKpGW7CNqZvkWazjkncjUo7HMvQA3E9miP7IfKKfSrGiF83MpwI5YUMs+f
-         YW1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726786208; x=1727391008;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5wz5lXmuEfJrsdnRfJzjlfMUt5hIQmRZ+lBgO7w7oV4=;
-        b=BHR2UCKyDk/g0tZ8NKj7wkqvefwT02omGXiUy2wWnorD9Pq2Xmsm1+GzjI0+WUh3jJ
-         subTvIyntyMsGhtJW1oeucGVlcT/T0HynfTp7REg8TwyJAHJXb6R6cX/+qqM4B1iF63n
-         gU7Rd/9DqkGSSqGX6IcqEu2fdawwSYgSzzreaGAkHyqI+mZaY+hacBq92uFeplapPss6
-         YftyYLHIKYv3bbyDZ/8SV6twKLqiK9rdV8hmemzrWDPGEDjVXrIdq8k3yEQbx/zNrItw
-         ghPOSDoNf3hfktxcBnlnCZYg0Qw6pt2rjHjyMBQDRYg9ss7GkhxKP1XnB2iSlgT0wwPX
-         4VIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWeUiaMfmNBdrKhN38ifTIu/dzNqCxDgc7usEf55IXF1dVEPH7gvVeK44dkFzyG2NWehXbx2+s1Drl4Pns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR4KoTohcXgXjvzZ0UCbyynfRYP2hB/1z06tTzqGknAnIH3FcB
-	MsM1ZgubVGJk9f3hCJc7AP3OOQL5TBkPvLjpDWOWhT+d3x/FNCGH4CFJJrPN5A==
-X-Google-Smtp-Source: AGHT+IEFTOdkTTfdrN+O9bFF4XZIaLF1A6VxLZ7fwhnPT6zj9SxeESvTNX2h3OI6/0yS5WhmbqNNQA==
-X-Received: by 2002:a17:902:d511:b0:205:7574:3b87 with SMTP id d9443c01a7336-208d980bb34mr4901005ad.15.1726786207484;
-        Thu, 19 Sep 2024 15:50:07 -0700 (PDT)
-Received: from ?IPV6:2a00:79e0:2e14:7:f9c5:155b:ca02:2b70? ([2a00:79e0:2e14:7:f9c5:155b:ca02:2b70])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946fb724sm84806845ad.200.2024.09.19.15.50.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Sep 2024 15:50:07 -0700 (PDT)
-Message-ID: <ad1e9554-ebec-483f-90e0-d0c63fc07b86@google.com>
-Date: Thu, 19 Sep 2024 15:50:05 -0700
+	s=arc-20240116; t=1726787289; c=relaxed/simple;
+	bh=kcJ9FPniXK4XD8DzmXUs15e7MYhkDa5d8MZGQterbsM=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=W6fVY3FKpEZ5hiHrBahih9y3O3sSR/u7JipYH8s9QIjgYrgnuZiXDXiXk8dNWRs+446S8yvGzMr/IFEAPsEC2mCQwvCO+qDC4fd99+RH9hrptLudylN6vYBl/m8Ce16D3kh2HLPKkEUwaedo2JOisKtPHRkM3dwz3lwaDzZUGWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=NllGs2yc; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1726787281; bh=ngiiRcFr65QAmddM4leUiyajDxrmIaKOksZVmxw1F7Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=NllGs2ycb58+mFgM81FQ7umxCNCitRQ8iHaj44Mw+S2El8mvSUFTfUb6ZbRFfVbjJ
+	 qDGdJ7nUifQEb92h+hoNy8LRJmnHIkLtKdArZAGGyyYo+DDaBXnrmdGH0BJlUnFxSe
+	 brpnWLzgLZvxs3KyDpykRaSXkJ5oz7gYCgDkwvOs=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id DD09BEB8; Fri, 20 Sep 2024 06:55:16 +0800
+X-QQ-mid: xmsmtpt1726786516tgwp9pijj
+Message-ID: <tencent_C2F02EF16C089514EB32EFFECC707A726F0A@qq.com>
+X-QQ-XMAILINFO: MOpJcPT3Yy241ULNy4rFne4SDy2fD0+wUx0zPNP+MOs+jX+LMbglc8aYpdk+Sh
+	 WYujE6cDAEbzzv7r8WPv/fCGiD9VzHE0L2sFGJFa6xsHzktW1mHJ4hY5/yZZLUOqNm500zgC/Geb
+	 QDJW4ty385wrywyXf7es2mQXNOukLeqbKs4ze+/21PmHQmlKHdPWnxBHyJMgvBZHEj9+VWZxU+0a
+	 K2uceNUwV+4kppz5bK64fMtCJLaYoPX8MMJXd60FLbwCahxYZ+OWkKL0Kcws9GISHbqaHciFl7e1
+	 8ArI0sIuDXDKdzYTBWt9P6OCxrdbuMBMMMaVyGO5O6NBYZ9e0doPnusnsdrA/dd1aEbJTbb5AY4B
+	 z0IM3OJo6Mcz5K13njajtmDaExLjlRPFobyVg5QncII6g4dopBlxeRsHWFRP9WcH0Qgsugm+/IHo
+	 XH+iHoxphnoE1/OfnVsb2Xv/SzQADZu21ayj8C5VzYfQUyjilxl0Umu6+Bv4CB44eG2hkNeQWqMp
+	 +Nw/a4WVpWAR5PQTuECFHCOeXt36hpzPRihh5yPmra8nXI/UnlulTGFeFGXJAhabc8buKjOWJ6UF
+	 lHOsatG0nI5JnsTdvWsNuUcBdN6QZxQjiR1K/rXLDDVjeuJIZMc3sqRNnSpeaoehVmaPqhLNSAjs
+	 qlm2YbwGJbVVhRxuuk2nYI1JrUDVFuYnlcf0+FSwniuNMopIXwll9TFwvRi2yLJ1z/COH2JzFdAB
+	 pHfW1XxqqJWuB8TE4nITP8U2qJOpy1AD4bv7i/kEgfXvWztSY2abkr6m/Deh1+rr9zdzHzaJJFwb
+	 ULlkWP3u575sHYx7Y8TeOyZKYdH1aPqP5DKrIQGmZet8LBDb2TF2MQTBRHzizLhvlQAx6jrJF2RT
+	 /9Hh7xgHbdJ4uboniVUKSONF5sttjT8r3mKZtlswaN0VghhuurHPjm5BsvAiCz0A==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+294f528e56138c357a48@syzkaller.appspotmail.com
+Cc: kent.overstreet@linux.dev,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] bcachefs: Fix null-ptr-deref in bch2_opt_to_text
+Date: Fri, 20 Sep 2024 06:55:17 +0800
+X-OQ-MSGID: <20240919225516.228808-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <66eb6254.050a0220.92ef1.0009.GAE@google.com>
+References: <66eb6254.050a0220.92ef1.0009.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] usb: typec: Fix arg check for
- usb_power_delivery_unregister_capabilities
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Greg KH <gregkh@linuxfoundation.org>
-Cc: heikki.krogerus@linux.intel.com, badhri@google.com, kyletso@google.com,
- rdbabiera@google.com, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, stable@vger.kernel.org
-References: <20240919075815.332017-1-amitsd@google.com>
- <2024091956-premiere-given-c496@gregkh>
- <gkyzytmvcaefbfvu6ryss7zq5cm3t3mcjgtugsryhxl7aglpkk@gi2fgjnyidgi>
-Content-Language: en-US
-From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <gkyzytmvcaefbfvu6ryss7zq5cm3t3mcjgtugsryhxl7aglpkk@gi2fgjnyidgi>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Greg, Dmitry,
+The mounting option values passed in by syzbot are:
+"metadata_checksum=crc64, errors=continue, obj_user={^, subj_user=obj_ur,
+approve", which does not meet the "key1=value1,key2=value2,..." requirement
+of the bcachefs.
 
-Thanks for the review!
+Reported-and-tested-by: syzbot+294f528e56138c357a48@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=294f528e56138c357a48
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/bcachefs/opts.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-On 9/19/24 3:03 AM, Dmitry Baryshkov wrote:
-> On Thu, Sep 19, 2024 at 10:11:37AM GMT, Greg KH wrote:
->> On Thu, Sep 19, 2024 at 12:58:12AM -0700, Amit Sunil Dhamne wrote:
->>> usb_power_delivery_register_capabilities() returns ERR_PTR in case of
->>> failure. usb_power_delivery_unregister_capabilities() we only check
->>> argument ("cap") for NULL. A more robust check would be checking for
->>> ERR_PTR as well.
->>>
->>> Cc: stable@vger.kernel.org
->>> Fixes: 662a60102c12 ("usb: typec: Separate USB Power Delivery from USB Type-C")
->>> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
->>> Reviewed-by: Badhri Jagan Sridharan <badhri@google.com>
->>> ---
->>>   drivers/usb/typec/pd.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/usb/typec/pd.c b/drivers/usb/typec/pd.c
->>> index d78c04a421bc..761fe4dddf1b 100644
->>> --- a/drivers/usb/typec/pd.c
->>> +++ b/drivers/usb/typec/pd.c
->>> @@ -519,7 +519,7 @@ EXPORT_SYMBOL_GPL(usb_power_delivery_register_capabilities);
->>>    */
->>>   void usb_power_delivery_unregister_capabilities(struct usb_power_delivery_capabilities *cap)
->>>   {
->>> -	if (!cap)
->>> +	if (IS_ERR_OR_NULL(cap))
->> This feels like there's a wrong caller, why would this be called with an
->> error value in the first place?  Why not fix that?  And why would this
->> be called with NULL as well in the first place?
-> I think passing NULL matches the rest of the kernel, it removes
-> unnecessary if(!NULL) statements from the caller side.
->
-The reason for this patch was just to be a little more defensive in case 
-things slip through cracks and be
-consistent with the rest of the PD class. For example 
-usb_power_delivery_unregister() &
-usb_power_delivery_unlink_device() has similar arg checks.
-
-
-Regards,
-
-Amit
+diff --git a/fs/bcachefs/opts.c b/fs/bcachefs/opts.c
+index e10fc1da71b1..78307e092075 100644
+--- a/fs/bcachefs/opts.c
++++ b/fs/bcachefs/opts.c
+@@ -472,6 +472,12 @@ int bch2_parse_one_mount_opt(struct bch_fs *c, struct bch_opts *opts,
+ 	u64 v;
+ 	int ret, id;
+ 
++	if (!val) {
++		pr_err("Bad mount option, value is NULL");
++		ret = -BCH_ERR_option_value;
++		goto out;
++	}
++
+ 	id = bch2_mount_opt_lookup(name);
+ 
+ 	/* Check for the form "noopt", negation of a boolean opt: */
+-- 
+2.43.0
 
 
