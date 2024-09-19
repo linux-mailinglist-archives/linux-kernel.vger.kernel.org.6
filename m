@@ -1,78 +1,105 @@
-Return-Path: <linux-kernel+bounces-333613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F0C97CB60
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:10:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A421097CB69
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4568287426
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:10:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18D34B218B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9EC1A072D;
-	Thu, 19 Sep 2024 15:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DC21A3BB0;
+	Thu, 19 Sep 2024 15:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldW8H1fx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="cnDZBoqY"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF661A4AC6
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 15:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D22F1A2542;
+	Thu, 19 Sep 2024 15:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726758618; cv=none; b=BeItppqmxlE6r7Ulneb42Lp4y3dbvKHWwb1Y4DMRga2Z1BlC1K1TG5UGlTkKSfvuVCA4cR5eUNoFdC3yw/pT6gBhhCoV8QarjPRJKNRf8Mh/2mmNle7e30fcRCic0fkwiTSiRHsfgKN5vk1TM/r5vF28k0+d9lZIrOV6TZY4COo=
+	t=1726758727; cv=none; b=fqx9DlUJTBZTlYJ9AxOLQ3JaIv/lNL9zEsl17nt6tlg1MmfmSILvI4CWrk5T4zPHIVrFczePRzZ4ZohvbYUce6MU1r+H8I2eeVrSwcraWI9yv0OJPzVddi2R5NHOm3L2qwH8hXAoIofwlTmBO8a80z6QnfiIYCa6ZQ7DIbwf46E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726758618; c=relaxed/simple;
-	bh=QneIcnwySL0MhW8hrn3OKkQL+93MnXOJ2uUT2sznJYE=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Cinu/nuVLtwoDdop2rGZ31EbcDuATeOGpmezrGxK1wOWsFQISymH3imvlDGe6pWf5hN/OvtS39cy9za7ua9QbSDa6k5YzNwk51UP5FyQmD9iQk0FI7xpu8SzYCYBN7xjOJ8D/3VA6PK/Sg7vOYLYamrfFpkAOhzCDWBLcziExCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldW8H1fx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ECBAC4CECE;
-	Thu, 19 Sep 2024 15:10:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726758617;
-	bh=QneIcnwySL0MhW8hrn3OKkQL+93MnXOJ2uUT2sznJYE=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ldW8H1fxF8p8X9B8qxUAXfBX0K81vmN/9fQ8fiWQ0wz60Wufmv4P/BLdQ8CdgBoVc
-	 hNoKjdx1cyg57N+1JZ42PeVg625qXpankoPdPHl3OcA7UpS8zy4Y2xEEPx+LJSbAz9
-	 SaCbclOzYCJC6kPdCMAY3du1RibIHc3rMQ+/c+2uK9RrGU8nlfObWedV4tkLIfuCk4
-	 3Q7jDbfuZagbikUk4oPobbOISwTwyF19FPG2JF3erut7QBrY6M0Okwv7B0yqA1ZLVu
-	 OgpIeFHOYJy3vf54V7I9Zrtp+kxwzryZrXOlp+/Hu+HbVdb+dKLX8vX85fpa/pKQdf
-	 69Jdk3MF/XU8g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 92C3D3809A81;
-	Thu, 19 Sep 2024 15:10:20 +0000 (UTC)
-Subject: Re: [GIT PULL] Scheduler changes for v6.12
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Zuv2PZQ1GWpxhQB9@gmail.com>
-References: <Zuv2PZQ1GWpxhQB9@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Zuv2PZQ1GWpxhQB9@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-core-2024-09-19
-X-PR-Tracked-Commit-Id: bc9057da1a220ff2cb6c8885fd5352558aceba2c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2004cef11ea072838f99bd95cefa5c8e45df0847
-Message-Id: <172675861953.1588903.10426895231963532928.pr-tracker-bot@kernel.org>
-Date: Thu, 19 Sep 2024 15:10:19 +0000
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+	s=arc-20240116; t=1726758727; c=relaxed/simple;
+	bh=qVoHmsRHGg98zFI6pqJncNtKRVJtC5MUzrba+bc+fqE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XGxUl5XC4+SGd23RzREhNkLCDLZe/0aDWVW5EQ+rktucKh+HiFP/8deZDKSJ2tptm8ndR2sFOzIKnPvtWhBVtC5nBzBpOl/5HTUQs4ehTXvKRVswThd/DOYZui4xd57b9f70/x9YI5vtn9AAMUtg/8YnxoQTeWoHoN8AM3Li5M0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=cnDZBoqY; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 0CE3623D30;
+	Thu, 19 Sep 2024 17:11:26 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id oyXPdYhAlJud; Thu, 19 Sep 2024 17:11:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1726758681; bh=qVoHmsRHGg98zFI6pqJncNtKRVJtC5MUzrba+bc+fqE=;
+	h=From:Subject:Date:To:Cc;
+	b=cnDZBoqYnyKfzaZrq9f3KL+S/i45kM/FIo9Kl3pW/xs6wx9KLeaCeR1g0jDxp2K2u
+	 0UHsQoHE0aS6TuSzMa4yHtyChXb3TEpisyxNUjGCS+JDwPCwvtXqNIn5wN5A1wCqRO
+	 84onX7kELKXyIGr+tIA1TGCzyboiBh9t4UAv5aOf/P2/XrzBEHZ5Fxa7f/OoooFjLx
+	 PslShWcaVjfeNR0fGrewR3LXCtQiawBM0UQ+7KwAZqsaagHXVO0S50SgWTN92Rz+V+
+	 B2mcR/ZhFyJBO6ba5TGIH4HkUTczWwhiKTEmwfTNk/nbc74Zbz6XJygYZVHMJsuiZ6
+	 VY8jXNLe3RDrw==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH 0/6] Samsung Exynos 7870 DECON driver support
+Date: Thu, 19 Sep 2024 20:40:59 +0530
+Message-Id: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAM/7GYC/x3MTQqAIBBA4avErBN0EPq5SrQoZ6xZpKEQhXT3p
+ OW3eK9A5iScYWwKJL4kSwwVpm3A7UvYWAlVA2q0ejCd4vsJMVM6FLGLQVmH2BMZwtVDrc7EXu7
+ /OM3v+wFWuUAIYQAAAA==
+To: Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
 
-The pull request you sent on Thu, 19 Sep 2024 12:00:29 +0200:
+This patch series aims at adding support for Exynos7870's DECON in the
+Exynos7 DECON driver. It introduces a driver data struct so that support
+for DECON on other SoCs can be added to it in the future.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-core-2024-09-19
+It also fixes a few bugs in the driver, such as functions recieving bad
+pointers.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2004cef11ea072838f99bd95cefa5c8e45df0847
+Tested on Samsung Galaxy J7 Prime and Samsung Galaxy A2 Core.
 
-Thank you!
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Kaustabh Chakraborty (6):
+      drm/exynos: exynos7_drm_decon: fix uninitialized crtc reference in functions
+      drm/exynos: exynos7_drm_decon: fix suspended condition in decon_commit()
+      drm/exynos: exynos7_drm_decon: fix ideal_clk by converting it to Hz
+      drm/exynos: exynos7_drm_decon: properly clear channels during bind
+      drm/exynos: exynos7_drm_decon: add driver data and support for Exynos7870
+      dt-bindings: display: samsung,exynos7-decon: add exynos7870 compatible
 
+ .../display/samsung/samsung,exynos7-decon.yaml     |   4 +-
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c         | 124 +++++++++++++--------
+ drivers/gpu/drm/exynos/regs-decon7.h               |  15 ++-
+ 3 files changed, 90 insertions(+), 53 deletions(-)
+---
+base-commit: 4f3e012d4cfd1d9bf837870c961f462ca9f23ebe
+change-id: 20240917-exynosdrm-decon-4c228dd1d2bf
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Kaustabh Chakraborty <kauschluss@disroot.org>
+
 
