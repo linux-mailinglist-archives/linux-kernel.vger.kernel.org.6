@@ -1,159 +1,132 @@
-Return-Path: <linux-kernel+bounces-333297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C6D97C68E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:07:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BED97C68B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CD2B1F24C9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:07:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 755C31C22E47
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA4B199E91;
-	Thu, 19 Sep 2024 09:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF2E199921;
+	Thu, 19 Sep 2024 09:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="aP0e28+9"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G77X70fw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAB5199957;
-	Thu, 19 Sep 2024 09:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726736815; cv=pass; b=JYkbLfNezkniIXOEHgm+HHpkz4FY4UFQnyXbSKXUnVX7nED3Jp82K5tjgAdcOHqyVQWFGh6pPSK3uFR6/tafVKlR3HFZ4CYdNvWMo44yTuyrb5h9yGRdP1fcDgRT4v1uHtLUJSoEivU7CGnmHp7e0AohsIzFkzQK2WJYXslGX08=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726736815; c=relaxed/simple;
-	bh=WIyPR9I7SW6Am8W2Xo7ZAkLcKedMPAaJoNrnX9TxwDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZwSJqGaYHqgpk//5R9F14omA1a+gpgDl3McyvQk6eTvdvAqvdAPqoW90q1jIQwj5WjEG5Ln8+td3kf5tZR88WE4MczJoFSA9iRusKZOU6zJpJOVdgMYfszRDEj37SC/Z6z2t7za0e9WLgliqfc2RhcPsHey9mU6pA/4NQlqmyc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=aP0e28+9; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726736744; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=WjG2BOdH75Al6lv/8HNX+J4MZwf54noq6XT02LOFdOST4yvSHm7s95wvHBehc1ibo3irRiz3EWoRQEfwJhJ7u9CeVpnhvL7MTS5K2mYQfVTSH3SXdAG35+ZRgae8HPAaioQEvJy2l3iE527Jc2Trwe+kFkT66DgUIjRkZaSYpO0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726736744; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=WIyPR9I7SW6Am8W2Xo7ZAkLcKedMPAaJoNrnX9TxwDI=; 
-	b=IX+AgYHmn9h0/JFMcQSb76kpnvvprbj+30Z/H7NWsE6UCw8CilmwCNIXi+zYyi5O0EwTEHF7dWTtTgeutdXSbgyO0GTcO5G+N5JbeljfaBuCKRLmu4urFbgkZFA7CX1S9zkT7mbMBtGO1RF80yyiAQysRRuT46Z63hmBrJwYLUo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726736744;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=WIyPR9I7SW6Am8W2Xo7ZAkLcKedMPAaJoNrnX9TxwDI=;
-	b=aP0e28+9MF1DAD9w61R9zdYhgHkXUjJgjquFdB9epwQpmoan9kk060se3CanuevN
-	gsKRjfRHKDNUukrlUk6TAVHjDo8/aLBau64DRYxp1VAeWihDccx0PvsOsXTxDubD0Ky
-	tYRiunm+tSWSE5RV/g6BCsqF+yTAIof8Vyj8OOew=
-Received: by mx.zohomail.com with SMTPS id 1726736742399817.1293742983563;
-	Thu, 19 Sep 2024 02:05:42 -0700 (PDT)
-Received: by mercury (Postfix, from userid 1000)
-	id 3C03B106031C; Thu, 19 Sep 2024 11:05:35 +0200 (CEST)
-Date: Thu, 19 Sep 2024 11:05:35 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Elaine Zhang <zhangqing@rock-chips.com>, 
-	=?utf-8?B?QWRyacOhbiBNYXJ0w61uZXo=?= Larumbe <adrian.larumbe@collabora.com>, Boris Brezillon <boris.brezillon@collabora.com>, 
-	devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v1 0/6] Fix RK3588 GPU domain
-Message-ID: <vh5gsouseahs6ddauzevcdtcjutl35dcyoc5cv4pvn56lyyilv@rekmpklpbbyh>
-References: <20240910180530.47194-1-sebastian.reichel@collabora.com>
- <CAPDyKFoMyGUagDdjdaBJXL_OEgewQjCeJcBBK+2PFk=vd+kjRg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16F9199253
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726736758; cv=none; b=phGYXVUHq/iXHdyEpRQ2TDNQFkXxCzanaehDz+4Y2Z5fvGPg8nA+YB9t3e5Ei68551ZYDOVaEt0OJmphFFvAFvJMoUDIeXGYXr+A7VGm1xyxGnflb+rNckbLoVq0TIH1U4adXvrXWl1D/95CR17vE9YGAg/oauAKoj9vHXJH3ec=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726736758; c=relaxed/simple;
+	bh=VWWBTcxk4hORGaLkX+0fM//HV8ZJSc6yfLE5/ZxEq80=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KsXTYWIoq8XxZqzjk4BYcATYra68icA0NrT+znLnQKMRzHyBu310nawu3zg6w1dxIZfZDgDlynyP66+D5GKSVUiOhs1A6IKxyf7cfgAZqTtHjzoYqOfbtcArNq+SgheVMXxkjx8+nS7APDrBVAFNy5yGxyJpiCZGd6MDm0Du95g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G77X70fw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726736755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nnex9kdS8NwvyPRASviDUdMuudMC1PvpZvkVEh7NFiQ=;
+	b=G77X70fw1ZBdLXOQuqT2yRDDz+2ZHNw+pwIJISNQbF6uLlUibLXH0Pp9LqxprOsi3qkHs8
+	gBGOH7roApUfKQBoBnP9ewtPbzSYa/xkD0k+Cnb+yrb7q4h4LE3VKmJ13CUXgtUrfWzSlM
+	Xpy1C7YvmAqA8jiItyqjD6TgpqGz0R8=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-463-8yAM-TXvP0Gh2AqEJeRYaQ-1; Thu, 19 Sep 2024 05:05:54 -0400
+X-MC-Unique: 8yAM-TXvP0Gh2AqEJeRYaQ-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-374c54e188dso837882f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 02:05:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726736753; x=1727341553;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nnex9kdS8NwvyPRASviDUdMuudMC1PvpZvkVEh7NFiQ=;
+        b=S528aqef2RSEt4+qCrFJP/4Co4XQIp/VTnA5K9pYtdc065VzWWsxDiTGARq+BYLYDV
+         BTc6PalTuHc70VE9DwbjpQKBY3Aa022H633YXEu3JjtY+8VTlYiYuz37tnQ23BAgmfeE
+         1KZB8zdOpnUty/OjvhQKFZCJI4tuNrO8KEDJVlceZ8/QVORw4p5UJM0rg9qrvn42CJL8
+         myOyGjRbd3Ox9ptZdFY4RQwwX63leppVCz01vI6EANvHK01wFpiG0k47d+1Rm70VCc7S
+         qT8+tIS4UkrqqLdKjK0CPQci636cclHruRdCWsNTYYoS2vlhBbMiffSVSd03hqW3tZ/I
+         /hYA==
+X-Gm-Message-State: AOJu0YxMUoijuPTqqBxQOUuMp4tQ4N0qUv4TQVNxLtf+Ba0NSMdXsBrP
+	CX0uh32B4SKaEAAW3HDbZqEJuwAKFuCvpJjgqsWPT+1SQ9///+6GMKTEtSF8N+L0lvWDpcHF0rL
+	DuKZcHkMNNfXy3700KiZg8wtr6B/vGbtDZ7H/4IO+A8zaQhhn47jA+GnFpnPrZg==
+X-Received: by 2002:adf:f94a:0:b0:374:ba78:9013 with SMTP id ffacd0b85a97d-379a8600601mr1235064f8f.9.1726736752929;
+        Thu, 19 Sep 2024 02:05:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHiXJ8EJ3vg1Ccjo7Mce+fhOayPgntM0rtjBpNHJcnp36weYWGzu7OgB6+gevN/ScNecv4iQA==
+X-Received: by 2002:adf:f94a:0:b0:374:ba78:9013 with SMTP id ffacd0b85a97d-379a8600601mr1235046f8f.9.1726736752518;
+        Thu, 19 Sep 2024 02:05:52 -0700 (PDT)
+Received: from [192.168.88.100] (146-241-67-136.dyn.eolo.it. [146.241.67.136])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e80eesm14456762f8f.30.2024.09.19.02.05.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Sep 2024 02:05:52 -0700 (PDT)
+Message-ID: <5632e043-bdba-4d75-bc7e-bf58014492fd@redhat.com>
+Date: Thu, 19 Sep 2024 11:05:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2ey5cyrmazej6g4l"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFoMyGUagDdjdaBJXL_OEgewQjCeJcBBK+2PFk=vd+kjRg@mail.gmail.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.3.1/223.982.64
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3] tcp: check skb is non-NULL in tcp_rto_delta_us()
+To: Josh Hunt <johunt@akamai.com>, edumazet@google.com, davem@davemloft.net,
+ kuba@kernel.org, netdev@vger.kernel.org, ncardwell@google.com
+Cc: linux-kernel@vger.kernel.org
+References: <20240910190822.2407606-1-johunt@akamai.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240910190822.2407606-1-johunt@akamai.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 9/10/24 21:08, Josh Hunt wrote:
+> diff --git a/include/net/tcp.h b/include/net/tcp.h
+> index 2aac11e7e1cc..196c148fce8a 100644
+> --- a/include/net/tcp.h
+> +++ b/include/net/tcp.h
+> @@ -2434,9 +2434,26 @@ static inline s64 tcp_rto_delta_us(const struct sock *sk)
+>   {
+>   	const struct sk_buff *skb = tcp_rtx_queue_head(sk);
+>   	u32 rto = inet_csk(sk)->icsk_rto;
+> -	u64 rto_time_stamp_us = tcp_skb_timestamp_us(skb) + jiffies_to_usecs(rto);
+>   
+> -	return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
+> +	if (likely(skb)) {
+> +		u64 rto_time_stamp_us = tcp_skb_timestamp_us(skb) + jiffies_to_usecs(rto);
+> +
+> +		return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
+> +	} else {
+> +		WARN_ONCE(1,
+> +			"rtx queue emtpy: "
+> +			"out:%u sacked:%u lost:%u retrans:%u "
+> +			"tlp_high_seq:%u sk_state:%u ca_state:%u "
+> +			"advmss:%u mss_cache:%u pmtu:%u\n",
+> +			tcp_sk(sk)->packets_out, tcp_sk(sk)->sacked_out,
+> +			tcp_sk(sk)->lost_out, tcp_sk(sk)->retrans_out,
+> +			tcp_sk(sk)->tlp_high_seq, sk->sk_state,
+> +			inet_csk(sk)->icsk_ca_state,
+> +			tcp_sk(sk)->advmss, tcp_sk(sk)->mss_cache,
+> +			inet_csk(sk)->icsk_pmtu_cookie);
 
---2ey5cyrmazej6g4l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As the underlying issue here share the same root cause as the one 
+covered by the WARN_ONCE() in tcp_send_loss_probe(), I'm wondering if it 
+would make sense do move the info dumping in a common helper, so that we 
+get the verbose warning on either cases.
 
-Hi,
+Thanks,
 
-On Fri, Sep 13, 2024 at 01:59:10PM GMT, Ulf Hansson wrote:
-> On Tue, 10 Sept 2024 at 20:05, Sebastian Reichel
-> <sebastian.reichel@collabora.com> wrote:
-> > I got a report, that the Linux kernel crashes on Rock 5B when the panth=
-or
-> > driver is loaded late after booting. The crash starts with the following
-> > shortened error print:
-> >
-> > rockchip-pm-domain fd8d8000.power-management:power-controller: failed t=
-o set domain 'gpu', val=3D0
-> > rockchip-pm-domain fd8d8000.power-management:power-controller: failed t=
-o get ack on domain 'gpu', val=3D0xa9fff
-> > SError Interrupt on CPU4, code 0x00000000be000411 -- SError
-> >
-> > This series first does some cleanups in the Rockchip power domain
-> > driver and changes the driver, so that it no longer tries to continue
-> > when it fails to enable a domain. This gets rid of the SError interrupt
-> > and long backtraces. But the kernel still hangs when it fails to enable
-> > a power domain. I have not done further analysis to check if that can
-> > be avoided.
-> >
-> > Last but not least this provides a fix for the GPU power domain failing
-> > to get enabled - after some testing from my side it seems to require the
-> > GPU voltage supply to be enabled.
-> >
-> > I'm not really happy about the hack to get a regulator for a sub-node
-> > in the 5th patch, which I took over from the Mediatek driver. But to
-> > get things going and open a discussion around it I thought it would be
-> > best to send a first version as soon as possible.
->=20
-> That creates a circular dependency from the fw_devlink point of view.
+Paolo
 
-Yes.
-
-> I assume that isn't a problem and fw_devlink takes care of this, so
-> the GPU power domain still can probe?
-
-This has been tested on Radxa Rock 5B and RK3588 EVB1. It properly
-probes the GPU power domain and fixes late probing of the GPU driver :)
-
-> Other than this, I think this looks okay to me.
-
-I will send a V2 with the minor things pointed out.
-
-Greetings,
-
--- Sebastian
-
---2ey5cyrmazej6g4l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmbr6VsACgkQ2O7X88g7
-+prM1A//Tz6tsfCtFAfD+esskzA7MDO9OW+icEYWp1LK1xBvIu+Sx9kB+ggKKHar
-q09BTcQD+NSweJfBeabKpIScdmw4YRpMkbpqkGKQkQOYuy2h5udtt6g8nUrvbfIG
-BtCo3N1VELMevzo1bW2uYafy2HLqH9rBTUS9kRRxXTfUyYKSwRnmmxrgrhiZJjGx
-nrBPWVbj5HouXNoa2X4yuFs3XNG9MP3FkuFBFNZnKb6hcFCv6IApWvrJ71ESUivD
-JJjDDKcy3yoVzRxb/AvA49WpCefKi/L2ilOOlZQswtLbLjxJ0ED+3nsHCxDA4RDU
-6imPttrxcuEn+bKb8URAYGuxgK110w3TvaBY260JRaPS8EfiI8b439riBllY8aHv
-ydpVBNdpvVaT/qG2RvLntsYlk+vx0M+nGRQCFJ4N+JudicQWmHuExncL8qBe8XiL
-or6gVTsgmcZ9t3EiC8K/9d+S+icu0utnCDwyEV00byRbxKTrSBeZ2y+FUeEZLUSP
-GmpniTJtQ2QkF3afhJZaN/57qZchTg4HmedHlFmqHEBuoh/U1LGG/SDcjiWnKmvp
-DL6WYLIshIEAb1edyPmO/y/PdSUolodr2oeJhD9tFul8wC+eAirXa70AlOsS+EHH
-wHVJ9BXeOfwEornBUsr41u7LDkCnAcX43WBKVobwDIWltnHXW3I=
-=mFbG
------END PGP SIGNATURE-----
-
---2ey5cyrmazej6g4l--
 
