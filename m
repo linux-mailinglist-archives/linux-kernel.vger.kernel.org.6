@@ -1,146 +1,86 @@
-Return-Path: <linux-kernel+bounces-333820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46F997CE84
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 22:36:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 744E997CE7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 22:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C82A283700
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:36:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 010EC282BFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B4B14A4D2;
-	Thu, 19 Sep 2024 20:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="m707pfNk"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE0E143895;
+	Thu, 19 Sep 2024 20:35:04 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5F01CD15
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 20:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EEF36B11
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 20:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726778110; cv=none; b=ooNqC5fP72yCLGIquTwG+D1PNVQD1aTjPMy7q1yCsf33+n6Bc+AV1m/Ff5Z+btFp0PfLXIQKzKhvhmEVPNsGmovn6yNeWbSZPRLdsHQ5C7mGDtoZ/oMgBKy/89GPYJy1NvsnJPqh1vXgGkYts9+HD4Fp/50XzrHBtgjYW0JXjCM=
+	t=1726778104; cv=none; b=TSwlwY2LdMoZffyoHF7seHuMP3MgFeFu88g6ruv99s+FWuZEloKyro9ZsgdCqcRG96R+pOKiF2e5wbtG/3+Li1AIvGF/7aVcWKqRdoF4RkKRQNx1VWPd8118N3fuyqkcMlQV5iGeuGow8ReY4/BCJ7j0qqyDhlswjaQTCJJrFQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726778110; c=relaxed/simple;
-	bh=vLmxEphw6+wrRCdlVpHFnwOKk5//YBsqWF77UaNubgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oQdFCJqgN+UmCGbY8jaMe5Z310PIbz3b74jjhBXbfiqSoo8ts1iqHcIrzPAHQ/JrGRIPeO7OdWZ49LvswhU1jF1OYzaY0JTuk4400k3qB1X7o88G5YrqGtDWv+dkHjoeD8bFD6TTYKztNgYixIUXlb6vl9/7wV/Bt7d/AdoPbNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=m707pfNk; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1726778091;
- bh=zz0FhRzCqVonO5BnvIqXHA8hVDwCov/EtnoRwJVPDww=;
- b=m707pfNklfj/F8bhdreoIYRnK6174Bsmox46pbvtGF+gFGVjCH6xcUJuOyK/ZIVso23Z+1X+m
- W8TlEP0LE067dPNfiu0Bj5gLqO8RSDmILIRlW03DNqnDwb5Hmcs1YvrPwINgO6gnrNfgcZ0OHMQ
- nW94IXG8eoC3CKG2KIXK9FZCEWhMU0PRkWN58ZCBK+jzKQ5k1qsBe9PoaumAZNPiHSeWcD/+VPU
- U8+gYLkvGGJawYU7CdRrzeAaGwZK9PSEzO6w9a6O7YL2/TIHkLMTGcl7Y15VRBuq6wai0bcn5Bf
- 4eFpFaMXqEho5m61UR1zNR3QVvCRf4QjEsqzGUEKHaqQ==
-Message-ID: <0dcb03be-dae1-4dcb-84d8-6ec204eab6ba@kwiboo.se>
-Date: Thu, 19 Sep 2024 22:34:38 +0200
+	s=arc-20240116; t=1726778104; c=relaxed/simple;
+	bh=BABU80/mnFH/GsJ0hUdKH49BxyI7IM79KbRSKeK/+KA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=dG3yFXtU0XqZe35BLe2mUVrVA+eO0uNrKlHk51SeIWtztOZP+yAg/Wy/wq3JSGuXIzIP3vWctVyi2bEUgt2k9xUiWKypg3DQpWh8IcjxT+R2F6+qwm429zBJsAYwogEXnID70Y8+1WbVNNa40P1Q+yvMJLT2aDOkNh5kn7ovX5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a04bf03b1aso18569925ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 13:35:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726778102; x=1727382902;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FKM6B5+ITjFSq3CzrYnH55UezEyThqXYOUxD0V8oUDY=;
+        b=sYxxtAJYcS1AQndQ/RAT0CGB6FiMXPNvaIFxYKoBbBdCrrVypF31DdFlTSyKo4+671
+         +TnEWLJgIBUklRRNMDxJ+fOl4a8lRRP46Mdu4Kf8jdPF6J7G1n9HWdiZvzRWjrSHVKuc
+         XeF+eXuBzgvEBJPGobmI9vHKNFG4/XImw0F2BwP9LA+DOBR/B17qRHp9YoHsrKJZUmK2
+         ce7C+AdiN/3PlcF8A+6OjwQUZGB5qaiEdHMwSrBLY4hibMTIn9v2Hy5rv/xsIzx8VqjA
+         cGBMoktLeeeFo3YCmk7QwDj5lQGm7Y58qPT3xTDzFw1zFWMvcBKlC+rayoBWKu5EAFg/
+         DRhA==
+X-Gm-Message-State: AOJu0YwEDQIkVufxk2+nrfz0uTbrMEhpF3nd/NHXqY5x4eNsSOpUsIHv
+	RQX6qeqHuwgLIih7YhSS+fUfYd8EkM9QhXb+Rq8hVAhocHLtuWGkh2BWK86mQSAXWVDrdio7PrQ
+	vYTEFptPzk1lBKMcoTZm1QJKTmmd8CLmM+6Kb6V/I6O8MFSlZmCE5g+4=
+X-Google-Smtp-Source: AGHT+IEC7ZpUbtJc05MgbhCABAeDJz/aQ/fsnTWN/5ya16/V94N4q7gYYsHsqt2W9k5C9CL+bhN9MRmTtii9bxukbmWoD2NHEHt6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/10] drm: bridge: dw_hdmi: Update EDID during hotplug
- processing
-To: neil.armstrong@linaro.org
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Christian Hewitt <christianshewitt@gmail.com>,
- Diederik de Haas <didi.debian@cknow.org>, dri-devel@lists.freedesktop.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240908132823.3308029-1-jonas@kwiboo.se>
- <20240908132823.3308029-10-jonas@kwiboo.se>
- <4bc6a5e6-f2cf-43ab-8555-4f8aaf9f2cd0@linaro.org>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <4bc6a5e6-f2cf-43ab-8555-4f8aaf9f2cd0@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-ForwardEmail-ID: 66ec8ae664435c8d6510ab67
+X-Received: by 2002:a05:6e02:219d:b0:3a0:9952:5fcb with SMTP id
+ e9e14a558f8ab-3a0c8d1602fmr9280495ab.17.1726778101904; Thu, 19 Sep 2024
+ 13:35:01 -0700 (PDT)
+Date: Thu, 19 Sep 2024 13:35:01 -0700
+In-Reply-To: <CAABpPxQ-H8MjYrG3VUdR-rUFDrnVwJ5aFJaXFGJ2GpJYWD65pQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ec8af5.050a0220.29194.0046.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_get_system_file_inode
+From: syzbot <syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, pvmohammedanees2003@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Neil,
+Hello,
 
-On 2024-09-13 10:02, Neil Armstrong wrote:
-> On 08/09/2024 15:28, Jonas Karlman wrote:
->> Update successfully read EDID during hotplug processing to ensure the
->> connector diplay_info is always up-to-date.
->>
->> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
->> ---
->> v2: No change
->> ---
->>   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 12 ++++++++++++
->>   1 file changed, 12 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> index c19307120909..7bd9f895f03f 100644
->> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> @@ -2457,6 +2457,18 @@ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
->>   
->>   	status = dw_hdmi_detect(hdmi);
->>   
->> +	/* Update EDID during hotplug processing (force=false) */
->> +	if (status == connector_status_connected && !force) {
->> +		const struct drm_edid *drm_edid;
->> +
->> +		drm_edid = dw_hdmi_edid_read(hdmi, connector);
->> +		if (drm_edid)
->> +			drm_edid_connector_update(connector, drm_edid);
->> +		cec_notifier_set_phys_addr(hdmi->cec_notifier,
->> +			connector->display_info.source_physical_address);
->> +		drm_edid_free(drm_edid);
->> +	}
->> +
->>   	if (status == connector_status_disconnected)
->>   		cec_notifier_phys_addr_invalidate(hdmi->cec_notifier);
->>   
-> 
-> I wonder why we should read edid at each dw_hdmi_connector_detect() call,
-> AFAIK it should only be when we have HPD pulses
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-That is what this change intends to help do.
+Reported-by: syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com
+Tested-by: syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com
 
-As stated in the short comment EDID is only updated at HPD processing,
-i.e. when force=false. To be on the safe side EDID is also only updated
-here when connected and EDID could be read.
+Tested on:
 
-drm_helper_probe_detect() is called with force=true in the
-fill_modes/get_modes call path that is triggered by userspace
-or the kernel kms client.
+commit:         2004cef1 Merge tag 'sched-core-2024-09-19' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16cd6607980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=38d475ce6711b8b4
+dashboard link: https://syzkaller.appspot.com/bug?extid=e0055ea09f1f5e6fabdd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17a13b00580000
 
-After a HPD interrupt the call to drm_helper_hpd_irq_event() will call
-check_connector_changed() that in turn calls drm_helper_probe_detect()
-with force=false to check/detect if connector status has changed. It is
-in this call chain the EDID may be read and updated in this detect ops.
-
-Reading EDID here at HPD processing may not be fully needed, however it
-help kernel keep the internal EDID state in better sync with sink when
-userspace does not act on the HOTPLUG=1 uevent.
-
-Regards,
-Jonas
-
-> 
-> Neil
-
+Note: testing is done by a robot and is best-effort only.
 
