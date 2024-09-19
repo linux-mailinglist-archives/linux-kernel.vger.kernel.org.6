@@ -1,250 +1,207 @@
-Return-Path: <linux-kernel+bounces-333775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C71297CDE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:58:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF96697CDE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D13942852BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:58:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EC1C1F23D7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693772033A;
-	Thu, 19 Sep 2024 18:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683E238FA1;
+	Thu, 19 Sep 2024 18:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nEhYEFx+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ysTABskm";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nEhYEFx+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ysTABskm"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QViUsMhU"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94BD18AEA;
-	Thu, 19 Sep 2024 18:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCA9381D5;
+	Thu, 19 Sep 2024 18:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726772288; cv=none; b=eDQM9ib/4dfC9dCneFaVbVDgvapCkAhLljQZMajHmlJ5yd3gnkPRNwB0R8bwg5mKD3NVVRO+1gPgU3P7x3DI7pwIVyT8IujG+9xjC6GZPNSA5fwBMLrUziJBzlXZ6KLhTjYaR1AWmE0BAG6QT6emDfKUxzmI+Bla/ZDR9aQclb8=
+	t=1726772341; cv=none; b=O1Nn/QHCLpMNFnPv4O4tPwcw12KVysIRv1e6cNTpE6km29ieDYSifAwOIvu6FeQ12g+MetO6wgOa/AHRrVOk7Zance/U93nmrstY1VpOC9MU7eQp01tD5CC1fC8X1yaX8SFZK2DgJhhOlyDGYmdkJkoPgcc3ocH9Gxe41gmu9rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726772288; c=relaxed/simple;
-	bh=FeENWgpN6vm11TceKeAkyzwYnQPW+7mijr2C8YX+VJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d9+QvAVe4ra4q3VGikyt4Q+cYTLPpcQABmV1RfaBQUWZfL3pYyzK9HDX5eYNBD7m1exgNFC91OS4RkHQcdBi8khyWKd8djRD/HP/X/Vt//8tOeZtSk+bRVclk7SocQYwfZgTyBLvkQUNqZOXVwprvzEz2rcchcY7RXok6kCheUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nEhYEFx+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ysTABskm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nEhYEFx+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ysTABskm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8FFD120A35;
-	Thu, 19 Sep 2024 18:58:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726772284; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=selmG9sv2Rc+Z+AIxNq38Y15kNQJ3wbA3QV55V81zvY=;
-	b=nEhYEFx+LkUwx1tLogcykjEC+8GhlRlt0h1nNlSPBhWp6ZATuiwlc7NJZNRBk3U4PuRhv8
-	2yXFHDlqicWfPoqtG2EF6sMLcQLqFseteIlTDBxii6Z4BIn2pQ0x7SEbOiTBMXFaopDhIr
-	jRKxKsTXFAoMVyWg8C5hZvDdZE5Zddk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726772284;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=selmG9sv2Rc+Z+AIxNq38Y15kNQJ3wbA3QV55V81zvY=;
-	b=ysTABskmetoNgIZYuG6QODRGPGnV6Bo6uri6N0jVOEMmVaRXEqxzQvYHeEVlSnXZs6qFLd
-	UWlKJqs5opv/NUCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=nEhYEFx+;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ysTABskm
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726772284; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=selmG9sv2Rc+Z+AIxNq38Y15kNQJ3wbA3QV55V81zvY=;
-	b=nEhYEFx+LkUwx1tLogcykjEC+8GhlRlt0h1nNlSPBhWp6ZATuiwlc7NJZNRBk3U4PuRhv8
-	2yXFHDlqicWfPoqtG2EF6sMLcQLqFseteIlTDBxii6Z4BIn2pQ0x7SEbOiTBMXFaopDhIr
-	jRKxKsTXFAoMVyWg8C5hZvDdZE5Zddk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726772284;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=selmG9sv2Rc+Z+AIxNq38Y15kNQJ3wbA3QV55V81zvY=;
-	b=ysTABskmetoNgIZYuG6QODRGPGnV6Bo6uri6N0jVOEMmVaRXEqxzQvYHeEVlSnXZs6qFLd
-	UWlKJqs5opv/NUCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8AF8513A1E;
-	Thu, 19 Sep 2024 18:58:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0gE5ITt07GaTGQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 19 Sep 2024 18:58:03 +0000
-Message-ID: <0c768bf6-bc19-43de-a30b-ff5e3ddfd0b3@suse.de>
-Date: Thu, 19 Sep 2024 20:58:03 +0200
+	s=arc-20240116; t=1726772341; c=relaxed/simple;
+	bh=2BHRVd2nRHEB49U/lj2UmGkgaXZ4zZLNAKH33PQ1vyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NMz6ZoxR+2bYluV1L++75nbj3h+unRDvjnkgafHcNfKxFjA8akw/UBxfZG0ekoUi8M7ldBKt739nSOMhzdPEakQd+XOg8k2K8lMKSzKWW8XsnK4ZyqflVHZfbGacM/YVZjispkadAFSPvz0GYH3ZQBlkkFE1pyYbENTf3/iCPyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QViUsMhU; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-458362e898aso9332091cf.0;
+        Thu, 19 Sep 2024 11:58:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726772339; x=1727377139; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=cwoecdcdbMgPQsF14fynmPgai9K23d2W9nS8l1lA3yI=;
+        b=QViUsMhUoKTCCUDzzgvMXpQYhJJKSWNAqK/yfk+Gyk7CAwt3Urjb1HcvqMRjVmUdVM
+         2a96fgAnKe7B0Ej3QEcSWkXPSOReEITDkNjS+WjSo7WekNTFFuRPKRDcMIMpO8EBC7WB
+         8qhNDRuAqg8Ug1GyX4rUp0KA3ozSy2OvONbpXezIUC/q8k0wBIvXyQwb+8I4SlBeKpE1
+         GDB6gUI3EMhH8Ufh899ay2zO6QfQK5TZ6hlTpp2GUWKtvjMObJahupje9fOvu/2nQnsR
+         WY4PiGn1uIJO/TRQ+NQn5Y+B8woe/IXdD1OsHheNgNgHgyHW0fdOSMsjiXxhEUEMH/hi
+         69WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726772339; x=1727377139;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cwoecdcdbMgPQsF14fynmPgai9K23d2W9nS8l1lA3yI=;
+        b=O5ScoTs84Xd3WD0yyfOHemopg4+ZorB2S3wREbtVpmBWIAiL444ctyiOTcSApcmbGi
+         B3oHNKNMUhc5yTy8SEwRK5DP0FvC/1/JCNDUjt2rjkZDG71VK1h50oSS88gAsqt7YTm9
+         HuUqUwPo4OgzoAR9snIAJSiO4h4UjRu3VNmw5LreRg1oamUesq3hmRv62yyp/d3DzvCp
+         btg6hpVNenIX3EG6rR3jjCr0vsvDI4kYnh9oI6XnB13+6PGMKlIA4MNonZ8EqDNoCVw9
+         bXJRVnL5KYvpTCuV04ZhgglCxQEemWI6qmSF94xmU4ajanSKDeQRTZFYvpTA/LRxN7dZ
+         uYig==
+X-Forwarded-Encrypted: i=1; AJvYcCWb/ZP/EAzL6/NzHGhoA/DHYvc61knLobsg/PmmgOgA7h1pDNFBIscI+xrUbWVuK/+A0ifNFc8omr3Xuzw=@vger.kernel.org, AJvYcCWrKzZuiouEH+vQ+F20BMVl2ZmI/Kz6a4yZ7Z5lPSIfJQddtYk5K/Ugj8Rz16zLHrwy8VZl@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG8ejEhtB4rw9oVIj5cxuxSJMaXb6tTEcFbZn5s7Rz2ErdOEqH
+	W1G/NSl7MgGUiKvutCu+EFT9fp50W1wex199QAM0ali03xiyC3h2
+X-Google-Smtp-Source: AGHT+IG9krhB+TqFIp3Xw3Uh0YLWlcpmOM9G1sjuTP6vk0Xn7571glVk4Nejjwuf1CSB1Ql1/7lMFA==
+X-Received: by 2002:ac8:7c47:0:b0:447:f7cf:7022 with SMTP id d75a77b69052e-45b2055f185mr5813031cf.40.1726772338945;
+        Thu, 19 Sep 2024 11:58:58 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b17919f4bsm9854851cf.85.2024.09.19.11.58.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 11:58:58 -0700 (PDT)
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 8D986120006E;
+	Thu, 19 Sep 2024 14:58:57 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Thu, 19 Sep 2024 14:58:57 -0400
+X-ME-Sender: <xms:cXTsZp8grmHRLhXzxyBFkrYpM6A7dVfgur5B5xZCeXeDzAthQmbhyg>
+    <xme:cXTsZtvZ_ER1vCvf0zcR0zXjK6k0r-H65eMkqc2wuWJ33dE9BpuWNuZ0k4oHLebHr
+    dFw2VyKDmJI33goZA>
+X-ME-Received: <xmr:cXTsZnDcp0IVgtxJRk292AqTlZSmti2eRZ3npRiaa9n1l7NW4cTO06Q34hg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeluddgudefvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    jeenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeevgffhueevkedutefgveduuedujeefledt
+    hffgheegkeekiefgudekhffggeelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
+    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvdejpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehmmhhpghhouhhrihguvgesghhmrghilh
+    drtghomhdprhgtphhtthhopehjihgrnhhgshhhrghnlhgrihesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehrtghusehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoheplhhkmhhmsehlihhsth
+    hsrdhlihhnuhigrdguvghvpdhrtghpthhtohepphgruhhlmhgtkheskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepfhhrvgguvghrihgtsehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehnvggvrhgrjhdruhhprgguhhihrgihsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:cXTsZtfnqM31xNyB3GG-nslVpV_CZaRpakh6WfZ8evbcyfreWq5CWA>
+    <xmx:cXTsZuOkrbkS_vnSCHI8IAKNmwjImZ0-6ebi6xSZHhvL7-zYJcAyMg>
+    <xmx:cXTsZvnCPW2JNH02s0lBpysxqBoOq83kturvA4YQc-qhRFrD7j7ulQ>
+    <xmx:cXTsZotLoR6rDpEMGMqKzBA-68SokOVqlRQX-F5_WdNTlB4C9bPxiA>
+    <xmx:cXTsZgvZYCs0nXp4IZNcciJy_0h_gNQjkE_f0BqqGtGZyI7JsKgiJMec>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 19 Sep 2024 14:58:57 -0400 (EDT)
+Date: Thu, 19 Sep 2024 11:58:31 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alan Huang <mmpgouride@gmail.com>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
+	LKML <linux-kernel@vger.kernel.org>, RCU <rcu@vger.kernel.org>,
+	linux-mm@kvack.org, lkmm@lists.linux.dev,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+	Neeraj upadhyay <neeraj.upadhyay@amd.com>
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+Message-ID: <Zux0Vyh38FK8OeJ4@boqun-archlinux>
+References: <20240917143402.930114-1-boqun.feng@gmail.com>
+ <20240917143402.930114-2-boqun.feng@gmail.com>
+ <CAJhGHyD8MzUssfuKSGnu1arnayNOyBnUA03vYB0WWwbE3WzoZg@mail.gmail.com>
+ <ZuvOWM5c8tZotHFL@boqun-archlinux>
+ <D2BDE4C4-48DB-4813-9608-F672896E0121@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] treewide: Correct the typo 'acccess'
-To: WangYuli <wangyuli@uniontech.com>, alexander.deucher@amd.com,
- christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com,
- simona@ffwll.ch, sunil.khatri@amd.com, vitaly.prosyak@amd.com,
- yifan1.zhang@amd.com, Tim.Huang@amd.com, jesse.zhang@amd.com,
- Prike.Liang@amd.com, Hawking.Zhang@amd.com, kevinyang.wang@amd.com,
- srinivasan.shanmugam@amd.com, Jiadong.Zhu@amd.com, tao.zhou1@amd.com,
- pavel@ucw.cz, lee@kernel.org, aren@peacevolution.org
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, le.ma@amd.com,
- Wenhui.Sheng@amd.com, jjhiblot@traphandler.com, guanwentao@uniontech.com,
- zhanjun@uniontech.com
-References: <4AB1F900B5D100C2+20240919182855.85840-1-wangyuli@uniontech.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <4AB1F900B5D100C2+20240919182855.85840-1-wangyuli@uniontech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 8FFD120A35
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[uniontech.com,amd.com,gmail.com,ffwll.ch,ucw.cz,kernel.org,peacevolution.org];
-	RCPT_COUNT_TWELVE(0.00)[29];
-	MIME_TRACE(0.00)[0:+];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL516un6i87yts6oyas1exgued)];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <D2BDE4C4-48DB-4813-9608-F672896E0121@gmail.com>
 
-Hi
+On Thu, Sep 19, 2024 at 09:57:12PM +0800, Alan Huang wrote:
+[...]
+> > 
+> > I think you're right. (Although the node will be eventually deleted at
+> > cleanup_hazptr_context(), however there could be a long-live
+> > hazptr_context). It should be:
+> > 
+> > hazptr_t val = smp_load_acquire(&hzcp->slots[i]);
+> > struct hazptr_slot_snap *snap = &hzcp->snaps[i];
+> > 
+> > if (val != snap->slot) { // val changed, need to update the tree node.
+> > // Already in the tree, need to remove first.
+> > if (!is_null_or_unused(snap->slot)) {
+> > reader_del(tree, snap);
+> > }
+> > 
+> > // use the latest snapshot.
+> > snap->slot = val;
+> > 
+> > // Add it into tree if there is a reader
+> > if (!is_null_or_unused(val))
+> > reader_add(tree, snap);
+> > }
+> 
+> It seems like that two different hazptr_context can’t be used to protect the same pointer?
+> 
+> Otherwise the following can happen?
+> 
+> thread1 					thread2  					 thread3(worker) 	      thread4
+> hazptr_tryprotect(hzp1, ptr1)   hazptr_tryprotect(hzp2, ptr1) 
+> 												 add ptr1 to tree
 
-Am 19.09.24 um 20:28 schrieb WangYuli:
-> There are some spelling mistakes of 'acccess' in comments which
-> should be instead of 'access'.
->
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> ---
->   drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c   | 2 +-
->   drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c  | 2 +-
->   drivers/leds/rgb/leds-group-multicolor.c | 2 +-
+Note that we have snapshot rb_node for each hazard pointer slot, so here
+thread3 actually would add two rb_nodes with ->slot == ptr1 here.
 
-I think it's better to make 2 patches: one for amdgpu and one for leds. 
-Each patch can then go into the correct tree.
+> hazptr_clear(hzp1) 
+> hazptr_tryprotect(hzp1, ptr2) 
+> 												 delete ptr1 from tree     unpub ptr1
 
-If you make 2 patches, you can add
+Therefore, there is still one rb_node with ->slot == ptr1 in the tree
+after the deletion, so updaters won't invoke ptr1's callback.
 
-Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+Regards,
+Boqun
 
-to each of them.
-
-Best regards
-Thomas
-
->   3 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
-> index d3e8be82a172..f847a9fc61e1 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
-> @@ -1894,7 +1894,7 @@ static void gfx_v11_0_init_compute_vmid(struct amdgpu_device *adev)
->   	mutex_unlock(&adev->srbm_mutex);
->   
->   	/* Initialize all compute VMIDs to have no GDS, GWS, or OA
-> -	   acccess. These should be enabled by FW for target VMIDs. */
-> +	   access. These should be enabled by FW for target VMIDs. */
->   	for (i = adev->vm_manager.first_kfd_vmid; i < AMDGPU_NUM_VMID; i++) {
->   		WREG32_SOC15_OFFSET(GC, 0, regGDS_VMID0_BASE, 2 * i, 0);
->   		WREG32_SOC15_OFFSET(GC, 0, regGDS_VMID0_SIZE, 2 * i, 0);
-> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c
-> index 408e5600bb61..13dca7377f53 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c
-> @@ -1248,7 +1248,7 @@ static void gfx_v9_4_3_xcc_init_compute_vmid(struct amdgpu_device *adev,
->   	mutex_unlock(&adev->srbm_mutex);
->   
->   	/* Initialize all compute VMIDs to have no GDS, GWS, or OA
-> -	   acccess. These should be enabled by FW for target VMIDs. */
-> +	   access. These should be enabled by FW for target VMIDs. */
->   	for (i = adev->vm_manager.first_kfd_vmid; i < AMDGPU_NUM_VMID; i++) {
->   		WREG32_SOC15_OFFSET(GC, GET_INST(GC, xcc_id), regGDS_VMID0_BASE, 2 * i, 0);
->   		WREG32_SOC15_OFFSET(GC, GET_INST(GC, xcc_id), regGDS_VMID0_SIZE, 2 * i, 0);
-> diff --git a/drivers/leds/rgb/leds-group-multicolor.c b/drivers/leds/rgb/leds-group-multicolor.c
-> index b6c7679015fd..548c7dd63ba1 100644
-> --- a/drivers/leds/rgb/leds-group-multicolor.c
-> +++ b/drivers/leds/rgb/leds-group-multicolor.c
-> @@ -55,7 +55,7 @@ static void restore_sysfs_write_access(void *data)
->   {
->   	struct led_classdev *led_cdev = data;
->   
-> -	/* Restore the write acccess to the LED */
-> +	/* Restore the write access to the LED */
->   	mutex_lock(&led_cdev->led_access);
->   	led_sysfs_enable(led_cdev);
->   	mutex_unlock(&led_cdev->led_access);
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+> 																       call_hazptr(ptr1)
+> 																       oops: invoke ptr1's callback
+> Or am I missing something?
+> 
+> > 
+> > Regards,
+> > Boqun
+> > 
+> >> I'm not so sure...
+> >> 
+> >> Thanks
+> >> Lai
+> 
+> 
 
