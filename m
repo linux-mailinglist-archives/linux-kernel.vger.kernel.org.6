@@ -1,96 +1,56 @@
-Return-Path: <linux-kernel+bounces-333414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC79297C845
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:57:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D34D97C847
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DCF9286DD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:57:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9DE11F24F53
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2B319C57B;
-	Thu, 19 Sep 2024 10:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hf/oqjAk"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBA019B3C0
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 10:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFD019CC34;
+	Thu, 19 Sep 2024 10:59:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA0619B3C0;
+	Thu, 19 Sep 2024 10:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726743446; cv=none; b=tzCSFAFZ3H9CQ4U68eN84ZM7EChDU3BEDedseVZis7j9OHDUq++i42C2Ein/xAe4CSEN7xB9qa/fvK/NfX5wdh2efxMDz1GrMdu0pryJhgVdp1uvH2ahWRk7U5ohB5BCfyuCvxN9N5cZuZSsXl0si/7pqBvcaI71wXQk5x3vQuM=
+	t=1726743573; cv=none; b=uR4jbyJgnvmyrCFtkKvh+FzY8lkmp+xRv9B0AhkhwhOyIwd5utpH0itsfS4u6xfG9N2FEO4l4zc5nxf3uSdL7cYT95qH9+mdY58fG069rB9qAtR/zncy8LghrhGs7Du2Ct2FUbNct9LHUQOIhx3l9DuXkd7uxgpYRCxyQi8K5Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726743446; c=relaxed/simple;
-	bh=KD9skxBbBj46lFQMazJKOb033r2fcd/rcGThZLlO35U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=liFtE1PZljsJXJADMeqFMS+plTHibL9wpz1pVAIdPxAY+/DM7ysWuyDaCrlz/LaZkPm3m7nrC6wjdBP+NFoq1LpDVd9H1j0bD5k79PjJipik/NnMdy68H+OS6HqSydf4tX7km9EoxBkwqSZf49wiqiiKdg++HGyIhHb39lhoAOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hf/oqjAk; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f78b28ddb6so6593461fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 03:57:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726743443; x=1727348243; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mJ9HZHJD0QLNFkZHIpeJlyi0Ek76HYhPtHMe5HLX1eo=;
-        b=Hf/oqjAkqkc/Pbz6vg5l9BaHxo6guLcMgun8nz1t6QZ9MvuYweyHf8K84I4BYuEVUD
-         xjwAaUMSO/UVZBArehw6puaMMQxQyy7Art1gLlYptsr2zBqlWfoVEWvsUbVlvkSwxVPl
-         +eP0DiQr4fXHiuvQjF6TDfDh93caAObDFYqv9O4R/4EDtFhaGlBavPyyU5bLejmyh7V3
-         D55Ert55MMH1deL0S1RtBSbWipuXBsJsovQQYVh7fgIxWXdRBeiF1C5hClppbKYQoa/p
-         5R2zx3YM2Qx6IpzlW5K8aMLcQpaGIZj9FvDpi+IhkhOp03tXny0yIhBxtlYwAz2B1v2j
-         gZzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726743443; x=1727348243;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mJ9HZHJD0QLNFkZHIpeJlyi0Ek76HYhPtHMe5HLX1eo=;
-        b=VDXaUc58RCTR9kj8x0R8RElO237Z5IA+I810ed6fQ3ytZXVNAHQTJTR9eT4yNwUPpU
-         J/W8mQrlteBERRuDlcolGaxSYEcF/ejR0xWsTIac7OUrJDPndAzW5Mc3xD1CRCdgMLML
-         XyLX22vuJvAbhHj9ZXgPDPL8pNMPpIF2/iuteBjGxj/tmzBR0z3WmszsWXVeTRyn/I4N
-         ysnt/+SPN3xT+QNSa6i9hBUwqlExFrGY0jTORrMga2cVMWIO0Z6Qg2vpttRisYaNYgDk
-         zFoBHdXwsOwegKJeFBgSrq4nnnz7JVouck/afEdYlIVLdq1Mn/XKcRpZv2aXUYheAl0z
-         RiyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMMRaPvqH3Cbs/e8sPEaEC9k+2C5Jv5nieqowPSYbOGQfrNciUBfptc1Yi0x3ov05mmwgX8Kq3ykRuBY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHNn5GdXyF06iz9fvOq4BQTQ/8zuyvq0QhtV0+lbgUniHXzX4j
-	v/dm3OXngd6t/Rfgg/VgvGaTcwWOd+gD5rTCsglo8fkdjARuz2pH
-X-Google-Smtp-Source: AGHT+IFCefsOZr/jmfhZfRtwZLYLHEqhbkYUuHJUtLH/v8E7pnynNcbVdgR2uDruY5y8SnFBAzqllA==
-X-Received: by 2002:a05:651c:154a:b0:2f6:4aed:9973 with SMTP id 38308e7fff4ca-2f787f5833dmr156325931fa.44.1726743442445;
-        Thu, 19 Sep 2024 03:57:22 -0700 (PDT)
-Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d2e1d8csm16223341fa.21.2024.09.19.03.57.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 03:57:21 -0700 (PDT)
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-To: andreyknvl@gmail.com
-Cc: akpm@linux-foundation.org,
-	bp@alien8.de,
-	brauner@kernel.org,
-	dave.hansen@linux.intel.com,
-	dhowells@redhat.com,
-	dvyukov@google.com,
-	glider@google.com,
-	hpa@zytor.com,
-	kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mingo@redhat.com,
-	ryabinin.a.a@gmail.com,
-	snovitoll@gmail.com,
-	tglx@linutronix.de,
-	vincenzo.frascino@arm.com,
-	x86@kernel.org
-Subject: [PATCH v3] mm: x86: instrument __get/__put_kernel_nofault
-Date: Thu, 19 Sep 2024 15:57:50 +0500
-Message-Id: <20240919105750.901303-1-snovitoll@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CA+fCnZfg2E7Hk2Sc-=Z4XnENm9KUtmAZ6378YgeJg6xriMQXpA@mail.gmail.com>
-References: <CA+fCnZfg2E7Hk2Sc-=Z4XnENm9KUtmAZ6378YgeJg6xriMQXpA@mail.gmail.com>
+	s=arc-20240116; t=1726743573; c=relaxed/simple;
+	bh=mxFAOVyrY0vyBJ7RF0Fc/M95egmsj3e4Xp70EK3JIoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nC1/OMZsEhkn/AkKsUH++Dc/t2bPINiqL67HF6d54i+rVeqEBFkagUgd4sej8KGoV4Gjf2L5K/r/5pc8/Tk/a2i+eaL3oj/inkehvzCRmrJxZIWWxRzCmQy1NuHyLXC7nDfDCEQGnOniutSK6JLJMUJ2kiY0Pw8XoQ7TlGfNotI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D65A1007;
+	Thu, 19 Sep 2024 03:59:59 -0700 (PDT)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E4143F71A;
+	Thu, 19 Sep 2024 03:59:27 -0700 (PDT)
+Date: Thu, 19 Sep 2024 11:59:23 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Kamil Kasperski <ressetkk@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v4 3/3] arm64: dts: allwinner: h616: add support for T95
+ tv boxes
+Message-ID: <20240919115923.6869adfb@donnerap.manchester.arm.com>
+In-Reply-To: <ff3b061a-27b7-42b3-b741-1d25c06487ae@gmail.com>
+References: <20240319-add-t95-axp313-support-v4-0-6204b6d23229@gmail.com>
+	<20240319-add-t95-axp313-support-v4-3-6204b6d23229@gmail.com>
+	<20240319232236.07007592@minigeek.lan>
+	<ff3b061a-27b7-42b3-b741-1d25c06487ae@gmail.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,129 +58,305 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 18, 2024 at 8:15 PM Andrey Konovalov <andreyknvl@gmail.com> wrote:
-> You still have the same problem here.
->
-> What I meant is:
->
-> char *ptr;
-> char buf[128 - KASAN_GRANULE_SIZE];
-> size_t size = sizeof(buf);
->
-> ptr = kmalloc(size, GFP_KERNEL);
-> KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
->
-> KUNIT_EXPECT_KASAN_FAIL(...);
-> ...
->
-> kfree(ptr);
+On Wed, 20 Mar 2024 00:33:50 +0100
+Kamil Kasperski <ressetkk@gmail.com> wrote:
 
-Thanks for catching this! I've turned kunit test into OOB instead of UAF.
----
-v3: changed kunit test from UAF to OOB case and git commit message.
----
-Instrument copy_from_kernel_nofault(), copy_to_kernel_nofault(),
-strncpy_from_kernel_nofault() where __put_kernel_nofault, __get_kernel_nofault
-macros are used.
+Hi Kamil,
 
-__get_kernel_nofault needs instrument_memcpy_before() which handles
-KASAN, KCSAN checks for src, dst address, whereas for __put_kernel_nofault
-macro, instrument_write() check should be enough as it's validated via
-kmsan_copy_to_user() in instrument_put_user().
+> W dniu 20.03.2024 o=C2=A000:22, Andre Przywara pisze:
+> > On Tue, 19 Mar 2024 18:50:24 +0100
+> > Kamil Kasperski <ressetkk@gmail.com> wrote:
+> >
+> > Hi Kamil,
+> > =20
+> >> Add dtsi file for T95 tv boxes and add initial support for T95 5G AXP3=
+13A
+> >> variant with a board name H616-T95MAX-AXP313A-v3.0 Internal storage is=
+ not
+> >> accessible due to lack of support for H616 NAND controller.
+> >>
+> >> Signed-off-by: Kamil Kasperski <ressetkk@gmail.com> =20
+> > thanks for the changes, looks good now, although a bit minimal ;-)
+> >
+> > Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+> >
+> > Please can you wait till the -rc1 release on Sunday, and send a rebased
+> > version next week? There is a small merge conflict in the dts Makefile
+> > as of now.
+> >
+> > Cheers,
+> > Andre =20
+>=20
+> Sure, no problem. Thank you very much for a review.
 
-__get_user_size was appended with instrument_get_user() for KMSAN check in
-commit 888f84a6da4d("x86: asm: instrument usercopy in get_user() and
-put_user()") but only for CONFIG_CC_HAS_ASM_GOTO_OUTPUT.
+It's been a while, but can you maybe send a rebased version of this
+patch set again? The merge window has just opened, so exactly now is
+probably not a good time, but if you rebase on v6.12-rc1, due to be
+released on the 29th September, we can get this queued.
 
-copy_from_to_kernel_nofault_oob() kunit test triggers 4 KASAN OOB bug reports
-as expected for each copy_from/to_kernel_nofault call.
+Some minor things I just spotted below:
 
-Reported-by: Andrey Konovalov <andreyknvl@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=210505
-Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
----
- arch/x86/include/asm/uaccess.h |  4 ++++
- mm/kasan/kasan_test.c          | 21 +++++++++++++++++++++
- 2 files changed, 25 insertions(+)
+> Once it gets merged I'll get back to u-boot patch.
+>=20
+> Cheers,
+> Kamil
+>=20
+> > =20
+> >> ---
+> >>  arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+> >>  arch/arm64/boot/dts/allwinner/sun50i-h616-t95.dtsi | 109 ++++++++++++=
++++++++++
+> >>  .../dts/allwinner/sun50i-h616-t95max-axp313.dts    |  84 ++++++++++++=
+++++
+> >>  3 files changed, 194 insertions(+)
+> >>
+> >> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/=
+dts/allwinner/Makefile
+> >> index 21149b346a60..294921f12b73 100644
+> >> --- a/arch/arm64/boot/dts/allwinner/Makefile
+> >> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+> >> @@ -42,6 +42,7 @@ dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h6-tanix-tx6-mi=
+ni.dtb
+> >>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h616-bigtreetech-cb1-manta.dtb
+> >>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h616-bigtreetech-pi.dtb
+> >>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h616-orangepi-zero2.dtb
+> >> +dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h616-t95max-axp313.dtb
+> >>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h616-x96-mate.dtb
+> >>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h618-longanpi-3h.dtb
+> >>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h618-orangepi-zero2w.dtb
+> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h616-t95.dtsi b/arch=
+/arm64/boot/dts/allwinner/sun50i-h616-t95.dtsi
+> >> new file mode 100644
+> >> index 000000000000..4c02408733bc
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h616-t95.dtsi
+> >> @@ -0,0 +1,109 @@
+> >> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> >> +/*
+> >> + * Copyright (C) 2024 Kamil Kasperski <ressetkk@gmail.com>
+> >> + *
+> >> + * Common DT nodes for H616-based T95 TV boxes
+> >> + * There are two versions reported with different PMIC variants.
+> >> + */
+> >> +
+> >> +#include "sun50i-h616.dtsi"
+> >> +
+> >> +#include <dt-bindings/gpio/gpio.h>
+> >> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> >> +
+> >> +/ {
+> >> +	aliases {
+> >> +		ethernet1 =3D &sdio_wifi;
+> >> +		serial0 =3D &uart0;
+> >> +	};
+> >> +
+> >> +	chosen {
+> >> +		stdout-path =3D "serial0:115200n8";
+> >> +	};
+> >> +
+> >> +	reg_vcc5v: vcc5v {
+> >> +		/* board wide 5V supply directly from the DC input */
+> >> +		compatible =3D "regulator-fixed";
+> >> +		regulator-name =3D "vcc-5v";
+> >> +		regulator-min-microvolt =3D <5000000>;
+> >> +		regulator-max-microvolt =3D <5000000>;
+> >> +		regulator-always-on;
+> >> +	};
+> >> +
+> >> +	reg_vcc3v3: vcc3v3 {
+> >> +		/* discrete 3.3V regulator */
+> >> +		compatible =3D "regulator-fixed";
+> >> +		regulator-name =3D "vcc-3v3";
+> >> +		regulator-min-microvolt =3D <3300000>;
+> >> +		regulator-max-microvolt =3D <3300000>;
+> >> +		regulator-always-on;
 
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index 3a7755c1a441..87fb59071e8c 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -353,6 +353,7 @@ do {									\
- 	default:							\
- 		(x) = __get_user_bad();					\
- 	}								\
-+	instrument_get_user(x);						\
- } while (0)
- 
- #define __get_user_asm(x, addr, err, itype)				\
-@@ -620,6 +621,7 @@ do {									\
- 
- #ifdef CONFIG_CC_HAS_ASM_GOTO_OUTPUT
- #define __get_kernel_nofault(dst, src, type, err_label)			\
-+	instrument_memcpy_before(dst, src, sizeof(type));		\
- 	__get_user_size(*((type *)(dst)), (__force type __user *)(src),	\
- 			sizeof(type), err_label)
- #else // !CONFIG_CC_HAS_ASM_GOTO_OUTPUT
-@@ -627,6 +629,7 @@ do {									\
- do {									\
- 	int __kr_err;							\
- 									\
-+	instrument_memcpy_before(dst, src, sizeof(type));		\
- 	__get_user_size(*((type *)(dst)), (__force type __user *)(src),	\
- 			sizeof(type), __kr_err);			\
- 	if (unlikely(__kr_err))						\
-@@ -635,6 +638,7 @@ do {									\
- #endif // CONFIG_CC_HAS_ASM_GOTO_OUTPUT
- 
- #define __put_kernel_nofault(dst, src, type, err_label)			\
-+	instrument_write(dst, sizeof(type));				\
- 	__put_user_size(*((type *)(src)), (__force type __user *)(dst),	\
- 			sizeof(type), err_label)
- 
-diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test.c
-index 7b32be2a3cf0..d13f1a514750 100644
---- a/mm/kasan/kasan_test.c
-+++ b/mm/kasan/kasan_test.c
-@@ -1899,6 +1899,26 @@ static void match_all_mem_tag(struct kunit *test)
- 	kfree(ptr);
- }
- 
-+static void copy_from_to_kernel_nofault_oob(struct kunit *test)
-+{
-+	char *ptr;
-+	char buf[128];
-+	size_t size = sizeof(buf);
-+
-+	ptr = kmalloc(size - KASAN_GRANULE_SIZE, GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
-+
-+	KUNIT_EXPECT_KASAN_FAIL(test,
-+		copy_from_kernel_nofault(&buf[0], ptr, size));
-+	KUNIT_EXPECT_KASAN_FAIL(test,
-+		copy_from_kernel_nofault(ptr, &buf[0], size));
-+	KUNIT_EXPECT_KASAN_FAIL(test,
-+		copy_to_kernel_nofault(&buf[0], ptr, size));
-+	KUNIT_EXPECT_KASAN_FAIL(test,
-+		copy_to_kernel_nofault(ptr, &buf[0], size));
-+	kfree(ptr);
-+}
-+
- static struct kunit_case kasan_kunit_test_cases[] = {
- 	KUNIT_CASE(kmalloc_oob_right),
- 	KUNIT_CASE(kmalloc_oob_left),
-@@ -1971,6 +1991,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
- 	KUNIT_CASE(match_all_not_assigned),
- 	KUNIT_CASE(match_all_ptr_tag),
- 	KUNIT_CASE(match_all_mem_tag),
-+	KUNIT_CASE(copy_from_to_kernel_nofault_oob),
- 	{}
- };
- 
--- 
-2.34.1
+Can you please add a line:
+		vin-supply =3D <&reg_vcc5v>;
+here, to not leave this regulator dangling? That should also suppress a
+warning about a dummy regulator.
+
+> >> +	};
+> >> +
+> >> +	wifi_pwrseq: pwrseq {
+> >> +		compatible =3D "mmc-pwrseq-simple";
+> >> +		clocks =3D <&rtc CLK_OSC32K_FANOUT>;
+> >> +		clock-names =3D "ext_clock";
+> >> +		pinctrl-0 =3D <&x32clk_fanout_pin>;
+> >> +		pinctrl-names =3D "default";
+> >> +		reset-gpios =3D <&pio 6 18 GPIO_ACTIVE_LOW>; /* PG18 */
+> >> +	};
+> >> +};
+> >> +
+> >> +&ehci0 {
+> >> +	status =3D "okay";
+> >> +};
+> >> +
+> >> +&ehci2 {
+> >> +	status =3D "okay";
+> >> +};
+> >> +
+> >> +&ir {
+> >> +	status =3D "okay";
+> >> +};
+> >> +
+> >> +&mmc0 {
+> >> +	cd-gpios =3D <&pio 8 16 GPIO_ACTIVE_LOW>;	/* PI16 */
+> >> +	bus-width =3D <4>;
+> >> +	status =3D "okay";
+
+Please add a:
+	disable-wp;
+here, as microSD slots don't have a write-protect switch. We are in the
+process of fixing all sunxi arm64 boards in this respect, but this DT would
+probably miss that effort.
+
+> >> +};
+> >> +
+> >> +&mmc1 {
+> >> +	mmc-pwrseq =3D <&wifi_pwrseq>;
+> >> +	bus-width =3D <4>;
+> >> +	non-removable;
+> >> +	status =3D "okay";
+> >> +
+> >> +	sdio_wifi: wifi@1 {
+> >> +		reg =3D <1>;
+> >> +	};
+> >> +};
+> >> +
+> >> +&ohci0 {
+> >> +	status =3D "okay";
+> >> +};
+> >> +
+> >> +&ohci2 {
+> >> +	status =3D "okay";
+> >> +};
+> >> +
+> >> +&uart0 {
+> >> +	pinctrl-names =3D "default";
+> >> +	pinctrl-0 =3D <&uart0_ph_pins>;
+> >> +	status =3D "okay";
+> >> +};
+> >> +
+> >> +&uart1 {
+> >> +	pinctrl-names =3D "default";
+> >> +	pinctrl-0 =3D <&uart1_pins>, <&uart1_rts_cts_pins>;
+> >> +	uart-has-rtscts;
+> >> +	status =3D "okay";
+
+As Jernej mentioned: this is probably for connecting to the Bluetooth part
+of the WiFi chip, so please add a least a comment here. And I wonder if we
+know what Bluetooth IP this is, and if there is a compatible string for
+that? Does the vendor firmware give any clue here?
+
+Cheers,
+Andre
+
+> >> +};
+> >> +
+> >> +&usbotg {
+> >> +	dr_mode =3D "host";	/* USB A type receptable */
+> >> +	status =3D "okay";
+> >> +};
+> >> +
+> >> +&usbphy {
+> >> +	status =3D "okay";
+> >> +};
+> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h616-t95max-axp313.d=
+ts b/arch/arm64/boot/dts/allwinner/sun50i-h616-t95max-axp313.dts
+> >> new file mode 100644
+> >> index 000000000000..08a6b4fcc235
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h616-t95max-axp313.dts
+> >> @@ -0,0 +1,84 @@
+> >> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> >> +/*
+> >> + * Copyright (C) 2024 Kamil Kasperski <ressetkk@gmail.com>
+> >> + *
+> >> + * Configuration for T95 TV box with board label H616-T95MAX-AXP313A-=
+v3.0
+> >> + */
+> >> +
+> >> +/dts-v1/;
+> >> +
+> >> +#include "sun50i-h616-t95.dtsi"
+> >> +
+> >> +/ {
+> >> +	model =3D "T95 5G (AXP313)";
+> >> +	compatible =3D "t95,t95max-axp313", "allwinner,sun50i-h616";
+> >> +};
+> >> +
+> >> +&mmc0 {
+> >> +	vmmc-supply =3D <&reg_dldo1>;
+> >> +};
+> >> +
+> >> +&mmc1 {
+> >> +	vmmc-supply =3D <&reg_dldo1>;
+> >> +	vqmmc-supply =3D <&reg_aldo1>;
+> >> +};
+> >> +
+> >> +&r_i2c {
+> >> +	status =3D "okay";
+> >> +
+> >> +	axp313: pmic@36 {
+> >> +		compatible =3D "x-powers,axp313a";
+> >> +		reg =3D <0x36>;
+> >> +		#interrupt-cells =3D <1>;
+> >> +		interrupt-controller;
+> >> +
+> >> +		vin1-supply =3D <&reg_vcc5v>;
+> >> +		vin2-supply =3D <&reg_vcc5v>;
+> >> +		vin3-supply =3D <&reg_vcc5v>;
+> >> +
+> >> +		regulators {
+> >> +			reg_aldo1: aldo1 {
+> >> +				regulator-always-on;
+> >> +				regulator-min-microvolt =3D <1800000>;
+> >> +				regulator-max-microvolt =3D <1800000>;
+> >> +				regulator-name =3D "vcc1v8";
+> >> +			};
+> >> +
+> >> +			reg_dldo1: dldo1 {
+> >> +				regulator-always-on;
+> >> +				regulator-min-microvolt =3D <3300000>;
+> >> +				regulator-max-microvolt =3D <3300000>;
+> >> +				regulator-name =3D "vcc3v3";
+> >> +			};
+> >> +
+> >> +			reg_dcdc1: dcdc1 {
+> >> +				regulator-always-on;
+> >> +				regulator-min-microvolt =3D <810000>;
+> >> +				regulator-max-microvolt =3D <990000>;
+> >> +				regulator-name =3D "vdd-gpu-sys";
+> >> +			};
+> >> +
+> >> +			reg_dcdc2: dcdc2 {
+> >> +				regulator-always-on;
+> >> +				regulator-min-microvolt =3D <810000>;
+> >> +				regulator-max-microvolt =3D <1100000>;
+> >> +				regulator-name =3D "vdd-cpu";
+> >> +			};
+> >> +
+> >> +			reg_dcdc3: dcdc3 {
+> >> +				regulator-always-on;
+> >> +				regulator-min-microvolt =3D <1500000>;
+> >> +				regulator-max-microvolt =3D <1500000>;
+> >> +				regulator-name =3D "vdd-dram";
+> >> +			};
+> >> +		};
+> >> +	};
+> >> +};
+> >> +
+> >> +&pio {
+> >> +	vcc-pc-supply =3D <&reg_aldo1>;
+> >> +	vcc-pf-supply =3D <&reg_dldo1>;
+> >> +	vcc-pg-supply =3D <&reg_aldo1>;
+> >> +	vcc-ph-supply =3D <&reg_dldo1>;
+> >> +	vcc-pi-supply =3D <&reg_dldo1>;
+> >> +};
+> >> =20
+>=20
 
 
