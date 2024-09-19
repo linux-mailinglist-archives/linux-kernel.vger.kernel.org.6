@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-333059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 049AB97C2F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 04:57:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D82197C2FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 04:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1350283A8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 02:57:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F74528398E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 02:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332EA175AE;
-	Thu, 19 Sep 2024 02:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32FB1803E;
+	Thu, 19 Sep 2024 02:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f/E+EXOK"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A90dXAbS"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7E41CD2C
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 02:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C932E1F942
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 02:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726714607; cv=none; b=Vq6edVUUeDTYha9xZLAqjqpfzuxFBVBjKsX4dQ6MG6aToIFZQuwem2DnQ3HRDs8dnha2zOFp5sVvDBeC1TFR6ykN/W2Z0ruJvJ/4F0pjlvb/uZoFSOSSRYJzT8hyRVDe/Or1ptb0JIj3sbRo01SbIxbw9x+9HyLnT846Pd19YUc=
+	t=1726714612; cv=none; b=kzEwBq5OfC4G0Nj826Hjhia51iU7c1fsKjfvcD0M+P6BID+RdN+ZGUwZKN3yawH7zixniikLy6IBcRlCGubVZjwJF1wK5mar9A5Kf56yMI0HGdT3EFXHipslEvQsrFdvQmLV88Rcpr7gd0/+qOkEgpEy9LMTHW6LbnKNkqq6yrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726714607; c=relaxed/simple;
-	bh=FsG1hRAQUYRA/vEnlI+7JEFrFUI5bmUaSjg6v6DcwoU=;
+	s=arc-20240116; t=1726714612; c=relaxed/simple;
+	bh=lGDU6+XsEZA63vePePBnGkCzitISc6raOI8xarwqjFo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JEiy+pCTqcQtjZwy2Xfj1+1jyw0jkM94Hr+f3ymdlXQfncTTa8NYhjUePDxwxnzsBPjFCyl1q4jr4/h3YTR2qRACOCBapOJv2bn1P7kDfB/taLtJQrgJsKB/AdxE087uhnPzRsweTmN2bOiH2aR5KJJQ1CRZ6Ke0r+mQM0Sy68E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f/E+EXOK; arc=none smtp.client-ip=209.85.214.173
+	 MIME-Version; b=VpD5WUJaj6sckhWXroESKmZ+aAsRYwPFTXUXF5TV19gWW+1+0n/f3CqW/LCQk0iYTzmqUb4EpsTuR/2kI9MssntPe2ws3UOFbIWGITKzcbyuWIwa/YHwmdZKPD0afbxkH0ufMRP6l6UegUOQWxYDNC42YGiqNAz8WyGQ1wKv0FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A90dXAbS; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20688fbaeafso4765125ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 19:56:45 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20543fdb7acso3502405ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 19:56:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726714605; x=1727319405; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726714610; x=1727319410; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=axWsqNzIpvlhLR7DqrnxUdvbHKQsISEkZ4mTeZAqu9w=;
-        b=f/E+EXOKmuJvfkC26qQrLP3yn3K3DQQLvL4Zhxh/sS1zylYG5D1DSeMtmS4SEVsOMk
-         AwoekJYliLtIVE2XVrbNRvftwRibXlwmH/HX/MQZixqg0iugMOuSvFbgjSkWbyQdultJ
-         GTTLB89ezzy4RKTqhhjrVC0VgIk43qU4kIg7XmgANm4hk8MQxaR13/u6/WPNdL1MX2qp
-         hW4JyKl1/G+Y2N6QLuhjOjVoTbUPUVFhzaNCbXMFeI9jrzdynkaV6zlqGyipB15fzLwZ
-         fMO0xnaY+ob4k3p5KRW8Sv0AlSmIIOGnAKhq1lFaqxWMRtQdSYP1VJW60qUTuSmyZT3M
-         X94A==
+        bh=U+q0qzhvgy5Htf+jNoj0jpwh62QEw37SjQucvD3DcJc=;
+        b=A90dXAbSzjxDkMBL/p08VdbHN2dcuXq0SxCoCJS38J//j0QZ2oY3M97PEv2jNfSL5d
+         02p2cajm94lcs6laej2avDxrQjXnB+5k3b4tkhK0c7FWTjcJHElLphk/RUGk2qNLYbCV
+         bLSoqeCFhjN5ti8ITakB3x/+U56K8QDulSW8cWZQuOD8zHmBFCfNdcNyTggMOshNEm4n
+         OSxYZqebyRERUBPJzzvJ4at/kfVDU4KDlimit2+yiu0jGUfaCmbR6BxX0mQw3DINiqw8
+         nalt0vyDpUYISMOQxBMmfA8WZLPtefod1gEZ2E/JpeIYxi1H9H0RtkY5ZLYYuunjm6qn
+         Efrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726714605; x=1727319405;
+        d=1e100.net; s=20230601; t=1726714610; x=1727319410;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=axWsqNzIpvlhLR7DqrnxUdvbHKQsISEkZ4mTeZAqu9w=;
-        b=Fh77DJcN/FDDNCjHyucXprd/CiOtogXsWxcRSbnek8O3j+3hv35knTppZ7NwlL+Y1M
-         zCRTWzC7M+Hh+IwBUMzyQv9fcI0O1Gvt3mSoyHZPgXVnSWWaYGLvgAHUIM0aK7pE+gdd
-         pNao6uxp8USvFKkITH41p/+wXlXTPYEqo0Uq4ePYziQtGTupuHFQh+hoKOw7miCDbrPg
-         HMdJn6K2kxL91AZh73fQVxhA7sbPOfx1M0Le034xmZfpnvw3bTlizUy3JjqeA1r+GDtB
-         HttVu8MQg78eA+taQmt3U9/DAVCARXmhJJV1/e5Ui5pBrp22mZy9FWB0fBJf3TEcdCxZ
-         hCFg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9FWaiHssgMKIHjPsTeON5akjUAjFiQ/pIVxW0BJan3kpHdJaCJWAhn3WT3pftoXiyvL6O75ASAxKmcHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlRsMMDI6zlI26CW0SAVXO2Vbz3atjKBm1tO4HNaXLhMrCAWPg
-	RCsCpjv14lbgp9r9u/Q4EmMZPcJCx89f5H5XdTEKx//xwU5mmPGx
-X-Google-Smtp-Source: AGHT+IHA1Q2JlW37EA2VKdDDVikQbbi1MnJIFVGu950hUG+dA+q41WmFWBJe/jOOl1HWU88lYqBIzQ==
-X-Received: by 2002:a17:902:d4d2:b0:206:f065:f45d with SMTP id d9443c01a7336-2078252bd1emr238945975ad.31.1726714605103;
-        Wed, 18 Sep 2024 19:56:45 -0700 (PDT)
+        bh=U+q0qzhvgy5Htf+jNoj0jpwh62QEw37SjQucvD3DcJc=;
+        b=PoTr2vW73EGrQWMzwnVr6RcOBNwmu9NOOijPRN7cYLnRAuFDEMakUA0H+57yfIJwDR
+         95mHRhifE8ATAvj2T6psn4wTDxOyJseU5Y99QrQJAr01cCf/v3uOOvqzTQorfXUyjoTe
+         aHaTVHDdrKk9fHzjnaUVEGoT8bQ9rRtQ666n46wXi/d79Y2v0836s9zC/ilDXatTyXvb
+         3opCu/PG/SI59LRg7FaxeUfDFz/afEc9eWjTehUdCEPeeXhjCo8b221P4O9KK24c9gkk
+         BGtEsqzjm28izZx6uINDmGFtoVCdzKsAZXU1e9uX/FSu9SzgXa7ino+YiujhczL7A9le
+         h+wg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUkOIqCb355XxtHobYbz9HMYWGq4JP2rWPrKisIEV5EpXPWPV+36z98Ghp09cmJPThJOjrz/+iW0WHwOY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGOUWlDvcspSzMoAoJIIcbtiv8sCTqVZNaxOG32kFyD7436xX3
+	t0zXvvdzkm44ccECrvNQpywUEOe7tKxW3iWALG1qVjjRqTVJ5Lnp
+X-Google-Smtp-Source: AGHT+IHDCEhyE6aDKQMLRWn1dVpCIu8ywaRfsfF6B1LtKOZnRl3x2/5HVbN1RjELYtzDCtK/03wddQ==
+X-Received: by 2002:a17:903:2452:b0:200:869c:95e3 with SMTP id d9443c01a7336-20781b42cfcmr332110025ad.4.1726714610017;
+        Wed, 18 Sep 2024 19:56:50 -0700 (PDT)
 Received: from dw-tp.. ([171.76.85.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d2823sm71389105ad.148.2024.09.18.19.56.40
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d2823sm71389105ad.148.2024.09.18.19.56.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 19:56:44 -0700 (PDT)
+        Wed, 18 Sep 2024 19:56:49 -0700 (PDT)
 From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To: linuxppc-dev@lists.ozlabs.org
 Cc: Michael Ellerman <mpe@ellerman.id.au>,
@@ -80,9 +80,9 @@ Cc: Michael Ellerman <mpe@ellerman.id.au>,
 	LKML <linux-kernel@vger.kernel.org>,
 	kasan-dev@googlegroups.com,
 	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFC v2 04/13] book3s64/hash: Refactor kernel linear map related calls
-Date: Thu, 19 Sep 2024 08:26:02 +0530
-Message-ID: <ee519d5927ca4e141d2b1570384ebe39e0ca850a.1726571179.git.ritesh.list@gmail.com>
+Subject: [RFC v2 05/13] book3s64/hash: Add hash_debug_pagealloc_add_slot() function
+Date: Thu, 19 Sep 2024 08:26:03 +0530
+Message-ID: <b8a835318147d3b8edd0e3236f5dcaa18789de16.1726571179.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1726571179.git.ritesh.list@gmail.com>
 References: <cover.1726571179.git.ritesh.list@gmail.com>
@@ -94,199 +94,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This just brings all linear map related handling at one place instead of
-having those functions scattered in hash_utils file.
-Makes it easy for review.
+This adds hash_debug_pagealloc_add_slot() function instead of open
+coding that in htab_bolt_mapping(). This is required since we will be
+separating kfence functionality to not depend upon debug_pagealloc.
 
-No functionality changes in this patch.
+No functionality change in this patch.
 
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- arch/powerpc/mm/book3s64/hash_utils.c | 164 +++++++++++++-------------
- 1 file changed, 82 insertions(+), 82 deletions(-)
+ arch/powerpc/mm/book3s64/hash_utils.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
 diff --git a/arch/powerpc/mm/book3s64/hash_utils.c b/arch/powerpc/mm/book3s64/hash_utils.c
-index 296bb74dbf40..82151fff9648 100644
+index 82151fff9648..6e3860224351 100644
 --- a/arch/powerpc/mm/book3s64/hash_utils.c
 +++ b/arch/powerpc/mm/book3s64/hash_utils.c
-@@ -273,6 +273,88 @@ void hash__tlbiel_all(unsigned int action)
- 		WARN(1, "%s called on pre-POWER7 CPU\n", __func__);
+@@ -328,6 +328,14 @@ static void kernel_unmap_linear_page(unsigned long vaddr, unsigned long lmi)
+ 				     mmu_kernel_ssize, 0);
  }
  
-+#ifdef CONFIG_DEBUG_PAGEALLOC
-+static DEFINE_RAW_SPINLOCK(linear_map_hash_lock);
-+
-+static void kernel_map_linear_page(unsigned long vaddr, unsigned long lmi)
++static inline void hash_debug_pagealloc_add_slot(phys_addr_t paddr, int slot)
 +{
-+	unsigned long hash;
-+	unsigned long vsid = get_kernel_vsid(vaddr, mmu_kernel_ssize);
-+	unsigned long vpn = hpt_vpn(vaddr, vsid, mmu_kernel_ssize);
-+	unsigned long mode = htab_convert_pte_flags(pgprot_val(PAGE_KERNEL), HPTE_USE_KERNEL_KEY);
-+	long ret;
-+
-+	hash = hpt_hash(vpn, PAGE_SHIFT, mmu_kernel_ssize);
-+
-+	/* Don't create HPTE entries for bad address */
-+	if (!vsid)
++	if (!debug_pagealloc_enabled())
 +		return;
-+
-+	if (linear_map_hash_slots[lmi] & 0x80)
-+		return;
-+
-+	ret = hpte_insert_repeating(hash, vpn, __pa(vaddr), mode,
-+				    HPTE_V_BOLTED,
-+				    mmu_linear_psize, mmu_kernel_ssize);
-+
-+	BUG_ON (ret < 0);
-+	raw_spin_lock(&linear_map_hash_lock);
-+	BUG_ON(linear_map_hash_slots[lmi] & 0x80);
-+	linear_map_hash_slots[lmi] = ret | 0x80;
-+	raw_spin_unlock(&linear_map_hash_lock);
++	if ((paddr >> PAGE_SHIFT) < linear_map_hash_count)
++		linear_map_hash_slots[paddr >> PAGE_SHIFT] = slot | 0x80;
 +}
 +
-+static void kernel_unmap_linear_page(unsigned long vaddr, unsigned long lmi)
-+{
-+	unsigned long hash, hidx, slot;
-+	unsigned long vsid = get_kernel_vsid(vaddr, mmu_kernel_ssize);
-+	unsigned long vpn = hpt_vpn(vaddr, vsid, mmu_kernel_ssize);
-+
-+	hash = hpt_hash(vpn, PAGE_SHIFT, mmu_kernel_ssize);
-+	raw_spin_lock(&linear_map_hash_lock);
-+	if (!(linear_map_hash_slots[lmi] & 0x80)) {
-+		raw_spin_unlock(&linear_map_hash_lock);
-+		return;
-+	}
-+	hidx = linear_map_hash_slots[lmi] & 0x7f;
-+	linear_map_hash_slots[lmi] = 0;
-+	raw_spin_unlock(&linear_map_hash_lock);
-+	if (hidx & _PTEIDX_SECONDARY)
-+		hash = ~hash;
-+	slot = (hash & htab_hash_mask) * HPTES_PER_GROUP;
-+	slot += hidx & _PTEIDX_GROUP_IX;
-+	mmu_hash_ops.hpte_invalidate(slot, vpn, mmu_linear_psize,
-+				     mmu_linear_psize,
-+				     mmu_kernel_ssize, 0);
-+}
-+
-+int hash__kernel_map_pages(struct page *page, int numpages, int enable)
-+{
-+	unsigned long flags, vaddr, lmi;
-+	int i;
-+
-+	local_irq_save(flags);
-+	for (i = 0; i < numpages; i++, page++) {
-+		vaddr = (unsigned long)page_address(page);
-+		lmi = __pa(vaddr) >> PAGE_SHIFT;
-+		if (lmi >= linear_map_hash_count)
-+			continue;
-+		if (enable)
-+			kernel_map_linear_page(vaddr, lmi);
-+		else
-+			kernel_unmap_linear_page(vaddr, lmi);
-+	}
-+	local_irq_restore(flags);
-+	return 0;
-+}
-+#else /* CONFIG_DEBUG_PAGEALLOC */
-+int hash__kernel_map_pages(struct page *page, int numpages,
-+					 int enable)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_DEBUG_PAGEALLOC */
-+
- /*
-  * 'R' and 'C' update notes:
-  *  - Under pHyp or KVM, the updatepp path will not set C, thus it *will*
-@@ -2120,88 +2202,6 @@ void hpt_do_stress(unsigned long ea, unsigned long hpte_group)
- 	}
- }
- 
--#ifdef CONFIG_DEBUG_PAGEALLOC
--static DEFINE_RAW_SPINLOCK(linear_map_hash_lock);
--
--static void kernel_map_linear_page(unsigned long vaddr, unsigned long lmi)
--{
--	unsigned long hash;
--	unsigned long vsid = get_kernel_vsid(vaddr, mmu_kernel_ssize);
--	unsigned long vpn = hpt_vpn(vaddr, vsid, mmu_kernel_ssize);
--	unsigned long mode = htab_convert_pte_flags(pgprot_val(PAGE_KERNEL), HPTE_USE_KERNEL_KEY);
--	long ret;
--
--	hash = hpt_hash(vpn, PAGE_SHIFT, mmu_kernel_ssize);
--
--	/* Don't create HPTE entries for bad address */
--	if (!vsid)
--		return;
--
--	if (linear_map_hash_slots[lmi] & 0x80)
--		return;
--
--	ret = hpte_insert_repeating(hash, vpn, __pa(vaddr), mode,
--				    HPTE_V_BOLTED,
--				    mmu_linear_psize, mmu_kernel_ssize);
--
--	BUG_ON (ret < 0);
--	raw_spin_lock(&linear_map_hash_lock);
--	BUG_ON(linear_map_hash_slots[lmi] & 0x80);
--	linear_map_hash_slots[lmi] = ret | 0x80;
--	raw_spin_unlock(&linear_map_hash_lock);
--}
--
--static void kernel_unmap_linear_page(unsigned long vaddr, unsigned long lmi)
--{
--	unsigned long hash, hidx, slot;
--	unsigned long vsid = get_kernel_vsid(vaddr, mmu_kernel_ssize);
--	unsigned long vpn = hpt_vpn(vaddr, vsid, mmu_kernel_ssize);
--
--	hash = hpt_hash(vpn, PAGE_SHIFT, mmu_kernel_ssize);
--	raw_spin_lock(&linear_map_hash_lock);
--	if (!(linear_map_hash_slots[lmi] & 0x80)) {
--		raw_spin_unlock(&linear_map_hash_lock);
--		return;
--	}
--	hidx = linear_map_hash_slots[lmi] & 0x7f;
--	linear_map_hash_slots[lmi] = 0;
--	raw_spin_unlock(&linear_map_hash_lock);
--	if (hidx & _PTEIDX_SECONDARY)
--		hash = ~hash;
--	slot = (hash & htab_hash_mask) * HPTES_PER_GROUP;
--	slot += hidx & _PTEIDX_GROUP_IX;
--	mmu_hash_ops.hpte_invalidate(slot, vpn, mmu_linear_psize,
--				     mmu_linear_psize,
--				     mmu_kernel_ssize, 0);
--}
--
--int hash__kernel_map_pages(struct page *page, int numpages, int enable)
--{
--	unsigned long flags, vaddr, lmi;
--	int i;
--
--	local_irq_save(flags);
--	for (i = 0; i < numpages; i++, page++) {
--		vaddr = (unsigned long)page_address(page);
--		lmi = __pa(vaddr) >> PAGE_SHIFT;
--		if (lmi >= linear_map_hash_count)
--			continue;
--		if (enable)
--			kernel_map_linear_page(vaddr, lmi);
--		else
--			kernel_unmap_linear_page(vaddr, lmi);
--	}
--	local_irq_restore(flags);
--	return 0;
--}
--#else /* CONFIG_DEBUG_PAGEALLOC */
--int hash__kernel_map_pages(struct page *page, int numpages,
--					 int enable)
--{
--	return 0;
--}
--#endif /* CONFIG_DEBUG_PAGEALLOC */
--
- void hash__setup_initial_memory_limit(phys_addr_t first_memblock_base,
- 				phys_addr_t first_memblock_size)
+ int hash__kernel_map_pages(struct page *page, int numpages, int enable)
  {
+ 	unsigned long flags, vaddr, lmi;
+@@ -353,6 +361,7 @@ int hash__kernel_map_pages(struct page *page, int numpages,
+ {
+ 	return 0;
+ }
++static inline void hash_debug_pagealloc_add_slot(phys_addr_t paddr, int slot) {}
+ #endif /* CONFIG_DEBUG_PAGEALLOC */
+ 
+ /*
+@@ -513,9 +522,7 @@ int htab_bolt_mapping(unsigned long vstart, unsigned long vend,
+ 			break;
+ 
+ 		cond_resched();
+-		if (debug_pagealloc_enabled() &&
+-			(paddr >> PAGE_SHIFT) < linear_map_hash_count)
+-			linear_map_hash_slots[paddr >> PAGE_SHIFT] = ret | 0x80;
++		hash_debug_pagealloc_add_slot(paddr, ret);
+ 	}
+ 	return ret < 0 ? ret : 0;
+ }
 -- 
 2.46.0
 
