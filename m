@@ -1,104 +1,93 @@
-Return-Path: <linux-kernel+bounces-333704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7FE897CC9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:45:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E0C97CC9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAEDF1C229BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:45:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61CD21F22E53
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4EC1A0705;
-	Thu, 19 Sep 2024 16:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640831A0720;
+	Thu, 19 Sep 2024 16:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="dUQnOKhY"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3EH6Elb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCEB1A01B8
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 16:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE52199FC2;
+	Thu, 19 Sep 2024 16:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726764300; cv=none; b=FQ//unmc+Zm/TpoUPNEbNE59/dZNtj8uMcpv2JBNCFY6F9amXdMgH1bEZ53cM8LqMerIpV7syRENG7dJmjdprh7Ww9jiyWEU1Y2yx2ywCxzeyHN0FXPbM+laZKyf94IfqIzFakZtMkBOumxc6IES/P0w+0wimqQSmk0KrMDs0TU=
+	t=1726764382; cv=none; b=Fymz3sHtS1JsXkKrwVDJhLZn2QO7aVrivpLYtqAcG3phbSIwXJeQqdWwUMgAgpMxFGLHQIdS7lh87mbjbwo9Vn/gaaytRiLrBnOv/DbmGe5V/0pP2CgbYMjPHhlf9XuPpaSS+pQMBnShOmPTTsDqKT0l3kxHvrhjLyiwtiwfSso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726764300; c=relaxed/simple;
-	bh=fGLwGNvhSyUN4tqy0B8fOiB+Akxq1PKmNmdksMZgeAk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PVUICPt6hIou7X+jrbCLjNe5KPOPsysq+Vp4PqBHjrDGZPIsKgsEdcSeRmUo2BzLEKODg5qOa4d5VkwN3+eQF7/gy/kYzgEetEWkMGp/5c80hV2kiAiRDbEjpGKM5UHjQ4SsUdGUmNkfygAv9FVaPTSNaS0HW4WgtsCpxSAoJLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=dUQnOKhY; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48J5eFFQ010089;
-	Thu, 19 Sep 2024 11:44:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=Y8HDrDZcq5CrBJHhSm
-	2kcFKekp/6O3KZeOV0pu87RQI=; b=dUQnOKhYgtM2aqZdY1KwFIfdyJvnW8XfP9
-	vL7IeCwN9v2wPpYqd0FsvQ+kVXJ8KHeb6OOTLkeSmYpgG+JwvuwECi6M0Ybu71Lb
-	qBWf62hkY1DpMVHJLgUXhgAsKPk0bg5GP0mE0vx3y8IWjt5eruAYO96XiRevANrH
-	mMt6e3UGX9NdsmnUqByXftYlXIxNAW+Ad1yz6rjetABzJlp6n3maEJE529/y/S06
-	75XbFS3LS4G+rrT2Wdbd63DACjp4TJJCX93/Wp7f7P/aiuo4yeHngxztel/ozwiA
-	46xP2BVG9TZEXomF2drPSUojUXjFHg5NZHMF4CSOoEvHwPG4EDSA==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 41n6wjp896-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 11:44:33 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 19 Sep
- 2024 17:44:31 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Thu, 19 Sep 2024 17:44:31 +0100
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id B322A820248;
-	Thu, 19 Sep 2024 16:44:31 +0000 (UTC)
-Date: Thu, 19 Sep 2024 17:44:30 +0100
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Ricardo Rivera-Matos <rriveram@opensource.cirrus.com>
-CC: David Rhodes <david.rhodes@cirrus.com>,
-        Richard Fitzgerald
-	<rf@opensource.cirrus.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>,
-        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: cs35l45: Corrects cs35l45_get_clk_freq_id function
- data type
-Message-ID: <ZuxU7tjueKOkE+d1@opensource.cirrus.com>
-References: <20240919151654.197337-1-rriveram@opensource.cirrus.com>
+	s=arc-20240116; t=1726764382; c=relaxed/simple;
+	bh=Vuv8FLFA9PwbWOnTvAxXu6BnGw5oinSe1553u2C8Ysw=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=KQIJcQe6Ritb0P15Sb6Q0x7toYu2Ai9RNXoogfDntjEEOH7981k8Y6vevu6T/hxxaWAHg1DwxQoi9KS5yQkdNGDS61+ioRH2CmuT0DPm8iUNJz0VGEihDBEBNwZkRQSOn1BZwQ1KsiX4K/465dFiHTn2ofddyL6C9qV6CKoF0CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3EH6Elb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9964C4CEC4;
+	Thu, 19 Sep 2024 16:46:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726764382;
+	bh=Vuv8FLFA9PwbWOnTvAxXu6BnGw5oinSe1553u2C8Ysw=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=f3EH6ElbaZu2o1Wsv/PHru5l/55w7fG6L8NBWBWAnETFMMb1AnL3YE8OSpGg64FEP
+	 JBZG+Lb4VnlGJe92DmsECuUY4K8e5k6A/Qwxr3rnUGJhQfOMHyQ79Rrwarp7j5lK6X
+	 8nM8yVVtD8I39XDLy7qYpQWNGjh7Z3qT0MGguwv3ZyAtONsazVrGlFvrkuYZXQD6ze
+	 JFI9GUOdka2DNnKYhkYcOVrBsyHx5iv0xTEsNT7TieNxoD4Mttbgrwhn90ygrD8F6X
+	 8VAjhe9AmpEpjPslLNU53Zi0L565Jys/WmOVcZnuzkZH0yKV0z7T2R3JfenC4u/tWm
+	 HqKPZy0gkfTVw==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240919151654.197337-1-rriveram@opensource.cirrus.com>
-X-Proofpoint-GUID: URMPacK92kHMxA_bqBMt9HDVXFD1CHyH
-X-Proofpoint-ORIG-GUID: URMPacK92kHMxA_bqBMt9HDVXFD1CHyH
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ath11k: modify null check logic in
+ ath11k_ce_rx_post_pipe()
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20240909150824.28195-1-m.lobanov@rosalinux.ru>
+References: <20240909150824.28195-1-m.lobanov@rosalinux.ru>
+To: Mikhail Lobanov <m.lobanov@rosalinux.ru>
+Cc: Mikhail Lobanov <m.lobanov@rosalinux.ru>,
+ Jeff Johnson <jjohnson@kernel.org>,
+ Govindaraj Saminathan <quic_gsamin@quicinc.com>,
+ Miles Hu <milehu@codeaurora.org>, Sven Eckelmann <seckelmann@datto.com>,
+ Rajkumar Manoharan <rmanohar@codeaurora.org>,
+ John Crispin <john@phrozen.org>, linux-wireless@vger.kernel.org,
+ ath11k@lists.infradead.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <172676437762.281449.1201751345434084726.kvalo@kernel.org>
+Date: Thu, 19 Sep 2024 16:46:19 +0000 (UTC)
 
-On Thu, Sep 19, 2024 at 03:16:52PM +0000, Ricardo Rivera-Matos wrote:
-> Changes cs35l45_get_clk_freq_id() function data type from unsigned int
-> to int. This function is returns a positive index value if successful
-> or a negative error code if unsuccessful.
+Mikhail Lobanov <m.lobanov@rosalinux.ru> wrote:
+
+> The previous logic in ath11k_ce_rx_post_pipe() incorrectly required both 
+> dest_ring and status_ring to be NULL in order to exit the function. 
+> This caused the function to continue even if only one of the pointers 
+> was NULL, potentially leading to null pointer dereferences in 
+> ath11k_ce_rx_buf_enqueue_pipe().
 > 
-> Functionally there should be no difference as long as the unsigned int
-> return is interpreted as an int, however it should be corrected for
-> readability.
+> Fix the condition by modifying the logic so that the function returns 
+> early if either dest_ring or status_ring is NULL.
 > 
-> Signed-off-by: Ricardo Rivera-Matos <rriveram@opensource.cirrus.com>
-> ---
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
+> Signed-off-by: Mikhail Lobanov <m.lobanov@rosalinux.ru>
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Jeff, what do you think?
 
-Thanks,
-Charles
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20240909150824.28195-1-m.lobanov@rosalinux.ru/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+https://docs.kernel.org/process/submitting-patches.html
+
 
