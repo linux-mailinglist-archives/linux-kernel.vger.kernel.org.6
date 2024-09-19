@@ -1,135 +1,179 @@
-Return-Path: <linux-kernel+bounces-333491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA5997C990
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:53:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF24497C992
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23F53B23298
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:53:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D42511C22964
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA0619E822;
-	Thu, 19 Sep 2024 12:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B1019DFB5;
+	Thu, 19 Sep 2024 12:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="LOdJrGcu"
-Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mvWpO0Po";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R+yPHDBI";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mvWpO0Po";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="R+yPHDBI"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3543719D8BB;
-	Thu, 19 Sep 2024 12:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B90419AD8D;
+	Thu, 19 Sep 2024 12:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726750383; cv=none; b=qrmWfLI5YTbaGc7Bb4H3VAgON0TemHUSOmZTBct6EA1cKwLRllZdC2iUEC9GEPz6ZkXFGgpDzvn2G+a2mLp6/TjhBirbfK38XD3FCtlsu6hq0XRiUemSL0PC1uBnHXEj9az7YPj0eHojXIEiNp6lA0bwhqB26qXfPv1eAqtQFTE=
+	t=1726750537; cv=none; b=To1auZVCs6HUj68BSddLaFgqsucbaJdSUTi8Qq+XtLSw+IBmGx3vhos0IulO00B77pNYTSiumuxY2PbYwIqIYdFb1Yd0Cf2SjhAcW+bWEGefMhM5282Tyu/rObzH0N4dZANd8UQvh8AWEq9lxpfBBEJZdV/wRTq/xO/jCLf8fGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726750383; c=relaxed/simple;
-	bh=Ph/oHin//pHNn53pb/cPXEAjtRG/v1xWFK7MeSfvfkg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FDcr8Zww9E0FayTW+enhAvqCBb22ukbr9qqJLBhWdpsHJO+66MDEsPwhax47RvHaxXsqjK94ST4nTaOLxHp7nQUE6XAoF7rOejmMHAP3UjJ4YSq5wEr3yxl0UKqw8+jcs3WKKWhz5KLYkCIIfQqhftntilDVTwMDNh5hKS5VqcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=LOdJrGcu; arc=none smtp.client-ip=81.19.3.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-	s=20160406-ysoft-com; t=1726750380;
-	bh=60bDgnFrrO+PEAycaO+HE7Dpyx2k7R6Ulk+P7uK3JEI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LOdJrGcu50/Li4tNNrzaVJwDoT5QmnBQ7VSLhBlMtrnxrZ19qCf8X9Q+JbgfDej4u
-	 SzMLOujxnN4NeASyk0rZOraeamXO+K5wOhpHi4WluiBztB7r6uBdA7UBNc81WqGFM8
-	 s3pOhqwB8MsloPefY6GGOVIg5gvptIS7PXbHwa0c=
-Received: from [10.1.8.111] (unknown [10.1.8.111])
-	by uho.ysoft.cz (Postfix) with ESMTP id DA291A05BD;
-	Thu, 19 Sep 2024 14:52:59 +0200 (CEST)
-Message-ID: <c4421504-2ccd-4adb-8df6-053c8085080a@ysoft.com>
-Date: Thu, 19 Sep 2024 14:52:59 +0200
+	s=arc-20240116; t=1726750537; c=relaxed/simple;
+	bh=uPk7QPnox1EKt4Oc2lIbYdayFzNPigxxINMuiljTa+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Em4n0MnX+IxgT51rNLkrBC5TrVOKWcNwUm2RaMxVJscPAn3/BSjoGY2Kz+bCY8jvHuSnEyezSbzh53dC+hq5qtvY9LmlbnsiDgEoTqvD/Xj7Jev2HeqYjXCkz3piUYDfTWISypCQUnHgTvKyl3WgPuIrjUg8CV95hJIGqSsfae8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mvWpO0Po; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R+yPHDBI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mvWpO0Po; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=R+yPHDBI; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 32B9F20922;
+	Thu, 19 Sep 2024 12:55:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1726750533;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J035lXz9NqS2T7rqPIx+v9m10/fpl5HiwgmW9zEOxDQ=;
+	b=mvWpO0PoJvQa/GgqpFIRNNRh1hddqeLTEahw+JwzJsCgXy5jESa520Hq33eo6UC0d4lU6y
+	8HxDLbHF5Tmrxv0q/7UM460XvqXY8qRC1CCobXBN7XChY+bvDSRDdtOuvFP9wV15OWV0Wf
+	Iegk9ElaJfdkOmi+fFmEly/YP8GFuV4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1726750533;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J035lXz9NqS2T7rqPIx+v9m10/fpl5HiwgmW9zEOxDQ=;
+	b=R+yPHDBIGnvUjbSeN57UebxkIBNmiIGc1hj7+FSRIMQnEjoBwKWNEaOn4oapqQb3BJTeTz
+	DXSwg+A1JD8KgYBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1726750533;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J035lXz9NqS2T7rqPIx+v9m10/fpl5HiwgmW9zEOxDQ=;
+	b=mvWpO0PoJvQa/GgqpFIRNNRh1hddqeLTEahw+JwzJsCgXy5jESa520Hq33eo6UC0d4lU6y
+	8HxDLbHF5Tmrxv0q/7UM460XvqXY8qRC1CCobXBN7XChY+bvDSRDdtOuvFP9wV15OWV0Wf
+	Iegk9ElaJfdkOmi+fFmEly/YP8GFuV4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1726750533;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J035lXz9NqS2T7rqPIx+v9m10/fpl5HiwgmW9zEOxDQ=;
+	b=R+yPHDBIGnvUjbSeN57UebxkIBNmiIGc1hj7+FSRIMQnEjoBwKWNEaOn4oapqQb3BJTeTz
+	DXSwg+A1JD8KgYBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1329E13A1E;
+	Thu, 19 Sep 2024 12:55:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OimABEUf7GZCMwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 19 Sep 2024 12:55:33 +0000
+Date: Thu, 19 Sep 2024 14:55:31 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Luca Stefani <luca.stefani.ge1@gmail.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/2] btrfs: Don't block system suspend during fstrim
+Message-ID: <20240919125531.GL2920@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20240917203346.9670-1-luca.stefani.ge1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: imx8mp-iota2: Enable the USB Type-C port
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Shawn Guo <shawnguo@kernel.org>, Petr Benes <petr.benes@ysoft.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Herburger <gregor.herburger@ew.tq-group.com>,
- Hiago De Franco <hiago.franco@toradex.com>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>,
- Joao Paulo Goncalves <joao.goncalves@toradex.com>,
- Michael Walle <mwalle@kernel.org>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Mathieu Othacehe <m.othacehe@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20240917151001.1289399-1-michal.vokac@ysoft.com>
- <20240917151001.1289399-5-michal.vokac@ysoft.com>
- <91d26ba6-01cd-4b45-8cca-689475285463@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
-In-Reply-To: <91d26ba6-01cd-4b45-8cca-689475285463@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917203346.9670-1-luca.stefani.ge1@gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.50 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Score: -2.50
+X-Spam-Flag: NO
 
-On 18. 09. 24 15:17, Krzysztof Kozlowski wrote:
-> On 17/09/2024 17:10, Michal Vokáč wrote:
->> From: Petr Benes <petr.benes@ysoft.com>
->>
->> Enable the USB Type-C port with the Diodes PI5USB30213A port controller.
->> The port supports dual role data but can operate only in source power role
->> and PD is not supported.
->>
->> Signed-off-by: Petr Benes <petr.benes@ysoft.com>
->> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
->> ---
->>   .../boot/dts/freescale/imx8mp-iota2-lumpy.dts | 96 +++++++++++++++++++
->>   1 file changed, 96 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
->> index 21d0899cabd5..b15d211e8667 100644
->> --- a/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
->> +++ b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
->> @@ -38,6 +38,17 @@ memory@40000000 {
->>   		      <0x1 0x00000000 0 0x80000000>;
->>   	};
->>   
->> +	reg_typec: regulator-typec {
->> +		compatible = "regulator-fixed";
->> +		enable-active-high;
->> +		gpio = <&gpio1 12 GPIO_ACTIVE_HIGH>;
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&pinctrl_usbc_vbus>;
->> +		regulator-max-microvolt = <5000000>;
->> +		regulator-min-microvolt = <5000000>;
->> +		regulator-name = "typec";
->> +	};
->> +
->>   	reg_usb_host: regulator-usb-host {
->>   		compatible = "regulator-fixed";
->>   		enable-active-high;
->> @@ -218,6 +229,47 @@ &i2c2 {
->>   	pinctrl-0 = <&pinctrl_i2c2>;
->>   	status = "okay";
->>   
->> +	tcpc@d {
+On Tue, Sep 17, 2024 at 10:33:03PM +0200, Luca Stefani wrote:
+> Changes since v5:
+> * Make chunk size a define
+> * Remove superfluous trim_interrupted checks
+>   after moving them to trim_no_bitmap/trim_bitmaps
 > 
-> typec@d
+> Changes since v4:
+> * Set chunk size to 1G
+> * Set proper error return codes in case of interruption
+> * Dropped fstrim_range fixup as pulled in -next
 > 
->> +		compatible = "diodes,pi5usb30213a";
->> +		reg = <0xd>;
->> +		pinctrl-names = "default";
->> +		pinctrl-0 = <&pinctrl_typec>;
->> +		interrupts-extended = <&gpio1 5 IRQ_TYPE_LEVEL_LOW>;
->> +		status = "okay";
+> Changes since v3:
+> * Went back to manual chunk size
 > 
-> Drop
+> Changes since v2:
+> * Use blk_alloc_discard_bio directly
+> * Reset ret to ERESTARTSYS
+> 
+> Changes since v1:
+> * Use bio_discard_limit to calculate chunk size
+> * Makes use of the split chunks
+> 
+> Original discussion: https://lore.kernel.org/lkml/20240822164908.4957-1-luca.stefani.ge1@gmail.com/
+> v1: https://lore.kernel.org/lkml/20240902114303.922472-1-luca.stefani.ge1@gmail.com/
+> v2: https://lore.kernel.org/lkml/20240902205828.943155-1-luca.stefani.ge1@gmail.com/
+> v3: https://lore.kernel.org/lkml/20240903071625.957275-4-luca.stefani.ge1@gmail.com/
+> v4: https://lore.kernel.org/lkml/20240916101615.116164-1-luca.stefani.ge1@gmail.com/
+> v5: https://lore.kernel.org/lkml/20240916125707.127118-1-luca.stefani.ge1@gmail.com/
+> 
+> ---
+> 
+> NB: I didn't change btrfs_discard_workfn yet to add error checks
+> as I don't know what semantics we should have in that case.
+> The work queue is always re-scheduled and created with WQ_FREEZABLE
+> so it should be automatically frozen. Shall I simply add some logs?
+> 
+> ---
+> 
+> Luca Stefani (2):
+>   btrfs: Split remaining space to discard in chunks
+>   btrfs: Don't block system suspend during fstrim
 
-OK. I will address both comments.
-
-Thank you for the review,
-Michal
+Added to for-next, with some minor updates to changelogs. Thanks.
 
