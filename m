@@ -1,160 +1,120 @@
-Return-Path: <linux-kernel+bounces-333130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 505A597C458
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:34:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6879297C45A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0537B22305
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:34:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16E061F21410
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D0E18D651;
-	Thu, 19 Sep 2024 06:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FC418D65D;
+	Thu, 19 Sep 2024 06:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="OX+Bx7Xw"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="ffStb6s8"
+Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA36D7345B;
-	Thu, 19 Sep 2024 06:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96B57345B;
+	Thu, 19 Sep 2024 06:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726727651; cv=none; b=EZSxmp4gyXnc1/+4280e0ihhPjRp4NvQZyBA8TEVEilbHpSCM/6AkznLgs0lD46+VaRXn5t6GrcdkPwIvAxwTrwgC3JmW+qAoDXKSy8N5hzk48w5Tt5WzPMtF4u6TYseekzL+vDuKgm4U0hEm/jtBigKJDKjR1niD4+oCHmdRMs=
+	t=1726727712; cv=none; b=c9SmXwEZ+sbJhinDIUfUFnShtYFRUJlAox215m6G+1Jv4NVZ9TVqyvOseHBgLN36j8kyvUTWmMIxYmyJrlbQbXNYIeB9rByAgEii9zNS1MWpQfOnVkZds/mNA/+lucN7B+rLlzBJ0j8runT4ufWy2thQFyfSB0axW/s4155s3Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726727651; c=relaxed/simple;
-	bh=89cRcYvE1cRdyq3k7ZQ7ijDCs7yVlHDdxaRO+kFukN8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z1GJq79xC8gJxIJjAHqDJPhr4Dmq+EyfylcKhw0LNvfCga+WPi0MhoF+mO4MjNIn6CFZhzP3tdoVNbljH4dGLNfplIMOxl6HxxSagvvWoM59kNg/ea9Cw57zOaOIgP/6xqzkCMCIX3Ae5UgC9P5pzdTK+vWgthPusjQc0dEi3Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=OX+Bx7Xw; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1726727630; x=1727332430; i=w_armin@gmx.de;
-	bh=0TAOlCNSTaYIQfLLnbrxO4iE3HoqYpdFMBeupOI56GU=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=OX+Bx7XwpbV/fnwMJpHUaBV4RIa88HZu4ziHfsG/dwBgBG2cDOeknbn8Fll7BGat
-	 VtuONILwv9kgRf9++OICv25LUYDlTRfXPerkRJLMqzMovXdF7q1svlQOh+wy+3lQD
-	 vqAH9SbgKWaawKwkRPETDS6va2XofXF30oqZQFQxr76MpRO3wfoADLK5m3rmxPQPT
-	 GD4Ah4UnQ+5QQfrBENsp3YZt0Wc2j1bUDAuF+ac93yuwm+Z/TczNx/vK6gJ8Jyatl
-	 KdNOmov8V5Qy4kZQ0vc85ebDSrm6jzTb8H0Zf/glG+w9k9+0oMEd2k8O7csosWo5Y
-	 JU/VA0U8tX9cbzc/rg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
- (mrgmx104 [212.227.17.168]) with ESMTPSA (Nemesis) id
- 1Mwwdf-1s1ZQ52O2F-00yNxW; Thu, 19 Sep 2024 08:33:50 +0200
-From: Armin Wolf <W_Armin@gmx.de>
-To: mjg59@srcf.ucam.org,
-	pali@kernel.org,
-	dilinger@queued.net
-Cc: rafael@kernel.org,
-	lenb@kernel.org,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86: dell-laptop: Fix crash when unregistering battery hook
-Date: Thu, 19 Sep 2024 08:33:32 +0200
-Message-Id: <20240919063332.362201-1-W_Armin@gmx.de>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1726727712; c=relaxed/simple;
+	bh=VRmJB0TDLwZhilpn0qW35CwpUJuZSIY3BltKr4ca9cU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=V1eFxi9v7/+kXP+gxI77UVMDbtIuub3Pv23Jr0nzzP279x7k2ObcXzFi7IWJB5Y2dZ09RuXiCtTdRVuQ4LELv16blzXXLlOrSwPO2VM3J8LwUKwMI0HSYEDc5sDDWeQ+UHROvVI2lu2VR+2ux0lTRwHEKCDevR+mmFqLhn1tYzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=ffStb6s8; arc=none smtp.client-ip=212.122.41.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
+	s=mail; t=1726727698;
+	bh=VRmJB0TDLwZhilpn0qW35CwpUJuZSIY3BltKr4ca9cU=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=ffStb6s8HBuWmwvQNys8HfkponNZskM8Va7mK4b5PD+RrjW/eX0uaZKkWUvFVvEPv
+	 JBdPaenuRjtZzTY8rHH4hzds6EBghd/8neuhuBb9/7fboUmtwNBWT4R0Tov1iDZCnZ
+	 9dLt/GxPJ2WN2iScG890VJaEkwzZo8/UgmT9/o4A=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+From: Christian Theune <ct@flyingcircus.io>
+In-Reply-To: <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
+Date: Thu, 19 Sep 2024 08:34:37 +0200
+Cc: Dave Chinner <david@fromorbit.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Chris Mason <clm@meta.com>,
+ Jens Axboe <axboe@kernel.dk>,
+ linux-mm@kvack.org,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Daniel Dao <dqminh@cloudflare.com>,
+ regressions@lists.linux.dev,
+ regressions@leemhuis.info
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:yNcooaYQb2R4h9fb1MmgCBjuE+BdHSrdZx/pB76/DldD36OLmx3
- FPqiJGbTU3MI/IflALFRwoV26RrvN3N89RvnW39rqRkCNz+BMdJ/qk+aKx43rUrpcyVRSUZ
- O8WtuqhGpGTwVmHP9CJ3thdDBdN4uFXEhCTpGkC5XouvkQyD4+MFVKGbrb3ivPk6pmictm7
- +ugbEoeog9PnuAVC9mmkw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:TVrXL/CWSjA=;WY41oLw9jEiXH8a0KOy2nNPh25C
- 6q3EBk4LqYeqAjdVTHJ6R2b9f3hw642i9ak6onSCl1FVWrWKUuMOCHIkMgpeYdLJ3xF9CWdxR
- hQIN+G6KuSrGu6KQ/3LGr/sY8/pWLJMUDxiDig5Y7sZ+b8U4otM59E/vuZTzOPVIWgkFASkW9
- cVAmtt4Hoe0FBHQMLhIHEcJJoXvjg1AW3ezGrKNcT4jXxveHAnvozuu4GVCRSR5rzLaHm4s3G
- z6f0/s/9bMXrxxINy1Nut0EKqS4gp5ygxeAvOnN6iG/LuQLm/KBah8YR/02GulHHPnhN1pirf
- cEAhr+oFifTEFjLmTA0PQXCfWH5bN4VD+vf1GeXaPM7Rmi45J9lNHywzhGQp3DadLu0Q6Qp4t
- skBwQ8yccf3Vw03Y9+FZY9mHO4NvB39HwXJ4Dn05LGm/JGDu4HQND0HvbBcs5z0Iu+wiuWMIU
- k7qBXtePT7qxjF2XANXLkZqqZKi+//tGcBdkMjXJJD4Ksn9KryWAwjgpWReygOmamss9qXox6
- utxNT6W0hWNcvg5I3UHrd/sBs//8uCpsn4WdiAikAKtdRjGVsWmq+89v7d2DXrpAQzTvveopX
- 8OkqrS0+IjA9nuAxgd9EJBGkMzc5IPkCJfbMb0+UqJLl/+6aWHpZIykLr/mJrALXlUL4wczgd
- wvk7C68lxw06gGsPqXIZ9cu/s/ZXD+CHWRDfCybovNNjzzrMbEu0dHDkF/17N5pW90qjeKJSs
- V7vM/TKvDHrsudeyfXPcXmhiv4Z/tDQDhIYyQZLmUDbaYAlEVfmNV881rxbeMwmU00N9GZmdV
- P3xDoo7doI2KuUksRGKCfM2A==
+Message-Id: <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
+References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <Zud1EhTnoWIRFPa/@dread.disaster.area>
+ <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
+ <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
+ <ZulMlPFKiiRe3iFd@casper.infradead.org>
+ <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
+ <ZumDPU7RDg5wV0Re@casper.infradead.org>
+ <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
+ <459beb1c-defd-4836-952c-589203b7005c@meta.com>
+ <ZurXAco1BKqf8I2E@casper.infradead.org>
+ <ZuuBs762OrOk58zQ@dread.disaster.area>
+ <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
+ <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 
-If the battery hook encounters a unsupported battery, it will
-return an error. This in turn will cause the battery driver to
-automatically unregister the battery hook.
 
-However as soon as the driver itself attempts to unregister the
-already unregistered battery hook, a crash occurs due to a
-corrupted linked list.
+> On 19. Sep 2024, at 05:12, Linus Torvalds =
+<torvalds@linux-foundation.org> wrote:
+>=20
+> On Thu, 19 Sept 2024 at 05:03, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>=20
+>> I think we should just do the simple one-liner of adding a
+>> "xas_reset()" to after doing xas_split_alloc() (or do it inside the
+>> xas_split_alloc()).
+>=20
+> .. and obviously that should be actually *verified* to fix the issue
+> not just with the test-case that Chris and Jens have been using, but
+> on Christian's real PostgreSQL load.
+>=20
+> Christian?
 
-Fix this by simply ignoring unsupported batteries.
+Happy to! I see there=E2=80=99s still some back and forth on the =
+specific patches. Let me know which kernel version and which patches I =
+should start trying out. I=E2=80=99m loosing track while following the =
+discussion.=20
 
-Tested on a Dell Inspiron 3505.
+In preparation: I=E2=80=99m wondering whether the known reproducer gives =
+insight how I might force my load to trigger it more easily? Would =
+running the reproducer above and combining that with a running =
+PostgreSQL benchmark make sense?=20
 
-Fixes: ab58016c68cc ("platform/x86:dell-laptop: Add knobs to change batter=
-y charge settings")
-Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-=2D--
-I CCed the maintainers of the ACPI battery driver since i believe
-that this patch highlights a general issue inside the battery hook
-mechanism.
+Otherwise we=E2=80=99d likely only be getting insight after weeks of not =
+seeing crashes =E2=80=A6=20
 
-This is because the same crash will be triggered should for example
-device_add_groups() fail.
+Christian
 
-Any ideas on how to solve this problem?
-=2D--
- drivers/platform/x86/dell/dell-laptop.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/platform/x86/dell/dell-laptop.c b/drivers/platform/x8=
-6/dell/dell-laptop.c
-index a3cd0505f282..5671bd0deee7 100644
-=2D-- a/drivers/platform/x86/dell/dell-laptop.c
-+++ b/drivers/platform/x86/dell/dell-laptop.c
-@@ -2391,12 +2391,18 @@ static struct attribute *dell_battery_attrs[] =3D =
-{
- };
- ATTRIBUTE_GROUPS(dell_battery);
-
-+static bool dell_battery_supported(struct power_supply *battery)
-+{
-+	/* We currently only support the primary battery */
-+	return strcmp(battery->desc->name, "BAT0") =3D=3D 0;
-+}
-+
- static int dell_battery_add(struct power_supply *battery,
- 		struct acpi_battery_hook *hook)
- {
--	/* this currently only supports the primary battery */
--	if (strcmp(battery->desc->name, "BAT0") !=3D 0)
--		return -ENODEV;
-+	/* Return 0 instead of an error to avoid being unloaded */
-+	if (!dell_battery_supported(battery))
-+		return 0;
-
- 	return device_add_groups(&battery->dev, dell_battery_groups);
- }
-@@ -2404,6 +2410,9 @@ static int dell_battery_add(struct power_supply *bat=
-tery,
- static int dell_battery_remove(struct power_supply *battery,
- 		struct acpi_battery_hook *hook)
- {
-+	if (!dell_battery_supported(battery))
-+		return 0;
-+
- 	device_remove_groups(&battery->dev, dell_battery_groups);
- 	return 0;
- }
-=2D-
-2.39.5
+--=20
+Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
+Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
+Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
+HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
+Christian Zagrodnick
 
 
