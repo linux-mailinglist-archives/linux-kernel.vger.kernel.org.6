@@ -1,174 +1,366 @@
-Return-Path: <linux-kernel+bounces-333513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82AC797C9E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A782A97C9D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E7EB284873
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B814285AE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC19519DF65;
-	Thu, 19 Sep 2024 13:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB5019DF86;
+	Thu, 19 Sep 2024 13:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="f+jNah3f"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PP9AZA9+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DB119B3C0;
-	Thu, 19 Sep 2024 13:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4EB41746
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 13:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726751691; cv=none; b=Na9kUqFuJIIe0XGsKsQT3D/4j/pu1rRqNsc+wgZRqFIb0Xatj8TYWe+KsDq9ASVEVUuACtS0WMrVb4zAwLXC2KFe6rIIEhRDzqGq9ETVnpIHUwQqDBYlMa07v+QjvnbML0zrE9aXijzAj00hRnBbJ/CpT23yo6MjwM9740RGsq0=
+	t=1726751647; cv=none; b=q08HXcB7L4tINdgnTCriN889qtuMGf1HyMdHBDv8cFLwSgWy8NDCUhJvjU6oUpDcdekwpgUkfScPkbNNwYzWo/ZEmszQhkIRNmj8Z77DlbCJSXHFHoBOdNA9azU91kMYKeh25y02ecZcELbcYHd4tKB192+M2D+fJmm3uIgjvjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726751691; c=relaxed/simple;
-	bh=/xmLIZTg25Qjq5h9nsT+FMqltJMCECrFHyT6Rqa27CI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=jXP6sxv7TChBFA/t3d1tK52bckHSN3jRZHIzYsS3H7j/fIv4SiUEOxhD7At9u14ZEGaj0ryIocxht8ZuelsJx0yTEE5BT3zkK2tkPSSjIH+wh7ufwbiamBiVgUvP0i6jhhAHZz7Y6IP9TFpClHtmvnSQ4zpuLDQQNHUcSxlfJ/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=f+jNah3f; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48JDEcwV089621;
-	Thu, 19 Sep 2024 08:14:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726751678;
-	bh=4tCfpmlyfchADm/bZ7pZ5HVB9+FDOrdHQOSWgbMXHKs=;
-	h=From:Date:Subject:To:CC;
-	b=f+jNah3fSwz8RyAICCXSyZs2NEWoGB0TwRzd0MKkdnS6Dzydxq4xtepPJggAXTUIx
-	 8xl+r4bWbXYolxvSwGMnvZaMR/jmYF3fgQv5pNOHeW5PH7z+IgPHBnm6Z60vhbTDgy
-	 uOHuY3g0b7S4ym30MVscsMLYA6JJBaXy/kqTsiGc=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48JDEcmb050008
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 19 Sep 2024 08:14:38 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 19
- Sep 2024 08:14:37 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 19 Sep 2024 08:14:37 -0500
-Received: from [127.0.1.1] (lcpd911.dhcp.ti.com [172.24.227.226])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48JDEYxa060794;
-	Thu, 19 Sep 2024 08:14:34 -0500
-From: Dhruva Gole <d-gole@ti.com>
-Date: Thu, 19 Sep 2024 18:43:40 +0530
-Subject: [PATCH v5] dt-bindings: opp: operating-points-v2-ti-cpu: Describe
- opp-supported-hw
+	s=arc-20240116; t=1726751647; c=relaxed/simple;
+	bh=lCCsv1hhjyh6eQu1BkQj5yv2U8sy/3kZdPI/S2GMWBE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=F5Xk7f60mhbwnr3h8O7v+cA7gZYZUgY7YOrkLKfq2MdNpqTBHN3xNlAtPRyamEa6T58dfLepOv2H5IWayAxefuMSrmluXzv+6b6q4SIykiZ9k67t5EeWZCn+tujkVjNLEOasxvpLgvGoMO00/Vc3iuYsmrO33UcGcT+IeKnYQnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PP9AZA9+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61E1AC4CED1;
+	Thu, 19 Sep 2024 13:14:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726751647;
+	bh=lCCsv1hhjyh6eQu1BkQj5yv2U8sy/3kZdPI/S2GMWBE=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=PP9AZA9+84eC+z00z0eD649s2F6/GfWQKbi4joDlV6xgTfrIwX+Aaqn+6jo4HPCDt
+	 jwO3s57HZrBThQRjQqrM4ePBR3MaTve53enrm/zf47+9xA6y7aRHTazqPpnDB/aEbv
+	 hTHJX+56N9CoCoqJtk4vZSeZekUepY2CFh/YvgiScOTA54SKUzlR90yzKYWjWpnRf3
+	 A6sMw1bYqlE27k6A0pQhFM23oiHpxpYYcxlqJ4u6aAwzpVDXNnpCBqNBdltouxsbf0
+	 HTFIIhRff54bB8/j4mo4SiW5Cslveihyxk0cQ1lJibPL7AFLKYP4yxN0cQ34ckyST3
+	 T+oIGM13YSIqg==
+Message-ID: <cef0eeba-6089-44c6-b08e-308f8ee36f6a@kernel.org>
+Date: Thu, 19 Sep 2024 21:14:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, Daeho Jeong <daehojeong@google.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: introduce device aliasing file
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20240913212810.912171-1-daeho43@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+Autocrypt: addr=chao@kernel.org; keydata=
+ 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
+In-Reply-To: <20240913212810.912171-1-daeho43@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240919-b4-opp-dt-binding-fix-v5-1-199216dc0991@ti.com>
-X-B4-Tracking: v=1; b=H4sIAIMj7GYC/4WNQQ6DIBBFr2Jm3WkAQaSr3qNxUQF1FgUDxLQx3
- r3UC3T5XvLf3yH7RD7Drdkh+Y0yxVBBXRqwyzPMHslVBsGEZIa1OEqM64qu4EjBUZhxojfq1na
- 9MFpxJ6Bu1+SrPruPofJCucT0OW82/rP/ihtHhpP2vO+k6pyZ7oWuNr5gOI7jC7qghGK3AAAA
-X-Change-ID: 20240903-b4-opp-dt-binding-fix-73c6829751d2
-To: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen
- Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Viresh Kumar <viresh.kumar@linaro.org>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dhruva Gole <d-gole@ti.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726751674; l=3557;
- i=d-gole@ti.com; s=20240919; h=from:subject:message-id;
- bh=/xmLIZTg25Qjq5h9nsT+FMqltJMCECrFHyT6Rqa27CI=;
- b=bzLUyEtejxYDeR3eWj51T+q/pqIA1dZiT8O1FZelEeHpzkjoh91gEWYiLXRC65SC3FDUuswTs
- 35h9VoGiYK1C1VEpC/2vcYCPJaB06G0Teqe70zjiWMhTzCPxdlLrvr9
-X-Developer-Key: i=d-gole@ti.com; a=ed25519;
- pk=k8NnY4RbxVqeqGsYfTHeVn4hPOHkjg7Mii0Ixs4rghM=
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-It seems like we missed migrating the complete information from the old
-DT binding where we had described what the opp-supported-hw is supposed
-to describe. Hence, bring back the description from the previous binding
-to the current one along with a bit more context on what the values are
-supposed to be.
+On 2024/9/14 5:28, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> F2FS should understand how the device aliasing file works and support
+> deleting the file after use. A device aliasing file can be created by
+> mkfs.f2fs tool and it can map the whole device with an extrent, not
+> using node blocks. The file space should be pinned and normally used for
+> read-only usages.
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> ---
+>   fs/f2fs/data.c         |  5 +++++
+>   fs/f2fs/extent_cache.c | 10 ++++++++++
+>   fs/f2fs/f2fs.h         |  5 +++++
+>   fs/f2fs/file.c         | 36 ++++++++++++++++++++++++++++++++----
+>   fs/f2fs/inode.c        | 10 ++++++++--
+>   fs/f2fs/sysfs.c        |  2 ++
+>   6 files changed, 62 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 6457e5bca9c9..9ce92093ba1e 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -3423,6 +3423,11 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
+>   
+>   	if (!f2fs_lookup_read_extent_cache_block(inode, index,
+>   						 &dn.data_blkaddr)) {
+> +		if (IS_DEVICE_ALIASING(inode)) {
+> +			err = -ENODATA;
+> +			goto out;
+> +		}
+> +
+>   		if (locked) {
+>   			err = f2fs_reserve_block(&dn, index);
+>   			goto out;
+> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+> index fd1fc06359ee..03883963b991 100644
+> --- a/fs/f2fs/extent_cache.c
+> +++ b/fs/f2fs/extent_cache.c
+> @@ -401,6 +401,11 @@ void f2fs_init_read_extent_tree(struct inode *inode, struct page *ipage)
+>   	if (atomic_read(&et->node_cnt) || !ei.len)
+>   		goto skip;
+>   
+> +	if (IS_DEVICE_ALIASING(inode)) {
+> +		et->largest = ei;
+> +		goto skip;
+> +	}
+> +
+>   	en = __attach_extent_node(sbi, et, &ei, NULL,
+>   				&et->root.rb_root.rb_node, true);
+>   	if (en) {
+> @@ -463,6 +468,11 @@ static bool __lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
+>   		goto out;
+>   	}
+>   
+> +	if (IS_DEVICE_ALIASING(inode)) {
+> +		ret = false;
+> +		goto out;
+> +	}
+> +
+>   	en = __lookup_extent_node(&et->root, et->cached_en, pgofs);
+>   	if (!en)
+>   		goto out;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index ac19c61f0c3e..59179b9b3a83 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -208,6 +208,7 @@ struct f2fs_mount_info {
+>   #define F2FS_FEATURE_CASEFOLD			0x00001000
+>   #define F2FS_FEATURE_COMPRESSION		0x00002000
+>   #define F2FS_FEATURE_RO				0x00004000
+> +#define F2FS_FEATURE_DEVICE_ALIAS		0x00008000
+>   
+>   #define __F2FS_HAS_FEATURE(raw_super, mask)				\
+>   	((raw_super->feature & cpu_to_le32(mask)) != 0)
+> @@ -3001,6 +3002,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+>   #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
+>   #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
+>   #define F2FS_CASEFOLD_FL		0x40000000 /* Casefolded file */
+> +#define F2FS_DEVICE_ALIAS_FL		0x80000000 /* File for aliasing a device */
+>   
+>   #define F2FS_QUOTA_DEFAULT_FL		(F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL)
+>   
+> @@ -3016,6 +3018,8 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
+>   /* Flags that are appropriate for non-directories/regular files. */
+>   #define F2FS_OTHER_FLMASK	(F2FS_NODUMP_FL | F2FS_NOATIME_FL)
+>   
+> +#define IS_DEVICE_ALIASING(inode)	(F2FS_I(inode)->i_flags & F2FS_DEVICE_ALIAS_FL)
+> +
+>   static inline __u32 f2fs_mask_flags(umode_t mode, __u32 flags)
+>   {
+>   	if (S_ISDIR(mode))
+> @@ -4478,6 +4482,7 @@ F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
+>   F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
+>   F2FS_FEATURE_FUNCS(compression, COMPRESSION);
+>   F2FS_FEATURE_FUNCS(readonly, RO);
+> +F2FS_FEATURE_FUNCS(device_alias, DEVICE_ALIAS);
+>   
+>   #ifdef CONFIG_BLK_DEV_ZONED
+>   static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 168f08507004..0f4af6b303ff 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -727,6 +727,11 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+>   
+>   	trace_f2fs_truncate_blocks_enter(inode, from);
+>   
+> +	if (IS_DEVICE_ALIASING(inode) && from) {
+> +		err = -EINVAL;
+> +		goto out_err;
+> +	}
+> +
+>   	free_from = (pgoff_t)F2FS_BLK_ALIGN(from);
+>   
+>   	if (free_from >= max_file_blocks(inode))
+> @@ -741,6 +746,21 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+>   		goto out;
+>   	}
+>   
+> +	if (IS_DEVICE_ALIASING(inode)) {
+> +		struct extent_tree *et = F2FS_I(inode)->extent_tree[EX_READ];
+> +		struct extent_info ei = et->largest;
+> +		unsigned int i;
+> +
+> +		for (i = 0; i < ei.len; i++)
+> +			f2fs_invalidate_blocks(sbi, ei.blk + i);
+> +
+> +		dec_valid_block_count(sbi, inode, ei.len);
+> +		f2fs_update_time(sbi, REQ_TIME);
+> +
+> +		f2fs_put_page(ipage, 1);
+> +		goto out;
+> +	}
+> +
+>   	if (f2fs_has_inline_data(inode)) {
+>   		f2fs_truncate_inline_inode(inode, ipage, from);
+>   		f2fs_put_page(ipage, 1);
+> @@ -776,7 +796,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
+>   	/* lastly zero out the first data page */
+>   	if (!err)
+>   		err = truncate_partial_data_page(inode, from, truncate_page);
+> -
+> +out_err:
+>   	trace_f2fs_truncate_blocks_exit(inode, err);
+>   	return err;
+>   }
+> @@ -994,7 +1014,8 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>   		return -EPERM;
+>   
+>   	if ((attr->ia_valid & ATTR_SIZE)) {
+> -		if (!f2fs_is_compress_backend_ready(inode))
+> +		if (!f2fs_is_compress_backend_ready(inode) ||
+> +				IS_DEVICE_ALIASING(inode))
+>   			return -EOPNOTSUPP;
+>   		if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
+>   			!IS_ALIGNED(attr->ia_size,
+> @@ -1855,7 +1876,7 @@ static long f2fs_fallocate(struct file *file, int mode,
+>   		return -EIO;
+>   	if (!f2fs_is_checkpoint_ready(F2FS_I_SB(inode)))
+>   		return -ENOSPC;
+> -	if (!f2fs_is_compress_backend_ready(inode))
+> +	if (!f2fs_is_compress_backend_ready(inode) || IS_DEVICE_ALIASING(inode))
+>   		return -EOPNOTSUPP;
+>   
+>   	/* f2fs only support ->fallocate for regular file */
+> @@ -3264,6 +3285,9 @@ int f2fs_pin_file_control(struct inode *inode, bool inc)
+>   	struct f2fs_inode_info *fi = F2FS_I(inode);
+>   	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>   
+> +	if (IS_DEVICE_ALIASING(inode))
+> +		return -EINVAL;
+> +
+>   	if (fi->i_gc_failures >= sbi->gc_pin_file_threshold) {
+>   		f2fs_warn(sbi, "%s: Enable GC = ino %lx after %x GC trials",
+>   			  __func__, inode->i_ino, fi->i_gc_failures);
+> @@ -3294,6 +3318,9 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
+>   	if (f2fs_readonly(sbi->sb))
+>   		return -EROFS;
+>   
+> +	if (!pin && IS_DEVICE_ALIASING(inode))
+> +		return -EOPNOTSUPP;
+> +
+>   	ret = mnt_want_write_file(filp);
+>   	if (ret)
+>   		return ret;
+> @@ -4711,7 +4738,8 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter,
+>   	else
+>   		return 0;
+>   
+> -	map.m_may_create = true;
+> +	if (!IS_DEVICE_ALIASING(inode))
+> +		map.m_may_create = true;
+>   	if (dio) {
+>   		map.m_seg_type = f2fs_rw_hint_to_seg_type(sbi,
+>   						inode->i_write_hint);
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index aef57172014f..f118e955ba88 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -367,6 +367,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+>   		return false;
+>   	}
+>   
+> +	if ((fi->i_flags & F2FS_DEVICE_ALIAS_FL) && !f2fs_sb_has_device_alias(sbi)) {
+> +		f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but the feature is off",
+> +			  __func__, inode->i_ino);
+> +		return false;
+> +	}
 
-Fixes: e576a9a8603f ("dt-bindings: cpufreq: Convert ti-cpufreq to json schema")
-Signed-off-by: Dhruva Gole <d-gole@ti.com>
----
-Changes in v5:
-- Fix the new lines inserted to seperate paragraphs.
-- /eg./example,/
-- Fix Odd line wrapping
-- Link to v4: https://lore.kernel.org/all/20240918173431.GA1833339-robh@kernel.org/
+Do we need to do sanity check device_alias feature flag w/
+sb.devs[].path format? and related inode?
 
-Changes in v4:
-- Fix dt_binding_check errors on previous revision.
-- As per Rob's suggestion, used a blank line in between description
-  and the paragraph.
-- Reworded the description a bit.
-- Link to v3: https://lore.kernel.org/all/20240917095252.1292321-1-d-gole@ti.com/
+> +
+>   	return true;
+>   }
+>   
+> @@ -818,8 +824,6 @@ void f2fs_evict_inode(struct inode *inode)
+>   	f2fs_bug_on(sbi, get_dirty_pages(inode));
+>   	f2fs_remove_dirty_inode(inode);
+>   
+> -	f2fs_destroy_extent_tree(inode);
 
-Changes in v3:
-- Use the items: and then provide description for both required items.
-  This tries to address Rob's comments on previous revision.
-- I've not use min/max Items as the 2 descriptions items implicitly
-  imply that number of bitfields needed are 2.
-- Link to v2: https://lore.kernel.org/all/20240905-b4-opp-dt-binding-fix-v2-1-1e3d2a06748d@ti.com/
+For hardlink inode, it missed to call f2fs_destroy_extent_tree()?
 
-Changes in v2:
-- Drop the patch where I updated Maintainers since it's already picked
-  by Viresh.
-- Add more details of how to populate the property based on device
-  documents like TRM/ datasheet.
-- Link to v1: https://lore.kernel.org/r/20240903-b4-opp-dt-binding-fix-v1-0-f7e186456d9f@ti.com
----
- .../bindings/opp/operating-points-v2-ti-cpu.yaml     | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+Thanks,
 
-diff --git a/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml b/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
-index fd0c8d5c5f3e7eacecb74523e052c2cbb076ce20..624d1f3f1382fb9cae576c6c4919a9be875cf061 100644
---- a/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
-+++ b/Documentation/devicetree/bindings/opp/operating-points-v2-ti-cpu.yaml
-@@ -45,7 +45,25 @@ patternProperties:
-       clock-latency-ns: true
-       opp-hz: true
-       opp-microvolt: true
--      opp-supported-hw: true
-+      opp-supported-hw:
-+        items:
-+          items:
-+            - description:
-+                The revision of the SoC the OPP is supported by.
-+                This can be easily obtained from the datasheet of the
-+                part being ordered/used. For example, it will be 0x01 for SR1.0
-+
-+            - description:
-+                The eFuse bits that indicate the particular OPP is available.
-+                The device datasheet has a table talking about Device Speed Grades.
-+                This table is to be sorted with only the unique elements of the
-+                MAXIMUM OPERATING FREQUENCY starting from the first row which
-+                tells the lowest OPP, to the highest. The corresponding bits
-+                need to be set based on N elements of speed grade the device supports.
-+                So, if there are 3 possible unique MAXIMUM OPERATING FREQUENCY
-+                in the table, then BIT(0) | (1) | (2) will be set, which means
-+                the value shall be 0x7.
-+
-       opp-suspend: true
-       turbo-mode: true
- 
-
----
-base-commit: 3621a2c9142bd490af0666c0c02d52d60ce0d2a5
-change-id: 20240903-b4-opp-dt-binding-fix-73c6829751d2
-
-Best regards,
--- 
-Dhruva Gole <d-gole@ti.com>
+> -
+>   	if (inode->i_nlink || is_bad_inode(inode))
+>   		goto no_delete;
+>   
+> @@ -874,6 +878,8 @@ void f2fs_evict_inode(struct inode *inode)
+>   		goto retry;
+>   	}
+>   
+> +	f2fs_destroy_extent_tree(inode);
+> +
+>   	if (err) {
+>   		f2fs_update_inode_page(inode);
+>   		if (dquot_initialize_needed(inode))
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index fee7ee45ceaa..bf64f4cc3522 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -1281,6 +1281,7 @@ F2FS_SB_FEATURE_RO_ATTR(sb_checksum, SB_CHKSUM);
+>   F2FS_SB_FEATURE_RO_ATTR(casefold, CASEFOLD);
+>   F2FS_SB_FEATURE_RO_ATTR(compression, COMPRESSION);
+>   F2FS_SB_FEATURE_RO_ATTR(readonly, RO);
+> +F2FS_SB_FEATURE_RO_ATTR(device_alias, DEVICE_ALIAS);
+>   
+>   static struct attribute *f2fs_sb_feat_attrs[] = {
+>   	ATTR_LIST(sb_encryption),
+> @@ -1297,6 +1298,7 @@ static struct attribute *f2fs_sb_feat_attrs[] = {
+>   	ATTR_LIST(sb_casefold),
+>   	ATTR_LIST(sb_compression),
+>   	ATTR_LIST(sb_readonly),
+> +	ATTR_LIST(sb_device_alias),
+>   	NULL,
+>   };
+>   ATTRIBUTE_GROUPS(f2fs_sb_feat);
 
 
