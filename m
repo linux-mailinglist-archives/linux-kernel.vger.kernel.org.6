@@ -1,151 +1,198 @@
-Return-Path: <linux-kernel+bounces-333839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CCF997CECF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:41:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 364BD97CECE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FF19282CC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A6A41C21674
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DD314B064;
-	Thu, 19 Sep 2024 21:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="dcAgRKzM"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12olkn2068.outbound.protection.outlook.com [40.92.21.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DAE14B064;
+	Thu, 19 Sep 2024 21:41:21 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F5F142E70
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 21:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.21.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726782094; cv=fail; b=J58i86nOtHblv8z0Y2JB8GmWQS9D0ZYucGs30uWPM73EtGpPZW6g69QwHrjk5pVOmywTXKR/dQ8f0slMK7EL1kwJcr56R5OhlHVM5SjiK4UUogql6lyPuAZ9lVcECxsnKy1+MocOqrww5MGsnqoKMINcuxSHTNgr5/EMJQumkxE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726782094; c=relaxed/simple;
-	bh=u7gMN+mV+ZEsWrz7gVEb2TO4Jx2Vt6CCzodG7hoxXdY=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=BsxtNo0p2K2DZ45nkPB5J5nWoXW86rrJJbGfDKmwPwqLyGzDqZvh46IDnQ8M9mEYDRxEA3fukCPCz05hZtv04TLfbk9oPFIXYkd/nLgc2vq3gO3VyUmRMNiMHgo9YkcoIK7Oh0XtdRyV6UKee7Z//YXLCXsy3KVlvFaSn2vnT7I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=dcAgRKzM; arc=fail smtp.client-ip=40.92.21.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XIhaEo8zSWr2Xp4LdNnKMnsK+NC8LaGpbv1XShgTN2YNxZx598yZkLfSSGUsBSV6ADmHzZ9FlAx9NCk0U7Ju73Nn6Mv5jxWWPXgwf0eQAkAS3UoK90jfhmQw8nhh3m7BcVX7PMyqCyd6Tzejf4xzyQBxhg8J++uv8d+pfup5lEyVUPaX6mxtvr4tMjgmvISm6AMesPK5skbXmHEBlDnCffKy/RcBUdKqbMkGsSIkRpa+wGNZQ3yz4G3OqC5L/Fv5oZluRGc8p7v7aNlBFBG+VitSEgfoAUhmAq1IyuuJrW0qR3oKLck0uAUV8vjMaUATzYbYhrzZHxXR5LQmhO2zXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=znIXMbVKkiijy+9FiPQg4zBkjtUcC/BUFTHVVdkCB1w=;
- b=RV1GeXKqTbbaCP8tNQAEO2IQH9CeUo2jGrFck31IT6rUE16QF2sCukhBaf3bydrPMtQ+KPRgOdo0wmZ9cZuIQM2RJWqK2LN+0WA6xiLstqH/uSE274gN75G56Om0pnrBkRKiubpojWBy0eSMPVv9ZnlJtp6fEAFcPnkIUDiQd5S1vtsciW2rCwvBfxaPvXOkaxXtGpNsN4MwMSDm7s3dIJNzdKFAhp4ED0+V62bYn3czt38wQ3EikfKzkj1CVnOW+jrc7w6qqG+yhqpO/YiTID2HjI4e4tzo2olSHtp2g6LCKdqXcd7hSw6FtV1Y36j0Wd3YUuAcwTQ/ONSlJ2VquQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=znIXMbVKkiijy+9FiPQg4zBkjtUcC/BUFTHVVdkCB1w=;
- b=dcAgRKzMyhaAjObNsFmsaitIK+u8EQaoXx9BAbgC5VvAw8vWkcZWGG0K9tKhZirskyAEJojLqUKG0jO/Xe6wOarq5jRnQYgvvpwU9BsSiXOojRlSbchNm1QRjVfFPPX4ueoPeJN+ttRVOh44euRj23OiCYqOGHt/1I/mRzXtbvASxY1K2F5yuAztJbIBebYcshT+WSWBCZniebYETOMAfG+cMamdzIxDYBRcNtZ2ez6nWlC8VU1i+SwbJaJp07TKwFzWAhdjIW2ypNQfHMsP6E2V/zNvdQyxbDwQBg4Ys+wJcdxXaMaf1+cwfx1zQYLS6oCnLWll/bWtygHIG1m8YQ==
-Received: from SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM (2603:10b6:a03:570::8)
- by SJ0P223MB0711.NAMP223.PROD.OUTLOOK.COM (2603:10b6:a03:483::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.21; Thu, 19 Sep
- 2024 21:41:27 +0000
-Received: from SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
- ([fe80::b5cd:c37a:bd3e:e3fd]) by SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
- ([fe80::b5cd:c37a:bd3e:e3fd%5]) with mapi id 15.20.7982.012; Thu, 19 Sep 2024
- 21:41:27 +0000
-From: Steven Davis <goldside000@outlook.com>
-To: brauner@kernel.org
-Cc: jlayton@kernel.org,
-	nichen@iscas.ac.cn,
-	linux-kernel@vger.kernel.org,
-	Steven Davis <goldside000@outlook.com>
-Subject: [PATCH] mqueue: Prevent memory leak by freeing unused node
-Date: Thu, 19 Sep 2024 17:40:58 -0400
-Message-ID:
- <SJ2P223MB10262FC2C833475F2A5BEE3EF7632@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.39.5
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CH0PR03CA0439.namprd03.prod.outlook.com
- (2603:10b6:610:10e::8) To SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:a03:570::8)
-X-Microsoft-Original-Message-ID:
- <20240919214058.11512-1-goldside000@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141AD143879
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 21:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726782080; cv=none; b=iNh8k9OZutXZwci1vS3nYAG16BcVfg8Uh8Q7sd8r9ZlA98w3izy33g1aMvdhvNmz0Nuvz+UH0oTPxCt1lSD2PShwDymP9EE9NolM/6up2cI85gG9aFeiS+SXyCPK2s20P6wX7KMoeaB2pLBoM2Qb6T3i/toKAMqfDqQHaoycj4c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726782080; c=relaxed/simple;
+	bh=WnqffNCFosVi6u5lcz1YKZTGiRy5I0laQzJ1qVWoYHY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=i2fdqTEhQIKBlWW93RuVzR8/87/6v72Sy2GJQSTM9md/S4Dn/WhQS0xg3UWcfOi5oeEsblExcn7pCMdYiKy6PYXVtCf7yLqFgdaTKDqPvACamIY3t3Ki7W6BbRUgm3Z2nTgNZHJ6ymn2CoIv/QQ7ri20weki6PLpV6sfNGZaPwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a080ae776eso15137375ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 14:41:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726782077; x=1727386877;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZKX/sd8fJgGOiv0DEuPDxctGgRWqhpSMrAriHGX9S0c=;
+        b=VQo1venzy8arMdPfuGF274ey59P9uWYAVaULLnrFf47kGchXnm8tY44QVZ1QT8t4vw
+         tsxCt8ghRxkOWb0Cj6xvDR371wKHQAbQcvgo+ZJOGctmQC+DF8MA2CNL7hgcNC8cr0J8
+         W4toKO+abHx9QmcPLn6QtbXHdMfvaUOeySiR0qrz/Y6SC5KidBH8rCtrjscHeJJzA0kX
+         1kKquY559k/cfwocyAscLAu5F0hrabY047BltPt76AgQNRXK1eN+dI7Ljq+UaABg6TX0
+         4Yg8rqXkYay0Jw5yQmAAotcwkfog+QKur+bzSIlTD/+R2PAOZchZnHxyAekdFCDllZ78
+         NKAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXP8NfbmIhPPCRAaDdBM+u0UMUp33TLCUV7ySmZFgDpTPBtwpvu7irBj9BlBxHbuuDLMgrShpRAhVOCRw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXsC9E8JYCqeb9nE6xaUEk3dNj8yQ23N0j+aWXQxxzVxhAn6wf
+	nUADjqPSEYIzmrYbz9wqw0eK4cYc7FHZ6cQKR0b88M8cH8j93LYRltZ2EQr3yfa8IroznHexOJ9
+	GYzMIAMc0RJfFG22At+1W+AZU1AeKNky+m9KoI1hIguWKM82A2/nHqbE=
+X-Google-Smtp-Source: AGHT+IF3fuFzd9nfh9CPtWW3qRd1mr/8OG5Q2v+hCZsV0MDhXujwJbNo8ruuXDXUeIf9NbMNMM9wClf2tl9s+ORCkfm1S3mnIJSU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2P223MB1026:EE_|SJ0P223MB0711:EE_
-X-MS-Office365-Filtering-Correlation-Id: bcff8d01-a1ef-4022-c6be-08dcd8f3d066
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|7042599003|5062599005|15080799006|461199028|19110799003|8060799006|3412199025|440099028|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	NT5Bsw+AE122KgDcnYSkfVe6LdrmzMwt7AkNvPtgyztz4E7lspafvgBOJG5ueriOOGGn+Kzyz8p8yYXGAxv6q9LkVdA/k9hj5j6nmSSYIday1au4o/AuJWKEJKywuVFimq3677SDV1p5eGr5vnBhHQKdgMtjEAJ4MwNDtuw0k/qObsKyp6fzyM2vZxsWtO7XA0Ke8EjcXIOjPA5Wikwb2pbv8LLPfh1tvHs+q6jy2TAbf/jvJGJG+4cDbBwU4GYq6wIoDIOGUjYLIi+P1x/AP3DNm24ije2olXhEDgO72D21s/DfKi1sSaB95bJcxjCgK7pBOi90+q8z3G3z83yZveY3CINirVLWISeGhFd/vEXfjatXNf2kuDfmgBNUdDvEtXTdu8V2KXrhLCvpNogjROxXPH4AwhskG1wOB8Z1FhUvKp/rIosfkyAeqEMPK9390hIZe1jFc4r/XlzHMR36lT6pG8VlkFXo4DM5GMQZDqtqvVm1hRlX+bTBVcDXL4u18US5IlGbfLVOaIA7jx2bnGCl6HQsWn2fKFzrfDVMyW5jyo4cKezBolQIpa6vW4tLib2mmsk2CYiw84Lyiyp7wWURYd7TvWxLjfSpz1Vx1txT0r9jcQayRkkHOabDV/54rbkiXDFJCGVhHQMKG3U6Pnao2KbxaW/AYSnUF+qaBqfD64DmiOCN80ozmUNwjnWyv7GJf91TDezTysHt3iqTLaKv1VVjZE49Zq/X6Eve78KZwhv4fXFxo5A9m+7ZN+7evENsJ7ftQ1MXmj2oGdBGrteYCcN8anjIkWUU4dA0paE=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AduBqkHiczwaERrcTg8caK4mvEmhVk2W/LJiNPUaHhl9Z2GJMfdGYGiuoCHJ?=
- =?us-ascii?Q?OgzXrEuqJ9RmjS//Njep+oASMtaT3rGrnKJJrxDiUpDwEzdH3dEbuM4rfB8L?=
- =?us-ascii?Q?VpMlA+EwFFlAh5JOUA82xrDz+pYLKQoyHxV6+vJ8eT8nPW1xdkUYdrA2OhHQ?=
- =?us-ascii?Q?9A1/lcujhEKX3jO3U12LcWxD9HhPaaQTJRPwwGF8XuIhdEUriYHbzNZwwp/4?=
- =?us-ascii?Q?1DZ3IWBGG/quh82phwZV5EE/TGfvpJi+NGW0jd9X06l/6v3DGBEmDvtrS3Eu?=
- =?us-ascii?Q?7wyEuANiLzYFL5cAzlXmqRctfJ3gVPwgcoKLdZvWimpsCmqBjhs5iPqeRx8w?=
- =?us-ascii?Q?KcDO7L84iGWJbTCZa+WgB9B52Ce9RMwOwEGOxWu74c/MuI8SYfsE99m6EUBb?=
- =?us-ascii?Q?hPSjXsJwEWG9UHDsjIynX04prXGQH7q9K1o0xqQ1rWsFWgjBqGyaVeI2pDjr?=
- =?us-ascii?Q?n4qyHwEV9TlrGcb41qeDWJ6cha8dzIm5cWTa6nylDjdaqU/Ixqi4Bt8W8fec?=
- =?us-ascii?Q?WGnvyXoXODCJm+t5pClMFgCViZ/tYni0i8eGXQO/BCeYJJ0cdsFFAdk1ve2y?=
- =?us-ascii?Q?k1Ed7yGCrXNuRH0f89WhIFPoSnLp5gxTxyIbDsphOkdc006GlfSYNm9bvwa2?=
- =?us-ascii?Q?fqp3ZzdvYlG238zehwqRY4vXcK6caFjfSWmvNyAZ0XWUxFRdwHpvNpiHMc+Y?=
- =?us-ascii?Q?0oNdYaOCPkt7krFl/vC7cD4o402s5IYEUKHAK1VpMqfye9wp978X15SWHwX1?=
- =?us-ascii?Q?+UbAd7WJqSkTapZB4gwcs9VwXeIazEI1X2S2Evp6btnHlRLS07J3qIpKQ0ad?=
- =?us-ascii?Q?jxCmbyko9pZTtv1OHgGcFgZpi6wKN/UbYjvS8lFagUT3yLBs5N2DkKVCAbBT?=
- =?us-ascii?Q?d7YPXO9mixg443BGjpkeivCgpMACkhemajR6P8T2rbr34a33cAlviS6/2clJ?=
- =?us-ascii?Q?m1RynI01yTEPz8MjCei0a/AByVH7cIP9rXM64M+276SSOE2HS+KlsK4zhCy+?=
- =?us-ascii?Q?8yzfmfAgUclaTYYWFTsqEUnuNMAOO+smo7D65Lx8AjMla0zXzqXjxlRAvLWS?=
- =?us-ascii?Q?GXekYij+dg6vYtG+BOS4z9Rk61r4cOOieYD3hnwu+lNNKeACo1OsOkI/b0le?=
- =?us-ascii?Q?qgzt3IJfJk4MmGDZpPvR2PadwWocYNFwOZbnigHvo7bJhpWk4xet40/PkKse?=
- =?us-ascii?Q?vf3O9Iv1mnZdqaEA5XB66gyoQobdYs0ZblP6sdUbAItByzviv9yhAdLdnRbC?=
- =?us-ascii?Q?K7NloLhpzMWzbNX1V2cy?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bcff8d01-a1ef-4022-c6be-08dcd8f3d066
-X-MS-Exchange-CrossTenant-AuthSource: SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2024 21:41:26.9423
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0P223MB0711
+X-Received: by 2002:a05:6e02:1a8e:b0:3a0:b1ea:816 with SMTP id
+ e9e14a558f8ab-3a0c9db0144mr5087635ab.25.1726782077160; Thu, 19 Sep 2024
+ 14:41:17 -0700 (PDT)
+Date: Thu, 19 Sep 2024 14:41:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ec9a7d.050a0220.29194.004a.GAE@google.com>
+Subject: [syzbot] [bcachefs?] divide error in __bch2_strtoh
+From: syzbot <syzbot+24beef64217854da05a4@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Added a check to free the newly allocated node when the node cache is NULL.
-This prevents memory leaks by ensuring that memory allocated with kmalloc
-is released if it is not being reused from the cache. This change enhances
-memory management consistency within the msg_insert function.
+Hello,
 
-Signed-off-by: Steven Davis <goldside000@outlook.com>
+syzbot found the following issue on:
+
+HEAD commit:    932d2d1fcb2b Merge tag 'dlm-6.12' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=157b3b00580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c208b3605ba9ec44
+dashboard link: https://syzkaller.appspot.com/bug?extid=24beef64217854da05a4
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11bf0ca9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d26607980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-932d2d1f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fbcb7198214b/vmlinux-932d2d1f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/418eaebf4817/bzImage-932d2d1f.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/dd062a95a35e/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+24beef64217854da05a4@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 32768
+Oops: divide error: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5102 Comm: syz-executor109 Not tainted 6.11.0-syzkaller-05442-g932d2d1fcb2b #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:div_u64_rem include/linux/math64.h:29 [inline]
+RIP: 0010:div_u64 include/linux/math64.h:130 [inline]
+RIP: 0010:__bch2_strtou64_h fs/bcachefs/util.c:143 [inline]
+RIP: 0010:__bch2_strtoh+0xb59/0xeb0 fs/bcachefs/util.c:168
+Code: ff 0f 88 8f 00 00 00 4c 89 74 24 08 44 89 f8 48 01 c5 48 89 2c 24 e8 96 52 49 fd 4d 89 e6 44 89 e1 48 c7 c0 ff ff ff ff 31 d2 <48> f7 f1 48 89 c5 48 8b 5c 24 18 48 89 df 48 89 c6 e8 d1 54 49 fd
+RSP: 0018:ffffc90002dff8e8 EFLAGS: 00010246
+RAX: ffffffffffffffff RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffff8880382487a2 R08: ffffffff844a8c4d R09: 0000000000000000
+R10: 0000000000000009 R11: ffff88801fdc8000 R12: 1000000000000000
+R13: ffff8880382487a0 R14: 1000000000000000 R15: 0000000000000001
+FS:  00005555730ab380(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9b13dff000 CR3: 000000004001a000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bch2_strtou64_h+0xa5/0x120 fs/bcachefs/util.c:205
+ bch2_opt_parse+0x2dd/0x4c0 fs/bcachefs/opts.c:353
+ bch2_parse_one_mount_opt+0x2d3/0x5e0 fs/bcachefs/opts.c:501
+ bch2_fs_parse_param+0x137/0x180 fs/bcachefs/fs.c:2095
+ vfs_parse_fs_param+0x1a5/0x420 fs/fs_context.c:146
+ vfs_parse_fs_string fs/fs_context.c:188 [inline]
+ vfs_parse_monolithic_sep fs/fs_context.c:230 [inline]
+ generic_parse_monolithic+0x2c8/0x400 fs/fs_context.c:258
+ do_new_mount+0x28f/0xb40 fs/namespace.c:3503
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9b1b2ffdea
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffef7660ac8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffef7660ae0 RCX: 00007f9b1b2ffdea
+RDX: 0000000020000040 RSI: 000000002000f680 RDI: 00007ffef7660ae0
+RBP: 0000000000000004 R08: 00007ffef7660b20 R09: 000000000000f62d
+R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
+R13: 00007ffef7660b20 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:div_u64_rem include/linux/math64.h:29 [inline]
+RIP: 0010:div_u64 include/linux/math64.h:130 [inline]
+RIP: 0010:__bch2_strtou64_h fs/bcachefs/util.c:143 [inline]
+RIP: 0010:__bch2_strtoh+0xb59/0xeb0 fs/bcachefs/util.c:168
+Code: ff 0f 88 8f 00 00 00 4c 89 74 24 08 44 89 f8 48 01 c5 48 89 2c 24 e8 96 52 49 fd 4d 89 e6 44 89 e1 48 c7 c0 ff ff ff ff 31 d2 <48> f7 f1 48 89 c5 48 8b 5c 24 18 48 89 df 48 89 c6 e8 d1 54 49 fd
+RSP: 0018:ffffc90002dff8e8 EFLAGS: 00010246
+RAX: ffffffffffffffff RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffff8880382487a2 R08: ffffffff844a8c4d R09: 0000000000000000
+R10: 0000000000000009 R11: ffff88801fdc8000 R12: 1000000000000000
+R13: ffff8880382487a0 R14: 1000000000000000 R15: 0000000000000001
+FS:  00005555730ab380(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055b9811eb7f8 CR3: 000000004001a000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	ff 0f                	decl   (%rdi)
+   2:	88 8f 00 00 00 4c    	mov    %cl,0x4c000000(%rdi)
+   8:	89 74 24 08          	mov    %esi,0x8(%rsp)
+   c:	44 89 f8             	mov    %r15d,%eax
+   f:	48 01 c5             	add    %rax,%rbp
+  12:	48 89 2c 24          	mov    %rbp,(%rsp)
+  16:	e8 96 52 49 fd       	call   0xfd4952b1
+  1b:	4d 89 e6             	mov    %r12,%r14
+  1e:	44 89 e1             	mov    %r12d,%ecx
+  21:	48 c7 c0 ff ff ff ff 	mov    $0xffffffffffffffff,%rax
+  28:	31 d2                	xor    %edx,%edx
+* 2a:	48 f7 f1             	div    %rcx <-- trapping instruction
+  2d:	48 89 c5             	mov    %rax,%rbp
+  30:	48 8b 5c 24 18       	mov    0x18(%rsp),%rbx
+  35:	48 89 df             	mov    %rbx,%rdi
+  38:	48 89 c6             	mov    %rax,%rsi
+  3b:	e8 d1 54 49 fd       	call   0xfd495511
+
+
 ---
- ipc/mqueue.c | 4 ++++
- 1 file changed, 4 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-index a7cbd69efbef..59ec6b3c1557 100644
---- a/ipc/mqueue.c
-+++ b/ipc/mqueue.c
-@@ -227,6 +227,10 @@ static int msg_insert(struct msg_msg *msg, struct mqueue_inode_info *info)
- 	info->attr.mq_curmsgs++;
- 	info->qsize += msg->m_ts;
- 	list_add_tail(&msg->m_list, &leaf->msg_list);
-+
-+	if (info->node_cache == NULL)
-+		kfree(leaf);
-+
- 	return 0;
- }
- 
--- 
-2.39.5
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
