@@ -1,124 +1,181 @@
-Return-Path: <linux-kernel+bounces-333041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987C197C2A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 03:43:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A929C97C2AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 03:44:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB1771C21614
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 01:43:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE26B1C21989
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 01:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7D11DA23;
-	Thu, 19 Sep 2024 01:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481AE1CD29;
+	Thu, 19 Sep 2024 01:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="zBDJ6s/7"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hC46j25E"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB7F7494
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3128312E48;
+	Thu, 19 Sep 2024 01:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726710200; cv=none; b=ueElb0GLB7Gdd9r+w6tUh7uZnJLogu6Ww8RjkpaZ0WbCKEB7V6GeifbNjNLcq2pPFGK36p3KPCmnt4rhYUr4OY5SZmajcHEW1V79UFv9I7gK3kbYSW1CqM+Nr5zTtU/jszFtlw8vXuG+HRGLl7nyY9wjDwcUCYMlTEa2QgAw/iE=
+	t=1726710284; cv=none; b=bDS5KpV6UOLO1X/b4bmK2dc7ySjSy8mROLkhmuEXnrULTHkF68J9ejYA8O7Hs2fnwYP02JxIQKL7oJ8D61Vxgre1nOFBqPclIYPrzSsz/cYgJsaZCZK/8/XedROlLm0NeGopYyY9zgUQVMbrDnXqMpM/ZlBUNHhbUCikuF6jZNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726710200; c=relaxed/simple;
-	bh=oNXPqtyDgLu9Kh2ue6NBD6CfWTrY2WHFnxBQrLR39sg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=av7xSP3zGwD17hW+ECugot2v1IJJhi4yMzLnYFS+k0rWzaLBzTLu+zQ403HtsypFwiqkTpnrmt5IqO3nmWLU+PlysFbMZTFFWUCMST8Bz5lR1NKxcqxBjy7jj4b2p599r7jpWOnDHoYsuUeYiLE7ctqVOtFBwmj8ijJwXD3kBhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=zBDJ6s/7; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-718d6ad6050so214012b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 18:43:18 -0700 (PDT)
+	s=arc-20240116; t=1726710284; c=relaxed/simple;
+	bh=gOX2Efoo6f2Mn2ISU9WRaKt7vI3dsEcG5PIE8Whds9c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=akKXiPx//WcX3ggs77GT4G9NTKVD8czJfWxlvkL8ZGWf7xv1LJUIaja3mr32IK9g3ByspuFg/DObv8Lvd+IrXreRwFjPl1xoMi6R/+xNUi1NNNytOofOtIwSaqPd224md/1o1riP9cvk4LxD0my8wvBMTcJT//vtZwFCn0t9x10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hC46j25E; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-39f56df0ddbso1332975ab.3;
+        Wed, 18 Sep 2024 18:44:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726710198; x=1727314998; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+jwxQJbxpwl4voWuXzYITDQeat0ESjsMo2U9Mc7bSDY=;
-        b=zBDJ6s/7s54hp1CPEEoM5xvQtVnHO9JpYjNVxYHuwzcCmu0iUhSxVkE1Nz3Qa7lNdP
-         /1cxGp7hj9VIbmrZvqdfkEv4CNhjjqNYgJKbLcplGlWvuwch1HPxXgoXPAfDS8ilZfMF
-         cLxTIeLj45WtloEoPSfyGPGQSN3CVJPq0H8g7P9oX+ffFL8vvdbD3+m5ZpWtfMnu5AuI
-         XMtXmNGFzwVw3D6hFPoVVGcYqaaJ+IBpdMfNbF1j4Z1sc2WXoB47QYRstLaH0Gjv19r4
-         YJlXquYfhTpv3wP/Mq2RkBeUmvl3vy1sHoZKx9Hf3FZ9jq0XAwGK9sJG2RoQyYr+gZgL
-         h28g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726710198; x=1727314998;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1726710282; x=1727315082; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+jwxQJbxpwl4voWuXzYITDQeat0ESjsMo2U9Mc7bSDY=;
-        b=wTD/jhdqukgGoRW+C1Zdq4HDWt+LeuohMUQZ9ZSA6Elf1tM5CjK0sdrXdTiZKaSY8W
-         zhCb3NDJVmvJ1TYYs9BHhSHWHXtL8dev9GJ3lRN3c12YDSW2U2u5sKbC5bC/50ZXb5qf
-         U17/nYlDj4lbiI9iIsLbnQZLYo37vBNqgMMXo15QtptWdAOsXq59wqtHGDGMQDS2B6iF
-         kjykkqD+EtT6yDsk6//YzkI789wZPiGTf3bt5jKcfLTqmXlTsIuhqTyo+rVtncemAn2R
-         RFWF6+tL5NZyOXNEI90FxPN6LFRaA2tgxZ8fWOHhJprR3iAyjgqQ5pL/yYH+ai2lQBMd
-         9oaA==
-X-Forwarded-Encrypted: i=1; AJvYcCU11Rhji8Tv+w3c6chy7hKVVa0NgXTOt5eSfhYRg9B4TkI1MOFwOy/R2GBew1a0nqGf8A2kb2s15GdVBlI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9tWlLOXez3e2vZsTJsNLsKqeE9UzXU0g4ZmRXhxSf8+P2IBxI
-	xfB3BpEAQ0nD5T39fkeF2HViK15adgfkdsWbGRVH8KWk16mC2I2rorswvU4sdHQ=
-X-Google-Smtp-Source: AGHT+IHP3QnTzJJQUGix1BZtfPAN61RzG3kG6wmczzL7AUu1v04MsD1wNi6JBs9VM4Ciz1/aEAynVA==
-X-Received: by 2002:a05:6a21:3942:b0:1d2:bb49:908b with SMTP id adf61e73a8af0-1d2bb499130mr25408416637.18.1726710198379;
-        Wed, 18 Sep 2024 18:43:18 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719918df7ccsm150940b3a.40.2024.09.18.18.43.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 18:43:17 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sr6CR-0072c8-0x;
-	Thu, 19 Sep 2024 11:43:15 +1000
-Date: Thu, 19 Sep 2024 11:43:15 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Chris Mason <clm@meta.com>, Jens Axboe <axboe@kernel.dk>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Daniel Dao <dqminh@cloudflare.com>, regressions@lists.linux.dev,
-	regressions@leemhuis.info
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-Message-ID: <ZuuBs762OrOk58zQ@dread.disaster.area>
-References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <Zud1EhTnoWIRFPa/@dread.disaster.area>
- <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
- <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
- <ZulMlPFKiiRe3iFd@casper.infradead.org>
- <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
- <ZumDPU7RDg5wV0Re@casper.infradead.org>
- <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
- <459beb1c-defd-4836-952c-589203b7005c@meta.com>
- <ZurXAco1BKqf8I2E@casper.infradead.org>
+        bh=DX8B0AVGc1Jcf/sZuX/Lm5rKGNOWSa7SVLWhBKf+5LU=;
+        b=hC46j25EYk4HsNeKbaRxZMzcjwm2ngn9aUItp5JkzMebn1pTO3WUJog/hB+cPapqwG
+         lMzBeaa36KBE6hDuQ8JyG2DHPK77KggmbFZ49og3vG9KNsrrWojZtgbhsXvoNwrBUGXJ
+         DGJLpPMjLQFeB9ZcpNQhgaphWSYGQfN+xdC6vsXgOLPF5wLa6KEzlY0xxpj/zK7Hf43y
+         ck2h15LpDY9w2VjMiFEXqmJfLbo7nueh9tVXfABJu+wpO5DqXeN5/R+fSXYzQC20pH/k
+         vzadINwjz+VVE3r1QtGzhtLe1TX8RYT5WbDiEove9k+sjsCaoq1QNu3qq65mk6Ua3vzh
+         F4ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726710282; x=1727315082;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DX8B0AVGc1Jcf/sZuX/Lm5rKGNOWSa7SVLWhBKf+5LU=;
+        b=e8W/v46n+x9iX8hGT9bE6Zt/b132he/4T79m/3dhk35sKfppMiiOHcVp83nxa7VFDf
+         /gVwsefp7dUrPwpicewwnQQEGLO3M0V22CBZeamHrtsOJqwEBDWEFMFW3Gs0ASsgvWIg
+         Dou5x5/uEV6Z1hpEKE3chdHvW+OCM33mMajUpfUc60wXrrlUvXIouXmvkvajAibAF8fq
+         meSyxhLWJZxXzReSkaieaAG2Kr6QPiVJEKw7/5DSWVlinAk3vp6pKQa6aMcV5ogfw9rJ
+         r3/KQmK/bVidbS8C1IN9qIwRBXA4rFtbEM6im2YyUVyaBmJKvQocyRBc4v5as6cYxk+S
+         ATQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgDLep22OLxeeQRKtPhjHgwikfeb76lRhkQNpuMLHyfjsEvBd9Fzm1bZ86l/9Rrz/XubOBbN2aCk2X5Ss=@vger.kernel.org, AJvYcCXMYh529ylU/ZeARqEA2S/jkoukzKkBn5iKseGLIqmocAPDy4uD2MJL6rK32Ix7NvAOMdH3jyA/OAe3Mzw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0xk1hGtQOGM1Le0L0PjLaoAP5fxcz72OljXDYIeHBoUMfPO+f
+	TVa2Nh/xEg+4lZPyGcVhqQRm98SW/rGbDBezmPIKd2gA+MgTHxv1SPvNC20C77UgO+NCGZ1v1i/
+	VTc1dAyBkA2oiNX1oISaZDcgJYUMUcA==
+X-Google-Smtp-Source: AGHT+IFvWrciDr6mTn/0jLlxcfQLFJaLJCVtLl6E6HMysiz+7fvxdv5D3t/y67xbPvsZHZCxSp+6BBa6yDCK4/1bo5U=
+X-Received: by 2002:a05:6e02:13a2:b0:39f:6180:afca with SMTP id
+ e9e14a558f8ab-3a08491196bmr275534325ab.13.1726710282105; Wed, 18 Sep 2024
+ 18:44:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZurXAco1BKqf8I2E@casper.infradead.org>
+References: <1725615837-24872-1-git-send-email-shengjiu.wang@nxp.com> <CAA+D8AOkQOanya6RViXfk_=CmNmCWx-N3cb-0SjMhSy0AA7LeA@mail.gmail.com>
+In-Reply-To: <CAA+D8AOkQOanya6RViXfk_=CmNmCWx-N3cb-0SjMhSy0AA7LeA@mail.gmail.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Thu, 19 Sep 2024 09:44:31 +0800
+Message-ID: <CAA+D8ANFn6yD=gV+uMYXyQ_7TmOoBnmJtMZ70qPOS_dHn8OkPA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 0/6] ASoC: fsl: add memory to memory function for ASRC
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: vkoul@kernel.org, perex@perex.cz, tiwai@suse.com, 
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com, 
+	nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, 
+	linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 18, 2024 at 02:34:57PM +0100, Matthew Wilcox wrote:
-> On Wed, Sep 18, 2024 at 11:28:52AM +0200, Chris Mason wrote:
-> > I think the bug was in __filemap_add_folio()'s usage of xarray_split_alloc()
-> > and the tree changing before taking the lock.  It's just a guess, but that
-> > was always my biggest suspect.
-> 
-> Oh god, that's it.
-> 
-> there should have been an xas_reset() after calling xas_split_alloc().
-> 
-> and 6758c1128ceb calls xas_reset() after calling xas_split_alloc().
+Hi Jaroslav
 
-Should we be asking for 6758c1128ceb to be backported to all
-stable kernels then?
+On Fri, Sep 13, 2024 at 10:29=E2=80=AFAM Shengjiu Wang <shengjiu.wang@gmail=
+.com> wrote:
+>
+> On Fri, Sep 6, 2024 at 6:05=E2=80=AFPM Shengjiu Wang <shengjiu.wang@nxp.c=
+om> wrote:
+> >
+> > This function is base on the accelerator implementation
+> > for compress API:
+> > https://patchwork.kernel.org/project/alsa-devel/patch/20240731083843.59=
+911-1-perex@perex.cz/
+>
+> Hi Jaroslav
+>
+>     Shall I add this patch to my patch set next time? Last time I
+> reported an issue
+> about "list_for_each_entry_safe_reverse", I can help to add it.  or
+> will you send
+> another version by yourself?
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+A gentle reminder, look forward to your reply.
+Thanks.
+
+Best regards
+Shengjiu Wang
+
+>
+> Best regards
+> Shengjiu Wang
+>
+> >
+> > Audio signal processing also has the requirement for memory to
+> > memory similar as Video.
+> >
+> > This asrc memory to memory (memory ->asrc->memory) case is a non
+> > real time use case.
+> >
+> > User fills the input buffer to the asrc module, after conversion, then =
+asrc
+> > sends back the output buffer to user. So it is not a traditional ALSA p=
+layback
+> > and capture case.
+> >
+> > Because we had implemented the "memory -> asrc ->i2s device-> codec"
+> > use case in ALSA.  Now the "memory->asrc->memory" needs
+> > to reuse the code in asrc driver, so the patch 1 and patch 2 is for ref=
+ining
+> > the code to make it can be shared by the "memory->asrc->memory"
+> > driver.
+> >
+> > Other change is to add memory to memory support for two kinds of i.MX A=
+SRC
+> > modules.
+> >
+> > changes in v3:
+> > - use Jaroslav's suggestion for header file compress_params.h (PATCH 01=
+)
+> > - remove the ASRC_OUTPUT_FORMAT/ASRC_OUTPUT_RATE definition
+> > - remove ASRC_RATIO_MOD in this version because it uses .set_metadata()
+> >   Will wait Jaroslav's update or other better method in the future.
+> > - Address some comments from Pierre.
+> >
+> > changes in v2:
+> > - Remove the changes in compress API
+> > - drop the SNDRV_COMPRESS_SRC_RATIO_MOD
+> > - drop the SND_AUDIOCODEC_SRC and struct snd_dec_src
+> > - define private metadata key value
+> >   ASRC_OUTPUT_FORMAT/ASRC_OUTPUT_RATE/ASRC_RATIO_MOD
+> >
+> > Shengjiu Wang (6):
+> >   ALSA: compress: Add output rate and output format support
+> >   ASoC: fsl_asrc: define functions for memory to memory usage
+> >   ASoC: fsl_easrc: define functions for memory to memory usage
+> >   ASoC: fsl_asrc_m2m: Add memory to memory function
+> >   ASoC: fsl_asrc: register m2m platform device
+> >   ASoC: fsl_easrc: register m2m platform device
+> >
+> >  include/uapi/sound/compress_params.h |  23 +-
+> >  sound/soc/fsl/Kconfig                |   1 +
+> >  sound/soc/fsl/Makefile               |   2 +-
+> >  sound/soc/fsl/fsl_asrc.c             | 179 ++++++-
+> >  sound/soc/fsl/fsl_asrc.h             |   2 +
+> >  sound/soc/fsl/fsl_asrc_common.h      |  70 +++
+> >  sound/soc/fsl/fsl_asrc_m2m.c         | 727 +++++++++++++++++++++++++++
+> >  sound/soc/fsl/fsl_easrc.c            | 261 +++++++++-
+> >  sound/soc/fsl/fsl_easrc.h            |   4 +
+> >  9 files changed, 1260 insertions(+), 9 deletions(-)
+> >  create mode 100644 sound/soc/fsl/fsl_asrc_m2m.c
+> >
+> > --
+> > 2.34.1
+> >
 
