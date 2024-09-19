@@ -1,212 +1,97 @@
-Return-Path: <linux-kernel+bounces-333564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B61797CACB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:14:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6969397CAD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCD291F23449
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:14:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F6F6282FB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E08719F479;
-	Thu, 19 Sep 2024 14:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAD01A01A6;
+	Thu, 19 Sep 2024 14:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ojYAINq9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e3r9tkaZ"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916E719CCF4;
-	Thu, 19 Sep 2024 14:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FCC1A00EC;
+	Thu, 19 Sep 2024 14:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726755260; cv=none; b=S2wZ7GOMVdctHAZTnZVju+mr8Yx9E8PAlectJY8LuSoxsyquRat7IBNoCvQhnzofuLPjxJI+F4IV7j8+RpCF4tB1wnFJNMe0QdISZukJje9JARyQ+NpThve/LVrCt6mNPKZPHiayPSfha7ovLoy3M2zvyojTk/glIXJbrrx5TwQ=
+	t=1726755304; cv=none; b=LE4DPymxLQHB7qR4y+pgQxv2F+pIFukBCiEbG10wOsYYLicItVRh7B2QxL1SsQrgzlRNNWy93wF9Ttny7zojsKnPTZZzDUfcQw/TVNDQIYj41csXibXNNWje0l/A4Rka8FdND5xB4VHha3zUW7s9ZDbVvR0oXZTAl9TTrFb4TTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726755260; c=relaxed/simple;
-	bh=OObN1ezUfyw7gZE5+/VFuKegN7OVO+qiLPLvdUWuUF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NolL8Tk4WWHYybFWHMZIv5w7QK5ypR15nB/TBla22dTABafMzZZXoQR5Mn3gOv9/71+Ns2KL4Rsc19lPbCLuehtOL6SHL6ntLUw1cL9bJY2a4dzB6Qd4jcjflpBEYabWGae6jHaWnDKVIJw/8MS1FFu8bwq0GomTaArNGhVgXr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ojYAINq9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA55C4CEC4;
-	Thu, 19 Sep 2024 14:14:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726755260;
-	bh=OObN1ezUfyw7gZE5+/VFuKegN7OVO+qiLPLvdUWuUF4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ojYAINq9iWvP5qV7U2jAMDk0x4Gs2YRSVZFvdqtYiZpG3YIbpSsCzC1G4GXRRpY2D
-	 d21n7i45AGV1Krm7lblx+0o9uH5wWQk3rfHf2/Vl14oj+GbpaQep1q9ZZRJUpPrgw0
-	 Eas7eVAXbtM8PzCIAQB9qoPRrpP2HFmfzP7covX2fzAAoShrLZLRtxDvUsPMOleoeH
-	 IveKSmJo+RKajnA51afsqq8GFx6ftKwOHnzL4s0X/AYvv9/Tk9Lwq37I2oASQikabf
-	 +0epZ0iAt0knNx7e1t0FB6qzw0PnFK551nBofcYv3uqMM7VEeS3bko/iwLXSOBu+a9
-	 I19Dvw8N9RpVQ==
-Message-ID: <e1ff5ccc-8204-44d8-ba62-84c8bd204fa0@kernel.org>
-Date: Thu, 19 Sep 2024 16:14:15 +0200
+	s=arc-20240116; t=1726755304; c=relaxed/simple;
+	bh=ExQ7E3kBrAtTxCmgFfyf29ldpaZkhlGmTYsCbJAo32k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sF6s7PCHuuJX4nZDmclmA3k438GRoLtu/P6QYbDPxUA9Tedo2hHp2p69L3qKihQ2vXMg1346VjlNzVEYbj9Zq5STwlS5yUnkQjrXsLVtIKCvACl4nyxZnB+CKSx673zxkUtUUxVp1GPceN8G0dY11Tn5/MFo0pdLbFvb/c2aubk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e3r9tkaZ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=p8px0XxXJF+y3oLJvNMcUJVB3rMlEUk+5pQdljqXFA4=; b=e3r9tkaZ9HmACSX7M3Ar7hX5WJ
+	7YR11MqG6xm7ShEcc/4e5i4H4giH2kqflDAZ0gjvB/4Q8a+c7/HTVivzXg4KtN9lkr2xn38Mkm+0P
+	+cxt7V3BkWMNHCMljxr9v0gHDm0bvj7gzU2ibdI/pNXPT4xyCPJNGDmmuu9XB4B1sSi/hGJVjznAH
+	vzFf4lok3eZmooEa0up5/t8o+Y3ZLQqUWyIrcogDHVSTe2w8Scts4PkHyfZV5jE3jyGwR+Qk9iHEL
+	HGTF973aQYGMTW+9yQOHITS9f3GzdAIFCiuojUzIRkRZk6GoBT/By5r9qos5K137zwHkxTAEiyTHu
+	hIYCk/8A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1srHvv-0000000AQDU-1NOf;
+	Thu, 19 Sep 2024 14:14:59 +0000
+Date: Thu, 19 Sep 2024 07:14:59 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com
+Subject: Re: [RFC PATCH 0/4] Add hazard pointers to kernel
+Message-ID: <Zuwx409kgivi1G5T@infradead.org>
+References: <20240917143402.930114-1-boqun.feng@gmail.com>
+ <CAHk-=wi76E2xxvOaZtgN2FK9YKmbK1ru_1atL8eBCs34z7UigA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [bug report] block: Non-NCQ commands will never be executed while
- fio is continuously running
-To: Yu Kuai <yukuai1@huaweicloud.com>, Niklas Cassel <cassel@kernel.org>,
- yangxingui <yangxingui@huawei.com>
-Cc: axboe@kernel.dk, John Garry <john.g.garry@oracle.com>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- James.Bottomley@hansenpartnership.com,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- "yukuai (C)" <yukuai3@huawei.com>,
- "yangerkun@huawei.com" <yangerkun@huawei.com>
-References: <eef1e927-c9b2-c61d-7f48-92e65d8b0418@huawei.com>
- <922e3d52-9567-4371-9a43-6d51f716a370@kernel.org>
- <129e1e4b-426f-3d5b-b95c-d386c90cfe06@huawei.com>
- <5b4a15be-1cb2-4477-8f17-b808612d10d5@kernel.org>
- <0e78cce0-3f4c-3ddf-4d5b-ee2b5c8d7e1a@huawei.com>
- <ZuAtLK5jIPEjhXmU@ryzen.lan>
- <7f179f49-a57b-45bf-92f0-f577aa0b8565@kernel.org>
- <04cf3f31-4bd8-3ce9-867a-41628e56e861@huaweicloud.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <04cf3f31-4bd8-3ce9-867a-41628e56e861@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wi76E2xxvOaZtgN2FK9YKmbK1ru_1atL8eBCs34z7UigA@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 2024/09/19 14:26, Yu Kuai wrote:
-> Hi,
+On Wed, Sep 18, 2024 at 09:18:43AM +0200, Linus Torvalds wrote:
+> On Tue, 17 Sept 2024 at 16:34, Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > This series introduces hazard pointers [1] to kernel space. A TL;DR
+> > description of hazard pointers is "a scalable refcounting mechanim
+> > with RCU-like API". More information can be found at [2].
 > 
-> 在 2024/09/11 6:38, Damien Le Moal 写道:
->> On 9/10/24 20:27, Niklas Cassel wrote:
->>> On Tue, Sep 10, 2024 at 02:34:06PM +0800, yangxingui wrote:
->>>>
->>>>
->>>> On 2024/9/10 12:45, Damien Le Moal wrote:
->>>>> On 9/10/24 10:09 AM, yangxingui wrote:
->>>>>>
->>>>>>
->>>>>> On 2024/9/9 21:21, Damien Le Moal wrote:
->>>>>>> On 9/9/24 22:10, yangxingui wrote:
->>>>>>>> Hello axboe & John,
->>>>>>>>
->>>>>>>> After the driver exposes all HW queues to the block layer, non-NCQ
->>>>>>>> commands will never be executed while fio is continuously running, such
->>>>>>>> as a smartctl command.
->>>>>>>>
->>>>>>>> The cause of the problem is that other hctx used by the NCQ command is
->>>>>>>> still active and can continue to issue NCQ commands to the sata disk.
->>>>>>>> And the pio command keeps retrying in its corresponding hctx because
->>>>>>>> qc_defer() always returns true.
->>>>>>>>
->>>>>>>> hctx0: ncq, pio, ncq
->>>>>>>> hctx1：ncq, ncq, ...
->>>>>>>> ...
->>>>>>>> hctxn: ncq, ncq, ...
->>>>>>>>
->>>>>>>> Is there any good solution for this?
->>>>>>>
->>>>>>> SATA devices are single queue so how can you have multiple queues ?
->>>>>>> What adapter are you using ?
->>>>>>
->>>>>> In the following patch, we expose the host's 16 hardware queues to the block
->>>>>> layer. And when connecting to a sata disk, 16 hctx are used.
->>>>>>
->>>>>> 8d98416a55eb ("scsi: hisi_sas: Switch v3 hw to MQ")
->>>>>
->>>>> OK, so the HBA is a hisi one, using libsas...
->>>>> What is the device ? An SSD ? and HDD ?
->>>> Both SATA SSD and SATA HDD have this problem.
->>>>
->>>>>
->>>>> Do you set a block I/O scheduler for the drive, e.g. mq-deadline. If not, does
->>>>> setting a scheduler resolve the issue ?
->>>> Currently, the default configuration mq-deadline is used, and the same
->>>> phenomenon occurs when I try setting it to none. It seems to have nothing to
->>>> do with the scheduling strategy.
->>>>
->>>>>
->>>>> I do not have any hisi HBA. I use a lot of mpt3sas and mpi3mr HBAs which also
->>>>> have multiple queues with a shared tagset. Never seen the issue you are
->>>>> reporting though using HDDs with mq-deadline or bfq as the scheduler.
->>>> Unlike libsas, as these hosts don't use qc_defer()?
->>>
->>> mpt3sas and mpi3mr do not use any libata code at all, the SCSI to ATA
->>> Translation (SAT) is done completely by the HBA, so from a Linux
->>> perspective, we are issuing SCSI commands to the HBA.
->>
->> Yes, but we still can get requeue happening. Though for a SATA drive, that is
->> unlikely since the max queue depth is clearly defined, unlike for SAS drives
->>
->>> We can see that libsas uses ata_std_qc_defer() as its .qc_defer callback:
->>> https://github.com/torvalds/linux/blob/v6.11-rc7/drivers/scsi/libsas/sas_ata.c#L566
->>
->> And that may be the issue. More on this below.
->>
->>> Without considering if it is a good idea or not, it should be possible to
->>> translate some commands to instead use the "NCQ encapsulated" variant of
->>> the ATA command that was used in the "ATA-16 passthrough" SCSI command.
->>
->> That would be way too much work on the user side, and likely open up a can of
->> device bugs unseen until now.
->>
->>> To be able to send a non-queued command, there has to be no NCQ commands queued
->>> on the device. I guess you could implement a scheduler that would be quiescing
->>> the queue, processes the non-queued command, and then thaw the queue, but that
->>> would essentially make non-queued commands high priority commands, and could
->>> thus be used to seriously limit throughput by just sending some non-queued
->>> commands every now and then :)
->>
->> Passthrough commands do not go through the scheduler and are submitted directly
->> to the dispatch queue, generally at the head of it (see blk_mq_insert_request()).
->>
->> So for a single queue device, even if ata_qc_defer causes a requeue, the
->> passthrough command ends up back at the top of the dispatch queue. After
->> repeating this a few times, all in-flight NCQ commands complete and the
->> passthrough command goes through.
->>
->> But I feel this is very fragile given that the block layer requeue is done
->> through a work item, so in parallel to an application submitting IOs. So in
->> theory, I think that the requeue for the passthrough command could happen forever...
->>
->> And for a multi-queue setup like with the hisi adapter, that is what is happening.
->>
->> I do not have any good idea how to fix that yet. We need to find something.
->> scsi_queue_rq() and the budget/host or device blocked state management may help
->> with that, or we have a bug there... In any case, I do not think it is a block
->> layer issue as the block layer knows nothing about NCQ vs non-NCQ.
-> 
-> Does libata return a specific value in this case? If so, maybe we can
-> stop other hctx untill this IO is handled.
-> 
-> For now, I think libata should use single hctx, it just doesn't support
-> multiple hctx yet.
+> Please give actual "this is useful for X, and here is an actual real
+> load with numbers showing why it matters".
 
-libata does not care/know about hctx. It only issues commands to ATA devices,
-which always are single queue. And pure SATA adapters like AHCI are always
-single queue.
-
-The issue at hand can happen only for libsas based SAS HBAs that have multiple
-command submission queues (with a shared tag set). Commands for the same device
-may end up being submitted through different queues, and when the submitted
-commands include a mix of NCQ and non-NCQ commands, the problem happens without
-libata being able to easily do anything about it, and not possible control
-possible at the scsi layer either since the commands submitted are SCSI (not yet
-translated to ATA commands) which do not have any NCQ/non-NCQ exclusion
-knowledge at all. NCQ is an ATA concept unknown to the scsi and block layer.
-
-We (Niklas and I) are trying to find a solution, but that may not be within
-libata itself. It may need changes to libsas as well. Not sure yet. Still exploring.
-
-> 
-> Thanks,
-> Kuai
-> 
->>
-> 
-
--- 
-Damien Le Moal
-Western Digital Research
+Agreed.  From the description this would seem like a good fit for
+q_usage_counter in the block layer, which currently makes creative use
+of percpu counters.
 
 
