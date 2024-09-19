@@ -1,111 +1,78 @@
-Return-Path: <linux-kernel+bounces-333298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0316E97C68F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:08:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C41997C69A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF3A21F259D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:07:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EDA01C23D6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897DB199FA2;
-	Thu, 19 Sep 2024 09:07:38 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F9119A281;
+	Thu, 19 Sep 2024 09:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOwodeeA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FA6199396;
-	Thu, 19 Sep 2024 09:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B3C19ABCB
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726736858; cv=none; b=OnUoaoYia08Rf1YjVO47HHhmx3nQQgl71RbznetTCqWhA9hJv7pRCeW9AwRxKDpWHh8sKkjlO1GrhNdjv8xIRD4xMBKew4IiUu4tKW5AJOX4Me8buibWdEW8CrUbCAuNmabD986q+LaLUamLwPqa0VtYL/QSr6YZROnCkY07yXc=
+	t=1726737012; cv=none; b=L2NdAM1Olwos6n8ZoxvqQ8A0310NqeQEiq1hip14K7yftyotLC13VzMnQgaHKyXGo7x9rWfvcQfwIMwgY6VTxRPOtxaPNEs4AHKZJTx79o0zRajtNRLsS8S5NwNP5OMTpmcHaZBXsKZuGg7stSyerBGi53sun1uNq/pllMzz/qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726736858; c=relaxed/simple;
-	bh=nTGu3Z8YPhHU4/lZ6nBmTnAyIqUnJqT9r1caIzKNTxI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=FY6S2amONMpcn6GZirL9cPKvqSuvFgoUxNqNHK/VcH9o3+oLUgJkJ51j1PLZHstOkqqvvJOr3BnRLkT8/t3SLbOnr/vD1oyL27xY3Yhcv0wpELlLu0dwyaNI1U/tasbgVTckdBZHNWiGObRhPM0tOZR01lwnvn7J/7U0rHXYm5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.110] (31.173.85.95) by msexch01.omp.ru (10.188.4.12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Thu, 19 Sep
- 2024 12:07:10 +0300
-Message-ID: <914b2a1e-cef1-b047-f9d3-d202368b9be9@omp.ru>
-Date: Thu, 19 Sep 2024 12:07:09 +0300
+	s=arc-20240116; t=1726737012; c=relaxed/simple;
+	bh=aPj/d/4bg4JcV7FUscYipxQyjHqi+ST42baM/NxI0F4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=n43rvtqw+lffJWzF3v3s8iwp/vyquhqgcRtByc8w0nD5yQVBvlaoCqqN4L/Nc6BZz+o1oeQkkpTN49hS63x6RYxoMs0ZfropOUwzRvatNE/nkEOzqgX2IW6s2mmMijHZp5HAASRaN36Dqry3N6QWwr/dcUaZpv0QABjMKOurgZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fOwodeeA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9D57C4CEC5;
+	Thu, 19 Sep 2024 09:10:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726737011;
+	bh=aPj/d/4bg4JcV7FUscYipxQyjHqi+ST42baM/NxI0F4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=fOwodeeAeuEui/UYDEY17ZfQ6Bs6LtDuBmu08iUwspE+SKSefeJL8sOpg12pbaQhC
+	 Y34hi2rvRS9Re4dhONuFaidiaLOL3qoy25Pcjal8QZ8PU0zllHXX87m8Mh2XiTgOxB
+	 RXuEg4yacLux9xFYbiOQUGQ/eygQ23cPwFKJoU+raqMAf7D5vgK/HhNHIE3DaLV6kf
+	 cyPB8MG8iTNdq3t3KKArBgBHY0xt2xSs6ygPuYNFormwA2dJamFsvuvFXoZNY/rnVw
+	 2XOMFTySRsSu6y/pEsmjcPH6hkTy2htmH/AwRLcEz7bsd8hCdMe6pdBNHN5cv+0BOU
+	 nMgi3WCspmItQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ECFBA3809A81;
+	Thu, 19 Sep 2024 09:10:14 +0000 (UTC)
+Subject: Re: [git pull] drm for 6.12-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAPM=9txujwc-GoV6qB1DpKjbDi-8uDcJLnJFSY4OBgPu=ZAVBw@mail.gmail.com>
+References: <CAPM=9txujwc-GoV6qB1DpKjbDi-8uDcJLnJFSY4OBgPu=ZAVBw@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAPM=9txujwc-GoV6qB1DpKjbDi-8uDcJLnJFSY4OBgPu=ZAVBw@mail.gmail.com>
+X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-next-2024-09-19
+X-PR-Tracked-Commit-Id: ae2c6d8b3b88c176dff92028941a4023f1b4cb91
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: de848da12f752170c2ebe114804a985314fd5a6a
+Message-Id: <172673701376.1425468.11289340107634023074.pr-tracker-bot@kernel.org>
+Date: Thu, 19 Sep 2024 09:10:13 +0000
+To: Dave Airlie <airlied@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 6.1.y] udf: Fold udf_getblk() into udf_bread()
-Content-Language: en-US
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-To: Jan Kara <jack@suse.cz>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>
-CC: <lvc-project@linuxtesting.org>
-References: <3996808f-711a-3861-8388-c729045bd28a@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <3996808f-711a-3861-8388-c729045bd28a@omp.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/19/2024 08:55:21
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 187853 [Sep 19 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.1.5
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
- 8a1fac695d5606478feba790382a59668a4f0039
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.85.95 in (user) dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	127.0.0.199:7.1.2;omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.85.95
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/19/2024 08:58:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/19/2024 6:00:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On 9/18/24 22:46, Sergey Shtylyov wrote:
+The pull request you sent on Thu, 19 Sep 2024 17:48:14 +1000:
 
-> From: Jan Kara <jack@suse.cz>
+> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-next-2024-09-19
 
-   And of course I forgot to mention the original commit... :-(
-   Ignore these 2 patches, I'll respin/resend...
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/de848da12f752170c2ebe114804a985314fd5a6a
 
-> udf_getblk() has a single call site. Fold it there.
-> 
-> [Sergey: moved back to using udf_get_block() and buffer_{mapped|new}().]
-> 
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+Thank you!
 
-[...]
-
-MBR, Sergey
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
