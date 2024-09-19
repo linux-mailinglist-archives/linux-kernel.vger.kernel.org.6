@@ -1,127 +1,143 @@
-Return-Path: <linux-kernel+bounces-333761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C8A97CD8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:28:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2494997CD92
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B4D9B22469
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:28:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D964B2847FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02178210E4;
-	Thu, 19 Sep 2024 18:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38FF220DE8;
+	Thu, 19 Sep 2024 18:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FWAylBn4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="LFeL2c5J"
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C442C87C;
-	Thu, 19 Sep 2024 18:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11706208AD;
+	Thu, 19 Sep 2024 18:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726770501; cv=none; b=fVOcD8kHh0zD294gNEhzNuA1mbPYvLLcgF0ovnNQJ36KrnkJkizwfukVkQ+T6+BRkK33RennE8iQHFQXAZkb5tiCQDskuwXifcLdtTYqmYzajpDcmo/KMLeoBEOZVB1qevllXlNagWv2ghL/e8sZOx8ryabT4msj6STasBeuBxo=
+	t=1726770598; cv=none; b=bkqZdKuBocD+btLTS6cDYCYKVeChS4G/enLv1hBjpD1lOd+mNUIH8/ggPNGeiBSTNdvHQQNBr+XANZTUHv3BCb05f2ViKI8mX3J+UCrgqXuCbih//Nfzjvu4dDOUjH3LNNOl9eM3yscL3Eaw/ihqrkx4+yeRgNeH2t5Z7/ah2tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726770501; c=relaxed/simple;
-	bh=UoNK/cjA2OlXExzMl1VlJI9PDhYRy/brc5cM/w2oeHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oNx/YZst+uiXfs266vW/ltJpYHi6hEdmnGxmn9qUzL/0HB2xL/Nqew3iWQ1GY3Fv3BBgcnsHYJ2JpYzVGGSJgCzDX0SODBiDuB7y+QLLOVhVoUA7Ri+gUmG8LuHavuLc4unBhXY4Bnx53EoFEigxPsdC+Fu+FPFCBAd7/X7jTu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FWAylBn4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48JBZKKZ030850;
-	Thu, 19 Sep 2024 18:27:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	O6rWaz5VkVg0DzOHeXT5mJM7S9+sUuoW2B1W7R+FgA0=; b=FWAylBn4nN/66+BZ
-	ilwpv6P821RiUAr9IvLqMvNdyxEKkjcZS4L1+Me5cgjTvg4H8f9gWNQqrJiY80vE
-	4wx+XN4IISHWgztCaAFEgOXPUwGd2BSOUNFja3pzz77xhLMlyrMY4aIELL6Lu6Sy
-	HhUo3L03c1NSw71cL04qiKvuyj1r7esUxAUqxWx4uMESR0x89Rq7mGVRkmEycrb3
-	FbMWUQpESJkTLkvVTVY0PgVuNZV5/h4je0f6JWcFaeDC4Hc6Psl4jxWUKTLoYKwf
-	koFXbHrLKIHu1xFXty6mN/VfGPCQvzL9Al4DivFB6EzOeCdxEuKnKCaM78PIHDRJ
-	XvrrZw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4hheb02-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 18:27:14 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48JIRBdm023458
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 18:27:11 GMT
-Received: from [10.110.111.10] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 19 Sep
- 2024 11:27:11 -0700
-Message-ID: <e2656024-4ca0-4898-9a2d-7df54c40ac7d@quicinc.com>
-Date: Thu, 19 Sep 2024 11:27:10 -0700
+	s=arc-20240116; t=1726770598; c=relaxed/simple;
+	bh=vaI4GOUDYbpKJodINUxVP6DizlMM1vpOJdTPcvOX6Z0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BXdHh4Q35iTCq/1PzJCHPBNHnsKKrLMtKNPTxUZNVtEnPQfC3+UQVOwMyeu3/fTKkqAL65uHQU6Vl2NSTP62EIO9+d2EGBaLHIltQtwI/LD0i43XqH1T0LSIzBvk4IfJPKHuJ6mSN8Bz1F6CDqzDvUJ62muyhu9oTzYHJCn42zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=LFeL2c5J; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1726770550;
+	bh=gsufGAYtIAM8AkakiwxVNuxyvm44kSowZzBK+ouwLxs=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=LFeL2c5JC0FlizRr+k0e1HZUmA1E10VmrVXCWiXc9QyUvGZBGrsnM8x2gwEgqW0tB
+	 zn/Qx4UhRc8ZOf8D8ysfC/OCWEzOqqvWCWZET86+1Izqpq8Qp5tjuGXwLe+pFfxZKl
+	 /dq5nKDzQw8/lHZtFPA5A3kg7UNnRKQxN0Br43eI=
+X-QQ-mid: bizesmtpip3t1726770541tlc1512
+X-QQ-Originating-IP: WzUcVFiVE3UagY0mvSWHGPMGplCkVM/luSeXsZy8DV0=
+Received: from avenger-OMEN-by-HP-Gaming-Lapto ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 20 Sep 2024 02:28:58 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 7623271536529475562
+From: WangYuli <wangyuli@uniontech.com>
+To: alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	sunil.khatri@amd.com,
+	vitaly.prosyak@amd.com,
+	yifan1.zhang@amd.com,
+	Tim.Huang@amd.com,
+	jesse.zhang@amd.com,
+	Prike.Liang@amd.com,
+	Hawking.Zhang@amd.com,
+	kevinyang.wang@amd.com,
+	srinivasan.shanmugam@amd.com,
+	Jiadong.Zhu@amd.com,
+	tao.zhou1@amd.com,
+	pavel@ucw.cz,
+	lee@kernel.org,
+	aren@peacevolution.org,
+	wangyuli@uniontech.com
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	le.ma@amd.com,
+	Wenhui.Sheng@amd.com,
+	jjhiblot@traphandler.com,
+	guanwentao@uniontech.com,
+	zhanjun@uniontech.com
+Subject: [PATCH] treewide: Correct the typo 'acccess'
+Date: Fri, 20 Sep 2024 02:28:55 +0800
+Message-ID: <4AB1F900B5D100C2+20240919182855.85840-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] drm/msm/dpu: drop LM_3 / LM_4 on SDM845
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Sravanthi
- Kollukuduru <skolluku@codeaurora.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Jami Kettunen
-	<jami.kettunen@somainline.org>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@somainline.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Jeykumar
- Sankaran <jsanka@codeaurora.org>,
-        Chandan Uddaraju <chandanu@codeaurora.org>
-References: <20240905-dpu-fix-sdm845-catalog-v1-0-3363d03998bd@linaro.org>
- <20240905-dpu-fix-sdm845-catalog-v1-2-3363d03998bd@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20240905-dpu-fix-sdm845-catalog-v1-2-3363d03998bd@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IABmKMX9h5fOTHXixWpMIJJa0HkKTy1j
-X-Proofpoint-ORIG-GUID: IABmKMX9h5fOTHXixWpMIJJa0HkKTy1j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- adultscore=0 impostorscore=0 phishscore=0 priorityscore=1501 clxscore=1015
- mlxlogscore=762 mlxscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409190123
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
+There are some spelling mistakes of 'acccess' in comments which
+should be instead of 'access'.
 
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c   | 2 +-
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c  | 2 +-
+ drivers/leds/rgb/leds-group-multicolor.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-On 9/4/2024 8:26 PM, Dmitry Baryshkov wrote:
-> On the SDM845 platform ther are no LM_3 and LM_4 blocks. Drop them from
-> the SDM845 catalog.
-> 
-> Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_4_0_sdm845.h | 12 ------------
->   1 file changed, 12 deletions(-)
-> 
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
+index d3e8be82a172..f847a9fc61e1 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v11_0.c
+@@ -1894,7 +1894,7 @@ static void gfx_v11_0_init_compute_vmid(struct amdgpu_device *adev)
+ 	mutex_unlock(&adev->srbm_mutex);
+ 
+ 	/* Initialize all compute VMIDs to have no GDS, GWS, or OA
+-	   acccess. These should be enabled by FW for target VMIDs. */
++	   access. These should be enabled by FW for target VMIDs. */
+ 	for (i = adev->vm_manager.first_kfd_vmid; i < AMDGPU_NUM_VMID; i++) {
+ 		WREG32_SOC15_OFFSET(GC, 0, regGDS_VMID0_BASE, 2 * i, 0);
+ 		WREG32_SOC15_OFFSET(GC, 0, regGDS_VMID0_SIZE, 2 * i, 0);
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c
+index 408e5600bb61..13dca7377f53 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c
+@@ -1248,7 +1248,7 @@ static void gfx_v9_4_3_xcc_init_compute_vmid(struct amdgpu_device *adev,
+ 	mutex_unlock(&adev->srbm_mutex);
+ 
+ 	/* Initialize all compute VMIDs to have no GDS, GWS, or OA
+-	   acccess. These should be enabled by FW for target VMIDs. */
++	   access. These should be enabled by FW for target VMIDs. */
+ 	for (i = adev->vm_manager.first_kfd_vmid; i < AMDGPU_NUM_VMID; i++) {
+ 		WREG32_SOC15_OFFSET(GC, GET_INST(GC, xcc_id), regGDS_VMID0_BASE, 2 * i, 0);
+ 		WREG32_SOC15_OFFSET(GC, GET_INST(GC, xcc_id), regGDS_VMID0_SIZE, 2 * i, 0);
+diff --git a/drivers/leds/rgb/leds-group-multicolor.c b/drivers/leds/rgb/leds-group-multicolor.c
+index b6c7679015fd..548c7dd63ba1 100644
+--- a/drivers/leds/rgb/leds-group-multicolor.c
++++ b/drivers/leds/rgb/leds-group-multicolor.c
+@@ -55,7 +55,7 @@ static void restore_sysfs_write_access(void *data)
+ {
+ 	struct led_classdev *led_cdev = data;
+ 
+-	/* Restore the write acccess to the LED */
++	/* Restore the write access to the LED */
+ 	mutex_lock(&led_cdev->led_access);
+ 	led_sysfs_enable(led_cdev);
+ 	mutex_unlock(&led_cdev->led_access);
+-- 
+2.43.0
 
-LGTM,
-
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
