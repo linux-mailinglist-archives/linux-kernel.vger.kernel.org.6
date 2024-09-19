@@ -1,125 +1,131 @@
-Return-Path: <linux-kernel+bounces-333754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DDBB97CD6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:03:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75CA297CD73
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89E581C229E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:03:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE46DB22369
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1D41BC39;
-	Thu, 19 Sep 2024 18:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S3kyoyA5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338D31C683;
+	Thu, 19 Sep 2024 18:08:11 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D65C1802E
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 18:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07D018E29;
+	Thu, 19 Sep 2024 18:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726768993; cv=none; b=ZMe+NJRRDyrX/LQA92Lam/2Tlxae2DOv1JnBcswnAc64FjWsJxkImZIM6ri2YlPK1C4dP28HmewyTMpkpXyYix/Lf84B9Mph8NAakbaqcYUk1Arh8SFQokHvqX+/Hl2uYBYrCape1ItsdyeweW5blqQmxbVJDBN2r1BWGaEavOU=
+	t=1726769290; cv=none; b=T/FqRu0/ZtUixwV3gjLjehroagimcc0xSxsLU0QNqOklGpepRgCakR3nki7VVWBhhZHKLMrOxev/i39NIgLNlf+9SF2TKkQfzT1R1Oum/QoGcBxvT7A6SBk8m71XxPxLkbDLe6trFwYVrrECMYRWU0k0J8VnzFB9ZnWLmhoDRIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726768993; c=relaxed/simple;
-	bh=e0wtT19dYMDMyfhWCQLhYZ2yk+Cou298QlGCexKO5I8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T0tZd6WccPaVW++zghKZDjFicrwaN7D5bctWsJKfCqwv3uAuVo1dogD2iwJMsuB1m6/ee1igxnpt0bdloOwhCYHSRvD7xoMdjX9w2sC7rgee9jNcuDumXRj0UkOqhZTyUcAtsWwi0F0RaR+bou05AsA3b4o5bJwCsRxf39PCJzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S3kyoyA5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726768991;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=PEVVCV0eXxZeKN06cXXcnbtsFJaX89LX0ix5stsQGvA=;
-	b=S3kyoyA5Vcp+wbHVNYBabiT3LqRitXvN78zIsjnHxPehvIppq6HVbL5FY+RHcYZjZXgkPS
-	T8/5jkBknrlqRsMUvPyjsZq+F5H5z7j7PlharUTxu76ORNNZ3rNsC5xYZVhLpLnUIAR33K
-	nLtwLXKtoEk3yhd5g52CCNJYxhOZ5Qs=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-202-xUnFllUyNSqasKvXdEBnlw-1; Thu, 19 Sep 2024 14:03:10 -0400
-X-MC-Unique: xUnFllUyNSqasKvXdEBnlw-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7a9cfe4442cso180885585a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 11:03:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726768989; x=1727373789;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PEVVCV0eXxZeKN06cXXcnbtsFJaX89LX0ix5stsQGvA=;
-        b=Sd5N6ht3I5hz2H8D+Nmo20ISlodAMnKQwt6efXNGTXsvkbs02ZJ15hlXlRk7dTOhOF
-         Pj0dxCqV7Bhc7ykvXyuZY3n0RtUpBF7hQjgFMhTelX3z/Ndm6f9j4PF4p7cCHOoVu3ZV
-         bZ44M4DRPwUpkFJGmN9dy8t6ScPyc6IT/2WPKdLxG2usPwo6BeFvdgP69ITnirMc5Xra
-         ihD43Etj4Fip75VDEuV249fkaCIAH2KCnrQgRGis2+Z4kSGzkP39q7aV4Q8x6JoaV2Fn
-         m/51SOc8hYZ3mxDQnyPtJnNY8GJm+F098eilJWlPJVkS0itpW1m8aCda/Zmn4huOTXZ2
-         LGJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHhFWsVDsYMDO/ppVMittlhmzbOwNrK7Y0SnejVJL/jwYP2DtiywxZmKjbRVdpxjlj+5aC6BYX4SPRcaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygpoNsSBF2GNdvytACAtEoffjGxDBZtXhByYON0VpgtOYP+q0p
-	npwhp9E2/iTkjBp2opS16k1KYKac4m+O65uY/LRaQxiFly7xlQVCGnjfVywZy/MF/nUjDUcedBL
-	BHcAizCIQJd/7iNH86rSkl+4cCtvV3HGV42eRJ8EbfZZYf/199uByfznVhEaazg==
-X-Received: by 2002:a05:620a:24d4:b0:7a1:dff1:57ab with SMTP id af79cd13be357-7acb80ab1d4mr35905785a.23.1726768989425;
-        Thu, 19 Sep 2024 11:03:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG9RkMsz091nt5D4n5G79Ahwqx7Q5einp6ANgb25P9fWEAnjJsSSqRv5u4PVrzdbrAK6h6vXg==
-X-Received: by 2002:a05:620a:24d4:b0:7a1:dff1:57ab with SMTP id af79cd13be357-7acb80ab1d4mr35902285a.23.1726768988985;
-        Thu, 19 Sep 2024 11:03:08 -0700 (PDT)
-Received: from rhfedora.redhat.com ([71.217.60.247])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7acb07dfebasm96263485a.17.2024.09.19.11.03.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 11:03:08 -0700 (PDT)
-From: "John B. Wyatt IV" <jwyatt@redhat.com>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: "John B. Wyatt IV" <jwyatt@redhat.com>,
-	linux-pm@vger.kernel.org,
-	Thomas Renninger <trenn@suse.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	John Kacur <jkacur@redhat.com>,
-	"John B. Wyatt IV" <sageofredondo@gmail.com>
-Subject: [PATCH] pm: cpupower: Clean up bindings gitignore
-Date: Thu, 19 Sep 2024 14:01:01 -0400
-Message-ID: <20240919180102.20675-1-jwyatt@redhat.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726769290; c=relaxed/simple;
+	bh=VpC6Z/47eQxpdIMlA69QxhaCcEiM6gKkuzmPhgwQNiw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lL8fa3WJw0OolmY8YY8C0+OjwVgRGFfPDFUUsq2SJKsjYLpZ8VvL/POXnDK6Ytg0+BjMJ+s3ac7RaX5k2AL+iPJYLBwhlH+zSs/zLZkz55UMy2mBBKCuRWrwlg06vojCBint9u8FdOe1Z/1yCsdnLbNrqROiGEwjEc0w9E71u7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4X8jfw0y6Xz9v7Hl;
+	Fri, 20 Sep 2024 01:48:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 26451140E75;
+	Fri, 20 Sep 2024 02:07:51 +0800 (CST)
+Received: from [10.81.207.148] (unknown [10.81.207.148])
+	by APP2 (Coremail) with SMTP id GxC2BwAXespnaOxmyP8_AQ--.55647S2;
+	Thu, 19 Sep 2024 19:07:50 +0100 (CET)
+Message-ID: <9de1c243-8299-4587-8661-7773cef31a05@huaweicloud.com>
+Date: Thu, 19 Sep 2024 20:07:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+To: Boqun Feng <boqun.feng@gmail.com>, Alan Huang <mmpgouride@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, RCU <rcu@vger.kernel.org>,
+ linux-mm@kvack.org, lkmm@lists.linux.dev,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Neeraj upadhyay <neeraj.upadhyay@amd.com>
+References: <20240917143402.930114-1-boqun.feng@gmail.com>
+ <20240917143402.930114-2-boqun.feng@gmail.com>
+ <CA757E86-2AE4-4077-A07A-679E3BFDBC34@gmail.com>
+ <ZuvLHxH33-p8ki1d@boqun-archlinux>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <ZuvLHxH33-p8ki1d@boqun-archlinux>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwAXespnaOxmyP8_AQ--.55647S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw47uF15XryrKFWUKw4UJwb_yoWDGrg_C3
+	Zrua4vkr1UGF4DXr4rtr18Kr12qF4UZw1qqwn8Jr47Z34rAFWrA3Wvyr95uws3Ja10y34a
+	9r90v34ava47XjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbxkYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
+	AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8
+	JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	4xRDUUUUU==
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-* Add SPDX identifier to the gitignore
-* Remove the comment and .i file since it was removed in another patch
-and therefore no longer needed.
 
-This patch depends on Min-Hua Chen's 'pm: cpupower: rename
-raw_pylibcpupower.i'
 
-Signed-off-by: John B. Wyatt IV <jwyatt@redhat.com>
-Signed-off-by: John B. Wyatt IV <sageofredondo@gmail.com>
----
- tools/power/cpupower/bindings/python/.gitignore | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Am 9/19/2024 um 8:56 AM schrieb Boqun Feng:
+> On Wed, Sep 18, 2024 at 11:17:37PM +0800, Alan Huang wrote:
+> [...]
+>>> +#define hazptr_tryprotect(hzp, gp, field) (typeof(gp))__hazptr_tryprotect(hzp, (void **)&(gp), offsetof(typeof(*gp), field))
+>>> +#define hazptr_protect(hzp, gp, field) ({ \
+>>> + typeof(gp) ___p; \
+>>> + \
+>>> + ___p = hazptr_tryprotect(hzp, gp, field); \
+>>> + BUG_ON(!___p); \
+>>
+>> hazptr_tryprotect might return NULL, do you need a loop here?
+>>
+> 
+> Thanks for the review. It's me who didn't do a good job here on the
+> documentation. hazptr_protect() is supposed to use for the case where
+> readers know the gp won't change.
+> 
+> Regards,
+> Boqun
+> 
+>>> + ___p; \
+>>> +})
+>>> +
 
-diff --git a/tools/power/cpupower/bindings/python/.gitignore b/tools/power/cpupower/bindings/python/.gitignore
-index 5c9a1f0212dd..51cbb8799c44 100644
---- a/tools/power/cpupower/bindings/python/.gitignore
-+++ b/tools/power/cpupower/bindings/python/.gitignore
-@@ -1,8 +1,7 @@
-+# SPDX-License-Identifier: GPL-2.0-only
- __pycache__/
- raw_pylibcpupower_wrap.c
- *.o
- *.so
- *.py
- !test_raw_pylibcpupower.py
--# git keeps ignoring this file, use git add -f raw_libcpupower.i
--!raw_pylibcpupower.i
--- 
-2.46.0
+Oh, disregard my other e-mail, I hadn't seen this discussion.
+
+Do you have any specific use case of this in mind? If you know that the 
+pointer can't change, I would assume you can also just read the pointer 
+normally and assign to the hazard pointer without a fence, no?
+
+have fun, jonas
 
 
