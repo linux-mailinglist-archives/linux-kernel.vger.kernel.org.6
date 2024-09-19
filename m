@@ -1,362 +1,162 @@
-Return-Path: <linux-kernel+bounces-333415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D34D97C847
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:59:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DAAB97C84B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9DE11F24F53
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:59:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B85F41F24C7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFD019CC34;
-	Thu, 19 Sep 2024 10:59:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA0619B3C0;
-	Thu, 19 Sep 2024 10:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4895019B3CB;
+	Thu, 19 Sep 2024 11:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFZ6uprE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DF81865C;
+	Thu, 19 Sep 2024 11:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726743573; cv=none; b=uR4jbyJgnvmyrCFtkKvh+FzY8lkmp+xRv9B0AhkhwhOyIwd5utpH0itsfS4u6xfG9N2FEO4l4zc5nxf3uSdL7cYT95qH9+mdY58fG069rB9qAtR/zncy8LghrhGs7Du2Ct2FUbNct9LHUQOIhx3l9DuXkd7uxgpYRCxyQi8K5Ig=
+	t=1726743781; cv=none; b=QTI18vuY2+JqadcQpRbRXs9oe7mUvu4Wsh1JWiMJriq3Mdg42HhWRnDRzJAXzx0C9mvG3AomrYSqVXfNhupeEnNp06dpN4y0u6Ok/ofTZT0r06h5iM0TuN6/y2vAQZAaiYf5AQNK8+mSh7q1atV1MzQCSAkKBwJNbgHPb4zRCQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726743573; c=relaxed/simple;
-	bh=mxFAOVyrY0vyBJ7RF0Fc/M95egmsj3e4Xp70EK3JIoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nC1/OMZsEhkn/AkKsUH++Dc/t2bPINiqL67HF6d54i+rVeqEBFkagUgd4sej8KGoV4Gjf2L5K/r/5pc8/Tk/a2i+eaL3oj/inkehvzCRmrJxZIWWxRzCmQy1NuHyLXC7nDfDCEQGnOniutSK6JLJMUJ2kiY0Pw8XoQ7TlGfNotI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D65A1007;
-	Thu, 19 Sep 2024 03:59:59 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E4143F71A;
-	Thu, 19 Sep 2024 03:59:27 -0700 (PDT)
-Date: Thu, 19 Sep 2024 11:59:23 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Kamil Kasperski <ressetkk@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v4 3/3] arm64: dts: allwinner: h616: add support for T95
- tv boxes
-Message-ID: <20240919115923.6869adfb@donnerap.manchester.arm.com>
-In-Reply-To: <ff3b061a-27b7-42b3-b741-1d25c06487ae@gmail.com>
-References: <20240319-add-t95-axp313-support-v4-0-6204b6d23229@gmail.com>
-	<20240319-add-t95-axp313-support-v4-3-6204b6d23229@gmail.com>
-	<20240319232236.07007592@minigeek.lan>
-	<ff3b061a-27b7-42b3-b741-1d25c06487ae@gmail.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1726743781; c=relaxed/simple;
+	bh=RG/LW8LPHfCBT977OpMqEUDzHLL9C5Pj6wQPzse7CQg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LbHOCSAOBgeZb93MxDFbs8zj1I41tLUILlQwgPyx4fiNOrEiOSvXxU5Hf+OqW8HB3tfpWy6821aEoEMOpTDxDzPtI00ofSApHxOTwxbJgEBS5UHB8KdUMy7hhqIHcUPzxvwIn7qzrKWBIrqM66lBgmyp6ZEqM7RKxcPd2V+CTHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFZ6uprE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BECFC4CEC4;
+	Thu, 19 Sep 2024 11:02:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726743781;
+	bh=RG/LW8LPHfCBT977OpMqEUDzHLL9C5Pj6wQPzse7CQg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uFZ6uprEdrUBpgN4/rd1S7xFyAZCojUbyiuInBkyFxG+o4xkbfpQL+zZc2XDMvLW6
+	 aILvBVcJUG8LJZTWVz4evFb9cFn44e8u3SstLM2XQJzQRGh814hbh/ILXvAJFz92hd
+	 wEX7lC3DFaf/dJlsCxFLu1iUVuVoHZnsQSiVZNBdIlJ3vDTulBJ5OJsKbgj7gNjeUv
+	 F4jLN8r2A/zfCbHIdMzLOMCat586+QuCtmVQkYKeqyCPerQjb/cF4glldu2TdL7pKm
+	 0dLLbPrZsHv3mmmZ/EbG+Sgcig4IABw+bUO+Zu/V/cSp0AXmjXv9y4LT2a5GT5wguu
+	 qJkY2D05QVqUg==
+Message-ID: <2543aa99-0069-4eb1-a37b-204f3e6bbf6c@kernel.org>
+Date: Thu, 19 Sep 2024 13:02:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] watchdog: rn5t618: use proper module tables
+To: Andreas Kemnade <andreas@kemnade.info>, Guenter Roeck <linux@roeck-us.net>
+Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240918212925.1191953-1-andreas@kemnade.info>
+ <f52deaf1-492e-4cbe-8e46-8999ae2e481f@roeck-us.net>
+ <20240919125005.0bcd17e4@akair>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240919125005.0bcd17e4@akair>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Wed, 20 Mar 2024 00:33:50 +0100
-Kamil Kasperski <ressetkk@gmail.com> wrote:
+On 19/09/2024 12:50, Andreas Kemnade wrote:
+> Am Wed, 18 Sep 2024 15:43:40 -0700
+> schrieb Guenter Roeck <linux@roeck-us.net>:
+> 
+>> On 9/18/24 14:29, Andreas Kemnade wrote:
+>>> Avoid requiring MODULE_ALIASES by declaring proper device id tables.
+>>>
+>>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>  
+>>
+>> This needs a better rationale. There are more than 40 watchdog drivers
+>> using MODULE_ALIAS. I would hate having to deal with 40+ patches just
+>> for cosmetic reasons, not counting the thousands of instances of
+>> MODULE_ALIAS in the kernel, including the more than 1,000 instances of
+>> "MODULE_ALIAS.*platform:".
+>>
+> basically reviewers were arguing against patches from me bringing in
+> MODULE_ALIASES. So I decided to clean up a bit in my backyard. Not
+> sure whether such things could by done by coccinelle but at least
+> it could be tested via output of modinfo.
+> 
+> This is one example for such a patch:
+> https://lore.kernel.org/linux-clk/119f56c8-5f38-eb48-7157-6033932f0430@linaro.org/
+> 
 
-Hi Kamil,
+There are multiple aspects here:
+1. People (including me) copy code which they do no understand. Or
+without really digging into it, because they do not have time. They just
+copy it, regardless whether the code is necessary or not. MODULE_ALIAS
+is one of such examples. It got copied to new drivers just because some
+other driver had it.
 
-> W dniu 20.03.2024 o=C2=A000:22, Andre Przywara pisze:
-> > On Tue, 19 Mar 2024 18:50:24 +0100
-> > Kamil Kasperski <ressetkk@gmail.com> wrote:
-> >
-> > Hi Kamil,
-> > =20
-> >> Add dtsi file for T95 tv boxes and add initial support for T95 5G AXP3=
-13A
-> >> variant with a board name H616-T95MAX-AXP313A-v3.0 Internal storage is=
- not
-> >> accessible due to lack of support for H616 NAND controller.
-> >>
-> >> Signed-off-by: Kamil Kasperski <ressetkk@gmail.com> =20
-> > thanks for the changes, looks good now, although a bit minimal ;-)
-> >
-> > Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-> >
-> > Please can you wait till the -rc1 release on Sunday, and send a rebased
-> > version next week? There is a small merge conflict in the dts Makefile
-> > as of now.
-> >
-> > Cheers,
-> > Andre =20
->=20
-> Sure, no problem. Thank you very much for a review.
+2. MODULE_ALIAS creates basically ABI - some user-space might depend on
+it, so removal might affect user. I think I was not dropping it from the
+drivers in cases it would actually drop an alias. I was only dropping
+duplicated aliases. That's not the case here, I believe.
 
-It's been a while, but can you maybe send a rebased version of this
-patch set again? The merge window has just opened, so exactly now is
-probably not a good time, but if you rebase on v6.12-rc1, due to be
-released on the 29th September, we can get this queued.
+3. MODULE_ALIAS scales poor. I believe proper xxx_device_id table is better.
 
-Some minor things I just spotted below:
+4. But it does not mean that one single line - MODULE_ALIAS - should be
+replaced in existing drivers into full-blown ID table. I think I never
+proposed such patches for existing drivers. Why? Because if there was no
+such need so far, means there were no scalability issues.
 
-> Once it gets merged I'll get back to u-boot patch.
->=20
-> Cheers,
-> Kamil
->=20
-> > =20
-> >> ---
-> >>  arch/arm64/boot/dts/allwinner/Makefile             |   1 +
-> >>  arch/arm64/boot/dts/allwinner/sun50i-h616-t95.dtsi | 109 ++++++++++++=
-+++++++++
-> >>  .../dts/allwinner/sun50i-h616-t95max-axp313.dts    |  84 ++++++++++++=
-++++
-> >>  3 files changed, 194 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/=
-dts/allwinner/Makefile
-> >> index 21149b346a60..294921f12b73 100644
-> >> --- a/arch/arm64/boot/dts/allwinner/Makefile
-> >> +++ b/arch/arm64/boot/dts/allwinner/Makefile
-> >> @@ -42,6 +42,7 @@ dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h6-tanix-tx6-mi=
-ni.dtb
-> >>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h616-bigtreetech-cb1-manta.dtb
-> >>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h616-bigtreetech-pi.dtb
-> >>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h616-orangepi-zero2.dtb
-> >> +dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h616-t95max-axp313.dtb
-> >>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h616-x96-mate.dtb
-> >>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h618-longanpi-3h.dtb
-> >>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h618-orangepi-zero2w.dtb
-> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h616-t95.dtsi b/arch=
-/arm64/boot/dts/allwinner/sun50i-h616-t95.dtsi
-> >> new file mode 100644
-> >> index 000000000000..4c02408733bc
-> >> --- /dev/null
-> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h616-t95.dtsi
-> >> @@ -0,0 +1,109 @@
-> >> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> >> +/*
-> >> + * Copyright (C) 2024 Kamil Kasperski <ressetkk@gmail.com>
-> >> + *
-> >> + * Common DT nodes for H616-based T95 TV boxes
-> >> + * There are two versions reported with different PMIC variants.
-> >> + */
-> >> +
-> >> +#include "sun50i-h616.dtsi"
-> >> +
-> >> +#include <dt-bindings/gpio/gpio.h>
-> >> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> >> +
-> >> +/ {
-> >> +	aliases {
-> >> +		ethernet1 =3D &sdio_wifi;
-> >> +		serial0 =3D &uart0;
-> >> +	};
-> >> +
-> >> +	chosen {
-> >> +		stdout-path =3D "serial0:115200n8";
-> >> +	};
-> >> +
-> >> +	reg_vcc5v: vcc5v {
-> >> +		/* board wide 5V supply directly from the DC input */
-> >> +		compatible =3D "regulator-fixed";
-> >> +		regulator-name =3D "vcc-5v";
-> >> +		regulator-min-microvolt =3D <5000000>;
-> >> +		regulator-max-microvolt =3D <5000000>;
-> >> +		regulator-always-on;
-> >> +	};
-> >> +
-> >> +	reg_vcc3v3: vcc3v3 {
-> >> +		/* discrete 3.3V regulator */
-> >> +		compatible =3D "regulator-fixed";
-> >> +		regulator-name =3D "vcc-3v3";
-> >> +		regulator-min-microvolt =3D <3300000>;
-> >> +		regulator-max-microvolt =3D <3300000>;
-> >> +		regulator-always-on;
+5. For new drivers I would propose to use ID table instead of
+MODULE_ALIAS, even if it has one entry, because of above scalability.
+But that's just my opinion and other person still might prefer might
+concise ALIAS.
 
-Can you please add a line:
-		vin-supply =3D <&reg_vcc5v>;
-here, to not leave this regulator dangling? That should also suppress a
-warning about a dummy regulator.
+That's said, considering (4) above, I would not propose such patch. I
+agree here with Guenter that you need proper rationale.
 
-> >> +	};
-> >> +
-> >> +	wifi_pwrseq: pwrseq {
-> >> +		compatible =3D "mmc-pwrseq-simple";
-> >> +		clocks =3D <&rtc CLK_OSC32K_FANOUT>;
-> >> +		clock-names =3D "ext_clock";
-> >> +		pinctrl-0 =3D <&x32clk_fanout_pin>;
-> >> +		pinctrl-names =3D "default";
-> >> +		reset-gpios =3D <&pio 6 18 GPIO_ACTIVE_LOW>; /* PG18 */
-> >> +	};
-> >> +};
-> >> +
-> >> +&ehci0 {
-> >> +	status =3D "okay";
-> >> +};
-> >> +
-> >> +&ehci2 {
-> >> +	status =3D "okay";
-> >> +};
-> >> +
-> >> +&ir {
-> >> +	status =3D "okay";
-> >> +};
-> >> +
-> >> +&mmc0 {
-> >> +	cd-gpios =3D <&pio 8 16 GPIO_ACTIVE_LOW>;	/* PI16 */
-> >> +	bus-width =3D <4>;
-> >> +	status =3D "okay";
-
-Please add a:
-	disable-wp;
-here, as microSD slots don't have a write-protect switch. We are in the
-process of fixing all sunxi arm64 boards in this respect, but this DT would
-probably miss that effort.
-
-> >> +};
-> >> +
-> >> +&mmc1 {
-> >> +	mmc-pwrseq =3D <&wifi_pwrseq>;
-> >> +	bus-width =3D <4>;
-> >> +	non-removable;
-> >> +	status =3D "okay";
-> >> +
-> >> +	sdio_wifi: wifi@1 {
-> >> +		reg =3D <1>;
-> >> +	};
-> >> +};
-> >> +
-> >> +&ohci0 {
-> >> +	status =3D "okay";
-> >> +};
-> >> +
-> >> +&ohci2 {
-> >> +	status =3D "okay";
-> >> +};
-> >> +
-> >> +&uart0 {
-> >> +	pinctrl-names =3D "default";
-> >> +	pinctrl-0 =3D <&uart0_ph_pins>;
-> >> +	status =3D "okay";
-> >> +};
-> >> +
-> >> +&uart1 {
-> >> +	pinctrl-names =3D "default";
-> >> +	pinctrl-0 =3D <&uart1_pins>, <&uart1_rts_cts_pins>;
-> >> +	uart-has-rtscts;
-> >> +	status =3D "okay";
-
-As Jernej mentioned: this is probably for connecting to the Bluetooth part
-of the WiFi chip, so please add a least a comment here. And I wonder if we
-know what Bluetooth IP this is, and if there is a compatible string for
-that? Does the vendor firmware give any clue here?
-
-Cheers,
-Andre
-
-> >> +};
-> >> +
-> >> +&usbotg {
-> >> +	dr_mode =3D "host";	/* USB A type receptable */
-> >> +	status =3D "okay";
-> >> +};
-> >> +
-> >> +&usbphy {
-> >> +	status =3D "okay";
-> >> +};
-> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h616-t95max-axp313.d=
-ts b/arch/arm64/boot/dts/allwinner/sun50i-h616-t95max-axp313.dts
-> >> new file mode 100644
-> >> index 000000000000..08a6b4fcc235
-> >> --- /dev/null
-> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h616-t95max-axp313.dts
-> >> @@ -0,0 +1,84 @@
-> >> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> >> +/*
-> >> + * Copyright (C) 2024 Kamil Kasperski <ressetkk@gmail.com>
-> >> + *
-> >> + * Configuration for T95 TV box with board label H616-T95MAX-AXP313A-=
-v3.0
-> >> + */
-> >> +
-> >> +/dts-v1/;
-> >> +
-> >> +#include "sun50i-h616-t95.dtsi"
-> >> +
-> >> +/ {
-> >> +	model =3D "T95 5G (AXP313)";
-> >> +	compatible =3D "t95,t95max-axp313", "allwinner,sun50i-h616";
-> >> +};
-> >> +
-> >> +&mmc0 {
-> >> +	vmmc-supply =3D <&reg_dldo1>;
-> >> +};
-> >> +
-> >> +&mmc1 {
-> >> +	vmmc-supply =3D <&reg_dldo1>;
-> >> +	vqmmc-supply =3D <&reg_aldo1>;
-> >> +};
-> >> +
-> >> +&r_i2c {
-> >> +	status =3D "okay";
-> >> +
-> >> +	axp313: pmic@36 {
-> >> +		compatible =3D "x-powers,axp313a";
-> >> +		reg =3D <0x36>;
-> >> +		#interrupt-cells =3D <1>;
-> >> +		interrupt-controller;
-> >> +
-> >> +		vin1-supply =3D <&reg_vcc5v>;
-> >> +		vin2-supply =3D <&reg_vcc5v>;
-> >> +		vin3-supply =3D <&reg_vcc5v>;
-> >> +
-> >> +		regulators {
-> >> +			reg_aldo1: aldo1 {
-> >> +				regulator-always-on;
-> >> +				regulator-min-microvolt =3D <1800000>;
-> >> +				regulator-max-microvolt =3D <1800000>;
-> >> +				regulator-name =3D "vcc1v8";
-> >> +			};
-> >> +
-> >> +			reg_dldo1: dldo1 {
-> >> +				regulator-always-on;
-> >> +				regulator-min-microvolt =3D <3300000>;
-> >> +				regulator-max-microvolt =3D <3300000>;
-> >> +				regulator-name =3D "vcc3v3";
-> >> +			};
-> >> +
-> >> +			reg_dcdc1: dcdc1 {
-> >> +				regulator-always-on;
-> >> +				regulator-min-microvolt =3D <810000>;
-> >> +				regulator-max-microvolt =3D <990000>;
-> >> +				regulator-name =3D "vdd-gpu-sys";
-> >> +			};
-> >> +
-> >> +			reg_dcdc2: dcdc2 {
-> >> +				regulator-always-on;
-> >> +				regulator-min-microvolt =3D <810000>;
-> >> +				regulator-max-microvolt =3D <1100000>;
-> >> +				regulator-name =3D "vdd-cpu";
-> >> +			};
-> >> +
-> >> +			reg_dcdc3: dcdc3 {
-> >> +				regulator-always-on;
-> >> +				regulator-min-microvolt =3D <1500000>;
-> >> +				regulator-max-microvolt =3D <1500000>;
-> >> +				regulator-name =3D "vdd-dram";
-> >> +			};
-> >> +		};
-> >> +	};
-> >> +};
-> >> +
-> >> +&pio {
-> >> +	vcc-pc-supply =3D <&reg_aldo1>;
-> >> +	vcc-pf-supply =3D <&reg_dldo1>;
-> >> +	vcc-pg-supply =3D <&reg_aldo1>;
-> >> +	vcc-ph-supply =3D <&reg_dldo1>;
-> >> +	vcc-pi-supply =3D <&reg_dldo1>;
-> >> +};
-> >> =20
->=20
+Best regards,
+Krzysztof
 
 
