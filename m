@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-333323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D3597C6EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:22:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C77897C6EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D93E5B2355A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:22:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FA1E1C20B40
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E9419A28B;
-	Thu, 19 Sep 2024 09:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8504B19B3DA;
+	Thu, 19 Sep 2024 09:21:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DtjLHv9O"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GruvSxtG"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F3C199921
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD7319995E
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726737700; cv=none; b=nRf7zRPjO3FH+PF0CoFipIb2WQjpCuLmjc+zNzWD6GH+L3XcBneiPwAfB2CMOoWG6VBReCydBfcgUUlRSrw3w40ogf/p9Qfo2/a6UzTrObgr0keJbvK1wH8mm1GCmEHBZcBREJ6Vc0wTF9sFZsA25tIbo2vTDaeYDk1poaiXI+Y=
+	t=1726737701; cv=none; b=mnUoprObSss0FkfD9FyJ9cL1qtoNdtkyTeCcMUn0YNLoDSojX2J0c731c7m2wu1gbezUAa+6RCLsxTlDms336uGXiQnUKyUux3wSzmCgD3wDpIoEBH0BVT7DjM9njD7sKfp4FAjiKnPelMiYsu9uDu1n0MQ5icxdYiJBY9qf6fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726737700; c=relaxed/simple;
-	bh=rmWek2CE7WPljPSo+Uou9ada/0CF37ebR/ci1deBjQw=;
+	s=arc-20240116; t=1726737701; c=relaxed/simple;
+	bh=i5PZepG1aoFBTCiFDPOYVCA2IFjIkELc4/8zmw5imSo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rsiCVeJ80ScA7eXfTpe2qtmZCH3v02Kxhx8p9cAe8So81TYKBfZ0SSrzP4/v2T+WJ7iP8j0X+7cSUWzrEV5MPcv8sGjqyNhNSM9wFSzolIRpwXlcYbTPZ8nKpkK9n0uoX4G7Gluh6QTDKURPn2F3xjI4vtciypxMASj5CSZqEdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DtjLHv9O; arc=none smtp.client-ip=209.85.208.174
+	 In-Reply-To:To:Cc; b=eLtX7NRY4ZvrVekWc/yhFU+oNElevLYA/P3LFTkCwaME7Rfkv3pqYrKOIjD2tLNLOV+b9JOYOOuIilTNRnaWbi1q2y/tkP6ZG09vMOqpdYRoJitRaWG+bohGkiICltULxgmMindV5gG4mx9fIZCeVJSiy0VU9tUFAqZ6GadkMEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GruvSxtG; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f752d9ab62so5714991fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 02:21:38 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42e748f78d6so4783155e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 02:21:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726737697; x=1727342497; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726737698; x=1727342498; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bi6dudpwiT1wruYc8KetPgHF34XRCEstNIC9Mcn08hE=;
-        b=DtjLHv9Ok0R4aIHxyMuBkP8LraJYEh7yG/o52UX1tidVBege+0FrDV8wKmPw17Iwd5
-         oYobHesUlHNE8NGJZYDzR+slheh4nrwYxUnKV4fos8dTVVW+HiAwN+DAWEsJAbF7Ha2a
-         V+TEEq01yIrac54AZWVi1+FcCt12+ut7zDp9sf/HEL9FYAFcEN/dNCvP14tOfmza7qIG
-         wC5WQnI8pug1cEygt2xuBGeokXFBvBlPHDUgkIbKr/WPYmgarR2ZXYlOxHaN+bUWUYbo
-         2P4NAhkXyg0kBxATKopyCupSMRQrgNVB2B1rj/5/2gJqXqdkvqO6kyTHz51naQhpkozY
-         g/cQ==
+        bh=aMa/yQ2Im0//zhcPUCeMNBxbg9N98XT4Go0CFqsD1eY=;
+        b=GruvSxtGn9TXNzz/DRl1ik8zufhfSeZzIUD1oo/6oGTLyz+0Amwpy6h19B8ylUbj/u
+         UOj2km66k6zmq3DpW7vbx7gYYnble0ojqbn+2huTythr84vx44PmoxLps4Q/8na1umR3
+         lKXxd04oBz1tKUzKf9d2cyF/iPEWbghnkLdsHPxLEM+8Lzilvi66lYYH+p1E+ZFNEODu
+         fz7g8EtlgAPUQ9m7NQ98aBbCDxsnIt3mdXsAWWXrrs0v0yXsHAJLt6AXvXfg/n3Szn1c
+         etrEjxtVkOZVB9RfCcBhZBuhxcuFRKKBGCxBIkRDOg/EkmKSvYjWxwBN45p8yht9E3KB
+         0Q7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726737697; x=1727342497;
+        d=1e100.net; s=20230601; t=1726737698; x=1727342498;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bi6dudpwiT1wruYc8KetPgHF34XRCEstNIC9Mcn08hE=;
-        b=GC+3aIQKLJMnl9WTTiWfEtHgMd2fhwcascVtF1BrVKL64QtAdNldXmsKTcqMampUyl
-         enr+oftxMTJ/YkMhnWutMgLYObJLS+x3TZRk4GmCLGOCAFyQu42IeW3ConIyXnFgL82m
-         Yo+zRxH3N69B0PTNlZw3w/CR1rnXFmNY0teYz6FW7iynLp1KrsWZe6tB7FMEaaNMGWeT
-         Aw0k9zemuYm0pqTVDgK5JjAUN+8v5I/knrlHXRe5GNCIa6CS0+wH/vdw4lax6Gu6Nyn8
-         4NmNjhKXlVRYR1eBw5jkjySWL698v6D08tZl++jsq/ssmwx3A3SXO0xskhY9STe+Nsup
-         28VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV56E8C2g5Cwx+XAhX7Vta4odSaVZR+7Xa9NbggjIsoOkjXJre5J2oD8/tD0l2MxMDjrWzpLrCIfRz8qck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvWDjUNWd1j/A4oK9qiW76iX1y+yrpViqJVQcT5cFaOrajAi4R
-	9qRxbGmC55P3WB9S6BA/AyAD8MlI5fvQIuGH8c29RDupcLvLgW0twom2TLWwTxM=
-X-Google-Smtp-Source: AGHT+IHyCwBaP2n+hEG21y4E73ikctDq544q5tnqdl4FFCfiMtCFgczBe46WG484l0Gqo1n7oWO3cQ==
-X-Received: by 2002:a2e:4e02:0:b0:2f7:669c:93c1 with SMTP id 38308e7fff4ca-2f7919042b3mr86992431fa.14.1726737696632;
-        Thu, 19 Sep 2024 02:21:36 -0700 (PDT)
+        bh=aMa/yQ2Im0//zhcPUCeMNBxbg9N98XT4Go0CFqsD1eY=;
+        b=fbuU8WbW4yZvdgHlAsVpUmwgcsczQESTWSkxv4OQx/HdBYj4mn76uVWx7frGw62Nmx
+         YT8HXMV+qGPWVGIp8E1gzlwMyBwb+zvBWS1hCgAEjO0ZiVpC/0Y7o7Yvbk51IwTT4ABJ
+         4XCkV61gjDgt/4xt9A3jPYzPXAH0LMThSrLG3fF76X48SULFAUl5jDC2UUkS9WTk+aFO
+         a/qbftckIzbSeQSuEtKvQrUeEQK45S03d7F+lFopiX29Ot4tsgGTeohuavrMowZzA1jY
+         JHRvEh6FcqFmlbz+6TCupWhVsDrIL2IRDXB6yhhN2m/qBR1Gft94eh+t5j7Ha8pyG9g2
+         9jQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHM2CzUeaxboih8og595VbnQj/89BF7WpT74JrXiNyBkc+klGueWXepanR1IWXdASKIADbgvzckP3UVsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnZPsBU5adAJzelOYOwpReJjRQhQkEqn9QP5hXsGsgufPGm3IT
+	i+rziQmAXEuz6i9g64WRKmQYFZBcMniNi2NTo/LR/9hBtuqSl9AvktvBKXL2SzY=
+X-Google-Smtp-Source: AGHT+IFzaSnso6ocrF9emwd2RsWQlvTAmzurK9UZ8AOuiIHpVPVrYdehMMnowjm9qAv3d8lc18uSxQ==
+X-Received: by 2002:a05:600c:4e8a:b0:427:abed:3602 with SMTP id 5b1f17b1804b1-42cdb5675f3mr190980895e9.24.1726737698218;
+        Thu, 19 Sep 2024 02:21:38 -0700 (PDT)
 Received: from [127.0.1.1] (host-80-117-99-70.retail.telecomitalia.it. [80.117.99.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e75468413sm16889465e9.45.2024.09.19.02.21.35
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e75468413sm16889465e9.45.2024.09.19.02.21.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 02:21:36 -0700 (PDT)
+        Thu, 19 Sep 2024 02:21:37 -0700 (PDT)
 From: Angelo Dureghello <adureghello@baylibre.com>
 X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
-Date: Thu, 19 Sep 2024 11:19:58 +0200
-Subject: [PATCH v3 02/10] dt-bindings: iio: dac: axi-dac: add ad3552r axi
- variant
+Date: Thu, 19 Sep 2024 11:19:59 +0200
+Subject: [PATCH v3 03/10] dt-bindings: iio: dac: ad3552r: fix maximum spi
+ speed
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +79,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-2-a17b9b3d05d9@baylibre.com>
+Message-Id: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-3-a17b9b3d05d9@baylibre.com>
 References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
 In-Reply-To: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
 To: Lars-Peter Clausen <lars@metafoo.de>, 
@@ -95,98 +95,26 @@ X-Mailer: b4 0.14.1
 
 From: Angelo Dureghello <adureghello@baylibre.com>
 
-Add a new compatible and related bindigns for the fpga-based
-"ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
-
-The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
-generic AXI "DAC" IP, intended to control ad3552r and similar chips,
-mainly to reach high speed transfer rates using an additional QSPI
-DDR interface.
-
-The ad3552r device is defined as a child of the AXI DAC, that in
-this case is acting as an SPI controller.
+Fix maximum SPI clock speed, as per datasheet (Rev. B, page 6).
 
 Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 ---
- .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   | 40 ++++++++++++++++++++--
- 1 file changed, 37 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-index a55e9bfc66d7..6cf0c2cb84e7 100644
---- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-+++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-@@ -19,11 +19,13 @@ description: |
-   memory via DMA into the DAC.
- 
-   https://wiki.analog.com/resources/fpga/docs/axi_dac_ip
-+  https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
- 
- properties:
-   compatible:
-     enum:
-       - adi,axi-dac-9.1.b
-+      - adi,axi-ad3552r
- 
-   reg:
+diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+index fc8b97f82077..41fe00034742 100644
+--- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
++++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+@@ -30,7 +30,7 @@ properties:
      maxItems: 1
-@@ -41,22 +43,54 @@ properties:
-   '#io-backend-cells':
-     const: 0
  
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
- required:
-   - compatible
-   - dmas
-   - reg
-   - clocks
+   spi-max-frequency:
+-    maximum: 30000000
++    maximum: 66000000
  
-+patternProperties:
-+  "^.*@([0-9])$":
-+    type: object
-+    additionalProperties: true
-+    properties:
-+      io-backends:
-+        description: |
-+          AXI backend reference
-+    required:
-+      - io-backends
-+
- additionalProperties: false
- 
- examples:
-   - |
-     dac@44a00000 {
--        compatible = "adi,axi-dac-9.1.b";
--        reg = <0x44a00000 0x10000>;
--        dmas = <&tx_dma 0>;
-+      compatible = "adi,axi-dac-9.1.b";
-+      reg = <0x44a00000 0x10000>;
-+      dmas = <&tx_dma 0>;
-+      dma-names = "tx";
-+      #io-backend-cells = <0>;
-+      clocks = <&axi_clk>;
-+    };
-+
-+  - |
-+    axi_dac: spi@44a70000 {
-+        compatible = "adi,axi-ad3552r";
-+        reg = <0x44a70000 0x1000>;
-+        dmas = <&dac_tx_dma 0>;
-         dma-names = "tx";
-         #io-backend-cells = <0>;
-         clocks = <&axi_clk>;
-+
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        /* DAC devices */
-     };
- ...
+   reset-gpios:
+     maxItems: 1
 
 -- 
 2.45.0.rc1
