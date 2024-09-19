@@ -1,113 +1,146 @@
-Return-Path: <linux-kernel+bounces-333391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B7297C7D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:17:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2AE097C7D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64E381F29D6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:17:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A44C3288A39
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3341991D7;
-	Thu, 19 Sep 2024 10:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9EB19A285;
+	Thu, 19 Sep 2024 10:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D6x6BKht"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="MdW/JwzL"
+Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B831991A0;
-	Thu, 19 Sep 2024 10:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5EA33D8;
+	Thu, 19 Sep 2024 10:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726741068; cv=none; b=jmo0Nd5xib/eU6Phj8xtg7WDbQbumr+qH0QmIVBOYEQXorAGU9FOkFoCwPyzms6tqFb2fLIS5l2VjFN3wjCNd3PJYWncOxiJGYerrya20ZwxGtVbXcNdLiK2WvXYA6JfCe5pc2LK8cv+k7Pqyfy/WdAp8jf2HyWtL95k3kcLHQQ=
+	t=1726741189; cv=none; b=XJh8qN+O6sRjICs5KJKSwnpcU1KGTpYKeMPwz7jCt5q11uh8u6PvaE1EkbaIdVbc2t6mA1zFY7hpHpTJ76sNcA14b3XiZv3WFnz72t6MEp30dvbd4vDfT68+3sIZc38FCed/uM1FYUVgmTFoIT6eW8UhQovfN3XnkuLLa2wSTAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726741068; c=relaxed/simple;
-	bh=JRE51gP5UxLcgAGuT2g5r97Z6STrbAowK6q6kqli0ZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F541x9B4/tsgYQy9e8MMwsz61uJQH1DC4QpYOHM5ewtz0AZejP2qUiPq4XOXOYLEXaRBKwXJzeroBt9rV/Lwe9P0ZbgtlRtdj5ZNhrunZT6+19RVGgvoS9xSAPwvaOT02fJx/74H3n0L0nWpXKh/fIoTOkHqZ2N5+zX5/Ej/56g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D6x6BKht; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 19 Sep 2024 03:17:38 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726741064;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I1mckTS2FV38bbZ879rd+/BowKPTlDKekDspILq4S7U=;
-	b=D6x6BKhtU1AsDKi/4KqvcONlUrTfddheLB6mjS/liWOZikXBBbl320OPz8mgGIKM4WllXD
-	+wY9aYHdLlkmHh4egDXFCzDa+mmurZ3C2W/5Yn9b7oeoiOBTG25PlxVj4C73Kx3idnOFp+
-	Vxq68Xs1nMkSJWGZkP3uhgfHcFJ6DPg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Colton Lewis <coltonlewis@google.com>
-Cc: kvm@vger.kernel.org, Sean Christopherson <seanjc@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Will Deacon <will@kernel.org>, Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] Correct perf sampling with Guest VMs
-Message-ID: <Zuv6QveQAHZ9H0HP@linux.dev>
-References: <20240912205133.4171576-1-coltonlewis@google.com>
+	s=arc-20240116; t=1726741189; c=relaxed/simple;
+	bh=yPvEhilC8o+QAD2dAw0R/Y7FjbORjvrTTvmE1gFLzow=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Uvoky0nuP1qj7FSQzFoEB2uqcgzxWiIXuIBJh6iFekV2SBle+fZyXzdPhWp1SF9pyAK+9wPLB8uSLF8iTvPVg3ONkGZ6n9K261L3mIgigd+TahHdVNI6h5k/11ScfIPncxxwzAE9ssudWppXg0h1zCj+1eS3+iCP4vyCZ9a/IWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=MdW/JwzL; arc=none smtp.client-ip=212.122.41.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
+	s=mail; t=1726741181;
+	bh=C8urjnOua0GCJAjrYNro+A9+djxFaRIrbs95gdqoxeU=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=MdW/JwzLtG7jvM2lKNp19UNEGkA++Q85uQ+qZjR6Gwdt1C7rGaR7xP/GOO7e/Ff73
+	 yCRvERCX/lQ8dqkMhIY+NBCdHUAnPm+OuxhsFXaaIWt08iCDrjc450JYCSLAU7m66F
+	 Tj4x6f9YQRiT1AWs3G2qXIx+1o4QNalFGYcwxG2g=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912205133.4171576-1-coltonlewis@google.com>
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+From: Christian Theune <ct@flyingcircus.io>
+In-Reply-To: <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
+Date: Thu, 19 Sep 2024 12:19:19 +0200
+Cc: Dave Chinner <david@fromorbit.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Chris Mason <clm@meta.com>,
+ Jens Axboe <axboe@kernel.dk>,
+ linux-mm@kvack.org,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Daniel Dao <dqminh@cloudflare.com>,
+ regressions@lists.linux.dev,
+ regressions@leemhuis.info
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io>
+References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <Zud1EhTnoWIRFPa/@dread.disaster.area>
+ <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
+ <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
+ <ZulMlPFKiiRe3iFd@casper.infradead.org>
+ <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
+ <ZumDPU7RDg5wV0Re@casper.infradead.org>
+ <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
+ <459beb1c-defd-4836-952c-589203b7005c@meta.com>
+ <ZurXAco1BKqf8I2E@casper.infradead.org>
+ <ZuuBs762OrOk58zQ@dread.disaster.area>
+ <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
+ <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
+ <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
+ <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 
-On Thu, Sep 12, 2024 at 08:51:28PM +0000, Colton Lewis wrote:
-> v3:
->   * Clarify final commit message further
->   * Remove an unused variable in perf_arch_misc_flags()
-> 
-> v2:
-> https://lore.kernel.org/kvm/20240911222433.3415301-1-coltonlewis@google.com/
-> 
-> v1:
-> https://lore.kernel.org/kvm/20240904204133.1442132-1-coltonlewis@google.com/
-> 
-> This series cleans up perf recording around guest events and improves
-> the accuracy of the resulting perf reports.
 
-Please fix the intermediate build issue, and also test that each patch
-in the series compiles. With that corrected, for the series:
 
-Reviewed-by: Oliver Upton <oliver.upton@linux.dev>
+> On 19. Sep 2024, at 08:57, Linus Torvalds =
+<torvalds@linux-foundation.org> wrote:
+>=20
+> Yeah, right now Jens is still going to run some more testing, but I
+> think the plan is to just backport
+>=20
+>  a4864671ca0b ("lib/xarray: introduce a new helper xas_get_order")
+>  6758c1128ceb ("mm/filemap: optimize filemap folio adding")
+>=20
+> and I think we're at the point where you might as well start testing
+> that if you have the cycles for it. Jens is mostly trying to confirm
+> the root cause, but even without that, I think you running your load
+> with those two changes back-ported is worth it.
+>=20
+> (Or even just try running it on plain 6.10 or 6.11, both of which
+> already has those commits)
 
-A nice follow-up on the arm64 side would be to further constrain
-kvm_arch_pmi_in_guest() to return true iff we exited the guest due to an
-IRQ.
+I=E2=80=99ve discussed this with my team and we=E2=80=99re preparing to =
+switch all our=20
+non-prod machines as well as those production machines that have shown
+the error before.
 
--- 
-Thanks,
-Oliver
+This will require a bit of user communication and reboot scheduling.
+Our release prep will be able to roll this out starting early next week
+and the production machines in question around Sept 30.
+
+We would run with 6.11 as our understanding so far is that running the
+most current kernel would generate the most insight and is easier to
+work with for you all?
+
+(Generally we run the mostly vanilla LTS that has surpassed x.y.50+ so
+we might later downgrade to 6.6 when this is fixed.)
+
+> So considering how well the reproducer works for Jens and Chris, my
+> main worry is whether your load might have some _additional_ issue.
+>=20
+> Unlikely, but still .. The two commits fix the repproducer, so I think
+> the important thing to make sure is that it really fixes the original
+> issue too.
+>=20
+> And yeah, I'd be surprised if it doesn't, but at the same time I would
+> _not_ suggest you try to make your load look more like the case we
+> already know gets fixed.
+>=20
+> So yes, it will be "weeks of not seeing crashes" until we'd be
+> _really_ confident it's all the same thing, but I'd rather still have
+> you test that, than test something else than what caused issues
+> originally, if you see what I mean.
+
+Agreed, I=E2=80=99m all onboard with that.
+
+Liebe Gr=C3=BC=C3=9Fe,
+Christian Theune
+
+--=20
+Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
+Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
+Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
+HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
+Christian Zagrodnick
+
 
