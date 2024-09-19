@@ -1,190 +1,202 @@
-Return-Path: <linux-kernel+bounces-333463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10E897C91D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:27:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA88F97C920
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 225FCB21DA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:27:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE6E91C21545
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B14419E7E8;
-	Thu, 19 Sep 2024 12:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3j8Zffp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C02919E822;
+	Thu, 19 Sep 2024 12:27:01 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5281519D8B8;
-	Thu, 19 Sep 2024 12:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A86219DF83;
+	Thu, 19 Sep 2024 12:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726748811; cv=none; b=gwCY9gzigRShszyqebVs676p0aRqDnnMIbVMPfx7BSVRkrJAI/ZO38BhS+NgU94sZOZvgEr91ie/BUM3KaDSc8CzlsWEtcqas2g4RgyVCuhLJ7b4aPvVQsEBx7rZx5Moz53/Po3IfcYWekEAlc9xn8pUasDrRh+91BGuKJNcIsg=
+	t=1726748821; cv=none; b=UV1Lctq7I9y8lOiO3qRSrWohx785DRic3Gzju1dwTq7frFMqb9diuNdANPeneYCoBWQ/dN4Fb9bklvK4ba+7mLh2erySKzSGQAqZG0nmy0OM0cKBu4TN6FT+tv3Oo8+tzRcxgYgBDdjfKfFE6tHFJofWERrD1Cn3M5cQ9JthdcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726748811; c=relaxed/simple;
-	bh=/sbvkvvWbo+R2p0WSTX4lWWIw7JQqF97MvRH9J8oNH8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mF11K12RE3NJf8AwfnvFKyPT2QjJwFJoPhynVzx5ITNug9lcf953VsDLNj2ruwWL0wFSB7b5JTWPm+ZCDgP9YlOAKprec85g2q3rk9ie2SCc5ogVBTo9ZWOIeyyQ7FkR23XWvRHSI7i11j/lkn5G3UOitXYQVgqwfvclWdKce/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d3j8Zffp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F00A3C4CECD;
-	Thu, 19 Sep 2024 12:26:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726748810;
-	bh=/sbvkvvWbo+R2p0WSTX4lWWIw7JQqF97MvRH9J8oNH8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=d3j8ZffpFCHU7Jjo1iVK0eMbcRup/sSaXR/OO73o+WfHNSKeeSqAM5/Y/6CFt6Zcc
-	 DVsDIDOWRMpah5x+CHsk9JMs5CWE/pwDii7WOJCp5Px0ykoQq8/zDc4q1u7Y5tEGRn
-	 niI5THLqOrK3JicP8z417S20jBDQ6qknA1RplNyXT8uszVRuw98XTyLMYBqTPaTMNL
-	 nWI57kDrBbk+yaPZpN1UAvoy8R/TJ++nKAzLfiq1N+B7/CBgpoH4tZKREmHCYLps1n
-	 q391xFyWyAEUPn9DsnecHnbXWJgU5CPuNabloP+zhrI1yIj56FRG13McEqMhfyA9J5
-	 GvESBgTOWu+aw==
-Message-ID: <4cd3d3f8-7d73-4171-bb35-aba975cdc11a@kernel.org>
-Date: Thu, 19 Sep 2024 14:26:42 +0200
+	s=arc-20240116; t=1726748821; c=relaxed/simple;
+	bh=80x4nsv2zhGPIBVG5Z54211v7pd2E6x1EBsjZw2zxEs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=VEKvN2N1e4s0lzDpi4d4c6FZlEWYpgRwftj/hI1iZYW+rGBErSjSXf+kPp/MzBiFowNYNU3zDHz8ZSRiVgTquIyuFM28H8xCEbKealVpBapz+9gbn2kyHL9OXyM+hcv0Q6yzWaLoZHkgV2qUs/n/iFsuKYwf5rTsWJ/tK5T5zZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4X8ZWd542cz4f3lCm;
+	Thu, 19 Sep 2024 20:26:37 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5875E1A018D;
+	Thu, 19 Sep 2024 20:26:54 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgD3KseMGOxm7lQMBw--.51560S3;
+	Thu, 19 Sep 2024 20:26:54 +0800 (CST)
+Subject: Re: [bug report] block: Non-NCQ commands will never be executed while
+ fio is continuously running
+To: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+ yangxingui <yangxingui@huawei.com>
+Cc: axboe@kernel.dk, John Garry <john.g.garry@oracle.com>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ James.Bottomley@hansenpartnership.com,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ "yukuai (C)" <yukuai3@huawei.com>,
+ "yangerkun@huawei.com" <yangerkun@huawei.com>
+References: <eef1e927-c9b2-c61d-7f48-92e65d8b0418@huawei.com>
+ <922e3d52-9567-4371-9a43-6d51f716a370@kernel.org>
+ <129e1e4b-426f-3d5b-b95c-d386c90cfe06@huawei.com>
+ <5b4a15be-1cb2-4477-8f17-b808612d10d5@kernel.org>
+ <0e78cce0-3f4c-3ddf-4d5b-ee2b5c8d7e1a@huawei.com>
+ <ZuAtLK5jIPEjhXmU@ryzen.lan>
+ <7f179f49-a57b-45bf-92f0-f577aa0b8565@kernel.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <04cf3f31-4bd8-3ce9-867a-41628e56e861@huaweicloud.com>
+Date: Thu, 19 Sep 2024 20:26:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
-To: Sricharan R <quic_srichara@quicinc.com>, andersson@kernel.org,
- konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- ulf.hansson@linaro.org, linus.walleij@linaro.org, catalin.marinas@arm.com,
- p.zabel@pengutronix.de, geert+renesas@glider.be,
- dmitry.baryshkov@linaro.org, neil.armstrong@linaro.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: quic_varada@quicinc.com
-References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
- <20240913121250.2995351-2-quic_srichara@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240913121250.2995351-2-quic_srichara@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <7f179f49-a57b-45bf-92f0-f577aa0b8565@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3KseMGOxm7lQMBw--.51560S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF13XF1DKF15Jw15Ww48JFb_yoWrKryfpr
+	WrGF4jkw4kAr4Fywn29w18XFyIqwnxAayqqr15Jr9rXrZ0yFySvr48tr4Y9F97Xrn7CF1j
+	q3yjq39xX3WUA37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 13/09/2024 14:12, Sricharan R wrote:
-> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Hi,
+
+在 2024/09/11 6:38, Damien Le Moal 写道:
+> On 9/10/24 20:27, Niklas Cassel wrote:
+>> On Tue, Sep 10, 2024 at 02:34:06PM +0800, yangxingui wrote:
+>>>
+>>>
+>>> On 2024/9/10 12:45, Damien Le Moal wrote:
+>>>> On 9/10/24 10:09 AM, yangxingui wrote:
+>>>>>
+>>>>>
+>>>>> On 2024/9/9 21:21, Damien Le Moal wrote:
+>>>>>> On 9/9/24 22:10, yangxingui wrote:
+>>>>>>> Hello axboe & John,
+>>>>>>>
+>>>>>>> After the driver exposes all HW queues to the block layer, non-NCQ
+>>>>>>> commands will never be executed while fio is continuously running, such
+>>>>>>> as a smartctl command.
+>>>>>>>
+>>>>>>> The cause of the problem is that other hctx used by the NCQ command is
+>>>>>>> still active and can continue to issue NCQ commands to the sata disk.
+>>>>>>> And the pio command keeps retrying in its corresponding hctx because
+>>>>>>> qc_defer() always returns true.
+>>>>>>>
+>>>>>>> hctx0: ncq, pio, ncq
+>>>>>>> hctx1：ncq, ncq, ...
+>>>>>>> ...
+>>>>>>> hctxn: ncq, ncq, ...
+>>>>>>>
+>>>>>>> Is there any good solution for this?
+>>>>>>
+>>>>>> SATA devices are single queue so how can you have multiple queues ?
+>>>>>> What adapter are you using ?
+>>>>>
+>>>>> In the following patch, we expose the host's 16 hardware queues to the block
+>>>>> layer. And when connecting to a sata disk, 16 hctx are used.
+>>>>>
+>>>>> 8d98416a55eb ("scsi: hisi_sas: Switch v3 hw to MQ")
+>>>>
+>>>> OK, so the HBA is a hisi one, using libsas...
+>>>> What is the device ? An SSD ? and HDD ?
+>>> Both SATA SSD and SATA HDD have this problem.
+>>>
+>>>>
+>>>> Do you set a block I/O scheduler for the drive, e.g. mq-deadline. If not, does
+>>>> setting a scheduler resolve the issue ?
+>>> Currently, the default configuration mq-deadline is used, and the same
+>>> phenomenon occurs when I try setting it to none. It seems to have nothing to
+>>> do with the scheduling strategy.
+>>>
+>>>>
+>>>> I do not have any hisi HBA. I use a lot of mpt3sas and mpi3mr HBAs which also
+>>>> have multiple queues with a shared tagset. Never seen the issue you are
+>>>> reporting though using HDDs with mq-deadline or bfq as the scheduler.
+>>> Unlike libsas, as these hosts don't use qc_defer()?
+>>
+>> mpt3sas and mpi3mr do not use any libata code at all, the SCSI to ATA
+>> Translation (SAT) is done completely by the HBA, so from a Linux
+>> perspective, we are issuing SCSI commands to the HBA.
 > 
-> Add binding for the Qualcomm IPQ5424 Global Clock Controller
+> Yes, but we still can get requeue happening. Though for a SATA drive, that is
+> unlikely since the max queue depth is clearly defined, unlike for SAS drives
 > 
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> ---
->  .../bindings/clock/qcom,ipq5424-gcc.yaml      |  58 ++++
->  include/dt-bindings/clock/qcom,ipq5424-gcc.h  | 156 +++++++++
->  include/dt-bindings/reset/qcom,ipq5424-gcc.h  | 310 ++++++++++++++++++
->  3 files changed, 524 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5424-gcc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,ipq5424-gcc.h
->  create mode 100644 include/dt-bindings/reset/qcom,ipq5424-gcc.h
+>> We can see that libsas uses ata_std_qc_defer() as its .qc_defer callback:
+>> https://github.com/torvalds/linux/blob/v6.11-rc7/drivers/scsi/libsas/sas_ata.c#L566
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq5424-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq5424-gcc.yaml
-> new file mode 100644
-> index 000000000000..af2d0cec43f3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq5424-gcc.yaml
-> @@ -0,0 +1,58 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,ipq5424-gcc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Global Clock & Reset Controller on IPQ5424
-> +
-> +maintainers:
-> +  - Bjorn Andersson <andersson@kernel.org>
-> +
-> +description: |
-> +  Qualcomm global clock control module provides the clocks, resets and power
-> +  domains on IPQ5424.
-> +
-> +  See also::
+> And that may be the issue. More on this below.
+> 
+>> Without considering if it is a good idea or not, it should be possible to
+>> translate some commands to instead use the "NCQ encapsulated" variant of
+>> the ATA command that was used in the "ATA-16 passthrough" SCSI command.
+> 
+> That would be way too much work on the user side, and likely open up a can of
+> device bugs unseen until now.
+> 
+>> To be able to send a non-queued command, there has to be no NCQ commands queued
+>> on the device. I guess you could implement a scheduler that would be quiescing
+>> the queue, processes the non-queued command, and then thaw the queue, but that
+>> would essentially make non-queued commands high priority commands, and could
+>> thus be used to seriously limit throughput by just sending some non-queued
+>> commands every now and then :)
+> 
+> Passthrough commands do not go through the scheduler and are submitted directly
+> to the dispatch queue, generally at the head of it (see blk_mq_insert_request()).
+> 
+> So for a single queue device, even if ata_qc_defer causes a requeue, the
+> passthrough command ends up back at the top of the dispatch queue. After
+> repeating this a few times, all in-flight NCQ commands complete and the
+> passthrough command goes through.
+> 
+> But I feel this is very fragile given that the block layer requeue is done
+> through a work item, so in parallel to an application submitting IOs. So in
+> theory, I think that the requeue for the passthrough command could happen forever...
+> 
+> And for a multi-queue setup like with the hisi adapter, that is what is happening.
+> 
+> I do not have any good idea how to fix that yet. We need to find something.
+> scsi_queue_rq() and the budget/host or device blocked state management may help
+> with that, or we have a bug there... In any case, I do not think it is a block
+> layer issue as the block layer knows nothing about NCQ vs non-NCQ.
 
-Just single :
+Does libata return a specific value in this case? If so, maybe we can
+stop other hctx untill this IO is handled.
 
-> +    include/dt-bindings/clock/qcom,gcc-ipq5424.h
-> +    include/dt-bindings/reset/qcom,ipq5424-gcc.h
+For now, I think libata should use single hctx, it just doesn't support
+multiple hctx yet.
 
-Wrong path
+Thanks,
+Kuai
 
-> +
-> +allOf:
-> +  - $ref: qcom,gcc.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,ipq5424-gcc
-
-So everything i sthe same as 5332? Why not adding it there?
-
-
-> +++ b/include/dt-bindings/reset/qcom,ipq5424-gcc.h
-> @@ -0,0 +1,310 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2018,2020 The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-
-2024 (other places and other patches as well)
-
-> + */
-> +
-> +#ifndef _DT_BINDINGS_RESET_IPQ_GCC_IPQ5424_H
-> +#define _DT_BINDINGS_RESET_IPQ_GCC_IPQ5424_H
-
-
-
-Best regards,
-Krzysztof
+> 
 
 
