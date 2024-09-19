@@ -1,186 +1,318 @@
-Return-Path: <linux-kernel+bounces-333791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F10C97CE23
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:28:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C9B97CE2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE91B1F229CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 19:28:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 351ACB21DCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 19:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD19B2C87C;
-	Thu, 19 Sep 2024 19:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F010446AC;
+	Thu, 19 Sep 2024 19:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="boxTSPfr"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="MT8zbC1s"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647E014A96;
-	Thu, 19 Sep 2024 19:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726774079; cv=pass; b=nVfOScKYJfx0V+hvuxTp6E5DwtugNfmijpnsyu27mCQfkNvPNdKiwLqGtyZB2gEjmjUEMhHiWSyYIYEArnE8Aprb9FpDYjWm89l2mTZSR4PEu/PEZ+z0D9m7wVxOTCZg5bvVSekEOWtQ/Hk3sYqwwZRb7Xn6JWlBhUyDtAcDs2k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726774079; c=relaxed/simple;
-	bh=YJa2JxVMqhfa9RmCyikEb1Uo1+h8M9rFrkHlJndLIOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dfXi8+pW7GLgoPOXyRGco/k4krArLk5yfez4ufM/eIfl1EDgU0lbmx3Izo/5+x+Elgnio5AP15fGbJJTeSxD1hUMbjiKp8dQlajeH8nirCc35p4uUTB57fwXD81IIlQetQw1epIiZNJ3IiiqZ7G9cfvkouze3cadNl0cckOd3aY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=boxTSPfr; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726774046; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=gzUFKT1zZHbHP8nrXYFQSeK/Vbu95YHXygfLOyzh7xLvaS+kfB4wbx7xPFlCub3gcfSEVOV+gb1jAd4z3YCyXyaaaMgRJeeLYjDWGYm1Qc03X19kr1YChlB9U8mZhbyNv/UQ8GRvrL/eIft9KpVGH6enO/Ar+IH21aGflvFqlWg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726774046; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=t4Ne6sfF33Z90OyTmpxA9lLW1DDECmfnMlVBavSL5ic=; 
-	b=ipzXPtcdqeWebG+eqHH0DMV6ZnEIBxSP4DKIKEkSVEDO435h2ibNSrpjCYffUYGkQx3Z1aLp7YArZuwxew4/LtGjBCiv7qySAPT1qIfiPpR2pGv5n8XZHe36JOaU8I4YVnEbrM/98Cov5/H9f6JJzhGzal3i47/5Z5etbrJ3blE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726774046;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=t4Ne6sfF33Z90OyTmpxA9lLW1DDECmfnMlVBavSL5ic=;
-	b=boxTSPfrtotkdSf8bMksmMn/hm2KakSAkiCoWXnsGwZZxhVlxlbNwcY4zmfbtW0U
-	zWipuumOiMSwc5x2E510uzqFaxClI7zwIiMr1L6ubMeeoE1FN+keULZZ7pIGqfz+fYG
-	vX8EOjOkteMYJzqcXO8Qy6jVGQWLEPWUkiUPjJyA=
-Received: by mx.zohomail.com with SMTPS id 1726774044357158.77599800361543;
-	Thu, 19 Sep 2024 12:27:24 -0700 (PDT)
-Received: by mercury (Postfix, from userid 1000)
-	id BC5CE106031C; Thu, 19 Sep 2024 21:27:17 +0200 (CEST)
-Date: Thu, 19 Sep 2024 21:27:17 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Elaine Zhang <zhangqing@rock-chips.com>, 
-	=?utf-8?B?QWRyacOhbiBNYXJ0w61uZXo=?= Larumbe <adrian.larumbe@collabora.com>, Boris Brezillon <boris.brezillon@collabora.com>, 
-	Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCH v2 6/6] arm64: dts: rockchip: Add GPU power domain
- regulator dependency for RK3588
-Message-ID: <zvzrjkacazxbv4cjxcnihv4rb2t3tu2zjd6zkny63ygfifpz7i@j4saijws5rcp>
-References: <20240919091834.83572-1-sebastian.reichel@collabora.com>
- <20240919091834.83572-7-sebastian.reichel@collabora.com>
- <a4d94eab-8543-45e1-b657-fa7f12470538@kwiboo.se>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C5523759
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 19:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726774627; cv=none; b=KXJjq7xm0aPNiJmM9UMMbf1LjT8ntKTC5a5GajuhcrNGRlkn1NgfImwXmEGRAbdrT5AzMvQZfQ89POgTzjdYaUcPS9B04RC80T+q4vMYLHaVmnJGGvK1FEWTXZ3qTX1om1RMzR1WkMuR4SCOotK4dnraExLB2WpfRCxlvbkbTiA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726774627; c=relaxed/simple;
+	bh=C+ME7fXLk6IvChq/v/YexZ5AQKs5QVOylqDE2bdhMs0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O+OOX5u+pazqlAsP3lVW97GaaCJ6JFYb4dWaZFPsnMONfKSnr2VguRQR6T7OsxDH7NdJOu8CcxUCx8ijdbumc7KLO6xZTX4BHOOFWxS+JgYPQPjcukIPbo6stvKHKVDCx5zOnxt+B7j55EJ/MElYWfOrV0n3I+53CiF+z8RSGQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=MT8zbC1s; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1726774618; x=1727033818;
+	bh=DFBi15tweOygE7n7l7iIMTCGHcKMHtPF8B/hV9IQyg0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=MT8zbC1snKrDr+WkllpmTH2KgYxbh/bw3psX3m0wWOgtwgoy23nhavtt6uEpZMUAJ
+	 B0PQ0HpASeTPtguQoQFIWYEepoh0f/YQCV4hqLDQDmcmIikKHqSUffpAImYWOS8gTC
+	 Br1yySm/K2ZmZgGZRjB5vzJyix86Af2eSvbW1njeJv2XDtepHMLUlssssCsWk9/WpM
+	 e0rcUhLx/pjRV850DLQZKSmVWMS0W4wiWygW1oH9doBXlcTsb35GADHo8X9ZUVnLMF
+	 CF6gGAs6vn/DF8imwATwLpexJapAAnRuGv5wWmzl+rGFeESABa0ocbLAViF1Eew6Ij
+	 0jW46sBYhLV7A==
+Date: Thu, 19 Sep 2024 19:36:53 +0000
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, Gary Guo <gary@garyguo.net>, Yiyang Wu <toolmanp@tlmp.cc>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
+Message-ID: <239b5d1d-64a7-4620-9075-dc645d2bab74@proton.me>
+In-Reply-To: <9bbbac63-c05f-4f7b-91c2-141a93783cd3@linux.alibaba.com>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc> <20240916135634.98554-4-toolmanp@tlmp.cc> <20240916210111.502e7d6d.gary@garyguo.net> <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com> <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me> <9bbbac63-c05f-4f7b-91c2-141a93783cd3@linux.alibaba.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 494c205a1874b0a64d5e13cf14775a4737933e3e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qcskwoh6fbt5qu6y"
-Content-Disposition: inline
-In-Reply-To: <a4d94eab-8543-45e1-b657-fa7f12470538@kwiboo.se>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.3.1/223.982.64
-X-ZohoMailClient: External
-
-
---qcskwoh6fbt5qu6y
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Thu, Sep 19, 2024 at 01:33:25PM GMT, Jonas Karlman wrote:
-> On 2024-09-19 11:12, Sebastian Reichel wrote:
-> > Enabling the GPU power domain requires that the GPU regulator is
-> > enabled. The regulator is enabled at boot time, but automatically
-> > gets disabled when there are no users.
-> >=20
-> > If the GPU driver is not probed at boot time or rebound while
-> > the system is running the system will try to enable the power
-> > domain before the regulator is enabled resulting in a failure
-> > hanging the whole system. Avoid this by adding an explicit
-> > dependency.
-> >=20
-> > Reported-by: Adri=E1n Mart=EDnez Larumbe <adrian.larumbe@collabora.com>
-> > Tested-by: Adrian Larumbe <adrian.larumbe@collabora.com> # On Rock 5B
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts         | 4 ++++
-> >  arch/arm64/boot/dts/rockchip/rk3588-base.dtsi                | 2 +-
-> >  arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5.dtsi          | 4 ++++
-> >  arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi | 4 ++++
-> >  arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts               | 4 ++++
-> >  arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts             | 4 ++++
-> >  arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts           | 4 ++++
-> >  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts              | 4 ++++
-> >  arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi               | 4 ++++
-> >  arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts           | 4 ++++
-> >  arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts        | 4 ++++
-> >  arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts          | 4 ++++
-> >  12 files changed, 45 insertions(+), 1 deletion(-)
+On 19.09.24 17:13, Gao Xiang wrote:
+> Hi Benno,
 >=20
-> Any reason why following rk3588 DTs was not updated?
+> On 2024/9/19 21:45, Benno Lossin wrote:
+>> Hi,
+>>
+>> Thanks for the patch series. I think it's great that you want to use
+>> Rust for this filesystem.
+>>
+>> On 17.09.24 01:58, Gao Xiang wrote:
+>>> On 2024/9/17 04:01, Gary Guo wrote:
+>>>> Also, it seems that you're building abstractions into EROFS directly
+>>>> without building a generic abstraction. We have been avoiding that. If
+>>>> there's an abstraction that you need and missing, please add that
+>>>> abstraction. In fact, there're a bunch of people trying to add FS
+>>>
+>>> No, I'd like to try to replace some EROFS C logic first to Rust (by
+>>> using EROFS C API interfaces) and try if Rust is really useful for
+>>> a real in-tree filesystem.  If Rust can improve EROFS security or
+>>> performance (although I'm sceptical on performance), As an EROFS
+>>> maintainer, I'm totally fine to accept EROFS Rust logic landed to
+>>> help the whole filesystem better.
+>>
+>> As Gary already said, we have been using a different approach and it has
+>> served us well. Your approach of calling directly into C from the driver
+>> can be used to create a proof of concept, but in our opinion it is not
+>> something that should be put into mainline. That is because calling C
+>> from Rust is rather complicated due to the many nuanced features that
+>> Rust provides (for example the safety requirements of references).
+>> Therefore moving the dangerous parts into a central location is crucial
+>> for making use of all of Rust's advantages inside of your code.
 >=20
-> rk3588-evb1-v10.dts
-> rk3588-quartzpro64.dts
+> I'm not quite sure about your point honestly.  In my opinion, there
+> is nothing different to use Rust _within a filesystem_ or _within a
+> driver_ or _within a Linux subsystem_ as long as all negotiated APIs
+> are audited.
 
-These two I skipped initially, since they have the GPU regulators
-always enabled due to the coupling. I'm not 100% sure if the GPU
-or the GPU-MEM regulator (or both) are required for the GPU power
-domain.
+To us there is a big difference: If a lot of functions in an API are
+`unsafe` without being inherent from the problem that it solves, then
+it's a bad API.
 
-> rk3588-nanopc-t6.dtsi
-> rk3588s-gameforce-ace.dts
-> rk3588s-odroid-m2.dts
+> Otherwise, it means Rust will never be used to write Linux core parts
+> such as MM, VFS or block layer. Does this point make sense? At least,
+> Rust needs to get along with the existing C code (in an audited way)
+> rather than refuse C code.
 
-=2E.. And these I missed, since they are new.
+I am neither requiring you to write solely safe code, nor am I banning
+interacting with the C side. What we mean when we talk about
+abstractions is that we want to minimize the Rust code that directly
+interfaces with C. Rust-to-Rust interfaces can be a lot safer and are
+easier to implement correctly.
 
-I don't have enough time to prepare a v3 before my vacation.
-Note, that not describing the regulator just keeps the current
-behaviour.
+> My personal idea about Rust: I think Rust is just another _language
+> tool_ for the Linux kernel which could save us time and make the
+> kernel development better.
 
-> I also expect we may need to define domain-supply for the npu on
-> rk3588 and also both gpu and npu on rk356x in a future series.
+Yes, but we do have conventions, rules and guidelines for writing such
+code. C code also has them. If you want/need to break them, there should
+be a good reason to do so. I don't see one in this instance.
 
-Yes, I already discussed that in Vienna with Heiko and Tomeu. The
-binding change also allows adding a regulator to the NPU power
-domain.
+> Or I wonder why not writing a complete new Rust stuff instead rather
+> than living in the C world?
 
-> Similar freeze issue has been observed on rk356x when booting vendor
-> kernel with npu support enabled using mainline U-Boot and DT [1].
+There are projects that do that yes. But Rust-for-Linux is about
+bringing Rust to the kernel and part of that is coming up with good
+conventions and rules.
+
+>>> For Rust VFS abstraction, that is a different and indepenent story,
+>>> Yiyang don't have any bandwidth on this due to his limited time.
+>>
+>> This seems a bit weird, you have the bandwidth to write your own
+>> abstractions, but not use the stuff that has already been developed?
 >=20
-> To work around that issue on rk356x the npu regulator could be changed
-> to always-on/boot-on to get past the kernel freeze [2].
+> It's not written by me, Yiyang is still an undergraduate tudent.
+> It's his research project and I don't think it's his responsibility
+> to make an upstreamable VFS abstraction.
+
+That is fair, but he wouldn't have to start from scratch, Wedsons
+abstractions were good enough for him to write a Rust version of ext2.
+In addition, tarfs and puzzlefs also use those bindings.
+To me it sounds as if you have not taken the time to try to make it work
+with the existing abstractions. Have you tried reaching out to Ariel? He
+is working on puzzlefs and might have some insight to give you. Sadly
+Wedson has left the project, so someone will have to pick up his work.
+
+I hope that you understand that we can't have two abstractions for the
+same C API. It confuses people which to use, some features might only be
+available in one version and others only in the other. It would be a
+total mess. It's just like the rule for no duplicated drivers that you
+have on the C side.
+
+People (mostly Wedson) also have put in a lot of work into making the
+VFS abstractions good. Why ignore all of that?
+
+>> I have quickly glanced over the patchset and the abstractions seem
+>> rather immature, not general enough for other filesystems to also take
 >=20
-> [1] https://github.com/armbian/build/pull/7025#issuecomment-2291067748
-> [2] https://github.com/Kwiboo/u-boot-rockchip/commit/da31da4b68f858f54364=
-a21b0dd00fef2ab0d0d6
+> I don't have enough time to take a full look of this patchset too
+> due to other ongoing work for now (Rust EROFS is not quite a high
+> priority stuff for me).
+>=20
+> And that's why it's called "RFC PATCH".
 
-Yes, that looks like the same issue and I guess the changes to the Rockchip
-power-domain driver should also work for rk356x. I don't have one, though.
+Yeah I saw the RFC title. I just wanted to communicate early that I
+would not review it if it were a normal patch. In fact, I would advise
+against taking the patch, due to the reasons I outlined.
 
--- Sebastian
+>> advantage of them. They also miss safety documentation and are in
+>=20
+> I don't think it needs to be general enough, since we'd like to use
+> the new Rust language tool within a subsystem.
+>=20
+> So why it needs to take care of other filesystems? Again, I'm not
+> working on a full VFS abstriction.
 
---qcskwoh6fbt5qu6y
-Content-Type: application/pgp-signature; name="signature.asc"
+And that's OK, feel free to just pick the parts of the existing VFS that
+you need and extend as you (or your student) see fit. What you said
+yourself is that we need a global vision for VFS abstractions. If you
+only use a subset of them, then you only care about that subset, other
+people can extend it if they need. If everyone would roll their own
+abstractions without communicating, then how would we create a global
+vision?
 
------BEGIN PGP SIGNATURE-----
+> Yes, this patchset is not perfect.  But I've asked Yiyang to isolate
+> all VFS structures as much as possible, but it seems that it still
+> touches something.
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmbsexIACgkQ2O7X88g7
-+ppTJxAAkEXAcW4m8OiEyvh+R+umb7431j7PO5cBpN3NM+cGmUD+ARwYE4yCH5Mi
-lqLf72szC73KnWPS5Eu9mhCEFBIrhNmEVrQM69ibmlHyihhZh2CO3X2wDV+UAm79
-ZyJ+OP71kvCHndjSNEXILKxXAyoARczvn+tbFICz3di3S+UXlqs1s3NnzGvjjBlo
-GwxkCx5JwIKsdc3FOe5Mtj3Lw08lCF3qxJTXxT9anF/2h055IJco8diIsGlAAXy7
-LnCQkpgZZBLKeJFhFeuMV7lJgjGK0bsymHl6P8dzXSIZtXBLbMRTXql8qunv4cUY
-hkVH0V6iduGVdcj/uZEpoOAAXqFQE+1UVA8Bsyf69/o3806iUzR3Z2zJk7CdZgu3
-3PUw/fpgDmFpMI7nIIH2GY6Q5+4yssZb0nd6kzCepIf41dQWAXAvvq3bBCjRz0cw
-eOP/BIZYEFwRSOu0YL+EQ7ae4kQ/j05sFMCBRFRGUB4uoLZbKWSos/SRt0DWTNQv
-N97DxGJmjfxH/zSxExgLqebsV1KZd6Frg4G7Nzp4XgW8hghoqPe+0YvQVNMLRfq7
-Y+y67lrBNCnEfnGv+mIU+cDWaH1NDlPAz1Zfjb8jdBOizYJjfohFdOyRNWc6RVh1
-i8kJklC2dA/K95e/LTU+1bPYFnnrycmrvFKrjECNmIGRAuRIz6Q=
-=nKZO
------END PGP SIGNATURE-----
+It would already be a big improvement to put the VFS structures into the
+kernel crate. Because then everyone can benefit from your work.
 
---qcskwoh6fbt5qu6y--
+>> general poorly documented.
+>=20
+> Okay, I think it can be improved then if you give more detailed hints.
+>=20
+>>
+>> Additionally, all of the code that I saw is put into the `fs/erofs` and
+>> `rust/erofs_sys` directories. That way people can't directly benefit
+>> from your code, put your general abstractions into the kernel crate.
+>> Soon we will be split the kernel crate, I could imagine that we end up
+>> with an `fs` crate, when that happens, we would put those abstractions
+>> there.
+>>
+>> As I don't have the bandwidth to review two different sets of filesystem
+>> abstractions, I can only provide you with feedback if you use the
+>> existing abstractions.
+>=20
+> I think Rust is just a tool, if you could have extra time to review
+> our work, that would be wonderful!  Many thanks then.
+>=20
+> However, if you don't have time to review, IMHO, Rust is just a tool,
+> I think each subsystem can choose to use Rust in their codebase, or
+> I'm not sure what's your real point is?
+
+I don't want to prevent or discourage you from using Rust in the kernel.
+In fact, I can't prevent you from putting this in, since after all you
+are the maintainer.
+What I can do, is advise against not using abstractions. That has been
+our philosophy since very early on. They are the reason that you can
+write PHY drivers without any `unsafe` code whatsoever *today*. I think
+that is an impressive feat and our recipe for success.
+
+We even have this in our documentation:
+https://docs.kernel.org/rust/general-information.html#abstractions-vs-bindi=
+ngs
+
+My real point is that I want Rust to succeed in the kernel. I strongly
+believe that good abstractions (in the sense that you can do as much as
+possible using only safe Rust) are a crucial factor.
+I and others from the RfL team can help you if you (or your student)
+have any Rust related questions for the abstractions. Feel free to reach
+out.
+
+
+Maybe Miguel can say more on this matter, since he was at the
+maintainers summit, but our takeaways essentially are that we want
+maintainers to experiment with Rust. And if you don't have any real
+users, then breaking the Rust code is fine.
+Though I think that with breaking we mean that changes to the C side
+prevent the Rust side from working, not shipping Rust code without
+abstractions.
+
+We might be able to make an exception to the "your driver can only use
+abstractions" rule, but only with the promise that the subsystem is
+working towards creating suitable abstractions and replacing the direct
+C accesses with that.
+
+I personally think that we should not make that the norm, instead try to
+create the minimal abstraction and minimal driver (without directly
+calling C) that you need to start. Of course this might not work, the
+"minimal driver" might need to be rather complex for you to start, but I
+don't know your subsystem to make that judgement.
+
+>>> And I _also_ don't think an incomplete ROFS VFS Rust abstraction
+>>> is useful to Linux community
+>>
+>> IIRC Wedson created ROFS VFS abstractions before going for the full
+>> filesystem. So it would definitely be useful for other read-only
+>> filesystems (as well as filesystems that also allow writing, since last
+>> time I checked, they often also support reading).
+>=20
+> Leaving aside everything else, an incomplete Rust read-only VFS
+> abstraction itself is just an unsafe stuff.
+
+I don't understand what you want to say.
+
+>>> (because IMO for generic interface
+>>> design, we need a global vision for all filesystems instead of
+>>> just ROFSes.  No existing user is not an excuse for an incomplete
+>>> abstraction.)
+>>
+>> Yes we need a global vision, but if you would use the existing
+>> abstractions, then you would participate in this global vision.
+>>
+>> Sorry for repeating this point so many times, but it is *really*
+>> important that we don't have multiple abstractions for the same thing.
+>=20
+> I've expressed my viewpoint.
+>=20
+>>
+>>> If a reasonble Rust VFS abstraction landed, I think we will switch
+>>> to use that, but as I said, they are completely two stories.
+>>
+>> For them to land, there has to be some kind of user. For example, a rust
+>> reference driver, or a new filesystem. For example this one.
+>=20
+> Without a full proper VFS abstraction, it's just broken and
+> needs to be refactored.  And that will be painful to all
+> users then.
+
+I also don't understand your point here. What is broken, this EROFS
+implementation? Why will it be painful to refactor?
+
+> =3D=3D=3D=3D=3D=3D=3D
+> In the end,
+>=20
+> Other thoughts, comments are helpful here since I wonder how "Rust
+> -for-Linux" works in the long term, and decide whether I will work
+> on Kernel Rust or not at least in the short term.
+
+The longterm goal is to make everything that is possible in C, possible
+in Rust. For more info, please take a look at the kernel summit talk by
+Miguel Ojeda.
+However, we can only reach that longterm goal if maintainers are willing
+and ready to put Rust into their subsystems (either by knowing/learning
+Rust themselves or by having a co-maintainer that does just the Rust
+part). So you wanting to experiment is great. I appreciate that you also
+have a student working on this. Still, I think we should follow our
+guidelines and create abstractions in order to require as little
+`unsafe` code as possible.
+
+---
+Cheers,
+Benno
+
 
