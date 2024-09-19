@@ -1,97 +1,143 @@
-Return-Path: <linux-kernel+bounces-333566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6969397CAD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:15:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8A3297CAD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F6F6282FB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 251501C2297F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAD01A01A6;
-	Thu, 19 Sep 2024 14:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743D81A0704;
+	Thu, 19 Sep 2024 14:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e3r9tkaZ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="hM1CCv04"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FCC1A00EC;
-	Thu, 19 Sep 2024 14:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436DB19F475;
+	Thu, 19 Sep 2024 14:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726755304; cv=none; b=LE4DPymxLQHB7qR4y+pgQxv2F+pIFukBCiEbG10wOsYYLicItVRh7B2QxL1SsQrgzlRNNWy93wF9Ttny7zojsKnPTZZzDUfcQw/TVNDQIYj41csXibXNNWje0l/A4Rka8FdND5xB4VHha3zUW7s9ZDbVvR0oXZTAl9TTrFb4TTw=
+	t=1726755311; cv=none; b=vChx43avfsGRevqYEQBEyMLwNuB827IhYq9stl0Vz1yZw24hn59iWnJsnr2XvOfytWWaPo+/6XYmfry8UaYQCX+tpoutZPq4h+oZr7YfdKmBRJFIktVeTyFMbIu/46jwT1zaj+lwoEEdq8ggqoePnOsl+3/O+YIltgBI2H1VWz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726755304; c=relaxed/simple;
-	bh=ExQ7E3kBrAtTxCmgFfyf29ldpaZkhlGmTYsCbJAo32k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sF6s7PCHuuJX4nZDmclmA3k438GRoLtu/P6QYbDPxUA9Tedo2hHp2p69L3qKihQ2vXMg1346VjlNzVEYbj9Zq5STwlS5yUnkQjrXsLVtIKCvACl4nyxZnB+CKSx673zxkUtUUxVp1GPceN8G0dY11Tn5/MFo0pdLbFvb/c2aubk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e3r9tkaZ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=p8px0XxXJF+y3oLJvNMcUJVB3rMlEUk+5pQdljqXFA4=; b=e3r9tkaZ9HmACSX7M3Ar7hX5WJ
-	7YR11MqG6xm7ShEcc/4e5i4H4giH2kqflDAZ0gjvB/4Q8a+c7/HTVivzXg4KtN9lkr2xn38Mkm+0P
-	+cxt7V3BkWMNHCMljxr9v0gHDm0bvj7gzU2ibdI/pNXPT4xyCPJNGDmmuu9XB4B1sSi/hGJVjznAH
-	vzFf4lok3eZmooEa0up5/t8o+Y3ZLQqUWyIrcogDHVSTe2w8Scts4PkHyfZV5jE3jyGwR+Qk9iHEL
-	HGTF973aQYGMTW+9yQOHITS9f3GzdAIFCiuojUzIRkRZk6GoBT/By5r9qos5K137zwHkxTAEiyTHu
-	hIYCk/8A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1srHvv-0000000AQDU-1NOf;
-	Thu, 19 Sep 2024 14:14:59 +0000
-Date: Thu, 19 Sep 2024 07:14:59 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Kent Overstreet <kent.overstreet@gmail.com>,
-	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com
-Subject: Re: [RFC PATCH 0/4] Add hazard pointers to kernel
-Message-ID: <Zuwx409kgivi1G5T@infradead.org>
-References: <20240917143402.930114-1-boqun.feng@gmail.com>
- <CAHk-=wi76E2xxvOaZtgN2FK9YKmbK1ru_1atL8eBCs34z7UigA@mail.gmail.com>
+	s=arc-20240116; t=1726755311; c=relaxed/simple;
+	bh=KOga4SC1i23o//+1L9L8R3rgFxzKEjiozXYwhCJtYqM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SUSzzcQ8ywdE8L5cl9bK43EGzb3s96MH/KxSi/TYwC90mw99nFhJrwFFoG5Rn5U6vpvcY2DkiRuHNEfTVMxOu3hM8aiSPSyvxWZltA4ED9p+ENp3qHXjACmNDy475CdFO3S6NaiDVZ7NMUMGJ7dfGpokGUGajdIOL03FlafdHQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=hM1CCv04; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1726755307; x=1727014507;
+	bh=8N+kn0X34iYoaUsWVNZUgCP4SUSsHwlQ0rPgNJGb1U8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=hM1CCv04YiSFu3AOp8LkaJ02KEZxUxxb+8airbLE6//wjnSqMfkN7le4CvL5BD/8l
+	 H7FEezl6Gz6Zmy+toreMu9jXYmpKkmPXRUiQsRK3bFrFQfQZlOUAxLv3/U8+7BWkJp
+	 +L5M/8U+NjnKEe07t6EH4uzs3rXQN07/6swwoeTiZDuqK8MUE9vy47XbeyGsCw9NC/
+	 jP/7Hh+ofYk9Bghxv8CR5rvxlupyhpigK4jSuTOkXBYlxDZdl9JgdHDcldC8aBMUvk
+	 dwuRdb3EQVzuT96ESSeQxfucveUCr2wAmFIqyGuNZTSWnyVDSD9OggcjeqStmZXvZF
+	 LXUf7UQLx8PHw==
+Date: Thu, 19 Sep 2024 14:15:02 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>, Gary Guo <gary@garyguo.net>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Boqun Feng <boqun.feng@gmail.com>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 04/14] rust: sync: add `Arc::clone_from_raw`
+Message-ID: <19760254-bc0b-49e2-88a0-7088ab55d9b1@proton.me>
+In-Reply-To: <87zfo4i3nc.fsf@kernel.org>
+References: <20240917222739.1298275-1-a.hindborg@kernel.org> <20240917222739.1298275-5-a.hindborg@kernel.org> <43b9bc9b-f64c-4421-8cf2-795f1f0ec94a@proton.me> <6J_M8_wAnE5epFRUo8RBkYFL5p36woueX8MHQleKVFw_WOitLFZNQ6808RjS7RmizhQ07qDQpze2G3UDLZgHDA==@protonmail.internalid> <20240918211211.73b1324e.gary@garyguo.net> <87zfo4i3nc.fsf@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: a4840b0f3aaae0674dba73bc5a819c869b64e028
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi76E2xxvOaZtgN2FK9YKmbK1ru_1atL8eBCs34z7UigA@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 18, 2024 at 09:18:43AM +0200, Linus Torvalds wrote:
-> On Tue, 17 Sept 2024 at 16:34, Boqun Feng <boqun.feng@gmail.com> wrote:
-> >
-> > This series introduces hazard pointers [1] to kernel space. A TL;DR
-> > description of hazard pointers is "a scalable refcounting mechanim
-> > with RCU-like API". More information can be found at [2].
-> 
-> Please give actual "this is useful for X, and here is an actual real
-> load with numbers showing why it matters".
+On 19.09.24 08:00, Andreas Hindborg wrote:
+> "Gary Guo" <gary@garyguo.net> writes:
+>=20
+>> On Wed, 18 Sep 2024 18:19:20 +0000
+>> Benno Lossin <benno.lossin@proton.me> wrote:
+>>
+>>> On 18.09.24 00:27, Andreas Hindborg wrote:
+> [...]
+>>>> +    pub unsafe fn clone_from_raw(ptr: *const T) -> Self {
+>>>> +        // SAFETY: The caller promises that this pointer points to da=
+ta
+>>>> +        // contained in an `Arc` that is still valid.
+>>>> +        let inner =3D unsafe { ArcInner::container_of(ptr).as_ref() }=
+;
+>>>> +
+>>>> +        // INVARIANT: C `refcount_inc` saturates the refcount, so it =
+cannot
+>>>> +        // overflow to zero. SAFETY: By the function safety requireme=
+nt, there
+>>>> +        // is necessarily a reference to the object, so it is safe to=
+ increment
+>>>> +        // the refcount.
+>>>> +        unsafe { bindings::refcount_inc(inner.refcount.get()) };
+>>>> +
+>>>> +        // SAFETY: We just incremented the refcount. This increment i=
+s now owned by the new `Arc`.
+>>>> +        unsafe { Self::from_inner(inner.into()) }
+>>>
+>>> The implementation of this function looks a bit strange to me, how abou=
+t
+>>> this?:
+>>>
+>>>     // SAFETY: this function has the same safety requirements as `from_=
+raw`.
+>>>     let arc =3D unsafe { Self::from_raw(ptr) };
+>>>     let clone =3D arc.clone();
+>>>     // Prevent decrementing the refcount.
+>>>     mem::forget(arc);
+>>>     clone
+>>>
+>>> (of course you would need to change the safety requirements of
+>>> `clone_from_raw` to point to `from_raw`)
+>>
+>> Wouldn't this function simply be
+>>
+>> =09// SAFETY: ...
+>> =09let borrow =3D unsafe { ArcBorrow::from_raw(ptr) }
+>>   =09borrow.into()
+>>
+>> ?
+>>
+>> Maybe this function doesn't even need to exist...
+>=20
+> Maybe that could work. But my use case does not satisfy the safety
+> requirements on `ArcBorrow::from_raw`. The`Arc::into_raw` was not
+> called. Perhaps we can update the requirements for that function?
 
-Agreed.  From the description this would seem like a good fit for
-q_usage_counter in the block layer, which currently makes creative use
-of percpu counters.
+If I understood the code correctly, you are essentially doing this:
+
+    let arc =3D Arc::<T>::new(..);
+    let ptr =3D Arc::as_ptr(&arc);
+    let ptr =3D T::raw_get_timer(ptr);
+    let ptr =3D Timer::raw_get(ptr);
+
+    // ptr is now used by the timer subsystem to fire the timer
+
+    let ptr =3D ptr.cast::<Timer>();
+    let ptr =3D T::timer_container_of(ptr);
+    let borrow =3D ArcBorrow::from_raw(ptr);
+    let arc =3D borrow.into();
+
+The only thing that we would have to change would be adding
+`Arc::as_ptr` as a source in the `ArcBorrow::from_raw` safety
+requirements.
+
+---
+Cheers,
+Benno
 
 
