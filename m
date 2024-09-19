@@ -1,149 +1,107 @@
-Return-Path: <linux-kernel+bounces-333553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C46297CAB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:04:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB14597CAA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C710A284D5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63DB8284531
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC5D19F480;
-	Thu, 19 Sep 2024 14:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44D219B59D;
+	Thu, 19 Sep 2024 14:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PsLCGWQs"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="DHGQ+5Bt"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181B719E7DC;
-	Thu, 19 Sep 2024 14:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E36190664
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 14:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726754683; cv=none; b=YE8pMEmEfP1i3ph6G3nEAPUSFYDS7nsf3xA32FEXoNdUAEkFmuGJhJMMBxZEOd4+bLDgUMRiNL1DwZrES1R/732u36Mt8K+pPj1ewSBnT+MzOpuQ1t+P+WA4052CwLSa203kSPYBIRU43RTO4MGjZi6kcdCq1N50PZpGotarjag=
+	t=1726754639; cv=none; b=FyD29vHZPzuGLPN6zbnUHN+TOXHNISBiwRLSYc0IbHmb3gRUQEgP16ICJLFGJxb5hmBknGSnDBXjv/CiFbfwhWpBpcdsgZQxPwpSudn6noe6bGe83ns0bbxTH3K7w0rq+2ULz4j3ZlI8hr7p1MpfEtymTbuXIj9BbiECKazxbCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726754683; c=relaxed/simple;
-	bh=JBUBy0yOW4g3uGwFIwxAryCeWfHfHiEc7tbJLCSM05A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Cyi39suKXUiSORVjU7E3QhL3nmxz4779B5scUUrRkrw1pJm5eRWR6laRE7sHOp0XhBufjUvoBLQXwE2c1hVuo+Zo69Zyky38ulFZrdKLZU/76dcYQ8C5vGY4QgFGm5uG7pjRSFPChuc28LKywA3NjNYpFbtQvnHov30ErH5aH9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PsLCGWQs; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48J9PIKn022854;
-	Thu, 19 Sep 2024 14:03:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KoflFVbELfCRwLfol/OzZivibLibziRpdOPhoCzuito=; b=PsLCGWQsnMjogkaT
-	tiGDUc6vlpkFTNXjZB/KAucPJZbUIcNfUJTPxPeeHgLNKOW5U0+wBK1IgHr/5T2m
-	wkwHktFvxumOXmFnIV18hEosy8i2yKt3vghmcZ6SrAbQk9LUBvGOAOmH+nAfnfai
-	Nof9aV3GDcWY9hAkUVCJTgbyWFBF+6Jy7AxZ7IRcvEOpinUQkSnFCHRi74xdljFG
-	lY9XaMoz03bsnNqM6aCScfpFAG/z6Q2tQ0Ub7MnRGIV3gYf66ClupThjLmVCtmmX
-	eMHY0JjMIX9zPjpHqlXjmTYn6GsU3/uCotd2v6nedHFK1EsG97GRZB2gV40OvsJ/
-	zBMmmQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4gd5fya-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 14:03:15 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48JE3DHx011315
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 14:03:13 GMT
-Received: from [10.253.37.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 19 Sep
- 2024 07:03:08 -0700
-Message-ID: <b36819ed-0e4a-4820-8c38-ac9d2c6f0f28@quicinc.com>
-Date: Thu, 19 Sep 2024 22:03:05 +0800
+	s=arc-20240116; t=1726754639; c=relaxed/simple;
+	bh=cmGLd08CsjOKNV4VxVyn6jm5trLijeF6uQOC7KHDSF8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QpDOhml3DT94TzfJThTNBjusMZSLLL4oJxnGApej/0gAZIGPrHO4npuitT8ArMvrTNz7qW+xOHeDxM9ahjp9LAOiCWMdyeKzWtZm6e22HuqYhwS9/UkuDdTMG9sWiRBwd3BpGEwhLV1NsthPQeNZuRU7amr3tcumbM6DQzPRnQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=DHGQ+5Bt; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1726754635; x=1727013835;
+	bh=jnmHS2qymuDnyC8ztO5a6S72SS+8B0fe54CXhWxCzn0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=DHGQ+5BtHIzhIFeFrkl/rwj7V6Kz3E9Xw9GMv7ww509RdJhBQDq2wsklSEl42tCpG
+	 fTVHhXzQnq0zo6bT5YlU1+I4dTjRUmmlxybGyVjitCV8bwLm/j9axXOwnIkWLgPdPK
+	 GzLrpggWvYJ35LkbcEPZKmfzfC+Bjyw/deHWHVOb28uJDUveFVBFyBSGvo8+eLpa+Z
+	 y+wOjcgmCY3j69my1E0MVywf00RBI+oroAgqYGY8yAnofkZIaMFSfpykni4U+LOaTc
+	 0v/0zx8YuAE1sX8mKYygHbV20aRLCwz4IFKc7GrGzOBW4pEWfl3iAn9BWHo/XX5uAY
+	 FiF0u/X7zerGg==
+Date: Thu, 19 Sep 2024 14:03:50 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/14] rust: sync: add `Arc::as_ptr`
+Message-ID: <e7e42ff2-1543-48b3-9bd3-bdef5ce66348@proton.me>
+In-Reply-To: <20240917222739.1298275-4-a.hindborg@kernel.org>
+References: <20240917222739.1298275-1-a.hindborg@kernel.org> <20240917222739.1298275-4-a.hindborg@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: dde87f36e2780ed2bd55c6f5db9b6bd5e2920797
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
- Document the X1E80100 QMP PCIe PHY Gen4 x8
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <manivannan.sadhasivam@linaro.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <abel.vesa@linaro.org>,
-        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
-        <dmitry.baryshkov@linaro.org>, <kw@linux.com>, <lpieralisi@kernel.org>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
- <20240913083724.1217691-2-quic_qianyu@quicinc.com>
- <lrcridndulcurod7tc5z76tmfhcf5uqumkw7cijsqicmad2rim@blyor66wt4e4>
-Content-Language: en-US
-From: Qiang Yu <quic_qianyu@quicinc.com>
-In-Reply-To: <lrcridndulcurod7tc5z76tmfhcf5uqumkw7cijsqicmad2rim@blyor66wt4e4>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: JKkUvmdw5ptZN4RXb2h3Ls-OKXVXVIZ7
-X-Proofpoint-GUID: JKkUvmdw5ptZN4RXb2h3Ls-OKXVXVIZ7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- bulkscore=0 clxscore=1011 spamscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=999 impostorscore=0 mlxscore=0 priorityscore=1501 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409190091
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On 18.09.24 00:27, Andreas Hindborg wrote:
+> Add a method to get a pointer to the data contained in an `Arc`.
+>=20
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+>  rust/kernel/sync/arc.rs | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+> index 3673496c2363..a57ea3e2b44c 100644
+> --- a/rust/kernel/sync/arc.rs
+> +++ b/rust/kernel/sync/arc.rs
+> @@ -258,6 +258,14 @@ pub fn into_raw(self) -> *const T {
+>          unsafe { core::ptr::addr_of!((*ptr).data) }
+>      }
+>=20
+> +    /// Return a raw pointer to the data in this arc.
+> +    pub fn as_ptr(&self) -> *const T {
 
-On 9/16/2024 11:15 PM, Krzysztof Kozlowski wrote:
-> On Fri, Sep 13, 2024 at 01:37:20AM -0700, Qiang Yu wrote:
->> PCIe 3rd instance of X1E80100 support Gen 4x8 which needs different 8 lane
->> capable QMP PCIe PHY. Document Gen 4x8 PHY as separate module.
-> And this is really different hardware? Not just different number of lanes? We discussed it, but I don't see the explanation in commit msg.
-Yes, PCIe3 use a different phy that supports 8 lanes and provides
-additional register set, txz and rxz. It is not a bifurcation mode which
-actually combines two same phys like PCIe6a. It's also not just different
-number of lanes. Will explain this in commit msg.
+I don't know if we have a convention for this, but shouldn't this be an
+associated function? Because if `T` also has an `as_ptr` function, it
+will be shadowed by this one.=20
 
-Thanks,
-Qiang
->> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->> ---
->>   .../devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml    | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
->> index dcf4fa55fbba..680ec3113c2b 100644
->> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
->> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
->> @@ -41,6 +41,7 @@ properties:
->>         - qcom,x1e80100-qmp-gen3x2-pcie-phy
->>         - qcom,x1e80100-qmp-gen4x2-pcie-phy
->>         - qcom,x1e80100-qmp-gen4x4-pcie-phy
->> +      - qcom,x1e80100-qmp-gen4x8-pcie-phy
->>   
->>     reg:
->>       minItems: 1
->> @@ -172,6 +173,7 @@ allOf:
->>                 - qcom,sc8280xp-qmp-gen3x2-pcie-phy
->>                 - qcom,sc8280xp-qmp-gen3x4-pcie-phy
->>                 - qcom,x1e80100-qmp-gen4x4-pcie-phy
->> +              - qcom,x1e80100-qmp-gen4x8-pcie-phy
->>       then:
->>         properties:
->>           clocks:
->> @@ -201,6 +203,7 @@ allOf:
->>                 - qcom,sm8550-qmp-gen4x2-pcie-phy
->>                 - qcom,sm8650-qmp-gen4x2-pcie-phy
->>                 - qcom,x1e80100-qmp-gen4x2-pcie-phy
-> Hm, why 4x4 is not here?
->
-> Best regards,
-> Krzysztof
+---
+Cheers,
+Benno
+
+> +        let ptr =3D self.ptr.as_ptr();
+> +        // SAFETY: As we derive the pointer from a reference above, the =
+pointer
+> +        // must be valid.
+> +        unsafe { core::ptr::addr_of!((*ptr).data) }
+> +    }
+> +
+>      /// Recreates an [`Arc`] instance previously deconstructed via [`Arc=
+::into_raw`].
+>      ///
+>      /// # Safety
+> --
+> 2.46.0
+>=20
+>=20
+
 
