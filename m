@@ -1,198 +1,463 @@
-Return-Path: <linux-kernel+bounces-333727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F9B97CCFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 19:21:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3278497CD00
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 19:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57ADC1F2376A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:21:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56FB81C20E01
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC271A0B16;
-	Thu, 19 Sep 2024 17:21:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED0B191F74
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 17:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A261B1A0BC4;
+	Thu, 19 Sep 2024 17:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIM9lKs2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3E7198A33;
+	Thu, 19 Sep 2024 17:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726766498; cv=none; b=fznQjsDJibClJ3r5DnWV5pXcjDnn6nlL+2/Mhmhd9O++Q2BIsKWkAn3XAy58jpHqJxYdylZEDemhRxqBWJ5PgMMPsNHcEG0OEG712YKuaJQnfXaqlRcVsab/7dIBRsZCq9SIaANt+OHdreqM3TOQx/xGyVaYqERH3NsVyl4nPeo=
+	t=1726766598; cv=none; b=tUqonyh2DVSm4/Xf101JnYD62/atFPwSbk1+LGkf/4upl6cqHVmYvEmVevQh1GDsDb5bFNQFxGjyZ3di52yu1NnWDIWfGpNVwrkMnq+1QwXbOZIcRd3l4Z8neKXM5g96pxx0vyZIUJETh0i6XIVPOhjs2xcvGV6+ojJB84LBpwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726766498; c=relaxed/simple;
-	bh=qoohf4dir+QD12ffCqFIrKxEQRUDj/58wKWXJA/Jt2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KsDCXKYSNBULowFfoMPXFua0henVUWNHXyfvZu6SEKYcgzy9ngmAmpVza1D66CPthsZXE4ikqirGpO5gMgA4Us9e6oUhUoUn+oq2cZuK8B+07iWftuLZ/P9arM9jFoX2za6ZRI8l68LINv4cAWdY/lsD9OEcltzgXR74f/U4uwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F8B51007;
-	Thu, 19 Sep 2024 10:22:04 -0700 (PDT)
-Received: from [10.57.82.79] (unknown [10.57.82.79])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ECB5A3F64C;
-	Thu, 19 Sep 2024 10:21:30 -0700 (PDT)
-Message-ID: <c6224621-74b2-465c-a0fe-b1aa9f69b1e9@arm.com>
-Date: Thu, 19 Sep 2024 19:21:27 +0200
+	s=arc-20240116; t=1726766598; c=relaxed/simple;
+	bh=ywE7jmWCgqwmnDgNwBtSx06TFLIK1ISnMWP7hs+d4s8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dB0paZZrhRGKApaUpFwRtweMAxz5cYgV3taX1ZedTQfY7d7s8tLT2nvLuo2W5t22uPY6zl7jMNJOVb2oCXkAsb1JM53GOQyYQ5/tzc2LQTMl09fwvetQ0SyZhwkrrzxDLVNgDCJmVAF+YMzgzrKuUOlGpaBZDEtlhgWYUirEZok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIM9lKs2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01D97C4CED1;
+	Thu, 19 Sep 2024 17:23:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726766598;
+	bh=ywE7jmWCgqwmnDgNwBtSx06TFLIK1ISnMWP7hs+d4s8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NIM9lKs2l6lbH1GWmaPnJkGcIsCGZwhcpyQYS780H70aNErk5a11BhEQizXF/+hp2
+	 Io0o6/O+/BZNesHmlGdl/qq0Gd/cWMTWoPh5C7rPVZdH0mx8RPEmfJuk7DFtSRJrdA
+	 KW+BIQ1oyahDxHAFN4JLsXKTHRQPeMhYn1NtEMCF+V9Jp62aMN3GoeBCzYq+N6q0Cu
+	 F/2AdW+VjaP8vfvpb1aDfbUO86TvPz9pli6NckMRFMksS/6SzpkC9KNlI7KosfqOoT
+	 Wvf7XM64KEk1fSkU+09kEeCAtAUjqv80AfViysv1AUmPSrgTcr0+yd7msihOXk0L/2
+	 JOHeHIKVOYQcA==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f75b13c2a8so13595861fa.3;
+        Thu, 19 Sep 2024 10:23:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVdeIINjcKIgl5I9lLGnKMDO62Vt8PK1SqwuZEGg0cvJ3J1R+PsFYfnX58JDFWl3n6guwSrQ7j9H7DISfIUjw==@vger.kernel.org, AJvYcCVfdiN6DIyTyClL0f2ZKvXPv1AZOusc2SzdiAj4eOiyIXTXtDg+5DHKhm3De61OFeSg8EwS4F+trMcJj4WLF5RxNAAK@vger.kernel.org, AJvYcCVzjc5ufGTSWiqz3X8rf1WWBEMlOi8kgFEbe+un4MG1vTKkJjVCJI414pxpPlL3oqkJvXh4vnhizOEVrFf8@vger.kernel.org, AJvYcCWDBDfmeHYjTpoiwmUJH7x3ltfcUmDa6plYPWGAz5+4za7dIs7zSOX2Zjc+QPKPGNnBuAr1LSpaWLh2iA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCSdwZl/uAIUchpBy4RtJnQH0clZk6CwS0ZZ1IBgjmpuvUW2V0
+	nguD6GyKPuN+B99a/49ep9ZEp1Hkce/Eh8tmy8b/FiRED7SKxs+sOg9j6dVRRMKCiigFwtpgoQ5
+	qp2aDMOnC7yV1AuFtUwR3n48B11k=
+X-Google-Smtp-Source: AGHT+IHTmgvLpSbHZVX9JxzBJbUb6nGrn3Mhzty+aN1kES3BtFRYG0X09T9FN3TJy6vHV+kYEK+KSMQ8OcPhwMTk6IE=
+X-Received: by 2002:a05:6512:3b20:b0:52e:be84:225c with SMTP id
+ 2adb3069b0e04-536ac2f5128mr35861e87.33.1726766596584; Thu, 19 Sep 2024
+ 10:23:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 0/4] Control folio sizes used for page cache memory
-Content-Language: en-GB
-To: Barry Song <baohua@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>,
- Pankaj Raghav <kernel@pankajraghav.com>, Daniel Gomez
- <da.gomez@samsung.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240717071257.4141363-1-ryan.roberts@arm.com>
- <480f34d0-a943-40da-9c69-2353fe311cf7@arm.com>
- <CAGsJ_4z8kh4Pn-TUrVq6FALR1J5j4fpvQkef2xPFYPWdWfXdxA@mail.gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CAGsJ_4z8kh4Pn-TUrVq6FALR1J5j4fpvQkef2xPFYPWdWfXdxA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240906144506.1151789-1-kris.van.hees@oracle.com>
+ <CGME20240919170739eucas1p1213d18f662c5370f71887fa1a5936409@eucas1p1.samsung.com>
+ <20240906144506.1151789-3-kris.van.hees@oracle.com> <20240919170737.3oe2teklabpz54hx@AALNPWDAGOMEZ1.aal.scsc.local>
+In-Reply-To: <20240919170737.3oe2teklabpz54hx@AALNPWDAGOMEZ1.aal.scsc.local>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Fri, 20 Sep 2024 02:22:40 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR_TKY+eiW6C_9DhDKY=7x9zmh=CMEM3fVSL6n26ruEjQ@mail.gmail.com>
+Message-ID: <CAK7LNAR_TKY+eiW6C_9DhDKY=7x9zmh=CMEM3fVSL6n26ruEjQ@mail.gmail.com>
+Subject: Re: [PATCH v10 2/4] kbuild: generate offset range data for builtin modules
+To: Daniel Gomez <da.gomez@samsung.com>
+Cc: Kris Van Hees <kris.van.hees@oracle.com>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Nick Alcock <nick.alcock@oracle.com>, 
+	Alan Maguire <alan.maguire@oracle.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Sam James <sam@gentoo.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni <elena.zannoni@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 19/09/2024 09:20, Barry Song wrote:
-> On Thu, Aug 8, 2024 at 10:27 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>
->> On 17/07/2024 08:12, Ryan Roberts wrote:
->>> Hi All,
->>>
->>> This series is an RFC that adds sysfs and kernel cmdline controls to configure
->>> the set of allowed large folio sizes that can be used when allocating
->>> file-memory for the page cache. As part of the control mechanism, it provides
->>> for a special-case "preferred folio size for executable mappings" marker.
->>>
->>> I'm trying to solve 2 separate problems with this series:
->>>
->>> 1. Reduce pressure in iTLB and improve performance on arm64: This is a modified
->>> approach for the change at [1]. Instead of hardcoding the preferred executable
->>> folio size into the arch, user space can now select it. This decouples the arch
->>> code and also makes the mechanism more generic; it can be bypassed (the default)
->>> or any folio size can be set. For my use case, 64K is preferred, but I've also
->>> heard from Willy of a use case where putting all text into 2M PMD-sized folios
->>> is preferred. This approach avoids the need for synchonous MADV_COLLAPSE (and
->>> therefore faulting in all text ahead of time) to achieve that.
->>
->> Just a polite bump on this; I'd really like to get something like this merged to
->> help reduce iTLB pressure. We had a discussion at the THP Cabal meeting a few
->> weeks back without solid conclusion. I haven't heard any concrete objections
->> yet, but also only a luke-warm reception. How can I move this forwards?
-> 
-> Hi Ryan,
-> 
-> These requirements seem to apply to anon, swap, pagecache, and shmem to
-> some extent. While the swapin_enabled knob was rejected, the shmem_enabled
-> option is already in place.
-> 
-> I wonder if it's possible to use the existing 'enabled' setting across
-> all cases, as
-> from an architectural perspective with cont-pte, pagecache may not differ from
-> anon. The demand for reducing page faults, LRU overhead, etc., also seems
-> quite similar.
-> 
-> I imagine that once Android's file systems support mTHP, we’ll uniformly enable
-> 64KB for anon, swap, shmem, and page cache. It should then be sufficient to
-> enable all of them using a single knob:
-> '/sys/kernel/mm/transparent_hugepage/hugepages-xxkB/enabled'.
-> 
-> Is there anything that makes pagecache and shmem significantly different
-> from anon? In my Android case, they all seem the same. However, I assume
-> there might be other use cases where differentiating them is necessary?
+On Fri, Sep 20, 2024 at 2:07=E2=80=AFAM Daniel Gomez <da.gomez@samsung.com>=
+ wrote:
+>
+> On Fri, Sep 06, 2024 at 10:45:03AM -0400, Kris Van Hees wrote:
+> > Create file module.builtin.ranges that can be used to find where
+> > built-in modules are located by their addresses. This will be useful fo=
+r
+> > tracing tools to find what functions are for various built-in modules.
+> >
+> > The offset range data for builtin modules is generated using:
+> >  - modules.builtin: associates object files with module names
+> >  - vmlinux.map: provides load order of sections and offset of first mem=
+ber
+> >     per section
+> >  - vmlinux.o.map: provides offset of object file content per section
+> >  - .*.cmd: build cmd file with KBUILD_MODFILE
+> >
+> > The generated data will look like:
+> >
+> > .text 00000000-00000000 =3D _text
+> > .text 0000baf0-0000cb10 amd_uncore
+> > .text 0009bd10-0009c8e0 iosf_mbi
+> > ...
+> > .text 00b9f080-00ba011a intel_skl_int3472_discrete
+> > .text 00ba0120-00ba03c0 intel_skl_int3472_discrete intel_skl_int3472_tp=
+s68470
+> > .text 00ba03c0-00ba08d6 intel_skl_int3472_tps68470
+> > ...
+> > .data 00000000-00000000 =3D _sdata
+> > .data 0000f020-0000f680 amd_uncore
+> >
+> > For each ELF section, it lists the offset of the first symbol.  This ca=
+n
+> > be used to determine the base address of the section at runtime.
+> >
+> > Next, it lists (in strict ascending order) offset ranges in that sectio=
+n
+> > that cover the symbols of one or more builtin modules.  Multiple ranges
+> > can apply to a single module, and ranges can be shared between modules.
+> >
+> > The CONFIG_BUILTIN_MODULE_RANGES option controls whether offset range d=
+ata
+> > is generated for kernel modules that are built into the kernel image.
+> >
+> > How it works:
+> >
+> >  1. The modules.builtin file is parsed to obtain a list of built-in
+> >     module names and their associated object names (the .ko file that
+> >     the module would be in if it were a loadable module, hereafter
+> >     referred to as <kmodfile>).  This object name can be used to
+> >     identify objects in the kernel compile because any C or assembler
+> >     code that ends up into a built-in module will have the option
+> >     -DKBUILD_MODFILE=3D<kmodfile> present in its build command, and tho=
+se
+> >     can be found in the .<obj>.cmd file in the kernel build tree.
+> >
+> >     If an object is part of multiple modules, they will all be listed
+> >     in the KBUILD_MODFILE option argument.
+> >
+> >     This allows us to conclusively determine whether an object in the
+> >     kernel build belong to any modules, and which.
+> >
+> >  2. The vmlinux.map is parsed next to determine the base address of eac=
+h
+> >     top level section so that all addresses into the section can be
+> >     turned into offsets.  This makes it possible to handle sections
+> >     getting loaded at different addresses at system boot.
+> >
+> >     We also determine an 'anchor' symbol at the beginning of each
+> >     section to make it possible to calculate the true base address of
+> >     a section at runtime (i.e. symbol address - symbol offset).
+> >
+> >     We collect start addresses of sections that are included in the top
+> >     level section.  This is used when vmlinux is linked using vmlinux.o=
+,
+> >     because in that case, we need to look at the vmlinux.o linker map t=
+o
+> >     know what object a symbol is found in.
+> >
+> >     And finally, we process each symbol that is listed in vmlinux.map
+> >     (or vmlinux.o.map) based on the following structure:
+> >
+> >     vmlinux linked from vmlinux.a:
+> >
+> >       vmlinux.map:
+> >         <top level section>
+> >           <included section>  -- might be same as top level section)
+> >             <object>          -- built-in association known
+> >               <symbol>        -- belongs to module(s) object belongs to
+> >               ...
+> >
+> >     vmlinux linked from vmlinux.o:
+> >
+> >       vmlinux.map:
+> >         <top level section>
+> >           <included section>  -- might be same as top level section)
+> >             vmlinux.o         -- need to use vmlinux.o.map
+> >               <symbol>        -- ignored
+> >               ...
+> >
+> >       vmlinux.o.map:
+> >         <section>
+> >             <object>          -- built-in association known
+> >               <symbol>        -- belongs to module(s) object belongs to
+> >               ...
+> >
+> >  3. As sections, objects, and symbols are processed, offset ranges are
+> >     constructed in a straight-forward way:
+> >
+> >       - If the symbol belongs to one or more built-in modules:
+> >           - If we were working on the same module(s), extend the range
+> >             to include this object
+> >           - If we were working on another module(s), close that range,
+> >             and start the new one
+> >       - If the symbol does not belong to any built-in modules:
+> >           - If we were working on a module(s) range, close that range
+> >
+> > Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
+> > Reviewed-by: Nick Alcock <nick.alcock@oracle.com>
+> > Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
+> > Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > Tested-by: Sam James <sam@gentoo.org>
+> > ---
+> >
+> > Notes:
+> >     Changes since v9:
+> >      - Reverted support for build directory as optional 4th argument.
+> >      - Added modules.builtin.ranges and vmlinux.o.map to CLEAN_FILES.
+> >      - Fixed support for sparc64.
+> >
+> >     Changes since v8:
+> >      - Added support for built-in Rust modules.
+> >      - Added optional 4th argument to specify kernel build directory.
+> >
+> >     Changes since v7:
+> >      - Removed extra close(fn).
+> >      - Make CONFIG_BUILTIN_MODULE_RANGES depend on !lTO.
+> >
+> >     Changes since v6:
+> >      - Applied Masahiro Yamada's suggestions (Kconfig, makefile, script=
+).
+> >
+> >     Changes since v5:
+> >      - Removed unnecessary compatibility info from option description.
+> >
+> >     Changes since v4:
+> >      - Improved commit description to explain the why and how.
+> >      - Documented dependency on GNU AWK for CONFIG_BUILTIN_MODULE_RANGE=
+S.
+> >      - Improved comments in generate_builtin_ranges.awk
+> >      - Improved logic in generate_builtin_ranges.awk to handle incorrec=
+t
+> >        object size information in linker maps
+> >
+> >     Changes since v3:
+> >      - Consolidated patches 2 through 5 into a single patch
+> >      - Move CONFIG_BUILTIN_MODULE_RANGES to Kconfig.debug
+> >      - Make CONFIG_BUILTIN_MODULE_RANGES select CONFIG_VMLINUX_MAP
+> >      - Disable CONFIG_BUILTIN_MODULE_RANGES if CONFIG_LTO_CLANG_(FULL|T=
+HIN)=3Dy
+> >      - Support LLVM (lld) compiles in generate_builtin_ranges.awk
+> >      - Support CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=3Dy
+> >
+> >     Changes since v2:
+> >      - Add explicit dependency on FTRACE for CONFIG_BUILTIN_MODULE_RANG=
+ES
+> >      - 1st arg to generate_builtin_ranges.awk is now modules.builtin.mo=
+dinfo
+> >      - Switched from using modules.builtin.objs to parsing .*.cmd files
+> >      - Parse data from .*.cmd in generate_builtin_ranges.awk
+> >      - Use $(real-prereqs) rather than $(filter-out ...)
+> >     ---
+> >
+> >  Documentation/process/changes.rst   |   7 +
+> >  Makefile                            |   1 +
+> >  lib/Kconfig.debug                   |  15 +
+> >  scripts/Makefile.vmlinux            |  18 +
+> >  scripts/Makefile.vmlinux_o          |   3 +
+> >  scripts/generate_builtin_ranges.awk | 508 ++++++++++++++++++++++++++++
+> >  6 files changed, 552 insertions(+)
+> >  create mode 100755 scripts/generate_builtin_ranges.awk
+> >
+> > diff --git a/Documentation/process/changes.rst b/Documentation/process/=
+changes.rst
+> > index 3fc63f27c226..00f1ed7c59c3 100644
+> > --- a/Documentation/process/changes.rst
+> > +++ b/Documentation/process/changes.rst
+> > @@ -64,6 +64,7 @@ GNU tar                1.28             tar --version
+> >  gtags (optional)       6.6.5            gtags --version
+> >  mkimage (optional)     2017.01          mkimage --version
+> >  Python (optional)      3.5.x            python3 --version
+> > +GNU AWK (optional)     5.1.0            gawk --version
+> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> >
+> >  .. [#f1] Sphinx is needed only to build the Kernel documentation
+> > @@ -192,6 +193,12 @@ platforms. The tool is available via the ``u-boot-=
+tools`` package or can be
+> >  built from the U-Boot source code. See the instructions at
+> >  https://docs.u-boot.org/en/latest/build/tools.html#building-tools-for-=
+linux
+> >
+> > +GNU AWK
+> > +-------
+> > +
+> > +GNU AWK is needed if you want kernel builds to generate address range =
+data for
+> > +builtin modules (CONFIG_BUILTIN_MODULE_RANGES).
+> > +
+> >  System utilities
+> >  ****************
+> >
+> > diff --git a/Makefile b/Makefile
+> > index d57cfc6896b8..ec98a1e5b257 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -1482,6 +1482,7 @@ endif # CONFIG_MODULES
+> >  # Directories & files removed with 'make clean'
+> >  CLEAN_FILES +=3D vmlinux.symvers modules-only.symvers \
+> >              modules.builtin modules.builtin.modinfo modules.nsdeps \
+> > +            modules.builtin.ranges vmlinux.o.map \
+> >              compile_commands.json rust/test \
+> >              rust-project.json .vmlinux.objs .vmlinux.export.c
+> >
+> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> > index a30c03a66172..5e2f30921cb2 100644
+> > --- a/lib/Kconfig.debug
+> > +++ b/lib/Kconfig.debug
+> > @@ -571,6 +571,21 @@ config VMLINUX_MAP
+> >         pieces of code get eliminated with
+> >         CONFIG_LD_DEAD_CODE_DATA_ELIMINATION.
+> >
+> > +config BUILTIN_MODULE_RANGES
+> > +     bool "Generate address range information for builtin modules"
+> > +     depends on !LTO
+> > +     depends on VMLINUX_MAP
+> > +     help
+> > +      When modules are built into the kernel, there will be no module =
+name
+> > +      associated with its symbols in /proc/kallsyms.  Tracers may want=
+ to
+> > +      identify symbols by module name and symbol name regardless of wh=
+ether
+> > +      the module is configured as loadable or not.
+> > +
+> > +      This option generates modules.builtin.ranges in the build tree w=
+ith
+> > +      offset ranges (per ELF section) for the module(s) they belong to=
+.
+> > +      It also records an anchor symbol to determine the load address o=
+f the
+> > +      section.
+> > +
+> >  config DEBUG_FORCE_WEAK_PER_CPU
+> >       bool "Force weak per-cpu definitions"
+> >       depends on DEBUG_KERNEL
+> > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> > index 5ceecbed31eb..dfb408aa19c6 100644
+> > --- a/scripts/Makefile.vmlinux
+> > +++ b/scripts/Makefile.vmlinux
+> > @@ -33,6 +33,24 @@ targets +=3D vmlinux
+> >  vmlinux: scripts/link-vmlinux.sh vmlinux.o $(KBUILD_LDS) FORCE
+> >       +$(call if_changed_dep,link_vmlinux)
+> >
+> > +# module.builtin.ranges
+> > +# --------------------------------------------------------------------=
+-------
+> > +ifdef CONFIG_BUILTIN_MODULE_RANGES
+> > +__default: modules.builtin.ranges
+> > +
+> > +quiet_cmd_modules_builtin_ranges =3D GEN     $@
+> > +      cmd_modules_builtin_ranges =3D $(real-prereqs) > $@
+> > +
+> > +targets +=3D modules.builtin.ranges
+> > +modules.builtin.ranges: $(srctree)/scripts/generate_builtin_ranges.awk=
+ \
+> > +                     modules.builtin vmlinux.map vmlinux.o.map FORCE
+> > +     $(call if_changed,modules_builtin_ranges)
+> > +
+> > +vmlinux.map: vmlinux
+> > +     @:
+> > +
+> > +endif
+> > +
+> >  # Add FORCE to the prerequisites of a target to force it to be always =
+rebuilt.
+> >  # --------------------------------------------------------------------=
+-------
+> >
+> > diff --git a/scripts/Makefile.vmlinux_o b/scripts/Makefile.vmlinux_o
+> > index d64070b6b4bc..0b6e2ebf60dc 100644
+> > --- a/scripts/Makefile.vmlinux_o
+> > +++ b/scripts/Makefile.vmlinux_o
+> > @@ -45,9 +45,12 @@ objtool-args =3D $(vmlinux-objtool-args-y) --link
+> >  # Link of vmlinux.o used for section mismatch analysis
+> >  # --------------------------------------------------------------------=
+-------
+> >
+> > +vmlinux-o-ld-args-$(CONFIG_BUILTIN_MODULE_RANGES)    +=3D -Map=3D$@.ma=
+p
+> > +
+> >  quiet_cmd_ld_vmlinux.o =3D LD      $@
+> >        cmd_ld_vmlinux.o =3D \
+> >       $(LD) ${KBUILD_LDFLAGS} -r -o $@ \
+> > +     $(vmlinux-o-ld-args-y) \
+> >       $(addprefix -T , $(initcalls-lds)) \
+> >       --whole-archive vmlinux.a --no-whole-archive \
+> >       --start-group $(KBUILD_VMLINUX_LIBS) --end-group \
+> > diff --git a/scripts/generate_builtin_ranges.awk b/scripts/generate_bui=
+ltin_ranges.awk
+> > new file mode 100755
+> > index 000000000000..b9ec761b3bef
+> > --- /dev/null
+> > +++ b/scripts/generate_builtin_ranges.awk
+> > @@ -0,0 +1,508 @@
+> > +#!/usr/bin/gawk -f
+>
+> This forces the gawk to be found always in /usr/bin. For systems where ga=
+wk can
+> be located in other places, can we change the Shebang to:
+>
+> diff --git a/scripts/generate_builtin_ranges.awk b/scripts/generate_built=
+in_ranges.awk
+> index b9ec761b3bef..886251c8d3f7 100755
+> --- a/scripts/generate_builtin_ranges.awk
+> +++ b/scripts/generate_builtin_ranges.awk
+> @@ -1,4 +1,4 @@
+> -#!/usr/bin/gawk -f
+> +#!/usr/bin/env gawk -f
+>  # SPDX-License-Identifier: GPL-2.0
+>  # generate_builtin_ranges.awk: Generate address range data for builtin m=
+odules
+>  # Written by Kris Van Hees <kris.van.hees@oracle.com>
 
-For anon vs shmem, we were just following the precedent set by the legacy PMD
-controls, which separated them. I vaguely recall David explaining why there are
-separate controls but don't recall the exact reason; I beleive there was some
-use case where anon THP made sense, but shmem THP was problematic for some
-reason. Note too, that the controls expose different options; anon has {always
-never, madvise}, shmem has {always, never, advise (no m; it applies to fadvise
-too), within_size, force, deny}. So I guess if the extra shmem options are
-important then it makes sense to have a separate control.
 
-For pagecache vs anon, I'm not sure it makes sense to tie these to the same
-control. We have readahead information to help us make an educated guess at the
-folio size we should use (currently we start at order-2 and increase by 2 orders
-every time we hit the readahead marker) and it's much easier to drop pagecache
-folios under memory pressure. So by default, I think most/all orders would be
-enabled for pagecahce. But for anon, things are harder. In the common case,
-likely we only want 2M when madvised, and 64K always (and possibly 16K always).
+No. We cannot fix it this way.
 
-Talking with Willy today, his preference is to not expose any controls for
-pagecache at all, and let the architecture hint the preferred folio size for
-code - basically how I did it at [1] - linked in the original post. This is very
-simple and exposes no user controls so could be easily modified over time as we
-get more data.
 
-Trouble is nobody seemed willing to R-b the first approach. So perhaps we're
-stuck waiting for Android's FSs to support large folios so we can start
-benchmarking the real-world gains?
+I already pointed out this shebang issue.
 
-Thanks,
-Ryan
+https://lore.kernel.org/lkml/CAK7LNASLc=3Dik9QdX4K_XuN=3Dcg+1VcUBk-y5EnQEtO=
+G+qOWaY=3DQ@mail.gmail.com/
 
-> 
->>
->> Thanks,
->> Ryan
->>
->>
->>>
->>> 2. Reduce memory fragmentation in systems under high memory pressure (e.g.
->>> Android): The theory goes that if all folios are 64K, then failure to allocate a
->>> 64K folio should become unlikely. But if the page cache is allocating lots of
->>> different orders, with most allocations having an order below 64K (as is the
->>> case today) then ability to allocate 64K folios diminishes. By providing control
->>> over the allowed set of folio sizes, we can tune to avoid crucial 64K folio
->>> allocation failure. Additionally I've heard (second hand) of the need to disable
->>> large folios in the page cache entirely due to latency concerns in some
->>> settings. These controls allow all of this without kernel changes.
->>>
->>> The value of (1) is clear and the performance improvements are documented in
->>> patch 2. I don't yet have any data demonstrating the theory for (2) since I
->>> can't reproduce the setup that Barry had at [2]. But my view is that by adding
->>> these controls we will enable the community to explore further, in the same way
->>> that the anon mTHP controls helped harden the understanding for anonymous
->>> memory.
->>>
->>> ---
->>> This series depends on the "mTHP allocation stats for file-backed memory" series
->>> at [3], which itself applies on top of yesterday's mm-unstable (650b6752c8a3). All
->>> mm selftests have been run; no regressions were observed.
->>>
->>> [1] https://lore.kernel.org/linux-mm/20240215154059.2863126-1-ryan.roberts@arm.com/
->>> [2] https://www.youtube.com/watch?v=ht7eGWqwmNs&list=PLbzoR-pLrL6oj1rVTXLnV7cOuetvjKn9q&index=4
->>> [3] https://lore.kernel.org/linux-mm/20240716135907.4047689-1-ryan.roberts@arm.com/
->>>
->>> Thanks,
->>> Ryan
->>>
->>> Ryan Roberts (4):
->>>   mm: mTHP user controls to configure pagecache large folio sizes
->>>   mm: Introduce "always+exec" for mTHP file_enabled control
->>>   mm: Override mTHP "enabled" defaults at kernel cmdline
->>>   mm: Override mTHP "file_enabled" defaults at kernel cmdline
->>>
->>>  .../admin-guide/kernel-parameters.txt         |  16 ++
->>>  Documentation/admin-guide/mm/transhuge.rst    |  66 +++++++-
->>>  include/linux/huge_mm.h                       |  61 ++++---
->>>  mm/filemap.c                                  |  26 ++-
->>>  mm/huge_memory.c                              | 158 +++++++++++++++++-
->>>  mm/readahead.c                                |  43 ++++-
->>>  6 files changed, 329 insertions(+), 41 deletions(-)
->>>
->>> --
->>> 2.43.0
->>>
->>
-> 
-> Thanks
-> Barry
 
+
+I thought Kris would send a fix up, but
+perhaps people tend to be busy with LPC this week.
+
+
+
+> Not sure if it's too late? in that case I can send a patch to change this=
+.
+
+
+I can locally fix it up.
+
+Kris agreed with this fix.
+
+
+diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+index dfb408aa19c6..1284f05555b9 100644
+--- a/scripts/Makefile.vmlinux
++++ b/scripts/Makefile.vmlinux
+@@ -39,7 +39,7 @@ ifdef CONFIG_BUILTIN_MODULE_RANGES
+ __default: modules.builtin.ranges
+
+ quiet_cmd_modules_builtin_ranges =3D GEN     $@
+-      cmd_modules_builtin_ranges =3D $(real-prereqs) > $@
++      cmd_modules_builtin_ranges =3D gawk -f $(real-prereqs) > $@
+
+ targets +=3D modules.builtin.ranges
+ modules.builtin.ranges: $(srctree)/scripts/generate_builtin_ranges.awk \
+
+
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
