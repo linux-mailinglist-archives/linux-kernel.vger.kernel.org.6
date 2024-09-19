@@ -1,169 +1,97 @@
-Return-Path: <linux-kernel+bounces-333272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF6697C634
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:49:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08E097C650
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09FE1281C80
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:49:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DCBF1F2737D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7151991B5;
-	Thu, 19 Sep 2024 08:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309B41991D4;
+	Thu, 19 Sep 2024 08:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FVFJlCOS"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="W8rfm6II"
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2652FC0E;
-	Thu, 19 Sep 2024 08:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD4F1957E7;
+	Thu, 19 Sep 2024 08:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726735742; cv=none; b=QGzS8/Ejr6fAyfhXmL5/ypuFt18o4W2ZZC5JKffRu+vxe5wX2Y22jfj7Sa8SlL3WVH5q001JebxZ3dryI7JMFgLJ3ww+WjovFwCPujyixhm6lStBbnRA2s8Y+FgiznwWfeepRV5Dzq/QTLLsv4yM28JZAakeIhKZ4vv/O8ERanI=
+	t=1726736161; cv=none; b=Jmt/bp1iAWgNgI0+HRJqa2OjHgpejLXYz/uVKRG3oe3f3yyD56ry60Y5UqEht1w2bDvCQu/CGxALBV/BvMIpQ9vPms+x5pkKxj5qAGiko7xh6QDPW6NujxA9kuqHamiOIT1nlp3oYJLWT7mHYSsJ7G+QZXWWRgR87aUR7ESq3I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726735742; c=relaxed/simple;
-	bh=Xycib8bl7thCGbYvoJLXnNtbcDi/AIgIEqbrTsj8i9A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G4x+esgU5pYosta/Wd2Z4Rf1u2czw7ChCwxQbebNXb66CQ/EG4Ui2BX/R1mQGLzXTTrLOysVhUMRGe4Xnbeho6SdXT/eFwPrIl5l1V3Ux15+QdwvhircGvo6L0U8GQsKuPXoHCkghAkBCUlsNjQu5CdXZsFB5QH8x1zMvjjYMzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FVFJlCOS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48J11feT006768;
-	Thu, 19 Sep 2024 08:48:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=8P8jp37VuVHU6HERyHf8csPpU1ieS8Rj655puJrSMSs=; b=FV
-	FJlCOSrAppaCHBjwT91n9yjSP26iYeBz+o6em5dwAbdu0XCmdn/MDTdFIqHzircd
-	zAg8zD4sZmg2xFCESp36ToGWq2AxFMmllq7AaKnOx1pw8wfBsTcX0+rQqSGEUlmr
-	L7znY2bzjuY7IzW3Bq6pSNiiBsMGDC/YVVclLHPEyL2NTihC728PRPrcUSFSbDTn
-	RoUcvsGv1aLkTCVdr+mpxSEiY+xFzqfTY5idieBh13dpxpx3gxAuaFrWL+1QrHhc
-	wxgP/o1gcTqhKA83t2nyg+GCWl0UHaR8cuxeil98bGWjasT60U+Zn4SqdJFXXZZl
-	G8G8v+M3nZNF9lVuky7g==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4j6vren-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 08:48:55 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48J8mrvW008190
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 08:48:53 GMT
-Received: from hu-sachgupt-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 19 Sep 2024 01:48:48 -0700
-From: Sachin Gupta <quic_sachgupt@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_cang@quicinc.com>,
-        <quic_nguyenb@quicinc.com>, <quic_bhaskarv@quicinc.com>,
-        <quic_mapa@quicinc.com>, <quic_narepall@quicinc.com>,
-        <quic_nitirawa@quicinc.com>, <quic_rampraka@quicinc.com>,
-        <quic_sachgupt@quicinc.com>, <quic_sartgarg@quicinc.com>
-Subject: [PATCH V3] arm64: dts: qcom: qcs6490-rb3gen2: Add SD Card node
-Date: Thu, 19 Sep 2024 14:18:26 +0530
-Message-ID: <20240919084826.1117-1-quic_sachgupt@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1726736161; c=relaxed/simple;
+	bh=tLo0+Gejk23J0fKT7g+olOV4M1y+Mq8K+ASTF+mWBEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNwgJmz3BHMesEZwgc8bMj84G1lFd1qEdySAO/34lPffLJJMJAgKMqX5K5EzaFd22kFsanGfQQC63dJg18GuG9ypBTNrkZNnMknKwW17HhXR7eQnrg0IEUWLv5NioEuIeywJKb36QtmUGhc04U38DRq41n+28oUDQ/0Io5iSK+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=W8rfm6II; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id E63DE6003C0E;
+	Thu, 19 Sep 2024 09:48:54 +0100 (WEST)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id 94kb_oDrimSw; Thu, 19 Sep 2024 09:48:52 +0100 (WEST)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 32E406000249;
+	Thu, 19 Sep 2024 09:48:52 +0100 (WEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail; t=1726735732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WvgPBwIZkNLSeUVeZEOkmQqK/jVBqcgra9Qwax10Ge4=;
+	b=W8rfm6IIyDLO58GT/2Lny1iZY59+y39hCAGgUV2wsY/zIOJfE6wLk3LPwUaQsdrpoHbjZR
+	YEbr9sfCLBw0sKjBHTary7tjU3n90357KjpupX0p101g587tEwYBD7ip2Mu1RaehSN7Wa7
+	EQxh0T9ktHVh6jG90MkFBnqUCrWT9Mk=
+Received: from diogo-gram (unknown [IPv6:2001:8a0:6a67:5600:aca0:c311:d240:b169])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id DB82F360107;
+	Thu, 19 Sep 2024 09:48:51 +0100 (WEST)
+Date: Thu, 19 Sep 2024 09:48:46 +0100
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+To: jja2000@gmail.com
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Add touchscreen and TMP451 tempsensor nodes to
+ Google Pixel C (tegra210-smaug) Device Tree
+Message-ID: <sjcgt76mo6pcw6n4vxg3zgxxjbeu6ixfbseqglml67xt6ltwye@a37rvqudxidh>
+References: <20240916-touch-temp-v1-0-5a008b2acbc8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8vBpyNYwEwu2CLIa_WaECk3L3PDpYlCo
-X-Proofpoint-GUID: 8vBpyNYwEwu2CLIa_WaECk3L3PDpYlCo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=768
- mlxscore=0 malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1015
- adultscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409190056
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240916-touch-temp-v1-0-5a008b2acbc8@gmail.com>
 
-Add SD Card node for Qualcomm qcs6490-rb3gen2 Board.
+On Mon, Sep 16, 2024 at 12:48:12AM GMT, Jasper Korten via B4 Relay wrote:
+> Information to get these working was gained from downstream DTS.
+> Link: https://android.googlesource.com/kernel/tegra/+/refs/heads/android-tegra-dragon-3.18-oreo-m8/arch/arm64/boot/dts/tegra/tegra210-smaug.dtsi
+> 
+> Both were missing upstream and easy to add:
+> - It uses a RMI4 HID-over-I2C compatible touchscreen.
+> - TMP451 is located close to eMMC according to iFixit's teardown.
+>   Link: https://www.ifixit.com/Teardown/Google+Pixel+C+Teardown/62277#s290806
+> 
+> This is the first time I've ever submitted patches upstream myself.
+> If there's anything I've missed or could do better in a new rev,
+> please let me know!
+> 
+> Signed-off-by: Jasper Korten <jja2000@gmail.com>
 
-Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
----
+For both patches:
 
-Changes from v2:
- - Moved status "okay" at the last. (Thanks Dmitry)
+Tested-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 
-Changes from v1:
- - Moving the pinctrl-related nodes below the PINCTRL comment and relocating
-   the sd-cd node within the PINCTRL-related TLMM section. (Thanks Dmitry)
----
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 33 ++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-index 0d45662b8028..5d81fa2ce86a 100644
---- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-@@ -716,6 +716,18 @@
- 	status = "okay";
- };
- 
-+&sdhc_2 {
-+	pinctrl-0 = <&sdc2_clk>, <&sdc2_cmd>, <&sdc2_data>, <&sd_cd>;
-+	pinctrl-1 = <&sdc2_clk_sleep>, <&sdc2_cmd_sleep>, <&sdc2_data_sleep>, <&sd_cd>;
-+
-+	vmmc-supply = <&vreg_l9c_2p96>;
-+	vqmmc-supply = <&vreg_l6c_2p96>;
-+
-+	cd-gpios = <&tlmm 91 GPIO_ACTIVE_LOW>;
-+
-+	status = "okay";
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <32 2>, /* ADSP */
- 			       <48 4>; /* NFC */
-@@ -812,6 +824,21 @@
- 	};
- };
- 
-+&sdc2_clk {
-+	bias-disable;
-+	drive-strength = <16>;
-+};
-+
-+&sdc2_cmd {
-+	bias-pull-up;
-+	drive-strength = <10>;
-+};
-+
-+&sdc2_data {
-+	bias-pull-up;
-+	drive-strength = <10>;
-+};
-+
- &tlmm {
- 	lt9611_irq_pin: lt9611-irq-state {
- 		pins = "gpio24";
-@@ -819,4 +846,10 @@
- 		drive-strength = <2>;
- 		bias-disable;
- 	};
-+
-+	sd_cd: sd-cd-state {
-+		pins = "gpio91";
-+		function = "gpio";
-+		bias-pull-up;
-+	};
- };
--- 
-2.17.1
-
+Thanks!
 
