@@ -1,129 +1,297 @@
-Return-Path: <linux-kernel+bounces-333626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1CE797CB90
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:21:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F382C97CB8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 206751C23AEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:21:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8DBD287585
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8237419994B;
-	Thu, 19 Sep 2024 15:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FBA19F13C;
+	Thu, 19 Sep 2024 15:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="j0YoRPa8"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="A55hCsmd"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A641EF1D
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 15:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933611DDC9;
+	Thu, 19 Sep 2024 15:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726759273; cv=none; b=CRcI+JJ56FQ7TPdOzmpu5/1qZeyyV40pkYc++hy+ieO0GJchq45sbVwyDFWReSi91+E3ij4EUf1/QpnHrcWW6JlrnSJgS+t/UGjbNbtxb7eH2dofLdKknnCIeZqePaAHCnYwHZRETmHX/nOWbkczt39IZgTi9xVpJXz8eWFjs8Q=
+	t=1726759218; cv=none; b=cB/zRqUn44TD32AwBimAy+kTbsOGSeV9u1C7HLrSCRDyNsppNSfsau0TNPsMy27dDWu8wQFc7vFUOn7E6Sdr8mD1F/zduD0aUwjIMwYUuIxjyr7HXxjYmnPBg0wE+ENay3upHpOB5ZwJhFsepo1ztnuGYnqFeAK+gUcB/r0My7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726759273; c=relaxed/simple;
-	bh=ba2TAi2tR0SuQFs7sr43Bx+L6d2cJFSg4rHFf0Q/4DU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nifEpvZ7SCX44Wxt/k9IRnv0Wg2vOXV+kfSGgzVAftqQ6HpMQRp++3o0jRpiDc3cizF3mWgS9qFvGeNIaouqv30xl/Rqc9pZi7jHMafXb4LNlx7LRhuckhvJfR0npkoU3ndukrTENcYFBbWLQCM9QQ5JHo970L/hTaYES/N/y/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=j0YoRPa8; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48JEPQHB023219;
-	Thu, 19 Sep 2024 10:17:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PODMain02222019; bh=baelYAyAIIoXLLAW
-	vPDu8R5un3ZAOjFgdb44s4mMjx8=; b=j0YoRPa8011hGxzhRx0CLDYtFeNYNrka
-	Xx7CofxzE91mIHpl6r+jfRpyQYqaGN4jCvGozFYo37NR3rXU4wPyfZ4Egl1z9k3w
-	2qY8IqKS2K3gFsetwCoax3S7ErR2JfsqVT+2PswMqp2MqsMaf192mEnqSaXXrmcE
-	W0q32om6T7l/6rA6kc3s+8UBJEayhdVQDk52atXz4fHzr/SJPOcxcffrejzdnML0
-	uVSTPMOjLIDRi3NM6uKbjgRwYSdYGEY3qKd2/heOiSUDHIYblDmgF2cjDKWGkjME
-	AB/xByMCwa9/+KfUCzGRisDbpdrElySJgYIuip6jQV8AF6ZDMl8VCA==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 41n7vy6bjy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 10:17:07 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 19 Sep
- 2024 16:17:05 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Thu, 19 Sep 2024 16:17:05 +0100
-Received: from ausswws06.ad.cirrus.com (ausswws06.ad.cirrus.com [141.131.145.166])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 216D2820248;
-	Thu, 19 Sep 2024 15:17:04 +0000 (UTC)
-From: Ricardo Rivera-Matos <rriveram@opensource.cirrus.com>
-To: David Rhodes <david.rhodes@cirrus.com>,
-        Richard Fitzgerald
-	<rf@opensource.cirrus.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>
-CC: <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>,
-        <linux-kernel@vger.kernel.org>,
-        Ricardo Rivera-Matos
-	<rriveram@opensource.cirrus.com>
-Subject: [PATCH] ASoC: cs35l45: Corrects cs35l45_get_clk_freq_id function data type
-Date: Thu, 19 Sep 2024 15:16:52 +0000
-Message-ID: <20240919151654.197337-1-rriveram@opensource.cirrus.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726759218; c=relaxed/simple;
+	bh=OGLUCgDWH562twCZsYpJURmvO0GqslL15kZSjFqgcgY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SInVDImXt8eFxNNx+k9a8Be8qBYmBnrFNM/1E4Q2PQYOG48dufQHaiAUX8f5aYYbZOPYissVmV9cvrz8inmdLk5SIt83Vx1y/HezIzU2HB2po6zv6H8dKj/xe0eh3opMAyiTg+JNufOCtEqhaaB1IQEjv9ZSKetyvizNTrbqG3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=A55hCsmd; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id A959620454;
+	Thu, 19 Sep 2024 17:20:14 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id Qo0bG5SzFI2j; Thu, 19 Sep 2024 17:20:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1726759213; bh=OGLUCgDWH562twCZsYpJURmvO0GqslL15kZSjFqgcgY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=A55hCsmdEO8Gznbzp2FRJwmJjccXj+GTJF6zPvzNisXBEsznw9wdjCwIQI166AcPo
+	 kIlEko3sMTln1yqa2b1Za3GTR5vGdGxbmnuJg2f8en3Nup9x+isUhs/IRV5pTH0Ynt
+	 u+2pdEmp5NHsOrDKIJlx8SYiCnhmyyby3o3E2P6gZZdtT1uhtvtzd1GKFHgsy3XmnK
+	 AEK+8+nzGAf8l5C+MbfkqSlMMMr1xiFqB3xB+dVL1uInlA13sT8rKg2ZzZyFnX5kfm
+	 +baHz/b17dQj2fwTqdKwNKPDHAL7wxLx7RLOAIEXi6XAeLjxeeTjhwnwa2RVxeIf0x
+	 rHvLk+VwG0r4Q==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+To: kauschluss@disroot.org
+Cc: airlied@gmail.com,
+	alim.akhtar@samsung.com,
+	conor@kernel.org,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	inki.dae@samsung.com,
+	krzk@kernel.org,
+	kyungmin.park@samsung.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	robh@kernel.org,
+	simona@ffwll.ch,
+	sw0312.kim@samsung.com,
+	tzimmermann@suse.de
+Subject: [PATCH 5/6] drm/exynos: exynos7_drm_decon: add driver data and support for Exynos7870
+Date: Thu, 19 Sep 2024 20:49:39 +0530
+Message-ID: <20240919-exynosdrm-decon-v1-5-8c3e3ccffad5@disroot.org>
+In-Reply-To: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
+References: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Z4Iae62f-M4zJT7xEVGP1D4UYNnxK-yC
-X-Proofpoint-GUID: Z4Iae62f-M4zJT7xEVGP1D4UYNnxK-yC
-X-Proofpoint-Spam-Reason: safe
 
-Changes cs35l45_get_clk_freq_id() function data type from unsigned int
-to int. This function is returns a positive index value if successful
-or a negative error code if unsuccessful.
+Add support for Exynos 7870 DECON in the Exynos 7 DECON driver.
 
-Functionally there should be no difference as long as the unsigned int
-return is interpreted as an int, however it should be corrected for
-readability.
+Some Exynos 7 series SoCs (Exynos 7580 onwards) have different
+register values. In order to address such changes, include a driver
+data struct (named decon_data) so that correct base addresses and
+shift values can be provided.
 
-Signed-off-by: Ricardo Rivera-Matos <rriveram@opensource.cirrus.com>
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
- sound/soc/codecs/cs35l45-tables.c | 2 +-
- sound/soc/codecs/cs35l45.h        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c | 58 ++++++++++++++++++++++--------
+ drivers/gpu/drm/exynos/regs-decon7.h       | 15 ++++----
+ 2 files changed, 51 insertions(+), 22 deletions(-)
 
-diff --git a/sound/soc/codecs/cs35l45-tables.c b/sound/soc/codecs/cs35l45-tables.c
-index e1cebb9e4dc6..405dab137b3b 100644
---- a/sound/soc/codecs/cs35l45-tables.c
-+++ b/sound/soc/codecs/cs35l45-tables.c
-@@ -315,7 +315,7 @@ static const struct {
- 	{ 0x3B, 24576000 },
+diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+index 7f0985eb216e..4d93d2d7959f 100644
+--- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
+@@ -37,6 +37,24 @@
+ 
+ #define WINDOWS_NR	2
+ 
++struct decon_data {
++	unsigned int vidw_buf_start_base;
++	unsigned int shadowcon_win_protect_shift;
++	unsigned int wincon_burstlen_shift;
++};
++
++static struct decon_data exynos7_decon_data = {
++	.vidw_buf_start_base = 0x80,
++	.shadowcon_win_protect_shift = 10,
++	.wincon_burstlen_shift = 11,
++};
++
++static struct decon_data exynos7870_decon_data = {
++	.vidw_buf_start_base = 0x880,
++	.shadowcon_win_protect_shift = 8,
++	.wincon_burstlen_shift = 10,
++};
++
+ struct decon_context {
+ 	struct device			*dev;
+ 	struct drm_device		*drm_dev;
+@@ -55,11 +73,19 @@ struct decon_context {
+ 	wait_queue_head_t		wait_vsync_queue;
+ 	atomic_t			wait_vsync_event;
+ 
++	const struct decon_data *data;
+ 	struct drm_encoder *encoder;
  };
  
--unsigned int cs35l45_get_clk_freq_id(unsigned int freq)
-+int cs35l45_get_clk_freq_id(unsigned int freq)
+ static const struct of_device_id decon_driver_dt_match[] = {
+-	{.compatible = "samsung,exynos7-decon"},
++	{
++		.compatible = "samsung,exynos7-decon",
++		.data = &exynos7_decon_data,
++	},
++	{
++		.compatible = "samsung,exynos7870-decon",
++		.data = &exynos7870_decon_data,
++	},
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, decon_driver_dt_match);
+@@ -92,8 +118,9 @@ static void decon_shadow_protect_win(struct decon_context *ctx,
+ 				     unsigned int win, bool protect)
  {
- 	int i;
+ 	u32 bits, val;
++	unsigned int shift = ctx->data->shadowcon_win_protect_shift;
  
-diff --git a/sound/soc/codecs/cs35l45.h b/sound/soc/codecs/cs35l45.h
-index e2ebcf58d7e0..7a790d2acac7 100644
---- a/sound/soc/codecs/cs35l45.h
-+++ b/sound/soc/codecs/cs35l45.h
-@@ -507,7 +507,7 @@ extern const struct dev_pm_ops cs35l45_pm_ops;
- extern const struct regmap_config cs35l45_i2c_regmap;
- extern const struct regmap_config cs35l45_spi_regmap;
- int cs35l45_apply_patch(struct cs35l45_private *cs35l45);
--unsigned int cs35l45_get_clk_freq_id(unsigned int freq);
-+int cs35l45_get_clk_freq_id(unsigned int freq);
- int cs35l45_probe(struct cs35l45_private *cs35l45);
- void cs35l45_remove(struct cs35l45_private *cs35l45);
+-	bits = SHADOWCON_WINx_PROTECT(win);
++	bits = SHADOWCON_WINx_PROTECT(shift, win);
  
--- 
-2.43.0
+ 	val = readl(ctx->regs + SHADOWCON);
+ 	if (protect)
+@@ -291,6 +318,7 @@ static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
+ {
+ 	unsigned long val;
+ 	int padding;
++	unsigned int shift = ctx->data->wincon_burstlen_shift;
+ 
+ 	val = readl(ctx->regs + WINCON(win));
+ 	val &= ~WINCONx_BPPMODE_MASK;
+@@ -298,44 +326,44 @@ static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
+ 	switch (fb->format->format) {
+ 	case DRM_FORMAT_RGB565:
+ 		val |= WINCONx_BPPMODE_16BPP_565;
+-		val |= WINCONx_BURSTLEN_16WORD;
++		val |= WINCONx_BURSTLEN_16WORD(shift);
+ 		break;
+ 	case DRM_FORMAT_XRGB8888:
+ 		val |= WINCONx_BPPMODE_24BPP_xRGB;
+-		val |= WINCONx_BURSTLEN_16WORD;
++		val |= WINCONx_BURSTLEN_16WORD(shift);
+ 		break;
+ 	case DRM_FORMAT_XBGR8888:
+ 		val |= WINCONx_BPPMODE_24BPP_xBGR;
+-		val |= WINCONx_BURSTLEN_16WORD;
++		val |= WINCONx_BURSTLEN_16WORD(shift);
+ 		break;
+ 	case DRM_FORMAT_RGBX8888:
+ 		val |= WINCONx_BPPMODE_24BPP_RGBx;
+-		val |= WINCONx_BURSTLEN_16WORD;
++		val |= WINCONx_BURSTLEN_16WORD(shift);
+ 		break;
+ 	case DRM_FORMAT_BGRX8888:
+ 		val |= WINCONx_BPPMODE_24BPP_BGRx;
+-		val |= WINCONx_BURSTLEN_16WORD;
++		val |= WINCONx_BURSTLEN_16WORD(shift);
+ 		break;
+ 	case DRM_FORMAT_ARGB8888:
+ 		val |= WINCONx_BPPMODE_32BPP_ARGB | WINCONx_BLD_PIX |
+ 			WINCONx_ALPHA_SEL;
+-		val |= WINCONx_BURSTLEN_16WORD;
++		val |= WINCONx_BURSTLEN_16WORD(shift);
+ 		break;
+ 	case DRM_FORMAT_ABGR8888:
+ 		val |= WINCONx_BPPMODE_32BPP_ABGR | WINCONx_BLD_PIX |
+ 			WINCONx_ALPHA_SEL;
+-		val |= WINCONx_BURSTLEN_16WORD;
++		val |= WINCONx_BURSTLEN_16WORD(shift);
+ 		break;
+ 	case DRM_FORMAT_RGBA8888:
+ 		val |= WINCONx_BPPMODE_32BPP_RGBA | WINCONx_BLD_PIX |
+ 			WINCONx_ALPHA_SEL;
+-		val |= WINCONx_BURSTLEN_16WORD;
++		val |= WINCONx_BURSTLEN_16WORD(shift);
+ 		break;
+ 	case DRM_FORMAT_BGRA8888:
+ 	default:
+ 		val |= WINCONx_BPPMODE_32BPP_BGRA | WINCONx_BLD_PIX |
+ 			WINCONx_ALPHA_SEL;
+-		val |= WINCONx_BURSTLEN_16WORD;
++		val |= WINCONx_BURSTLEN_16WORD(shift);
+ 		break;
+ 	}
+ 
+@@ -351,8 +379,8 @@ static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win,
+ 
+ 	padding = (fb->pitches[0] / fb->format->cpp[0]) - fb->width;
+ 	if (fb->width + padding < MIN_FB_WIDTH_FOR_16WORD_BURST) {
+-		val &= ~WINCONx_BURSTLEN_MASK;
+-		val |= WINCONx_BURSTLEN_8WORD;
++		val &= ~WINCONx_BURSTLEN_MASK(shift);
++		val |= WINCONx_BURSTLEN_8WORD(shift);
+ 	}
+ 
+ 	writel(val, ctx->regs + WINCON(win));
+@@ -397,6 +425,7 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
+ 	unsigned int win = plane->index;
+ 	unsigned int cpp = fb->format->cpp[0];
+ 	unsigned int pitch = fb->pitches[0];
++	unsigned int vidw_addr0_base = ctx->data->vidw_buf_start_base;
+ 
+ 	if (ctx->suspended)
+ 		return;
+@@ -413,7 +442,7 @@ static void decon_update_plane(struct exynos_drm_crtc *crtc,
+ 
+ 	/* buffer start address */
+ 	val = (unsigned long)exynos_drm_fb_dma_addr(fb, 0);
+-	writel(val, ctx->regs + VIDW_BUF_START(win));
++	writel(val, ctx->regs + VIDW_BUF_START(vidw_addr0_base, win));
+ 
+ 	padding = (pitch / cpp) - fb->width;
+ 
+@@ -695,6 +724,7 @@ static int decon_probe(struct platform_device *pdev)
+ 
+ 	ctx->dev = dev;
+ 	ctx->suspended = true;
++	ctx->data = of_device_get_match_data(dev);
+ 
+ 	i80_if_timings = of_get_child_by_name(dev->of_node, "i80-if-timings");
+ 	if (i80_if_timings)
+diff --git a/drivers/gpu/drm/exynos/regs-decon7.h b/drivers/gpu/drm/exynos/regs-decon7.h
+index 5bc5f1db5196..216c106dac8f 100644
+--- a/drivers/gpu/drm/exynos/regs-decon7.h
++++ b/drivers/gpu/drm/exynos/regs-decon7.h
+@@ -48,7 +48,7 @@
+ /* SHADOWCON */
+ #define SHADOWCON				0x30
+ 
+-#define SHADOWCON_WINx_PROTECT(_win)		(1 << (10 + (_win)))
++#define SHADOWCON_WINx_PROTECT(_shf, _win)	(1 << ((_shf) + (_win)))
+ 
+ /* WINCONx */
+ #define WINCON(_win)				(0x50 + ((_win) * 4))
+@@ -58,10 +58,9 @@
+ #define WINCONx_BUFSEL_SHIFT			28
+ #define WINCONx_TRIPLE_BUF_MODE			(0x1 << 18)
+ #define WINCONx_DOUBLE_BUF_MODE			(0x0 << 18)
+-#define WINCONx_BURSTLEN_16WORD			(0x0 << 11)
+-#define WINCONx_BURSTLEN_8WORD			(0x1 << 11)
+-#define WINCONx_BURSTLEN_MASK			(0x1 << 11)
+-#define WINCONx_BURSTLEN_SHIFT			11
++#define WINCONx_BURSTLEN_16WORD(_shf)		(0x0 << (_shf))
++#define WINCONx_BURSTLEN_8WORD(_shf)		(0x1 << (_shf))
++#define WINCONx_BURSTLEN_MASK(_shf)		(0x1 << (_shf))
+ #define WINCONx_BLD_PLANE			(0 << 8)
+ #define WINCONx_BLD_PIX				(1 << 8)
+ #define WINCONx_ALPHA_MUL			(1 << 7)
+@@ -89,9 +88,9 @@
+ #define VIDOSD_H(_x)				(0x80 + ((_x) * 4))
+ 
+ /* Frame buffer start addresses: VIDWxxADD0n */
+-#define VIDW_BUF_START(_win)			(0x80 + ((_win) * 0x10))
+-#define VIDW_BUF_START1(_win)			(0x84 + ((_win) * 0x10))
+-#define VIDW_BUF_START2(_win)			(0x88 + ((_win) * 0x10))
++#define VIDW_BUF_START(_base, _win)		((_base) + ((_win) * 0x10))
++#define VIDW_BUF_START1(_base, _win)		((_base) + ((_win) * 0x10))
++#define VIDW_BUF_START2(_base, _win)		((_base) + ((_win) * 0x10))
+ 
+ #define VIDW_WHOLE_X(_win)			(0x0130 + ((_win) * 8))
+ #define VIDW_WHOLE_Y(_win)			(0x0134 + ((_win) * 8))
 
+-- 
+2.46.1
 
