@@ -1,231 +1,239 @@
-Return-Path: <linux-kernel+bounces-333607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 180C997CB44
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:02:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40BEE97CB48
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8118285DAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:02:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6509C1C2104C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E57B190477;
-	Thu, 19 Sep 2024 15:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20B719F470;
+	Thu, 19 Sep 2024 15:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V5gxiNxS"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="jsUaBqf8"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2113.outbound.protection.outlook.com [40.107.220.113])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824F21E522
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 15:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726758132; cv=none; b=ispPWZVhM3oRJ/pNFEN7ftvOTFY8KLZw9IKMTk9A05RyjY/bJYli6HrzLtZaoNp1xOOhvpofi/ro7eLiFIW0iIMn7I+xEps0s36eoWOJsjvlAIDtlAcEAfXvipeAaUkSbEzGehqi2hVzNDPVJmhnimNlvn637kXrKvltVXtfSBc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726758132; c=relaxed/simple;
-	bh=YpUk7QNqAoJUkAbDvBnTy3VZp3BINGaqpAaOyQTJMqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JWM8og3aDP0xv4u7mXHNT4Kecq4rbyDLDMssvsKEJ2G9slPBxsUcesySMaWlsOerVwAAzJIfHMcrxdOOH8Dyfbi9YAv5lakI19Oi+wKAQ9E93B1rCFU0whkwdMlnTw4k6nq5oS/mL+Bwh5jaSJl992Z2oOD+ehlkeeuw0I6Zmlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V5gxiNxS; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5365aec6fc1so1187146e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 08:02:10 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E63D1DDC9;
+	Thu, 19 Sep 2024 15:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.113
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726758161; cv=fail; b=T5w8umrsuVmOVDQBuVJw7h2fm91ro0XFuwtkqJLW1OMawo2cU3eklgfNQIpXOr+D3sI5IpIFhWz+pD5ns1ujjUVwGwJC35IWFBL2iA/AZ8sAhx6k0A/dkoKkRGsgxuKOsDW/iQrhEK21YtF7VRgsYdEjU03YftWvz25uNBsixnc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726758161; c=relaxed/simple;
+	bh=/s9RjleiBkPI+szPW1DDB1EIDsOEiiqUUYzKPphE/W4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hN51T9CFsaugCR17pAWMsb4Ux8by2SpZKUkj/kEkNEyibnZFGfrelvuz5SqsjByhS9FoT4T276E9BE7ffQFOZSofmhYOFgr8mSQNS8o5bXeD9GG5PvpBfA1unA8aeiZX5Mgio8N+6HMzNFYJMfeB44L13NPG/ijZtDkJMfPdLbs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=jsUaBqf8 reason="key not found in DNS"; arc=fail smtp.client-ip=40.107.220.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sKZ9y0WaRqs17C2JtLsT9+9ylt3cSeED/vVhcYm/t6egE5mQMmgWH/g1/nhziI1a4vZ1bS2yPMGvsCCAQjmLz0s+jp2sTs4dOaYBwq1Pf160PFfLJWEYVzEi2Wc4Ii3UrFBHWlVOydhVVzb2Wb8iZac+SBHPsePmeckK9e6PswqZ6w0ETq+vdeKfYu0A2K0oai77TMJgXwBB8pDwm/GUIZ3PdPvY4KzVJIgkB7J9YQtyQJY4euhx/bA7PCcG9AMSO5bWak3m+qX5kBZGonsleqpKgs+sTge0nmWTERp2wLISo5PwcTN8GUVjEaU95plR6HVHWEDfQmQauowHo60Ieg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hDC8EMFxRAY12G8oJ+082720qn1I59pWPz2lBl6GWu8=;
+ b=S/xSgid7xmIz0VMSzL6a0M9t1y9mPFs/MscyLcu3gM68+yMi/l+++YiQNV7Cg3Fe1D/ryQfhgm8Fjs3+bf767qUMwQ5bZVhxpFZbcwN10RCUM1zR2rVIDtgBgoV5cg7nkHBjijE9uIxJUpqK4Og8HFFq38Ies0v2N9RlGz4gbrXDwEUPQjBSQ/DcQlko3/pNGYzaxdTzqIIH9Pusqk7lIVeORFWdiZskOdCZY3xPMn70s3tvBotoLtXTk7HNSBsNoC8HSjZtVCsQ7DaHaMFELrtQ2hYR5nOOJ8H4NElWm+pz4JiCff7OSAHw24hYXClO4fLNlI6a3rBvABFC85xBaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=amperemail.onmicrosoft.com; dkim=pass
+ header.d=amperemail.onmicrosoft.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1726758129; x=1727362929; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uCm2GzzK+q+0wa6+stISbobtFnZrzd/LjiQZU2jYSWs=;
-        b=V5gxiNxSUp0+xSFLz7LiQtg8HtpnxGvBDU6aE60/CbhUQJGbC9PJxvG0fhFf8xX5RR
-         4vDdyE78H9xK1yBV1Cz2duZ2j6h1OXFbsFS+/Dc8GiH4gcdKBts4b/JGdBaSSWWgzOdp
-         Hra/oo8hbgMwbPuVT9D2Ygj5H2oXluxgJ0Kaa950UNyHYTwpzS/1ST1RvoaQyGo25Tl0
-         wKY0xLkPSzUi3331n7tA+odUTQS66VnjN6NoPFOaHsxd32iQA1uHvu+r6EX6FE6FejwM
-         2JLFATCDfa4eibeq3ywoAfmSOuEpdrnMfGyLq4m2ygTskI9nPeoKWdn2n9SXGxgpysRN
-         cINg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726758129; x=1727362929;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uCm2GzzK+q+0wa6+stISbobtFnZrzd/LjiQZU2jYSWs=;
-        b=aVbHgFmCgAuC7cHIz32ZfrtkhF0yBdUK9flUAlI/27uoX7UK5Jr0/mneHMn3oJ5v0+
-         jLTBKthc4iC7eb+pbI2oC7M6rMjiB+GgzlAMSRM28BMic6T06xlIuxedwHhSjE0iaXAr
-         RTxlajTonjRFpdRkoY8lNdcoKzRdNdJUT8ud4Yfo8PyqGzz42mhF7lYGFpCe3orQWsX0
-         OzM/ipMXSRiysfIOK7RrMw2Sba5tp/eVlvVty0G7QJY92qndOeGTsk8+h0kObLVXGWzH
-         gp89V3v53BR75WEpSrjdjJv+5pdLBbEZQtnBadUyzCPNd6OKfLploeHo/7nggRP97H+Q
-         z8TA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqNs59QlzospFn0Atc8/1f9GHWUSXhH0yjCxbGswoBY4i3Av20aP0qiInwGm/tZbSVW7+kjD5J6TDafT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1FQD8bo355jkcqw2dBAWeyfheSF+Y/pM8/Dk4aDZArTU2F40r
-	jHOjXJufme3TA8ca8z0Il8/yl6pq7WyI6rwvrW6WCPrnt0UKy4BWgJsop5WSPhE=
-X-Google-Smtp-Source: AGHT+IFRQsoIHdcvjt2JIpniZeK8k6MPo4O04rrl7ltLpXb2c258J/bIcA534MWSbuTQYrLAiz5l1Q==
-X-Received: by 2002:a05:6512:3b0e:b0:52e:9fe0:bee4 with SMTP id 2adb3069b0e04-53678fb731bmr14420533e87.9.1726758128411;
-        Thu, 19 Sep 2024 08:02:08 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd6ef978besm1958074a91.57.2024.09.19.08.01.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 08:02:06 -0700 (PDT)
-Date: Thu, 19 Sep 2024 17:01:49 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Sunil V L <sunilvl@ventanamicro.com>, Arnd Bergmann <arnd@arndb.de>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-	Rengarajan S <rengarajan.s@microchip.com>,
-	Serge Semin <fancer.lancer@gmail.com>
-Subject: Re: [PATCH next v2 1/4] serial: 8250: Split out IER from
- rs485_start_tx()
-Message-ID: <Zuw83ZyzeKxA6RmE@pathway.suse.cz>
-References: <20240913140538.221708-1-john.ogness@linutronix.de>
- <20240913140538.221708-2-john.ogness@linutronix.de>
- <ZumWuketXcGQNw49@pathway.suse.cz>
- <84ldzproiy.fsf@jogness.linutronix.de>
+ d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hDC8EMFxRAY12G8oJ+082720qn1I59pWPz2lBl6GWu8=;
+ b=jsUaBqf8rT6wR9StZaSDjoX5xWxAVSuL7/OXLGZxJxusyr3vuPAPqcbaa/RJ53CPhTH/qNDL9xX+Jl1x1jqHiguvnjkRw/b3pJ8p+mbwIqXZgvvihgHYOdmyabCc+L6Cuoa9YHBlLUg75+VsPNJsJ7UVYzhBpHSDXrhl6ZYz7Hk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
+Received: from BL3PR01MB7057.prod.exchangelabs.com (2603:10b6:208:35c::16) by
+ MN0PR01MB7635.prod.exchangelabs.com (2603:10b6:208:377::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7962.28; Thu, 19 Sep 2024 15:02:34 +0000
+Received: from BL3PR01MB7057.prod.exchangelabs.com
+ ([fe80::b69e:5684:ed7c:4d09]) by BL3PR01MB7057.prod.exchangelabs.com
+ ([fe80::b69e:5684:ed7c:4d09%4]) with mapi id 15.20.7982.018; Thu, 19 Sep 2024
+ 15:02:33 +0000
+Message-ID: <d1a2133e-92d2-492b-9a82-047a9fe80cf6@amperemail.onmicrosoft.com>
+Date: Thu, 19 Sep 2024 22:02:22 +0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: hwmon: Add adt7462
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Chanh Nguyen <chanh@os.amperecomputing.com>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+ Open Source Submission <patches@amperecomputing.com>,
+ Phong Vo <phong@os.amperecomputing.com>,
+ Thang Nguyen <thang@os.amperecomputing.com>,
+ Quan Nguyen <quan@os.amperecomputing.com>,
+ Khanh Pham <khpham@amperecomputing.com>
+References: <20240918103212.591204-1-chanh@os.amperecomputing.com>
+ <20240918220553.GA2216504-robh@kernel.org>
+ <d825a93f-be5c-45b9-a8d4-5c412ddec232@amperemail.onmicrosoft.com>
+ <2229b659-c753-4f56-a1ab-7e8984f9147f@kernel.org>
+Content-Language: en-US
+From: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>
+In-Reply-To: <2229b659-c753-4f56-a1ab-7e8984f9147f@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR03CA0003.namprd03.prod.outlook.com
+ (2603:10b6:a03:1e0::13) To BL3PR01MB7057.prod.exchangelabs.com
+ (2603:10b6:208:35c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84ldzproiy.fsf@jogness.linutronix.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR01MB7057:EE_|MN0PR01MB7635:EE_
+X-MS-Office365-Filtering-Correlation-Id: afe241e1-7d14-4e70-aaf4-08dcd8bc1738
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WHMrYnZhMXNvM1p3MEUvdUk2OG5NYVBVbzRYYlBoVStnRGVaMkpCTkthM1FZ?=
+ =?utf-8?B?NXpUNzcrVU8rWDJKMFNVZDNvSU8zR1BPVHpsWThWRk0wWEcxTVl1bEV4amw4?=
+ =?utf-8?B?SkRNTjU3RmJOTisxUzV4NUZLTW40WkdGS3NCdlRmcldsL3FtOFk2ZmVmMGlW?=
+ =?utf-8?B?NnlHVnBXQ2dobnpaSjhxZVRKOFFUN3ZWaGdxSno3UzhqampYeXFCcE1DSGZk?=
+ =?utf-8?B?eXJ1UHh6Z3FleTBCY2xudFpVN3pibHBuM1dMVjZVOUc4OVBaNXR3U2loSFpt?=
+ =?utf-8?B?cktXMUJEeSt5TTkxMDByTGRkcDA4V3Z0V09ydzdqSWVidWh4RER5NXNBS2M3?=
+ =?utf-8?B?U09MZjlaNXBvOUc1UTZKOFQxZ2w2Y0lJeXBsSFNOalBjY2dPekhUU295MzVB?=
+ =?utf-8?B?UmFmMzI5SGJBeDFpdVpyL2tiSEV3WmJ0Tkx0WWR5ZlJGZkxQczJpQnNtQ2t5?=
+ =?utf-8?B?YmgxMG5zMjZDYWMyYjZxLzBsSDVtZ2k0aXlLUklienFVNFBiVEFXL3JWaXRV?=
+ =?utf-8?B?SzNZR3hmQVZRaG5qdkRuNGVldE5HZ0ZRZFlCa3V1TThIUlJGNitRRXlwTnFG?=
+ =?utf-8?B?N0ZGSEIvZktWM3dleTNyM2ZPRFUraGEwMXJRcHU2aWRRcnBXUzBVUGtqMVBu?=
+ =?utf-8?B?S3hMdTdURFh4SERNMThmeVR4U0pmQ2psb1plK3o4Wm1jbWhVRUhlVlJhVDEx?=
+ =?utf-8?B?YXhtYmNkRWh5Nk1NOTRHTTEwVXVadHZZWkZXSHBsSjl0bXB0RGpadkhiRlpm?=
+ =?utf-8?B?aCszZmpMdWlHbXdESGlzSzlYaDhtYU5iM2tJRWhSd1hJekRtc3BnVVRtS2Rn?=
+ =?utf-8?B?MkNuS0UrVDREajJNZTZveStrV0lzZjhBdjhUVzBkUWZQTmJRT0pxb0N1VFF4?=
+ =?utf-8?B?RWZJTGlYRlI4M1NrV2FHZ0dPcFVFempXWWxiRFdCQ0p1UU44dm96SkdLbjY5?=
+ =?utf-8?B?OXZrOERLeFFSemtKQXY5YmRBQmRoV0J5ZW5XZkZnZ3JVYks1RWM5bFNEMDE3?=
+ =?utf-8?B?V2lGVXNsdThwckxsbjVDclM4a2U1SEFjR3ppejV1U3hmOVhjelVwTmwzWjJV?=
+ =?utf-8?B?N0VSbmpmZG00SzRhZm95a2tKU3BwY0FQSnRNbjhXdzNoQi9ycWsxNFpzdkU2?=
+ =?utf-8?B?YjFQQmgrTnJJQmRwWE8zbHRUOEI1VDMvODc1WFNrYitIeGV5R056SFppTUNa?=
+ =?utf-8?B?SjFxMXBiLzUwazhERUpRVjFvWWxiblRNb05jSmxDMkdydVlzQ2g5RW9TQ2xP?=
+ =?utf-8?B?QXo5ekM4bFFXZnFvYkxMc3FGZ2p5N1FoNG45VWdmVnVwbFlzaWFKdytqdDg5?=
+ =?utf-8?B?dDJpbUJkNU14ZnRiUlNKZjRTOFFWU05Pa0lLSmRYWHd5TkpwT1gxUTlxRVFM?=
+ =?utf-8?B?elVwaTYyZzU0d0xEYUZXbDJmbTZFbnkzK3dTYUpQdkI0SkNCT2RhcUwwcjBP?=
+ =?utf-8?B?NVlON1N2ald2RXpZQ3FSNnFONnQwUU8zc0U1cTVLN2QwYk5LeHkzNVRYb1dj?=
+ =?utf-8?B?Zm1od3RkT0UrWk12NHA4a3JhUzVVRWJPbmFlRU5vSTQvVVdlVVlIaUNSQ2Zr?=
+ =?utf-8?B?SDc2aG5WbURkRG5RYldBVWZtMmVaZEFqbTE5T1dDOVZiekhMYTZITFZWUVBK?=
+ =?utf-8?B?cW5nN0ROOVN2NFMwa0RGYjYyZEhjeWp0Ykd2RE5PVzhBWm5tdjIxSjdTbHNq?=
+ =?utf-8?B?V05GWEdsVXg3aUl6b2VoaDd1MGxTS00yeGVmWXVHNC8yaU0reGxqcGdMQ0hV?=
+ =?utf-8?B?OVhpaEd4NEROQlQ2czM1L2pmWHJ6ZzVuaDRvbnZ3YndOb2VxN1liaWpMRGw1?=
+ =?utf-8?B?WElONkY5Z3ZLRDJPUDdaQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR01MB7057.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z2RtbFFjeXFUbTltakN3aHBHOTNGd05uVGRmRkZFVzJOTkRNOUJoTUwyQ3FW?=
+ =?utf-8?B?VlVkVi80d2c2eWYyRmppT2gzVGJvelpMQlZBMDI2S2Fzb2kwYVpkVkwyWlVC?=
+ =?utf-8?B?eWVBMFl6WVhDdGNTaC9FTy9FU3UyQTJmRVJCWDM5NjR2U1FvUHZkYUFyUysv?=
+ =?utf-8?B?RkZydUtlT1BZWkFQL1VPNldHazQ1Q2hOcXFZa2V0QXNmT2JsZG9UOVFGS2Vx?=
+ =?utf-8?B?ZnZuVE9hYUMxMk5jaVd0ZCtZYlJJZ1VZSU93M1NkK0VwbEdjRnRlNnF0WkhC?=
+ =?utf-8?B?WkV1UWxKbHRiSEc0ZWhVT2Y2Ti81RFlLTmtodWJNK3A1clNtRWlSSEk2Uk0v?=
+ =?utf-8?B?RUc0K3NLb0VMWU1KVkJ2NmlnV016T01YM2pqNjg3WXE2L3hIM0RzZ1VFYUFX?=
+ =?utf-8?B?aHhrdE13WmpWR0IwSzVvUGhrTTRKcGpTMVJOZHI4Znp1andpQlk2VWpGbUdu?=
+ =?utf-8?B?aEd5UjZmZURieWFYWCt6dGI1dEtlaWVqSEFtWUNqRllldlNJSURmSGI5eklO?=
+ =?utf-8?B?dzFzbFR1OHpNS243cG1xZzVpOExNRGIwY21OUWZKVmQ5bDdncXJwdVQ5dDdT?=
+ =?utf-8?B?Y2I4N1UzcW9POEZ1eWtQZUZma3dxZE5WTDBQYjV6K0J6R2JwbGh1UCtsWXZv?=
+ =?utf-8?B?TzdidjZUM3VpbUladngybmZsNjl0ZjJveHVkaGtWYmgwZVpRcWZ4YmhtOHV4?=
+ =?utf-8?B?QzdGZWdkcGg1VG4xVCt0SFNBYjltUXVPTVNhcUszK1ozak5tbXhEMi9JSkRo?=
+ =?utf-8?B?bGIvNThVOUtkbXllWGZUZTkxTlNlemlUZkh4Q3lTYkR1d0pYMHBEL0FxNlVL?=
+ =?utf-8?B?SjR1Q2VXSHlwbldXN05EdVdtY0daMzl3WHF2cUtobEtVRVF5ZGdXWnlvQm5C?=
+ =?utf-8?B?UTNuL0NaY1dCcEMvN3B5QWhGVUFuZWdvcUN1TGpkL0FpNWhrcklGSlR3SDVO?=
+ =?utf-8?B?VmpQdWowQWpIbXRCMW0rRW9WRW53QmtucWp0eGk3SDN1eVlJZXM1VzB6NWJS?=
+ =?utf-8?B?T3hyWWdPVUxCVzBmOG1OZnBjSG9uczBkZkcweUFlYkNKZ2NPeTc0YTZoaERG?=
+ =?utf-8?B?WDFPekw4SGZIdllLdWdXSVBpUnJOWVR3L3Z0MUlEVGV6emwvN3hlU1hPVmt1?=
+ =?utf-8?B?enk4ZTA2alpIbFZTaUY4dXhnU08yWjdYdGVFbCsyV2Q1L2NqeVJBMjc1SkZv?=
+ =?utf-8?B?ejhXNmxFZzI0SW9RRkxWbHJtUzhlTVBEd1p1MFZCb0IwM3pmOUdnVkhjaEpx?=
+ =?utf-8?B?WnhQc1Y1bmdhZ0pxWDV2OWUzSURON1g2clc5Tkg5Z3ZJdi8vWE52NW0zMkpU?=
+ =?utf-8?B?dlllZVhYbitLajk2MHhWU2J0ajhnVHRVZnRaTHl6UnZUM0VFMzBmWkpYWG9N?=
+ =?utf-8?B?d05GS1phYzRRZ2dGWmRWbEhnTTlMT2R4TXFtamFTZWRHaTRsSzU0aXM2bTNS?=
+ =?utf-8?B?R3hhSG9pUkQwTmxGcGJFNUlVZ3dnM09ML3NuOHQ1cTJ0am1FYVJyZDVEUFdL?=
+ =?utf-8?B?VTZIM0xRWjJaNkZQZEVrZ0FULzZzdnlPT0JLYUFTTXltNmpNWGppOHcwbi9P?=
+ =?utf-8?B?Q1RXM2V4bkl5d3FKM0pidGlMa1pqNGpId3dCbkdISEhPT3dKUGFQV1lObm9F?=
+ =?utf-8?B?cWFmNVdmcmZ2d0pMeEJsM0h2TXpHNGUzTjV1N1V6ZlJsdm41L1NCeThGVXBP?=
+ =?utf-8?B?UG5tc1JEZTcydExSTTNpL0l2cCtkb3RJa2VzbllIckZuVlBwSWJwZFV6eVJs?=
+ =?utf-8?B?cE82ME1aamJZMUl1akxmVTRFZmttYXRUemtESzBYaGVqRCsrRmZJMFhJdTRp?=
+ =?utf-8?B?NVBYZU5TaWxubEpNTlpJMXdONFdyQ2tEZHk3bFdwQjJxcks5WTJhamRlZmo3?=
+ =?utf-8?B?QzlFWVo0aHFZWkloNG5WUWFrTFpMWFlLc3NINUZqQXVTUUx4c283YzlULzZN?=
+ =?utf-8?B?dVR6QlM4RnJVZ1c4K1ZxT01jUS9EWENGUzVqOFp3N2lvRFV1OEUzZFZVeFJK?=
+ =?utf-8?B?ME8vWldVTlAyRExOY0c2Z0EwYWZzZ0o4T1QwSDU1STQ1VWUzcFU3YU9QN0Nq?=
+ =?utf-8?B?RmFyN3Q1bHM1M2VjNkFJWlVBdHUvZ2dqMmVqb0oxd1phK2JIUG9PTE9LWjMv?=
+ =?utf-8?B?My9CK2pJL1BVaVZCbTNsWSs3ODRhSllYR21sYnA5MG9RL1JmaERlUVF4NnZh?=
+ =?utf-8?Q?LsMUI82GZ5CoacVbrI4QyVA=3D?=
+X-OriginatorOrg: amperemail.onmicrosoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: afe241e1-7d14-4e70-aaf4-08dcd8bc1738
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR01MB7057.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2024 15:02:33.8398
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: G7ZFRPOnOmD3CNpVwna06cRNWQ5OG9ZR7y7xkGhxrUvC+PeV8Oj4pN+xCMLPQCF+a5KQ0VMJu9846H3SN7VgbDOamIM6o+XHyVIr2lbyADtwUfZXdqL4Ggfoxbda/e5N
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR01MB7635
 
-On Wed 2024-09-18 17:10:53, John Ogness wrote:
-> On 2024-09-17, Petr Mladek <pmladek@suse.com> wrote:
-> > Sigh, I am trying to review this patch but I am not familiar with the
-> > code. Feel free to ignore me when the questions are completely off.
+
+
+On 19/09/2024 17:39, Krzysztof Kozlowski wrote:
+> [EXTERNAL EMAIL NOTICE: This email originated from an external sender. Please be mindful of safe email handling and proprietary information protection practices.]
 > 
-> I appreciate you researching where the code came from. I made my changes
-> based on what I see the code doing now.
 > 
-> >> --- a/drivers/tty/serial/8250/8250_port.c
-> >> +++ b/drivers/tty/serial/8250/8250_port.c
-> >>  void serial8250_em485_start_tx(struct uart_8250_port *up)
-> >>  {
-> >>  	unsigned char mcr = serial8250_in_MCR(up);
-> >>  
-> >> +	/*
-> >> +	 * Some chips set the UART_LSR_DR bit even when UART_IER_RDI is
-> >> +	 * disabled, so explicitly mask it.
-> >> +	 */
-> >>  	if (!(up->port.rs485.flags & SER_RS485_RX_DURING_TX))
-> >> -		serial8250_stop_rx(&up->port);
-> >> +		up->port.read_status_mask &= ~UART_LSR_DR;
-> >
-> > This change is related to disabling UART_IER_RDI but we do not longer
-> > disable it in this code path.
+> On 19/09/2024 11:43, Chanh Nguyen wrote:
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: onnn,adt7462
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  resets:
+>>>> +    maxItems: 1
+>>>
+>>> How would this work? 'resets' generally is used for on-chip devices and
+>>> a reset controller. That doesn't exist at the board level. A standalone
+>>> device typically uses a GPIO lines if there's a s/w controlled reset.
+>>> That would be the 'reset-gpios' property.
+>>>
+>>
+>> Thank Rob for your comments! The ADT7462 includes an active low reset
+>> pin (Pin #14).
+>>
+>> I'll change 'resets' into the 'reset-gpios' property.
+>>
+>> The example in the binding will be
 > 
-> Correct. It will be disabled in the new wrapper
-> serial8250_em485_start_tx(). For the console write() callback, RDI is
-> already being disabled (IER is cleared). It will not use the wrapper.
+> The question how did it work in the first place is still valid... I
+> think we might benefit from asking people to post their upstreamed DTS.
+> Otherwise we will take broken or half-baked bindings, because we never
+> saw the bigger picture. :(
 > 
-> > Why do we need to do it here, please?
+
+Thank Krzysztof,
+
+I saw the ADT7462 includes an active low reset pin (Pin #14) to reset 
+device via I/O pin. So, I introduced a reset property follow the device 
+datasheet.
+
+But the adt7462 driver has not yet implemented this property. My 
+platform also doesn't design this pin on board, so I don't need it at 
+least now.
+
+Anyway, I hope Rob, Guenter and Krzysztof can give me advice on whether 
+I should add this property to the binding?
+
+Thanks,
+Chanh
+
+> Best regards,
+> Krzysztof
 > 
-> Because the console write() callback also needs to clear LSR_DR. That
-> part of the callback needs to stay.
-> 
-> > Why is it needed only in the em485-specific path, please?
-> 
-> Only RS485 deals with controlling TX/RX directions.
-> 
-> > On one hand, the comment talks about UART_LSR_DR and UART_IER_RDI
-> > so seems to be relater.
-> 
-> I do not know if the LSR_DR modify is strictly necessary. I am just
-> preserving the existing behavior (and related comment). The disabling of
-> IER_RDI will still happen (via wrapper or explicitly as in the console
-> write() callback).
-> 
-> >>  static bool start_tx_rs485(struct uart_port *port)
-> >>  {
-> >> @@ -1585,7 +1600,7 @@ static bool start_tx_rs485(struct uart_port *port)
-> >>  	if (em485->tx_stopped) {
-> >>  		em485->tx_stopped = false;
-> >>  
-> >> -		up->rs485_start_tx(up);
-> >> +		serial8250_rs485_start_tx(up);
-> >
-> > If I get this correctly then this keeps the existing behavior when
-> >
-> >     up->rs485_start_tx == serial8250_em485_start_tx
-> 
-> Correct.
-> 
-> > Is this always the case, please?
-> 
-> Yes.
-> 
-> > Can start_tx_rs485() be called for the 8250_bcm2835aux.c driver?
-> 
-> Yes.
-
-IMHO, the answer "Yes" to both last questions can't be valid.
-The 8250_bcm2835aux driver does:
-
-static int bcm2835aux_serial_probe(struct platform_device *pdev)
-{
-	[...]
-	up.rs485_start_tx = bcm2835aux_rs485_start_tx;
-	[...]
-}
-
-As a result, the 1st "Yes" was not correct:
-
-	up->rs485_start_tx != serial8250_em485_start_tx
-
-and this patch would change the behavior for the 8250_bcm2835aux driver.
-Before, start_tx_rs485() called directly:
-
-	up->rs485_start_tx(up);
-
-Newly, it would call:
-
-	void serial8250_rs485_start_tx(struct uart_8250_port *up)
-	{
-		if (!(up->port.rs485.flags & SER_RS485_RX_DURING_TX))
-			serial8250_stop_rx(&up->port);
-
-		up->rs485_start_tx(up);
-	}
-
-It means that it could call serial8250_stop_rx() even when it was not
-called by the original code.
-
-And SER_RS485_RX_DURING_TX seems to be checked even in
-drivers/tty/serial/8250/8250_bcm2835aux.c. So, it looks like it
-might be (un)set even for this driver.
-
-Or is this code path prevented in start_tx_rs485()? I mean that
-em485->tx_stopped could never be true for the 8250_bcm2835aux
-driver?
-
-But I see
-
-	static int bcm2835aux_serial_probe(struct platform_device *pdev)
-	{
-		[...]
-		up.port.rs485_config = serial8250_em485_config;
-		up.port.rs485_supported = serial8250_em485_supported;
-		[...]
-	}
-
-=> It looks like even bcm2835aux driver could have the em485 thing.
-   But it obviously wanted to something special in
-   up->rs485_start_tx().
-
-It looks to me that the change might either cause regression.
-Or it would deserve a comment unless the validity is obvious for people
-familiar with the code.
-
-Best Regards,
-Petr
 
