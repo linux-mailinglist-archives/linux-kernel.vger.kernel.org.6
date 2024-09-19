@@ -1,229 +1,193 @@
-Return-Path: <linux-kernel+bounces-333265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1855797C622
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:46:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF3297C62B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7321C228A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:46:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8706BB213A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5AB1990C6;
-	Thu, 19 Sep 2024 08:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KQjXKmPp"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E30199244;
+	Thu, 19 Sep 2024 08:47:45 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290571862B7
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 08:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450AB1991BB
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 08:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726735585; cv=none; b=l4Gwy12ca/omEc99MZmAz9nRxTdDXBRx/1WsCiO9n3jyRB3FMs/sjWySLzNwfQ8eHgKtJei8xzowApUKo8p3SGgHEXAylCPf4Yw8rpjYs3Nm6lKCxyMsCNHDIahqAkbNlUEa2hD5/CciorE1YLwgfSo/hOa7tvsR+lZPXspRg5c=
+	t=1726735665; cv=none; b=eDJjhkGuQSFHLwfJtJGERy6ue771WeSUhaPdlv21wq88Jr/OrbiKJRbdBG7I845HxfVEXTmM8QMGnD+dC9apWvYzfudcgOJYq5mk1Z/SSJIV41jJjyI6zF80vi/7yATYDsDA3tnxl/5Uva9B4DCCkV++u34INnUQpT6xZpITkMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726735585; c=relaxed/simple;
-	bh=ZYXvN4PM/Yw57V9eOc+34CW7Je+3EYhkLIft2Mx1y8c=;
+	s=arc-20240116; t=1726735665; c=relaxed/simple;
+	bh=TnRMX5yJakpY8P+dQ6zqeHJ/lVmJygHLklt+pllkci0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NWG/0vcSCMWhMR2iEtPRgeeUMnO4ovrpodClxDo2wDCHRMTGPD6Yk1dsFJyUEoTS9FgOxSlMwY8tM5CkdsRSx57BtRAAHkN2mWK0Jvy4yDg5+FOJ51ABtbCbu8qEmZZ9BPkIDLIAdTO//L2jhafN9myoSu/8RuM2nseuzPX4QFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KQjXKmPp; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53653ff0251so634328e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:46:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726735581; x=1727340381; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hJ12HbzQHhuObShUByJk3xORRM2O/FohuyVTNSBpDh8=;
-        b=KQjXKmPpYL+EcSgunIu/SD9xcGIqcaaRt6Boja7sdsjAxv0pduy/h3/2iEJjVOlLzp
-         vJpyeRqRHaIo5s4p5KibDdIXDEABqosfeNZYa+Qieib/PCqU1qyWomsEyOW/m2HWwvNb
-         fJChej8bnlDhsM5QXjBlADDjjCDPKic/0j27yPWtZZzO13mFuS+uo0pIL4O8rTU5Ql1X
-         6BaXtZGhbLNLtMG/5LzKrflp/yWpIea4lpEBlI0SFK2J8cDoUKA71z5tWd7arVkAPCLy
-         xNOpI+eN3QI8Y5lwvwgTJcoSDw/rFnv1Dtzf3rl+iTCHet/qFlqdoYYeziuDFVQl5Y2B
-         I8bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726735581; x=1727340381;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hJ12HbzQHhuObShUByJk3xORRM2O/FohuyVTNSBpDh8=;
-        b=GuPbn0JVR6BBAJDzGpJDmEVsifJs5rfjBowEmv/Wo30zEI6TYnOcWMiLGpdOPR8pNA
-         Hfmx/B04Cand4z4VUO9m0537E5cwKFmqBtWnjuEGVupNMvA7SKpzyWknZmjqy67g2rtN
-         727XLIeRrkAg157w5y+7lhFg4HOnwtPl296cORWdd2aEWRnsX3BAdnjB48sMnQ+GC9+l
-         30Ge0VyGtO/BNVGv/JKbej/Ixnf4emiT8/EJDqwwAtqinbKTf1Mx5ssE51DtazLB+P4h
-         uNCmTI75haHSXhA4dSkZ1DU9gtBod0luwaOxjV6CbseO3otRcb4wC8ye1VNds/9lIgDr
-         3olw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+J6m2MeZPz2nsSk/+SQsHKZDBYu6Ep0VpWWTQo70TwvLJVu6D5FMIDSv0gRnHsBZmsyG4uByPcuz+O00=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLMvZgo0X7MZdJ4dGRTgbkzVAghbJTx53uzSJ+5Z4tvXeRarn3
-	VQQ3BT7derTqGTcTcV+lCxSyi2yFVgTMsOSbECcrgewqLUwTPAMzFnowk/yf1tk=
-X-Google-Smtp-Source: AGHT+IEZElLzhpq+N2gsak+Pv41EuVKSdnqfaHqUixwI6vDwWQm809LovGIDQT7jKEi2wN/Tu8W/NA==
-X-Received: by 2002:a05:6512:3ca5:b0:535:6cde:5c4d with SMTP id 2adb3069b0e04-5367feb9b81mr13497263e87.3.1726735580856;
-        Thu, 19 Sep 2024 01:46:20 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870a86a4sm1771880e87.213.2024.09.19.01.46.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 01:46:19 -0700 (PDT)
-Date: Thu, 19 Sep 2024 11:46:16 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org, arnd@arndb.de, 
-	stable <stable@kernel.org>
-Subject: Re: [PATCH v1 3/3] misc: fastrpc: Skip reference for DMA handles
-Message-ID: <7ejauhf33nyt77ve26524rtvf46qohipztydjnbezlaz666cpg@3wfhpaxv3rd2>
-References: <20240822105933.2644945-1-quic_ekangupt@quicinc.com>
- <20240822105933.2644945-4-quic_ekangupt@quicinc.com>
- <7q7rar7ssvzlkol46e5e4yecgt6n4b4oqueam4ywlxjeasx2dl@oydthy337t6i>
- <27ed94a1-eb60-43b1-b181-2b8270015a37@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R0Qwbt12n1u+LET2A7fQvVZh+Xb/1ZyMuusqVLUFbdHdxVJ4/1YZfEeHz+fnOa/XdqQuWtl+VFfiVvgoOox6MBosGMEBC1VyaGVNIHenr1a2Ra/DOsDhNd4f0ZibFBDuPsa/qUbZgAZ2ZH/VH+50fmq21S/DSGGOOqSia9US374=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1srCoh-0006Y7-9E; Thu, 19 Sep 2024 10:47:11 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1srCod-0090ny-RA; Thu, 19 Sep 2024 10:47:07 +0200
+Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 38DD733F566;
+	Thu, 19 Sep 2024 08:47:07 +0000 (UTC)
+Date: Thu, 19 Sep 2024 10:47:06 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>, 
+	Markus Schneider-Pargmann <msp@baylibre.com>, "Felipe Balbi (Intel)" <balbi@kernel.org>, 
+	Raymond Tan <raymond.tan@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux@ew.tq-group.com
+Subject: Re: [PATCH 2/2] can: m_can: fix missed interrupts with m_can_pci
+Message-ID: <20240919-tourmaline-jaguar-of-reverence-4875d2-mkl@pengutronix.de>
+References: <ac8c49fffac582176ba1899a85db84e0f5d5c7a6.1726669005.git.matthias.schiffer@ew.tq-group.com>
+ <f6155510fbea33b0e18030a147b87c04395f7394.1726669005.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="znxmzativoaydeg7"
 Content-Disposition: inline
-In-Reply-To: <27ed94a1-eb60-43b1-b181-2b8270015a37@quicinc.com>
-
-On Thu, Sep 19, 2024 at 12:00:33PM GMT, Ekansh Gupta wrote:
-> 
-> 
-> On 8/30/2024 3:03 PM, Dmitry Baryshkov wrote:
-> > On Thu, Aug 22, 2024 at 04:29:33PM GMT, Ekansh Gupta wrote:
-> >> If multiple dma handles are passed with same fd over a remote call
-> >> the kernel driver takes a reference and expects that put for the
-> >> map will be called as many times to free the map.
-> >> But DSP only
-> >> updates the fd one time in the fd list when the DSP refcount
-> >> goes to zero
-> > I'm sorry, I couldn't understand this phrase. Could you plese clarify
-> > what do you mean here?
-> DMA handle are buffers passed to DSP which are only unmapped when DSP updated
-> the buffer fd in fdlist.
-> fdlist implementation: misc: fastrpc: Add fdlist implementation - kernel/git/next/linux-next.git - The linux-next integration testing tree <https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/misc/fastrpc.c?id=8f6c1d8c4f0cc316b0456788fff8373554d1d99d>
-> 
-> A remote call payload carries both input/output buffers and dma handles. The lifetime
-> of input/output buffer is a remote call which means that any buffer allocated or mapped
-> for a remote call will be freed or unmapped when the remote call is completing. Whereas,
-> dma handles can get freed over some other remote call whenever the DSP will update
-> fdlist. So if a remote call passed multiple dma handles with same fd to DSP, on driver, ref
-> count will be incremented, but DSP can update fdlist only 1 time for the same fd as DSP also
-> has a ref counting happening for the dma handle and fdlist is updated when the DSP ref
-> count goes to 0. In this case, the map will not get freed even though it is no longer in use.
+In-Reply-To: <f6155510fbea33b0e18030a147b87c04395f7394.1726669005.git.matthias.schiffer@ew.tq-group.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
-OK, I started looking at the related code. Pleas fix possible map leak
-in fastrpc_put_args(), happening if the copy_to_user() fails.
+--znxmzativoaydeg7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Second. Please merge fastrpc_map_lookup() + fastrpc_map_put() invocation
-into a single call, effectively dropping take_ref argument from
-fastrpc_map_lookup() (which can now become fastrpc_map_get()).
+On 18.09.2024 16:21:54, Matthias Schiffer wrote:
+> The interrupt line of PCI devices is interpreted as edge-triggered,
+> however the interrupt signal of the m_can controller integrated in Intel
+> Elkhart Lake CPUs appears to be generated level-triggered.
+>=20
+> Consider the following sequence of events:
+>=20
+> - IR register is read, interrupt X is set
+> - A new interrupt Y is triggered in the m_can controller
+> - IR register is written to acknowledge interrupt X. Y remains set in IR
+>=20
+> As at no point in this sequence no interrupt flag is set in IR, the
+> m_can interrupt line will never become deasserted, and no edge will ever
+> be observed to trigger another run of the ISR. This was observed to
+> result in the TX queue of the EHL m_can to get stuck under high load,
+> because frames were queued to the hardware in m_can_start_xmit(), but
+> m_can_finish_tx() was never run to account for their successful
+> transmission.
+>=20
+> To fix the issue, repeatedly read and acknowledge interrupts at the
+> start of the ISR until no interrupt flags are set, so the next incoming
+> interrupt will also result in an edge on the interrupt line.
+>=20
+> Fixes: cab7ffc0324f ("can: m_can: add PCI glue driver for Intel Elkhart L=
+ake")
+> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> ---
+>  drivers/net/can/m_can/m_can.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+> index 47481afb9add3..363732517c3c5 100644
+> --- a/drivers/net/can/m_can/m_can.c
+> +++ b/drivers/net/can/m_can/m_can.c
+> @@ -1207,20 +1207,28 @@ static void m_can_coalescing_update(struct m_can_=
+classdev *cdev, u32 ir)
+>  static int m_can_interrupt_handler(struct m_can_classdev *cdev)
+>  {
+>  	struct net_device *dev =3D cdev->net;
+> -	u32 ir;
+> +	u32 ir =3D 0, ir_read;
+>  	int ret;
+> =20
+>  	if (pm_runtime_suspended(cdev->dev))
+>  		return IRQ_NONE;
+> =20
+> -	ir =3D m_can_read(cdev, M_CAN_IR);
+> +	/* For m_can_pci, the interrupt line is interpreted as edge-triggered,
+> +	 * but the m_can controller generates them as level-triggered. We must
+> +	 * observe that IR is 0 at least once to be sure that the next
+> +	 * interrupt will generate an edge.
+> +	 */
+> +	while ((ir_read =3D m_can_read(cdev, M_CAN_IR)) !=3D 0) {
+> +		ir |=3D ir_read;
+> +
+> +		/* ACK all irqs */
+> +		m_can_write(cdev, M_CAN_IR, ir);
+> +	}
 
-Now back to your patch.
+This probably causes a measurable overhead on peripheral devices, think
+about limiting this to !peripheral devices or introduce a new quirk that
+is only set for the PCI devices.
 
-Please clarify if my understanding is correct:
+Marc
 
-The driver maps dma bufs and passes them to DSP. Then once DSP firmware
-finds out that a particular buffer is no longer needed, it returns
-its fd via the fdlist part of the invoke_buf. As these buffers are
-returned only once, when they are no longer necessary, the kernel should
-not take additional references on the long-living dma-bufs.
+> +
+>  	m_can_coalescing_update(cdev, ir);
+>  	if (!ir)
+>  		return IRQ_NONE;
+> =20
+> -	/* ACK all irqs */
+> -	m_can_write(cdev, M_CAN_IR, ir);
+> -
+>  	if (cdev->ops->clear_interrupts)
+>  		cdev->ops->clear_interrupts(cdev);
+> =20
+> --=20
+> TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Ge=
+rmany
+> Amtsgericht M=C3=BCnchen, HRB 105018
+> Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan S=
+chneider
+> https://www.tq-group.com/
+>=20
+>=20
+>=20
 
-If that's the case, see my comments below.
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-> >
-> >> and hence kernel make put call only once for the
-> >> fd. This can cause SMMU fault issue as the same fd can be used
-> >> in future for some other call.
-> >>
-> >> Fixes: 35a82b87135d ("misc: fastrpc: Add dma handle implementation")
-> >> Cc: stable <stable@kernel.org>
-> >> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> >> ---
-> >>  drivers/misc/fastrpc.c | 13 ++++++++-----
-> >>  1 file changed, 8 insertions(+), 5 deletions(-)
-> >>
-> >> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> >> index ebe828770a8d..ad56e918e1f8 100644
-> >> --- a/drivers/misc/fastrpc.c
-> >> +++ b/drivers/misc/fastrpc.c
-> >> @@ -755,7 +755,7 @@ static const struct dma_buf_ops fastrpc_dma_buf_ops = {
-> >>  
-> >>  static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
-> >>  				u64 va, u64 len, u32 attr,
-> >> -				struct fastrpc_map **ppmap)
-> >> +				struct fastrpc_map **ppmap, bool take_ref)
-> >>  {
-> >>  	struct fastrpc_session_ctx *sess = fl->sctx;
-> >>  	struct fastrpc_map *map = NULL;
-> >> @@ -763,7 +763,7 @@ static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
-> >>  	struct scatterlist *sgl = NULL;
-> >>  	int err = 0, sgl_index = 0;
-> >>  
-> >> -	if (!fastrpc_map_lookup(fl, fd, va, len, ppmap, true))
-> >> +	if (!fastrpc_map_lookup(fl, fd, va, len, ppmap, take_ref))
-> >>  		return 0;
+--znxmzativoaydeg7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Do not add the take_ref argument to fastrpc_map_create(). Instead
-extract the rest of the code to the function fastrpc_map_attach() (or
-something like that).
+-----BEGIN PGP SIGNATURE-----
 
-> >>  
-> >>  	map = kzalloc(sizeof(*map), GFP_KERNEL);
-> >> @@ -917,14 +917,17 @@ static int fastrpc_create_maps(struct fastrpc_invoke_ctx *ctx)
-> >>  	int i, err;
-> >>  
-> >>  	for (i = 0; i < ctx->nscalars; ++i) {
-> >> +		bool take_ref = true;
-> >>  
-> >>  		if (ctx->args[i].fd == 0 || ctx->args[i].fd == -1 ||
-> >>  		    ctx->args[i].length == 0)
-> >>  			continue;
-> >>  
-> >> +		if (i >= ctx->nbufs)
-> >> +			take_ref = false;
-> > Please clarify too.
-> nbufs -> total input/output buffers
-> nscalars -> nbufs + dma handles
-> So here, avoiding ref increment for dma handles.
-> >
-> >>  		err = fastrpc_map_create(ctx->fl, ctx->args[i].fd,
-> >>  				(u64)ctx->args[i].ptr, ctx->args[i].length,
-> >> -				ctx->args[i].attr, &ctx->maps[i]);
-> >> +				ctx->args[i].attr, &ctx->maps[i], take_ref);
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbr5QcACgkQKDiiPnot
+vG+OZwf/c88bKRbuevnUCUCzn6Eot1L8rix8rbMXHOwiY50+e07UK+ux/Z50J94y
+1xBVkCAD1MZu9/ftH13Ye/gWrMlBv49LzDScetl0vZy7A+kbmg3/+l3wGTqo3zQS
+NUqSxKlzFZP8b7vDPOjm/HxrAhx4WQbf28BcrcQ/AQA26+EH/nq6Z1agJBUV0s14
+3vOi0zwIm/plTKxEBR5Mu+4RUofHWa7wwwopDuQcgGEzWaBwr1Zxfe/sllmGcxQw
+Nd+Gs7XXYKQETfkHJ49bqYq8gxFwFztZBjAyfenuCOYQG0W21pxQn6EyAB05VTmC
+6VevDqOIWuvRdNdCaUVoEPXdnNl7eg==
+=iUnT
+-----END PGP SIGNATURE-----
 
-Call conditionally either fastrpc_map_create() or fastrpc_map_attach().
-
-> >>  		if (err) {
-> >>  			dev_err(dev, "Error Creating map %d\n", err);
-> >>  			return -EINVAL;
-> >> @@ -1417,7 +1420,7 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
-> >>  
-> >>  	if (init.filelen && init.filefd) {
-> >>  		err = fastrpc_map_create(fl, init.filefd, init.file,
-> >> -				init.filelen, 0, &map);
-> >> +				init.filelen, 0, &map, true);
-> >>  		if (err)
-> >>  			goto err;
-> >>  	}
-> >> @@ -2040,7 +2043,7 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
-> >>  
-> >>  	/* create SMMU mapping */
-> >>  	err = fastrpc_map_create(fl, req.fd, req.vaddrin, req.length,
-> >> -			0, &map);
-> >> +			0, &map, true);
-> >>  	if (err) {
-> >>  		dev_err(dev, "failed to map buffer, fd = %d\n", req.fd);
-> >>  		return err;
-> >> -- 
-> >> 2.34.1
-> >>
-> 
-
--- 
-With best wishes
-Dmitry
+--znxmzativoaydeg7--
 
