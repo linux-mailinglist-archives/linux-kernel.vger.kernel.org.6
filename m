@@ -1,140 +1,127 @@
-Return-Path: <linux-kernel+bounces-333257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C9597C604
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:40:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9520C97C5FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44DF11F234FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:40:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A3BD284805
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553FD198A3E;
-	Thu, 19 Sep 2024 08:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73C91990AD;
+	Thu, 19 Sep 2024 08:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jmEUQ6ze"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kECUarCj"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A08198E9E;
-	Thu, 19 Sep 2024 08:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8469A198E78
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 08:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726735191; cv=none; b=Dg7BsYGv+NYw49YlG9IALVaTaMlqoxLNuJe5g2f4qg3piuC0ompq1fVuQgUAx49qT2N6uDzs5U0oEqcvXXDcelNH9ujLEEuC9NjGYiGm9wb6VL8yW1QUpzZgmKjLslaLwFoH2VTXuIUh8KADOCMOrH5ttEEBoiD4UrcwAF7oHys=
+	t=1726735090; cv=none; b=eSc/nPQSTg/Gn763GozZHOqaGMcjKYUxxYgDmZQoPnE+dXvvrlBuQmEIcFcFmZ5ApZiqLJ5eVSXGmqKPRweU+apJXkgQ40zRKmRcgFM4JnBgX6u7fjtXjCw0iWby4M2pFd6ohYNKGvtuSghOLKhNpAO2hb5AISUUCBxs10X9x64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726735191; c=relaxed/simple;
-	bh=YVqE/L1HV4wg6Vyzyh1P6f6l8hRfOphwe2DO+KyoSgg=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=CRmgRZm/vJvUDpNiAzUW4t7DCLyP8nWsKjcGIOBPKh6b+auml653A0IR/7nyQSssw3JJ0SKtHaaUQgVD6FGFRSON6ak3LKjD9Jprb4OOjboLVmg3Kxyh7+XMYZ9LKoYx/6oJKGQ+Y1n9yGSBFPGxM2FemZWn+A8Nvalm1JT5qzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jmEUQ6ze; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726735186; h=Message-ID:Subject:Date:From:To;
-	bh=9DsAdYuAPv2ZkLquz5j1q/urZ0rt5W51A+rUAsh1me8=;
-	b=jmEUQ6zexYykPaACmxLnf3KEIVfB1Aya4OMTlY0a6ldj4oTC3nnsIIBISBoQC2FwfAQy/lAnMr49EGzvIpewt3qIfasPCjuJpf5wom11wRXGB5IGXEi8mUZhyuify8Hx+4KPb2RR5zwSMXRkq+FykjzBoEAj+dXvbZMXoTReYwo=
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WFH-KpM_1726735185)
-          by smtp.aliyun-inc.com;
-          Thu, 19 Sep 2024 16:39:46 +0800
-Message-ID: <1726734803.547666-2-xuanzhuo@linux.alibaba.com>
-Subject: Re: [RESEND PATCH v3] virtio_net: Fix mismatched buf address when unmapping for small packets
-Date: Thu, 19 Sep 2024 16:33:23 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc: virtualization@lists.linux.dev,
- netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Wenbo Li <liwenbo.martin@bytedance.com>,
- Jiahui Cen <cenjiahui@bytedance.com>,
- Ying Fang <fangying.tommy@bytedance.com>,
- mst@redhat.com,
- jasowang@redhat.com,
- eperezma@redhat.com,
- davem@davemloft.net,
- edumazet@google.com,
- kuba@kernel.org,
- pabeni@redhat.com,
- Wenbo Li <liwenbo.martin@bytedance.com>
-References: <20240919081351.51772-1-liwenbo.martin@bytedance.com>
- <1726734765.9623058-1-xuanzhuo@linux.alibaba.com>
-In-Reply-To: <1726734765.9623058-1-xuanzhuo@linux.alibaba.com>
+	s=arc-20240116; t=1726735090; c=relaxed/simple;
+	bh=YUB/0fLcjzGXnwiC4zI1rAwoYYavPrkSnnTvrKgHVVA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=so1l2j4z9Nn1wELHhYdp647g5ZMLwJHvimZNfxOtT8W21ClvQFDXJxSv6HL8VZDJQj8JDOfzVwohs3HPKTQQfRVXnmCVEfz5n3vVuScf3KkshM7yeiLyb+S0w6oewy4LBkYv6dm+5P+4/Ly8Jq5TT25Pk1EY2IbQHT9s46hxMQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kECUarCj; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-535dc4ec181so581556e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:38:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726735087; x=1727339887; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C+XA2XAWTlEdnUYeup2c1MqxMCgSg8DqVZ7RmeOX0C4=;
+        b=kECUarCj/Gt5cEVNs9xUe8O1bQxsjXZizU/puJ8+tdoVDnXCsLGChdhKe/7+O44GKr
+         pLyOfHg2spq++wE4/5fkdJfUMXBqaHWMNYKIchVQvmfchdeOl/5ksBvKqEv/xDHCJgc7
+         xXX51MZPCFjhfKj2wMWl/Qetjs+5NVnaoS2f1iKKYys5axcSOsldAjUFWyCpwdcGOuFJ
+         91+CugzM1NuVKZxrr2sUqg2LUoC2F+YrawQnhJ7a3QThZsz9UEqXSsq8VDXemPInGIXw
+         nBk3MfQy9Lyd1Gyi6boM2Uxq8MwyDVNaN2t/+qNCM1hx1aVf3gbTZrZbVGuun78m0kZQ
+         XOYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726735087; x=1727339887;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C+XA2XAWTlEdnUYeup2c1MqxMCgSg8DqVZ7RmeOX0C4=;
+        b=sYqXbOQmCIaZhBui16cKkIuhrzOCMUNKgxQ/eXjNsg3a1/hS1pc6f7pnHYxEgFisPb
+         d00uxo+ODNUUVOEWZTy1sM1l9YyCck0TWSItibqVVEUEJiRK+sFyQgMv/ra1ZXvkXm3X
+         G5arocCco3A4cgHCT1I9p/ZK2OAOIm3cxsdea6sxVOULrc6h+c+fZUeKGqVKmYNAeoF2
+         oeYIq0zE0oImDhLD37f8aqVegXtIw6DGWZ6Sr3jBizaNE/dsYYfnUOuCTcdViB/id7i6
+         7hRPxcwKIQDW1kAfoeDkeCHgoYy9HLz3TgE0/WNuuX+KROcqnBpa5qTJFz4ncaNS/C2N
+         6MSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZEaiQp4ETa+2dPX0+84sqrvTfGUOouCaK6Gk3MfkJO9f82lH2z22aV9nvldF5jXILcDrC2aj1qo91fXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+t1KlNjsJPoshSr/EGbIEwtNv5P6ap+2U+DVrx1AVIKA8dDvh
+	OdfsNKQUT7uUeA9y4sATq6C0VCJ52Ve/S8YjfPC6AYlPYFVbJotxi+QbiVnuagQU+4k/R/+RLON
+	9YM/31RGMJ/9b6L7RnulAYyv9eYTtw1QdgXX9ZA==
+X-Google-Smtp-Source: AGHT+IHlAd8jX3MKXVZb3aQKjC/g81iL8wnxQAiPyiHoR+AGu6/IS3gYvhYY5jrJ+9pB346nDJEx10hOjjAtq+yuc60=
+X-Received: by 2002:a05:6512:12c8:b0:533:46cc:a71e with SMTP id
+ 2adb3069b0e04-53678fec522mr14377896e87.54.1726735086540; Thu, 19 Sep 2024
+ 01:38:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
+ <20240822170951.339492-1-abdellatif.elkhlifi@arm.com> <20240822170951.339492-6-abdellatif.elkhlifi@arm.com>
+ <20240918154000.GA55399@e130802.arm.com>
+In-Reply-To: <20240918154000.GA55399@e130802.arm.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Thu, 19 Sep 2024 02:37:55 -0600
+Message-ID: <CANLsYkwgNoSnkqdrWYp7JvP3mF4d-h1iO7LtZmaP2t_+R7pF_A@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] remoteproc: arm64: corstone1000: Add the External
+ Systems driver
+To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 19 Sep 2024 16:32:45 +0800, Xuan Zhuo <xuanzhuo@linux.alibaba.com> wrote:
-> On Thu, 19 Sep 2024 16:13:51 +0800, Wenbo Li <liwenbo.martin@bytedance.com> wrote:
-> > Currently, the virtio-net driver will perform a pre-dma-mapping for
-> > small or mergeable RX buffer. But for small packets, a mismatched address
-> > without VIRTNET_RX_PAD and xdp_headroom is used for unmapping.
-> >
-> > That will result in unsynchronized buffers when SWIOTLB is enabled, for
-> > example, when running as a TDX guest.
-> >
-> > This patch unifies the address passed to the virtio core as the address of
-> > the virtnet header and fixes the mismatched buffer address.
-> >
-> > Changes from v2: unify the buf that passed to the virtio core in small
-> > and merge mode.
-> > Changes from v1: Use ctx to get xdp_headroom.
-> >
-> > Fixes: 295525e29a5b ("virtio_net: merge dma operations when filling mergeable buffers")
-> > Signed-off-by: Wenbo Li <liwenbo.martin@bytedance.com>
-> > Signed-off-by: Jiahui Cen <cenjiahui@bytedance.com>
-> > Signed-off-by: Ying Fang <fangying.tommy@bytedance.com>
+On Wed, 18 Sept 2024 at 09:40, Abdellatif El Khlifi
+<abdellatif.elkhlifi@arm.com> wrote:
 >
-> Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-
-For net/virtio maintainers:
-
-Because the premapped mode is closed by default for virtio-net rx. So this bug
-will not be triggered. DO NOT worry about it.
-
-So that is ok if we merge it into next version. (The merge window is closed).
-
-Thanks.
-
-
-
+> Hi Mathieu,
 >
-> Thanks.
->
+> > Introduce remoteproc support for Corstone-1000 external systems
+> >
+> > The Corstone-1000 IoT Reference Design Platform supports up to two
+> > external systems processors. These processors can be switched on or off
+> > using their reset registers.
+> >
+> > For more details, please see the SSE-710 External System Remote
+> > Processor binding [1] and the SSE-710 Host Base System Control binding [2].
+> >
+> > The reset registers are MMIO mapped registers accessed using regmap.
+> >
+> > [1]: Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
+> > [2]: Documentation/devicetree/bindings/arm/arm,sse710-host-base-sysctrl.yaml
+> >
+> > Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
 > > ---
-> >  drivers/net/virtio_net.c | 10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > index 6f4781ec2b36..f8131f92a392 100644
-> > --- a/drivers/net/virtio_net.c
-> > +++ b/drivers/net/virtio_net.c
-> > @@ -1807,6 +1807,11 @@ static struct sk_buff *receive_small(struct net_device *dev,
-> >  	struct page *page = virt_to_head_page(buf);
-> >  	struct sk_buff *skb;
-> >
-> > +	/* We passed the address of virtnet header to virtio-core,
-> > +	 * so truncate the padding.
-> > +	 */
-> > +	buf -= VIRTNET_RX_PAD + xdp_headroom;
-> > +
-> >  	len -= vi->hdr_len;
-> >  	u64_stats_add(&stats->bytes, len);
-> >
-> > @@ -2422,8 +2427,9 @@ static int add_recvbuf_small(struct virtnet_info *vi, struct receive_queue *rq,
-> >  	if (unlikely(!buf))
-> >  		return -ENOMEM;
-> >
-> > -	virtnet_rq_init_one_sg(rq, buf + VIRTNET_RX_PAD + xdp_headroom,
-> > -			       vi->hdr_len + GOOD_PACKET_LEN);
-> > +	buf += VIRTNET_RX_PAD + xdp_headroom;
-> > +
-> > +	virtnet_rq_init_one_sg(rq, buf, vi->hdr_len + GOOD_PACKET_LEN);
-> >
-> >  	err = virtqueue_add_inbuf_ctx(rq->vq, rq->sg, 1, buf, ctx, gfp);
-> >  	if (err < 0) {
-> > --
-> > 2.20.1
-> >
+> >  drivers/remoteproc/Kconfig              |  14 +
+> >  drivers/remoteproc/Makefile             |   1 +
+> >  drivers/remoteproc/corstone1000_rproc.c | 350 ++++++++++++++++++++++++
+> >  3 files changed, 365 insertions(+)
+>
+> A gentle reminder about reviewing the driver please.
+>
+> I'll be addressing the comments made for the bindings.
+
+Please address the comments already received for the bindings.  I will
+review this set once the bindings have settled.
+
+Thanks,
+Mathieu
+
+>
+> Thank you in advance.
+>
+> Cheers,
+> Abdellatif
 
