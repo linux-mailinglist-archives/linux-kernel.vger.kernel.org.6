@@ -1,112 +1,149 @@
-Return-Path: <linux-kernel+bounces-333448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1214E97C8BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:43:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA92397C8C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BAEA1C218EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:43:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37FDB1F239F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E1619D070;
-	Thu, 19 Sep 2024 11:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C5919D887;
+	Thu, 19 Sep 2024 11:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z2STDVEp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhMpvkHE"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A08193432;
-	Thu, 19 Sep 2024 11:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEDD193432;
+	Thu, 19 Sep 2024 11:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726746180; cv=none; b=MX50AbZpZgKVOq8IWloxoniUSGu55RWtuHPHhPNGoOHeEM21wfXLwdQqwqK12lXtP5QgchfOeyi01QsUwNsQrf6yxgs8gKWeFwVgrt3dvZBC1EcKEu9ryd5o3r5Or8jdxtjDdNjJ35u7GtYI/hnoehpXBg0cC1RtVXJ5jDRU3po=
+	t=1726746772; cv=none; b=KMxpVI7fr3XZ2j5VA3CmeB4f0uZpGx4GGXyRMx9XP8d47lS+GPb5fr/Rq4U2NvOMNVx7N4ktiDyOrAgYAIiG8R0dVoGO+vgS3OOKB5pu5l3THezXscSQLy+6hSLS11NsysliXO5bFrEoArvmmL03yurM+rmPmbkrxM1+luJ4rAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726746180; c=relaxed/simple;
-	bh=5TmbLzNY35MPG+6DijuO7RpVRl06QkUdrFsOEJAake8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V2eIgIv93xaU3d1GPsGVkwQglVcBoXfhKS4D3z5ne1kQ+RiL7l4RUKBpswDdzSp+mQMGwJIeymVO/V3fhrW69rEFYx9aKsaXzAJxVAv/AnwjYVJ8qEzzPrqJ19vJl7FBRnxTE2lP+63RKH6h4t3uihfrPttX1pXkNxw/zAon7go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z2STDVEp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16C61C4CEC6;
-	Thu, 19 Sep 2024 11:43:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726746180;
-	bh=5TmbLzNY35MPG+6DijuO7RpVRl06QkUdrFsOEJAake8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Z2STDVEp0SWsdE8cz181USldSfl7tKq0D8q592RkBCuQ8qPctpI4OZSZzXW75KGte
-	 zZAKN1mny/Tj/XToxtfw+HPvLmGqCPDm/H08w49llY0tD4bKVvmDuMKiR/XUpzGHbd
-	 KRPVzn3TAhi8KzfUQQHMyOGdoNBEoK5ulNVjLuy3ZqTyl1eg/p74rFSspnaRx3vD/L
-	 GzBTv5/6EzTo0z0KbWk56Vz3hxhCtL6DkuJGk+c9iB77sHRI9L1uyv2UihF+rWA2pU
-	 urmfJQ5ZkNPJjjpoLP5syXuMmg/fQdtcjbaJCvuH8A+TQIq6epU08QUqCztKRSEfjx
-	 tiUUKZowVtrhw==
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e04a6feef3so368131b6e.3;
-        Thu, 19 Sep 2024 04:43:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV6UXwobDd2OOK39h3a7a1kvPBayjJlF7rRB6rKGTiK/lsrGqfdFldcTRqF5+vQ+xie7VhCfKNDGYBegrVQ@vger.kernel.org, AJvYcCX0p3l6jwXzYfAO8V7IkJA7TYvJ0MCyqFZmcVhvaTpzDjXp7FWV+zxYbMP3+wEjXf8q5l7UTvcWyOJ5vlxJT+50@vger.kernel.org, AJvYcCXuoe49sSOiOh8C0Wxf0vjdwOMUzhTE8zClF1zDZKyVwRRrgrv2Og/v9yYjK8uRaDdL/7hzRxKMsooX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlYqvirlla6byXWkNSkVAVBmiGf6mOoN7Occ2AeCyw5V06Jbjl
-	sdOZWeAYajS7WFPSMWhLNxFDR4aJRk8W+lI0dQDmElbsAIA8a2J0UnRaXc0irxSrVt8KZjIlrUz
-	asycnwyFtdGV0GrGwSapP9uqbziw=
-X-Google-Smtp-Source: AGHT+IGMHvj71v4pRxIz9H4t3dZJiQYtGoEasfwol8SunCUXrBGi2TuhnCmQuTnIqrnVRMALjf80YAFRxuBInDLw4Ao=
-X-Received: by 2002:a05:6808:2181:b0:3e0:48e7:7f31 with SMTP id
- 5614622812f47-3e071a850cbmr17700057b6e.10.1726746179365; Thu, 19 Sep 2024
- 04:42:59 -0700 (PDT)
+	s=arc-20240116; t=1726746772; c=relaxed/simple;
+	bh=n2c8rCWw8z/lpoN5wgFADrTYkKDIlTR04TekYHp1qSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bt63beBM0aj2ubebMvzIMrutSZIMq8AmUTluj9W4C7fKf71PQjOBV5z+Cv7k04Y+j49DWWS8uq+iyx9DpMyJyDLfYCvICyWU5F7d2dTH3WcGwCH4r/wRHTUnNrFH56YXqZGAr8IymXLc33GBmkSLizSoXQwxHx8o1WM/HZ6cTgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhMpvkHE; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4582face04dso6581531cf.1;
+        Thu, 19 Sep 2024 04:52:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726746769; x=1727351569; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n2c8rCWw8z/lpoN5wgFADrTYkKDIlTR04TekYHp1qSo=;
+        b=OhMpvkHEdrEcd46I9hl6lNb8nnvZuJRKYxN4HiaJdxe6d0ygRqYOAS7G/iusxZMkQn
+         7QLJpWeGV0ryE6XQcZKPz+zzLkWEAttxQ2K5ZYZ+s5q6sC0Nt6IpvBscjof8qckmA5cu
+         08WUcPs3LDwoMlCYwHkYh5GdHOguQQxpUAalcqMMGw7MjtKiK1rdfcCbAEd3/hruofdu
+         IFYZ8bcQ4QLKbhg+D8Z9Vf3OWMzzl0kuX77LlUrVRFsgT2TSRBYu8qKYYSC135J2m1ov
+         kywK6Xz2ac3GbhDY2+Xvc/aql3OHUH/L9Jo3YOM/bme0zFH+abHjtMYGCDIw/hOZXR6x
+         oBTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726746769; x=1727351569;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n2c8rCWw8z/lpoN5wgFADrTYkKDIlTR04TekYHp1qSo=;
+        b=aX5zq4rlnrBzooFVkcwd0rLRfjhufIjtXS0gdJLll7sRuvGPgX79DTFKuQysP91nQU
+         cwfdBMPIsR01T/5gonwYeUj36n+kuT90D4hpdfR2kfAiOt+4oSgo+pMelf1ECjxeB+Te
+         4Ebz/Mt5bLfYSyqcA8VvoTXBtrc2VuAgjF/5WwZ5bAalFp7VynoQJ+VLqF7iW9AgEs2V
+         74uZTiiX4FtIx5VWzbNzEH0qng7f1gTZhr9CPAzaSsLwXF2N0zL8E3wV5WTX6T4pM+Mc
+         VSWPQlcHPjOGNI7m5yFeEo8xus3JtLkKYK2otMGaLZvjcgQD7k13gjH1hg5eFUJRd/dk
+         gCkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVF8Bc4uToV/790BRj8gFf0ZTHII9mlflkYdSCJQ1DMSvhprBQlC4aUD5/wPNM5xf6JehIBdFkCPyqYQSiC@vger.kernel.org, AJvYcCVaCUIWkKv4QbiZVdrsonc55eG03oMGbfDGsAKiBtgfWivVbDV1j/ORNbj4LJwdY7eaxd4pTbu7DgXZ@vger.kernel.org, AJvYcCWbZsLkUGxQqVBMfQw4YAgFrBnQ/qPq8IUssmpCGJVr7xaFHljDVQYMjVgtpZLHN1+quxwJwbG4/qEo+Kgh@vger.kernel.org, AJvYcCXBuVylbFLlTiv3bEF3KNWwhWx6VzlnymIsDH1vL2gpyj1pepGIiu3sNTDf65mFbrFj8PP0PSap5j8A@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJbgtUn6ov2J7WUeywtbzkxX0JxB/XTrwQF6u3oG9cA26qUV9+
+	3Z5ivlK72GHRMMp5viOpHlfrSNsRkhEU53CqIGu7XrHcuhaO7CfX
+X-Google-Smtp-Source: AGHT+IGQcZIp8iyJg2gTDfan3U3gpkE7chV5pJXxPcG09Udi1LvNQFGlfel4EdOFjiYN4XeQ62uD+g==
+X-Received: by 2002:a05:622a:1ba8:b0:456:953f:6fe6 with SMTP id d75a77b69052e-45b1602db49mr44449971cf.8.1726746769446;
+        Thu, 19 Sep 2024 04:52:49 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c0a8:11d1::1023? ([2620:10d:c091:400::5:4589])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b1788f56dsm6783921cf.56.2024.09.19.04.52.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Sep 2024 04:52:48 -0700 (PDT)
+Message-ID: <c65a07ef-6436-4e04-a263-7cad9758e9be@gmail.com>
+Date: Thu, 19 Sep 2024 13:52:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240820191520.100224-2-thorsten.blum@toblux.com>
- <CAKYAXd_T4JzjOVFqxSt=RQG7w0yzPX62-AihQHUepvS+80BZJQ@mail.gmail.com> <4881D699-9109-47B5-927F-B048479C48B8@toblux.com>
-In-Reply-To: <4881D699-9109-47B5-927F-B048479C48B8@toblux.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 19 Sep 2024 20:42:48 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9u5mxx=QY2Y64DjGNCoguCiqbDq69Xi2g6dpMJx9unCA@mail.gmail.com>
-Message-ID: <CAKYAXd9u5mxx=QY2Y64DjGNCoguCiqbDq69Xi2g6dpMJx9unCA@mail.gmail.com>
-Subject: Re: [PATCH v2] ksmbd: Replace one-element arrays with flexible-array members
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] Add Propeller configuration for kernel build.
+To: Rong Xu <xur@google.com>, Han Shen <shenhan@google.com>,
+ Sriraman Tallam <tmsriram@google.com>, David Li <davidxl@google.com>,
+ Jonathan Corbet <corbet@lwn.net>, Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Vegard Nossum <vegard.nossum@oracle.com>, John Moon <john@jmoon.dev>,
+ Andrew Morton <akpm@linux-foundation.org>, Heiko Carstens
+ <hca@linux.ibm.com>, Luis Chamberlain <mcgrof@kernel.org>,
+ Samuel Holland <samuel.holland@sifive.com>, Mike Rapoport <rppt@kernel.org>,
+ "Paul E . McKenney" <paulmck@kernel.org>, Rafael Aquini <aquini@redhat.com>,
+ Petr Pavlu <petr.pavlu@suse.com>, Eric DeVolder <eric.devolder@oracle.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Randy Dunlap <rdunlap@infradead.org>,
+ Benjamin Segall <bsegall@google.com>, Breno Leitao <leitao@debian.org>,
+ Wei Yang <richard.weiyang@gmail.com>, Brian Gerst <brgerst@gmail.com>,
+ Juergen Gross <jgross@suse.com>, Palmer Dabbelt <palmer@rivosinc.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>, Kees Cook <kees@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Xiao Wang <xiao.w.wang@intel.com>,
+ Jan Kiszka <jan.kiszka@siemens.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, linux-efi@vger.kernel.org,
+ linux-arch@vger.kernel.org, llvm@lists.linux.dev,
+ Krzysztof Pszeniczny <kpszeniczny@google.com>,
+ Stephane Eranian <eranian@google.com>
+References: <20240728203001.2551083-1-xur@google.com>
+ <20240728203001.2551083-7-xur@google.com>
+Content-Language: en-US
+From: Maksim Panchenko <max4bolt@gmail.com>
+In-Reply-To: <20240728203001.2551083-7-xur@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 19, 2024 at 6:12=E2=80=AFPM Thorsten Blum <thorsten.blum@toblux=
-.com> wrote:
->
-> Hi Namjae,
->
-> On 22. Aug 2024, at 14:01, Namjae Jeon <linkinjeon@kernel.org> wrote:
-> > On Wed, Aug 21, 2024 at 4:15=E2=80=AFAM Thorsten Blum <thorsten.blum@to=
-blux.com> wrote:
-> >>
-> >> Replace the deprecated one-element arrays with flexible-array members
-> >> in the structs copychunk_ioctl_req and smb2_ea_info_req.
-> >>
-> >> There are no binary differences after this conversion.
-> >>
-> >> Link: https://github.com/KSPP/linux/issues/79
-> >> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> >> ---
-> >> Changes in v2:
-> >> - Use <=3D instead of < and +1 as suggested by Namjae Jeon and Tom Tal=
-pey
-> >> - Link to v1: https://lore.kernel.org/linux-kernel/20240818162136.2683=
-25-2-thorsten.blum@toblux.com/
-> > Applied it to #ksmbd-for-next-next.
-> > Thanks!
->
-> I just noticed this patch never made it to linux-next and I can't find
-> it anywhere else (also not in #ksmbd-for-next-next).
->
-> Maybe it got lost because it has the same subject and a very similar
-> commit message as [1] (I submitted both around the same time)?
-Sorry for missing it. I have pushed it to #ksmbd-for-next-next again.
-Thanks for your report:)
->
-> Thanks,
-> Thorsten
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/co=
-mmit/?id=3D7c525dddbee71880e654ad44f3917787a4f6042c
+On Sun, Jul 28, 2024 at 01:29:56PM -0700, Rong Xu wrote:
+> Add the build support for using Clang's Propeller optimizer. Like
+> AutoFDO, Propeller uses hardware sampling to gather information
+> about the frequency of execution of different code paths within a
+> binary. This information is then used to guide the compiler's
+> optimization decisions, resulting in a more efficient binary.
+
+Thank you for submitting the patches with the latest compiler features.
+
+Regarding Propeller, I want to quickly mention that I plan to send a
+patch to include BOLT as a profile-based post-link optimizer for the
+kernel. I'd like it to be considered an alternative that is selectable
+at build time.
+
+BOLT also uses sampling, and the profile can be collected on virtually
+any kernel (with some caveats).  There are no constraints on the
+compiler (i.e., any version of GCC or Clang is acceptable), while Linux
+perf is the only external dependency used for profile collection and
+conversion. BOLT works on top of AutoFDO and LTO but can be used without
+them if the user desires. The build overhead is a few seconds.
+
+As you've heard from the LLVM discussion
+(https://discourse.llvm.org/t/optimizing-the-linux-kernel-with-autofdo-including-thinlto-and-propeller)
+and LPC talk (https://lpc.events/event/18/contributions/1921/), at Meta,
+we've also successfully optimized the kernel and got similar results.
+
+Again, this is a heads-up before the patch, and I would like to hear
+what people think about having a binary optimizer as a user-selectable
+alternative to Propeller.
+
+Thanks,
+Maksim
+
 
