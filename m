@@ -1,165 +1,192 @@
-Return-Path: <linux-kernel+bounces-333581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A9B97CAEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:28:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C794797CAF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0861C1C22E23
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:28:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84CA9285344
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9D619FA89;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E62194083;
 	Thu, 19 Sep 2024 14:28:25 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1969D19B59D
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 14:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498D019E7F0
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 14:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726756104; cv=none; b=KcKw/4H0s4pIsm5Qb8llI0n+g5LuvUiWR/BIrWC07NVPQl4nGGQSU+mBwKLmfezq083nJZ+J9o7SewU/b01Y8zvGmJUXqPhGPTKZMOPVEuP7IeROmCO6MstVCUHbT1z2X9tuP0nvnbQqMlu3ZbR24TEZVExYEZ7xx8AEhs8aAzk=
+	t=1726756104; cv=none; b=sRWEvhfKc/9/jgDKbByOzV9GK0JCg87yXa/Q4psLVuCqd2wN1U8AZOV7qywUyP7+XFxBM+ncr4KM1Kk5+R8+0FxYbE4+mJHy+h4Q28fSytgQPkzdzB+yYrKTEvI6adFfk50liXTHefGwMSoxi0wryC1R5yYdhRKPmxPCQ+HMNrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726756104; c=relaxed/simple;
-	bh=7U5vYZzV54AyYA/vKVGKNPoOAoAMp6ZBinjfFSCdxpU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uX/ERYugY04JW8gON66JG67qbf9dxqxs/GYQHRJCSoBRNtWjviwTMvK9DM8jm+ZAJeLmViEXFXEhKJQat0RUHU7T2CY2ps5Zp6H0tZt44v5WWaj7pTObpKU9aax3y3WRk9KXZx6TvHEo5ImfAO0muaD+nFFVCWNGWEWN1gNVPfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+	bh=ARkS/TdRTX1quJ/+KneNXaNfoRa+gSBSyw6INjFOF/Y=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=geLa7lsrv9F0gIkSI+tplKGenpBCQl1qofdjyTH+0+EFE7ndPqjg63Ks/ABZPmSxOe+Md+RbY9jh1SUTbvlMncpglscqOMcm0/JMg6Wi1XehUVtWw44SsbNgkXukpW4dPl50bNC03JhQq+MMDEe/hesCXPN4qiEwziYLysva+Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a08d4ada12so10762515ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 07:28:22 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0a71b7d90so12871175ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 07:28:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1726756102; x=1727360902;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/QaJe9sLoOeEHAHhkg+3eDQ78D6b0RIwb5ZRhM8fcqY=;
-        b=km1AAgdYu6IqcG6Rd/iW0pKGq0c1/86zCH09Y7ErdeJ2YQ2ZfTKmAde7s5HWXNFkVx
-         vdfID7pIH6FTuVD9/u7z0L3kQinvZmzlwt5AKJiSrU84OPIMTVl7RJYRsoN6mhK4B/Uw
-         gaDgB69Xcc3zu/aXVzX5zrK4Q2IYLGisdRs33YxX+qKnin06wdnpzn/lINJZU4uPpBT4
-         NsFsW+eblAIxfD4YxyoXN6IHqcb1xBcy5vZ+LY1iTI7kPOJW7emWY5aRPv4Lh90I9DuN
-         q8MBgeDzesWfdMx5afnpOSOLuEan0lo11EgjAW3ECh3m4gjjuE4hRU8XrqIrlwEej5/0
-         jd8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW/B/lSg7ZdsOS4HfcQeRIqJdfidaGnDlaseC4OFYmzD6Hq1s6mKyPAsEjp4TMksDQd1l9XZ2js3ZPbVRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywFjg8gIUaBGetta1zBVIEqUI1UKJuuaSrtBhOftmOkPny+zLy
-	s2RSqx82kODMQcyUv545EgMJuDJXwN+XSDPRLGEQwAos9UR+zzQCpEg8f6t7KwPzs1Em1OrhbmZ
-	vTeAMgE/lYoaqEP6T2A5XKMXZQehgE6MVfQoPiMtuaSfTwVF641Lv85w=
-X-Google-Smtp-Source: AGHT+IGnTQO/xvQwB5qAqhjlfR5Z1Gj8ZHnZRXzwHgfhCw3ClsstrKYKFykpnBdimdDJ0uxNfkEQeiC3vfVRlZ5Rw3+KNYRMxK5U
+        bh=VhoKh0X8PkzpeoULm+kGqj4f92k1O+QVQGRIZuxdXLg=;
+        b=MyzQaVvd6B6iuAB+U1JunZgeUfJkHAvGfbp+hRw8CJUije6S0Ka367inKpV6HjAXsw
+         REpXKg6qtHh5HxeP9f3xDLCfC35I3zpN/u9a7/3or0BIj1XQA8O10Xb6cUHMfaaRUjXq
+         ljMa+1ACEanLm1sjPUFona2+NjyZ5ByqdO6ENPDoQSvBHDvez826c9UnvWiKLDBZUEDM
+         tzo709cjCeD8PqTR4xlcMY5MKa+GkfcxsYFPGq85Neoj/qPeihPh8yFasSC8ZonxCirc
+         VZMDMOrr8AlElspaDSnp9Ap1y1sypR1mVwgFolcz44gTTSWCxTJijAMnfGqWmIC2B1Xq
+         68dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfMEUn9q5vUD/Aqm+gybpEIsP0+g/1WqFbScWeM1TLTlQVOZTwuzDW1shx+crrSKDKs3cYTgYLXBIuBRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznCG+5/81cLo+1YTvXmEVqkNmqwdBJZrgMfwJppltpfjadlbC9
+	gN+ljp8wbyAWcf1kvYz7FBVZyCLniO8eSm4SMpCXc/YdzEmSfQxwrROZdRzPoz3iZzoLv3P9SyT
+	iuEEuQ2I5FZx8r/pFig0CUOuDda2CrSD2NvMypY6AOhBCPLnKdCMnoNg=
+X-Google-Smtp-Source: AGHT+IEmWmlkU6TQc0eoIUQ2KVbgxtgRCiNv5E2vZEYIy31oMVG2AdhxLIjyKZOYLzsw5eIEbk6JaDkSir0WnjIE2Y9OOozyx7Hd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c8d:b0:39f:797a:65f8 with SMTP id
- e9e14a558f8ab-3a084929ebdmr226524215ab.19.1726756102130; Thu, 19 Sep 2024
+X-Received: by 2002:a92:194e:0:b0:3a0:979d:843 with SMTP id
+ e9e14a558f8ab-3a0979d0a06mr126255195ab.9.1726756102390; Thu, 19 Sep 2024
  07:28:22 -0700 (PDT)
 Date: Thu, 19 Sep 2024 07:28:22 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ec3506.050a0220.29194.002b.GAE@google.com>
-Subject: [syzbot] [btrfs?] kernel BUG in btrfs_recover_relocation
-From: syzbot <syzbot+4be543bf197a0325c7d9@syzkaller.appspotmail.com>
-To: brauner@kernel.org, clm@fb.com, dsterba@suse.com, 
-	johannes.thumshirn@wdc.com, josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <66ec3506.050a0220.29194.002c.GAE@google.com>
+Subject: [syzbot] [cgroups?] [mm?] INFO: rcu detected stall in shmem_fault (6)
+From: syzbot <syzbot+4145b11cdf925264bff4@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, cgroups@vger.kernel.org, hughd@google.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    d42f7708e27c Merge tag 'for-linus-6.11' of git://git.kerne..
+HEAD commit:    0babf683783d Merge tag 'pinctrl-v6.11-4' of git://git.kern..
 git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=141de407980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=162de407980000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=1c9e296880039df9
-dashboard link: https://syzkaller.appspot.com/bug?extid=4be543bf197a0325c7d9
+dashboard link: https://syzkaller.appspot.com/bug?extid=4145b11cdf925264bff4
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=125748a9980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14440c9f980000
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b879ea3b7dd4/disk-d42f7708.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/812a7fb7bfcc/vmlinux-d42f7708.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/806a22d4adbf/bzImage-d42f7708.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/06797c3a4d01/mount_0.gz
-
-The issue was bisected to:
-
-commit ad21f15b0f795daf8723dddbcb61797d4f1c2aed
-Author: Josef Bacik <josef@toxicpanda.com>
-Date:   Wed Nov 22 17:17:50 2023 +0000
-
-    btrfs: switch to the new mount API
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17725407980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14f25407980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f25407980000
+disk image: https://storage.googleapis.com/syzbot-assets/5d6146edacfa/disk-0babf683.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2593d4fb261a/vmlinux-0babf683.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a5e44e1e0eba/bzImage-0babf683.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4be543bf197a0325c7d9@syzkaller.appspotmail.com
-Fixes: ad21f15b0f79 ("btrfs: switch to the new mount API")
+Reported-by: syzbot+4145b11cdf925264bff4@syzkaller.appspotmail.com
 
-BTRFS info (device loop0 state MC): resize thread pool 2097158 -> 4
-assertion failed: fs_root, in fs/btrfs/relocation.c:4375
-------------[ cut here ]------------
-kernel BUG at fs/btrfs/relocation.c:4375!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 UID: 0 PID: 5226 Comm: syz-executor261 Not tainted 6.11.0-rc7-syzkaller-00151-gd42f7708e27c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:btrfs_recover_relocation+0x1b6f/0x1ba0 fs/btrfs/relocation.c:4375
-Code: 40 d1 fd eb 05 e8 c1 40 d1 fd 48 c7 c7 60 51 2d 8c 48 c7 c6 e0 52 2d 8c 48 c7 c2 e0 51 2d 8c b9 17 11 00 00 e8 02 ce eb 07 90 <0f> 0b e8 9a 40 d1 fd 48 c7 c7 60 51 2d 8c 48 c7 c6 00 52 2d 8c 48
-RSP: 0018:ffffc900033e76a0 EFLAGS: 00010246
-RAX: 0000000000000038 RBX: ffff88802918c048 RCX: 8c13e04592c8c800
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc900033e7830 R08: ffffffff8174016c R09: fffffbfff1cba0e0
-R10: dffffc0000000000 R11: fffffbfff1cba0e0 R12: dffffc0000000000
-R13: 0000000000000000 R14: ffffc900033e77a0 R15: ffff888027a8d160
-FS:  000055557fadc380(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000200011c8 CR3: 00000000693e0000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P9592/1:b..l
+rcu: 	(detected by 1, t=10502 jiffies, g=41797, q=358 ncpus=2)
+task:syz.1.962       state:R  running task     stack:24176 pid:9592  tgid:9589  ppid:9183   flags:0x00004006
 Call Trace:
  <TASK>
- btrfs_start_pre_rw_mount+0xe15/0x1300 fs/btrfs/disk-io.c:3048
- btrfs_remount_rw fs/btrfs/super.c:1309 [inline]
- btrfs_reconfigure+0xae6/0x2d40 fs/btrfs/super.c:1534
- btrfs_reconfigure_for_mount fs/btrfs/super.c:2020 [inline]
- btrfs_get_tree_subvol fs/btrfs/super.c:2079 [inline]
- btrfs_get_tree+0x918/0x1920 fs/btrfs/super.c:2115
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3472
- do_mount fs/namespace.c:3812 [inline]
- __do_sys_mount fs/namespace.c:4020 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x17ae/0x4a10 kernel/sched/core.c:6529
+ preempt_schedule_irq+0xfb/0x1c0 kernel/sched/core.c:6851
+ irqentry_exit+0x5e/0x90 kernel/entry/common.c:354
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:lock_acquire+0x264/0x550 kernel/locking/lockdep.c:5763
+Code: 2b 00 74 08 4c 89 f7 e8 ea e1 87 00 f6 44 24 61 02 0f 85 85 01 00 00 41 f7 c7 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 44 25 00 00 00 00 00 43 c7 44 25 09 00 00 00 00 43 c7 44 25
+RSP: 0018:ffffc90003d47020 EFLAGS: 00000206
+RAX: 0000000000000001 RBX: 1ffff920007a8e10 RCX: baa91729e815a300
+RDX: dffffc0000000000 RSI: ffffffff8beae6e0 RDI: ffffffff8c3fbb00
+RBP: ffffc90003d47168 R08: ffffffff93fa6847 R09: 1ffffffff27f4d08
+R10: dffffc0000000000 R11: fffffbfff27f4d09 R12: 1ffff920007a8e0c
+R13: dffffc0000000000 R14: ffffc90003d47080 R15: 0000000000000246
+ rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
+ rcu_read_lock include/linux/rcupdate.h:838 [inline]
+ filemap_get_entry+0x144/0x3b0 mm/filemap.c:1837
+ shmem_get_folio_gfp+0x29a/0x2370 mm/shmem.c:2104
+ shmem_fault+0x252/0x6f0 mm/shmem.c:2388
+ __do_fault+0x135/0x460 mm/memory.c:4672
+ do_read_fault mm/memory.c:5078 [inline]
+ do_fault mm/memory.c:5208 [inline]
+ do_pte_missing mm/memory.c:3964 [inline]
+ handle_pte_fault+0x321f/0x6fc0 mm/memory.c:5538
+ __handle_mm_fault mm/memory.c:5681 [inline]
+ handle_mm_fault+0x1056/0x1ad0 mm/memory.c:5849
+ faultin_page mm/gup.c:1194 [inline]
+ __get_user_pages+0x6ec/0x16a0 mm/gup.c:1493
+ populate_vma_page_range+0x264/0x330 mm/gup.c:1932
+ __mm_populate+0x27a/0x460 mm/gup.c:2035
+ mm_populate include/linux/mm.h:3430 [inline]
+ vm_mmap_pgoff+0x2c3/0x3d0 mm/util.c:593
  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7efc59f9fed9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff486e20c8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007efc59f9fed9
-RDX: 0000000020001240 RSI: 0000000020001200 RDI: 00000000200011c0
-RBP: 00007efc5a0195f0 R08: 0000000000000000 R09: 000055557fadd4c0
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff486e20f0
-R13: 00007fff486e2318 R14: 431bde82d7b634db R15: 00007efc59fe903b
+RIP: 0033:0x7f848877def9
+RSP: 002b:00007f848949c038 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 00007f8488936058 RCX: 00007f848877def9
+RDX: b635773f06ebbeee RSI: 0000000000b36000 RDI: 0000000020000000
+RBP: 00007f84887f0b76 R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000000008031 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f8488936058 R15: 00007ffd36b2c578
  </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:btrfs_recover_relocation+0x1b6f/0x1ba0 fs/btrfs/relocation.c:4375
-Code: 40 d1 fd eb 05 e8 c1 40 d1 fd 48 c7 c7 60 51 2d 8c 48 c7 c6 e0 52 2d 8c 48 c7 c2 e0 51 2d 8c b9 17 11 00 00 e8 02 ce eb 07 90 <0f> 0b e8 9a 40 d1 fd 48 c7 c7 60 51 2d 8c 48 c7 c6 00 52 2d 8c 48
-RSP: 0018:ffffc900033e76a0 EFLAGS: 00010246
-RAX: 0000000000000038 RBX: ffff88802918c048 RCX: 8c13e04592c8c800
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc900033e7830 R08: ffffffff8174016c R09: fffffbfff1cba0e0
-R10: dffffc0000000000 R11: fffffbfff1cba0e0 R12: dffffc0000000000
-R13: 0000000000000000 R14: ffffc900033e77a0 R15: ffff888027a8d160
-FS:  000055557fadc380(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+rcu: rcu_preempt kthread starved for 10184 jiffies! g41797 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
+rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:R  running task     stack:26448 pid:17    tgid:17    ppid:2      flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0x17ae/0x4a10 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6621
+ schedule_timeout+0x1be/0x310 kernel/time/timer.c:2581
+ rcu_gp_fqs_loop+0x2df/0x1330 kernel/rcu/tree.c:2034
+ rcu_gp_kthread+0xa7/0x3b0 kernel/rcu/tree.c:2236
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+rcu: Stack dump where RCU GP kthread last ran:
+CPU: 1 UID: 0 PID: 9590 Comm: syz.4.963 Not tainted 6.11.0-rc7-syzkaller-00149-g0babf683783d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:__bpf_trace_run kernel/trace/bpf_trace.c:2397 [inline]
+RIP: 0010:bpf_trace_run2+0x159/0x540 kernel/trace/bpf_trace.c:2447
+Code: 08 42 80 3c 30 00 74 08 48 89 df e8 81 a7 58 00 48 89 5c 24 38 48 8b 03 bb 01 00 00 00 65 0f c1 18 31 ff 89 de e8 f7 87 f4 ff <85> db 0f 85 b4 02 00 00 49 83 c5 70 4c 89 e8 48 c1 e8 03 42 80 3c
+RSP: 0018:ffffc9000318fde0 EFLAGS: 00000297
+RAX: 0000000000000002 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: ffff888026beda00 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000318fec8 R08: ffffffff819f08a9 R09: 0000000000000000
+R10: ffffc9000318fe40 R11: fffff52000631fca R12: ffffc90003b05000
+R13: ffff888033723100 R14: dffffc0000000000 R15: ffffc9000318fe40
+FS:  00007fc00c8a16c0(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000556f055030d8 CR3: 00000000693e0000 CR4: 00000000003506f0
+CR2: 000000110c3f657a CR3: 0000000088454000 CR4: 00000000003526f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ </IRQ>
+ <TASK>
+ trace_sys_enter+0x93/0xd0 include/trace/events/syscalls.h:18
+ syscall_trace_enter+0xf8/0x150 kernel/entry/common.c:61
+ syscall_enter_from_user_mode_work include/linux/entry-common.h:168 [inline]
+ syscall_enter_from_user_mode include/linux/entry-common.h:198 [inline]
+ do_syscall_64+0xcc/0x230 arch/x86/entry/common.c:79
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc00bb19869
+Code: 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 0f 1f 40 00 90 66 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 c7 c0 0f 00 00 00 0f 05 <0f> 1f 80 00 00 00 00 48 81 ec 48 01 00 00 49 89 d0 64 48 8b 04 25
+RSP: 002b:00007fc00c8a0b40 EFLAGS: 00000246 ORIG_RAX: 000000000000000f
+RAX: ffffffffffffffda RBX: 00007fc00bd35f88 RCX: 00007fc00bb19869
+RDX: 00007fc00c8a0b40 RSI: 00007fc00c8a0c70 RDI: 0000000000000011
+RBP: 00007fc00bd35f80 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc00bd35f8c
+R13: 0000000000000000 R14: 00007ffc51e12cf0 R15: 00007ffc51e12dd8
+ </TASK>
 
 
 ---
@@ -169,14 +196,9 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
