@@ -1,337 +1,153 @@
-Return-Path: <linux-kernel+bounces-333849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6DE97CEE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:51:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5E097CEE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42C82B2244B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:51:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73D11283AA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F7C17E015;
-	Thu, 19 Sep 2024 21:51:23 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184AE17ADE9;
+	Thu, 19 Sep 2024 21:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a06UjLzx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406ED16B3B7;
-	Thu, 19 Sep 2024 21:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3DDE1946C2;
+	Thu, 19 Sep 2024 21:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726782681; cv=none; b=jtrZfBYKh+uOjLGAqeKuFtScJwC4jz+rvcTVuhBlfwizELWB6Nc9XNNtmkbC5Bby9nh9suBKzTqzffHJ4skt0Q75Hk8x7AcKYHw0YK9dsxVdEjU19veTikUlTY8pGFfezl9P6JK6/Rg7b7xxzLefjgAIj2TaB/6ap5NCkzc0sOI=
+	t=1726782755; cv=none; b=Y7ymDPtRr/CB529iyIsfEURVnYta+sgzB1PDW1galNHg9/TZphFqzqCGo21Sh5NGxJoKOaVoxNCvVTylZ8HYkzvK4Rjix0BAm/0GZloZhg51Y6NddMgu117fZsdibcMu/I3SuB1wtO6M1NRrAD8FQg6HCjTTGVe34cXoPZfGa4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726782681; c=relaxed/simple;
-	bh=rHCSz90r5D1fX+SeHXTz5R+EPa2N6LsxuyaozkGa/8M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ioIlDGn6SqCUmWCStbc2pyluKY2utrVdM2YOigH5P/cbV6KA43IZPrit888p0/yXVlv5Yk7xcCnOi8HZGSCDF0X1rjQ9rZoZBKh+pLJJAanr0OAgSeDw6bcKs+d1WmybOVSP1zQ+eAF+dV+7nRMwk1ZPAEuSNrmwOOlHnw17Uhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=permerror (bad message/signature format); arc=none smtp.client-ip=198.175.65.9
-X-CSE-ConnectionGUID: XE1TYbJnThO7ZAlLP9mk2g==
-X-CSE-MsgGUID: MWlOLKjATQe0NHL2HBpC6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="48305708"
+	s=arc-20240116; t=1726782755; c=relaxed/simple;
+	bh=RHCftHVh0VYEKLZvIPJy7UQLlCOcdazq8yCwXdgPsvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=vCZZ1AbXaV+8j8Mt3C7ARiqgvKVF2Oc/oWn+UCBjYyJpVGRC6Ur5CLqi0BuanE0CPcdxHWQ0CngGb9HDhGAsEGX9UUuN8yz6I2dJ5ZfUClP3NfTueo4NhlNelX4xsXeELseRW8B+D2eAFi5i5BDVdajJCzgTii27vABOiDkGcCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a06UjLzx; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726782754; x=1758318754;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=RHCftHVh0VYEKLZvIPJy7UQLlCOcdazq8yCwXdgPsvU=;
+  b=a06UjLzxOfUuF9TmLf4PnaKl3F1PZXN8eNQRjfdLjV1+sR2BK69wp0Io
+   jn2+vC8cfoCzKVKFs8wCY3YJINhbZ5/q23mGfX25p4gSI+E+Ak0MkSbrP
+   FnP4rTlmC9ZAhiSdpYT+WX/BZxvCUylgaqwLDliih69fF27Yx+h+/Fyka
+   sT2HqBwF22vt1UNxaXVz4tdxl50L2brvnftaBuMnieCknhTucRyhTP4IJ
+   MKQFrg5QEDewsXyhAHgvVZ0Is8Xwdgc6hkXa6NFMad0qsuXDrSrOYOK+z
+   qzOooAF1CCX3j4KdvmJr8XgyBHbaVfuPsD2dj09xbee8ZIQ4aAyiyC5um
+   w==;
+X-CSE-ConnectionGUID: YMz+nwHgSqGTZworDVsn7Q==
+X-CSE-MsgGUID: jIYY2LYFTsSo/2WdSZaCEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="25870746"
 X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
-   d="scan'208";a="48305708"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2024 14:51:19 -0700
-X-CSE-ConnectionGUID: 63IdjRF4Rpuv/ZkmBww4tg==
-X-CSE-MsgGUID: B/SxFBEoTuSlEV5kl0f6CQ==
+   d="scan'208";a="25870746"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2024 14:52:34 -0700
+X-CSE-ConnectionGUID: CGgwDlO/S7WcXIlSY+Y4ZA==
+X-CSE-MsgGUID: M+l5qJ78Tt+9fXBEU4UVMQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
-   d="scan'208";a="74866721"
-Received: from b04f130c8410.jf.intel.com ([10.165.154.100])
-  by orviesa003.jf.intel.com with ESMTP; 19 Sep 2024 14:51:19 -0700
-From: Stefan@web.codeaurora.org, Ene@web.codeaurora.org
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: vinicius.gomes@intel.com,
-	stefan.ene@intel.com,
-	stef_an_ene@outlook.com
-Subject: [RFC v1 3/3] C and Rust support for perf script
-Date: Thu, 19 Sep 2024 14:51:04 -0700
-Message-ID: <20240919215107.2263552-5-stefan.ene@intel.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240919215107.2263552-2-stefan.ene@intel.com>
-References: <20240919215107.2263552-2-stefan.ene@intel.com>
+   d="scan'208";a="74862540"
+Received: from trevorcr-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.197])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2024 14:52:33 -0700
+Date: Thu, 19 Sep 2024 14:52:31 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Kaplan <David.Kaplan@amd.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: [PATCH RFC 0/2] Selective mitigation for trusted userspace
+Message-ID: <20240919-selective-mitigation-v1-0-1846cf41895e@linux.intel.com>
+X-B4-Tracking: v=1; b=H4sIAIyc7GYC/x3MTQqAIBBA4avErBNMpKht0AHaRgu1yQb6Q0WC8
+ O5Jy7f43gseHaGHrnjBYSRP15mjKgswmzotMlpyg+BC8rZqmccdTaCI7KBAVoUMWL1wYaTWuhE
+ aMr0drvT82wnGoYc5pQ/qSdgKawAAAA==
+X-Mailer: b4 0.14.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Stefan Ene <stefan.ene@intel.com>
+Hi,
 
-[PATCH 3/3] added the Rust sample script
+This is an experimental series exploring the feasibility of selectively
+applying CPU vulnerability mitigations on a per-process basis. The
+motivation behind this work is to address the performance degradation
+experienced by trusted user-space applications due to system-wide CPU
+mitigations.
 
+Currently, the mitigations are applied universally across the system,
+without discrimination between trusted and untrusted user-space processes.
+This results in a performance penalty for all applications, regardless of
+their trustworthiness. The proposed solution aims to provide a mechanism
+for system administrators to explicitly mark certain applications as
+trusted, allowing them to bypass these mitigations and regain lost
+performance.
+
+The series introduces a new cgroup attribute and a separate kernel
+entry/exit path that can be used to selectively disable CPU mitigations for
+processes that are deemed trustworthy by the system administrator. This
+approach provides a tool to the administrator who understands the security
+implications and is aware of trustworthiness of the applications that they
+care.
+
+The rationale for choosing the cgroup interface over other potential
+interfaces, such as LSMs, is cgroup's inherent support for core scheduling.
+Core scheduling allows the grouping of tasks such that they are scheduled
+to run on the same cores. By leveraging core scheduling, we can minimize
+the performance overhead caused by the MSR writes during context switching
+between trusted and untrusted processes. With the end goal being trusted
+and untrusted processes run on separate cores, enhancing the security.
+
+Patch 1 adds the unmitigated entry/exit path.
+Patch 2 provides a cgroup knob to bypass CPU mitigations.
+
+This series is lightly tested. Feedback and discussion are welcome.
+
+TODO:
+- Add CONFIG_MITIGATION_PER_PROCESS
+- Add support for skipping other mitigations like RSB filling.
+- Update suspend/resume paths to handle the new entry/exit path.
+- Should child processes inherit the parent's unmitigated status?
+- Add documentation.
+
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 ---
- tools/perf/new_script_templates/README   |  61 +++++++++++--
- tools/perf/new_script_templates/lib.rs   | 108 +++++++++++++++++++++++
- tools/perf/new_script_templates/script.c |   6 ++
- tools/perf/util/new_script_rs_lib.h      |  35 ++++++++
- 4 files changed, 204 insertions(+), 6 deletions(-)
- create mode 100644 tools/perf/new_script_templates/lib.rs
- create mode 100644 tools/perf/util/new_script_rs_lib.h
+Pawan Gupta (2):
+      x86/entry_64: Add a separate unmitigated entry/exit path
+      cpu/bugs: cgroup: Add a cgroup knob to bypass CPU mitigations
 
-diff --git a/tools/perf/new_script_templates/README b/tools/perf/new_script_templates/README
-index c2a55a65d444..f16a9759d37e 100644
---- a/tools/perf/new_script_templates/README
-+++ b/tools/perf/new_script_templates/README
-@@ -2,15 +2,64 @@ Linux kernel additions for C and Rust script support inside the perf-script tool
- 
- Steps to use new feature:
- 
--    First, use the provided update_perf_tools.sh script to make sure your perf toolset is up to date with the latest implementation:
--        $ bash update_perf_tools.sh
-+    First, use run the following lines to make sure your perf toolset is up to date with the latest implementation:
-+        $ cd ./tools/perf/
-+        $ make
-+        $ sudo cp perf /usr/bin
-+        $ perf --version
-+    Now, you can make use of our new features!
-+
- 
-     a) For C scripts:
--        1. Use the default C template test.c to write your own custom perf event processing
-+        1. Use the default C template in tools/perf/new_script_templates/script.c to write your own custom perf event processing
- 
-         2. Compile the C script into a dynamic library using the following two commands:
--            $ gcc -c -I ~/include -fpic new_script_templates/script.c
--            $ gcc -shared -o test.so new_script_templates/script.o
-+            $ gcc -c -I ~/include -fpic script.c
-+            $ gcc -shared -o script.so script.o
- 
-         3. Call the new perf script option to use the newly created .so file using the command:
--            $ sudo perf script --new_script new_script_templates/script.so
-\ No newline at end of file
-+            $ sudo perf script --new_script script.so
-+
-+
-+     b) For Rust scripts:
-+          1. Create a new Rust project using Cargo:
-+               $ cargo new rslib_script --lib
-+               $ cd rslib_script
-+          
-+          2. In the Cargo.toml file, specify the crate type as a dynamic library as follows:
-+               [lib]
-+               crate-type = ["cdylib"]
-+          
-+          3. Use the default Rust template in tools/perf/new_script_templates/lib.rs to write your own custom perf event processing, and store it into src/lib.rs inside of the Rust project folder.
-+
-+          4. Compile the Rust project using Cargo:
-+               $ cargo build --release
-+          
-+          5. Call the new perf script option to use the newly created /target/release/librslib.so within the Rust project using the followig command:
-+               $  sudo perf script --new_script rslib/target/release/librslib.so
-+
-+Enjoy using the new scripting languages for an added bonus of usability and performance over the existent Python and Perl options in the upstream kernel code. 
-+
-+
-+<!-- ============================= -->
-+
-+This section contains some initial benchmark results on the Intel Lab machine using the perf script tools on a 4026869-byte perf.data file.
-+
-+Process ----- Time
-+
-+> Perf tool vanilla:
-+perf script raw: 1.425s
-+perf script names: 0.915s
-+perf script Python: 1.334s
-+perf script Perl: 2.210s
-+
-+
-+> Pre-optimizations:
-+new_script raw C: 0.284s
-+new_script raw Rust: 0.607s
-+
-+> Post-optimizations:
-+new_script raw C batch=1MB: 0.306s 
-+new_script raw C batch=2MB: 0.301s 
-+new_script raw C batch=4MB: 0.296s 
-+new_script raw Rust batch=1MB: 0.262s
-\ No newline at end of file
-diff --git a/tools/perf/new_script_templates/lib.rs b/tools/perf/new_script_templates/lib.rs
-new file mode 100644
-index 000000000000..1249d9e9099b
---- /dev/null
-+++ b/tools/perf/new_script_templates/lib.rs
-@@ -0,0 +1,108 @@
-+// Stefan Ene's code, under Intel - Linux Kernel Team
-+/*
-+ * code for new perf script custom C script template
-+ *
-+ */
-+
-+ use std::os::raw::{c_char, c_int, c_void};
-+ use std::slice;
-+ use std::fmt::Write;
-+ 
-+ // =================== Needed stuff, DO NOT CHANGE ===================
-+ 
-+ #[repr(C)]
-+ struct NewScript {
-+     file: *mut c_char,
-+     handle: *mut c_void,
-+ 
-+     begin: extern "C" fn(*mut c_void, *mut c_void),
-+     end: extern "C" fn(*mut c_void, *mut c_void),
-+ 
-+     process_file_header: extern "C" fn(*mut c_void, *mut c_void) -> c_int,
-+     process_event_header: extern "C" fn(*mut c_void, *mut c_void) -> c_int,
-+     process_event_raw_data: extern "C" fn(*mut c_void, c_int, *mut c_void) -> c_int,
-+ }
-+ 
-+ #[repr(C)]
-+ struct ProcessedFileHeader {
-+     size: u64,
-+     data_size: u64,
-+     data_offset: u64,
-+ }
-+ 
-+ #[repr(C)]
-+ struct ProcessedEventHeader {
-+     event_type: u32,
-+     misc: u16,
-+     size: u16,
-+ }
-+ 
-+ //  =================== Editable funtions begin ===================
-+ 
-+ #[no_mangle]
-+ pub extern "C" fn print_begin(_data: *mut c_void, _ctx: *mut c_void) {
-+     println!(">> in trace_begin with Rust");
-+ }
-+ 
-+ #[no_mangle]
-+ pub extern "C" fn process_file_header(data: *mut c_void, _ctx: *mut c_void) -> c_int {
-+     if data.is_null() {
-+         println!("> Error dynamically processing file header");
-+         return -1;
-+     }
-+ 
-+     let fh = unsafe { &*(data as *const ProcessedFileHeader) };
-+ 
-+     println!("\nFile header: size={:x}, data.size={}, data.offset={}", fh.size, fh.data_size, fh.data_offset);
-+ 
-+     0
-+ }
-+ 
-+ #[no_mangle]
-+ pub extern "C" fn process_event_header(data: *mut c_void, _ctx: *mut c_void) -> c_int {
-+     if data.is_null() {
-+         println!("> Error dynamically processing event header");
-+         return -1;
-+     }
-+ 
-+     let evh = unsafe { &*(data as *const ProcessedEventHeader) };
-+ 
-+     println!("\nRS Event header: size={}, type={}, misc={}", evh.size, evh.event_type, evh.misc);
-+ 
-+     0
-+ }
-+ 
-+ #[no_mangle]
-+ pub extern "C" fn process_event_raw_data(data: *mut c_void, size: c_int, _ctx: *mut c_void) -> c_int {
-+     let byte_data = unsafe { slice::from_raw_parts(data as *const u8, size as usize) };
-+     let mut output = String::new();
-+ 
-+     for (i, &byte) in byte_data.iter().enumerate() {
-+         if i % 16 == 0 {
-+             output.push('\n');
-+         }
-+         write!(&mut output, "{:02x} ", byte).unwrap();
-+     }
-+ 
-+     println!("{}", output);
-+     0
-+ }
-+ 
-+ #[no_mangle]
-+ pub extern "C" fn print_end(_data: *mut c_void, _ctx: *mut c_void) {
-+     println!("\n>> in trace_end");
-+ }
-+ 
-+ // =================== Needed stuff begin, DO NOT CHANGE ===================
-+ 
-+ #[no_mangle]
-+ pub extern "C" fn initialize_new_script(s: *mut NewScript) {
-+     if !s.is_null() {
-+         let script = unsafe { &mut *s };
-+         script.begin = print_begin;
-+         script.end = print_end;
-+         script.process_file_header = process_file_header;
-+         script.process_event_header = process_event_header;
-+         script.process_event_raw_data = process_event_raw_data;
-+     }
-+ }
-\ No newline at end of file
-diff --git a/tools/perf/new_script_templates/script.c b/tools/perf/new_script_templates/script.c
-index e4942ba689db..787f67424d5e 100644
---- a/tools/perf/new_script_templates/script.c
-+++ b/tools/perf/new_script_templates/script.c
-@@ -1,3 +1,9 @@
-+// Stefan Ene's code, under Intel - Linux Kernel Team
-+/*
-+ * code for new perf script custom C script template
-+ *
-+ */
-+
- #include <stdlib.h>
- #include <stdio.h>
- 
-diff --git a/tools/perf/util/new_script_rs_lib.h b/tools/perf/util/new_script_rs_lib.h
-new file mode 100644
-index 000000000000..4a8d6f71b122
---- /dev/null
-+++ b/tools/perf/util/new_script_rs_lib.h
-@@ -0,0 +1,35 @@
-+// Stefan Ene's code, under Intel - Linux Kernel Team
-+/*
-+ * new_script_lib_rs.h: header file for new_script Rust FFI
-+ *
-+ */
-+
-+#ifndef NEW_SCRIPT_LIB_RS_H
-+#define NEW_SCRIPT_LIB_RS_H
-+
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
-+#include <stdint.h>
-+
-+// Match the struct definitions with the Rust code
-+struct NewScript {
-+    char		*file;
-+    void        *handle;
-+
-+    void (*begin)(void *data, void *ctx);
-+	void (*end)(void *data, void *ctx);
-+
-+    int (*process_file_header)(void *data, void *ctx);
-+    int (*process_event_header)(void *data, void *ctx);
-+    int (*process_event_raw_data)(void *data, const int size, void *ctx);
-+};
-+
-+void initialize_new_script(struct NewScript* s);
-+
-+#ifdef __cplusplus
-+}
-+#endif
-+
-+#endif // NEW_SCRIPT_LIB_RS_H
-\ No newline at end of file
+ arch/x86/entry/entry_64.S        | 66 +++++++++++++++++++++++++++++++++-------
+ arch/x86/include/asm/proto.h     | 15 ++++++---
+ arch/x86/include/asm/ptrace.h    | 15 ++++++---
+ arch/x86/include/asm/switch_to.h | 10 ++++++
+ arch/x86/kernel/cpu/bugs.c       | 21 +++++++++++++
+ arch/x86/kernel/cpu/common.c     |  2 +-
+ include/linux/cgroup-defs.h      |  3 ++
+ kernel/cgroup/cgroup.c           | 42 +++++++++++++++++++++++++
+ kernel/sched/core.c              |  2 +-
+ 9 files changed, 155 insertions(+), 21 deletions(-)
+---
+base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+change-id: 20240919-selective-mitigation-6d02c4bbb72b
+
 -- 
-2.46.0
+Thanks,
+Pawan
 
 
