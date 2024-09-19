@@ -1,144 +1,101 @@
-Return-Path: <linux-kernel+bounces-333153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF95C97C49D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:00:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 055BF97C4A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A72631F23509
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:00:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 375151C22818
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4415B1917FC;
-	Thu, 19 Sep 2024 07:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EE3191F6D;
+	Thu, 19 Sep 2024 07:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="db5wc1eY"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sE41oxpk"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856241917CC
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 07:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CB41917E3;
+	Thu, 19 Sep 2024 07:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726729251; cv=none; b=R0xm/FjiN0eNxKHcWHa/c7zA3heDSnWxEjsKPtlR+EUksqgGbgfQL47IlSLJiEpZAOd4RsOCMIHii7yQIqX1wS5lJhno/tpa2Nzcf3GD4N3K0N/wtujipDadypXv8TtrGMaU+rPMD6KGBDqkrxjhaheBoipaZwVYpxCJgaRSqDw=
+	t=1726729687; cv=none; b=f1QO7z3UTO5SVKYJERo+evbeV5+Wkp9iJpYElZJhuxXhmZx/T3DZGkC2ks4b+v7CEO91K+1twnZdedyZ3/Vu1V9jk47U2zMrof1t0b093HApRTNB6rysHbrcNqDPdP7QUV9Pt1bQ3tIHqeNlGp0snR2mwfYg3K3nGvkThy6lVoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726729251; c=relaxed/simple;
-	bh=ZlYyNBZ5P0ktQm8Ew7h76SoUodYtlPun2q8Ur1DRt9o=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=U0rSe7l9p436efSJBSP1i68zYxpU3DpAUW9AEdc6YBfs3z1bAfAsfj4Yq5UKnyDARyIGrCvqEOVSURCDM8cJujRHMqjYvLhfd8L+Y3YRqfVwtY2QiWuUYbZREtB2LE6iOni6iukVCkfIK1+arS8URPfY/RYFlikoAL+r7pEYowI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=db5wc1eY; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374c3400367so358670f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 00:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1726729248; x=1727334048; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iXTjk3MDehwblSiBjUQKz60Il4rt1YUNHjH5GGI6KiM=;
-        b=db5wc1eYQTZCBjDsjBpfLmNrtcUJjLCJfsDZtz1PgPMb9vS4pNMItLzCHKWNPgU3xJ
-         Nkw673SB9AmPpJjLGLfAq1KpPdPsqznMQGTU5Kea3q7oMrSB7qTH0w5oo7/Wb9IPgevc
-         J3bIiLB2B+yoy2GFZCB+15ZlLwR98Tyg0qk+gpkeS4Ru2jgsfvGYhJMzC4VSRj2iO5dG
-         Baiv6cQPdGJ+6nf+F1BqbCCJMuWGGRf5z0rH+XDOE6kRr7smtqXeK6GDJspOZrvL7IIm
-         siV9UNa/I1WXwuGtBS0ATcLZvtmSELeBdz36w8bBPECGrjelGndQEnEJ3ZlAkdPvdue1
-         PBsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726729248; x=1727334048;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iXTjk3MDehwblSiBjUQKz60Il4rt1YUNHjH5GGI6KiM=;
-        b=CB93BwQ108f/F8U9WZd8nqgAmak9m2zPhy/ARENYaDFKSdMfBpqB2aW5nbalRzVwT3
-         u2D/dnl4wef6yMRNZyLqQbbr79dc5P9253fGSL5lhucCM2Y7cdzFWkCTrJcJmxF74feO
-         qy9rS5EeW+Jy1hjDSV5aUWmTu3puWV/0fZ2S193QdX8x0XLq5NkRH8cyWsdeHBU9CUVt
-         TX/ZFbm6ue0ZDm3ceNMveecrDu/30xqCSt1y1j7c/L53Rmi1syV9xclnjb61tkjxVbT7
-         Y3R/C32cdvGw0DKpGwo0qpv89a232XTO/nBDr5Vug93pHmswmDd5sovKZSujvlp8aGvS
-         gPuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8DUYCWS7j1cV1V+sc98d5ZVw/LGMR27uDQmhqJnahKQkTIfvruCpBqaJlK1LKa0ylkcs38OO9omWMnJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkBMzMC614LZQ+2D74gXUp2+e+0XSc49FeDJEcUQL9qFnvID0k
-	+EShPlA8ZkLEibaTyfQWgovmeZE4cYu9selv/bGKJhrw88SLMmJFBTxLbf0lFSI=
-X-Google-Smtp-Source: AGHT+IGZFFs5GQZVRNRIAHLuv8CZrQv/FXme+c78MPRgdmwHEZgUe9prJacZdcvc7PMm6QqyWHoGiA==
-X-Received: by 2002:a5d:6a84:0:b0:371:8dd3:27c8 with SMTP id ffacd0b85a97d-378d61e2b0emr17599903f8f.23.1726729247809;
-        Thu, 19 Sep 2024 00:00:47 -0700 (PDT)
-Received: from localhost (2a02-8388-6584-6400-d322-7350-96d2-429d.cable.dynamic.v6.surfer.at. [2a02:8388:6584:6400:d322:7350:96d2:429d])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90613205b8sm674839866b.188.2024.09.19.00.00.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Sep 2024 00:00:47 -0700 (PDT)
+	s=arc-20240116; t=1726729687; c=relaxed/simple;
+	bh=AsoeLMkPtuAQtZwZldBkjJAV1+R8rg7d1q3UbPWQK8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=gIsjlzGpG44lHsk225V2agXQBRjRQqgxWB8OaDL16M4Fd4IZZl3XiBpiqjLHP5HIx0XzJStBLvSIPQRgyb0/YrBumxvzyRk2PHrpJbMyLMUk5ST31Km+CPGKq/5hfUjQr5MG246mkP7MiauioGTd1cN+RbyZij7WTOw+RiwRBUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sE41oxpk; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726729678; x=1727334478; i=markus.elfring@web.de;
+	bh=cGs2WqBpNcN5WRBfx28twMu1pLAft+cuvXGRLFsvlyA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:Cc:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=sE41oxpk+nMJ/NwUVbtFrmhxuD5ZugCYz8owI2zxraUc6xQcE++VNhTFJhi7dPz9
+	 GH06SRdT00W5t/a6kprmfBh1L/U3BblaTRAaoiXIvYGScN+m/ujyMwf82dWgiFRCa
+	 rQkmR9b8mrxgYA4UfDuKIs7Me08CXACNF+PcmyvaoOkNtI3+k3/TvXt8W+Ub05Uvr
+	 kCIF42gdhDC3i+AKcmJoPBsvYgNnTFu33yDmWZk/61GvmW5LVtdTT8JO9os/2XWBP
+	 9VmXlCSo9EKZhMemSaQZhlRKWjD+qQ3qOM5h6nbbvY8tvP+hNZ22e6vaHgPDjFHTJ
+	 Ydx+0VLimmzM7RJD+g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MXoca-1sU3Bf1arU-00JdG1; Thu, 19
+ Sep 2024 09:01:39 +0200
+Message-ID: <f8bab255-7e50-44cd-9476-882dd95ad9b8@web.de>
+Date: Thu, 19 Sep 2024 09:01:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cocci] [v3 01/10] coccinelle: Add rules to find str_true_false()
+ replacements
+To: Julia Lawall <julia.lawall@inria.fr>, cocci@inria.fr,
+ linux-hardening@vger.kernel.org, Hongbo Li <lihongbo22@huawei.com>
+References: <20240911010927.741343-1-lihongbo22@huawei.com>
+ <20240911010927.741343-2-lihongbo22@huawei.com>
+ <2aefba9e-f04e-4ee6-60cb-a139c0641ff1@inria.fr>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy@kernel.org>,
+ Kees Cook <kees@kernel.org>, Nicolas Palix <nicolas.palix@imag.fr>
+In-Reply-To: <2aefba9e-f04e-4ee6-60cb-a139c0641ff1@inria.fr>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 19 Sep 2024 09:00:46 +0200
-Message-Id: <D4A2FKPTXHS5.3AHU7ZEKFVMGG@fairphone.com>
-Cc: "Marijn Suijten" <marijn.suijten@somainline.org>,
- <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Konrad Dybcio" <quic_kdybcio@quicinc.com>
-Subject: Re: [RFC PATCH 00/11] Affirm SMMU coherent pagetable walker
- capability on RPMh SoCs
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Konrad Dybcio" <konradybcio@kernel.org>, "Bjorn Andersson"
- <andersson@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- <cros-qcom-dts-watchers@chromium.org>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20240919-topic-apps_smmu_coherent-v1-0-5b3a8662403d@quicinc.com>
-In-Reply-To: <20240919-topic-apps_smmu_coherent-v1-0-5b3a8662403d@quicinc.com>
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:jEqiU0gukV4uEXAi+gshd8WqxAVEdRjHEbKB0XRk/Y8E/F/GU5y
+ NE9EKVwuaO4aJjAS6Xw+55jP1l5XKs5rpcOVJn5xi4roc0fYPsl7jMBVMX5g/Ev2horjeS+
+ nNSRs4bk1G9Ee1IYNRKcmggn2Vo32BTyrkhY3GyaynM4y+g3arcGUnLQx8UDRktmt5Lgfop
+ UImmm4QRx3ZQk9NHhiFeA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:huDVqKXeBJQ=;NaJruPCZunXNqMMwL9Q05MAD0Lz
+ QIJuR3n4wddmg3FxfpWi+IF1GuJINt5eHf3mPy10bvSqAv6VLC81RMur7nhulFoz7cHqxfhid
+ qhutfwodp3iS6zlc2wSoQz1mmN55J/Wxa56jhUGgwRz+cykle5zWwyYfM5myxWcs4DrHMTVKb
+ 93wNHsDkf/jhHp3KtkpNbd3/6Ag43tHEqRONCW4rygofWNZpTSdzaEX2Gz/7fK/f8jOMTifJV
+ ROstlKEmP7v2JpzDq3FgCCziguamjzE01itHBZRL2SWttaL6w8JJm6+XHog0HmzFiSQKG1xr6
+ LiBBeFi8gZMBCO2HHm7/MwuvVZxl4rGnqamaCDR5Qklo1vgL1JtQhepWUHSwXwdGmUQQf8gxA
+ bRedJOw6Z6tX5gVWzoR0ueqGEIZkY29N8l0IB+KrEYNB+LUzK9quCNf7cU1nD23gDsIfO7ii0
+ iCrJBAsE9Y7oPUzUrK0mVVK/M/HyeIIIBNRoOv1DHmMHIJi4ljFyMbSJM1m3cnuNgP88S8iKc
+ 7ZPjfd0mMXK7RY7NA0++xRyJNOf2wZanWkWVh2Z5vd6gM9u3Cv3F9BQC5UT4ilVf7muKf8AhA
+ UPqSL8YK3DF1zPeLL94lPp3nzH+rEZhTUvv8fRfOkEO6GmiYLqKZUEWqOKZbKb+QVTxMLkZeK
+ uhxKUe7DrRtyk8T8WoVIwbDRMYte3v9kiVSzljY8MFYPLgf48ICdhGe399W9Oi0b+OlrnRxqk
+ IlFkV5VJMn1ic5k/TWp2r/PcSN4Fi7HA7I0+IGQvfF9qKB4TDdLXyB2Sb7QDH5u+csBIbyJnZ
+ ixkJz5urrLkXXuv/xixjDGpA==
 
-On Thu Sep 19, 2024 at 12:57 AM CEST, Konrad Dybcio wrote:
-> I only read back the SMMU config on X1E & 7280, but I have it on good
-> authority that this concerns all RPMh SoCs. Sending as RFC just in case.
->
-> Lacking coherency can hurt performance, but claiming coherency where it's
-> absent would lead to a kaboom.
+> The semantic patch is quite slow.  Actually it tests a large number of
+> cases, eg where the parentheses are present and where they are not.
 
-Hi Konrad!
+Can such development concerns trigger any adjustments for further
+coccicheck configurations and provided SmPL scripts?
 
-You want people with the affected SoCs to test this I imagine?
-
-Just boot it and see if it doesn't implode, or do you have any more
-elaborate test plan for this?
-
-Regards
-Luca
-
->
-> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
-> ---
-> Konrad Dybcio (11):
->       arm64: dts: qcom: qdu1000: Affirm IDR0.CCTW on apps_smmu
->       arm64: dts: qcom: sc7180: Affirm IDR0.CCTW on apps_smmu
->       arm64: dts: qcom: sc8180x: Affirm IDR0.CCTW on apps_smmu
->       arm64: dts: qcom: sc8280xp: Affirm IDR0.CCTW on apps_smmu
->       arm64: dts: qcom: sdm670: Affirm IDR0.CCTW on apps_smmu
->       arm64: dts: qcom: sdm845: Affirm IDR0.CCTW on apps_smmu
->       arm64: dts: qcom: sm6350: Affirm IDR0.CCTW on apps_smmu
->       arm64: dts: qcom: sm8150: Affirm IDR0.CCTW on apps_smmu
->       arm64: dts: qcom: sm8350: Affirm IDR0.CCTW on apps_smmu
->       arm64: dts: qcom: sm8450: Affirm IDR0.CCTW on apps_smmu
->       arm64: dts: qcom: x1e80100: Affirm IDR0.CCTW on apps_smmu
->
->  arch/arm64/boot/dts/qcom/qdu1000.dtsi  | 1 +
->  arch/arm64/boot/dts/qcom/sc7180.dtsi   | 1 +
->  arch/arm64/boot/dts/qcom/sc8180x.dtsi  | 2 +-
->  arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 1 +
->  arch/arm64/boot/dts/qcom/sdm670.dtsi   | 1 +
->  arch/arm64/boot/dts/qcom/sdm845.dtsi   | 1 +
->  arch/arm64/boot/dts/qcom/sm6350.dtsi   | 1 +
->  arch/arm64/boot/dts/qcom/sm8150.dtsi   | 1 +
->  arch/arm64/boot/dts/qcom/sm8350.dtsi   | 1 +
->  arch/arm64/boot/dts/qcom/sm8450.dtsi   | 1 +
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 2 ++
->  11 files changed, 12 insertions(+), 1 deletion(-)
-> ---
-> base-commit: 55bcd2e0d04c1171d382badef1def1fd04ef66c5
-> change-id: 20240919-topic-apps_smmu_coherent-070f38a2c207
->
-> Best regards,
-
+Regards,
+Markus
 
