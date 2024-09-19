@@ -1,171 +1,112 @@
-Return-Path: <linux-kernel+bounces-333263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D8F97C61A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:44:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3016E97C614
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 918EE281DB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:44:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E49281D40
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D541991B2;
-	Thu, 19 Sep 2024 08:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12149198A30;
+	Thu, 19 Sep 2024 08:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="ZGm/K6zK"
-Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WBvv6hDY"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C89319408B;
-	Thu, 19 Sep 2024 08:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.143.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C297519408B
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 08:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726735447; cv=none; b=gzjh0x2sF0UCA9FGspxo0EQ+wfKCmU5tOEMDUHu408n+pmYYXFadY1FchPJczaO7J3OyrGSUVSsOoSeoC27dy29dVi0NHC2RIVup8RhX3Ut+2tJRnsKw/rM5bRt1eM2AtRwfbII+WPW2p+bAeS/C1xna5TDLaKSCTVskGHrjW70=
+	t=1726735364; cv=none; b=JY8dzCGcqCY3TtDu1b1kv2xIi3OGG54yf/rzmksOOvq9wPDjbb5Bg07Uh6pGyrsCGSDS8O9SwkCddGQ3X/81N7xp27WszuAHfRaS0MAwuHDMKOOHcot1PoionaAeFcNXLbqVJq4bwoAJ9W2Y35DCzSRQmhVMx9rCXAZtIAobkdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726735447; c=relaxed/simple;
-	bh=vgWlXIIODT5FR5QzYPKyO4RY8gbXOj2gG7v3YbL+nfE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uNgI+85slUS1XnY9JZ+GUSnsrLWYMPRRq/qQn1xxZ57IN3pk/hiipgzhIcZtqXZG+GJfS6Cc+7YSGghEYrtrZTdTvDfpCcfGvDT+IIePmVt9fdF4EvkBANjTD+haMkSOPDsopSLOI4SrMdj6Vl4aBEaaD9Qm4+DAkqkv6GSUf7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=ZGm/K6zK; arc=none smtp.client-ip=68.232.143.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1726735444; x=1758271444;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=vgWlXIIODT5FR5QzYPKyO4RY8gbXOj2gG7v3YbL+nfE=;
-  b=ZGm/K6zKslhvvVceCIp6cM1xNobznZVdSGgs8OpK30bV8tpMGWnHvr3s
-   tEtCjiAewXjsLxRQeuLvvoNqcstVho25JU1x+1g/zgVrFUN3c2ljmUQer
-   gH3o6pdHytQSUeXo2oVw798qreEOCJNAb904o99Jz+YFaxz+4JgEdv8L/
-   qXrBpqvd38FYNNfcghhyKjrRKtfp8aVdbtsfo8VeNh/hdEIggvngh48aW
-   w5bnMdQpCgrU3DlC62G+SizSeo9BuPsTd5h39GwJQV+EYTs1lAnPtBjUw
-   vpu/gwelJa1ytB23Id+crxSf9SzJ0enqz3trXs7MldTZ03XcZ7lHBLTv4
-   g==;
-X-CSE-ConnectionGUID: wN62j8SwSJyUcCxXpwTOlw==
-X-CSE-MsgGUID: qXZYHRTnT06CuHoJ6rHI6Q==
-X-IronPort-AV: E=Sophos;i="6.10,241,1719849600"; 
-   d="scan'208";a="27426777"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 19 Sep 2024 16:43:55 +0800
-IronPort-SDR: 66ebd61c_85py7IKN2EaVDuEmGC2Tj7lNKwioe/SazL9MCVd517bc+7A
- k7c+68TxLrCHMM0e4xrhilDVZn6Sr8fByse0m1g==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Sep 2024 00:43:25 -0700
-WDCIronportException: Internal
-Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Sep 2024 01:43:54 -0700
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH v3] scsi: ufs: Zero utp_upiu_req at the beginning of each command
-Date: Thu, 19 Sep 2024 11:41:55 +0300
-Message-Id: <20240919084155.17004-1-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1726735364; c=relaxed/simple;
+	bh=AjvG9wYB2Zlm9ATKMGYH7jIuHXZ4cewAANEtE/mytYs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kmu4CpOmcTHtI/u3dbo0Inwu1FbYVHgwxlPJSgJ8gn0QSzpIq5QIn9qm6hVw61lbiyHZNjjnhc2KwygRE5nFW4rs5TQEau7xhv1Ken/m7Z3DmTkGHclZzmTdQcCGqFIBj45ueagI55pJpG976XVrkeFTfUVLOAPH4ceZutH3T/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WBvv6hDY; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6dde476d3dfso4551597b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:42:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1726735362; x=1727340162; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=slAQXs/8gsxb/7jYrM0cb/6jV3C3g1UiOusXI9+lqus=;
+        b=WBvv6hDYqWJzsd7do6x8DUYv/xVgPBysvzncZ1sDFstwYZ9Pih6qzyjGAg/7r/G1Gz
+         hSROK9dspICy+8Gfh9de0A/7TlCW6vKI5dEQJOhi/sv3kYYRBIVFLBIrh45NAcCKO+r0
+         l0fGUXhyj+Zl7f4ODoojE5YRyUm+jH1b6hVzg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726735362; x=1727340162;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=slAQXs/8gsxb/7jYrM0cb/6jV3C3g1UiOusXI9+lqus=;
+        b=nNhO6EAGIm9VhLRDI5sWeq5wlt3nNo/c4/DpH1JRQwvOTfmy1qd/lbqRGbiM3TaXvH
+         ydHw5JdscynxKR+zhtwhDCKefZE0oqLszz9fynOjR/CEiLEZDfGs9K1zKPuZzoRR29+X
+         bZ5lW8cVYxAhIaz1oG5BkZ3yAM7ZZrIc7mkoD3b1u9/dPSxM4KNWnkaF0Eybovda8/Wy
+         NwVtCaMFPUDWVQGAOdlA7nIA2Ledt6xxNsBz+3achy+D+gqBiOysoyhe92rIcciMj51+
+         ZGWj3lnwM2HLyb1ZrbiHUGOeqsD7pEluUqbqlOjTzY6UaK8a54+2V3YnjKbEUjX0NVPw
+         LicQ==
+X-Gm-Message-State: AOJu0YzOTe1o33L8FsqPyJHzbyogQZwtTNFbwi2A7osCZ0NFpedA8fC9
+	kgT+yrah9CRmmxRbOb5AT7TfmvK3P9SZ4Hx0+nTn9vtH+nCkLXHf/7AjJLDmufqQqjFJRp6ovjV
+	BOMlNjtikvhkLYRzUiJu4gOa1/y6brNKyOD3vxA==
+X-Google-Smtp-Source: AGHT+IFj00vfKV9ATD41y4iUwq9opmPQ0T3gBgBVz2kUsBxnSrNihAw+UT8XYIkJ82CMWHwArjry9OIZKMme+UHm1KI=
+X-Received: by 2002:a05:690c:fd6:b0:6dd:bace:4a5 with SMTP id
+ 00721157ae682-6ddbace0647mr150035247b3.9.1726735361777; Thu, 19 Sep 2024
+ 01:42:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <ZurLc9qEjBH9MkvK@gmail.com> <CAADWXX-xNBRC8yAUmCdPxe3W==Dxa_Xi6P_ceYDAEAeKYiqC4Q@mail.gmail.com>
+ <ZuvhwjNgDmpmReUl@gmail.com>
+In-Reply-To: <ZuvhwjNgDmpmReUl@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 19 Sep 2024 10:42:30 +0200
+Message-ID: <CAADWXX-Mu=h7hh1KmiWMPoDoVSTb=oQ5Huat+2=hsm59g4R6YA@mail.gmail.com>
+Subject: Re: [GIT PULL] Performance events changes for v6.12
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>, Jiri Olsa <jolsa@redhat.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Namhyung Kim <namhyung@kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch introduces a previously missing step: zeroing the
-`utp_upiu_req` structure at the beginning of each upiu transaction. This
-ensures that the upiu request fields are properly initialized,
-preventing potential issues caused by residual data from previous
-commands.
+On Thu, Sep 19, 2024 at 10:33=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wro=
+te:
+>
+> Thanks a lot - I fixed up my SMTP sending path, so starting with this mai=
+l
+> it shouldn't go to your spam folder anymore.
 
-While at it, re-use some of the common initializations for query and
-command upiu.
+Well, that didn't work at all. It's still marked as spam, and the
+headers of your email still say you go through gmail:
 
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
+  Received: from gmail.com (1F2EF419.nat.pool.telekom.hu. [31.46.244.25])
+        by smtp.gmail.com with ESMTPSA id
+ffacd0b85a97d-378e73e80basm14420731f8f.26.2024.09.19.01.33.08
+        (version=3DTLS1_3 cipher=3DTLS_AES_256_GCM_SHA384 bits=3D256/256);
+        Thu, 19 Sep 2024 01:33:09 -0700 (PDT)
+  Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+  Date: Thu, 19 Sep 2024 10:33:06 +0200
+  From: Ingo Molnar <mingo@kernel.org>
 
----
-Changes in v3:
- - initialize *ucd_req_ptr once (Bart)
+with no sign of it having gone through mail.kernel.org (which is the
+only way to get the right DKIM). So it still ends up with that
 
-Changes in v2:
- - Simplify things (Bart)
----
- drivers/ufs/core/ufshcd.c | 37 +++++++++++++++++++++++--------------
- 1 file changed, 23 insertions(+), 14 deletions(-)
+     dmarc=3Dfail (p=3DQUARANTINE sp=3DQUARANTINE dis=3DQUARANTINE)
+header.from=3Dkernel.org;
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 8ea5a82503a9..ddd0f9892c29 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -2761,7 +2761,6 @@ void ufshcd_prepare_utp_scsi_cmd_upiu(struct ufshcd_lrb *lrbp, u8 upiu_flags)
- 	ucd_req_ptr->sc.exp_data_transfer_len = cpu_to_be32(cmd->sdb.length);
- 
- 	cdb_len = min_t(unsigned short, cmd->cmd_len, UFS_CDB_SIZE);
--	memset(ucd_req_ptr->sc.cdb, 0, UFS_CDB_SIZE);
- 	memcpy(ucd_req_ptr->sc.cdb, cmd->cmnd, cdb_len);
- 
- 	memset(lrbp->ucd_rsp_ptr, 0, sizeof(struct utp_upiu_rsp));
-@@ -2864,6 +2863,27 @@ static void ufshcd_comp_scsi_upiu(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
- 	ufshcd_prepare_utp_scsi_cmd_upiu(lrbp, upiu_flags);
- }
- 
-+static void __ufshcd_setup_cmd(struct ufs_hba *hba, struct ufshcd_lrb *lrbp,
-+			     struct scsi_cmnd *cmd, u8 lun, int tag)
-+{
-+	memset(lrbp->ucd_req_ptr, 0, sizeof(*lrbp->ucd_req_ptr));
-+
-+	lrbp->cmd = cmd;
-+	lrbp->task_tag = tag;
-+	lrbp->lun = lun;
-+	ufshcd_prepare_lrbp_crypto(cmd ? scsi_cmd_to_rq(cmd) : NULL, lrbp);
-+}
-+
-+static void ufshcd_setup_scsi_cmd(struct ufs_hba *hba, struct ufshcd_lrb *lrbp,
-+				  struct scsi_cmnd *cmd, u8 lun, int tag)
-+{
-+	__ufshcd_setup_cmd(hba, lrbp, cmd, lun, tag);
-+	lrbp->intr_cmd = !ufshcd_is_intr_aggr_allowed(hba);
-+	lrbp->req_abort_skip = false;
-+
-+	ufshcd_comp_scsi_upiu(hba, lrbp);
-+}
-+
- /**
-  * ufshcd_upiu_wlun_to_scsi_wlun - maps UPIU W-LUN id to SCSI W-LUN ID
-  * @upiu_wlun_id: UPIU W-LUN id
-@@ -2997,16 +3017,8 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
- 	ufshcd_hold(hba);
- 
- 	lrbp = &hba->lrb[tag];
--	lrbp->cmd = cmd;
--	lrbp->task_tag = tag;
--	lrbp->lun = ufshcd_scsi_to_upiu_lun(cmd->device->lun);
--	lrbp->intr_cmd = !ufshcd_is_intr_aggr_allowed(hba);
- 
--	ufshcd_prepare_lrbp_crypto(scsi_cmd_to_rq(cmd), lrbp);
--
--	lrbp->req_abort_skip = false;
--
--	ufshcd_comp_scsi_upiu(hba, lrbp);
-+	ufshcd_setup_scsi_cmd(hba, lrbp, cmd, ufshcd_scsi_to_upiu_lun(cmd->device->lun), tag);
- 
- 	err = ufshcd_map_sg(hba, lrbp);
- 	if (err) {
-@@ -3034,11 +3046,8 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
- static void ufshcd_setup_dev_cmd(struct ufs_hba *hba, struct ufshcd_lrb *lrbp,
- 			     enum dev_cmd_type cmd_type, u8 lun, int tag)
- {
--	lrbp->cmd = NULL;
--	lrbp->task_tag = tag;
--	lrbp->lun = lun;
-+	__ufshcd_setup_cmd(hba, lrbp, NULL, lun, tag);
- 	lrbp->intr_cmd = true; /* No interrupt aggregation */
--	ufshcd_prepare_lrbp_crypto(NULL, lrbp);
- 	hba->dev_cmd.type = cmd_type;
- }
- 
--- 
-2.25.1
+thing.
 
+            Linus
 
