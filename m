@@ -1,188 +1,134 @@
-Return-Path: <linux-kernel+bounces-333442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A312197C8A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A2A97C8AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2446C1F25BE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:30:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E68B91F256B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDE519AD7D;
-	Thu, 19 Sep 2024 11:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E690719CC39;
+	Thu, 19 Sep 2024 11:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="H+UYOB/j"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="Exr18aGz"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51F719C57B;
-	Thu, 19 Sep 2024 11:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF24419938D
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 11:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726745420; cv=none; b=sdZomHUwvcz20K9sm9eqML0h5SMyYzprgvV5Q76+KteVbfweyHMguMu0xX+NksXjUGdyosdKDJJ64W679N10bMWWrANd1r8ffi8Fl9KUWO0QPxMgmqdW5vLX7TOwCwlh4ZcHUW3nvOAub4hR+RKXomIR2bDr+Esn3Eb7ai7loqE=
+	t=1726745640; cv=none; b=o0S8s6E5cQ2h7CD/zgvHArkQ3KBqT3PQYnS9XCML8t35dzbsgiRkpsnwt02KeyswPheIMrkbHb8g0ytc1nsBomE8VlJvPOklvWgv83r4sXQmd/AZJa2ah/KRMGpDj0AIb9hwJi2vQmdBvr1bM9FTQJRcvMmDoLrPKRNIRqqxeqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726745420; c=relaxed/simple;
-	bh=J1GEz64zOAykYyU2Ze0gwkYqGXSiOeUoc/zpNCbTw14=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sFlzVzBtpcXyemTRtufqQdV92JbC+3WRN4Y4Vo0GolVV681R94HaTAjk008u8Whs0QSOI0xNbIkcdRjr3MEuKxJ8eRm/YNP0edlPMv4ee1fCLtxrIrco9YOSOsWhdMKUEmXDi3MNTk/7Py7q0m778XkQDG1DUyMp0JXYCShrbQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=H+UYOB/j; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 88ab4856767a11efb66947d174671e26-20240919
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Z1SfHddMinVKqBnBm88AjNHZXXoOonLGMKU9hBryUwg=;
-	b=H+UYOB/jxS26nMcyuJNX2vQjHqqwM6HxZ5BlhzQRcFpBxpne/WVLeOzAqB170VtJyLlanVhtUyyqOgZHg/xJu5+9PD4F8Zv6VmCpWAAhHXOe/6I5x7uLDIr+HgbSEqQx9SWSgLGe/vQwfex726o+bnECzCrwiUeEFDDQTmPucCk=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:7db61870-6a3c-4165-856e-308dc4b2799e,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:89ee71d0-7921-4900-88a1-3aef019a55ce,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 88ab4856767a11efb66947d174671e26-20240919
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
-	(envelope-from <qun-wei.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2091604281; Thu, 19 Sep 2024 19:30:12 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 19 Sep 2024 19:30:10 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 19 Sep 2024 19:30:10 +0800
-From: Qun-Wei Lin <qun-wei.lin@mediatek.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Ryan Roberts
-	<ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, David
- Hildenbrand <david@redhat.com>, Chris Li <chrisl@kernel.org>, "Matthew Wilcox
- (Oracle)" <willy@infradead.org>, Al Viro <viro@zeniv.linux.org.uk>, Dan
- Schatzberg <schatzberg.dan@gmail.com>, Kairui Song <kasong@tencent.com>,
-	Barry Song <baohua@kernel.org>, Jens Axboe <axboe@kernel.dk>
-CC: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-block@vger.kernel.org>, Casper Li <casper.li@mediatek.com>, Chinwen
- Chang <chinwen.chang@mediatek.com>, Andrew Yang <andrew.yang@mediatek.com>,
-	John Hsu <john.hsu@mediatek.com>, <wsd_upstream@mediatek.com>, Qun-Wei Lin
-	<qun-wei.lin@mediatek.com>
-Subject: [PATCH 2/2] mm, swap: introduce SWP_READ_SYNCHRONOUS_IO
-Date: Thu, 19 Sep 2024 19:29:52 +0800
-Message-ID: <20240919112952.981-3-qun-wei.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20240919112952.981-1-qun-wei.lin@mediatek.com>
-References: <20240919112952.981-1-qun-wei.lin@mediatek.com>
+	s=arc-20240116; t=1726745640; c=relaxed/simple;
+	bh=StTQ73UEBD/IaT5ThHNmotx/taGDNKC6P65MmYY9Ncs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VtfoFO4/zeaSGI9mLN532nXndyf6S1hpVqVXLHRFAQTGTgjPH2vmo6yXycthi+pOdkRz9Cn2Qb9vtqlwwRM7z6352++RqZLWvtlx4oe38VZv/fL7zZl3r/L+djEFock2YNBNqKmtO9viaMjYmHJA0R4OL7Fw0QJlWAkS5uA8Az8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=Exr18aGz; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1726745614;
+ bh=AhnUxQ3TsikavWJSRf1+uBeZ6pR2rsbLiLx5LDOjo5M=;
+ b=Exr18aGzknF7qMIYUL6cKZPk8nl6Ti0QlGINoO3KI/MFrhGtyMzmC7VDNG962e2XDrKbkPG2I
+ TYioc8LK19oYW8FoGTgFnione75SOCeFvZy6Le6GxFFLqAE6US6iWPhIkKTOZZadxO2M3k0q84L
+ ms1K0Xy+RSrHu/BI20F1dOn/J1ZFAnpzEhflKIJfYW/yT6VbaK4lCYaZSHXaUC/9m/xE/BK+T8a
+ yZsA4s8V6QbwJEsiPvSFpxa8vXT5lFraztrwvvQhjrKicVi3ifRQTNj24RbuISycjUoTZEDEB21
+ srPhBgXebANM+chN1LRNx+itySv13ZcEAmTYBQPyVBwA==
+Message-ID: <a4d94eab-8543-45e1-b657-fa7f12470538@kwiboo.se>
+Date: Thu, 19 Sep 2024 13:33:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/6] arm64: dts: rockchip: Add GPU power domain
+ regulator dependency for RK3588
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Elaine Zhang
+ <zhangqing@rock-chips.com>,
+ =?UTF-8?Q?Adri=C3=A1n_Mart=C3=ADnez_Larumbe?=
+ <adrian.larumbe@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>, Chen-Yu Tsai
+ <wens@csie.org>, devicetree@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, kernel@collabora.com
+References: <20240919091834.83572-1-sebastian.reichel@collabora.com>
+ <20240919091834.83572-7-sebastian.reichel@collabora.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20240919091834.83572-7-sebastian.reichel@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 66ec0c0d5c923b6ab0c0bfa4
 
-The existing SWP_SYNCHRONOUS_IO flag is not enough for certain swap
-devices that support synchronous read operations but asynchronous write
-operations, so we need to introduce a new flag SWP_READ_SYNCHRONOUS_IO.
+Hi Sebastian,
 
-Signed-off-by: Qun-Wei Lin <qun-wei.lin@mediatek.com>
----
- include/linux/swap.h | 31 ++++++++++++++++---------------
- mm/memory.c          |  3 ++-
- mm/page_io.c         |  2 +-
- mm/swapfile.c        |  3 +++
- 4 files changed, 22 insertions(+), 17 deletions(-)
+On 2024-09-19 11:12, Sebastian Reichel wrote:
+> Enabling the GPU power domain requires that the GPU regulator is
+> enabled. The regulator is enabled at boot time, but automatically
+> gets disabled when there are no users.
+> 
+> If the GPU driver is not probed at boot time or rebound while
+> the system is running the system will try to enable the power
+> domain before the regulator is enabled resulting in a failure
+> hanging the whole system. Avoid this by adding an explicit
+> dependency.
+> 
+> Reported-by: Adrián Martínez Larumbe <adrian.larumbe@collabora.com>
+> Tested-by: Adrian Larumbe <adrian.larumbe@collabora.com> # On Rock 5B
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts         | 4 ++++
+>  arch/arm64/boot/dts/rockchip/rk3588-base.dtsi                | 2 +-
+>  arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5.dtsi          | 4 ++++
+>  arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi | 4 ++++
+>  arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts               | 4 ++++
+>  arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts             | 4 ++++
+>  arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts           | 4 ++++
+>  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts              | 4 ++++
+>  arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi               | 4 ++++
+>  arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts           | 4 ++++
+>  arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts        | 4 ++++
+>  arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts          | 4 ++++
+>  12 files changed, 45 insertions(+), 1 deletion(-)
+> 
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index ba7ea95d1c57..f595050f431b 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -205,21 +205,22 @@ struct swap_extent {
- 	  offsetof(union swap_header, info.badpages)) / sizeof(int))
- 
- enum {
--	SWP_USED	= (1 << 0),	/* is slot in swap_info[] used? */
--	SWP_WRITEOK	= (1 << 1),	/* ok to write to this swap?	*/
--	SWP_DISCARDABLE = (1 << 2),	/* blkdev support discard */
--	SWP_DISCARDING	= (1 << 3),	/* now discarding a free cluster */
--	SWP_SOLIDSTATE	= (1 << 4),	/* blkdev seeks are cheap */
--	SWP_CONTINUED	= (1 << 5),	/* swap_map has count continuation */
--	SWP_BLKDEV	= (1 << 6),	/* its a block device */
--	SWP_ACTIVATED	= (1 << 7),	/* set after swap_activate success */
--	SWP_FS_OPS	= (1 << 8),	/* swapfile operations go through fs */
--	SWP_AREA_DISCARD = (1 << 9),	/* single-time swap area discards */
--	SWP_PAGE_DISCARD = (1 << 10),	/* freed swap page-cluster discards */
--	SWP_STABLE_WRITES = (1 << 11),	/* no overwrite PG_writeback pages */
--	SWP_SYNCHRONOUS_IO = (1 << 12),	/* synchronous IO is efficient */
--					/* add others here before... */
--	SWP_SCANNING	= (1 << 14),	/* refcount in scan_swap_map */
-+	SWP_USED	= (1 << 0),		/* is slot in swap_info[] used? */
-+	SWP_WRITEOK	= (1 << 1),		/* ok to write to this swap?	*/
-+	SWP_DISCARDABLE = (1 << 2),		/* blkdev support discard */
-+	SWP_DISCARDING	= (1 << 3),		/* now discarding a free cluster */
-+	SWP_SOLIDSTATE	= (1 << 4),		/* blkdev seeks are cheap */
-+	SWP_CONTINUED	= (1 << 5),		/* swap_map has count continuation */
-+	SWP_BLKDEV	= (1 << 6),		/* its a block device */
-+	SWP_ACTIVATED	= (1 << 7),		/* set after swap_activate success */
-+	SWP_FS_OPS	= (1 << 8),		/* swapfile operations go through fs */
-+	SWP_AREA_DISCARD = (1 << 9),		/* single-time swap area discards */
-+	SWP_PAGE_DISCARD = (1 << 10),		/* freed swap page-cluster discards */
-+	SWP_STABLE_WRITES = (1 << 11),		/* no overwrite PG_writeback pages */
-+	SWP_SYNCHRONOUS_IO = (1 << 12),		/* synchronous IO is efficient */
-+	SWP_READ_SYNCHRONOUS_IO = (1 << 13),	/* synchronous IO is efficient */
-+						/* add others here before... */
-+	SWP_SCANNING	= (1 << 14),		/* refcount in scan_swap_map */
- };
- 
- #define SWAP_CLUSTER_MAX 32UL
-diff --git a/mm/memory.c b/mm/memory.c
-index ebfc9768f801..f531a6bfea5b 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4089,7 +4089,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 	swapcache = folio;
- 
- 	if (!folio) {
--		if (data_race(si->flags & SWP_SYNCHRONOUS_IO) &&
-+		if ((data_race(si->flags & (SWP_SYNCHRONOUS_IO |
-+		    SWP_READ_SYNCHRONOUS_IO))) &&
- 		    __swap_count(entry) == 1) {
- 			/*
- 			 * Prevent parallel swapin from proceeding with
-diff --git a/mm/page_io.c b/mm/page_io.c
-index ff8c99ee3af7..98a00709e98c 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -499,7 +499,7 @@ static void swap_read_folio_bdev_async(struct folio *folio,
- void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
- {
- 	struct swap_info_struct *sis = swp_swap_info(folio->swap);
--	bool synchronous = sis->flags & SWP_SYNCHRONOUS_IO;
-+	bool synchronous = sis->flags & (SWP_SYNCHRONOUS_IO | SWP_READ_SYNCHRONOUS_IO);
- 	bool workingset = folio_test_workingset(folio);
- 	unsigned long pflags;
- 	bool in_thrashing;
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 38bdc439651a..7b8feb235aab 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -3177,6 +3177,9 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
- 	if (p->bdev && bdev_synchronous(p->bdev))
- 		p->flags |= SWP_SYNCHRONOUS_IO;
- 
-+	if (p->bdev && bdev_read_synchronous(p->bdev))
-+		p->flags |= SWP_READ_SYNCHRONOUS_IO;
-+
- 	if (p->bdev && bdev_nonrot(p->bdev)) {
- 		int cpu, i;
- 		unsigned long ci, nr_cluster;
--- 
-2.45.2
+Any reason why following rk3588 DTs was not updated?
 
+rk3588-evb1-v10.dts
+rk3588-nanopc-t6.dtsi
+rk3588-quartzpro64.dts
+rk3588s-gameforce-ace.dts
+rk3588s-odroid-m2.dts
+
+I also expect we may need to define domain-supply for the npu on rk3588
+and also both gpu and npu on rk356x in a future series.
+
+Similar freeze issue has been observed on rk356x when booting vendor
+kernel with npu support enabled using mainline U-Boot and DT [1].
+
+To work around that issue on rk356x the npu regulator could be changed
+to always-on/boot-on to get past the kernel freeze [2].
+
+[1] https://github.com/armbian/build/pull/7025#issuecomment-2291067748
+[2] https://github.com/Kwiboo/u-boot-rockchip/commit/da31da4b68f858f54364a21b0dd00fef2ab0d0d6
+
+Regards,
+Jonas
 
