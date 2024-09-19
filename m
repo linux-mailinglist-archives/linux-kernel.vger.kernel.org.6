@@ -1,110 +1,105 @@
-Return-Path: <linux-kernel+bounces-333410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69FA297C833
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:48:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7F997C837
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6761C24C12
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:48:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC098288686
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DA919995D;
-	Thu, 19 Sep 2024 10:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2626619B3C0;
+	Thu, 19 Sep 2024 10:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RKcJ/Gf4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="b4oIHAkH"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E531360B8A;
-	Thu, 19 Sep 2024 10:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9C0194C8D;
+	Thu, 19 Sep 2024 10:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726742884; cv=none; b=tNya3Vlp0GYkX/TABmhBUJRvxriDR5RED6LaHNJcqPsFa9sxrnKRsi+Z9iQBHGTKetZ6ps8YXkud9z2Tf+39Wq4zfB8BTc0hDLc2wvQWwXRdpXl26QTaEjSSZHd9GkzsJSHcxjKtH9oXARGA4N4H6uyV1MWkOTa1FnGH8Lm0W60=
+	t=1726743015; cv=none; b=b/b/Tn9vYJVXe8FVXX9uPoSABBFNAND89eF2kmv/HCOJk23/P+Fy/2xX8nghRp+SI34wxkknQC8jGfBM9JqcOOyULjZZU04jxRUHO2YzDfHJ5x9zeed/JFmqViECoeVOTaA/UUU1C9QbF22ynavCyUbp/z0dr3PWbusELP+acGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726742884; c=relaxed/simple;
-	bh=ohLG7pnJOBzWUsJJjQmTQwDuGH6In+YAyaFt0MuX6Q4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KUtfqNKf1T+ggA4op/ASM+byaK0iYlg4tla+XJBINPp3J7UpMAe3ef7EoxH3CHzu5XmVNhc0FrpVAM/iID1q4ryuP6/7JsuBEVN4cVhTAzBvAHKdY04QAdr2ELzAC+mSq2sH62sKCcJDPlNM5Q/HRpGHfPqt2i8aTR+ksQlZMVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RKcJ/Gf4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7418C4CEC4;
-	Thu, 19 Sep 2024 10:48:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726742883;
-	bh=ohLG7pnJOBzWUsJJjQmTQwDuGH6In+YAyaFt0MuX6Q4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RKcJ/Gf4eZavVRqqjIrZHbFRa9oSXiUZlBojrI7QB36gQdbsJ7R2OUVFFgzT0vR4K
-	 5WGsrUz8cbc3mXxz/OqXejTln8ga/sBJmPpc4CVAQ6qDG1+DsPi4/fqH0J7aIK109F
-	 6sDicpXfNFdz3o61ssgZpzXkeiyeXI5divnlxZt2BAXbcvPjzIOBxLwXqc3zbdBwuR
-	 1dQJyGuz0yIYa84IifFqV2MmRFlORse4wdXNkUG6m1lAdHrwONTztz7mmb/Eoq7/36
-	 4wOTxVDA/0rWqqG1oBX2DWu9iYQSam9Ssm3t35Z5EwqnFjpC1VCE76ew4O2u21Ep0+
-	 j2TmK4tDTZCww==
-Date: Thu, 19 Sep 2024 12:47:54 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: xiaoning.wang@nxp.com, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: spi-fsl-lpspi: Use IRQF_NO_AUTOEN flag in
- request_irq()
-Message-ID: <ZuwBWofLJ3ZbKpi8@finisterre.sirena.org.uk>
-References: <20240906022828.891812-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1726743015; c=relaxed/simple;
+	bh=ANC+n21f2GuaGLTFK6/24yBgZWQqlsIzM4c66aDLVv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l1g0+q2MBDWG9r12EKNIegJhim5lHPFZ4Hdb2IV5uHspNj8AI2OixRe0/KRH2PQJBjv3aqGQtgpGgVTN1/cqy991x9aExCy5lwdflWZ0j58ZrxY8s8DL8Es0fCrKc8ROgnVDvAuvO/x/7t3vERAK225Cu7+EPTZsN4ojpI4XG80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=b4oIHAkH; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=WmCTEFCRDJodWNyHvySC/ohhFDWXMpEjRr5eMc/klAo=; b=b4oIHAkHwoblkA1H178OeaPBLr
+	l+ClD1EbvXQ6s4bYlS9WxL3AKUtur8z2IqvHtATveUmzfNSDW0um5DW/bRl/ujyMZExXHYMRJluua
+	AM+LQ4SIMWLD9mzLlrO+T6NCu3Jo9jdPypWF0/Dsy4tDHesbMDKZUCbWfb3GWh1fhn1DGNna7hXMn
+	M13xHjRCYp3LP/7Hst1YKF9Bi681WR7VoVD5s/AX0XOXYE6QmGT8bkFBuzYHO7XTExDI2wd+83L2r
+	mggTMt8974plk8A3jI/8mxziRSbnN5jK/APFiVpRKCUL5pooeTV2Nm+qjTNU+KTLljbcvSvX8p1Sy
+	FEIf4paQ==;
+Date: Thu, 19 Sep 2024 12:50:05 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] watchdog: rn5t618: use proper module tables
+Message-ID: <20240919125005.0bcd17e4@akair>
+In-Reply-To: <f52deaf1-492e-4cbe-8e46-8999ae2e481f@roeck-us.net>
+References: <20240918212925.1191953-1-andreas@kemnade.info>
+	<f52deaf1-492e-4cbe-8e46-8999ae2e481f@roeck-us.net>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="z92KKWU5rX8ihNCm"
-Content-Disposition: inline
-In-Reply-To: <20240906022828.891812-1-ruanjinjie@huawei.com>
-X-Cookie: Editing is a rewording activity.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+Am Wed, 18 Sep 2024 15:43:40 -0700
+schrieb Guenter Roeck <linux@roeck-us.net>:
 
---z92KKWU5rX8ihNCm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On 9/18/24 14:29, Andreas Kemnade wrote:
+> > Avoid requiring MODULE_ALIASES by declaring proper device id tables.
+> > 
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>  
+> 
+> This needs a better rationale. There are more than 40 watchdog drivers
+> using MODULE_ALIAS. I would hate having to deal with 40+ patches just
+> for cosmetic reasons, not counting the thousands of instances of
+> MODULE_ALIAS in the kernel, including the more than 1,000 instances of
+> "MODULE_ALIAS.*platform:".
+>
+basically reviewers were arguing against patches from me bringing in
+MODULE_ALIASES. So I decided to clean up a bit in my backyard. Not
+sure whether such things could by done by coccinelle but at least
+it could be tested via output of modinfo.
 
-On Fri, Sep 06, 2024 at 10:28:28AM +0800, Jinjie Ruan wrote:
-> disable_irq() after request_irq() still has a time gap in which
-> interrupts can come. request_irq() with IRQF_NO_AUTOEN flag will
-> disable IRQ auto-enable when request IRQ.
+This is one example for such a patch:
+https://lore.kernel.org/linux-clk/119f56c8-5f38-eb48-7157-6033932f0430@linaro.org/
 
-> @@ -948,14 +948,10 @@ static int fsl_lpspi_probe(struct platform_device *pdev)
->  	ret = fsl_lpspi_dma_init(&pdev->dev, fsl_lpspi, controller);
->  	if (ret == -EPROBE_DEFER)
->  		goto out_pm_get;
-> -	if (ret < 0)
-> +	if (ret < 0) {
->  		dev_warn(&pdev->dev, "dma setup error %d, use pio\n", ret);
-> -	else
-> -		/*
-> -		 * disable LPSPI module IRQ when enable DMA mode successfully,
-> -		 * to prevent the unexpected LPSPI module IRQ events.
-> -		 */
-> -		disable_irq(irq);
-> +		enable_irq(irq);
-> +	}
+Citing Krzysztof:
 
-This now enabled the interrupt in the case where we previously would've
-disabled it - I would have expected the condition on the if statement to
-be reversed?
+> > Is there a general consensus that MODULE_ALIAS("platform:.*") should
+> > be exorcised? Of course for this new driver I will avoid it now
+> > anyways.
 
---z92KKWU5rX8ihNCm
-Content-Type: application/pgp-signature; name="signature.asc"
+> Whether "general" I don't know, but I was removing it quite a lot in
+>the
+> past. I think I removed all at some point, now I guess we have them
+> back :/.
 
------BEGIN PGP SIGNATURE-----
+> MODULE_ALIAS is not the correct way to solve module matching problem.
+>ID
+> table with the correct way. Alias is just a workaround which now
+> works,
+> but later might stop (e.g. ID table will come with additional
+>features).
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbsAVkACgkQJNaLcl1U
-h9AUJQf/Zs36TMY0LjVstuctLBxIb0D369u7gv3ryDxJVaC8Y5UHDHm5W+sj3Lts
-06mKz4OH4hW+/i96l2kKOu4hKYP6huyKSex62oINDo1262FZtu2pueeEmra3aJX0
-xpJfw59W7eVnKi6rcWwbrpkTin2J82BV487WamIm71wSvvK0O2rz/ugAQZVYED86
-2uU1XnRRIvpcsrwt5kAJhbTK8KcxFuJKK763Q3pgAuUB4zKQck28sIjzb1VPQ1Cd
-Jpf3BS5eZe8s4pKchYEd/8XasIqGoetnBhRckbsw7DgDUERUlOskjU0ReykQrpuz
-gCm/GdRiC19YoUpNNmzbDRjUKBPy6Q==
-=0Ptj
------END PGP SIGNATURE-----
-
---z92KKWU5rX8ihNCm--
+Regards,
+Andreas
 
