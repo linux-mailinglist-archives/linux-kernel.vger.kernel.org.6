@@ -1,47 +1,70 @@
-Return-Path: <linux-kernel+bounces-333634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B797497CBAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:37:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A7897CBAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6298B1F24313
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:37:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34DFB28614A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA0F1A01B4;
-	Thu, 19 Sep 2024 15:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AE819F499;
+	Thu, 19 Sep 2024 15:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sqQs/Szp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gmVUCZL/"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BF9190477;
-	Thu, 19 Sep 2024 15:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEF4190477
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 15:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726760262; cv=none; b=ZmD6IJ2n2HoD4/fM1+6RZOEufx/gXiwSSYBfnFKV1DKjS02G2xxOA/UZW/N7UAdlD+jbzHVYoggn6fSZ774Pw1xKVwSfagLOX3mvVRGfw4K+lg+jVpNxO1VFuUiR3stlFyqbrsNi1IS91X/beiJEA0YNh+yEBuMFuLsuVYW7zzM=
+	t=1726760438; cv=none; b=YdbSqAZZjhoH3WoX9SbGYYNbhG6GJdiK6iW9HycyHvzq4AccKwYrsQPFjhVfQ5FeTy5g3Xc32txgaVn+KTBIWIu5llVhvfDmGtTMKsIk+BLMywb2ttyAznW4ob/HV07mQaXawVTEFMQLOGxW4dtDP93QhCtVTyz1AMLYOvmU8zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726760262; c=relaxed/simple;
-	bh=S6MIWYK6Un51svGZ37c7JU+yySKaaclPw/YJv6ZmRvc=;
+	s=arc-20240116; t=1726760438; c=relaxed/simple;
+	bh=S3jjB0JagbvuniWc1hw9aCEL9jm9m5aL8JTzByVY7z0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sxu+OLqzvAlF3FitAG89A6IMiYIBtmXYHtxW9B07pmmiBtRaPCmExcHDsS0Iaf5BmKi/Ex1NJhV5fDoXS6iKJWSDudB+5WawsS0gFE6l5uGkf50UbNh1lIh7O/7GvwxoM6EO8v9Ie/XH/XODL6KGpVZEXukFDQi4n7GFkw4m+A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sqQs/Szp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6401C4CEC4;
-	Thu, 19 Sep 2024 15:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726760262;
-	bh=S6MIWYK6Un51svGZ37c7JU+yySKaaclPw/YJv6ZmRvc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sqQs/SzpmNnddohCXdihZ4r5oYBTBNJ6bP9ZJYIUmw9zHuxB+rYCXPkeW2vqYL1Is
-	 XkCa84DwrMY+qAkTUZAhgtS41A5oynMVOhrsh3pG7sOTYyPnYcE1jkY7N8683yNuZR
-	 +iYiMKNTDTg9CtVwb4AmBFdKSx8AIXC0y6Hucdjky6SZxTJQ1urIDMMnOPdt6+Dn80
-	 rO85T8mvqRCG9TWJ3ESSmX/iW2oTO0DSPpAK/UPxEnebx3QyghNpae1qCH5YmfE3xV
-	 nGYMN4Jv+8hzxYlvwreVnj1Q96N+Q9sVfCntq0R9ZqenFPSFkKuWzJqAAPEV4w8U9F
-	 SnKW13xPqrnjQ==
-Message-ID: <2acbaedc-e577-4685-875c-ba599d845b19@kernel.org>
-Date: Thu, 19 Sep 2024 17:37:33 +0200
+	 In-Reply-To:Content-Type; b=VcS5a6iHP+Pnm9ZVpKdWvdt+18sh4QzkGYy/wt8fV5M5GrX3XL5RLseymxXBnSUjtXNiVOAq/AVtZipJ2ljLhnmTwwAJrACi24AvENgKgsyt+EdD9ulYmdsOBitKya/d+MtYF840YJ+yO3q95zSKuAznz9zEvPka2mtSSb2cJlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gmVUCZL/; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-39f54079599so3486735ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 08:40:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1726760436; x=1727365236; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6IkoMJd+OMOnoOk1pWpZJ8ZHHOuA8WqT9BG/0ux6KK0=;
+        b=gmVUCZL/6+73L7V9VMmIqtpNHYjVSPZV4wdorlblu/MZBA5URCV3046xqheT467Tp6
+         m9T2v3P/JDx6lf8YR6NWue4ayCEEWZUKCudkflaW/L2xWjGWqYaGIp/rb7Kv0rRsrZpC
+         KFozYHbUDt7L7nKVY+9IzyhrTXTqYWLX9pQA4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726760436; x=1727365236;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6IkoMJd+OMOnoOk1pWpZJ8ZHHOuA8WqT9BG/0ux6KK0=;
+        b=KlZwyuKct6brXRS3P47pFMDNfOnhU5SGEyXlmlVblRVoqq010i0+Qdd/gMdqYt2LNn
+         +TUIMvKJWC+9tK9OZiF/mNIFWTLj7RaV5OQSnNnRRsmXxTfxagjCTnHlEpOpDsZCXfIr
+         H78TaC2VNEcLwL/r/ZpYwqD4oQB57j40Rr/pyDqv63tpBm3YbuM2btYNtFtlhysVQwio
+         TmXyHKKYd8WcMtbEnsgRPsQbMwnmZVsIFgLQNCYxi4HBbYPK9MQV+OzEWJi7cKmA4YT2
+         e7NH4VpgjKRheMsr9vg2vBrbhbbnlEd7RjsNQVkGscEk3s8DjYMZ/ttP6dqdkF6Lq+nV
+         e1JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAj70GGDAL+akeiWqb1BDzMSsv2zFUeMDGqdTnT+CDobwkHD+G6eluQdbBCRLDHTfoAjyPDM4gzAp/Jr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHPr8PYFBhTBZSeV/8g7p2hsRrKing008G62MeOlpyMGslTgI5
+	YSwNwAyOvubc6bT8PW8EdfZ2iiH201ZtfRN6/dzyda2tCBj+2LR6PqqAWZ8rXKg=
+X-Google-Smtp-Source: AGHT+IEruDLQIz1NbajtnHH4BV/rIOv+kAftxwqCcOt/bshhGMnNettNJhh5yGcETaa2+wV+mG0peQ==
+X-Received: by 2002:a05:6e02:1a4a:b0:39d:3c87:1435 with SMTP id e9e14a558f8ab-3a0bef3865dmr30043455ab.1.1726760436231;
+        Thu, 19 Sep 2024 08:40:36 -0700 (PDT)
+Received: from [10.212.145.178] ([12.216.155.19])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d37ed1904dsm3089529173.108.2024.09.19.08.40.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Sep 2024 08:40:35 -0700 (PDT)
+Message-ID: <7caf7242-1ca4-462a-b3d0-627258df3f1b@linuxfoundation.org>
+Date: Thu, 19 Sep 2024 09:40:34 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,42 +72,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
- Document the X1E80100 QMP PCIe PHY Gen4 x8
-To: Qiang Yu <quic_qianyu@quicinc.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
- robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
- sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
- quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org, kw@linux.com,
- lpieralisi@kernel.org, neil.armstrong@linaro.org,
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
- <20240913083724.1217691-2-quic_qianyu@quicinc.com>
- <lrcridndulcurod7tc5z76tmfhcf5uqumkw7cijsqicmad2rim@blyor66wt4e4>
- <b36819ed-0e4a-4820-8c38-ac9d2c6f0f28@quicinc.com>
+Subject: Re: [PATCH] kselftest/alsa: add silent flag to reduce noise
+To: Abdul Rahim <abdul.rahim@myyahoo.com>, perex@perex.cz, tiwai@suse.com,
+ broonie@kernel.org, shuah@kernel.org
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240915234131.61962-2-abdul.rahim.ref@myyahoo.com>
+ <20240915234131.61962-2-abdul.rahim@myyahoo.com>
 Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <b36819ed-0e4a-4820-8c38-ac9d2c6f0f28@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240915234131.61962-2-abdul.rahim@myyahoo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 19.09.2024 4:03 PM, Qiang Yu wrote:
+On 9/15/24 17:41, Abdul Rahim wrote:
+> When ALSA is not installed on the users system, the error:
 > 
-> On 9/16/2024 11:15 PM, Krzysztof Kozlowski wrote:
->> On Fri, Sep 13, 2024 at 01:37:20AM -0700, Qiang Yu wrote:
->>> PCIe 3rd instance of X1E80100 support Gen 4x8 which needs different 8 lane
->>> capable QMP PCIe PHY. Document Gen 4x8 PHY as separate module.
->> And this is really different hardware? Not just different number of lanes? We discussed it, but I don't see the explanation in commit msg.
-> Yes, PCIe3 use a different phy that supports 8 lanes and provides
-> additional register set, txz and rxz. It is not a bifurcation mode which
-> actually combines two same phys like PCIe6a. It's also not just different
-> number of lanes. Will explain this in commit msg.
+> "Package alsa was not found in the pkg-config search path.
+> Perhaps you should add the directory containing `alsa.pc'
+> to the PKG_CONFIG_PATH environment variable
+> Package 'alsa', required by 'virtual:world', not found"
+> 
 
-Krzysztof, this PHY is new and has a different hardware revision (v6.30 as
-opposed to v6.20? of the other ones)
+extra line?
 
-Konrad
+> is printed 3 times, which generates unnecessary noise.
+> Hence, Remove unnecessary noise using `--silence-errors` on LDLIBS
+> assignment, so the message is printed only once.
+
+I would say this message is alerting the user that the package is missing.
+Why would you want to delete it?
+
+> 
+> Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
+> ---
+>   tools/testing/selftests/alsa/Makefile | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/alsa/Makefile b/tools/testing/selftests/alsa/Makefile
+> index 25be68025290..cd022fc869fb 100644
+> --- a/tools/testing/selftests/alsa/Makefile
+> +++ b/tools/testing/selftests/alsa/Makefile
+> @@ -2,7 +2,7 @@
+>   #
+>   
+>   CFLAGS += $(shell pkg-config --cflags alsa) $(KHDR_INCLUDES)
+> -LDLIBS += $(shell pkg-config --libs alsa)
+> +LDLIBS += $(shell pkg-config --silence-errors --libs alsa)
+>   ifeq ($(LDLIBS),)
+>   LDLIBS += -lasound
+>   endif
+
+
+thanks,
+-- Shuah
 
