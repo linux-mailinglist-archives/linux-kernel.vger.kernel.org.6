@@ -1,153 +1,146 @@
-Return-Path: <linux-kernel+bounces-333301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3952E97C6AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:12:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D08FD97C6AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EA2A285736
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:12:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9637E2865EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBA433D8;
-	Thu, 19 Sep 2024 09:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F75199955;
+	Thu, 19 Sep 2024 09:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="KxWAU0sA"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zh/+xn3G"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D962F19ABAC;
-	Thu, 19 Sep 2024 09:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D896919994D
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726737124; cv=none; b=LgLmlWIy42DJ5sit182sj+P0WqRpjewBxYsEg4IP/7xVCfHCU3m6S7yn9W9n+RvbSyIk9kpJP3Zg3ZhjTOCkidIUdkpXLnnVdXAd7Mb4x+lbx+t9wEWH1rA7oIoEFpSRZuZ6CSDATN9jCn1ItcRZctiGV0bu8gUh2k+1/DDgwy4=
+	t=1726737136; cv=none; b=g6LcJlKiSsUl39xaLSNMid9aBhZze2DmEPG8C6HpNDjgn8OQSrWkzd7K94kbtapVg1J1Wq5wSa0W/OaxZ4m6nqyJaFHg5exXPm1jILR7XGGAxRd3Htfqw4bqlrvxf7G1JwvmhTPs/JFLl+r6if+TIfb1W+H8r13rLV95yyfrzPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726737124; c=relaxed/simple;
-	bh=GRaM6wOTqW6/lUjG+bM3shCBbIIJiMeQtQqlr5Drc4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WmRBHRY27XRbqMzYDdAYXombqU+c8EsqBe8Qug6utnWNZhW+A5hdInAoJWANi7c4tzI3NkR8rRp+1/pWyeG/Sih6ECz9w+rce/GhaMoQTUWaobV1SqyW0OtR3NOY4WDCI2Jpbo2Qdu4/qiZ4IL9wAe54MIDvCljOPRYYKCYn2V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=KxWAU0sA; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=XSYMeRXWsqrG7F+YI4a+nTQDZpFZ8nCNoB9zSp4g67c=; b=KxWAU0sAe0pRV5nAR7txSNGzJO
-	XItJFBQrVuo5+4RSvbrFlqhDYvmkcSNIXEF68oEPTYwT+q2A1ztZDqeCU7pgQ5zkeuBwY9fqcBchi
-	4tvviAn87X1iy16W61vx5GnGCbZRricPB3EC7Ak7ApdDDKI/kEIyNBWxUtRDWMmFwgziStsxXWAxP
-	xnQJ5ixS87mwS0FPpD6dgfSy2lwrJdqsOXeSEhaUnKkK+5R2prDQOPpvO6fPHZovTNcqWgnlTPRQs
-	7ljx1NENkRmTCWVNLz+cyLfxQ+KwhrA2wFu4yR38fJzRWYlqoMw/lW9y+mYenxEqWEJk1iom421Zq
-	bTaPfakA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59440)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1srDBz-0000GJ-37;
-	Thu, 19 Sep 2024 10:11:15 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1srDBn-0001Rd-0M;
-	Thu, 19 Sep 2024 10:11:03 +0100
-Date: Thu, 19 Sep 2024 10:11:02 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: kernel test robot <lkp@intel.com>, linux-mm@kvack.org,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
-	linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Dimitri Sivanich <dimitri.sivanich@hpe.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Miaohe Lin <linmiaohe@huawei.com>, Dennis Zhou <dennis@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH V2 7/7] mm: Use pgdp_get() for accessing PGD entries
-Message-ID: <ZuvqpvJ6ht4LCuB+@shell.armlinux.org.uk>
-References: <20240917073117.1531207-8-anshuman.khandual@arm.com>
- <202409190310.ViHBRe12-lkp@intel.com>
- <8f43251a-5418-4c54-a9b0-29a6e9edd879@arm.com>
+	s=arc-20240116; t=1726737136; c=relaxed/simple;
+	bh=GVQ0O2R1uWNT+xiUn1NlNaE8AFa47yPX2wZPeJVfj+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ItyDyV9pwMDuO6CUJXk4Yu319RHhxISN3Sr5y837ltGzcWg3dLXoqNm2PP+ME4iKgwpG6Jr1T4mJDgDhfAsEljK3COJEcFZyK1gfnQPPFaH/GSttMRTwxuLWVJzHMe8kXYfVWUD27H7Bx2KOO0LRDd2aXS67/OzoecaTdKJD6PU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zh/+xn3G; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726737132;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LCElEKBH0phTZF2fIQuSy/+s0JOFGaYopSCTxfI0dVI=;
+	b=Zh/+xn3GrA294Ko9zsGph91Djs6j8hcLToH6UCkeQkrM/l7myAm0H0P+tjCYz6CS/A2sbA
+	qe29Z8nghyTQNU/wRibZU+YsjDeRDsqOdRBJubBIskcw01ViG3GNZkioOPaac0G5FqEHTF
+	bu6ehkDg3xFloTF5jMc9KSs7iRG/Oco=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-450-UGP8jRnQO6ej7uMwXS6_bg-1; Thu, 19 Sep 2024 05:12:10 -0400
+X-MC-Unique: UGP8jRnQO6ej7uMwXS6_bg-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-378929f1a4eso326004f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 02:12:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726737129; x=1727341929;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LCElEKBH0phTZF2fIQuSy/+s0JOFGaYopSCTxfI0dVI=;
+        b=hrLaYFZGHtKpxTJn8FRByA9m28hYE+dDS0v6sJHuzhOAqZoaY46g3l3We+jY3bgF9o
+         pv/esvFtpfTs+JPlbMo2/UZxpPav7WSjmqzEnZCCytP6J7gYaVdntuRZJFFuiFX8Yzf/
+         69gDK0L1D+kNAy8lG81Slf7cCBtSwlyjtT/0axzIXuaKzWw9KMKvcw05ii/HXtND++54
+         lDAZ58W3A32xBqUtZYpFczvEpJxiB3TkN8lScPxHXb5/0KKMa7MW42NWCpKATDNWgdEs
+         NzKKdez10n/8GpjCsgohi0I/qgFiKIHBOuUntqi9A97iaKprIw5VB5f1iwrOTToNcJKi
+         oiYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCQNkbQD1icRQ4NvMQIHjlRVlgTIEsDjsd08fv9xcXU8N7ku3iIhfud/ncoMxNIp6LFR9Yk4TVLE4FF+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgpNvSlfGyG3RudC8pMc53yzIUDrZYIooZAUr8eipsrsNeYMxX
+	5KFP6M70L+Ek03G9F22c3uAOUHBFVwXxhtHLmInUpWo+u7ZFcNRvSNZy7Xh2mLVWO325598M9aw
+	YRLDnymw/zNWHVLL9Uv+eKHiLdt+7KjxTQuKodSAKzA6jluJMbqlr40F5Is73gw==
+X-Received: by 2002:a05:6000:1815:b0:368:65ad:529 with SMTP id ffacd0b85a97d-378c2d06172mr13926651f8f.17.1726737128715;
+        Thu, 19 Sep 2024 02:12:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHiP7Zyv2OHT77WQZsp/MpXZUyd+Js26zDK1QxecEwwjKk/DBBeqSWHEiTWMF4+k3n/zDLpFw==
+X-Received: by 2002:a05:6000:1815:b0:368:65ad:529 with SMTP id ffacd0b85a97d-378c2d06172mr13926622f8f.17.1726737128263;
+        Thu, 19 Sep 2024 02:12:08 -0700 (PDT)
+Received: from [192.168.88.100] (146-241-67-136.dyn.eolo.it. [146.241.67.136])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e75468765sm16452365e9.44.2024.09.19.02.12.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Sep 2024 02:12:07 -0700 (PDT)
+Message-ID: <dd84c2d8-1571-41e9-8562-a4db232fbc38@redhat.com>
+Date: Thu, 19 Sep 2024 11:12:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f43251a-5418-4c54-a9b0-29a6e9edd879@arm.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v4 0/2] bpf: devmap: provide rxq after redirect
+To: Florian Kauer <florian.kauer@linutronix.de>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+ David Ahern <dsahern@kernel.org>, Hangbin Liu <liuhangbin@gmail.com>,
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
+ linux-kselftest@vger.kernel.org
+References: <20240911-devel-koalo-fix-ingress-ifindex-v4-0-5c643ae10258@linutronix.de>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240911-devel-koalo-fix-ingress-ifindex-v4-0-5c643ae10258@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 19, 2024 at 01:25:08PM +0530, Anshuman Khandual wrote:
-> arm (32) platform currently overrides pgdp_get() helper in the platform but
-> defines that like the exact same version as the generic one, albeit with a
-> typo which can be fixed with something like this.
-
-pgdp_get() was added to arm in eba2591d99d1 ("mm: Introduce
-pudp/p4dp/pgdp_get() functions") with the typo you've spotted. It seems
-it was added with no users, otherwise the error would have been spotted
-earlier. I'm not a fan of adding dead code to the kernel for this
-reason.
-
-> Regardless there is another problem here. On arm platform there are multiple
-> pgd_t definitions available depending on various configs but some are arrays
-> instead of a single data element, although platform pgdp_get() helper remains
-> the same for all.
+On 9/11/24 10:41, Florian Kauer wrote:
+> rxq contains a pointer to the device from where
+> the redirect happened. Currently, the BPF program
+> that was executed after a redirect via BPF_MAP_TYPE_DEVMAP*
+> does not have it set.
 > 
-> arch/arm/include/asm/page-nommu.h:typedef unsigned long pgd_t[2];
-> arch/arm/include/asm/pgtable-2level-types.h:typedef struct { pmdval_t pgd[2]; } pgd_t;
-> arch/arm/include/asm/pgtable-2level-types.h:typedef pmdval_t pgd_t[2];
-> arch/arm/include/asm/pgtable-3level-types.h:typedef struct { pgdval_t pgd; } pgd_t;
-> arch/arm/include/asm/pgtable-3level-types.h:typedef pgdval_t pgd_t;
+> Add bugfix and related selftest.
 > 
-> I guess it might need different pgdp_get() variants depending applicable pgd_t
-> definition. Will continue looking into this further but meanwhile copied Russel
-> King in case he might be able to give some direction.
+> Signed-off-by: Florian Kauer <florian.kauer@linutronix.de>
+> ---
+> Changes in v4:
+> - return -> goto out_close, thanks Toke
+> - Link to v3: https://lore.kernel.org/r/20240909-devel-koalo-fix-ingress-ifindex-v3-0-66218191ecca@linutronix.de
+> 
+> Changes in v3:
+> - initialize skel to NULL, thanks Stanislav
+> - Link to v2: https://lore.kernel.org/r/20240906-devel-koalo-fix-ingress-ifindex-v2-0-4caa12c644b4@linutronix.de
+> 
+> Changes in v2:
+> - changed fixes tag
+> - added selftest
+> - Link to v1: https://lore.kernel.org/r/20240905-devel-koalo-fix-ingress-ifindex-v1-1-d12a0d74c29c@linutronix.de
+> 
+> ---
+> Florian Kauer (2):
+>        bpf: devmap: provide rxq after redirect
+>        bpf: selftests: send packet to devmap redirect XDP
+> 
+>   kernel/bpf/devmap.c                                |  11 +-
+>   .../selftests/bpf/prog_tests/xdp_devmap_attach.c   | 114 +++++++++++++++++++--
+>   2 files changed, 115 insertions(+), 10 deletions(-)
 
-That's Russel*L*, thanks.
+Alex, Daniel: this will go directly via the bpf tree, right?
 
-32-bit arm uses, in some circumstances, an array because each level 1
-page table entry is actually two descriptors. It needs to be this way
-because each level 2 table pointed to by each level 1 entry has 256
-entries, meaning it only occupies 1024 bytes in a 4096 byte page.
+Thanks,
 
-In order to cut down on the wastage, treat the level 1 page table as
-groups of two entries, which point to two consecutive 1024 byte tables
-in the level 2 page.
+Paolo
 
-The level 2 entry isn't suitable for the kernel's use cases (there are
-no bits to represent accessed/dirty and other important stuff that the
-Linux MM wants) so we maintain the hardware page tables and a separate
-set that Linux uses in the same page. Again, the software tables are
-consecutive, so from Linux's perspective, the level 2 page tables
-have 512 entries in them and occupy one full page.
-
-This is documented in arch/arm/include/asm/pgtable-2level.h
-
-However, what this means is that from the software perspective, the
-level 1 page table descriptors are an array of two entries, both of
-which need to be setup when creating a level 2 page table, but only
-the first one should ever be dereferenced when walking the tables,
-otherwise the code that walks the second level of page table entries
-will walk off the end of the software table into the actual hardware
-descriptors.
-
-I've no idea what the idea is behind introducing pgd_get() and what
-it's semantics are, so I can't comment further.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
