@@ -1,143 +1,180 @@
-Return-Path: <linux-kernel+bounces-333529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0354B97CA56
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:46:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA14C97CA59
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:46:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD8071F23A29
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:46:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B0A31C2089B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9400919E7D1;
-	Thu, 19 Sep 2024 13:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5FD19F478;
+	Thu, 19 Sep 2024 13:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="W/c+d0T9"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLnXwY/P"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801EB1E884
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 13:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC2919F414;
+	Thu, 19 Sep 2024 13:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726753566; cv=none; b=mereGUpLsW9qbof0t7WSF3rw9rezdbapwshp6ZcdFa1JIaPEd87nIR06KvZtc12L/3Zo+My8iuiK0kaRJUUWSmun3uov1r1TU7S+ix076xS39yejlJtrNs75it64usEHE5XmB+R9fCmZcBRArxJOYlJtcy7NdTszog0jBe/9MlA=
+	t=1726753570; cv=none; b=AFZRuvObS9d8rj2LX8/4AdsgSQZLTtmKyDeg9j3GlEljc/RXZj1MjuIbMjne83zO1HHzWzYYOk478iaM5YLj4tlIIFd9xQ6h5GmwxpsGBRf9CO55a3tkM/tYvJViZx22Mk7QwGc5orv/K1E9RxYm7JZAPJ78YO3BjvGVvGzB+2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726753566; c=relaxed/simple;
-	bh=08Hrq/1zy42WL1U0lqBIB2EDF7K+U052L8fQ6GMV8/k=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AYscFlPUeZXjyGOSELO7Rc31F6jn70nhKkRDkvdC5LYMHkHJy1WOPFXFRWAlSAYW2yvU0L/k1CVlkcNsRVqO3FohKhGV3FlIzw5gjnSE5ptDP7NtrBnUMqZ8Upt+zXmEvuIne9TllAlilgU3NTztyFnTcGg2EAIPd5rPiPiMmQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=W/c+d0T9; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1726753559; x=1727012759;
-	bh=NT33HsfNCSAYhZK5GJl2I4nckfuU7LN1MNbY5TeJz/U=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=W/c+d0T9UMJnzXhcPX0tffEyYNAXdVQ+ZIaXB0VTMs1MRV7bUq5IwH9btO4HfM1pJ
-	 yGSUotJheJm/LCtYz6S53Q6FMYIfvb8Tv7FEwJor03A+vLxB/NOJwouepTn+dPx83z
-	 cM5+ywIXqOdJrklOAEOTBTmVcm0li0VJYCOZNGV0YOgDFSk2fBea4iSpnBx+E1NBx4
-	 i9YtFWce7sywTDWT7nYWo2fvilMHPrcOdMs4fdQNw7k+3+Ua0Pjr4BIw8jKepNT8ph
-	 hM6CNgXzRMkHrf2kE1k8nXbQpOml2SzPCIkoZ+3yyqakRpDn+mhr45jPiecfE5R9eY
-	 Mhntehp3wQNUg==
-Date: Thu, 19 Sep 2024 13:45:56 +0000
-To: Gao Xiang <hsiangkao@linux.alibaba.com>, Gary Guo <gary@garyguo.net>, Yiyang Wu <toolmanp@tlmp.cc>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-erofs@lists.ozlabs.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
-Message-ID: <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me>
-In-Reply-To: <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com>
-References: <20240916135634.98554-1-toolmanp@tlmp.cc> <20240916135634.98554-4-toolmanp@tlmp.cc> <20240916210111.502e7d6d.gary@garyguo.net> <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: b8d97f78ee362a1aa80e09e4076bc52d0a830dd6
+	s=arc-20240116; t=1726753570; c=relaxed/simple;
+	bh=TJXGBdhjECs1nxrMwVaHxIRZ7I1I6Fd4bTeaZwACRTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BcqGi+/2tH7UjfIag1oUxBcn5Nblqtaaimm/B41Z9Jms1rlfZhX5iARKoGr9BYe7f1rtDS3BT2rzKCtHb9jHlFkhL9SJeW0KeKfFTFOxT5K/dgyavSBNSJ/clBhHtVQT3uheGMPSHIvvOUNJOz3ABwBgfgZaKM7+dyUMynmN8Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLnXwY/P; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7191fb54147so638096b3a.2;
+        Thu, 19 Sep 2024 06:46:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726753569; x=1727358369; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nDD/hmh5p/hnVuAXd5jUE9QmV4PZ74xoj/KeQLWdWCY=;
+        b=DLnXwY/P2u3GjnXDZvJRa8aGc9nadllhYzYa2V/5TyKsMlm5Y4cjEkg1F9E3X/lSp4
+         T2m8B1LEFDxI5VEYeIRN0/rCJDEalTpWpqiqW43hWdiiupn0b8nEIVBe8Oqm7pOrsDpG
+         x8dN9EwPQAURgUoV9TqDajaFR0D0+rD5PorIzG7XRqiygDZ91Oe9WhpU4loUVJZF4hTq
+         1cEu+srboFaX4pvo/TUIEvq8sKcQ/UnKRGOgBrx1ossI0Tj6EXYBaRCwYCizhka5cHvk
+         Rx/9nxY9MM/e526FzqhVsZmYKwezggi4TNxD8O8O3VZq5A6XRvczr/d68m0BVEf0vRSU
+         nkeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726753569; x=1727358369;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=nDD/hmh5p/hnVuAXd5jUE9QmV4PZ74xoj/KeQLWdWCY=;
+        b=iB160uhj3jEinP0J7TuIpTN453Ymz049BgEGPNKzkeV0h4kSeDh4XM7nMt76FNKEWK
+         svlVr1dExXVIBTgGTxrwRS/Xc0AtQwrzkajIHC0HlXaIvVDyBxIdI25rEiJdL0Zmq8+m
+         sHcRg4pFXd1Qn/Yg9uxFo2Ci+wSaKV2Xwrvr1ZikbOcbBUcd2gKjrAYbUOzIz3oQraiP
+         DN1X35RIJRRvi8BFkerQ3A9VyAbgU7IbEJkroSIR/1yAtvKRS2AQz0C6A0jdmNnRIEN3
+         2Sbi45DtN3z0S7P+IOvsh1xUlX1H6EaRta4xsPHqW06GF/TvlijguOVEEn05NtCMyBSB
+         Nf7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUA+za5Jgo7JtpmwCLt9EHM5O4aPH9/bA5+BEkYirdjzDr5or9Us6m+DbWaEi3xA5zQrUw=@vger.kernel.org, AJvYcCXUBR+eVDsLbtBqi8ImdUEXIrVqVIUucmIAKx/Va6Svm4IsLBpaZTfsmQNbyqWBUSzXRptzdDh/VYTkIMIZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlRNyDUPmdDw03rMlRofwO7AugtYN36NUZSD2b49S5H689bjUj
+	bHmiBM4wAywxKVLXkbohK/3tND9K4/8+FZfNAjJNmriMqeGY2D4h
+X-Google-Smtp-Source: AGHT+IF8aHxbrDy8yuIW3KxWdlKQkLLu64Svz4YjS74lZgT3OVzFFCoAmgRC924b4qPGhE2gniWZqA==
+X-Received: by 2002:a05:6a00:3e29:b0:70d:2b95:d9c0 with SMTP id d2e1a72fcca58-71926090ecdmr40262746b3a.14.1726753568360;
+        Thu, 19 Sep 2024 06:46:08 -0700 (PDT)
+Received: from [192.168.50.122] ([117.147.90.205])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71972bf3999sm4340785b3a.48.2024.09.19.06.46.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Sep 2024 06:46:07 -0700 (PDT)
+Message-ID: <5310a4f2-3b45-4a3e-b05c-fcc5faba7c0e@gmail.com>
+Date: Thu, 19 Sep 2024 21:45:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3] libbpf: Fix expected_attach_type set when
+ kernel not support
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
+ <eddyz87@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240914154040.276933-1-chen.dylane@gmail.com>
+ <8bcac2c4-80fc-4807-9e77-5dc253b10568@gmail.com>
+ <CAEf4BzZpdMx7ZV6V6pJKLkq3BtdRrqj8Vo09YVSN5YApNtCa3Q@mail.gmail.com>
+From: Tao Chen <chen.dylane@gmail.com>
+In-Reply-To: <CAEf4BzZpdMx7ZV6V6pJKLkq3BtdRrqj8Vo09YVSN5YApNtCa3Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
+在 2024/9/19 12:20, Andrii Nakryiko 写道:
+> On Thu, Sep 19, 2024 at 4:05 AM Tao Chen <chen.dylane@gmail.com> wrote:
+>>
+>> 在 2024/9/14 23:40, Tao Chen 写道:
+>>> The commit "5902da6d8a52" set expected_attach_type again with
+>>> field of bpf_program after libpf_prepare_prog_load, which makes
+>>> expected_attach_type = 0 no sense when kenrel not support the
+>>> attach_type feature, so fix it.
+>>>
+>>> Fixes: 5902da6d8a52 ("libbpf: Add uprobe multi link support to bpf_program__attach_usdt")
+>>> Suggested-by: Jiri Olsa <jolsa@kernel.org>
+>>> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+>>> ---
+>>>    tools/lib/bpf/libbpf.c | 12 ++++++++----
+>>>    1 file changed, 8 insertions(+), 4 deletions(-)
+>>>
+>>> Change list:
+>>> - v2 -> v3:
+>>>       - update BPF_TRACE_UPROBE_MULTI both in prog and opts suggedted by
+>>>         Andrri
+>>> - v1 -> v2:
+>>>       - restore the original initialization way suggested by Jiri
+>>>
+>>> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+>>> index 219facd0e66e..a78e24ff354b 100644
+>>> --- a/tools/lib/bpf/libbpf.c
+>>> +++ b/tools/lib/bpf/libbpf.c
+>>> @@ -7352,8 +7352,14 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
+>>>                opts->prog_flags |= BPF_F_XDP_HAS_FRAGS;
+>>>
+>>>        /* special check for usdt to use uprobe_multi link */
+>>> -     if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MULTI_LINK))
+>>> +     if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MULTI_LINK)) {
+>>> +             /* for BPF_TRACE_KPROBE_MULTI, user might want to query exected_attach_type
+>>> +              * in prog, and expected_attach_type we set in kenrel is from opts, so we
+>>> +              * update both.
+>>> +              */
+>>>                prog->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
+>>> +             opts->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
+>>> +     }
+>>>
+>>>        if ((def & SEC_ATTACH_BTF) && !prog->attach_btf_id) {
+>>>                int btf_obj_fd = 0, btf_type_id = 0, err;
+>>> @@ -7443,6 +7449,7 @@ static int bpf_object_load_prog(struct bpf_object *obj, struct bpf_program *prog
+>>>        load_attr.attach_btf_id = prog->attach_btf_id;
+>>>        load_attr.kern_version = kern_version;
+>>>        load_attr.prog_ifindex = prog->prog_ifindex;
+>>> +     load_attr.expected_attach_type = prog->expected_attach_type;
+>>>
+>>>        /* specify func_info/line_info only if kernel supports them */
+>>>        if (obj->btf && btf__fd(obj->btf) >= 0 && kernel_supports(obj, FEAT_BTF_FUNC)) {
+>>> @@ -7474,9 +7481,6 @@ static int bpf_object_load_prog(struct bpf_object *obj, struct bpf_program *prog
+>>>                insns_cnt = prog->insns_cnt;
+>>>        }
+>>>
+>>> -     /* allow prog_prepare_load_fn to change expected_attach_type */
+>>> -     load_attr.expected_attach_type = prog->expected_attach_type;
+>>> -
+>>>        if (obj->gen_loader) {
+>>>                bpf_gen__prog_load(obj->gen_loader, prog->type, prog->name,
+>>>                                   license, insns, insns_cnt, &load_attr,
+>>
+>> Hi, guys, please review this patch again, the previous versions:
+> 
+> It looks good, but bpf-next is closed right now due to merge window.
+> I'll apply when the tree is open again.
 
-Thanks for the patch series. I think it's great that you want to use
-Rust for this filesystem.
+Hi，Andrii, thank you for your response! I’ll wait for the next window.
 
-On 17.09.24 01:58, Gao Xiang wrote:
-> On 2024/9/17 04:01, Gary Guo wrote:
->> Also, it seems that you're building abstractions into EROFS directly
->> without building a generic abstraction. We have been avoiding that. If
->> there's an abstraction that you need and missing, please add that
->> abstraction. In fact, there're a bunch of people trying to add FS
->=20
-> No, I'd like to try to replace some EROFS C logic first to Rust (by
-> using EROFS C API interfaces) and try if Rust is really useful for
-> a real in-tree filesystem.  If Rust can improve EROFS security or
-> performance (although I'm sceptical on performance), As an EROFS
-> maintainer, I'm totally fine to accept EROFS Rust logic landed to
-> help the whole filesystem better.
+> 
+>> v1:
+>> https://lore.kernel.org/bpf/20240913121627.153898-1-chen.dylane@gmail.com/
+>> v2:
+>> https://lore.kernel.org/bpf/20240913164355.176021-1-chen.dylane@gmail.com/
+>>
+>> --
+>> Best Regards
+>> Dylane Chen
 
-As Gary already said, we have been using a different approach and it has
-served us well. Your approach of calling directly into C from the driver
-can be used to create a proof of concept, but in our opinion it is not
-something that should be put into mainline. That is because calling C
-from Rust is rather complicated due to the many nuanced features that
-Rust provides (for example the safety requirements of references).
-Therefore moving the dangerous parts into a central location is crucial
-for making use of all of Rust's advantages inside of your code.
 
-> For Rust VFS abstraction, that is a different and indepenent story,
-> Yiyang don't have any bandwidth on this due to his limited time.
-
-This seems a bit weird, you have the bandwidth to write your own
-abstractions, but not use the stuff that has already been developed?
-
-I have quickly glanced over the patchset and the abstractions seem
-rather immature, not general enough for other filesystems to also take
-advantage of them. They also miss safety documentation and are in
-general poorly documented.
-
-Additionally, all of the code that I saw is put into the `fs/erofs` and
-`rust/erofs_sys` directories. That way people can't directly benefit
-from your code, put your general abstractions into the kernel crate.
-Soon we will be split the kernel crate, I could imagine that we end up
-with an `fs` crate, when that happens, we would put those abstractions
-there.
-
-As I don't have the bandwidth to review two different sets of filesystem
-abstractions, I can only provide you with feedback if you use the
-existing abstractions.
-
-> And I _also_ don't think an incomplete ROFS VFS Rust abstraction
-> is useful to Linux community
-
-IIRC Wedson created ROFS VFS abstractions before going for the full
-filesystem. So it would definitely be useful for other read-only
-filesystems (as well as filesystems that also allow writing, since last
-time I checked, they often also support reading).
-
-> (because IMO for generic interface
-> design, we need a global vision for all filesystems instead of
-> just ROFSes.  No existing user is not an excuse for an incomplete
-> abstraction.)
-
-Yes we need a global vision, but if you would use the existing
-abstractions, then you would participate in this global vision.
-
-Sorry for repeating this point so many times, but it is *really*
-important that we don't have multiple abstractions for the same thing.
-
-> If a reasonble Rust VFS abstraction landed, I think we will switch
-> to use that, but as I said, they are completely two stories.
-
-For them to land, there has to be some kind of user. For example, a rust
-reference driver, or a new filesystem. For example this one.
-
----
-Cheers,
-Benno
-
+-- 
+Best Regards
+Dylane Chen
 
