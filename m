@@ -1,162 +1,263 @@
-Return-Path: <linux-kernel+bounces-333048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80C597C2C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 04:05:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83EE497C2C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 04:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 545051F2246C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 02:05:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45867282E45
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 02:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE83C1E517;
-	Thu, 19 Sep 2024 02:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621951EB27;
+	Thu, 19 Sep 2024 02:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sb0ya/pA"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="PbiQn4tz"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB979F9CB;
-	Thu, 19 Sep 2024 02:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFBA0171C2;
+	Thu, 19 Sep 2024 02:10:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726711514; cv=none; b=gk0EG3RpGL4VCQeFVuWEE6qShJI4PCnfmSdYZBzSWdS2LIFje6g6BDnTVNgiNVX2Wrbrh42OtfIsZ2szNHVX34RyDgN0F2UyaOEGSG7xJ4Q3FX7ADgx9WP0TeC8axy1jRMPlP8hmizdiOjUcrpuHheMeOkkcc4veA0zkZqkjHzo=
+	t=1726711834; cv=none; b=hVoX9t3WzIrG8rdZrzJLJW0vbAYX++zxjDutHjOFk6dtGdjXZ06qqUMqLQwM/YoWVBmfLqu9B9KFDvKw75IWfcNvDJVAzBr/fjy7/t+rGwXbXqgOHYhaW+3MmWem91rdpfOKYIwbY+DiFC17XPybELeD93Jxeu3NTbwC2fsUs18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726711514; c=relaxed/simple;
-	bh=N8FdTUGuNmyq2lJnYRM2xWPYHgj7Ddsxz1LbksvKpKs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H1rhHJ+QLKO3Hxsuxv77yKhCyXgrwkEh7ro2teStzMrT0cVdJ+LIrzZlMN5cKavOGo9ardWqJAicJjtZLt9MVVLdVnXXubNLWPePxkeBcMxfvv3AU33JpTlA3U+7JyiAiFK8BXl4Qp8IvHjxC1JVZKqe0biwSqZKh8hJ7eeggWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sb0ya/pA; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20570b42f24so4420785ad.1;
-        Wed, 18 Sep 2024 19:05:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726711512; x=1727316312; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GZDcfVUFW8U6sCU8KMMZQLNLYtDHuq8VjwOV5ohHb+s=;
-        b=Sb0ya/pA6O8ttMQy0IVQGUq6CHt6CqSOTo3cNbAEzD2PAz0SYJzG+5vnz05DBwK+bB
-         7U4IAAJP6g48ll0Jsoys5Fw+gJMUnzloNTjFtXWmTObvrUZwUZMOFeUyUosBZmBhK7So
-         SFBEmpyJzcS9vzlpzPprS1Ivk5AXKyT5YAV4lod7KW7P5W5qivSKWp4PoEyv5mVvJriB
-         sMjXlGYw03CVshRPJi7p6tSTix2BKyYpm87ryYUBvsKAi8vqtcGrXalcuQ7IPJPAaWrf
-         DYm0tG4ZkufLDcl54Qg6DlnxjwL3FA1G8XW9V2LZsc3mtt7H7SsX/k7B5I3BS23kRufL
-         vrNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726711512; x=1727316312;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GZDcfVUFW8U6sCU8KMMZQLNLYtDHuq8VjwOV5ohHb+s=;
-        b=EXvN3D9uAklY9eEoEerZeT7NbRd798VrcyxPqF2/EjPwwrPnCypZa4axFBgPls59+x
-         W2u90ikRR0d511OkP9EzcBj1MXpppXUNjZszEbEZ8GljG5K74QsFvkrdrdIYdjsgy+9E
-         plqgcCHJf3uy49XBP3ifMU/gf8m+EdV7BiyOPWCSmjxWY7p9LYbjqo7hhC5wyB2ufURq
-         D1ZRLcoocWCd9ba3Oviacp40VhANzd3CBeFBdsGXtH4n94aEZVRIzYBz1gqKt+iy1DY1
-         2M2HfWbdxfTsuTm/Az4S0U4fqerIoKmchXOMy/S09UxTox3TNCoU9Mtd25mhY/HkpbTs
-         bKZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXL1vxvbhmIm5l2pcwYEqAresRffxxF5P4vgXvAsQV0G1gp84YbMtGbQpKJC7Z4l/V7ormwReXH9kBHr8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3MAdeBDCDTXAgvNkjZ9y+XK40cjOwsESm9chCGkcTgjz2onDK
-	/76MdMaHF264bwv1cz8O3gkcKlxZT53Ypf7SXb5JyXFQdSdt4gTW
-X-Google-Smtp-Source: AGHT+IF4E97Dq5yWY5wvxtNtVfE2yTUsUnMNtZ5I5HWN1h1PX0a+yOSHv7UiQtzqHc3Jzgo5UcswbA==
-X-Received: by 2002:a17:902:da85:b0:205:3aa8:f22f with SMTP id d9443c01a7336-2076e3f8e09mr391127755ad.46.1726711511886;
-        Wed, 18 Sep 2024 19:05:11 -0700 (PDT)
-Received: from [0.0.0.0] ([154.16.27.191])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db499935c5sm8086893a12.68.2024.09.18.19.05.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Sep 2024 19:05:11 -0700 (PDT)
-Message-ID: <8bcac2c4-80fc-4807-9e77-5dc253b10568@gmail.com>
-Date: Thu, 19 Sep 2024 10:05:03 +0800
+	s=arc-20240116; t=1726711834; c=relaxed/simple;
+	bh=GjnnAalKrUo6ZZkksy4vObwETa5MAT4PuvkokRInd08=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DKIRcGmBdrgbmlY7TH8dm5gDbqF83+WDd32kNrMo2Vahd3qWAGWJRuRjVZffuluUOY77Uy1UJmXYK21g+yRpY99a47kK8Dv3ce4+L9DrHmOTLwbHEKRRR31yBecLCyUriFIuwtRzZlohzoFZOTJAexh+ygI1520EIu2R7GsJYco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=PbiQn4tz; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48IITFHX009778;
+	Wed, 18 Sep 2024 19:09:57 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=PI3aNYe/hvx6qtW3e7Y/iLut/
+	YXbUFclLNSaL99unsg=; b=PbiQn4tzaS4k6PUz0hduiEIzD5RdhKn/wFBT44nh6
+	wc0p+mkPtO/+3ra+mBr7AGPqz6X3HoazB55PbHs73JPzV30FLo6TFtLDxQHRHkO5
+	KZhoBGPtZb2tLncXo7RWTqcMQ2XF3j3HD1wzOGq6Zj6zUzwO5Ggx+j0UD/eP3/+d
+	pcIKm/SspKDKaBg0Af1CUqB8knerKYYGv3nMmsXT7COHwwDwLkFv52tuas1BgrjP
+	CrP3t43in6CVNsoTXFPPadet5GTAa0af2G9mV+1URo8wErPgnxFUo5sC+ONzQNsu
+	UumlAPBeFSguJ5ugXXOSfsm4V8xMtQqZtCYpYC4yT2XMA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 41qdwgf713-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 18 Sep 2024 19:09:56 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 18 Sep 2024 19:09:55 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 18 Sep 2024 19:09:55 -0700
+Received: from hyd1403.caveonetworks.com (unknown [10.29.37.84])
+	by maili.marvell.com (Postfix) with SMTP id E20263F704E;
+	Wed, 18 Sep 2024 19:09:50 -0700 (PDT)
+Date: Thu, 19 Sep 2024 07:39:49 +0530
+From: Linu Cherian <lcherian@marvell.com>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+CC: <suzuki.poulose@arm.com>, <mike.leach@linaro.org>, <james.clark@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>, <coresight@lists.linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <corbet@lwn.net>, <devicetree@vger.kernel.org>, <sgoutham@marvell.com>,
+        <gcherian@marvell.com>
+Subject: Re: [PATCH v10 8/8] Documentation: coresight: Panic support
+Message-ID: <20240919020949.GA735454@hyd1403.caveonetworks.com>
+References: <20240916103437.226816-1-lcherian@marvell.com>
+ <20240916103437.226816-9-lcherian@marvell.com>
+ <ZujfhpLezHtbXhjs@archie.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3] libbpf: Fix expected_attach_type set when
- kernel not support
-To: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240914154040.276933-1-chen.dylane@gmail.com>
-From: Tao Chen <chen.dylane@gmail.com>
-In-Reply-To: <20240914154040.276933-1-chen.dylane@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZujfhpLezHtbXhjs@archie.me>
+X-Proofpoint-GUID: N4OEpQ-VPIZHL56J6G_IRQpnxsQeiWxq
+X-Proofpoint-ORIG-GUID: N4OEpQ-VPIZHL56J6G_IRQpnxsQeiWxq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-在 2024/9/14 23:40, Tao Chen 写道:
-> The commit "5902da6d8a52" set expected_attach_type again with
-> field of bpf_program after libpf_prepare_prog_load, which makes
-> expected_attach_type = 0 no sense when kenrel not support the
-> attach_type feature, so fix it.
-> 
-> Fixes: 5902da6d8a52 ("libbpf: Add uprobe multi link support to bpf_program__attach_usdt")
-> Suggested-by: Jiri Olsa <jolsa@kernel.org>
-> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
-> ---
->   tools/lib/bpf/libbpf.c | 12 ++++++++----
->   1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> Change list:
-> - v2 -> v3:
->      - update BPF_TRACE_UPROBE_MULTI both in prog and opts suggedted by
->        Andrri
-> - v1 -> v2:
->      - restore the original initialization way suggested by Jiri
-> 
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index 219facd0e66e..a78e24ff354b 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -7352,8 +7352,14 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
->   		opts->prog_flags |= BPF_F_XDP_HAS_FRAGS;
->   
->   	/* special check for usdt to use uprobe_multi link */
-> -	if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MULTI_LINK))
-> +	if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MULTI_LINK)) {
-> +		/* for BPF_TRACE_KPROBE_MULTI, user might want to query exected_attach_type
-> +		 * in prog, and expected_attach_type we set in kenrel is from opts, so we
-> +		 * update both.
-> +		 */
->   		prog->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
-> +		opts->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
-> +	}
->   
->   	if ((def & SEC_ATTACH_BTF) && !prog->attach_btf_id) {
->   		int btf_obj_fd = 0, btf_type_id = 0, err;
-> @@ -7443,6 +7449,7 @@ static int bpf_object_load_prog(struct bpf_object *obj, struct bpf_program *prog
->   	load_attr.attach_btf_id = prog->attach_btf_id;
->   	load_attr.kern_version = kern_version;
->   	load_attr.prog_ifindex = prog->prog_ifindex;
-> +	load_attr.expected_attach_type = prog->expected_attach_type;
->   
->   	/* specify func_info/line_info only if kernel supports them */
->   	if (obj->btf && btf__fd(obj->btf) >= 0 && kernel_supports(obj, FEAT_BTF_FUNC)) {
-> @@ -7474,9 +7481,6 @@ static int bpf_object_load_prog(struct bpf_object *obj, struct bpf_program *prog
->   		insns_cnt = prog->insns_cnt;
->   	}
->   
-> -	/* allow prog_prepare_load_fn to change expected_attach_type */
-> -	load_attr.expected_attach_type = prog->expected_attach_type;
-> -
->   	if (obj->gen_loader) {
->   		bpf_gen__prog_load(obj->gen_loader, prog->type, prog->name,
->   				   license, insns, insns_cnt, &load_attr,
+Hi,
 
-Hi, guys, please review this patch again, the previous versions:
-v1:
-https://lore.kernel.org/bpf/20240913121627.153898-1-chen.dylane@gmail.com/
-v2:
-https://lore.kernel.org/bpf/20240913164355.176021-1-chen.dylane@gmail.com/
+On 2024-09-17 at 07:16:46, Bagas Sanjaya (bagasdotme@gmail.com) wrote:
+> On Mon, Sep 16, 2024 at 04:04:37PM +0530, Linu Cherian wrote:
+> > +3. On a kernel panic, all coresight blocks are disabled, necessary
+> > +   metadata is synced by kernel panic handler.
+> "... and necessary metadata ..."
+> > +
+> > +   System would eventually reboot or boot a crashdump kernel.
+> > +
+> > +4. For  platforms that supports crashdump kernel, raw trace data can be
+> > +   dumped using the coresight sysfs interface from the crashdump kernel
+> > +   itself. Persistent RAM is not a requirement in this case.
+> > +
+> > +5. For platforms that supports persistent RAM, trace data can be dumped
+> > +   using the coresight sysfs interface in the subsequent Linux boot.
+> > +   Crashdump kernel is not a requirement in this case. Persistent RAM
+> > +   ensures that trace data is intact across reboot.
+> > +
+> > +Coresight trace during Watchdog reset
+> > +-------------------------------------
+> > +The main difference between addressing the watchdog reset and kernel panic
+> > +case are below,
+> "... are:"
+> > +Sample commands for testing a Kernel panic case with ETR sink
+> > +-------------------------------------------------------------
+> > +
+> > +1. Boot Linux kernel with "crash_kexec_post_notifiers" added to the kernel
+> > +   bootargs. This is mandatory if the user would like to read the tracedata
+> > +   from the crashdump kernel.
+> > +
+> > +2. Enable the preloaded ETM configuration
+> > +
+> > +    #echo 1 > /sys/kernel/config/cs-syscfg/configurations/panicstop/enable
+> > +
+> > +3. Configure CTI using sysfs interface::
+> > +
+> > +    #./cti_setup.sh
+> > +
+> > +    #cat cti_setup.sh
+> > +
+> > +
+> > +    cd /sys/bus/coresight/devices/
+> > +
+> > +    ap_cti_config () {
+> > +      #ETM trig out[0] trigger to Channel 0
+> > +      echo 0 4 > channels/trigin_attach
+> > +    }
+> > +
+> > +    etf_cti_config () {
+> > +      #ETF Flush in trigger from Channel 0
+> > +      echo 0 1 > channels/trigout_attach
+> > +      echo 1 > channels/trig_filter_enable
+> > +    }
+> > +
+> > +    etr_cti_config () {
+> > +      #ETR Flush in from Channel 0
+> > +      echo 0 1 > channels/trigout_attach
+> > +      echo 1 > channels/trig_filter_enable
+> > +    }
+> > +
+> > +    ctidevs=`find . -name "cti*"`
+> > +
+> > +    for i in $ctidevs
+> > +    do
+> > +            cd $i
+> > +
+> > +            connection=`find . -name "ete*"`
+> > +            if [ ! -z "$connection" ]
+> > +            then
+> > +                    echo "AP CTI config for $i"
+> > +                    ap_cti_config
+> > +            fi
+> > +
+> > +            connection=`find . -name "tmc_etf*"`
+> > +            if [ ! -z "$connection" ]
+> > +            then
+> > +                    echo "ETF CTI config for $i"
+> > +                    etf_cti_config
+> > +            fi
+> > +
+> > +            connection=`find . -name "tmc_etr*"`
+> > +            if [ ! -z "$connection" ]
+> > +            then
+> > +                    echo "ETR CTI config for $i"
+> > +                    etr_cti_config
+> > +            fi
+> > +
+> > +            cd ..
+> > +    done
+> > +
+> > +Note: CTI connections are SOC specific and hence the above script is
+> > +added just for reference.
+> > +
+> > +4. Choose reserved buffer mode for ETR buffer
+> > +    #echo "resrv" > /sys/bus/coresight/devices/tmc_etr0/buf_mode_preferred
+> > +
+> > +5. Enable stop on flush trigger configuration
+> > +    #echo 1 > /sys/bus/coresight/devices/tmc_etr0/stop_on_flush
+> > +
+> > +6. Start Coresight tracing on cores 1 and 2 using sysfs interface
+> > +
+> > +7. Run some application on core 1
+> > +    #taskset -c 1 dd if=/dev/urandom of=/dev/null &
+> > +
+> > +8. Invoke kernel panic on core 2
+> > +    #echo 1 > /proc/sys/kernel/panic
+> > +    #taskset -c 2 echo c > /proc/sysrq-trigger
+> > +
+> > +9. From rebooted kernel or crashdump kernel, read crashdata
+> > +
+> > +    #dd if=/dev/crash_tmc_etr0 of=/trace/cstrace.bin
+> > +
+> > +10. Run opencsd decoder tools/scripts to generate the instruction trace.
+> 
+> Format all command lines as literal code blocks to be consistent:
+> 
+> ---- >8 ----
+> diff --git a/Documentation/trace/coresight/panic.rst b/Documentation/trace/coresight/panic.rst
+> index 3b53d91cace8fd..864f6c05b3f7af 100644
+> --- a/Documentation/trace/coresight/panic.rst
+> +++ b/Documentation/trace/coresight/panic.rst
+> @@ -113,7 +113,7 @@ Sample commands for testing a Kernel panic case with ETR sink
+>     bootargs. This is mandatory if the user would like to read the tracedata
+>     from the crashdump kernel.
+>  
+> -2. Enable the preloaded ETM configuration
+> +2. Enable the preloaded ETM configuration::
+>  
+>      #echo 1 > /sys/kernel/config/cs-syscfg/configurations/panicstop/enable
+>  
+> @@ -176,22 +176,26 @@ Sample commands for testing a Kernel panic case with ETR sink
+>  Note: CTI connections are SOC specific and hence the above script is
+>  added just for reference.
+>  
+> -4. Choose reserved buffer mode for ETR buffer
+> +4. Choose reserved buffer mode for ETR buffer::
+> +
+>      #echo "resrv" > /sys/bus/coresight/devices/tmc_etr0/buf_mode_preferred
+>  
+> -5. Enable stop on flush trigger configuration
+> +5. Enable stop on flush trigger configuration::
+> +
+>      #echo 1 > /sys/bus/coresight/devices/tmc_etr0/stop_on_flush
+>  
+>  6. Start Coresight tracing on cores 1 and 2 using sysfs interface
+>  
+> -7. Run some application on core 1
+> +7. Run some application on core 1::
+> +
+>      #taskset -c 1 dd if=/dev/urandom of=/dev/null &
+>  
+> -8. Invoke kernel panic on core 2
+> +8. Invoke kernel panic on core 2::
+> +
+>      #echo 1 > /proc/sys/kernel/panic
+>      #taskset -c 2 echo c > /proc/sysrq-trigger
+>  
+> -9. From rebooted kernel or crashdump kernel, read crashdata
+> +9. From rebooted kernel or crashdump kernel, read crashdata::
+>  
+>      #dd if=/dev/crash_tmc_etr0 of=/trace/cstrace.bin
 
--- 
-Best Regards
-Dylane Chen
+
+Ack.
+
+>  
+> Thanks.
+> 
+> -- 
+> An old man doll... just what I always wanted! - Clara
+
+Linu Cherian.
+
+
 
