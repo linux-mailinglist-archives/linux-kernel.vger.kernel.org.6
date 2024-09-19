@@ -1,84 +1,112 @@
-Return-Path: <linux-kernel+bounces-333446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7CA97C8B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:37:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1214E97C8BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B17DB2131C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:37:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BAEA1C218EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5DD19D070;
-	Thu, 19 Sep 2024 11:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E1619D070;
+	Thu, 19 Sep 2024 11:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pd65Nbhp"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z2STDVEp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2A918A6C5;
-	Thu, 19 Sep 2024 11:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A08193432;
+	Thu, 19 Sep 2024 11:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726745869; cv=none; b=pyJNyhTNavVLvD17W130AxZorlm/QqGUaaVwMFjzSqhp3y+jsovWXuMgASe0m3TmcJmaLn74zwFENvmLNiX2fEi/p73m95XRzTK/d8WJ5Df5K1PvzECs/GrsLCkRyLKV/uqlqCJfQR4Uwr0Ko6AJcvfT+CkYYIG+frdWvZ/Tuak=
+	t=1726746180; cv=none; b=MX50AbZpZgKVOq8IWloxoniUSGu55RWtuHPHhPNGoOHeEM21wfXLwdQqwqK12lXtP5QgchfOeyi01QsUwNsQrf6yxgs8gKWeFwVgrt3dvZBC1EcKEu9ryd5o3r5Or8jdxtjDdNjJ35u7GtYI/hnoehpXBg0cC1RtVXJ5jDRU3po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726745869; c=relaxed/simple;
-	bh=/QwzbUtjn0JVsLE53dxj+9O1VYVnrHWhgyHOajQf6gM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G5VOD4Cg4Cqa0jTx8mHbW0OZauDuqmA3xKvO5uUV1VyXZ15TshKPvjWKEhCLJaoC6PhuPHW1hatnB3hrk6rLTtq+IWmYvouyJLByp7uFotsy5MnC+3aMNVe5E/RJYQClobCEG0oTpLVBGvQHR+mj4b3mCc5O1ItW4/fY6TyXF0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pd65Nbhp; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/QwzbUtjn0JVsLE53dxj+9O1VYVnrHWhgyHOajQf6gM=; b=pd65NbhphS1nHSii4UtGmEI+Bw
-	G7Yxc7bykIPjG7NWv6NUA+rq+rrseadCpelHDT54tZ/TUijFYJoWIoHRU77CxbHJKmZyqEaUTul6x
-	j+EHT1R3NYNRYPiDRlrFStSdpFbJmT9EZdfaGuLg/WT6t+k9SYUmI+BZqjUhlnpOtoXGCJBtid75Q
-	tIzrF9I5uVX+CeGNhjsL0OAwuCNljwgidunEyjyhjolE9vvoWIxy1p02skaFyS+z26BxTPLIZVd3x
-	E1L06M4wWFUtT7/3/CAt9GQkTuGEitdHv9O+0Ib2mTfG728DrvKUm4Gpy7BYtcLL+JwtA3ziU/AIP
-	B84Bfpqg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1srFTV-0000000AAxh-30TU;
-	Thu, 19 Sep 2024 11:37:29 +0000
-Date: Thu, 19 Sep 2024 04:37:29 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Qun-Wei Lin <qun-wei.lin@mediatek.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	David Hildenbrand <david@redhat.com>, Chris Li <chrisl@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Dan Schatzberg <schatzberg.dan@gmail.com>,
-	Kairui Song <kasong@tencent.com>, Barry Song <baohua@kernel.org>,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-block@vger.kernel.org,
-	Casper Li <casper.li@mediatek.com>,
-	Chinwen Chang <chinwen.chang@mediatek.com>,
-	Andrew Yang <andrew.yang@mediatek.com>,
-	John Hsu <john.hsu@mediatek.com>, wsd_upstream@mediatek.com
-Subject: Re: [PATCH 0/2] Add BLK_FEAT_READ_SYNCHRONOUS and
- SWP_READ_SYNCHRONOUS_IO
-Message-ID: <ZuwM-aEEo7DE-qXw@infradead.org>
-References: <20240919112952.981-1-qun-wei.lin@mediatek.com>
+	s=arc-20240116; t=1726746180; c=relaxed/simple;
+	bh=5TmbLzNY35MPG+6DijuO7RpVRl06QkUdrFsOEJAake8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V2eIgIv93xaU3d1GPsGVkwQglVcBoXfhKS4D3z5ne1kQ+RiL7l4RUKBpswDdzSp+mQMGwJIeymVO/V3fhrW69rEFYx9aKsaXzAJxVAv/AnwjYVJ8qEzzPrqJ19vJl7FBRnxTE2lP+63RKH6h4t3uihfrPttX1pXkNxw/zAon7go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z2STDVEp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16C61C4CEC6;
+	Thu, 19 Sep 2024 11:43:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726746180;
+	bh=5TmbLzNY35MPG+6DijuO7RpVRl06QkUdrFsOEJAake8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Z2STDVEp0SWsdE8cz181USldSfl7tKq0D8q592RkBCuQ8qPctpI4OZSZzXW75KGte
+	 zZAKN1mny/Tj/XToxtfw+HPvLmGqCPDm/H08w49llY0tD4bKVvmDuMKiR/XUpzGHbd
+	 KRPVzn3TAhi8KzfUQQHMyOGdoNBEoK5ulNVjLuy3ZqTyl1eg/p74rFSspnaRx3vD/L
+	 GzBTv5/6EzTo0z0KbWk56Vz3hxhCtL6DkuJGk+c9iB77sHRI9L1uyv2UihF+rWA2pU
+	 urmfJQ5ZkNPJjjpoLP5syXuMmg/fQdtcjbaJCvuH8A+TQIq6epU08QUqCztKRSEfjx
+	 tiUUKZowVtrhw==
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e04a6feef3so368131b6e.3;
+        Thu, 19 Sep 2024 04:43:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6UXwobDd2OOK39h3a7a1kvPBayjJlF7rRB6rKGTiK/lsrGqfdFldcTRqF5+vQ+xie7VhCfKNDGYBegrVQ@vger.kernel.org, AJvYcCX0p3l6jwXzYfAO8V7IkJA7TYvJ0MCyqFZmcVhvaTpzDjXp7FWV+zxYbMP3+wEjXf8q5l7UTvcWyOJ5vlxJT+50@vger.kernel.org, AJvYcCXuoe49sSOiOh8C0Wxf0vjdwOMUzhTE8zClF1zDZKyVwRRrgrv2Og/v9yYjK8uRaDdL/7hzRxKMsooX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlYqvirlla6byXWkNSkVAVBmiGf6mOoN7Occ2AeCyw5V06Jbjl
+	sdOZWeAYajS7WFPSMWhLNxFDR4aJRk8W+lI0dQDmElbsAIA8a2J0UnRaXc0irxSrVt8KZjIlrUz
+	asycnwyFtdGV0GrGwSapP9uqbziw=
+X-Google-Smtp-Source: AGHT+IGMHvj71v4pRxIz9H4t3dZJiQYtGoEasfwol8SunCUXrBGi2TuhnCmQuTnIqrnVRMALjf80YAFRxuBInDLw4Ao=
+X-Received: by 2002:a05:6808:2181:b0:3e0:48e7:7f31 with SMTP id
+ 5614622812f47-3e071a850cbmr17700057b6e.10.1726746179365; Thu, 19 Sep 2024
+ 04:42:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240919112952.981-1-qun-wei.lin@mediatek.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20240820191520.100224-2-thorsten.blum@toblux.com>
+ <CAKYAXd_T4JzjOVFqxSt=RQG7w0yzPX62-AihQHUepvS+80BZJQ@mail.gmail.com> <4881D699-9109-47B5-927F-B048479C48B8@toblux.com>
+In-Reply-To: <4881D699-9109-47B5-927F-B048479C48B8@toblux.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 19 Sep 2024 20:42:48 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9u5mxx=QY2Y64DjGNCoguCiqbDq69Xi2g6dpMJx9unCA@mail.gmail.com>
+Message-ID: <CAKYAXd9u5mxx=QY2Y64DjGNCoguCiqbDq69Xi2g6dpMJx9unCA@mail.gmail.com>
+Subject: Re: [PATCH v2] ksmbd: Replace one-element arrays with flexible-array members
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: sfrench@samba.org, senozhatsky@chromium.org, tom@talpey.com, 
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Well, you're not actually setting your new flags anywhere, which -
-as you might know - is an reson for an insta-NAK.
-
+On Thu, Sep 19, 2024 at 6:12=E2=80=AFPM Thorsten Blum <thorsten.blum@toblux=
+.com> wrote:
+>
+> Hi Namjae,
+>
+> On 22. Aug 2024, at 14:01, Namjae Jeon <linkinjeon@kernel.org> wrote:
+> > On Wed, Aug 21, 2024 at 4:15=E2=80=AFAM Thorsten Blum <thorsten.blum@to=
+blux.com> wrote:
+> >>
+> >> Replace the deprecated one-element arrays with flexible-array members
+> >> in the structs copychunk_ioctl_req and smb2_ea_info_req.
+> >>
+> >> There are no binary differences after this conversion.
+> >>
+> >> Link: https://github.com/KSPP/linux/issues/79
+> >> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> >> ---
+> >> Changes in v2:
+> >> - Use <=3D instead of < and +1 as suggested by Namjae Jeon and Tom Tal=
+pey
+> >> - Link to v1: https://lore.kernel.org/linux-kernel/20240818162136.2683=
+25-2-thorsten.blum@toblux.com/
+> > Applied it to #ksmbd-for-next-next.
+> > Thanks!
+>
+> I just noticed this patch never made it to linux-next and I can't find
+> it anywhere else (also not in #ksmbd-for-next-next).
+>
+> Maybe it got lost because it has the same subject and a very similar
+> commit message as [1] (I submitted both around the same time)?
+Sorry for missing it. I have pushed it to #ksmbd-for-next-next again.
+Thanks for your report:)
+>
+> Thanks,
+> Thorsten
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/co=
+mmit/?id=3D7c525dddbee71880e654ad44f3917787a4f6042c
 
