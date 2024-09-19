@@ -1,127 +1,102 @@
-Return-Path: <linux-kernel+bounces-333803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E68097CE4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:57:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095A197CE54
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED2C51F23C9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 19:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC05D284FFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 19:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F03D136E2E;
-	Thu, 19 Sep 2024 19:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AEC73440;
+	Thu, 19 Sep 2024 19:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bt1TF/pW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d4YSoGC7"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AFF131BDF
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 19:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939D6139CFA
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 19:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726775824; cv=none; b=luUX6VopLXkWBYalRkMvwLUM8thm87w8AdRmWaBk03oTwEbLJJ8RPDDJ+KE2a9fq2ox83MwaGB3Jza/bAjxsfxfWGQthQ0DnXKHXtg8TcXBb5cbi+xwJwHg/BVxMTfmzrSFaPagKay0sIDElSwSVXgK5s4F0B5MZb4E5udvC+Nc=
+	t=1726775905; cv=none; b=DCn+RthSXQKh7spcWUH35gVDVTY4C0quN58y9cB++MWEN5Gxpelp1mGDjPop3zq2mRX+qjdpZAii9igpjgcutFlho5Piy7ByaZ6VCVwCHdMLS/QPMnnzR5d39SooUx4pWWpKtjdwGw6mBjmPZZ6XHM5s3AoqOVXO8lnX7PMhwQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726775824; c=relaxed/simple;
-	bh=oZZ2sP1CndS0ambxtt6hVsiy5Jtev2nB0LICcnbSO34=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A4Gb9EJWd7gku9TCpOhm3VWTitE6B3go2ALDWqyfAXVhCG5JDYoKX8fhoHcfXOwR6+f+khqEJ9sMu/2z4yybDpW3BMAHcpDBaidop3drrI/w+5nMIgUMjUAI+OVCtRVA8bvQObfWR8Q0KLRHMTu85TXoLflXa7efMPJyUVvsfQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bt1TF/pW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726775821;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=IMRW3GhfouWxyFM1qW0RxKwI/EeZ/6kEKpBumcRNhfM=;
-	b=bt1TF/pWEqMzmMJHs3llqPThM2Q0rUPLDivdOo6EAapvrOURAUbvhmAL93FcJj62GVK5gT
-	B/9xwiriMqLdms14VS8+/32ROouyvb8F++P3siTm8n5repHLaMuTEmwwaPuHxkSXZxu69X
-	nxpMatTEIj5TYEU2lT2YB6ozyJUpDAU=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-mkGG927XMn2swUfmwNLpwg-1; Thu, 19 Sep 2024 15:57:00 -0400
-X-MC-Unique: mkGG927XMn2swUfmwNLpwg-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2070daaf8f1so17469565ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 12:56:59 -0700 (PDT)
+	s=arc-20240116; t=1726775905; c=relaxed/simple;
+	bh=aI7ClF1DwMBcWkQTFOuFWUi2ar++4bwigfoB5y/OgFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E6iRMzyPuGGrmheLThrCzKN/0itVyzsMHLhnPyNQHj+epyeIDEYPdE6WWkJdWQThxeh5rViix0EUm/DSlhHX1TgOxuvXxOB0eNdLHRHWJCDXypmebmPxlufwMh+CbapBNtrTLu8jRNVsog12VsI1y2K+pHsai7UTD3o10f7l3a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d4YSoGC7; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f759688444so10655061fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 12:58:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726775902; x=1727380702; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3T6VG4XZ1eVpUOvChP/8TFuvY3C5TZIY9Pixa3iMraw=;
+        b=d4YSoGC722pcKxQ1SRPU7SQFBF4lMk4aSufXM1WownEY4GNInRUt/4QZwqDP/nZyT5
+         a9G4q/b7QslJuON8Qxe3LYfM8LLP1UVfKxyjw0xfJF4sbJMsYYzul8ADA3H1WGcMP82X
+         mnzQtJgdkgEO9XxrL6p64T3oscX0zTZtv13HiAjRQiOKDxFww1NQzCQonQLlA+JKeerh
+         3SPDrKF4qWXW6bj7SvffDttTLi226bzYeyU/7Q1SPaO4TZoCr4h0dHvOV9C1bPgVn5oF
+         +wWDgmcMbJNX6S2fbMCoVy+EOpe6la9ZDo629t4QhKVfCaR4qdjeRpVzwv++dWbyTOQR
+         q0cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726775819; x=1727380619;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IMRW3GhfouWxyFM1qW0RxKwI/EeZ/6kEKpBumcRNhfM=;
-        b=OsfzTZ9hWP1rJ5SGVLwwv6g1F83oWWOzpBjdwVm6vlY2+LKEAl/XClqqmPB5obxq3O
-         jGnaniEs6yKdLIObEEi7yyWvNzri0PRoV0RE5VoeAJMWiQoOqVjhuBtj3ko/KmNaXxNP
-         EDCebLvRAHajGpGljCg5z/PnWanZtwUR8BNTvylwhcN7FWBEHejgIyzLUESFXh34uPwV
-         Cyj3+zVJbMidY9Na/rAE72z2fC/3Fn629ct7gYhK18+R7WJCrloWTbj2qpzKDa39Gx7v
-         Aqov0T3k5S25/nZ8F4an1q4tX0PI4eWbxSGFeeJC31XnoDaRupwBkNtlYMdGWCgDP+W9
-         aD4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWt/Ek+1+0CSkqQe8QzRb0AnkTlh7+9mPwQMPdynzETdtmGgNlq5KYwHJC6bfazgkiOGqaSSjLwsEhKoRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbPKTC0PJLA/ho0EAOfDFc42itsl+jba12t5dqcWQUcIGKid1o
-	Qr/E8ddywZsUKgBIIZ9GKFScWbzCcwaDVscv0PSaZshK5m8mC+Fv+3kFG5ekMst2ZjwthkUO5ig
-	Ow87c5pQKVMW4u2+yoHN2b0Z1azb0h0afheLwgoqzbS9n2kANfy5ObCB5Ci7GtQ==
-X-Received: by 2002:a17:903:2444:b0:202:2f0:3bb2 with SMTP id d9443c01a7336-208d843e50emr4377835ad.60.1726775819019;
-        Thu, 19 Sep 2024 12:56:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGr7GInwwPBXgtjEdeapMFLPjrpXj+uov2FO6b3wLt5XLcSg1apNPo5wJne5Z+DckO6Lk3JQ==
-X-Received: by 2002:a17:903:2444:b0:202:2f0:3bb2 with SMTP id d9443c01a7336-208d843e50emr4377675ad.60.1726775818688;
-        Thu, 19 Sep 2024 12:56:58 -0700 (PDT)
-Received: from rhfedora.redhat.com ([71.217.60.247])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2079470f1dcsm83787975ad.237.2024.09.19.12.56.53
+        d=1e100.net; s=20230601; t=1726775902; x=1727380702;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3T6VG4XZ1eVpUOvChP/8TFuvY3C5TZIY9Pixa3iMraw=;
+        b=v4Tu7lSmM3wDV1S1da3IUJpIGMP/czHw4TTA054zRKkTSQrMPIKMiivdLC+p99nKA6
+         P4jelHTwasD902UlEEvPPwEtCvXHgzeAsOMR3fdH1VHp16kdOA0MQ72FtC2ZAcZUJz7k
+         N7n2RVbU65tA6dmFkMK2Tilk5yT04ZPyf9AsIVgaLCyqiy6LdkIDrRwANj7qfvv4YjbB
+         ztFfCnEA5sQTWNiNhZEUDBmiq7CLZAwew/ycXMOfSG43Ax1BT4L8AzX6NBaWf/FKb9WW
+         27nyeF0Pw2oDdoQY2+m3xK5kleoZDdkp4OnSTOfUheq9qIFuiAlhtMOLuXEeWwrmAg71
+         GMAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVJWjvdrAYjpfHxes4catiT3u8OH/P4XLQfGcLHQ67wT7Ta4ft8q0qV9Hd0szxLIUurKRxuvu5LxwTTZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSAxSZZR+bQGitDFXGcY/BeUn8BGGdBmb0pLgIXU33+K3HIfsT
+	5Ok9vGyV7yhQypMWn8I9+CFRVNjYpe2il9DEzUTotY0EmEUy1bKfvxDhXDeI/kU=
+X-Google-Smtp-Source: AGHT+IGGqyOMIVYAeKYZz4EQw1D3YuqXoDUEoNQl2L/Xv/bG3uOuEYCOKU5H2YjX2daigmABvXadTA==
+X-Received: by 2002:a2e:83c4:0:b0:2ec:637a:c212 with SMTP id 38308e7fff4ca-2f7cb348cd7mr4137061fa.39.1726775901683;
+        Thu, 19 Sep 2024 12:58:21 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d37fb73sm17030821fa.78.2024.09.19.12.58.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 12:56:58 -0700 (PDT)
-From: "John B. Wyatt IV" <jwyatt@redhat.com>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: "John B. Wyatt IV" <jwyatt@redhat.com>,
-	linux-pm@vger.kernel.org,
-	Thomas Renninger <trenn@suse.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	John Kacur <jkacur@redhat.com>,
-	"John B. Wyatt IV" <sageofredondo@gmail.com>
-Subject: [PATCH v2] pm: cpupower: Clean up bindings gitignore
-Date: Thu, 19 Sep 2024 15:56:24 -0400
-Message-ID: <20240919195626.26833-1-jwyatt@redhat.com>
-X-Mailer: git-send-email 2.46.0
+        Thu, 19 Sep 2024 12:58:20 -0700 (PDT)
+Date: Thu, 19 Sep 2024 22:58:17 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maya Matuszczyk <maccraft123mc@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] firmware: qcom: enable qseecom on Lenovo Yoga Slim 7x
+Message-ID: <6qcffqabpvfycrapicd5g7dnjwneqzdodx6hkzx3ybd3jxu74k@7kh3crxjrbal>
+References: <20240919134421.112643-2-maccraft123mc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240919134421.112643-2-maccraft123mc@gmail.com>
 
-Add SPDX identifier to the gitignore. Remove the comment and .i file
-since the file it references was removed in another patch. This patch
-depends on Min-Hua Chen's 'pm: cpupower: rename raw_pylibcpupower.i'.
+On Thu, Sep 19, 2024 at 03:44:21PM GMT, Maya Matuszczyk wrote:
+> I'm not sure how to test it beyond checking if efivars work fine, and
+> reading and writing them works, persisting after reboot - adding a new
+> boot option with efibootmgr works perfectly.
+> 
+> Signed-off-by: Maya Matuszczyk <maccraft123mc@gmail.com>
+> ---
+>  drivers/firmware/qcom/qcom_scm.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Signed-off-by: John B. Wyatt IV <jwyatt@redhat.com>
-Signed-off-by: John B. Wyatt IV <sageofredondo@gmail.com>
----
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Changes in v2:
-	- Rewrote commit description to use the paragraph format.
-
----
- tools/power/cpupower/bindings/python/.gitignore | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/tools/power/cpupower/bindings/python/.gitignore b/tools/power/cpupower/bindings/python/.gitignore
-index 5c9a1f0212dd..51cbb8799c44 100644
---- a/tools/power/cpupower/bindings/python/.gitignore
-+++ b/tools/power/cpupower/bindings/python/.gitignore
-@@ -1,8 +1,7 @@
-+# SPDX-License-Identifier: GPL-2.0-only
- __pycache__/
- raw_pylibcpupower_wrap.c
- *.o
- *.so
- *.py
- !test_raw_pylibcpupower.py
--# git keeps ignoring this file, use git add -f raw_libcpupower.i
--!raw_pylibcpupower.i
 -- 
-2.46.0
-
+With best wishes
+Dmitry
 
