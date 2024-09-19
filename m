@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-333603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B61F97CB36
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:56:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F9F97CB3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AE2D284D4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:56:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACCAF1F2277E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F0E1A01C4;
-	Thu, 19 Sep 2024 14:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E5BD6+zJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A8E1A01A9;
-	Thu, 19 Sep 2024 14:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A7A1A00D7;
+	Thu, 19 Sep 2024 14:57:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BC119B59D;
+	Thu, 19 Sep 2024 14:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726757774; cv=none; b=BwQN50afh41eeGzBJR2sE0Tne+eNKu2UYJIPHr4XND16wZX41ZRzGCH97rj1VD+tNQqOgeeNA/8Jv7uj0Nb1PR4zKH4gjsVROfSekvNBjhWIYQBULJOCdk5S47xEQlZYKPVlEQTRsy9M3lLk8iXQSJnDzl6ykjLWlTPD+UnF0cc=
+	t=1726757876; cv=none; b=E1xSUDPM+yjRlGOYLfD8TxaQv6G9QIrjm2riPUL057M3wEDA81rTeKZGudTGlPeNaK0LvlyeSS9WacVm/jCys38xnvpc+3nPx3OkN1ep6TTIeoLg+yTayjgocWho5hRybpxsy14s28C8cmViRba8rpt4DGMpv/wTzRDmCHq7d60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726757774; c=relaxed/simple;
-	bh=QtIZeX0lLZcer6NTnJA8KxK4g0xGghJRzcuUPpkb0bA=;
+	s=arc-20240116; t=1726757876; c=relaxed/simple;
+	bh=W3Ku+a7f0Dz6ceI3TMqFraG7tkSnVcQJQJyuQe1NDQM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kWYDksEG93mcaFAKFKYuhWrB/3n5PPLfU2ZOWor8PAJj8I1GKYx0jvVdmKDjy7gIgSoYSL1vCQ0TV2XeUfu2+hCSBTNS63YkIBwkD3fZft6hrQPQ0gcYLjUUKF8mWwf8//DgMxVgwtjNxic6J5UZzyupslA8SItWpx2HxfMSABY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E5BD6+zJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C4FBC4CEC6;
-	Thu, 19 Sep 2024 14:56:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726757773;
-	bh=QtIZeX0lLZcer6NTnJA8KxK4g0xGghJRzcuUPpkb0bA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E5BD6+zJkxJRQkR4uhMeXTb5xDFvbc49U+UBAnb/rpWkm7Ps7hzIWTDItvKk68Ok4
-	 z/3gu9GSAb4OpVvncmFYcUDrrPBaMKOxGWFJZfSH/Izu0obJ9fp/4Apak7wky5a7Jw
-	 kkYs8OCz9Xlc76fmK0cd4Trm6XjxGtcJmqvC4cjbhpUZxmpZChtIXy0ICRfu2rf163
-	 U68HEgkGUuMCzlFSOKoQMHRU2L8181tlrYzEP84ZGLe8wCGw/u2of92IFdoc7xVUnw
-	 hZ8Zs+f8qbBEo53PlJfgBCt5JdfR3mjNK3a7xPqcUHxFteRHfcM1rmfoz1X9PICxxV
-	 b6yuOkWfYFT2A==
-Date: Thu, 19 Sep 2024 15:56:09 +0100
-From: Simon Horman <horms@kernel.org>
-To: Moon Yeounsu <yyyynoom@gmail.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: add inline annotation to fix the build warning
-Message-ID: <20240919145609.GF1571683@kernel.org>
-References: <20240919142149.282175-1-yyyynoom@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KB41DyQBQ1n5v6it6j7I85E+Lyb0tKE6Ot5k/Pa6CowS3oSCNjPsi7NpgONT/9/lXby7SnsNXBuf6VCq+lyJ5CNgBPDfc1wociU1mt9EUxXjp9bKPUqky6TSiIWD4AUYXnGu5UbIpQksO/QAs/gBoDcHPlYgmU0iL426z4ljcyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57155FEC;
+	Thu, 19 Sep 2024 07:58:23 -0700 (PDT)
+Received: from e130802.arm.com (e130802.arm.com [10.1.31.57])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 508033F71A;
+	Thu, 19 Sep 2024 07:57:50 -0700 (PDT)
+Date: Thu, 19 Sep 2024 15:57:41 +0100
+From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
+	Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, liviu.dudau@arm.com,
+	lpieralisi@kernel.org, robh@kernel.org, sudeep.holla@arm.com,
+	robin.murphy@arm.com
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
+ Systems remote processors
+Message-ID: <20240919145741.GA7940@e130802.arm.com>
+References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
+ <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
+ <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
+ <gzlncpyzwm7x4jcxtdrthrlv2dofk7u3oxn4taadwog5tt37wo@ot6s6kwukd4k>
+ <20240919093517.GA43740@e130802.arm.com>
+ <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,39 +60,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240919142149.282175-1-yyyynoom@gmail.com>
+In-Reply-To: <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
 
-On Thu, Sep 19, 2024 at 11:21:49PM +0900, Moon Yeounsu wrote:
-> This patch fixes two sparse warnings (`make C=1`):
-> net/ipv6/icmp.c:103:20: warning: context imbalance in 'icmpv6_xmit_lock' - wrong count at exit
-> net/ipv6/icmp.c:119:13: warning: context imbalance in 'icmpv6_xmit_unlock' - unexpected unlock
+Hi Krzysztof,
+
+> >>> +  '#extsys-id':
+> >>
+> >> '#' is not correct for sure, that's not a cell specifier.
+> >>
+> >> But anyway, we do not accept in general instance IDs.
+> > 
+> > I'm happy to replace the instance ID with  another solution.
+> > In our case the remoteproc instance does not have a base address
+> > to use. So, we can't put remoteproc@address
+> > 
+> > What do you recommend in this case please ?
 > 
-> Since `icmp6_xmit_lock()` and `icmp6_xmit_unlock()` are designed as they
-> are named, entering/returning the function without lock/unlock doesn't
-> matter.
+> Waiting one month to respond is a great way to drop all context from my
+> memory. The emails are not even available for me - gone from inbox.
 > 
-> Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
+> Bus addressing could note it. Or you have different devices, so
+> different compatibles. Tricky to say, because you did not describe the
+> hardware really and it's one month later...
+> 
 
-Hi Moon,
+Sorry for waiting. I was in holidays.
 
-Without this patch applied I see the warnings cited above.
+I'll add more documentation about the external system for more clarity [1].
 
-However, with this patch applied, I see the following.
-So I think this needs more work.
+Basically, Linux runs on the Cortex-A35. The External system is a
+Cortex-M core. The Cortex-A35 can not access the memory of the Cortex-M.
+It can only control Cortex-M core using the reset control and status registers mapped
+in the memory space of the Cortex-A35.
 
-net/ipv6/icmp.c: note: in included file (through include/linux/sched.h, include/linux/percpu.h, arch/x86/include/asm/msr.h, arch/x86/include/asm/tsc.h, arch/x86/include/asm/timex.h, include/linux/timex.h, ...):
-./include/linux/spinlock.h:361:16: warning: context imbalance in 'icmpv6_xmit_lock' - different lock contexts for basic block
-net/ipv6/icmp.c: note: in included file (through include/linux/spinlock.h, include/linux/sched.h, include/linux/percpu.h, arch/x86/include/asm/msr.h, arch/x86/include/asm/tsc.h, arch/x86/include/asm/timex.h, ...):
-./include/linux/bottom_half.h:33:30: warning: context imbalance in 'icmp6_send' - different lock contexts for basic block
-./include/linux/bottom_half.h:33:30: warning: context imbalance in 'icmpv6_echo_reply' - different lock contexts for basic block
+I'll make sure this explanation is added to the binding and commit log for
+more clarity.
 
-Also, It is my feeling that addressing warnings of this nature
-is not a fix for net, but rather but rather an enhancement for net-next.
+Thanks for the suggestion regarding supporting multiple instances of the
+External system. I will send a new version shortly addressing all comments.
 
-net-next is currently closed for the v6.12 merge windows, so non-RFC,
-patches should not be posted for net-next until it re-opens once v6.12-rc1
-has been released, most likely during the week of 30th September.
+[1]: paragraph 2.3, https://developer.arm.com/documentation/dai0550/D/?lang=en
 
--- 
-pw-bot: changes-requested
+Kind regards
+Abdellatif
 
