@@ -1,97 +1,74 @@
-Return-Path: <linux-kernel+bounces-333031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3970497C271
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 03:29:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9638697C272
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 03:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02834281FA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 01:29:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C24401C21678
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 01:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6F618654;
-	Thu, 19 Sep 2024 01:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0891814A82;
+	Thu, 19 Sep 2024 01:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JliZ4piX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+32dAq9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F87EF9CB;
-	Thu, 19 Sep 2024 01:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F0F4430
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726709387; cv=none; b=NYkyz+cPPMcVSeBoOzg+QOaiQMMwdv5PIxoJpBt98v/NcLB210yszZ785OTQFihKHlnuNRAmLyFMLo5B3LAWewS07esTHIfd/avuIhObt2wFTveYRVq3FSEzudACymnKzyxwFG6Jyn/HlIsUIj6bhzat9ULbf9SX7lQjnwA67h0=
+	t=1726709623; cv=none; b=gzLeLlpt0g6XbhlBMlidbs0wTBz3yNnbT0xhBEKyvt2mmmdmwWkNYRAyK00QN4Me2eOtdUMrnvubTEi7NhCpnhnKVH8CTN4is+8MoMm/dmOJiWFUTJq2qil8g/6axuUe6GEiU7oXRtYdY6qZGXJHkF9PicLc3nhC+GxEmTDZehI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726709387; c=relaxed/simple;
-	bh=No17i7pIxA9JTVP8LxQMt5chUyRmaEBBA0H5upGzXOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lw4j0ctuoyXHOBGF3mjkHXVe9Q0F7Byrs8QM4TDfv9SiIAoPYbu8yu0Unt6FZ12Bdaco6Wi7nb57wU2Sv+476Do3joanhC7Z8gYDwJGXIdnSSG9woHlkLLJ0WRd05zH3n4mFtyHk6z/Tc7XhcGw6TeDrsQ/QyQGewTnCnYeDEl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JliZ4piX; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726709386; x=1758245386;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=No17i7pIxA9JTVP8LxQMt5chUyRmaEBBA0H5upGzXOY=;
-  b=JliZ4piXbKq0e9/t49PZHPde1C6pSm8PkZSZ80jU/A+tjxJhJIC4iSeS
-   Ryq5l9JmC+4hXPASAM1mU2R5GHlG2e+/0r3dN5RBZh8EFQMZ+pAGx8ov/
-   mFGPn2hAUPguphD77oEWAgGTQF9gIvMRXawLoBD+ddUbDdkVVpQvzxOVD
-   KIF3xqBZzdisL8hb/JSZ/TQ/HgfYZJBtSTfv/kbHjs051HHt1LzBTPwcR
-   5W5vpDqvv/CqW4t9aTO9ikJfztYORUthGVR3l0HBilcP4Mv2cTSUJvubn
-   jOOjqTpfGrHaHfMP0tE2MTyp0zUxUDQOXXLMJDiE9FpO48JYb9/3zc9jq
-   A==;
-X-CSE-ConnectionGUID: Hze0Rl0xSYyoxoUXuSXq8A==
-X-CSE-MsgGUID: ZEvuX1aKQbOzyMiyU9xiwA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11199"; a="25476676"
-X-IronPort-AV: E=Sophos;i="6.10,240,1719903600"; 
-   d="scan'208";a="25476676"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 18:29:45 -0700
-X-CSE-ConnectionGUID: vCdy1wC0SyCAPd4Xhi+sKA==
-X-CSE-MsgGUID: B8DIPn3aS6KXhJaK+oGu2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,240,1719903600"; 
-   d="scan'208";a="70597582"
-Received: from tassilo.jf.intel.com (HELO tassilo) ([10.54.38.190])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 18:29:46 -0700
-Date: Wed, 18 Sep 2024 18:29:44 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Xu Yang <xu.yang_2@nxp.com>,
-	Zixian Cai <fzczx123@gmail.com>, Paran Lee <p4ranlee@gmail.com>,
-	Ben Gainey <ben.gainey@arm.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] perf python: Remove python 2 scripting support
-Message-ID: <Zut-iM3v9rJHehxJ@tassilo>
-References: <20240918225418.166717-1-irogers@google.com>
- <20240918225418.166717-2-irogers@google.com>
+	s=arc-20240116; t=1726709623; c=relaxed/simple;
+	bh=kIzzmFri/kJgjyyeug4PoRnrFCPRQ2ZgVw2wfglOml8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=G4lsU6numKnFgz+gvUSEzyE+sY2SlV1HpGygNZupXY9Fhn8ps25xo57YCPHVdThMnV+40AB0lpyGZWLn3JaBTOLU4GxCr/oTpMeqXujkjJPqjsdHxCnwWDOwC1+JYIrW3yTLDalNli2ySBNbcw9KxsDDCq6VFLNabWdzlmkou5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+32dAq9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4611AC4CEC2;
+	Thu, 19 Sep 2024 01:33:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726709622;
+	bh=kIzzmFri/kJgjyyeug4PoRnrFCPRQ2ZgVw2wfglOml8=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=f+32dAq9/k8CCkNnfzl9zXysl0mbgWIHSLV/Uwumz2GVh/V4IwlwDqLqJWAC0Rg6f
+	 jx1XHyYO0cHPfjlrlpXKOe6odDm68AOqMMaJvz5wOtAMHpB8v4g45F2l3cJOcVB/f+
+	 39maLEP40D7hu7MkGssx9oe2Fc5hWZiNZf3wKpbtQaIN9RMT87PTrZ9mydOUT60FeP
+	 bYiOlrF2u/ESo9Yo6GcMvJMvjzeQnmnDp4WPItzCIgDzUg7c5P0yROOzVQc+QXo0eE
+	 /rCmKMOPy9gJRhZI9MbrhEOhmS5FeyMO5zxq7K3SAcR+xFbyYrGu7yM8fdj292pGD0
+	 +I0x4I5yR/TMQ==
+Message-ID: <7ab615e8-348a-451a-b5bd-d95a6964a36a@kernel.org>
+Date: Thu, 19 Sep 2024 09:33:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240918225418.166717-2-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, Daeho Jeong <daehojeong@google.com>
+Subject: Re: [f2fs-dev] [PATCH v2 1/2] mkfs.f2fs: change -c option description
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20240916192014.1611002-1-daeho43@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240916192014.1611002-1-daeho43@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 19, 2024 at 12:54:17AM +0200, Ian Rogers wrote:
-> Python2 was deprecated 4 years ago, remove support and workarounds.
+On 2024/9/17 3:20, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> Current description confuses users like they can add addtional devices
+> with one -c option using commas(,) at the same time.
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
 
-Nacked-by: Andi Kleen
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-I don't see any advantages of breaking perfectly fine existing setups
-for no benefits.
-
--Andi
+Thanks,
 
