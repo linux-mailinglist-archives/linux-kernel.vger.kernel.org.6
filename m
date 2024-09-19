@@ -1,145 +1,107 @@
-Return-Path: <linux-kernel+bounces-333547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D871B97CA97
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:00:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 257A497CAA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CBAD1F219E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:00:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC039284103
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C5519F42C;
-	Thu, 19 Sep 2024 13:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/BD329B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3069B19F434;
+	Thu, 19 Sep 2024 14:00:49 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB24619D8BB;
-	Thu, 19 Sep 2024 13:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E04319F42C;
+	Thu, 19 Sep 2024 14:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726754393; cv=none; b=cvAssE0/AHGOYZ9Sujhu/8hiA934NF0A8BhBUwhnEdKW+Ytszrrf4wvvETuV9DO4K4rm6OtkJcBzkKA9cB84ZVW63LAFqd8N0uADX1qiENfD328zVb8+Y3BiAjU19GA+O0Do4EOubDsPsPYftkY/M9/QzgSqGKDPg9IC8xza8GQ=
+	t=1726754448; cv=none; b=DJhNyAyP9h0O2rAmaifyFVWQVt8WZmABUwAgGsbrfM0lBUUOD9a5Mvx5vo93egdQRmejqfiFnEas4pDi/Ctw6/WMYf4jfjViDrXZUh7TRu4pCyQWSyGwyR+8nsYgnIqEQLkTgxu/odDeAIDRNXauNqgSmZKAwi+SMp3r73xnzEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726754393; c=relaxed/simple;
-	bh=CePZyLigDVF6yDHPAAbBXKiYFarym/OrWA9cBQu4ghA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E3ScSRXFX/F82yVemsvWEVKwsiuXUUOnnw4edY/X1w5IhbWRYSrQYH/VLmrUz+UHo8Hkyz9HPiyTtbeytZoMQTd3ckOH7BHn0Ms4qlOynrAXhwZRpFohKCaeUdpeFT64sDITfk1tuALLzQ5o8Dbhv20WZclplczH+pt68IHWYFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/BD329B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CD47C4CEC4;
-	Thu, 19 Sep 2024 13:59:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726754392;
-	bh=CePZyLigDVF6yDHPAAbBXKiYFarym/OrWA9cBQu4ghA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=J/BD329BZWQwimY+QTC03Yv2DqIsRli2jZItPqpe91eYxZ85Blppw/GAY8Jbmhucl
-	 a+8nmLcaL1U0bx0Y7dtdqjB/qqLveEkpNg38OAOHNQTEncjS/hBDyaXvQPRgjjGzfA
-	 lmEC9lWZOpW24p3ZdyyPiBYz9L73Cf2fbmK/0Zc4ktOxhB41QbZ+wfpVZA8zwTV4mJ
-	 2rbP+HiN8DXC4yFERJDnAkn5NoDmE8LLCazbuE0/Nb17/tXJt2CNXb9JqWURLZA1md
-	 6Jlg+f2kFG1YPoyTrKgrH05v64aAQfAX0ifUh0156yITQvlIIyU+/BtybnYsAQ7tun
-	 /QYSb3fIaZifQ==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f754d4a6e4so9684791fa.3;
-        Thu, 19 Sep 2024 06:59:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU/ZvLi+ay/ABy1NZxKfg/YxdYlweBppqTbRmMhXimUrNFE8lyWDeMMv2P/p2VJwStl4HbW49cbrF7fGtfgSQU=@vger.kernel.org, AJvYcCWHvQXyXh2vKgfNbhikRqZk1FWwjt1M2dkyb9QsktB9AuLp3C2ZFus4/p/ftVUo6/gc7QZJpzskPnY0Ukw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY6Dse09zW3GdCw1Z7PbgMjbqERQFPacNa8cj9SgnlpQxhJexL
-	TWEnqT2NhkmrCCrXW+JM4KgdEkI46xyT0ukZnWS8IjeyPFWEpL0Cj6dcf1OHfbz8nkVf+7H6oQk
-	tWW58vtuYip5AaSO0PEUFE7cK/c4=
-X-Google-Smtp-Source: AGHT+IHhk8Dp9O86HEjI233s+GywkPv0eYie/FG0b1jEU9QzXUp+qIVvljtiBd//Xdk4DPfWcomKwoUyj0aHwliPIqg=
-X-Received: by 2002:a2e:b8c4:0:b0:2f7:c76f:3c62 with SMTP id
- 38308e7fff4ca-2f7c76f3cfdmr12015431fa.24.1726754391049; Thu, 19 Sep 2024
- 06:59:51 -0700 (PDT)
+	s=arc-20240116; t=1726754448; c=relaxed/simple;
+	bh=UIY7GQQtGwMKvGzu2eDJyLTjdUvx3nsugqXZIni3/Rk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lICRBVzAOHdkpBku+Igfg3amYv0si9PP5KBD8qsZpt5wbZpDPr/Eui5kPZ3u3BeuXpYr82GsuzwjGJkRNrXW2wSrj/C0uszh3Hherk+Y+ydSTX/27ls1J9nvmMBIFHwRTpececJ3ZYHpJFR/8AGvE7T2EHYnlxc6gunM97EF66Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4X8c2s06Y9z9v7Jk;
+	Thu, 19 Sep 2024 21:35:17 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 72F0F140122;
+	Thu, 19 Sep 2024 22:00:42 +0800 (CST)
+Received: from [10.81.207.148] (unknown [10.81.207.148])
+	by APP2 (Coremail) with SMTP id GxC2BwBHqcl5LuxmWCM9AQ--.55605S2;
+	Thu, 19 Sep 2024 15:00:41 +0100 (CET)
+Message-ID: <c62dd332-a8fe-4e9b-8bf8-8d1e6db052a7@huaweicloud.com>
+Date: Thu, 19 Sep 2024 16:00:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917141725.466514-1-masahiroy@kernel.org> <20240917141725.466514-9-masahiroy@kernel.org>
- <Zuws_qal2uJs0B2V@l-nschier-nb>
-In-Reply-To: <Zuws_qal2uJs0B2V@l-nschier-nb>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 19 Sep 2024 22:59:14 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATxynY4yrZgtqezt__DNvUt2pjetpuG25K050y=-bUCNQ@mail.gmail.com>
-Message-ID: <CAK7LNATxynY4yrZgtqezt__DNvUt2pjetpuG25K050y=-bUCNQ@mail.gmail.com>
-Subject: Re: [PATCH 08/23] kbuild: simplify find command for rustfmt
-To: Nicolas Schier <n.schier@avm.de>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Sep 19, 2024 at 10:54=E2=80=AFPM Nicolas Schier <n.schier@avm.de> w=
-rote:
->
-> On Tue, Sep 17, 2024 at 11:16:36PM +0900, Masahiro Yamada wrote:
-> > The current 'find' command does not prune the rust/test directory
-> > itself, requiring an additional 'grep -Fv' command to exclude it.
-> > This is cumbersome.
-> >
-> > The correct use of the -prune option can be seen in the 'make clean'
-> > rule.
-> >
-> > [Current command]
-> >
-> >   $ find . -type f -name '*.rs' -o -path ./rust/test -prune | wc
-> >        70      70    1939
-> >   $ find . -type f -name '*.rs' -o -path ./rust/test -prune | grep rust=
-/test
-> >   ./rust/test
-> >
-> > [Improved command]
-> >
-> >   $ find . -path ./rust/test -prune -o -type f -name '*.rs' -print | wc
-> >        69      69    1927
-> >   $ find . -path ./rust/test -prune -o -type f -name '*.rs' -print | gr=
-ep rust/test
-> >
-> > With the improved 'find' command, the grep command is no longer needed.
-> >
-> > There is also no need to use the absolute path, so $(abs_srctree) can b=
-e
-> > replaced with $(srctree).
-> >
-> > The pruned directory rust/test must be prefixed with $(srctree) instead
-> > of $(objtree). Otherwise, 'make O=3D... rustfmt' would visit the stale
-> > rust/test directory remaining in the source tree.
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
-> >
-> >  Makefile | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/Makefile b/Makefile
-> > index 5b16e0605a77..4992b2895dd5 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -1740,9 +1740,8 @@ PHONY +=3D rustfmt rustfmtcheck
-> >  # when matching, which is a problem when e.g. `srctree` is `..`.
-> >  # We `grep` afterwards in order to remove the directory entry itself.
-> >  rustfmt:
-> > -     $(Q)find $(abs_srctree) -type f -name '*.rs' \
-> > -             -o -path $(abs_objtree)/rust/test -prune \
-> > -             | grep -Fv $(abs_objtree)/rust/test \
-> > +     $(Q)find $(srctree) -path $(srctree)/rust/test -prune \
-> > +             -o -type f -name '*.rs' -print \
-> >               | grep -Fv generated \
->
-> Is there a reason for keeping the grep for generated instead of turning
-> it also into a find prune argument?
-
-
-This commit answers your question:
-
-https://github.com/Rust-for-Linux/linux/commit/73243a8a27a67
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+To: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+ rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@vger.kernel.org
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Neeraj Upadhyay <neeraj.upadhyay@amd.com>
+References: <20240917143402.930114-1-boqun.feng@gmail.com>
+ <20240917143402.930114-2-boqun.feng@gmail.com>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <20240917143402.930114-2-boqun.feng@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwBHqcl5LuxmWCM9AQ--.55605S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY37kC6x804xWl14x267AKxVWrJVCq3wAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjc
+	xK6I8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
+	c2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVW8ZVWrXwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUFYFCUUUUU
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
 
 
+Am 9/17/2024 um 4:33 PM schrieb Boqun Feng:
+> +#define hazptr_protect(hzp, gp, field) ({				\
+> +	typeof(gp) ___p;						\
+> +									\
+> +	___p = hazptr_tryprotect(hzp, gp, field);			\
+> +	BUG_ON(!___p);							\
+> +	___p;								\
+> +})
 
---=20
-Best Regards
-Masahiro Yamada
+
+Hi Boqun, why crash instead of retry?
+
+jonas
+
 
