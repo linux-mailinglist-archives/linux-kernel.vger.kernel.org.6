@@ -1,319 +1,178 @@
-Return-Path: <linux-kernel+bounces-333797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8434297CE3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:51:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C70F397CE40
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8EFA1C226AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 19:51:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EE96285160
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 19:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D8F5C8FC;
-	Thu, 19 Sep 2024 19:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RO9kC8ys"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE2B7F486;
+	Thu, 19 Sep 2024 19:50:59 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7E0524C4;
-	Thu, 19 Sep 2024 19:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E3B524B4;
+	Thu, 19 Sep 2024 19:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726775455; cv=none; b=K+uYjR4Soe5FETzTTWcBtdWBY5Cs0/kzAKKHKa9NkyYhYOUuRfPyNw5GMe2t9Dy6+ig+IBwMSnGKcGJUTv354DyrSGjmlAn70cSIwoIiczgUnOE0KJUGRItPnfKr3Y4PBael7gNwiJSJNRb53h4llqNdqCw8GDOGfIKKGW74FnU=
+	t=1726775459; cv=none; b=fOYYp336/UBw4ZGd8mQZn/wEuUcaAmubLqlhfqorOh0JTZ+hdWyWbHdSOh+06w+LBammuTr4wVdLNIYODaRhfKy+O3C71cAkQ8bUeXcqSSE8Klwp+05OV07wHbqdxrMbxS3V+8zJWgTBB7wypMwxgqnPV3bs62m4Na8dM4JXb9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726775455; c=relaxed/simple;
-	bh=es2tH5HR85ULg+VhL6Z13FNEk4ZnaR7pE1WXubqilL0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=HetRX56u3YsozJ4h0nTyhONrXi12Cim8DUSILfKdMY1Dzez5LHoXTizCiPsY6m2saHsg/kXa/Wt8YC7cLLxt8EOT/oLdotEwTH9lJ7mahUKgErZxw3AB4d13JpxU6m+IdT+93RPWftR4Hzf1LkH9PEPG/xfyFk/c64Jqtda8Wmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RO9kC8ys; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726775420; x=1727380220; i=markus.elfring@web.de;
-	bh=vVgLztpRxZMJV1LNxTel/o3SB6yp+N77eZ3BONwPVYI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=RO9kC8yssHLYJm3wdAJQE76SlT/0P7uZB4JMaDqWUTcZOFyWGG4OeCeC7wRB40wS
-	 Khq7G3rWQBL4m7YOk8Bgjku0SpM99RanmtQJPvjz0QxA0EmxIkPXTk9Uex0Y8J/3c
-	 BCP8hZOmvG9ZIax3OoI9h58zwYlRYyFcf8/g1MBr4/614zfdUXQsdoNfOrFY+8ayO
-	 Gaxf4Pkum+5xMQqnbKTd7ouDn6iI4kW6UiNXsUtNuMFAyQ/xrsVbZFgKZR6EWTnTS
-	 EYfjH1BWFMfzaa9SNfWjwJmUrneSzNSNRcXhLgFIaQ/6dmsemv59FEhcfxEr8mScl
-	 YlfZbRaU08OBYVczpg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MFrxl-1skZ7r21ol-002yBe; Thu, 19
- Sep 2024 21:50:20 +0200
-Message-ID: <7c98349a-bfa5-409b-847e-ed8439e80afd@web.de>
-Date: Thu, 19 Sep 2024 21:50:13 +0200
+	s=arc-20240116; t=1726775459; c=relaxed/simple;
+	bh=vzZiWjqkbum8uw7vhizL/BKTOXunpeeofOueZU+7x8I=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:Content-Type; b=Jm5UOvnt1ugAxYbzs0f/y3fBbH8Ob5HZ2bfGy8LY8F9slkuFo6fn/9gMK0VEd1JYlF4OecpTMhoZdgGhKaZqYSZLyuRXfBX41Mpsv1nIDxUVfbfa4jEAQcKzc5LiIllRTL2zpMvLozppGz2zKjqgWTlVUyvepMENm06iL9H8de0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.1.111] (31.173.81.63) by msexch01.omp.ru (10.188.4.12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Thu, 19 Sep
+ 2024 22:50:42 +0300
+Message-ID: <3cafe5c0-c00e-b9ef-24ff-2809e3fd36c1@omp.ru>
+Date: Thu, 19 Sep 2024 22:50:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: GR-Linux-NIC-Dev@marvell.com, netdev@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Himanshu Madhani <himanshu.madhani@qlogic.com>,
- Jakub Kicinski <kuba@kernel.org>, Manish Chopra <manishc@marvell.com>,
- Paolo Abeni <pabeni@redhat.com>, Shahed Shaikh <shshaikh@marvell.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Manish Chopra <manish.chopra@qlogic.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] qlcnic: Use common error handling code in four functions
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:3jABXlty3BYOJnBWTdWUwXhQnKEO+rrzvq7Mn/F/JwQOyYeIAzt
- kfvg5+qyzPTWNrGue3BZgqbs+R1K3vHzslvj0pbAULnkL3XpEk/hkuhGUGMSvNHiRGn35JC
- VMtbpQI2hrx26AlWr/l6/fos30dJ+Plwzmuu5lxVBYU/FfBGVWyndw6XdUCthXO3tW7nkqc
- q/goHY8dYp0thSHjCX0zQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:08z6dr4bPrs=;dMAySk9U+BbPwRvsn3RzvGxYeiN
- v64L34CZtUp9/SdebX0Z21Nw5stzVznBkUXFbibNh5Yqh+09NouHuSoc2qELGn4auI5Z3xTyW
- 0d2Gy1hDqzCW9WTVwD+O/bivjpBVHeOVP9Cmn+dc6cfkFUwAFXG6d/wxUFHSW22dx9VJhDUHa
- Trrkg6oMrlFeZC8/FLMVBwRX9qPgxtaW7AAGopXmUuWv79PPzY1IDDuYMyrFnoxXj28+AGXCC
- 1y9XNHG0LBKt2PyITuc8v1CnGyjQUblms3n/cJ/NUVaNlG2/0wO3OgF5sTj+b/U5MRvb6Mw7k
- +IlFzuW0vtXOxTQ8uXahXODCM2/9Fe1WDx7bwsXRDwAiJTIaisrh3PveNUKt79n5slQKsrt4I
- O47mM0viyZWMXhyPMaIIEetZomkOLKEJt4BuDrF4NRFvhPrxm2CfZ5SlbOljrAWoLNVZhBWZY
- 3OXB466LiJ4Nyrmt5azsOL01spgLpOYcn1fzJ6RtC8KbjpdUfnv1KC9n2gYmrJes19YybUaW1
- mG2ZTWputWnjaTWlkTgu/I1b2u6zltm8q4ROnFCEVLj9BzAyndf/AZT1XyipmrSEWZPe8/AHF
- JkVYk6dOD2IH1Bxw17TD1biElGvHuAPn7QNMyhLG+iyMM9XZBZgfuq9P7xI7+lTQX2/QYWE5V
- E+Y0hgUrWduASaUuqaRx84bEPe1Jg887nUjmosVAvta7w1HWOQkh0PIxhcPwV9Nj/urQnpGPG
- Kczj3IVcaSr7sONreLEjzxuRV+vV16TZAFcXXbpdVjanTdROv0l+NDzThyBlYsxqXQkc7vfdC
- ESnOEd+3LdCtg2BNzfp/s/hA==
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Subject: [PATCH v2 6.1.y] udf: Fold udf_getblk() into udf_bread()
+To: Jan Kara <jack@suse.cz>, <linux-kernel@vger.kernel.org>,
+	<stable@vger.kernel.org>
+CC: <lvc-project@linuxtesting.org>
+Content-Language: en-US
+Organization: Open Mobile Platform
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/19/2024 19:39:25
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 59
+X-KSE-AntiSpam-Info: Lua profiles 187870 [Sep 19 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.1.5
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
+ 8a1fac695d5606478feba790382a59668a4f0039
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {relay has no DNS name}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.81.63 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.81.63 in (user) dbl.spamhaus.org}
+X-KSE-AntiSpam-Info:
+	127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.81.63
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 59
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/19/2024 19:43:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/19/2024 3:09:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 19 Sep 2024 21:30:45 +0200
+From: Jan Kara <jack@suse.cz>
 
-Add jump targets so that a bit of exception handling can be better reused
-at the end of four function implementations.
+[ Upstream commit 32f123a3f34283f9c6446de87861696f0502b02e ]
 
-This issue was detected by using the Coccinelle software.
+udf_getblk() has a single call site. Fold it there.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- .../ethernet/qlogic/qlcnic/qlcnic_83xx_init.c | 12 +--
- .../net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c | 86 ++++++++-----------
- 2 files changed, 42 insertions(+), 56 deletions(-)
+[Sergey: moved back to using udf_get_block() and buffer_{mapped|new}().]
 
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c b/drive=
-rs/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
-index b733374b4dc5..a8eaf10d9158 100644
-=2D-- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_init.c
-@@ -1333,17 +1333,13 @@ static int qlcnic_83xx_copy_bootloader(struct qlcn=
-ic_adapter *adapter)
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 
- 	ret =3D qlcnic_83xx_lockless_flash_read32(adapter, src, p_cache,
- 						size / sizeof(u32));
--	if (ret) {
--		vfree(p_cache);
--		return ret;
--	}
-+	if (ret)
-+		goto free_cache;
-+
- 	/* 16 byte write to MS memory */
- 	ret =3D qlcnic_ms_mem_write128(adapter, dest, (u32 *)p_cache,
- 				     size / 16);
--	if (ret) {
--		vfree(p_cache);
--		return ret;
--	}
-+free_cache:
- 	vfree(p_cache);
+---
+This patch prevents NULL pointer dereference in case sb_getblk() fails...
 
- 	return ret;
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c b/drivers/n=
-et/ethernet/qlogic/qlcnic/qlcnic_sysfs.c
-index 74125188beb8..da1a6e68daf9 100644
-=2D-- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sysfs.c
-@@ -959,8 +959,8 @@ static ssize_t qlcnic_83xx_sysfs_flash_read_handler(st=
-ruct file *filp,
- 	if (!p_read_buf)
- 		return -ENOMEM;
- 	if (qlcnic_83xx_lock_flash(adapter) !=3D 0) {
--		kfree(p_read_buf);
--		return -EIO;
-+		ret =3D -EIO;
-+		goto free_read_buf;
- 	}
+Changes in version 2:
+- mentioned the original commit.
 
- 	ret =3D qlcnic_83xx_lockless_flash_read32(adapter, offset, p_read_buf,
-@@ -968,8 +968,7 @@ static ssize_t qlcnic_83xx_sysfs_flash_read_handler(st=
-ruct file *filp,
+ fs/udf/inode.c |   45 +++++++++++++++++++--------------------------
+ 1 file changed, 19 insertions(+), 26 deletions(-)
 
- 	if (ret) {
- 		qlcnic_83xx_unlock_flash(adapter);
--		kfree(p_read_buf);
--		return ret;
-+		goto free_read_buf;
- 	}
-
- 	qlcnic_83xx_unlock_flash(adapter);
-@@ -978,6 +977,10 @@ static ssize_t qlcnic_83xx_sysfs_flash_read_handler(s=
-truct file *filp,
- 	kfree(p_read_buf);
-
- 	return size;
-+
-+free_read_buf:
-+	kfree(p_read_buf);
-+	return ret;
+Index: linux-stable/fs/udf/inode.c
+===================================================================
+--- linux-stable.orig/fs/udf/inode.c
++++ linux-stable/fs/udf/inode.c
+@@ -459,30 +459,6 @@ abort:
+ 	return err;
  }
-
- static int qlcnic_83xx_sysfs_flash_bulk_write(struct qlcnic_adapter *adap=
-ter,
-@@ -996,18 +999,13 @@ static int qlcnic_83xx_sysfs_flash_bulk_write(struct=
- qlcnic_adapter *adapter,
- 	memcpy(p_cache, buf, size);
- 	p_src =3D p_cache;
-
--	if (qlcnic_83xx_lock_flash(adapter) !=3D 0) {
--		kfree(p_cache);
--		return -EIO;
+ 
+-static struct buffer_head *udf_getblk(struct inode *inode, udf_pblk_t block,
+-				      int create, int *err)
+-{
+-	struct buffer_head *bh;
+-	struct buffer_head dummy;
+-
+-	dummy.b_state = 0;
+-	dummy.b_blocknr = -1000;
+-	*err = udf_get_block(inode, block, &dummy, create);
+-	if (!*err && buffer_mapped(&dummy)) {
+-		bh = sb_getblk(inode->i_sb, dummy.b_blocknr);
+-		if (buffer_new(&dummy)) {
+-			lock_buffer(bh);
+-			memset(bh->b_data, 0x00, inode->i_sb->s_blocksize);
+-			set_buffer_uptodate(bh);
+-			unlock_buffer(bh);
+-			mark_buffer_dirty_inode(bh, inode);
+-		}
+-		return bh;
 -	}
-+	if (qlcnic_83xx_lock_flash(adapter))
-+		goto free_cache;
-
- 	if (adapter->ahw->fdt.mfg_id =3D=3D adapter->flash_mfg_id) {
- 		ret =3D qlcnic_83xx_enable_flash_write(adapter);
--		if (ret) {
--			kfree(p_cache);
--			qlcnic_83xx_unlock_flash(adapter);
--			return -EIO;
--		}
-+		if (ret)
-+			goto unlock_adapter;
- 	}
-
- 	for (i =3D 0; i < count / QLC_83XX_FLASH_WRITE_MAX; i++) {
-@@ -1018,16 +1016,11 @@ static int qlcnic_83xx_sysfs_flash_bulk_write(stru=
-ct qlcnic_adapter *adapter,
- 		if (ret) {
- 			if (adapter->ahw->fdt.mfg_id =3D=3D adapter->flash_mfg_id) {
- 				ret =3D qlcnic_83xx_disable_flash_write(adapter);
--				if (ret) {
--					kfree(p_cache);
--					qlcnic_83xx_unlock_flash(adapter);
--					return -EIO;
--				}
-+				if (ret)
-+					goto unlock_adapter;
- 			}
-
--			kfree(p_cache);
--			qlcnic_83xx_unlock_flash(adapter);
--			return -EIO;
-+			goto unlock_adapter;
- 		}
-
- 		p_src =3D p_src + sizeof(u32)*QLC_83XX_FLASH_WRITE_MAX;
-@@ -1036,17 +1029,20 @@ static int qlcnic_83xx_sysfs_flash_bulk_write(stru=
-ct qlcnic_adapter *adapter,
-
- 	if (adapter->ahw->fdt.mfg_id =3D=3D adapter->flash_mfg_id) {
- 		ret =3D qlcnic_83xx_disable_flash_write(adapter);
--		if (ret) {
--			kfree(p_cache);
--			qlcnic_83xx_unlock_flash(adapter);
--			return -EIO;
--		}
-+		if (ret)
-+			goto unlock_adapter;
- 	}
-
- 	kfree(p_cache);
- 	qlcnic_83xx_unlock_flash(adapter);
-
- 	return 0;
+-
+-	return NULL;
+-}
+-
+ /* Extend the file with new blocks totaling 'new_block_bytes',
+  * return the number of extents added
+  */
+@@ -1198,10 +1174,27 @@ struct buffer_head *udf_bread(struct ino
+ 			      int create, int *err)
+ {
+ 	struct buffer_head *bh = NULL;
++	struct buffer_head dummy;
 +
-+unlock_adapter:
-+	qlcnic_83xx_unlock_flash(adapter);
-+free_cache:
-+	kfree(p_cache);
-+	return -EIO;
- }
-
- static int qlcnic_83xx_sysfs_flash_write(struct qlcnic_adapter *adapter,
-@@ -1064,18 +1060,13 @@ static int qlcnic_83xx_sysfs_flash_write(struct ql=
-cnic_adapter *adapter,
- 	p_src =3D p_cache;
- 	count =3D size / sizeof(u32);
-
--	if (qlcnic_83xx_lock_flash(adapter) !=3D 0) {
--		kfree(p_cache);
--		return -EIO;
--	}
-+	if (qlcnic_83xx_lock_flash(adapter))
-+		goto free_cache;
-
- 	if (adapter->ahw->fdt.mfg_id =3D=3D adapter->flash_mfg_id) {
- 		ret =3D qlcnic_83xx_enable_flash_write(adapter);
--		if (ret) {
--			kfree(p_cache);
--			qlcnic_83xx_unlock_flash(adapter);
--			return -EIO;
--		}
-+		if (ret)
-+			goto unlock_adapter;
- 	}
-
- 	for (i =3D 0; i < count; i++) {
-@@ -1083,15 +1074,11 @@ static int qlcnic_83xx_sysfs_flash_write(struct ql=
-cnic_adapter *adapter,
- 		if (ret) {
- 			if (adapter->ahw->fdt.mfg_id =3D=3D adapter->flash_mfg_id) {
- 				ret =3D qlcnic_83xx_disable_flash_write(adapter);
--				if (ret) {
--					kfree(p_cache);
--					qlcnic_83xx_unlock_flash(adapter);
--					return -EIO;
--				}
-+				if (ret)
-+					goto unlock_adapter;
- 			}
--			kfree(p_cache);
--			qlcnic_83xx_unlock_flash(adapter);
--			return -EIO;
-+
-+			goto unlock_adapter;
- 		}
-
- 		p_src =3D p_src + sizeof(u32);
-@@ -1100,17 +1087,20 @@ static int qlcnic_83xx_sysfs_flash_write(struct ql=
-cnic_adapter *adapter,
-
- 	if (adapter->ahw->fdt.mfg_id =3D=3D adapter->flash_mfg_id) {
- 		ret =3D qlcnic_83xx_disable_flash_write(adapter);
--		if (ret) {
--			kfree(p_cache);
--			qlcnic_83xx_unlock_flash(adapter);
--			return -EIO;
--		}
-+		if (ret)
-+			goto unlock_adapter;
- 	}
-
- 	kfree(p_cache);
- 	qlcnic_83xx_unlock_flash(adapter);
-
- 	return 0;
-+
-+unlock_adapter:
-+	qlcnic_83xx_unlock_flash(adapter);
-+free_cache:
-+	kfree(p_cache);
-+	return -EIO;
- }
-
- static ssize_t qlcnic_83xx_sysfs_flash_write_handler(struct file *filp,
-=2D-
-2.46.0
-
++	dummy.b_state = 0;
++	dummy.b_blocknr = -1000;
++	*err = udf_get_block(inode, block, &dummy, create);
++	if (*err || !buffer_mapped(&dummy))
++		return NULL;
+ 
+-	bh = udf_getblk(inode, block, create, err);
+-	if (!bh)
++	bh = sb_getblk(inode->i_sb, dummy.b_blocknr);
++	if (!bh) {
++		*err = -ENOMEM;
+ 		return NULL;
++	}
++	if (buffer_new(&dummy)) {
++		lock_buffer(bh);
++		memset(bh->b_data, 0x00, inode->i_sb->s_blocksize);
++		set_buffer_uptodate(bh);
++		unlock_buffer(bh);
++		mark_buffer_dirty_inode(bh, inode);
++		return bh;
++	}
+ 
+ 	if (bh_read(bh, 0) >= 0)
+ 		return bh;
 
