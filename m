@@ -1,138 +1,154 @@
-Return-Path: <linux-kernel+bounces-333125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B208697C436
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:19:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3843A97C44E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:27:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7564B2832F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:19:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 587A21C2197E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B3918B492;
-	Thu, 19 Sep 2024 06:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C99B18C356;
+	Thu, 19 Sep 2024 06:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXg+Ohdl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oiu1YfpZ"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D261804F;
-	Thu, 19 Sep 2024 06:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3EB2B9AD
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 06:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726726759; cv=none; b=orrLXlxoG7dIbqajmgquAe6Q1Xhd3dZ7L8qsFIPHb2yQdHTClq+wI0K2wZuY7+o8+romwvNF46QyO/PhLg4+wPDZoqKKuUYpdleSx8Yv+72XQBnXw5e8TW+4kSM5tX8gnJHCNv7qFWj0g9ksM7Q9OCGbHqnojWv+7N1VhgELsx4=
+	t=1726727260; cv=none; b=PCxSxx3MTO5iKIPSKTb03Bkb45fg0AcJJ9Tt/KKew7xRobbyJkiMJRBSVkT2mpfsbrX8XeosQzLX2WoOiA8EpMT1GO44XK9HXg3zxcnsxGAfMv1bg3OCZ5E7xoHxZ7mMRFKKsJyHLqoG6BQ79kyF1uAGIfGDcfhks0Fta9fwMHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726726759; c=relaxed/simple;
-	bh=O3+KD1aEgMlytNwpJ/m3GJud5SAVm2MTMn9TmKmaVLA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lFmYj7/Q+utzcBgyTpzZUfRj8WS3ZULHaZ4vjFyP5MM5tijZ23VENU0QWnzM48o4YAoDYTuSt7SAC6cuNUZ098Zw7Esea39A8KwZtHQFtSB/V6H3Bk8xtsNKavx1FOoF4H9Fw09QmVbt+TO9BFGGKhBfYFrblNBGdoue38QVof8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXg+Ohdl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DD68C4CEC4;
-	Thu, 19 Sep 2024 06:19:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726726759;
-	bh=O3+KD1aEgMlytNwpJ/m3GJud5SAVm2MTMn9TmKmaVLA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=GXg+Ohdlm3GwqVscJQJbWybf4ilppyhpX1sPlnv4WLAkhGkBOypmfIQtTq6av8NUX
-	 yNXE4sjQp1uiCUU82nApV0a/3sFJPYmpBqobOL0fihuVZxlB3ATwXjO8a4b0NALsSu
-	 H+GVk2xLZT5toO4HLn1eCpG4zg5duMqw6snbjewQEcIOrsbd9ntmifurfAiR27f9uG
-	 m75RiIV6WQxxk1CFGTZClR+pBXIq8RGTieRUCHiBfLZ8DDmEpgXm7mR95pC4INLZ3l
-	 LkzMKPL0dEumTZgc299EM7jarhkaXvuJrkQBs7PBXVMW62ZZRN7KBlb2FRmICIMs4R
-	 J/ne0E+nC31uQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
-  "Frederic Weisbecker" <frederic@kernel.org>,  "Thomas Gleixner"
- <tglx@linutronix.de>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 04/14] rust: sync: add `Arc::clone_from_raw`
-In-Reply-To: <874j6cjiip.fsf@kernel.org> (Andreas Hindborg's message of "Thu,
-	19 Sep 2024 07:54:06 +0200")
-References: <20240917222739.1298275-1-a.hindborg@kernel.org>
-	<20240917222739.1298275-5-a.hindborg@kernel.org>
-	<uQyhqKNsbshVFUyAbdqOai1BfuYEl6ygcM8T-tTRf2rvmh6yIVNKqODmQavLegAedRUKVZ8JZoe7O-obhoz3Uw==@protonmail.internalid>
-	<43b9bc9b-f64c-4421-8cf2-795f1f0ec94a@proton.me>
- <874j6cjiip.fsf@kernel.org>
-Date: Thu, 19 Sep 2024 08:19:14 +0200
-Message-ID: <87v7ysi2sd.fsf@kernel.org>
+	s=arc-20240116; t=1726727260; c=relaxed/simple;
+	bh=VsAwGOCinvik8Ne4fJTXEsZBmEGj0hzYoshW3MPoFYU=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-version:Content-type; b=B+dPaTW6FXJEtc/bRBQKqMRnxDJ7eRc42FjI1RDXbOgn5A82rLf2vd/a39qsM/W79o6ZwdUe6GiXELq3Ma9G1WFbFBejJftMzJ4c1r3M0FGNaclFLWw5P5xTupZdmi6SEZPSqxmNWICFDIDYAa5edLxrglQU12puqC0BlL0cK2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oiu1YfpZ; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-206f9b872b2so4371395ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 23:27:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726727258; x=1727332058; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:message-id:date
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2Hj+1vqgujWOrqlQpkce2sq1h+JT76BLtBiXrr9bmsw=;
+        b=Oiu1YfpZIWipVRKC6gKM9snNGxWo7xj+1VPSId15CdTIokuh+Jo+qMx5WXhA9+xpCq
+         QFUW+9SyBXZ1QFiKpvUW+lwc0ghzglFHpQWgPcF++WBwXQEXa9b0GROqeWhraGQJU2UR
+         eFL1hmhKm1wS5x/vcLAkhIELevEcVkjMsmKGDmZyOcRoAnxXtyTmAbmhPxQP7Wgxk2QM
+         kLMgQv3HAYP7DJoGqlnIbc3tBKhLQHCexjwznzhKHfIUp7FIusj4F7L+9dmCIadAFfUY
+         lKHlUTZxOZshdI0Vh7eFvQGeVUNhboVIgqGbZFLvGXzoW2Z+oRuio9MeNT1QWi3un2FJ
+         zEIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726727258; x=1727332058;
+        h=content-transfer-encoding:mime-version:references:message-id:date
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2Hj+1vqgujWOrqlQpkce2sq1h+JT76BLtBiXrr9bmsw=;
+        b=isfKLiZ85nzI6qrOwyBkbKY2LVBhl92DfYqhIPrp9Ywy3Wp8IXYNXMKRJZkInYY/G3
+         w+30YrOB/HT26xnrwUXNz7LBZ5gnRWt+p4c/MbxVvRYFBpgWWwb7j3rrYWEv7WLwRemm
+         a66aXh9/v+Qct+WZy5DOxgXgOF97Om6ROE8AAUO+ImubyXlmz/46Ry4RE9LZi4vFsBBi
+         DeaIQ54oXd838H8/TMdFz6ceG6QjSN/R5GAKfdPOHJx42/rJxSPnDTzEKK5VmGdsx/R5
+         jJ6ImUmXxMPwfxIN7C7JxeUbtfkN2zS01WHDkI7ZL5cC3w1rzaoovpgiCo5vCku5SCw0
+         0hvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNl8/eJ/E2npOgMNt3Riw4NdT8XSAFCwTGsZ/SoGzrMSFOYWE5q3Bpc1nCJKXNLVKKnDtp/uFl82IYaqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpDQaqlvrsjD4Hf4gvJhBf/PheTKVpxd0bvadpPdkEDeipaoK6
+	rutQ0ZaeNaRATD0Ah8OMvQoRKGnK2Pymfyq9o3RQBZV94WyB0RTUz1+abg==
+X-Google-Smtp-Source: AGHT+IE50XMoZa4hBwRIz3mN6qx5JWjHTF23/FUJHa75WuBjbh10hAyGn2DW14ljgJyxa6XgGD0eSg==
+X-Received: by 2002:a17:902:eb8a:b0:206:ca91:1dda with SMTP id d9443c01a7336-2076e39c56bmr305359875ad.17.1726727258556;
+        Wed, 18 Sep 2024 23:27:38 -0700 (PDT)
+Received: from dw-tp ([171.76.85.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207945da793sm73443715ad.54.2024.09.18.23.27.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 23:27:37 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, linuxppc-dev@lists.ozlabs.org
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, Hari Bathini <hbathini@linux.ibm.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>, Donet Tom <donettom@linux.vnet.ibm.com>, Pavithra Prakash <pavrampu@linux.vnet.ibm.com>, Nirjhar Roy <nirjhar@linux.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kasan-dev@googlegroups.com
+Subject: Re: [RFC v2 03/13] book3s64/hash: Remove kfence support temporarily
+In-Reply-To: <d9d8703a-df24-47e3-bd0d-2ff5a6eae184@csgroup.eu>
+Date: Thu, 19 Sep 2024 11:53:15 +0530
+Message-ID: <87jzf8tb58.fsf@gmail.com>
+References: <cover.1726571179.git.ritesh.list@gmail.com> <5f6809f3881d5929eedc33deac4847bf41a063b9.1726571179.git.ritesh.list@gmail.com> <d9d8703a-df24-47e3-bd0d-2ff5a6eae184@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 
-Andreas Hindborg <a.hindborg@kernel.org> writes:
+Christophe Leroy <christophe.leroy@csgroup.eu> writes:
 
-> "Benno Lossin" <benno.lossin@proton.me> writes:
+> Le 19/09/2024 à 04:56, Ritesh Harjani (IBM) a écrit :
+>> Kfence on book3s Hash on pseries is anyways broken. It fails to boot
+>> due to RMA size limitation. That is because, kfence with Hash uses
+>> debug_pagealloc infrastructure. debug_pagealloc allocates linear map
+>> for entire dram size instead of just kfence relevant objects.
+>> This means for 16TB of DRAM it will require (16TB >> PAGE_SHIFT)
+>> which is 256MB which is half of RMA region on P8.
+>> crash kernel reserves 256MB and we also need 2048 * 16KB * 3 for
+>> emergency stack and some more for paca allocations.
+>> That means there is not enough memory for reserving the full linear map
+>> in the RMA region, if the DRAM size is too big (>=16TB)
+>> (The issue is seen above 8TB with crash kernel 256 MB reservation).
+>> 
+>> Now Kfence does not require linear memory map for entire DRAM.
+>> It only needs for kfence objects. So this patch temporarily removes the
+>> kfence functionality since debug_pagealloc code needs some refactoring.
+>> We will bring in kfence on Hash support in later patches.
+>> 
+>> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+>> ---
+>>   arch/powerpc/include/asm/kfence.h     |  5 +++++
+>>   arch/powerpc/mm/book3s64/hash_utils.c | 16 +++++++++++-----
+>>   2 files changed, 16 insertions(+), 5 deletions(-)
+>> 
+>> diff --git a/arch/powerpc/include/asm/kfence.h b/arch/powerpc/include/asm/kfence.h
+>> index fab124ada1c7..f3a9476a71b3 100644
+>> --- a/arch/powerpc/include/asm/kfence.h
+>> +++ b/arch/powerpc/include/asm/kfence.h
+>> @@ -10,6 +10,7 @@
+>>   
+>>   #include <linux/mm.h>
+>>   #include <asm/pgtable.h>
+>> +#include <asm/mmu.h>
+>>   
+>>   #ifdef CONFIG_PPC64_ELF_ABI_V1
+>>   #define ARCH_FUNC_PREFIX "."
+>> @@ -25,6 +26,10 @@ static inline void disable_kfence(void)
+>>   
+>>   static inline bool arch_kfence_init_pool(void)
+>>   {
+>> +#ifdef CONFIG_PPC64
+>> +	if (!radix_enabled())
 >
->> On 18.09.24 00:27, Andreas Hindborg wrote:
->>> Add a method to clone an arc from a pointer to the data managed by the
->>> `Arc`.
->>>
->>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->>> ---
->>>  rust/kernel/sync/arc.rs | 20 ++++++++++++++++++++
->>>  1 file changed, 20 insertions(+)
->>>
->>> diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
->>> index a57ea3e2b44c..2c95712d12a2 100644
->>> --- a/rust/kernel/sync/arc.rs
->>> +++ b/rust/kernel/sync/arc.rs
->>> @@ -282,6 +282,26 @@ pub unsafe fn from_raw(ptr: *const T) -> Self {
->>>          unsafe { Self::from_inner(ptr) }
->>>      }
->>>
->>> +    /// Clones an [`Arc`] instance from a pointer to the contained data.
->>> +    ///
->>> +    /// # Safety
->>> +    ///
->>> +    /// `ptr` must point to an allocation that is contained within a live [`Arc<T>`].
->>> +    pub unsafe fn clone_from_raw(ptr: *const T) -> Self {
->>> +        // SAFETY: The caller promises that this pointer points to data
->>> +        // contained in an `Arc` that is still valid.
->>> +        let inner = unsafe { ArcInner::container_of(ptr).as_ref() };
->>> +
->>> +        // INVARIANT: C `refcount_inc` saturates the refcount, so it cannot
->>> +        // overflow to zero. SAFETY: By the function safety requirement, there
->>> +        // is necessarily a reference to the object, so it is safe to increment
->>> +        // the refcount.
->>> +        unsafe { bindings::refcount_inc(inner.refcount.get()) };
->>> +
->>> +        // SAFETY: We just incremented the refcount. This increment is now owned by the new `Arc`.
->>> +        unsafe { Self::from_inner(inner.into()) }
->>
->> The implementation of this function looks a bit strange to me, how about
->> this?:
->>
->>     // SAFETY: this function has the same safety requirements as `from_raw`.
->>     let arc = unsafe { Self::from_raw(ptr) };
->>     let clone = arc.clone();
->>     // Prevent decrementing the refcount.
->>     mem::forget(arc);
->>     clone
->>
+> No need for a #ifdef here, you can just do:
 >
-> We do not own
-> a refcount on the Arc. For a short duration you will have a wrong
-> refcount. If you have two Arcs and the refcount is 1, the ArcInner might
-> be dropped after the first line of this suggestion, before you do clone,
-> and then this is not sound.
+> 	if (IS_ENABLED(CONFIG_PPC64) && !radix_enabled())
+> 		return false;
+>
+>
 
-Well, disregard that. This is why one should not reply to emails before
-coffee in the morning.
+This special radix handling is anyway dropped in later pacthes. 
+So I didn't bother changing it here.
 
-Of course, a precondition for calling this function is that the arc
-containing the data pointed to by `ptr` is live for the duration. So
-what you wrote would work. But I still do not like having two `Arc`s in
-existence with the wrong refcount. 
+>> +		return false;
+>> +#endif
+>>   	return !kfence_disabled;
+>
+> But why not just set kfence_disabled to true by calling disable_kfence() 
+> from one of the powerpc init functions ?
+>
 
-BR Andreas
+This patch is only temporarily disabling kfence support for only Hash.
+This special Hash handling gets removed in patch-10 which brings back
+kfence support.
 
+-ritesh
 
