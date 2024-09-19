@@ -1,125 +1,205 @@
-Return-Path: <linux-kernel+bounces-333399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD89997C800
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:33:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA8397C805
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BD1BB258ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:33:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C7E11F21F8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F32199EBB;
-	Thu, 19 Sep 2024 10:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30F619ADBA;
+	Thu, 19 Sep 2024 10:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="mZsO4AGi"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QX76XeTl"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B709D3C0C
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 10:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4D93C0C;
+	Thu, 19 Sep 2024 10:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726742008; cv=none; b=PywUVOHqQOIgy26JYwodU7SGm/wUBPYhTQBtjl0P5GV0IgwGje8Bu230TEHWzND4och2ma2VkiCzP4MtATpbQYQ/k7zjj/ixK5KsEc+XiJSoxF1C7Z48PtBlj37haqBDUKF6BeckNuGmX4oGSYh9y1LuAIhvT1Zi3KSNlaM3TwE=
+	t=1726742053; cv=none; b=B5KhFfzBxUCru3S3xgC6t+ne72Z2isOj3Hun1fCBZIl06GVE+jIJvLaJgVXTfR9eRaAmh2BF6EaJdmJuKW7QmFGxN/oMCVfypo4+a+4f4AG6O070fIrfEyGpIxB8VP1TdqSc+Z+LGQ5u2kGpsdCuuKvsOaFtgj8cfOognr2Pnps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726742008; c=relaxed/simple;
-	bh=V1YPdfqmajIEnriwvuftpiMyY/DSrs4cUIhXE5P3RNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sXtFMXhW7L3sQ0+XhCHWzsssh58zfOTNlZpbV7nEhnyR+BFngKWBHYAZMZKyBv/i73RNFG2SDEir8PT5FzSx7CZPssz2fFrfletgrNiZ/vpajbzTW/BUTg/xq8mT6tzGY+UAI4VgPfZll8zJHoialqcXqt1FALEGx6ERe1mwK/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=mZsO4AGi; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c42384c517so945175a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 03:33:26 -0700 (PDT)
+	s=arc-20240116; t=1726742053; c=relaxed/simple;
+	bh=kLNoi9PeYfT8beehybcUvKc+rFcI1JgvN9vyNUUyUyg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dWhhqGzFEctEqH/9jNnYZRjOZxuiaVmhRclCf8n+B/AQm7GJ2udAW8jvS9lyBLsp0x2yls3DhNSPhPfKnx0qCi/VHGj/+lZn9+gq0vxHDSLkowkbUA1uBx61BUopsKCyWXXGWh46k2Y9ibMEpG1yOo/6V0Az2D3Q6JSuay5FShI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QX76XeTl; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7197970e2aeso464229b3a.2;
+        Thu, 19 Sep 2024 03:34:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1726742005; x=1727346805; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6ElPw2rkqJxy3GrSWwEzcQxJQL1TZQOW7P03usn2dqU=;
-        b=mZsO4AGinb40OfWru/ps8zvUfk+S+Sv18uHs3qO9gXqbkfZo6jyvxT/Re/ywXFoZxH
-         mOU4itu+K9yI6guIlP54rl5nsTVEjlTf+PBJsy+Pp0775yFdo/YdmDaEE6FEYJp0zzGb
-         L4tjX/8QrNrhZB833AZSgYQaJ5r3jqpMyU8m/gXYyl0ovs0orSbAfqDCyGr2m5qZMWp6
-         bD5uQGmmXt3cjmloTyigVPG6KgjLmdAV4LpG/8tr7cGBE6Jv4bKhG+pj3wCKFXKuodIV
-         otjD0mgd+IxlBI12HGph2/UyYiYjhPodkuup+KdgTKf25eP5W3QJwWX/1o9at5TXgoZ7
-         hwTA==
+        d=gmail.com; s=20230601; t=1726742051; x=1727346851; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W8PsRMOFT2KRjjX91OQvWnXM7VKXooK07fcRHIqQtSE=;
+        b=QX76XeTl8luepMGHle+bjUkiPVWGBsoa4ZHyi9ClCf1CCLyQ/hhk4+sZuawl8gMz8r
+         MrMioKEGWbfcuyh/KIyxCIuGrLJ5NI8LRKOqZQEBe8+sOXo5Wm2PdFxKU2OFKNj7b7eN
+         nN9SklhI3c6cQ17NqQNVC6WuWMF6hrpwFfJMgiZo+Plh0NBiY9PTRJ52glME7A5muMEb
+         Gda068HhAUXp4BY7TiP95eUnIlI23I6ht781dufwo9P/+M+Jq1CSmZMMZr8PeGzdSpDt
+         1jM7Wc611K5JBnRJgNdjhrR1cHpK4+pOjNvGcwZnbdx3GJ5I4yGvOwCZ6DYHPm3gRJac
+         bbyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726742005; x=1727346805;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ElPw2rkqJxy3GrSWwEzcQxJQL1TZQOW7P03usn2dqU=;
-        b=wwr0qXrHKtEF6LzbliXpTQ38LVmEHXQPsHXkFyWUrbEJ4rII7/TIzu+e+Io+cqbFb4
-         A31KLs52N/iW87OHRpbg4FzZBxiPc9skIo6MGWZ6N/bwwdv1+uCz+lMvO56+D0fXYES2
-         Lm0Z3EzOF6k6uzkfzp0MmB9fF/Stv+tjWacKa5d988bU995NDPSIKi4g83pYLh/CE6Dk
-         8YsqZ5v8TqtuoJQekozu74fO0W3wDxVN9paRcPqs/ysiJQ8ZVQpaBdgjW7gufBw00Mmv
-         xvjTAxRnPwgglR3od8lcy5yTOVhuZ0Zq2bOYrknISaZ8Be786r05JeAJazLikLqzijSY
-         7OrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4sxQK+AFpeASy1js/G5gkQHipdml3Q5hp4+SuHafe8zu2hjtLtKQY9ijJ2XRhr1L4IcgYxbgYbrmnVcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ3Xxw6MITHmpCRVUqPBLAFYTBMZaIklioGT14PzkjYYWkemfK
-	my9yQLaVH89aFacgeo0CzgoAvFCOwjmABpFvahj/MRL80BZe4qkE+aDb8+AlPyo=
-X-Google-Smtp-Source: AGHT+IH5FaHwIy/HpPwgYVmO7IWOIFZ4wz7dkZfK70jhdOMRpGV6GaHoSjwhSDN9QfGUWFQLWu83lA==
-X-Received: by 2002:a17:907:efde:b0:a8a:8d81:97a8 with SMTP id a640c23a62f3a-a902941ff90mr2191026166b.1.1726742004941;
-        Thu, 19 Sep 2024 03:33:24 -0700 (PDT)
-Received: from [192.168.51.243] ([78.128.78.220])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612e5696sm710812966b.172.2024.09.19.03.33.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Sep 2024 03:33:24 -0700 (PDT)
-Message-ID: <934bf1f6-3f1c-4de4-be91-ba1913d1cb0e@blackwall.org>
-Date: Thu, 19 Sep 2024 13:33:22 +0300
+        d=1e100.net; s=20230601; t=1726742051; x=1727346851;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W8PsRMOFT2KRjjX91OQvWnXM7VKXooK07fcRHIqQtSE=;
+        b=YHA4Q0e/7WVr9bP3jjjF4sDrioHToezUSHUkslRnj9kab0L76KWP3DZr3iEh9PX6Wh
+         2ERCIIrKo0G/6E7ZvvmVlbBqvU5EkRXhIat4bggKnzJOLmbZ2ftS2P6FxfSCdcMa+M8o
+         QBfxRCYf7vKP915OGT+KPECsk3IUI6hzm13VWxd7GhRLPI4hQnKHhxEvbWaEc2Lni2BG
+         rpbW0u3hilQhYaxH2P4uxxpxioHxLVgRUQjG3EGrvupB/lmm0qUG+joGU9w0mrH2Onkg
+         iMy1jyhR6UAuj/+cz+8ZFnWw+eZGonot/vitkmQnODg7F0lxxEqgk+qCHEUwCJ3lvCZ9
+         E6Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQu/zxzMosoFwV07zkF5PSprQC9U0ufLz9KdFxsRAtA0G3q/eHeJiwTgAJwdvRkp+6748KAyMd@vger.kernel.org, AJvYcCWrhq0qcu4X5cmDL/iRQ8Bc359U1JRSitICZtUjQzuukmlnxCVTJujimi25Nw9FdB+pvDJVrD7Pi6L+@vger.kernel.org, AJvYcCXRfz0elGew7Rs42iU4iOqYZzCKPElrQetzPymId59IyOCwUS0mAjrzBAdpdjtv4EkIsUecCzh7fvvcDg8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywgg+Ih7r0OYqb/GR3f8IXmVvUXu6S4f8Ziq5W7+z1ggF758Mpp
+	jRzaVnHlB3A4E34VGgaO7vdLry6kM71XJpzzefJvfdtjEhGFHAWXBfL5HWVo
+X-Google-Smtp-Source: AGHT+IGHhX6h39WMZEkbI3vczVhHJZCNIaMGh+VTghScqUJK0x1mKw8GfMHsZqmKh4/8QMee0cHr4A==
+X-Received: by 2002:a05:6a21:58b:b0:1d2:f0e2:4ad6 with SMTP id adf61e73a8af0-1d2f0e24f38mr7613958637.18.1726742050729;
+        Thu, 19 Sep 2024 03:34:10 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b9ad0esm8232597b3a.175.2024.09.19.03.34.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 03:34:10 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: gregkh@linuxfoundation.org,
+	oneukum@suse.com
+Cc: colin.i.king@gmail.com,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH v2] usb: using mutex lock and supporting O_NONBLOCK flag in iowarrior_read()
+Date: Thu, 19 Sep 2024 19:34:03 +0900
+Message-Id: <20240919103403.3986-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH net-next] net: bridge: drop packets with a local
- source
-To: 20240911125820.471469-1-tmartitz-oss@avm.de,
- Roopa Prabhu <roopa@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: Johannes Nixdorf <jnixdorf-oss@avm.de>,
- Thomas Martitz <tmartitz-oss@avm.de>, bridge@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240919085803.105430-1-tmartitz-oss@avm.de>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20240919085803.105430-1-tmartitz-oss@avm.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 19/09/2024 11:58, Thomas Martitz wrote:
-> Currently, there is only a warning if a packet enters the bridge
-> that has the bridge's or one port's MAC address as source.
-> 
-> Clearly this indicates a network loop (or even spoofing) so we
-> generally do not want to process the packet. Therefore, move the check
-> already done for 802.1x scenarios up and do it unconditionally.
-> 
-> For example, a common scenario we see in the field:
-> In a accidental network loop scenario, if an IGMP join
-> loops back to us, it would cause mdb entries to stay indefinitely
-> even if there's no actual join from the outside. Therefore
-> this change can effectively prevent multicast storms, at least
-> for simple loops.
-> 
-> Signed-off-by: Thomas Martitz <tmartitz-oss@avm.de>
-> ---
->   net/bridge/br_fdb.c   |  4 +---
->   net/bridge/br_input.c | 17 ++++++++++-------
->   2 files changed, 11 insertions(+), 10 deletions(-)
-> 
+iowarrior_read() uses the iowarrior dev structure, but does not use any 
+lock on the structure. This can cause various bugs including data-races,
+so it is more appropriate to use a mutex lock to safely protect the 
+iowarrior dev structure. When using a mutex lock, you should split the
+branch to prevent blocking when the O_NONBLOCK flag is set.
 
-Absolutely not, I'm sorry but we're not all going to take a performance hit
-of an additional lookup because you want to filter src address. You can filter
-it in many ways that won't affect others and don't require kernel changes
-(ebpf, netfilter etc). To a lesser extent there is also the issue where we might
-break some (admittedly weird) setup.
+In addition, it is unnecessary to check for NULL on the iowarrior dev 
+structure obtained by reading file->private_data. Therefore, it is 
+better to remove the check.
 
-Cheers,
-  Nik
+Cc: stable@vger.kernel.org
+Fixes: 946b960d13c1 ("USB: add driver for iowarrior devices.")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+v1 -> v2: Added cc tag and change log
 
+ drivers/usb/misc/iowarrior.c | 46 ++++++++++++++++++++++++++++--------
+ 1 file changed, 36 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
+index 6d28467ce352..a513766b4985 100644
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -277,28 +277,45 @@ static ssize_t iowarrior_read(struct file *file, char __user *buffer,
+ 	struct iowarrior *dev;
+ 	int read_idx;
+ 	int offset;
++	int retval;
+ 
+ 	dev = file->private_data;
+ 
++	if (file->f_flags & O_NONBLOCK) {
++		retval = mutex_trylock(&dev->mutex);
++		if (!retval)
++			return -EAGAIN;
++	} else {
++		retval = mutex_lock_interruptible(&dev->mutex);
++		if (retval)
++			return -ERESTARTSYS;
++	}
++
+ 	/* verify that the device wasn't unplugged */
+-	if (!dev || !dev->present)
+-		return -ENODEV;
++	if (!dev->present) {
++		retval = -ENODEV;
++		goto exit;
++	}
+ 
+ 	dev_dbg(&dev->interface->dev, "minor %d, count = %zd\n",
+ 		dev->minor, count);
+ 
+ 	/* read count must be packet size (+ time stamp) */
+ 	if ((count != dev->report_size)
+-	    && (count != (dev->report_size + 1)))
+-		return -EINVAL;
++	    && (count != (dev->report_size + 1))) {
++		retval = -EINVAL;
++		goto exit;
++	}
+ 
+ 	/* repeat until no buffer overrun in callback handler occur */
+ 	do {
+ 		atomic_set(&dev->overflow_flag, 0);
+ 		if ((read_idx = read_index(dev)) == -1) {
+ 			/* queue empty */
+-			if (file->f_flags & O_NONBLOCK)
+-				return -EAGAIN;
++			if (file->f_flags & O_NONBLOCK) {
++				retval = -EAGAIN;
++				goto exit;
++			}
+ 			else {
+ 				//next line will return when there is either new data, or the device is unplugged
+ 				int r = wait_event_interruptible(dev->read_wait,
+@@ -309,28 +326,37 @@ static ssize_t iowarrior_read(struct file *file, char __user *buffer,
+ 								  -1));
+ 				if (r) {
+ 					//we were interrupted by a signal
+-					return -ERESTART;
++					retval = -ERESTART;
++					goto exit;
+ 				}
+ 				if (!dev->present) {
+ 					//The device was unplugged
+-					return -ENODEV;
++					retval = -ENODEV;
++					goto exit;
+ 				}
+ 				if (read_idx == -1) {
+ 					// Can this happen ???
+-					return 0;
++					retval = 0;
++					goto exit;
+ 				}
+ 			}
+ 		}
+ 
+ 		offset = read_idx * (dev->report_size + 1);
+ 		if (copy_to_user(buffer, dev->read_queue + offset, count)) {
+-			return -EFAULT;
++			retval = -EFAULT;
++			goto exit;
+ 		}
+ 	} while (atomic_read(&dev->overflow_flag));
+ 
+ 	read_idx = ++read_idx == MAX_INTERRUPT_BUFFER ? 0 : read_idx;
+ 	atomic_set(&dev->read_idx, read_idx);
++	mutex_unlock(&dev->mutex);
+ 	return count;
++
++exit:
++	mutex_unlock(&dev->mutex);
++	return retval;
+ }
+ 
+ /*
+--
 
