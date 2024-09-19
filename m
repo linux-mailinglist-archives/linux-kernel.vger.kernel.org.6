@@ -1,75 +1,76 @@
-Return-Path: <linux-kernel+bounces-333650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7086197CBD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:56:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF5197CBE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 276D01F25396
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:56:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB96AB223CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5DA1A3BBA;
-	Thu, 19 Sep 2024 15:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0DC1A072B;
+	Thu, 19 Sep 2024 15:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BkHk34p6"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bGbA0eRC"
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F701A3A8D;
-	Thu, 19 Sep 2024 15:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F0F1A070E;
+	Thu, 19 Sep 2024 15:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726761242; cv=none; b=eX4+FXChG91/40zGprbpJAQTNW7p0iewV/o25ll7NXzFn+abJZo2oELljyH7ZviGc9Zvs62CCw9n0CymCS7ykYc/JErRHMTpfqxUg9Bzqvmx08bHmNRPqNTqrZG+PLwekya4MuXxmAc3A2PdcvNjsMryL/pfjMb2QbVIHeQFwpE=
+	t=1726761258; cv=none; b=kc0gwxNGEfPOEiPvigkGwxJ1Gx4Fg5IfOPFoTxzHQNpfyuZ/NRXmeX6hzUcH4hnDgoTh3ujVKcsbs8tfn1XLmqIgouRpwO2Q6Z8Fyn1uVQlPkgeSSp3L+WcflyKK5nN5Ha3uBjuMPeQgR4Wuk8rAHmFGyRJCoz9/UTOPwc7Y9Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726761242; c=relaxed/simple;
-	bh=XXf+CrkEJowAZq1tpgIeCO3Bkr+nrD5AJByDeVP+n94=;
+	s=arc-20240116; t=1726761258; c=relaxed/simple;
+	bh=JQO25n3k3vstu4ts+z91Yzk/TvTOV83zbXFRjgSwCNQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XzzQ+k86k78Oy1DrfDfxQKoZNc4iy20041nZyD9R6NY8Ss+XCpTQRw/EoSrzQP1JwT1p10qK/JsiVH603APtMV1P/HOgThshT+zChBt4+dd448KUxjOLe7ZPWDpQCAH+MiSL7xqG1BhGagRPHL04Z6q9IxCXovsM/pHeaqTpjDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=BkHk34p6; arc=none smtp.client-ip=205.220.165.32
+	 MIME-Version:Content-Type; b=QQInR6n5iPfWd/ISxNNmnO+6zK46qN4qSZh/Kw3Mh6wfuQv33CAY9jc1T0tv81mCIwOCiJ9qKJuuA5D6hPRS9qVjumAciVQlEm1TtskLpPwMmSeEG1qLLmF4qojOeOFVk21fjGTXVdi0ZjVtx/j7ELFkWlWgw6m7ysz78eCpMKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=bGbA0eRC; arc=none smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48J9P5X1015064;
-	Thu, 19 Sep 2024 15:53:57 GMT
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48JEal9J003659;
+	Thu, 19 Sep 2024 15:54:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
 	from:to:cc:subject:date:message-id:in-reply-to:references
 	:mime-version:content-type:content-transfer-encoding; s=
-	corp-2023-11-20; bh=KAhnDswcdiztt0d6ghFdFvkTaxTMJiA9bqO6NbfgZa8=; b=
-	BkHk34p6qP4iMyBDvMnmT7znVmT4Rvx7jztZHBrZpsV7Zx7Vr8RHxXLUxVKqzlQe
-	hNgu81fq+6kxCv01eYz1TQCirYQGmdHrZWmjq4erVSj0NHJyaJcAIu4qxDMBhkGI
-	artOgVKCfQCaYQc/shUOT2HUeoAUn1bq+3JFf+OvfoD6ABWJPKuKUvD1JOYXPQyS
-	WO9PZsf9ir07s5xmdScmkMQMji8ny/lW2OkbTMvRrn9RXfLjwDkRcqaW/qVH0HlI
-	hASbUQJXG0H6fBkivrrTcq3hjUHudmeLtXHcZheAoBhL7vUT86/NbN5VAgM3jCaW
-	HxAjkSMItcSI3WyJzgq9ew==
+	corp-2023-11-20; bh=IY0Aejd7Foz1guIm3ThzIWgT2e9OwO3i6sFiEpk2r7Q=; b=
+	bGbA0eRCduD5nVx+F/hxfrrpCydsr3uYTnF7uvZIGY9r1qx7ze1iQb2U0s4U9G3Y
+	OYwDfNv167+wqK0NsEK+YSQf/aGm3PoJjfJhilvitxNYnSzI8+zMeh+4kzf/excD
+	D4rlQpLY1jofk2qqwpn6CtxVvGIIEUrFPxgG5r0DIU1VBc+w85IL0v41b1odenLB
+	Nbx5EMJchAqhm2nlvc+3VVojjvQ+53GQ9Tnee8T3N1Ll3DqihE4M1CYQkXdUexq4
+	NswG04UtyTGWeFQ0814v8u48FHMc/NW8PJTfbSAmhdPl5n0kDEthgoQg+riLnRx6
+	6+YYRlKANNm5hXqTMnaLbg==
 Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41n3sfvgd4-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41n3nsmkx7-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 19 Sep 2024 15:53:57 +0000 (GMT)
+	Thu, 19 Sep 2024 15:54:01 +0000 (GMT)
 Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48JFcDRU010442;
-	Thu, 19 Sep 2024 15:53:56 GMT
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48JEeNe9010443;
+	Thu, 19 Sep 2024 15:54:00 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41nyb9xjg7-1
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41nyb9xjjx-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 19 Sep 2024 15:53:56 +0000
+	Thu, 19 Sep 2024 15:54:00 +0000
 Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48JFri91031813;
-	Thu, 19 Sep 2024 15:53:56 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48JFri97031813;
+	Thu, 19 Sep 2024 15:53:59 GMT
 Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 41nyb9xj7h-12;
-	Thu, 19 Sep 2024 15:53:55 +0000
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 41nyb9xj7h-15;
+	Thu, 19 Sep 2024 15:53:59 +0000
 From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: James.Bottomley@HansenPartnership.com, Chen Ni <nichen@iscas.ac.cn>
+To: Kai.Makisara@kolumbus.fi, Rafael Rocha <vidurri@gmail.com>
 Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: pmcraid: Convert comma to semicolon
-Date: Thu, 19 Sep 2024 11:52:58 -0400
-Message-ID: <172676112049.1503679.17284268616344061238.b4-ty@oracle.com>
+        James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rrochavi@fnal.gov
+Subject: Re: [PATCH] scsi: st: Fix input/output error on empty drive reset
+Date: Thu, 19 Sep 2024 11:53:01 -0400
+Message-ID: <172676112033.1503679.5048085390706628215.b4-ty@oracle.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240905023521.1642862-1-nichen@iscas.ac.cn>
-References: <20240905023521.1642862-1-nichen@iscas.ac.cn>
+In-Reply-To: <20240905173921.10944-1-rrochavi@fnal.gov>
+References: <20240905173921.10944-1-rrochavi@fnal.gov>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,31 +82,29 @@ Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-19_12,2024-09-19_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=867 bulkscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0
  adultscore=0 malwarescore=0 suspectscore=0 phishscore=0 spamscore=0
  mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2408220000 definitions=main-2409190105
-X-Proofpoint-GUID: tJn9SOnOv8ptX7jxt39t06svOof8KeZ7
-X-Proofpoint-ORIG-GUID: tJn9SOnOv8ptX7jxt39t06svOof8KeZ7
+X-Proofpoint-GUID: IfsKOtBy9IX49kdas-XkpndTWcqfWh0r
+X-Proofpoint-ORIG-GUID: IfsKOtBy9IX49kdas-XkpndTWcqfWh0r
 
-On Thu, 05 Sep 2024 10:35:21 +0800, Chen Ni wrote:
+On Thu, 05 Sep 2024 12:39:21 -0500, Rafael Rocha wrote:
 
-> Replace comma between expressions with semicolons.
+> A previous change was introduced to prevent data loss during a power-on reset
+> when a tape is present inside the drive. This change set the "pos_unknown" flag
+> to true to avoid operations that could compromise data by performing actions
+> from an untracked position. The relevant commit is:
 > 
-> Using a ',' in place of a ';' can have unintended side effects.
-> Although that is not the case here, it is seems best to use ';'
-> unless ',' is intended.
-> 
-> Found by inspection.
-> No functional change intended.
-> Compile tested only.
+> Commit: 9604eea5bd3ae1fa3c098294f4fc29ad687141ea
+> Subject: scsi: st: Add third-party power-on reset handling
 > 
 > [...]
 
 Applied to 6.12/scsi-queue, thanks!
 
-[1/1] scsi: pmcraid: Convert comma to semicolon
-      https://git.kernel.org/mkp/scsi/c/4708c9332d97
+[1/1] scsi: st: Fix input/output error on empty drive reset
+      https://git.kernel.org/mkp/scsi/c/3d882cca73be
 
 -- 
 Martin K. Petersen	Oracle Linux Engineering
