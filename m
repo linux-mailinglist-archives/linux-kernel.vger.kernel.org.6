@@ -1,75 +1,82 @@
-Return-Path: <linux-kernel+bounces-333080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC4597C334
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 05:43:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A8D97C335
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 05:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D2E3B21B15
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 03:43:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA9351F22232
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 03:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999D612E75;
-	Thu, 19 Sep 2024 03:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1A3134AB;
+	Thu, 19 Sep 2024 03:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="qQaEjJEl"
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="N+KGvGP1"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40690FC0E
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 03:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0026C125DE
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 03:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726717392; cv=none; b=e/CTmQL2vKx4EoGry/BBvKYan8CxGOJKPmBWralLl3Wz2YWyFSdmJzfSNCE1DKYdZvpm63wFpxu15nSOefkDmWGsSWBlxTHGqKMy0EwULN4QYyJz0tTlsRiiJ7uFige6wnBqZnJwnSL3bk3a9Jp9EPR8zdZGh52KjGMY0QV9LRk=
+	t=1726717646; cv=none; b=M2h85mmkDwLh5K/EzjXUgQ+pLbrOrgg8ceOyWub2EkbSAMN6hupm3YY+FMLE9aTshHvnqR+I5ZJF8KpuoD+X3GNK4kdRh9Ssz3feaIZ8cCSklTot38ojyybFKIbMVT2fw9LFrlzP6SuNsXepnWcu3wLwN4nwsnZnSYrKcp/s0EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726717392; c=relaxed/simple;
-	bh=DGxeJgemhoDo5JKQYPlnG86DMJLcCfAUQs0cO+BoAK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bewzsBTsWy+h+qOOXoWio5Wo4Mo6hA+9IhBRCigp1umThRKh58B8nKTxyzchgHVw4pJ0y4rIftJmVMrxN6WiaZFd43Ql0jvpldoQ5NX8imbmiVYpBt7UKsgJMnQrgSYPLeSARLTqgdMb73YnqEiGqg78KOwJ3wQazFcKJjDbLYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=qQaEjJEl; arc=none smtp.client-ip=18.132.163.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1726717356;
-	bh=SgCHUiz82lndKjTeNsmeInw+/PdasPiFZ+8EYbiHHVQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=qQaEjJEl9LjxQ19FNBHEowYzzxMAbs8OqO9Xf4w0hdojDArQ8OZ6tE2cqafCAE2ky
-	 s10gDMiqoCxHEvRul1aHwkhiYufpdqSf/PZwJVh8oRkA7tGfguwboynpSrXrKvcGXt
-	 SHnSHbZcxAi8nglg5hPaApnscJnpYsU8qsy3+L3g=
-X-QQ-mid: bizesmtp91t1726717345tc4qvn7k
-X-QQ-Originating-IP: tfsA70aSzkRofVa6syLi67IHJ7ynHwMMwuML09155uQ=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 19 Sep 2024 11:42:23 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 5706766640839109577
-From: WangYuli <wangyuli@uniontech.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	samuel.holland@sifive.com,
-	conor.dooley@microchip.com,
-	charlie@rivosinc.com,
-	macro@orcam.me.uk
-Cc: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	atish.patra@wdc.com,
-	anup@brainfault.org,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com,
-	tglx@linutronix.de,
-	peterz@infradead.org,
-	palmer@rivosinc.com,
-	mikelley@microsoft.com,
-	oleksandr@natalenko.name,
-	deller@gmx.de,
-	gpiccoli@igalia.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [RESEND. PATCH v2] riscv: Use '%u' to format the output of 'cpu'
-Date: Thu, 19 Sep 2024 11:41:46 +0800
-Message-ID: <CC5FEE6571AB2A58+20240919034146.57207-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1726717646; c=relaxed/simple;
+	bh=e0OFdj0lpd7riRsXPDRhTjwJHNsX7V5YaXr9nipqHXM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q9+jnJwl1p84sLOw1+dDu1Hzw7UfRFNMC+X8ZLXVruRzZGcti1oanH0WSVc5HQafIBoL04oCjmcoJ4VA+KmP1GpsXWA0XZVREbfyxzyjytsvRRQc4YbYqcqjRqrvunGXJmF2T4s42JB6McCVF+pY/HOSTl4dcxVoIK7+NwKOAKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=N+KGvGP1; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7179069d029so270945b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 20:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1726717644; x=1727322444; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j8Wd/pkbfHSw6JOPxNYyJ9mdgKFr/6pXLapB9px/A40=;
+        b=N+KGvGP1rGUZdsDzyNtOrMPz9PezOzUm0/MCkT/m+ywTT8F8xyNpmx1e07GW9HnVm1
+         PmiJrcHcAM0vVtnTeMCFJ8zFEaeDpgCSAm6PBN82p+6LgfwHZk2etWRASz9/S0QrkN1g
+         fPJJO5plviZfncEcoKn+fCU9RFsOoifbNmLaiKEOumP+Ww5rQeeoRm6NSnQA6Ir5Y+Mx
+         Eopa0zaV4rr5WuUQbeqSt1JgNxXdcKKm/I838sqRME2+YPgJJ6XOTqO07WX0XwnT0P4m
+         RRZ914Bclpp1mP5g7ch68JzoDz9/dOSUMbhloLRP+CKgRVSGB50uhasOrqy0QklJ7Gt7
+         ZaDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726717644; x=1727322444;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j8Wd/pkbfHSw6JOPxNYyJ9mdgKFr/6pXLapB9px/A40=;
+        b=Y2IMLiRru6JZbiqXC7laQ5e/dm//T8a3jUoJerWf0Gbp3irhCdMgN1DFp8R+uBmf60
+         YDGDHFxVo+9yTyrl/NqxLbhuuL9R6p23mv3sW8wo+RmCZQcEoMkTktE5qtbjLpG9YQWd
+         hfpRQBtagUzCUhhXcCNgHe2ULiLX6ewjV3lGupCeOjJvs4d3/U7pZZUk1zbB8UgELfF5
+         WPmEJuEP/oODw1jeoh8sv4prjsuE5LnOMbzG8twab7yN928vlmtTvooPLOThZ/CjlolM
+         uUB5tijwJaoqvxeI0sPZdTsPvLCp6Zty0k25eWv+R3WslQEJzOB6+vRzw2pQdx3V8vUw
+         bACg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6ziuh4fRkpgMj4fjyDLHdhSihMLgoOm5ytZtQRZutr5t+ZcRz3N7lHFoGrPJDoy31R+yZzzsXqrb4uXY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7yvHdJNoBzr02XqzLHy8BdaNajb2YXL+s98AhpK4/81SRKWO/
+	zIZ1aBzXJr8SlLp+IUU7n0IQ2S5UlowRiKbFK4hSGdHig088DkN1TT9TV19kL78=
+X-Google-Smtp-Source: AGHT+IEDOJNSUO2mBw26T8OEjCzYNAuTNuBRNDMH3WRaF9pDa0z8VPH+i872tLVdSRjH9OOq2GbmWA==
+X-Received: by 2002:a05:6a00:4fc4:b0:714:1a74:9953 with SMTP id d2e1a72fcca58-71936a6267cmr30982838b3a.16.1726717644249;
+        Wed, 18 Sep 2024 20:47:24 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([139.177.225.245])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944bc344bsm7427062b3a.194.2024.09.18.20.47.20
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 18 Sep 2024 20:47:23 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: punit.agrawal@bytedance.com,
+	xueshuai@linux.alibaba.com,
+	renyu.zj@linux.alibaba.com,
+	will@kernel.org,
+	mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Yunhui Cui <cuiyunhui@bytedance.com>
+Subject: [PATCH] drivers perf: remove unused field pmu_node
+Date: Thu, 19 Sep 2024 11:46:01 +0800
+Message-Id: <20240919034601.2453-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,36 +84,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-'cpu' is an unsigned integer, so its conversion specifier should
-be %u, not %d.
+The driver does not use the pmu_node field, so remove it.
 
-Suggested-by: Wentao Guan <guanwentao@uniontech.com>
-Suggested-by: Maciej W. Rozycki <macro@orcam.me.uk>
-Link: https://lore.kernel.org/all/alpine.DEB.2.21.2409122309090.40372@angie.orcam.me.uk/
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-Tested-by: Charlie Jenkins <charlie@rivosinc.com>
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
 ---
- arch/riscv/kernel/cpu-hotplug.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/perf/dwc_pcie_pmu.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/riscv/kernel/cpu-hotplug.c b/arch/riscv/kernel/cpu-hotplug.c
-index 28b58fc5ad19..a1e38ecfc8be 100644
---- a/arch/riscv/kernel/cpu-hotplug.c
-+++ b/arch/riscv/kernel/cpu-hotplug.c
-@@ -58,7 +58,7 @@ void arch_cpuhp_cleanup_dead_cpu(unsigned int cpu)
- 	if (cpu_ops->cpu_is_stopped)
- 		ret = cpu_ops->cpu_is_stopped(cpu);
- 	if (ret)
--		pr_warn("CPU%d may not have stopped: %d\n", cpu, ret);
-+		pr_warn("CPU%u may not have stopped: %d\n", cpu, ret);
- }
+diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
+index 4ca50f9b6dfe..59526a48499f 100644
+--- a/drivers/perf/dwc_pcie_pmu.c
++++ b/drivers/perf/dwc_pcie_pmu.c
+@@ -82,7 +82,6 @@ struct dwc_pcie_pmu {
+ 	u16			ras_des_offset;
+ 	u32			nr_lanes;
  
- /*
+-	struct list_head	pmu_node;
+ 	struct hlist_node	cpuhp_node;
+ 	struct perf_event	*event[DWC_PCIE_EVENT_TYPE_MAX];
+ 	int			on_cpu;
 -- 
-2.45.2
+2.39.2
 
 
