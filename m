@@ -1,224 +1,116 @@
-Return-Path: <linux-kernel+bounces-333712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C28397CCC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:56:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31C8197CDDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0A091F23E2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:56:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62A6B1C22149
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90751A0B04;
-	Thu, 19 Sep 2024 16:56:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9321A0AF8
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 16:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3BC2F86E;
+	Thu, 19 Sep 2024 18:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=internode.on.net header.i=@internode.on.net header.b="aBjBiQxO"
+Received: from omr000.pc5.atmailcloud.com (omr000.pc5.atmailcloud.com [103.150.252.0])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C433C25624
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 18:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.150.252.0
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726764963; cv=none; b=Qo1XWwKWfKRads82/eb/r/lEUzmzeeHsEaH6DSs3Z8ZXi1OByRXOzkEax4t8prFBewn1foeYf+IK04gSaPZc3vah+40mNLhn0/BgMzCR6MKBPpVgmZd/abq5pNHAVfdlhNUlV6+9AcmEtHcjjtZW+qOSHz14dwkMNP869nXyVJ4=
+	t=1726772131; cv=none; b=II8uZzekwUODM3ERJ5Dbp7W/DroVci0N1vT0kQK0dbEhRLxK/fG8NwCypMZykD5Ra883V9XAvtJktIizyHKxq8NBe8LAN9/DRe+yxC/6Aq7hueE3o/v/6Wm15gI8kmf2ccrT1juj0Tjom5IQPOp7L58M4gryIlcP/sc77FqPZbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726764963; c=relaxed/simple;
-	bh=VH696WdXFPTxkE+gY8UokhzFKPs5Oa0XK6fCJneEoEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K8I7Paym0nIifXZh1Chuqpe7oR7jzPRMUIQwpQj72SetlDJ5jptDUGJ37QL10hiZqv/jaTX0Yfvub0lx2Xpn/gJimNILqAIajMgIJEiVU8X0le6quPhpIiTOUC83CxC2WGCqdif/KNUJa4lrT8iaHvrhtku70OHa4uIZKwxIQW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6562D1007;
-	Thu, 19 Sep 2024 09:56:29 -0700 (PDT)
-Received: from [10.57.82.79] (unknown [10.57.82.79])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CF10B3F64C;
-	Thu, 19 Sep 2024 09:55:56 -0700 (PDT)
-Message-ID: <ffa62217-8452-41e4-b7ee-0fbd7d3a44c5@arm.com>
-Date: Thu, 19 Sep 2024 18:55:53 +0200
+	s=arc-20240116; t=1726772131; c=relaxed/simple;
+	bh=chaRijaW/4ADbHv2b3PNvl3AH4FWg2/8ru69hKxIMng=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mO4zMsA6VJ2Q+XZ3nPaR/SJ6cwOVHDWhdMsyoNeV8w9I4isqG/IDLMr9YV84dQidv1SkCrcvN2VUcfknqi3ZyI5/JZpZGR4UtALpx/7B1EIFWchFulOfps88UJ4JHfpl0cC3v4JpfwKMq3k5+R9osMnOhbzecmoFkR2GhuyyBxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=internode.on.net; spf=pass smtp.mailfrom=internode.on.net; dkim=pass (2048-bit key) header.d=internode.on.net header.i=@internode.on.net header.b=aBjBiQxO; arc=none smtp.client-ip=103.150.252.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=internode.on.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=internode.on.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=internode.on.net; s=202309; h=MIME-Version:Message-ID:Date:Subject:To:From:
+	content-type; bh=CNvzFe9fGd98RlReCYS+NNkkhCDG6VKvF/0EOMmVuWw=; b=aBjBiQxONcG+
+	WStWCQNFMDyM5XL8L1jEzI2qqij749Gda8n53drz+derd8HA4XwjKNa1vC5DUQSy7cyHzmZZFGv/i
+	G+nnprzZT7RD0myzz/ZaRUj4YYxRhCBLVjgZZyFZH7sAmglhQi35Q18txbtpwAK2d1sga2+NtVtzS
+	cvf6N0YJ+WBlWG4v4QV8JyCDTRXH0LecxI/++lVRzLSvTsqUs+EBwPtRX2Zm+RnIrG47s2/xXCkbM
+	7f9S5CEcTO7E09RwZmIP6KPW0RQrpHSGLZy77sAn0GMAh3vSQjJqElpc4FhJRUPPtZP1sMvxuFBXa
+	1em9/3Q+IyV26dom6HPYbw==;
+Received: from CMR-KAKADU01.i-02175a00542f9bb7e
+	 by OMR.i-011229ae50fa0cd71 with esmtps
+	(envelope-from <arthur.marsh@internode.on.net>)
+	id 1srKST-000000006NL-2t4y;
+	Thu, 19 Sep 2024 16:56:45 +0000
+Received: from [203.173.7.72] (helo=localhost)
+	 by CMR-KAKADU01.i-02175a00542f9bb7e with esmtpsa
+	(envelope-from <arthur.marsh@internode.on.net>)
+	id 1srKST-000000004vD-06HQ;
+	Thu, 19 Sep 2024 16:56:45 +0000
+Received: from amarsh04 by localhost with local (Exim 4.98)
+	(envelope-from <arthur.marsh@internode.on.net>)
+	id 1srKSP-000000001Cq-1EPo;
+	Fri, 20 Sep 2024 02:26:41 +0930
+From: Arthur Marsh <arthur.marsh@internode.on.net>
+To: wuhoipok@gmail.com
+Cc: Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	alexander.deucher@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	christian.koenig@amd.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	tzimmermann@suse.de,
+	arthur.marsh@internode.on.net
+Subject: drm/radeon: remove load callback from kms_driver
+Date: Fri, 20 Sep 2024 02:26:40 +0930
+Message-ID: <20240919165641.4632-1-user@am64>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240630165949.117634-3-wuhoipok@gmail.com>
+References: <20240630165949.117634-3-wuhoipok@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] mm: Compute first_set_pte to eliminate evaluating
- redundant ranges
-Content-Language: en-GB
-To: Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>
-Cc: akpm@linux-foundation.org, david@redhat.com, willy@infradead.org,
- anshuman.khandual@arm.com, hughd@google.com, ioworker0@gmail.com,
- wangkefeng.wang@huawei.com, baolin.wang@linux.alibaba.com, gshan@redhat.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240916110754.1236200-1-dev.jain@arm.com>
- <20240916110754.1236200-3-dev.jain@arm.com>
- <CAGsJ_4wuSqA8vzHCTH6rnVrppQ4k0FUcSu-=6HfAf+oYqz15bQ@mail.gmail.com>
- <8700274f-b521-444e-8d17-c06039a1376c@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <8700274f-b521-444e-8d17-c06039a1376c@arm.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Atmail-Id: arthur.marsh@internode.on.net
+X-atmailcloud-spam-action: no action
+X-Cm-Analysis: v=2.4 cv=S/DfwpsP c=1 sm=1 tr=0 ts=66ec57cd a=q73fGBFtUWUW5y4nvQjQTA==:117 a=q73fGBFtUWUW5y4nvQjQTA==:17 a=EaEq8P2WXUwA:10 a=x7bEGLp0ZPQA:10 a=pGLkceISAAAA:8 a=aIJAOKreiCTeCyBpU-sA:9
+X-Cm-Envelope: MS4xfHYppumKWIUnyI2Ju0M49vhnvlI5I58KLh4+FPPY2NoGJ2kbZEMp8UJ0GP5RcBj4Y7lrVRzdx8vKa/zkhB+xX2yttGtN9cY+gbgwMpCjdJRG9KUiZfoW mgFQnH+Gory5lpvGZtlBfdI/y0NdXfFypS6yxqGrTmIK0ZplfmRYhuA0wyzStGh3shfYwSgojx+DgA==
+X-atmailcloud-route: unknown
 
-On 19/09/2024 09:40, Dev Jain wrote:
-> 
-> On 9/19/24 07:04, Barry Song wrote:
->> On Mon, Sep 16, 2024 at 11:08 PM Dev Jain <dev.jain@arm.com> wrote:
->>> For an mTHP allocation, we need to check, for every order, whether for
->>> that order, we have enough number of contiguous PTEs empty. Instead of
->>> iterating the while loop for every order, use some information, which
->>> is the first set PTE found, from the previous iteration to eliminate
->>> some cases. The key to understanding the correctness of the patch
->>> is that the ranges we want to examine form a strictly decreasing
->>> sequence of nested intervals.
->> Could we include some benchmark data here, as suggested by Ryan in this thread?
->>
->> https://lore.kernel.org/linux-mm/58f91a56-890a-45d0-8b1f-47c4c70c9600@arm.com/
-> 
-> Can you please verify and get some numbers for the following program,
-> because if I am doing this correctly, it would be a regression :)
-> https://www.codedump.xyz/cpp/Zuvf8FwvRPH21UO2
+Recent kernels resulted in a blank screen, with Xorg.0.log reporting:
 
-Some brief comments on the test code:
+(II) [KMS] drm report modesetting isn't supported.
 
-- You don't need to enable/disable the top-level control. Regardless, I don't
-think this breaks the benchmark.
+Sometimes while bisecting the pc came to a complete lockup (magic Sysreq 
+unresponsive).
 
-- I think you have an off-by-1 in your for loop condition:
+At the end of bisecting I had:
 
-for (unsigned long i = 1; (i * border) < size; ++i) {
+90985660ba488cd3428706e7d53d6c9cdbbf3101 is the first bad commit
+commit 90985660ba488cd3428706e7d53d6c9cdbbf3101
+Author: Wu Hoi Pok <wuhoipok@gmail.com>
+Date:   Sun Jun 30 12:59:18 2024 -0400
 
-I think this needs to be:
+    drm/radeon: remove load callback from kms_driver
+    
+    The ".load" callback in "struct drm_driver" is deprecated. In order to remove
+    the callback, we have to manually call "radeon_driver_load_kms" instead.
 
-for (unsigned long i = 1; (i * border) <= size; ++i) {
+This machine reports having:
 
-It just means that the final 32K block will get a single 32K mapping.
+AMD A10-6800K APU with Radeon HD Graphics
 
-- You're measuring the whole program; including mmap/munmap and
-enabling/disabling mTHP. It would be much better to just measure the loop that
-writes to each page after mTHP is enabled.
+with the gpu appearing as 
 
+Advanced Micro Devices [AMD/ATI] Richland [Radeon HD 8670D] 1002:990c
 
-I modified the code to iterate for 10 seconds and on each iteration, measure
-only the time spent in the interesting loop. Running on Apple M2 VM:
+Regards,
 
-Before the change:
-
-ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
-Average: 0.070028 seconds per GB (iterations=98)
-ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
-Average: 0.068495 seconds per GB (iterations=96)
-ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
-Average: 0.070207 seconds per GB (iterations=93)
-
-After the change:
-
-ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
-Average: 0.076923 seconds per GB (iterations=88)
-ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
-Average: 0.072206 seconds per GB (iterations=96)
-ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
-Average: 0.072397 seconds per GB (iterations=89)
-
-So this looks pretty clearly slower to me. So suggest we shouldn't take this patch.
-
-
-> 
-> The program does this: disable THP completely -> mmap 1G VMA -> touch the last
-> page of a 32K sized boundary. That is, 0th till 32K/4K - 2 pages are
-> empty, while the 32K/4K - 1'th page is touched, and so on -> madvise
-> the entire VMA -> enable all THPs except 2M -> touch all pages.
-> 
-> Therefore, we have 0 - 6 PTEs empty, 7th is filled, and so on. Eventually,
-> kernel will fall down to finding 4 contiguous PTEs empty and allocate
-> 4K * 4 = 16K mTHP.
-> 
-> The result without the patches:
-> 
-> real: 8.250s
-> user: 0.941s
-> sys: 7.077s
-> 
-> real: 8.175s
-> user: 0.939s
-> sys: 7.021s
-> 
-> With the patches:
-> 
-> real: 8.584s
-> user: 1.089s
-> sys: 7.234s
-> 
-> real: 8.429s
-> user: 0.954s
-> sys: 7.220s
-
-What HW did you measure this on? I'm guessing this is measuring multiple
-iterations, otherwise it looks extremely slow. If you were measuring on FVP, for
-example, that would not give representative performance numbers.
-
-Thanks,
-Ryan
-
-> 
-> You can change the #iterations in the for loop to magnify this,
-> and the current code surprisingly wins.
-> 
-> 
->>
->>> Suggested-by: Ryan Roberts <ryan.roberts@arm.com>
->>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>> ---
->>>   mm/memory.c | 20 ++++++++++++++++++--
->>>   1 file changed, 18 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/mm/memory.c b/mm/memory.c
->>> index 8bb1236de93c..e81c6abe09ce 100644
->>> --- a/mm/memory.c
->>> +++ b/mm/memory.c
->>> @@ -4633,10 +4633,11 @@ static struct folio *alloc_anon_folio(struct vm_fault
->>> *vmf)
->>>   {
->>>          struct vm_area_struct *vma = vmf->vma;
->>>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>> +       pte_t *first_set_pte = NULL, *align_pte, *pte;
->>>          unsigned long orders;
->>>          struct folio *folio;
->>>          unsigned long addr;
->>> -       pte_t *pte;
->>> +       int max_empty;
->>>          gfp_t gfp;
->>>          int order;
->>>
->>> @@ -4671,8 +4672,23 @@ static struct folio *alloc_anon_folio(struct vm_fault
->>> *vmf)
->>>          order = highest_order(orders);
->>>          while (orders) {
->>>                  addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
->>> -               if (pte_range_none(pte + pte_index(addr), 1 << order) == 1 <<
->>> order)
->>> +               align_pte = pte + pte_index(addr);
->>> +
->>> +               /* Range to be scanned known to be empty */
->>> +               if (align_pte + (1 << order) <= first_set_pte)
->>> +                       break;
->>> +
->>> +               /* Range to be scanned contains first_set_pte */
->>> +               if (align_pte <= first_set_pte)
->>> +                       goto repeat;
->>> +
->>> +               /* align_pte > first_set_pte, so need to check properly */
->>> +               max_empty = pte_range_none(align_pte, 1 << order);
->>> +               if (max_empty == 1 << order)
->>>                          break;
->>> +
->>> +               first_set_pte = align_pte + max_empty;
->>> +repeat:
->>>                  order = next_order(&orders, order);
->>>          }
->>>
->>> -- 
->>> 2.30.2
->>>
->> Thanks
->> barry
-
+Arthur Marsh.
 
