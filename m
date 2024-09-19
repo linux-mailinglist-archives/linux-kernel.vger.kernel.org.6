@@ -1,99 +1,150 @@
-Return-Path: <linux-kernel+bounces-333461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B5F97C90F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:26:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F8397C92A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 715B9B21E3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:26:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 173021C213B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80A719DF61;
-	Thu, 19 Sep 2024 12:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7230D19DF5C;
+	Thu, 19 Sep 2024 12:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjAqAcGW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="du1W/Xmw"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3170319D8B8;
-	Thu, 19 Sep 2024 12:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486E61957F8;
+	Thu, 19 Sep 2024 12:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726748775; cv=none; b=Htp/h5l335doRMQbD/ZcaapjAbgbri9gwCXd7/XjU8KQk+seBoGM/OUO8B/gx2aazU4GJE127UcwuoQq3FaxKlXMWyydkiGsdJoCEmapG9/0fwcjIwnDU0tytOzl1LeMOS56L2QKu4OaFyonzcbEC7kJVRkPBZEY4w0h/kXhoFM=
+	t=1726748926; cv=none; b=CoRh2hOEix6cDKODRzDKIpRnM2Dmunrg9i+XF+KnU7ya7p7eMG/Y/PY+SBgmBfVGeBAcCFHH6Ub7sWB4GYpLYz+rSsMlb5ZOZ4NnIYIi6Bl2VGX34TkHh3n38iSzvs7gYSXZ0z4jIBcmMDuRo1dPYkSzCirnz6u195ACkuJViN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726748775; c=relaxed/simple;
-	bh=X4HJKjcUVv7A3ogg3mjwc9zaPWYEZyj1nV+T5ayJ7yo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VwgzwUQu3ThW8hozSZNMFDW3qwbI+Nr7g4atRGqjA+euiSOhrOJNNw85Qrv0m2VHhvRPApHt58cxmNxJNzH28fHJIkJef8V2jcCHigKjbQuTkj+sQpACyKnWV44+m90Xz5mMQAGx0KhLpWYvsRHGcmljQyyTiicyWydj9h9FG7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjAqAcGW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00745C4CECE;
-	Thu, 19 Sep 2024 12:26:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726748774;
-	bh=X4HJKjcUVv7A3ogg3mjwc9zaPWYEZyj1nV+T5ayJ7yo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JjAqAcGWNhOSRSlmQM1q3yR4eoTWLvi9n9saaZ74/ch8nJSNQEHS0SywB8Fw0JbKn
-	 iFZBPEmrzB91OKaehhiQteH1xereF2ac75vl6EnBJqXfH2ZwxNuBqNZ0murd47NWpU
-	 EfLCjaP26Xt9nCfyJO/8JBNuZCNmrky7W/7MbtO04jObCks9dATOmAEQhz+9rNhh0j
-	 AwGPEeZE2EwyvnTvBqM6Cn5+HnRihISInYGz1e+NRUxk7OCfjXBbX9G7ZSvgXDbbX5
-	 i6wRk1jNyT4cNUz5F/BnH8JOFFwcGXWX6nmsHEEtWClRJFp5W4or4TZyYIzuehE3YM
-	 3f8I5kJfyuedw==
-Date: Thu, 19 Sep 2024 14:26:10 +0200
-From: Mark Brown <broonie@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: xiaoning.wang@nxp.com, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: spi-fsl-lpspi: Use IRQF_NO_AUTOEN flag in
- request_irq()
-Message-ID: <ZuwYYqsBR-uL7F4J@finisterre.sirena.org.uk>
-References: <20240906022828.891812-1-ruanjinjie@huawei.com>
- <ZuwBWofLJ3ZbKpi8@finisterre.sirena.org.uk>
- <1e2f2408-b6a3-64fe-b616-05470c75b0f4@huawei.com>
+	s=arc-20240116; t=1726748926; c=relaxed/simple;
+	bh=yYlI6tTus0ZiU3Ar9IfNHE31m1w2Fawm/zJ9bxgzhQg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=b4j703gFapTO/uU8tPDC9zmkqwRgKd1Eed8qYWQVQT7z2xFQwQcnIn1F0CbOGavEnHHnKrDstPfRIlISfiz9T/oRh20zxmaOrGrZh6ocPaOS3PcvY2zjNrjrfvvnMnr0detJF1QrwjNtURj/v39wZeXvxCHZ2oXQbjFgon116Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=du1W/Xmw; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cbaf9bfdbso6936595e9.0;
+        Thu, 19 Sep 2024 05:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726748924; x=1727353724; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jJ9vLOIwefl3iNMuVxcYqoEs8VcLhp7ZSQofYSHIYJU=;
+        b=du1W/XmwmMeA596nJHe0MPYjPAbpDMmaYNa0L+qos6IqfIH6jzneeSddECUqZ+M/yN
+         qNKRjMUCdoJgFe10bi8aToblceXEEgTc9Hj+EiRxFRek1ptc9qYhjTlOv4CaQyyTu+Dk
+         9uz0zGgcbvJQOeI/2pdYoL170Rc9Xza/P/M4XqpPKMTYnL2X7BGEY/TF6eI9Gj1qDeA4
+         KPlDPAKnASFW4qTb91ljgvaT9ez8BYDFnHJkVvorz6jZCOCrCabuiJfE+pTGn2/Ya1LJ
+         kOGb/d6La8/FnBXRS8f+bfkGDI76SLiLg8k9m2/gwUnNlF0qPjrzaIzfauNEZPkC/ULX
+         vO5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726748924; x=1727353724;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jJ9vLOIwefl3iNMuVxcYqoEs8VcLhp7ZSQofYSHIYJU=;
+        b=KPwTDAPqzcaGMTX20mh7OkpSjFDF67zXn9uu6zU5EL4gCA7V+O5HxzOg3jH/XBtzvw
+         ZKAT9c0S+48Mv7FGLXE2SzbfLVMy7akwQRJe++VjCL4mOr0EmDxyrkuJWA2/Ws7Q5RrI
+         HOgqe6TnB5S5WiAdom0wFByQipBbmex7iLtSLO9MfjW0SVj2/MDqg9KoViz4b/hOVuE+
+         G/IsZJT+NwHeNs+WmgEodzOoTqoEwWnaW/bneILPucOuLRZx04hFAELNTQW84CoGOLdP
+         pH+K2qeedHgcc1y72f+n0i7p2Bt9MhtaFenEO3jaV+t6M5D3l6zQTquDiCnCPkPHPcvq
+         s2yA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpmE6NIBCqwnP+WXoLHyCeijeyfWUO5Kk40eKW+zuB66VmEywCX2o295uirOafID3hhC0U8Dg+h3/Rd5nl@vger.kernel.org, AJvYcCVPqixIggjebsi3Cm1nfT0LB0xnYZGYfhJ+OTATj2tbrzZ7F5dgQKmkaltXbyCiAdk1qL63OsooE9X+@vger.kernel.org, AJvYcCXJfYSWdYnPXPtYBU4kEUNND+Ts91Ag/uFe0w+kFFJEofxwIN8+/LBvg2wlywoiBUtQD3pZ0TqEn9w1by9W8sA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhZ3GEnwUMhH74nHf0N4o4FpFy5QGYE04dTf6DjRH3E4SKn9Bb
+	zwHxQfqqB5EjNv1IRSrQVeRQB890u8CU9od7sCSiw2tjlXnrGtTq
+X-Google-Smtp-Source: AGHT+IE/Io2i6GSdXSw+/wIr/wc5aJW3eYk5lzU37goMz09UdJc4IALbDWG79muCgWJFt7Z4DxwA3A==
+X-Received: by 2002:a05:600c:34c2:b0:42c:bad0:6c16 with SMTP id 5b1f17b1804b1-42d9070baa1mr144760475e9.2.1726748923270;
+        Thu, 19 Sep 2024 05:28:43 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42e754ce37bsm20509115e9.48.2024.09.19.05.28.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 05:28:42 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com
+Subject: [PATCH 1/2] dt-bindings: watchdog: airoha: document watchdog for Airoha EN7581
+Date: Thu, 19 Sep 2024 14:26:17 +0200
+Message-ID: <20240919122759.10456-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="od2xPA1l+5UNA5Tq"
-Content-Disposition: inline
-In-Reply-To: <1e2f2408-b6a3-64fe-b616-05470c75b0f4@huawei.com>
-X-Cookie: Editing is a rewording activity.
+Content-Transfer-Encoding: 8bit
 
+Document watchdog for Airoha EN7581. This SoC implement a simple
+watchdog that supports a max timeout of 28 seconds.
 
---od2xPA1l+5UNA5Tq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The watchdog ticks on half the BUS clock and require the BUS frequency
+to be provided.
 
-On Thu, Sep 19, 2024 at 07:18:45PM +0800, Jinjie Ruan wrote:
-> On 2024/9/19 18:47, Mark Brown wrote:
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ .../bindings/watchdog/airoha,en7581-wdt.yaml  | 39 +++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/airoha,en7581-wdt.yaml
 
-> > This now enabled the interrupt in the case where we previously would've
-> > disabled it - I would have expected the condition on the if statement to
-> > be reversed?
+diff --git a/Documentation/devicetree/bindings/watchdog/airoha,en7581-wdt.yaml b/Documentation/devicetree/bindings/watchdog/airoha,en7581-wdt.yaml
+new file mode 100644
+index 000000000000..47210a5990ee
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/airoha,en7581-wdt.yaml
+@@ -0,0 +1,39 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/watchdog/airoha,en7581-wdt.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Airoha EN7581 Watchdog Timer
++
++maintainers:
++  - Christian Marangi <ansuelsmth@gmail.com>
++
++allOf:
++  - $ref: watchdog.yaml#
++
++properties:
++  compatible:
++    const: airoha,en7581-wdt
++
++  reg:
++    maxItems: 1
++
++  clock-frequency:
++    description: BUS frequency in Hz (timer ticks at half the BUS freq)
++    const: 300000000
++
++required:
++  - compatible
++  - reg
++  - clock-frequency
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    watchdog@1fbf0100 {
++        compatible = "airoha,en7581-wdt";
++        reg = <0x1fbf0100 0x3c>;
++        clock-frequency = <300000000>;
++    };
+-- 
+2.45.2
 
-> It enabled the if statement rather than the else because the else
-> statement has been removed.
-
-Ah, yes - I'd missed the else there.
-
---od2xPA1l+5UNA5Tq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbsGF8ACgkQJNaLcl1U
-h9B6Nwf+K2HHBRXGXMBp/nW8zHB0KSGnRG5lfZtwMgrT2CLRiFZAOdvMdse604kw
-RgmEc082Bqtq7ewQsCm+iZcEzJaNXETTAYEP50k0teM8yVaVBzbzzJEXUg/juM6T
-TY8qHFGB4EVo4YzT7X3VbAVnOCWcj65JC7/4e0qk7/XcYe74gGVlHcs4bqypvSxL
-8/c1Skvx8/dQF+brZcIeJaiOW4nm9Kflt6JCTFUr8BRAsWCKw648j4a/SU4RMWlM
-3CHpltFN3bJHM8XSMEJUNfciQBB5XbbDyXUscGuQyF2nxnQY/2SpAM3dI0SCw4gb
-y6//YQgkNdssQJLUmQWAnK59jZQQHw==
-=K9Uu
------END PGP SIGNATURE-----
-
---od2xPA1l+5UNA5Tq--
 
