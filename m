@@ -1,256 +1,159 @@
-Return-Path: <linux-kernel+bounces-333481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4412497C962
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:41:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D872C97C95A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADDB3B22783
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:41:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7812FB2280B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D8919DFB8;
-	Thu, 19 Sep 2024 12:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="UN+edTHs"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55D919DF82;
+	Thu, 19 Sep 2024 12:39:21 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CA219DF69
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 12:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0BB1991BB;
+	Thu, 19 Sep 2024 12:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726749666; cv=none; b=CuX99d8a6jdLUDufI6WLZrgV7Jct6BkkdWau/p2FQeFXgZME2IL9I2YqbHzTmCWFCNBI7I/Qkwu+A5AffADJuxIcOoAqCxGoWPGQHPS151v1KPlemuBtBXUOK8gayTnJ2wq2xe5aKFycrgMRV4ktvsbrQh83/MHqewIyeq/OzXo=
+	t=1726749561; cv=none; b=bkiOFWOke69uf4RMkfWMbfxvRD77/pkuxpzXKvykBMSjKdd6OsN5eGi7KYQ3HgDiQa3jJIXP5E6+IlEayXLrXkg/e/Xlky2jnzhIzTmkRo+8T4/pnMYbE21RuyRj7ivRWm7pBVK2ayZnVul6PlakKZXv7APNKbHKmZF1WlB9pSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726749666; c=relaxed/simple;
-	bh=x26iYqBoeoZf8GKGmKK3+WLcXQWjkUBKu7A6oBF4hu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KXxUoYD+qVfGhcwcvbQ3ZBSwbvBkYL3r9L+wMEI6znEXklEJS2QbtzKEm5QcQZl4Dkf3+02jxDmjZMlPVCunMQTz1w2mnRDqs/VSYV8fH690o91KTPxBf1eoO7kwJ55jSEfNx3t28fRtln/eXqDe7DZelIPwrD04NOlUpmLN50M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=UN+edTHs; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-108-20-194-30.bstnma.fios.verizon.net [108.20.194.30])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 48JCcmC7000891
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Sep 2024 08:38:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1726749530; bh=1oP8nBXnEOv4H0tLtXyba23RZUsaGaX4QZKks4tzHpE=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=UN+edTHslSn7V3FXh5V2nJD6dCOR5Og8+8ngJXunwZwqIsHzeEQwSn3C3wSfKyslj
-	 ifFLjeVtLlHkPaZqXezqcIsceWiT5ceblZFA5l0IS1PPE6SGG6Hldn10i4W9NQ7zMw
-	 WyXFUQOkTAszJYYeA4ygUNd9mOfKUGjeyc7a87oQyy3why6c3eK/c12hj65qGIJcj1
-	 AOIWWfHw/8DUL801/DqBo0qGRZKn4rq7CJpBLRkDLfEpUEY8/ANqhsfDb02sKjK0oG
-	 TmDVJ+mclyX2sHCQE1+RUro/NYiLQn8q35XDzE7IDAzYZZV/79MH2458Q6zvfkImL/
-	 be0oDgHJAM0gQ==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 1F61A15C19A9; Thu, 19 Sep 2024 08:38:48 -0400 (EDT)
-Date: Thu, 19 Sep 2024 08:38:48 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>
-Subject: [GIT PULL] ext4 updates for 6.12-rc1
-Message-ID: <20240919123848.GA1969831@mit.edu>
+	s=arc-20240116; t=1726749561; c=relaxed/simple;
+	bh=655Jd2qP7NJBqhT0RvcylSy/vCaPG/tFFyErumgKUX0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=mHReN09yuaKAGpz6p5cqIsYdv+RYN78XpDISB5gFD1nk93v/kyIbXLY+9jg/pWwDEqJ+vu3ZZYCIwam+i+4DF8Z91NXWPD/j3q/FgAIa4i+UXCBJ9nNkAaNIglNI3CJoda0hkRCAEz6GEdQLDk60tTlUKAptPliE8TM0PHOrn18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4X8Znt07GQz4f3jMy;
+	Thu, 19 Sep 2024 20:38:58 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id DF70A1A0359;
+	Thu, 19 Sep 2024 20:39:13 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgDHR8RwG+xmPCINBw--.8325S3;
+	Thu, 19 Sep 2024 20:39:13 +0800 (CST)
+Subject: Re: [PATCH] md: ensure child flush IO does not affect origin
+ bio->bi_status
+To: linan666@huaweicloud.com, song@kernel.org
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, houtao1@huawei.com, yangerkun@huawei.com,
+ zhangxiaoxu5@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20240919063048.2887579-1-linan666@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <100549dd-d146-2bb0-a04d-ed3a0bb6ee9e@huaweicloud.com>
+Date: Thu, 19 Sep 2024 20:39:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20240919063048.2887579-1-linan666@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHR8RwG+xmPCINBw--.8325S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tF1xur1fGF4rKw1UAFW7twb_yoW8Kw4kpa
+	y8G3Z8ArZ8JF4xu3W3Aa9rGa4Sgws7KFWjyFy3C3y8ZFnxCF98Kr4Yg340qryDGrW3CrZF
+	q3WDtw4DuayUJFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQ6p
+	9UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
+Hi,
 
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
+ÔÚ 2024/09/19 14:30, linan666@huaweicloud.com Ð´µÀ:
+> From: Li Nan <linan122@huawei.com>
+> 
+> When a flush is issued to an RAID array, a child flush IO is created and
+> issued for each member disk in the RAID array. Since commit b75197e86e6d
+> ("md: Remove flush handling"), each child flush IO has been chained with
+> the original bio. As a result, the failure of any child IO could modify
+> the bi_status of the original bio, potentially impacting the upper-layer
+> filesystem.
+> 
+> Fix the issue by preventing child flush IO from altering the original
+> bio->bi_status as before. However, this design introduces a known
+> issue: in the event of a power failure, if a flush IO on a member
+> disk fails, the upper layers may not be informed. This issue is not easy
+> to fix and will not be addressed for the time being in this issue.
+> 
+> Fixes: b75197e86e6d ("md: Remove flush handling")
+> Signed-off-by: Li Nan <linan122@huawei.com>
+> ---
+>   drivers/md/md.c | 24 +++++++++++++++++++++++-
+>   1 file changed, 23 insertions(+), 1 deletion(-)
 
-are available in the Git repository at:
+LGTM
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+> 
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 179ee4afe937..67108c397c5a 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -546,6 +546,26 @@ static int mddev_set_closing_and_sync_blockdev(struct mddev *mddev, int opener_n
+>   	return 0;
+>   }
+>   
+> +/*
+> + * The only difference from bio_chain_endio() is that the current
+> + * bi_status of bio does not affect the bi_status of parent.
+> + */
+> +static void md_end_flush(struct bio *bio)
+> +{
+> +	struct bio *parent = bio->bi_private;
+> +
+> +	/*
+> +	 * If any flush io error before the power failure,
+> +	 * disk data may be lost.
+> +	 */
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/ext4_for_linus-6.12-rc1
+The only solution I can think of is treating flush IO the same
+as meta IO, just call md_error() this rdev.
 
-for you to fetch changes up to ff2beee206d23f49d022650122f81285849033e4:
+Thanks,
+Kuai
 
-  ext4: convert EXT4_B2C(sbi->s_stripe) users to EXT4_NUM_B2C (2024-09-03 22:14:17 -0400)
 
-NOTE: git will report a merge conflict involving write_begin calls,
-   but just taking the version from the ext4 branch should just work.
-   See the test branch on the ext4.git branch for the test merge that I
-   did my last round of regression tests before sending this pull request.
+> +	if (bio->bi_status)
+> +		pr_err("md: %pg flush io error %d\n", bio->bi_bdev,
+> +			blk_status_to_errno(bio->bi_status));
+> +
+> +	bio_put(bio);
+> +	bio_endio(parent);
+> +}
+> +
+>   bool md_flush_request(struct mddev *mddev, struct bio *bio)
+>   {
+>   	struct md_rdev *rdev;
+> @@ -565,7 +585,9 @@ bool md_flush_request(struct mddev *mddev, struct bio *bio)
+>   		new = bio_alloc_bioset(rdev->bdev, 0,
+>   				       REQ_OP_WRITE | REQ_PREFLUSH, GFP_NOIO,
+>   				       &mddev->bio_set);
+> -		bio_chain(new, bio);
+> +		new->bi_private = bio;
+> +		new->bi_end_io = md_end_flush;
+> +		bio_inc_remaining(bio);
+>   		submit_bio(new);
+>   	}
+>   
+> 
 
-----------------------------------------------------------------
-Lots of cleanups and bug fixes this cycle, primarily in the block
-allocation, extent management, fast commit, and journalling.
-
-----------------------------------------------------------------
-Artem Sadovnikov (1):
-      ext4: fix i_data_sem unlock order in ext4_ind_migrate()
-
-Baokun Li (26):
-      jbd2: stop waiting for space when jbd2_cleanup_journal_tail() returns error
-      ext4: refactor ext4_ext_rm_idx() to index 'path'
-      ext4: prevent partial update of the extents path
-      ext4: fix slab-use-after-free in ext4_split_extent_at()
-      ext4: avoid use-after-free in ext4_ext_show_leaf()
-      ext4: update orig_path in ext4_find_extent()
-      ext4: aovid use-after-free in ext4_ext_insert_extent()
-      ext4: drop ppath from ext4_ext_replay_update_ex() to avoid double-free
-      ext4: fix double brelse() the buffer of the extents path
-      ext4: add new ext4_ext_path_brelse() helper
-      ext4: propagate errors from ext4_find_extent() in ext4_insert_range()
-      ext4: get rid of ppath in ext4_find_extent()
-      ext4: get rid of ppath in get_ext_path()
-      ext4: get rid of ppath in ext4_ext_create_new_leaf()
-      ext4: get rid of ppath in ext4_ext_insert_extent()
-      ext4: get rid of ppath in ext4_split_extent_at()
-      ext4: get rid of ppath in ext4_force_split_extent_at()
-      ext4: get rid of ppath in ext4_split_extent()
-      ext4: get rid of ppath in ext4_split_convert_extents()
-      ext4: get rid of ppath in ext4_convert_unwritten_extents_endio()
-      ext4: get rid of ppath in ext4_ext_convert_to_initialized()
-      ext4: get rid of ppath in ext4_ext_handle_unwritten_extents()
-      ext4: get rid of ppath in convert_initialized_extent()
-      ext4: refactor ext4_swap_extents() to reuse extents path
-      ext4: make some fast commit functions reuse extents path
-      ext4: save unnecessary indentation in ext4_ext_create_new_leaf()
-
-Edward Adam Davis (1):
-      ext4: no need to continue when the number of entries is 1
-
-Gabriel Krisman Bertazi (1):
-      ext4: fix error message when rejecting the default hash
-
-Jan Kara (1):
-      ext4: don't set SB_RDONLY after filesystem errors
-
-Junchao Sun (1):
-      ext4: adjust the layout of the ext4_inode_info structure to save memory
-
-Kemeng Shi (18):
-      ext4: correct comment of ext4_xattr_cmp
-      ext4: correct comment of ext4_xattr_block_cache_insert
-      ext4: correct comment of h_checksum
-      jbd2: correctly compare tids with tid_geq function in jbd2_fc_begin_commit
-      jbd2: remove dead check in journal_alloc_journal_head
-      jbd2: remove unused return value of jbd2_fc_release_bufs
-      jbd2: remove unneeded kmap for jh_in->b_frozen_data in jbd2_journal_write_metadata_buffer
-      jbd2: remove unneeded done_copy_out variable in jbd2_journal_write_metadata_buffer
-      jbd2: move escape handle to futher improve jbd2_journal_write_metadata_buffer
-      jbd2: correct comment jbd2_mark_journal_empty
-      jbd2: remove unneeded check of ret in jbd2_fc_get_buf
-      ext4: avoid buffer_head leak in ext4_mark_inode_used()
-      ext4: avoid potential buffer_head leak in __ext4_new_inode()
-      ext4: avoid negative min_clusters in find_group_orlov()
-      ext4: remove dead check in __ext4_new_inode()
-      ext4: move checksum length calculation of inode bitmap into ext4_inode_bitmap_csum_[verify/set]() functions
-      ext4: remove unneeded NULL check of buffer_head in ext4_mark_inode_used()
-      ext4: check buffer_verified in advance to avoid unneeded ext4_get_group_info()
-
-Lizhi Xu (1):
-      ext4: filesystems without casefold feature cannot be mounted with siphash
-
-Luis Henriques (SUSE) (6):
-      ext4: fix fast commit inode enqueueing during a full journal commit
-      ext4: fix access to uninitialised lock in fc replay path
-      ext4: fix incorrect tid assumption in ext4_wait_for_tail_page_commit()
-      ext4: fix incorrect tid assumption in __jbd2_log_wait_for_space()
-      ext4: fix incorrect tid assumption in jbd2_journal_shrink_checkpoint_list()
-      ext4: fix incorrect tid assumption in ext4_fc_mark_ineligible()
-
-Markus Elfring (1):
-      ext4: use seq_putc() in two functions
-
-Matthew Wilcox (Oracle) (4):
-      ext4: reduce stack usage in ext4_mpage_readpages()
-      ext4: pipeline buffer reads in mext_page_mkuptodate()
-      ext4: remove array of buffer_heads from mext_page_mkuptodate()
-      ext4: tidy the BH loop in mext_page_mkuptodate()
-
-Ojaswin Mujoo (2):
-      ext4: check stripe size compatibility on remount as well
-      ext4: convert EXT4_B2C(sbi->s_stripe) users to EXT4_NUM_B2C
-
-Randy Dunlap (1):
-      jbd2: fix kernel-doc for j_transaction_overhead_buffers
-
-Shida Zhang (4):
-      ext4: persist the new uptodate buffers in ext4_journalled_zero_new_buffers
-      ext4: hoist ext4_block_write_begin and replace the __block_write_begin
-      ext4: fix a potential assertion failure due to improperly dirtied buffer
-      ext4: remove the special buffer dirty handling in do_journal_get_write_access
-
-Stefan Tauner (1):
-      Documentation: ext4.rst: remove obsolete descriptions of noacl/nouser_xattr options
-
-Thadeu Lima de Souza Cascardo (4):
-      ext4: ext4_search_dir should return a proper error
-      ext4: return error on ext4_find_inline_entry
-      ext4: explicitly exit when ext4_find_inline_entry returns an error
-      ext4: avoid OOB when system.data xattr changes underneath the filesystem
-
-Thorsten Blum (1):
-      ext4: annotate struct ext4_xattr_inode_array with __counted_by()
-
-Wojciech GÅ‚adysz (1):
-      ext4: nested locking for xattr inode
-
-Xiaxi Shen (1):
-      ext4: fix timer use-after-free on failed mount
-
-Zhang Yi (12):
-      ext4: factor out ext4_map_create_blocks() to allocate new blocks
-      ext4: optimize the EXT4_GET_BLOCKS_DELALLOC_RESERVE flag set
-      ext4: don't set EXTENT_STATUS_DELAYED on allocated blocks
-      ext4: let __revise_pending() return newly inserted pendings
-      ext4: passing block allocation information to ext4_es_insert_extent()
-      ext4: update delalloc data reserve spcae in ext4_es_insert_extent()
-      ext4: drop ext4_es_delayed_clu()
-      ext4: use ext4_map_query_blocks() in ext4_map_blocks()
-      ext4: drop unused ext4_es_store_status()
-      ext4: make extent status types exclusive
-      ext4: drop ext4_es_is_delonly()
-      ext4: drop all delonly descriptions
-
-Zhihao Cheng (1):
-      ext4: dax: fix overflowing extents beyond inode size when partially writing
-
-carrion bent (1):
-      ext4: fix macro definition error of EXT4_DIRENT_HASH and EXT4_DIRENT_MINOR_HASH
-
-yangerkun (2):
-      ext4: clear EXT4_GROUP_INFO_WAS_TRIMMED_BIT even mount with discard
-      ext4: dax: keep orphan list before truncate overflow allocated blocks
-
-yao.ly (1):
-      ext4: correct encrypted dentry name hash when not casefolded
-
- Documentation/admin-guide/ext4.rst |  10 -
- fs/ext4/bitmap.c                   |   8 +-
- fs/ext4/dir.c                      |  14 +-
- fs/ext4/ext4.h                     |  31 +-
- fs/ext4/extents.c                  | 823 ++++++++++++++++++-----------------
- fs/ext4/extents_status.c           | 240 ++++------
- fs/ext4/extents_status.h           |  28 +-
- fs/ext4/fast_commit.c              |  47 +-
- fs/ext4/file.c                     |  20 +-
- fs/ext4/ialloc.c                   |  35 +-
- fs/ext4/indirect.c                 |   7 -
- fs/ext4/inline.c                   |  46 +-
- fs/ext4/inode.c                    | 292 ++++++-------
- fs/ext4/mballoc.c                  |  25 +-
- fs/ext4/migrate.c                  |   7 +-
- fs/ext4/move_extent.c              |  90 ++--
- fs/ext4/namei.c                    |  16 +-
- fs/ext4/readpage.c                 |  16 +-
- fs/ext4/resize.c                   |   3 +-
- fs/ext4/super.c                    |  65 ++-
- fs/ext4/xattr.c                    |  31 +-
- fs/ext4/xattr.h                    |   7 +-
- fs/jbd2/checkpoint.c               |  21 +-
- fs/jbd2/journal.c                  |  97 ++---
- include/linux/jbd2.h               |   4 +-
- 25 files changed, 989 insertions(+), 994 deletions(-)
 
