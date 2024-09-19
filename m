@@ -1,81 +1,87 @@
-Return-Path: <linux-kernel+bounces-333319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3305F97C6E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:20:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E1597C6E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 11:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E765C2863A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:20:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C0D81C232E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A4019AA5F;
-	Thu, 19 Sep 2024 09:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED5A199937;
+	Thu, 19 Sep 2024 09:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="MqeUvm6J"
-Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mRGxBWID"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093D1FC0C
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E781CFC0C;
+	Thu, 19 Sep 2024 09:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726737620; cv=none; b=QU/ZtzA+Ed2ShUKUAxEcP3c9f0MoI8SmZ4xzU6AKn6MBiGC6yeiiXpcRe/Mn0eQam1k/IqZl6jheB+pw2dn+bXuS1cxUx0e8S7Oxgy7cUTa0Z5/c8BItk7An+mKpn+qGHH2NsEnS1QH8XL8FJEmpqFNRb/GMI947Mf2SIS3Bj/g=
+	t=1726737644; cv=none; b=FXYl2MkIG4KesC3lnrQ5QxN2hqS3K3Jcu8jRuxKbgUVydktjNU0DD5blHkzjQ0iZaDUjlKejwuJXLFwTIV+vKPPTZt/AVM49OObMNpRDFkEw7LiJYfPG+UIE6uxb2w27SeykU3l8cNXlma0xVWeho9JbzIuk5d5j8EAtkzWuEPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726737620; c=relaxed/simple;
-	bh=0pYi2Ni0VLg4Q2jL0VHsJ0rBYp+TMB0afkc/uJHrl6A=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ECNhgW5fOqFonMyrbOxpqmsObbLNRTmvr1Sfxin9QZCQb3eOvSBApR4B+M7GwwsM8I32oYLf2d0s8urDAgIiQHEiiddCXTATLrcdrTOivBEhiTwYS2gP8GoYmHlEZWAZibstqSJ/9Y2wX/M4DrF4Zm2SjX39JklhCLtkW4oG16s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=MqeUvm6J reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
+	s=arc-20240116; t=1726737644; c=relaxed/simple;
+	bh=AU986l34BYcMhrEGJUyJ8eifExDZXbldXJzAM6FzRSo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oy7FNtstCZ+tk2pR1XJB+9Amt0o8YuT6xHXlRLQHC47IF283DMjHaR4gJ+czLebFsb6PsTMJexzP3r5+tie6yLPEfwf11d+G4EnG/qNjH/1z7GNXroFL3yKz7ifqBWA+W70aa+iumTw6yYuP5FLeY/GvwzqgaV642jlLbI9Tluk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mRGxBWID; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7db1f0e1641so116852a12.1;
+        Thu, 19 Sep 2024 02:20:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9z9UGdgk9MPxd1ynPoki1CPpX1B3DsdgFQ83VM+CmXk=;
-  b=MqeUvm6JRA/5LU2oVvhTuYWuXz7zCZQCld7Kzq12BX2UXUs8vep4Vw2U
-   7I6G14upUmWKEXE6waRLQm+Tgb8fJlMb2GVZGdVdRwik9WvmRfqkLa0lH
-   xIDY4fQMatYNybAFE9VVVr3AE7DumKvyFIcvVI3R60jZjHOa08cCui86Q
-   gOM2mMvC6M5exV6/dSSFn9r/hwndsxr6bhKC2h++HiZiCeFzpYaRPSV1C
-   ka8t8OBzBmDFM+hGsL8hOwwqbokwQtTzENVs7/1jZ9hgTutumwIbV5uD/
-   A/tqaZ9uZraVlr7rG0a+ExOPU/Znfd43XAaqEPSSHSA8aONSNbVKakK3M
-   w==;
-X-CSE-ConnectionGUID: 4FxOiOCaQR69B7RhMI/McA==
-X-CSE-MsgGUID: ZLSd1G3URH6shpKKy25XIQ==
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 19 Sep 2024 17:20:11 +0800
-Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
-	by mse.ite.com.tw with ESMTP id 48J9K4Aa051461;
-	Thu, 19 Sep 2024 17:20:04 +0800 (GMT-8)
-	(envelope-from Hermes.Wu@ite.com.tw)
-Received: from LAPTOP-C4GM1L3U.localdomain (192.168.82.6) by
- TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 19 Sep 2024 17:20:05 +0800
-From: Hermes Wu <Hermes.Wu@ite.com.tw>
-To: Pin-yen Lin <treapking@chromium.org>, Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss
-	<robert.foss@linaro.org>,
-        Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej
- Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>,
-        "open list:DRM DRIVERS"
-	<dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-CC: Kenneth Hung <Kenneth.hung@ite.com.tw>, "Hermes.Wu" <Hermes.wu@ite.com.tw>
-Subject: [PATCH v1 2/2] drm/bridge: it6505:  Add MSSC suport
-Date: Thu, 19 Sep 2024 17:19:16 +0800
-Message-ID: <20240919091916.1484-3-Hermes.Wu@ite.com.tw>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240919091916.1484-1-Hermes.Wu@ite.com.tw>
-References: <20240919091916.1484-1-Hermes.Wu@ite.com.tw>
+        d=gmail.com; s=20230601; t=1726737642; x=1727342442; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2HCkCdBBUpVJ0qsYsnBW5q14r0IwDCMEBz+OlfqvwaI=;
+        b=mRGxBWID0UzKN67g+VWayTZ+/vEp0nIukzkAaghF/iGJq1/cONhbcJljwxblI53sJB
+         qMlIubSBD2gwGNurGVPpdWfTMyv7yK3fDkVi6Hnn7GRaGJD/Mr5+aHj2SOlmz1/3JdRx
+         QlBHCzTQ2j5cnNlLe6R1Q5Lq2Xs7bVtuQwbKzJoAu/acWXWrjp/oiZ3Mj/55990HxxLr
+         GaE8zooITAPHr/Kr4YlXl0TcyygbUfEJKrisEH0LU2JufYWv6shMHhcW9K9llA/ODHf5
+         To7gr6ik0IDG01GCGNPXR/5+mk5tg8SJ3cDVK8a1sFK7m45LviLAeyR62lKjDErnB8TO
+         z0CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726737642; x=1727342442;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2HCkCdBBUpVJ0qsYsnBW5q14r0IwDCMEBz+OlfqvwaI=;
+        b=df+5Mb4pUhWsXfGLIhaGTtU5+lM7phf+dbPDMqPrnoeiN7PDKm8i3GPN2Im8TbRukP
+         Ts7NVCYy5clpg2nD7QtmCzpzH5zIfOSLx65fflD4Ng9RzS1urwmqzFq43nPw3+rM4yCU
+         HuMhLhkuzGwYMALNw7yrWC7cBDz+D1R60dowGBZMO6D+6t1SAWSWJgsBNmJ3svVM/Jbj
+         JsToG7gWyeEuKxSDTUVg0YlEH7A2xf4cBPqv8Q2Pe2poPwOUJdowvQkgnChwzD5j4kg7
+         cg/vQQJFB63Ev7mBNE4lpLZ1ovVfXfhCmk5u12Pu5bHpX5j12AgIFaYtZi0cqBOOhBUK
+         Xibw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHv3XwWAoJRRosUdUZJbaAEak9LCbh9PdDbqaZ0ts2uCzaTpO8PZg6s1mTbOZxOsy0yswHUEKT@vger.kernel.org, AJvYcCUqKppff2KATZmzI8oJE5eWSTv/iTAtaN8X92SbhrRTaYHh4BNyd6r/ifVYkRx0CJym9Gnu+rVWp8Q17XA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEltb5g8TZ7NR8bxCrEA9+OseDiogolnhR1OHqHl/zivmszcbb
+	LgrQ2pfddMaAcBhIaGdprPycNvt1M/TIU7sgeptR6fmtpYYI6ZAO
+X-Google-Smtp-Source: AGHT+IHC65bgZbGkrU/oDmLG+6tw2yQfdW5AiZJJIOtY8+xEQBNqxfKeGsUnMLf2uVeSng8N9IxbjA==
+X-Received: by 2002:a05:6a21:2d85:b0:1cf:440a:d785 with SMTP id adf61e73a8af0-1cf75ee4d5amr34727850637.11.1726737642053;
+        Thu, 19 Sep 2024 02:20:42 -0700 (PDT)
+Received: from fedora.. ([106.219.160.111])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd6ee8a040sm1256568a91.3.2024.09.19.02.20.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 02:20:41 -0700 (PDT)
+From: Riyan Dhiman <riyandhiman14@gmail.com>
+To: sgoutham@marvell.com,
+	lcherian@marvell.com,
+	gakula@marvell.com,
+	jerinj@marvell.com,
+	hkelam@marvell.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: rsaladi2@marvell.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Riyan Dhiman <riyandhiman14@gmail.com>
+Subject: [PATCH] octeontx2-af: Change block parameter to const pointer in get_lf_str_list
+Date: Thu, 19 Sep 2024 14:49:36 +0530
+Message-ID: <20240919091935.68209-2-riyandhiman14@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,336 +89,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TPEMAIL1.internal.ite.com.tw (192.168.15.58) To
- TPEMAIL1.internal.ite.com.tw (192.168.15.58)
-X-TM-SNTS-SMTP:
-	91B360ED5822D2E4940C8FBA3A618D6AE2246F3D1D3FE4CC472BCCAAB889E14F2002:8
-X-MAIL:mse.ite.com.tw 48J9K4Aa051461
 
-From: "Hermes.Wu" <Hermes.wu@ite.com.tw>
+Convert struct rvu_block block to const struct rvu_block *block in
+get_lf_str_list() function parameter. This improves efficiency by
+avoiding structure copying and reflects the function's read-only
+access to block.
 
-add AUX-I2C functionality to support MCCS. 
-
-Change-Id: I63e1a0e5da67526f89f35605a82944be67dee8ac
-Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
+Fixes: e77bcdd1f639 (octeontx2-af: Display all enabled PF VF rsrc_alloc entries.)
+Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
 ---
- drivers/gpu/drm/bridge/ite-it6505.c | 209 ++++++++++++++++++++++++++--
- 1 file changed, 200 insertions(+), 9 deletions(-)
+Compile tested only
+ .../ethernet/marvell/octeontx2/af/rvu_debugfs.c    | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-index cef02c8c363e..1a272c67e82b 100644
---- a/drivers/gpu/drm/bridge/ite-it6505.c
-+++ b/drivers/gpu/drm/bridge/ite-it6505.c
-@@ -127,6 +127,9 @@
- #define REG_AUX_ADR_16_19 0x26
- #define REG_AUX_OUT_DATA0 0x27
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+index 87ba77e5026a..8c700ee4a82b 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c
+@@ -663,16 +663,16 @@ static ssize_t rvu_dbg_lmtst_map_table_display(struct file *filp,
  
-+#define REG_AUX_I2C_ADR 0x25
-+#define REG_AUX_I2C_OP 0x26
-+
- #define REG_AUX_CMD_REQ 0x2B
- #define AUX_BUSY BIT(5)
+ RVU_DEBUG_FOPS(lmtst_map_table, lmtst_map_table_display, NULL);
  
-@@ -268,6 +271,19 @@
- #define REG_SSC_CTRL1 0x189
- #define REG_SSC_CTRL2 0x18A
- 
-+#define REG_AUX_USER_CTRL 0x190
-+#define EN_USER_AUX BIT(0)
-+#define USER_AUX_DONE BIT(1)
-+#define AUX_EVENT BIT(4)
-+
-+#define REG_AUX_USER_DATA_REC 0x191
-+#define M_AUX_IN_REC   0xF0
-+#define M_AUX_OUT_REC  0x0F
-+
-+#define REG_AUX_USER_TXB 0x190
-+#define REG_AUX_USER_REPLY 0x19A
-+#define REG_AUX_USER_RXB(n) (n + 0x19B)
-+
- #define RBR DP_LINK_BW_1_62
- #define HBR DP_LINK_BW_2_7
- #define HBR2 DP_LINK_BW_5_4
-@@ -303,6 +319,8 @@
- #define MAX_EQ_LEVEL 0x03
- #define AUX_WAIT_TIMEOUT_MS 15
- #define AUX_FIFO_MAX_SIZE 16
-+#define AUX_I2C_MAX_SIZE 4
-+#define AUX_I2C_DEFER_RETRY 4
- #define PIXEL_CLK_DELAY 1
- #define PIXEL_CLK_INVERSE 0
- #define ADJUST_PHASE_THRESHOLD 80000
-@@ -325,7 +343,12 @@
- enum aux_cmd_type {
- 	CMD_AUX_NATIVE_READ = 0x0,
- 	CMD_AUX_NATIVE_WRITE = 0x5,
-+	CMD_AUX_GI2C_ADR = 0x08,
-+	CMD_AUX_GI2C_READ = 0x09,
-+	CMD_AUX_GI2C_WRITE = 0x0A,
- 	CMD_AUX_I2C_EDID_READ = 0xB,
-+	CMD_AUX_I2C_READ = 0x0D,
-+	CMD_AUX_I2C_WRITE = 0x0C,
- 
- 	/*extend read ncommand */
- 	CMD_AUX_GET_KSV_LIST = 0x10,
-@@ -333,8 +356,11 @@ enum aux_cmd_type {
- 
- enum aux_cmd_reply {
- 	REPLY_ACK,
--	REPLY_NACK,
--	REPLY_DEFER,
-+	REPLY_NACK = 1,
-+	REPLY_DEFER = 2,
-+
-+	REPLY_I2C_NACK = 4,
-+	REPLY_I2C_DEFER = 8,
- };
- 
- enum link_train_status {
-@@ -1087,7 +1113,6 @@ static ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
- 				      size_t size, enum aux_cmd_reply *reply)
+-static void get_lf_str_list(struct rvu_block block, int pcifunc,
++static void get_lf_str_list(const struct rvu_block *block, int pcifunc,
+ 			    char *lfs)
  {
- 	int i, ret_size, ret = 0, request_size;
--	struct device *dev = &it6505->client->dev;
+-	int lf = 0, seq = 0, len = 0, prev_lf = block.lf.max;
++	int lf = 0, seq = 0, len = 0, prev_lf = block->lf.max;
  
- 	mutex_lock(&it6505->aux_lock);
- 	for (i = 0; i < size; ) {
-@@ -1114,6 +1139,168 @@ static ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
- 	return ret;
- }
- 
-+
-+static int it6505_aux_i2c_wait(struct it6505 *it6505, u8 *reply)
-+{
-+	int err = 0;
-+	unsigned long timeout;
-+	struct device *dev = &it6505->client->dev;
-+
-+	timeout = jiffies + msecs_to_jiffies(AUX_WAIT_TIMEOUT_MS) + 1;
-+
-+	do {
-+		if (it6505_read(it6505, REG_AUX_USER_CTRL) & AUX_EVENT)
-+			break;
-+		if (time_after(jiffies, timeout)) {
-+			dev_err(dev, "Timed out waiting AUX I2C, BUSY = %X\n",
-+					it6505_aux_op_finished(it6505));
-+			err = -ETIMEDOUT;
-+			goto end_aux_i2c_wait;
-+		}
-+		usleep_range(300, 800);
-+
-+	} while (!it6505_aux_op_finished(it6505));
-+
-+	if (reply == NULL)
-+		goto end_aux_i2c_wait;
-+
-+	*reply = it6505_read(it6505, REG_AUX_USER_REPLY) >> 4;
-+
-+	if (*reply == 0)
-+		goto end_aux_i2c_wait;
-+
-+	if ((*reply == DP_AUX_NATIVE_REPLY_DEFER) ||
-+			(*reply == DP_AUX_I2C_REPLY_DEFER))
-+		err = -EBUSY;
-+	else if ((*reply == DP_AUX_NATIVE_REPLY_NACK) ||
-+			(*reply == DP_AUX_I2C_REPLY_NACK))
-+		err = -ENXIO;
-+
-+end_aux_i2c_wait:
-+	it6505_set_bits(it6505, REG_AUX_USER_CTRL, USER_AUX_DONE, USER_AUX_DONE);
-+	return err;
-+}
-+
-+static int it6505_aux_i2c_readb(struct it6505 *it6505, u8 *buf, size_t size, u8 *reply)
-+{
-+	int ret, i;
-+	int retry = 0;
-+
-+	for (retry = 0; retry < AUX_I2C_DEFER_RETRY; retry++) {
-+
-+		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_READ);
-+
-+		ret = it6505_aux_i2c_wait(it6505, reply);
-+
-+		if ((*reply == DP_AUX_NATIVE_REPLY_DEFER) ||
-+			(*reply == DP_AUX_I2C_REPLY_DEFER))
-+			continue;
-+
-+		if (ret >= 0)
-+			break;
-+	}
-+
-+	for (i = 0; i < size; i++)
-+		buf[i] =  (u8) it6505_read(it6505, REG_AUX_USER_RXB(0 + i));
-+
-+	return size;
-+}
-+
-+static int it6505_aux_i2c_writeb(struct it6505 *it6505, u8 *buf, size_t size, u8 *reply)
-+{
-+	int i, ret;
-+	int retry = 0;
-+
-+	for (i = 0; i < size; i++)
-+		it6505_write(it6505, REG_AUX_OUT_DATA0 + i, buf[i]);
-+
-+	for (retry = 0; retry < AUX_I2C_DEFER_RETRY; retry++) {
-+
-+		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_WRITE);
-+
-+		ret = it6505_aux_i2c_wait(it6505, reply);
-+
-+		if ((*reply == DP_AUX_NATIVE_REPLY_DEFER) ||
-+			(*reply == DP_AUX_I2C_REPLY_DEFER))
-+			continue;
-+
-+		if (ret >= 0)
-+			break;
-+	}
-+	return size;
-+}
-+
-+static ssize_t it6505_aux_i2c_operation(struct it6505 *it6505,
-+					struct drm_dp_aux_msg *msg)
-+{
-+	int ret;
-+	ssize_t request_size, data_cnt = 0;
-+	struct device *dev = &it6505->client->dev;
-+	u8 *buffer = msg->buffer;
-+
-+	/* set AUX user mode */
-+	it6505_set_bits(it6505, REG_AUX_CTRL,
-+			AUX_USER_MODE | AUX_NO_SEGMENT_WR, AUX_USER_MODE);
-+	it6505_set_bits(it6505, REG_AUX_USER_CTRL, EN_USER_AUX, EN_USER_AUX);
-+	/* clear AUX FIFO */
-+	it6505_set_bits(it6505, REG_AUX_CTRL,
-+			AUX_EN_FIFO_READ | CLR_EDID_FIFO,
-+			AUX_EN_FIFO_READ | CLR_EDID_FIFO);
-+
-+	it6505_set_bits(it6505, REG_AUX_CTRL,
-+			AUX_EN_FIFO_READ | CLR_EDID_FIFO, 0x00);
-+
-+	it6505_write(it6505, REG_AUX_ADR_0_7, 0x00);
-+	it6505_write(it6505, REG_AUX_I2C_ADR, msg->address << 1);
-+
-+	if (msg->size == 0) {
-+		/* IIC Start/STOP dummy write */
-+		it6505_write(it6505, REG_AUX_I2C_OP, msg->request);
-+		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_ADR);
-+		ret = it6505_aux_i2c_wait(it6505, &msg->reply);
-+		goto end_aux_i2c_transfer;
-+	}
-+
-+	/* IIC data transfer */
-+	for (data_cnt = 0; data_cnt < msg->size; ) {
-+		request_size = min(msg->size - data_cnt, AUX_I2C_MAX_SIZE);
-+		it6505_write(it6505, REG_AUX_I2C_OP,
-+					(msg->request) | ((request_size - 1) << 4));
-+
-+		if ((msg->request & DP_AUX_I2C_READ) == DP_AUX_I2C_READ)
-+			ret = it6505_aux_i2c_readb(it6505, &buffer[data_cnt],
-+							request_size, &msg->reply);
-+		else
-+			ret = it6505_aux_i2c_writeb(it6505, &buffer[data_cnt],
-+							request_size, &msg->reply);
-+
-+		if (ret < 0)
-+			goto end_aux_i2c_transfer;
-+
-+		data_cnt += request_size;
-+	}
-+	ret = data_cnt;
-+end_aux_i2c_transfer:
-+
-+	it6505_set_bits(it6505, REG_AUX_USER_CTRL, EN_USER_AUX, 0);
-+	it6505_set_bits(it6505, REG_AUX_CTRL, AUX_USER_MODE, 0);
-+	return ret;
-+}
-+
-+
-+static ssize_t it6505_aux_i2c_transfer(struct drm_dp_aux *aux,
-+				   struct drm_dp_aux_msg *msg)
-+{
-+	struct it6505 *it6505 = container_of(aux, struct it6505, aux);
-+	int ret;
-+
-+	mutex_lock(&it6505->aux_lock);
-+	ret = it6505_aux_i2c_operation(it6505, msg);
-+	mutex_unlock(&it6505->aux_lock);
-+	return ret;
-+}
-+
-+
- static ssize_t it6505_aux_transfer(struct drm_dp_aux *aux,
- 				   struct drm_dp_aux_msg *msg)
- {
-@@ -1125,7 +1312,7 @@ static ssize_t it6505_aux_transfer(struct drm_dp_aux *aux,
- 
- 	/* IT6505 doesn't support arbitrary I2C read / write. */
- 	if (is_i2c)
--		return -EINVAL;
-+		return it6505_aux_i2c_transfer(aux, msg);
- 
- 	switch (msg->request) {
- 	case DP_AUX_NATIVE_READ:
-@@ -1153,6 +1340,8 @@ static ssize_t it6505_aux_transfer(struct drm_dp_aux *aux,
- 	case REPLY_DEFER:
- 		msg->reply = DP_AUX_NATIVE_REPLY_DEFER;
- 		break;
-+	default:
-+		break;
- 	}
- 
- 	return ret;
-@@ -1180,7 +1369,7 @@ static int it6505_get_edid_block(void *data, u8 *buf, unsigned int block,
- 		switch (reply) {
- 		case REPLY_ACK:
- 			DRM_DEV_DEBUG_DRIVER(dev, "[0x%02x]: %8ph", offset,
--					     buf + offset);
-+								uf + offset);
- 			offset += 8;
- 			aux_retry = 100;
+-	for_each_set_bit(lf, block.lf.bmap, block.lf.max) {
+-		if (lf >= block.lf.max)
++	for_each_set_bit(lf, block->lf.bmap, block->lf.max) {
++		if (lf >= block->lf.max)
  			break;
-@@ -1190,6 +1379,8 @@ static int it6505_get_edid_block(void *data, u8 *buf, unsigned int block,
- 			msleep(20);
- 			if (!(--aux_retry))
- 				return -EIO;
-+		default:
-+			break;
- 		}
- 	}
  
-@@ -2031,8 +2222,8 @@ static int it6505_setup_sha1_input(struct it6505 *it6505, u8 *sha1_input)
+-		if (block.fn_map[lf] != pcifunc)
++		if (block->fn_map[lf] != pcifunc)
+ 			continue;
  
+ 		if (lf == prev_lf + 1) {
+@@ -719,7 +719,7 @@ static int get_max_column_width(struct rvu *rvu)
+ 				if (!strlen(block.name))
+ 					continue;
  
- 	err =  it6505_get_ksvlist(it6505, sha1_input, down_stream_count * 5);
--	if (err < 0)
--		return err;
-+		if (err < 0)
-+			return err;
+-				get_lf_str_list(block, pcifunc, buf);
++				get_lf_str_list(&block, pcifunc, buf);
+ 				if (lf_str_size <= strlen(buf))
+ 					lf_str_size = strlen(buf) + 1;
+ 			}
+@@ -803,7 +803,7 @@ static ssize_t rvu_dbg_rsrc_attach_status(struct file *filp,
+ 					continue;
+ 				len = 0;
+ 				lfs[len] = '\0';
+-				get_lf_str_list(block, pcifunc, lfs);
++				get_lf_str_list(&block, pcifunc, lfs);
+ 				if (strlen(lfs))
+ 					flag = 1;
  
- 	msg_count += down_stream_count * 5;
- 
-@@ -2075,7 +2266,7 @@ static bool it6505_hdcp_part2_ksvlist_check(struct it6505 *it6505)
- 	for (retry = 0; retry < 3; retry++) {
- 
- 		err = it6505_get_dpcd(it6505, DP_AUX_HDCP_V_PRIME(0), (u8 *)bv,
--					sizeof(bv));
-+			      sizeof(bv));
- 
- 		if (err < 0) {
- 			dev_err(dev, "Read V' value Fail %d", retry);
-@@ -2126,7 +2317,7 @@ static void it6505_hdcp_wait_ksv_list(struct work_struct *work)
- 
- 	ksv_list_check = it6505_hdcp_part2_ksvlist_check(it6505);
- 	DRM_DEV_DEBUG_DRIVER(dev, "ksv list ready, ksv list check %s",
--				ksv_list_check ? "pass" : "fail");
-+			     ksv_list_check ? "pass" : "fail");
- 
- 	if (ksv_list_check)
- 		return;
 -- 
-2.34.1
+2.46.0
 
 
