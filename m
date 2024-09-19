@@ -1,46 +1,64 @@
-Return-Path: <linux-kernel+bounces-333093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF62897C368
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:43:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 479B297C3A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82E9C283917
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 04:43:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A1BB1C22473
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 04:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E15A18E29;
-	Thu, 19 Sep 2024 04:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20241B285;
+	Thu, 19 Sep 2024 04:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="OPlNJ+bp"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C90A208AD;
-	Thu, 19 Sep 2024 04:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m1IKUsMC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D9E1CD1F
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 04:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726721027; cv=none; b=G0zcADJ2sjfUak8BA6mgNp6u5ll6XWanab7hhkG6jJpxt3pcLr+YVElPhoSrqgysQ8ehfqP2G0fYaZfoDm43Rb0u8Yi6H40p9GFIIxFumzL3X1IuuIJpu+ZayihzRciAUvPxm4m6V3yxy2DtfVz+9uJh2riXwUm0Icyjz4jyOWQ=
+	t=1726721378; cv=none; b=LX17jQuZWqcB2HKIQjOEZuxpFAPuK5NZ7BjD4UqWC8TgbXeaovubBT7d+k5TQAcl/Qgj/R3167f4POtmuoZ3+w1RIfRfiAnNNU7exjD6HgaBIS1eQQM/9pWTK8bG4duY8Kis9ZsyjMsf78kkbuK6ML4DRABEFGSiLv7kg3xs85o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726721027; c=relaxed/simple;
-	bh=lpNgFZv9seW9we31BCKItN+jbOx7qSRiNfOfsPSNkcU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dIn9y4FKLv7/nNDmfDtZ6pbAjq3ucItqi+3ddGTaoN784hpiYIcJ6vNj+tR6MupQUBsW9NwqMNCpAnYTL6+ZekFdP32MOoxRMpF2pKUyY/5nankciYBKWbjNQJPcT5JFsOdR4JIV7YX33c0/pujGqnBd+0FCnKH0R96LJW7uf3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=OPlNJ+bp; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.95.75.183] (unknown [167.220.238.215])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 93E9720C0A19;
-	Wed, 18 Sep 2024 21:43:39 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 93E9720C0A19
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1726721025;
-	bh=2cXZn7AsuO1/f29Ymo7/H1OKKdihpH5ofIpGs9C1Gak=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OPlNJ+bpgLvH5/u1uymp+5eK5jLvpIg7kpgbHDIWxZNe5ftQWDKevBX59qVDYlld8
-	 vNA42RHM6o1hKiGHNIa+DD9Z0i/PX+UEoh+ObOgk2NYvDI24yQvfR7/uBOn//s9Smy
-	 YbkyJeztx5QlX8kQEnWlcxkPduMbqkOn9hl5OEko=
-Message-ID: <26d243c5-6e31-402c-ab3b-588db806ef12@linux.microsoft.com>
-Date: Thu, 19 Sep 2024 10:13:35 +0530
+	s=arc-20240116; t=1726721378; c=relaxed/simple;
+	bh=H3YvGkTpFeoPDN5wi0RdOSRjHHmnuaoIA73Eys9KfIw=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=IdbAsxa+JWdosI9dvgwUz9dA5zql/ePKWdW/CFz5+gnAIIpnCed+iv9212rSsCip3vdTe8I2+NpiZQhE6B0uP7xE065azuVaUn2WR0Tgm1r6AVTH+lPtpA7vufG1Yiau+Cuq074h7KAOBvye835Pr04MGdKewC8yb8PFL2OQ3P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m1IKUsMC; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726721376; x=1758257376;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=H3YvGkTpFeoPDN5wi0RdOSRjHHmnuaoIA73Eys9KfIw=;
+  b=m1IKUsMCrC3JdgU/3QM9BN4Ivn8kGOTR27obzxhIlVu6PCYlqucv+Vh8
+   HeCYLDIUjEFXRE7sjYt15aPyYO/tf8SYKOKrdwckMrIZT+6iUepFzHvoY
+   /ZF+1Tvg0djDfakABCFTi9pPaD0v+iGPqFgN1SgSz17JWunVR+ANjtGvL
+   6pvvHX17k0SblOkTi2/aeKa8zhXNtHKLm9ulLLNcR9x8FScQrai6czFbO
+   K8lriHjK49/S0erikO4dv561oNLtepqg5IauYtbtwnuerZI7G7CkQRi1/
+   A1dvk93k35ZpzwvSm308C5La32GjEnkv6ybR8EUL72lYW9hkeOQPF6mJr
+   Q==;
+X-CSE-ConnectionGUID: qkU0SOkmQ2akLmZtCiYdHg==
+X-CSE-MsgGUID: y6pzdovCT3mgXEuefuP1qQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11199"; a="36331313"
+X-IronPort-AV: E=Sophos;i="6.10,240,1719903600"; 
+   d="scan'208";a="36331313"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2024 21:49:36 -0700
+X-CSE-ConnectionGUID: cqXILBR+QembfQ+6/Vsxtg==
+X-CSE-MsgGUID: 3Rjb/cTQT5u9ebj2P9oDJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,240,1719903600"; 
+   d="scan'208";a="74157565"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa005.fm.intel.com with ESMTP; 18 Sep 2024 21:49:33 -0700
+Message-ID: <7a532573-9e59-41c6-bf57-f50cad502e57@linux.intel.com>
+Date: Thu, 19 Sep 2024 12:45:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,108 +66,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] x86/hyper-v: Fix hv tsc page based sched_clock for
- hibernation
-To: Michael Kelley <mhklinux@outlook.com>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org"
- <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-References: <20240917053917.76787-1-namjain@linux.microsoft.com>
- <SN6PR02MB415772CE1B1F9FC03ECD0258D4622@SN6PR02MB4157.namprd02.prod.outlook.com>
+Cc: baolu.lu@linux.intel.com, linux-arm-kernel@lists.infradead.org,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/arm-smmu-v3: Convert comma to semicolon
+To: Chen Ni <nichen@iscas.ac.cn>, will@kernel.org, robin.murphy@arm.com,
+ joro@8bytes.org, jgg@ziepe.ca, nicolinc@nvidia.com, mshavit@google.com,
+ smostafa@google.com
+References: <20240919035356.2798911-1-nichen@iscas.ac.cn>
 Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB415772CE1B1F9FC03ECD0258D4622@SN6PR02MB4157.namprd02.prod.outlook.com>
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240919035356.2798911-1-nichen@iscas.ac.cn>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 9/19/2024 12:07 AM, Michael Kelley wrote:
-> From: Naman Jain <namjain@linux.microsoft.com> Sent: Monday, September 16, 2024 10:39 PM
->>
->> read_hv_sched_clock_tsc() assumes that the Hyper-V clock counter is
->> bigger than the variable hv_sched_clock_offset, which is cached during
->> early boot, but depending on the timing this assumption may be false
->> when a hibernated VM starts again (the clock counter starts from 0
->> again) and is resuming back (Note: hv_init_tsc_clocksource() is not
->> called during hibernation/resume); consequently,
->> read_hv_sched_clock_tsc() may return a negative integer (which is
->> interpreted as a huge positive integer since the return type is u64)
->> and new kernel messages are prefixed with huge timestamps before
->> read_hv_sched_clock_tsc() grows big enough (which typically takes
->> several seconds).
->>
->> Fix the issue by saving the Hyper-V clock counter just before the
->> suspend, and using it to correct the hv_sched_clock_offset in
->> resume. This makes hv tsc page based sched_clock continuous and ensures
->> that post resume, it starts from where it left off during suspend.
->> Override x86_platform.save_sched_clock_state and
->> x86_platform.restore_sched_clock_state routines to correct this as soon
->> as possible.
->>
->> Note: if Invariant TSC is available, the issue doesn't happen because
->> 1) we don't register read_hv_sched_clock_tsc() for sched clock:
->> See commit e5313f1c5404 ("clocksource/drivers/hyper-v: Rework
->> clocksource and sched clock setup");
->> 2) the common x86 code adjusts TSC similarly: see
->> __restore_processor_state() ->  tsc_verify_tsc_adjust(true) and
->> x86_platform.restore_sched_clock_state().
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 1349401ff1aa ("clocksource/drivers/hyper-v: Suspend/resume Hyper-V
->> clocksource for hibernation")
->> Co-developed-by: Dexuan Cui <decui@microsoft.com>
->> Signed-off-by: Dexuan Cui <decui@microsoft.com>
->> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
->> ---
->> Changes from v2:
->> https://lore.kernel.org/all/20240911045632.3757-1-namjain@linux.microsoft.com/
->> Addressed Michael's comments:
->> * Changed commit msg to include information on making timestamps
->>    continuous
->> * Changed subject to reflect the new file being changed
->> * Changed variable name for saving offset/counters
->> * Moved comment on new function introduced from header file to function
->>    definition.
->> * Removed the equations in comments
->> * Rebased to latest linux-next tip
->>
->> Changes from v1:
->> https://lore.kernel.org/all/20240909053923.8512-1-namjain@linux.microsoft.com/
->> * Reorganized code as per Michael's comment, and moved the logic to x86
->> specific files, to keep hyperv_timer.c arch independent.
->>
->> ---
->>   arch/x86/kernel/cpu/mshyperv.c     | 58 ++++++++++++++++++++++++++++++
->>   drivers/clocksource/hyperv_timer.c | 14 +++++++-
->>   include/clocksource/hyperv_timer.h |  2 ++
->>   3 files changed, 73 insertions(+), 1 deletion(-)
+On 9/19/24 11:53 AM, Chen Ni wrote:
+> Replace comma between expressions with semicolons.
 > 
-> This all looks good to me now. Thanks for indulging all my comments. :-)
+> Using a ',' in place of a ';' can have unintended side effects.
+> Although that is not the case here, it is seems best to use ';'
+> unless ',' is intended.
 > 
-> One minor nit: The "Subject:" prefix should not have a dash in "hyper-v".
-> The goal is to be consistent in the prefixes used for a particular file instead
-> of wandering all over the place. If you check the commit history for
-> arch/x86/kernel/cpu/mshyperv.c, you'll see that it is "x86/hyperv", not
-> "x86/hyperv-v".
+> Found by inspection.
+> No functional change intended.
+> Compile tested only.
 > 
-> This is super picky, so don't respin just for this. The maintainer can
-> probably fix it when accepting the patch if there are no other changes.
-> 
-> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+> Signed-off-by: Chen Ni<nichen@iscas.ac.cn>
+> ---
+>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you Michael for reviewing. I'll keep this in mind while posting
-any patch in future.
+A typo in commit e3b1be2e73dbe ("iommu/arm-smmu-v3: Reorganize struct
+arm_smmu_ctx_desc_cfg").
 
-Regards,
-Naman
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-
+Thanks,
+baolu
 
