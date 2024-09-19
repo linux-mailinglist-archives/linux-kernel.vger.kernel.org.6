@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-333383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B57797C7AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:04:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5724397C7B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24D1528D86F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:04:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D6D9B2874F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A5A198E76;
-	Thu, 19 Sep 2024 10:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253691990C6;
+	Thu, 19 Sep 2024 10:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pbWjCrAX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hOZRppXG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46431CABA;
-	Thu, 19 Sep 2024 10:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0AD1862B5
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 10:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726740279; cv=none; b=szDETeYX2k9LwJvf2GNTg6K2RsR8mQGr2RIEcuUjRQJYJkB5aEg7YV54CNv5NhyfBY0xeO9IBE2WNLU0sxHmg6fcd2grCWdfIe8hSPaWvTp2igao8yRsyeTzn8TBxLlzbpCYnhfR2DKFpdxjlqTvZZMWyf0pGAyZbC4cNuUaYi0=
+	t=1726740370; cv=none; b=c6uMMnL4PIZLgdjd7cqQhnUnRWk2Rx9aApGkYLhag2W/zWoco4no/H1qWQdbaGB+8hs/eulUGQMM7ZNu+Xta9dQLrRsVvxD/r9JVvlccwh3cm2InPP0OY/McZFPPZlW9j0JogFngsjY6nk6vXHueeboL1uw6zBIpL98Y5q785m8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726740279; c=relaxed/simple;
-	bh=VJ/w9KvYWfGEMh7f+UtSWlzn3vMDtAd5TpcQAK1f8H4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YwyYColQ+iUiPKhdGZ2x31lF2d9R4sCTPcAI1oU8iAJFQugq1nvA0qXR+/fBosOGMfTT39mOuzhBJOwYz/tUOwwQAEYD8S7Q3VNWj/FImffbDjBByf7NATpPFY2YNZEibBu9fsjSOhEpcPSx3KcavsqXZHXYsZizlppHSiqSwOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pbWjCrAX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A990C4CEC5;
-	Thu, 19 Sep 2024 10:04:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726740279;
-	bh=VJ/w9KvYWfGEMh7f+UtSWlzn3vMDtAd5TpcQAK1f8H4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pbWjCrAX6MIJAuIY/EXYHRWcDufaMM8WC6X2qQ0vq0zd4pCojdNk+zcE3UpbUSVw5
-	 nwsU8ll11W/G11h9EXaXbRGsfUcqG7dt9t2KuDesAG1fMYNjuVbj0YFbTrU02RlxHt
-	 Gvqogw611UvI+rO5KV07Avgtf/jZ82r+V2/ENzluFdVP1PiqZei3lrk7GmxxdhZ3JA
-	 HvMzGlSCPHnN0tCVfu6kpU3SaYfP/2ysREZV4seeYdJ/Ellmw1Iu5roTueljHM9mMd
-	 m972maQOdR+hf6ywvaXTMm8NI85JfGAua0jg6u0JPXaF+hA3zvfr3PU734+9x72xcp
-	 E5iGN6ksZVQgg==
-Message-ID: <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
-Date: Thu, 19 Sep 2024 12:04:33 +0200
+	s=arc-20240116; t=1726740370; c=relaxed/simple;
+	bh=XCSshaxJzznqVzATTj4/9h1+YuItLrY1TyGGv+lOYiQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nPrXEKiVfHN6yALGfzotnCWMqiBVt7UFWOFj5dO11JC0OXtccW/jjhC9tZ/jAkMtWR29JsLUZ7sFQqlxdLt8S/0/WaTQc8FThCY4xiROqoHqKFpYBeUQcwgiIA8rGb2xJcJCiLjP0PwIVL+8TfLoqnEVwSatXO5TJbrQsJ228i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hOZRppXG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726740367;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j8sw9chzh6V0ldGfmUwBiAZ2jnRMPFw7mVDSc3g8Bgc=;
+	b=hOZRppXG9tmrJQW+4jf8MbgAtTildR1aheXZOulgxFI0xI+bpNxLA/eoUyG7h0W5FZ5GX0
+	q07/m80KyzQ2U9g4fhgnQub4kzEqonRFcGoUzsVomxn1r5TCxovkw4eEb1OGsXETg7oERS
+	dTYAmkKAQqkORh3/vBqgPRloBVV0hug=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-411-OXbF-IB7Oc-Kw1ROOZ_8Qg-1; Thu, 19 Sep 2024 06:06:06 -0400
+X-MC-Unique: OXbF-IB7Oc-Kw1ROOZ_8Qg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cbcf60722so4731075e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 03:06:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726740365; x=1727345165;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j8sw9chzh6V0ldGfmUwBiAZ2jnRMPFw7mVDSc3g8Bgc=;
+        b=T5WUkRwtImf8xXPzHM3WKV7Xap6s1awVLI2yG8eMEjh3LHOC2L9RbnSgRu4ZS7QF3U
+         6MUYod1kd1mIrO0fj12cltZGY/E9Zemyeo7Fv+ZwxZVj3NxGi7K6ooIQZf3ciopYQkr1
+         Hp4mAW2Rhx2K0hovih4zlyLHJc5t3HY5h4EnVhcvZAMlKN7vho5RsLMmCXCqXsTkojDp
+         uwlpw3Bh95/uP+auO+raTXxeNpGD9Vr4Gbq+HHHcTISuS1gOOwwyp0p+UMFgIq/3L9Iu
+         7KouiM6LJl4rwQypNeCTDdFuFK1Gxt0/9vqErIzgBbThAETj4yljDKYe1UPk8l/ROZbN
+         yT3A==
+X-Forwarded-Encrypted: i=1; AJvYcCU6+wYesU8azeDv6gWtXPQMQtE7ACqkIKWo0tZ/JkXLASLeLfGx4HuiqmZwxS0HxsDK8jnB31IHNWTwLfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz74lEb27QuqZ3+p3gFFPPSF8VdrSzvyWb7pDIFDRHfwMtsu0/I
+	ThNk0Wzya3sJup2K/tOpSQY6bDl9kGdMrVD1MrX7ld/GfYzyO8Fhap2paw4nP2sf2e1Vzwowc6V
+	3Ttl2YV8fvZMy+octsYXiJEi+WtaQrEZYcScGXfDatuTO5O/D0KPK5Ft0wVaLPYOGePKqR8GxVh
+	s=
+X-Received: by 2002:a05:600c:45ce:b0:428:18d9:9963 with SMTP id 5b1f17b1804b1-42cdb586d9fmr198605165e9.22.1726740364770;
+        Thu, 19 Sep 2024 03:06:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGCQb+yDIF3c7yHLOLlyuOP1obKRz9WHSVtK0x+cI/W3HDiqwFW29UxH0o8W4i4Ib8pkExQlw==
+X-Received: by 2002:a05:600c:45ce:b0:428:18d9:9963 with SMTP id 5b1f17b1804b1-42cdb586d9fmr198604895e9.22.1726740364282;
+        Thu, 19 Sep 2024 03:06:04 -0700 (PDT)
+Received: from [192.168.88.100] (146-241-67-136.dyn.eolo.it. [146.241.67.136])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e754256c8sm17803525e9.14.2024.09.19.03.06.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Sep 2024 03:06:03 -0700 (PDT)
+Message-ID: <49d32698-e226-46b5-bee8-46e9aad5754b@redhat.com>
+Date: Thu, 19 Sep 2024 12:06:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,152 +82,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
- Systems remote processors
-To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
- Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org,
- sudeep.holla@arm.com, robin.murphy@arm.com
-References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
- <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
- <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
- <gzlncpyzwm7x4jcxtdrthrlv2dofk7u3oxn4taadwog5tt37wo@ot6s6kwukd4k>
- <20240919093517.GA43740@e130802.arm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH net] net:ipv4:ip_route_input_slow: Change behaviour of
+ routing decision when IP router alert option is present
+To: Guy Avraham <guyavrah1986@gmail.com>, davem@davemloft.net,
+ dsahern@kernel.org, edumazet@google.com, kuba@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240912141440.314005-1-guyavrah1986@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240919093517.GA43740@e130802.arm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240912141440.314005-1-guyavrah1986@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 19/09/2024 11:35, Abdellatif El Khlifi wrote:
-> Hi Krzysztof,
-> 
->>> Add devicetree binding schema for the External Systems remote processors
->>>
->>> The External Systems remote processors are provided on the Corstone-1000
->>> IoT Reference Design Platform via the SSE-710 subsystem.
->>>
->>> For more details about the External Systems, please see Corstone SSE-710
->>> subsystem features [1].
->>>
->>
->> Do not attach (thread) your patchsets to some other threads (unrelated
->> or older versions). This buries them deep in the mailbox and might
->> interfere with applying entire sets.
->>
->>> [1]: https://developer.arm.com/documentation/102360/0000/Overview-of-Corstone-1000/Corstone-SSE-710-subsystem-features
->>>
->>> Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
->>> ---
->>>  .../remoteproc/arm,sse710-extsys.yaml         | 90 +++++++++++++++++++
->>>  1 file changed, 90 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml b/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
->>> new file mode 100644
->>> index 000000000000..827ba8d962f1
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
->>> @@ -0,0 +1,90 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/remoteproc/arm,sse710-extsys.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: SSE-710 External System Remote Processor
->>> +
->>> +maintainers:
->>> +  - Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
->>> +  - Hugues Kamba Mpiana <hugues.kambampiana@arm.com>
->>> +
->>> +description: |
->>
->> dt-preserve-formatting
-> 
-> Do you mean I should remove the '|' please ? (I didn't find examples of use of
-> dt-preserve-formatting in Documentation/devicetree/bindings/)
-> 
->>
->>> +  SSE-710 is an heterogeneous subsystem supporting up to two remote
->>> +  processors aka the External Systems.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - arm,sse710-extsys
->>> +
->>> +  firmware-name:
->>> +    description:
->>> +      The default name of the firmware to load to the remote processor.
->>> +
->>> +  '#extsys-id':
->>
->> '#' is not correct for sure, that's not a cell specifier.
->>
->> But anyway, we do not accept in general instance IDs.
-> 
-> I'm happy to replace the instance ID with  another solution.
-> In our case the remoteproc instance does not have a base address
-> to use. So, we can't put remoteproc@address
-> 
-> What do you recommend in this case please ?
+Hi,
 
-Waiting one month to respond is a great way to drop all context from my
-memory. The emails are not even available for me - gone from inbox.
+On 9/12/24 16:14, Guy Avraham wrote:
+> When an IP packet with the IP router alert (RFC 2113) field arrives
+> to some host who is not the destination of that packet (i.e - non of
+> its interfaces is the address in the destination IP address field of that
+> packet) and, for whatever reason, it does not have a route to this
+> destination address, it drops this packet during the "routing decision"
+> flow even though it should potentially pass it to the relevant
+> application(s) that are interested in this packet's content - which happens
+> in the "forwarding decision" flow. The suggested fix changes this behaviour
+> by setting the ip_forward as the next "step" in the flow of the packet,
+> just before it (previously was) is dropped, so that later the ip_forward,
+> as usual, will pass it on to its relevant recipient (socket), by
+> invoking the ip_call_ra_chain.
+> 
+> Signed-off-by: Guy Avraham <guyavrah1986@gmail.com>
+> ---
+> The fix was tested and verified on Linux hosts that act as routers in which
+> there are kerenls 3.10 and 5.2. The verification was done by simulating
+> a scenario in which an RSVP (RFC 2205) Path message (that has the IP
+> router alert option set) arrives to a transit RSVP node, and this host
+> passes on the RSVP Path message to the relevant socket (of the RSVP
+> deamon) even though upon arrival of this packet it does NOT have route
+> to the destination IP address of the IP packet (that encapsulates the
+> RSVP Path message).
+> 
+>   net/ipv4/route.c | 8 ++++++--
+>   1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/ipv4/route.c b/net/ipv4/route.c
+> index 13c0f1d455f3..7c416eca84f8 100644
+> --- a/net/ipv4/route.c
+> +++ b/net/ipv4/route.c
+> @@ -2360,8 +2360,12 @@ out:	return err;
+>   
+>   	RT_CACHE_STAT_INC(in_slow_tot);
+>   	if (res->type == RTN_UNREACHABLE) {
+> -		rth->dst.input= ip_error;
+> -		rth->dst.error= -err;
+> +		if (IPCB(skb)->opt.router_alert)
+> +			rth->dst.input = ip_forward;
+> +		else
+> +			rth->dst.input = ip_error;
+> +
+> +		rth->dst.error = -err;
+>   		rth->rt_flags	&= ~RTCF_LOCAL;
+>   	}
+>   
 
-Bus addressing could note it. Or you have different devices, so
-different compatibles. Tricky to say, because you did not describe the
-hardware really and it's one month later...
+I think this is not the correct solution. At very least you should check 
+the host is actually a router (forwarding is enabled) and someone has 
+registered to receive router alerts. At that point you will be better 
+off processing the router alert in place directly calling 
+ip_call_ra_chain().
 
-Best regards,
-Krzysztof
+However I'm unsure all the above is actually required. It can be argued 
+your host has a bad configuration.
+
+If it's a AS border router, and there is no route for the destination, 
+the packet not matching any route is invalid and should be indeed 
+dropped/not processed.
+
+Otherwise you should have/add a catch-up default route - at very least 
+to handle this cases. If you really want to forward packets only to 
+known destination, you could make such route as blackhole one.
+
+Cheers,
+
+Paolo
 
 
