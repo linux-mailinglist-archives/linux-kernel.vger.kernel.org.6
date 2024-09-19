@@ -1,55 +1,59 @@
-Return-Path: <linux-kernel+bounces-333178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0FA497C4F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:37:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7327097C4F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 732A7B210CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:37:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3461E282A16
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD9F194C69;
-	Thu, 19 Sep 2024 07:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C066E194C6A;
+	Thu, 19 Sep 2024 07:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJwOu/NN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rzqo9i4H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEC2166F31;
-	Thu, 19 Sep 2024 07:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C117166F31;
+	Thu, 19 Sep 2024 07:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726731430; cv=none; b=JDV/6PtCx4MZc/zXuO3ihDpjn9NgmEje0pS/IZkKx1XNK8JCF9+a3V1PzsP/S+gZlGqFep4jj16nbujwzdCPnt3OT/k17I18eGhd3xzKGJGT8Gm2PMDShmWWo4hPBBDBBxdnmeNLwvjxqFBQ7EwormQ1sdqjAHVTqvELL8g0EFM=
+	t=1726731490; cv=none; b=IOuLkjXYX22d7XVV/uQPABJwBIVTeuIifw+UGjF/w/4mXBI1d5GBS5bkdNaoC94U+tUc/VPzE75MIVwlVTEF+hZOf4jc4XQ/VkzBdO63/h84XBChnZp3aaSQn0FwP5Ltob8Q4Z/td8wIj2LFw0OPZ0bGo/YJITAX+90p1h5BX4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726731430; c=relaxed/simple;
-	bh=4QKy08zf+xeNkkt8xnmcf7Rr59CLcc5i1MsoEESsjfQ=;
+	s=arc-20240116; t=1726731490; c=relaxed/simple;
+	bh=b/TvnlGUozolDpF9ubAiqQ9D9AtRZIsO8cTp8d7NLAI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tf54au436GD/KzrQzGqZ8eZAl4UkAn+NcTph0CeqUs5wh1tjeR7LOOd7ox5+M2Tg05vyjqFOkV6npZU+StNapjQZh5Upt5rfn9l/aFD1R9EwKwhWqj0EzPP3nWD/T3WYEPyVo7BfgULOt64B6drXTh6dttmnZmrHIhC9CuuDSEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJwOu/NN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4CACC4CEC4;
-	Thu, 19 Sep 2024 07:37:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UipaCEYYnAk3Z5ogzOcU0JsW6tY9L2+1mWpUs8KS7xsEZCc+/iDw/kb2dXnNYNbQD/HvMaNXNbfv+eH/dw/c0LbQpzoO6ZxilWteYsDnbqQJNxE2OTasJOypHft4SmUacd7qC/qtiIaFIAzBQNC4buVDgpnZbawTwbLD/Ft3riw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rzqo9i4H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7240BC4CEC4;
+	Thu, 19 Sep 2024 07:38:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726731429;
-	bh=4QKy08zf+xeNkkt8xnmcf7Rr59CLcc5i1MsoEESsjfQ=;
+	s=k20201202; t=1726731489;
+	bh=b/TvnlGUozolDpF9ubAiqQ9D9AtRZIsO8cTp8d7NLAI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JJwOu/NNV+jj/kFaAjAecE7f7Af4h8b6kFD5PXCfPSw4TZG8H4yTQhPuq+535I+pl
-	 KK8lwRmMtSHTCUAAREfBdvJyiz+i110vkEbnOXVZAlsqLpwWEGlkLePhP2vM2JI32h
-	 hooB/AF7GgaPQlneNAbnt0fGrs/XfOvl8ufQLoaJvYt8DNONHGcetnTndDAEUAY+ee
-	 J5QQVBD2UiV7M+qc5aKdhhywqJHSaznV9G7TBnb7vjS5M8xcjPU7ak2dJ4Km6yiR2G
-	 XlMThwttQvh91cpJUIPEmfYhbTMCqY5TnQfZTq12fItAqWJ4urg91h04qurVZTf2j/
-	 Gd27Sfgn0NO+A==
-Date: Thu, 19 Sep 2024 08:37:14 +0100
+	b=Rzqo9i4HBub0UQQHqadkJlXlK0XP9ECaGqwUY0yaN8d8LOwnmKpkYdangf7hN1xu+
+	 QRzVbLI/4PEi3VNE5sE1YBs6p7Jm4P8F58Rq9EHGU7AkQoduyi0iArzmi7Hnjq3XiK
+	 hFCkBrWgzmMYgDq9bzpssEf/lm9OPeKfaiscMYEq+VXawTAJALx5kbRPXQoufEcRNn
+	 JMUTYET0JEzX2h5z0Mnm/IF3UQajTGGrIx7qALDmQsmmgw/KadWfD+x4OFOu7/uLp6
+	 8at4eriadMSHwrv91mXIR2sIFvRYddM6afiH6RjZrt2MWBPO3DACngcxT4UCUcJ+vN
+	 Uw4SWerwhDi1A==
+Date: Thu, 19 Sep 2024 08:38:14 +0100
 From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+To: Jianfeng Liu <liujianfeng1994@gmail.com>
+Cc: linux-rockchip@lists.infradead.org,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>,
 	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] dt-bindings: writing-schema: Add details on YAML
- text blocks
-Message-ID: <20240919-bluff-thievish-9be0cdb5df9d@squawk>
-References: <20240918195130.2024205-2-robh@kernel.org>
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: arm: rockchip: Add ArmSoM LM7 SoM
+Message-ID: <20240919-wikipedia-hamster-22ae9f9d8dd0@squawk>
+References: <20240918165008.169917-1-liujianfeng1994@gmail.com>
+ <20240918165008.169917-2-liujianfeng1994@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,42 +61,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8Zr6vVtt2eO6A7V0"
+	protocol="application/pgp-signature"; boundary="YWWdApAqxAOp6MrL"
 Content-Disposition: inline
-In-Reply-To: <20240918195130.2024205-2-robh@kernel.org>
+In-Reply-To: <20240918165008.169917-2-liujianfeng1994@gmail.com>
 
 
---8Zr6vVtt2eO6A7V0
+--YWWdApAqxAOp6MrL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 18, 2024 at 02:51:30PM -0500, Rob Herring (Arm) wrote:
-> The YAML format has a couple of different forms for multi-line text
-> blocks which control allowed characters and handling of line-breaks.
-> Getting this wrong is a common review issue. Either a literal block is
-> used when there's no formatting needed or a folded/literal block is
-> not used when there is formatting to maintain.
+On Thu, Sep 19, 2024 at 12:50:06AM +0800, Jianfeng Liu wrote:
+> LM7 is an System on Module made by ArmSoM based on Rockchip RK3588.
+> This SoM is used by W3 Board.
 >=20
-> Add some descriptions of the different forms to point folks to in
-> reviews.
+> LM7 features:
+> - Rockchip RK3588
+> - LPDDR4x 4/8/16/32 GB
+> - eMMC 16/32/64/128 GB
+>=20
+> Add devicetree binding for ArmSoM LM7 SoM.
+>=20
+> Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
 
-And mentioning the # stuff is good too, keep hitting that with the
-commit descriptions in the riscv extension stuff. That said, not as if
-people read documentation anyway...
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
---8Zr6vVtt2eO6A7V0
+--YWWdApAqxAOp6MrL
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuvUpwAKCRB4tDGHoIJi
-0ntUAQCDZzwK2lG0pdPXA8YCmuYWlyrq6JUOSeL9PnkS8V/kSwEA98ho1MR4fTQh
-Rv0Pl7HFk4tpugD78KhZT1cDdv/cPAI=
-=BnXF
+iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuvU4wAKCRB4tDGHoIJi
+0qzVAP4u/Ml6aPzDt2IXu/YTG+KwhPAvvDW9jFJWvja8pA8ndwEA8hdLvljuYsLA
+qjo8XeWEgIIm0GDO4q2SQ6yd1MGSZQQ=
+=4dhv
 -----END PGP SIGNATURE-----
 
---8Zr6vVtt2eO6A7V0--
+--YWWdApAqxAOp6MrL--
 
