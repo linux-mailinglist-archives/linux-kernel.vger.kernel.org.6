@@ -1,135 +1,277 @@
-Return-Path: <linux-kernel+bounces-333854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C8697CEEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:53:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8769697CF0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 00:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 259321C21D6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:53:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDFB1B22DE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 22:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5D1197531;
-	Thu, 19 Sep 2024 21:53:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D041E1B2EF3;
+	Thu, 19 Sep 2024 22:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="PlOKsvuE"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2065.outbound.protection.outlook.com [40.107.247.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501DA181B8F
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 21:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726782783; cv=none; b=GcHdLcgr60ri5jG5UQtVexA8+5djSlUhANiAd10/cKVGdPutFM5kDb/PAzid2P0wJPHZNoy8LLPFx1wabeIGj6qMw8EaKD2Beu2sMHOGhQJv53cR/R4Lza/hlYP73UBtjtuYodQyDhNw/BA/pNFspesMVODFnOAU0bKitIGHQEA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726782783; c=relaxed/simple;
-	bh=gH5jeaXTOGjaMZRbBoeeFR0tONnZ8x+YTluzWwg/Ygc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NaKVMz+QMkHbIz0Y30dlLi3tZ7BchanO/Be4V+sqmloy0Gtj6uH71l7HWrnXe5yktGRPhClIJw5fYJ76zrBAOB/MV1dPrvTLAI4O6KQWx2X2dBn6EQVS9mDpACBupx2nmeg8ilvxR1sYwZhmmTqUXR1sZSf3rldgbTBNjbyFOHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a0a2c95e81so18607425ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 14:53:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726782781; x=1727387581;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JQDaAGdJwvcAPCWoOavAWx/j7bUgvmt62gUqSd994u0=;
-        b=J65ukdtfRMsKSum3UYKHsSksiRGcSF49XV1vdrGW5uy0jSxhJ1cvZvpfNCIjCMeagu
-         5+Q1BHHkH2hQEx9hCzcVLdwPGVTHXY8S6xPLrVq1lrT4IaFiP3lDQAKwjHVzPck8nkAx
-         WhQi3QwN0oDYeBzLyZi8G/FWiZwS20Qf1cWGjt5E4TBYK8h8rWosz/oiYF7ZgpuI+U53
-         AEg7GPvzO7LSNIcf23cETuErKd6q1p1v2A2M//7g1l05mlzUbNImiU84bx8TJKTh4ht+
-         6U4QkYbe6ENJyDmW3e9bVHM8E+mLWK1mxC1IIlFxYF3ttkT/m9r7Wmu7jzOveUHoXeaU
-         OxcA==
-X-Gm-Message-State: AOJu0YxlRaA8N5ecbQ5Zsc2g4lQTeldz/Crw/d8JmBJyTadAWbk/WC63
-	S8yr8DIXRTBl+gwjAKmJ0iIukFVZDnIP1j5PHep+i0iG2frxaZ6nM1OdSiaMPg4cKUzyB5yDLrQ
-	2kRH9HuOTqkOG0BMfpATOjcPrZ2vX5D/EW9j6kKt1AQRjQtrzGTpQei0=
-X-Google-Smtp-Source: AGHT+IF0wXVWbu6My1mpl1Aqkhgi3/rW2D16gewIV+AXX7+/8ASthr6SzBVD3SkJtPG7DAkc9QFxQx1+Zmk0TWaor6q54b6HWdGA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCCC1B2ECB;
+	Thu, 19 Sep 2024 22:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726783420; cv=fail; b=Sgd1opC3F2w474rvPUNb01Hg3M7UWagisE5qXkDwxWUsFFil9/+qdTKjQNUIuwFu81PZtVFD065WzRBO1wHNLNSSbrLrzmDf7pho+h9kHOCbCtILa4J+2qNwHaXz1wMIqdQx6D79BT8hkhIfRc7LXigyUL7yv3FRyHfXkcp5QlE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726783420; c=relaxed/simple;
+	bh=vDo0CTqtXkW2vkHMQRmkJR3TexBHqAnWrGWuqBuQVvg=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=I3HKhDsWfzHed3kvFKJ0mLsa6JESLW5nVCZF2AXl5C8bg9DLfeGEQZ2XT7YmqZRCZfUUj9i4w6Mpv4kro2Aot4YK2/FabsR/hhN83szWz9yWzvVOvGHrtHB5ldT99flzllwRPWnxJx/bAx4D5UFDEN+gjBIcpzcS7lVdoYJffMU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=PlOKsvuE; arc=fail smtp.client-ip=40.107.247.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rYj4sKsPjhvr2tbwUyGchCUDYK3At7VVosFmz0IIJoBI7nMujCrVlqsjjz3B7MrPQ23Aal+ojWIZxrwCWsFCJ/HsTp7pcwO07rywyKONcAnfLeVDdboviuI2KnxtwNUVU7mnYZcuUK9xMQzPMJA/8hLDusRjmxCZtDQzp/4w7eygboGIiLZxowPilhAQpsqxEASUnEnHxEpWQzPx5ejJzbQmF0UHXulBGDQkC8SHAMfQ9KpEp1XUEDIOvxzzr41LPtmcRBr1wuRdJP8XBwo3VBXsuvnscdrcURb/pG3rLZ6M6X7P72WXvtCTPP2Jz89L4BSflLIbet0xtDGvDj3lWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U5hyEexqSJM3L1dF/wpAUvlH8NDjFDFwAw0HSKX5rIo=;
+ b=Iyx94DMLfmLwFqj/j3cNsGTDTKATJVcueBdAZrz002ny+XoFNpRB5dFbKi/AeA0HonqPuiVKpcBkbyaAMWRkAhJbLLy97JN0e7Ft3cMuwxC5S/Tvf3KzqjBNOB7jcx9qMQrHENPdd/TH2pQgD9LdhETHghJjooXN5BHTpLYUJfAs0EPnjhUcPaZPaYVN3hSR82im6je925wYuvAXCMIfp0Tx9U6eEkvx7q92v4t5ETuF4+BPVrcCxryZDUyLfYRoXXFVmtFcW55Zivh/LjtYdIpitf+INXzvDiwXHLrdsIhYocf+FzKYWj5infXs9DpCMv2s9CReM+Ac5EtR+hdzLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U5hyEexqSJM3L1dF/wpAUvlH8NDjFDFwAw0HSKX5rIo=;
+ b=PlOKsvuEW7EB8Q3j8VWZT/gyLGJ2FOL3cZ+az7O6TJJHWOI2/EQkNbaTrrRPyuxcdyivVqcwDd8IQhJjcnuwEgsnGz9dUfyH/e8MvU6AFsfrqcAEabWwFw5ilynkUu4ZVkLJhN/VdIg4yYgJKK7r2OrHxhnwSCX61bT4/1U4jzAzT/0LxC4U2k7Uz3NEy8q2ZIqjelczegpZhK5jr+GC4kXr7Vvv6m2BDRGGgmmDTnO+H9oWhKBfENu8/5Em975IHdFA921HpYMAyXjCQIYBYWdGsxoNhtsmEL7uNkJzIK5AM/vkA6xitudYYGmi4FYhWa06pwTg/EhxyRSo7YlBAg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM7PR04MB6965.eurprd04.prod.outlook.com (2603:10a6:20b:104::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Thu, 19 Sep
+ 2024 22:03:35 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7982.018; Thu, 19 Sep 2024
+ 22:03:35 +0000
+From: Frank Li <Frank.Li@nxp.com>
+Subject: [PATCH 0/9] PCI-EP: Add 'ranges' support for PCI endpoint devices
+Date: Thu, 19 Sep 2024 18:03:00 -0400
+Message-Id: <20240919-pcie_ep_range-v1-0-b3e9d62780b7@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJSf7GYC/x2MUQqAIBAFryL7XaBWkF0lQsJetT8mK0QQ3T3xc
+ xhmXsoQRqZJvSS4OfMVC5hGUTjXeKDlrTBZbXvtzNimwPBIXqrswxAGdFrDOCpNEuz81N+8fN8
+ PoJIo118AAAA=
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>, 
+ Saravana Kannan <saravanak@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
+ Gustavo Pimentel <gustavo.pimentel@synopsys.com>, 
+ Jesper Nilsson <jesper.nilsson@axis.com>, 
+ Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@axis.com, 
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.13-dev-e586c
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726783409; l=3664;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=vDo0CTqtXkW2vkHMQRmkJR3TexBHqAnWrGWuqBuQVvg=;
+ b=I6GHA1h9s7oxVcrQiepOky1wY4WBDAWvoAELK38hjFatMhxl9TjQCU1qH4K8R9CQEa5XC9FWP
+ tqewaEtk+C9BmZMg1Jyx1bXGQfTgiNoGmybMsfQZMxwN39pFMw6cMBf
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: SJ0PR05CA0057.namprd05.prod.outlook.com
+ (2603:10b6:a03:33f::32) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:219d:b0:3a0:9952:5fcb with SMTP id
- e9e14a558f8ab-3a0c8d1602fmr11551775ab.17.1726782781530; Thu, 19 Sep 2024
- 14:53:01 -0700 (PDT)
-Date: Thu, 19 Sep 2024 14:53:01 -0700
-In-Reply-To: <TT27cZDqBGQEtV6whPGMs_ax9ZUJqt8I-54DUJm01rMuL0GpRVbg5Xa99R75GSKEvzaU7Vx8zNUFXCNhF1GZnFWioSD1pbhyvxq92Kc_Fw0=@proton.me>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ec9d3d.050a0220.2abe4d.0001.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_journal_flush_seq_async
-From: syzbot <syzbot+d119b445ec739e7f3068@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, pz010001011111@proton.me, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM7PR04MB6965:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf423d20-649e-4aac-8ed2-08dcd8f6e848
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|366016|52116014|376014|1800799024|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TUludHpwTDhVOVJkSnZraGVQUnZqK2dSZ0IvTXIzbjA5UzVLa29NbkJ0bkVO?=
+ =?utf-8?B?OEFpc2YzTnQraHU1VW5ielBuVmVRVyt4eWJLL1h1Q2kxODdMcHpmazFjNVpU?=
+ =?utf-8?B?bjBGemF0SFR1SFJJK0ZJM2lCUEZYeFY1NHpleEV5UkYrNGtKWEJ3dXlvM0JI?=
+ =?utf-8?B?bUJQZ29TUWIwbk9oUUhIek90akFmaXVDcXk4cDNYaUZMOVBNTlQwVndpUmd6?=
+ =?utf-8?B?YkRDSTJxUHZBc1FCMlBBL3pmMC83SXV4bTRwYnFJZndrWlZ5WnVzQ2EyZW1h?=
+ =?utf-8?B?ZWF0Qk4vTDNSYlM5NWJ2bVFjVStOWWc2akJEWm80V2JJdGNYRVVaaytTVEVK?=
+ =?utf-8?B?cytPbWlIVlc1N3FMTXJHWWlzbHRnNFBKTTQxZzJLT2dUNy9OWkdpSlNRcFEv?=
+ =?utf-8?B?dGJ1Z3M1Nm1ZZThUS1Rkei9LcjV4dnZRVHdrbnZQNzZQbk5UQXVWa0NlYlpQ?=
+ =?utf-8?B?QXJQSDBkWThnSW1Bc2pkTW81V1RiNG83cGUvZUhsQVl6Z1FqKzFPUFQ2VDdD?=
+ =?utf-8?B?VmNYL3VhNnZhL3NJZnIyVUFzMW9SUGJxbkw3TEMzWFBteUl6YkpONnVaMXFK?=
+ =?utf-8?B?OHJ4VS82ZEdGZlZEZW4yN2ZCWXJ3Qy9yMXR0aVc0bEhVSEhnS28zZjM0OEZr?=
+ =?utf-8?B?SGtoeUxJc2RmV1J2cmh2VW1sT3BSaWJPNTAvb2RaZEprZUNjUHQvYzduMHBF?=
+ =?utf-8?B?dXBHaTZOWnpoQkRncWc2M2IxVzBRb0R3cjhxdUNUUkdGZk5DbEh4WVhzOGlV?=
+ =?utf-8?B?NVlJZDhyVkF1S1pINUJTUmxEUGE1VzBtSW5sVXlwb1l4WC9NQm11VU1CRTQ4?=
+ =?utf-8?B?UnE5OWsyNUZVbEJhMUNMbkxhaWRXMDZlNzhVbmYrVmZCb2JaSHcxTm5nWkZo?=
+ =?utf-8?B?NGhZYjZoYmR2NG9JdWkwYmtmYUtQdXNiZjBPZVNyV2hmU0FGLzVuZGtwWFpJ?=
+ =?utf-8?B?K01jbm9VSWgzdjN1T1h6dndxR3QwWUxZQmIrdkNqTWhSMkg4RkpPbzE0alpt?=
+ =?utf-8?B?TEhPUHJETllWOHdiN0k4LzN1aFhQRGwybVo0d2FSd25nOWQvQUhDcWh5MkU0?=
+ =?utf-8?B?aC9HTVF5ckNtT3cvRWFaQk1DQ1krUlNWa3VBU1hpdEs4d2dvRHg2cXhXSHJs?=
+ =?utf-8?B?SEJ5d3NWOHAvNCtQYWE4a0YvVDdyd05kTDJTdFhaOHBxdTZyU2tjVnNlSVNq?=
+ =?utf-8?B?NHl1dWhEaW1iYi9XZDRtNmZSNTVMMFFjemhFZkZnaTJiaEFmV052Ynl6M2N5?=
+ =?utf-8?B?V0k5Ti9IODlhTmJ4WE1GMXhjK0E4Sjhwc2hrUnRSZEVuWHZCMG8xNEdRMHV0?=
+ =?utf-8?B?YTJ1UE02UzVIaitZaklrOU12ZE4xZ2ZQdHV0aDNMZElueVNtdHhzY2R3c29G?=
+ =?utf-8?B?K09wR2JuT1RlWnlPR2tja0s3Yk8ydmh5ckRhOEVVNFlvN0xsOEkyeEhIcmJa?=
+ =?utf-8?B?RUk2SGRpN0RGa3dydWpsc2Q2U3pXTS9OcXZaZEpUenBOcGtwNGdYVjJFZUdq?=
+ =?utf-8?B?YU9XWmJSaE5sRDNheVB2a2loUlplMUpzMVFqcHFQQk9BRy9HMDZ5K2VwRWQ1?=
+ =?utf-8?B?T2NkTXNqSDZucitnTmxaY201bG13NXdyUlVxSGx6UHJvcFA5R1BwVHpRSkdO?=
+ =?utf-8?B?QlY3ZEhBSGlKQ3FyU3pHQlRoRGNMNGMvSUFIblhlWTFkVDR1REJUb3h4YXB2?=
+ =?utf-8?B?aTdYQWZQTEZXQ2VZV0VVOUxiZHNVNnd6VXVPU2pNLzVSM0RvaFN3bURrS0RT?=
+ =?utf-8?B?R3VMclhpVVZxVUVtQVZUalhYSFdvbmE3dmNHdHVEQkxJRzdPU1ZLUVF3NjJz?=
+ =?utf-8?B?aUpiTy9SN2VMME14QXFsVFVtTkhsc1lDb2lDeHJSeTJ4SnNmbHJkc3hWdm9Q?=
+ =?utf-8?B?dEFrZURlcWVjSXhUVnVpNnRSZmdMMGswOFphY1pUb2p3YXgvZUQwaWpuc2lz?=
+ =?utf-8?Q?nDtFKu6VXBM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(52116014)(376014)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bVBGcE9mWHlGdGZ5MTA5NkFGUWx5VEpPbmhFSzQwUndwY0xtOUhZSk1vdnM2?=
+ =?utf-8?B?VGhKaEJiQXkrV01VZWFTRVppTEQ0VTJMRkNQc0hRbnl1WkxaT2dBNC9tMzlZ?=
+ =?utf-8?B?elNEdG1LaTRqMGRXME1CZU1oWXhUbVdrcGoxaGdVWGN2c09RUDBCTVhETDBq?=
+ =?utf-8?B?OU96MmtpNzIyS290Z1BYWVNRdDZLTkpXNXU1MUlDS3ZwMGs1RExuci9jWjFE?=
+ =?utf-8?B?OEdMVzkzdnZoS29ITjRiQXZjbkNjdGVHbzZOeWpkeG9jQWU5aDBSOFIySkI1?=
+ =?utf-8?B?L0tNdHNzQWJhd09aZUF5TTFJTzZKajdxb3QyZDRISG5nUEdqVGg3cVlmTm9m?=
+ =?utf-8?B?YlNqLzYySVBRTWg3RFhRRlBpNCtqeGhhYjRURWdzOFVWZE5aWHIya0ROckls?=
+ =?utf-8?B?UVc2OUNqLzhpSnRzaDhNVGZZQkVpY2VVT1lsRXVDcDYra2xqY2huYkRFc0NR?=
+ =?utf-8?B?clhmSnpVVlduTVd3bElaNUYzNjJMdGpJYlN3Rk5DSHFpdU9XRlFuc3hsZkd4?=
+ =?utf-8?B?ME9UNEN6dERSb1NYZ2hubUxEOGhBc1B4djJLRHJUYnZsWDgxRVJuc1ZFZExk?=
+ =?utf-8?B?Um9NRy9HU29YREl3bkhmNWR5allNL216bE9GcHJCblc4cDVoQVNldHp0bmtv?=
+ =?utf-8?B?VlMyc2doMnJJS2hvY2JacStiSXVZbWhXRmRYVU4vUWUrVlNidHdHbEpxZVJV?=
+ =?utf-8?B?Ni9QdTJnbDcwQmZvRktsc0E5ZDJNMDZtUERvZ1FOQnZzYU5aaVpVblBDS2pV?=
+ =?utf-8?B?MERvRmtGSHAvN2xKQW44ZEd4QlNZL1ltallJN3RBTnhxc0xTSkxPSzVvVE5y?=
+ =?utf-8?B?Nk9nNHErMngxWm9zRGxmTFlGYXBYWEV4R2w2QVlFdjNPOVcyVll5WmRlOEVR?=
+ =?utf-8?B?SFM0N1VGZi9GOXYvMis5NnJIWjMwcU9PNE5RaXFmK1JjS05ZMzB3TGhpWGM4?=
+ =?utf-8?B?NGFBQis2YytWTWg3WEZKbnptTG9WRDNYMEcvdEowNmdrOStzRFdjcWJ4MDlL?=
+ =?utf-8?B?U1daYU1yT1Y5Q0g3WlUybkg1dUJWRE45R0xydVBtK0E1QkpGVHFrNkxaQXk4?=
+ =?utf-8?B?bmx2SGFwTFNmTW9RS1ZleFpCMDBuY2g2LzVCd1VvTmJ3dnYzQWNHK0p3NU00?=
+ =?utf-8?B?ejFsY1R3M20yQzZwVkNKS085RUxoUEJxQzVyMThUcml3NHE3cVJ4ZHJ4dFEv?=
+ =?utf-8?B?KzZHZ252empRM3k0VEhWNVdqT2tYUmFlTVlJUzhrSUlkV082VGRiMUN6NDNH?=
+ =?utf-8?B?dWFiTUxnYSt0T1o1OTNoLzFWRkpsU0xhandrT1NCWXVkMHZBNHZpdG5uNUpq?=
+ =?utf-8?B?eTVML25iRzBMZ0ZCaVNWZ2kvdzdZSk9RWitFRkNCNENlbmc1YWR0OEhRZnc0?=
+ =?utf-8?B?L1NYMUhKYXNEaU01Y0psU2xtejRtMzZVNStFWWNYSFpKcUI3YjVNQ1dLa29M?=
+ =?utf-8?B?SG5FR1NHbGJlOTgyZldtcGs5dnh4U3pmTXNGOEx5U01MajZGU29lNUQrdEV2?=
+ =?utf-8?B?MnNlYzNQMGN2MWFUL25iV0RHV3ZES3RCcjBMQkd1L1oxZGZ3dnFySjV5RERD?=
+ =?utf-8?B?NmFQclR5TDNuMEpPUEZ1QytoTHkvcWFYc2dHZktsb1FPZ2VLY0x1N1FQRWVE?=
+ =?utf-8?B?aDhXRFZnOUwvYkRUblBWdXNYWm9neE5GSi9XcEswK2dwRmJzVXphbnd4RVk5?=
+ =?utf-8?B?V1NSaWNXWDZ4cmxvZGlkVm5lamt1WXhtV0ZCZHRnUmZvUGpVT1RUV1ZjNHFN?=
+ =?utf-8?B?ZVY3NU1rbmJiL01mS0R0OFZrb3BJZXJNeUdTUUpxaDAycytVbzZKN2FuY2di?=
+ =?utf-8?B?dDdQdVVqdjBOaTQ4MWF2czFQV1dXZXJ2aDNRaEFGL0JRUXg0K0ZxeFd3YlY3?=
+ =?utf-8?B?VnVTVGQwSUxKMFpYbWIvM0JMRS94U2g2L3dLWUt0R2tNR2lxMUk4YjZSUWE5?=
+ =?utf-8?B?S3E3YWFFZXNOQU5aNEUyandzNTkvbytGMjRWS3huUFFDaHA5VG1BZUEvNjVV?=
+ =?utf-8?B?UFY2V0J3WHI1Qk1BakxPU1Fqa1dTejdkL3VaenFEdFV0bFRLVmpnWHBGVXZO?=
+ =?utf-8?B?UHErN25aajJjVjIwcXREV1h5bi9HSUh6TWhnejd2UDVTNnlCTjNjcGJhZ1Ju?=
+ =?utf-8?Q?2cW2E+68ZxG2z2ydo3fWpuj8Q?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf423d20-649e-4aac-8ed2-08dcd8f6e848
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2024 22:03:35.2372
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ksc92cuzfDh9UvMJ62no/s2yZ5MfO8SYD0IwnJjH6WkhgJ/czYuhP8D0NBQ27/XVYp9dHpYiYaVm0GbJwYg5Tg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6965
 
-Hello,
+The PCI bus device tree supports 'ranges' properties that indicate
+how to convert PCI addresses to CPU addresses. Many PCI controllers
+are dual-role controllers, supporting both Root Complex (RC) and
+Endpoint (EP) modes. The EP side also needs similar information for
+proper address translation.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in bch2_journal_flush_seq_async
+This commit introduces several changes to add 'ranges' support for
+PCI endpoint devices:
 
-bcachefs (loop0): delete_dead_inodes... done
-bcachefs (loop0): done starting filesystem
-------------[ cut here ]------------
-requested to flush journal seq 36028797018963972, but currently at 15
-WARNING: CPU: 1 PID: 7336 at fs/bcachefs/journal.c:672 bch2_journal_flush_seq_async+0x668/0x6c0
-Modules linked in:
-CPU: 1 UID: 0 PID: 7336 Comm: syz.0.15 Not tainted 6.11.0-rc7-syzkaller-00105-g5f5673607153-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : bch2_journal_flush_seq_async+0x668/0x6c0
-lr : bch2_journal_flush_seq_async+0x664/0x6c0 fs/bcachefs/journal.c:670
-sp : ffff8000a2ba78e0
-x29: ffff8000a2ba7960 x28: dfff800000000000 x27: 1fffe0001c739537
-x26: 1ffff00014574f20 x25: 000000000000000f x24: ffff0000e39ca9c8
-x23: 0000000000000000 x22: 1fffe0001c739539 x21: ffff0000e39ca9b8
-x20: ffff0000e39ca380 x19: ffff8000927b7000 x18: 0000000000000008
-x17: 0000000000000000 x16: ffff800083032784 x15: 0000000000000001
-x14: 1fffe000366d7a5a x13: 0000000000000000 x12: 0000000000000000
-x11: 0000000000000003 x10: 0000000000ff0100 x9 : c755fe8fa63d1700
-x8 : c755fe8fa63d1700 x7 : 0000000000000001 x6 : 0000000000000001
-x5 : ffff8000a2ba7038 x4 : ffff80008f65b620 x3 : ffff8000806051a0
-x2 : 0000000000000001 x1 : 0000000100000001 x0 : 0000000000000000
-Call trace:
- bch2_journal_flush_seq_async+0x668/0x6c0
- bch2_journal_flush_seq+0xe8/0x280 fs/bcachefs/journal.c:759
- bch2_flush_inode+0x220/0x390 fs/bcachefs/fs-io.c:185
- bch2_fsync+0x1a0/0x44c fs/bcachefs/fs-io.c:205
- vfs_fsync_range fs/sync.c:188 [inline]
- vfs_fsync fs/sync.c:202 [inline]
- do_fsync fs/sync.c:212 [inline]
- __do_sys_fsync fs/sync.c:220 [inline]
- __se_sys_fsync fs/sync.c:218 [inline]
- __arm64_sys_fsync+0x178/0x1c0 fs/sync.c:218
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 75740
-hardirqs last  enabled at (75739): [<ffff800080388420>] __up_console_sem kernel/printk/printk.c:341 [inline]
-hardirqs last  enabled at (75739): [<ffff800080388420>] __console_unlock kernel/printk/printk.c:2801 [inline]
-hardirqs last  enabled at (75739): [<ffff800080388420>] console_unlock+0x18c/0x3d4 kernel/printk/printk.c:3120
-hardirqs last disabled at (75740): [<ffff80008b3363f4>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
-softirqs last  enabled at (75718): [<ffff8000801f8e88>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (75718): [<ffff8000801f8e88>] handle_softirqs+0xa3c/0xbfc kernel/softirq.c:582
-softirqs last disabled at (75375): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
+1. **Modify of_address.c**: Add support for the new `device_type`
+   "pci-ep", enabling it to parse 'ranges' using the same functions
+   as for PCI devices.
 
+2. **Update DesignWare PCIe EP driver**: Enhance the driver to
+   support 'ranges' when 'addr_space' is missing, maintaining
+   compatibility with existing drivers.
 
-Tested on:
+3. **Update binding documentation**: Modify the device tree bindings
+   to include 'ranges' support and make 'addr_space' an optional
+   entry in 'reg-names'.
 
-commit:         5f567360 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=117b6607980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dedbcb1ff4387972
-dashboard link: https://syzkaller.appspot.com/bug?extid=d119b445ec739e7f3068
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10136607980000
+4. **Add i.MX8QXP EP support**: Incorporate support for the
+   i.MX8QXP PCIe EP in the driver.
+
+i.MX8QXP PCIe dts is upstreaming.  Below is pcie-ep part.
+
+pcieb_ep: pcie-ep@5f010000 {
+                compatible = "fsl,imx8q-pcie-ep";
+                reg = <0x5f010000 0x00010000>;
+                reg-names = "dbi";
+                #address-cells = <3>;
+                #size-cells = <2>;
+                device_type = "pci-ep";
+                ranges = <0x82000000 0 0x80000000 0x70000000 0 0x10000000>;
+                num-lanes = <1>;
+                interrupts = <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
+                interrupt-names = "dma";
+                clocks = <&pcieb_lpcg IMX_LPCG_CLK_6>,
+                         <&pcieb_lpcg IMX_LPCG_CLK_4>,
+                         <&pcieb_lpcg IMX_LPCG_CLK_5>;
+                clock-names = "dbi", "mstr", "slv";
+                power-domains = <&pd IMX_SC_R_PCIE_B>;
+                fsl,max-link-speed = <3>;
+                num-ib-windows = <6>;
+                num-ob-windows = <6>;
+                status = "disabled";
+};
+
+These changes improve PCIe EP support by allowing proper address
+translation using 'ranges', ensuring compatibility with devices that
+rely on this information.
+
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Frank Li (9):
+      dt-bindings: PCI: pci-ep: Document 'ranges' property
+      of: address: Add argument 'name' for of_node_is_pcie()
+      of: address: Add device type pci-ep
+      dt-bindings: PCI: snps,dw-pcie-ep: 'addr_space' not required if 'ranges' present
+      PCI: dwc: ep: Replace phys_base and addr_size with range
+      PCI: dwc: ep: Use 'ranges' from DT if 'addr_space' is missing
+      dt-bindings: PCI: fsl,imx6q-pcie-ep: Add compatible string fsl,imx8q-pcie-ep
+      PCI: imx6: Pass correct sub mode when calling phy_set_mode_ext()
+      PCI: imx6: Add i.MX8Q PCIe Endpoint (EP) support
+
+ .../devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml | 42 +++++++++++++++++++++-
+ Documentation/devicetree/bindings/pci/pci-ep.yaml  | 30 ++++++++++++++++
+ .../bindings/pci/snps,dw-pcie-common.yaml          |  4 +--
+ .../devicetree/bindings/pci/snps,dw-pcie-ep.yaml   | 21 ++++++++---
+ drivers/of/address.c                               | 30 ++++++++++++----
+ drivers/pci/controller/dwc/pci-imx6.c              | 24 ++++++++++++-
+ drivers/pci/controller/dwc/pcie-artpec6.c          |  2 +-
+ drivers/pci/controller/dwc/pcie-designware-ep.c    | 23 ++++++++----
+ drivers/pci/controller/dwc/pcie-designware.h       |  4 +--
+ 9 files changed, 157 insertions(+), 23 deletions(-)
+---
+base-commit: 909eac36208b70a22fd0d1c3097e3af98dca7599
+change-id: 20240918-pcie_ep_range-4c5c5e300e19
+
+Best regards,
+---
+Frank Li <Frank.Li@nxp.com>
 
 
