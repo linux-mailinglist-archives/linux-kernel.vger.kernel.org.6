@@ -1,220 +1,249 @@
-Return-Path: <linux-kernel+bounces-333871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A7597CF3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 00:34:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2290B97CF44
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 00:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C92A4284BBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 22:34:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C1BDB224A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 22:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E041B2EE6;
-	Thu, 19 Sep 2024 22:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3481B2ED3;
+	Thu, 19 Sep 2024 22:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ZxLDelKH"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ky0qvNCc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883BB1CD15
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 22:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726785261; cv=none; b=Mq4MvSHTPhkubyWGguAyFpt6nXr/0e8RkBqy1VGIgj2ipAfx3e1VN8D20qzCt6Zlmh45ZmUAEyclmd6wCwHBYxWvDfXlmSAUxe03x3b+msV1dSjcbf0eE9hKw6JP2FWbptSnT0x+fEcPdGJwMTlL+x40EqtcCMBV0MMm26auFyE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726785261; c=relaxed/simple;
-	bh=g/ecMF/sw/yVF1INJCRkpTfEM+9BG73xHJwB2ynrrLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nr5/y7adbf9EfDq9CNi1wBJ9bq6gieeljePtXwMFtyhMdeJgdaijLcswdERFepxgYDAamt3P0cliRneXIg0WYSnwvWqvQAhv076HhzEa4xxNqqTi1Vs1VsEY+SwDxR6E3haOajpKFJPWPtibaYAzOtHBDLKwCqluB0bPWYbSA9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ZxLDelKH; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-718e6299191so798243b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 15:34:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1726785259; x=1727390059; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pPylLiZ7PWxP0wN+w7CEhhbolesJkThAPqP1eba+Vi0=;
-        b=ZxLDelKHT+0Ug/j9re2TbR4Ybf9GeG4hPCgvHstjPJZvDXA2BxU+xI/UglNXEPH+VW
-         /PqqUiKDAEwGtqT1OL1sgYiK8OOWgXcAOMS9iOh11dmEysvcIMj/mFQbnr1zsiMTKnXB
-         jsxMOxSd8HybmuiZWH/z6wa3uZ9dwfwjUpXHWq6bf3LNm42ZVuwhZdOmM5CdLLxxT1Xl
-         C+9HGWhVz5eWsHl5WU6BCpTUrI5Gl6E+PEne3/gYROr/QbJ7Tjq7hrgOLl7E5s5+PZD3
-         gWABF//8lZENAlrQl1+Eus8v6EnlVu5YCi3cVDs3r9XynZ6bCMdnnRigjED1aWydW+D1
-         ORng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726785259; x=1727390059;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pPylLiZ7PWxP0wN+w7CEhhbolesJkThAPqP1eba+Vi0=;
-        b=C1yIucNU73rSmrC86PZXyKoSq6LYG5UcWjdFQrhWUBj9R0PXHFyo+aKZmYuiF2gBn6
-         fMWxeebcvXAQVzKn2IDOCazCEKQXOWaqpTuzxFjqOqCyRWdThTBeFSkwgfRiOz8TECde
-         vzN3U3gnQTLyWeEPBTRoiweh7qFJsOimQKw3z8ooxGgZUZSJvx7Vp579VRPfxbrPIROl
-         teHOEriSgqPRsTzohyDcupIWpUZjbaCPAn5+f5kkLGr6+WTlHXdphGGUU9aAJwP96e3B
-         qyVAoiFl4Y9WwFgZbdcSmbL3QofvRjs827Y5Nk4ajDDvT2sZtklUFRWEz2eIF67Qlrma
-         M15w==
-X-Forwarded-Encrypted: i=1; AJvYcCX/64jC799idtFfn49O95t8xEJe6Bp5WAweHOEQYw1CWWqUG9PGviN5zOANRWKTpv62EDDiRoPDFBrhwEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTbeOuQh0zAUyIdtrmqEouGwzpfu42uoBKaaccMma0Y7NhiI8Q
-	KKjaDhvEC6XlUtpSrck7Dif5V2aTbFllcTTdZr6o1YsMQGeQCLUJbo1NnLVrg+A=
-X-Google-Smtp-Source: AGHT+IFTKz5dpfb+KDYUMX6NntS62oh+fxC5f3xzf9TFJpXVhvPLuHHJFeIgB7iSz4vzGVBOooAxZQ==
-X-Received: by 2002:a05:6a00:13a4:b0:714:3acb:9d4b with SMTP id d2e1a72fcca58-7199ce207bcmr857880b3a.18.1726785258792;
-        Thu, 19 Sep 2024 15:34:18 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b7b110sm8763605b3a.134.2024.09.19.15.34.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 15:34:18 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1srPj4-007QGw-1o;
-	Fri, 20 Sep 2024 08:34:14 +1000
-Date: Fri, 20 Sep 2024 08:34:14 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, John Garry <john.g.garry@oracle.com>,
-	dchinner@redhat.com
-Subject: Re: [RFC 0/5] ext4: Implement support for extsize hints
-Message-ID: <Zuym5suTo/KYUAND@dread.disaster.area>
-References: <cover.1726034272.git.ojaswin@linux.ibm.com>
- <ZuqjU0KcCptQKrFs@dread.disaster.area>
- <ZuvPDQ+S/u4FdNNU@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F085A125A9;
+	Thu, 19 Sep 2024 22:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726785509; cv=fail; b=EXyFzgdb0ZjJ5YzgPpajsgb5iUS0F4MI2a+zVxJBi1OjE0yefz9ZRZeSdcGlxoesEFdBdUuD2oklwj9U0Nb2w9fgGtWbxEtRN1MX6CASfU4BAC39B+kjH0uOUn4kdd02vrJzuUeGBxeG4Fgm0cJoPdTFsoTSg4MEptfejWnxv3I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726785509; c=relaxed/simple;
+	bh=YbWF9nIBa4DD7UTYOO4XTcGGdWYgSVwlwL3Pl1SvZko=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=riSBA+XZfxTFBXwddAWa/dtqjQd3Ki40vbuM4F/d3jcB/RpCGxE+y83gvfKj8s9w96fHtzz4NwwyrDb1MH0uggnfF4lGodOXLYzBbnFYijyvHVncnnTyAa/gwS7g7ExcASuYJ1eTD+RFbIPC02gwp3J45LPUXr/hxnu2lQc97Rw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ky0qvNCc; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726785507; x=1758321507;
+  h=from:to:cc:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=YbWF9nIBa4DD7UTYOO4XTcGGdWYgSVwlwL3Pl1SvZko=;
+  b=Ky0qvNCcrc7w2iDIMLDceDkGmrtBmzzYdBALM9bs9MudFbNwj+zaC0Kd
+   5oianxRR4AqK2GW5CHA88DTfGWh4oUPg4y+gRAcghZ/iyNh6AFaY12Mcd
+   pqtirIe7L8e2x0tt+XAmdQ/2FMPMN3nnNAAwCbNnKh+TuI0QOP0xZ5JHo
+   GHthtNs84k4IZoLG1OaqIsq4wgxp9Z1Cul41UOu+S1PT6BvLmIFGzK1pf
+   SNn8/S4Boaeh7d0kjq32COETZxS+etK2JiYri0BHaCjJcoFG/7+YeCR4M
+   bk6ll+XqGZAkuW6NPRI+daderkdOA7ZBDnEXhSSvnbSq0a61akFnzSWEo
+   A==;
+X-CSE-ConnectionGUID: 0dTAH0yyT+Gp8lC4FAGlHw==
+X-CSE-MsgGUID: JTDgh0+cRFekqNM5wJ8SJA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="29514928"
+X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
+   d="scan'208";a="29514928"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2024 15:38:26 -0700
+X-CSE-ConnectionGUID: UFEJhJckTQGZTgWCqfO9oA==
+X-CSE-MsgGUID: uTHuzJfGSamRsfZrRxehYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
+   d="scan'208";a="75061346"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Sep 2024 15:38:27 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 19 Sep 2024 15:38:25 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 19 Sep 2024 15:38:25 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.48) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 19 Sep 2024 15:38:25 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=i5AwAc0HI2MK0vDEiedgLs16HAHQGgp2Ki3ylyw8gC8MXQUY1oe3bKROgjeUMH5Q9+j1NlYUajCl9BVGiq8RPR31PTnFgynhgRmjRqvTpk23oJUN/nxXLuWb8B8XsCp7eiraJiW6thUZKlfZ5gp2NkE5ZJVDmt83tR+Fx5q0xJZHSivsu/p6NvgmFWu1aHsJy9ZYRWr9sooyKGvupeLWiFekHZbR2Aw2r769u4GtnQ7SFUCB+uhhdaM8P1IW9loTBifUqhb5T5Si/iapP4R6s6q0tLkSHPfYKUCxqiBXTLXILLCFWNH/E4M3BDYt1J04dQdGjuKu0bDSvtY1k0U+hw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=F2LOO0TQoxaV4GEmA+bJHioFpYdwNbXXIMX6LjCnrJk=;
+ b=fx2NgQOSjqGw7LN+3HVnUGrsMvmIYKHGeFslqYQd44esmIFmN53HX5nS2VfjFPmvUHtVbPkQUC526r+X+ouqR8wdjMV9OZBEFF1APGTMfXMfN0bXwgiLlH1xurKGufIO/IlaQSSBmhvE2sb3wnMoIBNd+iAz7qJtVSTwOMWBWLC1tmG4zFGno95lS76ezj9Fq3tw/IZLuLE6qLjRrJIRRIlqImaO+EhYB9YspqHK49tA0UvFq2mBEQ8C1ctYIeheY+6zVB30jDctEYVKkYLMS/a7ZDnnUEyxvuWeeH3e4gxvXycMkkEtzgxZKP9s/Rf2lkqxtHyEZQTlCOEJr/bowg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB5373.namprd11.prod.outlook.com (2603:10b6:5:394::7) by
+ MW4PR11MB5824.namprd11.prod.outlook.com (2603:10b6:303:187::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.26; Thu, 19 Sep
+ 2024 22:38:22 +0000
+Received: from DM4PR11MB5373.namprd11.prod.outlook.com
+ ([fe80::927a:9c08:26f7:5b39]) by DM4PR11MB5373.namprd11.prod.outlook.com
+ ([fe80::927a:9c08:26f7:5b39%5]) with mapi id 15.20.7982.018; Thu, 19 Sep 2024
+ 22:38:21 +0000
+From: =?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>
+To: <linux-pci@vger.kernel.org>, <intel-xe@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, "Bjorn
+ Helgaas" <bhelgaas@google.com>, =?UTF-8?q?Christian=20K=C3=B6nig?=
+	<christian.koenig@amd.com>, =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?=
+	<kw@linux.com>
+CC: Rodrigo Vivi <rodrigo.vivi@intel.com>, Michal Wajdeczko
+	<michal.wajdeczko@intel.com>, Lucas De Marchi <lucas.demarchi@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Matt Roper
+	<matthew.d.roper@intel.com>, =?UTF-8?q?Micha=C5=82=20Winiarski?=
+	<michal.winiarski@intel.com>
+Subject: [PATCH v2 0/3] PCI: VF resizable BAR
+Date: Fri, 20 Sep 2024 00:35:54 +0200
+Message-ID: <20240919223557.1897608-1-michal.winiarski@intel.com>
+X-Mailer: git-send-email 2.46.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: WA2P291CA0044.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:1f::20) To DM4PR11MB5373.namprd11.prod.outlook.com
+ (2603:10b6:5:394::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZuvPDQ+S/u4FdNNU@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB5373:EE_|MW4PR11MB5824:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7cac091d-dd62-45da-13bd-08dcd8fbc258
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?a212S1M4Nlp0MnhNQWliMnFYS2VhQ3hQRHg5RVplOWI2cExtRGc2UFdzSE5H?=
+ =?utf-8?B?cm5vNHpGSy8xYVFnd0dBZ2xqcVBoU21ubmU1YlFkMVdXOGdSaU5teFMrU1Mr?=
+ =?utf-8?B?WnhNVkxEWDM5RXVvNGpZenduN3BacVNlQTFIQXZsWmJzZW1jcm80WnFqOWor?=
+ =?utf-8?B?b09hQjFlOWVpQmdDWENvckxvR1B6VklhMzB2YjBZYzBBMEw4R1B0V0NybDVp?=
+ =?utf-8?B?U1BhWWJxNWtXV1JJTmdyR1ArRjFkR2I3eUR6SmFod2pwNW9selNZMkFzVjM4?=
+ =?utf-8?B?alp4NGxmbkNNNzgrZGpLUk40ek1QS0pKSjRKb2FmZFROZS9hREwxYUdrdHBn?=
+ =?utf-8?B?ZmZ0OGk0bjNSdkJSbXR4enRWUCtUZEdvMWxqdzd5UmlrTlUvV0F2eEJiT2Zz?=
+ =?utf-8?B?RTV6RlBtREJITWFpdUFyb1EreHQwTUEvTHpYNisvY2VpYVprbytLdTRDRUw2?=
+ =?utf-8?B?U3hVbHN0WEx6cVhPcCtDeEFqS0h6b0RzMWs5dkFwTEVFRzBOYW1yaDNTUEN4?=
+ =?utf-8?B?T2M2NXhnVWlxWkE4WERUYzBVUWRFQ3JlbEtKZzdSd01UOG8zRFdPTU5BR3pG?=
+ =?utf-8?B?T3VuODdDcmJsNFpkS0E4aE8rTTRCY3ZCU1JrYmZYODR1bG1FdUFMWFJ0Z214?=
+ =?utf-8?B?MmFsb05vYlFLUzRPV2gzYmJUSkVnRldJQ0lLZWRJVS8ra3VWY3ZuSHhMUEZX?=
+ =?utf-8?B?K2tjcFdZL2g0SVhMZ25rUDFRb2hCRVJlSGVkZ3pmeXJUYUlHcVpJeHZDL0RP?=
+ =?utf-8?B?cUN2N0hVY2c1NXFDU1lsbEhhaFk3SU11Y3c1T2ozRWRBTVZGMjM2b3VLc0NK?=
+ =?utf-8?B?WURiOXdOdTV3eDRxY2EyU0lheFdrTXRaMjd3V3hvU0FtbERidEExVjlwK2tC?=
+ =?utf-8?B?NjUxaXRaNStlMXBMeGd4UVBMWnlITWVJZDZMNG9YUCtFRHc2NitsOE51d0Nh?=
+ =?utf-8?B?VnhVZlZBTThIVmJHVXpHcnV4SStxNEN2U1pqRTJwTXE1NXRBc2d1R2p2TWRl?=
+ =?utf-8?B?Rnh1a0c1R0RNb2k3S1JiaE9VREdxVkl2citvTkE0UWN2Zjh4L3pnbDlVVlRY?=
+ =?utf-8?B?VlkyY3lGbHNyTW1TQXRzSkhNV2cyQ1JhSnc4UmF5UVRUNDdkR3NCalh3Y3kz?=
+ =?utf-8?B?d2tDNWpjUlp2djd4RjhvbklIWjY4VzV0NjZTd0RpK1VGRkcwais2YmlKLzl6?=
+ =?utf-8?B?WGpFL1BleXQzZ0YyenorRVdxVlFNU29MYzN0SHhxWE9ydkxUM2oyRTVXbDN6?=
+ =?utf-8?B?RlpPQVU4YjZOWGIwOXNxdXBOd3M1WjU2TDAzckZxcUxSV0JJbG54Q2Q2WHQr?=
+ =?utf-8?B?a0Zrb0l6R3pWOVppbCtlN2JkNWxJTmgzZldYQmY3OUYxSm84c0NQOVd2R0ds?=
+ =?utf-8?B?Ukp6bjlJdXV0a0JFWklxZUhCTmd6cy9KZU52cnFhSGRvVjNBdjNhYndlSVVB?=
+ =?utf-8?B?cldkdE13aExqV1ltOUd3N3pWWm5lRjB1a0krU2pQZ3U3RUVudGEvVG5zWHdB?=
+ =?utf-8?B?TUt0Sm9UQVhndHlRdjM5TzBxdkVSc1JXRUtRRS9GUjNMQmtJa2hha2JBbXBa?=
+ =?utf-8?B?OHZ1ZEhLblJaZW5LSThqbXkranVyeU1xdTJWSHdwbjVXTkNXbE5xY0tjNmx0?=
+ =?utf-8?B?aDh3RG1HVXZvWFRDRG9xSGxEY09Mc1F2MGhoek0wU1Y0ZlJsVjJnbURlV0d5?=
+ =?utf-8?B?WXNBRUdMQSt2NW1HMkY1OGVhUlZ2cm1wUklTQmJZWkh0YVpBamNZZWtvOEtC?=
+ =?utf-8?B?VlVmNVVuU2J6UmFFMWlTKzhrVFRyVlJUM2c1MnUvenQvQnZzTmhFaXB1b08w?=
+ =?utf-8?Q?zuYtkDWiWioaeJWSBI9ijxNbS/qNqHGoGNmbI=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5373.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Sm4zQ0NuSXRyTDIvenFYamhrbUx3anE3dXROOHhrNXpGQ255S0F0UTNaR3BD?=
+ =?utf-8?B?bldhNGtFUjdPK3lTbWp6WTBYT3NYWm02YjlnSXZBaTRoMXpZUUFVMnpZZjha?=
+ =?utf-8?B?NHFDME0wMHBQYXhFa2pLNExORkVrZHg0Wk5GcjMrUnZhTEZ2Z0FTSkJZcG1D?=
+ =?utf-8?B?SVpjWjlxY0EvKzNYdTJ1R2FENk8rTWVyVHlSWlhPN1pmR3BNblFKVUdHeWM3?=
+ =?utf-8?B?Q1lKQUVIQ0xpbEVSZEdZV0xxZWk2KzJNVDJRQzA4ZEM3dy9aOHkyaGVzam9N?=
+ =?utf-8?B?VTRUbjBMWWZMR0xjK3NPem1sc3RYMitXbHBkdjJoalRJUU9oeCtSOVl3M0dR?=
+ =?utf-8?B?RmVCck1Ubm12OUNKSEJMN3dFV3ZxYmpvcmQ4VURDalYrVGtmcksveEw1NzRH?=
+ =?utf-8?B?djB6VldDbDlTNnlXZzllaUltRkh4TTlzWDY1Kyt5eURkay9lbDRtZ0ZteVg5?=
+ =?utf-8?B?eVloRDBqZGpub1U3WDhoUWE4L2o0THhhL0drNUYvbXFPVXVHTUNjNmxoRHVW?=
+ =?utf-8?B?WHZjSzYrT0hLOUZ3MGNrcHZKYmQ3bElpSTRQb1JETjdRSE40MXE4Z0xla1pF?=
+ =?utf-8?B?STBZQnhoL0I5RnRBQW15MitRNnJkeTkzZVUrSC9DVW5GNlUyNTJZYk1xZ29N?=
+ =?utf-8?B?Vml6a3BNb0ZvSGVwU2lZWStYcjI1bURXUHorRVVsSFVUMThvT3prWWt0Unow?=
+ =?utf-8?B?SUJmUmlCNk5rVy9MQUZRUHRYNVhXd1JVS2hnNU5XcXFYTnJQUnk4eURrcU83?=
+ =?utf-8?B?aEE0OGRVdFFCb2s4amhJN1gvSjljVjl0aFdaMjlURXJMUEtDUGhIUTJ2V0Jn?=
+ =?utf-8?B?Yjg0cTlnRG55K1RwY2VkS2NLSmJNM2lKMU4xUEJHaTc1WDd5U05aS0V5ekM5?=
+ =?utf-8?B?a0kwWkVJU3h6WmFrUEhZTVB0MDRpc2xwcVR0YnppV05HTnFiRVdTNWhHN3pk?=
+ =?utf-8?B?eXdOWHZiMHc4SExwWm4xay9KaDVieDBvd0F3NDhiRWFCMXQ1UmFjdUEvekVH?=
+ =?utf-8?B?a01RREF4MnpXeTVpaFIzUkM1ejlVRGNzTS9hTWJ5bE0rZ0YwQUd2UFNlY2hM?=
+ =?utf-8?B?WmhhTEFkOHVrSFN4MkxzNmp4Y2R6L2l2TW8vVU9SRWVMOGMyU2tIQ2YvVjVK?=
+ =?utf-8?B?cnZ5WVZxREx2VEVkSG9kOTNXQVlVOEp1Y01pWTBRV1p5eVh1ZS9nUms4eURX?=
+ =?utf-8?B?cWt0VDRrWkRqQWNUczgxRmlUOGRSaHpyL2duaWNOTFQvWWI1cW9QTzUxRTVO?=
+ =?utf-8?B?YzNCMTYxN0dsV0ptRmtkbUVoVEdDNkNWK21UUy9hSWZZSUwxY3ZEbnl0SzF3?=
+ =?utf-8?B?RjRuM3FCRTZKb2IxMXBmT3V0SGZmRnZCek5NSnZQdnpTVjJkeFYxNlVzOXlS?=
+ =?utf-8?B?QnFzWHVYQmJqSDRMZlBqT3o0MlJsZThWUlJIeUtHR29lRnFsWHRxdENOUFBW?=
+ =?utf-8?B?S0N4YkZ6a3M2ZUxrM0dDM0ZTNG9tZFJFVldjRmdtYllqeExpd2hiMG82TVVV?=
+ =?utf-8?B?N3dhR0lsWVkrUjBLdVQ1Y1h0RVNVbEM5QXZpSkkwam1MQkdXWU5sM2p1dHEy?=
+ =?utf-8?B?RmY1bUUzSSt2ajlaTEgwV0o0TUxhbUJySmczNDlKRC90VmRDSXNROXNEZ0JU?=
+ =?utf-8?B?Q24yOXhNeGI5Y1JUb2QyUFhvSkVlNFlLbDhjVnJDVGxvM0lNQ2ZsbGlwRmo5?=
+ =?utf-8?B?ZVh1MWJuTGtwekFjWTdwYlVuc0UrWjd6dnQ2TVlaSXFvQWVZV1gxKzVjejVF?=
+ =?utf-8?B?ZFByei9RLzduSm5WTTJuazJIV01MM0VoRi9RWTlmMXVPQjFwdmpVMWNFOW5v?=
+ =?utf-8?B?S1ZUd0dFRUI5R0Z5WlRaYk1VbmlOVy8wemYwQjVSQTlCVzB2c3ZsekJtcGNQ?=
+ =?utf-8?B?NDc0bXMrT3dKa2ZtNkFpZkxJYnJuRjNYN0xyd0RUc2JxNGwvTWl4cjFhOC9o?=
+ =?utf-8?B?ejlhT29uWWVvZzlpeENoNWhQNmJBMk1DUTlKOW1vTmVGblB6TWk5ZzM1UGxR?=
+ =?utf-8?B?SmRPbitHSS96bCsxSFdKS2hnZk1mU1JJV3BOZEtzSkxlT2VJaEMyTlA1N3VJ?=
+ =?utf-8?B?c0lUckhIcGYzR055QnZaOTl3dVFrV3dlYXl0VkFYUWMzWVBxM2VGTml3T2w3?=
+ =?utf-8?B?M2wrZFB5ZjhzWHU4emxoSExQUFhrdG9XZmgvZmZHRTNwdVFUMVk5R001WjZq?=
+ =?utf-8?B?TEE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7cac091d-dd62-45da-13bd-08dcd8fbc258
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5373.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2024 22:38:21.7715
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oe27+F8xndMl8ECaPbJH2PeXQQSvcjevr4fKuNGgTw8ArBnbOgrb3Gx2XjLQUPcFl5H9/2yA/POPM/whdHpzQIwsmU3xhHqKq1F8/jIIm7c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB5824
+X-OriginatorOrg: intel.com
 
-On Thu, Sep 19, 2024 at 12:43:17PM +0530, Ojaswin Mujoo wrote:
-> On Wed, Sep 18, 2024 at 07:54:27PM +1000, Dave Chinner wrote:
-> > On Wed, Sep 11, 2024 at 02:31:04PM +0530, Ojaswin Mujoo wrote:
-> > Behaviour such as extent size hinting *should* be the same across
-> > all filesystems that provide this functionality.  This makes using
-> > extent size hints much easier for users, admins and application
-> > developers. The last thing I want to hear is application devs tell
-> > me at conferences that "we don't use extent size hints anymore
-> > because ext4..."
-> 
-> Yes, makes sense :)  
-> 
-> Nothing to worry here tho as ext4 also treats the extsize value as a
-> hint exactly like XFS. We have tried to keep the behavior as similar
-> to XFS as possible for the exact reasons you mentioned. 
+Hi,
 
-It is worth explicitly stating this (i.e. all the behaviours that
-are the same) in the design documentation rather than just the
-corner cases where it is different. It was certainly not clear how
-failures were treated.
+Resurrecting an old series [1], now that we have an in-tree user for it.
 
-> And yes, we do plan to add a forcealign (or similar) feature for ext4 as
-> well for atomic writes which would change the hint to a mandate
+For regular BAR, drivers can use pci_resize_resource to resize it to the
+desired size provided that it is supported by the hardware, which the
+driver can query using pci_rebar_get_possible_sizes.
+This series expands the API to work with IOV BAR as well.
+It also adds the additional API to allow extending the VF BAR within the
+original resource boundary.
 
-Ok. That should be stated, too.
+Thanks,
+-Michał
 
-FWIW, it would be a good idea to document this all in the kernel
-documentation itself, so there is a guideline for other filesystems
-to implement the same behaviour. e.g. in
-Documentation/filesystems/extent-size-hints.rst
+[1] https://lore.kernel.org/all/20211215141626.3090807-1-michal.winiarski@intel.com/
 
-> > > 2. eof allocation on XFS trims the blocks allocated beyond eof with extsize
-> > >    hint. That means on XFS for eof allocations (with extsize hint) only logical
-> > >    start gets aligned.
-> > 
-> > I'm not sure I understand what you are saying here. XFS does extsize
-> > alignment of both the start and end of post-eof extents the same as
-> > it does for extents within EOF. For example:
-> > 
-> > # xfs_io -fdc "truncate 0" -c "extsize 16k" -c "pwrite 0 4k" -c "bmap -vvp" foo
-> > wrote 4096/4096 bytes at offset 0
-> > 4 KiB, 1 ops; 0.0308 sec (129.815 KiB/sec and 32.4538 ops/sec)
-> > foo:
-> > EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
-> >    0: [0..7]:          256504..256511    0 (256504..256511)     8 000000
-> >    1: [8..31]:         256512..256535    0 (256512..256535)    24 010000
-> >  FLAG Values:
-> >     0100000 Shared extent
-> >     0010000 Unwritten preallocated extent
-> > 
-> > There's a 4k written extent at 0, and a 12k unwritten extent
-> > beyond EOF at 4k. I.e. we have an extent of 16kB as the hint
-> > required that is correctly aligned beyond EOF.
-> > 
-> > If I then write another 4k at 20k (beyond both EOF and the unwritten
-> > extent beyond EOF:
-> > 
-> > # xfs_io -fdc "truncate 0" -c "extsize 16k" -c "pwrite 0 4k" -c "pwrite 20k 4k" -c "bmap -vvp" foo
-> > wrote 4096/4096 bytes at offset 0
-> > 4 KiB, 1 ops; 0.0210 sec (190.195 KiB/sec and 47.5489 ops/sec)
-> > wrote 4096/4096 bytes at offset 20480
-> > 4 KiB, 1 ops; 0.0001 sec (21.701 MiB/sec and 5555.5556 ops/sec)
-> > foo:
-> >  EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
-> >    0: [0..7]:          180000..180007    0 (180000..180007)     8 000000
-> >    1: [8..39]:         180008..180039    0 (180008..180039)    32 010000
-> >    2: [40..47]:        180040..180047    0 (180040..180047)     8 000000
-> >    3: [48..63]:        180048..180063    0 (180048..180063)    16 010000
-> >  FLAG Values:
-> >     0100000 Shared extent
-> >     0010000 Unwritten preallocated extent
-> > 
-> > You can see we did contiguous allocation of another 16kB at offset
-> > 16kB, and then wrote to 20k for 4kB.. i.e. the new extent was
-> > correctly aligned at both sides as the extsize hint says it should
-> > be....
-> 
-> Sorry for the confusion Dave. What was meant is that XFS would indeed
-> respect extsize hint for EOF allocations but if we close the file, since
-> we trim the blocks past EOF upon close, we would only see that the
-> lstart is aligned but the end would not.
+v1 -> v2:
+- Add pci_iov_resource_extend() and usage in Xe driver
+- Reduce the number of ifdefs (Christian)
+- Drop patch 2/2 from v1 (Christian)
+- Add a helper to avoid upsetting static analysis tools (Krzysztof)
 
-Right, but that is desired behaviour, especially when extsize is
-large.  i.e. when the file is closed it is an indication that the
-file will not be written again, so we don't need to keep post-eof
-blocks around for fragmentation prevention reasons.
+Michał Winiarski (3):
+  PCI: Add support for VF Resizable Bar extended cap
+  PCI: Allow extending VF BAR within original resource boundary
+  drm/xe/pf: Extend the VF LMEM BAR
 
-Removing post-EOF extents on close prevents large extsize hints from
-consuming lots of unused space on files that are never going to be
-written to again(*).  That's user visible, and because it can cause
-premature ENOSPC, users will report this excessive space usage
-behaviour as a bug (and they are right).  Hence removing post-eof
-extents on file close when extent size hints are in use comes under
-the guise of Good Behaviour To Have.
+ drivers/gpu/drm/xe/regs/xe_bars.h |   1 +
+ drivers/gpu/drm/xe/xe_sriov_pf.c  |   8 ++
+ drivers/pci/iov.c                 | 120 +++++++++++++++++++++++++++++-
+ drivers/pci/pci.c                 |  40 +++++++++-
+ drivers/pci/pci.h                 |  15 +++-
+ drivers/pci/setup-res.c           |  44 +++++++++--
+ include/linux/pci.h               |   3 +
+ include/uapi/linux/pci_regs.h     |   1 +
+ 8 files changed, 223 insertions(+), 9 deletions(-)
 
-(*) think about how much space is wasted if you clone a kernel git
-tree under a 1MB extent size hint directory. All those tiny header
-files now take up 1MB of space on disk....
-
-Keep in mind that when the file is opened for write again, the
-extent size hint still gets applied to the new extents.  If the
-extending write starts beyond the EOF extsize range, then the new
-extent after the hole at EOF will be fully extsize aligned, as
-expected.
-
-If the new write is exactly extending the file, then the new extents
-will not be extsize aligned - the start will be at the EOF block,
-and they will be extsize -length-.  IOWs, the extent size is
-maintained, just the logical alignment is not exactly extsize
-aligned. This could be considered a bug, but it's never been an
-issue for anyone because, in XFS, physical extent alignment is
-separate (and maintained regardless of logical alignment) for extent
-size hint based allocations.
-
-Adding force-align will prevent this behaviour from occurring, as
-post-eof trimming will be done to extsize alignment, not to the EOF
-block.  Hence open/close/open will not affect logical or physical
-alignment of force-align extents (and hence won't affect atomic
-writes).
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+2.46.0
+
 
