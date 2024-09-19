@@ -1,142 +1,138 @@
-Return-Path: <linux-kernel+bounces-333214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B226797C571
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:58:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D9097C572
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:58:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2357284605
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:58:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 149E1B22915
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31001991AC;
-	Thu, 19 Sep 2024 07:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0324B1991AF;
+	Thu, 19 Sep 2024 07:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="WcnmV03R"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KCfn/ojd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF321990B7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBCA1990B2
 	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 07:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726732674; cv=none; b=PWWm+xeONHjqU6qCjjVjEK/zTtJcv2tutOxy7Yv4dGFU+8vjR4PneUEET+qD4k7GuQa+8J+rKATOo3kqDR7rVaZwwDycjAWCo59KWU882te5Ba4QRTODJctp32w1KmEso3aXQ/aV9URFe3UgBb8RlQ5suT5VRMxSc71TZ+r2W/I=
+	t=1726732674; cv=none; b=u1CQQ6VjFXE4s/x3qq70vKK7Fw4X1CGX4AHr/DdOghxanAadAczXqIAOMi3tVTF34G5T1Zd3rCy4Vtd/3Wfjwp59EbMWMGaN8SUCKchrbUtDtFgYsP4WRGVJ1xBRNCxChQpdLQlsEvfe9OmuIiNhgHb3ONxYCNY8ovexYH684VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726732674; c=relaxed/simple;
-	bh=gtvvVhGi2BodgECS9/LLDjF6CRbdY/AYaJaNGE83ygU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bj9PiX+1e/oGH75y64uFS7Ix1/eLErPB+rum5/H5I3LJkhfSr0L7B2zlNTssWl8AP9YwN7XamCVQPDMCaE4BoFq/BOx8v4MNzfAZJfJ6Ql7I56sAOCekYybbiOTKpwiomgXkXrUj6i41y0JRkYDE4RWfkkEUZ7YOH4fGXfFBwGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=WcnmV03R; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6dde7e4a41eso4740387b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 00:57:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1726732671; x=1727337471; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QmjzfzSOViupOA3GGnp9LMg51SfbNjXhfgtUuukyDgQ=;
-        b=WcnmV03RmcUoCWzRVO6CtrxV4c3AFqHigbNEDOb1q+8CkxiElWzqJHXo00p9Olz8hi
-         5Eke9f8mKzlC4wXrR2IQTgzb0K60OFpxMtBZMtwfcRIYb9XMwF1T1jWZUhbG209pmocp
-         2uj/76oXdjzAhkxm7yPRTs3XrXfA4sk0RtNWifWKfBxPqTtxRDwLHV4J9UfEAvtoyz38
-         CNQyiJ+PiR7Nr/9u0ekCqVm6Jmz/aGSklpBN9TgHhdJkQZu/62hJ1Y06m/rWd+AbAsWn
-         bVAGUvttozw0uv1rYaxHXsjhU/L66DQ/Vbsx0idYYtGh7RNZVY2D6LmQZ/b+um22eE7Z
-         ZQug==
+	bh=WjTR5Fl9rB5SyxIdjvbDVCUkIESWrZgHawZRIoKkHas=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EJnCT3KgKarwRQ/99blYke56PTh2OcvJDm0awVWMnQjow12JND9QApQgacyPIcSopDjBWUiuUjfKdgEFlSQxJaLodp2T2jZKD8ervFsouYaZJXuRxFdx0u25wuzqL6MZdGG5xcA8WdHLeekKga3IUMrINjWm0d+PBHYnW299zDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KCfn/ojd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726732671;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BveYqjoEFbQN7A9EhNP5LD7TmPQnn8rjTb0WXfJDJ+s=;
+	b=KCfn/ojdID7go+XpA+dvg6U0R5/F8kGsvn6aflxgW2+Y+apVtSG41YlnmhYSufOq4/U0z5
+	Re7mfgGlDorbeIjn1p9yKz9gmpGNzQ7B8J6g1oYxFK+I3iKj8AlgUkRPlbpxU0OYvUZ/vQ
+	VpdPsRI3e8P3RMGB6HZfvkeuwFbnMoA=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-187-7P0RzXVtOsqZWsaky5ZO3g-1; Thu, 19 Sep 2024 03:57:50 -0400
+X-MC-Unique: 7P0RzXVtOsqZWsaky5ZO3g-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-374ba33b2d2so185284f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 00:57:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726732671; x=1727337471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QmjzfzSOViupOA3GGnp9LMg51SfbNjXhfgtUuukyDgQ=;
-        b=N4Y28Md1lNoU2nBt2RZ3sZ04c7jPXnB4+0DqegDaL38pReQAS9ZKocgQPRZ4trY9Q6
-         wqh0QWoq+uSaRGeu340OymHAz+X0DutedK5iMsL8o1O150TBCciLuD2Vm8UL+Mqu+Fl2
-         wccQ33Erlg/FmBYvMLVTnFHR5+VXJlfCsElxyr99gXeeEiTY7GPi1AlPOqb+YXncmqJp
-         u8wjUvBDXg/S9cdwDNFb/Xpz9sQDkJ4mf+b5U1/4kfILI3CJDbUoal0Yl4w5oayFnf2U
-         9ZeMdC4JawKWySDRJ178s1+1opUPU+u6btC7AEk98l728xVhDIc1hq5gfitEXQYfrm6x
-         QzMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWO1jftbdYz2DKafHIjhHmtLb6YOU12AYUcVEgeorpJl8nYiF8ItH/Rj5oXM/tpc0m/9XjOh0rt9WUgvxk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5pyw5DkE678nCO+GzvaR/EiAS3RCSxfCpJXARednWl6NvXNNF
-	jEGRo6Cpb65NnG5ZU0wL7eQUVanw3RRCQpWYGW8joFcpxXfYDhhH/WjXSynsmZs1VJgyFCqQOjE
-	IHJOkOGSV+CNd8fGrfOVVcG6XEZN/+zwcAW5T
-X-Google-Smtp-Source: AGHT+IG43NCtgaW53OS7+PojKU/GXx7ck7PWExtnRut3+UcuubSUiadyEQxRVw5uBHaVL3DQ+b9ITlAJnOKiIS27EFQ=
-X-Received: by 2002:a05:690c:6808:b0:6db:d5dd:af76 with SMTP id
- 00721157ae682-6dbd5ddb9c2mr210170627b3.32.1726732671638; Thu, 19 Sep 2024
- 00:57:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726732668; x=1727337468;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BveYqjoEFbQN7A9EhNP5LD7TmPQnn8rjTb0WXfJDJ+s=;
+        b=dJ+oKpLgHoy8fxdIx24Mak0v/cmPHaZO94cvUYvyef6NAa8UnueB8nBEToXIKIR7/R
+         PiP6a9IbZuXvkmu4gMudpHzytfr3FM8M2/RsCUxnoimp6sPPLBgjdUFz0zIUGrYcDIec
+         S6DSz40mSm41evQC9r6q2nPsNaDemB7+2hty9io59ItiTOxp+yNeGAVhpwwmJaap72R/
+         90S41t/7saN0Jjzd3yR9Jkdv4KgLLeGpnCrTh0sUTsNW7F0P4mMgwqHNWXKXYsstZqo5
+         ELXEplhT3DNFd4WNioL6ui7Db0w8PlbueUHVMHczeHCtcdMcXx+4OUQg3HKXB+MVRBUF
+         t/nA==
+X-Forwarded-Encrypted: i=1; AJvYcCWWwtZ5wuJ4EqdIjss3viykeogzGNnDQY8CHF/3cxvWDYW9X/dErpWCUWUV6E6K7ZsEWoEnaDkVRz3Dr2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzyBZgKT8Upoi96dGLlygQs7eMYee37CIgL5TZaEt0OyuJIYVU
+	zPM6zZyQtm/kwIjoLuDUBVc3IzSRCG6gaLzO6/V78brslPdO+sjRvnCA7EGFRBYf38qqz+uMBWm
+	Agx93dFQv73FT+zY9QsEaGVS2/MxU/lS3mVJg6CIxx+/fHSwac4+xRGRZJt06d63hEuvvmAdv6N
+	8=
+X-Received: by 2002:a05:6000:18c2:b0:374:ce15:998c with SMTP id ffacd0b85a97d-378c2d1345dmr12838606f8f.30.1726732668060;
+        Thu, 19 Sep 2024 00:57:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFjcuNBkqYHoctjpvy9L9izSMqtg504D/BPyWJE0SJlP13gf5PTW3zCH/yMLyXpqgIpClOBOg==
+X-Received: by 2002:a05:6000:18c2:b0:374:ce15:998c with SMTP id ffacd0b85a97d-378c2d1345dmr12838590f8f.30.1726732667646;
+        Thu, 19 Sep 2024 00:57:47 -0700 (PDT)
+Received: from [192.168.88.100] (146-241-67-136.dyn.eolo.it. [146.241.67.136])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e71f0529sm14653556f8f.6.2024.09.19.00.57.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Sep 2024 00:57:47 -0700 (PDT)
+Message-ID: <bbeb8c77-1772-45a2-8626-a4e064ab7c54@redhat.com>
+Date: Thu, 19 Sep 2024 09:57:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com> <20240915-alice-file-v10-4-88484f7a3dcf@google.com>
-In-Reply-To: <20240915-alice-file-v10-4-88484f7a3dcf@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 19 Sep 2024 03:57:40 -0400
-Message-ID: <CAHC9VhR+m5APSjS_CUO7i01RBrLoeuGC6q15cWaCELt-SPgwpw@mail.gmail.com>
-Subject: Re: [PATCH v10 4/8] rust: cred: add Rust abstraction for `struct cred`
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] selftests: net: ioam: add tunsrc support
+To: Justin Iurman <justin.iurman@uliege.be>, netdev@vger.kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ shuah@kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20240907164245.89627-1-justin.iurman@uliege.be>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20240907164245.89627-1-justin.iurman@uliege.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Sep 15, 2024 at 10:31=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> From: Wedson Almeida Filho <wedsonaf@gmail.com>
->
-> Add a wrapper around `struct cred` called `Credential`, and provide
-> functionality to get the `Credential` associated with a `File`.
->
-> Rust Binder must check the credentials of processes when they attempt to
-> perform various operations, and these checks usually take a
-> `&Credential` as parameter. The security_binder_set_context_mgr function
-> would be one example. This patch is necessary to access these security_*
-> methods from Rust.
->
-> This Rust abstraction makes the following assumptions about the C side:
-> * `struct cred` is refcounted with `get_cred`/`put_cred`.
-> * It's okay to transfer a `struct cred` across threads, that is, you do
->   not need to call `put_cred` on the same thread as where you called
->   `get_cred`.
-> * The `euid` field of a `struct cred` never changes after
->   initialization.
-> * The `f_cred` field of a `struct file` never changes after
->   initialization.
->
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Trevor Gross <tmgross@umich.edu>
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-> Reviewed-by: Gary Guo <gary@garyguo.net>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/bindings/bindings_helper.h |  1 +
->  rust/helpers/cred.c             | 13 +++++++
->  rust/helpers/helpers.c          |  1 +
->  rust/kernel/cred.rs             | 76 +++++++++++++++++++++++++++++++++++=
-++++++
->  rust/kernel/fs/file.rs          | 13 +++++++
->  rust/kernel/lib.rs              |  1 +
->  6 files changed, 105 insertions(+)
+On 9/7/24 18:42, Justin Iurman wrote:
+> TL;DR This patch comes from a discussion we had with Jakub and Paolo.
+> 
+> This patch updates the IOAM selftests to support the new "tunsrc"
+> feature of IOAM. As a consequence, some changes were required. For
+> example, the IPv6 header must be accessed to check some fields (i.e.,
+> the source address for the "tunsrc" feature), which is not possible
+> AFAIK with IPv6 raw sockets. The latter is currently used with
+> IPV6_RECVHOPOPTS and was introduced by commit 187bbb6968af ("selftests:
+> ioam: refactoring to align with the fix") to fix an issue. But, we
+> really need packet sockets actually... which is one of the changes in
+> this patch (see the description of the topology at the top of ioam6.sh
+> for explanations). Another change is that all IPv6 addresses used in the
+> topology are now based on the documentation prefix (2001:db8::/32).
+> Also, the tests have been improved and there are now many more of them.
+> Overall, the script is more robust.
+> 
+> The diff is kind of a mess. Since it's "just" a selftests patch, I
+> didn't bother having a series of two patches (one to remove it, one to
+> add the new one back). Let me know if you think it's necessary for
+> readability.
+> 
+> Note: this patch needs this [1] iproute2-next patch to be merged
+> (waiting for David to do so, should be done soon).
+> 
+>    [1] https://patchwork.kernel.org/project/netdevbpf/list/?series=884653
+> 
+> Signed-off-by: Justin Iurman <justin.iurman@uliege.be>
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
+Unfortunatelly we was unable to process this patch before the merge 
+window and net-next is currently closed. You will need to repost it is ~2w.
 
---=20
-paul-moore.com
+Strictly speaking about the patch contents, any chance you could 
+refactor the change in a more 'incremental' way?
+The current format is very hard to review, and even self-tests patches 
+deserve some love ;)
+
+Thanks,
+
+Paolo
+
 
