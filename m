@@ -1,151 +1,174 @@
-Return-Path: <linux-kernel+bounces-333884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4516197CF64
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 01:46:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8586B97CF65
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 01:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 388921C21802
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:46:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C4B2847AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8089319B586;
-	Thu, 19 Sep 2024 23:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ioCMVkuH"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F31C19D8B5;
+	Thu, 19 Sep 2024 23:50:24 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0298817C8B;
-	Thu, 19 Sep 2024 23:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FCD1DA5E
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 23:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726789564; cv=none; b=FBfHcJuXb9CiDVTydU+d325uy9cuMVqSslBK/4VSVNUU2du8sU+kcz7+yxxYGA5ITHegslTrFIf/O2thRlkZD4HsTUz/ZdMKfA9lzxHaO8aJLQArT8OXZSgxYbqTwe2YRzzHcsf+qjG1e4S1zO5Nlixrh156VgMhmzbnBv7t2Hw=
+	t=1726789823; cv=none; b=TASkjTlIXA1W36LnpOuqBCojgFmIyV5Z63SyuisyVbR7JzXYHj8wSUaPIbKarX34ggfqfLQrRrWsPYdfALVbsh4Bc+sLWDcyncelxXi7qwqaQaPuhkUAZob5zkqlUf6hICbLidJ7SOIezFBI6purJ+umoo6hu1pr0hUPqvQD52I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726789564; c=relaxed/simple;
-	bh=vqzZy1A0o5mc5on3eFpuxUagpwrWUON52Xd0/KhOSRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gTRtvkQn86s3SHKXaFG3nVg/R8gBcWu9raXYk+Ed1p9XEJeHtLFpXxFKGY4JUho7vPWm3Plt4OytRvneiK5JnrpbFFOhQUmFk5bkbZpu9E9i6UuVVColj8yUti2z0cVCuSDnazZ8uTAg1lNmSdf05c3bvoWas8NzKOzvlLDp23c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ioCMVkuH; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a83562f9be9so161382266b.0;
-        Thu, 19 Sep 2024 16:46:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726789561; x=1727394361; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oNw+KwgX5BU49QjrEyk+XQBLcn1osmOHz4x6fiYtEnU=;
-        b=ioCMVkuHwNBaP3NNTXvTV8+HuJtle2tYihQ33XbvmUxiSeHCVC1F1Qq7EZZf2cnSf4
-         ZMAE2vgZBjBL2ntCFISNuzTV6lwxpEI9Y2fBCcOaDqKyM+zCF/kv+3V4Wdj6ej4sR2AI
-         gQJWwHZ8A14JTCLOOUVTzoYPXlMLln9MzQWg03sor3n8Rkpa5qwS1xqfrK4PWGEUZayL
-         tE9UKXmJObyXpgrryRl+YupCWZA/SQs4Tv01w2xoMSGt9KeZoKE6dRQFVmtiOpWJIIJF
-         Zv/Nd84H3+p2WNFVHbtg4NW2n8Vdh3NNMUn1W9YaKV68iB5Ba3LLbMRvF1MHkFuMsfwI
-         qsCg==
+	s=arc-20240116; t=1726789823; c=relaxed/simple;
+	bh=+j+1M7v9BuEbK8mliB7Gv6cMOFzsGBaBok+YVzuUlXk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XJRmNyCmhX/ZR+cH6J/t8x3bRkTfCib86wbLTpAEtk5SaBWV+Ngz9qG8+4lKT8qh/Ds5KZBx4lplLzPnZEr63ZsDCv7sjR3LSVRNGdO+3i5NVnlZDP0mUlqFZUASXsVqRHM2WbGj6fvbkGp90NiVGPJkhFnqhaSrsbb7a+ZCdK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a0cadb1536so486045ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 16:50:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726789561; x=1727394361;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=oNw+KwgX5BU49QjrEyk+XQBLcn1osmOHz4x6fiYtEnU=;
-        b=BOKOLeB35SzNyLRHciXOLyuI6Oj/fdZNbsoyTWfHlePpgA5UAO0neY1JCMnf+KoKlN
-         reYoWQzf1OGEtZ3E+sqHJNLYg107KI2srRXZHgyneYGd0cnBIvmal2It0dDV/wa0Vg0b
-         sXYlYSsXQ6EyImbhXx2UNCSSG2DS9gLj0o2GkrGM3c0917jetCVjEqCeaM/ZQ6mqkG23
-         FeG2JjHVG+WO0zBLvM7wKfz+VFMmnHUjfQwYIuuScwDCR2naNXVS9Jt5CzjLkn7TMohS
-         /6cA6XORQSsibYcEPYNRprpcDAV65dCgKM32ya5QB2ye+hrRelgdanY+0b4Ev/+hizPJ
-         ia3A==
-X-Forwarded-Encrypted: i=1; AJvYcCU3R1DGe3z2j2M7uccoYrOba8CfHTptnSqyO23gtuMNlLkCLdNTIyUHixd9BD1H7yptAvG5QpEcOfAfTA==@vger.kernel.org, AJvYcCWVb70xNc1VYq5wOgXy4lomDQGymv4eVwy0hjApldY06LT3/a26l/1gEPXkWDR3zN3qRGy0XqqSDQAS7nE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpcGo3g6kOV1wyJ8BHJWb4dVZy3gjrsKDakXfWgrFkpT399N8L
-	T2dOPBG1cQ1Wz/QTthkjIMwTerShihqqprEFqypCyrbkDQjTcHOE
-X-Google-Smtp-Source: AGHT+IFuVKoQTQFMny/yuT3vo0BKylSf06Z3BFNJPHcSsPHHr+ulRz3bWS+YDcPD3QlRd8POiTtjIg==
-X-Received: by 2002:a17:907:97c1:b0:a90:d1e1:eed0 with SMTP id a640c23a62f3a-a90d4fc8432mr65030866b.9.1726789561062;
-        Thu, 19 Sep 2024 16:46:01 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f42a6sm773046166b.70.2024.09.19.16.45.57
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 19 Sep 2024 16:45:59 -0700 (PDT)
-Date: Thu, 19 Sep 2024 23:45:57 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mike Rapoport <rppt@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Wei Yang <richard.weiyang@gmail.com>
-Subject: Re: linux-next: manual merge of the random tree with the memblock
- tree
-Message-ID: <20240919234557.hsvajq4qp4u3mhtg@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240827150453.26bff4c3@canb.auug.org.au>
- <20240919145356.2f205696@canb.auug.org.au>
+        d=1e100.net; s=20230601; t=1726789821; x=1727394621;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I6FXrxzIyYKClICyjTP1w1uk86Bg0/yZXIYu4nr8pj0=;
+        b=T0EoCYKAt4g2HM0U5eFxhQkWRpi46vZ1SLziHEyFbTlhuXr7NPX+iSArZZLERAFxg3
+         owyvv97KV6vkeUA79oA3BFfqiVlQuX6Aa4au6NqpKkQvAm3a64fFirU/CmT4YTjQssSs
+         /JL8OhsM+sUfmkvq8UgAYOnf1mNIBz36Jb8a9J5UY9eo2u+VV8vYv+UvpegXvOzyiqxZ
+         POKkGZuj5WtxbjMpVI/JfFARmtY9WU6wpYMZ+Bco+UvJP1m8/VhXn+j+kb8FHFBRAu2F
+         ET5SbSUFg84/QZv/TlkHqOaUQWMm1YKleWl4y6jlONxmmQ60MnMk36npYKCd+EavR2++
+         agrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOrFEg10VTBQxoI/CrOgzwRg/2H5Gd94Yj2NsvcAzqNGRTJ7cUaoJZZ1I2i31ts9UuQlNkoZuKYwe5AUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHNOPHPCj65ShFGBmpCb8UnLWmsRzBdCFy5tcU9OuDXxPiTXWc
+	6nhpn15nbwSSVtuec24yNnWj80ETCqKaZg5L1el6KPhH386fAfHEw2uKfGshGOMA1LyHaCQvP2x
+	ab26pPk39TdfsRbgs2OgSXYDkfRDq20uRv2lN0qf1VHvk2jhi5GpGIoc=
+X-Google-Smtp-Source: AGHT+IEuBFhMjtwjHpyJFM4nz2NyxXrjbKjOKuYzf5j1OYkGGAu6t2cYXDpYUb8zpFIMjtDzPQZhS6gXKsy4zOqnQd03ckw3HDgG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240919145356.2f205696@canb.auug.org.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-Received: by 2002:a05:6e02:1c2f:b0:3a0:5642:c78 with SMTP id
+ e9e14a558f8ab-3a0c8cdad80mr12485335ab.15.1726789821036; Thu, 19 Sep 2024
+ 16:50:21 -0700 (PDT)
+Date: Thu, 19 Sep 2024 16:50:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ecb8bd.050a0220.2abe4d.0003.GAE@google.com>
+Subject: [syzbot] [btrfs?] WARNING in btrfs_create_pending_block_groups (2)
+From: syzbot <syzbot+b0643a1387dac0572b27@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, wqu@suse.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 19, 2024 at 02:53:56PM +1000, Stephen Rothwell wrote:
->Hi all,
->
->On Tue, 27 Aug 2024 15:04:53 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Today's linux-next merge of the random tree got a conflict in:
->> 
->>   tools/include/linux/linkage.h
->> 
->> between commit:
->> 
->>   d68c08173b70 ("memblock tests: include export.h in linkage.h as kernel dose")
->> 
->> from the memblock tree and commit:
->> 
->>   9fcce2aaea8a ("selftests/vDSO: fix include order in build of test_vdso_chacha")
->> 
->> from the random tree.
->> 
->> I fixed it up (see below) and can carry the fix as necessary. This
->> is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
->> 
->> diff --cc tools/include/linux/linkage.h
->> index 20dee24d7e1b,a48ff086899c..000000000000
->> --- a/tools/include/linux/linkage.h
->> +++ b/tools/include/linux/linkage.h
->> @@@ -1,6 -1,8 +1,10 @@@
->>   #ifndef _TOOLS_INCLUDE_LINUX_LINKAGE_H
->>   #define _TOOLS_INCLUDE_LINUX_LINKAGE_H
->>   
->>  +#include <linux/export.h>
->>  +
->> + #define SYM_FUNC_START(x) .globl x; x:
->> + 
->> + #define SYM_FUNC_END(x)
->> + 
->>   #endif /* _TOOLS_INCLUDE_LINUX_LINKAGE_H */
->
->This is now a conflict between the memblock tree and Linus' tree.
->
+Hello,
 
-Do I need to send a new version? 
+syzbot found the following issue on:
 
->-- 
->Cheers,
->Stephen Rothwell
+HEAD commit:    d42f7708e27c Merge tag 'for-linus-6.11' of git://git.kerne..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10795900580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1c9e296880039df9
+dashboard link: https://syzkaller.appspot.com/bug?extid=b0643a1387dac0572b27
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11ede797980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c4dd67980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b879ea3b7dd4/disk-d42f7708.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/812a7fb7bfcc/vmlinux-d42f7708.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/806a22d4adbf/bzImage-d42f7708.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/b7ab2abbef2a/mount_0.gz
+
+The issue was bisected to:
+
+commit b2f78e88052bc0bee56bbf646d245fcfb431a873
+Author: David Sterba <dsterba@suse.com>
+Date:   Thu Jul 22 18:54:37 2021 +0000
+
+    btrfs: allow degenerate raid0/raid10
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17fee277980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1401e277980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1001e277980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b0643a1387dac0572b27@syzkaller.appspotmail.com
+Fixes: b2f78e88052b ("btrfs: allow degenerate raid0/raid10")
+
+BTRFS info (device loop0): balance: start -s
+------------[ cut here ]------------
+BTRFS: Transaction aborted (error -28)
+WARNING: CPU: 1 PID: 5219 at fs/btrfs/block-group.c:2752 btrfs_create_pending_block_groups+0x14f9/0x1710 fs/btrfs/block-group.c:2752
+Modules linked in:
+CPU: 1 UID: 0 PID: 5219 Comm: syz-executor144 Not tainted 6.11.0-rc7-syzkaller-00151-gd42f7708e27c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:btrfs_create_pending_block_groups+0x14f9/0x1710 fs/btrfs/block-group.c:2752
+Code: c0 fd 4c 89 f7 be 03 00 00 00 e8 d2 58 d7 00 e9 86 f9 ff ff e8 a8 eb c0 fd 90 48 c7 c7 00 47 2e 8c 44 89 f6 e8 38 0f 83 fd 90 <0f> 0b 90 90 e9 7b fe ff ff e8 89 eb c0 fd 90 48 c7 c7 00 47 2e 8c
+RSP: 0018:ffffc900034776a0 EFLAGS: 00010246
+RAX: 7f15963a9c8f3600 RBX: ffff88807c9b4001 RCX: ffff88802be1da00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90003477960 R08: ffffffff8155b292 R09: fffffbfff1cba0e0
+R10: dffffc0000000000 R11: fffffbfff1cba0e0 R12: 0000000000000000
+R13: dffffc0000000000 R14: 00000000ffffffe4 R15: ffff8880323c49c0
+FS:  00005555919dc380(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f46f00c80f8 CR3: 00000000253ae000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __btrfs_end_transaction+0x150/0x630 fs/btrfs/transaction.c:1066
+ btrfs_inc_block_group_ro+0x648/0x700 fs/btrfs/block-group.c:3043
+ btrfs_relocate_block_group+0x440/0xd90 fs/btrfs/relocation.c:4090
+ btrfs_relocate_chunk+0x12c/0x3b0 fs/btrfs/volumes.c:3374
+ __btrfs_balance+0x1b0f/0x26b0 fs/btrfs/volumes.c:4158
+ btrfs_balance+0xbdc/0x10c0 fs/btrfs/volumes.c:4535
+ btrfs_ioctl_balance+0x496/0x7d0 fs/btrfs/ioctl.c:3675
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f46f004bae9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcdde70d78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f46f004bae9
+RDX: 0000000020000040 RSI: 00000000c4009420 RDI: 0000000000000003
+RBP: 00007f46f00c45f0 R08: 00005555919dd4c0 R09: 00005555919dd4c0
+R10: 0000000000005598 R11: 0000000000000246 R12: 00007ffcdde70da0
+R13: 00007ffcdde70fc8 R14: 431bde82d7b634db R15: 00007f46f009401d
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
--- 
-Wei Yang
-Help you, Help me
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
