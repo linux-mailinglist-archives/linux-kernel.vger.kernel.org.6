@@ -1,128 +1,174 @@
-Return-Path: <linux-kernel+bounces-333770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62D2997CDD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:49:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE86897CDD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EEBE1F23DDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:49:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B6AD1F23E37
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7152033A;
-	Thu, 19 Sep 2024 18:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BA72033A;
+	Thu, 19 Sep 2024 18:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b="MSuxslZ8"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KLurUU4s"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F1D23759
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 18:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4797F291E;
+	Thu, 19 Sep 2024 18:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726771732; cv=none; b=L5ixjM/RH3VMCpaXhdA6e5VYT9hgMBiSqcjF8/N7jtu2FaK/W8qnMXmX3yum3xFu2V7rCjzTAQBz9VEB4UFv9RL620I20QanFDcKIFWDoHAmxitvWiPWRUBX1Bkjdk6NAo6r8OPYslbDMyFANF94SRKlTaUJ6mCDVXNwXi/afsk=
+	t=1726771933; cv=none; b=JkNM2GDCyRamCcVCXY9apSVqeu0m69MRf1hxYr9AvpwrfFm58bduTP46WMmcBKevH544y8m+YUzN6nX7h4kDZMtazbkkWJ6+z2ZmSsvv9egyvzT/rV3hHrqtEFlnO8znip5u7MGYYu7BcfE2srgXfQRSpbMZsmhsPYUXFpOytOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726771732; c=relaxed/simple;
-	bh=tBkFsOEGKki/Ujou0mi5ka3jQDUd4rYy6dVeLu5RC6w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IRq9fK/4mTRKRBR+TeWQOcXzUL4PwLlR4o6g/ybEHshErJnprAmu7RwQJZmAK+BAwe+LyT6pMsiJgiED0osdwaaB2UqXb68H2FfN820tVtCV+DdpZvm0Tv3a860W0LlsMnmMecoXnWp7T1j5YjtKtQA92FKYlrpUwttDDigi1mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org; spf=pass smtp.mailfrom=kali.org; dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b=MSuxslZ8; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kali.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374b9761eecso861527f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 11:48:50 -0700 (PDT)
+	s=arc-20240116; t=1726771933; c=relaxed/simple;
+	bh=gJ4IWCfyHQTyAa+Kg5oyCF1nbi/ZbieJ5/JWjqzNrmM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kKrOyYcqGvdPJpQrV/ddpIv6dVngW0k3lPNZeV1OLiX6cfeSbQp6K5aGE6qPGdghzi4u/D3tUQykidESKp8OvAsz7rylllwByiYMWP3WqHHR9RLk/+4oO78CzgUCeSMAK/nP1gdDcmK/n6BZHYATeMd7zl2h578ZMPqii7jB5zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KLurUU4s; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f75c205e4aso14237551fa.0;
+        Thu, 19 Sep 2024 11:52:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kali.org; s=google; t=1726771729; x=1727376529; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1726771930; x=1727376730; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5NKj5Iywn8pi1HV6RavjZasiS19LGez3AtSbupjyBc4=;
-        b=MSuxslZ8E9y9YmWorzOb7RA3Csz+2Okf1MY9ZvOQwn1+sKSyIokoQ9ZXhP7UpHPAYW
-         NOu41thxDOC6siauWBFnbk86zqlCxnFU+EY5UXLM3uUvzSGBVgcY3yWHQQQPzrhJO9sq
-         DclOU6+tYc/4qXtepr8bLvlv6j8p5LstNqOnpk7cROnWS2qw6O1IsMUZ/mVQ2KsiVw78
-         8/wWfXJC0De51TbrfLbv/e/shjHSp00fmCWXpLfmKCDxkvbaonhWqUF2OKz2IRlo8JFJ
-         UMAI0qxgTsXwKlRpVGPhIFkRZ6gSeF8HVD5DgShbPjZ0oni6wBiQQmYZuDDUEKGq+uZU
-         FfkQ==
+        bh=/U1C4mUu4VDiFkBMlpROb2ZCYD26GbiPKZSxK9yppTk=;
+        b=KLurUU4s4bldixsfCslZBwPbNckw1zblT5tVSMykrFspAhFq0FhuxDomtPiA4Sy1Ph
+         E3+p6KqoDG2GrTHYeuX9xDfx9ZvW2GQE3DsjJfFym8GDf5AvA0jmRkBJyxEXA3AWdOs9
+         D4T/oMgRoANhSiSDce8IutS2BxlTIw4DdF+qr4+kdnnBctQkrb2jAxmHy3LDI0NKDNl9
+         N+Bfh0Tq0V9BLsJqKTBo8KU9lSM0Ih9onqNEDB/733joaB2+ceQfi3h2MRzJJT0raYPU
+         vs3ngpOzOBeBntmg8n0Tku+9xH247Es6UheFkp+90qZH0ASLBYWADSGJhJPe2aOFnP9+
+         hMEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726771729; x=1727376529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1726771930; x=1727376730;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5NKj5Iywn8pi1HV6RavjZasiS19LGez3AtSbupjyBc4=;
-        b=a1OpY8chU5xIsNXsRnsS0f6cCtQbbrqV0QXD6StFGRoV2ELWdyVIzUXkZzM4qhvBwP
-         cXDVnb9Jy5LruLBRI6DK4Uyu7q07R317BarcgtssQzCntcIcVt9ZJmR+wtyG5xIkwYyc
-         F3yv5BIjWdOYe+lhBkC2Wphl7U/KvPyr+qe9nXGT+EM23Ng6Tv2nF2PTPT5pYC+IYkKo
-         GuVrHjFsR0qodFBdBU3+Ka6M1EvmB0/SZvch9Ml7PSJY7bs/jawXjVA5yPOPYLtjI1XR
-         k/6pw3DBjN16LJ/3gueW3XZ2/xrHyaAuHipV6oCuA/DnnXqPjlja2wxV2rWBqd4MHPqu
-         +g0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWryTKpo4K0RUalV5UqVJK27BRN6WTYhZFiiiHfdQbCgcwoiVB2LGSKrUaVChATl4MOYHCH+/B9loQX9KE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVzdY5OiWclMCLWMXGzAzKKm1F7FkUTIgt9JgRqRxdHWNLOWeO
-	VONh6SxC/NjnMPAtrz5bA0uFE/KZPemj6iCPtPdjZ09rGcBBxAX4rwhzmYbwK5H4+iCjybB/xTL
-	r1UEkxGKylr1ExiqKofFTP48qoesnr+RFEPpuZ9GAshn/yg3jvK62tw==
-X-Google-Smtp-Source: AGHT+IFwZ00ICb5UCjsH6ziqz8Xe7HABIip24+gKr+pPgaD0kCyAzp+K0Fw2+tCzsUPMbb7TJM5PAUtR0m7y7h5wl6k=
-X-Received: by 2002:a5d:410b:0:b0:369:9358:4634 with SMTP id
- ffacd0b85a97d-37a42277e15mr193773f8f.19.1726771728546; Thu, 19 Sep 2024
- 11:48:48 -0700 (PDT)
+        bh=/U1C4mUu4VDiFkBMlpROb2ZCYD26GbiPKZSxK9yppTk=;
+        b=Mmo+pHoFzheJb9JHJpGOlSrEfS8m+UZQzmzexAlfcMLMTMjlYs+Zr8tvITFFt+V3vY
+         SyTuwZ8QIhsGlcNtMFCF/mttPiTnw8x1RNVVeItmrUvlGewukeJ64YJeVBB4gPyxHAXs
+         2tu0RrNcL2PZUfWtD4klb+vOd3BAQ8M6pX57NwZsflJAmZAJzRNTO7oiCJ8owgL+nD9W
+         QaKvP88msEiVMM7GcznTG+6H8GQ3jybtas1r+3BU2wy3Sgh+McCRyRni+wMppvf7F+QH
+         qSt8LKm1QI01E5Vac6iH/Bxok9etsi+OBmAPsFB/QG983I5m/AEzH8xqS1JWAe8ajlWq
+         lhSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNVAbzcztGkRKEEa5969TawtieofCN9iCKN97VbYf8sa3Wrw1ank+gIkUZcZe1z6T9OqKpREZC0LI=@vger.kernel.org, AJvYcCUoJSCUNstjz3N1ule5d81wdGE6f0Og6TBqigLFg08TNwSzmuufK49Me140F+j/RG41f2ZjymlfRDVkabnz@vger.kernel.org, AJvYcCXF/ROJ7y0MNrxOTPzcmoZr9/kh4N1Tic4PqcHwg0hd/BAEV5eyXhZsOsrRwn4YNusD+aPxEmND@vger.kernel.org
+X-Gm-Message-State: AOJu0YygnfMSd2J9VytoLBiSfHYp0Ujd3+KdkbmqWJEnqefuc+xcLiAc
+	mtvLXWtvYixRDFLsKN5Ctq5sRVgC06c3eaoIQjcWzR0gWclR47Ez
+X-Google-Smtp-Source: AGHT+IEwLSaQuYkgJI3L+iKFj+a62LBltSQOe/bdEeJFTU8ZeTslhYKgdz8G3ouvO2latWGRKJ8CnQ==
+X-Received: by 2002:a2e:4a19:0:b0:2f3:fd6a:d170 with SMTP id 38308e7fff4ca-2f7cc5adbf8mr102801fa.36.1726771929935;
+        Thu, 19 Sep 2024 11:52:09 -0700 (PDT)
+Received: from localhost ([95.79.225.241])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d37f949sm16792061fa.93.2024.09.19.11.52.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 11:52:08 -0700 (PDT)
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Viresh Kumar <vireshk@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Ferry Toth <fntoth@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ferry Toth <ftoth@exalondelft.nl>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] dmaengine: dw: Select only supported masters for ACPI devices
+Date: Thu, 19 Sep 2024 21:51:48 +0300
+Message-ID: <20240919185151.7331-1-fancer.lancer@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240919135854.16124-1-fancer.lancer@gmail.com>
+References: <20240919135854.16124-1-fancer.lancer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240919-topic-apps_smmu_coherent-v1-0-5b3a8662403d@quicinc.com>
- <D4A2FKPTXHS5.3AHU7ZEKFVMGG@fairphone.com> <2fb16b35-e6c5-4239-a745-a9dd7412539a@kernel.org>
-In-Reply-To: <2fb16b35-e6c5-4239-a745-a9dd7412539a@kernel.org>
-From: Steev Klimaszewski <steev@kali.org>
-Date: Thu, 19 Sep 2024 13:48:37 -0500
-Message-ID: <CAKXuJqj=5wZg2+EZOmbS4TjrvqNm9UhsqeSPHZyVbOLnir_juA@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/11] Affirm SMMU coherent pagetable walker
- capability on RPMh SoCs
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Luca Weiss <luca.weiss@fairphone.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	cros-qcom-dts-watchers@chromium.org, 
-	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Konrad Dybcio <quic_kdybcio@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Konrad,
+The recently submitted fix-commit revealed a problem in the iDMA32
+platform code. Even though the controller supported only a single master
+the dw_dma_acpi_filter() method hard-coded two master interfaces with IDs
+0 and 1. As a result the sanity check implemented in the commit
+b336268dde75 ("dmaengine: dw: Add peripheral bus width verification") got
+incorrect interface data width and thus prevented the client drivers
+from configuring the DMA-channel with the EINVAL error returned. E.g. the
+next error was printed for the PXA2xx SPI controller driver trying to
+configure the requested channels:
 
-On Thu, Sep 19, 2024 at 5:07=E2=80=AFAM Konrad Dybcio <konradybcio@kernel.o=
-rg> wrote:
->
-> On 19.09.2024 9:00 AM, Luca Weiss wrote:
-> > On Thu Sep 19, 2024 at 12:57 AM CEST, Konrad Dybcio wrote:
-> >> I only read back the SMMU config on X1E & 7280, but I have it on good
-> >> authority that this concerns all RPMh SoCs. Sending as RFC just in cas=
-e.
-> >>
-> >> Lacking coherency can hurt performance, but claiming coherency where i=
-t's
-> >> absent would lead to a kaboom.
-> >
-> > Hi Konrad!
-> >
-> > You want people with the affected SoCs to test this I imagine?
->
-> Yeah, would be nice to confirm
->
-> >
-> > Just boot it and see if it doesn't implode, or do you have any more
-> > elaborate test plan for this?
->
-> No, booting should be enough of a test
->
-> Konrad
+> [  164.525604] pxa2xx_spi_pci 0000:00:07.1: DMA slave config failed
+> [  164.536105] pxa2xx_spi_pci 0000:00:07.1: failed to get DMA TX descriptor
+> [  164.543213] spidev spi-SPT0001:00: SPI transfer failed: -16
 
-I have tested sc8280xp on the Thinkpad X13s.  It still boots and
-nothing seems to be more broken than usual (kidding, it seems to be
-running exactly as it was before the patchset was applied.)  I will
-try to find the time to test sc8180x on a Flex 5G as well as the
-sdm845 on the Lenovo Yoga C630, but I can't promise I'll find the
-time.
+The problem would have been spotted much earlier if the iDMA32 controller
+supported more than one master interfaces. But since it supports just a
+single master and the iDMA32-specific code just ignores the master IDs in
+the CTLLO preparation method, the issue has been gone unnoticed so far.
 
-Tested-by: Steev Klimaszewski <steev@kali.org> # Thinkpad X13s (sc8280xp)
+Fix the problem by specifying a single master ID for both memory and
+peripheral devices on the ACPI-based platforms if there is only one master
+available on the controller. Thus the issue noticed for the iDMA32
+controllers will be eliminated and the ACPI-probed DW DMA controllers will
+be configured with the correct master ID by default.
+
+Cc: stable@vger.kernel.org
+Fixes: b336268dde75 ("dmaengine: dw: Add peripheral bus width verification")
+Fixes: 199244d69458 ("dmaengine: dw: add support of iDMA 32-bit hardware")
+Reported-by: Ferry Toth <fntoth@gmail.com>
+Closes: https://lore.kernel.org/dmaengine/ZuXbCKUs1iOqFu51@black.fi.intel.com/
+Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Closes: https://lore.kernel.org/dmaengine/ZuXgI-VcHpMgbZ91@black.fi.intel.com/
+Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+
+---
+
+Note I haven't got any device with the Intel Merrifield iDMA32 + SPI
+PXA2xx pair to test out the solution. So any tests are very welcome. But
+based on Andy' (see the reported-by links) and my investigations the fix
+seems correct.
+
+Link: https://lore.kernel.org/dmaengine/20240919135854.16124-1-fancer.lancer@gmail.com/
+Changelog v2:
+- Implement only the "fallback" conditional statement (@Andy)
+- Fix incorrect NoF masters literal (@Andy)
+- Drop redundant empty line (@Andy)
+---
+ drivers/dma/dw/acpi.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/dma/dw/acpi.c b/drivers/dma/dw/acpi.c
+index c510c109d2c3..806620f5a406 100644
+--- a/drivers/dma/dw/acpi.c
++++ b/drivers/dma/dw/acpi.c
+@@ -8,6 +8,7 @@
+ 
+ static bool dw_dma_acpi_filter(struct dma_chan *chan, void *param)
+ {
++	struct dw_dma *dw = to_dw_dma(chan->device);
+ 	struct acpi_dma_spec *dma_spec = param;
+ 	struct dw_dma_slave slave = {
+ 		.dma_dev = dma_spec->dev,
+@@ -17,6 +18,13 @@ static bool dw_dma_acpi_filter(struct dma_chan *chan, void *param)
+ 		.p_master = 1,
+ 	};
+ 
++	/*
++	 * Fallback to using a single interface for both memory and peripheral
++	 * device if there is only one master I/F supported (e.g. iDMA32)
++	 */
++	if (dw->pdata->nr_masters == 1)
++		slave.p_master = 0;
++
+ 	return dw_dma_filter(chan, &slave);
+ }
+ 
+-- 
+2.43.0
+
 
