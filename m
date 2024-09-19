@@ -1,132 +1,197 @@
-Return-Path: <linux-kernel+bounces-333026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0ADE97C261
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 03:12:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B3697C268
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 03:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7C9283240
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 01:12:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0B6928376F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 01:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218F4171C2;
-	Thu, 19 Sep 2024 01:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17C0171A1;
+	Thu, 19 Sep 2024 01:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FqdpvgnR"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="nQiCg+Jw"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5E179D2;
-	Thu, 19 Sep 2024 01:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C060DBA42;
+	Thu, 19 Sep 2024 01:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726708362; cv=none; b=hDfpajYt065QF0QG7j1fILoRUzM4sA+8si0ERf8qxQZ84QXBXudhIs9l6A94f93B7UAeKLv7y91sNJAUlIPW7d5xNRcdd7KjZvXTddbrNHGHalrvfjD5nXMhIvTFnBywKYfYdI6MnvdlmvrzjzuATSJgljQKcQ4+jMLpAGHd3s0=
+	t=1726708966; cv=none; b=HoAyed71JVjYY3ggIlSuhOCMTID5wSOCb89o1vEvjc4W4+HJ4gMB9TTwtgsBfcGuuo0v4aOrR0KhD5J1mB7vKCCghhmS2CfKLBgdJnqOUoP9mZovaEt6y5FHelj6NmJjLSkyHpcq9ysJrhcp95jvp2p+VeNWGfHd5ljGoeFKt/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726708362; c=relaxed/simple;
-	bh=o3G+mZv7Dg4WUGawn4ExcHsCIklE/37c+rlu+u2/N0g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ohOzQxMdVfu6IEe9FDAfO/HRe8UGA2+0op43twNr3dCnsl5itTCPqPnmMn+3Kqev7VZogi+iZzpc8cxVou4riuOznbqU2kAAZxBR6f/9fxCOFoHyNVqshZXF4Ih9IQavFDffIBGbtBdQ/iSfiIAksIzVMneeY74LQAhjB12AkTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FqdpvgnR; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5365b71a6bdso300351e87.2;
-        Wed, 18 Sep 2024 18:12:40 -0700 (PDT)
+	s=arc-20240116; t=1726708966; c=relaxed/simple;
+	bh=HjPUrKu+j/D2JEYbilGLkObOoJh09svt2PAMGh/GDQ8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KrnVteHww8KjBjZVjnAftOLL2o+Pa87qYTHD78+1nUZDl8E6Z5xtqqzeG0xN3q0gw3cl20N/rLhrJiSxuIusUkm8+ZfW89A0POp1h++8Ou67X/xbT/4XWvZ7gYs78zUkIevTPMa3RTZdW1UHpvhVhtAxGLrn98I0a2n6MOpAf1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=nQiCg+Jw; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726708359; x=1727313159; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dB1gc+yGLOs2kchtI7XwJyvizaEutRuYGrskAUCT1b0=;
-        b=FqdpvgnRxLz03i70gUpN88KdjO/JgUrynbzNtzNVcPSmxk7246t9ZaY0g6UuSDw/Oj
-         kF5Nei+BaLuJkaeao2ZBMRDq7g/K6ChYf0UFWAB9TQsyF8pdd+KHcN6eWPFRcGijRy95
-         S/eTeDuGVLFMnb8ducmw6xirIlY/rtbTO9dDPj+KxvOTYxwY7sMZq6ymbgYH1T6l/WQA
-         vTg7s1h+2lJ/NSuH4YXJZd3zr7N9d1vbdH4YldLCQpzv69awTqmQsjK6LYYVEkKkBpjO
-         N9WwjJ/Y4nbVI+S843fSCu5Fny8fg6GfQUO++AnCuckOGFaqbTWEOQaHfBY3tk7iKz84
-         jExw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726708359; x=1727313159;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dB1gc+yGLOs2kchtI7XwJyvizaEutRuYGrskAUCT1b0=;
-        b=exL78innrdSyIXH0wFkErqHdpAfFjMPYkfguvYyGNWn7KNB87w665O/c04FyDOu+VR
-         gEM0OcenmeHNyqoift/FcxKxRoA/pB4DEppEsFn7zOALZw0A/D6W6OOtxRN7fo/0DBCM
-         XKLYy1aXu/MfQwiQOiYITo8CSL9M85hRDWyqcztdTwC5KZPAQ9a6avTHu2s/ur5kSjTy
-         MdIRbAn0YSNLRTzfv3WxyqJ2G8Dl46Z9qqUgowZ2F/x4GIDiDp9nSOYN/We/iPuv+WGI
-         KBJdokOHnVvB+7X4flHVbfScH2BfPrs6YtjOYrN6AvaGVm1nP49eBSDsG4UlLQB2ZrY9
-         KTsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5rQrW/yycR1l0LWAk0H6rgSPPTt88OV8yOzlfsQa+3oy1Nde/nHCpb8ercW/pRlDzcEqByzBa49VxVJCC@vger.kernel.org, AJvYcCVK8EslrKau8V8UxiZVguuoZX2bElegc+ZlQECqK58ZJY8Kzs8IgANWru34ojex749KQ3ZSw1Oymp0KoyGKXj6pwygZ+Tdw@vger.kernel.org, AJvYcCVWgy9A2YrvFSD5kP0lqLb9MXIoSM3CwzapuQ2MZ6nRA0qbQTyvVViv05znQ4/wa8OLrfakjlQb/A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhgjltQYTcQXQL98IQBCyshy7Y9NbqPV/k3CzsQv2K9IXQmrAY
-	CST0rE3hsLTmPxw9Hm8w+G6nmtp7TzlfTFayJBvksbNdYBKAA0Wd0OOmI3lFF0wbjvF61pKivFs
-	Lgr/XG4k+z37dpF6dur+VF9QEii4=
-X-Google-Smtp-Source: AGHT+IFOLp2ZhO84fb64DPm0Rm8L/PWOA9f5FFy8m43tqUXG9/+REZx2PzWFEAWtEgBdHUkKplJvqCdc9BhQy3g1Yl4=
-X-Received: by 2002:a05:6512:a8d:b0:530:e323:b1d0 with SMTP id
- 2adb3069b0e04-5367feba0a6mr10735885e87.9.1726708358747; Wed, 18 Sep 2024
- 18:12:38 -0700 (PDT)
+	d=codeconstruct.com.au; s=2022a; t=1726708955;
+	bh=Q9bLimoZ5dqO/v/xStiEtBFXXxiEU7NxX3hkGV7VX/4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=nQiCg+JwJb/V4sGdSmNJ3xEHu9mtyIOtCwDxbSWQ76UXYP+XVeBk3rKqwz3OUw26i
+	 B3Uh7p7Se6Kk15jEjrlERxP3FOSn6Zt5lzNMa24SUk4h4e0qHs0L3q4z9PfgyDQjI8
+	 yA0bfCBJKbplMl2lfcqTQp9psRYryV8O+ZVrPHXLQ1npr5RLO8e/443pDH9rjKgSCA
+	 eOWLb2Khz8AWakal2b8PCLPnsRtfwVcJZFJehBxlwyIG+UpyZQyPFD4z4ACEpwy35b
+	 3wPFTTJMAALOCNdH3wB5GYm5oQ3kc5t06MfUk8RXNtVCIg84TTKV93++/sZDLFTf8L
+	 w3qPq6AubH1vw==
+Received: from [192.168.238.88] (ppp118-210-188-185.adl-adc-lon-bras34.tpg.internode.on.net [118.210.188.185])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 5A09965027;
+	Thu, 19 Sep 2024 09:22:27 +0800 (AWST)
+Message-ID: <11a0ae09bc722b1f21ae76df99bd8c1d885c85d1.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 3/3] ARM: dts: aspeed: yosemite4: Add power module
+ and ADC on Medusa Board
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
+Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, Guenter Roeck
+ <linux@roeck-us.net>, Noah Wang <noahwang.wang@outlook.com>, Peter Yin
+ <peteryin.openbmc@gmail.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>,  Lukas Wunner <lukas@wunner.de>, Laurent
+ Pinchart <laurent.pinchart@ideasonboard.com>,  devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org
+Date: Thu, 19 Sep 2024 10:52:24 +0930
+In-Reply-To: <20240918095438.1345886-4-Delphine_CC_Chiu@wiwynn.com>
+References: <20240918095438.1345886-1-Delphine_CC_Chiu@wiwynn.com>
+	 <20240918095438.1345886-4-Delphine_CC_Chiu@wiwynn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240918203559.192605-1-jarkko@kernel.org>
-In-Reply-To: <20240918203559.192605-1-jarkko@kernel.org>
-From: Pengyu Ma <mapengyu@gmail.com>
-Date: Thu, 19 Sep 2024 09:12:26 +0800
-Message-ID: <CALSz7m3SXE3v-yB=_E3Xf5zCDv6bAYhjb+KHrnZ6J14ay2q9sw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] Lazy flush for the auth session
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, James.Bottomley@hansenpartnership.com, 
-	roberto.sassu@huawei.com, Mimi Zohar <zohar@linux.ibm.com>, 
-	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 19, 2024 at 4:36=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
->
-> For the sake of:
-> https://bugzilla.kernel.org/show_bug.cgi?id=3D219229
->
-> The baseline for the series is v6.11 tag.
+Hi Ricky,
 
-Clean applied on v6.11 upstream kernel.
-Boot time is 8.7 seconds which is almost good as 7 seconds without TPM2_HMA=
-C.
+On Wed, 2024-09-18 at 17:54 +0800, Delphine CC Chiu wrote:
+> From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+>=20
+> Add RTQ6056 as 2nd source ADC sensor on Medusa Board.
 
-Thanks,
-Pengyu
+Can you unpack why this is related in the commit message? I assume it's
+for something like battery monitoring? An explanation would help
+though.
 
->
-> v3:
-> https://lore.kernel.org/linux-integrity/20240917154444.702370-1-jarkko@ke=
-rnel.org/
-> v2:
-> https://lore.kernel.org/linux-integrity/20240916110714.1396407-1-jarkko@k=
-ernel.org/
-> v1:
-> https://lore.kernel.org/linux-integrity/20240915180448.2030115-1-jarkko@k=
-ernel.org/
->
-> Jarkko Sakkinen (5):
->   tpm: Return on tpm2_create_null_primary() failure
->   tpm: Return on tpm2_create_primary() failure in tpm2_load_null()
->   tpm: flush the null key only when /dev/tpm0 is accessed
->   tpm: Allocate chip->auth in tpm2_start_auth_session()
->   tpm: flush the auth session only when /dev/tpm0 is open
->
->  drivers/char/tpm/tpm-chip.c       |  14 ++++
->  drivers/char/tpm/tpm-dev-common.c |   8 +++
->  drivers/char/tpm/tpm-interface.c  |  10 ++-
->  drivers/char/tpm/tpm2-cmd.c       |   3 +
->  drivers/char/tpm/tpm2-sessions.c  | 109 +++++++++++++++++++-----------
->  include/linux/tpm.h               |   2 +
->  6 files changed, 104 insertions(+), 42 deletions(-)
->
-> --
-> 2.46.0
->
+> Add power sensors on Medusa board:
+> - Add XDP710 as 2nd source HSC to monitor P48V PSU power.
+> - Add MP5023 as P12V efuse (Driver exists but un-documented).
+> - Add PMBUS sensors as P12V Delta Module.
+
+Generally if you're listing multiple things the change does in the
+commit message you should have split the patch up accordingly.
+
+There's some good advice here:
+
+https://docs.kernel.org/process/5.Posting.html#patch-preparation
+
+and here:
+
+https://github.com/axboe/liburing/blob/master/CONTRIBUTING.md?plain=3D1#L21=
+-L32
+
+>=20
+> Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+> ---
+>  .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 45 ++++++++++++++++++-
+>  1 file changed, 43 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b=
+/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> index 98477792aa00..e486b9d78f61 100644
+> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> @@ -284,15 +284,25 @@ &i2c10 {
+>  &i2c11 {
+>  	status =3D "okay";
+>  	power-sensor@10 {
+> -		compatible =3D "adi, adm1272";
+> +		compatible =3D "adi,adm1272";
+>  		reg =3D <0x10>;
+>  	};
+
+This was outright busted. The hunk is a fix, as is the second instance
+below. Please separate these out into their own patch and add a Fixes:
+tag to it.
+
+> =20
+> +	power-sensor@11 {
+> +		compatible =3D "infineon,xdp710";
+> +		reg =3D <0x11>;
+> +	};
+> +
+>  	power-sensor@12 {
+> -		compatible =3D "adi, adm1272";
+> +		compatible =3D "adi,adm1272";
+
+(i.e. this one also)
+
+>  		reg =3D <0x12>;
+>  	};
+> =20
+> +	power-sensor@13 {
+> +		compatible =3D "infineon,xdp710";
+> +		reg =3D <0x13>;
+> +	};
+> +
+>  	gpio@20 {
+>  		compatible =3D "nxp,pca9555";
+>  		reg =3D <0x20>;
+> @@ -321,6 +331,17 @@ gpio@23 {
+>  		#gpio-cells =3D <2>;
+>  	};
+> =20
+> +	power-sensor@40 {
+> +		compatible =3D "mps,mp5023";
+> +		reg =3D <0x40>;
+> +	};
+> +
+> +	adc@41 {
+> +		compatible =3D "richtek,rtq6056";
+> +		reg =3D <0x41>;
+> +		#io-channel-cells =3D <1>;
+> +	};
+> +
+>  	temperature-sensor@48 {
+>  		compatible =3D "ti,tmp75";
+>  		reg =3D <0x48>;
+> @@ -345,6 +366,26 @@ eeprom@54 {
+>  		compatible =3D "atmel,24c256";
+>  		reg =3D <0x54>;
+>  	};
+> +
+> +	power-sensor@62 {
+> +		compatible =3D "pmbus";
+> +		reg =3D <0x62>;
+> +	};
+> +
+> +	power-sensor@64 {
+> +		compatible =3D "pmbus";
+> +		reg =3D <0x64>;
+> +	};
+> +
+> +	power-sensor@65 {
+> +		compatible =3D "pmbus";
+> +		reg =3D <0x65>;
+> +	};
+> +
+> +	power-sensor@68 {
+> +		compatible =3D "pmbus";
+> +		reg =3D <0x68>;
+> +	};
+
+See the discussion on your proposed DT binding document; I expect these
+will need to change.
+
+Andrew
 
