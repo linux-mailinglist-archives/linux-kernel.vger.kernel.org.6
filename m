@@ -1,104 +1,145 @@
-Return-Path: <linux-kernel+bounces-333656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C2897CBF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:01:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6821A97CBF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 317222856B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:01:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D8E2285348
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97CF19FA99;
-	Thu, 19 Sep 2024 16:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441101A00EC;
+	Thu, 19 Sep 2024 16:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="NEvcd5Pe"
-Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Uy4kYy8D"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7757712E78;
-	Thu, 19 Sep 2024 16:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=167.235.159.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726761682; cv=pass; b=RNXCb1vfrPtT1CNg9j9crS0At2tgRygW69D4jUf3h13wzeEafb09F2JVLPard/G/zE1ahWu/W/SZjzJT6DD5jR0sd/v7+O9LELS82o4a8+kYDJC4gONVGeV3rCCPOr9zhzT9efWfKXTKnx6EPa0Zj2irt2r3dxUVLudl3htOI84=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726761682; c=relaxed/simple;
-	bh=9apZN3gdncchidJNMgRva76vAr6gjxwT+9Tj84xH6yo=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=qY1oBFnyKWHMv4qJ9vvy7chnO56c6OElTMojFb5LkO2GcrFdOkGwxdjoNBCJFAiXb+3dIKyYhkXuW/aEu3FHYoFE7WIvQlXtFrBEnjqQBSUQTtPm8LdVLa+P4fiIf93E8wqwxWHliJ/iuvSRnINb3OK8v5x1yNLeoFACd8uJ65E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=NEvcd5Pe; arc=pass smtp.client-ip=167.235.159.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
-Message-ID: <31d3465bbb306b7390dd7be15e174671@manguebit.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1726761673;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J5OEabVcJpXqlzpr09AtYa8XVKEt17KM+jff+BcSPVA=;
-	b=NEvcd5PekX1vIQKRMxmsrSIe4iRG4GcBNX3yRuv4tINH1Tm1vrJhZ/7Orp25fdMfejUCPC
-	TBQ+xzHsrakidO5vAaqp33ZmFY1f8m4RT3f+CjPYSowQYkFIoMOzkxrYAhJ6UQiwUwPzJP
-	eN8lH0dEgwaHYYqBvk30ORFL42aTfFc25OHImIsH4Hbuiu803b39Qrwmi6tgVW4pYfxNfE
-	mkW1uQa+QxCpg80RQSre7YgG323MCMzRHQGkW+SUsTSKAfHJlvF6j5u3pFUNIV1ykdZ9Rm
-	W6YNbCiqhDoB7MHy0eJ21nQiMDJip8H1Wr43EfdZzScx8jcmsgVNC+B5QdF9pA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1726761673; h=from:from:sender:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J5OEabVcJpXqlzpr09AtYa8XVKEt17KM+jff+BcSPVA=;
-	b=GTRJw95lKuh+lplAXllOy/GjP9ix5FLgo+OKxANGEByRUNGtNO+DDA56U1srdwxz0YiIRD
-	dBe0fnSytmCe9qEa7wGjcCDgEcFvBecIeiw3qoZ8VbfFBIL7d+mQEq17K/5aG7/qtKlOdL
-	Cymj/3h/yI/hzjKRhCZqzmLvoP+GdK8seCHB5N9qOM/IEz97IsU6WlBbSfZBSrGe7INkoL
-	AC1WrNqq9rbOkU74c/Ov0O2oKEOUZU+u462Un4nJW8o6ooIGKNVcv8b0VtNK7EYLw+zXfK
-	aeSqxADUwTAgOQCoYmbmMEPWm2Jjq/2dX08Is2pqEul6/sXiHcwDNmHHsZDSzw==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.mailfrom=pc@manguebit.com
-ARC-Seal: i=1; s=dkim; d=manguebit.com; t=1726761673; a=rsa-sha256;
-	cv=none;
-	b=ZrC1B9uyEceT34dunHzDViMw8XC+VM/XEenZ6k0PVBkZ+rjcyHgwmTvG6zvynCMmOE+SWD
-	Pb2qtfIiBNXjMS17rVxKj8Kiz6hDLIa0cD2cgGaRyU2D1QdMiLwqUxUyX+sof4bX5CbDNB
-	UaIS15yz5AMH++VXwNZy/WZUpRHSKnD75Vm0z+ShoF5GnuyGeBUXWMcgTbup0W7EkdVnI3
-	RQl3zmrC66AyX//1p+rbe0V8j8lsVzqWxDk/yJVnD+snrDxL/6UGBs4DjSnhQsCkfX3Ctt
-	plGRpG7ql4zSpVeIoc4CwfXq+pNjTfSt8gW0egM+GrCdBXN9ZwqF+UO8Rprj5w==
-From: Paulo Alcantara <pc@manguebit.com>
-To: David Howells <dhowells@redhat.com>, Steve French <stfrench@microsoft.com>
-Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
- linux-cifs@vger.kernel.org, netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cifs: Make the write_{enter,done,err} tracepoints
- display netfs info
-In-Reply-To: <2390624.1726687464@warthog.procyon.org.uk>
-References: <2390624.1726687464@warthog.procyon.org.uk>
-Date: Thu, 19 Sep 2024 13:01:10 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA9319E7EF
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 16:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726761753; cv=none; b=MyntH8jND0KLP14dNFMvpgDh+Qe6fpIOa6JBNBr/ZNZuRTtE5xLUJfBBMmiJkkjpwLAWO9Jgw3JzN/iv5TjzZOKiInHJfp9awnwOWNUTww7a4EIfOoLKvg5awwmhiBiN5hiYiqoPTEdVom8kwta2qF2tW5Z5+p12j8bDVhYMpNc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726761753; c=relaxed/simple;
+	bh=3Rdw/7FPHr7LRKVhUtEAjNZXLsqUxVL5CyGv7Wt/Dy4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q/SgGonInl10aMEBwp55eTpAHeUmjkKJeI08MNbmE43MjGj48u5NejzBWmCav9811qChvWIIIpSGE2546pNMEgzD53axsx6+9KZLWvKkvmmle3PxPS15CFRDqlCXXmv49qDt5Z5Jm11BYBDYWgUgldNKTEG3meupD1Ql0vWQogE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Uy4kYy8D; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2054feabfc3so10807485ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:02:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1726761751; x=1727366551; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IY5B5QxXDNVGbG3vnBPyBqvWzO5uiDp/nIYu33vK85A=;
+        b=Uy4kYy8DvylGxgTb8+p2pAPlwrvJFuTxYB/fDG+Skl2LR7fBUDhc2lzJwqWoUEEaX+
+         g11Iv4uhb7dKs/wpqhCbZZPVrIBy3O9nbLOX9CRaCht7k4JMqQp++kEn/9v//9x5hbEB
+         qxtIJR+2mpYz5mTnDS4eoZEg/eV7bI8RhQ1j2f4OI1acsI1yUwzVtiTQaxEzid2Tuw60
+         5JjqBsZMNhRcVcdlipszY/p/zNOgrcGzGI1Ki+bKgAhqUYhwktc9BPlJYosg6K9qGOon
+         4ei1PrnquEEvXEETp99f3DKpSLRfGtxV4LTGwWRncyjI5YGjg3b5nLl2V6yE82dhSYSr
+         nB+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726761751; x=1727366551;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IY5B5QxXDNVGbG3vnBPyBqvWzO5uiDp/nIYu33vK85A=;
+        b=PFn/XFyKBqF63mYINeh5NF/PqcqkqBQrJfXMq0wwjHr71xAQ59fx0lKEFCymaEvNhs
+         CrhdLKxgOxtZwOXI9j9cZUgLNYZ7pL85jjWjMeKLb9DFSgNrUL32CpoFSPT6xdDIY9Is
+         V3OjIaIr3Xm82FyEpfSbFciTPF2XDlrJuYeUCLjnzgZ44KMP83qTnzve8Ri19GhEVcjL
+         e8av0tknfPwonM456PSuCbs2wS+CuY3eXhsuFRkgkgPIZfdRTaODSgk+0jSTlKJ1F/xA
+         RwaOfcqRHFXtOg7gjfHIy2PpWgofeTtkrRSfsV19/o9XYSQ00n+oO7nMowM/Hs9SnipO
+         Znig==
+X-Forwarded-Encrypted: i=1; AJvYcCV65uOi31OLbz+BwCt5rpeswx2F4PA3JnkBZT6CX5B8t3cQP6cUrPWRq04E7yGWhuoxG+h9awxleqRHxuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ1uI+SBSaYuZTo5IOhaB+0f0o807e3aCt+v/p4j5lmXYr70Ox
+	iEfgvHk5HUmqSI8KkYcbUrzMl8eEj+d3dXVZQXJOQeXUKXpTl+0oWY+dnn9fyr8=
+X-Google-Smtp-Source: AGHT+IHlrfEPPxfE7BBmxMTJoT8E08EE7/Q0AmzGFUzu6sN8uV/9Rnz5ZDYIemz+SMlLQ8t0Vj4kxg==
+X-Received: by 2002:a17:903:8c8:b0:205:40a6:115a with SMTP id d9443c01a7336-2076e4360f7mr350612825ad.48.1726761751137;
+        Thu, 19 Sep 2024 09:02:31 -0700 (PDT)
+Received: from cyan-mbp.internal.sifive.com (114-32-147-116.hinet-ip.hinet.net. [114.32.147.116])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d19e5sm81665645ad.140.2024.09.19.09.02.28
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 19 Sep 2024 09:02:30 -0700 (PDT)
+From: Cyan Yang <cyan.yang@sifive.com>
+To: anup@brainfault.org
+Cc: atishp@atishpatra.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Cyan Yang <cyan.yang@sifive.com>,
+	Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Subject: [PATCH] RISCV: KVM: use raw_spinlock for critical section in imsic
+Date: Fri, 20 Sep 2024 00:01:26 +0800
+Message-Id: <20240919160126.44487-1-cyan.yang@sifive.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-David Howells <dhowells@redhat.com> writes:
+For the external interrupt updating procedure in imsic, there was a
+spinlock to protect it already. But since it should not be preempted in
+any cases, we should turn to use raw_spinlock to prevent any preemption
+in case PREEMPT_RT was enabled.
 
-> Make the write RPC tracepoints use the same trace macro complexes as the
-> read tracepoints and display the netfs request and subrequest IDs where
-> available (see commit 519be989717c "cifs: Add a tracepoint to track credits
-> involved in R/W requests").
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <stfrench@microsoft.com>
-> cc: Paulo Alcantara (Red Hat) <pc@manguebit.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-cifs@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/smb/client/smb2pdu.c |   22 +++++++++++++++-------
->  fs/smb/client/trace.h   |    6 +++---
->  2 files changed, 18 insertions(+), 10 deletions(-)
+Signed-off-by: Cyan Yang <cyan.yang@sifive.com>
+Reviewed-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+---
+ arch/riscv/kvm/aia_imsic.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+diff --git a/arch/riscv/kvm/aia_imsic.c b/arch/riscv/kvm/aia_imsic.c
+index 0a1e85932..a8085cd82 100644
+--- a/arch/riscv/kvm/aia_imsic.c
++++ b/arch/riscv/kvm/aia_imsic.c
+@@ -55,7 +55,7 @@ struct imsic {
+ 	/* IMSIC SW-file */
+ 	struct imsic_mrif *swfile;
+ 	phys_addr_t swfile_pa;
+-	spinlock_t swfile_extirq_lock;
++	raw_spinlock_t swfile_extirq_lock;
+ };
+ 
+ #define imsic_vs_csr_read(__c)			\
+@@ -622,7 +622,7 @@ static void imsic_swfile_extirq_update(struct kvm_vcpu *vcpu)
+ 	 * interruptions between reading topei and updating pending status.
+ 	 */
+ 
+-	spin_lock_irqsave(&imsic->swfile_extirq_lock, flags);
++	raw_spin_lock_irqsave(&imsic->swfile_extirq_lock, flags);
+ 
+ 	if (imsic_mrif_atomic_read(mrif, &mrif->eidelivery) &&
+ 	    imsic_mrif_topei(mrif, imsic->nr_eix, imsic->nr_msis))
+@@ -630,7 +630,7 @@ static void imsic_swfile_extirq_update(struct kvm_vcpu *vcpu)
+ 	else
+ 		kvm_riscv_vcpu_unset_interrupt(vcpu, IRQ_VS_EXT);
+ 
+-	spin_unlock_irqrestore(&imsic->swfile_extirq_lock, flags);
++	raw_spin_unlock_irqrestore(&imsic->swfile_extirq_lock, flags);
+ }
+ 
+ static void imsic_swfile_read(struct kvm_vcpu *vcpu, bool clear,
+@@ -1051,7 +1051,7 @@ int kvm_riscv_vcpu_aia_imsic_init(struct kvm_vcpu *vcpu)
+ 	}
+ 	imsic->swfile = page_to_virt(swfile_page);
+ 	imsic->swfile_pa = page_to_phys(swfile_page);
+-	spin_lock_init(&imsic->swfile_extirq_lock);
++	raw_spin_lock_init(&imsic->swfile_extirq_lock);
+ 
+ 	/* Setup IO device */
+ 	kvm_iodevice_init(&imsic->iodev, &imsic_iodoev_ops);
+-- 
+2.39.5 (Apple Git-154)
+
 
