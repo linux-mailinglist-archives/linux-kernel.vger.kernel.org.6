@@ -1,237 +1,168 @@
-Return-Path: <linux-kernel+bounces-333545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A93B197CA8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:57:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA87997CA94
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AF9B1F21951
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:57:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B5A71C2293A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDA819F415;
-	Thu, 19 Sep 2024 13:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4E419CD17;
+	Thu, 19 Sep 2024 13:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XpZ1f1b8"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccOWF4xC"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3CB19D8BB;
-	Thu, 19 Sep 2024 13:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE9E19D8BB;
+	Thu, 19 Sep 2024 13:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726754258; cv=none; b=sqq/hh9Wg6wCc3lBOg2UHvclom1tcEXMKnxngfgAJxEw/oFna0S5tAGXS6GTvfKmn91RpcBeEAaS5NCprvELon2F755oke/xj9JlNLVcOtGThyhSlNx0KQMQfTx/l7BweFknfayw15zMxvs2CLXtGNSh76PtmZzMuOh0kayjwGw=
+	t=1726754344; cv=none; b=K9yGfMmxS8PpN5tnJ2ob5RzT+EmhPBQMpSLPFhM4Rz/6bRMBUst1N7pjh9AqhKOzISX+xQQqiMeR6Kj+1pBLGOqsm7ZZmLmrFs60b/yVq4C/5RpAbi8mZgl0CGG9OQTlaNPcGIdcLZ6S5wOveExgGE4EvDJQuUu6IzFxZviTqCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726754258; c=relaxed/simple;
-	bh=rlSCdSdxPLC0z0AuFMduwMBmz9enE8vC/LaQSYEVWiU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=YG8fRADcmFL6jmkrQwQIGh36OhbFVcjE3NN7kVH2OqvFoaxW1lri/2HFTgmfLLtUoaKjOMWJU55wM+RyUTZ3WHngEsdbsO1KthIa3LNF8/tD7hh4Pe1F+5ztQ6OqsY3YLLak5L96TJWCsNXPvHQV5zwWDR9QdIXWEfkHElC3t7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XpZ1f1b8; arc=none smtp.client-ip=209.85.210.172
+	s=arc-20240116; t=1726754344; c=relaxed/simple;
+	bh=srnK6yLEvtox5NfJs7v7fOjIgfyIoFIDJY/8Rw2mEJQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=konf8KYGeQV+j0imBRIa/FP5eQu0OE0/Y3jVWm9afKebCctu/61FegIgrl9ZbVBeHfAOYQ8lm1Ox7MX9KmyH6nWd5PheabdY0q2Tx8fvMBpSfnaP8eka3XR4TItV7cUaxowDvNqryOz7ZLFJ2B+IVOpu9nmsbxRpa8RAzMHec4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ccOWF4xC; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7191fb54147so647686b3a.2;
-        Thu, 19 Sep 2024 06:57:37 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f75c6ed397so9864761fa.2;
+        Thu, 19 Sep 2024 06:59:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726754257; x=1727359057; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W9KoiB0YsZBX4kdWY2koiL+vhQxEK5DgJarh6ifR10c=;
-        b=XpZ1f1b83mH2o/UTfnQRHs/h/eDFlqTyx3qLY5RYd7OMl3WizQRFyEdlXKQPIWoRUH
-         2foTJv3YyF4kd8AB42z9ORhzUTStsGtGLKmWLYs9ozgoT9nN3NHasDGD5fbfNsqDpawW
-         rUc+gYaKJEMNV8f7r/3F5Yt+4QoCMywFNBuf4I2/HhUEJZ99l57G3erZoAgVSQ2S98dY
-         dg7hp88+1heDkXW/IEq9yh/dDp2DZJsSI6V8EZlqxwS9ZHzAZk3Tn3NnNCk7XN2bphv9
-         vGgiyyV80WicPMTPIvjt/Aeup3Br1bmBjEnfubTZyPSRhGiZmDlf9U53B84CTCUxdydP
-         hzwA==
+        d=gmail.com; s=20230601; t=1726754341; x=1727359141; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/dl3OjrsVMZv+aA568NjTJEOVVfeESkGFa9253qsbzQ=;
+        b=ccOWF4xCiRG41JY8JUrPPWx73cSdIQb8ShOO71rSVOFFxAyqx7PVbk2ObvBxMK1fin
+         tkzvVRL3kw5XuHpPVJ4OzK9ymmpuxJZkmwzcFdOX+4JpcYtu/tE+E/Lek0iua7W0Ird4
+         nP4n+g51uPOVJm4MjKypeHIlYGHGRmg/cVXpWEVuzuQLyDCbMOMLktdio+hPwJp/cmSw
+         I7+lkdeZBF5L2oMdmOifna6+oiDLsyQGG2WQjVkVaXrqTUHmxzs5fErPgWRRqEPhF4AS
+         kFCRJzjpACmSlcKOiXe0Xgl+WXmpWvJR3foicF9Z/qBIvyNHJmLAoVfqhJIENJGqz8Oz
+         /Zzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726754257; x=1727359057;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W9KoiB0YsZBX4kdWY2koiL+vhQxEK5DgJarh6ifR10c=;
-        b=MPo+WKZi4VfjivRGO9MBtnSPGg+cVOeVhoefJuLqQEuEqA7IytmIT5epQluLD61dZc
-         nG+wobwFKq/+oUyVNsxMUMwTKrk57dBGasavVcw/BnlFGYW08THBDJd7mZekkGu6wX+1
-         1dJQRoHm5Ky7lhZxkPKvcBs3F9i7APhQxDCk8kLHha15nGqPix2gpS7RzvDv3yfUV09z
-         49uE3vu920bLoWCn5uDftHEekPaS6KpxaNTVNMPnQy9Ncf8Sx+obPuPD3IZfnii/SQK2
-         g0/bGLS01JjRBWL3WocRAQpSHpQyNvCUFsKupvHPuKHsUaaoniv7qMn3xFKycy4nzFAd
-         Qzaw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3oOMcoyW6aIII9YTdNfw/zcywx5GsN2kA9jwB18Aaz7fpIesFm7AiyDPOjjaLv0IgbsuV@vger.kernel.org, AJvYcCWlCNp3HyODdXD92FAdWzWDAKhoF8iOhIC6J1Bf+1DTDBjX4IkWEfNFvS8usgTsvzrTYN1PibyLrnX2vuo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIkfcx7oWMsGvf3ou+Cdspj/CjFstmjR8FhMtLU6YUCRU3KG8F
-	LkPFrLnbUi1Ld/UIn+YRg3K9dZ5s2GZcV+ZYKJ4hhTd2M6zc9aMQSMXuyKBbin8=
-X-Google-Smtp-Source: AGHT+IG3NM9cbEsGODVNJC/nw53fZr59xEmoESCbE/ZFVMlqAxM2UadkXcrIOGgUj+nimzv9M+wsaw==
-X-Received: by 2002:aa7:8895:0:b0:717:8deb:c195 with SMTP id d2e1a72fcca58-719261eca18mr41957713b3a.21.1726754256588;
-        Thu, 19 Sep 2024 06:57:36 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944bc543dsm8267246b3a.204.2024.09.19.06.57.26
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Sep 2024 06:57:36 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+        d=1e100.net; s=20230601; t=1726754341; x=1727359141;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/dl3OjrsVMZv+aA568NjTJEOVVfeESkGFa9253qsbzQ=;
+        b=uMlsKVFLW/OY/cBmgPK3zaiAMZrRfpBzm0668K14armMVK9nxi0lLEvU9VRtLi8ofj
+         nSqCPIB6Iodj4gzHqFwE8C5JuiT8IcpVHHFPCqRZd644lyo4THNw/MbFCdPPF/ZKDtw2
+         n3dGrRSoWzQCmnABRRbYrs3LuGkv1vuxcq2SUI7B/4Dh7yuACStKHrRsAN3yNiiI0jnU
+         ljyyBBvYYTeAUkgTwMRXbz2u1rs51vh1VHGacPpJsLBhxSIKilS76BjATrCCWpEJhF+9
+         ObBEscmF+JxHLpk6nbbFQhhod28xhdbPHzY4wyuqCdBtFCzcg+B4ewbLtI0n4NAXbGao
+         g2aA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHUp7sIIUndT73iFeXjAg9UqllL9x2y66vPve/OVhB4ghsYpFZ1cbisdOfFEeedmhn74R496nyef40YDQ3@vger.kernel.org, AJvYcCWAmYTP8d+C+RNyQk0hujXQXR0cdsEf6+AM6TQvlqqnvwCufwRqyucIwY3g6N6TLmNZXvh1X4ym@vger.kernel.org, AJvYcCXwJfHOr/Iuu6mqym0wqg5ykJkusCt04wCoEdTcAh8LBHsbt7Xen8p7LYWHvRCbJhR9T05mxpT0CUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhN62NPLBO0x8BzmU6Z3dwzXsyWrzCqQMtsvwbuiUj6HL4NLc0
+	x+Oro89UzKPoiy9IFwuqs5OfoxGLPtayjg7qsDQBEaD/w2LbkAy4
+X-Google-Smtp-Source: AGHT+IH/PH5CDFn2ze7amXvKo4RYRc0NY7vDJsTWy5InZjVmIkrJ03PVI3LDq/+/zAU6zVIBsrYcNw==
+X-Received: by 2002:a05:651c:504:b0:2ef:2555:e52f with SMTP id 38308e7fff4ca-2f787f2e66fmr153794481fa.35.1726754340638;
+        Thu, 19 Sep 2024 06:59:00 -0700 (PDT)
+Received: from localhost ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d4861f5sm16359541fa.119.2024.09.19.06.58.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 06:58:59 -0700 (PDT)
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Viresh Kumar <vireshk@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Ferry Toth <fntoth@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Serge Semin <fancer.lancer@gmail.com>,
+	dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] dmaengine: dw: Select only supported masters for ACPI devices
+Date: Thu, 19 Sep 2024 16:58:14 +0300
+Message-ID: <20240919135854.16124-1-fancer.lancer@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <ZuvOWM5c8tZotHFL@boqun-archlinux>
-Date: Thu, 19 Sep 2024 21:57:12 +0800
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
- LKML <linux-kernel@vger.kernel.org>,
- RCU <rcu@vger.kernel.org>,
- linux-mm@kvack.org,
- lkmm@lists.linux.dev,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>,
- "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Zqiang <qiang.zhang1211@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Kent Overstreet <kent.overstreet@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>,
- maged.michael@gmail.com,
- Neeraj upadhyay <neeraj.upadhyay@amd.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D2BDE4C4-48DB-4813-9608-F672896E0121@gmail.com>
-References: <20240917143402.930114-1-boqun.feng@gmail.com>
- <20240917143402.930114-2-boqun.feng@gmail.com>
- <CAJhGHyD8MzUssfuKSGnu1arnayNOyBnUA03vYB0WWwbE3WzoZg@mail.gmail.com>
- <ZuvOWM5c8tZotHFL@boqun-archlinux>
-To: Boqun Feng <boqun.feng@gmail.com>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-2024=E5=B9=B49=E6=9C=8819=E6=97=A5 15:10=EF=BC=8CBoqun Feng =
-<boqun.feng@gmail.com> wrote=EF=BC=9A
->=20
-> On Thu, Sep 19, 2024 at 02:39:13PM +0800, Lai Jiangshan wrote:
->> On Tue, Sep 17, 2024 at 10:34=E2=80=AFPM Boqun Feng =
-<boqun.feng@gmail.com> wrote:
->>=20
->>> +static void hazptr_context_snap_readers_locked(struct =
-hazptr_reader_tree *tree,
->>> +                                              struct hazptr_context =
-*hzcp)
->>> +{
->>> +       lockdep_assert_held(hzcp->lock);
->>> +
->>> +       for (int i =3D 0; i < HAZPTR_SLOT_PER_CTX; i++) {
->>> +               /*
->>> +                * Pairs with smp_store_release() in =
-hazptr_{clear,free}().
->>> +                *
->>> +                * Ensure
->>> +                *
->>> +                * <reader>             <updater>
->>> +                *
->>> +                * [access protected pointers]
->>> +                * hazptr_clear();
->>> +                *   smp_store_release()
->>> +                *                      // in reader scan.
->>> +                *                      smp_load_acquire(); // is =
-null or unused.
->>> +                *                      [run callbacks] // all =
-accesses from
->>> +                *                                      // reader =
-must be
->>> +                *                                      // observed.
->>> +                */
->>> +               hazptr_t val =3D smp_load_acquire(&hzcp->slots[i]);
->>> +
->>> +               if (!is_null_or_unused(val)) {
->>> +                       struct hazptr_slot_snap *snap =3D =
-&hzcp->snaps[i];
->>> +
->>> +                       // Already in the tree, need to remove =
-first.
->>> +                       if (!is_null_or_unused(snap->slot)) {
->>> +                               reader_del(tree, snap);
->>> +                       }
->>> +                       snap->slot =3D val;
->>> +                       reader_add(tree, snap);
->>> +               }
->>> +       }
->>> +}
->>=20
->> Hello
->>=20
->> I'm curious about whether there are any possible memory leaks here.
->>=20
->> It seems that call_hazptr() never frees the memory until the slot is
->> set to another valid value.
->>=20
->> In the code here, the snap is not deleted when hzcp->snaps[i] is =
-null/unused
->> and snap->slot is not which I think it should be.
->>=20
->> And it can cause unneeded deletion and addition of the snap if the =
-slot
->> value is unchanged.
->>=20
->=20
-> I think you're right. (Although the node will be eventually deleted at
-> cleanup_hazptr_context(), however there could be a long-live
-> hazptr_context). It should be:
->=20
-> hazptr_t val =3D smp_load_acquire(&hzcp->slots[i]);
-> struct hazptr_slot_snap *snap =3D &hzcp->snaps[i];
->=20
-> if (val !=3D snap->slot) { // val changed, need to update the tree =
-node.
-> // Already in the tree, need to remove first.
-> if (!is_null_or_unused(snap->slot)) {
-> reader_del(tree, snap);
-> }
->=20
-> // use the latest snapshot.
-> snap->slot =3D val;
->=20
-> // Add it into tree if there is a reader
-> if (!is_null_or_unused(val))
-> reader_add(tree, snap);
-> }
+The recently submitted fix-commit revealed a problem in the iDMA32
+platform code. Even though the controller supported only a single master
+the dw_dma_acpi_filter() method hard-coded two master interfaces with IDs
+0 and 1. As a result the sanity check implemented in the commit
+b336268dde75 ("dmaengine: dw: Add peripheral bus width verification") got
+incorrect interface data width and thus prevented the client drivers
+from configuring the DMA-channel with the EINVAL error returned. E.g. the
+next error was printed for the PXA2xx SPI controller driver trying to
+configure the requested channels:
 
-It seems like that two different hazptr_context can=E2=80=99t be used to =
-protect the same pointer?
+> [  164.525604] pxa2xx_spi_pci 0000:00:07.1: DMA slave config failed
+> [  164.536105] pxa2xx_spi_pci 0000:00:07.1: failed to get DMA TX descriptor
+> [  164.543213] spidev spi-SPT0001:00: SPI transfer failed: -16
 
-Otherwise the following can happen?
+The problem would have been spotted much earlier if the iDMA32 controller
+supported more than one master interfaces. But since it supports just a
+single master and the iDMA32-specific code just ignores the master IDs in
+the CTLLO preparation method, the issue has been gone unnoticed so far.
 
-thread1 					thread2  			=
-		 thread3(worker) 	      thread4
-hazptr_tryprotect(hzp1, ptr1)   hazptr_tryprotect(hzp2, ptr1)=20
-										=
-		 add ptr1 to tree
-hazptr_clear(hzp1)=20
-hazptr_tryprotect(hzp1, ptr2)=20
-										=
-		 delete ptr1 from tree     unpub ptr1
-										=
-						       call_hazptr(ptr1)
-										=
-						       oops: invoke =
-ptr1's callback
-Or am I missing something?
+Fix the problem by specifying a single master ID for both memory and
+peripheral devices on the ACPI-based platforms if there is only one master
+available on the controller. Thus the issue noticed for the iDMA32
+controllers will be eliminated and the ACPI-probed DW DMA controllers will
+be configured with the correct master ID by default.
 
->=20
-> Regards,
-> Boqun
->=20
->> I'm not so sure...
->>=20
->> Thanks
->> Lai
+Cc: stable@vger.kernel.org
+Fixes: b336268dde75 ("dmaengine: dw: Add peripheral bus width verification")
+Fixes: 199244d69458 ("dmaengine: dw: add support of iDMA 32-bit hardware")
+Reported-by: Ferry Toth <fntoth@gmail.com>
+Closes: https://lore.kernel.org/dmaengine/ZuXbCKUs1iOqFu51@black.fi.intel.com/
+Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Closes: https://lore.kernel.org/dmaengine/ZuXgI-VcHpMgbZ91@black.fi.intel.com/
+Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
 
+---
+
+Note I haven't got any device with the Intel Merrifield iDMA32 + SPI
+PXA2xx pair to test out the solution. So any tests are very welcome. But
+based on Andy' (see the reported-by links) and my investigations the fix
+seems correct.
+---
+ drivers/dma/dw/acpi.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/dma/dw/acpi.c b/drivers/dma/dw/acpi.c
+index c510c109d2c3..efbe8baeccbc 100644
+--- a/drivers/dma/dw/acpi.c
++++ b/drivers/dma/dw/acpi.c
+@@ -8,15 +8,25 @@
+ 
+ static bool dw_dma_acpi_filter(struct dma_chan *chan, void *param)
+ {
++	struct dw_dma *dw = to_dw_dma(chan->device);
+ 	struct acpi_dma_spec *dma_spec = param;
+ 	struct dw_dma_slave slave = {
+ 		.dma_dev = dma_spec->dev,
+ 		.src_id = dma_spec->slave_id,
+ 		.dst_id = dma_spec->slave_id,
+ 		.m_master = 0,
+-		.p_master = 1,
+ 	};
+ 
++	/*
++	 * Fallback to using a single interface for both memory and peripheral
++	 * device if there is only one master I/F supported (e.g. iDMA32)
++	 */
++	if (dw->pdata->nr_masters == 0)
++		slave.p_master = 0;
++	else
++		slave.p_master = 1;
++
++
+ 	return dw_dma_filter(chan, &slave);
+ }
+ 
+-- 
+2.43.0
 
 
