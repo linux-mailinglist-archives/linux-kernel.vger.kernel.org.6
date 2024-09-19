@@ -1,73 +1,46 @@
-Return-Path: <linux-kernel+bounces-333092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16F897C35F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:42:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF62897C368
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22EC41C2225C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 04:42:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82E9C283917
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 04:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0237C1B970;
-	Thu, 19 Sep 2024 04:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E15A18E29;
+	Thu, 19 Sep 2024 04:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="n2BP+4bh"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2239B1758F
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 04:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="OPlNJ+bp"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C90A208AD;
+	Thu, 19 Sep 2024 04:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726720938; cv=none; b=RdVWmJjRQY/pgFW0pitQVY7hdsJvqI0GEC3aYQYVH+W62Lo42946MG0tQLT1t8d9vTd8MC+CkRQdE8tEtBvjpjioI3mlyEZJz0zqxOMiU/5z2NxbW9FRwf7Yv8mpwKKErr9VCcdRtQxhL/C4rIE5XqSONQzsHV3n2f7gwVSe0ac=
+	t=1726721027; cv=none; b=G0zcADJ2sjfUak8BA6mgNp6u5ll6XWanab7hhkG6jJpxt3pcLr+YVElPhoSrqgysQ8ehfqP2G0fYaZfoDm43Rb0u8Yi6H40p9GFIIxFumzL3X1IuuIJpu+ZayihzRciAUvPxm4m6V3yxy2DtfVz+9uJh2riXwUm0Icyjz4jyOWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726720938; c=relaxed/simple;
-	bh=I4emb0PPJdJq3XXtILxPZ4lkaDq6aRuqvd/+l5hpDA4=;
+	s=arc-20240116; t=1726721027; c=relaxed/simple;
+	bh=lpNgFZv9seW9we31BCKItN+jbOx7qSRiNfOfsPSNkcU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nk1jCaZV2pIbQAdDBJyHnfikVP/+8endY2tC8cbiLEEt7QXcyWfqFWOyBf1zGGLnQf32dVyuIXtVh6ApAs2kxGpKUO64IAIOVi+CJd6BhWb1G0ZJ+7IudZn/53MkYdP25tZZx0zVZ/yf505HA0HvmRgbStzycb3r4AiPOfjqNUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=n2BP+4bh; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so4561535e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 21:42:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726720934; x=1727325734; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FEv0NNjcPwkYB/8A8F624McGvuZVJ9GKy7Zkfan8JEI=;
-        b=n2BP+4bhySmWqQfoUaR5X2MpBbuVRf9b4TRm1Ybma4zWj8/2ZgyuYQq6DEuM3JdHfZ
-         7CGc1N8i543uoJ9GIcem4w9H66KcKf9AUKGiOTELW+wtFzW4qGsInDhGpGMyMTBngsy2
-         VDwHocFHYCeIGh02lEhs7ZonMbBasMRkenQn+wGKV59Y7htNPXizh7yzwsPl81YpB/xP
-         B2TThF5CNOGBVPYwzL1LHtqZT/Q/dnky3PHsS/EyH/B5UlqiaAexl+LrOD43hcIQsjiY
-         wPkkYQlnJSgoT+McNMW52g1kJ2FH/5xOCHdQQNNn7xQzdvfKaQE1G49NxGLlRvg1wH0E
-         P3Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726720934; x=1727325734;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FEv0NNjcPwkYB/8A8F624McGvuZVJ9GKy7Zkfan8JEI=;
-        b=FaVgf8e7zCdPXvo1isu9NhQpOWdkJAkPkogs4FJJOwIskNaCuiwWZxxv7utgUXHZ4v
-         cJBxMPr7lKKqQu0nH5d1SGdoWqHmOLXzGD8r+M2A7PyP/unIYRfs2TrKjnjkDEf7TcvS
-         Mmo2cYnW0he37CYl3Kyd4nAVUvBAT0arAX78fs429um4OL1vL4P28dndnojP4z4yGVtH
-         nQDpPTpksqlSHDtVdrkURfysGwO6t/MG4+p6keakoy+ELGtXqZpBkbTxFtGc6FJSin4H
-         gbBCrbUOBIKmOVuBNLsxHtDWjQ5zlEroxe7G5NWdElqRF7w9TuzSx0pQRCdiTdUqq22i
-         e5eg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4ZFcf+AejkrK54Mz1n8BtUqdcr46gmT6SrI3o/ToukXC/lPkVVTRXRPSQybg6vZ3Lu4Hq9PpceRSDcoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTNWUEEsQHJdwpp4FTntv41FP/71GC8fnKZKpT7745NsoOQBeo
-	c1pjhb9HMsFAD1NCycR8vmJsdprLNfHp9Ohjqp7U+BawFh6bWIyLX7psOv27xcM=
-X-Google-Smtp-Source: AGHT+IEgYzZAXC3ZjqvsRJgwZCm8/AA1vRU0Hskc9IMNfMwPplLV5Fn3D/nQ2UuKkwP3xJKeZULYnw==
-X-Received: by 2002:a05:600c:4e94:b0:42c:b8c9:16b6 with SMTP id 5b1f17b1804b1-42d9070a24cmr199328925e9.2.1726720933826;
-        Wed, 18 Sep 2024 21:42:13 -0700 (PDT)
-Received: from [192.168.0.216] ([185.44.53.103])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e75b814bcsm9164595e9.21.2024.09.18.21.42.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Sep 2024 21:42:12 -0700 (PDT)
-Message-ID: <4ef7647f-80d1-48e5-9cff-9ab612054ff8@kernel.dk>
-Date: Wed, 18 Sep 2024 22:42:10 -0600
+	 In-Reply-To:Content-Type; b=dIn9y4FKLv7/nNDmfDtZ6pbAjq3ucItqi+3ddGTaoN784hpiYIcJ6vNj+tR6MupQUBsW9NwqMNCpAnYTL6+ZekFdP32MOoxRMpF2pKUyY/5nankciYBKWbjNQJPcT5JFsOdR4JIV7YX33c0/pujGqnBd+0FCnKH0R96LJW7uf3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=OPlNJ+bp; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.95.75.183] (unknown [167.220.238.215])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 93E9720C0A19;
+	Wed, 18 Sep 2024 21:43:39 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 93E9720C0A19
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1726721025;
+	bh=2cXZn7AsuO1/f29Ymo7/H1OKKdihpH5ofIpGs9C1Gak=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OPlNJ+bpgLvH5/u1uymp+5eK5jLvpIg7kpgbHDIWxZNe5ftQWDKevBX59qVDYlld8
+	 vNA42RHM6o1hKiGHNIa+DD9Z0i/PX+UEoh+ObOgk2NYvDI24yQvfR7/uBOn//s9Smy
+	 YbkyJeztx5QlX8kQEnWlcxkPduMbqkOn9hl5OEko=
+Message-ID: <26d243c5-6e31-402c-ab3b-588db806ef12@linux.microsoft.com>
+Date: Thu, 19 Sep 2024 10:13:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,73 +48,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Chinner <david@fromorbit.com>, Matthew Wilcox <willy@infradead.org>,
- Chris Mason <clm@meta.com>, Christian Theune <ct@flyingcircus.io>,
- linux-mm@kvack.org, "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Daniel Dao <dqminh@cloudflare.com>, regressions@lists.linux.dev,
- regressions@leemhuis.info
-References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <Zud1EhTnoWIRFPa/@dread.disaster.area>
- <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
- <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
- <ZulMlPFKiiRe3iFd@casper.infradead.org>
- <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
- <ZumDPU7RDg5wV0Re@casper.infradead.org>
- <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
- <459beb1c-defd-4836-952c-589203b7005c@meta.com>
- <ZurXAco1BKqf8I2E@casper.infradead.org>
- <ZuuBs762OrOk58zQ@dread.disaster.area>
- <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
- <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
- <8697e349-d22f-43a0-8469-beb857eb44a1@kernel.dk>
- <CAHk-=wjsf9eAsKf-s6Vcif8wHPFj3iycaJ89ei=K1hQPPAojEg@mail.gmail.com>
+Subject: Re: [PATCH v3] x86/hyper-v: Fix hv tsc page based sched_clock for
+ hibernation
+To: Michael Kelley <mhklinux@outlook.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org"
+ <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20240917053917.76787-1-namjain@linux.microsoft.com>
+ <SN6PR02MB415772CE1B1F9FC03ECD0258D4622@SN6PR02MB4157.namprd02.prod.outlook.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHk-=wjsf9eAsKf-s6Vcif8wHPFj3iycaJ89ei=K1hQPPAojEg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB415772CE1B1F9FC03ECD0258D4622@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/18/24 10:32 PM, Linus Torvalds wrote:
-> On Thu, 19 Sept 2024 at 05:38, Jens Axboe <axboe@kernel.dk> wrote:
+
+
+On 9/19/2024 12:07 AM, Michael Kelley wrote:
+> From: Naman Jain <namjain@linux.microsoft.com> Sent: Monday, September 16, 2024 10:39 PM
 >>
->> I kicked off a quick run with this on 6.9 with my debug patch as well,
->> and it still fails for me... I'll double check everything is sane. For
->> reference, below is the 6.9 filemap patch.
+>> read_hv_sched_clock_tsc() assumes that the Hyper-V clock counter is
+>> bigger than the variable hv_sched_clock_offset, which is cached during
+>> early boot, but depending on the timing this assumption may be false
+>> when a hibernated VM starts again (the clock counter starts from 0
+>> again) and is resuming back (Note: hv_init_tsc_clocksource() is not
+>> called during hibernation/resume); consequently,
+>> read_hv_sched_clock_tsc() may return a negative integer (which is
+>> interpreted as a huge positive integer since the return type is u64)
+>> and new kernel messages are prefixed with huge timestamps before
+>> read_hv_sched_clock_tsc() grows big enough (which typically takes
+>> several seconds).
+>>
+>> Fix the issue by saving the Hyper-V clock counter just before the
+>> suspend, and using it to correct the hv_sched_clock_offset in
+>> resume. This makes hv tsc page based sched_clock continuous and ensures
+>> that post resume, it starts from where it left off during suspend.
+>> Override x86_platform.save_sched_clock_state and
+>> x86_platform.restore_sched_clock_state routines to correct this as soon
+>> as possible.
+>>
+>> Note: if Invariant TSC is available, the issue doesn't happen because
+>> 1) we don't register read_hv_sched_clock_tsc() for sched clock:
+>> See commit e5313f1c5404 ("clocksource/drivers/hyper-v: Rework
+>> clocksource and sched clock setup");
+>> 2) the common x86 code adjusts TSC similarly: see
+>> __restore_processor_state() ->  tsc_verify_tsc_adjust(true) and
+>> x86_platform.restore_sched_clock_state().
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 1349401ff1aa ("clocksource/drivers/hyper-v: Suspend/resume Hyper-V
+>> clocksource for hibernation")
+>> Co-developed-by: Dexuan Cui <decui@microsoft.com>
+>> Signed-off-by: Dexuan Cui <decui@microsoft.com>
+>> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+>> ---
+>> Changes from v2:
+>> https://lore.kernel.org/all/20240911045632.3757-1-namjain@linux.microsoft.com/
+>> Addressed Michael's comments:
+>> * Changed commit msg to include information on making timestamps
+>>    continuous
+>> * Changed subject to reflect the new file being changed
+>> * Changed variable name for saving offset/counters
+>> * Moved comment on new function introduced from header file to function
+>>    definition.
+>> * Removed the equations in comments
+>> * Rebased to latest linux-next tip
+>>
+>> Changes from v1:
+>> https://lore.kernel.org/all/20240909053923.8512-1-namjain@linux.microsoft.com/
+>> * Reorganized code as per Michael's comment, and moved the logic to x86
+>> specific files, to keep hyperv_timer.c arch independent.
+>>
+>> ---
+>>   arch/x86/kernel/cpu/mshyperv.c     | 58 ++++++++++++++++++++++++++++++
+>>   drivers/clocksource/hyperv_timer.c | 14 +++++++-
+>>   include/clocksource/hyperv_timer.h |  2 ++
+>>   3 files changed, 73 insertions(+), 1 deletion(-)
+> 
+> This all looks good to me now. Thanks for indulging all my comments. :-)
+> 
+> One minor nit: The "Subject:" prefix should not have a dash in "hyper-v".
+> The goal is to be consistent in the prefixes used for a particular file instead
+> of wandering all over the place. If you check the commit history for
+> arch/x86/kernel/cpu/mshyperv.c, you'll see that it is "x86/hyperv", not
+> "x86/hyperv-v".
+> 
+> This is super picky, so don't respin just for this. The maintainer can
+> probably fix it when accepting the patch if there are no other changes.
+> 
+> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
 
-Confirmed with a few more runs, still hits, basically as quickly as it
-did before. So no real change observed with the added xas_reset().
+Thank you Michael for reviewing. I'll keep this in mind while posting
+any patch in future.
 
-> Ok, that's interesting. So it's *not* just about "that code didn't do
-> xas_reset() after xas_split_alloc()".
-> 
-> Now, another thing that commit 6758c1128ceb ("mm/filemap: optimize
-> filemap folio adding") does is that it now *only* calls xa_get_order()
-> under the xa lock, and then it verifies it against the
-> xas_split_alloc() that it did earlier.
-> 
-> The old code did "xas_split_alloc()" with one order (all outside the
-> lock), and then re-did the xas_get_order() lookup inside the lock. But
-> if it changed in between, it ended up doing the "xas_split()" with the
-> new order, even though "xas_split_alloc()" was done with the *old*
-> order.
-> 
-> That seems dangerous, and maybe the lack of xas_reset() was never the
-> *major* issue?
-> 
-> Willy? You know this code much better than I do. Maybe we should just
-> back-port 6758c1128ceb in its entirety.
-> 
-> Regardless, I'd want to make sure that we really understand the root
-> cause. Because it certainly looks like *just* the lack of xas_reset()
-> wasn't it.
+Regards,
+Naman
 
-Just for sanity's sake, I backported 6758c1128ceb (and the associated
-xarray xas_get_order() change) to 6.9 and kicked that off.
 
--- 
-Jens Axboe
 
