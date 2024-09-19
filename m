@@ -1,114 +1,141 @@
-Return-Path: <linux-kernel+bounces-333404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD0097C818
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:41:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E5D97C81A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 950CE1F29EC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:41:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9910E1C246B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A002D19AA5F;
-	Thu, 19 Sep 2024 10:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA8919ABB4;
+	Thu, 19 Sep 2024 10:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LcPrI6NB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGzX053/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF56194C61
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 10:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECE0168BD
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 10:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726742462; cv=none; b=jk+JeGXdEf6QS8skh6SpAZm1RrXpLYijiMP33/VUFdaTCwrf2bOeOW2C9mcDLhTyBYSuKXGWpgzeY5pEaie/yO7sLNjlSGYcOKTJmvC8OPHGRLpEPAvIGasevVPll7onGrHPjuWfFbs11ojrS82ubskyFrLj0dUA7k4ws6y+LwM=
+	t=1726742539; cv=none; b=fnEVz9vPuDsl0YVqQXp63nueGMtO5amtoN3jQYnCugUi/oRQ77XqLvm3E1iZl4FPV2UPhZ6vGoBjQb/SJy18Usqr32vd7rtybEeCnBKuee6z8eb2QYCels0nEG51UTBZmcujPiOnxdbnz8uSdNE+HqjKAnlEZ6xz05TAwiUgN10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726742462; c=relaxed/simple;
-	bh=iSdB96//uOYNetxOBLT39OE78EZTh4JQ1vmKYkFcepo=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=CmUXwxjczFy+sYpuW2mi9jH/oIQtZ7apXaeamRFflU7a3zWCIBCeRxd2dmW3uXIUP1v/K9aeg9mwOtFYQNh4KVRZR6GdMLTAja10VSk/tkg4o5srwzHoiNBGIbpR5Qpio1NkmZzj3B3osKu90k/X/XhXYJtuk1kmLXVb0EvGEqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LcPrI6NB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726742459;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=VcvHdf5Pmtgf7/MQNxfdvUPCsOw52+fwh9xXqYx7hPg=;
-	b=LcPrI6NBkh53jbD4oGOHLinRmeJZF2+6CQatQb2HIy7FNwOSJVJEBYFF6XLQaMcD8NNSkr
-	Y3kfVdEubV59JTFywqHfwf8qvuKendV78Q+JSN7dsjuGhYqjJD/bizvl6fYWkYnCQH5Tju
-	V376RdITzJJUGLIf2IN0izBwAFPAWTs=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-77-Wj0fOkpxPSa41HX4PpiQXg-1; Thu,
- 19 Sep 2024 06:40:56 -0400
-X-MC-Unique: Wj0fOkpxPSa41HX4PpiQXg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CC0291935852;
-	Thu, 19 Sep 2024 10:40:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.14])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 79398196CAD2;
-	Thu, 19 Sep 2024 10:40:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Marc Dionne <marc.dionne@auristor.com>
-cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] afs: Fix setting of the server responding flag
+	s=arc-20240116; t=1726742539; c=relaxed/simple;
+	bh=dsGKreUhg585i1GMTCc1aIriMbL6tNeRAhG/pt1htz8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=E2T/MxYMgA3kH2LZSFGVc+0wGtS9bbCY3yzPI30MoS98Zf5x5tGxOy23wjbcsQSVvVatJVHD5zofepN9brFFx1zQpA/uVTaUV8UG0gyMXSVzj+b7IeLdmYtHj7ugxAqxlYdxsUKfxI+VnW2D/R8vPr2xiavK8tLLIFR/DVQ89Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGzX053/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0D1F5C4CEC4;
+	Thu, 19 Sep 2024 10:42:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726742539;
+	bh=dsGKreUhg585i1GMTCc1aIriMbL6tNeRAhG/pt1htz8=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=AGzX053/cx7BdD2Gye0lP7CEysrcBA3KdIgYP9/5ZZl5pvgKaPE3v1yKuzLVALsTk
+	 gyEv6TLW0x5uhRg2e2DnPv4p1ReIyxX9Q5gG+A051nhRGGoJGcW3ttoaUaRxz62oep
+	 AxAeOoix/Z4ONflljooLGtQle+je3gwc1IF0x5noqWYp6My1LU6MGqhCpgS2f3U+6c
+	 rS52xhW9LkePtQPRCVmfKq9Yf22BUJZpYfF0Yrnyqf3gwJLz5oEFLHNLAl5lGl8b3J
+	 7/NSJuGcEpvOaxvkrXeqkm9+vQsxzOgKykeXLAEV7WkToMVQ+6hWnLTlMCfON3R9HZ
+	 NFS18dgRu03Gg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E68AACE8D79;
+	Thu, 19 Sep 2024 10:42:18 +0000 (UTC)
+From: =?utf-8?q?T=C3=B3th_J=C3=A1nos_via_B4_Relay?= <devnull+gomba007.gmail.com@kernel.org>
+Date: Thu, 19 Sep 2024 12:42:00 +0200
+Subject: [PATCH] scripts: checkpatch: Check spaces in Makefiles.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2614632.1726742450.1@warthog.procyon.org.uk>
-Date: Thu, 19 Sep 2024 11:40:50 +0100
-Message-ID: <2614633.1726742450@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240919-checkpatch-makefile-spaces-v1-1-f247fd2ba4cf@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAPf/62YC/x3MQQqEMAxA0atI1gZsEbRzFXFRY7RBR0sjIoh3t
+ 7h8fPg3KCdhhV9xQ+JTVPYtw5QFUPDbzChjNtjK1pUzDikwLdEfFPDvF55kZdToiRWbmsxAo22
+ tI8iDmHK+vnnXP88LqSXOx2wAAAA=
+To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
+ Dwaipayan Ray <dwaipayanray1@gmail.com>, 
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: linux-kernel@vger.kernel.org, 
+ =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726742538; l=1959;
+ i=gomba007@gmail.com; s=20230706; h=from:subject:message-id;
+ bh=cj6gu4/UTXFzy6OsqnaOr/hYFlv40OHqBGK224ZRoTY=;
+ b=6NtY27pxl6eurNqMk3Nvy0KrRMsJSNpoJaZdHfi8EJQAHiHbIxaMLrMPx5VDPQnPu34NEMeVQ
+ o9QTsTXClT+AH7eafe5Yw8hFOgd/BxfLK6b6LlhKbifGe2RP+v8JLYq
+X-Developer-Key: i=gomba007@gmail.com; a=ed25519;
+ pk=iY9MjPCbud82ULS2PQJIq3QwjKyP/Sg730I6T2M8Y5U=
+X-Endpoint-Received: by B4 Relay for gomba007@gmail.com/20230706 with
+ auth_id=60
+X-Original-From: =?utf-8?q?T=C3=B3th_J=C3=A1nos?= <gomba007@gmail.com>
+Reply-To: gomba007@gmail.com
 
-In afs_wait_for_operation(), we set transcribe the call responded flag to
-the server record that we used after doing the fileserver iteration loop -
-but it's possible to exit the loop having had a response from the server
-that we've discarded (e.g. it returned an abort or we started receiving
-data, but the call didn't complete).
+From: Tóth János <gomba007@gmail.com>
 
-This means that op->server might be NULL, but we don't check that before
-attempting to set the server flag.
+I've found a Makefile that looked like this:
+    obj-$(X)<tab><tab>+=<space>X.o
+    obj-$(Y)<space><space>+=<space>Y.o
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
-Fixes: 98f9fda2057b ("afs: Fold the afs_addr_cursor struct in")
+This patch allows checkpatch to detect this type of style error
+in Makefiles. The check is disabled for the comment-only lines.
+
+Signed-off-by: Tóth János <gomba007@gmail.com>
 ---
- fs/afs/fs_operation.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ scripts/checkpatch.pl | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/fs/afs/fs_operation.c b/fs/afs/fs_operation.c
-index 3546b087e791..f9602c9a3257 100644
---- a/fs/afs/fs_operation.c
-+++ b/fs/afs/fs_operation.c
-@@ -197,13 +197,12 @@ void afs_wait_for_operation(struct afs_operation *op)
- 			op->call_abort_code = op->call->abort_code;
- 			op->call_error = op->call->error;
- 			op->call_responded = op->call->responded;
-+			if (op->call_responded)
-+				set_bit(AFS_SERVER_FL_RESPONDING, &op->server->flags);
- 			afs_put_call(op->call);
- 		}
- 	}
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 4427572b2477..25b6f5b024c0 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -6,6 +6,7 @@
+ # (c) 2007,2008, Andy Whitcroft <apw@uk.ibm.com> (new conditions, test suite)
+ # (c) 2008-2010 Andy Whitcroft <apw@canonical.com>
+ # (c) 2010-2018 Joe Perches <joe@perches.com>
++# (c) 2024 Tóth János <gomba007@gmail.com>
  
--	if (op->call_responded)
--		set_bit(AFS_SERVER_FL_RESPONDING, &op->server->flags);
--
- 	if (!afs_op_error(op)) {
- 		_debug("success");
- 		op->ops->success(op);
+ use strict;
+ use warnings;
+@@ -3718,6 +3719,26 @@ sub process {
+ 			     "Use of $flag is deprecated, please use \`$replacement->{$flag} instead.\n" . $herecurr) if ($replacement->{$flag});
+ 		}
+ 
++		if ($realfile =~ /Makefile.*/ && $rawline !~ /^\+\#/) {
++			if ($rawline =~ /  /) {
++				my $herevet = "$here\n" . cat_vet($rawline) . "\n";
++				WARN("MULTIPLE_SPACES",
++				     "please, use tabs\n" . $herevet)
++			}
++
++			if ($rawline =~ / \t/) {
++				my $herevet = "$here\n" . cat_vet($rawline) . "\n";
++				WARN("SPACE_BEFORE_TAB",
++				     "please, no space before tabs, use tabs\n" . $herevet)
++			}
++
++			if ($rawline =~ /\t /) {
++				my $herevet = "$here\n" . cat_vet($rawline) . "\n";
++				WARN("TAB_BEFORE_SPACE",
++				     "please, no tab before spaces, use tabs\n" . $herevet)
++			}
++		}
++
+ # check for DT compatible documentation
+ 		if (defined $root &&
+ 			(($realfile =~ /\.dtsi?$/ && $line =~ /^\+\s*compatible\s*=\s*\"/) ||
+
+---
+base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+change-id: 20240919-checkpatch-makefile-spaces-74c1bcd2829c
+
+Best regards,
+-- 
+Tóth János <gomba007@gmail.com>
+
 
 
