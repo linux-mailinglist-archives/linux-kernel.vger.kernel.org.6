@@ -1,137 +1,113 @@
-Return-Path: <linux-kernel+bounces-333202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7E897C552
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:51:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A79897C55B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 660352817C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:51:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5901C211E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7AC197A7F;
-	Thu, 19 Sep 2024 07:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A4F195F17;
+	Thu, 19 Sep 2024 07:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="sHLFICmK"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nBQihPH1"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E499A196C7C;
-	Thu, 19 Sep 2024 07:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B3A194C65
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 07:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726732180; cv=none; b=NuFs8kQGd1N+SmmK35yjeghB1y0y4iN9iJCd9DDM6yNiuUVtp41gzU1I4JWBHTyxFzoB/wuyTbn+Ta+tzlt/DQ3gvc9CtmCLVMc5ZRRxb6ktn77DCtGWshGTCpZOAw6KRr9j3UmDOVZ2vGsU3/UcbRA6I0bPRho65rX1o+922bE=
+	t=1726732304; cv=none; b=HQeQjsPPmYTKUWJR+sFm/s9lUblGroAFQZqB3GLVhlJ55qi2wy1BA/LrcqpTCbuM5iSKa0RRfnxdPuc3TxFypuBaEvffawY/VnabciXLH24k9mT26VwsRjH1W2QrB8hcuPHjh4gaZVq5aKgjuZ5UOS6Xh7xUmwbsDHXuvfjxphI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726732180; c=relaxed/simple;
-	bh=r1cXFTfwn7yTEwq72n7R++KWICFpO9L7KdZt8lSPK+4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RVgQIPwSLGvnddkAr/MrffMlREzfV0GZIf4dEjTQmAgEABxAjSKBK+OP9HMJZPf8bXs3PehcC12z/OAl8FkwsJcJP/64Vh09Uji0KJiPacTjPIWfGqGGkCPNsdTX08F2jU45ctdH3PYX6lzz7wakkD3mfaP5l8U9cyoNWrooEVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=sHLFICmK; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: b3539e24765b11ef8b96093e013ec31c-20240919
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=mMiJYM6LFq/ZFiBJD1Iufm69acB1VIDo+EHB1kP4RNc=;
-	b=sHLFICmKEhSwhcfvATQf8cqmIaeywIkdYNXTpDusUi6ym7xVSjv6YOQtLuC0AFnLTibXQpTuk1mmNfcBKlUpA4UUs+pcWxW3Nqw6xXaLk+O/Quqa+E8/GjGXBbLpfbtTiWUQveOvzMbsfsK/0ZqohS81JH/nKVxMbM9wfyRvcrQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:a0aa84f5-124a-4b51-b116-520d25087ce3,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:80db3a9e-8e9a-4ac1-b510-390a86b53c0a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: b3539e24765b11ef8b96093e013ec31c-20240919
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
-	(envelope-from <chris.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 387824893; Thu, 19 Sep 2024 15:49:29 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 19 Sep 2024 15:49:28 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 19 Sep 2024 15:49:28 +0800
-From: Chris Lu <chris.lu@mediatek.com>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
-	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
-CC: Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>,
-	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth
-	<linux-bluetooth@vger.kernel.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-mediatek
-	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
-Subject: [PATCH v2 4/4] Bluetooth: btusb: mediatek: change the conditions for ISO interface
-Date: Thu, 19 Sep 2024 15:49:25 +0800
-Message-ID: <20240919074925.22860-5-chris.lu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20240919074925.22860-1-chris.lu@mediatek.com>
-References: <20240919074925.22860-1-chris.lu@mediatek.com>
+	s=arc-20240116; t=1726732304; c=relaxed/simple;
+	bh=U5WJaoTtcAuGD8VknlYfHc4GGLGgL4otqGdvhWJttDg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=OvvPZm7JsVQGe/kjRbKYM0v/cp+pejvbHLUgaJyoP50h/pIJJcfhwRDsrj9d46AbyZCyu221cOy9i/IGbtnShzH5WV6fqDf53cgUYUxqi1E8429W4ha41zSryorQxxK5spbXSKCuVmpWqE9kN6gYAfW7YFnSitZHCawFItsmdYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nBQihPH1; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d683cfa528so8596137b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 00:51:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726732301; x=1727337101; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Mate0Slr3ggKx26+pzgz4eKqO0en772zUr1uU4Z1wp0=;
+        b=nBQihPH1o3ieP/xmIzPUM5TRB4vLnv7K/AZhqj5hCAu8InlN4qqvvdn6cbhKZw36+W
+         nQ6nPQhrcZo0hJ43Zlx2471JCzwuGNbC78/2FHWx79vowvC9CcGlMtRGE37rwoleDA17
+         fcN2yfx3jOonc/1y43mLgXtiHKCkjg53B3fmE+Twm6jdi1FS/asNrDgBecitLIGKSkWk
+         olhSs3X47b2rGa+woQqUrBPXQ3briGmS8wePskoaD2UcwEobP/dqw5eoEd3fTfuyLeYf
+         212MuQkcaNgl+zQdaE6cE4EBt0LrbrQTuNdXPmb5L+PJOykbiuWpoRNKaKG+IeTXT082
+         1poQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726732301; x=1727337101;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Mate0Slr3ggKx26+pzgz4eKqO0en772zUr1uU4Z1wp0=;
+        b=T3eql5uvCics178UhbuFgNzj+462/iRp3kM4+xkYq51vUQvSUgBp63F978tfVCAp33
+         /AAkKeOBBZiEsa1KeQJHww8Im2JFkzVPPj8tek7mx88vK4wtkQpn571TBODX0xMNeu8c
+         IgfLVHL8//et//KNTAjuEij4yroIr1FsqZatWJgseR367fM4cykOdKvBwzlxEDb7ZP5+
+         m7SZEYAGOvk66jHWtLyHfhUpLsFoCXRhhSbLAwL8Hz/RBspkyWmqHA6wflsIlWRHbTcN
+         8e5O+2FQ15fic6C7v5er8vh3ZJx/H5Xcd4FuZYUl3fd/BCm/24TqinXMWmGfL/6ZaXZE
+         dxAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXdas946ONUgo6Can2XaSiUoImJCOmPvirvjk/KeqFC2fa+tTXOfYp7tIQpzwlMfheA4ilt/AZFwprEgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMKxRsvO+NObvkT0npvwdgHGtdQr759iZJfUqn6d5nSxXd0GML
+	DuIvQtPE15Z32l2Sf8jKrGsK4VacrI1LaxqBkEeBP9fqBaO33dlHZxnBLB/zUSmy6OH6xTg11Vo
+	HoQ==
+X-Google-Smtp-Source: AGHT+IEu/+FJoc9hrDc4MDglAwuuZk+o0/lAYv5WANFWM3V2/yyCRexmYGQ4ZVdoraKu6E3CzFuagXfOftw=
+X-Received: from amitsd-gti.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:827])
+ (user=amitsd job=sendgmr) by 2002:a0d:c087:0:b0:6d4:d6de:3e35 with SMTP id
+ 00721157ae682-6dbb6ba2a49mr2511977b3.8.1726732301295; Thu, 19 Sep 2024
+ 00:51:41 -0700 (PDT)
+Date: Thu, 19 Sep 2024 00:51:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
+Message-ID: <20240919075120.328469-1-amitsd@google.com>
+Subject: [RFC v2 0/2] Add support for time DT property in TCPM
+From: Amit Sunil Dhamne <amitsd@google.com>
+To: gregkh@linuxfoundation.org, robh@kernel.org, dmitry.baryshkov@linaro.org, 
+	heikki.krogerus@linux.intel.com
+Cc: badhri@google.com, kyletso@google.com, rdbabiera@google.com, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, Amit Sunil Dhamne <amitsd@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Change conditions for Bluetooth driver claiming and releasing usb
-ISO interface for MediaTek ISO data transmission.
+USB PD specification defines a bunch of timers that can have a range of
+acceptable values instead of specific values. These values have to be
+tuned based on the platform. However, TCPM currently sets them to a
+default value without providing a mechanism to set platform specific
+values.
 
-Signed-off-by: Chris Lu <chris.lu@mediatek.com>
----
- drivers/bluetooth/btusb.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+This patchset adds new DT properties per timer to allow users to define
+platform specific values.
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 37e67b451b34..bb28a9b2dc11 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -2618,7 +2618,7 @@ static int btusb_mtk_release_iso_intf(struct hci_dev *hdev)
- {
- 	struct btmtk_data *btmtk_data = hci_get_priv(hdev);
- 
--	if (btmtk_data->isopkt_intf) {
-+	if (test_bit(BTMTK_ISOPKT_OVER_INTR, &btmtk_data->flags)) {
- 		usb_kill_anchored_urbs(&btmtk_data->isopkt_anchor);
- 		clear_bit(BTMTK_ISOPKT_RUNNING, &btmtk_data->flags);
- 
-@@ -2650,7 +2650,7 @@ static int btusb_mtk_reset(struct hci_dev *hdev, void *rst_data)
- 	if (err < 0)
- 		return err;
- 
--	if (test_bit(BTMTK_ISOPKT_RUNNING, &btmtk_data->flags))
-+	if (test_bit(BTMTK_ISOPKT_OVER_INTR, &btmtk_data->flags))
- 		btusb_mtk_release_iso_intf(hdev);
- 
- 	btusb_stop_traffic(data);
-@@ -2696,9 +2696,10 @@ static int btusb_mtk_setup(struct hci_dev *hdev)
- 	btmtk_data->reset_sync = btusb_mtk_reset;
- 
- 	/* Claim ISO data interface and endpoint */
--	btmtk_data->isopkt_intf = usb_ifnum_to_if(data->udev, MTK_ISO_IFNUM);
--	if (btmtk_data->isopkt_intf)
-+	if (!test_bit(BTMTK_ISOPKT_OVER_INTR, &btmtk_data->flags)) {
-+		btmtk_data->isopkt_intf = usb_ifnum_to_if(data->udev, MTK_ISO_IFNUM);
- 		btusb_mtk_claim_iso_intf(data);
-+	}
- 
- 	return btmtk_usb_setup(hdev);
- }
-@@ -2710,7 +2711,7 @@ static int btusb_mtk_shutdown(struct hci_dev *hdev)
- 
- 	ret = btmtk_usb_shutdown(hdev);
- 
--	if (test_bit(BTMTK_ISOPKT_RUNNING, &btmtk_data->flags))
-+	if (test_bit(BTMTK_ISOPKT_OVER_INTR, &btmtk_data->flags))
- 		btusb_mtk_release_iso_intf(hdev);
- 
- 	return ret;
+Changes compared to v1:
+  - Defined new properties per timer that we are interested in rather
+    than defining a single pd-timers u32 array property.
+  - Better description of the timer properties.
+  - Since subject has changed, adding link for previous patchset for
+    posterity:
+    https://lore.kernel.org/all/20240911000715.554184-1-amitsd@google.com/
+
+Amit Sunil Dhamne (2):
+  dt-bindings: connector: Add properties to define time values
+  usb: typec: tcpm: Add support for parsing time dt properties
+
+ .../bindings/connector/usb-connector.yaml     | 32 +++++++-
+ drivers/usb/typec/tcpm/tcpm.c                 | 81 +++++++++++++++----
+ 2 files changed, 96 insertions(+), 17 deletions(-)
+
+
+base-commit: 68d4209158f43a558c5553ea95ab0c8975eab18c
 -- 
-2.18.0
+2.46.0.792.g87dc391469-goog
 
 
