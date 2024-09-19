@@ -1,145 +1,160 @@
-Return-Path: <linux-kernel+bounces-333129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC7C97C455
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:33:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 505A597C458
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E719F28371D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:33:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0537B22305
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB9C18D647;
-	Thu, 19 Sep 2024 06:33:28 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D0E18D651;
+	Thu, 19 Sep 2024 06:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="OX+Bx7Xw"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7902E7345B;
-	Thu, 19 Sep 2024 06:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA36D7345B;
+	Thu, 19 Sep 2024 06:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726727608; cv=none; b=FGxxVO+Yv6/Aq2puteI5mrWyVuDljE0OJR8mzJX4wbS5bgwVdF+e7ObSJXdHDDbuoPOYXbmgHQlZLEF0+aab1wlOZ/VkN60S9PkNB54iMxA4uPNRwcbvkcCOPdsdQTqGpWRpq4xy6FFnCpL+czFNAkYWe7FLbiOC/TrDY27xpWk=
+	t=1726727651; cv=none; b=EZSxmp4gyXnc1/+4280e0ihhPjRp4NvQZyBA8TEVEilbHpSCM/6AkznLgs0lD46+VaRXn5t6GrcdkPwIvAxwTrwgC3JmW+qAoDXKSy8N5hzk48w5Tt5WzPMtF4u6TYseekzL+vDuKgm4U0hEm/jtBigKJDKjR1niD4+oCHmdRMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726727608; c=relaxed/simple;
-	bh=/qOykdb7Slk9hqgZWIdmfjaTAxzZPv9Pt5wMu3ABVM8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=thoHm7y2jrrQOvLWMxHLnxaf1mU5ywo+d5RMEP3Z4yIjDE0kYzQw0/zcfYiyk4E1RyfExAbUPgGUJpdjnViXpxd/75J3VtcSEmhVQ5G7spBqozFUDRjKPxInFUU/NSzNNa6DleMJ+qTJKRyhHLHFGdWJ6nQ1n9/QnNq/4P5DoU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4X8Qgb2vKqz4f3jJ3;
-	Thu, 19 Sep 2024 14:32:59 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 472871A092F;
-	Thu, 19 Sep 2024 14:33:15 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAnXMipxetm9E31Bg--.40694S4;
-	Thu, 19 Sep 2024 14:33:15 +0800 (CST)
-From: linan666@huaweicloud.com
-To: song@kernel.org,
-	yukuai3@huawei.com
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linan666@huaweicloud.com,
-	yi.zhang@huawei.com,
-	houtao1@huawei.com,
-	yangerkun@huawei.com,
-	zhangxiaoxu5@huawei.com
-Subject: [PATCH] md: ensure child flush IO does not affect origin bio->bi_status
-Date: Thu, 19 Sep 2024 14:30:48 +0800
-Message-Id: <20240919063048.2887579-1-linan666@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1726727651; c=relaxed/simple;
+	bh=89cRcYvE1cRdyq3k7ZQ7ijDCs7yVlHDdxaRO+kFukN8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z1GJq79xC8gJxIJjAHqDJPhr4Dmq+EyfylcKhw0LNvfCga+WPi0MhoF+mO4MjNIn6CFZhzP3tdoVNbljH4dGLNfplIMOxl6HxxSagvvWoM59kNg/ea9Cw57zOaOIgP/6xqzkCMCIX3Ae5UgC9P5pzdTK+vWgthPusjQc0dEi3Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=OX+Bx7Xw; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1726727630; x=1727332430; i=w_armin@gmx.de;
+	bh=0TAOlCNSTaYIQfLLnbrxO4iE3HoqYpdFMBeupOI56GU=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=OX+Bx7XwpbV/fnwMJpHUaBV4RIa88HZu4ziHfsG/dwBgBG2cDOeknbn8Fll7BGat
+	 VtuONILwv9kgRf9++OICv25LUYDlTRfXPerkRJLMqzMovXdF7q1svlQOh+wy+3lQD
+	 vqAH9SbgKWaawKwkRPETDS6va2XofXF30oqZQFQxr76MpRO3wfoADLK5m3rmxPQPT
+	 GD4Ah4UnQ+5QQfrBENsp3YZt0Wc2j1bUDAuF+ac93yuwm+Z/TczNx/vK6gJ8Jyatl
+	 KdNOmov8V5Qy4kZQ0vc85ebDSrm6jzTb8H0Zf/glG+w9k9+0oMEd2k8O7csosWo5Y
+	 JU/VA0U8tX9cbzc/rg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
+ (mrgmx104 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 1Mwwdf-1s1ZQ52O2F-00yNxW; Thu, 19 Sep 2024 08:33:50 +0200
+From: Armin Wolf <W_Armin@gmx.de>
+To: mjg59@srcf.ucam.org,
+	pali@kernel.org,
+	dilinger@queued.net
+Cc: rafael@kernel.org,
+	lenb@kernel.org,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] platform/x86: dell-laptop: Fix crash when unregistering battery hook
+Date: Thu, 19 Sep 2024 08:33:32 +0200
+Message-Id: <20240919063332.362201-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAnXMipxetm9E31Bg--.40694S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7urWfWFy8uFyfAr47JrW8WFg_yoW8uF48pa
-	yfW3Z8J398Ja1IvanxZrZrGa4Yqws7KFWqyFy3C34fZF13CFn8Ka1aq340vF98GF4furZr
-	Jw1jyw4UuayUAFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9m14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
-	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwAKzVCY07xG64k0F24lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I
-	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-	xVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8I
-	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
-	1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUBrWrUUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:yNcooaYQb2R4h9fb1MmgCBjuE+BdHSrdZx/pB76/DldD36OLmx3
+ FPqiJGbTU3MI/IflALFRwoV26RrvN3N89RvnW39rqRkCNz+BMdJ/qk+aKx43rUrpcyVRSUZ
+ O8WtuqhGpGTwVmHP9CJ3thdDBdN4uFXEhCTpGkC5XouvkQyD4+MFVKGbrb3ivPk6pmictm7
+ +ugbEoeog9PnuAVC9mmkw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TVrXL/CWSjA=;WY41oLw9jEiXH8a0KOy2nNPh25C
+ 6q3EBk4LqYeqAjdVTHJ6R2b9f3hw642i9ak6onSCl1FVWrWKUuMOCHIkMgpeYdLJ3xF9CWdxR
+ hQIN+G6KuSrGu6KQ/3LGr/sY8/pWLJMUDxiDig5Y7sZ+b8U4otM59E/vuZTzOPVIWgkFASkW9
+ cVAmtt4Hoe0FBHQMLhIHEcJJoXvjg1AW3ezGrKNcT4jXxveHAnvozuu4GVCRSR5rzLaHm4s3G
+ z6f0/s/9bMXrxxINy1Nut0EKqS4gp5ygxeAvOnN6iG/LuQLm/KBah8YR/02GulHHPnhN1pirf
+ cEAhr+oFifTEFjLmTA0PQXCfWH5bN4VD+vf1GeXaPM7Rmi45J9lNHywzhGQp3DadLu0Q6Qp4t
+ skBwQ8yccf3Vw03Y9+FZY9mHO4NvB39HwXJ4Dn05LGm/JGDu4HQND0HvbBcs5z0Iu+wiuWMIU
+ k7qBXtePT7qxjF2XANXLkZqqZKi+//tGcBdkMjXJJD4Ksn9KryWAwjgpWReygOmamss9qXox6
+ utxNT6W0hWNcvg5I3UHrd/sBs//8uCpsn4WdiAikAKtdRjGVsWmq+89v7d2DXrpAQzTvveopX
+ 8OkqrS0+IjA9nuAxgd9EJBGkMzc5IPkCJfbMb0+UqJLl/+6aWHpZIykLr/mJrALXlUL4wczgd
+ wvk7C68lxw06gGsPqXIZ9cu/s/ZXD+CHWRDfCybovNNjzzrMbEu0dHDkF/17N5pW90qjeKJSs
+ V7vM/TKvDHrsudeyfXPcXmhiv4Z/tDQDhIYyQZLmUDbaYAlEVfmNV881rxbeMwmU00N9GZmdV
+ P3xDoo7doI2KuUksRGKCfM2A==
 
-From: Li Nan <linan122@huawei.com>
+If the battery hook encounters a unsupported battery, it will
+return an error. This in turn will cause the battery driver to
+automatically unregister the battery hook.
 
-When a flush is issued to an RAID array, a child flush IO is created and
-issued for each member disk in the RAID array. Since commit b75197e86e6d
-("md: Remove flush handling"), each child flush IO has been chained with
-the original bio. As a result, the failure of any child IO could modify
-the bi_status of the original bio, potentially impacting the upper-layer
-filesystem.
+However as soon as the driver itself attempts to unregister the
+already unregistered battery hook, a crash occurs due to a
+corrupted linked list.
 
-Fix the issue by preventing child flush IO from altering the original
-bio->bi_status as before. However, this design introduces a known
-issue: in the event of a power failure, if a flush IO on a member
-disk fails, the upper layers may not be informed. This issue is not easy
-to fix and will not be addressed for the time being in this issue.
+Fix this by simply ignoring unsupported batteries.
 
-Fixes: b75197e86e6d ("md: Remove flush handling")
-Signed-off-by: Li Nan <linan122@huawei.com>
----
- drivers/md/md.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+Tested on a Dell Inspiron 3505.
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 179ee4afe937..67108c397c5a 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -546,6 +546,26 @@ static int mddev_set_closing_and_sync_blockdev(struct mddev *mddev, int opener_n
- 	return 0;
- }
- 
-+/*
-+ * The only difference from bio_chain_endio() is that the current
-+ * bi_status of bio does not affect the bi_status of parent.
-+ */
-+static void md_end_flush(struct bio *bio)
+Fixes: ab58016c68cc ("platform/x86:dell-laptop: Add knobs to change batter=
+y charge settings")
+Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+=2D--
+I CCed the maintainers of the ACPI battery driver since i believe
+that this patch highlights a general issue inside the battery hook
+mechanism.
+
+This is because the same crash will be triggered should for example
+device_add_groups() fail.
+
+Any ideas on how to solve this problem?
+=2D--
+ drivers/platform/x86/dell/dell-laptop.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/platform/x86/dell/dell-laptop.c b/drivers/platform/x8=
+6/dell/dell-laptop.c
+index a3cd0505f282..5671bd0deee7 100644
+=2D-- a/drivers/platform/x86/dell/dell-laptop.c
++++ b/drivers/platform/x86/dell/dell-laptop.c
+@@ -2391,12 +2391,18 @@ static struct attribute *dell_battery_attrs[] =3D =
+{
+ };
+ ATTRIBUTE_GROUPS(dell_battery);
+
++static bool dell_battery_supported(struct power_supply *battery)
 +{
-+	struct bio *parent = bio->bi_private;
-+
-+	/*
-+	 * If any flush io error before the power failure,
-+	 * disk data may be lost.
-+	 */
-+	if (bio->bi_status)
-+		pr_err("md: %pg flush io error %d\n", bio->bi_bdev,
-+			blk_status_to_errno(bio->bi_status));
-+
-+	bio_put(bio);
-+	bio_endio(parent);
++	/* We currently only support the primary battery */
++	return strcmp(battery->desc->name, "BAT0") =3D=3D 0;
 +}
 +
- bool md_flush_request(struct mddev *mddev, struct bio *bio)
+ static int dell_battery_add(struct power_supply *battery,
+ 		struct acpi_battery_hook *hook)
  {
- 	struct md_rdev *rdev;
-@@ -565,7 +585,9 @@ bool md_flush_request(struct mddev *mddev, struct bio *bio)
- 		new = bio_alloc_bioset(rdev->bdev, 0,
- 				       REQ_OP_WRITE | REQ_PREFLUSH, GFP_NOIO,
- 				       &mddev->bio_set);
--		bio_chain(new, bio);
-+		new->bi_private = bio;
-+		new->bi_end_io = md_end_flush;
-+		bio_inc_remaining(bio);
- 		submit_bio(new);
- 	}
- 
--- 
-2.39.2
+-	/* this currently only supports the primary battery */
+-	if (strcmp(battery->desc->name, "BAT0") !=3D 0)
+-		return -ENODEV;
++	/* Return 0 instead of an error to avoid being unloaded */
++	if (!dell_battery_supported(battery))
++		return 0;
+
+ 	return device_add_groups(&battery->dev, dell_battery_groups);
+ }
+@@ -2404,6 +2410,9 @@ static int dell_battery_add(struct power_supply *bat=
+tery,
+ static int dell_battery_remove(struct power_supply *battery,
+ 		struct acpi_battery_hook *hook)
+ {
++	if (!dell_battery_supported(battery))
++		return 0;
++
+ 	device_remove_groups(&battery->dev, dell_battery_groups);
+ 	return 0;
+ }
+=2D-
+2.39.5
 
 
