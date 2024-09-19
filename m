@@ -1,156 +1,140 @@
-Return-Path: <linux-kernel+bounces-333040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFF397C27F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 03:38:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9A197C2B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 03:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EDD91C21618
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 01:38:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0EA1281B8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 01:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901CA1BC44;
-	Thu, 19 Sep 2024 01:38:14 +0000 (UTC)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17FF1BC44;
+	Thu, 19 Sep 2024 01:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gFx5UiyB"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C4318654
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8034F182AE
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726709894; cv=none; b=UC2ECpbb+c8hIk4E7LwldHgzaJu1sBRSFE+MzBIlqAo/wL7nYnGIksOJ3Zmq66q4lu9qwNw5WsP8OW6/VSHoKn/ZO08BN65Wvg8Q8Z+gQbB+dWwTYTQN51HlDhLbIL4Ow0fcxtc+u7varZmNzY6nm2qZvO7WnE3o/m2W8qaZbqo=
+	t=1726710493; cv=none; b=kBNckCl9FZZyAwZ7pKAwLFRO09KACSiVHIho3M7Qs4dvfpS2uramfAQjI9Fytfly9GvpkUhKBf78NbzG3OzwcMGmPXkdDqJaF1/v3twAA98PGTBvWVPc0mWTyb60AeOQ2uwYbIvrTU/mr053C5FiTRxBrxUZG55ELBj9NKlf6bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726709894; c=relaxed/simple;
-	bh=Zdi3ybR3mP53fa/CJa4WxJD91q6pHUzHisCVrKPLbAo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=He4Hp0XgiPb1/3AFNj4FUYoTh/DIL4rb69fB8kA9DC/vaJQYqtoF+Ene2IB8f+98Dn2+n+r8PvQ2XlYhh9aR4F9P+7GlpTxVBPpSMoXP6z0eqJOLTdoXwaYgv018BaBCtICdZX9J+TmDqQQjsyuixEbfbFT98lMiLbHYmiwVUtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-502c0ffd07cso94906e0c.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 18:38:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726709891; x=1727314691;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jOumTyFzmApDLmcuzvAmkjZjCGRjQy7iz9BhGJngPAs=;
-        b=qkYuJE4zPMXT38TlJEBpzEFvy87uHdLOHOEM+t1sFJ1sBEpWUJi46vLH77t9toyY0Z
-         ezS3aKPwomCi8eKMP6jTWWfQlOC75uO9r0owIyKuBmN0TqiG89Feebiz1z8lx831Ooap
-         kHkC2rX7yDCBjywAImZEopSEJEonYVwvS1C6mkUj2aKVqYgmNEFXOtrEot8apkqkm6nA
-         B/+HHbOyVDH+rlEtKeoe+sHjRMkxBBy0TfOnlq8L4NWYIo1GbR7Xl4Ej3B7/FMWxAEwi
-         apRSRXnwIID/Dz3+9m9SFbBVdYF0Lk4xrPzBuxlehLX4T3zf5NjLHrtRNjZr1fYvIpBY
-         SGYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZqcRirt5jtVn+jw6m3PpKyAGCP1PJl619tsQGYv6f4jw1NZQisRvw59u4Jbc1WFzUFAfMeVkAVDnACW8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys47K7Jiblsr0DsYNx0BKfrZkAWWvISb3o9af9sd+wRdR+yuOX
-	RHcQcRpTL5CA62PHemAxecmNwKUp2HVTYpW0LEXONqnVn04Z7snovT0n1qysiygRG29xzi4f8jN
-	VIAi6+qBQok8/c0D0t8xnRYXIqxg=
-X-Google-Smtp-Source: AGHT+IGeaI3XwXhVCcs8TxI+CxKj5y2PoN9gQ5vAHJWzKcaD+balY7FmQ98EIi8Y2Bt/iggITxsbQ88QZD7qSpDURVk=
-X-Received: by 2002:a05:6102:510b:b0:49b:fe6b:493e with SMTP id
- ada2fe7eead31-49d4f6ee970mr12877891137.24.1726709891536; Wed, 18 Sep 2024
- 18:38:11 -0700 (PDT)
+	s=arc-20240116; t=1726710493; c=relaxed/simple;
+	bh=pqkE2vT7+u+CoySrWrolwRxzKhdX9j2GAqXbHAcxrMc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=I38wAbRRlItljUkFS5tsBoC0sgeN9dKF9PrAwt/Dgghs/PLBbUDSuuopeQ/pFQUPtRHsiCLh8rYKDOWblUA5wYkTj9VP8JRAlScVi2LPxyD78L5B3qWKnNO73a4Y3+ArScNhQAPIv598Stjc95U/fg7ojnrAQnv1rChltytOckg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gFx5UiyB; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240919014803epoutp02c87304f8c82a50d0d072eed6fed65001~2ggkvrHHN3088830888epoutp02I
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 01:48:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240919014803epoutp02c87304f8c82a50d0d072eed6fed65001~2ggkvrHHN3088830888epoutp02I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1726710483;
+	bh=rb1rBTehHHnRSOKalZMxxKpc26ophhoIP8ZNoi+El1o=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=gFx5UiyBJF9V8s2FkTQtjhyxeU3L795Y+bCUZcKX3IOeyNjjX2mIyvwnGxW03QhhQ
+	 tEc9J69/AFwr36MAD4GcszcNot092aEhfM5QsHJvc9pEHDuYZMWSDsMFAvvhXAP6tj
+	 0zPTKIbgZtBJ38ICln2EnGLXyWTwT/daFXmSgCFQ=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240919014802epcas1p1598ddbd43bc9db7ccbc165b0d72830ee~2ggkWKzvM2895628956epcas1p1m;
+	Thu, 19 Sep 2024 01:48:02 +0000 (GMT)
+Received: from epcpadp2new (unknown [182.195.40.142]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4X8JLp4c5Zz4x9Q3; Thu, 19 Sep
+	2024 01:48:02 +0000 (GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240919013807epcas1p11de9b8fecb848696ea60a1d6eb9d4985~2gX5ntxZg0153201532epcas1p1k;
+	Thu, 19 Sep 2024 01:38:07 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240919013807epsmtrp2f64ed7115b4366c1515610f8c786f634~2gX5nD1q90075300753epsmtrp23;
+	Thu, 19 Sep 2024 01:38:07 +0000 (GMT)
+X-AuditID: b6c32a28-e95f970000001d8f-86-66eb807e2924
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F4.DA.07567.E708BE66; Thu, 19 Sep 2024 10:38:06 +0900 (KST)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240919013806epsmtip2406e2b1febe086a1fdb6dad138a31b0f~2gX5en-0p1193411934epsmtip2X;
+	Thu, 19 Sep 2024 01:38:06 +0000 (GMT)
+From: "Sungjong Seo" <sj1557.seo@samsung.com>
+To: <Yuezhang.Mo@sony.com>, <linkinjeon@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <Jacky.Cao@sony.com>,
+	<Wataru.Aoyama@sony.com>, <Daniel.Palmer@sony.com>, <cpgs@samsung.com>
+In-Reply-To: <PUZPR04MB6316617B76FF4DE05E2DD10281662@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Subject: RE: [PATCH v1] MAINTAINERS: exfat: add myself as reviewer
+Date: Thu, 19 Sep 2024 10:38:06 +0900
+Message-ID: <1891546521.01726710482634.JavaMail.epsvc@epcpadp2new>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240916110754.1236200-1-dev.jain@arm.com> <20240916110754.1236200-2-dev.jain@arm.com>
-In-Reply-To: <20240916110754.1236200-2-dev.jain@arm.com>
-From: Barry Song <baohua@kernel.org>
-Date: Thu, 19 Sep 2024 13:38:00 +1200
-Message-ID: <CAGsJ_4xeNLd9xrQ531xqpKkpwPSsWF_44rzftvMbFAD0-X3ZQg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] mm: Make pte_range_none() return number of empty PTEs
-To: Dev Jain <dev.jain@arm.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, willy@infradead.org, 
-	ryan.roberts@arm.com, anshuman.khandual@arm.com, hughd@google.com, 
-	ioworker0@gmail.com, wangkefeng.wang@huawei.com, 
-	baolin.wang@linux.alibaba.com, gshan@redhat.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQHbKEb6nuZDhaSR8B++xvE4JpgwEwHmlr4Osk7ff/A=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSvG5dw+s0gyXzbCxeHtK0WNOzjN3i
+	1KJZTBYTpy1ltri8aw6bxccHuxktrr95yOrA7rFpVSebR9+WVYwe7RN2Mnt83iQXwBLFZZOS
+	mpNZllqkb5fAlbHx/ULWgjVsFa37V7A3ME5m7WLk5JAQMJHY/ekSUxcjF4eQwG5GiR1vTjN2
+	MXIAJaQkDu7ThDCFJQ4fLoYoec4ocWV2DwtIL5uArsSTGz+ZQWwRAVOJL5dPsIEUMQt0MEpc
+	XvKSDaJjHaPEktnLwTo4BWIlXh67xgRiCws4SZx4s4UVZAOLgKrEoZ3ZICavgJXEmWW8IBW8
+	AoISJ2c+YQEJMwvoSbRtZAQJMwvIS2x/O4cZ4nwFoPOPgg0RAepc/zgQokREYnZnG/MERuFZ
+	SAbNQhg0C8mgWUg6FjCyrGKUTC0ozk3PTTYsMMxLLdcrTswtLs1L10vOz93ECI4cLY0djPfm
+	/9M7xMjEwXiIUYKDWUmEV/zDyzQh3pTEyqrUovz4otKc1OJDjNIcLErivIYzZqcICaQnlqRm
+	p6YWpBbBZJk4OKUamAxOGCS+M1a8x53jssxjbvQf/t/nP/aKLivk+mXHMmXP2r2qT5e80iq4
+	vV9PwNvLZcqeLa9T3SXjMrRMWq506d1J13B6uGm7jqfG8bT0c1walWHi3w6Xf2T7onk3WP95
+	xlS9v9We0e9DlFy9RMsu/3j64eD1i/9eZG/aVVv1c/6ikNqLU9X959v8X6+x3HreI//7cz+r
+	qU/UcOH9UFzC9Ln28227aZkzPwrK67h/k3H8/ED0cpuI9VfeA6wvVA3rcjrVHtecXiC/2Nfb
+	5pfCz8DOn4Gfq1JEw7gtJ3wp7nGcsoXdo9eH68k7uQvX1gTUfzCP7YzgeuDUnrYnZMvZG2vS
+	LQSc3H7VBaxhuP7ppRJLcUaioRZzUXEiAPqjE7ILAwAA
+X-CMS-MailID: 20240919013807epcas1p11de9b8fecb848696ea60a1d6eb9d4985
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-CPGSPASS: Y
+X-ArchiveUser: EV
+X-Hop-Count: 3
+X-CMS-RootMailID: 20240914030000epcas1p3ea5fbfcf2a139d61193ff4eea5bf6042
+References: <CGME20240914030000epcas1p3ea5fbfcf2a139d61193ff4eea5bf6042@epcas1p3.samsung.com>
+	<PUZPR04MB6316617B76FF4DE05E2DD10281662@PUZPR04MB6316.apcprd04.prod.outlook.com>
 
-On Mon, Sep 16, 2024 at 11:08=E2=80=AFPM Dev Jain <dev.jain@arm.com> wrote:
->
-> In preparation for the second patch, make pte_range_none() return
-> the number of contiguous empty PTEs.
->
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> I have been contributing to exfat for sometime and I would like to help
+> with code reviews as well.
+
+Thank you for your active involvement in improving exFAT.
+Acked-by: Sungjong Seo <sj1557.seo@samsung.com>
+
+> 
+> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
 > ---
->  mm/memory.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 6469ac99f2f7..8bb1236de93c 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4617,16 +4617,16 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->         return ret;
->  }
->
-> -static bool pte_range_none(pte_t *pte, int nr_pages)
-> +static int pte_range_none(pte_t *pte, int nr_pages)
->  {
->         int i;
->
->         for (i =3D 0; i < nr_pages; i++) {
->                 if (!pte_none(ptep_get_lockless(pte + i)))
-> -                       return false;
-> +                       return i;
->         }
->
-> -       return true;
-> +       return nr_pages;
->  }
->
->  static struct folio *alloc_anon_folio(struct vm_fault *vmf)
-> @@ -4671,7 +4671,7 @@ static struct folio *alloc_anon_folio(struct vm_fau=
-lt *vmf)
->         order =3D highest_order(orders);
->         while (orders) {
->                 addr =3D ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
-> -               if (pte_range_none(pte + pte_index(addr), 1 << order))
-> +               if (pte_range_none(pte + pte_index(addr), 1 << order) =3D=
-=3D 1 << order)
-
-Minor suggestion: it's a bit odd that we're doing 1 << order twice.
-Perhaps consider
-introducing a local variable, nr_pages, for clarity.
-
-Otherwise,
-
-Reviewed-by: Barry Song <baohua@kernel.org>
-
-
->                         break;
->                 order =3D next_order(&orders, order);
->         }
-> @@ -4787,7 +4787,7 @@ static vm_fault_t do_anonymous_page(struct vm_fault=
- *vmf)
->         if (nr_pages =3D=3D 1 && vmf_pte_changed(vmf)) {
->                 update_mmu_tlb(vma, addr, vmf->pte);
->                 goto release;
-> -       } else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
-> +       } else if (nr_pages > 1 && pte_range_none(vmf->pte, nr_pages) !=
-=3D nr_pages) {
->                 update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
->                 goto release;
->         }
-> @@ -5121,7 +5121,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->                 update_mmu_tlb(vma, addr, vmf->pte);
->                 ret =3D VM_FAULT_NOPAGE;
->                 goto unlock;
-> -       } else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
-> +       } else if (nr_pages > 1 && pte_range_none(vmf->pte, nr_pages) !=
-=3D nr_pages) {
->                 update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
->                 ret =3D VM_FAULT_NOPAGE;
->                 goto unlock;
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 82f19f0f0752..031fd91a4e57 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8378,6 +8378,7 @@ N:	binfmt
+>  EXFAT FILE SYSTEM
+>  M:	Namjae Jeon <linkinjeon@kernel.org>
+>  M:	Sungjong Seo <sj1557.seo@samsung.com>
+> +R:	Yuezhang Mo <yuezhang.mo@sony.com>
+>  L:	linux-fsdevel@vger.kernel.org
+>  S:	Maintained
+>  T:	git
+> git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/exfat.git
 > --
-> 2.30.2
->
+> 2.34.1
 
-Thanks
-Barry
+
+
 
