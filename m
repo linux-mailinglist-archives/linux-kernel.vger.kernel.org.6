@@ -1,98 +1,125 @@
-Return-Path: <linux-kernel+bounces-333388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74B897C7CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:12:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C9E997C7D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:12:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 693721F269E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:12:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90AAAB22EB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F4419AA43;
-	Thu, 19 Sep 2024 10:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B220A19B5A5;
+	Thu, 19 Sep 2024 10:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r+z9VlVB"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kaehlcke.net header.i=@kaehlcke.net header.b="R0MmtBmx"
+Received: from slategray.cherry.relay.mailchannels.net (slategray.cherry.relay.mailchannels.net [23.83.223.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C5C198842
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 10:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726740746; cv=none; b=bMz8aq7paJMhFEiWKjPAaPFt0gGxc1HW7ayTKK8re1CqF7z4UpHalE9jh0egZvT1yo9uTolCJRRGZ3/R2sLdaS4BgN8/jAEr7u5cdCmQF93lU98zxRwE8Caq7YuLT+5kNhswiWxKRuxsvugwpPZZXez3H2UlKAjQLXvN1PQZS8s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726740746; c=relaxed/simple;
-	bh=DIkAJir5JfJORJ5MkFp4kEfthpXf2iDOkp5wt+Yfn7Q=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5273C199E93;
+	Thu, 19 Sep 2024 10:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.169
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726740754; cv=pass; b=Aq36nlRqjKWwf1jH0TwoN5fjP5mvTbCpuPQIBRGftduITdkbFA6ZopdJQWoukVk+P1AxE5WnY6mfzE7L6Hv2Wbb40DH2Ph/k0Xq/II4Bp+ZCmYngghHZoynUfhxVzdp9OmGjFR+EucIjyPj5h0Zl/7WrTh+LX+d+FNlVOD1Q82E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726740754; c=relaxed/simple;
+	bh=9toxh2QugKeZQNHG1W/nM5ymUyMfx7tQmikOfUvG+Mg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VTqaEJNXuMrt2HUmm24dNfERHhqYFLtvnzq8n2SdGg0hBSgPufa7aTie2P6PJHfDNS0AxXqWcHVtuxl5GvTju2tJoem9XZWOfRcgjnpNB4Pkc8tzPNxA25PaS3cyozjzCF+20ZIOJ30WeU1g5IAHCWYYOI3heh4NI8hxW2SUduw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r+z9VlVB; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f74e613a10so9025571fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 03:12:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726740742; x=1727345542; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GLFjOu5wJvL2rv+0CoDa2SB5UCn11iYd9z/GnY6i9QI=;
-        b=r+z9VlVBHQ4Am+LOk3sIv+vhsOqdE53ZvrC3Wn8XQTCiOPdbcc2hpZAu6Tg2H6Fw9b
-         H/9IaKVFolhbTRh3p5nCmq2z/OomS+ldQoxuTRP8nWeb/EGbabmRw+KOHUw5d/CaUAW2
-         +xt8Wi+32sJ7jdRVclAeFevZ3gLcFDG+/+e63ey7QWdqgzF8MEk8SnWfm4KcrAmyigkd
-         WlSr7BcA4Yuk9Jb9jsSWvvly/xjynW3idW1tn32YneHQH1zXCVUM7t2+ZDsZ5b9hqLQ/
-         lPtD++iugBt10M7q49I1DZle6d9gUjiSRlkH25s2sHJeAzuT5knbnt/JQbbkKfEJzxph
-         6fFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726740742; x=1727345542;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GLFjOu5wJvL2rv+0CoDa2SB5UCn11iYd9z/GnY6i9QI=;
-        b=icJ3QJQMRNRwgMYhZKb1TnPa/exi8C605Zt56iTKkC4cBPaWCk2hf4jUjQPTb0n1Yx
-         axtAL9lpgVSeQRhpKJU0Wxs7HHNGpPq3ys9R19ZbXgdaEdF7QfCXCj7SAbZ6Un6zc5no
-         Rf2jwSLcjUX4OsqJ7J9cmC2JvG0C849E133SxukvvnIrsGgnmfj9WMUPHkpMl/Q+moNu
-         8vhZiZz5Cw5intTZANtxUv/i2tlIvKyZdFMgu870C8RvlEtttH+0H64IflggPN2GPfLE
-         P8Xm+hd400z5PcDtgelnFroENdAWLlUqmCa2n8BcqC7wluV2LIX/CW4LF9l6J6OOkmO+
-         v+UA==
-X-Forwarded-Encrypted: i=1; AJvYcCWURviCsuElSv/frH4H29epVPjSWaeVclaaijATI+SJU4rUhYi+VBVM+tcuXgckOvICRF4e8dz+k5bpv0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP4pqScRrCLpNEBW7b3+hiR/z9ixUSk27+6NLlwe83XtMXWd/1
-	EaOnRzITxInWEfAKg129tE9tb7JQ5fG8ExmnMGq/E5zAMnPRhtPHJFPIf5ORyzDom4uFXeRDpDy
-	Evnc=
-X-Google-Smtp-Source: AGHT+IFs8u88LihqDZIZ2JBPSh5x0leTTbUiKEPgu3X0utw4O9nD7aokz6LHJhifGnBWperW+atYZw==
-X-Received: by 2002:a2e:84a:0:b0:2f7:5777:cf14 with SMTP id 38308e7fff4ca-2f7935c342bmr109006111fa.35.1726740742024;
-        Thu, 19 Sep 2024 03:12:22 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d59ba9dsm15593971fa.128.2024.09.19.03.12.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 03:12:20 -0700 (PDT)
-Date: Thu, 19 Sep 2024 13:12:17 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, devicetree@vger.kernel.org, 
-	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, 
-	Guenter Roeck <groeck@chromium.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Daniel Scally <djrscally@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
-	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v4 03/18] usb: typec: Stub out typec_switch APIs when
- CONFIG_TYPEC=n
-Message-ID: <kvm44f4c2lejbvfviuykxvcyo3ofcncjt5ssesn7ldequfeymc@eocnaacw425i>
-References: <20240901040658.157425-1-swboyd@chromium.org>
- <20240901040658.157425-4-swboyd@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HmhlTLO1qgvBRyUTxGtSOVF0Jyic6nTVOfRYjHAKeOIGukxqXwfLpU3ktwNMg6790Ofuh1MBK9CPJZz7tnbmK5vCywB6zlFWnQ87xp3KoeCSEgQeLiKsOZ0rsU/s0oF0LA+hWYGvImYjr4bM5O3lmkvP+UJMJocCkReNs1WIxjM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaehlcke.net; spf=pass smtp.mailfrom=kaehlcke.net; dkim=pass (2048-bit key) header.d=kaehlcke.net header.i=@kaehlcke.net header.b=R0MmtBmx; arc=pass smtp.client-ip=23.83.223.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaehlcke.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaehlcke.net
+X-Sender-Id: dreamhost|x-authsender|matthias@kaehlcke.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id B75AB507944;
+	Thu, 19 Sep 2024 10:12:30 +0000 (UTC)
+Received: from pdx1-sub0-mail-a280.dreamhost.com (unknown [127.0.0.6])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 4BEF6507914;
+	Thu, 19 Sep 2024 10:12:30 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1726740750; a=rsa-sha256;
+	cv=none;
+	b=go5DNKDdZdCq24Z1bU/sjNxroATr/IjTYXeuXBVvOu6c4LMqVEQfzT4BmyKxdlj0ynit8J
+	pWaf+KwX6dY47k5HxZDXaeXNAbLjwMHRkSUImiZn4OepCDNmfBFAMixQIv8+uCzbEA8g5Z
+	E554HjBmyh1uIPwIFyfXWLsNhPpup5XWXNcYFnaW1ZV2uaAp4hHeJH2CC9UcD+G7kv3wrI
+	kfSE/hYZ+pqj4UfIOii0ClopfVhMSreYAl17iljLrW1fFR/nZXlKu7xeDQ0yVm8c7Zvf1X
+	J6zjCm8HQ3Ca+fKj6DHxtd0UszgKDFTip5yhB3GPnWrDAdPwXDkBxBegczYalQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1726740750;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=nhl3N5PZbkc1mh3ZRvOT4Ai3aK5Mz0r510ySNMfKxpQ=;
+	b=a1FHoK3hNKLln+zvYnRCpT27fhoDp4u4dACLKg2G64LDh9/V/RSYBImN9aWOEHxnkNHbkA
+	ISXIzbXDqfJrmpeCC4TawUKRO/eyTn3ucsJQHOKp9EjoHm/YcC3HV7Tpqw03B0WMWAkBjm
+	JfTz331/zP/s+/pYSVWV7/emr+o4dAPuGnKvVFh7fWHiyrlAyl/FarHuAAyJ/Ue3Xs1OVi
+	to+QjPmqajls/yUCglOVb6RmDFLSB7wV5p2WUfJRlDZ3DWpxGoODeHW5se7H3vmXxOgvIz
+	D2x5h8ApLMMd3QoDMgiRzYuC5wgoh8NRkmQNt3lFCv0v5uBNr7pcIaYWsLr5PQ==
+ARC-Authentication-Results: i=1;
+	rspamd-b5ccff48b-7smdh;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=matthias@kaehlcke.net
+X-Sender-Id: dreamhost|x-authsender|matthias@kaehlcke.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|matthias@kaehlcke.net
+X-MailChannels-Auth-Id: dreamhost
+X-Army-Befitting: 5f4b2a004af54268_1726740750654_733918822
+X-MC-Loop-Signature: 1726740750654:3827263465
+X-MC-Ingress-Time: 1726740750653
+Received: from pdx1-sub0-mail-a280.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.117.77.248 (trex/7.0.2);
+	Thu, 19 Sep 2024 10:12:30 +0000
+Received: from curie.home (unknown [86.127.233.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: matthias@kaehlcke.net)
+	by pdx1-sub0-mail-a280.dreamhost.com (Postfix) with ESMTPSA id 4X8WXs62qCzCv;
+	Thu, 19 Sep 2024 03:12:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaehlcke.net;
+	s=dreamhost; t=1726740750;
+	bh=nhl3N5PZbkc1mh3ZRvOT4Ai3aK5Mz0r510ySNMfKxpQ=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=R0MmtBmxuykLF8zz0C1AEfUrC0ZJqKsCYpWCwd3XyWMU/+PHMEtN4zh62mKf5Wb4o
+	 JffVGNqJqxzvs8o2lebtbwStKudj3zSsAUBL+2u0eQj5189AReiqEGot27GXoo9Xyn
+	 Lt15YgWn8HeYpVm8HL9zZggACP2L2ng9JUqIKE2y+AJDEzAB1qyom3mYbJpoLMhdLq
+	 TSf07RyuWw2btigDp1cxck1HsiGqS4XFyvoy27CgBdCLLlhuiZTIVtRX06YqQPzbJr
+	 Tq9kBBE4xSquPikkGVyrqOzOJYk0C1p0KznGcwkWQM16pUnnILNfi04UkhqDDhYnfY
+	 Aey0iEMl7hEpw==
+Received: by curie.home (Postfix, from userid 1000)
+	id 5F8CB106F6E; Thu, 19 Sep 2024 12:12:26 +0200 (CEST)
+Date: Thu, 19 Sep 2024 10:12:26 +0000
+From: Matthias Kaehlcke <matthias@kaehlcke.net>
+To: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, 
+	"mka@chromium.org" <mka@chromium.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, 
+	"wentong.wu@intel.com" <wentong.wu@intel.com>, 
+	"javier.carrasco@wolfvision.net" <javier.carrasco@wolfvision.net>, 
+	"stefan.eichenberger@toradex.com" <stefan.eichenberger@toradex.com>, "francesco.dolcini@toradex.com" <francesco.dolcini@toradex.com>, 
+	"jbrunet@baylibre.com" <jbrunet@baylibre.com>, "macpaul.lin@mediatek.com" <macpaul.lin@mediatek.com>, 
+	"frieder.schrempf@kontron.de" <frieder.schrempf@kontron.de>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>
+Subject: Re: [PATCH v4 2/2] usb: misc: onboard_usb_dev: add Microchip usb5744
+ SMBus programming support
+Message-ID: <5ibu7s3ycks6wgchkjvvmf22w3rpx6ngyuiw6aoj5joj672piz@sfardf5qf4a5>
+Mail-Followup-To: Matthias Kaehlcke <matthias@kaehlcke.net>, 
+	"Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>, Greg KH <gregkh@linuxfoundation.org>, 
+	"mka@chromium.org" <mka@chromium.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, 
+	"wentong.wu@intel.com" <wentong.wu@intel.com>, 
+	"javier.carrasco@wolfvision.net" <javier.carrasco@wolfvision.net>, 
+	"stefan.eichenberger@toradex.com" <stefan.eichenberger@toradex.com>, "francesco.dolcini@toradex.com" <francesco.dolcini@toradex.com>, 
+	"jbrunet@baylibre.com" <jbrunet@baylibre.com>, "macpaul.lin@mediatek.com" <macpaul.lin@mediatek.com>, 
+	"frieder.schrempf@kontron.de" <frieder.schrempf@kontron.de>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>
+References: <1725192519-3867920-1-git-send-email-radhey.shyam.pandey@amd.com>
+ <1725192519-3867920-3-git-send-email-radhey.shyam.pandey@amd.com>
+ <2024090312-stool-ergonomic-f2fe@gregkh>
+ <MN0PR12MB5953AD101E185462A6CC61BBB7932@MN0PR12MB5953.namprd12.prod.outlook.com>
+ <cnzcqfkqrrs5jv3asmyw54ee2wtztxufariwtj2cjsexuzt7th@fh4htlnlmyae>
+ <MN0PR12MB5953A5341E4E17A08FABCEFDB7622@MN0PR12MB5953.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,112 +128,197 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240901040658.157425-4-swboyd@chromium.org>
+In-Reply-To: <MN0PR12MB5953A5341E4E17A08FABCEFDB7622@MN0PR12MB5953.namprd12.prod.outlook.com>
 
-On Sat, Aug 31, 2024 at 09:06:41PM GMT, Stephen Boyd wrote:
-> Ease driver development by adding stubs for the typec_switch APIs when
-> CONFIG_TYPEC=n. Copy the same method used for the typec_mux APIs to be
-> consistent.
+El Wed, Sep 18, 2024 at 07:22:42PM GMT Pandey, Radhey Shyam ha dit:
+
+> > -----Original Message-----
+> > From: Matthias Kaehlcke <matthias@kaehlcke.net>
+> > Sent: Wednesday, September 18, 2024 10:37 PM
+> > To: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>
+> > Cc: Greg KH <gregkh@linuxfoundation.org>; mka@chromium.org;
+> > sakari.ailus@linux.intel.com; wentong.wu@intel.com;
+> > javier.carrasco@wolfvision.net; stefan.eichenberger@toradex.com;
+> > francesco.dolcini@toradex.com; jbrunet@baylibre.com; macpaul.lin@mediatek.com;
+> > frieder.schrempf@kontron.de; linux-usb@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; git (AMD-Xilinx) <git@amd.com>
+> > Subject: Re: [PATCH v4 2/2] usb: misc: onboard_usb_dev: add Microchip usb5744
+> > SMBus programming support
+> > 
+> > El Tue, Sep 03, 2024 at 07:19:09AM GMT Pandey, Radhey Shyam ha dit:
+> > 
+> > > > -----Original Message-----
+> > > > From: Greg KH <gregkh@linuxfoundation.org>
+> > > > Sent: Tuesday, September 3, 2024 12:10 PM
+> > > > To: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>
+> > > > Cc: mka@chromium.org; sakari.ailus@linux.intel.com;
+> > > > wentong.wu@intel.com; javier.carrasco@wolfvision.net;
+> > > > stefan.eichenberger@toradex.com; francesco.dolcini@toradex.com;
+> > > > jbrunet@baylibre.com; macpaul.lin@mediatek.com;
+> > > > frieder.schrempf@kontron.de; linux-usb@vger.kernel.org; linux-
+> > > > kernel@vger.kernel.org; git (AMD-Xilinx) <git@amd.com>
+> > > > Subject: Re: [PATCH v4 2/2] usb: misc: onboard_usb_dev: add
+> > > > Microchip
+> > > > usb5744 SMBus programming support
+> > > >
+> > > > On Sun, Sep 01, 2024 at 05:38:39PM +0530, Radhey Shyam Pandey wrote:
+> > > > > usb5744 supports SMBus Configuration and it may be configured via
+> > > > > the SMBus slave interface during the hub start-up configuration stage.
+> > > > >
+> > > > > To program it driver uses i2c-bus phandle (added in commit
+> > > > > '02be19e914b8
+> > > > > dt-bindings: usb: Add support for Microchip usb5744 hub
+> > > > > controller') to get i2c client device and then based on usb5744
+> > > > > compatible check calls
+> > > > > usb5744 i2c default initialization sequence.
+> > > > >
+> > > > > Apart from the USB command attach, prevent the hub from suspend.
+> > > > > when the USB Attach with SMBus (0xAA56) command is issued to the
+> > > > > hub, the hub is getting enumerated and then it puts in a suspend mode.
+> > > > > This causes the hub to NAK any SMBus access made by the SMBus
+> > > > > Master during this period and not able to see the hub's slave
+> > > > > address while running the "i2c probe" command.
+> > > > >
+> > > > > Prevent the MCU from putting the HUB in suspend mode through
+> > > > > register write. The BYPASS_UDC_SUSPEND bit (Bit 3) of the
+> > > > > RuntimeFlags2 register at address 0x411D controls this aspect of
+> > > > > the hub. The BYPASS_UDC_SUSPEND bit in register 0x411Dh must be
+> > > > > set to ensure that
+> > > > the
+> > > > > MCU is always enabled and ready to respond to SMBus runtime
+> > > > commands.
+> > > > > This register needs to be written before the USB attach command is issued.
+> > > > >
+> > > > > The byte sequence is as follows:
+> > > > > Slave addr: 0x2d           00 00 05 00 01 41 1D 08
+> > > > > Slave addr: 0x2d           99 37 00
+> > > > > Slave addr: 0x2d           AA 56 00
+> > > > >
+> > > > > Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> > > > > ---
+> > > > > Changes for v4:
+> > > > > - Fix error: implicit declaration of function 'i2c_smbus_*' APIs by
+> > > > >   introducing a dependency on I2C_CONFIG. This error is reported
+> > > > >   by kernel test on v3 series and usb:usb-testing 20/25 branch.
+> > > > >   https://lore.kernel.org/all/2024082503-uncoated-chaperone-
+> > > > 7f70@gregkh
+> > > > >
+> > > > > Changes for v3:
+> > > > > - Add comment for UDC suspend sequence.
+> > > > > - Drop USB5744_CREG_MEM_NBYTES and USB5744_CREG_NBYTES
+> > and
+> > > > replace
+> > > > >   it with literal + comment.
+> > > > > - Move microchip defines to source file.
+> > > > >
+> > > > > Changes for v2:
+> > > > > - Move power on reset delay to separate patch.
+> > > > > - Switch to compatible based check for calling usb5755
+> > > > >   onboard_dev_5744_i2c_init(). This is done to make
+> > > > >   onboard_dev_5744_i2c_init() as static.
+> > > > > - Fix subsystem "usb: misc: onboard_usb_dev:..."
+> > > > > - Use #define for different register bits instead of magic values.
+> > > > > - Use err_power_off label name.
+> > > > > - Modified commit description to be in sync with v2 changes.
+> > > > > ---
+> > > > >  drivers/usb/misc/Kconfig           |  2 +-
+> > > > >  drivers/usb/misc/onboard_usb_dev.c | 73
+> > > > ++++++++++++++++++++++++++++++
+> > > > >  2 files changed, 74 insertions(+), 1 deletion(-)
+> > > > >
+> > > > > diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
+> > > > > index 50b86d531701..cb5e47d439ab 100644
+> > > > > --- a/drivers/usb/misc/Kconfig
+> > > > > +++ b/drivers/usb/misc/Kconfig
+> > > > > @@ -318,7 +318,7 @@ config BRCM_USB_PINMAP
+> > > > >
+> > > > >  config USB_ONBOARD_DEV
+> > > > >  	tristate "Onboard USB device support"
+> > > > > -	depends on OF
+> > > > > +	depends on OF && I2C
+> > > >
+> > > > This feels wrong.
+> > > >
+> > > > While a single device that this driver supports might need i2c, not
+> > > > all of the devices do, so you have the potential to drag in a bunch
+> > > > of code here for devices that do not have/need i2c at all, right?
+> > > >
+> > > > Any way to "split this out" into a smaller chunk?  Or better yet,
+> > > > just detect at runtime if you need/want to call those i2c functions
+> > > > (and they should have no-ops for when i2c is not enabled, right?)
+> > >
+> > > In onboard driver I am calling onboard_dev_5744_i2c_init() by
+> > > detecting at runtime if "i2c-bus" phandle is present. But the problem
+> > > is i2c_smbus_* APIs are declared and defined only for #if
+> > > IS_ENABLED(CONFIG_I2C).
+> > >
+> > > Do you think we should implement no-ops for I2C smbus APIs (in
+> > > linux/i2c.h)? OR a simpler alternative would be to add #if
+> > > IS_ENABLED(CONFIG_I2C) check in the onboard_*_i2c_init() and return
+> > > error code if CONFIG_I2C is not defined ?
+> > > Did a grep on #if IS_ENABLED(CONFIG_I2C) and find couple of drivers
+> > > using this approach.
+> > 
+> > I expect using IS_ENABLED(CONFIG_I2C) would cause issues when
+> > USB_ONBOARD_DEV=y and CONFIG_I2C=m.
+> > 
+> > Another option could be adding an option USB_ONBOARD_DEV_USB5744 (or
+> > similar) and make that dependent on CONFIG_I2C.
 > 
-> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: <linux-usb@vger.kernel.org>
-> Cc: Pin-yen Lin <treapking@chromium.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  include/linux/usb/typec_mux.h | 43 +++++++++++++++++++++++++++++++----
->  1 file changed, 38 insertions(+), 5 deletions(-)
+> Yes, theoretically this can also be valid build configuration.
 > 
-> diff --git a/include/linux/usb/typec_mux.h b/include/linux/usb/typec_mux.h
-> index 2489a7857d8e..efb5ed32b813 100644
-> --- a/include/linux/usb/typec_mux.h
-> +++ b/include/linux/usb/typec_mux.h
-> @@ -3,6 +3,7 @@
->  #ifndef __USB_TYPEC_MUX
->  #define __USB_TYPEC_MUX
->  
-> +#include <linux/err.h>
->  #include <linux/property.h>
->  #include <linux/usb/typec.h>
->  
-> @@ -24,16 +25,13 @@ struct typec_switch_desc {
->  	void *drvdata;
->  };
->  
-> +#if IS_ENABLED(CONFIG_TYPEC)
-> +
->  struct typec_switch *fwnode_typec_switch_get(struct fwnode_handle *fwnode);
->  void typec_switch_put(struct typec_switch *sw);
->  int typec_switch_set(struct typec_switch *sw,
->  		     enum typec_orientation orientation);
->  
-> -static inline struct typec_switch *typec_switch_get(struct device *dev)
-> -{
-> -	return fwnode_typec_switch_get(dev_fwnode(dev));
-> -}
-> -
->  struct typec_switch_dev *
->  typec_switch_register(struct device *parent,
->  		      const struct typec_switch_desc *desc);
-> @@ -42,6 +40,41 @@ void typec_switch_unregister(struct typec_switch_dev *sw);
->  void typec_switch_set_drvdata(struct typec_switch_dev *sw, void *data);
->  void *typec_switch_get_drvdata(struct typec_switch_dev *sw);
->  
-> +#else
-> +
-> +static inline struct typec_switch *
-> +fwnode_typec_switch_get(struct fwnode_handle *fwnode)
-> +{
-> +	return NULL;
-> +}
-> +static inline void typec_switch_put(struct typec_switch *sw) {}
-> +static inline int typec_switch_set(struct typec_switch *sw,
-> +		     enum typec_orientation orientation)
-> +{
-> +	return 0;
-> +}
-
-Just my 2c:
-
-The stubs above look fine from my POV, they help us to cleanup the users
-of the API. The register/unregister callbacks are not. The switch
-providers should clearly know whether the API is actually available or
-not. Compare this to how other subsystems (regulators, interconnects,
-etc) provide stubs for consumer API only.
-
-In other words, please consider sending a patch that drops provider-side
-Type-C MUX API stubs.
-
-> +
-> +static inline struct typec_switch_dev *
-> +typec_switch_register(struct device *parent,
-> +		      const struct typec_switch_desc *desc)
-> +{
-> +	return ERR_PTR(-EOPNOTSUPP);
-> +}
-> +static inline void typec_switch_unregister(struct typec_switch_dev *sw) {}
-> +
-> +static inline void typec_switch_set_drvdata(struct typec_switch_dev *sw, void *data) {}
-> +static inline void *typec_switch_get_drvdata(struct typec_switch_dev *sw)
-> +{
-> +	return ERR_PTR(-EOPNOTSUPP);
-> +}
-> +
-> +#endif /* CONFIG_TYPEC */
-> +
-> +static inline struct typec_switch *typec_switch_get(struct device *dev)
-> +{
-> +	return fwnode_typec_switch_get(dev_fwnode(dev));
-> +}
-> +
->  struct typec_mux_state {
->  	struct typec_altmode *alt;
->  	unsigned long mode;
-> -- 
-> https://chromeos.dev
+> I assume your suggestion is something like below:
 > 
+> +config USB_ONBOARD_DEV_USB5744
+> +       tristate "Onboard USB Microchip usb5744 hub with SMBus support"
+> +       depends on USB_ONBOARD_DEV && I2C
+> +       help
+> +         Say Y here if you want to support onboard USB Microchip usb5744
+> +         hub that requires SMBus initialization.
+> diff --git a/drivers/usb/misc/onboard_usb_dev.c b/drivers/usb/misc/onboard_usb_dev.c
+> index 560591e02d6a..6169780a18d9 100644
+> --- a/drivers/usb/misc/onboard_usb_dev.c
+> +++ b/drivers/usb/misc/onboard_usb_dev.c
+> @@ -311,7 +311,7 @@ static void onboard_dev_attach_usb_driver(struct work_struct *work)
+> 
+>  static int onboard_dev_5744_i2c_init(struct i2c_client *client)
+>  {
+> -#if IS_ENABLED(CONFIG_I2C)
+> +#if IS_ENABLED(CONFIG_USB_ONBOARD_DEV_USB5744)
+> 
+> 
+> <*>   Onboard USB device support                                                               
+>   <M>     Onboard USB Microchip usb5744 hub with SMBus support
 
--- 
-With best wishes
-Dmitry
+Yes, something along these lines
+
+> Here IS_ENABLED will report true either onboard usb5744 is module/in-built.
+>
+> So, we hit same issue as USB_ONBOARD_DEV=y and I2C=m.
+
+Right, the problem is that USB_ONBOARD_DEV_USB5744 isn't an actual module,
+otherwise Kconfig would prevent it from being builtin when I2C=m.
+
+I think CONFIG_USB_ONBOARD_DEV_USB5744 should be boolean. It should only
+be selectable when CONFIG_I2C=y or CONFIG_USB_ONBOARD_DEV=m and
+CONFIG_I2C=m. That can be achieved with:
+
+  depends on USB_ONBOARD_DEV && (I2C=y || I2C=USB_ONBOARD_DEV)
+
+or
+
+  depends on (USB_ONBOARD_DEV && I2C=y) || (USB_ONBOARD_DEV=m && I2C=m)
+
+This doesn't look particularly elegant but should do the trick.
+
+> FYI, as this series merged to -next based on our discussion
+
+Ah, thanks for letting me know. Sorry for the delayed reply, I went
+through an intercontinental relocation and it took some time to
+get things settled.
+
+> I will send another series fixing this particular build configuration and
+> other coding style changes based on v4 review comments.
+
+Thanks!
 
