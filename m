@@ -1,146 +1,99 @@
-Return-Path: <linux-kernel+bounces-333392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2AE097C7D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:19:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7504C97C7DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A44C3288A39
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36753288178
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9EB19A285;
-	Thu, 19 Sep 2024 10:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55232199FC2;
+	Thu, 19 Sep 2024 10:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="MdW/JwzL"
-Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qlJeoNSQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5EA33D8;
-	Thu, 19 Sep 2024 10:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB98233D8;
+	Thu, 19 Sep 2024 10:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726741189; cv=none; b=XJh8qN+O6sRjICs5KJKSwnpcU1KGTpYKeMPwz7jCt5q11uh8u6PvaE1EkbaIdVbc2t6mA1zFY7hpHpTJ76sNcA14b3XiZv3WFnz72t6MEp30dvbd4vDfT68+3sIZc38FCed/uM1FYUVgmTFoIT6eW8UhQovfN3XnkuLLa2wSTAY=
+	t=1726741264; cv=none; b=SIqamRuq7RWjcQRXG/N9soTmLbk5IPpUTUUXj9YiToeMvZ32CGB7FF39DnurVQzt8QZH3eMNhBU/Cxv8gysGYN1QXdU8QSfcyzCYPZMHM7G07Ry2A/28oTsjQI9w+6zzMd2Pab6yBgNUyIgx9r6AWOTCcxSn7nkfElvI3OzCEHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726741189; c=relaxed/simple;
-	bh=yPvEhilC8o+QAD2dAw0R/Y7FjbORjvrTTvmE1gFLzow=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Uvoky0nuP1qj7FSQzFoEB2uqcgzxWiIXuIBJh6iFekV2SBle+fZyXzdPhWp1SF9pyAK+9wPLB8uSLF8iTvPVg3ONkGZ6n9K261L3mIgigd+TahHdVNI6h5k/11ScfIPncxxwzAE9ssudWppXg0h1zCj+1eS3+iCP4vyCZ9a/IWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=MdW/JwzL; arc=none smtp.client-ip=212.122.41.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
-	s=mail; t=1726741181;
-	bh=C8urjnOua0GCJAjrYNro+A9+djxFaRIrbs95gdqoxeU=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=MdW/JwzLtG7jvM2lKNp19UNEGkA++Q85uQ+qZjR6Gwdt1C7rGaR7xP/GOO7e/Ff73
-	 yCRvERCX/lQ8dqkMhIY+NBCdHUAnPm+OuxhsFXaaIWt08iCDrjc450JYCSLAU7m66F
-	 Tj4x6f9YQRiT1AWs3G2qXIx+1o4QNalFGYcwxG2g=
+	s=arc-20240116; t=1726741264; c=relaxed/simple;
+	bh=7yVbot+N/CeVkiDlQIKv8CrioNBnIRJgLn3YppEiVBg=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=qEZLtDyZuHN3TN7Z85QJQnWFEtY9XPqyffvZsaXx4KywfJSTSdykJW/+SpRpgaypr6dV1r4WjeIxZZTuXZgp/zPbijTH1K7FCq8p84cZut9NJrS7VKqJBfwbj5WTZTn9BIvs5HAIG+jVIl/ZRPIVHixfm60x9XeyHVmi/MMtKvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qlJeoNSQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 667C1C4CEC4;
+	Thu, 19 Sep 2024 10:21:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726741264;
+	bh=7yVbot+N/CeVkiDlQIKv8CrioNBnIRJgLn3YppEiVBg=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=qlJeoNSQ59Vg3rRloBWA2IJdP5+o6EilofG92u3vVkgFWmRhLjUgiPNczv91WghqM
+	 pykkRQGSdPwTd0QeLKqbqX/FsF5wBizJZevZ2cxGd+JG3M8/HLeu40w9jDmD0YRlYw
+	 1vzvrZEQiz5nguJzeJSCUVzsPVZHww5ggi28ICpPydS2K2x3RHm5+uT1Je46cHs3o9
+	 kGdyvPtNJdSCCnBDw3r7sDq4PTv+7AtVvmtk9rLd9YzlOAZ2r0NdTfqTxwHM0kLHg9
+	 rETCpPevrVM5XZvR0bzcR8lyPjedIiDkETycZpltCsLFpF2vPXHjayw+kYu0tCIqvF
+	 aT/doqJzq6iUw==
+Message-ID: <0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-From: Christian Theune <ct@flyingcircus.io>
-In-Reply-To: <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
-Date: Thu, 19 Sep 2024 12:19:19 +0200
-Cc: Dave Chinner <david@fromorbit.com>,
- Matthew Wilcox <willy@infradead.org>,
- Chris Mason <clm@meta.com>,
- Jens Axboe <axboe@kernel.dk>,
- linux-mm@kvack.org,
- "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Daniel Dao <dqminh@cloudflare.com>,
- regressions@lists.linux.dev,
- regressions@leemhuis.info
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io>
-References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <Zud1EhTnoWIRFPa/@dread.disaster.area>
- <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
- <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
- <ZulMlPFKiiRe3iFd@casper.infradead.org>
- <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
- <ZumDPU7RDg5wV0Re@casper.infradead.org>
- <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
- <459beb1c-defd-4836-952c-589203b7005c@meta.com>
- <ZurXAco1BKqf8I2E@casper.infradead.org>
- <ZuuBs762OrOk58zQ@dread.disaster.area>
- <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
- <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
- <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
- <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
+In-Reply-To: <20240917101016.23238-1-inbaraj.e@samsung.com>
+References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com> <20240917101016.23238-1-inbaraj.e@samsung.com>
+Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com, Inbaraj E <inbaraj.e@samsung.com>
+To: Inbaraj E <inbaraj.e@samsung.com>, alim.akhtar@samsung.com, cw00.choi@samsung.com, krzk@kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com, s.nawrocki@samsung.com
+Date: Thu, 19 Sep 2024 03:21:02 -0700
+User-Agent: alot/0.10
 
-
-
-> On 19. Sep 2024, at 08:57, Linus Torvalds =
-<torvalds@linux-foundation.org> wrote:
+Quoting Inbaraj E (2024-09-17 03:10:16)
+> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the CMU_CAM_CSI
+> block. When we gate ACLK or PCLK, the clock framework will subsequently
+> disables the parent clocks(PLL_CAM_CSI). Disabling PLL_CAM_CSI is causing
+> sytem level halt.
 >=20
-> Yeah, right now Jens is still going to run some more testing, but I
-> think the plan is to just backport
+> It was observed on FSD SoC, when we gate the ACLK and PCLK during CSI stop
+> streaming through pm_runtime_put system is getting halted. So marking
+> PLL_CAM_CSI as critical to prevent disabling.
 >=20
->  a4864671ca0b ("lib/xarray: introduce a new helper xas_get_order")
->  6758c1128ceb ("mm/filemap: optimize filemap folio adding")
+> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
+> ---
+
+Please add a fixes tag. Although this is likely a band-aid fix because
+marking something critical leaves it enabled forever.
+
+>  drivers/clk/samsung/clk-fsd.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 >=20
-> and I think we're at the point where you might as well start testing
-> that if you have the cycles for it. Jens is mostly trying to confirm
-> the root cause, but even without that, I think you running your load
-> with those two changes back-ported is worth it.
->=20
-> (Or even just try running it on plain 6.10 or 6.11, both of which
-> already has those commits)
+> diff --git a/drivers/clk/samsung/clk-fsd.c b/drivers/clk/samsung/clk-fsd.c
+> index 6f984cfcd33c..b1764aab9429 100644
+> --- a/drivers/clk/samsung/clk-fsd.c
+> +++ b/drivers/clk/samsung/clk-fsd.c
+> @@ -1637,8 +1637,9 @@ static const struct samsung_pll_rate_table pll_cam_=
+csi_rate_table[] __initconst
+>  };
+> =20
+>  static const struct samsung_pll_clock cam_csi_pll_clks[] __initconst =3D=
+ {
+> -       PLL(pll_142xx, 0, "fout_pll_cam_csi", "fin_pll",
+> -           PLL_LOCKTIME_PLL_CAM_CSI, PLL_CON0_PLL_CAM_CSI, pll_cam_csi_r=
+ate_table),
+> +       __PLL(pll_142xx, 0, "fout_pll_cam_csi", "fin_pll",
+> +               CLK_GET_RATE_NOCACHE | CLK_IS_CRITICAL, PLL_LOCKTIME_PLL_=
+CAM_CSI,
 
-I=E2=80=99ve discussed this with my team and we=E2=80=99re preparing to =
-switch all our=20
-non-prod machines as well as those production machines that have shown
-the error before.
-
-This will require a bit of user communication and reboot scheduling.
-Our release prep will be able to roll this out starting early next week
-and the production machines in question around Sept 30.
-
-We would run with 6.11 as our understanding so far is that running the
-most current kernel would generate the most insight and is easier to
-work with for you all?
-
-(Generally we run the mostly vanilla LTS that has surpassed x.y.50+ so
-we might later downgrade to 6.6 when this is fixed.)
-
-> So considering how well the reproducer works for Jens and Chris, my
-> main worry is whether your load might have some _additional_ issue.
->=20
-> Unlikely, but still .. The two commits fix the repproducer, so I think
-> the important thing to make sure is that it really fixes the original
-> issue too.
->=20
-> And yeah, I'd be surprised if it doesn't, but at the same time I would
-> _not_ suggest you try to make your load look more like the case we
-> already know gets fixed.
->=20
-> So yes, it will be "weeks of not seeing crashes" until we'd be
-> _really_ confident it's all the same thing, but I'd rather still have
-> you test that, than test something else than what caused issues
-> originally, if you see what I mean.
-
-Agreed, I=E2=80=99m all onboard with that.
-
-Liebe Gr=C3=BC=C3=9Fe,
-Christian Theune
-
---=20
-Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
-Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
-Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
-HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
-Christian Zagrodnick
-
+Please add a comment indicating that this clk can never turn off because
+<insert reason here>.
 
