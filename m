@@ -1,83 +1,144 @@
-Return-Path: <linux-kernel+bounces-333597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 438AC97CB25
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:44:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06F0597CB29
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E06D01F24EC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:43:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B551F248A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD0F19FA77;
-	Thu, 19 Sep 2024 14:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E8119F49D;
+	Thu, 19 Sep 2024 14:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AdUtEPUS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VIN+eXj3"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710A21E517;
-	Thu, 19 Sep 2024 14:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5716019B3CB;
+	Thu, 19 Sep 2024 14:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726757030; cv=none; b=lyBm10NvcYxi6hMyNA16/eGrUC+T7cQN8h8ON1RwXTlkc8WMC6l3mEEz9r9QobetkZDo+OGldiQwbbgORdKODToK/mSQHYG5T6uUslycBzAB9WiR2GilbQR2HuUmQGbZOBP6FCc+KwXBUFElGZoi+Vextz0PReMbuKoBy+uEruI=
+	t=1726757152; cv=none; b=LplxYmPe0RACyOjPMyN+o4pwQ5+wydXhd+V4iPzB8WK6JIlyfh2Pe40Gn6woHdS4HgSQaazqjVElnKqlhYYyBS3HLuw5bfxrcZdmABB5VV/98VJPG8JYmPLdEpO8wMT65PDRQR/hjt+cJXrUycx/bCcbudTJ3RWn38VDC5kCisE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726757030; c=relaxed/simple;
-	bh=tKvQ4uAvdY25kkNNbkFy8qUv07VfNMSDnZOyg4vWIo8=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=nJDG2olnWhjCvTrnz08OAh+pQLty4knm62IkwXoQp5WMg9tmYo23Wvpx9dlSE3ZqOQjjrxDl+jYt2/VcHYCGSi9GZ0b1bX5ZVttdcAUloEaRTN5V6vEDSOea+W6z74MzXZjl+dXKhIYM5FUwpU9sHzlsOTuMYmWvKEeDDI4XAa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AdUtEPUS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95AEFC4CEC4;
-	Thu, 19 Sep 2024 14:43:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726757030;
-	bh=tKvQ4uAvdY25kkNNbkFy8qUv07VfNMSDnZOyg4vWIo8=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=AdUtEPUSs7OgA9Wx/FZcX3iSC7kxQMrN/ENakhiAJShnGFlIiXKoIxsqJ6h48Rz04
-	 DdBbm+awJmfPT841nq+hYBOs7dRkw32urrt81eWWqC3Jtd9IFm2xZ/55op28MGsm4A
-	 USoQQLhvkRWZHnQKwjmhQZN5fHnAyLYs5BdJCj9STgIWhMaZpShw7oFY1tcjKj99m5
-	 e0+xVl0L+hiLuCa8UwvMB7lZaEsNMQMx7bA4s4t12JS4LqIeL2IX97aQNdpxb80K46
-	 q9A0xDWGW+ENJj3sJGkC0XqUkmCZ8T4dmoRK9oXibPscr041tGYQvy5YDUupLk7z33
-	 RFWv0PtIsk2tw==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1726757152; c=relaxed/simple;
+	bh=pSfwgrTPvnmFiOqh3pT2jvWaxAtgqdoC3kyn+7ZtUTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JeHlKMB8g8G4sSZG8/m6oyLQVpeeWl9jeAE3Abykn8+sQMR45Km6+Yb1TQg8l+uRV/gmpyAbx2yK5/UpDDh3C2mJGjwXc/ozqT8INdBh+KjCVSGjWJd8Fswofp1AVJGQ8v13j2zyMr/e3bvx7LryyrwhGdsGmmxhETxEu82qbV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VIN+eXj3; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so377815266b.1;
+        Thu, 19 Sep 2024 07:45:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726757149; x=1727361949; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BnMoVwbaYU2xar7OIpkgN7D8RCu0vLhUDD2HtUB2qh8=;
+        b=VIN+eXj3A8D5YmDnnpmZew0H7vY26qsBSiDXGwCUMED0l4+ql96tPClGXViE/ErO4i
+         H0WVJg4Qv3cNaIyiTDqL51bsCx2b0vQZ1fiG+mIcXcOmWKtd3O+FMmKLk8IZY2109BRn
+         COzPea2TPTeHdp8O3JJm+irgacB0RQ6LE2nSLl+oTlVUN3Ojz6/w8geAqW0dvgnrH3xa
+         XRSpn1q9P9SELy1rvWaUvVXqMGAFJ9UxDtQnFek3dhE6lnyQ48jTK3KUj5ZkDp4R1heT
+         P+nc1iSkz1aKIHGMsxhA1VGb5iFrGRxdD79knJXXXpr9MgTQmzY5hOF0aZkiB2t7qZfd
+         izmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726757149; x=1727361949;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BnMoVwbaYU2xar7OIpkgN7D8RCu0vLhUDD2HtUB2qh8=;
+        b=CBjGOT7iozG47qZWRpEmqi3BRQxENjCaCj3Ctzr0s9HRCYrh2vu4DD50EYzfVmGMBe
+         NsaJrQ7CEcm0xQbVcjupq/XM1A0JygecC/1+HhpdO8DJFkSNEoWAb++2hCe7V9CendFg
+         fvAJYZLAyafjY/y0j/RNhOWu6TYZlHzir776eDKY2twxjXAb8ftHjAXI12jRvrNHWAeh
+         QCTj5VkshU5moGy83tv2jQkvgnRdq0XuywVUSi7NVWuLLeuulBr6aKEwvFVZcbJ476Sl
+         xe7d3WP4Td/MQxaHNhf098+akBqZZz1/gDP6yteMQ4N0TOwD8w4YG+QUhswGCVuRWeWU
+         7qwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVpesHG5sGbzrYal8yQVBw6LcxS72HAjM0yICluCEwW6qAXIXjt1IitLEfnOnrAy55gMeGgIhGjRfbQ4ela@vger.kernel.org, AJvYcCXooovU9MVh3JvfsuKY0jNVa+BQ9RdJz7iqDPS9hHRzucelj5aLSUdqoo8MLCqr8ZlwCcgjTooykeOiJA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJefytcZKlgoe+AF9vVX1cIsz/5SFPOSXU8dWJ53oY9CQOt9XJ
+	BN0fZVys9+IXInSRXhWK8cUs2QwMKx14wli9Sn0SlKyqmKrAa54a
+X-Google-Smtp-Source: AGHT+IEvFr3SE6FxalseTQjkOWlEA8ju3/yO+4QAFrVm7xyZgf7fPTziPJ5TPH6keQrARIAI39garw==
+X-Received: by 2002:a17:907:3da0:b0:a8d:2bc7:6331 with SMTP id a640c23a62f3a-a90c1e4e209mr357428366b.27.1726757148347;
+        Thu, 19 Sep 2024 07:45:48 -0700 (PDT)
+Received: from google.com ([83.68.141.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f43d2sm735326966b.87.2024.09.19.07.45.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 07:45:47 -0700 (PDT)
+Date: Thu, 19 Sep 2024 14:45:45 +0000
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Denis Arefev <arefev@swemel.ru>
+Cc: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH 5/10] Input: adp5588-keys - added a check key_val
+Message-ID: <Zuw5GZ2k3T-JKhHK@google.com>
+References: <20240919142914.100609-1-arefev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240919094147.328737-5-dongml2@chinatelecom.cn>
-References: <20240919094147.328737-1-dongml2@chinatelecom.cn> <20240919094147.328737-5-dongml2@chinatelecom.cn>
-Subject: Re: [RFC PATCH net-next 4/7] net: ip: make fib_validate_source() return drop reason
-From: Antoine Tenart <atenart@kernel.org>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, dsahern@kernel.org, steffen.klassert@secunet.com, herbert@gondor.apana.org.au, dongml2@chinatelecom.cn, bigeasy@linutronix.de, toke@redhat.com, idosch@nvidia.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-To: Menglong Dong <menglong8.dong@gmail.com>, edumazet@google.com
-Date: Thu, 19 Sep 2024 16:43:45 +0200
-Message-ID: <172675702580.6616.12370018117434278479@kwain.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240919142914.100609-1-arefev@swemel.ru>
 
-Quoting Menglong Dong (2024-09-19 11:41:44)
-> =20
-> @@ -2339,8 +2345,11 @@ static int ip_route_input_slow(struct sk_buff *skb=
-, __be32 daddr, __be32 saddr,
->         if (!ipv4_is_zeronet(saddr)) {
->                 err =3D fib_validate_source(skb, saddr, 0, tos, 0, dev,
->                                           in_dev, &itag);
-> -               if (err < 0)
-> +               if (err < 0) {
-> +                       err =3D -EINVAL;
-> +                       __reason =3D -err;
+Hi Denis,
 
-That should be:
+On Thu, Sep 19, 2024 at 05:29:14PM +0300, Denis Arefev wrote:
+> No upstream commit exists for this commit.
 
-    __reason =3D -err;
-    err =3D -EINVAL;
+Sorry, what does this mean?
 
+> 
+> If the adp5588_read function returns 0, then there will be an
+> overflow of the kpad->keycode[key_val - 1] buffer.
+> 
+> If the adp5588_read function returns a negative value, then the
+> logic is broken - the wrong value is used as an index of
+> the kpad->keycode array.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: 69a4af606ed4 ("Input: adp5588-keys - support GPI events for ADP5588 devices")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Denis Arefev <arefev@swemel.ru>
+> ---
+>  drivers/input/keyboard/adp5588-keys.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/input/keyboard/adp5588-keys.c b/drivers/input/keyboard/adp5588-keys.c
+> index 90a59b973d00..19be8054eb5f 100644
+> --- a/drivers/input/keyboard/adp5588-keys.c
+> +++ b/drivers/input/keyboard/adp5588-keys.c
+> @@ -272,6 +272,8 @@ static void adp5588_report_events(struct adp5588_kpad *kpad, int ev_cnt)
+>  		int key = adp5588_read(kpad->client, Key_EVENTA + i);
+>  		int key_val = key & KEY_EV_MASK;
+>  
+> +		if (key_val <= 0)
+> +			continue;
 
-Also this patch should take care of the fib_validate_source call in
-ip_mc_validate_source.
+We should be checking the original value (key) and not masked value.
+Masked value will never be negative.
 
-Thanks!
-Antoine
+		int key, key_vali, key_press;
+
+		key = adp5588_read(kpad->client, Key_EVENTA + i);
+		if (key < 0)
+			continue;
+
+		key_val = key & key & KEY_EV_MASK;
+		key_press = key & KEY_EV_PRESSED;
+		if (key_val >= GPI_PIN_BASE && key_val <= GPI_PIN_END) {
+			...
+		} else if (key_val > 0) {
+			...
+		}
+
+Thanks.
+
+-- 
+Dmitry
 
