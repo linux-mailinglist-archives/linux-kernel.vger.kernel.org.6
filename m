@@ -1,97 +1,78 @@
-Return-Path: <linux-kernel+bounces-333612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA45F97CB5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:10:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2760797CB5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 17:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FF6E1F27692
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:10:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A30A1C242C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3459A1A08C1;
-	Thu, 19 Sep 2024 15:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EF61A0728;
+	Thu, 19 Sep 2024 15:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aXJ19tKC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d77NqEOD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F811A3BD3;
-	Thu, 19 Sep 2024 15:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C251A3BCE;
+	Thu, 19 Sep 2024 15:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726758616; cv=none; b=iSmrEb4ZRo7VtVGDflXflSteHQGjfALCPYEHK6tbWtqvOrisdt7lTcdDAncIlX+Z4vteupicOmBb7tilnrVc17tk8km1KyLENmcyg56l82KlN8fYvlvb0QNqJcUVOy8Y8UA0wS9og/rLjM789xkJg8RVEEm9YnA46pIRUn/x0gM=
+	t=1726758615; cv=none; b=gk7wxMI0n55WvIrT+HqAdZ9OpcDbKBTk7kgYqXtgqXejGvGhyusFzFp/4wYaRhc1yVlgXLIXH3y77ig22UQ3khe7oT75pW67DAJpekPt/l+8LV28fZuTSKJWKWduZYms9jm8Nr6vW/kbghEcNeaDUQD/lAeVfCquaqY5mhrx/aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726758616; c=relaxed/simple;
-	bh=Mj1MR3Dw/TqPRYxfxnRC0YmPJ5ACiuJJvIONjkmxu1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HseCF17OO0YVk0r8JE4mcE8tqQaVxKmrRywjyPHmyNB0Spz9i3WxPNXf/hJSjz3ACKDvnwWtL4zarBqt5DpCSzL3S0wfe/4I6Ew7cPSOCNPYSM3p2Psf+WjuaDkCt01HgVZCT7vAQtkxebo+UfvipqJaPIROlUyXhXXgXIz/e20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aXJ19tKC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 808F7C4CEC4;
-	Thu, 19 Sep 2024 15:10:13 +0000 (UTC)
+	s=arc-20240116; t=1726758615; c=relaxed/simple;
+	bh=fqC28D/WFTkWkUXkRi3RSK8bJ+CtdTMZcYqv0EghQj8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=mrqPnNvaAJp69+IvBAxxMbBcYyhhiw3RE0oWkf9ud3SbV72HHt3bkcqh2wkJyo4wLvk/Eb9pDdFxXNSkXE63cljskJhLGDr58xGIgnkEc/ig/SbZ6KGln5uekQyH/qw/EhUjR+FeJM7syp6wuUh0Qdr7GM4j2OWrIrMkZ9r44KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d77NqEOD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 899BAC4CECF;
+	Thu, 19 Sep 2024 15:10:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726758616;
-	bh=Mj1MR3Dw/TqPRYxfxnRC0YmPJ5ACiuJJvIONjkmxu1o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aXJ19tKColUGOf4joHhrbgN502gULr1tVc4rnatH4KXxRr7TGbpAd//zH7uXKcPWh
-	 LFBClDL80NA/8rjNIz5UJADydhoh2BvlMsaRDcaDF1aZijaS44XKHRLoX/8XaB75IM
-	 m8fJgx7fE8XcVV2Wsyapj8xwv3Ny0rQtMMuMhC2Z4m5zW0IL5a/IwORxhYD6m6ORXK
-	 eDI0JONp9S1vivdH8icFVLLN+Ql/PdRSo1yov/yGJz5DeT3QqzVvsGA0p+0PMi1MLx
-	 V1svwTqed8JoA2B3Mxhlk8qwKKFm8lqah3oQt1qKmwxqDjGHFvP3o1+60VqrSjaJ5u
-	 7e+Oy9w1Od7Cg==
-Date: Thu, 19 Sep 2024 16:10:11 +0100
-From: Simon Horman <horms@kernel.org>
-To: Riyan Dhiman <riyandhiman14@gmail.com>
-Cc: sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
-	jerinj@marvell.com, hkelam@marvell.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	rsaladi2@marvell.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] octeontx2-af: Change block parameter to const pointer in
- get_lf_str_list
-Message-ID: <20240919151011.GG1571683@kernel.org>
-References: <20240919091935.68209-2-riyandhiman14@gmail.com>
+	s=k20201202; t=1726758615;
+	bh=fqC28D/WFTkWkUXkRi3RSK8bJ+CtdTMZcYqv0EghQj8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=d77NqEOD8XPCRiePIZSRCa8bu1YVo6Cj4TO+mnSW2k3VzziYAWUywFMPF5JZYTqXa
+	 3CknS2tAJ1wOD/yrnbKPlov/7GI+Nn0hp2T3St/aRTQcAkvvGLHAcLlF43aIT7n0XP
+	 wcp9lxHcAYLJY11HPbIyOhHo8gkuw8Tudr9XEDxwk7AucW6K5OLnnU1a1ZBCLC8nc6
+	 rnafTBMvQ1Qa2Z0dyNcslTa0wixtAs/5V6VI2P7dNDPLXjlx3SGDnR5heuw/WnIsnV
+	 4Ze61/2Dd5uPwW3gLGLacc5DoeLLo3jbnUVF/hjzEpNqSN/5OzXBUJ5yY7nwESHEJ+
+	 Z4FoG3ZX5f8Iw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id A190E3809A81;
+	Thu, 19 Sep 2024 15:10:18 +0000 (UTC)
+Subject: Re: [GIT PULL] Smack patches for 6.12
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <b14d039a-7b06-4552-ae61-fbfb4e912b4d@schaufler-ca.com>
+References: <b14d039a-7b06-4552-ae61-fbfb4e912b4d.ref@schaufler-ca.com> <b14d039a-7b06-4552-ae61-fbfb4e912b4d@schaufler-ca.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <b14d039a-7b06-4552-ae61-fbfb4e912b4d@schaufler-ca.com>
+X-PR-Tracked-Remote: https://github.com/cschaufler/smack-next tags/Smack-for-6.12
+X-PR-Tracked-Commit-Id: 2749749afa071f8a0e405605de9da615e771a7ce
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 509d2cd12a10d057fdf72f565b930f9a81140d59
+Message-Id: <172675861754.1588903.16015187619761400872.pr-tracker-bot@kernel.org>
+Date: Thu, 19 Sep 2024 15:10:17 +0000
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LSM List <linux-security-module@vger.kernel.org>, Linux kernel mailing list <linux-kernel@vger.kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, GiSeong Ji <jiggyjiggy0323@gmail.com>, Jiawei Ye <jiawei.ye@foxmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240919091935.68209-2-riyandhiman14@gmail.com>
 
-On Thu, Sep 19, 2024 at 02:49:36PM +0530, Riyan Dhiman wrote:
-> Convert struct rvu_block block to const struct rvu_block *block in
-> get_lf_str_list() function parameter. This improves efficiency by
-> avoiding structure copying and reflects the function's read-only
-> access to block.
-> 
-> Fixes: e77bcdd1f639 (octeontx2-af: Display all enabled PF VF rsrc_alloc entries.)
-> Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+The pull request you sent on Fri, 13 Sep 2024 17:16:09 -0700:
 
-Hi Riyan,
+> https://github.com/cschaufler/smack-next tags/Smack-for-6.12
 
-Thanks for your patch.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/509d2cd12a10d057fdf72f565b930f9a81140d59
 
-While I agree that this is a nice change I don't feel that it is
-a fix, typically something that addresses a user-visible bug.
-
-I suggest that the patch should be treated as an enhancement.
-It should not have a Fixes tag. And it should be targeted at
-net-next (as opposed to net, which is, in general, for fixes).
-
-	Subject: [PATCH net-next] ...
-
-Please note that net-next is currently closed for the v6.12 merge window.
-It should reopen after v6.12-rc1 has been released, likely during
-the week of the 30th September.
-
-So please consider reposting your patch once net-next has reopened.
-
-Link: https://docs.kernel.org/process/maintainer-netdev.html
+Thank you!
 
 -- 
-pw-bot: defer
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
