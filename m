@@ -1,133 +1,76 @@
-Return-Path: <linux-kernel+bounces-333831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A28C97CEB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:05:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F0797CEB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 23:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C28331F23919
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2FC2848E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED9514E2FD;
-	Thu, 19 Sep 2024 21:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMIiZugO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428F514A09A;
+	Thu, 19 Sep 2024 21:08:24 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87C8143880;
-	Thu, 19 Sep 2024 21:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFFC142659
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 21:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726779894; cv=none; b=ECFxxjIR2M4/5jUKYcuyDaX6fdnJ/Mr0vIhA9ZD9dnUq87baPtRX3uv0gqeWtYanIMSgu0uLO2P/Yl2NDJflQHy2QB5CWZjPZmuAOaTnZaKVdIE+tXZhBlxwTbM/S3WZGcqBvCncfdCjZPbR1G/nR8/LKc4sDCayr39MDOo68uE=
+	t=1726780103; cv=none; b=mOjGQbWPS1h5/voGwkNDVvu/QKxzt/V/X1rECxqg87IDhy40w6mchrzgFu+mo0xGLSCGhegP5W3MX1a9Q52Ee0gBwehAdB85a80IcFKEbkFhvXLICPY8aCsLAAnJjMmzEVkRUT6rplDRXFGxZW+iaCGKNUOpKsNb5+mqS9840hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726779894; c=relaxed/simple;
-	bh=8rmdkhy7mle9GnzKV59Fez0ZiYJ5ItopN5knD5heul0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OtyYZc7s5Uxt8DM+T0cTTfhOMr3D9EHvO0SYMpgQDF1Ti6hwlyk9stQSEMjdC/zRdsllEovRTM3voQPeGjyGBad3gvWTWx8FkiKMRdJFC7vkefK+ql02oMk+vLEat5mHD3XD+lGVh8oA7aObgHbxWy+AhZK8kZ+td5+EUPcEagc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMIiZugO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7DAEC4CEC4;
-	Thu, 19 Sep 2024 21:04:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726779893;
-	bh=8rmdkhy7mle9GnzKV59Fez0ZiYJ5ItopN5knD5heul0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tMIiZugOhjzqgyUpW7HkIMb94kB3G/IoEOWJvEfIibHaCL2W6lxj/6dAy50ww3Upd
-	 5BuV7yd7+xf0LnJlLA6shnOsl4ybtmmnw4qRRAcxcVdTlQQO8CjzRoHuaAPl0cnLci
-	 KyO838TcaL8c8mfnqC3Fcz2LQ0BjvUfx2U9ux0XAeez0raNOeRSjsGu9186hqHSozD
-	 ekcF76hWo/vt3sl8iQ7tBHFkSTET2nmVrmZCljeeCkxJkkq5cSQY3mp+XWQ6e0oYMf
-	 Qo62AxytxEW4fp+yzCDxcmUUB+Wme/iNSXIqef4vFQ/XRD6jqsRg+/Yl4tOtEC8q6k
-	 c8Ol4+tfmgDUA==
-Message-ID: <0e8c7a7a-0e2a-42ec-adbc-b29f6a514517@kernel.org>
-Date: Thu, 19 Sep 2024 23:04:43 +0200
+	s=arc-20240116; t=1726780103; c=relaxed/simple;
+	bh=11UbySa6dkYDjT9M66kSYCPLMOFE1PhiFbqRlZ1mVCU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ONpyEhrRv6jr+jqa76naBAIoejZu5uwb8ScZKlsbBXUmMQ+HpuW+CkzYkfxufaIZcC4koq/1YXNAbxEpaWx64C85wtS36RQxkGLxYgdSyEoMIvU2DuY8EyPBAXn0ZYmf4RMmM0HYA17pPGcVQR06NWyaalPiYKyjACUD1oi2RMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82aa467836eso266858339f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 14:08:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726780101; x=1727384901;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=11UbySa6dkYDjT9M66kSYCPLMOFE1PhiFbqRlZ1mVCU=;
+        b=odUGmq2fSldH1VzUklMp/nTd0FgDfYyuBJr36Fi4w3hIxubRQLYOlhpbbsSeOlDa6u
+         mf9Hxi1JFShk1H+0YJJXQdjOw+/rXljDvFgcCFAzen7P+LcqBlsLy+vcuMIE6rmfWA3Z
+         trnuvrKdGMxwWNJRdrpDcLsjOQd825qy6/8Fo4AhZzLj/t1skq2Pd6Q3brXPetZdqNQ9
+         /JWFaRJdr56agNwztvyYjodsU7b7wwfwW5pRCaiRnCbZlR2b5GfIPWVF9TCEFJIkUH4/
+         CsMHthTdZlCh238lnk+qKDtJi7G9j4uVmK3/hY4D3SeLuNmEEX3M2pAjEN1+G6Hdc4Hg
+         sTLQ==
+X-Gm-Message-State: AOJu0YzadI2x+AzwfZpXyrmcugOe5sLMluLZrMwwqL4runydU9DKtmYI
+	9GVZxpe9YXLo/vm2tXvRVxbpaG0/2G3O4kZmM4ZZZ8RChLqzrF04eGr33geYb5ZCmnMYgbVGeuM
+	vDIyI19sxG90KDZ0kL1VEltmNbnc4hCH4SWQ4RsbICNyzsGKbwImb/hM=
+X-Google-Smtp-Source: AGHT+IGn0xKjThVYHgOCjhY0cUhBUazJI/Ewbe7gYEEBYKivSG1tBW787gRlgXwPS+nkZRp1I1dxFTY7z9uEN5bFUELhM5EGRMlI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 2/2] page_pool: fix IOMMU crash when driver has
- already unbound
-To: Yunsheng Lin <linyunsheng@huawei.com>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
- liuyonglong@huawei.com, fanghaiqing@huawei.com, zhangkun09@huawei.com,
- Robin Murphy <robin.murphy@arm.com>,
- Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>,
- Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
- Clark Wang <xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>, Saeed Mahameed
- <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Felix Fietkau <nbd@nbd.name>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
- Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
- Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Andrew Morton <akpm@linux-foundation.org>, imx@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- intel-wired-lan@lists.osuosl.org, bpf@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-mm@kvack.org
-References: <20240918111826.863596-1-linyunsheng@huawei.com>
- <20240918111826.863596-3-linyunsheng@huawei.com>
- <CAC_iWjK=G7Oo5=pN2QunhasgDC6NyC1L+96jigX7u9ad+PbYng@mail.gmail.com>
- <894a3c2c-22f9-45b9-a82b-de7320066b42@kernel.org>
- <cdfecd37-31d7-42d2-a8d8-92008285b42e@huawei.com>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <cdfecd37-31d7-42d2-a8d8-92008285b42e@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:13a3:b0:3a0:abd0:12b with SMTP id
+ e9e14a558f8ab-3a0c8c9286bmr11142305ab.8.1726780101693; Thu, 19 Sep 2024
+ 14:08:21 -0700 (PDT)
+Date: Thu, 19 Sep 2024 14:08:21 -0700
+In-Reply-To: <00000000000087599b06225fc0a0@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ec92c5.050a0220.2abe4d.0000.GAE@google.com>
+Subject: Re: [syzbot] WARNING in bch2_journal_flush_seq_async
+From: syzbot <syzbot+d119b445ec739e7f3068@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
+***
 
-On 19/09/2024 13.15, Yunsheng Lin wrote:
-> On 2024/9/19 17:42, Jesper Dangaard Brouer wrote:
->>
->> On 18/09/2024 19.06, Ilias Apalodimas wrote:
->>>> In order not to do the dma unmmapping after driver has already
->>>> unbound and stall the unloading of the networking driver, add
->>>> the pool->items array to record all the pages including the ones
->>>> which are handed over to network stack, so the page_pool can
->>>> do the dma unmmapping for those pages when page_pool_destroy()
->>>> is called.
->>>
->>> So, I was thinking of a very similar idea. But what do you mean by
->>> "all"? The pages that are still in caches (slow or fast) of the pool
->>> will be unmapped during page_pool_destroy().
->>
->> I really dislike this idea of having to keep track of all outstanding pages.
->>
->> I liked Jakub's idea of keeping the netdev around for longer.
->>
->> This is all related to destroying the struct device that have points to
->> the DMA engine, right?
-> 
-> Yes, the problem seems to be that when device_del() is called, there is
-> no guarantee hw behind the 'struct device ' will be usable even if we
-> call get_device() on it.
-> 
->>
->> Why don't we add an API that allow netdev to "give" struct device to
->> page_pool.  And then the page_poll will take over when we can safely
->> free the stuct device?
-> 
-> By 'allow netdev to "give" struct device to page_pool', does it mean
-> page_pool become the driver for the device?
-> If yes, it seems that is similar to jakub's idea, as both seems to stall
-> the calling of device_del() by not returning when the driver unloading.
+Subject: WARNING in bch2_journal_flush_seq_async
+Author: pz010001011111@proton.me
 
-Yes, this is what I mean. (That is why I mentioned Jakub's idea).
-
-
-> If no, it seems that the problem is still existed when the driver for
-> the device has unbound after device_del() is called.
+#syz test
 
