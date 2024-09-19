@@ -1,91 +1,88 @@
-Return-Path: <linux-kernel+bounces-333166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91AFA97C4CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:22:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4078597C4D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C47D71C228EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:22:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E292A1F216FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBFF22098;
-	Thu, 19 Sep 2024 07:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A858619342A;
+	Thu, 19 Sep 2024 07:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="mJ2tavrE"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LIB56Q0B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A4718BC04
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 07:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECBE19007D;
+	Thu, 19 Sep 2024 07:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726730551; cv=none; b=FIU99vMwzfi2RoRYuyHmTBY+e35pC7sTO6ysLfh6K/sKSHplFD2U0NyD/ZyUhwBKsUVYaFQoUWLxc6IzwhKn5R8Xm9scyMaHiL5Y73xCdzxu/8G3pCd5CvGStkMLRxfVyjoZSl+Nz4mov3C0VlsTmSIhWR963a+Su9zpQ9s1jk0=
+	t=1726730796; cv=none; b=VunZiY7MhGhjPF8mAGpwTguZkXdkwviHnKQviXvJho9/XcBE95dbj1ksPfe440KlFyvHGbLPY3yNCYGVVazezIuDWsNkF3cl3+OX7XG/rCusz6wrBCspKUoAr10TH7JTMWmAZeUtEwSd52QbXrz8KmvmR1IV93ms4gigImyV0Yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726730551; c=relaxed/simple;
-	bh=kXe44D4oPW7CPCoxcbg896TShv4XLJMnwM4n0Dy3AXw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FoAZuUKKmYZZ/+Kg6w52I6iPKAhYnMIRf6CrsnjiC3pJcOHIxWCo+10ER5zu1gJLieHhXiuqNd7JJ7EJMeB0RdNt/vALsJrk6A+a1Hp9Fj7KhfLAoVmUO2c5gB3x9jb/yL9O2UPioeR17MWh1OYAAUh0XmfPjMKZ4rAJ0BuOKyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=mJ2tavrE; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=kXe44D4oPW7CPCoxcbg896TShv4XLJMnwM4n0Dy3AXw=;
-	t=1726730550; x=1727940150; b=mJ2tavrEcZz0+UD7V+QBMbmVwHKT9DjnMNTKMwFme7jS6Pg
-	bnMpSdorrGufhiDzBotkjcXqo5G0gf3XLHvlbHewo3x/jup/5ZJaNmm5aRbf28249+DOUnFuce+1c
-	DetFPYjmAprAw7ow/QbEDeDTuYCuSDxw29STK59gOBRkfLVmedsdiF7OinxoV4GBDUV64/v/iXpXO
-	L+TetLse9nuMaOShvytucJ3Wwkwz7thF6TIkKWfOFz57KD31Pfwqtj7Juryk7PG6sOK6/huhiSszD
-	dNc4QIKqt5EJPg/gyn2qEK9T6Cq2qXLt+8GxR1p4I3bUX6tGcen04fgPf8IBlvVA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <benjamin@sipsolutions.net>)
-	id 1srBUd-00000003SkL-0W6a;
-	Thu, 19 Sep 2024 09:22:24 +0200
-Message-ID: <627bd11a7fe69fed02719c2ecf5370b59328e80d.camel@sipsolutions.net>
-Subject: Re: [PATCH] um: Remove 3-level page table support on i386
-From: Benjamin Berg <benjamin@sipsolutions.net>
-To: Johannes Berg <johannes@sipsolutions.net>, Tiwei Bie
-	 <tiwei.btw@antgroup.com>, richard@nod.at, anton.ivanov@cambridgegreys.com
-Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Thu, 19 Sep 2024 09:22:19 +0200
-In-Reply-To: <0a73298f1c0ed189046360ea867e6da32276381c.camel@sipsolutions.net>
-References: <20240918061702.614837-1-tiwei.btw@antgroup.com>
-	 <0a73298f1c0ed189046360ea867e6da32276381c.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1726730796; c=relaxed/simple;
+	bh=V21h8ErhgIyZ+3DZeFKp38C5/7/mog8Po+sKP9DvGkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mckpu2Xpl8ceB7rwKCzwdMP6oZAi2FBy16DNnK7BcBOLtHGB4iGCfVq1h7nlUJok15KBrIIzFYWbNHjdGhZdV/tXfYW14WDGWwKdWnEIQqHMS5AM6fnCaGV+ncZpYSYBizod0ND6Y7wj+vXy4tmztXRUqCJo1nijKb6HtiLE+JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LIB56Q0B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AA17C4CEC5;
+	Thu, 19 Sep 2024 07:26:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726730795;
+	bh=V21h8ErhgIyZ+3DZeFKp38C5/7/mog8Po+sKP9DvGkY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LIB56Q0BX3y0y3t//Q/NxeiIG6ZGhhd79Z0f+2MXKimPM+47I04XSJFBh/jTTeI7/
+	 FS6QLapsQ/ra970FTCk/I6FV663gOtXRcmARNuz/rYqkCdJQukP8e+/ymcbuyivvim
+	 VjLMQOMfYFly+LOchQXNqP1z53ASYQUwsKZUI+TAtJcpp8t5rcDpF9l87+nCCDkBQV
+	 BCQobSQVCwc1/63c7RgHTGo/StGK05wONBu1Erdzq0WI0GBLz4D75W46OqOyvVOOxO
+	 0NqtuNWfY6oK2sntxtHh+YsFVp0agClB8oWUkHBJ1SBDD+Rhe9Fja9jgupVpDaAqGe
+	 SSLvc7y9uZ+9g==
+Date: Thu, 19 Sep 2024 08:24:55 +0100
+From: Simon Horman <horms@kernel.org>
+To: Paul Barker <paul.barker.ct@bp.renesas.com>
+Cc: Sergey Shtylyov <s.shtylyov@omp.ru>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Andrew Lunn <andrew@lunn.ch>, Biju Das <biju.das.jz@bp.renesas.com>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net PATCH v3 1/2] net: ravb: Fix maximum TX frame size for
+ GbEth devices
+Message-ID: <20240919072455.GC1044577@kernel.org>
+References: <20240918081839.259-1-paul.barker.ct@bp.renesas.com>
+ <20240918081839.259-2-paul.barker.ct@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240918081839.259-2-paul.barker.ct@bp.renesas.com>
 
-On Thu, 2024-09-19 at 08:54 +0200, Johannes Berg wrote:
-> On Wed, 2024-09-18 at 14:17 +0800, Tiwei Bie wrote:
-> > The highmem support has been removed by commit a98a6d864d3b ("um:
-> > Remove broken highmem support"). The 2-level page table is
-> > sufficient
-> > on UML/i386 now. Remove the 3-level page table support on UML/i386
-> > which is still marked as experimental.
-> >=20
->=20
-> No real objection, but with the 4-level page table work on 64-bit
-> pending as well (which likely conflicts), I wonder if we should just
-> remove 3-level *entirely*?
+On Wed, Sep 18, 2024 at 09:18:38AM +0100, Paul Barker wrote:
+> The datasheets for all SoCs using the GbEth IP specify a maximum
+> transmission frame size of 1.5 kByte. I've confirmed through internal
+> discussions that support for 1522 byte frames has been validated, which
+> allows us to support the default MTU of 1500 bytes after reserving space
+> for the Ethernet header, frame checksums and an optional VLAN tag.
+> 
+> Fixes: 2e95e08ac009 ("ravb: Add rx_max_buf_size to struct ravb_hw_info")
+> Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 
-Fine with me. There is only the tiny advantage of saving a few pages of
-memory for each process. I just erred on the side of keeping it in case
-anyone is cares to the option =E2=80=A6
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-I'll resubmit the patchset without 3-level support then, possibly on
-top of this patch. On the assumption that no one actually cares about
-3-level page tables on x86_64.
-
-Benjamin
 
