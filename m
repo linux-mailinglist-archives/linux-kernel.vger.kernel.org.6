@@ -1,154 +1,202 @@
-Return-Path: <linux-kernel+bounces-333127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3843A97C44E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:27:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52CB897C452
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 587A21C2197E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:27:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8977DB210D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C99B18C356;
-	Thu, 19 Sep 2024 06:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA7018D645;
+	Thu, 19 Sep 2024 06:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oiu1YfpZ"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JB0n8yFk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3EB2B9AD
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 06:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC2A2D611;
+	Thu, 19 Sep 2024 06:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726727260; cv=none; b=PCxSxx3MTO5iKIPSKTb03Bkb45fg0AcJJ9Tt/KKew7xRobbyJkiMJRBSVkT2mpfsbrX8XeosQzLX2WoOiA8EpMT1GO44XK9HXg3zxcnsxGAfMv1bg3OCZ5E7xoHxZ7mMRFKKsJyHLqoG6BQ79kyF1uAGIfGDcfhks0Fta9fwMHs=
+	t=1726727454; cv=none; b=agQBobTPce1AC7tBvp204t4+5TV1HV4JTzIfM0lFoIw+7//bL+Ub9+yafzzEK25I7vxKB7xNyCvHUP3Jha452D18gpZ/8uotR1GOses/T0yxTjTFry9w/F+piz1uKy9YP2r6GFrzPZH1zkOCyr2nz/fM4yUNHrBiWSyLHbQNqmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726727260; c=relaxed/simple;
-	bh=VsAwGOCinvik8Ne4fJTXEsZBmEGj0hzYoshW3MPoFYU=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-version:Content-type; b=B+dPaTW6FXJEtc/bRBQKqMRnxDJ7eRc42FjI1RDXbOgn5A82rLf2vd/a39qsM/W79o6ZwdUe6GiXELq3Ma9G1WFbFBejJftMzJ4c1r3M0FGNaclFLWw5P5xTupZdmi6SEZPSqxmNWICFDIDYAa5edLxrglQU12puqC0BlL0cK2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oiu1YfpZ; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-206f9b872b2so4371395ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 23:27:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726727258; x=1727332058; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:message-id:date
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2Hj+1vqgujWOrqlQpkce2sq1h+JT76BLtBiXrr9bmsw=;
-        b=Oiu1YfpZIWipVRKC6gKM9snNGxWo7xj+1VPSId15CdTIokuh+Jo+qMx5WXhA9+xpCq
-         QFUW+9SyBXZ1QFiKpvUW+lwc0ghzglFHpQWgPcF++WBwXQEXa9b0GROqeWhraGQJU2UR
-         eFL1hmhKm1wS5x/vcLAkhIELevEcVkjMsmKGDmZyOcRoAnxXtyTmAbmhPxQP7Wgxk2QM
-         kLMgQv3HAYP7DJoGqlnIbc3tBKhLQHCexjwznzhKHfIUp7FIusj4F7L+9dmCIadAFfUY
-         lKHlUTZxOZshdI0Vh7eFvQGeVUNhboVIgqGbZFLvGXzoW2Z+oRuio9MeNT1QWi3un2FJ
-         zEIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726727258; x=1727332058;
-        h=content-transfer-encoding:mime-version:references:message-id:date
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Hj+1vqgujWOrqlQpkce2sq1h+JT76BLtBiXrr9bmsw=;
-        b=isfKLiZ85nzI6qrOwyBkbKY2LVBhl92DfYqhIPrp9Ywy3Wp8IXYNXMKRJZkInYY/G3
-         w+30YrOB/HT26xnrwUXNz7LBZ5gnRWt+p4c/MbxVvRYFBpgWWwb7j3rrYWEv7WLwRemm
-         a66aXh9/v+Qct+WZy5DOxgXgOF97Om6ROE8AAUO+ImubyXlmz/46Ry4RE9LZi4vFsBBi
-         DeaIQ54oXd838H8/TMdFz6ceG6QjSN/R5GAKfdPOHJx42/rJxSPnDTzEKK5VmGdsx/R5
-         jJ6ImUmXxMPwfxIN7C7JxeUbtfkN2zS01WHDkI7ZL5cC3w1rzaoovpgiCo5vCku5SCw0
-         0hvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNl8/eJ/E2npOgMNt3Riw4NdT8XSAFCwTGsZ/SoGzrMSFOYWE5q3Bpc1nCJKXNLVKKnDtp/uFl82IYaqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpDQaqlvrsjD4Hf4gvJhBf/PheTKVpxd0bvadpPdkEDeipaoK6
-	rutQ0ZaeNaRATD0Ah8OMvQoRKGnK2Pymfyq9o3RQBZV94WyB0RTUz1+abg==
-X-Google-Smtp-Source: AGHT+IE50XMoZa4hBwRIz3mN6qx5JWjHTF23/FUJHa75WuBjbh10hAyGn2DW14ljgJyxa6XgGD0eSg==
-X-Received: by 2002:a17:902:eb8a:b0:206:ca91:1dda with SMTP id d9443c01a7336-2076e39c56bmr305359875ad.17.1726727258556;
-        Wed, 18 Sep 2024 23:27:38 -0700 (PDT)
-Received: from dw-tp ([171.76.85.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207945da793sm73443715ad.54.2024.09.18.23.27.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Sep 2024 23:27:37 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>, linuxppc-dev@lists.ozlabs.org
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, Hari Bathini <hbathini@linux.ibm.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>, Donet Tom <donettom@linux.vnet.ibm.com>, Pavithra Prakash <pavrampu@linux.vnet.ibm.com>, Nirjhar Roy <nirjhar@linux.ibm.com>, LKML <linux-kernel@vger.kernel.org>, kasan-dev@googlegroups.com
-Subject: Re: [RFC v2 03/13] book3s64/hash: Remove kfence support temporarily
-In-Reply-To: <d9d8703a-df24-47e3-bd0d-2ff5a6eae184@csgroup.eu>
-Date: Thu, 19 Sep 2024 11:53:15 +0530
-Message-ID: <87jzf8tb58.fsf@gmail.com>
-References: <cover.1726571179.git.ritesh.list@gmail.com> <5f6809f3881d5929eedc33deac4847bf41a063b9.1726571179.git.ritesh.list@gmail.com> <d9d8703a-df24-47e3-bd0d-2ff5a6eae184@csgroup.eu>
+	s=arc-20240116; t=1726727454; c=relaxed/simple;
+	bh=9E1Dj8+Rtvk4CsMbA5zBO+6mpKq1iMvge6SlBi4g6Fg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XQNa1RNCAJvPwN4MHP12PkJWtT3WoIYtT6OYCOI0/U9oVaWDfDVnvnRVSF1s6/5Hsxerj/qIPu8RLrMXUw/gwAW8j7/Gx94dP3G2Z06Qz2UTuiDKIh/v6TfAetykHp9xn1DMSSYTAA3Vi14k4gVSGhj6GoAgtOeJh5XdNMqhe00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JB0n8yFk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48IJI7tY012612;
+	Thu, 19 Sep 2024 06:30:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2CMh2NDjOinI+rhXcFElY+FQUwnwc3oYqXqP3e8yjhE=; b=JB0n8yFkCU6TMunz
+	A/7o6G2jKTvQXt9zCVmhb1Szuhk2sA9kDLGqwg7O7+f/n9YBuqyWYojZXA1WHFEu
+	w2DebHoSeyX94WZRAYHjBwjPi6d61NgwP3AFCSI+u/Mv5+KjWPjEc+DEwZnzDmhg
+	MZ5R5ISm/2nFhvwu3BElmTEnlp7L8DOJ9JjjVCX9Gf+mNhENgi52sRPG7vxQQCl6
+	GtgQv3aL2Ctgmj8cMe2uanvUC2swOJMe+0fqWhm5oKirFsGx9OuZu65xceF41UMY
+	OKyDw5N9fXx3HppudXT9ka+b8zB7QM1qVKqGtubirZdAOyxzeyVa/YoaLXMwWu+e
+	7ukJQA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4gd4ade-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Sep 2024 06:30:39 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48J6UdlK027082
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 19 Sep 2024 06:30:39 GMT
+Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 18 Sep
+ 2024 23:30:35 -0700
+Message-ID: <27ed94a1-eb60-43b1-b181-2b8270015a37@quicinc.com>
+Date: Thu, 19 Sep 2024 12:00:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-version: 1.0
-Content-type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/3] misc: fastrpc: Skip reference for DMA handles
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
+        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
+        stable
+	<stable@kernel.org>
+References: <20240822105933.2644945-1-quic_ekangupt@quicinc.com>
+ <20240822105933.2644945-4-quic_ekangupt@quicinc.com>
+ <7q7rar7ssvzlkol46e5e4yecgt6n4b4oqueam4ywlxjeasx2dl@oydthy337t6i>
+Content-Language: en-US
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+In-Reply-To: <7q7rar7ssvzlkol46e5e4yecgt6n4b4oqueam4ywlxjeasx2dl@oydthy337t6i>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: sFzpdocpkrE2omDSeZ2UUeT0-RqyU-dm
+X-Proofpoint-GUID: sFzpdocpkrE2omDSeZ2UUeT0-RqyU-dm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ bulkscore=0 clxscore=1015 spamscore=0 adultscore=0 lowpriorityscore=0
+ mlxlogscore=999 impostorscore=0 mlxscore=0 priorityscore=1501 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409190040
 
-Christophe Leroy <christophe.leroy@csgroup.eu> writes:
 
-> Le 19/09/2024 à 04:56, Ritesh Harjani (IBM) a écrit :
->> Kfence on book3s Hash on pseries is anyways broken. It fails to boot
->> due to RMA size limitation. That is because, kfence with Hash uses
->> debug_pagealloc infrastructure. debug_pagealloc allocates linear map
->> for entire dram size instead of just kfence relevant objects.
->> This means for 16TB of DRAM it will require (16TB >> PAGE_SHIFT)
->> which is 256MB which is half of RMA region on P8.
->> crash kernel reserves 256MB and we also need 2048 * 16KB * 3 for
->> emergency stack and some more for paca allocations.
->> That means there is not enough memory for reserving the full linear map
->> in the RMA region, if the DRAM size is too big (>=16TB)
->> (The issue is seen above 8TB with crash kernel 256 MB reservation).
->> 
->> Now Kfence does not require linear memory map for entire DRAM.
->> It only needs for kfence objects. So this patch temporarily removes the
->> kfence functionality since debug_pagealloc code needs some refactoring.
->> We will bring in kfence on Hash support in later patches.
->> 
->> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+
+On 8/30/2024 3:03 PM, Dmitry Baryshkov wrote:
+> On Thu, Aug 22, 2024 at 04:29:33PM GMT, Ekansh Gupta wrote:
+>> If multiple dma handles are passed with same fd over a remote call
+>> the kernel driver takes a reference and expects that put for the
+>> map will be called as many times to free the map.
+>> But DSP only
+>> updates the fd one time in the fd list when the DSP refcount
+>> goes to zero
+> I'm sorry, I couldn't understand this phrase. Could you plese clarify
+> what do you mean here?
+DMA handle are buffers passed to DSP which are only unmapped when DSP updated
+the buffer fd in fdlist.
+fdlist implementation: misc: fastrpc: Add fdlist implementation - kernel/git/next/linux-next.git - The linux-next integration testing tree <https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/misc/fastrpc.c?id=8f6c1d8c4f0cc316b0456788fff8373554d1d99d>
+
+A remote call payload carries both input/output buffers and dma handles. The lifetime
+of input/output buffer is a remote call which means that any buffer allocated or mapped
+for a remote call will be freed or unmapped when the remote call is completing. Whereas,
+dma handles can get freed over some other remote call whenever the DSP will update
+fdlist. So if a remote call passed multiple dma handles with same fd to DSP, on driver, ref
+count will be incremented, but DSP can update fdlist only 1 time for the same fd as DSP also
+has a ref counting happening for the dma handle and fdlist is updated when the DSP ref
+count goes to 0. In this case, the map will not get freed even though it is no longer in use.
+>
+>> and hence kernel make put call only once for the
+>> fd. This can cause SMMU fault issue as the same fd can be used
+>> in future for some other call.
+>>
+>> Fixes: 35a82b87135d ("misc: fastrpc: Add dma handle implementation")
+>> Cc: stable <stable@kernel.org>
+>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
 >> ---
->>   arch/powerpc/include/asm/kfence.h     |  5 +++++
->>   arch/powerpc/mm/book3s64/hash_utils.c | 16 +++++++++++-----
->>   2 files changed, 16 insertions(+), 5 deletions(-)
->> 
->> diff --git a/arch/powerpc/include/asm/kfence.h b/arch/powerpc/include/asm/kfence.h
->> index fab124ada1c7..f3a9476a71b3 100644
->> --- a/arch/powerpc/include/asm/kfence.h
->> +++ b/arch/powerpc/include/asm/kfence.h
->> @@ -10,6 +10,7 @@
->>   
->>   #include <linux/mm.h>
->>   #include <asm/pgtable.h>
->> +#include <asm/mmu.h>
->>   
->>   #ifdef CONFIG_PPC64_ELF_ABI_V1
->>   #define ARCH_FUNC_PREFIX "."
->> @@ -25,6 +26,10 @@ static inline void disable_kfence(void)
->>   
->>   static inline bool arch_kfence_init_pool(void)
->>   {
->> +#ifdef CONFIG_PPC64
->> +	if (!radix_enabled())
+>>  drivers/misc/fastrpc.c | 13 ++++++++-----
+>>  1 file changed, 8 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+>> index ebe828770a8d..ad56e918e1f8 100644
+>> --- a/drivers/misc/fastrpc.c
+>> +++ b/drivers/misc/fastrpc.c
+>> @@ -755,7 +755,7 @@ static const struct dma_buf_ops fastrpc_dma_buf_ops = {
+>>  
+>>  static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
+>>  				u64 va, u64 len, u32 attr,
+>> -				struct fastrpc_map **ppmap)
+>> +				struct fastrpc_map **ppmap, bool take_ref)
+>>  {
+>>  	struct fastrpc_session_ctx *sess = fl->sctx;
+>>  	struct fastrpc_map *map = NULL;
+>> @@ -763,7 +763,7 @@ static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
+>>  	struct scatterlist *sgl = NULL;
+>>  	int err = 0, sgl_index = 0;
+>>  
+>> -	if (!fastrpc_map_lookup(fl, fd, va, len, ppmap, true))
+>> +	if (!fastrpc_map_lookup(fl, fd, va, len, ppmap, take_ref))
+>>  		return 0;
+>>  
+>>  	map = kzalloc(sizeof(*map), GFP_KERNEL);
+>> @@ -917,14 +917,17 @@ static int fastrpc_create_maps(struct fastrpc_invoke_ctx *ctx)
+>>  	int i, err;
+>>  
+>>  	for (i = 0; i < ctx->nscalars; ++i) {
+>> +		bool take_ref = true;
+>>  
+>>  		if (ctx->args[i].fd == 0 || ctx->args[i].fd == -1 ||
+>>  		    ctx->args[i].length == 0)
+>>  			continue;
+>>  
+>> +		if (i >= ctx->nbufs)
+>> +			take_ref = false;
+> Please clarify too.
+nbufs -> total input/output buffers
+nscalars -> nbufs + dma handles
+So here, avoiding ref increment for dma handles.
 >
-> No need for a #ifdef here, you can just do:
->
-> 	if (IS_ENABLED(CONFIG_PPC64) && !radix_enabled())
-> 		return false;
->
->
+>>  		err = fastrpc_map_create(ctx->fl, ctx->args[i].fd,
+>>  				(u64)ctx->args[i].ptr, ctx->args[i].length,
+>> -				ctx->args[i].attr, &ctx->maps[i]);
+>> +				ctx->args[i].attr, &ctx->maps[i], take_ref);
+>>  		if (err) {
+>>  			dev_err(dev, "Error Creating map %d\n", err);
+>>  			return -EINVAL;
+>> @@ -1417,7 +1420,7 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
+>>  
+>>  	if (init.filelen && init.filefd) {
+>>  		err = fastrpc_map_create(fl, init.filefd, init.file,
+>> -				init.filelen, 0, &map);
+>> +				init.filelen, 0, &map, true);
+>>  		if (err)
+>>  			goto err;
+>>  	}
+>> @@ -2040,7 +2043,7 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
+>>  
+>>  	/* create SMMU mapping */
+>>  	err = fastrpc_map_create(fl, req.fd, req.vaddrin, req.length,
+>> -			0, &map);
+>> +			0, &map, true);
+>>  	if (err) {
+>>  		dev_err(dev, "failed to map buffer, fd = %d\n", req.fd);
+>>  		return err;
+>> -- 
+>> 2.34.1
+>>
 
-This special radix handling is anyway dropped in later pacthes. 
-So I didn't bother changing it here.
-
->> +		return false;
->> +#endif
->>   	return !kfence_disabled;
->
-> But why not just set kfence_disabled to true by calling disable_kfence() 
-> from one of the powerpc init functions ?
->
-
-This patch is only temporarily disabling kfence support for only Hash.
-This special Hash handling gets removed in patch-10 which brings back
-kfence support.
-
--ritesh
 
