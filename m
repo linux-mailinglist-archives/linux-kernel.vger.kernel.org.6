@@ -1,59 +1,65 @@
-Return-Path: <linux-kernel+bounces-333179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7327097C4F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:38:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36E897C4FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3461E282A16
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:38:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35CB1C227D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C066E194C6A;
-	Thu, 19 Sep 2024 07:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F097194C6E;
+	Thu, 19 Sep 2024 07:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rzqo9i4H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8fKW7ZT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C117166F31;
-	Thu, 19 Sep 2024 07:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D32C166F31;
+	Thu, 19 Sep 2024 07:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726731490; cv=none; b=IOuLkjXYX22d7XVV/uQPABJwBIVTeuIifw+UGjF/w/4mXBI1d5GBS5bkdNaoC94U+tUc/VPzE75MIVwlVTEF+hZOf4jc4XQ/VkzBdO63/h84XBChnZp3aaSQn0FwP5Ltob8Q4Z/td8wIj2LFw0OPZ0bGo/YJITAX+90p1h5BX4I=
+	t=1726731607; cv=none; b=hSf3gwGA3/UyWkrOZIkm42JPwHA1l+y+GVfJ+po0CEUSltTTHehGxndbk1qKcHRmJ1PTVVpWTy24C8z2rnfQCZM16A7YsUMLqHIkhLEIdZiLltOH+n+Ab6EIBWpf52Te9QErEDuD0+jAzlfnVXGm5EGGcEEp9xLNDevhB8K6teo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726731490; c=relaxed/simple;
-	bh=b/TvnlGUozolDpF9ubAiqQ9D9AtRZIsO8cTp8d7NLAI=;
+	s=arc-20240116; t=1726731607; c=relaxed/simple;
+	bh=SKHiWuT9os4iwt/8Rac5rB767h2DJnB/vbFf5fmwPGk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UipaCEYYnAk3Z5ogzOcU0JsW6tY9L2+1mWpUs8KS7xsEZCc+/iDw/kb2dXnNYNbQD/HvMaNXNbfv+eH/dw/c0LbQpzoO6ZxilWteYsDnbqQJNxE2OTasJOypHft4SmUacd7qC/qtiIaFIAzBQNC4buVDgpnZbawTwbLD/Ft3riw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rzqo9i4H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7240BC4CEC4;
-	Thu, 19 Sep 2024 07:38:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PXelOo03sr6NacBhaF0v80KVRr5cskiSU5PgnkXt1xxr1VjIQFOgXko5PkyLXmWyDR9ArmtrwFH6bcTGSu1Sl7jVrEo4UB9l63htpH49H8EYsSexXXu/t4H6VR3c7D1GnTl853EOwBzDi+pvTkr5oogluy0lAQjEHQqzwV/C94A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8fKW7ZT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3113DC4CEC4;
+	Thu, 19 Sep 2024 07:40:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726731489;
-	bh=b/TvnlGUozolDpF9ubAiqQ9D9AtRZIsO8cTp8d7NLAI=;
+	s=k20201202; t=1726731607;
+	bh=SKHiWuT9os4iwt/8Rac5rB767h2DJnB/vbFf5fmwPGk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rzqo9i4HBub0UQQHqadkJlXlK0XP9ECaGqwUY0yaN8d8LOwnmKpkYdangf7hN1xu+
-	 QRzVbLI/4PEi3VNE5sE1YBs6p7Jm4P8F58Rq9EHGU7AkQoduyi0iArzmi7Hnjq3XiK
-	 hFCkBrWgzmMYgDq9bzpssEf/lm9OPeKfaiscMYEq+VXawTAJALx5kbRPXQoufEcRNn
-	 JMUTYET0JEzX2h5z0Mnm/IF3UQajTGGrIx7qALDmQsmmgw/KadWfD+x4OFOu7/uLp6
-	 8at4eriadMSHwrv91mXIR2sIFvRYddM6afiH6RjZrt2MWBPO3DACngcxT4UCUcJ+vN
-	 Uw4SWerwhDi1A==
-Date: Thu, 19 Sep 2024 08:38:14 +0100
+	b=F8fKW7ZTcay47pT/vW9S0y+4lE0fuNphqZeE6IY6af3wozhlOnLetyr4/nf7jP7Zy
+	 TETUSuGjCDJI9V2aSBGrSLKgUtEdgTmovhu6BQGjhkIZSBOe7PubY2Pt+4my0tnPz3
+	 n6G1KDycUbajtzn0Nk9jzpB/JN42orDcCQqv5ZLw2axJjYpaL2s1TURRZvP7WAWPjW
+	 t7XS/y5z2RljkHluIhYezKh/Ns5ZMNXJHWDYWJatsGATCdcdLUUwDuCp4iTrPMJFEe
+	 SL+Hqb6B9fwmgw/fgMyRq8sw36XZz4WHHZzTUUGCAeYqZXOTglrKA3/s+hvhKcTdWO
+	 EkJDusAOtJy7A==
+Date: Thu, 19 Sep 2024 08:40:09 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Jianfeng Liu <liujianfeng1994@gmail.com>
-Cc: linux-rockchip@lists.infradead.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: arm: rockchip: Add ArmSoM LM7 SoM
-Message-ID: <20240919-wikipedia-hamster-22ae9f9d8dd0@squawk>
-References: <20240918165008.169917-1-liujianfeng1994@gmail.com>
- <20240918165008.169917-2-liujianfeng1994@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Samuel Holland <samuel.holland@sifive.com>,
+	Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	peterlin@andestech.com, dminus@andestech.com, ycliang@andestech.com,
+	jassisinghbrar@gmail.com, krzk+dt@kernel.org, andersson@kernel.org,
+	mathieu.poirier@linaro.org, conor+dt@kernel.org,
+	conor.dooley@microchip.com
+Subject: Re: [PATCH v1 2/5] dt-bindings: mailbox: add binding for Microchip
+ IPC mailbox driver
+Message-ID: <20240919-useable-margarine-d6eefae9485c@squawk>
+References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
+ <20240912170025.455167-3-valentina.fernandezalanis@microchip.com>
+ <b4acc0a7-b7da-4947-904d-8406aa5ba95b@sifive.com>
+ <20240916-palpable-flock-7217424ed8db@spud>
+ <20240918153558.GA1567736-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,41 +67,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="YWWdApAqxAOp6MrL"
+	protocol="application/pgp-signature"; boundary="XW5QfXNOZ95nX152"
 Content-Disposition: inline
-In-Reply-To: <20240918165008.169917-2-liujianfeng1994@gmail.com>
+In-Reply-To: <20240918153558.GA1567736-robh@kernel.org>
 
 
---YWWdApAqxAOp6MrL
+--XW5QfXNOZ95nX152
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 19, 2024 at 12:50:06AM +0800, Jianfeng Liu wrote:
-> LM7 is an System on Module made by ArmSoM based on Rockchip RK3588.
-> This SoM is used by W3 Board.
+On Wed, Sep 18, 2024 at 10:35:58AM -0500, Rob Herring wrote:
+> On Mon, Sep 16, 2024 at 05:31:36PM +0100, Conor Dooley wrote:
+> > On Thu, Sep 12, 2024 at 04:23:44PM -0500, Samuel Holland wrote:
+> > > Hi Valentina,
+> > >=20
+> > > On 2024-09-12 12:00 PM, Valentina Fernandez wrote:
+> > > > Add a dt-binding for the Microchip Inter-Processor Communication (I=
+PC)
+> > > > mailbox controller.
+> > > >=20
+> > > > Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@micro=
+chip.com>
+> > > > ---
+> > > >  .../bindings/mailbox/microchip,sbi-ipc.yaml   | 115 ++++++++++++++=
+++++
+> > > >  1 file changed, 115 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/mailbox/micro=
+chip,sbi-ipc.yaml
+> > > >=20
+> > > > diff --git a/Documentation/devicetree/bindings/mailbox/microchip,sb=
+i-ipc.yaml b/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.ya=
+ml
+> > > > new file mode 100644
+> > > > index 000000000000..dc2cbd5eb28f
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.y=
+aml
+> > > > @@ -0,0 +1,115 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/mailbox/microchip,sbi-ipc.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: Microchip Inter-processor communication (IPC) mailbox contr=
+oller
+> > > > +
+> > > > +maintainers:
+> > > > +  - Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+> > > > +
+> > > > +description:
+> > > > +  The Microchip Inter-processor Communication (IPC) facilitates
+> > > > +  message passing between processors using an interrupt signaling
+> > > > +  mechanism.
+> > > > +  This SBI interface is compatible with the Mi-V Inter-hart
+> > > > +  Communication (IHC) IP.
+> > > > +  The microchip,sbi-ipc compatible string is inteded for use by so=
+ftware
+> > > > +  running in supervisor privileged mode (s-mode). The SoC-specific
+> > > > +  compatibles are inteded for use by the SBI implementation in mac=
+hine
+> > > > +  mode (m-mode).
+> > >=20
+> > > There is a lot of conditional logic in this binding for how small it =
+is. Would
+> > > it make sense to split this into two separate bindings? For example, =
+with the
+> > > current binding microchip,ihc-chan-disabled-mask is allowed for the S=
+BI
+> > > interface, but doesn't look like it belongs there.
+> >=20
+> > I dunno. Part of me says that because this is two compatibles for the
+> > same piece of hardware (the choice depending on which programming model
+> > you use) they should be documented together. The other part of me is of
+> > the opinion that they effectively describe different things, given one
+> > describes the hardware and the other describes a firmware interface that
+> > may have any sort of hardware backing it.
+> >=20
+> > I suppose it's more of a problem for "us" (that being me/Rob/Krzysztof)
+> > than for Valentina, and how to handle firmware interfaces to hardware
+> > like this is one of the topics that's planned for Krzysztof's devicetree
+> > BoF session at LPC.
 >=20
-> LM7 features:
-> - Rockchip RK3588
-> - LPDDR4x 4/8/16/32 GB
-> - eMMC 16/32/64/128 GB
->=20
-> Add devicetree binding for ArmSoM LM7 SoM.
->=20
-> Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
+> If how the client interacts with the device is fundamentally different,=
+=20
+> then I think different compatibles is fine.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+It wasn't about different compatibles (which I think are non-debatable
+here) it's whether or not the different compatibles should be in their
+own binding files.
 
---YWWdApAqxAOp6MrL
+--XW5QfXNOZ95nX152
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuvU4wAKCRB4tDGHoIJi
-0qzVAP4u/Ml6aPzDt2IXu/YTG+KwhPAvvDW9jFJWvja8pA8ndwEA8hdLvljuYsLA
-qjo8XeWEgIIm0GDO4q2SQ6yd1MGSZQQ=
-=4dhv
+iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuvVVgAKCRB4tDGHoIJi
+0ogwAP9aQ00DhFSZtkfdD4M6IsRJi3SNUC6DmPJlEz0PltPCegD9FJcnmg8ZE6Dm
+4HbBn/9l40PyHree8TdGYaQazOxWIwU=
+=QgG+
 -----END PGP SIGNATURE-----
 
---YWWdApAqxAOp6MrL--
+--XW5QfXNOZ95nX152--
 
