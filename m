@@ -1,162 +1,558 @@
-Return-Path: <linux-kernel+bounces-333157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C86497C4AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:12:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67A1497C4B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8F2A28367D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:12:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 255DC283546
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3246D191F99;
-	Thu, 19 Sep 2024 07:12:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8FE1917CC;
-	Thu, 19 Sep 2024 07:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5D4191F89;
+	Thu, 19 Sep 2024 07:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eD18MXBg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970D11917CC
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 07:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726729949; cv=none; b=t3nsSd+dY/DFe2e8QifSMcivaFyDONazYYOMjacGNoTU6ravgEDIPv74PsocsKsnF3fTbrjTKHk7qCL0E8UMHgdfb2j+ikRwBzLLLredvbqjXDr6zfpzlvpunrif70e+6pcGf87NTXIbW0Ib+LXxbk7YsYiVlXJm16BXaJ2bCQw=
+	t=1726729983; cv=none; b=bwf37S8nzgwiB9eUx5l2fOi4Bc8RQV6AeTGprveamMh+D5GJ2YLxeaA3HTrMrYN52L8rRbgJJPbsrTo/fAPpxIv39p7xip2jsCPi8aeB7FHmXIuwhTcKB2YDcywudns7tEjvvRt6pZiU8i6W8iHRk0V1lUcBWdvd4mQ1LmKfl/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726729949; c=relaxed/simple;
-	bh=/jgnX+ABOI2z3m4Qx4fkTR24jfiYP85AWYoL8PMuYjs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gH/3L/rSTr6BnIjR14is2rd7zB8PEueUKn4oXuoWz+JYsqIBRhAO7sPpHYH51GheT1PxPWMTjAvYVnZy3u7IwlQNotzVUzvIzlUSfD2GGT6CcuUzEcUZb7bDb2QazIjmZVnK8l+4gMhwmfQKZZ0BwD7ZtV5shvdKkZV8igpwitc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 190C81007;
-	Thu, 19 Sep 2024 00:12:50 -0700 (PDT)
-Received: from [10.163.34.169] (unknown [10.163.34.169])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 109FE3F64C;
-	Thu, 19 Sep 2024 00:12:11 -0700 (PDT)
-Message-ID: <6191a730-1a0f-476e-8041-a0a51094b6b3@arm.com>
-Date: Thu, 19 Sep 2024 12:42:08 +0530
+	s=arc-20240116; t=1726729983; c=relaxed/simple;
+	bh=b/RqzdXwdBW7BDbEYOzCZxKUe26H5mUoXKzcy5m9a0M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=un5vCkzNlx8fisCDqiMhqeMpALtkG5q7W1vB0HHmzVmA1pdUQFwdkiEnGJDEHxBfppFcgniEuOzi24Y5T0sSIWPbTUC/i8BoBSoJmyYh4yZ7a/JCiFYWjuKzJroEtUxTte1zsqRE+xep0x+txaxrg9xSKcsY1SF+DZWyC9bbA4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eD18MXBg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726729980;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bM6YuvUbKlxxl6+rtsHRM0R7zkZNAhp2fONXi51+naM=;
+	b=eD18MXBgkMsrCdzjkFFC/tkU76oP+P1HE1srMqRsdGeTV+Bbq24cSoazojUYdRfkllKDCo
+	PEx2+YLGgGV9EpPggameIwOA6AOxO3nmY0s4samywgRRKV8dPeVrhmbTULIPbpmODGXocK
+	1pzxy2/Di7JhxJgT58d3X7skjPc1qnc=
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
+ [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-481-AxZ6DOFJOzGRoWCwiz1EJA-1; Thu, 19 Sep 2024 03:12:58 -0400
+X-MC-Unique: AxZ6DOFJOzGRoWCwiz1EJA-1
+Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5e1c33f0de1so499859eaf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 00:12:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726729978; x=1727334778;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bM6YuvUbKlxxl6+rtsHRM0R7zkZNAhp2fONXi51+naM=;
+        b=nASiDwUgiqtdwt/N/c/M1cZC32pKNWlIAzuaZ22/l2F9Ix7k1uuXvsAKJSRwnZfm8x
+         KE3LE03OmQ3XjFOk+yu3YHQngKxNcPqUHd60Zpcc4OLLzHrSJFAlyGdlVy8IxNCwFNr5
+         ZwndFtFomWjn4rBDldjziYNwQKykA40cUw2ufFzfl4AyGiShNfyvRwltF1Jf2QS15D1e
+         uWRqQpt5HIDmwwkOH7xWlg8POzw71otkL2rxvXU4FNAjRZ1SLdFkIcNc1Gqoy/0G0c+G
+         qBeGKIY+oBOmN9UfLgBg3wE6BGBdzkHUmeuBGUY/upIa/bCm+7fKZttdbB4kboqHElI4
+         z0nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ/uPd/pUstZYzUhsjncK5O9iJQdRBKAdvB06YlsobLPSVaHD/nr2gAXPgFbqDf1arjluOvYt8G3b9/bY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPjxgaHdWYCjKAEUnzSoFEL4UEAltw07cHzQlhwwTCzc3Jaxba
+	cQL8FsUix5mS48T5TBI4DPkgxTX3fPfpdF7a1EsYh7SJmOGIVP7+Z1UBxPY3boi6tUq7FnrjeX6
+	r8sJae6hrkyTuWS7rm2M+Yz4CAZCrKJ2rYkSP+OsMXPUdDBsDFVzHTmqBY5QHxQ==
+X-Received: by 2002:a05:687c:2c60:b0:268:2efa:2de0 with SMTP id 586e51a60fabf-27c68933a48mr11942870fac.13.1726729977906;
+        Thu, 19 Sep 2024 00:12:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGcIoW6YWy39vzGtTRaUybYViMYqT9kPyK/B9jEPEGj/R50IeIqEOAK84yvhldwWKjgjcpIhw==
+X-Received: by 2002:a05:687c:2c60:b0:268:2efa:2de0 with SMTP id 586e51a60fabf-27c68933a48mr11942861fac.13.1726729977510;
+        Thu, 19 Sep 2024 00:12:57 -0700 (PDT)
+Received: from zeus.elecom ([240b:10:83a2:bd00:6e35:f2f5:2e21:ae3a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719918df7ccsm538840b3a.40.2024.09.19.00.12.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 00:12:56 -0700 (PDT)
+From: Ryosuke Yasuoka <ryasuoka@redhat.com>
+To: airlied@redhat.com,
+	kraxel@redhat.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	daniel@ffwll.ch,
+	jfalempe@redhat.com
+Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
+	virtualization@lists.linux.dev,
+	spice-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v2] drm/qxl: Add drm_panic support
+Date: Thu, 19 Sep 2024 16:12:29 +0900
+Message-ID: <20240919071230.840994-1-ryasuoka@redhat.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 4/7] mm: Use pmdp_get() for accessing PMD entries
-To: kernel test robot <lkp@intel.com>, linux-mm@kvack.org
-Cc: oe-kbuild-all@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- "Mike Rapoport (IBM)" <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- x86@kernel.org, linux-m68k@lists.linux-m68k.org,
- linux-fsdevel@vger.kernel.org, kasan-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dimitri Sivanich <dimitri.sivanich@hpe.com>,
- Muchun Song <muchun.song@linux.dev>, Andrey Ryabinin
- <ryabinin.a.a@gmail.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Naoya Horiguchi <nao.horiguchi@gmail.com>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, Dennis Zhou <dennis@kernel.org>,
- Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux-foundation.org>,
- Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>
-References: <20240917073117.1531207-5-anshuman.khandual@arm.com>
- <202409190244.JcrD4CwD-lkp@intel.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <202409190244.JcrD4CwD-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+QXL supports the drm_panic module, which displays a message to the
+screen when a kernel panic occurs.
 
+Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+---
+v2
+In [1], Jocelyn gives me feedbacks and fix them.
+1. Removing qxl_surface_evict(): It takes a mutex and it possibly
+causes deadlock in panic handler. As the panic handler works
+correctly without it and to make it simple, I remove it.
+2. Update qxl_panic_ttm_bo_destory(): It deleted bo->list with taking
+mutex but it does not need to call because this list is not updated in
+panic handler.
+3. Remove unnecessary args from panic functions: Some panic functions
+always take same values as args (e.g. kernel, pinned, domain etc in
+qxl_panic_bo_create()). So I remove them from panic functions and
+define them in each function.
 
-On 9/19/24 00:37, kernel test robot wrote:
-> Hi Anshuman,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on char-misc/char-misc-testing]
-> [also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus brauner-vfs/vfs.all dennis-percpu/for-next linus/master v6.11]
-> [cannot apply to akpm-mm/mm-everything next-20240918]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Anshuman-Khandual/m68k-mm-Change-pmd_val/20240917-153331
-> base:   char-misc/char-misc-testing
-> patch link:    https://lore.kernel.org/r/20240917073117.1531207-5-anshuman.khandual%40arm.com
-> patch subject: [PATCH V2 4/7] mm: Use pmdp_get() for accessing PMD entries
-> config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240919/202409190244.JcrD4CwD-lkp@intel.com/config)
-> compiler: or1k-linux-gcc (GCC) 14.1.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240919/202409190244.JcrD4CwD-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202409190244.JcrD4CwD-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->    In file included from include/asm-generic/bug.h:22,
->                     from arch/openrisc/include/asm/bug.h:5,
->                     from include/linux/bug.h:5,
->                     from include/linux/mmdebug.h:5,
->                     from include/linux/mm.h:6,
->                     from include/linux/pagemap.h:8,
->                     from mm/pgtable-generic.c:10:
->    mm/pgtable-generic.c: In function 'pmd_clear_bad':
->>> arch/openrisc/include/asm/pgtable.h:369:36: error: lvalue required as unary '&' operand
->      369 |                __FILE__, __LINE__, &(e), pgd_val(e))
->          |                                    ^
->    include/linux/printk.h:437:33: note: in definition of macro 'printk_index_wrap'
->      437 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
->          |                                 ^~~~~~~~~~~
->    arch/openrisc/include/asm/pgtable.h:368:9: note: in expansion of macro 'printk'
->      368 |         printk(KERN_ERR "%s:%d: bad pgd %p(%08lx).\n", \
->          |         ^~~~~~
->    include/asm-generic/pgtable-nop4d.h:25:50: note: in expansion of macro 'pgd_ERROR'
->       25 | #define p4d_ERROR(p4d)                          (pgd_ERROR((p4d).pgd))
->          |                                                  ^~~~~~~~~
->    include/asm-generic/pgtable-nopud.h:32:50: note: in expansion of macro 'p4d_ERROR'
->       32 | #define pud_ERROR(pud)                          (p4d_ERROR((pud).p4d))
->          |                                                  ^~~~~~~~~
->    include/asm-generic/pgtable-nopmd.h:36:50: note: in expansion of macro 'pud_ERROR'
->       36 | #define pmd_ERROR(pmd)                          (pud_ERROR((pmd).pud))
->          |                                                  ^~~~~~~~~
->    mm/pgtable-generic.c:54:9: note: in expansion of macro 'pmd_ERROR'
->       54 |         pmd_ERROR(pmdp_get(pmd));
->          |         ^~~~~~~~~
-> 
-> 
-> vim +369 arch/openrisc/include/asm/pgtable.h
-> 
-> 61e85e367535a7 Jonas Bonn 2011-06-04  363  
-> 61e85e367535a7 Jonas Bonn 2011-06-04  364  #define pte_ERROR(e) \
-> 61e85e367535a7 Jonas Bonn 2011-06-04  365  	printk(KERN_ERR "%s:%d: bad pte %p(%08lx).\n", \
-> 61e85e367535a7 Jonas Bonn 2011-06-04  366  	       __FILE__, __LINE__, &(e), pte_val(e))
-> 61e85e367535a7 Jonas Bonn 2011-06-04  367  #define pgd_ERROR(e) \
-> 61e85e367535a7 Jonas Bonn 2011-06-04  368  	printk(KERN_ERR "%s:%d: bad pgd %p(%08lx).\n", \
-> 61e85e367535a7 Jonas Bonn 2011-06-04 @369  	       __FILE__, __LINE__, &(e), pgd_val(e))
-> 61e85e367535a7 Jonas Bonn 2011-06-04  370  
-> 
+[1] https://lore.kernel.org/dri-devel/89b55f6f-f462-4e84-b2e2-7f2edc0f1cc4@redhat.com/T/#t
 
-This build failure can be fixed with dropping address output from
-pxd_ERROR() helpers as is being done for the x86 platform. Similar
-fix is also required for the UM architecture as well.
+ drivers/gpu/drm/qxl/qxl_cmd.c     | 29 ++++++++++
+ drivers/gpu/drm/qxl/qxl_display.c | 94 +++++++++++++++++++++++++++++++
+ drivers/gpu/drm/qxl/qxl_draw.c    | 57 ++++++++++++++++++-
+ drivers/gpu/drm/qxl/qxl_drv.h     | 22 ++++++++
+ drivers/gpu/drm/qxl/qxl_gem.c     |  9 +++
+ drivers/gpu/drm/qxl/qxl_image.c   | 25 ++++++++
+ drivers/gpu/drm/qxl/qxl_object.c  | 46 +++++++++++++++
+ drivers/gpu/drm/qxl/qxl_object.h  |  1 +
+ 8 files changed, 282 insertions(+), 1 deletion(-)
 
-diff --git a/arch/openrisc/include/asm/pgtable.h b/arch/openrisc/include/asm/pgtable.h
-index 60c6ce7ff2dc..831efb71ab54 100644
---- a/arch/openrisc/include/asm/pgtable.h
-+++ b/arch/openrisc/include/asm/pgtable.h
-@@ -362,11 +362,11 @@ static inline unsigned long pmd_page_vaddr(pmd_t pmd)
- #define pfn_pte(pfn, prot)  __pte((((pfn) << PAGE_SHIFT)) | pgprot_val(prot))
+diff --git a/drivers/gpu/drm/qxl/qxl_cmd.c b/drivers/gpu/drm/qxl/qxl_cmd.c
+index d6ea01f3797b..895e41c1a567 100644
+--- a/drivers/gpu/drm/qxl/qxl_cmd.c
++++ b/drivers/gpu/drm/qxl/qxl_cmd.c
+@@ -174,6 +174,35 @@ static bool qxl_ring_pop(struct qxl_ring *ring,
+ 	return true;
+ }
  
- #define pte_ERROR(e) \
--       printk(KERN_ERR "%s:%d: bad pte %p(%08lx).\n", \
--              __FILE__, __LINE__, &(e), pte_val(e))
-+       printk(KERN_ERR "%s:%d: bad pte (%08lx).\n", \
-+              __FILE__, __LINE__, pte_val(e))
- #define pgd_ERROR(e) \
--       printk(KERN_ERR "%s:%d: bad pgd %p(%08lx).\n", \
--              __FILE__, __LINE__, &(e), pgd_val(e))
-+       printk(KERN_ERR "%s:%d: bad pgd (%08lx).\n", \
-+              __FILE__, __LINE__, pgd_val(e))
++/* For drm panic */
++int
++qxl_push_command_ring_without_release(struct qxl_device *qdev,
++		struct qxl_bo *bo, uint32_t offset)
++{
++	struct qxl_command cmd;
++	struct qxl_ring *ring = qdev->command_ring;
++	struct qxl_ring_header *header = &(ring->ring->header);
++	uint8_t *elt;
++	int idx;
++
++	cmd.type = QXL_CMD_DRAW;
++	cmd.data = qxl_bo_physical_address(qdev, bo, offset);
++
++	idx = header->prod & (ring->n_elements - 1);
++	elt = ring->ring->elements + idx * ring->element_size;
++
++	memcpy((void *)elt, &cmd, ring->element_size);
++
++	header->prod++;
++
++	mb();
++
++	if (header->prod == header->notify_on_prod)
++		outb(0, ring->prod_notify);
++
++	return 0;
++}
++
+ int
+ qxl_push_command_ring_release(struct qxl_device *qdev, struct qxl_release *release,
+ 			      uint32_t type, bool interruptible)
+diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
+index bc24af08dfcd..b80cb8879215 100644
+--- a/drivers/gpu/drm/qxl/qxl_display.c
++++ b/drivers/gpu/drm/qxl/qxl_display.c
+@@ -37,6 +37,7 @@
+ #include <drm/drm_probe_helper.h>
+ #include <drm/drm_simple_kms_helper.h>
+ #include <drm/drm_gem_atomic_helper.h>
++#include <drm/drm_panic.h>
  
- extern pgd_t swapper_pg_dir[PTRS_PER_PGD]; /* defined in head.S */
+ #include "qxl_drv.h"
+ #include "qxl_object.h"
+@@ -889,6 +890,97 @@ static void qxl_plane_cleanup_fb(struct drm_plane *plane,
+ 	}
+ }
+ 
++static int qxl_primary_plane_helper_get_scanout_buffer(struct drm_plane *plane,
++							struct drm_scanout_buffer *sb)
++{
++	struct qxl_bo *bo;
++
++	if (!plane->state || !plane->state->fb)
++		return -ENODEV;
++
++	bo = gem_to_qxl_bo(plane->state->fb->obj[0]);
++
++	if (!bo->map.vaddr) {
++		int ret;
++
++		ret = qxl_bo_pin_and_vmap(bo, &sb->map[0]);
++		if (ret)
++			return ret;
++	} else {
++		iosys_map_set_vaddr(&sb->map[0], bo->map.vaddr);
++	}
++
++	sb->format = plane->state->fb->format;
++	sb->height = plane->state->fb->height;
++	sb->width = plane->state->fb->width;
++	sb->pitch[0] = plane->state->fb->pitches[0];
++	return 0;
++}
++
++static void qxl_panic_flush(struct drm_plane *plane)
++{
++	struct qxl_device *qdev = to_qxl(plane->dev);
++	struct qxl_bo *_bo = gem_to_qxl_bo(plane->state->fb->obj[0]);
++	uint8_t *surface_base = _bo->map.vaddr;
++	struct drm_clip_rect rect = {
++		.x1 = 0,
++		.y1 = 0,
++		.x2 = plane->state->fb->width,
++		.y2 = plane->state->fb->height
++	};
++	unsigned int num_clips = 1;
++	struct qxl_bo clips_bo = {};
++	struct qxl_bo image_bo = {};
++	struct qxl_bo chunk_bo = {};
++	struct qxl_drm_image dimage;
++	struct qxl_drm_chunk chunk;
++	int width = rect.x2;
++	int height = rect.y2;
++	int stride = plane->state->fb->pitches[0];
++	int depth = plane->state->fb->format->cpp[0] * 8;
++	struct qxl_rect *rects;
++	struct qxl_rect drawable_rect = {
++		.left = 0,
++		.right = width,
++		.top = 0,
++		.bottom = height,
++	};
++	int cur_idx = 0;
++	int size = 256;
++	struct qxl_bo *bo = qxl_bo_ref(qdev->current_release_bo[cur_idx]);
++	uint32_t offset = qdev->current_release_bo_offset[cur_idx] * size;
++	int ret;
++
++	qxl_panic_bo_create(qdev, sizeof(struct qxl_clip_rects) + sizeof(struct qxl_rect),
++			&clips_bo);
++
++	ret = qxl_image_alloc_objects_without_release(qdev, &dimage, &chunk, &image_bo, &chunk_bo,
++			surface_base, width, height, depth, stride);
++	if (ret)
++		return;
++
++	ret = make_drawable_without_release(qdev, &drawable_rect, bo, &clips_bo,
++			&dimage, offset, height, width);
++	if (ret)
++		return;
++
++	rects = drawable_set_clipping(qdev, num_clips, &clips_bo);
++	if (!rects)
++		return;
++	rects[0].left = 0;
++	rects[0].right = width;
++	rects[0].top = 0;
++	rects[0].bottom = height;
++
++	qxl_push_command_ring_without_release(qdev, bo, offset);
++
++	qxl_panic_gem_object_free(&chunk_bo.tbo.base);
++	qxl_panic_gem_object_free(&image_bo.tbo.base);
++
++	qxl_bo_vunmap_locked(&clips_bo);
++	qxl_panic_gem_object_free(&clips_bo.tbo.base);
++}
++
+ static const uint32_t qxl_cursor_plane_formats[] = {
+ 	DRM_FORMAT_ARGB8888,
+ };
+@@ -920,6 +1012,8 @@ static const struct drm_plane_helper_funcs primary_helper_funcs = {
+ 	.atomic_disable = qxl_primary_atomic_disable,
+ 	.prepare_fb = qxl_plane_prepare_fb,
+ 	.cleanup_fb = qxl_plane_cleanup_fb,
++	.get_scanout_buffer = qxl_primary_plane_helper_get_scanout_buffer,
++	.panic_flush = qxl_panic_flush,
+ };
+ 
+ static const struct drm_plane_funcs qxl_primary_plane_funcs = {
+diff --git a/drivers/gpu/drm/qxl/qxl_draw.c b/drivers/gpu/drm/qxl/qxl_draw.c
+index 3a3e127ce297..49fdc0162377 100644
+--- a/drivers/gpu/drm/qxl/qxl_draw.c
++++ b/drivers/gpu/drm/qxl/qxl_draw.c
+@@ -41,7 +41,8 @@ static int alloc_clips(struct qxl_device *qdev,
+ /* returns a pointer to the already allocated qxl_rect array inside
+  * the qxl_clip_rects. This is *not* the same as the memory allocated
+  * on the device, it is offset to qxl_clip_rects.chunk.data */
+-static struct qxl_rect *drawable_set_clipping(struct qxl_device *qdev,
++
++struct qxl_rect *drawable_set_clipping(struct qxl_device *qdev,
+ 					      unsigned int num_clips,
+ 					      struct qxl_bo *clips_bo)
+ {
+@@ -74,6 +75,60 @@ free_drawable(struct qxl_device *qdev, struct qxl_release *release)
+ 	qxl_release_free(qdev, release);
+ }
+ 
++/* For drm panic */
++int
++make_drawable_without_release(struct qxl_device *qdev,
++		struct qxl_rect *drawable_rect,
++		struct qxl_bo *bo,
++		struct qxl_bo *clips_bo,
++		struct qxl_drm_image *dimage,
++		uint32_t offset, int height, int width)
++{
++	struct qxl_drawable *drawable;
++	union qxl_release_info *info;
++	void *ptr;
++	int i;
++
++	ptr = qxl_bo_kmap_atomic_page(qdev, bo, offset & PAGE_MASK);
++	if (!ptr)
++		return -ENOMEM;
++	drawable = ptr + (offset & ~PAGE_MASK);
++
++	drawable->type = QXL_DRAW_COPY;
++	drawable->surface_id = 0;
++	drawable->effect = QXL_EFFECT_OPAQUE;
++	drawable->self_bitmap = 0;
++	drawable->self_bitmap_area.top = 0;
++	drawable->self_bitmap_area.left = 0;
++	drawable->self_bitmap_area.bottom = 0;
++	drawable->self_bitmap_area.right = 0;
++
++	for (i = 0; i < 3; ++i)
++		drawable->surfaces_dest[i] = -1;
++
++	drawable->bbox = *drawable_rect;
++	drawable->mm_time = qdev->rom->mm_clock;
++	drawable->clip.type = SPICE_CLIP_TYPE_RECTS;
++	drawable->clip.data = qxl_bo_physical_address(qdev, clips_bo, 0);
++	drawable->u.copy.src_area.top = 0;
++	drawable->u.copy.src_area.bottom = height;
++	drawable->u.copy.src_area.left = 0;
++	drawable->u.copy.src_area.right = width;
++	drawable->u.copy.rop_descriptor = SPICE_ROPD_OP_PUT;
++	drawable->u.copy.scale_mode = 0;
++	drawable->u.copy.mask.flags = 0;
++	drawable->u.copy.mask.pos.x = 0;
++	drawable->u.copy.mask.pos.y = 0;
++	drawable->u.copy.mask.bitmap = 0;
++	drawable->u.copy.src_bitmap = qxl_bo_physical_address(qdev, dimage->bo, 0);
++
++	info = &drawable->release_info;
++	ptr = ((void *)info) - (offset & ~PAGE_MASK);
++	qxl_bo_kunmap_atomic_page(qdev, bo, ptr);
++
++	return 0;
++}
++
+ /* release needs to be reserved at this point */
+ static int
+ make_drawable(struct qxl_device *qdev, int surface, uint8_t type,
+diff --git a/drivers/gpu/drm/qxl/qxl_drv.h b/drivers/gpu/drm/qxl/qxl_drv.h
+index 32069acd93f8..ffeafb5b73ef 100644
+--- a/drivers/gpu/drm/qxl/qxl_drv.h
++++ b/drivers/gpu/drm/qxl/qxl_drv.h
+@@ -309,6 +309,7 @@ int qxl_gem_object_create_with_handle(struct qxl_device *qdev,
+ 				      struct qxl_surface *surf,
+ 				      struct drm_gem_object **gobj,
+ 				      uint32_t *handle);
++void qxl_panic_gem_object_free(struct drm_gem_object *gobj);
+ void qxl_gem_object_free(struct drm_gem_object *gobj);
+ int qxl_gem_object_open(struct drm_gem_object *obj, struct drm_file *file_priv);
+ void qxl_gem_object_close(struct drm_gem_object *obj,
+@@ -334,6 +335,13 @@ int qxl_image_init(struct qxl_device *qdev,
+ 		   const uint8_t *data,
+ 		   int x, int y, int width, int height,
+ 		   int depth, int stride);
++
++int qxl_image_alloc_objects_without_release(struct qxl_device *qdev,
++		struct qxl_drm_image *image, struct qxl_drm_chunk *chunk,
++		struct qxl_bo *image_bo, struct qxl_bo *chunk_bo,
++		uint8_t *surface_base, int width,
++		int height, int depth, int stride);
++
+ int
+ qxl_image_alloc_objects(struct qxl_device *qdev,
+ 			struct qxl_release *release,
+@@ -376,6 +384,9 @@ int qxl_alloc_release_reserved(struct qxl_device *qdev, unsigned long size,
+ 			       int type, struct qxl_release **release,
+ 			       struct qxl_bo **rbo);
+ 
++int qxl_push_command_ring_without_release(struct qxl_device *qdev,
++		struct qxl_bo *bo, uint32_t offset);
++
+ int
+ qxl_push_command_ring_release(struct qxl_device *qdev, struct qxl_release *release,
+ 			      uint32_t type, bool interruptible);
+@@ -387,6 +398,9 @@ int qxl_alloc_bo_reserved(struct qxl_device *qdev,
+ 			  unsigned long size,
+ 			  struct qxl_bo **_bo);
+ /* qxl drawing commands */
++struct qxl_rect *drawable_set_clipping(struct qxl_device *qdev,
++					      unsigned int num_clips,
++					      struct qxl_bo *clips_bo);
+ 
+ void qxl_draw_dirty_fb(struct qxl_device *qdev,
+ 		       struct drm_framebuffer *fb,
+@@ -399,6 +413,14 @@ void qxl_draw_dirty_fb(struct qxl_device *qdev,
+ void qxl_release_free(struct qxl_device *qdev,
+ 		      struct qxl_release *release);
+ 
++int
++make_drawable_without_release(struct qxl_device *qdev,
++		struct qxl_rect *drawable_rect,
++		struct qxl_bo *bo,
++		struct qxl_bo *clips_bo,
++		struct qxl_drm_image *dimage,
++		uint32_t offset, int height, int width);
++
+ /* used by qxl_debugfs_release */
+ struct qxl_release *qxl_release_from_id_locked(struct qxl_device *qdev,
+ 						   uint64_t id);
+diff --git a/drivers/gpu/drm/qxl/qxl_gem.c b/drivers/gpu/drm/qxl/qxl_gem.c
+index fc5e3763c359..f140439c640a 100644
+--- a/drivers/gpu/drm/qxl/qxl_gem.c
++++ b/drivers/gpu/drm/qxl/qxl_gem.c
+@@ -28,6 +28,15 @@
+ #include "qxl_drv.h"
+ #include "qxl_object.h"
+ 
++void qxl_panic_gem_object_free(struct drm_gem_object *gobj)
++{
++	struct qxl_bo *qobj = gem_to_qxl_bo(gobj);
++	struct ttm_buffer_object *tbo;
++
++	tbo = &qobj->tbo;
++	ttm_bo_put(tbo);
++}
++
+ void qxl_gem_object_free(struct drm_gem_object *gobj)
+ {
+ 	struct qxl_bo *qobj = gem_to_qxl_bo(gobj);
+diff --git a/drivers/gpu/drm/qxl/qxl_image.c b/drivers/gpu/drm/qxl/qxl_image.c
+index ffff54e5fb31..064dfdc3f722 100644
+--- a/drivers/gpu/drm/qxl/qxl_image.c
++++ b/drivers/gpu/drm/qxl/qxl_image.c
+@@ -52,6 +52,31 @@ qxl_allocate_chunk(struct qxl_device *qdev,
+ 	return 0;
+ }
+ 
++/* For drm panic */
++int
++qxl_image_alloc_objects_without_release(struct qxl_device *qdev,
++		struct qxl_drm_image *image, struct qxl_drm_chunk *chunk,
++		struct qxl_bo *image_bo, struct qxl_bo *chunk_bo,
++		uint8_t *surface_base, int width, int height,
++		int depth, int stride)
++{
++	int ret;
++	unsigned int chunk_size = sizeof(struct qxl_data_chunk) + stride * height;
++
++	INIT_LIST_HEAD(&image->chunk_list);
++	qxl_panic_bo_create(qdev, sizeof(struct qxl_image), image_bo);
++	image->bo = image_bo;
++
++	qxl_panic_bo_create(qdev, chunk_size, chunk_bo);
++	chunk->bo = chunk_bo;
++	list_add_tail(&chunk->head, &image->chunk_list);
++
++	ret = qxl_image_init(qdev, NULL, image, surface_base,
++			     0, 0, width, height, depth, stride);
++	return ret;
++
++}
++
+ int
+ qxl_image_alloc_objects(struct qxl_device *qdev,
+ 			struct qxl_release *release,
+diff --git a/drivers/gpu/drm/qxl/qxl_object.c b/drivers/gpu/drm/qxl/qxl_object.c
+index 66635c55cf85..22aa16ed0685 100644
+--- a/drivers/gpu/drm/qxl/qxl_object.c
++++ b/drivers/gpu/drm/qxl/qxl_object.c
+@@ -29,6 +29,16 @@
+ #include "qxl_drv.h"
+ #include "qxl_object.h"
+ 
++/* for drm panic */
++static void qxl_panic_ttm_bo_destroy(struct ttm_buffer_object *tbo)
++{
++	struct qxl_bo *bo;
++
++	bo = to_qxl_bo(tbo);
++	WARN_ON_ONCE(bo->map_count > 0);
++	drm_gem_object_release(&bo->tbo.base);
++}
++
+ static void qxl_ttm_bo_destroy(struct ttm_buffer_object *tbo)
+ {
+ 	struct qxl_bo *bo;
+@@ -101,6 +111,42 @@ static const struct drm_gem_object_funcs qxl_object_funcs = {
+ 	.print_info = drm_gem_ttm_print_info,
+ };
+ 
++/* for drm_panic */
++int qxl_panic_bo_create(struct qxl_device *qdev, unsigned long size, struct qxl_bo *bo)
++{
++	u32 domain = QXL_GEM_DOMAIN_VRAM;
++	struct ttm_operation_ctx ctx = { true, false };
++	enum ttm_bo_type type;
++	int r;
++
++	type = ttm_bo_type_device;
++
++	size = roundup(size, PAGE_SIZE);
++	r = drm_gem_object_init(&qdev->ddev, &bo->tbo.base, size);
++	if (unlikely(r))
++		return r;
++	bo->tbo.base.funcs = &qxl_object_funcs;
++	bo->type = domain;
++	bo->surface_id = 0;
++	INIT_LIST_HEAD(&bo->list);
++
++	qxl_ttm_placement_from_domain(bo, domain);
++
++	bo->tbo.priority = 0;
++	r = ttm_bo_init_reserved(&qdev->mman.bdev, &bo->tbo, type,
++				 &bo->placement, 0, &ctx, NULL, NULL,
++				 &qxl_panic_ttm_bo_destroy);
++	if (unlikely(r != 0)) {
++		if (r != -ERESTARTSYS)
++			dev_err(qdev->ddev.dev,
++				"object_init failed for (%lu, 0x%08X)\n",
++				size, domain);
++		return r;
++	}
++	ttm_bo_unreserve(&bo->tbo);
++	return 0;
++}
++
+ int qxl_bo_create(struct qxl_device *qdev, unsigned long size,
+ 		  bool kernel, bool pinned, u32 domain, u32 priority,
+ 		  struct qxl_surface *surf,
+diff --git a/drivers/gpu/drm/qxl/qxl_object.h b/drivers/gpu/drm/qxl/qxl_object.h
+index 875f63221074..d1dbf7a3dd5b 100644
+--- a/drivers/gpu/drm/qxl/qxl_object.h
++++ b/drivers/gpu/drm/qxl/qxl_object.h
+@@ -53,6 +53,7 @@ static inline unsigned long qxl_bo_size(struct qxl_bo *bo)
+ 	return bo->tbo.base.size;
+ }
+ 
++extern int qxl_panic_bo_create(struct qxl_device *qdev, unsigned long size, struct qxl_bo *bo);
+ extern int qxl_bo_create(struct qxl_device *qdev,
+ 			 unsigned long size,
+ 			 bool kernel, bool pinned, u32 domain,
+-- 
+2.46.0
+
 
