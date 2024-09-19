@@ -1,168 +1,145 @@
-Return-Path: <linux-kernel+bounces-333546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA87997CA94
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 15:59:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D871B97CA97
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B5A71C2293A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 13:59:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CBAD1F219E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4E419CD17;
-	Thu, 19 Sep 2024 13:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C5519F42C;
+	Thu, 19 Sep 2024 13:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccOWF4xC"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J/BD329B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE9E19D8BB;
-	Thu, 19 Sep 2024 13:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB24619D8BB;
+	Thu, 19 Sep 2024 13:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726754344; cv=none; b=K9yGfMmxS8PpN5tnJ2ob5RzT+EmhPBQMpSLPFhM4Rz/6bRMBUst1N7pjh9AqhKOzISX+xQQqiMeR6Kj+1pBLGOqsm7ZZmLmrFs60b/yVq4C/5RpAbi8mZgl0CGG9OQTlaNPcGIdcLZ6S5wOveExgGE4EvDJQuUu6IzFxZviTqCU=
+	t=1726754393; cv=none; b=cvAssE0/AHGOYZ9Sujhu/8hiA934NF0A8BhBUwhnEdKW+Ytszrrf4wvvETuV9DO4K4rm6OtkJcBzkKA9cB84ZVW63LAFqd8N0uADX1qiENfD328zVb8+Y3BiAjU19GA+O0Do4EOubDsPsPYftkY/M9/QzgSqGKDPg9IC8xza8GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726754344; c=relaxed/simple;
-	bh=srnK6yLEvtox5NfJs7v7fOjIgfyIoFIDJY/8Rw2mEJQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=konf8KYGeQV+j0imBRIa/FP5eQu0OE0/Y3jVWm9afKebCctu/61FegIgrl9ZbVBeHfAOYQ8lm1Ox7MX9KmyH6nWd5PheabdY0q2Tx8fvMBpSfnaP8eka3XR4TItV7cUaxowDvNqryOz7ZLFJ2B+IVOpu9nmsbxRpa8RAzMHec4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ccOWF4xC; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f75c6ed397so9864761fa.2;
-        Thu, 19 Sep 2024 06:59:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726754341; x=1727359141; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/dl3OjrsVMZv+aA568NjTJEOVVfeESkGFa9253qsbzQ=;
-        b=ccOWF4xCiRG41JY8JUrPPWx73cSdIQb8ShOO71rSVOFFxAyqx7PVbk2ObvBxMK1fin
-         tkzvVRL3kw5XuHpPVJ4OzK9ymmpuxJZkmwzcFdOX+4JpcYtu/tE+E/Lek0iua7W0Ird4
-         nP4n+g51uPOVJm4MjKypeHIlYGHGRmg/cVXpWEVuzuQLyDCbMOMLktdio+hPwJp/cmSw
-         I7+lkdeZBF5L2oMdmOifna6+oiDLsyQGG2WQjVkVaXrqTUHmxzs5fErPgWRRqEPhF4AS
-         kFCRJzjpACmSlcKOiXe0Xgl+WXmpWvJR3foicF9Z/qBIvyNHJmLAoVfqhJIENJGqz8Oz
-         /Zzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726754341; x=1727359141;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/dl3OjrsVMZv+aA568NjTJEOVVfeESkGFa9253qsbzQ=;
-        b=uMlsKVFLW/OY/cBmgPK3zaiAMZrRfpBzm0668K14armMVK9nxi0lLEvU9VRtLi8ofj
-         nSqCPIB6Iodj4gzHqFwE8C5JuiT8IcpVHHFPCqRZd644lyo4THNw/MbFCdPPF/ZKDtw2
-         n3dGrRSoWzQCmnABRRbYrs3LuGkv1vuxcq2SUI7B/4Dh7yuACStKHrRsAN3yNiiI0jnU
-         ljyyBBvYYTeAUkgTwMRXbz2u1rs51vh1VHGacPpJsLBhxSIKilS76BjATrCCWpEJhF+9
-         ObBEscmF+JxHLpk6nbbFQhhod28xhdbPHzY4wyuqCdBtFCzcg+B4ewbLtI0n4NAXbGao
-         g2aA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHUp7sIIUndT73iFeXjAg9UqllL9x2y66vPve/OVhB4ghsYpFZ1cbisdOfFEeedmhn74R496nyef40YDQ3@vger.kernel.org, AJvYcCWAmYTP8d+C+RNyQk0hujXQXR0cdsEf6+AM6TQvlqqnvwCufwRqyucIwY3g6N6TLmNZXvh1X4ym@vger.kernel.org, AJvYcCXwJfHOr/Iuu6mqym0wqg5ykJkusCt04wCoEdTcAh8LBHsbt7Xen8p7LYWHvRCbJhR9T05mxpT0CUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhN62NPLBO0x8BzmU6Z3dwzXsyWrzCqQMtsvwbuiUj6HL4NLc0
-	x+Oro89UzKPoiy9IFwuqs5OfoxGLPtayjg7qsDQBEaD/w2LbkAy4
-X-Google-Smtp-Source: AGHT+IH/PH5CDFn2ze7amXvKo4RYRc0NY7vDJsTWy5InZjVmIkrJ03PVI3LDq/+/zAU6zVIBsrYcNw==
-X-Received: by 2002:a05:651c:504:b0:2ef:2555:e52f with SMTP id 38308e7fff4ca-2f787f2e66fmr153794481fa.35.1726754340638;
-        Thu, 19 Sep 2024 06:59:00 -0700 (PDT)
-Received: from localhost ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d4861f5sm16359541fa.119.2024.09.19.06.58.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 06:58:59 -0700 (PDT)
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Viresh Kumar <vireshk@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Ferry Toth <fntoth@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Serge Semin <fancer.lancer@gmail.com>,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] dmaengine: dw: Select only supported masters for ACPI devices
-Date: Thu, 19 Sep 2024 16:58:14 +0300
-Message-ID: <20240919135854.16124-1-fancer.lancer@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726754393; c=relaxed/simple;
+	bh=CePZyLigDVF6yDHPAAbBXKiYFarym/OrWA9cBQu4ghA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E3ScSRXFX/F82yVemsvWEVKwsiuXUUOnnw4edY/X1w5IhbWRYSrQYH/VLmrUz+UHo8Hkyz9HPiyTtbeytZoMQTd3ckOH7BHn0Ms4qlOynrAXhwZRpFohKCaeUdpeFT64sDITfk1tuALLzQ5o8Dbhv20WZclplczH+pt68IHWYFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J/BD329B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CD47C4CEC4;
+	Thu, 19 Sep 2024 13:59:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726754392;
+	bh=CePZyLigDVF6yDHPAAbBXKiYFarym/OrWA9cBQu4ghA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=J/BD329BZWQwimY+QTC03Yv2DqIsRli2jZItPqpe91eYxZ85Blppw/GAY8Jbmhucl
+	 a+8nmLcaL1U0bx0Y7dtdqjB/qqLveEkpNg38OAOHNQTEncjS/hBDyaXvQPRgjjGzfA
+	 lmEC9lWZOpW24p3ZdyyPiBYz9L73Cf2fbmK/0Zc4ktOxhB41QbZ+wfpVZA8zwTV4mJ
+	 2rbP+HiN8DXC4yFERJDnAkn5NoDmE8LLCazbuE0/Nb17/tXJt2CNXb9JqWURLZA1md
+	 6Jlg+f2kFG1YPoyTrKgrH05v64aAQfAX0ifUh0156yITQvlIIyU+/BtybnYsAQ7tun
+	 /QYSb3fIaZifQ==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f754d4a6e4so9684791fa.3;
+        Thu, 19 Sep 2024 06:59:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU/ZvLi+ay/ABy1NZxKfg/YxdYlweBppqTbRmMhXimUrNFE8lyWDeMMv2P/p2VJwStl4HbW49cbrF7fGtfgSQU=@vger.kernel.org, AJvYcCWHvQXyXh2vKgfNbhikRqZk1FWwjt1M2dkyb9QsktB9AuLp3C2ZFus4/p/ftVUo6/gc7QZJpzskPnY0Ukw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY6Dse09zW3GdCw1Z7PbgMjbqERQFPacNa8cj9SgnlpQxhJexL
+	TWEnqT2NhkmrCCrXW+JM4KgdEkI46xyT0ukZnWS8IjeyPFWEpL0Cj6dcf1OHfbz8nkVf+7H6oQk
+	tWW58vtuYip5AaSO0PEUFE7cK/c4=
+X-Google-Smtp-Source: AGHT+IHhk8Dp9O86HEjI233s+GywkPv0eYie/FG0b1jEU9QzXUp+qIVvljtiBd//Xdk4DPfWcomKwoUyj0aHwliPIqg=
+X-Received: by 2002:a2e:b8c4:0:b0:2f7:c76f:3c62 with SMTP id
+ 38308e7fff4ca-2f7c76f3cfdmr12015431fa.24.1726754391049; Thu, 19 Sep 2024
+ 06:59:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240917141725.466514-1-masahiroy@kernel.org> <20240917141725.466514-9-masahiroy@kernel.org>
+ <Zuws_qal2uJs0B2V@l-nschier-nb>
+In-Reply-To: <Zuws_qal2uJs0B2V@l-nschier-nb>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 19 Sep 2024 22:59:14 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATxynY4yrZgtqezt__DNvUt2pjetpuG25K050y=-bUCNQ@mail.gmail.com>
+Message-ID: <CAK7LNATxynY4yrZgtqezt__DNvUt2pjetpuG25K050y=-bUCNQ@mail.gmail.com>
+Subject: Re: [PATCH 08/23] kbuild: simplify find command for rustfmt
+To: Nicolas Schier <n.schier@avm.de>
+Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The recently submitted fix-commit revealed a problem in the iDMA32
-platform code. Even though the controller supported only a single master
-the dw_dma_acpi_filter() method hard-coded two master interfaces with IDs
-0 and 1. As a result the sanity check implemented in the commit
-b336268dde75 ("dmaengine: dw: Add peripheral bus width verification") got
-incorrect interface data width and thus prevented the client drivers
-from configuring the DMA-channel with the EINVAL error returned. E.g. the
-next error was printed for the PXA2xx SPI controller driver trying to
-configure the requested channels:
+On Thu, Sep 19, 2024 at 10:54=E2=80=AFPM Nicolas Schier <n.schier@avm.de> w=
+rote:
+>
+> On Tue, Sep 17, 2024 at 11:16:36PM +0900, Masahiro Yamada wrote:
+> > The current 'find' command does not prune the rust/test directory
+> > itself, requiring an additional 'grep -Fv' command to exclude it.
+> > This is cumbersome.
+> >
+> > The correct use of the -prune option can be seen in the 'make clean'
+> > rule.
+> >
+> > [Current command]
+> >
+> >   $ find . -type f -name '*.rs' -o -path ./rust/test -prune | wc
+> >        70      70    1939
+> >   $ find . -type f -name '*.rs' -o -path ./rust/test -prune | grep rust=
+/test
+> >   ./rust/test
+> >
+> > [Improved command]
+> >
+> >   $ find . -path ./rust/test -prune -o -type f -name '*.rs' -print | wc
+> >        69      69    1927
+> >   $ find . -path ./rust/test -prune -o -type f -name '*.rs' -print | gr=
+ep rust/test
+> >
+> > With the improved 'find' command, the grep command is no longer needed.
+> >
+> > There is also no need to use the absolute path, so $(abs_srctree) can b=
+e
+> > replaced with $(srctree).
+> >
+> > The pruned directory rust/test must be prefixed with $(srctree) instead
+> > of $(objtree). Otherwise, 'make O=3D... rustfmt' would visit the stale
+> > rust/test directory remaining in the source tree.
+> >
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > ---
+> >
+> >  Makefile | 5 ++---
+> >  1 file changed, 2 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index 5b16e0605a77..4992b2895dd5 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -1740,9 +1740,8 @@ PHONY +=3D rustfmt rustfmtcheck
+> >  # when matching, which is a problem when e.g. `srctree` is `..`.
+> >  # We `grep` afterwards in order to remove the directory entry itself.
+> >  rustfmt:
+> > -     $(Q)find $(abs_srctree) -type f -name '*.rs' \
+> > -             -o -path $(abs_objtree)/rust/test -prune \
+> > -             | grep -Fv $(abs_objtree)/rust/test \
+> > +     $(Q)find $(srctree) -path $(srctree)/rust/test -prune \
+> > +             -o -type f -name '*.rs' -print \
+> >               | grep -Fv generated \
+>
+> Is there a reason for keeping the grep for generated instead of turning
+> it also into a find prune argument?
 
-> [  164.525604] pxa2xx_spi_pci 0000:00:07.1: DMA slave config failed
-> [  164.536105] pxa2xx_spi_pci 0000:00:07.1: failed to get DMA TX descriptor
-> [  164.543213] spidev spi-SPT0001:00: SPI transfer failed: -16
 
-The problem would have been spotted much earlier if the iDMA32 controller
-supported more than one master interfaces. But since it supports just a
-single master and the iDMA32-specific code just ignores the master IDs in
-the CTLLO preparation method, the issue has been gone unnoticed so far.
+This commit answers your question:
 
-Fix the problem by specifying a single master ID for both memory and
-peripheral devices on the ACPI-based platforms if there is only one master
-available on the controller. Thus the issue noticed for the iDMA32
-controllers will be eliminated and the ACPI-probed DW DMA controllers will
-be configured with the correct master ID by default.
+https://github.com/Rust-for-Linux/linux/commit/73243a8a27a67
 
-Cc: stable@vger.kernel.org
-Fixes: b336268dde75 ("dmaengine: dw: Add peripheral bus width verification")
-Fixes: 199244d69458 ("dmaengine: dw: add support of iDMA 32-bit hardware")
-Reported-by: Ferry Toth <fntoth@gmail.com>
-Closes: https://lore.kernel.org/dmaengine/ZuXbCKUs1iOqFu51@black.fi.intel.com/
-Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Closes: https://lore.kernel.org/dmaengine/ZuXgI-VcHpMgbZ91@black.fi.intel.com/
-Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
 
----
 
-Note I haven't got any device with the Intel Merrifield iDMA32 + SPI
-PXA2xx pair to test out the solution. So any tests are very welcome. But
-based on Andy' (see the reported-by links) and my investigations the fix
-seems correct.
----
- drivers/dma/dw/acpi.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma/dw/acpi.c b/drivers/dma/dw/acpi.c
-index c510c109d2c3..efbe8baeccbc 100644
---- a/drivers/dma/dw/acpi.c
-+++ b/drivers/dma/dw/acpi.c
-@@ -8,15 +8,25 @@
- 
- static bool dw_dma_acpi_filter(struct dma_chan *chan, void *param)
- {
-+	struct dw_dma *dw = to_dw_dma(chan->device);
- 	struct acpi_dma_spec *dma_spec = param;
- 	struct dw_dma_slave slave = {
- 		.dma_dev = dma_spec->dev,
- 		.src_id = dma_spec->slave_id,
- 		.dst_id = dma_spec->slave_id,
- 		.m_master = 0,
--		.p_master = 1,
- 	};
- 
-+	/*
-+	 * Fallback to using a single interface for both memory and peripheral
-+	 * device if there is only one master I/F supported (e.g. iDMA32)
-+	 */
-+	if (dw->pdata->nr_masters == 0)
-+		slave.p_master = 0;
-+	else
-+		slave.p_master = 1;
-+
-+
- 	return dw_dma_filter(chan, &slave);
- }
- 
--- 
-2.43.0
-
+--=20
+Best Regards
+Masahiro Yamada
 
