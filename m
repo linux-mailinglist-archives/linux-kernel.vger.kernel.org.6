@@ -1,129 +1,135 @@
-Return-Path: <linux-kernel+bounces-333490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94A3697C98C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:52:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA5997C990
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 405091F23297
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:52:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23F53B23298
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4538B19E7D0;
-	Thu, 19 Sep 2024 12:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA0619E822;
+	Thu, 19 Sep 2024 12:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="cEkP6PDQ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="LOdJrGcu"
+Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFAF19DF5F
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 12:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3543719D8BB;
+	Thu, 19 Sep 2024 12:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726750346; cv=none; b=kbmOUPYB02ZegTgC3KE6Z235wjaIHksFlyuMvgPvt1223C24OA4xsd2rAsaQr4QS4Goe6X8y3L2+GpqxIjOXMuAJj5+G9XzBa9QAOrKhuJMshlCr+rufCKItOi/zDfMdGlSma/jmIUXUQezhnTpOIf0XU2m5MtsW5FBDLRyBJns=
+	t=1726750383; cv=none; b=qrmWfLI5YTbaGc7Bb4H3VAgON0TemHUSOmZTBct6EA1cKwLRllZdC2iUEC9GEPz6ZkXFGgpDzvn2G+a2mLp6/TjhBirbfK38XD3FCtlsu6hq0XRiUemSL0PC1uBnHXEj9az7YPj0eHojXIEiNp6lA0bwhqB26qXfPv1eAqtQFTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726750346; c=relaxed/simple;
-	bh=cMEmpzX38bdh1pLdWmdrhsen+4ruiQJlBB3j29UORZU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EhJl8AE+xxI4Cpjh5qkevL/2BmNFp2XhmfA6d7BUalJ2oaTj0GFuFfYTLcumH/8CVP/CqhmuEf8BeiyfEJEbj5z0T5HPPc+hn4KvOI298nVg5q0w1/XxUrkxEStGc/yL/OU2l/0+nSxWtCxrzW8rIBJ6pV3fM+CzvKQfpl/X1UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=cEkP6PDQ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1726750342;
-	bh=YdfaTvkQDBi4PXl8ldsfHZrG66LfS85qUpPVnUW7PhQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=cEkP6PDQe/cGBgTv9xjFn5FgrS7hVSmWVy0zMzRWqw09WZXJO0jznZ8GNsNkK4Tud
-	 lP3vMJ9RHxCdEFxHBY8sK6jHAtIV2x/sm5uYnl+1VdEn8W33TfUUNJc/EB2XgzVFFp
-	 QulvhH0tGFKYz3ehJ1BRy6PmIgTt8oD6Fb6WB4gnqotpOWgM8zsEauceb4CzuY/dxO
-	 QqgMehIOEd3FRkx9N1OK7ceGLK3yfe+j6kyvopQ3pE/1F/eUacccfnLtluJ88tYwhm
-	 IZ0/jc9OWlX0UJOwL1T9CQDHLxnQbwogGSY6JOK/CCkNsRaAvPSXcT4XtqeTrr5fG3
-	 A0v6Ki80FR4lQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X8b5L1MZhz4x5M;
-	Thu, 19 Sep 2024 22:52:21 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Luming Yu <luming.yu@shingroup.cn>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- npiggin@gmail.com, christophe.leroy@csgroup.eu, jialong.yang@shingroup.cn,
- luming.yu@gmail.com
-Subject: Re: [RFC PATCH] powerpc/tlb: enable arch want batched unmap tlb flush
-In-Reply-To: <040533E1233A67C4+ZuugYFMsPMaDAjI9@HX09040029.powercore.com.cn>
-References: <9BC3D1299ECE8428+20240918092515.2121-2-luming.yu@shingroup.cn>
- <87wmj8pbte.fsf@mail.lhotse>
- <040533E1233A67C4+ZuugYFMsPMaDAjI9@HX09040029.powercore.com.cn>
-Date: Thu, 19 Sep 2024 22:52:21 +1000
-Message-ID: <87ldznreka.fsf@mail.lhotse>
+	s=arc-20240116; t=1726750383; c=relaxed/simple;
+	bh=Ph/oHin//pHNn53pb/cPXEAjtRG/v1xWFK7MeSfvfkg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FDcr8Zww9E0FayTW+enhAvqCBb22ukbr9qqJLBhWdpsHJO+66MDEsPwhax47RvHaxXsqjK94ST4nTaOLxHp7nQUE6XAoF7rOejmMHAP3UjJ4YSq5wEr3yxl0UKqw8+jcs3WKKWhz5KLYkCIIfQqhftntilDVTwMDNh5hKS5VqcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=LOdJrGcu; arc=none smtp.client-ip=81.19.3.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+	s=20160406-ysoft-com; t=1726750380;
+	bh=60bDgnFrrO+PEAycaO+HE7Dpyx2k7R6Ulk+P7uK3JEI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LOdJrGcu50/Li4tNNrzaVJwDoT5QmnBQ7VSLhBlMtrnxrZ19qCf8X9Q+JbgfDej4u
+	 SzMLOujxnN4NeASyk0rZOraeamXO+K5wOhpHi4WluiBztB7r6uBdA7UBNc81WqGFM8
+	 s3pOhqwB8MsloPefY6GGOVIg5gvptIS7PXbHwa0c=
+Received: from [10.1.8.111] (unknown [10.1.8.111])
+	by uho.ysoft.cz (Postfix) with ESMTP id DA291A05BD;
+	Thu, 19 Sep 2024 14:52:59 +0200 (CEST)
+Message-ID: <c4421504-2ccd-4adb-8df6-053c8085080a@ysoft.com>
+Date: Thu, 19 Sep 2024 14:52:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] arm64: dts: imx8mp-iota2: Enable the USB Type-C port
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Shawn Guo <shawnguo@kernel.org>, Petr Benes <petr.benes@ysoft.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Herburger <gregor.herburger@ew.tq-group.com>,
+ Hiago De Franco <hiago.franco@toradex.com>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+ Michael Walle <mwalle@kernel.org>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Mathieu Othacehe <m.othacehe@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20240917151001.1289399-1-michal.vokac@ysoft.com>
+ <20240917151001.1289399-5-michal.vokac@ysoft.com>
+ <91d26ba6-01cd-4b45-8cca-689475285463@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
+In-Reply-To: <91d26ba6-01cd-4b45-8cca-689475285463@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Luming Yu <luming.yu@shingroup.cn> writes:
-> On Thu, Sep 19, 2024 at 01:22:21PM +1000, Michael Ellerman wrote:
->> Luming Yu <luming.yu@shingroup.cn> writes:
->> > From: Yu Luming <luming.yu@gmail.com>
->> >
->> > ppc always do its own tracking for batch tlb.
->> 
->> I don't think it does? :)
->> 
->> I think you're referring to the batch handling in 
->> arch/powerpc/include/asm/book3s/64/tlbflush-hash.h ?
->> 
->> But that's only used for 64-bit Book3S with the HPT MMU.
->> 
->> > By trivially enabling
->> > the ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH in ppc, ppc arch can re-use
->> > common code in rmap and reduce overhead and do optimization it could not
->> > have without a tlb flushing context at low architecture level.
->> >
->> > Signed-off-by: Luming Yu <luming.yu@shingroup.cn>
->> > ---
->> >  arch/powerpc/Kconfig                |  1 +
->> >  arch/powerpc/include/asm/tlbbatch.h | 30 +++++++++++++++++++++++++++++
->> >  2 files changed, 31 insertions(+)
->> >  create mode 100644 arch/powerpc/include/asm/tlbbatch.h
->> 
->> This doesn't build:
->> 
->>   https://github.com/linuxppc/linux-snowpatch/actions/runs/10919442655
->> 
->> Can you please follow the instructions here:
->> 
->>   https://github.com/linuxppc/wiki/wiki/Testing-with-GitHub-Actions
->> 
->> Which describe how to fork our CI tree that has Github Actions
->> preconfigured, then you can apply your patches on top and push to github
->> and it will do some test builds for you. Notably it will do 32-bit
->> builds which is what broke here.
-
-> thanks, I will take a look and do this for next patch before posting on mailing list. :-)
+On 18. 09. 24 15:17, Krzysztof Kozlowski wrote:
+> On 17/09/2024 17:10, Michal Vokáč wrote:
+>> From: Petr Benes <petr.benes@ysoft.com>
+>>
+>> Enable the USB Type-C port with the Diodes PI5USB30213A port controller.
+>> The port supports dual role data but can operate only in source power role
+>> and PD is not supported.
+>>
+>> Signed-off-by: Petr Benes <petr.benes@ysoft.com>
+>> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+>> ---
+>>   .../boot/dts/freescale/imx8mp-iota2-lumpy.dts | 96 +++++++++++++++++++
+>>   1 file changed, 96 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
+>> index 21d0899cabd5..b15d211e8667 100644
+>> --- a/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
+>> +++ b/arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
+>> @@ -38,6 +38,17 @@ memory@40000000 {
+>>   		      <0x1 0x00000000 0 0x80000000>;
+>>   	};
+>>   
+>> +	reg_typec: regulator-typec {
+>> +		compatible = "regulator-fixed";
+>> +		enable-active-high;
+>> +		gpio = <&gpio1 12 GPIO_ACTIVE_HIGH>;
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&pinctrl_usbc_vbus>;
+>> +		regulator-max-microvolt = <5000000>;
+>> +		regulator-min-microvolt = <5000000>;
+>> +		regulator-name = "typec";
+>> +	};
+>> +
+>>   	reg_usb_host: regulator-usb-host {
+>>   		compatible = "regulator-fixed";
+>>   		enable-active-high;
+>> @@ -218,6 +229,47 @@ &i2c2 {
+>>   	pinctrl-0 = <&pinctrl_i2c2>;
+>>   	status = "okay";
+>>   
+>> +	tcpc@d {
 > 
-> Ideally it should also include qemu boot tests for targets that must work.
- 
-Those scripts do qemu boots of pseries p8/p9, powernv p8/p9, 44x,
-e5500, g5, and mac99.
+> typec@d
+> 
+>> +		compatible = "diodes,pi5usb30213a";
+>> +		reg = <0xd>;
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&pinctrl_typec>;
+>> +		interrupts-extended = <&gpio1 5 IRQ_TYPE_LEVEL_LOW>;
+>> +		status = "okay";
+> 
+> Drop
 
-It doesn't boot full distros because that's too slow for Github Actions,
-so it doesn't catch all bugs, but it's better than nothing.
+OK. I will address both comments.
 
-> I think we could also need a powerpc yocto recipe as well to make
-> patch test more customizable
-> and reproducible than fedora/Debian distro. I've been searching for it
-> for a while, but I couldn't find a useful one. Maybe I need to come up
-> one of my own to facilitate the ci test bot ideas.
-
-I've never used Yocto, not sure if it does/did support powerpc.
-
-Buildroot can build powerpc images with lots of packages included.
-
-cheers
+Thank you for the review,
+Michal
 
