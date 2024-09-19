@@ -1,145 +1,152 @@
-Return-Path: <linux-kernel+bounces-333659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6821A97CBF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:02:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A84C97CBF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 18:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D8E2285348
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:02:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F96C2854F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 16:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441101A00EC;
-	Thu, 19 Sep 2024 16:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B021A00D4;
+	Thu, 19 Sep 2024 16:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Uy4kYy8D"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Nbn3ddoZ"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA9319E7EF
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 16:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E26519E7F7
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 16:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726761753; cv=none; b=MyntH8jND0KLP14dNFMvpgDh+Qe6fpIOa6JBNBr/ZNZuRTtE5xLUJfBBMmiJkkjpwLAWO9Jgw3JzN/iv5TjzZOKiInHJfp9awnwOWNUTww7a4EIfOoLKvg5awwmhiBiN5hiYiqoPTEdVom8kwta2qF2tW5Z5+p12j8bDVhYMpNc=
+	t=1726761717; cv=none; b=Y4IPt94Bwjmi7JH+tAyoew0BkGgxHo84EpcBgO+iapftdjXD2DyPEsavyGYzfFNc/E3G0eidah+BQ77eWWvxzcqLeb1oG7rPwRcBln0di4aN9Oy5YcWYMwVA8ouM/cz9aRkvopKIlion+tZeBF2NRyD36csQtNtAQRZdcV7U1ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726761753; c=relaxed/simple;
-	bh=3Rdw/7FPHr7LRKVhUtEAjNZXLsqUxVL5CyGv7Wt/Dy4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q/SgGonInl10aMEBwp55eTpAHeUmjkKJeI08MNbmE43MjGj48u5NejzBWmCav9811qChvWIIIpSGE2546pNMEgzD53axsx6+9KZLWvKkvmmle3PxPS15CFRDqlCXXmv49qDt5Z5Jm11BYBDYWgUgldNKTEG3meupD1Ql0vWQogE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Uy4kYy8D; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2054feabfc3so10807485ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:02:32 -0700 (PDT)
+	s=arc-20240116; t=1726761717; c=relaxed/simple;
+	bh=cpJFeFr3Q9I7szQagFKASX5ieMYKw9TQeZYUEZA6+Qc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZvLOIrYg+NyoxTHWMDLe4D9PPtPzHPNVmC+pF9lb8GJ+x7iXZuuoJ/U64yKHWqgyhlLQ5bG3rFipI5LCDU62aXmDVQ3vCbZc61Bd1CiuAVtvGRYqrKfR/PduUNFjQ8uBlKGo1aLD9NLi4HkS47AMHbEIjj3nKlNX6UMXf2nl+lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Nbn3ddoZ; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3a08c907245so3914235ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 09:01:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1726761751; x=1727366551; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IY5B5QxXDNVGbG3vnBPyBqvWzO5uiDp/nIYu33vK85A=;
-        b=Uy4kYy8DvylGxgTb8+p2pAPlwrvJFuTxYB/fDG+Skl2LR7fBUDhc2lzJwqWoUEEaX+
-         g11Iv4uhb7dKs/wpqhCbZZPVrIBy3O9nbLOX9CRaCht7k4JMqQp++kEn/9v//9x5hbEB
-         qxtIJR+2mpYz5mTnDS4eoZEg/eV7bI8RhQ1j2f4OI1acsI1yUwzVtiTQaxEzid2Tuw60
-         5JjqBsZMNhRcVcdlipszY/p/zNOgrcGzGI1Ki+bKgAhqUYhwktc9BPlJYosg6K9qGOon
-         4ei1PrnquEEvXEETp99f3DKpSLRfGtxV4LTGwWRncyjI5YGjg3b5nLl2V6yE82dhSYSr
-         nB+A==
+        d=linuxfoundation.org; s=google; t=1726761714; x=1727366514; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hf+LsicU5kfxn2tpKhkFH/ZcN5QJYed0eVtFtXBM19w=;
+        b=Nbn3ddoZzzBKImVr8EDmyVp1pcNrFBcLG9bIi5PEFTlfc5RhuUxLVbTN3Ew0d9uNVO
+         JfEvHsD2PWZpzyp86lAxiLbduWFVI07hMLOBomYFDXPX5aQodGBC3u9ipYLxJTuWY+Nr
+         NIc6M9+AdH7kvzvruHbSLVY+R2I9l9qeJrTKw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726761751; x=1727366551;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IY5B5QxXDNVGbG3vnBPyBqvWzO5uiDp/nIYu33vK85A=;
-        b=PFn/XFyKBqF63mYINeh5NF/PqcqkqBQrJfXMq0wwjHr71xAQ59fx0lKEFCymaEvNhs
-         CrhdLKxgOxtZwOXI9j9cZUgLNYZ7pL85jjWjMeKLb9DFSgNrUL32CpoFSPT6xdDIY9Is
-         V3OjIaIr3Xm82FyEpfSbFciTPF2XDlrJuYeUCLjnzgZ44KMP83qTnzve8Ri19GhEVcjL
-         e8av0tknfPwonM456PSuCbs2wS+CuY3eXhsuFRkgkgPIZfdRTaODSgk+0jSTlKJ1F/xA
-         RwaOfcqRHFXtOg7gjfHIy2PpWgofeTtkrRSfsV19/o9XYSQ00n+oO7nMowM/Hs9SnipO
-         Znig==
-X-Forwarded-Encrypted: i=1; AJvYcCV65uOi31OLbz+BwCt5rpeswx2F4PA3JnkBZT6CX5B8t3cQP6cUrPWRq04E7yGWhuoxG+h9awxleqRHxuA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ1uI+SBSaYuZTo5IOhaB+0f0o807e3aCt+v/p4j5lmXYr70Ox
-	iEfgvHk5HUmqSI8KkYcbUrzMl8eEj+d3dXVZQXJOQeXUKXpTl+0oWY+dnn9fyr8=
-X-Google-Smtp-Source: AGHT+IHlrfEPPxfE7BBmxMTJoT8E08EE7/Q0AmzGFUzu6sN8uV/9Rnz5ZDYIemz+SMlLQ8t0Vj4kxg==
-X-Received: by 2002:a17:903:8c8:b0:205:40a6:115a with SMTP id d9443c01a7336-2076e4360f7mr350612825ad.48.1726761751137;
-        Thu, 19 Sep 2024 09:02:31 -0700 (PDT)
-Received: from cyan-mbp.internal.sifive.com (114-32-147-116.hinet-ip.hinet.net. [114.32.147.116])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d19e5sm81665645ad.140.2024.09.19.09.02.28
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 19 Sep 2024 09:02:30 -0700 (PDT)
-From: Cyan Yang <cyan.yang@sifive.com>
-To: anup@brainfault.org
-Cc: atishp@atishpatra.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Cyan Yang <cyan.yang@sifive.com>,
-	Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Subject: [PATCH] RISCV: KVM: use raw_spinlock for critical section in imsic
-Date: Fri, 20 Sep 2024 00:01:26 +0800
-Message-Id: <20240919160126.44487-1-cyan.yang@sifive.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+        d=1e100.net; s=20230601; t=1726761714; x=1727366514;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hf+LsicU5kfxn2tpKhkFH/ZcN5QJYed0eVtFtXBM19w=;
+        b=fMxM6JtigcUxAEaUslNNa2evADf18i/jHM6i1WLPKZ6C5GmmXfmUJBpWa+W5GlQ/uT
+         JhvBCFURKbH2KqswHdcujwHFknCvYLx52nokxaaVP1cRWooPp7k9k5xxIRUj1zgxnIDr
+         B7yPY1VOroOUySAFl+GFQmHcPyQ8nBUiCVMpaFq/lS9NxE1+yqmB5Bh+fwg2XzpoRnzG
+         SAUcZFvXPCtgmjj0Br08ixbYHieQPtV2XZf3IDwRmgbFV8FVCsvgue0NvDNxkhV4m9c8
+         GGq8YUyJKIhPtmf63mDGAgK3ExIPG1Gp0wRrOwSUxyHW4qovQMdqlUmj854xAOovcrbF
+         RzFA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/6H5rvFde+GqzGpNP7/aF/BR6S61uRXjOjzFZSj+Fc6jhWo+39DWnQYswErvJqy6Y2TJQE/I9/v3bWGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg2NbYZ8Ipu2T0BvxQWYxt2mLGcCxApP8DqHlGbAVrx7hGN1QV
+	qdHUcSb2NPJrQV8uSrAAWmlBSKaLbaNA2Uw1fT1VVGob0fre3tMMtK8urVBAk2I=
+X-Google-Smtp-Source: AGHT+IHfDnCPZjd75IkE+J/Gi3J6YMDrXBv/k81CP1ouQYZ6tsGogqyqq6qhv3icghhWDzOT2fHdPA==
+X-Received: by 2002:a92:ca08:0:b0:3a0:92a4:a462 with SMTP id e9e14a558f8ab-3a092a4a67cmr184506265ab.10.1726761714157;
+        Thu, 19 Sep 2024 09:01:54 -0700 (PDT)
+Received: from [10.212.145.178] ([12.216.155.19])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d37ec17e9bsm3017456173.53.2024.09.19.09.01.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Sep 2024 09:01:53 -0700 (PDT)
+Message-ID: <bd5eb792-124f-4eaa-9ff9-a99765d1ef73@linuxfoundation.org>
+Date: Thu, 19 Sep 2024 10:01:51 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/1] Add KUnit tests for llist
+To: Artur Alves <arturacb@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow
+ <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Cc: n@nfraprado.net, andrealmeid@riseup.net, vinicius@nukelet.com,
+ diego.daniel.professional@gmail.com, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240917005116.304090-1-arturacb@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240917005116.304090-1-arturacb@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For the external interrupt updating procedure in imsic, there was a
-spinlock to protect it already. But since it should not be preempted in
-any cases, we should turn to use raw_spinlock to prevent any preemption
-in case PREEMPT_RT was enabled.
+On 9/16/24 18:51, Artur Alves wrote:
+> Hi all,
+> 
+> This is part of a hackathon organized by LKCAMP[1], focused on writing
+> tests using KUnit. We reached out a while ago asking for advice on what
+> would be a useful contribution[2] and ended up choosing data structures
+> that did not yet have tests.
+> 
+> This patch adds tests for the llist data structure, defined in
+> include/linux/llist.h, and is inspired by the KUnit tests for the doubly
+> linked list in lib/list-test.c[3].
+> 
+> It is important to note that this patch depends on the patch referenced
+> in [4], as it utilizes the newly created lib/tests/ subdirectory.
+> 
+> [1] https://lkcamp.dev/about/
+> [2] https://lore.kernel.org/all/Zktnt7rjKryTh9-N@arch/
+> [3] https://elixir.bootlin.com/linux/latest/source/lib/list-test.c
+> [4] https://lore.kernel.org/all/20240720181025.work.002-kees@kernel.org/
+> 
+> ---
+> Changes in v3:
+>      - Resolved checkpatch warnings:
+>          - Renamed tests for macros starting with 'for_each'
 
-Signed-off-by: Cyan Yang <cyan.yang@sifive.com>
-Reviewed-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
----
- arch/riscv/kvm/aia_imsic.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Shouldn't this a separate patch to make it easy to review?
 
-diff --git a/arch/riscv/kvm/aia_imsic.c b/arch/riscv/kvm/aia_imsic.c
-index 0a1e85932..a8085cd82 100644
---- a/arch/riscv/kvm/aia_imsic.c
-+++ b/arch/riscv/kvm/aia_imsic.c
-@@ -55,7 +55,7 @@ struct imsic {
- 	/* IMSIC SW-file */
- 	struct imsic_mrif *swfile;
- 	phys_addr_t swfile_pa;
--	spinlock_t swfile_extirq_lock;
-+	raw_spinlock_t swfile_extirq_lock;
- };
- 
- #define imsic_vs_csr_read(__c)			\
-@@ -622,7 +622,7 @@ static void imsic_swfile_extirq_update(struct kvm_vcpu *vcpu)
- 	 * interruptions between reading topei and updating pending status.
- 	 */
- 
--	spin_lock_irqsave(&imsic->swfile_extirq_lock, flags);
-+	raw_spin_lock_irqsave(&imsic->swfile_extirq_lock, flags);
- 
- 	if (imsic_mrif_atomic_read(mrif, &mrif->eidelivery) &&
- 	    imsic_mrif_topei(mrif, imsic->nr_eix, imsic->nr_msis))
-@@ -630,7 +630,7 @@ static void imsic_swfile_extirq_update(struct kvm_vcpu *vcpu)
- 	else
- 		kvm_riscv_vcpu_unset_interrupt(vcpu, IRQ_VS_EXT);
- 
--	spin_unlock_irqrestore(&imsic->swfile_extirq_lock, flags);
-+	raw_spin_unlock_irqrestore(&imsic->swfile_extirq_lock, flags);
- }
- 
- static void imsic_swfile_read(struct kvm_vcpu *vcpu, bool clear,
-@@ -1051,7 +1051,7 @@ int kvm_riscv_vcpu_aia_imsic_init(struct kvm_vcpu *vcpu)
- 	}
- 	imsic->swfile = page_to_virt(swfile_page);
- 	imsic->swfile_pa = page_to_phys(swfile_page);
--	spin_lock_init(&imsic->swfile_extirq_lock);
-+	raw_spin_lock_init(&imsic->swfile_extirq_lock);
- 
- 	/* Setup IO device */
- 	kvm_iodevice_init(&imsic->iodev, &imsic_iodoev_ops);
--- 
-2.39.5 (Apple Git-154)
+>          - Removed link from commit message
+>      - Replaced hardcoded constants with ENTRIES_SIZE
 
+Shouldn't this a separate patch to make it easy to review?
+
+>      - Updated initialization of llist_node array
+>      - Fixed typos
+>      - Update Kconfig.debug message for llist_kunit
+
+Are these changes to existing code or warnings on your added code?
+> 
+> Changes in v2:
+>      - Add MODULE_DESCRIPTION()
+>      - Move the tests from lib/llist_kunit.c to lib/tests/llist_kunit.c
+>      - Change the license from "GPL v2" to "GPL"
+> 
+> Artur Alves (1):
+>    lib/llist_kunit.c: add KUnit tests for llist
+> 
+>   lib/Kconfig.debug       |  11 ++
+>   lib/tests/Makefile      |   1 +
+>   lib/tests/llist_kunit.c | 358 ++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 370 insertions(+)
+>   create mode 100644 lib/tests/llist_kunit.c
+> 
+
+You are combining lot of changes in one single patch. Each change as a separate
+patch will help reviewers.
+
+Adding new test should be a separate patch.
+
+- renaming as a separate patch
+
+thanks,
+-- Shuah
 
