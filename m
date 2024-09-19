@@ -1,88 +1,79 @@
-Return-Path: <linux-kernel+bounces-333806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07EC697CE58
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:59:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEA5D97CE5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 22:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8A161F239B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 19:59:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E59D01C22B2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 20:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AC413A878;
-	Thu, 19 Sep 2024 19:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDFF142659;
+	Thu, 19 Sep 2024 20:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Uq/pZWWV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hYv5l73F"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3145139CFE
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 19:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857A63A1AC;
+	Thu, 19 Sep 2024 20:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726775937; cv=none; b=WYHM3Zs9UlD2sUNlF8t5O2njaJWWKeSmPqCPhGxNuS93SY0nvsDU5AkzlUmzRCRfAdgNFYO4vTJChQvPQEFbsSrt52vOQnVBV77OUp80AY/s3f6CS2ubACCJQoBjR0x7uT3tML64tctwqPE2R2giHGsiTBt7he2bOPEj5n2t0gE=
+	t=1726776391; cv=none; b=J+u1IcR4+WP5EQ/Ycb9mVGsh1TSt2tse9VvMt+QRWCn5XkFdngxtC1jpPjlWXlHATqg2AgJo9KxVmBIzuIM/nkbWTDJNfwLR1SWS8/mzIa9N2HB4HrsPLa46JgBuxGx3nSFnBjO+NHXBnuMQeAZ7o7ymaQs+fzqYHGJhSHTksT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726775937; c=relaxed/simple;
-	bh=LS7GkpmgUUdA1yoEbHbxbJFO3tiZMC+glZfVX6Vn7FI=;
+	s=arc-20240116; t=1726776391; c=relaxed/simple;
+	bh=XjN0oSMKjxqwxkOHJOTdBU2OHtVCEa6+hxnDLEA3Nrk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KtSWVouNTL79MiJKx/tTXLopblLmNz9wXshQmUVaE+953UL920l1zK4ZKXS0pt6jxj6X3aXMq0Mbav+dWarsi/NH0iWWVmVOmaJSXHnulB0Rl+JsQiRnr1fL3o69RzxLh/oakr0wxFJKVjXT16okg0OnCt7Vcw6ywEcLdfo6rp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Uq/pZWWV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726775934;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uw3K7ykFF44drs9NAs+jCzR3haQI1c688j5wvgISOu4=;
-	b=Uq/pZWWVktxGRVFLydO2vC6Hct+3r4jSLXd5s99pQ4HdVrClrdQl3tNw25lj/I8iwfM2PN
-	7FtdvxFU8/fPizX7OrnAt1v7oDQrih1704eQQKoQI7eUu/k6UDXpnT/skeeD9FbNxPGxDX
-	1SoyiiLcZ9+ia9sxxTM4tQZs9WM45Xk=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-634-foarJzyrNd-lQ7Eald1zFQ-1; Thu, 19 Sep 2024 15:58:53 -0400
-X-MC-Unique: foarJzyrNd-lQ7Eald1zFQ-1
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-6507e2f0615so1130357a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 12:58:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726775932; x=1727380732;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uw3K7ykFF44drs9NAs+jCzR3haQI1c688j5wvgISOu4=;
-        b=n6kh9Xcx17MgFLJDCkLSF0u3ZIaLtpAZ3ssrAgzVCRYOCzZDBV7BZmV3mN0cqoDNRv
-         AdKMg3RYi9ir8FFlybgqbgBBAl5FGur5S0moDP8wQ1rqq51t+crMdmI5kBe31vKFkag3
-         4vz4xOq5PrUrhpPwPevX7yPybBe+hwPxk+lfJPxVAX4hNT9Xn6zxiXwg4sqempvTlg/Y
-         nmb3G8JTinV1JxJPuU4DZ9d41ObtxDFO6VnQQt/fricXKD0EGhIcFSWH3CavTU5RTNy6
-         OcPOBlAtvt9905KnBSPDMb0ewB0wYfKZChI2Ib8amYfJX5hMpLm8w6wOhPLgRKY59nrV
-         bG1w==
-X-Forwarded-Encrypted: i=1; AJvYcCW3dE6MckyBHLxdxrqXNFivUlTaXNmmj1WqNJhclrljVBAkWGpGWjC1NQCQZQyFnwbfA+eCDz7NAob4BOw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZCPaYzN4+aC4UjG62RYbMhvpKgYbpA72R9+18jDREVh5pR8g6
-	fJAA2iQ8uaaE+4P05D4S3gJwG4dEcMDQiTI9D5kf2GLg1Kyc5p/nnhq1nhuGepuSco9LHz1u+45
-	8ghp/IIyizTtLNI8Qj7fdPLhDsUcv64iKWtkbvDJrT3wS3En7XH1bo4l/QMxkXQ==
-X-Received: by 2002:a05:6a21:3984:b0:1cf:5643:459a with SMTP id adf61e73a8af0-1d30cb6ad31mr234154637.43.1726775932255;
-        Thu, 19 Sep 2024 12:58:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFQb6DGtXAS0Y/S6hSYcohhBKcUqxpou8n8QoeC+t6JtE14DWnS9KfuoX0HP7jy3GAxCNx1eQ==
-X-Received: by 2002:a05:6a21:3984:b0:1cf:5643:459a with SMTP id adf61e73a8af0-1d30cb6ad31mr234135637.43.1726775931965;
-        Thu, 19 Sep 2024 12:58:51 -0700 (PDT)
-Received: from rhfedora ([71.217.60.247])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b9ab85sm8950434b3a.173.2024.09.19.12.58.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2024 12:58:51 -0700 (PDT)
-Date: Thu, 19 Sep 2024 15:58:42 -0400
-From: "John B. Wyatt IV" <jwyatt@redhat.com>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: linux-pm@vger.kernel.org, Thomas Renninger <trenn@suse.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, John Kacur <jkacur@redhat.com>,
-	"John B. Wyatt IV" <sageofredondo@gmail.com>
-Subject: Re: [PATCH] pm: cpupower: Clean up bindings gitignore
-Message-ID: <ZuyCcs67swgQpryP@rhfedora>
-References: <20240919180102.20675-1-jwyatt@redhat.com>
- <272b9839-f2a0-4090-be41-cf0ff8721808@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D4JC9s3x0uJMgB7/s7omht8ubgFqhVKVNjII/FSVp4+qnPhwMa7cXA0QJKwLBw5NjFMRVnzEKeaW4m969GmR4Ti0krSziSTrwpBreR84rjxSS1XCkFQEheJUu26o+H5K3xt+zh9jD4ZoazM4xR8Hzxw2tDBOK61RTqWUTAyHxn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hYv5l73F; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726776390; x=1758312390;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XjN0oSMKjxqwxkOHJOTdBU2OHtVCEa6+hxnDLEA3Nrk=;
+  b=hYv5l73FcFRY/QcaDAzRwbG+FrcPqervXhfRh1DBEgmXzlWaU0bllBwh
+   QdbgsV3Us79GMNHaATlZm7fZH9LMoixqUTK2kmxeGGHSzCD8Hz0jf2r+F
+   HREkMH61uxnAYCcBTiEwymeGHXxQk7lej5aYxyZbRcwvsiXb7GjaCkNUP
+   md/F6IQCtx3cjYnGQ83MXtDkuEirdn+G3eAW6EcfCnWuvApiOVe4w0Sr6
+   27KVoQyK4MG+TMmidjHdkX2t7nStESK9Uu7CoAme19d0KQ0ZfEaNPB1RD
+   0LRRYaiepKfxPTbPSCUPJoHK4gqzKJtuWiZmC6skHEJPaxKOHPmYFeGck
+   g==;
+X-CSE-ConnectionGUID: SzKBei91SkiSx4y5keDw4g==
+X-CSE-MsgGUID: f6bGWtf3R+qvH3WkfUydbw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="25289362"
+X-IronPort-AV: E=Sophos;i="6.10,242,1719903600"; 
+   d="scan'208";a="25289362"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2024 13:06:29 -0700
+X-CSE-ConnectionGUID: x9OG1XstSeeGeCAcRv8Eqw==
+X-CSE-MsgGUID: PM6gh1Q7SmugdCKrnPa6NQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,242,1719903600"; 
+   d="scan'208";a="74167365"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2024 13:06:27 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1srNQ0-0000000AgQy-25PB;
+	Thu, 19 Sep 2024 23:06:24 +0300
+Date: Thu, 19 Sep 2024 23:06:24 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Ferry Toth <fntoth@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ferry Toth <ftoth@exalondelft.nl>, dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] dmaengine: dw: Select only supported masters for ACPI
+ devices
+Message-ID: <ZuyEQOIztvUrO0gO@smile.fi.intel.com>
+References: <20240919135854.16124-1-fancer.lancer@gmail.com>
+ <20240919185151.7331-1-fancer.lancer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,23 +82,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <272b9839-f2a0-4090-be41-cf0ff8721808@linuxfoundation.org>
+In-Reply-To: <20240919185151.7331-1-fancer.lancer@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Sep 19, 2024 at 12:39:01PM -0600, Shuah Khan wrote:
-> On 9/19/24 12:01, John B. Wyatt IV wrote:
-> > * Add SPDX identifier to the gitignore
-> > * Remove the comment and .i file since it was removed in another patch
-> > and therefore no longer needed.
+On Thu, Sep 19, 2024 at 09:51:48PM +0300, Serge Semin wrote:
+> The recently submitted fix-commit revealed a problem in the iDMA32
+> platform code. Even though the controller supported only a single master
+> the dw_dma_acpi_filter() method hard-coded two master interfaces with IDs
+> 0 and 1. As a result the sanity check implemented in the commit
+> b336268dde75 ("dmaengine: dw: Add peripheral bus width verification") got
+> incorrect interface data width and thus prevented the client drivers
+> from configuring the DMA-channel with the EINVAL error returned. E.g. the
+> next error was printed for the PXA2xx SPI controller driver trying to
+> configure the requested channels:
 > 
-> Don't use the * in the changelogs. There is no need to write this like a
-> itemized list. Simply write it as a paragraph.
+> > [  164.525604] pxa2xx_spi_pci 0000:00:07.1: DMA slave config failed
+> > [  164.536105] pxa2xx_spi_pci 0000:00:07.1: failed to get DMA TX descriptor
+> > [  164.543213] spidev spi-SPT0001:00: SPI transfer failed: -16
+> 
+> The problem would have been spotted much earlier if the iDMA32 controller
+> supported more than one master interfaces. But since it supports just a
+> single master and the iDMA32-specific code just ignores the master IDs in
+> the CTLLO preparation method, the issue has been gone unnoticed so far.
+> 
+> Fix the problem by specifying a single master ID for both memory and
+> peripheral devices on the ACPI-based platforms if there is only one master
+> available on the controller. Thus the issue noticed for the iDMA32
+> controllers will be eliminated and the ACPI-probed DW DMA controllers will
+> be configured with the correct master ID by default.
 
-Sorry about that; v2 sent.
+Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Seems this fixes the bug I have seen.
+Ferry, can you confirm?
 
 -- 
-Sincerely,
-John Wyatt
-Software Engineer, Core Kernel
-Red Hat
+With Best Regards,
+Andy Shevchenko
+
 
 
