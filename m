@@ -1,145 +1,221 @@
-Return-Path: <linux-kernel+bounces-333472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D9597C93F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:32:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3438697C940
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 14:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94B071C21C59
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:32:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2EE6283CF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 12:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDC819E7F5;
-	Thu, 19 Sep 2024 12:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AB419B5B4;
+	Thu, 19 Sep 2024 12:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSXDN+XT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NICXe5eX"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8EE19B3E3;
-	Thu, 19 Sep 2024 12:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804421E4B0;
+	Thu, 19 Sep 2024 12:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726749104; cv=none; b=tsYU3Kpt/NTJnHl5BrCtf3nyS+MLVCITMjxk252rlFP1PLnzh/m0D+OyzSoCjyn1QIqvsFhvlorxj76NemlOHO1APhov2ruFJ/Q7t2xkY3pKiSKZemMwxxYgrzQVGiWzmGxTRZToIwYbAdJNKSPIzWIYlTs2/4nH/WpNeolk93k=
+	t=1726749228; cv=none; b=mz0ue1AeVUNeHzqnEl4Tr11TkCd1ikdyH4xUrOQgYa4hhTiW6AaHudRZfL1fgmWzEVgxSKni80gkUn0MqB860tz2MqX0gwPQVLHlPFdAw0YKyk77qXd5v1BATZOo7TnjsM+owvhNYDv5n6hKUhnal1lNF3MqBcm0YsH8w5bR92A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726749104; c=relaxed/simple;
-	bh=Y+lqYF/Ng0G7yZGMjhbQ8WgJL8U2eedtCQjr6g7E1KY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cOCY0EwZkjoRcPEGPpBEYxw8HRXessjTyw5+nPrD6XyQM7h9PWh7hJWd2toljZFRJZS5eGY1BPClNJOPgGMp6ZGyP/apvaztXYxoYYtalPBIuxvHrOQTJSeUmIVYSh/IUjm21sVRWYkxiweC7oiDEsCftwNcuzTyFZMpaxqZJDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DSXDN+XT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37F9AC4CEC6;
-	Thu, 19 Sep 2024 12:31:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726749103;
-	bh=Y+lqYF/Ng0G7yZGMjhbQ8WgJL8U2eedtCQjr6g7E1KY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DSXDN+XTfpUvavhJqdwbMhRnFjNt5cdtPQXJh4g7CpObXM0EYy36uosth0YuSiVqj
-	 zH1qIPXoydAuXWSHpNH2vfuSnWdwLqWPTDh3h7PNQj/nRk7CwqbCCqrpxCtcff+g+1
-	 nRQ8cPHFLKd72uhu5BNkw3KyPvaSVZCLleppE9yXA5Y6wc6Bij8zjFmRlxDyPIQcXd
-	 eqQBHxyubQy9eCWevE/2ooS3tY/NRp+thP4BIJ6ymUYimF+8wjnFffNCVyV0bUvR3y
-	 JsM/FdCwF9GwTiddBMuySXtE7hxg5FNI00Cv1/h37bRPjGqqp2IutYSjVajuMM6P1o
-	 fTOnWkJxrQppw==
-Message-ID: <10887d65-e643-4ab2-a9e7-af0f829e88ec@kernel.org>
-Date: Thu, 19 Sep 2024 14:31:34 +0200
+	s=arc-20240116; t=1726749228; c=relaxed/simple;
+	bh=V/jzswor5s1CzAW0ZUtaQ2xScydnXC/HzCHeyQzuX6s=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Azi+UkWXDyilCFgSodJ744eLihr4UVP8xO8WMnYtOQ5bHQYsJVTcvSt2pAc3ErXAlsZos1VHT9oRmMb3tl7A/KxIIpHe65lhz/5wywDYzj//hRG+pwqhD48H2ynAr+cZc7j6lgr6DkxFls8JiiwOMstlyIVpzeq0wMLgXtuBwGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NICXe5eX; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2db89fb53f9so571616a91.3;
+        Thu, 19 Sep 2024 05:33:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726749227; x=1727354027; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QmKwDE+vQbJFZKx1pG1WdGf3eu6TWhTPyNHtYBECpZw=;
+        b=NICXe5eXb4Md/OOxiDtmXZ09t1qa7naKQ9UD7vFL/O/4ENBF1gdUjCkA6e/ZxKbp5e
+         dBuinMNuj9yEtaRirMWNIwcW0frXQQaiPGD1F+xnJxOKE8PkbOHMtgdcVM0V4F1rQsvk
+         jujrgPeUiFuEPX0fHJb9z+uPqX/NqQYQphVAhucl8np8ncYxrjrLhHR+qpfAGXXe4NMZ
+         obj1wiMmFlfvkHjitOXfk+fRtcY/sXZmDD6Yb0T5H1n4z6Y48brc/+TFlswN8AMbgy1l
+         d+I5cIkbGVyc8RhNT0lcnN+ML1TOdbQRMDZTI4iZzP0ie368v+lvcl3xLyMEEkkdy/fR
+         WPeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726749227; x=1727354027;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QmKwDE+vQbJFZKx1pG1WdGf3eu6TWhTPyNHtYBECpZw=;
+        b=kTREs4VAMJB4PMMBDOhlKzZdFNcnz0v3g15xDlYZxqgPIKhmp3YhnF3T8OGaYm4NLL
+         Rihn4od4S6wEpKNviN9mlXZMgjkeEl+j6M7vWEjH4O+Vd2Aip7K+Y9/sJu1jZ13xhYnR
+         m9PpFDYF1LJ6BMoZdwo8+KK7n0EpDC7MmxaJDwwfPBsQmPa0zr2FEL0ar+i/VySoiy9p
+         R1Hj4oXoChYpPwcHy2euLUvSxTlYHD5YevDHbO2YA8GJdoV3arGyQ92rCCqrOldRvLbK
+         aYk4W7LSdE7lTVbHnI2X0x+v8WGdFOiFIvQxv7qpGm6QY8uy8TfiHHdmnXOd0Ic/05E4
+         tqVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqhBm3GJNBGxj+CEvZEmjJrolqDkxLs0ABkwe/IU7H0A+/Z4y5a6FPRtDf5zcmgcntoB72b/mjGCVfYcg=@vger.kernel.org, AJvYcCX8u8ti5efRLYm7AZyG8tjbGkapKegvZE8XKQigsrhDcRm32YAJT0lSAD5bSEf6VYqSL/r3@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTA2MBdDQ2GQeRys2CpAvAxba7IRqeaBcoWH9OMTAAE/d7gY7z
+	KylpQZD5AKB9kvDTc6W3fmSZqL3f6ERcBs7BSvORbiGHnGE5OAOB
+X-Google-Smtp-Source: AGHT+IEjFLx9rHSbMjqqXE9JnSVpBQ8FdB0R34tyP1bgjc3xd0VMFuHdGq+CTtZA/pDsiECQAkLVBA==
+X-Received: by 2002:a17:90a:6888:b0:2c4:e333:35e5 with SMTP id 98e67ed59e1d1-2dba00826f1mr31425087a91.36.1726749226750;
+        Thu, 19 Sep 2024 05:33:46 -0700 (PDT)
+Received: from smtpclient.apple ([2402:d0c0:11:86::1])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd6ee898b6sm1673500a91.6.2024.09.19.05.33.40
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Sep 2024 05:33:46 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] arm64: dts: qcom: add IPQ5424 SoC and rdp466 board
- support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Sricharan R <quic_srichara@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
- sboyd@kernel.org, ulf.hansson@linaro.org, linus.walleij@linaro.org,
- catalin.marinas@arm.com, p.zabel@pengutronix.de, geert+renesas@glider.be,
- neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- quic_varada@quicinc.com
-References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
- <20240913121250.2995351-8-quic_srichara@quicinc.com>
- <fyoh72in62sfmsw3syqswr2p3pcv26zoce2tvlx53mu4lpoakx@ixyvy4oylms3>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <fyoh72in62sfmsw3syqswr2p3pcv26zoce2tvlx53mu4lpoakx@ixyvy4oylms3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+From: Alan Huang <mmpgouride@gmail.com>
+In-Reply-To: <ZuvOWM5c8tZotHFL@boqun-archlinux>
+Date: Thu, 19 Sep 2024 20:33:27 +0800
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
+ LKML <linux-kernel@vger.kernel.org>,
+ RCU <rcu@vger.kernel.org>,
+ linux-mm@kvack.org,
+ lkmm@lists.linux.dev,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>,
+ Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ maged.michael@gmail.com,
+ Neeraj upadhyay <neeraj.upadhyay@amd.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <6B551C0A-3E09-45E2-9A00-03DEDB1EFEA7@gmail.com>
+References: <20240917143402.930114-1-boqun.feng@gmail.com>
+ <20240917143402.930114-2-boqun.feng@gmail.com>
+ <CAJhGHyD8MzUssfuKSGnu1arnayNOyBnUA03vYB0WWwbE3WzoZg@mail.gmail.com>
+ <ZuvOWM5c8tZotHFL@boqun-archlinux>
+To: Boqun Feng <boqun.feng@gmail.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On 13/09/2024 14:52, Dmitry Baryshkov wrote:
-> On Fri, Sep 13, 2024 at 05:42:49PM GMT, Sricharan R wrote:
+2024=E5=B9=B49=E6=9C=8819=E6=97=A5 15:10=EF=BC=8CBoqun Feng =
+<boqun.feng@gmail.com> wrote=EF=BC=9A
+>=20
+> On Thu, Sep 19, 2024 at 02:39:13PM +0800, Lai Jiangshan wrote:
+>> On Tue, Sep 17, 2024 at 10:34=E2=80=AFPM Boqun Feng =
+<boqun.feng@gmail.com> wrote:
+>>=20
+>>> +static void hazptr_context_snap_readers_locked(struct =
+hazptr_reader_tree *tree,
+>>> +                                              struct hazptr_context =
+*hzcp)
+>>> +{
+>>> +       lockdep_assert_held(hzcp->lock);
+>>> +
+>>> +       for (int i =3D 0; i < HAZPTR_SLOT_PER_CTX; i++) {
+>>> +               /*
+>>> +                * Pairs with smp_store_release() in =
+hazptr_{clear,free}().
+>>> +                *
+>>> +                * Ensure
+>>> +                *
+>>> +                * <reader>             <updater>
+>>> +                *
+>>> +                * [access protected pointers]
+>>> +                * hazptr_clear();
+>>> +                *   smp_store_release()
+>>> +                *                      // in reader scan.
+>>> +                *                      smp_load_acquire(); // is =
+null or unused.
+>>> +                *                      [run callbacks] // all =
+accesses from
+>>> +                *                                      // reader =
+must be
+>>> +                *                                      // observed.
+>>> +                */
+>>> +               hazptr_t val =3D smp_load_acquire(&hzcp->slots[i]);
+>>> +
+>>> +               if (!is_null_or_unused(val)) {
+>>> +                       struct hazptr_slot_snap *snap =3D =
+&hzcp->snaps[i];
+>>> +
+>>> +                       // Already in the tree, need to remove =
+first.
+>>> +                       if (!is_null_or_unused(snap->slot)) {
+>>> +                               reader_del(tree, snap);
+>>> +                       }
+>>> +                       snap->slot =3D val;
+>>> +                       reader_add(tree, snap);
+>>> +               }
+>>> +       }
+>>> +}
+>>=20
+>> Hello
+>>=20
+>> I'm curious about whether there are any possible memory leaks here.
+>>=20
+>> It seems that call_hazptr() never frees the memory until the slot is
+>> set to another valid value.
+>>=20
+>> In the code here, the snap is not deleted when hzcp->snaps[i] is =
+null/unused
+>> and snap->slot is not which I think it should be.
+>>=20
+>> And it can cause unneeded deletion and addition of the snap if the =
+slot
+>> value is unchanged.
+>>=20
+>=20
+> I think you're right. (Although the node will be eventually deleted at
+> cleanup_hazptr_context(), however there could be a long-live
+> hazptr_context). It should be:
+>=20
+> hazptr_t val =3D smp_load_acquire(&hzcp->slots[i]);
+> struct hazptr_slot_snap *snap =3D &hzcp->snaps[i];
+>=20
+> if (val !=3D snap->slot) { // val changed, need to update the tree =
+node.
+> // Already in the tree, need to remove first.
+> if (!is_null_or_unused(snap->slot)) {
+> reader_del(tree, snap);
+> }
+>=20
+> // use the latest snapshot.
+> snap->slot =3D val;
+>=20
+> // Add it into tree if there is a reader
+> if (!is_null_or_unused(val))
+> reader_add(tree, snap);
+> }
 
->> +	#address-cells = <2>;
->> +	#size-cells = <2>;
->> +	interrupt-parent = <&intc>;
->> +
->> +	clocks {
->> +		xo_board: xo-board-clk {
->> +			compatible = "fixed-clock";
->> +			#clock-cells = <0>;
->> +		};
->> +
->> +		sleep_clk: sleep-clk {
->> +			compatible = "fixed-clock";
->> +			#clock-cells = <0>;
->> +		};
-> 
-> I think Krzysztof lately suggested moving these clocks to board DT
-> files.
-> 
+With this changed, and force users call hazptr_clear() like =
+rcu_read_unlock(), we could remove
+the reader_del() in cleanup_hazptr_context(), then remove the =
+tree->lock?
 
-The node can stay. Just the frequency goes to DTSI. See also DTS coding
-style document.
+>=20
+> Regards,
+> Boqun
+>=20
+>> I'm not so sure...
+>>=20
+>> Thanks
+>> Lai
 
-Best regards,
-Krzysztof
 
 
