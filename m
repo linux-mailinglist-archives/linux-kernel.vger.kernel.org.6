@@ -1,476 +1,309 @@
-Return-Path: <linux-kernel+bounces-333231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B79397C5B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:17:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D86697C5B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 10:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B30E61C21DFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:17:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A386C1F219DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 08:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275433B791;
-	Thu, 19 Sep 2024 08:17:05 +0000 (UTC)
-Received: from mxde.zte.com.cn (mxde.zte.com.cn [209.9.37.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101EC198E7E;
+	Thu, 19 Sep 2024 08:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ijLI7xUs";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ijLI7xUs"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861501CABA;
-	Thu, 19 Sep 2024 08:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.9.37.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296B05588B;
+	Thu, 19 Sep 2024 08:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726733824; cv=none; b=gU+l4A5aCwLm6S+NV0V3NX/satx3GHE6eIiwYCNq0llF0OJ6hxOeA6HJfR0HfDXaXGL1FLGXFzl2LXbDOplEIRSo/4JcB4e6ec65seyqmnNfMih9MPeFfLwH54xgE0XVRsdQfNPEXOGJFFZqPsIwqlVBkn7YOOrtDOno/G31t18=
+	t=1726733917; cv=none; b=mSt7lgbxaYUiv76/fKQZmzX/wq9/0SN42aC4oGPnrBE33s5oEoQOLbOX4+PSAa2u0+axfCqJLQkSBHKJvZv+y+WKOo/r0HPI5lLB9RaNFBfEAOpRJ26FHGFdRusmjK+Dq7yJnnEQENJsFvug9QJiG5c864A2nNl5dHRdeGDmlyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726733824; c=relaxed/simple;
-	bh=42SRhJTVR5G5W5IrzFC2hiNrNOwwYrpdQgMp7SYQhHA=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=sXrhORDyJX52G0912TbywuqqNCntcGs7f53kjGJo0bGMrXJ8ViJP6I++ldUZ4fhGnFApyD/6rpe6rJqY6Bk6QmnvRPH0Y8tsoKrnZo3cXhf9+I2GK9N0b5J3E1hi+Pc+cKwLLf3oX3ouVoizEkIXxYR29Qxz54JDlSUC1e1RmmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=209.9.37.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
-	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by mxde.zte.com.cn (FangMail) with ESMTPS id 4X8SzT3SntzBRHKP;
-	Thu, 19 Sep 2024 16:16:53 +0800 (CST)
-Received: from mxct.zte.com.cn (unknown [192.168.251.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4X8SzJ0f8Lz5B18B;
-	Thu, 19 Sep 2024 16:16:44 +0800 (CST)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4X8Sz507q6z4xVbs;
-	Thu, 19 Sep 2024 16:16:33 +0800 (CST)
-Received: from njy2app02.zte.com.cn ([10.40.13.116])
-	by mse-fl1.zte.com.cn with SMTP id 48J8GSPu018392;
-	Thu, 19 Sep 2024 16:16:28 +0800 (+08)
-	(envelope-from jiang.kun2@zte.com.cn)
-Received: from mapi (njb2app07[null])
-	by mapi (Zmail) with MAPI id mid204;
-	Thu, 19 Sep 2024 16:16:30 +0800 (CST)
-Date: Thu, 19 Sep 2024 16:16:30 +0800 (CST)
-X-Zmail-TransId: 2aff66ebdddeffffffff879-b9c43
-X-Mailer: Zmail v1.0
-Message-ID: <20240919161630891WDVy1IhTDCo8JYWf1h2z7@zte.com.cn>
+	s=arc-20240116; t=1726733917; c=relaxed/simple;
+	bh=xeIVER5Aak4ykzzD1etJNGp9Hr8aEpXPMYioKA2HlH0=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=E+Gck90Zp2LyGJhPAaDRpDYfFC2AlWWknqbsyiYWdbzwhOtbTJGTftk8Z9yZ4Z3Dm1cKWWKyYBqcP7mXSuK2tkwSxwoNg5oKvp2vs/JgA8pik2PQ+EAnujg2BZztMFzS/m0SrPTAGI2PzbJBfrYrPMDFrhxvG5Tc8w0zKiBFUVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=ijLI7xUs; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=ijLI7xUs; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1726733912;
+	bh=xeIVER5Aak4ykzzD1etJNGp9Hr8aEpXPMYioKA2HlH0=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=ijLI7xUspcWgHoDh2OcLACl5nZoZ2DN53f8who8jdUczWXuMS4lMAl9FXf4mLstGp
+	 /nhmMU3bu2Ci228FdP7S0Pjt17YqSCVkeR7ku450H1NXE7VmKm4IutcuV6OYAbyxtR
+	 za0HhPA5L/acimGA6O/IynbbmNUs85bZJPqAV9DU=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id E690C1286340;
+	Thu, 19 Sep 2024 04:18:32 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id 4nhFf95FBx7m; Thu, 19 Sep 2024 04:18:32 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1726733912;
+	bh=xeIVER5Aak4ykzzD1etJNGp9Hr8aEpXPMYioKA2HlH0=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=ijLI7xUspcWgHoDh2OcLACl5nZoZ2DN53f8who8jdUczWXuMS4lMAl9FXf4mLstGp
+	 /nhmMU3bu2Ci228FdP7S0Pjt17YqSCVkeR7ku450H1NXE7VmKm4IutcuV6OYAbyxtR
+	 za0HhPA5L/acimGA6O/IynbbmNUs85bZJPqAV9DU=
+Received: from [10.131.5.2] (unknown [83.68.141.146])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 874471281CC7;
+	Thu, 19 Sep 2024 04:18:31 -0400 (EDT)
+Message-ID: <99f009993832aed11f0f05c669eb25d7678a9a19.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI updates for the 6.11+ merge window
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel
+	 <linux-kernel@vger.kernel.org>
+Date: Thu, 19 Sep 2024 10:18:28 +0200
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <jiang.kun2@zte.com.cn>
-To: <alexs@kernel.org>, <siyanteng@loongson.cn>, <corbet@lwn.net>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mudongliangabcd@gmail.com>, <seakeel@gmail.com>
-Cc: <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
-        <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIHY0XSBEb2NzL3poX0NOOiBUcmFuc2xhdGUgcGh5c2ljYWxfbWVtb3J5LnJzdCB0byBTaW1wbGlmaWVkIENoaW5lc2U=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 48J8GSPu018392
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 66EBDDF4.000/4X8SzT3SntzBRHKP
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-From: Yaxin Wang <wang.yaxin@zte.com.cn>
+Updates to the usual drivers (ufs, smartpqi, NCR5380, mac_scsi, lpfc,
+mpi3mr).  There are no user visible core changes and a whole series of
+minor updates and fixes.  The largest core change is probably the
+simplification of the workqueue allocation path.
 
-This patch translates the "physical_memory.rst" document into
-Simplified Chinese to improve accessibility for Chinese-speaking
-developers and users.
+The patch is available here:
 
-The translation was done with attention to technical accuracy
-and readability, ensuring that the document remains informative
-and useful in its translated form.
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-misc
 
-Signed-off-by: Yaxin Wang <wang.yaxin@zte.com.cn>
----
-v3->v4:
-Some fixes according to:
-https://lore.kernel.org/all/CAD-N9QWJL8xmyLXi+D1gm5fXX-9DcjuzGv=pW=oQyJyXc=GfqA@mail.gmail.com/
-1. Adjust the context alignment, make it more neat.
-2. Regenerate the patch make sure it can now be applied to the latest
-next/master branch.
+The short changelog is:
 
-Documentation/translations/zh_CN/mm/index.rst |   1 +
-../translations/zh_CN/mm/physical_memory.rst | 356 ++++++++++++++++++
-2 files changed, 357 insertions(+)
-create mode 100644 Documentation/translations/zh_CN/mm/physical_memory.rst
+Avri Altman (3):
+      scsi: ufs: Move UFS trace events to private header
+      scsi: ufs: Add HCI capabilities sysfs group
+      scsi: ufs: Prepare to add HCI capabilities sysfs
 
-diff --git a/Documentation/translations/zh_CN/mm/index.rst b/Documentation/translations/zh_CN/mm/index.rst
-index b950dd118be7..eac20a7ec9a6 100644
---- a/Documentation/translations/zh_CN/mm/index.rst
-+++ b/Documentation/translations/zh_CN/mm/index.rst
-@@ -53,6 +53,7 @@ Linux内存管理文档
-page_migration
-page_owner
-page_table_check
-+   physical_memory
-remap_file_pages
-split_page_table_lock
-vmalloced-kernel-stacks
-diff --git a/Documentation/translations/zh_CN/mm/physical_memory.rst b/Documentation/translations/zh_CN/mm/physical_memory.rst
-new file mode 100644
-index 000000000000..ed813e513897
---- /dev/null
-+++ b/Documentation/translations/zh_CN/mm/physical_memory.rst
-@@ -0,0 +1,356 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/mm/physical_memory.rst
-+
-+:翻译:
-+
-+   王亚鑫 Yaxin Wang <wang.yaxin@zte.com.cn>
-+
-+========
-+物理内存
-+========
-+
-+Linux可用于多种架构，因此需要一个与架构无关的抽象来表示物理内存。本章描述
-+了管理运行系统中物理内存的结构。
-+
-+第一个与内存管理相关的主要概念是`非一致性内存访问(NUMA)
-+<https://en.wikipedia.org/wiki/Non-uniform_memory_access>`
-+
-+在多核和多插槽机器中，内存可能被组织成不同的存储区，这些存储区根据与处理器
-+的“不同”而有不同的访问开销。例如，可能为每个CPU分配内存存储区，或者为外围
-+设备在附近分配一个非常适合DMA的内存存储区。
-+
-+每个存储区被称为一个节点，节点在Linux中表示为 ``struct pglist_data``，
-+即使是在UMA架构中也是这样表示。该结构总是通过 ``pg_data_t`` 来引用。特
-+定节点的 ``pg_data_t`` 结构体可以通过NODE_DATA(nid)引用，其中nid被称
-+为该节点的ID。
-+
-+对于非一致性内存访问（NUMA）架构，节点数据结构在引导时由特定于架构的代码早
-+期分配。通常，这些结构在其所在的内存区上本地分配。对于一致性内存访问（UMA）
-+架构，只使用一个静态的 ``pg_data_t`` 结构体，称为 ``contig_page_data`` 。
-+节点将会在 :ref:`节点 <nodes>` 章节中进一步讨论。
-+
-+整个物理内存被划分为一个或多个被称为区域的块，这些区域表示内存的范围。这
-+些范围通常由访问内存的架构限制来决定。在节点内，与特定区域对应的内存范围
-+由 ``struct zone`` 结构体描述，该结构被定义为 ``zone_t``，每种区域都
-+属于以下描述类型的一种。
-+
-+* ``ZONE_DMA`` 和 ``ZONE_DMA32`` 在历史上代表适用于DMA的内存，这些
-+  内存由那些不能访问所有可寻址内存的外设访问。多年来，已经有了更好、更稳
-+  固的接口来获取满足特定DMA需求的内存（这些接口由
-+  Documentation/core-api/dma-api.rst 文档描述），但是 ``ZONE_DMA``
-+  和 ``ZONE_DMA32`` 仍然表示访问受限的内存范围。
-+
-+取决于架构的不同，这两种区域可以在构建时通过关闭 ``CONFIG_ZONE_DMA`` 和
-+``CONFIG_ZONE_DMA32`` 配置选项来禁用。一些64位的平台可能需要这两种区域，
-+因为他们支持具有不同DMA寻址限制的外设。
-+
-+* ``ZONE_NORMAL`` 是普通内存的区域，这种内存可以被内核随时访问。如果DMA
-+  设备支持将数据传输到所有可寻址的内存区域，那么可在该区域的页面上执行DMA
-+  操作。 ``ZONE_NORMAL`` 总是开启的。
-+
-+* ``ZONE_HIGHMEM`` 是指那些没有在内核页表中永久映射的物理内存部分。该区
-+  域的内存只能通过临时映射被内核访问。该区域只在某些32位架构上可用，并且是
-+  通过 ``CONFIG_HIGHMEM`` 选项开启。
-+
-+* ``ZONE_MOVABLE`` 是用于可访问的普通内存区域，就像 ``ZONE_NORMAL``
-+  一样。  不同之处在于 ``ZONE_MOVABLE`` 中的大多数页面内容是可移动的。
-+  这意味着这些页面的虚拟地址不会改变，但它们的内容可能会在不同的物理页面
-+  之间移动。通常，在内存热插拔期间填充 ``ZONE_MOVABLE``，  在启动时也
-+  可以使用 ``kernelcore``、 ``movablecore`` 和 ``movable_node``
-+  这些内核命令行参数来填充。更多详细信息，请参阅内核文档
-+  Documentation/mm/page_migration.rst 和
-+  Documentation/admin-guide/mm/memory-hotplug.rst。
-+
-+* ``ZONE_DEVICE`` 表示位于持久性内存（PMEM）和图形处理单元（GPU）
-+  等设备上的内存。它与RAM区域类型有不同的特性，并且它的存在是为了提供
-+  :ref:`struct page<Pages>` 结构和内存映射服务，以便设备驱动程序能
-+  识别物理地址范围。 ``ZONE_DEVICE`` 通过 ``CONFIG_ZONE_DEVICE``
-+  选项开启。
-+
-+需要注意的是，许多内核操作只能使用 ``ZONE_NORMAL`` 来执行，因此它是
-+性能最关键区域。区域在 :ref:`区域 <zones>` 章节中有更详细的讨论。
-+
-+节点和区域范围之间的关系由固件报告的物理内存映射决定，另外也由内存寻址
-+的架构约束以及内核命令行中的某些参数决定。
-+
-+例如，在具有2GB RAM的x86统一内存架构（UMA）机器上运行32位内核时，整
-+个内存将位于节点0，并且将有三个区域： ``ZONE_DMA``、 ``ZONE_NORMAL``
-+和 ``ZONE_HIGHMEM``::
-+
-+  0                                                            2G
-+  +-------------------------------------------------------------+
-+  |                            node 0                           |
-+  +-------------------------------------------------------------+
-+
-+  0         16M                    896M                        2G
-+  +----------+-----------------------+--------------------------+
-+  | ZONE_DMA |      ZONE_NORMAL      |       ZONE_HIGHMEM       |
-+  +----------+-----------------------+--------------------------+
-+
-+
-+在内核构建时关闭 ``ZONE_DMA`` 开启 ``ZONE_DMA32``，并且在具有16GB
-+RAM平均分配在两个节点上的arm64机器上，使用 ``movablecore=80%`` 参数
-+启动时， ``ZONE_DMA32`` 、 ``ZONE_NORMAL`` 和 ``ZONE_MOVABLE``
-+位于节点0，而 ``ZONE_NORMAL`` 和 ``ZONE_MOVABLE`` 位于节点1::
-+
-+
-+ 1G                                9G                         17G
-+  +--------------------------------+ +--------------------------+
-+  |              node 0            | |          node 1          |
-+  +--------------------------------+ +--------------------------+
-+
-+  1G       4G        4200M          9G          9320M          17G
-+  +---------+----------+-----------+ +------------+-------------+
-+  |  DMA32  |  NORMAL  |  MOVABLE  | |   NORMAL   |   MOVABLE   |
-+  +---------+----------+-----------+ +------------+-------------+
-+
-+
-+内存存储区可能位于交错的节点。在下面的例子中，一台x86机器有16GB的RAM分
-+布在4个内存存储区上，偶数编号的内存存储区属于节点0，奇数编号的内存条属于
-+节点1::
-+
-+  0              4G              8G             12G            16G
-+  +-------------+ +-------------+ +-------------+ +-------------+
-+  |    node 0   | |    node 1   | |    node 0   | |    node 1   |
-+  +-------------+ +-------------+ +-------------+ +-------------+
-+
-+  0   16M      4G
-+  +-----+-------+ +-------------+ +-------------+ +-------------+
-+  | DMA | DMA32 | |    NORMAL   | |    NORMAL   | |    NORMAL   |
-+  +-----+-------+ +-------------+ +-------------+ +-------------+
-+
-+在这种情况下，节点0将覆盖从0到12GB的内存范围，而节点1将覆盖从4GB到16GB
-+的内存范围。
-+
-+.. _nodes:
-+
-+节点
-+====
-+
-+正如我们所提到的，内存中的每个节点由 ``pg_data_t`` 描述，通过
-+``struct pglist_data`` 结构体的类型定义。在分配页面时，默认情况下，Linux
-+使用节点本地分配策略，从离当前运行CPU的最近节点分配内存。由于进程倾向于在同
-+一个CPU上运行，很可能会使用当前节点的内存。分配策略可以由用户控制，如内核文
-+档Documentation/admin-guide/mm/numa_memory_policy.rst 中所述。
-+
-+大多数NUMA（非统一内存访问）架构维护了一个指向节点结构的指针数组。这些实际
-+的结构在启动过程中的早期被分配，这时特定于架构的代码解析了固件报告的物理内
-+存映射。节点初始化的大部分工作是在由 free_area_init()实现的启动过程之后
-+完成，该函数在后面的小节 :ref:`初始化 <initialization>` 中有详细描述。
-+
-+除了节点结构，内核还维护了一个名为 ``node_states`` 的 ``nodemask_t``
-+位掩码数组。这个数组中的每个位掩码代表一组特定属性的节点，这些属性由
-+``enum node_states`` 定义，定义如下：
-+
-+``N_POSSIBLE``
-+节点可能在某个时刻上线。
-+
-+``N_ONLINE``
-+节点已经上线。
-+
-+``N_NORMAL_MEMORY``
-+节点拥有普通内存。
-+
-+``N_HIGH_MEMORY``
-+节点拥有普通或高端内存。当关闭 ``CONFIG_HIGHMEM`` 配置时，
-+也可以称为 ``N_NORMAL_MEMORY``。
-+
-+``N_MEMORY``
-+节点拥有（普通、高端、可移动）内存。
-+
-+``N_CPU``
-+节点拥有一个或多个CPU。
-+
-+对于具有上述属性的每个节点， ``node_states[<property>]``
-+掩码中对应于节点ID的位会被置位。
-+
-+例如，对于具有常规内存和CPU的节点2，第二个bit将被设置::
-+
-+  node_states[N_POSSIBLE]
-+  node_states[N_ONLINE]
-+  node_states[N_NORMAL_MEMORY]
-+  node_states[N_HIGH_MEMORY]
-+  node_states[N_MEMORY]
-+  node_states[N_CPU]
-+
-+有关使用节点掩码（nodemasks）可能进行的各种操作，请参考
-+``include/linux/nodemask.h``。
-+
-+除此之外，节点掩码（nodemasks）提供用于遍历节点的宏，即
-+``for_each_node()`` 和 ``for_each_online_node()``。
-+
-+例如，要为每个在线节点调用函数 foo()，可以这样操作::
-+
-+  for_each_online_node(nid) {
-+		  pg_data_t *pgdat = NODE_DATA(nid);
-+
-+		  foo(pgdat);
-+	}
-+
-+节点数据结构
-+------------
-+
-+节点结构 ``struct pglist_data`` 在 ``include/linux/mmzone.h``
-+中声明。这里我们将简要描述这个结构体的字段：
-+
-+通用字段
-+~~~~~~~~
-+
-+``node_zones``
-+表示该节点的区域列表。并非所有区域都可能被填充，但这是
-+完整的列表。它被该节点的node_zonelists以及其它节点的
-+node_zonelists引用。
-+
-+``node_zonelists``
-+所有节点中所有区域的列表。此列表定义了分配内存时首选的区域
-+顺序。 ``node_zonelists`` 在核心内存管理结构初始化期间，
-+由 ``mm/page_alloc.c`` 中的 ``build_zonelists()``
-+函数设置。
-+
-+``nr_zones``
-+表示此节点中已填充区域的数量。
-+
-+``node_mem_map``
-+对于使用FLATMEM内存模型的UMA系统，0号节点的 ``node_mem_map``
-+表示每个物理帧的struct pages数组。
-+
-+``node_page_ext``
-+对于使用FLATMEM内存模型的UMA系统，0号节点的 ``node_page_ext``
-+是struct pages的扩展数组。只有在构建时开启了 ``CONFIG_PAGE_EXTENSION``
-+选项的内核中才可用。
-+
-+``node_start_pfn``
-+表示此节点中起始页面帧的页面帧号。
-+
-+``node_present_pages``
-+表示此节点中存在的物理页面的总数。
-+
-+``node_spanned_pages``
-+表示包括空洞在内的物理页面范围的总大小。
-+
-+``node_size_lock``
-+一个保护定义节点范围字段的锁。仅在开启了 ``CONFIG_MEMORY_HOTPLUG`` 或
-+``CONFIG_DEFERRED_STRUCT_PAGE_INIT`` 配置选项中的某一个时才定义。提
-+供了``pgdat_resize_lock()`` 和 ``pgdat_resize_unlock()`` 用来操作
-+``node_size_lock``，而无需检查 ``CONFIG_MEMORY_HOTPLUG`` 或
-+``CONFIG_DEFERRED_STRUCT_PAGE_INIT`` 选项。
-+
-+``node_id``
-+节点的节点ID（NID），从0开始。
-+
-+``totalreserve_pages``
-+这是每个节点保留的页面，这些页面不可用于用户空间分配。
-+
-+``first_deferred_pfn``
-+如果大型机器上的内存初始化被推迟，那么第一个PFN（页帧号）是需要初始化的。
-+在开启了 ``CONFIG_DEFERRED_STRUCT_PAGE_INIT`` 选项时定义。
-+
-+``deferred_split_queue``
-+每个节点的大页队列，这些大页的拆分被推迟了。仅在开启了 ``CONFIG_TRANSPARENT_HUGEPAGE``
-+配置选项时定义。
-+
-+``__lruvec``
-+每个节点的lruvec持有LRU（最近最少使用）列表和相关参数。仅在禁用了内存
-+控制组（cgroups）时使用。它不应该直接访问，而应该使用 ``mem_cgroup_lruvec()``
-+来查找 lruvecs。
-+
-+回收控制
-+~~~~~~~~
-+
-+另见内核文档 Documentation/mm/page_reclaim.rst 文件。
-+
-+``kswapd``
-+每个节点的kswapd内核线程实例。
-+
-+``kswapd_wait``, ``pfmemalloc_wait``, ``reclaim_wait``
-+同步内存回收任务的工作队列。
-+
-+``nr_writeback_throttled``
-+等待写回脏页时，被限制的任务数量。
-+
-+``kswapd_order``
-+控制kswapd尝试回收的order。
-+
-+``kswapd_highest_zoneidx``
-+kswapd线程可以回收的最高区域索引。
-+
-+``kswapd_failures``
-+kswapd无法回收任何页面的运行次数。
-+
-+``min_unmapped_pages``
-+无法回收的未映射文件支持的最小页面数量。由 ``vm.min_unmapped_ratio``
-+系统控制台（sysctl）参数决定。在开启 ``CONFIG_NUMA`` 配置时定义。
-+
-+``min_slab_pages``
-+无法回收的SLAB页面的最少数量。由 ``vm.min_slab_ratio`` 系统控制台
-+（sysctl）参数决定。在开启 ``CONFIG_NUMA`` 时定义。
-+
-+``flags``
-+控制回收行为的标志位。
-+
-+内存压缩控制
-+~~~~~~~~~~~~
-+
-+``kcompactd_max_order``
-+kcompactd应尝试实现的页面order。
-+
-+``kcompactd_highest_zoneidx``
-+kcompactd可以压缩的最高区域索引。
-+
-+``kcompactd_wait``
-+同步内存压缩任务的工作队列。
-+
-+``kcompactd``
-+每个节点的kcompactd内核线程实例。
-+
-+``proactive_compact_trigger``
-+决定是否使用主动压缩。由 ``vm.compaction_proactiveness`` 系统控
-+制台（sysctl）参数控制。
-+
-+统计信息
-+~~~~~~~~
-+
-+``per_cpu_nodestats``
-+表示节点的Per-CPU虚拟内存统计信息。
-+
-+``vm_stat``
-+表示节点的虚拟内存统计数据。
-+
-+.. _zones:
-+
-+区域
-+====
-+
-+.. admonition:: Stub
-+
-+  本节内容不完整。请列出并描述相应的字段。
-+
-+.. _pages:
-+
-+页
-+====
-+
-+.. admonition:: Stub
-+
-+  本节内容不完整。请列出并描述相应的字段。
-+
-+页码
-+====
-+
-+.. admonition:: Stub
-+
-+  本节内容不完整。请列出并描述相应的字段。
-+
-+.. _initialization:
-+
-+初始化
-+======
-+
-+.. admonition:: Stub
-+
-+  本节内容不完整。请列出并描述相应的字段。
-+
-+
---
-2.25.1
+Bao D. Nguyen (2):
+      scsi: ufs: core: Remove ufshcd_urgent_bkops()
+      scsi: ufs: core: Support Updating UIC Command Timeout
+
+Bart Van Assche (18):
+      scsi: core: Simplify an alloc_workqueue() invocation
+      scsi: ufs: Simplify alloc*_workqueue() invocation
+      scsi: stex: Simplify an alloc_ordered_workqueue() invocation
+      scsi: scsi_transport_fc: Simplify alloc_workqueue() invocations
+      scsi: snic: Simplify alloc_workqueue() invocations
+      scsi: qedi: Simplify an alloc_workqueue() invocation
+      scsi: qedf: Simplify alloc_workqueue() invocations
+      scsi: myrs: Simplify an alloc_ordered_workqueue() invocation
+      scsi: myrb: Simplify an alloc_ordered_workqueue() invocation
+      scsi: mpt3sas: Simplify an alloc_ordered_workqueue() invocation
+      scsi: mpi3mr: Simplify an alloc_ordered_workqueue() invocation
+      scsi: ibmvscsi_tgt: Simplify an alloc_workqueue() invocation
+      scsi: fcoe: Simplify alloc_ordered_workqueue() invocations
+      scsi: esas2r: Simplify an alloc_ordered_workqueue() invocation
+      scsi: bfa: Simplify an alloc_ordered_workqueue() invocation
+      scsi: be2iscsi: Simplify an alloc_workqueue() invocation
+      scsi: mptfusion: Simplify the alloc*_workqueue() invocations
+      scsi: Expand all create*_workqueue() invocations
+
+Christophe JAILLET (2):
+      scsi: bnx2fc: Remove some unused fields in struct bnx2fc_rport
+      scsi: qla2xxx: Remove the unused 'del_list_entry' field in struct fc_port
+
+Dan Carpenter (2):
+      scsi: elx: libefc: Fix potential use after free in efc_nport_vport_del()
+      scsi: ufs: ufshcd-pltfrm: Signedness bug in ufshcd_parse_clock_info()
+
+David Strahan (2):
+      scsi: smartpqi: add new controller PCI IDs
+      scsi: smartpqi: Add new controller PCI IDs
+
+Don Brace (3):
+      scsi: smartpqi: update driver version to 2.1.30-031
+      scsi: smartpqi: fix volume size updates
+      scsi: smartpqi: Update driver version to 2.1.28-025
+
+Finn Thain (11):
+      scsi: NCR5380: Clean up indentation
+      scsi: NCR5380: Remove obsolete comment
+      scsi: NCR5380: Remove redundant result calculation from NCR5380_transfer_pio()
+      scsi: NCR5380: Drop redundant member from struct NCR5380_cmd
+      scsi: NCR5380: Handle BSY signal loss during information transfer phases
+      scsi: NCR5380: Initialize buffer for MSG IN and STATUS transfers
+      scsi: mac_scsi: Enable scatter/gather by default
+      scsi: NCR5380: Check for phase match during PDMA fixup
+      scsi: mac_scsi: Disallow bus errors during PDMA send
+      scsi: mac_scsi: Refactor polling loop
+      scsi: mac_scsi: Revise printk(KERN_DEBUG ...) messages
+
+Gaosheng Cui (1):
+      scsi: core: Remove obsoleted declaration for scsi_driverbyte_string()
+
+Gilbert Wu (1):
+      scsi: smartpqi: revert propagate-the-multipath-failure-to-SML-quickly
+
+John Garry (2):
+      scsi: block: Don't check REQ_ATOMIC for reads
+      scsi: sd: Don't check if a write for REQ_ATOMIC
+
+Justin Tee (8):
+      scsi: lpfc: Copyright updates for 14.4.0.4 patches
+      scsi: lpfc: Update lpfc version to 14.4.0.4
+      scsi: lpfc: Update PRLO handling in direct attached topology
+      scsi: lpfc: Fix unsolicited FLOGI kref imbalance when in direct attached topology
+      scsi: lpfc: Fix unintentional double clearing of vmid_flag
+      scsi: lpfc: Validate hdwq pointers before dereferencing in reset/errata paths
+      scsi: lpfc: Remove redundant vport assignment when building an abort request
+      scsi: lpfc: Change diagnostic log flag during receipt of unknown ELS cmds
+
+Kees Cook (17):
+      scsi: aacraid: struct {user,}sgmap{,64,raw}: Replace 1-element arrays with flexible arrays
+      scsi: aacraid: Rearrange order of struct aac_srb_unit
+      scsi: message: fusion: struct _CONFIG_PAGE_IOC_4: Replace 1-element array with flexible array
+      scsi: message: fusion: struct _CONFIG_PAGE_IOC_3: Replace 1-element array with flexible array
+      scsi: message: fusion: struct _CONFIG_PAGE_IOC_2: Replace 1-element array with flexible array
+      scsi: message: fusion: struct _CONFIG_PAGE_RAID_PHYS_DISK_1: Replace 1-element array with flexible array
+      scsi: message: fusion: struct _CONFIG_PAGE_SAS_IO_UNIT_0: Replace 1-element array with flexible array
+      scsi: message: fusion: struct _RAID_VOL0_SETTINGS: Replace 1-element array with flexible array
+      scsi: ipr: Replace 1-element arrays with flexible arrays
+      scsi: aacraid: struct aac_ciss_phys_luns_resp: Replace 1-element array with flexible array
+      scsi: aacraid: union aac_init: Replace 1-element array with flexible array
+      scsi: megaraid_sas: struct MR_HOST_DEVICE_LIST: Replace 1-element array with flexible array
+      scsi: megaraid_sas: struct MR_LD_VF_MAP: Replace 1-element arrays with flexible arrays
+      scsi: mpi3mr: struct mpi3_sas_io_unit_page1: Replace 1-element array with flexible array
+      scsi: mpi3mr: struct mpi3_sas_io_unit_page0: Replace 1-element array with flexible array
+      scsi: mpi3mr: struct mpi3_event_data_pcie_topology_change_list: Replace 1-element array with flexible array
+      scsi: mpi3mr: struct mpi3_event_data_sas_topology_change_list: Replace 1-element array with flexible array
+
+Kevin Barnett (2):
+      scsi: smartpqi: Improve handling of multipath failover
+      scsi: smartpqi: Improve accuracy/performance of raid-bypass-counter
+
+Mahesh Rajashekhara (2):
+      scsi: smartpqi: add counter for parity write stream requests
+      scsi: smartpqi: correct stream detection
+
+Murthy Bhat (2):
+      scsi: smartpqi: fix rare system hang during LUN reset
+      scsi: smartpqi: Add fw log to kdump
+
+Pedro Falcato (1):
+      scsi: snic: Avoid creating two slab caches with the same name
+
+Ranjan Kumar (3):
+      scsi: mpi3mr: Driver version update to 8.10.0.5.50
+      scsi: mpi3mr: Update consumer index of reply queues after every 100 replies
+      scsi: mpi3mr: Return complete ioc_status for ioctl commands
+
+Rob Herring (Arm) (2):
+      scsi: ufs: ufshcd-pltfrm: Use of_property_count_u32_elems() to get property length
+      scsi: ufs: ufshcd-pltfrm: Use of_property_present()
+
+Yue Haibing (2):
+      scsi: bnx2i: Remove unused declarations
+      scsi: target: Remove unused declarations
+
+And the diffstat:
+
+ Documentation/ABI/testing/sysfs-driver-ufs         |  27 ++
+ block/blk-core.c                                   |   1 +
+ drivers/message/fusion/lsi/mpi_cnfg.h              |  60 +--
+ drivers/message/fusion/mptbase.c                   |  10 +-
+ drivers/message/fusion/mptbase.h                   |   3 -
+ drivers/message/fusion/mptfc.c                     |   7 +-
+ drivers/scsi/NCR5380.c                             | 233 +++++-----
+ drivers/scsi/NCR5380.h                             |  20 +-
+ drivers/scsi/aacraid/aachba.c                      |  28 +-
+ drivers/scsi/aacraid/aacraid.h                     |  21 +-
+ drivers/scsi/aacraid/commctrl.c                    |   4 +-
+ drivers/scsi/aacraid/comminit.c                    |   3 +-
+ drivers/scsi/aacraid/commsup.c                     |   5 +-
+ drivers/scsi/aacraid/src.c                         |   2 +-
+ drivers/scsi/be2iscsi/be_main.c                    |   6 +-
+ drivers/scsi/bfa/bfad_im.c                         |   5 +-
+ drivers/scsi/bfa/bfad_im.h                         |   1 -
+ drivers/scsi/bnx2fc/bnx2fc.h                       |   6 -
+ drivers/scsi/bnx2fc/bnx2fc_fcoe.c                  |   4 +-
+ drivers/scsi/bnx2i/bnx2i.h                         |  11 -
+ drivers/scsi/device_handler/scsi_dh_rdac.c         |   3 +-
+ drivers/scsi/elx/efct/efct_lio.c                   |   3 +-
+ drivers/scsi/elx/libefc/efc_nport.c                |   2 +-
+ drivers/scsi/esas2r/esas2r.h                       |   1 -
+ drivers/scsi/esas2r/esas2r_init.c                  |   5 +-
+ drivers/scsi/fcoe/fcoe_sysfs.c                     |  18 +-
+ drivers/scsi/fnic/fnic_main.c                      |   6 +-
+ drivers/scsi/hisi_sas/hisi_sas_main.c              |   3 +-
+ drivers/scsi/hosts.c                               |   9 +-
+ drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c           |   5 +-
+ drivers/scsi/ipr.h                                 |   4 +-
+ drivers/scsi/libfc/fc_exch.c                       |   3 +-
+ drivers/scsi/libfc/fc_rport.c                      |   3 +-
+ drivers/scsi/libsas/sas_init.c                     |   4 +-
+ drivers/scsi/lpfc/lpfc.h                           |  12 +-
+ drivers/scsi/lpfc/lpfc_els.c                       |  79 ++--
+ drivers/scsi/lpfc/lpfc_hbadisc.c                   |  14 +-
+ drivers/scsi/lpfc/lpfc_nportdisc.c                 |  22 +-
+ drivers/scsi/lpfc/lpfc_scsi.c                      |  13 +-
+ drivers/scsi/lpfc/lpfc_sli.c                       |  13 +-
+ drivers/scsi/lpfc/lpfc_version.h                   |   2 +-
+ drivers/scsi/lpfc/lpfc_vmid.c                      |   3 +-
+ drivers/scsi/mac_scsi.c                            | 170 +++----
+ drivers/scsi/megaraid/megaraid_sas.h               |   6 +-
+ drivers/scsi/megaraid/megaraid_sas_fusion.c        |   4 +-
+ drivers/scsi/mpi3mr/mpi/mpi30_cnfg.h               |  10 +-
+ drivers/scsi/mpi3mr/mpi/mpi30_ioc.h                |  10 +-
+ drivers/scsi/mpi3mr/mpi3mr.h                       |   7 +-
+ drivers/scsi/mpi3mr/mpi3mr_fw.c                    |  36 +-
+ drivers/scsi/mpi3mr/mpi3mr_os.c                    |   4 +-
+ drivers/scsi/mpt3sas/mpt3sas_base.c                |   4 +-
+ drivers/scsi/mpt3sas/mpt3sas_base.h                |   4 +-
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c               |   4 +-
+ drivers/scsi/myrb.c                                |   5 +-
+ drivers/scsi/myrb.h                                |   1 -
+ drivers/scsi/myrs.c                                |   5 +-
+ drivers/scsi/myrs.h                                |   1 -
+ drivers/scsi/qedf/qedf_main.c                      |  20 +-
+ drivers/scsi/qedi/qedi_main.c                      |   8 +-
+ drivers/scsi/qla2xxx/qla_def.h                     |   1 -
+ drivers/scsi/qla2xxx/qla_os.c                      |   6 +-
+ drivers/scsi/qla4xxx/ql4_os.c                      |   2 +-
+ drivers/scsi/scsi_transport_fc.c                   |  11 +-
+ drivers/scsi/sd.c                                  |   2 +-
+ drivers/scsi/smartpqi/smartpqi.h                   |  39 +-
+ drivers/scsi/smartpqi/smartpqi_init.c              | 496 +++++++++++++++------
+ drivers/scsi/smartpqi/smartpqi_sis.c               |  60 +++
+ drivers/scsi/smartpqi/smartpqi_sis.h               |   3 +
+ drivers/scsi/snic/snic_main.c                      |  10 +-
+ drivers/scsi/stex.c                                |   6 +-
+ drivers/scsi/sun3_scsi.c                           |   2 +-
+ drivers/scsi/vmw_pvscsi.c                          |   3 +-
+ drivers/target/iscsi/iscsi_target.h                |   2 -
+ drivers/target/iscsi/iscsi_target_login.h          |   1 -
+ drivers/target/iscsi/iscsi_target_nego.h           |   2 -
+ drivers/target/iscsi/iscsi_target_tpg.h            |   5 -
+ drivers/target/iscsi/iscsi_target_util.h           |   5 -
+ drivers/ufs/core/ufs-sysfs.c                       |  91 +++-
+ .../events/ufs.h => drivers/ufs/core/ufs_trace.h   |   6 +
+ drivers/ufs/core/ufshcd.c                          |  85 ++--
+ drivers/ufs/host/ufshcd-pltfrm.c                   |  14 +-
+ include/scsi/fcoe_sysfs.h                          |   2 -
+ include/scsi/scsi_dbg.h                            |   7 -
+ include/scsi/scsi_host.h                           |   1 -
+ include/scsi/scsi_transport_fc.h                   |   6 -
+ include/ufs/ufs.h                                  |   4 +-
+ include/ufs/ufshci.h                               |   5 +-
+ 87 files changed, 1098 insertions(+), 762 deletions(-)
+ rename include/trace/events/ufs.h => drivers/ufs/core/ufs_trace.h (98%)
+
+Regards,
+
+James
 
