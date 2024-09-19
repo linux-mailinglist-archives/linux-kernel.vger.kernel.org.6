@@ -1,176 +1,140 @@
-Return-Path: <linux-kernel+bounces-333087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F6E97C34C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:21:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A78DD97C350
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 06:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3651E1F224B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 04:21:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B48C61C216C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 04:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7EDA18633;
-	Thu, 19 Sep 2024 04:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FB2179BB;
+	Thu, 19 Sep 2024 04:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cKDGsZZI"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mE7h8y6m"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39BB28EA;
-	Thu, 19 Sep 2024 04:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8E023AB
+	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 04:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726719672; cv=none; b=i0iz4YpEJA5V42Q7/ZgXV6BX9oCZcYLK//M2TWobRaL5sEvHZCcrZ+7myRPZQfLc4uOtXwQRNcq57joPY4YeJYdh1pV1bvJjc7/+GJKi6JZLZOUpYSLgAMMSEt+dYeGY4c6pljI9Jh2z1ecxfVMrW/ra7+2J1o6DTeemxFXT+OY=
+	t=1726720313; cv=none; b=B+8ejTlRyM/Vlrv49o5tFUetypAEKCa0YCfjaOuFKm/c7O5mrSCaUudIbG+nbLkt45lF3Wi4/LqwgwhEDBGbeNpthFX9DsHy3QtbgmhQ2oWxqwsEifUPEUIY29BTGOu5cPtE3jygwmAJaWkNpwsBIrEvaD85/g16WiBctSU2+Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726719672; c=relaxed/simple;
-	bh=8AIciPGsz4JbiYumMdGacVtdecMVW1sg5pCblgyNQLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gxxHG7yYJr+6QLXf/cum2WltzQEbkVnLixycYh/M9NSO2UeqFKF1K6wUiKSjQzbM8NcvnEvAW5htqpJ/oGZFvNkGJvkW2/IIRk1IyWbD4uimkpisxgydoTJGxW79vuJHogNM1j3WpLYIeoN+KaS6Vo5XpJ3faDXShw5ojHlRmEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cKDGsZZI; arc=none smtp.client-ip=209.85.216.43
+	s=arc-20240116; t=1726720313; c=relaxed/simple;
+	bh=EcEbpoT4Yi23+De7VvqDSLDM9LsvEFlD/sABkkZCJpw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VopyLxxNvvmaT7LcV2lOBNcUSJL6CDpQy9v6Y2eCo2etv7li7pLyWyqyh7G28ueHLItPasdQdXgMeh3vmNvQ+3ZdjkDHK+CJepSOOk8ba94uw6pyNtloOykRuau01/G+hhJO+gbU9fnPVN/VzG2S960TewGaOQKG98EdsIPuEKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mE7h8y6m; arc=none smtp.client-ip=209.85.167.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2d8a7c50607so310244a91.1;
-        Wed, 18 Sep 2024 21:21:10 -0700 (PDT)
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e0438e81aaso301180b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Sep 2024 21:31:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726719670; x=1727324470; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c35lJhVYOqRiofOwrBye7t56BCz2AoWDtRPEI/zarqE=;
-        b=cKDGsZZI4pHAmDpFi5HgWlc6U7Vm4OIA7NbKLd61NUYyWzfXhaAxw17zRG+5AiBsT3
-         G/ykhVDXAR/l8oHf5bguc7NpJxrQv70DeUS4DbHrer/+bnyEgX0DOTtoINBSItbF599b
-         M3rN8igv/NqqqW0aKJnXt8BLTmqBedAu5Kx50oCuv640bfUDkpaAvl0Epct/2owkHv2n
-         txrGZQ1suGchPSMUvvFzl3vs2s00pJWhXplL8nta15XKQjJVIWpxdPerNdwQHf/l6lnT
-         f59Pw7ot5boe4a+Vq4WfdmqZfFVdVBprTl6WeF9C9AVjG0oTq4a/1LnwwNk7rQiFOFJH
-         3b8Q==
+        d=gmail.com; s=20230601; t=1726720311; x=1727325111; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jnEOZ1pExE6GXIP1uo6O5xxRyy89O+vheaw1Do4bDlo=;
+        b=mE7h8y6mQZWOfcR3XB/eXaZZqWT/BtO0WObmP/glPS/BXXVnzsRLrDEbHKrtXFC7W3
+         j89ohHPrycjF7x+lFb4Xijfpz0//dkkv7CB5R8jIprEiohg8hkgYX48qyZmWquXL/qS1
+         WSHM0qLTJHtLNhQZeO6e9dhtLebdjde53D4GvrwnKlbFaV+rwwgDpe/5LouO99grKZ5V
+         biNkslj28uWGyG4PvBUTm/Et9KGA9t6pigxiIjGFffWcgTXAYwg/CaBuu5cUL03kEqZk
+         ahlni2m5c5+xtJvsbZ820vu+ghbVUF+xLa8G6Ax/3Nvhl1yR3m7NVK8IPhb7gJlFkEuQ
+         WCiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726719670; x=1727324470;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c35lJhVYOqRiofOwrBye7t56BCz2AoWDtRPEI/zarqE=;
-        b=aplfHHQD2rTQtApxqyFG7My1Z39Y8GfCNX3YFTYGyvzMWESuC1CiAc2E2YCveEsDov
-         GzHG/u3c0a8LgzchiXJ+PHnN0AcpGtOT5tFRC9MxJbw4oeW0oC+mDrRwwLONhy+7IudP
-         bhFBZ8lubIaZp6srMWvIf3tBbr3wyhbGqh1ghxuVfMmTyjNtXohAoYse50gvx8w5fB8S
-         0kDrCHRbJk+JJBZ1DNj1QkVCTY6UYi94e316wqubnMORjo71u5naAhJcC6HkTGKTvC+t
-         ISXdoHDcmJkUz5K/PFWFrokQDlN8OQOBbyMJQFAhEc0NSCDG0jE9HKoT9eAuC9IB4iUe
-         2PIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUp64WZ9AmLp+F99AeYAGWswxCY1tYXmkbFiWtUe7v9WcBwXrJV5X2USgwnsd9hRtYJQNzymRfrfJtTzkI3@vger.kernel.org, AJvYcCXColgN+N4ku1d48h5DMVi3Q5y7tSRtX8kbn3vuihn+kZ+EJ8bwj4N3Lr5Mdb6PUX3/Uws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQg3Oar4YDfpMzAnMrrlEZsT9BVvSmkoigHLF4P5TDhAWgF+jQ
-	AphpmdOfXsRunZpTfMGlQWWLnSS8HBxKg7fwOq7XpLb5RDDVyzcLuF3pXQyYl0Lh3whXGy7R2el
-	WjRmGxXh3tSUKAwm/l418ELISkkQ=
-X-Google-Smtp-Source: AGHT+IGBorv9TBHVbxdie5vLEjrQlqrhYXFjsT14NDOdl0/Fa6Bkt8ZRcZm8nVutPrR/EvnEiNo1XNFztj6hQN02fPU=
-X-Received: by 2002:a17:90b:3616:b0:2cc:ef14:89e3 with SMTP id
- 98e67ed59e1d1-2db9ffcab27mr25909340a91.15.1726719670045; Wed, 18 Sep 2024
- 21:21:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726720311; x=1727325111;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jnEOZ1pExE6GXIP1uo6O5xxRyy89O+vheaw1Do4bDlo=;
+        b=NBtlX4quRdJoYNL6BUCEhNSz/7YzmZwudvSrmP53+buEjaO8WlUzSz8hWFtNbnrAe2
+         6rRCLWEtcBy+cHyNsrAulPnSVrzJR+Twc23jmFQd98RLb4myoolMMWq25emMY5Gt1lb+
+         ZKreKVNruznh1asFsoF/lBThEAs2eCcyAsl2D4fITJ+za5XJqR3QaIWS0V01zeSXu5TT
+         92YMRiFIHhJj/MRMQrPkxpc9jWy5HJWfxJ+VF55lpMJoM6vtay49aTRGdoR4WcFupEfK
+         zw+xjMB6mHKaKeEpGYhExYX7l+aJz4qE1TUWDAZgiqLKzdcJ0Eae7fiN1V4kGt0Q/TGH
+         O7Ag==
+X-Gm-Message-State: AOJu0Yyzm3Pp4rUg3VeBB97qfTd53H8DkVXUkJrKRptlCMe0blRLUGRM
+	8FLnRdhbZ0NaT5vYd70FZtxtvI0r8bXCBAJ8GniDEpcNTJuvTFkTj2QaIo4S
+X-Google-Smtp-Source: AGHT+IFPY1p11K7SNgnXsHQAZuSMJj8nXShqm/KTnmJE87uRTzNxmpFc9IFDksQCU3rAM51H34Q8Mw==
+X-Received: by 2002:a05:6808:1821:b0:3e0:6b72:f324 with SMTP id 5614622812f47-3e07a125223mr12371571b6e.20.1726720310623;
+        Wed, 18 Sep 2024 21:31:50 -0700 (PDT)
+Received: from localhost.localdomain ([143.166.81.254])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e26b6ac829sm207305b6e.18.2024.09.18.21.31.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Sep 2024 21:31:49 -0700 (PDT)
+From: Stuart Hayes <stuart.w.hayes@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Martin Belanger <Martin.Belanger@dell.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Daniel Wagner <dwagner@suse.de>,
+	Keith Busch <kbusch@kernel.org>,
+	Lukas Wunner <lukas@wunner.de>,
+	David Jeffery <djeffery@redhat.com>,
+	Jeremy Allison <jallison@ciq.com>,
+	Jens Axboe <axboe@fb.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	linux-nvme@lists.infradead.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Jan Kiszka <jan.kiszka@seimens.com>
+Cc: Stuart Hayes <stuart.w.hayes@gmail.com>
+Subject: [PATCH] driver core: fix async device shutdown hang
+Date: Wed, 18 Sep 2024 23:31:43 -0500
+Message-Id: <20240919043143.1194950-1-stuart.w.hayes@gmail.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240914154040.276933-1-chen.dylane@gmail.com> <8bcac2c4-80fc-4807-9e77-5dc253b10568@gmail.com>
-In-Reply-To: <8bcac2c4-80fc-4807-9e77-5dc253b10568@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 19 Sep 2024 06:20:57 +0200
-Message-ID: <CAEf4BzZpdMx7ZV6V6pJKLkq3BtdRrqj8Vo09YVSN5YApNtCa3Q@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3] libbpf: Fix expected_attach_type set when
- kernel not support
-To: Tao Chen <chen.dylane@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 19, 2024 at 4:05=E2=80=AFAM Tao Chen <chen.dylane@gmail.com> wr=
-ote:
->
-> =E5=9C=A8 2024/9/14 23:40, Tao Chen =E5=86=99=E9=81=93:
-> > The commit "5902da6d8a52" set expected_attach_type again with
-> > field of bpf_program after libpf_prepare_prog_load, which makes
-> > expected_attach_type =3D 0 no sense when kenrel not support the
-> > attach_type feature, so fix it.
-> >
-> > Fixes: 5902da6d8a52 ("libbpf: Add uprobe multi link support to bpf_prog=
-ram__attach_usdt")
-> > Suggested-by: Jiri Olsa <jolsa@kernel.org>
-> > Signed-off-by: Tao Chen <chen.dylane@gmail.com>
-> > ---
-> >   tools/lib/bpf/libbpf.c | 12 ++++++++----
-> >   1 file changed, 8 insertions(+), 4 deletions(-)
-> >
-> > Change list:
-> > - v2 -> v3:
-> >      - update BPF_TRACE_UPROBE_MULTI both in prog and opts suggedted by
-> >        Andrri
-> > - v1 -> v2:
-> >      - restore the original initialization way suggested by Jiri
-> >
-> > diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> > index 219facd0e66e..a78e24ff354b 100644
-> > --- a/tools/lib/bpf/libbpf.c
-> > +++ b/tools/lib/bpf/libbpf.c
-> > @@ -7352,8 +7352,14 @@ static int libbpf_prepare_prog_load(struct bpf_p=
-rogram *prog,
-> >               opts->prog_flags |=3D BPF_F_XDP_HAS_FRAGS;
-> >
-> >       /* special check for usdt to use uprobe_multi link */
-> > -     if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MU=
-LTI_LINK))
-> > +     if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MU=
-LTI_LINK)) {
-> > +             /* for BPF_TRACE_KPROBE_MULTI, user might want to query e=
-xected_attach_type
-> > +              * in prog, and expected_attach_type we set in kenrel is =
-from opts, so we
-> > +              * update both.
-> > +              */
-> >               prog->expected_attach_type =3D BPF_TRACE_UPROBE_MULTI;
-> > +             opts->expected_attach_type =3D BPF_TRACE_UPROBE_MULTI;
-> > +     }
-> >
-> >       if ((def & SEC_ATTACH_BTF) && !prog->attach_btf_id) {
-> >               int btf_obj_fd =3D 0, btf_type_id =3D 0, err;
-> > @@ -7443,6 +7449,7 @@ static int bpf_object_load_prog(struct bpf_object=
- *obj, struct bpf_program *prog
-> >       load_attr.attach_btf_id =3D prog->attach_btf_id;
-> >       load_attr.kern_version =3D kern_version;
-> >       load_attr.prog_ifindex =3D prog->prog_ifindex;
-> > +     load_attr.expected_attach_type =3D prog->expected_attach_type;
-> >
-> >       /* specify func_info/line_info only if kernel supports them */
-> >       if (obj->btf && btf__fd(obj->btf) >=3D 0 && kernel_supports(obj, =
-FEAT_BTF_FUNC)) {
-> > @@ -7474,9 +7481,6 @@ static int bpf_object_load_prog(struct bpf_object=
- *obj, struct bpf_program *prog
-> >               insns_cnt =3D prog->insns_cnt;
-> >       }
-> >
-> > -     /* allow prog_prepare_load_fn to change expected_attach_type */
-> > -     load_attr.expected_attach_type =3D prog->expected_attach_type;
-> > -
-> >       if (obj->gen_loader) {
-> >               bpf_gen__prog_load(obj->gen_loader, prog->type, prog->nam=
-e,
-> >                                  license, insns, insns_cnt, &load_attr,
->
-> Hi, guys, please review this patch again, the previous versions:
+Modify device_shutdown() so that supplier devices do not wait for
+consumer devices to be shut down first when the devlink is sync state
+only, since the consumer is not dependent on the supplier in this case.
 
-It looks good, but bpf-next is closed right now due to merge window.
-I'll apply when the tree is open again.
+Without this change, a circular dependency could hang the system.
 
-> v1:
-> https://lore.kernel.org/bpf/20240913121627.153898-1-chen.dylane@gmail.com=
-/
-> v2:
-> https://lore.kernel.org/bpf/20240913164355.176021-1-chen.dylane@gmail.com=
-/
->
-> --
-> Best Regards
-> Dylane Chen
+Fixes: 8064952c6504 ("driver core: shut down devices asynchronously")
+
+Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+---
+The patch this fixes is in driver-core-next and linux-next.
+
+Please let me know if this needs to be a V2 or if it needs anything
+else... it is the identical patch I sent in yesterday, except I added
+a "Fixes:" tag and the comments.  Thank you for the help!
+
+ drivers/base/core.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index b69b82da8837..76513e360496 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -4898,8 +4898,16 @@ void device_shutdown(void)
+ 
+ 		idx = device_links_read_lock();
+ 		list_for_each_entry_rcu(link, &dev->links.suppliers, c_node,
+-				device_links_read_lock_held())
++				device_links_read_lock_held()) {
++			/*
++			 * sync_state_only suppliers don't need to wait,
++			 * aren't reordered on devices_kset, so making them
++			 * wait could result in a hang
++			 */
++			if (device_link_flag_is_sync_state_only(link->flags))
++				continue;
+ 			link->supplier->p->shutdown_after = cookie;
++		}
+ 		device_links_read_unlock(idx);
+ 		put_device(dev);
+ 
+-- 
+2.39.3
+
 
