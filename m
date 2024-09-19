@@ -1,493 +1,186 @@
-Return-Path: <linux-kernel+bounces-333790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0610F97CE20
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:24:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F10C97CE23
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 21:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69FBC1F22A44
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 19:24:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE91B1F229CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 19:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7462AC29;
-	Thu, 19 Sep 2024 19:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD19B2C87C;
+	Thu, 19 Sep 2024 19:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dV0LaGw9"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="boxTSPfr"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647D6210FF
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 19:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726773858; cv=none; b=Qz7/ZVI+jRcjO4LgJRlK+lJTGZc9uenFq9P3OTqmmUP554GadMe9lNNMHMI+fAE6Uif0gfCIpQp4swhuPjGp1X9dFJ/nGz0PYRgTzsG7NZhPeExC1qxaQJtvxLTBow+6jF0c5HwuE9sBPsl2Pyh8yGkxTpxB/K2ZDga93VIctIo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726773858; c=relaxed/simple;
-	bh=IjDT9iqTJHfrRFhCloh81vzl0vaVD8F/cZMy720WJhA=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=LgeXUzMl4nEvDu5U/c92QLtCGAvlazIpsiMbvZFgoUJn3nliXxNDT0YujeYRRVkDuYe1KFaIup6nz5IseDlYbrn/vmZ1dHVRIAwdQWo8LK10m1c16ZTDAqr4gOuFpYv4ZILQUeGmnpgQpPNPJ4ad0rWZWycDfxkIN92fZ+46nBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=dV0LaGw9; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240919192412euoutp017fad0d5c5798b8edcbd4140591863cae~2u6uSmE-N0301403014euoutp01i
-	for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 19:24:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240919192412euoutp017fad0d5c5798b8edcbd4140591863cae~2u6uSmE-N0301403014euoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726773852;
-	bh=QJPcX8V73+obafRpp+Tuw1mRcu/lkVFqnLsDYylEpOc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=dV0LaGw9U3p0PDPYvVLDNluXrAHg0zYSsvzDI3WMFPuT4FYr2IOchrQ1tq8+xRa6e
-	 dUlZWnfxKasjQ7W5lUw+iJTbTaaZ2ar6Iegj8uHOIjVeFkUldwvzmCjtAeFVAsR1o6
-	 9rhh1aIVQXLr12AdWFrXY4rBZGFzFDtg4KAB1LWI=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240919192412eucas1p12cc3da4af716cb68b879589751584559~2u6t5hzaf0918109181eucas1p1O;
-	Thu, 19 Sep 2024 19:24:12 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id B5.B4.09624.C5A7CE66; Thu, 19
-	Sep 2024 20:24:12 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240919192410eucas1p1b20597bb951af35f31e3fe5e0df62294~2u6sk-PJ90914409144eucas1p1C;
-	Thu, 19 Sep 2024 19:24:10 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240919192410eusmtrp1cade60775b53c9cbded91cc0c51a394a~2u6sj1GPq0926209262eusmtrp1e;
-	Thu, 19 Sep 2024 19:24:10 +0000 (GMT)
-X-AuditID: cbfec7f2-c11ff70000002598-c4-66ec7a5cbcd8
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 8C.45.19096.A5A7CE66; Thu, 19
-	Sep 2024 20:24:10 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240919192410eusmtip2c17e21735de8bbb0a7b34f45e71ac409~2u6sXJqP20065600656eusmtip2E;
-	Thu, 19 Sep 2024 19:24:10 +0000 (GMT)
-Received: from localhost (106.110.32.87) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Thu, 19 Sep 2024 20:24:08 +0100
-Date: Thu, 19 Sep 2024 21:24:08 +0200
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Sam James <sam@gentoo.org>
-CC: Masahiro Yamada <masahiroy@kernel.org>, Kris Van Hees
-	<kris.van.hees@oracle.com>, <linux-kernel@vger.kernel.org>,
-	<linux-kbuild@vger.kernel.org>, <linux-modules@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, Nick Alcock <nick.alcock@oracle.com>,
-	Alan Maguire <alan.maguire@oracle.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Luis Chamberlain <mcgrof@kernel.org>, Masami
-	Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
-	Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni <elena.zannoni@oracle.com>
-Subject: Re: [PATCH v10 2/4] kbuild: generate offset range data for builtin
- modules
-Message-ID: <20240919192408.e4phivt2h742e7mo@AALNPWDAGOMEZ1.aal.scsc.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647E014A96;
+	Thu, 19 Sep 2024 19:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726774079; cv=pass; b=nVfOScKYJfx0V+hvuxTp6E5DwtugNfmijpnsyu27mCQfkNvPNdKiwLqGtyZB2gEjmjUEMhHiWSyYIYEArnE8Aprb9FpDYjWm89l2mTZSR4PEu/PEZ+z0D9m7wVxOTCZg5bvVSekEOWtQ/Hk3sYqwwZRb7Xn6JWlBhUyDtAcDs2k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726774079; c=relaxed/simple;
+	bh=YJa2JxVMqhfa9RmCyikEb1Uo1+h8M9rFrkHlJndLIOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dfXi8+pW7GLgoPOXyRGco/k4krArLk5yfez4ufM/eIfl1EDgU0lbmx3Izo/5+x+Elgnio5AP15fGbJJTeSxD1hUMbjiKp8dQlajeH8nirCc35p4uUTB57fwXD81IIlQetQw1epIiZNJ3IiiqZ7G9cfvkouze3cadNl0cckOd3aY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=boxTSPfr; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1726774046; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=gzUFKT1zZHbHP8nrXYFQSeK/Vbu95YHXygfLOyzh7xLvaS+kfB4wbx7xPFlCub3gcfSEVOV+gb1jAd4z3YCyXyaaaMgRJeeLYjDWGYm1Qc03X19kr1YChlB9U8mZhbyNv/UQ8GRvrL/eIft9KpVGH6enO/Ar+IH21aGflvFqlWg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726774046; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=t4Ne6sfF33Z90OyTmpxA9lLW1DDECmfnMlVBavSL5ic=; 
+	b=ipzXPtcdqeWebG+eqHH0DMV6ZnEIBxSP4DKIKEkSVEDO435h2ibNSrpjCYffUYGkQx3Z1aLp7YArZuwxew4/LtGjBCiv7qySAPT1qIfiPpR2pGv5n8XZHe36JOaU8I4YVnEbrM/98Cov5/H9f6JJzhGzal3i47/5Z5etbrJ3blE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726774046;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=t4Ne6sfF33Z90OyTmpxA9lLW1DDECmfnMlVBavSL5ic=;
+	b=boxTSPfrtotkdSf8bMksmMn/hm2KakSAkiCoWXnsGwZZxhVlxlbNwcY4zmfbtW0U
+	zWipuumOiMSwc5x2E510uzqFaxClI7zwIiMr1L6ubMeeoE1FN+keULZZ7pIGqfz+fYG
+	vX8EOjOkteMYJzqcXO8Qy6jVGQWLEPWUkiUPjJyA=
+Received: by mx.zohomail.com with SMTPS id 1726774044357158.77599800361543;
+	Thu, 19 Sep 2024 12:27:24 -0700 (PDT)
+Received: by mercury (Postfix, from userid 1000)
+	id BC5CE106031C; Thu, 19 Sep 2024 21:27:17 +0200 (CEST)
+Date: Thu, 19 Sep 2024 21:27:17 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Elaine Zhang <zhangqing@rock-chips.com>, 
+	=?utf-8?B?QWRyacOhbiBNYXJ0w61uZXo=?= Larumbe <adrian.larumbe@collabora.com>, Boris Brezillon <boris.brezillon@collabora.com>, 
+	Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH v2 6/6] arm64: dts: rockchip: Add GPU power domain
+ regulator dependency for RK3588
+Message-ID: <zvzrjkacazxbv4cjxcnihv4rb2t3tu2zjd6zkny63ygfifpz7i@j4saijws5rcp>
+References: <20240919091834.83572-1-sebastian.reichel@collabora.com>
+ <20240919091834.83572-7-sebastian.reichel@collabora.com>
+ <a4d94eab-8543-45e1-b657-fa7f12470538@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qcskwoh6fbt5qu6y"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87ldzncy8l.fsf@gentoo.org>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDKsWRmVeSWpSXmKPExsWy7djP87oxVW/SDF42cVvcONTIYrHx9H02
-	i/Nf/zJb/Nm1g8ni8q45bBYNs7+zWhxZf5bF4uGDG6wWNyY8ZbRYvFzN4sOE/0wWJ74cZ7Q4
-	/n8No8W+jgdMFrvuPWR24Pe4/P0Ns8fOWXfZPVr23WL3WLCp1GPTqk42j49Pb7F4fN4kF8Ae
-	xWWTkpqTWZZapG+XwJXxbs9cxoLF9RXn959ga2DcldDFyMkhIWAisfv0DMYuRi4OIYEVjBLL
-	/+xjgXC+MEp0tNxng3A+M0qcvnGUGaal9fYsqMRyRomj3ccY4ar6XhxmgnA2M0q83j2XEaSF
-	RUBVYubXHiYQm01AU2LfyU3sILaIgJzE9PZ5YN3MAgtZJLqWnQDbISwQKnGsbTqYzSvgLbH9
-	w18WCFtQ4uTMJ0A2B1CDpsT6XfoQprTE8n8cIBXMAvISzVtng3VyCmhINC/4D3W1osSMiStZ
-	IOxaiVNbboHdKSGwn1Ni277pTBAJF4kZ+y6wQtjCEq+Ob2GHsGUkTk/ugWpOl1iybhaUXSCx
-	5/YsVpAbJASsJfrO5ECEHSWW3L4FFeaTuPFWEOI0PolJ20CeAgnzSnS0CU1gVJmF5K1ZCG/N
-	QnhrFpK3FjCyrGIUTy0tzk1PLTbMSy3XK07MLS7NS9dLzs/dxAhMcKf/Hf+0g3Huq496hxiZ
-	OBgPMUpwMCuJ8Ip/eJkmxJuSWFmVWpQfX1Sak1p8iFGag0VJnFc1RT5VSCA9sSQ1OzW1ILUI
-	JsvEwSnVwCR7hfuJYPHOvatkH8tE1ujnp/TsuWxaeVtrE0/vXuaWOpPTfAdXNpTHB3ps/LHP
-	7+X0lDR3G/Po1tONfvekWKUW/JlkOJFhf1bx8XdhsgH/p+qci3rUy/xxv4z/paL/VzyPPxFj
-	3ZDQFFK0ycihIDC8w/rI5kNbVdm9ojnuzckQ7ZCaWbuLVcN5b8+mf7euH+mdtCPt8rGJq75P
-	32jpyfFqTfCuP7P29V0uXnr+Ts0fvmIj3beTcqXzvT7tkd1R6jbltXDZzJNvBSpPT1p0abKU
-	2/OzOrPc2rU+PX1wY8bl41r7mMS8/px9nZHBtn2Fn7lTfcKk/ZVPl4X5a8ioF3K+2rlN7uj6
-	iC82pZJLpm1RYinOSDTUYi4qTgQArJNMpt8DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGIsWRmVeSWpSXmKPExsVy+t/xe7pRVW/SDH7P1re4caiRxWLj6fts
-	Fue//mW2+LNrB5PF5V1z2CwaZn9ntTiy/iyLxcMHN1gtbkx4ymixeLmaxYcJ/5ksTnw5zmhx
-	/P8aRot9HQ+YLHbde8jswO9x+fsbZo+ds+6ye7Tsu8XusWBTqcemVZ1sHh+f3mLx+LxJLoA9
-	Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS/j3Z65
-	jAWL6yvO7z/B1sC4K6GLkZNDQsBEovX2LLYuRi4OIYGljBJX9jxmh0jISGz8cpUVwhaW+HOt
-	C6roI6PEo73NjCAJIYHNjBLPvmuA2CwCqhIzv/YwgdhsApoS+05uAhskIiAnMb19HiNIM7PA
-	QhaJhc/6mEESwgKhEsfapoPZvALeEts//GWB2PCBSWLL/f1sEAlBiZMznwAlOIC6NSXW79KH
-	MKUllv/jAKlgFpCXaN46G2wMp4CGRPOC/8wQRytKzJi4kgXCrpX4/PcZ4wRGkVlIhs5CGDoL
-	YegsJEMXMLKsYhRJLS3OTc8tNtIrTswtLs1L10vOz93ECEwA24793LKDceWrj3qHGJk4GA8x
-	SnAwK4nwin94mSbEm5JYWZValB9fVJqTWnyI0RQYQhOZpUST84EpKK8k3tDMwNTQxMzSwNTS
-	zFhJnJftyvk0IYH0xJLU7NTUgtQimD4mDk6pBqadKVPqlIPyFmYbrXw8LTDp79JzXemPmY5x
-	10TPXbHsrNnuNoEnsu3Rn42nqPopPl5QV7H4zcf2/Z6Gdi6VK81fd9kwm8lf0JRqv8C0+nWh
-	isbZN0I2MfVOEwTnWb8+Wr3yNitH3uHo2t31c8z28h3YrBF/6E3Do4yi1DDR6KlJ/xmENTbu
-	PrkiV+2cKpNwG+e3mRvqzd8dLpk+f7/W64in1rl9WlU+tkte/588I+DLh8in4Uu9n994pWR8
-	Va6+Qk7my7R9TnLXCuReX35R17KI79/O3T7lt+Z9Xzu1f8nkZ68XsCnJbDx2p2ni9r83HUMm
-	pi6IW8l3s8LLU/LSMwbp06V79iTHbunMWKkVpbdCiaU4I9FQi7moOBEACSnuo4kDAAA=
-X-CMS-MailID: 20240919192410eucas1p1b20597bb951af35f31e3fe5e0df62294
-X-Msg-Generator: CA
-X-RootMTR: 20240919170739eucas1p1213d18f662c5370f71887fa1a5936409
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240919170739eucas1p1213d18f662c5370f71887fa1a5936409
-References: <20240906144506.1151789-1-kris.van.hees@oracle.com>
-	<CGME20240919170739eucas1p1213d18f662c5370f71887fa1a5936409@eucas1p1.samsung.com>
-	<20240906144506.1151789-3-kris.van.hees@oracle.com>
-	<20240919170737.3oe2teklabpz54hx@AALNPWDAGOMEZ1.aal.scsc.local>
-	<CAK7LNAR_TKY+eiW6C_9DhDKY=7x9zmh=CMEM3fVSL6n26ruEjQ@mail.gmail.com>
-	<87ldzncy8l.fsf@gentoo.org>
+In-Reply-To: <a4d94eab-8543-45e1-b657-fa7f12470538@kwiboo.se>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/223.982.64
+X-ZohoMailClient: External
 
-On Thu, Sep 19, 2024 at 07:08:42PM +0100, Sam James wrote:
-> Masahiro Yamada <masahiroy@kernel.org> writes:
-> 
-> > On Fri, Sep 20, 2024 at 2:07 AM Daniel Gomez <da.gomez@samsung.com> wrote:
-> >>
-> >> On Fri, Sep 06, 2024 at 10:45:03AM -0400, Kris Van Hees wrote:
-> >> > Create file module.builtin.ranges that can be used to find where
-> >> > built-in modules are located by their addresses. This will be useful for
-> >> > tracing tools to find what functions are for various built-in modules.
-> >> >
-> >> > The offset range data for builtin modules is generated using:
-> >> >  - modules.builtin: associates object files with module names
-> >> >  - vmlinux.map: provides load order of sections and offset of first member
-> >> >     per section
-> >> >  - vmlinux.o.map: provides offset of object file content per section
-> >> >  - .*.cmd: build cmd file with KBUILD_MODFILE
-> >> >
-> >> > The generated data will look like:
-> >> >
-> >> > .text 00000000-00000000 = _text
-> >> > .text 0000baf0-0000cb10 amd_uncore
-> >> > .text 0009bd10-0009c8e0 iosf_mbi
-> >> > ...
-> >> > .text 00b9f080-00ba011a intel_skl_int3472_discrete
-> >> > .text 00ba0120-00ba03c0 intel_skl_int3472_discrete intel_skl_int3472_tps68470
-> >> > .text 00ba03c0-00ba08d6 intel_skl_int3472_tps68470
-> >> > ...
-> >> > .data 00000000-00000000 = _sdata
-> >> > .data 0000f020-0000f680 amd_uncore
-> >> >
-> >> > For each ELF section, it lists the offset of the first symbol.  This can
-> >> > be used to determine the base address of the section at runtime.
-> >> >
-> >> > Next, it lists (in strict ascending order) offset ranges in that section
-> >> > that cover the symbols of one or more builtin modules.  Multiple ranges
-> >> > can apply to a single module, and ranges can be shared between modules.
-> >> >
-> >> > The CONFIG_BUILTIN_MODULE_RANGES option controls whether offset range data
-> >> > is generated for kernel modules that are built into the kernel image.
-> >> >
-> >> > How it works:
-> >> >
-> >> >  1. The modules.builtin file is parsed to obtain a list of built-in
-> >> >     module names and their associated object names (the .ko file that
-> >> >     the module would be in if it were a loadable module, hereafter
-> >> >     referred to as <kmodfile>).  This object name can be used to
-> >> >     identify objects in the kernel compile because any C or assembler
-> >> >     code that ends up into a built-in module will have the option
-> >> >     -DKBUILD_MODFILE=<kmodfile> present in its build command, and those
-> >> >     can be found in the .<obj>.cmd file in the kernel build tree.
-> >> >
-> >> >     If an object is part of multiple modules, they will all be listed
-> >> >     in the KBUILD_MODFILE option argument.
-> >> >
-> >> >     This allows us to conclusively determine whether an object in the
-> >> >     kernel build belong to any modules, and which.
-> >> >
-> >> >  2. The vmlinux.map is parsed next to determine the base address of each
-> >> >     top level section so that all addresses into the section can be
-> >> >     turned into offsets.  This makes it possible to handle sections
-> >> >     getting loaded at different addresses at system boot.
-> >> >
-> >> >     We also determine an 'anchor' symbol at the beginning of each
-> >> >     section to make it possible to calculate the true base address of
-> >> >     a section at runtime (i.e. symbol address - symbol offset).
-> >> >
-> >> >     We collect start addresses of sections that are included in the top
-> >> >     level section.  This is used when vmlinux is linked using vmlinux.o,
-> >> >     because in that case, we need to look at the vmlinux.o linker map to
-> >> >     know what object a symbol is found in.
-> >> >
-> >> >     And finally, we process each symbol that is listed in vmlinux.map
-> >> >     (or vmlinux.o.map) based on the following structure:
-> >> >
-> >> >     vmlinux linked from vmlinux.a:
-> >> >
-> >> >       vmlinux.map:
-> >> >         <top level section>
-> >> >           <included section>  -- might be same as top level section)
-> >> >             <object>          -- built-in association known
-> >> >               <symbol>        -- belongs to module(s) object belongs to
-> >> >               ...
-> >> >
-> >> >     vmlinux linked from vmlinux.o:
-> >> >
-> >> >       vmlinux.map:
-> >> >         <top level section>
-> >> >           <included section>  -- might be same as top level section)
-> >> >             vmlinux.o         -- need to use vmlinux.o.map
-> >> >               <symbol>        -- ignored
-> >> >               ...
-> >> >
-> >> >       vmlinux.o.map:
-> >> >         <section>
-> >> >             <object>          -- built-in association known
-> >> >               <symbol>        -- belongs to module(s) object belongs to
-> >> >               ...
-> >> >
-> >> >  3. As sections, objects, and symbols are processed, offset ranges are
-> >> >     constructed in a straight-forward way:
-> >> >
-> >> >       - If the symbol belongs to one or more built-in modules:
-> >> >           - If we were working on the same module(s), extend the range
-> >> >             to include this object
-> >> >           - If we were working on another module(s), close that range,
-> >> >             and start the new one
-> >> >       - If the symbol does not belong to any built-in modules:
-> >> >           - If we were working on a module(s) range, close that range
-> >> >
-> >> > Signed-off-by: Kris Van Hees <kris.van.hees@oracle.com>
-> >> > Reviewed-by: Nick Alcock <nick.alcock@oracle.com>
-> >> > Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
-> >> > Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> >> > Tested-by: Sam James <sam@gentoo.org>
-> >> > ---
-> >> >
-> >> > Notes:
-> >> >     Changes since v9:
-> >> >      - Reverted support for build directory as optional 4th argument.
-> >> >      - Added modules.builtin.ranges and vmlinux.o.map to CLEAN_FILES.
-> >> >      - Fixed support for sparc64.
-> >> >
-> >> >     Changes since v8:
-> >> >      - Added support for built-in Rust modules.
-> >> >      - Added optional 4th argument to specify kernel build directory.
-> >> >
-> >> >     Changes since v7:
-> >> >      - Removed extra close(fn).
-> >> >      - Make CONFIG_BUILTIN_MODULE_RANGES depend on !lTO.
-> >> >
-> >> >     Changes since v6:
-> >> >      - Applied Masahiro Yamada's suggestions (Kconfig, makefile, script).
-> >> >
-> >> >     Changes since v5:
-> >> >      - Removed unnecessary compatibility info from option description.
-> >> >
-> >> >     Changes since v4:
-> >> >      - Improved commit description to explain the why and how.
-> >> >      - Documented dependency on GNU AWK for CONFIG_BUILTIN_MODULE_RANGES.
-> >> >      - Improved comments in generate_builtin_ranges.awk
-> >> >      - Improved logic in generate_builtin_ranges.awk to handle incorrect
-> >> >        object size information in linker maps
-> >> >
-> >> >     Changes since v3:
-> >> >      - Consolidated patches 2 through 5 into a single patch
-> >> >      - Move CONFIG_BUILTIN_MODULE_RANGES to Kconfig.debug
-> >> >      - Make CONFIG_BUILTIN_MODULE_RANGES select CONFIG_VMLINUX_MAP
-> >> >      - Disable CONFIG_BUILTIN_MODULE_RANGES if CONFIG_LTO_CLANG_(FULL|THIN)=y
-> >> >      - Support LLVM (lld) compiles in generate_builtin_ranges.awk
-> >> >      - Support CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y
-> >> >
-> >> >     Changes since v2:
-> >> >      - Add explicit dependency on FTRACE for CONFIG_BUILTIN_MODULE_RANGES
-> >> >      - 1st arg to generate_builtin_ranges.awk is now modules.builtin.modinfo
-> >> >      - Switched from using modules.builtin.objs to parsing .*.cmd files
-> >> >      - Parse data from .*.cmd in generate_builtin_ranges.awk
-> >> >      - Use $(real-prereqs) rather than $(filter-out ...)
-> >> >     ---
-> >> >
-> >> >  Documentation/process/changes.rst   |   7 +
-> >> >  Makefile                            |   1 +
-> >> >  lib/Kconfig.debug                   |  15 +
-> >> >  scripts/Makefile.vmlinux            |  18 +
-> >> >  scripts/Makefile.vmlinux_o          |   3 +
-> >> >  scripts/generate_builtin_ranges.awk | 508 ++++++++++++++++++++++++++++
-> >> >  6 files changed, 552 insertions(+)
-> >> >  create mode 100755 scripts/generate_builtin_ranges.awk
-> >> >
-> >> > diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-> >> > index 3fc63f27c226..00f1ed7c59c3 100644
-> >> > --- a/Documentation/process/changes.rst
-> >> > +++ b/Documentation/process/changes.rst
-> >> > @@ -64,6 +64,7 @@ GNU tar                1.28             tar --version
-> >> >  gtags (optional)       6.6.5            gtags --version
-> >> >  mkimage (optional)     2017.01          mkimage --version
-> >> >  Python (optional)      3.5.x            python3 --version
-> >> > +GNU AWK (optional)     5.1.0            gawk --version
-> >> >  ====================== ===============  ========================================
-> >> >
-> >> >  .. [#f1] Sphinx is needed only to build the Kernel documentation
-> >> > @@ -192,6 +193,12 @@ platforms. The tool is available via the ``u-boot-tools`` package or can be
-> >> >  built from the U-Boot source code. See the instructions at
-> >> >  https://protect2.fireeye.com/v1/url?k=6b601b01-34fc322b-6b61904e-000babe598f7-59f65dfa7ee29fbf&q=1&e=8abd7076-5118-4660-a833-f762c2c71d32&u=https%3A%2F%2Fdocs.u-boot.org%2Fen%2Flatest%2Fbuild%2Ftools.html%23building-tools-for-linux
-> >> >
-> >> > +GNU AWK
-> >> > +-------
-> >> > +
-> >> > +GNU AWK is needed if you want kernel builds to generate address range data for
-> >> > +builtin modules (CONFIG_BUILTIN_MODULE_RANGES).
-> >> > +
-> >> >  System utilities
-> >> >  ****************
-> >> >
-> >> > diff --git a/Makefile b/Makefile
-> >> > index d57cfc6896b8..ec98a1e5b257 100644
-> >> > --- a/Makefile
-> >> > +++ b/Makefile
-> >> > @@ -1482,6 +1482,7 @@ endif # CONFIG_MODULES
-> >> >  # Directories & files removed with 'make clean'
-> >> >  CLEAN_FILES += vmlinux.symvers modules-only.symvers \
-> >> >              modules.builtin modules.builtin.modinfo modules.nsdeps \
-> >> > +            modules.builtin.ranges vmlinux.o.map \
-> >> >              compile_commands.json rust/test \
-> >> >              rust-project.json .vmlinux.objs .vmlinux.export.c
-> >> >
-> >> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> >> > index a30c03a66172..5e2f30921cb2 100644
-> >> > --- a/lib/Kconfig.debug
-> >> > +++ b/lib/Kconfig.debug
-> >> > @@ -571,6 +571,21 @@ config VMLINUX_MAP
-> >> >         pieces of code get eliminated with
-> >> >         CONFIG_LD_DEAD_CODE_DATA_ELIMINATION.
-> >> >
-> >> > +config BUILTIN_MODULE_RANGES
-> >> > +     bool "Generate address range information for builtin modules"
-> >> > +     depends on !LTO
-> >> > +     depends on VMLINUX_MAP
-> >> > +     help
-> >> > +      When modules are built into the kernel, there will be no module name
-> >> > +      associated with its symbols in /proc/kallsyms.  Tracers may want to
-> >> > +      identify symbols by module name and symbol name regardless of whether
-> >> > +      the module is configured as loadable or not.
-> >> > +
-> >> > +      This option generates modules.builtin.ranges in the build tree with
-> >> > +      offset ranges (per ELF section) for the module(s) they belong to.
-> >> > +      It also records an anchor symbol to determine the load address of the
-> >> > +      section.
-> >> > +
-> >> >  config DEBUG_FORCE_WEAK_PER_CPU
-> >> >       bool "Force weak per-cpu definitions"
-> >> >       depends on DEBUG_KERNEL
-> >> > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> >> > index 5ceecbed31eb..dfb408aa19c6 100644
-> >> > --- a/scripts/Makefile.vmlinux
-> >> > +++ b/scripts/Makefile.vmlinux
-> >> > @@ -33,6 +33,24 @@ targets += vmlinux
-> >> >  vmlinux: scripts/link-vmlinux.sh vmlinux.o $(KBUILD_LDS) FORCE
-> >> >       +$(call if_changed_dep,link_vmlinux)
-> >> >
-> >> > +# module.builtin.ranges
-> >> > +# ---------------------------------------------------------------------------
-> >> > +ifdef CONFIG_BUILTIN_MODULE_RANGES
-> >> > +__default: modules.builtin.ranges
-> >> > +
-> >> > +quiet_cmd_modules_builtin_ranges = GEN     $@
-> >> > +      cmd_modules_builtin_ranges = $(real-prereqs) > $@
-> >> > +
-> >> > +targets += modules.builtin.ranges
-> >> > +modules.builtin.ranges: $(srctree)/scripts/generate_builtin_ranges.awk \
-> >> > +                     modules.builtin vmlinux.map vmlinux.o.map FORCE
-> >> > +     $(call if_changed,modules_builtin_ranges)
-> >> > +
-> >> > +vmlinux.map: vmlinux
-> >> > +     @:
-> >> > +
-> >> > +endif
-> >> > +
-> >> >  # Add FORCE to the prerequisites of a target to force it to be always rebuilt.
-> >> >  # ---------------------------------------------------------------------------
-> >> >
-> >> > diff --git a/scripts/Makefile.vmlinux_o b/scripts/Makefile.vmlinux_o
-> >> > index d64070b6b4bc..0b6e2ebf60dc 100644
-> >> > --- a/scripts/Makefile.vmlinux_o
-> >> > +++ b/scripts/Makefile.vmlinux_o
-> >> > @@ -45,9 +45,12 @@ objtool-args = $(vmlinux-objtool-args-y) --link
-> >> >  # Link of vmlinux.o used for section mismatch analysis
-> >> >  # ---------------------------------------------------------------------------
-> >> >
-> >> > +vmlinux-o-ld-args-$(CONFIG_BUILTIN_MODULE_RANGES)    += -Map=$@.map
-> >> > +
-> >> >  quiet_cmd_ld_vmlinux.o = LD      $@
-> >> >        cmd_ld_vmlinux.o = \
-> >> >       $(LD) ${KBUILD_LDFLAGS} -r -o $@ \
-> >> > +     $(vmlinux-o-ld-args-y) \
-> >> >       $(addprefix -T , $(initcalls-lds)) \
-> >> >       --whole-archive vmlinux.a --no-whole-archive \
-> >> >       --start-group $(KBUILD_VMLINUX_LIBS) --end-group \
-> >> > diff --git a/scripts/generate_builtin_ranges.awk b/scripts/generate_builtin_ranges.awk
-> >> > new file mode 100755
-> >> > index 000000000000..b9ec761b3bef
-> >> > --- /dev/null
-> >> > +++ b/scripts/generate_builtin_ranges.awk
-> >> > @@ -0,0 +1,508 @@
-> >> > +#!/usr/bin/gawk -f
-> >>
-> >> This forces the gawk to be found always in /usr/bin. For systems where gawk can
-> >> be located in other places, can we change the Shebang to:
-> >>
-> >> diff --git a/scripts/generate_builtin_ranges.awk b/scripts/generate_builtin_ranges.awk
-> >> index b9ec761b3bef..886251c8d3f7 100755
-> >> --- a/scripts/generate_builtin_ranges.awk
-> >> +++ b/scripts/generate_builtin_ranges.awk
-> >> @@ -1,4 +1,4 @@
-> >> -#!/usr/bin/gawk -f
-> >> +#!/usr/bin/env gawk -f
-> >>  # SPDX-License-Identifier: GPL-2.0
-> >>  # generate_builtin_ranges.awk: Generate address range data for builtin modules
-> >>  # Written by Kris Van Hees <kris.van.hees@oracle.com>
-> >
-> >
-> > No. We cannot fix it this way.
 
-May I ask why if a distro installs gawk somewhere else, the "/usr/bin/env"
-approach will not work either? I just want to understand that case.
+--qcskwoh6fbt5qu6y
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> >
-> >
-> > I already pointed out this shebang issue.
-> >
-> > https://lore.kernel.org/lkml/CAK7LNASLc=ik9QdX4K_XuN=cg+1VcUBk-y5EnQEtOG+qOWaY=Q@mail.gmail.com/
+Hi,
 
-To clarify, I've mentioned this because the patch landed in the linux-next
-without the fix below. And I did not see there was a build error reporting it.
+On Thu, Sep 19, 2024 at 01:33:25PM GMT, Jonas Karlman wrote:
+> On 2024-09-19 11:12, Sebastian Reichel wrote:
+> > Enabling the GPU power domain requires that the GPU regulator is
+> > enabled. The regulator is enabled at boot time, but automatically
+> > gets disabled when there are no users.
+> >=20
+> > If the GPU driver is not probed at boot time or rebound while
+> > the system is running the system will try to enable the power
+> > domain before the regulator is enabled resulting in a failure
+> > hanging the whole system. Avoid this by adding an explicit
+> > dependency.
+> >=20
+> > Reported-by: Adri=E1n Mart=EDnez Larumbe <adrian.larumbe@collabora.com>
+> > Tested-by: Adrian Larumbe <adrian.larumbe@collabora.com> # On Rock 5B
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk3588-armsom-sige7.dts         | 4 ++++
+> >  arch/arm64/boot/dts/rockchip/rk3588-base.dtsi                | 2 +-
+> >  arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5.dtsi          | 4 ++++
+> >  arch/arm64/boot/dts/rockchip/rk3588-friendlyelec-cm3588.dtsi | 4 ++++
+> >  arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts               | 4 ++++
+> >  arch/arm64/boot/dts/rockchip/rk3588-ok3588-c.dts             | 4 ++++
+> >  arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts           | 4 ++++
+> >  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts              | 4 ++++
+> >  arch/arm64/boot/dts/rockchip/rk3588-tiger.dtsi               | 4 ++++
+> >  arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts           | 4 ++++
+> >  arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts        | 4 ++++
+> >  arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts          | 4 ++++
+> >  12 files changed, 45 insertions(+), 1 deletion(-)
+>=20
+> Any reason why following rk3588 DTs was not updated?
+>=20
+> rk3588-evb1-v10.dts
+> rk3588-quartzpro64.dts
 
-Thanks for sending the link!
+These two I skipped initially, since they have the GPU regulators
+always enabled due to the coupling. I'm not 100% sure if the GPU
+or the GPU-MEM regulator (or both) are required for the GPU power
+domain.
 
-> >
-> >
-> >
-> > I thought Kris would send a fix up, but
-> > perhaps people tend to be busy with LPC this week.
-> >
-> >
-> 
-> He did, see https://lore.kernel.org/all/20240912171646.1523528-1-kris.van.hees@oracle.com/.
+> rk3588-nanopc-t6.dtsi
+> rk3588s-gameforce-ace.dts
+> rk3588s-odroid-m2.dts
 
-Thanks for the link. That worked for me too.
+=2E.. And these I missed, since they are new.
 
-> 
-> >
-> >> Not sure if it's too late? in that case I can send a patch to change this.
-> >
-> >
-> > I can locally fix it up.
-> >
-> > Kris agreed with this fix.
-> >
-> >
-> > diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
-> > index dfb408aa19c6..1284f05555b9 100644
-> > --- a/scripts/Makefile.vmlinux
-> > +++ b/scripts/Makefile.vmlinux
-> > @@ -39,7 +39,7 @@ ifdef CONFIG_BUILTIN_MODULE_RANGES
-> >  __default: modules.builtin.ranges
-> >
-> >  quiet_cmd_modules_builtin_ranges = GEN     $@
-> > -      cmd_modules_builtin_ranges = $(real-prereqs) > $@
-> > +      cmd_modules_builtin_ranges = gawk -f $(real-prereqs) > $@
-> >
-> >  targets += modules.builtin.ranges
-> >  modules.builtin.ranges: $(srctree)/scripts/generate_builtin_ranges.awk \
+I don't have enough time to prepare a v3 before my vacation.
+Note, that not describing the regulator just keeps the current
+behaviour.
+
+> I also expect we may need to define domain-supply for the npu on
+> rk3588 and also both gpu and npu on rk356x in a future series.
+
+Yes, I already discussed that in Vienna with Heiko and Tomeu. The
+binding change also allows adding a regulator to the NPU power
+domain.
+
+> Similar freeze issue has been observed on rk356x when booting vendor
+> kernel with npu support enabled using mainline U-Boot and DT [1].
+>=20
+> To work around that issue on rk356x the npu regulator could be changed
+> to always-on/boot-on to get past the kernel freeze [2].
+>=20
+> [1] https://github.com/armbian/build/pull/7025#issuecomment-2291067748
+> [2] https://github.com/Kwiboo/u-boot-rockchip/commit/da31da4b68f858f54364=
+a21b0dd00fef2ab0d0d6
+
+Yes, that looks like the same issue and I guess the changes to the Rockchip
+power-domain driver should also work for rk356x. I don't have one, though.
+
+-- Sebastian
+
+--qcskwoh6fbt5qu6y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmbsexIACgkQ2O7X88g7
++ppTJxAAkEXAcW4m8OiEyvh+R+umb7431j7PO5cBpN3NM+cGmUD+ARwYE4yCH5Mi
+lqLf72szC73KnWPS5Eu9mhCEFBIrhNmEVrQM69ibmlHyihhZh2CO3X2wDV+UAm79
+ZyJ+OP71kvCHndjSNEXILKxXAyoARczvn+tbFICz3di3S+UXlqs1s3NnzGvjjBlo
+GwxkCx5JwIKsdc3FOe5Mtj3Lw08lCF3qxJTXxT9anF/2h055IJco8diIsGlAAXy7
+LnCQkpgZZBLKeJFhFeuMV7lJgjGK0bsymHl6P8dzXSIZtXBLbMRTXql8qunv4cUY
+hkVH0V6iduGVdcj/uZEpoOAAXqFQE+1UVA8Bsyf69/o3806iUzR3Z2zJk7CdZgu3
+3PUw/fpgDmFpMI7nIIH2GY6Q5+4yssZb0nd6kzCepIf41dQWAXAvvq3bBCjRz0cw
+eOP/BIZYEFwRSOu0YL+EQ7ae4kQ/j05sFMCBRFRGUB4uoLZbKWSos/SRt0DWTNQv
+N97DxGJmjfxH/zSxExgLqebsV1KZd6Frg4G7Nzp4XgW8hghoqPe+0YvQVNMLRfq7
+Y+y67lrBNCnEfnGv+mIU+cDWaH1NDlPAz1Zfjb8jdBOizYJjfohFdOyRNWc6RVh1
+i8kJklC2dA/K95e/LTU+1bPYFnnrycmrvFKrjECNmIGRAuRIz6Q=
+=nKZO
+-----END PGP SIGNATURE-----
+
+--qcskwoh6fbt5qu6y--
 
