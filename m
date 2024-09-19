@@ -1,133 +1,226 @@
-Return-Path: <linux-kernel+bounces-333161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA11197C4BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:17:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A37597C4A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 09:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A07592854A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:17:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D85361F22103
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Sep 2024 07:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00CE019259E;
-	Thu, 19 Sep 2024 07:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FFF191F88;
+	Thu, 19 Sep 2024 07:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="v7ggCbi7"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L2ENpv2E"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CF820314;
-	Thu, 19 Sep 2024 07:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A0E191F7D;
+	Thu, 19 Sep 2024 07:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726730229; cv=none; b=E+YtoQo9+puZzQ8e89X/fuizxi+0+p+CBmZRD4/EN8Y4pdXOB3msqSC1uc0yb53uOKy456LeJgVyjoQgra3xTrhZjK/8GignL2t1raUU9n/wGM0bOG2eDAEYSrDGFS/yarv5M5HPTfEDfjnbz+lJXEdVsM+7JFnwf1Fx97Lznxg=
+	t=1726729845; cv=none; b=JFfbCWxHDhDEM5Op1oh8g499bnEVy8BARPL/HEcftDa+wS3qgJj3B2Fw12TcJbMm61JFAegPdkzoGG/LcstZGzi1QNk+tmOZ+JGyjE45DHopMCSp1pWypGyGHXDPiOsOJZOZavn7ZetsnBMJYnfGNSg3qZAgocorCEZRAOupoj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726730229; c=relaxed/simple;
-	bh=xcjpsMKI13u3WcKGB0N9zGs0tG0CLFvOvo1y6POEmoI=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=ln6gVQqo0wiWp40gcv8j3+NwTTPep/NecIUEkCSlcxZiy3Iq4UnROe4AzSlsFOhcKapHj0RfdBw5PUOxd9bHRW9RyDn6svMjIUByaUFxJFP5u+KKGq6/xKvrnNduRd+IpuiMMD/adLtL5qJIJd9LEsZ2py3Nu85yrcJS2LssPw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=v7ggCbi7; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726730224; h=Message-ID:Subject:Date:From:To;
-	bh=ssL8UI9+cmR3eancWEz3OVmCqRIhQMFqE23fxOHlFWk=;
-	b=v7ggCbi7ClIqsz8NhNfwwlBMpsJ6Zji4gWjGfVX4XI/rlIW5C5HUyLDnNIuudwNaLvVMOIbDl7RskQgYr1ZzHDDiu3qFxyRjXrUUSeGebPYBElZD5Mn3v0hS47Ys4xMaBqgQxg/07b7JUFJV7iJiJhF5yu9JqgENthVZhCMGo4c=
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WFGjrnj_1726729904)
-          by smtp.aliyun-inc.com;
-          Thu, 19 Sep 2024 15:11:45 +0800
-Message-ID: <1726729783.1689022-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [RESEND PATCH v3] virtio_net: Fix mismatched buf address when unmapping for small packets
-Date: Thu, 19 Sep 2024 15:09:43 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Wenbo Li <liwenbo.martin@bytedance.com>
-Cc: virtualization@lists.linux.dev,
- netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Wenbo Li <liwenbo.martin@bytedance.com>,
- Jiahui Cen <cenjiahui@bytedance.com>,
- Ying Fang <fangying.tommy@bytedance.com>,
- mst@redhat.com,
- jasowang@redhat.com,
- eperezma@redhat.com,
- davem@davemloft.net,
- edumazet@google.com,
- kuba@kernel.org,
- pabeni@redhat.com
-References: <20240919035214.41805-1-liwenbo.martin@bytedance.com>
-In-Reply-To: <20240919035214.41805-1-liwenbo.martin@bytedance.com>
+	s=arc-20240116; t=1726729845; c=relaxed/simple;
+	bh=3QHzNYn6bQo9WZIWRe3nhGOkEDPFAhwWWERWCitveaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SkKrgJZPLtbzhRgVYgnRqsxvk+kDYsfe53JhtLsaijiStrTbRFOy9+gdbymSVeM5ifyBLAU5LvgoDB/2YEbgYqkT6/XI/TEW37VBd+Daah02e6Z5xt3OJY63f9LmQFOEUw2EVc0HmL+6sUc4NQCXkB3kRm1jk0AyXFqQbLXegBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L2ENpv2E; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-45821eb62daso2760491cf.3;
+        Thu, 19 Sep 2024 00:10:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726729843; x=1727334643; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=7QO2c7/I67RlCRDcr/Y3qX9Q299kYfHctBt13qLUVFY=;
+        b=L2ENpv2E7SfesfqD5Sa8kdB/FRB0ydtRqxsCdhtu82+Y34uXMbQCK3Ui0Va0NkkD5X
+         6OAkZcg9wCFmS1uz57SUlJyoWST/zHXYBkEkwUwB5G6gbADpB7VQFnmqq5i++OVU0axq
+         dG+nkivRZHwc5Ii2T6l/0bIMAhW66TYq+dSkmSw+gKKcqhAUr9x7uhis4VQazIJrBWGP
+         jVuOuYHmVG8BlE9dhYLkHOfdKoz3Zx49KndRcpq7TMTvA3c4demR0bRR/LbjBwGpmuen
+         vlcmlM1PDHw7t9ucL9HsK6FxjlPkxBnuuw3gU0R/jdoifFhPfm1zHQtkY0bNSSTJHWh0
+         DZpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726729843; x=1727334643;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7QO2c7/I67RlCRDcr/Y3qX9Q299kYfHctBt13qLUVFY=;
+        b=nXHMeh0gu5fz94WyX68g+Jwb+PcVRF8si9eXbRF2xEobHBOw+I/3yY2768j80HYiOd
+         W7WK/8z8hXMESv4iz1BAPxvTv6D8CmlEq2lE28vxeU2GRTnbZwpQjj9ERTwmk3uNwQCu
+         +UmddoRCy9WdkyYy32GtO9jetxMr1anqsvnvQO7U+Yo4KCHAiaPqdoVWLMf2ZgWH09tM
+         YbL0InO7Zv5zuXbG4W15mfkucT2fPNLWA+IVjrdHmTIJe2R/XaX5IVu7SNRHw68Me1ZS
+         NHjiwxgeGeWruKcr2JgLA12hj8n4IA5fJzP4kNacelD62DMJjsHKLEdl2mLza3CR9D+g
+         HGbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPvdnZr3tylaztCJvLGhP3xn33jMTf6YqZEFoKm+I6g9VFEZ/iKaeohnl5wemmo6Oy2sY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZQhJMWLtM+ASf0hJCGav1PN9vTMBtYRjsCbMEzRcJLohJoeuM
+	408uT1bJCgUgwNt8ex/3gC/HmJLIA+Zf2/I/udz1PtB5t8GJqglb
+X-Google-Smtp-Source: AGHT+IEKX3hg+/XrCUs3vNj5lGyvUgv9sa2s1gAeDJdkuaQ80BEsYKQrkSosZ6GkHLs9lV7qEOSmyg==
+X-Received: by 2002:ac8:7d02:0:b0:458:52f0:9bd8 with SMTP id d75a77b69052e-45860422a45mr368514221cf.53.1726729842653;
+        Thu, 19 Sep 2024 00:10:42 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45b1788c181sm4461881cf.52.2024.09.19.00.10.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Sep 2024 00:10:42 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 785DF120006E;
+	Thu, 19 Sep 2024 03:10:41 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Thu, 19 Sep 2024 03:10:41 -0400
+X-ME-Sender: <xms:cc7rZuL2KHpOmhysjtNv0J7Ul8PR7rUZN3DoM0IJ3r6a8DlgJP2TWw>
+    <xme:cc7rZmJGjq1YIbKuEKmvp_m-f2H2otINvkQIvm4WugGtWuwCX4nrEY_VcMmFGj1vS
+    VP9l1ElaNCrSdGXiA>
+X-ME-Received: <xmr:cc7rZutbiI7QMFsGerMXhXO1junoCRgmS3xkGcxhooXxLWitXXvBCL12Q7E1yQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeltddguddulecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    jeenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeevgffhueevkedutefgveduuedujeefledt
+    hffgheegkeekiefgudekhffggeelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
+    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvdeipdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehjihgrnhhgshhhrghnlhgrihesghhmrg
+    hilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehrtghusehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoheplhhk
+    mhhmsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepphgruhhlmhgtkheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepfhhrvgguvghrihgtsehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehnvggvrhgrjhdruhhprgguhhihrgihsehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehjohgvlhesjhhovghlfhgvrhhnrghnuggvshdrohhrgh
+X-ME-Proxy: <xmx:cc7rZjaxK_4FLYRunDorIZ-lf25ZimazwKmlXG46oFpPRf3L9lzu7A>
+    <xmx:cc7rZla83OcqCw74lEFDI8tUAfKrwQy1gRULvYEF5yYrO2ObvuvAEA>
+    <xmx:cc7rZvAQYL5oabCq1Osgi2S5AgTTt_efQM4zVLG7_gwJ_Jhp_dO3-Q>
+    <xmx:cc7rZrZn_I1vzu8Fd8uR4iTOucHrGzc2_PeN2iElgMelzfyzGemshw>
+    <xmx:cc7rZlp5HrKHc67ffqs2cwdsK-oZ-hz1GIKWGvtCe701TrMNTdD3AeWN>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 19 Sep 2024 03:10:40 -0400 (EDT)
+Date: Thu, 19 Sep 2024 00:10:16 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
+	lkmm@lists.linux.dev, "Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+Message-ID: <ZuvOWM5c8tZotHFL@boqun-archlinux>
+References: <20240917143402.930114-1-boqun.feng@gmail.com>
+ <20240917143402.930114-2-boqun.feng@gmail.com>
+ <CAJhGHyD8MzUssfuKSGnu1arnayNOyBnUA03vYB0WWwbE3WzoZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJhGHyD8MzUssfuKSGnu1arnayNOyBnUA03vYB0WWwbE3WzoZg@mail.gmail.com>
 
-On Thu, 19 Sep 2024 11:52:14 +0800, Wenbo Li <liwenbo.martin@bytedance.com> wrote:
-> Currently, the virtio-net driver will perform a pre-dma-mapping for
-> small or mergeable RX buffer. But for small packets, a mismatched address
-> without VIRTNET_RX_PAD and xdp_headroom is used for unmapping.
->
-> That will result in unsynchronized buffers when SWIOTLB is enabled, for
-> example, when running as a TDX guest.
->
-> This patch unifies the address passed to the virtio core into the address
-> of the virtnet header and fixes the mismatched buffer address.
->
-> Changes from v2: unify the buf that passed to the virtio core in small
-> and merge mode.
-> Changes from v1: Use ctx to get xdp_headroom.
->
-> Fixes: 295525e29a5b ("virtio_net: merge dma operations when filling mergeable buffers")
-> Signed-off-by: Wenbo Li <liwenbo.martin@bytedance.com>
-> Signed-off-by: Jiahui Cen <cenjiahui@bytedance.com>
-> Signed-off-by: Ying Fang <fangying.tommy@bytedance.com>
-> ---
->  drivers/net/virtio_net.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 6f4781ec2b36..9446666c84aa 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -1804,9 +1804,15 @@ static struct sk_buff *receive_small(struct net_device *dev,
->  				     struct virtnet_rq_stats *stats)
->  {
->  	unsigned int xdp_headroom = (unsigned long)ctx;
-> -	struct page *page = virt_to_head_page(buf);
-> +	struct page *page;
+On Thu, Sep 19, 2024 at 02:39:13PM +0800, Lai Jiangshan wrote:
+> On Tue, Sep 17, 2024 at 10:34 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> 
+> > +static void hazptr_context_snap_readers_locked(struct hazptr_reader_tree *tree,
+> > +                                              struct hazptr_context *hzcp)
+> > +{
+> > +       lockdep_assert_held(hzcp->lock);
+> > +
+> > +       for (int i = 0; i < HAZPTR_SLOT_PER_CTX; i++) {
+> > +               /*
+> > +                * Pairs with smp_store_release() in hazptr_{clear,free}().
+> > +                *
+> > +                * Ensure
+> > +                *
+> > +                * <reader>             <updater>
+> > +                *
+> > +                * [access protected pointers]
+> > +                * hazptr_clear();
+> > +                *   smp_store_release()
+> > +                *                      // in reader scan.
+> > +                *                      smp_load_acquire(); // is null or unused.
+> > +                *                      [run callbacks] // all accesses from
+> > +                *                                      // reader must be
+> > +                *                                      // observed.
+> > +                */
+> > +               hazptr_t val = smp_load_acquire(&hzcp->slots[i]);
+> > +
+> > +               if (!is_null_or_unused(val)) {
+> > +                       struct hazptr_slot_snap *snap = &hzcp->snaps[i];
+> > +
+> > +                       // Already in the tree, need to remove first.
+> > +                       if (!is_null_or_unused(snap->slot)) {
+> > +                               reader_del(tree, snap);
+> > +                       }
+> > +                       snap->slot = val;
+> > +                       reader_add(tree, snap);
+> > +               }
+> > +       }
+> > +}
+> 
+> Hello
+> 
+> I'm curious about whether there are any possible memory leaks here.
+> 
+> It seems that call_hazptr() never frees the memory until the slot is
+> set to another valid value.
+> 
+> In the code here, the snap is not deleted when hzcp->snaps[i] is null/unused
+> and snap->slot is not which I think it should be.
+> 
+> And it can cause unneeded deletion and addition of the snap if the slot
+> value is unchanged.
+> 
 
-Because that here is head page, so you can keep the original code.
+I think you're right. (Although the node will be eventually deleted at
+cleanup_hazptr_context(), however there could be a long-live
+hazptr_context). It should be:
 
->  	struct sk_buff *skb;
->
-> +	// We passed the address of virtnet header to virtio-core,
-> +	// so truncate the padding.
+		hazptr_t val = smp_load_acquire(&hzcp->slots[i]);
+		struct hazptr_slot_snap *snap = &hzcp->snaps[i];
 
-Please check the kernel code style.
+		if (val != snap->slot) { // val changed, need to update the tree node.
+			// Already in the tree, need to remove first.
+			if (!is_null_or_unused(snap->slot)) {
+				reader_del(tree, snap);
+			}
 
-Thanks.
+			// use the latest snapshot.
+			snap->slot = val;
 
-> +	buf -= VIRTNET_RX_PAD + xdp_headroom;
-> +
-> +	page = virt_to_head_page(buf);
-> +
->  	len -= vi->hdr_len;
->  	u64_stats_add(&stats->bytes, len);
->
-> @@ -2422,8 +2428,9 @@ static int add_recvbuf_small(struct virtnet_info *vi, struct receive_queue *rq,
->  	if (unlikely(!buf))
->  		return -ENOMEM;
->
-> -	virtnet_rq_init_one_sg(rq, buf + VIRTNET_RX_PAD + xdp_headroom,
-> -			       vi->hdr_len + GOOD_PACKET_LEN);
-> +	buf += VIRTNET_RX_PAD + xdp_headroom;
-> +
-> +	virtnet_rq_init_one_sg(rq, buf, vi->hdr_len + GOOD_PACKET_LEN);
->
->  	err = virtqueue_add_inbuf_ctx(rq->vq, rq->sg, 1, buf, ctx, gfp);
->  	if (err < 0) {
-> --
-> 2.20.1
->
+			// Add it into tree if there is a reader
+			if (!is_null_or_unused(val))
+				reader_add(tree, snap);
+		}
+
+Regards,
+Boqun
+
+> I'm not so sure...
+> 
+> Thanks
+> Lai
 
