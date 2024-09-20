@@ -1,144 +1,132 @@
-Return-Path: <linux-kernel+bounces-334026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B56197D188
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:12:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 538AE97D18B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 458891C22A35
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:12:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 870B21C2301B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A393548CDD;
-	Fri, 20 Sep 2024 07:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DBD4317C;
+	Fri, 20 Sep 2024 07:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DSVBRiAx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jAV1v4og"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D0F3BB50;
-	Fri, 20 Sep 2024 07:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0B255897;
+	Fri, 20 Sep 2024 07:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726816343; cv=none; b=ETHz+lNWowZW3iV9kgCnT/o3dfgofiwvlbgwIxci06+z6BWu8ueDyxi4c4xskHsOErd+JbCVnbkze5/J0one8HcyFpXkFnvClx4IulOBlsPPMt4Lp+Zb9dgO3vVGCF+cSosp8y97K84PVKQ7K3l8QTUiZBP/owKJqPj/tKXBkVg=
+	t=1726816380; cv=none; b=jGXUxucovnGQNEd33xQoqIOr73Re/IWYekJ56xf98h8ZKg2LA4Fu1QEtVJVvyRC/fvbv5RRNXmynFg0jNw398XVKMDff6dpMzjuLF7qjhgjn/HF7Y3iwERK/5fIKEIH7MJUcFkQbYqsfBcxvTDZeGuaSzoCudcyt+IcpZos2OOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726816343; c=relaxed/simple;
-	bh=/8F4vC+WrRK8JmcD0TA3VmXt6A8IcZpsr5kN9dbyx7o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=R9PQQSyiMvtZRf4byHzhhB3R6Fpv3Cw/K5eSm2/XRmvMtXEnDG148+DRPbJbeupyV0ZNkeLDWR+2JiJJMBuMly3IblLdeXMvNhSNPuQ0SbHlIpx+/leXHO9i4cshpvjq7HRNEYhwTshO9wBMhSBRrvCMhMNa1TAHEMwbJJLF+V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DSVBRiAx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48JLx2kl018133;
-	Fri, 20 Sep 2024 07:12:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=0EKgVH//p3yEU4Of22Zpii
-	69hvSp1EgzKmBMS7nyUfU=; b=DSVBRiAxcTbzJSnxmAek/GIIjgTySK5YYE75XW
-	T7wMWjHt0X4vmDPZ286A1JSNhswbjVDXjzgHzRqNJ22TVDZNHfpasyD+TfueDqZp
-	UnGrEbh4FQlOfpWy1a5As4YB6RJrjZIWKmp7aWrorK6YjdjXp0YoYWs8i1GtciOn
-	Rql7CxLRllKKDYCDmL2SFoYvhe8U6lHIKP/ioJzWmM5bcZNlRf6tcimtYLfkZo48
-	u9PRdbkoSHhJOgQjNWyHfmcj3+YegqnfZ00PzM0kahPp6dd9bcRs8uN8Ivr7faNh
-	GKwEFgoAraZkncksGZUkErPqGzGBqPQdfc5ayjMXRpHfbETA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4hfr2rg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 07:12:05 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48K7C4cR006797
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 07:12:04 GMT
-Received: from lijuang2-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 20 Sep 2024 00:11:57 -0700
-From: lijuang <quic_lijuang@quicinc.com>
-Date: Fri, 20 Sep 2024 15:11:41 +0800
-Subject: [PATCH v2] dt-bindings: watchdog: Document Qualcomm QCS615
- watchdog
+	s=arc-20240116; t=1726816380; c=relaxed/simple;
+	bh=ZJvISPtPq3+qRDOJvQTH0OIRh8JTF7qw15SFZ+NCIXI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GSwhokGykiQg/6HrMMVoPLMU8GC8/C4xA+DfOlIwA5NWT10CzpSJwLZ5IJobNbMQagao0KeeSYBZ+AzCGhZe3Qzd+cRGg0S4OwXMSWQ0hjrM+nhjCK6gNDtePZtOGaUx9aP1yYKdWUDJ+X43h34jIhLrc+ShJQqR8A7XcJXVQzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jAV1v4og; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC8AC4CEC5;
+	Fri, 20 Sep 2024 07:12:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726816379;
+	bh=ZJvISPtPq3+qRDOJvQTH0OIRh8JTF7qw15SFZ+NCIXI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jAV1v4ogk4aHFALA2x29CQB947xy8Kli8vVlDNeE6aE+mhNC0vQfq1D5tSMSwHHfF
+	 y2FKBnPnESqdJiuDZwklcP4rq0XabCIiKmJ1lUI6h3CcmaNH0PWyPx+mETq/d34wO8
+	 PJNE0oqtjs0OSlwX9/FZ+Jta5bWGDwG+8Qv0nmScyw7jxwpduqJbSFZpPQEOR65V7F
+	 tdsQPCeD6GB1Tu8zhnOfE446nIfMfvv7yCxHJXHgtD6Xhce0J+dg3fX57SIoDQbf/3
+	 kacV5DeIlfqt6FVt47fTn4D4EGUtGEHpkxuWrXHGrL4avm//vW2mP4xKvoFPepoVce
+	 sFR3Zweq4DbGQ==
+From: SeongJae Park <sj@kernel.org>
+To: damon@lists.linux.dev
+Cc: SeongJae Park <sj@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: DAMON Beer/Coffee/Tea chat reminder (was: Re: DAMON Beer/Coffee/Tea chat reminder and extending for office hour)
+Date: Fri, 20 Sep 2024 00:12:54 -0700
+Message-ID: <20240920071255.373268-1-sj@kernel.org>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240920-add_watchdog_compatible_for_qcs615-v2-1-427944f1151e@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIACwg7WYC/42NQQ6CMBBFr0K6toZOwFBX3sOQpkwHmEQptIgaw
- t2txAO4fD8/760iUmCK4pytItDCkf2QAA6ZwN4OHUl2iQXkUOQacmmdM087Y+98Z9DfRztzcyP
- T+mAmjCdVSiKsbIWAGgqRRGOgll975Fon7jnOPrz35qK+60+v4B/9oqSShABNaZ2utLpMD0Ye8
- Jj+ot627QN1orgt1gAAAA==
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck
-	<linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Rajendra Nayak
-	<quic_rjendra@quicinc.com>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Lijuan Gao <quic_lijuang@quicinc.com>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726816316; l=1347;
- i=quic_lijuang@quicinc.com; s=20240827; h=from:subject:message-id;
- bh=/8F4vC+WrRK8JmcD0TA3VmXt6A8IcZpsr5kN9dbyx7o=;
- b=AyiaB6kq6mN7zrKjfS3c7QTrfacqklSKgmDxslJeYz3hj6UVjrLSwKt755IHXcqoZFueHRPIZ
- x3rutL4hQX6CCGTrsgd7B2zWcYegmzaZ1KJt0erfV8yrLlfupwlQPWx
-X-Developer-Key: i=quic_lijuang@quicinc.com; a=ed25519;
- pk=1zeM8FpQK/J1jSFHn8iXHeb3xt7F/3GvHv7ET2RNJxE=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 2LvPdIpFtkIOlW-stJqeU7CLoU7Wqp4c
-X-Proofpoint-ORIG-GUID: 2LvPdIpFtkIOlW-stJqeU7CLoU7Wqp4c
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 phishscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
- impostorscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409200049
+Content-Transfer-Encoding: 8bit
 
-Add devicetree binding for watchdog present on Qualcomm QCS615 SoC.
+Hello,
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
----
-Add devicetree binding for watchdog present on Qualcomm
-QCS615 SoC.
----
-Changes in v2:
-- Collected Acked-by
-- Rebased patchset on top next-20240919
-- Link to v1: https://lore.kernel.org/r/20240912-add_watchdog_compatible_for_qcs615-v1-1-ec22b5ad9891@quicinc.com
----
- Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml | 1 +
- 1 file changed, 1 insertion(+)
+On Sun, 19 May 2024 09:33:29 -0700 SeongJae Park <sj@kernel.org> wrote:
+> On Wed, 10 Aug 2022 22:51:02 +0000 SeongJae Park <sj@kernel.org> wrote:
+> 
+> > Hello,
+> > 
+> > 
+> > In short, I'd like to start an open, regular, and informal virtual bi-weekly
+> > meeting series for DAMON community.
+> > 
+> > Important links and dates
+> > -------------------------
+> > 
+> > Location: https://meet.google.com/ndx-evoc-gbu
+> > Agenda: https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
+> 
+[...]
+> Firstly, I will regularly provide reminder of the series, probably 1-2 days
+> before every instance.
+> 
+> Secondly, I'm extending this series for reservation-based office hour.  That
+> is, I will reserve my time for 30 minutes every two weeks, keep the schedule
+> public, and encourage people to reserve the time for discussion on a special
+> topic for them.  The reservation should be made at least one day before the
+> time slot, and will be first-come first-served basis.  In detail, I will
+> reserve Monday afternoon or Tuesday morning of the group chat scheduled week.
+> Note that this is not necessarily only time slot for such discussion.  You're
+> still encouraged to schedule private meetings on your convenience.
 
-diff --git a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
-index 932393f8c649..32eaf43aadb3 100644
---- a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
-+++ b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
-@@ -26,6 +26,7 @@ properties:
-               - qcom,apss-wdt-msm8994
-               - qcom,apss-wdt-qcm2290
-               - qcom,apss-wdt-qcs404
-+              - qcom,apss-wdt-qcs615
-               - qcom,apss-wdt-sa8255p
-               - qcom,apss-wdt-sa8775p
-               - qcom,apss-wdt-sc7180
+So, yet another reminder.
 
----
-base-commit: 3621a2c9142bd490af0666c0c02d52d60ce0d2a5
-change-id: 20240920-add_watchdog_compatible_for_qcs615-eec8a8c2c924
+Any-topic discussions
+---------------------
 
-Best regards,
--- 
-lijuang <quic_lijuang@quicinc.com>
+Next two chat instance for any topic (no reservation is required) are scheduled
+as below:
 
+- 2024-09-23 (Mon) 18:00 PT (https://meet.google.com/ndx-evoc-gbu)
+- 2024-10-08 (Tue) 09:30 PT (https://meet.google.com/ndx-evoc-gbu)
+- 2024-10-21 (Mon) 18:00 PT (https://meet.google.com/ndx-evoc-gbu)
+
+Dedicated-topic discussions
+---------------------------
+
+Next three time slots that I reserved in advance for possible future dedicated
+topic discussions are as below.
+
+- 2024-09-24 (Tue) 09:30 PT (not yet reserved)
+- 2024-10-07 (Mon) 18:00 PT (not yet reserved)
+- 2024-10-22 (Tue) 09:30 PT (not yet reserved)
+
+Please reach out to me (sj@kernel.org or whatever) to reserve the
+not-yet-reserved time slots for your topics.  The reservation is made in a
+First-Come First-Served way, and I will send a Google Meet link to
+reservation-confirmed attendees.
+
+Please note that other time slots are also available based on the demands.
+
+Shared Calendar
+---------------
+
+You can get the schedule via this shared Google Calendar:
+https://calendar.google.com/calendar/u/0?cid=ZDIwOTA4YTMxNjc2MDQ3NTIyMmUzYTM5ZmQyM2U4NDA0ZGIwZjBiYmJlZGQxNDM0MmY4ZTRjOTE0NjdhZDRiY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t
+
+You can also get the past and upcoming schedules via
+https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
+
+
+Thanks,
+SJ
+
+[...]
 
