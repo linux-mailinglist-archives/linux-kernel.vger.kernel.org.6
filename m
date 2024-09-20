@@ -1,268 +1,146 @@
-Return-Path: <linux-kernel+bounces-333952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591C797D05B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 05:43:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A36BA97D06A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D8841C21259
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 03:43:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DD951F245B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910092032A;
-	Fri, 20 Sep 2024 03:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0482231C;
+	Fri, 20 Sep 2024 04:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G2aZzR8q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="Cam2EvT8"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63DC23A0;
-	Fri, 20 Sep 2024 03:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726803801; cv=fail; b=dxq5mrf/YRBi2gVQsXKKDFI3hKEaTyJDmcGbrN2usGCUro8Yt2ayK3aEjkie+plxv1JbRGdPKdv8IKe7itChInFiZlMHDwHhQ0tayusesJw6+VShtk0yjCof1CqlaWNzhkQRFWWlegFltGx1wrCtDtwyZKuG6oKG/H4N/aOG5Ls=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726803801; c=relaxed/simple;
-	bh=57fyQU1+KsbmoeOalNo+qiJMKe4WK9OYCW+AAFMekuI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=qW8GtKBgZs4C/GBjC1pNj1TcXGtgHQRy1sIs4DqKymqz+wHpNJroZAcXGO3+Yqxe3tpqctAFix1eudRYq8L1Kc3yoD+7nMCuE7pKjYsPKKPXQMhmE+Hf5kl7YDjVWwmXOHX1RIz3P5u0tUjzqOHUDyLJDAb1MNZBKu6QdKG18a0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G2aZzR8q; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726803799; x=1758339799;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=57fyQU1+KsbmoeOalNo+qiJMKe4WK9OYCW+AAFMekuI=;
-  b=G2aZzR8qhRnjOxe0ImLg4fMRJW0mWvL1iQTN5NiJYOxkDjYKJPbUgKm/
-   p8cb7CaDXa2Dq5hohPiiISA6gGdCUHKih/5ypUOJZbSyNy4HGiJsJlx+I
-   3vWBLAWzldOkIsQ29Tu03QPvsZYT9TFGQCpuq6Q/aNspSybWNTBkF9mKw
-   JNjdXva/vWvDnSrKtWyVL9cED7y1fBf7vkp0fdKy3PWlv+zawLqo6af/R
-   ZM01hLtMQWw+nAvfOxxhdzHuahADgrG64TXC3/QHU7VnNMpmrPKM3R+lU
-   LGhBNvruPCziR8mQf5chb9DlQhrg8JW4n5cl3zVmzqZ5ND4iOQr3KzZ3H
-   Q==;
-X-CSE-ConnectionGUID: KQlg0aG+SJO3+0j5r91FVw==
-X-CSE-MsgGUID: m3FuBeCCS6y6cj8MfP/mtA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="36367703"
-X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
-   d="scan'208";a="36367703"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2024 20:43:19 -0700
-X-CSE-ConnectionGUID: LIHsAvRSRoyKTuq7qPTysw==
-X-CSE-MsgGUID: 3yoyD8xDSjeGNO8b+3xStg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
-   d="scan'208";a="70593349"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Sep 2024 20:43:19 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 19 Sep 2024 20:43:18 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 19 Sep 2024 20:43:18 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 19 Sep 2024 20:43:18 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.46) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 19 Sep 2024 20:43:17 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YP1ZKuGZJsKY/uY4MCFIhNzrAd89YIKXKp0w3L9RJMJ6LOt6OlNEkCWAFsMErNlwCxK/pSZHfMZKqtat/ZqBq1uWJDA+rCP8jewNcvGh8ACL/zG1/pbotFuKJGyuIhT1H/txmzlxjKivdJGtUWcjcz/Z7qBBSOrrRe9fEv/waEgSh6YjU+7cCIUBY7lbbW5Br2BxObSY2wF46AWfwPsr+ZmeDH8Q2Vp9Yp0lfFlHPTC8HXTDl8SVMv1PuaCnv8RYt62C3MKnaBE98t189/cKvd8JDPtI3P/mf1pFheHd1F0rrvZ4osU0BcZ3jgJKNFgghW/W6Dl/qDmy3mzfAvcIxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qm0J1ggnV+0MgLzwObMrvEyfAMF+CHfXZADFI0Pumxo=;
- b=gb8+oi/jrO/P0RA6BHtpuf09D1kYdICEPEiJGQR5w2RuJbISOxhLUu+7nXgh9E7wGHOsbjp+xYGYTT3T2zSwSLE1kP2Z7jPRimYs304gf0GvkwGuGEYbBAXcv0bfYXk4L1x6uazeU5AcVzRPfIqnz42zlqN9aBsYrVLpdRp0Ye9KssnA382wzp+QFAWW1P1o84I2DVafz6bIJK4cVGDFQEtLrucOi5a/Nzs35NnR9BlslqALxerGtAbEUJPX7P+7g6foAP88p1j56mLaGD1v1n+QVEYJVp7/EdyKLlheBus0y8mKYL9fKBpSm8XCJGyLHG8fK26aPRTJdyZ91DaGuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
- by SJ0PR11MB5118.namprd11.prod.outlook.com (2603:10b6:a03:2dd::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.17; Fri, 20 Sep
- 2024 03:43:15 +0000
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44%5]) with mapi id 15.20.7982.016; Fri, 20 Sep 2024
- 03:43:15 +0000
-Date: Thu, 19 Sep 2024 22:43:11 -0500
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-CC: Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, Kees
- Cook <kees@kernel.org>, Riana Tauro <riana.tauro@intel.com>, "Rodrigo Vivi"
-	<rodrigo.vivi@intel.com>, Michal Wajdeczko <michal.wajdeczko@intel.com>, DRM
- XE List <intel-xe@lists.freedesktop.org>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
-	<linux-next@vger.kernel.org>, Dave Airlie <airlied@redhat.com>, DRI
-	<dri-devel@lists.freedesktop.org>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Message-ID: <owkmwjhxbhii6devx33npufv3pgrjygbjprba5lby2dq25wvce@nvm4ll6d42h2>
-References: <20240909195939.067c1c13@canb.auug.org.au>
- <20240919092752.5a832aaa@canb.auug.org.au>
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240919092752.5a832aaa@canb.auug.org.au>
-X-ClientProxiedBy: MW4PR04CA0155.namprd04.prod.outlook.com
- (2603:10b6:303:85::10) To CY5PR11MB6139.namprd11.prod.outlook.com
- (2603:10b6:930:29::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FF2B676;
+	Fri, 20 Sep 2024 04:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726805094; cv=none; b=nHIOYqFWmx7MfEDghOF1dbQqF/IRl1ReJotc7tyvx5YdZ1z8gzQEawivVIBChDXR+yOlH++QudHZiwAgBSu3UwdVpInGsnBEo4VBBI5vfA9nSp3OFZOd38DDFJX7f8VDIof1nn2x4ePRK3eco0nyyhqa3mxHWllJ9hCtmt+0sOs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726805094; c=relaxed/simple;
+	bh=njQRqLG7wlH/zIXBSY4tiDaObLehSkaocznA1qc1A38=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=jtzEaew6BylDRaR8YPQuWu8+KnGQ4K3RiFPGvbH8BPmvhq3ZK1U9jPLhzfPi0FEunmIZcK/FepxsmGIgzXDAIXEbrthfYiVsgJesRTzAkbN8YzyEnXdNksuLAhFK7t9ZwioL4xCJuLcGRbbubX3Sw6OM1Wr36t0PD8F2m6MBSCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=Cam2EvT8; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1726805086;
+	bh=Z2Z3+yeR3SnFTYap5T0uUA9hdSiUIk+aWXvfdPP8fwE=;
+	h=From:To:Cc:Subject:Date;
+	b=Cam2EvT8itnabezFTD0xyfYjGjVIEYbBRyp9BWwZal3ylkQK1n/igA3GYLsuBq4h2
+	 oSu4sLe7V+RjJsqOfGPikwqYioej4k3Z84v9Vujk1r5+0q/clxNjs4E301i4JaOk+P
+	 8WBqW/yr02euIM8ocE4hK584z4FbcAR1L4+xAb+E=
+Received: from localhost.localdomain ([114.246.200.160])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id E100020; Fri, 20 Sep 2024 12:03:33 +0800
+X-QQ-mid: xmsmtpt1726805013tyuqqrxw2
+Message-ID: <tencent_3D3535F93CE8BC48A50E29D1CF7A25E93D0A@qq.com>
+X-QQ-XMAILINFO: N7h1OCCDntujycmiipQosCyokqx0fKwi+k8zgQnMhO1Z7x0x0lPClOiQ9Msa1n
+	 DseKo74Mc2PEjZIkrxyWvHLu4XL4cDZf6xIG+V6TvZW1+i3Dcd+egQs/KMDYH5D80HEW9hh7oNuQ
+	 neGB0j72f4cyCyR8gyMflrE9Y/vKVP7qQI91MBgJ1vdQnS1T5bxL8JhKezYHCPVqQMHNk5YLKHEh
+	 sANwQJjg6SOAW4B3UowINMbvgKLCmt9cKJvW/F6t0jMFQmOQRrrSG1O8OYlD0A/a2mo08Lndr25Z
+	 7t3V8d0L0+OaZa5eQLqOpAL1/92LQlLDNbhV4tR0FdAolSSd1KackhCM9+bUg16+eVF7OnqRB95h
+	 WTrmNYJmvPqemW2He9Ybhyhi/AN/PVNkrUBI4TQM7HkMEJiJEU0jinK+bHoEbL9y8Fsm9dqoxhDH
+	 6uAgg9lG6so4LnDicpfgqrSFTf0QWEgDkN8ScitewHfPBDwyGf3k8xSDNJLkNgj+wyquNU6WOSCv
+	 lR7cfAPv7yKP5/J9v04E/ONYI3dZI3PmJ0GhTLHR9eF3UCx/1IYDzCeD/pBrKpzfldvLAEjdlZ7p
+	 WfqKMM55OAQLNI8MJDjzxkAh+KY7EuO3qcbKqa7wcDPAkay9wxzrPyO7UkcKsCZogIlz13fznxU6
+	 wuAWX+p06d1QO1s5Kjt0IvmjdVRL+TOx1HvH3cZdJMLNGMrS1EGkpq/NfAbp+w1yAoh/NmRz4sjo
+	 fhsm+xu8BRg6+o1VaoN1JG/LE2iBotG8IvVmaDLXb9NsMZNhIyTKFa924PGFHOe37wfgDiY0zOOu
+	 WiLK37sk2A38rU/xqpL5hzM29UyhRpwZ+oOF2uKtI9dDpR3TfowFvnFis+6+I145fxJgUafbk0AQ
+	 VJlXKr/UDeS3IFWfLFsvUE1dXsoHeDfSMte+jJ+B6WtQWCMliJx6tdDwIa9MHOEHyQyU94avB7Qg
+	 p8LoqZB78kpQZLo7OZ7ekSXsG2LwQEuYTaZGJ4BDJc0n4NqK6OCLtEJavjQPsbEIzaK4c4toy4o+
+	 wrevh2V2234CxkW4F4UsZJ6G0fKrqzywevkVEtcRhQLtsekz5iCgYdWGZyhzTrk4faON4Bkw==
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Jiawei Ye <jiawei.ye@foxmail.com>
+To: przemyslaw.kitszel@intel.com
+Cc: alex.aring@gmail.com,
+	stefan@datenfreihafen.org,
+	miquel.raynal@bootlin.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	david.girault@qorvo.com,
+	linux-wpan@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] mac802154: Fix potential RCU dereference issue in mac802154_scan_worker
+Date: Fri, 20 Sep 2024 04:03:32 +0000
+X-OQ-MSGID: <20240920040332.1706036-1-jiawei.ye@foxmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|SJ0PR11MB5118:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7d3e09c7-96a4-4915-3e7a-08dcd9265c05
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7cJO9KJg3RKmPWC38gqbIunoqlY3rNFWdX+Z0UZSxfobRk43kcbIqhyYRf8v?=
- =?us-ascii?Q?KBP9nInxjy/rvb+1sDWvzjfdJu23rd6RZnxlSL+nA/oI8POjah/a5EkQyLsj?=
- =?us-ascii?Q?bGpxafL1GkT0jnyBV8QSD+0FQcwpr8RN9pBoFMZg8pQMLa+Yz8i3kE32v5LR?=
- =?us-ascii?Q?lir+TLm3wPs0fHmvSDNYcmdWOTwTJ63Xios4vDAaktnhifK9g5e3Pmds/UVw?=
- =?us-ascii?Q?6mb/ibyVpdaeHcSbAtyx/oknK4PkssBoZnhFRUifI4uxRa6lRjdF8+4Yd+El?=
- =?us-ascii?Q?k5P/eH/6nbr98kOPKMFiEhHmY/YyrCqP/EGIDJgnDnWjlfME+0mlUquGK8/w?=
- =?us-ascii?Q?YbOegHTq3Iv0Wc+eC09pckaiSbjdinYFGuuOI9mMWv1Iooe4HF/W57a91Sk2?=
- =?us-ascii?Q?N7cXH5ukqeOCxou6d3M61nrukg5Cghvy0p+/bb1z/ProgD8b6klllFyTGvp+?=
- =?us-ascii?Q?cATRursGwTH0iJqaW6YnqIz1MoMozO1+XTJHtUj+rb30WBJXJdIATQMqaGXO?=
- =?us-ascii?Q?3pSYSuVWjmFQBFYq68OVj/ls3/yRsUl3PzW88stZpYNPUyw/wWwAbDnftCXn?=
- =?us-ascii?Q?rL5b6eFHvA3I4LtQg1YaoDSaH0eV/7XE5Mvd2uHtrlto4qeqbJH1geHBoOYx?=
- =?us-ascii?Q?wsm6LX4vXa5Hyq5jMT+rZ+OeSSS//x3hemYvkusw32wTLCTeVSlJi4kYc16q?=
- =?us-ascii?Q?y/YAT2bJ40MRQF5faWja9CxfQZ/s4NKlz/oUpdQestr2gWe77/i9E6nQz730?=
- =?us-ascii?Q?StYgT2qQQO924tE8CNQo6Cwt3WCrckajZJmptfSQwsct1EIIfuHEs7zvKjTR?=
- =?us-ascii?Q?tE3oS7tnjcK/o1r7JhtDy8kH/LeL6taUE4EXnUmBk/JFCK55XPfmbc8AXrQb?=
- =?us-ascii?Q?CIU1ILCAoAkDD8bcSDREvMMUR24lEpvzpbwQHGzN2Ve1eDBVqZON6NBd1p6h?=
- =?us-ascii?Q?r3iRL/o+VFCJ3MqVFR993SMFvWd+mBiCy5CBPWQiXN456BB/rmElUNQmPY3q?=
- =?us-ascii?Q?/y92uCwQoolQz2264kRp+DZ6mBHFarCLxAaSeNGC9uYshQ3fqOhIvTnhtuQz?=
- =?us-ascii?Q?rIUmCEXKhld0yzE3msTy66oX1s5mFL3UGil1CDq8RHUbvgesbYKcjqYsB/Ke?=
- =?us-ascii?Q?tSKLBQ6c5OENDXGEHbkpcgShi34LHwSlCVR+clYws/icmX8YqWma34lYJHmf?=
- =?us-ascii?Q?I8ngfu6FrVozk+Nhj8Bbfv4XeOF7gZ0+TWkt4F6C1eVg6C+QgxnoDFzRnZcp?=
- =?us-ascii?Q?beSFgNza/J7Lkd6eG4gUS92+Saasp9/Cp15xf4b6Sw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VWvbhCIkbv486ZKwhSJVBTq+ftiyfIpILC8LLrPNM+Twa66FkYnPzILjMola?=
- =?us-ascii?Q?lr1aoaK3UCI/+ICv/+hiRYs32+z6bFF37UOyFEtm/FOl2bY/5uXoCm91lVpP?=
- =?us-ascii?Q?UgW7rmsGoJJ+dlT7X5lhWAwX1zt2MUM11j5SYfSzec+6XGutaPOt+kkWKFLn?=
- =?us-ascii?Q?v7/eWzR/3mHtHxxMt6Vfw2tZhT/spv5jX17op+0BWCm9xowj40+9xev6SzZe?=
- =?us-ascii?Q?4CG0GIe8XZp4YZbbuP1LRz1kuW6G3G2sF44WGgfu4ziVmi2G/zzC7bAwKUer?=
- =?us-ascii?Q?ddT+LzNQji3a3qyN1J0xaTFIw+8Evh/RuI9OoUulF/ci6DHn7Y9SNgIbH6LJ?=
- =?us-ascii?Q?GDbxqrAb68Llg0IPxEO4XqpBB8JHjVDcV77TOO75HZjs/0O3dBagVtyr+grh?=
- =?us-ascii?Q?pPwy581mtfF0VqMZaJL5Xl263W01ws3fXIwkY8bLzm8vXwtYwK64WSS6q7Bz?=
- =?us-ascii?Q?PBAMx+dBpydN4hkAGXSl0ghJsaJDiZ4hmlBvzhB/re722oCxQcP5V+6eYNGI?=
- =?us-ascii?Q?VGDMM3adhsNg2kkLjO8kSHUUE4orkOyKjM4KgLKobnhvwI3taNY79+xg8usG?=
- =?us-ascii?Q?/zZ4yimqYRd7ad4aqUJpMLLsJdYx42jfdth72T53Yx7YywpLoGE5TKBHHO/1?=
- =?us-ascii?Q?FS9xjsTnJaWmcKNK8ssGDFL552WNUT648KJhVRCOJMnKj767uOsFCz6sMURo?=
- =?us-ascii?Q?wpVJhfChMNM332rFEZHItpRgepZ1tsDM2h9+4gmdUtWChQv0OdgTAhlz224q?=
- =?us-ascii?Q?Akg8SymN0Tj4bfGQRCZNHiSYvtlOk0mzrhVJ9gfdX0NswsNqQqgPoflh9E5k?=
- =?us-ascii?Q?BtFDX8W5Tq+c5ekb1g7Xw/SMISXrgqVISRuHSK6oKgFRBD0Ja28NsXsTkwXL?=
- =?us-ascii?Q?a3xYmVhxEpJJBWkEX8Uah8IYhrTqH3H3+t7aAJIKgkwQuHO7a6asG8RXuLDM?=
- =?us-ascii?Q?6UN/fAsbMzU+M4f5kPKarHJN+K3VSDOqLVW+aBReHegxQ6o8TwpBOvCA6nVe?=
- =?us-ascii?Q?jUOFet91YoqBeE0MRtxvKvx6olcH7iUNdsxNyXdkrWcTxG2hduqjW0sHLu6+?=
- =?us-ascii?Q?hDsgXDefZromdX2NbH5t1kuCh21m3hjoWP0mQZQH+KydO2a9DU6dAHdfbmmu?=
- =?us-ascii?Q?exNPfiB+wb1BCHMm2bMqwDzB7HDFilIal/WX6PmP9/LoOuS+GGzejAbQBck/?=
- =?us-ascii?Q?/5mlgpf2jxSgK3ouJPBHrT+xDWnol8nXKeiNRm4di00p8nwhAe5Zrdc/eWiR?=
- =?us-ascii?Q?DYRw5e/7P6W8P9jaXiGgnaj+dZRL6/jUraM1FHJhtD1gua3ITk8Mc+FdHJaR?=
- =?us-ascii?Q?aGUSSeQ+efYLfBXbFr3DKOxfDGm44XID7POORNLRMPEdMnyZoSj9KBcEkZ+v?=
- =?us-ascii?Q?CJdIt3ErXdrN4fWha3IBxK5+g08dx2fqm2ZbMrR7+T18V2xmecIhX3morMcF?=
- =?us-ascii?Q?1nlY6DsDNFTer9k43bRzWnKdK+zTY01ZAncgE8I96M8kKKK85LKz28dIcVQW?=
- =?us-ascii?Q?MP5aU5MNVsrXO7sbWSptS2y9aWCOUUzZOBnxseJAS6j8HdSIKFg5XbKt1Ne0?=
- =?us-ascii?Q?AX8PFFFV/ls4Q3ztpUnGSfkfZyUeRP+y3ALfgQmE9hmU+feARhBzS60LD/Bn?=
- =?us-ascii?Q?jQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d3e09c7-96a4-4915-3e7a-08dcd9265c05
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 03:43:15.7056
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z8RP9IgZD2MQP23dhhXriLMO5jkAGqLk3JbgZZAu3rbFZFJKzfXPgN2E1JfxMt80+/r4xitlBucjG1sg83VtNe2I8ytJ/qXPI4mNZY/4IZ0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5118
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 19, 2024 at 09:27:52AM GMT, Stephen Rothwell wrote:
->Hi all,
->
->On Mon, 9 Sep 2024 19:59:39 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> After merging the kspp tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> drivers/gpu/drm/xe/xe_gt_idle.c:56:27: error: redefinition of 'str_up_down'
->>    56 | static inline const char *str_up_down(bool v)
->>       |                           ^~~~~~~~~~~
->> In file included from include/linux/string_helpers.h:7,
->>                  from drivers/gpu/drm/xe/xe_assert.h:9,
->>                  from drivers/gpu/drm/xe/xe_force_wake.h:9,
->>                  from drivers/gpu/drm/xe/xe_gt_idle.c:8:
->> include/linux/string_choices.h:62:27: note: previous definition of 'str_up_down' with type 'const char *(bool)' {aka 'const char *(_Bool)'}
->>    62 | static inline const char *str_up_down(bool v)
->>       |                           ^~~~~~~~~~~
->>
->> Caused by commit
->>
->>   a98ae7f045b2 ("lib/string_choices: Add str_up_down() helper")
->>
->> interacting with commit
->>
->>   0914c1e45d3a ("drm/xe/xe_gt_idle: add debugfs entry for powergating info")
->>
->> from the drm-xe tree.
->>
->> I have applied the following patch for today.
->>
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Mon, 9 Sep 2024 19:40:17 +1000
->> Subject: [PATCH] fix up for "lib/string_choices: Add str_up_down() helper"
->>
->> interacting wit commit "drm/xe/xe_gt_idle: add debugfs entry for
->> powergating info" from the drm-xe tree.
->>
->> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> ---
->>  drivers/gpu/drm/xe/xe_gt_idle.c | 5 -----
->>  1 file changed, 5 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/xe/xe_gt_idle.c b/drivers/gpu/drm/xe/xe_gt_idle.c
->> index 85a35ed153a3..0f98c1539c64 100644
->> --- a/drivers/gpu/drm/xe/xe_gt_idle.c
->> +++ b/drivers/gpu/drm/xe/xe_gt_idle.c
->> @@ -53,11 +53,6 @@ pc_to_xe(struct xe_guc_pc *pc)
->>  	return gt_to_xe(gt);
->>  }
->>
->> -static inline const char *str_up_down(bool v)
->> -{
->> -	return v ? "up" : "down";
->> -}
->> -
->>  static const char *gt_idle_state_to_string(enum xe_gt_idle_state state)
->>  {
->>  	switch (state) {
->> --
->> 2.45.2
->
->This is now needed in the merge between Linus' tree and the drm-xe tree.
+In the `mac802154_scan_worker` function, the `scan_req->type` field was
+accessed after the RCU read-side critical section was unlocked. According
+to RCU usage rules, this is illegal and can lead to unpredictable
+behavior, such as accessing memory that has been updated or causing
+use-after-free issues.
 
-Thanks. This not going to 6.12. It's targeted to 6.13, so we should fix
-it when merging drm-next back to drm-xe-next.
+This possible bug was identified using a static analysis tool developed
+by myself, specifically designed to detect RCU-related issues.
 
-Lucas De Marchi
+To address this, the `scan_req->type` value is now stored in a local
+variable `scan_req_type` while still within the RCU read-side critical
+section. The `scan_req_type` is then used after the RCU lock is released,
+ensuring that the type value is safely accessed without violating RCU
+rules.
 
->
->-- 
->Cheers,
->Stephen Rothwell
+Fixes: e2c3e6f53a7a ("mac802154: Handle active scanning")
+Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
 
+---
+Changelog:
+
+v1->v2: -Repositioned the enum nl802154_scan_types scan_req_type
+declaration between struct cfg802154_scan_request *scan_req and struct
+ieee802154_sub_if_data *sdata to comply with the reverse Christmas tree
+rule.
+---
+ net/mac802154/scan.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/net/mac802154/scan.c b/net/mac802154/scan.c
+index 1c0eeaa76560..a6dab3cc3ad8 100644
+--- a/net/mac802154/scan.c
++++ b/net/mac802154/scan.c
+@@ -176,6 +176,7 @@ void mac802154_scan_worker(struct work_struct *work)
+ 	struct ieee802154_local *local =
+ 		container_of(work, struct ieee802154_local, scan_work.work);
+ 	struct cfg802154_scan_request *scan_req;
++	enum nl802154_scan_types scan_req_type;
+ 	struct ieee802154_sub_if_data *sdata;
+ 	unsigned int scan_duration = 0;
+ 	struct wpan_phy *wpan_phy;
+@@ -209,6 +210,7 @@ void mac802154_scan_worker(struct work_struct *work)
+ 	}
+ 
+ 	wpan_phy = scan_req->wpan_phy;
++	scan_req_type = scan_req->type;
+ 	scan_req_duration = scan_req->duration;
+ 
+ 	/* Look for the next valid chan */
+@@ -246,7 +248,7 @@ void mac802154_scan_worker(struct work_struct *work)
+ 		goto end_scan;
+ 	}
+ 
+-	if (scan_req->type == NL802154_SCAN_ACTIVE) {
++	if (scan_req_type == NL802154_SCAN_ACTIVE) {
+ 		ret = mac802154_transmit_beacon_req(local, sdata);
+ 		if (ret)
+ 			dev_err(&sdata->dev->dev,
+-- 
+2.34.1
 
 
