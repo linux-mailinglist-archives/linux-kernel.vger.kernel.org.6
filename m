@@ -1,83 +1,91 @@
-Return-Path: <linux-kernel+bounces-334435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0223B97D73E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:04:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D839297D742
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86161B23FA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609261F253B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0B717C7BE;
-	Fri, 20 Sep 2024 15:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FF317C9F9;
+	Fri, 20 Sep 2024 15:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ijRkfpFC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="H7wSq9eK"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FCA178CC5;
-	Fri, 20 Sep 2024 15:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A53178CC5;
+	Fri, 20 Sep 2024 15:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726844656; cv=none; b=kIC76XIwG0IitQb20eFuXaE93hjoagK4DmS01fMMGtqoc6hrQoYb/cRz+kip3Du0406SxRI0Ewk/Y+fwmQSstX3fkRmrT3dYZlTIGBH2PdZwDW/KKfBCpHrtINkamOh0aluPJKpEYXv9EYsOjdWtVx/ku3Qp+JBP2P/jgr4ja24=
+	t=1726844713; cv=none; b=Ntx+QeoN0SulnD22vbLkc5z0SFVIIglR0dN61gs8i9deHaUBcmMe2Fj1czHBQmMf5PO2CtTKzwAbHLUFCGtEyvhtEkhscjWTTXb7jAgcEyNMwYk2o1ubhONn6D6CLSWlGfqmcp/w7LujT8qANPdYzekLSSbpYvScpDSDlRZs1UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726844656; c=relaxed/simple;
-	bh=YGshjomfJAQzfeWG34of48+m39QEodXmkWvzkLGXTR8=;
+	s=arc-20240116; t=1726844713; c=relaxed/simple;
+	bh=hy0yaNATSBW6HFAtXgqFKMg6kFdVeMn/ISUMPkMHW0o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EIU8p/0cRd9mCGT5C3OC094m7KYPjtFRuoJvkUROT2bxhbQjFaknPPuv1B6QmX/1uUB+RQEyVttqzy9eJHCYYtG59OqmWeuk882d4ZJhFsI9BSGPjwDXvpNZRVdM1JzfSqL6VHpASGqbSHOtHB4ybYxRGEfwf62pOYi3haz557w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ijRkfpFC; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726844656; x=1758380656;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YGshjomfJAQzfeWG34of48+m39QEodXmkWvzkLGXTR8=;
-  b=ijRkfpFCOODqeDvxIL2QCKKuKEaR/T+7UkjupjAu4qS8Sf01YI7DMpoW
-   ovIMbHKABTkDT2NtIwnVYNZ8y+AC++CzHbKwKL3Wiq3wcjpBh7bXPYUZg
-   9B/1S1Ct2sqb8vG5LkAdhFNxkFEqj2ktq1O64SNsDgMkHfvEMjHK41+qm
-   f+z2Xl6H3HmX9HdMgBS7F/wCHe0TpeSPkGJ2q/K1ImV69wQvvUoFi11+w
-   m858VzjFQRLLyB/hm9hb2DiNMX5C4zmIDufTaXe+5fjWnRWrWSLCfFUEf
-   OGVjX/eJMefRPeW1GWc1mMioXvpsewTk6vKGSCJctkk98bbtbzSm/3L9q
-   A==;
-X-CSE-ConnectionGUID: XECC/SWOQmKxvYlCjRogcw==
-X-CSE-MsgGUID: p+17LwTeRxipC2t29nHXRw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="26006235"
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="26006235"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 08:04:15 -0700
-X-CSE-ConnectionGUID: 9wipslfVTCqHkF39VFJwEQ==
-X-CSE-MsgGUID: DuTCFx9YSTqNigaOY+peRw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="70635137"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 08:04:10 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1srfB1-0000000AwvL-23Zr;
-	Fri, 20 Sep 2024 18:04:07 +0300
-Date: Fri, 20 Sep 2024 18:04:07 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Viresh Kumar <vireshk@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, dmaengine@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] dmaengine: dw: Fix sys freeze and XFER-bit set error
- for UARTs
-Message-ID: <Zu2O5wWGyhRFkBnO@smile.fi.intel.com>
-References: <20240911184710.4207-1-fancer.lancer@gmail.com>
- <ZugsFPWRZQnH9RaS@smile.fi.intel.com>
- <kpujn6pqnxerasd6zhkfgxrgyidb3tmxuoqgauheoosdhnwatr@spdtf46m7bnu>
- <Zu2FpaBQymPJSAY-@smile.fi.intel.com>
- <3zoeze233vpxoet2tpqayxq4z2covha2p5ymio5lxrbvmp54fs@lqo4ix3hr6gy>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YQw4We6OrHVEEE9N+2MW7uKHG/aYPLsBzPLiuQjy0fqw6G2R/DsjOlrwHoayMev39c7pLhm6xBit+c4d6cqUYXV404ELO4Uh+3QN0d0j5DV1Kw1N3QpwErzsPPvsTtFtpS6v++/QMsrcM4oufO6zeUy3ldLGKUh44pEDzlaCXNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=H7wSq9eK; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48K7IUTT018163;
+	Fri, 20 Sep 2024 15:04:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=hBOva1nCLu1YkoUWtKFqjSHLjIa
+	NINMLna+tFGpx2f0=; b=H7wSq9eKqkh+DjNQ/hnG+ZmqOdR5uUBHBTqx8p1xgkE
+	cZ7OWBuVNDb5O0659GNDsEIshlJP9F3ygpbrU4txJKCrsAPFTeS3ihH/VgydKFBL
+	uLsDAe3ZqSxwWM8FM31cn4WOqGm91GDF9liYYL8zV4RbxlWaBM2V5JyDsDDyY7y/
+	9KJ5E17BMYS2xVOGwcLet2QRbnnCmDwYytuUdaH+7mT5Kxi7K6KNLa/D4FeDGfYD
+	qqHdhM/2HBI9lgwYyND6CmyKZP42YLVwI1CeKIx362oczPY8qG8zth9txmOq5zfa
+	KPhxHmEX5CbBsrJc3MqSrrsN9DcXndAdBDBN6t9jjnw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3vpbyv9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 15:04:57 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48KF4uGA007341;
+	Fri, 20 Sep 2024 15:04:56 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41n3vpbyv5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 15:04:56 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48KBwFKp024672;
+	Fri, 20 Sep 2024 15:04:55 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 41nq1nfpf1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 15:04:55 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48KF4seS39649734
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 20 Sep 2024 15:04:54 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0AE8F20040;
+	Fri, 20 Sep 2024 15:04:54 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5A13220043;
+	Fri, 20 Sep 2024 15:04:52 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.124.218.203])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 20 Sep 2024 15:04:52 +0000 (GMT)
+Date: Fri, 20 Sep 2024 20:34:49 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
+        John Garry <john.g.garry@oracle.com>, dchinner@redhat.com
+Subject: Re: [RFC 0/5] ext4: Implement support for extsize hints
+Message-ID: <Zu2PEXtKMAUN5CyV@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <cover.1726034272.git.ojaswin@linux.ibm.com>
+ <ZuqjU0KcCptQKrFs@dread.disaster.area>
+ <ZuvPDQ+S/u4FdNNU@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <Zuym5suTo/KYUAND@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,50 +94,156 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3zoeze233vpxoet2tpqayxq4z2covha2p5ymio5lxrbvmp54fs@lqo4ix3hr6gy>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <Zuym5suTo/KYUAND@dread.disaster.area>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: IseEDR8wnXBf21xRi0Rc59LkXBRvuYAW
+X-Proofpoint-GUID: WjHLczP8o4B6uChnJtkS_OdA7-Ctz_Hf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-20_07,2024-09-19_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ priorityscore=1501 phishscore=0 clxscore=1015 malwarescore=0 bulkscore=0
+ impostorscore=0 spamscore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409200110
 
-On Fri, Sep 20, 2024 at 05:56:23PM +0300, Serge Semin wrote:
-> On Fri, Sep 20, 2024 at 05:24:37PM +0300, Andy Shevchenko wrote:
-> > On Fri, Sep 20, 2024 at 12:33:51PM +0300, Serge Semin wrote:
-> > > On Mon, Sep 16, 2024 at 04:01:08PM +0300, Andy Shevchenko wrote:
-
-...
-
-> > > There is another problem caused by the too slow coherent memory IO on
-> > > my device. Due to that the data gets to be copied too slow in the
-> > > __dma_rx_complete()->tty_insert_flip_string() call. As a result a fast
-> > > incoming traffic overflows the DW UART inbound FIFO. But that can be
-> > > worked around by decreasing the Rx DMA-buffer size. (There are some
-> > > more generic fixes possible, but they haven't shown to be as effective
-> > > as the buffer size reduction.)
+On Fri, Sep 20, 2024 at 08:34:14AM +1000, Dave Chinner wrote:
+> On Thu, Sep 19, 2024 at 12:43:17PM +0530, Ojaswin Mujoo wrote:
+> > On Wed, Sep 18, 2024 at 07:54:27PM +1000, Dave Chinner wrote:
+> > > On Wed, Sep 11, 2024 at 02:31:04PM +0530, Ojaswin Mujoo wrote:
+> > > Behaviour such as extent size hinting *should* be the same across
+> > > all filesystems that provide this functionality.  This makes using
+> > > extent size hints much easier for users, admins and application
+> > > developers. The last thing I want to hear is application devs tell
+> > > me at conferences that "we don't use extent size hints anymore
+> > > because ext4..."
+> > 
+> > Yes, makes sense :)  
+> > 
+> > Nothing to worry here tho as ext4 also treats the extsize value as a
+> > hint exactly like XFS. We have tried to keep the behavior as similar
+> > to XFS as possible for the exact reasons you mentioned. 
 > 
-> > This sounds like a specific quirk for a specific platform. In case you
-> > are going to address that make sure it does not come to be generic.
+> It is worth explicitly stating this (i.e. all the behaviours that
+> are the same) in the design documentation rather than just the
+> corner cases where it is different. It was certainly not clear how
+> failures were treated.
+
+Got it Dave, I did mention it in the actual commit 5/5 but I agree. I
+will update the cover letter to be more clear about the design in future
+revisions.
+
 > 
-> Of course reducing the buffer size is the platform-specific quirk.
+> > And yes, we do plan to add a forcealign (or similar) feature for ext4 as
+> > well for atomic writes which would change the hint to a mandate
 > 
-> A more generic fix could be to convert the DMA-buffer to being
-> allocated from the DMA-noncoherent memory _if_ the DMA performed by
-> the DW DMA-device is non-coherent anyway. In that case the
-> DMA-coherent memory buffer is normally allocated from the
-> non-cacheable memory pool, access to which is very-very slow even on
-> the Intel/AMD devices.  So using the cacheable buffer for DMA, then
-> manually invalidating the cache for it before DMA IOs and prefetching
-> the data afterwards seemed as a more universal solution. But my tests
-> showed that such approach doesn't fully solve the problem on my
-> device. That said that approach permitted to execute data-safe UART
-> transfers for up to 460Kbit/s, meanwhile just reducing the buffer from
-> 16K to 512b - for up to 2.0Mbaud/s. It's still not enough since the
-> device is capable to work on the speed 3Mbit/s, but it's better than
-> 460Kbaud/s.
+> Ok. That should be stated, too.
+> 
+> FWIW, it would be a good idea to document this all in the kernel
+> documentation itself, so there is a guideline for other filesystems
+> to implement the same behaviour. e.g. in
+> Documentation/filesystems/extent-size-hints.rst
 
-Ah, interesting issue.  Good lick with solving it the best way you can.
-Any yes, you're right that 2M support is better than 0.5M.
+Okay makes sense, I can look into this as a next step.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> 
+> > > > 2. eof allocation on XFS trims the blocks allocated beyond eof with extsize
+> > > >    hint. That means on XFS for eof allocations (with extsize hint) only logical
+> > > >    start gets aligned.
+> > > 
+> > > I'm not sure I understand what you are saying here. XFS does extsize
+> > > alignment of both the start and end of post-eof extents the same as
+> > > it does for extents within EOF. For example:
+> > > 
+> > > # xfs_io -fdc "truncate 0" -c "extsize 16k" -c "pwrite 0 4k" -c "bmap -vvp" foo
+> > > wrote 4096/4096 bytes at offset 0
+> > > 4 KiB, 1 ops; 0.0308 sec (129.815 KiB/sec and 32.4538 ops/sec)
+> > > foo:
+> > > EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
+> > >    0: [0..7]:          256504..256511    0 (256504..256511)     8 000000
+> > >    1: [8..31]:         256512..256535    0 (256512..256535)    24 010000
+> > >  FLAG Values:
+> > >     0100000 Shared extent
+> > >     0010000 Unwritten preallocated extent
+> > > 
+> > > There's a 4k written extent at 0, and a 12k unwritten extent
+> > > beyond EOF at 4k. I.e. we have an extent of 16kB as the hint
+> > > required that is correctly aligned beyond EOF.
+> > > 
+> > > If I then write another 4k at 20k (beyond both EOF and the unwritten
+> > > extent beyond EOF:
+> > > 
+> > > # xfs_io -fdc "truncate 0" -c "extsize 16k" -c "pwrite 0 4k" -c "pwrite 20k 4k" -c "bmap -vvp" foo
+> > > wrote 4096/4096 bytes at offset 0
+> > > 4 KiB, 1 ops; 0.0210 sec (190.195 KiB/sec and 47.5489 ops/sec)
+> > > wrote 4096/4096 bytes at offset 20480
+> > > 4 KiB, 1 ops; 0.0001 sec (21.701 MiB/sec and 5555.5556 ops/sec)
+> > > foo:
+> > >  EXT: FILE-OFFSET      BLOCK-RANGE      AG AG-OFFSET        TOTAL FLAGS
+> > >    0: [0..7]:          180000..180007    0 (180000..180007)     8 000000
+> > >    1: [8..39]:         180008..180039    0 (180008..180039)    32 010000
+> > >    2: [40..47]:        180040..180047    0 (180040..180047)     8 000000
+> > >    3: [48..63]:        180048..180063    0 (180048..180063)    16 010000
+> > >  FLAG Values:
+> > >     0100000 Shared extent
+> > >     0010000 Unwritten preallocated extent
+> > > 
+> > > You can see we did contiguous allocation of another 16kB at offset
+> > > 16kB, and then wrote to 20k for 4kB.. i.e. the new extent was
+> > > correctly aligned at both sides as the extsize hint says it should
+> > > be....
+> > 
+> > Sorry for the confusion Dave. What was meant is that XFS would indeed
+> > respect extsize hint for EOF allocations but if we close the file, since
+> > we trim the blocks past EOF upon close, we would only see that the
+> > lstart is aligned but the end would not.
+> 
+> Right, but that is desired behaviour, especially when extsize is
+> large.  i.e. when the file is closed it is an indication that the
+> file will not be written again, so we don't need to keep post-eof
+> blocks around for fragmentation prevention reasons.
+> 
+> Removing post-EOF extents on close prevents large extsize hints from
+> consuming lots of unused space on files that are never going to be
+> written to again(*).  That's user visible, and because it can cause
+> premature ENOSPC, users will report this excessive space usage
+> behaviour as a bug (and they are right).  Hence removing post-eof
+> extents on file close when extent size hints are in use comes under
+> the guise of Good Behaviour To Have.
+> 
+> (*) think about how much space is wasted if you clone a kernel git
+> tree under a 1MB extent size hint directory. All those tiny header
+> files now take up 1MB of space on disk....
+> 
+> Keep in mind that when the file is opened for write again, the
+> extent size hint still gets applied to the new extents.  If the
+> extending write starts beyond the EOF extsize range, then the new
+> extent after the hole at EOF will be fully extsize aligned, as
+> expected.
+> 
+> If the new write is exactly extending the file, then the new extents
+> will not be extsize aligned - the start will be at the EOF block,
+> and they will be extsize -length-.  IOWs, the extent size is
+> maintained, just the logical alignment is not exactly extsize
+> aligned. This could be considered a bug, but it's never been an
+> issue for anyone because, in XFS, physical extent alignment is
+> separate (and maintained regardless of logical alignment) for extent
+> size hint based allocations.
+> 
+> Adding force-align will prevent this behaviour from occurring, as
+> post-eof trimming will be done to extsize alignment, not to the EOF
+> block.  Hence open/close/open will not affect logical or physical
+> alignment of force-align extents (and hence won't affect atomic
+> writes).
 
+Thanks for the context, I will try to keep this behavior similar to XFS
+once we implement the EOF support for extsize hints in next revision.
 
+Regards,
+Ojaswin
+> 
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
 
