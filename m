@@ -1,199 +1,161 @@
-Return-Path: <linux-kernel+bounces-334188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C1597D3AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:33:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC9C97D3AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 168A6286D86
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:33:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E4EA287945
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D0F13A26F;
-	Fri, 20 Sep 2024 09:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBAD13AA27;
+	Fri, 20 Sep 2024 09:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jQudKUx8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ceKtXrCe"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856F233981
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAA0136658;
+	Fri, 20 Sep 2024 09:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726824823; cv=none; b=S/NBz4fNs9xuB2seBYaHqtFebFxVgJ0Iiwm370VYuvC5dMw1oWnt4We2v/yHA1DP35Z3g2+NApoc0Bqj2DOjJvUraOwL2PlKV3gbSvuN5T8zmtplUbiOg4WO2qoKwAKQU/dbIIXylFCvpOZB6Oqaf754vqTNpMN+O3M5HA3bAB4=
+	t=1726824838; cv=none; b=r+fISoHhT9RCGRNKCmn2MrXVfHax7fT7iV7qaUuKNtDMaGPb4gVAqIaw4cegsEBWBRUhi/kkDRhwBUBpTe2F1agqlL8JRjyc7w7P2rEqOSbR4Tvajfb+36tuIxVb2Dm3/1F6f9bfPFxuSrVnpYhmUbqoRJB9o+kyWgHB5q81kNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726824823; c=relaxed/simple;
-	bh=M8xtpxZtx2GFbURHc0l4RiSTe5jknvfBktm6aEiClUk=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=dgpj9mJzXPatH9oF5CfhHPC6MHf5Nisizazg3oeu0UwAlzQ83uc17dhaY7ZXDej46VnxkItBU8myTiyHZvLNwLVbhjCrymNMr5RUuQiSZWoeS/kng7qq2ejGivvTjFLFhtZMQoNWPgQwTsEgHkRRkPlKQeKfFtBdZ+SSphQRhQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jQudKUx8; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726824821; x=1758360821;
-  h=date:from:to:cc:subject:message-id;
-  bh=M8xtpxZtx2GFbURHc0l4RiSTe5jknvfBktm6aEiClUk=;
-  b=jQudKUx8TyIFaX3LEc5yixQ4WYepZZA+mEAP6cZTBkBiOV1rt7TDy9FV
-   65s4DTRPd29+IQJaFqyeFQOchP6GFVHDOD1OQE/Y1ZftAL9KbJjIv+ize
-   yfYrhf8ebISrjy8WsXgPg5nThxBT1wdRPuvBZMLGNerdbgdRp46UcTkCB
-   Mb0j/jBjobML0Ov8DYumVjSXdT9O2p6XLKl289/vc1mtrMlVKUZOOEK2d
-   V8aHZup48smb0TE7rN2LLn5nD14YtXlFgtAlPBZs3pO9kiloSyOHF/16n
-   s6bOGdU3jwzPV8k8FdK6c4wb8GMVQUBakiYFHnuHX5wazsrC7KbYM+a7Q
-   A==;
-X-CSE-ConnectionGUID: Bs9YT5RVQJiYImam5j00Yw==
-X-CSE-MsgGUID: DId94ygpR9acid9NYupldg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="25973289"
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="25973289"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 02:33:39 -0700
-X-CSE-ConnectionGUID: Zjh4m86MQbipI1+HNX4CTg==
-X-CSE-MsgGUID: 70JSYFyORKSShS5d1MyBsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="69829376"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 20 Sep 2024 02:33:38 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sra19-000EEj-2w;
-	Fri, 20 Sep 2024 09:33:35 +0000
-Date: Fri, 20 Sep 2024 17:33:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:core/merge] BUILD SUCCESS
- adf04642e6250ed9504aa9877c7c31baec506005
-Message-ID: <202409201721.2WmwUoPJ-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1726824838; c=relaxed/simple;
+	bh=UFbl4cZt/wsuZP01cfVUbeRDzPjLazHarkFswDwq4PM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WgmOLf1tSG5ZWcABtKMUqmuwhlaclkKUI5sWYb8Saz/kf4rUQnKYM7rVRT4uicaRYG0Wqn4WeRExy3P72WpsNZlYyq8RL0yrkDE1Tiu1ACMt08ijhCLD+PVK5ND+W1YO+QZ6difmwm5GQPXbbsiFt/AaEzxjvd+aTME2cgNGMGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ceKtXrCe; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso3150427e87.2;
+        Fri, 20 Sep 2024 02:33:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726824835; x=1727429635; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zgzYQQIygAr6qxmvFaGpF3Ge/dSNGjAm5OZ5ZHk08eU=;
+        b=ceKtXrCej9zCkpmrQ0IT6GxjcSU8zNiG+8mDWl0YiVyFB7wSrj+ZPWHM47DY2HRFqK
+         ML8uV8MDQ1dUAKN6fmUgrqlV3+mcYoz+mjDvPwdx8kJFqMyVbnbnSuNMG1SbQBpbSGtp
+         GZPRVEuhTrr+45SwDiikvfmnsmh2DwpIupwAfzGdtNHj90vRCP1XA3cc2Zs8D5PiAV4+
+         KqcT2LV1lcp2d2nsn0YrVZfYh2/HT+wNkadirf/uvBDb7X8QD8sX7ULiXhlS0qA98MUG
+         ch8BHCYSlEq6CWrx73YToza1vOAX7h7z1bfJ62v+S9FhqZGSO155gqTFapUSfLtKu8DX
+         xwOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726824835; x=1727429635;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zgzYQQIygAr6qxmvFaGpF3Ge/dSNGjAm5OZ5ZHk08eU=;
+        b=cmH78Nu/YIQjmeY8auOYssKjnwaHdQCOCM89SiGNrll8zOiq8t7WX/Q0bPjzlxZdL7
+         0AMo/xhHDOYh+Xfn2SaxL7mlw2GGxaRhX2+SlTAlXpbh7GK5UblhOmMyzNefM0RD6EBf
+         LWChDe/adt3JWLsryPqfJiewcRUEJxbQUwC2aaesiYLZwWqL/++M61+nv/OtzZW8P4dv
+         frolhk+L439qUW9Emuum4vhhjNJ8Wb27DjB7a969H8OOG2BKXa+zpF7ylPS20Zujiva2
+         AULtc76h2DTcrsmZfSYgsDLCA+n86CipoHn+Nj9jjA99Y+0BNTlIoRfVo/PeZNvuTJYm
+         9SgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Rjc5TS/U+24oKJfqWzgx1W8vXMrAPdABS60dhSjrYp2+VflPUEAuotQbdXSuOxSu7AAoPU4F9iq8ENjq@vger.kernel.org, AJvYcCVV9XKXRpfbp6TniZN1vtAMyhXJXkHZqXD7mZmV2c/YdaTibEFF2O8XMuZyjp6S05rRyXAI/1YmRrf3blod@vger.kernel.org, AJvYcCWLiys0YZe1fJhhiW7z8Qc4CEJsgomhaSQLjuiAAHgbEuecbWAbk55fULESL+eZeDR6+WIF35dzAc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi8Wf6NarMUBQLbIBzGdd4oC57ovz09cHI7+7k+vLM52lu380x
+	0/4+1Kom77nDsLATS8jHJdmu75j+I2xXgLYp4dRHcZLMhA5Se1/u5EZR5w==
+X-Google-Smtp-Source: AGHT+IEZw33lFEgDQbTs/1HGnrG9vMhwEkSnbqvhxO5oF309XqhOuIj8ZmqezF+isCotfBHS+GFgNQ==
+X-Received: by 2002:a05:6512:33ca:b0:52e:936e:a237 with SMTP id 2adb3069b0e04-536ac2e5b7amr1513374e87.16.1726824834373;
+        Fri, 20 Sep 2024 02:33:54 -0700 (PDT)
+Received: from mobilestation ([93.157.254.210])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536a687cfc9sm519861e87.189.2024.09.20.02.33.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 02:33:53 -0700 (PDT)
+Date: Fri, 20 Sep 2024 12:33:51 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Viresh Kumar <vireshk@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, dmaengine@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] dmaengine: dw: Fix sys freeze and XFER-bit set error
+ for UARTs
+Message-ID: <kpujn6pqnxerasd6zhkfgxrgyidb3tmxuoqgauheoosdhnwatr@spdtf46m7bnu>
+References: <20240911184710.4207-1-fancer.lancer@gmail.com>
+ <ZugsFPWRZQnH9RaS@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZugsFPWRZQnH9RaS@smile.fi.intel.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core/merge
-branch HEAD: adf04642e6250ed9504aa9877c7c31baec506005  Merge branch 'linus' into core/merge, to resolve conflicts
+Hi Andy
 
-elapsed time: 2740m
+On Mon, Sep 16, 2024 at 04:01:08PM +0300, Andy Shevchenko wrote:
+> On Wed, Sep 11, 2024 at 09:46:08PM +0300, Serge Semin wrote:
+> > The main goal of the series is to fix the DW DMAC driver to be working
+> > better with the serial 8250 device driver implementation. In particular it
+> > was discovered that there is a random system freeze (caused by a
+> > deadlock) and an occasional "BUG: XFER bit set, but channel not idle"
+> > error printed to the log when the DW APB UART interface is used in
+> > conjunction with the DW DMA controller. Although I guess the problem can
+> > be found for any 8250 device using DW DMAC for the Tx/Rx-transfers
+> > execution. Anyway this short series contains two patches fixing these
+> > bugs. Please see the respective patches log for details.
+> > 
+> > Link: https://lore.kernel.org/dmaengine/20240802080756.7415-1-fancer.lancer@gmail.com/
+> > Changelog RFC:
+> > - Add a new patch:
+> >   [PATCH 2/2] dmaengine: dw: Fix XFER bit set, but channel not idle error
+> >   fixing the "XFER bit set, but channel not idle" error.
+> > - Instead of just dropping the dwc_scan_descriptors() method invocation
+> >   calculate the residue in the Tx-status getter.
+> 
 
-configs tested: 107
-configs skipped: 2
+> FWIW, this series does not regress on Intel Merrifield (SPI case),
+> Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Great! Thanks.
 
-tested configs:
-alpha                             allnoconfig    gcc-13.3.0
-alpha                            allyesconfig    gcc-13.3.0
-alpha                               defconfig    gcc-13.3.0
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                                 defconfig    gcc-13.2.0
-arc                   randconfig-001-20240920    gcc-13.2.0
-arc                   randconfig-002-20240920    gcc-13.2.0
-arm                              allmodconfig    gcc-14.1.0
-arm                               allnoconfig    clang-20
-arm                              allyesconfig    gcc-14.1.0
-arm                       aspeed_g5_defconfig    gcc-14.1.0
-arm                   milbeaut_m10v_defconfig    clang-16
-arm                             mxs_defconfig    clang-20
-arm                   randconfig-001-20240920    gcc-14.1.0
-arm                   randconfig-002-20240920    gcc-14.1.0
-arm                   randconfig-003-20240920    gcc-14.1.0
-arm                   randconfig-004-20240920    gcc-14.1.0
-arm                             rpc_defconfig    clang-20
-arm                           sama7_defconfig    clang-20
-arm                          sp7021_defconfig    gcc-14.1.0
-arm                       versatile_defconfig    gcc-14.1.0
-arm64                             allnoconfig    gcc-14.1.0
-arm64                 randconfig-001-20240920    gcc-14.1.0
-arm64                 randconfig-002-20240920    clang-20
-arm64                 randconfig-003-20240920    clang-20
-arm64                 randconfig-004-20240920    clang-20
-csky                              allnoconfig    gcc-14.1.0
-csky                                defconfig    gcc-14.1.0
-csky                  randconfig-001-20240920    gcc-14.1.0
-csky                  randconfig-002-20240920    gcc-14.1.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    clang-20
-hexagon                          allyesconfig    clang-20
-hexagon               randconfig-001-20240920    clang-20
-hexagon               randconfig-002-20240920    clang-20
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20240920    clang-18
-i386        buildonly-randconfig-002-20240920    clang-18
-i386        buildonly-randconfig-003-20240920    clang-18
-i386        buildonly-randconfig-004-20240920    clang-18
-i386        buildonly-randconfig-005-20240920    gcc-12
-i386        buildonly-randconfig-006-20240920    gcc-12
-i386                                defconfig    clang-18
-i386                  randconfig-001-20240920    gcc-12
-i386                  randconfig-002-20240920    gcc-11
-i386                  randconfig-003-20240920    clang-18
-i386                  randconfig-004-20240920    gcc-12
-i386                  randconfig-005-20240920    gcc-12
-i386                  randconfig-006-20240920    clang-18
-i386                  randconfig-011-20240920    clang-18
-i386                  randconfig-012-20240920    clang-18
-i386                  randconfig-013-20240920    clang-18
-i386                  randconfig-014-20240920    clang-18
-i386                  randconfig-015-20240920    gcc-12
-i386                  randconfig-016-20240920    clang-18
-loongarch                        allmodconfig    gcc-14.1.0
-loongarch                         allnoconfig    gcc-14.1.0
-loongarch             randconfig-001-20240920    gcc-14.1.0
-m68k                             allmodconfig    gcc-14.1.0
-m68k                              allnoconfig    gcc-14.1.0
-m68k                             allyesconfig    gcc-14.1.0
-m68k                            q40_defconfig    gcc-14.1.0
-microblaze                       allmodconfig    gcc-14.1.0
-microblaze                        allnoconfig    gcc-14.1.0
-microblaze                       allyesconfig    gcc-14.1.0
-mips                              allnoconfig    gcc-14.1.0
-mips                     cu1000-neo_defconfig    gcc-13.2.0
-mips                     cu1830-neo_defconfig    gcc-13.2.0
-mips                           ip27_defconfig    gcc-14.1.0
-nios2                             allnoconfig    gcc-14.1.0
-openrisc                          allnoconfig    gcc-14.1.0
-openrisc                         allyesconfig    gcc-14.1.0
-openrisc                            defconfig    gcc-14.1.0
-parisc                           allmodconfig    gcc-14.1.0
-parisc                            allnoconfig    gcc-14.1.0
-parisc                           allyesconfig    gcc-14.1.0
-parisc                              defconfig    gcc-14.1.0
-powerpc                          allmodconfig    gcc-14.1.0
-powerpc                           allnoconfig    gcc-14.1.0
-powerpc                          allyesconfig    clang-20
-riscv                            allmodconfig    clang-20
-riscv                             allnoconfig    gcc-14.1.0
-riscv                            allyesconfig    clang-20
-riscv                               defconfig    clang-20
-s390                             allmodconfig    clang-20
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.1.0
-sh                               allmodconfig    gcc-14.1.0
-sh                                allnoconfig    gcc-14.1.0
-sh                               allyesconfig    gcc-14.1.0
-sh                                  defconfig    gcc-14.1.0
-sparc                            allmodconfig    gcc-14.1.0
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-17
-um                               allyesconfig    gcc-12
-x86_64                            allnoconfig    clang-18
-x86_64                           allyesconfig    clang-18
-x86_64                              defconfig    gcc-11
-x86_64                           rhel-8.3-bpf    gcc-12
-x86_64                         rhel-8.3-kunit    gcc-12
-x86_64                           rhel-8.3-ltp    gcc-12
-x86_64                          rhel-8.3-rust    clang-18
-xtensa                            allnoconfig    gcc-14.1.0
+> P.S.
+> However it might need an additional tests for the DW UART based platforms.
+> Cc'ed to Hans just in case (it might that he can add this to his repo for
+> testing on Bay Trail and Cherry Trail that may have use of DW UART for BT
+> operations).
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+It's not enough though. The DW UART controller must be connected to
+the DW DMAC handshaking interface on the platform. The kernel must be
+properly setup for that too. In that case the test would be done on
+a proper target. Do the Bay Trail and Cherry Trail chips support such
+HW-setup? If so the additional test would be very welcome.
+
+Sometime ago you said that you seemed to meet a similar issue on older
+machines:
+https://lore.kernel.org/dmaengine/CAHp75VdXqS6xqdsQCyhaMNLvzwkFn9HU8k9SLcT=KSwF9QPN4Q@mail.gmail.com/
+If it's still possible could you please perform at least some smoke
+test on those devices?
+
+In case of my device this series and a previous one
+https://lore.kernel.org/dmaengine/20240802075100.6475-1-fancer.lancer@gmail.com/
+fixed all the critical issues for the DW UART + DW DMAC buddies:
+1. Sudden data disappearing at the tail of the transfers (previous
+patch set).
+2. Random system freeze (this patch set).
+
+There is another problem caused by the too slow coherent memory IO on
+my device. Due to that the data gets to be copied too slow in the
+__dma_rx_complete()->tty_insert_flip_string() call. As a result a fast
+incoming traffic overflows the DW UART inbound FIFO. But that can be
+worked around by decreasing the Rx DMA-buffer size. (There are some
+more generic fixes possible, but they haven't shown to be as effective
+as the buffer size reduction.)
+
+-Serge(y)
+
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
+> 
 
