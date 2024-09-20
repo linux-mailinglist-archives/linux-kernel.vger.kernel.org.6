@@ -1,190 +1,224 @@
-Return-Path: <linux-kernel+bounces-334619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C3F197D9AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 20:54:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C110F97D9AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 20:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53B932830A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:54:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ECB6B227B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1E4183CB6;
-	Fri, 20 Sep 2024 18:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F95183CA3;
+	Fri, 20 Sep 2024 18:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kUWBPZsq"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QaWA0dMf"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2056.outbound.protection.outlook.com [40.107.243.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAC6B663;
-	Fri, 20 Sep 2024 18:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726858478; cv=none; b=rsV9AslFKZXdxrgtt4ekGh5qwKKw4JM42/5R8RSVuZTQ2QTVbDFaB3HAxIxqkfEQdOmWUGjG2zgRccZns1SKIYjwFk/Y8AkBB91Hi3N83dghWt1FmDwPLRUOtQkqvxvJG9gLUrYpw8MQPdUBvwXIyjWVcnc//Zu9affkJjg7JpM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726858478; c=relaxed/simple;
-	bh=mR84EBGM8Cys4fy25SD6rPpMGks83DIr/PZKyPuk3UQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=H5FqOZCT92prwuQ2DdV/JobdeMIR0Zd+VUnaRZGKHbnC+u8FiLqSQSLTbNPmoGCq0RrVKzpxNAG7MFaHadRpBxwJmrBRQ1doknqsO7iwWcBOn3xf+7SYOOhDHxAOIGXnniSvvXk+Ft71IBxYs8NLlPDG5Ww06DHtf8F1vIsd7Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kUWBPZsq; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c260b19f71so2752361a12.1;
-        Fri, 20 Sep 2024 11:54:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726858474; x=1727463274; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nYnfodJu1G6xNTNc0rdOj3cHR1Z8yN1C64CNCYSVH68=;
-        b=kUWBPZsq+bsHI0Yzzs2m+W+txX+KVrYrzTvHGnUrHlAac0n7tTXhMi6ismPfWMxY4d
-         P6esd0c7OP55MqG85KtyEPtNVaf+MH5JtzbQ92m2ysx7u39M1J1XhPe3POpQQbnjIejT
-         J+Q2YgYE1qUGYwt7wSokzj71xAulzOHRi+wdVtWFnrEECHdEe6HH3D+jRGfW/A6OYDCw
-         T7K9udhKpriRGeXH7d9FNP4h2riRTgXJuvjzPnuaMkjaWwOcQTIU+GgQI1kYtku05skw
-         3GoVSSl74uDr7I9bcG7A9QjsETVCXazfsFzDnKmxM83rfX1peTE8hHAryiQXK7KRXkey
-         IYZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726858474; x=1727463274;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nYnfodJu1G6xNTNc0rdOj3cHR1Z8yN1C64CNCYSVH68=;
-        b=rQcw9fm00v/hz2wNVwmYtSq9wqt1CEFLoYhbzboKngst+DaDpfofTbXNoTXywOTCTY
-         Fo2/FBULR2pw3YRBJA+gGqJ4FZx7MKFYF1iwmuqN7qCW5OIcuse11ps0JKFW3PVTGO3W
-         7ArEDYcLiItktCcwOfEEAlor4GLhVI0lQghzjY9r6l35yXEkXsohekKiMdoocVkASBx5
-         YLIJHu7/Z/VXxxqqjjl+IZZDZOXNP94LciTisLtUokJg/nHIuI1amkDwnSQGgfcdK3kZ
-         KjQ+cRojJKswJMiRy15qRNDPcWvBk95g/O8BEpIOXxPxR5P3b8XV6ukZBHU+nxYzK70N
-         5SYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6fz/fMYSwMRQb2m2R7QrkQ/sqTJS1qQ8dBpxOX8wheTxQ6dfSHx4o4NasX/HyGqVVUWcYC6e2dbKJ8Uc=@vger.kernel.org, AJvYcCWOWUqERyAJkqLSrkVK5eF5LnUuIWdVmBl89cCXYZ4aOUYVk/edC3+Mw+atn6SQtR5nq+MOWSIxwtAlxCpLh1AT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz098g2inHzFhYX5P8ktJcoBfLoYUnHfIC5hY0RnlGrlRQTwj3V
-	MaHM2Hn9boSr+tSKxDXkhXoVmGryKUyLuVtniWJERJkXLyXmWVdFMa0c3A==
-X-Google-Smtp-Source: AGHT+IECLYIyQ9ArqEoEWejS7/McoKvnrSSOQtGYJ+UPJQXuf9gplRtZd/RAXpD8Wi4OPKD1dHBMVg==
-X-Received: by 2002:a17:906:cae1:b0:a8d:2a46:6068 with SMTP id a640c23a62f3a-a90d5775f44mr273464566b.39.1726858474151;
-        Fri, 20 Sep 2024 11:54:34 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-42-44.xnet.hr. [88.207.42.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f442dsm879041066b.59.2024.09.20.11.54.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2024 11:54:33 -0700 (PDT)
-Message-ID: <917bd4b6-7536-4f68-90fb-99f37e3616ce@gmail.com>
-Date: Fri, 20 Sep 2024 20:53:56 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692F117C9FC
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 18:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726858725; cv=fail; b=cvVmC2ttNDBC/V0AwxNMVKKHk3RaPVAAoJd8GXkngfzncLqICg98SDN/i7s4RNYfbohtIdSp10dJQiSyhSIMLYMqc0XJE94W1l42cFgR1xAqNJK45dtoV25Zkda9/IwV05pBqX5FIqki0LTBTpwkaBgejkRc8TC3dD2/kovBGlc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726858725; c=relaxed/simple;
+	bh=zx2L/E/YPBHM3HyMSO/cLFkjzAVXk2m45BGWL0kWdVU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=p6/NNNOwJEiMGu1hR3i8B553dFtdgL58N3qpdyyX0mSjqreV8lFRY+mWhMcKM8XgOvBkidbuRT0jpKsWDImZvqoLPL15XrAK/+z+uhS999clBJ2PKeYeGFh58YyNsDZi5ChmSnqyHLwZMClnyCVwQYYKRNnktZv3OEmqUVzoHU4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QaWA0dMf; arc=fail smtp.client-ip=40.107.243.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QgSQ0341cWqHtw4/XXoojh1+fMabExbQak9ruEpH/C7q2tevhX7pELsYvfjYh7XnJyPZVsvvw7THBD1+sRCcgoGR6MFYRWZ5gPCyfdn82ovni6MhT2eJ/O4O0gm2iBHXqUVyZd4fTAaFJ8fwT7ea5EmW5gYzxJ6x3ULnlWa2V9zODQXNI+WXke1g3Spf0m+zRC+KVR5nia1thM+P9ActIQV4CEmvmbc4dC5msC3od6YmdQOwpUzJBcbAoXby12JgYcxBfu00OHWan7HGkwaIz7D9T9eQebttb331fKnhiLc2p0Xny9/gRoJouoT0t70fygPwsNlqYXsQIj1v3KgUYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ufPEu+GoOdnfGzpen0ympxItMhutYnETyLd8GFBiX7g=;
+ b=bLI9Cti3MXX0z0JtZ8BRkXx9fR8HrQ9HdlVw9HbnJAqPDXEOAahAhR56k6CfqCwjl/MmZhtlYZg8D3G0ZOpCh8HBMp4egOarKs7d4Jw5XvRXSPmtvrAWvIJSy5APp3/g+5mW6Tya8A7AS8DfIAWYgLMsXN8F57QgFuIkBbfTmMSs2O7AG0gzIigCp8WJgLorOl5JJIlQSo/szD27sJFqvk1DvYogbTiWtfjn1qhitEjW/Yn5LL9edmFhI5YpNuexwlaP/J6DpUKIEus7QSRmRfjTeBYeUT7lAr+BFsVxh0iG6iU6Br+sASlOy9pQhsgmtzmbNtOgZ/IcMJi73GOB1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ufPEu+GoOdnfGzpen0ympxItMhutYnETyLd8GFBiX7g=;
+ b=QaWA0dMfkM6WlUlqfkOdRRH24e4GFIUVXAKVZ2zLZuAnFwzqn6Rm3vt1ztxiJE9C4u7CPWjBQrkfrPEP6Zlt7W4nJxyv+SFj14nXElBVsh6hLkL2uo4paTosYUZskCdwnmggJAXq0NwrASnX5keWjn+mT0cDZEd6m3UAW0dOEqM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by BY5PR12MB4180.namprd12.prod.outlook.com (2603:10b6:a03:213::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.22; Fri, 20 Sep
+ 2024 18:58:39 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.7982.012; Fri, 20 Sep 2024
+ 18:58:39 +0000
+Message-ID: <ae062c07-dc09-4975-ad31-2f9d9ea435f9@amd.com>
+Date: Fri, 20 Sep 2024 20:58:33 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Staging: drivers/gpu/drm/amd/amdgpu: Fix null pointer
+ deference in amdkfd_fence_get_timeline_name
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: Felix.Kuehling@amd.com, alexander.deucher@amd.com, Xinhui.Pan@amd.com,
+ airlied@gmail.com, daniel@ffwll.ch, amd-gfx@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20240920090959.30755-1-kdipendra88@gmail.com>
+ <ac13994c-b77b-48f2-b2cf-20299f02c2e8@amd.com>
+ <CAEKBCKMg0c5AW7YggDMR+Kg7OGq3dXApLK-=RTR71H0KHO73+g@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <CAEKBCKMg0c5AW7YggDMR+Kg7OGq3dXApLK-=RTR71H0KHO73+g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR0P281CA0237.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b2::9) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] selftests/nci: ./nci_dev hang in wait4()
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Bongsu Jeon <bongsu.jeon@samsung.com>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <4f2dfd0c-9e57-46d0-86c9-c73955f90d1b@gmail.com>
-Content-Language: en-US
-In-Reply-To: <4f2dfd0c-9e57-46d0-86c9-c73955f90d1b@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|BY5PR12MB4180:EE_
+X-MS-Office365-Filtering-Correlation-Id: 45b38320-9a29-440b-47d8-08dcd9a63cdc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SElLaU9KL0FMYzE5V2F4NHE2bU1pK0d1TG8rM241dVhBV1B5M1N6TTlxWkNo?=
+ =?utf-8?B?enE1RmNXd29kT2JPVit6OS80RVgwUEtyNkVlRnFXNHlGM0E0OGV6eFhRYi9U?=
+ =?utf-8?B?VVBobjNyMVN3eEp4U3NIVzNKQm5pcC8xTUVzLzFUbUVxN2J0eUw5dm9nV2xs?=
+ =?utf-8?B?MjVqelBsSDNZVlJZWnFGL3l3K0RDenlndjlxZDFrQkt6M0FuUmtBOGJZdlRj?=
+ =?utf-8?B?K3VkVFFnakxvV0JWclNIbFU5L3VvSk5YVFc3cGNaM1RpRVhNM3phZWp0ZmJj?=
+ =?utf-8?B?KzFTeUVtVTl1b1ZUaStpL3ByM0lndTZRV1A1Qk1YVTBCai9VTkpMRUpVN2Y1?=
+ =?utf-8?B?MHAvUmgyRnBsNUZ1NHIwWFo4ZG9UQkNOZVA1SU5PUzQ0L0h1OTN5V2ZsbU5Y?=
+ =?utf-8?B?RzJxSFQ5SlFhdGRoMllIT1NxOVdNS1k5c3JYWHkvMy80TUJ5RUd5aGI2NnRP?=
+ =?utf-8?B?bHRocCt0VFRUeHg1QUtNWHB4K2hFQWtwcmFIQ29vZTBqMllGdU5NZ3Z4K3lT?=
+ =?utf-8?B?YUxvYWtBSUNnZlp1c21nSVFXMll0cU9qZ1ZQRWd0MFoyRnVmY2V6K0hEaEFF?=
+ =?utf-8?B?d2I2aDFkdyt1ck5NZTZPdU5lVml0OTh3engxWktrUENDR3huVEtvSytnYm9y?=
+ =?utf-8?B?a2w5eUxTRWNpR3E2TldoQlh6OGJRWkJ2aVRVcytiTkFNZ0xQQlRnU2dFbDJH?=
+ =?utf-8?B?ZCtzbExnREFWb2owaU1oSW1laGR3RWxnc3k5NHk1V1JubkFaUTdQNFlTNnl6?=
+ =?utf-8?B?ZmNqZWJRYSsyM1ZpRUZDN2dPb0xyOS9JUU1IU0IraXEwRlBnbitMNmdUUERz?=
+ =?utf-8?B?eHpIRXY2cDd3U2R5c09JcUVhSVRkYmpEekxUNmhoallpNW9sZ0I0bzRJK1dJ?=
+ =?utf-8?B?N0tUWVE0TE9CSlByVU4vNEpLNG9BK3EzTkxYUXBMc0lGeWNJMFZjWkJMMUVw?=
+ =?utf-8?B?dTZSU3FiOEVzekgvem5rL3FOYWI0QVRZMXZlSVdCY0Y4dzRTK1h2OEtEZUhD?=
+ =?utf-8?B?cWoyc1RUSmx1bUJFMUxNaExLZlFJTWpoMjdhZUV6c01EMjMweTA4M1NVSEU5?=
+ =?utf-8?B?Wnh2S0piSmtXM2JNU2pNc1RLeUlhRFhFOWJ6N3VmVWlwUk8xK2R0ak5oZG9Q?=
+ =?utf-8?B?aTFEM1VlRldyQklhRzlYYU80d29BcXdQcmpSR2t6VGF0Wm9QVld0VmE1QVc5?=
+ =?utf-8?B?emFlamtTLzJESHpOZEw1REZsWnhMVUh0a1N1anVvS0VsOS9WWjVyQUZZUDVQ?=
+ =?utf-8?B?ZDV4VUFLSStzL1hIVDRFcTEyRzI0Z3A2QUxUSEdxenJHQ1VRWmlWVms4VE9k?=
+ =?utf-8?B?QXJaUFNEV1RTVlhCakxkYk1TTE5Mdm1GVEtCYkI0YVdFRUp3SnhFbnZoWFNq?=
+ =?utf-8?B?NHFFRGZVRVJOeGtyN2E4UFc4YU5QcHFYSHZNWU9VN1VIcUNpbm1XUUNJUm15?=
+ =?utf-8?B?bGpMOVNxOHBGRnJObm9BeXVETzg0MVJCYmwzNmRkVWRDdkRxWjJTaWFnQ0R0?=
+ =?utf-8?B?U2lpWUl2WEs2RkVpOFoyOXNTTXlpeW1vNnJZaVpUaDNTMnlUUmR4eVpXTjZ1?=
+ =?utf-8?B?WmxIbXAxeHg5RnVsWHhsaFJveWtmYlRyLy96YlhPcTRmbDBlWGpJdS9uWHBs?=
+ =?utf-8?B?aTZ2UVlIVVJQTmtyRlNtSUdNWE5kQmpaRG1tbWgwamkxK05ZVUppZjZLTjV6?=
+ =?utf-8?B?bUVoelRrQUdYbVg3Q1AwQWZFTjVINDZ4TnRqa2liV3RSQUJpMkdBWitQWDA5?=
+ =?utf-8?B?VnhiOHBGMjVXcFlFRzltaGpiaVNZeGcxN0lFdFYvSzcwRDdzdkNmSWNEbThJ?=
+ =?utf-8?B?Z1FkVnVKRkZoN2hPUlRKZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z1c2a09WQTZUd0VvOTFMYnRPUHR2NmFJWWJyRTBXMWpMRmp4bjF4cTByWkRm?=
+ =?utf-8?B?Z2xyN1NtcTBSbExjQXFReXRzRklIbWhqbEM4MXl4cWxZQTlndnVSZ3BMNHhy?=
+ =?utf-8?B?eHpIRXJyRFBVV21IZ0ZpVGliNG44NUQ3dDJZWitMVWZpZlhYeDIwa0RhS3ZG?=
+ =?utf-8?B?NzhwZlRuNUNzRGFJemsxUGIwd3E4dWRDekFsSWRDbnVsdjZxanR3RGNPNUZm?=
+ =?utf-8?B?cThuUUpYK3QxK3RkUHVTS2JVaFdtbG1oTE1PbkhwUDk2M0ozMU5ZUjR5c0hm?=
+ =?utf-8?B?QVVVVG4rTkpaK1djK013eStEbTd4MzUvTU8waWV1WVRRYVJSK1FiNW9uVnBo?=
+ =?utf-8?B?MnQ5VUZhR0l6YUQrYWhERnkxOFBReDNSV01GZ29XbHkrbjA3dzZydnBBdlBp?=
+ =?utf-8?B?SG1UVlpmVXZ0UUJ3TENEellCWVhaNXorcUMwUnh1aFdGejhMVGpBbEliWWNu?=
+ =?utf-8?B?ZE5odU5ReWdXYjFRd2xubThXQkhwZUV6a1VaUWYycjdCRmZxM3NYMzJaL3lh?=
+ =?utf-8?B?VGVxQUdFeTZuS2J0RnBqdmpNcUtwQWZicUEyNzZMcC9CTFBIVlZ2OEpNQXBa?=
+ =?utf-8?B?ZmRhQVJxalFDa0laTGRiMi9RaVMzTzJmOWZJVVM5RGNFN0wxNUZjdnBYNDZ5?=
+ =?utf-8?B?N2dJbnlUMWpRT1FsSlZwOTlHYTJqbE1HUkZ0ZjJrS05QN0l2OVhDUXJldFhq?=
+ =?utf-8?B?aHllRitmUXJJSVBDbVVOdk1wOHJ2REgrUGd3bEtnaVN2SXdJOE92T0h5RjlJ?=
+ =?utf-8?B?NWxWYXFaZmp1L0wvMjZpU3hxMmNPZGJnbEhtQ3FoTVhTQWoyOTNYUGdPbThr?=
+ =?utf-8?B?Y3dZK3kxN2dWeTJhanRIRVJ6YzlZSmlWeG5Cb0Z5aVdWR0RKM1Y4Y0E0K1VN?=
+ =?utf-8?B?TkNQQlFaRzBGMkZETGxnSUxXTGVWVXdDakpZNHR5NFdJaExxUlQvRmUyTVVh?=
+ =?utf-8?B?QTBIcUdTTTVlRWNVbWZhZ3d4WG9JcmlDZkpEdkVvNFBOc0doeWY1VVpMeVI2?=
+ =?utf-8?B?aFIvN21mVElGRWJ5TCtvQTVuVHlESEdHRk5kVXVCQ2JsU3UyWWJWdTcra3Ar?=
+ =?utf-8?B?NUkxVmpGZS9wNHlhdXdac0FoY29HWnQ4bnBTeWtZTDNhQ1BRM2xBaDNZM216?=
+ =?utf-8?B?eEs1cThJZ25DYThsQ2RLQjg1VzlaUEd1MUQzcEhwdnJuUzA0Nm56UkVpckQv?=
+ =?utf-8?B?ZFpJMm4rSFRtYjNWbXhDQ1J2VHV3N0x2RFpKTG1yKzZUOCtnUHduKzJxcTF2?=
+ =?utf-8?B?RFNGSFlCUExEdkVqaE9vWHV0NndEdThsRHkyL1dlNlY4a1psVTk5cE5XWUE3?=
+ =?utf-8?B?NFJXZ29BbFQvWlFBeFVpRVZNN0RSTU4wNE9MWit5c0kxTUQxOHlhdDdJQllD?=
+ =?utf-8?B?T0VNVitDdHREUHlDWHdUSzk4R3FjVFUrQytRd1JVK1pVdllJZlRzM1hJZnNL?=
+ =?utf-8?B?UEw4VE92REVwOVJtU3Y2cHpoY29yT0k4WTFrYytoRGNoU29yY3FIRTVBajZk?=
+ =?utf-8?B?TkM3b2NpeTdGM0ZHS09vYWtMZklUM0hPaG10K2thRjJOMUZUTVpsSndoeU9N?=
+ =?utf-8?B?WmFyamN4Z2FNOUpIVnlONlMyaWpvL0xpR3pzQVZpR2kxSGdTQmU2a2RzdCtI?=
+ =?utf-8?B?S3R3MUNyYTNaZnA0U3pvSFAvUVBpZ0NHWlhrcDZPeVRVUWJNeUp3cU9Uc1NH?=
+ =?utf-8?B?RHh4NXlMUEJXazJIWjU4MThJOUZaZVBDV2VGS2d2aGRTQ21GQmkxTXFNRHJs?=
+ =?utf-8?B?RGZtNVkxeGNJNUFXWU9NcHlwM3o0NXF1UTY0SHd3NUpFQXNqMVBHMFVkZXVE?=
+ =?utf-8?B?czg3YmFCaGxZWnBObGM4aWRRcVA2WmRqV0tjNFZ1bE5pYlpIZDRHbkRZMDQr?=
+ =?utf-8?B?RTZuVUdMR3d6NE1PVzRMVjdPZ3YxQjNWUGJqU3hLeldWUFdJWnNEeFNuYjF6?=
+ =?utf-8?B?WnlXdW05cEx1NkxFc2FXZnZNUDhBNWEyd0hTeGhsbG01S0dBM2VEMitSU1R3?=
+ =?utf-8?B?RlhHZkFXSkV2WkgxVFFPS3VQWjlsRDBKWHFYY1ZiSFlnSFdyaUJ5SVJHNis1?=
+ =?utf-8?B?UmdiSkdPbldQN0RNak05MGw1S1U5WS9rVXZ2VVoxN2d4a3RibENmWkNCTTk3?=
+ =?utf-8?Q?5ciM=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 45b38320-9a29-440b-47d8-08dcd9a63cdc
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 18:58:39.2230
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: n7E2vIg3sllhAuA4XBLUiHvcAu7S3XynmKX4H08AwUD+fNY96Mp41lSdW63Gid9+
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4180
 
-On 9/20/24 18:22, Mirsad Todorovac wrote:
-> Hi, all,
-> 
-> I was testing Linux torvalds tree vanilla kernel, and I've noticed for a number of releases this
-> ./nci_dev stops testing until it's terminated (15).
-> 
-> Now, I tried to examine what went wrong, I hoped it will go away by itself. it didn't, so I am posting
-> a bug report.
-> 
-> The ./nci_dev seems to be stuck in several processes waiting on each other. I was able to produce
-> stacktraces. I am unable to tell if it is testsuite bug or a problem in underlying syscalls.
-> 
-> user@host:~/linux/kernel/linux_torvalds$ sudo gdb --pid 14132
-> GNU gdb (Ubuntu 15.0.50.20240403-0ubuntu1) 15.0.50.20240403-git
-> Copyright (C) 2024 Free Software Foundation, Inc.
-> License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-> This is free software: you are free to change and redistribute it.
-> There is NO WARRANTY, to the extent permitted by law.
-> Type "show copying" and "show warranty" for details.
-> This GDB was configured as "x86_64-linux-gnu".
-> Type "show configuration" for configuration details.
-> For bug reporting instructions, please see:
-> <https://www.gnu.org/software/gdb/bugs/>.
-> Find the GDB manual and other documentation resources online at:
->     <http://www.gnu.org/software/gdb/documentation/>.
-> 
-> For help, type "help".
-> Type "apropos word" to search for commands related to "word".
-> Attaching to process 14132
-> Reading symbols from /home/marvin/linux/kernel/linux_torvalds/tools/testing/selftests/nci/nci_dev...
-> Reading symbols from /lib/x86_64-linux-gnu/libc.so.6...
-> Reading symbols from /usr/lib/debug/.build-id/6d/64b17fbac799e68da7ebd9985ddf9b5cb375e6.debug...
-> Reading symbols from /lib64/ld-linux-x86-64.so.2...
-> Reading symbols from /usr/lib/debug/.build-id/35/3e1b6cb0eebc08cf3ff812eae8a51b4efd684e.debug...
-> [Thread debugging using libthread_db enabled]
-> Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
-> 0x00007be7cf3107a7 in __GI___wait4 (pid=pid@entry=14133, stat_loc=stat_loc@entry=0x7ffef60482dc, options=options@entry=0, usage=usage@entry=0x0) at ../sysdeps/unix/sysv/linux/wait4.c:30
-> 
-> warning: 30	../sysdeps/unix/sysv/linux/wait4.c: No such file or directory
-> (gdb) where
-> #0  0x00007be7cf3107a7 in __GI___wait4 (pid=pid@entry=14133, stat_loc=stat_loc@entry=0x7ffef60482dc, options=options@entry=0, usage=usage@entry=0x0) at ../sysdeps/unix/sysv/linux/wait4.c:30
-> #1  0x00007be7cf3108eb in __GI___waitpid (pid=pid@entry=14133, stat_loc=stat_loc@entry=0x7ffef60482dc, options=options@entry=0) at ./posix/waitpid.c:38
-> #2  0x00005d550d59299b in wrapper_NCI_start_poll (_metadata=0x7be7cf486000, variant=0x5d550d597020 <_NCI_NCI2_0_object>) at nci_dev.c:625
-> #3  0x00005d550d591a94 in __run_test (f=f@entry=0x5d550d5970a0 <_NCI_fixture_object>, variant=variant@entry=0x5d550d597020 <_NCI_NCI2_0_object>, t=t@entry=0x7be7cf486000) at ../kselftest_harness.h:1249
-> #4  0x00005d550d58fd47 in test_harness_run (argv=0x7ffef60488f8, argc=1) at ../kselftest_harness.h:1319
-> #5  main (argc=1, argv=0x7ffef60488f8) at nci_dev.c:904
-> (gdb) 
-> 
-> user@host:~$ sudo gdb --pid 14133
-> GNU gdb (Ubuntu 15.0.50.20240403-0ubuntu1) 15.0.50.20240403-git
-> Copyright (C) 2024 Free Software Foundation, Inc.
-> License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-> This is free software: you are free to change and redistribute it.
-> There is NO WARRANTY, to the extent permitted by law.
-> Type "show copying" and "show warranty" for details.
-> This GDB was configured as "x86_64-linux-gnu".
-> Type "show configuration" for configuration details.
-> For bug reporting instructions, please see:
-> <https://www.gnu.org/software/gdb/bugs/>.
-> Find the GDB manual and other documentation resources online at:
->     <http://www.gnu.org/software/gdb/documentation/>.
-> 
-> For help, type "help".
-> Type "apropos word" to search for commands related to "word".
-> Attaching to process 14133
-> [New LWP 14137]
-> [Thread debugging using libthread_db enabled]
-> Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
-> 0x00007be7cf298d61 in __futex_abstimed_wait_common64 (private=128, cancel=true, abstime=0x0, op=265, expected=14137, futex_word=0x7be7cf000990) at ./nptl/futex-internal.c:57
-> 
-> warning: 57	./nptl/futex-internal.c: No such file or directory
-> (gdb) where
-> #0  0x00007be7cf298d61 in __futex_abstimed_wait_common64 (private=128, cancel=true, abstime=0x0, op=265, expected=14137, futex_word=0x7be7cf000990) at ./nptl/futex-internal.c:57
-> #1  __futex_abstimed_wait_common (cancel=true, private=128, abstime=0x0, clockid=0, expected=14137, futex_word=0x7be7cf000990) at ./nptl/futex-internal.c:87
-> #2  __GI___futex_abstimed_wait_cancelable64 (futex_word=futex_word@entry=0x7be7cf000990, expected=14137, clockid=clockid@entry=0, abstime=abstime@entry=0x0, private=private@entry=128)
->     at ./nptl/futex-internal.c:139
-> #3  0x00007be7cf29e793 in __pthread_clockjoin_ex (threadid=136235540547264, thread_return=thread_return@entry=0x7ffef6047dd0, clockid=clockid@entry=0, abstime=abstime@entry=0x0, 
->     block=block@entry=true) at ./nptl/pthread_join_common.c:102
-> #4  0x00007be7cf29e633 in ___pthread_join (threadid=<optimized out>, thread_return=thread_return@entry=0x7ffef6047dd0) at ./nptl/pthread_join.c:24
-> #5  0x00005d550d591e48 in NCI_setup (_metadata=_metadata@entry=0x7be7cf486000, self=self@entry=0x7ffef60482e0, variant=<optimized out>) at nci_dev.c:447
-> #6  0x00005d550d5929f3 in wrapper_NCI_start_poll (_metadata=0x7be7cf486000, variant=0x5d550d597020 <_NCI_NCI2_0_object>) at nci_dev.c:625
-> #7  0x00005d550d591a94 in __run_test (f=f@entry=0x5d550d5970a0 <_NCI_fixture_object>, variant=variant@entry=0x5d550d597020 <_NCI_NCI2_0_object>, t=t@entry=0x7be7cf486000)
->     at ../kselftest_harness.h:1249
-> #8  0x00005d550d58fd47 in test_harness_run (argv=0x7ffef60488f8, argc=1) at ../kselftest_harness.h:1319
-> #9  main (argc=1, argv=0x7ffef60488f8) at nci_dev.c:904
-> (gdb) 
-> 
-> I hope this can help you see what went wrong. The testing suite gets stuck on each run.
-> 
-> Best regards,
-> Mirsad Todorovac
+Am 20.09.24 um 18:31 schrieb Dipendra Khadka:
+> On Fri, 20 Sept 2024 at 16:01, Christian König <christian.koenig@amd.com> wrote:
+>> Am 20.09.24 um 11:09 schrieb Dipendra Khadka:
+>>> '''
+>>> drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c:108:9: error: Null pointer dereference: fence [nullPointer]
+>>>    return fence->timeline_name;
+>>>           ^
+>>> '''
+>>>
+>>> The method to_amdgpu_amdkfd_fence can return NULL incase of empty f
+>>> or f->ops != &amdkfd_fence_ops.Hence, check has been added .
+>>> If fence is null , then null is returned.
+>> Well NAK, completely nonsense. Calling the function with a NULL fence is
+>> illegal.
+> Thanks for enlightening me .
 
-P.S.
+Well sorry to be so direct, but what the heck did you tried to do here?
 
-Forgot to mention, the kernel was 6.11.0 release.
+I mean that is broken on so many different levels that I can't 
+understand why somebody is suggesting something like that.
 
-Mea culpa.
+Regards,
+Christian.
 
-Best regards,
-Mirsad Todorovac
+>
+>> Regards,
+>> Christian.
+>>
+>>> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+>>> ---
+>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c | 3 +++
+>>>    1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c
+>>> index 1ef758ac5076..2313babcc944 100644
+>>> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c
+>>> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c
+>>> @@ -105,6 +105,9 @@ static const char *amdkfd_fence_get_timeline_name(struct dma_fence *f)
+>>>    {
+>>>        struct amdgpu_amdkfd_fence *fence = to_amdgpu_amdkfd_fence(f);
+>>>
+>>> +     if (!fence)
+>>> +             return NULL;
+>>> +
+>>>        return fence->timeline_name;
+>>>    }
+>>>
+> Regards,
+> Dipendra Khadka
 
 
