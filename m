@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-334063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07D7597D231
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:02:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A07DA97D234
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7F321F255E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:02:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 560271F2378F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152A25D915;
-	Fri, 20 Sep 2024 08:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08ECD770E2;
+	Fri, 20 Sep 2024 08:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="gTk0Nu1X"
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="CPiKmHgK"
 Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2F418EB1;
-	Fri, 20 Sep 2024 08:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E3255E58;
+	Fri, 20 Sep 2024 08:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726819331; cv=none; b=VdcrR40uuUPtGNZ/iuLMuvCUfRqdmcl9KQ7bwUJiNWFBVWUc6S4yMZl0Af93Gw+WkWJe8D/JW9xFtq9EGO9dZFbQg5BizYO0f9nR2jx3n8ejBxzFDPrkUc70dCkekQQN83SnT5II7ZXDkoGRnl9gOVdAUFVakj3xaiOkKsbdP3M=
+	t=1726819333; cv=none; b=lwe7tpiz6yoOxcmTVIChd9wjD4Y6Ybj0YSGXz28Rtglv5co2JrYiU08OJrHJIOg2mcaJ5jQ0XOr/gt2TreqeIxOzg47xXf9NbOx5ohtEpPfWdJ+0pqPdQiOuouk1gPytOo9fS8jS3f+D+s/Aib5u7SG3jbtTLNmwyo64fRPCrac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726819331; c=relaxed/simple;
-	bh=4t9FIdG8kcgMmWsigSoI8Jasp4vMsO39N68Dc9kJ7xk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i4zpF2i2wiY2wgncs2WMrwq/6PelFXL5wRdKVmhHvmRLjBoXX8qLC10asbyQ2UJ6hGcsp1hIgJGjHnMJdkRZZ1us8SA95u/byAZau4TjvIaT+DeeYA4qei+VaE3/mj23TcvIfOY4yQa0pN/omRXbN7wSzXCgn2m9wLhsWw5EJgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=gTk0Nu1X; arc=none smtp.client-ip=81.19.3.130
+	s=arc-20240116; t=1726819333; c=relaxed/simple;
+	bh=w92tLlQoXu88wLKumObChRsMI2UcbSIGRJvvllzr42Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YwQYUV8kSyZVKIElgwyTy3e1Jzum4j0t9Hlw6MtYQwKXk4lbIQMLXaQ/KZC+uV5dE2dBA1v55tUaT21C4OJ/KZV0QDmKVRRDPT2F4x+mEKa/fAXnKpufozQQ23a85sb7McisQ3Of5fOM587lsfY7h0BaJTQsy2chwZSV83kPf4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=CPiKmHgK; arc=none smtp.client-ip=81.19.3.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-	s=20160406-ysoft-com; t=1726819324;
-	bh=eNwOUsnTzpWabWCjSD0aAJbn8IKtEXU1rIipDUczE6o=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gTk0Nu1XyC3Oun7Izllc+bHHB3+nwekV86IrrlXdEyDtDOAVrzbFfNlTysrQngHi5
-	 4l4wQD/8lo6Dgpt/cD6JrJy9cgGAFzyE8s4S8AijH2zi7Ur532EBDrlICZfxUqHDmJ
-	 xO0GT3hHIYw3p9yi/UpM67dhshbeN8IbzLVyhTAo=
+	s=20160406-ysoft-com; t=1726819329;
+	bh=gBzT+90S7lwHa+Ul+EHImMRwV6xJ59wUyiGH0dZBWUw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CPiKmHgKoQrBj2qjrpaYAgZvAa/1fUur+6AK8h+VCj9znx2YbQ5LPL2wIF5+vzAyU
+	 ZEbYFVl7PA28P7ZsFcrBT+gBWubv8pAW0t3d4COVGYWpkBruuxbJCSmCTEm7XrJTR3
+	 C5y0PSVCwPefeuKdfpeid+KwbCM04F95KT7isJXQ=
 Received: from vokac-nb.ysoft.local (unknown [10.1.8.111])
-	by uho.ysoft.cz (Postfix) with ESMTP id 1F87DA0419;
-	Fri, 20 Sep 2024 10:02:04 +0200 (CEST)
+	by uho.ysoft.cz (Postfix) with ESMTP id 3E3D1A0743;
+	Fri, 20 Sep 2024 10:02:09 +0200 (CEST)
 From: =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -61,11 +62,14 @@ Cc: Sascha Hauer <s.hauer@pengutronix.de>,
 	linux-usb@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
-	=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-Subject: [PATCH v2 0/4] Add support for new IMX8MP based board
-Date: Fri, 20 Sep 2024 10:01:50 +0200
-Message-ID: <20240920080154.1595808-1-michal.vokac@ysoft.com>
+	=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 1/4] dt-bindings: arm: Add i.MX8MP IOTA2 Lumpy board
+Date: Fri, 20 Sep 2024 10:01:51 +0200
+Message-ID: <20240920080154.1595808-2-michal.vokac@ysoft.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240920080154.1595808-1-michal.vokac@ysoft.com>
+References: <20240920080154.1595808-1-michal.vokac@ysoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,41 +79,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Add new board from the Y Soft IOTA family. This one is based on the i.MX8MP
+SoC. It is basically a stripped-down clone of the EVK board with some minor
+additions.
 
-this series adds support for a new member in our IOTA platform.
-The board is based on the i.MX8MP SoC. The first two patches
-add support for most of the board functionality except USB Type-C
-port and some other minor things.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+---
+v2:
+- Added tag from Krzysztof.
 
-[PATCH 3] adds new device tree binding for a Diodes Incorporated
-PI5USB30213A Type-C Controller and [PATCH 4] enables that port on
-the IOTA2 Lumpy board.
+ Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-We also wrote a driver for that Type-C port controller. I would like
-to get that driver upstream as well but I expect it will take much
-more iterations and effort to get it into mainline-ready shape so
-I intentionally excluded it from this series. AFAIK it should not
-be a problem to accept a device tree binding for a HW that does not
-have a driver in the kernel yet.
-
-Michal Vokáč (2):
-  dt-bindings: arm: Add i.MX8MP IOTA2 Lumpy board
-  arm64: dts: imx: Add imx8mp-iota2-lumpy board
-
-Petr Benes (2):
-  dt-bindings: usb: Add Diodes Incorporated PI5USB30213A Type-C
-    Controller
-  arm64: dts: imx8mp-iota2: Enable the USB Type-C port
-
- .../devicetree/bindings/arm/fsl.yaml          |   1 +
- .../bindings/usb/diodes,pi5usb30213a.yaml     |  88 +++
- arch/arm64/boot/dts/freescale/Makefile        |   1 +
- .../boot/dts/freescale/imx8mp-iota2-lumpy.dts | 518 ++++++++++++++++++
- 4 files changed, 608 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/diodes,pi5usb30213a.yaml
- create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
-
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index b39a7e031177..a3389f2d06e6 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -1088,6 +1088,7 @@ properties:
+               - toradex,verdin-imx8mp     # Verdin iMX8M Plus Modules
+               - toradex,verdin-imx8mp-nonwifi  # Verdin iMX8M Plus Modules without Wi-Fi / BT
+               - toradex,verdin-imx8mp-wifi  # Verdin iMX8M Plus Wi-Fi / BT Modules
++              - ysoft,imx8mp-iota2-lumpy  # Y Soft i.MX8MP IOTA2 Lumpy Board
+           - const: fsl,imx8mp
+ 
+       - description: Avnet (MSC Branded) Boards with SM2S i.MX8M Plus Modules
 -- 
 2.43.0
 
