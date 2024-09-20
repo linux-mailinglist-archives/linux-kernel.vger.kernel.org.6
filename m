@@ -1,141 +1,129 @@
-Return-Path: <linux-kernel+bounces-334381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EDEF97D68A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:01:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C759397D690
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C15611C22A27
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:01:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43B5A1F25239
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741E217BB0C;
-	Fri, 20 Sep 2024 14:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3245017BEB8;
+	Fri, 20 Sep 2024 14:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="X9caUx4W"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="HuGUst7y"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22484224F0;
-	Fri, 20 Sep 2024 14:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1842D638;
+	Fri, 20 Sep 2024 14:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726840858; cv=none; b=ksbOjTsTmpnNs2E96IpYxoLuTd23sBXqo4BzijRe6CZzF2+7YFlYik6+ulFBLyksqCzGst0NLcXrk2VLaWvCLBu0s6uXWO81ACIOJTikK2ShsFn/fxsMhDHjIpzVb6s8xMl/DTTuzmB6TGneKWBczs+qK+i+HkNLFLfaI4nYpvk=
+	t=1726841058; cv=none; b=dkSCX+YCU/j93wLVY7lTrzukNKXL1WphlzlGQEIRoY9GysPGxGQteY14SHHsj9llTe6LSOMalF7jAsk7Bf1o88ElWoLO9cvRnzBuOL44eKEOi8VfzrJoXtCJmiphuItDvTwYsGg9NzySyALJHPNXT5hDmvqElrpZ8kOS/8E+SyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726840858; c=relaxed/simple;
-	bh=SjouKvnGzvSQYYGymuKxBI8tlJLwwvujAM9/Hx6FcxE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jOpqCEwlt348sDel//6fNaRKV9BNLtnEsBIxHxxynLkW+BI4O/cza2fx7M7lPyzh+9z9QnrjN3GJLUx/4KEXznZ86/rLEWccjuyOvlOhlhpkwQem+tcng/xyInfLQLFlmH9/OoqAYaS0vV4qHkNe+XeWvWkGflsLOhHzQluAYXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=X9caUx4W; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48KB5tad017555;
-	Fri, 20 Sep 2024 14:00:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Se93HO0HCudHeOs3VcVG74GCHSXa9IoKZz1+bHFhs2o=; b=X9caUx4WUMG5TR5e
-	XKnYibiKKX6i3tCHlmpDCsQT3/mnoK/z9K4dY0p8UC9RgKrdqEi2x9sT9uw63Ahy
-	ujf93IeBCU3tV+8iDDOppHxTaPx4vhxctRnfQsAFg6H5briGfYnjBW4pfJUvYmft
-	XrWwdo9W1mmDTNCJMwIGVWuZKq5ewqVtKLQMqdizUxJyGUArK/01HENlL7zV7AIh
-	upehnRSJZTQsHaXGOWL6TNmfc4+cGQuGyF/4TMsiZB5GG87cODqq9757GPpTr9LI
-	bcb6CnE/tifpM2NqnklpuivgaNqrqy1R/bQLQdNjA8fY0/xxv2NNvY4uV+KMkFrn
-	OmJW0g==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41ry4aa2cr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 14:00:39 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48KE0HxF013883
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 14:00:17 GMT
-Received: from [10.111.141.132] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 20 Sep
- 2024 07:00:14 -0700
-Message-ID: <18e971c6-a0ef-4d48-a592-ec035b05d2b7@quicinc.com>
-Date: Fri, 20 Sep 2024 07:00:11 -0700
+	s=arc-20240116; t=1726841058; c=relaxed/simple;
+	bh=j66VQ1fvE8/8VpS3wXfWW24Xi81y7pNfLqg+Xw7+1mM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DKMYLupBGU4rCr3q1VDbrmJqgGlaa3nvIhN4XmZWWP0+r98QUGM/1WWhOaDN18lcwbbaN2e0ckISI4FMlF5lJayTIXuh8JCmAnS5KGZ6u4YRfH52JKX3WQTlkb8vbmZW0kmbTwRlsfSMzZ+TVK8ao7dBjGkV3dZLSZIl38YTgOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=HuGUst7y; arc=none smtp.client-ip=74.208.4.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1726841037; x=1727445837; i=parker@finest.io;
+	bh=0uxUw95odIsHL7hwIEFBBP/4w7jv8NAoCGe2lMCgos4=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=HuGUst7yAgJyl52dvkVGi+L6zlJWjSzpfkI9+m6r2unT17sWu3/s2P+T4snRYR9D
+	 i3MwA9CCE4XN6FlGneBpTGcQy2xmugfn8+u2NtbNdKXpj9iS2Xz2StKzj7UJwzp1R
+	 ZZ3T38v1T32zuTOxTX6R6mYHDtIq8ECMEZWsUjTPkInKIvFfOTRebazGuFfLL2oX2
+	 C8sPkDm+3JRpgvtIImXsoiTAKuddgcBfnCUGhwx63l8/EqxNWAIKWm6u3Aw6mP9jh
+	 fZOdna24M3YAVLKNEk835lxpWcx3b3KLbIv/J53DxCI8Hkh7Q2VLZHSvHjwOsIK70
+	 J5YHYqvuZFuzq6aq/g==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from finest.io ([98.159.241.229]) by mrelay.perfora.net (mreueus002
+ [74.208.5.2]) with ESMTPSA (Nemesis) id 0MfFYy-1sctZm2fiU-00R8Fl; Fri, 20 Sep
+ 2024 16:03:56 +0200
+From: Parker Newman <parker@finest.io>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: Parker Newman <pnewman@connecttech.com>
+Subject: [PATCH v2 0/4] serial: 8250_exar: Replace custom EEPROM code with eeprom_93cx6
+Date: Fri, 20 Sep 2024 10:03:20 -0400
+Message-ID: <cover.1726838531.git.pnewman@connecttech.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: qcom: pd_mapper: fix ADSP PD maps
-To: Johan Hovold <johan@kernel.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Stephan Gerhold <stephan.gerhold@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20240918-x1e-fix-pdm-pdr-v1-1-cefc79bb33d1@linaro.org>
- <Zu0wb-RSwnlb0Lma@hovoldconsulting.com>
- <sziblrb4ggjzehl7fqwrh3bnedvwizh2vgymxu56zmls2whkup@yziunmooga7b>
- <Zu06HiEpA--LbaoU@hovoldconsulting.com>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <Zu06HiEpA--LbaoU@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8xh5ep7kPkkbkIMIPCF1nbqlX1sStHZ7
-X-Proofpoint-ORIG-GUID: 8xh5ep7kPkkbkIMIPCF1nbqlX1sStHZ7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- priorityscore=1501 lowpriorityscore=0 clxscore=1011 malwarescore=0
- suspectscore=0 spamscore=0 impostorscore=0 adultscore=0 bulkscore=0
- mlxlogscore=906 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409200102
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:N0+wb7PVLd/XNLVLQyGzt+7m35ny9yY4/HbboVxAnFvXkrV03MK
+ sUCwS7lZrfUywoQZ7Xns1FFTVdSxYVZuvWsXAlt4zstx7PG2nvUrMbQNTzlU7hkWFITgNDt
+ lqHbwLMhRLbqLh/NKoRNJ5L/4Y9TAI9lFPmvz59mkKB5e6yvW1B2RoJT4DDz3FFkZZKosq8
+ nSQXmtP+Gd+3HmbwQ4Xzg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:VuWNG6JCRno=;l9oUfQX+1R9uPe6hmRkhPe9Bjab
+ xDWrT31PWqNWj3SjgxrCioolWGCsWz3DDeRKMnjbXxtBt6aX0dkMYmjfzadybpqhSq0o3yP1l
+ BeTrO271kb08CD8nII/dIYX3tnB2ggpB2YKk5M1Aeclzew7+kKvSah1URp1JIzISUeX0rDIXn
+ 7x+RvQfvtrE8UB0hw7kEDsALVGrUtCmbLYgMQaH5/Q4+zxanuNuevti2UErWAdg9FSDbIIqVC
+ OycraMzQL/3XRDVCslxyyIYhKiRApWWWGu31BVHP/x1AnMP65YRIA1rXfjqAvOVHCWKgOppTD
+ B/UGFJpP3AS2WDLX5WJLMmjyVT6XwglBVufIMAVyfe6ZJMY18QDs+eBx0Fp1/gTLbq6o9xCIV
+ IOy0Y/wya4HIRq8diYOXDm810AIQFsvE4y/Dfi9pt+fonFb6d2eXsqNbc0pclK3XVPbm4UzC8
+ oLiMdkdyZY3Z8splfeMpkORySeQ3jmRX5MNcPdeACJ9M62hLsZKWyGylRWS/LdJgzYCk1ZoqZ
+ kWkwINAGnKr/uUrwslV3ZFg1jBGiQXKb1k5Pdl6D6Bw8hpTQgxeJfLSdBypEtVZnmEyuqJ0xi
+ N/CiJFNX+rIHOTroVELws7VN8ClN9Dz/1k7ZfcE1NZ8IKPz8/fWCvcEpqrvW6hyVB6vpXDf7w
+ 1wjLXxG5bCEJla6q5lgDFNFJv2AVp46x5Rqv12vvi5hsiXLg85L3QOBpsNGoQXjcRJQ8Z9tFc
+ tyqOAaD6GAeZRyyd4PMMlbCokAo3jbJuA==
+
+From: Parker Newman <pnewman@connecttech.com>
+
+This series of patches replaces the custom 93cx6 EEPROM read functions in
+the 8250_exar driver with the eeprom_93cx6 driver. This removes duplicate =
+code
+and improves code readability.
+
+In order to use the eeprom_93cx6 driver a quirk needed to be added to add =
+an
+extra clock cycle before reading from the EEPROM. This is similar to the
+quirk in the eeprom_93xx46 driver.
+
+More details in associated patch and mailing list discussion with
+Andy Shevchenko about these changes:
+Link: https://lore.kernel.org/linux-serial/Ztr5u2wEt8VF1IdI@black.fi.intel=
+.com/
+
+Changes in v2:
+- Dropped patch 3 "misc: eeprom: eeprom_93cx6: Replace printk(KERN_ERR...)=
+ with pr_err()".
+- Moved Kconfig change into main patch.
+- Moved quirk define into struct eeprom_93cx6.
+- Moved quirk check function into eeprom_93cx6.h.
+- Refactored cti_read_osc_freq() based on feedback.
+- Minor commit message formatting fixes.
+
+Parker Newman (4):
+  misc: eeprom: eeprom_93cx6: Add quirk for extra read clock cycle
+  misc: eeprom: eeprom_93cx6: Switch to BIT() macro
+  serial: 8250_exar: Replace custom EEPROM read with eeprom_93cx6
+  serial: 8250_exar: Remove old exar_ee_read() and other unneeded code
+
+ drivers/misc/eeprom/eeprom_93cx6.c  |  15 +++-
+ drivers/tty/serial/8250/8250_exar.c | 121 ++++++++--------------------
+ drivers/tty/serial/8250/Kconfig     |   1 +
+ include/linux/eeprom_93cx6.h        |  12 +++
+ 4 files changed, 58 insertions(+), 91 deletions(-)
 
 
+base-commit: 5ed771f174726ae879945d4f148a9005ac909cb7
+=2D-
+2.46.0
 
-On 9/20/2024 2:02 AM, Johan Hovold wrote:
-> On Fri, Sep 20, 2024 at 11:49:46AM +0300, Dmitry Baryshkov wrote:
->> On Fri, Sep 20, 2024 at 10:21:03AM GMT, Johan Hovold wrote:
->>> On Wed, Sep 18, 2024 at 04:02:39PM +0300, Dmitry Baryshkov wrote:
->>>> On X1E8 devices root ADSP domain should have tms/pdr_enabled registered.
->>>> Change the PDM domain data that is used for X1E80100 ADSP.
->>>
->>> Please expand the commit message so that it explains why this is
->>> needed and not just describes what the patch does.
->>
->> Unfortunately in this case I have no idea. It marks the domain as
->> restartable (?), this is what json files for CRD and T14s do. Maybe
->> Chris can comment more.
-> 
-> Chris, could you help sort out if and why this change is needed?
-> 
-> 	https://lore.kernel.org/all/20240918-x1e-fix-pdm-pdr-v1-1-cefc79bb33d1@linaro.org/	
-> 
-
-I don't think this change would help with the issue reported by Johan. 
- From a quick glance, I couldn't find where exactly the restartable 
-attribute is used, but this type of change would only matter when the 
-ChargerPD is started or restarted.
-
-The PMIC_GLINK channel probing in rpmsg is dependent on ChargerPD 
-starting, so we know ChargerPD can start with or without this change.
-
-I can give this change a try next week to help give a better analysis.
-
->>> What is the expected impact of this and is there any chance that this is
->>> related to some of the in-kernel pd-mapper regression I've reported
->>> (e.g. audio not being registered and failing with a PDR error)?
->>>
->>> 	https://lore.kernel.org/all/ZthVTC8dt1kSdjMb@hovoldconsulting.com/
->>
->> Still debugging this, sidetracked by OSS / LPC.
-> 
-> Johan
 
