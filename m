@@ -1,138 +1,220 @@
-Return-Path: <linux-kernel+bounces-334277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA51697D4E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:42:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA8F97D4EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61CE11F232E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:42:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EB3C1F22C16
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389EB1448D9;
-	Fri, 20 Sep 2024 11:42:53 +0000 (UTC)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2EC145A0B;
+	Fri, 20 Sep 2024 11:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqXLf/kF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0DD20B20;
-	Fri, 20 Sep 2024 11:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B415D13B59B;
+	Fri, 20 Sep 2024 11:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726832572; cv=none; b=ZQSHf00V1/EIPZs/LdSWi5NdWZoZdPvvoY2jmubALhl21jU8NWi1vvNTR+T5j0zQFSeC3IFqbAgNPVgPMg56QQr0qy1o5q7f/hnjfLR6yhVDwUmpppkyQZ4HW2wGMUr2B1NIU+iSwTIWSHL+7/fiGX0k5Vws2wob9JRU1fuPLJc=
+	t=1726832660; cv=none; b=Q1IhA4SEwI40oILFr3I6L/80tNHgB1Dr1952wekbgJX3/ydIht2vdwGuVgIAfk17AQiNLo3420tKNz/QzHe1LF9Q7C4HhRzqqy+2HnGlc3uvUq9ccSI+xnXca9NRzu5eHFXM5X+K9nSuilyla6AxUBXSas/KhFU04O5K0y4hbS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726832572; c=relaxed/simple;
-	bh=EiUrBnnPPKo3+c08LehpmkVRBmIR2Vey6Rh8ikMEH0Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fckr81ggwv2hYSmg9l2IiFiuphyJqAcE+bLT5bwe4g+jA7W2qWKPArnGFqqXuzM1BV2PQGHtZQ3psTyOi3kBk1nQduZJLdUFuf5v8RDZOmvJTIO+j7fOorGl9mxjXKzzfOSTJ4X1xtH6HShrSll1278b9nl67PM/f2rhFiNZrPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f75e5f3debso18491271fa.1;
-        Fri, 20 Sep 2024 04:42:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726832567; x=1727437367;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wdsT5svVcvOhG90auQdmy7PS7pzw5L+P6+hRSDptKww=;
-        b=W1cCwiGQKq6akhvyyZYm54BIbKr+PKp5aZQWwMC6Ljf8z5f6tMS6nMSZO2jEedqyWv
-         w6XtYWpu+u2B/etTE3SJk+vcW0097Dk6FWo65pC6qt8HaVQhHbPQ6RpRJZLCViAJswwU
-         QiCZNobUu7wx136VqJRE2Lr6dvU91fFFDbE7NUPfQUeZjurLYjVHQ61yKcbIRIbZQAhu
-         o20h4yQBqixz5vqDrS5oI/7SMucS9gTE1CeE1gAhy2LirmeqxdaxW+fxbXke/RIWd2yY
-         y0508V8JD8BoDSXEx0rmFd17V7vLjHjouxzYnmNFdsnAYjhO/LCbkcRZfZQfbpU29iUk
-         A2Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCUF4q1ZcvRwX5Kap36pMMXgNnj5uRqEGwvjyg54FI6jGLkcs7jYs/B76i/A8vOABsy71ZPzpkBILA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSh/g0x3CyBqQtCgRg8t9BH+yyQ9WXdcJIMWauZd+ZTX/xmdWD
-	BeFnOlEYZnorp3ZpHPOhgqmXyTLkdzYZyBBzpfP0jqcBeu2rylYPIUyaECsK
-X-Google-Smtp-Source: AGHT+IEAB8MH+s+cPyGf14bPoRydyUJ9Rvr31bhySAjXmys51OeqSbYnWRaTk8FsAxgpXyrI/H0C+A==
-X-Received: by 2002:ac2:4c41:0:b0:536:533c:c460 with SMTP id 2adb3069b0e04-536ac3401d2mr1481136e87.50.1726832566788;
-        Fri, 20 Sep 2024 04:42:46 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870ad17dsm2149940e87.241.2024.09.20.04.42.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2024 04:42:46 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5365b71a6bdso2318662e87.2;
-        Fri, 20 Sep 2024 04:42:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXqTIVmcuXDnzdJmP/3c0EiVsTn5oDDZ4t8LhWSLx/5XaW9UmgLuhO3QAOFBnT1Kus7ipPtzh33og==@vger.kernel.org
-X-Received: by 2002:a05:6512:108f:b0:536:7cfb:6998 with SMTP id
- 2adb3069b0e04-536ac2f5ba6mr1546516e87.35.1726832565794; Fri, 20 Sep 2024
- 04:42:45 -0700 (PDT)
+	s=arc-20240116; t=1726832660; c=relaxed/simple;
+	bh=qP5aHhZ4nfs0X9Vr6kQJ38Ui+BjdmI5igsGwNHEb858=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=FpnXR4ZTN4Tf32T4Efeq8u6aiEOM099wMet5R6gP1K5SaJEl6hCLngSRfyxlyBmEhbXTtCY4nqagjljnah63zEeiE0hKYakit8ykkXSzn27/nz0cN3T3iMbu0vhSVojdGJbUZEjrBSSi0dAIimBhoixMokrUcufckKTmxRzixTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uqXLf/kF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFCFBC4CEC3;
+	Fri, 20 Sep 2024 11:44:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726832660;
+	bh=qP5aHhZ4nfs0X9Vr6kQJ38Ui+BjdmI5igsGwNHEb858=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=uqXLf/kFl1ZolzQ5qMOzzufmQF402Ru1QwZdJp1B6u4wGJR69WsEhsDP0t0mCFhzT
+	 Sz9fWMHNzDNrn0pzUkTiyQTVKziXmvqAnD8lBHY8qTdke7+TrWE5vXu6O9AlShGH6q
+	 n7KdcA8RbxpdegBYWXNOYOp0jclQe0CXib5MyvcBU7ZlTMHmCKLHWamZA/NBdZ/V+h
+	 Dfohfp4E6ReZTcVL67bGaxIVirIatyk/uZbuI6b/De1ywOCH7o+54fn6C1yqpiRQKp
+	 Ue62bxAXdAg8gWTCKppbw4YRTD46Jjo7qXqrCHrX0IKhgr9qYxvGO15058GLEWVu+c
+	 evUBu1XpxaJNw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cover.1720728319.git.jstancek@redhat.com> <27899413.1r3eYUQgxm@skuld-framework>
-In-Reply-To: <27899413.1r3eYUQgxm@skuld-framework>
-From: Neal Gompa <neal@gompa.dev>
-Date: Fri, 20 Sep 2024 07:42:09 -0400
-X-Gmail-Original-Message-ID: <CAEg-Je_MXyP_PNj_QOu66SW_XYHy0zv0PnTTxX2qWELRG+xM_w@mail.gmail.com>
-Message-ID: <CAEg-Je_MXyP_PNj_QOu66SW_XYHy0zv0PnTTxX2qWELRG+xM_w@mail.gmail.com>
-Subject: Re: [PATCH 0/3] sign-file,extract-cert: switch to PROVIDER API for
- OpenSSL >= 3.0
-To: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>, David Howells <dhowells@redhat.com>, dwmw2@infradead.org, 
-	zxu@redhat.com, keyrings@vger.kernel.org, Jan Stancek <jstancek@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Asahi Linux <asahi@lists.linux.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Jarkko Sakkinen <jarkko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 20 Sep 2024 14:44:16 +0300
+Message-Id: <D4B336WSZNHL.RTMEF39HYUEA@kernel.org>
+Cc: <linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+ <linux-kernel@vger.kernel.org>, <akpm@linux-foundation.org>,
+ <linux-edac@vger.kernel.org>, <x86@kernel.org>, <justin.he@arm.com>,
+ <ardb@kernel.org>, <ying.huang@intel.com>, <ashish.kalra@amd.com>,
+ <baolin.wang@linux.alibaba.com>, <tglx@linutronix.de>,
+ <dave.hansen@linux.intel.com>, <lenb@kernel.org>, <hpa@zytor.com>,
+ <robert.moore@intel.com>, <lvying6@huawei.com>, <xiexiuqi@huawei.com>,
+ <zhuo.song@linux.alibaba.com>
+Subject: Re: [PATCH v13 3/3] ACPI: APEI: handle synchronous exceptions in
+ task work
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Shuai Xue" <xueshuai@linux.alibaba.com>, <mark.rutland@arm.com>,
+ <catalin.marinas@arm.com>, <mingo@redhat.com>, <robin.murphy@arm.com>,
+ <Jonathan.Cameron@Huawei.com>, <bp@alien8.de>, <rafael@kernel.org>,
+ <wangkefeng.wang@huawei.com>, <tanxiaofei@huawei.com>,
+ <mawupeng1@huawei.com>, <tony.luck@intel.com>, <linmiaohe@huawei.com>,
+ <naoya.horiguchi@nec.com>, <james.morse@arm.com>, <tongtiangen@huawei.com>,
+ <gregkh@linuxfoundation.org>, <will@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+ <20240920043027.21907-4-xueshuai@linux.alibaba.com>
+In-Reply-To: <20240920043027.21907-4-xueshuai@linux.alibaba.com>
 
-On Tue, Aug 6, 2024 at 4:27=E2=80=AFPM Neal Gompa <neal@gompa.dev> wrote:
+On Fri Sep 20, 2024 at 7:30 AM EEST, Shuai Xue wrote:
+> The memory uncorrected error could be signaled by asynchronous interrupt
+> (specifically, SPI in arm64 platform), e.g. when an error is detected by
+> a background scrubber, or signaled by synchronous exception
+> (specifically, data abort excepction in arm64 platform), e.g. when a CPU
+> tries to access a poisoned cache line. Currently, both synchronous and
+> asynchronous error use memory_failure_queue() to schedule
+> memory_failure() exectute in kworker context.
 >
-> On Friday, July 12, 2024 3:11:13=E2=80=AFAM EDT Jan Stancek wrote:
-> > The ENGINE interface has its limitations and it has been superseded
-> > by the PROVIDER API, it is deprecated in OpenSSL version 3.0.
-> > Some distros have started removing it from header files.
-> >
-> > Update sign-file and extract-cert to use PROVIDER API for OpenSSL Major=
- >=3D
-> > 3.
-> >
-> > Tested on F39 with openssl-3.1.1, pkcs11-provider-0.5-2,
-> > openssl-pkcs11-0.4.12-4 and softhsm-2.6.1-5 by using same key/cert as P=
-EM
-> > and PKCS11 and comparing that the result is identical.
-> >
-> > Jan Stancek (3):
-> >   sign-file,extract-cert: move common SSL helper functions to a header
-> >   sign-file,extract-cert: avoid using deprecated ERR_get_error_line()
-> >   sign-file,extract-cert: use pkcs11 provider for OPENSSL MAJOR >=3D 3
-> >
-> >  MAINTAINERS          |   1 +
-> >  certs/Makefile       |   2 +-
-> >  certs/extract-cert.c | 138 +++++++++++++++++++++++--------------------
-> >  scripts/sign-file.c  | 134 +++++++++++++++++++++--------------------
-> >  scripts/ssl-common.h |  32 ++++++++++
-> >  5 files changed, 178 insertions(+), 129 deletions(-)
-> >  create mode 100644 scripts/ssl-common.h
+> As a result, when a user-space process is accessing a poisoned data, a
+> data abort is taken and the memory_failure() is executed in the kworker
+> context:
 >
-> The code looks fairly reasonable to me and behaves as expected.
+>   - will send wrong si_code by SIGBUS signal in early_kill mode, and
+>   - can not kill the user-space in some cases resulting a synchronous
+>     error infinite loop
 >
-> I have been actively using this patch set for several weeks now across
-> linux-6.9.y and now linux-6.10.y with good success.
+> Issue 1: send wrong si_code in early_kill mode
 >
-> It is in use in production for Fedora Asahi Linux kernels with good succe=
-ss.
-> Thanks for the fixes. :)
+> Since commit a70297d22132 ("ACPI: APEI: set memory failure flags as
+> MF_ACTION_REQUIRED on synchronous events")', the flag MF_ACTION_REQUIRED
+> could be used to determine whether a synchronous exception occurs on
+> ARM64 platform.  When a synchronous exception is detected, the kernel is
+> expected to terminate the current process which has accessed poisoned
+> page. This is done by sending a SIGBUS signal with an error code
+> BUS_MCEERR_AR, indicating an action-required machine check error on
+> read.
 >
-> Reviewed-by: Neal Gompa <neal@gompa.dev>
+> However, when kill_proc() is called to terminate the processes who have
+> the poisoned page mapped, it sends the incorrect SIGBUS error code
+> BUS_MCEERR_AO because the context in which it operates is not the one
+> where the error was triggered.
 >
+> To reproduce this problem:
+>
+>   #sysctl -w vm.memory_failure_early_kill=3D1
+>   vm.memory_failure_early_kill =3D 1
+>
+>   # STEP2: inject an UCE error and consume it to trigger a synchronous er=
+ror
+>   #einj_mem_uc single
+>   0: single   vaddr =3D 0xffffb0d75400 paddr =3D 4092d55b400
+>   injecting ...
+>   triggering ...
+>   signal 7 code 5 addr 0xffffb0d75000
+>   page not present
+>   Test passed
+>
+> The si_code (code 5) from einj_mem_uc indicates that it is BUS_MCEERR_AO
+> error and it is not fact.
+>
+> After this patch:
+>
+>   # STEP1: enable early kill mode
+>   #sysctl -w vm.memory_failure_early_kill=3D1
+>   vm.memory_failure_early_kill =3D 1
+>   # STEP2: inject an UCE error and consume it to trigger a synchronous er=
+ror
+>   #einj_mem_uc single
+>   0: single   vaddr =3D 0xffffb0d75400 paddr =3D 4092d55b400
+>   injecting ...
+>   triggering ...
+>   signal 7 code 4 addr 0xffffb0d75000
+>   page not present
+>   Test passed
+>
+> The si_code (code 4) from einj_mem_uc indicates that it is BUS_MCEERR_AR
+> error as we expected.
+>
+> Issue 2: a synchronous error infinite loop
+>
+> If a user-space process, e.g. devmem, a poisoned page which has been set
+> HWPosion flag, kill_accessing_process() is called to send SIGBUS to the
+> current processs with error info. Because the memory_failure() is
+> executed in the kworker contex, it will just do nothing but return
+> EFAULT. So, devmem will access the posioned page and trigger an
+> excepction again, resulting in a synchronous error infinite loop. Such
+> loop may cause platform firmware to exceed some threshold and reboot
+> when Linux could have recovered from this error.
+>
+> To reproduce this problem:
+>
+>   # STEP 1: inject an UCE error, and kernel will set HWPosion flag for re=
+lated page
+>   #einj_mem_uc single
+>   0: single   vaddr =3D 0xffffb0d75400 paddr =3D 4092d55b400
+>   injecting ...
+>   triggering ...
+>   signal 7 code 4 addr 0xffffb0d75000
+>   page not present
+>   Test passed
+>
+>   # STEP 2: access the same page and it will trigger a synchronous error =
+infinite loop
+>   devmem 0x4092d55b400
+>
+> To fix above two issues, queue memory_failure() as a task_work so that it=
+ runs in
+> the context of the process that is actually consuming the poisoned data.
+>
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> Tested-by: Ma Wupeng <mawupeng1@huawei.com>
+> Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> Reviewed-by: Xiaofei Tan <tanxiaofei@huawei.com>
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> ---
+>  drivers/acpi/apei/ghes.c | 78 +++++++++++++++++++++++-----------------
+>  include/acpi/ghes.h      |  3 --
+>  include/linux/mm.h       |  1 -
+>  mm/memory-failure.c      | 13 -------
+>  4 files changed, 45 insertions(+), 50 deletions(-)
+>
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index 93eb11482832..60d8044f14d1 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -467,28 +467,42 @@ static void ghes_clear_estatus(struct ghes *ghes,
+>  }
+> =20
+>  /*
+> - * Called as task_work before returning to user-space.
+> - * Ensure any queued work has been done before we return to the context =
+that
+> - * triggered the notification.
+> + * struct task_work - for synchronous RAS event
+> + *
+> + * @twork:                callback_head for task work
+> + * @pfn:                  page frame number of corrupted page
+> + * @flags:                work control flags
+> + *
+> + * Structure to pass task work to be handled before
+> + * returning to user-space via task_work_add().
+>   */
+> -static void ghes_kick_task_work(struct callback_head *head)
+> +struct task_work {
+> +	struct callback_head twork;
+> +	u64 pfn;
+> +	int flags;
+> +};
 
-Jarkko, could you please consider submitting this for inclusion into
-6.12? I've been carrying this for three Linux kernel rebases now
-(6.9.y, 6.10.y, and now 6.11.y) and it seems to be just fine, and
-without it, I cannot build kernels anymore with the OpenSSL engine API
-disabled in Fedora and CentOS/RHEL. I also expect that the engine API
-will disappear on other platforms in the near future given its
-deprecated status and recently accelerated conversion of engine
-backends to the newer provider API.
+I'd rename this as ghes_task_work. It is too generic name IMHO, easily
+confused with task_work.h definitions.
 
-Thanks in advance! :)
-
-
---=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
+BR, Jarkko
 
