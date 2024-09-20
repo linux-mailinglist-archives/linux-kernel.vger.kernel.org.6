@@ -1,179 +1,146 @@
-Return-Path: <linux-kernel+bounces-334281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB61297D4FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:56:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7E9097D508
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6941D1F23F72
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:56:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 641BD285DA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D2114A606;
-	Fri, 20 Sep 2024 11:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A74A15099B;
+	Fri, 20 Sep 2024 11:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XKwpaT2P"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="u2OOvz9B";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="u2OOvz9B"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A2913AA46;
-	Fri, 20 Sep 2024 11:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9872914D6EE;
+	Fri, 20 Sep 2024 11:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726833392; cv=none; b=FnCeEerc7Znq5npWW3H7WgWIYP//13yA2zOUJ8V7lIFkEFzu807krkT9Xxj1mErvz+rqJKrs8eeyM/hDeJSSmPi6y4+z62zuKK+skVlMUUJM075BdLPyGcbfs5FJu+S0FTmRnbAx0NqV+bwPCHyOxKEj5KK6nx/YsVCc/FB6IRE=
+	t=1726833403; cv=none; b=df7lWEbZyXygCxo2GkXQKvfYg5ULaCMJkIhrRv3NepmBWp20Egej7iaFxUG4AW2BLwhTviR8DVHWYHHJT1oVW8zvQVf/zhE2tjUjXHoxE+XQeq77z7oAEAOjwDGM6yydsBEXhoG+QRFeoOqVvp+oyw59e+RmIFRa8mNNPg7qGfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726833392; c=relaxed/simple;
-	bh=RNec7BVdPi/LdBJN0Bz9n7hYw3Z57PdKQQbXFuB7LF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tPnX0CusPbi/3MxOhLy8a4Oq+3ReXZbIN7LbqBRgNp/s62BIynrCI34623XMHOMJ9GXVNkAgpEMi9+wv+w6Dw6iXeeCT5xHeV9gJfF/BF0rNeD5bUd/vAy088mW0t69/2KNlR9YmQ/ZIcxWKmSvObo/riWjzLTeedgmDqu0QBC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XKwpaT2P; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48K8D1sR017296;
-	Fri, 20 Sep 2024 11:56:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Polskk9T6FUawelzjapeNON4Q/inj9BMUxOHfhmNqi8=; b=XKwpaT2PDp5gcnrq
-	50ro/O9lLj6GAAfyMZ3+b0DlwMWC0pILUdp3zUq73lL3EYOpFzsfFO23iwozNb27
-	wtBEcoX7h9/bSWqjLCXgRtX9b8g7RNBsPdEObGN2ctmM0NPEA99K8EV0889dooIQ
-	HVcFD2N6Uj2Iy7h5yTgMlK8WWANRnNnBbdulCMkplrphRKvvcLZ+5KS5aKE1WUZy
-	xN3IzcGLi0nXcvK4f9iqn6vl/UeJFplbEH7UQsJiM8a9+qyWlnckA+ufbn7u8Lcd
-	vezaUKDSyzkapY9TrxGXVP9tmOQU/E4TscNKwNBfFwWWuR+S3MERz22aGyEjdSoF
-	IA8ESA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4hhgwnn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 11:56:13 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48KBuB2F011684
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 11:56:11 GMT
-Received: from [10.50.45.132] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 20 Sep
- 2024 04:56:05 -0700
-Message-ID: <9f2ccf3d-fa71-4784-b6d2-2b12ed50bdd2@quicinc.com>
-Date: Fri, 20 Sep 2024 17:26:02 +0530
+	s=arc-20240116; t=1726833403; c=relaxed/simple;
+	bh=8H+erQ1HqadjhMVioL0hwVWRUTsfsIHFV5Yb8bx6JiU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ey43KyN5g3kUfHpXWTRJqMkIBgV1cM5CTRaMlTcwdVfQC8/PXAbkPZ9iAfmQbD+ZFEu2hcaUWmD9xnXtUo3zzOqQo+HbZxnyiuTKdN1YnfUGFoNvxIuFz5Qn2Ud2V6zT5f8WtAh0hFYAyMPwUTHYv8+NC24Tv242RFlBhqdF5qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=u2OOvz9B; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=u2OOvz9B; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1EADD33A37;
+	Fri, 20 Sep 2024 11:56:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1726833394; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=inyu8WpIlzG2DuQjZTZgTs1aahX51cTPQiYCRAod0Iw=;
+	b=u2OOvz9BKt1/88RtPHPNTRGX4X1mfi/2sI7/PsCadPYZH0Khl23VMy7icNxrtOOg3KRGcv
+	30gA0z4Pr1Z7TykFT/xMWNx/xDBzwOOVd1yaQQspwB3agq8LW+uEEqp4ml7cQgveLtKoE3
+	gN9usHn7S+YJazjEdPrkJQbw9ekRQWI=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=u2OOvz9B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1726833394; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=inyu8WpIlzG2DuQjZTZgTs1aahX51cTPQiYCRAod0Iw=;
+	b=u2OOvz9BKt1/88RtPHPNTRGX4X1mfi/2sI7/PsCadPYZH0Khl23VMy7icNxrtOOg3KRGcv
+	30gA0z4Pr1Z7TykFT/xMWNx/xDBzwOOVd1yaQQspwB3agq8LW+uEEqp4ml7cQgveLtKoE3
+	gN9usHn7S+YJazjEdPrkJQbw9ekRQWI=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C9F7613AE1;
+	Fri, 20 Sep 2024 11:56:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id gJO1LvFi7WbdHwAAD6G6ig
+	(envelope-from <mvetter@suse.com>); Fri, 20 Sep 2024 11:56:33 +0000
+From: Michael Vetter <mvetter@suse.com>
+To: linux-kselftest@vger.kernel.org,
+	live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Michael Vetter <mvetter@suse.com>
+Subject: [PATCH v3 0/3] selftests: livepatch: test livepatching a kprobed function
+Date: Fri, 20 Sep 2024 13:56:28 +0200
+Message-ID: <20240920115631.54142-1-mvetter@suse.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] dt-bindings: clock: Add Qualcomm IPQ5424 GCC
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
-        <catalin.marinas@arm.com>, <p.zabel@pengutronix.de>,
-        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: <quic_varada@quicinc.com>
-References: <20240913121250.2995351-1-quic_srichara@quicinc.com>
- <20240913121250.2995351-2-quic_srichara@quicinc.com>
- <4cd3d3f8-7d73-4171-bb35-aba975cdc11a@kernel.org>
-Content-Language: en-US
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-In-Reply-To: <4cd3d3f8-7d73-4171-bb35-aba975cdc11a@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: c2z0oZZoWIpyMPZxfT76Nj8IYSyZyNA5
-X-Proofpoint-ORIG-GUID: c2z0oZZoWIpyMPZxfT76Nj8IYSyZyNA5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- adultscore=0 impostorscore=0 phishscore=0 priorityscore=1501 clxscore=1015
- mlxlogscore=999 mlxscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409200086
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 1EADD33A37
+X-Spam-Score: -5.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-5.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:mid,suse.com:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+This patchset adds a test for livepatching a kprobed function.
 
+Thanks to Petr and Marcos for the reviews!
 
-On 9/19/2024 5:56 PM, Krzysztof Kozlowski wrote:
-> On 13/09/2024 14:12, Sricharan R wrote:
->> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>
->> Add binding for the Qualcomm IPQ5424 Global Clock Controller
->>
->> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->> ---
->>   .../bindings/clock/qcom,ipq5424-gcc.yaml      |  58 ++++
->>   include/dt-bindings/clock/qcom,ipq5424-gcc.h  | 156 +++++++++
->>   include/dt-bindings/reset/qcom,ipq5424-gcc.h  | 310 ++++++++++++++++++
->>   3 files changed, 524 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5424-gcc.yaml
->>   create mode 100644 include/dt-bindings/clock/qcom,ipq5424-gcc.h
->>   create mode 100644 include/dt-bindings/reset/qcom,ipq5424-gcc.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq5424-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq5424-gcc.yaml
->> new file mode 100644
->> index 000000000000..af2d0cec43f3
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq5424-gcc.yaml
->> @@ -0,0 +1,58 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/qcom,ipq5424-gcc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Global Clock & Reset Controller on IPQ5424
->> +
->> +maintainers:
->> +  - Bjorn Andersson <andersson@kernel.org>
->> +
->> +description: |
->> +  Qualcomm global clock control module provides the clocks, resets and power
->> +  domains on IPQ5424.
->> +
->> +  See also::
-> 
-> Just single :
-> 
-ok
->> +    include/dt-bindings/clock/qcom,gcc-ipq5424.h
->> +    include/dt-bindings/reset/qcom,ipq5424-gcc.h
-> 
-> Wrong path
-> 
-ok, will fix
->> +
->> +allOf:
->> +  - $ref: qcom,gcc.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    const: qcom,ipq5424-gcc
-> 
-> So everything i sthe same as 5332? Why not adding it there?
-> 
-infact, ipq5332 has 1 dual lane and 1 single lane pcie, whereas
-ipq5424 has 2 dual lane and 2 single lane pcie. will update the
-bindings in v2 accordingly.
-> 
->> +++ b/include/dt-bindings/reset/qcom,ipq5424-gcc.h
->> @@ -0,0 +1,310 @@
->> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->> +/*
->> + * Copyright (c) 2018,2020 The Linux Foundation. All rights reserved.
->> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> 
-> 2024 (other places and other patches as well)
-> 
-ok
+V3:
+Save and restore kprobe state also when test fails, by integrating it
+into setup_config() and cleanup().
+Rename SYSFS variables in a more logical way.
+Sort test modules in alphabetical order.
+Rename module description.
 
-Regards,
-  Sricharan
+V2:
+Save and restore kprobe state.
+
+Michael Vetter (3):
+  selftests: livepatch: rename KLP_SYSFS_DIR to SYSFS_KLP_DIR
+  selftests: livepatch: save and restore kprobe state
+  selftests: livepatch: test livepatching a kprobed function
+
+ tools/testing/selftests/livepatch/Makefile    |  3 +-
+ .../testing/selftests/livepatch/functions.sh  | 13 +++-
+ .../selftests/livepatch/test-kprobe.sh        | 62 +++++++++++++++++++
+ .../selftests/livepatch/test_modules/Makefile |  3 +-
+ .../livepatch/test_modules/test_klp_kprobe.c  | 38 ++++++++++++
+ 5 files changed, 114 insertions(+), 5 deletions(-)
+ create mode 100755 tools/testing/selftests/livepatch/test-kprobe.sh
+ create mode 100644 tools/testing/selftests/livepatch/test_modules/test_klp_kprobe.c
+
+-- 
+2.46.0
+
 
