@@ -1,99 +1,66 @@
-Return-Path: <linux-kernel+bounces-334400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2671C97D6C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:19:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2BC97D6C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFB3C2835F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:19:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 163D81C227F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD37717BB1E;
-	Fri, 20 Sep 2024 14:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iAeLn8rK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D96217BB2B;
+	Fri, 20 Sep 2024 14:19:14 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD52D482CD;
-	Fri, 20 Sep 2024 14:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4605482CD;
+	Fri, 20 Sep 2024 14:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726841941; cv=none; b=O4acuSTuzTDsXD3KYI/Zf0zRVRpUq8bHd+v8CbRs5AQ9lck4P7xY4d9SywGqcT3rMYlKYaULzPyLc0zUFdQrFrqu0Q+0vb6cAcygUMgCb/BwPfO1R/P8JRAZFEDduaMCQ64y8xFOtLb5lk1HYYv1cDrU+4T0ZzpW6o6P7cif1FQ=
+	t=1726841953; cv=none; b=grJLgePhxGS1U8QSaPjwjGeWRCmjKUAhGbYiJBEYQ5k0ST5VP92RGDqfJmIdqHuhtzkXCN4JjkbFsyNaNYQnKcRnKuJ3DpJntfAoDRolzOcMi4d6fJS7qflFLXeeTgybMUZXX+1ZL9z/FAyHvmQKUmXRPyHJLjyTOb1RA7mNbMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726841941; c=relaxed/simple;
-	bh=IXPUnzpp1w57YA1bQOgZXNfrvJ8JZ6uPN7NAZSoFc6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MgyZFmS3O+oVw/fI8isVADA3k+oGFPy6lishM74mK5OfvUoJDuWeyhSqU448q8v2gSwP6VX2VLfmwHLVg7+VKWU43igDXiRIt5cfjVvQDhY2HiYrZucZOQVpBMfb7cR1umGgYvQAtRAwtLXyZ3gSoiiV9p3KR6B86JZ9T8UwKNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iAeLn8rK; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726841940; x=1758377940;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IXPUnzpp1w57YA1bQOgZXNfrvJ8JZ6uPN7NAZSoFc6Y=;
-  b=iAeLn8rKHdxIWhsaCyzA67Al8h/HHlv9D6hmowlJYQSMinuB4+ZAk7k7
-   6v1+eZYqJ9vAJ0NK00UTX+oVsk7Yvx5PDjQLhODwHSNY6pk5hQXHyQ3MV
-   3gmbUJo1+hlgaerikt24WDWSLxNc5TWdhV+NVklyn3d6pd/gRbVQp6y68
-   Sy9tTtpySjOwRQqu08anVdnl139ApQOKPsNPcEoYdMesQ//zBp+1/17YL
-   xsYmnHNv/B019w4AZKHn/yvLuHthZzT3UkVBS8d1gdyhV8XsptTOZWa9c
-   y5MupzoYqTfi3jtDawkvWKxJYXyIHtPZ9UJDXcuo9c78QgESC7cicNL9s
-   A==;
-X-CSE-ConnectionGUID: 3j1WGb7UQVOzdOiCHaq/dA==
-X-CSE-MsgGUID: Z4BY+kqbSma+NfLHwIyAuQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="13609042"
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="13609042"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 07:18:59 -0700
-X-CSE-ConnectionGUID: mQoxdzwdSn2iP3NaOtHc2A==
-X-CSE-MsgGUID: D6NvOD3NSvSIg7wqGvJOnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="101049845"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 07:18:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sreTE-0000000Aw3C-2O5A;
-	Fri, 20 Sep 2024 17:18:52 +0300
-Date: Fri, 20 Sep 2024 17:18:52 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Yanteng Si <siyanteng@cqsoftware.com.cn>
-Cc: linux@armlinux.org.uk, gregkh@linuxfoundation.org, jirislaby@kernel.org,
-	alan@linux.intel.com, bartosz.golaszewski@linaro.org, arnd@arndb.de,
-	u.kleine-koenig@pengutronix.de, mengdewei@cqsoftware.com.cn,
-	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, si.yanteng@linux.dev
-Subject: Re: [PATCH] serial: clean up uart_info
-Message-ID: <Zu2ETNl_IGcQGxqA@smile.fi.intel.com>
-References: <20240920053423.1373354-1-siyanteng@cqsoftware.com.cn>
+	s=arc-20240116; t=1726841953; c=relaxed/simple;
+	bh=ta2107TOM+y4zD2f/LP8En/FMWYImz6hpl3lVk6uBjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VryUoDsuY4t2ANI2tNmD5c90c/cvBfGtFgAqBiYjMVBVwTdS3pY166pbjQeOVGD+/NG0x09KVxLkL2nxqpU9nO8V7+WNLQv8R5itRg5bor3U2m6WBUqyW7YN7FqCVPap3aEu05fX++w5CYY2xZ8NguXVwAtuVYgOGSXWd3qr35I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E0C6C4CEC3;
+	Fri, 20 Sep 2024 14:19:11 +0000 (UTC)
+Date: Fri, 20 Sep 2024 10:19:07 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the ftrace tree
+Message-ID: <20240920101907.05b3a10b@rorschach.local.home>
+In-Reply-To: <20240919072849.09486807@canb.auug.org.au>
+References: <20240919072849.09486807@canb.auug.org.au>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240920053423.1373354-1-siyanteng@cqsoftware.com.cn>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 20, 2024 at 01:34:23PM +0800, Yanteng Si wrote:
-> Since commit ebd2c8f6d2ec ("serial: kill off uart_info") has
-> removed uart_info, the uart_info declaration looks lonely,
-> let it go.
+On Thu, 19 Sep 2024 07:28:49 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Confirmed.
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Hi all,
+> 
+> Commit
+> 
+>   ca088d067ebd ("uprobes: make trace_uprobe->nhit counter a per-CPU one")
+> 
+> is missing a Signed-off-by from its committer.
+> 
 
--- 
-With Best Regards,
-Andy Shevchenko
+Masami, can you fix this?
 
-
+-- Steve
 
