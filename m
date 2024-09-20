@@ -1,137 +1,151 @@
-Return-Path: <linux-kernel+bounces-334070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B418C97D246
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:11:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A24B97D24A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF20C1C22631
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:11:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3587DB22381
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D597B69959;
-	Fri, 20 Sep 2024 08:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263636E2AE;
+	Fri, 20 Sep 2024 08:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R3C7+7cn"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmQdpQUW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C1218EB1
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765AE18EB1;
+	Fri, 20 Sep 2024 08:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726819859; cv=none; b=F1v6CBjGR0s6Qb5WHJj1MgaFlUs1DooXUZaK77aqYkGKNaGUSmXvp36oZ1h6Ro6JxnL+T0CHSTzoBF4eYK6d5hxhqIK6BiiTki/MQsAp2JpbdXtCbhIKes+0AMCIn9+ckxCkD0QAvv05G6vtNt7HfaQqKlZYpsE6WXI+QmoSjZU=
+	t=1726820029; cv=none; b=Im22ePhE4orb3SJOLoRfxY3jhgf7GY67CkzOyAI6qraozb7mke7DMmdd7bhwgSDZdtauhSn1W8wrXXavMQn+fH1jzgULbzZYSz4mDjjGOMlcZw8HE+oTKHJoDLfFUZ6Owm3HmHfKJvjcqRO7VjTpSMJ5znCPzZ5EYCm3cPznstc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726819859; c=relaxed/simple;
-	bh=uhXbFq8gdZ2ouyL/m9MKMTRJUOP96jYL2Q/O2Zi59Nc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qsTMIM23JC8ZsGjqfhXdnNkBCpyhcVcpnMBLSVE/2Q9PuQ78juYwrDY8ECnRc3NQNvIILpmiMlKWcQyqlXn/Y9J78tx4EvTp7WGDte+ni47RorZSrhoeAcF9yDxl0xTv+M9DXJdDkSL9KZmeIaINN5GRo/nXKXRj1jylS8t4Jvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R3C7+7cn; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6ddfdeed0c9so14863917b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726819856; x=1727424656; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QAx74AURDGHuXTdqCWkFDBVlw9v7Z3zu5Hmc9mIJ5s8=;
-        b=R3C7+7cn5FFh81up8lwqKnLBmeQusri4fMOuBIA9a6uOTCqvOxsXVHNNLAdQLqtROY
-         k7ikVfDC0m91KPZhpJqRTT/GF3++SRId4PASbNLOX2ZIH0CNyXbhnE+NbutiY8lDj9RF
-         BDC8hMxTIV4ACD5K5Pty5Pj+BjOVPj6EiA55gcvnn94payoCkrNj5CA5xSvq+aBwKWuk
-         QyigUUMzaWAipPYWshoUGawCIhW7/4uTRSq0BdqxVQU0h7KW5C/opm02vNFB+WxUGiOm
-         kXGGq1snsnJz0V3hFNA9SrsJCwx9tREeaUznZZgp4XimXUHFHe+B6aKVYIYSxZ4HIJpi
-         wOKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726819856; x=1727424656;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QAx74AURDGHuXTdqCWkFDBVlw9v7Z3zu5Hmc9mIJ5s8=;
-        b=T1rlecJpna0EVY1f63ABfs8ObBdXdbCejCvnmeA4Wnj91XLOSb2YqPdaLY2MGyPjUK
-         k/3HiKkaGH8c2p3MVa/L4nTVQMzvTcz7gb4g1enY/kMstmawzl9crFPIuaXQdD9x/HKi
-         2R/aC3EdK9W2UUesm3L69BwEuXlv93XSeOV9s+j6I4miL1hLD/42xIoXGJkUBZjNEMEQ
-         RzrNrId/ilEVOQieeZUtfbnbAYHH+jaiEcQ7BvIN9qMfRowKEowjMVjOIJTpAZAULw8G
-         eO/vXmLPBRoYlhfB8dvHOtgJ/D31JHdFonnIPK9+nVZ5MvGQ8VLO2LKk/0CcKg3E7S3H
-         IIow==
-X-Forwarded-Encrypted: i=1; AJvYcCVp/JO/O4+wPgvbhysoJ8GiASQwmjGnRS9zSkHvxBnpkL98d45opwdag+bQiMOfMdtRG6ZOtgzy6s4ch+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVIcHrLkUKjDHlClynV1XIQJ73xLKYyNn115Sy8giAy3v8DcmS
-	qlEKEJMqMy0G0F3wcWTnLg32qS5c8NhXrPnfmK+C9rQWAgSUvxGeQ632dKBxdM0IUN6PGdE1fcZ
-	AA35bBGLX2us0tBwAeakHL0JjVkTue4biCVjzWQ==
-X-Google-Smtp-Source: AGHT+IFyUoCHJ9pKmMCbefdpFZcNBvA8xvQey5jC89NmExx2r83qi6xqdYU2QWsfTDK64HSz+UG4mwpDEY9D3DnxjpY=
-X-Received: by 2002:a05:690c:6207:b0:672:8ad4:9461 with SMTP id
- 00721157ae682-6dfeeeeb16cmr21388877b3.41.1726819856635; Fri, 20 Sep 2024
- 01:10:56 -0700 (PDT)
+	s=arc-20240116; t=1726820029; c=relaxed/simple;
+	bh=9hmMsURfWQvQALeUJoUpEIlJ5bSjiG5NcrH3pWDEfjA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rYndd45kF8wMepeTD/5HFFxxboQSgqM+Tf7grnDGoxCABy6luVqDJlWElAiRFbt+KD7j1zMgL0MXlqfX2299OMaEcZ3sy887bmsFr06bm4frNpbY6u/AoNPJf5uTfuoq2VxquFhJbPjiOB/tOmDrB2l17szne5qE21j0JlPEn4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmQdpQUW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DD219C4CEC5;
+	Fri, 20 Sep 2024 08:13:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726820028;
+	bh=9hmMsURfWQvQALeUJoUpEIlJ5bSjiG5NcrH3pWDEfjA=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=AmQdpQUW4VQVNjjs1Mab7sJO5EUTftLM5IK8CyRi3A53qii1LSKP1sQeD4llp4VHV
+	 r0vEKZ46AJSoWj7i7/7LvGae6i8svaLxVvXUy5o5fg/RsTtXcrJsYdHci3mYq+Irqp
+	 n04RfQyEf8vdIlOjJiPSI3Lb2Hceh8iZexI4SVLh0xp2QyDk+m70IqJTQyq+nhUzTK
+	 xVSJpQ1DGPSYQHA3OKNoOq0vD/5cNtXpmfF1HLTaE5IdV0Buj3IQB1JtkT3awcKns+
+	 1NCayfrra1d4ppsJJw2mcTusLiAXS7Upwem11mwWY5e0ynKeCHq4D9TLxeOgozAW3m
+	 7hQgSgikkZ0Mg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCAFCF58DD;
+	Fri, 20 Sep 2024 08:13:48 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Fri, 20 Sep 2024 16:13:13 +0800
+Subject: [PATCH] clk: meson: pll: Update the meson_clk_pll_init execution
+ judgment logic
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920075905.19441-1-quic_jinlmao@quicinc.com>
-In-Reply-To: <20240920075905.19441-1-quic_jinlmao@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 20 Sep 2024 10:10:45 +0200
-Message-ID: <CAA8EJppY4QXDWK1QsrorQM8NTOmi4cK_Fjhkzf10muRE85BQ-w@mail.gmail.com>
-Subject: Re: [PATCH v1] arm64: defconfig: Enable Ftrace and STM configs
-To: Mao Jinlong <quic_jinlmao@quicinc.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Bjorn Andersson <quic_bjorande@quicinc.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240920-optimize_pll_flag-v1-1-c90d84a80a51@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIAJgu7WYC/x3M0QpAMBSA4VfRubZixOFVJC07m1PD2iSRd7dcf
+ hf//0CkwBShzx4IdHLkfUso8wzmRW2WBOtkkIWsi65EsfuDV75p8s5NxikrmhYVopaVQQmp84E
+ MX/9zGN/3A4BHfd1jAAAA
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726820026; l=2429;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=Bxi0pv+eCzIxvYRz/WWiwYenjJWhGAFp4yX+VQVeYR0=;
+ b=SHfpgZJ0kfXUg89lZ7xFZh4+atixE7c7aAQxxNKPJ4Pj5PBehGSJ/C39ZYFB1y/QIK1IadLCz
+ 53bEMsO8fveCj1E6BYhN0C3BkiwU/wYlJIhy/UB7GJvLoLoI4Jb/f73
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-On Fri, 20 Sept 2024 at 09:59, Mao Jinlong <quic_jinlmao@quicinc.com> wrote:
->
-> Ftrace logs can be captured by STM over TMC sink path. We can enable
-> ftrace logs along with HW trace of coresight component. The timestamp
-> of ftrace logs and hw traces will be in sync which helps to debug.
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-You are describing what can be done. Please describe why this is
-necessary and what is actually being done. See
-Documentation/process/submitting-patches.rst. The "why" part is the
-most important.
+The hardware property of PLL determines that PLL can only be enabled
+after PLL has been initialized. If PLL is not initialized, the
+corresponding lock bit will not be set to 1, resulting in
+meson_clk_pll_is_enabled() returning "false".
 
->
-> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
-> ---
->  arch/arm64/configs/defconfig | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 4a3999eefa67..c0a56e58e554 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -1554,6 +1554,12 @@ CONFIG_NVMEM_SNVS_LPGPR=y
->  CONFIG_NVMEM_SPMI_SDAM=m
->  CONFIG_NVMEM_SUNXI_SID=y
->  CONFIG_NVMEM_UNIPHIER_EFUSE=y
-> +CONFIG_STM_PROTO_BASIC=m
-> +CONFIG_STM_PROTO_SYS_T=m
-> +CONFIG_STM_DUMMY=m
-> +CONFIG_STM_SOURCE_CONSOLE=m
-> +CONFIG_STM_SOURCE_HEARTBEAT=m
-> +CONFIG_STM_SOURCE_FTRACE=m
->  CONFIG_FPGA=y
->  CONFIG_FPGA_MGR_ALTERA_CVP=m
->  CONFIG_FPGA_MGR_STRATIX10_SOC=m
-> @@ -1663,7 +1669,7 @@ CONFIG_DEBUG_INFO_REDUCED=y
->  CONFIG_MAGIC_SYSRQ=y
->  CONFIG_DEBUG_FS=y
->  # CONFIG_SCHED_DEBUG is not set
-> -# CONFIG_FTRACE is not set
-> +CONFIG_FTRACE=y
->  CONFIG_CORESIGHT=m
->  CONFIG_CORESIGHT_LINK_AND_SINK_TMC=m
->  CONFIG_CORESIGHT_CATU=m
-> --
-> 2.46.0
->
+Therefore, if PLL is already enabled, there is no need to repeat
+initialization, and the judgment "CLK_MESON_PLL_NOINIT_ENABLED" in
+meson_clk_pll_init() appears redundant.
 
+---
+The hardware property of PLL determines that PLL can only be enabled
+after PLL has been initialized. If PLL is not initialized, the
+corresponding lock bit will not be set to 1, resulting in
+meson_clk_pll_is_enabled() returning "false".
 
+Therefore, if PLL is already enabled, there is no need to repeat
+initialization, and the judgment "CLK_MESON_PLL_NOINIT_ENABLED" in
+meson_clk_pll_init() appears redundant.
+
+In actual application scenarios, PLL configuration is determined during
+the bootloader phase. If PLL has been configured during the bootloader
+phase, you need to add a flag to the kernel to avoid PLL
+re-initialization, which will increase the coupling between the kernel
+and the bootloader.
+
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+ drivers/clk/meson/clk-pll.c | 3 +--
+ drivers/clk/meson/clk-pll.h | 1 -
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 89f0f04a16ab..8df2add40b57 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -316,8 +316,7 @@ static int meson_clk_pll_init(struct clk_hw *hw)
+ 	 * Keep the clock running, which was already initialized and enabled
+ 	 * from the bootloader stage, to avoid any glitches.
+ 	 */
+-	if ((pll->flags & CLK_MESON_PLL_NOINIT_ENABLED) &&
+-	    meson_clk_pll_is_enabled(hw))
++	if (meson_clk_pll_is_enabled(hw))
+ 		return 0;
+ 
+ 	if (pll->init_count) {
+diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+index 949157fb7bf5..cccbf52808b1 100644
+--- a/drivers/clk/meson/clk-pll.h
++++ b/drivers/clk/meson/clk-pll.h
+@@ -28,7 +28,6 @@ struct pll_mult_range {
+ 	}
+ 
+ #define CLK_MESON_PLL_ROUND_CLOSEST	BIT(0)
+-#define CLK_MESON_PLL_NOINIT_ENABLED	BIT(1)
+ 
+ struct meson_clk_pll_data {
+ 	struct parm en;
+
+---
+base-commit: 0ef513560b53d499c824b77220c537eafe1df90d
+change-id: 20240918-optimize_pll_flag-678a88d23f82
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Chuan Liu <chuan.liu@amlogic.com>
+
+
 
