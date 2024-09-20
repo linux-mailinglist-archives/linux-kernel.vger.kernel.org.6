@@ -1,66 +1,138 @@
-Return-Path: <linux-kernel+bounces-334401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2BC97D6C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:19:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BEF597D6C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 163D81C227F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:19:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05103B24544
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D96217BB2B;
-	Fri, 20 Sep 2024 14:19:14 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4605482CD;
-	Fri, 20 Sep 2024 14:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E3217BB2A;
+	Fri, 20 Sep 2024 14:20:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19496482CD;
+	Fri, 20 Sep 2024 14:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726841953; cv=none; b=grJLgePhxGS1U8QSaPjwjGeWRCmjKUAhGbYiJBEYQ5k0ST5VP92RGDqfJmIdqHuhtzkXCN4JjkbFsyNaNYQnKcRnKuJ3DpJntfAoDRolzOcMi4d6fJS7qflFLXeeTgybMUZXX+1ZL9z/FAyHvmQKUmXRPyHJLjyTOb1RA7mNbMo=
+	t=1726842014; cv=none; b=Fw5R/6AQDrlTdmHNXYj4hJAg9QHIVJRKHyyMeJwbRbAgKXI/BRpaECw8qDN1dfgkZK6B+5Hu1W4wxiUSxunWYgM8uz8EqhyZfaHxsy/eQobBPbF7GUpSZadpUHJ1kjM4Dc7XSfRyUrJKQx3lvUYTmUsxho8m/r4Bw/skzpepuq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726841953; c=relaxed/simple;
-	bh=ta2107TOM+y4zD2f/LP8En/FMWYImz6hpl3lVk6uBjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VryUoDsuY4t2ANI2tNmD5c90c/cvBfGtFgAqBiYjMVBVwTdS3pY166pbjQeOVGD+/NG0x09KVxLkL2nxqpU9nO8V7+WNLQv8R5itRg5bor3U2m6WBUqyW7YN7FqCVPap3aEu05fX++w5CYY2xZ8NguXVwAtuVYgOGSXWd3qr35I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E0C6C4CEC3;
-	Fri, 20 Sep 2024 14:19:11 +0000 (UTC)
-Date: Fri, 20 Sep 2024 10:19:07 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the ftrace tree
-Message-ID: <20240920101907.05b3a10b@rorschach.local.home>
-In-Reply-To: <20240919072849.09486807@canb.auug.org.au>
-References: <20240919072849.09486807@canb.auug.org.au>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726842014; c=relaxed/simple;
+	bh=57XzM5CSGWeVZRIhqQSfkAgaC6Mb7CGyUkP+XadZxzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q2AEefeKMulXF5HPU6CLw/cL5oof4U667r3f08RI9hykKrktmPt8osdyfE19hTRrI5nS5FPqUrMk4ar46fSL6p3WxDVhzy3pD6qgzRsOYH9b7f/MbKo1ZP8AIIhWln5NKsioW/gVBOvPfpBM5zUwgdOfKXzpkVix6kp2XbKBfvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F7AC1007;
+	Fri, 20 Sep 2024 07:20:38 -0700 (PDT)
+Received: from e130802.arm.com (unknown [10.57.52.210])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5BFCF3F66E;
+	Fri, 20 Sep 2024 07:20:05 -0700 (PDT)
+Date: Fri, 20 Sep 2024 15:19:58 +0100
+From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
+	Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, liviu.dudau@arm.com,
+	lpieralisi@kernel.org, robh@kernel.org, sudeep.holla@arm.com,
+	robin.murphy@arm.com
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
+ Systems remote processors
+Message-ID: <20240920141958.GA288724@e130802.arm.com>
+References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
+ <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
+ <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
+ <gzlncpyzwm7x4jcxtdrthrlv2dofk7u3oxn4taadwog5tt37wo@ot6s6kwukd4k>
+ <20240919093517.GA43740@e130802.arm.com>
+ <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
+ <20240919145741.GA7940@e130802.arm.com>
+ <85a223e9-05a4-4034-87a5-57d3eb9409b7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <85a223e9-05a4-4034-87a5-57d3eb9409b7@kernel.org>
 
-On Thu, 19 Sep 2024 07:28:49 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Krzysztof,
 
-> Hi all,
+> >>>>> +  '#extsys-id':
+> >>>>
+> >>>> '#' is not correct for sure, that's not a cell specifier.
+> >>>>
+> >>>> But anyway, we do not accept in general instance IDs.
+> >>>
+> >>> I'm happy to replace the instance ID with  another solution.
+> >>> In our case the remoteproc instance does not have a base address
+> >>> to use. So, we can't put remoteproc@address
+> >>>
+> >>> What do you recommend in this case please ?
+> >>
+> >> Waiting one month to respond is a great way to drop all context from my
+> >> memory. The emails are not even available for me - gone from inbox.
+> >>
+> >> Bus addressing could note it. Or you have different devices, so
+> >> different compatibles. Tricky to say, because you did not describe the
+> >> hardware really and it's one month later...
+> >>
+> > 
+> > Sorry for waiting. I was in holidays.
+> > 
+> > I'll add more documentation about the external system for more clarity [1].
+> > 
+> > Basically, Linux runs on the Cortex-A35. The External system is a
+> > Cortex-M core. The Cortex-A35 can not access the memory of the Cortex-M.
+> > It can only control Cortex-M core using the reset control and status registers mapped
+> > in the memory space of the Cortex-A35.
 > 
-> Commit
+> That's pretty standard.
 > 
->   ca088d067ebd ("uprobes: make trace_uprobe->nhit counter a per-CPU one")
-> 
-> is missing a Signed-off-by from its committer.
-> 
+> It does not explain me why bus addressing or different compatible are
+> not sufficient here.
 
-Masami, can you fix this?
+Using an instance ID was a design choice.
+I'm happy to replace it with the use of compatible and match data (WIP).
 
--- Steve
+The match data will be pointing to a data structure containing the right offsets
+to be used with regmap APIs.
+
+syscon node is used to represent the Host Base System Control register area [1]
+where the external system reset registers are mapped (EXT_SYS*).
+
+The nodes will look like this:
+
+syscon@1a010000 {
+        compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
+        reg = <0x1a010000 0x1000>;
+
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        remoteproc@310 {
+            compatible = "arm,sse710-extsys0";
+            reg = <0x310 4>;
+            ...
+        }
+
+        remoteproc@318 {
+            compatible = "arm,sse710-extsys1";
+            reg = <0x318 4>;
+            ...
+}
+
+
+[1]: https://developer.arm.com/documentation/102342/0000/Programmers-model/Register-descriptions/Host-Base-System-Control-register-summary
+
+Cheers
+Abdellatif
 
