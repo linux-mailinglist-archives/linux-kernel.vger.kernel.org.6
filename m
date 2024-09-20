@@ -1,335 +1,154 @@
-Return-Path: <linux-kernel+bounces-334523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BA197D851
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:25:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32D9697D852
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 841FE283041
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:24:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF10A285AF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6885717F394;
-	Fri, 20 Sep 2024 16:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D8D17E46E;
+	Fri, 20 Sep 2024 16:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HLFa2CxG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9inRGdee";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HLFa2CxG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9inRGdee"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bfO3RnVz"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9223417E003;
-	Fri, 20 Sep 2024 16:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC78017E00E
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 16:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726849489; cv=none; b=gDPvLZ7IPisKfliGCJaFyVwBwYiQXlH0DwlD+SuzbAiDoUZXXxyFXvcTDH7nS+zQVtnhRoNSMj6Vzzg5W7qyuWHnV6JZL7gJ74tVNAz3Rt34LtNAjS7iP3jedNKeQ5gHT1vyBCNqDXAPiK+ODtV5DW0RFHdW/BDLjbHnXw/2rjk=
+	t=1726849501; cv=none; b=rgljlKHMzQpncCujA6z+Btpu9jSVURSU1HjQy+VPUUAKnIVeeStDBf+PzbptUhM1ebVywcpZGneBt1WXuOWHI1TGwL2gaUl8ItmSIXybCsFx3/9yu+EQqXibb21n3JbXejKG0yehPgeVg+rAYdGvrUawmzJcIqjBOV2bhV+JCiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726849489; c=relaxed/simple;
-	bh=KwCLXU36CkuUgCwd8TgpXlDQCl+rZJdRRn+cQonUp6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gBWtIJCXZglW1YUdsGcM2gdK4gk6FcaXEYx8mdEvJONgH34MeFiVetrVBbUvqQfLRSMBkgAQQbar96r5MD97oUITIMpjTBmU9ZjpHYMtbAnVJZLOdHlus15Sa6HTzdNz1nJxTjGRAe4z7VD6UHuOLYOq/zy83VhdMPQw//SRam4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HLFa2CxG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9inRGdee; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HLFa2CxG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9inRGdee; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B519D33A3E;
-	Fri, 20 Sep 2024 16:24:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726849485; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NQOWrkA/WG22S0Ff5+HZ6LyJeXHjt9ekwamO2xCR3A0=;
-	b=HLFa2CxG+1LHd7PoUgi7GPvsAU4MzwyfjVZie+WoSjunWkn9oQ49udMKD4UlM+Ao4zHyig
-	5VnbtT9+0EnVq93RrpF4VIbvD6qdNH+TS/wpQextsTeDenbMpnQau6I26EUXDXpTh0qls7
-	/m1Eqpoyzfrt31mJ7r0OzZhHoUdR6gA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726849485;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NQOWrkA/WG22S0Ff5+HZ6LyJeXHjt9ekwamO2xCR3A0=;
-	b=9inRGdeeMzqFgW+Tjm7bfKOihCtH9J/ghcpP4Wq7UZr2mZ7fa0w6+3F2DAMmhkpUjuZ+bd
-	5hX8j3OR/vBKADAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726849485; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NQOWrkA/WG22S0Ff5+HZ6LyJeXHjt9ekwamO2xCR3A0=;
-	b=HLFa2CxG+1LHd7PoUgi7GPvsAU4MzwyfjVZie+WoSjunWkn9oQ49udMKD4UlM+Ao4zHyig
-	5VnbtT9+0EnVq93RrpF4VIbvD6qdNH+TS/wpQextsTeDenbMpnQau6I26EUXDXpTh0qls7
-	/m1Eqpoyzfrt31mJ7r0OzZhHoUdR6gA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726849485;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NQOWrkA/WG22S0Ff5+HZ6LyJeXHjt9ekwamO2xCR3A0=;
-	b=9inRGdeeMzqFgW+Tjm7bfKOihCtH9J/ghcpP4Wq7UZr2mZ7fa0w6+3F2DAMmhkpUjuZ+bd
-	5hX8j3OR/vBKADAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5B62313AA7;
-	Fri, 20 Sep 2024 16:24:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id S41IFsah7WYNbwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 20 Sep 2024 16:24:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id EDD25A08BD; Fri, 20 Sep 2024 18:24:22 +0200 (CEST)
-Date: Fri, 20 Sep 2024 18:24:22 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 04/10] ext4: refactor ext4_zero_range()
-Message-ID: <20240920162422.sfoefd3bng6wwhir@quack3>
-References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
- <20240904062925.716856-5-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1726849501; c=relaxed/simple;
+	bh=Lo57eX2x9k6yvg2bMfey2e8hVztipaeaZ3SiF94jyDU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ucD6kd8gDA08wo15V/+hRXrRS1y/RQ2SpRsPxbDvBETkAgpplR/LN6SFtqJIgbO4m1nDZG1OqGGYpJJ+2KiEkyDq31/mTyuYQiu05CV4rmP98qUn44Ae4rO2DVuCs3tz4KCc9PUTOqXocP45FkexwgUno1E415IMCp4l0MUOj/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bfO3RnVz; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a0cbc08b38so3426205ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:24:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1726849498; x=1727454298; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ETzjk99HfOyExYviklOPPMMoaRaeOvjJU32oW0oE2qo=;
+        b=bfO3RnVznDtz0ni9kvewetWodGbOSrjXOLLlnJPxKYj3FQ4O7yOXVN+S0gVwR2yVRg
+         cAg+gu0JaQulpamAdwqjPoGqn2bRfWHLgJl4t+c69HHl0sW77Bh/8kDx02hUVYrrGRHI
+         8iLsrgZOmrP6DICh8O48eOKVYBkt4cVB/kyQQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726849498; x=1727454298;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ETzjk99HfOyExYviklOPPMMoaRaeOvjJU32oW0oE2qo=;
+        b=gOxeS722FU3qSgoLhO89DnpzweS1Y+xAGYN556TBaQJVeXmMe2Y9xOvkDUXJgxChE9
+         mekwpWzX73gFeoFpruMm5G+Hbf5zSQdZ3xaxas8FuVJnbT1gEv68Z+ww/KEMb7WdC9aY
+         XrQbnpXXQ+Vgniuf8V3GoP4aGkqckW/g7q5DbJE1dFSjSzmdQhgJBD68vovktg5Ov5KD
+         4CtIkGaU9jKnRVZ9T+desZmrohs3cQllwF5nYLre4kqjsIZploFQR1MmiMnczkx1NTzA
+         TBNaEvTOQGaiLySbIe+JhEFTfg0ilZBjLmZHlog53ZJ3qYSqoO1m7hqihu9GbK4/QdkX
+         BKpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPKCz1p5ualFdp8Emi6Gdu4bzew1c4O5JfKyiT1NlMPJc9tXplMyDMKEVjilKj4F4n17fw7xqeSg9glpU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIgQAVpV2P1jrX3b8ssposWZ0SEHQWqNmDKZu4pWMlZmvdWXfO
+	q1L6sSmx/iH4SfPbpAjvk1uiFbMKAzLmv18xKSL8evjfgYNhQt8lCgHiSWd+TXw=
+X-Google-Smtp-Source: AGHT+IE2uigUmVj+vxJgtES2OgC740iUyQL252JUzMrivDAeT+DIiYvxOM1axog1ETSGFzr32I8+EQ==
+X-Received: by 2002:a05:6e02:1e03:b0:39f:6f8c:45f3 with SMTP id e9e14a558f8ab-3a0c8d25d74mr32825515ab.16.1726849497965;
+        Fri, 20 Sep 2024 09:24:57 -0700 (PDT)
+Received: from [10.212.145.178] ([12.216.155.19])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a092e1b608sm42277985ab.38.2024.09.20.09.24.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Sep 2024 09:24:57 -0700 (PDT)
+Message-ID: <62c6883c-19ca-4ccb-ae78-dd3e665fca08@linuxfoundation.org>
+Date: Fri, 20 Sep 2024 10:24:56 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904062925.716856-5-yi.zhang@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kselftest/alsa: add silent flag to reduce noise
+To: Abdul Rahim <abdul.rahim@myyahoo.com>
+Cc: perex@perex.cz, tiwai@suse.com, broonie@kernel.org, shuah@kernel.org,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240915234131.61962-2-abdul.rahim.ref@myyahoo.com>
+ <20240915234131.61962-2-abdul.rahim@myyahoo.com>
+ <7caf7242-1ca4-462a-b3d0-627258df3f1b@linuxfoundation.org>
+ <vzrosmbs5x5mmnxwubwljjqxo4m4eih35z26cudshpbr3uue7j@k3v65fkr24rz>
+ <087c4ef0-5718-48d3-9367-1d79a255fab1@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <087c4ef0-5718-48d3-9367-1d79a255fab1@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed 04-09-24 14:29:19, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On 9/20/24 09:27, Shuah Khan wrote:
+> On 9/19/24 15:49, Abdul Rahim wrote:
+>> On Thu, Sep 19, 2024 at 09:40:34AM GMT, Shuah Khan wrote:
+>>> On 9/15/24 17:41, Abdul Rahim wrote:
+>>>> When ALSA is not installed on the users system, the error:
+>>>>
+>>>> "Package alsa was not found in the pkg-config search path.
+>>>> Perhaps you should add the directory containing `alsa.pc'
+>>>> to the PKG_CONFIG_PATH environment variable
+>>>> Package 'alsa', required by 'virtual:world', not found"
+>>>>
+>>>
+>>> extra line?
+>>>
+>>>> is printed 3 times, which generates unnecessary noise.
+>>>> Hence, Remove unnecessary noise using `--silence-errors` on LDLIBS
+>>>> assignment, so the message is printed only once.
+>>>
+>>> I would say this message is alerting the user that the package is missing.
+>>> Why would you want to delete it?
+>>>
+>>>>
+>>>> Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
+>>>> ---
+>>>>    tools/testing/selftests/alsa/Makefile | 2 +-
+>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/tools/testing/selftests/alsa/Makefile b/tools/testing/selftests/alsa/Makefile
+>>>> index 25be68025290..cd022fc869fb 100644
+>>>> --- a/tools/testing/selftests/alsa/Makefile
+>>>> +++ b/tools/testing/selftests/alsa/Makefile
+>>>> @@ -2,7 +2,7 @@
+>>>>    #
+>>>>    CFLAGS += $(shell pkg-config --cflags alsa) $(KHDR_INCLUDES)
+>>>> -LDLIBS += $(shell pkg-config --libs alsa)
+>>>> +LDLIBS += $(shell pkg-config --silence-errors --libs alsa)
+>>>>    ifeq ($(LDLIBS),)
+>>>>    LDLIBS += -lasound
+>>>>    endif
+>>>
+>>>
+>>> thanks,
+>>> -- Shuah
+>>>
+>>
+>> This can also be handled like this:
+>> ---
+>> CHECK := $(shell pkg-config --exists alsa; echo $?)
+>> ifneq ($(CHECK),0)
+>> $(error Package alsa not found! Add directory containing alsa.pc in PKG_CONFIG_PATH)
+>> endif
+>> ---
+>>
 > 
-> Current ext4_zero_range() is full of complex position calculation and
-> stale error out tags. In order to clean up the code and make things
-> clear, refactor it by a) simplify and rename variables, b) remove some
-> unnecessary position calculations, always write back dirty data and
-> drop cache from offset to end, instead of only write back aligned
-> blocks, c) rename the stale out_mutex tag.
+> This is a better solution than suppressing errors.
 > 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Looks good to me. Feel free to add:
+One more thing. "make kselftest-all" has to continue even if this error causes alsa
+compile to fail.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+thanks,
+-- Shuah
 
-								Honza
-
-> ---
->  fs/ext4/extents.c | 96 ++++++++++++++++++-----------------------------
->  1 file changed, 37 insertions(+), 59 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index d9fccf2970e9..2fb0c2e303c7 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -4540,40 +4540,15 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  	struct inode *inode = file_inode(file);
->  	struct address_space *mapping = file->f_mapping;
->  	handle_t *handle = NULL;
-> -	unsigned int max_blocks;
->  	loff_t new_size = 0;
-> -	int ret = 0;
-> -	int flags;
-> -	int credits;
-> -	int partial_begin, partial_end;
-> -	loff_t start, end;
-> -	ext4_lblk_t lblk;
-> +	loff_t end = offset + len;
-> +	ext4_lblk_t start_lblk, end_lblk;
-> +	unsigned int blocksize = i_blocksize(inode);
->  	unsigned int blkbits = inode->i_blkbits;
-> +	int ret, flags, credits;
->  
->  	trace_ext4_zero_range(inode, offset, len, mode);
->  
-> -	/*
-> -	 * Round up offset. This is not fallocate, we need to zero out
-> -	 * blocks, so convert interior block aligned part of the range to
-> -	 * unwritten and possibly manually zero out unaligned parts of the
-> -	 * range. Here, start and partial_begin are inclusive, end and
-> -	 * partial_end are exclusive.
-> -	 */
-> -	start = round_up(offset, 1 << blkbits);
-> -	end = round_down((offset + len), 1 << blkbits);
-> -
-> -	if (start < offset || end > offset + len)
-> -		return -EINVAL;
-> -	partial_begin = offset & ((1 << blkbits) - 1);
-> -	partial_end = (offset + len) & ((1 << blkbits) - 1);
-> -
-> -	lblk = start >> blkbits;
-> -	max_blocks = (end >> blkbits);
-> -	if (max_blocks < lblk)
-> -		max_blocks = 0;
-> -	else
-> -		max_blocks -= lblk;
-> -
->  	inode_lock(inode);
->  
->  	/*
-> @@ -4581,26 +4556,23 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  	 */
->  	if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))) {
->  		ret = -EOPNOTSUPP;
-> -		goto out_mutex;
-> +		goto out;
->  	}
->  
->  	if (!(mode & FALLOC_FL_KEEP_SIZE) &&
-> -	    (offset + len > inode->i_size ||
-> -	     offset + len > EXT4_I(inode)->i_disksize)) {
-> -		new_size = offset + len;
-> +	    (end > inode->i_size || end > EXT4_I(inode)->i_disksize)) {
-> +		new_size = end;
->  		ret = inode_newsize_ok(inode, new_size);
->  		if (ret)
-> -			goto out_mutex;
-> +			goto out;
->  	}
->  
-> -	flags = EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT;
-> -
->  	/* Wait all existing dio workers, newcomers will block on i_rwsem */
->  	inode_dio_wait(inode);
->  
->  	ret = file_modified(file);
->  	if (ret)
-> -		goto out_mutex;
-> +		goto out;
->  
->  	/*
->  	 * Prevent page faults from reinstantiating pages we have released
-> @@ -4616,36 +4588,40 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  	 * Write data that will be zeroed to preserve them when successfully
->  	 * discarding page cache below but fail to convert extents.
->  	 */
-> -	ret = filemap_write_and_wait_range(mapping, start, end - 1);
-> +	ret = filemap_write_and_wait_range(mapping, offset, end - 1);
->  	if (ret)
->  		goto out_invalidate_lock;
->  
-> +	/* Now release the pages and zero block aligned part of pages */
-> +	truncate_pagecache_range(inode, offset, end - 1);
-> +
-> +	flags = EXT4_GET_BLOCKS_CREATE_UNWRIT_EXT;
->  	/* Preallocate the range including the unaligned edges */
-> -	if (partial_begin || partial_end) {
-> -		ret = ext4_alloc_file_blocks(file,
-> -				round_down(offset, 1 << blkbits) >> blkbits,
-> -				(round_up((offset + len), 1 << blkbits) -
-> -				 round_down(offset, 1 << blkbits)) >> blkbits,
-> -				new_size, flags);
-> +	if (offset & (blocksize - 1) || end & (blocksize - 1)) {
-> +		ext4_lblk_t alloc_lblk = offset >> blkbits;
-> +		ext4_lblk_t len_lblk = EXT4_MAX_BLOCKS(len, offset, blkbits);
-> +
-> +		ret = ext4_alloc_file_blocks(file, alloc_lblk, len_lblk,
-> +					     new_size, flags);
->  		if (ret)
->  			goto out_invalidate_lock;
->  
->  	}
->  
->  	/* Zero range excluding the unaligned edges */
-> -	if (max_blocks > 0) {
-> -		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN |
-> -			  EXT4_EX_NOCACHE);
-> -
-> -		/* Now release the pages and zero block aligned part of pages */
-> -		truncate_pagecache_range(inode, start, end - 1);
-> -
-> -		ret = ext4_alloc_file_blocks(file, lblk, max_blocks, new_size,
-> -					     flags);
-> +	start_lblk = round_up(offset, blocksize) >> blkbits;
-> +	end_lblk = end >> blkbits;
-> +	if (end_lblk > start_lblk) {
-> +		ext4_lblk_t zero_blks = end_lblk - start_lblk;
-> +
-> +		flags |= (EXT4_GET_BLOCKS_CONVERT_UNWRITTEN | EXT4_EX_NOCACHE);
-> +		ret = ext4_alloc_file_blocks(file, start_lblk, zero_blks,
-> +					     new_size, flags);
->  		if (ret)
->  			goto out_invalidate_lock;
->  	}
-> -	if (!partial_begin && !partial_end)
-> +	/* Finish zeroing out if it doesn't contain partial block */
-> +	if (!(offset & (blocksize - 1)) && !(end & (blocksize - 1)))
->  		goto out_invalidate_lock;
->  
->  	/*
-> @@ -4662,16 +4638,18 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  		goto out_invalidate_lock;
->  	}
->  
-> +	/* Zero out partial block at the edges of the range */
-> +	ret = ext4_zero_partial_blocks(handle, inode, offset, len);
-> +	if (ret)
-> +		goto out_handle;
-> +
->  	if (new_size)
->  		ext4_update_inode_size(inode, new_size);
->  	ret = ext4_mark_inode_dirty(handle, inode);
->  	if (unlikely(ret))
->  		goto out_handle;
-> -	/* Zero out partial block at the edges of the range */
-> -	ret = ext4_zero_partial_blocks(handle, inode, offset, len);
-> -	if (ret >= 0)
-> -		ext4_update_inode_fsync_trans(handle, inode, 1);
->  
-> +	ext4_update_inode_fsync_trans(handle, inode, 1);
->  	if (file->f_flags & O_SYNC)
->  		ext4_handle_sync(handle);
->  
-> @@ -4679,7 +4657,7 @@ static long ext4_zero_range(struct file *file, loff_t offset,
->  	ext4_journal_stop(handle);
->  out_invalidate_lock:
->  	filemap_invalidate_unlock(mapping);
-> -out_mutex:
-> +out:
->  	inode_unlock(inode);
->  	return ret;
->  }
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
