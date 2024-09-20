@@ -1,151 +1,122 @@
-Return-Path: <linux-kernel+bounces-334497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F1697D7FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:00:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7F097D7EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C21B7287A55
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:00:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D52851C22ACD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5DB18453C;
-	Fri, 20 Sep 2024 15:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5674E17E44A;
+	Fri, 20 Sep 2024 15:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pFVUh35t"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SEVnVaUC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3749C184529;
-	Fri, 20 Sep 2024 15:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AF317DFFE;
+	Fri, 20 Sep 2024 15:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726847987; cv=none; b=A+gX8sS14TGMJOsgzYvH6B8NVZhSdMM2OXhduFm3/NPnom9u+WGMTVk/OxEFuTI5pG5j6/HK0s8zSCn0EcW7GNAtaleDD29DRr2IV4a0N3xm8TiIIctNi7LQZxMs//5oWIu4kQzx1+RWQtfb6Bm4cqZsdB9hJn5FOU8Fiq/kf/E=
+	t=1726847910; cv=none; b=UeLm/0ECzYaz9MYcuFyFFIgcfyHeB7gMaRsLbGmLu7SI2GCVz+4VKNLXPZdzYBsqP9EbZ5GUKbR2UJfbCiATfZ8V8EtTvN1SFrkMImemiFn5ZNPIhz6C4VFGcatCdN5idngnH1Vu2clPmh9bsf4yD9SwR49CGZa5A/x0wRLfQtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726847987; c=relaxed/simple;
-	bh=oQqgdkk5Pt2hdfZdFyO66Afsk7xvJlfyQpNEu70FOaI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CQrswIzuawXMJx2lGShztWeO7TCrV8VB0rRDHfK+aeckpsRj9JOg4hn9NW0/+HhqMV64kywFL7sKx0gKIEI3u84GQ3zMknf9hMp25kjoZDrWk2tiH92Vr9WHMrzQOPTxFbtmj69Zwqc7PiuPB/5MmEJUqG0B4Yu/7l0mpnQCtdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pFVUh35t; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48KB7rcS017226;
-	Fri, 20 Sep 2024 15:59:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xiWBRRupGHCE0Ea8IadEJWOu5jtdc/94LN076XPWVbA=; b=pFVUh35tm0qLjXpl
-	1D8N3ab8qVrhyyQXBVdrvMkQbOGQyyKmKAN+0V5HjoRHaKtDDRvLh2qyxx4qKSKw
-	7oYisZOhA+ythDSd68aA/vZJxbr9jD8JF3kLsh/inekopCda09h5n8JvUD+btbHf
-	EtIYI2phaVNh/U26AFzEB2w6Vrq85DTai/JJbKwv01ClVWokMbhiBK9qcxXPdKNk
-	F0XOwOeG1ufoRiMcWVTEyGM2fpzy7cR6JIJjH2mSBiPzF85YG/I4ieP6iF/A2wki
-	YFcAyi2184jaqaSKAYt55dvXPRudKDV/qupt8ol3zXWBSibEhGR+c0JcX2QcM6RJ
-	HHyhXA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41ry4aajqp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 15:59:30 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48KFxTvk003292
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 15:59:29 GMT
-Received: from hu-bibekkum-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 20 Sep 2024 08:59:24 -0700
-From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-To: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
-        <joro@8bytes.org>, <jgg@ziepe.ca>, <jsnitsel@redhat.com>,
-        <robh@kernel.org>, <krzysztof.kozlowski@linaro.org>,
-        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>
-CC: <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <quic_bibekkum@quicinc.com>
-Subject: [PATCH v15 5/5] iommu/arm-smmu: add ACTLR data and support for qcom_smmu_500
-Date: Fri, 20 Sep 2024 21:28:13 +0530
-Message-ID: <20240920155813.3434021-6-quic_bibekkum@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240920155813.3434021-1-quic_bibekkum@quicinc.com>
-References: <20240920155813.3434021-1-quic_bibekkum@quicinc.com>
+	s=arc-20240116; t=1726847910; c=relaxed/simple;
+	bh=XNfFFrRVo8a4wL2UR3VbWZtjgrhwmDIpuPmCd0POBCI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=pjB+Jj8KWfzoQE7SHoKX5uxHQJ0RLAc4Gek9D6GmAXiNVSqImSPPtww7apdkaXBu54EHRbsJqWjqXu32WAh/yMIVWYVzjLMPhw54poQ1E/FcV5j1RWPzMA393LA1752Ku2sVw8zgoK4aqPHj+vDAf0Q9Av22QovDo9n44ItJFb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SEVnVaUC; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726847910; x=1758383910;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=XNfFFrRVo8a4wL2UR3VbWZtjgrhwmDIpuPmCd0POBCI=;
+  b=SEVnVaUCMGV+Kol5lmhpldq3L11PeVo6fBzvxj46pbuyhm6g5J5wbJdo
+   0mURDAZBYyEnUAhNbtocnsFR1FhtJ7fN5dC27XgxQB2CN3+jHwlbKYymg
+   7Wmf8LE4E8zIZUb+hUbARr2DuThijLn/ATapaL26dCXoXAx+9ByixThCT
+   KCJaN8JWVJc/iWsTAvVsR+uDCGZVn7gBOUsktQRrI+f8RKK5dRNwnF2ee
+   x4knmDJxRra/hMxNx5TjP49aGN3cS2UszATrR0XkBL6roqr/LBkI+IkXT
+   6fvt28kOukSiW9d6Ho3xLcRchmMkDTNsgw2qHCHmaFwYvOcaIU7i3fvWr
+   g==;
+X-CSE-ConnectionGUID: aGx7cwjqQcC2Q97OVoxLkA==
+X-CSE-MsgGUID: 2IztmSfHTS+ncdHZfWmbdg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11201"; a="36993372"
+X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
+   d="scan'208";a="36993372"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 08:58:29 -0700
+X-CSE-ConnectionGUID: yXk6fyQHQN2yIOKlPR89xA==
+X-CSE-MsgGUID: eZG4rdVpRyKxvYFXLfNMrg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
+   d="scan'208";a="70787342"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.61])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 08:58:24 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 20 Sep 2024 18:58:21 +0300 (EEST)
+To: Jiri Slaby <jslaby@suse.cz>, LiangCheng Wang <zaq14760@gmail.com>
+cc: shawnguo@kernel.org, s.hauer@pengutronix.de, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kernel@pengutronix.de, 
+    festevam@gmail.com, u.kleine-koenig@pengutronix.de, 
+    cniedermaier@dh-electronics.com, l.sanfilippo@kunbus.com, 
+    linux@rasmusvillemoes.dk, stefan.eichenberger@toradex.com, 
+    tglx@linutronix.de, rickaran@axis.com, LKML <linux-kernel@vger.kernel.org>, 
+    linux-serial <linux-serial@vger.kernel.org>, imx@lists.linux.dev, 
+    linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/1] drivers: tty: imx: fix flags of rs485 not work
+ properly
+In-Reply-To: <7a31001d-da37-4deb-a366-084a4027bcd2@suse.cz>
+Message-ID: <f09c546e-4f0c-81a0-8acf-24f4e5d29229@linux.intel.com>
+References: <20240906021905.197891-1-zaq14760@gmail.com> <7a31001d-da37-4deb-a366-084a4027bcd2@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: eBhJFC1LK9ISgCsrly53eCh733pGoyD3
-X-Proofpoint-ORIG-GUID: eBhJFC1LK9ISgCsrly53eCh733pGoyD3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- priorityscore=1501 lowpriorityscore=0 clxscore=1015 malwarescore=0
- suspectscore=0 spamscore=0 impostorscore=0 adultscore=0 bulkscore=0
- mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409200117
+Content-Type: text/plain; charset=US-ASCII
 
-Add ACTLR data table for qcom_smmu_500 including
-corresponding data entry and set prefetch value by
-way of a list of compatible strings.
+On Fri, 6 Sep 2024, Jiri Slaby wrote:
 
-Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
----
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+> It seems gmail refuses to send this to zaq14760@gmail.com (the author).
+> 
+> On 06. 09. 24, 4:19, LiangCheng Wang wrote:
+> > The rs485.flags are lost in functions such as imx_uart_stop_tx(),
+> > causing the function of RS485 to be invalid when using the
+> > serial port as the RS485 port. Use a variable to store the state to
+> > avoid this issue.
+> 
+> AFAICT, this feels rather wrong. Any rs485 experts around?
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-index 4ac272d05843..e8f936a446df 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-@@ -25,8 +25,31 @@
+It is wrong. The patch makes no sense at all and prevents 
+reconfiguring/setting rs485 from userspace.
 
- #define CPRE			(1 << 1)
- #define CMTLB			(1 << 0)
-+#define PREFETCH_SHIFT		8
-+#define PREFETCH_DEFAULT	0
-+#define PREFETCH_SHALLOW	(1 << PREFETCH_SHIFT)
-+#define PREFETCH_MODERATE	(2 << PREFETCH_SHIFT)
-+#define PREFETCH_DEEP		(3 << PREFETCH_SHIFT)
- #define GFX_ACTLR_PRR		(1 << 5)
+> At minimum, how are the flags "lost" and why this does not matter to other
+> drivers?
 
-+static const struct of_device_id qcom_smmu_actlr_client_of_match[] = {
-+	{ .compatible = "qcom,adreno",
-+			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
-+	{ .compatible = "qcom,adreno-gmu",
-+			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
-+	{ .compatible = "qcom,adreno-smmu",
-+			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
-+	{ .compatible = "qcom,fastrpc",
-+			.data = (const void *) (PREFETCH_DEEP | CPRE | CMTLB) },
-+	{ .compatible = "qcom,sc7280-mdss",
-+			.data = (const void *) (PREFETCH_SHALLOW | CPRE | CMTLB) },
-+	{ .compatible = "qcom,sc7280-venus",
-+			.data = (const void *) (PREFETCH_SHALLOW | CPRE | CMTLB) },
-+	{ .compatible = "qcom,sm8550-mdss",
-+			.data = (const void *) (PREFETCH_DEFAULT | CMTLB) },
-+	{ }
-+};
-+
- static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
- {
- 	return container_of(smmu, struct qcom_smmu, smmu);
-@@ -640,6 +663,7 @@ static const struct qcom_smmu_match_data qcom_smmu_500_impl0_data = {
- 	.impl = &qcom_smmu_500_impl,
- 	.adreno_impl = &qcom_adreno_smmu_500_impl,
- 	.cfg = &qcom_smmu_impl0_cfg,
-+	.client_match = qcom_smmu_actlr_client_of_match,
- };
+Perhaps some userspace program is altering rs485 settings, definitely 
+nothing in imx_uart_stop_tx() writes to it. I'm skeptical it would be a 
+problem in the kernel, especially given the patch that is supposed to 
+"avoid the issue" (whatever the issue is).
 
- /*
---
-2.34.1
+> > --- a/drivers/tty/serial/imx.c
+> > +++ b/drivers/tty/serial/imx.c
+> > @@ -209,7 +209,7 @@ struct imx_port {
+> >   	const struct imx_uart_data *devdata;
+> >     	struct mctrl_gpios *gpios;
+> > -
+> > +	int flags;
+> 
+> Definitely not int for flags.
+
+Driver is not supposed to duplicate the rs485 flags at all.
+
+-- 
+ i.
 
 
