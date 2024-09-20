@@ -1,186 +1,160 @@
-Return-Path: <linux-kernel+bounces-334554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64BAC97D8BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:58:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7661C97D8C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DB2F281A79
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:58:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A11C2863BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C72C17E01B;
-	Fri, 20 Sep 2024 16:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MfOhFd0d"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B1017F389;
+	Fri, 20 Sep 2024 17:00:35 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68AB2B9B9
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 16:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D577B2B9B9
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 17:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726851526; cv=none; b=cM926KqaNTzM5GCJ9fjW8zr8wrw36XL7uuXIXsVqhHn6HPIs5/7214NH1aeTg3oi32onmGohOAFtwf+f5zUPn8dE82egOmzCVf6DPvNmQ3tT+P6Nq0HSw8n+ve/iDNDRID5jIIkz2pmcJErDW8aUPKX6T+ZWozbsOBAv+/dlN9M=
+	t=1726851635; cv=none; b=Z3x/QvPAkFeXurjbSb4p3niVAoTAHueTFy3y6dLMHUvfkTJ+GtmVIqiEuLwOclWPmf1PBlzkdkiQGd9pSJdogJLIhAhlS1XuBm5jerkeYq/vBVbVZRNPTlKgUWurcRXypy5C6F1n3LsW5uqhbSdsPBc14SUDqgHJOvFSZmdOLpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726851526; c=relaxed/simple;
-	bh=GkyOJ/OlUlu/timXxU6QtBE6s88mkLrJPU+vCWjLrOA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uap96mrUswgkI6cV8XaFpKqNTIiZluoywpSL1tITQ9g99T08HateT69DnYQnU7AmhgqM2nC5Ivvz9JJxXX9W2AL7579cHsLJFjiSYz1hcoj6FlsFdPSHPdOaOFNGFyFrk6ldruqnqVAxDbL3+25pKOJtjOzNesMCerV2c77EvLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MfOhFd0d; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6ddd758aaf4so17108207b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:58:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1726851522; x=1727456322; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yuengg8SKuG258v3/BqxPdn3H/VM/Idwmrn82JID4+E=;
-        b=MfOhFd0d1bv0ib7LefljJYDljD10bUcDMMfllfrvOKK3hVJaXhlCSoqt6+GXa++idx
-         xtn6dLnDZ3bpS8q1MjHgTogGcwe7wEVDIPEAquZ/JuLB5xBa0rhSd5eDY6iTbFaG9A4K
-         xhXGF0uk8YX5SRM3HEtPQh/gaqjHMoBeYgIE/vCRakncCCumKj9dFuONkmNW+5JX6Ui3
-         HZ6+71uhmRAd5CLH/bN2SFd8fOjNlU/8c64o4oWHJXcbPgt33v8Qivu3tWOMX6oqqaBo
-         2zenAWMhkBytlTo96yH30orYdtBUcssKXtE3Kq8tajsgt/I7l0p+2UEuZHyZIfobgrcs
-         QzHg==
+	s=arc-20240116; t=1726851635; c=relaxed/simple;
+	bh=4j+fUHE3+805kbYfg1lYbt761J4oZtOOvdmszfKJ8RQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=M+/8ustbbdWjzb/Bf+VCOZsMhAnvflLIIuIXHIbMqzSty7cGmWrcXlvcvhuEFcTaDAi0pgMdOsTlrSPeAk6UocdSTWzNHVCtopKR49bk6nTCNunn/bZl9nrTwtl9eM3AqCsyMBn/kzSqFpgDrduhRpQC8zETr/pqnrGUH6XBXAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82ce3316d51so282562239f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 10:00:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726851522; x=1727456322;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yuengg8SKuG258v3/BqxPdn3H/VM/Idwmrn82JID4+E=;
-        b=a4W3IEC2/6r2GFAqTvUt2T5mKTRDdSOjyMv1NYU/JMr4Q8S/Xu3pv1GnTWZq+oU4n2
-         0b6SFSzBTsBZATOElzNZ4XqE/hPh/xZuYua09Dl5LiMwbvLZmuylWG5I0iW7nWG/ez4a
-         UYx/nflaAl/2GqoUkg6J65LzkQPj7WRGWM56SxP11MiATWHjq1Jo/vVax4Avr+GUXYO6
-         Vmd05Lg0p22zzdvzj2t4RKCHo++TKljQr+1VnW5ZjFK9rfqzX37j+Nb9kBPhQCxMw09O
-         dzonONp5zjwFnKlcw6uVQRrgKhFN27y5f+9U8CHdFsFjoHL7zzZcNfa0gkHkt16e8TZM
-         P3cA==
-X-Forwarded-Encrypted: i=1; AJvYcCWm7EZ2ZVfOsFozs65q8p1GS6G4v7eFosJxYF3WRzpKrmuyeLKQH9bg2n62IQzljfREwm6MJDdNXMuZjQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy084Xtc6bQhXPXuDund07xKIXoaowLmmO8zZKu/3is1GMldsfT
-	JnaWokxhiVc/n6TGA9Sn9Gvb4F3FmWc3ptDUYAsNxJoEQb4R5SFCZdh70LUxqDiZ7SjYHpTqjtg
-	gBPovJyq9xmL2KkzJ4lINhVT3jgJIOOe3ozN2
-X-Google-Smtp-Source: AGHT+IHdzpdMp4IjA99SMzli7V3Y5kLR6/exTEKpjjTukuZMinUsN29sqVguIdeLyOh/J2LJfnpTD8XwjYFIstv3Xpo=
-X-Received: by 2002:a05:690c:67c5:b0:6d5:90f:d497 with SMTP id
- 00721157ae682-6dfeed8a6a2mr36754917b3.19.1726851522519; Fri, 20 Sep 2024
- 09:58:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726851633; x=1727456433;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kfDdPHt9GI0mh8ly82kMMRpzmCBeMx53wohZf9EjjOU=;
+        b=AwL/F6dsHVfINgPFb/AthVNz2Nvj8WaYDhgwB75og1pK2wJr1B9aaClXmSe+HsIGIW
+         fXti0o+UJDPfZh557c9a/buD6NighS+nRFA2iOA9mw+lGotUVxUtCEZAIN/SB3b1Na8+
+         evOumGr/UBbBr67no57p8pmIrEbAnfmCpJO3p7Hdw/5cwLvYFO/bQHOGiOd6LlrRTRdG
+         OGF6T0fWk7KOd6z0rh0Av3dGDtIWQ9g5atM2E40d5mw1PaYhoLHnMptWqLWfN8CQMikP
+         QIT8IJI1HPHEV/ByMbcYRCUFVao/EqrvzBATp+rb5CtAA75fcUju6xyHZKpI0Wby3Umz
+         rh9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVzVmfCAJY3zcll4m095Dg9T9CMW2sNpHURzjrV4aO6oigW8el+RT3/24+juHDVZY7yDp01eqBQySh54Qg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5xErcvOQ4KoMgawEWoXhZkvOLlj47lsnOGFyzjxr8R2OC4B7V
+	oQ9vGD4eqLGXS63aAdSUeapCaODEyO26dEbh1k3vKGCAI3qrzh1GmSnkNGlKpLo9GVqXPh+Ubaf
+	SSq6vJVcHVU0Kh9tgBfqEte6+JKFls4OH8pwkIokdVThrNQKoc2P7S84=
+X-Google-Smtp-Source: AGHT+IGHQLJzZ3Fwb8rhyPaE93K4zYCduyO6cmykcNi4QNNVdsnzFUnAgaEPQ+1hPSwt7ObLXPFgHEAlZ0B43MJ/HEgM61DDf8E8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66ed837a.050a0220.29194.0057.GAE@google.com>
-In-Reply-To: <66ed837a.050a0220.29194.0057.GAE@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 20 Sep 2024 12:58:31 -0400
-Message-ID: <CAHC9VhQF743KeHEULgA1hqq9OM3ttMmyhwFdavJLpgHT9j7uGw@mail.gmail.com>
-Subject: Re: [syzbot] [lsm?] KASAN: slab-use-after-free Read in smk_access
-To: syzbot <syzbot+a95cf48b5daf4bb16c29@syzkaller.appspotmail.com>
-Cc: casey@schaufler-ca.com, jmorris@namei.org, john.johansen@canonical.com, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	serge@hallyn.com, syzkaller-bugs@googlegroups.com
+X-Received: by 2002:a05:6e02:1a8e:b0:3a0:b1ea:816 with SMTP id
+ e9e14a558f8ab-3a0c9db0144mr31192415ab.25.1726851632712; Fri, 20 Sep 2024
+ 10:00:32 -0700 (PDT)
+Date: Fri, 20 Sep 2024 10:00:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66edaa30.050a0220.25340c.0006.GAE@google.com>
+Subject: [syzbot] [netfs?] KMSAN: uninit-value in netfs_clear_buffer
+From: syzbot <syzbot+921873345a95f4dae7e9@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 20, 2024 at 10:15=E2=80=AFAM syzbot
-<syzbot+a95cf48b5daf4bb16c29@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    a430d95c5efa Merge tag 'lsm-pr-20240911' of git://git.ker=
-n..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D10469d0058000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dd9ab5893ec519=
-1eb
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Da95cf48b5daf4bb=
-16c29
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D110e6a77980=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10cee20798000=
-0
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/c27c9d8c6782/dis=
-k-a430d95c.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/73c62c975a0c/vmlinu=
-x-a430d95c.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/56164e51e333/b=
-zImage-a430d95c.xz
->
-> The issue was bisected to:
->
-> commit 5f8d28f6d7d568dbbc8c5bce94894474c07afd4f
-> Author: Casey Schaufler <casey@schaufler-ca.com>
-> Date:   Wed Jul 10 21:32:26 2024 +0000
->
->     lsm: infrastructure management of the key security blob
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D10293fc798=
-0000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D12293fc798=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D14293fc798000=
-0
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+a95cf48b5daf4bb16c29@syzkaller.appspotmail.com
-> Fixes: 5f8d28f6d7d5 ("lsm: infrastructure management of the key security =
-blob")
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: slab-out-of-bounds in smk_access+0xae/0x4e0 security/smack/sm=
-ack_access.c:147
-> Read of size 8 at addr ffff8880202b03c0 by task syz-executor367/5216
->
-> CPU: 0 UID: 60928 PID: 5216 Comm: syz-executor367 Not tainted 6.11.0-syzk=
-aller-02574-ga430d95c5efa #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 08/06/2024
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:93 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
->  print_address_description mm/kasan/report.c:377 [inline]
->  print_report+0x169/0x550 mm/kasan/report.c:488
->  kasan_report+0x143/0x180 mm/kasan/report.c:601
->  smk_access+0xae/0x4e0 security/smack/smack_access.c:147
->  smack_watch_key+0x2f4/0x3a0 security/smack/smack_lsm.c:4656
->  security_watch_key+0x86/0x250 security/security.c:4448
->  keyctl_watch_key+0x2b7/0x480 security/keys/keyctl.c:1813
->  __do_sys_keyctl security/keys/keyctl.c:2021 [inline]
->  __se_sys_keyctl+0x106/0xa50 security/keys/keyctl.c:1874
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fbebbbc2fe9
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 1d 00 00 90 48 89 f8 48 89 f=
-7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fbebbb74238 EFLAGS: 00000246 ORIG_RAX: 00000000000000fa
-> RAX: ffffffffffffffda RBX: 00007fbebbc463e8 RCX: 00007fbebbbc2fe9
-> RDX: 0000000000000004 RSI: 0000000016bf1cf5 RDI: 0000000000000020
-> RBP: 00007fbebbc463e0 R08: 0000000000000000 R09: 00007fbebbb746c0
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00676e697279656b
-> R13: 0000000000000002 R14: 00007ffe798160c0 R15: 00007ffe798161a8
->  </TASK>
+Hello,
 
-...
+syzbot found the following issue on:
 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
+HEAD commit:    2f27fce67173 Merge tag 'sound-6.12-rc1' of git://git.kerne..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10da7500580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5d864366be695947
+dashboard link: https://syzkaller.appspot.com/bug?extid=921873345a95f4dae7e9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12bdbfc7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17acc69f980000
 
-#syz dup: [syzbot] [audit?] general protection fault in smack_log_callback
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c167a07d047b/disk-2f27fce6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a68ac6093374/vmlinux-2f27fce6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/72a53f77d2bc/bzImage-2f27fce6.xz
 
---=20
-paul-moore.com
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+921873345a95f4dae7e9@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in netfs_clear_buffer+0x216/0x4e0 fs/netfs/misc.c:75
+ netfs_clear_buffer+0x216/0x4e0 fs/netfs/misc.c:75
+ netfs_free_request+0x51f/0x890 fs/netfs/objects.c:146
+ netfs_put_request+0x161/0x360 fs/netfs/objects.c:170
+ netfs_write_collection_worker+0x7337/0x7c20
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3393
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3995 [inline]
+ slab_alloc_node mm/slub.c:4038 [inline]
+ __kmalloc_cache_noprof+0x4f0/0xb00 mm/slub.c:4185
+ kmalloc_noprof include/linux/slab.h:690 [inline]
+ netfs_buffer_append_folio+0x2cf/0x8b0 fs/netfs/misc.c:25
+ netfs_write_folio+0x1120/0x3050 fs/netfs/write_issue.c:421
+ netfs_writepages+0xe60/0x1670 fs/netfs/write_issue.c:541
+ do_writepages+0x427/0xc30 mm/page-writeback.c:2683
+ filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
+ __filemap_fdatawrite_range mm/filemap.c:430 [inline]
+ __filemap_fdatawrite mm/filemap.c:436 [inline]
+ filemap_fdatawrite+0xbf/0xf0 mm/filemap.c:441
+ v9fs_dir_release+0x1f2/0x810 fs/9p/vfs_dir.c:219
+ __fput+0x32c/0x1120 fs/file_table.c:431
+ ____fput+0x25/0x30 fs/file_table.c:459
+ task_work_run+0x268/0x310 kernel/task_work.c:228
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0xd88/0x4050 kernel/exit.c:882
+ do_group_exit+0x2fe/0x390 kernel/exit.c:1031
+ __do_sys_exit_group kernel/exit.c:1042 [inline]
+ __se_sys_exit_group kernel/exit.c:1040 [inline]
+ __x64_sys_exit_group+0x3c/0x50 kernel/exit.c:1040
+ x64_sys_call+0x3b9a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 0 UID: 0 PID: 2945 Comm: kworker/u8:9 Not tainted 6.11.0-syzkaller-04557-g2f27fce67173 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Workqueue: events_unbound netfs_write_collection_worker
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
