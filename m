@@ -1,986 +1,220 @@
-Return-Path: <linux-kernel+bounces-334530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 391E497D85F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:32:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C2C097D863
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93BDC1F21C10
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:31:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28D5228406F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0717442AB7;
-	Fri, 20 Sep 2024 16:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8B517BB11;
+	Fri, 20 Sep 2024 16:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xn4fTm9X"
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tdk/OA1H"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2041.outbound.protection.outlook.com [40.107.92.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0FE27713
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 16:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726849911; cv=none; b=qsGY1sTPGkBjpAKSnu2UxrTmMS/o4HYl6l7rY6JiLFlnSSGkX8m6ByqD2UsN0TgrTm3M7wq2MWrbqz9t2Jk7ixYG6vtz/yJ7U0gLEcLxl40IQJmAn6875UVbr3jG+0q01IMy4IBhVBFBvp1C2fbcSFcH4fbx9e2UErdnZAZMCaM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726849911; c=relaxed/simple;
-	bh=FnaJybfBOZVmEzmPywW0fOhUiAiuEQuW1vbeTIUrSBQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CW3fag1wcmoYl6uFV4XrRxoJWC9UuF2LgVzJO54RaDwPGEaAAEHLnXANU6miXPeDgjLGUesrHvoC5kdfmlIRLXm4BBBKJ05iaEAgi1Y+OMD1853fg6OQOzQEqc2puMWX8kc7FB4C1pX+PVtucld43AEDEh6Xp7ydgAHLxbAmmMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xn4fTm9X; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5012813249cso674646e0c.2
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:31:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726849907; x=1727454707; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+61A5L3/PRT1eZNo0mo6u51LuXmlAjR9JkYuttIUfKk=;
-        b=Xn4fTm9Xz8/Sl/OVVUK0BSrEj6gcVesT1ugC85RR6TNm+4Cs4BweMODatJK8kGFacf
-         SRU+FDGR9EXyhxlUgZTVunSR7XmUbs2ETTazlXh0kLTyar915OTwOF2pWgaQZVQVMXxl
-         k2GoghuerEfnqEOIPhUgPTSW+nbW8/MyEHJu8zzfDn7Kukh3Yu3hKWMOoPy7DjebXAgZ
-         Qz0diNfomidO312/femyCsUhTQmroRQMwdqCYUCkXzaT3C5iB6kVwIy7T6XwofTXD5d+
-         duIfGuB7Fu3VFFi4gFeglYbTK8JV139kXB2Xw8IUt0+ZIZVc0jNS28CEIOR274GpSUX0
-         BEFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726849907; x=1727454707;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+61A5L3/PRT1eZNo0mo6u51LuXmlAjR9JkYuttIUfKk=;
-        b=PvnvCb6fJQgqnORzmzaXQeHrlyyT7hYQmuQyPQT18mBACHUeA/A9lNalCKPqfJd4Fz
-         ceBRKTDtanBzuMsmjLCsmBI5YWpAcacj38PHHe1OsTU4kloM0QGyREobNF8SHWbu2A1Z
-         3OP4ihwzQrrjuYmKA2Da8f82knBHAeA30KMOK/Ldw7OFcWDVMCVx/lp6q+heyRyI4GF6
-         JBAPmWRxIkxBmdnJoSLvQKnPwTiWafuAn/IXnCJSvt3hy1Fajv/iV5HK224/l3v/L2Me
-         RlhErrvPJzho9YffGLU9TLo1LPGLlikdkwgzHph/4G67vHMtej6r0Hf9QpwZPropYv1U
-         V/zA==
-X-Gm-Message-State: AOJu0Ywa9MipfGQfkFfgwSvz/2NPcv+f3AOGTkGvb7+p9GtitcEL0ZkC
-	5npsqv7dMFdghpD26mv03/guWltdbNiivV3Fq74EreGY84k3/wyKsX3kGmwLQWBJMIcsYks7vTq
-	uegiXJlfg0Vhyzci/T07t6AGoGbKmVA==
-X-Google-Smtp-Source: AGHT+IH7DXphHRs/WaScCE9ijugASp74goZUk7U2TmlJxIwsj5ebyG0EGktLZYaEZ1XEi1DeuXIwYXLYjIkN63s/j8E=
-X-Received: by 2002:a05:6122:1793:b0:502:8cca:1313 with SMTP id
- 71dfb90a1353d-503e41cf814mr2279432e0c.12.1726849907129; Fri, 20 Sep 2024
- 09:31:47 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BD1481D5;
+	Fri, 20 Sep 2024 16:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726849948; cv=fail; b=F4ZqDOidY9QP4eOlv6cjWkP8lf+Jb9ardaG1K/o+0WdTsESi6TmGB6VGGH6LFuoc/ZKmGyjJhco5jrTQrxJn5+9SPtwTFK1SFb0tG0lUcwYVTDwUCA63mn7AXCRhvBn3ntEaxkyDouizduNCvzFgIDitKm0Uwg7mkpqzrdZSkqI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726849948; c=relaxed/simple;
+	bh=FEykNo/R6SPMOX8xSAigtrq3+L7kSvSMoVjLyX3hbcE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=gEReFv8RurhEMDv5ubG2T6N1Jm+FXSGcVDVqkbaLy7frVbT9rbuC/+MTWmQYV3RtkTyNl/AhEAV74UI7/3weXbZrpk3N0R5YOJzTMY8/CcHAuUYg+5evvLswT76f66Dwhh0GWY7URmDEgNj8NLoFoSVpL0AJPckFB6ymbxjcN2E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tdk/OA1H; arc=fail smtp.client-ip=40.107.92.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mZOndZ0JGi+hW/s1ESo+o7e/+prThpg2b1ZfBYxKaRSxuYV0E0iU2QXQVdsbpz2oLYNy0HHMVIVjQKN4pae7+HjtHRSNiSDI13DrZnQD2GwVgIiI2mFczuO3ChOhzxEfNsw9niP7dLkb6uCqg9WvRDu/ioA/IIv1gnrKgflsV1p7ewhtaCcYyZleo5Mudhu5pqnVBdTt35yXp9tEvNLDHBrosdPrdoalJ89DZkqO59KlsrZPnfUeYsQGVp/f3vrHkeSypWye3Tn2l3Wxx5zZ3nc2rW0nvGn6PgJitvy7MYmDJBnQWfCtjsMZhO773zdGbL5aRFrc21t9HvlRawMZYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WFncIEOMsT55t7PcwE7rbY60r87CxULliDDkgV497vk=;
+ b=pjTrFQP8TicQLv5ro7wvT/VtkYwwtu88In9XtujuranCshmyGM7xB+f6arzCKWki7HGkLiooyXC8MM2exDlfIscefB60e0wn7kng2LJ5eZLoke7iLB+SoJfoE9qIbQV5gn5n3v3s/s4AfOcgBjO4Mh6x7aBKDEni/CAuvS3JEKiFXTFe5tSl5w0rk96l7RH9+NHOvNkTQ29fSYOyZJf9k5ZPxxipmHwP7hFHa8yBgE8RkjXYDuUVeWQs+lFgIM6nleq26rf6k3xGMtiViXNM7Vg6rk1eL9+GfyAQu1L4ArZsF+kQiCfyY8a6L74YCbJwQDmJC23KSUO20+tcaIR02w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WFncIEOMsT55t7PcwE7rbY60r87CxULliDDkgV497vk=;
+ b=tdk/OA1HKjPRJbq24e9zCMuZSNjAMCYx53gHmwaFpJJyhw0tyEGtL81iYYcM6SiYeiNBx1Rpz6RkqoD5pX/5TDjMBWkm2EriWJEsDVfYJLe5GQyn8xcemM3zqqg7JrjqJ28Hq1vmIhKpWt+7uPqT/mm6XtoHL1b4bQyXpnDNQvIohBaLDpJ3IxrqLcP9PQ8FC+uYxpihi3uLwqkiRu8uwfymZTU1q5/Pog0L5VYNm/kj0viigK1TkIpyo01dHrdBj36K+MM0SETzBSu/z8wkAdjVatDCRDF6nINd4o3fH6ziywV/5uvzR+5+Ap3qfXv+gz9c+4ogu/FQ2feTVT9kOQ==
+Received: from IA0PR12MB8713.namprd12.prod.outlook.com (2603:10b6:208:48e::7)
+ by CYYPR12MB9013.namprd12.prod.outlook.com (2603:10b6:930:c2::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.23; Fri, 20 Sep
+ 2024 16:32:23 +0000
+Received: from IA0PR12MB8713.namprd12.prod.outlook.com
+ ([fe80::9fc9:acc2:bdac:a04a]) by IA0PR12MB8713.namprd12.prod.outlook.com
+ ([fe80::9fc9:acc2:bdac:a04a%5]) with mapi id 15.20.7982.022; Fri, 20 Sep 2024
+ 16:32:22 +0000
+From: Parav Pandit <parav@nvidia.com>
+To: Sebastian Ott <sebott@redhat.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-rdma@vger.kernel.org"
+	<linux-rdma@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>, "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>
+Subject: RE: [PATCH] net/mlx5: unique names for per device caches
+Thread-Topic: [PATCH] net/mlx5: unique names for per device caches
+Thread-Index: AQHbC2od5XUBVjkR/0KKxMmsWuLY3rJg3G5g
+Date: Fri, 20 Sep 2024 16:32:22 +0000
+Message-ID:
+ <IA0PR12MB8713EC167DC79275451864BADC6C2@IA0PR12MB8713.namprd12.prod.outlook.com>
+References: <20240920143335.25237-1-sebott@redhat.com>
+In-Reply-To: <20240920143335.25237-1-sebott@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA0PR12MB8713:EE_|CYYPR12MB9013:EE_
+x-ms-office365-filtering-correlation-id: c7488463-60fd-4832-8d8e-08dcd991cdde
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?k2+mBbZE3uLRe0q8wLg7uE6Kn4XZYlLwyNpAWH1dc7jBoLM6841SwweoHIAo?=
+ =?us-ascii?Q?iAqBwSNaKr15HLDAkd2CfoTjUrwwyzPkGM/4FPSh3l8SL6czE3SBPgnGFSob?=
+ =?us-ascii?Q?LMWeJoiX+zaH6NmBuHLnd4GUo8e/r97UqI7B0NcN7v8+Rw6Gq+4lB9mbeZEU?=
+ =?us-ascii?Q?blU2EN+DYg4Ck1B1UDWahHCfh1WhlqBDy1jyDu622I/b8ZZ2sXq8VVPO6JJw?=
+ =?us-ascii?Q?GhjI78MPrIwFjjBYktmUq8TrQx3EPYXLZgxJBzDAsviFFzvE2Zvxnnf4gJuC?=
+ =?us-ascii?Q?zH+osUbn2Tg9hENTGkeYmMwCZSCnmS+tIv0KbkKOPdVyujSXCRAZJju17muE?=
+ =?us-ascii?Q?mQS7fnHvSYtnWb1gggAD8JQjwVVzJjcoGCxFs+118gaicARVYvjRrJ8I9MOQ?=
+ =?us-ascii?Q?i6PyE0QXtYNgxqBqfdWw+pDxTcTUVyaApZX8mY4kyEW29WTFtFePyKIpbnez?=
+ =?us-ascii?Q?FSCnVBoKGCvSvCh+ryJffA2tizLaiMJZn/w0XKfW10sKaN8bPpaRty1EATvf?=
+ =?us-ascii?Q?yffnG9sTOa7XFobNCtejTQaUgRjdZMma6q+AfZ2lpi7KiyYOddGWvY/cfqs8?=
+ =?us-ascii?Q?OOvuHaojJJHRR+gVmbs8xZ/f0hN7UdO/bL+tXYzaJtgo2poI1R6WMLA0FXP+?=
+ =?us-ascii?Q?lApmlBvs2E1NzZmBDatdLrbcVsQG78lXErIMke0LzA68Zcv6R/W5IoFQcDcv?=
+ =?us-ascii?Q?P7rIYLxmdx+XgpeVhiwLSyEzl7OWWxTla/yYtze0zoYAbft3BwU5aa/Io21N?=
+ =?us-ascii?Q?Cpgvhh9fQvecNsKb3IAfK6GdvPtQtCsmuQozQ14u2I8eBgY//ytKd6MPABiJ?=
+ =?us-ascii?Q?7dD3Z5LnY+71RTTWFJVMljZK3rn4BibS/pWQmZR2hc+Jr9FbQ1J5T4tvwddx?=
+ =?us-ascii?Q?NHmqIX9AsuLqa0y6BQ1JUXM/bLt8+pJgt+TJomxPkLhR6ZbWGFuWkV7P0w4x?=
+ =?us-ascii?Q?1+2tChTjsoJJ0ETQ7IeJfNf099Xfs6aJ3nLktqBG+OypcD2/HwFaxi33MYvG?=
+ =?us-ascii?Q?4uK+l5vtcVSmtdc5Tr+8M7UlkV+Uc1QpqCuE7exWfd4CvDBGAMDIDHa4/c+t?=
+ =?us-ascii?Q?nXF3TWBuVQWnWk7xch2qN6/BjwWiJQS7nBQpg79Qlfor0QqnVhtSkkHRsxnK?=
+ =?us-ascii?Q?O8TUTRhcX/mtVgLrSHtNh00am0bw0RIJfwkY4e8eE9b5ErFiqt54QRE01t2U?=
+ =?us-ascii?Q?YleOXanQ2VOqHAgTpEimpq5V9qrBjZUU3nsZkzZkIGO9+h0qlz7/kUgw2OVq?=
+ =?us-ascii?Q?8lGNRMMVglhjhpjrtWx0joQXiHwIjfUv9aF4sspTjdpppnMoPrUSTXXmaVl1?=
+ =?us-ascii?Q?omTgLZ/ESnQaP4t5MbFYnj0SvK1ncYWA5KgqoOXvuefglA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB8713.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?5RakwgtWM7hj4yPUXEaB4Tzl2U1G3AWlpa3YpozGF+Fllb65wCksLrzg3VRs?=
+ =?us-ascii?Q?ylpxMsdXXU4uq92WSoehl6XbWrcwd8M4CPRls0s9z/AiEkWE9PlCas3FWluG?=
+ =?us-ascii?Q?+VaefXkQbaZs0+knaWSfp0m5Rfanq+FHcsb9ElHAWNEkI2Xi20mQBdjT0aOg?=
+ =?us-ascii?Q?8Ho0gTjvtmpszc95z++iG6bm1jtJGLjEYyUz9Nz+xgGNrcyV94j/xIcb1tAM?=
+ =?us-ascii?Q?gi5PA4uwW5JyfnVX8H8wNKa0Zk4INqOCcb37KDmlsHRc6BaIhkXux93pmhJu?=
+ =?us-ascii?Q?KWmUswxcwDDNEhF9s5VU2EpXRiQ6JOFaFIaSP6S/Gwb58MXKqnW3+SrfZrlF?=
+ =?us-ascii?Q?qXIEp/7gfTJBkkSxF6P8dxJ3/gCgF83Mpp669q8KKItVtPrmkJfMQhoyN2jO?=
+ =?us-ascii?Q?/y272A0DRw3gpgPnXXPFCPcA/+79BM+WrtK/9wDLaHfVlGagOnpaFhrDR9af?=
+ =?us-ascii?Q?IaFHnAzfSs9g1aLLVYuNWz4i8y4sxhw3oA4+aNxi+ImHAEvM9IakzIK2hNnv?=
+ =?us-ascii?Q?+hbSFAj9JEEyB7zObnJoD5+KADYyDuuiZw36XH5GKSshaWGgCaQuSYJE8Y/f?=
+ =?us-ascii?Q?/uOVgShIIzCH19I2B5xetRCCm2S7QEFPLAJwbI6GTy+fks43ZEDb1AI+Umis?=
+ =?us-ascii?Q?dcxFCmE09w+gRnwfdUQxBCRMYFs1P1/0qqnLGEWf9sZ5vj/USi82lKSUY+J7?=
+ =?us-ascii?Q?PTFGLAE2lBJgu8rvexpe+7HiCkwhGU3Nrm8Sw0oZnmprHOERYQK+BabM8cfD?=
+ =?us-ascii?Q?BW2aG75DZ+wiUkYrcEMX91N4oqmIRBiiUG1KHayNAihiNb9ExEY7b9+Fc13i?=
+ =?us-ascii?Q?pfk/9SzIuRNK60X9HLu5J8Xw0ykgb+hktqUaPxevHelGIvPQiupj8uwUs6Ip?=
+ =?us-ascii?Q?Zu+P1ddaw34asayEkqLVVZqAce5KhrZI2cpmOWYdsEEa/WNG5hWsWP5VF3uk?=
+ =?us-ascii?Q?CGLi2n6hZvfsopsAAEN9rEh0CnTHOEGJMli2Dy3EKNsVellkKnH8hmRo5Ibj?=
+ =?us-ascii?Q?u8dNDfLBXWkHBWI5X8l1TdVzfCyLEahWgGg32ErFWIDV6A4OO/F0IY6beAu/?=
+ =?us-ascii?Q?b3JlI/eXGVtq/aoxzGcw4koqN16UdJlPSojLU6UMbdpMAZmvpYa8N6gulmPZ?=
+ =?us-ascii?Q?fxQqQbX2BOuuKhvEA8TCmKZmmWJWvq7qaMWPme0GoKgjhiICEGeV0Il5DhDb?=
+ =?us-ascii?Q?daKVC/yzZd6bEdSGrYxqwu3qz+dkVq5376QWsc8s0vp+J0eDLybERrrfPkY/?=
+ =?us-ascii?Q?aOJ4CFyz6BXNE/i6XRP70GgOTd/DYOEegYI8O1kNguAn371fqsJHRlkNT0zO?=
+ =?us-ascii?Q?p1s3DgDaO3cH/hdiw7byAaQalkbm1UfeRK49vqRTttg2zd0douq+W5SePgXQ?=
+ =?us-ascii?Q?8geEySJ8BhYt4/holL6JVX3ekeELeqi+zDW3QGLe0rXIY711CwgbK4afZmKg?=
+ =?us-ascii?Q?mme8/B7/UjjGUThcZ/0u31DSyv68dABXHswwGT1fv7w8dHRrR5wGSh7QyXg5?=
+ =?us-ascii?Q?H4zMlPIrldZi8LAwS4jz6Vep4qQgB27EtDbrTZ3KPyrj5+gQ8EFuSSthEFag?=
+ =?us-ascii?Q?IMxeCZuTMKo+tSLNmMg=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240916192014.1611002-1-daeho43@gmail.com> <20240916192014.1611002-2-daeho43@gmail.com>
- <155863d9-3e2e-44b1-9260-9d7fd3127a7e@kernel.org>
-In-Reply-To: <155863d9-3e2e-44b1-9260-9d7fd3127a7e@kernel.org>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Fri, 20 Sep 2024 09:31:36 -0700
-Message-ID: <CACOAw_w24uBTn+1+0zAJzVd4nkLSGS8uiwes=FFrg2MNMe9T9w@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH v2 2/2] mkfs.f2fs: add device aliasing feature
-To: Chao Yu <chao@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
-	kernel-team@android.com, Daeho Jeong <daehojeong@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB8713.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7488463-60fd-4832-8d8e-08dcd991cdde
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2024 16:32:22.6670
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bRH5y11QGk3X8yEK4QF7CmgQKn+mNPsskxWYGdSRrgwnWbvAh0bXWRxBzurUDmSPNFmdd3NH8EuFh4UZsy0zFA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB9013
 
-On Thu, Sep 19, 2024 at 3:43=E2=80=AFAM Chao Yu <chao@kernel.org> wrote:
->
-> On 2024/9/17 3:20, Daeho Jeong wrote:
-> > From: Daeho Jeong <daehojeong@google.com>
-> >
-> > We can add a device aliasing file which can map the whole device with a=
-n
-> > extent, not using node blocks. This mapped area should be pinned and
-> > normally used for read-only usages. After finished using it, we can
-> > deallocate the whole area and return it back to use it for other files.
-> >
-> > Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> > ---
-> > v2: removed unnecessary define and renamed IS_ALIASING()
-> > ---
-> >   fsck/dump.c             |  13 ++
-> >   fsck/fsck.c             |  49 ++++--
-> >   fsck/fsck.h             |   4 +-
-> >   fsck/main.c             |   5 +
-> >   include/f2fs_fs.h       |   7 +
-> >   mkfs/f2fs_format.c      | 335 ++++++++++++++++++++++++++++++++-------=
--
-> >   mkfs/f2fs_format_main.c |  30 +++-
-> >   7 files changed, 359 insertions(+), 84 deletions(-)
-> >
-> > diff --git a/fsck/dump.c b/fsck/dump.c
-> > index 448c0ef..bd4c7bd 100644
-> > --- a/fsck/dump.c
-> > +++ b/fsck/dump.c
-> > @@ -527,6 +527,19 @@ static int dump_inode_blk(struct f2fs_sb_info *sbi=
-, u32 nid,
-> >       }
-> >
-> >       c.show_file_map_max_offset =3D f2fs_max_file_offset(&node_blk->i)=
-;
-> > +
-> > +     if (IS_DEVICE_ALIASING(&node_blk->i)) {
-> > +             u32 blkaddr =3D le32_to_cpu(node_blk->i.i_ext.blk_addr);
-> > +             u32 len =3D le32_to_cpu(node_blk->i.i_ext.len);
-> > +             u32 idx;
-> > +
-> > +             for (idx =3D 0; idx < len; idx++)
-> > +                     dump_data_blk(sbi, idx * F2FS_BLKSIZE, blkaddr++,=
- false);
->
-> Use type instead of false?
+Hi Sebastian,
 
-Right
+> From: Sebastian Ott <sebott@redhat.com>
+> Sent: Friday, September 20, 2024 8:04 PM
+>=20
+> Add the pci device name to the per device kmem_cache names to ensure
+> their uniqueness. This fixes warnings like this:
+> "kmem_cache of name 'mlx5_fs_fgs' already exists".
+>=20
+> Signed-off-by: Sebastian Ott <sebott@redhat.com>
+> ---
+>  drivers/net/ethernet/mellanox/mlx5/core/fs_core.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+> b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+> index 8505d5e241e1..5d54386a5669 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+> @@ -3689,6 +3689,7 @@ void mlx5_fs_core_free(struct mlx5_core_dev
+> *dev)  int mlx5_fs_core_alloc(struct mlx5_core_dev *dev)  {
+>  	struct mlx5_flow_steering *steering;
+> +	char name[80];
+>  	int err =3D 0;
+>=20
+>  	err =3D mlx5_init_fc_stats(dev);
+> @@ -3713,10 +3714,12 @@ int mlx5_fs_core_alloc(struct mlx5_core_dev
+> *dev)
+>  	else
+>  		steering->mode =3D MLX5_FLOW_STEERING_MODE_DMFS;
+>=20
+> -	steering->fgs_cache =3D kmem_cache_create("mlx5_fs_fgs",
+> +	snprintf(name, sizeof(name), "%s-mlx5_fs_fgs", pci_name(dev-
+> >pdev));
+> +	steering->fgs_cache =3D kmem_cache_create(name,
+>  						sizeof(struct
+> mlx5_flow_group), 0,
+>  						0, NULL);
+> -	steering->ftes_cache =3D kmem_cache_create("mlx5_fs_ftes",
+> sizeof(struct fs_fte), 0,
+> +	snprintf(name, sizeof(name), "%s-mlx5_fs_ftes", pci_name(dev-
+> >pdev));
+> +	steering->ftes_cache =3D kmem_cache_create(name, sizeof(struct
+> fs_fte),
+> +0,
+Mlx5 SFs are attached to the auxiliary bus. Hence, they will have duplicate=
+ name and this warning will persist.
+Please change it to=20
+pci_name(dev->pdev) to dev_name(dev->device)
 
->
-> > +             print_extent(true);
-> > +
-> > +             goto dump_xattr;
-> > +     }
-> > +
-> >       addr_per_block =3D ADDRS_PER_BLOCK(&node_blk->i);
-> >
-> >       /* check data blocks in inode */
-> > diff --git a/fsck/fsck.c b/fsck/fsck.c
-> > index a18bee9..c9b0f36 100644
-> > --- a/fsck/fsck.c
-> > +++ b/fsck/fsck.c
-> > @@ -902,6 +902,7 @@ void fsck_chk_inode_blk(struct f2fs_sb_info *sbi, u=
-32 nid,
-> >       int need_fix =3D 0;
-> >       int ret;
-> >       u32 cluster_size =3D 1 << node_blk->i.i_log_cluster_size;
-> > +     bool is_aliasing =3D IS_DEVICE_ALIASING(&node_blk->i);
-> >
-> >       if (!compressed)
-> >               goto check_next;
-> > @@ -1132,6 +1133,33 @@ check_next:
-> >                               addrs_per_blk * NIDS_PER_BLOCK *
-> >                               NIDS_PER_BLOCK) * F2FS_BLKSIZE;
-> >       }
-> > +
-> > +     if (is_aliasing) {
-> > +             struct extent_info ei;
-> > +
-> > +             get_extent_info(&ei, &node_blk->i.i_ext);
-> > +             for (idx =3D 0; idx < ei.len; idx++, child.pgofs++) {
-> > +                     block_t blkaddr =3D ei.blk + idx;
-> > +
-> > +                     /* check extent info */
-> > +                     check_extent_info(&child, blkaddr, 0);
-> > +                     ret =3D fsck_chk_data_blk(sbi, &node_blk->i, blka=
-ddr,
-> > +                             &child, (i_blocks =3D=3D *blk_cnt), ftype=
-, nid,
-> > +                             idx, ni->version, node_blk);
-> > +                     if (!ret) {
-> > +                             *blk_cnt =3D *blk_cnt + 1;
-> > +                             if (cur_qtype !=3D -1)
-> > +                                     qf_last_blkofs[cur_qtype] =3D chi=
-ld.pgofs;
-> > +                     } else if (c.fix_on) {
-> > +                             node_blk->i.i_ext.len =3D cpu_to_le32(idx=
-);
-> > +                             need_fix =3D 1;
-> > +                             break;
-> > +                     }
-> > +             }
-> > +
-> > +             goto check;
-> > +     }
-> > +
-> >       for (idx =3D 0; idx < addrs; idx++, child.pgofs++) {
-> >               block_t blkaddr =3D le32_to_cpu(node_blk->i.i_addr[ofs + =
-idx]);
-> >
-> > @@ -1164,11 +1192,11 @@ check_next:
-> >                               child.pgofs - cbc->cheader_pgofs < cluste=
-r_size)
-> >                       cbc->cnt++;
-> >               ret =3D fsck_chk_data_blk(sbi,
-> > -                             IS_CASEFOLDED(&node_blk->i),
-> > +                             &node_blk->i,
-> >                               blkaddr,
-> >                               &child, (i_blocks =3D=3D *blk_cnt),
-> >                               ftype, nid, idx, ni->version,
-> > -                             file_is_encrypt(&node_blk->i), node_blk);
-> > +                             node_blk);
-> >               if (blkaddr !=3D le32_to_cpu(node_blk->i.i_addr[ofs + idx=
-]))
-> >                       need_fix =3D 1;
-> >               if (!ret) {
-> > @@ -1362,7 +1390,7 @@ skip_blkcnt_fix:
-> >       }
-> >
-> >       /* drop extent information to avoid potential wrong access */
-> > -     if (need_fix && f2fs_dev_is_writable())
-> > +     if (need_fix && f2fs_dev_is_writable() && !is_aliasing)
-> >               node_blk->i.i_ext.len =3D 0;
-> >
-> >       if ((c.feature & F2FS_FEATURE_INODE_CHKSUM) &&
-> > @@ -1436,11 +1464,9 @@ int fsck_chk_dnode_blk(struct f2fs_sb_info *sbi,=
- struct f2fs_inode *inode,
-> >               if (!compr_rel && blkaddr =3D=3D NEW_ADDR && child->pgofs=
- -
-> >                               cbc->cheader_pgofs < cluster_size)
-> >                       cbc->cnt++;
-> > -             ret =3D fsck_chk_data_blk(sbi, IS_CASEFOLDED(inode),
-> > -                     blkaddr, child,
-> > +             ret =3D fsck_chk_data_blk(sbi, inode, blkaddr, child,
-> >                       le64_to_cpu(inode->i_blocks) =3D=3D *blk_cnt, fty=
-pe,
-> > -                     nid, idx, ni->version,
-> > -                     file_is_encrypt(inode), node_blk);
-> > +                     nid, idx, ni->version, node_blk);
-> >               if (blkaddr !=3D le32_to_cpu(node_blk->dn.addr[idx]))
-> >                       need_fix =3D 1;
-> >               if (!ret) {
-> > @@ -2044,12 +2070,15 @@ int fsck_chk_dentry_blk(struct f2fs_sb_info *sb=
-i, int casefolded, u32 blk_addr,
-> >       return 0;
-> >   }
-> >
-> > -int fsck_chk_data_blk(struct f2fs_sb_info *sbi, int casefolded,
-> > +int fsck_chk_data_blk(struct f2fs_sb_info *sbi, struct f2fs_inode *ino=
-de,
-> >               u32 blk_addr, struct child_info *child, int last_blk,
-> >               enum FILE_TYPE ftype, u32 parent_nid, u16 idx_in_node, u8=
- ver,
-> > -             int enc_name, struct f2fs_node *node_blk)
-> > +             struct f2fs_node *node_blk)
-> >   {
-> >       struct f2fs_fsck *fsck =3D F2FS_FSCK(sbi);
-> > +     int casefolded =3D IS_CASEFOLDED(inode);
-> > +     int enc_name =3D file_is_encrypt(inode);
-> > +     int aliasing =3D IS_DEVICE_ALIASING(inode);
-> >
-> >       /* Is it reserved block? */
-> >       if (blk_addr =3D=3D NEW_ADDR) {
-> > @@ -2062,7 +2091,7 @@ int fsck_chk_data_blk(struct f2fs_sb_info *sbi, i=
-nt casefolded,
-> >               return -EINVAL;
-> >       }
-> >
-> > -     if (is_valid_ssa_data_blk(sbi, blk_addr, parent_nid,
-> > +     if (!aliasing && is_valid_ssa_data_blk(sbi, blk_addr, parent_nid,
-> >                                               idx_in_node, ver)) {
-> >               ASSERT_MSG("summary data block is not valid. [0x%x]",
-> >                                               parent_nid);
-> > diff --git a/fsck/fsck.h b/fsck/fsck.h
-> > index a8f187e..a2625ef 100644
-> > --- a/fsck/fsck.h
-> > +++ b/fsck/fsck.h
-> > @@ -179,9 +179,9 @@ extern int fsck_chk_idnode_blk(struct f2fs_sb_info =
-*, struct f2fs_inode *,
-> >   extern int fsck_chk_didnode_blk(struct f2fs_sb_info *, struct f2fs_in=
-ode *,
-> >               enum FILE_TYPE, struct f2fs_node *, u32 *,
-> >               struct f2fs_compr_blk_cnt *, struct child_info *);
-> > -extern int fsck_chk_data_blk(struct f2fs_sb_info *, int,
-> > +extern int fsck_chk_data_blk(struct f2fs_sb_info *, struct f2fs_inode =
-*,
-> >               u32, struct child_info *, int, enum FILE_TYPE, u32, u16, =
-u8,
-> > -             int, struct f2fs_node *);
-> > +             struct f2fs_node *);
-> >   extern int fsck_chk_dentry_blk(struct f2fs_sb_info *, int,
-> >               u32, struct child_info *, int, int, struct f2fs_node *);
-> >   int fsck_chk_inline_dentries(struct f2fs_sb_info *, struct f2fs_node =
-*,
-> > diff --git a/fsck/main.c b/fsck/main.c
-> > index 8881936..9dd834f 100644
-> > --- a/fsck/main.c
-> > +++ b/fsck/main.c
-> > @@ -1015,6 +1015,11 @@ static int do_defrag(struct f2fs_sb_info *sbi)
-> >               return -1;
-> >       }
-> >
-> > +     if (get_sb(feature) & F2FS_FEATURE_DEVICE_ALIAS) {
-> > +             MSG(0, "Not support on image with device aliasing feature=
-.\n");
-> > +             return -1;
-> > +     }
-> > +
-> >       if (c.defrag_start > get_sb(block_count))
-> >               goto out_range;
-> >       if (c.defrag_start < SM_I(sbi)->main_blkaddr)
-> > diff --git a/include/f2fs_fs.h b/include/f2fs_fs.h
-> > index 15a1c82..a8380df 100644
-> > --- a/include/f2fs_fs.h
-> > +++ b/include/f2fs_fs.h
-> > @@ -444,6 +444,7 @@ struct device_info {
-> >       uint64_t start_blkaddr;
-> >       uint64_t end_blkaddr;
-> >       uint32_t total_segments;
-> > +     char *alias_filename;
-> >
-> >       /* to handle zone block devices */
-> >       int zoned_model;
-> > @@ -666,6 +667,8 @@ enum {
-> >   #define F2FS_IMMUTABLE_FL           0x00000010 /* Immutable file */
-> >   #define F2FS_NOATIME_FL                     0x00000080 /* do not upda=
-te atime */
-> >   #define F2FS_CASEFOLD_FL            0x40000000 /* Casefolded file */
-> > +#define F2FS_DEVICE_ALIAS_FL         0x80000000 /* File for aliasing a=
- device */
-> > +#define IS_DEVICE_ALIASING(fi)       ((fi)->i_flags & cpu_to_le32(F2FS=
-_DEVICE_ALIAS_FL))
-> >
-> >   #define F2FS_ENC_UTF8_12_1  1
-> >   #define F2FS_ENC_STRICT_MODE_FL     (1 << 0)
-> > @@ -698,6 +701,7 @@ enum {
-> >   #define F2FS_FEATURE_CASEFOLD               0x1000
-> >   #define F2FS_FEATURE_COMPRESSION    0x2000
-> >   #define F2FS_FEATURE_RO                     0x4000
-> > +#define F2FS_FEATURE_DEVICE_ALIAS    0x8000
-> >
-> >   #define MAX_NR_FEATURE                      32
-> >
-> > @@ -1520,11 +1524,14 @@ struct f2fs_configuration {
-> >       time_t fixed_time;
-> >       int roll_forward;
-> >       bool need_fsync;
-> > +     int aliased_devices;
-> > +     uint32_t aliased_segments;
-> >
-> >       /* mkfs parameters */
-> >       int fake_seed;
-> >       uint32_t next_free_nid;
-> >       uint32_t lpf_ino;
-> > +     uint32_t first_alias_ino;
-> >       uint32_t root_uid;
-> >       uint32_t root_gid;
-> >       uint32_t blksize;
-> > diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-> > index 247a836..80b140f 100644
-> > --- a/mkfs/f2fs_format.c
-> > +++ b/mkfs/f2fs_format.c
-> > @@ -13,6 +13,7 @@
-> >   #include <unistd.h>
-> >   #include <f2fs_fs.h>
-> >   #include <assert.h>
-> > +#include <stdbool.h>
-> >
-> >   #ifdef HAVE_SYS_STAT_H
-> >   #include <sys/stat.h>
-> > @@ -39,10 +40,62 @@ struct f2fs_super_block raw_sb;
-> >   struct f2fs_super_block *sb =3D &raw_sb;
-> >   struct f2fs_checkpoint *cp;
-> >
-> > +static inline bool device_is_aliased(unsigned int dev_num)
-> > +{
-> > +     if (dev_num >=3D c.ndevs)
-> > +             return false;
-> > +     return c.devices[dev_num].alias_filename !=3D NULL;
-> > +}
-> > +
-> > +static inline unsigned int target_device_index(uint64_t blkaddr)
-> > +{
-> > +     int i;
-> > +
-> > +     for (i =3D 0; i < c.ndevs; i++)
-> > +             if (c.devices[i].start_blkaddr <=3D blkaddr &&
-> > +                             c.devices[i].end_blkaddr >=3D blkaddr)
-> > +                     return i;
-> > +     return 0;
-> > +}
-> > +
-> > +#define GET_SEGNO(blk_addr) ((blk_addr - get_sb(main_blkaddr)) / \
-> > +                             c.blks_per_seg)
-> > +#define START_BLOCK(segno) (segno * c.blks_per_seg + get_sb(main_blkad=
-dr))
-> > +
-> >   /* Return first segment number of each area */
-> > -#define prev_zone(cur)               (c.cur_seg[cur] - c.segs_per_zone=
-)
-> > -#define next_zone(cur)               (c.cur_seg[cur] + c.segs_per_zone=
-)
-> > -#define last_zone(cur)               ((cur - 1) * c.segs_per_zone)
-> > +static inline uint32_t next_zone(int seg_type)
-> > +{
-> > +     uint32_t next_seg =3D c.cur_seg[seg_type] + c.segs_per_zone;
-> > +     uint64_t next_blkaddr =3D START_BLOCK(next_seg);
-> > +     int dev_num;
-> > +
-> > +     dev_num =3D target_device_index(next_blkaddr);
-> > +     if (!device_is_aliased(dev_num))
-> > +             return GET_SEGNO(next_blkaddr);
-> > +
-> > +     while (dev_num < c.ndevs && device_is_aliased(dev_num))
-> > +             dev_num++;
-> > +
-> > +     return GET_SEGNO(c.devices[dev_num - 1].end_blkaddr + 1);
-> > +}
-> > +
-> > +static inline uint32_t last_zone(uint32_t total_zone)
-> > +{
-> > +     uint32_t last_seg =3D (total_zone - 1) * c.segs_per_zone;
-> > +     uint64_t last_blkaddr =3D START_BLOCK(last_seg);
-> > +     int dev_num;
-> > +
-> > +     dev_num =3D target_device_index(last_blkaddr);
-> > +     if (!device_is_aliased(dev_num))
-> > +             return GET_SEGNO(last_blkaddr);
-> > +
-> > +     while (dev_num > 0 && device_is_aliased(dev_num))
-> > +             dev_num--;
-> > +
-> > +     return GET_SEGNO(c.devices[dev_num + 1].start_blkaddr) -
-> > +             c.segs_per_zone;
-> > +}
-> > +
-> >   #define last_section(cur)   (cur + (c.secs_per_zone - 1) * c.segs_per=
-_sec)
-> >
-> >   /* Return time fixed by the user or current time by default */
-> > @@ -220,7 +273,7 @@ static int f2fs_prepare_super_block(void)
-> >       uint64_t total_meta_zones, total_meta_segments;
-> >       uint32_t sit_bitmap_size, max_sit_bitmap_size;
-> >       uint32_t max_nat_bitmap_size, max_nat_segments;
-> > -     uint32_t total_zones, avail_zones;
-> > +     uint32_t total_zones, avail_zones =3D 0;
-> >       enum quota_type qtype;
-> >       int i;
-> >
-> > @@ -314,6 +367,16 @@ static int f2fs_prepare_super_block(void)
-> >                       c.devices[i].end_blkaddr =3D c.devices[i].start_b=
-lkaddr +
-> >                                       c.devices[i].total_segments *
-> >                                       c.blks_per_seg - 1;
-> > +                     if (device_is_aliased(i)) {
-> > +                             if (c.devices[i].zoned_model =3D=3D
-> > +                                             F2FS_ZONED_HM) {
-> > +                                     MSG(1, "\tError: do not support "
-> > +                                     "device aliasing for device[%d]\n=
-", i);
-> > +                                     return -1;
-> > +                             }
-> > +                             c.aliased_segments +=3D
-> > +                                     c.devices[i].total_segments;
-> > +                     }
-> >               }
-> >               if (c.ndevs > 1) {
-> >                       strncpy((char *)sb->devs[i].path, c.devices[i].pa=
-th, MAX_PATH_LEN);
-> > @@ -531,10 +594,16 @@ static int f2fs_prepare_super_block(void)
-> >       if (c.feature & F2FS_FEATURE_LOST_FOUND)
-> >               c.lpf_ino =3D c.next_free_nid++;
-> >
-> > +     if (c.aliased_devices) {
-> > +             c.first_alias_ino =3D c.next_free_nid;
-> > +             c.next_free_nid +=3D c.aliased_devices;
-> > +             avail_zones +=3D c.aliased_segments / c.segs_per_zone;
->
-> Need roundup?
+This will uniformly work for PF, VF and SF.
 
-I don't think we need this, since c.aliased_segments is already
-aligned with zone size.
+>  						 0, NULL);
+>  	if (!steering->ftes_cache || !steering->fgs_cache) {
+>  		err =3D -ENOMEM;
+> --
+> 2.42.0
+>=20
 
->
-> > +     }
-> > +
-> >       if (c.feature & F2FS_FEATURE_RO)
-> > -             avail_zones =3D 2;
-> > +             avail_zones +=3D 2;
-> >       else
-> > -             avail_zones =3D 6;
-> > +             avail_zones +=3D 6;
-> >
-> >       if (total_zones <=3D avail_zones) {
-> >               MSG(1, "\tError: %d zones: Need more zones "
-> > @@ -701,6 +770,7 @@ static int f2fs_write_check_point_pack(void)
-> >       char *sum_compact, *sum_compact_p;
-> >       struct f2fs_summary *sum_entry;
-> >       unsigned short vblocks;
-> > +     uint32_t used_segments =3D c.aliased_segments;
-> >       int ret =3D -1;
-> >
-> >       cp =3D calloc(F2FS_BLKSIZE, 1);
-> > @@ -752,9 +822,14 @@ static int f2fs_write_check_point_pack(void)
-> >       }
-> >
-> >       set_cp(cur_node_blkoff[0], c.curseg_offset[CURSEG_HOT_NODE]);
-> > +     set_cp(cur_node_blkoff[2], c.curseg_offset[CURSEG_COLD_NODE]);
-> >       set_cp(cur_data_blkoff[0], c.curseg_offset[CURSEG_HOT_DATA]);
-> > +     set_cp(cur_data_blkoff[2], c.curseg_offset[CURSEG_COLD_DATA]);
-> >       set_cp(valid_block_count, c.curseg_offset[CURSEG_HOT_NODE] +
-> > -                                     c.curseg_offset[CURSEG_HOT_DATA])=
-;
-> > +                     c.curseg_offset[CURSEG_HOT_DATA] +
-> > +                     c.curseg_offset[CURSEG_COLD_NODE] +
-> > +                     c.curseg_offset[CURSEG_COLD_DATA] +
-> > +                     c.aliased_segments * c.blks_per_seg);
-> >       set_cp(rsvd_segment_count, c.reserved_segments);
-> >
-> >       /*
-> > @@ -801,15 +876,16 @@ static int f2fs_write_check_point_pack(void)
-> >                                       c.reserved_segments);
-> >
-> >       /* main segments - reserved segments - (node + data segments) */
-> > -     if (c.feature & F2FS_FEATURE_RO) {
-> > -             set_cp(free_segment_count, f2fs_get_usable_segments(sb) -=
- 2);
-> > -             set_cp(user_block_count, ((get_cp(free_segment_count) + 2=
- -
-> > -                     get_cp(overprov_segment_count)) * c.blks_per_seg)=
-);
-> > -     } else {
-> > -             set_cp(free_segment_count, f2fs_get_usable_segments(sb) -=
- 6);
-> > -             set_cp(user_block_count, ((get_cp(free_segment_count) + 6=
- -
-> > -                     get_cp(overprov_segment_count)) * c.blks_per_seg)=
-);
-> > -     }
-> > +     if (c.feature & F2FS_FEATURE_RO)
-> > +             used_segments +=3D 2;
-> > +     else
-> > +             used_segments +=3D 6;
-> > +
-> > +     set_cp(user_block_count, (f2fs_get_usable_segments(sb) -
-> > +                     get_cp(overprov_segment_count)) * c.blks_per_seg)=
-;
-> > +     set_cp(free_segment_count, f2fs_get_usable_segments(sb) -
-> > +                     used_segments);
-> > +
-> >       /* cp page (2), data summaries (1), node summaries (3) */
-> >       set_cp(cp_pack_total_block_count, 6 + get_sb(cp_payload));
-> >       flags =3D CP_UMOUNT_FLAG | CP_COMPACT_SUM_FLAG;
-> > @@ -825,8 +901,10 @@ static int f2fs_write_check_point_pack(void)
-> >
-> >       set_cp(ckpt_flags, flags);
-> >       set_cp(cp_pack_start_sum, 1 + get_sb(cp_payload));
-> > -     set_cp(valid_node_count, c.curseg_offset[CURSEG_HOT_NODE]);
-> > -     set_cp(valid_inode_count, c.curseg_offset[CURSEG_HOT_NODE]);
-> > +     set_cp(valid_node_count, c.curseg_offset[CURSEG_HOT_NODE] +
-> > +                     c.curseg_offset[CURSEG_COLD_NODE]);
-> > +     set_cp(valid_inode_count, c.curseg_offset[CURSEG_HOT_NODE] +
-> > +                     c.curseg_offset[CURSEG_COLD_NODE]);
-> >       set_cp(next_free_nid, c.next_free_nid);
-> >       set_cp(sit_ver_bitmap_bytesize, ((get_sb(segment_count_sit) / 2) =
-<<
-> >                       get_sb(log_blocks_per_seg)) / 8);
-> > @@ -974,9 +1052,12 @@ static int f2fs_write_check_point_pack(void)
-> >               goto free_cp_payload;
-> >       }
-> >
-> > -     /* Fill segment summary for COLD_NODE to zero. */
-> > +     /* Prepare and write Segment summary for COLD_NODE */
-> >       memset(sum, 0, F2FS_BLKSIZE);
-> >       SET_SUM_TYPE(sum, SUM_TYPE_NODE);
-> > +     memcpy(sum->entries, c.sum[CURSEG_COLD_NODE],
-> > +                     sizeof(struct f2fs_summary) * MAX_CACHE_SUMS);
-> > +
-> >       cp_seg_blk++;
-> >       DBG(1, "\tWriting Segment summary for COLD_NODE, at offset 0x%08"=
-PRIx64"\n",
-> >                       cp_seg_blk);
-> > @@ -1209,10 +1290,40 @@ void update_summary_entry(int curseg_type, nid_=
-t nid,
-> >       sum->ofs_in_node =3D cpu_to_le16(ofs_in_node);
-> >   }
-> >
-> > +static void add_dentry(struct f2fs_dentry_block *dent_blk, unsigned in=
-t *didx,
-> > +             const char *name, uint32_t ino, u8 type)
-> > +{
-> > +     int len =3D strlen(name);
-> > +     f2fs_hash_t hash;
-> > +
-> > +     if (name[0] =3D=3D '.' && (len =3D=3D 1 || (len =3D=3D 2 && name[=
-1] =3D=3D '.')))
-> > +             hash =3D 0;
-> > +     else
-> > +             hash =3D f2fs_dentry_hash(0, 0, (unsigned char *)name, le=
-n);
-> > +
-> > +     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, *didx).hash_code =3D cpu_to_le=
-32(hash);
-> > +     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, *didx).ino =3D cpu_to_le32(ino=
-);
-> > +     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, *didx).name_len =3D cpu_to_le1=
-6(len);
-> > +     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, *didx).file_type =3D type;
-> > +
-> > +     while (len > F2FS_SLOT_LEN) {
-> > +             memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, *didx), name,
-> > +                             F2FS_SLOT_LEN);
-> > +             test_and_set_bit_le(*didx, dent_blk->dentry_bitmap);
-> > +             len -=3D (int)F2FS_SLOT_LEN;
-> > +             name +=3D F2FS_SLOT_LEN;
-> > +             (*didx)++;
-> > +     }
-> > +     memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, *didx), name, len);
-> > +     test_and_set_bit_le(*didx, dent_blk->dentry_bitmap);
-> > +     (*didx)++;
-> > +}
-> > +
-> >   static block_t f2fs_add_default_dentry_root(void)
-> >   {
-> >       struct f2fs_dentry_block *dent_blk =3D NULL;
-> >       block_t data_blkaddr;
-> > +     unsigned int didx =3D 0;
-> >
-> >       dent_blk =3D calloc(F2FS_BLKSIZE, 1);
-> >       if(dent_blk =3D=3D NULL) {
-> > @@ -1220,37 +1331,26 @@ static block_t f2fs_add_default_dentry_root(voi=
-d)
-> >               return 0;
-> >       }
-> >
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).hash_code =3D 0;
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).ino =3D sb->root_ino;
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).name_len =3D cpu_to_le16(1)=
-;
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).file_type =3D F2FS_FT_DIR;
-> > -     memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, 0), ".", 1);
-> > +     add_dentry(dent_blk, &didx, ".",
-> > +                     le32_to_cpu(sb->root_ino), F2FS_FT_DIR);
-> > +     add_dentry(dent_blk, &didx, "..",
-> > +                     le32_to_cpu(sb->root_ino), F2FS_FT_DIR);
-> >
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).hash_code =3D 0;
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).ino =3D sb->root_ino;
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).name_len =3D cpu_to_le16(2)=
-;
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).file_type =3D F2FS_FT_DIR;
-> > -     memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, 1), "..", 2);
-> > -
-> > -     /* bitmap for . and .. */
-> > -     test_and_set_bit_le(0, dent_blk->dentry_bitmap);
-> > -     test_and_set_bit_le(1, dent_blk->dentry_bitmap);
-> > -
-> > -     if (c.lpf_ino) {
-> > -             int len =3D strlen(LPF);
-> > -             f2fs_hash_t hash =3D f2fs_dentry_hash(0, 0, (unsigned cha=
-r *)LPF, len);
-> > +     if (c.lpf_ino)
-> > +             add_dentry(dent_blk, &didx, LPF, c.lpf_ino, F2FS_FT_DIR);
-> >
-> > -             F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 2).hash_code =3D cpu_t=
-o_le32(hash);
-> > -             F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 2).ino =3D cpu_to_le32=
-(c.lpf_ino);
-> > -             F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 2).name_len =3D cpu_to=
-_le16(len);
-> > -             F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 2).file_type =3D F2FS_=
-FT_DIR;
-> > -             memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, 2), LPF, F2FS=
-_SLOT_LEN);
-> > +     if (c.aliased_devices) {
-> > +             int i, dev_off =3D 0;
-> >
-> > -             memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, 3), &LPF[F2FS=
-_SLOT_LEN],
-> > -                             len - F2FS_SLOT_LEN);
-> > +             for (i =3D 1; i < c.ndevs; i++) {
-> > +                     if (!device_is_aliased(i))
-> > +                             continue;
-> >
-> > -             test_and_set_bit_le(2, dent_blk->dentry_bitmap);
-> > -             test_and_set_bit_le(3, dent_blk->dentry_bitmap);
-> > +                     add_dentry(dent_blk, &didx, c.devices[i].alias_fi=
-lename,
-> > +                                     c.first_alias_ino + dev_off,
-> > +                                     F2FS_FT_REG_FILE);
-> > +                     dev_off++;
-> > +             }
-> >       }
-> >
-> >       data_blkaddr =3D alloc_next_free_block(CURSEG_HOT_DATA);
-> > @@ -1323,6 +1423,7 @@ static int f2fs_write_default_quota(int qtype, __=
-le32 raw_id)
-> >       struct v2_disk_dqinfo ddqinfo;
-> >       struct v2r1_disk_dqblk dqblk;
-> >       block_t blkaddr;
-> > +     uint64_t icnt =3D 1, bcnt =3D 1;
-> >       int i;
-> >
-> >       if (filebuf =3D=3D NULL) {
-> > @@ -1358,16 +1459,18 @@ static int f2fs_write_default_quota(int qtype, =
-__le32 raw_id)
-> >       dqblk.dqb_pad =3D cpu_to_le32(0);
-> >       dqblk.dqb_ihardlimit =3D cpu_to_le64(0);
-> >       dqblk.dqb_isoftlimit =3D cpu_to_le64(0);
-> > -     if (c.lpf_ino)
-> > -             dqblk.dqb_curinodes =3D cpu_to_le64(2);
-> > -     else
-> > -             dqblk.dqb_curinodes =3D cpu_to_le64(1);
-> > +     if (c.lpf_ino) {
-> > +             icnt++;
-> > +             bcnt++;
-> > +     }
-> > +     if (c.aliased_devices) {
-> > +             icnt +=3D c.aliased_devices;
-> > +             bcnt +=3D c.aliased_segments * c.blks_per_seg;
-> > +     }
-> > +     dqblk.dqb_curinodes =3D cpu_to_le64(icnt);
-> >       dqblk.dqb_bhardlimit =3D cpu_to_le64(0);
-> >       dqblk.dqb_bsoftlimit =3D cpu_to_le64(0);
-> > -     if (c.lpf_ino)
-> > -             dqblk.dqb_curspace =3D cpu_to_le64(F2FS_BLKSIZE * 2);
-> > -     else
-> > -             dqblk.dqb_curspace =3D cpu_to_le64(F2FS_BLKSIZE);
-> > +     dqblk.dqb_curspace =3D cpu_to_le64(F2FS_BLKSIZE * bcnt);
-> >       dqblk.dqb_btime =3D cpu_to_le64(0);
-> >       dqblk.dqb_itime =3D cpu_to_le64(0);
-> >
-> > @@ -1490,6 +1593,7 @@ static block_t f2fs_add_default_dentry_lpf(void)
-> >   {
-> >       struct f2fs_dentry_block *dent_blk;
-> >       block_t data_blkaddr;
-> > +     unsigned int didx =3D 0;
-> >
-> >       dent_blk =3D calloc(F2FS_BLKSIZE, 1);
-> >       if (dent_blk =3D=3D NULL) {
-> > @@ -1497,20 +1601,8 @@ static block_t f2fs_add_default_dentry_lpf(void)
-> >               return 0;
-> >       }
-> >
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).hash_code =3D 0;
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).ino =3D cpu_to_le32(c.lpf_i=
-no);
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).name_len =3D cpu_to_le16(1)=
-;
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 0).file_type =3D F2FS_FT_DIR;
-> > -     memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, 0), ".", 1);
-> > -
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).hash_code =3D 0;
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).ino =3D sb->root_ino;
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).name_len =3D cpu_to_le16(2)=
-;
-> > -     F2FS_DENTRY_BLOCK_DENTRY(dent_blk, 1).file_type =3D F2FS_FT_DIR;
-> > -     memcpy(F2FS_DENTRY_BLOCK_FILENAME(dent_blk, 1), "..", 2);
-> > -
-> > -     test_and_set_bit_le(0, dent_blk->dentry_bitmap);
-> > -     test_and_set_bit_le(1, dent_blk->dentry_bitmap);
-> > +     add_dentry(dent_blk, &didx, ".", c.lpf_ino, F2FS_FT_DIR);
-> > +     add_dentry(dent_blk, &didx, "..", c.lpf_ino, F2FS_FT_DIR);
-> >
-> >       data_blkaddr =3D alloc_next_free_block(CURSEG_HOT_DATA);
-> >
-> > @@ -1578,6 +1670,104 @@ exit:
-> >       return err;
-> >   }
-> >
-> > +static void allocate_blocks_for_aliased_device(struct f2fs_node *raw_n=
-ode,
-> > +             unsigned int dev_num)
-> > +{
-> > +     uint32_t start_segno =3D (c.devices[dev_num].start_blkaddr -
-> > +                     get_sb(main_blkaddr)) / c.blks_per_seg;
-> > +     uint32_t end_segno =3D (c.devices[dev_num].end_blkaddr -
-> > +                     get_sb(main_blkaddr) + 1) / c.blks_per_seg;
-> > +     uint32_t segno;
-> > +     uint64_t blkcnt;
-> > +     struct f2fs_sit_block *sit_blk =3D calloc(F2FS_BLKSIZE, 1);
-> > +
-> > +     ASSERT(sit_blk);
-> > +
-> > +     for (segno =3D start_segno; segno < end_segno; segno++) {
-> > +             struct f2fs_sit_entry *sit;
-> > +             uint64_t sit_blk_addr =3D get_sb(sit_blkaddr) +
-> > +                     (segno / SIT_ENTRY_PER_BLOCK);
-> > +
-> > +             ASSERT(dev_read_block(sit_blk, sit_blk_addr) >=3D 0);
-> > +             sit =3D &sit_blk->entries[segno % SIT_ENTRY_PER_BLOCK];
-> > +             memset(&sit->valid_map, 0xFF, SIT_VBLOCK_MAP_SIZE);
-> > +             sit->vblocks =3D cpu_to_le16((CURSEG_COLD_DATA <<
-> > +                                     SIT_VBLOCKS_SHIFT) | c.blks_per_s=
-eg);
-> > +             sit->mtime =3D cpu_to_le64(mkfs_time);
-> > +             ASSERT(dev_write_block(sit_blk, sit_blk_addr) >=3D 0);
-> > +     }
-> > +
-> > +     blkcnt =3D (end_segno - start_segno) * c.blks_per_seg;
-> > +     raw_node->i.i_size =3D cpu_to_le64(blkcnt << get_sb(log_blocksize=
-));
-> > +     raw_node->i.i_blocks =3D cpu_to_le64(blkcnt + 1);
-> > +
-> > +     raw_node->i.i_ext.fofs =3D cpu_to_le32(0);
-> > +     raw_node->i.i_ext.blk_addr =3D
-> > +             cpu_to_le32(c.devices[dev_num].start_blkaddr);
-> > +     raw_node->i.i_ext.len =3D cpu_to_le32(blkcnt);
-> > +
-> > +     free(sit_blk);
-> > +}
-> > +
-> > +static int f2fs_write_alias_inodes(void)
-> > +{
-> > +     struct f2fs_node *raw_node;
-> > +     block_t node_blkaddr;
-> > +     int err =3D 0;
-> > +     unsigned int i, dev_off =3D 0;
-> > +
-> > +     ASSERT(c.aliased_devices);
-> > +
-> > +     raw_node =3D calloc(F2FS_BLKSIZE, 1);
-> > +     if (raw_node =3D=3D NULL) {
-> > +             MSG(1, "\tError: Calloc Failed for raw_node!!!\n");
-> > +             return -1;
-> > +     }
-> > +
-> > +     for (i =3D 1; i < c.ndevs; i++) {
-> > +             const char *filename;
-> > +             nid_t ino;
-> > +
-> > +             if (!device_is_aliased(i))
-> > +                     continue;
-> > +
-> > +             ino =3D c.first_alias_ino + dev_off;
-> > +             dev_off++;
-> > +             f2fs_init_inode(sb, raw_node, ino, mkfs_time, 0x81c0);
-> > +
-> > +             raw_node->i.i_flags =3D cpu_to_le32(F2FS_IMMUTABLE_FL |
-> > +                             F2FS_DEVICE_ALIAS_FL);
-> > +             raw_node->i.i_inline =3D F2FS_PIN_FILE;
-> > +             raw_node->i.i_pino =3D sb->root_ino;
-> > +             filename =3D c.devices[i].alias_filename;
-> > +             raw_node->i.i_namelen =3D cpu_to_le32(strlen(filename));
-> > +             memcpy(raw_node->i.i_name, filename, strlen(filename));
-> > +
-> > +             node_blkaddr =3D alloc_next_free_block(CURSEG_COLD_NODE);
-> > +             F2FS_NODE_FOOTER(raw_node)->next_blkaddr =3D
-> > +                     cpu_to_le32(node_blkaddr + 1);
-> > +
-> > +             allocate_blocks_for_aliased_device(raw_node, i);
-> > +
-> > +             DBG(1, "\tWriting aliased device inode (cold node), "
-> > +                             "offset 0x%x\n", node_blkaddr);
-> > +             if (write_inode(raw_node, node_blkaddr) < 0) {
-> > +                     MSG(1, "\tError: While writing the raw_node to "
-> > +                                     "disk!!!\n");
-> > +                     err =3D -1;
-> > +                     goto exit;
-> > +             }
-> > +
-> > +             update_nat_journal(ino, node_blkaddr);
-> > +             update_sit_journal(CURSEG_COLD_NODE);
-> > +             update_summary_entry(CURSEG_COLD_NODE, ino, 0);
-> > +     }
-> > +
-> > +exit:
-> > +     free(raw_node);
-> > +     return err;
-> > +}
-> > +
-> >   static int f2fs_create_root_dir(void)
-> >   {
-> >       enum quota_type qtype;
-> > @@ -1607,6 +1797,15 @@ static int f2fs_create_root_dir(void)
-> >               }
-> >       }
-> >
-> > +     if (c.aliased_devices) {
-> > +             err =3D f2fs_write_alias_inodes();
-> > +             if (err < 0) {
-> > +                     MSG(1, "\tError: Failed to write aliased device "
-> > +                             "inodes!!!\n");
-> > +                     goto exit;
-> > +             }
-> > +     }
-> > +
-> >   #ifndef WITH_ANDROID
-> >       err =3D f2fs_discard_obsolete_dnode();
-> >       if (err < 0) {
-> > diff --git a/mkfs/f2fs_format_main.c b/mkfs/f2fs_format_main.c
-> > index 2ba1c21..b113bbc 100644
-> > --- a/mkfs/f2fs_format_main.c
-> > +++ b/mkfs/f2fs_format_main.c
-> > @@ -50,7 +50,7 @@ static void mkfs_usage()
-> >       MSG(0, "\nUsage: mkfs.f2fs [options] device [sectors]\n");
-> >       MSG(0, "[options]:\n");
-> >       MSG(0, "  -b filesystem block size [default:4096]\n");
-> > -     MSG(0, "  -c [device_name] up to 7 additional devices, except met=
-a device\n");
-> > +     MSG(0, "  -c [device_name[@alias_filename]] up to 7 additional de=
-vices, except meta device\n");
-> >       MSG(0, "  -d debug level [default:0]\n");
-> >       MSG(0, "  -e [cold file ext list] e.g. \"mp3,gif,mov\"\n");
-> >       MSG(0, "  -E [hot file ext list] e.g. \"db\"\n");
-> > @@ -105,6 +105,9 @@ static void f2fs_show_info()
-> >
-> >       if (c.feature & F2FS_FEATURE_COMPRESSION)
-> >               MSG(0, "Info: Enable Compression\n");
-> > +
-> > +     if (c.feature & F2FS_FEATURE_DEVICE_ALIAS)
-> > +             MSG(0, "Info: Enable device aliasing\n");
-> >   }
-> >
-> >   #if defined(ANDROID_TARGET) && defined(HAVE_SYS_UTSNAME_H)
-> > @@ -181,6 +184,7 @@ static void f2fs_parse_options(int argc, char *argv=
-[])
-> >       int32_t option=3D0;
-> >       int val;
-> >       char *token;
-> > +     int dev_num;
-> >
-> >       while ((option =3D getopt_long(argc,argv,option_string,long_opts,=
-NULL)) !=3D EOF) {
-> >               switch (option) {
-> > @@ -200,17 +204,35 @@ static void f2fs_parse_options(int argc, char *ar=
-gv[])
-> >                       }
-> >                       break;
-> >               case 'c':
-> > -                     if (c.ndevs >=3D MAX_DEVICES) {
-> > +                     dev_num =3D c.ndevs;
-> > +
-> > +                     if (dev_num >=3D MAX_DEVICES) {
-> >                               MSG(0, "Error: Too many devices\n");
-> >                               mkfs_usage();
-> >                       }
-> >
-> > -                     if (strlen(optarg) > MAX_PATH_LEN) {
-> > +                     token =3D strtok(optarg, "@");
-> > +                     if (strlen(token) > MAX_PATH_LEN) {
-> >                               MSG(0, "Error: device path should be less=
- than "
-> >                                       "%d characters\n", MAX_PATH_LEN);
->
-> less than MAX_PATH_LEN + 1?
-
-Got it. I can fix the message like "equal or less than".
-
->
-> >                               mkfs_usage();
-> >                       }
-> > -                     c.devices[c.ndevs++].path =3D strdup(optarg);
-> > +                     c.devices[dev_num].path =3D strdup(token);
-> > +                     token =3D strtok(NULL, "");
-> > +                     if (token) {
-> > +                             if (strlen(token) > MAX_PATH_LEN) {
-> > +                                     MSG(0, "Error: alias_filename sho=
-uld "
-> > +                                             "be less than %d characte=
-rs\n",
-> > +                                             MAX_PATH_LEN);
->
-> less than MAX_PATH_LEN + 1?
-
-ditto
-
->
-> > +                                     mkfs_usage();
-> > +                             }
-> > +                             c.devices[dev_num].alias_filename =3D
-> > +                                     strdup(token);
->
-> Do we need to do sanity check on alias_filename to avoid including
-> '/' charactor in filename?
-
-Got it.
-
->
-> Thanks,
->
-> > +                             if (!c.aliased_devices)
-> > +                                     c.feature |=3D F2FS_FEATURE_DEVIC=
-E_ALIAS;
-> > +                             c.aliased_devices++;
-> > +                     }
-> > +                     c.ndevs++;
-> >                       break;
-> >               case 'd':
-> >                       c.dbg_lv =3D atoi(optarg);
->
 
