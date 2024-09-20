@@ -1,75 +1,83 @@
-Return-Path: <linux-kernel+bounces-334173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E5597D37B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:15:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C551497D373
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FF591F21DB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:15:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E12128219D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:10:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403E57FBA2;
-	Fri, 20 Sep 2024 09:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C52139D19;
+	Fri, 20 Sep 2024 09:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="trKTdoBu"
-Received: from out203-205-221-164.mail.qq.com (out203-205-221-164.mail.qq.com [203.205.221.164])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PgfEmQPa"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CEE433D6;
-	Fri, 20 Sep 2024 09:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A520136341
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726823724; cv=none; b=MIIfNAEJni9tztG0VOhEJnmPPyp7W8hb8vP7giz4Qme+PxXu3qLFTxRAbOUrnhCvN6ueeSs4Q4WS2LtEJUs5qhKzUAGb+W4DGrU3XD7q5Tn8WQ71dUFY30DMXkFsLHJjz00O9FetB3m2kyqJHMzdv3dYdiwkv8Y1eKPKOHYlJwU=
+	t=1726823412; cv=none; b=lPVBZNm4ziE5dn0xdELX7XY096m64q8LgBLa1NUuVW9IMI/JyKOl8ocoZoAqsYLqzBgLix5LvIZwL6DTNLnZGqaKDM7r50j2A2YMFHKBzbIPXOLDfD/oeHGjQHVVzdLQRPp2PhvS+OxzbfQPfcHtNN3dDMhd60Lgq0ROAWxAVoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726823724; c=relaxed/simple;
-	bh=A+iOFCNbVBbZtL98U43+jYe2s7E0pCN4uCInxvd+iak=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=pPpB58pmARDKgbSWK5D2qK3WXHi2lWVm44hwRiYq7qphLHlTqu3ai5nznVtnhielSGFys0bH33lLB821d4+HuN9a5ALSVHV//Yayn1MyKtc9ojM/hB/llz+zjAnosIMvkZkYmG2Xgwq8ztNhv6wkbq6YzabVQ7dxPanqYFCdX2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=trKTdoBu; arc=none smtp.client-ip=203.205.221.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1726823720;
-	bh=E9JMoMR2Sb03SykfAwT0ZGt49t+RkfgcBQ5qjTrpQjA=;
-	h=From:To:Cc:Subject:Date;
-	b=trKTdoBuztpolAzlsz5nzhhTKvdUH+2j6C2TQaZqQJxF+akiZkV9zgS5Pc7yLEqtB
-	 CiEMOjgXYfd9l5Ao4wPSMRgAZs5IEnWVNUGTAM1day31yaVjZ/oY1UdPUB+JZYwLr6
-	 mUZAs60WZpYJWvrvxTAPepAbmgHhbDu071aLuUIA=
-Received: from localhost.localdomain ([114.246.200.160])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id 23AAF009; Fri, 20 Sep 2024 17:08:58 +0800
-X-QQ-mid: xmsmtpt1726823338tqg53ksm0
-Message-ID: <tencent_2A17499A4FFA4D830F7D2F72A95A4ADAB308@qq.com>
-X-QQ-XMAILINFO: OK7NBzdNss/RXE/zwVV5mbLF1AfVnU+2R1mM3ZSfang121kWEEKBTYsiNuhvIf
-	 PmL8V8wqdLGVuQUCfoPlVT8gn2dIYBvns70ZrhUtjvotwCeIsiX+fKJ/vV6GOWyEJIvHHyyP0UCl
-	 jG8z1r5fvgz9joSNYGdRCDc3PAYqBon58W+3+OyQegaGPjED6UjwfuTbXAeMD+Sg3dCXhedooZcW
-	 gIZ1URxt5fWe3lrJraIHEXJ/Uo4+2XKzYUys5sInd0skG0SzHNeUnx+IeescrV8peX0Mm3+3Cw9y
-	 efh+b7G7luSuBYiOVpQCB59FWJta26u4woeyUBoned/2doLnNPElZTNseh2q8mEKCx0vHo5SMDUK
-	 A3FuiawOKdhCXABiqVMgmzPt1VJK/z0mQhNXJS+V+x/JnEGvc4hZp1Dn14UTvEsVsZvcORCFXnNg
-	 hvzNMj+r4/R5DFyuUia3KyhmRjT51zw+vQ6g0m8DPyYI8GZyc6L3JCdqT6qc+EcO7Ut31jf5H72N
-	 JDiok8DhMXbLiHMSarVfkyqaQOpYBDCmGupAOci2kxXqa/5gQHL6cmu//Oi9dlgdq53aJ3G7TO+V
-	 T28QdrF1tzv6leqdkMH5s2fo3S4JtWgzrrIycfTZNLfzNNCBdW1M44BjkreqbMbZ7TMN5z1pcQCg
-	 qN+PsLs+URaYT0ct0HF7wh0RLaShaGxrLzmCNzEtGOihsjWi2aLeyPLOIAcXkFcrYpJaDsXzL7Vm
-	 UWc8jBOMhZnaLyAuuV+xsNMZWTn08eAKWFbXZYHOmKMXo4c+xWQ0J9MKNt5huOGU8ooCBPe22u5b
-	 eUVAP01hNuTpSOVtg4kJ/sEcoBBX5hRkhr+2nJ/0MDO+rR3t7RaGCyw4fQgHY6z78jBMbjjBfZBD
-	 jwo0E91pcTxgkaciQAcdOc366+898aQeVpGOnfiieqR4BsMPJrp/mdBODVklJl5f/T51gjJeS4cF
-	 IXyYpyo3rQEsHQpqIKOBq7N7d270VsvY2Yi+g9ED3i4H/IV2ET3Ff4+DejbaF7Z+vmIAqtUNhdy6
-	 XRT/fCubKzmJfqxBN4LmfXvJ9wVc/W+WKqKLVwOtZftfcD+bggYYnjdW5PPEQWE6tK12snDbybo7
-	 BVVJka
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Jiawei Ye <jiawei.ye@foxmail.com>
-To: edumazet@google.com,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
+	s=arc-20240116; t=1726823412; c=relaxed/simple;
+	bh=Th4wKPFyQncfLUvNbN3KixRu3cYwqzSdItC1CZxmc4k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SZlFx0hzTLb0LUnbS2UwnrEVL2f+3uLSYwOqkD7B50aHzwVl4qrKyowzjOdRcP1T6fvCURZW5r1XioD8tKFDmLBBdGL38rnpjYol+vRme21pxK961pqMQzqAIqnw025128zx4KFp7vQ1rZ+hU5O3TFhKuJ870nGPhfTU+ifQu+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PgfEmQPa; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-6e7b121be30so1269018a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 02:10:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726823408; x=1727428208; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QsjeiXcVbkhRS0S6mAuTlJso2qznjwKlAjYCJol6uhQ=;
+        b=PgfEmQPaCmv3zNPSAj4Qg+8XeVL7/VlyaXIvIPQymuEq1ia7ObjuRkfvLKjIDXacey
+         nZ1PDt5ruyARaPPWyiqTrwCEIOYnW16Q+ObViYzNE/AhVVgl3X+u0NB5ukfFModX+cHy
+         o6vFDV6N45INx11h2xjx9AHZwnrwT/hOMLc7FkX1VOPvJL8XUu7IoVNVUZQY7OL6D9T/
+         gvAQnnXAjpzFOiLT1t3c7X2xsgESGfdiNfTLa0QZipBIZ+rZA+N/y0aWk45K9prAbaOD
+         1xnlkcpqp87l+JtGIGwf2WuyA56hTyaUlx+EElZFnm9HFe2ebbq1w2eXR/Rxe3ZZdkLp
+         ALZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726823408; x=1727428208;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QsjeiXcVbkhRS0S6mAuTlJso2qznjwKlAjYCJol6uhQ=;
+        b=hlIotmkqe7Wns46DCqxkJjvPiRfue/O9bu7v2DE5gHOiCM4uXhJyzowUGB8z2y4uM5
+         VAMDjKniR3O5ZDTBuq1T9trl4u2TlKdsNy78OdAEdBqsT266cOg3r6gPToxSMqhakccr
+         1ckhZidDsV6FLnHQji61v19kpin423BlaN60DQGxvY7xp7+A0xatqSVt8Qk4USfl+mXz
+         /F26Lr55O//yqi1Adk+9rO67B2hbzVzZzjjt/fKvWFckNsS2K9U+itlWpDVC5Ct1B0Er
+         D0+Qj273e41MEjTVNW7SclqjXeFd39ng/eDhhztfgnRYz8IxED9HvB0G91y0EPIlUf5X
+         iknw==
+X-Forwarded-Encrypted: i=1; AJvYcCXrvEFBA75MNux8WrFJsVih4+BpnIo94WFgAkJbOn2dQc/3SV0DIfgHlYrsf/Vyjuu+rzgpRDkHmGYPSWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLS3r0HOy1028yo6fyvXYKG18dP9oik2HJ/OyDmljGU8Wzw5uv
+	/cGLIcUTZ8XMDlq8jYdznggRHnhwfRWNy4T2UjWKgRQmID2agOcE
+X-Google-Smtp-Source: AGHT+IH8FAN48dFcmR+m08J6jb/G83Ca1mUzCilqajUAhPNAMop9IubRUvCxd+x0whCenAuCu2S9Mw==
+X-Received: by 2002:a05:6a21:2d8c:b0:1d0:56b1:1aec with SMTP id adf61e73a8af0-1d30a9b4f69mr4170408637.35.1726823408509;
+        Fri, 20 Sep 2024 02:10:08 -0700 (PDT)
+Received: from ubuntu.worldlink.com.np ([27.34.65.246])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b7b181sm9455864b3a.112.2024.09.20.02.10.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 02:10:08 -0700 (PDT)
+From: Dipendra Khadka <kdipendra88@gmail.com>
+To: Felix.Kuehling@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: Dipendra Khadka <kdipendra88@gmail.com>,
+	amd-gfx@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: Fix potential RCU dereference issue in tcp_assign_congestion_control
-Date: Fri, 20 Sep 2024 09:08:58 +0000
-X-OQ-MSGID: <20240920090858.2054151-1-jiawei.ye@foxmail.com>
-X-Mailer: git-send-email 2.34.1
+Subject: [PATCH] Staging: drivers/gpu/drm/amd/amdgpu: Fix null pointer deference in amdkfd_fence_get_timeline_name
+Date: Fri, 20 Sep 2024 09:09:57 +0000
+Message-ID: <20240920090959.30755-1-kdipendra88@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,52 +86,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In the `tcp_assign_congestion_control` function, the `ca->flags` is
-accessed after the RCU read-side critical section is unlocked. According
-to RCU usage rules, this is illegal. Reusing this pointer can lead to
-unpredictable behavior, including accessing memory that has been updated
-or causing use-after-free issues.
+'''
+drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c:108:9: error: Null pointer dereference: fence [nullPointer]
+ return fence->timeline_name;
+        ^
+'''
 
-This possible bug was identified using a static analysis tool developed
-by myself, specifically designed to detect RCU-related issues.
+The method to_amdgpu_amdkfd_fence can return NULL incase of empty f
+or f->ops != &amdkfd_fence_ops.Hence, check has been added .
+If fence is null , then null is returned. 
 
-To resolve this issue, the `rcu_read_unlock` call has been moved to the
-end of the function.
-
-Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
+Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
 ---
-In another part of the file, `tcp_set_congestion_control` calls
-`tcp_reinit_congestion_control`, ensuring that the congestion control
-reinitialization process is protected by RCU. The
-`tcp_reinit_congestion_control` function contains operations almost
-identical to those in `tcp_assign_congestion_control`, but the former
-operates under full RCU protection, whereas the latter is only partially
-protected. The differing protection strategies between the two may
-warrant further unification.
----
- net/ipv4/tcp_cong.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/ipv4/tcp_cong.c b/net/ipv4/tcp_cong.c
-index 0306d257fa64..356a59d316e3 100644
---- a/net/ipv4/tcp_cong.c
-+++ b/net/ipv4/tcp_cong.c
-@@ -223,13 +223,13 @@ void tcp_assign_congestion_control(struct sock *sk)
- 	if (unlikely(!bpf_try_module_get(ca, ca->owner)))
- 		ca = &tcp_reno;
- 	icsk->icsk_ca_ops = ca;
--	rcu_read_unlock();
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c
+index 1ef758ac5076..2313babcc944 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c
+@@ -105,6 +105,9 @@ static const char *amdkfd_fence_get_timeline_name(struct dma_fence *f)
+ {
+ 	struct amdgpu_amdkfd_fence *fence = to_amdgpu_amdkfd_fence(f);
  
- 	memset(icsk->icsk_ca_priv, 0, sizeof(icsk->icsk_ca_priv));
- 	if (ca->flags & TCP_CONG_NEEDS_ECN)
- 		INET_ECN_xmit(sk);
- 	else
- 		INET_ECN_dontxmit(sk);
-+	rcu_read_unlock();
++	if (!fence)
++		return NULL;
++
+ 	return fence->timeline_name;
  }
  
- void tcp_init_congestion_control(struct sock *sk)
 -- 
-2.34.1
+2.43.0
 
 
