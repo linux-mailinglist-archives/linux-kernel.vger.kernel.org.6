@@ -1,94 +1,184 @@
-Return-Path: <linux-kernel+bounces-334425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B608B97D718
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:54:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35EF797D720
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C9AF1F24BEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:54:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5911D1C22F3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC43817C215;
-	Fri, 20 Sep 2024 14:54:03 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F65717C22B;
+	Fri, 20 Sep 2024 14:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c8ozusu7"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E18C17BEB3
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 14:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4BA17B427;
+	Fri, 20 Sep 2024 14:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726844043; cv=none; b=FWWBPaRiBEyXhBe55TbLOHwr4Xv69JgK/4rfXPy/gjY2FYzRyxAHTrKSy9LCH+/cQfCL4Xd8XJ67yDnXGk3Irecs6SaqSwirOvae8o/Ky5Aa7eV4exkIU9O+cfddxXM5Uw3y+BOYIpVMOL9cgKohd5ZuEPb8rG86dEMIVV/so+4=
+	t=1726844108; cv=none; b=WqAEv0AvQ6YnA7HhFyPL4yh/O/XLMRZYEWZdzuZoqH8u33W+jF5+0bhMnbi2fPU5Wk36gol60XrtM4iz2EIm/rBBqHV+Xlm08+P1Df3Ph8l054vHGBbaehxEr84vLWiatlyQwe0BGc90HYI6clef1QDfkexmUmi4+ZDdbaCNSgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726844043; c=relaxed/simple;
-	bh=S4P7L6S4YVxHG7FlOc9S8smNJC+oJB3xqP6RGBINWaE=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EGXvU/pzuDviAhdZichOnbba2ZqBP0GGr5aeBM+KOCUr4wE9KqPzQ6wuZubPcJPdjU72DfrA8GiC5Q3gWLVglFUWryMo1y+C6ME/o5vSYQbvCUHhPdkINTf8fJDc/fi6RvYARffPukZeDr1O7JVi+H7BRGcf/i0+2AA2Nnn7ZoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1srf0f-0002Ol-7i; Fri, 20 Sep 2024 16:53:25 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1srf0Z-000H55-Qp; Fri, 20 Sep 2024 16:53:19 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1srf0Z-000BDt-2K;
-	Fri, 20 Sep 2024 16:53:19 +0200
-Message-ID: <13010c194e4674f6bdef84bcf748030a1d46b814.camel@pengutronix.de>
-Subject: Re: [PATCH v2 3/5] drm/imx/ipuv3: Use IRQF_NO_AUTOEN flag in
- request_irq()
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Jinjie Ruan <ruanjinjie@huawei.com>, laurentiu.palcu@oss.nxp.com, 
- l.stach@pengutronix.de, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org,  tzimmermann@suse.de, airlied@gmail.com,
- daniel@ffwll.ch, shawnguo@kernel.org,  s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com,  robdclark@gmail.com,
- sean@poorly.run, konradybcio@kernel.org,  quic_abhinavk@quicinc.com,
- dmitry.baryshkov@linaro.org,  marijn.suijten@somainline.org,
- thierry.reding@gmail.com, mperttunen@nvidia.com,  jonathanh@nvidia.com,
- agx@sigxcpu.org, gregkh@linuxfoundation.org,  jordan@cosmicpenguin.net,
- dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
- linux-tegra@vger.kernel.org
-Date: Fri, 20 Sep 2024 16:53:19 +0200
-In-Reply-To: <20240912083020.3720233-4-ruanjinjie@huawei.com>
-References: <20240912083020.3720233-1-ruanjinjie@huawei.com>
-	 <20240912083020.3720233-4-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1726844108; c=relaxed/simple;
+	bh=RoJg69/sSksKDasmFyN/iEDFBNBh8oRsNnabyTCKEAg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CpKbYNwAF8Dz7BH4uAT7wSx9MA0WB08AcoxLHjz7eJwua+tUQiP29b9tUEKfH23TTCRM0tbPnDbr7S6nivk5++NTQ954gmO+Fsp1VdOmfHsBVClPXmJLPNyCidzjaSkEdWTQKfVuliuYRY0EnfBZmDFc+xRCgHPZCpAO2Ho3A4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c8ozusu7; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f74e613a10so33832301fa.1;
+        Fri, 20 Sep 2024 07:55:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726844105; x=1727448905; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Urf9epkit9Wnq7mh+mMh5qFW8LtYH5Rj1D3J2QjXNes=;
+        b=c8ozusu7AUZjY+phJYkaEg9cBuwDEWPwhdNqJVPyjX1BwStdpMa7j/tMmxU3xNR8IO
+         W/DxGABXUHaIeeMTiXt3tYFCXWDbDePK3oIEyiOx3nUvLAjk2NgPwoWZz8EOkfDg+Lf7
+         Ajg4rMH2Ya8J0ty2n0eLcnboz/KuvPn1wSuDBRmPUhAvpAU0XFA7K5HrhCVgFh7AM7E6
+         bT8fL4SSLoVXuw3GeHqqbqnEA6PS/VQmvfh0zmORlcGlocMIfrtQGSvvQEtdRohmQrzf
+         HR4LCSAQRvQSpwHXj1bAhi53bsUlA8oERTcYGCJnTJtFaDdzTy7HvslpWnBxj/YvLhG2
+         rVyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726844105; x=1727448905;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Urf9epkit9Wnq7mh+mMh5qFW8LtYH5Rj1D3J2QjXNes=;
+        b=gOc9/F4+5ppdPzaj20OCEFLta0DdCsstUucjIZCyu41LFax7lNBZiJj2wpB2+8l+Xb
+         QldQxHLJztHwPtZ/8EqZq9YoRPjSJSaYLuU9Isi7itnGkeWGJwRDger950SCFJM3MOCJ
+         uZACzu7/N6uAZSDyTA+4nyU95orACLHLRnVWHAIPWI7N6nE/sRe0qJrwDP+pk7wltb1D
+         LEHOLFIqGFwBzZNJV/9J6vwbcDoLISWGTZKKb9fhgneBPl+KXHZRUvmDKFfUhAed5o1M
+         VTkxSTh33mO7hmd7vpveRrzSdqLVtrTipBCOAAV1Hfr9FWQPUewj9dXh3/uu05otE9Td
+         T4pA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGvwxfvvKFTvGYlBV6byJONEKtWuVIlE2/VHDrrXHyQAMQp+Iuw6yhHaS6DsmXES4McSlYUj1mYA1JKmh0Kx4=@vger.kernel.org, AJvYcCXS4qcKSgH5T6jM3YXXy/4tvrIbAZSJ7cpDq/Y6DxBR9zJfsqEzxgerYslAGTAyXqoFMoORQclsCHbi/B9z@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjCAyb1hXkTE1mfoLbSRNIIJg1IOKQRVvmfz99eBMcNrOwzT1t
+	sDEYDhb29dozuao6y/SEyL9QVhLr9SWnXQZk55BbpQQa/wjue5uldq6j9zdJsiuq5utle2WgaSq
+	dTm/WPwQ2enHNrNFAVSWyHyhQlRg=
+X-Google-Smtp-Source: AGHT+IGRMbJOtLIe11lU8+yttfrugpnh34xPWQlgkz2BjnvZmPECE9B5LY05OCCCUvgqw8AZro92Tf2rVv9ya4d944k=
+X-Received: by 2002:a2e:a9a2:0:b0:2ef:1b1b:7f42 with SMTP id
+ 38308e7fff4ca-2f7cb367bf3mr29478471fa.36.1726844104528; Fri, 20 Sep 2024
+ 07:55:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240919074925.22860-1-chris.lu@mediatek.com> <20240919074925.22860-4-chris.lu@mediatek.com>
+In-Reply-To: <20240919074925.22860-4-chris.lu@mediatek.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Fri, 20 Sep 2024 10:54:52 -0400
+Message-ID: <CABBYNZJ62dw0JHTrNK7xe9_kO61_gH9+XGPm+UEWw4CGRVCnnQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] Bluetooth: btusb: mediatek: add intf release flow
+ when usb disconnect
+To: Chris Lu <chris.lu@mediatek.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>, 
+	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth <linux-bluetooth@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-mediatek <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Do, 2024-09-12 at 16:30 +0800, Jinjie Ruan wrote:
-> disable_irq() after request_irq() still has a time gap in which
-> interrupts can come. request_irq() with IRQF_NO_AUTOEN flag will
-> disable IRQ auto-enable when request IRQ.
->=20
-> Fixes: 47b1be5c0f4e ("staging: imx/drm: request irq only after adding the=
- crtc")
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Hi Chris,
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+On Thu, Sep 19, 2024 at 3:49=E2=80=AFAM Chris Lu <chris.lu@mediatek.com> wr=
+ote:
+>
+> MediaTek claim an special usb intr interface for ISO data transmission.
+> The interface need to be released before unregistering hci device when
+> usb disconnect. Removing BT usb dongle without properly releasing the
+> interface may cause Kernel panic while unregister hci device.
+>
+> Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+> ---
+>  drivers/bluetooth/btusb.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index dfc42bdc8aaf..37e67b451b34 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -2614,9 +2614,9 @@ static void btusb_mtk_claim_iso_intf(struct btusb_d=
+ata *data)
+>         set_bit(BTMTK_ISOPKT_OVER_INTR, &btmtk_data->flags);
+>  }
+>
+> -static void btusb_mtk_release_iso_intf(struct btusb_data *data)
+> +static int btusb_mtk_release_iso_intf(struct hci_dev *hdev)
+>  {
+> -       struct btmtk_data *btmtk_data =3D hci_get_priv(data->hdev);
+> +       struct btmtk_data *btmtk_data =3D hci_get_priv(hdev);
+>
+>         if (btmtk_data->isopkt_intf) {
+>                 usb_kill_anchored_urbs(&btmtk_data->isopkt_anchor);
+> @@ -2630,6 +2630,8 @@ static void btusb_mtk_release_iso_intf(struct btusb=
+_data *data)
+>         }
+>
+>         clear_bit(BTMTK_ISOPKT_OVER_INTR, &btmtk_data->flags);
+> +
+> +       return 0;
+>  }
+>
+>  static int btusb_mtk_reset(struct hci_dev *hdev, void *rst_data)
+> @@ -2649,7 +2651,7 @@ static int btusb_mtk_reset(struct hci_dev *hdev, vo=
+id *rst_data)
+>                 return err;
+>
+>         if (test_bit(BTMTK_ISOPKT_RUNNING, &btmtk_data->flags))
+> -               btusb_mtk_release_iso_intf(data);
+> +               btusb_mtk_release_iso_intf(hdev);
 
-regards
-Philipp
+We can probably move the check for BTMTK_ISOPKT_RUNNING into
+btusb_mtk_release_iso_intf to avoid having to duplicate it whenever
+calling btusb_mtk_release_iso_intf.
+
+>
+>         btusb_stop_traffic(data);
+>         usb_kill_anchored_urbs(&data->tx_anchor);
+> @@ -2703,14 +2705,13 @@ static int btusb_mtk_setup(struct hci_dev *hdev)
+>
+>  static int btusb_mtk_shutdown(struct hci_dev *hdev)
+>  {
+> -       struct btusb_data *data =3D hci_get_drvdata(hdev);
+>         struct btmtk_data *btmtk_data =3D hci_get_priv(hdev);
+>         int ret;
+>
+>         ret =3D btmtk_usb_shutdown(hdev);
+>
+>         if (test_bit(BTMTK_ISOPKT_RUNNING, &btmtk_data->flags))
+> -               btusb_mtk_release_iso_intf(data);
+> +               btusb_mtk_release_iso_intf(hdev);
+
+Ditto.
+
+>         return ret;
+>  }
+> @@ -3824,6 +3825,7 @@ static int btusb_probe(struct usb_interface *intf,
+>                 data->recv_acl =3D btmtk_usb_recv_acl;
+>                 data->suspend =3D btmtk_usb_suspend;
+>                 data->resume =3D btmtk_usb_resume;
+> +               data->disconnect =3D btusb_mtk_release_iso_intf;
+
+I'd wrap (e.g. btmtk_usb_disconnect) the call to
+btusb_mtk_release_iso_intf since that is only meant to release the ISO
+endpoint.
+
+>         }
+>
+>         if (id->driver_info & BTUSB_SWAVE) {
+> --
+> 2.18.0
+>
+
+
+--=20
+Luiz Augusto von Dentz
 
