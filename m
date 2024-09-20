@@ -1,144 +1,137 @@
-Return-Path: <linux-kernel+bounces-334192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9653F97D3B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:36:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A74EE97D3B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DC47289508
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:36:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D947F1C21EB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4142A13C682;
-	Fri, 20 Sep 2024 09:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D247136658;
+	Fri, 20 Sep 2024 09:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YGxskrwE"
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D1133985
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="p9qtnjco"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9690757F3
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726824959; cv=none; b=F3vH5wIjrMrun9DFt2VictPin9za+6ZMhL/ycbHuUwkPDQ6tzTjNVy03qEzJeIpiy00BMWtja/0Lq5IkRyGAZJqMmJu22hF5xmkoM+cco8SbW15KVzvdOcYZCEnQdug2AMZL7fvWoHM6SX+Uy1QkabjpniJw8BBgWHLvTB/+0b4=
+	t=1726825030; cv=none; b=jmuN38D4D5IvXoLjr1iVol7VjeO2v+I/NNdh+4uC2uCd27A5zD0yjWV3nOlwRksM2vdeXeljsXuSkUWjpCwB/nyi9824asTxmxgWI5OmGMP044Oc1+6pjo7RH8cD3Chp9cd1XpaHiZSZi3eDWhRVTsaKPUEFdmW+jD5ugMa0um0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726824959; c=relaxed/simple;
-	bh=wOtQsEhhjAhWoZR3qcn1/pQp9HTZYrFhQ9fCpT9g5rE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=k5atAoHW1amAd3i8XAPM1F79UBlMOecxflXANjZgsd3oUIbrros7anPNZnRWHYkCGyDA8VZlBgpMsdBiEKwnwYQUFmQuA8ZD7YBcP+kSokRyzmCc+VAWHHzd9bO1HSlCATynlkAuV8uef5QH+WTuc2lHXhOIXUR0zcO32qKTNl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YGxskrwE; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726824954;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OziaRXhCqEX71q65+JEThFme/Bx7YR5ge7b/UpC9jzk=;
-	b=YGxskrwEvc+2P9lMit/+EJm6KNvLs7C9bkLx+EMtn7mfkFPgedB1qsE5WAOP1G5Zu8K4Aa
-	QZowI2yuMKnznsAiEgZYIB6XOKZCZjG9ZzB9bElsSzQkXPWolHFtibnu7FH1rEWekVZaFK
-	xazfqY1FpuT8s7w/krQkPyr7Rq3Y/EQ=
-From: Luis Henriques <luis.henriques@linux.dev>
-To: Jan Kara <jack@suse.cz>
-Cc: Theodore Ts'o <tytso@mit.edu>,  Andreas Dilger <adilger@dilger.ca>,
-  Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-  linux-ext4@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ext4: mark fc as ineligible using an handle in
- ext4_xattr_set()
-In-Reply-To: <20240919214730.gza4j3gkrn34tcyn@quack3> (Jan Kara's message of
-	"Thu, 19 Sep 2024 23:47:30 +0200")
-References: <20240919093848.2330-1-luis.henriques@linux.dev>
-	<20240919093848.2330-3-luis.henriques@linux.dev>
-	<20240919214730.gza4j3gkrn34tcyn@quack3>
-Date: Fri, 20 Sep 2024 10:35:45 +0100
-Message-ID: <87msk23bwu.fsf@linux.dev>
+	s=arc-20240116; t=1726825030; c=relaxed/simple;
+	bh=mV/+H1lEiNypRkNS7WbBfGy8Vcp4NzoqAxsA3sdH28A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jVlg147h3kp9NvBVXqRJKa16zGUMcmQYX+/jJjwdcumEa30YIOSN0aadmOECrXJtbegHD0hDgjz8eahtHomA1dFVQyJX9jRlmzEUDODhbsB39Z98qEdUDCOEy8vTbr6cQNdzMGR8fKv/YXqoXWfuMViJncz+BNLsYI4vU+hfQ3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=p9qtnjco; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=hgecV
+	r+tVurwSxwGSHpG48Xb3t6wVc7vDsaAUV3Jteo=; b=p9qtnjcoi+vM0Tv0vp/Em
+	/36FwMP8HaFvSgjTtW5WgN7OnA96dkDRnJtyR99G2H1CW0BsXd/jfpaNnRTIM0Wr
+	U7/vMKDcAeNNbIZCPOCfKTJoOzFLH55OSRsZmY4CzTzua9wvIpnrgLdxf0rtYQll
+	EiB3i1XFAr2LsQJpkTpxjk=
+Received: from ProDesk.. (unknown [58.22.7.114])
+	by gzga-smtp-mta-g3-0 (Coremail) with SMTP id _____wDXH1MfQu1mJ+xaBg--.40480S2;
+	Fri, 20 Sep 2024 17:36:34 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: vkoul@kernel.org
+Cc: kishon@kernel.org,
+	heiko@sntech.de,
+	linux-phy@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	cristian.ciocaltea@collabora.com,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH] phy: phy-rockchip-samsung-hdptx: Don't request RST_PHY/RST_ROPLL/RST_LCPLL
+Date: Fri, 20 Sep 2024 17:36:28 +0800
+Message-ID: <20240920093629.7410-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXH1MfQu1mJ+xaBg--.40480S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Kr15JrWDZry3WF13ArykAFb_yoW8tFWfpF
+	s3CF47JrWqgFn8Wa1UKFn8CFWxJF9IqF1YqFsxZa4xtr1xArWDuryruF95Xr1DJrW2qayF
+	kw4xtFWfu3W2vwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UvAp5UUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqQVgXmVODBPGLgAAsO
 
-On Thu, Sep 19 2024, Jan Kara wrote:
+From: Andy Yan <andy.yan@rock-chips.com>
 
-> On Thu 19-09-24 10:38:48, Luis Henriques (SUSE) wrote:
->> Calling ext4_fc_mark_ineligible() with a NULL handle is racy and may res=
-ult
->> in a fast-commit being done before the filesystem is effectively marked =
-as
->> ineligible.  This patch reduces the risk of this happening in function
->> ext4_xattr_set() by using an handle if one is available.
->>=20
->> Suggested-by: Jan Kara <jack@suse.cz>
->> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
->
-> One comment below:
->
->> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
->> index 46ce2f21fef9..dbe4d11cd332 100644
->> --- a/fs/ext4/xattr.c
->> +++ b/fs/ext4/xattr.c
->> @@ -2554,11 +2554,15 @@ ext4_xattr_set(struct inode *inode, int name_ind=
-ex, const char *name,
->>  	handle =3D ext4_journal_start(inode, EXT4_HT_XATTR, credits);
->>  	if (IS_ERR(handle)) {
->>  		error =3D PTR_ERR(handle);
->> +		ext4_fc_mark_ineligible(inode->i_sb, EXT4_FC_REASON_XATTR,
->> +					NULL);
->
-> So when starting a transaction fails:
->
-> a) We have a big problem, the journal is aborted so marking fs ineligible
-> is moot.
->
-> b) We don't set anything and bail with error to userspace so again marking
-> fs as ineligible is pointless.
->
-> So there's no need to do anything in this case.
+RST_PHY/RST_ROPLL/RST_LCPLL are used for debug only on rk3588,
+and they are not exported on rk3576, no need to request it in
+driver.
 
-Ah! I spent a good amount of time trying to understand if there was a
-point marking it as ineligible in that case, but couldn't reach a clear
-conclusion.  That's why I decided to leave it there.  And, hoping to get
-some early feedback, that's also why I decided to send these 2 patches
-first, because fixing ext4_evict_inode() will require a bit more re-work.
-The fix will have to deal with more error paths, and probably the call to
-ext4_journal_start() will need to be moved upper in the function.
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+---
+ .../phy/rockchip/phy-rockchip-samsung-hdptx.c   | 17 +----------------
+ 1 file changed, 1 insertion(+), 16 deletions(-)
 
-And, as always, thanks a lot your review, Jan.
-
-Cheers,
---=20
-Lu=C3=ADs
-
-> 								Honza
->
->>  	} else {
->>  		int error2;
->>=20=20
->>  		error =3D ext4_xattr_set_handle(handle, inode, name_index, name,
->>  					      value, value_len, flags);
->> +		ext4_fc_mark_ineligible(inode->i_sb, EXT4_FC_REASON_XATTR,
->> +					handle);
->>  		error2 =3D ext4_journal_stop(handle);
->>  		if (error =3D=3D -ENOSPC &&
->>  		    ext4_should_retry_alloc(sb, &retries))
->> @@ -2566,7 +2570,6 @@ ext4_xattr_set(struct inode *inode, int name_index=
-, const char *name,
->>  		if (error =3D=3D 0)
->>  			error =3D error2;
->>  	}
->> -	ext4_fc_mark_ineligible(inode->i_sb, EXT4_FC_REASON_XATTR, NULL);
->>=20=20
->>  	return error;
->>  }
-> --=20
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+index 946c01210ac8..f3f03914bf78 100644
+--- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
++++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+@@ -252,13 +252,10 @@ struct ropll_config {
+ };
+ 
+ enum rk_hdptx_reset {
+-	RST_PHY = 0,
+-	RST_APB,
++	RST_APB = 0,
+ 	RST_INIT,
+ 	RST_CMN,
+ 	RST_LANE,
+-	RST_ROPLL,
+-	RST_LCPLL,
+ 	RST_MAX
+ };
+ 
+@@ -655,11 +652,6 @@ static void rk_hdptx_phy_disable(struct rk_hdptx_phy *hdptx)
+ {
+ 	u32 val;
+ 
+-	/* reset phy and apb, or phy locked flag may keep 1 */
+-	reset_control_assert(hdptx->rsts[RST_PHY].rstc);
+-	usleep_range(20, 30);
+-	reset_control_deassert(hdptx->rsts[RST_PHY].rstc);
+-
+ 	reset_control_assert(hdptx->rsts[RST_APB].rstc);
+ 	usleep_range(20, 30);
+ 	reset_control_deassert(hdptx->rsts[RST_APB].rstc);
+@@ -780,10 +772,6 @@ static int rk_hdptx_ropll_tmds_cmn_config(struct rk_hdptx_phy *hdptx,
+ 
+ 	rk_hdptx_pre_power_up(hdptx);
+ 
+-	reset_control_assert(hdptx->rsts[RST_ROPLL].rstc);
+-	usleep_range(20, 30);
+-	reset_control_deassert(hdptx->rsts[RST_ROPLL].rstc);
+-
+ 	rk_hdptx_multi_reg_write(hdptx, rk_hdtpx_common_cmn_init_seq);
+ 	rk_hdptx_multi_reg_write(hdptx, rk_hdtpx_tmds_cmn_init_seq);
+ 
+@@ -958,13 +946,10 @@ static int rk_hdptx_phy_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(hdptx->regmap),
+ 				     "Failed to init regmap\n");
+ 
+-	hdptx->rsts[RST_PHY].id = "phy";
+ 	hdptx->rsts[RST_APB].id = "apb";
+ 	hdptx->rsts[RST_INIT].id = "init";
+ 	hdptx->rsts[RST_CMN].id = "cmn";
+ 	hdptx->rsts[RST_LANE].id = "lane";
+-	hdptx->rsts[RST_ROPLL].id = "ropll";
+-	hdptx->rsts[RST_LCPLL].id = "lcpll";
+ 
+ 	ret = devm_reset_control_bulk_get_exclusive(dev, RST_MAX, hdptx->rsts);
+ 	if (ret)
+-- 
+2.34.1
 
 
