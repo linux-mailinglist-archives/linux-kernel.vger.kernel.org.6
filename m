@@ -1,224 +1,112 @@
-Return-Path: <linux-kernel+bounces-334298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F4E97D54D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:20:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8407097D54E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C82512831C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09B681F22B7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1BD14D449;
-	Fri, 20 Sep 2024 12:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4061A14B972;
+	Fri, 20 Sep 2024 12:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="DXA+d+tw"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UtWyQksf"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E939B13B5B6;
-	Fri, 20 Sep 2024 12:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476E2143894
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726834824; cv=none; b=CaxwskmTNn3DcWsD8fZCpBrHVI1245cSVSO33KjoczkaixxkanTClte+Qd8E8N4Y04QHllZLcymTQSjJW0jYb34jqw4Q+Gog/h1gysCXh17MBwf8uMw0Gc8btkqK5bDWUuSPW1284VjBQ13IUT0FVEK1AB5IOPdehv1YmITKQ6Y=
+	t=1726834838; cv=none; b=KrAEnr+XS9/MeWyczvGm17k5i3LBxjJVVVdxDHjjUQ9aw/FxkR1RZ9U6TV0tGohoPLd0ZnELDTqVP+bYu34xj+127pw2cc/RMZJruMgeEIqeK/zjTRP8aryjsbVfxGvHAMe68yXuP/u/7YTGX2oyGCI0KtTshp3osshRZEwnoIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726834824; c=relaxed/simple;
-	bh=T1ZUoqTmsNnAUkQRKmhYs461f9XWUqcVBFlBYHGdLx4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tBZYwV+hIni+PjDyId6Vubwe6r6orrNQaVU+seWrW4AUF4qA6WhnK29hUe8wSWZPH3ZsWM4aOOVEzHHhOUfo0wWSm7IOh+aaAvr+4vO5EtFPaPXG4Xe6pnQSS12srGeZ7O3OpyA/XWWknthDsJ8gYl1Nuwke9/l+BYty66Cf8VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=DXA+d+tw; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726834811; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=iXz1a8wbqLWAyQb93ZIDKPeN5RtD2+gJiC+TI4LF2A4=;
-	b=DXA+d+twF7sb1fjt73Tf+mauFaYmX5BO+CEjLnVGbIVGMc5YbaxHc7KgSmu7EUeXOGBKMG+Da0GKTVU0AAKu2sBX5rRbyugzGl5ptsZCHuSS/g83nW8T6AteSPk6wk8ZVor3FGkW+5clWPjHOG4gobTsbHDZ5nP5X0/XbEGH2VQ=
-Received: from 30.246.161.141(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WFL26p5_1726834485)
-          by smtp.aliyun-inc.com;
-          Fri, 20 Sep 2024 20:14:47 +0800
-Message-ID: <0701964b-1c7f-4d41-8b04-e888b3c998ec@linux.alibaba.com>
-Date: Fri, 20 Sep 2024 20:14:45 +0800
+	s=arc-20240116; t=1726834838; c=relaxed/simple;
+	bh=GBuSXc6vX5T2hmGsg5gA3ZVIaKp+Z3zLUYr8b/KLRiU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZaNCIm9aNjC0x/QvyFKnDw7zlSIBQvy7aV4Xxzlc7WyhfEOOjqOCQOaUZY/0hZbdAnVYJuqfRmvMUE4L4ssdFoPFNwxNFNqgoZwFmOgwpgSwkaY18WKxlb216CmgP4h8+xPjnhqu85vdVwKH0MVNe6y9xX0QKRqTc3omKz+zqy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UtWyQksf; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7198a7a1c01so1659044b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:20:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726834836; x=1727439636; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uBmgJ3E+zJEFPhajcCAnbmCn511pKS8K43xQBt9qbMc=;
+        b=UtWyQksfjLY1sqVh8xwspua0TRjJROkJTeoOXBxXSfsraruLWq9FjjUooMmsRq7WeM
+         6rljtqD1nLBfUSxnEDW3IVRQuXutCebSE1t5Gb8PQTG2Znom99txf3lizvq1StAdm00/
+         y2Fz0gt2jWa0CVm2GJl9kwqJonfsZlHiii4T/yF0j/8Y1BdC9BcPc64vpAMSZg7x0daL
+         9cBQRHdUaFaLx89Oue9kDkMv7n43KwvtyB8D4R24THnfGpccNbP3zCqiMj7aPHs5itNz
+         L2b7Srx5pvRIkQvnjpTW/jl0DL6pdRtcMrOvKBmRi8On2TJycTLtF2Edp8+bFLjuIG4p
+         x2Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726834836; x=1727439636;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uBmgJ3E+zJEFPhajcCAnbmCn511pKS8K43xQBt9qbMc=;
+        b=FYPT2aEm2TeMiA1lWSSud1qQdqNiOO8iaZo47xrxSklE5EdPTFS/yPhW5oXQM+dp2e
+         Zz7zcyyrVhmddKEGaJROced0BZPMTBIxQWqfhwnEVSnn2vnIFDZYg8s8EvijdOuBzIQ5
+         wF9g/WzpxFnux8rI47Wtl4kxyVo+j87ewOkYre7xD52Ltih4lg4P27XKd8JnF8TLp4UP
+         l8zyImjtPnMuvo8ZrnXj0O/QniCGdyj2q352JEhobxIkIK63sRSqmGRHFlwNy4Ydgm/A
+         U/48cPLBiJibu4TZl2JLxnGkxrkAYlE7zNAMRWyaXAAVKd0LszE8DZH/ykQgJ5Yiv2lX
+         hJUA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2QE6f9vrEJsdM7eGf5VCCLgTbf4PpbrzW+7ikhS8w06EgGv54wRHrmqwNaNORrwNoH7r/31X/e4uGHEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFDlll6G4MiiWFILlaJr7Ykmf2GxiI8cV21gMm1rhhsElzgR/C
+	v0hXzeb2od0zh906E0ZhS19V7xmbGyo1zv6YXkM4MSVeQ/83GeDXF4x4Nw==
+X-Google-Smtp-Source: AGHT+IGk1cGR5y1+GjjZv3Z8cfFvB8ZNrHFiohP/FG6vRNw1JdrLfQ1aw74lxhXZDqTOMoWNX8Q1BQ==
+X-Received: by 2002:a05:6a21:e8b:b0:1cc:e43e:3a01 with SMTP id adf61e73a8af0-1d30a9be470mr4609792637.33.1726834836430;
+        Fri, 20 Sep 2024 05:20:36 -0700 (PDT)
+Received: from xiaoa.mioffice.cn ([43.224.245.180])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944bc8310sm9761927b3a.189.2024.09.20.05.20.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 05:20:35 -0700 (PDT)
+From: Xiang Gao <gxxa03070307@gmail.com>
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	gaoxiang17 <gaoxiang17@xiaomi.com>
+Subject: [PATCH] mm/page_alloc: Add some detailed comments in can_steal_fallback
+Date: Fri, 20 Sep 2024 20:20:30 +0800
+Message-Id: <20240920122030.159751-1-gxxa03070307@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 3/3] ACPI: APEI: handle synchronous exceptions in task
- work
-To: Jarkko Sakkinen <jarkko@kernel.org>, mark.rutland@arm.com,
- catalin.marinas@arm.com, mingo@redhat.com, robin.murphy@arm.com,
- Jonathan.Cameron@Huawei.com, bp@alien8.de, rafael@kernel.org,
- wangkefeng.wang@huawei.com, tanxiaofei@huawei.com, mawupeng1@huawei.com,
- tony.luck@intel.com, linmiaohe@huawei.com, naoya.horiguchi@nec.com,
- james.morse@arm.com, tongtiangen@huawei.com, gregkh@linuxfoundation.org,
- will@kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
- linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
- ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
- baolin.wang@linux.alibaba.com, tglx@linutronix.de,
- dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
- robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
- zhuo.song@linux.alibaba.com
-References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
- <20240920043027.21907-4-xueshuai@linux.alibaba.com>
- <D4B336WSZNHL.RTMEF39HYUEA@kernel.org>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <D4B336WSZNHL.RTMEF39HYUEA@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+From: gaoxiang17 <gaoxiang17@xiaomi.com>
 
+Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
+---
+ mm/page_alloc.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-在 2024/9/20 19:44, Jarkko Sakkinen 写道:
-> On Fri Sep 20, 2024 at 7:30 AM EEST, Shuai Xue wrote:
->> The memory uncorrected error could be signaled by asynchronous interrupt
->> (specifically, SPI in arm64 platform), e.g. when an error is detected by
->> a background scrubber, or signaled by synchronous exception
->> (specifically, data abort excepction in arm64 platform), e.g. when a CPU
->> tries to access a poisoned cache line. Currently, both synchronous and
->> asynchronous error use memory_failure_queue() to schedule
->> memory_failure() exectute in kworker context.
->>
->> As a result, when a user-space process is accessing a poisoned data, a
->> data abort is taken and the memory_failure() is executed in the kworker
->> context:
->>
->>    - will send wrong si_code by SIGBUS signal in early_kill mode, and
->>    - can not kill the user-space in some cases resulting a synchronous
->>      error infinite loop
->>
->> Issue 1: send wrong si_code in early_kill mode
->>
->> Since commit a70297d22132 ("ACPI: APEI: set memory failure flags as
->> MF_ACTION_REQUIRED on synchronous events")', the flag MF_ACTION_REQUIRED
->> could be used to determine whether a synchronous exception occurs on
->> ARM64 platform.  When a synchronous exception is detected, the kernel is
->> expected to terminate the current process which has accessed poisoned
->> page. This is done by sending a SIGBUS signal with an error code
->> BUS_MCEERR_AR, indicating an action-required machine check error on
->> read.
->>
->> However, when kill_proc() is called to terminate the processes who have
->> the poisoned page mapped, it sends the incorrect SIGBUS error code
->> BUS_MCEERR_AO because the context in which it operates is not the one
->> where the error was triggered.
->>
->> To reproduce this problem:
->>
->>    #sysctl -w vm.memory_failure_early_kill=1
->>    vm.memory_failure_early_kill = 1
->>
->>    # STEP2: inject an UCE error and consume it to trigger a synchronous error
->>    #einj_mem_uc single
->>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
->>    injecting ...
->>    triggering ...
->>    signal 7 code 5 addr 0xffffb0d75000
->>    page not present
->>    Test passed
->>
->> The si_code (code 5) from einj_mem_uc indicates that it is BUS_MCEERR_AO
->> error and it is not fact.
->>
->> After this patch:
->>
->>    # STEP1: enable early kill mode
->>    #sysctl -w vm.memory_failure_early_kill=1
->>    vm.memory_failure_early_kill = 1
->>    # STEP2: inject an UCE error and consume it to trigger a synchronous error
->>    #einj_mem_uc single
->>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
->>    injecting ...
->>    triggering ...
->>    signal 7 code 4 addr 0xffffb0d75000
->>    page not present
->>    Test passed
->>
->> The si_code (code 4) from einj_mem_uc indicates that it is BUS_MCEERR_AR
->> error as we expected.
->>
->> Issue 2: a synchronous error infinite loop
->>
->> If a user-space process, e.g. devmem, a poisoned page which has been set
->> HWPosion flag, kill_accessing_process() is called to send SIGBUS to the
->> current processs with error info. Because the memory_failure() is
->> executed in the kworker contex, it will just do nothing but return
->> EFAULT. So, devmem will access the posioned page and trigger an
->> excepction again, resulting in a synchronous error infinite loop. Such
->> loop may cause platform firmware to exceed some threshold and reboot
->> when Linux could have recovered from this error.
->>
->> To reproduce this problem:
->>
->>    # STEP 1: inject an UCE error, and kernel will set HWPosion flag for related page
->>    #einj_mem_uc single
->>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
->>    injecting ...
->>    triggering ...
->>    signal 7 code 4 addr 0xffffb0d75000
->>    page not present
->>    Test passed
->>
->>    # STEP 2: access the same page and it will trigger a synchronous error infinite loop
->>    devmem 0x4092d55b400
->>
->> To fix above two issues, queue memory_failure() as a task_work so that it runs in
->> the context of the process that is actually consuming the poisoned data.
->>
->> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->> Tested-by: Ma Wupeng <mawupeng1@huawei.com>
->> Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
->> Reviewed-by: Xiaofei Tan <tanxiaofei@huawei.com>
->> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   drivers/acpi/apei/ghes.c | 78 +++++++++++++++++++++++-----------------
->>   include/acpi/ghes.h      |  3 --
->>   include/linux/mm.h       |  1 -
->>   mm/memory-failure.c      | 13 -------
->>   4 files changed, 45 insertions(+), 50 deletions(-)
->>
->> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
->> index 93eb11482832..60d8044f14d1 100644
->> --- a/drivers/acpi/apei/ghes.c
->> +++ b/drivers/acpi/apei/ghes.c
->> @@ -467,28 +467,42 @@ static void ghes_clear_estatus(struct ghes *ghes,
->>   }
->>   
->>   /*
->> - * Called as task_work before returning to user-space.
->> - * Ensure any queued work has been done before we return to the context that
->> - * triggered the notification.
->> + * struct task_work - for synchronous RAS event
->> + *
->> + * @twork:                callback_head for task work
->> + * @pfn:                  page frame number of corrupted page
->> + * @flags:                work control flags
->> + *
->> + * Structure to pass task work to be handled before
->> + * returning to user-space via task_work_add().
->>    */
->> -static void ghes_kick_task_work(struct callback_head *head)
->> +struct task_work {
->> +	struct callback_head twork;
->> +	u64 pfn;
->> +	int flags;
->> +};
-> 
-> I'd rename this as ghes_task_work. It is too generic name IMHO, easily
-> confused with task_work.h definitions.
-> 
-> BR, Jarkko
-
-Agreed, I will rename it in next version.
-
-Thank you.
-
-Best Regards,
-Shuai
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 0aefae4a26b2..8b0634d1728b 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1818,6 +1818,13 @@ static bool can_steal_fallback(unsigned int order, int start_mt)
+ 	if (order >= pageblock_order)
+ 		return true;
+ 
++	/*
++	 * movable pages won't cause permanent fragmentation, so when you alloc small pages,
++	 * you just need to temporarily steal unmovable or reclaimable pages that are closest
++	 * to the request size. After a while, memory compact may occur to form large contiguous
++	 * pages, and the next movable allocation may not need to steal. Unmovable and reclaimable
++	 * allocation need to actually steal pages.
++	 */
+ 	if (order >= pageblock_order / 2 ||
+ 		start_mt == MIGRATE_RECLAIMABLE ||
+ 		start_mt == MIGRATE_UNMOVABLE ||
+-- 
+2.34.1
 
 
