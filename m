@@ -1,157 +1,170 @@
-Return-Path: <linux-kernel+bounces-334321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D7F197D5B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:47:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 905FE97D5BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D354CB234F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:47:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52F7A282191
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4848516A943;
-	Fri, 20 Sep 2024 12:47:27 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20D416B391;
+	Fri, 20 Sep 2024 12:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+ce2VNi"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A9315CD78
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C77165EEB;
+	Fri, 20 Sep 2024 12:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726836446; cv=none; b=bW1qi9bx550nG/znQmJiSTt+7kWMUu4Dl/XhpvdrdoFkghi5vJp+qAPJVWs7vf4pAYqeFxlk1LIBUva25zTEX7uvlZQkTMd6ae5kGm9VB76Ja9K8g7F5WpDy63r3Fl0zsIh+B/sexeqZvuue63BwXvajy4y+vytRTk9HAqVm3sk=
+	t=1726836476; cv=none; b=G9OPJ8L9NXLAqqFmURB1xGCw3et4TWk+QlSnTC+7uXka7hAoZx797aj9GdRh4Zam72wx0SbdacMbq1LW0lnTakv00N9177i2fgv8ePIBVrC/dIxmSBuif7JvB4X6RY99rO6i3a8bXvMmDJ/Yt5z0dDhA5duWkgPt4ViqnEnricc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726836446; c=relaxed/simple;
-	bh=tD3iDft4SBwpBaSHl8NlI2gqYGQHO0INPEO5LqHu1QI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=D+95tMoF5wbBavFXKyC4szXkscEenSLJ9DZv2FUYNyfT1VSThp97InsBdqKhjylpGwUTS0SkVYyFvYv7cGAmNJNoc0oG/BdeK3T0EQddYOVeANywwWhYP07Ke+i4N3Y2sPqyWcBsH+LWzEz9s5rNtaDZQEV4JQ5gtnrPYPOkRfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0ce8cf657so520665ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:47:25 -0700 (PDT)
+	s=arc-20240116; t=1726836476; c=relaxed/simple;
+	bh=RzaI1Bue8WUSTHVDYIvRA1yKnKrbyy5a7y0/P3CYtBs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MbF58NEUbqMvqlhXEpm7Rlo5UDDpFsSZ0m8svdq7rJj7KQ8dLVDXBFKscB64TthtxhHddNmv0rgzGmIBQ/cozBzEwyL6DZ7Tu9b7B00DNzV2Ibj1cXABpG6/dIWaschLqOvJomEhLeByunn40xZbYeQ0CN/nsGLzgZC0CYuxjvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+ce2VNi; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c466170bfdso391163a12.1;
+        Fri, 20 Sep 2024 05:47:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726836473; x=1727441273; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RzaI1Bue8WUSTHVDYIvRA1yKnKrbyy5a7y0/P3CYtBs=;
+        b=g+ce2VNiH9NkeBPtAiRGP+Tpb7+mneEG6BZdXPELkoyAXZM7xK8BSVtjm3y0wAF+we
+         7fE4Bb1kA2i1/vmwmJTZMeOXBHIxf/bokUUp5/IXHscCUpQ1DmUfA/f230GEEGVCf4Z2
+         PjvNFslW214S9ZLvVUbX3RRxYV80DprxpFEnimV8l2su77jVoqOym7sWacBtD5bZ8apk
+         O2wwYAH1Fdqg+fCEZNtoakkeKkx9nDFqrO0R8A0VHCw26gwlyLMMzQiTaDOVtQ7AGakC
+         G4lmkgL2Ky7wmXKp3fXqrNXulL/cE7WxUxXZFuFcGTjuOD8bkRg9BwlEZE0ezFypLfhm
+         v8JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726836444; x=1727441244;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1726836473; x=1727441273;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=IxIryZOr6HYqrQlJxWr1jnYP1uSOLuO/kQSlwcjblKo=;
-        b=AamxHa0AUQ2Pi+ZVZmS+897qxpag/lWbyrNmhb0kW6Hgfc2e3L8WaBzMeo90WnwXoR
-         A8Y4nvNZwZLT0ddt1zNTWUZtHRz0UFWrqTlzLQdR1vzvbpxfhr6NJ4Y5k/LJ4z29XWa2
-         twvl1p0lx03pusjByLhIXM9NdPZerCImKcKiVlr3ATmmzu14IOVw25DIVf0jNRvffYeF
-         kkydVfKN1hSoYZiDEXfxl6ZJpDbCB4zuI08qsyn2b/dBKR/7frBMM7BaIUwz6VXGyZzi
-         EsTDf/hrYWTZML18OXD3Zt4I3h65tcsx1jwng9F77QHN6fuwExRkf79uxWmUjTLsitIY
-         JkxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXenKcsvta5eqhVN2B7f8Cg1D/MOl3ForIk19wB5CpJYXa62BeuMAbJi0u+hEGonnqh9CEA9hNRPFJSkGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztGZQk2LNSbi7HKC3H8F/kxj8mHlPAKWSN7/iU66uXEYeycjMM
-	8O211TN746FL7kDUmFWzII6k3rStWd/nP/ItlaSCQx8+0gkeWLVxWzeQ420QkatrtQsQKNgoFWg
-	XnkD+i7Zb82/TxPFp8+SjXerXMBkLOQpYImCtjcyk++ROk4tp/m2P7m4=
-X-Google-Smtp-Source: AGHT+IHyg/NSSAXQ6bcrGSnBfOGrXCWgOAeuOULXE3fpQN4XrKArcp3ok4OS8tizrd/GiQq5XkG9rH2jRv2x62m/Ki2fK+6/Y32U
+        bh=RzaI1Bue8WUSTHVDYIvRA1yKnKrbyy5a7y0/P3CYtBs=;
+        b=LRYsO571wR3QgP8mku/WoTdutIEU0BgAzY25IdI9mxXjWb92tgylnOrTM89TYmznaP
+         aj5FBAqhT+evZe5S/ZAiPAtIa77q9Fsszw6tTk8xKVffSwM5+xn/kBeZnygdIGFTAgnS
+         fAcCT7aft6rrbdYa2cBQzyEX8IGaoBnt8/7Y28GlYwFr/6aKfGiKMT9ROfxe6XLvJrLm
+         VVbcTSkeLpreLnKhNPbf04BL+GCAvN8tA2OqWovxzi0ZLKPj83JV4x4FnGRpHuy7c68b
+         MLeGyAuChBbZP2fCVxt31X8Z7wEy5ghwwEl1VS5b5FlwuSEgNTWYPh86/tPC2jP3F2QJ
+         3Kqg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5jqC9MX2KTkpnoiDvaPT7bE4q28PJGR/u2q4m6OaD9Fse8NcuOS5ATJeR6yWWUrOiDi1n6+QLknkPvVvo@vger.kernel.org, AJvYcCXkwK8Quc1QpUbifbXPVs4M60O2eMNyjX24APCIAZqS8NUxf+kQ0b0vsDPFDFKEGj8Q3pE57cz1Q8tl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyncm5ZrQS/zyPZ+OdBoK9xgaw2RHh2OYTMsmecPmml8hQwjRO6
+	AQxQY9bk0dxC/3+elgkvQJ372/xH3v/+9fTrOGgCV56pZ+Z8YWDj
+X-Google-Smtp-Source: AGHT+IGvK6Je6lL02ozpRaYklA0yiDCKfJuDxR/k7NOTIJ9ruYRb6YZUw/mv1vmSox7D4LVmdMFcvg==
+X-Received: by 2002:a05:6402:50cb:b0:5c2:6311:c9d1 with SMTP id 4fb4d7f45d1cf-5c464a5c02bmr1993961a12.22.1726836472348;
+        Fri, 20 Sep 2024 05:47:52 -0700 (PDT)
+Received: from ?IPv6:2001:a61:341e:1201:c434:b5b1:98a6:efed? ([2001:a61:341e:1201:c434:b5b1:98a6:efed])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb5dd02sm7221881a12.41.2024.09.20.05.47.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 05:47:51 -0700 (PDT)
+Message-ID: <36e4c636578f2871c0f6b4c6242d71e409215ae0.camel@gmail.com>
+Subject: Re: [PATCH v3 02/10] dt-bindings: iio: dac: axi-dac: add ad3552r
+ axi variant
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Angelo Dureghello <adureghello@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ Sa <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, dlechner@baylibre.com
+Date: Fri, 20 Sep 2024 14:47:50 +0200
+In-Reply-To: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-2-a17b9b3d05d9@baylibre.com>
+References: 
+	<20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+	 <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-2-a17b9b3d05d9@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a43:b0:3a0:a070:b81 with SMTP id
- e9e14a558f8ab-3a0c8d2ea34mr32629695ab.23.1726836444433; Fri, 20 Sep 2024
- 05:47:24 -0700 (PDT)
-Date: Fri, 20 Sep 2024 05:47:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ed6edc.050a0220.2abe4d.0014.GAE@google.com>
-Subject: [syzbot] [io-uring?] WARNING in io_sq_offload_create
-From: syzbot <syzbot+71b95eda637a2088bd6b@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Thu, 2024-09-19 at 11:19 +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+>=20
+> Add a new compatible and related bindigns for the fpga-based
+> "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
+>=20
+> The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
+> generic AXI "DAC" IP, intended to control ad3552r and similar chips,
+> mainly to reach high speed transfer rates using an additional QSPI
+> DDR interface.
+>=20
+> The ad3552r device is defined as a child of the AXI DAC, that in
+> this case is acting as an SPI controller.
+>=20
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
+> =C2=A0.../devicetree/bindings/iio/dac/adi,axi-dac.yaml=C2=A0=C2=A0 | 40 +=
++++++++++++++++++++--
+> =C2=A01 file changed, 37 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> index a55e9bfc66d7..6cf0c2cb84e7 100644
+> --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> @@ -19,11 +19,13 @@ description: |
+> =C2=A0=C2=A0 memory via DMA into the DAC.
+> =C2=A0
+> =C2=A0=C2=A0 https://wiki.analog.com/resources/fpga/docs/axi_dac_ip
+> +=C2=A0 https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.=
+html
+> =C2=A0
+> =C2=A0properties:
+> =C2=A0=C2=A0 compatible:
+> =C2=A0=C2=A0=C2=A0=C2=A0 enum:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - adi,axi-dac-9.1.b
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - adi,axi-ad3552r
+> =C2=A0
+> =C2=A0=C2=A0 reg:
+> =C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
+> @@ -41,22 +43,54 @@ properties:
+> =C2=A0=C2=A0 '#io-backend-cells':
+> =C2=A0=C2=A0=C2=A0=C2=A0 const: 0
+> =C2=A0
+> +=C2=A0 '#address-cells':
+> +=C2=A0=C2=A0=C2=A0 const: 1
+> +
+> +=C2=A0 '#size-cells':
+> +=C2=A0=C2=A0=C2=A0 const: 0
+> +
+> =C2=A0required:
+> =C2=A0=C2=A0 - compatible
+> =C2=A0=C2=A0 - dmas
+> =C2=A0=C2=A0 - reg
+> =C2=A0=C2=A0 - clocks
+> =C2=A0
+> +patternProperties:
+> +=C2=A0 "^.*@([0-9])$":
+> +=C2=A0=C2=A0=C2=A0 type: object
+> +=C2=A0=C2=A0=C2=A0 additionalProperties: true
+> +=C2=A0=C2=A0=C2=A0 properties:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 io-backends:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 description: |
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 AXI backend refer=
+ence
+> +=C2=A0=C2=A0=C2=A0 required:
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - io-backends
+> +
 
-syzbot found the following issue on:
+I wonder if it makes sense to have these specific bits only for the new com=
+patible?
 
-HEAD commit:    adfc3ded5c33 Merge tag 'for-6.12/io_uring-discard-20240913..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10ccd500580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c7cbb8108ed6b75e
-dashboard link: https://syzkaller.appspot.com/bug?extid=71b95eda637a2088bd6b
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=156d5fc7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ccd500580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f36034d78003/disk-adfc3ded.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/312ad0ebcf45/vmlinux-adfc3ded.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/06eca1ed13c5/bzImage-adfc3ded.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+71b95eda637a2088bd6b@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5230 at include/linux/cpumask.h:135 cpu_max_bits_warn include/linux/cpumask.h:135 [inline]
-WARNING: CPU: 1 PID: 5230 at include/linux/cpumask.h:135 cpumask_check include/linux/cpumask.h:142 [inline]
-WARNING: CPU: 1 PID: 5230 at include/linux/cpumask.h:135 cpumask_test_cpu include/linux/cpumask.h:562 [inline]
-WARNING: CPU: 1 PID: 5230 at include/linux/cpumask.h:135 io_sq_offload_create+0xe3d/0x1090 io_uring/sqpoll.c:469
-Modules linked in:
-CPU: 1 UID: 0 PID: 5230 Comm: syz-executor334 Not tainted 6.11.0-syzkaller-02520-gadfc3ded5c33 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:cpu_max_bits_warn include/linux/cpumask.h:135 [inline]
-RIP: 0010:cpumask_check include/linux/cpumask.h:142 [inline]
-RIP: 0010:cpumask_test_cpu include/linux/cpumask.h:562 [inline]
-RIP: 0010:io_sq_offload_create+0xe3d/0x1090 io_uring/sqpoll.c:469
-Code: 44 24 08 e9 2f f7 ff ff e8 a0 8d 0f fd 44 89 e3 e9 06 ff ff ff e8 93 8d 0f fd 4c 89 ff e8 6b 5f 7f fd eb ad e8 84 8d 0f fd 90 <0f> 0b 90 e9 f3 fd ff ff e8 76 8d 0f fd 31 ff 89 de e8 ad 8f 0f fd
-RSP: 0018:ffffc9000369fcd8 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffff88803234bc00 RCX: ffffffff847b951e
-RDX: ffff88801f7eda00 RSI: ffffffff847b972c RDI: 0000000000000005
-RBP: ffff88802b2aa000 R08: 0000000000000005 R09: 0000000000000007
-R10: 0000000000000008 R11: 0000000000000000 R12: 0000000000000008
-R13: 1ffff920006d3fa0 R14: ffffc9000369fd20 R15: 0000000000000000
-FS:  000055557be9d380(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f88aadf0df8 CR3: 0000000078b14000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- io_uring_create io_uring/io_uring.c:3617 [inline]
- io_uring_setup+0x180f/0x3730 io_uring/io_uring.c:3726
- __do_sys_io_uring_setup io_uring/io_uring.c:3753 [inline]
- __se_sys_io_uring_setup io_uring/io_uring.c:3747 [inline]
- __x64_sys_io_uring_setup+0x98/0x140 io_uring/io_uring.c:3747
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f88aad91919
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe74f4e298 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 00007f88aaddb105 RCX: 00007f88aad91919
-RDX: ffffffffffffffb8 RSI: 0000000000000003 RDI: 00000000000003ff
-RBP: 00007f88aaddb0e3 R08: 0000000000008000 R09: 0000000000008000
-R10: 0000000000008000 R11: 0000000000000246 R12: 00007f88aade009c
-R13: 00007f88aaddb0a3 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+- Nuno S=C3=A1
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
