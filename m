@@ -1,418 +1,183 @@
-Return-Path: <linux-kernel+bounces-334656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 620C997DA12
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 22:27:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB4A97DA18
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 22:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15912284245
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 20:27:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 294CFB21BB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 20:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597001849D9;
-	Fri, 20 Sep 2024 20:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IzqRU490"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2081.outbound.protection.outlook.com [40.107.95.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78916183CD2;
+	Fri, 20 Sep 2024 20:32:25 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B86913E04C
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 20:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726864020; cv=fail; b=dHDsNygBnzoRU7smh6YIjcJtZw+KEEBmjXqwgecG2bw8JKyBs5dOxEathbDmvcxf7ElHyOsGWWwxLNZ5oitvYBiIJahH5Tq5JiyvhCsR3isancZeQ4RItvoG0fj8yP3gIoF5pj3/kyOMFood8aYOo3pEq+33LJOwu4FwXlwd7/Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726864020; c=relaxed/simple;
-	bh=bTZD7UtnU1f9Yrb/qgdogcs4sA7NN0K9OcePKkD/TFI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Pj43Z54yLxcsaRsm3sLhlO2wcc7N9+VzxwjCsz6GEJP70Kvv2b93jMhuvZ+Li+8xjb3hEtKYYzrOV9VTBerpMy/t/Jl7VIipra0QZxpmcgHOJh6t5laYxKBCddMLr7BWQOFvEdeKUG7GviqSD3xLVM09rIiwejde8Cd/d1wh1wY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IzqRU490; arc=fail smtp.client-ip=40.107.95.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UXqCgdm07jiufBEfrA55ZIKNGZoNk8oEcX085c4l/LQutmjNMZNHUuodRIIZHoILs/5fA+vYtVKp0LoLl4rBYtcUaQ72gk/ia6dJU2ebs8x0dwTi8aG1Rlm1mvos03KOBOXwiFstRVd723kO8IQ58IvHjeidBMMpC2JYLloWVflj4T3p+TpfrLnerE8wrPFJ5FY6jRMHMDH1FEwt+mgq2XLSOoXog1Os3lAat8mTMkD1708QnOH2sASKp0HrXaVzSq2Sqe43oPBC7ODet5WkaluEu/kyz8zDTH1p84buyk+YJf7C0ZvR1WQheJ80VjVhTMKC5EUt+u5A7iqrrq9+rQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IvBLUGoTv9qDcdBjMpdKjYLOu4SMXrqqieJu20MSiLI=;
- b=Th5YM6S8tOCohhYlsK7b3pO9NJG+tV3YckaeLylA/+DofDEfDeaDrbWUTLy0ir9VHn1e058kpUwdd+P1HvO+uTvylPZleQetSXTEdUq6Vv16sgYoRqckev1DOa1eJWm/LdUExMHPWGdsPzrIOlobtLpKpD5c3fWDSfT99Rw7ohw3Sjgwz4hUOYh8yWxmPC5z1xdv+lZIPWO5nYfMw8BT3GiF/bP+2PniuqUHlTAIzLTBcwQReT2lWu0yysfmmTXb3OBhckEehajs5Q526eNUF+vSKyKd4TVpQmT8WZ7mQ18svWulL2+po2OTeViVO/+t8VEU1A3JzByXVFZHy9mmUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IvBLUGoTv9qDcdBjMpdKjYLOu4SMXrqqieJu20MSiLI=;
- b=IzqRU490YfFNt2xhRnm1p+11iWuDQpp2lGVzetRYY5c0Z6QA8Jgo1uptRkiMW5AB7kLEK2et8xGBbDZ4gTKdB079N4So18sNQf5QkkZto1UwI4y1OjXx/VakACTXnbpD4b5hJni57q5NANqFufiEFEAnPtjBq6iMKbDzkcwCwEc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BN9PR12MB5115.namprd12.prod.outlook.com (2603:10b6:408:118::14)
- by SN7PR12MB8130.namprd12.prod.outlook.com (2603:10b6:806:32e::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.22; Fri, 20 Sep
- 2024 20:26:54 +0000
-Received: from BN9PR12MB5115.namprd12.prod.outlook.com
- ([fe80::9269:317f:e85:cf81]) by BN9PR12MB5115.namprd12.prod.outlook.com
- ([fe80::9269:317f:e85:cf81%2]) with mapi id 15.20.7982.018; Fri, 20 Sep 2024
- 20:26:53 +0000
-Message-ID: <ece41917-2ea7-4571-83a5-a50c776c6587@amd.com>
-Date: Fri, 20 Sep 2024 16:26:50 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] mm/migrate: Trylock device page in do_swap_page
-To: Alistair Popple <apopple@nvidia.com>,
- Matthew Brost <matthew.brost@intel.com>
-Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, simona.vetter@ffwll.ch,
- Philip.Yang@amd.com, akpm@linux-foundation.org, christian.koenig@amd.com
-References: <20240911030337.870160-1-matthew.brost@intel.com>
- <20240911030337.870160-2-matthew.brost@intel.com>
- <87mskehjtc.fsf@nvdebian.thelocal>
- <ZuS/NH/P8Fl+qptx@DUT025-TGLU.fm.intel.com>
- <87msk5our1.fsf@nvdebian.thelocal>
-Content-Language: en-US
-From: Felix Kuehling <felix.kuehling@amd.com>
-Organization: AMD Inc.
-In-Reply-To: <87msk5our1.fsf@nvdebian.thelocal>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: YQBP288CA0047.CANP288.PROD.OUTLOOK.COM
- (2603:10b6:c01:9d::20) To BN9PR12MB5115.namprd12.prod.outlook.com
- (2603:10b6:408:118::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B28C2032A
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 20:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726864345; cv=none; b=dXpsdSvUTMGEEmPsnZ/Pd3+cVXE3ysYxNpmbm1v+1Ie5FpKK3UowhJHTpAB9c5MBoNfD5S03FoiJBQDjxq82Ipgh/O51/gC7dFqWiVugOqCvf7pdn4KDDEN+9x7AZSw21QG/OUrAUZFFcgwgPvFNPHKiTU4RKfT5MZe2ttwMBk8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726864345; c=relaxed/simple;
+	bh=mEneWP1qBGs0CnJElUkcKJfUKMxN8NqiBW+1XFVnoRQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ns20I+2weK31BTDJzq4Ady+iVykBWLjcYZePF6IiKn4ZOh2RwXw2Os4waR9X5AvzG+lLmCyfeRSCRHr3NCN2lptfgHfmE5nIkUer+smO+geER0a0WBqo7p8htZExmcM+CGtiQRv52v14u07+I84XxBpGmYfXuUuhxyS15ZTbnBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0cd6a028bso10236725ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 13:32:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726864342; x=1727469142;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zH4CGun5FdXs5sVSKWrYadSnvsfpjmcreRzHvorZMe8=;
+        b=aZR8bW8FJ7+ojaUmc5PCG2t9oUZgwvxWHOUgUYDx36yK2LJw7fcEMz8fEHrE/VjsBi
+         cCVo5MEP1raGw6cvTjESOmf54DndFGY6RJqEdt7aDTdKoi1ArMtiPJp76MSNBVWx4ucD
+         9ke/5csi+vvkyXUVyAXl2FOX/d+g4PQgZcshy4us+2mwySITYYzvuoVvbnBWBdoQX1FW
+         0l6RnuewZSzAQEKis5Eg/xYsSCcGmGgB0oZuSfgrKg4rJA5sp+N6s9YaByasS+RZ5oOo
+         g3jNPIjgR1uddSzprSSCoEj0/3IdCz+hnphox5tDJsvETNSuKeFYvW+qmGb6P9HguzKO
+         SdXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxl/b/CkE5AGJg83XxlrUEN8PDexfyidDxnD+VB20Ys+hd2dy7gnGAE8ACh0Z/mJrNRGZZFKMVD0LyKGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxfy/uluSY/K8PmpEE95fnfWSmjhLqi2cjC2+DemVmfrYO4A14K
+	w//4QA0/3zsM+v/oig7mXwKA03RK7Gv4TW+ZlLC8+WBNbPVvP5WWqeQ6C2LMk475JNcwNgF9R8S
+	MEwazTRDwFuymJ+OL7/1s6Kedu8DBbCdk5liAPFvXSnLLuj6GE58RlTQ=
+X-Google-Smtp-Source: AGHT+IGLD46nYhdO8KHMYv0/RE/yy1oHfRbkBTtWpimknnuvwzEg3rHsq6LbvOBKgnMU+J5M4eoVj8xQFtv5zM7LILo+KGKbk+Vf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN9PR12MB5115:EE_|SN7PR12MB8130:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d216788-f434-4cd7-cc48-08dcd9b290da
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SVBiZjB6dXNrdHhyRGQ5M0pUNHlZdlIzaEpGejd4eDRsYVVzcFh3ZHAyWks1?=
- =?utf-8?B?UG5ISkR2OWs1RGUzM1dXYjBBcFVkbE5mbTJBamNhMXJHWnhLeVBZQXQ5Zkti?=
- =?utf-8?B?OXNqRlN2NVRuTDltVEtRdjROMFpHMlQrT1QzenJWN050MjlCVUVuMnF0Zk44?=
- =?utf-8?B?TzZGYmh4aUJKbzhMcmZDQTltL21rZmczYTRLRmZsZk5VdmwxYWZVNis4RG12?=
- =?utf-8?B?UWZ5WGlEZDZra2xDOTZWM1Vhd1NseGVHR004VjY0VHF2WFFMZC93WWRyWkQ5?=
- =?utf-8?B?K3FjcGJKODZsbjc5bndlVVVOdWk4VnhzRmtORTlSM1JJR2tPbGxpOWd3Vk1l?=
- =?utf-8?B?djFrMk5GMkJYZGE1Z05BdzdiZ1BRcGllQ2g1UmQvUnN6U2Z5a3FDVWZNS3hZ?=
- =?utf-8?B?eVVZUEczYUJ5alJ0WmZFWXJ6TnUxTWZhamVwK0hpd0V2NlBNejlibEp4ZXJJ?=
- =?utf-8?B?bDI5VlNrOWtveHBWL2NmZlBGT3k5T2wvcFBCTTFDUVRjc2NOYkJ5YzNRTjZY?=
- =?utf-8?B?bStqcTI5emRiVllSRzdMellvQm96OWhzMGJRMHdKR1V0T1A4OTUrNkVIdXYr?=
- =?utf-8?B?UnB3SWNieCsyVlN1dHRZSWJqbUdVT3BEWTJESmVRbnVBSHhlL0RQZDdQZm5r?=
- =?utf-8?B?eWw3SHlXVGhiVlRMN3psc1R2NGVWT0FUYi9jUGcxSGZBMzNFUVZ2MGlSWEF2?=
- =?utf-8?B?MEZzckthVmVaV3lLdjBaVVM0MVRxT3pIWWZicG5iMzlJb3M3RjRhUlhrMU5q?=
- =?utf-8?B?SkNaYm03Mjd1L2x1cVJQK1dvMmJFZlBqMCtDckkyOVlFOHVWSnQvUkpLYmgv?=
- =?utf-8?B?aGRoSTZ1aHBJU2JhMmxwQTFwbDJReTRSMFVLcWFQU2JndmhBS2lpbzZXU0dI?=
- =?utf-8?B?SCtSOWp0MTNEYzdXbHBWUWFvU1VTYytzMTZtellzNk1MSzU4TkM2dXg4Wjhx?=
- =?utf-8?B?REx5cXRiWDMzdnh6L2lhSzlPL2N1ZTdGbFlwYnRLT3l1Z0wwenlzNTJ3RFdV?=
- =?utf-8?B?RS95ZWpZbndMSHp0TXNpa0J2dzBsVXhJa1RtR3JGaWppZ1NoRGMxWG1BMDFQ?=
- =?utf-8?B?WVVnV015Z1BXZ3NnRmd6dzdxY3E4Q05hVUxrQTI3NHRTcnVicXR1MFV2dzJK?=
- =?utf-8?B?OThSVVlMK0F6blprSXRETnRNb3Z5Y1JaZHVBY29VUjZ5QjNSMHZNbkx2RFl5?=
- =?utf-8?B?N0FnaGgybWVBcXlPbnIwSXlULy9nVXlOMlNLVDJQTFBDYkN5ZW1FUEZrWWt4?=
- =?utf-8?B?Z0pKa2RSczcvTk9ZbmdmUnZ2ZjZ1aThHd3R1UG52UWlscTJkN0k3SThKWnJZ?=
- =?utf-8?B?SFdBc293eG8ybFdqVXV4R0sxS2w5bjdvQUd4UFoxSXJhL3FCVjh0WGxEaStJ?=
- =?utf-8?B?RE1FZWJJQTR6dENycGdWcHplK3dOcjVYM09YTjhaTDdIUk9PQU1sUi9QVDIv?=
- =?utf-8?B?bmtjRlh3dm1lTUFwSWxFTGNQS0tlaVlVZGZDMFpEeUpOOFBNY3lZM1JvUS94?=
- =?utf-8?B?QW5sY0NBVUErRGFKZzhLRlljZWpLUXZQTlY5VS9UaW5odmpPVWZwYXM5ZlJx?=
- =?utf-8?B?Tk8rdXQyYjhKR2pKeGVzWGZXQUhUa28ya2pqaXdnc3ZDRHlOd1JxTktrQnJs?=
- =?utf-8?B?eC9QRXlDbGNMN004YXhMa252UVhQaFYzOHNOUlNZWWVHekthUWNTdkpwZjlM?=
- =?utf-8?B?SGtwRWJySGRGbCtES0N3SGwyY3NWNnVSdysrTmJLNlU2VkhSYjhmdUl6YVV4?=
- =?utf-8?B?VnAxcWwzWERYenJUWGV3UDd6M2FYTWFXTHdYWFhHNSttL3RWeXYxMTYwNVIy?=
- =?utf-8?B?T09BeEREblZqRnIwSWU2dz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5115.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dURYeG5yVnZOQkNzTzBqTXF2YUJ1SW5qckRPL0dtcWNSRUFoMldZLzRTOGVi?=
- =?utf-8?B?V0x1bytocnB3TDFOby9pY3BvNVgvTUp6N2oycG5rYmtZbnN2VVk4R0IxcWVK?=
- =?utf-8?B?aGRDM1RaWktvUFNXK2tPSjl4R3NHRFRmdjgrTzY3Nmc0eXlBeHgxeHVMb1B5?=
- =?utf-8?B?RlExaU9OUkU3UEZSN3FpdEFSaDJHa0RRNDh1aVUwMkxjY25QTDFxcmpZc25P?=
- =?utf-8?B?Z2JuOGt2RjE1ZTBWbWFPYkFMcFJKQ2dHQW45aHExdXFMTGJLR0Nka3F5TmNL?=
- =?utf-8?B?QkVKd0FZRElMNDNQLzhqL1lUeUlubElnVzFURHBROENoOGxmYkVaYXlSYVhI?=
- =?utf-8?B?WVBzQlYwbFlQMjRHb3Y3ZjNZV3hzUEtBZlJjTjZhT3BreUt0Z0dKWkQzTjh1?=
- =?utf-8?B?ZGszNVZsVzQ1TUVzbXByNUV2TDNVYmozclVvV0lRU2F5NFNSd2IzbGtPYS9V?=
- =?utf-8?B?RUs2aGJPMHZ4UU1wOWhkODgxS2NSdXcyT3krYXFOOHJmcUYyS3dIdTl0M0JN?=
- =?utf-8?B?amFWd2RNWjVlcjRYN3ZkS0k1QXlKUG85VDU3Wjkra2F6YWZGUjlwR1B5bkRR?=
- =?utf-8?B?Qm1QZitxTUl4WTI1b2t2T29RdU5VUmQrOENFMDR2cC9zdkQvNDFOV2psd1ZY?=
- =?utf-8?B?OG5kMEZMWDJGVFhRdUgvTmFHTC9ENXMwajMwSVBJZEpzd2Uwc1BmZ1QwSnkr?=
- =?utf-8?B?dnZMQ1pEMHprRnBMTm9yMnBnaThJclAxSjZZejhkSnVDVWhLYW52ZWdiTHNr?=
- =?utf-8?B?SE5KTzQzWlFLYzBvQjFNNFR1RHpPUW9RL1p6ZHlsb21QNE5uUE1KTWN6V2JP?=
- =?utf-8?B?ZU1PR1JrbklLUWZnL3IrUVhZOG9UMDBTSVBCNjd1eEhUbFlxYzZNVnlGL1VP?=
- =?utf-8?B?ck9BclhocHEzQ0Nrb2Yrbms3Rk11SlBMNEU0YTBzS0hlMW9nVFNJZzFZeFFr?=
- =?utf-8?B?Wk53MTFRS0xPV1lteU5wb29oUWV4QnBMUURZWUppTjkxNkhMWlE1c0lrZG9G?=
- =?utf-8?B?WnpjcFVyWURzeWRZejlUaEwyb0JSU0xUZ0JBbHo3eXJXMHpXWEN1YWhLWEd2?=
- =?utf-8?B?bEtVNEc2UVhRbktVWFNNeXNsenM2c0l2VnhINWRCa0tLdWtoUU1ib29tYkRm?=
- =?utf-8?B?bzVHdm5RTGtPYkJ2S2RLQlJMK243SkdVbEtNRFZob1FZajUvZDlLeUEzZmFi?=
- =?utf-8?B?R3lsV01PQnBkbHFUR0ZaRnl6ODF2aWZNcUI5U0JDb1h2YytpQ1FXOVdyTmRK?=
- =?utf-8?B?Sk14U1dEM2hPQVJqMUVCenNONzhhTERSMXdaOUFwZGY1WjQ0eG54OUVuMUh2?=
- =?utf-8?B?SHlVRzVRdHppVEdMZmhnZm12M002UTJkWThVVnVuMWVkTUxOWTRSd3J0Y2FT?=
- =?utf-8?B?VFdXTnRtdEVET0UyeHp2c2F5NW5pZUV5THVjbU5rbmRQbk5JdEhaazU3cmRm?=
- =?utf-8?B?TXZHbTAxMzYwdDZBbjdzNU8ycmgxNnNyUUc0SFdodUNEM2I4QkZnYzhYR0VP?=
- =?utf-8?B?ODVsb0hoaTYwdEMvZEhiTUFYTUV1WjdVakw4OFA1VE1XTjJUc2czZUtCK3Fp?=
- =?utf-8?B?QnRGRDREM3NaRTcxSkZhYUJONmdQSy9HNWd1NmdLcEZyZFA5aGdEY2JxUFdm?=
- =?utf-8?B?NjIzWVBSdnBSY1piTVY2TmdRc0N0MWVYdkhBSW44dUJ3Z3l4cXpmMHhpbDdC?=
- =?utf-8?B?bHhPTUVNV0JhOUFkSW00ZXAwU1M4TWdFdmtDSS9UZ1E3a3o4bC93Q1g1eTM5?=
- =?utf-8?B?L0RxTWdIVHJhSjZ5TFZyNDVvZ1BsMFNhVFlIZ2lLQkgrNnFYQXNrOVdtOGhF?=
- =?utf-8?B?UFdDaEFYVjVLMUQ5ejQ5VGloV3dqMm1naXVrWk9NcnFSZnJMMWxybTVMZ0hJ?=
- =?utf-8?B?akVYV2YvWC8rUlFEOWNaZU1pK2d3MStJdTk1aXl4VjVXcDRxMXBjcTdaTlJ0?=
- =?utf-8?B?OGZwdUxCS1FHZm0zaEdQb3ZkVkYyUzMxbC9XQ0Z0b094UmtqVE9hajV6QVIz?=
- =?utf-8?B?SE9DcVFmVHQ5OFZZOFdTV29ZdWc3UFc3ZzNUMjV3UlNXTlNTaEdkamxkUGUw?=
- =?utf-8?B?bjAybmdjZm53ZVFTakNuN0VzM1ZlQTJScVpLM0QzOXZHNHBlaWY0aERtNG5V?=
- =?utf-8?Q?Cor2yDGdz+8dQQzvFsZKITA5s?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d216788-f434-4cd7-cc48-08dcd9b290da
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5115.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 20:26:53.8826
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: m2879BjB+7R3bZYRhRBAQeHiI8H2G32lB4GPGFC0RxajH7Ou+ylYSvVrdbjbbH5PMuU7oi6ao2/8ciqFATM1Rg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8130
+X-Received: by 2002:a05:6e02:1a0e:b0:3a0:922f:8e9a with SMTP id
+ e9e14a558f8ab-3a0c9d6f2ffmr42851735ab.17.1726864342460; Fri, 20 Sep 2024
+ 13:32:22 -0700 (PDT)
+Date: Fri, 20 Sep 2024 13:32:22 -0700
+In-Reply-To: <000000000000ce6fdb061cc7e5b2@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66eddbd6.050a0220.3195df.0013.GAE@google.com>
+Subject: Re: [syzbot] [netfilter] BUG: soft lockup in batadv_iv_send_outstanding_bat_ogm_packet
+From: syzbot <syzbot+572f6e36bc6ee6f16762@syzkaller.appspotmail.com>
+To: a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org, davem@davemloft.net, 
+	edumazet@google.com, kadlec@netfilter.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, mareklindner@neomailbox.ch, 
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com, 
+	pablo@netfilter.org, sven@narfation.org, sw@simonwunderlich.de, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-09-18 11:10, Alistair Popple wrote:
-> Matthew Brost <matthew.brost@intel.com> writes:
->
->> On Wed, Sep 11, 2024 at 02:53:31PM +1000, Alistair Popple wrote:
->>> Matthew Brost <matthew.brost@intel.com> writes:
->>>
->>> I haven't seen the same in the NVIDIA UVM driver (out-of-tree, I know)
->> Still a driver.
-> Indeed, and I'm happy to answer any questions about our implementation.
->
->>> but theoretically it seems like it should be possible. However we
->>> serialize migrations of the same virtual address range to avoid these
->>> kind of issues as they can happen the other way too (ie. multiple
->>> threads trying to migrate to GPU).
->>>
->>> So I suspect what happens in UVM is that one thread wins and installs
->>> the migration entry while the others fail to get the driver migration
->>> lock and bail out sufficiently early in the fault path to avoid the
->>> live-lock.
->>>
->> I had to try hard to show this, doubt an actual user could trigger this.
->>
->> I wrote a test which kicked 8 threads, each thread did a pthread join,
->> and then tried to read the same page. This repeats in loop for like 512
->> pages or something. I needed an exclusive lock in migrate_to_ram vfunc
->> for it to livelock. Without an exclusive lock I think on average I saw
->> about 32k retries (i.e. migrate_to_ram calls on the same page) before a
->> thread won this race.
->>
->>  From reading UVM, pretty sure if you tried hard enough you could trigger
->> a livelock given it appears you take excluvise locks in migrate_to_ram.
-> Yes, I suspect you're correct here and that we just haven't tried hard
-> enough to trigger it.
->
->>>> Cc: Philip Yang <Philip.Yang@amd.com>
->>>> Cc: Felix Kuehling <felix.kuehling@amd.com>
->>>> Cc: Christian König <christian.koenig@amd.com>
->>>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>>> Suggessted-by: Simona Vetter <simona.vetter@ffwll.ch>
->>>> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
->>>> ---
->>>>   mm/memory.c         | 13 +++++++---
->>>>   mm/migrate_device.c | 60 +++++++++++++++++++++++++++++++--------------
->>>>   2 files changed, 50 insertions(+), 23 deletions(-)
->>>>
->>>> diff --git a/mm/memory.c b/mm/memory.c
->>>> index 3c01d68065be..bbd97d16a96a 100644
->>>> --- a/mm/memory.c
->>>> +++ b/mm/memory.c
->>>> @@ -4046,10 +4046,15 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->>>>   			 * Get a page reference while we know the page can't be
->>>>   			 * freed.
->>>>   			 */
->>>> -			get_page(vmf->page);
->>>> -			pte_unmap_unlock(vmf->pte, vmf->ptl);
->>>> -			ret = vmf->page->pgmap->ops->migrate_to_ram(vmf);
->>>> -			put_page(vmf->page);
->>>> +			if (trylock_page(vmf->page)) {
->>>> +				get_page(vmf->page);
->>>> +				pte_unmap_unlock(vmf->pte, vmf->ptl);
->>> This is all beginning to look a lot like migrate_vma_collect_pmd(). So
->>> rather than do this and then have to pass all this context
->>> (ie. fault_page) down to the migrate_vma_* functions could we instead
->>> just do what migrate_vma_collect_pmd() does here? Ie. we already have
->>> the PTL and the page lock so there's no reason we couldn't just setup
->>> the migration entry prior to calling migrate_to_ram().
->>>
->>> Obviously calling migrate_vma_setup() would show the page as not
->>> migrating, but drivers could easily just fill in the src_pfn info after
->>> calling migrate_vma_setup().
->>>
->>> This would eliminate the whole fault_page ugliness.
->>>
->> This seems like it would work and agree it likely be cleaner. Let me
->> play around with this and see what I come up with. Multi-tasking a bit
->> so expect a bit of delay here.
->>
->> Thanks for the input,
->> Matt
+syzbot has found a reproducer for the following issue on:
 
-Thanks! Sorry, I'm late catching up after a vacation. Please keep 
-Philip, Christian and myself in the loop with future patches in this area.
+HEAD commit:    a430d95c5efa Merge tag 'lsm-pr-20240911' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e87f00580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=44d46e514184cd24
+dashboard link: https://syzkaller.appspot.com/bug?extid=572f6e36bc6ee6f16762
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1481cca9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14929607980000
 
-Regards,
-   Felix
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/bdf130384fad/disk-a430d95c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c62ff195641a/vmlinux-a430d95c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4069702199e2/bzImage-a430d95c.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+572f6e36bc6ee6f16762@syzkaller.appspotmail.com
+
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P1119/1:b..l
+rcu: 	(detected by 0, t=10503 jiffies, g=23913, q=347 ncpus=2)
+task:kworker/u8:6    state:R  running task     stack:24576 pid:1119  tgid:1119  ppid:2      flags:0x00004000
+Workqueue: bat_events batadv_iv_send_outstanding_bat_ogm_packet
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0xe37/0x5490 kernel/sched/core.c:6529
+ preempt_schedule_irq+0x51/0x90 kernel/sched/core.c:6851
+ irqentry_exit+0x36/0x90 kernel/entry/common.c:354
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:lock_acquire+0x1f2/0x560 kernel/locking/lockdep.c:5727
+Code: c1 05 ea b0 98 7e 83 f8 01 0f 85 ea 02 00 00 9c 58 f6 c4 02 0f 85 d5 02 00 00 48 85 ed 74 01 fb 48 b8 00 00 00 00 00 fc ff df <48> 01 c3 48 c7 03 00 00 00 00 48 c7 43 08 00 00 00 00 48 8b 84 24
+RSP: 0018:ffffc900045b7a70 EFLAGS: 00000206
+RAX: dffffc0000000000 RBX: 1ffff920008b6f50 RCX: 0000000000000001
+RDX: 0000000000000001 RSI: ffffffff8b4cddc0 RDI: ffffffff8bb118a0
+RBP: 0000000000000200 R08: 0000000000000000 R09: fffffbfff2d39ae0
+R10: ffffffff969cd707 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: ffffffff8ddba6a0 R15: 0000000000000000
+ rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
+ rcu_read_lock include/linux/rcupdate.h:838 [inline]
+ batadv_iv_ogm_slide_own_bcast_window net/batman-adv/bat_iv_ogm.c:754 [inline]
+ batadv_iv_ogm_schedule_buff+0x5ac/0x14d0 net/batman-adv/bat_iv_ogm.c:825
+ batadv_iv_ogm_schedule net/batman-adv/bat_iv_ogm.c:868 [inline]
+ batadv_iv_ogm_schedule net/batman-adv/bat_iv_ogm.c:861 [inline]
+ batadv_iv_send_outstanding_bat_ogm_packet+0x31e/0x8d0 net/batman-adv/bat_iv_ogm.c:1712
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3393
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+rcu: rcu_preempt kthread starved for 10529 jiffies! g23913 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:R  running task     stack:27680 pid:17    tgid:17    ppid:2      flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0xe37/0x5490 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6621
+ schedule_timeout+0x136/0x2a0 kernel/time/timer.c:2581
+ rcu_gp_fqs_loop+0x1eb/0xb00 kernel/rcu/tree.c:2034
+ rcu_gp_kthread+0x271/0x380 kernel/rcu/tree.c:2236
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+rcu: Stack dump where RCU GP kthread last ran:
+CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted 6.11.0-syzkaller-02574-ga430d95c5efa #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:native_irq_disable arch/x86/include/asm/irqflags.h:37 [inline]
+RIP: 0010:arch_local_irq_disable arch/x86/include/asm/irqflags.h:92 [inline]
+RIP: 0010:acpi_safe_halt+0x1a/0x20 drivers/acpi/processor_idle.c:112
+Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 65 48 8b 05 78 a2 eb 74 48 8b 00 a8 08 75 0c 66 90 0f 00 2d 68 56 a4 00 fb f4 <fa> c3 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffffff8da07d70 EFLAGS: 00000246
+RAX: 0000000000004000 RBX: 0000000000000001 RCX: ffffffff8b181979
+RDX: 0000000000000001 RSI: ffff8880212b3000 RDI: ffff8880212b3064
+RBP: ffff8880212b3064 R08: 0000000000000001 R09: ffffed1017106fd9
+R10: ffff8880b8837ecb R11: 0000000000000000 R12: ffff8880212be800
+R13: ffffffff8e9faa20 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff2dde0dd58 CR3: 000000002ad40000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ </IRQ>
+ <TASK>
+ acpi_idle_enter+0xc5/0x160 drivers/acpi/processor_idle.c:702
+ cpuidle_enter_state+0xaa/0x4f0 drivers/cpuidle/cpuidle.c:264
+ cpuidle_enter+0x4e/0xa0 drivers/cpuidle/cpuidle.c:385
+ cpuidle_idle_call kernel/sched/idle.c:230 [inline]
+ do_idle+0x313/0x3f0 kernel/sched/idle.c:326
+ cpu_startup_entry+0x4f/0x60 kernel/sched/idle.c:424
+ rest_init+0x16b/0x2b0 init/main.c:747
+ start_kernel+0x3e4/0x4d0 init/main.c:1105
+ x86_64_start_reservations+0x18/0x30 arch/x86/kernel/head64.c:507
+ x86_64_start_kernel+0xb2/0xc0 arch/x86/kernel/head64.c:488
+ common_startup_64+0x13e/0x148
+ </TASK>
 
 
->>
->>>> +				ret = vmf->page->pgmap->ops->migrate_to_ram(vmf);
->>>> +				put_page(vmf->page);
->>>> +				unlock_page(vmf->page);
->>>> +			} else {
->>>> +				pte_unmap_unlock(vmf->pte, vmf->ptl);
->>>> +			}
->>>>   		} else if (is_hwpoison_entry(entry)) {
->>>>   			ret = VM_FAULT_HWPOISON;
->>>>   		} else if (is_pte_marker_entry(entry)) {
->>>> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
->>>> index 6d66dc1c6ffa..049893a5a179 100644
->>>> --- a/mm/migrate_device.c
->>>> +++ b/mm/migrate_device.c
->>>> @@ -60,6 +60,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->>>>   				   struct mm_walk *walk)
->>>>   {
->>>>   	struct migrate_vma *migrate = walk->private;
->>>> +	struct folio *fault_folio = migrate->fault_page ?
->>>> +		page_folio(migrate->fault_page) : NULL;
->>>>   	struct vm_area_struct *vma = walk->vma;
->>>>   	struct mm_struct *mm = vma->vm_mm;
->>>>   	unsigned long addr = start, unmapped = 0;
->>>> @@ -88,11 +90,13 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->>>>   
->>>>   			folio_get(folio);
->>>>   			spin_unlock(ptl);
->>>> -			if (unlikely(!folio_trylock(folio)))
->>>> +			if (unlikely(fault_folio != folio &&
->>>> +				     !folio_trylock(folio)))
->>>>   				return migrate_vma_collect_skip(start, end,
->>>>   								walk);
->>>>   			ret = split_folio(folio);
->>>> -			folio_unlock(folio);
->>>> +			if (fault_folio != folio)
->>>> +				folio_unlock(folio);
->>>>   			folio_put(folio);
->>>>   			if (ret)
->>>>   				return migrate_vma_collect_skip(start, end,
->>>> @@ -192,7 +196,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->>>>   		 * optimisation to avoid walking the rmap later with
->>>>   		 * try_to_migrate().
->>>>   		 */
->>>> -		if (folio_trylock(folio)) {
->>>> +		if (fault_folio == folio || folio_trylock(folio)) {
->>>>   			bool anon_exclusive;
->>>>   			pte_t swp_pte;
->>>>   
->>>> @@ -204,7 +208,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->>>>   
->>>>   				if (folio_try_share_anon_rmap_pte(folio, page)) {
->>>>   					set_pte_at(mm, addr, ptep, pte);
->>>> -					folio_unlock(folio);
->>>> +					if (fault_folio != folio)
->>>> +						folio_unlock(folio);
->>>>   					folio_put(folio);
->>>>   					mpfn = 0;
->>>>   					goto next;
->>>> @@ -363,6 +368,8 @@ static unsigned long migrate_device_unmap(unsigned long *src_pfns,
->>>>   					  unsigned long npages,
->>>>   					  struct page *fault_page)
->>>>   {
->>>> +	struct folio *fault_folio = fault_page ?
->>>> +		page_folio(fault_page) : NULL;
->>>>   	unsigned long i, restore = 0;
->>>>   	bool allow_drain = true;
->>>>   	unsigned long unmapped = 0;
->>>> @@ -427,7 +434,8 @@ static unsigned long migrate_device_unmap(unsigned long *src_pfns,
->>>>   		remove_migration_ptes(folio, folio, false);
->>>>   
->>>>   		src_pfns[i] = 0;
->>>> -		folio_unlock(folio);
->>>> +		if (fault_folio != folio)
->>>> +			folio_unlock(folio);
->>>>   		folio_put(folio);
->>>>   		restore--;
->>>>   	}
->>>> @@ -536,6 +544,8 @@ int migrate_vma_setup(struct migrate_vma *args)
->>>>   		return -EINVAL;
->>>>   	if (args->fault_page && !is_device_private_page(args->fault_page))
->>>>   		return -EINVAL;
->>>> +	if (args->fault_page && !PageLocked(args->fault_page))
->>>> +		return -EINVAL;
->>>>   
->>>>   	memset(args->src, 0, sizeof(*args->src) * nr_pages);
->>>>   	args->cpages = 0;
->>>> @@ -799,19 +809,13 @@ void migrate_vma_pages(struct migrate_vma *migrate)
->>>>   }
->>>>   EXPORT_SYMBOL(migrate_vma_pages);
->>>>   
->>>> -/*
->>>> - * migrate_device_finalize() - complete page migration
->>>> - * @src_pfns: src_pfns returned from migrate_device_range()
->>>> - * @dst_pfns: array of pfns allocated by the driver to migrate memory to
->>>> - * @npages: number of pages in the range
->>>> - *
->>>> - * Completes migration of the page by removing special migration entries.
->>>> - * Drivers must ensure copying of page data is complete and visible to the CPU
->>>> - * before calling this.
->>>> - */
->>>> -void migrate_device_finalize(unsigned long *src_pfns,
->>>> -			unsigned long *dst_pfns, unsigned long npages)
->>>> +static void __migrate_device_finalize(unsigned long *src_pfns,
->>>> +				      unsigned long *dst_pfns,
->>>> +				      unsigned long npages,
->>>> +				      struct page *fault_page)
->>>>   {
->>>> +	struct folio *fault_folio = fault_page ?
->>>> +		page_folio(fault_page) : NULL;
->>>>   	unsigned long i;
->>>>   
->>>>   	for (i = 0; i < npages; i++) {
->>>> @@ -838,7 +842,8 @@ void migrate_device_finalize(unsigned long *src_pfns,
->>>>   		src = page_folio(page);
->>>>   		dst = page_folio(newpage);
->>>>   		remove_migration_ptes(src, dst, false);
->>>> -		folio_unlock(src);
->>>> +		if (fault_folio != src)
->>>> +			folio_unlock(src);
->>>>   
->>>>   		if (is_zone_device_page(page))
->>>>   			put_page(page);
->>>> @@ -854,6 +859,22 @@ void migrate_device_finalize(unsigned long *src_pfns,
->>>>   		}
->>>>   	}
->>>>   }
->>>> +
->>>> +/*
->>>> + * migrate_device_finalize() - complete page migration
->>>> + * @src_pfns: src_pfns returned from migrate_device_range()
->>>> + * @dst_pfns: array of pfns allocated by the driver to migrate memory to
->>>> + * @npages: number of pages in the range
->>>> + *
->>>> + * Completes migration of the page by removing special migration entries.
->>>> + * Drivers must ensure copying of page data is complete and visible to the CPU
->>>> + * before calling this.
->>>> + */
->>>> +void migrate_device_finalize(unsigned long *src_pfns,
->>>> +			unsigned long *dst_pfns, unsigned long npages)
->>>> +{
->>>> +	return __migrate_device_finalize(src_pfns, dst_pfns, npages, NULL);
->>>> +}
->>>>   EXPORT_SYMBOL(migrate_device_finalize);
->>>>   
->>>>   /**
->>>> @@ -869,7 +890,8 @@ EXPORT_SYMBOL(migrate_device_finalize);
->>>>    */
->>>>   void migrate_vma_finalize(struct migrate_vma *migrate)
->>>>   {
->>>> -	migrate_device_finalize(migrate->src, migrate->dst, migrate->npages);
->>>> +	__migrate_device_finalize(migrate->src, migrate->dst, migrate->npages,
->>>> +				  migrate->fault_page);
->>>>   }
->>>>   EXPORT_SYMBOL(migrate_vma_finalize);
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
