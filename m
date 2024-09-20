@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-334485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0D4297D7DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:49:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D0397D7DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ECF7B2402D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:49:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 615851F246B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432B817CA02;
-	Fri, 20 Sep 2024 15:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4AA17C224;
+	Fri, 20 Sep 2024 15:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hodz91Pr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kvn4L/n1"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440532AE69;
-	Fri, 20 Sep 2024 15:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705BDF4ED
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726847364; cv=none; b=dqVbBe+I9GAlTlITfoarK6c0P3oj7PodmRYVcGg/tM0huEjAnURhsPQuQBmogMAC29ECNSC5ZGxvvq7Lyp9cNyU8Bgsl2h8gcnMMFU/qEU0QdiVx0JlkXsK2OyfC2o+WGGZ+SZVq6P1TZIL3/1d7VC7MsGwNBzS9oqJvZA1l1vo=
+	t=1726847412; cv=none; b=X0cjPyAiT+gnA4rpv80f50UKUq03LOehldpukWKMVUNt7RrkLuEzojRNFasZs2morEvnSCCpWtUekkpsDUg4ZhIowadGx+7+su+Is9cnLA+HcDXseUY1ggyeQU3+iZjTnX+Gijtqg2uTv/vI1bML66ccQE/lJ6w2V+TW0hmHzJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726847364; c=relaxed/simple;
-	bh=O1chZsUdDn48ClY7zZU4LRBrBZnSUfVEQdhGFn+jYD0=;
+	s=arc-20240116; t=1726847412; c=relaxed/simple;
+	bh=9mX8Lc8FHhzmhdfC4qNmIeDhIa3Q8HZH8o+UXxa3Xbo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZneZ/eN6jccGpa/T8KQ7t/43x7zrSVqmsL2zSOim2W4vpF2Z44dhCKo8cTZsy5A7shG+ps6F7giVOSVETo690ht3Hb+JmZO8Cv+z1TbI8fl3Ej3KG38ACoE+pOFy9Ih+VCuyxI0Vxowbsu+qtdtvPcviDz5mnCrmuxY2q7lnB9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hodz91Pr; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726847363; x=1758383363;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=O1chZsUdDn48ClY7zZU4LRBrBZnSUfVEQdhGFn+jYD0=;
-  b=Hodz91Pr5zyin7fDdmFX0goTSlMioZiH6G1yOSYOVJHym3XtAU6FFx3k
-   /fVlR0qzGWR/EQpRmCLxHsF3jnVMH+GhT+GhxhIriHQG7qikwR1gZU6cV
-   0aYLZmlL+w+tSgBYW53IEjSmRIQ3TRbPBNabWL9R4gs/scar6p0SRuKYP
-   481xqE3XFa8pEb8QSHMMK9fko+4WNh0WMTjWNZZBth57Ka75BDiYlJuLl
-   VLxxkOD3sc1bQYRRt2HJ0n3QQI9Fe7c+1E17epugUsvGnavBi8DJWgNkq
-   gQW5fOff2fmFjg++AeAUQfDdXmcvyKrsL7cpybH3s0sGMm8UNeUC0p8hv
-   A==;
-X-CSE-ConnectionGUID: pNc5PTWmQ2OepCbItvRliA==
-X-CSE-MsgGUID: rT2bL8lkQD2vltnJyOrs8w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11201"; a="43379212"
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="43379212"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 08:49:22 -0700
-X-CSE-ConnectionGUID: 6mdG4o0hS/yYqFSINcS5YA==
-X-CSE-MsgGUID: p2RDcGTgRaCl0n/HZZlR/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="70621265"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 08:49:21 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1srfsk-0000000Axp3-3fTV;
-	Fri, 20 Sep 2024 18:49:18 +0300
-Date: Fri, 20 Sep 2024 18:49:18 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Parker Newman <pnewman@connecttech.com>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH v1 1/1] serial: 8250_exar: Group CTI EEPROM offsets by
- device
-Message-ID: <Zu2ZfpnnY6z4BBG9@smile.fi.intel.com>
-References: <20240920154430.3323820-1-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FAJO4nDdRD7bn+YB8+LhPi3wZ7N+RmNjMYl9kUKlLqRJi1W9wCXe3ud9ApmuKjLvWgMyTVsFVmqiU6IKdiVs5gYJ+2MEhAq0gLV/W/cHEhboMXke/NpCpbCia03KYNlZCZb/sUHZfWSu/QFDGzbj72zjFJz6wEcptyjpiCx/ndM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kvn4L/n1; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so2960571e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:50:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726847408; x=1727452208; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KSTgG1ONFuwyX839G8yS/YFRBceOdoCcCoRfbiWXxRA=;
+        b=kvn4L/n1TyPTFE25V7Q1eh2eAbL+2A4dZQNfMe7564LZBKDCDJcCciVOpfQF79ee/Z
+         XsCztGZEuWRzlF30IDyceY/wzDeDWqc37MoT9ydF9uHZS8la6Coi2yngKniZUWIchjx3
+         MBgPsVOuJMDTeX2WS68myN8eiMOP3npq/BiDJyfkUleQUaoMNaTqwldbaHFE3xkBseXs
+         YbPzU/yY4VC2t2AZwjqbOUMM1c6Jxp3DPVpU6xVIaE0ruPPgKxqqUqhGVKHUDB6s05F7
+         lD8lzIeTo61dC7VK3eTkOB6ZUpfKtnuMqYKX9DxM6idrNSz8R+NTcR+iDrxBAxePdOv3
+         sdpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726847408; x=1727452208;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KSTgG1ONFuwyX839G8yS/YFRBceOdoCcCoRfbiWXxRA=;
+        b=UbZd/7NpKd1Mku4+URiK60MNJvCvDcCLGVb2u/7kx1ov14WEhGBY0K2VsJm03oV7ND
+         GeAArGXi67IlhGQJaQJPqYuVpAfB8RLVHBo+nKo6K88tk1IDYstXoY+HLrz1Zxqgwkp/
+         1IkeS0+E9jKozN+qaXwIOoYcXXkZXVFzM2BOAuXDQ1zA3ZzqJMRucJdR/0GK6g0SlBlM
+         AfpX7rzXYuifihTblgE5ioyAg+6/pgluiW0yOezzyPCcLNl1Bw62dc+9dthicMbjoNjx
+         xUMQruBdOR+S73bn7j1v90fVXwMb5qg4l+e5+e/kPupo9H+pRdQV6J3TXaqJRP90sEw7
+         Un6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWLurQsEvzwfo/XwyzQuTBmQo0Zq1gOc7mvKYBhqZm+9JOb0wam9E9m9yg3ONOAbUMXbwa3XNbynFCIphU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw50ExKJw/JFKc/7xZmc5/KPf1zUg4VQjSsk49sVxCG5dGDuXJm
+	sBaS7GSDYtZZstuQ6ae1s0pPv6FLYazINfCsLgUwKWg6q55hrc8+DLLN2fq+Ros=
+X-Google-Smtp-Source: AGHT+IFFifI1MUsOVRDjkDVOg+d0xUbcZiymFm1+Kp7WhRry1g/Fga9+FS4wV+y+d1B48js9K9fuPw==
+X-Received: by 2002:a05:6512:2391:b0:52c:c9ce:be8d with SMTP id 2adb3069b0e04-536ac341b82mr2170221e87.57.1726847408505;
+        Fri, 20 Sep 2024 08:50:08 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53687047023sm2210754e87.45.2024.09.20.08.50.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 08:50:08 -0700 (PDT)
+Date: Fri, 20 Sep 2024 18:50:05 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: Hermes.Wu@ite.com.tw, Andrzej Hajda <a.hajda@samsung.com>, 
+	Neil Armstrong <narmstrong@baylibre.com>, Robert Foss <robert.foss@linaro.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, 
+	open list <linux-kernel@vger.kernel.org>, Kenneth hung <kenneth.hung@ite.com.tw>
+Subject: Re: [PATCH v1] drm/bridge: it6505: HDCP CTS fail on repeater items
+Message-ID: <nczuje3ur7sf7uqkygtziwnz5p6b4b7bf5on5crljr2ijmblrv@ym3fkvqxbjq5>
+References: <20240919025551.254-1-Hermes.Wu@ite.com.tw>
+ <CAEXTbpc7N2v4LwoZ4wpHXi7ogyqGwYC3Gpt5sqfxtOpYrngPLg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240920154430.3323820-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEXTbpc7N2v4LwoZ4wpHXi7ogyqGwYC3Gpt5sqfxtOpYrngPLg@mail.gmail.com>
 
-On Fri, Sep 20, 2024 at 06:43:24PM +0300, Andy Shevchenko wrote:
-> It's not obvious from the first glance that the list of the CTI EEPROM
-> offsets covers three different models, let's group them accordingly for
-> better readability.
+On Fri, Sep 20, 2024 at 01:27:54PM GMT, Pin-yen Lin wrote:
+> On Thu, Sep 19, 2024 at 10:58 AM <Hermes.Wu@ite.com.tw> wrote:
+> >
+> > From: Hermes Wu <Hermes.Wu@ite.com.tw>
+> >
+> > Fix HDCP CTS items on UNIGRAF DPR-100.
+> >
+> > Signed-off-by: Hermes Wu <Hermes.Wu@ite.com.tw>
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
-> 
-> Parker, feel free to append this one to your v3 as a last patch.
+> Reviewed-by: Pin-yen Lin <treapking@chromium.org>
 
-A bit more hints for usage of `b4`. As I described earlier you may use b4
-to gather the tags, but also to inject / append other patches to the series.
+For the sake of somebody applying the patch because it was R-B'ed
 
-Like with this one, after you collected yours, just run
+Nacked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-	b4 am -s $<message ID of this email thread>
+The commit message doesn't describe what is being done and why, it
+doesn't have Fixes tags, etc.
 
-followed by
-
-	git am ...
-
-as the tool hints you. It will take care about everything you need.
+Hermes, I'm not sure what's happening on your side. I have seen several
+revisions of this patch with minimal modifications (and being a part of
+different series). Some of them were marked as v1 (although you've sent
+different patches as v1), other had v2 (but no changelog, etc). Please
+adhere to the described process of sending patches.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+With best wishes
+Dmitry
 
