@@ -1,97 +1,144 @@
-Return-Path: <linux-kernel+bounces-334191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF0297D3B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:36:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9653F97D3B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0783A1F256D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:36:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DC47289508
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D1F13AD06;
-	Fri, 20 Sep 2024 09:35:58 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4142A13C682;
+	Fri, 20 Sep 2024 09:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YGxskrwE"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2713D7E107;
-	Fri, 20 Sep 2024 09:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D1133985
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726824958; cv=none; b=ACNa2otJhhaq4dYJnwp+E2b3PFdCmS3FyZ/nHh55eJSukflH1PVdG3wtvR+GUEz4KSV+SxKwV8Idi3L6iay9iI1cdmTb/AJl6H2E+rQOMcYD2Fl5tCNXO0HmeUaGDYLzW2P8hVp96FDNTOBYu3/WOHnjZGzAKN56M/jo8ZjWs5o=
+	t=1726824959; cv=none; b=F3vH5wIjrMrun9DFt2VictPin9za+6ZMhL/ycbHuUwkPDQ6tzTjNVy03qEzJeIpiy00BMWtja/0Lq5IkRyGAZJqMmJu22hF5xmkoM+cco8SbW15KVzvdOcYZCEnQdug2AMZL7fvWoHM6SX+Uy1QkabjpniJw8BBgWHLvTB/+0b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726824958; c=relaxed/simple;
-	bh=i0xqeoqAvHXB5qmRqkvEbbm+QoU0HBOXjF/kNH1c/4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sDGKG1e4s7ebhMkA99BSAwVY993x3Kz4wx9hl717JvDlTL7zG0oTGLpptoAiY6sY22I7vjgqhZcu+7mthLFt/Qv8T1qjN6jJUNJTCn7LJfTpWazzYAXQokZZxiYPTmELSRiL49LeYNIfn/T9v4oZidPaMBlDzC2XqoBDriX5dNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1sra39-0002Ub-OH; Fri, 20 Sep 2024 11:35:39 +0200
-Date: Fri, 20 Sep 2024 11:35:39 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Jiawei Ye <jiawei.ye@foxmail.com>
-Cc: edumazet@google.com, davem@davemloft.net, dsahern@kernel.org,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: Fix potential RCU dereference issue in
- tcp_assign_congestion_control
-Message-ID: <20240920093539.GA8490@breakpoint.cc>
-References: <tencent_2A17499A4FFA4D830F7D2F72A95A4ADAB308@qq.com>
+	s=arc-20240116; t=1726824959; c=relaxed/simple;
+	bh=wOtQsEhhjAhWoZR3qcn1/pQp9HTZYrFhQ9fCpT9g5rE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=k5atAoHW1amAd3i8XAPM1F79UBlMOecxflXANjZgsd3oUIbrros7anPNZnRWHYkCGyDA8VZlBgpMsdBiEKwnwYQUFmQuA8ZD7YBcP+kSokRyzmCc+VAWHHzd9bO1HSlCATynlkAuV8uef5QH+WTuc2lHXhOIXUR0zcO32qKTNl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YGxskrwE; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1726824954;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OziaRXhCqEX71q65+JEThFme/Bx7YR5ge7b/UpC9jzk=;
+	b=YGxskrwEvc+2P9lMit/+EJm6KNvLs7C9bkLx+EMtn7mfkFPgedB1qsE5WAOP1G5Zu8K4Aa
+	QZowI2yuMKnznsAiEgZYIB6XOKZCZjG9ZzB9bElsSzQkXPWolHFtibnu7FH1rEWekVZaFK
+	xazfqY1FpuT8s7w/krQkPyr7Rq3Y/EQ=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Jan Kara <jack@suse.cz>
+Cc: Theodore Ts'o <tytso@mit.edu>,  Andreas Dilger <adilger@dilger.ca>,
+  Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+  linux-ext4@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ext4: mark fc as ineligible using an handle in
+ ext4_xattr_set()
+In-Reply-To: <20240919214730.gza4j3gkrn34tcyn@quack3> (Jan Kara's message of
+	"Thu, 19 Sep 2024 23:47:30 +0200")
+References: <20240919093848.2330-1-luis.henriques@linux.dev>
+	<20240919093848.2330-3-luis.henriques@linux.dev>
+	<20240919214730.gza4j3gkrn34tcyn@quack3>
+Date: Fri, 20 Sep 2024 10:35:45 +0100
+Message-ID: <87msk23bwu.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_2A17499A4FFA4D830F7D2F72A95A4ADAB308@qq.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-Jiawei Ye <jiawei.ye@foxmail.com> wrote:
-> In the `tcp_assign_congestion_control` function, the `ca->flags` is
-> accessed after the RCU read-side critical section is unlocked. According
-> to RCU usage rules, this is illegal. Reusing this pointer can lead to
-> unpredictable behavior, including accessing memory that has been updated
-> or causing use-after-free issues.
-> 
-> This possible bug was identified using a static analysis tool developed
-> by myself, specifically designed to detect RCU-related issues.
-> 
-> To resolve this issue, the `rcu_read_unlock` call has been moved to the
-> end of the function.
-> 
-> Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
-> ---
-> In another part of the file, `tcp_set_congestion_control` calls
-> `tcp_reinit_congestion_control`, ensuring that the congestion control
-> reinitialization process is protected by RCU. The
-> `tcp_reinit_congestion_control` function contains operations almost
-> identical to those in `tcp_assign_congestion_control`, but the former
-> operates under full RCU protection, whereas the latter is only partially
-> protected. The differing protection strategies between the two may
-> warrant further unification.
-> ---
->  net/ipv4/tcp_cong.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/ipv4/tcp_cong.c b/net/ipv4/tcp_cong.c
-> index 0306d257fa64..356a59d316e3 100644
-> --- a/net/ipv4/tcp_cong.c
-> +++ b/net/ipv4/tcp_cong.c
-> @@ -223,13 +223,13 @@ void tcp_assign_congestion_control(struct sock *sk)
->  	if (unlikely(!bpf_try_module_get(ca, ca->owner)))
->  		ca = &tcp_reno;
+On Thu, Sep 19 2024, Jan Kara wrote:
 
-After this, ca either has module refcount incremented, so it can't
-go away anymore, or reno fallback was enabled (always bultin).
+> On Thu 19-09-24 10:38:48, Luis Henriques (SUSE) wrote:
+>> Calling ext4_fc_mark_ineligible() with a NULL handle is racy and may res=
+ult
+>> in a fast-commit being done before the filesystem is effectively marked =
+as
+>> ineligible.  This patch reduces the risk of this happening in function
+>> ext4_xattr_set() by using an handle if one is available.
+>>=20
+>> Suggested-by: Jan Kara <jack@suse.cz>
+>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>
+> One comment below:
+>
+>> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+>> index 46ce2f21fef9..dbe4d11cd332 100644
+>> --- a/fs/ext4/xattr.c
+>> +++ b/fs/ext4/xattr.c
+>> @@ -2554,11 +2554,15 @@ ext4_xattr_set(struct inode *inode, int name_ind=
+ex, const char *name,
+>>  	handle =3D ext4_journal_start(inode, EXT4_HT_XATTR, credits);
+>>  	if (IS_ERR(handle)) {
+>>  		error =3D PTR_ERR(handle);
+>> +		ext4_fc_mark_ineligible(inode->i_sb, EXT4_FC_REASON_XATTR,
+>> +					NULL);
+>
+> So when starting a transaction fails:
+>
+> a) We have a big problem, the journal is aborted so marking fs ineligible
+> is moot.
+>
+> b) We don't set anything and bail with error to userspace so again marking
+> fs as ineligible is pointless.
+>
+> So there's no need to do anything in this case.
 
->  	icsk->icsk_ca_ops = ca;
-> -	rcu_read_unlock();
+Ah! I spent a good amount of time trying to understand if there was a
+point marking it as ineligible in that case, but couldn't reach a clear
+conclusion.  That's why I decided to leave it there.  And, hoping to get
+some early feedback, that's also why I decided to send these 2 patches
+first, because fixing ext4_evict_inode() will require a bit more re-work.
+The fix will have to deal with more error paths, and probably the call to
+ext4_journal_start() will need to be moved upper in the function.
 
-Therefore its ok to rcu unlock here.
+And, as always, thanks a lot your review, Jan.
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+> 								Honza
+>
+>>  	} else {
+>>  		int error2;
+>>=20=20
+>>  		error =3D ext4_xattr_set_handle(handle, inode, name_index, name,
+>>  					      value, value_len, flags);
+>> +		ext4_fc_mark_ineligible(inode->i_sb, EXT4_FC_REASON_XATTR,
+>> +					handle);
+>>  		error2 =3D ext4_journal_stop(handle);
+>>  		if (error =3D=3D -ENOSPC &&
+>>  		    ext4_should_retry_alloc(sb, &retries))
+>> @@ -2566,7 +2570,6 @@ ext4_xattr_set(struct inode *inode, int name_index=
+, const char *name,
+>>  		if (error =3D=3D 0)
+>>  			error =3D error2;
+>>  	}
+>> -	ext4_fc_mark_ineligible(inode->i_sb, EXT4_FC_REASON_XATTR, NULL);
+>>=20=20
+>>  	return error;
+>>  }
+> --=20
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+
 
