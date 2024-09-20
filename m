@@ -1,153 +1,142 @@
-Return-Path: <linux-kernel+bounces-334035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9D797D1B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:26:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D436A97D1B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6F1AB22F82
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:26:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23977B22F68
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6200D2AF0B;
-	Fri, 20 Sep 2024 07:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6666B45C18;
+	Fri, 20 Sep 2024 07:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T9/ZH120"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I/80oSva"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE8920ED
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 07:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2298820ED;
+	Fri, 20 Sep 2024 07:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726817166; cv=none; b=Le4GmLaTvkI610nk5U8q/ntR1nNZHT831AF49MkMqjIQs7uA8gv9lJjeUKFqTywXNFTjTB89trz4jrvQkcsHbpwXQY2kzfZZYWHkN5B6xR+Ov3Cr4I/Mo27Y9ZsZgF3lJctf3m/rX70eClIaaqHoaCzR0ylVHh7JX8/TPau4Ef8=
+	t=1726817191; cv=none; b=KwIwl5VWnogMGJFr1eARf487JcbFUBwEGvRrzsEydC1TUIKLyAtXeo7nhOjXrnQ33Pgvg8x32kK/uBMNWHkJDcNARyHwcj2mOMbxwVmShgVyJN4idc9v11zk/eEFRGT1cKKsJvZybA0vIyrZ6o89qV1iUfof5qKJ5MESr5RndF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726817166; c=relaxed/simple;
-	bh=oXEnFJwNfWwAX7+EFdBKG6ZvXR+KF+DCzgf0AyAIJWo=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mDyQgDwb35ib4rYwgZRbhi/BxcBW5ktYTDc5LQXrnTnkqRTOQFmcbK6vN5IY3FyVVvhoIQfQCsJPlaTE5ViB0LSrvakhwvC5/jJAhkBoZTck6NhdZdimbTFnDsagUL6pxV/l6UylH4qpZQKNRmCv+nWgBLuB2lCskBYLEMP0VM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T9/ZH120; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-208ccde82e6so14733205ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 00:26:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726817164; x=1727421964; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TLR5GVT/zVa6b58PYxjO2bKhU2CX4JQk4WFiq4WQ7BQ=;
-        b=T9/ZH120uU+xAktjezgyDQav1O9RRyWmKsJa9rrc9SxTUQ1ZWitGxT2i0yrsYlbFRb
-         QuULuGTIi+wOW5dOaAuXGEC1kP5zHp66iACyaGJSnBXBqTAiXy3yR1B43HgeRtGoJNTB
-         HEPxeidq4jt8l4uZUCJpBjpUJ6TmEjoCZKPEA7kltBz+oGvIFlZWH406CrqxiHfZhqLg
-         FKxgmr9eU5uMYT3iskeFJpAiY7DYtHtZZd8S1sf6Rwr6QRv266vg9rqzSS2P3eSnp277
-         r7q/rDYlk7KCBuJRCZq3Xvk2/N34CYRpPsug53dqq8Oda+Q72iThZf7fkOVm3WaEueNT
-         r5ZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726817164; x=1727421964;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TLR5GVT/zVa6b58PYxjO2bKhU2CX4JQk4WFiq4WQ7BQ=;
-        b=IC+PqNlfQtkYYQpVgXH33xPPK5leqvRsS8KRhul+Y3HKvPYnsnoEgRE9Fgr+45/7eF
-         djAX7+tVccIn55mmmsn90WpF775Eaf7YSMlTpCerSUJqnWXi+1a+XjrMgAlJrPjLkZ2v
-         gPlofEIpJzsqrKXmnY6ONa6tnl64jxB3ssFzGYGOzY2l+m4xa/9AwrnKACB4Yu8sZh5t
-         trx9i8T5HTwN8ZOLqtJqjI9SkBBw1P7c1F9aTtmD2xYKU1PmwGNz29Vu9J33FymDSISH
-         u4tx+XpyWkN1Q8MihJoh/EWh4DMwLuJQQjtaAY+2FVTZhkWDKlcZEG6arXZMwseFdkyw
-         rxQQ==
-X-Gm-Message-State: AOJu0YycJUVQmA+TOPHjL11pa0aq214D09BBBVhaZ27zsWBZZfPvebFZ
-	TCCWkuTEt42bsXbnSICoIafjNiZWsQR+WjBVe/0nWcvd/5vUMKU45Ex33u1p9oYR7Npcqw9kwVR
-	hg5v0UU6w3HpBeCFNaRmJiTGR89iXrcTrfhQNDA==
-X-Google-Smtp-Source: AGHT+IEUxPLfZGcfZDms3e9DWJ7RIAL6AODSM2rUNR/nHOwLN3LVl3C6RxWSOT1tkbwYAFCTuzM/bCzun9x2/tAuCcI=
-X-Received: by 2002:a17:903:18a:b0:205:8425:e9c6 with SMTP id
- d9443c01a7336-208d854e7bemr28546445ad.52.1726817163711; Fri, 20 Sep 2024
- 00:26:03 -0700 (PDT)
+	s=arc-20240116; t=1726817191; c=relaxed/simple;
+	bh=v4qD2LzdHQxvvvs14S/SB1WeQes1Tb/4cKlo5Zj+e6I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=V9wYwuljyYEaP9dAPL5afRVwvxn7cz8HVZ7DYnBTQqVhEgpjruNed+eQzEQWY7WfKl+14LMxRktoII8EN0Z7bd30HXuWNDIjUkL6OGSctPf74ZlRuxSZ3Kpq67SOrK0fFl8kt7w6dKLKhAlzdo46TwCExTEwr+VWvwoTE6pvjxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I/80oSva; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48JJ3sNj005788;
+	Fri, 20 Sep 2024 07:26:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Kw6dFYWBBHebVUmaYsgwQJ
+	YlHh8GjmSyGYzeZdBjeNg=; b=I/80oSva4FZFckZyI0rhxNTx1M3XqzxomWbUDD
+	wJmvlcf+6t6Z9eupXv3JiFZo5oC9xKhpaRY6eLugpgcZlr/z1Mc7vwcKfHsw9LvI
+	Pubo5jEypJxUwsNxfKg9hFyNzKhQ08YkGi+BoATc0uV2LKQoMENjy1fQJ0yuYLz6
+	bz1dOIqJpERdau6JFZ55ag+pQ5Di6wmaXMqY/qiU6dAhZLxoaPEDVT3JSxsOXjYw
+	egygUfjhe/aIaa9AeqHFATLYE6jdOxi6mYuIE93uJhQKxjWJNv7UUMoMEqROpXOD
+	WhwBRQY24X6dA+aGjjpgb9KLmjBfEFts6fkwJARA6r2JHxsg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4jj08ad-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 07:26:26 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48K7QOJc027264
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 07:26:24 GMT
+Received: from lijuang2-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 20 Sep 2024 00:26:19 -0700
+From: lijuang <quic_lijuang@quicinc.com>
+Date: Fri, 20 Sep 2024 15:26:05 +0800
+Subject: [PATCH v2] dt-bindings: mfd: qcom,tcsr: Add compatible for qcs615
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Yan, Zheng" <ukernel@gmail.com>
-Date: Fri, 20 Sep 2024 15:25:51 +0800
-Message-ID: <CAAM7YAkHjVg5qj+6b9HAqbE_d6fugAhdCxqsOHgN06VMjbmQvA@mail.gmail.com>
-Subject: [Bug] premature worker thread wakeup
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: vschneid@redhat.com, Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240920-add_tcsr_compatible_for_qcs615-v2-1-8ce2dbc7f72c@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAIwj7WYC/4WNQQ6CMBBFr2JmbU2nARRX3sOQpnRamUQptEg0h
+ LtbiXuX7+fnvQWSi+wSnHcLRDdz4tBnUPsd2M70NyeYMoOSqpC1ksIQ6cmmqG14DGbi9u60D1G
+ PNlVYClmjMdXRo608ZMkQnefXFrg2mTtOU4jvrTfjd/2pUf1TzyhQlO2pJCqoUIYu45Mt9/aQ/
+ 9Cs6/oB/D1xeM4AAAA=
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Lijuan Gao
+	<quic_lijuang@quicinc.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726817178; l=1288;
+ i=quic_lijuang@quicinc.com; s=20240827; h=from:subject:message-id;
+ bh=v4qD2LzdHQxvvvs14S/SB1WeQes1Tb/4cKlo5Zj+e6I=;
+ b=JiL7oABRij1J8nybGMIGnVyb0D2pJHKqIvuUYpKFYBhbvnWYiceLUqgkc3R4BydiXy+WbPhpd
+ B0/30Gs+vJrDc3oobS7LwXPFvmGFCyQoJP7hYzfWC5YzxERgVBdafuS
+X-Developer-Key: i=quic_lijuang@quicinc.com; a=ed25519;
+ pk=1zeM8FpQK/J1jSFHn8iXHeb3xt7F/3GvHv7ET2RNJxE=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Z2ejSs9JvTD6Ch5z7E3Q62l7uzyxD7oa
+X-Proofpoint-GUID: Z2ejSs9JvTD6Ch5z7E3Q62l7uzyxD7oa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 phishscore=0 impostorscore=0 bulkscore=0 adultscore=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
+ mlxlogscore=936 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409200050
 
-Hello,
+Document the qcom,qcs615-tcsr compatible.
 
-We recently encountered a kernel oops at for 4.18.0-477 el kernel.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+---
+Document the qcom,qcs615-tcsr compatible, tcsr will provide various
+control and status functions for their peripherals.
+---
+Changes in v2:
+- Collected Acked-by
+- Rebased patchset on top next-20240919
+- Link to v1: https://lore.kernel.org/r/20240912-add_tcsr_compatible_for_qcs615-v1-1-5b85dd4d42ad@quicinc.com
+---
+ Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-crash> bt
-PID: 1501282  TASK: ff232219e1528000  CPU: 17   COMMAND: "kworker/70:0"
- #0 [ff61ef13b2f67c00] machine_kexec at ffffffffb346c033
- #1 [ff61ef13b2f67c58] __crash_kexec at ffffffffb35b5b8a
- #2 [ff61ef13b2f67d18] crash_kexec at ffffffffb35b6ac1
- #3 [ff61ef13b2f67d30] oops_end at ffffffffb342a9c1
- #4 [ff61ef13b2f67d50] no_context at ffffffffb347e913
- #5 [ff61ef13b2f67da8] __bad_area_nosemaphore at ffffffffb347ec8c
- #6 [ff61ef13b2f67df0] do_page_fault at ffffffffb347f8a7
- #7 [ff61ef13b2f67e20] page_fault at ffffffffb400116e
-    [exception RIP: _raw_spin_lock_irq+19]
-    RIP: ffffffffb3e02113  RSP: ff61ef13b2f67ed8  RFLAGS: 00010046
-    RAX: 0000000000000000  RBX: ff23222dcf1d8740  RCX: 0000000000000000
-    RDX: 0000000000000001  RSI: 0000000000000246  RDI: 0000000000000000
-    RBP: 0000000000000000   R8: ff232206b00739f8   R9: 0000000000000001
-    R10: 0000000000000000  R11: ff232206b0071c04  R12: ff232219e1528000
-    R13: ff61ef13e16efdc8  R14: ffffffffb35164d0  R15: ff23223f8e6072c0
-    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
- #8 [ff61ef13b2f67ed8] worker_thread at ffffffffb351658f
- #9 [ff61ef13b2f67f10] kthread at ffffffffb351d6a4
-#10 [ff61ef13b2f67f50] ret_from_fork at ffffffffb400024f
+diff --git a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+index 7d0b0b403150..6734a6c99f8f 100644
+--- a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
++++ b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+@@ -21,6 +21,7 @@ properties:
+           - qcom,msm8998-tcsr
+           - qcom,qcm2290-tcsr
+           - qcom,qcs404-tcsr
++          - qcom,qcs615-tcsr
+           - qcom,sa8775p-tcsr
+           - qcom,sc7180-tcsr
+           - qcom,sc7280-tcsr
 
-The cause of the oops is that work_thread function get executed while
-worker->pool is  still null
+---
+base-commit: 3621a2c9142bd490af0666c0c02d52d60ce0d2a5
+change-id: 20240920-add_tcsr_compatible_for_qcs615-091aa67f1c6f
 
-The oops happens immediately after a kernel warning from work_thread's creator
+Best regards,
+-- 
+lijuang <quic_lijuang@quicinc.com>
 
-crash> bt 1168590
-PID: 1168590  TASK: ff23225d4f078000  CPU: 70   COMMAND: "kworker/70:11"
- #0 [fffffe0000fa1e48] crash_nmi_callback at ffffffffb345e713
- #1 [fffffe0000fa1e50] nmi_handle at ffffffffb342b393
- #2 [fffffe0000fa1ea8] default_do_nmi at ffffffffb3dee089
- #3 [fffffe0000fa1ec8] do_nmi at ffffffffb342b8ef
- #4 [fffffe0000fa1ef0] end_repeat_nmi at ffffffffb40015e8
-    [exception RIP: fbcon_redraw_blit+164]
-    RIP: ffffffffb3965f44  RSP: ff61ef13e16ef8f0  RFLAGS: 00000006
-    RAX: 0000000000000e61  RBX: ff2321a8d2a7c740  RCX: 0000000000000000
-    RDX: ff2321a8d2a7c740  RSI: 0000000000000001  RDI: 0000000000000002
-    RBP: ff2321a8d2a7c640   R8: 0000000000000010   R9: ff61ef139c4703e0
-    R10: 000000000000001e  R11: 0000000000000000  R12: ff2321a8d2a7c742
-    R13: ff2321a8d2a7c800  R14: 0000000000000020  R15: 0000000000000006
-    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
---- <NMI exception stack> ---
- #5 [ff61ef13e16ef8f0] fbcon_redraw_blit at ffffffffb3965f44
- #6 [ff61ef13e16ef950] fbcon_scroll at ffffffffb3966d58
- #7 [ff61ef13e16ef9a0] con_scroll at ffffffffb3a05adf
- #8 [ff61ef13e16efa10] lf at ffffffffb3a05ba4
- #9 [ff61ef13e16efa38] vt_console_print at ffffffffb3a07cc4
-#10 [ff61ef13e16efaa0] console_unlock at ffffffffb3567396
-#11 [ff61ef13e16efb60] vprintk_emit at ffffffffb3569521
-#12 [ff61ef13e16efbb0] printk at ffffffffb3569b0c
-#13 [ff61ef13e16efc10] show_trace_log_lvl at ffffffffb342afe0
-#14 [ff61ef13e16efd00] __warn at ffffffffb34f6e74
-#15 [ff61ef13e16efd38] report_bug at ffffffffb3dd62a1
-#16 [ff61ef13e16efd60] do_error_trap at ffffffffb342733e
-#17 [ff61ef13e16efda0] do_invalid_op at ffffffffb3427916
-#18 [ff61ef13e16efdc0] invalid_op at ffffffffb4000d64
-    [exception RIP: __kthread_bind_mask+29]
-    RIP: ffffffffb351c99d  RSP: ff61ef13e16efe70  RFLAGS: 00010246
-    RAX: 0000000000000000  RBX: ff232219e1528000  RCX: 0000000000000000
-    RDX: 0000000000000001  RSI: 0000000000000246  RDI: 0000000000000246
-    RBP: ff2321a8c0024a20   R8: 0000000080000000   R9: 00000
-
-Looks like the newly created kthread got woke up prematurely. Checking
-the source code, path "workqueue: Unbind kworkers before sending them
-to exit()" looks suspicious. The patch wakes up dying worker's task up
-without holding pool->lock.  Is it possible that another worker thread
-recently died, the newly create worker thread reused the dead thread's
-task_struct and wrongly  got woke up.
-
-Regards
-Yan, Zheng
 
