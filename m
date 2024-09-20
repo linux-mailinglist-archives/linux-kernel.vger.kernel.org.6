@@ -1,230 +1,227 @@
-Return-Path: <linux-kernel+bounces-334143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0407A97D30D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:54:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5149F97D30F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9CFC283628
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:54:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94533B2128E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F313D136341;
-	Fri, 20 Sep 2024 08:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5877884A35;
+	Fri, 20 Sep 2024 08:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0723BQL+"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2070.outbound.protection.outlook.com [40.107.92.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NZZ084ew"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6D22AE77;
-	Fri, 20 Sep 2024 08:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726822465; cv=fail; b=OcvoGghBYHSjDwEbeFAfno4mYp3x543dIt553ewK7ryBlVWpV03dhh0ujpGfSDUNJhigkzDoEEgr+/xuWCN6RyxT1cSLVDLFUQQdua4AGRAz3q7vhaUtwsbtu+WEuvgVAWrIwq2ObtKDf6c/PQjjXRzwLGD0UwVhdm5yHu5EB74=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726822465; c=relaxed/simple;
-	bh=Dm5oCSLhGnliZPd/kd4wRudXQm4u9W+3RDHlkw/PSJc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=sjRY1odW8EnXLF6WJpttiJ+PM+IiiRXP2ROKClAbxz2RMgahBwUtJiq561bosNH7MjqDK/jVPt7SDTtjFw28dA0qSnMePkvr6Z/tCr5fE95aAuDs19hSxL5DPlkm1+2xWC8hL7hIZ9wgOw99kJEdyu6I/I4WMaZQkHG9qvqj7LY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0723BQL+; arc=fail smtp.client-ip=40.107.92.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jo0rjjlntPv4QprYg71wLNNV7HTbnWWHBqx3RbuRn9KZLhWfRYsk5wSRWReCH1QdopbyYmwcyCUjZGlB+fIoV6Hc+RY6SSWiEsPM7z5kr//kD8lwLx0urr4dQzBwJOdVTctztHyjiG3yMNNbOsyXOtT35g3Cx079G+Eqs1RHSPv7tGrDW6qDstfHEGcVtjvEpDvivl8PTJt6y0p0GwmDzVtE/hW4fyXXI+rlmmSLMM43e9hGaRTztahVwgo2gBrYeVrDIleUk9RXh2bnXO/53p95sUq9VjQP4nEzwb69vQwcCIvojRml86g+2ADJ6DZTrucO3QwzeEGgGGYe2wiGMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=69E9lEYd7EWHyOuZ7im6NWZPAYOKXsr0n/eER0lo28I=;
- b=VCoUmOJfzx5j9vKh6MFMJLhUm4RnSGQJoOAT1mS3n95miX7dEEzZ58OgADcwnejliSbzbX8qw+VBhS/gErmwW+TZga5ljAdhGiNoebYzuRizTWQsMI4u11fiQOAYbci9aqTI2ibmZHjAxW6nDOIhdf+4KjqykZfeOI+nMgo2SgK/Z+go04wL5ZPfafbDiBeQYpXqA6Nz4nuB73BBQAKwc7A3TRlK7SchgY239tDOi9ySsB5Yi7AOWeXqv1ruFisA7afUwOzs9xeU3OEZyFSWY/XptTO5aFKlKF2D+skvMs8GSI6BNIjsnQHGyRPcThJLM9MkTxz5H1UkDaWXmskFcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=69E9lEYd7EWHyOuZ7im6NWZPAYOKXsr0n/eER0lo28I=;
- b=0723BQL+m7A6wT+JhURr85Qln0V+k4M4vvDI/dQInp4U7M/LCIJy3FFzFyRNgItUzLbiiISP11zBBPU27WrLORUxeLblXOI2OGvdxjTcjnP3yHXnCDadajR/G4ejEAFl8BLYcKemJljZKvCuHNAWc1ULirY004ia/ybVfb6GrRs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com (2603:10b6:8:96::19) by
- SA1PR12MB6679.namprd12.prod.outlook.com (2603:10b6:806:252::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Fri, 20 Sep
- 2024 08:54:19 +0000
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec]) by DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec%6]) with mapi id 15.20.7982.016; Fri, 20 Sep 2024
- 08:54:19 +0000
-Message-ID: <4cc88621-d548-d3a1-d667-13586b7bfea8@amd.com>
-Date: Fri, 20 Sep 2024 14:24:10 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v11 19/20] x86/kvmclock: Skip kvmclock when Secure TSC is
- available
-To: Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, bp@alien8.de,
- x86@kernel.org, kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
- dave.hansen@linux.intel.com, pgonda@google.com, pbonzini@redhat.com
-References: <20240731150811.156771-1-nikunj@amd.com>
- <20240731150811.156771-20-nikunj@amd.com> <ZuR2t1QrBpPc1Sz2@google.com>
- <9a218564-b011-4222-187d-cba9e9268e93@amd.com> <ZurCbP7MesWXQbqZ@google.com>
- <2870c470-06c8-aa9c-0257-3f9652a4ccd8@amd.com> <Zu0iiMoLJprb4nUP@google.com>
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <Zu0iiMoLJprb4nUP@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0172.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:de::16) To DS7PR12MB6309.namprd12.prod.outlook.com
- (2603:10b6:8:96::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2143A22EEF;
+	Fri, 20 Sep 2024 08:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726822605; cv=none; b=NmG6lm5Tm2ybdxYBfOPbttOAjNWS8q5SrV8GEIH2Ua8ZsEO78FBq1eEiEqqck01iVEF8UMca/3BUPnk5p4sMJRbT5vXfKwEh/Ufmm1BonV0HX1hv0AMyUf3NeIwsQzEai+gNByjkfHSom4yKMJkOFT6gIItUDEaPIVWgXOyDLCA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726822605; c=relaxed/simple;
+	bh=/aNzG0VvDQiJBoENuzXT9mrjGoM/WraE9mg2UaXs5lA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GPuf/3JmlMm3virae3fgLW3AdtM5kbA6qBkd/rTitMcmhO/QivqaqHa2wyAKwuhAul4B8qKF58jnkCh/1oYfBbwRHmjPAG/PVM340XX/yLgXUpMccoSff/h/xs4wD03OIDKf3nksilpPgUezAd76r04Wk0wsoOh4ku52SvvD+9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NZZ084ew; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a83562f9be9so200862466b.0;
+        Fri, 20 Sep 2024 01:56:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726822600; x=1727427400; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iRaxuEQlfKW2g/XHgBJt6Xs+eFFiMWGCan6Za5aU4eI=;
+        b=NZZ084ewfwnyAB2Qr9/OLPhEUDuFKILbsUHliyHwf1WCoi8CTcVHcIVSHHFowLFDWY
+         3emnr8xr2BbUX2lI+l9Pdf4zOpWEQO5niuXF4FwGRzwu7vhE6bTiGGbtjJXf6r/Ziqjb
+         bpSpuva2haD/RQBPxdlpt8ZvcBtuGOjhRtIhQq/Nm/Kfo3uYSFkSG5fwt3euRyaqODc8
+         tNGa7dU1CdU58BzPqE15yH60CG4ujyRSd4dHMXdLfG5gyhZu8RzNN5lGTglsBALus2Vd
+         952Dm1fQSsNz/vh8A6crRVw6n2+nLuM9h6I34OSsSNZDSnjtEo4MurDBRpE+AKc7D6+F
+         JYNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726822600; x=1727427400;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iRaxuEQlfKW2g/XHgBJt6Xs+eFFiMWGCan6Za5aU4eI=;
+        b=JJhwerSu2dUeu/FiN0NkyGMCWAy/Jby98yIsYbG1oJWGlK8CpakJ9gFN7bJjBkTR/V
+         sfVJSN7pHVO5oHLzRXIcOXVigMWIYtm0msHpTpy/025luinjH+NnUlHHZzYfnnRonhK+
+         /33CdhoPEs33IUZHSomFDApPxRvkff2XbJar5wDxPBfKLUS8JPXr0aIn1O72Fee9VBo6
+         jrGVDNPd47Wv6DKy/7QYIer6x309Ski7ELcanzf97zUASjzmo41C2um72nIrWQAyg29J
+         AHnrBoG+5IV/AA+XVUX97YiocceunHnAhY8q3ExQxSY5LcThOV00ZCV7ka8dTaki37UO
+         z29A==
+X-Forwarded-Encrypted: i=1; AJvYcCUjmN4xt+xKIJZl4qMUqdnA8vUr7den7Jjz2pPhXiCdMOFSeVlrnRIFIlZq9QHQhMOcdEZws2i+loddNH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWOvJSDbL/Sc+AhHESvOinyQg2IaRWOMc49u6wrLQWjtdota2z
+	RtM+MWT54B/UV/u0jvnPqhlTk3DFuqUsMKg7LuHk1c+nYOOyUFtAaqkTWA==
+X-Google-Smtp-Source: AGHT+IGyNG9aT1ZJpCKkfu8YApBJQZiv5Pwkbbn+pOreJas768yk8cg0P+fItatkHUOlmi5MRsVXBw==
+X-Received: by 2002:a17:907:3f9f:b0:a86:a41c:29e with SMTP id a640c23a62f3a-a90d4fc84dcmr171406166b.2.1726822599852;
+        Fri, 20 Sep 2024 01:56:39 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:908:e842:bf20:422c:48db:9094:2fa9])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a906109637esm817861866b.40.2024.09.20.01.56.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 01:56:39 -0700 (PDT)
+From: Ole Schuerks <ole0811sch@gmail.com>
+To: linux-kbuild@vger.kernel.org
+Cc: ole0811sch@gmail.com,
+	jude.gyimah@rub.de,
+	thorsten.berger@rub.de,
+	deltaone@debian.org,
+	jan.sollmann@rub.de,
+	mcgrof@kernel.org,
+	masahiroy@kernel.org,
+	linux-kernel@vger.kernel.org,
+	nathan@kernel.org,
+	nicolas@fjasle.eu
+Subject: [PATCH v5 00/11] kbuild, kconfig: Add support for conflict resolution
+Date: Fri, 20 Sep 2024 10:56:17 +0200
+Message-Id: <20240920085628.51863-1-ole0811sch@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6309:EE_|SA1PR12MB6679:EE_
-X-MS-Office365-Filtering-Correlation-Id: 69404169-216b-47ef-2dfd-08dcd951d02b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eWQvN0ZocWUvTXFOVzM0Nm9aWWFDc0ROS2xMbytGNDdlNGVNSkNyYVByclRX?=
- =?utf-8?B?ZElvbUxBbzZWSkl1cE1tZHQ5czBWYnVxT09xZ3NFd1BXQzB3MlNxSU1DRmNL?=
- =?utf-8?B?R0NmT0Q0WUtieFBZSWpmM3pSUFlFZmRQYm14bTFWTk1EeDhKZFhjemJqdXpo?=
- =?utf-8?B?b3NkTStPN1hTbVIxNHJZaFg5aDlxWUFPUUtmM0swTVA1YnhTRVRvVko0eC91?=
- =?utf-8?B?U29GbFdVa01YVkhxVU1PczU0bmFsQ3o5eXljSTFNUHY3U3o5ekkzOUxuM0JS?=
- =?utf-8?B?em1XT2g0R1lsbXRIU3dVaVRtYzY2bkZMYXRYSzVOcWVETjNSRS9mdWtLTC9n?=
- =?utf-8?B?Z3BJOTJmdkpTMTBPcFE1WjM0QU9ZRnFSYUE1K0RSeVRpVDNZcStXWjZNZXJF?=
- =?utf-8?B?U1d4WXZTWEFUQVRXQXdtYTFhZFBXU1dPUkhZbVhRaE0wY0lmR1ZEQjR3bko0?=
- =?utf-8?B?NzB4VVYxaG1POStOL2h6akVydnRMME93dzNqMWFReGw1K3QwUTh1cmJMR3BW?=
- =?utf-8?B?OFNsakZTelZ3enBvQXZVNWFDeTBVUlpKbUUyZHI4Vzc5bkVRZXE1S0tUdEdD?=
- =?utf-8?B?Ykc3YVdwdVczVDNZbDROWlBFY2tNODBFU2psY0hqK3BXbHpTNExBM3ZWdFk2?=
- =?utf-8?B?d1AyV0lZT1ZZMHI1UHBCVWljZlNnVFl4Uk9FTlJnRW5mNVpMV0RXVDNQNFk5?=
- =?utf-8?B?cmtqaGttak5pZld0bFhDUkFVa3VpbVlkQ2YvL0VQeTZSNjM0OGFRWld5V3Ir?=
- =?utf-8?B?QStQNnBhNkhQSDBERW1HSnBqb3F2ZkJEbE9mSFdoT3NsUWVwR2RiamF1S0Jn?=
- =?utf-8?B?eXhxL3Bra0xjZjZPK1VSSnpFMnpJR2ZDcWRydnVCWUFNWDcwREJMLzhLa2R1?=
- =?utf-8?B?akpaYVlxUVRWYnpwdUNsRUd0UUZJSHJuRk5uVHFIci91eFhlZ3NqUVB4aUJa?=
- =?utf-8?B?WlpWZkVqbFNtV3RGNm9naU9ySjBnMTlLWGF2RVJJaHB5MHZZeVNaZjFhZDdN?=
- =?utf-8?B?UG9hcjRWRWsyazBpQUJpSkMwYlcyUzdXcUpTa1h3WEZqTmlydEkvbTJDRHo0?=
- =?utf-8?B?clRmdnFVRm1nV3FjSWNOeDJtY3JUY1dtK3JEQWVyYjk0NmU1YVUyQ1NRM0w0?=
- =?utf-8?B?ZGYyeTBHcUUvQUZPOFNPVE5RQzIzaFlpV2J5ejBzT0NMQjJINzdxd2hxWGhn?=
- =?utf-8?B?S3JmVHVTL3hzWmlUR0pHd1pURHhuQy9hNXFiazk5NnQ4U0cvZm5PZGxRbTA5?=
- =?utf-8?B?cG5zNEpaQnpORWlSQzZZejhYYTkyc2d5WUsreHUwaU1hS2lpWWxZOXlQT0pZ?=
- =?utf-8?B?a0RQbXpSNFNWM3gvOFBWR1c2WkV2WjhXVk01NDJrU0d2bjFWVHJxZTZlR0ht?=
- =?utf-8?B?ME0welhYeXRycFBaL1pyaHk5N0NubWZQOXd4bTBZN3dKNE04dVN0eEg3SWcy?=
- =?utf-8?B?WFV6UHA1VmpMTUd2WmhFSE8vbmJZbGYxQUhwcEp3MGhvQmZUaHFBY2lpWExq?=
- =?utf-8?B?cUpOMUdGSk9pS1c1aGZEb0piV1RRTDNId2I5SVROOFVtMzhGb0lJYmtOOCtK?=
- =?utf-8?B?VjZvVnpGNzMyOUdYWlV6MXRWZFcySW12ZExpeVRZb0R2V2svVUZSbSs4SFZn?=
- =?utf-8?B?SnJ0MVhpL2JwRWNCRkZiWUF3dENuRFJyQ0dLa1J4VVVGbDd6WWsvRlJVbTZE?=
- =?utf-8?B?ODJ3MkhsM1Z4cU8rRWt2ZEpnWEhkY1J0V2IzOGF2ajhySzJ3VTZZYXpSSVVr?=
- =?utf-8?B?eXBndS85WGNoa2xYNDJUdTJ2ZW9CeWFwMzNxanpNdnRiN282cHNkNFd5TXda?=
- =?utf-8?B?SU9qYTl0OGpZOWJRdkJqUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6309.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d1N3U1pxT2hrdkozaGxTV3RPYmRCenMvZnhNeEJhb2w3Qy9TdHpLZDc3N2sv?=
- =?utf-8?B?VWZnOUx5dHJGczIxc1RFYTh2VzUyd2Zsa1EzT0hrcnpLaERUaC9kWm1DZ3ZH?=
- =?utf-8?B?b0pNcGYrYW5EMElWVGRlZndpWWZRV3VwYjgwVFZ3eEZSTHp6bTh4Z1ltKzBt?=
- =?utf-8?B?TENodVBtMTBrajZUK25qNHRrZXZpTGZOeDhoTVh4TXJBcytneVpKQlRyQVlS?=
- =?utf-8?B?bDMvWFh4UkYrTStxSTNoTnczWEdYb3hzV2lHU3I0NDJvRUViNzNGQWZ1bjZ2?=
- =?utf-8?B?dEJLUnh4WGp4VzlqVFZHMm5pVEpKRDNKWWc4QWloa3k0QS9ObHo3dTlsNGtT?=
- =?utf-8?B?YStNUTE1eU9nZy95cys4MTlTZVNtb0ZWODVQTkc3YkVuQkdJSXd0OXJPQ09M?=
- =?utf-8?B?NFRRVnVXOGZaTWQwNGhaMFpaVUcvUnQ2a2E4WTFOank5cElRWkZDZGJGekNV?=
- =?utf-8?B?c2hlQnc0eUc5Mzl2WjlWMTVrV1Uyai9QQkczODhKc1VoRUpkTW90MG53UHdR?=
- =?utf-8?B?Yy9Mb2NtUkRURzBhL0RmS2hMRXQvTGNybENFU2N4OXFNcUVWNUpTaVhoeGhs?=
- =?utf-8?B?MW1oTEhMREhyOHh5YkFWWE01L2lLMHEyQlRIT1FXeEpST1BDbzJTbjJyT0sy?=
- =?utf-8?B?b0duVEFDbmVJMHdJaDZ2bVdUajlFYWJtckEwYUJoc3RJcE1id0dWWU1Yb1JR?=
- =?utf-8?B?ems4ZVRBY3hOd2gvQkVhN2ppMFNZaW1rVDE1WGlBN0ZRZDJNbG14d01ORHZJ?=
- =?utf-8?B?NjZiRFVySEo5cmtlTFZNbzd1SHdKYzhIV05hUzZZaWl5VHMxb1F1UDJpOXJr?=
- =?utf-8?B?bVBhRDIrclNZTmcvekNyYVp5ZUdsTU4zUlJtWHN0TU5PcFExSVpSR1ROUGxS?=
- =?utf-8?B?NEVib2hQUDlScnBJeXRVYjRVK0pmVktqL3VXKzVRU2JTZzdXdTg5cm9pNkRq?=
- =?utf-8?B?amhjZk11OWZiN3crRnVqd3ZRQ3ByUDF1anRGZldQRjZ6K3lOOGVtdVZ4TjZw?=
- =?utf-8?B?ZTdndVNCUnVYTjNCbTdvTHY4dDl5KzZLZXR0b1NwOTYrNU5idUl5VEJQZjNE?=
- =?utf-8?B?bnBWc2RPOW1SOFRhNnp1N0RCUzdPZ045MnpWd0VEZzlXLzFtRmh4U0pTcGUw?=
- =?utf-8?B?c3pBbG8zblVicVZKZ2s5M1dEOC9KVWhLa21vMmJrd3ZrRXRVOEtxdytYL2RG?=
- =?utf-8?B?cDBtb3VwVE0rbktTb3NmSUFIaHEvRllUNHYzaDB5ZHQ1YlFLcVJhTnFQR25p?=
- =?utf-8?B?a2ZTMmduL1lDeXpwT0lxenlhUElEVHBvMnRhTmRuMS8xY0daMk5zOW1vQUZ2?=
- =?utf-8?B?UmFjaUV4S1NqdFhBWVhHRUNFR21YbkZORVp3NFBUQmVrdHNtRE04dFpNSjFU?=
- =?utf-8?B?bWhGOGlzOTlvZGNuUHpqWUJ0SlBnT1h6SjhlSnpxaTMrN1BoaGloazV4WWZW?=
- =?utf-8?B?NU9YczUxb0VObFBQUTVuOFo0RXlMOXlYYTZUVkFIYXlXejJkZzUvUW0zSWpw?=
- =?utf-8?B?eWx1OWRTNlliYVRzdVVyUTd3M2x6aHM4Z2poZXRlNlRvLzVFNWVnT044TjJq?=
- =?utf-8?B?OTVNbjh3VmxwdmNNMk4vY3o2WEwybm9ZUm05VVpxdkpzOVViN0Q3NVAwbyt3?=
- =?utf-8?B?VjRwa05UMXJ2MHZKbDZCYWFYSnZvMGhLdXNwYW9QQXkvUXhPcThoTU1OWUlm?=
- =?utf-8?B?Z2M5N2hCajltNDdqSi9pUzdwaWtsbEFScTJ6WEhPejhqTHlrQ0FnZ2VtL0RT?=
- =?utf-8?B?N2xBYnRDTnF6WTV4amNUZXFhdVA5bmZjdjQxbWVXMi9MZ3BTOWNuVFdkVTNk?=
- =?utf-8?B?eU9DRE92SElFL2JSMTdYZDFUOW0reGpNcU5pcjJzd2ZYRzNNZ2h3NUZBOWN5?=
- =?utf-8?B?bXJZdjczbXFGQ3Rwa2YwNGxEOG5rS2xvZlp3a1ZqTzczVStUSy9FVGVQbTVI?=
- =?utf-8?B?ejlhVEVHRDl0NmtNZnhtTEQreWtYN1NXelAzZUh3dlRlZGpXNnRRTDlFbnVG?=
- =?utf-8?B?bkNpamRwNW9EVUsrb2FYU25TRDdIRVNiRWpCMXovMkV3Tmw5bnFFSSt4aHB3?=
- =?utf-8?B?enFJdjhIV0JHRmk5UkdSNFNHdzd1RmtMUnNzZmwxN1JMN1B2bkpLM0lWSWtU?=
- =?utf-8?Q?rhFQarcDKwKcuyQQL9LtszUpr?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69404169-216b-47ef-2dfd-08dcd951d02b
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6309.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 08:54:19.1816
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4gVLWsvmnaIyQFicjaZA73NmRCaQ8XxKt1ADkG9rQlzbNPr2MdOq4U9+LfkLZ4dCbGzWIaS5uQMRXF/IzjW7SQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6679
+Content-Transfer-Encoding: 8bit
 
-On 9/20/2024 12:51 PM, Sean Christopherson wrote:
-> On Fri, Sep 20, 2024, Nikunj A. Dadhania wrote:
->> On 9/18/2024 5:37 PM, Sean Christopherson wrote:
->>> On Mon, Sep 16, 2024, Nikunj A. Dadhania wrote:
->>>> On 9/13/2024 11:00 PM, Sean Christopherson wrote:
->>>>>> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
->>>>>> Tested-by: Peter Gonda <pgonda@google.com>
->>>>>> ---
->>>>>>  arch/x86/kernel/kvmclock.c | 2 +-
->>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
->>>>>> index 5b2c15214a6b..3d03b4c937b9 100644
->>>>>> --- a/arch/x86/kernel/kvmclock.c
->>>>>> +++ b/arch/x86/kernel/kvmclock.c
->>>>>> @@ -289,7 +289,7 @@ void __init kvmclock_init(void)
->>>>>>  {
->>>>>>  	u8 flags;
->>>>>>  
->>>>>> -	if (!kvm_para_available() || !kvmclock)
->>>>>> +	if (!kvm_para_available() || !kvmclock || cc_platform_has(CC_ATTR_GUEST_SECURE_TSC))
->>>>>
->>>>> I would much prefer we solve the kvmclock vs. TSC fight in a generic way.  Unless
->>>>> I've missed something, the fact that the TSC is more trusted in the SNP/TDX world
->>>>> is simply what's forcing the issue, but it's not actually the reason why Linux
->>>>> should prefer the TSC over kvmclock.  The underlying reason is that platforms that
->>>>> support SNP/TDX are guaranteed to have a stable, always running TSC, i.e. that the
->>>>> TSC is a superior timesource purely from a functionality perspective.  That it's
->>>>> more secure is icing on the cake.
->>>>
->>>> Are you suggesting that whenever the guest is either SNP or TDX, kvmclock
->>>> should be disabled assuming that timesource is stable and always running?
->>>
->>> No, I'm saying that the guest should prefer the raw TSC over kvmclock if the TSC
->>> is stable, irrespective of SNP or TDX.  This is effectively already done for the
->>> timekeeping base (see commit 7539b174aef4 ("x86: kvmguest: use TSC clocksource if
->>> invariant TSC is exposed")), but the scheduler still uses kvmclock thanks to the
->>> kvm_sched_clock_init() code.
->>
->> The kvm-clock and tsc-early both are having the rating of 299. As they are of
->> same rating, kvm-clock is being picked up first.
->>
->> Is it fine to drop the clock rating of kvmclock to 298 ? With this tsc-early will
->> be picked up instead.
-> 
-> IMO, it's ugly, but that's a problem with the rating system inasmuch as anything.
->
-> But the kernel will still be using kvmclock for the scheduler clock, which is
-> undesirable.
+Hi,
 
-Agree, kvm_sched_clock_init() is still being called. The above hunk was to use
-tsc-early/tsc as the clocksource and not kvm-clock.
+Configuring a kernel requires a forward enabling approach where one enables
+each option one needs at a time. If one enables an option that selects
+other options, these options are no longer de-selectable by design.
+Likewise, if one has enabled an option which creates a conflict with a
+secondary option one wishes to enable, one cannot easily enable that
+secondary option, unless one is willing to spend time analyzing the
+dependencies that led to this conflict. Sometimes, these conflicts are not
+easy to understand [0,1].
 
-Regards,
-Nikunj
+This patch series (for linux-next) provides support to enable users to
+express their desired target configuration and display possible resolutions
+to their conflicts. This support is provided within xconfig.
+
+Conflict resolution is provided by translating kconfig's configuration
+option tree to a propositional formula, and then allowing our resolution
+algorithm, which uses a SAT solver (picosat, implemented in C) calculate
+the possible fixes for an expressed target kernel configuration.
+
+New UI extensions are made to xconfig with panes and buttons to allow users
+to express new desired target options, calculate fixes, and apply any of
+found solutions.
+
+We created a separate test infrastructure that we used to validate the
+correctness of the suggestions made. It shows that our resolution algorithm
+resolves around 95% of the conflicts. We plan to incorporate this with a
+later patch series.
+
+We envision that our translation of the kconfig option tree into a
+propositional formula could potentially also later be repurposed to address
+other problems. An example is checking the consistency between the use of
+ifdefs and logic expressed in kconfig files. We suspect that this could,
+for example, help avoid invalid kconfig configurations and help with ifdef
+maintenance.
+
+You can see a YouTube video demonstrating this work [2]. This effort is
+part of the kernelnewbies Kconfig-SAT project [3], the approach and effort
+is also explained in detail in our paper [4]. The results from the
+evaluation have significantly improved since then: Around 80 % of the
+conflicts could be resolved, and 99.9 % of the generated fixes resolved the
+conflict. It is also our attempt at contributing back to the kernel
+community, whose configurator researchers studied a lot.
+
+Patches applicable to next-20240917.
+
+[0] https://gsd.uwaterloo.ca/sites/default/files/vamos12-survey.pdf
+[1] https://www.linux-magazine.com/Issues/2021/244/Kconfig-Deep-Dive
+[2] https://www.youtube.com/watch?v=vn2JgK_PTbc
+[3] https://kernelnewbies.org/KernelProjects/kconfig-sat
+[4] http://www.cse.chalmers.se/~bergert/paper/2021-icseseip-configfix.pdf
+
+Thanks from the team! (and thanks to Luis Chamberlain for guiding us here)
+
+Co-developed-by: Patrick Franz <deltaone@debian.org>
+Signed-off-by: Patrick Franz <deltaone@debian.org>
+Co-developed-by: Ibrahim Fayaz <phayax@gmail.com>
+Signed-off-by: Ibrahim Fayaz <phayax@gmail.com>
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Tested-by: Evgeny Groshev <eugene.groshev@gmail.com>
+Suggested-by: Sarah Nadi <nadi@ualberta.ca>
+Suggested-by: Thorsten Berger <thorsten.berger@rub.de>
+Signed-off-by: Thorsten Berger <thorsten.berger@rub.de>
+Signed-off-by: Ole Schuerks <ole0811sch@gmail.com>
+
+Changelog v5:
+* use lists from scripts/include/list.h
+* use PicoSAT as a dynamically loaded library
+* Fix GUI bug that made the displayed tables editable
+* Allow cycling through the desired values of a symbol in the conflict view
+  in the GUI by clicking on the cell
+* Fix usage of "NO" instead of "N" etc. in some places in the GUI
+* Improve function naming
+* Add documentation
+* Simlify xcalloc to xmalloc in some places
+* Fix allocation bug in fexpr_add_to_satmap() and init_data()
+* Remove functions pexpr_eliminate_dups() and print_expr()
+
+Ole Schuerks (11):
+  kconfig: Add PicoSAT interface
+  kbuild: Add list_is_{first,last}, list_size, list_at_index,
+    list_for_each_from
+  kconfig: Add definitions
+  kconfig: Add files for building constraints
+  kconfig: Add files for handling expressions
+  kconfig: Add files for RangeFix
+  kconfig: Add files with utility functions
+  kconfig: Add tools
+  kconfig: Add xconfig-modifications
+  kconfig: Add loader.gif
+  kconfig: Add documentation for the conflict resolver
+
+ Documentation/kbuild/kconfig.rst    |   53 +
+ scripts/include/list.h              |   71 +
+ scripts/kconfig/.gitignore          |    1 +
+ scripts/kconfig/Makefile            |   11 +-
+ scripts/kconfig/cf_constraints.c    | 1789 ++++++++++++++++++++++++
+ scripts/kconfig/cf_constraints.h    |   24 +
+ scripts/kconfig/cf_defs.h           |  391 ++++++
+ scripts/kconfig/cf_expr.c           | 2003 +++++++++++++++++++++++++++
+ scripts/kconfig/cf_expr.h           |  181 +++
+ scripts/kconfig/cf_rangefix.c       | 1136 +++++++++++++++
+ scripts/kconfig/cf_rangefix.h       |   21 +
+ scripts/kconfig/cf_utils.c          |  980 +++++++++++++
+ scripts/kconfig/cf_utils.h          |  112 ++
+ scripts/kconfig/cfoutconfig.c       |  149 ++
+ scripts/kconfig/configfix.c         |  351 +++++
+ scripts/kconfig/configfix.h         |   31 +
+ scripts/kconfig/expr.h              |   17 +
+ scripts/kconfig/install-picosat.sh  |   29 +
+ scripts/kconfig/loader.gif          |  Bin 0 -> 4177 bytes
+ scripts/kconfig/picosat_functions.c |   74 +
+ scripts/kconfig/picosat_functions.h |   35 +
+ scripts/kconfig/qconf.cc            |  623 ++++++++-
+ scripts/kconfig/qconf.h             |  111 ++
+ 23 files changed, 8189 insertions(+), 4 deletions(-)
+ create mode 100644 scripts/kconfig/cf_constraints.c
+ create mode 100644 scripts/kconfig/cf_constraints.h
+ create mode 100644 scripts/kconfig/cf_defs.h
+ create mode 100644 scripts/kconfig/cf_expr.c
+ create mode 100644 scripts/kconfig/cf_expr.h
+ create mode 100644 scripts/kconfig/cf_rangefix.c
+ create mode 100644 scripts/kconfig/cf_rangefix.h
+ create mode 100644 scripts/kconfig/cf_utils.c
+ create mode 100644 scripts/kconfig/cf_utils.h
+ create mode 100644 scripts/kconfig/cfoutconfig.c
+ create mode 100644 scripts/kconfig/configfix.c
+ create mode 100644 scripts/kconfig/configfix.h
+ create mode 100755 scripts/kconfig/install-picosat.sh
+ create mode 100644 scripts/kconfig/loader.gif
+ create mode 100644 scripts/kconfig/picosat_functions.c
+ create mode 100644 scripts/kconfig/picosat_functions.h
+
+-- 
+2.39.2
+
 
