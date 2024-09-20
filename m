@@ -1,79 +1,45 @@
-Return-Path: <linux-kernel+bounces-334297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38DCA97D546
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:11:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F4E97D54D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:20:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C27B1C21348
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:11:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C82512831C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7211814F121;
-	Fri, 20 Sep 2024 12:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1BD14D449;
+	Fri, 20 Sep 2024 12:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GjnDrqgi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="DXA+d+tw"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E905014C581
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E939B13B5B6;
+	Fri, 20 Sep 2024 12:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726834240; cv=none; b=a64V2XaEDIs6zM7/zyg+IwNnIpCtNUB4hn/yS8Xno5pQAmRbcSYBcEpMKtn7cVriAX7g1JUWcpolv1lcsJ8fPdv1FESOV4b0HwrcepKEjvxQwMlOhvF9nxcSNxcsmxehaPipBpSw4zBmvFj4ptNIz5zSad3JjBl0dT4b2n++xUQ=
+	t=1726834824; cv=none; b=CaxwskmTNn3DcWsD8fZCpBrHVI1245cSVSO33KjoczkaixxkanTClte+Qd8E8N4Y04QHllZLcymTQSjJW0jYb34jqw4Q+Gog/h1gysCXh17MBwf8uMw0Gc8btkqK5bDWUuSPW1284VjBQ13IUT0FVEK1AB5IOPdehv1YmITKQ6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726834240; c=relaxed/simple;
-	bh=XYFh4DLN6/r6Sq85qf4bYLjUAqp38/Hg/NQArtbjRpM=;
+	s=arc-20240116; t=1726834824; c=relaxed/simple;
+	bh=T1ZUoqTmsNnAUkQRKmhYs461f9XWUqcVBFlBYHGdLx4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jwXESobQWtqwAnB5rktvFGsIfXpDnj5oVoVMpzHt48Jk+zK5D8MCPRL0W9jga3gWYMUGGgr/VHdyJfdcGCcwU0DzyUjrtCNZT5ObHpO7sAdEWyaHoI+AhKT5QFEHIhyIbSh80DLg79Wd7kXqBmzxj1iTgv5LDUFeI9v0NANHqlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GjnDrqgi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726834237;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eM2fNaRDFas29zMKWdtqBon+bSwbaG6Nc3FOrqL+huI=;
-	b=GjnDrqgigaDRLgoCH7yy89nJx5JbyfW0PWFP4+lCFJ+A0M2a/X6feWbAUtBj+0hFzQLSkw
-	im1ptW+/pGUOQBQiOdZq8sdYwTSRLE/fu79tAB/zuDyMO8tTJog4C3j2FVDnde7QywnrI0
-	WQxzWry2rlU4sVrqoZt0M6eu329CQNk=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-658-KRGrihpeME60lRtvS7A0fQ-1; Fri, 20 Sep 2024 08:10:36 -0400
-X-MC-Unique: KRGrihpeME60lRtvS7A0fQ-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-5356a05fc7cso2259568e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:10:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726834234; x=1727439034;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eM2fNaRDFas29zMKWdtqBon+bSwbaG6Nc3FOrqL+huI=;
-        b=nkxMhP0ULtM0vNz7k+eBsyVejQwmCuvFulbOl2y73IjZFK1FeDCve4+3SbZqXyidgD
-         p4/Z3UbpqESKzo61xm2CGj0bBtD27iWqSaw3GxAT3T1OW73afTWBc2puJ0WREu2mSwIb
-         g9bpC03DWjDHW/fvJhYRqj9gm4DmuPhvMKQKTT5KSL/qk/dTi6nt7X9NFyFAIHZVbu8K
-         F47F0dPk+cUGCC57eIux4+NxGy3YbdhQzRvLMegVBGYjiemLoQM0chgYD6FX0vyt5f0p
-         TV4AY/lomAUN7DWcqpjGOwMIuOhDLpXBAZovzmL8G71WZRDlSLn/tcniuiAAOz9owlHg
-         g3TA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFBrR6zZrvUJflGRtydpekQp+TJkOJKHx+/7+Ls2j0qaW+F5udnRaT7zVMBj6ZO/YP4Zl0p2VNjPBsu/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyeYbF8o5/FNZA8ecofFEKFeEaL+HmsauGUFzqJtuVHXSR5CD+
-	k0X9I+lS9PjimAMvprs6RLEtqGJA8n1j1KI8KZb39FWwixiFcoJ3pmAJVHzJU0SkuaK+EqJvpjq
-	e94M+MPfiA+x3QpiM2w/fXHZf0nQCSfe9JK8bXUq1ngkEnCo9KktAHxI60I5TAQ==
-X-Received: by 2002:a05:6512:3dac:b0:533:71f:3a3d with SMTP id 2adb3069b0e04-536ac2e86ccmr1961533e87.24.1726834234238;
-        Fri, 20 Sep 2024 05:10:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFHQogLeRmFy/+WuPOpcbeCnoGIHILmzzS/u0ArVVZxjQgjr3rXN2lc/s8QND0gPFH+ZQKkNA==
-X-Received: by 2002:a05:6512:3dac:b0:533:71f:3a3d with SMTP id 2adb3069b0e04-536ac2e86ccmr1961499e87.24.1726834233833;
-        Fri, 20 Sep 2024 05:10:33 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612e1a55sm838937166b.157.2024.09.20.05.10.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2024 05:10:33 -0700 (PDT)
-Message-ID: <e893f91f-6f78-46ac-b28d-1e45fab892e2@redhat.com>
-Date: Fri, 20 Sep 2024 14:10:32 +0200
+	 In-Reply-To:Content-Type; b=tBZYwV+hIni+PjDyId6Vubwe6r6orrNQaVU+seWrW4AUF4qA6WhnK29hUe8wSWZPH3ZsWM4aOOVEzHHhOUfo0wWSm7IOh+aaAvr+4vO5EtFPaPXG4Xe6pnQSS12srGeZ7O3OpyA/XWWknthDsJ8gYl1Nuwke9/l+BYty66Cf8VY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=DXA+d+tw; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1726834811; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=iXz1a8wbqLWAyQb93ZIDKPeN5RtD2+gJiC+TI4LF2A4=;
+	b=DXA+d+twF7sb1fjt73Tf+mauFaYmX5BO+CEjLnVGbIVGMc5YbaxHc7KgSmu7EUeXOGBKMG+Da0GKTVU0AAKu2sBX5rRbyugzGl5ptsZCHuSS/g83nW8T6AteSPk6wk8ZVor3FGkW+5clWPjHOG4gobTsbHDZ5nP5X0/XbEGH2VQ=
+Received: from 30.246.161.141(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WFL26p5_1726834485)
+          by smtp.aliyun-inc.com;
+          Fri, 20 Sep 2024 20:14:47 +0800
+Message-ID: <0701964b-1c7f-4d41-8b04-e888b3c998ec@linux.alibaba.com>
+Date: Fri, 20 Sep 2024 20:14:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,63 +47,178 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hwmon: abituguru: Remove unused
- ABITUGURU_TEMP_NAMES_LENGTH macro
-To: Ba Jing <bajing@cmss.chinamobile.com>
-Cc: jdelvare@suse.com, linux@roeck-us.net, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240903025037.9711-1-bajing@cmss.chinamobile.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240903025037.9711-1-bajing@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v13 3/3] ACPI: APEI: handle synchronous exceptions in task
+ work
+To: Jarkko Sakkinen <jarkko@kernel.org>, mark.rutland@arm.com,
+ catalin.marinas@arm.com, mingo@redhat.com, robin.murphy@arm.com,
+ Jonathan.Cameron@Huawei.com, bp@alien8.de, rafael@kernel.org,
+ wangkefeng.wang@huawei.com, tanxiaofei@huawei.com, mawupeng1@huawei.com,
+ tony.luck@intel.com, linmiaohe@huawei.com, naoya.horiguchi@nec.com,
+ james.morse@arm.com, tongtiangen@huawei.com, gregkh@linuxfoundation.org,
+ will@kernel.org
+Cc: linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
+ ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
+ baolin.wang@linux.alibaba.com, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
+ robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
+ zhuo.song@linux.alibaba.com
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+ <20240920043027.21907-4-xueshuai@linux.alibaba.com>
+ <D4B336WSZNHL.RTMEF39HYUEA@kernel.org>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <D4B336WSZNHL.RTMEF39HYUEA@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
 
-On 3-Sep-24 4:50 AM, Ba Jing wrote:
-> The macro ABITUGURU_TEMP_NAMES_LENGTH is never referenced in the code. Remove it.
+
+在 2024/9/20 19:44, Jarkko Sakkinen 写道:
+> On Fri Sep 20, 2024 at 7:30 AM EEST, Shuai Xue wrote:
+>> The memory uncorrected error could be signaled by asynchronous interrupt
+>> (specifically, SPI in arm64 platform), e.g. when an error is detected by
+>> a background scrubber, or signaled by synchronous exception
+>> (specifically, data abort excepction in arm64 platform), e.g. when a CPU
+>> tries to access a poisoned cache line. Currently, both synchronous and
+>> asynchronous error use memory_failure_queue() to schedule
+>> memory_failure() exectute in kworker context.
+>>
+>> As a result, when a user-space process is accessing a poisoned data, a
+>> data abort is taken and the memory_failure() is executed in the kworker
+>> context:
+>>
+>>    - will send wrong si_code by SIGBUS signal in early_kill mode, and
+>>    - can not kill the user-space in some cases resulting a synchronous
+>>      error infinite loop
+>>
+>> Issue 1: send wrong si_code in early_kill mode
+>>
+>> Since commit a70297d22132 ("ACPI: APEI: set memory failure flags as
+>> MF_ACTION_REQUIRED on synchronous events")', the flag MF_ACTION_REQUIRED
+>> could be used to determine whether a synchronous exception occurs on
+>> ARM64 platform.  When a synchronous exception is detected, the kernel is
+>> expected to terminate the current process which has accessed poisoned
+>> page. This is done by sending a SIGBUS signal with an error code
+>> BUS_MCEERR_AR, indicating an action-required machine check error on
+>> read.
+>>
+>> However, when kill_proc() is called to terminate the processes who have
+>> the poisoned page mapped, it sends the incorrect SIGBUS error code
+>> BUS_MCEERR_AO because the context in which it operates is not the one
+>> where the error was triggered.
+>>
+>> To reproduce this problem:
+>>
+>>    #sysctl -w vm.memory_failure_early_kill=1
+>>    vm.memory_failure_early_kill = 1
+>>
+>>    # STEP2: inject an UCE error and consume it to trigger a synchronous error
+>>    #einj_mem_uc single
+>>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+>>    injecting ...
+>>    triggering ...
+>>    signal 7 code 5 addr 0xffffb0d75000
+>>    page not present
+>>    Test passed
+>>
+>> The si_code (code 5) from einj_mem_uc indicates that it is BUS_MCEERR_AO
+>> error and it is not fact.
+>>
+>> After this patch:
+>>
+>>    # STEP1: enable early kill mode
+>>    #sysctl -w vm.memory_failure_early_kill=1
+>>    vm.memory_failure_early_kill = 1
+>>    # STEP2: inject an UCE error and consume it to trigger a synchronous error
+>>    #einj_mem_uc single
+>>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+>>    injecting ...
+>>    triggering ...
+>>    signal 7 code 4 addr 0xffffb0d75000
+>>    page not present
+>>    Test passed
+>>
+>> The si_code (code 4) from einj_mem_uc indicates that it is BUS_MCEERR_AR
+>> error as we expected.
+>>
+>> Issue 2: a synchronous error infinite loop
+>>
+>> If a user-space process, e.g. devmem, a poisoned page which has been set
+>> HWPosion flag, kill_accessing_process() is called to send SIGBUS to the
+>> current processs with error info. Because the memory_failure() is
+>> executed in the kworker contex, it will just do nothing but return
+>> EFAULT. So, devmem will access the posioned page and trigger an
+>> excepction again, resulting in a synchronous error infinite loop. Such
+>> loop may cause platform firmware to exceed some threshold and reboot
+>> when Linux could have recovered from this error.
+>>
+>> To reproduce this problem:
+>>
+>>    # STEP 1: inject an UCE error, and kernel will set HWPosion flag for related page
+>>    #einj_mem_uc single
+>>    0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+>>    injecting ...
+>>    triggering ...
+>>    signal 7 code 4 addr 0xffffb0d75000
+>>    page not present
+>>    Test passed
+>>
+>>    # STEP 2: access the same page and it will trigger a synchronous error infinite loop
+>>    devmem 0x4092d55b400
+>>
+>> To fix above two issues, queue memory_failure() as a task_work so that it runs in
+>> the context of the process that is actually consuming the poisoned data.
+>>
+>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>> Tested-by: Ma Wupeng <mawupeng1@huawei.com>
+>> Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+>> Reviewed-by: Xiaofei Tan <tanxiaofei@huawei.com>
+>> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> ---
+>>   drivers/acpi/apei/ghes.c | 78 +++++++++++++++++++++++-----------------
+>>   include/acpi/ghes.h      |  3 --
+>>   include/linux/mm.h       |  1 -
+>>   mm/memory-failure.c      | 13 -------
+>>   4 files changed, 45 insertions(+), 50 deletions(-)
+>>
+>> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+>> index 93eb11482832..60d8044f14d1 100644
+>> --- a/drivers/acpi/apei/ghes.c
+>> +++ b/drivers/acpi/apei/ghes.c
+>> @@ -467,28 +467,42 @@ static void ghes_clear_estatus(struct ghes *ghes,
+>>   }
+>>   
+>>   /*
+>> - * Called as task_work before returning to user-space.
+>> - * Ensure any queued work has been done before we return to the context that
+>> - * triggered the notification.
+>> + * struct task_work - for synchronous RAS event
+>> + *
+>> + * @twork:                callback_head for task work
+>> + * @pfn:                  page frame number of corrupted page
+>> + * @flags:                work control flags
+>> + *
+>> + * Structure to pass task work to be handled before
+>> + * returning to user-space via task_work_add().
+>>    */
+>> -static void ghes_kick_task_work(struct callback_head *head)
+>> +struct task_work {
+>> +	struct callback_head twork;
+>> +	u64 pfn;
+>> +	int flags;
+>> +};
 > 
-> Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
-> ---
->  drivers/hwmon/abituguru.c | 5 -----
->  1 file changed, 5 deletions(-)
+> I'd rename this as ghes_task_work. It is too generic name IMHO, easily
+> confused with task_work.h definitions.
 > 
-> diff --git a/drivers/hwmon/abituguru.c b/drivers/hwmon/abituguru.c
-> index 93653ea05430..58072af4676b 100644
-> --- a/drivers/hwmon/abituguru.c
-> +++ b/drivers/hwmon/abituguru.c
-> @@ -95,11 +95,6 @@
->   * in??_{min,max}_alarm_enable\0, in??_beep\0, in??_shutdown\0
->   */
->  #define ABITUGURU_IN_NAMES_LENGTH	(11 + 2 * 9 + 2 * 15 + 2 * 22 + 10 + 14)
-> -/*
-> - * sum of strlen of: temp??_input\0, temp??_max\0, temp??_crit\0,
-> - * temp??_alarm\0, temp??_alarm_enable\0, temp??_beep\0, temp??_shutdown\0
-> - */
-> -#define ABITUGURU_TEMP_NAMES_LENGTH	(13 + 11 + 12 + 13 + 20 + 12 + 16)
->  /*
->   * sum of strlen of: fan?_input\0, fan?_min\0, fan?_alarm\0,
->   * fan?_alarm_enable\0, fan?_beep\0, fan?_shutdown\0
+> BR, Jarkko
 
-ABITUGURU_TEMP_NAMES_LENGTH is used further down buy only in a comment:
+Agreed, I will rename it in next version.
 
-/* IN_NAMES_LENGTH > TEMP_NAMES_LENGTH so assume all bank1 sensors are in */
-#define ABITUGURU_SYSFS_NAMES_LENGTH    ( \
-        ABIT_UGURU_MAX_BANK1_SENSORS * ABITUGURU_IN_NAMES_LENGTH + \
-        ABIT_UGURU_MAX_BANK2_SENSORS * ABITUGURU_FAN_NAMES_LENGTH + \
-        ABIT_UGURU_MAX_PWMS * ABITUGURU_PWM_NAMES_LENGTH)
+Thank you.
 
-So IMHO ABITUGURU_TEMP_NAMES_LENGTH should stay so that someone
-reading the comment will actually be able to understand things,
-removing ABITUGURU_TEMP_NAMES_LENGTH makes the comment very
-hard to understand and we want to keep the comment.
-
-So NACK from me for this change.
-
-Regards,
-
-Hans
-
+Best Regards,
+Shuai
 
 
