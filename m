@@ -1,143 +1,129 @@
-Return-Path: <linux-kernel+bounces-334439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10F297D74E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:08:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD85597D751
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 201D01C21538
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:08:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CAC1B24BED
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ECB17DFF1;
-	Fri, 20 Sep 2024 15:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABCD17C9B9;
+	Fri, 20 Sep 2024 15:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYwDgtZo"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="fk2X3rrO"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2626417C7C9;
-	Fri, 20 Sep 2024 15:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67313BBC1;
+	Fri, 20 Sep 2024 15:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726844859; cv=none; b=JG1QUGd3IPDqNWfNeHWg5GqtivWtthP4s874TpbuxaaHbyGS5wGdqORnKOlZOnL1sxbOE1s7R6hWnqArbZc0eJhHCQLsajDGJrTUIJoTSfp7sj4fFjXNtuqcQSOYM1uY5qeAwqGL3IMBGEtIEv23p9XFjt6pPIzQNN6K47SRxjQ=
+	t=1726844969; cv=none; b=SjSE0rLz52Qq75h9XENQisYNhwZkEqIIB2pvUDMjTyPUaH2CnKkucg21QsqoQuYhpA7VeNyn5TTgcFdds+GOx3qu/hu6AUMAU+/Hnkk4/kB8zCBEZRq6iMfwPZu8dZqIs5V4mnztWtaxLaSxSJW0wzMol8ARX9EJlZSnZtO0Ycw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726844859; c=relaxed/simple;
-	bh=T3Bx79A9fpSpiBg/sM2LWVV+GyyLV76LWhZ1clxz26o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YgJj3nriLlPth1Buvx2Szz+j15MIDR5AtJzZ/v5IElO+8qt210byKyrrRNu1vlx+XvOfRMCYxJQcF6u0lzSFjAJOIkoisee43S+xPGSe70AzA5Kvm8c3PhO2J7Y8qg8+0AP3onD4ne2ujd+SkpHm7sE7irhSJvtQBqelKpiR6Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eYwDgtZo; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-718d606726cso1492039b3a.3;
-        Fri, 20 Sep 2024 08:07:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726844857; x=1727449657; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qqssmp9/Q4bMnylmVAyuApOL66R83xQywZPSLREzBdw=;
-        b=eYwDgtZoKnvDLvEolCIgRuQ5xEaQtLMVqHfLXUXpkLYPy/bbnt7MzDKUjeC0GeAy8I
-         WrI4jZjP7OI+4H6A7QsS+/y/RE9zhPwy55+cDOZjv/lUpOXeIgXDp60ywl/6oKTH1ByU
-         I7HEpzIwTEKWPqdqIRPJp8mWqKjMLue/hNlwVE4sjFLyXjzGexy8YdTt3ZyMP7UUrkna
-         +GC6Rxq6OseuGdU0HDRE4CAnGjPaPv2PLGd7r2Q2nFPWTFVl3orlAIVs9WBORo3x9/QD
-         ApTaw1NuMBiWLX7PLUl3BAHYag2lCm4Ap52zZ6VRJJmiA95YX5CH4StoOls1lwjJrqPv
-         ok6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726844857; x=1727449657;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qqssmp9/Q4bMnylmVAyuApOL66R83xQywZPSLREzBdw=;
-        b=RwKSVDEDdwbd12bx7bTvncYNaAHOXASEi7Qdz4k0zXG1CIgOTea3ss5vYBFJGetzm9
-         AcsCAVeCXikR+QIYLvT7LhZ9FY9Ga6mPpPsO2RDta846hM8RyM9Iu3zONSZYqgFdAi3s
-         HTdm/4ZGajTZ8BG4k/StAdtqt9R/97KF8a2Ar/axVPdJaKo6M7OvoyJhiZpG8hUNy34w
-         QMNaYsu/pqfsLJYx8ocKMnprit29W50+HNsefQ9ebLvPkVpvQHLzHNYiZU1B4OBd2XNK
-         RB2axtBnLtFoECFsQw7J0L5zces4deKjYdVjeYYwI5UMX3ElW9/xbktMbuTIPZwrjL2y
-         NVdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPJw3E6i5vFu4sMUEgjjWPBnvHXgt1GQn6FtRFN9hKzLxH9Wqqc1mVVlnoPBPiJ2itJ5ZZ8js4d83/oQA=@vger.kernel.org, AJvYcCWenGfkoXF5aNGyogRY1K2mYfYfwsuNK/9LQRKO0YxsMtOewzg7E6OiNqJ7SPBK4bW2XPpfn3A00fR+@vger.kernel.org, AJvYcCWqDh0k82s148Bfb205IX/PVPRU2D0KpPjiF+jMtCOyfmp0BFsQOfnhrJIP8aMuRLrG9Osa9+t+iVHemChO@vger.kernel.org, AJvYcCXD6jqrBahn4en8EXCV8cjla6FghpcXnjVEExk+MRwZQ9U/6Je91G2fbEontauuD8SioaYnA+SMMmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw95ImUaX2zyirVLLuZX8x6GzzcfECVD+jfPd729HVxgHKGMZzf
-	n4W67KWSsWyBVuO77lzcvg+SiRsKnZMbCRa4IwUqvpi3e7H06RngzYNlzVua
-X-Google-Smtp-Source: AGHT+IHEzdh15TOy6+vECMW1tVXFloHn7UQoapI0TK3/tNqpmkHmb5bjWq9xhi2e9iQ7SLX0EC4omQ==
-X-Received: by 2002:a05:6a21:3489:b0:1cf:2a85:722d with SMTP id adf61e73a8af0-1d30c9897d1mr4086676637.3.1726844857214;
-        Fri, 20 Sep 2024 08:07:37 -0700 (PDT)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:223:9c18:4232:3cbf:2f25:b7b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944a97799sm9910403b3a.23.2024.09.20.08.07.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 08:07:36 -0700 (PDT)
-From: SurajSonawane2415 <surajsonawane0215@gmail.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org,
-	corbet@lwn.net,
-	linux-usb@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: SurajSonawane2415 <surajsonawane0215@gmail.com>
-Subject: [PATCH] docs: fix spelling and grammar mistakes
-Date: Fri, 20 Sep 2024 20:37:16 +0530
-Message-Id: <20240920150716.15821-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726844969; c=relaxed/simple;
+	bh=rdhZvUrRYqnq10ejxQHRUp3m5b2pphh1v/aFv8MI8FE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g8192gKbtFy64gdnrJXvmSWgAQ5yE3ynBQ2IiZIfIi4+FxkalVuwrF2aGPzi4W/t6JEMHbpILPdH/l8W1hWTivS8iCGJEROH2siHtanq1VVQm73JStwXzBFBYjrKm1iO12Qm09stQldJbjCuLI2qKk30Tjr9yVORUldJ286vy5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=fk2X3rrO; arc=none smtp.client-ip=74.208.4.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1726844955; x=1727449755; i=parker@finest.io;
+	bh=rdhZvUrRYqnq10ejxQHRUp3m5b2pphh1v/aFv8MI8FE=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=fk2X3rrO9v8yCTX4Wh2tpc3l02XEC6ND8kgRPnrj3b6QUI6d5fhxDD4+K30XgCIN
+	 hLJ5yxsg6vwGvXXmaKuYN9JMxXk6x83iDNLdEGeO2RS2wBPmq5gNFbR+bj/eJhz1X
+	 ndCGAVhaL4HadcR2UzkypIEfd5Fe5vN6M4M+R04ytITR4uHJMSC/iOEzoILduuOAi
+	 yxET+QcrSdB5f9GdO2YGif6KwUKtbEMNXRkOwNBm68AGc71fe3tAIwHYzbPx/PNT0
+	 Z262IU+M2UMUx7l3jcvod3HH3d7ef1xAQc2QCCMixJKOwAwOoxfs8W5MC+0HszRcE
+	 sc7e7RpyXxyutA+igQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
+ mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 0Me9Ie-1sbmYn2RKg-00VTsi; Fri, 20 Sep 2024 17:09:15 +0200
+Date: Fri, 20 Sep 2024 11:09:13 -0400
+From: Parker Newman <parker@finest.io>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Parker Newman
+ <pnewman@connecttech.com>
+Subject: Re: [PATCH v2 3/4] serial: 8250_exar: Replace custom EEPROM read
+ with eeprom_93cx6
+Message-ID: <20240920110913.66f768d0@SWDEV2.connecttech.local>
+In-Reply-To: <Zu2M5Y_scTkhSyzx@smile.fi.intel.com>
+References: <cover.1726838531.git.pnewman@connecttech.com>
+	<87719d2113970b6ff4979329fb96346a0aca9775.1726838531.git.pnewman@connecttech.com>
+	<Zu2M5Y_scTkhSyzx@smile.fi.intel.com>
+Organization: Connect Tech Inc.
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:OVnDAoKanvoUIzsp8vHHjIK9LXZlm9qNDbkeITT3yUhXmXwm8Ar
+ 2TE+df48TWAtOjLSltJNTHw657a5rm8UXRXlSWfkdhDSlnjwc2bmtHQlpqXSO5m9zur1jwF
+ WzkiJQmxCAMh1SJwvEX9NlfTfsqLahu3ftwc1XMtWt2lCelXTv9zCkMpFjitwN2URZdl24D
+ 9X1LXAFWthrVGqUorcW/A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:5C+7VOKP7bM=;6vHrg+s2129rPTyjBYq+3utQSDL
+ 3Qp0AiWI6ELmrQbtoB+sRYCCOeraI9qt6tD9aSVv+SC/W2N2eeuzaj0NgvA6jkKS6+pzxx37u
+ op9jN4MRSNImuMdLmjEPUy0vHGNcDOZVxNQoFWHX3HT8ApjpQFwkNgPhhk5fxM8cVLUbmKAFv
+ 7dgAFfWF+RzCGPfPLuK71MDBN5RFNhdpDDZWEur3K0zz6XROgklR5QIwCuIQgCzpnC1Q2dPiW
+ R0eiepi582F0lqQgxehXBbdQvuwQeXmvedHdpCeQE5JOQYstryHh4ROQKxDRFGnEQyjQR1/hH
+ GhZ3T7+Rg2TOJItck4sA2d827tVLhx1I6sMGpk8XWFOxWbqyfeUYN3d9bblrJsg1O1mDfrt+i
+ wN0tZYtmEwlhS3iGw7z8cgYC4YG5lPa/LakfHDluftk9v2eTQKyTY+2RQZzxPaN43/6L/OhUN
+ WmIe1z/yIbn66gGMNXGutqKLMTGVyUGX7sQJ5fNjohnIof4PmuJP6FLIuKQ5IBAWdeANut33O
+ U/ksGl/vUVM6R7l6NUvUT/gd1LUnONmNTJAp9XSNcBShGCx2iu5MaYMhKYA8XH/jbKxv8LNcm
+ 632Xdido0moTM+A1qDCmP9+4GQAGsQrqbPm+5HVjs6CkGC+bA+SIjktkjDZoR4BQ03Aru1lmV
+ DZYmD9pLPkVHCtM0yPzzfoc8R5NDK8Kwr+7Moq46t/eroGBloYvr+cMvIbnS4mQ9mZB4OwF3g
+ LRC0hJG8fH3RAgLLkeptVKaaSFTzmNxiw==
 
-Fix grammatical and spelling errors in the HID documentation files. 
+On Fri, 20 Sep 2024 17:55:33 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
----
- Documentation/hid/hiddev.rst        | 4 ++--
- Documentation/hid/intel-ish-hid.rst | 2 +-
- Documentation/hid/uhid.rst          | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+> On Fri, Sep 20, 2024 at 10:03:23AM -0400, Parker Newman wrote:
+> > From: Parker Newman <pnewman@connecttech.com>
+> >
+> > Replace the custom 93cx6 EEPROM read functions with the eeprom_93cx6
+> > driver. This removes duplicate code and improves code readability.
+> >
+> > exar_ee_read() calls are replaced with eeprom_93cx6_read() or
+> > eeprom_93cx6_multiread().
+> >
+> > Add "select EEPROM_93CX6" to config SERIAL_8250_EXAR to ensure
+> > eeprom_93cx6 driver is also compiled when 8250_exar driver is selected=
+.
+> >
+> > Note: Old exar_ee_read() and associated functions are removed in next
+> > patch in this series.
+>
+> Looks perfect!
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> Let's wait for others and CIs to test all this and then after v6.12-rc1
+> is out (presumably within ~ten days) rebase your series (as I suggested
+> in another reply) and send a v3.
+>
 
-diff --git a/Documentation/hid/hiddev.rst b/Documentation/hid/hiddev.rst
-index 9b82c7f89..073485f84 100644
---- a/Documentation/hid/hiddev.rst
-+++ b/Documentation/hid/hiddev.rst
-@@ -15,10 +15,10 @@ To support these disparate requirements, the Linux USB system provides
- HID events to two separate interfaces:
- * the input subsystem, which converts HID events into normal input
- device interfaces (such as keyboard, mouse and joystick) and a
--normalised event interface - see Documentation/input/input.rst
-+normalized event interface - see Documentation/input/input.rst
- * the hiddev interface, which provides fairly raw HID events
- 
--The data flow for a HID event produced by a device is something like
-+The data flow for an HID event produced by a device is something like
- the following::
- 
-  usb.c ---> hid-core.c  ----> hid-input.c ----> [keyboard/mouse/joystick/event]
-diff --git a/Documentation/hid/intel-ish-hid.rst b/Documentation/hid/intel-ish-hid.rst
-index 2adc174fb..fdabf6ec6 100644
---- a/Documentation/hid/intel-ish-hid.rst
-+++ b/Documentation/hid/intel-ish-hid.rst
-@@ -21,7 +21,7 @@ mainly use HID over I2C or USB. But ISH doesn't use either I2C or USB.
- Overview
- ========
- 
--Using a analogy with a usbhid implementation, the ISH follows a similar model
-+Using an analogy with a usbhid implementation, the ISH follows a similar model
- for a very high speed communication::
- 
- 	-----------------		----------------------
-diff --git a/Documentation/hid/uhid.rst b/Documentation/hid/uhid.rst
-index 2243a6b75..2681038cd 100644
---- a/Documentation/hid/uhid.rst
-+++ b/Documentation/hid/uhid.rst
-@@ -106,7 +106,7 @@ UHID_INPUT2:
- 
- UHID_GET_REPORT_REPLY:
-   If you receive a UHID_GET_REPORT request you must answer with this request.
--  You  must copy the "id" field from the request into the answer. Set the "err"
-+  You must copy the "id" field from the request into the answer. Set the "err"
-   field to 0 if no error occurred or to EIO if an I/O error occurred.
-   If "err" is 0 then you should fill the buffer of the answer with the results
-   of the GET_REPORT request and set "size" correspondingly.
--- 
-2.34.1
+Sounds good, I will wait for v6.12-rc1, rebase and send v3 with the
+changes you (or others) suggested. I promise I won't forget the Reviewed-b=
+y
+tags this time :).
 
+> Good work!
+>
+
+Thanks and thanks for the help!
+-Parker
 
