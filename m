@@ -1,417 +1,158 @@
-Return-Path: <linux-kernel+bounces-334115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E144097D2B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:27:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D727497D2B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A46F28229F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:27:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 166AD1C23B4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF7913A878;
-	Fri, 20 Sep 2024 08:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8611613C3D3;
+	Fri, 20 Sep 2024 08:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="raYL+J1L"
-Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eh021mjM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B17213F431
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24DE13AA4E;
+	Fri, 20 Sep 2024 08:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726820725; cv=none; b=Q0NETWuQck6Ou/03dF3vY283H9baH11mi6ECLRi+L2S0ATevyDw7gXKkLOTtTHPrYk96qCv13StS5GVYCojJ0J1p+lpjvYeS7GSxzltDkP2ErLUgD1DPhtpw//71xifxx3YgUZWJ1sBICUtC7z+KmVJVm+uXy/+G8N0dJS+Z+jI=
+	t=1726820714; cv=none; b=X5aCuA7p2E83R4IjI+ySu0HXVCyW9x09vMOvpziFkeDmP/Vu64o2xMkVXUgRYXF3q8Xj6GJd5u2Ag1o5X+LFvwd6DeMJ96KIBLEJq4JWqwyLb10le+6ujZ/ea9tpJzRvLQ2nSCdce1wk0Ldq/ccKb4fYhD29nYG1mGJciQkPxJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726820725; c=relaxed/simple;
-	bh=7Z9TBY9r35/xIbDqPqsS5oQyJcGpyxP7sz9snC/1b/Y=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ODbazMB2KmyjNJZseRiBIxSH02x+v8Syu2POz4Mbps79aVPVk3gSNJonmDYDsGjp57+qoyNhl30ykcaUxqrpmlwcSJsklWgMEq6lD753BxuPAwrRUbEIBo4KQaFf+SfgFc2FYq54K5hM0UjuTQXy15R31GzMoorWeCY7VwTB3Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=raYL+J1L reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=ite.com.tw; s=dkim;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=bTDzqOS47QQw0H5HnXPUclM1b17EzbnVmqfdMQjEfc0=;
-  b=raYL+J1L9EKLvygJla840e85nw3gQXuPKNJDEoQ/BE8CP6bcI+xWy+1C
-   mer378T323BCHkJ6ABmc1JGUXMe0smeh+9Jj1pC2x7ZT/iJ4wAsJ5hq+v
-   zYobq+cPQM8zpla2Bvmt7Z8mO6GRn8VH3mJ8HzYCslJbffvuy6cIOnsY3
-   8x/zumkAF3kyX4uNu59oP9SdXOpqx2FBGqN4R8mDvvltXgfCd3jfZp+ij
-   OOie2J2mfdJ5Ts86J3AJKGbiPTX5IQnC6mTSrX9GBwGuNtaLW2mEJRmSE
-   CFff654UpA4+hwvKyiHyYJ/mV2YwSUm4EmdwR7yArQfShKu9okZo8cLkO
-   Q==;
-X-CSE-ConnectionGUID: YQ6cslkHT8eTX8x/PkZXgA==
-X-CSE-MsgGUID: Q3nt34DVSjaUUA5dKNT9xA==
-Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 20 Sep 2024 16:25:11 +0800
-Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
-	by mse.ite.com.tw with ESMTP id 48K8P5vw024311;
-	Fri, 20 Sep 2024 16:25:05 +0800 (GMT-8)
-	(envelope-from Hermes.Wu@ite.com.tw)
-Received: from LAPTOP-C4GM1L3U.localdomain (192.168.82.6) by
- TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 20 Sep 2024 16:25:06 +0800
-From: Hermes Wu <Hermes.Wu@ite.com.tw>
-To: Pin-yen Lin <treapking@chromium.org>, Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss
-	<robert.foss@linaro.org>,
-        Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej
- Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>,
-        "open list:DRM DRIVERS"
-	<dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-CC: Kenneth Hung <Kenneth.hung@ite.com.tw>, Hermes Wu <Hermes.wu@ite.com.tw>
-Subject: [PATCH v2 2/2] drm/bridge: it6505: Add MCCS support
-Date: Fri, 20 Sep 2024 16:24:51 +0800
-Message-ID: <20240920082451.9240-7-Hermes.Wu@ite.com.tw>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240920082451.9240-1-Hermes.Wu@ite.com.tw>
-References: <20240920082451.9240-1-Hermes.Wu@ite.com.tw>
+	s=arc-20240116; t=1726820714; c=relaxed/simple;
+	bh=H1asYJpbEc/Ve9AdnB6jOwTfoQo/irpzHgdMxUR7AOI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BGMoKo8wTBScIe/R/JRsy+wuRtxmC7GaXkqTpKeWnVqpErCkncm7hROJ0JwggkotjX3wLGFZfPQf/3o/TLwbLDyhsJk/1D99XiKDB0KR1lXIT/Dz6AlTVje82mTtBZn6GQvdWVzxyTiJMInzI8m91s/Mqm2AVKe42vqeBUI5H4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eh021mjM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A6EC4CEC3;
+	Fri, 20 Sep 2024 08:25:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726820713;
+	bh=H1asYJpbEc/Ve9AdnB6jOwTfoQo/irpzHgdMxUR7AOI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Eh021mjM3bxxOgxCmpYxOqatsBwUY22jMa8C9n1mgCJczPmZGUr43Fhs32dHrM4O1
+	 oFNPRJcfciplroGrHup741eqTKv38d8Fx4CpRx1YC6pvludQ6zqc+3Rs+yVDZYB2VI
+	 wu7pj64BPXL/R7+YzCioUEpQ1v/ysQ5Cpj5JThbiMR8nfhh2OD4Hl9Sb6d8m+5tmbb
+	 zmfcxIgmQfb/4Fbt6P0hGz4n5wG/o4r/LpqaBM+40GaqQngHUjO7H4S83BUuefEo7O
+	 sJZQt39cnqKIMbboa2yLCD3z3EYniRYSbtK5brTTFh75JzpWswOgERUzB6762Nw6o9
+	 9lrEyPLPO0TRg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <benno.lossin@proton.me>
+Cc: "Gary Guo" <gary@garyguo.net>,  "Miguel Ojeda" <ojeda@kernel.org>,
+  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Anna-Maria Behnsen"
+ <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
+  "Thomas Gleixner" <tglx@linutronix.de>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+  "Alice Ryhl" <aliceryhl@google.com>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 04/14] rust: sync: add `Arc::clone_from_raw`
+In-Reply-To: <19760254-bc0b-49e2-88a0-7088ab55d9b1@proton.me> (Benno Lossin's
+	message of "Thu, 19 Sep 2024 14:15:02 +0000")
+References: <20240917222739.1298275-1-a.hindborg@kernel.org>
+	<20240917222739.1298275-5-a.hindborg@kernel.org>
+	<43b9bc9b-f64c-4421-8cf2-795f1f0ec94a@proton.me>
+	<6J_M8_wAnE5epFRUo8RBkYFL5p36woueX8MHQleKVFw_WOitLFZNQ6808RjS7RmizhQ07qDQpze2G3UDLZgHDA==@protonmail.internalid>
+	<20240918211211.73b1324e.gary@garyguo.net> <87zfo4i3nc.fsf@kernel.org>
+	<1dkKZAT3rq13ubPiaoqilP1uZsSCOiAXnJ8HTUQ4qpWmHpl45XpiJpkaZiT87VYE_I0YpsZZKa7Tz6Fs-kbOlA==@protonmail.internalid>
+	<19760254-bc0b-49e2-88a0-7088ab55d9b1@proton.me>
+Date: Fri, 20 Sep 2024 10:25:13 +0200
+Message-ID: <87bk0iivfa.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: TPEMAIL1.internal.ite.com.tw (192.168.15.58) To
- TPEMAIL1.internal.ite.com.tw (192.168.15.58)
-X-TM-SNTS-SMTP:
-	C6DFD326E296B29C3DA7A0BAB263AE5FE650988372D7E9840CB33A4DF2B581EA2002:8
-X-MAIL:mse.ite.com.tw 48K8P5vw024311
 
-From: Hermes Wu <Hermes.wu@ite.com.tw>
+"Benno Lossin" <benno.lossin@proton.me> writes:
 
-add AUX-I2C functionality to support MCCS
+> On 19.09.24 08:00, Andreas Hindborg wrote:
+>> "Gary Guo" <gary@garyguo.net> writes:
+>>
+>>> On Wed, 18 Sep 2024 18:19:20 +0000
+>>> Benno Lossin <benno.lossin@proton.me> wrote:
+>>>
+>>>> On 18.09.24 00:27, Andreas Hindborg wrote:
+>> [...]
+>>>>> +    pub unsafe fn clone_from_raw(ptr: *const T) -> Self {
+>>>>> +        // SAFETY: The caller promises that this pointer points to data
+>>>>> +        // contained in an `Arc` that is still valid.
+>>>>> +        let inner = unsafe { ArcInner::container_of(ptr).as_ref() };
+>>>>> +
+>>>>> +        // INVARIANT: C `refcount_inc` saturates the refcount, so it cannot
+>>>>> +        // overflow to zero. SAFETY: By the function safety requirement, there
+>>>>> +        // is necessarily a reference to the object, so it is safe to increment
+>>>>> +        // the refcount.
+>>>>> +        unsafe { bindings::refcount_inc(inner.refcount.get()) };
+>>>>> +
+>>>>> +        // SAFETY: We just incremented the refcount. This increment is now owned by the new `Arc`.
+>>>>> +        unsafe { Self::from_inner(inner.into()) }
+>>>>
+>>>> The implementation of this function looks a bit strange to me, how about
+>>>> this?:
+>>>>
+>>>>     // SAFETY: this function has the same safety requirements as `from_raw`.
+>>>>     let arc = unsafe { Self::from_raw(ptr) };
+>>>>     let clone = arc.clone();
+>>>>     // Prevent decrementing the refcount.
+>>>>     mem::forget(arc);
+>>>>     clone
+>>>>
+>>>> (of course you would need to change the safety requirements of
+>>>> `clone_from_raw` to point to `from_raw`)
+>>>
+>>> Wouldn't this function simply be
+>>>
+>>> 	// SAFETY: ...
+>>> 	let borrow = unsafe { ArcBorrow::from_raw(ptr) }
+>>>   	borrow.into()
+>>>
+>>> ?
+>>>
+>>> Maybe this function doesn't even need to exist...
+>>
+>> Maybe that could work. But my use case does not satisfy the safety
+>> requirements on `ArcBorrow::from_raw`. The`Arc::into_raw` was not
+>> called. Perhaps we can update the requirements for that function?
+>
+> If I understood the code correctly, you are essentially doing this:
+>
+>     let arc = Arc::<T>::new(..);
+>     let ptr = Arc::as_ptr(&arc);
+>     let ptr = T::raw_get_timer(ptr);
+>     let ptr = Timer::raw_get(ptr);
+>
+>     // ptr is now used by the timer subsystem to fire the timer
+>
+>     let ptr = ptr.cast::<Timer>();
+>     let ptr = T::timer_container_of(ptr);
+>     let borrow = ArcBorrow::from_raw(ptr);
+>     let arc = borrow.into();
+>
+> The only thing that we would have to change would be adding
+> `Arc::as_ptr` as a source in the `ArcBorrow::from_raw` safety
+> requirements.
 
-Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
----
- drivers/gpu/drm/bridge/ite-it6505.c | 209 ++++++++++++++++++++++++++--
- 1 file changed, 200 insertions(+), 9 deletions(-)
+Yes, I think so. I agree that `ArcBorrow` is the right way forward here.
+Patch 11 of this series extends `TimerCallback` to be able to have a
+different type for the implementer of `RawCallback` and the type passed
+to `run`. This is to be able to specify `Pin<Box<_>` as the pointer but
+`& _` as the parameter. Those names should probably be changed to
+`CallbackTarget` and `CallbackTargetBorrow`, but they could cover this
+use of `ArcBorrow` as well.
 
-diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-index cef02c8c363e..1a272c67e82b 100644
---- a/drivers/gpu/drm/bridge/ite-it6505.c
-+++ b/drivers/gpu/drm/bridge/ite-it6505.c
-@@ -127,6 +127,9 @@
- #define REG_AUX_ADR_16_19 0x26
- #define REG_AUX_OUT_DATA0 0x27
- 
-+#define REG_AUX_I2C_ADR 0x25
-+#define REG_AUX_I2C_OP 0x26
-+
- #define REG_AUX_CMD_REQ 0x2B
- #define AUX_BUSY BIT(5)
- 
-@@ -268,6 +271,19 @@
- #define REG_SSC_CTRL1 0x189
- #define REG_SSC_CTRL2 0x18A
- 
-+#define REG_AUX_USER_CTRL 0x190
-+#define EN_USER_AUX BIT(0)
-+#define USER_AUX_DONE BIT(1)
-+#define AUX_EVENT BIT(4)
-+
-+#define REG_AUX_USER_DATA_REC 0x191
-+#define M_AUX_IN_REC   0xF0
-+#define M_AUX_OUT_REC  0x0F
-+
-+#define REG_AUX_USER_TXB 0x190
-+#define REG_AUX_USER_REPLY 0x19A
-+#define REG_AUX_USER_RXB(n) (n + 0x19B)
-+
- #define RBR DP_LINK_BW_1_62
- #define HBR DP_LINK_BW_2_7
- #define HBR2 DP_LINK_BW_5_4
-@@ -303,6 +319,8 @@
- #define MAX_EQ_LEVEL 0x03
- #define AUX_WAIT_TIMEOUT_MS 15
- #define AUX_FIFO_MAX_SIZE 16
-+#define AUX_I2C_MAX_SIZE 4
-+#define AUX_I2C_DEFER_RETRY 4
- #define PIXEL_CLK_DELAY 1
- #define PIXEL_CLK_INVERSE 0
- #define ADJUST_PHASE_THRESHOLD 80000
-@@ -325,7 +343,12 @@
- enum aux_cmd_type {
- 	CMD_AUX_NATIVE_READ = 0x0,
- 	CMD_AUX_NATIVE_WRITE = 0x5,
-+	CMD_AUX_GI2C_ADR = 0x08,
-+	CMD_AUX_GI2C_READ = 0x09,
-+	CMD_AUX_GI2C_WRITE = 0x0A,
- 	CMD_AUX_I2C_EDID_READ = 0xB,
-+	CMD_AUX_I2C_READ = 0x0D,
-+	CMD_AUX_I2C_WRITE = 0x0C,
- 
- 	/*extend read ncommand */
- 	CMD_AUX_GET_KSV_LIST = 0x10,
-@@ -333,8 +356,11 @@ enum aux_cmd_type {
- 
- enum aux_cmd_reply {
- 	REPLY_ACK,
--	REPLY_NACK,
--	REPLY_DEFER,
-+	REPLY_NACK = 1,
-+	REPLY_DEFER = 2,
-+
-+	REPLY_I2C_NACK = 4,
-+	REPLY_I2C_DEFER = 8,
- };
- 
- enum link_train_status {
-@@ -1087,7 +1113,6 @@ static ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
- 				      size_t size, enum aux_cmd_reply *reply)
- {
- 	int i, ret_size, ret = 0, request_size;
--	struct device *dev = &it6505->client->dev;
- 
- 	mutex_lock(&it6505->aux_lock);
- 	for (i = 0; i < size; ) {
-@@ -1114,6 +1139,168 @@ static ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
- 	return ret;
- }
- 
-+
-+static int it6505_aux_i2c_wait(struct it6505 *it6505, u8 *reply)
-+{
-+	int err = 0;
-+	unsigned long timeout;
-+	struct device *dev = &it6505->client->dev;
-+
-+	timeout = jiffies + msecs_to_jiffies(AUX_WAIT_TIMEOUT_MS) + 1;
-+
-+	do {
-+		if (it6505_read(it6505, REG_AUX_USER_CTRL) & AUX_EVENT)
-+			break;
-+		if (time_after(jiffies, timeout)) {
-+			dev_err(dev, "Timed out waiting AUX I2C, BUSY = %X\n",
-+					it6505_aux_op_finished(it6505));
-+			err = -ETIMEDOUT;
-+			goto end_aux_i2c_wait;
-+		}
-+		usleep_range(300, 800);
-+
-+	} while (!it6505_aux_op_finished(it6505));
-+
-+	if (reply == NULL)
-+		goto end_aux_i2c_wait;
-+
-+	*reply = it6505_read(it6505, REG_AUX_USER_REPLY) >> 4;
-+
-+	if (*reply == 0)
-+		goto end_aux_i2c_wait;
-+
-+	if ((*reply == DP_AUX_NATIVE_REPLY_DEFER) ||
-+			(*reply == DP_AUX_I2C_REPLY_DEFER))
-+		err = -EBUSY;
-+	else if ((*reply == DP_AUX_NATIVE_REPLY_NACK) ||
-+			(*reply == DP_AUX_I2C_REPLY_NACK))
-+		err = -ENXIO;
-+
-+end_aux_i2c_wait:
-+	it6505_set_bits(it6505, REG_AUX_USER_CTRL, USER_AUX_DONE, USER_AUX_DONE);
-+	return err;
-+}
-+
-+static int it6505_aux_i2c_readb(struct it6505 *it6505, u8 *buf, size_t size, u8 *reply)
-+{
-+	int ret, i;
-+	int retry = 0;
-+
-+	for (retry = 0; retry < AUX_I2C_DEFER_RETRY; retry++) {
-+
-+		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_READ);
-+
-+		ret = it6505_aux_i2c_wait(it6505, reply);
-+
-+		if ((*reply == DP_AUX_NATIVE_REPLY_DEFER) ||
-+			(*reply == DP_AUX_I2C_REPLY_DEFER))
-+			continue;
-+
-+		if (ret >= 0)
-+			break;
-+	}
-+
-+	for (i = 0; i < size; i++)
-+		buf[i] =  (u8) it6505_read(it6505, REG_AUX_USER_RXB(0 + i));
-+
-+	return size;
-+}
-+
-+static int it6505_aux_i2c_writeb(struct it6505 *it6505, u8 *buf, size_t size, u8 *reply)
-+{
-+	int i, ret;
-+	int retry = 0;
-+
-+	for (i = 0; i < size; i++)
-+		it6505_write(it6505, REG_AUX_OUT_DATA0 + i, buf[i]);
-+
-+	for (retry = 0; retry < AUX_I2C_DEFER_RETRY; retry++) {
-+
-+		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_WRITE);
-+
-+		ret = it6505_aux_i2c_wait(it6505, reply);
-+
-+		if ((*reply == DP_AUX_NATIVE_REPLY_DEFER) ||
-+			(*reply == DP_AUX_I2C_REPLY_DEFER))
-+			continue;
-+
-+		if (ret >= 0)
-+			break;
-+	}
-+	return size;
-+}
-+
-+static ssize_t it6505_aux_i2c_operation(struct it6505 *it6505,
-+					struct drm_dp_aux_msg *msg)
-+{
-+	int ret;
-+	ssize_t request_size, data_cnt = 0;
-+	struct device *dev = &it6505->client->dev;
-+	u8 *buffer = msg->buffer;
-+
-+	/* set AUX user mode */
-+	it6505_set_bits(it6505, REG_AUX_CTRL,
-+			AUX_USER_MODE | AUX_NO_SEGMENT_WR, AUX_USER_MODE);
-+	it6505_set_bits(it6505, REG_AUX_USER_CTRL, EN_USER_AUX, EN_USER_AUX);
-+	/* clear AUX FIFO */
-+	it6505_set_bits(it6505, REG_AUX_CTRL,
-+			AUX_EN_FIFO_READ | CLR_EDID_FIFO,
-+			AUX_EN_FIFO_READ | CLR_EDID_FIFO);
-+
-+	it6505_set_bits(it6505, REG_AUX_CTRL,
-+			AUX_EN_FIFO_READ | CLR_EDID_FIFO, 0x00);
-+
-+	it6505_write(it6505, REG_AUX_ADR_0_7, 0x00);
-+	it6505_write(it6505, REG_AUX_I2C_ADR, msg->address << 1);
-+
-+	if (msg->size == 0) {
-+		/* IIC Start/STOP dummy write */
-+		it6505_write(it6505, REG_AUX_I2C_OP, msg->request);
-+		it6505_write(it6505, REG_AUX_CMD_REQ, CMD_AUX_GI2C_ADR);
-+		ret = it6505_aux_i2c_wait(it6505, &msg->reply);
-+		goto end_aux_i2c_transfer;
-+	}
-+
-+	/* IIC data transfer */
-+	for (data_cnt = 0; data_cnt < msg->size; ) {
-+		request_size = min(msg->size - data_cnt, AUX_I2C_MAX_SIZE);
-+		it6505_write(it6505, REG_AUX_I2C_OP,
-+					(msg->request) | ((request_size - 1) << 4));
-+
-+		if ((msg->request & DP_AUX_I2C_READ) == DP_AUX_I2C_READ)
-+			ret = it6505_aux_i2c_readb(it6505, &buffer[data_cnt],
-+							request_size, &msg->reply);
-+		else
-+			ret = it6505_aux_i2c_writeb(it6505, &buffer[data_cnt],
-+							request_size, &msg->reply);
-+
-+		if (ret < 0)
-+			goto end_aux_i2c_transfer;
-+
-+		data_cnt += request_size;
-+	}
-+	ret = data_cnt;
-+end_aux_i2c_transfer:
-+
-+	it6505_set_bits(it6505, REG_AUX_USER_CTRL, EN_USER_AUX, 0);
-+	it6505_set_bits(it6505, REG_AUX_CTRL, AUX_USER_MODE, 0);
-+	return ret;
-+}
-+
-+
-+static ssize_t it6505_aux_i2c_transfer(struct drm_dp_aux *aux,
-+				   struct drm_dp_aux_msg *msg)
-+{
-+	struct it6505 *it6505 = container_of(aux, struct it6505, aux);
-+	int ret;
-+
-+	mutex_lock(&it6505->aux_lock);
-+	ret = it6505_aux_i2c_operation(it6505, msg);
-+	mutex_unlock(&it6505->aux_lock);
-+	return ret;
-+}
-+
-+
- static ssize_t it6505_aux_transfer(struct drm_dp_aux *aux,
- 				   struct drm_dp_aux_msg *msg)
- {
-@@ -1125,7 +1312,7 @@ static ssize_t it6505_aux_transfer(struct drm_dp_aux *aux,
- 
- 	/* IT6505 doesn't support arbitrary I2C read / write. */
- 	if (is_i2c)
--		return -EINVAL;
-+		return it6505_aux_i2c_transfer(aux, msg);
- 
- 	switch (msg->request) {
- 	case DP_AUX_NATIVE_READ:
-@@ -1153,6 +1340,8 @@ static ssize_t it6505_aux_transfer(struct drm_dp_aux *aux,
- 	case REPLY_DEFER:
- 		msg->reply = DP_AUX_NATIVE_REPLY_DEFER;
- 		break;
-+	default:
-+		break;
- 	}
- 
- 	return ret;
-@@ -1180,7 +1369,7 @@ static int it6505_get_edid_block(void *data, u8 *buf, unsigned int block,
- 		switch (reply) {
- 		case REPLY_ACK:
- 			DRM_DEV_DEBUG_DRIVER(dev, "[0x%02x]: %8ph", offset,
--					     buf + offset);
-+								uf + offset);
- 			offset += 8;
- 			aux_retry = 100;
- 			break;
-@@ -1190,6 +1379,8 @@ static int it6505_get_edid_block(void *data, u8 *buf, unsigned int block,
- 			msleep(20);
- 			if (!(--aux_retry))
- 				return -EIO;
-+		default:
-+			break;
- 		}
- 	}
- 
-@@ -2031,8 +2222,8 @@ static int it6505_setup_sha1_input(struct it6505 *it6505, u8 *sha1_input)
- 
- 
- 	err =  it6505_get_ksvlist(it6505, sha1_input, down_stream_count * 5);
--	if (err < 0)
--		return err;
-+		if (err < 0)
-+			return err;
- 
- 	msg_count += down_stream_count * 5;
- 
-@@ -2075,7 +2266,7 @@ static bool it6505_hdcp_part2_ksvlist_check(struct it6505 *it6505)
- 	for (retry = 0; retry < 3; retry++) {
- 
- 		err = it6505_get_dpcd(it6505, DP_AUX_HDCP_V_PRIME(0), (u8 *)bv,
--					sizeof(bv));
-+			      sizeof(bv));
- 
- 		if (err < 0) {
- 			dev_err(dev, "Read V' value Fail %d", retry);
-@@ -2126,7 +2317,7 @@ static void it6505_hdcp_wait_ksv_list(struct work_struct *work)
- 
- 	ksv_list_check = it6505_hdcp_part2_ksvlist_check(it6505);
- 	DRM_DEV_DEBUG_DRIVER(dev, "ksv list ready, ksv list check %s",
--				ksv_list_check ? "pass" : "fail");
-+			     ksv_list_check ? "pass" : "fail");
- 
- 	if (ksv_list_check)
- 		return;
--- 
-2.34.1
+This use is very similar to `ForeignOwnable`, but a slightly different
+use case, since I want to implement for pinned references too. Is there
+a way of aligning this and sharing some trait here?
+
+Best regards,
+Andreas
+
 
 
