@@ -1,137 +1,118 @@
-Return-Path: <linux-kernel+bounces-334193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74EE97D3B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:37:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A3397D3C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D947F1C21EB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:37:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 015BE1C213FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D247136658;
-	Fri, 20 Sep 2024 09:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A27913AA27;
+	Fri, 20 Sep 2024 09:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="p9qtnjco"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9690757F3
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a3kWlhvp"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763831CD2C;
+	Fri, 20 Sep 2024 09:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726825030; cv=none; b=jmuN38D4D5IvXoLjr1iVol7VjeO2v+I/NNdh+4uC2uCd27A5zD0yjWV3nOlwRksM2vdeXeljsXuSkUWjpCwB/nyi9824asTxmxgWI5OmGMP044Oc1+6pjo7RH8cD3Chp9cd1XpaHiZSZi3eDWhRVTsaKPUEFdmW+jD5ugMa0um0=
+	t=1726825090; cv=none; b=rZP3EysnAHl2n6T1rzc/cNUhHoVJJ8iR7fbrGlAf43I+H4glIRMK/qxxSG58GPrfFsX1m/voR0zFMwtXo5Xe8FNyD9eJzwoGkXzQ48xX3nkym3JboOfGV3jl5KRn+5XymWOgdsBuQspWG+SKCqzu1b0EPd4Krw7XAerjqUmnZYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726825030; c=relaxed/simple;
-	bh=mV/+H1lEiNypRkNS7WbBfGy8Vcp4NzoqAxsA3sdH28A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jVlg147h3kp9NvBVXqRJKa16zGUMcmQYX+/jJjwdcumEa30YIOSN0aadmOECrXJtbegHD0hDgjz8eahtHomA1dFVQyJX9jRlmzEUDODhbsB39Z98qEdUDCOEy8vTbr6cQNdzMGR8fKv/YXqoXWfuMViJncz+BNLsYI4vU+hfQ3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=p9qtnjco; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=hgecV
-	r+tVurwSxwGSHpG48Xb3t6wVc7vDsaAUV3Jteo=; b=p9qtnjcoi+vM0Tv0vp/Em
-	/36FwMP8HaFvSgjTtW5WgN7OnA96dkDRnJtyR99G2H1CW0BsXd/jfpaNnRTIM0Wr
-	U7/vMKDcAeNNbIZCPOCfKTJoOzFLH55OSRsZmY4CzTzua9wvIpnrgLdxf0rtYQll
-	EiB3i1XFAr2LsQJpkTpxjk=
-Received: from ProDesk.. (unknown [58.22.7.114])
-	by gzga-smtp-mta-g3-0 (Coremail) with SMTP id _____wDXH1MfQu1mJ+xaBg--.40480S2;
-	Fri, 20 Sep 2024 17:36:34 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: vkoul@kernel.org
-Cc: kishon@kernel.org,
-	heiko@sntech.de,
-	linux-phy@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	cristian.ciocaltea@collabora.com,
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH] phy: phy-rockchip-samsung-hdptx: Don't request RST_PHY/RST_ROPLL/RST_LCPLL
-Date: Fri, 20 Sep 2024 17:36:28 +0800
-Message-ID: <20240920093629.7410-1-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726825090; c=relaxed/simple;
+	bh=zrcIwAMuAWkfsz35vSNkxOlMouu2YIEF3sxN+NveNUU=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QeRLLmoGw5mMLx0qjmWgjKqoGLVJA10a8ON7bl0M9jh3buRd7qeb2eQ8UTBFZylnyzJjk3vhBUAMmMCRT6QbFspuW7yEpMrbCNWfvS1TUjsFumQTGoNvaEWu8Se2tHUqNVSWA8tTvztRCD+zGmMv/HXW0UJHHILcCGVGlxB/blk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=a3kWlhvp; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48K9bKjn025160;
+	Fri, 20 Sep 2024 04:37:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1726825040;
+	bh=D0mskHRaG8uO51XB0w+Qjupk2ywjqNEa2TOnwxQtqhQ=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date;
+	b=a3kWlhvpf7IkGjWVT7lDFl5kpISZbS1j+VWuBtJR9VfBSU3nRHit4EI73t62rGy8m
+	 hMuak9pesVjAl9mfLUqywH+IJBAmsyq72nQxbgDpafsse10uCQUWAmJ3Q3itijTb/k
+	 Qfx183o9yeTivmeYQ6bqd1Ht+sdtxnzoXLoHXf5w=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48K9bKDD015708
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 20 Sep 2024 04:37:20 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 20
+ Sep 2024 04:37:20 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 20 Sep 2024 04:37:20 -0500
+Received: from localhost (kamlesh.dhcp.ti.com [172.24.227.123])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48K9bJLg087632;
+	Fri, 20 Sep 2024 04:37:20 -0500
+From: Kamlesh Gurudasani <kamlesh@ti.com>
+To: Danny Tsen <dtsen@linux.ibm.com>, <linux-crypto@vger.kernel.org>
+CC: <stable@vger.kernel.org>, <herbert@gondor.apana.org.au>,
+        <leitao@debian.org>, <nayna@linux.ibm.com>, <appro@cryptogams.org>,
+        <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+        <mpe@ellerman.id.au>, <ltcgcw@linux.vnet.ibm.com>, <dtsen@us.ibm.com>,
+        Danny
+ Tsen <dtsen@linux.ibm.com>
+Subject: Re: [PATCH v3] crypto: Removing CRYPTO_AES_GCM_P10.
+In-Reply-To: <20240919113637.144343-1-dtsen@linux.ibm.com>
+References: <20240919113637.144343-1-dtsen@linux.ibm.com>
+Date: Fri, 20 Sep 2024 15:07:19 +0530
+Message-ID: <87ldzmll80.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXH1MfQu1mJ+xaBg--.40480S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Kr15JrWDZry3WF13ArykAFb_yoW8tFWfpF
-	s3CF47JrWqgFn8Wa1UKFn8CFWxJF9IqF1YqFsxZa4xtr1xArWDuryruF95Xr1DJrW2qayF
-	kw4xtFWfu3W2vwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UvAp5UUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqQVgXmVODBPGLgAAsO
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-From: Andy Yan <andy.yan@rock-chips.com>
+Danny Tsen <dtsen@linux.ibm.com> writes:
 
-RST_PHY/RST_ROPLL/RST_LCPLL are used for debug only on rk3588,
-and they are not exported on rk3576, no need to request it in
-driver.
+> Data mismatch found when testing ipsec tunnel with AES/GCM crypto.
+> Disabling CRYPTO_AES_GCM_P10 in Kconfig for this feature.
+>
+> Fixes: fd0e9b3e2ee6 ("crypto: p10-aes-gcm - An accelerated AES/GCM stitched implementation")
+> Fixes: cdcecfd9991f ("crypto: p10-aes-gcm - Glue code for AES/GCM stitched implementation")
+> Fixes: 45a4672b9a6e2 ("crypto: p10-aes-gcm - Update Kconfig and Makefile")
+>
+> Signed-off-by: Danny Tsen <dtsen@linux.ibm.com>
+nitpick
+checkpatch complains
+Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<title line>")' -
+ie: 'Fixes: 45a4672b9a6e ("crypto: p10-aes-gcm - Update Kconfig and
+Makefile")'
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
----
- .../phy/rockchip/phy-rockchip-samsung-hdptx.c   | 17 +----------------
- 1 file changed, 1 insertion(+), 16 deletions(-)
+There is no rule for 12 characters, but it is generally preferred.
+I guess it is just a typo for you as you have correctly added other
+Fixes tag.
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-index 946c01210ac8..f3f03914bf78 100644
---- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-+++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-@@ -252,13 +252,10 @@ struct ropll_config {
- };
- 
- enum rk_hdptx_reset {
--	RST_PHY = 0,
--	RST_APB,
-+	RST_APB = 0,
- 	RST_INIT,
- 	RST_CMN,
- 	RST_LANE,
--	RST_ROPLL,
--	RST_LCPLL,
- 	RST_MAX
- };
- 
-@@ -655,11 +652,6 @@ static void rk_hdptx_phy_disable(struct rk_hdptx_phy *hdptx)
- {
- 	u32 val;
- 
--	/* reset phy and apb, or phy locked flag may keep 1 */
--	reset_control_assert(hdptx->rsts[RST_PHY].rstc);
--	usleep_range(20, 30);
--	reset_control_deassert(hdptx->rsts[RST_PHY].rstc);
--
- 	reset_control_assert(hdptx->rsts[RST_APB].rstc);
- 	usleep_range(20, 30);
- 	reset_control_deassert(hdptx->rsts[RST_APB].rstc);
-@@ -780,10 +772,6 @@ static int rk_hdptx_ropll_tmds_cmn_config(struct rk_hdptx_phy *hdptx,
- 
- 	rk_hdptx_pre_power_up(hdptx);
- 
--	reset_control_assert(hdptx->rsts[RST_ROPLL].rstc);
--	usleep_range(20, 30);
--	reset_control_deassert(hdptx->rsts[RST_ROPLL].rstc);
--
- 	rk_hdptx_multi_reg_write(hdptx, rk_hdtpx_common_cmn_init_seq);
- 	rk_hdptx_multi_reg_write(hdptx, rk_hdtpx_tmds_cmn_init_seq);
- 
-@@ -958,13 +946,10 @@ static int rk_hdptx_phy_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(hdptx->regmap),
- 				     "Failed to init regmap\n");
- 
--	hdptx->rsts[RST_PHY].id = "phy";
- 	hdptx->rsts[RST_APB].id = "apb";
- 	hdptx->rsts[RST_INIT].id = "init";
- 	hdptx->rsts[RST_CMN].id = "cmn";
- 	hdptx->rsts[RST_LANE].id = "lane";
--	hdptx->rsts[RST_ROPLL].id = "ropll";
--	hdptx->rsts[RST_LCPLL].id = "lcpll";
- 
- 	ret = devm_reset_control_bulk_get_exclusive(dev, RST_MAX, hdptx->rsts);
- 	if (ret)
--- 
-2.34.1
+If you end up re-spinning, please correct this
 
+Also, just to understand,
+
+"A Fixes: tag indicates that the patch fixes an issue in a previous
+ commit. It is used to make it easy to determine where a bug originated,
+ which can help review a bug fix"
+
+from 
+https://docs.kernel.org/process/submitting-patches.html
+
+should there not be just single Fixes tag? as bug originated from one
+commit, may be the commit that actually broke the functionality.
+
+P.S.
+Not expert on this, just trying to learn.
+
+Kamlesh
 
