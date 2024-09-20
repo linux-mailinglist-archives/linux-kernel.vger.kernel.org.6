@@ -1,296 +1,271 @@
-Return-Path: <linux-kernel+bounces-334053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 430C297D210
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:53:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D10397D213
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 688A71C2295B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:53:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4F112833A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFAB768E1;
-	Fri, 20 Sep 2024 07:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3105674E;
+	Fri, 20 Sep 2024 07:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHcTgol+"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T+kE48ws"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1B26F2FE;
-	Fri, 20 Sep 2024 07:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF011DA5F;
+	Fri, 20 Sep 2024 07:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726818798; cv=none; b=mK9/uSEfIbjqtNbEJ2umWzT3ay67gvZZ1ct09gs8TW8C99eDFguK5wU9dV8cOgHZZwJu/reeewP+UTJN5F97Xa7NDfE73OzmJnRQyLjzBGH/CIQTWexLcE3XveU3sVrywj1+4jFRF2MaRoZKcftQy9hDHnBfjfciAQyZ0mybKn8=
+	t=1726818899; cv=none; b=HrnUakL4+Lo3ZbUpUwF403Ie16CO7eRHJs7n0biQN4m+vJYVwfATYFEgnlZM/RC2qD5ZwWAfkk5Jeudkgx95BetwMZ8lD9FDJBo477486uEZ7mcvDVSioiD32bUhg8mDUwYFyuoM6dyS5BFIXhadU+CyUYaM9bBsoi/1xygwqbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726818798; c=relaxed/simple;
-	bh=T1W6L5QpnQKpwKjC1poc2NjFmxjZ471D3fP2Aphip1Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FnZfRjNo0nZ/P6f0W+lKy628X1ZfMtE7Pnt26C2Stcpfd8ES8WkpiwIE58kPdrZqF4ff3q/Dp4WeP3xsUEGppBqfSC6VtYNlI5T4bIx8M8lNhRv+wsjT9KSpxxmD8khZhfCrsDS0BWXyNIaaUtxUSCGIARdlqq2OTzjIY8t/eX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eHcTgol+; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f763e9e759so20083581fa.3;
-        Fri, 20 Sep 2024 00:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726818793; x=1727423593; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VhugxSGuV6ZvqI3s0b5MXFKYtefsB4pkxXmNwlWj1fo=;
-        b=eHcTgol+Zk7vQllRrTE1s9/xVjmRmyiJk6MQrSYR+OukweaOtVNA5kl2HG8BkpF6Wa
-         kdSRaxdkg95J/y2LSnXn2eRN2a5pOT0mluW0DXwiYLJDfC6M1a+t7ulLzvnBNZkGt07y
-         L7bYt6H0bbMaBCVpM+OAPcHSgkNAxN22jWnBi84WJHordo+0tm8UVhQGUJi/F0f+Lnxk
-         C7CPP7OQqrL4wDmaUhTAqLf46is6obQqybSczRuJhgI9pFL8HO9/vrjS/eee8JP+6xnG
-         drxQDB+GGEyPSJgrDyEJmTePEF7leLaa1RA+ELpWjOFbiIQQTYmLtBd5IIxWuWSKIMFq
-         T1OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726818793; x=1727423593;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VhugxSGuV6ZvqI3s0b5MXFKYtefsB4pkxXmNwlWj1fo=;
-        b=jUpu4JO8KsFzGOFhlgUioeRYndjmUUdjGfkxf02aJQFzBr32O/I9IzTM8ku+PmoBcV
-         Ev2MqNXmInm3/U+6ckL6BsIAz2wdrhR9pUAPHjfdmvHPZr4n6brMEr6x9ZSB239bJwMi
-         Zvcq/RZEdXOfiyw9geGBLAq/4AEIYyAUIMrDxNbsee9baNSVu5y/qEEaSgkz05iiKG7S
-         FxK0TeM3zpxa8QdWUXlM5Pho8VXJfxx5sE+ULYq87OsLSx/d2fkZ8t0hRAfzxrKcfbGt
-         nLrKKpqHoCboy8+iCqFxgpe2w+dAyZ+6BWwPH/9yfJSbCbyxJyWV5uQ/ULCxK2m7LAup
-         tDgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDh7IL5xSQLtaT3JQ+qIe+ie1sUJhFREjAqP60XiV4z9Nv2D3PfT4pz6/kyMB6AfzFVAVX7Ye4S+uHpvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdP5siYMphgnLJN/Or5b/qWC70Uf9IWgL17TWmj0Xsh0ncmtP6
-	Rmo1FOShikW3Z0Ybi+xMplmOU5SzZor7ydOPoZMm+vSdkzW7tFeFrPm8AA==
-X-Google-Smtp-Source: AGHT+IG8WOndB0FwjkumAaCBnQpmRu7CyX2FaSkFZM0+mzqe+usnKcJK0+AdYUSoG5HdowTVkXvFGw==
-X-Received: by 2002:a05:651c:542:b0:2f7:4b90:204b with SMTP id 38308e7fff4ca-2f7cb319284mr11382871fa.12.1726818792590;
-        Fri, 20 Sep 2024 00:53:12 -0700 (PDT)
-Received: from localhost.localdomain (201.red-88-10-59.dynamicip.rima-tde.net. [88.10.59.201])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7afbfbfbsm15178465e9.22.2024.09.20.00.53.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 00:53:11 -0700 (PDT)
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To: linux-mips@vger.kernel.org
-Cc: daniel.lezcano@linaro.org,
-	tglx@linutronix.de,
-	tsbogend@alpha.franken.de,
-	john@phrozen.org,
-	linux-kernel@vger.kernel.org,
-	yangshiji66@outlook.com
-Subject: [PATCH 2/2] MIPS: ralink: remove System Tick Counter driver
-Date: Fri, 20 Sep 2024 09:53:06 +0200
-Message-Id: <20240920075306.704665-3-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240920075306.704665-1-sergio.paracuellos@gmail.com>
-References: <20240920075306.704665-1-sergio.paracuellos@gmail.com>
+	s=arc-20240116; t=1726818899; c=relaxed/simple;
+	bh=MTEaidON3OLtUoz+E8Zra0xl6FXvcr9rhuEQ4miQbG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aYkKHMvN0BTVEt7qDeJ229Apq9q4wDr2LjmfXsTugVtixlQtkn9NwJJnsO8h9b+zdNnV/GBD7CEn8kNQ4VKYAnLStr0tYdrGVIygfn2MglfycdpvD/5gjJJ1Uciroe2LRoNCWPVesQhi0S37YRKowZml/XPGNxZdD1WsqDlTrjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T+kE48ws; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726818898; x=1758354898;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MTEaidON3OLtUoz+E8Zra0xl6FXvcr9rhuEQ4miQbG0=;
+  b=T+kE48wsvThSDvPAleDPE+yJJVu6aYy9moIVBG3Rapi1biqFDqwj/wbt
+   0gT5nrcIs3j5i3wcz/mH4nfTNkCCWsyd4A7wQJfQHCh/TA5jy1AV+BRDx
+   hzBQdRwDrM+iXDsBKx+d+BaeJMFppqalwneKNmy6x8MDa48zAEVO2sFJd
+   jOO0lL/9QaI2/qDzDsi9enTEL7XHlXSHpGneTnCj4k+DXmqvqRuNicElB
+   eeMtGNcCzYOvBLIu13jHipqwV7K5wjScVOPiFqizPMWjeQzPFVPcnTUvG
+   Cd/Ppn0gX4VJb0woZmUDNnurLFLY4DZRAhp8KPWgz4EkDQHTyFIE2rX7+
+   Q==;
+X-CSE-ConnectionGUID: xCqlV5XnRymufOdXB5VAvg==
+X-CSE-MsgGUID: kg0R8WcWR1u0Fe/cqqbWpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="36384789"
+X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
+   d="scan'208";a="36384789"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 00:54:57 -0700
+X-CSE-ConnectionGUID: PMcneTryRX2rTBotCj3Niw==
+X-CSE-MsgGUID: gaRGsgAsRbCdciPNJZqAhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
+   d="scan'208";a="74761059"
+Received: from alexta1x-mobl.ger.corp.intel.com (HELO desk) ([10.125.147.201])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 00:54:56 -0700
+Date: Fri, 20 Sep 2024 00:54:48 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Kaplan <David.Kaplan@amd.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org
+Subject: Re: [PATCH RFC 2/2] cpu/bugs: cgroup: Add a cgroup knob to bypass
+ CPU mitigations
+Message-ID: <20240920075448.djesnjetefwa4yl4@desk>
+References: <20240919-selective-mitigation-v1-0-1846cf41895e@linux.intel.com>
+ <20240919-selective-mitigation-v1-2-1846cf41895e@linux.intel.com>
+ <5f48073d-8b4e-4569-af4f-3a9b5586d7ad@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5f48073d-8b4e-4569-af4f-3a9b5586d7ad@redhat.com>
 
-This driver has been moved into a more accurate place in the kernel tree
-in 'drivers/clocksource' directory as 'timer-ralink.c'. Hence, remove it
-from here so we can  reduce architecture code folder.
+On Fri, Sep 20, 2024 at 03:05:57AM -0400, Waiman Long wrote:
+> 
+> On 9/19/24 17:52, Pawan Gupta wrote:
+> > For cases where an admin wanting to bypass CPU mitigations for a specific
+> > workload that they trust. Add a cgroup attribute "cpu.skip_mitigation" that
+> > can only be set by a privileged user. When set, the CPU mitigations are
+> > bypassed for all tasks in that cgroup.
+> > 
+> > Before setting this knob, the admin should be aware of possible security
+> > risks like confused deputy attack on trusted interpreters, JIT engine,
+> > etc.
+> > 
+> > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> > ---
+> >   arch/x86/include/asm/switch_to.h | 10 ++++++++++
+> >   arch/x86/kernel/cpu/bugs.c       | 21 ++++++++++++++++++++
+> >   include/linux/cgroup-defs.h      |  3 +++
+> >   kernel/cgroup/cgroup.c           | 42 ++++++++++++++++++++++++++++++++++++++++
+> >   kernel/sched/core.c              |  2 +-
+> >   5 files changed, 77 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/include/asm/switch_to.h b/arch/x86/include/asm/switch_to.h
+> > index c3bd0c0758c9..7f32fd139644 100644
+> > --- a/arch/x86/include/asm/switch_to.h
+> > +++ b/arch/x86/include/asm/switch_to.h
+> > @@ -46,6 +46,16 @@ struct fork_frame {
+> >   	struct pt_regs regs;
+> >   };
+> > +extern inline void cpu_mitigation_skip(struct task_struct *prev, struct task_struct *next);
+> > +
+> > +#define prepare_arch_switch prepare_arch_switch
+> > +
+> > +static inline void prepare_arch_switch(struct task_struct *prev,
+> > +				       struct task_struct *next)
+> > +{
+> > +	cpu_mitigation_skip(prev, next);
+> > +}
+> > +
+> >   #define switch_to(prev, next, last)					\
+> >   do {									\
+> >   	((last) = __switch_to_asm((prev), (next)));			\
+> > diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> > index 45675da354f3..77eb4f6dc5c9 100644
+> > --- a/arch/x86/kernel/cpu/bugs.c
+> > +++ b/arch/x86/kernel/cpu/bugs.c
+> > @@ -128,6 +128,27 @@ DEFINE_STATIC_KEY_FALSE(switch_mm_cond_l1d_flush);
+> >   DEFINE_STATIC_KEY_FALSE(mmio_stale_data_clear);
+> >   EXPORT_SYMBOL_GPL(mmio_stale_data_clear);
+> > +inline void cpu_mitigation_skip(struct task_struct *prev,
+> > +				struct task_struct *next)
+> > +{
+> > +	bool prev_skip = false, next_skip = false;
+> > +
+> > +	if (prev->mm)
+> > +		prev_skip = task_dfl_cgroup(prev)->cpu_skip_mitigation;
+> > +	if (next->mm)
+> > +		next_skip = task_dfl_cgroup(next)->cpu_skip_mitigation;
+> > +
+> > +	if (!prev_skip && !next_skip)
+> > +		return;
+> > +	if (prev_skip == next_skip)
+> > +		return;
+> I believe the first (!prev_skip && !next_skip) check is redundant.
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- arch/mips/ralink/Kconfig       |   7 --
- arch/mips/ralink/Makefile      |   2 -
- arch/mips/ralink/cevt-rt3352.c | 153 ---------------------------------
- 3 files changed, 162 deletions(-)
- delete mode 100644 arch/mips/ralink/cevt-rt3352.c
+Agh, you are right. I will remove it.
 
-diff --git a/arch/mips/ralink/Kconfig b/arch/mips/ralink/Kconfig
-index 08c012a2591f..910d059ec70b 100644
---- a/arch/mips/ralink/Kconfig
-+++ b/arch/mips/ralink/Kconfig
-@@ -1,13 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- if RALINK
- 
--config CLKEVT_RT3352
--	bool
--	depends on SOC_RT305X || SOC_MT7620
--	default y
--	select TIMER_OF
--	select CLKSRC_MMIO
--
- config RALINK_ILL_ACC
- 	bool
- 	depends on SOC_RT305X
-diff --git a/arch/mips/ralink/Makefile b/arch/mips/ralink/Makefile
-index 26fabbdea1f1..0c109eae1953 100644
---- a/arch/mips/ralink/Makefile
-+++ b/arch/mips/ralink/Makefile
-@@ -10,8 +10,6 @@ ifndef CONFIG_MIPS_GIC
- 	obj-y += clk.o timer.o
- endif
- 
--obj-$(CONFIG_CLKEVT_RT3352) += cevt-rt3352.o
--
- obj-$(CONFIG_RALINK_ILL_ACC) += ill_acc.o
- 
- obj-$(CONFIG_IRQ_INTC) += irq.o
-diff --git a/arch/mips/ralink/cevt-rt3352.c b/arch/mips/ralink/cevt-rt3352.c
-deleted file mode 100644
-index 269d4877d120..000000000000
---- a/arch/mips/ralink/cevt-rt3352.c
-+++ /dev/null
-@@ -1,153 +0,0 @@
--/*
-- * This file is subject to the terms and conditions of the GNU General Public
-- * License.  See the file "COPYING" in the main directory of this archive
-- * for more details.
-- *
-- * Copyright (C) 2013 by John Crispin <john@phrozen.org>
-- */
--
--#include <linux/clockchips.h>
--#include <linux/clocksource.h>
--#include <linux/interrupt.h>
--#include <linux/reset.h>
--#include <linux/init.h>
--#include <linux/time.h>
--#include <linux/of.h>
--#include <linux/of_irq.h>
--#include <linux/of_address.h>
--
--#include <asm/mach-ralink/ralink_regs.h>
--
--#define SYSTICK_FREQ		(50 * 1000)
--
--#define SYSTICK_CONFIG		0x00
--#define SYSTICK_COMPARE		0x04
--#define SYSTICK_COUNT		0x08
--
--/* route systick irq to mips irq 7 instead of the r4k-timer */
--#define CFG_EXT_STK_EN		0x2
--/* enable the counter */
--#define CFG_CNT_EN		0x1
--
--struct systick_device {
--	void __iomem *membase;
--	struct clock_event_device dev;
--	int irq_requested;
--	int freq_scale;
--};
--
--static int systick_set_oneshot(struct clock_event_device *evt);
--static int systick_shutdown(struct clock_event_device *evt);
--
--static int systick_next_event(unsigned long delta,
--				struct clock_event_device *evt)
--{
--	struct systick_device *sdev;
--	u32 count;
--
--	sdev = container_of(evt, struct systick_device, dev);
--	count = ioread32(sdev->membase + SYSTICK_COUNT);
--	count = (count + delta) % SYSTICK_FREQ;
--	iowrite32(count, sdev->membase + SYSTICK_COMPARE);
--
--	return 0;
--}
--
--static void systick_event_handler(struct clock_event_device *dev)
--{
--	/* noting to do here */
--}
--
--static irqreturn_t systick_interrupt(int irq, void *dev_id)
--{
--	struct clock_event_device *dev = (struct clock_event_device *) dev_id;
--
--	dev->event_handler(dev);
--
--	return IRQ_HANDLED;
--}
--
--static struct systick_device systick = {
--	.dev = {
--		/*
--		 * cevt-r4k uses 300, make sure systick
--		 * gets used if available
--		 */
--		.rating			= 310,
--		.features		= CLOCK_EVT_FEAT_ONESHOT,
--		.set_next_event		= systick_next_event,
--		.set_state_shutdown	= systick_shutdown,
--		.set_state_oneshot	= systick_set_oneshot,
--		.event_handler		= systick_event_handler,
--	},
--};
--
--static int systick_shutdown(struct clock_event_device *evt)
--{
--	struct systick_device *sdev;
--
--	sdev = container_of(evt, struct systick_device, dev);
--
--	if (sdev->irq_requested)
--		free_irq(systick.dev.irq, &systick.dev);
--	sdev->irq_requested = 0;
--	iowrite32(0, systick.membase + SYSTICK_CONFIG);
--
--	return 0;
--}
--
--static int systick_set_oneshot(struct clock_event_device *evt)
--{
--	const char *name = systick.dev.name;
--	struct systick_device *sdev;
--	int irq = systick.dev.irq;
--
--	sdev = container_of(evt, struct systick_device, dev);
--
--	if (!sdev->irq_requested) {
--		if (request_irq(irq, systick_interrupt,
--				IRQF_PERCPU | IRQF_TIMER, name, &systick.dev))
--			pr_err("Failed to request irq %d (%s)\n", irq, name);
--	}
--	sdev->irq_requested = 1;
--	iowrite32(CFG_EXT_STK_EN | CFG_CNT_EN,
--		  systick.membase + SYSTICK_CONFIG);
--
--	return 0;
--}
--
--static int __init ralink_systick_init(struct device_node *np)
--{
--	int ret;
--
--	systick.membase = of_iomap(np, 0);
--	if (!systick.membase)
--		return -ENXIO;
--
--	systick.dev.name = np->name;
--	clockevents_calc_mult_shift(&systick.dev, SYSTICK_FREQ, 60);
--	systick.dev.max_delta_ns = clockevent_delta2ns(0x7fff, &systick.dev);
--	systick.dev.max_delta_ticks = 0x7fff;
--	systick.dev.min_delta_ns = clockevent_delta2ns(0x3, &systick.dev);
--	systick.dev.min_delta_ticks = 0x3;
--	systick.dev.irq = irq_of_parse_and_map(np, 0);
--	if (!systick.dev.irq) {
--		pr_err("%pOFn: request_irq failed", np);
--		return -EINVAL;
--	}
--
--	ret = clocksource_mmio_init(systick.membase + SYSTICK_COUNT, np->name,
--				    SYSTICK_FREQ, 301, 16,
--				    clocksource_mmio_readl_up);
--	if (ret)
--		return ret;
--
--	clockevents_register_device(&systick.dev);
--
--	pr_info("%pOFn: running - mult: %d, shift: %d\n",
--			np, systick.dev.mult, systick.dev.shift);
--
--	return 0;
--}
--
--TIMER_OF_DECLARE(systick, "ralink,cevt-systick", ralink_systick_init);
--- 
-2.25.1
+> > +	if (next_skip)
+> > +		wrmsrl(MSR_LSTAR, (unsigned long)entry_SYSCALL_64_unmitigated);
+> > +	else
+> > +		wrmsrl(MSR_LSTAR, (unsigned long)entry_SYSCALL_64_mitigated);
+> > +}
+> > +
+> >   void __init cpu_select_mitigations(void)
+> >   {
+> >   	/*
+> > diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+> > index ae04035b6cbe..6a131a62f43c 100644
+> > --- a/include/linux/cgroup-defs.h
+> > +++ b/include/linux/cgroup-defs.h
+> > @@ -546,6 +546,9 @@ struct cgroup {
+> >   	struct bpf_local_storage __rcu  *bpf_cgrp_storage;
+> >   #endif
+> > +	/* Used to bypass the CPU mitigations for tasks in a cgroup */
+> > +	bool cpu_skip_mitigation;
+> > +
+> >   	/* All ancestors including self */
+> >   	struct cgroup *ancestors[];
+> >   };
+> > diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+> > index c8e4b62b436a..b745dbcb153e 100644
+> > --- a/kernel/cgroup/cgroup.c
+> > +++ b/kernel/cgroup/cgroup.c
+> > @@ -2045,6 +2045,7 @@ static void init_cgroup_housekeeping(struct cgroup *cgrp)
+> >   	cgrp->dom_cgrp = cgrp;
+> >   	cgrp->max_descendants = INT_MAX;
+> >   	cgrp->max_depth = INT_MAX;
+> > +	cgrp->cpu_skip_mitigation = 0;
+> >   	INIT_LIST_HEAD(&cgrp->rstat_css_list);
+> >   	prev_cputime_init(&cgrp->prev_cputime);
+> > @@ -3751,6 +3752,41 @@ static int cpu_stat_show(struct seq_file *seq, void *v)
+> >   	return ret;
+> >   }
+> > +static int cpu_skip_mitigation_show(struct seq_file *seq, void *v)
+> > +{
+> > +	struct cgroup *cgrp = seq_css(seq)->cgroup;
+> > +	int ret = 0;
+> > +
+> > +	seq_printf(seq, "%d\n", cgrp->cpu_skip_mitigation);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static ssize_t cgroup_skip_mitigation_write(struct kernfs_open_file *of,
+> > +					    char *buf, size_t nbytes,
+> > +					    loff_t off)
+> > +{
+> > +	struct cgroup *cgrp = of->kn->parent->priv;
+> > +	struct cgroup_file_ctx *ctx = of->priv;
+> > +	u64 skip_mitigation;
+> > +	int ret;
+> > +
+> > +	/* Only privileged user in init namespace is allowed to set skip_mitigation */
+> > +	if ((ctx->ns != &init_cgroup_ns) || !capable(CAP_SYS_ADMIN))
+> > +		return -EPERM;
+> > +
+> > +	ret = kstrtoull(buf, 0, &skip_mitigation);
+> > +	if (ret)
+> > +		return -EINVAL;
+> > +
+> > +	if (skip_mitigation > 1)
+> > +		return -EINVAL;
+> > +
+> > +	cgrp->cpu_skip_mitigation = skip_mitigation;
+> > +
+> > +	return nbytes;
+> > +}
+> > +
+> >   static int cpu_local_stat_show(struct seq_file *seq, void *v)
+> >   {
+> >   	struct cgroup __maybe_unused *cgrp = seq_css(seq)->cgroup;
+> > @@ -5290,6 +5326,12 @@ static struct cftype cgroup_base_files[] = {
+> >   		.name = "cpu.stat.local",
+> >   		.seq_show = cpu_local_stat_show,
+> >   	},
+> > +	{
+> > +		.name = "cpu.skip_mitigation",
+> > +		.flags = CFTYPE_NOT_ON_ROOT,
+> > +		.seq_show = cpu_skip_mitigation_show,
+> > +		.write = cgroup_skip_mitigation_write,
+> > +	},
+> >   	{ }	/* terminate */
+> >   };
+> Since this control knob is effective only for x86_64, should we enable this
+> only for this architecture?
 
+This should be under a CONFIG option that depends on the architecture
+selected. I don't see a reason why it will not be useful for other archs.
+
+> However, cgroup never has architecture specific control knob like that
+> before, it will be the first if we decide to do that.
+
+Hmm, maybe then it could be universally available, but only effective on
+archs using it, and NOP on others? Other than performance, this knob should
+not have any userspace visible side effects.
+
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index f3951e4a55e5..4b4109afbf7c 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -4994,7 +4994,7 @@ prepare_task_switch(struct rq *rq, struct task_struct *prev,
+> >   	fire_sched_out_preempt_notifiers(prev, next);
+> >   	kmap_local_sched_out();
+> >   	prepare_task(next);
+> > -	prepare_arch_switch(next);
+> > +	prepare_arch_switch(prev, next);
+> >   }
+> >   /**
+> > 
+> The sparc and m68k arches have their own prepare_arch_switch() calls. So you
+> will need to modify those places as well.
+
+Will do. Thanks for the review.
 
