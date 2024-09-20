@@ -1,200 +1,294 @@
-Return-Path: <linux-kernel+bounces-334138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE9A97D302
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:51:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 495C897D307
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D7F71C22B7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:51:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1C61F238F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4182F12EBEA;
-	Fri, 20 Sep 2024 08:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="UzwQxEdI"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE90136341;
+	Fri, 20 Sep 2024 08:53:32 +0000 (UTC)
+Received: from mailfilter02-out21.webhostingserver.nl (mailfilter02-out21.webhostingserver.nl [141.138.168.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B8A34CF5
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726822276; cv=none; b=GWeqEB7RL1+BljvUZSdSa+crBfVAXdHxmYZXSGLkUf8FbVuY5dPD7SR/CUBn/Yom5Uf6vaDlgB1TUEyZoKHo8j+uBcA79id6wY0SgfOM1u9MGzG89YWpJHa5smeDM7qAwQLiUyioY2xLvxR/ip1rtG3l/CcjHqN9UZEfkdD/OqY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726822276; c=relaxed/simple;
-	bh=enjexeWIM/zfUTF9N6uDaW6CmXQXGi1d2i+TGQBYd+Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GAEK4eMmEoSNmivaXczIofo8IZMEoQ1WkzOz9yiQNorJAj9thBwpDcQZCmjFz26xmf40Xqpu6DsVurR+YurTLXhKkeG3evwBT6Cqcb71LWY/JY99flBDJXS+tmVsfvuolVZgpE8BObmIYglL+o6FjNWZKk9gQ3MlHKDQK4HGej8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=UzwQxEdI; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8a897bd4f1so225550466b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:51:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726822271; x=1727427071; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Rvy4/7iJkADqxJUMtWkXFnVrVE6Fo9oX+q4VInNWCCw=;
-        b=UzwQxEdIh+iMIQzZlRSZKNKfsMPetTZfDWg4JJaaCxIKrgIsd+lntMzvgaMqf/nceO
-         ACrcO3QQJqpW7/ZKQwRDHlwdGiGu+NUDiFYZANsRFFxmzPYqMMxLONqIJVD0XtBxkP1N
-         AZqGSyH7QfJHeUpXF7Rbd2il6t0khD9+4NazijVj6A/mCkQe2JyCeMf/MXCP/iVSVCm+
-         iVXdagyZQSdk7HvMvEdxRymD/Asz87BCstPUlaGCkUiPMOSNC7NhBZL61LTQNMsK7byX
-         s+1TgY/ydX48X1G4csSzr3wtUYczFWrSrgjvQmf1miWV9ETHTcJEb1WBXlIP3knbZwJc
-         PQIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726822271; x=1727427071;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rvy4/7iJkADqxJUMtWkXFnVrVE6Fo9oX+q4VInNWCCw=;
-        b=D74KzVGJ4GOyy2FEZPXp+63ivRj64MOJuRdm9qjtQeXWlEWvBdqz5w0GclaKV14CuQ
-         klg21/65FbE5HOErdTOtMwjO5Ri8VsqcYIlADNmvZWILJzT53AGm0EvG8gJwo1tqrQvP
-         ZAxh+7BxoMT93Q0Gx0UkgC3DK6pIGnRee8Wm5/CM2koDVgQp71TIO9kMPj9wO+2cU4vN
-         7O/qMZeKXFPk9nobhROXqVr1YXfmkkIRk7Cy0Y7ewrKTtgLHWfFEsMH7fcnDemKCtswv
-         jorlEVmxW1axxJ8QFxGef8J74y3tc6xvt3KzLzdqpzGjXQSAerVjjF7xn7AMXudsNoQi
-         b8EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXTW7FM6zowX4EsQxWZq2mcOGHq7cyF2Z2Zbawwm8gRiFU7G1Y8J8VpXQorL2liMjXNFQCU9gVV5GKG9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywljl534s4dCM1ppqoXDqrA/y5uZBp4LidlcIMoLMpzo51ndHco
-	AiS0JTgUoIrwI9MlkRsF50JtSdoNeB5n8joMqd8knQI8VBxe6tmNNVYr9C8x73g=
-X-Google-Smtp-Source: AGHT+IFREpCbUeNC+7klw4/rTFGjabYGgqoPION+JjvgLb78PO0UMh/HrYsrQj+a8l6zN8qNYtm1FQ==
-X-Received: by 2002:a17:907:3f25:b0:a8a:ead3:8515 with SMTP id a640c23a62f3a-a90d514a83fmr159421166b.65.1726822271073;
-        Fri, 20 Sep 2024 01:51:11 -0700 (PDT)
-Received: from [192.168.0.216] ([185.44.53.103])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f42f1sm812092966b.57.2024.09.20.01.51.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2024 01:51:10 -0700 (PDT)
-Message-ID: <0d88fc54-93a7-4075-996f-b2d343c0ba28@kernel.dk>
-Date: Fri, 20 Sep 2024 02:51:09 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14C734CF5
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=141.138.168.70
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726822411; cv=pass; b=NTlfA+y8aDNjT3yGkRbr0lP4dG1+/RUwXl9fIHRSehr/nt8fvFsbawtHqpqo22OlPvMJYjuVgsVRvU42BOqJXQItICB0Eij5hjFkadOJrJwLHlYn/WoWZF3EAeQcL0J4SbdqBZXtY2UFbGz5mSBipU8R25QlakVYF1G7wZF9r+g=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726822411; c=relaxed/simple;
+	bh=aWE098Eh+hKoVJ1x4B7cc4FweM0bu5M/qDTQ3MebZVM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NepLDD+yxHa45mzliWiH5ErHCaWf9xi+ZvUKJpKYaDKnIz0f0ilPFtEdFAJIq5O1GkJmnVhuj2jsiW6HNzdvV5blkQgolctVIVmVWgufRdKy+urJxNmgEeSMTF4vo4W4wFnwJe6zIAq4VCipgQAr4XBgnajfOEzdDJHPiWwPVwg=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=pass smtp.client-ip=141.138.168.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+ARC-Seal: i=2; a=rsa-sha256; t=1726822333; cv=pass;
+	d=webhostingserver.nl; s=whs1;
+	b=jTSqi77J5tdx2uMLZ5XrUhc+JeGcQ+5lGpQ5xzoL3ucVji5YDoYDjUaY/xAGvAm/8GayDIy8V98r7
+	 zwL9Ax2sK8JDp14H6TaixMR9OoGqcHlMiZL9TpdrOegwfuJoQUYqUx37mqTNzHxeG8FsRqjJBeOgPv
+	 jXd781drOWq6P+pC0J7rKXoeutl43DyYf9w0GKfyTcjpjQ+a4lTDkUCch7A5Slhj1KMytw3MP7mA+F
+	 wKQQ8goPEF7imNjlT8LBCaOpSaejOOUrnEcNmcQFHZTlqHlulFgx39kLwys9yGJpSbncEutglTBsCB
+	 6dBBuY6S5DD9W0l561cWgXpFhXytmIg==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed;
+	d=webhostingserver.nl; s=whs1;
+	h=content-type:mime-version:references:in-reply-to:message-id:date:subject:cc:
+	 to:from:from;
+	bh=1jspWOWybiap7NHajr/2gavctJVMXp/EyJLgmVHcn5U=;
+	b=FMXSPdqsF1yIWW2o3n55iVY3fHyLnnhYTtEazrQAFTOgc8dPqrMYAq6TnD6TJPVSEs+PRSHNb5zSF
+	 ko1VX0iZrE2q2nYPmmMX7xSGvnf6k+6O6q4eTo/GwPJj/8vfSE6sBevLZYxtlfmX2icCyW8Z3Mcmc3
+	 JSatwzXTYSuHNoW8NzaeBB7fP4TnGDaJAVBxgPKA3AA5vEmxG03yW1ggYsGJZXhmBk3lXFWAoCWox7
+	 MKaeCxZiQYxZhBk/JT9PbzFE1TP4TbfF+oy+1MDnZr8k+UwgcPPXQ3N4i/M3W1GxRLjUoShXjFUanR
+	 I5xOFvdBJADvdBwTPVIuO7h+aM2YShQ==
+ARC-Authentication-Results: i=2; mailfilter02.webhostingserver.nl;
+	spf=softfail smtp.mailfrom=gmail.com smtp.remote-ip=141.138.168.154;
+	dmarc=fail header.from=gmail.com;
+	arc=pass header.oldest-pass=0;
+X-Halon-ID: a060b686-772d-11ef-b705-001a4a4cb922
+Received: from s198.webhostingserver.nl (s198.webhostingserver.nl [141.138.168.154])
+	by mailfilter02.webhostingserver.nl (Halon) with ESMTPSA
+	id a060b686-772d-11ef-b705-001a4a4cb922;
+	Fri, 20 Sep 2024 10:52:12 +0200 (CEST)
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=webhostingserver.nl; s=whs1; t=1726822338;
+	 b=iVXUWHt+iFGLvBFJttO9IerVYAbSgtOH+q2DCI+q3FNFiO2C0P0isu0+z0MqmZSwO0ariKlSrh
+	  qbtCQeSgKYgO/tYH/b7PLfSMWimzw3DkShX4QBQFdLubWG++Ya0rZIqmAucn/Ro58EjVK945ki
+	  IRS1Ih117NX57350n+UM63n7gu93mpTfMkwfpBC4R/UVqHV52EMD7R2xLA7yiIlRU6Lmeokb3p
+	  Brhf5FvJ0sHvVqTZW6czNGa5BkMxipZi9ZUrZOEjGFsNhwm0u0JnmZSUlBtGolGwkiTHQxhfdx
+	  GOAtahnwhFDKQLMplAebz94ZPUfzCJ3L/5eNq4+90BFtRQ==;
+ARC-Authentication-Results: i=1; webhostingserver.nl; smtp.remote-ip=178.250.146.69;
+	iprev=pass (cust-178-250-146-69.breedbanddelft.nl) smtp.remote-ip=178.250.146.69;
+	auth=pass (PLAIN) smtp.auth=ferry.toth@elsinga.info;
+	spf=softfail smtp.mailfrom=gmail.com;
+	dmarc=skipped header.from=gmail.com;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=webhostingserver.nl; s=whs1; t=1726822338;
+	bh=aWE098Eh+hKoVJ1x4B7cc4FweM0bu5M/qDTQ3MebZVM=;
+	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:
+	  To:From;
+	b=w0Tni9uJKRBvosbIv6XePlr0noqxZcfc/DPZQZZxw62MoXTLVWWYewAoU2H6zyZnawKvhqYjAD
+	  tDC45GAkpFcR7jWmHtTRZTHDc2xwmDwnuzeatTdVrMEBF8Vl8vL1e88NuWDjql9nONqFhrCv0K
+	  SDfL0Pbed77qrS3dowlq1w+xpbUvCE8WFPmyJvG0K/LxZIfBNZ1zxCFM3lX0VrI+CikqJ3jy2Y
+	  iVr5XKrA7tuojNjhR4dKyyhpajEvdfvh+1KeLCCD3uugVnTzjtR2LMIpVhkThr1D6FbzB5aKVq
+	  SapAx4Yi6j75yOpabMoWoGE7i3ugEprmkmZeixPUoOOtqQ==;
+Authentication-Results: webhostingserver.nl;
+	iprev=pass (cust-178-250-146-69.breedbanddelft.nl) smtp.remote-ip=178.250.146.69;
+	auth=pass (PLAIN) smtp.auth=ferry.toth@elsinga.info;
+	spf=softfail smtp.mailfrom=gmail.com;
+	dmarc=skipped header.from=gmail.com;
+	arc=none
+Received: from cust-178-250-146-69.breedbanddelft.nl ([178.250.146.69] helo=smtp)
+	by s198.webhostingserver.nl with esmtpa (Exim 4.98)
+	(envelope-from <fntoth@gmail.com>)
+	id 1srZNC-0000000ATGh-39pO;
+	Fri, 20 Sep 2024 10:52:18 +0200
+From: Ferry Toth <fntoth@gmail.com>
+To: Serge Semin <fancer.lancer@gmail.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, dmaengine@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject:
+ Re: [PATCH v2] dmaengine: dw: Select only supported masters for ACPI devices
+Date: Fri, 20 Sep 2024 10:52:18 +0200
+Message-ID: <2627811.Lt9SDvczpP@ferry-quad>
+In-Reply-To: <ZuyEQOIztvUrO0gO@smile.fi.intel.com>
+References:
+ <20240919135854.16124-1-fancer.lancer@gmail.com>
+ <20240919185151.7331-1-fancer.lancer@gmail.com>
+ <ZuyEQOIztvUrO0gO@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] INFO: rcu detected stall in
- sys_io_uring_enter (2)
-To: syzbot <syzbot+5fca234bd7eb378ff78e@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <66ed061d.050a0220.29194.0053.GAE@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <66ed061d.050a0220.29194.0053.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="nextPart2210023.Mh6RI2rZIc";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-ACL-Warn: Sender domain ( gmail.com ) must match your domain name used in authenticated email user ( ferry.toth@elsinga.info ).
+X-ACL-Warn: From-header domain ( gmail.com} ) must match your domain name used in authenticated email user ( ferry.toth@elsinga.info )
+X-Antivirus-Scanner: Clean mail though you should still use an Antivirus
 
-On 9/19/24 11:20 PM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    98f7e32f20d2 Linux 6.11
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17271c07980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c78874575ba70f27
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5fca234bd7eb378ff78e
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/20d79fec7eb2/disk-98f7e32f.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/57606ddb0989/vmlinux-98f7e32f.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/901e6ba22e57/bzImage-98f7e32f.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+5fca234bd7eb378ff78e@syzkaller.appspotmail.com
-> 
-> rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> rcu: 	1-...!: (0 ticks this GP) idle=11bc/1/0x4000000000000000 softirq=116660/116660 fqs=17
-> rcu: 	(detected by 0, t=10502 jiffies, g=200145, q=315 ncpus=2)
-> Sending NMI from CPU 0 to CPUs 1:
-> NMI backtrace for cpu 1
-> CPU: 1 UID: 0 PID: 6917 Comm: syz.2.16175 Not tainted 6.11.0-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-> RIP: 0010:match_held_lock+0x0/0xb0 kernel/locking/lockdep.c:5204
-> Code: 08 75 11 48 89 d8 48 83 c4 10 5b 41 5e 41 5f c3 cc cc cc cc e8 11 f9 ff ff 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 <55> 53 bd 01 00 00 00 48 39 77 10 74 67 48 89 fb 81 7f 20 00 00 20
-> RSP: 0018:ffffc90000a18d10 EFLAGS: 00000083
-> RAX: 0000000000000002 RBX: ffff888057310b08 RCX: ffff888057310000
-> RDX: ffff888057310000 RSI: ffff8880b892c898 RDI: ffff888057310b08
-> RBP: 0000000000000001 R08: ffffffff8180cfbe R09: 0000000000000000
-> R10: ffff88803641a340 R11: ffffed1006c8346b R12: 0000000000000046
-> R13: ffff888057310000 R14: 00000000ffffffff R15: ffff8880b892c898
-> FS:  00007f183bd6c6c0(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f7205d61f98 CR3: 000000001bb10000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <NMI>
->  </NMI>
->  <IRQ>
->  __lock_is_held kernel/locking/lockdep.c:5500 [inline]
->  lock_is_held_type+0xa9/0x190 kernel/locking/lockdep.c:5831
->  lock_is_held include/linux/lockdep.h:249 [inline]
->  __run_hrtimer kernel/time/hrtimer.c:1655 [inline]
->  __hrtimer_run_queues+0x2d9/0xd50 kernel/time/hrtimer.c:1753
->  hrtimer_interrupt+0x396/0x990 kernel/time/hrtimer.c:1815
->  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1032 [inline]
->  __sysvec_apic_timer_interrupt+0x110/0x3f0 arch/x86/kernel/apic/apic.c:1049
->  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
->  sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1043
->  </IRQ>
->  <TASK>
->  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-> RIP: 0010:lock_acquire+0x264/0x550 kernel/locking/lockdep.c:5763
-> Code: 2b 00 74 08 4c 89 f7 e8 ea e1 87 00 f6 44 24 61 02 0f 85 85 01 00 00 41 f7 c7 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 44 25 00 00 00 00 00 43 c7 44 25 09 00 00 00 00 43 c7 44 25
-> RSP: 0018:ffffc9000c5c79a0 EFLAGS: 00000206
-> RAX: 0000000000000001 RBX: 1ffff920018b8f40 RCX: 2e46bf6ba4daf100
-> RDX: dffffc0000000000 RSI: ffffffff8beae6c0 RDI: ffffffff8c3fbac0
-> RBP: ffffc9000c5c7ae8 R08: ffffffff93fa6967 R09: 1ffffffff27f4d2c
-> R10: dffffc0000000000 R11: fffffbfff27f4d2d R12: 1ffff920018b8f3c
-> R13: dffffc0000000000 R14: ffffc9000c5c7a00 R15: 0000000000000246
->  __mutex_lock_common kernel/locking/mutex.c:608 [inline]
->  __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
->  io_cqring_do_overflow_flush io_uring/io_uring.c:644 [inline]
->  io_cqring_wait io_uring/io_uring.c:2486 [inline]
->  __do_sys_io_uring_enter io_uring/io_uring.c:3255 [inline]
->  __se_sys_io_uring_enter+0x1c2a/0x2670 io_uring/io_uring.c:3147
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+--nextPart2210023.Mh6RI2rZIc
+Content-Type: multipart/alternative; boundary="nextPart4379146.ejJDZkT8p0";
+ protected-headers="v1"
+Content-Transfer-Encoding: 7Bit
+From: Ferry Toth <fntoth@gmail.com>
+Date: Fri, 20 Sep 2024 10:52:18 +0200
+Message-ID: <2627811.Lt9SDvczpP@ferry-quad>
+In-Reply-To: <ZuyEQOIztvUrO0gO@smile.fi.intel.com>
+MIME-Version: 1.0
 
-I know there's no reproducer for this and hence it can't get tested, but
-this is obviously some syzbot nonsense that just wildly overflows the
-CQE list. The below should fix it, will add it.
+This is a multi-part message in MIME format.
 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index f3570e81ecb4..c03d523ff468 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -635,6 +635,21 @@ static void __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool dying)
- 		}
- 		list_del(&ocqe->list);
- 		kfree(ocqe);
-+
-+		/*
-+		 * For silly syzbot cases that deliberately overflow by huge
-+		 * amounts, check if we need to resched and drop and
-+		 * reacquire the locks if so. Nothing real would ever hit this.
-+		 * Ideally we'd have a non-posting unlock for this, but hard
-+		 * to care for a non-real case.
-+		 */
-+		if (need_resched()) {
-+			io_cq_unlock_post(ctx);
-+			mutex_unlock(&ctx->uring_lock);
-+			cond_resched();
-+			mutex_lock(&ctx->uring_lock);
-+			io_cq_lock(ctx);
-+		}
- 	}
- 
- 	if (list_empty(&ctx->cq_overflow_list)) {
+--nextPart4379146.ejJDZkT8p0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 
--- 
-Jens Axboe
+Hi,
+
+Op donderdag 19 september 2024 22:06:24 CEST schreef Andy Shevchenko:
+> On Thu, Sep 19, 2024 at 09:51:48PM +0300, Serge Semin wrote:
+> > The recently submitted fix-commit revealed a problem in the iDMA32
+> > platform code. Even though the controller supported only a single master
+> > the dw_dma_acpi_filter() method hard-coded two master interfaces with I=
+Ds
+> > 0 and 1. As a result the sanity check implemented in the commit
+> > b336268dde75 ("dmaengine: dw: Add peripheral bus width verification") g=
+ot
+> > incorrect interface data width and thus prevented the client drivers
+> > from configuring the DMA-channel with the EINVAL error returned. E.g. t=
+he
+> > next error was printed for the PXA2xx SPI controller driver trying to
+> > configure the requested channels:
+> >=20
+> > > [  164.525604] pxa2xx_spi_pci 0000:00:07.1: DMA slave config failed
+> > > [  164.536105] pxa2xx_spi_pci 0000:00:07.1: failed to get DMA TX desc=
+riptor
+> > > [  164.543213] spidev spi-SPT0001:00: SPI transfer failed: -16
+> >=20
+> > The problem would have been spotted much earlier if the iDMA32 controll=
+er
+> > supported more than one master interfaces. But since it supports just a
+> > single master and the iDMA32-specific code just ignores the master IDs =
+in
+> > the CTLLO preparation method, the issue has been gone unnoticed so far.
+> >=20
+> > Fix the problem by specifying a single master ID for both memory and
+> > peripheral devices on the ACPI-based platforms if there is only one mas=
+ter
+> > available on the controller. Thus the issue noticed for the iDMA32
+> > controllers will be eliminated and the ACPI-probed DW DMA controllers w=
+ill
+> > be configured with the correct master ID by default.
+>=20
+> Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Seems this fixes the bug I have seen.
+> Ferry, can you confirm?
+I was testing something else and broke my setup :-(  I=E2=80=99ll fix that =
+and test this patch this weekend.
+
+
+
+
+--nextPart4379146.ejJDZkT8p0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset="UTF-8"
+
+<html>
+<head>
+<meta http-equiv=3D"content-type" content=3D"text/html; charset=3DUTF-8">
+</head>
+<body><p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0=
+;">Hi,</p>
+<br /><p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0=
+;">Op donderdag 19 september 2024 22:06:24 CEST schreef Andy Shevchenko:</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; On Thu, Sep 19, 2024 at 09:51:48PM +0300, Serge Semin wrote:</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; The recently submitted fix-commit revealed a problem in the iDMA32</=
+p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; platform code. Even though the controller supported only a single ma=
+ster</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; the dw_dma_acpi_filter() method hard-coded two master interfaces wit=
+h IDs</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; 0 and 1. As a result the sanity check implemented in the commit</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; b336268dde75 (&quot;dmaengine: dw: Add peripheral bus width verifica=
+tion&quot;) got</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; incorrect interface data width and thus prevented the client drivers=
+</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; from configuring the DMA-channel with the EINVAL error returned. E.g=
+=2E the</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; next error was printed for the PXA2xx SPI controller driver trying t=
+o</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; configure the requested channels:</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; </p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; &gt; [&nbsp; 164.525604] pxa2xx_spi_pci 0000:00:07.1: DMA slave conf=
+ig failed</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; &gt; [&nbsp; 164.536105] pxa2xx_spi_pci 0000:00:07.1: failed to get =
+DMA TX descriptor</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; &gt; [&nbsp; 164.543213] spidev spi-SPT0001:00: SPI transfer failed:=
+ -16</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; </p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; The problem would have been spotted much earlier if the iDMA32 contr=
+oller</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; supported more than one master interfaces. But since it supports jus=
+t a</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; single master and the iDMA32-specific code just ignores the master I=
+Ds in</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; the CTLLO preparation method, the issue has been gone unnoticed so f=
+ar.</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; </p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; Fix the problem by specifying a single master ID for both memory and=
+</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; peripheral devices on the ACPI-based platforms if there is only one =
+master</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; available on the controller. Thus the issue noticed for the iDMA32</=
+p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; controllers will be eliminated and the ACPI-probed DW DMA controller=
+s will</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; &gt; be configured with the correct master ID by default.</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; </p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; Tested-by: Andy Shevchenko &lt;andriy.shevchenko@linux.intel.com&gt;</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; Seems this fixes the bug I have seen.</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">&gt=
+; Ferry, can you confirm?</p>
+<p style=3D"margin-top:0;margin-bottom:0;margin-left:0;margin-right:0;">I w=
+as testing something else and broke my setup :-(&nbsp; I=E2=80=99ll fix tha=
+t and test this patch this weekend.</p>
+<br /><br /><br /></body>
+</html>
+--nextPart4379146.ejJDZkT8p0--
+
+--nextPart2210023.Mh6RI2rZIc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEqR7zuEuxfQFO1Tt5OB30JY3rOi0FAmbtN8IACgkQOB30JY3r
+Oi3CSgf/WUaXPJIZCCq3g+7MCEgr2r3JyOEWbBfReYAe3gHeff2OBf1/W+tRiVhB
+knThJaD7vXiHzZ5USwUU5JB86pFmNFmNf+H4KNmszAohnpc2zXDOmNobBmYb2qDd
+kQcdmHJ2h0oGzs6bWZQseNjg+MIRUhj6tf6r1+vzDjAQgXqMt22hUa2UfmJOuT6V
+syQHtEi1IuHEnzerIkeppCDcJqJ6Y4gvcRQzmTmMXc6GXJKZs2IPzoWGkZvXeUrf
+Oq1D/83Xvra1kuo93c2o7urYHRf3TQHwVvgz/HgDiQ5hhdROmU2lnoX8dW6jGv5V
+fOOkWL8f8DJBGYvCGDnYybGcie8gIw==
+=KL4q
+-----END PGP SIGNATURE-----
+
+--nextPart2210023.Mh6RI2rZIc--
+
+
+
 
