@@ -1,174 +1,120 @@
-Return-Path: <linux-kernel+bounces-334459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C75A97D784
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:34:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E467B97D789
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 152DC1F22AAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:34:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B244B224DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3F217BB3F;
-	Fri, 20 Sep 2024 15:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE4A17C7C6;
+	Fri, 20 Sep 2024 15:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="KdzG15aP"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RI3g2QiF"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E025F4ED;
-	Fri, 20 Sep 2024 15:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726846472; cv=pass; b=Jy8/HDtBUiB8ZrtNSDdcRepQaYY7vCnMqWxXmT7CxZ4lvFJlKj1CR9FC5QfMLmDzgFtNQAhIIYxLxK5JbjL5Q6513rhXrRKlA1+/dZhH8CCUECA4sG2vqIFcdwzKzXGyj/z+GnoSlAJA1EAJdLEb2HoTbc4VswdkAVxVGrjlZG0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726846472; c=relaxed/simple;
-	bh=gbyIZVZnbcw7+bZPXXeG07noug9qNa0booEz2wBF6JU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=t4W/ZCNYNRO7bnT+aSBdiA94mXfbUBPqQ6IMETrhXCtwOSZfSFnrUMqpNkm3oDzqekmuJlhv7H+kXIMUB4tThmn6nLXYfgNZV6vu+s1iNk5S8IJXGWBhLL2KBE0YRy9Bu102DS+5JnYHHwop79iki0N1ceFocsxx6uFQCL6FRk4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=KdzG15aP; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from localhost (83-245-197-106.elisa-laajakaista.fi [83.245.197.106])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sakkinen)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4X9Gdp58hCzyPT;
-	Fri, 20 Sep 2024 18:34:22 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1726846466;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iMSeBKczlfKSdUKSUaROX2phkD9MdqepiGiKR31Gj68=;
-	b=KdzG15aPW4EcKfRGSq5P5CrV0tf1A2f1mdElokm8wRaE/FTG29OcXFd3/G9eKFFCbuEs+m
-	NAOKCrhzmFBHwcYOimJB2sdjAairgJm15of4cEOnJ+zQzEbBalgsp0A8OykkboHSGFtq6o
-	zvAkTF/lRwjIfsYM0GD8ZlmdJDpW2pw=
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1726846466; a=rsa-sha256; cv=none;
-	b=qDc193Fm46QPiNEJ51JYG6LYeKRqA6UiA1vZEtdG+LGiACLQOg1UftjsXdMSKJaHwJC2nx
-	ssysaNPsRfAscwloftPfP2/NrB6ttWfbHUE5AAwGP+z8HN18f0VGIEUH0i90Wkt6nm6FQT
-	aoCAqJfCh5+GEPt0iVL9RMKjEcdQwiE=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1726846466;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iMSeBKczlfKSdUKSUaROX2phkD9MdqepiGiKR31Gj68=;
-	b=Emkzlh3IuZI8+Jxzf9Zgmh9ufCZUkhaV2jzKd09u+mCu0hmyJypGBnxxOOiGK8h8bEofIE
-	YLo+jE16vC3migaqytD/NPzvKyAl9TRGFn0hMRucscKU/VlxAvnUBP+8mZkE5BTMAoWbdm
-	EV1kMC6+u4ybFBX1mnUO0ao0Qxt49Ao=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC83C17BEBF
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726846517; cv=none; b=L/YulSf649i/lI+IJ7VI251+IUj1TzycdVCz5I6PlkdT9z+aociKEmWhw0J+lpG2ozTqOSJ07+HI3LaPOliU44lfrjqOAhkS6W88LxZS8jr9f3itbcNjdFvg19qWoRg4qdezPNal1ly2SfkYZSWXwp6mxPH7sb19NmhYByACkco=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726846517; c=relaxed/simple;
+	bh=Ff7K6cFONJH358OS+E+terxkifRGKFlrelFWRsEBzH0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NjFzQG/oDZ/KagAD0zyCwMnMwEE+v7fuhHvSwjTS5urEGQXQJai64Rw/l3eT0Xf7ZJjHXx5MFsiMlG6egikS5/g9r2qSxE3BSMrbWKln3pgBfByEiUO9u83j3CsiXBi0qtX1AaI7Vgg/p6LxUd7oJLBWGnf9opeCB07t009xO1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RI3g2QiF; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374c180d123so1356410f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:35:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726846514; x=1727451314; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RQKR4iRmb2AaBghMMbFk3Osh28MhFGu0gWv8w6kVGDQ=;
+        b=RI3g2QiFkRcibYsZw3ixDqLmpBKsVyX+uT9Dik+tOpAuWWDa/Lihu6wWGgUsGJHYsq
+         dsh+kPwjsBHcyuv9EzH49CHKwHaYNNlaylcUYJH7plhS9JBsk+Ou0CphVHOc7lUnf1d8
+         XXNT5m55t8XK+xC8qPNQ8w0+3OVPoURBr5F1jS/lJ+OGqVgQE7WTx0Wfql2h8sPjJybV
+         ab/Q3xM/bsG0eXeEcL4093t6K7hd1Qdxr4d+HGIh4KgVpnTwyTMie5191QR0om+JBq9B
+         Piat/sswvGrHq16qnGdUhExbxnpM/UgkZuPfjFRz4WY5/aoBQ89QsUzIFvJs9146CJV2
+         RPDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726846514; x=1727451314;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RQKR4iRmb2AaBghMMbFk3Osh28MhFGu0gWv8w6kVGDQ=;
+        b=djlTx6U1PAL6i4gCVgFBksAADcwjugQ/LX0zhd4ZLUFxeIlDOirVthPFQ7cKpGXI0o
+         Xb29FcqjkrJ0A+eowV4krTu54xCGaWoEvB2gQhx78Hhm+UV5s3AjOoWkAjSRJ8BUn11F
+         r59dNpfoHRyvixHeZuK7KEe7BfYG/Q3qqmbBHh97BgkAmFHZ77KLbqZr6KYx/EKlBFgD
+         1C7r3Ad2VV5zCQHHDFOt4hJmQawM8cuL0CSw3sADPWdOFedDiNxrUIcvl1M4s3+3s36Q
+         fJMwDehGWdZnpfORJ/cn++FQN3iHvYwIYmCbYuCH93qOswwezvWHTIrEm/OczU16TL/H
+         T5QQ==
+X-Gm-Message-State: AOJu0YzC0ZkaFBXvbe6Kzj+Bqndyy0gmt2biydNYiZl3M8dHeLYzA8NI
+	i4djkmcMTrBs47IjcXVCtgzUi6Mp4lGoahpbdEu1/+dN2Vr7KITdZjiYr4evVsc=
+X-Google-Smtp-Source: AGHT+IH0vMONnBQRabKJT6a9AQQ+vueeCVBbJ60tmNS6BEyiTM/7pjTlHjSnl2mbonRS9dVXU33V3g==
+X-Received: by 2002:a5d:6d0b:0:b0:374:c847:85c with SMTP id ffacd0b85a97d-37a422ac5d2mr2496650f8f.24.1726846514014;
+        Fri, 20 Sep 2024 08:35:14 -0700 (PDT)
+Received: from localhost (p5dc68d3d.dip0.t-ipconnect.de. [93.198.141.61])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f9cd3sm18176096f8f.62.2024.09.20.08.35.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 08:35:13 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] regulator: isl6271a: Drop explicit initialization of struct i2c_device_id::driver_data to 0
+Date: Fri, 20 Sep 2024 17:34:32 +0200
+Message-ID: <20240920153430.503212-14-u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Fri, 20 Sep 2024 18:34:21 +0300
-Message-Id: <D4B7ZCR4XWCT.3TWNN24TA8PSF@iki.fi>
-To: "Neal Gompa" <neal@gompa.dev>, "David Howells" <dhowells@redhat.com>,
- <dwmw2@infradead.org>, <zxu@redhat.com>, <keyrings@vger.kernel.org>, "Jan
- Stancek" <jstancek@redhat.com>
-Cc: <linux-kernel@vger.kernel.org>, "Asahi Linux" <asahi@lists.linux.dev>,
- "Hector Martin" <marcan@marcan.st>, "Janne Grunau" <j@jannau.net>, "Jarkko
- Sakkinen" <jarkko@kernel.org>
-Subject: Re: [PATCH 0/3] sign-file,extract-cert: switch to PROVIDER API for
- OpenSSL >= 3.0
-From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
-X-Mailer: aerc 0.18.2
-References: <cover.1720728319.git.jstancek@redhat.com>
- <27899413.1r3eYUQgxm@skuld-framework>
- <CAEg-Je_MXyP_PNj_QOu66SW_XYHy0zv0PnTTxX2qWELRG+xM_w@mail.gmail.com>
-In-Reply-To: <CAEg-Je_MXyP_PNj_QOu66SW_XYHy0zv0PnTTxX2qWELRG+xM_w@mail.gmail.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1090; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=Ff7K6cFONJH358OS+E+terxkifRGKFlrelFWRsEBzH0=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBm7ZYRKVN+50dKf2I6p8wRSmUcc80WEOwL+OGNv hAa6YGeC+GJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZu2WEQAKCRCPgPtYfRL+ TojqB/92lYQjZ2MhwwPvWuOFFEvK2KuSi7PcM38naimTSa7gm5K0WpR1yJV3jGawdMa8AMEdp6Q okIMlzXhaLU418QedG2eAYPfVqLxNpQV6yAwya0DWxqMJ5XLjbndHC/WDeWv6K/hgtlA3VgeylZ zWIjPQX4dfGFt0qhsk+STeSoOmrwi4EX4YAGKOqBCdM/n4NfR44qotx2YZTyyCgid97kEzkM65n wC5uj/SypShzU981pleIzwp9lQPR3p3LwHJyg+SwPFexkWSA7FY+pqsNUuSVtUB00PCW94XLFXv 3lvo9zJlaQJIdiRfgUVZ0blMVxM7F004BhDB9uyi26I5n2Ca
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-On Fri Sep 20, 2024 at 2:42 PM EEST, Neal Gompa wrote:
-> On Tue, Aug 6, 2024 at 4:27=E2=80=AFPM Neal Gompa <neal@gompa.dev> wrote:
-> >
-> > On Friday, July 12, 2024 3:11:13=E2=80=AFAM EDT Jan Stancek wrote:
-> > > The ENGINE interface has its limitations and it has been superseded
-> > > by the PROVIDER API, it is deprecated in OpenSSL version 3.0.
-> > > Some distros have started removing it from header files.
-> > >
-> > > Update sign-file and extract-cert to use PROVIDER API for OpenSSL Maj=
-or >=3D
-> > > 3.
-> > >
-> > > Tested on F39 with openssl-3.1.1, pkcs11-provider-0.5-2,
-> > > openssl-pkcs11-0.4.12-4 and softhsm-2.6.1-5 by using same key/cert as=
- PEM
-> > > and PKCS11 and comparing that the result is identical.
-> > >
-> > > Jan Stancek (3):
-> > >   sign-file,extract-cert: move common SSL helper functions to a heade=
-r
-> > >   sign-file,extract-cert: avoid using deprecated ERR_get_error_line()
-> > >   sign-file,extract-cert: use pkcs11 provider for OPENSSL MAJOR >=3D =
-3
-> > >
-> > >  MAINTAINERS          |   1 +
-> > >  certs/Makefile       |   2 +-
-> > >  certs/extract-cert.c | 138 +++++++++++++++++++++++------------------=
---
-> > >  scripts/sign-file.c  | 134 +++++++++++++++++++++--------------------
-> > >  scripts/ssl-common.h |  32 ++++++++++
-> > >  5 files changed, 178 insertions(+), 129 deletions(-)
-> > >  create mode 100644 scripts/ssl-common.h
-> >
-> > The code looks fairly reasonable to me and behaves as expected.
-> >
-> > I have been actively using this patch set for several weeks now across
-> > linux-6.9.y and now linux-6.10.y with good success.
-> >
-> > It is in use in production for Fedora Asahi Linux kernels with good suc=
-cess.
-> > Thanks for the fixes. :)
-> >
-> > Reviewed-by: Neal Gompa <neal@gompa.dev>
-> >
->
-> Jarkko, could you please consider submitting this for inclusion into
-> 6.12? I've been carrying this for three Linux kernel rebases now
-> (6.9.y, 6.10.y, and now 6.11.y) and it seems to be just fine, and
-> without it, I cannot build kernels anymore with the OpenSSL engine API
-> disabled in Fedora and CentOS/RHEL. I also expect that the engine API
-> will disappear on other platforms in the near future given its
-> deprecated status and recently accelerated conversion of engine
-> backends to the newer provider API.
->
-> Thanks in advance! :)
+These drivers don't use the driver_data member of struct i2c_device_id,
+so don't explicitly initialize this member.
 
-Yes, I think I can. And I've yet to do 6.12 PR because I've been
-busy sorting out perf regression in the TPM driver.
+This prepares putting driver_data in an anonymous union which requires
+either no initialization or named designators. But it's also a nice
+cleanup on its own.
 
-ERROR: need consistent spacing around '*' (ctx:WxV)
-#66: FILE: certs/extract-cert.c:69:
-+	OSSL_STORE_CTX *store;
- 	              ^
+While touching the initializer, also remove the comma after the sentinel
+entry.
 
-ERROR: need consistent spacing around '*' (ctx:WxV)
-#93: FILE: certs/extract-cert.c:96:
-+		ENGINE *e;
- 		      ^
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+ drivers/regulator/isl6271a-regulator.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-ERROR: need consistent spacing around '*' (ctx:WxV)
-#199: FILE: scripts/sign-file.c:114:
-+	OSSL_STORE_CTX *store;
- 	              ^
+diff --git a/drivers/regulator/isl6271a-regulator.c b/drivers/regulator/isl6271a-regulator.c
+index 69b4afe95e66..7883cd160727 100644
+--- a/drivers/regulator/isl6271a-regulator.c
++++ b/drivers/regulator/isl6271a-regulator.c
+@@ -138,8 +138,8 @@ static int isl6271a_probe(struct i2c_client *i2c)
+ }
+ 
+ static const struct i2c_device_id isl6271a_id[] = {
+-	{.name = "isl6271a", 0 },
+-	{ },
++	{ .name = "isl6271a", },
++	{ }
+ };
+ 
+ MODULE_DEVICE_TABLE(i2c, isl6271a_id);
 
-ERROR: need consistent spacing around '*' (ctx:WxV)
-#229: FILE: scripts/sign-file.c:141:
-+	ENGINE *e;
- 	      ^
-Any ideas of these? My guess is that they are unfixable and related
-to non-kernel-standard code.
+base-commit: 62f92d634458a1e308bb699986b9147a6d670457
+-- 
+2.45.2
 
-BR, Jarkko
 
