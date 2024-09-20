@@ -1,120 +1,157 @@
-Return-Path: <linux-kernel+bounces-334323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A074C97D5BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:48:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C162097D5BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62C2328462C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:48:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2030CB23B75
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F02316A395;
-	Fri, 20 Sep 2024 12:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6674816BE23;
+	Fri, 20 Sep 2024 12:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="TFpe+4kj"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CT5QkNIK"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE02165EEB
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070E916A957
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726836481; cv=none; b=HvKhfNW0Uvpwr9RSsFa0Bw6Fo6xMLTUmPlQcnn+teB0k28eqkR/lpEaii3uD5TeR0JsMJFpg5wovYrhfCCje5bGgS0ajvh64sfwpojDsr6dHM9EQClWCJ1P6YG8fxYVvGxJYEp56o6ROXBeHr4g6MxnTFxL9GGGLnkPxuL6izP0=
+	t=1726836494; cv=none; b=SUD3w6Ko+JS8IGk/9nII3A4Fl1SPNzYskwl0rjCS6jmkQkqdgZ3ybV+aLoSdG/INzDG1Z5I23YLiazh2HobKy9oP+hUNvPPm6wfBnJ1dkz1lXyIRusnnG4jeSma+qrvtlE8KtppmKsw9cfUixJwEE7HqnAUgynTQcZMRToA3MIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726836481; c=relaxed/simple;
-	bh=4aywC+B5Om4OSHCxCkeV1IQJG+CDm7m2zEJ8aYzXg8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VJyxMPxfx3MpHEINQqiUeQCWiattQubzf+hl7DZH0n5D0+Gc6Xl2jXKYWPszmXSwtXlpBSrUAx7zN4Wqp+Tf+6ssOCgmg6df8AaVmD7gbqWtkWdSMBmKemfQZHF/u6kWs2/wBSu8E9nyZP/Q9bSPeQN+5rFRN64ANkeAGYFjgxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=TFpe+4kj; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8b155b5e9eso270905566b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:47:59 -0700 (PDT)
+	s=arc-20240116; t=1726836494; c=relaxed/simple;
+	bh=AclRvldpatLgSSIEgQdKGzYslxoxSDWheM7zZr9XXNA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F6dl2Zf59yQkcgjXomdTaqeXQmnCDdMXOq7w2HyroiGb2P00Iwt8kf4XBjM4IUW7vfKhSy55gJkECcJeWmcqfNwDJpDysvax/nykmykOpzQJNLM/rLIKy7plv6KB87T9+O9jnz8OgcgAGbPYy9fNv5YTXtWPhALhS+HLdfpN4q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CT5QkNIK; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374b9c74aa9so153703f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:48:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1726836478; x=1727441278; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X2xJE7hCuiR6rhROHcQFlHj6IQHUA6H+IS+eLm/arhQ=;
-        b=TFpe+4kjfb979MT2TpXFlM88p3t/ljWVgsLLNWeJGsDOJm787uVJe7g1Vij2bjcFFN
-         wdIuD4j2l7w4JtGnA0/0H0xXgJRpVyf6XasNX7hHbZuJU4F8vHBJlnMkD743gaph0UdS
-         CjD3YvsUNbWNdlBvHw6aPhsov+ILnVYQFZAkx7yqsyX6yFwkWNEqIKHndoDldx9Hr9pu
-         g9irk+OS6xK0RzXoNrFvn7tidqYs2FkIv2gffVZr5awe6QTRtXz0WO+4YDnI2MtD31KE
-         rYp6AhN1tBU0y9f7z6oGU9to4WAt1f0TfT+isWcJOirlU254n/93fcKrRDbLCJAimmux
-         AK4g==
+        d=linaro.org; s=google; t=1726836491; x=1727441291; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ndjuzcBb3KczM0OtIVNQY8792/H5OZdu/ATsA551N0=;
+        b=CT5QkNIKj838HV99+yPYlNwBLu/lFEIegDOQDKWhGr+6xfe231KO8uq0oKe+0/mTst
+         r0eZFJb8RbKvnnrkDHpl7w8tT0daOA1xekDnSLUmiR3cXzUH+GbaVvPQIGY2JB+1bCc3
+         SPNgRJV5GMtzrLcBf1zZtoZDf+QewDHVsY3gcawYMOsKJeny77g8EYvNOgJ2tMb2OjSQ
+         b6HwqL3KploPHtmKUji/0LAXza/auQ5prT0YhA8WPuJ2eI87c5a4nJ1RhrtMSNQaEIWA
+         miDXzN8OFRYLCn6edL4fyIgvKvG3eZD+DzmV7FQ5ycJMm7LhXffbn5upXYYfUtIAy+fF
+         ncww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726836478; x=1727441278;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X2xJE7hCuiR6rhROHcQFlHj6IQHUA6H+IS+eLm/arhQ=;
-        b=N2b7VBL306Fi+O9kx3sl0TEJM3hHSxfFoCpDLTJotcntY9bBBr9jENGILJ4b8ZdSxR
-         krCKcSGyAEVsCO/6fqd5lL/iUaKFB8D6kmLq9eAbArfaT3rVaXPshmE5fAkSw491TnAP
-         dKknB/Tfb4lHioPzywaELACxQ9Lr3d7c4SQjn+DLKjVi6NfStSydqDIQGTTP4odsFO4S
-         rpe3TZ1qoVSOCFyy2avhmxkP9wtpqxuvsSaEFuOR3a+mXY7atOWf+M9YXHib98BKGm8p
-         6NA00wFfF7acszWx0tzBh1HnSU8I2AYN7bHW+aS5Ak5tdwdQDrCkv91fI9Sgi6ryInDG
-         AN4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXH4SQr3qRmRywsnNwQ/Tnvbj143qsCOugJWzXJ/e67ofAbI+Oz89f50WTYADO5n/Q98OhowPEQsivsIWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCE77wL0JYfrcfgtfhh+b7x2saWUDAMAr27uPtm9LFkHptlv0T
-	nSly0hMOMIdpK2Emnk4XIHlGKBe93pV0pVygip6TxsVGP0o1bw9vcynoNTFxi9c=
-X-Google-Smtp-Source: AGHT+IE4F67aGCJpQ0MA7SSdlxROIwB102izDy/PQaIh7Yf9dNwfHp5Up+3oQi50poFc1poRs/PJZg==
-X-Received: by 2002:a17:907:e25a:b0:a86:8832:2fb7 with SMTP id a640c23a62f3a-a90d4fe825bmr205726366b.20.1726836478358;
-        Fri, 20 Sep 2024 05:47:58 -0700 (PDT)
-Received: from ziepe.ca ([83.68.141.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f42e6sm842024666b.78.2024.09.20.05.47.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 05:47:57 -0700 (PDT)
-Received: from jgg by jggl with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1srd3F-00017y-1U;
-	Fri, 20 Sep 2024 09:47:57 -0300
-Date: Fri, 20 Sep 2024 09:47:57 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
-	linuxarm@huawei.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 for-next 2/2] RDMA/hns: Disassociate mmap pages for
- all uctx when HW is being reset
-Message-ID: <Zu1u/aiOAooVUeq2@ziepe.ca>
-References: <20240913122955.1283597-1-huangjunxian6@hisilicon.com>
- <20240913122955.1283597-3-huangjunxian6@hisilicon.com>
- <20240916091323.GM4026@unreal>
- <595ec9f3-c3cd-66b3-c523-452f88e079ac@hisilicon.com>
+        d=1e100.net; s=20230601; t=1726836491; x=1727441291;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7ndjuzcBb3KczM0OtIVNQY8792/H5OZdu/ATsA551N0=;
+        b=GwLOvyLnqH9DaXBb14cXAnscdP+skr2QD8x1x5PmbqEUCTi7GQ8+aA9E5GRIOrzUBS
+         mOndVwt+eTIBmVo619z3xje3l0+IR6W7bxRLubK1unoNXsMmidP6Rhh7TANZnokIB5DD
+         rpDtfgpK+dBW5Vld+028rSnReb03XhOalOnR63ZiLxlJxgen1Vs92PZdZWN33nwZZdLH
+         pqzrtnJqLB5hLitcsCQStwNY1IeOTpCqmWAP2LKVewn1NLq+0TGj7IwQ92iFcPGwOXnh
+         53v0hSPfBhGq1vWkmcy2zQegbBdyEjgmGpZUJtF766Ia808OxD3UeJUN26QDl5UIlTGA
+         4aVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVI+Gu5E//k64dTRw92eFadQG9ZPIEJWfyuzL63zSZX/Fi18FOc4cTHi1x3G6OzuCQ32zivo8Vs4hd7E2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN04SR0FYCJz+Uk33hbgkSuizDlh3DSpkNQnZCh7HH522TKeeE
+	Qd4gbvfQLhn5NJa9CWP7yY4AkzYJPlYH2ruP23sqKyHcUv6v0RLYyFU1pUq+aa8=
+X-Google-Smtp-Source: AGHT+IEjRqf7ROMNAOcdynOQ2m0TfxnrLbHdAL0pf+Mm1v9dYgC+waJqWQnT3hNm0L/fE6v6z1cIPQ==
+X-Received: by 2002:a5d:64ce:0:b0:374:ca43:ac00 with SMTP id ffacd0b85a97d-37a422722c4mr903863f8f.4.1726836491250;
+        Fri, 20 Sep 2024 05:48:11 -0700 (PDT)
+Received: from [10.138.0.47] ([83.68.141.146])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb495besm7191325a12.4.2024.09.20.05.48.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Sep 2024 05:48:10 -0700 (PDT)
+Message-ID: <dd4c1956-cf6e-442b-9119-12f63fb95db8@linaro.org>
+Date: Fri, 20 Sep 2024 14:48:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <595ec9f3-c3cd-66b3-c523-452f88e079ac@hisilicon.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64: defconfig: Enable Ftrace and STM configs
+To: Mao Jinlong <quic_jinlmao@quicinc.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Bjorn Andersson <quic_bjorande@quicinc.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+ =?UTF-8?B?J07DrWNvbGFzIEYgLiBSIC4gQSAuIFByYWRvJw==?=
+ <nfraprado@collabora.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240920075905.19441-1-quic_jinlmao@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240920075905.19441-1-quic_jinlmao@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 20, 2024 at 05:18:14PM +0800, Junxian Huang wrote:
-
-> >> diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
-> >> index 4cb0af733587..49315f39361d 100644
-> >> --- a/drivers/infiniband/hw/hns/hns_roce_main.c
-> >> +++ b/drivers/infiniband/hw/hns/hns_roce_main.c
-> >> @@ -466,6 +466,11 @@ static int hns_roce_mmap(struct ib_ucontext *uctx, struct vm_area_struct *vma)
-> >>  	pgprot_t prot;
-> >>  	int ret;
-> >>  
-> >> +	if (hr_dev->dis_db) {
-> > 
-> > How do you clear dis_db after calling to hns_roce_hw_v2_reset_notify_down()? Does it have any locking protection?
-> > 
+On 20/09/2024 09:59, Mao Jinlong wrote:
+> Ftrace logs can be captured by STM over TMC sink path. We can enable
+> ftrace logs along with HW trace of coresight component. The timestamp
+> of ftrace logs and hw traces will be in sync which helps to debug.
 > 
-> Sorry for the late response, I just came back from vacation.
+> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+> ---
+>  arch/arm64/configs/defconfig | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> After calling hns_roce_hw_v2_reset_notify_down(), we will call ib_unregister_device()
-> and destory all HW resources eventually, so there is no need to clear dis_db.
 
-Why can't you do the unregister device sooner then and avoid all this
-special stuff?
+I am pretty sure I saw this and even commented on. So you miss changelog
+and proper patch versioning... unless you duplicate someone's else work?
 
-I assumed you'd bring the same device back after completing the reset??
+Best regards,
+Krzysztof
 
-Jason
 
