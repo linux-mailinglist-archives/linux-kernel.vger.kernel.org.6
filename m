@@ -1,101 +1,110 @@
-Return-Path: <linux-kernel+bounces-334262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1912197D4BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:21:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A729697D4BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE02C282EE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:21:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAF151C22482
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6F21482F0;
-	Fri, 20 Sep 2024 11:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B9414375C;
+	Fri, 20 Sep 2024 11:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTqxTJFz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MelgKL6t"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED31D45027;
-	Fri, 20 Sep 2024 11:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110567DA76;
+	Fri, 20 Sep 2024 11:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726831256; cv=none; b=Zqt1uGjJa09CwNyGxsoXg+r9ka6zJrEbOafG1dnfLjZvEdKSxjyAR1clPaLbf0UZ/CkRaF57Z4bUG778mzQR1R+UXve0OnOD2zqGOpLKVGd32cRe6u92tpW4MSealwKovzrR1WrPfRbLZlui6UHu7F8Dou+L6p3F/QMQFIQVOGI=
+	t=1726831300; cv=none; b=YY0ETDOUyn50lKfHV3Sy818Fc+R/YpYCqjmfeuuKISe3joo4lSAaLXaRXeohjIDYIDN/COrnDf6XT1ui7t4ZZwSBzez3PrbVORtWDrlyQcg/vSQKU6FwWjuOj1VTGBak9vho7wYGyPt63fIRMHuXzT2cFZwLXikGNzUCpc725qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726831256; c=relaxed/simple;
-	bh=AOm6CiYihAUPza1oEC3n4S6HAK1ZQbToAsiMUNAJ9v0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=DQmPlfc6D8aZ3QR8Syo61sp+Lr9GLo/XFpqMPDMuIGm+ykqNMbQj0EmHYLbtubGnVwyFKXFo1kPzjfIfnkbX0vmTBUnzF+phAJl/8UU1p+cgsmYKa0/Du23Od8ydIDj0RdOeqRTWF1Mm3VUxcTnv5A5oLnNjHdv9atOvD65Ua/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NTqxTJFz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38E39C4CEC3;
-	Fri, 20 Sep 2024 11:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726831255;
-	bh=AOm6CiYihAUPza1oEC3n4S6HAK1ZQbToAsiMUNAJ9v0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=NTqxTJFzr0tX4MKGLnh2smz/O2hVmLyooLMZJg7/Ec79dsQ7Um+yJTW2oaLxybR9v
-	 mS1X/yv93l5OT0rWTAQjBfQsa67mZaXZLE6AKl6s7FNH1C/Qz54kcMwkkWRh/jNAe2
-	 gA99CnUSKatFoGW/5UQqijuqJyKc8r5cOyA1TMqfkEgdXgZ5zvvJj/sAjtQD6Ce2Jr
-	 0SUadizHI+6JxvBEJRyw2m+XTnx4cCt0KrvfRnOISWPqWKOsOQ+KYh/+meKfbVADjh
-	 dO+h+uZkkjOODp36lCngvVjBmpRzvfbfwd1RYeVLM1nYM312Vg3Jprc7B/7T2W+xII
-	 Lwzqf8/iUezIQ==
-From: Mark Brown <broonie@kernel.org>
-To: Alexander Dahl <ada@thorsis.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>, linux-spi@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240918082744.379610-1-ada@thorsis.com>
-References: <20240918082744.379610-1-ada@thorsis.com>
-Subject: Re: (subset) [PATCH 0/2] spi: atmel-quadspi: Fix and add full CS
- delay support
-Message-Id: <172683125380.1876737.2732107267327234575.b4-ty@kernel.org>
-Date: Fri, 20 Sep 2024 13:20:53 +0200
+	s=arc-20240116; t=1726831300; c=relaxed/simple;
+	bh=bxKEtC5qNY3zXEqd9y537CZSdz2DNen+N/WtzqreB2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uxk5xU5gnUBQicX6ekIs3prpJgBi7p4jJvtivLQzF25Obt003A5pvTZB5SpVHdUqWkUsmliu6boY8YV6cmBCkId5atoHmICcmWZ7oALdMy5+P5wBOY2E+jDKdt1g3EpuSp7xvGPh7XyAgzaENrecIWVZ8bUjln6cs/EvbciYHio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MelgKL6t; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 89F51E0008;
+	Fri, 20 Sep 2024 11:21:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726831296;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bxKEtC5qNY3zXEqd9y537CZSdz2DNen+N/WtzqreB2o=;
+	b=MelgKL6tLbVlCpObozi14FKQTJ6qZaJN3mRyPjBiVPNQzwaz9LREICMpoYfqKAoq+Xn08J
+	ioImy9WpCg7Xujh/gGhA+anPd2UQaEhPgamnYjVnHaidRuuK92JBJHsob9pRvBm+NcUvpG
+	Cq6K89ZmRuUeqRqd3gdzzlY77ITOJciVjXuD0CDEnKuvNZGsGpxK3/jZeulkb3IHknkcrp
+	5CTNUvcmDUX09bTvkOEqj6dzM98m0aFwutY4ePlcNxUjlYaypM2FRhToTPBRqgZX3pkpyi
+	bRTrR5K5n/m6nlTUqBcf6GaQBA8kP7/2C42bVuqkoYc3BrKxGWH6Lt2yWtmcQg==
+Date: Fri, 20 Sep 2024 13:21:31 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Jiawei Ye <jiawei.ye@foxmail.com>
+Cc: przemyslaw.kitszel@intel.com, alex.aring@gmail.com,
+ stefan@datenfreihafen.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, david.girault@qorvo.com,
+ linux-wpan@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mac802154: Fix potential RCU dereference issue in
+ mac802154_scan_worker
+Message-ID: <20240920132131.466e5636@xps-13>
+In-Reply-To: <tencent_3D3535F93CE8BC48A50E29D1CF7A25E93D0A@qq.com>
+References: <tencent_3D3535F93CE8BC48A50E29D1CF7A25E93D0A@qq.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Wed, 18 Sep 2024 10:27:42 +0200, Alexander Dahl wrote:
-> when testing on a SAM9X60 based board with an FPGA implementing a custom
-> SPI-MEM protocol, we found the need to fully control the delay settings
-> the atmel/microchip QSPI controller offers.
-> 
-> Greets
-> Alex
-> 
-> [...]
+Hi Jiawei,
 
-Applied to
+jiawei.ye@foxmail.com wrote on Fri, 20 Sep 2024 04:03:32 +0000:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+> In the `mac802154_scan_worker` function, the `scan_req->type` field was
+> accessed after the RCU read-side critical section was unlocked. According
+> to RCU usage rules, this is illegal and can lead to unpredictable
+> behavior, such as accessing memory that has been updated or causing
+> use-after-free issues.
+>=20
+> This possible bug was identified using a static analysis tool developed
+> by myself, specifically designed to detect RCU-related issues.
+>=20
+> To address this, the `scan_req->type` value is now stored in a local
+> variable `scan_req_type` while still within the RCU read-side critical
+> section. The `scan_req_type` is then used after the RCU lock is released,
+> ensuring that the type value is safely accessed without violating RCU
+> rules.
+>=20
+> Fixes: e2c3e6f53a7a ("mac802154: Handle active scanning")
+> Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
 
-Thanks!
+I think net maintainers now expect the Cc: stable tag to be put here
+when there is a reason to backport, which I believe is the case here.
+So please add this line here.
 
-[1/2] spi: atmel-quadspi: Avoid overwriting delay register settings
-      commit: 329ca3eed4a9a161515a8714be6ba182321385c7
+>=20
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Please delete this blank line as well.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+And with that you can add my:
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> ---
 
 Thanks,
-Mark
-
+Miqu=C3=A8l
 
