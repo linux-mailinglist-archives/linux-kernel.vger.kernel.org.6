@@ -1,165 +1,139 @@
-Return-Path: <linux-kernel+bounces-334123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF08797D2D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:37:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC3D97D2D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D06AB2137C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:37:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8400D1F24D62
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E877DA87;
-	Fri, 20 Sep 2024 08:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05BA4C62B;
+	Fri, 20 Sep 2024 08:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eCemhpwo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UENH9aTN"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD4B3BBD8;
-	Fri, 20 Sep 2024 08:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759D93BBD8
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726821459; cv=none; b=c9pqmAr5JrqwutHTWphHn8O0bPK36MERBs6z4auZ6JbrO3OAKXVzC9L05tcvG6nqaPSCvTEpMiZeOtGqPf2s2MlPCHze3JUFFaHymXDEvoIUsRemh41EPp3ToueW5Kw8W/eZiaWnROcu9h1ocECzw8vJ+jLkSoMJZOIDHsHNFik=
+	t=1726821491; cv=none; b=ViTEk2s9+JanDTZP5/+DGkqQl8Ti+E6mgpr/SVoU7eZBYGjdf6sKNEnUZpcUPsC47CakXl44dlR6CVDKCq87SCSqpnbHTGh85RGhoUww3M5+6wp3prFE5GDMJyNo24qly4iD7KjWRnj+nHVCqIt/5UJKRW1p8M0/wDYfk6vldyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726821459; c=relaxed/simple;
-	bh=FjYT2BKjGT6OchrotM7LjHr6S6Ni/aoPuOPvVS5kbqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D2SB7N0DuSpcsfAsYDiLF4Gwu1yBzTYtM6Ri2mHtRUlg92b8ck7rIveI4kHmJmMt2euVYrqjETRTUGKmfyx19vm2Irw+bHPulZKoJ5tk++p81lNwHWQtVXAa65GkOvxDfeMQoY5fsHvlbYKAo/moEPumgy/cAS2BL0jjLOA6UIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eCemhpwo; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726821458; x=1758357458;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=FjYT2BKjGT6OchrotM7LjHr6S6Ni/aoPuOPvVS5kbqU=;
-  b=eCemhpwoplWgliqNxRtvRZJWspE9EeLvYFhGczQz4dePwLsEY4NZz7jp
-   gttH714tzax2oRISeAXKFEAiFSgC8pnfdwaKaBTEjdw9E9swwYK7unfXj
-   8kcUoP+JNbszLgXh9eofPbREYu8UyIuTpIXw/ibEyDTVGLhX+Z2U9dhfG
-   mFjm7Xg3Sjm+WxDUtMGkWycsQxcEEy8TLRtR7xQdDTorYGlMIQuybGbV/
-   wkzEtAn+zQLf6Nz+nlttOQjvf2rxeUFRmNspBdeYV4FEnPUmvVqV0DfXS
-   UtezTIS6X16SFua60w1FyB7OIKjXoJ3i6ozdEm/el/ffalg2NtWTEFUAf
-   Q==;
-X-CSE-ConnectionGUID: IJTYp2uzRnWZ3IpU/cbGOQ==
-X-CSE-MsgGUID: HI/qhd7RTqmpczmH1ZahZA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="29605466"
-X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
-   d="scan'208";a="29605466"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 01:37:38 -0700
-X-CSE-ConnectionGUID: Rm93kEgkS8SLlfUah43CXQ==
-X-CSE-MsgGUID: zz7eSZuWRdKWQL8YubJJjg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
-   d="scan'208";a="93540570"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 20 Sep 2024 01:37:33 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1srZ8s-000E8n-30;
-	Fri, 20 Sep 2024 08:37:30 +0000
-Date: Fri, 20 Sep 2024 16:36:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>,
-	linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Matt Roper <matthew.d.roper@intel.com>,
-	=?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
-Subject: Re: [PATCH v2 1/3] PCI: Add support for VF Resizable Bar extended cap
-Message-ID: <202409201629.QlC0MRbn-lkp@intel.com>
-References: <20240919223557.1897608-2-michal.winiarski@intel.com>
+	s=arc-20240116; t=1726821491; c=relaxed/simple;
+	bh=O0gR+EEyIIZGwIA+qtqCfN2wuQii0s/XxaptJOUZn6o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sXm82nN2+CH5MhNStyHaxYA7owZKF59WniFCCxAI/8W7HuY6s5bEyLc7IhesfmVCMA/4QJBu2gOdcPteURiMKo8bFhYUvSBIXHxhZf51LALMU1wzxflm3SpjMQJR5fhvnmUwGlxwkCpdLGXmQh+SL4NNVQbsNr6m5KH7i8a5A+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UENH9aTN; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3787ddbd5a2so1072754f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:38:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726821488; x=1727426288; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CtR9rrwh7DNDhn87WGlIXFPqSFnA1qNP99faPKnPFcA=;
+        b=UENH9aTNYLmwSqSGfA4To8Z90im524IEikE4w1fg74poRGgHwfgyQhIT/h8mfwNxp8
+         c9mME3Ro/7bdgUPZ5zoFnD+dbwsX3SbbEUCzgpdj+TUlUyXpXs62bHp7bj2GT2CuaIWI
+         nKd06LzzHCLMiwXAPU+IU/youxFru8b0iMcowEhErELTL+OLstM65u8cHTP4f8ardi74
+         fp6HRMZaZsbsN5YfG7ntKS3fNhiVXRKFBRqmweI0buQoA5fWmrCYJViQOdOg6vVSZZo9
+         pNx1DjFC9R7d/43VKdHFy0/CVS0iOGgYbkPzLMXfig/csXxosXVO7US/3QQ4Zd28dnbR
+         BC9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726821488; x=1727426288;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CtR9rrwh7DNDhn87WGlIXFPqSFnA1qNP99faPKnPFcA=;
+        b=Pa1M5Eb5+c0WOIviqOWfkEbi6ZnsQVetMalTZ9D7CNK9ZxEjZKHu6GbMM8KytOKW5Q
+         JRsgGFyUGqQ7Y6m5sulXnGfF6sKMvpb4en098nHOS+1SESg1cjoN2K0Wu7nOPISTQB6e
+         5VtGAjOOUSSGhhocIbxwjb/o6EW9UH56DoOktfxp1D5wBp9X/yp/IseIA3SvpEN3j1As
+         x/ZE5LcUcsurXUCF9IYrFWqXCJRkvWEmuFF/M0S6XiyA9ZLVTyOekPQuGr7RIQf8wwIx
+         JydRnMLwbUkxLc0cumhlI+TInLDng30KZ4XP7omvGJEghBcIbSJTHtW8jNbTK0ecv19A
+         LmfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYCXJc0MraUyBH65/IHp/RtRFXGT6Za4erqR4tlNPTJ0zi9/TGYkNARfB7kik1ZQQGeDY73z86igfq9Y4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+RDdrg1016ODubQGGgfyzP4AcWmsys6NjZixdnHZO7dKgqrly
+	8isRxnGJrUhazh2EhvQEvolZvW0MMTISszW4PVAsa/K98ka9sBD9vxGxW1KOK9U=
+X-Google-Smtp-Source: AGHT+IHC6NMRGd8XrHhnl2luCm5xPyNVEx8J3g73EFnggKlMIkGbyXMoJxZmTUE53GTxvFNbBZuAFg==
+X-Received: by 2002:adf:c788:0:b0:36d:2984:ef6b with SMTP id ffacd0b85a97d-37a4225216amr1084085f8f.11.1726821487809;
+        Fri, 20 Sep 2024 01:38:07 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7540e2c1sm43099165e9.2.2024.09.20.01.38.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 01:38:07 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH v2 0/3] dt-bindings: mmc: document mmc-slot and convert
+ amlogic,meson-mx-sdio.txt to dtschema
+Date: Fri, 20 Sep 2024 10:38:02 +0200
+Message-Id: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-0-5aa8bdfe01af@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240919223557.1897608-2-michal.winiarski@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGo07WYC/62OQQ6CMBBFr0K6dgytiujKexgXLQw4Ce2QGSQaw
+ 90tnMHVz/v5yftfoyiEaq7F1wjOpMQpg9sVpnn61CNQm9m40h3Li7Uw8UgN+Dhwv6bEg4PXqJO
+ gjxAotZR6hY7eqNBwmlEmiKicIL5BW2KoOn8uT8cKQ6hN9oyC2zxr7o/MT9KJ5bNdmu3a/tM+W
+ 7AQzqHzWNeVs/Y2UPLCe5bePJZl+QFqNQZmEwEAAA==
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1196;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=O0gR+EEyIIZGwIA+qtqCfN2wuQii0s/XxaptJOUZn6o=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBm7TRtbOtlTlRm40YRznfQ/pndGMNieGeHGev29+pX
+ b3EWRBCJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZu00bQAKCRB33NvayMhJ0aEhD/
+ 9NFslcvRji8i+vGYoP/zVBiOQLVQ+1bF3mEoBRIY/9l9X1Z96h104J6HbFpP5YloCWA+torFEbFCdd
+ 7GbqjY+gr9oTIwyX6gZFAET6YQHK9nC4smEFUPluIgBLLbvPeh2ywK79NAuAQI65oXE3nsmpTmiGVe
+ HOcKq6e6eODBOwq7tTllFpo/KOLlu9SGR9Vct3xKOykgUYwrcndnYzLlpiN4NGbvbZgehY65zY89EM
+ D8LgChW+tC8+KpI1AIbuusJuoVzBuRDEpzb7Qf4Qi4e0kuGI3ZSlwFq1TtwaUaolYOaraBh6VfXwy+
+ BMQPYA3I5GyYrC3J+bcc4Gtc8tms6RhBFgqPNTpXB8whWCjhcFH4yi0tAdR1LFz/URt1HyIIdxkoQK
+ /x+tyCF1waIcIWzxRJoXa/kZPp4+sH6tIno952A/X2Bp3IHivQX7jVUJ0X0UHYeYo5+E+IpJTiFAoF
+ 29sWOlAr+xW5P7WYWZu23J37K4Rg1xB72oBGbZWUhkHppg8ZnxIPq91QGmKGZh2xN+NZyAqJY8prkn
+ dYGhubRZpskGLKMgyAXxNVxZ78GqQeZeMv8/Nijnn8CbKAkLsbQLcZ/3gIx7D3BhDEP7qp5+zqsWqi
+ zY/J6h8Sukf1Cl0C8ePVaYtX5PW15mqgRDNJBiMHbyuawinmIAxi9aO6WVig==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-Hi Michał,
+Document mmc-slot because used by amlogic,meson-mx-sdio.txt and
+cavium-mmc.txt, so make it common.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Changes in v2:
+- Fixed description, limited to 3 slots
+- Moved out mmc-slot in a separate common schema
+- Link to v1: https://lore.kernel.org/r/20240911-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v1-1-b7bfae886211@linaro.org
 
-[auto build test WARNING on pci/for-linus]
-[also build test WARNING on drm-xe/drm-xe-next drm/drm-next drm-exynos/exynos-drm-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-misc/drm-misc-next drm-tip/drm-tip linus/master v6.11 next-20240919]
-[cannot apply to pci/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+---
+Neil Armstrong (3):
+      dt-bindings: mmc: controller: allow node name to be named slot@*
+      dt-bindings: mmc: document mmc-slot
+      dt-bindings: mmc: convert amlogic,meson-mx-sdio.txt to dtschema
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Micha-Winiarski/PCI-Add-support-for-VF-Resizable-Bar-extended-cap/20240920-064112
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git for-linus
-patch link:    https://lore.kernel.org/r/20240919223557.1897608-2-michal.winiarski%40intel.com
-patch subject: [PATCH v2 1/3] PCI: Add support for VF Resizable Bar extended cap
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20240920/202409201629.QlC0MRbn-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240920/202409201629.QlC0MRbn-lkp@intel.com/reproduce)
+ .../bindings/mmc/amlogic,meson-mx-sdio.txt         | 54 ------------
+ .../bindings/mmc/amlogic,meson-mx-sdio.yaml        | 96 ++++++++++++++++++++++
+ .../devicetree/bindings/mmc/mmc-controller.yaml    |  4 +-
+ .../devicetree/bindings/mmc/mmc-slot.yaml          | 40 +++++++++
+ 4 files changed, 139 insertions(+), 55 deletions(-)
+---
+base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
+change-id: 20240911-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-6fa70546ebb8
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409201629.QlC0MRbn-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/pci/pci.c:1920:20: warning: variable 'res' set but not used [-Wunused-but-set-variable]
-    1920 |                 struct resource *res;
-         |                                  ^
-   1 warning generated.
-
-
-vim +/res +1920 drivers/pci/pci.c
-
-  1903	
-  1904	static void pci_restore_vf_rebar_state(struct pci_dev *pdev)
-  1905	{
-  1906		unsigned int pos, nbars, i;
-  1907		u32 ctrl;
-  1908	
-  1909		if (!pdev->is_physfn)
-  1910			return;
-  1911	
-  1912		pos = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_VF_REBAR);
-  1913		if (!pos)
-  1914			return;
-  1915	
-  1916		pci_read_config_dword(pdev, pos + PCI_REBAR_CTRL, &ctrl);
-  1917		nbars = FIELD_GET(PCI_REBAR_CTRL_NBAR_MASK, ctrl);
-  1918	
-  1919		for (i = 0; i < nbars; i++, pos += 8) {
-> 1920			struct resource *res;
-  1921			int bar_idx, size;
-  1922	
-  1923			pci_read_config_dword(pdev, pos + PCI_REBAR_CTRL, &ctrl);
-  1924			bar_idx = ctrl & PCI_REBAR_CTRL_BAR_IDX;
-  1925			res = pdev->resource + bar_idx;
-  1926			size = pci_rebar_bytes_to_size(pdev->sriov->barsz[bar_idx]);
-  1927			ctrl &= ~PCI_REBAR_CTRL_BAR_SIZE;
-  1928			ctrl |= FIELD_PREP(PCI_REBAR_CTRL_BAR_SIZE, size);
-  1929			pci_write_config_dword(pdev, pos + PCI_REBAR_CTRL, ctrl);
-  1930		}
-  1931	}
-  1932	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Neil Armstrong <neil.armstrong@linaro.org>
+
 
