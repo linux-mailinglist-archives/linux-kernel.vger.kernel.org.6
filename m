@@ -1,141 +1,105 @@
-Return-Path: <linux-kernel+bounces-334242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E48197D475
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:49:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EFA397D470
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BA1B1F24D37
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690972863BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B4B14264C;
-	Fri, 20 Sep 2024 10:49:39 +0000 (UTC)
-Received: from mx2.zhaoxin.com (mx2.zhaoxin.com [203.110.167.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AB413D52A;
+	Fri, 20 Sep 2024 10:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BkkfnsZ2"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCD413C827
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 10:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.110.167.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F399B13C827
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 10:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726829379; cv=none; b=hSDqsduG1+RhTbNnZwWYA+hgmLMoafinFLQdczZT8wpAYGDXNzqlXPmW+2iNpcoznbRxTQ20VTyMg1SnxQ0XtZV2t0oMgAHGbyjVWvNleBSLR9i5fVf0mzwEQhm1+QS6u3DoDpQkh77tVLn67TzeFFSdXNYwuFBn4m7aATLRvtA=
+	t=1726829334; cv=none; b=bOZ+tyslNLQeGermK4MhyMcMTXVmQvkyekl7BuvA+pzLBoXqgrKDMG/pLL52u7CzsP1IghxlVWnoWVo6HhHTxjK8fDxIKXVMO4mnGYCKyOUhxH/Bt/agfPA2KArRX2T1cHAugcBwzQLhqVdX8z2TUMqP7ljTFnY3zYGqxtwQFlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726829379; c=relaxed/simple;
-	bh=76X4WGDb7fXflCuGB1Z3/sPBMa3Yo5I8KilmZWq1wzo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IBTpc3p4jspvyXs6evYRxrDiIJLdAOj5EkgG0gAMIiAat5jELDJukG75R5XrYBf5zoxtALZFawodaVhLWqoPKMtlPLKCF/P0hPOG9vsOyPrjoZe4EpXUwQoU+N5DdEGSiPbElnR4sDHeIgEgrN2erGKvIfWpHyJuz/F2r6tWBbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=203.110.167.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1726829366-1eb14e31a9113e30001-xx1T2L
-Received: from ZXSHMBX1.zhaoxin.com (ZXSHMBX1.zhaoxin.com [10.28.252.163]) by mx2.zhaoxin.com with ESMTP id hmcmp4N4PbGYAws8 (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Fri, 20 Sep 2024 18:49:27 +0800 (CST)
-X-Barracuda-Envelope-From: TonyWWang-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
-Received: from ZXSHMBX2.zhaoxin.com (10.28.252.164) by ZXSHMBX1.zhaoxin.com
- (10.28.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 20 Sep
- 2024 18:49:26 +0800
-Received: from ZXSHMBX2.zhaoxin.com ([fe80::d4e0:880a:d21:684d]) by
- ZXSHMBX2.zhaoxin.com ([fe80::d4e0:880a:d21:684d%4]) with mapi id
- 15.01.2507.039; Fri, 20 Sep 2024 18:49:26 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
-Received: from [10.32.65.165] (10.32.65.165) by ZXBJMBX03.zhaoxin.com
- (10.29.252.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 20 Sep
- 2024 18:42:20 +0800
-Message-ID: <7a80b9f5-9503-45fa-bbf4-d0dfa97688ff@zhaoxin.com>
-Date: Fri, 20 Sep 2024 18:42:22 +0800
+	s=arc-20240116; t=1726829334; c=relaxed/simple;
+	bh=dZ4/ujZpQbCpyXCntr1AGF7SI+Rv8E8hhQze7yJX3o8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=js2cV7wfFv5a6cgKw8Qqe9IS3vXQyWlyBCCvfoKmhI5TypDl6OqwfxEnlvQePBm8SpiBLQufA45RzLuLl5joCaBZFW6gFIpNtmMXjA4NlOJzR0zMacVeyTDwE/i7gS1x4xIluwkjuJqp5cEoRR/9sAWiKr9TUEpTQ5JVJMbZ+og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BkkfnsZ2; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f75de9a503so18147791fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 03:48:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726829331; x=1727434131; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KEaKZbC2ikTC9wCBaKId7vvau6vAXgNDzN70KcRD24w=;
+        b=BkkfnsZ2KEy7WtdvNGhmNnKZFOX7OorijKk6B/f3cBHS1WpdqxJ7nJz3B5vv07+R2o
+         wiZSSXC2XnN6MdxX7oEdzfu81LvHAcXbeB+PVS0ss4LhzaoMgHHa4JlbnLoXnijx/vPE
+         7tfp5lDbJ/FnEqERBZZk6/Ekb5Ofg9pAhesuxXnHVJUr/KaIsuYEeUaQm4t5XAe2GnEh
+         +kZukPeY0Q0qqNp6Fl3js+Sy/MrI2kBYeWEP9tsobjDlFpsK7GScGt23R6a8N5FSV1L7
+         M+cO8TR8vTpDw0qorqTk9a7TklESYHD+m+BoV66IxUOJSfE77MWd7LTwvRAxD81q8GDk
+         EP5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726829331; x=1727434131;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KEaKZbC2ikTC9wCBaKId7vvau6vAXgNDzN70KcRD24w=;
+        b=YTHaCuhhCTsOWr1crHLH8xJDFj5spktE2tzMo2J4O4Uf7c0ZLxK9Fbjqp/TvRoIaN/
+         M2U61G/Ei93hzj6ucRTXc6Cv6mxd5HaCASaNAKwfXUazuapnddeNajcXosULlegtI6nY
+         DxpV3c3I98Thzvbpb9bAaRGr01TU3Zsh9uRGflm8nz6zZauQn5CYEtVOlzqfaj5ZKzei
+         42neNtS0WTUlSgdX5sdAJbOWTv6hmjvb+npXJflbPWDPSCCNdJH0uomu45+Xw5/sCYr6
+         kGVA3/CRUJo4OCP/iaCOleZgbJe26LQBbeF58ObQMOeVPnR4K2RoeRhBsoWELOoqfEJ+
+         o86Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVBSIuIjYOEpCfZIKcW9y8UdttJ4/nAbCy5aQLqfWM84gmJMU3m5OiF7eqv5IjMUPsqIU/4+QhX92BnSgY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH/5Y+Z/5wY8W8q92ycrWJs35efA4my+kDEKQ+zIXVnEKVomtG
+	JtdXUUC8MVp39PtpVMOT319a00yhtJbwP41yY5KFrjIr1QTYC7ABiN/Y0rNAdXM=
+X-Google-Smtp-Source: AGHT+IFvd7/6+jQCXzW+8cOE2HgQQSXqm7oa6E2UoDj0bBvS7WK9wGBNR3rLkjkZnrprPAtCOotFYw==
+X-Received: by 2002:a2e:701:0:b0:2f7:7b34:285f with SMTP id 38308e7fff4ca-2f7cb2f926cmr10296501fa.20.1726829331003;
+        Fri, 20 Sep 2024 03:48:51 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d2e1dd6sm18989041fa.11.2024.09.20.03.48.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 03:48:49 -0700 (PDT)
+Date: Fri, 20 Sep 2024 13:48:47 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] clk: qcom: rpmhcc: Add support for QCS615 Clocks
+Message-ID: <7xc6qxkonbioivbgn6nbs3kiewsnf6iemm5rxlblbp5bwo75do@zerort4eagf6>
+References: <20240920-qcs615-clock-driver-v2-0-2f6de44eb2aa@quicinc.com>
+ <20240920-qcs615-clock-driver-v2-2-2f6de44eb2aa@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] x86/mce: Add CMCI storm switching support for
- Zhaoxin
-To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
-	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "Luck,
- Tony" <tony.luck@intel.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-edac@vger.kernel.org"
-	<linux-edac@vger.kernel.org>
-X-ASG-Orig-Subj: Re: [PATCH v3 3/3] x86/mce: Add CMCI storm switching support for
- Zhaoxin
-CC: "CobeChen@zhaoxin.com" <CobeChen@zhaoxin.com>, "TimGuo@zhaoxin.com"
-	<TimGuo@zhaoxin.com>, "LeoLiu-oc@zhaoxin.com" <LeoLiu-oc@zhaoxin.com>, "Lyle
- Li" <LyleLi@zhaoxin.com>
-References: <20240910092652.13354-1-TonyWWang-oc@zhaoxin.com>
- <20240918055436.15551-1-TonyWWang-oc@zhaoxin.com>
- <20240918055436.15551-4-TonyWWang-oc@zhaoxin.com>
- <CY8PR11MB71344BE2857EA522CF71DBA1896C2@CY8PR11MB7134.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-In-Reply-To: <CY8PR11MB71344BE2857EA522CF71DBA1896C2@CY8PR11MB7134.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZXSHCAS1.zhaoxin.com (10.28.252.161) To
- ZXBJMBX03.zhaoxin.com (10.29.252.7)
-X-Moderation-Data: 9/20/2024 6:49:24 PM
-X-Barracuda-Connect: ZXSHMBX1.zhaoxin.com[10.28.252.163]
-X-Barracuda-Start-Time: 1726829366
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.36:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 1503
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.02
-X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.130712
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240920-qcs615-clock-driver-v2-2-2f6de44eb2aa@quicinc.com>
 
-
-
-On 2024/9/20 17:17, Zhuo, Qiuxu wrote:
+On Fri, Sep 20, 2024 at 04:08:16PM GMT, Taniya Das wrote:
+> Add the RPMHCC clocks required for QCS615 SoC.
 > 
->> From: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
->> [...]
->> Subject: [PATCH v3 3/3] x86/mce: Add CMCI storm switching support for
->> [...]
->> --- a/arch/x86/kernel/cpu/mce/zhaoxin.c
->> +++ b/arch/x86/kernel/cpu/mce/zhaoxin.c
->> @@ -63,3 +63,21 @@ void mce_zhaoxin_feature_clear(struct cpuinfo_x86 *c)
->> {
->>        intel_clear_lmce();
->>   }
->> +
->> +void mce_zhaoxin_handle_storm(int bank, bool on) {
->> +     unsigned long flags;
->> +     u64 val;
->> +
->> +     raw_spin_lock_irqsave(&cmci_discover_lock, flags);
->> +     rdmsrl(MSR_IA32_MCx_CTL2(bank), val);
->> +     if (on) {
->> +             val &= ~(MCI_CTL2_CMCI_EN |
->> MCI_CTL2_CMCI_THRESHOLD_MASK);
->> +             val |= CMCI_STORM_THRESHOLD;
->> +     } else {
->> +             val &= ~MCI_CTL2_CMCI_THRESHOLD_MASK;
->> +             val |= (MCI_CTL2_CMCI_EN | cmci_threshold[bank]);
->> +     }
->> +     wrmsrl(MSR_IA32_MCx_CTL2(bank), val);
->> +     raw_spin_unlock_irqrestore(&cmci_discover_lock, flags); }
-> 
-> Are there any reasons or comments why it needs to disable/enable the CMCI interrupt
-> here during a CMCI storm on/off? If not, then reuse mce_intel_handle_storm() to avoid
-> duplicating the code.
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  drivers/clk/qcom/clk-rpmh.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
 > 
 
-As explained in another email.
-The reason is actually mentioned in the cover letter: "because Zhaoxin's 
-UCR error is not reported through CMCI", and we want to disable CMCI 
-interrupt when CMCI storm happened.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Sincerely
-TonyWWang-oc
+-- 
+With best wishes
+Dmitry
 
