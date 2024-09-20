@@ -1,113 +1,138 @@
-Return-Path: <linux-kernel+bounces-334694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D96597DABF
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:13:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B132997DAC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9815D1C212CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:13:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E20D1F223DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BCA18DF8C;
-	Fri, 20 Sep 2024 23:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8AA187328;
+	Fri, 20 Sep 2024 23:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kiVeK4hj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sauHYC4q"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D751C693;
-	Fri, 20 Sep 2024 23:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A639C1531E1
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 23:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726873991; cv=none; b=SvwB7bl9bMX0mSNMfo4vvSgrZMQtDNID0MKQE2B1BLYj/r5tpa2bFlwY8Jmdy7f+UpTi5I/AxbCWji5nwSeTtlv12DJRwiF3yOsQSDLs1NcJh/WLO8F7TCBnOEHdKrFA7rxrG8gxl1gZMWN+ymSqoOYXMzLFwhLgvwnK/azH28g=
+	t=1726874172; cv=none; b=kSsoexEyjbkPyPIjoS1Zyh1pM44xdPa2LcvKvUbwzxJkgQsCBga0IS8lSHiq9uKXejtJihEWr00lRUTRVGTcdAqJrole0VqT2uMxMnMiO20QIWJz1aZHvrAyBDBkHFvP4/i59lN5ILReCPR9mcHJshZGyoEt28t7G0heGT6HBDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726873991; c=relaxed/simple;
-	bh=+CbtnYI/5ORGbbRU1OhnMdiA6deltgQ52qYdl/OS+Ok=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=tXOty0ZfUUeuE0dJxuNqWS0ppQY0IV4tzWdIPD10nVZtr3h4f/JxgpOVZUkph6CKRRJ3dkeNjUiqGbjthDQrvu9T1dYYU+x7WxQpRgZi476E+jcvqa447fQ2JgZkY6QrYrTtSYaD7BSCPEvXCbHwNl62c8FH9K5ft5Vn1pvfJp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kiVeK4hj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F1DC4CEC3;
-	Fri, 20 Sep 2024 23:13:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726873989;
-	bh=+CbtnYI/5ORGbbRU1OhnMdiA6deltgQ52qYdl/OS+Ok=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=kiVeK4hjoJc9Eu0ncckqydFSpzyBITFhQViNa96hU8zj303xNGFlP5l/AVb7YUrW/
-	 MMYZmViZSBnoL8LJf9qET6QugL0EZ06S1Q362GvIhgI+Ztf0HBFwagdh6B2697zFfC
-	 JH7vqgUw6v8Ym+KYOpW+8mXSPj5ee6M87jdDVRQaFxr+kce6dCfRxRdmBJdhIKFtiX
-	 vAMBJdm9mMoWusz0drX9SKUtl3+xqeAuDZY5oWKan0anGqC4fLVvk6rnAOLSXB7p1Q
-	 Ev+LIz5XEw7DoW2dMADqySR+8NJ6uRPDzC9l8+P/mBUoz/J5Do3KZ6ZXUwPWoSLUGm
-	 /XPnIUTB6M2gw==
-Date: Fri, 20 Sep 2024 18:13:07 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: mhklinux@outlook.com
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, James.Bottomley@hansenpartnership.com,
-	martin.petersen@oracle.com, arnd@arndb.de,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-arch@vger.kernel.org, maz@kernel.org, den@valinux.co.jp,
-	jgowans@amazon.com, dawei.li@shingroup.cn
-Subject: Re: [RFC 04/12] PCI: hv: Annotate the VMBus channel IRQ name
-Message-ID: <20240920231307.GA1073064@bhelgaas>
+	s=arc-20240116; t=1726874172; c=relaxed/simple;
+	bh=9X6O+MA8rmqD/bydBHU6Nbhq5c+A5SGw08blteJZLRc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kAeTDPTntQsLTSt0KBT/wi3fRmBpgY7fFlFWbCJ+C8f0TyVxNoA3pkWMJw+X4hNjI4BiG9eRdLVZa4MRxoZ1IPamh8qjFiTGWEzXnE3PzJ67tKmFIzHE/k50WzzQgCDCR+DY4HoGmdeIs3wjYOb0+dlhoNMTZ/1Px3MlfWbbtaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sauHYC4q; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8d13b83511so285709266b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 16:16:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726874169; x=1727478969; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9X6O+MA8rmqD/bydBHU6Nbhq5c+A5SGw08blteJZLRc=;
+        b=sauHYC4q0yEhGHau7TLccaFZSCqRiL8zYzb3hm/itw9TOFRiCsfMtONghyTLYDvnDG
+         vrLvAFKYsTLB6xy5yfa9XPVC2+eU7QvAMEy1vEjf5hioB+o0LctB/rxtpyGOwLzochib
+         vwa7y0yYEI/v+SIGZKqEUFZamwgBjmQOjPYAbrjPl41guD07TDTmp4Q7bqjF9hXv8TET
+         aod2TTwy8l1Uy3eJkUwiR45Vzr63Qc+P5WcPpEQyJ7HTIIq6oxtXPtuQ8PfhV8bZH7Lg
+         8zEsyx5dTt3vGa60kVQckWyC0uuogfnfGPnDFQ/qUVqjXiTRn5jAzi5jkC02vnICxtyo
+         cp7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726874169; x=1727478969;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9X6O+MA8rmqD/bydBHU6Nbhq5c+A5SGw08blteJZLRc=;
+        b=Z9cYSGKN+d8XhT7hhMxU8XhRjKmhchuTkBPdWo1pXIu1tnUh0sMl8Obyrgq/F8v4p0
+         86cNtjYx0XL1F34TK1NiUd3ALw/ItyZxT6XEm4/XoI9cMuJU3JJa/B+UnYkoLtLeeBMV
+         aXj4YeGR2ShVtqG1V3vMyFL0OtHNf0/mPrgB3HUn3plEdSPjQWlDjVZNJDscgq6tMfdR
+         jvRSeId3jvoVraRFSCdfuP4gJEA9/zrPnKrTMI9Q4Z6xso4C0NVhJkUDawnMRkWBMGSU
+         D8zbSMXAfmRr5qFBfpmGKFI+AnCMfzNpTa8uGcMo5/C5rY7QSFOsXmXUJLQGIVfKWoVc
+         cOuA==
+X-Gm-Message-State: AOJu0YweH21kSnKCZgXiR/XCT9e/WBnvedgJxvdvfHq9NHlleTg16729
+	l1Ne9XYy5yWXda65w6RMYgmxQsOINROmTHQIFtgzcyN8QILAM3NCsaE1ldX7m0H5oblZAfZ1ZtP
+	SUdbWtfD373sigobSL8AGm5ZGDEW0L9mHdE8V9Lu44dJS7lrQ3JC4
+X-Google-Smtp-Source: AGHT+IHK4RG0Mf32g3RyJVsw84+iTVFIYCW5DLewI9I78LGN1eHejMhnR1NEKq4LWWsTiMklCpJht5wcvq9N6YOvyjw=
+X-Received: by 2002:a17:907:25c2:b0:a8a:780f:4faf with SMTP id
+ a640c23a62f3a-a90d5925392mr292207366b.47.1726874168746; Fri, 20 Sep 2024
+ 16:16:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604050940.859909-5-mhklinux@outlook.com>
+References: <20240829212705.6714-1-kanchana.p.sridhar@intel.com>
+ <CAJD7tkaqp_3YbK_qsq+v2=Q0r4xwTG9PbbPYjQdpTBu_Z7K5_A@mail.gmail.com> <SJ0PR11MB567893E61CB522991ED1379EC96C2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+In-Reply-To: <SJ0PR11MB567893E61CB522991ED1379EC96C2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 20 Sep 2024 16:15:32 -0700
+Message-ID: <CAJD7tkbPcrHYGxCTTj7=YgXFcT6W4iek49cP_yHXWi2ce3jXTw@mail.gmail.com>
+Subject: Re: [PATCH v6 0/3] mm: ZSWAP swap-out of mTHP folios
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>, 
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "Zou, Nanhai" <nanhai.zou@intel.com>, 
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 03, 2024 at 10:09:32PM -0700, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mhklinux@outlook.com>
-> 
-> In preparation for assigning Linux IRQs to VMBus channels, annotate
-> the IRQ name in the single VMBus channel used for setup and teardown
-> of a virtual PCI device in a Hyper-V guest. The annotation adds the
-> 16-bit PCI domain ID that the Hyper-V vPCI driver assigns to the
-> virtual PCI bus for the device.
-> 
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+[..]
+> > If we really want to compare CONFIG_THP_SWAP on before and after, it
+> > should be with SSD because that's a more conventional setup. In this
+> > case the users that have CONFIG_THP_SWAP=y only experience the
+> > benefits of zswap with this series. You mentioned experimenting with
+> > usemem to keep the memory allocated longer so that you're able to have
+> > a fair test with the small SSD swap setup. Did that work?
+>
+> Thanks, these are good points. I ran this experiment with mm-unstable 9-17-2024,
+> commit 248ba8004e76eb335d7e6079724c3ee89a011389.
+>
+> Data is based on average of 3 runs of the vm-scalability "usemem" test.
 
-Seems fine to me.
+Thanks for the results, this makes much more sense. I see you also ran
+the tests with a larger swap size, which is good. In the next
+iteration, I would honestly drop the results with --sleep 0 because
+it's not a fair comparison imo.
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+I see that in most cases we are observing higher sys time with zswap,
+and sometimes even higher elapsed time, which is concerning. If the
+sys time is higher when comparing zswap to SSD, but elapsed time is
+not higher, this can be normal due to compression on the CPU vs.
+asynchronous disk writes.
 
-> ---
->  drivers/pci/controller/pci-hyperv.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-> index 5992280e8110..4f70cddb61dc 100644
-> --- a/drivers/pci/controller/pci-hyperv.c
-> +++ b/drivers/pci/controller/pci-hyperv.c
-> @@ -3705,6 +3705,9 @@ static int hv_pci_probe(struct hv_device *hdev,
->  	hdev->channel->request_addr_callback = vmbus_request_addr;
->  	hdev->channel->rqstor_size = HV_PCI_RQSTOR_SIZE;
->  
-> +	snprintf(hdev->channel->irq_name, VMBUS_CHAN_IRQ_NAME_MAX,
-> +				"vpci:%04x", dom);
-> +
->  	ret = vmbus_open(hdev->channel, pci_ring_size, pci_ring_size, NULL, 0,
->  			 hv_pci_onchannelcallback, hbus);
->  	if (ret)
-> @@ -4018,6 +4021,8 @@ static int hv_pci_resume(struct hv_device *hdev)
->  	hdev->channel->next_request_id_callback = vmbus_next_request_id;
->  	hdev->channel->request_addr_callback = vmbus_request_addr;
->  	hdev->channel->rqstor_size = HV_PCI_RQSTOR_SIZE;
-> +	snprintf(hdev->channel->irq_name, VMBUS_CHAN_IRQ_NAME_MAX,
-> +				"vpci:%04x", hbus->bridge->domain_nr);
->  
->  	ret = vmbus_open(hdev->channel, pci_ring_size, pci_ring_size, NULL, 0,
->  			 hv_pci_onchannelcallback, hbus);
-> -- 
-> 2.25.1
-> 
+However, if the sys time increases when comparing CONFIG_THP_SWAP=n
+before this series and CONFIG_THP_SWAP=y with this series (i.e.
+comparing zswap with 4K vs. zswap with mTHP), then that's a problem.
+
+Also, if the total elapsed time increases, it is also a problem.
+
+My main concern is that synchronous compression of an mTHP may be too
+expensive of an operation to do in one shot. I am wondering if we need
+to implement asynchronous swapout for zswap, so that it behaves more
+like swapping to disk from a reclaim perspective.
+
+Anyway, there are too many test results now. For the next version, I
+would suggest only having two different test cases:
+1. Comparing zswap 4K vs zswap mTHP. This would be done by comparing
+CONFIG_THP_SWAP=n to CONFIG_THP_SWAP=y as you did before.
+
+2. Comparing SSD swap mTHP vs zswap mTHP.
+
+In both cases, I think we want to use a sufficiently large swapfile
+and make the usemem processes sleep for a while to maintain the memory
+allocations. Since we already confirmed the theory about the
+restricted swapfile results being due to processes immediately
+exiting, I don't see value in running tests anymore with a restricted
+swapfile or without sleeping.
+
+Thanks!
 
