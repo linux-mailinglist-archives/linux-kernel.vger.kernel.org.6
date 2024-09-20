@@ -1,92 +1,152 @@
-Return-Path: <linux-kernel+bounces-334325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E1D397D5C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:49:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA79397D5C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E9961C20BB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:49:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59019B237CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587FE16B391;
-	Fri, 20 Sep 2024 12:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D296216F27D;
+	Fri, 20 Sep 2024 12:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="KNna4CDV"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE29154425;
-	Fri, 20 Sep 2024 12:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qQKIl+uZ"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D62154425
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726836566; cv=none; b=Hp7df2nYDXUjItQ/1Jiu9LR6GCsdX+xbRj+dl3pa2dAIAg7kkckPDq37xEcuSVGFGYHEk7hGBgUG+XYNskr+n8q7MN5q6W1ZMScCBy6DF4yPxNLuM8YSBYLnns4WuiclOdlFxgVgMWl+UwB7Kr86Qt5rBLOij/LkCpryYmtZmfA=
+	t=1726836573; cv=none; b=eNKFR3L6LvM/U6nvkWrp+1UeFKZxuKcPBfKhHKEiPnjvwR51R68vkJ8sO7o3z1tcfeCz8GsFSWrjUSoeTdN2rMWR3eZChpA/cy4RwFlKDNF5CutnUo2/dXbAHDEnBW3NkWoktR5sIybCmh2ZH89oq5aql2EfPrzAuef8lD+2o6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726836566; c=relaxed/simple;
-	bh=dz3ZOK8RweoNZJBvQ0/IcWNv0Aw1uFRQylDkziHNO5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSJC0SXKnq1ooYbsFJptN2aSo3RUjQCPKdZ2KnIP/zrx68SC0YeX25I7UCXU6M5oA/s2RV8T1QXJ7fttbP01Vc9wbwrT9MsJlOBR8pBI8LTrtsQ0qpUWAcvWuaSWKp5kFn3KpjmnNWH//PMsg7EcbPo3lA9Iktxd7/yh/zYUgW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=KNna4CDV; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1173)
-	id 0C4EB20C0B1D; Fri, 20 Sep 2024 05:49:25 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0C4EB20C0B1D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1726836565;
-	bh=W5hKwvKNko6AMeYhYNpHbjM8KDfp5lpUMDns8H6KWtU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KNna4CDVIVeRohC/qQ7aNKRnohIY8rILee8jTNZEZcjSyfptJAU+nO1ezTgJCmDnv
-	 ZMLksbW+VWuhVrr8XmXNr6KyMF9O+nLDEk2MV8zLZVeTyaAIncwNg0dKXvV7AMg4s8
-	 uvgeNtWB1CUISdMgs1ShIu0czBoElfJxEzVZTnu8=
-Date: Fri, 20 Sep 2024 05:49:25 -0700
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>,
-	KY Srinivasan <kys@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"shradhagupta@linux.microsoft.com" <shradhagupta@linux.microsoft.com>,
-	"ahmed.zaki@intel.com" <ahmed.zaki@intel.com>,
-	"colin.i.king@gmail.com" <colin.i.king@gmail.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: mana: Add get_link and get_link_ksettings in ethtool
-Message-ID: <20240920124925.GA14863@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1726127083-28538-1-git-send-email-ernis@linux.microsoft.com>
- <20240913202347.2b74f75e@kernel.org>
- <PH7PR21MB3260F88970A04FDB9C0ACCC4CA612@PH7PR21MB3260.namprd21.prod.outlook.com>
- <20240917170406.6a9d6e27@kernel.org>
- <PH7PR21MB32606C49F796ED9E7AD0E5ABCA612@PH7PR21MB3260.namprd21.prod.outlook.com>
- <20240919094553.1ee7776c@kernel.org>
+	s=arc-20240116; t=1726836573; c=relaxed/simple;
+	bh=vfRWMFoZU4glUs5++nvdb1GcsWs9asQqDHry4+dOspo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lf//I3rJCIcQcLW+wZpvbubZek3TXHNJL95Mv+fnij0yXyc6Hfb7NxSgpPnPymh9cvd6kAgBSmefz31/WHJxtozr5SAxlZAJPyAqRiSFi3gMF1/eVaP9kOyQ3jumeUTd8WqY/Q2AhcDPdz1X1jr+DGjqO77m73UgiIVb+yLRauQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qQKIl+uZ; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8a765f980dso37204266b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:49:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726836569; x=1727441369; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=vfRWMFoZU4glUs5++nvdb1GcsWs9asQqDHry4+dOspo=;
+        b=qQKIl+uZb8DYP7g9ANCvgkQJyFzlThILOTRpZ8sdj7YImRTnDDVNmHQazFARQdDzWV
+         l8x/GfeWMYDdvXIM4y3vRohbVRqiq+ZzyERBg7nltRugeRNyxGMsRKOb/GHcC3wz5zS1
+         Lu2NlZJu+xdkc2yLnc2Ujr1ZYD1I3MjoSFrLXxlMogo9wI3Vvy1aYgD82JMcF4UH0xtm
+         CpIZZrZP2cnXdXjfs6LOvJT/K8BIpr3EkknqGo7B4KWDqx9XPc0TnSm8ZYJRQFSXsqAu
+         g5y8QR42eBHLSlVCNHaOsv/K3dxgChXRxBc9E+5Su9suLkBbArB1vVosLjBF0anww2vm
+         D1HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726836569; x=1727441369;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vfRWMFoZU4glUs5++nvdb1GcsWs9asQqDHry4+dOspo=;
+        b=v5EbaCls8CVQ0nFaloV/eVr99im/ZyusWTXeCNVTI164IbwOIZx+gma/URDuia0BbO
+         Th0hjOuGgh4yaCGd+6/Qk/fiKcmPthdsEvH/Kmw0uzpdbh0lmtKuNvl0geSJaidWUG6z
+         u+GN1CrHSspwFw7gfDs+b+miHutWZ2YCHpu4+VT9+VLLNFiwb+rc8aiv4T6j+59BCX8y
+         3VqiINItwFS/x/pv9xnmazh6mKitVs055GHwPYa6GU+bAkPb9tQtJRVu450SINSJMOum
+         XOn62PEHOtThU4/nNoqhC8u9mOB4Zo8BY3K+w+zGGjXJBDB/df+DrdNkcXuTgtdka0W8
+         9evw==
+X-Forwarded-Encrypted: i=1; AJvYcCW0HDiJZZk2qzKzc6+Az/wQ91WQP+zTUk1utrOcEhHQnyNC8GIkjlaTw/b16UFCJk65mwn+n/0hczBXl9w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi+D2rKit/blLKz6icaHNupAjmt/9PMwLDMxZZjviPpbbwtKz2
+	icWWOL00dIzmRftgmNxFYcjirR/yAW5vcWw8SOvm6bMZAJEA7GPtaV9vmPFOzRU=
+X-Google-Smtp-Source: AGHT+IHYUaO7wrNEXfc5RiPcetLxkdTyJydMjpOrlno5ScjSovfOahx2tIpdcefS4Wf9kyoxJoj4Ug==
+X-Received: by 2002:a17:907:940f:b0:a8d:2624:1a87 with SMTP id a640c23a62f3a-a90d511a5b7mr100761166b.14.1726836568980;
+        Fri, 20 Sep 2024 05:49:28 -0700 (PDT)
+Received: from [10.138.0.47] ([83.68.141.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610966ccsm846533066b.45.2024.09.20.05.49.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Sep 2024 05:49:28 -0700 (PDT)
+Message-ID: <85effc94-b69d-456b-8e26-0c34a757b1f7@linaro.org>
+Date: Fri, 20 Sep 2024 14:49:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240919094553.1ee7776c@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] firmware: qcom: scm: Allow QSEECOM on Dell XPS 13
+ 9345
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <20240919170018.13672-1-alex.vinarskis@gmail.com>
+ <20240919170018.13672-3-alex.vinarskis@gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240919170018.13672-3-alex.vinarskis@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 19, 2024 at 09:45:53AM +0200, Jakub Kicinski wrote:
-> On Tue, 17 Sep 2024 20:34:40 +0000 Haiyang Zhang wrote:
-> > > Unless I'm misreading I don't see the answer to the "why?" in your
-> > > reply.
-> > > 
-> > > What benefit does reporting duplex on a virtual device bring?
-> > > What kind of SW need this current patch?
-> > > etc.  
-> > 
-> > I'm not aware of any SW has such requirement either.
-> > We just want the "ethtool <nic>" cmd can output something we already know.
-> > Is this acceptable?
-> 
-> Yeah, that's fine, I was just curious. 
-Thankyou for the feedback. I will update these changes in the next
-version of the patch.
+On 19/09/2024 18:59, Aleksandrs Vinarskis wrote:
+> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
+
+Best regards,
+Krzysztof
+
 
