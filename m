@@ -1,161 +1,98 @@
-Return-Path: <linux-kernel+bounces-334683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953EB97DAA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:41:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC4D97DAA6
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7084E1C20FA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 22:41:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 199F91C20E2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 22:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB6D18D62F;
-	Fri, 20 Sep 2024 22:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZcM69Jev"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B6418DF63;
+	Fri, 20 Sep 2024 22:45:23 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BDC18CC1D
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 22:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B515FB8D
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 22:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726872090; cv=none; b=PmSfggk4mSPoL9ykdO79Swsc/jzON8PSqWX6V7qb/1DN4/nmwxyxOw0R9MGyxvEPm+Ty+9gThImteadB3m9a8Jh6tvNomllvnvde9tx2EFhCIJlf/T7aYcQviJGSCjJNBk3731JhDxzOds6eCHdSJtoNOQZGCHLHD6UcszmmpRk=
+	t=1726872322; cv=none; b=ESjH0bNGOiHhSj5Szqm1VZmsv/CZNvyx5u4Z3PjZ/iw86ox3FQWSGk6DQ33buoF5awNfWXO4Ha9UCTJ7fOm1Lyv2ga6PUtTEkWqNlboWVcN61WlFTf5pa00GSAID85lUIX/1DKooSQGBbLCDPz74sk/cIMBXXfuI8VSRxGMz9u0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726872090; c=relaxed/simple;
-	bh=yPjw/4nNfNHd++hSCKB3UpIVTWNA8jDzE/WpFb0N04g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SriIWSOFPcG9dFqtZSHL8VOofLkQcSUvgQ7p2fWatHyzG7m4GVHtYEAbGNLtxG+igIgYj0hLqmVFUNqvCwONiI34wC0EVla85E2kgQXmr7HJ0+Nb3N04kziPCEdO9A55g/tYRdhBqmg4et31zaPUJMcXEy32O7nZz8d9CHIOa1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZcM69Jev; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7d7a9200947so1655050a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:41:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726872088; x=1727476888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oSZbRXIQPSUlUDkWbO6YvNgSct1jZO+BnzpSd1WooY8=;
-        b=ZcM69JevV3zH3G9rlOmCiBTEhrtyptGNCZmLEsCkRHPbf1DG1xpKzyPaXzbA512gOr
-         A5Y0VU26aJJtFbJx4s7mZgHPPJHpVXd35TUObonrB16iX57v9n4DFPVFzWw/nDIWHTtY
-         krEZ032r1bdRKuQFWM9iRNZUBGXDlljY+xtDFTHOBqNwUzoKDmmUKoWc7i8QouRdTLIt
-         E6XMYESj2CCccoDD3/VN3A14jpXyJv8gMHiB0AlBIMn7QRv/8yNVwWsuN3zDqMxUw+jv
-         qyJQvk/jloYITx5ygKIB11Eyl1oxZ66nr8Kltn9LLjPg1r90fgzGPkenDzIS74pgTbru
-         rNYA==
+	s=arc-20240116; t=1726872322; c=relaxed/simple;
+	bh=eta5Fc9Y+6a/5oMPLsomajKDvYS1cKOPfTjY1UsPG6A=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mkXgRquXH9Wcsp195yBoTdbFeZr/G05riiaKAWjs+pNGUmpnjIc2KhT6878Lp034+R7wMvVRD0q8aJZGFO90X/oBGRlIFUNkayzXxXfxPrL5Rp/ja/v7SC/TSVhTj3xDaX+bn6pD/0LgxgnIc9SOGpHh48fcHikMRn4KmhDNk8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a09aecb414so29951275ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:45:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726872088; x=1727476888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oSZbRXIQPSUlUDkWbO6YvNgSct1jZO+BnzpSd1WooY8=;
-        b=s3BHjaeZAGeby2v/K2LP6B4i61n6e08xUcTIgi3oxsV/u5Irve5KAcWnEXMcsaMI7F
-         aXCxvcmht19eYP6nIRlLJKGNhatYHOd7VZAlmpjbXGTSTG09y6xNA6xBdwZ9hLfk5bWM
-         k7zIdsURTeXn5NP2TFO7+CQefOufP5YYE9uqN1Jmbiluen1cgxm7LjQl53LkjieJl0re
-         u/aEKghdAaWP7YaNfWbLriw2Mvl7EyG+cp8Oicnf0xEI+49AogjRWDtPTL3yA6QtOs9p
-         z5BMOPR+4BBrewHqt7ptAOEU18EJZb+6Q9v81fo75ef7DellqoQEY3QfesZFxba+jNrw
-         7kwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWc1OLoNag67s49WKdRAljpCzbVBMuSnfXs09ThC2E99OYtngHY5fM7t65SHWNq54EAhZkncnJ34lzzpxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjRt3uPSX6dUDAOJq7BW4fJAlhE1yvT1DUvwbJeYf5A8j2rCGs
-	S+aXMowGxwgxi+fU2sJtO+dHMuCsGMOqZAiBfDlgDY9ZvlYyU9B9uag14HdTIVvPvjg59dBlcyO
-	NRyui7U9uAUhLz1ZwEuZl9RfiQy0+5DbVsbVf
-X-Google-Smtp-Source: AGHT+IFZNUH7m6HqWBq1trLOtyxZm8aJEuRRGQnIhczq1VLGVf2oSoO3pghlIsWmL0npolTVLq3WGh3ae3ZUkD44rIU=
-X-Received: by 2002:a17:90b:3b8c:b0:2d8:a9ca:17a4 with SMTP id
- 98e67ed59e1d1-2dd7f44a848mr5242193a91.21.1726872087372; Fri, 20 Sep 2024
- 15:41:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726872320; x=1727477120;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=joh3pehkJFQ/sQ2EiiPr8j4k+Jc50WReW9rhSgTJIrs=;
+        b=YOtYanakAk52FtAyQ5HngRuU7RfIjD3vQz0x1oOhpY4lNM+qN7ays5D/tJpAIvG90f
+         XcUTB0VlktD9BfvMUX92mTkMKAEoJA8A3lMZZtU2HOGY8ZBAb56Vd+lMPUaoQSQ1VOIB
+         S1gqdVTNKtkfedgTcVb4oshcg5yfFt9DrTLu/4ypeeJlEohYL5LgyJzwWleGUxg4TuCM
+         XwhXDXQHQKiAABTnLrSiB0YYqBhB4CTdt61cqXH0kMY36o75dj3AdvE+ZP6VPibAms2S
+         XQo0iLZQiVgWHsSdbS9+w3UceK9e34/BFjtexfcXK8viDZHGEwcnEVUoTMuCyW8eksRU
+         Q7Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzzpxoYM42IHyyIY/wZBOVybwLkR8vkrHejJmihlAqicRPGIsyfaYjth8fNXZ0oXfHRNgra57FFet3X3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsn25UrChBBVs308iwZJIqsOf+os+W/OzyYYbC4n9vobPuMAP3
+	DGVfs2LZeTdNpekLbBHkCDrVwctXyXvllyGMHO5NwEFmxHQ01PX/DdJCXui3bFA4ySPwYoTD4UF
+	SUuUaZZ4SmI6XXXbMyNH0RaF5mZPjkSTKUkgDl1NOMVMiuOl1aW4xjlQ=
+X-Google-Smtp-Source: AGHT+IGsinVff1sLKMdNLDGhsqC03PzSGBwOSCgbfPCA79JmMGWFm/j+SeqrDrSI6ffXqOtgugebWHvl+pcWMvg+l9jc5FsoxQSx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66eaf3f1.050a0220.252d9a.0019.GAE@google.com> <18e1d9caf56a56fadabd6abb82c63e0ba0c3dc34.camel@kernel.org>
- <172680104122.17050.16032356795670302194@noble.neil.brown.name> <96DE704B-2EB0-43D5-B34C-3323840F1BB2@oracle.com>
-In-Reply-To: <96DE704B-2EB0-43D5-B34C-3323840F1BB2@oracle.com>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Sat, 21 Sep 2024 00:41:13 +0200
-Message-ID: <CANp29Y5c+Af7H4kNM8S=uwMu2X2B=R_ODFDe2O4fD4d-xOuiSw@mail.gmail.com>
-Subject: Re: [syzbot] [nfs?] KASAN: slab-use-after-free Read in rhashtable_walk_enter
-To: Chuck Lever III <chuck.lever@oracle.com>
-Cc: Neil Brown <neilb@suse.de>, Jeff Layton <jlayton@kernel.org>, 
-	syzbot <syzbot+24cd636199753ac5e0ca@syzkaller.appspotmail.com>, 
-	Dai Ngo <dai.ngo@oracle.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux NFS Mailing List <linux-nfs@vger.kernel.org>, Olga Kornievskaia <okorniev@redhat.com>, 
-	"syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>, Tom Talpey <tom@talpey.com>
+X-Received: by 2002:a92:c26e:0:b0:3a0:a71b:75ee with SMTP id
+ e9e14a558f8ab-3a0c8d13104mr47938005ab.19.1726872320312; Fri, 20 Sep 2024
+ 15:45:20 -0700 (PDT)
+Date: Fri, 20 Sep 2024 15:45:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66edfb00.050a0220.3195df.0019.GAE@google.com>
+Subject: [syzbot] Monthly cgroups report (Sep 2024)
+From: syzbot <syzbot+list888f35116218f9d000a7@syzkaller.appspotmail.com>
+To: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 20, 2024 at 8:51=E2=80=AFPM 'Chuck Lever III' via syzkaller-bug=
-s
-<syzkaller-bugs@googlegroups.com> wrote:
->
->
->
-> > On Sep 19, 2024, at 10:57=E2=80=AFPM, NeilBrown <neilb@suse.de> wrote:
-> >
-> >> So we're tearing down the server and cleaning out the nfsd_file hash,
-> >> and we hit a UAF. That probably means that we freed a nfsd_file withou=
-t
-> >> removing it from the hash? Maybe we should add a WARN_ON() in
-> >> nfsd_file_slab_free that checks whether the item is still hashed?
-> >>
-> >> It is strange though. struct nfsd_file is 112 bytes on my machine, but
-> >> the warning is about a 4k allocation. I guess that just means that the
-> >> page got recycled into a different slabcache.
-> >
-> > The code that is crashing hasn't come close to touching anything that i=
-s
-> > thought to be an nfsd_file.
-> > The error is detected in the list_add() in rhashtable_walk_enter() when
-> > the new on-stack iterator is being attached to the bucket_table that is=
- being
-> > iterated.  So that bucket_table must (now) be an invalid address.
-> >
-> > The handling of NFSD_FILE_CACHE_UP is strange.  nfsd_file_cache_init()
-> > sets it, but doesn't clear it on failure.  So if nfsd_file_cache_init()
-> > fails for some reason, nfsd_file_cache_shutdown() would still try to
-> > clean up if it was called.
-> >
-> > So suppose nfsd_startup_generic() is called.  It increments nfsd_users
-> > from 0 so continues to nfsd_file_cache_init() which fails for some
-> > reason after initialising nfsd_file_rhltable and then destroying it.
-> > This will leave nfsd_file_rhltable.tbl as a pointer to a large
-> > allocation which has been freed.  nfsd_startup_generic() will then
-> > decrement nfsd_users back to zero, but NFSD_FILE_CACHE_UP will still be
-> > set.
-> >
-> > When nfsd_startup_generic() is called again, nfsd_file_cache_init() wil=
-l
-> > skip initialisation because NFSD_FILE_CACHE_UP is set.  When
-> > nfsd_file_cache_shutdown() is then called it will clean up an rhltable
-> > that has already been destroyed.  We get exactly the reported symptom.
-> >
-> > I *think* nfsd_file_cache_init() can only fail with -ENOMEM and I would
-> > expect to see a warning when that happened.  In any case
-> > nfsd_file_cache_init() uses pr_err() for any failure except
-> > rhltable_init(), and that only fails if the params are inconsistent.
-> >
-> > So I think there are problems with NFSD_FILE_CACHE_UP settings and I
-> > think they could trigger this bug if a kmalloc failed, but I don't thin=
-k
-> > that a kmalloc failed and I think there must be some other explanation
-> > here.
->
-> Also, the FILE_CACHE_UP logic has been around for several releases.
-> Why is this UAF showing up only now?
+Hello cgroups maintainers/developers,
 
-The most likely reason for that is that syzbot has only recently got
-some nfsd interface descriptions. It just didn't fuzz nfsd before.
+This is a 31-day syzbot report for the cgroups subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/cgroups
 
---=20
-Aleksandr
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 7 issues are still open and 37 have been fixed so far.
 
-> The "unable to register" messages suggest a possible reason.
->
-> --
-> Chuck Lever
->
->
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 776     Yes   possible deadlock in task_rq_lock
+                  https://syzkaller.appspot.com/bug?extid=ca14b36a46a8c541b509
+<2> 4       No    possible deadlock in obj_cgroup_charge
+                  https://syzkaller.appspot.com/bug?extid=57765728d598e67e505a
+<3> 1       No    possible deadlock in refill_stock
+                  https://syzkaller.appspot.com/bug?extid=dfd0410e573d2afac470
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
