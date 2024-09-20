@@ -1,110 +1,206 @@
-Return-Path: <linux-kernel+bounces-334129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 188DB97D2E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:40:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D10097D2EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C941F259FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:40:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBE3C1F24E50
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFD61369B6;
-	Fri, 20 Sep 2024 08:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RivngTb6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D4712EBEA;
-	Fri, 20 Sep 2024 08:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929107DA84;
+	Fri, 20 Sep 2024 08:42:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D972209D
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726821617; cv=none; b=olJI+ouE7nNJ4xJ2fgk63RyQTP5et1JUZRqIkEHoYiOTV+yK4O8rbPp22nCp3RF8UJj0a+/TmC35Vw4ptJHNK8rZQqm6Epzj9y6XLbGcCAhFWFJ2h5BOx1D0wVTZa+4NH3S++25Oi/Vi5VvHZCSPSbMxdtJNvtipc5mQy2jM8NY=
+	t=1726821776; cv=none; b=Z6oAiUcWW8eG4nrdKV7txtcwDs1H+23D8jYyDUhv9u9D/aflKvL0ZaY6Cd5fMTf0HwLKDJYtILO0XsTroE47IGFggbuiufUV6M8VWJfBgZngiiPMFM31L9g1RciEox8XNZbpUSmbgc8YR7Rtzb/8EwhAkA4badrtYvdpHBsRedA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726821617; c=relaxed/simple;
-	bh=T6eEFVRQyoo07Wn65ust8kGnoZmk5hgOcPaHEAsIAro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lh9fUhy4Ifs2zQDAX2e1hC0Ljd57LfW4FFhy0uo7ZoEfG53xSJWDiOA9n7H7pqgD0Eu5EbMQNVGycLJQWpCkyBOZ8d/WCuyxnAEpJv7cnJmc0FfOgUyL8z3trR72/e8beImuqYaZ1B1IGfCvdL6hGe4tvpY2clQGf6pK8FPVwVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RivngTb6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B680FC4CEC3;
-	Fri, 20 Sep 2024 08:40:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726821616;
-	bh=T6eEFVRQyoo07Wn65ust8kGnoZmk5hgOcPaHEAsIAro=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RivngTb6Y2tJZX2EcEVdvwZQjnyjsIOsb0U0ekD1XiAs/JuCA1XOwRDGbiMpX7HO0
-	 KtpPrn3yL1Cmr8hVUl2QJqDbg9VkFlB95ie0Id5dyVOq8x9JH2FaL+zDm28XA/pwnP
-	 BKE2QWAQ8q3fYnQ6kkRVjR1YhU9aD40erxUGYBnatZUTBsgMdovSaTb326mpJ0uQNR
-	 G4yJ7cNfOwUkfyqxSDaWELVDadb+8cMCWn/b7JjsAxF2w8TEd28Ia+4F12HvT9AMi6
-	 lO8xw8n1bqtv/XrP3AjM/Qs7JnXxfsBmOXkxIa5Pjy/I7Ta6+JhHf0XRyKmBOUTAwM
-	 /lpcRWu0m/F6g==
-Received: from johan by theta with local (Exim 4.98)
-	(envelope-from <johan@kernel.org>)
-	id 1srZBV-000000001PK-0Nj4;
-	Fri, 20 Sep 2024 10:40:13 +0200
-Date: Fri, 20 Sep 2024 10:40:13 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: qcom: edp: Add runtime PM support
-Message-ID: <Zu007YUYie7bEQvj@hovoldconsulting.com>
-References: <20240907-phy-qcom-edp-enable-runtime-pm-v1-1-8b9ee4210e1e@linaro.org>
- <ZuqmB3Cn7mGfA2PU@hovoldconsulting.com>
- <ZurRLf8S1j6s8GPz@linaro.org>
+	s=arc-20240116; t=1726821776; c=relaxed/simple;
+	bh=vn2XKvyX6HAulXqw2351fmizWO+pb2CnOpQuZ51UBo0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y+/o/o0wBXwLFrQ/Q4bEqUUNhj2Terr7R54Bmy8khhup0HDOAdRtdG1gxahaaGTnz4uK5PGPduBanv2MlzBY21K9p3cJl7Q/HkGbRJx2u1yowgcDDGKOnzKUmurThyTSXR63Is38ynQ++8pjvEzPu7v56KjEEUQlSU6ARBEMOdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D4BE1007;
+	Fri, 20 Sep 2024 01:43:16 -0700 (PDT)
+Received: from [10.163.35.184] (unknown [10.163.35.184])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2611A3F64C;
+	Fri, 20 Sep 2024 01:42:42 -0700 (PDT)
+Message-ID: <6f178f3c-40fd-45f6-a380-a218429852ca@arm.com>
+Date: Fri, 20 Sep 2024 14:12:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZurRLf8S1j6s8GPz@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: Move set_pxd_safe() helpers from generic to platform
+To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+ akpm@linux-foundation.org
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, x86@kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240920053017.2514920-1-anshuman.khandual@arm.com>
+ <4aad893a-f8ba-4b2e-bded-b01a35ec0a94@redhat.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <4aad893a-f8ba-4b2e-bded-b01a35ec0a94@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 18, 2024 at 04:10:05PM +0300, Abel Vesa wrote:
-> On 24-09-18 12:05:59, Johan Hovold wrote:
-> > On Sat, Sep 07, 2024 at 06:25:21PM +0300, Abel Vesa wrote:
-> > > Enable runtime PM support by adding proper ops which will handle the
- 
-> > > clocks and regulators. These resources will now be handled on power_on and
-> > > power_off instead of init and exit PHY ops.
-> > 
-> > No, this is simply a false claim and indicates that you haven't reviewed
-> > how PHY runtime PM works. Core will increment the usage count on init()
-> > and decrement it on exit().
+
+
+On 9/20/24 12:09, David Hildenbrand wrote:
+> On 20.09.24 07:30, Anshuman Khandual wrote:
+>> set_pxd_safe() helpers that serve a specific purpose for both x86 and riscv
+>> platforms, do not need to be in the common memory code. Otherwise they just
+>> unnecessarily make the common API more complicated. This moves the helpers
+>> from common code to platform instead.
+>>
+>> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+>> Cc: Palmer Dabbelt <palmer@dabbelt.com>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: x86@kernel.org
+>> Cc: linux-mm@kvack.org
+>> Cc: linux-riscv@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Suggested-by: David Hildenbrand <david@redhat.com>
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>>   arch/riscv/include/asm/pgtable.h | 19 ++++++++++++++++
+>>   arch/x86/include/asm/pgtable.h   | 37 +++++++++++++++++++++++++++++++
+>>   include/linux/pgtable.h          | 38 --------------------------------
+>>   3 files changed, 56 insertions(+), 38 deletions(-)
+>>
+>> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+>> index 089f3c9f56a3..39ca652c5ebe 100644
+>> --- a/arch/riscv/include/asm/pgtable.h
+>> +++ b/arch/riscv/include/asm/pgtable.h
+>> @@ -957,6 +957,25 @@ void misc_mem_init(void);
+>>   extern unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)];
+>>   #define ZERO_PAGE(vaddr) (virt_to_page(empty_zero_page))
+>>   +/*
+>> + * Use set_p*_safe(), and elide TLB flushing, when confident that *no*
+>> + * TLB flush will be required as a result of the "set". For example, use
+>> + * in scenarios where it is known ahead of time that the routine is
+>> + * setting non-present entries, or re-setting an existing entry to the
+>> + * same value. Otherwise, use the typical "set" helpers and flush the
+>> + * TLB.
+>> + */
+>> +#define set_p4d_safe(p4dp, p4d) \
+>> +({ \
+>> +    WARN_ON_ONCE(p4d_present(*p4dp) && !p4d_same(*p4dp, p4d)); \
+>> +    set_p4d(p4dp, p4d); \
+>> +})
+>> +
+>> +#define set_pgd_safe(pgdp, pgd) \
+>> +({ \
+>> +    WARN_ON_ONCE(pgd_present(*pgdp) && !pgd_same(*pgdp, pgd)); \
+>> +    set_pgd(pgdp, pgd); \
+>> +})
+>>   #endif /* !__ASSEMBLY__ */
+>>     #endif /* _ASM_RISCV_PGTABLE_H */
+>> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+>> index e39311a89bf4..fefb52bb6b4d 100644
+>> --- a/arch/x86/include/asm/pgtable.h
+>> +++ b/arch/x86/include/asm/pgtable.h
+>> @@ -1701,6 +1701,43 @@ bool arch_is_platform_page(u64 paddr);
+>>   #define arch_is_platform_page arch_is_platform_page
+>>   #endif
+>>   +/*
+>> + * Use set_p*_safe(), and elide TLB flushing, when confident that *no*
+>> + * TLB flush will be required as a result of the "set". For example, use
+>> + * in scenarios where it is known ahead of time that the routine is
+>> + * setting non-present entries, or re-setting an existing entry to the
+>> + * same value. Otherwise, use the typical "set" helpers and flush the
+>> + * TLB.
+>> + */
+>> +#define set_pte_safe(ptep, pte) \
+>> +({ \
+>> +    WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
+>> +    set_pte(ptep, pte); \
+>> +})
+>> +
+>> +#define set_pmd_safe(pmdp, pmd) \
+>> +({ \
+>> +    WARN_ON_ONCE(pmd_present(*pmdp) && !pmd_same(*pmdp, pmd)); \
+>> +    set_pmd(pmdp, pmd); \
+>> +})
+>> +
+>> +#define set_pud_safe(pudp, pud) \
+>> +({ \
+>> +    WARN_ON_ONCE(pud_present(*pudp) && !pud_same(*pudp, pud)); \
+>> +    set_pud(pudp, pud); \
+>> +})
+>> +
+>> +#define set_p4d_safe(p4dp, p4d) \
+>> +({ \
+>> +    WARN_ON_ONCE(p4d_present(*p4dp) && !p4d_same(*p4dp, p4d)); \
+>> +    set_p4d(p4dp, p4d); \
+>> +})
+>> +
+>> +#define set_pgd_safe(pgdp, pgd) \
+>> +({ \
+>> +    WARN_ON_ONCE(pgd_present(*pgdp) && !pgd_same(*pgdp, pgd)); \
+>> +    set_pgd(pgdp, pgd); \
+>> +})
+>>   #endif    /* __ASSEMBLY__ */
 > 
-> Yeah, I guess the better argument here would be that the PHY needs
-> regulators and clocks enabled
+> I'm wondering if we can completely get rid of these, for example via:
+> 
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index d8dbeac8b206..bc71c25930bb 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -79,10 +79,8 @@ DEFINE_POPULATE(pmd_populate_kernel, pmd, pte, init)
+>  static inline void set_##type1##_init(type1##_t *arg1,         \
+>                         type2##_t arg2, bool init)              \
+>  {                                                              \
+> -       if (init)                                               \
+> -               set_##type1##_safe(arg1, arg2);                 \
+> -       else                                                    \
+> -               set_##type1(arg1, arg2);                        \
+> +       WARN_ON_ONCE(init && ##type1##_present(*arg1) && !##type1##_same(*arg1, arg2)); \
+> +       set_##type1(arg1, arg2);                                \
+>  }
+>  
+> 
+> We might be able to handle the pgd_populate etc part similarly, possibly getting
+> rid of the pgd_populate_safe etc as well.
+> 
+> Assuming I don't miss anything important :)
 
-No, that's already handled today so is clearly not a valid argument.
+Sounds feasible but will just leave that upto the x86 platform folks to
+change later on, after this patch which just moves these helpers inside
+the platform code.
 
-> Anyway, ignore this version as it was already NACKed by Dmitry.
+> 
+> Ideally, we get rid of the macros here and just use inline functions ...
+> 
 
-No, my feedback is still valid, and you're bound to repeat the same
-mistakes over and over again unless you try to understand what I've been
-saying here.
+Sure, makes sense. Will change these as inline functions.
 
-> > > Also enable these resources on
-> > > probe in order to balance out the disabling that is happening right after.
-> > > Prevent runtime PM from being ON by default as well.
-> > 
-> > And here you just regressed all current systems that do not have udev
-> > rules to enable runtime PM, and which will now be stuck with these
-> > resources always-on (e.g. during DPMS off and system suspend).
-> > 
-> > In fact, you are even regressing systems that would enable runtime PM,
-> > as the runtime suspend callback would not currently be called when you
-> > enter system suspend so the regulators and clocks will be left on.
-> > 
-> > This clearly hasn't been tested and analysed properly.
-
-Johan
+-#define set_pte_safe(ptep, pte) \
+-({ \
+-       WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
+-       set_pte(ptep, pte); \
+-})
++static inline void set_pte_safe(pte_t *ptep, pte_t pte)
++{
++       WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte));
++       set_pte(ptep, pte);
++}
 
