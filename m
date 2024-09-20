@@ -1,147 +1,209 @@
-Return-Path: <linux-kernel+bounces-334280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56BF597D4F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:50:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E791E97D529
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E40A31F23C72
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:50:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 949AC280FE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE6E144D15;
-	Fri, 20 Sep 2024 11:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E8913D8A0;
+	Fri, 20 Sep 2024 12:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X3xqNLHZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="T6f851+U"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [207.246.76.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D272E13BADF
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 11:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652C413A271
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.246.76.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726833048; cv=none; b=oHOVRrMRX8/7TBMBpNC93wxSDaLwn+pFcmbZlbP1U5iAoHNJl2ClS19xTdAowO5YO73q8LPnwdeINQZZ6VsdVAEZV+xmRuJb/2PkYsyaUoWC2IUlQu2cj/esQDqmrLn5g+zvMQzbK6Nxx9IYDidW2nuRcwnrdrbuNCbfpi0Oi4U=
+	t=1726833756; cv=none; b=MAP/d14eAqzkrdSuZ0ETvUKwwDrslygeD3u0ZNpjVJ5//Pxq7x8JrXNHnbdT6x8yHA3wv0V/4EE4kvtqM7RcjFNeZZCS8YVAlJbvrOuHjsfEIYlfyvhmmWzeWS2XBV8mHrOI5dTvAN1zmCzRlNfgSSVC/LrIY1CaJGagSHuZ2K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726833048; c=relaxed/simple;
-	bh=rq04TlOMTUHBZR/Ub9XI0K+Naau321POAKUBeSMCc3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GJNGoFaris/r7uojDhFsnMw+/i1hEo7EPm39qJyCau3pQMgqqwUpglKyxK3u8Ccz2EAb7PViVWnRxPghL9v7RnsAnyVDul2JBbC9kK0PbsBD7MujdehOb9aCeuKjVR2MpnmHUsgJzY84DCeiYgCiXhRIQoF1ZhHSbFLhmsXnoNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X3xqNLHZ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726833047; x=1758369047;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rq04TlOMTUHBZR/Ub9XI0K+Naau321POAKUBeSMCc3E=;
-  b=X3xqNLHZpjm+wqy6p0AUfT4GoLx5MvwevUsBQJI0Ja0Z2z8LN2MMeN7a
-   EbkymzRRqDcHU1+g8ZVDy5NxD2nGn/UwLQNXVrOQ8oT06MDvfL4fq01ew
-   xhm8sA+nTQgsr2a1eIGKfDSjDJw8FV6pNDzUJk1MLFWXDTzWkoQOM06EH
-   hxGOBKKPwlwHi8VUhdv/wajUeDf5GxmkuaXdgTZgrClRqZOTDos+570+t
-   fWuPgzMh1exoS9TO674Dc8H23QG6CppHJz7dOwMID5uJo4dP7D3GQ+lxc
-   nIP3TFXpoFV5uDJW4ApwtXxCGgubCVd9d24ZSJ3qPNVcjs0EhT6FmCI2w
-   A==;
-X-CSE-ConnectionGUID: RcG9wGzNTl2r8SCdaZ/ULg==
-X-CSE-MsgGUID: 7f8p00e6QyadfIjUBT4fMg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="29568047"
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="29568047"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 04:50:46 -0700
-X-CSE-ConnectionGUID: g9j6ZvJmSMWQR2mwldwFYA==
-X-CSE-MsgGUID: tyPdsZfrTrKtuIiX5r8EeQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="75059155"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 20 Sep 2024 04:50:44 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1src9p-000EKf-20;
-	Fri, 20 Sep 2024 11:50:41 +0000
-Date: Fri, 20 Sep 2024 19:50:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	alistair@popple.id.au, joel@jms.id.au, jk@ozlabs.org,
-	andrew@codeconstruct.com.au, eajames@linux.ibm.com,
-	ninad@linux.ibm.com
-Subject: Re: [PATCH 12/15] fsi: occ: Get device number from FSI minor number
- API
-Message-ID: <202409201954.IYcZNCSj-lkp@intel.com>
-References: <20240917171647.1403910-13-eajames@linux.ibm.com>
+	s=arc-20240116; t=1726833756; c=relaxed/simple;
+	bh=SRRebwSx7/jlASkx6KmF7/UeIP7lHyUQ/s5A7P7giaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cxr2bTtG70yzJ78Mp/JyoLDvDFgCTG1MfHENIhlWOW8LLKnO5oe352a/9LoHrJ70VzgHl+iIpGJrRrWeiZEH/myNSJr13Ud+elUk2zB9weFO+lQTZgFPZhaynROH6JSCXd5/3/4lUAc7PXmiBTSn1RBKbpWLmUp3Ehd7XUtt+9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=T6f851+U; arc=none smtp.client-ip=207.246.76.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1726833746;
+ bh=YPYl+tQZMmhVuW6En3H83eNOir+B/MTvUugkSsrwG3g=;
+ b=T6f851+UxIQXtR9gBBI61Z+Obu6GwDc1YnZ8Fvv3uTHZ5nldouqP3m809C4MKkfDHN4+lUpLK
+ ux/m3vSpCrqnPY+U9sn17sO29zFOdJilaSc/lOn2LUWKztPKOG9qyVEEpYfUzPUHgj9+5RcfGiq
+ TDuNTL/R4atIcx4kUC/dnCEgzeIxRRdVKwYv1sYeSopODDiwCob1YSsOcbOm9q+t09RdRGKWuUN
+ abEf43DRKtEodts0Jebu+VCaL3w39zSv0etAwDZPNpYje609gcc4u02NfKmC8w/VoM6G50F4+gl
+ eWMDh8vhCBywHE5WFE4gQhpQ97kKAID2ywe6X+duXQMw==
+Message-ID: <5cdd34d6-76e4-4ee1-aaff-93894857ec2a@kwiboo.se>
+Date: Fri, 20 Sep 2024 13:51:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917171647.1403910-13-eajames@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/10] drm: bridge: dw_hdmi: Update EDID during hotplug
+ processing
+To: neil.armstrong@linaro.org, Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Christian Hewitt <christianshewitt@gmail.com>,
+ Diederik de Haas <didi.debian@cknow.org>, dri-devel@lists.freedesktop.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240908132823.3308029-1-jonas@kwiboo.se>
+ <20240908132823.3308029-10-jonas@kwiboo.se>
+ <4bc6a5e6-f2cf-43ab-8555-4f8aaf9f2cd0@linaro.org>
+ <0dcb03be-dae1-4dcb-84d8-6ec204eab6ba@kwiboo.se>
+ <e865e42c-a528-45bb-bdf5-df1cd103e695@linaro.org>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <e865e42c-a528-45bb-bdf5-df1cd103e695@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 207.246.76.47
+X-ForwardEmail-ID: 66ed61bd012156b78323792b
 
-Hi Eddie,
+On 2024-09-20 09:04, neil.armstrong@linaro.org wrote:
+> On 19/09/2024 22:34, Jonas Karlman wrote:
+>> Hi Neil,
+>>
+>> On 2024-09-13 10:02, Neil Armstrong wrote:
+>>> On 08/09/2024 15:28, Jonas Karlman wrote:
+>>>> Update successfully read EDID during hotplug processing to ensure the
+>>>> connector diplay_info is always up-to-date.
+>>>>
+>>>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+>>>> ---
+>>>> v2: No change
+>>>> ---
+>>>>    drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 12 ++++++++++++
+>>>>    1 file changed, 12 insertions(+)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>>>> index c19307120909..7bd9f895f03f 100644
+>>>> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>>>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>>>> @@ -2457,6 +2457,18 @@ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
+>>>>    
+>>>>    	status = dw_hdmi_detect(hdmi);
+>>>>    
+>>>> +	/* Update EDID during hotplug processing (force=false) */
+>>>> +	if (status == connector_status_connected && !force) {
+>>>> +		const struct drm_edid *drm_edid;
+>>>> +
+>>>> +		drm_edid = dw_hdmi_edid_read(hdmi, connector);
+>>>> +		if (drm_edid)
+>>>> +			drm_edid_connector_update(connector, drm_edid);
+>>>> +		cec_notifier_set_phys_addr(hdmi->cec_notifier,
+>>>> +			connector->display_info.source_physical_address);
+>>>> +		drm_edid_free(drm_edid);
+>>>> +	}
+>>>> +
+>>>>    	if (status == connector_status_disconnected)
+>>>>    		cec_notifier_phys_addr_invalidate(hdmi->cec_notifier);
+>>>>    
+>>>
+>>> I wonder why we should read edid at each dw_hdmi_connector_detect() call,
+>>> AFAIK it should only be when we have HPD pulses
+>>
+>> That is what this change intends to help do.
+>>
+>> As stated in the short comment EDID is only updated at HPD processing,
+>> i.e. when force=false. To be on the safe side EDID is also only updated
+>> here when connected and EDID could be read.
+>>
+>> drm_helper_probe_detect() is called with force=true in the
+>> fill_modes/get_modes call path that is triggered by userspace
+>> or the kernel kms client.
+>>
+>> After a HPD interrupt the call to drm_helper_hpd_irq_event() will call
+>> check_connector_changed() that in turn calls drm_helper_probe_detect()
+>> with force=false to check/detect if connector status has changed. It is
+>> in this call chain the EDID may be read and updated in this detect ops.
+>>
+>> Reading EDID here at HPD processing may not be fully needed, however it
+>> help kernel keep the internal EDID state in better sync with sink when
+>> userspace does not act on the HOTPLUG=1 uevent.
+> 
+> 
+> I understand but if somehow a dw-hdmi integration fails to have HDP working
+> properly, EDID will be read continuously which is really not what we want.
 
-kernel test robot noticed the following build warnings:
+I do not fully understand when or how that could happen.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.11 next-20240920]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The dw_hdmi_detect() -> phy.ops->read_hpd() call chain only return
+connected status when HPD is high, for what I can see from all current
+integrations.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Eddie-James/fsi-hub-Set-master-index-to-link-number-plus-one/20240918-012109
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240917171647.1403910-13-eajames%40linux.ibm.com
-patch subject: [PATCH 12/15] fsi: occ: Get device number from FSI minor number API
-config: arc-randconfig-002-20240920 (https://download.01.org/0day-ci/archive/20240920/202409201954.IYcZNCSj-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240920/202409201954.IYcZNCSj-lkp@intel.com/reproduce)
+The default dw_hdmi_phy_read_hpd() used by all but meson should only
+return connected status when the HPD is high:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409201954.IYcZNCSj-lkp@intel.com/
+	return hdmi_readb(hdmi, HDMI_PHY_STAT0) & HDMI_PHY_HPD ?
+		connector_status_connected : connector_status_disconnected;
 
-All warnings (new ones prefixed by >>):
+DRM_CONNECTOR_POLL_HPD is also used for all integrations so there should
+not be any polling happening that would trigger multiple detect calls.
 
-   drivers/fsi/fsi-occ.c: In function 'occ_remove':
->> drivers/fsi/fsi-occ.c:708:16: warning: 'return' with a value, in function returning void [-Wreturn-type]
-     708 |         return 0;
-         |                ^
-   drivers/fsi/fsi-occ.c:690:13: note: declared here
-     690 | static void occ_remove(struct platform_device *pdev)
-         |             ^~~~~~~~~~
+I guess this could/should be improved to also check for the polled type
+to not cause multiple unnecessary EDID reads, in case a future
+integration need to poll connector status.
 
+> 
+> HDMI 1.4b specifies in Section 8.5 and Appendix A:
+> ============><==========================================
+> An HDMI Sink shall not assert high voltage level on its Hot Plug Detect pin when the E-EDID
+> is not available for reading.
+> An HDMI Sink shall indicate any change to the contents of the E-EDID by driving a low
+> voltage level pulse on the Hot Plug Detect pin. This pulse shall be at least 100 msec.
+> ============><==========================================
+> 
+> So this is OK with the first sentence, and should also work with the second one because
+> right after the pulse we will read the EDID again, but I think we should have a much
+> more robust way to detect those 100ms pulses, no ?
 
-vim +/return +708 drivers/fsi/fsi-occ.c
+Using a work queue to debounce reacting on HPD event for >100 ms when
+HPD goes from high to low and a few ms when it goes from low to high
+could probably further prevent unnecessary detect calls, and also help
+avoid a possible unnecessary disable/enable cycle.
 
-   689	
-   690	static void occ_remove(struct platform_device *pdev)
-   691	{
-   692		struct occ *occ = platform_get_drvdata(pdev);
-   693	
-   694		misc_deregister(&occ->mdev);
-   695	
-   696		mutex_lock(&occ->occ_lock);
-   697		kvfree(occ->buffer);
-   698		occ->buffer = NULL;
-   699		mutex_unlock(&occ->occ_lock);
-   700	
-   701		if (occ->platform_hwmon)
-   702			device_for_each_child(&pdev->dev, NULL, occ_unregister_platform_child);
-   703		else
-   704			device_for_each_child(&pdev->dev, NULL, occ_unregister_of_child);
-   705	
-   706		fsi_free_minor(occ->devt);
-   707	
- > 708		return 0;
-   709	}
-   710	
+I have not seen anything other in core that handles the EDID refresh in
+any special way, but I may have missed something?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Will try to use a debounce work queue to delay any calls to
+helper_hpd_irq_event() and drm_bridge_hpd_notify() and see if that could
+improve the HPD handling.
+
+Regards,
+Jonas
+
+> 
+> Maxime, do you have an opinion on this ?
+> 
+> Neil
+> 
+>>
+>> Regards,
+>> Jonas
+>>
+>>>
+>>> Neil
+>>
+> 
+
 
