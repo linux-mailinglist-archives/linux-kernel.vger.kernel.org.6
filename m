@@ -1,225 +1,123 @@
-Return-Path: <linux-kernel+bounces-333954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B90497D06B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:05:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B7497D077
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB9DF1F244F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:05:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 272F3286CC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723D222075;
-	Fri, 20 Sep 2024 04:05:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16084B676
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 04:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D73822612;
+	Fri, 20 Sep 2024 04:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LDRd7TGk"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2682A29422;
+	Fri, 20 Sep 2024 04:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726805105; cv=none; b=US195m8ylqqwk8N5jvWm8+EPXagnADevWgayzeFIiOIUlzseCrmjt0LF6PXurZzXxvq9ZoVYyj1BnfmiAB1Ya/fuIkweROzYTWrRzsxv7qhILFnXoCSPoPUnVDUZneYbLijOINhbujqRwu7PRQig9GmX1iqvbYxqHnTHtp9gyo0=
+	t=1726805398; cv=none; b=RJ4ODbIwhZdVonJOP6NLRu6bR5mIHPw8f5jUIy0KiVEps2iF04xPAzO/h0Z/j3R7wydwO44SPjq2FxHjaHh9l0ugadoA7N1FV//Adu+iPshtKaXY7BFpS/z5UqI2ktKQX8yXuKK4gNzBHvBBkIf3C/13uVoh67roLngsSTgb/IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726805105; c=relaxed/simple;
-	bh=j7IAgeead1rCr7krXrXLziXRV99UjnK+dVi7TPGlxhs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BGH/UjcAiBaQSlK7ZLtctCwKnnZ7L7jB2YEv/P+eePI9wy24umPFHNvsT5/+EBSVLRrWpfZ47l8SC8WEmVn8ACqDjRtGJPQlNs5S7R6hkL4KhmkicIqTL5EXLVukIr9bSBjyDqxHOUfLuepRqNy5hZfVGlA/OjrhGdLwYdhOur8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 76F65FEC;
-	Thu, 19 Sep 2024 21:05:30 -0700 (PDT)
-Received: from [10.162.43.22] (e116581.arm.com [10.162.43.22])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CDAD23F71A;
-	Thu, 19 Sep 2024 21:04:56 -0700 (PDT)
-Message-ID: <c07d1917-a460-440a-b843-a6866a87d261@arm.com>
-Date: Fri, 20 Sep 2024 09:34:53 +0530
+	s=arc-20240116; t=1726805398; c=relaxed/simple;
+	bh=rhnw39cVR6UKLf+U5BoCFMmMNEbONgzSSLqbdq6phGE=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=gzYUgeJhcTt7zAcL1VVHbkW90SXhXQLSWc08q4TCM8IHL+Z64ngYGJKBMIP76mDLKU1OsE3/HBvN89vvYSj36I5+wFJ+izfTGeNHZDgdahKN3Pukxc7JM9tnwhRcGG7h0EiRfGPqV2Vzer/8FAaPRIPCMOiZQ+qL+mTHy2YXYtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LDRd7TGk; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48JJ3rPG004269;
+	Fri, 20 Sep 2024 04:09:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=UJHUcFExo0sVoottPf80QO
+	NNbId0HaZQl4QLR7JDkos=; b=LDRd7TGktdIGJY1L0KZogoYjIj0sCwqrmIGSRB
+	k8pza2qXDgvEtHijuERx4h9XtFgz2d1ktOTZIbSOJaibnQbBhzVr5MHIZZ0J7iuG
+	D7KTveat+XSuPBBQ1mIMYzzvW05inS07mQfQ0Wg15jGa4VZ06IIBTMd1m+F2/xqL
+	RwoC/uMDl/QiPwZKpW0lVImfWL3Ilftz+q9It3y/faHGXTDZKE0BU3MjsUKhTn1j
+	DRCHc1M0rrnBYLD8u8XKNrRRiNJZXs8IEjRcsAgVQve3t9izfZSwFkWhECUiuPUY
+	KnfK23UP1mzqQw1T28ACdDUcfC9VaHrvoWOAn+FThtfGfAAw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4jdyqgc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 04:09:53 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48K49rGH027655
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 04:09:53 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 19 Sep 2024 21:09:47 -0700
+From: Tingguo Cheng <quic_tingguoc@quicinc.com>
+Subject: [PATCH 0/2] Add rpmhpd power domains driver support for QCS615
+Date: Fri, 20 Sep 2024 12:08:41 +0800
+Message-ID: <20240920-add_qcs615_powerdomains_driver_support-v1-0-8846efaf9454@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] mm: Compute first_set_pte to eliminate evaluating
- redundant ranges
-To: Ryan Roberts <ryan.roberts@arm.com>, Barry Song <baohua@kernel.org>
-Cc: akpm@linux-foundation.org, david@redhat.com, willy@infradead.org,
- anshuman.khandual@arm.com, hughd@google.com, ioworker0@gmail.com,
- wangkefeng.wang@huawei.com, baolin.wang@linux.alibaba.com, gshan@redhat.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240916110754.1236200-1-dev.jain@arm.com>
- <20240916110754.1236200-3-dev.jain@arm.com>
- <CAGsJ_4wuSqA8vzHCTH6rnVrppQ4k0FUcSu-=6HfAf+oYqz15bQ@mail.gmail.com>
- <8700274f-b521-444e-8d17-c06039a1376c@arm.com>
- <ffa62217-8452-41e4-b7ee-0fbd7d3a44c5@arm.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <ffa62217-8452-41e4-b7ee-0fbd7d3a44c5@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEr17GYC/x3NQQrCMBBA0auUWRtIY1OoVxEJaWaqszCJM7UKp
+ Xc3uHyb/3dQEiaFS7eD0MbKJTf0pw7SI+Y7GcZmcNYNdnLWRMTwSjr2PtTyIcHyjJw1oPBGEvR
+ da5HVpOk8zOSTH5cZWqwKLfz9j6634/gBzIYi8HgAAAA=
+X-Change-ID: 20240920-add_qcs615_powerdomains_driver_support-c934be5c56fb
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <quic_fenglinw@quicinc.com>,
+        <quic_tingweiz@quicinc.com>, Tingguo Cheng <quic_tingguoc@quicinc.com>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726805386; l=695;
+ i=quic_tingguoc@quicinc.com; s=20240917; h=from:subject:message-id;
+ bh=rhnw39cVR6UKLf+U5BoCFMmMNEbONgzSSLqbdq6phGE=;
+ b=SUy8pKSFSr4SgAjxemcweQfJIpkzRO+JX0wftPQwVS6XkuJD5AGVpiy53RTpglcHno4TSulC2
+ AhNcnoFqKhwBaHrNAgMgTjDNIuyNaaUuGGE5GcjIpU6ArZSXL7anUkY
+X-Developer-Key: i=quic_tingguoc@quicinc.com; a=ed25519;
+ pk=PiFYQPN5GCP7O6SA43tuKfHAbl9DewSKOuQA/GiHQrI=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: mE6iS4F-1EDTxGkJy0F2h2H8SX0z06Wv
+X-Proofpoint-GUID: mE6iS4F-1EDTxGkJy0F2h2H8SX0z06Wv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ clxscore=1015 adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 bulkscore=0 lowpriorityscore=0
+ mlxlogscore=810 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409200026
 
+Document the qcom,qcs615-rpmhpd compatible and add power domains in
+rpmhpd driver to support QCS615.
 
-On 9/19/24 22:25, Ryan Roberts wrote:
-> On 19/09/2024 09:40, Dev Jain wrote:
->> On 9/19/24 07:04, Barry Song wrote:
->>> On Mon, Sep 16, 2024 at 11:08 PM Dev Jain <dev.jain@arm.com> wrote:
->>>> For an mTHP allocation, we need to check, for every order, whether for
->>>> that order, we have enough number of contiguous PTEs empty. Instead of
->>>> iterating the while loop for every order, use some information, which
->>>> is the first set PTE found, from the previous iteration to eliminate
->>>> some cases. The key to understanding the correctness of the patch
->>>> is that the ranges we want to examine form a strictly decreasing
->>>> sequence of nested intervals.
->>> Could we include some benchmark data here, as suggested by Ryan in this thread?
->>>
->>> https://lore.kernel.org/linux-mm/58f91a56-890a-45d0-8b1f-47c4c70c9600@arm.com/
->> Can you please verify and get some numbers for the following program,
->> because if I am doing this correctly, it would be a regression :)
->> https://www.codedump.xyz/cpp/Zuvf8FwvRPH21UO2
-> Some brief comments on the test code:
->
-> - You don't need to enable/disable the top-level control. Regardless, I don't
-> think this breaks the benchmark.
->
-> - I think you have an off-by-1 in your for loop condition:
->
-> for (unsigned long i = 1; (i * border) < size; ++i) {
->
-> I think this needs to be:
->
-> for (unsigned long i = 1; (i * border) <= size; ++i) {
->
-> It just means that the final 32K block will get a single 32K mapping.
->
-> - You're measuring the whole program; including mmap/munmap and
-> enabling/disabling mTHP. It would be much better to just measure the loop that
-> writes to each page after mTHP is enabled.
->
->
-> I modified the code to iterate for 10 seconds and on each iteration, measure
-> only the time spent in the interesting loop. Running on Apple M2 VM:
->
-> Before the change:
->
-> ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
-> Average: 0.070028 seconds per GB (iterations=98)
-> ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
-> Average: 0.068495 seconds per GB (iterations=96)
-> ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
-> Average: 0.070207 seconds per GB (iterations=93)
->
-> After the change:
->
-> ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
-> Average: 0.076923 seconds per GB (iterations=88)
-> ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
-> Average: 0.072206 seconds per GB (iterations=96)
-> ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
-> Average: 0.072397 seconds per GB (iterations=89)
->
-> So this looks pretty clearly slower to me. So suggest we shouldn't take this patch.
+Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+---
+Tingguo Cheng (2):
+      dt-bindings: power: qcom,rpmpd: document qcs615 RPMh power domains
+      pmdomain: qcom: rpmhpd: Add qcs615 power domains
 
-Thanks for testing!
+ Documentation/devicetree/bindings/power/qcom,rpmpd.yaml |  1 +
+ drivers/pmdomain/qcom/rpmhpd.c                          | 12 ++++++++++++
+ 2 files changed, 13 insertions(+)
+---
+base-commit: 4f3e012d4cfd1d9bf837870c961f462ca9f23ebe
+change-id: 20240920-add_qcs615_powerdomains_driver_support-c934be5c56fb
 
->
->
->> The program does this: disable THP completely -> mmap 1G VMA -> touch the last
->> page of a 32K sized boundary. That is, 0th till 32K/4K - 2 pages are
->> empty, while the 32K/4K - 1'th page is touched, and so on -> madvise
->> the entire VMA -> enable all THPs except 2M -> touch all pages.
->>
->> Therefore, we have 0 - 6 PTEs empty, 7th is filled, and so on. Eventually,
->> kernel will fall down to finding 4 contiguous PTEs empty and allocate
->> 4K * 4 = 16K mTHP.
->>
->> The result without the patches:
->>
->> real: 8.250s
->> user: 0.941s
->> sys: 7.077s
->>
->> real: 8.175s
->> user: 0.939s
->> sys: 7.021s
->>
->> With the patches:
->>
->> real: 8.584s
->> user: 1.089s
->> sys: 7.234s
->>
->> real: 8.429s
->> user: 0.954s
->> sys: 7.220s
-> What HW did you measure this on? I'm guessing this is measuring multiple
-> iterations, otherwise it looks extremely slow. If you were measuring on FVP, for
-> example, that would not give representative performance numbers.
+Best regards,
+-- 
+Tingguo Cheng <quic_tingguoc@quicinc.com>
 
-I measured with qemu.
-
->
-> Thanks,
-> Ryan
->
->> You can change the #iterations in the for loop to magnify this,
->> and the current code surprisingly wins.
->>
->>
->>>> Suggested-by: Ryan Roberts <ryan.roberts@arm.com>
->>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>> ---
->>>>    mm/memory.c | 20 ++++++++++++++++++--
->>>>    1 file changed, 18 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/mm/memory.c b/mm/memory.c
->>>> index 8bb1236de93c..e81c6abe09ce 100644
->>>> --- a/mm/memory.c
->>>> +++ b/mm/memory.c
->>>> @@ -4633,10 +4633,11 @@ static struct folio *alloc_anon_folio(struct vm_fault
->>>> *vmf)
->>>>    {
->>>>           struct vm_area_struct *vma = vmf->vma;
->>>>    #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>>> +       pte_t *first_set_pte = NULL, *align_pte, *pte;
->>>>           unsigned long orders;
->>>>           struct folio *folio;
->>>>           unsigned long addr;
->>>> -       pte_t *pte;
->>>> +       int max_empty;
->>>>           gfp_t gfp;
->>>>           int order;
->>>>
->>>> @@ -4671,8 +4672,23 @@ static struct folio *alloc_anon_folio(struct vm_fault
->>>> *vmf)
->>>>           order = highest_order(orders);
->>>>           while (orders) {
->>>>                   addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
->>>> -               if (pte_range_none(pte + pte_index(addr), 1 << order) == 1 <<
->>>> order)
->>>> +               align_pte = pte + pte_index(addr);
->>>> +
->>>> +               /* Range to be scanned known to be empty */
->>>> +               if (align_pte + (1 << order) <= first_set_pte)
->>>> +                       break;
->>>> +
->>>> +               /* Range to be scanned contains first_set_pte */
->>>> +               if (align_pte <= first_set_pte)
->>>> +                       goto repeat;
->>>> +
->>>> +               /* align_pte > first_set_pte, so need to check properly */
->>>> +               max_empty = pte_range_none(align_pte, 1 << order);
->>>> +               if (max_empty == 1 << order)
->>>>                           break;
->>>> +
->>>> +               first_set_pte = align_pte + max_empty;
->>>> +repeat:
->>>>                   order = next_order(&orders, order);
->>>>           }
->>>>
->>>> -- 
->>>> 2.30.2
->>>>
->>> Thanks
->>> barry
 
