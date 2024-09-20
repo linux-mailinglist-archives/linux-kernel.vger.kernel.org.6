@@ -1,285 +1,118 @@
-Return-Path: <linux-kernel+bounces-334127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A1A197D2DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:38:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 431F097D2E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D175E1F24D2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:38:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC5F21F2501D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD8013C8F9;
-	Fri, 20 Sep 2024 08:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9859512EBEA;
+	Fri, 20 Sep 2024 08:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="chhwzM0s"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8F6139D0A
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="KFAIcEyz"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FBD2209D;
+	Fri, 20 Sep 2024 08:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726821494; cv=none; b=Dqtvuor0IT4rqEd5iwq/R/EeT+MTAmlT9ucUAKqiyM+QhCaK2oNAEtsAtn75JFL3S5K6tROovlAA2avFpbTxog2PPM3XqthdvmGzY/rg2YiRy9sOgdZquuEIe3GxVRFQXG3df0ZLOzOyXSPxTc/BrPeZh9PR/WCrjZxt2Intqn4=
+	t=1726821581; cv=none; b=LaROp3EcN4fq+yUlvthI/UU9QkD2GYpNFxW02aQ+9J6ABYfX6EeieupAF5xjf4vhQLnnSUHYz16Ty+Lq+FwV6cNQg2XGQLc7uQ7XyglGsFkphwBYnnA/+3XcKF8pPWKZNxaLnRvOR2pT5dZYYVBH6HAX2stvESdupIQNlnDr3AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726821494; c=relaxed/simple;
-	bh=7CJFNsK+RYsiPatWJUwXv7bSU3rHGoSDbNBW/V45qdo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UShjqHbNOudaLUPKNifrUirZefdp+4dxlEGu9dUJIo3JlWJDp7WXhaecUEwDQW7BSQd39sfAZ4wCcWejqqFB3nRjiO1Zp+rJ19UUUJNzBJnggKI2DFjGZiMmJiRPDYTEJgW2sfuopNuu1aGSifL2dWB9gkqiGI6KmJc0TvZOuyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=chhwzM0s; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so21473255e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:38:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726821491; x=1727426291; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M26p8HJUGVrSTve7LtSl4MnedM6VlYwh3DdAdGmuv7c=;
-        b=chhwzM0sMxRHQRobSnwUarGwHfhuDFKDdbUa7Su86ODuA/4rNWg3PyLCjhcpR1u1n1
-         Aq+gToIAC1vKIbYtJHYrfmHELfBpo0CUMXAdOLujJ/4Z4ihZaNS6izTu4Yv3Xcnx1hZy
-         XvULAcM8qgvCAbxotV4+qnc/catiOZlq2gycMUdJ3xHziVfAPOPytWcL2kE+OXrq27mB
-         4F0DG09niNX9oJsmPYDnC1b/F9VcBse8gSq3KMvnsNTOqRCRCPr7rrdq1DXGx7M7HuLs
-         x85cRLSx2H7Ts9D7bjmiNmdfoqjbErdlg5e5mQ0407RWGyQ3ZgeSA+cMuG3Y2cwZk8UH
-         z1kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726821491; x=1727426291;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M26p8HJUGVrSTve7LtSl4MnedM6VlYwh3DdAdGmuv7c=;
-        b=uHLC5F3A6DQHt9P10E3X6seVN1KJY+mSzNCwCC8vVugBA/r6N+KR2urnXWb27zS0HM
-         4NAmd41xNo1fOxoPGbNxcY3I19zYtUZxgDaGR8s7g6cltJVrUiO63pxUblLmvt7DXdAU
-         qUwIensX+kSWoJ4dwj0X7ogFM+CZLDqu/itZeDMxSBdOYfrCvR8hln2PnIDO65QFoUI7
-         tQqmQeqJKmjJFlZ4+1CYaIkzFPreFY9meWxXCSS1zbluMLFiE0ZdwGlM+jCXkZfZUQGG
-         4CNuq0oY8ub8nJzRk9U/xwRknfhgf6IvmcyN63BSR848N7FjCgvoklaahcsXcl7J3PNJ
-         TWXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjqxoq5MugnCnt1lQbQ6xCPdwyDrbfrD3LQu8NZyCj82P4Tn+1yVdD9HqMDKsO/mLUbKM7ASJCTmq10lw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/Z0sCv1zm8iQby7B6G5bhdCe7u+kQy6q65A2jkPspnsAneiwk
-	Lp5y1zcJd19VNy8XSr28yKJ4bta0dru4Sj1EISsTHd6dwmHwFkWI8UeKRoi5D8c=
-X-Google-Smtp-Source: AGHT+IGu0mJn0TEAtjrxCTFxsE8k5t1vGcbdWZEZvHC/A/1yKOwaWCwpTcH4rvcoPgrQPnL4UVJgQw==
-X-Received: by 2002:a05:600c:314c:b0:42c:bb58:a077 with SMTP id 5b1f17b1804b1-42e7ac30863mr19117735e9.14.1726821491058;
-        Fri, 20 Sep 2024 01:38:11 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7540e2c1sm43099165e9.2.2024.09.20.01.38.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 01:38:10 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Fri, 20 Sep 2024 10:38:05 +0200
-Subject: [PATCH v2 3/3] dt-bindings: mmc: convert amlogic,meson-mx-sdio.txt
- to dtschema
+	s=arc-20240116; t=1726821581; c=relaxed/simple;
+	bh=qSFC0CPXsAs0/QR/Ub6gPzLAUS0VertXsdiCQtyDBXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VtvyS9Ub8+QcntiZyTLoTvhUQMeiNwgZtZatzRAl5sjEbaIOGT9daUPsDCOQvVnnmkJMmDYm8z2NAzLOiXiCwUDtw8ItZMFuMpVcGjll4AgG6ftqImNoxgP6TytQ8KoNUsiNn+I7B6dHelIi3TgdW4Oh8+PoSGvbra29gGU5Zkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=KFAIcEyz; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1134)
+	id 6CD9020C0B12; Fri, 20 Sep 2024 01:39:33 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6CD9020C0B12
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1726821573;
+	bh=y9iGzqI1llZBex/f3DgwQ0iyDZreXOsN5uFJeLWLC0k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KFAIcEyzo3N44wnyUjHX+yIfCxoZ1f7IibIH4VM1q7HchqKc+rvjqtldgg1EMPqoq
+	 XyQSIijTzQDrLGMFPrvgN5Qn6S5A3m0bgeZXbtEszQXcQGS4FY1Xu75D3S4Z6G+sOj
+	 vIyMyOKk+656L1YCg7aggu7p7T9BS/aLgtM6okP4=
+Date: Fri, 20 Sep 2024 01:39:33 -0700
+From: Shradha Gupta <shradhagupta@linux.microsoft.com>
+To: Simon Horman <horms@kernel.org>
+Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Long Li <longli@microsoft.com>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	Erick Archer <erick.archer@outlook.com>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Shradha Gupta <shradhagupta@microsoft.com>
+Subject: Re: [PATCH net-next] net: mana: Increase the
+ DEF_RX_BUFFERS_PER_QUEUE to 1024
+Message-ID: <20240920083933.GA15696@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1726376184-14874-1-git-send-email-shradhagupta@linux.microsoft.com>
+ <20240915180835.GA167971@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-3-5aa8bdfe01af@linaro.org>
-References: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-0-5aa8bdfe01af@linaro.org>
-In-Reply-To: <20240920-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v2-0-5aa8bdfe01af@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5098;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=7CJFNsK+RYsiPatWJUwXv7bSU3rHGoSDbNBW/V45qdo=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBm7TRuyUKbSWggrLcYL3U67aC98p+hgvoXseunmRTZ
- QSonzOGJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZu00bgAKCRB33NvayMhJ0SxZEA
- DD/tHmAUJB6hYWVHojaA5NrWqA/Nhi/mZY7G4EnGnwGWzTLVeD3recvdof38Itt1vty9fYc9qrP3na
- gsszZfV0hOSwZcvJA5SERhRfc4yljd7GjhRuSRBh2C0wzumWXqJm7xcZLxkR+4f/jXGcPaem46tfc0
- CSNZ9meAoaRHWFSzCTnQx3F2NPI1SXnyfLkRNJHZMtli0FNwoXbtd4sfW/IUG47YrfjaWvUcG1+yws
- IqE+8jNZx72J1mCfktuUNB3jC3e9mf2tMAvvGt3AFH5DogngSiZSN6oL3Lh+GNNYmmjENyvota1ryH
- kOZlHb2J+deIdbL3YbmTmMKpnzVw+FmT1wt81kB1avqCMxEFs1XtpSc+wDyEi5vTrrXSD/GXnMtaFt
- 9Vc1aFOcxRfQCQl70a98MiR3j/rkFW2+4teKte7lEQ7339p0N4Gz1WkVNiVmK6elb2RqwJ7cfd/tIO
- mnzJ72REGtGtAhgOSZvUc3pJAIKerQ1U+bFABnqUtu1geaTzNw8zTXg0E+l2PGGRRip1plVIQrrdJt
- I7QIT2ikwZwuqGYOC3Gu4rVcdmugVx28ghj+5VjM8Cs6EnIfglsavmD3vZdal4C4bem+M6VTpU7+I2
- HAo+g5zS5Be191z30RM9QCH/mjcBEvG7BptWhtHO3tJnCumJY1VQuSMNZtjg==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240915180835.GA167971@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Convert the Amlogic Meson6, Meson8 and Meson8b SDIO/MMC controller
-bindings to dt-schema.
-
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- .../bindings/mmc/amlogic,meson-mx-sdio.txt         | 54 ------------
- .../bindings/mmc/amlogic,meson-mx-sdio.yaml        | 96 ++++++++++++++++++++++
- 2 files changed, 96 insertions(+), 54 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/mmc/amlogic,meson-mx-sdio.txt b/Documentation/devicetree/bindings/mmc/amlogic,meson-mx-sdio.txt
-deleted file mode 100644
-index 8765c605e6bc..000000000000
---- a/Documentation/devicetree/bindings/mmc/amlogic,meson-mx-sdio.txt
-+++ /dev/null
-@@ -1,54 +0,0 @@
--* Amlogic Meson6, Meson8 and Meson8b SDIO/MMC controller
--
--The highspeed MMC host controller on Amlogic SoCs provides an interface
--for MMC, SD, SDIO and SDHC types of memory cards.
--
--Supported maximum speeds are the ones of the eMMC standard 4.41 as well
--as the speed of SD standard 2.0.
--
--The hardware provides an internal "mux" which allows up to three slots
--to be controlled. Only one slot can be accessed at a time.
--
--Required properties:
-- - compatible : must be one of
--	- "amlogic,meson8-sdio"
--	- "amlogic,meson8b-sdio"
--	along with the generic "amlogic,meson-mx-sdio"
-- - reg : mmc controller base registers
-- - interrupts : mmc controller interrupt
-- - #address-cells : must be 1
-- - size-cells : must be 0
-- - clocks : phandle to clock providers
-- - clock-names : must contain "core" and "clkin"
--
--Required child nodes:
--A node for each slot provided by the MMC controller is required.
--NOTE: due to a driver limitation currently only one slot (= child node)
--      is supported!
--
--Required properties on each child node (= slot):
-- - compatible : must be "mmc-slot" (see mmc.txt within this directory)
-- - reg : the slot (or "port") ID
--
--Optional properties on each child node (= slot):
-- - bus-width : must be 1 or 4 (8-bit bus is not supported)
-- - for cd and all other additional generic mmc parameters
--   please refer to mmc.txt within this directory
--
--Examples:
--	mmc@c1108c20 {
--		compatible = "amlogic,meson8-sdio", "amlogic,meson-mx-sdio";
--		reg = <0xc1108c20 0x20>;
--		interrupts = <0 28 1>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		clocks = <&clkc CLKID_SDIO>, <&clkc CLKID_CLK81>;
--		clock-names = "core", "clkin";
--
--		slot@1 {
--			compatible = "mmc-slot";
--			reg = <1>;
--
--			bus-width = <4>;
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/mmc/amlogic,meson-mx-sdio.yaml b/Documentation/devicetree/bindings/mmc/amlogic,meson-mx-sdio.yaml
-new file mode 100644
-index 000000000000..3b665396169d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/amlogic,meson-mx-sdio.yaml
-@@ -0,0 +1,96 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/amlogic,meson-mx-sdio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Amlogic Meson6, Meson8 and Meson8b SDIO/MMC controller
-+
-+description: |
-+  The highspeed MMC host controller on Amlogic SoCs provides an interface
-+  for MMC, SD, SDIO and SDHC types of memory cards.
-+
-+  Supported maximum speeds are the ones of the eMMC standard 4.41 as well
-+  as the speed of SD standard 2.0.
-+
-+  The hardware provides an internal "mux" which allows up to three slots
-+  to be controlled. Only one slot can be accessed at a time.
-+
-+maintainers:
-+  - Neil Armstrong <neil.armstrong@linaro.org>
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - amlogic,meson8-sdio
-+          - amlogic,meson8b-sdio
-+      - const: amlogic,meson-mx-sdio
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: core
-+      - const: clkin
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+patternProperties:
-+  "slot@[0-2]+$":
-+    $ref: mmc-slot.yaml#
-+    description:
-+      A node for each slot provided by the MMC controller
-+
-+    properties:
-+      reg:
-+        description:
-+          the slot (or "port") ID
-+        enum: [0, 1, 2]
-+
-+      bus-width:
-+        enum: [1, 4]
-+
-+    unevaluatedProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - "#address-cells"
-+  - "#size-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    mmc@c1108c20 {
-+        compatible = "amlogic,meson8-sdio", "amlogic,meson-mx-sdio";
-+        reg = <0xc1108c20 0x20>;
-+        interrupts = <GIC_SPI 28 IRQ_TYPE_EDGE_RISING>;
-+        clocks = <&clk_core>, <&clk_in>;
-+        clock-names = "core", "clkin";
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        slot@1 {
-+            compatible = "mmc-slot";
-+            reg = <1>;
-+            bus-width = <4>;
-+        };
-+    };
-
--- 
-2.34.1
-
+On Sun, Sep 15, 2024 at 07:08:35PM +0100, Simon Horman wrote:
+> On Sat, Sep 14, 2024 at 09:56:24PM -0700, Shradha Gupta wrote:
+> > Through some experiments, we found out that increasing the default
+> > RX buffers count from 512 to 1024, gives slightly better throughput
+> > and significantly reduces the no_wqe_rx errs on the receiver side.
+> > Along with these, other parameters like cpu usage, retrans seg etc
+> > also show some improvement with 1024 value.
+> > 
+> > Following are some snippets from the experiments
+> > 
+> > ntttcp tests with 512 Rx buffers
+> > ---------------------------------------
+> > connections|  throughput|  no_wqe errs|
+> > ---------------------------------------
+> > 1          |  40.93Gbps | 123,211     |
+> > 16         | 180.15Gbps | 190,120
+> > 128        | 180.20Gbps | 173,508     |
+> > 256        | 180.27Gbps | 189,884     |
+> > 
+> > ntttcp tests with 1024 Rx buffers
+> > ---------------------------------------
+> > connections|  throughput|  no_wqe errs|
+> > ---------------------------------------
+> > 1          |  44.22Gbps | 19,864      |
+> > 16         | 180.19Gbps | 4,430       |
+> > 128        | 180.21Gbps | 2,560       |
+> > 256        | 180.29Gbps | 1,529       |
+> > 
+> > So, increasing the default RX buffers per queue count to 1024
+> > 
+> > Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> > Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> 
+> Hi Shradha,
+> 
+> net-next is currently closed other than for bug fixes.
+> Please consider reposting once it re-opens, after v6.12-rc1
+> has been released.
+Noted, thanks Simon
+> 
+> -- 
+> pw-bot: defer
 
