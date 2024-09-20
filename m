@@ -1,146 +1,145 @@
-Return-Path: <linux-kernel+bounces-334046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E9897D1DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:40:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 055D397D1E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1288D1F237A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:40:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30FF2828ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB71A7EEFD;
-	Fri, 20 Sep 2024 07:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="LoUFRYLz"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8DC502B1;
+	Fri, 20 Sep 2024 07:41:46 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32A67D401
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 07:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B980B487AE;
+	Fri, 20 Sep 2024 07:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726817973; cv=none; b=MKCtiDVYXrmHbjdxCDCmgZz2QZa863ItKje1BHn8NOI9pNp0Mt3qqk5gTFlFkKRQIozKLIgQZrditBWZSK5oRXrJjDrwCv5280QB3FrDpc7p5CiOD1a3fVCMDcKM1zNnKtdB0++pAX1Le/jJ771pkd/wCcr/jq0qCV/Z0Z2CxWM=
+	t=1726818106; cv=none; b=LTW1pYPhardiqnNsJR2AgqkjbGBFRhibU4Nrdn5YABjtMwXDwpAyGkYn4ce7efUJH10FzyQFeHUVcF3n86bjedPHtBGSVimgpcDO00oWE/vfPzvIBmJP6Muxv5L3bWJuqh6hR7Yoeb/mbDzYpjLjZQX1cUw1pRzaqMo2vIC2pOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726817973; c=relaxed/simple;
-	bh=H2dmJr8hpjnnkdgnm3AAwF3pNuKwnFfGeFFtmmrBeZo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=njrc2bbYd52hEcIWGXUdlNlHuJiJvByN6a1vnGAs/ffL9en45g9Ih/oAUKomT9OQb60SVVihq8e2bxSM4NMfNIGB8Wa1fNso1bnho+OpxBhhOUfz5z6rBmi0p3NRQ8LAnOdCZGU7uxtUfW76k9s2nqwLJTLqcOWibt8tYxQ61jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=LoUFRYLz; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2053616fa36so22744655ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 00:39:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1726817970; x=1727422770; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=56knnfie3gn40U1586qIcyfLVXwVK5l1OK1pmMi2fA0=;
-        b=LoUFRYLzxWPzVjkoFV9ao0yf/yF09mqx+0jqO39Uk0Z7jIBuwE3Fd/H238IuD6/jZX
-         3rne++r3wl/LLYumWU3MVL5NKxzkeKqoc9IeoZut4dtixnpjZZj+xIOJIxhRQrH7iJQK
-         j+/NqbYzfh7L3v1cooKZ79aJm8Zbirjz6Lf8tzuy/JS8P+hj3yQfnt+AhDqmIEk/AH4p
-         TLCV+K5G2KUeFq+H7SeuiF0+XJM0RchFYDxsVtmJ+yqlRMxUpdFMXfsBa+nQtJhblyu2
-         9YTx7CpiHsZvP+Pgg0wpwVF6qhjJLJic9ZAx4Vx0FAwSMZQCI2t2jOiVImFXRHki8jDM
-         BKqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726817970; x=1727422770;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=56knnfie3gn40U1586qIcyfLVXwVK5l1OK1pmMi2fA0=;
-        b=usil+qVhWnIkxP9CkRi6fzWMP8kuHCVybf+Izihcpz1j2vrFO1RnPENw4fgB3h5aTv
-         Dh29V9py7OlnyubMhHEhuBpcPXzVzziZyG6saajBBrbzHXjm2Q2ONgk6GeR4SFTBdzMe
-         L2MAAMOfGIm5AxJonlB9FqabPAriOJE0h6bXQgTv6ePEGFtLJWpVTywvJ+VuXsVs2kH/
-         f3KbQs5538eSTGwU19udw/OWUsmm19iqsyjgUOYxx17Lbf4+fm1LWtrpXYeRAnErN58j
-         EOj1MtR1/2IHL2wxyQOgo7FLcc43lXQZSY3qpEdWiDMsAE4qPSHsimXwcA1kATPUCv8B
-         ejug==
-X-Forwarded-Encrypted: i=1; AJvYcCUgisM6NQjORFlV7LlvtHljD7GSl1WNZJONNBsZXOvCnJkqvgAgTWILB7x1e27JY6djPxUyCriEvG1+iN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzthMDRT96fg3c7MlS1nxo5usirEDZhKJOYxoZtYEIuvwPetzF2
-	tHnnmTSWpIiHmlzr48oc1bsRMn3RDX7fmWCO4mY4TCeQ8fVbdcYmYmKzwJRzUms=
-X-Google-Smtp-Source: AGHT+IFdJWu48cTXjfm7pmPi0SJjjpoM8oaSNh7cs+sv8ppa+Eh8rcIfQI/ARHDbsMfIMGKI31JoxA==
-X-Received: by 2002:a17:903:8c8:b0:205:410c:f3b3 with SMTP id d9443c01a7336-208d8442483mr26756335ad.59.1726817970349;
-        Fri, 20 Sep 2024 00:39:30 -0700 (PDT)
-Received: from [127.0.1.1] (59-124-168-89.hinet-ip.hinet.net. [59.124.168.89])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946fcaa4sm89645805ad.212.2024.09.20.00.39.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 00:39:29 -0700 (PDT)
-From: Max Hsu <max.hsu@sifive.com>
-Date: Fri, 20 Sep 2024 15:39:05 +0800
-Subject: [PATCH RFC 3/3] riscv: KVM: Add Svukte extension support for
- Guest/VM
+	s=arc-20240116; t=1726818106; c=relaxed/simple;
+	bh=mm5FE5CerJn4exUyitMt7FzApp/OUc8cXF1jNcij2IU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gj1Wdc6O0UXDtpve7yGDki1I6iXpSTyOZZAQj7fR9v5IBOnT+WXXSqn9OHVNg2RtK78hlsbwi1CatigoP+xU90h3J7zQhC/vD12uivG3bNqqlZIKCXM7k2r4ki+703+pN5h7P6RzRQyIx0LFN0ox7NCgQKUYrs6zvXAYg+5LbkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4X93jj35Q1z9v7NM;
+	Fri, 20 Sep 2024 15:22:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 7CFC11408CC;
+	Fri, 20 Sep 2024 15:41:33 +0800 (CST)
+Received: from [10.45.149.49] (unknown [10.45.149.49])
+	by APP2 (Coremail) with SMTP id GxC2BwDnlsceJ+1mNllJAQ--.61641S2;
+	Fri, 20 Sep 2024 08:41:32 +0100 (CET)
+Message-ID: <55975a55-302f-4c45-bfcc-192a8a1242e9@huaweicloud.com>
+Date: Fri, 20 Sep 2024 09:41:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
+ pointers
+To: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org,
+ rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@vger.kernel.org
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kent Overstreet <kent.overstreet@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Neeraj Upadhyay <neeraj.upadhyay@amd.com>
+References: <20240917143402.930114-1-boqun.feng@gmail.com>
+ <20240917143402.930114-2-boqun.feng@gmail.com>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <20240917143402.930114-2-boqun.feng@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240920-dev-maxh-svukte-rebase-v1-3-7864a88a62bd@sifive.com>
-References: <20240920-dev-maxh-svukte-rebase-v1-0-7864a88a62bd@sifive.com>
-In-Reply-To: <20240920-dev-maxh-svukte-rebase-v1-0-7864a88a62bd@sifive.com>
-To: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>
-Cc: Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
- Max Hsu <max.hsu@sifive.com>, Samuel Holland <samuel.holland@sifive.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1319; i=max.hsu@sifive.com;
- h=from:subject:message-id; bh=H2dmJr8hpjnnkdgnm3AAwF3pNuKwnFfGeFFtmmrBeZo=;
- b=owEB7QES/pANAwAKAdID/Z0HeUC9AcsmYgBm7SalRgR20+oKL/qOJCPUSe6TlQ9TxOvvbzCZ3
- /oFZ1j4YAyJAbMEAAEKAB0WIQTqXmcbOhS2KZE9X2jSA/2dB3lAvQUCZu0mpQAKCRDSA/2dB3lA
- vWC7DAC6wEj/n9CbTmnWTmX1V13illBvFuFZRuglicYsApqy50khOjplX6PJZuGQ95zwOU7MgL0
- R3EiVMLLWH+svNhI0RKdAYZgkYaC+ebdN6rmtFUPZoTDzYN29PcsufuUTCYGVx6yhvRJ6tUsKz5
- XsfgxNU5bsp2/TrTrtpBr9ikId9PSeSaZjSvYX+XjxRKaRAUBl1ZEOjWlR6QKCMo0GO4KW5CSWx
- jptrxxQmq5XHZvg6nChHyWTNRYK6hDH2Kn6+AjKgyNIjnl/0QzAv4UalKsaHJk5wiwJWMQ3oCa4
- lQcTWE/+8v3Dtz9RlFFQHkuyEY06ph9ETUWB9+qstgSGitlZYBMi9uaOTRlXgoK9XF1yo0VmF7L
- p/gBoLYn0F29Vo7Zu2MiEfzlww2NgqTkTtIHEt5VgQZac5TIQq52VSoq/Bwz8S+4LBKeb1gOeR6
- bCoaMInYzf6Jur0ktZwEGciz7Mw/YS+SFW3LprnqtS5bHDVHzRYf9Tp9JY0o4dbSO3Yuw=
-X-Developer-Key: i=max.hsu@sifive.com; a=openpgp;
- fpr=EA5E671B3A14B629913D5F68D203FD9D077940BD
+X-CM-TRANSID:GxC2BwDnlsceJ+1mNllJAQ--.61641S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7try3Xw45KFyDJFyxGrW3ZFb_yoW8GrW8pr
+	ZFqFyUCFs3JF4SyayDXw17urWv93Z3tFyDJas3uFykA3W5GrWrXF9rKryjvws5ArsY934Y
+	qrW5KrZxAFyDuFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIF
+	4iUUUUU
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-Add KVM ISA extension ONE_REG interface to allow VMM tools to
-detect and enable Svukte extension for Guest/VM.
 
-Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
-Signed-off-by: Max Hsu <max.hsu@sifive.com>
----
- arch/riscv/include/uapi/asm/kvm.h | 1 +
- arch/riscv/kvm/vcpu_onereg.c      | 1 +
- 2 files changed, 2 insertions(+)
 
-diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/asm/kvm.h
-index e97db3296456e19f79ca02e4c4f70ae1b4abb48b..41b466b7ffaec421e8389d3f5b178580091a2c98 100644
---- a/arch/riscv/include/uapi/asm/kvm.h
-+++ b/arch/riscv/include/uapi/asm/kvm.h
-@@ -175,6 +175,7 @@ enum KVM_RISCV_ISA_EXT_ID {
- 	KVM_RISCV_ISA_EXT_ZCF,
- 	KVM_RISCV_ISA_EXT_ZCMOP,
- 	KVM_RISCV_ISA_EXT_ZAWRS,
-+	KVM_RISCV_ISA_EXT_SVUKTE,
- 	KVM_RISCV_ISA_EXT_MAX,
- };
- 
-diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
-index b319c4c13c54ce22d2a7552f4c9f256a0c50780e..67237d6e53882a9fcd2cf265aa1704f25cc4a701 100644
---- a/arch/riscv/kvm/vcpu_onereg.c
-+++ b/arch/riscv/kvm/vcpu_onereg.c
-@@ -41,6 +41,7 @@ static const unsigned long kvm_isa_ext_arr[] = {
- 	KVM_ISA_EXT_ARR(SVINVAL),
- 	KVM_ISA_EXT_ARR(SVNAPOT),
- 	KVM_ISA_EXT_ARR(SVPBMT),
-+	KVM_ISA_EXT_ARR(SVUKTE),
- 	KVM_ISA_EXT_ARR(ZACAS),
- 	KVM_ISA_EXT_ARR(ZAWRS),
- 	KVM_ISA_EXT_ARR(ZBA),
+Am 9/17/2024 um 4:33 PM schrieb Boqun Feng:
+> +static inline void *__hazptr_tryprotect(hazptr_t *hzp,
+> +					void *const *p,
+> +					unsigned long head_offset)
+> +{
+> +	void *ptr;
+> +	struct callback_head *head;
+> +
+> +	ptr = READ_ONCE(*p);
+> +
+> +	if (ptr == NULL)
+> +		return NULL;
+> +
+> +	head = (struct callback_head *)(ptr + head_offset);
+> +
+> +	WRITE_ONCE(*hzp, head);
+> +	smp_mb();
+> +
+> +	ptr = READ_ONCE(*p); // read again
+> +
+> +	if (ptr + head_offset != head) { // pointer changed
+> +		WRITE_ONCE(*hzp, NULL);  // reset hazard pointer
+> +		return NULL;
+> +	} else
+> +		return ptr;
+> +}
 
--- 
-2.43.2
+There is a subtle potential for ABA issues here.
+
+If the compiler replaces 'return ptr;' with 'return head - 
+head_offset;', then you do not have an address dependency from the 
+second read.
+
+In this case, in ABA, the first read can read from a stale store, then 
+the second read reads the same value from a newer store but only 
+establishes control-dependency based synchronization with that store; 
+any reads from *ptr could be speculatively executed before doing the 
+second ptr = READ_ONCE(*p).
+
+Therefore you could read the object state before it is properly 
+reinitialized by the second store.
+
+I'm not sure what the most efficient fix is or if you just want to 
+gamble that "the compiler will never do that".
+I guess either READ_ONCE(ptr) or a compiler barrier before return ptr 
+might do it?
+
+Have fun,
+    jonas
 
 
