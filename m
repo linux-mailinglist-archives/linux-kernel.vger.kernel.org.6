@@ -1,138 +1,82 @@
-Return-Path: <linux-kernel+bounces-334708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1486097DAEB
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:50:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17EF497DAED
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEA9F2834CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:50:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8C79285294
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4AF18E038;
-	Fri, 20 Sep 2024 23:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oJUhsjfE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EAE18DF93;
+	Fri, 20 Sep 2024 23:54:33 +0000 (UTC)
+Received: from mail115-118.sinamail.sina.com.cn (mail115-118.sinamail.sina.com.cn [218.30.115.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7FA5D915;
-	Fri, 20 Sep 2024 23:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148F717A5A4
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 23:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726876228; cv=none; b=sesN2RUx03i+iJAIcQRTj3Taaxpsgj/+5EY0GoEAEF2I+XQoIsxQXD/ZFdXrtIBa/G9ocKmD6AlL3ogZQlUgfiIA3mXSSGGXBG5tsYHPLu1f+D2BqIQkNcxA7JG/34A6uC8hoAuYmi1i7xEuZece+iz0zwXtD1j5ReelO9JdLPM=
+	t=1726876472; cv=none; b=Rn+JzucwS4KagFQBMizrrzMYolGjq4WYcPi9eycEuRSokAlqeqp1K/aVdEc5vsfQskc+i/4YoS7RpHBRSdI5CqGrvDVhO8O/101IfITa+8A059wRpMJnsvH9sf59ueDBGMrJa6pWibHaz4raEtlsSoWb48W2naiTkAv7ZznzeD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726876228; c=relaxed/simple;
-	bh=ipjxMYTJoUHV3BA3NQmOYPF7baYuN9ZnKpWZo3rOiu4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=k5hJOOKoIEd89oIChSlAG6W+ipKsRoKQUhbb1RfNtHMnn9NOLvVMgPrx9V6UCWuwXXapn0rj/b76dr5KkXANlCQvPffKthsacTnzttYwjHfQGrDyk8+tlfFrXD3BY9nyngkW6hhekiSKTmnKnXB6AKqvj0soKh6t17ElK224JDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oJUhsjfE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48KKfbDf018634;
-	Fri, 20 Sep 2024 23:49:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ipjxMYTJoUHV3BA3NQmOYPF7baYuN9ZnKpWZo3rOiu4=; b=oJUhsjfEtGDyM+Xk
-	sT9Exk6FnRk/K6LyxiHaCDBqhVQbTf9oAsbilKHcPnCirdSxQW7Zu1BgW5oSfbOl
-	fZi+/Dg5P+46YauPnUtI1ShsqpNNTsKIxnWvPiRVF0Hl3tNcbs/mMeNeVPfGGI5W
-	WA71H3X71j6loxOa4Uop19VSgmmhYkd2pjOPqFrgcR+youl3vZYOR085mQ5eaqAp
-	MT/5pUUcu/2hkaGobdhEskM14ziOgL75PBULCWpJURYdIszjjkZ1vdUB9UoFMl0Z
-	8dq1uAhO9+I14V7FSfXVJ8axATi9KnrF/xg0onTL2vXjzp4MtEVigsfIOxkYHy7d
-	ANgOUw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4hftsu2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 23:49:58 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48KNnwf2011994
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 23:49:58 GMT
-Received: from [10.71.112.62] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 20 Sep
- 2024 16:49:57 -0700
-Message-ID: <182938da-da86-49a4-800a-446954cc6c60@quicinc.com>
-Date: Fri, 20 Sep 2024 16:49:57 -0700
+	s=arc-20240116; t=1726876472; c=relaxed/simple;
+	bh=EpAxF6lJIM9iAk9VMD/4N0iCEQ23YQW7ZdIZ8BdrHo4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=C0BJt42skih4xK7/fSCUsr79IabI0ff+a3Itf/3miQKtba4TIvfL8zQrglskTbwxPxVb6hoIEv8Q/HCRFQkgMVNE0v+Qo7BspW0WPzDf8JTW7/oiW1jEefyCOalo+2rgKauBxSMODrI53pPIG0+GH2N8B5AVzCLGsC9dZNj8KCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.10.129])
+	by sina.com (10.185.250.24) with ESMTP
+	id 66EE0B2D0000432D; Fri, 21 Sep 2024 07:54:23 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 81291710748469
+X-SMAIL-UIID: 98C380FB80754754A5FC5BE342966804-20240921-075423-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+7c48153a9d788824044b@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [netfs?] KASAN: slab-use-after-free Read in iov_iter_advance
+Date: Sat, 21 Sep 2024 07:54:14 +0800
+Message-Id: <20240920235414.755-1-hdanton@sina.com>
+In-Reply-To: <66ed861a.050a0220.2abe4d.0015.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v27 01/32] xhci: add helper to stop endpoint and wait for
- completion
-To: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>
-CC: <mathias.nyman@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
-        <alsa-devel@alsa-project.org>, <bgoswami@quicinc.com>,
-        <broonie@kernel.org>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <devicetree@vger.kernel.org>, <dmitry.torokhov@gmail.com>,
-        <gregkh@linuxfoundation.org>, <krzk+dt@kernel.org>,
-        <lgirdwood@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
-        <robh@kernel.org>, <srinivas.kandagatla@linaro.org>, <tiwai@suse.com>
-References: <20240913103237.2f5dc796@foxbook>
- <a9dcaa5a-4f5d-451a-93aa-7457798fc243@quicinc.com>
- <20240915095514.6b01fefb@foxbook>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <20240915095514.6b01fefb@foxbook>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: iytzgxK0RhtlpMsGzW7stpvgCpcQAXKb
-X-Proofpoint-ORIG-GUID: iytzgxK0RhtlpMsGzW7stpvgCpcQAXKb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 phishscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
- impostorscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409200174
 
-Hi Michal,
+On Fri, 20 Sep 2024 07:26:34 -0700
+> syzbot found the following issue on:
+> 
+> HEAD commit:    a430d95c5efa Merge tag 'lsm-pr-20240911' of git://git.kern..
+> git tree:       upstream
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c7d69f980000
 
-On 9/15/2024 12:55 AM, Michał Pecio wrote:
-> Hi,
->
->> Maybe the last sentence is not needed.  When we are using the
->> secondary interrupters, at least in the offload use case that I've
->> verified with, the XHCI is completely unaware of what TDs have been
->> queued, etc...  So technically, even if we did call the default
->> handler (ie xhci_handle_cmd_stop_ep), most of the routines to
->> invalidate TDs are going to be no-ops.
-> Yes, the cancellation machinery will return immediately if there are
-> no TDs queued by xhci_hcd itself.
->
-> But xhci_handle_cmd_stop_ep() does a few more things for you - it
-> checks if the command has actually succeeded, clears any halt condition
-> which may be preventing stopping the endpoint, and it sometimes retries
-> the command (only on "bad" chips, AFAIK).
->
-> This new code does none of the above, so in the general case it can't
-> even guarantee that the endpoint is stopped when it returns zero. This
-> should ideally be documented in some way, or fixed, before somebody is
-> tempted to call it with unrealistically high expectations ;)
->
-> As far as I see, it only works for you because isochronous never halts
-> and Qualcomm HW is (hopefully) free of those stop-after-restart bugs.
-> There will be problems if the SB tries to use any other endpoint type.
+#syz test
 
-So what I ended up doing was to split off the context error handling into a separate helper API, which can be also called for the sync ep stop API.  From there, based on say....the helper re queuing the stop EP command, it would return a specific value to signify that it has done so.  The sync based API will then re-wait for the completion of the subsequent stop endpoint command that was queued.  In all other context error cases, it'd return the error to the caller, and its up to them to handle it accordingly.
-
-Thanks
-
-Wesley Cheng
-
+--- x/fs/netfs/write_collect.c
++++ y/fs/netfs/write_collect.c
+@@ -548,7 +548,9 @@ void netfs_write_collection_worker(struc
+ 		return;
+ 	}
+ 
++	mutex_lock(&ictx->wb_lock);
+ 	netfs_collect_write_results(wreq);
++	mutex_unlock(&ictx->wb_lock);
+ 
+ 	/* We're done when the app thread has finished posting subreqs and all
+ 	 * the queues in all the streams are empty.
+--
 
