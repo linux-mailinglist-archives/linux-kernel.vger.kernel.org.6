@@ -1,244 +1,140 @@
-Return-Path: <linux-kernel+bounces-334600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E083297D97D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 20:02:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D4D697D981
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 20:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0935283BEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:02:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D44CB2221C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB3717E44A;
-	Fri, 20 Sep 2024 18:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CABC17F397;
+	Fri, 20 Sep 2024 18:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SqT9RRUt"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IyGr+YIu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA84143C49;
-	Fri, 20 Sep 2024 18:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D4AC147
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 18:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726855318; cv=none; b=WLLuKKSNB8cPnjLzvpvmQumSGc+KEF62E5YHObvtBsykTS21pKYEou8bdAC5Dn9vgS0hvjT6lgKNAuisuqsGjECLJ7N/plUz7IuJDvhHG51jlT4p0kUDoTpd23caf81dHS59/btYQcMGY+nZaAZjvfOVf3EpnCjCd18tFGctMLQ=
+	t=1726855901; cv=none; b=Mi3LV6N/Npn72NNyM0KRp39GyCIS+QLEJefyOBOVUbrS+a0NZinucFKwvHXDUL4Fg70Sw4B2DEqFDGy/RF2/Orl/80F5fj9cLYqNO+XmMx6O4ClztXtqrYA8d8wDhBXqVK1XbtuBRK89qGn1Yok3LFgt7ALTj7xm4PtdVCqV7EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726855318; c=relaxed/simple;
-	bh=6W+CdwnzCI9NJoMF0y+A+2VlZvAeHLpKpEfJdi0Rr5w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=d1Szh2CZLSfmP/Qe0mnf2sCWCb873L6yZrq8HsqEBhjsngRCux4+xoVXXcZ+GCpNNlccOjoMYHHShAvJ3birOBwA1zYYoOGFuuv4cxXm0R3EpNSnUz8g4KJ/HeYdAycXlKMtpvu5GwJ4GQsALc6H1v4cbIF33AlzYk82XPf3JyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SqT9RRUt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48K7w7Xn007280;
-	Fri, 20 Sep 2024 18:01:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=BnmWo3uauhP14rQ9Q9kY2G
-	Ew/zzZwdaoNnruHWyG220=; b=SqT9RRUtwrsvSUZyU8BoJfjgvF0FX/oqQmq1nv
-	y/+pvY9KM/FRHJ8GZXVqFB9mk74akhMDyXDKUjRLgLGsJLwnLtHfCbXFqKVDxvtR
-	CvF8o1lJcN0e5zTEt7QaEfv+BNmvGuG4MSCS/ALnVcSt4bEcWG3GZQ6A4PM8rzPa
-	muDJ74N/YYHMPQYd5UREEcftBUO2SWw1bp4F/yV9S5BeLUlh6VdwGXzy3vK3ow8x
-	70xBsM4+HTHkZrRLJXcQeAzXdg1d2OWuMduhedMuRrbzZPc7ufYr3NA11ohTmRfW
-	L4K0Um67tCG+J+4paC65IRmgMw5xMtf+LIurV69F1JAz0zOg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4jf2944-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 18:01:44 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48KI1hgA001546
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 18:01:43 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 20 Sep 2024 11:01:43 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-Date: Fri, 20 Sep 2024 11:01:40 -0700
-Subject: [PATCH] firmware: qcom: scm: Allow devicetree-less probe
+	s=arc-20240116; t=1726855901; c=relaxed/simple;
+	bh=QBJtY3q03Hr/PpRhpzA994iX75ZkzJVz9Fy5vr8eskc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=n3XLKE1gRVGci/eC3/R63lbDuzNCZqZWQ6gWXovVJtDNZbi1W7To/3M50UKrhXXO9PqVsLpk5TyiQ/lNVbJpDbDwiMVE2A/66xhC2r02RiEI7f1Dgs/rc5g26RfIhxrTIwlyiwhzbXHnRMmYKQ6gUOv5o6EfNIu0Hc7yZ0Nh6eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IyGr+YIu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726855899;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j9YI0Mx5SgwWvTuwt/Zk6J43Azxd9r7yYf/eWhY2wBY=;
+	b=IyGr+YIuXnO1jtWk9qQz66rbcMlnyzhVvB2JvbxoDXEDPd9nPpF7eQIfLO61jA1paDMwV+
+	sKByx3t4cSB2Mw6GhvR2QWi3XSBPT5hdgjgQV6v7fvxR5ihpMOohnAUHquWf9Nkw59qW7F
+	Tx8SFD/7nA7cg9I5dou0/r9Lk5kYUUY=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-393-FNS3cdTvMYKUQd3fMba7lw-1; Fri, 20 Sep 2024 14:11:37 -0400
+X-MC-Unique: FNS3cdTvMYKUQd3fMba7lw-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-374c79bf194so1213678f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 11:11:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726855897; x=1727460697;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j9YI0Mx5SgwWvTuwt/Zk6J43Azxd9r7yYf/eWhY2wBY=;
+        b=c4hDxiFTCTPS1qRUug7r7yYWyBwg/6pPAnmcurTblJ62h7BShP99dnqJCFWWzGR8fS
+         V617FcrZ3W+qE146iedptoGXhRhpP4hB0Qf7IuSiQ217LtFE7l9Q1zuQsBcupDoPRfQq
+         XQBOH/Gz3G1rwepu+L7UC7jWHEDJuyXkBdaLvUu1iiec8ohHChffOZGrG+sBV1BWqYmQ
+         b+Cul9bhifCmfzSyu+SFJuFs0EKjxJkki8nLuCB1lRGq/IehDxzwNgWilCQMWcqIpRdK
+         R1IXFtd9c1I4LM8RaZ+k8RaYGnpMtxemUyUH35AxEXKzFaF3A+p/RsiO4P62A2mju6yB
+         akZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpvJyE6TmgOF/Zbm8YXAISTVZhqQod8sb/bJBTAeQC4lnlOj8nUiBOiMx2eyBf4A3nxsDBQvG/mmfsHPI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKXH10SEjLZB3t/QAnFLwtxrvlijvQ0Ix4xogxEl99x6kKTF34
+	GCEBGAG3kKTHuz2DQmpFjNUG8vKe7VSnTbc7ua35uYM4sqMCUyrlXip+HRSqwjijxxlGHzc3JLA
+	Me1LdmbGFy+vjeIBmUrTXcdFhFOQAa7DACzanyJheDB0nnVNMpr7sumvSuD/T7g==
+X-Received: by 2002:a5d:58e4:0:b0:368:64e:a7dd with SMTP id ffacd0b85a97d-37a42386bc8mr2199128f8f.53.1726855896646;
+        Fri, 20 Sep 2024 11:11:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEBcxtJ3sS5JJFgcJgBZHUw8G5EqMXIrri2f+A56fBjGFG9X4lsHzRKtM9Z31wcMlAPyWoT3w==
+X-Received: by 2002:a5d:58e4:0:b0:368:64e:a7dd with SMTP id ffacd0b85a97d-37a42386bc8mr2199107f8f.53.1726855896231;
+        Fri, 20 Sep 2024 11:11:36 -0700 (PDT)
+Received: from rh.fritz.box (p200300e16705d800cb8281343aec4007.dip0.t-ipconnect.de. [2003:e1:6705:d800:cb82:8134:3aec:4007])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7afbfa1asm29450025e9.21.2024.09.20.11.11.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 11:11:35 -0700 (PDT)
+From: Sebastian Ott <sebott@redhat.com>
+To: netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Parav Pandit <parav@nvidia.com>
+Subject: [PATCH v2] net/mlx5: unique names for per device caches
+Date: Fri, 20 Sep 2024 20:11:29 +0200
+Message-ID: <20240920181129.37156-1-sebott@redhat.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <IA0PR12MB8713EC167DC79275451864BADC6C2@IA0PR12MB8713.namprd12.prod.outlook.com>
+References: <IA0PR12MB8713EC167DC79275451864BADC6C2@IA0PR12MB8713.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240920-scm-pdev-v1-1-b76d90e06af7@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAIO47WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDS0Nz3eLkXN2ClNQy3aRki5QkC9O0xBQDUyWg8oKi1LTMCrBR0bG1tQA
- htW35WgAAAA==
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        Andrew Halaney <ahalaney@redhat.com>,
-        Rudraksha Gupta <guptarud@gmail.com>,
-        "Linux regression tracking (Thorsten
- Leemhuis)" <regressions@leemhuis.info>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Bartosz
- Golaszewski" <brgl@bgdev.pl>,
-        Elliot Berman <quic_eberman@quicinc.com>
-X-Mailer: b4 0.14.1
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: SuyJGb0-EA3JBaqg5B1h842TJZH2irpl
-X-Proofpoint-GUID: SuyJGb0-EA3JBaqg5B1h842TJZH2irpl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- mlxscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
- mlxlogscore=999 adultscore=0 impostorscore=0 spamscore=0
- lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2408220000 definitions=main-2409200131
+Content-Transfer-Encoding: 8bit
 
-Some devicetrees representing Qualcomm Technologies, Inc. SoCs are
-missing the SCM node. Users of the SCM device assume the device is
-present and the driver also assumes it has probed. This can lead to
-unanticipated crashes when there isn't an SCM device. All Qualcomm
-Technologies, Inc. SoCs use SCM to communicate with firmware, so create
-the platform device if it's not present in the devicetree.
+Add the device name to the per device kmem_cache names to
+ensure their uniqueness. This fixes warnings like this:
+"kmem_cache of name 'mlx5_fs_fgs' already exists".
 
-Tested that SCM node still probes on:
- - sm8650-qrd with the SCM DT node still present
- - sm845-mtp with the SCM DT node still present
- - sm845-mtp with the node removed
-
-Fixes: 449d0d84bcd8 ("firmware: qcom: scm: smc: switch to using the SCM allocator")
-Reported-by: Rudraksha Gupta <guptarud@gmail.com>
-Closes: https://lore.kernel.org/lkml/692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com/
-Link: https://lore.kernel.org/all/CAA8EJpqSKbKJ=y0LAigGdj7_uk+5mezDgnzV5XEzwbxRJgpN1w@mail.gmail.com/
-Suggested-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+Signed-off-by: Sebastian Ott <sebott@redhat.com>
 ---
- drivers/firmware/qcom/qcom_scm.c | 75 +++++++++++++++++++++++++++++++++++-----
- 1 file changed, 66 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/fs_core.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-index 10986cb11ec0..842ba490cd37 100644
---- a/drivers/firmware/qcom/qcom_scm.c
-+++ b/drivers/firmware/qcom/qcom_scm.c
-@@ -1954,10 +1954,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
- 	init_completion(&scm->waitq_comp);
- 	mutex_init(&scm->scm_bw_lock);
- 
--	scm->path = devm_of_icc_get(&pdev->dev, NULL);
--	if (IS_ERR(scm->path))
--		return dev_err_probe(&pdev->dev, PTR_ERR(scm->path),
--				     "failed to acquire interconnect path\n");
-+	if (pdev->dev.of_node) {
-+		scm->path = devm_of_icc_get(&pdev->dev, NULL);
-+		if (IS_ERR(scm->path))
-+			return dev_err_probe(&pdev->dev, PTR_ERR(scm->path),
-+					"failed to acquire interconnect path\n");
-+	}
- 
- 	scm->core_clk = devm_clk_get_optional(&pdev->dev, "core");
- 	if (IS_ERR(scm->core_clk))
-@@ -2012,10 +2014,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
- 	if (of_property_read_bool(pdev->dev.of_node, "qcom,sdi-enabled") || !download_mode)
- 		qcom_scm_disable_sdi();
- 
--	ret = of_reserved_mem_device_init(__scm->dev);
--	if (ret && ret != -ENODEV)
--		return dev_err_probe(__scm->dev, ret,
--				     "Failed to setup the reserved memory region for TZ mem\n");
-+	if (pdev->dev.of_node) {
-+		ret = of_reserved_mem_device_init(__scm->dev);
-+		if (ret && ret != -ENODEV)
-+			return dev_err_probe(__scm->dev, ret,
-+					"Failed to setup the reserved memory region for TZ mem\n");
-+	}
- 
- 	ret = qcom_tzmem_enable(__scm->dev);
- 	if (ret)
-@@ -2068,6 +2072,11 @@ static const struct of_device_id qcom_scm_dt_match[] = {
- };
- MODULE_DEVICE_TABLE(of, qcom_scm_dt_match);
- 
-+static const struct platform_device_id qcom_scm_id_table[] = {
-+	{ .name = "qcom-scm" },
-+	{}
-+};
-+
- static struct platform_driver qcom_scm_driver = {
- 	.driver = {
- 		.name	= "qcom_scm",
-@@ -2076,11 +2085,59 @@ static struct platform_driver qcom_scm_driver = {
- 	},
- 	.probe = qcom_scm_probe,
- 	.shutdown = qcom_scm_shutdown,
-+	.id_table = qcom_scm_id_table,
- };
- 
-+static bool is_qcom_machine(void)
-+{
-+	struct device_node *np __free(device_node) = NULL;
-+	struct property *prop;
-+	const char *name;
-+
-+	np = of_find_node_by_path("/");
-+	if (!np)
-+		return false;
-+
-+	of_property_for_each_string(np, "compatible", prop, name)
-+		if (!strncmp("qcom,", name, 5))
-+			return true;
-+
-+	return false;
-+}
-+
- static int __init qcom_scm_init(void)
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+index 8505d5e241e1..c2db0a1c132b 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+@@ -3689,6 +3689,7 @@ void mlx5_fs_core_free(struct mlx5_core_dev *dev)
+ int mlx5_fs_core_alloc(struct mlx5_core_dev *dev)
  {
--	return platform_driver_register(&qcom_scm_driver);
-+	struct device_node *np __free(device_node) = NULL;
-+	struct platform_device *pdev;
-+	int ret;
-+
-+	ret = platform_driver_register(&qcom_scm_driver);
-+	if (ret)
-+		return ret;
-+
-+	/* Some devicetrees representing Qualcomm Technologies, Inc. SoCs are
-+	 * missing the SCM node. Find out if we don't have a SCM node *and*
-+	 * we are a Qualcomm-compatible SoC. If yes, then create a platform
-+	 * device for the SCM driver. Assume scanning the root compatible for
-+	 * "qcom," vendor prefix will be faster than searching for the
-+	 * SCM DT node.
-+	 */
-+	if (!is_qcom_machine())
-+		return 0;
-+
-+	np = of_find_matching_node_and_match(NULL, qcom_scm_dt_match, NULL);
-+	if (np)
-+		return 0;
-+
-+	pdev = platform_device_alloc(qcom_scm_id_table[0].name, PLATFORM_DEVID_NONE);
-+	if (!pdev)
-+		return -ENOMEM;
-+
-+	ret = platform_device_add(pdev);
-+	if (ret)
-+		platform_device_put(pdev);
-+
-+	return ret;
- }
- subsys_initcall(qcom_scm_init);
+ 	struct mlx5_flow_steering *steering;
++	char name[80];
+ 	int err = 0;
  
-
----
-base-commit: 2adcf3941db724e1750da7094c34431d9b6b7fcb
-change-id: 20240917-scm-pdev-bc8db85fad05
-
-Best regards,
+ 	err = mlx5_init_fc_stats(dev);
+@@ -3713,10 +3714,12 @@ int mlx5_fs_core_alloc(struct mlx5_core_dev *dev)
+ 	else
+ 		steering->mode = MLX5_FLOW_STEERING_MODE_DMFS;
+ 
+-	steering->fgs_cache = kmem_cache_create("mlx5_fs_fgs",
++	snprintf(name, sizeof(name), "%s-mlx5_fs_fgs", dev_name(dev->device));
++	steering->fgs_cache = kmem_cache_create(name,
+ 						sizeof(struct mlx5_flow_group), 0,
+ 						0, NULL);
+-	steering->ftes_cache = kmem_cache_create("mlx5_fs_ftes", sizeof(struct fs_fte), 0,
++	snprintf(name, sizeof(name), "%s-mlx5_fs_ftes", dev_name(dev->device));
++	steering->ftes_cache = kmem_cache_create(name, sizeof(struct fs_fte), 0,
+ 						 0, NULL);
+ 	if (!steering->ftes_cache || !steering->fgs_cache) {
+ 		err = -ENOMEM;
 -- 
-Elliot Berman <quic_eberman@quicinc.com>
+2.42.0
 
 
