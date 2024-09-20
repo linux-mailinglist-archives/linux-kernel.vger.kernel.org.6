@@ -1,115 +1,140 @@
-Return-Path: <linux-kernel+bounces-334470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812E097D7A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:44:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F7E097D7A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3F4F1C2188E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:44:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5727B28692F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D5C17B500;
-	Fri, 20 Sep 2024 15:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C99617C9F1;
+	Fri, 20 Sep 2024 15:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AnGkxcx5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c6kgXt/a"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F5E1E521;
-	Fri, 20 Sep 2024 15:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFC61E521
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726847077; cv=none; b=NfVA5RPHeNpr4gH2yDRHMG3l4rz1lf81BTmV7ScRkcIzSRROFeg+Hpa0n35qpWnC8CXw6aHZ6QLaIRPzu99ZzpIw+14jR2YXTMAPCC6jarOzGNxBjTr93SA2cgYzUrQ2kFTbpO5TjQNR10X4Vc8RZbOgA8XZ3gEAAB4u+1+86NI=
+	t=1726847071; cv=none; b=FABHj45mD+sWfRTG3VTuXAu9IZRy3DeTVKmxAdSQrT8n3p6B0R6TZZ0wdHqDBfOTr4Ty5N0VkVkM9LWCsIbRLvu+6jZ3I0hs+ZGFEZMhwnVH66K5rno4TjGJO+/FS+f2E740zL54yPYPZQQf2IcsxRD9/Zh3Z/ZBVaeOPHxnq/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726847077; c=relaxed/simple;
-	bh=fNcqIZINSyW+JPIfzlbqlSq/4aL6iT1F4ezJEhbY3nk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QaicI1B/yEJRlq8O8EB/WPlxc7suebudiwCosT5mSdhq2B6/r8OO1oQLKlgrVk36ZdndEt1K6LIQLtirYAy/MCTmEQjDoH1ibQHY0j9qyLA4lymMUkCsALi4FrckAtDdZfT6dPC4jCZ8rALckPiUUrHAUF14Aec78tFnVXIK6qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AnGkxcx5; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726847076; x=1758383076;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=fNcqIZINSyW+JPIfzlbqlSq/4aL6iT1F4ezJEhbY3nk=;
-  b=AnGkxcx5FEuTOJpjW1CymIK6VIPO8+TgUl+6LjsO7FJZoTOfj1wRm64F
-   wzB1Dy5eE5VD0lOYz30H04d1rVWDekent0r4s567moHAhY65/4tRI614q
-   cxTV8VeFJFsPO3P8nLqRjQrgQw1N0J2C5HhMTUJgELef75FrP+fnMK8dE
-   a2+wwqAwLdLhtd9K5kBN7RoIVzV4Cwhgkprj/VkACWgr5ecEe0RNpy/R5
-   tSOuV5hkN46lIBo4T8cFHnpuW70D1FGrM3mrZT5XdJ5VQc8e7YyHgXQBA
-   hKlmelAjz92RRUJTEEiq7hUV9AqVswcFs8VvllngrlXnzGtog5UfRRDn/
-   A==;
-X-CSE-ConnectionGUID: XQ/lm3tBTf6Gem1Sbg3esg==
-X-CSE-MsgGUID: JE2lBPIvROa+TjKljZ5AYg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11201"; a="25686953"
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="25686953"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 08:44:35 -0700
-X-CSE-ConnectionGUID: XZlebMGSTBmRTJhcX+DO0w==
-X-CSE-MsgGUID: MwPH0EQnR42ZPGb6+5We2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="70493941"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa008.fm.intel.com with ESMTP; 20 Sep 2024 08:44:33 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 819911C2; Fri, 20 Sep 2024 18:44:32 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Parker Newman <pnewman@connecttech.com>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Cc: Jiri Slaby <jirislaby@kernel.org>
-Subject: [PATCH v1 1/1] serial: 8250_exar: Group CTI EEPROM offsets by device
-Date: Fri, 20 Sep 2024 18:43:24 +0300
-Message-ID: <20240920154430.3323820-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1726847071; c=relaxed/simple;
+	bh=L4F9t9eX2mGkrFvAoAO4WcKWW0cmDO9vUJ06dP3REH4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NhNU2QObrZrNlfBU0AIl7aJ5qsFsyDmCR5K0Yh28vMvoKuRcbtPk5dl3Mb7385UriecGrgnlk/RL3zgp4enXzGtisLyJfS8qNG8gzORf/bGf7y8anpkl67Feko++TlPXurVtJUy3FUjgRT2zd4VW1w2L1aArRGGZEJ1nE3ElQes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c6kgXt/a; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726847068;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tuUFCphhzHU/5+RQPnqBt9ZmoF79wTTTNRlLo/sGdJo=;
+	b=c6kgXt/acPGlGfAC1oNRjDmfaJUagMQlm4ZQ+BIEOLJWMRIzxAxKNVznQL0wyUtqJq3BuS
+	g7x/62cPcsYjx4ENdlg8vx398E7YbCC1VnRRqXKX/Az8LXMaV9VZj56738JTc+BqRjg+mX
+	EQXv4++xWoJSWWSay9ba67ph/pwO7B8=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-62-UyipB_pMMiqs5u6zSbBI3g-1; Fri,
+ 20 Sep 2024 11:44:26 -0400
+X-MC-Unique: UyipB_pMMiqs5u6zSbBI3g-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A44BD19137AA;
+	Fri, 20 Sep 2024 15:44:25 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.45.225.184])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 90AAA19560AF;
+	Fri, 20 Sep 2024 15:44:23 +0000 (UTC)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: kvm@vger.kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>
+Cc: Jan Richter <jarichte@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: selftests: x86: Avoid using SSE/AVX instructions
+Date: Fri, 20 Sep 2024 17:44:22 +0200
+Message-ID: <20240920154422.2890096-1-vkuznets@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-It's not obvious from the first glance that the list of the CTI EEPROM
-offsets covers three different models, let's group them accordingly for
-better readability.
+Some distros switched gcc to '-march=x86-64-v3' by default and while it's
+hard to find a CPU which doesn't support it today, many KVM selftests fail
+with
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+  ==== Test Assertion Failure ====
+    lib/x86_64/processor.c:570: Unhandled exception in guest
+    pid=72747 tid=72747 errno=4 - Interrupted system call
+    Unhandled exception '0x6' at guest RIP '0x4104f7'
+
+The failure is easy to reproduce elsewhere with
+
+   $ make clean && CFLAGS='-march=x86-64-v3' make -j && ./x86_64/kvm_pv_test
+
+The root cause of the problem seems to be that with '-march=x86-64-v3' GCC
+uses AVX* instructions (VMOVQ in the example above) and without prior
+XSETBV() in the guest this results in #UD. It is certainly possible to add
+it there, e.g. the following saves the day as well:
+
+diff --git a/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c b/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c
+index 78878b3a2725..704668adb3bd 100644
+--- a/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c
++++ b/tools/testing/selftests/kvm/x86_64/kvm_pv_test.c
+@@ -82,8 +82,17 @@ static void test_hcall(struct hcall_data *hc)
+
+ static void guest_main(void)
+ {
++	uint64_t cr4, xcr0;
+        int i;
+
++	cr4 = get_cr4();
++	cr4 |= X86_CR4_OSXSAVE;
++	set_cr4(cr4);
++
++	xcr0 = xgetbv(0);
++	xcr0 |= XFEATURE_MASK_SSE | XFEATURE_MASK_YMM;
++	xsetbv(0x0, xcr0);
++
+        for (i = 0; i < ARRAY_SIZE(msrs_to_test); i++) {
+                test_msr(&msrs_to_test[i]);
+        }
+
+but this needs to be made conditional depending on the compilation target
+and added to all selftests. Slap a band-aid on the problem by forcing
+'-march=x86-64-v2' in Makefile.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
+ tools/testing/selftests/kvm/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-Parker, feel free to append this one to your v3 as a last patch.
-
- drivers/tty/serial/8250/8250_exar.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
-index b7a75db15249..072eb2bff01a 100644
---- a/drivers/tty/serial/8250/8250_exar.c
-+++ b/drivers/tty/serial/8250/8250_exar.c
-@@ -179,11 +179,13 @@
- 
- /* CTI EEPROM offsets */
- #define CTI_EE_OFF_XR17C15X_OSC_FREQ	0x04  /* 2 words */
--#define CTI_EE_OFF_XR17V25X_OSC_FREQ	0x08  /* 2 words */
- #define CTI_EE_OFF_XR17C15X_PART_NUM	0x0A  /* 4 words */
--#define CTI_EE_OFF_XR17V25X_PART_NUM	0x0E  /* 4 words */
- #define CTI_EE_OFF_XR17C15X_SERIAL_NUM	0x0E  /* 1 word */
-+
-+#define CTI_EE_OFF_XR17V25X_OSC_FREQ	0x08  /* 2 words */
-+#define CTI_EE_OFF_XR17V25X_PART_NUM	0x0E  /* 4 words */
- #define CTI_EE_OFF_XR17V25X_SERIAL_NUM	0x12  /* 1 word */
-+
- #define CTI_EE_OFF_XR17V35X_SERIAL_NUM	0x11  /* 2 word */
- #define CTI_EE_OFF_XR17V35X_BRD_FLAGS	0x13  /* 1 word */
- #define CTI_EE_OFF_XR17V35X_PORT_FLAGS	0x14  /* 1 word */
+diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+index 48d32c5aa3eb..3f1b24ed7245 100644
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@ -238,6 +238,7 @@ CFLAGS += -Wall -Wstrict-prototypes -Wuninitialized -O2 -g -std=gnu99 \
+ 	-fno-stack-protector -fno-PIE -I$(LINUX_TOOL_INCLUDE) \
+ 	-I$(LINUX_TOOL_ARCH_INCLUDE) -I$(LINUX_HDR_PATH) -Iinclude \
+ 	-I$(<D) -Iinclude/$(ARCH_DIR) -I ../rseq -I.. $(EXTRA_CFLAGS) \
++	-march=x86-64-v2 \
+ 	$(KHDR_INCLUDES)
+ ifeq ($(ARCH),s390)
+ 	CFLAGS += -march=z10
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+2.46.0
 
 
