@@ -1,109 +1,106 @@
-Return-Path: <linux-kernel+bounces-334471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8342997D7A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:45:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD82597D7D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B570C1C2188E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:45:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF9241C2135B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE4917C9B9;
-	Fri, 20 Sep 2024 15:44:57 +0000 (UTC)
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDE576026;
+	Fri, 20 Sep 2024 15:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VrRHAjAW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E4017A583;
-	Fri, 20 Sep 2024 15:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76011176AC5;
+	Fri, 20 Sep 2024 15:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726847097; cv=none; b=uj9gApMf9ito0lm+vDdqh00FhQuOF/z28v3PgTj9c0cMQMti3lKL5FnigfC70EdTvGet5Xyg+Zsn5JIdiFwB88NRCuQL8an4hI8r1/xLHtgZEwM1achrsrI3KjE8dVgZTMcYB27InN5paK3p6cUsS3WMj8uh/vcF+EfPk3GksKk=
+	t=1726847195; cv=none; b=Spr6DRVo3kF7BB4CBM6G2b4dyTTbtqGMkZWRH0TJ/VDqo14lICrkCvc2SmUkJSsy0HgC2yWTMCwgrTfkr07SBKCvXFA6rdZkSLGbXpyhOgJEHnma2je0Y+GtJByUR2M9lTSu515ieBOgmFpRezE+731AYVYhWPk/Arm5l0xhrKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726847097; c=relaxed/simple;
-	bh=2ajiJnj03HskaA66gwpS2jYabSCyPSFwBxxZ1ZM1FQc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jdlyEU1BpIdr8zQnuxjjuVBBNQcH522EMB6pkYgAXz/IWh803LEuwzJH43TKbSEyWAh6ZV/QY3Hpz6b430bW1RYLuWzoV/gTKfFkxaT6Q0h77nospEXhwKIZo3kd20EAQkXvf8m1NBPCcZGaLzeBE1TR0y0FiQf4fogvi7kDDBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7A2801F7F1;
-	Fri, 20 Sep 2024 15:44:53 +0000 (UTC)
-Authentication-Results: smtp-out2.suse.de;
-	none
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1FBC413AE1;
-	Fri, 20 Sep 2024 15:44:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id izqLBnWY7WZuYwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 20 Sep 2024 15:44:53 +0000
-Date: Fri, 20 Sep 2024 17:45:44 +0200
-Message-ID: <87ed5enxav.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com
-Subject: Re: [PATCH] ALSA: Drop explicit initialization of struct i2c_device_id::driver_data to 0
-In-Reply-To: <20240920151009.499188-2-u.kleine-koenig@baylibre.com>
-References: <20240920151009.499188-2-u.kleine-koenig@baylibre.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1726847195; c=relaxed/simple;
+	bh=Engf6z76qpKlNEPMOZLUg9FwBGasCOqP5Xndi5tcOEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DIVQV1nwFBtrUFUERjAeTGzaXtUiLgdZB0bzxm3FfuveHv8ixI83nZdeqLT0+Ts9RLuPAw8TqxTzLGPyg3O6zph5t/Fj/DDO9wm59HQpkRJ+BhxTKFV27Ytzdfp3E8ra4dMbFvNIZpv7etVi9cCm/cdMypyf4yTL5Rff1bH60NQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VrRHAjAW; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726847194; x=1758383194;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Engf6z76qpKlNEPMOZLUg9FwBGasCOqP5Xndi5tcOEQ=;
+  b=VrRHAjAW8zWrvXjOgl6EX27UXSxOiOGoami2xqQoHP/Jrnf1nmFezq2o
+   5Dt0/c/0V2ZGOelhKkX2eadH5ehJ3nWd9jUwX9jXwMfadiOP0mISpv6dD
+   VAk1Ti0lMmMrkWrwHV15R7TFEYpYy5ql+xc6JgapGOkF8F6S0tkJe4m0U
+   U5x8JGC74hvjgAqCgPNSFn2l3fEQdNk+bK81pfEkQKto0Ho/X2MzfznJG
+   74zaRg3nyclPejeam4oivMsb3Q4kXOrdd6E+nXTeO68LiOxTa8/1U2/VD
+   fR7zHMdGt1gkIIKeYaHPqO+gvn7/tJTn3V7q6UHkj37m0kvDCyCVCoJap
+   w==;
+X-CSE-ConnectionGUID: W6L/cyJSRtaD7G1bRoc0gw==
+X-CSE-MsgGUID: hOnh+V0uTnCK5iPQIF4Pow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11201"; a="26006032"
+X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
+   d="scan'208";a="26006032"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 08:46:33 -0700
+X-CSE-ConnectionGUID: VwO/chKUTpu5flE5yDl3JQ==
+X-CSE-MsgGUID: 8R1P82BVQV6VIc9RNhayAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
+   d="scan'208";a="70345991"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 08:46:31 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1srfq0-0000000Axm7-3G6Z;
+	Fri, 20 Sep 2024 18:46:28 +0300
+Date: Fri, 20 Sep 2024 18:46:28 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Parker Newman <parker@finest.io>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v2 3/4] serial: 8250_exar: Replace custom EEPROM read
+ with eeprom_93cx6
+Message-ID: <Zu2Y1HlX8JqvJg-z@smile.fi.intel.com>
+References: <cover.1726838531.git.pnewman@connecttech.com>
+ <87719d2113970b6ff4979329fb96346a0aca9775.1726838531.git.pnewman@connecttech.com>
+ <Zu2UEAY1jweup6tS@smile.fi.intel.com>
+ <20240920114221.57da8890@SWDEV2.connecttech.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	REPLY(-4.00)[]
-X-Spam-Score: -4.00
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 7A2801F7F1
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240920114221.57da8890@SWDEV2.connecttech.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, 20 Sep 2024 17:10:08 +0200,
-Uwe Kleine-König wrote:
-> 
-> These drivers don't use the driver_data member of struct i2c_device_id,
-> so don't explicitly initialize this member.
-> 
-> This prepares putting driver_data in an anonymous union which requires
-> either no initialization or named designators. But it's also a nice
-> cleanup on its own.
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+On Fri, Sep 20, 2024 at 11:42:21AM -0400, Parker Newman wrote:
+> On Fri, 20 Sep 2024 18:26:08 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Thanks, applied.
+...
+
+> I will fix in v3. In this case should I drop your Reviewed-by tag?
+> Or is this change small enough to keep it?
+
+I'm glad you asked. As you rightfully noted, this one is small, no need
+to drop tag.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Takashi
 
