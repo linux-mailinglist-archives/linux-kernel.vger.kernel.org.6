@@ -1,181 +1,195 @@
-Return-Path: <linux-kernel+bounces-334048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB78997D1EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:44:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F22B97D1FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27CB11F212A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:44:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28E48283E35
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3470552F9E;
-	Fri, 20 Sep 2024 07:44:25 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFC4558BB;
+	Fri, 20 Sep 2024 07:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KYGodaCf"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC98487AE;
-	Fri, 20 Sep 2024 07:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38041C69D;
+	Fri, 20 Sep 2024 07:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726818264; cv=none; b=Nh3lml1jqelSSk8lC6pDH6Z7AS/lqJaIO96zdmIx3Q1Fv7J6fGylyuvZrNgc9NB99UFA78thG51Tztg3eshiymKh9q5VtNWaXtl6QtxisBYxI2p50lyMkHPACNo1RyJ+OWNBBBmbr1xLGn9CKZ7SzGV3RN8EIaMxzEr7v9FLBNA=
+	t=1726818479; cv=none; b=jyW7Qg+QSs0ieBZNANZUEC7DrtWGJZQXMhO632aqlmynbYm+faTtj3+Op+Ly8/W/VQ6AqmtLfrhl4OFcDy+SqSCkQl3ohXeDv2AgSDs2lMwDARz4Q0Czuv6Tp6fZrMnnmjZJhrNoKdF9CONb4yY8esN28v+4fiJm+pZH7Cl6HX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726818264; c=relaxed/simple;
-	bh=YWSUNT3mvy5KQhGTIciRDN7UKP2afgrsJvQq8zmHzK4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PufguUwz1/g8nS44aEMdaCftNrOkHCU9Qkp8KbjDf4tpmWteU8Rqec36WeouHMUkhDQG1Aw4xWg2V2EEvgiKQv9Th2W9Ih3FzrvmQdmxb4Dep/DPxkSAh+yykoRA2VfM//T9zV48mgwU5X4udfMoaZQeg4vB253zZkah0m9OqZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4X93f45jyVz9v7JM;
-	Fri, 20 Sep 2024 15:18:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 4A055140F86;
-	Fri, 20 Sep 2024 15:44:09 +0800 (CST)
-Received: from [10.45.149.49] (unknown [10.45.149.49])
-	by APP2 (Coremail) with SMTP id GxC2BwAHt8e6J+1m+mBJAQ--.61459S2;
-	Fri, 20 Sep 2024 08:44:08 +0100 (CET)
-Message-ID: <16c2aba7-212d-4612-8cea-50c64626d8f3@huaweicloud.com>
-Date: Fri, 20 Sep 2024 09:43:52 +0200
+	s=arc-20240116; t=1726818479; c=relaxed/simple;
+	bh=CLcNs5kqxdJgt6qP0MB0cAqrax1hjoWqC8oMfdnbPjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SS5vj8qNXX7C3d0fw4knuChV3wh2erOzbCaHSFFKW8ZQDmQ1F6EL4DdeoH2oqnBFHS6YMohWrprQ50d1+J1sYpu9QmdWovtJbpCutLtWLtGdGw3Gf6CgJDkrrmhoGBQRSKmbua1wg8qefvpmMWJfi65CcPVq5ekc0JsrpKlHWUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KYGodaCf; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6971720d-3639-4a80-a17b-48489bfadb0a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1726818473;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uC/xou3pHrirAtgbyCjJ2O1AHcinEj0qAI+WR7A8lTc=;
+	b=KYGodaCffMFwqwLEfA4IqIH3uk/AnNk6I2VQtOvd++oA2wUT3KPdcVbDa6mY4Qk/lPSzJC
+	86DpiFjAfgoyIdJK0xIV2AEBLy3SGxJ8xBeFl6vjg+wCUCMomZv1TZmO95cOIuyhWL33YP
+	x3S890mP2ZKOQQfmFYc5+Nq2htVhZS0=
+Date: Fri, 20 Sep 2024 15:47:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] hazptr: Add initial implementation of hazard
- pointers
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-To: Jann Horn <jannh@google.com>, Boqun Feng <boqun.feng@gmail.com>,
- "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
- lkmm@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Kent Overstreet <kent.overstreet@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Neeraj Upadhyay <neeraj.upadhyay@amd.com>, lkmm@lists.linux.dev
-References: <20240917143402.930114-1-boqun.feng@gmail.com>
- <20240917143402.930114-2-boqun.feng@gmail.com>
- <CAG48ez0VN8oZcqhdzkWQgNv6bwUN=MUu5EacLg5iPvMQL+R-Qg@mail.gmail.com>
- <abf4a899-e53e-41ac-91d6-1865ffeff5c6@huaweicloud.com>
-In-Reply-To: <abf4a899-e53e-41ac-91d6-1865ffeff5c6@huaweicloud.com>
+Subject: Re: [MAINLINE 2/2] rds: ib: Add Dynamic Interrupt Moderation to CQs
+To: =?UTF-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ Allison Henderson <allison.henderson@oracle.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, rds-devel@oss.oracle.com
+References: <20240918083552.77531-1-haakon.bugge@oracle.com>
+ <20240918083552.77531-3-haakon.bugge@oracle.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20240918083552.77531-3-haakon.bugge@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwAHt8e6J+1m+mBJAQ--.61459S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxur15GryfGF17Kw43Kr4xXrb_yoW5AF13pr
-	y8tF4UJryDJr1fAw1UXr1UX34UAr13J3WUJrn5WFyUJFWxGr1Igr1UXr1jgr1DAr4kJr1U
-	tr1UXr9xZry5XrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v2
-	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07
-	jzE__UUUUU=
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+X-Migadu-Flow: FLOW_OUT
 
+在 2024/9/18 16:35, Håkon Bugge 写道:
+> With the support from ib_core to use Dynamic Interrupt Moderation
+> (DIM) from legacy ULPs, which uses ib_create_cq(), we enable that
+> feature for the receive and send CQs in RDS.
 
+Hi, Haakon
 
-Am 9/19/2024 um 10:30 PM schrieb Jonas Oberhauser:
-> 
-> 
-> 
-> Am 9/19/2024 um 2:12 AM schrieb Jann Horn:
->> On Tue, Sep 17, 2024 at 4:33 PM Boqun Feng <boqun.feng@gmail.com> wrote:
->>> Hazard pointers [1] provide a way to dynamically distribute refcounting
->>> and can be used to improve the scalability of refcounting without
->>> significant space cost.
->>
->>> +static inline void *__hazptr_tryprotect(hazptr_t *hzp,
->>> +                                       void *const *p,
->>> +                                       unsigned long head_offset)
->>> +{
->>> +       void *ptr;
->>> +       struct callback_head *head;
->>> +
->>> +       ptr = READ_ONCE(*p);
->>> +
->>> +       if (ptr == NULL)
->>> +               return NULL;
->>> +
->>> +       head = (struct callback_head *)(ptr + head_offset);
->>> +
->>> +       WRITE_ONCE(*hzp, head);
->>> +       smp_mb();
->>> +
->>> +       ptr = READ_ONCE(*p); // read again
->>> +
->>> +       if (ptr + head_offset != head) { // pointer changed
->>> +               WRITE_ONCE(*hzp, NULL);  // reset hazard pointer
->>> +               return NULL;
->>> +       } else
->>> +               return ptr;
->>> +}
->>
->> I got nerdsniped by the Plumbers talk. So, about that smp_mb()...
->>
->> I think you should be able to avoid the smp_mb() using relaxed atomics
->> (on architectures that have those), at the cost of something like a
->> cmpxchg-acquire sandwiched between a load-acquire and a relaxed load?
->> I'm not sure how their cost compares to an smp_mb() though.
-> 
-> 
-> 
-> We have done a similar scheme before, and on some architectures (not 
-> x86) the RMW is slightly cheaper than the mb.
-> 
-> Your reasoning is a bit simplified because it seems to assume a stronger 
-> concept of ordering than LKMM has, but even with LKMM's ordering your 
-> code seems fine.
-> 
-> I feel it can even be simplified a little, the hazard bit does not seem 
-> necessary.
-> 
-> Assuming atomic operations for everything racy, relaxed unless stated 
-> otherwise:
-> 
-> (R)eader:
-> 
->     old = read p // I don't think this needs acq, because of address 
-> dependencies (*)
->     haz ||=_acq old
->     if (read p != old) retry;
+I am interested in this patch series. I just wonder if the performance 
+of rds is increased after DIM is used in legacy ULPs?
+That is, is there any benefit to legacy ULPs after DIM is used?
 
-I realized before going to bed that I copied a subtle mistake here from 
-Jann's code, we need an address dependency from this read, or it is not 
-ABA safe.
-This can be done with the small detour that Boqun used:
+Do you have any test results about this DIM?
 
-      head = read p // I don't think this needs acq, because of address 
-dependencies (*)
-      haz ||=_acq head
-      old = read p // again
-      if (head != old) retry;
-      barrier(); // ensure compiler does not use its knowledge that head 
-== old to do *head instead!
-      *old // definitely use the second read pointer so hardware can't 
-speculatively dereference this before the second read!
+Thanks,
+Zhu Yanjun
 
-
-Have a good time,
-   jonas
+> 
+> A set of rds-stress runs have been done. bcopy read + write for
+> payload 8448 and 16640 bytes and ack/req of 256 bytes. Number of QPs
+> varies from 8 to 128, number of threads (i.e. rds-stress processes)
+> from one to 16 and a depth of four. A limit has been applied such that
+> the number of processes times the number of QPs never exceeds 128. All
+> in all, 61 rds-stress runs.
+> 
+> For brevity, only the rows showing a +/- 3% deviation or larger from
+> base is listed. The geometric mean of the ratios (IOPS_test /
+> IOPS_base) is calculated for all 61 runs, and that gives the best
+> possible "average" impact of the commits.
+> 
+> In the following, "base" is v6.11-rc7. "test" is the same
+> kernel with the following two commits:
+> 
+>         * rds: ib: Add Dynamic Interrupt Moderation to CQs (this commit)
+>         * RDMA/core: Enable legacy ULPs to use RDMA DIM
+> 
+> This is executed between two X8-2 with CX-5 using fw 16.35.3502. These
+> BM systems were instantiated with one VF, which were used for the
+> test:
+> 
+>                                   base     test
+>     ACK    REQ  QPS  THR  DEP     IOPS     IOPS  Percent
+>     256   8448    8    1    4   634463   658162      3.7
+>     256   8448    8    2    4   862648   997358     15.6
+>     256   8448    8    4    4   950458  1113991     17.2
+>     256   8448    8    8    4   932120  1127024     20.9
+>     256   8448    8   16    4   944977  1133885     20.0
+>    8448    256    8    2    4   858663   975563     13.6
+>    8448    256    8    4    4   934884  1098854     17.5
+>    8448    256    8    8    4   928247  1116015     20.2
+>    8448    256    8   16    4   938864  1123455     19.7
+>     256   8448   64    1    4   965985   918445     -4.9
+>    8448    256   64    1    4   963280   918239     -4.7
+>     256  16640    8    2    4   544670   582330      6.9
+>     256  16640    8    4    4   554873   597553      7.7
+>     256  16640    8    8    4   551799   597479      8.3
+>     256  16640    8   16    4   553041   597898      8.1
+>   16640    256    8    2    4   544644   578331      6.2
+>   16640    256    8    4    4   553944   594627      7.3
+>   16640    256    8    8    4   551388   594737      7.9
+>   16640    256    8   16    4   552986   596581      7.9
+> Geometric mean of ratios: 1.03
+> 
+> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+> ---
+>   net/rds/ib_cm.c | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/net/rds/ib_cm.c b/net/rds/ib_cm.c
+> index 26b069e1999df..79603d86b6c02 100644
+> --- a/net/rds/ib_cm.c
+> +++ b/net/rds/ib_cm.c
+> @@ -259,6 +259,7 @@ static void rds_ib_cq_comp_handler_recv(struct ib_cq *cq, void *context)
+>   static void poll_scq(struct rds_ib_connection *ic, struct ib_cq *cq,
+>   		     struct ib_wc *wcs)
+>   {
+> +	int ncompleted = 0;
+>   	int nr, i;
+>   	struct ib_wc *wc;
+>   
+> @@ -276,7 +277,10 @@ static void poll_scq(struct rds_ib_connection *ic, struct ib_cq *cq,
+>   				rds_ib_mr_cqe_handler(ic, wc);
+>   
+>   		}
+> +		ncompleted += nr;
+>   	}
+> +	if (cq->dim)
+> +		rdma_dim(cq->dim, ncompleted);
+>   }
+>   
+>   static void rds_ib_tasklet_fn_send(unsigned long data)
+> @@ -304,6 +308,7 @@ static void poll_rcq(struct rds_ib_connection *ic, struct ib_cq *cq,
+>   		     struct ib_wc *wcs,
+>   		     struct rds_ib_ack_state *ack_state)
+>   {
+> +	int ncompleted = 0;
+>   	int nr, i;
+>   	struct ib_wc *wc;
+>   
+> @@ -316,7 +321,10 @@ static void poll_rcq(struct rds_ib_connection *ic, struct ib_cq *cq,
+>   
+>   			rds_ib_recv_cqe_handler(ic, wc, ack_state);
+>   		}
+> +		ncompleted += nr;
+>   	}
+> +	if (cq->dim)
+> +		rdma_dim(cq->dim, ncompleted);
+>   }
+>   
+>   static void rds_ib_tasklet_fn_recv(unsigned long data)
+> @@ -542,6 +550,7 @@ static int rds_ib_setup_qp(struct rds_connection *conn)
+>   	ic->i_scq_vector = ibdev_get_unused_vector(rds_ibdev);
+>   	cq_attr.cqe = ic->i_send_ring.w_nr + fr_queue_space + 1;
+>   	cq_attr.comp_vector = ic->i_scq_vector;
+> +	cq_attr.flags |= IB_CQ_MODERATE;
+>   	ic->i_send_cq = ib_create_cq(dev, rds_ib_cq_comp_handler_send,
+>   				     rds_ib_cq_event_handler, conn,
+>   				     &cq_attr);
+> @@ -556,6 +565,7 @@ static int rds_ib_setup_qp(struct rds_connection *conn)
+>   	ic->i_rcq_vector = ibdev_get_unused_vector(rds_ibdev);
+>   	cq_attr.cqe = ic->i_recv_ring.w_nr;
+>   	cq_attr.comp_vector = ic->i_rcq_vector;
+> +	cq_attr.flags |= IB_CQ_MODERATE;
+>   	ic->i_recv_cq = ib_create_cq(dev, rds_ib_cq_comp_handler_recv,
+>   				     rds_ib_cq_event_handler, conn,
+>   				     &cq_attr);
 
 
