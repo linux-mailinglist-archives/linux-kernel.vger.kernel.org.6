@@ -1,355 +1,191 @@
-Return-Path: <linux-kernel+bounces-334574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE5A97D910
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8505697D90F
 	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 757852826C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:33:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05F831F235D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CFC17F389;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7A817E47A;
 	Fri, 20 Sep 2024 17:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="vP26Pdae"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uLa9Iq+y"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6946B27466;
-	Fri, 20 Sep 2024 17:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702D7376E0
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 17:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726853609; cv=none; b=pIdocZngUciwwBTlaamfSrODCPqa+sM6nRxsQVXjXdwsBSGK6Qrx/r90a0RzsiN64oH2EAgivUJ/BbNdMOOuTeBpFJxUOavwlQoR9G9j8b2I4TRJCX70FPoexurZfAQld0a9I+QrJ3I+vuaQlT8S0BkB3jbxWagubfBZ86yp78Q=
+	t=1726853610; cv=none; b=oRJ7BageIgStySnpIH6AUgiG/nBEMwV3AP2R+h7GC5thTENbsfDLFygdgrQAIRU5J0eClh5cW6hFKmuryp8HFBrJf0d2Vdv+WDUvP/a46nHguMKy85K2AcC7c6YCwlJNCG65DAKZTeS3AxSf4OEytHdp4aLAu8DcJKxci1DyDEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726853609; c=relaxed/simple;
-	bh=Y6lxOub/26ndx8n1Lj3on6tzWH6EjcfJkpByenSLYWA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=naFxpz5ft8J8QkaG6AT96hPggzvnh1Hv0SSBk5cobTtUsLn62A8he8IwU+GuUMtqfqNKANjjyQIWcf4Wch/K9226q33e0j7l13bXvzsQSu/xfPizSrXInepVTLARn7jvabCMYXre/e99P227K2L26Cb4UvVvgVD57IxAntDxaLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=vP26Pdae; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 59DC8100008;
-	Fri, 20 Sep 2024 20:33:15 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 59DC8100008
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1726853595;
-	bh=mfVfaUmGMTdMZo6H7znn440n/Ednn8LG0UZiPhBtyMA=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=vP26PdaeuP/oN/WtFkHLkmhcnUgTVA1R77+d4vCUT4o/LRI0BYzkIH3rq5KkXbuMi
-	 ohhLhCu2wP+Cf6zl9rRXCM4s9IQj3QbX+BdBQ6iwxNeba7Yo8DbFcdXG051GvrCz0i
-	 N2edmUjfItBAXmViPRXg1/D9S6Rgy2JAcr9b5VROnbyWa8riy61Gd9mUBuw9JVAg4+
-	 t421Xn0+5I8bxhGwHhNR/cWKjmyOGEVwGZX3NqMTkLAA3lxPyCD5y8ZY2ZdEOj55kA
-	 iVVTn8EPT8rfUYk9/kRnIIy5YYBCLfkNp9EguTSQ/fgnxOnXhG0tHu1MGb0AH/ldON
-	 Nciy8SoJzUiCw==
-Received: from smtp.sberdevices.ru (unknown [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri, 20 Sep 2024 20:33:15 +0300 (MSK)
-Date: Fri, 20 Sep 2024 20:33:12 +0300
-From: Igor Prusov <ivprusov@salutedevices.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<prusovigor@gmail.com>, <kernel@salutedevices.com>,
-	<linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/6] ASoC: codecs: Add NeoFidelity NTP8835 codec
-Message-ID: <20240920173312.mc2ylk4n3lliaelj@pc>
-References: <20240709172834.9785-1-ivprusov@salutedevices.com>
- <20240709172834.9785-7-ivprusov@salutedevices.com>
- <751ebf34-cd0d-4d3a-bf02-e25ca3dd350b@kernel.org>
+	s=arc-20240116; t=1726853610; c=relaxed/simple;
+	bh=1IlR2iZrx1TWLUUVujKhfxFMAELLRAU+i32cLvFkSvg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Q5v5GpcwyYpElJwl+OLxbxuSO/xZbGcBms5xTuo3l8cWiRSMD+m3/K5x7Zsu/Z8q6RtrGy5vFTYxR0p2abZYYaqOfIJ8tan9b1Mg2OkIXumQBtRvq8TnsxMj5xMr8eHRBEZ7dQg1XJoUQrKPziHbqTgsXxQp83ruQKzQsumAZNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uLa9Iq+y; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cd74c0d16so20618375e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 10:33:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726853606; x=1727458406; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6UUFhGcTyiJvlWI+WlBNBe2epzsWpe+JtKV2K/AcAmk=;
+        b=uLa9Iq+y2zz500I+S7qTrtoi5u02SKxSkBsp4IJ8Nktj6I15/rQZwDpP+/0PIJeUgC
+         z6XEjjWiDeAz0ySrQu0llV/+2K9eF/yIE+GmnCVX29J2G4cIh+CdyixQz43cohnnBgwO
+         x2RQ+2D6SkZZv9MMi12n3Ue/hwcomRBgu2wwb2eCBzJ5jzf2aoFBAaAWHMvN/mJz0xkN
+         /NWnCYDbFcMfvEfew5e8kQJQyFT1RT799iEb6UGAtN034cORmgCVG9Jk/LfjKDmB4/FF
+         LeWCkSGSd+WU2U1IggZzUkhAiJc0ukKRvjiGz/+uaKGRndQAFEIsppBEQ0nFcW4sb8nQ
+         /cYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726853606; x=1727458406;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6UUFhGcTyiJvlWI+WlBNBe2epzsWpe+JtKV2K/AcAmk=;
+        b=cvQJsQmPU91yppcICqLV91FRe1H0Jr98Cy5nI30DdiWfTs61Ezh+C2nWPh9nBeam5Q
+         OHG16J51841JYrNYqC14/PlC7U0uxvC7oOreTqb3jGf/ZRkALiu24sJVJI3KlGzULcuL
+         onky9E4egMQGkjyMdTQgBQhm6rzV6YA8JMLytia3GHHSvxm8+V/ARnKwYZJUBiqgBWqy
+         v2yHv9hp+HlorGAXHaUkS3zJpERmSyQEdOoAUfzs3PullV3s+NOyCKF1mqWtf85zOFwT
+         xt5ylU7W0HtWakCy9XbSqMWFLaTeBh4YXMDpwQLSKaXV/fquMGOl73rDi2B7gWs16e2M
+         y8FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVY23iwuhbwA03UjIpOUsClynWWUNDyc1UCnsXaVNIm8gl2hnKHi7JTFOuMYYhFxXo/MfaJEAt3hVYWDW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsdIkEk7TgOmP4oMkS3jIKB3rNPhHVqxBv19pAbIO/NrTfspw1
+	RflnHGOKXXEj9kDPBD8IfGxJigy1uK5QiUEHd1MzqW1uzFeRXhKjq+wWCN0tZ80=
+X-Google-Smtp-Source: AGHT+IGgCKLlGsFVnLPMMsSCnB8uD2rlgl4JGpdbipw0lqW+P0JA7xndJNxMakwiINiRxxfTey9q+w==
+X-Received: by 2002:a05:600c:1553:b0:42c:b180:d452 with SMTP id 5b1f17b1804b1-42e7ac4b610mr28776055e9.19.1726853605527;
+        Fri, 20 Sep 2024 10:33:25 -0700 (PDT)
+Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e780e029sm18111177f8f.116.2024.09.20.10.33.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 10:33:25 -0700 (PDT)
+From: Guillaume Stols <gstols@baylibre.com>
+Subject: [PATCH v2 00/10] Add iio backend compatibility for ad7606
+Date: Fri, 20 Sep 2024 17:33:20 +0000
+Message-Id: <20240920-ad7606_add_iio_backend_support-v2-0-0e78782ae7d0@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <751ebf34-cd0d-4d3a-bf02-e25ca3dd350b@kernel.org>
-X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 187889 [Sep 20 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.5
-X-KSMG-AntiSpam-Envelope-From: ivprusov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/09/20 14:03:00 #26646385
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOCx7WYC/4WOQW7CMBBFrxLNuka24yQuK+6BUDS2J2XUEgc7R
+ CCUu2PCAbp8f/H+e0KmxJRhXz0h0cKZ41hAf1Xgzzj+kOBQGLTURna6ERi6VrY9htAzx96h/6U
+ x9Pk2TTHNwhupatlg+60NFMmUaOD7dnA8fTjR9VZ+5s8IDjMJHy8XnveVdYS17SyqRinnCYPXg
+ xu0NU5K532DmgoFeLvOnOeYHlv7ojbZlmnVv5mLElIUfU3lRiGag8PHH7tEu5ICp3VdXyRD0Nc
+ bAQAA
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Michal Marek <mmarek@suse.com>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
+ aardelean@baylibre.com, dlechner@baylibre.com, 
+ Guillaume Stols <gstols@baylibre.com>, jstephan@baylibre.com
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726853604; l=4064;
+ i=gstols@baylibre.com; s=20240417; h=from:subject:message-id;
+ bh=1IlR2iZrx1TWLUUVujKhfxFMAELLRAU+i32cLvFkSvg=;
+ b=BkWA5UZ8sbnmCANhIMAVsLd2+kn0lyBQ/wmDqoeiqChuNU9MI4wLyBlKGIVmoeIkIMZWlUAnz
+ HBqJyUAgKfrBimDDhdOZCtUAJeQfvVoU3mTMM+xAWQRyPa8roudXHYd
+X-Developer-Key: i=gstols@baylibre.com; a=ed25519;
+ pk=XvMm5WHuV67sGYOJZqIYzXndbaJOlNd8Q6li6vnb4Cs=
 
-Hello Krzysztof,
+This series aims to add iio backend support for AD7606X ADCs.
 
-Thank you for review and apologies for late response. I'm about to send
-next version with all comments addressed, just wanted to ask some
-questions before.
+In a nutshell, iio backend is a paradigm to shift the logic establishing
+the connexion between iio buffers and backend buffers into the backend's
+driver.  This provides a more stable programming interface to the driver
+developers, and give more flexibility in the way the hardware communicates.
 
-On Wed, Jul 10, 2024 at 12:31:53PM +0200, Krzysztof Kozlowski wrote:
-> On 09/07/2024 19:28, Igor Prusov wrote:
-> > The NeoFidelity NTP8835 adn NTP8835C are 2.1 channel amplifiers with
-> > mixer and biquad filters. Both amplifiers have identical programming
-> > interfaces but differ in output signal characteristics.
-> > 
-> 
-> 
-> > +
-> > +#include <linux/kernel.h>
-> > +#include <linux/module.h>
-> > +#include <linux/moduleparam.h>
-> 
-> Where do you use moduleparam?
-> 
-> > +#include <linux/bits.h>
-> > +#include <linux/gpio.h>
-> 
-> And gpio?
-> 
-> > +#include <linux/slab.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_gpio.h>
-> 
-> And this?
-> 
-> Please clean up the driver first.
-> 
-> > +#include <linux/reset.h>
-> > +#include <linux/init.h>
-> > +#include <linux/i2c.h>
-> > +#include <linux/regmap.h>
-> > +
-> > +#include <sound/initval.h>
-> > +#include <sound/core.h>
-> > +#include <sound/pcm.h>
-> > +#include <sound/pcm_params.h>
-> > +#include <sound/soc.h>
-> > +#include <sound/soc-component.h>
-> > +#include <sound/tlv.h>
-> > +
-> > +#include "ntpfw.h"
-> > +
-> > +#define NTP8835_FORMATS     (SNDRV_PCM_FMTBIT_S16_LE | \
-> > +			     SNDRV_PCM_FMTBIT_S20_3LE | \
-> > +			     SNDRV_PCM_FMTBIT_S24_LE | \
-> > +			     SNDRV_PCM_FMTBIT_S32_LE)
-> > +
-> > +#define NTP8835_INPUT_FMT			0x0
-> > +#define  NTP8835_INPUT_FMT_MASTER_MODE		BIT(0)
-> > +#define  NTP8835_INPUT_FMT_GSA_MODE		BIT(1)
-> > +#define NTP8835_GSA_FMT				0x1
-> > +#define  NTP8835_GSA_BS_MASK			GENMASK(3, 2)
-> > +#define  NTP8835_GSA_BS(x)			((x) << 2)
-> > +#define  NTP8835_GSA_RIGHT_J			BIT(0)
-> > +#define  NTP8835_GSA_LSB			BIT(1)
-> > +#define NTP8835_SOFT_MUTE			0x26
-> > +#define  NTP8835_SOFT_MUTE_SM1			BIT(0)
-> > +#define  NTP8835_SOFT_MUTE_SM2			BIT(1)
-> > +#define  NTP8835_SOFT_MUTE_SM3			BIT(2)
-> > +#define NTP8835_PWM_SWITCH			0x27
-> > +#define  NTP8835_PWM_SWITCH_POF1		BIT(0)
-> > +#define  NTP8835_PWM_SWITCH_POF2		BIT(1)
-> > +#define  NTP8835_PWM_SWITCH_POF3		BIT(2)
-> > +#define NTP8835_PWM_MASK_CTRL0			0x28
-> > +#define  NTP8835_PWM_MASK_CTRL0_OUT_LOW		BIT(1)
-> > +#define  NTP8835_PWM_MASK_CTRL0_FPMLD		BIT(2)
-> > +#define NTP8835_MASTER_VOL			0x2e
-> > +#define NTP8835_CHNL_A_VOL			0x2f
-> > +#define NTP8835_CHNL_B_VOL			0x30
-> > +#define NTP8835_CHNL_C_VOL			0x31
-> > +#define REG_MAX					NTP8835_CHNL_C_VOL
-> > +
-> > +#define NTP8835_FW_NAME				"eq_8835.bin"
-> > +#define NTP8835_FW_MAGIC			0x38383335	/* "8835" */
-> > +
-> 
-> 
-> ...
-> 
-> 
-> > +
-> > +static void ntp8835_reset_gpio(struct ntp8835_priv *ntp8835, bool active)
-> > +{
-> > +	if (active) {
-> > +		/*
-> > +		 * According to NTP8835 datasheet, 6.2 Timing Sequence (recommended):
-> > +		 * Deassert for T2 >= 1ms...
-> > +		 */
-> > +		reset_control_deassert(ntp8835->reset);
-> 
-> Explain in comment why do you need to power up device to perform
-> reset... This sounds odd.
-> 
+The support will be first added on AD7606B, and on next patches AD7606C16
+and AD7606C18 will be added.  The series have been tested on a Zedboard,
+using the latest HDL available, i.e
+https://github.com/analogdevicesinc/hdl/commit/7d0a4cee1b5fa403f175af513d7eb804c3bd75d0
+and an AD7606B FMCZ EKV.  This HDL handles both the conversion trigger
+(through a PWM), and the end of conversion interruption, and is compatible
+with axi-adc, which is "iio-backendable".
 
-This sequence comes from device datasheet, for some reason vendor
-recommends to drive /RESET low for 0.1us during initialization.
-Datasheet also describes (section 6.3) init sequence with simple reset
-deassert, but it's called legacy, though it works fine on my board. Do
-you mean to add more verbose comment than linking to a datasheet?
+More information about this HDL design can be found at:
+https://wiki.analog.com/resources/eval/user-guides/ad7606x-fmc/hdl
 
-> > +		fsleep(1000);
-> > +
-> > +		/* ...Assert for T3 >= 0.1us... */
-> > +		reset_control_assert(ntp8835->reset);
-> > +		fsleep(1);
-> > +
-> > +		/* ...Deassert, and wait for T4 >= 0.5ms before sound on sequence. */
-> > +		reset_control_deassert(ntp8835->reset);
-> > +		fsleep(500);
-> > +	} else {
-> > +		reset_control_assert(ntp8835->reset);
-> 
-> This function is confusing. It is supposed to perform reset and leave
-> the device in active state, but here it leaves the device in reset.
-> 
-> 
-> 
-> > +
-> > +static struct snd_soc_dai_driver ntp8835_dai = {
-> 
-> Not const?
-> 
+The support is thus separated in two parts:
 
-ntp8835_dai is passed to devm_snd_soc_register_component(), which takes
-non-const parameter.
+- PWM support was first added.  My first intention was to make it available
+  for any version of the driver, but the time required to handle the
+  interruption is not neglectable, and I saw drifts that would eventually
+  cause an overlapping SPI read with a new conversion trigger, whith
+  catastrphic consequences. To mitigate this, CRC check must be
+  implemented, but indeed increasing the samplerate causes more sample to
+  be lost.  Therefore, I decided to only allow PWM for iio-backend
+  powered device as a first intention, leaving open the possibility to
+  add the general compatibility afterwards.
 
-> > +	.name = "ntp8835-amplifier",
-> > +	.playback = {
-> > +		.stream_name = "Playback",
-> > +		.channels_min = 1,
-> > +		.channels_max = 3,
-> > +		.rates = SNDRV_PCM_RATE_8000_192000,
-> > +		.formats = NTP8835_FORMATS,
-> > +	},
-> > +	.ops = &ntp8835_dai_ops,
-> > +};
-> > +
-> > +static struct regmap_config ntp8835_regmap = {
-> 
-> Not const?
-> 
-> Judging by weird includes and such simple issues, it looks like you try
-> to upstream downstream or old code. That's not how you are supposed to
-> bring new devices. You expect us to perform review on the same issues we
-> fixed already. Work on newest drivers - take them as template - so you
-> will not repeat the same issues we already fixed.
-> 
-> > +	.reg_bits = 8,
-> > +	.val_bits = 8,
-> > +	.max_register = REG_MAX,
-> > +	.cache_type = REGCACHE_MAPLE,
-> > +};
-> > +
-> > +static int ntp8835_i2c_probe(struct i2c_client *i2c)
-> > +{
-> > +	struct ntp8835_priv *ntp8835;
-> > +	struct regmap *regmap;
-> > +	int ret;
-> > +
-> > +	ntp8835 = devm_kzalloc(&i2c->dev, sizeof(struct ntp8835_priv), GFP_KERNEL);
-> 
-> sizeof(*)
-> 
-> > +	if (!ntp8835)
-> > +		return -ENOMEM;
-> > +
-> > +	ntp8835->i2c = i2c;
-> > +
-> > +	ntp8835->reset = devm_reset_control_get_shared(&i2c->dev, NULL);
-> 
-> shared is on purpose?
-> 
+- IIO backend support was added: Once the PWM support was ready, the driver
+  can be extended to iio-backend. The iio-backend powered version of the
+  driver is a platform driver, and an exemple devicetree node is available
+  in the bindings.
 
-Yes, we have a board with two amplifiers sharing same reset line, so
-shared allows to work around this hardware issue. Is it the wrong
-approach?
+The following features will be added in subsequent patch series:
+ - software mode for iio backend
+ - 18 bits mode (AD7606C18)
+ - single read (IIO_CHAN_READ_RAW)
 
-> > +	if (IS_ERR(ntp8835->reset))
-> > +		return dev_err_probe(&i2c->dev, PTR_ERR(ntp8835->reset),
-> > +				     "Failed to get reset\n");
-> > +
-> > +	ret = reset_control_deassert(ntp8835->reset);
-> > +	if (ret)
-> > +		return dev_err_probe(&i2c->dev, PTR_ERR(ntp8835->reset),
-> > +				     "Failed to deassert reset\n");
-> > +
-> > +	dev_set_drvdata(&i2c->dev, ntp8835);
-> > +
-> > +	ntp8835_reset_gpio(ntp8835, true);
-> > +
-> > +	regmap = devm_regmap_init_i2c(i2c, &ntp8835_regmap);
-> > +	if (IS_ERR(regmap))
-> > +		return dev_err_probe(&i2c->dev, PTR_ERR(regmap),
-> > +				     "Failed to allocate regmap\n");
-> > +
-> > +	ret = devm_snd_soc_register_component(&i2c->dev, &soc_component_ntp8835,
-> > +					      &ntp8835_dai, 1);
-> > +	if (ret)
-> > +		return dev_err_probe(&i2c->dev, ret,
-> > +				     "Failed to register component\n");
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct i2c_device_id ntp8835_i2c_id[] = {
-> > +	{ "ntp8835", 0 },
-> > +	{}
-> > +};
-> > +MODULE_DEVICE_TABLE(i2c, ntp8835_i2c_id);
-> > +
-> > +static const struct of_device_id ntp8835_of_match[] = {
-> > +	{.compatible = "neofidelity,ntp8835",},
-> > +	{.compatible = "neofidelity,ntp8835c",},
-> 
-> This does not match your i2c IDs, which leads to troubles when matching
-> variants.
-> 
-> Anyway, aren't they compatible?
-> 
-> 
+Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+---
+Changes in v2:
+- Logical change in dt-bindings, using a flag for the interface instead of
+  infering it from the value of the "reg" property.
+- Removal of get_platform_match_data addition, instead the logic is
+  directly used in the file.
+- Removal of use and export of pwm_get_state_hw, returning the configured
+  frequency instead of the running one.
+- Correction on various typos, whitespaces, bad order of includes.
+- Separation of SPI conditions and PWM disabling for no backend in other
+  commits.
+- Link to v1: https://lore.kernel.org/r/20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com
 
-They have identical programming interface and only differ in some output
-signal characteristics. Is it OK use single compatible string in such
-case?
+---
+Guillaume Stols (10):
+      dt-bindings: iio: adc: ad7606: Set the correct polarity
+      dt-bindings: iio: adc: ad7606: Make corrections on spi conditions
+      dt-bindings: iio: adc: ad7606: Add iio backend bindings
+      Documentation: iio: Document ad7606 driver
+      iio: adc: ad7606: Sort includes in alphabetical order
+      iio: adc: ad7606: Add PWM support for conversion trigger
+      iio: adc: ad7606: Add compatibility to fw_nodes
+      iio: adc: ad7606: Fix typo in the driver name
+      iio: adc: ad7606: Add iio-backend support
+      iio: adc: ad7606: Disable PWM usage for non backend version
 
-> > +	{}
-> > +};
-> > +MODULE_DEVICE_TABLE(of, ntp8835_of_match);
-> > +
-> > +static struct i2c_driver ntp8835_i2c_driver = {
-> > +	.probe = ntp8835_i2c_probe,
-> > +	.id_table = ntp8835_i2c_id,
-> > +	.driver = {
-> > +		.name = "NTP8835",
-> 
-> Driver names are lowercase
-> 
-> > +		.of_match_table = ntp8835_of_match,
-> > +	},
-> > +};
-> > +module_i2c_driver(ntp8835_i2c_driver);
-> > +
-> > +MODULE_AUTHOR("Igor Prusov <ivprusov@salutedevices.com>");
-> > +MODULE_DESCRIPTION("NTP8835 Audio Amplifier Driver");
-> > +MODULE_LICENSE("GPL");
-> 
-> Best regards,
-> Krzysztof
-> 
+ .../devicetree/bindings/iio/adc/adi,ad7606.yaml    |  97 ++++-
+ Documentation/iio/ad7606.rst                       | 143 +++++++
+ drivers/iio/adc/Kconfig                            |   4 +-
+ drivers/iio/adc/ad7606.c                           | 474 +++++++++++++++------
+ drivers/iio/adc/ad7606.h                           |  51 ++-
+ drivers/iio/adc/ad7606_par.c                       | 126 +++++-
+ drivers/iio/adc/ad7606_spi.c                       |  33 +-
+ 7 files changed, 749 insertions(+), 179 deletions(-)
+---
+base-commit: 8bea3878a1511bceadc2fbf284b00bcc5a2ef28d
+change-id: 20240725-ad7606_add_iio_backend_support-c401305a6924
 
--- 
-Best Regards,
-Igor Prusov
+Best regards,
+--
+Guillaume Stols <gstols@baylibre.com>
+
 
