@@ -1,120 +1,221 @@
-Return-Path: <linux-kernel+bounces-334460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E467B97D789
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:35:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AA7397D78F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B244B224DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:35:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B42D284376
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE4A17C7C6;
-	Fri, 20 Sep 2024 15:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D40617BB3F;
+	Fri, 20 Sep 2024 15:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RI3g2QiF"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CCfhKMJO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC83C17BEBF
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C833F4ED
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726846517; cv=none; b=L/YulSf649i/lI+IJ7VI251+IUj1TzycdVCz5I6PlkdT9z+aociKEmWhw0J+lpG2ozTqOSJ07+HI3LaPOliU44lfrjqOAhkS6W88LxZS8jr9f3itbcNjdFvg19qWoRg4qdezPNal1ly2SfkYZSWXwp6mxPH7sb19NmhYByACkco=
+	t=1726846595; cv=none; b=EhBToDeHHJ1wrcvZv5Eg1DCZLP9WyGGyWm+JMIftkV4/FR5N9VqDkJSNPmDPukIl3Jjj647PYAM6hu4MINI+ZF4QqL+a4ClGcv7tUGoKM2z+BJ60pP2xJvYAEutO02FDGyFI7ijG4FRvBbSOSZNXL23DtUJbxfYd9m5+3C6NU7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726846517; c=relaxed/simple;
-	bh=Ff7K6cFONJH358OS+E+terxkifRGKFlrelFWRsEBzH0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NjFzQG/oDZ/KagAD0zyCwMnMwEE+v7fuhHvSwjTS5urEGQXQJai64Rw/l3eT0Xf7ZJjHXx5MFsiMlG6egikS5/g9r2qSxE3BSMrbWKln3pgBfByEiUO9u83j3CsiXBi0qtX1AaI7Vgg/p6LxUd7oJLBWGnf9opeCB07t009xO1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RI3g2QiF; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-374c180d123so1356410f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:35:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726846514; x=1727451314; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RQKR4iRmb2AaBghMMbFk3Osh28MhFGu0gWv8w6kVGDQ=;
-        b=RI3g2QiFkRcibYsZw3ixDqLmpBKsVyX+uT9Dik+tOpAuWWDa/Lihu6wWGgUsGJHYsq
-         dsh+kPwjsBHcyuv9EzH49CHKwHaYNNlaylcUYJH7plhS9JBsk+Ou0CphVHOc7lUnf1d8
-         XXNT5m55t8XK+xC8qPNQ8w0+3OVPoURBr5F1jS/lJ+OGqVgQE7WTx0Wfql2h8sPjJybV
-         ab/Q3xM/bsG0eXeEcL4093t6K7hd1Qdxr4d+HGIh4KgVpnTwyTMie5191QR0om+JBq9B
-         Piat/sswvGrHq16qnGdUhExbxnpM/UgkZuPfjFRz4WY5/aoBQ89QsUzIFvJs9146CJV2
-         RPDQ==
+	s=arc-20240116; t=1726846595; c=relaxed/simple;
+	bh=xzTgl+aGo86H82fLR/N0xFNi6H/y2TnW6BqfgG3saVI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q+OPaqvqmZCFEnCp1kwgX7Zey6e619a47rAZ9qVvr3APD2C6gPgQun7zVYTtW9Ehfccr0NcY3VNSWebah3QMCJXU4iSuWdWtoCxXS+UOFj+D61GLJernAzdHDz6HLKkBGTWTRcYk3BeUErzr/Ue2/qT3EFEZ3PJHWSjq4loOri4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CCfhKMJO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726846592;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XF81E5q3dcgpsAt6yPTalypggTyS/xoFs7GofpOnUp4=;
+	b=CCfhKMJOoX6JAN1rxgmZV0KlK9BiRXbkZm6VnlvBWcap/o+lPAP0QD82MglPUHMD3TDlVJ
+	BIE6Ubvsmn1AxGyCgViNQ/qTOm27nweOQWrJ8iPuISMdHvwmLLM+hPrEywkHPVnFCzj18q
+	ngE67bQCBHnr3NdgJ1eDhKjDJc2WIgo=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-610-y8qJe2GyONuxUZQDT16I5A-1; Fri, 20 Sep 2024 11:36:31 -0400
+X-MC-Unique: y8qJe2GyONuxUZQDT16I5A-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cb471a230so16562555e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:36:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726846514; x=1727451314;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RQKR4iRmb2AaBghMMbFk3Osh28MhFGu0gWv8w6kVGDQ=;
-        b=djlTx6U1PAL6i4gCVgFBksAADcwjugQ/LX0zhd4ZLUFxeIlDOirVthPFQ7cKpGXI0o
-         Xb29FcqjkrJ0A+eowV4krTu54xCGaWoEvB2gQhx78Hhm+UV5s3AjOoWkAjSRJ8BUn11F
-         r59dNpfoHRyvixHeZuK7KEe7BfYG/Q3qqmbBHh97BgkAmFHZ77KLbqZr6KYx/EKlBFgD
-         1C7r3Ad2VV5zCQHHDFOt4hJmQawM8cuL0CSw3sADPWdOFedDiNxrUIcvl1M4s3+3s36Q
-         fJMwDehGWdZnpfORJ/cn++FQN3iHvYwIYmCbYuCH93qOswwezvWHTIrEm/OczU16TL/H
-         T5QQ==
-X-Gm-Message-State: AOJu0YzC0ZkaFBXvbe6Kzj+Bqndyy0gmt2biydNYiZl3M8dHeLYzA8NI
-	i4djkmcMTrBs47IjcXVCtgzUi6Mp4lGoahpbdEu1/+dN2Vr7KITdZjiYr4evVsc=
-X-Google-Smtp-Source: AGHT+IH0vMONnBQRabKJT6a9AQQ+vueeCVBbJ60tmNS6BEyiTM/7pjTlHjSnl2mbonRS9dVXU33V3g==
-X-Received: by 2002:a5d:6d0b:0:b0:374:c847:85c with SMTP id ffacd0b85a97d-37a422ac5d2mr2496650f8f.24.1726846514014;
-        Fri, 20 Sep 2024 08:35:14 -0700 (PDT)
-Received: from localhost (p5dc68d3d.dip0.t-ipconnect.de. [93.198.141.61])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f9cd3sm18176096f8f.62.2024.09.20.08.35.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 08:35:13 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] regulator: isl6271a: Drop explicit initialization of struct i2c_device_id::driver_data to 0
-Date: Fri, 20 Sep 2024 17:34:32 +0200
-Message-ID: <20240920153430.503212-14-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1726846590; x=1727451390;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XF81E5q3dcgpsAt6yPTalypggTyS/xoFs7GofpOnUp4=;
+        b=LT+PGyNfBirA2E4pwkkHrHK8U0dObZLsWtz4sfrMTR1zpRVoCTn9yRxgONsKeZegPH
+         ff4zS7xpzzYjSnl5zBdrundDdvSrSrSccLFcWoPOmGQ3w0FoWdPi13TD1wieWtO6WITy
+         YyQL2JcYzz6yzD7OmYhCRA3MdoMKFPmKZfkm9N4mJ4DBpa5PMH+6ivAn2yZKKt+qCn06
+         KWAtkPrBUnVkezsTzYRksprUecVlAjQviSnRO/8tWsTjIYxPnVCZHVepSNiWrccmtPKS
+         8kRihE3cRaLSNhTze4enzvubwsKVkcmvLD8wVOkxN0BOZo1DzfI4c0n2Bxd2fLBFiVke
+         ow7w==
+X-Forwarded-Encrypted: i=1; AJvYcCW9Y7Ht70/7TvMQb0p+7kFK2cYY36HFQ6Gu117kld9fDxQO9GJXlBjRpWmxsUOqaJZkHHJc3PxVcCxx3vs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEfo0E/uNP3s/fmokb2WJEtR7QZspgaFfP7Ldv7ZD4/qVgH1Xi
+	2s4I8aSxIMdB8uzROOp8M2FG+cvTH2hp+cjCF4rBVO3T/HakQYnoIbev7+RuWo3XDzZLaJDgQMC
+	Gy7w7sHdo1SKKL+W72uUqIEJPxIHTK7sbIDVFjrxfm/j3Bd+RvUiDPDjgm7922g==
+X-Received: by 2002:a05:600c:310a:b0:426:61e8:fb3b with SMTP id 5b1f17b1804b1-42e7ada4d19mr21185495e9.27.1726846589792;
+        Fri, 20 Sep 2024 08:36:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbBnSe6ZeVzt8REAbM4EztjbArVr1o71yxuBniSzhuLu4B6LPEfV+k7lLYBVAZUTUqL6NisQ==
+X-Received: by 2002:a05:600c:310a:b0:426:61e8:fb3b with SMTP id 5b1f17b1804b1-42e7ada4d19mr21185365e9.27.1726846589389;
+        Fri, 20 Sep 2024 08:36:29 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f9a22sm17878482f8f.61.2024.09.20.08.36.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Sep 2024 08:36:28 -0700 (PDT)
+Message-ID: <16352ae0-7e61-440d-8c04-7ec912f9bf9a@redhat.com>
+Date: Fri, 20 Sep 2024 17:36:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1090; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=Ff7K6cFONJH358OS+E+terxkifRGKFlrelFWRsEBzH0=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBm7ZYRKVN+50dKf2I6p8wRSmUcc80WEOwL+OGNv hAa6YGeC+GJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZu2WEQAKCRCPgPtYfRL+ TojqB/92lYQjZ2MhwwPvWuOFFEvK2KuSi7PcM38naimTSa7gm5K0WpR1yJV3jGawdMa8AMEdp6Q okIMlzXhaLU418QedG2eAYPfVqLxNpQV6yAwya0DWxqMJ5XLjbndHC/WDeWv6K/hgtlA3VgeylZ zWIjPQX4dfGFt0qhsk+STeSoOmrwi4EX4YAGKOqBCdM/n4NfR44qotx2YZTyyCgid97kEzkM65n wC5uj/SypShzU981pleIzwp9lQPR3p3LwHJyg+SwPFexkWSA7FY+pqsNUuSVtUB00PCW94XLFXv 3lvo9zJlaQJIdiRfgUVZ0blMVxM7F004BhDB9uyi26I5n2Ca
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/amdgpu: add dce6 drm_panic support
+To: Alex Deucher <alexdeucher@gmail.com>, Lu Yao <yaolu@kylinos.cn>
+Cc: ckoenig.leichtzumerken@gmail.com, daniel@ffwll.ch, Xinhui.Pan@amd.com,
+ airlied@gmail.com, alexander.deucher@amd.com, amd-gfx@lists.freedesktop.org,
+ christian.koenig@amd.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, srinivasan.shanmugam@amd.com,
+ sunil.khatri@amd.com
+References: <20240802071752.116541-1-yaolu@kylinos.cn>
+ <20240812060914.102614-1-yaolu@kylinos.cn>
+ <CADnq5_OcUgV9dgAynDCQnm9NS+QCvhBiHvxWnhWqi2qqhh=zXg@mail.gmail.com>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <CADnq5_OcUgV9dgAynDCQnm9NS+QCvhBiHvxWnhWqi2qqhh=zXg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-These drivers don't use the driver_data member of struct i2c_device_id,
-so don't explicitly initialize this member.
+On 17/09/2024 15:21, Alex Deucher wrote:
+> On Mon, Aug 12, 2024 at 2:10 AM Lu Yao <yaolu@kylinos.cn> wrote:
+>>
+>> Add support for the drm_panic module, which displays a pretty user
+>> friendly message on the screen when a Linux kernel panic occurs.
+>>
+>> Signed-off-by: Lu Yao <yaolu@kylinos.cn>
+> 
+> Patch looks good to me.  Any chance you want to convert the other
+> non-DC dce files (dce_v8_0.c, dce_v10_0.c, dce_v11_0.c) while you are
+> at it?
 
-This prepares putting driver_data in an anonymous union which requires
-either no initialization or named designators. But it's also a nice
-cleanup on its own.
+I've made a similar patch in amdgpu_dm_plane.c, and it works on a Radeon 
+pro w6400.
+But it only works when I'm in a VT terminal (so the framebuffer is 
+linear and CPU accessible).
+When under Gnome/Wayland, the flag AMDGPU_GEM_CREATE_NO_CPU_ACCESS is 
+set, so that means I can't vmap it ?
 
-While touching the initializer, also remove the comma after the sentinel
-entry.
+Also I don't know if there is a similar way to disable 
+tiling/compression on this hardware.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
- drivers/regulator/isl6271a-regulator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Best regards,
 
-diff --git a/drivers/regulator/isl6271a-regulator.c b/drivers/regulator/isl6271a-regulator.c
-index 69b4afe95e66..7883cd160727 100644
---- a/drivers/regulator/isl6271a-regulator.c
-+++ b/drivers/regulator/isl6271a-regulator.c
-@@ -138,8 +138,8 @@ static int isl6271a_probe(struct i2c_client *i2c)
- }
- 
- static const struct i2c_device_id isl6271a_id[] = {
--	{.name = "isl6271a", 0 },
--	{ },
-+	{ .name = "isl6271a", },
-+	{ }
- };
- 
- MODULE_DEVICE_TABLE(i2c, isl6271a_id);
-
-base-commit: 62f92d634458a1e308bb699986b9147a6d670457
 -- 
-2.45.2
+
+Jocelyn
+
+
+> 
+> Alex
+> 
+> 
+>> ---
+>> Changes in v2:
+>> 1. Drop include "drm_internal.h"
+>> 2. Add disabling DC tiling ops.
+>> Per suggestion from previous thread:
+>> https://patchwork.freedesktop.org/patch/606879/?series=136832&rev=1
+>> ---
+>>   drivers/gpu/drm/amd/amdgpu/dce_v6_0.c | 48 +++++++++++++++++++++++++++
+>>   1 file changed, 48 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+>> index 05c0df97f01d..ba1b7a36caa3 100644
+>> --- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+>> +++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+>> @@ -28,6 +28,7 @@
+>>   #include <drm/drm_modeset_helper.h>
+>>   #include <drm/drm_modeset_helper_vtables.h>
+>>   #include <drm/drm_vblank.h>
+>> +#include <drm/drm_panic.h>
+>>
+>>   #include "amdgpu.h"
+>>   #include "amdgpu_pm.h"
+>> @@ -2600,6 +2601,52 @@ static const struct drm_crtc_helper_funcs dce_v6_0_crtc_helper_funcs = {
+>>          .get_scanout_position = amdgpu_crtc_get_scanout_position,
+>>   };
+>>
+>> +static int dce_v6_0_drm_primary_plane_get_scanout_buffer(struct drm_plane *plane,
+>> +                                                        struct drm_scanout_buffer *sb)
+>> +{
+>> +       struct drm_framebuffer *fb;
+>> +       struct amdgpu_bo *abo;
+>> +       struct amdgpu_crtc *amdgpu_crtc;
+>> +       struct amdgpu_device *adev;
+>> +       uint32_t fb_format;
+>> +
+>> +       if (!plane->fb)
+>> +               return -EINVAL;
+>> +
+>> +       fb = plane->fb;
+>> +
+>> +       abo = gem_to_amdgpu_bo(fb->obj[0]);
+>> +       amdgpu_crtc = to_amdgpu_crtc(plane->crtc);
+>> +       adev = drm_to_adev(fb->dev);
+>> +
+>> +       if (!abo->kmap.virtual &&
+>> +           ttm_bo_kmap(&abo->tbo, 0, PFN_UP(abo->tbo.base.size), &abo->kmap)) {
+>> +               DRM_WARN("amdgpu bo map failed, panic won't be displayed\n");
+>> +               return -ENOMEM;
+>> +       }
+>> +
+>> +       if (abo->kmap.bo_kmap_type & TTM_BO_MAP_IOMEM_MASK)
+>> +               iosys_map_set_vaddr_iomem(&sb->map[0], abo->kmap.virtual);
+>> +       else
+>> +               iosys_map_set_vaddr(&sb->map[0], abo->kmap.virtual);
+>> +
+>> +       sb->width = fb->width;
+>> +       sb->height = fb->height;
+>> +       sb->format = fb->format;
+>> +       sb->pitch[0] = fb->pitches[0];
+>> +
+>> +       /* Disable DC tiling */
+>> +       fb_format = RREG32(mmGRPH_CONTROL + amdgpu_crtc->crtc_offset);
+>> +       fb_format &= ~GRPH_ARRAY_MODE(0x7);
+>> +       WREG32(mmGRPH_CONTROL + amdgpu_crtc->crtc_offset, fb_format);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static const struct drm_plane_helper_funcs dce_v6_0_drm_primary_plane_helper_funcs = {
+>> +       .get_scanout_buffer = dce_v6_0_drm_primary_plane_get_scanout_buffer
+>> +};
+>> +
+>>   static int dce_v6_0_crtc_init(struct amdgpu_device *adev, int index)
+>>   {
+>>          struct amdgpu_crtc *amdgpu_crtc;
+>> @@ -2627,6 +2674,7 @@ static int dce_v6_0_crtc_init(struct amdgpu_device *adev, int index)
+>>          amdgpu_crtc->encoder = NULL;
+>>          amdgpu_crtc->connector = NULL;
+>>          drm_crtc_helper_add(&amdgpu_crtc->base, &dce_v6_0_crtc_helper_funcs);
+>> +       drm_plane_helper_add(amdgpu_crtc->base.primary, &dce_v6_0_drm_primary_plane_helper_funcs);
+>>
+>>          return 0;
+>>   }
+>> --
+>> 2.25.1
+>>
+> 
 
 
