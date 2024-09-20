@@ -1,93 +1,148 @@
-Return-Path: <linux-kernel+bounces-334444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5440797D758
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:11:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5662697D764
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1951F21D3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:11:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DADAC286627
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAE517CA0A;
-	Fri, 20 Sep 2024 15:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="A8Qs13nH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC50156F2B;
+	Fri, 20 Sep 2024 15:21:25 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BEE17C7C9;
-	Fri, 20 Sep 2024 15:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D62CC13B
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726845072; cv=none; b=Au3kpZrD0fypGOr1iAL8kh7WHtB0YCoGtbOWMW7XLvxE+/5UgPirVFyJuKiGjjlO3xhWBsIkxP/SgbEh5OhWx+o3bAWU/nxdkmmeA7GdE5X3vf0yvXbijBhT4UCyqMZjeiHtho/bJoI5WP8vMCKrYynQ0a9yB22sxzjnDf5yrbA=
+	t=1726845685; cv=none; b=hPtbk3A/uXOpYn86To35qq4sViVm5dwlRa1rQKJoLLMw8aIpSzfS6mN0oRDZlwRGz9sbQKGG4wRvWbyxt94Vr1MnN2teNIhItfPJZaJk6mlpFDWQaD+RA69rG0VK+ZEvlRHCIdVu0HAMkZBKL7n3f7Bvg/nxbCezqEmcwiURTtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726845072; c=relaxed/simple;
-	bh=LHIrL4+IOK7TTq6FT8QQMFr9RgfnqS9Hr5wbe/S6Epw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZQVME6Ob7ZoqGnK0cfWsdkNOxIo5X0YysruvwwuZkV6lJUxPPHIHEGvpeMUanMO6V7Cw8+djMSqaJ6cTG7bn4pGOowpsgTe+7mFzC2Qw8+bqDYCN5wZJmvHtmacTxWtuwKE0FS3hDrPVDfdjKuf6/UWF+LgaBW5fZSrqTwuwNoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=A8Qs13nH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80A68C4CEC3;
-	Fri, 20 Sep 2024 15:11:10 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="A8Qs13nH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1726845068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/sgZZCfozFmaQM131uVRt5yID4XaoLqKTLeHDmO9BnM=;
-	b=A8Qs13nHy5gGuOu7rsPLfBuYvzqkgOUO79+5OW9ZnrGY8ya/EZywhrSla32AH6zmPanvc9
-	t3Jy+cXb5R+rxElnj19IFpADdrajDNayV8G2SlrIVPnjyT3krU8DF0aLM5ynKvKn3fGp8v
-	8YOG77L+lXvC0My1wHfu3/PbDCO3Nbo=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 81ef0f0a (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 20 Sep 2024 15:11:08 +0000 (UTC)
-Date: Fri, 20 Sep 2024 17:11:05 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-crypto@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Jinyang He <hejinyang@loongson.cn>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] LoongArch: vDSO: Tune the chacha20 implementation
-Message-ID: <Zu2Qif3n7oIMweJ2@zx2c4.com>
-References: <20240919091359.7023-1-xry111@xry111.site>
+	s=arc-20240116; t=1726845685; c=relaxed/simple;
+	bh=ZKN/Jx0Cgg3E49vF+Ha0Y1UmXQXpo/qvF2nu4rNnzQo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PdHNj6Ck9VXPwQ1I5PtKiMP184xVCXmef8xahA/pB7vimcx2rdHCaQUCyhOfJOHICNyFJWWsVJXoiYsBIg6nH/KwKYX0Ap8crw1rXNKluhqDPpea9VG/v27K4v2JNcM0sNR3h8PNGE0NEm9x9uQGONVSCt/c4uDnwKs53GrHNbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a09da3baa8so29066105ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:21:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726845683; x=1727450483;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Fr78q/KfWsNOxKd5MbJvZ/ms4Nh44n0ECdqoTNwBoQ0=;
+        b=lzuNPi2q2o5BMFVIUMMKhAHm3BAwDt/N7/ypSZQaJXCf8hWdYPJiXGGjjiOo2HqhGL
+         Y/QqzLDEQZyXJ72YVY56KaWiEt41MpTh8cjnaaQ7L35cgRVrnqx4oW0/51nNncOSUzan
+         BDl3CbEQ3TJpFCPU1Huy4QkBkWY70T6nIL4RAd6z0yubNyA4sK7jeUad5Y4LaNFvyR2A
+         32dKPdf3EYo1OjaHy17Aknr+bjV/Pdegh74y3HniLHZbl4YMFu+H315scUPZ2+ho8zEw
+         DEEuxnZj5EmgquDp//ggoaXZ5OfXqY1Rb30+/eVYq42boiXcrgBVTEcCU/ADvxP6JOsE
+         yctg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbYPvWcdmCYrNVzzUFHuP5lX6VKEqXQG3XtS3aHa1TNGLgiPIroDqb4Lba3jPHRW7uJvXVravJSsCAGdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjBsBu2YCRYgns+iu25AdB+hBd6IXxP/nHnBd39C2OBltBxb+s
+	gtXtPpS00+jx9jTo7/MIqb9buXQPhMuMO+ULD/OcLGTpVMGo4DB/9jhYL6udhyBcEHdQv3Vit/l
+	/iyx/sB8g+8yT6RqhidLsafAPVhOBMmMM6slWn29i/G5UWb66QINatUg=
+X-Google-Smtp-Source: AGHT+IFJ7PooyB6Fp2shSustKNFxH99VCZua4ONb9rvwq7nmc5I2bzlN/pp+wfJk9EL3oWivxGfTtqa9mhtGxXQ6zuroZ2O3MP+i
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240919091359.7023-1-xry111@xry111.site>
+X-Received: by 2002:a05:6e02:17cc:b0:3a0:a057:6908 with SMTP id
+ e9e14a558f8ab-3a0c8a225edmr25801565ab.11.1726845682764; Fri, 20 Sep 2024
+ 08:21:22 -0700 (PDT)
+Date: Fri, 20 Sep 2024 08:21:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ed92f2.050a0220.29194.005a.GAE@google.com>
+Subject: [syzbot] [ocfs2?] KMSAN: uninit-value in from_kuid (2)
+From: syzbot <syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 19, 2024 at 05:13:59PM +0800, Xi Ruoyao wrote:
-> As Christophe pointed out, tuning the chacha20 implementation by
-> scheduling the instructions like what GCC does can improve the
-> performance.
-> 
-> The tuning does not introduce too much complexity (basically it's just
-> reordering some instructions).  And the tuning does not hurt readibility
-> too much: actually the tuned code looks even more similar to a
-> textbook-style implementation based on 128-bit vectors.  So overall it's
-> a good deal to me.
-> 
-> Tested with vdso_test_getchacha and benched with vdso_test_getrandom.
-> On a LA664 the speedup is 5%, and I expect a larger speedup on LA[2-4]64
-> with a lower issue rate.
-> 
-> Suggested-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Link: https://lore.kernel.org/all/77655d9e-fc05-4300-8f0d-7b2ad840d091@csgroup.eu/
-> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+Hello,
 
-That seems like a reasonable optimization to me. I'll queue it up in
-random.git and send it in my pull next week.
+syzbot found the following issue on:
 
-Thanks.
+HEAD commit:    2004cef11ea0 Merge tag 'sched-core-2024-09-19' of git://gi..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1737fb00580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea86c03799707382
+dashboard link: https://syzkaller.appspot.com/bug?extid=6c55f725d1bdc8c52058
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ad1607980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b7fb00580000
 
-Jason
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/712bb1e6270f/disk-2004cef1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4c85f46e8c8b/vmlinux-2004cef1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9e811c6cc65b/bzImage-2004cef1.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/2a5b0a53fa65/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com
+
+ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
+=====================================================
+BUG: KMSAN: uninit-value in map_id_up_base kernel/user_namespace.c:355 [inline]
+BUG: KMSAN: uninit-value in map_id_up kernel/user_namespace.c:385 [inline]
+BUG: KMSAN: uninit-value in from_kuid+0x41e/0x990 kernel/user_namespace.c:433
+ map_id_up_base kernel/user_namespace.c:355 [inline]
+ map_id_up kernel/user_namespace.c:385 [inline]
+ from_kuid+0x41e/0x990 kernel/user_namespace.c:433
+ ocfs2_setattr+0x254/0x3140 fs/ocfs2/file.c:1133
+ notify_change+0x1a8e/0x1b80 fs/attr.c:503
+ do_truncate fs/open.c:65 [inline]
+ do_ftruncate+0x8c1/0xbf0 fs/open.c:181
+ do_sys_ftruncate fs/open.c:199 [inline]
+ __do_sys_ftruncate fs/open.c:207 [inline]
+ __se_sys_ftruncate fs/open.c:205 [inline]
+ __x64_sys_ftruncate+0x133/0x280 fs/open.c:205
+ x64_sys_call+0x9e4/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:78
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Local variable newattrs.i created at:
+ do_truncate fs/open.c:43 [inline]
+ do_ftruncate+0x600/0xbf0 fs/open.c:181
+ do_sys_ftruncate fs/open.c:199 [inline]
+ __do_sys_ftruncate fs/open.c:207 [inline]
+ __se_sys_ftruncate fs/open.c:205 [inline]
+ __x64_sys_ftruncate+0x133/0x280 fs/open.c:205
+
+CPU: 0 UID: 0 PID: 5177 Comm: syz-executor217 Not tainted 6.11.0-syzkaller-07337-g2004cef11ea0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
