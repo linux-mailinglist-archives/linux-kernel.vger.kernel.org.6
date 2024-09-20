@@ -1,201 +1,185 @@
-Return-Path: <linux-kernel+bounces-334429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2267097D729
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:56:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A547C97D72C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46C111C23460
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:56:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3555A1F2517D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C19617C22E;
-	Fri, 20 Sep 2024 14:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A46017C9FC;
+	Fri, 20 Sep 2024 14:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KRJyeB0F"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DW7Eew1p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D0679C0;
-	Fri, 20 Sep 2024 14:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE27D17C7CA;
+	Fri, 20 Sep 2024 14:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726844191; cv=none; b=p9xmDmJYez6RHlim4GENTwT4ZFNOipwoWncQLausWipJPE9kKYkPh9rgBrctv3uyj8TgQ9pgj6uRFepblTW60hoSO0/vm0uV5y4NPWLwBsExrbzBVfk/ONBaPrv0ldhISL6jHZKDaZpMeAmA4/70ZHp2R5D9ZzNOteMe5TX5p7A=
+	t=1726844194; cv=none; b=AprXtqAbsn3eBqgjYroWVqhkmudeftFwClX2kw1bLbSxNwS9WkDjvkYRiIrElvQ+Ua+TeXQQ1GdR3ToYvE5uvbtlVpHDgs9sGpX7W9kgk4tYBgOaN09eXhdXHpwGofnRTRJrFPWuCVxKvYWVdYwZB09CdhA9JfP7cKKuPDJp+ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726844191; c=relaxed/simple;
-	bh=nAwIst1FqVNp0n8NkCbxv3NMglRg6tFVzk56NQ8RaY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0XlVLTQzNDVYRihYnc5anIItLOFHmSV6VFxxo1/90QR8i4BMqCj/DVNTuPVM7R1ZSZiwrtQ7hlb5BhjrQkf0V5CK00xQO81qyFiJTSFNio3r9R5aG0a9QWZmWAjRUHMHH7R6tPFfveEF5pRwruWBXTqCeBIx9FnDqh5SAHXSsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KRJyeB0F; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5366fd6fdf1so2577482e87.0;
-        Fri, 20 Sep 2024 07:56:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726844188; x=1727448988; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=emJoM9U+GKECg0xUETh97PyhRRrj7p7mKcHXD32vXKQ=;
-        b=KRJyeB0FX+UYTdJlRdgUshAXdmpBYVy3R8RHOpsuPu+09YRDJNUVrrXvOhp3vJedaV
-         qB5ybyAR0dTP9C977rQJ+vc//07dvisezkNbG4BhRdwvOMTyyGZtDMYSEUuRmO9QwBpo
-         Tsia0ixZ67P6uShuNm8rLwYC7qOFtWrP87uyfDBSI36hIJiFTPJo8aiUvwxH/uBDfvzO
-         0x+vSDIe6YP8Mi7wDWLWHGn9T70JuoDzJn6G4e7w9B5wIRyfW6+s2gGy+EpvHFKMN1bd
-         UctgakYqA1VM583HL2a/v+rspWpiMmj3CIuUC5VqjkQZy3dlJcBpZNZDmqLGApBLb6E4
-         mb7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726844188; x=1727448988;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=emJoM9U+GKECg0xUETh97PyhRRrj7p7mKcHXD32vXKQ=;
-        b=JlV8w1PMSMpk8VJ6Qs9uxHVQ5yNpTDD17FwAnOYVYtHNyhgZU0/4dEsLDnGlqvVHJQ
-         wGuC2/TJ8qcGCFl0wVYmvowJd0xB7lOC2CbKl17MRpKSTibi6ebQHdXhv9O3EO/PeFsD
-         BdawPB2FoOvkehOmIyd5f+JU18eUghsZ1+KA0qAK2LiLmUAJ39d9FhE4ZxCoKzDKzq/d
-         /Zk5bQv75rF6ErrKwk5EgZOw9rKARnm11quh8cg9Q7/LwPqcWc6Kp01vaBihwB6eJyWt
-         TzaXKMmKZ8SuaWbSO8HJsLtgOKe2w3xeG/m8ID/hbMJrp1f+RuwhZzcaIrNS/zJKZmyF
-         ow3w==
-X-Forwarded-Encrypted: i=1; AJvYcCV1W5MDTqFF/tYjj9rJ3cVL5TNlp9Bz3NmLwXdf3BNlmMig89uh8UMXDWcAacgqZnBxv/Gj3ULXuJ8=@vger.kernel.org, AJvYcCXRXzsfA8Xvbnor3kleVACaRUT07xerLQu0Ot7yqKkudhxv/1FfFuFemK4wOKPt/32ZVnclpRQ1iotsUEQ4@vger.kernel.org, AJvYcCXYl90OGbVBOvrUYuV4YMsWtUiCOPXhemj5AbaouMRx7nEzO477J3hifXRj6rBcIpz9DQ1ap3bp2Vh2sXl/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgy1tzj0yWpRPUYuXpZT50Sg4qzEUUb6GQxMqxAG9CSLqCBlAu
-	J6KRSU4Nr3HfLxGAUb26WcvkdsiFzReA+5uwuZkDSw+P1LrHyCoa
-X-Google-Smtp-Source: AGHT+IEi4kM0xge4IWO1VQHG4RPXSxai4omuIUiBkbn08Jun+nhFwyQ/xyBM6aSKKi3nmAx5Zl6iXQ==
-X-Received: by 2002:a05:6512:31c3:b0:535:6892:3be6 with SMTP id 2adb3069b0e04-536ad3df1aamr2025591e87.54.1726844187593;
-        Fri, 20 Sep 2024 07:56:27 -0700 (PDT)
-Received: from mobilestation ([93.157.254.210])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870a85fesm2186809e87.207.2024.09.20.07.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 07:56:25 -0700 (PDT)
-Date: Fri, 20 Sep 2024 17:56:23 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Viresh Kumar <vireshk@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, dmaengine@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] dmaengine: dw: Fix sys freeze and XFER-bit set error
- for UARTs
-Message-ID: <3zoeze233vpxoet2tpqayxq4z2covha2p5ymio5lxrbvmp54fs@lqo4ix3hr6gy>
-References: <20240911184710.4207-1-fancer.lancer@gmail.com>
- <ZugsFPWRZQnH9RaS@smile.fi.intel.com>
- <kpujn6pqnxerasd6zhkfgxrgyidb3tmxuoqgauheoosdhnwatr@spdtf46m7bnu>
- <Zu2FpaBQymPJSAY-@smile.fi.intel.com>
+	s=arc-20240116; t=1726844194; c=relaxed/simple;
+	bh=8Qg1iY3o93a4LTA+ya6IEHEBHO0XR9NhsFaS3l8Zm1k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WpUXsqbPpS4kfe/U9uwFWaix9AELKFe+FZesZCwQaNL5BWqIB2SAhoWQeE+N+jkRqzImTcShlWob5rieIjjD+ujmAeaxeVrGf2TOffhG+tHOvh7kME+YubjzzbGwq6HsKMsdfZjQVnMAUjIJA3ixRbuiQ0xo8GeU4FDLEG5E3yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DW7Eew1p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1342FC4CEC3;
+	Fri, 20 Sep 2024 14:56:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726844193;
+	bh=8Qg1iY3o93a4LTA+ya6IEHEBHO0XR9NhsFaS3l8Zm1k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DW7Eew1pwfrkc6qYVb14pexGV7yS1IbuW5PsyK2ksVzMRVWKwAYN4G/CQZmeHzkOi
+	 GpIMerXOvcHsq4fICpIg6Ef9qqJjChESQfiAv6nbUwOXNDEYccceSYenMmMnJNEorT
+	 O0p7Gv0nN0JwnE+orEYx3IJdgOPIcm09JGFeIdOk+4hOSOXZ0Z9USZiOghxTX4BSSa
+	 MVUcEEjfXrXZDcyfSiNlpQ+AXtFoty54iE/WJ6ZoAQK2Ig40krp+kMt/HpDXTPZF98
+	 X4AflcX9VWEdWf7Uf/WI5bGj0mR07dITShxUfb4AnYzP0rP2HndlsiE6NCD4BWsVrg
+	 mMZXf8P7iW/1A==
+Message-ID: <7784248d-4372-4cf1-a01a-5b731b3f6b96@kernel.org>
+Date: Fri, 20 Sep 2024 16:56:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zu2FpaBQymPJSAY-@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
+ Systems remote processors
+To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
+ Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org,
+ sudeep.holla@arm.com, robin.murphy@arm.com
+References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
+ <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
+ <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
+ <gzlncpyzwm7x4jcxtdrthrlv2dofk7u3oxn4taadwog5tt37wo@ot6s6kwukd4k>
+ <20240919093517.GA43740@e130802.arm.com>
+ <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
+ <20240919145741.GA7940@e130802.arm.com>
+ <85a223e9-05a4-4034-87a5-57d3eb9409b7@kernel.org>
+ <20240920141958.GA288724@e130802.arm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240920141958.GA288724@e130802.arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 20, 2024 at 05:24:37PM +0300, Andy Shevchenko wrote:
-> On Fri, Sep 20, 2024 at 12:33:51PM +0300, Serge Semin wrote:
-> > On Mon, Sep 16, 2024 at 04:01:08PM +0300, Andy Shevchenko wrote:
-> > > On Wed, Sep 11, 2024 at 09:46:08PM +0300, Serge Semin wrote:
-> > > > The main goal of the series is to fix the DW DMAC driver to be working
-> > > > better with the serial 8250 device driver implementation. In particular it
-> > > > was discovered that there is a random system freeze (caused by a
-> > > > deadlock) and an occasional "BUG: XFER bit set, but channel not idle"
-> > > > error printed to the log when the DW APB UART interface is used in
-> > > > conjunction with the DW DMA controller. Although I guess the problem can
-> > > > be found for any 8250 device using DW DMAC for the Tx/Rx-transfers
-> > > > execution. Anyway this short series contains two patches fixing these
-> > > > bugs. Please see the respective patches log for details.
-> > > > 
-> > > > Link: https://lore.kernel.org/dmaengine/20240802080756.7415-1-fancer.lancer@gmail.com/
-> > > > Changelog RFC:
-> > > > - Add a new patch:
-> > > >   [PATCH 2/2] dmaengine: dw: Fix XFER bit set, but channel not idle error
-> > > >   fixing the "XFER bit set, but channel not idle" error.
-> > > > - Instead of just dropping the dwc_scan_descriptors() method invocation
-> > > >   calculate the residue in the Tx-status getter.
-> > 
-> > > FWIW, this series does not regress on Intel Merrifield (SPI case),
-> > > Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > 
-> > Great! Thanks.
-> > 
-> > > P.S.
-> > > However it might need an additional tests for the DW UART based platforms.
-> > > Cc'ed to Hans just in case (it might that he can add this to his repo for
-> > > testing on Bay Trail and Cherry Trail that may have use of DW UART for BT
-> > > operations).
-> > 
-> > It's not enough though. The DW UART controller must be connected to
-> > the DW DMAC handshaking interface on the platform. The kernel must be
-> > properly setup for that too. In that case the test would be done on
-> > a proper target. Do the Bay Trail and Cherry Trail chips support such
-> > HW-setup? If so the additional test would be very welcome.
+On 20/09/2024 16:19, Abdellatif El Khlifi wrote:
+> Hi Krzysztof,
 > 
-
-> I'm not sure I understand what HW setup you mean.
-
-I meant exactly what you explained in the next sentence - whether the
-Bay Trail and Cherry Trail have the DW UART capable to work with the
-DW DMAC.
-
+>>>>>>> +  '#extsys-id':
+>>>>>>
+>>>>>> '#' is not correct for sure, that's not a cell specifier.
+>>>>>>
+>>>>>> But anyway, we do not accept in general instance IDs.
+>>>>>
+>>>>> I'm happy to replace the instance ID with  another solution.
+>>>>> In our case the remoteproc instance does not have a base address
+>>>>> to use. So, we can't put remoteproc@address
+>>>>>
+>>>>> What do you recommend in this case please ?
+>>>>
+>>>> Waiting one month to respond is a great way to drop all context from my
+>>>> memory. The emails are not even available for me - gone from inbox.
+>>>>
+>>>> Bus addressing could note it. Or you have different devices, so
+>>>> different compatibles. Tricky to say, because you did not describe the
+>>>> hardware really and it's one month later...
+>>>>
+>>>
+>>> Sorry for waiting. I was in holidays.
+>>>
+>>> I'll add more documentation about the external system for more clarity [1].
+>>>
+>>> Basically, Linux runs on the Cortex-A35. The External system is a
+>>> Cortex-M core. The Cortex-A35 can not access the memory of the Cortex-M.
+>>> It can only control Cortex-M core using the reset control and status registers mapped
+>>> in the memory space of the Cortex-A35.
+>>
+>> That's pretty standard.
+>>
+>> It does not explain me why bus addressing or different compatible are
+>> not sufficient here.
 > 
-> Bay Trail and Cherry Trail uses a shared DW DMA controller with number of
-> peripheral devices, HS UART (also DW) is one of them.
-
-Ok. Thanks. Testing the patch set on these platforms make sense then,
-but of course with the kernel configured to have the DW UART device
-handling the in-/outbound traffic by the DW DMA controller.
-
+> Using an instance ID was a design choice.
+> I'm happy to replace it with the use of compatible and match data (WIP).
 > 
-> > Sometime ago you said that you seemed to meet a similar issue on older
-> > machines:
-> > https://lore.kernel.org/dmaengine/CAHp75VdXqS6xqdsQCyhaMNLvzwkFn9HU8k9SLcT=KSwF9QPN4Q@mail.gmail.com/
-> > If it's still possible could you please perform at least some smoke
-> > test on those devices?
+> The match data will be pointing to a data structure containing the right offsets
+> to be used with regmap APIs.
 > 
-> That mainly was exactly about Bay Trail and Cherry Trail machines
-> (and may be Broadwell and Haswell, but the latter two is not so
->  distributed nowadays).
+> syscon node is used to represent the Host Base System Control register area [1]
+> where the external system reset registers are mapped (EXT_SYS*).
 > 
-> > In case of my device this series and a previous one
-> > https://lore.kernel.org/dmaengine/20240802075100.6475-1-fancer.lancer@gmail.com/
-> > fixed all the critical issues for the DW UART + DW DMAC buddies:
-> > 1. Sudden data disappearing at the tail of the transfers (previous
-> > patch set).
-> > 2. Random system freeze (this patch set).
-> > 
-> > There is another problem caused by the too slow coherent memory IO on
-> > my device. Due to that the data gets to be copied too slow in the
-> > __dma_rx_complete()->tty_insert_flip_string() call. As a result a fast
-> > incoming traffic overflows the DW UART inbound FIFO. But that can be
-> > worked around by decreasing the Rx DMA-buffer size. (There are some
-> > more generic fixes possible, but they haven't shown to be as effective
-> > as the buffer size reduction.)
+> The nodes will look like this:
 > 
+> syscon@1a010000 {
+>         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
+>         reg = <0x1a010000 0x1000>;
+> 
+>         #address-cells = <1>;
+>         #size-cells = <1>;
+> 
+>         remoteproc@310 {
+>             compatible = "arm,sse710-extsys0";
+>             reg = <0x310 4>;
 
-> This sounds like a specific quirk for a specific platform. In case you
-> are going to address that make sure it does not come to be generic.
+Uh, why do you create device nodes for one word? This really suggests it
+is part of parent device and your split is artificial.
 
-Of course reducing the buffer size is the platform-specific quirk.
+Best regards,
+Krzysztof
 
-A more generic fix could be to convert the DMA-buffer to being
-allocated from the DMA-noncoherent memory _if_ the DMA performed by
-the DW DMA-device is non-coherent anyway. In that case the
-DMA-coherent memory buffer is normally allocated from the
-non-cacheable memory pool, access to which is very-very slow even on
-the Intel/AMD devices.  So using the cacheable buffer for DMA, then
-manually invalidating the cache for it before DMA IOs and prefetching
-the data afterwards seemed as a more universal solution. But my tests
-showed that such approach doesn't fully solve the problem on my
-device. That said that approach permitted to execute data-safe UART
-transfers for up to 460Kbit/s, meanwhile just reducing the buffer from
-16K to 512b - for up to 2.0Mbaud/s. It's still not enough since the
-device is capable to work on the speed 3Mbit/s, but it's better than
-460Kbaud/s.
-
--Serge(y)
-
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
 
