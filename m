@@ -1,172 +1,205 @@
-Return-Path: <linux-kernel+bounces-334155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7FE97D329
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:59:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0623E97D331
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FC89B22F4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:59:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B2C41C21393
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7404514C581;
-	Fri, 20 Sep 2024 08:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32CE13A86C;
+	Fri, 20 Sep 2024 08:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kOHCaIaS"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Td96Na4s"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9226014389F;
-	Fri, 20 Sep 2024 08:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60FA13C810
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726822629; cv=none; b=ovXxl3CU6rjdmwsAC/gFTEK/Vy8GPls8A2OEPVumxnI/J52uasZ3Om/mJAbD9R2gN60g/wTtdWutIFv11SdTPURxkhlU9VsJTcz9/LNf5l7Jkihw92acp5bTSJgrmKbgzWyvd5+t2gN0vW0J1vchviZZwLNh3dqmjFri9K8YNvM=
+	t=1726822719; cv=none; b=oA3wRHbZZDlgIcv/rjgnck+x0gLKZHPm8scgx82gKx9aSTfLwvB4zpwadVQG37iStfBDzQGo2OYW4WcfS7tvUnAX+aJAgpyi4AUK4ZXNv7/uKn4FNO0NxlgfKlm5FJF5YoH3oeYXQVmJeNU3wW/2kbKKqnyIHYUoioVBI0Gctmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726822629; c=relaxed/simple;
-	bh=61QQlySFa5pEM/vWncsXNN6TckBPFGjbzEUDyKZyDc0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ir+L5Aj+MwTvlnfBuI3vcF0mQab0Mi7mY7kgo0wjNUcRdpqDcOXjKck/2YXHtm35i9syBafjs5ViUqOJgzf1UryA7lSKn8+A6O+jAtKNfSV88LOxwCP5l2rc9PbATVpIiXl25X1Z/qNjyTgtTFzgEQByt4sNaQwZTEEBEDp0x6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kOHCaIaS; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c241feb80dso5584626a12.0;
-        Fri, 20 Sep 2024 01:57:07 -0700 (PDT)
+	s=arc-20240116; t=1726822719; c=relaxed/simple;
+	bh=te+EbZlOUzUoKfESPB4idPRylkC8d1cHg4R/EUUCx30=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QgoC0+HH/vJT6k78IcP/wbDtrL1LOmDtI2uJxPhnU30zWjyn/xozZNj0ED+91EIZNlueccrjjtyJ7ACUHwgYIox2kuyY+ICr+40M/rkhpvHlVAaOCQsDgBfucdfmU+U3mR9fUaRrkGzaJmSY2kA34r0L32pRbuW0xVU4j7KLWms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Td96Na4s; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cbaf9bfdbso15646445e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:58:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726822626; x=1727427426; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tSINRI5oDb/ENez5X3KtVyvqwsHbg24jiAO3lEAztlo=;
-        b=kOHCaIaSpgZWXiZ9+vgEvPmpepvaizZoPtxT9SIEXmvmAoXb+kABCNLN3AQUOtzYmZ
-         fr+pSnFnoQqAF0x5XgeG5y+bBsc6KIn5tGmx1p2g8sxEORgw3e0de3JCl8WcXFLIsqSy
-         yznSATMCy/j/SWwdqnRAar0IXXCNvydOroSF2n4zpjkf61YiU2S/7kRksw7yYC3ychBo
-         YyROAEbcdU4OpvcwkwsoH/iVktPtrjdA3GiLO0sEarDAvCPk75/wHD+FLwnhoDBuXag5
-         NZxU0/oJxhsUTvLqOLkyqGAszf+vLaVPN28hgM7i+ksI9L+SmZQSZqeka9n/OEgHQWpl
-         Jy7Q==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726822714; x=1727427514; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5T7rAchj5qjYDoyRW1lduedlZlpub5pg2seiU2N4rAs=;
+        b=Td96Na4s2MzDQgbaTwc/3HOiMnxDMhleVrin2asGCLw+ZX0KOr+w7qbgAxWQ8ovxLL
+         2xlGOTMd3uWVPpSDvHYwjC6Rmybh1wA6RU6t8tFaztQxDvbbALgQ/3LsYtAR8E7F7Ph/
+         fBQQ/mzEb7tHMbitMPs0e0CS2mYqdwsunfoAPTMT60tzZBUsCIzaVevcAFmLVsy7vG/a
+         T5Eok0Ydtt9FFwWJ+mp/xd3R+dJwom0UlwqqBNHQLiHzSl/9h+q2UKx08zpRuaKwBNUJ
+         rCp7ecp5mebw1IxQkp9UerbZ4pWdgoAon9bacWiPa4mSWh2fO73QP42Lseq2eIXWmXDj
+         Ey6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726822626; x=1727427426;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tSINRI5oDb/ENez5X3KtVyvqwsHbg24jiAO3lEAztlo=;
-        b=kQuyaUu29dEYwGI89xTkL0ElOb4zcWsUIRUmICzEBIDJwoHXZ+N22QYYL8QRvcUnpo
-         cwFP+6DjXgg5k3Pt/24yqnJEVg9jYEo2UDnQfR4IJ1U6TJEfcqweCILWTDeoS76mC+7O
-         AVGDwUMbJf89I/TqpgyEbkg8bNAGXJLPpGzxjwmEs+QJ57+dEXG7t2hXNbD7lK7EBWIr
-         ACk1MtEQ22WaeKVnXrksho8ST2haFkTDZ+2++8fEZ+sy73BSvz/Gv9H4XML0R66GdybZ
-         DJeuq6xrYODZlKXveEFXq8w1LpZIItrUkbXcpiTwBuHkKVKX5+TytUGDxpxZgWcyBi/j
-         /W3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUFhcoe064oAtRc0dJx5qkO94eDeFMrrMpRHeaxyAGbsf9zC2Z0t7SjIdNA+h11KXGfUx88DhmquDPzCXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrnMKHYH2p0trb7fUg5gChXXSY8z28gn0hwlh7qVPWkLKk6dS7
-	WtPDxbicwXB57h7wz6W+wVN5rhzesbaymDYpqcRRjYAcjUTevDiCYrmiog==
-X-Google-Smtp-Source: AGHT+IGuwGV0NYWs6KD4S9AxG15tOLMKgs3Qp/ORAsqck2unCK7XvXylU8DwIZvSn3gjAMvKYfLS/g==
-X-Received: by 2002:a17:907:3f27:b0:a8d:59d7:f92b with SMTP id a640c23a62f3a-a90c1e545c7mr570196566b.30.1726822625560;
-        Fri, 20 Sep 2024 01:57:05 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:908:e842:bf20:422c:48db:9094:2fa9])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a906109637esm817861866b.40.2024.09.20.01.57.03
+        d=1e100.net; s=20230601; t=1726822714; x=1727427514;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5T7rAchj5qjYDoyRW1lduedlZlpub5pg2seiU2N4rAs=;
+        b=mD7l7Y0pvJsppHyJnlKEBtFT0rI5UN7V6BTMMZN7VQSmThAfIYz3DDt6pobSmb9vVe
+         1BvKzcJxTSBZr978Sda4jHNlyRnbhQs1yrk6TUlNXFzE3XcmpU1aU1+JthSFrthf+R2K
+         qXXxFo13utbyDokW6S1elY7ix6L2xFpTGJ5G3hO440HLvjbE8AP8CCljK2o+XrDtIvp/
+         uTiGYEyJQOmhfi5+XEJ0LjzJJ9gM/YJg35i9ueT/grQBZQigXRHMW3W7/2oIyJwWJFLx
+         OpIQ/aEpHc6MViW3yLt5X9W0cKSPWj3B+PYY/s0ixps3FeFY+2+c+51DkWWuuW+hEeZP
+         CTVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvL9/puniz8VPjdBeQlF6wcG9haUrrC4aZGfKpOwWxY0jJzJfK03u+7Z8YWbqM2EA9dACg0nNS3ra0JBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2ZpA8HGzXuGmBOT14HOW2KOsEmYgKEdceqAHHVdjgzKJ6A13U
+	swm2x9ltHeOuua3bCEj2HdMtFlBZnjLk6F/h1306++Ufvl9Fp+D3AccQI3r5cEY=
+X-Google-Smtp-Source: AGHT+IFiyYUeet0rXnG7rQ+wSp502xhgfbMgHAX8ZnoNks935ZvuxAODvTuqZ89H56rGe8FXixFBRQ==
+X-Received: by 2002:a5d:6646:0:b0:378:89d8:8242 with SMTP id ffacd0b85a97d-37a422bf176mr1194672f8f.26.1726822714017;
+        Fri, 20 Sep 2024 01:58:34 -0700 (PDT)
+Received: from localhost (p200300f65f01db004d6a46a6454a1385.dip0.t-ipconnect.de. [2003:f6:5f01:db00:4d6a:46a6:454a:1385])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e71f060bsm17253187f8f.1.2024.09.20.01.58.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 01:57:05 -0700 (PDT)
-From: Ole Schuerks <ole0811sch@gmail.com>
-To: linux-kbuild@vger.kernel.org
-Cc: ole0811sch@gmail.com,
-	jude.gyimah@rub.de,
-	thorsten.berger@rub.de,
-	deltaone@debian.org,
-	jan.sollmann@rub.de,
-	mcgrof@kernel.org,
-	masahiroy@kernel.org,
-	linux-kernel@vger.kernel.org,
-	nathan@kernel.org,
-	nicolas@fjasle.eu
-Subject: [PATCH v5 11/11] kconfig: Add documentation for the conflict resolver
-Date: Fri, 20 Sep 2024 10:56:28 +0200
-Message-Id: <20240920085628.51863-12-ole0811sch@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240920085628.51863-1-ole0811sch@gmail.com>
-References: <20240920085628.51863-1-ole0811sch@gmail.com>
+        Fri, 20 Sep 2024 01:58:33 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Trevor Gamblin <tgamblin@baylibre.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Kent Gibson <warthog618@gmail.com>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 0/8] pwm: New abstraction and userspace API
+Date: Fri, 20 Sep 2024 10:57:56 +0200
+Message-ID: <cover.1726819463.git.u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4775; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=te+EbZlOUzUoKfESPB4idPRylkC8d1cHg4R/EUUCx30=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBm7TkV/hf2RR9pvgUEH/B4lFQkjy6tkOym4gxCC vSZyuCbZu2JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZu05FQAKCRCPgPtYfRL+ Tvt+B/9MeZwymukRVIoG7lg3WRNuWiKios+vhDimsAp5YqaQUrWoPlJXQQQE3OxiVqTlfEWmIWZ RMfLrxP51RUnl2ohTkJ2+UWZypzOdCyQ9SqPuz+m7pYTSxhEAKnN76IDUK4FFhfgCup/PwG4Xx8 02m8ui24J/3AO/9F0mkibyoI2xseAU4DUMdUUU8pDTFeGzI0E6+r/uu9cxc+hXEE4CkGIy7Lis+ CK+7e5KbyBw/Nu2djwDD/lUFniw6PqVcXqHTQuMq/ESlAtHzU9zYEsku8b6DFEiQV/ljUZ6FzkL p29TKSASh7D360Iquptb5Pg/WKyZTmMf+mMitPW3UmG8bthV
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Add documentation for the interface of the conflict resolver and
-instructions for installing PicoSAT. The target audience is everyone
-using xconfig, in particular, kernel developers, end users, system
-administrators, and distributors.
+Hello,
 
-Signed-off-by: Ole Schuerks <ole0811sch@gmail.com>
----
- Documentation/kbuild/kconfig.rst | 53 ++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+here comes v5 of the series to add support for duty offset in PWM
+waveforms. With that (and using two PWMs of a single chip) the following 
+waveform pair can be configured:
 
-diff --git a/Documentation/kbuild/kconfig.rst b/Documentation/kbuild/kconfig.rst
-index fc4e845bc249..6a606c83d8e9 100644
---- a/Documentation/kbuild/kconfig.rst
-+++ b/Documentation/kbuild/kconfig.rst
-@@ -285,6 +285,59 @@ Searching in xconfig:
-     You can also enter a different search string without having
-     to return to the main menu.
- 
-+Conflict resolution
-+-------------------
-+
-+    xconfig has support for conflict resolution. A conflict is in this case any
-+    situation where you want to change the value of a symbol, but
-+    unfulfilled dependencies prevent this. You can create a list of symbols
-+    and their desired values, and the conflict resolver will calculate a series
-+    of changes in xconfig, which allows setting the symbols to their desired
-+    values.
-+
-+Requirements:
-+
-+    To use the conflict resolver, PicoSAT needs to be installed as a library.
-+
-+    Debian-based distributions::
-+
-+        sudo apt install picosat
-+
-+    Fedora::
-+
-+        sudo dnf install picosat
-+
-+    Other::
-+
-+        sudo scripts/kconfig/install-picosat.sh
-+
-+Usage:
-+
-+    To add a symbol to the list of symbols whose values should be changed (that
-+    is, the 'conflict'), you select the symbol in the main view of xconfig. With
-+    the button "Add symbol" you add the symbol to the conflict, which makes it
-+    appear in a table below the main view. You need to switch to "Show Prompt
-+    Options" under the tab "Option" if the symbol is hidden in the main view.
-+    You can set the desired value of a symbol by either clicking on the
-+    corresponding cell in the column "Wanted Value," or by selecting the
-+    symbol's row and using one of the buttons above the table.
-+
-+    Once the 'conflict' is declared, the solutions can be calculated using the
-+    button "Calculate Fixes". Once calculated, they appear in the menu on the
-+    bottom right. You can select a solution from up to three candidates. The
-+    solutions are presented in a table that shows which values the symbols need
-+    to have to resolve the conflict. Using the button "Apply selected solution"
-+    the indicated changes can automatically be applied. If you want to change
-+    the values manually, the symbols are color-coded to indicate the order in
-+    which they need to be set: Green means that a symbol is already set to the
-+    calculated value. Gray means that a symbol cannot yet be set to the
-+    calculated value and that other symbols' values need to be changed first.
-+    Red means that a symbol is not yet set to the calculated value, but that you
-+    can set it to the calculated value.
-+
-+    Note that in rare cases the conflict resolver cannot resolve the conflict
-+    even when a solution exists, it suggests unnecessary changes, or it suggests
-+    changes that do not resolve the conflict.
- 
- gconfig
- =======
+               ______         ______         ______         ______
+   PWM #0  ___/      \_______/      \_______/      \_______/      \_______
+                 __             __             __             __
+   PWM #1  _____/  \___________/  \___________/  \___________/  \_________
+              ^              ^              ^              ^
+
+This is required for an adc driver by Trevor Gamblin[1]. The last patch
+also adds a new userspace API using a character device per pwm_chip (if
+the underlaying lowlevel driver support the new waveform callbacks).
+Compared to the earlier revisions of this series it was moved to the
+last patch because I don't intend to apply it during the next
+development cycle. The reason that makes me hesitate is that the return
+value convention by the .round_waveform_tohw() callback is unusual: It
+returns either 0 or 1 or a negative error value. These return values are
+passed to userspace as the return value of the added ioctl() calls and
+so are not changable any more once they are considered part of the
+userspace API. So for now the pwm internal convention stays unusual as
+it was before, but can still be easily adapted if practise showed the
+convention to be too bad to keep.
+
+If you want to test this series, the current state is available at
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/chardev
+.
+
+Changes since v4 which is available at
+https://lore.kernel.org/linux-pwm/cover.1725635013.git.u.kleine-koenig@baylibre.com
+:
+
+ - As described above: New patch to reorder symbols in core.c and the
+   character device patch is moved to the end.
+
+ - PWM_IOCTL_REQUEST is now mandatory before using a pwm device via the
+   pwmchip character device. Thanks to David for input here.
+   The libpwm repo[2] is updated accordingly.
+
+ - PWM_IOCTL_REQUEST and PWM_IOCTL_FREE calling convention changed.
+   Before you had to do:
+
+	someuint = 3;
+	ioctl(pwmchipfd, PWM_IOCTL_REQUEST, &someuint);
+
+   Now it's just:
+
+	ioctl(pwmchipfd, PWM_IOCTL_REQUEST, 3);
+
+ - There is a new patch that reorders functions in drivers/pwm/core.c.
+   The motivation for that was a locking issue in the ioctl code where
+   pwm_lock was taken twice on PWM_IOCTL_FREE. So a new variant of
+   pwm_put() was introduced that relies on the caller to have grabbed
+   the lock already. To not have to declare this new function, it had to
+   be moved further up in core.c
+
+ - Some debugging code removed. (huh, thanks to David for noticing.)
+
+ - Additions to comments (also kernel doc) and commit logs for several
+   patches to (hopefully) make things clearer.
+
+ - Refactored how the input is validated for the PWM_IOCTL_SET*WF
+   ioctls to remove code duplication. (IIRC this was feedback on an
+   earlier revision. But I only remembered it and couldn't find it in my
+   mailbox. I think it was Fabrice who wrote that, but I'm not entirely
+   sure. Thanks to whoever it was.)
+
+Unless something grave pops up, I intend to add this series (without the
+last patch) to next after the merge window closes to give it some more
+exposure and testing. I'm pretty sure the code still has to be fixed and
+improved here and there, but I will do that in-tree then. Once I'm sure
+it will go in, I'll create a tag for Jonathan to merge into his iio tree
+to allow him to apply Trevor's adc driver.
+@Jonathan: What's your desired timing? I'd target for around -rc3 time
+to create that tag for you. Is that early enough for you?
+
+Best regards
+Uwe
+
+[1] https://lore.kernel.org/linux-iio/20240909-ad7625_r1-v5-0-60a397768b25@baylibre.com
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/libpwm.git
+
+Uwe Kleine-König (8):
+  pwm: Add more locking
+  pwm: New abstraction for PWM waveforms
+  pwm: Provide new consumer API functions for waveforms
+  pwm: Add tracing for waveform callbacks
+  pwm: axi-pwmgen: Implementation of the waveform callbacks
+  pwm: stm32: Implementation of the waveform callbacks
+  pwm: Reorder symbols in core.c
+  pwm: Add support for pwmchip devices for faster and easier userspace access
+
+ drivers/pwm/core.c           | 1144 +++++++++++++++++++++++++++++-----
+ drivers/pwm/pwm-axi-pwmgen.c |  154 +++--
+ drivers/pwm/pwm-stm32.c      |  612 +++++++++++-------
+ include/linux/pwm.h          |   58 +-
+ include/trace/events/pwm.h   |  134 +++-
+ include/uapi/linux/pwm.h     |   32 +
+ 6 files changed, 1693 insertions(+), 441 deletions(-)
+ create mode 100644 include/uapi/linux/pwm.h
+
+base-commit: d242feaf81d63b25d8c1fb1a68738dc33966a376
 -- 
-2.39.2
-
+2.45.2
 
