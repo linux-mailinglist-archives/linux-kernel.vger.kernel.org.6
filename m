@@ -1,143 +1,118 @@
-Return-Path: <linux-kernel+bounces-334246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 649B897D481
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:02:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B4897D486
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2781C284103
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A39B1C224B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024EC13E02B;
-	Fri, 20 Sep 2024 11:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF51313E04C;
+	Fri, 20 Sep 2024 11:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Cv5twCDS"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xu64s7aN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199237DA76;
-	Fri, 20 Sep 2024 11:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A363F39FF2
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 11:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726830162; cv=none; b=EKkChH7BNxj4jOBa6odkuMmOW1eTZsjhqOlcfG3q4qrKUFirY2x669SBTBSMpEFD4PwV2nVRDIvwm7CpTUriceZQBv36nfnb5WNbS79Ua7k2ewqYeZdkVgddfWVyLxk5n5Emvrk02W6FaBMEPDqKwTrN0YmWzXHYSRdoF/9uIdE=
+	t=1726830205; cv=none; b=NtUiNAmGNhpBVKnO1trhWIx4Bto0q48/rhfOYt/1kSTM3E5PXAPcJvRsNCpocl1305T085khv/qOpq3xSI5Cs9wx22hlT/SVOVNzUw1aAYWLqSHf1+1+ZUyNSbk1E9gGGPnVPGs34J1/msBFJv41HkdLfVteQ9GAElU4uUmFkAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726830162; c=relaxed/simple;
-	bh=zFLPkV5XjB0qkCSNYvCEWZU0VCFSWNUkhb7OzTGfOUg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=kqeJTslne7p2cqJ1nqcQz8Y+64D5n7uEc+TCFzxnW5T3BnDpl9Jsex1LeVgAumIqzRgX1VCZGcINhjwzDBHTitohVC6KGo0iUU6OJcOeqHJZrrnXgox4vyFtwTGDbC8IIBciFI6bpsvf4TUEw1kEIAtTajhaXFb0XvNQksRMyU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Cv5twCDS; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726830110; x=1727434910; i=markus.elfring@web.de;
-	bh=5lLOSFSG9mhzZCxoUT9gqo2ko2jbykdEX5ZMcrTCqqA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Cv5twCDSbYPidcGkWUgi7bInQ6Fxt8KoL3KQsfc7TucWyrukC64G2E1K2fPwvAeB
-	 bR8OTIhXmvamJJyols/2+trVzLgswsmgiyKRZ+uOi9NG8k1J4fYBH0PNWsNnJSEA6
-	 TcwKc+Wnwq0XYB/oKFfpe6oW+2/hshpdSrCm9AaEInmHUhCWoAyqBey0v3dcoSBsq
-	 gUxAPjNFTnVXiWUWEvRNz+PsDZozCuUFGGoMAQkuCTehADlFg/6n6+i+hTdV9SoVN
-	 bYZ0OJg6NI6MqoyJJCqHEYC7MjcuuDyVO3qoNQqMq5tTSsE2bbjS3yYnxuUMgm8ur
-	 ZUgaQK7208TDb49VOQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N30ZL-1roXaK4B7l-00xQV9; Fri, 20
- Sep 2024 13:01:50 +0200
-Message-ID: <330c2b9e-9a15-4442-8288-07f66760f856@web.de>
-Date: Fri, 20 Sep 2024 13:01:45 +0200
+	s=arc-20240116; t=1726830205; c=relaxed/simple;
+	bh=t6PyiaU+q5uLSGJpe7i/vY50/CfRtYLyGpxj/y9mOkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NuL93o0co9deu1ctahbfYLAwgQ/DsLgV1MSgzWQmqCc5QScT9Ui/IEcyAbljN16tQutKQnh+g6P/yut9nX7NJqoQKGi5NPUnjH5xDXvLQVdNsbBzi5py2awT7xMR8MkxjThZ6Nbl6b5SJFbXX09zJ69w2TrEj0ImIF7MliZoyF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xu64s7aN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726830202;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/pdqIvSPYWLb/TIk+26OrGjim3sMahhGwrllbas8MQY=;
+	b=Xu64s7aNP6qGyOQTBkVprOZA1iu2mbe4qXThBej+F7UAAogWTTj5m2SthdWpbbbhVdeRdl
+	SLamTzympBX2zJVUInq7gVxRCtYzQ2QiDbX8aNgly0n42iv9kFhqsWjMPNvufCks/nInV4
+	qB9Z1T1MgzMEjYI4zyHBNKijOU2naPM=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-145-4iI78YvhOFmvGhS3JrhF-A-1; Fri,
+ 20 Sep 2024 07:03:20 -0400
+X-MC-Unique: 4iI78YvhOFmvGhS3JrhF-A-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 64F1E192DE09;
+	Fri, 20 Sep 2024 11:03:19 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.115])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8B7C819560AA;
+	Fri, 20 Sep 2024 11:03:15 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 20 Sep 2024 13:03:07 +0200 (CEST)
+Date: Fri, 20 Sep 2024 13:03:01 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Liao, Chang" <liaochang1@huawei.com>
+Cc: mhiramat@kernel.org, peterz@infradead.org, catalin.marinas@arm.com,
+	will@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: uprobes: Optimize cache flushes for xol slot
+Message-ID: <20240920110301.GB15795@redhat.com>
+References: <20240919121719.2148361-1-liaochang1@huawei.com>
+ <20240919141824.GB12149@redhat.com>
+ <41fdfc47-4161-d2e4-6528-4079b660424f@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Clayton Rayment <clayton.rayment@xilinx.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Paolo Abeni <pabeni@redhat.com>,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@inria.fr>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] net: xilinx: axienet: Use common error handling code in
- axienet_mdio_write()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XSLuD600Eg4etH3tvnH0Z216mHgPuhqWJhqAUwh8thyKuaNPK7b
- 7hKHWQcJoMgZz25PixI9t6PfNYQv1UrER3UAwJ6KbZuU0L0Lr91Idfim20U3hyL2mmrPVs+
- uuMizDENCkPTp2KU+o2f1GuEks1LUhQggcB1QVqxjkHq0U6PoeiGPF4Vv2nE+K7nzuHb7IJ
- t5BO7XyJ4qy4V5W6u64wQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Hubf6ZAdFMA=;He1VW0lUejwFHQ4NrAyPLsRNwEY
- ygVjG2gIdm+zMr/WlfqNMIP9d5/vGSIuB5lNf/o3HO8OMtDhtMoclcheYq4CI7XW9QuA4CyLC
- QT4jUWdErG7p2Fr5RveylqrD0uIR7zL4ZYbOpJrYVqt2t0KWQ3UaUFiEPq57evnKC8DWp4aDw
- Iukf/aFLPjVkPnuMwaa3oQg3gnuhYQYa8tKu10j+MN7WpADrQg8w0f8nYkQdPrpAjXzZUmlEV
- ZzAMwL1+JsfiFhq9zoXQU3gK4iomGTWh+FBYQUmSW02Uj3FDKr2gDJbAPslztmYG2tDA4jdFY
- HIfPHxn5fTETb/a8jjVfMaoKzAtgB79BC1NsWGwO6SJNdd+U/bHDGI8V7gGHRmvzL8eFKUZ6o
- 3FxoUIUiM16C+zUs9PEJuR5MsNexRAPnQPRiHYf0scXRmtfVLkGsNpMYi+lBN7VFvrtzip4DF
- /FukX580jzbbjwqjxHlt3GuOHAcAt1X5ffTjIGwJGPsgov0Pi/wSMv5aZ4ztBdPWVWr2zbsTH
- QkBCuHdx0x5E88CYi/I4o2Gc/D30/pEEMcLfsrohxO/kDO56MFBVtC0UnAa35qm1yQdoeJPkm
- wvjRjomnWrBc+s2Qz7IwAbICGkGeT62GTe+hFvQ10Vel6YGta0q09Cdoxzyr03xA9akbQBGWT
- RPe3wMp74rxZoQwGhHPui2q3VZwjHAmUgrkstcHxbYareIYtjAtBsKH/n3l+QNbdCQIyHogS0
- 26sy2B3AWLFTUzsaMScNOeBMsFG58B8US9kZ9DP7vcLMKMYPF7faDQzDh0W7+gHhLb22AVI77
- gi3H2clcwOeL7mcRGVAnnHXQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <41fdfc47-4161-d2e4-6528-4079b660424f@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Sep 2024 12:43:39 +0200
-Subject: [PATCH] net: xilinx: axienet: Use common error handling code in a=
-xienet_mdio_write()
+On 09/20, Liao, Chang wrote:
+>
+> 在 2024/9/19 22:18, Oleg Nesterov 写道:
+> > On 09/19, Liao Chang wrote:
+> >>
+> >> --- a/arch/arm64/kernel/probes/uprobes.c
+> >> +++ b/arch/arm64/kernel/probes/uprobes.c
+> >> @@ -17,12 +17,16 @@ void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
+> >>  	void *xol_page_kaddr = kmap_atomic(page);
+> >>  	void *dst = xol_page_kaddr + (vaddr & ~PAGE_MASK);
+> >>
+> >> +	if (!memcmp(dst, src, len))
+> >> +		goto done;
+> >
+> > can't really comment, I know nothing about arm64...
+> >
+> > but don't we need to change __create_xol_area()
+> >
+> > 	-	area->page = alloc_page(GFP_HIGHUSER);
+> > 	+	area->page = alloc_page(GFP_HIGHUSER | __GFP_ZERO);
+> >
+> > to avoid the false positives?
+>
+> Indeed, it would be safer.
+>
+> Could we tolerate these false positives? Even if the page are not reset
+> to zero bits, if the existing bits are the same as the instruction being
+> copied, it still can execute the correct instruction.
 
-Add a label so that a bit of exception handling can be better reused
-at the end of this function implementation.
+OK, agreed, the task should the same data after page fault.
 
-This issue was detected by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c b/drivers/n=
-et/ethernet/xilinx/xilinx_axienet_mdio.c
-index 9ca2643c921e..0c7b931b2e66 100644
-=2D-- a/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
-@@ -138,10 +138,8 @@ static int axienet_mdio_write(struct mii_bus *bus, in=
-t phy_id, int reg,
- 	axienet_mdio_mdc_enable(lp);
-
- 	ret =3D axienet_mdio_wait_until_ready(lp);
--	if (ret < 0) {
--		axienet_mdio_mdc_disable(lp);
--		return ret;
--	}
-+	if (ret < 0)
-+		goto disable_mdc;
-
- 	axienet_iow(lp, XAE_MDIO_MWD_OFFSET, (u32)val);
- 	axienet_iow(lp, XAE_MDIO_MCR_OFFSET,
-@@ -153,12 +151,9 @@ static int axienet_mdio_write(struct mii_bus *bus, in=
-t phy_id, int reg,
- 		     XAE_MDIO_MCR_OP_WRITE_MASK));
-
- 	ret =3D axienet_mdio_wait_until_ready(lp);
--	if (ret < 0) {
--		axienet_mdio_mdc_disable(lp);
--		return ret;
--	}
-+disable_mdc:
- 	axienet_mdio_mdc_disable(lp);
--	return 0;
-+	return ret;
- }
-
- /**
-=2D-
-2.46.0
+Oleg.
 
 
