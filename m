@@ -1,88 +1,85 @@
-Return-Path: <linux-kernel+bounces-334252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DFEE97D490
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:09:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22FEE97D492
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1763B1F22778
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:09:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD3742863CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B380F13F42A;
-	Fri, 20 Sep 2024 11:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C371428E4;
+	Fri, 20 Sep 2024 11:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mCVj7zUG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kDfdLhjd"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6579655887;
-	Fri, 20 Sep 2024 11:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDC113D26B
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 11:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726830589; cv=none; b=FalNzqTq1vuRUlSbTIZwlIsjA9uw6Xeq3rVI8HaffrF5VMXTnJuzIdlxp1ZahSioP2BqaEbWtFWjhbkBjtvBwz13XDJJXTAoHtMjnZDYSh9HtjRh0GRKQNU0/C3kcaZ/D1ZCVC/zGODDBYlgu8KVuZZSs6nNs5M2ObSbxiIC6nA=
+	t=1726830608; cv=none; b=q7gjKGfVF+AM7icVTqeGndi2LLve4Ne7OOui5LygGc5HsV9V051B2uIeyYrkU+eQrT+00SGWi+MJPh18mNALmmtShx+p5OTd3cPj3kOywEVG8c8caBx6oLh9ZKcgCVmSVg6OkEJmnwhYg9InUDowOT6M9gDBr05jXfEPRhWCT+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726830589; c=relaxed/simple;
-	bh=vCaO4ypVNNj50k616bvbWb0ZhmSIhGXQ+CsBpme5xXE=;
+	s=arc-20240116; t=1726830608; c=relaxed/simple;
+	bh=SP8iz223UYOSo5BzrpVFkVxPNjsWT3Y4xNAfrH2OA8w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oqbB8zmsKIdPEwGaWdPgoYpAyj8WiMfpOL6m8nxEGIjvCzVV23LXSLvZc0K2P1iiRv9EHCCcXRHYoTpJZS25c2+jNj4vwcMsJbT6IQ45jMMAkw5laaMQ+WfH/5lW2ySXudkEsryUYkCz/e8iqBiuD9uuhkSLYJ3P6SAZ+fkHQao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mCVj7zUG; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726830587; x=1758366587;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=vCaO4ypVNNj50k616bvbWb0ZhmSIhGXQ+CsBpme5xXE=;
-  b=mCVj7zUGKdRM9OeE91UgS/y6/ALdlwtR1cP0DiaPVgbKu7a1SjSz1E7F
-   J6dTxb/EiNZ1MnVPcY6dstvAK+6lj8gpq5zzCMZT9Zd0VlOyhFazGQRAH
-   qsVhsgY9SiDppANml+U+cju9rw7R/ic4Hi998f+NSlAtBQJurT+yNKEVP
-   11RZx6lXVZlCdC64ksNhg9T/Fo5EmKDYbmuglptowoq8CgDR3gHZ6ydqA
-   sB5uHFN+sLvCdTy7EsQ7ouc/3jQNkL5jKjLeKoDfkIXzhE6p8/oUrUvHG
-   UFipjUnumwnXv/vnSXbJ79Kh7mzhoYRapw7tzrhKjgaVgy9t3KiOD1/C1
-   w==;
-X-CSE-ConnectionGUID: +eqXOH90T6ufOKzHDy+DdA==
-X-CSE-MsgGUID: B5kYsJ5xRMeoRxphP7TZWA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="29726420"
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="29726420"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 04:09:46 -0700
-X-CSE-ConnectionGUID: N1zVYBiWRBCSO1UCyjakwg==
-X-CSE-MsgGUID: wtpa2aEqTcynycK8eRDJQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="75219609"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 20 Sep 2024 04:09:42 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1srbW7-000EJH-28;
-	Fri, 20 Sep 2024 11:09:39 +0000
-Date: Fri, 20 Sep 2024 19:09:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>,
-	linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-Cc: oe-kbuild-all@lists.linux.dev, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Matt Roper <matthew.d.roper@intel.com>,
-	=?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
-Subject: Re: [PATCH v2 2/3] PCI: Allow extending VF BAR within original
- resource boundary
-Message-ID: <202409201854.z0daqyYE-lkp@intel.com>
-References: <20240919223557.1897608-3-michal.winiarski@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eDysdoauGR9fPM0fjwlCJAzUWjC/4HRkvxivPHGIsNAHpN+mTbAR+q7MhEkAj0wuip9za5orn6KCLrew6cdwUVR3rcGEqD05jWLkDxM/FAFDkueNFKKJXUX7YaEYXBwkBDfS8L+btnoRcGzfzctblOonyvkeIYngIL/nTuXgr/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kDfdLhjd; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53659867cbdso2972071e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 04:10:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726830605; x=1727435405; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5EHjGRXCWgZwp1krkmlisCOVeWPEKWd2TIUOSRIDt8I=;
+        b=kDfdLhjdBeOydgV97U6nK5UAgSczZtr7yRru4NBKNrF6QwqmYVduDpJwyIQ+FPo3AO
+         9uIr95jJCMAa4OETbEt8/g7g3aoxigVNKYiB+xp214OMOjURWy9D5C2KqtJO9dOLtbyH
+         yfweLpkd4nRIXHz7ZjtxzO8EOGKh0+zXYXwYw03BAlFbS1dba5WnD/JNWcwyFLsuW3zp
+         Rr4sFS93+2Z8sFpaJBn4fM+ClwbLtRFgSJAGsJ3y2H2WpHh5gAKZgHkJUA93TQrqBOYM
+         vjcP4OZGnWoIe+SkMtmnuB9U3DkFhTGeMnQdjfRWMe9IWFxbG1QHwg3ZTNjYGjpOBOMu
+         kUBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726830605; x=1727435405;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5EHjGRXCWgZwp1krkmlisCOVeWPEKWd2TIUOSRIDt8I=;
+        b=ZKnfF5JlDGwegR2p4Cs9IbMPPlw8GPFW28OtYaU9n8KYqqJIWZaqoCkahMj+n+tDq7
+         liJb/G+JxLGTAh+uROQh8Hk8yBGT1CYkJ0vdvy0ocSe2BH35TZdUOmSmRooeU9RPncJt
+         uKZ0groDa/c2GNaizGPCN7vz93v3h972IFeh69cIUq9tAMrKty7Lk0ifuRC2Tc+3EEjL
+         5G9zm0CisJqN4dwVjtTH0NMegMsMSuRGECShVv7WEW9FjOcrK0tG1SLXL61LeTMia7VH
+         g2afCY6o3skukIYJTRdB6PSEqisuKqMm5TJseqLL/Tl/bPhnC4Or5Z4OEmaSrKDAmkPD
+         5/Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCV4Mvb1d23cFHu59MWDZMYs0qjsPfGHl/0qOY99Hmr6Ow+ms5H7nypZw0B9YiroTl92ivCXOh7GvmhfRGU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7Pakhy9rOPoClWunP0qgL04/yEwFxz0XmahlqhUlvCRPsOELm
+	8TbsbNN0xd3MdoI3RpjuBBW3ghmV5W00puxLE6qFAwXiyTpII7N7dDqKD5Cy4zk=
+X-Google-Smtp-Source: AGHT+IFNGKP6ElDwKV6SnNuyGO0cfMJ44eZrIuCs6c8/FaQcThhnYhR3j4iMkCX5GmVhPiPCfnOd3A==
+X-Received: by 2002:a05:6512:39c4:b0:536:a4f1:d214 with SMTP id 2adb3069b0e04-536ac2e705bmr2027275e87.19.1726830604714;
+        Fri, 20 Sep 2024 04:10:04 -0700 (PDT)
+Received: from localhost ([83.68.141.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061096762sm835762266b.37.2024.09.20.04.10.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 04:10:03 -0700 (PDT)
+Date: Fri, 20 Sep 2024 14:10:02 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Chuck Lever III <chuck.lever@oracle.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <dai.ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH v2] nfsd: prevent integer overflow in
+ decode_cb_compound4res()
+Message-ID: <183154d2-cb65-4161-a737-394aba9c1d43@suswa.mountain>
+References: <ed14a180-56c8-40f2-acf7-26a787eb3769@suswa.mountain>
+ <C185CD71-0AF6-4D83-AEE5-F8C87EEDE86B@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,76 +89,57 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240919223557.1897608-3-michal.winiarski@intel.com>
+In-Reply-To: <C185CD71-0AF6-4D83-AEE5-F8C87EEDE86B@oracle.com>
 
-Hi Michał,
+On Thu, Sep 19, 2024 at 02:02:19PM +0000, Chuck Lever III wrote:
+> 
+> 
+> > On Sep 19, 2024, at 1:12 AM, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > 
+> > If "length" is >= U32_MAX - 3 then the "length + 4" addition can result
+> > in an integer overflow.  The impact of this bug is not totally clear to
+> > me, but it's safer to not allow the integer overflow.
+> > 
+> > Check that "length" is valid right away before doing any math.
+> > 
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > ---
+> > v2: Check that "len" is valid instead of just checking for integer
+> >    overflows.
+> > 
+> > fs/nfsd/nfs4callback.c | 2 ++
+> > 1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
+> > index 43b8320c8255..0f5b7b6fba74 100644
+> > --- a/fs/nfsd/nfs4callback.c
+> > +++ b/fs/nfsd/nfs4callback.c
+> > @@ -317,6 +317,8 @@ static int decode_cb_compound4res(struct xdr_stream *xdr,
+> > hdr->status = be32_to_cpup(p++);
+> > /* Ignore the tag */
+> > length = be32_to_cpup(p++);
+> > + if (unlikely(length > xdr->buf->len))
+> > + goto out_overflow;
+> > p = xdr_inline_decode(xdr, length + 4);
+> > if (unlikely(p == NULL))
+> > goto out_overflow;
+> > -- 
+> > 2.34.1
+> > 
+> 
+> Hi Dan, I've already gone with
+> 
+> https://lore.kernel.org/linux-nfs/172658972371.2454.15715383792386404543.stgit@oracle-102.chuck.lever.oracle.com.nfsv4.dev/T/#u
+> 
+> Let me know if that doesn't make sense.
 
-kernel test robot noticed the following build warnings:
+Oh, sorry, I got mixed up which things were patched.  That looks good.
+The truth is I always prefer when people give me a reported by tag so I
+don't have to write a v2 patch.  It just saves a back and forth.
+Thanks!
 
-[auto build test WARNING on pci/for-linus]
-[also build test WARNING on drm-xe/drm-xe-next drm/drm-next drm-exynos/exynos-drm-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-misc/drm-misc-next drm-tip/drm-tip linus/master v6.11 next-20240920]
-[cannot apply to pci/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+regards,
+dan carpenter
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Micha-Winiarski/PCI-Add-support-for-VF-Resizable-Bar-extended-cap/20240920-064112
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git for-linus
-patch link:    https://lore.kernel.org/r/20240919223557.1897608-3-michal.winiarski%40intel.com
-patch subject: [PATCH v2 2/3] PCI: Allow extending VF BAR within original resource boundary
-config: arc-allnoconfig (https://download.01.org/0day-ci/archive/20240920/202409201854.z0daqyYE-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240920/202409201854.z0daqyYE-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409201854.z0daqyYE-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/pci/of.c:12:
-   include/linux/pci.h: In function 'pci_iov_resource_extend':
->> include/linux/pci.h:2421:10: warning: 'return' with a value, in function returning void [-Wreturn-type]
-    2421 | { return -ENODEV; }
-         |          ^
-   include/linux/pci.h:2420:20: note: declared here
-    2420 | static inline void pci_iov_resource_extend(struct pci_dev *dev, int resno, bool enable)
-         |                    ^~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/return +2421 include/linux/pci.h
-
-  2397	
-  2398	static inline int pci_iov_sysfs_link(struct pci_dev *dev,
-  2399					     struct pci_dev *virtfn, int id)
-  2400	{
-  2401		return -ENODEV;
-  2402	}
-  2403	static inline int pci_iov_add_virtfn(struct pci_dev *dev, int id)
-  2404	{
-  2405		return -ENOSYS;
-  2406	}
-  2407	static inline void pci_iov_remove_virtfn(struct pci_dev *dev,
-  2408						 int id) { }
-  2409	static inline void pci_disable_sriov(struct pci_dev *dev) { }
-  2410	static inline int pci_num_vf(struct pci_dev *dev) { return 0; }
-  2411	static inline int pci_vfs_assigned(struct pci_dev *dev)
-  2412	{ return 0; }
-  2413	static inline int pci_sriov_set_totalvfs(struct pci_dev *dev, u16 numvfs)
-  2414	{ return 0; }
-  2415	static inline int pci_sriov_get_totalvfs(struct pci_dev *dev)
-  2416	{ return 0; }
-  2417	#define pci_sriov_configure_simple	NULL
-  2418	static inline resource_size_t pci_iov_resource_size(struct pci_dev *dev, int resno)
-  2419	{ return 0; }
-  2420	static inline void pci_iov_resource_extend(struct pci_dev *dev, int resno, bool enable)
-> 2421	{ return -ENODEV; }
-  2422	static inline void pci_vf_drivers_autoprobe(struct pci_dev *dev, bool probe) { }
-  2423	#endif
-  2424	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
