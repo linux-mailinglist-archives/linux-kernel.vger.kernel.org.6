@@ -1,417 +1,158 @@
-Return-Path: <linux-kernel+bounces-334679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A13597DA8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:30:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE9697DA90
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849C21C20F05
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 22:30:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39FBF1F2218E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 22:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569D018A6D1;
-	Fri, 20 Sep 2024 22:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1395218C93D;
+	Fri, 20 Sep 2024 22:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OU1HjZFO"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="O9WAWhAx"
+Received: from sonic310-21.consmr.mail.sg3.yahoo.com (sonic310-21.consmr.mail.sg3.yahoo.com [106.10.244.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B72F18A6A8
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 22:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C2D136341
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 22:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726871405; cv=none; b=cyvZtvz6y2ovQDX9iP02MP1RJQoRIxw4HQxuPwUpyhhoORA3SCWCyYAkjMMedTJc4K1Xup9a9mHb2c0CEiV8vwuhkyfCm3dW/dGLk7zoXNjnnjzKewSYX6nrIHJi9EOQlXHmMg08SdLGuFgXskapMYyOMXjJ+S66ERaYnPJ58qA=
+	t=1726871513; cv=none; b=Mj89bniBErmxaUmSEC4+8LlgIC+QoziivzBNa1U+o5URl2ImEBHyF4bMlifNF2XKyNFz7UI4K5uYM96d5FQLhuJRxXnFlHLEYvpec16fZ2J8roxvoAf1U8ck/Uw3PI8ZQ7mcO/CtYnrXmwed6DGbWmSvpZY/Y5D1P/ZpJR9RXaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726871405; c=relaxed/simple;
-	bh=5rjovaAAbiNgMBuU7M4FLRqHaMzI8V12hLRmG6DgklM=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Oqy1Uk2o3/8f9+XZe3CmyEAwPunP0sF7YUnQX/TETfxz26iqXAOwYSkOwFkBjgEWSIsfBGEIvYUsJ/dadYV+r6bKSZmBwXNy4dGg/5OJCkYiHS+ZLrcjNDCD5VIqswj+DEpez+VY0RsGfhlmOV4QudY1/MxGbIq1pHXEcOG7iPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OU1HjZFO; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c26815e174so3180254a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:30:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726871402; x=1727476202; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=swS/eAMre3URp5M1Cs94CLh7EUmF/oecqun6+tXxKcs=;
-        b=OU1HjZFOPUxBCSxTC/noAih7kJdKanUGlPxOMVZe91uo8Byo9JJV0YE7t6pTBpy6nG
-         htVkeo3PJMeen9trNonWTvMtDrz+Sdn37HaA2V60Bsz0L7Ruo1JJ8Fv5msuuFDIUGS1L
-         Qmi4eLIdqHi115q1i+9qGvSIxf1BZzc8ZynUqFv8iWXbOW5xWb+J9jAMcq8DmlhOYiYM
-         11RXYXJ/o4JJVSSzFDBVScuRvfW6LE2nglaFMjabAAG3FRceHg1aiSAquShCVyhugW0R
-         aHjUXNq1XdOWmg+QZryRvwVWWUI+ajnU6NEt3eNw2Cii6OK0YhxDLaS0YCfjwulfevZt
-         zs4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726871402; x=1727476202;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=swS/eAMre3URp5M1Cs94CLh7EUmF/oecqun6+tXxKcs=;
-        b=beV5dyAwPsrSo1YZe5dWC0arYSfuZSu05eYR6QP+UI637yntbrKf9YV59RvoIv3wIT
-         hGfe+xkGNxmFlLcxzOLlGqEtEm5tPCrHnMjLLX284NnsmiVoDFCI0lY6hDBOibV2Dy/4
-         FFtx7NDRicsokbZmWe7iduXCeMX0zdIUQ7RcSmmGxs/yRVGmEqCACWt97G9xtunUId3w
-         bt2he/yPv9oSVJQJMa5nNAy38IHoTatqsq/69IbzgnjHwVgFIRVra/E4V13RbYTaNMdR
-         QAQ04Erx6cQ8m1icah7HeC4bDsJJJYHTiKW+x3RmGU/igKg/zv/dopQ42ropVFsuk2Om
-         0CFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWi6Wg+qtaRcXORzvB5eVpk0m67AOOcAVQyuzKq969d8fNa3FD/jF0ligu6kU4HraPFsQBBtJSgoAp1h2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNVdbQ1qOja4/YEmc4Py1TCeccaPgryqlMSfQrFPO0vOlLbGZf
-	aA6zsWIhF8ySCXhFmaKnkknfBsQNnvlokCxJR126vcihhoJkP2kW
-X-Google-Smtp-Source: AGHT+IHY2wNeQFC/zHp9gActEThKEMdUGPFSwqp94LloOTxHO0KcxabgRYXnUcFGy+hjuzPfWnZcpw==
-X-Received: by 2002:a17:907:d2c8:b0:a8d:5288:f48d with SMTP id a640c23a62f3a-a90d5033deamr343635966b.32.1726871401350;
-        Fri, 20 Sep 2024 15:30:01 -0700 (PDT)
-Received: from giga-mm-1.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610967a5sm910924066b.21.2024.09.20.15.30.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 15:30:00 -0700 (PDT)
-Message-ID: <8271905d88ecbba4487f260bdfa347decfdfadbc.camel@gmail.com>
-Subject: Re: [PATCH 1/4] soc: marvell: Add a general purpose RVU PF driver
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: Anshumali Gaur <agaur@marvell.com>, conor.dooley@microchip.com, 
-	ulf.hansson@linaro.org, arnd@arndb.de, linus.walleij@linaro.org, 
-	nikita.shubin@maquefel.me, vkoul@kernel.org, cyy@cyyself.name, 
-	krzysztof.kozlowski@linaro.org, linux-kernel@vger.kernel.org, 
-	sgoutham@marvell.com
-Date: Sat, 21 Sep 2024 00:30:29 +0200
-In-Reply-To: <20240920112318.2722488-2-agaur@marvell.com>
-References: <20240920112318.2722488-1-agaur@marvell.com>
-	 <20240920112318.2722488-2-agaur@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+	s=arc-20240116; t=1726871513; c=relaxed/simple;
+	bh=S3EUaGvQSUGjrMQM6Dkcsg3qCg+FcExmcLudME4TXrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dgp/U8oNbrA5c5HeaNMJJLTv/o4bZafVxtkUB9yJCt7mu5nFwovoOPJgu87TyzqNhh6uTu4ZwPzi80kHsSzWr2Ub4w5VVpsgGDI7gR8HQ5PtY1gxCz5Tt555QeiAqP7OfVyHnTJsgHsgWQt8cjJ7sg9sVlTWpR7CC4pIUqV27d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=O9WAWhAx; arc=none smtp.client-ip=106.10.244.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1726871502; bh=9u6ESS5Lcr/sJjALlRUo/j9k47a5Jeb/37M0+Yd7Im8=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject:Reply-To; b=O9WAWhAxavccdt4uSNZKBeC87vdOLcBoF5KT2sqHFehiJs+jvXix3/j85bN9p4W7gAY397lexwaNjB11VA7KFUdQdVmPIwlQHrePQ42T7Wks5RoDeUkAKq5jxMI3NnWG2jBh9M5BJ+rSR6uP8Wum0HiNxO3rP+5Xyz18pu+cJzdv9aTfFg/OrkC2+oZBMoslF0LnuHuMVw25jTvmAP99GrSzRAdfk8RDheaXAgaUSOx1jylkglcM5lcAJ7JPShlLnUO38Zy16USuj+1ORzkauLZWU/zoXGV0LmT0mWrAKqEQuusKoYTFNDESdsKVEZ/aMUrVHa1//69LELRSOn9Y9A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726871502; bh=DmH3nxOTtRSmSOj4XUP5cRTYFEFV5pq4rTsrmY/9Zg7=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=hPBFIZuD+kzuWlSi53FPXBBTGkITaPXU2r2Gypi0s/UiOYuQU6z5KkAp2D5koLziD7xtKm/uv0TeLwpmT5QVhaT/bLykTa33dwz4jteLt5NP9gdDyX/7Wxjeo6knLTpG9FfydSmYffv9Dpl0CDXza+8daf1BwSIDqcgfEsnVYT60970NpSetV0CVM1W3iaGNp5v0uMPbt6E9IdGr6HmFEgdpI+WKjOi5NzaFULUWVD0etidBh/yPgQnSBgCWFl7LEz0wYYtTw4Hznt1LYVW8tvXSK6T3ZceyztnoFXegztoikYR7nLVpHH3teG/NY518JKvZNC8+zDY2gSls9s8qdw==
+X-YMail-OSG: KzAv4uEVM1mCZvXu6Noi9gp143SNSMpo3y5ouJdcLDAmBMTyJJTTEKWnPdS.o27
+ My50MVr9Au9rXy55x8gyqOB11zrllRmRnnBYwLQwMwYVCCYPGnjQhvl11JYMbr5mhDdliTA8OAH.
+ uQQ_4gKSnWWlj8GdUd7NXVF.7L95NuqJbID4pwP3WfG4_ska.A0jYKIgO4b0W_nzpAjvVpt2fgYA
+ xmxYwjpBFM7hGLUapxPawtKDozaVcU1.1HTi8CoOpM5nYU_Te9L8TB3YMxGZhVLkqtMwJXHs42O3
+ Uqi8gI5UmJf11Eg1Wr6ToCIGfhxFKvtSJuQrTGsNFY5777x_gbVq9nXC3zRORjuoc_9oDCN4uk4e
+ 1MSeH1ss1VUeuj66YG4zisfF4pUHBgAKH3jSCQ2ZJ9xu.YsHa8vucYOmoC3rP0g0e5f2gvKTNpEr
+ FBTdpbb2ymrFGg8eHKjBlgU_c33.aET8wtOn_BKgiqV6LYo6AhkIyM7IWJ34KrKxbWFdzb010qhW
+ VyqINHzoIOj4BFHsIuJt7rNcJ0p6Af_dANuFtnRUnRNtW3lmjx1dfbqk6fuONT0DmU6XdaB8rpWT
+ OS8Q52IvCd8lwadw6dTa00Jp3iazNlWdtu0IMFnJZyxFF4yI5kRatXdRL8pLnBVqAkVGoi2a.g2Y
+ kkymSxEMvBP6IQ7lxf4sVUp7TpgFNfLwIBwk_ci_P2aF4M0wX5idDyUGyh1CY0KIHmX5mmQ4yx6Q
+ geZjT34PeWLPXYB4hj5AogS.KpRWsD45cIBSi1SJlWDe_IBGlvtchqtLzJbQD1Pw3F61mZjzoLyk
+ sHYFNRWKoaRaC4rnqcRBC_2no7JhMUOOS0bgA2Tc3wC.YoEtKl3qTLHqhncEGclgjOwEMK7auWDW
+ Dpb5CxW3MotKFDdLyFroZc45tmISbkTaetjciJZqJhwIanoSmzTN4U2zyTWUBk_z68OGX1ds_N1w
+ 6LY3bq.CzMQoySkBYWv2j6aWD3hK.pyFnaq8SM8mr89i6yJ2KGpok3WwpOdgYuW2TXoRFxYpBbfZ
+ qhWPcMcI6UlKPRnPPJDy60ELfKrnR_hi9Nt.QUJFQ2EHKa9wNnV.axjiHl60BncEcwPlCWQDwRm_
+ CTefPMV11mdARY39.R_iC.P5CRtHwcJwX26xBl.BCPpmQ0Qx9Fw1QS.nbPfx27cpP6p6dSwpkChA
+ gwBXANEycfAT3bC9cqccqHC1kvPSdIPH.JdTMr13lUUPGtXNve9BwTGqXrUW7aJu.7nnb5Cj.2PA
+ 664g2GdsceJS3Ur2H0lK_FQSvuOZWaHDzuaEKFooGJTudlTe3ycQSQgNJ4tIpzDldLx5wFk2XGpF
+ TPkwtwpRQFWQkqxAS6qc9j6FkioweXhA9gbfDjt_ZE1thFWj3lHn8WDFj9dug0Jh5XC0zwPlFP9K
+ Rzfxces9BQeIb.wyZ.enJ8tdtiwIO6Gxk_gtk06T8nV2LLU6ACFLGXLjv91v1LmPOqnByqvZbk3l
+ aNwqvGjidh9ZbLY9xhq7Bujq0ZIQxpfej6S0kMJmO6hznUnilPnoaugJk3X8BCWVA5djlsBro0zA
+ YM8kOCdmFA2ki6ILsCtfxYrs0iKZpNOwwArFm_eBQ.kaC8bvlFX_7GAIVAtG86JpjTYGAq4h0wCY
+ CHn.HTl20BKz2KZqrtQyvOgLSZzcaEbf8ZvQVJYW6Lm5laNM_K3.uCHISArD_Qpg1yw30HmAp2dG
+ 0gxHgVfIfQsvq0qOmrLdR9GxTSBE7dDd6LcROc.zkBojxRWcKsRqAUIEZ2G6mNJeNJJLzsBeFOoO
+ QDClmR3UaEeFfDMGqM5YevjyA3VFt9rh6zLabkMYKpBEc6a.DkBIHe5txmv._QMnNK3lq6Fn6.FF
+ zSYbTMmwMk07OmBf.blaKt0TnNae0DtyA2TtUxv_NjtOFeXpRPT_q29NnkZ82e3wsDYk5NKmeTCV
+ .7V6YWViaUwtJ5e7fT8fKKFiC9Lo3YyJ1XhrN0F9bzqZUgn7tkGNAysA2LFIYUQ_OY6v0Bnc40dP
+ RH.u1TkfGRGnEfPO9i6ymrZdF8hIlciacADcszEKz1duT5AHBeNaGWn.t7fO.NO2QTZexHrgVj37
+ rRsSLPilJBFlI0OkfTxozHkPAxd6kATZvuKwnWLU5Up0oFNEsV0VeU7T5iQaeBVCLWNJS.fYBCi8
+ JyJcXrNMseumnVkhUCEWi3P0IOPtuqg4VfHFyKlrkZZs_9.wqQZfUEGBoBgv91jTMHn5ddPi6HTm
+ K.3F0sqDO1kGJJVo1dUoz4EMSAfc52jtsbXbmjaJE
+X-Sonic-MF: <abdul.rahim@myyahoo.com>
+X-Sonic-ID: 8f480c15-3224-41c4-a621-37a91a9b51c9
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.sg3.yahoo.com with HTTP; Fri, 20 Sep 2024 22:31:42 +0000
+Received: by hermes--production-sg3-fc85cddf6-m4s4b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e680406d2f7b2a53297f7fb694c75ce0;
+          Fri, 20 Sep 2024 22:31:38 +0000 (UTC)
+Date: Sat, 21 Sep 2024 04:01:34 +0530
+From: Abdul Rahim <abdul.rahim@myyahoo.com>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: perex@perex.cz, tiwai@suse.com, broonie@kernel.org, shuah@kernel.org, 
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest/alsa: add silent flag to reduce noise
+Message-ID: <y6a347udrtudmbfsq7erk7m3dt5smasqg3mffaazwl67zua75d@sl57aj6rwa3g>
+References: <20240915234131.61962-2-abdul.rahim.ref@myyahoo.com>
+ <20240915234131.61962-2-abdul.rahim@myyahoo.com>
+ <7caf7242-1ca4-462a-b3d0-627258df3f1b@linuxfoundation.org>
+ <vzrosmbs5x5mmnxwubwljjqxo4m4eih35z26cudshpbr3uue7j@k3v65fkr24rz>
+ <087c4ef0-5718-48d3-9367-1d79a255fab1@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <087c4ef0-5718-48d3-9367-1d79a255fab1@linuxfoundation.org>
+X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Hi!
+On Fri, Sep 20, 2024 at 09:27:03AM -0600, Shuah Khan wrote:
+> On 9/19/24 15:49, Abdul Rahim wrote:
+> > On Thu, Sep 19, 2024 at 09:40:34AM GMT, Shuah Khan wrote:
+> > > On 9/15/24 17:41, Abdul Rahim wrote:
+> > > > When ALSA is not installed on the users system, the error:
+> > > > 
+> > > > "Package alsa was not found in the pkg-config search path.
+> > > > Perhaps you should add the directory containing `alsa.pc'
+> > > > to the PKG_CONFIG_PATH environment variable
+> > > > Package 'alsa', required by 'virtual:world', not found"
+> > > > 
+> > > 
+> > > extra line?
+> > > 
+> > > > is printed 3 times, which generates unnecessary noise.
+> > > > Hence, Remove unnecessary noise using `--silence-errors` on LDLIBS
+> > > > assignment, so the message is printed only once.
+> > > 
+> > > I would say this message is alerting the user that the package is missing.
+> > > Why would you want to delete it?
+> > > 
+> > > > 
+> > > > Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
+> > > > ---
+> > > >    tools/testing/selftests/alsa/Makefile | 2 +-
+> > > >    1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/tools/testing/selftests/alsa/Makefile b/tools/testing/selftests/alsa/Makefile
+> > > > index 25be68025290..cd022fc869fb 100644
+> > > > --- a/tools/testing/selftests/alsa/Makefile
+> > > > +++ b/tools/testing/selftests/alsa/Makefile
+> > > > @@ -2,7 +2,7 @@
+> > > >    #
+> > > >    CFLAGS += $(shell pkg-config --cflags alsa) $(KHDR_INCLUDES)
+> > > > -LDLIBS += $(shell pkg-config --libs alsa)
+> > > > +LDLIBS += $(shell pkg-config --silence-errors --libs alsa)
+> > > >    ifeq ($(LDLIBS),)
+> > > >    LDLIBS += -lasound
+> > > >    endif
+> > > 
+> > > 
+> > > thanks,
+> > > -- Shuah
+> > > 
+> > 
+> > This can also be handled like this:
+> > ---
+> > CHECK := $(shell pkg-config --exists alsa; echo $?)
+> > ifneq ($(CHECK),0)
+> > $(error Package alsa not found! Add directory containing alsa.pc in PKG_CONFIG_PATH)
+> > endif
+> > ---
+> > 
+> 
+> This is a better solution than suppressing errors.
+> 
+> thanks,
+> -- Shuah
+> 
 
-On Fri, 2024-09-20 at 16:53 +0530, Anshumali Gaur wrote:
-> Resource virtualization unit (RVU) on Marvell's Octeon series of
-> silicons maps HW resources from the network, crypto and other
-> functional blocks into PCI-compatible physical and virtual functions.
-> Each functional block again has multiple local functions (LFs) for
-> provisioning to PCI devices.
-> RVU supports multiple PCIe SRIOV physical functions (PFs) and virtual
-> functions (VFs). And RVU admin function (AF) is the one which manages
-> all the resources (local functions etc) in the system.
->=20
-> Functionality of these PFs and VFs depends on which block LFs are
-> attached to them. Depending on usecase some PFs might support IO
-> (ie LFs attached) and some may not. For the usecases where PF
-> doesn't (need to) support IO, PF's driver will be limited to below
-> functionality.
-> 1. Creating and destroying of PCIe SRIOV VFs
-> 2. Support mailbox communication between VFs and admin function
-> =C2=A0=C2=A0 (RVU AF)
-> 3. PCIe Function level reset (FLR) for VFs
->=20
-> For such PFs this patch series adds a general purpose driver which
-> supports above functionality. This will avoid duplicating same
-> functionality for different RVU PFs.
->=20
-> This patch adds basic stub PF driver with PCI device init logic and
-> SRIOV enable/disable support.
->=20
-> Signed-off-by: Anshumali Gaur <agaur@marvell.com>
+Yes, i see. Because other errors can also be silenced.
+I'll resend this one
 
-Reviewed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-
-> ---
-> =C2=A0drivers/soc/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0=C2=A0 1 +
-> =C2=A0drivers/soc/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
-=A0=C2=A0 1 +
-> =C2=A0drivers/soc/marvell/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 19 +++
-> =C2=A0drivers/soc/marvell/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +
-> =C2=A0drivers/soc/marvell/rvu_gen_pf/Makefile |=C2=A0=C2=A0 5 +
-> =C2=A0drivers/soc/marvell/rvu_gen_pf/gen_pf.c | 159 +++++++++++++++++++++=
-+++
-> =C2=A0drivers/soc/marvell/rvu_gen_pf/gen_pf.h |=C2=A0 19 +++
-> =C2=A07 files changed, 206 insertions(+)
-> =C2=A0create mode 100644 drivers/soc/marvell/Kconfig
-> =C2=A0create mode 100644 drivers/soc/marvell/Makefile
-> =C2=A0create mode 100644 drivers/soc/marvell/rvu_gen_pf/Makefile
-> =C2=A0create mode 100644 drivers/soc/marvell/rvu_gen_pf/gen_pf.c
-> =C2=A0create mode 100644 drivers/soc/marvell/rvu_gen_pf/gen_pf.h
->=20
-> diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-> index 6a8daeb8c4b9..a5d3770a6acf 100644
-> --- a/drivers/soc/Kconfig
-> +++ b/drivers/soc/Kconfig
-> @@ -15,6 +15,7 @@ source "drivers/soc/imx/Kconfig"
-> =C2=A0source "drivers/soc/ixp4xx/Kconfig"
-> =C2=A0source "drivers/soc/litex/Kconfig"
-> =C2=A0source "drivers/soc/loongson/Kconfig"
-> +source "drivers/soc/marvell/Kconfig"
-> =C2=A0source "drivers/soc/mediatek/Kconfig"
-> =C2=A0source "drivers/soc/microchip/Kconfig"
-> =C2=A0source "drivers/soc/nuvoton/Kconfig"
-> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-> index 2037a8695cb2..b20ec6071302 100644
-> --- a/drivers/soc/Makefile
-> +++ b/drivers/soc/Makefile
-> @@ -20,6 +20,7 @@ obj-y				+=3D ixp4xx/
-> =C2=A0obj-$(CONFIG_SOC_XWAY)		+=3D lantiq/
-> =C2=A0obj-$(CONFIG_LITEX_SOC_CONTROLLER) +=3D litex/
-> =C2=A0obj-y				+=3D loongson/
-> +obj-y				+=3D marvell/
-> =C2=A0obj-y				+=3D mediatek/
-> =C2=A0obj-y				+=3D microchip/
-> =C2=A0obj-y				+=3D nuvoton/
-> diff --git a/drivers/soc/marvell/Kconfig b/drivers/soc/marvell/Kconfig
-> new file mode 100644
-> index 000000000000..b55d3bbfaf2a
-> --- /dev/null
-> +++ b/drivers/soc/marvell/Kconfig
-> @@ -0,0 +1,19 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +#
-> +# MARVELL SoC drivers
-> +#
-> +
-> +menu "Marvell SoC drivers"
-> +
-> +config MARVELL_OCTEON_RVU_GEN_PF
-> +	tristate "Marvell Octeon RVU Generic PF Driver"
-> +	depends on ARM64 && PCI && OCTEONTX2_AF
-> +	default n
-> +	help
-> +	This driver is used to create and destroy PCIe SRIOV VFs of the
-> +	RVU PFs that doesn't need to support any I/O functionality. It also
-> +	enables VFs to communicate with RVU admin function (AF) & handles
-> +	PCIe FLR for VFs.
-> +
-> +	Say =E2=80=98Yes=E2=80=99 to this driver if you have such a RVU PF devi=
-ce.
-> +endmenu
-> diff --git a/drivers/soc/marvell/Makefile b/drivers/soc/marvell/Makefile
-> new file mode 100644
-> index 000000000000..9a6917393873
-> --- /dev/null
-> +++ b/drivers/soc/marvell/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +obj-$(CONFIG_MARVELL_OCTEON_RVU_GEN_PF) +=3D rvu_gen_pf/
-> diff --git a/drivers/soc/marvell/rvu_gen_pf/Makefile b/drivers/soc/marvel=
-l/rvu_gen_pf/Makefile
-> new file mode 100644
-> index 000000000000..6c3d2568942b
-> --- /dev/null
-> +++ b/drivers/soc/marvell/rvu_gen_pf/Makefile
-> @@ -0,0 +1,5 @@
-> +#
-> +# Makefile for Marvell's Octeon RVU GENERIC PF driver
-> +#
-> +obj-$(CONFIG_MARVELL_OCTEON_RVU_GEN_PF) +=3D gen_pf.o
-> +ccflags-y +=3D -I$(srctree)/drivers/net/ethernet/marvell/octeontx2/af
-> diff --git a/drivers/soc/marvell/rvu_gen_pf/gen_pf.c b/drivers/soc/marvel=
-l/rvu_gen_pf/gen_pf.c
-> new file mode 100644
-> index 000000000000..b9ddf3746a44
-> --- /dev/null
-> +++ b/drivers/soc/marvell/rvu_gen_pf/gen_pf.c
-> @@ -0,0 +1,159 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Marvell Octeon RVU Generic Physical Function driver
-> + *
-> + * Copyright (C) 2024 Marvell.
-> + *
-> + */
-> +#include <linux/delay.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/list.h>
-> +#include <linux/module.h>
-> +#include <linux/pci.h>
-> +#include <linux/sysfs.h>
-> +
-> +#include "gen_pf.h"
-> +#include <rvu_trace.h>
-> +#include <rvu.h>
-> +
-> +#define DRV_NAME=C2=A0=C2=A0=C2=A0 "rvu_generic_pf"
-> +
-> +/* Supported devices */
-> +static const struct pci_device_id rvu_gen_pf_id_table[] =3D {
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_CAVIUM, 0xA0F6) },
-> +	{ }=C2=A0 /* end of table */
-> +};
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Marvell Octeon RVU Generic PF Driver");
-> +MODULE_DEVICE_TABLE(pci, rvu_gen_pf_id_table);
-> +
-> +static int rvu_gen_pf_check_pf_usable(struct gen_pf_dev *pfdev)
-> +{
-> +	u64 rev;
-> +
-> +	rev =3D readq(pfdev->reg_base + RVU_PF_BLOCK_ADDRX_DISC(BLKADDR_RVUM));
-> +	rev =3D (rev >> 12) & 0xFF;
-> +	/* Check if AF has setup revision for RVUM block,
-> +	 * otherwise this driver probe should be deferred
-> +	 * until AF driver comes up.
-> +	 */
-> +	if (!rev) {
-> +		dev_warn(pfdev->dev,
-> +			 "AF is not initialized, deferring probe\n");
-> +		return -EPROBE_DEFER;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int rvu_gen_pf_sriov_enable(struct pci_dev *pdev, int numvfs)
-> +{
-> +	int ret;
-> +
-> +	ret =3D pci_enable_sriov(pdev, numvfs);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return numvfs;
-> +}
-> +
-> +static int rvu_gen_pf_sriov_disable(struct pci_dev *pdev)
-> +{
-> +	int numvfs =3D pci_num_vf(pdev);
-> +
-> +	if (!numvfs)
-> +		return 0;
-> +
-> +	pci_disable_sriov(pdev);
-> +
-> +	return 0;
-> +}
-> +
-> +static int rvu_gen_pf_sriov_configure(struct pci_dev *pdev, int numvfs)
-> +{
-> +	if (numvfs =3D=3D 0)
-> +		return rvu_gen_pf_sriov_disable(pdev);
-> +
-> +	return rvu_gen_pf_sriov_enable(pdev, numvfs);
-> +}
-> +
-> +static void rvu_gen_pf_remove(struct pci_dev *pdev)
-> +{
-> +	struct gen_pf_dev *pfdev =3D pci_get_drvdata(pdev);
-> +
-> +	rvu_gen_pf_sriov_disable(pfdev->pdev);
-> +	pci_set_drvdata(pdev, NULL);
-> +
-> +	pci_release_regions(pdev);
-> +}
-> +
-> +static int rvu_gen_pf_probe(struct pci_dev *pdev, const struct pci_devic=
-e_id *id)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct gen_pf_dev *pfdev;
-> +	int err;
-> +
-> +	err =3D pcim_enable_device(pdev);
-> +	if (err) {
-> +		dev_err(dev, "Failed to enable PCI device\n");
-> +		return err;
-> +	}
-> +
-> +	err =3D pci_request_regions(pdev, DRV_NAME);
-> +	if (err) {
-> +		dev_err(dev, "PCI request regions failed %d\n", err);
-> +		goto err_map_failed;
-> +	}
-> +
-> +	err =3D dma_set_mask_and_coherent(dev, DMA_BIT_MASK(48));
-> +	if (err) {
-> +		dev_err(dev, "DMA mask config failed, abort\n");
-> +		goto err_release_regions;
-> +	}
-> +
-> +	pci_set_master(pdev);
-> +
-> +	pfdev =3D devm_kzalloc(dev, sizeof(struct gen_pf_dev), GFP_KERNEL);
-> +	if (!pfdev) {
-> +		err =3D -ENOMEM;
-> +		goto err_release_regions;
-> +	}
-> +
-> +	pci_set_drvdata(pdev, pfdev);
-> +	pfdev->pdev =3D pdev;
-> +	pfdev->dev =3D dev;
-> +	pfdev->total_vfs =3D pci_sriov_get_totalvfs(pdev);
-> +
-> +	err =3D rvu_gen_pf_check_pf_usable(pfdev);
-> +	if (err)
-> +		goto err_release_regions;
-> +
-> +	return 0;
-> +
-> +err_release_regions:
-> +	pci_release_regions(pdev);
-> +	pci_set_drvdata(pdev, NULL);
-> +err_map_failed:
-> +	pci_disable_device(pdev);
-> +	return err;
-> +}
-> +
-> +static struct pci_driver rvu_gen_driver =3D {
-> +	.name =3D DRV_NAME,
-> +	.id_table =3D rvu_gen_pf_id_table,
-> +	.probe =3D rvu_gen_pf_probe,
-> +	.remove =3D rvu_gen_pf_remove,
-> +	.sriov_configure =3D rvu_gen_pf_sriov_configure,
-> +};
-> +
-> +static int __init rvu_gen_pf_init_module(void)
-> +{
-> +	return pci_register_driver(&rvu_gen_driver);
-> +}
-> +
-> +static void __exit rvu_gen_pf_cleanup_module(void)
-> +{
-> +	pci_unregister_driver(&rvu_gen_driver);
-> +}
-> +
-> +module_init(rvu_gen_pf_init_module);
-> +module_exit(rvu_gen_pf_cleanup_module);
-> diff --git a/drivers/soc/marvell/rvu_gen_pf/gen_pf.h b/drivers/soc/marvel=
-l/rvu_gen_pf/gen_pf.h
-> new file mode 100644
-> index 000000000000..4cf12e65a526
-> --- /dev/null
-> +++ b/drivers/soc/marvell/rvu_gen_pf/gen_pf.h
-> @@ -0,0 +1,19 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/* Marvell Octeon RVU Generic Physical Function driver
-> + *
-> + * Copyright (C) 2024 Marvell.
-> + */
-> +#include <linux/device.h>
-> +#include <linux/pci.h>
-> +
-> +#define RVU_PFFUNC(pf, func)=C2=A0=C2=A0=C2=A0 \
-> +	((((pf) & RVU_PFVF_PF_MASK) << RVU_PFVF_PF_SHIFT) | \
-> +	(((func) & RVU_PFVF_FUNC_MASK) << RVU_PFVF_FUNC_SHIFT))
-> +
-> +struct gen_pf_dev {
-> +	struct pci_dev=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *p=
-dev;
-> +	struct device=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 *dev;
-> +	void __iomem		*reg_base;
-> +	int=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pf;
-> +	u8=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 total_vfs;
-> +};
-
---=20
-Alexander Sverdlin.
-
+Thanks mam
 
