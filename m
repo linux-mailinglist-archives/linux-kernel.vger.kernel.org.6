@@ -1,73 +1,39 @@
-Return-Path: <linux-kernel+bounces-334003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA3BE97D146
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:42:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F274697D149
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B53F1C20BB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:42:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C7881F23DFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:43:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F4042070;
-	Fri, 20 Sep 2024 06:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="d2cyRI9D"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCD03BB22
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 06:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109F84084C;
+	Fri, 20 Sep 2024 06:42:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527BD38F9C
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 06:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726814548; cv=none; b=NmYI/20ZuO1gHFn2jFxPprTlFVDgPh4R9SWk0uvbzqYdZvBnUjZRBEkj5mIj2J7M0zu22k0cETkmkG2sHRJsulyG45NLOHeywTh7xqkeo7D5nDZVnvGMCdH6PMfNwJXT6QpcG5yZ4xdePBXRXAgc7GrZPRTj+RJ8IbKi6CcWVB4=
+	t=1726814575; cv=none; b=iZgG5aB5iXu6mSibCAx7xTjEU0vaUS8Qc7tDcG+Gj7d6U1H+2tJGO4MYUra0Ec3lLNpOvpzxSPjhRO6VgSjoJUmOOykVoMtx882X6Yj4ll8c8jow3GjrX3l0obFLoAoqpRCgR8kqIkObmBWbD6mpon7p/LvkkX+k5eScxTBNN6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726814548; c=relaxed/simple;
-	bh=Hb2b/+q+hToRh61WxWnw+lJdABcYLPuii7nIFRD9qsU=;
+	s=arc-20240116; t=1726814575; c=relaxed/simple;
+	bh=Caar0Ui3QeyIyusR/HrVjbDpxF2GyfG3bUi2+8aZIKk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ijc7yR4+4jWj/zbeo03h9n+3DR0a2aVXGLeNS0PO8ogCc5av42M4xRa0d3oBCKccDWsMndghUIZ0uUmvo2tVKeezb+PqJKdalB8NMI0sQbXekTJslVcMIxrHRA03UKuKIIxnkaPgfTy9cjI28qA6hWRYn6KIzD7DgOmX2NEepNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=d2cyRI9D; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso214579066b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Sep 2024 23:42:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1726814545; x=1727419345; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=98uSNXWBdtIj2loX7w9P5NmjIJ5+wZsoyxlrEw5OdHs=;
-        b=d2cyRI9DpNUsiiiwbwqNaVc8IDC83X/gjCOLiQYqWNOfpJvci0X1/KAomOY9kOfd5+
-         xP7KuzxA+7cQ3QBc+ORnS71nq+y9/GP4JCe4aUqZ+vDAs5bju2hMhcuY4xXom+qR16NZ
-         myoEudhNOGQ706QDUHhqorUZy9jFTyzi4694O/2BKJ3W0qtvyxwZ9Hml0HPgVSVXwEBn
-         IIgxqHNTu+pth+nopXdxRvH9qq800ISDzG9yDp+gf0MlBE89l2jsEGjIhakAw0B4DbHI
-         7lIpoOhrLDk0AAxCJczpd2vZE8BRuQHcAikU1dBFXZ/T1qX7syJeR/KQ/sDySYjX30+4
-         PQSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726814545; x=1727419345;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=98uSNXWBdtIj2loX7w9P5NmjIJ5+wZsoyxlrEw5OdHs=;
-        b=qkpilyLGSPnA08hg0Ksny6yEOGpopha3gr2HCYtAU6hOn/YszAoJ8em0IM5i5vv+zj
-         RcSro7o3khkhsRzcHuDULaDgpwJ6KrNnkTu2XADJoT/dotbPMQd4lJnxsPhUsJfdJDFg
-         lhun/0IqLRrRMk0R3N7EA4p+qo4vpTeKBYHlDvpDYjGUfvyrNE88aOR4vaGimEwUqEqd
-         Kl5qPaX6I+iMBqK6nExSdZufhqrL5QYS86maMdVjCkZYZsgF9uYCaPEuHWKp5YFsW9Ki
-         3JOFZIUWipXjNKx0l4D3TE389qp8+eYX7QsD/BZBUZhqsdDnR3VUd/o2xboHwRQ26Ck+
-         J49Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXlqhUfxy7UGxw5CHyq+q7LEwJ2EA8ToHNE4XGcRYE40f/nGd4GULb5608M0VYUZ0oYcqzweecYH0RmT1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEGXdhhkElLu78Qqrh93JmMzCyEbFRvMIlC+hcjQwAIGVeq090
-	bVFxUVnUfU5agoTE30GV0UPDL+1e227C+63wf8naMo5Y3hC4hEiSMgwSClmMowg=
-X-Google-Smtp-Source: AGHT+IFK3LECOgNL2LQB34zytpe20wT+mFRQaW0BYumib9GiIXC7awb6RQOknCMw9j46sSiKv4IBmw==
-X-Received: by 2002:a17:907:e6de:b0:a86:68a1:6a08 with SMTP id a640c23a62f3a-a90d56b44a3mr138829566b.29.1726814544477;
-        Thu, 19 Sep 2024 23:42:24 -0700 (PDT)
-Received: from [192.168.0.245] ([62.73.69.208])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90d21bc502sm76613066b.25.2024.09.19.23.42.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Sep 2024 23:42:24 -0700 (PDT)
-Message-ID: <34a42cfa-9f72-4a66-be63-e6179e04f86e@blackwall.org>
-Date: Fri, 20 Sep 2024 09:42:22 +0300
+	 In-Reply-To:Content-Type; b=TWN/eN5Tw+q+T3GwZgv5zso1aolvCMklK3CeKU+U9jhltG81Jri5ZDyyhCaS9kgfYihn0OJqDBgG6R8EABIg6mBS3r6W4AjNjR4fM+f0jT7u6AsFGhGShnjVOccYBXe7IjO5+W9Bzij5ljvPL7yO6MJHw/JkN0E0XSAhoS1LeF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9D0CFEC;
+	Thu, 19 Sep 2024 23:43:21 -0700 (PDT)
+Received: from [10.163.35.184] (unknown [10.163.35.184])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E5B7E3F66E;
+	Thu, 19 Sep 2024 23:42:48 -0700 (PDT)
+Message-ID: <925a26e2-bd53-4bf4-b22d-7a0e11581376@arm.com>
+Date: Fri, 20 Sep 2024 12:12:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,110 +41,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH net-next] net: bridge: drop packets with a local
- source
-To: Thomas Martitz <tmartitz-oss@avm.de>, Roopa Prabhu <roopa@nvidia.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Johannes Nixdorf <jnixdorf-oss@avm.de>, bridge@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240919085803.105430-1-tmartitz-oss@avm.de>
- <934bf1f6-3f1c-4de4-be91-ba1913d1cb0e@blackwall.org>
- <7aa4c66e-d0dc-452f-aebd-eb02a1b15a44@avm.de>
+Subject: Re: [PATCH] mm: Move set_pxd_safe() helpers from generic to platform
+To: Dave Hansen <dave.hansen@intel.com>, linux-mm@kvack.org,
+ akpm@linux-foundation.org
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ x86@kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240920053017.2514920-1-anshuman.khandual@arm.com>
+ <3309e9ca-458b-4b10-8409-9fe315b60ae2@intel.com>
 Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <7aa4c66e-d0dc-452f-aebd-eb02a1b15a44@avm.de>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <3309e9ca-458b-4b10-8409-9fe315b60ae2@intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 19/09/2024 14:13, Thomas Martitz wrote:
-> Am 19.09.24 um 12:33 schrieb Nikolay Aleksandrov:
->> On 19/09/2024 11:58, Thomas Martitz wrote:
->>> Currently, there is only a warning if a packet enters the bridge
->>> that has the bridge's or one port's MAC address as source.
->>>
->>> Clearly this indicates a network loop (or even spoofing) so we
->>> generally do not want to process the packet. Therefore, move the check
->>> already done for 802.1x scenarios up and do it unconditionally.
->>>
->>> For example, a common scenario we see in the field:
->>> In a accidental network loop scenario, if an IGMP join
->>> loops back to us, it would cause mdb entries to stay indefinitely
->>> even if there's no actual join from the outside. Therefore
->>> this change can effectively prevent multicast storms, at least
->>> for simple loops.
->>>
->>> Signed-off-by: Thomas Martitz <tmartitz-oss@avm.de>
->>> ---
->>>   net/bridge/br_fdb.c   |  4 +---
->>>   net/bridge/br_input.c | 17 ++++++++++-------
->>>   2 files changed, 11 insertions(+), 10 deletions(-)
->>>
->>
->> Absolutely not, I'm sorry but we're not all going to take a performance hit
->> of an additional lookup because you want to filter src address. You can filter
->> it in many ways that won't affect others and don't require kernel changes
->> (ebpf, netfilter etc). To a lesser extent there is also the issue where we might
->> break some (admittedly weird) setup.
->>
-> 
-> Hello Nikolay,
-> 
-> thanks for taking a look at the patch. I expected concerns, therefore the RFC state.
-> 
-> So I understand that performance is your main concern. Some users might
-> be willing to pay for that cost, however, in exchange for increased
-> system robustness. May I suggest per-bridge or even per-port flags to
-> opt-in to this behavior? We'd set this from our userspace. This would
-> also address the concern to not break weird, existing setups.
-> 
 
-That is the usual way these things are added, as opt-in. A flag sounds good
-to me, if you're going to make it per-bridge take a look at the bridge bool
-opts, they were added for such cases.
 
-> This would be analogous to the check added for MAB in 2022
-> (commit a35ec8e38cdd "bridge: Add MAC Authentication Bypass (MAB) support").
+On 9/20/24 11:19, Dave Hansen wrote:
+> On 9/19/24 22:30, Anshuman Khandual wrote:
+>> set_pxd_safe() helpers that serve a specific purpose for both x86 and riscv
+>> platforms, do not need to be in the common memory code. Otherwise they just
+>> unnecessarily make the common API more complicated. This moves the helpers
+>> from common code to platform instead.
 > 
-> While there are maybe other methods, only in the bridge code I may
-> access the resulting FDB to test for the BR_FDB_LOCAL flag. There's
-> typically not only a single MAC adress to check for, but such a local
-> FDB is maintained for the enslaved port's MACs as well. Replicating
-> the check outside of the bridge receive code would be orders more
-> complex. For example, you need to update the filter each time a port is
-> added or removed from the bridge.
+> I just did a quick grep and don't see any difference between the _safe
+> and normal variants.  A quick grep didn't turn up any actual users.
 > 
+> Did anyone actually double check that these are still needed on x86 in
+> the first place?
 
-That is not entirely true, you can make a solution that dynamically compares
-the mac addresses of net devices with src mac of incoming frames, you may need
-to keep a list of the ports themselves or use ebpf though. It isn't complicated
-at all, you just need to keep that list updated when adding/removing ports
-you can even do it with a simple ip monitor and a bash script as a poc, there's nothing
-complicated about it and we won't have to maintain another bridge option forever.
+arch/x86/mm/init_64.c
 
-> Since a very similar check exists already using a per-port opt-in flag,
-> would a similar approach acceptable for you? If yes, I'd send a
-> follow-up shortly.
-> 
+#define DEFINE_ENTRY(type1, type2, init)                        \
+static inline void set_##type1##_init(type1##_t *arg1,          \
+                        type2##_t arg2, bool init)              \
+{                                                               \
+        if (init)                                               \
+                set_##type1##_safe(arg1, arg2);                 \
+        else                                                    \
+                set_##type1(arg1, arg2);                        \
+}
 
-Yeah, that would work although I try to limit the new options as the bridge
-has already too many options.
+DEFINE_ENTRY(p4d, p4d, init)
+DEFINE_ENTRY(pud, pud, init)
+DEFINE_ENTRY(pmd, pmd, init)
+DEFINE_ENTRY(pte, pte, init)
 
-> PS: I haven't spottet you, but in case you're at LPC in Vienna we can
-> chat in person about it, I'm here.
-> 
+We had triggered a build problem after dropping off set_pte_safe()
+which seemed not to be used after normal grep.
 
-That would've been nice, but unfortunately I couldn't make it this year.
-
-Cheers,
- Nik
-
-> Best regards.
-> 
-> 
->> Cheers,
->>   Nik
->>
-> 
-
+https://lore.kernel.org/linux-mm/202409131220.CJ5MlGCG-lkp@intel.com/
 
