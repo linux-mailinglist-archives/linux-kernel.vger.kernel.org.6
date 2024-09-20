@@ -1,75 +1,70 @@
-Return-Path: <linux-kernel+bounces-334431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA6097D731
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:58:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E56297D733
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAFACB228F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:58:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AB971F24E1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0503217C232;
-	Fri, 20 Sep 2024 14:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D9317C7B1;
+	Fri, 20 Sep 2024 14:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G1I4h3JQ"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KAvxvmtG"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA83D17C21B;
-	Fri, 20 Sep 2024 14:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6924C79C0
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 14:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726844304; cv=none; b=iyZ80O5Xsf8EeBi+6PaVjV/Np9sJZ60jOZDi+OyMLdtHPPCjOHdSUb/CyokYufGMu5G5Za1AFdpYeiIzj8/TDtohHw9kHWUSsc/IWYVwFqzVlzHBCOB7IAWEl2GjnKLPRuoQ/Ttdo4YfPhRL0Mtt/lJ5tR6ciiFXqsYnH0YZis8=
+	t=1726844357; cv=none; b=YguXvAJX66IDCUGjSuEP1q8YO/6o0SW+xw4uCE5GdSpU/Di0DF1t6RXQTl7GyxsMCc1jTEEWZA93pkOJ/b8ahI94ZtnryRF2iBuQChwZ99y5gGj45OoZEoDB+YysPc6L2ySM/uqWol38MOVWAnbs7DcOv1H+LvsK4ZpU1PkwcrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726844304; c=relaxed/simple;
-	bh=F7VW+38YkfYrOdIps0qbmxsKsewCErp6/rAUqx/w9/0=;
+	s=arc-20240116; t=1726844357; c=relaxed/simple;
+	bh=sKDpkDMkerixzA6Cw6aEtvJMOjylAkUEtEbo9QU2oQI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N328yhPRevDowCu5RI3zPqXoM3t1QzlpHvXdTKAFXAu/9ttFNWG+gqJF/vG9+QPWTdXTa+ZMNjJ/eJY6P8cRp+Ad6FmEe+doE6ZhdZnYtL2OX4znOTYA3KDTunocl1ZZOFkbcO0UPOTKWqHN8K0/2M/01FTIuM/+B1y1OnE7JgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G1I4h3JQ; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7db1f0e1641so724895a12.1;
-        Fri, 20 Sep 2024 07:58:22 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=PlKWfQfYz1zyZrVwhsXr1+5OBWO+kRvaaC8VB6bFld9zJMyugC8rq4rsbe/N5waX4bSmc1xjpgw8cIkgzALclr/MhDA24A8vcr5EN73m8JBzLD27nTbePGnkZA16vVGEQYPx/8C3tq2A2C7fgMfDQ6EJXuX791bVU/BH2bfs3Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KAvxvmtG; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a046d4c465so7083785ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 07:59:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726844302; x=1727449102; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=69Ai5LvhNUYR4IJgcq7IQfzna+mHgTfiWiM32wBl+Nw=;
-        b=G1I4h3JQ6Ya97y4maifapbw7D47giHOu3SewW1UeHLBjZ4BryU+Yi0h7nWZecijcb6
-         hjxGkYjF7R6cZQTL/KZDqkN94l8DxM7Y5WGeUaWsaTB0oNlLdF3WwDQ70o+GCNGsplWI
-         6Un4fyM9ECFtDLGwkXROoAymx4HRIOGOKDGfqEAakYYHdYa265/03q4KmTFQywpaJVm8
-         bGiqfXCb2bTCcssPUr2WYC9CAgIGfXru+Ltixp0AeCfRTNdkn+TMJSRwDJBeZ3S5WDt8
-         5lnqSwL+E7dEbBawTGufYMUCrKDuw26huY3rKVFS3YlvswbB2uniD20k/Rxa4hIcTdLv
-         XMOA==
+        d=linuxfoundation.org; s=google; t=1726844354; x=1727449154; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WYxe9kwrqo1GfeH3C0KfOo+V1SDp2i8OljG3N7NL5wA=;
+        b=KAvxvmtGBjV1aY5p/t4zUUgPBvFAyHZgLjomiC6K/XVk9X8Ww+ECJe/HH0DUoXZR/s
+         DgonTj+PP8yADz4ySZkK3vxu7cPe+rQ1GwcRA+seENc3p37N5G+tfw3XELXTJOXVdNNx
+         N5Jw7kZqjAsL9HDl36knG8qy7eKuTRX0bS2+4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726844302; x=1727449102;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=69Ai5LvhNUYR4IJgcq7IQfzna+mHgTfiWiM32wBl+Nw=;
-        b=n4zw5wer8N5TxyAy0tMReLlFQ//5X1xyxLHlQcFZudXCg0lX/CzRHfHs9Oq1RODZFK
-         g1Pi/9RD8lLzoUSyvN0IOxJZhZR2hn8jOMaObxaxdjAi1GLK0YjhvC3fGPiOTYEVRXBR
-         mez/JTzkuTnOQTmpBr8DG1KHF39UXE3oFzXj/IICtXvxfYxo0Y670iAqonn9GnskRjb8
-         TRCZRtkc5bSmemqqzkf8ukxOH6W5vCsfF35Y9LT/q+O0sRGaYJFocz9L/BykXdcBeNiC
-         6Vg5E1gIBftuDc6NsESEigqX9IXhG1VIzgakKXBKZSvED5XQmNYiRFq/Qk51x7wFqNXY
-         uDmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhZ1AyTc5NXHn0mMZHgLoC5DoDD44OLJGA7f8PN5ehDIzt6eI96gJfVs7prTSS812qkEubxAYdA0XJr0AKgkQ=@vger.kernel.org, AJvYcCXrRxVD+g/HaRN+5S2UWXCiQsiwWOShUA3rfRy85anO0+0e4DIdKanDqJEC8tZr19oB63r0jpYS4WoobIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU4LleR8FGQgsDEr0Z63lSVusdd2+yHMnfXTD0ARIs8mxZxDRB
-	arfzQTpYD6VtfPec02eCb0oqCuw1gyIvXCYAW1CfGnV4fH17TDk0XLbHFA==
-X-Google-Smtp-Source: AGHT+IFS14r+vvooHawbdxg3AAjDYfpTobgQO43FAsXAs68QAa14OqW1P3sy4RxFtqwrQZi0KfRW2w==
-X-Received: by 2002:a05:6a20:b603:b0:1cf:2875:c4af with SMTP id adf61e73a8af0-1d30a947cd1mr4070594637.8.1726844301998;
-        Fri, 20 Sep 2024 07:58:21 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944a9cab5sm9927233b3a.5.2024.09.20.07.58.20
+        d=1e100.net; s=20230601; t=1726844354; x=1727449154;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WYxe9kwrqo1GfeH3C0KfOo+V1SDp2i8OljG3N7NL5wA=;
+        b=BEh+TmsoeK4POzSXnUIh6iRdU8ulLJhxrhynxehhjGjObAZ1lBNO7QNLQ2nmOTE9AB
+         SxI3r8M3sZe7ERgV3FLkvJOTtMYQ7HAmi/Bc1oCFwT+9PtCRFXJ5nxGy7Y6PD1wZqYu7
+         TNcqRQgoWJoJYejNHQAq75+YV+gsSPalQrWSr1ohLd1MlUWGcAX0p5UpxOxH9b04GLMo
+         oCN3nvEAVe+CbSdkjWAC+tt6Wc/M100QwrNXLF1n8h1VyIgUK+WmNEyLfFVVkgZm0X+G
+         UZMrg+ZUgt0kKH6iTBHUwuHzS3/267flLIdqSgcYFlAk9iotexVgGUjzMDx+KGGxUKnN
+         XkiA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1K4eBz4UX0IxzMHPSesAeyp3U+exnqdFQBhhcQmnuGIe15stl6XpMNjTZV07aYO6msKxs9NIhncibT3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8a5yNdKmuYZgbVCziKd2MTXn6gQDpTkRGyFHF6z8yo62wE1jE
+	Kr/ZrGS/I5YvP8OhjNdEybFs4zXe9LFh3NnM9JqVjiEnXJXMbrmCftr9hyQf1PQ=
+X-Google-Smtp-Source: AGHT+IFR1dxehC1DeauIKJjZxKxCtU9ZHfRiqWSorqoWsZuZa7+canQ6L2+MemljTc3siNvr4bdfdg==
+X-Received: by 2002:a05:6e02:1c49:b0:3a0:c88c:e668 with SMTP id e9e14a558f8ab-3a0c8cba344mr35924225ab.14.1726844354353;
+        Fri, 20 Sep 2024 07:59:14 -0700 (PDT)
+Received: from [10.212.145.178] ([12.216.155.19])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a092e72080sm41727115ab.68.2024.09.20.07.59.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2024 07:58:21 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2509005b-2dbd-4dde-bd78-c832a2a343a0@roeck-us.net>
-Date: Fri, 20 Sep 2024 07:58:19 -0700
+        Fri, 20 Sep 2024 07:59:13 -0700 (PDT)
+Message-ID: <e2a4d2b4-ca3f-4d21-82d5-b87bc9de9358@linuxfoundation.org>
+Date: Fri, 20 Sep 2024 08:59:12 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,80 +72,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] watchdog: xilinx_wwdt: Calculate max_hw_heartbeat_ms
- using clock frequency
-To: Harini T <harini.t@amd.com>, michal.simek@amd.com,
- srinivas.neeli@amd.com, shubhrajyoti.datta@amd.com
-Cc: srinivas.goud@amd.com, wim@linux-watchdog.org,
- linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, git@amd.com
-References: <20240913113230.1939373-1-harini.t@amd.com>
+Subject: Re: [PATCH 1/2] kselftests: mm: Fix wrong __NR_userfaultfd value
+To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>
+Cc: kernel@collabora.com, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240912103151.1520254-1-usama.anjum@collabora.com>
+ <a9ae7dc4-275d-43c3-bf4c-b0090cb6bb12@linuxfoundation.org>
+ <3cb9d266-4d4b-4031-8603-da7fd9e3ad47@collabora.com>
+ <b3caeb96-2f48-4efd-a56c-e91dae891b48@linuxfoundation.org>
+ <0b847784-a95f-4ed5-a0fb-1b7b4023df13@collabora.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
- nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
- hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
- c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
- 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
- GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
- sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
- Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
- HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
- BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
- l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
- J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
- cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
- wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
- hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
- nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
- QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
- trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
- WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
- HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240913113230.1939373-1-harini.t@amd.com>
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <0b847784-a95f-4ed5-a0fb-1b7b4023df13@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/13/24 04:32, Harini T wrote:
-> In the current implementation, the value of max_hw_heartbeat_ms is set
-> to the timeout period expressed in milliseconds and fails to verify if
-> the close window percentage exceeds the maximum value that the hardware
-> supports.
+On 9/17/24 23:46, Muhammad Usama Anjum wrote:
+> On 9/17/24 6:56 AM, Shuah Khan wrote:
+>> On 9/16/24 00:32, Muhammad Usama Anjum wrote:
+>>> On 9/12/24 8:44 PM, Shuah Khan wrote:
+>>>> On 9/12/24 04:31, Muhammad Usama Anjum wrote:
+>>>>> The value of __NR_userfaultfd was changed to 282 when
+>>>>> asm-generic/unistd.h was included. It makes the test to fail every time
+>>>>> as the correct number of this syscall on x86_64 is 323. Fix the header
+>>>>> to asm/unistd.h.
+>>>>>
+>>>>
+>>>> "please elaborate every time" - I just built on my x86_64 and built
+>>>> just fine.
+>>> The build isn't broken.
+>>>
+>>>> I am not saying this isn't a problem, it is good to
+>>>> understand why and how it is failing before making the change.
+>>> I mean to say that the test is failing at run time because the correct
+>>> userfaultfd syscall isn't being found with __NR_userfaultfd = 282.
+>>> _NR_userfaultfd's value depends on the header. When asm-generic/unistd.h
+>>> is included, its value (282) is wrong. I've tested on x86_64.
+>>>
+>>
+>> Okay - how do you know this is wrong? can you provide more details.
+>>
+>> git grep _NR_userfaultfd
+>> include/uapi/asm-generic/unistd.h:#define __NR_userfaultfd 282
+>> include/uapi/asm-generic/unistd.h:__SYSCALL(__NR_userfaultfd,
+>> sys_userfaultfd)
+>> tools/include/uapi/asm-generic/unistd.h:#define __NR_userfaultfd 282
+>>
+>>> The fix is simple. Add the correct header which has _NR_userfaultfd =
+>>> 323.
 > 
-> 1. Calculate max_hw_heartbeat_ms based on input clock frequency.
-> 2. Update frequency check to require a minimum frequency of 1Mhz.
-> 3. Limit the close and open window percent to hardware supported value
-> to avoid truncation.
-> 4. If the user input timeout exceeds the maximum timeout supported, use
-> only open window and the framework supports the higher timeouts.
+> grep -rnIF "#define __NR_userfaultfd"
+> tools/include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
+> arch/x86/include/generated/uapi/asm/unistd_32.h:374:#define
+> __NR_userfaultfd 374
+> arch/x86/include/generated/uapi/asm/unistd_64.h:327:#define
+> __NR_userfaultfd 323
+> arch/x86/include/generated/uapi/asm/unistd_x32.h:282:#define
+> __NR_userfaultfd (__X32_SYSCALL_BIT + 323)
+> arch/arm/include/generated/uapi/asm/unistd-eabi.h:347:#define
+> __NR_userfaultfd (__NR_SYSCALL_BASE + 388)
+> arch/arm/include/generated/uapi/asm/unistd-oabi.h:359:#define
+> __NR_userfaultfd (__NR_SYSCALL_BASE + 388)
+> include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
 > 
-> Fixes: 12984cea1b8c ("watchdog: xilinx_wwdt: Add Versal window watchdog support")
-> 
-> Signed-off-by: Harini T <harini.t@amd.com>
+> The number is dependent on the architecture. The above data shows that:
+> x86	374
+> x86_64	323
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Correct and the generated header files do the right thing and it is good to
+include them as this patch does.
 
+This is a good find and fix. I wish you explained this in your changelog.
+Please add more details when you send v2.
+
+There could be other issues lurking based on what I found.
+
+The other two files are the problem where they hard code it to 282 without
+taking the __NR_SYSCALL_BASE for the arch into consideration:
+
+tools/include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
+include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
+
+> 
+> I'm unable to find the history of why it is set to 282 in unistd.h and
+> when this problem happened.
+
+According to git history it is added in the following commit to
+include/uapi/asm-generic/unistd.h:
+
+09f7298100ea9767324298ab0c7979f6d7463183
+Subject: [PATCH] userfaultfd: register uapi generic syscall (aarch64)
+
+and it is added in the following commit to tools/include/uapi/asm-generic/unistd.h
+34b009cfde2b8ce20a69c7bfd6bad4ce0e7cd970
+Subject: [PATCH] tools include: Grab copies of arm64 dependent unistd.h files
+
+I think, the above defines from include/uapi/asm-generic/unistd.h and
+tools/include/uapi/asm-generic/unistd.h should be removed.
+
+Maybe others familiar with userfaultfd can determine the best course of action.
+We might have other NR_ defines in these two files that are causing problems
+for tests and tools that we haven't uncovered yet.
+
+thanks,
+-- Shuah
 
