@@ -1,146 +1,306 @@
-Return-Path: <linux-kernel+bounces-333960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA11297D08B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:29:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B8697D093
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D98A1F24C32
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:29:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89D721C22054
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F140728DB3;
-	Fri, 20 Sep 2024 04:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1039C22309;
+	Fri, 20 Sep 2024 04:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q3G5jYtc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="MjOIBuLN"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0310879D2;
-	Fri, 20 Sep 2024 04:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D602574B;
+	Fri, 20 Sep 2024 04:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726806562; cv=none; b=Zc5NWk6d6kPCwgZv+6fX0g/MwSNhevG+VDjCun2f0hzGAsGGOnm1fXij/1NEbVvd+lIRUuVsGSrvlQ37cyd/XWGWixeAkExWrW2vuT7duO1FhAdWUrBMjGQ6iIWTca4itMPAEqsAwCLKlaDe+CsUl8QwOMFX5XHsFs+qSwEBZXM=
+	t=1726806654; cv=none; b=rs6UNV6Uc+S+NVvH4D7F6M7Or6rbg1daZ19grSxgxDG9IDLwrEWvIfuh0xoRanrYTeGxUXN7anup7LEQMngjuT7vNLJ1DJuJSPNCQ4yAaGWu/qR4Lagy2TDIoSF41BdfDy9CMCr5PMb8btghwgPGw6wRFj14d1K2udqjjk7QB80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726806562; c=relaxed/simple;
-	bh=7OI69Dbq64XO6NFe8O3Ks+AB5DeVlameRcJBVDTMDzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B9hTM+JSnbkj+7rQzp3bhm/y+bcevO0eIJogSGrmeN7lRcat2pFTOtK9C5vuvv/ZGr3ml91UBBm3rCuqDtHsaL3i5ZbZFToMQOX2+FnE8eDpb0euaZ3rm5KRsZ802ZhOScnOIlOsvTYZ/QoF0XoIX3tlfSjhkQEaUWxbJhjvuig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q3G5jYtc; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726806560; x=1758342560;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7OI69Dbq64XO6NFe8O3Ks+AB5DeVlameRcJBVDTMDzw=;
-  b=Q3G5jYtc1hHAaOWyU1rs+o9TvGf37NusH601BFhwfF2krAyqH6RDUwl8
-   rahp7MFdI3PwA8/Y6sNuuICNlD7ExJIx3XWLmzauo1OGQZhQUvikDptFo
-   /ETx72J2E+b4unk0uz+EiLI5motCYYW8oE8NdgUrTEbHp+xGvj1JbH1qs
-   r6TixXmhzuPfWwDyJqFX6ggHuM4yfwPaI135SxyaU+Sb79xo5NEFMC3L1
-   u0sfWol+Kcyq039JWtzGufYoiXI5oGA//N3CV46KnXEzvTchiViTTIc8L
-   quEqjLDvSei6PGjVsAD6/vMNET3E5Wyk/ziiQSwqdy/a6sf0lQtH9V+/W
-   g==;
-X-CSE-ConnectionGUID: QdHXSsH9Rx6tVZf/ZpBBPA==
-X-CSE-MsgGUID: U34lEFizSLCaEBTsI6eKAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="25745771"
-X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
-   d="scan'208";a="25745771"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2024 21:29:19 -0700
-X-CSE-ConnectionGUID: mIXwfmt3Q36E5AYC2QmlEg==
-X-CSE-MsgGUID: klCmEn5HRjiekeu+HFuJKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
-   d="scan'208";a="70404987"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 19 Sep 2024 21:29:17 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1srVGc-000Dxo-1w;
-	Fri, 20 Sep 2024 04:29:14 +0000
-Date: Fri, 20 Sep 2024 12:28:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-	linux-pci@vger.kernel.org, bhelgaas@google.com,
-	manivannan.sadhasivam@linaro.org, logang@deltatee.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, sumanesh.samanta@broadcom.com,
-	sathya.prakash@broadcom.com, sjeaugey@nvidia.com,
-	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-Subject: Re: [PATCH 1/2 v2] PCI/portdrv: Enable reporting inter-switch P2P
- links
-Message-ID: <202409201219.feYAxGor-lkp@intel.com>
-References: <1726733624-2142-2-git-send-email-shivasharan.srikanteshwara@broadcom.com>
+	s=arc-20240116; t=1726806654; c=relaxed/simple;
+	bh=61+D44caa7v8N/CkTnNqF63lgoQQciLap3XVaJodn3I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rdUMUoTrlqeFlOkYFuIBcCv678sRTbVpAk/tVMUDWiBtFrfFzR4ZoGLEr+gx2aBtmEc40DClvLkb3+FJxd+vOSZ6jdMDrlWUiEzLXGuhlUivRVrXjEN+Zp5YTXbz2kKGZVDYBn5fzBgS1WXVQUVeT0eDSMJF8V++OrLy8v6+e7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=MjOIBuLN; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1726806642; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=CgWPrHA1WqKU122KWW54ucmriKCe6Cyz7dYNTHTUd0w=;
+	b=MjOIBuLNL7+rwM+izs9LVNsZmBkD2Zhtp1tbnwIgdanvuDf4u0jrk0ZlaBoWNw0P53Zx28ZqblCUzXWPru/VNrWcbAshEpb866bEAiTYrSNTC228LxZAcecUNijMn5xJrzVNZ38r8uOSHkD53eqHJH4xDbWAvxiWlVhoQI+essM=
+Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WFJd0I._1726806637)
+          by smtp.aliyun-inc.com;
+          Fri, 20 Sep 2024 12:30:40 +0800
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+To: mark.rutland@arm.com,
+	catalin.marinas@arm.com,
+	mingo@redhat.com,
+	robin.murphy@arm.com,
+	Jonathan.Cameron@Huawei.com,
+	bp@alien8.de,
+	rafael@kernel.org,
+	wangkefeng.wang@huawei.com,
+	tanxiaofei@huawei.com,
+	mawupeng1@huawei.com,
+	tony.luck@intel.com,
+	linmiaohe@huawei.com,
+	naoya.horiguchi@nec.com,
+	james.morse@arm.com,
+	tongtiangen@huawei.com,
+	gregkh@linuxfoundation.org,
+	will@kernel.org,
+	jarkko@kernel.org
+Cc: linux-acpi@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	linux-edac@vger.kernel.org,
+	x86@kernel.org,
+	xueshuai@linux.alibaba.com,
+	justin.he@arm.com,
+	ardb@kernel.org,
+	ying.huang@intel.com,
+	ashish.kalra@amd.com,
+	baolin.wang@linux.alibaba.com,
+	tglx@linutronix.de,
+	dave.hansen@linux.intel.com,
+	lenb@kernel.org,
+	hpa@zytor.com,
+	robert.moore@intel.com,
+	lvying6@huawei.com,
+	xiexiuqi@huawei.com,
+	zhuo.song@linux.alibaba.com
+Subject: [PATCH v13 0/3] ACPI: APEI: handle synchronous errors in task work
+Date: Fri, 20 Sep 2024 12:30:24 +0800
+Message-ID: <20240920043027.21907-1-xueshuai@linux.alibaba.com>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
+References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1726733624-2142-2-git-send-email-shivasharan.srikanteshwara@broadcom.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Shivasharan,
+## Changes Log
 
-kernel test robot noticed the following build warnings:
+changes since v12:
+- tweak error message for force kill (per Jarkko)
+- fix comments style (per Jarkko)
+- fix commit log typo (per Jarko)
 
-[auto build test WARNING on pci/next]
-[also build test WARNING on next-20240919]
-[cannot apply to pci/for-linus linus/master v6.11]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+changes since v11:
+- rebase to Linux 6.11-rc6
+- fix grammer and typo in commit log (per Borislav)
+- remove `sync_` perfix of `sync_task_work`  (per Borislav)
+- comments flags and description of `task_work`  (per Borislav)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Shivasharan-S/PCI-portdrv-Enable-reporting-inter-switch-P2P-links/20240919-162626
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/1726733624-2142-2-git-send-email-shivasharan.srikanteshwara%40broadcom.com
-patch subject: [PATCH 1/2 v2] PCI/portdrv: Enable reporting inter-switch P2P links
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20240920/202409201219.feYAxGor-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240920/202409201219.feYAxGor-lkp@intel.com/reproduce)
+changes since v10:
+- rebase to v6.8-rc2
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409201219.feYAxGor-lkp@intel.com/
+changes since v9:
+- split patch 2 to address exactly one issue in one patch (per Borislav)
+- rewrite commit log according to template (per Borislav)
+- pickup reviewed-by tag of patch 1 from James Morse
+- alloc and free twcb through gen_pool_{alloc, free) (Per James)
+- rewrite cover letter
 
-All warnings (new ones prefixed by >>):
+changes since v8:
+- remove the bug fix tag of patch 2 (per Jarkko Sakkinen)
+- remove the declaration of memory_failure_queue_kick (per Naoya Horiguchi)
+- rewrite the return value comments of memory_failure (per Naoya Horiguchi)
 
->> drivers/pci/pcie/portdrv.c:86: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * Determine if device supports Inter switch P2P links.
+changes since v7:
+- rebase to Linux v6.6-rc2 (no code changed)
+- rewritten the cover letter to explain the motivation of this patchset
 
+changes since v6:
+- add more explicty error message suggested by Xiaofei
+- pick up reviewed-by tag from Xiaofei
+- pick up internal reviewed-by tag from Baolin
 
-vim +86 drivers/pci/pcie/portdrv.c
+changes since v5 by addressing comments from Kefeng:
+- document return value of memory_failure()
+- drop redundant comments in call site of memory_failure() 
+- make ghes_do_proc void and handle abnormal case within it
+- pick up reviewed-by tag from Kefeng Wang 
 
-    84	
-    85	/**
-  > 86	 * Determine if device supports Inter switch P2P links.
-    87	 *
-    88	 * Return value: true if inter switch P2P is supported, return false otherwise.
-    89	 */
-    90	static bool pcie_port_is_p2p_supported(struct pci_dev *dev)
-    91	{
-    92		/* P2P link attribute is supported on upstream ports only */
-    93		if (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM)
-    94			return false;
-    95	
-    96		/*
-    97		 * Currently Broadcom PEX switches are supported.
-    98		 */
-    99		if (dev->vendor == PCI_VENDOR_ID_LSI_LOGIC &&
-   100		    (dev->device == PCI_DEVICE_ID_BRCM_PEX_89000_HLC ||
-   101		     dev->device == PCI_DEVICE_ID_BRCM_PEX_89000_LLC))
-   102			return pcie_brcm_is_p2p_supported(dev);
-   103	
-   104		return false;
-   105	}
-   106	
+changes since v4 by addressing comments from Xiaofei:
+- do a force kill only for abnormal sync errors
+
+changes since v3 by addressing comments from Xiaofei:
+- do a force kill for abnormal memory failure error such as invalid PA,
+unexpected severity, OOM, etc
+- pcik up tested-by tag from Ma Wupeng
+
+changes since v2 by addressing comments from Naoya:
+- rename mce_task_work to sync_task_work
+- drop ACPI_HEST_NOTIFY_MCE case in is_hest_sync_notify()
+- add steps to reproduce this problem in cover letter
+
+changes since v1:
+- synchronous events by notify type
+- Link: https://lore.kernel.org/lkml/20221206153354.92394-3-xueshuai@linux.alibaba.com/
+
+## Cover Letter
+
+There are two major types of uncorrected recoverable (UCR) errors :
+
+- Synchronous error: The error is detected and raised at the point of the
+  consumption in the execution flow, e.g. when a CPU tries to access
+  a poisoned cache line. The CPU will take a synchronous error exception
+  such as Synchronous External Abort (SEA) on Arm64 and Machine Check
+  Exception (MCE) on X86. OS requires to take action (for example, offline
+  failure page/kill failure thread) to recover this uncorrectable error.
+
+- Asynchronous error: The error is detected out of processor execution
+  context, e.g. when an error is detected by a background scrubber. Some data
+  in the memory are corrupted. But the data have not been consumed. OS is
+  optional to take action to recover this uncorrectable error.
+
+Currently, both synchronous and asynchronous error use
+memory_failure_queue() to schedule memory_failure() exectute in kworker
+context. As a result, when a user-space process is accessing a poisoned
+data, a data abort is taken and the memory_failure() is executed in the
+kworker context:
+
+  - will send wrong si_code by SIGBUS signal in early_kill mode, and
+  - can not kill the user-space in some cases resulting a synchronous
+    error infinite loop
+
+Issue 1: send wrong si_code in early_kill mode
+
+Since commit a70297d22132 ("ACPI: APEI: set memory failure flags as
+MF_ACTION_REQUIRED on synchronous events")', the flag MF_ACTION_REQUIRED
+could be used to determine whether a synchronous exception occurs on
+ARM64 platform.  When a synchronous exception is detected, the kernel is
+expected to terminate the current process which has accessed poisoned
+page. This is done by sending a SIGBUS signal with an error code
+BUS_MCEERR_AR, indicating an action-required machine check error on
+read.
+
+However, when kill_proc() is called to terminate the processes who have
+the poisoned page mapped, it sends the incorrect SIGBUS error code
+BUS_MCEERR_AO because the context in which it operates is not the one
+where the error was triggered.
+
+To reproduce this problem:
+
+  # STEP1: enable early kill mode
+  #sysctl -w vm.memory_failure_early_kill=1
+  vm.memory_failure_early_kill = 1
+
+  # STEP2: inject an UCE error and consume it to trigger a synchronous error
+  #einj_mem_uc single
+  0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+  injecting ...
+  triggering ...
+  signal 7 code 5 addr 0xffffb0d75000
+  page not present
+  Test passed
+
+The si_code (code 5) from einj_mem_uc indicates that it is BUS_MCEERR_AO
+error and it is not fact.
+
+To fix it, queue memory_failure() as a task_work so that it runs in
+the context of the process that is actually consuming the poisoned data.
+
+After this patch set:
+
+  # STEP1: enable early kill mode
+  #sysctl -w vm.memory_failure_early_kill=1
+  vm.memory_failure_early_kill = 1
+
+  # STEP2: inject an UCE error and consume it to trigger a synchronous error
+  #einj_mem_uc single
+  0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+  injecting ...
+  triggering ...
+  signal 7 code 4 addr 0xffffb0d75000
+  page not present
+  Test passed
+
+The si_code (code 4) from einj_mem_uc indicates that it is BUS_MCEERR_AR
+error as we expected.
+
+Issue 2: a synchronous error infinite loop due to memory_failure() failed
+
+If a user-space process, e.g. devmem, a poisoned page which has been set
+HWPosion flag, kill_accessing_process() is called to send SIGBUS to the
+current processs with error info. Because the memory_failure() is
+executed in the kworker contex, it will just do nothing but return
+EFAULT. So, devmem will access the posioned page and trigger an
+excepction again, resulting in a synchronous error infinite loop. Such
+loop may cause platform firmware to exceed some threshold and reboot
+when Linux could have recovered from this error.
+
+To reproduce this problem:
+
+  # STEP 1: inject an UCE error, and kernel will set HWPosion flag for related page
+  #einj_mem_uc single
+  0: single   vaddr = 0xffffb0d75400 paddr = 4092d55b400
+  injecting ...
+  triggering ...
+  signal 7 code 4 addr 0xffffb0d75000
+  page not present
+  Test passed
+
+  # STEP 2: access the same page and it will trigger a synchronous error infinite loop
+  devmem 0x4092d55b400
+
+To fix it, if memory_failure() failed, perform a force kill to current process.
+
+Issue 3: a synchronous error infinite loop due to no memory_failure() queued
+
+No memory_failure() work is queued unless all bellow preconditions check passed:
+
+- `if (!(mem_err->validation_bits & CPER_MEM_VALID_PA))` in ghes_handle_memory_failure()
+- `if (flags == -1)` in ghes_handle_memory_failure()
+- `if (!IS_ENABLED(CONFIG_ACPI_APEI_MEMORY_FAILURE))` in ghes_do_memory_failure()
+- `if (!pfn_valid(pfn) && !arch_is_platform_page(physical_addr)) ` in ghes_do_memory_failure()
+
+If the preconditions are not passed, the user-space process will trigger SEA again.
+This loop can potentially exceed the platform firmware threshold or even
+trigger a kernel hard lockup, leading to a system reboot.
+
+To fix it, if no memory_failure() queued, perform a force kill to current process.
+
+And the the memory errors triggered in kernel-mode[5], also relies on this
+patchset to kill the failure thread.
+
+Lv Ying and XiuQi from Huawei also proposed to address similar problem[2][4].
+Acknowledge to discussion with them.
+
+[1] Add ARMv8 RAS virtualization support in QEMU https://patchew.org/QEMU/20200512030609.19593-1-gengdongjiu@huawei.com/
+[2] https://lore.kernel.org/lkml/20221205115111.131568-3-lvying6@huawei.com/
+[3] https://lkml.kernel.org/r/20220914064935.7851-1-xueshuai@linux.alibaba.com
+[4] https://lore.kernel.org/lkml/20221209095407.383211-1-lvying6@huawei.com/
+[5] https://patchwork.kernel.org/project/linux-arm-kernel/cover/20240528085915.1955987-1-tongtiangen@huawei.com/
+
+Shuai Xue (3):
+  ACPI: APEI: send SIGBUS to current task if synchronous memory error
+    not recovered
+  mm: memory-failure: move return value documentation to function
+    declaration
+  ACPI: APEI: handle synchronous exceptions in task work
+
+ arch/x86/kernel/cpu/mce/core.c |  7 ---
+ drivers/acpi/apei/ghes.c       | 86 +++++++++++++++++++++-------------
+ include/acpi/ghes.h            |  3 --
+ include/linux/mm.h             |  1 -
+ mm/memory-failure.c            | 22 +++------
+ 5 files changed, 60 insertions(+), 59 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.3
+
 
