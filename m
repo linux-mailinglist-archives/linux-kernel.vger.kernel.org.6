@@ -1,183 +1,102 @@
-Return-Path: <linux-kernel+bounces-334208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D90197D3F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:58:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA1A97D3ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89C9B1C21267
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:58:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1C191C2032E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D2713C80E;
-	Fri, 20 Sep 2024 09:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73B613C80E;
+	Fri, 20 Sep 2024 09:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iymm4QYV"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="sORopcg1"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501ED139D0A;
-	Fri, 20 Sep 2024 09:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4CA25776;
+	Fri, 20 Sep 2024 09:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726826317; cv=none; b=oP57FkRoioVdj7s3xBacByWRP4FXu+JemwmKIrjb0kgQyxAIW/DMxDAd7l1tvieW6s0B2KSa5P8HnkcrT8Vm07K3dGopJMjtMfJh2fIL+fl8ZWUCgPjMhS8YCVWUqLd4STFEAFiXOkMkCvyXuLlPU033WmVRbaXLw+/sxcKpuHI=
+	t=1726826217; cv=none; b=N3ncBnIe9NoM1ubAb2O+qHvDo75EwdNDg9Fk/AORWiynG+RANtwntYAit61deTXy3on8tRGyhkfkdbyV/atrmF9duqzQ5+++61XjL48hDaEpigGz0F1iRIsZwuIUi1PGEggIfgkbzbd6qugz+o8l8M1f8IjtzN8C4ucebG4+ujg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726826317; c=relaxed/simple;
-	bh=88gDVpnA6PhWT5LuFMIcdjhzh9mXo979fV+FwMxeJSs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sx39IaVaxxpiM8ypGqt6Z+EihAk7Kk8yU+IUyKNHawBCEisNQJ3nAueuQu5bx03FCtefkzMm/k9cbLWyALL4e02sHUUJC1BrpFHi1KRDLa5+SMIP85XlgNF6IAjk5cFSMi7LWI9irxvk8uUSWw9eoOIfNV2FriS1WUg6LU/6obA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iymm4QYV; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20688fbaeafso20473155ad.0;
-        Fri, 20 Sep 2024 02:58:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726826315; x=1727431115; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=krJa0YHzRYesDBmJ71AnWCcrG4bSU9zriTKtOU/d2KE=;
-        b=Iymm4QYVcfgbpIlezBsS5kErH3QUhr8EyfignH5UkH+eSW6wgMnxqccYhpXBgfcTzm
-         57hZr6roGxb36QsJijuX9+5Iao26Jd4nWj8DQoDJq3mci0YXK186egmhiazm5Ko/Su+u
-         UdSzuiLadvd5fSGIqNXtsdbxH+WCHYxhrvLyz7GtK3T2/rMlqXrtWzt8/p3ajUx9tI/g
-         OlEQgC5X9QDEZzxzb3ZUfuG0V1k0/0P5vPEeHimCf3ue10FhqfHc6R2Zz575vLeCEHgR
-         R+9bTYb7Sg4LBMP33FEnlrdfhWkKelrvrJgUryoU8LMVWR+8EhNzDkC9sMo4SkRcC+nA
-         cJeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726826315; x=1727431115;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=krJa0YHzRYesDBmJ71AnWCcrG4bSU9zriTKtOU/d2KE=;
-        b=d1Xn/QeY8Lpp4aOmypeQdz+W/xqDd3nUcE/8zMJ7gOn7dJWHaedTqWsHSf7QCY/nfR
-         ZhdCbntiXVLKEQ0IgVf3DaHgCBeFONIcYyHr2sgI/6p4Bam6pnxRGGmPfZVWL9VyD7KM
-         a8/7jBX71td8RN0J/oPYL2rRo896n1pVKZ7QPmDLn2nKC+UBEKNIIYJNwiVUm7IKh+Dr
-         2NJY3W9CEVLPKe2Bzu0tSqUYSdo43/av0r0pylD0iciUA9bCFZvsiqjWDgliPwLyqAj3
-         fK/MgwTF+uDjDDFxfomzpmLQ+Zk0vGrTBRGWwtWNRcYQR+0B+rdNkWp9H9R0Bu4bFYZA
-         3ztA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwFAIV0EkpARcplUcWEOY93ZoSJGUFmtgjiOEkfUdEl49S1mQ2o1tKhq22Sb8eTdlOozZrggqwGZVS8cA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEoj/el0RdFZkOMOkZ2T/Y8/ycBws3bOmdYRW5+KOVYcYnGUHK
-	BXHaZh0FbUP7hY1l+z9aZcHgKQx2lkGv5bC9X379AaE1aOG6u5a0
-X-Google-Smtp-Source: AGHT+IE9C39w5Iba/YHQXZXIMA8mOji+ut7xuUk6fgcjEZj2VVfu1BCkhcqolvGF9lg8xcaB5dYOpA==
-X-Received: by 2002:a17:902:e888:b0:205:8407:6321 with SMTP id d9443c01a7336-208d833b333mr35304595ad.9.1726826315420;
-        Fri, 20 Sep 2024 02:58:35 -0700 (PDT)
-Received: from localhost.localdomain (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794767891sm91909615ad.300.2024.09.20.02.58.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 02:58:35 -0700 (PDT)
-From: Potin Lai <potin.lai.pt@gmail.com>
-Date: Fri, 20 Sep 2024 17:55:52 +0800
-Subject: [PATCH] ARM: dts: aspeed: catalina: add i2c-mux-idle-disconnect to
- all mux
+	s=arc-20240116; t=1726826217; c=relaxed/simple;
+	bh=WdDoGFPSTqZbec6YN4cQkS64m6JSU4DnTNwgzcZBjdA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WiSZsXYFVV+aqeo2JURO9zWkJlRqmAuX2fgargt0lcGti5vUeDzA7UkecD1ObqzU+DM2RGphbbwgA7bUyEg9HCd8hcURCjTZoOpbzO3QLYkhbvWIoj8bk4WGFP4eZPXjBEwavMer6uBsmqlilf7kyi9K8vRU55UZRurZyEBwPVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=sORopcg1; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ZjYXtCI4nuFEDAhXrD2uZbQsprc9VRMwkexVscbAyM0=; b=sORopcg130vTP2BE+HEZOFpnfT
+	Zs6sk4eDWLQoVWqYfadzyCn7a2sdObvIjsa7Lql16zLwBNvae24aYxECwxyajBps4CHQsZe4cTwDc
+	izA6tjN0aAJ4JWz4kj8hmHSICwOj6Xquh9P4jv2p4Id/lxssuqTQFvddtru5NxexjFSeCWOJWHDDo
+	NXMJ8VQgG1g3ozMSc0ZReMf5QHUR3MnhMYHc7/9GlAwQlBVkEgHfJLU8+X+QdhaSXzhCjRepcSayx
+	QvCShrI3QKj5x6JbTH8hKvHJwXd61yikR5VGMVvp0PlIJxdyNhorXQtf3G98dOmlAfT07NEHCl8Yf
+	AehKMy7g==;
+Received: from ip092042140082.rev.nessus.at ([92.42.140.82] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sraNb-0000fJ-8O; Fri, 20 Sep 2024 11:56:47 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: joro@8bytes.org, Andy Yan <andyshrk@163.com>
+Cc: conor+dt@kernel.org, krzk+dt@kernel.org, robh@kernel.org,
+ devicetree@vger.kernel.org, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH] dt-bindings: iommu: rockchip: Add Rockchip RK3576
+Date: Fri, 20 Sep 2024 11:56:46 +0200
+Message-ID: <2220454.C4sosBPzcN@phil>
+In-Reply-To: <20240920094947.7566-1-andyshrk@163.com>
+References: <20240920094947.7566-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240920-catalina-i2c-mux-fix-2-v1-1-66cce7c54188@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAKdG7WYC/x2MSQqAMAwAvyI5G6hB3L4iHkKNGtAqrYpQ/LvF4
- zDMRAjiVQJ0WQQvtwbdXYIiz8Au7GZBHRMDGSpNSwYtn7yqY1SyuF0PTvogYTXasmmoZjIMKT6
- 8JPGP++F9PxaCMxBoAAAA
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Patrick Williams <patrick@stwcx.xyz>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- Potin Lai <potin.lai@quantatw.com>, Potin Lai <potin.lai.pt@gmail.com>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726826312; l=2479;
- i=potin.lai.pt@gmail.com; s=20240724; h=from:subject:message-id;
- bh=88gDVpnA6PhWT5LuFMIcdjhzh9mXo979fV+FwMxeJSs=;
- b=RKgxX3dZqhkSkyCu75khWXpwggC3ECCrTel6ZpW5RF7y7Bz1hO3BitmgqL/Wfc6DGzusH8C1N
- Ng6yO4CLdJzBDWeRFQZM5aTBOna40W/Bsp0x5Man2zawENBRxcR1y4J
-X-Developer-Key: i=potin.lai.pt@gmail.com; a=ed25519;
- pk=6Z4H4V4fJwLteH/WzIXSsx6TkuY5FOcBBP+4OflJ5gM=
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Add the `i2c-mux-idle-disconnect` property to all i2c-mux nodes to
-ensure proper behavior when switching between multiple I2C buses.
-This avoids potential confusion caused by device addresses appearing on
-multiple buses when they are not actively selected.
+Am Freitag, 20. September 2024, 11:49:40 CEST schrieb Andy Yan:
+> From: Andy Yan <andy.yan@rock-chips.com>
+> 
+> Just like RK3588, RK3576 is compatible to the existing rk3568
+> binding.
+> 
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
-Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
----
-Add the i2c-mux-idle-disconnect property to all i2c-mux nodes to
-ensure proper behavior when switching between multiple I2C buses.
-This avoids potential confusion caused by device addresses appearing on
-multiple buses when they are not actively selected.
----
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
-index 82835e96317d..fa0921a4afe2 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
-@@ -185,6 +185,7 @@ i2c-mux@71 {
- 		reg = <0x71>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		i2c-mux-idle-disconnect;
- 
- 		i2c0mux0ch0: i2c@0 {
- 			#address-cells = <1>;
-@@ -213,6 +214,7 @@ i2c-mux@72 {
- 		reg = <0x72>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		i2c-mux-idle-disconnect;
- 
- 		i2c0mux1ch0: i2c@0 {
- 			#address-cells = <1>;
-@@ -247,6 +249,7 @@ i2c-mux@70 {
- 				reg = <0x70>;
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-+				i2c-mux-idle-disconnect;
- 
- 				i2c30mux0ch0: i2c@0 {
- 					#address-cells = <1>;
-@@ -328,6 +331,7 @@ i2c-mux@73 {
- 		reg = <0x73>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		i2c-mux-idle-disconnect;
- 
- 		i2c0mux2ch0: i2c@0 {
- 			#address-cells = <1>;
-@@ -356,6 +360,7 @@ i2c-mux@75 {
- 		reg = <0x75>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		i2c-mux-idle-disconnect;
- 
- 		i2c0mux3ch0: i2c@0 {
- 			#address-cells = <1>;
-@@ -384,6 +389,7 @@ i2c-mux@76 {
- 		reg = <0x76>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		i2c-mux-idle-disconnect;
- 
- 		i2c0mux4ch0: i2c@0 {
- 			#address-cells = <1>;
-@@ -426,6 +432,7 @@ i2c-mux@77 {
- 		reg = <0x77>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		i2c-mux-idle-disconnect;
- 
- 		i2c0mux5ch0: i2c@0 {
- 			#address-cells = <1>;
+> ---
+> 
+>  Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml b/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml
+> index 621dde0e45d8..6ce41d11ff5e 100644
+> --- a/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml
+> +++ b/Documentation/devicetree/bindings/iommu/rockchip,iommu.yaml
+> @@ -25,6 +25,7 @@ properties:
+>            - rockchip,rk3568-iommu
+>        - items:
+>            - enum:
+> +              - rockchip,rk3576-iommu
+>                - rockchip,rk3588-iommu
+>            - const: rockchip,rk3568-iommu
+>  
+> 
 
----
-base-commit: baeb9a7d8b60b021d907127509c44507539c15e5
-change-id: 20240920-catalina-i2c-mux-fix-2-6dc48827a20a
 
-Best regards,
--- 
-Potin Lai <potin.lai.pt@gmail.com>
+
 
 
