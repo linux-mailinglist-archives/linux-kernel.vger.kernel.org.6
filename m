@@ -1,231 +1,523 @@
-Return-Path: <linux-kernel+bounces-334156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E592897D32D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:59:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BCD397D339
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A9CF1F2593D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:59:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2AFB287556
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B549813A268;
-	Fri, 20 Sep 2024 08:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B3213FD72;
+	Fri, 20 Sep 2024 08:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="SMvDSbNK"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013066.outbound.protection.outlook.com [52.101.67.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="esQcH0j8"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC3C7FBA2;
-	Fri, 20 Sep 2024 08:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726822686; cv=fail; b=to7+o2/NczNhUHkio1APATrZn9bYznfEQRGKu7UszyuRn38ATC2hf4McdjUtJCKLK7h+iNMbeMCgwoIsULKrK3LSc63vJyP7tpvizIRdr+xR/ctOXOyJov6bbRygj6MhB0IFH/eHLWjX2UlZfE62ekCZIOt+Q0RWTym4TMRzTC4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726822686; c=relaxed/simple;
-	bh=w3UEXERWQGpsX3nc/3iJYUOWbn847jDDHC2Uv9kCsPc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bL45ZdClNxzY1s5M8WUn8jinnxaLSRxfnqMZmJoVrrtvB4gzvSMs+Q5+6vkhQxV7hrqO2mHs7wNfY6j+eakeShSCxTs9v+WDsrt9FXMBIZwabAog/EHo1OU3nfnm6lsiwNBDM9I/hXsTLAI1+EenXLFE8fLovEMG5MIraDU+zsQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=SMvDSbNK; arc=fail smtp.client-ip=52.101.67.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HEc0/pDkeBqCorn62lr048RsLn/MBgi2iNV3zsqLT2J2g/SZcI/ldO6UbEYrRbvID+Qk0y3B8PM1IFoanaRX4KhbgKTBidszwdYIMnP/q23PWIKPVwrOeMBMRNTdIo1HqQjv/lEovWTEFJG1Ugv0cyc5a61Q8lHxCu1lpAU7jEdoweEYXqT3vdoTEPDfBFBy6RYDpfUU9tPssdrh31KGoAp9KLydcAXPVOeO1RzNLkvZPMoyL3E7OAu5CzWhXMxBvmD6Kg4ZcFqDPySlSc/3YEImstRq3rMJxhtAJExzc6mZ01+eFolCtbkXOKOF3GCZaaUSxBBQIB2pbeqdMSBgew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LZxjs8WIZytmrTLnL0fDLSqiEwF+r0cH3jphtQ3ilD4=;
- b=zOkgkX2TqSgZD1ohLr6nXfuToMoxHqwZ1g/QoC4rXDGyki33uWgmsGVmTX0R7a2WzmFzsKhIz7Rnxi1VXtWiwxUPTUm52ib422walhK3UVsY7Ny0MZvThyp2gK8brXUCxBb66wjB4yTUBA+al03PZhrG5cn5ZAgHGAZaNhswa3C3K/s1/+7wr3dtO321K/tsWdGSWpiLOFCFQs6QJOGEO74nh1rTIRObaggfrcO/+WgBK/zmD/z1fuYNZSIZS5ceDuRK1Q6Ot9/GuX/Z2xmDQ+YzkgQ3O6Kw42J0FGK322PXjYwClRKRLBXt7iCJAa4RX/Orm+c2/BgUzvSAczrr/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LZxjs8WIZytmrTLnL0fDLSqiEwF+r0cH3jphtQ3ilD4=;
- b=SMvDSbNK21CAO9a6gjp9v8v/iHUm85pRxPJmkdG6lp/1t9WBAgcTC1frGTjawq8/Q5lNpDQtkgaK9wF6KBOsBwESv4zKKFUTW3C+6jz3sOqZVhzCGrgAairThB94ZGVx89/zPiL2o8z2Y7zXCIlGG3v7TN3xMlJRlc6u7hf/4LJwzPLPdBTkyZBdk0sriXpzMFGq9iPntOmMaWyfGDyij4GJ+Yb1+SQ+3Xmu7qgW7JvBcRDZXgf7lbq7DN9DkMJcQuLBIUKkvAa05YwmiwTvLDwi0N6KngfjLs5fzaoF5ECpQWr8zERksxW9hLn4u3SxCbIvefYxm0PpJzFsGrmLNg==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by AM0PR04MB7074.eurprd04.prod.outlook.com (2603:10a6:208:196::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.19; Fri, 20 Sep
- 2024 08:58:00 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.7982.018; Fri, 20 Sep 2024
- 08:58:00 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: "John B. Wyatt IV" <jwyatt@redhat.com>, "Peng Fan (OSS)"
-	<peng.fan@oss.nxp.com>
-CC: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>, John
- Kacur <jkacur@redhat.com>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 0/2] tools: power: cpupower: Allow overriding
- cross-compiling envs
-Thread-Topic: [PATCH v2 0/2] tools: power: cpupower: Allow overriding
- cross-compiling envs
-Thread-Index: AQHbCotf4uMyP70W+022nGBUmwhal7JfT6uAgAEQhSA=
-Date: Fri, 20 Sep 2024 08:58:00 +0000
-Message-ID:
- <PAXPR04MB845910C56EA61D3215DA5452886C2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20240919-pm-v2-0-0f25686556b5@nxp.com>
- <ZuxTjy7I-pZBcXa0@rhfedora>
-In-Reply-To: <ZuxTjy7I-pZBcXa0@rhfedora>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AM0PR04MB7074:EE_
-x-ms-office365-filtering-correlation-id: 43ed0c75-f2af-480f-656f-08dcd9525491
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?eJMtBmKdllrauwGvtK29RnMN81gQ87F27pOV0c7Q848PsOV8Wpe2KHnQ1i16?=
- =?us-ascii?Q?xLrHeW4h6tNC4HWio+CUVeCdNn72Spd6TjVxRYvN52N01mRmQwU2V4z1rc1H?=
- =?us-ascii?Q?4LHYWcm1cHQUcxRKs67x4G2HirxW7zXSBERN1HI+APLlipE5acGHxomwJsw6?=
- =?us-ascii?Q?71k4NTuMDlL0qsrrsIGjqAkNf07XKdXuK+3hMnUjXUS4vKbJ0544FF1+0IDB?=
- =?us-ascii?Q?h4K82/0ib9nKMnCFRN+fCVwtytjvCvaNVzNUEPzULZrOjs9iGOMDp1ZYSy4B?=
- =?us-ascii?Q?T5bIibar0zdqsLWr8bH2cQ14PUgGMRRp6Frc6umfcMtDysbWXskGQa7A9DBa?=
- =?us-ascii?Q?eU4uPsqJ3VkcpuY5u7OjqX1k4NE4XZxQ149XjVkCiOcg8PQpk3KO7sZoZcY1?=
- =?us-ascii?Q?ltmNQy9+IznvBCvwx3bc4Vl4YkMhhYbSOWFvV38gqkJrKM9K7MwtlYTQwi28?=
- =?us-ascii?Q?1VubPnRItjwAsHGChK47kbY9g0/bTq6RRPP0awx3Ljesg1iaA1B+jPEvJJe7?=
- =?us-ascii?Q?N43jfTVk2W1VgPygPntoMTnh4NIRNZgvhnYs7Ga+uuNtPitw0TVFq6VD1dOO?=
- =?us-ascii?Q?kuz6IxQdvelibn5PF/7RTUe9XMlIQsTxJw6GaADi9F17oMq60DXxV97EaofG?=
- =?us-ascii?Q?moOlzUX3B11SoaJaidjmf7rRnxAOVlqKG5spMbfcg1UIw9DUMkxcLr0H180A?=
- =?us-ascii?Q?hfbRULKU0GNNe0pGnFknfbXLSPGNZ/phzLsZ0wkQZ43uAg94ze6ef5kYi2As?=
- =?us-ascii?Q?ezfQKgImAHJ4MsNsIE6L6cwrs8bFEJgJ0rUH2N+8VDAti8A6oBipiNv52VBT?=
- =?us-ascii?Q?pcsl9mA/qAbNfxsizf4x94k6/2yAQtHPxrzlI6VzrdHph0XQ8E1vi0W8sH0P?=
- =?us-ascii?Q?XxjZrXOA/ufSc8r1jZFbAuza3LFqIFxTJfMvZ2ITwQy1oRTx0VSYm0U4fMM9?=
- =?us-ascii?Q?u7FiNZ5i3uzyLvavatIkt/CwMWknhS7LasLQ4Z309AnnwEzIIhKbwD1QiHLr?=
- =?us-ascii?Q?jepKoI0QTtISrvxcldf6Pn2gyijXy1u6HvQ2uRPpZd1uuktQ6D3BksyzOCeY?=
- =?us-ascii?Q?vD0Azl5DFat6mTAOWbmWLg/2MCVIgpkV3/QVvqp1GGf2BRWfbw2//g5c3vjI?=
- =?us-ascii?Q?VVKwjaNKZkE4dWC9sJ4RzRXuPQf2rUdMWimqrHm1OK4AFbvgPwE7yjQOaaCH?=
- =?us-ascii?Q?3lZf/WOEsiK2crgz0L7V4AkGqMGXexFSLUw9MGwSGZ8gSO4y6ugYWyHQKM/e?=
- =?us-ascii?Q?hprlEZxlH3T+9qDLbELEY1MKLMHRy3bhzapQvCNmJpE1IL/3DoOxtW4DqqWy?=
- =?us-ascii?Q?hPZOMEqDPMyI0pcTuXxtY67SaDYqgnBwM/qQy/ZCFYsm8mLVz6xfmE0BvH/f?=
- =?us-ascii?Q?7cTpiWXBHzQSyvjNRyH+dT4g4Cg2wWzmYm47egOXYMmUWV5BoA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?KrqrrhlMc5drT0ijhIi0zwJ3mFWs9Faw2DJOCk17BcOV00IR2Tm4JaQVhSjB?=
- =?us-ascii?Q?sNEYzZPxVX5J77MdR94Vcr6NF0yMAOdT/sajc8Ujy8mzOkEdUNrbdYFlJw+Q?=
- =?us-ascii?Q?YhTFSMA+5Pk89p92JuRKfOhTBzqnbdQKJ1upFfmZcgEG1XgZy8obYgAVRej+?=
- =?us-ascii?Q?TH6y6IH4Cp/u1u9Z5k/Ps5kKd3GyBAx+iynsavr5995kbjnT+jDxMm9Gs6gL?=
- =?us-ascii?Q?G+wm8unK4EO4bRhU3QuuM0bqNvndIzdgIWMLWnP83w+xjDSwLSSxnF/5fr5e?=
- =?us-ascii?Q?a3FYti02ku9KQg21DcvT48Ir0yf+h76Ek2pyY1eKXvS4Z77MQMB7TN/C/I3O?=
- =?us-ascii?Q?vASwskFQ/87T3je/bg8lgahnPPYI5vEb2y7oBCsZOu83HKA1rDfGPjt8WTsH?=
- =?us-ascii?Q?I6ofNaWEqOHN/oxF/44CjGAhZM4dntShpA1u6++EI2NKDRjsofAWw5Fqx1D8?=
- =?us-ascii?Q?7uPv0eK5fQTeFs2WmVOIEEx6b9Xp6uXsZG4mBrrxf8tcaEPyYJp2rUuk7Zw3?=
- =?us-ascii?Q?eBQ2ILGBjKR8zLEoA2CAXIJ+QaueCXq2TOtHmTplitmiVMOH6v9QyTmiLNEj?=
- =?us-ascii?Q?nTCQvpoPvOXCTj3wfpeVKY4YJAMvJzSpq+jzrvTot1ibjhLzC7Ot2Tia13aM?=
- =?us-ascii?Q?/y13MKlG4mn2vf5M2ix4DNWpQ2FJ2fWrFaNWTp+rH/Es8qpsnrLBI69qIO8b?=
- =?us-ascii?Q?DR8bNez4odKixL1iJKFr3EnoU8KI8b60GoVX37q6ZjAVw7kETm+l4WI6Gb0A?=
- =?us-ascii?Q?dNcnV/nUrA3p3DTv+2VbIvybNUbQah5z/LbgpAdMSe9dJ9b4YRXdBpzk71Mg?=
- =?us-ascii?Q?MMyl3h5zJ7OwWQyTLTonF+zN9rX9TeSQJptKjDcKjU3rXPvOJIxaBe3zfCoQ?=
- =?us-ascii?Q?iMOxkpRovbu/pMs6zMtAt1pwvnSpYnaU6WcjSWpt1KZK6GN3gnj+Puq8rCJc?=
- =?us-ascii?Q?bwNwuni12l+JLRetQwg4MTZTbqr/679cXNCumXyjEAbC3JjqkLJR32Gdzy4b?=
- =?us-ascii?Q?0Mhse18gqfQSMEt+hdJ/48+6VL1CBYiFmacWEWeQXjzcTJ7G8Msxu+9qqdar?=
- =?us-ascii?Q?KG1/AfXzzyZNJ+SHi49HF2s5hJBReuzrPGt2ON3xh6SiPAPPoTiv37++9qN8?=
- =?us-ascii?Q?kINeQ3SucoUXmEhuYpvOH9jAnzf97s/4tpn0MWvQbS2o5mlc4uomMvzGav3i?=
- =?us-ascii?Q?K5aRczJV14Yr1ZsHWH2jWu1kpjujLmptXWNoL3QGxZ9n4nvr9dC0KrfffGDJ?=
- =?us-ascii?Q?FcjmUH79EQD6QQ6BrG6yVS5PqJsjWrqG/D2Y0lmdMAFj8SMa4GklK+lInX0B?=
- =?us-ascii?Q?H4xdr2ndYiyQhpPM1LcKQEcrzjjCHM0BZ2SuaI9zUmDzNnyTd58Y8qvlobmR?=
- =?us-ascii?Q?j7kjdeRPS+9jam26TFgFl7dwVlbnb++MpO3zdlmCuT6jmVBFKkjow8IOpX0t?=
- =?us-ascii?Q?67PYlLul/Y41SRjcXXtaUmzBO7TEuUpcw3q018R5OPv0tVHe+DNGuAoGgyqQ?=
- =?us-ascii?Q?dAoKULIHMvnovuB/1YRhusknOIajjE5OFiKzzuNiQVsmBWwkEq0YzJBRY6i/?=
- =?us-ascii?Q?9SiW+VAZrFtgP2BgLDM=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A775913D8A0
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726822735; cv=none; b=H0QUXB4WmbQeO42ZdNUYXz36vP4Yl+aOSwb7r0srRqd1iRDgFKzjyXrDUEDSZGJjeDXdsAAeIs4Jes0kONm/95gr+q/Z9CiJRuEu7r9GphN7wKqhSrVhIz4osqhQe2WvI41YvbPHpNRgfDJh5e4PznHHTzxmNBMfkWII4Iok/IQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726822735; c=relaxed/simple;
+	bh=8JKOHwvVTOOdOu90bngn5MEjnoNO8sQIVWMjzemkCfk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cdxvbKSliUUV2xnGsczCLoeCtDwqVwh9hzkDHpXAmZEF/C1vEaAFJAk74gGIpKQOc22qRh0fsI5ukcwTESa5HbcpY3bxFuwBbSbdUjvmI4hv+u09Gq89FTOo/rOJQfTXNh+v7HC0+8zu7xjT2R85Jyku+mqEy7+LQUkxHr+nW88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=esQcH0j8; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so21706985e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:58:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726822732; x=1727427532; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yIJe8wo5LEYCDyfF2tjtE/tRYsnrKBITD4P5/2zAJmg=;
+        b=esQcH0j8353YVSts9v+/ThZ+qlpmXlMqaoR6gXS9Fpf4rYYPWcq2feqbAlt3AMS+b9
+         yCU+vCLtUMj+fg1hLuOgWI6mxeasDlsKAix+rSP5quDLuGe4txRS/WYFjYi6D1MUtpft
+         Gwc8XprrcEY1Tn3mfekrwdG+M6c6ZCSrZFmVcsvu5EEYoqaw8o9rPWELJKziVG8jiXR7
+         oisXxeaBZd0kqRxOBVPCqpgLk8rbdxQ7X/VfGBZlOXRpN+/1V5M47J8TpdP4CyW266fg
+         kgmfz2B1nXf7+JQYFitg6uzuVmAqt8p9k2RL1TgB5Upbf47SucJiMscp8YNZClXkMNur
+         QzJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726822732; x=1727427532;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yIJe8wo5LEYCDyfF2tjtE/tRYsnrKBITD4P5/2zAJmg=;
+        b=daO45ExkRLeQZvq3Ekc5TVnwZ308ePJHGUnJJCuhfjzGIJ7+IB0zoD76e1LXTvP+Dy
+         CCRBlVfkZX2FuMSjEir5qs15DYOJoC6RVvPZ8XHPz6skJy0ioflySY3VvzGzp1ZmgeGy
+         lk1F9wN188GXHidfO5dRShj00MEz0g8G31zikJJop3jz86YHbLhkt8Np36dstriiFw/A
+         UXGR0yRSLJEcjQ5RgpNef651sMOYlk7ukujYYiV74J06V2ydBU/YeWqvTBBUBwLFIhnw
+         0AKGvDlG3nibqsZHyg5XUGHsNszVEhaUrzfse4aEqQZ//7cqkC/0f+7P/Pf94nl+3H6d
+         9ESA==
+X-Gm-Message-State: AOJu0YxDG9ORkjivGEU41c6zvSQFijjpIOXQQfF1xRfuO507eO7n/HtK
+	SCwjKtO2ZLSie1DHgYfh/s0Cru/ZelPsI+ofn10zMV2ViIx4bJpe/VI9WhjGsj+yeQUrwXOBoh4
+	H
+X-Google-Smtp-Source: AGHT+IEamuKw3j7lSmk0UG/EIStzY9+oi8Mn2s4wNSgOjO3z4k9kC7oJWxHuLTVvyk/WnqsCAQsDEw==
+X-Received: by 2002:a05:6000:2a8:b0:374:c160:269e with SMTP id ffacd0b85a97d-37a42279388mr1644429f8f.22.1726822731781;
+        Fri, 20 Sep 2024 01:58:51 -0700 (PDT)
+Received: from localhost (p200300f65f01db004d6a46a6454a1385.dip0.t-ipconnect.de. [2003:f6:5f01:db00:4d6a:46a6:454a:1385])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73e85ccsm17007726f8f.42.2024.09.20.01.58.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 01:58:51 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: linux-kernel@vger.kernel.org
+Cc: Trevor Gamblin <tgamblin@baylibre.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	Kent Gibson <warthog618@gmail.com>
+Subject: [PATCH v5 8/8] pwm: Add support for pwmchip devices for faster and easier userspace access
+Date: Fri, 20 Sep 2024 10:58:04 +0200
+Message-ID:  <657876d1321467a2b23060ac15924aed8c423390.1726819463.git.u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.1726819463.git.u.kleine-koenig@baylibre.com>
+References: <cover.1726819463.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43ed0c75-f2af-480f-656f-08dcd9525491
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2024 08:58:00.8600
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gA9G7j9jz1XJyJSfJ0ngnONmO7cvAulcWWtQa5iRpPKl8BdvW7KjjNghPMqvumbwNJ2pBoH61X5qdhzX94PTHg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7074
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10642; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=8JKOHwvVTOOdOu90bngn5MEjnoNO8sQIVWMjzemkCfk=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBm7TkpswEwsF25gBsVxXSlIq4lmGd3FeJ9fPI8K B52WGhBz1GJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZu05KQAKCRCPgPtYfRL+ TqrAB/4jddMa8T8RqTIhHG9NbYzhXbKaaW1+lYimdszaksyxbqGy0Nk9GtxnfCjGt/LDVf9uVGV ipkyCS4uumCU7A5EABb6R9O8jqYP6sMvcKcIp9PTJBpCmqQTXHxY/0iTV0aKQ9MUB3dSZ/BTxCg Enyut5KinVcMV+h48vlxEg78Lfn3PUslIHpZ1UIc0X7MJKdcHBOBcv25TOgRYYl1fyMM09oBnH5 ucvg0Jzh/n8llAUTTCDnbe8aVviCX4s7gYzoJrIf1gItup9PgCk/oIO80uN5OP3MuTiTxnOa2bs xVociSJJgcAlKbR1zNBvO5YYqQrLpGbyNXPamhR+ZgbiUohS
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-Hi John,
+With this change each pwmchip defining the new-style waveform callbacks
+can be accessed from userspace via a character device. Compared to the
+sysfs-API this is faster (on a stm32mp157 applying a new configuration
+takes approx 25% only) and allows to pass the whole configuration in a
+single ioctl allowing atomic application.
 
-> Subject: Re: [PATCH v2 0/2] tools: power: cpupower: Allow overriding
-> cross-compiling envs
->=20
-> Hi Peng,
->=20
-> A few comments:
->=20
-> > V2:
-> >  subject update, commit log update in patch 1, 2  Use strerror in
-> > patch 1  without patch 2, need update Makefile with 'CROSS =3D  [cross
-> > toolchain path]/aarch64-poky-linux-'
->=20
-> Version information is applied per commit patch. Not in the cover
-> letter.
->=20
-> Example:
->=20
-> https://lore.kernel.org/linux-pm/20240905021916.15938-2-jwyatt@redhat.com=
-/
-> Reference:
->=20
->=20
-> You will need to submit a V3 version of this.
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html#th=
-e-canonical-patch-format
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+ drivers/pwm/core.c       | 291 +++++++++++++++++++++++++++++++++++++--
+ include/linux/pwm.h      |   3 +
+ include/uapi/linux/pwm.h |  32 +++++
+ 3 files changed, 311 insertions(+), 15 deletions(-)
+ create mode 100644 include/uapi/linux/pwm.h
 
-Sure, I will follow in v3.
-
-> >  without patch 2, need update Makefile with 'CROSS =3D  [cross
-> toolchain
-> > path]/aarch64-poky-linux-'
->=20
-> I am not sure what this is saying exactly. Please clarify.
->=20
-
-Shuah asked to put that in changelog,
-
-https://lore.kernel.org/all/0f8df90f-007a-483e-83ce-df8ff0e99791@linuxfound=
-ation.org/
-
-I could put in patch 1/2 change log in V3.
-
-> > Subject: Re: [PATCH v2 0/2] tools: power: cpupower: Allow
-> overriding
->=20
-> Not sure you need 'tools: power: cpupower:' in the cover letter.
-
-Will use "tools: power:" in v3.
->=20
-> > pm: cpupower: bench: print config file path when open
-> > cpufreq-bench.conf fails
->=20
-> I do not think you need bench either.
-
-Will drop "bench" in v3.
-
-
-Thanks,
-Peng.
-
->=20
-> --
-> Sincerely,
-> John Wyatt
-> Software Engineer, Core Kernel
-> Red Hat
+diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+index ed620e35db61..3c25e0ac682c 100644
+--- a/drivers/pwm/core.c
++++ b/drivers/pwm/core.c
+@@ -23,6 +23,8 @@
+ 
+ #include <dt-bindings/pwm/pwm.h>
+ 
++#include <uapi/linux/pwm.h>
++
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/pwm.h>
+ 
+@@ -1915,20 +1917,9 @@ struct pwm_device *pwm_get(struct device *dev, const char *con_id)
+ }
+ EXPORT_SYMBOL_GPL(pwm_get);
+ 
+-/**
+- * pwm_put() - release a PWM device
+- * @pwm: PWM device
+- */
+-void pwm_put(struct pwm_device *pwm)
++static void __pwm_put(struct pwm_device *pwm)
+ {
+-	struct pwm_chip *chip;
+-
+-	if (!pwm)
+-		return;
+-
+-	chip = pwm->chip;
+-
+-	guard(mutex)(&pwm_lock);
++	struct pwm_chip *chip = pwm->chip;
+ 
+ 	/*
+ 	 * Trigger a warning if a consumer called pwm_put() twice.
+@@ -1949,6 +1940,20 @@ void pwm_put(struct pwm_device *pwm)
+ 
+ 	module_put(chip->owner);
+ }
++
++/**
++ * pwm_put() - release a PWM device
++ * @pwm: PWM device
++ */
++void pwm_put(struct pwm_device *pwm)
++{
++	if (!pwm)
++		return;
++
++	guard(mutex)(&pwm_lock);
++
++	__pwm_put(pwm);
++}
+ EXPORT_SYMBOL_GPL(pwm_put);
+ 
+ static void devm_pwm_release(void *pwm)
+@@ -2018,6 +2023,249 @@ struct pwm_device *devm_fwnode_pwm_get(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(devm_fwnode_pwm_get);
+ 
++struct pwm_cdev_data {
++	struct pwm_chip *chip;
++	struct pwm_device *pwm[];
++};
++
++static int pwm_cdev_open(struct inode *inode, struct file *file)
++{
++	struct pwm_chip *chip = container_of(inode->i_cdev, struct pwm_chip, cdev);
++	struct pwm_cdev_data *cdata;
++
++	guard(mutex)(&pwm_lock);
++
++	if (!chip->operational)
++		return -ENXIO;
++
++	cdata = kzalloc(struct_size(cdata, pwm, chip->npwm), GFP_KERNEL);
++	if (!cdata)
++		return -ENOMEM;
++
++	cdata->chip = chip;
++
++	file->private_data = cdata;
++
++	return nonseekable_open(inode, file);
++}
++
++static int pwm_cdev_release(struct inode *inode, struct file *file)
++{
++	struct pwm_cdev_data *cdata = file->private_data;
++	unsigned int i;
++
++	for (i = 0; i < cdata->chip->npwm; ++i) {
++		if (cdata->pwm[i])
++			pwm_put(cdata->pwm[i]);
++	}
++	kfree(cdata);
++
++	return 0;
++}
++
++static int pwm_cdev_request(struct pwm_cdev_data *cdata, unsigned int hwpwm)
++{
++	struct pwm_chip *chip = cdata->chip;
++
++	if (hwpwm >= chip->npwm)
++		return -EINVAL;
++
++	if (!cdata->pwm[hwpwm]) {
++		struct pwm_device *pwm = &chip->pwms[hwpwm];
++		int ret;
++
++		ret = pwm_device_request(pwm, "pwm-cdev");
++		if (ret < 0)
++			return ret;
++
++		cdata->pwm[hwpwm] = pwm;
++	}
++
++	return 0;
++}
++
++static int pwm_cdev_free(struct pwm_cdev_data *cdata, unsigned int hwpwm)
++{
++	struct pwm_chip *chip = cdata->chip;
++
++	if (hwpwm >= chip->npwm)
++		return -EINVAL;
++
++	if (cdata->pwm[hwpwm]) {
++		struct pwm_device *pwm = cdata->pwm[hwpwm];
++
++		__pwm_put(pwm);
++
++		cdata->pwm[hwpwm] = NULL;
++	}
++
++	return 0;
++}
++
++static struct pwm_device *pwm_cdev_get_requested_pwm(struct pwm_cdev_data *cdata,
++						     u32 hwpwm)
++{
++	struct pwm_chip *chip = cdata->chip;
++
++	if (hwpwm >= chip->npwm)
++		return ERR_PTR(-EINVAL);
++
++	if (cdata->pwm[hwpwm])
++		return cdata->pwm[hwpwm];
++
++	return ERR_PTR(-EINVAL);
++}
++
++static long pwm_cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	int ret = 0;
++	struct pwm_cdev_data *cdata = file->private_data;
++	struct pwm_chip *chip = cdata->chip;
++
++	guard(mutex)(&pwm_lock);
++
++	if (!chip->operational)
++		return -ENODEV;
++
++	switch (cmd) {
++	case PWM_IOCTL_REQUEST:
++		{
++			unsigned int hwpwm = arg;
++
++			return pwm_cdev_request(cdata, hwpwm);
++		}
++		break;
++
++	case PWM_IOCTL_FREE:
++		{
++			unsigned int hwpwm = arg;
++
++			return pwm_cdev_free(cdata, hwpwm);
++		}
++		break;
++
++	case PWM_IOCTL_ROUNDWF:
++		{
++			struct pwmchip_waveform cwf;
++			struct pwm_waveform wf;
++			struct pwm_device *pwm;
++
++			ret = copy_from_user(&cwf,
++					     (struct pwmchip_waveform __user *)arg,
++					     sizeof(cwf));
++			if (ret)
++				return -EFAULT;
++
++			if (cwf.__pad != 0)
++				return -EINVAL;
++
++			pwm = pwm_cdev_get_requested_pwm(cdata, cwf.hwpwm);
++			if (IS_ERR(pwm))
++				return PTR_ERR(pwm);
++
++			wf = (struct pwm_waveform) {
++				.period_length_ns = cwf.period_length_ns,
++				.duty_length_ns = cwf.duty_length_ns,
++				.duty_offset_ns = cwf.duty_offset_ns,
++			};
++
++			ret = pwm_round_waveform_might_sleep(pwm, &wf);
++			if (ret)
++				return ret;
++
++			cwf = (struct pwmchip_waveform) {
++				.hwpwm = cwf.hwpwm,
++				.period_length_ns = wf.period_length_ns,
++				.duty_length_ns = wf.duty_length_ns,
++				.duty_offset_ns = wf.duty_offset_ns,
++			};
++
++			return copy_to_user((struct pwmchip_waveform __user *)arg,
++					    &cwf, sizeof(cwf));
++		}
++		break;
++
++	case PWM_IOCTL_GETWF:
++		{
++			struct pwmchip_waveform cwf;
++			struct pwm_waveform wf;
++			struct pwm_device *pwm;
++
++			ret = copy_from_user(&cwf,
++					     (struct pwmchip_waveform __user *)arg,
++					     sizeof(cwf));
++			if (ret)
++				return -EFAULT;
++
++			if (cwf.__pad != 0)
++				return -EINVAL;
++
++			pwm = pwm_cdev_get_requested_pwm(cdata, cwf.hwpwm);
++			if (IS_ERR(pwm))
++				return PTR_ERR(pwm);
++
++			ret = pwm_get_waveform_might_sleep(pwm, &wf);
++			if (ret)
++				return ret;
++
++			cwf.period_length_ns = wf.period_length_ns;
++			cwf.duty_length_ns = wf.duty_length_ns;
++			cwf.duty_offset_ns = wf.duty_offset_ns;
++
++			return copy_to_user((struct pwmchip_waveform __user *)arg,
++					    &cwf, sizeof(cwf));
++		}
++		break;
++
++	case PWM_IOCTL_SETROUNDEDWF:
++	case PWM_IOCTL_SETEXACTWF:
++		{
++			struct pwmchip_waveform cwf;
++			struct pwm_waveform wf;
++			struct pwm_device *pwm;
++
++			ret = copy_from_user(&cwf,
++					     (struct pwmchip_waveform __user *)arg,
++					     sizeof(cwf));
++			if (ret)
++				return -EFAULT;
++
++			if (cwf.__pad != 0)
++				return -EINVAL;
++
++			wf = (struct pwm_waveform){
++				.period_length_ns = cwf.period_length_ns,
++				.duty_length_ns = cwf.duty_length_ns,
++				.duty_offset_ns = cwf.duty_offset_ns,
++			};
++
++			if (!pwm_wf_valid(&wf))
++				return -EINVAL;
++
++			pwm = pwm_cdev_get_requested_pwm(cdata, cwf.hwpwm);
++			if (IS_ERR(pwm))
++				return PTR_ERR(pwm);
++
++			return pwm_set_waveform_might_sleep(pwm, &wf,
++							    cmd == PWM_IOCTL_SETEXACTWF);
++		}
++		break;
++
++	default:
++		return -ENOTTY;
++	}
++}
++
++static const struct file_operations pwm_cdev_fileops = {
++	.open = pwm_cdev_open,
++	.release = pwm_cdev_release,
++	.owner = THIS_MODULE,
++	.llseek = no_llseek,
++	.unlocked_ioctl = pwm_cdev_ioctl,
++};
++
++static dev_t pwm_devt;
++
+ /**
+  * __pwmchip_add() - register a new PWM chip
+  * @chip: the PWM chip to add
+@@ -2070,7 +2318,13 @@ int __pwmchip_add(struct pwm_chip *chip, struct module *owner)
+ 	scoped_guard(pwmchip, chip)
+ 		chip->operational = true;
+ 
+-	ret = device_add(&chip->dev);
++	if (chip->id < 256 && chip->ops->write_waveform)
++		chip->dev.devt = MKDEV(MAJOR(pwm_devt), chip->id);
++
++	cdev_init(&chip->cdev, &pwm_cdev_fileops);
++	chip->cdev.owner = owner;
++
++	ret = cdev_device_add(&chip->cdev, &chip->dev);
+ 	if (ret)
+ 		goto err_device_add;
+ 
+@@ -2121,7 +2375,7 @@ void pwmchip_remove(struct pwm_chip *chip)
+ 		idr_remove(&pwm_chips, chip->id);
+ 	}
+ 
+-	device_del(&chip->dev);
++	cdev_device_del(&chip->cdev, &chip->dev);
+ }
+ EXPORT_SYMBOL_GPL(pwmchip_remove);
+ 
+@@ -2262,9 +2516,16 @@ static int __init pwm_init(void)
+ {
+ 	int ret;
+ 
++	ret = alloc_chrdev_region(&pwm_devt, 0, 256, "pwm");
++	if (ret) {
++		pr_warn("Failed to initialize chrdev region for PWM usage\n");
++		return ret;
++	}
++
+ 	ret = class_register(&pwm_class);
+ 	if (ret) {
+ 		pr_err("Failed to initialize PWM class (%pe)\n", ERR_PTR(ret));
++		unregister_chrdev_region(pwm_devt, 256);
+ 		return ret;
+ 	}
+ 
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index c3d9ddeafa65..f43dbfaef1a1 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -2,6 +2,7 @@
+ #ifndef __LINUX_PWM_H
+ #define __LINUX_PWM_H
+ 
++#include <linux/cdev.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
+ #include <linux/module.h>
+@@ -304,6 +305,7 @@ struct pwm_ops {
+ /**
+  * struct pwm_chip - abstract a PWM controller
+  * @dev: device providing the PWMs
++ * @cdev: &struct cdev for this device
+  * @ops: callbacks for this PWM controller
+  * @owner: module providing this chip
+  * @id: unique number of this PWM chip
+@@ -318,6 +320,7 @@ struct pwm_ops {
+  */
+ struct pwm_chip {
+ 	struct device dev;
++	struct cdev cdev;
+ 	const struct pwm_ops *ops;
+ 	struct module *owner;
+ 	unsigned int id;
+diff --git a/include/uapi/linux/pwm.h b/include/uapi/linux/pwm.h
+new file mode 100644
+index 000000000000..0a9cdaa0fe37
+--- /dev/null
++++ b/include/uapi/linux/pwm.h
+@@ -0,0 +1,32 @@
++/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
++
++#ifndef _UAPI_PWM_H_
++#define _UAPI_PWM_H_
++
++#include <linux/ioctl.h>
++#include <linux/types.h>
++
++/**
++ * struct pwmchip_waveform - Describe a PWM waveform for a pwm_chip's PWM channel
++ * @hwpwm: per-chip relative index of the PWM device
++ * @__pad: padding, must be zero
++ * @period_length_ns: duration of the repeating period
++ * @duty_length_ns: duration of the active part in each period
++ * @duty_offset_ns: offset of the rising edge from a period's start
++ */
++struct pwmchip_waveform {
++	__u32 hwpwm;
++	__u32 __pad;
++	__u64 period_length_ns;
++	__u64 duty_length_ns;
++	__u64 duty_offset_ns;
++};
++
++#define PWM_IOCTL_REQUEST	_IO(0x75, 1)
++#define PWM_IOCTL_FREE		_IO(0x75, 2)
++#define PWM_IOCTL_ROUNDWF	_IOWR(0x75, 3, struct pwmchip_waveform)
++#define PWM_IOCTL_GETWF		_IOWR(0x75, 4, struct pwmchip_waveform)
++#define PWM_IOCTL_SETROUNDEDWF	_IOW(0x75, 5, struct pwmchip_waveform)
++#define PWM_IOCTL_SETEXACTWF	_IOW(0x75, 6, struct pwmchip_waveform)
++
++#endif /* _UAPI_PWM_H_ */
+-- 
+2.45.2
 
 
