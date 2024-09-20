@@ -1,126 +1,159 @@
-Return-Path: <linux-kernel+bounces-334310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0720197D58D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:42:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF21D97D590
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D4951F23E5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:42:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781181F23F72
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D86314EC42;
-	Fri, 20 Sep 2024 12:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602E114D710;
+	Fri, 20 Sep 2024 12:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P6H2h41E"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KY3qdbBY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3414314E2D8
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39C238DD3;
+	Fri, 20 Sep 2024 12:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726836106; cv=none; b=Cun+49GKr4CDBKmqmWzf0dbXGg8v/73uk+i2J62LGlkeZe637/UGzHQJZ+cNpi4VKvNjKfHOsIDx2GxqYDUTUhyfnPzNY0iOynJtiCrCY5wwuaJXt2ligFrl0js/JaElmEUNfY/6tJyEROK5MVeut3faQJWQ6DBI13bxUQ2RT7U=
+	t=1726836133; cv=none; b=XbQnPAZ7H8U9qK1+dvp0+eGePT7yUV3xciQ/b84H6islC6GC/FzrjBJVDKn9QTM8mlFBV0rv+Tc4Y9vevM1geGzdkuUMPp37ACG/YwaSxhdsQ9wpwG/xUh64HZdRq1vzzXJ+p3sVeN6pr8bzkbjOB6vncPJfThGKZbSVyNILoPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726836106; c=relaxed/simple;
-	bh=0WBFv8ZA/oo3j8ELhbh8DQGgWxcTm466AwnPjGt38mw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qFxELR8RVT5byFL8+knwQn0LfB8AYdvIK+EAskBSN8OtQ6WdqTfM8f2mbRYb/BkeGmcgmXJ6qDF/kr06iJr5BTqceLTHRCiXtdqCSGzgdSrccn+yr2lAmeR+77uCnjvr06Bb80JwGSyihaOOOZMwg5Ghf5RwPuu3d0lJm+k1Dck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P6H2h41E; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726836104;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S8278FaFTM3d6Aw9sPU40vZ5+RejEtI0zdZPEAND+qI=;
-	b=P6H2h41EgbdLX5qSnpXZ9far8Girvy9CcqPFlWL7LxBLX48Q/MAKvjetgjHuhLzwUUiRDj
-	0UOO3zBqRMh/ADy+JM7//7W7XegsC0UdFDbo1FmjxcdU71n0uIajrdFUd0I73qecy2V0D8
-	z092aYN5rF4blOhQxGdxPkpQJP3Pka8=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-682-P9-Ngl8XOIqjtM8WOFwhCA-1; Fri, 20 Sep 2024 08:41:43 -0400
-X-MC-Unique: P9-Ngl8XOIqjtM8WOFwhCA-1
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6c353a05885so30693956d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:41:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726836102; x=1727440902;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S8278FaFTM3d6Aw9sPU40vZ5+RejEtI0zdZPEAND+qI=;
-        b=kz1l1JjzRrmR8hdH8rzm+pOcP7nQbVEOkAXr8Z93cdIWK6qfCIAwOAR1yefY5SYr30
-         PgVfC1iftHmgdpzH1aDlMrWTDjFeZiTOHQmxKQyNtFaYhtRjF548bIUxujFhtXr/pL09
-         6cw9eAOL6CoU53yPB2gCh2J2BDdes1i3E3HRpMjqUJkUhx6Qwyly7Y4id5BeKASR/nHf
-         Nffxiu/j4WOIxVjauvalWqZBEsFavgtRb8HTJbnPJTy1KUhZPKy2a8xVaAgzxdPo6K2y
-         OnQJrQcanF/y58YxX2F0lTjAVNG/JXd1tFoNDMjYbLFY+3Zy/re8aQuiC5CDKJWqPuAr
-         ur0w==
-X-Forwarded-Encrypted: i=1; AJvYcCV/wxWH12MdoqXDGh9BK/MRTowzRH6Ebnpmh+wbz6Kw3GBABZia7IRXKS6YBm2wR3OkIqa+ZAhFHx0tWeM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZMng9zwFzZN0Ai2ds/5AQZ/Xum3ajmZcfrMft0PBFTliPmJ0n
-	jzkjYNSTMjdm2dvzls4IlcPjMHjRcBrKihLH8ph61RQ8eooVZrcGMtC33N9hxpfxXYVeHvEOASq
-	ozo1lGpJMsDICGy2KOUPsT+mMLfakx9TfsKPu2gKP/x1FvQK2XnqbfLcV+Bq0Bg==
-X-Received: by 2002:a05:6214:5bca:b0:6c5:acf0:400 with SMTP id 6a1803df08f44-6c7bc840d7bmr33864236d6.52.1726836102451;
-        Fri, 20 Sep 2024 05:41:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEeZYlCDagt49geOPi8bJoCNqqITveP2mhvBOTHqrlbKm5mYcL7GSCJ1GilaoYeitL7x0r7PA==
-X-Received: by 2002:a05:6214:5bca:b0:6c5:acf0:400 with SMTP id 6a1803df08f44-6c7bc840d7bmr33863946d6.52.1726836102067;
-        Fri, 20 Sep 2024 05:41:42 -0700 (PDT)
-Received: from rhfedora ([71.217.60.247])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c75e46142csm17151586d6.47.2024.09.20.05.41.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 05:41:41 -0700 (PDT)
-Date: Fri, 20 Sep 2024 08:41:40 -0400
-From: "John B. Wyatt IV" <jwyatt@redhat.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
-	John Kacur <jkacur@redhat.com>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/2] tools: power: cpupower: Allow overriding
- cross-compiling envs
-Message-ID: <Zu1thIT0V11C4l-5@rhfedora>
-References: <20240919-pm-v2-0-0f25686556b5@nxp.com>
- <ZuxTjy7I-pZBcXa0@rhfedora>
- <PAXPR04MB845910C56EA61D3215DA5452886C2@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <PAXPR04MB84591B0819F847D79548CFB0886C2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1726836133; c=relaxed/simple;
+	bh=rM3zf1xWpimtTUOp6jfcPic1anecVTQCmw8fhG2IIPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ORSc5M5bh9ItqIIPoMM2explU04Yjt9aQq48N8xlA0N+ecgmxbt9tynNXcYqhufXMNTL8XpCp/xv1UlaBD8HOQsleawioil86zqm17vepvis3oemdDvDD7emWw6gpEkkfi8x8lg9GwJdOD4OHhL52rjZhTZOlPoFMM4oPQXfFbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KY3qdbBY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14E92C4CEC3;
+	Fri, 20 Sep 2024 12:42:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726836133;
+	bh=rM3zf1xWpimtTUOp6jfcPic1anecVTQCmw8fhG2IIPc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KY3qdbBYj8P8jO3uVcsxoGFUqjDzaYJkwdea58IYeRK5ZAMSbt8SHAnYuJrA/o34s
+	 ZAj/jhIpjZMceO+aNgIz5PuqY4o2E63zDXwrviV2pzEGE5W2lwjYLdqRZHrnP5+VSH
+	 IINlQj82C8AghUsVQAHZKfvsuxGtfYtaom0Jcjm8QGdLxsFRhYR24x4sz1vOEuYw/+
+	 7A12CZG6BgccXyYsPAHwv2mnb7gs45p6mmd51KfEBA08f3ZD1F3wDxyF88JmUK4oqK
+	 EOmb6q896c0GPwitIR8DYuORc58l9KJc1qESNx5fDN6A/xVm9KjuJzmRSVUDs1ou9P
+	 pZ9uUZELTc5Uw==
+Message-ID: <85a223e9-05a4-4034-87a5-57d3eb9409b7@kernel.org>
+Date: Fri, 20 Sep 2024 14:42:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB84591B0819F847D79548CFB0886C2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
+ Systems remote processors
+To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
+ Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org,
+ sudeep.holla@arm.com, robin.murphy@arm.com
+References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
+ <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
+ <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
+ <gzlncpyzwm7x4jcxtdrthrlv2dofk7u3oxn4taadwog5tt37wo@ot6s6kwukd4k>
+ <20240919093517.GA43740@e130802.arm.com>
+ <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
+ <20240919145741.GA7940@e130802.arm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240919145741.GA7940@e130802.arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 20, 2024 at 09:01:49AM +0000, Peng Fan wrote:
-> > > > V2:
-> > > >  subject update, commit log update in patch 1, 2  Use strerror in
-> > > > patch 1  without patch 2, need update Makefile with 'CROSS =
-> > [cross
-> > > > toolchain path]/aarch64-poky-linux-'
-> > >
-> > > Version information is applied per commit patch. Not in the cover
-> > > letter.
-> > >
+On 19/09/2024 16:57, Abdellatif El Khlifi wrote:
+> Hi Krzysztof,
 > 
-> Just get this from the page:
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html#the-canonical-patch-format
-> When sending a next version, add a patch changelog to the cover
-> Letter or to individual patches explaining difference against
-> previous submission
+>>>>> +  '#extsys-id':
+>>>>
+>>>> '#' is not correct for sure, that's not a cell specifier.
+>>>>
+>>>> But anyway, we do not accept in general instance IDs.
+>>>
+>>> I'm happy to replace the instance ID with  another solution.
+>>> In our case the remoteproc instance does not have a base address
+>>> to use. So, we can't put remoteproc@address
+>>>
+>>> What do you recommend in this case please ?
+>>
+>> Waiting one month to respond is a great way to drop all context from my
+>> memory. The emails are not even available for me - gone from inbox.
+>>
+>> Bus addressing could note it. Or you have different devices, so
+>> different compatibles. Tricky to say, because you did not describe the
+>> hardware really and it's one month later...
+>>
 > 
-> So it is fine to put changelog in cover-letter?
+> Sorry for waiting. I was in holidays.
+> 
+> I'll add more documentation about the external system for more clarity [1].
+> 
+> Basically, Linux runs on the Cortex-A35. The External system is a
+> Cortex-M core. The Cortex-A35 can not access the memory of the Cortex-M.
+> It can only control Cortex-M core using the reset control and status registers mapped
+> in the memory space of the Cortex-A35.
 
-Ah, my mistake. It is fine.
+That's pretty standard.
 
--- 
-Sincerely,
-John Wyatt
-Software Engineer, Core Kernel
-Red Hat
+It does not explain me why bus addressing or different compatible are
+not sufficient here.
+
+
+Best regards,
+Krzysztof
 
 
