@@ -1,174 +1,226 @@
-Return-Path: <linux-kernel+bounces-334661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5BBC97DA27
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:01:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0E997DA2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:03:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EBAFB22201
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 21:01:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FA78B22681
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 21:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406EE17DFE8;
-	Fri, 20 Sep 2024 21:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C762F18454F;
+	Fri, 20 Sep 2024 21:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aduHBX+6"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nu93tajL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA00DEBE
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 21:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1738BEBE;
+	Fri, 20 Sep 2024 21:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726866111; cv=none; b=rAFvKUBZMhTxhn6G9GJnWCTe+fzoPbD8U7rMfdWXxhKsTtXG2Rd1VYmgIuJkPyXnBRAVhkTn2tH90qtNtLSy0JU2wmcg2oEVkxby64Q2zjDf4gC+fk/XpHRHopr8cAcU4hEVU+CkYJ84sUPmVczHRX/ybF6Hhf034JMRZxmBqSE=
+	t=1726866192; cv=none; b=T71h7Nklr+y1fUFhzEOiinsolMcmT7skPBQLXQ9EM7dM6caFyZLz7x2+cIKWx+SuY+zRwjQhx1ajGdByar36fZ9rVm4h9H1Z8l9GiG5NEOdaAmWGoydzduLYMYyIpIrixfiyUrwgwlf7KznHNGP0iLRuYNCT4ZyqrqcHkBd1GeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726866111; c=relaxed/simple;
-	bh=aW2Nx+9pDAekANQe4nSumsh9tZ2PBvvueH4dM8znLsc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r5kWdivE6259M5dG0Ws8xzz3hKcyWjGLEoKgJOwtxQQ02nZrImXBQ2hPufKFssd2BtDLQYNBP0qrWPJqjF+iGuYQahIyqVOOEA8F6eZwXGErIh/LcDS3BXtC72P83gEh1QMTau97cqKX9P2Qa327vtXNbpFRWWODpmsteZWW0QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aduHBX+6; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8d3cde1103so297157366b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 14:01:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726866108; x=1727470908; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qdl57amVBu6DXeBOLMK8MN+khwXGaNskcQz0VYuOrAs=;
-        b=aduHBX+6QilsvkK+x1fupGYOpETrysa+MJSLQnYdheoEdH+GXbCGPbv395Flo0+82L
-         TmkAJdYWauCM70Qk8peQ4XNKaI1Hxu3Qt/9T+586gO82UndiPAxph6eQw9KUH5vsbMkw
-         8t/cZNQygXHBrIHanpQTAVbDKeg5BpYO+DJT8EEw4R6X+pwkeeTzA9D+/qkoewxQFgr1
-         DaCBZoSjX50CnpnX0t67R+3a3Mgi26kD8DgslwEpdeQ/8451EwlwshGRSWbV8Fx3vAGN
-         E9njTcBIfoQmOmz1d5fXPdkgkd4NB7SLJuAFRNK2mMhJVSP6ccUMR3Gl9e87RHbnRx2p
-         bkvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726866108; x=1727470908;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qdl57amVBu6DXeBOLMK8MN+khwXGaNskcQz0VYuOrAs=;
-        b=Y2+LfdEOMBHZ/ULuVQtuOMD02uysHQWaNzBODWlGxAuMJ15KrlsFE89bzmiLN6AsjG
-         H2fb3KT8a2p1CNvItS561lD20WlaCffaqxqO9K6DHDR8ubN56FItFOnmpzlK/+IQZ5BV
-         U2bPe65KPicjXbT8KOzQ9tDDKmcBL2JZiEIPlouRyAKZTHaCVVjeSVu8Ua2K58sL3gp8
-         1fzEaeCW+wniMAxvw1Zff2hB9ukdibDQQ+GaCWwMf5P6DUG45F3FgO/xLnOODOJIfoJl
-         N718EGqoyzhuSKoOp8l+wrgRF58439votrQGWkunevJ/DS2Co293jkRrws9eQQoLKJdj
-         HIGA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4aXBumPbBocXJI4HQH+D5JMJHgzNpF9EZHI9HUlYL4tY8Is6IfIf/vl90ocFWVrAkuDXi2TjWz0DULb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVey7+tqSeRGLCoGpv/EWLcpE7KOkqTZc6hSFPjNagOWVQ5mPx
-	UxMPiTyajXl7ZWXfLzNPq2JRIg2HLL7C6PUaxz0OIQJsnoqFgrlz
-X-Google-Smtp-Source: AGHT+IHJCm5WU4OfP6Vr5dJgpvji6/OFtW4ssQU7cAn1A2iDQrIXHtOwwhu3BrwddhGpBXrCEHy0qA==
-X-Received: by 2002:a17:907:e22a:b0:a86:8285:24a0 with SMTP id a640c23a62f3a-a90d5658865mr335953566b.23.1726866107766;
-        Fri, 20 Sep 2024 14:01:47 -0700 (PDT)
-Received: from [192.168.0.131] ([194.183.54.57])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610966b6sm905722866b.17.2024.09.20.14.01.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2024 14:01:47 -0700 (PDT)
-Message-ID: <102418ed-c7c3-3287-7ad0-f7a48b600c18@gmail.com>
-Date: Fri, 20 Sep 2024 23:01:43 +0200
+	s=arc-20240116; t=1726866192; c=relaxed/simple;
+	bh=To8EsQs4C3f6m/gBBaaZms93pIspdDdKgL2SmZRBnL0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BU0TDBIQky5//dM5yf8Iobz0sOODbAJircCb9BBWsO7KtwZF3hohZlwCS3qqw+TfPUHN92TNpUas5Ft+BX91B2V+ugp4LLiBCYw7eQWscPhemZrkvOStRZF6LGiPOro76vpEH7MzZPXk2sWtZp6mdoIuSHQITL4CdJnxhn/OJmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nu93tajL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48KKfhIK021838;
+	Fri, 20 Sep 2024 21:02:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HPvH/KPFI9cFs02tKe4xQrHmrpWIDZy+NVAg7DBI6Hg=; b=nu93tajLBCkg+R+c
+	B4qjmmfYtTyocAmggLNlaP8hRdjLcWVFh1Ruj8h2vUi7SuWN8vUhd9NZO3Gt87/u
+	92Q5oCdKY+Yx5XZNG/Fo6bjXrdlUe/LHxraDaWD6AC3ViNus/ctcjg97SP+cvXSi
+	F3t+OZ17fvL9uiFG4788huCGYcJgD5f6ZNMAJiVOW1PoD7V0tQ+mcZZWdR7fIEas
+	NrT50GiMnlOLeAYnvP/js1Te8imxSMFDXZUUDb7fojIF93mI3mT7giAHr4Nh7gvT
+	MtymmO4Bn1TubZPB477Fl8dLBWUvhJWgnMqOSRlKW4slAYG2fMKB6XbhP2gwnHOn
+	ybhMMA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4hfafb6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 21:02:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48KL2qBS008927
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 21:02:53 GMT
+Received: from [10.111.182.77] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 20 Sep
+ 2024 14:02:52 -0700
+Message-ID: <b7fdafd6-5029-4b80-b264-11943740b354@quicinc.com>
+Date: Fri, 20 Sep 2024 14:02:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 1/2] tools/leds: Add '-h' & '--help' cmd line options to
- uledmon
-To: Rajkumar Vadhyar <rajkumarvad@gmail.com>
-Cc: "Ricardo B. Marliere" <rbmarliere@gmail.com>,
- Shuah Khan <skhan@linuxfoundation.org>, linux-kernel@vger.kernel.org
-References: <20240820072341.41153-1-rajkumarvad@gmail.com>
- <20240820072341.41153-2-rajkumarvad@gmail.com>
- <a7ab6f74-08ba-0749-3889-b6d040457ac7@gmail.com>
- <CAPTF_YM5CS5-5sdceU598uY16LaGy1hJMKwVmr75Cqsemjs38g@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the inputs
+ of the ath11k on WCN6855
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Kalle Valo <kvalo@kernel.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>,
+        "David S . Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>, <linux-wireless@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <ath11k@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20240814082301.8091-1-brgl@bgdev.pl>
+ <83c562e9-2add-4086-86e7-6e956d2ee70f@kernel.org> <87msk49j8m.fsf@kernel.org>
+ <ed6aceb6-4954-43ad-b631-6c6fda209411@kernel.org> <87a5g2bz6j.fsf@kernel.org>
+ <CAMRc=MeLick_+Czy5MhkX=SxVvR4WCmUZ8CQ5hQBVTe2fscCPg@mail.gmail.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
 Content-Language: en-US
-From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-In-Reply-To: <CAPTF_YM5CS5-5sdceU598uY16LaGy1hJMKwVmr75Cqsemjs38g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MeLick_+Czy5MhkX=SxVvR4WCmUZ8CQ5hQBVTe2fscCPg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: uWrwlgWhzSafXP1o32PKT16s7q-E5LRi
+X-Proofpoint-GUID: uWrwlgWhzSafXP1o32PKT16s7q-E5LRi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ suspectscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015
+ mlxlogscore=999 adultscore=0 malwarescore=0 phishscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409200153
 
-Hi Rajkumar,
+On 9/20/2024 1:22 AM, Bartosz Golaszewski wrote:
+> On Fri, 20 Sep 2024 08:45:56 +0200, Kalle Valo <kvalo@kernel.org> said:
+>> Krzysztof Kozlowski <krzk@kernel.org> writes:
+>>
+>>> On 19/09/2024 09:48, Kalle Valo wrote:
+>>>> Krzysztof Kozlowski <krzk@kernel.org> writes:
+>>>>
+>>>>> On 14/08/2024 10:23, Bartosz Golaszewski wrote:
+>>>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>>>>
+>>>>>> Describe the inputs from the PMU of the ath11k module on WCN6855.
+>>>>>>
+>>>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>>>>> ---
+>>>>>> v1 -> v2:
+>>>>>> - update the example
+>>>>>
+>>>>> I don't understand why this patch is no being picked up. The code
+>>>>> correct represents the piece of hardware. The supplies should be
+>>>>> required, because this one particular device - the one described in this
+>>>>> binding - cannot work without them.
+>>>>
+>>>> I have already explained the situation. With supplies changed to
+>>>> optional I'm happy take the patch.
+>>>
+>>> You did not provide any relevant argument to this case. Your concerns
+>>> described quite different case and are no applicable to DT based platforms.
+>>
+>> Ok, I'll try to explain my concerns one more time. I'll try to be
+>> thorough so will be a longer mail.
+>>
+>> In ath11k we have board files, it's basically board/product specific
+>> calibration data which is combined with the calibration data from chip's
+>> OTP. Choosing the correct board file is essential as otherwise the
+>> performance can be bad or the device doesn't work at all.
+>>
+>> The board files are stored in board-2.bin file in /lib/firmware. ath11k
+>> chooses the correct board file based on the information provided by the
+>> ath11k firmware and then transfers the board file to firmware. From
+>> board-2.bin the correct board file is search based on strings like this:
+>>
+>> bus=pci,vendor=17cb,device=1103,subsystem-vendor=105b,subsystem-device=e0ca,qmi-chip-id=2,qmi-board-id=255
+>> bus=pci,vendor=17cb,device=1103,subsystem-vendor=105b,subsystem-device=e0ca,qmi-chip-id=2,qmi-board-id=255,variant=HO_BNM
+>>
+>> But the firmware does not always provide unique enough information for
+>> choosing the correct board file and that's why we added the variant
+>> property (the second example above). This variant property gives us the
+>> means to name the board files uniquely and not have any conflicts. In
+>> x86 systems we retrieve it from SMBIOS and in DT systems using
+>> qcom,ath11k-calibration-variant property.
+>>
+> 
+> No issues here.
+> 
+>> If WCN6855 supplies are marked as required, it means that we cannot use
+>> qcom,ath11k-calibration-variant DT property anymore with WCN6855 M.2
+>> boards. So if we have devices which don't provide unique information
+>> then for those devices it's impossible to automatically to choose the
+>> correct board file.
+>>
+> 
+> What you're really trying to say is: we cannot use the following snippet of
+> DTS anymore:
+> 
+> 	&pcie4_port0 {
+> 		wifi@0 {
+> 			compatible = "pci17cb,1103";
+> 			reg = <0x10000 0x0 0x0 0x0 0x0>;
+> 
+> 			qcom,ath11k-calibration-variant = "LE_X13S";
+> 		};
+> 	};
+> 
+> First: it's not true. We are not allowed to break existing device-tree sources
+> and a change to the schema has no power to do so anyway. You will however no
+> longer be able to upstream just this as it will not pass make dtbs_check
+> anymore.
+> 
+> Second: this bit is incomplete even if the WCN6855 package is on a detachable
+> M.2 card. When a DT property is defined as optional in schema, it doesn't
+> mean: "the driver will work fine without it". It means: "the *hardware* does
+> not actually need it to function". That's a huge difference. DTS is not a
+> configuration file for your convenience.
+> 
+>> So based on this, to me the correct solution here is to make the
+>> supplies optional so that qcom,ath11k-calibration-variant DT property
+>> can continue to be used with WCN6855 M.2 boards.
+>>
+> 
+> No, this is the convenient solution. The *correct* solution is to say how the
+> ath11k inside the WCN6855 package is really supplied. The dt-bindings should
+> define the correct representation, not the convenient one.
+> 
+> Let me give you an analogy: we don't really need to have always-on, fixed
+> regulators in DTS. The drivers don't really need them. We do it for
+> completeness of the HW description.
 
-LED maintainers are responsible also for tools/leds.
-MAINTAINERS file say today the following:
+Again, since I'm a DT n00b:
+Just to make sure I understand, you are saying that with this change any
+existing .dts/.dtb files will still work with an updated driver, so the new
+properties are not required to be populated on existing devices.
 
-LED SUBSYSTEM
-M:  Pavel Machek <pavel@ucw.cz>
-M:  Lee Jones <lee@kernel.org>
+However a new driver with support for these properties will utilize them when
+they are present, and the current ath11k .dts files will need to be updated to
+include these properties for pci17cb,1103, i.e. the following needs updating:
+arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+&pcie4_port0 {
+	wifi@0 {
+		compatible = "pci17cb,1103";
+		reg = <0x10000 0x0 0x0 0x0 0x0>;
 
--- 
-Best regards,
-Jacek Anaszewski
+		qcom,ath11k-calibration-variant = "LE_X13S";
+	};
+};
 
-On 8/26/24 05:58, Rajkumar Vadhyar wrote:
-> Hi Jacek,
-> Actually when I did getmaintainer.pl <http://getmaintainer.pl> on the 
-> patch I was only getting the mailing list email id. Also when I did git 
-> blame I saw your name as the committer of the led file so I thought you 
-> might be the maintainer also.
-> Would you know who is the maintainer of this tools/leds? Thank you
-> 
-> Regards,
-> Rajkumar
-> 
-> On Sun, 25 Aug 2024, 17:25 Jacek Anaszewski, <jacek.anaszewski@gmail.com 
-> <mailto:jacek.anaszewski@gmail.com>> wrote:
-> 
->     https://www.royalmail.com/track-your-item#/tracking-results/LE879811818GB
-> 
->     You should send it to linux-leds@vger.kernel.org
->     <mailto:linux-leds@vger.kernel.org> and to LEDs maintainer.
-> 
->     -- 
->     Best regards,
->     Jacek Anaszewski
-> 
->     On 8/20/24 09:23, Rajkumar Vadhyar wrote:
->      > Add '-h' and '--help' command line options to uledmon
->      >
->      > Signed-off-by: Rajkumar Vadhyar <rajkumarvad@gmail.com
->     <mailto:rajkumarvad@gmail.com>>
->      > ---
->      >   tools/leds/uledmon.c | 7 +++++++
->      >   1 file changed, 7 insertions(+)
->      >
->      > diff --git a/tools/leds/uledmon.c b/tools/leds/uledmon.c
->      > index c15a39c1f271..6609235d80b0 100644
->      > --- a/tools/leds/uledmon.c
->      > +++ b/tools/leds/uledmon.c
->      > @@ -11,6 +11,8 @@
->      >    * CTRL+C will exit.
->      >    */
->      >
->      > +#define      ULEDMON_USAGE   "Usage: ./uledmon <device-name>\n"
->      > +
->      >   #include <fcntl.h>
->      >   #include <stdio.h>
->      >   #include <string.h>
->      > @@ -19,6 +21,7 @@
->      >
->      >   #include <linux/uleds.h>
->      >
->      > +
->      >   int main(int argc, char const *argv[])
->      >   {
->      >       struct uleds_user_dev uleds_dev;
->      > @@ -30,6 +33,10 @@ int main(int argc, char const *argv[])
->      >               fprintf(stderr, "Requires <device-name> argument\n");
->      >               return 1;
->      >       }
->      > +     if (!(strcmp(argv[1], "-h")) || !(strcmp(argv[1], "--help"))) {
->      > +             fprintf(stderr, ULEDMON_USAGE);
->      > +             return 1;
->      > +     }
->      >
->      >       strncpy(uleds_dev.name <http://uleds_dev.name>, argv[1],
->     LED_MAX_NAME_SIZE);
->      >       uleds_dev.max_brightness = 100;
-> 
 
 
