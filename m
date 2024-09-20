@@ -1,151 +1,191 @@
-Return-Path: <linux-kernel+bounces-334685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18AB397DAA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:46:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81E7497DAA9
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E7561F2240C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 22:46:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D55A1C21254
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 22:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A846718D65B;
-	Fri, 20 Sep 2024 22:46:22 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70EE18D65F;
+	Fri, 20 Sep 2024 22:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MStdv8VB"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AD9F9F8
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 22:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D43518733D
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 22:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726872382; cv=none; b=JTZzS3Ptk7pjSDzwiDBDN15lc165vsnLoMaqi9O/O0/FohfxEEc7l8BXGimygB6QH8MREWE0ex+csiV2gGKFQQmSDf+REfBh+ZDTP9Xh+tnYnBT/WMbmTHhciEjHuVc9L9B1lhVTtOLlU0UDktYxqPrSvKlNrBzE1MJ1MBPvRQM=
+	t=1726873093; cv=none; b=o9E3EcdJRpc34lng5zmI+ccu1ZktnjZSadZBhhseYe5NvgihJAxh8MnfDXJnFQ/5AlWDZYMJoP6sAfUsEsbAVomsIboM2SIXkp/LlRDwGwxAZ/tFdM1NcfEzno6KByt7SUULeO/DWXhCrAuJFg8OV6rNe6dtQXgGoBDJ0C2H4bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726872382; c=relaxed/simple;
-	bh=GL47SFFcTle11eqGz4D70eZnps0ZNFsyHl8H3Sf95Q8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l6KIuybmaa/5XPGbv4G/u4SUqYxVuzmpG+fke0MQGoriZDlA1SwiY3JR5+7shsLr4NvUkR/xSKvctPgn4taiyTH7DCTotSlubZWKNXUSNwQ5bhwojcdDJsjDyAnJqBxK8q8PxAbhzAuv9NSDASe2fQAC8CubU31a2EXgiDWyQiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39f6f16ed00so31927435ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:46:20 -0700 (PDT)
+	s=arc-20240116; t=1726873093; c=relaxed/simple;
+	bh=2zTHEWx4+jhd15hfHsUv576gjZB143yv9TfrGEYJLKw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gbItIY84TUrNR1mn1TtMtXcLzcpB8ldFu8Rg41FqqN88ctBs/o/Jx7aW6gudF3yBO1Z6gSNgeFI0tD+Zf9ffP2t+PkY1PSwqzCCgpZl74PEvU4+evwBB7KuK7x3Qb4MrOsWsUira6T4ZGZ3i0jy0AQXT377I/B3/vm2r+Ouu1bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MStdv8VB; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c42f406e29so3510518a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:58:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726873090; x=1727477890; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6mq/voqlf4mL8U2+m8aQ6n/5tyrYP8g1KxZiW0+DAj0=;
+        b=MStdv8VBM6AgZaevE2xg2h7gosMiGJFZJBMYvDRDMmHKzIC90j4g6g3jIKcbBSyoyH
+         zVnkxF6uXRBFhKotwtmT/GPz2PkBdEO02xHaDNgghdf51fkId0E9juT+QZd1WSVy70qf
+         P4GnzL3hcC8lIeIMjMJ33yXdjSlTb73/bh9t4bbiAHGavtUux6wpEO5Ug3cK9AAOFRO+
+         by2Sp0a6lRuOxIF8B6BadVQjbyRABfWSyM1CuyJAl+vOCm0+Ij2HLkGpWs3BvHsycz1l
+         sF4MptWu9uitSPXNhmSiBUWxDjFsJr6oHbxK11aAAHn9CGizmXidCyL75Yu/k0Lyv+4U
+         uc0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726872380; x=1727477180;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5CWl/oXgHFGuHggsC2LsqL669quZl+i9JwDCfxfEDJM=;
-        b=TNcUl8kfvTOrMO8pWO/Rc+Z1rIPHuVapUPWGw1jXRWi4gooVNn8DlTWUOE0qSJa0JZ
-         0SPzYDxAXaBAkAQv/9Y/0e48rfYKI6GV0DoFaL/JC0mR5Jsa1X/tF4l3X9syyfczwAK8
-         i0APww320bb/Aw1lXfdnfrEjRbt5uWrjaZw2N9PplwtvpdPrPP2uwl6qy+IIWX7MwlES
-         we9JunKCOBrRRZWei44uxRE+zBD8wZpeoU4nchDwyQV8NwdXpxasT9ko/95U6QkW+Jdh
-         3brq1rxmr97sM4SJwKzmBS6N0uNY9+PyKs0mZKsdNvz5jQEZ1aZsSt32AXGMmaIyw72u
-         1u6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUR7tWhDRCj8ZWoSHGCtw2KWJ3mET2MlwCulown2GDRq2r+LijEhLg69U5VvnYkwwG+x3KtTCWTZgiF1oM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXIeklWdl+JGvMQYpxdj64o3kKp19mnGw4P+E2OUY5Gw8I9y9g
-	49Ci6URsDcXU6Hxv4evk8pgBFlO1NUSsg2JUIecEpID0mMYHgjtkKcT5O9GaZb2NSW9ULn4q9CD
-	kQ6q67+9/KsIoz9Rknna7RlC7hgGFdbz41QOgYYK7kR8FHVXdw4JWg2A=
-X-Google-Smtp-Source: AGHT+IEnCMHwiQXwXo7xUh1hdOL7ScpBpmb0Kq1UHilzjw/OoE4eu0USUk0Mts3GnGbBjvMf/XscQfJE5xhEU8mgE5CFo9chVzYF
+        d=1e100.net; s=20230601; t=1726873090; x=1727477890;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6mq/voqlf4mL8U2+m8aQ6n/5tyrYP8g1KxZiW0+DAj0=;
+        b=c/Ku7CioEOGMnyHSxELq88mDTKajBZZ7UhgYSBwFVyMW9GAHvH6g27Ae//aMjOOUWx
+         GJlvsPK3k0Gk7D3oSGlYiAkfZb95k2sM/Map24PXXCVghwCq/EUbVtbXn93mNDYpdIck
+         94CzJW45t9DHPeO0xzJ5hyDe9IEPcCehqq2eE54flYBc950uiA+cu+yQh5QTym/21Gby
+         ozavPIxsdYex7DPc/FRrI9o2smeh9NzQscGZqZdWQtAqrSp8CWFP2qv+xSbx3mXPgSvX
+         0cVCpgVXNKeu4hYjErgmgkkaLtdJN3V53hOn6BRwYKrWpXkxraDxqEisE6/h/jk9O3mc
+         Kf8A==
+X-Gm-Message-State: AOJu0YzrFLhgAqy7iUMEdk2p4SEOqFf3nWRpHD0snzTFkg8O1o9OgwjD
+	DTj4IaQcZm5OR9mTrAlAdQQeHdnIN91rVmP0aWTAeNyO3NRjYKG8/apdmiJxoHzu7V0kgQws02C
+	FB7STFLp+qO9ibXrujyVP68NyBXxzQx4xhK+t
+X-Google-Smtp-Source: AGHT+IFgOADyf7UwM0IofIFAmjZTYO18vRoUZkATcenZKxqoRQbjdfO9DfNK1fcrQLf/7R1cAkotJ4ynbbCIaOA9TG0=
+X-Received: by 2002:a17:906:6a24:b0:a8a:9207:c4c1 with SMTP id
+ a640c23a62f3a-a90d5167dafmr409646966b.58.1726873089625; Fri, 20 Sep 2024
+ 15:58:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b26:b0:3a0:9b27:7d52 with SMTP id
- e9e14a558f8ab-3a0c8d39690mr42649655ab.20.1726872380049; Fri, 20 Sep 2024
- 15:46:20 -0700 (PDT)
-Date: Fri, 20 Sep 2024 15:46:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66edfb3c.050a0220.3195df.001a.GAE@google.com>
-Subject: [syzbot] [fs?] KCSAN: data-race in __ep_remove / __fput (5)
-From: syzbot <syzbot+3b6b32dc50537a49bb4a@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
+References: <20240829212705.6714-1-kanchana.p.sridhar@intel.com> <20240829212705.6714-4-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20240829212705.6714-4-kanchana.p.sridhar@intel.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 20 Sep 2024 15:57:31 -0700
+Message-ID: <CAJD7tkbnZHCPu0Bqs2xNyP6FQviuq6kGSQa840H+sVhiPEbYpA@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] mm: swap: Count successful mTHP ZSWAP stores in
+ sysfs mTHP zswpout stats.
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
+	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com, 
+	akpm@linux-foundation.org, nanhai.zou@intel.com, wajdi.k.feghali@intel.com, 
+	vinodh.gopal@intel.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Aug 29, 2024 at 2:27=E2=80=AFPM Kanchana P Sridhar
+<kanchana.p.sridhar@intel.com> wrote:
+>
+> Add a new MTHP_STAT_ZSWPOUT entry to the sysfs mTHP stats so that
+> per-order mTHP folio ZSWAP stores can be accounted.
+>
+> If zswap_store() successfully swaps out an mTHP, it will be counted under
+> the per-order sysfs "zswpout" stats:
+>
+> /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/zswpout
+>
+> Other block dev/fs mTHP swap-out events will be counted under
+> the existing sysfs "swpout" stats:
+>
+> /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/swpout
+>
+> Based on changes made in commit 61e751c01466ffef5dc72cb64349454a691c6bfe
+> ("mm: cleanup count_mthp_stat() definition"), this patch also moves
+> the call to count_mthp_stat() in count_swpout_vm_event() to be outside
+> the "ifdef CONFIG_TRANSPARENT_HUGEPAGE".
 
-syzbot found the following issue on:
+This should be in a separate change, it's irrelevant to
+MTHP_STAT_ZSWPOUT being added.
 
-HEAD commit:    baeb9a7d8b60 Merge tag 'sched-rt-2024-09-17' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16080700580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3b3c9c7ae5fde27e
-dashboard link: https://syzkaller.appspot.com/bug?extid=3b6b32dc50537a49bb4a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b0581f8f76ee/disk-baeb9a7d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/742809660d16/vmlinux-baeb9a7d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/628c7d467d97/bzImage-baeb9a7d.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3b6b32dc50537a49bb4a@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in __ep_remove / __fput
-
-write to 0xffff888117ce4690 of 8 bytes by task 3797 on cpu 1:
- __ep_remove+0x3c8/0x450 fs/eventpoll.c:826
- ep_remove_safe fs/eventpoll.c:864 [inline]
- ep_clear_and_put+0x158/0x260 fs/eventpoll.c:900
- ep_eventpoll_release+0x2c/0x40 fs/eventpoll.c:937
- __fput+0x17a/0x6d0 fs/file_table.c:431
- ____fput+0x1c/0x30 fs/file_table.c:459
- task_work_run+0x13a/0x1a0 kernel/task_work.c:228
- get_signal+0xf87/0x1100 kernel/signal.c:2690
- arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x59/0x130 kernel/entry/common.c:218
- do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-read to 0xffff888117ce4690 of 8 bytes by task 3795 on cpu 0:
- eventpoll_release include/linux/eventpoll.h:45 [inline]
- __fput+0xee/0x6d0 fs/file_table.c:422
- ____fput+0x1c/0x30 fs/file_table.c:459
- task_work_run+0x13a/0x1a0 kernel/task_work.c:228
- get_signal+0xf87/0x1100 kernel/signal.c:2690
- arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x59/0x130 kernel/entry/common.c:218
- do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-value changed: 0xffff888103209140 -> 0x0000000000000000
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 UID: 0 PID: 3795 Comm: syz.3.142 Not tainted 6.11.0-syzkaller-07341-gbaeb9a7d8b60 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> ---
+>  include/linux/huge_mm.h | 1 +
+>  mm/huge_memory.c        | 3 +++
+>  mm/page_io.c            | 3 ++-
+>  3 files changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 4da102b74a8c..8b690328e78b 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -118,6 +118,7 @@ enum mthp_stat_item {
+>         MTHP_STAT_ANON_FAULT_ALLOC,
+>         MTHP_STAT_ANON_FAULT_FALLBACK,
+>         MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+> +       MTHP_STAT_ZSWPOUT,
+>         MTHP_STAT_SWPOUT,
+>         MTHP_STAT_SWPOUT_FALLBACK,
+>         MTHP_STAT_SHMEM_ALLOC,
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 15418ffdd377..ad921c4b2ad8 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -587,6 +587,7 @@ static struct kobj_attribute _name##_attr =3D __ATTR_=
+RO(_name)
+>  DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
+>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK=
+);
+>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_F=
+ALLBACK_CHARGE);
+> +DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
+>  DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+>  DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+>  #ifdef CONFIG_SHMEM
+> @@ -605,6 +606,7 @@ static struct attribute *anon_stats_attrs[] =3D {
+>         &anon_fault_fallback_attr.attr,
+>         &anon_fault_fallback_charge_attr.attr,
+>  #ifndef CONFIG_SHMEM
+> +       &zswpout_attr.attr,
+>         &swpout_attr.attr,
+>         &swpout_fallback_attr.attr,
+>  #endif
+> @@ -637,6 +639,7 @@ static struct attribute_group file_stats_attr_grp =3D=
+ {
+>
+>  static struct attribute *any_stats_attrs[] =3D {
+>  #ifdef CONFIG_SHMEM
+> +       &zswpout_attr.attr,
+>         &swpout_attr.attr,
+>         &swpout_fallback_attr.attr,
+>  #endif
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index b6f1519d63b0..26106e745d73 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -289,6 +289,7 @@ int swap_writepage(struct page *page, struct writebac=
+k_control *wbc)
+>                 swap_zeromap_folio_clear(folio);
+>         }
+>         if (zswap_store(folio)) {
+> +               count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
+>                 folio_unlock(folio);
+>                 return 0;
+>         }
+> @@ -308,8 +309,8 @@ static inline void count_swpout_vm_event(struct folio=
+ *folio)
+>                 count_memcg_folio_events(folio, THP_SWPOUT, 1);
+>                 count_vm_event(THP_SWPOUT);
+>         }
+> -       count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
+>  #endif
+> +       count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
+>         count_vm_events(PSWPOUT, folio_nr_pages(folio));
+>  }
+>
+> --
+> 2.27.0
+>
 
