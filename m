@@ -1,144 +1,120 @@
-Return-Path: <linux-kernel+bounces-334072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D8297D24B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:14:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E29B97D254
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 183BFB22795
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:14:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D622F28693B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D316F06D;
-	Fri, 20 Sep 2024 08:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B7F7DA71;
+	Fri, 20 Sep 2024 08:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="THvxhL9e"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rznLJj3/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697835FDA7
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA4E2B9B7;
+	Fri, 20 Sep 2024 08:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726820060; cv=none; b=bTlnX8vaK2MeincDYLT1kCVjVXoS7zSurqmpGzMEsUJnerOdlUEe6FxdHXuJC/B9ucoNNc5aOj/9XqLgMNzBm4VXxaSO9T9A7W9IteOza08FGp/w9WE0gq8JiaSVzCbWOpDja8hGL++LfYlEGpfyJPj+XYRb09Bry0cNmiB+jo8=
+	t=1726820176; cv=none; b=G+U5zvW4frGveaMFO7YaLIaXqEgwOXCo48/7L3++Vm6UQb4ixWKeKroxt3iMmYSqnn3VhVBzTq3jH9w+Wf5642HqJyl+e5YF6AEvIfK/COT8isOe0Of8S8RmMQlB9O0cldVRiddSVelMEQFLPJdG8bXW1jXyPu0niFUSABh8SHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726820060; c=relaxed/simple;
-	bh=+T/38q/733oY7lFYN7yq1mIg11UNkECAKyzikUM6u6M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NecHxFE1jA/eYL+CkUQJ023Xa4levzDaYyGT60D6vioaG+DkheWG00mvlBlglGSUAa2H4vH0Ul2Y+H/G1Yx0/2ydKWzBRtRlDUG6B8Jp41ygVEvYzea+qC9MgLYEOZdOaNSPmK0Da3ljvImxyXIFVQE0s85YHcTwnM8wp1vBfq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=THvxhL9e; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374c962e5adso1018367f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:14:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726820057; x=1727424857; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fbr7uHJxZBXpc9SxcUXYAD0M/z9tzCVql6NpOtOjSnM=;
-        b=THvxhL9eokj5uqLlmhbM6Edlz7QMqRSHYPFw9KX/hYAtxbjfKmXM5A2jG9rflM/JC5
-         hRc3Dbwp50WoY+YV1raaD3zjusFXwYDQYpVBPnvqPllOG3dwqUUTuoiTvpLaC+ua9B/X
-         6N3xKAQzkGUApzfYwM6LYe5fDxtWkdw18OtrBt43SgNNCfqFcKsrPQ/7uNkEt6Rt5a2Q
-         RswuhPsILocokn9Qi+bcJm2JVgF4ppkY4Vrq8OmQ5OEabi+rAW7MMgMExbLiv4TAYE7i
-         v+KP5c6E/a4SL6QEjWQFzjm6AWpp9deNT527S2VdOjS0nxB8xZ1QHPsaTcl31C4jvnqQ
-         LX0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726820057; x=1727424857;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fbr7uHJxZBXpc9SxcUXYAD0M/z9tzCVql6NpOtOjSnM=;
-        b=J/xgX3O+XGD9DItlN7pfm+Q52GjdBq/kjY2tKrqm5G/6nHoqC266E4MuXT4hOCrbc0
-         HuBhyQdk0Nbnbq5egkpZXiebFVjoDmlAGEhZeBAsF0OicNw+Y+JTQqQU5vPmNTMkzV3K
-         GtwxDzWqqlaGiFoAWQq05wCfrhJboTadO6SvOveFhkOp6/YDTZPQFMIvHTpP4GK3PlKT
-         mgjb+5qCwQKeqWUMhbdAgIPdJZMmq2H8UxH8gMGMwO9yJFYkOOQ/RgGci6d/v9e2q1Xd
-         JH73wXMb2SYKeO2zNIpBwkti88Mg5WA5G2CZGVP5/zJ8vzJaQtNGmZwaX73HmkqmHiSX
-         8tzw==
-X-Forwarded-Encrypted: i=1; AJvYcCURPH1dCRaWbM+aWA3dRpewSd2cwh34my5wAfp/sxpX+wLVrxdi+Rk0Q9mVwpC7EUZKnRec6Xm2FFmaBIs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqo2RQcm3xsEUl4lAvr7istvqDAzaB8p/UI/0v5FpDY3xmigZ1
-	l9ztP038GttZfPcc/AWbJAztZ0e+UzHNqigBnW4WROKR6DlET9xZDr1Qej8HZss=
-X-Google-Smtp-Source: AGHT+IHEed/p2Pf28xJnO9owUMqlwyQa0QykvsOdE/oVxO5WRmGwqzHMPTalaq1XxY7tI00VZPekFg==
-X-Received: by 2002:a5d:5b84:0:b0:374:b6e4:16a7 with SMTP id ffacd0b85a97d-3799a1d312dmr2836672f8f.8.1726820056626;
-        Fri, 20 Sep 2024 01:14:16 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7af8905bsm15603035e9.11.2024.09.20.01.14.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2024 01:14:16 -0700 (PDT)
-Message-ID: <ddc6c1d0-a88a-46d2-93d4-f9f10f6aa254@linaro.org>
-Date: Fri, 20 Sep 2024 09:14:13 +0100
+	s=arc-20240116; t=1726820176; c=relaxed/simple;
+	bh=RY6C6fgg/u2FQqsycCMOcuCyZ6IO+mQm4xQLZhTAfLU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=S+pNuPDTeECds7HBPo8dFdzz//D+0YuS2zcH/NYeLy/lnhH5/P/UUglgrsCwPY2Y4SEbbCSsTk37LOepdLXiPgPHTOOFOxj6Ur3zRd8syZP70fxI3YJh/Ej4i3842BcN49Cy9IE8N47CImb688oFIbkd70tAu9x3alxY38Xfhng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rznLJj3/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8AFE9C4CEC3;
+	Fri, 20 Sep 2024 08:16:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726820175;
+	bh=RY6C6fgg/u2FQqsycCMOcuCyZ6IO+mQm4xQLZhTAfLU=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=rznLJj3/j4Y33sCWx4vMGgJbObJootBWRDxFOVas4+uMuqz+pMCu6KqTPMbQFo2JE
+	 u1xTbuwdZUZEaq/TUxV5vU4kLP+OMqVdoWxBsP23g4A6ychrD0O8Mu80xFx/EV6uxn
+	 gSe1g5tc0/a5lmmRHdv8HyHCwzLJBwGEjGBGw4WPrGzQ3yK/Jv7PnCxBXDJD1gaP55
+	 q1kk4QJSQcxJ1sLjuOYc+E65UwIPyLQzrdWH3esYxxd8igJP/DjOug4HmetJ9786ZP
+	 9xMBrq2iP+jOb77FgOPW8jZo63QkVDQp9GBvwI2Oj4o0GaZEbW+RwIUAD7WRTjDQZ3
+	 brCiVJeuMz1GQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F15FCF58E5;
+	Fri, 20 Sep 2024 08:16:15 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Subject: [PATCH 0/6] clk: meson: Delete a meaningless spinlock from the
+ MPLL
+Date: Fri, 20 Sep 2024 16:16:10 +0800
+Message-Id: <20240920-mpll_spinlock-v1-0-5249a9a7e2b7@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/7] perf: cs-etm: Coresight decode and disassembly
- improvements
-To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>,
- Ben Gainey <ben.gainey@arm.com>, Ruidong Tian
- <tianruidong@linux.alibaba.com>, Benjamin Gray <bgray@linux.ibm.com>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Ilkka Koskinen <ilkka@os.amperecomputing.com>,
- linux-perf-users@vger.kernel.org, coresight@lists.linaro.org,
- leo.yan@arm.com, scclevenger@os.amperecomputing.com
-References: <20240916135743.1490403-1-james.clark@linaro.org>
- <24e24324-cb41-4ae7-9584-e97684b12585@os.amperecomputing.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <24e24324-cb41-4ae7-9584-e97684b12585@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEov7WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDS0ML3dyCnJz44oLMvJz85GxdkyTLJFPTZBOTtBRTJaCegqLUtMwKsHn
+ RsbW1ACypo2ZfAAAA
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726820173; l=1441;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=RY6C6fgg/u2FQqsycCMOcuCyZ6IO+mQm4xQLZhTAfLU=;
+ b=Bel3Jh1Lzlk031mBbSqUOf1Dk86SKnJakYDwJxNS3ho8IG5uNcg8mx+X7/EfDSiy6iKQyUMhu
+ 3KqlnI81BLTAVgJmOjGOvofYkUdDus+QNqhGaVI3qnas/eAXOOemQf7
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
+
+The existing locking mechanism of CCF can effectively avoid concurrent
+register access. struct meson_clk_mpll_data has no meaning in defining
+a spinlock repeatedly.
+
+In addition, the register corresponding to MPLL does not share the same
+register with other module drivers, so there is no concurrent access to
+the register with other modules drivers.
+
+Every driver file with mpll defines a spinlock with the same name (even
+if defined as "static"), giving the illusion of repeated definitions?
+
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+Chuan Liu (6):
+      clk: meson: mpll: Delete a meaningless spinlock from the MPLL
+      clk: meson: axg: Delete the spinlock from the MPLL
+      clk: meson: meson8b: Delete the spinlock from the MPLL
+      clk: meson: gxbb: Delete the spinlock from the MPLL
+      clk: meson: g12a: Delete the spinlock from the MPLL
+      clk: meson: s4: Delete the spinlock from the MPLL
+
+ drivers/clk/meson/axg.c      |  6 ------
+ drivers/clk/meson/clk-mpll.c | 11 -----------
+ drivers/clk/meson/clk-mpll.h |  1 -
+ drivers/clk/meson/g12a.c     |  6 ------
+ drivers/clk/meson/gxbb.c     |  6 ------
+ drivers/clk/meson/meson8b.c  |  3 ---
+ drivers/clk/meson/s4-pll.c   |  6 ------
+ 7 files changed, 39 deletions(-)
+---
+base-commit: 0ef513560b53d499c824b77220c537eafe1df90d
+change-id: 20240918-mpll_spinlock-4b9b55c44fd5
+
+Best regards,
+-- 
+Chuan Liu <chuan.liu@amlogic.com>
 
 
-
-On 18/09/2024 12:23 pm, Ganapatrao Kulkarni wrote:
-> 
-> Hi James,
-> 
-> On 16-09-2024 07:27 pm, James Clark wrote:
->> A set of changes that came out of the issues reported here [1].
->>
->>   * First 2 patches fix a decode bug in Perf and add support for new
->>     consistency checks in OpenCSD
->>   * The remaining ones make the disassembly script easier to test
->>     and use. This also involves adding a new Python binding to
->>     Perf to get a config value (perf_config_get())
->>
->> [1]: 
->> https://lore.kernel.org/linux-arm-kernel/20240719092619.274730-1-gankulkarni@os.amperecomputing.com/
->>
-> 
-> Tried this series with below commands and issue is not seen as reported 
-> in [1].
-> 
-> record:
-> timeout 8s ./perf record -e cs_etm// -C 1 -o kcore --kcore dd 
-> if=/dev/zero of=/dev/null
-> 
-> decode:
-> ./perf script -i ./kcore -s scripts/python/arm-cs-trace-disasm.py -- -d 
-> objdump -k kcore/kcore_dir/kcore
-> 
-> ./perf script -i ./kcore -s scripts/python/arm-cs-trace-disasm.py -F 
-> cpu,event,ip,addr,sym -- -d objdump -k kcore/kcore_dir/kcore
-> 
-> Feel free to add for 1/7 and 2/7.
-> Tested-by: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-> 
-
-Thanks for testing!
 
