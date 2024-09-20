@@ -1,699 +1,691 @@
-Return-Path: <linux-kernel+bounces-334633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7E597D9D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 21:29:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED69E97D9D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 21:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E714EB22C48
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:29:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8D861C21141
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808DC184549;
-	Fri, 20 Sep 2024 19:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE7A1442F4;
+	Fri, 20 Sep 2024 19:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uSCc5Bn9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RpSItJNa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F9B291E;
-	Fri, 20 Sep 2024 19:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726860588; cv=none; b=bGLtXvWF+EHXSmd0D+eKO+Stv3AO0XObRY1l/1Qp2J31yyetxWCV45qrTg3370ZYqoFtfgqwJqIeYLGuKIkJfniruTAWZcYbn287SZORk+AZ0+kSAdGNxcJi+JcZfCaY4G1ekR9R5CbhU66TxgoHmZBEm/sl8U5Em/nO7nmmLsQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726860588; c=relaxed/simple;
-	bh=jun9a+1lPTCqA1/lb4i92yBSJ3qrOMQng/blWk5GA2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Woi4ckdWmCv9OS1HRooMueqI4QEW0SxmiiyPY/KqTLA4v2nSTOSLcTHxBoDKUIMRxtNb1g2Ba83DuWHlvVV6bWStzP22lpsunLYP/t8pLnnPUuFhVXptR3SZGhbGhdr3/yWtWl07Wtf+8SCcC72vjzIk+eei2vmr2oJiD6gR7GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uSCc5Bn9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35A38C4CEC3;
-	Fri, 20 Sep 2024 19:29:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726860587;
-	bh=jun9a+1lPTCqA1/lb4i92yBSJ3qrOMQng/blWk5GA2Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uSCc5Bn9xZ/WoSEe3gUFwqCSDq/9q+sYfe30pntpPYk2kYdv93MynHmH4s1pg/BBY
-	 MrMneL8GvYXgOtdr7nyhJW4QypVZQP8l3jzelNV7dRyQRA6V3L4Jltc1wqEuRPgelM
-	 o2OonTdaf1tGanNCieDniUCnmFnjp1dT/JGB1XyVBaXopC8MAWqHlrMK21ati1VmiI
-	 MlYPjyuh3SvxN/yC7fycis5o6WhDBHCwuBwVX9+C0lXrPUaykywR8yur22OyuOIYnt
-	 ixxcT2G61I/IZ7lPjXa1CvSxaYhjeNNXSlO/ESl70SXhjYz2S18HqZWFdelnwA5TdS
-	 vlX9m5X0HtQSA==
-Received: by pali.im (Postfix)
-	id A0E53814; Fri, 20 Sep 2024 21:29:41 +0200 (CEST)
-Date: Fri, 20 Sep 2024 21:29:41 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nfsd: Add support for mapping sticky bit into NFS4 ACL
-Message-ID: <20240920192941.l2fomgmdfpwq7x6p@pali>
-References: <20240912221523.23648-1-pali@kernel.org>
- <Zumizr3WnA+XY9ge@tissot.1015granger.net>
- <20240917161050.6g2zpzjqkroddi22@pali>
- <Zu3K34MHFUYNaRfu@tissot.1015granger.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3BC14F98
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 19:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726860698; cv=fail; b=EdFE03N8ZjlNQVPUlQTaq3PYVS/Z4tmvorjAFP28aO4YSRLfahlhyyP0/K/dxpgOnicAsHsy5CxcHQg7ubzmQA7Iduc4t2G3p7mABSyefg2J+xi8Yg4FmdA8hOibhISq1YYXhBLM9FVrFB55PBe44eSBB03v4AHnCbY9XwSU5BE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726860698; c=relaxed/simple;
+	bh=U5G53wVWz/U3SGVl8HeHJWT2OeIaly9dEnKiLM88aZE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=A5wHXOlOOpQeKTaPkMgeUcm6iOdIsfTLZcK/brcdewF0T05TLSoPhLXvpmnofACWyVc1a6NT6UGkk06RWRf1T/xSyqaf273IvDE2ixlnDlb9HAo7l6o5Kbu0vShT6VTrcsd7agzKCUz/nNGnU56c/na0EHFg+gy/1FpOnhAPcO0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RpSItJNa; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726860696; x=1758396696;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=U5G53wVWz/U3SGVl8HeHJWT2OeIaly9dEnKiLM88aZE=;
+  b=RpSItJNaxOYuLKZSxEX8xCBUzFIT5n0a+h3hiW7wpf08OwaimAbZHjeS
+   OM5BwuljCjCqHLtm92dHwe4tUzSwt0HHVy5CPZDq9t3axJHch3E2UGwwU
+   ajxJAgGYqcOQYYeTJNXt3F+HUDrvQrC45cN06QzIXbNJC64m3xLrqBYBD
+   pxPYJgeO1sme/F8CunRNRZsJmiIcytgEhzmD8h+dQGn3YkfVRshLmrQke
+   Pr9PIJR0ThDbR9fnvkPgFueK6B9QCCQvTQh+oTtuVKXP5xqYMArc9UdJw
+   O5qeNHg73H9XUttDBo40APyz1qe9WaGdbflSO15P1337zrBp0qitz27oV
+   Q==;
+X-CSE-ConnectionGUID: xksCmD9TTTCHBHVLNr5KxQ==
+X-CSE-MsgGUID: 3Ofv+7wOTRqyJ/YSMaVCtA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11201"; a="37015053"
+X-IronPort-AV: E=Sophos;i="6.10,245,1719903600"; 
+   d="scan'208";a="37015053"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 12:31:35 -0700
+X-CSE-ConnectionGUID: gii+2lg+QXO2G84OL7XSlw==
+X-CSE-MsgGUID: 4vHyMsE/Sy6R9bPv3Ktu3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,245,1719903600"; 
+   d="scan'208";a="75361219"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Sep 2024 12:31:35 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 20 Sep 2024 12:31:34 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 20 Sep 2024 12:31:34 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 20 Sep 2024 12:31:34 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.45) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 20 Sep 2024 12:31:33 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TYLeb1R0ZapILwMlkH45fqnVbFRBngh9o+UPi+0hVfDvflV0Co+0nJ3H9Y9NJ2nsMVrlPAmpmN4oLo/Wsb6SnYctmO7ih8o7SqBmo3HsgAALH3XorrT7liEOFDPtHZnfTPajEE74M/qSdITyTTW0Uvkw2Dbyo4V4ERj4D9iqA3KmOuhpI2Mvgsns7dajY6FGVFxepjIrFYl99LBg4wObjRApV8A2aVPO8iY91OUMHnNXgH5yJayqmiY3hfrs6lwXZnBhvcf+2+e+vhIv74Z1RH4ye6rhjthxsTwsqzgZEsgCko/NdEC00kB1FYPEldpX7XWG7bxynjrLTvhwyF1OHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U5G53wVWz/U3SGVl8HeHJWT2OeIaly9dEnKiLM88aZE=;
+ b=x15aLpN2eTaoVsmJP9xECBa/5QH8kMh8fMSwnCzZnNHpe5YZZ5xLDmAdl3qdrhcgN9YTLzft91KOtEblHzAYBz++ZDRNf9QqvjuieOwywpqqny2jtQUWHs4PkCpCoByK6EqcMuCJ2nSFY4PZUr+PNUl5QR4+4an9yqcyxI5JvUyq4hpRefxGZx9BLZvGzPVGd+s/Kl5jE4/Lx+65AVraelE0COu4qKaXTqujClTvUAEJzUBWt/hKxucES7Emial4CXV4uZH03x7QBiKGRs2Ektmv8lO25MzZg6y7JhOPInGkRtloRy4pyvVXAo4cq+kOx24esZhQfB2VIastOauYfA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ0PR11MB5678.namprd11.prod.outlook.com (2603:10b6:a03:3b8::22)
+ by SJ2PR11MB7646.namprd11.prod.outlook.com (2603:10b6:a03:4c3::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.23; Fri, 20 Sep
+ 2024 19:31:31 +0000
+Received: from SJ0PR11MB5678.namprd11.prod.outlook.com
+ ([fe80::812:6f53:13d:609c]) by SJ0PR11MB5678.namprd11.prod.outlook.com
+ ([fe80::812:6f53:13d:609c%4]) with mapi id 15.20.7982.022; Fri, 20 Sep 2024
+ 19:31:31 +0000
+From: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+To: Usama Arif <usamaarif642@gmail.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "yosryahmed@google.com"
+	<yosryahmed@google.com>, "nphamcs@gmail.com" <nphamcs@gmail.com>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, "ryan.roberts@arm.com"
+	<ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "Sridhar, Kanchana P"
+	<kanchana.p.sridhar@intel.com>
+CC: "Zou, Nanhai" <nanhai.zou@intel.com>, "Feghali, Wajdi K"
+	<wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
+Subject: RE: [PATCH v6 0/3] mm: ZSWAP swap-out of mTHP folios
+Thread-Topic: [PATCH v6 0/3] mm: ZSWAP swap-out of mTHP folios
+Thread-Index: AQHa+lo8ysIDIejPvUy4b6yFKhIRqLJEl3iAgBuBkxA=
+Date: Fri, 20 Sep 2024 19:31:31 +0000
+Message-ID: <SJ0PR11MB5678924DB48D68F5DA8EB9ACC96C2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+References: <20240829212705.6714-1-kanchana.p.sridhar@intel.com>
+ <cf062292-65d1-4d55-9ec6-d4e73956ecbc@gmail.com>
+In-Reply-To: <cf062292-65d1-4d55-9ec6-d4e73956ecbc@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ0PR11MB5678:EE_|SJ2PR11MB7646:EE_
+x-ms-office365-filtering-correlation-id: 04c47bf8-4461-4681-f5d2-08dcd9aad498
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|921020|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?NWc0R21FNkl0YkVzNTJVRGI3bXBEbnBhZjk2OThNUnF4aFdzLzNXczVqUEVP?=
+ =?utf-8?B?TnJQdytmZVoyanNFb1lLWFBtbmZuSSs4QktMb2I3RjB2ZFFaUUdrcVBad2hX?=
+ =?utf-8?B?bHpZb2xqQm1kM1puV2ZVRXFnZmtjczVmbkhUejkzbG85YndrMzJwczQvQVdq?=
+ =?utf-8?B?QWthc1RoRFZxdEp0dkxXT3ZqU1JxOG0xRjhWa3JZZ00xcGZ2YU9QQnZMVHVJ?=
+ =?utf-8?B?N3gzQUhqNUxPUldDNlYwOW8wVEw2NEFESkFuY0FZaThlZ0hsMDljRGo0bEFB?=
+ =?utf-8?B?U09NMzBTVk5oZ0FtY2V1N1VhSG4xSW9ocE5yRndDcWJhNzhrV1NhZDJjVlNX?=
+ =?utf-8?B?RHZaV2FCQjA2bkNJajdkVDJKM2lwaDNsTmtTZ28yODBWWkdFcC9LTis0R2Ex?=
+ =?utf-8?B?MHowTEtZWTQ3SkZleWdodEhscURiQlhxeW5sczZibnUxNTNVQWVWYklyeHpS?=
+ =?utf-8?B?WE53ZmJ4bmtvZGJ0bHR2NU43ZTRPeHBsRi81eDZSZEZ1Y2l6TDBMeW1mQTdE?=
+ =?utf-8?B?WjFXbWhySUhmbjVmYTJobjRYd0VzblZ6L29KWCtYZEJUbVlTNVBUYTFLSmJZ?=
+ =?utf-8?B?L0Q2ZkpBNnVSZmV4UFRJeXVSaGo2eFFHUDhhbGhXbGFBb3JTL0hoZ2pkKytu?=
+ =?utf-8?B?Zm1zSlQ0c3JZK2dSL3NNZ3NnNUFJTk56RXEzczNuc1JsZXpUaW5KSEloYUpH?=
+ =?utf-8?B?Z2pyZU5sZXpUekZESk85OS92YnZ1ckRTN09xYTRucWZWQTg0VE54UTdFT085?=
+ =?utf-8?B?Y210eVpaQ3dRS1Fzc2V2SWxlMTdvd2VRYllkQW9pakMzOHdhQm0xV0I3bHdT?=
+ =?utf-8?B?dnRodWpBb3hJREJXdmNsY0ljbHFSVFltbzh5WGVYTStOaS91ZVNsVytyOFR6?=
+ =?utf-8?B?eC92WTVHK2FOMTF0cU4yeFo1UU5DbXYyWlpPaWZueVdGNzBVcm03Tk9ERWNT?=
+ =?utf-8?B?dUtGTUNJaEpBRlJZaFNxUVErYXVkOC80SG9WaUZhaXhlaWhVbUhDS0ZsZW9Z?=
+ =?utf-8?B?VnZ3WTN2aUpBSDZVMFF0cFFsWG1iY2hIRXV1QUhUclJwVStESW94T1ZFbXFu?=
+ =?utf-8?B?RTh4dkhhL3lYNXh4YTBGZkdlclczTjlTaHJvNDJuQVAxK2VCcndlS2hrYSth?=
+ =?utf-8?B?bktWYS9MdFpJeXFsamJBWEhHQ09jQXNWTFJkZ3dwTi9OVG9LUThGUG56dnM3?=
+ =?utf-8?B?cHZvNmVVWFZvbkt1Z1J3L0JjeTlwMWdYZ25MQzZweVFjZklmZUk4QzFvU1gx?=
+ =?utf-8?B?Y3phQ0lZdmF0NVB5a2xKTGlLL1pOZXJ3OE5iTUdlK2ZUR2sxaTlBY3hORXJ5?=
+ =?utf-8?B?RXhuV3RDMEhTRzF6VFZRVUxtRmZRcnNUaUFwbGlxemNEOFU2SlUycXp6QktN?=
+ =?utf-8?B?UStHT1pGcG9zbEM5WmpBVjA1OHdRUXQ0Q2xMOXNpNXVLVk02elJBdVBhckIr?=
+ =?utf-8?B?YktxbDVjSHl4TWtmdUJndUF6YWJwbkQ0eEM2OHpCMjBVcFNLK0FVZzNLSElz?=
+ =?utf-8?B?WmhXUlBtUm5nd0tEbHNVSzVOS1J4MVc5Y3U0RE1OczQ0Z0NDRWJObmR5OFVY?=
+ =?utf-8?B?VWZETGVLYVlwRlhBdWUrTFBJazZDZUlPU0R5a3FtajV5UTVNQ2VGRDcyZXZ0?=
+ =?utf-8?B?QVBpZXpRMzRhak5BaTdid1I5MGEyRkVBYVY0ZVd5dVNPWkNZTkROK29MS0pU?=
+ =?utf-8?B?R292Y2YwS0toNHNIaXVRKytoZ1B5UmMrbGUyTU8vTFJSUzA1N0o3SGl4OGll?=
+ =?utf-8?B?YjRGNUxVSGlzcmJLc04vVGtvOGNRNm5zdzRVME9lNFJZZDdsOEh6NzY3QWJv?=
+ =?utf-8?B?MjZENFVOVk1LbEsrYXNXQ25BWW0vSTYrZWpzamMxZ1hBOVpmZEdrQzY1a1pz?=
+ =?utf-8?Q?zoYxS0xeUtFtA?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5678.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?b2pzNHZRaklWUkEycHU4QmpqSUxNemJSYTN1aEE2WWorc1VWdzQydU8yM1A1?=
+ =?utf-8?B?NFJ1R0xDem9WbHZMM3ZweGJXM01sclNWRmlxTGZvcWFtOWtueGVuR0lYVDFY?=
+ =?utf-8?B?WG5NdnFuRjhLU1Fkb3dBNmcyaWtxRXM3Y0EwbW9vY0hMODBDK2N6QTByeEZ4?=
+ =?utf-8?B?OTlUdHdqcWxVTWVWa2ZRMzNpQUgxSi81dzhSMEp5WEtHaVpNbWVpQVZJUGVw?=
+ =?utf-8?B?QmpiV3c4NEJmYzRrNGNoVnZrOVFTcEZLTmhxMmY1TFhCRjhrUDN1c25BRUJy?=
+ =?utf-8?B?L2dUenZYTFJtTzM4NzZqdHU5TEVMZkxCOG1oazNlSDBreEZIZlVJSzZuZ2Qz?=
+ =?utf-8?B?RG1MQUtaQkdZZW1ObWV4OVltY05hR1U5S1dvWm9tdUZUanBVaDJLWlNSNnF2?=
+ =?utf-8?B?WldROFlCb1JUS1BjTUpvWHZBaVFaSDhwckFLcFJaQkxMbXlNOUU5d205a1VB?=
+ =?utf-8?B?U0EveCtRL2tQWDFYbURtYUEyWExXQktudzhpbm1VTTIrOFRxbU13U2hPalI3?=
+ =?utf-8?B?ejhrZFl3SFZHYWpsMmphMDBjOHF5R3dUZzNMSHZXRWNPa2p2ek9wMVEyZFZ6?=
+ =?utf-8?B?MDA1ZG5YanVLbHVnUmZYamlCbnoveGNDL0F1UEVsQldVb3NueDFsa00zbDll?=
+ =?utf-8?B?SmNBRmtXMUdQSzdvclJ6UzFKN2ZVTS9GUzRkeXl0aXZrdDRtUGpVc2FVSFFk?=
+ =?utf-8?B?Z2dKZlRZMHpsbWJIdWU1dFZrRnk3dzhIemcxYjIxVERKZUY5Mmc2enpkb3do?=
+ =?utf-8?B?ZTFDYmN5MWNPRWk2NkJTWVpLYkVhTzFicHJVTEN1L2tHeDRJUFZtTFFIY3hw?=
+ =?utf-8?B?KzVlSFdRY1lZY2E5YUZMaXJIcEtQZitGdXpsemh5UUY5bG40TEZick1lOXR0?=
+ =?utf-8?B?bkdyNTBUeTZ6TE1YUGcwbi9GMGdqNnpqbHZCa0RvZDY5Z3V2WTg4OEZHU3dZ?=
+ =?utf-8?B?ZlhISHpSaWxHR2JsbElnWDcyS0ozQ3VubjBMcmlacHpGMVk0VHI2bnZwc1Ji?=
+ =?utf-8?B?VWpiUGJoNk9RQ0ZiSGFwakgwdDRteXNBaHBITkxnUWJoWTRja2dUeVd1RnBU?=
+ =?utf-8?B?MzltWHM1Qi8xa2RkUCtoM0RPK25QdU5OeXcrMlkveXNtd0s1dU9qQmFYaWgx?=
+ =?utf-8?B?TUY4U2tJaFpSejVkWUVhMHQ3WVpLNFUwSmZmejltQU94NzhsaG9QVDdpZi9H?=
+ =?utf-8?B?Wi9uYlVNOXlPbkVtRUQzcUxxd0ljSnhVb1plS2RRS0gwMVB4d3p6eG9MZDBX?=
+ =?utf-8?B?ak14MytzOTViZ0dYMVNxTmZrVExUOGdxQlJMT1pYNnlxd1lETC9ON3doTk95?=
+ =?utf-8?B?WjNmaHkxSjNvNGMwYUYwclhwcFA0bnJnTjhKMUpadU0zanVkd1FaV1ZjNmNL?=
+ =?utf-8?B?d3E3REZ6aTM2SVdlSzcwS1hJeG55azE2YjNKendZVlpqbElHV045VXpsTThP?=
+ =?utf-8?B?Y0JOVTdpNlpjSjcrWG1FOU5VNXdZQjNBb3lzaUt1ZThnOU5TdkF1YzdrUEsv?=
+ =?utf-8?B?aWtnMUxUc1ZhK3VHQ1JGN1dZYlROc2s3ZGU5WG1LN3JFcnBMOWZNZlpqY0U2?=
+ =?utf-8?B?UndEWmxpZzArYjdzWC9kS3ZvaE1Ld2hvSmdGZmxUR2t1N0hyT3hsYytpaEtp?=
+ =?utf-8?B?SEswZ1p3Wnp2dVY3b01UTzJtOXpqT0dDSDdGNFFYS3VHMUNyT2lUZ1B0WFJv?=
+ =?utf-8?B?cmNDek1Sbm1JVEc0c1lNZVQ4RHVNSXpMWlpxcXhuMFlSb1lKMG1TS2VwZlBr?=
+ =?utf-8?B?TGdoWTVHM3JNYWh2VEJQZ3MzTjVvV0xJRThLZitPamhRUlFMRWwwWFUxaWVp?=
+ =?utf-8?B?dXJaQ01tV09jM3B4TFVVQ1BONDVOclNYdlRMcXA1NVZhZSt1THp6eHR5d1p3?=
+ =?utf-8?B?MkdPTGlGVWYvL01TMGZpNDhiUE1OQW9WZkt2K0JmdS9KRFRkL3d5VzIwNENz?=
+ =?utf-8?B?Q0xhMkhvRmdwUXlXWjhxSWlSTitZVXhZVitZRG9QNlJHbm5WUFd4ZitEYjNF?=
+ =?utf-8?B?bUduVEFnZUNITUFpTHQ2R0FvcWRKazB5RldhbzlmcWRUcFdmcXl3RmdLMUpY?=
+ =?utf-8?B?dEpMdlFpVUxoSENxRGUzNk1yaSt3UDJVanZraEQ5aEEvZjNvaWdtcEo1Q0pp?=
+ =?utf-8?B?Nkx1ckJCUW0raEh1dVFJVC84R1FBalRSNjF6TFRMeGNzSnpRODZUOEtHeXZN?=
+ =?utf-8?B?YXc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zu3K34MHFUYNaRfu@tissot.1015granger.net>
-User-Agent: NeoMutt/20180716
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5678.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 04c47bf8-4461-4681-f5d2-08dcd9aad498
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2024 19:31:31.3931
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: e9MVhtveIUalLSFMMzYdE1WgExXQR5fvOiXYkyYJHivNsONxy/wCWhpn6ateGmkTbBpiyyf155tvDl6qew8seEyp00vZZcnqXNXrCiGb42A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7646
+X-OriginatorOrg: intel.com
 
-On Friday 20 September 2024 15:19:59 Chuck Lever wrote:
-> On Tue, Sep 17, 2024 at 06:10:50PM +0200, Pali Rohár wrote:
-> > On Tuesday 17 September 2024 11:39:58 Chuck Lever wrote:
-> > > On Fri, Sep 13, 2024 at 12:15:23AM +0200, Pali Rohár wrote:
-> > > > Currently the directory restricted deletion flag (sticky bit, SVTX) is not
-> > > > mapped into NFS4 ACL by knfsd. Which means that the NFS4 ACL client is not
-> > > > aware of the fact that it cannot delete some files if the sticky bit is set
-> > > > on the server on parent directory. If the client copies sticky bit
-> > > > directory recursively to some other storage which implements the NFS4-like
-> > > > ACL (e.g. to NTFS filesystem or to SMB server) then the directory's
-> > > > restricted deletion flag is completely lost.
-> > > > 
-> > > > This change aims to improve interoperability of the POSIX directory
-> > > > restricted deletion flag (sticky bit, SVTX) and NFS4 ACL structure in
-> > > > knfsd. It transparently maps POSIX directory's sticky bit into NFS4 ACL
-> > > > and vice-versa similarly like it already maps POSIX ACL into NFS4 ACL.
-> > > > It covers NFS4 GETATTR ACL, NFS4 SETATTR ACL, NFS4 CREATE+OPEN operations.
-> > > > When creating a new object over NFS4, it is possible to optionally specify
-> > > > NFS4 ACL, so this is covered too.
-> > > > 
-> > > > For client SETATTR ACL, CREATE with ACL and OPEN-create with ACL
-> > > > operations, detection pattern for restricted deletion flag is ACE entry
-> > > > INHERIT_ONLY NO_PROPAGATE ALLOW OWNER@ DELETE together with check that
-> > > > nobody except the OWNER@ has DELETE_CHILD permission. Note that the OWNER@
-> > > > does not have to have DELETE_CHILD permission in case it does not have
-> > > > write access to directory.
-> > > > 
-> > > > For client GETATTR ACL operation, when restricted deletion flag is present
-> > > > in inode, following ACE entries are prepended before any other ACEs:
-> > > > 
-> > > >   ALLOW OWNER@ DELETE_CHILD                                 (1)
-> > > >   DENY EVERYONE@ DELETE_CHILD
-> > > >   INHERIT_ONLY NO_PROPAGATE DENY user_owner_of_dir DELETE   (3)
-> > > >   INHERIT_ONLY NO_PROPAGATE DENY OWNER@ DELETE              (4)
-> > > >   INHERIT_ONLY NO_PROPAGATE DENY user1 DELETE               (ACL user1)
-> > > >   ...
-> > > >   INHERIT_ONLY NO_PROPAGATE DENY userN DELETE               (ACL userN)
-> > > >   INHERIT_ONLY NO_PROPAGATE ALLOW OWNER@ DELETE
-> > > > 
-> > > > ACE entry (1) is present only when user OWNER@ has write access (can modify
-> > > > directory, including removing child entries), because it is possible to
-> > > > have sticky bit set also on read-only directory.
-> > > > 
-> > > > ACE entry (3) is present only when user OWNER@ does not have write access
-> > > > (cannot modify directory) and it is required to override effect of the last
-> > > > ACE entry which allows child entry OWNER@ to remove entry itself. This is
-> > > > needed for example for POSIX mode 1577.
-> > > > 
-> > > > ACE entry (4) is present only when anybody else except the directory owner
-> > > > has no write access to the directory. This is the case when sticky bit is
-> > > > set but nobody can use it because of missing directory write access. So
-> > > > this explicit DENY covers this edge case.
-> > > > 
-> > > > ACE entries (ACL user1...userN) are for POSIX users which do not have write
-> > > > access to directory and therefore they cannot remove directory entries
-> > > > which they own. This is again needed for overriding the effect of the last
-> > > > ACE entry.
-> > > > 
-> > > > When restricted deletion flag is not present then nothing is added.
-> > > > 
-> > > > This is probably the best approximation of the directory restricted
-> > > > deletion flag. It covers directory's OWNER@ grant access, child OWNER@
-> > > > grant access and also restrictions for all other users. It also covers the
-> > > > situation when OWNER@ or some POSIX user does not have write access to the
-> > > > directory, and also covers situation when nobody except directory owner has
-> > > > write access to the directory.
-> > > > 
-> > > > What this does not cover is the restriction when some POSIX group does not
-> > > > have directory write access, and another POSIX group has directory write
-> > > > access. This is probably not possible to express in NFS4 ACL language
-> > > > without ability to evaluate if user is member of some group or not. NFS4
-> > > > ACL in this case says for the owner of the file that the delete operation
-> > > > is allowed.
-> > > > 
-> > > > The whole change is only about the mapping of the sticky bit into NFS4 ACL
-> > > > and only for NFS4 GET and SET ACL operations. It does not change any access
-> > > > permission checks.
-> > > > 
-> > > > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > > > ---
-> > > >  fs/nfsd/acl.h      |   2 +-
-> > > >  fs/nfsd/nfs4acl.c  | 242 ++++++++++++++++++++++++++++++++++++++++++---
-> > > >  fs/nfsd/nfs4proc.c |  31 +++++-
-> > > >  3 files changed, 255 insertions(+), 20 deletions(-)
-> > > > 
-> > > > diff --git a/fs/nfsd/acl.h b/fs/nfsd/acl.h
-> > > > index 4b7324458a94..e7e7909bf03a 100644
-> > > > --- a/fs/nfsd/acl.h
-> > > > +++ b/fs/nfsd/acl.h
-> > > > @@ -48,6 +48,6 @@ __be32 nfs4_acl_write_who(struct xdr_stream *xdr, int who);
-> > > >  int nfsd4_get_nfs4_acl(struct svc_rqst *rqstp, struct dentry *dentry,
-> > > >  		struct nfs4_acl **acl);
-> > > >  __be32 nfsd4_acl_to_attr(enum nfs_ftype4 type, struct nfs4_acl *acl,
-> > > > -			 struct nfsd_attrs *attr);
-> > > > +			 struct nfsd_attrs *attr, int *dir_sticky);
-> > > >  
-> > > >  #endif /* LINUX_NFS4_ACL_H */
-> > > > diff --git a/fs/nfsd/nfs4acl.c b/fs/nfsd/nfs4acl.c
-> > > > index 96e786b5e544..6a53772c2a13 100644
-> > > > --- a/fs/nfsd/nfs4acl.c
-> > > > +++ b/fs/nfsd/nfs4acl.c
-> > > > @@ -46,6 +46,7 @@
-> > > >  #define NFS4_ACL_TYPE_DEFAULT	0x01
-> > > >  #define NFS4_ACL_DIR		0x02
-> > > >  #define NFS4_ACL_OWNER		0x04
-> > > > +#define NFS4_ACL_DIR_STICKY	0x08
-> > > >  
-> > > >  /* mode bit translations: */
-> > > >  #define NFS4_READ_MODE (NFS4_ACE_READ_DATA)
-> > > > @@ -73,7 +74,7 @@ mask_from_posix(unsigned short perm, unsigned int flags)
-> > > >  		mask |= NFS4_READ_MODE;
-> > > >  	if (perm & ACL_WRITE)
-> > > >  		mask |= NFS4_WRITE_MODE;
-> > > > -	if ((perm & ACL_WRITE) && (flags & NFS4_ACL_DIR))
-> > > > +	if ((perm & ACL_WRITE) && (flags & NFS4_ACL_DIR) && !(flags & NFS4_ACL_DIR_STICKY))
-> > > >  		mask |= NFS4_ACE_DELETE_CHILD;
-> > > >  	if (perm & ACL_EXECUTE)
-> > > >  		mask |= NFS4_EXECUTE_MODE;
-> > > > @@ -89,7 +90,7 @@ deny_mask_from_posix(unsigned short perm, u32 flags)
-> > > >  		mask |= NFS4_READ_MODE;
-> > > >  	if (perm & ACL_WRITE)
-> > > >  		mask |= NFS4_WRITE_MODE;
-> > > > -	if ((perm & ACL_WRITE) && (flags & NFS4_ACL_DIR))
-> > > > +	if ((perm & ACL_WRITE) && (flags & NFS4_ACL_DIR) && !(flags & NFS4_ACL_DIR_STICKY))
-> > > >  		mask |= NFS4_ACE_DELETE_CHILD;
-> > > >  	if (perm & ACL_EXECUTE)
-> > > >  		mask |= NFS4_EXECUTE_MODE;
-> > > > @@ -110,7 +111,7 @@ low_mode_from_nfs4(u32 perm, unsigned short *mode, unsigned int flags)
-> > > >  {
-> > > >  	u32 write_mode = NFS4_WRITE_MODE;
-> > > >  
-> > > > -	if (flags & NFS4_ACL_DIR)
-> > > > +	if ((flags & NFS4_ACL_DIR) && !(flags | NFS4_ACL_DIR_STICKY))
-> > > >  		write_mode |= NFS4_ACE_DELETE_CHILD;
-> > > >  	*mode = 0;
-> > > >  	if ((perm & NFS4_READ_MODE) == NFS4_READ_MODE)
-> > > > @@ -123,7 +124,7 @@ low_mode_from_nfs4(u32 perm, unsigned short *mode, unsigned int flags)
-> > > >  
-> > > >  static short ace2type(struct nfs4_ace *);
-> > > >  static void _posix_to_nfsv4_one(struct posix_acl *, struct nfs4_acl *,
-> > > > -				unsigned int);
-> > > > +				unsigned int, kuid_t);
-> > > >  
-> > > >  int
-> > > >  nfsd4_get_nfs4_acl(struct svc_rqst *rqstp, struct dentry *dentry,
-> > > > @@ -142,8 +143,11 @@ nfsd4_get_nfs4_acl(struct svc_rqst *rqstp, struct dentry *dentry,
-> > > >  	if (IS_ERR(pacl))
-> > > >  		return PTR_ERR(pacl);
-> > > >  
-> > > > -	/* allocate for worst case: one (deny, allow) pair each: */
-> > > > -	size += 2 * pacl->a_count;
-> > > > +	/*
-> > > > +	 * allocate for worst case: one (deny, allow) pair for each
-> > > > +	 * plus for restricted deletion flag (sticky bit): 4 + one for each
-> > > > +	 */
-> > > > +	size += 2 * pacl->a_count + (4 + pacl->a_count);
-> > > >  
-> > > >  	if (S_ISDIR(inode->i_mode)) {
-> > > >  		flags = NFS4_ACL_DIR;
-> > > > @@ -155,6 +159,10 @@ nfsd4_get_nfs4_acl(struct svc_rqst *rqstp, struct dentry *dentry,
-> > > >  
-> > > >  		if (dpacl)
-> > > >  			size += 2 * dpacl->a_count;
-> > > > +
-> > > > +		/* propagate restricted deletion flag (sticky bit) */
-> > > > +		if (inode->i_mode & S_ISVTX)
-> > > > +			flags |= NFS4_ACL_DIR_STICKY;
-> > > >  	}
-> > > >  
-> > > >  	*acl = kmalloc(nfs4_acl_bytes(size), GFP_KERNEL);
-> > > > @@ -164,10 +172,10 @@ nfsd4_get_nfs4_acl(struct svc_rqst *rqstp, struct dentry *dentry,
-> > > >  	}
-> > > >  	(*acl)->naces = 0;
-> > > >  
-> > > > -	_posix_to_nfsv4_one(pacl, *acl, flags & ~NFS4_ACL_TYPE_DEFAULT);
-> > > > +	_posix_to_nfsv4_one(pacl, *acl, flags & ~NFS4_ACL_TYPE_DEFAULT, inode->i_uid);
-> > > >  
-> > > >  	if (dpacl)
-> > > > -		_posix_to_nfsv4_one(dpacl, *acl, flags | NFS4_ACL_TYPE_DEFAULT);
-> > > > +		_posix_to_nfsv4_one(dpacl, *acl, (flags | NFS4_ACL_TYPE_DEFAULT) & ~NFS4_ACL_DIR_STICKY, inode->i_uid);
-> > > >  
-> > > >  out:
-> > > >  	posix_acl_release(dpacl);
-> > > > @@ -231,7 +239,7 @@ summarize_posix_acl(struct posix_acl *acl, struct posix_acl_summary *pas)
-> > > >  /* We assume the acl has been verified with posix_acl_valid. */
-> > > >  static void
-> > > >  _posix_to_nfsv4_one(struct posix_acl *pacl, struct nfs4_acl *acl,
-> > > > -						unsigned int flags)
-> > > > +		    unsigned int flags, kuid_t owner_uid)
-> > > >  {
-> > > >  	struct posix_acl_entry *pa, *group_owner_entry;
-> > > >  	struct nfs4_ace *ace;
-> > > > @@ -243,9 +251,149 @@ _posix_to_nfsv4_one(struct posix_acl *pacl, struct nfs4_acl *acl,
-> > > >  	BUG_ON(pacl->a_count < 3);
-> > > >  	summarize_posix_acl(pacl, &pas);
-> > > >  
-> > > > -	pa = pacl->a_entries;
-> > > >  	ace = acl->aces + acl->naces;
-> > > >  
-> > > > +	/*
-> > > > +	 * Translate restricted deletion flag (sticky bit, SVTX) set on the
-> > > > +	 * directory to following NFS4 ACEs prepended before any other ACEs:
-> > > > +	 *
-> > > > +	 *   ALLOW OWNER@ DELETE_CHILD                                 (1)
-> > > > +	 *   DENY EVERYONE@ DELETE_CHILD
-> > > > +	 *   INHERIT_ONLY NO_PROPAGATE DENY user_owner_of_dir DELETE   (3)
-> > > > +	 *   INHERIT_ONLY NO_PROPAGATE DENY OWNER@ DELETE              (4)
-> > > > +	 *   INHERIT_ONLY NO_PROPAGATE DENY user1 DELETE               (ACL user1)
-> > > > +	 *   ...
-> > > > +	 *   INHERIT_ONLY NO_PROPAGATE DENY userN DELETE               (ACL userN)
-> > > > +	 *   INHERIT_ONLY NO_PROPAGATE ALLOW OWNER@ DELETE
-> > > > +	 *
-> > > > +	 *   (1) - only if user-owner has write access
-> > > > +	 *   (3) - only if user-owner does not have write access
-> > > > +	 *   (4) - only if non-user-owner does not have write access
-> > > > +	 *   (ACL user1) - only if user1 does not have write access
-> > > > +	 *   (ACL userN) - only if userN does not have write access
-> > > > +	 *
-> > > > +	 * These ACEs describe behavior of set restricted deletion flag (sticky
-> > > > +	 * bit) on directory as they allow only owner of individual child entries
-> > > > +	 * and owner of the directory to delete individual child entries.
-> > > > +	 * Everyone else is denied to remove child entries in this directory.
-> > > > +	 *
-> > > > +	 * For deleting entry in NFS4 ACL model it is needed either DELETE_CHILD
-> > > > +	 * permission (access mask) from the parent directory or DELETE permission
-> > > > +	 * (access mask) on the child. Just one of these two permissions is enough.
-> > > > +	 * So if there is explicit DENY DELETE_CHILD on the parent together with
-> > > > +	 * explicit ALLOW DELETE on the child, it means that deleting is allowed
-> > > > +	 * (evaluation of permissions is independent in NFS4 ACL model). OWNER@
-> > > > +	 * for inherited ACEs means owner of the child entry and not the owner
-> > > > +	 * of the parent from which was ACE inherited.
-> > > > +	 *
-> > > > +	 * This translation is imperfect just for a case when some group
-> > > > +	 * (including group-owner and others-group) does not have write access
-> > > > +	 * to directory. Handled is only the edge case (via rule 4) when
-> > > > +	 * everyone else except owner has no write access to the directory.
-> > > > +	 * This information is not present in NFS4 ACL because it looks like that
-> > > > +	 * this is not possible to express in this ACL model. So for ACL consumer
-> > > > +	 * it could look like that owner of the file can delete its own file even
-> > > > +	 * when group or other mode bits of the directory do not allow it.
-> > > > +	 */
-> > > > +	if (flags & NFS4_ACL_DIR_STICKY) {
-> > > > +		/*
-> > > > +		 * Explicitly allow directory owner to delete child entries
-> > > > +		 * if directory owner has write access
-> > > > +		 */
-> > > > +		if (pas.owner & ACL_WRITE) {
-> > > > +			ace->type = NFS4_ACE_ACCESS_ALLOWED_ACE_TYPE;
-> > > > +			ace->flag = 0;
-> > > > +			ace->access_mask = NFS4_ACE_DELETE_CHILD;
-> > > > +			ace->whotype = NFS4_ACL_WHO_OWNER;
-> > > > +			ace++;
-> > > > +			acl->naces++;
-> > > > +		}
-> > > > +
-> > > > +		/*
-> > > > +		 * And then deny deleting child entries for all other users
-> > > > +		 * which do not have explicit DELETE permission granted by
-> > > > +		 * last rule in this section.
-> > > > +		 */
-> > > > +		ace->type = NFS4_ACE_ACCESS_DENIED_ACE_TYPE;
-> > > > +		ace->flag = 0;
-> > > > +		ace->access_mask = NFS4_ACE_DELETE_CHILD;
-> > > > +		ace->whotype = NFS4_ACL_WHO_EVERYONE;
-> > > > +		ace++;
-> > > > +		acl->naces++;
-> > > > +
-> > > > +		/*
-> > > > +		 * Do not grant directory owner to delete child entries (by the
-> > > > +		 * last rule in this section) if it does not have write access.
-> > > > +		 */
-> > > > +		if (!(pas.owner & ACL_WRITE)) {
-> > > > +			ace->type = NFS4_ACE_ACCESS_DENIED_ACE_TYPE;
-> > > > +			ace->flag = NFS4_INHERITANCE_FLAGS |
-> > > > +				    NFS4_ACE_INHERIT_ONLY_ACE |
-> > > > +				    NFS4_ACE_NO_PROPAGATE_INHERIT_ACE;
-> > > > +			ace->access_mask = NFS4_ACE_DELETE;
-> > > > +			ace->whotype = NFS4_ACL_WHO_NAMED;
-> > > > +			ace->who_uid = owner_uid;
-> > > > +			ace++;
-> > > > +			acl->naces++;
-> > > > +		}
-> > > > +
-> > > > +		if (!(pas.users & ACL_WRITE) && !(pas.group & ACL_WRITE) &&
-> > > > +		    !(pas.groups & ACL_WRITE) && !(pas.other & ACL_WRITE)) {
-> > > > +			/*
-> > > > +			 * Do not grant child owner who is not directory owner
-> > > > +			 * (handled by the first rule in this section) to
-> > > > +			 * delete own child entries if there is no possible
-> > > > +			 * directory write permission (checked for named users,
-> > > > +			 * group-owner, named groups and others-groups).
-> > > > +			 * This handles special edge case when only directory
-> > > > +			 * owner has write access to directory.
-> > > > +			 */
-> > > > +			ace->type = NFS4_ACE_ACCESS_DENIED_ACE_TYPE;
-> > > > +			ace->flag = NFS4_INHERITANCE_FLAGS |
-> > > > +				    NFS4_ACE_INHERIT_ONLY_ACE |
-> > > > +				    NFS4_ACE_NO_PROPAGATE_INHERIT_ACE;
-> > > > +			ace->access_mask = NFS4_ACE_DELETE;
-> > > > +			ace->whotype = NFS4_ACL_WHO_OWNER;
-> > > > +			ace++;
-> > > > +			acl->naces++;
-> > > > +		} else {
-> > > > +			/*
-> > > > +			 * Do not grant individual named users to delete child
-> > > > +			 * entries (by the last rule in this section) if user
-> > > > +			 * does not have write access to directory.
-> > > > +			 */
-> > > > +			for (pa = pacl->a_entries + 1; pa->e_tag == ACL_USER; pa++) {
-> > > > +				if (pa->e_perm & pas.mask & ACL_WRITE)
-> > > > +					continue;
-> > > > +				ace->type = NFS4_ACE_ACCESS_DENIED_ACE_TYPE;
-> > > > +				ace->flag = NFS4_INHERITANCE_FLAGS |
-> > > > +					    NFS4_ACE_INHERIT_ONLY_ACE |
-> > > > +					    NFS4_ACE_NO_PROPAGATE_INHERIT_ACE;
-> > > > +				ace->access_mask = NFS4_ACE_DELETE;
-> > > > +				ace->whotype = NFS4_ACL_WHO_NAMED;
-> > > > +				ace->who_uid = pa->e_uid;
-> > > > +				ace++;
-> > > > +				acl->naces++;
-> > > > +			}
-> > > > +		}
-> > > > +
-> > > > +		/*
-> > > > +		 * Above rules filtered out users which do not have write access
-> > > > +		 * to the directory. Now allow child-owner to delete its own
-> > > > +		 * directory entries.
-> > > > +		 */
-> > > > +		ace->type = NFS4_ACE_ACCESS_ALLOWED_ACE_TYPE;
-> > > > +		ace->flag = NFS4_INHERITANCE_FLAGS |
-> > > > +			    NFS4_ACE_INHERIT_ONLY_ACE |
-> > > > +			    NFS4_ACE_NO_PROPAGATE_INHERIT_ACE;
-> > > > +		ace->access_mask = NFS4_ACE_DELETE;
-> > > > +		ace->whotype = NFS4_ACL_WHO_OWNER;
-> > > > +		ace++;
-> > > > +		acl->naces++;
-> > > > +	}
-> > > > +
-> > > > +	pa = pacl->a_entries;
-> > > > +
-> > > >  	/* We could deny everything not granted by the owner: */
-> > > >  	deny = ~pas.owner;
-> > > >  	/*
-> > > > @@ -517,7 +665,8 @@ posix_state_to_acl(struct posix_acl_state *state, unsigned int flags)
-> > > >  
-> > > >  	pace = pacl->a_entries;
-> > > >  	pace->e_tag = ACL_USER_OBJ;
-> > > > -	low_mode_from_nfs4(state->owner.allow, &pace->e_perm, flags);
-> > > > +	/* owner is never affected by restricted deletion flag, so clear NFS4_ACL_DIR_STICKY */
-> > > > +	low_mode_from_nfs4(state->owner.allow, &pace->e_perm, flags & ~NFS4_ACL_DIR_STICKY);
-> > > >  
-> > > >  	for (i=0; i < state->users->n; i++) {
-> > > >  		pace++;
-> > > > @@ -691,9 +840,14 @@ static void process_one_v4_ace(struct posix_acl_state *state,
-> > > >  
-> > > >  static int nfs4_acl_nfsv4_to_posix(struct nfs4_acl *acl,
-> > > >  		struct posix_acl **pacl, struct posix_acl **dpacl,
-> > > > +		int *dir_sticky,
-> > > >  		unsigned int flags)
-> > > >  {
-> > > >  	struct posix_acl_state effective_acl_state, default_acl_state;
-> > > > +	bool dir_allow_nonowner_delete_child = false;
-> > > > +	bool dir_deny_everyone_delete_child = false;
-> > > > +	bool dir_allow_child_owner_delete = false;
-> > > > +	unsigned int eflags = 0;
-> > > >  	struct nfs4_ace *ace;
-> > > >  	int ret;
-> > > >  
-> > > > @@ -705,6 +859,28 @@ static int nfs4_acl_nfsv4_to_posix(struct nfs4_acl *acl,
-> > > >  		goto out_estate;
-> > > >  	ret = -EINVAL;
-> > > >  	for (ace = acl->aces; ace < acl->aces + acl->naces; ace++) {
-> > > > +		/*
-> > > > +		 * Process and parse ACE entry INHERIT_ONLY NO_PROPAGATE DELETE
-> > > > +		 * for detecting restricted deletion flag (sticky bit). Allow
-> > > > +		 * SYNCHRONIZE access mask to be present as NFS4 clients can
-> > > > +		 * include this access mask together with any other one.
-> > > > +		 *
-> > > > +		 * It needs to be done before validation as NFS4_SUPPORTED_FLAGS
-> > > > +		 * does not contain NFS4_ACE_NO_PROPAGATE_INHERIT_ACE and this
-> > > > +		 * ACE must not throw error.
-> > > > +		 */
-> > > > +		if ((flags & NFS4_ACL_DIR) &&
-> > > > +		    !(ace->flag & ~(NFS4_SUPPORTED_FLAGS|NFS4_ACE_NO_PROPAGATE_INHERIT_ACE)) &&
-> > > > +		    (ace->flag & NFS4_INHERITANCE_FLAGS) &&
-> > > > +		    (ace->flag & NFS4_ACE_INHERIT_ONLY_ACE) &&
-> > > > +		    (ace->flag & NFS4_ACE_NO_PROPAGATE_INHERIT_ACE) &&
-> > > > +		    (ace->access_mask & ~NFS4_ACE_SYNCHRONIZE) == NFS4_ACE_DELETE) {
-> > > > +			if (ace->type == NFS4_ACE_ACCESS_ALLOWED_ACE_TYPE &&
-> > > > +			    ace->whotype == NFS4_ACL_WHO_OWNER)
-> > > > +				dir_allow_child_owner_delete = true;
-> > > > +			continue;
-> > > > +		}
-> > > > +
-> > > >  		if (ace->type != NFS4_ACE_ACCESS_ALLOWED_ACE_TYPE &&
-> > > >  		    ace->type != NFS4_ACE_ACCESS_DENIED_ACE_TYPE)
-> > > >  			goto out_dstate;
-> > > > @@ -725,6 +901,38 @@ static int nfs4_acl_nfsv4_to_posix(struct nfs4_acl *acl,
-> > > >  
-> > > >  		if (!(ace->flag & NFS4_ACE_INHERIT_ONLY_ACE))
-> > > >  			process_one_v4_ace(&effective_acl_state, ace);
-> > > > +
-> > > > +		/*
-> > > > +		 * Process and parse ACE entry with DELETE_CHILD access mask
-> > > > +		 * for detecting restricted deletion flag (sticky bit).
-> > > > +		 */
-> > > > +		if ((flags & NFS4_ACL_DIR) &&
-> > > > +		    !(ace->flag & NFS4_ACE_INHERIT_ONLY_ACE) &&
-> > > > +		    (ace->access_mask & NFS4_ACE_DELETE_CHILD)) {
-> > > > +			if (ace->type == NFS4_ACE_ACCESS_ALLOWED_ACE_TYPE &&
-> > > > +			    !dir_deny_everyone_delete_child &&
-> > > > +			    ace->whotype != NFS4_ACL_WHO_OWNER)
-> > > > +				dir_allow_nonowner_delete_child = true;
-> > > > +			else if (ace->type == NFS4_ACE_ACCESS_DENIED_ACE_TYPE &&
-> > > > +				 ace->whotype == NFS4_ACL_WHO_EVERYONE)
-> > > > +				dir_deny_everyone_delete_child = true;
-> > > > +		}
-> > > > +	}
-> > > > +
-> > > > +	/*
-> > > > +	 * Recognize restricted deletion flag (sticky bit) from directory ACL
-> > > > +	 * if ACEs on directory allow only owner of directory child entry to
-> > > > +	 * delete entry itself.
-> > > > +	 *
-> > > > +	 * This is relaxed check for rules generated by _posix_to_nfsv4_one().
-> > > > +	 * Relaxed check of restricted deletion flag is for security reasons
-> > > > +	 * and means that permissions would be more stricter, to prevent
-> > > > +	 * granting more access than what was specified in NFS4 ACL packet.
-> > > > +	 */
-> > > > +	if (flags & NFS4_ACL_DIR) {
-> > > > +		*dir_sticky = !dir_allow_nonowner_delete_child && dir_allow_child_owner_delete;
-> > > > +		if (*dir_sticky)
-> > > > +			eflags |= NFS4_ACL_DIR_STICKY;
-> > > >  	}
-> > > >  
-> > > >  	/*
-> > > > @@ -750,7 +958,7 @@ static int nfs4_acl_nfsv4_to_posix(struct nfs4_acl *acl,
-> > > >  			default_acl_state.other = effective_acl_state.other;
-> > > >  	}
-> > > >  
-> > > > -	*pacl = posix_state_to_acl(&effective_acl_state, flags);
-> > > > +	*pacl = posix_state_to_acl(&effective_acl_state, flags | eflags);
-> > > >  	if (IS_ERR(*pacl)) {
-> > > >  		ret = PTR_ERR(*pacl);
-> > > >  		*pacl = NULL;
-> > > > @@ -776,19 +984,23 @@ static int nfs4_acl_nfsv4_to_posix(struct nfs4_acl *acl,
-> > > >  }
-> > > >  
-> > > >  __be32 nfsd4_acl_to_attr(enum nfs_ftype4 type, struct nfs4_acl *acl,
-> > > > -			 struct nfsd_attrs *attr)
-> > > > +			 struct nfsd_attrs *attr, int *dir_sticky)
-> > > >  {
-> > > >  	int host_error;
-> > > >  	unsigned int flags = 0;
-> > > >  
-> > > > -	if (!acl)
-> > > > +	if (!acl) {
-> > > > +		if (type == NF4DIR)
-> > > > +			*dir_sticky = -1;
-> > > >  		return nfs_ok;
-> > > > +	}
-> > > >  
-> > > >  	if (type == NF4DIR)
-> > > >  		flags = NFS4_ACL_DIR;
-> > > >  
-> > > >  	host_error = nfs4_acl_nfsv4_to_posix(acl, &attr->na_pacl,
-> > > > -					     &attr->na_dpacl, flags);
-> > > > +					     &attr->na_dpacl, dir_sticky,
-> > > > +					     flags);
-> > > >  	if (host_error == -EINVAL)
-> > > >  		return nfserr_attrnotsupp;
-> > > >  	else
-> > > > diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-> > > > index 0f67f4a7b8b2..56aeb745d108 100644
-> > > > --- a/fs/nfsd/nfs4proc.c
-> > > > +++ b/fs/nfsd/nfs4proc.c
-> > > > @@ -259,7 +259,7 @@ nfsd4_create_file(struct svc_rqst *rqstp, struct svc_fh *fhp,
-> > > >  		return nfserrno(host_err);
-> > > >  
-> > > >  	if (is_create_with_attrs(open))
-> > > > -		nfsd4_acl_to_attr(NF4REG, open->op_acl, &attrs);
-> > > > +		nfsd4_acl_to_attr(NF4REG, open->op_acl, &attrs, NULL);
-> > > >  
-> > > >  	inode_lock_nested(inode, I_MUTEX_PARENT);
-> > > >  
-> > > > @@ -791,6 +791,7 @@ nfsd4_create(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
-> > > >  	};
-> > > >  	struct svc_fh resfh;
-> > > >  	__be32 status;
-> > > > +	int dir_sticky;
-> > > >  	dev_t rdev;
-> > > >  
-> > > >  	fh_init(&resfh, NFS4_FHSIZE);
-> > > > @@ -804,7 +805,7 @@ nfsd4_create(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
-> > > >  	if (status)
-> > > >  		return status;
-> > > >  
-> > > > -	status = nfsd4_acl_to_attr(create->cr_type, create->cr_acl, &attrs);
-> > > > +	status = nfsd4_acl_to_attr(create->cr_type, create->cr_acl, &attrs, &dir_sticky);
-> > > >  	current->fs->umask = create->cr_umask;
-> > > >  	switch (create->cr_type) {
-> > > >  	case NF4LNK:
-> > > > @@ -848,6 +849,11 @@ nfsd4_create(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
-> > > >  		break;
-> > > >  
-> > > >  	case NF4DIR:
-> > > > +		if (dir_sticky == 1) {
-> > > > +			/* Set directory sticky bit deduced from the ACL attr. */
-> > > > +			create->cr_iattr.ia_valid |= ATTR_MODE;
-> > > > +			create->cr_iattr.ia_mode |= S_ISVTX;
-> > > > +		}
-> > > >  		create->cr_iattr.ia_valid &= ~ATTR_SIZE;
-> > > >  		status = nfsd_create(rqstp, &cstate->current_fh,
-> > > >  				     create->cr_name, create->cr_namelen,
-> > > > @@ -1144,6 +1150,7 @@ nfsd4_setattr(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
-> > > >  	struct inode *inode;
-> > > >  	__be32 status = nfs_ok;
-> > > >  	bool save_no_wcc;
-> > > > +	int dir_sticky;
-> > > >  	int err;
-> > > >  
-> > > >  	if (setattr->sa_iattr.ia_valid & ATTR_SIZE) {
-> > > > @@ -1165,10 +1172,26 @@ nfsd4_setattr(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
-> > > >  
-> > > >  	inode = cstate->current_fh.fh_dentry->d_inode;
-> > > >  	status = nfsd4_acl_to_attr(S_ISDIR(inode->i_mode) ? NF4DIR : NF4REG,
-> > > > -				   setattr->sa_acl, &attrs);
-> > > > -
-> > > > +				   setattr->sa_acl, &attrs, &dir_sticky);
-> > > >  	if (status)
-> > > >  		goto out;
-> > > > +
-> > > > +	if (S_ISDIR(inode->i_mode) && dir_sticky != -1 && !!(inode->i_mode & S_ISVTX) != dir_sticky) {
-> > > > +		/*
-> > > > +		 * Set directory sticky bit deduced from the ACL attr.
-> > > > +		 * Do not clear sticky bit if it was explicitly set in MODE attr
-> > > > +		 * but was not deduced from ACL attr because clients can send
-> > > > +		 * both MODE and ACL attrs where sticky bit is only in MODE attr.
-> > > > +		 */
-> > > > +		if (!(attrs.na_iattr->ia_valid & ATTR_MODE))
-> > > > +			attrs.na_iattr->ia_mode = inode->i_mode;
-> > > > +		if (dir_sticky)
-> > > > +			attrs.na_iattr->ia_mode |= S_ISVTX;
-> > > > +		else if (!(attrs.na_iattr->ia_valid & ATTR_MODE))
-> > > > +			attrs.na_iattr->ia_mode &= ~S_ISVTX;
-> > > > +		attrs.na_iattr->ia_valid |= ATTR_MODE;
-> > > > +	}
-> > > > +
-> > > >  	save_no_wcc = cstate->current_fh.fh_no_wcc;
-> > > >  	cstate->current_fh.fh_no_wcc = true;
-> > > >  	status = nfsd_setattr(rqstp, &cstate->current_fh, &attrs, NULL);
-> > > > -- 
-> > > > 2.20.1
-> > > > 
-> > > 
-> > > Hi Pali -
-> > > 
-> > > Apologies for the delayed response.
-> > > 
-> > > Being somewhat un-expert in things ACL, I'm not sure if this is the
-> > > correct approach, or if it's right for the POSIX ACL-only
-> > > implementation we have in Linux. I'm going to research this a bit
-> > > and get back to you.
-> > > 
-> > > -- 
-> > > Chuck Lever
-> > 
-> > Hello Chuck, thank you reply.
-> > 
-> > Just to note that this does not affect POSIX ACL-only storage on Linux
-> > server. Everything is same as before (it is POSIX ACL-only and
-> > everything is evaluated via POSIX ACLs).
-> > 
-> > This change is just what Linux NFS4 server provides to NFS4 clients,
-> > i.e. not for POSIX clients. As Linux NFS4 server already maps POSIX-ACL
-> > into NFS4-ACL format, I think that it makes sense to also map
-> > POSIX-sticky bit into NFS4-ACL format. It allows better interop for NFS4
-> > clients which use NFS4 ACLs.
-> > 
-> > What is this change trying to achieve is to allow Linux server to serve
-> > POSIX things (like sticky bit) for NFS4-ACL clients which are not POSIX
-> > aware, and serve this sticky bit in NFS4-ACL language. And same for
-> > opposite direction, to translate NFS4 ACL rules which describe sticky
-> > bit into the POSIX sticky bit in mode.
-> 
-> The fundamental claim from your patch description is that:
-> 
-> > > > the NFS4 ACL client is not
-> > > > aware of the fact that it cannot delete some files if the
-> > > > sticky bit is set on the server on parent directory.
-> 
-> POSIX-based clients are in fact aware of this additional constraint
-> because they can see the set of mode bits returned by GETATTR.
-> 
-> So can non-POSIX clients for that matter; although they might not
-> natively understand what that bit means, their NFS client can impart
-> that meaning.
-
-Of course POSIX client is. But NFS4 ACL client is not (NFS4 ACL are not
-POSIX/compatible).
-
-> I can find no spec mandate or guidance that requires this mapping,
-> nor can I find any other NFS server implementations that add it.
-> If this is indeed a valuable innovation, a standard that recommends
-> or requires implementation of this feature would be the place to
-> begin.
-> 
-> What RFC 8881 does say is on point:
-> 
-> > 6.3.1.1. Server Considerations
-> 
-> > The server uses the algorithm described in Section 6.2.1 to
-> > determine whether an ACL allows access to an object. However, the
-> > ACL might not be the sole determiner of access.
-> 
-> A list of examples follows. The spirit of this text seems to be that
-> a file object's ACL need not reflect every possible security policy
-> that a server might use to determine whether an operation may
-> proceed.
-> 
-> -- 
-> Chuck Lever
-
-Yes, it is not mentioned neither as mandatory or recommended. And as you
-wrote server does not have to reflect.
-
-But it helps NFS4 ACL based clients (i.e. non-POSIX), for example for
-Windows NFS4 client. Also I mentioned that it helps to preserve
-permissions then copying directory to some other filesystem, e.g. NTFS.
+SGkgVXNhbWEsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogVXNhbWEg
+QXJpZiA8dXNhbWFhcmlmNjQyQGdtYWlsLmNvbT4NCj4gU2VudDogTW9uZGF5LCBTZXB0ZW1iZXIg
+MiwgMjAyNCA3OjQxIEFNDQo+IFRvOiBTcmlkaGFyLCBLYW5jaGFuYSBQIDxrYW5jaGFuYS5wLnNy
+aWRoYXJAaW50ZWwuY29tPjsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4
+LW1tQGt2YWNrLm9yZzsgaGFubmVzQGNtcHhjaGcub3JnOw0KPiB5b3NyeWFobWVkQGdvb2dsZS5j
+b207IG5waGFtY3NAZ21haWwuY29tOw0KPiBjaGVuZ21pbmcuemhvdUBsaW51eC5kZXY7IHJ5YW4u
+cm9iZXJ0c0Bhcm0uY29tOyBIdWFuZywgWWluZw0KPiA8eWluZy5odWFuZ0BpbnRlbC5jb20+OyAy
+MWNuYmFvQGdtYWlsLmNvbTsgYWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZw0KPiBDYzogWm91LCBO
+YW5oYWkgPG5hbmhhaS56b3VAaW50ZWwuY29tPjsgRmVnaGFsaSwgV2FqZGkgSw0KPiA8d2FqZGku
+ay5mZWdoYWxpQGludGVsLmNvbT47IEdvcGFsLCBWaW5vZGggPHZpbm9kaC5nb3BhbEBpbnRlbC5j
+b20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjYgMC8zXSBtbTogWlNXQVAgc3dhcC1vdXQgb2Yg
+bVRIUCBmb2xpb3MNCj4gDQo+IA0KPiANCj4gT24gMjkvMDgvMjAyNCAxNzoyNywgS2FuY2hhbmEg
+UCBTcmlkaGFyIHdyb3RlOg0KPiA+IEhpIEFsbCwNCj4gPg0KPiA+IFRoaXMgcGF0Y2gtc2VyaWVz
+IGVuYWJsZXMgenN3YXBfc3RvcmUoKSB0byBhY2NlcHQgYW5kIHN0b3JlIG1USFANCj4gPiBmb2xp
+b3MuIFRoZSBtb3N0IHNpZ25pZmljYW50IGNvbnRyaWJ1dGlvbiBpbiB0aGlzIHNlcmllcyBpcyBm
+cm9tIHRoZQ0KPiA+IGVhcmxpZXIgUkZDIHN1Ym1pdHRlZCBieSBSeWFuIFJvYmVydHMgWzFdLiBS
+eWFuJ3Mgb3JpZ2luYWwgUkZDIGhhcyBiZWVuDQo+ID4gbWlncmF0ZWQgdG8gdjYuMTEtcmMzIGlu
+IHBhdGNoIDIvNCBvZiB0aGlzIHNlcmllcy4NCj4gPg0KPiA+IFsxXTogW1JGQyBQQVRDSCB2MV0g
+bW06IHpzd2FwOiBTdG9yZSBsYXJnZSBmb2xpb3Mgd2l0aG91dCBzcGxpdHRpbmcNCj4gPiAgICAg
+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LW1tLzIwMjMxMDE5MTEwNTQzLjMyODQ2NTQt
+MS0NCj4gcnlhbi5yb2JlcnRzQGFybS5jb20vVC8jdQ0KPiA+DQo+ID4gQWRkaXRpb25hbGx5LCB0
+aGVyZSBpcyBhbiBhdHRlbXB0IHRvIG1vZHVsYXJpemUgc29tZSBvZiB0aGUgZnVuY3Rpb25hbGl0
+eQ0KPiA+IGluIHpzd2FwX3N0b3JlKCksIHRvIG1ha2UgaXQgbW9yZSBhbWVuYWJsZSB0byBzdXBw
+b3J0aW5nIGFueS1vcmRlcg0KPiA+IG1USFBzLiBGb3IgaW5zdGFuY2UsIHRoZSBmdW5jdGlvbiB6
+c3dhcF9zdG9yZV9lbnRyeSgpIHN0b3JlcyBhDQo+IHpzd2FwX2VudHJ5DQo+ID4gaW4gdGhlIHhh
+cnJheS4gTGlrZXdpc2UsIHpzd2FwX2RlbGV0ZV9zdG9yZWRfb2Zmc2V0cygpIGNhbiBiZSB1c2Vk
+IHRvDQo+ID4gZGVsZXRlIGFsbCBvZmZzZXRzIGNvcnJlc3BvbmRpbmcgdG8gYSBoaWdoZXIgb3Jk
+ZXIgZm9saW8gc3RvcmVkIGluIHpzd2FwLg0KPiA+DQo+ID4gRm9yIGFjY291bnRpbmcgcHVycG9z
+ZXMsIHRoZSBwYXRjaC1zZXJpZXMgYWRkcyBwZXItb3JkZXIgbVRIUCBzeXNmcw0KPiA+ICJ6c3dw
+b3V0IiBjb3VudGVycyB0aGF0IGdldCBpbmNyZW1lbnRlZCB1cG9uIHN1Y2Nlc3NmdWwgenN3YXBf
+c3RvcmUgb2YNCj4gPiBhbiBtVEhQIGZvbGlvOg0KPiA+DQo+ID4gL3N5cy9rZXJuZWwvbW0vdHJh
+bnNwYXJlbnRfaHVnZXBhZ2UvaHVnZXBhZ2VzLSprQi9zdGF0cy96c3dwb3V0DQo+ID4NCj4gPiBB
+IG5ldyBjb25maWcgdmFyaWFibGUgQ09ORklHX1pTV0FQX1NUT1JFX1RIUF9ERUZBVUxUX09OIChv
+ZmYgYnkNCj4gZGVmYXVsdCkNCj4gPiB3aWxsIGVuYWJsZS9kaXNhYmxlIHpzd2FwIHN0b3Jpbmcg
+b2YgKG0pVEhQLiBXaGVuIGRpc2FibGVkLCB6c3dhcCB3aWxsDQo+ID4gZmFsbGJhY2sgdG8gcmVq
+ZWN0aW5nIHRoZSBtVEhQIGZvbGlvLCB0byBiZSBwcm9jZXNzZWQgYnkgdGhlIGJhY2tpbmcNCj4g
+PiBzd2FwIGRldmljZS4NCj4gPg0KPiA+IFRoaXMgcGF0Y2gtc2VyaWVzIGlzIGEgcHJlY3Vyc29y
+IHRvIFpTV0FQIGNvbXByZXNzIGJhdGNoaW5nIG9mIG1USFANCj4gPiBzd2FwLW91dCBhbmQgZGVj
+b21wcmVzcyBiYXRjaGluZyBvZiBzd2FwLWlucyBiYXNlZCBvbg0KPiBzd2FwaW5fcmVhZGFoZWFk
+KCksDQo+ID4gdXNpbmcgSW50ZWwgSUFBIGhhcmR3YXJlIGFjY2VsZXJhdGlvbiwgd2hpY2ggd2Ug
+d291bGQgbGlrZSB0byBzdWJtaXQgaW4NCj4gPiBzdWJzZXF1ZW50IFJGQyBwYXRjaC1zZXJpZXMs
+IHdpdGggcGVyZm9ybWFuY2UgaW1wcm92ZW1lbnQgZGF0YS4NCj4gPg0KPiBIaSBLYW5jaGFuYSwN
+Cj4gDQo+IElmIEkgYW0gcmVwZWF0aW5nIGFueSBvZiB0aGUgcXVlc3Rpb25zIHJhaXNlZCBpbiBw
+cmV2aW91cyByZXZpc2lvbnMNCj4gb3ZlciBoZXJlLCBwbGVhc2UgZmVlbCBmcmVlIHRvIGp1c3Qg
+cG9pbnQgdG8gZWFybGllciByZXNwb25zZXMhDQoNClN1cmUsIG5vIHByb2JsZW0uIFRoYW5rcyBm
+b3IgdGhlIHF1ZXN0aW9ucyBhbmQgb2JzZXJ2YXRpb25zIHdpdGggcmVnYXJkcw0KdG8gdGhlIGRh
+dGEgcG9zdGVkIGluIHY2IQ0KDQo+IA0KPiBKdXN0IHdhbnRlZCB0byBjaGVjayB3aGF0IGRvZXMg
+Y29tcHJlc3MgYmF0Y2hpbmcgb2YgbVRIUCBzd2FwLW91dA0KPiBtZWFucz8NCj4gRG9lcyBpdCBt
+ZWFuIHRoYXQgenN3YXAgd2lsbCBub3QgY29tcHJlc3MgbVRIUCBwYWdlIGJ5IHBhZ2UsIGJ1dCB3
+aWxsDQo+IGNvbXByZXNzIHRoZSBlbnRpcmUgbVRIUD8NCj4gSWYgaXQgaW1wcm92ZXMgcGVyZm9y
+bWFuY2UgYW5kIHBvc3NpYmx5IHRoZSBudW1iZXJzIGZvciBjYXNlIDIgYmVsb3csIG1heWJlDQo+
+IGl0cyB3b3J0aA0KPiBhZGRpbmcgaXQgdG8gdGhpcyBzZXJpZXM/DQoNCldpdGggSW50ZWwgSUFB
+LCB3ZSBoYXZlIHRoZSBvcHBvcnR1bml0eSB0byBtYWtlIHVzZSBvZiBjb21wcmVzc2lvbg0KYW5k
+IGRlY29tcHJlc3Npb24gZW5naW5lcyBpbiBoYXJkd2FyZSB0byBkbyBwYXJhbGxlbCBjb21wcmVz
+c2lvbnMgZHVyaW5nDQpzd2Fwb3V0IGFuZCBwYXJhbGxlbCBkZWNvbXByZXNzaW9ucyBkdXJpbmcg
+c3dhcGluIHdpdGggcmVhZGFoZWFkLg0KSWYgY29tcHJlc3Npb25zIGNhbiBiZSBwYXJhbGxlbGl6
+ZWQsIHdlIGNhbiBpbXByb3ZlIHJlY2xhaW0gcGVyZm9ybWFuY2UuDQpJZiBkZWNvbXByZXNzaW9u
+cyBjYW4gYmUgcGFyYWxsZWxpemVkLCB3ZSBjYW4gaW1wcm92ZSBwYWdlLWZhdWx0IGhhbmRsaW5n
+DQpwZXJmb3JtYW5jZS4NCg0KV2UgaGF2ZSBpbXBsZW1lbnRlZCBjb21wcmVzcyBiYXRjaGluZyB3
+aXRoaW4gbVRIUCBmb2xpb3MgZHVyaW5nDQp6c3dhcCBzdG9yZSwgYXMgd2VsbCBhcyBjb21wcmVz
+cyBiYXRjaGluZyBvZiBhbnktb3JkZXIgZm9saW9zIGR1cmluZw0Kc2hyaW5rX2ZvbGlvX2xpc3Qo
+KSAtLSBzd2FwX3dyaXRlcGFnZSgpIHVzaW5nIGEgcGx1ZyBtZWNoYW5pc20sIHNpbWlsYXINCnRv
+IHRoZSBleGlzdGluZyBzd2FwX3dyaXRlX3VucGx1ZygpIGltcGxlbWVudGF0aW9uLg0KDQpJbml0
+aWFsbHksIG91ciBzb2x1dGlvbiB3b3JrcyBhdCB0aGUgZ3JhbnVsYXJpdHkgb2YgY29tcHJlc3Np
+bmcgUEFHRV9TSVpFDQpwYWdlcyB3aXRoaW4gKG1hbnkpIGZvbGlvcyBpbiBwYXJhbGxlbCwgdG8g
+bWF4aW1pemUgdGhyb3VnaHB1dCB3aXRoIElBQQ0KYW5kIG1pbmltaXplIGxhdGVuY3kgcGVyIGZv
+bGlvIHN0b3JlL2xvYWQuIFRoaXMgaXMgdGhlIGNvbXByZXNzL2RlY29tcHJlc3MNCmJhdGNoaW5n
+IEkgd2FzIHJlZmVycmluZyB0by4gVG8gdXRpbGl6ZSBJQUEgY29tcHJlc3MvZGVjb21wcmVzcyBl
+bmdpbmVzLA0Kd2UgaGF2ZSBkZXZlbG9wZWQgdGhlIHJlc3BlY3RpdmUgYmF0Y2hpbmcgaW50ZXJm
+YWNlcyBmcm9tDQpzaHJpbmtfZm9saW9fbGlzdCgpIGFuZCBmcm9tIHN3YXBpbl9yZWFkYWhlYWQo
+KS4gT3VyIGV4cGVyaW1lbnRzDQppbiBtdWx0aS1pbnN0YW5jZSwgaGlnaGx5IGNvbnRlbmRlZCBz
+Y2VuYXJpb3MgdW5kZXIgbWVtb3J5IHByZXNzdXJlLA0KaGF2ZSBkZW1vbnN0cmF0ZWQgc2lnbmlm
+aWNhbnQga2VybmVsIGFuZCB3b3JrbG9hZCBsZXZlbCBwZXJmb3JtYW5jZQ0KaW1wcm92ZW1lbnRz
+IGFuZCBvdmVyYWxsIHN5c3RlbSBsZXZlbCBtZW1vcnkgc2F2aW5ncy4gSSB3YXMgaW50ZW5kaW5n
+DQp0byBzdWJtaXQgdGhpcyBmdW5jdGlvbmFsaXR5IGFzIHBhdGNoLXNlcmllcyBzZXBhcmF0ZSBm
+cm9tIHRoZSBiYXNpYw0KIm1tOiB6c3dhcDogc3VwcG9ydCBtVEhQIHN3YXBvdXQgaW4genN3YXBf
+c3RvcmUoKSIgKHRoaXMgcGF0Y2gtc2VyaWVzKQ0KYXMgaW4gbXkgcmVzcG9uc2UgdG8gWW9zcnku
+IEFzIGxvbmcgYXMgd2UgY2FuIGRlbW9uc3RyYXRlIHRoYXQgenN3YXAtbVRIUA0Kc3dhcG91dCBp
+cyBiZW5lZmljaWFsIGluIGFuZCBvZiBpdHNlbGYsIEkgYmVsaWV2ZSB3ZSBjYW4gc3VibWl0IElB
+QSBiYXRjaGluZw0KaW1wcm92ZW1lbnRzIGFzIHNlcGFyYXRlIHBhdGNoIHNlcmllcywgYXMgbm90
+ZWQgaW4gbXkgcmVzcG9uc2UgdG8gWW9zcnkuDQoNCldlIGFyZSBhbHNvIHN0YXlpbmcgdHVuZWQg
+aW4gdG8gQmFycnkgU29uZydzIG1USFAgc3dhcGluIGVmZm9ydHMNCnRvIGV2ZW50dWFsbHkgYmUg
+YWJsZSB0byBzd2Fwb3V0L3N3YXBpbiBhbiBtVEhQIGFzIGEgc2luZ2xlIGVudGl0eS4NCkluIHRo
+aXMgY2FzZSBhbHNvLCBJQUEgYnlOIGNhbiBjb21wcmVzcy9kZWNvbXByZXNzIGEgdHVuYWJsZSBu
+dW1iZXINCm9mIGNodW5rcyBvZiBhbiBtVEhQIGluIHBhcmFsbGVsIFsxXS4NCg0KVGhlIElBQSBi
+eU4gYXBwcm9hY2ggaXMgZGVwZW5kZW50IG9uIEJhcnJ5J3MgcGF0Y2hzZXRzIGZvciBtVEhQDQpz
+d2FwaW4gWzJdIGFuZCBhc3NvY2lhdGVkIHpzbWFsbG9jIHVwZGF0ZXMgZm9yIHN0b3JpbmcgbGFy
+Z2VyIGNvbXByZXNzZWQNCmJ1ZmZlcnMgWzNdLiBQbGVhc2Ugbm90ZSB0aGF0IEJhcnJ5J3Mgd29y
+ayBpcyBmb2N1c2VkIG9uIFpSQU0vc3luYyBJTyBtVEhQDQpzd2FwaW4gYW5kIG5vdCBmb3IgWlNX
+QVAuDQoNClsxXSBodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwvOGZlMDRlODZmMDkwNzU4OGQy
+MTA4ODVhYzkxOTY1OTYwZjk3ZjQ1MC4xNzE0NTgxNzkyLmdpdC5hbmRyZS5nbG92ZXJAbGludXgu
+aW50ZWwuY29tL1QvI3UNClsyXSBodHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3Byb2plY3Qv
+bGludXgtbW0vY292ZXIvMjAyNDA5MDgyMzIxMTkuMjE1Ny0xLTIxY25iYW9AZ21haWwuY29tLw0K
+WzNdIGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI0MDMyNzIxNDgxNi4zMTE5MS0xLTIx
+Y25iYW9AZ21haWwuY29tLw0KDQo+IA0KPiA+IFRoYW5rcyB0byBZaW5nIEh1YW5nIGZvciBwcmUt
+cG9zdGluZyByZXZpZXcgZmVlZGJhY2sgYW5kIHN1Z2dlc3Rpb25zIQ0KPiA+DQo+ID4gVGhhbmtz
+IGFsc28gdG8gTmhhdCwgWW9zcnkgYW5kIEJhcnJ5IGZvciB0aGVpciBoZWxwZnVsIGZlZWRiYWNr
+LCBkYXRhDQo+ID4gcmV2aWV3cyBhbmQgc3VnZ2VzdGlvbnMhDQo+ID4NCj4gPiBDaGFuZ2VzIHNp
+bmNlIHY1Og0KPiA+ID09PT09PT09PT09PT09PT09DQo+ID4gMSkgUmViYXNlZCB0byBtbS11bnN0
+YWJsZSBhcyBvZiA4LzI5LzIwMjQsDQo+ID4gICAgY29tbWl0IDkyODdlNGFkYmM2YWI4ZmEwNGQy
+NWViODJlMDk3ZmVkODc3YTQ2NDIuDQo+ID4gMikgQWRkZWQgQ09ORklHX1pTV0FQX1NUT1JFX1RI
+UF9ERUZBVUxUX09OIChvZmYgYnkgZGVmYXVsdCkgdG8NCj4gPiAgICBlbmFibGUvZGlzYWJsZSB6
+c3dhcF9zdG9yZSgpIG9mIG1USFAgZm9saW9zLiBUaGFua3MgTmhhdCBmb3IgdGhlDQo+ID4gICAg
+c3VnZ2VzdGlvbiB0byBhZGQgYSBrbm9iIGJ5IHdoaWNoIHVzZXJzIGNhbiBlbmFibGUvZGlzYWJs
+ZSB0aGlzDQo+ID4gICAgY2hhbmdlLiBOaGF0LCBJIGhvcGUgdGhpcyBpcyBhbG9uZyB0aGUgbGlu
+ZXMgb2Ygd2hhdCB5b3Ugd2VyZQ0KPiA+ICAgIHRoaW5raW5nLg0KPiA+IDMpIEFkZGVkIHZtLXNj
+YWxhYmlsaXR5IHVzZW1lbSBkYXRhIHdpdGggNEsgZm9saW9zIHdpdGgNCj4gPiAgICBDT05GSUdf
+WlNXQVBfU1RPUkVfVEhQX0RFRkFVTFRfT04gb2ZmLCB0aGF0IEkgZ2F0aGVyZWQgdG8gbWFrZQ0K
+PiBzdXJlDQo+ID4gICAgdGhlcmUgaXMgbm8gcmVncmVzc2lvbiB3aXRoIHRoaXMgY2hhbmdlLg0K
+PiA+IDQpIEFkZGVkIGRhdGEgd2l0aCB1c2VtZW0gd2l0aCA2NEsgYW5kIDJNIFRIUCBmb3IgYW4g
+YWx0ZXJuYXRlIHZpZXcgb2YNCj4gPiAgICBiZWZvcmUvYWZ0ZXIsIGFzIHN1Z2dlc3RlZCBieSBZ
+b3NyeSwgc28gd2UgY2FuIHVuZGVyc3RhbmQgdGhlIGltcGFjdA0KPiA+ICAgIG9mIHdoZW4gbVRI
+UHMgYXJlIHNwbGl0IGludG8gNEsgZm9saW9zIGluIHNocmlua19mb2xpb19saXN0KCkNCj4gPiAg
+ICAoQ09ORklHX1RIUF9TV0FQIG9mZikgdnMuIG5vdCBzcGxpdCAoQ09ORklHX1RIUF9TV0FQIG9u
+KSBhbmQgc3RvcmVkDQo+ID4gICAgaW4genN3YXAuIFRoYW5rcyBZb3NyeSBmb3IgdGhpcyBzdWdn
+ZXN0aW9uLg0KPiA+DQo+ID4gQ2hhbmdlcyBzaW5jZSB2NDoNCj4gPiA9PT09PT09PT09PT09PT09
+PQ0KPiA+IDEpIFB1Ymxpc2hlZCBiZWZvcmUvYWZ0ZXIgZGF0YSB3aXRoIHpzdGQsIGFzIHN1Z2dl
+c3RlZCBieSBOaGF0IChUaGFua3MNCj4gPiAgICBOaGF0IGZvciB0aGUgZGF0YSByZXZpZXdzISku
+DQo+ID4gMikgUmViYXNlZCB0byBtbS11bnN0YWJsZSBmcm9tIDgvMjcvMjAyNCwNCj4gPiAgICBj
+b21taXQgYjY1OWVkZWMwNzljOTAwMTJjZjhkMDU2MjRlMzEyZDEwNjJiOGI4Ny4NCj4gPiAzKSBJ
+bmNvcnBvcmF0ZWQgdGhlIGNoYW5nZSBpbiBtZW1jb250cm9sLmggdGhhdCBkZWZpbmVzIG9ial9j
+Z3JvdXBfZ2V0KCkgaWYNCj4gPiAgICBDT05GSUdfTUVNQ0cgaXMgbm90IGRlZmluZWQsIHRvIHJl
+c29sdmUgYnVpbGQgZXJyb3JzIHJlcG9ydGVkIGJ5IGtlcm5lbA0KPiA+ICAgIHJvYm90OyBhcyBw
+ZXIgTmhhdCdzIGFuZCBNaWNoYWwncyBzdWdnZXN0aW9uIHRvIG5vdCByZXF1aXJlIGEgc2VwYXJh
+dGUNCj4gPiAgICBwYXRjaCB0byBmaXggdGhlIGJ1aWxkIGVycm9ycyAodGhhbmtzIGJvdGghKS4N
+Cj4gPiA0KSBEZWxldGVkIGFsbCBzYW1lLWZpbGxlZCBmb2xpbyBwcm9jZXNzaW5nIGluIHpzd2Fw
+X3N0b3JlKCkgb2YgbVRIUCwgYXMNCj4gPiAgICBzdWdnZXN0ZWQgYnkgWW9zcnkgKFRoYW5rcyBZ
+b3NyeSEpLg0KPiA+IDUpIFNxdWFzaGVkIHRoZSBjb21taXRzIHRoYXQgZGVmaW5lIG5ldyBtdGhw
+IHpzd3BvdXQgc3RhdCBjb3VudGVycywgYW5kDQo+ID4gICAgaW52b2tlIGNvdW50X210aHBfc3Rh
+dCgpIGFmdGVyIHN1Y2Nlc3NmdWwgenN3YXBfc3RvcmUoKXM7IGludG8gYSBzaW5nbGUNCj4gPiAg
+ICBjb21taXQuIFRoYW5rcyBZb3NyeSBmb3IgdGhpcyBzdWdnZXN0aW9uIQ0KPiA+DQo+ID4gQ2hh
+bmdlcyBzaW5jZSB2MzoNCj4gPiA9PT09PT09PT09PT09PT09PQ0KPiA+IDEpIFJlYmFzZWQgdG8g
+bW0tdW5zdGFibGUgY29tbWl0DQo+IDhjMGI0ZjdiNjVmZDFjYTdhZjAxMjY3ZjQ5MWU4MTVhNDBk
+Nzc0NDQuDQo+ID4gICAgVGhhbmtzIHRvIEJhcnJ5IGZvciBzdWdnZXN0aW5nIGFsaWduaW5nIHdp
+dGggUnlhbiBSb2JlcnRzJyBsYXRlc3QNCj4gPiAgICBjaGFuZ2VzIHRvIGNvdW50X210aHBfc3Rh
+dCgpIHNvIHRoYXQgaXQncyBhbHdheXMgZGVmaW5lZCwgZXZlbiB3aGVuIFRIUA0KPiA+ICAgIGlz
+IGRpc2FibGVkLiBCYXJyeSwgSSBoYXZlIGFsc28gbWFkZSBvbmUgb3RoZXIgY2hhbmdlIGluIHBh
+Z2VfaW8uYw0KPiA+ICAgIHdoZXJlIGNvdW50X210aHBfc3RhdCgpIGlzIGNhbGxlZCBieSBjb3Vu
+dF9zd3BvdXRfdm1fZXZlbnQoKS4gSSB3b3VsZA0KPiA+ICAgIGFwcHJlY2lhdGUgaXQgaWYgeW91
+IGNhbiByZXZpZXcgdGhpcy4gVGhhbmtzIQ0KPiA+ICAgIEhvcGVmdWxseSB0aGlzIHNob3VsZCBy
+ZXNvbHZlIHRoZSBrZXJuZWwgcm9ib3QgYnVpbGQgZXJyb3JzLg0KPiA+DQo+ID4gQ2hhbmdlcyBz
+aW5jZSB2MjoNCj4gPiA9PT09PT09PT09PT09PT09PQ0KPiA+IDEpIEdhdGhlcmVkIHVzZW1lbSBk
+YXRhIHVzaW5nIFNTRCBhcyB0aGUgYmFja2luZyBzd2FwIGRldmljZSBmb3IgenN3YXAsDQo+ID4g
+ICAgYXMgc3VnZ2VzdGVkIGJ5IFlpbmcgSHVhbmcuIFlpbmcsIEkgd291bGQgYXBwcmVjaWF0ZSBp
+dCBpZiB5b3UgY2FuDQo+ID4gICAgcmV2aWV3IHRoZSBsYXRlc3QgZGF0YS4gVGhhbmtzIQ0KPiA+
+IDIpIEdlbmVyYXRlZCB0aGUgYmFzZSBjb21taXQgaW5mbyBpbiB0aGUgcGF0Y2hlcyB0byBhdHRl
+bXB0IHRvIGFkZHJlc3MNCj4gPiAgICB0aGUga2VybmVsIHRlc3Qgcm9ib3QgYnVpbGQgZXJyb3Jz
+Lg0KPiA+IDMpIE5vIGNvZGUgY2hhbmdlcyB0byB0aGUgaW5kaXZpZHVhbCBwYXRjaGVzIHRoZW1z
+ZWx2ZXMuDQo+ID4NCj4gPiBDaGFuZ2VzIHNpbmNlIFJGQyB2MToNCj4gPiA9PT09PT09PT09PT09
+PT09PT09PT0NCj4gPg0KPiA+IDEpIFVzZSBzeXNmcyBmb3IgenN3cG91dCBtVEhQIHN0YXRzLCBh
+cyBwZXIgQmFycnkgU29uZydzIHN1Z2dlc3Rpb24uDQo+ID4gICAgVGhhbmtzIEJhcnJ5IQ0KPiA+
+IDIpIEFkZHJlc3NlZCBzb21lIG9mIHRoZSBjb2RlIHJldmlldyBjb21tZW50cyB0aGF0IE5oYXQg
+UGhhbSBwcm92aWRlZA0KPiBpbg0KPiA+ICAgIFJ5YW4ncyBpbml0aWFsIFJGQyBbMV06DQo+ID4g
+ICAgLSBBZGRlZCBhIGNvbW1lbnQgYWJvdXQgdGhlIGNncm91cCB6c3dhcCBsaW1pdCBjaGVja3Mg
+b2NjdXJpbmcgb25jZQ0KPiBwZXINCj4gPiAgICAgIGZvbGlvIGF0IHRoZSBiZWdpbm5pbmcgb2Yg
+enN3YXBfc3RvcmUoKS4NCj4gPiAgICAgIE5oYXQsIFJ5YW4sIHBsZWFzZSBkbyBsZXQgbWUga25v
+dyBpZiB0aGUgY29tbWVudHMgY29udmV5IHRoZSBzdW1tYXJ5DQo+ID4gICAgICBmcm9tIHRoZSBS
+RkMgZGlzY3Vzc2lvbi4gVGhhbmtzIQ0KPiA+ICAgIC0gUG9zdGVkIGRhdGEgb24gcnVubmluZyB0
+aGUgY2dyb3VwIHN1aXRlJ3MgenN3YXAga3NlbGZ0ZXN0Lg0KPiA+IDMpIFJlYmFzZWQgdG8gdjYu
+MTEtcmMzLg0KPiA+IDQpIEdhdGhlcmVkIHBlcmZvcm1hbmNlIGRhdGEgd2l0aCB1c2VtZW0gYW5k
+IHRoZSByZWJhc2VkIHBhdGNoLXNlcmllcy4NCj4gPg0KPiA+DQo+ID4gUmVncmVzc2lvbiBUZXN0
+aW5nOg0KPiA+ID09PT09PT09PT09PT09PT09PT0NCj4gPiBJIHJhbiB2bS1zY2FsYWJpbGl0eSB1
+c2VtZW0gNzAgcHJvY2Vzc2VzIHdpdGhvdXQgbVRIUCwgaS5lLiwgb25seSA0Sw0KPiA+IGZvbGlv
+cyB3aXRoIG1tLXVuc3RhYmxlIGFuZCB3aXRoIHRoaXMgcGF0Y2gtc2VyaWVzLiBUaGUgbWFpbiBn
+b2FsIHdhcw0KPiA+IHRvIG1ha2Ugc3VyZSB0aGF0IHRoZXJlIGlzIG5vIGZ1bmN0aW9uYWwgb3Ig
+cGVyZm9ybWFuY2UgcmVncmVzc2lvbg0KPiA+IHdydCB0aGUgZWFybGllciB6c3dhcCBiZWhhdmlv
+ciBmb3IgNEsgZm9saW9zLA0KPiA+IENPTkZJR19aU1dBUF9TVE9SRV9USFBfREVGQVVMVF9PTiBp
+cyBub3Qgc2V0LCBhbmQgenN3YXBfc3RvcmUoKSBvZg0KPiA0Sw0KPiA+IHBhZ2VzIGdvZXMgdGhy
+b3VnaCB0aGUgbmV3bHkgYWRkZWQgY29kZSBwYXRoIFt6c3dhcF9zdG9yZSgpLA0KPiA+IHpzd2Fw
+X3N0b3JlX3BhZ2UoKV0uDQo+ID4NCj4gPiBUaGUgZGF0YSBpbmRpY2F0ZXMgdGhlcmUgaXMgbm8g
+cmVncmVzc2lvbi4NCj4gPg0KPiA+ICAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gPiAgICAgICAg
+ICAgICAgICAgICAgICBtbS11bnN0YWJsZSA4LTI4LTIwMjQgICAgICAgICAgICAgICAgICAgICAg
+ICB6c3dhcC1tVEhQIHY2DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIENPTkZJR19aU1dBUF9TVE9SRV9USFBfREVGQVVMVF9PTg0KPiA+ICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIGlzIG5vdCBzZXQNCj4gPiAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gIFpTV0FQIGNv
+bXByZXNzb3IgICAgICAgIHpzdGQgICAgIGRlZmxhdGUtICAgICAgICAgICAgICAgICAgICAgenN0
+ZCAgICBkZWZsYXRlLQ0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IGlhYSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpYWENCj4gPiAgLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tDQo+ID4gIFRocm91Z2hwdXQgKEtCL3MpICAgIDExMCw3NzUgICAgICAxMTMs
+MDEwICAgICAgICAgICAgICAgMTExLDU1MCAgICAgICAgMTIxLDkzNw0KPiA+ICBzeXMgdGltZSAo
+c2VjKSAgICAgIDEsMTQxLjcyICAgICAgIDk1NC44NyAgICAgICAgICAgICAgMSwxMzEuOTUgICAg
+ICAgICA4MjguNDcNCj4gPiAgbWVtY2dfaGlnaCAgICAgICAgICAgMTQwLDUwMCAgICAgIDE1Myw3
+MzcgICAgICAgICAgICAgICAxMzksNzcyICAgICAgICAxMzQsMTI5DQo+ID4gIG1lbWNnX3N3YXBf
+aGlnaCAgICAgICAgICAgIDAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgMCAgICAg
+ICAgICAgICAgMA0KPiA+ICBtZW1jZ19zd2FwX2ZhaWwgICAgICAgICAgICAwICAgICAgICAgICAg
+MCAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgIDANCj4gPiAgcHN3cGluICAgICAg
+ICAgICAgICAgICAgICAgMCAgICAgICAgICAgIDAgICAgICAgICAgICAgICAgICAgICAwICAgICAg
+ICAgICAgICAwDQo+ID4gIHBzd3BvdXQgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAw
+ICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAgICAgICAgMA0KPiA+ICB6c3dwaW4gICAgICAg
+ICAgICAgICAgICAgNjc1ICAgICAgICAgIDY5MCAgICAgICAgICAgICAgICAgICA2ODIgICAgICAg
+ICAgICA2ODQNCj4gPiAgenN3cG91dCAgICAgICAgICAgIDksNTUyLDI5OCAgIDEwLDYwMywyNzEg
+ICAgICAgICAgICAgOSw1NjYsMzkyICAgICAgOSwyNjcsMjEzDQo+ID4gIHRocF9zd3BvdXQgICAg
+ICAgICAgICAgICAgIDAgICAgICAgICAgICAwICAgICAgICAgICAgICAgICAgICAgMCAgICAgICAg
+ICAgICAgMA0KPiA+ICB0aHBfc3dwb3V0XyAgICAgICAgICAgICAgICAwICAgICAgICAgICAgMCAg
+ICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgIDANCj4gPiAgIGZhbGxiYWNrDQo+ID4g
+IHBnbWFqZmF1bHQgICAgICAgICAgICAgMyw0NTMgICAgICAgIDMsNDY4ICAgICAgICAgICAgICAg
+ICAzLDg0MSAgICAgICAgICAzLDQ4Nw0KPiA+ICBaU1dQT1VULTY0a0ItbVRIUCAgICAgICAgbi9h
+ICAgICAgICAgIG4vYSAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgICAgIDANCj4gPiAg
+U1dQT1VULTY0a0ItbVRIUCAgICAgICAgICAgMCAgICAgICAgICAgIDAgICAgICAgICAgICAgICAg
+ICAgICAwICAgICAgICAgICAgICAwDQo+ID4gIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+DQo+
+ID4NCj4gPiBQZXJmb3JtYW5jZSBUZXN0aW5nOg0KPiA+ID09PT09PT09PT09PT09PT09PT09DQo+
+ID4gVGVzdGluZyBvZiB0aGlzIHBhdGNoLXNlcmllcyB3YXMgZG9uZSB3aXRoIHRoZSB2Ni4xMS1y
+YzMgbWFpbmxpbmUsIHdpdGhvdXQNCj4gPiBhbmQgd2l0aCB0aGlzIHBhdGNoLXNlcmllcywgb24g
+YW4gSW50ZWwgU2FwcGhpcmUgUmFwaWRzIHNlcnZlciwNCj4gPiBkdWFsLXNvY2tldCA1NiBjb3Jl
+cyBwZXIgc29ja2V0LCA0IElBQSBkZXZpY2VzIHBlciBzb2NrZXQuDQo+ID4NCj4gPiBUaGUgc3lz
+dGVtIGhhcyA1MDMgR2lCIFJBTSwgd2l0aCAxNzZHaUIgWlJBTSAoMzUlIG9mIGF2YWlsYWJsZSBS
+QU0pIGFzDQo+IHRoZQ0KPiA+IGJhY2tpbmcgc3dhcCBkZXZpY2UgZm9yIFpTV0FQLiB6c3RkIGlz
+IGNvbmZpZ3VyZWQgYXMgdGhlIFpSQU0gY29tcHJlc3Nvci4NCj4gPiBDb3JlIGZyZXF1ZW5jeSB3
+YXMgZml4ZWQgYXQgMjUwME1Iei4NCj4gPg0KPiA+IFRoZSB2bS1zY2FsYWJpbGl0eSAidXNlbWVt
+IiB0ZXN0IHdhcyBydW4gaW4gYSBjZ3JvdXAgd2hvc2UgbWVtb3J5LmhpZ2gNCj4gPiB3YXMgZml4
+ZWQgYXQgNDBHLiBUaGUgaXMgbm8gc3dhcCBsaW1pdCBzZXQgZm9yIHRoZSBjZ3JvdXAuIEZvbGxv
+d2luZyBhDQo+ID4gc2ltaWxhciBtZXRob2RvbG9neSBhcyBpbiBSeWFuIFJvYmVydHMnICJTd2Fw
+LW91dCBtVEhQIHdpdGhvdXQgc3BsaXR0aW5nIg0KPiA+IHNlcmllcyBbMl0sIDcwIHVzZW1lbSBw
+cm9jZXNzZXMgd2VyZSBydW4sIGVhY2ggYWxsb2NhdGluZyBhbmQgd3JpdGluZyAxRyBvZg0KPiA+
+IG1lbW9yeToNCj4gPg0KPiA+ICAgICB1c2VtZW0gLS1pbml0LXRpbWUgLXcgLU8gLW4gNzAgMWcN
+Cj4gPg0KPiA+IFRoZSB2bS9zeXNmcyBtVEhQIHN0YXRzIGluY2x1ZGVkIHdpdGggdGhlIHBlcmZv
+cm1hbmNlIGRhdGEgcHJvdmlkZQ0KPiBkZXRhaWxzDQo+ID4gb24gdGhlIHN3YXBvdXQgYWN0aXZp
+dHkgdG8gWlNXQVAvc3dhcC4NCj4gPg0KPiA+IE90aGVyIGtlcm5lbCBjb25maWd1cmF0aW9uIHBh
+cmFtZXRlcnM6DQo+ID4NCj4gPiAgICAgWlNXQVAgQ29tcHJlc3NvcnMgOiB6c3RkLCBkZWZsYXRl
+LWlhYQ0KPiA+ICAgICBaU1dBUCBBbGxvY2F0b3IgICA6IHpzbWFsbG9jDQo+ID4gICAgIFNXQVAg
+cGFnZS1jbHVzdGVyIDogMg0KPiA+DQo+ID4gSW4gdGhlIGV4cGVyaW1lbnRzIHdoZXJlICJkZWZs
+YXRlLWlhYSIgaXMgdXNlZCBhcyB0aGUgWlNXQVAgY29tcHJlc3NvciwNCj4gPiBJQUEgImNvbXBy
+ZXNzaW9uIHZlcmlmaWNhdGlvbiIgaXMgZW5hYmxlZC4gSGVuY2UgZWFjaCBJQUEgY29tcHJlc3Np
+b24NCj4gPiB3aWxsIGJlIGRlY29tcHJlc3NlZCBpbnRlcm5hbGx5IGJ5IHRoZSAiaWFhX2NyeXB0
+byIgZHJpdmVyLCB0aGUgY3JjLXMNCj4gPiByZXR1cm5lZCBieSB0aGUgaGFyZHdhcmUgd2lsbCBi
+ZSBjb21wYXJlZCBhbmQgZXJyb3JzIHJlcG9ydGVkIGluIGNhc2Ugb2YNCj4gPiBtaXNtYXRjaGVz
+LiBUaHVzICJkZWZsYXRlLWlhYSIgaGVscHMgZW5zdXJlIGJldHRlciBkYXRhIGludGVncml0eSBh
+cw0KPiA+IGNvbXBhcmVkIHRvIHRoZSBzb2Z0d2FyZSBjb21wcmVzc29ycy4NCj4gPg0KPiA+IFRo
+cm91Z2hwdXQgaXMgZGVyaXZlZCBieSBhdmVyYWdpbmcgdGhlIGluZGl2aWR1YWwgNzAgcHJvY2Vz
+c2VzJyB0aHJvdWdocHV0cw0KPiA+IHJlcG9ydGVkIGJ5IHVzZW1lbS4gc3lzIHRpbWUgaXMgbWVh
+c3VyZWQgd2l0aCBwZXJmLiBBbGwgZGF0YSBwb2ludHMgYXJlDQo+ID4gYXZlcmFnZWQgYWNyb3Nz
+IDMgcnVucy4NCj4gPg0KPiA+IENhc2UgMTogQmFzZWxpbmUgd2l0aCBDT05GSUdfVEhQX1NXQVAg
+dHVybmVkIG9mZiwgYW5kIG1USFAgaXMgc3BsaXQgaW4NCj4gcmVjbGFpbS4NCj4gPg0KPiA9PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PQ0KPiA9PT09PT09PT09PT09PT09PQ0KPiA+DQo+ID4gSW4gdGhpcyBzY2VuYXJpbywgdGhlICJi
+ZWZvcmUiIGlzIENPTkZJR19USFBfU1dBUCBzZXQgdG8gb2ZmLCB0aGF0IHJlc3VsdHMgaW4NCj4g
+PiA2NEsvMk0gKG0pVEhQIHRvIGJlIHNwbGl0LCBhbmQgb25seSA0SyBmb2xpb3MgcHJvY2Vzc2Vk
+IGJ5IHpzd2FwLg0KPiA+DQo+ID4gVGhlICJhZnRlciIgaXMgQ09ORklHX1RIUF9TV0FQIHNldCB0
+byBvbiwgYW5kIHRoaXMgcGF0Y2gtc2VyaWVzLCB0aGF0DQo+IHJlc3VsdHMNCj4gPiBpbiA2NEsv
+Mk0gKG0pVEhQIHRvIG5vdCBiZSBzcGxpdCwgYW5kIHByb2Nlc3NlZCBieSB6c3dhcC4NCj4gPg0K
+PiA+ICA2NEtCIG1USFAgKGNncm91cCBtZW1vcnkuaGlnaCBzZXQgdG8gNDBHKToNCj4gPiAgPT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQo+ID4NCj4gPiAgLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQ0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgdjYuMTEtcmMzIG1h
+aW5saW5lICAgICAgICAgICAgICB6c3dhcC1tVEhQICAgICBDaGFuZ2Ugd3J0DQo+ID4gICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgQmFzZWxpbmUgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgQmFzZWxpbmUNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBDT05GSUdfVEhQ
+X1NXQVA9TiAgICAgICBDT05GSUdfVEhQX1NXQVA9WQ0KPiA+ICAtLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tDQo+ID4gIFpTV0FQIGNvbXByZXNzb3IgICAgICAgenN0ZCAgICAgZGVmbGF0ZS0gICAgICAg
+IHpzdGQgICAgZGVmbGF0ZS0gIHpzdGQgZGVmbGF0ZS0NCj4gPiAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIGlhYSAgICAgICAgICAgICAgICAgICAgIGlhYSAgICAgICAgICAg
+IGlhYQ0KPiA+ICAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gIFRocm91Z2hwdXQgKEtCL3Mp
+ICAgMTM2LDExMyAgICAgIDE0MCwwNDQgICAgIDE0MCwzNjMgICAgIDE1MSw5MzggICAgMyUgICAg
+ICAgOCUNCj4gPiAgc3lzIHRpbWUgKHNlYykgICAgICAgOTg2Ljc4ICAgICAgIDk1MS45NSAgICAg
+IDk1NC44NSAgICAgIDczNS40NyAgICAzJSAgICAgIDIzJQ0KPiA+ICBtZW1jZ19oaWdoICAgICAg
+ICAgIDEyNCwxODMgICAgICAxMjcsNTEzICAgICAxMzgsNjUxICAgICAxMzMsODg0DQo+ID4gIG1l
+bWNnX3N3YXBfaGlnaCAgICAgICAgICAgMCAgICAgICAgICAgIDAgICAgICAgICAgIDAgICAgICAg
+ICAgIDANCj4gPiAgbWVtY2dfc3dhcF9mYWlsICAgICA2MTksMDIwICAgICAgNzUxLDA5OSAgICAg
+ICAgICAgMCAgICAgICAgICAgMA0KPiA+ICBwc3dwaW4gICAgICAgICAgICAgICAgICAgIDAgICAg
+ICAgICAgICAwICAgICAgICAgICAwICAgICAgICAgICAwDQo+ID4gIHBzd3BvdXQgICAgICAgICAg
+ICAgICAgICAgMCAgICAgICAgICAgIDAgICAgICAgICAgIDAgICAgICAgICAgIDANCj4gPiAgenN3
+cGluICAgICAgICAgICAgICAgICAgNjU2ICAgICAgICAgIDU2OSAgICAgICAgIDYyNCAgICAgICAg
+IDYzOQ0KPiA+ICB6c3dwb3V0ICAgICAgICAgICA5LDQxMyw2MDMgICAxMSwyODQsODEyICAgOSw0
+NTMsNzYxICAgOSwzODUsOTEwDQo+IA0KPiBJIHdvdWxkIGV4cGVjdCB6c3dwb3V0IHRvIGVpdGhl
+ciByZW1haW4gdGhlIHNhbWUgb3Igc2xpZ2h0bHkgaW5jcmVhc2Ugd2hlbg0KPiB1c2luZw0KPiBD
+T05GSUdfVEhQX1NXQVAuIEJ1dCBmb3IgZGVmbGF0ZS1pYWEsIHRoZXJlIGlzIGEgMTclIGRlY3Jl
+YXNlIGluIHpzd3BvdXQsDQo+IHdoaWNoDQo+IGRvZXNuJ3QgbWFrZSBzZW5zZT8NCg0KR29vZCBx
+dWVzdGlvbi4gV2l0aG91dCBDT05GSUdfVEhQX1NXQVAsIHdlIHNlZSA3NTEsMDk5IG1lbWNnX3N3
+YXBfZmFpbA0KY291bnRzIHdpdGggZGVmbGF0ZS1pYWEuIFdpdGggQ09ORklHX1RIUF9TV0FQLCB3
+ZSBzZWUgMCBtZW1jZ19zd2FwX2ZhaWwNCmNvdW50cyB3aXRoIGRlZmxhdGUtaWFhLiBNeSBpbnRl
+cnByZXRhdGlvbiBvZiB0aGlzIGRhdGEgaXMgdGhhdCB3aXRoDQpDT05GSUdfVEhQX1NXQVAsIHRo
+ZSBtYWluIGNvbnRyaWJ1dGluZyBmYWN0b3JzIHRvIG1lbWNnLmhpZ2ggYnJlYWNoZXMNCmFyZSBm
+YXN0ZXIgc3dhcG91dCBjYXVzaW5nIGZhc3RlciBhbGxvY2F0aW9ucyArIGNncm91cCB6c3dhcCBj
+aGFyZ2luZy4NCldpdGhvdXQgQ09ORklHX1RIUF9TV0FQLCB0aGVyZSBzZWVtcyB0byBiZSBhbiBh
+ZGRpdGlvbmFsIGNvbnRyaWJ1dGlvbg0Kb2YgcGFnZXMgdGhhdCByZW1haW4gaW4gbWVtb3J5IGR1
+ZSB0byBzd2FwIHNsb3QgYWxsb2NhdGlvbiBmYWlsdXJlczsgYW5kDQpoZW5jZSBtb3JlIHN3YXBv
+dXRzLiBDb3VsZCB0aGVyZSBhbHNvIGJlIHNvbWUgZWZmZWN0IG9mIHRoZSByZWNsYWltDQpwYXRo
+IGxhdGVuY3kgb3ZlcmhlYWQgb2YgbWFraW5nIDE2IGNhbGxzIHRvIHN3YXBfd3JpdGVwYWdlKCkg
+cGVyIG1USFANCnRoYXQgaXMgc3BsaXQsIHZzLiBtYWtpbmcgb25lIGNhbGwgaW4gdGhlIGNhc2Ug
+b2YgenN3YXAtbVRIUD8gV291bGQgYXBwcmVjaWF0ZQ0Kb3RoZXIgYW5hbHlzZXMgYW5kIGV4cGxh
+bmF0aW9ucy4NCg0KPiANCj4gPiAgdGhwX3N3cG91dCAgICAgICAgICAgICAgICAwICAgICAgICAg
+ICAgMCAgICAgICAgICAgMCAgICAgICAgICAgMA0KPiA+ICB0aHBfc3dwb3V0XyAgICAgICAgICAg
+ICAgIDAgICAgICAgICAgICAwICAgICAgICAgICAwICAgICAgICAgICAwDQo+ID4gICBmYWxsYmFj
+aw0KPiA+ICBwZ21hamZhdWx0ICAgICAgICAgICAgMyw0NzAgICAgICAgIDMsMzgyICAgICAgIDQs
+NjMzICAgICAgIDMsNjExDQo+ID4gIFpTV1BPVVQtNjRrQiAgICAgICAgICAgIG4vYSAgICAgICAg
+ICBuL2EgICAgIDU5MCw3NjggICAgIDU4Niw1MjENCj4gPiAgU1dQT1VULTY0a0IgICAgICAgICAg
+ICAgICAwICAgICAgICAgICAgMCAgICAgICAgICAgMCAgICAgICAgICAgMA0KPiA+ICAtLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tDQo+ID4NCj4gPg0KPiA+ICAyTUIgUE1ELVRIUC8yMDQ4SyBtVEhQIChj
+Z3JvdXAgbWVtb3J5LmhpZ2ggc2V0IHRvIDQwRyk6DQo+ID4gID09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCj4gPg0KPiA+ICAtLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0NCj4gPiAgICAgICAgICAgICAgICAgICAgICAgIHY2LjExLXJjMyBtYWlubGlu
+ZSAgICAgICAgICAgICAgenN3YXAtbVRIUCAgICBDaGFuZ2Ugd3J0DQo+ID4gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgQmFzZWxpbmUgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBCYXNlbGluZQ0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIENPTkZJR19USFBfU1dBUD1O
+ICAgICAgIENPTkZJR19USFBfU1dBUD1ZDQo+ID4gIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+
+ICBaU1dBUCBjb21wcmVzc29yICAgICAgIHpzdGQgICAgZGVmbGF0ZS0gICAgICAgIHpzdGQgICAg
+ZGVmbGF0ZS0gIHpzdGQgZGVmbGF0ZS0NCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgaWFhICAgICAgICAgICAgICAgICAgICAgaWFhICAgICAgICAgICAgaWFhDQo+ID4g
+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+ICBUaHJvdWdocHV0IChLQi9zKSAgICAxNjQsMjIw
+ICAgIDE3Miw1MjMgICAgICAxNjUsMDA1ICAgICAxNzQsNTM2ICAwLjUlICAgICAgMSUNCj4gPiAg
+c3lzIHRpbWUgKHNlYykgICAgICAgIDg1NS43NiAgICAgNjg2Ljk0ICAgICAgIDgwMS43MiAgICAg
+IDY3Ni42NSAgICA2JSAgICAgIDElDQo+ID4gIG1lbWNnX2hpZ2ggICAgICAgICAgICAxNCw2Mjgg
+ICAgIDE2LDI0NyAgICAgICAxNCw5NTEgICAgICAxNiwwOTYNCj4gPiAgbWVtY2dfc3dhcF9oaWdo
+ICAgICAgICAgICAgMCAgICAgICAgICAwICAgICAgICAgICAgMCAgICAgICAgICAgMA0KPiA+ICBt
+ZW1jZ19zd2FwX2ZhaWwgICAgICAgMTgsNjk4ICAgICAyMSwxMTQgICAgICAgICAgICAwICAgICAg
+ICAgICAwDQo+ID4gIHBzd3BpbiAgICAgICAgICAgICAgICAgICAgIDAgICAgICAgICAgMCAgICAg
+ICAgICAgIDAgICAgICAgICAgIDANCj4gPiAgcHN3cG91dCAgICAgICAgICAgICAgICAgICAgMCAg
+ICAgICAgICAwICAgICAgICAgICAgMCAgICAgICAgICAgMA0KPiA+ICB6c3dwaW4gICAgICAgICAg
+ICAgICAgICAgNjYzICAgICAgICA2NjUgICAgICAgIDUsMzMzICAgICAgICAgNzgxDQo+ID4gIHpz
+d3BvdXQgICAgICAgICAgICA4LDQxOSw0NTggIDgsOTkyLDA2NSAgICA4LDU0Niw4OTUgICA5LDM1
+NSw3NjANCj4gPiAgdGhwX3N3cG91dCAgICAgICAgICAgICAgICAgMCAgICAgICAgICAwICAgICAg
+ICAgICAgMCAgICAgICAgICAgMA0KPiA+ICB0aHBfc3dwb3V0XyAgICAgICAgICAgMTgsNjk3ICAg
+ICAyMSwxMTMgICAgICAgICAgICAwICAgICAgICAgICAwDQo+ID4gICBmYWxsYmFjaw0KPiA+ICBw
+Z21hamZhdWx0ICAgICAgICAgICAgIDMsNDM5ICAgICAgMyw0OTYgICAgICAgIDgsMTM5ICAgICAg
+IDMsNTgyDQo+ID4gIFpTV1BPVVQtMjA0OGtCICAgICAgICAgICBuL2EgICAgICAgIG4vYSAgICAg
+ICAxNiw2ODQgICAgICAxOCwyNzANCj4gPiAgU1dQT1VULTIwNDhrQiAgICAgICAgICAgICAgMCAg
+ICAgICAgICAwICAgICAgICAgICAgMCAgICAgICAgICAgMA0KPiA+ICAtLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLQ0KPiA+DQo+ID4gV2Ugc2VlIGltcHJvdmVtZW50cyBvdmVyYWxsIGluIHRocm91Z2hwdXQg
+YW5kIHN5cyB0aW1lIGZvciB6c3RkIGFuZA0KPiA+IGRlZmxhdGUtaWFhLCB3aGVuIGNvbXBhcmlu
+ZyBiZWZvcmUgKFRIUF9TV0FQPU4pIHZzLiBhZnRlcg0KPiAoVEhQX1NXQVA9WSkuDQo+ID4NCj4g
+Pg0KPiA+IENhc2UgMjogQmFzZWxpbmUgd2l0aCBDT05GSUdfVEhQX1NXQVAgZW5hYmxlZC4NCj4g
+PiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQo+ID4NCj4g
+PiBJbiB0aGlzIHNjZW5hcmlvLCB0aGUgImJlZm9yZSIgcmVwcmVzZW50cyB6c3dhcCByZWplY3Rp
+bmcgbVRIUCwgYW5kIHRoZQ0KPiBtVEhQDQo+ID4gYmVpbmcgc3RvcmVkIGJ5IHRoZSBiYWNraW5n
+IHN3YXAgZGV2aWNlLg0KPiA+DQo+IA0KPiANCj4gSnVzdCBjdXJpb3VzLCBob3cgZGlkIHlvdSBt
+YWtlIHRoZSBiZWZvcmUgY2FzZSBvZiB6c3dhcCByZWplY3RpbmcgbVRIUA0KPiB3b3JrPw0KDQpJ
+IHN1cHBvc2UgeW91ciBxdWVzdGlvbiBpcyBhYm91dCB0aGUgZXhwZXJpbWVudGFsIHNldHVwIHVz
+ZWQgZm9yICJiZWZvcmUiPw0KSWYgc28sIHRoZSBrZXJuZWwgSSB1c2VkIHdhcyB2Ni4xMS1yYzMg
+aW4gd2hpY2ggenN3YXAgcmVqZWN0cyBtVEhQIHN0b3JlcywNCmFuZCBtVEhQIGdldHMgcHJvY2Vz
+c2VkIGluIF9fc3dhcF93cml0ZXBhZ2UoKS4gRm9yIHRoZSB2NiBkYXRhLCBJIGhhZA0KMTc2R2lC
+IFpSQU0gKDM1JSBvZiBhdmFpbGFibGUgUkFNKSBhcyB0aGUgYmFja2luZyBzd2FwIGRldmljZSBm
+b3IgWlNXQVAuDQpIZW5jZSB0aGUgbVRIUHMgd291bGQgYmUgcHJvY2Vzc2VkIGJ5IHN3YXBfd3Jp
+dGVwYWdlX2JkZXZfc3luYygpLg0KUGxlYXNlIGxldCBtZSBrbm93IGlmIHRoaXMgYW5zd2VycyB5
+b3VyIHF1ZXN0aW9uLg0KDQo+IA0KPiA+IFRoZSAiYWZ0ZXIiIHJlcHJlc2VudHMgZGF0YSB3aXRo
+IHRoaXMgcGF0Y2gtc2VyaWVzLCB0aGF0IHJlc3VsdHMgaW4gNjRLLzJNDQo+ID4gKG0pVEhQIGJl
+aW5nIHByb2Nlc3NlZCBieSB6c3dhcC4NCj4gPg0KPiA+ICA2NEtCIG1USFAgKGNncm91cCBtZW1v
+cnkuaGlnaCBzZXQgdG8gNDBHKToNCj4gPiAgPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09DQo+ID4NCj4gPiAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gICAgICAg
+ICAgICAgICAgICAgICAgdjYuMTEtcmMzIG1haW5saW5lICAgICAgICAgICAgICB6c3dhcC1tVEhQ
+ICAgICAgQ2hhbmdlIHdydA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBCYXNl
+bGluZSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgQmFzZWxpbmUNCj4gPiAgLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tDQo+ID4gIFpTV0FQIGNvbXByZXNzb3IgICAgICAgenN0ZCAgIGRlZmxh
+dGUtICAgICAgICB6c3RkICAgIGRlZmxhdGUtICAgenN0ZCBkZWZsYXRlLQ0KPiA+ICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlhYSAgICAgICAgICAgICAgICAgICAgIGlhYSAg
+ICAgICAgICAgICBpYWENCj4gPiAgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gIFRocm91Z2hw
+dXQgKEtCL3MpICAgMTYxLDQ5NiAgICAxNTYsMzQzICAgICAxNDAsMzYzICAgICAxNTEsOTM4ICAg
+LTEzJSAgICAgIC0zJQ0KPiA+ICBzeXMgdGltZSAoc2VjKSAgICAgICA3NzEuNjggICAgIDgwMi4w
+OCAgICAgIDk1NC44NSAgICAgIDczNS40NyAgIC0yNCUgICAgICAgOCUNCj4gPiAgbWVtY2dfaGln
+aCAgICAgICAgICAxMTEsMjIzICAgIDExMCw4ODkgICAgIDEzOCw2NTEgICAgIDEzMyw4ODQNCj4g
+PiAgbWVtY2dfc3dhcF9oaWdoICAgICAgICAgICAwICAgICAgICAgIDAgICAgICAgICAgIDAgICAg
+ICAgICAgIDANCj4gPiAgbWVtY2dfc3dhcF9mYWlsICAgICAgICAgICAwICAgICAgICAgIDAgICAg
+ICAgICAgIDAgICAgICAgICAgIDANCj4gPiAgcHN3cGluICAgICAgICAgICAgICAgICAgIDE2ICAg
+ICAgICAgMTYgICAgICAgICAgIDAgICAgICAgICAgIDANCj4gPiAgcHN3cG91dCAgICAgICAgICAg
+Nyw0NzEsNDcyICA3LDUyNyw5NjMgICAgICAgICAgIDAgICAgICAgICAgIDANCj4gPiAgenN3cGlu
+ICAgICAgICAgICAgICAgICAgNjM1ICAgICAgICA2MDUgICAgICAgICA2MjQgICAgICAgICA2MzkN
+Cj4gPiAgenN3cG91dCAgICAgICAgICAgICAgIDEsNTA5ICAgICAgMSw0NzggICA5LDQ1Myw3NjEg
+ICA5LDM4NSw5MTANCj4gPiAgdGhwX3N3cG91dCAgICAgICAgICAgICAgICAwICAgICAgICAgIDAg
+ICAgICAgICAgIDAgICAgICAgICAgIDANCj4gPiAgdGhwX3N3cG91dF8gICAgICAgICAgICAgICAw
+ICAgICAgICAgIDAgICAgICAgICAgIDAgICAgICAgICAgIDANCj4gPiAgIGZhbGxiYWNrDQo+ID4g
+IHBnbWFqZmF1bHQgICAgICAgICAgICAzLDYxNiAgICAgIDMsNDMwICAgICAgIDQsNjMzICAgICAg
+IDMsNjExDQo+ID4gIFpTV1BPVVQtNjRrQiAgICAgICAgICAgIG4vYSAgICAgICAgbi9hICAgICA1
+OTAsNzY4ICAgICA1ODYsNTIxDQo+ID4gIFNXUE9VVC02NGtCICAgICAgICAgNDY2LDk2NyAgICA0
+NzAsNDk4ICAgICAgICAgICAwICAgICAgICAgICAwDQo+ID4gIC0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LQ0KPiA+DQo+ID4gIDJNQiBQTUQtVEhQLzIwNDhLIG1USFAgKGNncm91cCBtZW1vcnkuaGlnaCBz
+ZXQgdG8gNDBHKToNCj4gPiAgPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PQ0KPiA+DQo+ID4gIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+ICAg
+ICAgICAgICAgICAgICAgICAgICB2Ni4xMS1yYzMgbWFpbmxpbmUgICAgICAgICAgICAgIHpzd2Fw
+LW1USFAgICAgIENoYW5nZSB3cnQNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IEJhc2VsaW5lICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEJhc2VsaW5lDQo+ID4gIC0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+ICBaU1dBUCBjb21wcmVzc29yICAgICAgIHpzdGQgICAg
+ZGVmbGF0ZS0gICAgICAgIHpzdGQgICAgZGVmbGF0ZS0gIHpzdGQgZGVmbGF0ZS0NCj4gPiAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWFhICAgICAgICAgICAgICAgICAgICAg
+aWFhICAgICAgICAgICAgaWFhDQo+ID4gIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+ICBUaHJv
+dWdocHV0IChLQi9zKSAgICAxOTIsMTY0ICAgIDE5NCw2NDMgICAgIDE2NSwwMDUgICAgIDE3NCw1
+MzYgIC0xNCUgICAgIC0xMCUNCj4gPiAgc3lzIHRpbWUgKHNlYykgICAgICAgIDgyMy41NSAgICAg
+ODMwLjQyICAgICAgODAxLjcyICAgICAgNjc2LjY1ICAgIDMlICAgICAgMTklDQo+ID4gIG1lbWNn
+X2hpZ2ggICAgICAgICAgICAxNiwwNTQgICAgIDE1LDkzNiAgICAgIDE0LDk1MSAgICAgIDE2LDA5
+Ng0KPiA+ICBtZW1jZ19zd2FwX2hpZ2ggICAgICAgICAgICAwICAgICAgICAgIDAgICAgICAgICAg
+IDAgICAgICAgICAgIDANCj4gPiAgbWVtY2dfc3dhcF9mYWlsICAgICAgICAgICAgMCAgICAgICAg
+ICAwICAgICAgICAgICAwICAgICAgICAgICAwDQo+ID4gIHBzd3BpbiAgICAgICAgICAgICAgICAg
+ICAgIDAgICAgICAgICAgMCAgICAgICAgICAgMCAgICAgICAgICAgMA0KPiA+ICBwc3dwb3V0ICAg
+ICAgICAgICAgOCw2MjksMjQ4ICA4LDYyOCw5MDcgICAgICAgICAgIDAgICAgICAgICAgIDANCj4g
+PiAgenN3cGluICAgICAgICAgICAgICAgICAgIDU2MCAgICAgICAgNjQ1ICAgICAgIDUsMzMzICAg
+ICAgICAgNzgxDQo+ID4gIHpzd3BvdXQgICAgICAgICAgICAgICAgMSw0MTYgICAgICAxLDUwMyAg
+IDgsNTQ2LDg5NSAgIDksMzU1LDc2MA0KPiA+ICB0aHBfc3dwb3V0ICAgICAgICAgICAgMTYsODU0
+ICAgICAxNiw4NTMgICAgICAgICAgIDAgICAgICAgICAgIDANCj4gPiAgdGhwX3N3cG91dF8gICAg
+ICAgICAgICAgICAgMCAgICAgICAgICAwICAgICAgICAgICAwICAgICAgICAgICAwDQo+ID4gICBm
+YWxsYmFjaw0KPiA+ICBwZ21hamZhdWx0ICAgICAgICAgICAgIDMsMzQxICAgICAgMyw1NzQgICAg
+ICAgOCwxMzkgICAgICAgMyw1ODINCj4gPiAgWlNXUE9VVC0yMDQ4a0IgICAgICAgICAgIG4vYSAg
+ICAgICAgbi9hICAgICAgMTYsNjg0ICAgICAgMTgsMjcwDQo+ID4gIFNXUE9VVC0yMDQ4a0IgICAg
+ICAgICAxNiw4NTQgICAgIDE2LDg1MyAgICAgICAgICAgMCAgICAgICAgICAgMA0KPiA+ICAtLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0NCj4gPg0KPiA+IEluIHRoZSAiQmVmb3JlIiBzY2VuYXJpbywgd2hl
+biB6c3dhcCBkb2VzIG5vdCBzdG9yZSBtVEhQLCBvbmx5IGFsbG9jYXRpb25zDQo+ID4gY291bnQg
+dG93YXJkcyB0aGUgY2dyb3VwIG1lbW9yeSBsaW1pdC4gSG93ZXZlciwgaW4gdGhlICJBZnRlciIg
+c2NlbmFyaW8sDQo+ID4gd2l0aCB0aGUgaW50cm9kdWN0aW9uIG9mIHpzd2FwX3N0b3JlKCkgbVRI
+UCwgYm90aCwgYWxsb2NhdGlvbnMgYXMgd2VsbCBhcw0KPiA+IHRoZSB6c3dhcCBjb21wcmVzc2Vk
+IHBvb2wgdXNhZ2UgZnJvbSBhbGwgNzAgcHJvY2Vzc2VzIGFyZSBjb3VudGVkDQo+IHRvd2FyZHMN
+Cj4gPiB0aGUgbWVtb3J5IGxpbWl0LiBBcyBhIHJlc3VsdCwgd2Ugc2VlIGhpZ2hlciBzd2Fwb3V0
+IGFjdGl2aXR5IGluIHRoZQ0KPiA+ICJBZnRlciIgZGF0YS4gSGVuY2UsIG1vcmUgdGltZSBpcyBz
+cGVudCBkb2luZyByZWNsYWltIGFzIHRoZSB6c3dhcCBjZ3JvdXANCj4gPiBjaGFyZ2UgbGVhZHMg
+dG8gbW9yZSBmcmVxdWVudCBtZW1vcnkuaGlnaCBicmVhY2hlcy4NCj4gPg0KPiANCj4gaG1tLCBp
+ZiB0aGF0IHdhcyB0aGUgY2FzZSwgd291bGRuJ3QgImFmdGVyIiB6c3dwb3V0IGJlIG11Y2ggbW9y
+ZSB0aGFuIHRoZQ0KPiAiYmVmb3JlIg0KPiBwc3dwb3V0LiBCdXQgdGhleSBsb29rIHZlcnkgc2lt
+aWxhcj8gKEV2ZW4gZ29lcyBkb3duIGZvciB6c3RkKQ0KDQpGb3IgNjRrIG1USFAsIHRoZSAiYWZ0
+ZXIiIHpzd3BvdXQgaXMgY29uc2lkZXJhYmx5IG1vcmUgdGhhbiAiYmVmb3JlIiBwc3dwb3V0LA0K
+YW5kIHNvIGFyZSB0aGUgbWVtY2dfaGlnaCBjb3VudHMuIE15IGNvbW1lbnRzIHdlcmUgYmFzZWQg
+b24gdGhpcw0KKG15IGFwb2xvZ2llczogSSBzaG91bGQgaGF2ZSBiZWVuIG1vcmUgc3BlY2lmaWMp
+Lg0KDQpJbiBjYXNlIG9mIDJNIFRIUCwgeW91IGFyZSByaWdodDogdGhlICJhZnRlciIgenN3cG91
+dCBhbmQgImJlZm9yZSIgcHN3cG91dA0KYXJlIHF1aXRlIHNpbWlsYXIuDQoNCj4gDQo+IElmIHBz
+d3BvdXQgaW4gYmVmb3JlIGlzIGFwcHJveGltYXRlbHkgZXF1YWwgdG8genN3cG91dCBpbiBhZnRl
+ciwgdGhlbiBkb2VzbnQgaXQNCj4gbWVhbg0KPiB0aGF0IHN3YXAgaXMgcGVyZm9ybWluZyBiZXR0
+ZXIgdGhhbiB6c3dhcD8gd2hpY2ggcHJvYmFibHkgc2hvdWxkbnQgaGFwcGVuLg0KDQpBZ3JlZWQu
+IEJhc2VkIG9uIGNvbW1lbnRzIGZyb20gWW9zcnkgYW5kIE5oYXQsIEkgaGF2ZSBwb3N0ZWQgNjRr
+IG1USFANCmRhdGEgd2l0aCA0RyBTU0QgYmFja2luZyB6c3dhcCwgaW5zdGVhZCBvZiAxNzVHIFpS
+QU0gYmFja2luZyB6c3dhcC4gSWYgd2UgYWdyZWUNCnRvIGNvbnRpbnVlIHVzaW5nIDRHIFNTRCBh
+cyB0aGUgYmFja2luZyBkZXZpY2UsIEkgY2FuIGdhdGhlciBkYXRhIHdpdGggMk0gVEhQDQphcyB3
+ZWxsIGZvciBmdXJ0aGVyIGFuYWx5c2lzIG9mIHRoaXMgcGF0Y2hzZXQuDQoNClRoYW5rcywNCkth
+bmNoYW5hDQoNCj4gDQo+IFRoYW5rcywNCj4gVXNhbWENCj4gDQo+ID4gVGhpcyBjYXVzZXMgZGVn
+cmFkYXRpb24gaW4gdGhyb3VnaHB1dCBhbmQgc3lzIHRpbWUgd2l0aCB6c3dhcCBtVEhQLCBtb3Jl
+DQo+IHNvDQo+ID4gaW4gY2FzZSBvZiB6c3RkIHRoYW4gZGVmbGF0ZS1pYWEuIENvbXByZXNzIGxh
+dGVuY3kgY291bGQgcGxheSBhIHBhcnQgaW4NCj4gPiB0aGlzIC0gd2hlbiB0aGVyZSBpcyBtb3Jl
+IHN3YXBvdXQgYWN0aXZpdHkgaGFwcGVuaW5nLCBhIHNsb3dlciBjb21wcmVzc29yDQo+ID4gd291
+bGQgY2F1c2UgYWxsb2NhdGlvbnMgdG8gc3RhbGwgZm9yIGFueS9hbGwgb2YgdGhlIDcwIHByb2Nl
+c3Nlcy4NCj4gPg0KPiA+IEluIG15IG9waW5pb24sIGV2ZW4gdGhvdWdoIHRoZSB0ZXN0IHNldCB1
+cCBkb2VzIG5vdCBwcm92aWRlIGFuIGFjY3VyYXRlDQo+ID4gd2F5IGZvciBhIGRpcmVjdCBiZWZv
+cmUvYWZ0ZXIgY29tcGFyaXNvbiAoYmVjYXVzZSBvZiB6c3dhcCB1c2FnZSBiZWluZw0KPiA+IGNv
+dW50ZWQgaW4gY2dyb3VwLCBoZW5jZSB0b3dhcmRzIHRoZSBtZW1vcnkuaGlnaCksIGl0IHN0aWxs
+IHNlZW1zDQo+ID4gcmVhc29uYWJsZSBmb3IgenN3YXBfc3RvcmUgdG8gc3VwcG9ydCAobSlUSFAs
+IHNvIHRoYXQgZnVydGhlciBwZXJmb3JtYW5jZQ0KPiA+IGltcHJvdmVtZW50cyBjYW4gYmUgaW1w
+bGVtZW50ZWQuDQo+ID4NCj4gPiBPbmUgb2YgdGhlIGlkZWFzIHRoYXQgaGFzIHNob3duIHByb21p
+c2UgaW4gb3VyIGV4cGVyaW1lbnRzIGlzIHRvIGltcHJvdmUNCj4gPiBaU1dBUCBtVEhQIHN0b3Jl
+IHBlcmZvcm1hbmNlIHVzaW5nIGJhdGNoaW5nLiBXaXRoIElBQQ0KPiBjb21wcmVzcy9kZWNvbXBy
+ZXNzDQo+ID4gYmF0Y2hpbmcgdXNlZCBpbiBaU1dBUCwgd2UgYXJlIGFibGUgdG8gZGVtb25zdHJh
+dGUgc2lnbmlmaWNhbnQNCj4gPiBwZXJmb3JtYW5jZSBpbXByb3ZlbWVudHMgYW5kIG1lbW9yeSBz
+YXZpbmdzIHdpdGggSUFBIGluIHNjYWxhYmlsaXR5DQo+ID4gZXhwZXJpbWVudHMsIGFzIGNvbXBh
+cmVkIHRvIHNvZnR3YXJlIGNvbXByZXNzb3JzLiBXZSBob3BlIHRvIHN1Ym1pdA0KPiA+IHRoaXMg
+d29yayBhcyBzdWJzZXF1ZW50IFJGQ3MuDQo+ID4NCj4gPiBJIHdvdWxkIGdyZWF0bHkgYXBwcmVj
+aWF0ZSB5b3VyIGNvZGUgcmV2aWV3IGNvbW1lbnRzIGFuZCBzdWdnZXN0aW9ucyENCj4gPg0KPiA+
+IFRoYW5rcywNCj4gPiBLYW5jaGFuYQ0KPiA+DQo+ID4gWzJdIGh0dHBzOi8vbG9yZS5rZXJuZWwu
+b3JnL2xpbnV4LW1tLzIwMjQwNDA4MTgzOTQ2LjI5OTExNjgtMS0NCj4gcnlhbi5yb2JlcnRzQGFy
+bS5jb20vDQo+ID4NCj4gPg0KPiA+IEthbmNoYW5hIFAgU3JpZGhhciAoMyk6DQo+ID4gICBtbTog
+RGVmaW5lIG9ial9jZ3JvdXBfZ2V0KCkgaWYgQ09ORklHX01FTUNHIGlzIG5vdCBkZWZpbmVkLg0K
+PiA+ICAgbW06IHpzd2FwOiB6c3dhcF9zdG9yZSgpIGV4dGVuZGVkIHRvIGhhbmRsZSBtVEhQIGZv
+bGlvcy4NCj4gPiAgIG1tOiBzd2FwOiBDb3VudCBzdWNjZXNzZnVsIG1USFAgWlNXQVAgc3RvcmVz
+IGluIHN5c2ZzIG1USFAgenN3cG91dA0KPiA+ICAgICBzdGF0cy4NCj4gPg0KPiA+ICBpbmNsdWRl
+L2xpbnV4L2h1Z2VfbW0uaCAgICB8ICAgMSArDQo+ID4gIGluY2x1ZGUvbGludXgvbWVtY29udHJv
+bC5oIHwgICA0ICsNCj4gPiAgbW0vS2NvbmZpZyAgICAgICAgICAgICAgICAgfCAgIDggKysNCj4g
+PiAgbW0vaHVnZV9tZW1vcnkuYyAgICAgICAgICAgfCAgIDMgKw0KPiA+ICBtbS9wYWdlX2lvLmMg
+ICAgICAgICAgICAgICB8ICAgMyArLQ0KPiA+ICBtbS96c3dhcC5jICAgICAgICAgICAgICAgICB8
+IDI0MyArKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tDQo+ID4gIDYgZmlsZXMg
+Y2hhbmdlZCwgMjAwIGluc2VydGlvbnMoKyksIDYyIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4NCj4g
+PiBiYXNlLWNvbW1pdDogOTI4N2U0YWRiYzZhYjhmYTA0ZDI1ZWI4MmUwOTdmZWQ4NzdhNDY0Mg0K
+DQo=
 
