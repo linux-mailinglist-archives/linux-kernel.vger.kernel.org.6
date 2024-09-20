@@ -1,88 +1,166 @@
-Return-Path: <linux-kernel+bounces-334089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65AD497D27C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:21:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13AB497D289
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 122951F25CA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:21:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF2FD1F256CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E739824BD;
-	Fri, 20 Sep 2024 08:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7233D13A86C;
+	Fri, 20 Sep 2024 08:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCC8B2Fn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38924C62B;
-	Fri, 20 Sep 2024 08:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="aCLjwB4V"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7338882876;
+	Fri, 20 Sep 2024 08:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726820466; cv=none; b=l1yolXmbgK7fUQ/syX8M/5qG3z+B05e5Is8ztEcDxYll/IoGeNP5dcO4Gq56XRsog2afaN/OtzgQvJd0HZ4r95luvv6y/T/PkHfua7GDKYo5eetRWaBi51WtFqv7YOF77HJIBj9UXkHqirjhdIBDr0rOQvBtZN1Cf5CXO3jLn54=
+	t=1726820504; cv=none; b=ZvISJtVqbNFw15FN/jDSYvGy0dtsM10FEYO4M5b9Tz3brdCCusAaLVRzvjGlUJmJ8PvxL9ZWGujYZ0kDwqVpE37FudE3BuLD5dbHkT+pFEhSd4Yb/fjcqXdleh8RTOqfcohqfW9GZ/L3850AJoVtncbiE+QQUfVpOHpBN3iFX/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726820466; c=relaxed/simple;
-	bh=caI3Gjh9ysGzGdw73u4qGfOHUpjWFgDmBK+Wo5CFDWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ShjcTpN52ww8ZfRRDg1erQHlYoTc7MBVIAZUXYV5e7ZXfBP0PxX5tkmbELve9MU2m+yhathzeUUJsdy7sm0QaRH5Z8MhPMMUvQJDUM59F286cOK37ssJYmezeI9qbKsN8Y5ocV6wQZQGlR4BiwBGeX3eJMgWSdoSJ8zYO5ssqXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCC8B2Fn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CB12C4CEC3;
-	Fri, 20 Sep 2024 08:21:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726820466;
-	bh=caI3Gjh9ysGzGdw73u4qGfOHUpjWFgDmBK+Wo5CFDWw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HCC8B2Fne8WBGYhAlne31qK/mO1DhHijTNjK2BdSH4twPWRIl6R8KaXPokic/BFOB
-	 ThBnZFcS2+LFFd+M7F1SypZA17bkOGoO+xt6lBwDEoQclOj6U+GJgxGy+jRoPeI+2K
-	 ZveItOQw+bkYKZPn2mUNo2uxvzlDmM5Ksmtt8+lCFuOJvo4oxvaECBucucONjYAqd+
-	 M4LZCn84x/DDYU3HxHPTU1BDiqMSkuTjE6KUNwoG2GllGrNFICfoFsLivN4Ir68cy4
-	 re8NHXdpoSK+yYgCeApfnlIVC8az8vwNhU4cfVGfFPoi4jMoRJ4basTCBpXbPx1sIF
-	 YTXjb5Pd9PI6Q==
-Received: from johan by theta with local (Exim 4.98)
-	(envelope-from <johan@kernel.org>)
-	id 1srYsx-000000000pD-0VIV;
-	Fri, 20 Sep 2024 10:21:03 +0200
-Date: Fri, 20 Sep 2024 10:21:03 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] soc: qcom: pd_mapper: fix ADSP PD maps
-Message-ID: <Zu0wb-RSwnlb0Lma@hovoldconsulting.com>
-References: <20240918-x1e-fix-pdm-pdr-v1-1-cefc79bb33d1@linaro.org>
+	s=arc-20240116; t=1726820504; c=relaxed/simple;
+	bh=NkJZMKGNeBL80jNOVq4j9ciirDMAEdlUiDgcdlD0BZw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lNeJ6jQaMNABRZyxZc8XPdKn1/op8jMa8EogutekHrfQYAB6v88KJxfihvPupxDR/e7bdqC4r3rRGYnPMrQNo2Wz9Gxe8HLOkTAXpPpMqssyxskFsUAzWfS/xuEBDzRPxjd7l1mNloSxLv+2rcLprm5LX6p/Adxvgz00wVKizLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=aCLjwB4V; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=SU0ce
+	PcU3UeiZAFIZupQ6VPwSqSkMbhiZUCKiN2xRRc=; b=aCLjwB4VlDI1eEKQcJFTM
+	VpLSfIx7+mp95MaETbeYJ6QQ5IjKrFPNz/vW0FNF2X6Ty1wm/Y8vnoODylmIR52X
+	H04a28qrP8Rx9F43UlSCPH+9DRWeqqcyY4rJgaev3rtff3QqsThdjyd+FLDcJLhu
+	fdVasNVM9hnWvd+aojXMjY=
+Received: from ProDesk.. (unknown [58.22.7.114])
+	by gzsmtp2 (Coremail) with SMTP id sSgvCgBnY9R4MO1mbdlnBg--.49799S2;
+	Fri, 20 Sep 2024 16:21:16 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: hjc@rock-chips.com,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	s.hauer@pengutronix.de,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	derek.foreman@collabora.com,
+	minhuadotchen@gmail.com,
+	detlev.casanova@collabora.com,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v3 05/15] drm/rockchip: vop2: Fix the windows switch between different layers
+Date: Fri, 20 Sep 2024 16:21:10 +0800
+Message-ID: <20240920082111.6712-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240920081626.6433-1-andyshrk@163.com>
+References: <20240920081626.6433-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240918-x1e-fix-pdm-pdr-v1-1-cefc79bb33d1@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:sSgvCgBnY9R4MO1mbdlnBg--.49799S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZw4fWF4DAFW7Gw15ur4fAFb_yoW5CF13pF
+	15WrWjgw4UKFsIqr9rtr48uF4ay397Kay7W3Z7tw1rGFy8tr1DJan8Cr9ayryUGFn3uryj
+	yr1Uur909FWjyF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jFSoJUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqRxgXmVODBHcAgAAsj
 
-On Wed, Sep 18, 2024 at 04:02:39PM +0300, Dmitry Baryshkov wrote:
-> On X1E8 devices root ADSP domain should have tms/pdr_enabled registered.
-> Change the PDM domain data that is used for X1E80100 ADSP.
+From: Andy Yan <andy.yan@rock-chips.com>
 
-Please expand the commit message so that it explains why this is
-needed and not just describes what the patch does.
+Every layer of vop2 should bind a window, and we also need to make
+sure that this window is not used by other layer.
 
-What is the expected impact of this and is there any chance that this is
-related to some of the in-kernel pd-mapper regression I've reported
-(e.g. audio not being registered and failing with a PDR error)?
+0x5 is a reserved layer sel value on rk3568, but it will select
+Cluster3 on rk3588, configure unused layers to 0x5  will lead
+alpha blending error on rk3588.
 
-	https://lore.kernel.org/all/ZthVTC8dt1kSdjMb@hovoldconsulting.com/
+When we bind a window from layerM to layerN, we move the old window
+on layerN to layerM.
 
-> Fixes: bd6db1f1486e ("soc: qcom: pd_mapper: Add X1E80100")
-> Cc: stable@vger.kernel.org
+Fixes: 604be85547ce ("drm/rockchip: Add VOP2 driver")
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Tested-by: Derek Foreman <derek.foreman@collabora.com>
+---
 
-Since the offending commit has not reached mainline yet, there's no need
-for a stable tag.
+(no changes since v1)
 
-Johan
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 38 +++++++++++++++-----
+ 1 file changed, 29 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+index c50d93df8404..4776a227e62c 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+@@ -2364,7 +2364,9 @@ static void vop2_setup_layer_mixer(struct vop2_video_port *vp)
+ 	struct drm_plane *plane;
+ 	u32 layer_sel = 0;
+ 	u32 port_sel;
+-	unsigned int nlayer, ofs;
++	u8 old_layer_id;
++	u8 layer_sel_id;
++	unsigned int ofs;
+ 	u32 ovl_ctrl;
+ 	int i;
+ 	struct vop2_video_port *vp0 = &vop2->vps[0];
+@@ -2408,9 +2410,28 @@ static void vop2_setup_layer_mixer(struct vop2_video_port *vp)
+ 	for (i = 0; i < vp->id; i++)
+ 		ofs += vop2->vps[i].nlayers;
+ 
+-	nlayer = 0;
+ 	drm_atomic_crtc_for_each_plane(plane, &vp->crtc) {
+ 		struct vop2_win *win = to_vop2_win(plane);
++		struct vop2_win *old_win;
++
++		/*
++		 * Find the layer this win bind in old state.
++		 */
++		for (old_layer_id = 0; old_layer_id < vop2->data->win_size; old_layer_id++) {
++			layer_sel_id = (layer_sel >> (4 * old_layer_id)) & 0xf;
++			if (layer_sel_id == win->data->layer_sel_id)
++				break;
++		}
++
++		/*
++		 * Find the win bind to this layer in old state
++		 */
++		for (i = 0; i < vop2->data->win_size; i++) {
++			old_win = &vop2->win[i];
++			layer_sel_id = (layer_sel >> (4 * (plane->state->normalized_zpos + ofs))) & 0xf;
++			if (layer_sel_id == old_win->data->layer_sel_id)
++				break;
++		}
+ 
+ 		switch (win->data->phys_id) {
+ 		case ROCKCHIP_VOP2_CLUSTER0:
+@@ -2459,13 +2480,12 @@ static void vop2_setup_layer_mixer(struct vop2_video_port *vp)
+ 							  0x7);
+ 		layer_sel |= RK3568_OVL_LAYER_SEL__LAYER(plane->state->normalized_zpos + ofs,
+ 							 win->data->layer_sel_id);
+-		nlayer++;
+-	}
+-
+-	/* configure unused layers to 0x5 (reserved) */
+-	for (; nlayer < vp->nlayers; nlayer++) {
+-		layer_sel &= ~RK3568_OVL_LAYER_SEL__LAYER(nlayer + ofs, 0x7);
+-		layer_sel |= RK3568_OVL_LAYER_SEL__LAYER(nlayer + ofs, 5);
++		/*
++		 * When we bind a window from layerM to layerN, we also need to move the old
++		 * window on layerN to layerM to avoid one window selected by two or more layers.
++		 */
++		layer_sel &= ~RK3568_OVL_LAYER_SEL__LAYER(old_layer_id, 0x7);
++		layer_sel |= RK3568_OVL_LAYER_SEL__LAYER(old_layer_id, old_win->data->layer_sel_id);
+ 	}
+ 
+ 	vop2_writel(vop2, RK3568_OVL_LAYER_SEL, layer_sel);
+-- 
+2.34.1
+
 
