@@ -1,138 +1,132 @@
-Return-Path: <linux-kernel+bounces-333900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4644E97CFAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 02:39:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A018F97CFB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 02:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55AB51C22327
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 00:39:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C44D11C22489
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 00:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A61E8F6B;
-	Fri, 20 Sep 2024 00:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5008F6C;
+	Fri, 20 Sep 2024 00:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2b6ewUDo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bHDedZDr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UJQRC4+B"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B73579D2
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 00:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2821E1863E
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 00:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726792758; cv=none; b=RZUh6/hKbfB/wmkV8PSXFpNlxS8gkplFqQlx3BKKTKo/Z9cvID5frEIUEidmw4X1xS5nw0J18it+/1IAlxKtLYFcNrk7qw8Z17duAk/vmhakswljoiNco7B/v8Gt6PmFEgBxLVAjq8yMemiXgB7idepdBj25eaBDZhOGL5orLfU=
+	t=1726793133; cv=none; b=M0UKJ5ZfPWIgaP6C1ytYtyNLjBW3EelDV7lPfC9uaq9GlC/+GpjJaEJQ8Q+DlnHiy6ytXiMqGJ1MByHoZYORae8AJ8T6R/lAGPw9cHKkyLG9By2Tlhynl6z2gxTGhLfWqzI+LqKxgEcnT+ZAWX3dn8b9rQZ11iZqSCacWIOxd+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726792758; c=relaxed/simple;
-	bh=I17ZgvwuOvAGNkRqQ3ZV/fAZ5UGvI4rhZ7Y+v9mjunA=;
-	h=From:To:Cc:Subject:Message-ID:Content-Type:MIME-Version:Date; b=cPxEENIOnhymcsUmuqYyK2NKb3S8p4XawYsUjSgvEz/jixXsfvmnTO+RXtw04JN+n+S1aMByiI38MR7zmbPsX+8oihRlfG1+CFIQ81muMN7i8CHvQiC0P8oPjO7MSI+c3Ry0W73io0v1bMl6JkWNgEazON5q9PqBxdbrMKEYEYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2b6ewUDo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bHDedZDr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726792755;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=omT6qHi3dHTUuQmtEw+wP0mwJKPwdS2PWeHchBEZGUc=;
-	b=2b6ewUDoXfTIvXrLEAMOAoQON8oFd9s4g7JS1nv9ifiq15NSN3X9iVQCmbjFW4+MeYveo/
-	6dH4ZRnBAzeFrr689lHPuK3FwYwSPCmj5sIK+S/cBHc6XTNU0PMRMijP+sQykBRINxsZAD
-	ucYxZmLkfQDGmoUW21goTEojsZJKhPoh9bNFzdJrludojdVqTmu+S8os+WXZ5TE/O6yuDG
-	YQRiyXvcL64I1fSheC7wFzVgx4DBlxBjph7hnUsQ2XYaJVa9LbQXlOdkvqAIZcpgVXLe0o
-	Hb7lkTFrBkn7E9L8AAJiCqFQlZOIwee2eTkJEul3wOuOYIgRESTX9ulYliYNnQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726792755;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=omT6qHi3dHTUuQmtEw+wP0mwJKPwdS2PWeHchBEZGUc=;
-	b=bHDedZDrYCkrAWj5V1FqynJGFM9/YZW1dcem8HZ7U7rSROM00fyhqrQbsCHG71WAtJlGaA
-	oxszQMFPVVB9GrCQ==
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [GIT pull] sched/rt for v6.12-rc1
-Message-ID: <172656429254.2474571.1051331842339040765.tglx@xen13>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1726793133; c=relaxed/simple;
+	bh=z1bcvZvYpgHmxF3F1PTSk7hV7fd7Q28WZoSKTVsXkyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uKKK0LO19nr9TAkW4jWaytX6qs8nPhXpfFM5wgOhm1eXIaNUJJLnNugzX0L+fZG960lI6Mjf5kQS9Sy7tkvqYWg3jfgi2UZOcgoqvzAe7eGo5uB1gLNPjVTtPJzTSaNLFY1b+PMQIU36XU3xiiuJzSL0F34V4BMYwlNV3eOm1Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UJQRC4+B; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726793131; x=1758329131;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=z1bcvZvYpgHmxF3F1PTSk7hV7fd7Q28WZoSKTVsXkyk=;
+  b=UJQRC4+BrlgBfu6sjIqvkqZ5CcJgA+/wMcttnYL1RdjEyySsVLHucKIN
+   XC4h6TXfc2XYjujt8ZmrGyuDKUZHr4Qd+AsBlACTRMq0KnT0+hcy+MEuJ
+   aVUc0/s5q5rB2hOcl8twoSdbwZsrINzDsnku5/a4RvA+mYo2SHXniYibY
+   8ABttw1h8jS4xkAqSliAlYDC7z1tqluj1uIkqsEEsG97E2q4aiavRZR7e
+   YdLaltdDYfAq78dwmT4ESWiH1bjRaGxWdOBvv+HWZ+9vCTiJxepMEpAbk
+   2IXNMLnuHIzZ/f2crYQKS/4s78ArRSTK8INCEGyd7h06kOtpHCGdVRprB
+   w==;
+X-CSE-ConnectionGUID: /+eGcxFCRBuC00AnRz+IGQ==
+X-CSE-MsgGUID: hQr0eIxsQ5qPGK0rvhJkpA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="25931879"
+X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
+   d="scan'208";a="25931879"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2024 17:45:31 -0700
+X-CSE-ConnectionGUID: 10GkP/K+RpGtTo+xUVeE/w==
+X-CSE-MsgGUID: qUbo3fJ4TE2IybJvTMw7iQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
+   d="scan'208";a="74473945"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 19 Sep 2024 17:45:29 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1srRm3-000DpM-0F;
+	Fri, 20 Sep 2024 00:45:27 +0000
+Date: Fri, 20 Sep 2024 08:45:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: include/linux/sync_core.h: asm/sync_core.h is included more than
+ once.
+Message-ID: <202409200859.fKF5Xs8a-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 20 Sep 2024 02:39:14 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Linus,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   2004cef11ea072838f99bd95cefa5c8e45df0847
+commit: 4ff4c745a16c4c151a71863420811e7f406c3ec2 locking: Introduce prepare_sync_core_cmd()
+date:   7 months ago
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
 
-please pull the latest sched/rt branch from:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409200859.fKF5Xs8a-lkp@intel.com/
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-rt-2024-09=
--17
+includecheck warnings: (new ones prefixed by >>)
+>> include/linux/sync_core.h: asm/sync_core.h is included more than once.
 
-up to:  2638e4e6b182: riscv: Allow to enable PREEMPT_RT.
+vim +6 include/linux/sync_core.h
 
-Enable PREEMPT_RT on supported architectures:
+     4	
+     5	#ifdef CONFIG_ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
+   > 6	#include <asm/sync_core.h>
+     7	#else
+     8	/*
+     9	 * This is a dummy sync_core_before_usermode() implementation that can be used
+    10	 * on all architectures which return to user-space through core serializing
+    11	 * instructions.
+    12	 * If your architecture returns to user-space through non-core-serializing
+    13	 * instructions, you need to write your own functions.
+    14	 */
+    15	static inline void sync_core_before_usermode(void)
+    16	{
+    17	}
+    18	#endif
+    19	
+    20	#ifdef CONFIG_ARCH_HAS_PREPARE_SYNC_CORE_CMD
+  > 21	#include <asm/sync_core.h>
+    22	#else
+    23	/*
+    24	 * This is a dummy prepare_sync_core_cmd() implementation that can be used on
+    25	 * all architectures which provide unconditional core serializing instructions
+    26	 * in switch_mm().
+    27	 * If your architecture doesn't provide such core serializing instructions in
+    28	 * switch_mm(), you may need to write your own functions.
+    29	 */
+    30	static inline void prepare_sync_core_cmd(struct mm_struct *mm)
+    31	{
+    32	}
+    33	#endif
+    34	
 
-  After twenty years of development we finally reached the point to enable
-  PREEMPT_RT support in the mainline kernel.
-
-  All prerequisites are merged, so enable it on the supported architectures
-  ARM64, RISCV and X86(32/64-bit).
-
-Thanks,
-
-	tglx
-
------------------->
-Sebastian Andrzej Siewior (3):
-      x86: Allow to enable PREEMPT_RT.
-      arm64: Allow to enable PREEMPT_RT.
-      riscv: Allow to enable PREEMPT_RT.
-
-
- arch/arm64/Kconfig | 1 +
- arch/riscv/Kconfig | 1 +
- arch/x86/Kconfig   | 1 +
- 3 files changed, 3 insertions(+)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index ed15b876fa74..7da710b21f76 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -100,6 +100,7 @@ config ARM64
- 	select ARCH_SUPPORTS_NUMA_BALANCING
- 	select ARCH_SUPPORTS_PAGE_TABLE_CHECK
- 	select ARCH_SUPPORTS_PER_VMA_LOCK
-+	select ARCH_SUPPORTS_RT
- 	select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
- 	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION if COMPAT
- 	select ARCH_WANT_DEFAULT_BPF_JIT
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 86d1f1cea571..82724bc95b74 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -65,6 +65,7 @@ config RISCV
- 	select ARCH_SUPPORTS_LTO_CLANG_THIN if LLD_VERSION >=3D 140000
- 	select ARCH_SUPPORTS_PAGE_TABLE_CHECK if MMU
- 	select ARCH_SUPPORTS_PER_VMA_LOCK if MMU
-+	select ARCH_SUPPORTS_RT
- 	select ARCH_SUPPORTS_SHADOW_CALL_STACK if HAVE_SHADOW_CALL_STACK
- 	select ARCH_USE_CMPXCHG_LOCKREF if 64BIT
- 	select ARCH_USE_MEMTEST
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 6f1c31f4b9ab..865573bef975 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -122,6 +122,7 @@ config X86
- 	select ARCH_USES_CFI_TRAPS		if X86_64 && CFI_CLANG
- 	select ARCH_SUPPORTS_LTO_CLANG
- 	select ARCH_SUPPORTS_LTO_CLANG_THIN
-+	select ARCH_SUPPORTS_RT
- 	select ARCH_USE_BUILTIN_BSWAP
- 	select ARCH_USE_CMPXCHG_LOCKREF		if X86_CMPXCHG64
- 	select ARCH_USE_MEMTEST
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
