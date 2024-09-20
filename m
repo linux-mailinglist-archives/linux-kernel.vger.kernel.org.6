@@ -1,171 +1,180 @@
-Return-Path: <linux-kernel+bounces-334520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A275697D844
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:22:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 714E297D83C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEB8E1C22919
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:22:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C19CB24454
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8B4181BA8;
-	Fri, 20 Sep 2024 16:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A3A17F4F5;
+	Fri, 20 Sep 2024 16:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=b1n.io header.i=@b1n.io header.b="HDvKe6O8"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wfiDAwPX"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F5A17E00B
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 16:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2648017DFF2
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 16:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726849274; cv=none; b=ZdciEu/MVjKzG+cIbWc1xSfVvaYe30/2PWGaPJAljK/Zhr5QGMUsOOjPQDUCIjS4BoRXgeJpFkAM9VaNTxxEKd1TViDap47PnOJrc/YiezPqFYMhT91Hf9Ph3zMj8hPL27RnTziQ8ZbfnIkYh2EaSc/ogCV4eDP55wZUZW/tG3g=
+	t=1726849252; cv=none; b=kTLE6BR+bFZlo1V5OjRhRvvwCDCK+VRbYVS1H0U/JXCQqbWP8YdEmU7MAombYikRIdf+Xwdx4Bb/NZLrmvRFni5Jdvw05dcEgZkDUUZ/9vqTETSm58ECvc1pu4RzmeGY1BN9ksUCygqMlv8Q7zkToIphNH++mA5XBatLDpoU74k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726849274; c=relaxed/simple;
-	bh=10sS86pwP6gHcteFJPgYDUv/YPWBTwZwbZnLN814vYY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=E65G1mf7s/ynVvUeG473ampd5LczRgkgn0uVXb+lDyKNMAzaGdtr8oAAQFou98X7AomrDg3MEL64awPPd2MsEi3N6lz3XTnUpJx5E5OVsuisrtytaqJBz+bg368d4XKpMg30KhYd3sTNE9eb/IASz3c8JSwN826AzIDJJP/42tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=b1n.io; spf=pass smtp.mailfrom=b1n.io; dkim=pass (2048-bit key) header.d=b1n.io header.i=@b1n.io header.b=HDvKe6O8; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=b1n.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=b1n.io
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=b1n.io; s=key1;
-	t=1726849269;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W9OorerApR/92ZiWdbVbfYZFIQiGs2U58WETLDI6z3U=;
-	b=HDvKe6O845GJU/keyGIr4q/JWvAXQDawnMH7ywM9kzlnh69uYUu4+cOZkbyYHGDh1vQdjb
-	vSMnPTdSgKDq9qALkx3NIv/jzMrsutgh0rk/qy99zHtLeSPyhAFxLNa4TFAo2PfHDuOHF2
-	6Sv++Z/jK9sv9+IT5HGBVRSFVMILwhW/keYSSi6XA225q79B7gXEoZIC5V3Q0weNG0iVDd
-	8XVoEysBmrMO1Ye4dttvj62SuA7wUhnRXf9fvdl28W45gJUWmFaXXwKMSiZ6Cpuxt0xowz
-	k4CyY6Sr7s3VGsHQjVMMFfjLQVpcYgcp+DG+y+VsGmc8JofOV8L380ElZRK8MQ==
-From: Xingquan Liu <b1n@b1n.io>
-To: Philipp Hortmann <philipp.g.hortmann@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev,
+	s=arc-20240116; t=1726849252; c=relaxed/simple;
+	bh=6eKgFgJf42pu/lKMuVHL2+tqfDtjlOjjL7VlY21WaD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ur3sCIB8F+lLyD8Vh8VMQgDaInaCwhz5/WjmXEeAfgH26Di2HuHZRMCJ828wZJ0skIn9nD9P+Bq/8U2eiZDFWNN6mdB10YqtkoHWJD2x4DprLWXeIVSFD8YvpcOa3E+MUcbhnz1LB39SNsJ8Y3GRHRRxyK5A++U3n2xgi68fDkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wfiDAwPX; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53654e2ed93so2737417e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726849249; x=1727454049; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oGooyg5nMtcSZswOs44H9PRNk+nCm/4lfki5MlJ1BHQ=;
+        b=wfiDAwPXkQYJxyteXwtvfj6gcM5JqCUwGMBEaRa5vOKKgaYzw1i09yT12n4JBhktfa
+         E+W656jotop2Yd+dI1nng/CjQCs514Su6w8nnEdCbsQrzrCsWscaT9M7DRnd7gHi264M
+         tyT7VHeI+GAPx1v4ZQ3YnaEaggTTCIJXnBSyTOGA2HpTGRqIHocxbdvqtfuAvJ/qR47U
+         03bO9yIz4CT+55JiGe2jjWmCzzvNVBia6osj5k9kDb6PpvNuyGqJFg8i3T2LaDitsQft
+         GRVKo83rmLcDthqnVadApwfnmI7TZVR/wX9hGhoa8vOA0FGeUwrc8lgTbUwApTkxATgi
+         GctA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726849249; x=1727454049;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oGooyg5nMtcSZswOs44H9PRNk+nCm/4lfki5MlJ1BHQ=;
+        b=RECD3u/EZidVAHYD6GCH3rCRvKrUyWHgHySvrlw4jbj1j48ziwIoTB4ErWnJOIAosL
+         BDgmww0sZ9CAtHBkNWrx9WSRYVqzbajQ5VJ83tMs6hK6/9A9bdS0+HuiFO6YWbuohww9
+         vMM6jg3y2lZRO11k8t3as1ThS06atRmlx0OJkLZ+noX7Jm3sZ3TeLTY4iq0g+jz1wQF4
+         HdJslvP84NFoERsPBvsKj7ZZnGRWEJwlAkUJXwVCfbUgUBolAOlHcC30bH8CRc8xtVQP
+         m79eZ43YWljlMmc2KzDO2OAtI/yIXRiK/1rJy+lZlmxHb7Gj6joqwMF05t0qmrZUzsM/
+         HbVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVN+uVdRXWfN3REA8Ls7jaQTGMfEe/J20pTnTnFoeL9mIuWA/zdyrsfCPE0TeF13aQcdS4K0/s5TwPGzUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx27xReDjKER+REsA4AcQUkUSoajdYP936TwzY/TbR4akImpc89
+	hIAAs5T/b19Cm477RcUsNtNQj2OgNQk+1dmQ7yNduG0sxwmjjz/X/cHneQuREog=
+X-Google-Smtp-Source: AGHT+IFdCcmTtqmqomK0sEI35/rVqAWrJW5uXepKNk/H8es87n2uQEQ7plX41BbzPLePnxWiyWJiCQ==
+X-Received: by 2002:a05:6512:3044:b0:530:ad7d:8957 with SMTP id 2adb3069b0e04-536ad3d4864mr2118426e87.49.1726849249157;
+        Fri, 20 Sep 2024 09:20:49 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870a8772sm2213395e87.234.2024.09.20.09.20.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 09:20:48 -0700 (PDT)
+Date: Fri, 20 Sep 2024 19:20:46 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+Cc: robdclark@gmail.com, will@kernel.org, robin.murphy@arm.com, 
+	joro@8bytes.org, jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org, 
+	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com, iommu@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-kernel@vger.kernel.org
-Cc: Xingquan Liu <b1n@b1n.io>
-Subject: [PATCH 7/7] staging: vt6655: Rename variable aRD1Ring
-Date: Sat, 21 Sep 2024 00:20:25 +0800
-Message-Id: <20240920162025.31465-7-b1n@b1n.io>
-In-Reply-To: <20240920162025.31465-1-b1n@b1n.io>
-References: <20240920162025.31465-1-b1n@b1n.io>
+Subject: Re: [PATCH v15 4/5] iommu/arm-smmu: introduction of ACTLR for custom
+ prefetcher settings
+Message-ID: <hdel47qqf4tto34a5atbjyukameoweudywixuj24aisqoikhcq@v523pootitbg>
+References: <20240920155813.3434021-1-quic_bibekkum@quicinc.com>
+ <20240920155813.3434021-5-quic_bibekkum@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240920155813.3434021-5-quic_bibekkum@quicinc.com>
 
-Rename variable aRD1Ring to a_rd1_ring to fix checkpatch warning
-Avoid CamelCase.
+On Fri, Sep 20, 2024 at 09:28:12PM GMT, Bibek Kumar Patro wrote:
+> Currently in Qualcomm  SoCs the default prefetch is set to 1 which allows
+> the TLB to fetch just the next page table. MMU-500 features ACTLR
+> register which is implementation defined and is used for Qualcomm SoCs
+> to have a custom prefetch setting enabling TLB to prefetch the next set
+> of page tables accordingly allowing for faster translations.
+> 
+> ACTLR value is unique for each SMR (Stream matching register) and stored
+> in a pre-populated table. This value is set to the register during
+> context bank initialisation.
+> 
+> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+> ---
+>  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 26 ++++++++++++++++++++++
+>  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h |  1 +
+>  2 files changed, 27 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> index 38ac9cab763b..4ac272d05843 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> @@ -252,6 +252,20 @@ static bool qcom_adreno_can_do_ttbr1(struct arm_smmu_device *smmu)
+>  	return true;
+>  }
+> 
+> +static void qcom_smmu_set_actlr_dev(struct device *dev, struct arm_smmu_device *smmu, int cbndx,
+> +		const struct of_device_id *client_match)
+> +{
+> +	const struct of_device_id *match =
+> +			of_match_device(client_match, dev);
+> +
+> +	if (!match) {
+> +		dev_notice(dev, "no ACTLR settings present\n");
 
-Signed-off-by: Xingquan Liu <b1n@b1n.io>
----
- drivers/staging/vt6655/card.c        |  4 ++--
- drivers/staging/vt6655/device.h      |  2 +-
- drivers/staging/vt6655/device_main.c | 14 +++++++-------
- 3 files changed, 10 insertions(+), 10 deletions(-)
+dev_dbg() or even dev_vdbg(), please. We do not want to spam people with
+messages about a perfectly normal behaviour.
 
-diff --git a/drivers/staging/vt6655/card.c b/drivers/staging/vt6655/card.c
-index 712a478aac91..c8b3b16b03c6 100644
---- a/drivers/staging/vt6655/card.c
-+++ b/drivers/staging/vt6655/card.c
-@@ -436,7 +436,7 @@ void card_v_safe_reset_rx(struct vnt_private *priv)
- 
- 	/* initialize RD index */
- 	priv->p_curr_rd[0] = &priv->a_rd0_ring[0];
--	priv->p_curr_rd[1] = &priv->aRD1Ring[0];
-+	priv->p_curr_rd[1] = &priv->a_rd1_ring[0];
- 
- 	/* init state, all RD is chip's */
- 	for (uu = 0; uu < priv->opts.rx_descs0; uu++) {
-@@ -448,7 +448,7 @@ void card_v_safe_reset_rx(struct vnt_private *priv)
- 
- 	/* init state, all RD is chip's */
- 	for (uu = 0; uu < priv->opts.rx_descs1; uu++) {
--		p_desc = &priv->aRD1Ring[uu];
-+		p_desc = &priv->a_rd1_ring[uu];
- 		p_desc->rd0.res_count = cpu_to_le16(priv->rx_buf_sz);
- 		p_desc->rd0.owner = OWNED_BY_NIC;
- 		p_desc->rd1.req_count = cpu_to_le16(priv->rx_buf_sz);
-diff --git a/drivers/staging/vt6655/device.h b/drivers/staging/vt6655/device.h
-index 8fd4d972df14..591fcd02ee8e 100644
---- a/drivers/staging/vt6655/device.h
-+++ b/drivers/staging/vt6655/device.h
-@@ -139,7 +139,7 @@ struct vnt_private {
- 	struct vnt_tx_desc *ap_td1_rings;
- 
- 	struct vnt_rx_desc *a_rd0_ring;
--	struct vnt_rx_desc *aRD1Ring;
-+	struct vnt_rx_desc *a_rd1_ring;
- 	struct vnt_rx_desc *p_curr_rd[TYPE_MAXRD];
- 
- 	struct vnt_options opts;
-diff --git a/drivers/staging/vt6655/device_main.c b/drivers/staging/vt6655/device_main.c
-index 84b8a476d240..eeb2f271ba0b 100644
---- a/drivers/staging/vt6655/device_main.c
-+++ b/drivers/staging/vt6655/device_main.c
-@@ -518,7 +518,7 @@ static bool device_init_rings(struct vnt_private *priv)
- 	}
- 
- 	priv->a_rd0_ring = vir_pool;
--	priv->aRD1Ring = vir_pool +
-+	priv->a_rd1_ring = vir_pool +
- 		priv->opts.rx_descs0 * sizeof(struct vnt_rx_desc);
- 
- 	priv->rd0_pool_dma = priv->pool_dma;
-@@ -650,7 +650,7 @@ static int device_init_rd1_ring(struct vnt_private *priv)
- 	/* Init the RD1 ring entries */
- 	for (i = 0; i < priv->opts.rx_descs1;
- 	     i ++, curr += sizeof(struct vnt_rx_desc)) {
--		desc = &priv->aRD1Ring[i];
-+		desc = &priv->a_rd1_ring[i];
- 		desc->rd_info = kzalloc(sizeof(*desc->rd_info), GFP_KERNEL);
- 		if (!desc->rd_info) {
- 			ret = -ENOMEM;
-@@ -663,13 +663,13 @@ static int device_init_rd1_ring(struct vnt_private *priv)
- 			goto err_free_rd;
- 		}
- 
--		desc->next = &priv->aRD1Ring[(i + 1) % priv->opts.rx_descs1];
-+		desc->next = &priv->a_rd1_ring[(i + 1) % priv->opts.rx_descs1];
- 		desc->next_desc = cpu_to_le32(curr + sizeof(struct vnt_rx_desc));
- 	}
- 
- 	if (i > 0)
--		priv->aRD1Ring[i - 1].next_desc = cpu_to_le32(priv->rd1_pool_dma);
--	priv->p_curr_rd[1] = &priv->aRD1Ring[0];
-+		priv->a_rd1_ring[i - 1].next_desc = cpu_to_le32(priv->rd1_pool_dma);
-+	priv->p_curr_rd[1] = &priv->a_rd1_ring[0];
- 
- 	return 0;
- 
-@@ -678,7 +678,7 @@ static int device_init_rd1_ring(struct vnt_private *priv)
- 
- err_free_desc:
- 	while (i--) {
--		desc = &priv->aRD1Ring[i];
-+		desc = &priv->a_rd1_ring[i];
- 		device_free_rx_buf(priv, desc);
- 		kfree(desc->rd_info);
- 	}
-@@ -703,7 +703,7 @@ static void device_free_rd1_ring(struct vnt_private *priv)
- 	int i;
- 
- 	for (i = 0; i < priv->opts.rx_descs1; i++) {
--		struct vnt_rx_desc *desc = &priv->aRD1Ring[i];
-+		struct vnt_rx_desc *desc = &priv->a_rd1_ring[i];
- 
- 		device_free_rx_buf(priv, desc);
- 		kfree(desc->rd_info);
+LGTM otherwise.
+
+
+> +		return;
+> +	}
+> +
+> +	arm_smmu_cb_write(smmu, cbndx, ARM_SMMU_CB_ACTLR, (u64)match->data);
+> +}
+> +
+>  static int qcom_adreno_smmu_init_context(struct arm_smmu_domain *smmu_domain,
+>  		struct io_pgtable_cfg *pgtbl_cfg, struct device *dev)
+>  {
+> @@ -316,8 +330,20 @@ static const struct of_device_id qcom_smmu_client_of_match[] __maybe_unused = {
+>  static int qcom_smmu_init_context(struct arm_smmu_domain *smmu_domain,
+>  		struct io_pgtable_cfg *pgtbl_cfg, struct device *dev)
+>  {
+> +	struct arm_smmu_device *smmu = smmu_domain->smmu;
+> +	struct qcom_smmu *qsmmu = to_qcom_smmu(smmu);
+> +	const struct of_device_id *client_match;
+> +	int cbndx = smmu_domain->cfg.cbndx;
+> +
+>  	smmu_domain->cfg.flush_walk_prefer_tlbiasid = true;
+> 
+> +	client_match = qsmmu->data->client_match;
+> +
+> +	if (!client_match)
+> +		return 0;
+> +
+> +	qcom_smmu_set_actlr_dev(dev, smmu, cbndx, client_match);
+> +
+>  	return 0;
+>  }
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h
+> index b55cd3e3ae48..8addd453f5f1 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h
+> @@ -28,6 +28,7 @@ struct qcom_smmu_match_data {
+>  	const struct qcom_smmu_config *cfg;
+>  	const struct arm_smmu_impl *impl;
+>  	const struct arm_smmu_impl *adreno_impl;
+> +	const struct of_device_id * const client_match;
+>  };
+> 
+>  irqreturn_t qcom_smmu_context_fault(int irq, void *dev);
+> --
+> 2.34.1
+> 
+
 -- 
-Xingquan Liu
-
+With best wishes
+Dmitry
 
