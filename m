@@ -1,238 +1,243 @@
-Return-Path: <linux-kernel+bounces-334202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A8E197D3DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:46:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0054897D3DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0FE71F24851
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:46:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24CB11C2125F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD13A13C80A;
-	Fri, 20 Sep 2024 09:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F401613C80C;
+	Fri, 20 Sep 2024 09:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="axvEKtAg";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="CmLwxXgy"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="FCaBAyrk"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560FF1DFE8;
-	Fri, 20 Sep 2024 09:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726825584; cv=fail; b=K+cNaNRwK1B69bo3z72VIEt3QleHV9SwZF/3U49+biBZxEOJJnKlTtUSnS/hALDkBrIBBwoNd1TywLPQKggrXxXWbvLNKJMUvjPNftKMPNXJSQWiGaorlpg4iidWKDZqhQgbX5bUKVnfziQGzTrO2luDLyvnUdSWb5Hqlmcvc+8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726825584; c=relaxed/simple;
-	bh=UPYpkVPVC5YCJZ1Uuq5l3RiZAf7nyXR/bpLLDyFiBVo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BeLDE7BWDZfvNPDy2f2Zz12RomKsxqVS6drCgqMHzPaRgHLvmnYkCgvZzkSqN3Fq150LKm3nIfRiWe0/3V5w542LJB7YRa2Cv7X6/EkPyYKWdqMk9rCxc47RttWy6JzNSAI+NMum+LGyCrlz62cH2RidD4EJ/DQslViO6pMhcZc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=axvEKtAg; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=CmLwxXgy; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48K7tZIZ031636;
-	Fri, 20 Sep 2024 09:46:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:references:in-reply-to
-	:content-type:content-id:content-transfer-encoding:mime-version;
-	 s=corp-2023-11-20; bh=UPYpkVPVC5YCJZ1Uuq5l3RiZAf7nyXR/bpLLDyFiB
-	Vo=; b=axvEKtAgqC5Vbk4B0it5cUYYo86tZlc0NtyhTrhEGBIwxnelQgIQtadTQ
-	x+aePKSsTUF+nyPZ5UOnt/ZNlGklrsw2uPCNHASwCuOR0f8uRqi/+s4zP5Auua/N
-	7RfO/HVrmo3TsYkhx/Z9XyKdkSfoqdtsXztUDu5olqzggvuBscSFD646uZm/FKHa
-	s1ShXBAS32+mVvdOZ4E+hUGhEahZ6/JwSi6kLUqDa8ROX9wem91Sq49yXcHUEBTV
-	kbNeG956Prnh9Zgma4vEswVpqX2lJNpU+CvbOqBwbia4FnH5XDPjC48NyY4tJQqq
-	XDXkKB49fedLhR25aoFrchBqgq/vg==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41n3nspevr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 20 Sep 2024 09:46:12 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48K8L0WR011097;
-	Fri, 20 Sep 2024 09:46:12 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2046.outbound.protection.outlook.com [104.47.66.46])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41nybavs4m-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 20 Sep 2024 09:46:11 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MpiF4C6M7WmDtHZYGPOassVj10Q7E4tZCT3871cSWDUUdCBUTzecj0X6zaqY7XiIzauWF/MEe72m2tLE0nFlpWKefoqhuKT3qV9JuorE5bDVHU6ZPIBibuIUsmMUH+E4jqgCch7NWdg5R8n1ryNm3+Ky7OmsiYZTvPh+3iJmW6Dua/uNRk2O4yH9JeEcKMjLOaTOCmSLA/Q/Y83YcLqjeV0KzrW8aWy94sEGYRm6mYErFXz4YdNsqYb8h5PH3rIiswMlVyFHNzE7IUTT4Lry4aaiRr4cuRjy/Fof/pcrGzsKlf4dp7eEQX+brmhP4yex/TCPIiqaG5gPK8+iTcKOhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UPYpkVPVC5YCJZ1Uuq5l3RiZAf7nyXR/bpLLDyFiBVo=;
- b=Yzo4lS0FugsSln3Due8rB6+CiaTb8i1TdhX7wE7YXAO0ZkYpkt5gq2cHp2LoGWJk0zVCCjspKy+Tdol1cS1dj1L/REyEFWaXb74q7dh4OeM91tt/WqvnrA7vtcENPN0oVo93yXwf9BRPFTYS3lP0ZgRvQDczDalcqx2m4/+5e6jDcJfMcudwK5h4sP0KZxmSz6UeJEq2kAXH+5rP4ZKuPQag7yQKW3TWIdT6FcHIGlludMDxL5Wx5ko8Am3M+zkz/92K/OsZVTQM69yQj94mkVEYe+R/5c5lZipjD0rH+Sabt5Dgn8EK2g/9oOJ5qvgF50Spwndm0H2kupwSfX6tUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UPYpkVPVC5YCJZ1Uuq5l3RiZAf7nyXR/bpLLDyFiBVo=;
- b=CmLwxXgyHlLfPEJ3654NArsaasJMA25HhXXgHLhGjg4Tu3KXixMl4RL0H6hrilVqR4Tw+cyOXTv6i0+LUkemOyTD4NzW/qSTJn3/U6qn8n99b9euYmv+W1/T/YNXYF8kx889EI/f1CRbyDwR4flAELeOHnkIifTKl8/lUisrLew=
-Received: from CY8PR10MB6826.namprd10.prod.outlook.com (2603:10b6:930:9d::13)
- by IA1PR10MB6710.namprd10.prod.outlook.com (2603:10b6:208:419::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Fri, 20 Sep
- 2024 09:46:07 +0000
-Received: from CY8PR10MB6826.namprd10.prod.outlook.com
- ([fe80::b3df:777f:7515:d04f]) by CY8PR10MB6826.namprd10.prod.outlook.com
- ([fe80::b3df:777f:7515:d04f%4]) with mapi id 15.20.8005.006; Fri, 20 Sep 2024
- 09:46:06 +0000
-From: Haakon Bugge <haakon.bugge@oracle.com>
-To: Christoph Hellwig <hch@infradead.org>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-        Allison
- Henderson <allison.henderson@oracle.com>,
-        "David S . Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        OFED mailing list
-	<linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        "rds-devel@oss.oracle.com"
-	<rds-devel@oss.oracle.com>
-Subject: Re: [MAINLINE 0/2] Enable DIM for legacy ULPs and use it in RDS
-Thread-Topic: [MAINLINE 0/2] Enable DIM for legacy ULPs and use it in RDS
-Thread-Index: AQHbCp7A0vkWwunDUUiiivGPdE4MvbJgbooA
-Date: Fri, 20 Sep 2024 09:46:06 +0000
-Message-ID: <C00EA178-ED20-4D56-B6F2-200AC72F3A39@oracle.com>
-References: <20240918083552.77531-1-haakon.bugge@oracle.com>
- <Zuwyf0N_6E6Alx-H@infradead.org>
-In-Reply-To: <Zuwyf0N_6E6Alx-H@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-mailer: Apple Mail (2.3774.200.91.1.1)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY8PR10MB6826:EE_|IA1PR10MB6710:EE_
-x-ms-office365-filtering-correlation-id: 76e06b29-1a8e-411f-4eec-08dcd9590ccb
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?RFpXYVVPY1NPSEZLUjdhWW5QbWdUbTJabGRRTmtrRnVtYnZCR3kySTBML2NQ?=
- =?utf-8?B?V000UHQzZkJLd0dDdWtLbjNITmNobzJRbnVIdDZkU0QreDZjSmRxZmIvVUY2?=
- =?utf-8?B?dHQ0UTJlbVk0TmtqQ1JjNHpBdkUwUWtKNzFDT095S1lYekxDWkJSZzByQzc5?=
- =?utf-8?B?NmNwSnVMZktkU0UyKzJUcVh3bW1IZkVFWkxsT1dVWDg1T0puVGpxaSsvdGVS?=
- =?utf-8?B?VENvN242NFZGNmNjSk5BR0VHOG9jRnVqN01sWjNZbmk3bGxHR3diN2Q2Slh4?=
- =?utf-8?B?MUdxaklwUTRzeTE5R3pueE0xV3E4Zkh6MzlDTGFIR0ZQTHhXVHA1cUpwelJz?=
- =?utf-8?B?U1U1VjZGczlpZnJ3b0RXTEh4TWFiQ2ZWVUR4QUxqTldMaTF5cWUwazNueU50?=
- =?utf-8?B?V3NQU0xaKzlYZFkrcnVQeTlJQzJLZGNWK1RyVlQ2aVZsUndpVnNJc1BjSk5W?=
- =?utf-8?B?NFJHY0Fhak1qWWx2MXRTcy9GaUVkcG81RlYyUm9uaEYwaUJYc20xQVFzNmhy?=
- =?utf-8?B?YnlLRnVBaURITEJWK0ZJeE00aVBsTmZScU9iTjdTUDV6TjVJaXZybUtGL0dm?=
- =?utf-8?B?S1VWdFVkUGg5WEpMR3hXKzNFRGo2WnJMT3Y5Sk1tKzZxUGwvakt2ZmplMWww?=
- =?utf-8?B?LzhYeEFIZER5dnYveHNzaXpzOUx3TG1zMDh4cGw3MVZUQ0NpY0N1aGtPZ2pO?=
- =?utf-8?B?dVpmNU02SlA0V1V6d0NMUFFjeTFEWHUzOW1qRFE3NGMxMmQ5aVJkK1ByQlI2?=
- =?utf-8?B?eUhRdWJFNTh6bUpyTTBjZEhZVHdYMngwRU0vcnlYT1JkUlBwSDdTMyt5ckRR?=
- =?utf-8?B?T1k0Qmx3VFZrT2h4UTUzTHZhZ1A5V1hTM0NWMzg2OXl1anY1UkJLM05KaExD?=
- =?utf-8?B?ckVOMERxSmg4eGdKaWdnaFlQS3FUZDFLdFFWM05WUmZqR2p3Q01MNTFLZEhE?=
- =?utf-8?B?T3dndTlyUnU5UStEcGpBc2hBTStrWXJPVUdmL1FPZDUrYStmVnhMNWZxY1U5?=
- =?utf-8?B?K1VPNUxCL2dDUzE2Y2lrZDB0SDNsRVU4WGJDUnFhSGFJak9RcEVvcUNqZjdR?=
- =?utf-8?B?NCt4dkwxUzZWUnZrTVl6R0huU2lwSTZaQmxheXlFeGpLWXREU0xIdE1Xd29n?=
- =?utf-8?B?T3l5SEFsblU1ZDdjK0Z0ck5mYmtIVjZYQVY5K3VZVys0L1ptS3JGL1VNQzV1?=
- =?utf-8?B?alJJSldldnBubWZhVmFUTFkxcjVHa003enhBejNzMU1ILzNndUl4aHliZzlH?=
- =?utf-8?B?OWVLZ212L1lyRUxkbFJ2Mzk1d3VnK2lpRnRuKzVhSmRSNTZ3dk5kbk5KMDZG?=
- =?utf-8?B?VTlqZjRPcWwzR0NaTlRSOVBRY0xrMjA1RmFkRXU5cUZUYW9wYTd2SzBQeHJY?=
- =?utf-8?B?RnhUQ2xLYzJUYXR5dWtLcUhjVDAxa2VwYXppTGZQQWtPZFA2aS9aRzdIRGIz?=
- =?utf-8?B?aEFJNmlaUVV3SGV0bnpibHRVMllLcGE2ODMzZUJ3d2wrb2thSC9mV2hvak5J?=
- =?utf-8?B?dGg4SWFIa2puenpjYVVYeDJ2c0FSdGMvODRzNmY5dSs0QU5yQW52WVdOSlFS?=
- =?utf-8?B?enVaMTRNWncxYlcrUTY0SVc3V3orZUUvRitXZ0VIMHlUSVlZRkwvSVl4SE5I?=
- =?utf-8?B?Yk9HTWJSYWRTOVhTbkJ0aTdXVVRFZTV0WjhIV0xjdUp5ZVlDYWdmemIvWVFF?=
- =?utf-8?B?ZUUveGdSRGJ0cFpSaG4rcDcvWXhqSyttaGJBdFRia29BMldwUjh2TFY3K3Qy?=
- =?utf-8?B?ZmIvdGEzMmlIbytvL0pqVllnRXhvdWl4Mzl0V0kxWW80K3oyV09ud3BsNFl6?=
- =?utf-8?B?d1RBS2JsTmhPWWt2cVJmZz09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR10MB6826.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?RS9DRFVyMXJNcVJITTJOTUlyUWhhTWozYUJ4Uk84aGFlVjZSMFFxQlFodnBy?=
- =?utf-8?B?WEZQRmxnRVk1R2tsVi95OGlnZ01iRkJXbWFwUkpGbytVZ0cwcUphNVkzeGpQ?=
- =?utf-8?B?N3BuYzJ2TjMvelVCdjFrd0drOVQzZFZKNWR4b0g3SXZ5c01oV0ZMdlpMTWwv?=
- =?utf-8?B?UDllZ2RJQk5xTERrUy9DL0ZZM3IrZFBHcFVpQUdWYW1BSzlOSUc4V2F4RWNu?=
- =?utf-8?B?MjRQd091WUpEcGJSeU1ZMkx4TVVaZ3N4cnJUYjV6Q2lLck51cUN6MXBtdVpo?=
- =?utf-8?B?aml1RWFVZ3ZSemZBV0tRNFVtY0lwcFBkRnk2L3VkTG9tSUIxeFNoMVZHT1ZN?=
- =?utf-8?B?dFhiMVlldVZnT1Q0Q2pyQUNoYVUzYUlTL2c4ckFkcDdlcFFMSVdyOE1CRVF1?=
- =?utf-8?B?aGJGRG1jNW1mdlNBSU1Zb3dvdEhPSUc0WW5FZ3FQbDhhVzVGdGs5bFY4K1Bm?=
- =?utf-8?B?Wkc5U21UQmkvWnlnZUhFelF1UTQyd0RDRGY0VDJzYTV5c3RCUE5Ka1E3bGM3?=
- =?utf-8?B?ZHdGc3J0dFdmeGt0RXUzdGNhSGFLcVJydFNnWXdLbHB5cFFHZVB4d3Q4NDNz?=
- =?utf-8?B?S3VnWHMvMXU5QkhqN3IrZ2xzaWJXcXBEWXBQMFFCSG1zTldtRkM1aktRNGZ5?=
- =?utf-8?B?cWJwRmU5V0NmQ0dJSGJlcnMrTmFXUExhQTZxUGFHU2JUS3Y2aUhQOGhuRklK?=
- =?utf-8?B?ODJScVNsTkpjQ1FTaG50RWM2SHBTTUhyZnljYjFpRVAwVmhOemNDdUdoSmds?=
- =?utf-8?B?T2lybFpDRTNpMnI4YzdKaHNNcUtpaUpsTTErcXlaaFh1Tms3b2F1dDdxRTh1?=
- =?utf-8?B?N2lrMFV4ZHNKcW5MSStEejFvNS9FN2laRW5rZTFTT04wTTVnWHpyaDgrb1hs?=
- =?utf-8?B?d09ZeklXdFRqLzE5TGNEeWhnU1dEVXEwTEc3YzNub1B5YXVuOXc3bTQvcVVp?=
- =?utf-8?B?MlozUmxzdnU1U21XUUZzUVBEMWtSTWl4cXhTVml5NDFEak0xUERqWEJsd1RX?=
- =?utf-8?B?cTFCZy9HSmozSjRDZWlGM3VJY2ZYU1ZtaFQ3UnNGNHV2WkJPdS9uVTJORWpN?=
- =?utf-8?B?dFhwWndFdzFwU2hZdFlPUGtFWlN0RkUvd1hYb3g2aWZreWF3ZFpKKzZHZmNS?=
- =?utf-8?B?YldNNjBGTGY4MTFXdEdJdDJObXllbndGaG54MktWbXh5QUdQeUM1dTFEWlRW?=
- =?utf-8?B?SUFNUy9RMzdhWVJudU1NNnRDU095dUhUL0VIWjBrUDJOVCtEb3BVY0s4NVAr?=
- =?utf-8?B?L2VrS1MxRDN5YVpCdzVIVFJmRFdKa2FId2RqSnMzSWN4cWhXT1V0RUdSTWJE?=
- =?utf-8?B?UVBmTUswVmNlZzQyam80RG4rRmNQUmt3TGhSSkw2cHhMLzk4b24xZ254TEVl?=
- =?utf-8?B?eWx5V0MvckFZN2ZyWGxiVUpIM2dVcXc5em1JdEoxdDd0K0NzYldNMTBvbnhQ?=
- =?utf-8?B?VmFtQ2ZBK1FYRjFIOXh6dHFVVnNGV0I1TmdCRXFuMElWZW5MeFNkZFpROGJa?=
- =?utf-8?B?V1Exd0I5MkhadDJMTnJwQmpGdGkwVlVHb1dYU2lLU0lsbjRqdUNVVnJxVktJ?=
- =?utf-8?B?TXYyNVMwcEMxQklsNHU0WlJyZjgzQkhrN2JqeStMWndoeTlPdVY2UzhtWmk5?=
- =?utf-8?B?OGh4YzJQbWVKWTlPczQzV2tBMEtRSkx4bW5heitGc2d0cnhlRlNtQVY2SWVs?=
- =?utf-8?B?czhtWUZUamxBWEZoTEV5NmVwVWU0djhqdXhIV0MwbHhBbHd6cytxOFFoVFNs?=
- =?utf-8?B?UFpzUE5TNWl2L1NFODQ4V0Rvd1FtNzF2WC9MNnZGOWxRc2craFB1Z1RPekNI?=
- =?utf-8?B?byt3Qm1rNUd1WGZnOUpNWXYxemJqNTR1RWJuNHRGaGRtN3h4ZW56ak95aE13?=
- =?utf-8?B?Mis1cm04UUhIeFRRbGRnSVdkRjEyaEhQbnN6Yjd4V2phbUcvamppOUhuaXZs?=
- =?utf-8?B?YWZZeWpBRERuRFI1RXM1VWdPemJqeFNLUWpQSzloZnNNVjREa0E3ajBFZ2RC?=
- =?utf-8?B?UldBV3lKQWtvdGl2cjQ5Rlp3MTZHd3I5SVhjS0RVUDZpTnVGN0xhNmkvR3FF?=
- =?utf-8?B?YU1lbXhsM29nSk85N0NDeU9SVWxGR3owQW9ZNVd4SzVCbWMxVjlxQTJXcUFZ?=
- =?utf-8?B?Mkhxd2dQWFdBRVZlOUZlQnJxUjBuNFA0ZGczREg5T3MzRE1FYzFweVhZNUYz?=
- =?utf-8?B?d3c9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <12A9D20CA58FB44DAF7A10DF647D879C@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FAB13AA3F;
+	Fri, 20 Sep 2024 09:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726825717; cv=none; b=pdpWwkkvpYCZuXrEAi8RdlCCvFAYIMmP5rHxc9uV3JCwg/M2JO9KSs52j2ttNm59iWQLuZ71jpA71FZxtYuPvk6lhGF25LxnE9q/HxrQ5X32WMI0a9nc9SnYnL68CzPnIBmzPlun3nfEB8Ff81feZDjOmr/6JIjucJQQSn1VHio=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726825717; c=relaxed/simple;
+	bh=FyxXb8akrb6773SzHwSGzE+XY53OJaKmSY0ZkfUJSqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HIDoFf2iJTYBpxOWvIvSIZlqOCQPS8fZMl94Zfajf1Karl0ArqW8B5OF8XCTNyXmKnmv/Rda5LpMk2f0AcUyh7tAIXrB+/vJzixLPRbJmVOy+t/h+yptoh6p1GR9zrc76Cpz5lABdo7KGJjAHR8lwBx1QH082KAN2rxFJM94fyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=FCaBAyrk; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=lqLyI3VFGw/HAwz/TUdgSpSC7qmKkHxnZTuEYK+TROA=; b=FCaBAyrkr2GhMgqDOcDSm15x44
+	nBBZNKK4o9GTMPjz2ia1eI3kls0oviUY0lhgsfF078MVJ95hghGLUWqxjj7IQJmhvgpLIPV/yzCoi
+	UwCVkT0y2oAqMAnQ7V4iCoNNGeAaXGZoVmnKe+e4D8PVlQrF+WlpvAQT5N3EzL52CV2AbsyillS/E
+	G7kqNOAMyp5VI22eqWfpdik8O6y0z3/ezk72CoHzgDI7/QfbfayfpKTVZe42RhbO6Kyg63huHbJyD
+	lrcsuFtw8ntkZDjFpG/+BpKsPH4eBNbbt48coqkUgq60sBcdvKdIMvsGIaTRuXyBxkKozH6oFjq34
+	HASJesyQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33476)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sraF3-0001NG-1b;
+	Fri, 20 Sep 2024 10:47:57 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sraEr-0002Qp-2B;
+	Fri, 20 Sep 2024 10:47:45 +0100
+Date: Fri, 20 Sep 2024 10:47:45 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	kernel test robot <lkp@intel.com>, linux-mm@kvack.org,
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+	linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Miaohe Lin <linmiaohe@huawei.com>, Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH V2 7/7] mm: Use pgdp_get() for accessing PGD entries
+Message-ID: <Zu1EwTItDrnkTVTB@shell.armlinux.org.uk>
+References: <20240917073117.1531207-8-anshuman.khandual@arm.com>
+ <202409190310.ViHBRe12-lkp@intel.com>
+ <8f43251a-5418-4c54-a9b0-29a6e9edd879@arm.com>
+ <ZuvqpvJ6ht4LCuB+@shell.armlinux.org.uk>
+ <82fa108e-5b15-435a-8b61-6253766c7d88@arm.com>
+ <ZuxZ/QeSdqTHtfmw@shell.armlinux.org.uk>
+ <5bd51798-cb47-4a7b-be40-554b5a821fe7@arm.com>
+ <ZuyIwdnbYcm3ZkkB@shell.armlinux.org.uk>
+ <9e68ffad-8a7e-40d7-a6f3-fa989a834068@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	CxJs+rdrtq0ExlnWJqqpvtdxdDn04GaDtpPobXZLmnlYt3Nx+Gld3Sc4OlV7HaGuT/1eThrvcgvx2wIacfwwspcX70H2GH4YiVl80xXfvfdL29yx1+MtjV+aqH2ZAZxY25PLKok/wmgrZIkziFOFvdIgOk2JDQ/K+iIzBOWTMLMk/EIRxG2irxYWSsfBvsXcxr7x5MlQFZ0NOC+OpyVcIvNjHcFtW1jgfaDUVEtY3vdtgg4DsuBvtQr6u/rpLD3Jqz+szC+w9pqWxJpgW45m0G1Mwvakalq/8J0PMCT2pR4/35yOLZWY1M3T9J7S4NYwXBOUY/eI9XJBSEvROrRJpbHIzcyONhVvLAZ9mCMkuemkQDUZPGdxPD9piRITTyAp2IXNuy2Gao2otAJt5wtRFHZvEip7KzdXjBh/b72NYJ5VhBY78ySttlR9Sy4OeEQgWIhEWJdMru5sYLz3AJlQPqYXJRBt/nR5XIOLzjcw00/CfHnAvxAAIUVBC5JPlogAdVCuTZFWNUTQLTmU6lxofZKrZYbWg9hAms2KtAFsRZsAttq4QWkhc05jJWVS6f49qZ7v5gdcUhk30vQE43Rrbm9LRCaZz5S06Wh23bWd7b4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR10MB6826.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76e06b29-1a8e-411f-4eec-08dcd9590ccb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Sep 2024 09:46:06.9114
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: D3iWygsD2CYv96Nj5DNGqIZS+E6xhsTvsqCu9M9EedCElnwrtq3RVwY4notR7zo5ezyjhA78uhrPOZ/BOBbI+Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6710
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-20_04,2024-09-19_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=594 bulkscore=0
- adultscore=0 malwarescore=0 suspectscore=0 phishscore=0 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2408220000 definitions=main-2409200069
-X-Proofpoint-GUID: klJRCDyPmWvLXSKaH15jcO1NmcIZP8Dt
-X-Proofpoint-ORIG-GUID: klJRCDyPmWvLXSKaH15jcO1NmcIZP8Dt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9e68ffad-8a7e-40d7-a6f3-fa989a834068@arm.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-SGkgQ2hyaXN0b3BoLA0KDQo+IE9uIDE5IFNlcCAyMDI0LCBhdCAxNjoxNywgQ2hyaXN0b3BoIEhl
-bGx3aWcgPGhjaEBpbmZyYWRlYWQub3JnPiB3cm90ZToNCj4gDQo+IE9uIFdlZCwgU2VwIDE4LCAy
-MDI0IGF0IDEwOjM1OjUwQU0gKzAyMDAsIEjDpWtvbiBCdWdnZSB3cm90ZToNCj4+IFRoZSBEeW5h
-bWljIEludGVycnVwdCBNb2RlcmF0aW9uIG1lY2hhbmlzbSBjYW4gb25seSBiZSB1c2VkIGJ5IFVM
-UHMNCj4+IHVzaW5nIGliX2FsbG9jX2NxKCkgYW5kIGZhbWlseS4gV2UgZXh0ZW5kIERJTSB0byBh
-bHNvIGNvdmVyIGxlZ2FjeQ0KPj4gVUxQcyB1c2luZyBpYl9jcmVhdGVfY3EoKS4gVGhlIGxhc3Qg
-Y29tbWl0IHRha2VzIGFkdmFudGFnZSBvZiB0aGlzIGVuZA0KPj4gdXNlcyBESU0gaW4gUkRTLg0K
-PiANCj4gSSB3b3VsZCBtdWNoIHByZWZlciBpZiB5b3UgY291bGQgbW92ZSBSRFMgb2ZmIHRoYXQg
-aG9ycmlibGUgQVBJIGZpbmFsbHkNCj4gaW5zdGVhZCBvZiBpbnZlc3RpbmcgbW9yZSBlZmZvcnQg
-aW50byBpdCBhbmQgbWFraW5nIGl0IG1vcmUgY29tcGxpY2F0ZWQuDQoNCmliX2FsbG9jX2NxKCkg
-YW5kIGZhbWlseSBkb2VzIG5vdCBzdXBwb3J0IGFybWluZyB0aGUgQ1Egd2l0aCB0aGUgSUJfQ1Ff
-U09MSUNJVEVEIGZsYWcsIHdoaWNoIFJEUyB1c2VzLg0KDQoNClRoeHMsIEjDpWtvbg0KDQoNCg==
+On Fri, Sep 20, 2024 at 08:57:23AM +0200, Ryan Roberts wrote:
+> On 19/09/2024 21:25, Russell King (Oracle) wrote:
+> > On Thu, Sep 19, 2024 at 07:49:09PM +0200, Ryan Roberts wrote:
+> >> On 19/09/2024 18:06, Russell King (Oracle) wrote:
+> >>> On Thu, Sep 19, 2024 at 05:48:58PM +0200, Ryan Roberts wrote:
+> >>>>> 32-bit arm uses, in some circumstances, an array because each level 1
+> >>>>> page table entry is actually two descriptors. It needs to be this way
+> >>>>> because each level 2 table pointed to by each level 1 entry has 256
+> >>>>> entries, meaning it only occupies 1024 bytes in a 4096 byte page.
+> >>>>>
+> >>>>> In order to cut down on the wastage, treat the level 1 page table as
+> >>>>> groups of two entries, which point to two consecutive 1024 byte tables
+> >>>>> in the level 2 page.
+> >>>>>
+> >>>>> The level 2 entry isn't suitable for the kernel's use cases (there are
+> >>>>> no bits to represent accessed/dirty and other important stuff that the
+> >>>>> Linux MM wants) so we maintain the hardware page tables and a separate
+> >>>>> set that Linux uses in the same page. Again, the software tables are
+> >>>>> consecutive, so from Linux's perspective, the level 2 page tables
+> >>>>> have 512 entries in them and occupy one full page.
+> >>>>>
+> >>>>> This is documented in arch/arm/include/asm/pgtable-2level.h
+> >>>>>
+> >>>>> However, what this means is that from the software perspective, the
+> >>>>> level 1 page table descriptors are an array of two entries, both of
+> >>>>> which need to be setup when creating a level 2 page table, but only
+> >>>>> the first one should ever be dereferenced when walking the tables,
+> >>>>> otherwise the code that walks the second level of page table entries
+> >>>>> will walk off the end of the software table into the actual hardware
+> >>>>> descriptors.
+> >>>>>
+> >>>>> I've no idea what the idea is behind introducing pgd_get() and what
+> >>>>> it's semantics are, so I can't comment further.
+> >>>>
+> >>>> The helper is intended to read the value of the entry pointed to by the passed
+> >>>> in pointer. And it shoiuld be read in a "single copy atomic" manner, meaning no
+> >>>> tearing. Further, the PTL is expected to be held when calling the getter. If the
+> >>>> HW can write to the entry such that its racing with the lock holder (i.e. HW
+> >>>> update of access/dirty) then READ_ONCE() should be suitable for most
+> >>>> architectures. If there is no possibility of racing (because HW doesn't write to
+> >>>> the entry), then a simple dereference would be sufficient, I think (which is
+> >>>> what the core code was already doing in most cases).
+> >>>
+> >>> The core code should be making no access to the PGD entries on 32-bit
+> >>> ARM since the PGD level does not exist. Writes are done at PMD level
+> >>> in arch code. Reads are done by core code at PMD level.
+> >>>
+> >>> It feels to me like pgd_get() just doesn't fit the model to which 32-bit
+> >>> ARM was designed to use decades ago, so I want full details about what
+> >>> pgd_get() is going to be used for and how it is going to be used,
+> >>> because I feel completely in the dark over this new development. I fear
+> >>> that someone hasn't understood the Linux page table model if they're
+> >>> wanting to access stuff at levels that effectively "aren't implemented"
+> >>> in the architecture specific kernel model of the page tables.
+> >>
+> >> This change isn't as big and scary as I think you fear.
+> > 
+> > The situation is as I state above. Core code must _not_ dereference pgd
+> > pointers on 32-bit ARM.
+> 
+> Let's just rewind a bit. This thread exists because the kernel test robot failed
+> to compile pgd_none_or_clear_bad() (a core-mm function) for the arm architecture
+> after Anshuman changed the direct pgd dereference to pgdp_get(). The reason
+> compilation failed is because arm defines its own pgdp_get() override, but it is
+> broken (there is a typo).
+
+Let's not rewind, because had you fully read and digested my reply, you
+would have seen why this isn't a problem... but let me spell it out.
+
+> 
+> Code before Anshuman's change:
+> 
+> static inline int pgd_none_or_clear_bad(pgd_t *pgd)
+> {
+> 	if (pgd_none(*pgd))
+> 		return 1;
+> 	if (unlikely(pgd_bad(*pgd))) {
+> 		pgd_clear_bad(pgd);
+> 		return 1;
+> 	}
+> 	return 0;
+> }
+
+This isn't a problem as the code stands. While there is a dereference
+in C, that dereference is a simple struct copy, something that we use
+everywhere in the kernel. However, that is as far as it goes, because
+neither pgd_none() and pgd_bad() make use of their argument, and thus
+the compiler will optimise it away, resulting in no actual access to
+the page tables - _as_ _intended_.
+
+If these are going to be converted to pgd_get(), then we need pgd_get()
+to _also_ be optimised away, and if e.g. this is the only place that
+pgd_get() is going to be used, the suggestion I made in my previous
+email is entirely reasonable, since we know that the result of pgd_get()
+will not actually be used.
+
+> As an aside, the kernel also dereferences p4d, pud, pmd and pte pointers in
+> various circumstances.
+
+I already covered these in my previous reply.
+
+> And other changes in this series are also replacing those
+> direct dereferences with calls to similar helpers. The fact that these are all
+> folded (by a custom arm implementation if I've understood the below correctly)
+> just means that each dereference is returning what you would call the pmd from
+> the HW perspective, I think?
+
+It'll "return" the first of each pair of level-1 page table entries,
+which is pgd[0] or *p4d, *pud, *pmd - but all of these except *pmd
+need to be optimised away, so throwing lots of READ_ONCE() around
+this code without considering this is certainly the wrong approach.
+
+> >> The core-mm today
+> >> dereferences pgd pointers (and p4d, pud, pmd pointers) directly in its code. See
+> >> follow_pfnmap_start(),
+> > 
+> > Doesn't seem to exist at least not in 6.11.
+> 
+> Appologies, I'm on mm-unstable and that isn't upstream yet. See follow_pte() in
+> v6.11 or __apply_to_page_range(), or pgd_none_or_clear_bad() as per above.
+
+Looking at follow_pte(), it's not a problem.
+
+I think we wouldn't be having this conversation before:
+
+commit a32618d28dbe6e9bf8ec508ccbc3561a7d7d32f0
+Author: Russell King <rmk+kernel@arm.linux.org.uk>
+Date:   Tue Nov 22 17:30:28 2011 +0000
+
+    ARM: pgtable: switch to use pgtable-nopud.h
+
+where:
+-#define pgd_none(pgd)          (0)
+-#define pgd_bad(pgd)           (0)
+
+existed before this commit - and thus the dereference in things like:
+
+	pgd_none(*pgd)
+
+wouldn't even be visible to beyond the preprocessor step.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
