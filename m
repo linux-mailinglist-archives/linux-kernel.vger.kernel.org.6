@@ -1,183 +1,200 @@
-Return-Path: <linux-kernel+bounces-334137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9897D97D2FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:50:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE9A97D302
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:51:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCA3D1C20DD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:50:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D7F71C22B7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDAE136982;
-	Fri, 20 Sep 2024 08:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4182F12EBEA;
+	Fri, 20 Sep 2024 08:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="FAX5S2vz"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2050.outbound.protection.outlook.com [40.107.117.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="UzwQxEdI"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C832B2B9BC;
-	Fri, 20 Sep 2024 08:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726822217; cv=fail; b=bN3aZUEa7LtNahYn8mlN7kp5MY6eFsxDfF0QRCvMWP4skDtOdevua6wtkz7gcrZtM5OlosyU3GZ/WN5vD7jGwJgRNhwRw8/uebCHnUFqi3wVmRCGkGzRD5tgiJkT2WURfDrf9JZigf3yWk9I5lW67SxOt2P7WuvO5Kmesq4gs1U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726822217; c=relaxed/simple;
-	bh=QrSHOVFROpzkuvi/S2R/MZWfqDhQDEnfs/kVQmmIDtk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Wc1ZFaA/QILDIBLHOb0EkwLGQbpazEe0tu7buZU8Bb5yrh6mZ/dwfxnLEBL8bIQXgOyCBJYVm81+BOKDM13XUUrhKcWgTzedHlfxHt7QZXCixqL2VK4TzT3nMLYrorL7RG7sWINJNe/7El0M7LBmd2XWHq8gaajXrsxrhDssfOI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=FAX5S2vz; arc=fail smtp.client-ip=40.107.117.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=naK1pldSk6qbI0Xg3T7xJC7qaV9OrWbaZpkM4EWBH3gvEmjOuEMzO368VIzjZTwd7fzQlZZtWq3zx87Ae6oebCRdTBuPVrv2f4wMSb5gEZSMILGOGO6zOGTCvuZ3Y11DlxTAeGQty7+CEdkcqbR26Za+D0VEgPT0v5Kkz77dAHml06/aqSxKgHUKiSVSNQldDSxZGXws4nmbqXmK5Id0n9gqXb7kgVMOq6Rc0qGCkLh5pAcqtDoMgfzcvjEWuyVp3yCsrotgqUIljvuYAiMU4f4HQkPOSkxYcrOZdQJB8kGOpSetw0QN0/EdIeNJcOLrqZ3i7LV0bnMyo+Te0rCnJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mHvP5SNNJU64H3j5CiQuYovnkukIg1pumSF1+dfbN/w=;
- b=e22/SC1Nmj+JDW/+nt1b3IGQ2+KnKt3NlBRaOss4AlMyRHBjQMyODQEFkwfCKy9pzpfwGkWuPwOyPlrbo/a00YSrJPoAe6wvVrxlykwoW3nAm100rnPW5CLDC5wWrJsD0QvEMPYsHPjt+supetH9jTN4zYukDynbCxiydEHRhWDtmDVTWRIlyZywzVIVvxlAlKJnjmPm0OcgOQqDEgby+4uu2PoB+JBKMURmrKtlgGyJElvEupD47Dvj2d4Fw+iGUlRD+YPUtCtvq0HW2Taba1I/y6lV6SsDMS2qrZk+WyNP4p8S3eNDqCEb4onkHLO//9PZ+nK1AAuocud+0xV6mw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
- (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mHvP5SNNJU64H3j5CiQuYovnkukIg1pumSF1+dfbN/w=;
- b=FAX5S2vztN72tz3A6KdUdyP4wfbveUOWxYSNjNjQoTYUiPtBFjzXNg0PVxxG771gb4+ahQX6HIUnl0g7WrurXJN1vRlgGXwFvkZbSF/fjsmu5xJtNJbu7NM8PsAUutN4Q/So1LII5MnHzHs8IrneBvULcaahzxBpypJ/IxPyd/WzuLcGXsnd4GN9F31J1gL9Crc8JdueGijMmx/xkjoxGB2GSRAlouXeXP6GiGUPScxS2beyzbs2h2PB18kW/6nS3/MtAqsAMkqG4ckVG/im4WQeewsXsgRUdPAKTT/UzRGLeYt1r++LhODBEI3pLFzrOqxyyNyAMIKHo+T2dbmNPA==
-Received: from KL1PR01CA0151.apcprd01.prod.exchangelabs.com
- (2603:1096:820:149::7) by TYUPR04MB6692.apcprd04.prod.outlook.com
- (2603:1096:400:355::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Fri, 20 Sep
- 2024 08:50:11 +0000
-Received: from HK3PEPF0000021C.apcprd03.prod.outlook.com
- (2603:1096:820:149:cafe::a4) by KL1PR01CA0151.outlook.office365.com
- (2603:1096:820:149::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.29 via Frontend
- Transport; Fri, 20 Sep 2024 08:50:11 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
- smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
-Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
- designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
- client-ip=211.20.1.79; helo=localhost.localdomain;
-Received: from localhost.localdomain (211.20.1.79) by
- HK3PEPF0000021C.mail.protection.outlook.com (10.167.8.38) with Microsoft SMTP
- Server id 15.20.7918.13 via Frontend Transport; Fri, 20 Sep 2024 08:50:10
- +0000
-From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-To: patrick@stwcx.xyz,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] ARM: dts: aspeed: yosemite4: Revise adc128d818 adc mode on Spider Board
-Date: Fri, 20 Sep 2024 16:50:07 +0800
-Message-Id: <20240920085007.1076174-1-Delphine_CC_Chiu@wiwynn.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B8A34CF5
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726822276; cv=none; b=GWeqEB7RL1+BljvUZSdSa+crBfVAXdHxmYZXSGLkUf8FbVuY5dPD7SR/CUBn/Yom5Uf6vaDlgB1TUEyZoKHo8j+uBcA79id6wY0SgfOM1u9MGzG89YWpJHa5smeDM7qAwQLiUyioY2xLvxR/ip1rtG3l/CcjHqN9UZEfkdD/OqY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726822276; c=relaxed/simple;
+	bh=enjexeWIM/zfUTF9N6uDaW6CmXQXGi1d2i+TGQBYd+Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=GAEK4eMmEoSNmivaXczIofo8IZMEoQ1WkzOz9yiQNorJAj9thBwpDcQZCmjFz26xmf40Xqpu6DsVurR+YurTLXhKkeG3evwBT6Cqcb71LWY/JY99flBDJXS+tmVsfvuolVZgpE8BObmIYglL+o6FjNWZKk9gQ3MlHKDQK4HGej8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=UzwQxEdI; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8a897bd4f1so225550466b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:51:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726822271; x=1727427071; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Rvy4/7iJkADqxJUMtWkXFnVrVE6Fo9oX+q4VInNWCCw=;
+        b=UzwQxEdIh+iMIQzZlRSZKNKfsMPetTZfDWg4JJaaCxIKrgIsd+lntMzvgaMqf/nceO
+         ACrcO3QQJqpW7/ZKQwRDHlwdGiGu+NUDiFYZANsRFFxmzPYqMMxLONqIJVD0XtBxkP1N
+         AZqGSyH7QfJHeUpXF7Rbd2il6t0khD9+4NazijVj6A/mCkQe2JyCeMf/MXCP/iVSVCm+
+         iVXdagyZQSdk7HvMvEdxRymD/Asz87BCstPUlaGCkUiPMOSNC7NhBZL61LTQNMsK7byX
+         s+1TgY/ydX48X1G4csSzr3wtUYczFWrSrgjvQmf1miWV9ETHTcJEb1WBXlIP3knbZwJc
+         PQIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726822271; x=1727427071;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rvy4/7iJkADqxJUMtWkXFnVrVE6Fo9oX+q4VInNWCCw=;
+        b=D74KzVGJ4GOyy2FEZPXp+63ivRj64MOJuRdm9qjtQeXWlEWvBdqz5w0GclaKV14CuQ
+         klg21/65FbE5HOErdTOtMwjO5Ri8VsqcYIlADNmvZWILJzT53AGm0EvG8gJwo1tqrQvP
+         ZAxh+7BxoMT93Q0Gx0UkgC3DK6pIGnRee8Wm5/CM2koDVgQp71TIO9kMPj9wO+2cU4vN
+         7O/qMZeKXFPk9nobhROXqVr1YXfmkkIRk7Cy0Y7ewrKTtgLHWfFEsMH7fcnDemKCtswv
+         jorlEVmxW1axxJ8QFxGef8J74y3tc6xvt3KzLzdqpzGjXQSAerVjjF7xn7AMXudsNoQi
+         b8EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXTW7FM6zowX4EsQxWZq2mcOGHq7cyF2Z2Zbawwm8gRiFU7G1Y8J8VpXQorL2liMjXNFQCU9gVV5GKG9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywljl534s4dCM1ppqoXDqrA/y5uZBp4LidlcIMoLMpzo51ndHco
+	AiS0JTgUoIrwI9MlkRsF50JtSdoNeB5n8joMqd8knQI8VBxe6tmNNVYr9C8x73g=
+X-Google-Smtp-Source: AGHT+IFREpCbUeNC+7klw4/rTFGjabYGgqoPION+JjvgLb78PO0UMh/HrYsrQj+a8l6zN8qNYtm1FQ==
+X-Received: by 2002:a17:907:3f25:b0:a8a:ead3:8515 with SMTP id a640c23a62f3a-a90d514a83fmr159421166b.65.1726822271073;
+        Fri, 20 Sep 2024 01:51:11 -0700 (PDT)
+Received: from [192.168.0.216] ([185.44.53.103])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f42f1sm812092966b.57.2024.09.20.01.51.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Sep 2024 01:51:10 -0700 (PDT)
+Message-ID: <0d88fc54-93a7-4075-996f-b2d343c0ba28@kernel.dk>
+Date: Fri, 20 Sep 2024 02:51:09 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK3PEPF0000021C:EE_|TYUPR04MB6692:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 93d091cb-ec8b-48e8-b024-08dcd9513c75
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sVmX402X/wPF5gx17Ki1O2agvlEcuIhMZsrLPWVCr94CsGseyE2dib/n5dKD?=
- =?us-ascii?Q?GTx99i1+pXxBx93SaV0BIuasiws5XFI7eTGsJtSidWgeuh/rIIsfFIrJRUvl?=
- =?us-ascii?Q?lWAm4JjH+hevkx0mvAV31RgWP6DfPwfU7IBUeE1FjwH1n2pknv4BPqbjzxH7?=
- =?us-ascii?Q?pqJ6tgne3rshwkFgbUGAIzimTt++qnRKhIBj/Ibu1lLb46QaBlIXSpM7/cOY?=
- =?us-ascii?Q?eNBR4B8n6Se9YZe6zqJq1Dkj3O4SAXa1BDFBs59XYppthO0EmH0296NXnnj7?=
- =?us-ascii?Q?BGYdXAMAS3aKcQxKc40knroAKPuNaA0LwDOzPYV6KL1tYPlM4ZGw0xJ20rjH?=
- =?us-ascii?Q?MWpH629sg2/lSFlF9gMp4EdT2Q1K9Jqe8vWFNO6z5FAi6W0Y8gM/FHXmMYr6?=
- =?us-ascii?Q?TssUPmOFQ9dnnibbRdyS7DREllbyasUyMAHTd2HNmCPiRuEc0as9H1SMjvxp?=
- =?us-ascii?Q?bAfYxu2y3ucB82srZFKACCzQ1vo0ZmkJypsH5W0Cc0Pk5LKbXPDka8lXrV71?=
- =?us-ascii?Q?jOeN1i6Gg/wk/zVN7Ji+LWuTchUVmu23LKb5TWMRs6LmF4at8uxD+fzSMO3O?=
- =?us-ascii?Q?Uj2BXnCzS/ibs4Hsdd0QRL5zsVOP9ckX3mFFraSMESuADZ4pv0BKDyC6eRNB?=
- =?us-ascii?Q?eb38RWcR77R7O1uvL8zSCdq+p/iaNRNc6XQoaYGjzu4RrS+7x4/BkgYFeZic?=
- =?us-ascii?Q?DldcZVDOCfDS8GEoZ23WuPbf4cxtH78JyquluUFz6I4LxIm6LN9fCdh87AFS?=
- =?us-ascii?Q?t9Hiy8frLShSoPfH39NtSLszNfZaJhDYCW4Hk4f1ctlje/Ik4+1k2AEZ03QO?=
- =?us-ascii?Q?3M6xFVYhDjZxPxIQvxbVL/EQqncaawdl50ZydMhD8oTw/o6bntZSif6giJsG?=
- =?us-ascii?Q?rQtrT4jGxWb6n+vEUufH4VofC2ecG220e9UQoqWn2YqY8IEaHQstwLeZTmiy?=
- =?us-ascii?Q?m/4pgRj17C4duN+DDDmWJPu38XRbCVStwInaK7rxNdk/GZiPhcDKEj6oJ61R?=
- =?us-ascii?Q?LIMunaIN7dFfbwOc8vj+0D+kHhvRWJQV/38VweQa6sEBaWLbw6is6xbgH04I?=
- =?us-ascii?Q?gzKk5joV+S04gcIbWMERYK5JXN23CrgqZ3B+6i5d3tU868/IMd3Q2JaoBEX8?=
- =?us-ascii?Q?hoqlUU+xCCmtBYwyDrdWYHcvsYd9Z1VRBjfk2uPBfMBFWElYf50u8mbsbV+E?=
- =?us-ascii?Q?zUTuy8sLYh+djFT0VRc5qTsnXqighg724Pp5f5R8eTdLTuB8tUo86pngW9K6?=
- =?us-ascii?Q?NiuB/qJ51H99Ro5eQflZW9l0LbTtSiOYseOjHy1TApywtUqDBM2RPqtcRm/U?=
- =?us-ascii?Q?/QnJl2gZOVsjy9dMwAmAGa9njrzyCWyQ0ftBmuJoikJEBtz3xiZf/MNi1xFu?=
- =?us-ascii?Q?JMZtEudjSWq0hCQJ0lskqXKf/CfEXfK6pt8YHcRD/96xmV12zECxcDhFuXpm?=
- =?us-ascii?Q?14vfODTPAMwXfJKf1iW9NdRhPbSD4LR7?=
-X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 08:50:10.6254
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93d091cb-ec8b-48e8-b024-08dcd9513c75
-X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK3PEPF0000021C.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYUPR04MB6692
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] INFO: rcu detected stall in
+ sys_io_uring_enter (2)
+To: syzbot <syzbot+5fca234bd7eb378ff78e@syzkaller.appspotmail.com>,
+ asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <66ed061d.050a0220.29194.0053.GAE@google.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <66ed061d.050a0220.29194.0053.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+On 9/19/24 11:20 PM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    98f7e32f20d2 Linux 6.11
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17271c07980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c78874575ba70f27
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5fca234bd7eb378ff78e
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/20d79fec7eb2/disk-98f7e32f.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/57606ddb0989/vmlinux-98f7e32f.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/901e6ba22e57/bzImage-98f7e32f.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+5fca234bd7eb378ff78e@syzkaller.appspotmail.com
+> 
+> rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> rcu: 	1-...!: (0 ticks this GP) idle=11bc/1/0x4000000000000000 softirq=116660/116660 fqs=17
+> rcu: 	(detected by 0, t=10502 jiffies, g=200145, q=315 ncpus=2)
+> Sending NMI from CPU 0 to CPUs 1:
+> NMI backtrace for cpu 1
+> CPU: 1 UID: 0 PID: 6917 Comm: syz.2.16175 Not tainted 6.11.0-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+> RIP: 0010:match_held_lock+0x0/0xb0 kernel/locking/lockdep.c:5204
+> Code: 08 75 11 48 89 d8 48 83 c4 10 5b 41 5e 41 5f c3 cc cc cc cc e8 11 f9 ff ff 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 <55> 53 bd 01 00 00 00 48 39 77 10 74 67 48 89 fb 81 7f 20 00 00 20
+> RSP: 0018:ffffc90000a18d10 EFLAGS: 00000083
+> RAX: 0000000000000002 RBX: ffff888057310b08 RCX: ffff888057310000
+> RDX: ffff888057310000 RSI: ffff8880b892c898 RDI: ffff888057310b08
+> RBP: 0000000000000001 R08: ffffffff8180cfbe R09: 0000000000000000
+> R10: ffff88803641a340 R11: ffffed1006c8346b R12: 0000000000000046
+> R13: ffff888057310000 R14: 00000000ffffffff R15: ffff8880b892c898
+> FS:  00007f183bd6c6c0(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f7205d61f98 CR3: 000000001bb10000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <NMI>
+>  </NMI>
+>  <IRQ>
+>  __lock_is_held kernel/locking/lockdep.c:5500 [inline]
+>  lock_is_held_type+0xa9/0x190 kernel/locking/lockdep.c:5831
+>  lock_is_held include/linux/lockdep.h:249 [inline]
+>  __run_hrtimer kernel/time/hrtimer.c:1655 [inline]
+>  __hrtimer_run_queues+0x2d9/0xd50 kernel/time/hrtimer.c:1753
+>  hrtimer_interrupt+0x396/0x990 kernel/time/hrtimer.c:1815
+>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1032 [inline]
+>  __sysvec_apic_timer_interrupt+0x110/0x3f0 arch/x86/kernel/apic/apic.c:1049
+>  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+>  sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1043
+>  </IRQ>
+>  <TASK>
+>  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+> RIP: 0010:lock_acquire+0x264/0x550 kernel/locking/lockdep.c:5763
+> Code: 2b 00 74 08 4c 89 f7 e8 ea e1 87 00 f6 44 24 61 02 0f 85 85 01 00 00 41 f7 c7 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 44 25 00 00 00 00 00 43 c7 44 25 09 00 00 00 00 43 c7 44 25
+> RSP: 0018:ffffc9000c5c79a0 EFLAGS: 00000206
+> RAX: 0000000000000001 RBX: 1ffff920018b8f40 RCX: 2e46bf6ba4daf100
+> RDX: dffffc0000000000 RSI: ffffffff8beae6c0 RDI: ffffffff8c3fbac0
+> RBP: ffffc9000c5c7ae8 R08: ffffffff93fa6967 R09: 1ffffffff27f4d2c
+> R10: dffffc0000000000 R11: fffffbfff27f4d2d R12: 1ffff920018b8f3c
+> R13: dffffc0000000000 R14: ffffc9000c5c7a00 R15: 0000000000000246
+>  __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>  __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+>  io_cqring_do_overflow_flush io_uring/io_uring.c:644 [inline]
+>  io_cqring_wait io_uring/io_uring.c:2486 [inline]
+>  __do_sys_io_uring_enter io_uring/io_uring.c:3255 [inline]
+>  __se_sys_io_uring_enter+0x1c2a/0x2670 io_uring/io_uring.c:3147
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Revise adc128d818 adc mode on Spider Board according to schematic.
+I know there's no reproducer for this and hence it can't get tested, but
+this is obviously some syzbot nonsense that just wildly overflows the
+CQE list. The below should fix it, will add it.
 
-Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
-Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
----
- .../boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts  | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-index 98477792aa00..84b7dca88ce8 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-@@ -385,19 +385,19 @@ &i2c14 {
- 	adc@1d {
- 		compatible = "ti,adc128d818";
- 		reg = <0x1d>;
--		ti,mode = /bits/ 8 <2>;
-+		ti,mode = /bits/ 8 <1>;
- 	};
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index f3570e81ecb4..c03d523ff468 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -635,6 +635,21 @@ static void __io_cqring_overflow_flush(struct io_ring_ctx *ctx, bool dying)
+ 		}
+ 		list_del(&ocqe->list);
+ 		kfree(ocqe);
++
++		/*
++		 * For silly syzbot cases that deliberately overflow by huge
++		 * amounts, check if we need to resched and drop and
++		 * reacquire the locks if so. Nothing real would ever hit this.
++		 * Ideally we'd have a non-posting unlock for this, but hard
++		 * to care for a non-real case.
++		 */
++		if (need_resched()) {
++			io_cq_unlock_post(ctx);
++			mutex_unlock(&ctx->uring_lock);
++			cond_resched();
++			mutex_lock(&ctx->uring_lock);
++			io_cq_lock(ctx);
++		}
+ 	}
  
--	adc@35 {
-+	adc@36 {
- 		compatible = "ti,adc128d818";
--		reg = <0x35>;
--		ti,mode = /bits/ 8 <2>;
-+		reg = <0x36>;
-+		ti,mode = /bits/ 8 <1>;
- 	};
- 
- 	adc@37 {
- 		compatible = "ti,adc128d818";
- 		reg = <0x37>;
--		ti,mode = /bits/ 8 <2>;
-+		ti,mode = /bits/ 8 <1>;
- 	};
- 
- 	power-sensor@40 {
+ 	if (list_empty(&ctx->cq_overflow_list)) {
+
 -- 
-2.25.1
-
+Jens Axboe
 
