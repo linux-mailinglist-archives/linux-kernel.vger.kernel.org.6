@@ -1,255 +1,177 @@
-Return-Path: <linux-kernel+bounces-333988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC73197D10F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:12:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E790697D130
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 461B8B217A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:12:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2591F234F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7BA36127;
-	Fri, 20 Sep 2024 06:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="KV8GlRbk"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2076.outbound.protection.outlook.com [40.107.255.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB05244384;
+	Fri, 20 Sep 2024 06:30:54 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D90328E0F;
-	Fri, 20 Sep 2024 06:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726812734; cv=fail; b=oW5gWaPcWSopeo1gPCNOe3AyDREGfqnIES8NmudUJ2ufSOhZXmSYLpdZgeLKghbobUvupzqxFDtO9PDqI6CuPLfXxMX2PQqfPUsiX+eoLR5D1LmJOY4MGuDR2JSutqS4a72JZBmC3SZ8IQpZ+z11CzVRE1AhnS30HtAqoFmy2B0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726812734; c=relaxed/simple;
-	bh=ZHp33LeyAeMDjPN4fKdgJ10jtmoRwkE3PyZ4OhXj+dE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=lJvozj2WicQPvqm5NYKc7zJz+dxF11AOvG2ManwaO5uAQTcsODntq4OSTnHiJoEIeD4xH+hz6BvVhTkTTvSGQ4GGJPRkQy6nB10eIOdL7u+fnwrqhxdkvCaZ6Sy6wstEQacexUvWEVvLhpza4ZwalhykIGP/3Bey4LyJz6Ft1ag=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=KV8GlRbk; arc=fail smtp.client-ip=40.107.255.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ibjfguDcp1KiRoYfpA9H7OHDbuUFAxsy2PfKoK9rzfKfYDkBSZ2MXBDOTszi4G28a0x+Q9eX8VRXSGAECRIATLxQr0eInQlt5DJPvYIGnC0NCoITvqu7HI3TPhDjFou63OSw8VV3dQ/KlhWRz88fOH/d8C/ZZlAk3iIixSAqcYwJC4Gnfpgskkq6t/MtTx3HIfDTIgWLlaMCG7eMCsXiyCIZdCmS4xtH9DrRdU2PViwYAnzHiFRL5kKOFvklWqARAPbXHy3faoxsfFHtPuW+N2DPAUNVlci41Wr7SkO//46KPwKnoW5MzS0/GogJ7faF2wO0q2oS0ElkSQvAI7b4/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9qyrmxVJilMWW7UD9xMd6M1JzPgts+9bi0Ix2BQBjGI=;
- b=Wcqa6kgjrtJfPFo28HK0HNZwEu6rzrcmFrvkInIxCAQaxT7PcUA9O9GXNqyBX/g3El93WNCfrAIEOk6ifbtMO8exqejFQ9Yy9qAsRiYMJzrBnGFRt+9TWNVmEK2QYCHspPWIETBefd9dnuapOZTHtKEl3DvMQXE/U7BHT+qHDIv3sY2z8REBBO3oSaFVgdAm5UR8F4aT4a4eCxxVtjQRHDxAiggbxE7LbJfMbs0BAnhK/l+73JgNcDtk0OCKSuMuEjJ8utXw2h5vaGec7fVCTugM67iWumG43/zp08RIo0MPGhfed58RUuKT6tWQlzcpyxqb6RjSO/5y/bx8Sxv4jA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9qyrmxVJilMWW7UD9xMd6M1JzPgts+9bi0Ix2BQBjGI=;
- b=KV8GlRbkFQ5v0sbxMzOn5UGbG/kZVQWymwqknphG9rZ5thnm9ktBTew/DnMRzrfzRKfaWiwPfQL3+GXitxREAIWqIVW/wJjFutaF4sq/fb9Gm4yIIIYAsholwdp7rPooaOBjLEFaBtfFyKFjOxrNVcWRDXB3fuBnezx61YAAmDtRnWK2MJKNRkT7Obf17MtyEHOfSa7pdjrKBJUfTg+lqtDj4WQfNltoVyI33U6TI5pDHNHD8DxIe9dK42mTWmhWhRuF9k0QckWs00JIEuRCwu9Wrl3DPks7GiFOl1sO8qwyDNaHLO12c6hY60UrRnbt9+dO/8oCYoGFieGGtu8LMQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com (2603:1096:101:e3::16)
- by TY0PR06MB5425.apcprd06.prod.outlook.com (2603:1096:400:216::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.21; Fri, 20 Sep
- 2024 06:12:07 +0000
-Received: from SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce]) by SEZPR06MB5899.apcprd06.prod.outlook.com
- ([fe80::8bfc:f1ee:8923:77ce%3]) with mapi id 15.20.7982.018; Fri, 20 Sep 2024
- 06:12:07 +0000
-From: Shen Lichuan <shenlichuan@vivo.com>
-To: herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev,
-	gcherian@marvell.com,
-	ayush.sawal@chelsio.com
-Cc: linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Shen Lichuan <shenlichuan@vivo.com>
-Subject: [PATCH v1] crypto: Correct multiple typos in comments
-Date: Fri, 20 Sep 2024 14:11:41 +0800
-Message-Id: <20240920061141.10720-1-shenlichuan@vivo.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0156.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:383::20) To SEZPR06MB5899.apcprd06.prod.outlook.com
- (2603:1096:101:e3::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8A91C683;
+	Fri, 20 Sep 2024 06:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726813854; cv=none; b=cnAZ3rRZtfA8jSChjAm2tAFDU2nhxeqN4oWGL2jYxElUJtsQsEotmZU5O50/g94iMA4TitPWL0IeaQEYFLYN7xIetbqTXLDDVC3Rj70S9x1eJGhd9h8AO03dJMgAgyyKxqQDBQ4dHeBsbbNRuczwgtDlHAAWEPzeSdsYO02cT9E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726813854; c=relaxed/simple;
+	bh=pUsj6zi6XSx6GhIlGdt1Hl9sG+23RLjq3jnloPOfGSA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rxDIsaTHi3kWq43/mRml/2YUdB9q/6XVJyZcbfYOnOEMi1uTbtpezOSHa3YNGc6CcCZyVewtNvSv5//QyWFnKLfJDN3h10xzcg5k4JcqMR5i+r+6fvsULmxIW4EO156J0uVbl2awpoEm+AurSY7y6NuNUYqBNzrEVDMBFLfNbtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X92BV2t0Fz2DcJj;
+	Fri, 20 Sep 2024 14:13:22 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 140801401DC;
+	Fri, 20 Sep 2024 14:14:03 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 20 Sep 2024 14:14:02 +0800
+Message-ID: <2c5ccfff-6ab4-4aea-bff6-3679ff72cc9a@huawei.com>
+Date: Fri, 20 Sep 2024 14:14:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5899:EE_|TY0PR06MB5425:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3ce1ac73-8c5c-41a0-134c-08dcd93b279f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?P8GRJImHiKnN4O9z13/c5YCRHuX2FAEN9qDc6FtakesthFW3bS1RjSiw/yxF?=
- =?us-ascii?Q?PfgzffjRzep18FOWAAaAPoxV2MTWpzQ1NucqQ08Di9gDARNpRUVgm2VvQtdH?=
- =?us-ascii?Q?VwDSNs9+Gem1xMQJ3K3CAWLAo6OjeISEdsu+estwJPjgZqXk/tn7qzYUuKNa?=
- =?us-ascii?Q?7CEq4Y6Z0XIDx3BeUb8u4hs2XQNZxHSLSvlUDO3AFeXAop58rJr9wI1mbyzO?=
- =?us-ascii?Q?9K19WfCepyzZAF1mMR9q7OXfTJIBFql3vLyDxsfqRkmiyRO7Q34yRTpGIJ75?=
- =?us-ascii?Q?SI1w+Tk+yQAtB19JBKb16pJ4DH4YsVg3pfnfne7nAzRMSdXizcu4yXTvJFly?=
- =?us-ascii?Q?HGkSubPlfauhdsMYeSnUNzlHX0g59X0wNmwGEZ9HlfK8JG2ts2OxTuWG3x0Q?=
- =?us-ascii?Q?+BTQePhAVwAGcnMm8UKvRyV02BXjod6rjG2tBUrKgN1V+Zb/K9kKddE7CAS9?=
- =?us-ascii?Q?iUrTECLlw51WJK7u/4txJxXUZCuDc9jICo8hljXMNKCoNtPtzo86DqW34Xiy?=
- =?us-ascii?Q?i52Z6Ht/Rlg53SWi9mESCBKAmBCX7g9j1eyW3b7aPnAFRowXtlKXkp59iS7J?=
- =?us-ascii?Q?mJ+6luYT+3zSlvoL6FxAZ/tuFKNGsZKRTtI4qpPKPhKFhGk3HzthJfXA4D8z?=
- =?us-ascii?Q?YkcjaCFDaXGmXCmoAk1wujMrBBZE/L5pbmoaRhrKYhdgGBUtVXJlYyuB2QQ4?=
- =?us-ascii?Q?DOXDPMOEsjVIR2K4kPwBU19Zv4fUE9Y+cxPvuvpK3Z5ifhmIUYMhfR9esi0b?=
- =?us-ascii?Q?56xFedCdUwpZVX9slJDIrxQkxNmNSpSURFCQBg0Ywd8gOvbrNxU+VjPhRiCF?=
- =?us-ascii?Q?f09XIYdQmIHoZQe3OiQ8nwBMG4xKj/R3uI/NSckgfGZVLhB2kotvYRb/t7aq?=
- =?us-ascii?Q?DSJl5eSBDqvYRJJyJ75HGpzPmLtBPpVg//n2t7oYBrn5JfWfQtHnMRxu2lrY?=
- =?us-ascii?Q?JfByaMgsApuHs2ZLm2YWhYh5btdaqbZpKh8adR2KgQcRtqa7Vwi6fNABVYq8?=
- =?us-ascii?Q?9Gb9O7U0cm91hj2L9f/WtvrS0kZb5896Ztl8zl7rgdxX3a9o/wXGSu6uGVsx?=
- =?us-ascii?Q?2iJBNKzwW0PmvqkdASWDRsSOst0cq15deg9wZ6V9U6hUm2xPvtXziCQlueKq?=
- =?us-ascii?Q?dipq4b51lgl2IO9bImVD4bRVNc8ByzRalYUAUDt9hLd3yE0L1PXXjF0hdCZO?=
- =?us-ascii?Q?XWAS73N+IoWS15hlYqLjvlWDUf/nAqR7Bw7RIzsJlmqVLKa7lOzP0AqvtIIV?=
- =?us-ascii?Q?uuP2DiO7Auahznzpjopg67GZu2exC11wPMMg+V0QmEm8p5IpDcAtSMT1tjKZ?=
- =?us-ascii?Q?nQbT5qHxUIu9LmsPr6hHnoOFv/Yw6MwDQLpdHlPZJUcpPWWI5onvZJq4JQY5?=
- =?us-ascii?Q?lhnOhtiRWajr1PJENFHUFmYjSOi6ysbc5kStH6THposDTbqHUQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5899.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Es5AOwlA0bQb5SKzHyCW4UJk3gm/sFphxsB4RSRn9E9YgO5WYOUJzyXHbCmb?=
- =?us-ascii?Q?VoHFpayuFdZ8qmiqO4qLt2WzlNVRhSMFWTEyIf1IgxTVBKMqNJWzNq6Ng+l4?=
- =?us-ascii?Q?NeRmjQwFMA3qZ/c3DD4vvQPP5E4tf13jS07nj1gZ5bWRufWJCT0af5Uh1HWm?=
- =?us-ascii?Q?1JRGTQkX2c9lr6yfCmBw/xgGsh5n9aNhcm5NlAKjg+m9iKyyNE2F8OHHGi8t?=
- =?us-ascii?Q?3BNMXrjpYCjCNhUknKSpfH2jmL6ww7zRjT9TVYrA/cWee++vLOBESZz+MhTN?=
- =?us-ascii?Q?get2Ug+RsXy/3I+9pNJ5+Oc+5CDdQK0HNrxdVDRs36NK2dYWQuyiRKuvqAKv?=
- =?us-ascii?Q?CdwY7XBgv4CgjU+1FV5WefPthCQSC7dDzmsGIQDtwCkF8OGGrghYAn7gQOsh?=
- =?us-ascii?Q?cNsG/K2xjK2EqdN219sh51jfGuIavU9anejCuKMmDJC1pkr79hgQKaKYuN6N?=
- =?us-ascii?Q?eOkOJioipfGnDLWTFjCTpEwZklXkaKeQy5+tzEpk0aJ1VjaDcrEt28mdKHFv?=
- =?us-ascii?Q?Rby+05aO8cRikkQPefKgZLU7wUkdqzdp6JKQWsa67YQM+zfoQbhaGvpn4MwA?=
- =?us-ascii?Q?cdT+v4npbiy9qDkssKqkTqTsKXKeoTQ1YOn7wV6cSEgdq4vlHWs9zqUoXl52?=
- =?us-ascii?Q?661EIU9e9ggXgQyfQSZX+6TCalR8Pw92EDUb0C2rD1p6/y7Mh9waXufxB6ee?=
- =?us-ascii?Q?v5+dhUEFvqa+q1bZtLF2tsaOMhxXAfonduDNL3/rHJoQ9jPc8IrHlB0PxNfN?=
- =?us-ascii?Q?5phlSiGfw0TYx2sf/vSI6cOzfmJb4qwqlXvTjz4sNElQhla0yYXvW76Id8Ne?=
- =?us-ascii?Q?WghxOKRDnDlPVzq8sKdNqGIBVbaNr9tLR6MlsBB3Vcyf0G1OmjqpfLqn2W+m?=
- =?us-ascii?Q?5r412nw7lPdqvhDJv4tY07R70xcG+q19C6hKas+loc5AKrvxwEsFUEbWNFBI?=
- =?us-ascii?Q?QZU+b4+tJkERELIy2muhza0fu1tltCC2ZU9zV+MzKpBrGRBcp2W/iIp1IdFC?=
- =?us-ascii?Q?72sPv+1vlG/zWkDrPmCmIGwZDAuefU1kpWbRj2zpER2PPrSpZDzE95ukekD2?=
- =?us-ascii?Q?e5IS1B6FQ67vq9zH92FpnFtqmxSPxlCL3TRdrgeL5QdBoOApIK1zVjk/UyaA?=
- =?us-ascii?Q?fTFKvqDQDUQBKwoCbXwPUjffEzPPGzfrhRbmi17znDBwuX/ChpYdDwuNvaev?=
- =?us-ascii?Q?22KOyQ7wbe3rHwJ5K1yNwP8fFRGH26QHfJ8unDBgOHn7YhcFNM3lgq627nGe?=
- =?us-ascii?Q?uKyCAE5bz795TXUlhjUleUgNOyMKxB4ArnNIyUy362WYADpH74Q5jFXSW2io?=
- =?us-ascii?Q?YhGWOJDy6Cze9WfXiVvoXXlvrpgOap+FaC+Qhj7ht/PE2Lao92vcxz4KvKhX?=
- =?us-ascii?Q?xjlE9uKPEkIjAmsUnRY/cUdjycpm8Y58yCk7oKrmsNV6jAHhFfPaDlsiWxl3?=
- =?us-ascii?Q?uCoGwsfBxQYt13CmlINZGrtA6/qqvk+eRATlw/E4MdOxIWA51TcBWX6ZqSYO?=
- =?us-ascii?Q?Qq0xGXOu+zHeFI5YJtwC+vpnBFrUnt/w6qUHVvHsF+BQZULyFBrDjqehmKvA?=
- =?us-ascii?Q?wQW1NSRSKJeUK41+crRSP02vEB0rHjiGTGg8P7tG?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ce1ac73-8c5c-41a0-134c-08dcd93b279f
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5899.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 06:12:07.2909
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5vndgy85aGADKlrVLNSfFtPicKeKQIRFsP7Mpl4Nd6coVQqMpBKplVM1xaMN7Vju5TN7b3PXyk7SNPim6BfSCw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5425
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 2/2] page_pool: fix IOMMU crash when driver has
+ already unbound
+To: Ilias Apalodimas <ilias.apalodimas@linaro.org>, Jesper Dangaard Brouer
+	<hawk@kernel.org>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<liuyonglong@huawei.com>, <fanghaiqing@huawei.com>, <zhangkun09@huawei.com>,
+	Robin Murphy <robin.murphy@arm.com>, Alexander Duyck
+	<alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Wei Fang
+	<wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang
+	<xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>, Tony Nguyen
+	<anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov
+	<ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
+	<john.fastabend@gmail.com>, Saeed Mahameed <saeedm@nvidia.com>, Leon
+ Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Felix Fietkau
+	<nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee
+	<ryder.lee@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>, Sean Wang
+	<sean.wang@mediatek.com>, Kalle Valo <kvalo@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Andrew Morton
+	<akpm@linux-foundation.org>, <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <intel-wired-lan@lists.osuosl.org>,
+	<bpf@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+	<linux-wireless@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-mm@kvack.org>
+References: <20240918111826.863596-1-linyunsheng@huawei.com>
+ <20240918111826.863596-3-linyunsheng@huawei.com>
+ <CAC_iWjK=G7Oo5=pN2QunhasgDC6NyC1L+96jigX7u9ad+PbYng@mail.gmail.com>
+ <894a3c2c-22f9-45b9-a82b-de7320066b42@kernel.org>
+ <cdfecd37-31d7-42d2-a8d8-92008285b42e@huawei.com>
+ <0e8c7a7a-0e2a-42ec-adbc-b29f6a514517@kernel.org>
+ <CAC_iWj+3JvPY2oqVOdu0T1Wt6-ukoy=dLc72u1f55yY23uOTbA@mail.gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAC_iWj+3JvPY2oqVOdu0T1Wt6-ukoy=dLc72u1f55yY23uOTbA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Fixed some confusing spelling errors, the details are as follows:
+On 2024/9/20 13:29, Ilias Apalodimas wrote:
+> Hi Jesper,
+> 
+> On Fri, 20 Sept 2024 at 00:04, Jesper Dangaard Brouer <hawk@kernel.org> wrote:
+>>
+>>
+>>
+>> On 19/09/2024 13.15, Yunsheng Lin wrote:
+>>> On 2024/9/19 17:42, Jesper Dangaard Brouer wrote:
+>>>>
+>>>> On 18/09/2024 19.06, Ilias Apalodimas wrote:
+>>>>>> In order not to do the dma unmmapping after driver has already
+>>>>>> unbound and stall the unloading of the networking driver, add
+>>>>>> the pool->items array to record all the pages including the ones
+>>>>>> which are handed over to network stack, so the page_pool can
+>>>>>> do the dma unmmapping for those pages when page_pool_destroy()
+>>>>>> is called.
+>>>>>
+>>>>> So, I was thinking of a very similar idea. But what do you mean by
+>>>>> "all"? The pages that are still in caches (slow or fast) of the pool
+>>>>> will be unmapped during page_pool_destroy().
+>>>>
+>>>> I really dislike this idea of having to keep track of all outstanding pages.
+>>>>
+>>>> I liked Jakub's idea of keeping the netdev around for longer.
+>>>>
+>>>> This is all related to destroying the struct device that have points to
+>>>> the DMA engine, right?
+>>>
+>>> Yes, the problem seems to be that when device_del() is called, there is
+>>> no guarantee hw behind the 'struct device ' will be usable even if we
+>>> call get_device() on it.
+>>>
+>>>>
+>>>> Why don't we add an API that allow netdev to "give" struct device to
+>>>> page_pool.  And then the page_poll will take over when we can safely
+>>>> free the stuct device?
+>>>
+>>> By 'allow netdev to "give" struct device to page_pool', does it mean
+>>> page_pool become the driver for the device?
+>>> If yes, it seems that is similar to jakub's idea, as both seems to stall
+>>> the calling of device_del() by not returning when the driver unloading.
+>>
+>> Yes, this is what I mean. (That is why I mentioned Jakub's idea).
 
--in the code comments:
-	fininishing	-> finishing
-	commad		-> command
-	intrepretation	-> interpretation
-	inuput		-> input
-	overfloa	-> overflow
-	Iniialize	-> Initialize
+I am not sure what dose the API that allows netdev to "give" struct device
+to page_pool look like or how to implement the API yet, but the obvious way
+to stall the calling of device_del() is to wait for the inflight page to
+come back in page_pool_destroy(), which seems the same as the jakub's
+way from the viewpoint of user, and jakub's way seems more elegant than
+waiting in page_pool_destroy().
 
-Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
----
- drivers/crypto/atmel-tdes.c                  | 2 +-
- drivers/crypto/cavium/cpt/cptvf_reqmanager.c | 4 ++--
- drivers/crypto/cavium/nitrox/nitrox_lib.c    | 2 +-
- drivers/crypto/chelsio/chcr_algo.c           | 2 +-
- drivers/crypto/sa2ul.c                       | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> Keeping track of inflight packets that need to be unmapped is
+> certainly more complex. Delaying the netdevice destruction certainly
+> solves the problem but there's a huge cost IMHO. Those devices might
+> stay there forever and we have zero guarantees that the network stack
+> will eventually release (and unmap) those packets. What happens in
+> that case? The user basically has to reboot the entire machine, just
+> because he tries to bring an interface down and up again.
 
-diff --git a/drivers/crypto/atmel-tdes.c b/drivers/crypto/atmel-tdes.c
-index dcc2380a5889..d539f4422cad 100644
---- a/drivers/crypto/atmel-tdes.c
-+++ b/drivers/crypto/atmel-tdes.c
-@@ -872,7 +872,7 @@ static void atmel_tdes_done_task(unsigned long data)
- 		if (!err)
- 			err = atmel_tdes_crypt_start(dd);
- 		if (!err)
--			return; /* DMA started. Not fininishing. */
-+			return; /* DMA started. Not finishing. */
- 	}
- 
- 	atmel_tdes_finish_req(dd, err);
-diff --git a/drivers/crypto/cavium/cpt/cptvf_reqmanager.c b/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
-index 153004bdfb5c..fb59bb282455 100644
---- a/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
-+++ b/drivers/crypto/cavium/cpt/cptvf_reqmanager.c
-@@ -238,7 +238,7 @@ static int send_cpt_command(struct cpt_vf *cptvf, union cpt_inst_s *cmd,
- 
- 	qinfo = &cptvf->cqinfo;
- 	queue = &qinfo->queue[qno];
--	/* lock commad queue */
-+	/* lock command queue */
- 	spin_lock(&queue->lock);
- 	ent = &queue->qhead->head[queue->idx * qinfo->cmd_size];
- 	memcpy(ent, (void *)cmd, qinfo->cmd_size);
-@@ -510,7 +510,7 @@ int process_request(struct cpt_vf *cptvf, struct cpt_request_info *req)
- 	info->time_in = jiffies;
- 	info->req = req;
- 
--	/* Create the CPT_INST_S type command for HW intrepretation */
-+	/* Create the CPT_INST_S type command for HW interpretation */
- 	cptinst.s.doneint = true;
- 	cptinst.s.res_addr = (u64)info->comp_baddr;
- 	cptinst.s.tag = 0;
-diff --git a/drivers/crypto/cavium/nitrox/nitrox_lib.c b/drivers/crypto/cavium/nitrox/nitrox_lib.c
-index a5cdc2b48bd6..068265207ddd 100644
---- a/drivers/crypto/cavium/nitrox/nitrox_lib.c
-+++ b/drivers/crypto/cavium/nitrox/nitrox_lib.c
-@@ -17,7 +17,7 @@
- 
- #define CRYPTO_CTX_SIZE	256
- 
--/* packet inuput ring alignments */
-+/* packet input ring alignments */
- #define PKTIN_Q_ALIGN_BYTES 16
- /* AQM Queue input alignments */
- #define AQM_Q_ALIGN_BYTES 32
-diff --git a/drivers/crypto/chelsio/chcr_algo.c b/drivers/crypto/chelsio/chcr_algo.c
-index 177428480c7d..af37477ffd8d 100644
---- a/drivers/crypto/chelsio/chcr_algo.c
-+++ b/drivers/crypto/chelsio/chcr_algo.c
-@@ -1186,7 +1186,7 @@ static int chcr_handle_cipher_resp(struct skcipher_request *req,
- 		else
- 			bytes = rounddown(bytes, 16);
- 	} else {
--		/*CTR mode counter overfloa*/
-+		/*CTR mode counter overflow*/
- 		bytes  = req->cryptlen - reqctx->processed;
- 	}
- 	err = chcr_update_cipher_iv(req, fw6_pld, reqctx->iv);
-diff --git a/drivers/crypto/sa2ul.c b/drivers/crypto/sa2ul.c
-index 461eca40e878..3f056f56bd21 100644
---- a/drivers/crypto/sa2ul.c
-+++ b/drivers/crypto/sa2ul.c
-@@ -574,7 +574,7 @@ static int sa_format_cmdl_gen(struct sa_cmdl_cfg *cfg, u8 *cmdl,
- 	/* Clear the command label */
- 	memzero_explicit(cmdl, (SA_MAX_CMDL_WORDS * sizeof(u32)));
- 
--	/* Iniialize the command update structure */
-+	/* Initialize the command update structure */
- 	memzero_explicit(upd_info, sizeof(*upd_info));
- 
- 	if (cfg->enc_eng_id && cfg->auth_eng_id) {
--- 
-2.17.1
+Yes.
+The problem seems to be how long page_pool is allowed to stall the driver
+unloading? Does the driver unload stalling affect some feature like device
+hotplug?
+As the problem in [1], the stall might be forever due to caching in the
+network stack as discussed in [2], and there might be some other caching
+we don't know yet.
 
+The stalling log in [1] is caused by the caching in skb_attempt_defer_free(),
+we may argue that a timeout is needed for those kind of caching, but Eric
+seemed to think otherwise in commit log of [3]:
+"As Eric pointed out/predicted there's no guarantee that
+applications will read / close their sockets so a page pool page
+may be stuck in a socket (but not leaked) forever."
+
+1. https://lore.kernel.org/netdev/20240814075603.05f8b0f5@kernel.org/T/#me2f2c89fbeb7f92a27d54a85aab5527efedfe260
+2. https://lore.kernel.org/netdev/20240814075603.05f8b0f5@kernel.org/T/#m2687f25537395401cd6a810ac14e0e0d9addf97e
+3. https://lore.kernel.org/netdev/ZWfuyc13oEkp583C@makrotopia.org/T/
+
+> 
+> Thanks
+> /Ilias
+>>
+>>
+>>> If no, it seems that the problem is still existed when the driver for
+>>> the device has unbound after device_del() is called.
 
