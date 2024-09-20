@@ -1,125 +1,100 @@
-Return-Path: <linux-kernel+bounces-334271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D4797D4D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:27:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F155297D4D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D91828371B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:27:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E03BB22D29
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9881442E3;
-	Fri, 20 Sep 2024 11:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJqKzdaz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA6214386D;
+	Fri, 20 Sep 2024 11:28:44 +0000 (UTC)
+Received: from smtp134-25.sina.com.cn (smtp134-25.sina.com.cn [180.149.134.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9A414290;
-	Fri, 20 Sep 2024 11:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D23E14290
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 11:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726831627; cv=none; b=Pui/SaGF8/f7mIF3UlRnLnjTWZl4AvIKACIBgS9YAGiE7cKIdZwnb4eWAFjOYCloOxskrdvGmWHXDMshu/69TxvNgbs0yxILRfy7snFrLXQ/MF4M6loRx10D6h3+RmrvXYE0fdKqoB/YEFbnQ5mFpk0a2nPJd1IDNwLIY3/duc8=
+	t=1726831724; cv=none; b=tRmmNAyJ8v/LFlIEbgF/LqEs64QELX0t1uTM0IvgkJCIII+vkCJrjSgRQ6Lx/nfnPQ3YSxAlLm91QZS+tDkic34ruUc8Zbun3VbHU1KRR3xr2Eve8r7C2nF2rSH9+elmVbJomZMU0AqgPJwDsUkkSez69tgjm6fxKA/II0uctic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726831627; c=relaxed/simple;
-	bh=Pu+Q8DHoL0edU64i2MkdXyKqaILGDIGkO3K4u29/lmU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=RcOkBGudeUIUKDJeQ0l69x97PbDM9lvcl5U5Edb7wiORRG/+GoyfpIMDA3n56CKO0VwsXy/nqbbRVs/j2PnwfYzpn720R5rzNr1sdjVdi+SXiNQEwGXTRVcwkj65FL05HY6Tf/UyOVo2pJ3Jyx2I06KUjL7zCP6P5IwoWQ9sYss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJqKzdaz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 080DEC4CECD;
-	Fri, 20 Sep 2024 11:27:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726831627;
-	bh=Pu+Q8DHoL0edU64i2MkdXyKqaILGDIGkO3K4u29/lmU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WJqKzdazK7zg+v5FDyOGY2q3YtjXBOFVBu17Znyx05tRwPBc0gqDcBDTDEfauIqo6
-	 eBCo+JwEz+wJ29r+DSDnnAuAbFlWFPXgrcaq53+Cl02Y30859U4ilkXHo/WjMg2nyI
-	 9OFI/7uFrOiLYSzXQPKYrIOMH5CZiaWHrNIUNJmQTvv1/bh7wBCFbyzmZZqN/4M+bP
-	 BsSohYwc/ABAlGbct8KuUvNIrqkD6x7eNi7VZyfbx2I3xl+cnvQ6yypYHuMmsWVMuU
-	 jf4HAlLyu8VdWIUPwQ2KBqr0m5eoZix3hMGxtoFCeWPHzUkXhpUuADFUtsu0YL3BqH
-	 Mdu4cT68WZ9KQ==
-Date: Fri, 20 Sep 2024 13:26:59 +0200
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Steven Rostedt
- <rostedt@goodmis.org>, Florent Revest <revest@chromium.org>,
- linux-trace-kernel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
- Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
- Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>,
- linux-arch@vger.kernel.org
-Subject: Re: [PATCH v15 00/19] tracing: fprobe: function_graph:
- Multi-function graph and fprobe on fgraph
-Message-Id: <20240920132659.48d4563d4ab4ff32ba64d65a@kernel.org>
-In-Reply-To: <CAEf4BzZAPjZEZR9m66hPr6srzJwuu=B8zu6cNhxe-7__5+LpHw@mail.gmail.com>
-References: <172639136989.366111.11359590127009702129.stgit@devnote2>
-	<CAEf4BzZAPjZEZR9m66hPr6srzJwuu=B8zu6cNhxe-7__5+LpHw@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726831724; c=relaxed/simple;
+	bh=jEqJ/+mSPKWOagHDO6i56B5narGLux3drkgc9G2BwsM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=uYJIfeXC5sdFgwHA73hgJExwqmTGlblAueCsJoOUJ9ooO/Wv58p8HWWgU4D8Qj/iDqh6GsIhNEskskAH+/g34ZZgDZavtWFvAuPuK4KWOM1JlZRpMEM/js/+mTjHk13GfrINXdPPEToI8xIEdMFA69D7j2KiWF5H9bA3/yGrRwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.69.138])
+	by sina.com (10.185.250.21) with ESMTP
+	id 66ED5C5100001D2D; Fri, 20 Sep 2024 19:28:19 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9092103408272
+X-SMAIL-UIID: BF091B63CF41477F87B282E8409A83F5-20240920-192819-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+a11c46f37ee083a73deb@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [media?] KASAN: use-after-free Read in em28xx_close_extension (2)
+Date: Fri, 20 Sep 2024 19:28:09 +0800
+Message-Id: <20240920112809.627-1-hdanton@sina.com>
+In-Reply-To: <66ec3c83.050a0220.29194.002f.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Wed, 18 Sep 2024 23:22:41 +0200
-Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
-
-> On Sun, Sep 15, 2024 at 11:09 AM Masami Hiramatsu (Google)
-> <mhiramat@kernel.org> wrote:
-> >
-> > Hi,
-> >
-> > Here is the 15th version of the series to re-implement the fprobe on
-> > function-graph tracer. The previous version is;
-> >
-> > https://lore.kernel.org/all/172615368656.133222.2336770908714920670.stgit@devnote2/
-> >
-> > This version rebased on Steve's calltime change[1] instead of the last
-> > patch in the previous series, and adds a bpf patch to add get_entry_ip()
-> > for arm64. Note that [1] is not included in this series, so please use
-> > the git branch[2].
-> >
+On Thu, 19 Sep 2024 08:00:19 -0700
+> syzbot found the following issue on:
 > 
-> With LPC and Kernel Recipes back-to-back I won't have time to look
-> through the code, but I did manage to run some benchmarks tonight, and
-> they look pretty good now, thanks! Seems like the kprobe regression is
-> gone, and kretprobes are a bit faster. So, nice work, thanks!
-> 
-> BEFORE
-> ======
-> kprobe         :   25.052 ± 0.032M/s
-> kprobe-multi   :   28.102 ± 0.167M/s
-> kretprobe      :   10.724 ± 0.008M/s
-> kretprobe-multi:   11.337 ± 0.054M/s
-> 
-> AFTER
-> =====
-> kprobe         :   25.206 ± 0.026M/s
-> kprobe-multi   :   30.167 ± 0.148M/s
-> kretprobe      :   10.714 ± 0.016M/s
-> kretprobe-multi:   13.436 ± 0.328M/s
+> HEAD commit:    68d4209158f4 sub: cdns3: Use predefined PCI vendor ID cons..
+> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11166200580000
 
-Thanks for reevaluate the series!
-This results look nice.
+#syz test
 
-Thank you,
-
-> 
-> > [1] https://lore.kernel.org/all/20240914214805.779822616@goodmis.org/
-> > [2] https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/log/?h=topic/fprobe-on-fgraph
-> >
-> 
-> [...]
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+--- x/drivers/media/usb/em28xx/em28xx-core.c
++++ y/drivers/media/usb/em28xx/em28xx-core.c
+@@ -1134,7 +1134,7 @@ void em28xx_close_extension(struct em28x
+ 			ops->fini(dev);
+ 		}
+ 	}
+-	list_del(&dev->devlist);
++	list_del_init(&dev->devlist);
+ 	mutex_unlock(&em28xx_devlist_mutex);
+ }
+ 
+--- x/drivers/media/usb/em28xx/em28xx-cards.c
++++ y/drivers/media/usb/em28xx/em28xx-cards.c
+@@ -3910,6 +3910,7 @@ static int em28xx_usb_probe(struct usb_i
+ 		retval = -ENOMEM;
+ 		goto err;
+ 	}
++	INIT_LIST_HEAD(&dev->devlist);
+ 
+ 	/* compute alternate max packet sizes */
+ 	dev->alt_max_pkt_size_isoc = kcalloc(intf->num_altsetting,
+@@ -4156,6 +4157,8 @@ static int em28xx_usb_probe(struct usb_i
+ 	return 0;
+ 
+ err_free:
++	if (!list_empty(&dev->devlist))
++		em28xx_close_extension(dev);
+ 	kfree(dev->alt_max_pkt_size_isoc);
+ 	kfree(dev);
+ 
+--
 
