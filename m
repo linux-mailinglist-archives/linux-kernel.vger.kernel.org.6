@@ -1,84 +1,81 @@
-Return-Path: <linux-kernel+bounces-334486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D0397D7DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:50:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74B697D7E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 615851F246B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:50:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0018282C48
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4AA17C224;
-	Fri, 20 Sep 2024 15:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1353817D8A9;
+	Fri, 20 Sep 2024 15:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kvn4L/n1"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UTa8SC+N"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705BDF4ED
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB1961FCF;
+	Fri, 20 Sep 2024 15:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726847412; cv=none; b=X0cjPyAiT+gnA4rpv80f50UKUq03LOehldpukWKMVUNt7RrkLuEzojRNFasZs2morEvnSCCpWtUekkpsDUg4ZhIowadGx+7+su+Is9cnLA+HcDXseUY1ggyeQU3+iZjTnX+Gijtqg2uTv/vI1bML66ccQE/lJ6w2V+TW0hmHzJE=
+	t=1726847487; cv=none; b=fXDYjCfMLRbhZbhIjDN0Vwts5/l6sgLSIjkaP2suzd3M0S9rte6aUx5nLzbB0IH8DAdoeYnTSrvxEYDtyLayVgtxWvvYwqT2rKfZutsd7n6JS31iBNCCmHtgelOEwsq00bHEhiL0Pv7kf0aiAZ9Oy7JbnptR1bVaG38jp2Ohfbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726847412; c=relaxed/simple;
-	bh=9mX8Lc8FHhzmhdfC4qNmIeDhIa3Q8HZH8o+UXxa3Xbo=;
+	s=arc-20240116; t=1726847487; c=relaxed/simple;
+	bh=wqyug4XUddrN+NJhKaXRgld45uzsP6gN++oYCHgIWAg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FAJO4nDdRD7bn+YB8+LhPi3wZ7N+RmNjMYl9kUKlLqRJi1W9wCXe3ud9ApmuKjLvWgMyTVsFVmqiU6IKdiVs5gYJ+2MEhAq0gLV/W/cHEhboMXke/NpCpbCia03KYNlZCZb/sUHZfWSu/QFDGzbj72zjFJz6wEcptyjpiCx/ndM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kvn4L/n1; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so2960571e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:50:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726847408; x=1727452208; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KSTgG1ONFuwyX839G8yS/YFRBceOdoCcCoRfbiWXxRA=;
-        b=kvn4L/n1TyPTFE25V7Q1eh2eAbL+2A4dZQNfMe7564LZBKDCDJcCciVOpfQF79ee/Z
-         XsCztGZEuWRzlF30IDyceY/wzDeDWqc37MoT9ydF9uHZS8la6Coi2yngKniZUWIchjx3
-         MBgPsVOuJMDTeX2WS68myN8eiMOP3npq/BiDJyfkUleQUaoMNaTqwldbaHFE3xkBseXs
-         YbPzU/yY4VC2t2AZwjqbOUMM1c6Jxp3DPVpU6xVIaE0ruPPgKxqqUqhGVKHUDB6s05F7
-         lD8lzIeTo61dC7VK3eTkOB6ZUpfKtnuMqYKX9DxM6idrNSz8R+NTcR+iDrxBAxePdOv3
-         sdpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726847408; x=1727452208;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KSTgG1ONFuwyX839G8yS/YFRBceOdoCcCoRfbiWXxRA=;
-        b=UbZd/7NpKd1Mku4+URiK60MNJvCvDcCLGVb2u/7kx1ov14WEhGBY0K2VsJm03oV7ND
-         GeAArGXi67IlhGQJaQJPqYuVpAfB8RLVHBo+nKo6K88tk1IDYstXoY+HLrz1Zxqgwkp/
-         1IkeS0+E9jKozN+qaXwIOoYcXXkZXVFzM2BOAuXDQ1zA3ZzqJMRucJdR/0GK6g0SlBlM
-         AfpX7rzXYuifihTblgE5ioyAg+6/pgluiW0yOezzyPCcLNl1Bw62dc+9dthicMbjoNjx
-         xUMQruBdOR+S73bn7j1v90fVXwMb5qg4l+e5+e/kPupo9H+pRdQV6J3TXaqJRP90sEw7
-         Un6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWLurQsEvzwfo/XwyzQuTBmQo0Zq1gOc7mvKYBhqZm+9JOb0wam9E9m9yg3ONOAbUMXbwa3XNbynFCIphU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw50ExKJw/JFKc/7xZmc5/KPf1zUg4VQjSsk49sVxCG5dGDuXJm
-	sBaS7GSDYtZZstuQ6ae1s0pPv6FLYazINfCsLgUwKWg6q55hrc8+DLLN2fq+Ros=
-X-Google-Smtp-Source: AGHT+IFFifI1MUsOVRDjkDVOg+d0xUbcZiymFm1+Kp7WhRry1g/Fga9+FS4wV+y+d1B48js9K9fuPw==
-X-Received: by 2002:a05:6512:2391:b0:52c:c9ce:be8d with SMTP id 2adb3069b0e04-536ac341b82mr2170221e87.57.1726847408505;
-        Fri, 20 Sep 2024 08:50:08 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53687047023sm2210754e87.45.2024.09.20.08.50.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 08:50:08 -0700 (PDT)
-Date: Fri, 20 Sep 2024 18:50:05 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: Hermes.Wu@ite.com.tw, Andrzej Hajda <a.hajda@samsung.com>, 
-	Neil Armstrong <narmstrong@baylibre.com>, Robert Foss <robert.foss@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, 
-	open list <linux-kernel@vger.kernel.org>, Kenneth hung <kenneth.hung@ite.com.tw>
-Subject: Re: [PATCH v1] drm/bridge: it6505: HDCP CTS fail on repeater items
-Message-ID: <nczuje3ur7sf7uqkygtziwnz5p6b4b7bf5on5crljr2ijmblrv@ym3fkvqxbjq5>
-References: <20240919025551.254-1-Hermes.Wu@ite.com.tw>
- <CAEXTbpc7N2v4LwoZ4wpHXi7ogyqGwYC3Gpt5sqfxtOpYrngPLg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=taVcfmDVCURYO77VoBSJC6RtjTXhnjEabdCPULam5gfZ7ZCleYBg8y1CWDCeMPlYL9ZSAdj/SwMELnbL9ImPYpAl0dQppSgq0F5lW1p7XQ3/fAwYrun7kYNVm1Gg9jMXiy5bMpKHZD6yxqzkrO5H3fBBftFOC/63VDjPeG1PYK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UTa8SC+N; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726847486; x=1758383486;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=wqyug4XUddrN+NJhKaXRgld45uzsP6gN++oYCHgIWAg=;
+  b=UTa8SC+NAAAiAWhdfxzTjdbRV+X58giLtjSkwzOV40QXk7kkhY8cibou
+   1amuGZE0QpN3vZIOvhe8oVlZhrJvK07lcBXZCHczcRmSucvyUDbF/mmMi
+   giRrwY/H69SDkMvzVPPV+63RxXHR3R4o20bVFSLeNnJhY89m9kDEy8u3f
+   rmnDfA+AV/ihRCXhTjk0HUj6aSd5Ig2Rx2ndiPn740ZpP7xEwkwpgG6O8
+   hwcJj5WGUb+RlPgMPu6xYFoIDQ+O0Ed/uwkY1Sgu6B0NCYRrJ5rkZz1dh
+   AIbuEB1XP54me0X8Xq4C6Ov2vs2peGKkCjeUCItDBnaVlNRyTfT1ezqZ2
+   g==;
+X-CSE-ConnectionGUID: juC1zPuAQICA8wK1E7j5YA==
+X-CSE-MsgGUID: rPK5dpyYT5m5vo97mMT+0g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11201"; a="26006596"
+X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
+   d="scan'208";a="26006596"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 08:51:26 -0700
+X-CSE-ConnectionGUID: Rw+Pb09dTJe2pmxKPGMZDg==
+X-CSE-MsgGUID: 4x24elq4T5Wi+SomsuX8Xw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
+   d="scan'208";a="101197302"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 08:51:22 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1srfui-0000000Axr7-06Xo;
+	Fri, 20 Sep 2024 18:51:20 +0300
+Date: Fri, 20 Sep 2024 18:51:19 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ferry Toth <fntoth@gmail.com>
+Cc: Serge Semin <fancer.lancer@gmail.com>,
+	Viresh Kumar <vireshk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] dmaengine: dw: Select only supported masters for ACPI
+ devices
+Message-ID: <Zu2Z99pULL_m66Dm@smile.fi.intel.com>
+References: <20240919135854.16124-1-fancer.lancer@gmail.com>
+ <20240919185151.7331-1-fancer.lancer@gmail.com>
+ <ZuyEQOIztvUrO0gO@smile.fi.intel.com>
+ <2627811.Lt9SDvczpP@ferry-quad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,33 +85,36 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEXTbpc7N2v4LwoZ4wpHXi7ogyqGwYC3Gpt5sqfxtOpYrngPLg@mail.gmail.com>
+In-Reply-To: <2627811.Lt9SDvczpP@ferry-quad>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Sep 20, 2024 at 01:27:54PM GMT, Pin-yen Lin wrote:
-> On Thu, Sep 19, 2024 at 10:58 AM <Hermes.Wu@ite.com.tw> wrote:
-> >
-> > From: Hermes Wu <Hermes.Wu@ite.com.tw>
-> >
-> > Fix HDCP CTS items on UNIGRAF DPR-100.
-> >
-> > Signed-off-by: Hermes Wu <Hermes.Wu@ite.com.tw>
-> 
-> Reviewed-by: Pin-yen Lin <treapking@chromium.org>
+On Fri, Sep 20, 2024 at 10:52:18AM +0200, Ferry Toth wrote:
+> Op donderdag 19 september 2024 22:06:24 CEST schreef Andy Shevchenko:
+> > On Thu, Sep 19, 2024 at 09:51:48PM +0300, Serge Semin wrote:
 
-For the sake of somebody applying the patch because it was R-B'ed
+...
 
-Nacked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > Fix the problem by specifying a single master ID for both memory and
+> > > peripheral devices on the ACPI-based platforms if there is only one master
+> > > available on the controller. Thus the issue noticed for the iDMA32
+> > > controllers will be eliminated and the ACPI-probed DW DMA controllers will
+> > > be configured with the correct master ID by default.
+> > 
+> > Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Seems this fixes the bug I have seen.
+> > Ferry, can you confirm?
+> I was testing something else and broke my setup :-(
+> I’ll fix that and test this patch this weekend.
 
-The commit message doesn't describe what is being done and why, it
-doesn't have Fixes tags, etc.
+Thinking about this more I believe it's not the best what we can do.
+Because this leaves a potential gap for the devices of more than one
+master but in different order.
 
-Hermes, I'm not sure what's happening on your side. I have seen several
-revisions of this patch with minimal modifications (and being a part of
-different series). Some of them were marked as v1 (although you've sent
-different patches as v1), other had v2 (but no changelog, etc). Please
-adhere to the described process of sending patches.
+I'll send another patch after my testing.
 
 -- 
-With best wishes
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
 
