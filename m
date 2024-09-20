@@ -1,88 +1,89 @@
-Return-Path: <linux-kernel+bounces-334697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F9197DAC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:19:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D1797DAC7
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1E2D1C21218
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:19:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C40A6B22074
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33E518A6B9;
-	Fri, 20 Sep 2024 23:19:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5636D18DF7D;
+	Fri, 20 Sep 2024 23:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VTGVcK6/"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B7F1531E1
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 23:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9D61531E1;
+	Fri, 20 Sep 2024 23:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726874345; cv=none; b=CYI5ERB+ggUD+RZXPzAIPA19KAycfmNK6kwkLF3nBahg9md0hZHPTwP4ESE4iXoeFqZTMNm9Gzi4UynlkHGAySDXmrpK7F52CDvidD0vhbpMIMAxzswVQOqP5s0wvopCFFVX2mFMgm080Up37A7xzoTDZ1TOHjNK1YopF9rjeKI=
+	t=1726874577; cv=none; b=XQpaEPY+ntGzDLiAkLR1GLzY6QtHgomnc2khkq7exa35pCEjRQz7H4tMW+D1ALZLo/Hco/ABPK5gydpmeXDB6F/wGnRaT3WwddXPiLmsEuT5o8O194VXmArKHEGBIz5VSKth+FlhbBh8FsjCrNqLrmhkzeaE3tJC09IRf77lo5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726874345; c=relaxed/simple;
-	bh=aFyRAmhT9zUmgflTkx204tNVMvA3xkcW9nYv+0sy2+o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XPsDK07DidF+HZCZfnmzBMSeGd8lm65vzra6zpcHidoANM2t72VVkEYLkY5utkbUifFXXz5uunApM3DMczh3hY/QTYZOP3TALTJmr9R361kLMrwWLAnG6wW6p+pYxW0ZgGV6ok9DdLGZsKJtwxrUw7xhh1dEsvgkTYft0SXsptE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0a2c95e81so32246085ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 16:19:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726874343; x=1727479143;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ns5zg23lQTVN+Sxwh8wVeSg8SPgTxehmvUwFAr5ff/4=;
-        b=gxK4MvHwB06ISHVbnvGQfgY+z+NMPf1VedDEew1B4rQYe7jbMsSu5hOEujQfmL/Uaf
-         eKrSi0bY5VepTZAO3GnSmbxl0mwNiIiQ32bkCFvWK8NK0tjBL7Pc5uJyG6t416Nvzx5+
-         2jk5ePs25MpuE9cl8gl2M7WBlYkO8puBEMCYz924FgBLskmTnKNkvZkaC2ZYEt9Bn4sN
-         lvFJ/+xXJqe30L7IHBMTv2n+d6tvyVOn5dbM1h2WEar6YmvzMapYvTavEDBm9z1Xzb7K
-         Rt7NC1s/0+Kvc3ofyEawDpLzFtU8BLjGbuz0YgF7IuSvxV1D3f/Yq1wbrfZJGFSKNOTP
-         GVxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEy9n4nDw2tpURawhgAcyRytwgANrpwuQLajNlJZpy9iA9PG+Vf+izQbfhoNm/QP7O2GR/T8ANs4/ynH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1QOpdxEbBFsfy2MZ+nooQJkB28lp2S048iYmXFkT2NpgKmqaQ
-	anNeipDz5rx9SKJRIYsgiIi8y1xVUU3lPmx9yLLVB8ylrHY/djcWf0vCQ14w38OqL6PXQQrTo+T
-	vFZ6s8uBJI5FTgrYc8Y6Tj6mX3oJMtFVgV+RnxhE8u3n8glC/sNcDDTg=
-X-Google-Smtp-Source: AGHT+IHVVfIMSkfJRlIK2pISjvj1ucQmiMJqq1H+ghk2fcN139rC9/JIDBrBY3MOETXnxPV7JiAA/4jZ3pQMOaURQiGM3RmbwnMF
+	s=arc-20240116; t=1726874577; c=relaxed/simple;
+	bh=M8wjtrpNrvCnP385XjaEF5STK8Qo/y9Z5rIxlYHEl54=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ocyiS94dTWU4yRlO2z8Nz0xR6TZAecz8Rxu3Q9FG2M4Et8N+ajRelaiYcT2ABqtuOzp2Me9f5T7bQvcQW3l9+YoNfBsaipTenlcQQLQbpbjthrUwen2z3CWWJazq9SDO9KJEDD1KhVoIN2ZsLBSd/IWPitDZrtQCl7rX1F+Isd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=VTGVcK6/; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=5+TVLbYfVRT8NLkF05JjoAdiCr5BuJ0yliYxVMsjdUQ=; b=VTGVcK6/s809xWxyOplbott3br
+	YdF47TjYOJiA+bTOilXXRNsgZaiYYl6KYDu24oe66F1SZUWbU0N0lWtNNLFhIjKF0DT+JmQZ4NGmJ
+	mUy98QdEh54+cVK2vmGPlyRp0MEhVwxt5PH6M6J25BWUnGbNJBIK1BVYkwum8jLa+05c=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1srmxY-007xhe-VT; Sat, 21 Sep 2024 01:22:44 +0200
+Date: Sat, 21 Sep 2024 01:22:44 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Frank Sae <Frank.Sae@motor-comm.com>, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	xiaogang.fan@motor-comm.com, fei.zhang@motor-comm.com,
+	hua.sun@motor-comm.com
+Subject: Re: [RFC] net:yt6801: Add Motorcomm yt6801 PCIe driver
+Message-ID: <8dad36e2-88c0-4c10-a629-be032353fac2@lunn.ch>
+References: <20240913124113.9174-1-Frank.Sae@motor-comm.com>
+ <20240920230534.GA1071655@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b0d:b0:3a0:9043:59ac with SMTP id
- e9e14a558f8ab-3a0c8d387bamr48859565ab.25.1726874343108; Fri, 20 Sep 2024
- 16:19:03 -0700 (PDT)
-Date: Fri, 20 Sep 2024 16:19:03 -0700
-In-Reply-To: <20240920230001.685-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ee02e7.050a0220.3195df.001c.GAE@google.com>
-Subject: Re: [syzbot] [media?] KASAN: use-after-free Read in
- em28xx_close_extension (2)
-From: syzbot <syzbot+a11c46f37ee083a73deb@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240920230534.GA1071655@bhelgaas>
 
-Hello,
+> > +static int fxgmac_change_mtu(struct net_device *netdev, int mtu)
+> > +{
+> > +	struct fxgmac_pdata *pdata = netdev_priv(netdev);
+> > +	int old_mtu = netdev->mtu;
+> > +	int ret, max_mtu;
+> > +
+> > +	max_mtu = FXGMAC_JUMBO_PACKET_MTU - ETH_HLEN;
+> > +	if (mtu > max_mtu) {
+> > +		yt_err(pdata, "MTU exceeds maximum supported value\n");
+> 
+> Always nice to include the offending value (mtu) instead of just a
+> constant string with no real information other than "we were here".
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+This is actually pointless, the core will do this check and never
+actually call this function if the MTU is out of range.
 
-Reported-by: syzbot+a11c46f37ee083a73deb@syzkaller.appspotmail.com
-Tested-by: syzbot+a11c46f37ee083a73deb@syzkaller.appspotmail.com
+FYI: Networking people have not taken any sort of serious look at the
+code, it needs breaking up into smaller patches.
 
-Tested on:
+Feel free to review PCI parts, but i suggest you ignore networking
+for the moment.
 
-commit:         68d42091 sub: cdns3: Use predefined PCI vendor ID cons..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=13fdcca9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cb61872d4d8c5df9
-dashboard link: https://syzkaller.appspot.com/bug?extid=a11c46f37ee083a73deb
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17219607980000
-
-Note: testing is done by a robot and is best-effort only.
+	Andrew
 
