@@ -1,146 +1,117 @@
-Return-Path: <linux-kernel+bounces-334335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1897D97D5DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:55:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B0897D5DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A56EB234D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:55:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9424F2888BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7C216F282;
-	Fri, 20 Sep 2024 12:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A978D16BE23;
+	Fri, 20 Sep 2024 12:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TMU34yql"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="JvY5OaKv"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8A716A94F;
-	Fri, 20 Sep 2024 12:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7F716A94F
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726836884; cv=none; b=BXxf7Ni1nrVhAvwGafSuQ3paYGPsCOapSIQX+1ioSnYalIsC1RG5bAMYCy4mW7Z2CCNalyXuQysJ3fmJsaLGzwqdB32on5SWWqeZg+NRKlUGEFL/ZC5zxQeM1R4UAwfXuQs6LejaA2isNHW/k54tyTsB7zELQAgX6k+nXRvCBF8=
+	t=1726836879; cv=none; b=LOpXXf4kycuU0eDNsU8yYCPk3kzX3eJZeqFDjHs8dS3CXggrryx5UeUvp7ZblS6arCkz/mv6pu5L1vWBj90fPq1TozfwJYl7C6iX5ZBormuf3wuELWYkb7hBTnVbs98zEQ+loeHoocIEPmI6S9wROb/sJOyZrs3f3B9nRKeoo9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726836884; c=relaxed/simple;
-	bh=9/XbiXvNtfo9Ahhxyxq6laPOnKE8m8Kp8tFx/t2A8HU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IYZmgn1afhG0pIuOneISwQmeZIeCTWAKT5nAKrTxDvYmeVmxGwHpa8iyGfw42orAVymnktCDTlhMcRPugQZIeVYwVRo9+kXui4Z8otGBTuewGt0zHJqiSNOkz0D+peTjNNdiZzIV9nK7vIN0t1aDefoy5QJGmKDro0Eip0KnA+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TMU34yql; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so563676666b.1;
-        Fri, 20 Sep 2024 05:54:42 -0700 (PDT)
+	s=arc-20240116; t=1726836879; c=relaxed/simple;
+	bh=92w6dv+VseI/pBpQZrtGVh/yup0MAZCj8HPO1uZ7qiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FmEYqbnYtQ6Uymv9P5yXVtrUE9We/kmtsAm8jnaEsHodievy1bivt4ay4xvgVlVjFF1RUGH5+6qbirf0UfIzBscIxbNKZqvzXNBCe8ClndLJE70WnMezaSj0b/dfxrKy63tGiJBIqxl2L5R7JacJddu1ZVtduBzkCAhXOrygW8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=JvY5OaKv; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5365c512b00so2449715e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:54:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726836881; x=1727441681; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RpseacMxjUgxJQCQ0p8XO6h9OmRZt38JJp1qVkqe51w=;
-        b=TMU34yql4hRf5Xae89m4gKygnh9tPT4rFGTWxIhra3qMQSfEbEovbATlU6ArvpigF8
-         x1KuU/uXkYSdkEzV4Z0ILaFScNgyHHThtG030/9vZdioAf7qUK/LqjteE6gTvOvIzaVH
-         EnZ0r1pB1R2By3IltUcwFBfkrDRe/9dqxocwQ5tbrZjWOIUFGknf8pkwrv5uO4SCtOxV
-         rB3R7Dff+31wvOlpbVm1h6ciUgswjuP9B/HxXpfH8BZC4a8CRogtOpBHZMmxV4hAHAWf
-         TTZG0uBm5lKtAzLvPJnYPquhKuhV+Cd1v2Na+8m42JoZKtOQ+czwafBI9kFzkR60hP5x
-         gIVQ==
+        d=ziepe.ca; s=google; t=1726836875; x=1727441675; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VxOJXXuTPtJD2C97fiCxabtfgKFUIiIOX78ur33VM08=;
+        b=JvY5OaKvuz1aJrzZJHVBrE2o00vDCTX6YtGXQGiXVs4Qh15hBx+QNbUSTnyqT+WU10
+         woRgrT4SbatG47PCTH1UuBieTZV+vGNqGGWR5dzv6IZ20KqNtNVy2HnNnok8nXhomIKK
+         9bHsPCZJBPj5OPE7t4+hu5/z4xbY/SNSBPA2jUB6eZzwx3q0lBO2ahoAH9eODB1UBbGf
+         ixMY92MAHXm032DubA9AbiX3utQ9pa/mPV6EUBffeQRFsdT1OTY2/l9twySCQXszCKxM
+         zVQo0yS2lpfgHYCvAcV0HTtsGFO9bzRXW+oYbCZmzVR7lfXmHX5UUdWz5mnSsfeO0MYF
+         BOjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726836881; x=1727441681;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RpseacMxjUgxJQCQ0p8XO6h9OmRZt38JJp1qVkqe51w=;
-        b=myEt3++IZ/CgaTzHk8lO+nSNkEsUGB0NKw+2XfZIgXFVMBae5sL2COmw9a+y1JvYvK
-         dDB8BZ7lFX9bbvyrLiTSClWrgeJAENFgUrjPJnJRrw+iIg8Ts5D9GRBW0nC93nhiUQoW
-         65g50RXRJwuLSmabqMhN9d1YyhyVP1NzZFUQNs7qDFqw/J2HNdwsnyxN4CIw4S38on08
-         fjkYx5JWNe7K90GiSFe/SBPZIZi34aDXB9S9eU7t/5S8Gw13spIOPgwIlQWfUM6wecZR
-         8MNbf5LyRiQEhyrpZ/3Y917buzeo10713NkWNuK+dyCI65CGqJB964tDk0bUNUxaSutg
-         11NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvm43/Vt26Bnktef7BOUmjSSsLPlX6f5wNi0lCJ2ZvGng3ZbW1n3rjGM/es1DYWSeMVXSXBlo2UrYHujjilg23@vger.kernel.org, AJvYcCW+9bK2AUk0CdPmVzVJMzJFS8868WoaDtLZy26GNENHhOW+4v5xlMVaLNG+wCToBlasMkC0JCsE@vger.kernel.org, AJvYcCXlKIAqTCWVb2v+Nx0SQ520L2Cen+6wKvWnYsi35QFnYD8oAw4JTQKjeLdzJnFXmKSSmdGfxTOsKSsh9Ds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweMQCVzISXeUD9hxfK7UVjVBARV16YEE3pyQaLo7XBLcgVT160
-	xQu5LfEePpOfF/XlqAKg14kcqqqb2MtBF1CNRFfzZgI7VLoLngDe209EUE4M5Ds/grJGb3aLlYG
-	Dk0IDx2xBGsNTzA2KnmIgah0GxJIetV7l+WngaQ==
-X-Google-Smtp-Source: AGHT+IFNG7eWZ0hTCSU9dnVSqE4S90H/FnkxsBpn+k7zYe1p9qup8+dfLEzF2OhL+u23ShqmAAZopTPFI7IK4WbqJI8=
-X-Received: by 2002:a17:907:94cf:b0:a77:c051:36a9 with SMTP id
- a640c23a62f3a-a90d35107d9mr296404166b.9.1726836881397; Fri, 20 Sep 2024
- 05:54:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726836875; x=1727441675;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VxOJXXuTPtJD2C97fiCxabtfgKFUIiIOX78ur33VM08=;
+        b=q+SIacdfRBMexfs6hx94YqGXHzpOD07rCUFnLzuKs8YAqTl4Urbdd6KtqGsaXOxKT/
+         6hi9UgW7isEzD48ETvmcuSq2e+K/kdNRW+k2ksXPTSF4go+M10ZEf/sfYX2c43xw0qeh
+         PA9pfS/8x55Bwrh/UsS2cEMNrI6b0K24ErYHR/KRwgn0x1ddP3DY518Z6EYa4CyUfqvn
+         QqTKy7npkvbW4TkUECiwuQzfIVSxmqPB/t72tHsQvNF/l3UJXU9e4eUstDyfCchfdufG
+         pPTO2e2WSGd2Xz9xVFlTVXRf98yKmdZsdAv/vsyP40+tK5EyVDGLWt5h5agLb219yAPY
+         fZog==
+X-Forwarded-Encrypted: i=1; AJvYcCVipWdOevHdGYv6BDItaTnQMEFbjS9wj9UK+uVhn6DfzvJEIjgCYwek8qRszYw37wpbH0Er1nJsgq0cAl8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUcqAboMSBAbqza5xZSpf++O1zmJ1u38XhoY3NIuhabm+991GP
+	ciVTMLAAnaZ0VVZe1VMWOmOUis2IeomAg3YUhnxwpSTu7fkrvV62Zm0T+x2d0Es=
+X-Google-Smtp-Source: AGHT+IHOG14KF21RzqtJPgrK582YmG8ObcTpDLjYz0OHoTRqntbt5Q6vcnyU0BwEDB79I9PC0gWfDg==
+X-Received: by 2002:a05:6512:acd:b0:535:65ce:e901 with SMTP id 2adb3069b0e04-536ac2d6791mr1966041e87.4.1726836875496;
+        Fri, 20 Sep 2024 05:54:35 -0700 (PDT)
+Received: from ziepe.ca ([83.68.141.146])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb497adsm7145406a12.14.2024.09.20.05.54.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 05:54:34 -0700 (PDT)
+Received: from jgg by jggl with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1srd9e-0001AK-AT;
+	Fri, 20 Sep 2024 09:54:34 -0300
+Date: Fri, 20 Sep 2024 09:54:34 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: "Tian, Kevin" <kevin.tian@intel.com>,
+	"j.granados@samsung.com" <j.granados@samsung.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Klaus Jensen <its@irrelevant.dk>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v2 1/5] iommu/vt-d: Separate page request queue from SVM
+Message-ID: <Zu1wim6MZz3rkbWY@ziepe.ca>
+References: <20240913-jag-iopfv8-v2-0-dea01c2343bc@samsung.com>
+ <20240913-jag-iopfv8-v2-1-dea01c2343bc@samsung.com>
+ <BL1PR11MB52713D3D5947C66AE463FA4B8C662@BL1PR11MB5271.namprd11.prod.outlook.com>
+ <e0a1347f-877e-445c-9158-7584ae200bff@linux.intel.com>
+ <BN9PR11MB527611131A808B78C8E0E8388C662@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <c8708b95-14b9-4545-84f7-6f45161456cc@linux.intel.com>
+ <BN9PR11MB52769D1D1FEA9BAF0E6D19718C622@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <c54a15d8-fe60-480c-9156-bd77114c196c@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c92569919307749f879b9482b0f3e125b7d9d2e3.1726480066.git.jamie.bainbridge@gmail.com>
- <Zuw7d9eRGo4wdVP3@shredder.mtl.com>
-In-Reply-To: <Zuw7d9eRGo4wdVP3@shredder.mtl.com>
-From: Jamie Bainbridge <jamie.bainbridge@gmail.com>
-Date: Fri, 20 Sep 2024 22:54:29 +1000
-Message-ID: <CAAvyFNiAXb7wuDMi6tRVuzHUwkSwtCtJOzM7LGxk5nDEtaqgyQ@mail.gmail.com>
-Subject: Re: [PATCH net v2] selftests: forwarding: Avoid false MDB
- delete/flush failures
-To: Ido Schimmel <idosch@nvidia.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c54a15d8-fe60-480c-9156-bd77114c196c@linux.intel.com>
 
-On Fri, 20 Sept 2024 at 00:56, Ido Schimmel <idosch@nvidia.com> wrote:
->
-> Hi,
->
-> Thanks for the patch and sorry for the late reply (was OOO).
->
-> On Mon, Sep 16, 2024 at 07:49:05PM +1000, Jamie Bainbridge wrote:
-> > Running this test on a small system produces different failures every
-> > test checking deletions, and some flushes. From different test runs:
-> >
-> > TEST: Common host entries configuration tests (L2)                [FAIL]
-> >   Failed to delete L2 host entry
-> >
-> > TEST: Common port group entries configuration tests (IPv4 (S, G)) [FAIL]
-> >   IPv4 (S, G) entry with VLAN 10 not deleted when VLAN was not specified
-> >
-> > TEST: Common port group entries configuration tests (IPv6 (*, G)) [FAIL]
-> >   IPv6 (*, G) entry with VLAN 10 not deleted when VLAN was not specified
-> >
-> > TEST: Flush tests                                                 [FAIL]
-> >   Entry not flushed by specified VLAN ID
-> >
-> > TEST: Flush tests                                                 [FAIL]
-> >   IPv6 host entry not flushed by "nopermanent" state
-> >
-> > Add a short sleep after deletion and flush to resolve this.
->
-> The port group entry is removed from MDB entry's list synchronously, but
-> the MDB entry itself is removed from the hash table asynchronously and
-> the MDB get query will only return an error if an entry was not found
-> there.
->
-> IOW, I think that when you do get a response after deletion, the entry
-> you get is empty.
->
-> Can you please test the following patch [1] (w/o yours, obviously)?
->
-> [1]
-> diff --git a/net/bridge/br_mdb.c b/net/bridge/br_mdb.c
-> index bc37e47ad829..1a52a0bca086 100644
-> --- a/net/bridge/br_mdb.c
-> +++ b/net/bridge/br_mdb.c
-> @@ -1674,7 +1674,7 @@ int br_mdb_get(struct net_device *dev, struct nlattr *tb[], u32 portid, u32 seq,
->         spin_lock_bh(&br->multicast_lock);
->
->         mp = br_mdb_ip_get(br, &group);
-> -       if (!mp) {
-> +       if (!mp || (!mp->ports && !mp->host_joined)) {
->                 NL_SET_ERR_MSG_MOD(extack, "MDB entry not found");
->                 err = -ENOENT;
->                 goto unlock;
+On Wed, Sep 18, 2024 at 07:17:32PM +0800, Baolu Lu wrote:
+> > more than that... for each IOMMU the current code allocates 16 pages
+> > and 1 hwirq. Those are unnecessary burdens in majority deployments
+> > which don't support/require I/O page faults.
+> 
+> Yeah! I only focused on the kernel binary size but ignored these system
+> resources consumed by IOPF. Then, perhaps
 
-This works perfectly for me. Previously I would get at least 2
-failures in 10. Without my patch and with the above patch, 100 tests
-pass without any failure.
+If you care about runtime overhead it should be delt with by
+dynamically allocating the memory and enabling it, not via kconfig
 
-Many thanks for looking at this!
+We can dynmaically add IRQS in some cases now for instance
 
-Jamie
+Jason
 
