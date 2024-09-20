@@ -1,127 +1,136 @@
-Return-Path: <linux-kernel+bounces-334014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5616997D165
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:58:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E2697D166
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0872B23386
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:58:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98F461C22D3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD0A45948;
-	Fri, 20 Sep 2024 06:58:17 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0682055887;
-	Fri, 20 Sep 2024 06:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3936142ABD;
+	Fri, 20 Sep 2024 06:58:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B25433D6
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 06:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726815496; cv=none; b=EM2mjGKNRgXNv/s/yQrT3ChrOkuNosD2MsdLusJFzx45zWsvris7bpb0TxUactlJjPGrgOTpCaQvk6OShK84YzS5/ZLexhTB04PxihZXn2g2K6gXvaRpPRapOTKf0OYEzsZkhcgYiSTqnNWHIeGqepOVwhXkZzf12h2uXf+q2/Y=
+	t=1726815531; cv=none; b=blEgV90gGakAsxkJcNma0A2C9HzqiDBLaFlg4425x9YiOr0sW3m0NPit0QQhvYYUDhFlsZmr17F1fq0WyStFRIU0VGsUtndeRp544mMmiep+H8c6steOjaHIS/Afsd/WZNkw4Lf+uaoVJsD9iuvvGxDOn9x6HzbG24CoQnlgscI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726815496; c=relaxed/simple;
-	bh=IIvsMXaLeg0qRAVTfpic+BSoaYnupJy0Fsa5vsxOLe0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=CPq1HwXUR7Wz4EZRmm1JLQzgRQI8l5Wryjkn1kHnHP0zdsRTIEVz1/TlnO60GOMTolDV5o/Tec/xwHIQGu0J2qUQX11Hgxk0obmdEVGKscIeZfoy68PlVxlAu6G9Xl8/N5ZCz4VsKPySENgqUkhXWhU4sYTMgEPmJrfOK0U/r8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4X939s4KSrz4f3kw0;
-	Fri, 20 Sep 2024 14:57:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 498711A08DC;
-	Fri, 20 Sep 2024 14:58:10 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCn28cAHe1ma5lVBw--.14598S3;
-	Fri, 20 Sep 2024 14:58:10 +0800 (CST)
-Subject: Re: [PATCH RFC 5/6] md/raid1: Handle bio_split() errors
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, hch@lst.de
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, martin.petersen@oracle.com,
- "yukuai (C)" <yukuai3@huawei.com>,
- "yangerkun@huawei.com" <yangerkun@huawei.com>
-References: <20240919092302.3094725-1-john.g.garry@oracle.com>
- <20240919092302.3094725-6-john.g.garry@oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <bc4c414c-a7aa-358b-71c1-598af05f005f@huaweicloud.com>
-Date: Fri, 20 Sep 2024 14:58:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1726815531; c=relaxed/simple;
+	bh=mnslPytw/GT5iBSuOmGhwFzMETeBcTXbPtH4/UY+3BM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YZiJiG6tFeEYoIm8jOsbTeev3p8qGgvoC1mYSwK8nlwdYHza9UZ/Dd4y3KgptAGQeuPCKniCAdFcy/Nex889ikkgf7LccCoX4yUQhHTkJvnmcIvuD84Wn7z4EPyEhO8JHYVnEJmIJN0Urv08NV+3/sHzd5QVlg/R9/ag5Mm5aBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D78D7FEC;
+	Thu, 19 Sep 2024 23:59:18 -0700 (PDT)
+Received: from [10.163.35.184] (unknown [10.163.35.184])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F4693F64C;
+	Thu, 19 Sep 2024 23:58:46 -0700 (PDT)
+Message-ID: <b1dc2aa1-cd38-4f1f-89e9-6d009a619541@arm.com>
+Date: Fri, 20 Sep 2024 12:28:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240919092302.3094725-6-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCn28cAHe1ma5lVBw--.14598S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw13Jr45KryUJF13Aw1fJFb_yoW8JFWrpr
-	4UWa4avrW5JFW7KwsxJay29F95ZF10qFyUArWxuw4kArnFqa9rKa1UXr18W3s8ury7G34U
-	Awn5Ganxu3ZFyFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
-	xVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsU
-	UUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm/vmstat: Defer the refresh_zone_stat_thresholds
+ after all CPUs bringup
+To: Saurabh Sengar <ssengar@linux.microsoft.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: ssengar@microsoft.com, wei.liu@kernel.org, srivatsa@csail.mit.edu
+References: <1723443220-20623-1-git-send-email-ssengar@linux.microsoft.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <1723443220-20623-1-git-send-email-ssengar@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
 
-ÔÚ 2024/09/19 17:23, John Garry Ð´µÀ:
-> Add proper bio_split() error handling. For any error, call
-> raid_end_bio_io() and return;
+
+On 8/12/24 11:43, Saurabh Sengar wrote:
+> refresh_zone_stat_thresholds function has two loops which is expensive for
+> higher number of CPUs and NUMA nodes.
 > 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> Below is the rough estimation of total iterations done by these loops
+> based on number of NUMA and CPUs.
+> 
+> Total number of iterations: nCPU * 2 * Numa * mCPU
+> Where:
+>  nCPU = total number of CPUs
+>  Numa = total number of NUMA nodes
+>  mCPU = mean value of total CPUs (e.g., 512 for 1024 total CPUs)
+> 
+> For the system under test with 16 NUMA nodes and 1024 CPUs, this
+> results in a substantial increase in the number of loop iterations
+> during boot-up when NUMA is enabled:
+> 
+> No NUMA = 1024*2*1*512  =   1,048,576 : Here refresh_zone_stat_thresholds
+> takes around 224 ms total for all the CPUs in the system under test.
+> 16 NUMA = 1024*2*16*512 =  16,777,216 : Here refresh_zone_stat_thresholds
+> takes around 4.5 seconds total for all the CPUs in the system under test.
+> 
+> Calling this for each CPU is expensive when there are large number
+> of CPUs along with multiple NUMAs. Fix this by deferring
+> refresh_zone_stat_thresholds to be called later at once when all the
+> secondary CPUs are up. Also, register the DYN hooks to keep the
+> existing hotplug functionality intact.
+> 
+> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
 > ---
->   drivers/md/raid1.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
+> [V2]
+> 	- Move vmstat_late_init_done under CONFIG_SMP to fix
+>           variable 'defined but not used' warning.
 > 
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 6c9d24203f39..c561e2d185e2 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -1383,6 +1383,10 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
->   	if (max_sectors < bio_sectors(bio)) {
->   		struct bio *split = bio_split(bio, max_sectors,
->   					      gfp, &conf->bio_split);
-> +		if (IS_ERR(split)) {
-> +			raid_end_bio_io(r1_bio);
-> +			return;
-> +		}
-
-This way, BLK_STS_IOERR will always be returned, perhaps what you want
-is to return the error code from bio_split()?
-
-Thanks,
-Kuai
-
->   		bio_chain(split, bio);
->   		submit_bio_noacct(bio);
->   		bio = split;
-> @@ -1576,6 +1580,10 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->   	if (max_sectors < bio_sectors(bio)) {
->   		struct bio *split = bio_split(bio, max_sectors,
->   					      GFP_NOIO, &conf->bio_split);
-> +		if (IS_ERR(split)) {
-> +			raid_end_bio_io(r1_bio);
-> +			return;
-> +		}
->   		bio_chain(split, bio);
->   		submit_bio_noacct(bio);
->   		bio = split;
+>  mm/vmstat.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
 > 
+> diff --git a/mm/vmstat.c b/mm/vmstat.c
+> index 4e2dc067a654..fa235c65c756 100644
+> --- a/mm/vmstat.c
+> +++ b/mm/vmstat.c
+> @@ -1908,6 +1908,7 @@ static const struct seq_operations vmstat_op = {
+>  #ifdef CONFIG_SMP
+>  static DEFINE_PER_CPU(struct delayed_work, vmstat_work);
+>  int sysctl_stat_interval __read_mostly = HZ;
+> +static int vmstat_late_init_done;
+>  
+>  #ifdef CONFIG_PROC_FS
+>  static void refresh_vm_stats(struct work_struct *work)
+> @@ -2110,7 +2111,8 @@ static void __init init_cpu_node_state(void)
+>  
+>  static int vmstat_cpu_online(unsigned int cpu)
+>  {
+> -	refresh_zone_stat_thresholds();
+> +	if (vmstat_late_init_done)
+> +		refresh_zone_stat_thresholds();
+>  
+>  	if (!node_state(cpu_to_node(cpu), N_CPU)) {
+>  		node_set_state(cpu_to_node(cpu), N_CPU);
+> @@ -2142,6 +2144,14 @@ static int vmstat_cpu_dead(unsigned int cpu)
+>  	return 0;
+>  }
+>  
+> +static int __init vmstat_late_init(void)
+> +{
+> +	refresh_zone_stat_thresholds();
+> +	vmstat_late_init_done = 1;
+> +
+> +	return 0;
+> +}
+> +late_initcall(vmstat_late_init);>  #endif
+>  
+>  struct workqueue_struct *mm_percpu_wq;
 
+late_initcall() triggered vmstat_late_init() guaranteed to be called
+before the last call into vmstat_cpu_online() during a normal boot ?
+Otherwise refresh_zone_stat_thresholds() will never be called unless
+there is a CPU online event later.
 
