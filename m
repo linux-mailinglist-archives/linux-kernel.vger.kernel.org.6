@@ -1,226 +1,148 @@
-Return-Path: <linux-kernel+bounces-334653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C8197D9FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 22:23:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF1E97DA08
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 22:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C60841C2119D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 20:23:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82C29B213E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 20:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BE3184545;
-	Fri, 20 Sep 2024 20:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458BC183CBF;
+	Fri, 20 Sep 2024 20:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="BQ5Ar9o5"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WBT+/Wpj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FB2EAD0;
-	Fri, 20 Sep 2024 20:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999CC184543;
+	Fri, 20 Sep 2024 20:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726863794; cv=none; b=G0elUyQAhYMaFcXC5/pzbTdvfSeZ7eUyHMMVX86z4i1JAFaTKzTXkFNgK7ccLibh2Ge86HyuSujNoCd1O7yEEqsAnYSWyb9frwipNKF3Wr/JgcrRv6MDyyeuMTYT+h/pUkVf9LHoXpCU2jwXrf9cJ3T/Ay8mY/4ZcxzsHyy36zU=
+	t=1726863842; cv=none; b=iowoF9YPSe1dmlwFaw9r/O99d66ybCKjT7kGURFOaninJufTYRIbi8nyAzfQ5oQB37X0pa918jEUChk+Z/h0WRnb+jZUHVKQIZFLfvPAvmJvs6m42hX4sdPVyh8vFyqw926cE3gdNmuZ7PnVi/MrqaaFZrP5Mv3zQsQccSQ0tfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726863794; c=relaxed/simple;
-	bh=ib+A9S5I9CMvHt4v2Ct35wVZBQs6+SYKbHCDlgeiVaI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZJWSv/7hbU8SVE8esFw7Mk7pexulNUBUGn50QDNs1h6bu26ONqZ8U520uOT3vKbtYpQfS8eIDFcqiIcZazHzZG4GdUFl12i5yJHZiAfTMu4fH2CI7wfvedPOHZQ/1P0JTNndzYkBRZVG2S28iVTeKT/7fwviQrbcsZZQbT6xQkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=BQ5Ar9o5; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=Sf/FAwdE+OOEoqBoch5OH47McASgFoKuaA8Cys6NfL4=; b=BQ5Ar9o5IHpvMkSQ
-	UU9L5RA1z1um4I1Sd46C+HioIQgggopUPJpPFyZnGSBT0qT8l9cc9zVzmBomeUs8XXuE9gPd/Ciib
-	MoN5hU3wVkf9jcJ4pbyZ8149sNytglrML9nYufO7mIUitvdDRyJa2un/6pmuGRR0e0JXoj/nFdvsh
-	9sHHldIVgEdehX/+BUVW0EIq0pyhhvmfzHRXsEGy1sbiyRSZ820kKiSXE2F9skg2gRDsDQUXc5eK8
-	iEEuMAhuA32xORZiJrNcUbWj8KBtfnWe1cjtW91uszw+i9j62Vo19BVQd580IM+HJeilOLERSIqco
-	nyn+To2ZxIoG5OuBOA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1srk9h-006b9Z-18;
-	Fri, 20 Sep 2024 20:23:05 +0000
-From: linux@treblig.org
-To: aacraid@microsemi.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] scsi: aacraid: Remove unused aac_check_health
-Date: Fri, 20 Sep 2024 21:23:04 +0100
-Message-ID: <20240920202304.333108-1-linux@treblig.org>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1726863842; c=relaxed/simple;
+	bh=Wh8sHbvfsTSmd1i/R8CqUvzdQepQ0QPuUtjoeELfLz0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OixCHCAiO34GkIcYpOTSJmN6P/LHZXQgLSA0rI0Nz6tsn6W3S9y4ap+DK73g820yrmuTPHmNHGVEK4EUBePOS42CT1GBkugxB6wAZTAE1MO4Tn+RhURCO9qBKTMhzi+2LDZw4r3Cv3i3DvVSL8SygWzKl0IyH53YBnb2wtpTtas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WBT+/Wpj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48KJ0307003191;
+	Fri, 20 Sep 2024 20:23:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=FoIytXTUV75c+PlHCgmn4J50
+	RSYWuyj5ws1/5bxnkNY=; b=WBT+/WpjUNAzTo2pSKwtOzwTff5IKLCq/KcJKnn+
+	rTipNY3BKjVG5cOvc0NKijNIeAYu2j5u4xphE1jF+GEZJt0uWiBUwGmo9Jll6qfv
+	DKCm0yR1urJqGReG6CiX0Rw2LG8s7n9PoAOv02zk2y02yn1WbD/aPgRgHbrsZbYX
+	x4zVdPh9anUshy2aUjp2Uqv8y78DdQ4Q9cKN0Br/LsBffxuCj8DKc6yFCWe2EEDs
+	u1N4YDt6vBNf2Wo9NPtmNCQlnQS/hC8w3TJSDlV0LodgahcqY2EFa2OoqrUcr5R3
+	QgHCfaiiiBc8LcQ9rfG6o7CRfsZrNcQGMDraN+6n0DqK8w==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4hfadc1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 20:23:47 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48KKNkbR009884
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 20:23:46 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 20 Sep 2024 13:23:46 -0700
+Date: Fri, 20 Sep 2024 13:23:45 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Andrew Halaney <ahalaney@redhat.com>,
+        Rudraksha Gupta <guptarud@gmail.com>,
+        "Linux regression tracking (Thorsten
+ Leemhuis)" <regressions@leemhuis.info>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH] firmware: qcom: scm: Allow devicetree-less probe
+Message-ID: <20240920132108019-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240920-scm-pdev-v1-1-b76d90e06af7@quicinc.com>
+ <Zu3Q4dZLmMb3zAaq@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Zu3Q4dZLmMb3zAaq@linaro.org>
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: qrZKiOERDT1IcP8gBmRywoY1c8JiiqkM
+X-Proofpoint-GUID: qrZKiOERDT1IcP8gBmRywoY1c8JiiqkM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ suspectscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0 clxscore=1011
+ mlxlogscore=564 adultscore=0 malwarescore=0 phishscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409200148
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Fri, Sep 20, 2024 at 09:45:37PM +0200, Stephan Gerhold wrote:
+> On Fri, Sep 20, 2024 at 11:01:40AM -0700, Elliot Berman wrote:
+> > Some devicetrees representing Qualcomm Technologies, Inc. SoCs are
+> > missing the SCM node. Users of the SCM device assume the device is
+> > present and the driver also assumes it has probed. This can lead to
+> > unanticipated crashes when there isn't an SCM device. All Qualcomm
+> > Technologies, Inc. SoCs use SCM to communicate with firmware, so create
+> > the platform device if it's not present in the devicetree.
+> > 
+> > Tested that SCM node still probes on:
+> >  - sm8650-qrd with the SCM DT node still present
+> >  - sm845-mtp with the SCM DT node still present
+> >  - sm845-mtp with the node removed
+> > 
+> > Fixes: 449d0d84bcd8 ("firmware: qcom: scm: smc: switch to using the SCM allocator")
+> > Reported-by: Rudraksha Gupta <guptarud@gmail.com>
+> > Closes: https://lore.kernel.org/lkml/692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com/
+> > Link: https://lore.kernel.org/all/CAA8EJpqSKbKJ=y0LAigGdj7_uk+5mezDgnzV5XEzwbxRJgpN1w@mail.gmail.com/
+> > Suggested-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> > Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> 
+> Do we actually need this patch?
+> 
+> We have a simple patch already that fixes the reported regression [1].
+> 
+> And as I explained in my reply to that series [2], the root cause is not
+> the lack of /scm node in the DT, but the time when the SCM call is made
+> during the kernel boot process. qcom_scm_set_cold_boot_addr() is called
+> in arch/arm/mach-qcom/platsmp.c before any drivers bind to devices in
+> the DT. We would need an early_initcall() to run early enough before
+> initializing SMP, but I haven't found any examples that the
+> device/driver model is actually functional at that point.
+> 
+> I think applying the simple one line fix from Bartosz [1] should be
+> sufficient to restore all functionality that worked before the SCM
+> allocator changes.
 
-aac_check_health has been unused since commit
-  9473ddb2b037 ("scsi: aacraid: Use correct function to get ctrl health")
+Ah, I had missed seeing [2]! I am happy with Bartosz's existing patch. I
+had thought the discussion in [3] was still relevant.
 
-Remove it.
+Thanks,
+Elliot
 
-(I don't have the hardware to test this, build and booted only)
+> [1]: https://lore.kernel.org/linux-arm-msm/20240911-tzmem-null-ptr-v2-1-7c61b1a1b463@linaro.org/
+> [2]: https://lore.kernel.org/linux-arm-msm/ZuhgV1vicIFzPGI-@linaro.org/
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/scsi/aacraid/aacraid.h |   1 -
- drivers/scsi/aacraid/commsup.c | 121 ---------------------------------
- 2 files changed, 122 deletions(-)
-
-diff --git a/drivers/scsi/aacraid/aacraid.h b/drivers/scsi/aacraid/aacraid.h
-index 1d09d3ac6aa4..8c384c25dca1 100644
---- a/drivers/scsi/aacraid/aacraid.h
-+++ b/drivers/scsi/aacraid/aacraid.h
-@@ -2736,7 +2736,6 @@ unsigned int aac_intr_normal(struct aac_dev *dev, u32 Index,
- 			int isAif, int isFastResponse,
- 			struct hw_fib *aif_fib);
- int aac_reset_adapter(struct aac_dev *dev, int forced, u8 reset_type);
--int aac_check_health(struct aac_dev * dev);
- int aac_command_thread(void *data);
- int aac_close_fib_context(struct aac_dev * dev, struct aac_fib_context *fibctx);
- int aac_fib_adapter_complete(struct fib * fibptr, unsigned short size);
-diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
-index 47287559c768..ffef61c4aa01 100644
---- a/drivers/scsi/aacraid/commsup.c
-+++ b/drivers/scsi/aacraid/commsup.c
-@@ -1698,127 +1698,6 @@ int aac_reset_adapter(struct aac_dev *aac, int forced, u8 reset_type)
- 	return retval;
- }
- 
--int aac_check_health(struct aac_dev * aac)
--{
--	int BlinkLED;
--	unsigned long time_now, flagv = 0;
--	struct list_head * entry;
--
--	/* Extending the scope of fib_lock slightly to protect aac->in_reset */
--	if (spin_trylock_irqsave(&aac->fib_lock, flagv) == 0)
--		return 0;
--
--	if (aac->in_reset || !(BlinkLED = aac_adapter_check_health(aac))) {
--		spin_unlock_irqrestore(&aac->fib_lock, flagv);
--		return 0; /* OK */
--	}
--
--	aac->in_reset = 1;
--
--	/* Fake up an AIF:
--	 *	aac_aifcmd.command = AifCmdEventNotify = 1
--	 *	aac_aifcmd.seqnum = 0xFFFFFFFF
--	 *	aac_aifcmd.data[0] = AifEnExpEvent = 23
--	 *	aac_aifcmd.data[1] = AifExeFirmwarePanic = 3
--	 *	aac.aifcmd.data[2] = AifHighPriority = 3
--	 *	aac.aifcmd.data[3] = BlinkLED
--	 */
--
--	time_now = jiffies/HZ;
--	entry = aac->fib_list.next;
--
--	/*
--	 * For each Context that is on the
--	 * fibctxList, make a copy of the
--	 * fib, and then set the event to wake up the
--	 * thread that is waiting for it.
--	 */
--	while (entry != &aac->fib_list) {
--		/*
--		 * Extract the fibctx
--		 */
--		struct aac_fib_context *fibctx = list_entry(entry, struct aac_fib_context, next);
--		struct hw_fib * hw_fib;
--		struct fib * fib;
--		/*
--		 * Check if the queue is getting
--		 * backlogged
--		 */
--		if (fibctx->count > 20) {
--			/*
--			 * It's *not* jiffies folks,
--			 * but jiffies / HZ, so do not
--			 * panic ...
--			 */
--			u32 time_last = fibctx->jiffies;
--			/*
--			 * Has it been > 2 minutes
--			 * since the last read off
--			 * the queue?
--			 */
--			if ((time_now - time_last) > aif_timeout) {
--				entry = entry->next;
--				aac_close_fib_context(aac, fibctx);
--				continue;
--			}
--		}
--		/*
--		 * Warning: no sleep allowed while
--		 * holding spinlock
--		 */
--		hw_fib = kzalloc(sizeof(struct hw_fib), GFP_ATOMIC);
--		fib = kzalloc(sizeof(struct fib), GFP_ATOMIC);
--		if (fib && hw_fib) {
--			struct aac_aifcmd * aif;
--
--			fib->hw_fib_va = hw_fib;
--			fib->dev = aac;
--			aac_fib_init(fib);
--			fib->type = FSAFS_NTC_FIB_CONTEXT;
--			fib->size = sizeof (struct fib);
--			fib->data = hw_fib->data;
--			aif = (struct aac_aifcmd *)hw_fib->data;
--			aif->command = cpu_to_le32(AifCmdEventNotify);
--			aif->seqnum = cpu_to_le32(0xFFFFFFFF);
--			((__le32 *)aif->data)[0] = cpu_to_le32(AifEnExpEvent);
--			((__le32 *)aif->data)[1] = cpu_to_le32(AifExeFirmwarePanic);
--			((__le32 *)aif->data)[2] = cpu_to_le32(AifHighPriority);
--			((__le32 *)aif->data)[3] = cpu_to_le32(BlinkLED);
--
--			/*
--			 * Put the FIB onto the
--			 * fibctx's fibs
--			 */
--			list_add_tail(&fib->fiblink, &fibctx->fib_list);
--			fibctx->count++;
--			/*
--			 * Set the event to wake up the
--			 * thread that will waiting.
--			 */
--			complete(&fibctx->completion);
--		} else {
--			printk(KERN_WARNING "aifd: didn't allocate NewFib.\n");
--			kfree(fib);
--			kfree(hw_fib);
--		}
--		entry = entry->next;
--	}
--
--	spin_unlock_irqrestore(&aac->fib_lock, flagv);
--
--	if (BlinkLED < 0) {
--		printk(KERN_ERR "%s: Host adapter is dead (or got a PCI error) %d\n",
--				aac->name, BlinkLED);
--		goto out;
--	}
--
--	printk(KERN_ERR "%s: Host adapter BLINK LED 0x%x\n", aac->name, BlinkLED);
--
--out:
--	aac->in_reset = 0;
--	return BlinkLED;
--}
--
- static inline int is_safw_raid_volume(struct aac_dev *aac, int bus, int target)
- {
- 	return bus == CONTAINER_CHANNEL && target < aac->maximum_num_containers;
--- 
-2.46.1
-
+[3]: https://lore.kernel.org/all/CAA8EJpqSKbKJ=y0LAigGdj7_uk+5mezDgnzV5XEzwbxRJgpN1w@mail.gmail.com/
 
