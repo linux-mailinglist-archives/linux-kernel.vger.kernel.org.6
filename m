@@ -1,240 +1,136 @@
-Return-Path: <linux-kernel+bounces-334340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F24A97D5EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:59:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C74A997D5E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEB341C21EF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:59:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72B061F22787
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50C2170A01;
-	Fri, 20 Sep 2024 12:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AA316C695;
+	Fri, 20 Sep 2024 12:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJRN2V98"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MCAVcUxi"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2064916F0E8;
-	Fri, 20 Sep 2024 12:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF4D166F00
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726837166; cv=none; b=QDTwXqpq6nYslT/ne9bumTjmQipCZc6O+mdWN9DX4dOH01MVyd/ridUxdYOR6y/2F8jqgptuXP1F+vdGk+kpvy4nWiccj9Uu6+m35oZ2tODRm8H8rmRGvC8uUmzK+SVCs1AUnMyKeCjJCePcUx5k4QsQiQDrIgcuo2EVu7hrAWI=
+	t=1726837162; cv=none; b=u7kS5iAa2K/QqYjSHOqgplfUyErEFF4z/T/yh1RNUihRcvv2c4uEZ7vsSb+3NhYZp6pLF+KVllDQ3nF+OqoTro7qg/S/FE8p9HTl+lzB4d/+X33RVXL20oFfKpZ/ETTk4Pu5b6DnYepeblXjL67+N0e3oRh5CVzikLVPSL/13+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726837166; c=relaxed/simple;
-	bh=lls3LxqYGED1bVEP7KNHMcYz/Fj/2kdJdmfvhQuRYgk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HDBMrm6uwikuCN9Tuwre5CflQiheZK2qdCoYCHnY+Ffi1S8AU1khlTYdeybisUXs5HZaDwil0BVXAgfj+frFMl5LTnvCoUT9aaDmgp7ttoZU1QaDbO0njasrPJMDTvDoC/s6JjcsGmdJbJ5BqkBYkhO/zLm2MXnINyIFv1xSGNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJRN2V98; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2ABDC4CECD;
-	Fri, 20 Sep 2024 12:59:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726837165;
-	bh=lls3LxqYGED1bVEP7KNHMcYz/Fj/2kdJdmfvhQuRYgk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PJRN2V98QggHSM/PwPE50JuQTYw0H88Zy1cd0m6eGVc9AwUNIWkesUYpkK3VEK13z
-	 539H6I/PAvExHlRAUjcAXRwbgGazTiqPWiCTmxC/HpInHdboQXohWKdxmt27ujB91u
-	 HMifxcpElMgSQ+TGdFAr5vHEN99x7k0HbCgZsqLCFaPRtrQ7+fsz+F74armL/IG6KQ
-	 /qIzwSr9KIeonNE5PphojiA/Agg3pI7u4totra3ioV/Bi2wHk9Watm7GWpcUs32HWV
-	 ACtSXCP2VgCVM1s77BiTHwzZQsMN1+Y26tAgw4IZerKc5csriR34LuX5SO3HGoU/f0
-	 V5rTzqCEWkHjA==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53654e2ed93so2450300e87.0;
-        Fri, 20 Sep 2024 05:59:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXaAuhDeC01jQ7lndgsMPxqGab2L4nNFxakm3wuxNhGQ6AHk3Tmt9bpFbnMK/hTNpJ+C+O5cLx1P1T0oYdfo6A=@vger.kernel.org, AJvYcCXdruuSMFrGn2sSy/V9K4ujGavEYaFcyJoEdqvJN3jeT3FjTMBPT2QGkzliMsXsBTGACzcEv+shuoC2IXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5znnOX246buFnmenZnEyxwazsA01ptGIrBz8CPqMgVqvAIm81
-	D5Klgzao0N1VNp1cwfXUH63mNAelTfKv+mZVrroJKUQX/m68pdYNcGcMFkCX4fl/6tsnc353vki
-	wqBeqCWI23v1M+XnSqiXuBbsmnjs=
-X-Google-Smtp-Source: AGHT+IEd+GMFo2Er0REvASH1RQ1qF9PMK8eVDI4I9hE/80oeEUEIKwLzPeFbbw6mbFh/W44I8ZAUGy9F1w5VuhgAT5g=
-X-Received: by 2002:a05:6512:3408:b0:530:ae22:a6ea with SMTP id
- 2adb3069b0e04-536ad3b7e1bmr1482227e87.40.1726837164265; Fri, 20 Sep 2024
- 05:59:24 -0700 (PDT)
+	s=arc-20240116; t=1726837162; c=relaxed/simple;
+	bh=7Hnn1zpKWTHy+QSIa9H8bCbOoQngQFoFIPK4roLpd/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b5gqsESrvKfETIOxJTnNw870C87gh0xgsCoH2P+zCPXb+LbI4GeYvfoIx+5eYbPaxZZCF4JFdgAXRMPZ0svZ9e0rFarM4POalPPRDlBDJMKr7K3vk4dkuNLIy6q69lBQ29e8pG0RUetyU7tSbwCEvKV8piJ/PubKDwXmF3ivxKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MCAVcUxi; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-829f7911eecso94573039f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:59:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1726837160; x=1727441960; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=W0hP89T635eug0SQzdhHFuUzTKbWOKYLiIcD5q3T0mM=;
+        b=MCAVcUxikZCfmAXeVIb5iBJHuECg7CBM2mY1HurldzwwHyoTzxZN5sbeHdjKrRr9G3
+         upaROjxnwrqotTJFarUBLvplxRRymj0E/vIOkuo9aD4zdGJl9U8RVCmwth9s79jlXord
+         J8EMSyvhfDwcu06Jz65tBjxTAwyLk2t+7sNE8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726837160; x=1727441960;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=W0hP89T635eug0SQzdhHFuUzTKbWOKYLiIcD5q3T0mM=;
+        b=tiB2OGpuFOMhiR9KKGjgqJnGqMhljN+RZnt9ylb7H0hYJNR6+hwTzJfk0dnoMQTsSw
+         c9zC4qxN+8vo2WEV4+YF+gc3IbD65vfPGjZst2qVIjp6/ivxNY5SihVBH9rUBWKwyNvt
+         S/di0PLLCvY8Oo/eN4IaB+B8mBsQ+pQhYsaR8oPtXnX2k7cgEvXDCCdIUcC3BT9bQEbU
+         r/N0dW9zV/dvAscUg+2LzTXZGuDqWc0/J3u9199b1VNv7V3iTFTuXU7uNaPtaP9MyRRO
+         j8XjiEy4VHgxY68R5/1TxMbxoIS6dRK50K/jWtlvOXzq2hJ/rhrU/1M8dOWzON7XiLvs
+         32HA==
+X-Gm-Message-State: AOJu0YzbvzwiSQGQ5UEXulqV/C5Sc1JmPg6Y/3EEpeH5xdOjYDITlHCv
+	UB4l7GLc9uorXNk92DhJmkmadIHHK0Ps71EyfKTzHVL32DTrTYyhU87aKCHIj30=
+X-Google-Smtp-Source: AGHT+IGF6z+FwKs6Ow9z55WL2jKZTmbVonx4GKN4imUz/2x6f8q9f1nEgxtWtd14C01WEykOqTVEbQ==
+X-Received: by 2002:a05:6602:341d:b0:82d:79b:ee8d with SMTP id ca18e2360f4ac-8320b2841femr233896639f.4.1726837159804;
+        Fri, 20 Sep 2024 05:59:19 -0700 (PDT)
+Received: from [10.212.145.178] ([12.216.155.19])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82d49338509sm382912439f.34.2024.09.20.05.59.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Sep 2024 05:59:19 -0700 (PDT)
+Message-ID: <3d89dd5c-549e-4f40-8d5d-3ef71b1f58d8@linuxfoundation.org>
+Date: Fri, 20 Sep 2024 06:59:17 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917141725.466514-1-masahiroy@kernel.org> <Zu1Q1yi4bs2plCxl@l-nschier-nb>
-In-Reply-To: <Zu1Q1yi4bs2plCxl@l-nschier-nb>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 20 Sep 2024 21:58:47 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS7D_d+Kz5+rk3OuN0StY=d3iOOa4Un12HYyF4w89LbTQ@mail.gmail.com>
-Message-ID: <CAK7LNAS7D_d+Kz5+rk3OuN0StY=d3iOOa4Un12HYyF4w89LbTQ@mail.gmail.com>
-Subject: Re: [PATCH 00/23] kbuild: support building external modules in a
- separate build directory
-To: Nicolas Schier <n.schier@avm.de>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] mm/mempolicy: fix comments for better documentation
+To: Tanya Agarwal <tanyaagarwal25699@gmail.com>, akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, anupnewsmail@gmail.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240914151801.4388-1-tanyaagarwal25699@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240914151801.4388-1-tanyaagarwal25699@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 20, 2024 at 7:39=E2=80=AFPM Nicolas Schier <n.schier@avm.de> wr=
-ote:
->
-> On Tue, Sep 17, 2024 at 11:16:28PM +0900, Masahiro Yamada wrote:
-> >
-> > There has been a long-standing request to support building external
-> > modules in a separate build directory.
->
-> Thanks a lot, you are making several of my colleages very happy with
-> your patch set!
->
-> > The first half is cleanups of documents and Makefiles.
-> >
-> > The last part adds KBUILD_EXTMOD_OUTPUT (MO=3D).
-> > This is too big changes, and too late for the current MW.
-> > (I did not test kselftest at all.)
-> > I hope people test this and may uncover some issues.
->
-> I'm not through all the patches in detail yet, just one observation befor=
-ehand:
->
->     $ make KBUILD_OUTPUT=3Dbuild allnoconfig
->     $ ./scripts/config --file build/.config --enable modules --enable acc=
-essibility
->     $ make KBUILD_OUTPUT=3Dbuild olddefconfig
->     $ make KBUILD_OUTPUT=3Dbuild
->     $ make KBUILD_OUTPUT=3Dbuild CONFIG_SPEAKUP=3Dm MO=3D/tmp/build M=3D~=
-+/drivers/accessibility/speakup modules
->     /home/nschier/src/kbuild-review/drivers/accessibility/speakup/genmap.=
-c:23:10: fatal error: mapdata.h: No such file or directory
->        23 | #include "mapdata.h"
->           |          ^~~~~~~~~~~
->     compilation terminated.
->     make[3]: *** [/home/nschier/src/kbuild-review/scripts/Makefile.host:1=
-33: genmap.o] Error 1
->     make[3]: *** Waiting for unfinished jobs....
->     make[2]: *** [/home/nschier/src/kbuild-review/Makefile:1971: .] Error=
- 2
->     make[1]: *** [/home/nschier/src/kbuild-review/Makefile:251: __sub-mak=
-e] Error 2
->     make: *** [Makefile:251: __sub-make] Error 2
->     [exit code 2]
->
-> If I add "EXTRA_CFLAGS=3D-I${MO} and EXTRA_HOSTCFLAGS=3D-I${MO}" to the m=
-odule
-> build command, it works as expected.
->
-> Patching this into kbuild works for me, too, but I haven't checked whethe=
-r it
-> breaks some other scenarios:
->
-> diff --git a/scripts/Makefile.host b/scripts/Makefile.host
-> index e01c13a588dd..056c7da2776f 100644
-> --- a/scripts/Makefile.host
-> +++ b/scripts/Makefile.host
-> @@ -97,10 +97,13 @@ hostrust_flags =3D --out-dir $(dir $@) --emit=3Ddep-i=
-nfo=3D$(depfile) \
->                   $(HOSTRUSTFLAGS_$(target-stem))
->
->  # $(objtree)/$(obj) for including generated headers from checkin source =
-files
-> -ifeq ($(KBUILD_EXTMOD),)
->  ifdef building_out_of_srctree
-> +ifeq ($(KBUILD_EXTMOD),)
->  hostc_flags   +=3D -I $(objtree)/$(obj)
->  hostcxx_flags +=3D -I $(objtree)/$(obj)
-> +else
-> +hostc_flags   +=3D -I $(CURDIR)
-> +hostcxx_flags   +=3D -I $(CURDIR)
->  endif
->  endif
->
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index 1bdd77f42289..428a9eb74381 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -190,11 +190,15 @@ endif
->
->  # $(src) for including checkin headers from generated source files
->  # $(obj) for including generated headers from checkin source files
-> -ifeq ($(KBUILD_EXTMOD),)
->  ifdef building_out_of_srctree
-> +ifeq ($(KBUILD_EXTMOD),)
->  _c_flags   +=3D $(addprefix -I, $(src) $(obj))
->  _a_flags   +=3D $(addprefix -I, $(src) $(obj))
->  _cpp_flags +=3D $(addprefix -I, $(src) $(obj))
-> +else
-> +_c_flags   +=3D $(addprefix -I, $(src) $(obj) $(CURDIR))
-> +_a_flags   +=3D $(addprefix -I, $(src) $(obj) $(CURDIR))
-> +_cpp_flags +=3D $(addprefix -I, $(src) $(obj) $(CURDIR))
->  endif
->  endif
->
-> Is '-I$(MO)' in CFLAGS/HOSTCFLAGS is something we should support by
-> default, or should this be added to the external module's Makefile by
-> the respective developers themselves?
->
-> Kind regards,
-> Nicolas
+On 9/14/24 09:18, Tanya Agarwal wrote:
+> From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+> 
+> - Fix typo in mempolicy.h
+> - Correct the number of allowed memory policy
 
+You don't need to say 1/1 for a single patch.
 
+Please write changelog in paragraph form. Also mention how you found
+the problem and include putput from the tool to find the problem.
 
-We can fix it more simply.
+> 
+> Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+> ---
+>   include/linux/mempolicy.h | 2 +-
+>   mm/mempolicy.c            | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
+> index 1add16f21612..ce9885e0178a 100644
+> --- a/include/linux/mempolicy.h
+> +++ b/include/linux/mempolicy.h
+> @@ -47,7 +47,7 @@ struct mempolicy {
+>   	atomic_t refcnt;
+>   	unsigned short mode; 	/* See MPOL_* above */
+>   	unsigned short flags;	/* See set_mempolicy() MPOL_F_* above */
+> -	nodemask_t nodes;	/* interleave/bind/perfer */
+> +	nodemask_t nodes;	/* interleave/bind/preferred/etc */
+>   	int home_node;		/* Home node to use for MPOL_BIND and MPOL_PREFERRED_MANY */
+>   
+>   	union {
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index b858e22b259d..613fdb73c404 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -8,7 +8,7 @@
+>    * NUMA policy allows the user to give hints in which node(s) memory should
+>    * be allocated.
+>    *
+> - * Support four policies per VMA and per process:
+> + * Support six policies per VMA and per process:
+>    *
+>    * The VMA policy has priority over the process policy for a page fault.
+>    *
 
+With these fixed:
 
+Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
 
-
-diff --git a/scripts/Makefile.host b/scripts/Makefile.host
-index e01c13a588dd..c1dedf646a39 100644
---- a/scripts/Makefile.host
-+++ b/scripts/Makefile.host
-@@ -96,12 +96,10 @@ hostrust_flags =3D --out-dir $(dir $@)
---emit=3Ddep-info=3D$(depfile) \
-                  $(KBUILD_HOSTRUSTFLAGS) $(HOST_EXTRARUSTFLAGS) \
-                  $(HOSTRUSTFLAGS_$(target-stem))
-
--# $(objtree)/$(obj) for including generated headers from checkin source fi=
-les
--ifeq ($(KBUILD_EXTMOD),)
-+# $(obj) for including generated headers from checkin source files
- ifdef building_out_of_srctree
--hostc_flags   +=3D -I $(objtree)/$(obj)
--hostcxx_flags +=3D -I $(objtree)/$(obj)
--endif
-+hostc_flags   +=3D -I $(obj)
-+hostcxx_flags +=3D -I $(obj)
- endif
-
- #####
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 1bdd77f42289..d8ce0f59fd17 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -190,13 +190,11 @@ endif
-
- # $(src) for including checkin headers from generated source files
- # $(obj) for including generated headers from checkin source files
--ifeq ($(KBUILD_EXTMOD),)
- ifdef building_out_of_srctree
- _c_flags   +=3D $(addprefix -I, $(src) $(obj))
- _a_flags   +=3D $(addprefix -I, $(src) $(obj))
- _cpp_flags +=3D $(addprefix -I, $(src) $(obj))
- endif
--endif
-
- # If $(is-kernel-object) is 'y', this object will be linked to
-vmlinux or modules
- is-kernel-object =3D $(or $(part-of-builtin),$(part-of-module))
-
-
-
-
-
-However, I'd rather fix each Makefile
-to add necessary include paths explicitly.
-
-
-
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+thanks,
+-- Shuah
 
