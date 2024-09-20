@@ -1,194 +1,150 @@
-Return-Path: <linux-kernel+bounces-334348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C10B897D610
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:18:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C572997D611
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AFBF1F2335A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:18:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87FE128637D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF731714AF;
-	Fri, 20 Sep 2024 13:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103781779A4;
+	Fri, 20 Sep 2024 13:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="G5N6KKLC"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Zjcowcu2"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F801422AB
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 13:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15531714AF
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 13:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726838305; cv=none; b=Hw9E/Xfmyt2i0luZSJAuHFAmZBCC7imoEo8VZR78aq3pnLUtWV8OwVy+0nAEWSon1kybHWPPXR845O8baLP2X/FVXaFkykqQoBjHaYcjasbj4kHHztKQ0qYn2gEq5adT7gjTZiORX/G4E78RRZrzD/qUFC4u9R7AqYmAag/18aA=
+	t=1726838386; cv=none; b=me+6X00bT3QlGKhGVxc8SMa0C/nJNn02Y/ldxkpOFFRLt3XCm9a9BEM/62zIyUBiQCmXm7RZ2/RFwEEzqJ2fvm0g955thOuRA4H7cGe1jCoN6neWHiODcjGQhwUa+UFzIC9WKaD7SdqvnsyhBtMEs22L6wv7LXS6XXX6vtqM5S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726838305; c=relaxed/simple;
-	bh=9tesRVsZ7ddwOkKfTsjmJUig+CLz21Z/WhxJbLEl5mU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sbYAlR5S0rfP7PXrBGAI3vlxXSGREIqtOuKckJdRZajPaaIpfq9WFAck15rKoq4/nQa6dKyI3wZkPvXrPVr9lnFwKZGUL/CC6piD61POyxJvLDUrIa54079e1C23H2gSU13zpSKC4Z3EWXnbu5lcxfJVkpi7HGV+C0qovVRwDWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=G5N6KKLC; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f74e468baeso23429971fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 06:18:23 -0700 (PDT)
+	s=arc-20240116; t=1726838386; c=relaxed/simple;
+	bh=DFJqtOF4lDhc4gTyULxbIXKWq6CAYC2v6Kd9JudlogQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=f2RvLVxJm1Ur/vGSit1sN/W6mKmUe18wJ+4CVcckjVRZNcxmBfbDtf+dLHvw07xfwZkScyAOMjs7eLA2JMgUgrgYtJgGX4ASUtEgRsi2fIQJD15V4tVynEZL9QL2iS6QcLPbyV7aezLoy9kBtS2cDyIKcY1MKnaCx6IMNLl4ghw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Zjcowcu2; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1726838302; x=1727443102; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bCr+b1uaUv6DBDhbwInFIiICgPG/Kycc9x8fjXZbOhA=;
-        b=G5N6KKLCTI7sZ8nxci/E2uvctqQcbtCaqrCLtdbBiQk/IQpTO38/5MXAV0tYe5mMZT
-         UU2fNRJRY02LtKjLIIjiNpZLP4F6nU3z44oXhEYUY5nWJM8rH5wg5mOQk4Zq5/SgGD4S
-         Iq4ri8Z0Z+/tQ1K8H78NOsRadVVvt0Xukg/9BNuDI3/KegjNnCalHhTqd9N8KjfP5f+I
-         Sa2dZJAUx2zTp6v3tVeS8LhOMMFgQg4vnmv84bZ8j11p7bsgge2eQpmPeVu2R7egQ06s
-         iwj8oKg9Yqq8EMifIXthgn0VorjxE2s3YVU1BjAJdh/lnmKt9mh7gENoFhV3mKF051ci
-         j/hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726838302; x=1727443102;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bCr+b1uaUv6DBDhbwInFIiICgPG/Kycc9x8fjXZbOhA=;
-        b=eg+tS2WYbPttBbSFzlgSZ6oXtya13SlACbT3m3GfakYsbiKW76Y/rcAdQIEgwX2/+n
-         dT7d1gXaW7R//iLk4eYDyV4HzSeMYx6F1M+UpGAX6Y58EyVwAVf2Ef+yvdZHLYzCYYPp
-         mlqU9wJLi69q4EKiP2vGuBhzgU2LCV1eKmETcAx1W06ALj5ZeOpARCCj56jjEYX2nuR+
-         A7+li8mdm+3u/JG2NjIING55DPo+AKlKvwvqvyFz6v5q+WY/Nf1N2pTcG0p98QB10PHF
-         kcuOflR7ci0bJG5pRwr08hbGwd+GEmxtat/7FrHWJvrSHrlhG8JOiV7Q00yEecdG+B6g
-         7USQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmAqGZP1e57fwORPyT7oivxh+d3fICBSseswLsLtBwjePIdBZm0TdxZTy/Cp45vdS9PefjR+4f6XI2hyA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGjyZvGgnO2l0RTGgSkEezyjOYBqxp/xKS0dlp3MS82akyvf1W
-	+GHk28rQ19QaYOfBhIIA1MV/1EuAv8CWub+8AdTWkKtMdpmZ0VZ/5IgWHCrqqcI=
-X-Google-Smtp-Source: AGHT+IEKGMpSHb5f0yI5u05QvgiUAxmRxE826tRbypV2GPNIMdsmv1gm2pe/f5PYbylfyOE4f+EASQ==
-X-Received: by 2002:a05:651c:220d:b0:2f6:5921:f35b with SMTP id 38308e7fff4ca-2f7cb30cabfmr19027321fa.27.1726838301434;
-        Fri, 20 Sep 2024 06:18:21 -0700 (PDT)
-Received: from x1 ([83.68.141.146])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb5ee43sm7111622a12.50.2024.09.20.06.18.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 06:18:21 -0700 (PDT)
-Date: Fri, 20 Sep 2024 15:18:19 +0200
-From: Drew Fustini <drew@pdp7.com>
-To: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: dfustini@tenstorrent.com, Conor Dooley <conor@kernel.org>,
-	vladimir.kondratiev@mobileye.com,
-	Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
-	akpm@linux-foundation.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] riscv: make ZONE_DMA32 optional
-Message-ID: <Zu12G+Px2E+d26aD@x1>
-References: <Zs5c3KJR41AUVyEv@x1>
- <mhng-ff7311d0-a1e2-4487-af68-130a7efb6040@palmer-ri-x1c9>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1726838384; x=1758374384;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=DFJqtOF4lDhc4gTyULxbIXKWq6CAYC2v6Kd9JudlogQ=;
+  b=Zjcowcu2ITSWlm0BDn2z2TJt13Wsl3D/gNjtcw5I2BC6/+MtueIi6eTi
+   dJOevS32pR+hmwhUI73fq6/kFdO357NlOSRAJYBjSg9lSwcVpOCWcmx6i
+   ajN7mwV031NfKhLcjlzHbL2Lkbbd2f1LpE93qfRv3koMjAa4HljS+6AJN
+   I=;
+X-IronPort-AV: E=Sophos;i="6.10,244,1719878400"; 
+   d="scan'208";a="128029568"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 13:19:42 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:28574]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.51.228:2525] with esmtp (Farcaster)
+ id 02076010-c227-44f5-850a-0b401f639afb; Fri, 20 Sep 2024 13:19:42 +0000 (UTC)
+X-Farcaster-Flow-ID: 02076010-c227-44f5-850a-0b401f639afb
+Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Fri, 20 Sep 2024 13:19:40 +0000
+Received: from [0.0.0.0] (10.253.83.51) by EX19D020UWC004.ant.amazon.com
+ (10.13.138.149) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Fri, 20 Sep 2024
+ 13:19:34 +0000
+Message-ID: <23d90b50-f087-4daa-b4bc-4da406160c9d@amazon.com>
+Date: Fri, 20 Sep 2024 15:19:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mhng-ff7311d0-a1e2-4487-af68-130a7efb6040@palmer-ri-x1c9>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/7] support for mm-local memory allocations and use
+ it
+To: Fares Mehanna <faresx@amazon.de>
+CC: <nh-open-source@amazon.com>, Marc Zyngier <maz@kernel.org>, Oliver Upton
+	<oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, Suzuki K Poulose
+	<suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>,
+	=?UTF-8?Q?Pierre-Cl=C3=A9ment_Tosi?= <ptosi@google.com>, Ard Biesheuvel
+	<ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "Javier Martinez
+ Canillas" <javierm@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Fuad Tabba
+	<tabba@google.com>, Mark Brown <broonie@kernel.org>, Joey Gouly
+	<joey.gouly@arm.com>, Kristina Martsenko <kristina.martsenko@arm.com>, "Randy
+ Dunlap" <rdunlap@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>, "Mike Rapoport (IBM)"
+	<rppt@kernel.org>, David Hildenbrand <david@redhat.com>, Roman Kagan
+	<rkagan@amazon.de>, "moderated list:KERNEL VIRTUAL MACHINE FOR ARM64
+ (KVM/arm64)" <linux-arm-kernel@lists.infradead.org>, "open list:KERNEL
+ VIRTUAL MACHINE FOR ARM64 (KVM/arm64)" <kvmarm@lists.linux.dev>, open list
+	<linux-kernel@vger.kernel.org>, "open list:MEMORY MANAGEMENT"
+	<linux-mm@kvack.org>, <mark.rutland@arm.com>, Mike Rapoport
+	<mikerapoport@microsoft.com>
+References: <20240911143421.85612-1-faresx@amazon.de>
+Content-Language: en-US
+From: Alexander Graf <graf@amazon.com>
+In-Reply-To: <20240911143421.85612-1-faresx@amazon.de>
+X-ClientProxiedBy: EX19D037UWB002.ant.amazon.com (10.13.138.121) To
+ EX19D020UWC004.ant.amazon.com (10.13.138.149)
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Transfer-Encoding: base64
 
-On Fri, Sep 20, 2024 at 01:58:23AM -0700, Palmer Dabbelt wrote:
-> On Tue, 27 Aug 2024 16:10:20 PDT (-0700), dfustini@tenstorrent.com wrote:
-> > On Tue, Aug 27, 2024 at 02:36:11PM +0300, Vladimir Kondratiev wrote:
-> > > It is not necessary any RISCV platform has ZONE_DMA32.
-> > > 
-> > > Example - if platform has no DRAM in [0..4G] region,
-> > > it will report failure like below each boot.
-> > > 
-> > > [    0.088709] swapper/0: page allocation failure: order:7, mode:0xcc4(GFP_KERNEL|GFP_DMA32), nodemask=(null),cpuset=/
-> > > [    0.088832] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc5 #30
-> > > [    0.088864] Call Trace:
-> > > [    0.088869] [<ffffffff800059f2>] dump_backtrace+0x1c/0x24
-> > > [    0.088910] [<ffffffff805f328c>] show_stack+0x2c/0x38
-> > > [    0.088957] [<ffffffff805fd800>] dump_stack_lvl+0x52/0x74
-> > > [    0.088987] [<ffffffff805fd836>] dump_stack+0x14/0x1c
-> > > [    0.089010] [<ffffffff801a23a8>] warn_alloc+0xf4/0x176
-> > > [    0.089041] [<ffffffff801a3052>] __alloc_pages_noprof+0xc28/0xcb4
-> > > [    0.089067] [<ffffffff80086eda>] atomic_pool_expand+0x62/0x1f8
-> > > [    0.089090] [<ffffffff8080d674>] __dma_atomic_pool_init+0x46/0x9e
-> > > [    0.089115] [<ffffffff8080d762>] dma_atomic_pool_init+0x96/0x11c
-> > > [    0.089139] [<ffffffff80002146>] do_one_initcall+0x5c/0x1b2
-> > > [    0.089158] [<ffffffff8080127c>] kernel_init_freeable+0x214/0x274
-> > > [    0.089190] [<ffffffff805fefd8>] kernel_init+0x1e/0x10a
-> > > [    0.089209] [<ffffffff8060748a>] ret_from_fork+0xe/0x1c
-> > > 
-> > > Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-> > > ---
-> > >  arch/riscv/Kconfig | 2 +-
-> > >  mm/Kconfig         | 2 +-
-> > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > > index 0f3cd7c3a436..94a573112625 100644
-> > > --- a/arch/riscv/Kconfig
-> > > +++ b/arch/riscv/Kconfig
-> > > @@ -50,6 +50,7 @@ config RISCV
-> > >  	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
-> > >  	select ARCH_HAS_UBSAN
-> > >  	select ARCH_HAS_VDSO_DATA
-> > > +	select ARCH_HAS_ZONE_DMA_SET if 64BIT
-> > >  	select ARCH_KEEP_MEMBLOCK if ACPI
-> > >  	select ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE	if 64BIT && MMU
-> > >  	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
-> > > @@ -200,7 +201,6 @@ config RISCV
-> > >  	select THREAD_INFO_IN_TASK
-> > >  	select TRACE_IRQFLAGS_SUPPORT
-> > >  	select UACCESS_MEMCPY if !MMU
-> > > -	select ZONE_DMA32 if 64BIT
-> > > 
-> > >  config CLANG_SUPPORTS_DYNAMIC_FTRACE
-> > >  	def_bool CC_IS_CLANG
-> > > diff --git a/mm/Kconfig b/mm/Kconfig
-> > > index b72e7d040f78..97c85da98e89 100644
-> > > --- a/mm/Kconfig
-> > > +++ b/mm/Kconfig
-> > > @@ -1032,7 +1032,7 @@ config ZONE_DMA
-> > >  config ZONE_DMA32
-> > >  	bool "Support DMA32 zone" if ARCH_HAS_ZONE_DMA_SET
-> > >  	depends on !X86_32
-> > > -	default y if ARM64
-> > > +	default y if ARM64 || (RISCV && 64BIT)
-> > > 
-> > >  config ZONE_DEVICE
-> > >  	bool "Device memory (pmem, HMM, etc...) hotplug support"
-> > > --
-> > > 2.37.3
-> > > 
-> > 
-> > Reviewed-by: Drew Fustini <dfustini@tenstorrent.com>
-> > 
-> > Thanks for sending this patch as I've also encountered that annoying
-> > error on systems with DRAM above 4GB.
-> > 
-> > I tested this patch by changing the qemu virt machine to have DRAM
-> > starting at 2^32:
-> > 
-> > diff --git a/hw/riscv/virt.c b/hw/riscv/virt.c
-> > index cef41c150aaf..3033a2560edb 100644
-> > --- a/hw/riscv/virt.c
-> > +++ b/hw/riscv/virt.c
-> > @@ -87,7 +87,7 @@ static const MemMapEntry virt_memmap[] = {
-> >      [VIRT_IMSIC_S] =      { 0x28000000, VIRT_IMSIC_MAX_SIZE },
-> >      [VIRT_PCIE_ECAM] =    { 0x30000000,    0x10000000 },
-> >      [VIRT_PCIE_MMIO] =    { 0x40000000,    0x40000000 },
-> > -    [VIRT_DRAM] =         { 0x80000000,           0x0 },
-> > +    [VIRT_DRAM] =        { 0x100000000,           0x0 },
-> >  };
-> > 
-> >  /* PCIe high mmio is fixed for RV32 */
-> 
-> IIRC the ZONE_DMA32 stuff existed for some of the early SiFive systems,
-> where the expansion daughterboard's PCIe controller (via a Xilinx FPGA)
-> could only handle 32-bit DMA addreses.  I think there's a similar quirk in
-> the Microsemi PCIe controller on the PolarFire boards, but Conor would know
-> for sure.
+T24gMTEuMDkuMjQgMTY6MzMsIEZhcmVzIE1laGFubmEgd3JvdGU6Cj4gSW4gYSBzZXJpZXMgcG9z
+dGVkIGEgZmV3IHllYXJzIGFnbyBbMV0sIGEgcHJvcG9zYWwgd2FzIHB1dCBmb3J3YXJkIHRvIGFs
+bG93IHRoZQo+IGtlcm5lbCB0byBhbGxvY2F0ZSBtZW1vcnkgbG9jYWwgdG8gYSBtbSBhbmQgdGh1
+cyBwdXNoIGl0IG91dCBvZiByZWFjaCBmb3IKPiBjdXJyZW50IGFuZCBmdXR1cmUgc3BlY3VsYXRp
+b24tYmFzZWQgY3Jvc3MtcHJvY2VzcyBhdHRhY2tzLiAgV2Ugc3RpbGwgYmVsaWV2ZQo+IHRoaXMg
+aXMgYSBuaWNlIHRoaW5nIHRvIGhhdmUuCj4KPiBIb3dldmVyLCBpbiB0aGUgdGltZSBwYXNzZWQg
+c2luY2UgdGhhdCBwb3N0IExpbnV4IG1tIGhhcyBncm93biBxdWl0ZSBhIGZldyBuZXcKPiBnb29k
+aWVzLCBzbyB3ZSdkIGxpa2UgdG8gZXhwbG9yZSBwb3NzaWJpbGl0aWVzIHRvIGltcGxlbWVudCB0
+aGlzIGZ1bmN0aW9uYWxpdHkKPiB3aXRoIGxlc3MgZWZmb3J0IGFuZCBjaHVybiBsZXZlcmFnaW5n
+IHRoZSBub3cgYXZhaWxhYmxlIGZhY2lsaXRpZXMuCj4KPiBBbiBSRkMgd2FzIHBvc3RlZCBmZXcg
+bW9udGhzIGJhY2sgWzJdIHRvIHNob3cgdGhlIHByb29mIG9mIGNvbmNlcHQgYW5kIGEgc2ltcGxl
+Cj4gdGVzdCBkcml2ZXIuCj4KPiBJbiB0aGlzIFJGQywgd2UncmUgdXNpbmcgdGhlIHNhbWUgYXBw
+cm9hY2ggb2YgaW1wbGVtZW50aW5nIG1tLWxvY2FsIGFsbG9jYXRpb25zCj4gcGlnZ3ktYmFja2lu
+ZyBvbiBtZW1mZF9zZWNyZXQoKSwgdXNpbmcgcmVndWxhciB1c2VyIGFkZHJlc3NlcyBidXQgcGlu
+bmluZyB0aGUKPiBwYWdlcyBhbmQgZmxpcHBpbmcgdGhlIHVzZXIvc3VwZXJ2aXNvciBmbGFnIG9u
+IHRoZSByZXNwZWN0aXZlIFBURXMgdG8gbWFrZSB0aGVtCj4gZGlyZWN0bHkgYWNjZXNzaWJsZSBm
+cm9tIGtlcm5lbC4KPiBJbiBhZGRpdGlvbiB0byB0aGF0IHdlIGFyZSBzdWJtaXR0aW5nIDUgcGF0
+Y2hlcyB0byB1c2UgdGhlIHNlY3JldCBtZW1vcnkgdG8gaGlkZQo+IHRoZSB2Q1BVIGdwLXJlZ3Mg
+YW5kIGZwLXJlZ3Mgb24gYXJtNjQgVkhFIHN5c3RlbXMuCj4KPiBUaGUgZ2VuZXJpYyBkcmF3YmFj
+a3Mgb2YgdXNpbmcgdXNlciB2aXJ0dWFsIGFkZHJlc3NlcyBtZW50aW9uZWQgaW4gdGhlIHByZXZp
+b3VzCj4gUkZDIFsyXSBzdGlsbCBob2xkLCBpbiBhZGRpdGlvbiB0byBhIG1vcmUgc3BlY2lmaWMg
+b25lOgo+Cj4gLSBXaGlsZSB0aGUgdXNlciB2aXJ0dWFsIGFkZHJlc3NlcyBhbGxvY2F0ZWQgZm9y
+IGtlcm5lbCBzZWNyZXQgbWVtb3J5IGFyZSBub3QKPiAgICBkaXJlY3RseSBhY2Nlc3NpYmxlIGJ5
+IHVzZXJzcGFjZSBhcyB0aGUgUFRFcyByZXN0cmljdCB0aGF0LCBjb3B5X2Zyb21fdXNlcigpCj4g
+ICAgYW5kIGNvcHlfdG9fdXNlcigpIGNhbiBvcGVyYXRlIG9uIHRob3NlIHJhbmdlcywgc28gdGhh
+dCBlLmcuIHRoZSB1c2VybW9kZSBjYW4KPiAgICBndWVzcyB0aGUgYWRkcmVzcyBhbmQgcGFzcyBp
+dCBhcyB0aGUgdGFyZ2V0IGJ1ZmZlciBmb3IgcmVhZCgpLCBtYWtpbmcgdGhlCj4gICAga2VybmVs
+IG92ZXJ3cml0ZSBpdCB3aXRoIHRoZSB1c2VyLWNvbnRyb2xsZWQgY29udGVudC4gRWZmZWN0aXZl
+bHkgbWFraW5nIHRoZQo+ICAgIHNlY3JldCBtZW1vcnkgaW4gdGhlIGN1cnJlbnQgaW1wbGVtZW50
+YXRpb24gbWlzc2luZyBjb25maWRlbnRpYWxpdHkgYW5kCj4gICAgaW50ZWdyaXR5IGd1YXJhbnRl
+ZXMuCj4KPiBJbiB0aGUgc3BlY2lmaWMgY2FzZSBvZiB2Q1BVIHJlZ2lzdGVycywgdGhpcyBpcyBm
+aW5lIGJlY2F1c2UgdGhlIG93bmVyIHByb2Nlc3MKPiBjYW4gcmVhZCBhbmQgd3JpdGUgdG8gdGhl
+bSB1c2luZyBLVk0gSU9DVExzIGFueXdheS4gQnV0IGluIHRoZSBnZW5lcmFsIGNhc2UgdGhpcwo+
+IHJlcHJlc2VudHMgYSBzZWN1cml0eSBjb25jZXJuIGFuZCBuZWVkcyB0byBiZSBhZGRyZXNzZWQu
+Cj4KPiBBIHBvc3NpYmxlIHdheSBmb3J3YXJkIGZvciB0aGUgYXJjaC1hZ25vc3RpYyBpbXBsZW1l
+bnRhdGlvbiBpcyB0byBsaW1pdCB0aGUgdXNlcgo+IHZpcnR1YWwgYWRkcmVzc2VzIHVzZWQgZm9y
+IGtlcm5lbCB0byBzcGVjaWZpYyByYW5nZSB0aGF0IGNhbiBiZSBjaGVja2VkIGFnYWluc3QKPiBp
+biBjb3B5X2Zyb21fdXNlcigpIGFuZCBjb3B5X3RvX3VzZXIoKS4KPgo+IEZvciBhcmNoIHNwZWNp
+ZmljIGltcGxlbWVudGF0aW9uLCB1c2luZyBzZXBhcmF0ZSBQR0QgaXMgdGhlIHdheSB0byBnby4K
+Pgo+IFsxXSBodHRwczovL2xvcmUua2VybmVsLm9yZy9sa21sLzIwMTkwNjEyMTcwODM0LjE0ODU1
+LTEtbWhpbGxlbmJAYW1hem9uLmRlLwo+IFsyXSBodHRwczovL2xvcmUua2VybmVsLm9yZy9sa21s
+LzIwMjQwNjIxMjAxNTAxLjEwNTk5NDgtMS1ya2FnYW5AYW1hem9uLmRlLwoKCkhleSBNYXJrIGFu
+ZCBNaWtlLAoKV2UgdGFsa2VkIGF0IExQQyBhYm91dCBtbS1sb2NhbCBtZW1vcnkgYW5kIHlvdSBo
+YWQgc29tZSBpbnB1dHMuIEl0IHdvdWxkIApiZSBhbWF6aW5nIHRvIHdyaXRlIHRoZW0gZG93biBo
+ZXJlIHNvIEkgZG9uJ3QgZW5kIHVwIHBsYXlpbmcgZ2FtZSBvZiAKdGVsZXBob25lIDopCgoKVGhh
+bmtzIQoKCgoKQW1hem9uIFdlYiBTZXJ2aWNlcyBEZXZlbG9wbWVudCBDZW50ZXIgR2VybWFueSBH
+bWJICktyYXVzZW5zdHIuIDM4CjEwMTE3IEJlcmxpbgpHZXNjaGFlZnRzZnVlaHJ1bmc6IENocmlz
+dGlhbiBTY2hsYWVnZXIsIEpvbmF0aGFuIFdlaXNzCkVpbmdldHJhZ2VuIGFtIEFtdHNnZXJpY2h0
+IENoYXJsb3R0ZW5idXJnIHVudGVyIEhSQiAyNTc3NjQgQgpTaXR6OiBCZXJsaW4KVXN0LUlEOiBE
+RSAzNjUgNTM4IDU5Nwo=
 
-I don't think this patch would affect those systems that need ZONE_DMA2.
-I believe it just makes it possible to disable it in the kernel config.
-The platform I'm working on has no memory below 4GB and all the PCIe
-devices that I care about are not 32-bit constrained. Therefore I just
-want to be able to turn it off in my .config.
-
-Thanks,
-Drew
 
