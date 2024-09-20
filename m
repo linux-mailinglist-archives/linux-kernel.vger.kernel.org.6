@@ -1,64 +1,60 @@
-Return-Path: <linux-kernel+bounces-333930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4002497CFF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:47:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F6B997CFFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2507B214BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 02:47:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38C101F24DFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 02:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3670FEAD0;
-	Fri, 20 Sep 2024 02:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E06810A0E;
+	Fri, 20 Sep 2024 02:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="mk/x513d"
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="KKeIXorr"
+Received: from mail.tlmp.cc (unknown [148.135.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A6BDF42;
-	Fri, 20 Sep 2024 02:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E00F9CF;
+	Fri, 20 Sep 2024 02:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726800422; cv=none; b=qEFaKO0MYQW9Vj7V5iNRNLtwNmQYBzpOvKcDWjMAa2HT6XiqtZzv6IzPk/OKATL/RJRUMUiJgXE8X3oxE9ryykBWq8IR53AXT2wwj/GW/Oa4xH6S1rS9VwHAnSy/abxQEklJ306X+XjAbncDEdVMEVDq49nCL1M14Os7j+FsUkU=
+	t=1726800585; cv=none; b=IjgTYHfbTqR0EOgc0IK4+aGJ023Ur9R7D6rJJL9LsdVSlNLe6eSYNc2VocG3IGqbUPaUmc5OlMoeSn9rHagm45gH9VbJ0iJY/1tJ59KqkjL/p2robOE6E5x98oYk6io7RBwA5+hEzixarT4IbPZENEwkBLiS5NAhipAkTPEulCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726800422; c=relaxed/simple;
-	bh=HMwqAktBHR321G4V0drhu3d2RksWelOXlZchpT6OQXY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S/cxIU91a1pthXAxKNfc8QC10OQ42oAQofhpyQIjgz8yNeUNuqzG3ubyZbHbx0WXU/RDwIhhlsTNTClianPk2aySpUAInWbTR6kM+SSbrdy1/jtP3FEDmmmH/GecfGfsDCcDj5N9DGUhYKa6oXExF7qha5zpUqerr7Lw0ggR07E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=mk/x513d; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1726800332;
-	bh=dEd10cim6i43JU3mwWFeexRFb9vw0bE8/cYxC7zHp8U=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=mk/x513dPqmvsyHmhqVEuOrH0wWcnr3EC1W8BqucW/U6fKrEfmVaejWIHwMhQmaAn
-	 r2CTxVIELct1NdHdugW8BLRkQtcGuC5GepIjR48S/mpEIr+Dw2EqE0hisHGfOoWCDp
-	 26Ln2N/ipRt/B737VbpMIGRd8gbfe9CHGIx07AvU=
-X-QQ-mid: bizesmtpsz15t1726800324twyqdd
-X-QQ-Originating-IP: iIfI+RrGXex+r8Ho2ZfR3/8Vfrg+NQsYnJlQg7ZLZtc=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 20 Sep 2024 10:45:22 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 2362225561624237966
-From: WangYuli <wangyuli@uniontech.com>
-To: pavel@ucw.cz,
-	lee@kernel.org,
-	aren@peacevolution.org,
-	tzimmermann@suse.de,
-	wangyuli@uniontech.com
-Cc: linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jjhiblot@traphandler.com,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com
-Subject: [PATCH] leds: rgb: leds-group-multicolor: Correct the typo 'acccess'
-Date: Fri, 20 Sep 2024 10:45:14 +0800
-Message-ID: <B586A1E6EA476B68+20240920024514.1182292-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1726800585; c=relaxed/simple;
+	bh=lMFubXXsL0PKhnM343sH+K8ASfwAxFFtuaILaZWDW44=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eVJon7O1JOJ0/P1XbexTQyXwSVbLPuZqcd0aE1/bbpED/PvXOG+PHH9i2J62AEdIC76bgvtJ8YtQWYIpLrNFfvcbie2mCZxD4sFl/stpqy/pdhH5qb9BwJ/+IXwpdmfbizwDH+E3QxfHJ/kEXzPfljOqV7VBr1hVd/IhidnUfTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=KKeIXorr; arc=none smtp.client-ip=148.135.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1A5D2697C9;
+	Thu, 19 Sep 2024 22:49:25 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
+	t=1726800580; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=NBsLeq/4sQ8AcrTmee8ysml0OejfPujGQbZMIO2X+mA=;
+	b=KKeIXorrvFDJLDxpZIcA7qDlcoQGYZzomYUsQiIAyHfsNrjYHg+d4jZTHZtR941rdmKV8G
+	Tg6FK6zsqDERv8Jfo/2GUfbWa4PZa/gYOzirfWmMOCSxn5dcCb0BjG5UYVjU4A6D4UejF3
+	RbVfiblfSLvzOgo3vZQkekALufyWiRt7bzew03FVylWXsb/8hPNLrJw8TZ5Mdbd5p9zzhF
+	2Oi9DKGrkUABOaVv1o6GT3P38SbxxaTQWlywGZOk1OpeZDPxUyxFLEtrqm8sldNJkiUUhD
+	9fsgG1pGieiifkxmgsYsc/RsQBl8tohmzY8Ek3g5wBfCBsjRW9hs7hdrt8d68A==
+From: Yiyang Wu <toolmanp@tlmp.cc>
+To: rust-for-linux@vger.kernel.org
+Cc: gregkh@linuxfoundation.org,
+	xiang@kernel.org,
+	gary@garyguo.net,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH RESEND 0/1] rust: introduce declare_err! autogeneration
+Date: Fri, 20 Sep 2024 10:49:18 +0800
+Message-ID: <20240920024920.215842-1-toolmanp@tlmp.cc>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <2024091602-bannister-giddy-0d6e@gregkh>
+References: <2024091602-bannister-giddy-0d6e@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,33 +62,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-Last-TLS-Session-Version: TLSv1.3
 
-There is a spelling mistake of 'acccess' which should be instead of
-'access'.
+Currently, the error.rs's errno import is done manually by copying the
+comments from include/linux/errno.h and uses the declare_err! to wrap
+the constant errno.
 
-Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-Link: https://lore.kernel.org/all/0c768bf6-bc19-43de-a30b-ff5e3ddfd0b3@suse.de/
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/leds/rgb/leds-group-multicolor.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+However, this reduces the readability and increases difficulty of
+maintaining the error.rs if the errno list is growing too long or
+or if errno.h gets updated for new semantics.
 
-diff --git a/drivers/leds/rgb/leds-group-multicolor.c b/drivers/leds/rgb/leds-group-multicolor.c
-index b6c7679015fd..548c7dd63ba1 100644
---- a/drivers/leds/rgb/leds-group-multicolor.c
-+++ b/drivers/leds/rgb/leds-group-multicolor.c
-@@ -55,7 +55,7 @@ static void restore_sysfs_write_access(void *data)
- {
- 	struct led_classdev *led_cdev = data;
- 
--	/* Restore the write acccess to the LED */
-+	/* Restore the write access to the LED */
- 	mutex_lock(&led_cdev->led_access);
- 	led_sysfs_enable(led_cdev);
- 	mutex_unlock(&led_cdev->led_access);
+This patchset solves this issues for good by introducing a rule
+to generate errno_generated.rs by seding the errno.h and
+including the generated file in the error.rs.
+
+This patch is based on the rust-next branch.
+
+Yiyang Wu (1):
+  rust: error: auto-generate error declarations
+
+ rust/.gitignore      |  1 +
+ rust/Makefile        | 14 ++++++++++-
+ rust/kernel/error.rs | 58 +++-----------------------------------------
+ 3 files changed, 18 insertions(+), 55 deletions(-)
+
 -- 
-2.45.2
+2.46.0
 
 
