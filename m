@@ -1,154 +1,198 @@
-Return-Path: <linux-kernel+bounces-334117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F95597D2BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4E397D2C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92BC81C2134A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:28:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D41111C23D04
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A9047A66;
-	Fri, 20 Sep 2024 08:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9041F60A;
+	Fri, 20 Sep 2024 08:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jMO+YoMY"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sfR9q1AI"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF7E4C62B
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349062E634
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726820906; cv=none; b=FZSkAM2neCOHsWGtTeKfDMc3HviHBXD+E6maH6MNE8wzvrhiy4/dfoewHnKhSZplFyIzPzf1qG0OFF1Xv05gjhoWTtCUJIJMtkJUGnNVfokuUN9ME3+SF5rp5hslKVupqxo2fHD/Bb8EuxBRJ8VhXRswdayZaWF/D1Pnp4FmnAo=
+	t=1726821183; cv=none; b=usy2f60c6nurkl47BLsLov3iTEDMc/jHmgEu/oy1O/WiLTN+fFOfaxzF32USIl6WVYnnIHQxdc33gYAENNyKKIcw71e5XMxWskwctz7VKeNjLuJUQOvo1QVLROeP1f37pOoQwbkq4OzPtW/nFDZzFU8QiSpLbGFxrQ5upVPC6q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726820906; c=relaxed/simple;
-	bh=NScGYUd6179Tb5vwg/DqqbnXhiOkYig3H5YIrnsrsfc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=UQ+32JIgvaYlG8CdMa87uBbHua+fIRoFs2g49YVryUbFxMATNQhiRXcSYUUwdUmH1Ii4cujpk7p/F6oOPwCi9kkVlrLnp2l/FuEumvDYDMq+Bg0i83o+z5wyB05JOvfL152DymdgH95kSOUJiO+mJoYfXXU1LRRsrXolS0cfmmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jMO+YoMY; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1726821183; c=relaxed/simple;
+	bh=AO4+xnSF1tH3MJYpSjKgX14ht4ppR+X+p+D3K9kiXoE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZPZErDmvD53s9TqklJSiSpz52Cv4Uvk3eQiKSY9WiW9Q3wzH/6gKEUpZcMFuavLFnKi0H83yVLFam2p+MRQHnW1oA9DLzwPuc2uz+I9agVB2Rc+rngYOfAyz9+XJD5NhMhZqXkany6asfVzgf5vOwb5ksIBA1VkbgsMilsfMBi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sfR9q1AI; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3780c8d689aso1138580f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:28:24 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso228018566b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:33:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726820903; x=1727425703; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QSY/XwkbAFk0AHpPR2dqnekk1R5T+r9ialJRBpwsOMY=;
-        b=jMO+YoMYyMqhHa2sAPGJqMw3GRTPVCUXEYGoECjdyY13PAiQB2m3M0VDT3zU/k1BYh
-         PPEaeO29pWb3oB+TQEBSs+dXk2N3CT0rpMejPMC3yPjqGTgmIfZV8M2WXhH4TCB5CuY+
-         2FlhCf1CjDdhSclm/MOMrhu1sUgKA/CviSiN3obUfUhcUGXt5af+FPNNr90enOTFx2fY
-         QF4N3zdNfa1tSQ6Xs/yqgoydmKBlvlroxgrb9bBunXJzApc+CkKCwuSK6YBpkLYbqBwT
-         2kN9EIP+oZ8R8QqMqB/MRocrtL1DPr8hHxIXStvmZYA8idJAcpfFJYzY6hH7BFAgyG5+
-         CLpQ==
+        d=linaro.org; s=google; t=1726821179; x=1727425979; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ypxja65TLBp+p3wOd2ob3HsV+twNi7uaZxdgqA5Jp1c=;
+        b=sfR9q1AI1Gz1qf1O8u2KMj4Tn7aSHUT/hUAMTCZiD48SJpAbAadlj227PAH8zj4c0/
+         WNUTU2R2d+hOOS2HybZZgI6B4TD0p/2Trk0D131lXz/x7+tQrzzfOl2OjzG4C0lh36Xj
+         LerpaZlT9fUStB+iqcSLj6gxyAFhszW7Bj0hsZVZwUk3kpiy9hHuL3efs1tqfGmcaLAS
+         jCguDxO1VdirgYrOsAgy6I/k1othEjm74Vz6pq8q0d6WECJjRzU/PkH8tmv/9DuRV6rK
+         iH6NymxDcMICoguJ9is3uPHnB0NHbcv2yAsssRrLjJb/Ssvf30QJR4sdfS2uOyR7+V7f
+         e2lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726820903; x=1727425703;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QSY/XwkbAFk0AHpPR2dqnekk1R5T+r9ialJRBpwsOMY=;
-        b=bSRN8PV8YkKcshqD8syESrezKNc3qlw5F9FeQxSeKLKQQTZ6cDkPbQiIR77zGFhkvY
-         I9iAKqXF4Dh+oRl56LhHgFzQfh4TywheO124Rgtg2/ODwswIwu1zyjgeybOi3rF7DQS3
-         Mzbro2y381E+jtgUwKdygn//LsGYK7kk9V5YFLIIosEbqd9izxn9pGNt5ci1+36YSNxJ
-         w/eRjbeL3AcKxMev4tLkR4VV0cvYYa6RrBaI32dBq60cOmu3RFSGkmaVoiP+/jiYeeCm
-         KZ/wdu/HMJdBZGrh8dSMKEYsTERJCf8pZchh63gCOnmPOrsyYetHfYiI+QPOidTOLbWj
-         qAsg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3oEicd4xDR2pbAysHzvsbMxygMOruvU0WQ3obJVfaAHhk+xk+PmLLep3BiHOvOzZjiSYw8Ot3mfBH1Kg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYaMdi9RjLI9fGGbI3r9MtQjbaEKvPcv0rJnio3mEWyVqSWEVw
-	g3IJ34DM3GFNDpYYn6wUVpI2l9iway6BPN1nL0X5QqD5Vmi9tdcr9JoSgPKB+59xW53mb67IDPh
-	Z
-X-Google-Smtp-Source: AGHT+IEwpW97abutw3SvbbD+fpsLM/YqBbH/+ujjWdJHEh1aCbcZ94oU53Wv3GaurPQr/FG0QEN0Gw==
-X-Received: by 2002:adf:e84b:0:b0:374:cd36:8533 with SMTP id ffacd0b85a97d-37a43197db1mr1010222f8f.54.1726820903286;
-        Fri, 20 Sep 2024 01:28:23 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:b3d5:235d:4ae1:4c0f? ([2a01:e0a:982:cbb0:b3d5:235d:4ae1:4c0f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e7809e0fsm17044622f8f.110.2024.09.20.01.28.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2024 01:28:22 -0700 (PDT)
-Message-ID: <e8906af4-e769-48ea-8ec4-779ca4be9b8a@linaro.org>
-Date: Fri, 20 Sep 2024 10:28:22 +0200
+        d=1e100.net; s=20230601; t=1726821179; x=1727425979;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ypxja65TLBp+p3wOd2ob3HsV+twNi7uaZxdgqA5Jp1c=;
+        b=eA1XgUmS2Ry2wkjXnIuMuXYJW2SNESolWvYPBhxbtZIf0+ccG99owsw6kWHEjaHnQK
+         bliDYBYl6H7qzx4rfmNSpwngYJqBXxRUCcli2hTQIhyL1RgVEHYKxvEdbucHo5rZc6ik
+         K7Z4tcpgpIsjQLS2moYeRKxUP0J0zQfBQD9yar7WofF91chOy1DOi3htJO8rYnFsXYUn
+         iIR+Px2o3LM5eo6hZQTKlFIr08XM7047Aw1MYmSrkrqnjE1Mz1QWrcXC5fzwAxa9DrkY
+         /03KmGETlhccOE8qEBTCkq9EYVtL83KJtIqV7WOqE9QuGAYf9gwIe6todfTYiO8bbfzi
+         GGYA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9NE6N9fCoKlPu6tVoG/wz2RdI61ePnDBvITrz7So2UfDGcg63+VptXOb/jX5IGsJM2m08vXli++4EP1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzAxPgs+VVEQfef2/yhyFw/5nOaGS+l/INLTGfF9C9VbUwsFCE
+	Ct2GtiK9J76HGhDOVpDUyq1m900TNuuhSUdvR8fua9xGN+Jsv6eMRSutbbmINg==
+X-Google-Smtp-Source: AGHT+IFq7Wvo6OUssiEuoXNyxmZPYl1dqhcKaVsaBSfeoLsRvO9Zn3liui9Ko4IRJJHTky3kgLZblQ==
+X-Received: by 2002:a17:907:f151:b0:a86:7021:1368 with SMTP id a640c23a62f3a-a90d5613552mr156399966b.21.1726821179454;
+        Fri, 20 Sep 2024 01:32:59 -0700 (PDT)
+Received: from thinkpad ([83.68.141.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612b3b9csm826017566b.140.2024.09.20.01.32.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 01:32:59 -0700 (PDT)
+Date: Fri, 20 Sep 2024 10:32:58 +0200
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	quic_vbadigan@quicinc.com, quic_ramkri@quicinc.com,
+	quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
+	quic_vpernami@quicinc.com, quic_mrana@quicinc.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] PCI: qcom: Skip wait for link up if global IRQ handler
+ is present
+Message-ID: <20240920083258.rpxr6kd4onsbu73c@thinkpad>
+References: <20240917-remove_wait-v1-1-456d2551bc50@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] dt-bindings: mmc: convert amlogic,meson-mx-sdio.txt to
- dtschema
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Rob Herring <robh@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v1-1-b7bfae886211@linaro.org>
- <20240916174030.GA835203-robh@kernel.org>
- <9394d785-5954-4d44-8ad0-9b57fbecde25@linaro.org>
- <CAFBinCAbb5rh4GZZhjFA1jSGJAPNC80vnUY+PC9AdaApLZphmA@mail.gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <CAFBinCAbb5rh4GZZhjFA1jSGJAPNC80vnUY+PC9AdaApLZphmA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240917-remove_wait-v1-1-456d2551bc50@quicinc.com>
 
-On 19/09/2024 18:33, Martin Blumenstingl wrote:
-> Hi Neil,
+On Tue, Sep 17, 2024 at 04:16:20PM +0530, Krishna chaitanya chundru wrote:
+> In cases where a global IRQ handler is present to manage link up
+> interrupts, it may not be necessary to wait for the link to be up
+> during PCI initialization which optimizes the bootup time.
 > 
-> On Tue, Sep 17, 2024 at 9:13 AM Neil Armstrong
-> <neil.armstrong@linaro.org> wrote:
-> [...]
->>>> +      reg:
->>>> +        description:
->>>> +          the slot (or "port") ID
->>>> +        maxItems: 1
->>>
->>> Aren't there limits in the number of slots the h/w can support?
->>
->> Good question, let me check
-> allowed values are: 0, 1, 2
+> Move platform_get_irq_byname_optional() above to set bypass_link_up_wait
+> before dw_pcie_host_init() as this flag is used in this function only.
 > 
-> For the remaining questions: I also don't know - so let's see what
-> Rob's suggestion is going to be.
-
-I did something, I'll post it shortly, no idea if it works
-
-Neil
-
+> And also as part of the PCIe link up event, update ICC and OPP values.
 > 
+
+This has to be a separate patch.
+
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 3 ++-
+>  drivers/pci/controller/dwc/pcie-designware.h      | 1 +
+>  drivers/pci/controller/dwc/pcie-qcom.c            | 7 ++++++-
+>  3 files changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 3e41865c7290..e0ddfaf9f87a 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -531,7 +531,8 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>  	}
+>  
+>  	/* Ignore errors, the link may come up later */
+> -	dw_pcie_wait_for_link(pci);
+
+Add a comment to clarify that the link up delay is skipped in the presence of
+Link up IRQ.
+
+This flag is not a way to just skip the link up delay for arbitrary reasons as
+attempted before.
+
+> +	if (!pp->bypass_link_up_wait)
+> +		dw_pcie_wait_for_link(pci);
+>  
+>  	bridge->sysdata = pp;
+>  
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index e518f81ea80c..7fe0e9b1b095 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -348,6 +348,7 @@ struct dw_pcie_rp {
+>  	bool			use_atu_msg;
+>  	int			msg_atu_index;
+>  	struct resource		*msg_res;
+> +	bool			bypass_link_up_wait;
+
+How about, 'linkup_irq'?
+
+- Mani
+
+>  };
+>  
+>  struct dw_pcie_ep_ops {
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 88a98be930e3..bcb8c60453ba 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1552,6 +1552,8 @@ static irqreturn_t qcom_pcie_global_irq_thread(int irq, void *data)
+>  		pci_lock_rescan_remove();
+>  		pci_rescan_bus(pp->bridge->bus);
+>  		pci_unlock_rescan_remove();
+> +
+> +		qcom_pcie_icc_opp_update(pcie);
+>  	} else {
+>  		dev_WARN_ONCE(dev, 1, "Received unknown event. INT_STATUS: 0x%08x\n",
+>  			      status);
+> @@ -1686,6 +1688,10 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>  
+>  	platform_set_drvdata(pdev, pcie);
+>  
+> +	irq = platform_get_irq_byname_optional(pdev, "global");
+> +	if (irq > 0)
+> +		pp->bypass_link_up_wait = true;
+> +
+>  	ret = dw_pcie_host_init(pp);
+>  	if (ret) {
+>  		dev_err(dev, "cannot initialize host\n");
+> @@ -1699,7 +1705,6 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>  		goto err_host_deinit;
+>  	}
+>  
+> -	irq = platform_get_irq_byname_optional(pdev, "global");
+>  	if (irq > 0) {
+>  		ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
+>  						qcom_pcie_global_irq_thread,
+> 
+> ---
+> base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
+> change-id: 20240911-remove_wait-ad46248dc9f0
 > 
 > Best regards,
-> Martin
+> -- 
+> Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> 
 
+-- 
+மணிவண்ணன் சதாசிவம்
 
