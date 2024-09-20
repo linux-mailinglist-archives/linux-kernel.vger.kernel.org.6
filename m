@@ -1,182 +1,137 @@
-Return-Path: <linux-kernel+bounces-334069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB09097D243
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:03:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B418C97D246
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 463F01F25A4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:03:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF20C1C22631
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884DC2AF0E;
-	Fri, 20 Sep 2024 08:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D597B69959;
+	Fri, 20 Sep 2024 08:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="tGZc51sA"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2047.outbound.protection.outlook.com [40.107.117.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R3C7+7cn"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A872762EF;
-	Fri, 20 Sep 2024 08:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726819357; cv=fail; b=QYndyQZg9B5cA2GcZyv7sHQ6VPlYzIb/RlPWUp+/0IFRT2GSrbNjkFIxiR0u7c5is6d6ouoGIl8VeXKX8wjo7Ipt1RcerEfrjIgmoehUa6iutmR41bF644Xl2+S/koST1vuEJ0izaJxfuA/1ZuxMhXrlMcdhvSfHKYLmEG1YyL8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726819357; c=relaxed/simple;
-	bh=bC1vaDlTXL6KkbaCo+RYJbMY8DmwtNVaRMxayp36R9E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=vAUQczIqRKIPJAbBbVd3Q8thJ8b8zL718U3l96O7V7jazXnMg8QhADfBVfBDkN9psg/xGrfjPYxPzCze499rnCqID0f9kOalMa5Oh+HD47IRwMntDllNXm5Ci+Ed7cnp4Zg3AJzUiL2DR7laP5+odW1CLQT2I7+YqwpnvsSq4Ok=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=tGZc51sA; arc=fail smtp.client-ip=40.107.117.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IEBTCIN9L09y12JqtJHDKBi30Bvt5NA3XZxvw1diqgLzIhtCWU3R85XhVMzskSQkXmsFz1aXSXE/V3s9Gy2mfGiBsIBxwKELvvuwRM/OqWsidDAm8H4vfFgiqpkADDfJLQYDDuhszSAOQCDzh+VPtXkEyeZqnnZd+q0Z2oIMH/N6j8ijewBAMqCD/Iexgtb/vRy5BCIy7XC2DpbhlHKBGcjGWyW2D4vYGHhXN8UB7b3Iou4N+nBTcJPZNdvuOSJZaA6i2MtkDzqAkErzINc4NNLycts7CNGu0cqBmXdSzk37B0aQwe+rctwklfJt08GcEkMv/bXo3dhXMSY/TWCShg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YCjI4Z4PhO+v3yk3B6XlKuJlSm6m/P2L9KbKt/2/bxE=;
- b=v02EoFHeOtepwAwilYsWG1gBX6NA7+z02VRVnReMAXhmXhdaBXGYUo7GoaVNFKcVymFn2jtVYHm0/dYQxy34DG4JkszNDY9gVFhakdzSN033zs1piTJPpt86ocL8Bb9x9P6kVd3O6P1djKfEDkkYhM2gvonWRZ98f5pNKHaMJDLdYTUjl4Yi5epASwkxhuxQpcuulHcOyYEgzBm0pZuHbzGy0VpwiHrJCCwQ7KGq4LGXrazp/8sGpIBvvcr4OxizwLo792PF1sud+LU8V7DPiOQlVSkcOSqFWjgPymnI5tzGpQsVVh3t7FvndzpY7qMbXsNrsUBR6hZc/IVgRYZj4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
- (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YCjI4Z4PhO+v3yk3B6XlKuJlSm6m/P2L9KbKt/2/bxE=;
- b=tGZc51sAnu02UAzkFWrWhew7afcUGbZTzHcn5vDOHalH4HzDMsqsNI0Uv0SFt+sA5BV/9eTFmN+tlIFkdBhayCvNArPJzseffo/YpO8ghZfiMHcUQixzKiWFP2UtX0Rc6f258EsczY5Ghmo5GIU9Wy7EX4TE695nOFEYj5QDwaJliDFDWYUXidCgvq2jBQYYLHmWUAJnMP/coXSVz9xXgTcqgQGk7YkD1uP+8GAPta+quxuG6iD9RSwWFf4xQVSgnCY5ApLNNvEd4ncxZei99wdcHvgNagPZuuGEj+arEIZosYl3FP0zPM6Lix31XFKUF6Zw480jcWHquflf7hwFAw==
-Received: from SI1PR02CA0017.apcprd02.prod.outlook.com (2603:1096:4:1f4::10)
- by TYSPR04MB7275.apcprd04.prod.outlook.com (2603:1096:400:471::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Fri, 20 Sep
- 2024 08:02:29 +0000
-Received: from HK3PEPF0000021A.apcprd03.prod.outlook.com
- (2603:1096:4:1f4:cafe::11) by SI1PR02CA0017.outlook.office365.com
- (2603:1096:4:1f4::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.29 via Frontend
- Transport; Fri, 20 Sep 2024 08:02:29 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
- smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
-Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
- designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
- client-ip=211.20.1.79; helo=localhost.localdomain;
-Received: from localhost.localdomain (211.20.1.79) by
- HK3PEPF0000021A.mail.protection.outlook.com (10.167.8.36) with Microsoft SMTP
- Server id 15.20.7918.13 via Frontend Transport; Fri, 20 Sep 2024 08:02:28
- +0000
-From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-To: patrick@stwcx.xyz,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ARM: dts: aspeed: yosemite4: Enable spi-gpio setting for TPM
-Date: Fri, 20 Sep 2024 16:02:26 +0800
-Message-Id: <20240920080227.711691-1-Delphine_CC_Chiu@wiwynn.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C1218EB1
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726819859; cv=none; b=F1v6CBjGR0s6Qb5WHJj1MgaFlUs1DooXUZaK77aqYkGKNaGUSmXvp36oZ1h6Ro6JxnL+T0CHSTzoBF4eYK6d5hxhqIK6BiiTki/MQsAp2JpbdXtCbhIKes+0AMCIn9+ckxCkD0QAvv05G6vtNt7HfaQqKlZYpsE6WXI+QmoSjZU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726819859; c=relaxed/simple;
+	bh=uhXbFq8gdZ2ouyL/m9MKMTRJUOP96jYL2Q/O2Zi59Nc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qsTMIM23JC8ZsGjqfhXdnNkBCpyhcVcpnMBLSVE/2Q9PuQ78juYwrDY8ECnRc3NQNvIILpmiMlKWcQyqlXn/Y9J78tx4EvTp7WGDte+ni47RorZSrhoeAcF9yDxl0xTv+M9DXJdDkSL9KZmeIaINN5GRo/nXKXRj1jylS8t4Jvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R3C7+7cn; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6ddfdeed0c9so14863917b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:10:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726819856; x=1727424656; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QAx74AURDGHuXTdqCWkFDBVlw9v7Z3zu5Hmc9mIJ5s8=;
+        b=R3C7+7cn5FFh81up8lwqKnLBmeQusri4fMOuBIA9a6uOTCqvOxsXVHNNLAdQLqtROY
+         k7ikVfDC0m91KPZhpJqRTT/GF3++SRId4PASbNLOX2ZIH0CNyXbhnE+NbutiY8lDj9RF
+         BDC8hMxTIV4ACD5K5Pty5Pj+BjOVPj6EiA55gcvnn94payoCkrNj5CA5xSvq+aBwKWuk
+         QyigUUMzaWAipPYWshoUGawCIhW7/4uTRSq0BdqxVQU0h7KW5C/opm02vNFB+WxUGiOm
+         kXGGq1snsnJz0V3hFNA9SrsJCwx9tREeaUznZZgp4XimXUHFHe+B6aKVYIYSxZ4HIJpi
+         wOKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726819856; x=1727424656;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QAx74AURDGHuXTdqCWkFDBVlw9v7Z3zu5Hmc9mIJ5s8=;
+        b=T1rlecJpna0EVY1f63ABfs8ObBdXdbCejCvnmeA4Wnj91XLOSb2YqPdaLY2MGyPjUK
+         k/3HiKkaGH8c2p3MVa/L4nTVQMzvTcz7gb4g1enY/kMstmawzl9crFPIuaXQdD9x/HKi
+         2R/aC3EdK9W2UUesm3L69BwEuXlv93XSeOV9s+j6I4miL1hLD/42xIoXGJkUBZjNEMEQ
+         RzrNrId/ilEVOQieeZUtfbnbAYHH+jaiEcQ7BvIN9qMfRowKEowjMVjOIJTpAZAULw8G
+         eO/vXmLPBRoYlhfB8dvHOtgJ/D31JHdFonnIPK9+nVZ5MvGQ8VLO2LKk/0CcKg3E7S3H
+         IIow==
+X-Forwarded-Encrypted: i=1; AJvYcCVp/JO/O4+wPgvbhysoJ8GiASQwmjGnRS9zSkHvxBnpkL98d45opwdag+bQiMOfMdtRG6ZOtgzy6s4ch+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVIcHrLkUKjDHlClynV1XIQJ73xLKYyNn115Sy8giAy3v8DcmS
+	qlEKEJMqMy0G0F3wcWTnLg32qS5c8NhXrPnfmK+C9rQWAgSUvxGeQ632dKBxdM0IUN6PGdE1fcZ
+	AA35bBGLX2us0tBwAeakHL0JjVkTue4biCVjzWQ==
+X-Google-Smtp-Source: AGHT+IFyUoCHJ9pKmMCbefdpFZcNBvA8xvQey5jC89NmExx2r83qi6xqdYU2QWsfTDK64HSz+UG4mwpDEY9D3DnxjpY=
+X-Received: by 2002:a05:690c:6207:b0:672:8ad4:9461 with SMTP id
+ 00721157ae682-6dfeeeeb16cmr21388877b3.41.1726819856635; Fri, 20 Sep 2024
+ 01:10:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK3PEPF0000021A:EE_|TYSPR04MB7275:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: fdeeac0d-6cd3-4ab3-2591-08dcd94a9284
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|7416014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jW94vp0s6WfkdB0u1KNql1Up78u6DDtPfNmyad8mt+p/0RsmctZxHUqphDsM?=
- =?us-ascii?Q?9bvvFB0LBJpsoG0S7DO3c8KbO882p/bcUXaTyfSJ9Dh18asgIAiOOTC8jZLA?=
- =?us-ascii?Q?JX5XjJ+25rpEIPgt7+C+HBwJr4Jr44eCgXcLPZ3jWj9oIFmRVIZO79qokiyN?=
- =?us-ascii?Q?BgFWW7EbYDLrNS0xHPdwWslNqPD/no+LuDIqxzyQtzV9jesU8JLcEZKyZCI4?=
- =?us-ascii?Q?qa/3oQXfvSFi/Dqj6anw+2XAeWlNPzuK8nxunyMST/WQjjTdcl9v4baM7O54?=
- =?us-ascii?Q?WJ6irLJ5cUcr6RqsNzyT881rHroRZHmrG2XnqEZiY4u7hFopS/IMC15EEOsL?=
- =?us-ascii?Q?Hen3CK5rtNnx4mgdc5gAfE1whbfmtOl0zAiwD2H8NsBTSU/CsIO8JRAgHxgp?=
- =?us-ascii?Q?JCWwmHtnAdogwqxB+Al2kSR1G5GIdTHw9vpanG+44GQxt3gnfdjPgMZ3dLhD?=
- =?us-ascii?Q?Gs4abgD2BU+9h14v5/lMxKb/2hSe5EMiKt4EJYfSprgvTjKLVKD9nKTcdEkt?=
- =?us-ascii?Q?rUX5IS4N9akBWmcvryzpBUhaDDbIMkg0lMBXeeudzyJs3HecpuvRJiNXmBUn?=
- =?us-ascii?Q?mXgT3PlDOuARz8iLu+vYLHd/AZdyqjqjpwGGh9rPqYihHA20kFvO7nitJfr+?=
- =?us-ascii?Q?mROwjA4hG2MV1IpcbifRympZTZd4UVbgJBk7EeyVP7GuJgISweL3wfpQ47BK?=
- =?us-ascii?Q?p7UIVPJmyiPD92S9+ghNpnoSl4/YNbnsbU8JPEKeIAZRDkr+v0eq+fznBVBC?=
- =?us-ascii?Q?zVmKi8JJQzdhabGxO+wqGMq/FuX194goRtzDytGYgFkaIwpVgjxBrknlZpO2?=
- =?us-ascii?Q?yrTVg0v2H30+mJJ7Y+wNlaXB07cqIVUo9MByFF9nWMKZpllTUMa3KDDJAT8+?=
- =?us-ascii?Q?4nhUYSFRdxqvV+y8wPU0DuV7F8+FgY8Ej0MzjPvujaYXOD2QJSAxeVfZL9ET?=
- =?us-ascii?Q?NkF2j1yZZJik/AFb4q5AhHR00e0rnME6wxaDfYqCgTlMtH+8aJwMMzTcAf95?=
- =?us-ascii?Q?yzGDpjNNsXVESLMr7N9bNt/T6FFXdEBZXVIvzNk/crYwCSzxNXsBfhZzPeqT?=
- =?us-ascii?Q?vRMDf5y8WHNkVJl9hc/MIiq+gawuNCD6rdyOl+X7hO4NR+YQHKf841NO4px4?=
- =?us-ascii?Q?W100u4gt0EkyjtjJtXFjM0xCGzpELV5bd5amyIH9RhFiaIodke3yy9dkYay2?=
- =?us-ascii?Q?NFKgmpHSXyUnc2q5HQ2NINP/FOQmcBt5b1tUIMQoE+Vuczp7kRlDTV7Mzd9B?=
- =?us-ascii?Q?DxU2gAXVD7Z/lE6Am8XwfW7oSAd2YqmvtXhj5KRfm/Q2AofcvOj9GBKgGL1S?=
- =?us-ascii?Q?4uDmDji3ZyKaQi4Kcoj7j1V/WcuRFUM/Lni11u666RwFWn658+++4iIfxGuD?=
- =?us-ascii?Q?ER7SJcw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 08:02:28.6365
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdeeac0d-6cd3-4ab3-2591-08dcd94a9284
-X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK3PEPF0000021A.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR04MB7275
+References: <20240920075905.19441-1-quic_jinlmao@quicinc.com>
+In-Reply-To: <20240920075905.19441-1-quic_jinlmao@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 20 Sep 2024 10:10:45 +0200
+Message-ID: <CAA8EJppY4QXDWK1QsrorQM8NTOmi4cK_Fjhkzf10muRE85BQ-w@mail.gmail.com>
+Subject: Re: [PATCH v1] arm64: defconfig: Enable Ftrace and STM configs
+To: Mao Jinlong <quic_jinlmao@quicinc.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Bjorn Andersson <quic_bjorande@quicinc.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+On Fri, 20 Sept 2024 at 09:59, Mao Jinlong <quic_jinlmao@quicinc.com> wrote:
+>
+> Ftrace logs can be captured by STM over TMC sink path. We can enable
+> ftrace logs along with HW trace of coresight component. The timestamp
+> of ftrace logs and hw traces will be in sync which helps to debug.
 
-Enable spi-gpio setting for TPM device in yosemite4.
+You are describing what can be done. Please describe why this is
+necessary and what is actually being done. See
+Documentation/process/submitting-patches.rst. The "why" part is the
+most important.
 
-Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
-Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
----
- .../aspeed/aspeed-bmc-facebook-yosemite4.dts   | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+>
+> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+> ---
+>  arch/arm64/configs/defconfig | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 4a3999eefa67..c0a56e58e554 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -1554,6 +1554,12 @@ CONFIG_NVMEM_SNVS_LPGPR=y
+>  CONFIG_NVMEM_SPMI_SDAM=m
+>  CONFIG_NVMEM_SUNXI_SID=y
+>  CONFIG_NVMEM_UNIPHIER_EFUSE=y
+> +CONFIG_STM_PROTO_BASIC=m
+> +CONFIG_STM_PROTO_SYS_T=m
+> +CONFIG_STM_DUMMY=m
+> +CONFIG_STM_SOURCE_CONSOLE=m
+> +CONFIG_STM_SOURCE_HEARTBEAT=m
+> +CONFIG_STM_SOURCE_FTRACE=m
+>  CONFIG_FPGA=y
+>  CONFIG_FPGA_MGR_ALTERA_CVP=m
+>  CONFIG_FPGA_MGR_STRATIX10_SOC=m
+> @@ -1663,7 +1669,7 @@ CONFIG_DEBUG_INFO_REDUCED=y
+>  CONFIG_MAGIC_SYSRQ=y
+>  CONFIG_DEBUG_FS=y
+>  # CONFIG_SCHED_DEBUG is not set
+> -# CONFIG_FTRACE is not set
+> +CONFIG_FTRACE=y
+>  CONFIG_CORESIGHT=m
+>  CONFIG_CORESIGHT_LINK_AND_SINK_TMC=m
+>  CONFIG_CORESIGHT_CATU=m
+> --
+> 2.46.0
+>
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-index 98477792aa00..869aa8b3f411 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
-@@ -34,6 +34,24 @@ iio-hwmon {
- 				<&adc0 4>, <&adc0 5>, <&adc0 6>, <&adc0 7>,
- 				<&adc1 0>, <&adc1 1>;
- 	};
-+
-+	spi {
-+		compatible = "spi-gpio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		sck-gpios = <&gpio0 ASPEED_GPIO(X, 3) GPIO_ACTIVE_HIGH>;
-+		mosi-gpios = <&gpio0 ASPEED_GPIO(X, 4) GPIO_ACTIVE_HIGH>;
-+		miso-gpios = <&gpio0 ASPEED_GPIO(X, 5) GPIO_ACTIVE_HIGH>;
-+		cs-gpios = <&gpio0 ASPEED_GPIO(X, 0) GPIO_ACTIVE_LOW>;
-+		num-chipselects = <1>;
-+
-+		tpm@0 {
-+			compatible = "infineon,slb9670", "tcg,tpm_tis-spi";
-+			reg = <0>;
-+			spi-max-frequency = <33000000>;
-+		};
-+	};
- };
- 
- &uart1 {
+
 -- 
-2.25.1
-
+With best wishes
+Dmitry
 
