@@ -1,151 +1,146 @@
-Return-Path: <linux-kernel+bounces-334333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0236897D5D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:53:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1897D97D5DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27E121C21907
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:53:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A56EB234D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D602616A94F;
-	Fri, 20 Sep 2024 12:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7C216F282;
+	Fri, 20 Sep 2024 12:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="klR9Xjz9"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TMU34yql"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9EF165EEB
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8A716A94F;
+	Fri, 20 Sep 2024 12:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726836804; cv=none; b=JdhPpjHhXsemCPYHCPV8rH1xHavA7+6V2jXT4ywBROKR6rKEaBbVcnVw7CQlBQZiHUPSo7UPPs9FNxFyFscFs+yI9SRPsOvyOj6c9+E5wPAn+UAahBwzC6rOmeVeDvdjCTIeXBAi5fQvLLf+FPI96AMkWJTlQOy4cdmj5P8tf6A=
+	t=1726836884; cv=none; b=BXxf7Ni1nrVhAvwGafSuQ3paYGPsCOapSIQX+1ioSnYalIsC1RG5bAMYCy4mW7Z2CCNalyXuQysJ3fmJsaLGzwqdB32on5SWWqeZg+NRKlUGEFL/ZC5zxQeM1R4UAwfXuQs6LejaA2isNHW/k54tyTsB7zELQAgX6k+nXRvCBF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726836804; c=relaxed/simple;
-	bh=kl32+29wDMJLKm5y5Ry4I20StAeXq44bgCW38vO9c+U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J7uqEKbSCPuUfrJfwoesg7ZZPiHBgKoqxHzc6zF3kM+or70OLseVad81TxMLQFyOb9lDs0o2fQCh1gBq8uzHgmrrgrKAqLfNkcXBKowbR3jkCFLMV1Cq3GHqejJuGBgre2m2AH/gequ0ZRKs9vGh+KT3SOV9m0z/Spj57nO+T3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=klR9Xjz9; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8713b00219so27573766b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:53:22 -0700 (PDT)
+	s=arc-20240116; t=1726836884; c=relaxed/simple;
+	bh=9/XbiXvNtfo9Ahhxyxq6laPOnKE8m8Kp8tFx/t2A8HU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IYZmgn1afhG0pIuOneISwQmeZIeCTWAKT5nAKrTxDvYmeVmxGwHpa8iyGfw42orAVymnktCDTlhMcRPugQZIeVYwVRo9+kXui4Z8otGBTuewGt0zHJqiSNOkz0D+peTjNNdiZzIV9nK7vIN0t1aDefoy5QJGmKDro0Eip0KnA+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TMU34yql; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so563676666b.1;
+        Fri, 20 Sep 2024 05:54:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726836801; x=1727441601; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=kl32+29wDMJLKm5y5Ry4I20StAeXq44bgCW38vO9c+U=;
-        b=klR9Xjz9o0BVPsrfzcDeJBZySqxZezNmjhr302G/lYiKo6/fmPL7PCpQGGy2Xw4RIi
-         OmZTBfSLAZ0/906DSuYXwjUf9nhrhN5OMHXGH0ygnFJg73hKx83B1DnFa8g0HriEmq73
-         Ekwp/KltZok2evMTq4htVNKj/VRUjrALP/WamYo0ni+m6LnMRZnbHheI1Ep7KAPkHID2
-         caKj/yh/VOiEcjuklFvMzYp29AjjbKLoV/y5cIkRc9Ji9w4MQ2Vxhr1mh8W2XpcSfxyi
-         M+KPDGbdvsuczg50pImT/c6PoDzAS8lSJPhC/wKt1LatHielgvmLj+Jd21ZBG/E3/RYu
-         H2xg==
+        d=gmail.com; s=20230601; t=1726836881; x=1727441681; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RpseacMxjUgxJQCQ0p8XO6h9OmRZt38JJp1qVkqe51w=;
+        b=TMU34yql4hRf5Xae89m4gKygnh9tPT4rFGTWxIhra3qMQSfEbEovbATlU6ArvpigF8
+         x1KuU/uXkYSdkEzV4Z0ILaFScNgyHHThtG030/9vZdioAf7qUK/LqjteE6gTvOvIzaVH
+         EnZ0r1pB1R2By3IltUcwFBfkrDRe/9dqxocwQ5tbrZjWOIUFGknf8pkwrv5uO4SCtOxV
+         rB3R7Dff+31wvOlpbVm1h6ciUgswjuP9B/HxXpfH8BZC4a8CRogtOpBHZMmxV4hAHAWf
+         TTZG0uBm5lKtAzLvPJnYPquhKuhV+Cd1v2Na+8m42JoZKtOQ+czwafBI9kFzkR60hP5x
+         gIVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726836801; x=1727441601;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1726836881; x=1727441681;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kl32+29wDMJLKm5y5Ry4I20StAeXq44bgCW38vO9c+U=;
-        b=Qk8t0rgSngbsRjGH3SE8sRL9IxNQbll04GYuGq5JWhWqilYYc1VpGueJG0/34lTAhM
-         zpBFjXRA/NJtnlGy5LBlyTLMzM5qsUGYGtUa0zp4Ckq5EYSPARLJ0yeFg3zucpOEdiuu
-         HTYeTiPB/fxTGyrD75qBQXPZ7dPq1Jz5o9R7N/M9wFRB3Z9ioraJmngivgihRW3rJ628
-         8jVDNCi3GIuj+KuN0HVJ63BQV/uqynL9lfapwC3u68/QzRG2sKQyB4YuZCUhF37MRket
-         Q+Y/2JM8zGM+x3R7ERlC4eDbDORXTr1avKP8nsbp25ubrkajVYghcPP320P3N8JuX0AI
-         D2kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU95hRo/11T0NrVcVXdC0OityBzEcD/S7h8lDc/bwBfukpX4ATyV/A4sQoMNeeu1W8ESbHsPWU9ViJwCss=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd35unewkT5qtmMezxcgzL2D/R829+tT6DjjpLqMvJt20tMdmo
-	ucE8N71OZZ5twhjaS7bLmOXn23XfzUtFzSNNTOIY7z4tTdPctiN2sDWaD3odiGA=
-X-Google-Smtp-Source: AGHT+IHPEtXrWumPTeLERZTSTGilYRH1uR88CoYUEZ8Bdu/b5t2NO6HcTtdnmaFRMbYsCDW7m7PSSA==
-X-Received: by 2002:a17:907:7ba2:b0:a80:f54a:f428 with SMTP id a640c23a62f3a-a90d4fc3130mr121564466b.2.1726836800754;
-        Fri, 20 Sep 2024 05:53:20 -0700 (PDT)
-Received: from [10.138.0.47] ([83.68.141.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90613315cbsm843291866b.215.2024.09.20.05.53.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2024 05:53:20 -0700 (PDT)
-Message-ID: <e9bf2870-8e17-49c6-b08f-881c2992c45b@linaro.org>
-Date: Fri, 20 Sep 2024 14:53:19 +0200
+        bh=RpseacMxjUgxJQCQ0p8XO6h9OmRZt38JJp1qVkqe51w=;
+        b=myEt3++IZ/CgaTzHk8lO+nSNkEsUGB0NKw+2XfZIgXFVMBae5sL2COmw9a+y1JvYvK
+         dDB8BZ7lFX9bbvyrLiTSClWrgeJAENFgUrjPJnJRrw+iIg8Ts5D9GRBW0nC93nhiUQoW
+         65g50RXRJwuLSmabqMhN9d1YyhyVP1NzZFUQNs7qDFqw/J2HNdwsnyxN4CIw4S38on08
+         fjkYx5JWNe7K90GiSFe/SBPZIZi34aDXB9S9eU7t/5S8Gw13spIOPgwIlQWfUM6wecZR
+         8MNbf5LyRiQEhyrpZ/3Y917buzeo10713NkWNuK+dyCI65CGqJB964tDk0bUNUxaSutg
+         11NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvm43/Vt26Bnktef7BOUmjSSsLPlX6f5wNi0lCJ2ZvGng3ZbW1n3rjGM/es1DYWSeMVXSXBlo2UrYHujjilg23@vger.kernel.org, AJvYcCW+9bK2AUk0CdPmVzVJMzJFS8868WoaDtLZy26GNENHhOW+4v5xlMVaLNG+wCToBlasMkC0JCsE@vger.kernel.org, AJvYcCXlKIAqTCWVb2v+Nx0SQ520L2Cen+6wKvWnYsi35QFnYD8oAw4JTQKjeLdzJnFXmKSSmdGfxTOsKSsh9Ds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweMQCVzISXeUD9hxfK7UVjVBARV16YEE3pyQaLo7XBLcgVT160
+	xQu5LfEePpOfF/XlqAKg14kcqqqb2MtBF1CNRFfzZgI7VLoLngDe209EUE4M5Ds/grJGb3aLlYG
+	Dk0IDx2xBGsNTzA2KnmIgah0GxJIetV7l+WngaQ==
+X-Google-Smtp-Source: AGHT+IFNG7eWZ0hTCSU9dnVSqE4S90H/FnkxsBpn+k7zYe1p9qup8+dfLEzF2OhL+u23ShqmAAZopTPFI7IK4WbqJI8=
+X-Received: by 2002:a17:907:94cf:b0:a77:c051:36a9 with SMTP id
+ a640c23a62f3a-a90d35107d9mr296404166b.9.1726836881397; Fri, 20 Sep 2024
+ 05:54:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: arm: qcom: Add Dell XPS 13 9345
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-References: <20240919170018.13672-1-alex.vinarskis@gmail.com>
- <20240919170018.13672-2-alex.vinarskis@gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240919170018.13672-2-alex.vinarskis@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <c92569919307749f879b9482b0f3e125b7d9d2e3.1726480066.git.jamie.bainbridge@gmail.com>
+ <Zuw7d9eRGo4wdVP3@shredder.mtl.com>
+In-Reply-To: <Zuw7d9eRGo4wdVP3@shredder.mtl.com>
+From: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+Date: Fri, 20 Sep 2024 22:54:29 +1000
+Message-ID: <CAAvyFNiAXb7wuDMi6tRVuzHUwkSwtCtJOzM7LGxk5nDEtaqgyQ@mail.gmail.com>
+Subject: Re: [PATCH net v2] selftests: forwarding: Avoid false MDB
+ delete/flush failures
+To: Ido Schimmel <idosch@nvidia.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 19/09/2024 18:59, Aleksandrs Vinarskis wrote:
-> Document the X1E80100-based Dell XPS laptop.
+On Fri, 20 Sept 2024 at 00:56, Ido Schimmel <idosch@nvidia.com> wrote:
+>
+> Hi,
+>
+> Thanks for the patch and sorry for the late reply (was OOO).
+>
+> On Mon, Sep 16, 2024 at 07:49:05PM +1000, Jamie Bainbridge wrote:
+> > Running this test on a small system produces different failures every
+> > test checking deletions, and some flushes. From different test runs:
+> >
+> > TEST: Common host entries configuration tests (L2)                [FAIL]
+> >   Failed to delete L2 host entry
+> >
+> > TEST: Common port group entries configuration tests (IPv4 (S, G)) [FAIL]
+> >   IPv4 (S, G) entry with VLAN 10 not deleted when VLAN was not specified
+> >
+> > TEST: Common port group entries configuration tests (IPv6 (*, G)) [FAIL]
+> >   IPv6 (*, G) entry with VLAN 10 not deleted when VLAN was not specified
+> >
+> > TEST: Flush tests                                                 [FAIL]
+> >   Entry not flushed by specified VLAN ID
+> >
+> > TEST: Flush tests                                                 [FAIL]
+> >   IPv6 host entry not flushed by "nopermanent" state
+> >
+> > Add a short sleep after deletion and flush to resolve this.
+>
+> The port group entry is removed from MDB entry's list synchronously, but
+> the MDB entry itself is removed from the hash table asynchronously and
+> the MDB get query will only return an error if an entry was not found
+> there.
+>
+> IOW, I think that when you do get a response after deletion, the entry
+> you get is empty.
+>
+> Can you please test the following patch [1] (w/o yours, obviously)?
+>
+> [1]
+> diff --git a/net/bridge/br_mdb.c b/net/bridge/br_mdb.c
+> index bc37e47ad829..1a52a0bca086 100644
+> --- a/net/bridge/br_mdb.c
+> +++ b/net/bridge/br_mdb.c
+> @@ -1674,7 +1674,7 @@ int br_mdb_get(struct net_device *dev, struct nlattr *tb[], u32 portid, u32 seq,
+>         spin_lock_bh(&br->multicast_lock);
+>
+>         mp = br_mdb_ip_get(br, &group);
+> -       if (!mp) {
+> +       if (!mp || (!mp->ports && !mp->host_joined)) {
+>                 NL_SET_ERR_MSG_MOD(extack, "MDB entry not found");
+>                 err = -ENOENT;
+>                 goto unlock;
 
-XPS 13 9435, codenamed (?) Tributo 13? Otherwise I don't get the
-connection between compatible and above.
+This works perfectly for me. Previously I would get at least 2
+failures in 10. Without my patch and with the above patch, 100 tests
+pass without any failure.
 
+Many thanks for looking at this!
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+Jamie
 
