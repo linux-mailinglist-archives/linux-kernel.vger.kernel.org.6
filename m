@@ -1,146 +1,199 @@
-Return-Path: <linux-kernel+bounces-333953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A36BA97D06A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:05:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A7C97D083
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DD951F245B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:05:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6565B23821
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0482231C;
-	Fri, 20 Sep 2024 04:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CEF28E0F;
+	Fri, 20 Sep 2024 04:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="Cam2EvT8"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FxDHTec9"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FF2B676;
-	Fri, 20 Sep 2024 04:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2D955C3E
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 04:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726805094; cv=none; b=nHIOYqFWmx7MfEDghOF1dbQqF/IRl1ReJotc7tyvx5YdZ1z8gzQEawivVIBChDXR+yOlH++QudHZiwAgBSu3UwdVpInGsnBEo4VBBI5vfA9nSp3OFZOd38DDFJX7f8VDIof1nn2x4ePRK3eco0nyyhqa3mxHWllJ9hCtmt+0sOs=
+	t=1726805567; cv=none; b=t0JuH0ND7ZWSxpSkU0IGqRszy1Gef/wZcnQci3MgidzUWLSbATnzPLjcn6yobTVXteXyjEz7qPKURki7CaeP7v4Wt0/nqjKyl2S3PSgANAf/TNpZQqcEj7rXNLBXTqXzTHYXaQpUBN5tzC3Uu/Mqy1CPZp8TdSsFxp7fJutGKW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726805094; c=relaxed/simple;
-	bh=njQRqLG7wlH/zIXBSY4tiDaObLehSkaocznA1qc1A38=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=jtzEaew6BylDRaR8YPQuWu8+KnGQ4K3RiFPGvbH8BPmvhq3ZK1U9jPLhzfPi0FEunmIZcK/FepxsmGIgzXDAIXEbrthfYiVsgJesRTzAkbN8YzyEnXdNksuLAhFK7t9ZwioL4xCJuLcGRbbubX3Sw6OM1Wr36t0PD8F2m6MBSCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=Cam2EvT8; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1726805086;
-	bh=Z2Z3+yeR3SnFTYap5T0uUA9hdSiUIk+aWXvfdPP8fwE=;
-	h=From:To:Cc:Subject:Date;
-	b=Cam2EvT8itnabezFTD0xyfYjGjVIEYbBRyp9BWwZal3ylkQK1n/igA3GYLsuBq4h2
-	 oSu4sLe7V+RjJsqOfGPikwqYioej4k3Z84v9Vujk1r5+0q/clxNjs4E301i4JaOk+P
-	 8WBqW/yr02euIM8ocE4hK584z4FbcAR1L4+xAb+E=
-Received: from localhost.localdomain ([114.246.200.160])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id E100020; Fri, 20 Sep 2024 12:03:33 +0800
-X-QQ-mid: xmsmtpt1726805013tyuqqrxw2
-Message-ID: <tencent_3D3535F93CE8BC48A50E29D1CF7A25E93D0A@qq.com>
-X-QQ-XMAILINFO: N7h1OCCDntujycmiipQosCyokqx0fKwi+k8zgQnMhO1Z7x0x0lPClOiQ9Msa1n
-	 DseKo74Mc2PEjZIkrxyWvHLu4XL4cDZf6xIG+V6TvZW1+i3Dcd+egQs/KMDYH5D80HEW9hh7oNuQ
-	 neGB0j72f4cyCyR8gyMflrE9Y/vKVP7qQI91MBgJ1vdQnS1T5bxL8JhKezYHCPVqQMHNk5YLKHEh
-	 sANwQJjg6SOAW4B3UowINMbvgKLCmt9cKJvW/F6t0jMFQmOQRrrSG1O8OYlD0A/a2mo08Lndr25Z
-	 7t3V8d0L0+OaZa5eQLqOpAL1/92LQlLDNbhV4tR0FdAolSSd1KackhCM9+bUg16+eVF7OnqRB95h
-	 WTrmNYJmvPqemW2He9Ybhyhi/AN/PVNkrUBI4TQM7HkMEJiJEU0jinK+bHoEbL9y8Fsm9dqoxhDH
-	 6uAgg9lG6so4LnDicpfgqrSFTf0QWEgDkN8ScitewHfPBDwyGf3k8xSDNJLkNgj+wyquNU6WOSCv
-	 lR7cfAPv7yKP5/J9v04E/ONYI3dZI3PmJ0GhTLHR9eF3UCx/1IYDzCeD/pBrKpzfldvLAEjdlZ7p
-	 WfqKMM55OAQLNI8MJDjzxkAh+KY7EuO3qcbKqa7wcDPAkay9wxzrPyO7UkcKsCZogIlz13fznxU6
-	 wuAWX+p06d1QO1s5Kjt0IvmjdVRL+TOx1HvH3cZdJMLNGMrS1EGkpq/NfAbp+w1yAoh/NmRz4sjo
-	 fhsm+xu8BRg6+o1VaoN1JG/LE2iBotG8IvVmaDLXb9NsMZNhIyTKFa924PGFHOe37wfgDiY0zOOu
-	 WiLK37sk2A38rU/xqpL5hzM29UyhRpwZ+oOF2uKtI9dDpR3TfowFvnFis+6+I145fxJgUafbk0AQ
-	 VJlXKr/UDeS3IFWfLFsvUE1dXsoHeDfSMte+jJ+B6WtQWCMliJx6tdDwIa9MHOEHyQyU94avB7Qg
-	 p8LoqZB78kpQZLo7OZ7ekSXsG2LwQEuYTaZGJ4BDJc0n4NqK6OCLtEJavjQPsbEIzaK4c4toy4o+
-	 wrevh2V2234CxkW4F4UsZJ6G0fKrqzywevkVEtcRhQLtsekz5iCgYdWGZyhzTrk4faON4Bkw==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Jiawei Ye <jiawei.ye@foxmail.com>
-To: przemyslaw.kitszel@intel.com
-Cc: alex.aring@gmail.com,
-	stefan@datenfreihafen.org,
-	miquel.raynal@bootlin.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	david.girault@qorvo.com,
-	linux-wpan@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] mac802154: Fix potential RCU dereference issue in mac802154_scan_worker
-Date: Fri, 20 Sep 2024 04:03:32 +0000
-X-OQ-MSGID: <20240920040332.1706036-1-jiawei.ye@foxmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726805567; c=relaxed/simple;
+	bh=v/JP9+dnSPQ/EzDmys6ognVMWUo7kv+BV4Dmyx0DlF0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=gGEZ+9Xo90jsFjdgFMgAqeH0kLfQE2kVOydyr5eCALtdbr8U6+rMXwXXRRBGIMiYmgQ8LbzLfkziulO/tvEQgNQQ9W8rL8A0PjaSX3YIczJRsjOpMmNXdUv5/lPd1I+cUR2BYaih8iCXwgowvmBfPGrFmW4XZfX3PpH/A0jrRSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FxDHTec9; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240920041238epoutp026ee2629f4723cdf39c0cc10d712cdcda~22IGQ-ycl2114421144epoutp02z
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 04:12:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240920041238epoutp026ee2629f4723cdf39c0cc10d712cdcda~22IGQ-ycl2114421144epoutp02z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1726805558;
+	bh=aBM3hbgXChryLwT6K57OXYPNbI0aIxRu0X2/9XMYaJI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=FxDHTec9yj2ZZGn2dZOGPeHAHmEYDya7ADLOi8hAEcywN53TjC07rj7GHM2DK3AtM
+	 1DTXJ3xjd9+qQjJeJ7Yva7vAC/MGx8rnoYHV2Uq7/cpFtWZHE8u8oLEQNT53vHUJDD
+	 gDHR33Xo6hV4GxbWpXL9wkU7ZNqhe+nEQ8FWLi3I=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240920041237epcas5p11a04bf5cd4d28dd4d318c503ffa93c3b~22IF-IkVg1270012700epcas5p1t;
+	Fri, 20 Sep 2024 04:12:37 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4X8zW8244Wz4x9Q0; Fri, 20 Sep
+	2024 04:12:36 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E5.C5.19863.236FCE66; Fri, 20 Sep 2024 13:12:34 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240920040449epcas5p196b268539c2dabd69045a45af241ebcc~22BRjN6bu2174021740epcas5p1l;
+	Fri, 20 Sep 2024 04:04:49 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240920040449epsmtrp2d3c54926f2f4f80f95fe32eb8f921242~22BRihgkX2326523265epsmtrp2G;
+	Fri, 20 Sep 2024 04:04:49 +0000 (GMT)
+X-AuditID: b6c32a50-ef5fe70000004d97-3c-66ecf6325074
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8E.D9.19367.164FCE66; Fri, 20 Sep 2024 13:04:49 +0900 (KST)
+Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240920040447epsmtip12931110a4a3846ee98848d5ba8423091~22BP9Q0Yl2097220972epsmtip1V;
+	Fri, 20 Sep 2024 04:04:47 +0000 (GMT)
+From: "Inbaraj E" <inbaraj.e@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Stephen Boyd'"
+	<sboyd@kernel.org>, <alim.akhtar@samsung.com>, <cw00.choi@samsung.com>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>, <mturquette@baylibre.com>,
+	<s.nawrocki@samsung.com>
+Cc: <pankaj.dubey@samsung.com>, <gost.dev@samsung.com>
+In-Reply-To: <633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
+Subject: RE: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+Date: Fri, 20 Sep 2024 09:34:46 +0530
+Message-ID: <011101db0b12$3c75edc0$b561c940$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQMYu0UT7KgXFJ9p8WqzYl/+4ytJPAKVNCMjAc9ECZkCVSVjTgGurbUsr6Fq/7A=
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmpq7RtzdpBvfXilo8mLeNzeL6l+es
+	FjcP7GSyOH9+A7vFx557rBaXd81hs5hxfh+TxcVTrhaLtn5htzj8pp3V4t+1jSwO3B7vb7Sy
+	e2xa1cnm0bdlFaPH501yASxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5
+	ibmptkouPgG6bpk5QEcpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OL
+	S/PS9fJSS6wMDQyMTIEKE7Izznxbz1TwW7jiw9setgbGfQJdjJwcEgImErPvf2PsYuTiEBLY
+	wyhx5egMRpCEkMAnRomth2ohEkD2h5utbDAd108fZodI7GSUeDtzFhOE85JRYmHjS1aQKjYB
+	TYmbR/+BzRURWMok0XnvBztIglnATGLL3ftgRZwCdhJLju0GiwsLuEjM+HeJGcRmEVCVmDLv
+	JBOIzStgKXGw6xozhC0ocXLmExaIOfIS29/OYYY4SUHi59NlYDNFBPwkjq97zQxRIy5x9GcP
+	VM1SDoljreEQtovE/JNToN4Rlnh1fAs7hC0l8fndXqi4j8T+Ob8YIewMiWPbl7NC2PYSB67M
+	AbqBA2i+psT6XfoQYVmJqafWMUGs5ZPo/f2ECSLOK7FjHoytLDHzyH2o8ZISOy/vZJnAqDQL
+	yWezkHw2C8kHsxC2LWBkWcUolVpQnJuemmxaYKibl1oOj/Hk/NxNjOBEqxWwg3H1hr96hxiZ
+	OBgPMUpwMCuJ8Ip/eJkmxJuSWFmVWpQfX1Sak1p8iNEUGN4TmaVEk/OBqT6vJN7QxNLAxMzM
+	zMTS2MxQSZz3devcFCGB9MSS1OzU1ILUIpg+Jg5OqQamhWp8c267T+rzDL4+7b6ZocvvaTK2
+	+5+xau3ftihar2HCohb+By5S3ku8BZ+ZT5xTLi2TqX5E/IYf695DkR+9vmUvPHY7YJV8ao7K
+	Bmap0rIAwbdcn6eczPluEPS9dv4HqfKbph/25ZicyzW51PZv4hrHgHztizN3RNyeMzF/p/LJ
+	JAMnY03zO4c4ynfMLb7vvDpx9ne99Oqj6WcXzSm7x3WutTVAvcCAe32JfeicrGfaMb9tkmOM
+	St2i8//otqrNnciUpaYzzz9h7qYbaZziM2eV3W5wnvz2Sx7Hlb1rV1+RKVC8yyiywOn7lI3F
+	e3QOxr5a1DPlY9PE/8y2E3az3inQX3+2e2n+gphJ5048UmIpzkg01GIuKk4EAONOJwk9BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnkeLIzCtJLcpLzFFi42LZdlhJTjfxy5s0g4MTOSwezNvGZnH9y3NW
+	i5sHdjJZnD+/gd3iY889VovLu+awWcw4v4/J4uIpV4tFW7+wWxx+085q8e/aRhYHbo/3N1rZ
+	PTat6mTz6NuyitHj8ya5AJYoLpuU1JzMstQifbsErowz39YzFfwWrvjwtoetgXGfQBcjJ4eE
+	gInE9dOH2bsYuTiEBLYzSrQ0dTBBJCQlZv+ezg5hC0us/Pccqug5o8S8A4tYQBJsApoSN4/+
+	YwRJiAisZZLo2L6SESTBLGAhsfzPdTaIjgVMErenzwcbxSlgJ7Hk2G4wW1jARWLGv0vMIDaL
+	gKrElHknwVbzClhKHOy6xgxhC0qcnPmEBWKotkTvw1aoBfIS29/OYYY4T0Hi59NlrCC2iICf
+	xPF1r5khasQljv7sYZ7AKDwLyahZSEbNQjJqFpKWBYwsqxhFUwuKc9NzkwsM9YoTc4tL89L1
+	kvNzNzGC40wraAfjsvV/9Q4xMnEwHmKU4GBWEuEV//AyTYg3JbGyKrUoP76oNCe1+BCjNAeL
+	kjivck5nipBAemJJanZqakFqEUyWiYNTqoFJaJPKuvUX4xX4qw91qHTNy5dmmnvrdlDkhdTL
+	08+Gfjm37G+GaVrTqknSpQE3Hv489W2P8fOeuqopX+Vy1jqFXW54+rnrvClvDdcyD93Ib9Pn
+	NFspOwZM8HL+s6X44vsVCb1dt9il5bNnfBB89mq6psWE76seH6pbvv/z3d857FLva/O39Ry8
+	LvaIWYvLOD+EkX+ly4OW2MYpTPW9PPxfmB4s0Ap5dvfvlUX37yz3uZ9rc7JXYt3j/5YNMVan
+	3v5ep759hZTerH/l/y/5cvck95/ep844+/HO8xPTFIp+Vlk7Oi9rlc46djj/WZit0IKtzS9s
+	wu7zJHTuPPK3aXLWzkucKm55/SJ37lzM3r5ISYmlOCPRUIu5qDgRAPzvJKYiAwAA
+X-CMS-MailID: 20240920040449epcas5p196b268539c2dabd69045a45af241ebcc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300
+References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com>
+	<20240917101016.23238-1-inbaraj.e@samsung.com>
+	<0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
+	<00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
+	<633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
 
-In the `mac802154_scan_worker` function, the `scan_req->type` field was
-accessed after the RCU read-side critical section was unlocked. According
-to RCU usage rules, this is illegal and can lead to unpredictable
-behavior, such as accessing memory that has been updated or causing
-use-after-free issues.
 
-This possible bug was identified using a static analysis tool developed
-by myself, specifically designed to detect RCU-related issues.
 
-To address this, the `scan_req->type` value is now stored in a local
-variable `scan_req_type` while still within the RCU read-side critical
-section. The `scan_req_type` is then used after the RCU lock is released,
-ensuring that the type value is safely accessed without violating RCU
-rules.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: 19 September 2024 17:33
+> To: Inbaraj E <inbaraj.e@samsung.com>; 'Stephen Boyd'
+> <sboyd@kernel.org>; alim.akhtar@samsung.com; cw00.choi@samsung.com;
+> linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; linux-samsung-
+> soc@vger.kernel.org; mturquette@baylibre.com; s.nawrocki@samsung.com
+> Cc: pankaj.dubey@samsung.com; gost.dev@samsung.com
+> Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+> 
+> On 19/09/2024 13:33, Inbaraj E wrote:
+> >
+> >
+> >> -----Original Message-----
+> >> From: Stephen Boyd <sboyd@kernel.org>
+> >> Sent: 19 September 2024 15:51
+> >> To: Inbaraj E <inbaraj.e@samsung.com>; alim.akhtar@samsung.com;
+> >> cw00.choi@samsung.com; krzk@kernel.org; linux-clk@vger.kernel.org;
+> >> linux- kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
+> >> mturquette@baylibre.com; s.nawrocki@samsung.com
+> >> Cc: pankaj.dubey@samsung.com; gost.dev@samsung.com; Inbaraj E
+> >> <inbaraj.e@samsung.com>
+> >> Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+> >>
+> >> Quoting Inbaraj E (2024-09-17 03:10:16)
+> >>> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the
+> >>> CMU_CAM_CSI block. When we gate ACLK or PCLK, the clock framework
+> >> will
+> >>> subsequently disables the parent clocks(PLL_CAM_CSI). Disabling
+> >>> PLL_CAM_CSI is causing sytem level halt.
+> >>>
+> >>> It was observed on FSD SoC, when we gate the ACLK and PCLK during
+> >>> CSI stop streaming through pm_runtime_put system is getting halted.
+> >>> So marking PLL_CAM_CSI as critical to prevent disabling.
+> >>>
+> >>> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
+> >>> ---
+> >>
+> >> Please add a fixes tag. Although this is likely a band-aid fix
+> >> because marking something critical leaves it enabled forever.
+> >
+> > Sure, will add fixes tag. As per HW manual, this PLL_CAM_CSI is
+> > supplying clock even for CMU SFR access of CSI block, so we can't gate
+> > this.
+> 
+> Hm, I am not so sure. The CMU driver should just take appropriate clock.
+> Sprinkling CLK_CRITICAL looks as substitute of missing clock handling/
 
-Fixes: e2c3e6f53a7a ("mac802154: Handle active scanning")
-Signed-off-by: Jiawei Ye <jiawei.ye@foxmail.com>
+As per HW design, PLL_CAM_CSI is responsible for suppling clock to
+CSI SFR, CMU SFR and some internal block of CAM_CSI. In this some of
+the clock is not handled by any driver but it is required for CSI to
+work properly. For example CSI NOC clock. So this is the reason we
+are marking PLL_CAM_CSI as critical.
 
----
-Changelog:
+> 
+> 
+> Best regards,
+> Krzysztof
 
-v1->v2: -Repositioned the enum nl802154_scan_types scan_req_type
-declaration between struct cfg802154_scan_request *scan_req and struct
-ieee802154_sub_if_data *sdata to comply with the reverse Christmas tree
-rule.
----
- net/mac802154/scan.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/net/mac802154/scan.c b/net/mac802154/scan.c
-index 1c0eeaa76560..a6dab3cc3ad8 100644
---- a/net/mac802154/scan.c
-+++ b/net/mac802154/scan.c
-@@ -176,6 +176,7 @@ void mac802154_scan_worker(struct work_struct *work)
- 	struct ieee802154_local *local =
- 		container_of(work, struct ieee802154_local, scan_work.work);
- 	struct cfg802154_scan_request *scan_req;
-+	enum nl802154_scan_types scan_req_type;
- 	struct ieee802154_sub_if_data *sdata;
- 	unsigned int scan_duration = 0;
- 	struct wpan_phy *wpan_phy;
-@@ -209,6 +210,7 @@ void mac802154_scan_worker(struct work_struct *work)
- 	}
- 
- 	wpan_phy = scan_req->wpan_phy;
-+	scan_req_type = scan_req->type;
- 	scan_req_duration = scan_req->duration;
- 
- 	/* Look for the next valid chan */
-@@ -246,7 +248,7 @@ void mac802154_scan_worker(struct work_struct *work)
- 		goto end_scan;
- 	}
- 
--	if (scan_req->type == NL802154_SCAN_ACTIVE) {
-+	if (scan_req_type == NL802154_SCAN_ACTIVE) {
- 		ret = mac802154_transmit_beacon_req(local, sdata);
- 		if (ret)
- 			dev_err(&sdata->dev->dev,
--- 
-2.34.1
 
 
