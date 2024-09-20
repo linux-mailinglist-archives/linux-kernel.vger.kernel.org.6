@@ -1,113 +1,106 @@
-Return-Path: <linux-kernel+bounces-334097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 619FB97D299
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:23:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF80197D29B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0635A1F255AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:23:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DED8286F3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5801013AA45;
-	Fri, 20 Sep 2024 08:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC6513CA93;
+	Fri, 20 Sep 2024 08:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koicdA8Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZhVAj8B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B211280604;
-	Fri, 20 Sep 2024 08:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C5D824BD
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726820542; cv=none; b=RPI1iCLKt5v3WASct9ru75Lbfq6AMxBrAc+Tk79uMUGR/dks9dM8MWR6iAYNjk9h4Pz1jBeDho2AS9MoGDR+7yiBdYfdjVbRMzpUX99oc0aTdL17CJPnsjHNiklyJn9hDn7V/3vzTmv9DcgGmC25OyRoU/4K1PjaFMY3ejPv8vk=
+	t=1726820543; cv=none; b=CRScFfsaXbvLFgU6Xo0ht+RiL6BuKANeMEx9QTgAn08ztCY154t/gZJvmWh6XZMbd718rEbDTSZvLyzzVSj1ELR0YzcnIKgBt3iS5yzM3+vmvtNV0nXy6e3xUUiKefE8U92zW+8+tjDWFFkhZRsrhh9oWyzXQ5KNeRzs1l46p9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726820542; c=relaxed/simple;
-	bh=CGYWgsYvHo7ITiau4tlbFsj0X9C4MzBSsji/WzgrVlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tpgNJij1zA50Elb/s3KJ4U02dw74wbZB3cmUXGSgS5rKQWC4E5lNOwUjTDtQIN4cx39jZ/VZhR9Ibh9OvDEEvNFuKLPADRUQnfU7/yi2L9LdfZl5s1HoQ+pcfUK85m5w3UqBN0N2eczszpVauTs/LwyJq+/NbfbbczFk+aw1kUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koicdA8Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA7BDC4CEC5;
-	Fri, 20 Sep 2024 08:22:21 +0000 (UTC)
+	s=arc-20240116; t=1726820543; c=relaxed/simple;
+	bh=60s4AnSUBYLnAs2LLbYv1rI0vTblMwEDXFJ/ddNuHsA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=k96D3L9okeCXDwS2bhtjaYBwYIABXhdr9h4hJr0/mXW1Ede6t/ynJxsrNGrMHs3cWVOBzKSJIjWl/6q3Qh6K03PJ8CRN41a08gg3g38mUc2XYUFPEkE2+77Y26JZhx8//LykaEX01esLQ+hgPABGS60e9G1pusP791mRPMXNvuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZhVAj8B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA277C4CEC3;
+	Fri, 20 Sep 2024 08:22:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726820542;
-	bh=CGYWgsYvHo7ITiau4tlbFsj0X9C4MzBSsji/WzgrVlY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=koicdA8QX3TN+2n9mTSiPZRVEzS1VkA0WsFoioMSZVLIDXMgMeDWbz+srMW/HHyCx
-	 FxqTLflcSz+047AMBH4bEeUZfhMzO834n3atF/2iZbFXoWSLwVDxmwlyEsmvXOsKeF
-	 mJTRl9wRiK73LP+Uzgsfk9kFLq6XvsXkXloNNoo70aYcPFz+a+mKlr3jEZ/g4cTGLG
-	 Pqtzx9dt1TH/mOyyuvYZLEsHDp2wOgzvCMQ/WQK8AmqBwXh+qrxCVYtNrQ3XCjcG2L
-	 SL7qNYRKmO84AtSyZL17SFrvdFvIN+iqLtJMB0A+VvebS6cpq2dR3EMQeX6oHNrevM
-	 +NJ/pjO3s4sNQ==
-Date: Fri, 20 Sep 2024 10:22:19 +0200
+	s=k20201202; t=1726820543;
+	bh=60s4AnSUBYLnAs2LLbYv1rI0vTblMwEDXFJ/ddNuHsA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=DZhVAj8BYAkmamADIlocvxwemPJwwhD4CyyP6ijpNvuHk7ZCF4vAW3FNq6rve53xy
+	 bWYRfREFAZX7RguU1G5oYuRJgMKn1IeRmJpBGOfCqcQSMRqxZdFU2HCW2dG7J9wuXx
+	 8jTcPK1yQe4bOXfts6S3nvZxxfrSoL2zTGoMeCyG7TOKLggQxUgtsEoq+yRktOHUlL
+	 KILvqOdeTDCo2DtvohFVbQ1qNXohDmOOH1nILZGgyxi+NVHUf54YX7/M17p4+dOKhT
+	 IqpNfzshK9tIDTAjY5Tehis49p1O3pdb2L2WuFGs5DTUBljEYkYzyyaxK9C3WSXfVG
+	 wllctvsFelDdg==
 From: Mark Brown <broonie@kernel.org>
-To: Alexander Dahl <ada@thorsis.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
-	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] spi: atmel-quadspi: Avoid overwriting delay register
- settings
-Message-ID: <Zu0wu99Hxb-b5Xo1@finisterre.sirena.org.uk>
-References: <20240918082744.379610-1-ada@thorsis.com>
- <20240918082744.379610-2-ada@thorsis.com>
+To: David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, 
+ Ricardo Rivera-Matos <rriveram@opensource.cirrus.com>
+Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240919151654.197337-1-rriveram@opensource.cirrus.com>
+References: <20240919151654.197337-1-rriveram@opensource.cirrus.com>
+Subject: Re: [PATCH] ASoC: cs35l45: Corrects cs35l45_get_clk_freq_id
+ function data type
+Message-Id: <172682054035.1859092.8371317736754373491.b4-ty@kernel.org>
+Date: Fri, 20 Sep 2024 10:22:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AbZ+Ny3EXg+uflXy"
-Content-Disposition: inline
-In-Reply-To: <20240918082744.379610-2-ada@thorsis.com>
-X-Cookie: Editing is a rewording activity.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
+On Thu, 19 Sep 2024 15:16:52 +0000, Ricardo Rivera-Matos wrote:
+> Changes cs35l45_get_clk_freq_id() function data type from unsigned int
+> to int. This function is returns a positive index value if successful
+> or a negative error code if unsuccessful.
+> 
+> Functionally there should be no difference as long as the unsigned int
+> return is interpreted as an int, however it should be corrected for
+> readability.
+> 
+> [...]
 
---AbZ+Ny3EXg+uflXy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to
 
-On Wed, Sep 18, 2024 at 10:27:43AM +0200, Alexander Dahl wrote:
-> Previously the MR and SCR registers were just set with the supposedly
-> required values, from cached register values (cached reg content
-> initialized to zero).
->=20
-> All parts fixed here did not consider the current register (cache)
-> content, which would make future support of cs_setup, cs_hold, and
-> cs_inactive impossible.
->=20
-> Setting SCBR in atmel_qspi_setup() erases a possible DLYBS setting from
-> atmel_qspi_set_cs_timing().  The DLYBS setting is applied by ORing over
-> the current setting, without resetting the bits first.  All writes to MR
-> did not consider possible settings of DLYCS and DLYBCT.
->=20
-> Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> Fixes: f732646d0ccd ("spi: atmel-quadspi: Add support for configuring CS =
-timing")
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-This isn't actually a fix AFAICT since nothing yet sets any of these
-fields?
+Thanks!
 
---AbZ+Ny3EXg+uflXy
-Content-Type: application/pgp-signature; name="signature.asc"
+[1/1] ASoC: cs35l45: Corrects cs35l45_get_clk_freq_id function data type
+      commit: 01e709aeaf913a4d0e04f9957d399cf6fc3b5455
 
------BEGIN PGP SIGNATURE-----
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbtMLoACgkQJNaLcl1U
-h9CuKAf9EnlkCetJ+PrdusHNMj28alBBuDa0vQ3WuM76Gveg3QBRqSBH6pdLONE6
-EUlgrri8xy58LbSmLVHNXREIsDs+zUjgmL3R7D7FWsHe5o+A/nIEARALKbYXwtY7
-t4wH6Aajryk18S1Qfy2lusizODgey9GuI46FzCLLA0OFmU4O5S03VMJu69vJF3fv
-ZgaLWbERJ2QVxoe8OjdxCJmGukee6kq1iWSat9oAnDOF5T4lesa4MyIuKGJRvpn6
-lPPt/aHdOgcMltduSOpQZ2oY3ADJiN/i8QNle6yZHQOIDQegiT5+yUZUrkUW0Q5V
-FMz1IUQXC/l8DBMpUjhYID1Axeok7g==
-=iwlT
------END PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---AbZ+Ny3EXg+uflXy--
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
