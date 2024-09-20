@@ -1,202 +1,239 @@
-Return-Path: <linux-kernel+bounces-334331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7943297D5D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:51:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2B797D5D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F1161C20E3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:51:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE6481F2424D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A0B16DEDF;
-	Fri, 20 Sep 2024 12:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCA916BE23;
+	Fri, 20 Sep 2024 12:52:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NN/OszTa"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r0RjYg+7"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F61A16B391
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C70154425
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726836678; cv=none; b=LQ2HvIYAQTmwboW+NIUJExLX8imPiee6nzWpqPkmo+a5mpGO6rZ/ZWgQ80jesztSQaODJXmZaY7wJtAahsAHZ1GpQWOZlCV42+d+plMI0lwTrOdkbNie1xSmeDayRK2JC250/03TPe9ejVL9xUzPTLzj/zDBwGqvIDfZbsM1iG4=
+	t=1726836749; cv=none; b=YDT+msb5Uq4RWC9CK1Lw4hW8CcXUQbVt3S7mlgkk4pSN4jEsBq+QljLWa1R7vqsz5UEj+zvvq+NTD/3BFZOBXyYEPbQNAWaEdWj+oV8bpFnLcm2zloIDO3x0+f0dxswAZlY03dSHaOQ0AmvECbMjfRacpIfBLzpx9SscOsRdgjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726836678; c=relaxed/simple;
-	bh=lZz/D0yQlTmVoZ9F0DI0OokR9dxgJE3Vt4L76O2x4A4=;
+	s=arc-20240116; t=1726836749; c=relaxed/simple;
+	bh=pU3ehJAkU0jPqFcjk5J+iYn9uwIXikjr1eW4PI5CxmM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d0oOUYm4EF69xtmPg9qDmy3p7FG7+lknj/v4zUJTMcqsPIMOytlVx1edzEmSly7wz1+lq4kzra3ZFQ6uIXusJWBZYHNSg/HfdSzKY22bn97jNYt30/AGNKXZgUHi2cN5XGy/sNVq+2M7AguiurgeN0ATR/vlOlP7atZCb/8cNXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NN/OszTa; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d86ba879-874c-45e3-8158-64d3abdcb317@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726836674;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BJSv3jfp3fGjVx0COe7tr+nr24AFeC9YXQj5U90zPNk=;
-	b=NN/OszTaDwlhTgvlN5sZkk7QgGLCKIFTpyYXYyEhVGMNbaW1FZlKyDpnjb/0nojAAjB2m7
-	GhafgqBBUOI6jf9k6W6jFF6RGY2wApBMAxXgCWsOdGF5+1K/1TU6Vxv4pTC9HqUSkOQ6cl
-	e/C44JTkGG6wwQbCDFob8wlBxeY2IYQ=
-Date: Fri, 20 Sep 2024 20:51:02 +0800
+	 In-Reply-To:Content-Type; b=sa44psWx2ya2MQztl5YFja+BVtVemDWKH7YZQeMJTOjdMVV5ZPZ6Qlp1JCGFwpLFQyPRG0uOvimkuqxv+/+HbHpmOb0VTfg0dZmS42xmDTV1R0AC09DeQmgL3vVUmiS/8RuAsGqob+TG2zPR51CP+HGPY0QaHakO3j5bavlz118=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r0RjYg+7; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8a7dddd2c3so22240166b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:52:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726836745; x=1727441545; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=NWzuVG9MtNb5Bk1t2LtZcYDbl8S7R6RsKoddHcBsg/8=;
+        b=r0RjYg+7kwzWkAxIpuy+CR6akO2tPpZF88/WEDttvbrqAWAH6yovq6WpkZskq6qLqS
+         vyF8vptNYz4KI7MDa4uaKDVMSKBERPhvmBJtfw3E3c3Eyu1SDKfnk1R6TzsspunfdbQs
+         tbW3dvQAUBJbwQXKlVI+kDTG7VVIhbekO2J2RFmrSXNvMt+p1t6irPyGN1w+7sJVgMyt
+         qUa+pGLjKDLK0zy1PKB7ojA7A5Iox0FT4BHJQ2SG6NnT3ZQRWahbMwQbqGsgzPF1oB7M
+         Osk7GemSNVi7uCeE2tG7iqbNafBo3A/1kfHF3NDhnjBGpTC4dc5a5Q9wVfSf5ekcyt22
+         +Pxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726836745; x=1727441545;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NWzuVG9MtNb5Bk1t2LtZcYDbl8S7R6RsKoddHcBsg/8=;
+        b=vOF/NDfiA+n8WKkGpVQ+6h8oFW7s1K/JcUTtrzfHhgroHimJDLiwmtaQrlXXvLcQx4
+         Q0NHckTNFrIp9K7+LXNbndAkQBgzfVVi4F1u09acQ6aEF3utHVQ53iwmgKsrVChvTI4U
+         Isib7Zxw9FJjkxGneR4w7FPQLMZAbSJbOU3lTnz6s2N7D4RxoGRWdOt/mAQrGv/xCqlD
+         gTDhOa5kZX6HVszGM6IBWUUp9bWQChKoNu5w873KmMO7M5fVEQlKLC4ogFzjvNwdnX21
+         DYFPsL+G55+rV4pJ+JX1oQK5vR1FM4kjgHGwdxJbIYnmk8sY+kzINIG0HNXRZhf0OXSv
+         u7Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCVG9KGIqhpv4/j+djxH3wKLSYoeqpSzRTj/ELPFB0aMKFXOYt917QcS8Q+RQYmB9VmNK7DA00azYmpu/qE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvzmAmNXqmEXdc/vVcKFakoegycdzmBA0W33r1pwufDOIVaCrx
+	u4K5pqnFc7v6Ka9Vn72npnTv7/q9L8Kbo3B8Y6bxN70F+i3NYXrJpVH1ZE81k7Y=
+X-Google-Smtp-Source: AGHT+IFwjSBwayaKrRLq6jwEsNGgmc4+zxrI03jCkDv6qvryck0VLkiiYzvfBpZjZ0yql+4+MtAnVw==
+X-Received: by 2002:a17:907:749:b0:a80:a294:f8a with SMTP id a640c23a62f3a-a90d4fc47ebmr106875766b.1.1726836745486;
+        Fri, 20 Sep 2024 05:52:25 -0700 (PDT)
+Received: from [10.138.0.47] ([83.68.141.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061320b9asm845514066b.189.2024.09.20.05.52.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Sep 2024 05:52:25 -0700 (PDT)
+Message-ID: <2c600b98-fc0b-4fbc-a951-ec8cc8964378@linaro.org>
+Date: Fri, 20 Sep 2024 14:52:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [MAINLINE 2/2] rds: ib: Add Dynamic Interrupt Moderation to CQs
-To: Haakon Bugge <haakon.bugge@oracle.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- Allison Henderson <allison.henderson@oracle.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- OFED mailing list <linux-rdma@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>, netdev <netdev@vger.kernel.org>,
- "rds-devel@oss.oracle.com" <rds-devel@oss.oracle.com>
-References: <20240918083552.77531-1-haakon.bugge@oracle.com>
- <20240918083552.77531-3-haakon.bugge@oracle.com>
- <6971720d-3639-4a80-a17b-48489bfadb0a@linux.dev>
- <AAE98F7B-F556-4C9E-BB3B-3907790D801B@oracle.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <AAE98F7B-F556-4C9E-BB3B-3907790D801B@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: Add support for X1-based Dell
+ XPS 13 9345
+To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <20240919170018.13672-1-alex.vinarskis@gmail.com>
+ <20240919170018.13672-4-alex.vinarskis@gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240919170018.13672-4-alex.vinarskis@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-在 2024/9/20 17:42, Haakon Bugge 写道:
-> 
-> 
->> On 20 Sep 2024, at 09:47, Zhu Yanjun <yanjun.zhu@linux.dev> wrote:
->>
->> 在 2024/9/18 16:35, Håkon Bugge 写道:
->>> With the support from ib_core to use Dynamic Interrupt Moderation
->>> (DIM) from legacy ULPs, which uses ib_create_cq(), we enable that
->>> feature for the receive and send CQs in RDS.
->>
->> Hi, Haakon
->>
->> I am interested in this patch series. I just wonder if the performance of rds is increased after DIM is used in legacy ULPs?
->> That is, is there any benefit to legacy ULPs after DIM is used?
->>
->> Do you have any test results about this DIM?
-> 
-> Yes, please see the cover letter of this commit.
+On 19/09/2024 18:59, Aleksandrs Vinarskis wrote:
+> +			panic-indicator;
+> +		};
+> +	};
+> +
+> +	pmic-glink {
+> +		compatible = "qcom,x1e80100-pmic-glink",
+> +					 "qcom,sm8550-pmic-glink",
+> +					 "qcom,pmic-glink";
 
-Which Oracle Linux distro includes this feature?
-And what is the kernel version?
+Misaligned. These start with previous ".
 
-Zhu Yanjun
 
-> 
-> 
-> Thxs, Håkon
-> 
->>
->> Thanks,
->> Zhu Yanjun
->>
->>> A set of rds-stress runs have been done. bcopy read + write for
->>> payload 8448 and 16640 bytes and ack/req of 256 bytes. Number of QPs
->>> varies from 8 to 128, number of threads (i.e. rds-stress processes)
->>> from one to 16 and a depth of four. A limit has been applied such that
->>> the number of processes times the number of QPs never exceeds 128. All
->>> in all, 61 rds-stress runs.
->>> For brevity, only the rows showing a +/- 3% deviation or larger from
->>> base is listed. The geometric mean of the ratios (IOPS_test /
->>> IOPS_base) is calculated for all 61 runs, and that gives the best
->>> possible "average" impact of the commits.
->>> In the following, "base" is v6.11-rc7. "test" is the same
->>> kernel with the following two commits:
->>>         * rds: ib: Add Dynamic Interrupt Moderation to CQs (this commit)
->>>         * RDMA/core: Enable legacy ULPs to use RDMA DIM
->>> This is executed between two X8-2 with CX-5 using fw 16.35.3502. These
->>> BM systems were instantiated with one VF, which were used for the
->>> test:
->>>                                   base     test
->>>     ACK    REQ  QPS  THR  DEP     IOPS     IOPS  Percent
->>>     256   8448    8    1    4   634463   658162      3.7
->>>     256   8448    8    2    4   862648   997358     15.6
->>>     256   8448    8    4    4   950458  1113991     17.2
->>>     256   8448    8    8    4   932120  1127024     20.9
->>>     256   8448    8   16    4   944977  1133885     20.0
->>>    8448    256    8    2    4   858663   975563     13.6
->>>    8448    256    8    4    4   934884  1098854     17.5
->>>    8448    256    8    8    4   928247  1116015     20.2
->>>    8448    256    8   16    4   938864  1123455     19.7
->>>     256   8448   64    1    4   965985   918445     -4.9
->>>    8448    256   64    1    4   963280   918239     -4.7
->>>     256  16640    8    2    4   544670   582330      6.9
->>>     256  16640    8    4    4   554873   597553      7.7
->>>     256  16640    8    8    4   551799   597479      8.3
->>>     256  16640    8   16    4   553041   597898      8.1
->>>   16640    256    8    2    4   544644   578331      6.2
->>>   16640    256    8    4    4   553944   594627      7.3
->>>   16640    256    8    8    4   551388   594737      7.9
->>>   16640    256    8   16    4   552986   596581      7.9
->>> Geometric mean of ratios: 1.03
->>> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
->>> ---
->>>   net/rds/ib_cm.c | 10 ++++++++++
->>>   1 file changed, 10 insertions(+)
->>> diff --git a/net/rds/ib_cm.c b/net/rds/ib_cm.c
->>> index 26b069e1999df..79603d86b6c02 100644
->>> --- a/net/rds/ib_cm.c
->>> +++ b/net/rds/ib_cm.c
->>> @@ -259,6 +259,7 @@ static void rds_ib_cq_comp_handler_recv(struct ib_cq *cq, void *context)
->>>   static void poll_scq(struct rds_ib_connection *ic, struct ib_cq *cq,
->>>        struct ib_wc *wcs)
->>>   {
->>> + int ncompleted = 0;
->>>    int nr, i;
->>>    struct ib_wc *wc;
->>>   @@ -276,7 +277,10 @@ static void poll_scq(struct rds_ib_connection *ic, struct ib_cq *cq,
->>>    rds_ib_mr_cqe_handler(ic, wc);
->>>      }
->>> + ncompleted += nr;
->>>    }
->>> + if (cq->dim)
->>> + rdma_dim(cq->dim, ncompleted);
->>>   }
->>>     static void rds_ib_tasklet_fn_send(unsigned long data)
->>> @@ -304,6 +308,7 @@ static void poll_rcq(struct rds_ib_connection *ic, struct ib_cq *cq,
->>>        struct ib_wc *wcs,
->>>        struct rds_ib_ack_state *ack_state)
->>>   {
->>> + int ncompleted = 0;
->>>    int nr, i;
->>>    struct ib_wc *wc;
->>>   @@ -316,7 +321,10 @@ static void poll_rcq(struct rds_ib_connection *ic, struct ib_cq *cq,
->>>      rds_ib_recv_cqe_handler(ic, wc, ack_state);
->>>    }
->>> + ncompleted += nr;
->>>    }
->>> + if (cq->dim)
->>> + rdma_dim(cq->dim, ncompleted);
->>>   }
->>>     static void rds_ib_tasklet_fn_recv(unsigned long data)
->>> @@ -542,6 +550,7 @@ static int rds_ib_setup_qp(struct rds_connection *conn)
->>>    ic->i_scq_vector = ibdev_get_unused_vector(rds_ibdev);
->>>    cq_attr.cqe = ic->i_send_ring.w_nr + fr_queue_space + 1;
->>>    cq_attr.comp_vector = ic->i_scq_vector;
->>> + cq_attr.flags |= IB_CQ_MODERATE;
->>>    ic->i_send_cq = ib_create_cq(dev, rds_ib_cq_comp_handler_send,
->>>        rds_ib_cq_event_handler, conn,
->>>        &cq_attr);
->>> @@ -556,6 +565,7 @@ static int rds_ib_setup_qp(struct rds_connection *conn)
->>>    ic->i_rcq_vector = ibdev_get_unused_vector(rds_ibdev);
->>>    cq_attr.cqe = ic->i_recv_ring.w_nr;
->>>    cq_attr.comp_vector = ic->i_rcq_vector;
->>> + cq_attr.flags |= IB_CQ_MODERATE;
->>>    ic->i_recv_cq = ib_create_cq(dev, rds_ib_cq_comp_handler_recv,
->>>        rds_ib_cq_event_handler, conn,
->>>        &cq_attr);
->>
-> 
+> +		orientation-gpios = <&tlmm 121 GPIO_ACTIVE_HIGH>,
+> +							<&tlmm 123 GPIO_ACTIVE_HIGH>;
+
+
+Even more misaligned. I guess this comment applies to multiple places.
+
+
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		/* Right-side USB Type-C port */
+> +		connector@0 {
+> +			compatible = "usb-c-connector";
+> +			reg = <0>;
+> +			power-role = "dual";
+> +			data-role = "dual";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					pmic_glink_ss0_hs_in: endpoint {
+> +						remote-endpoint = <&usb_1_ss0_dwc3_hs>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					pmic_glink_ss0_ss_in: endpoint {
+> +						remote-endpoint = <&usb_1_ss0_qmpphy_out>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		/* Left-side USB Type-C port */
+> +		connector@1 {
+> +			compatible = "usb-c-connector";
+> +			reg = <1>;
+> +			power-role = "dual";
+> +			data-role = "dual";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					pmic_glink_ss1_hs_in: endpoint {
+> +						remote-endpoint = <&usb_1_ss1_dwc3_hs>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					pmic_glink_ss1_ss_in: endpoint {
+> +						remote-endpoint = <&usb_1_ss1_qmpphy_out>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	reserved-memory {
+> +		linux,cma {
+> +			compatible = "shared-dma-pool";
+> +			size = <0x0 0x8000000>;
+> +			reusable;
+> +			linux,cma-default;
+> +		};
+> +	};
+> +
+> +	vph_pwr: vph-pwr-regulator {
+
+regulator-foo-bar (so regulator-vph-pwr), which will also point to the
+need of reordering the nods. They are sorted alphabetically.
+
+Best regards,
+Krzysztof
 
 
