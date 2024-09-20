@@ -1,235 +1,159 @@
-Return-Path: <linux-kernel+bounces-334433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2DBD97D735
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:00:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F8F997D73B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 418D21F216DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:00:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 503121C2160E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A661017C21C;
-	Fri, 20 Sep 2024 15:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8EE17C217;
+	Fri, 20 Sep 2024 15:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mS10Vzci"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="KSPtWyPX"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875CA1EA84;
-	Fri, 20 Sep 2024 15:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1071E521;
+	Fri, 20 Sep 2024 15:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726844447; cv=none; b=ULKoxFGJEVzy91YHIw5WgmuCuGtUL+fH5kW4hz/VKgeb1w8xV/U2VDaUMs1cnqJ8EuMzmaELPPH9FdMP1BkUFUG9Y/znujkz+iWwnQChJLJlNKTjL7c0RHIGOh3C+6gsdrd3sVY+o0mEz1WNVS1E7KbWEkZMqWLC3R0C5FkADW8=
+	t=1726844640; cv=none; b=bdtie4aqx1LtkQjdcD5LYaH3kbp1iJ3OmG8UeFTuQqEOHnigQnfRO20TgvYdXxR33XduD+RPBW3LCQ4jhXgyZwcDltxC21XHZkzSzBh0FQI3GJZCHZGmDL2DgJzwNvhcJ9L4k8udVhTWJo/AyHDeSqg+P6isvfRmw62VphB1CF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726844447; c=relaxed/simple;
-	bh=0ASLXfSVwbMq6iMZVMyo10HW1dHGWEbdZFqwz6cyu9Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aPXG0Gs+86BZR81xGZ7ti5YRM+jKLeq9UZTDHYKEDdlcrTb6TICSYc+mLcVKGE7VgsfqTRL8zgq5DH/W8CDPvcDnVtwiL7f0b4WQZOj1+qT1tZuceZFfX/c+wxqQS6w4aqKRjsxAAMQduzn+FfesJlkY8mmW1qMcvjL4a7WcLkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mS10Vzci; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-205909afad3so26652465ad.2;
-        Fri, 20 Sep 2024 08:00:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726844445; x=1727449245; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TvEkmf5URJ1aeSmER0MrZLqGQs3JKg0CwGkoOctEdws=;
-        b=mS10Vzci6mhSep3lai7Ku14nv15J4jRYU6cqDBbRJXX/Y4eV/tjPUbOO2kmIOIXp1l
-         CWvotrgDghzy8ucqlt61/X+GbAt2NKDecuRq/8JExXthyMupLC4qEDj9wtrsPjKMN0Du
-         GjH0lSQOxqzlv+Ofp/5+aYMtiLlbLm1lyUYaaNII61gDdzxOVKyAGeUQPCECC9h8ScaX
-         6vQBK9LYEKtWP3BDkiQjvhBhTd/rO8hHpiu/cjL44EW6w21vGKuqNGmtxcMB9vBWmUR8
-         RKQpcxzYWT0ZfDfAjonz6X6MvtM0OO3++xW6a+NFAGyLFtAOYI5PvsiY4uLvbNQNGZJO
-         AB/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726844445; x=1727449245;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TvEkmf5URJ1aeSmER0MrZLqGQs3JKg0CwGkoOctEdws=;
-        b=gJGTEfUmToNpv7GQRrKyMy5m9cg73k6p+OzcyK0th/+EdWm1F6+3rJw6S8xRbIGFXw
-         Ql++ZjwORHIqARzbyiKtRG9CwTkxtA0f6oLnVQ4ZXxK+/lz/+rum2f4+Bh9X+/JuUxEk
-         LjolKFnI7s0v+afg+UD55o1+HUSszB4JkZOdD3BGQW9y3ETtIX6KwRD6dsJibltcB1PH
-         JXZNhhF4kMTAss8W+clGz3rBuEOQKzdI2Ffx00iH2cZ2CCBDSdsz2IkTdCN3hQqKLILa
-         LabqIIncEva73JLsX6U5Xz7uJnDgQxEg7Nl0F1hNfy8NKzNO1y+3ItCoUjY5c/lh7y7J
-         Zo0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUguK2+Va6VWX6LnJsz5TGdTfX1X40nDKAu15DnldzQ8dL9YBhDJzhlxLg7eWGrTcCgUtQkap/K+/5+@vger.kernel.org, AJvYcCXSwB09AuUT/p8X8q2TyKZXeEMpSzXpyabaefoBWQVxHmR7BXOGAmdx+c98ADIZsP1NJ15Yw7YlCQRMZKYG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf2luJqFv6QWEvwWJY4byRlCeadKSPbsobaBItqGbPH77QbN99
-	NVyIyD8BtJGsw+HiC7nQPZF0hpBNBZJjzN9YCY7aPfec/MaPh+5hsATX+tAR
-X-Google-Smtp-Source: AGHT+IF/iz6QKaBigAHbbFuRIWDoJr/3bOq3rNTvobPeENpmYtCeopnab2S0vL0c1j4Md5OnTfBVEA==
-X-Received: by 2002:a17:902:d4ce:b0:206:b399:2f21 with SMTP id d9443c01a7336-208d840808dmr42159785ad.43.1726844423660;
-        Fri, 20 Sep 2024 08:00:23 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d15fesm96196865ad.162.2024.09.20.08.00.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 08:00:23 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: akpm@osdl.org,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH v2] ext4: prevent data-race that occur when read/write ext4_group_desc structure members
-Date: Sat, 21 Sep 2024 00:00:13 +0900
-Message-Id: <20240920150013.2447-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726844640; c=relaxed/simple;
+	bh=X9esZzGOTeQF3OB43MS7uS6NdgofMUQTaJ3qZMAytUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LP9JasFwFdDMOWCS6wMXA8ZcoyOuwZva/jXok1nYuaKhc/uHNkBzyL/RHqjb2xx8iIKT5FiboiS0P5ncVDpBwJ4FFF7pHy7ilxKZGnUWAQ9bbUHIi25Hwnci0sKS5CwUqTqoZm+0DCC5UGzO+Zthf61qNe+4gPq//p1ESTY32u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=KSPtWyPX; arc=none smtp.client-ip=74.208.4.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1726844627; x=1727449427; i=parker@finest.io;
+	bh=BiGXGzW7sTDkHBHRU98fhBYgG2xqKnyjbSiNuAi7zBs=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=KSPtWyPXrhKC5q5NGqGa+2IvDAWnwaRXSXdCvL0QsTruhmrP76qCgYkJVT60pyA7
+	 LsKyTufc16WZAbcWakH+q3jTOBLxEQ0Uc1tahYIyyaLZ+9tajLl3Qp0nW+L3GmZLw
+	 Y2SJkAMdvVqjp6RqUM57kzupQEXMFjyq6ZOAf5N4g8diSn08tDS4Y0T2v0Jx7cU1E
+	 0PCmD6RCGsyhNoLRwd82pgsIWaZYGrUoXosp26aXpM5f2eS42Q2MlOa+q1KR0eqBV
+	 ZeNrBdhSElVvBpXGMl61p2CuD18wWpCoo5CPi1ZIDXN+H/Eq/0vK0I+1ZxDtpjkw6
+	 PGSBFoScWOHr8xczKg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
+ mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 0MY95y-1sVmhn1nZw-00KC5q; Fri, 20 Sep 2024 17:03:47 +0200
+Date: Fri, 20 Sep 2024 11:03:33 -0400
+From: Parker Newman <parker@finest.io>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Parker Newman
+ <pnewman@connecttech.com>
+Subject: Re: [PATCH v2 1/4] misc: eeprom: eeprom_93cx6: Add quirk for extra
+ read clock cycle
+Message-ID: <20240920110333.290caae6@SWDEV2.connecttech.local>
+In-Reply-To: <Zu2Ke5ttvrqXICDB@smile.fi.intel.com>
+References: <cover.1726838531.git.pnewman@connecttech.com>
+	<b92bd58e016a14ae95e259ffbdcfc5e5da6a7aca.1726838531.git.pnewman@connecttech.com>
+	<Zu2Ke5ttvrqXICDB@smile.fi.intel.com>
+Organization: Connect Tech Inc.
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:PBiEFXUH4mF/+GdY+ewzpPsIUKL+hnfiHok9vbItpDYl4pBstM2
+ 2GDT55gdnE+VsuVOOqkyvNie9iEKsNJ7X9K8cx3D1wj7w1iKfUGnc1yID8JC+PmcTjwKRcn
+ bpsxFjINexfovq0WW/wRH3ISrtsajbCM+VVbWJd5JqroymrP5LTFUI4tGkaqrYq7BiK4EQL
+ CcTD/bY7ZkOZSG3VmWDmQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:a8455BJiI6o=;sBGNT1X9cjrPOkpnBrVKYSbORz+
+ lNUbod1Pu/4LZrh8oMdhG7mj4aeALXWV/Sra3u2alL5TnHoqRb3xKYPBAH5/JcmP/LNDx4pm5
+ zo4Azz+i75+XVkiDWMb8FR4qzwoh4b162jypvJflYJIekxklScBzZWt0g072l2w6hpnUUuw9I
+ uqCOzMEtHJe9Z4VdV5Uc57SQllFuDA9FqaqPu+phoG8kYdtiA1r291iYuPn43S/A8n5bDs62C
+ UKgOhflxj0wLTXEa8TvQEvLrJoaaCRKqmsWMp4SIjVQtgYXXk7GgIZ0bVKzucSmIdQjJj8U8i
+ X6nsPmNbvuKGiXUb5MsSLqzz9rKvP5kB3f5gtB3654nocSWzSlE62qY8VQn0P5YegmNY5/8LF
+ Zr/6CUHB/a7XI21CpWJ4YW8yM1FtlrOGzGtmw5CLe94RgTSF5PxOVtARsE4tHHohYR4o2fhIN
+ 7pDAMWvv1SOzU9Yxv+DYwsHsQniz7wbuIMjZ7WZc4Mv/Eq4yN5jUwjAHOPftPIFS+FlbVap8c
+ Fe1qEkzshF2g/s1s2wy7lbtwvHJ91aBlWTd7uByZfFinDDEt9NxCiHLCZFC5hchJccHjMjalY
+ jZTm3L4KxgvFAWeKoBjbLmq/K3KIPjvk+LeFcKrNYJ+5Ay3muCtzmNg4iiMNvm21JYu87rocD
+ tTR5PQPAmfjTxp3jye+EVt5TNuavJz/eXWGqeNonbwgNzWOQL1Z4s8F8uZQFBFpeuGJbF5PQY
+ 8mK5EbH2VZFWEneWHL7OKWAKkmsuvtFLw==
 
-Currently, data-race like [1] occur in fs/ext4/ialloc.c
+On Fri, 20 Sep 2024 17:45:15 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-find_group_other() and find_group_orlov() read multiple ext4_groups but
-do not protect them with locks, which causes data-race. I think it would
-be appropriate to add ext4_lock_group() at an appropriate location to solve
-this.
+> On Fri, Sep 20, 2024 at 10:03:21AM -0400, Parker Newman wrote:
+> > From: Parker Newman <pnewman@connecttech.com>
+> >=20
+> > This patch adds a quirk similar to eeprom_93xx46 to add an extra clock
+> > cycle before reading data from the EEPROM.
+> >=20
+> > The 93Cx6 family of EEPROMs output a "dummy 0 bit" between the writing
+> > of the op-code/address from the host to the EEPROM and the reading of
+> > the actual data from the EEPROM.
+> >=20
+> > More info can be found on page 6 of the AT93C46 datasheet (linked below=
+).
+> > Similar notes are found in other 93xx6 datasheets.
+> >=20
+> > In summary the read operation for a 93Cx6 EEPROM is:
+> > Write to EEPROM:	110[A5-A0]	(9 bits)
+> > Read from EEPROM:	0[D15-D0]	(17 bits)
+> >=20
+> > Where:
+> > 	110 is the start bit and READ OpCode
+> > 	[A5-A0] is the address to read from
+> > 	0 is a "dummy bit" preceding the actual data
+> > 	[D15-D0] is the actual data.
+> >=20
+> > Looking at the READ timing diagrams in the 93Cx6 datasheets the dummy
+> > bit should be clocked out on the last address bit clock cycle meaning it
+> > should be discarded naturally.
+> >=20
+> > However, depending on the hardware configuration sometimes this dummy
+> > bit is not discarded. This is the case with Exar PCI UARTs which require
+> > an extra clock cycle between sending the address and reading the data.
+> >=20
+> > Link: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-5193-SEEPR=
+OM-AT93C46D-Datasheet.pdf =20
+>=20
+> JFYI: You may also convert this to Datasheet: tag (we have a history of it
+> mostly in IIO subsystem), basically replacing word Link by Datasheet in t=
+he
+> above line.
+>=20
 
-[1]
+Sounds good, I will change in v3.
 
-==================================================================
-BUG: KCSAN: data-race in ext4_free_inodes_count / ext4_free_inodes_set
+> > Signed-off-by: Parker Newman <pnewman@connecttech.com> =20
+>=20
+> Code wise LGTM now,
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>=20
+> (Do not forget to embed this tag into a new version. With this the `b4` t=
+ool
+>  is quite helpful, so the workflow is to checkout a new branch in your lo=
+cal
+>  Git tree, like `git checkout -b exar-93xx46 v6.12-rc1` then taking a mes=
+sage
+>  ID from email of this thread =E2=80=94 any should succeed, but cover let=
+ter's one
+>  for sure =E2=80=94 run the following `b4 am $<message ID>`. It will prin=
+t the hints
+>  what to do next, something like `git am $<patch_title>.mbx`. Then you can
+>  continue with `git rebase --interactive v6.12-rc1` if the code or other
+>  stuff in the commit message needs to be updated.)
+>=20
 
-write to 0xffff88810404300e of 2 bytes by task 6254 on cpu 1:
- ext4_free_inodes_set+0x1f/0x80 fs/ext4/super.c:405
- __ext4_new_inode+0x15ca/0x2200 fs/ext4/ialloc.c:1216
- ext4_symlink+0x242/0x5a0 fs/ext4/namei.c:3391
- vfs_symlink+0xca/0x1d0 fs/namei.c:4615
- do_symlinkat+0xe3/0x340 fs/namei.c:4641
- __do_sys_symlinkat fs/namei.c:4657 [inline]
- __se_sys_symlinkat fs/namei.c:4654 [inline]
- __x64_sys_symlinkat+0x5e/0x70 fs/namei.c:4654
- x64_sys_call+0x1dda/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:267
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-read to 0xffff88810404300e of 2 bytes by task 6257 on cpu 0:
- ext4_free_inodes_count+0x1c/0x80 fs/ext4/super.c:349
- find_group_other fs/ext4/ialloc.c:594 [inline]
- __ext4_new_inode+0x6ec/0x2200 fs/ext4/ialloc.c:1017
- ext4_symlink+0x242/0x5a0 fs/ext4/namei.c:3391
- vfs_symlink+0xca/0x1d0 fs/namei.c:4615
- do_symlinkat+0xe3/0x340 fs/namei.c:4641
- __do_sys_symlinkat fs/namei.c:4657 [inline]
- __se_sys_symlinkat fs/namei.c:4654 [inline]
- __x64_sys_symlinkat+0x5e/0x70 fs/namei.c:4654
- x64_sys_call+0x1dda/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:267
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-value changed: 0x185c -> 0x185b
-
-Fixes: ac27a0ec112a ("[PATCH] ext4: initial copy of files from ext3")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- fs/ext4/ialloc.c | 27 ++++++++++++++++++++++++---
- 1 file changed, 24 insertions(+), 3 deletions(-)
-
-diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index 9dfd768ed9f8..5cae247ff21f 100644
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -500,11 +500,14 @@ static int find_group_orlov(struct super_block *sb, struct inode *parent,
- 		for (i = 0; i < flex_size; i++) {
- 			if (grp+i >= real_ngroups)
- 				break;
-+			ext4_lock_group(sb, grp+i);
- 			desc = ext4_get_group_desc(sb, grp+i, NULL);
- 			if (desc && ext4_free_inodes_count(sb, desc)) {
- 				*group = grp+i;
-+				ext4_unlock_group(sb, grp+i);
- 				return 0;
- 			}
-+			ext4_unlock_group(sb, grp+i);
- 		}
- 		goto fallback;
- 	}
-@@ -544,14 +547,17 @@ static int find_group_orlov(struct super_block *sb, struct inode *parent,
- 	parent_group = EXT4_I(parent)->i_block_group;
- 	for (i = 0; i < ngroups; i++) {
- 		grp = (parent_group + i) % ngroups;
-+		ext4_lock_group(sb, grp);
- 		desc = ext4_get_group_desc(sb, grp, NULL);
- 		if (desc) {
- 			grp_free = ext4_free_inodes_count(sb, desc);
- 			if (grp_free && grp_free >= avefreei) {
- 				*group = grp;
-+				ext4_unlock_group(sb, grp);
- 				return 0;
- 			}
- 		}
-+		ext4_unlock_group(sb, grp);
- 	}
- 
- 	if (avefreei) {
-@@ -590,11 +596,14 @@ static int find_group_other(struct super_block *sb, struct inode *parent,
- 		if (last > ngroups)
- 			last = ngroups;
- 		for  (i = parent_group; i < last; i++) {
-+			ext4_lock_group(sb, i);
- 			desc = ext4_get_group_desc(sb, i, NULL);
- 			if (desc && ext4_free_inodes_count(sb, desc)) {
- 				*group = i;
-+				ext4_unlock_group(sb, i);
- 				return 0;
- 			}
-+			ext4_unlock_group(sb, i);
- 		}
- 		if (!retry && EXT4_I(parent)->i_last_alloc_group != ~0) {
- 			retry = 1;
-@@ -616,10 +625,14 @@ static int find_group_other(struct super_block *sb, struct inode *parent,
- 	 * Try to place the inode in its parent directory
- 	 */
- 	*group = parent_group;
-+	ext4_lock_group(sb, *group);
- 	desc = ext4_get_group_desc(sb, *group, NULL);
- 	if (desc && ext4_free_inodes_count(sb, desc) &&
--	    ext4_free_group_clusters(sb, desc))
-+	    ext4_free_group_clusters(sb, desc)) {
-+		ext4_unlock_group(sb, *group);
- 		return 0;
-+	}
-+	ext4_unlock_group(sb, *group);
- 
- 	/*
- 	 * We're going to place this inode in a different blockgroup from its
-@@ -640,10 +653,14 @@ static int find_group_other(struct super_block *sb, struct inode *parent,
- 		*group += i;
- 		if (*group >= ngroups)
- 			*group -= ngroups;
-+		ext4_lock_group(sb, *group);
- 		desc = ext4_get_group_desc(sb, *group, NULL);
- 		if (desc && ext4_free_inodes_count(sb, desc) &&
--		    ext4_free_group_clusters(sb, desc))
-+		    ext4_free_group_clusters(sb, desc)) {
-+			ext4_unlock_group(sb, *group);
- 			return 0;
-+		}
-+		ext4_unlock_group(sb, *group);
- 	}
- 
- 	/*
-@@ -654,9 +671,13 @@ static int find_group_other(struct super_block *sb, struct inode *parent,
- 	for (i = 0; i < ngroups; i++) {
- 		if (++*group >= ngroups)
- 			*group = 0;
-+		ext4_lock_group(sb, *group);
- 		desc = ext4_get_group_desc(sb, *group, NULL);
--		if (desc && ext4_free_inodes_count(sb, desc))
-+		if (desc && ext4_free_inodes_count(sb, desc)) {
-+			ext4_unlock_group(sb, *group);
- 			return 0;
-+		}
-+		ext4_unlock_group(sb, *group);
- 	}
- 
- 	return -1;
---
+Thanks! This is very helpful. =20
 
