@@ -1,132 +1,174 @@
-Return-Path: <linux-kernel+bounces-334302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0E097D554
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:25:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B0F97D55D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C17B1C21656
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:25:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFA6928390A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1CC14D719;
-	Fri, 20 Sep 2024 12:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13BB14D708;
+	Fri, 20 Sep 2024 12:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="S9E0ghCC"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iLn4nMKg"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1578524B4A;
-	Fri, 20 Sep 2024 12:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21E84D8BC
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726835138; cv=none; b=c0cQ26Sc+R6SfxZysLYOQSrbaeBs9hfVO4rnxaWAPcMtq0tPziLZY+GFnPt6Svj+8k87ypwlVGpf1dtuUeRfctsq3d/fc8wzw+UTCNkAYOm/RH5ojTL/iGu0eAnGZKqDzRbzGXjE2PcI7CkRm+JN98FrGxFG3wXb3qUbXG/LRqc=
+	t=1726835326; cv=none; b=iOYX3Sy+3t9ovU14hw5IqmnAPFVoL2BkKmB8nhE5P2z83Bgf7xiHCwgqLL/Om75h07dqBT6dHv3LIVWPJX5OXJOp58Nuux2tATSAKcXUTtOC/7vwp8Z9B8MO65Z6uQsbgKvbEMmVVqq8uYuK70dZ2OJdC/QMmtbTjUyj8asIZPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726835138; c=relaxed/simple;
-	bh=yXB0hLWCoGo9t46ZIUBlPoTp7WsJL7Abmdc4v8zPONs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=AhEenBPFDUFaio/Ktbh4VViXpDQINxvLO8mD5MtggLLH+ZI8U96AtgYXH3Dvhopl2CNgvw2QBF3FwP39w8uISO2+/sC/UP1yyp1TvurlU+7tkuLaUiQ5/xjDN/QESfu0gkiTPN5ecf5H+OIrv9azg+Vqyia3Mpg4JiJ1zm/sWow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=S9E0ghCC; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726835100; x=1727439900; i=markus.elfring@web.de;
-	bh=yQ0Q90b27hvd1XnO7XfM7gFJpcmvTpMQ3JKT/PSupIQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=S9E0ghCCDgxQ2j22iL5w4xH8OXcFMaoc0b8/uwL4xaweTPftxzgHhEbVn0PGlL+T
-	 ZCmTh5wM4phTwq+3PDNr2O0TwZP0XeqV4GkyyIDX97+uDApYRlVbAQPgjejOee4Ou
-	 Z7R0H7uPV0bu/l8Mn5FgEz8V3lpVsh7pHqfrdD2VL3k0KSQf7wrO7wHRo4S5PjMsZ
-	 plfkMCOAuE8pL0C6AO+VIhg9Pne54DHXNM6ePPdBlE+12Z4NOtBuON+XGADLNFfKW
-	 IsFP524O9uh0cHkKfmyJG5nJwBheynFD5fjYucGI67/rkjyqwr5CS8KKFJIZ9SltS
-	 chNudQvtWEX98dUWLA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MpCmT-1sB7LA49Rn-00c1z9; Fri, 20
- Sep 2024 14:25:00 +0200
-Message-ID: <9ec752a8-49e9-40fd-8ed9-fed29d53f37b@web.de>
-Date: Fri, 20 Sep 2024 14:24:50 +0200
+	s=arc-20240116; t=1726835326; c=relaxed/simple;
+	bh=iit+uR/WIxsccGlxObPp8Gkk13EhuR66ocl8pncYXy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dy9ADGgB1vhYBmOBH+ZwcP0RXCpspOETTTVQ3F6uC9cYY+IooTHZk542ZR4SSaS25TI7MmWdIvP/ktpjLwXLMYQmWyMhdyomfsQEuaVE2Y4b8ZIwFdolhpPnsAZAnuZlppKCtIUW4oKqKPfms93bRxbWxcGZE1ljXkPPeFAsfqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iLn4nMKg; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-536584f6c84so2685395e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:28:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726835322; x=1727440122; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KmyYTSzJGsL/YMovQsb/XKINA9qbOmIqA08DqAcjnQM=;
+        b=iLn4nMKgqixWlMa2bRdp1E0Vi2DgPDZ7GwLr+A3YUIBQN7voZADmyBsrDbMnaOrI1w
+         +mozvdWdq4lu1/nDZxAUSZMCLUYQUnNEMruXqeLVpDlvJ129p4FhRHDjDyKukhrDjYz9
+         UVHT7ITAth3QXuUX8d+fCZZSuCUAdm7MUnElo+YuyzdGymsCUflVAIivPanj0aC4h3Ve
+         uctb7FjoiCrMY8tXImzJ/pn8jx/QoKnYIRF5oI5EYhblZi/gZqYOfjzW7ZMCmgH0Fit/
+         qjNXP2+sK/qBow2704lHVcJWySrcTBLHHQ6EZqbro8xYbhoshbgupJ12CwHll2EPyZXQ
+         SMPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726835322; x=1727440122;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KmyYTSzJGsL/YMovQsb/XKINA9qbOmIqA08DqAcjnQM=;
+        b=oyZKHAII2wdEfM8oFgtcKTgUNO20qgurQuxnrAW5lBWNPudUOF3UskqaRc95OSl2k2
+         1fpljimbQb1d5822IZv+JS7V0Nqb3Pcv17x3unpksFZRbfg7dphGp2wRYFKb3QPHCuei
+         1fSaOsvYVN9xtD6HsByMGnqB0DMiUWDc1VXZYwp/YhbeXOKhO5Yp8fK1bDnRW+ET4mE1
+         iKxhXGOlJua/m0a6gHYWf+p+3trQhClNtBT3Q2I+IF1e6nQOP2iqp+6sVFdZntEpTxUY
+         3NkL26v4M3JATgIvSVngWusQZfS0MB0QwTK7HwxqUi5YPxawVGhn531Lw2iKIX4buYqK
+         MjtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfGr/uP2fgWLPr8GiKu+b9NDXQ41Y2CqlwLK96eDgHRwLjTOMm64Doz2Dv200lF1xOJ1T6H3w/GOg5AEw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlfCo0L4L3xRPZbvn/HxDFxXdxte8YAU7XyepgTqjO6HBdM81u
+	bq0y6j2YX6jp28DaFBNRBTLSqOpfS0f4OSuvJOAzBRpJZGQbnh9DWwegFzAofrU=
+X-Google-Smtp-Source: AGHT+IHqUCZSjDBGtSw+A8NmpVy9eKMCzlJUf0BJqZSjg4++cq0bIVZpdwJeTY8vMubkrtJMtyGRdA==
+X-Received: by 2002:a05:6512:304d:b0:535:6a75:8ac8 with SMTP id 2adb3069b0e04-536ac2e5e21mr1760442e87.23.1726835321653;
+        Fri, 20 Sep 2024 05:28:41 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53687096993sm2149440e87.140.2024.09.20.05.28.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 05:28:40 -0700 (PDT)
+Date: Fri, 20 Sep 2024 15:28:38 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: =?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>
+Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel-dev@igalia.com, alexander.deucher@amd.com, 
+	christian.koenig@amd.com, Simon Ser <contact@emersion.fr>, 
+	Pekka Paalanen <ppaalanen@gmail.com>, daniel@ffwll.ch, Daniel Stone <daniel@fooishbar.org>, 
+	'Marek =?utf-8?B?T2zFocOhayc=?= <maraeo@gmail.com>, Dave Airlie <airlied@gmail.com>, ville.syrjala@linux.intel.com, 
+	Xaver Hugl <xaver.hugl@gmail.com>, Joshua Ashton <joshua@froggi.es>, 
+	Michel =?utf-8?Q?D=C3=A4nzer?= <michel.daenzer@mailbox.org>
+Subject: Re: [PATCH RESEND v8 1/2] drm/atomic: Let drivers decide which
+ planes to async flip
+Message-ID: <h2nyiovf5ixbqjrmtqcofmj6uwigcps7yjwfu67j3xdewnoj5x@fyu6ee7qjgk4>
+References: <20240806135300.114469-1-andrealmeid@igalia.com>
+ <20240806135300.114469-2-andrealmeid@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: netdev@vger.kernel.org, Christian Marangi <ansuelsmth@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Nick Child <nnac123@linux.ibm.com>, Paolo Abeni <pabeni@redhat.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Taku Izumi <izumi.taku@jp.fujitsu.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall
- <julia.lawall@inria.fr>, Yasuaki Ishimatsu <yasu.isimatu@gmail.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] net: fjes: Refactor a string comparison in
- is_extended_socket_device()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Okdpm64eKK8S6mNuMy1xmqVl1ugr4x6gC9MK1j9HHwdxuKHQZsa
- RY+hEDYcGWWOXYes5ar/fhDgI+DcI8fF6Y9GeWrp6kvl6m7QODGLiMMqdit2ytY8rG/Z/rb
- 7bmseRZH2ZIx61oMWfXq1vXlqCgGLbvEvn6FiJywWSonUPqjsquNRAgwHfcVZvAB8ho6VCC
- gReuEaxfjHxlXEnLsF3Mg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Mxgz01IBf1Y=;dsNwyQyC54fLGqG4rPQ1y+4caXQ
- kOejPhWuOKYHl2zDncyRqdqUcgsJdKKRNOD/k+pbzB5PLEQd25Wse2F1VU329lCt8gEO8xmn3
- nNCoijG6L/w+6FXQRPW9R96QMldGF4gFuJchzNiBxuL7AazMWWYe0vsmpheEiVHa1n/GnU2zW
- U3Z7KAEXv31qkaqMpoQg98NJdH7zxqnGsYyDTDF/wUGhJM6mo/SUQW9uRQw+T9d4jkUZjsiX5
- IDsamnpN7/wXEWO+SI1HGLAyP1ZR7Ol+T/+0moS8yKt7X6WOg2UrhCVYufcnhTjr4alMq/Eps
- XBGCzy+B5Mnz6h6GHet6QMciix7pWZAIEeqcET6MDYHh1bcJig5ieXITfdQoHGx00aAVWhx5l
- C2gj6eMIiQGB3KFWDGCwietKxow4zvkgdN1cvjAxO1HvW10KjQ2cU/ftH4eySf9I2kZFkXUeI
- ZOCfwzOFYWp1ND7zqW4xMPQoFc3qwHIuza/xMBlT+V/7QG96ixuWjWFX2/2v7tF+H0gknowH3
- jeLbHtOufhsz2edzjjd64/E9ZF4D+xwnDYPp8yTWPNCU+Dv+9jcQUJQygChHfdF4ry0gQ+WOJ
- cAx/U6iYjUtE6eAAyTNrjpmr6vAIF50ERH1EJa7EfqTIwnkVhfLY7v6ERgJPjegV+V4rjDEUB
- txqkuhyeudggHoSYgY9mfGrwplRBnzijaXk1Ov0HEvVHXVdsn12h+Xh0AYm0mHImvuUinDyyP
- njkmx7Pq33NBBk4g5wMAQqD6LCcNAF4e2HdLRvxotxnXyBn8cNwTvuoDqyi8TqEDDJLqI8EeF
- Mirk/MouRC/IrzfXZQ6pPCLg==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240806135300.114469-2-andrealmeid@igalia.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 20 Sep 2024 13:56:44 +0200
+On Tue, Aug 06, 2024 at 10:52:59AM GMT, André Almeida wrote:
+> Currently, DRM atomic uAPI allows only primary planes to be flipped
+> asynchronously. However, each driver might be able to perform async
+> flips in other different plane types. To enable drivers to set their own
+> restrictions on which type of plane they can or cannot flip, use the
+> existing atomic_async_check() from struct drm_plane_helper_funcs to
+> enhance this flexibility, thus allowing different plane types to be able
+> to do async flips as well.
+> 
+> In order to prevent regressions and such, we keep the current policy: we
+> skip the driver check for the primary plane, because it is always
+> allowed to do async flips on it.
 
-Assign the return value from a strncmp() call to a local variable
-so that an if statement can be omitted accordingly.
+Unfortunately this needs to be rebased on top of 929725bd7eb4
+("drm/atomic: allow no-op FB_ID updates for async flips"), but the
+approach looks good to me and it fits the existing API.
 
-This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: André Almeida <andrealmeid@igalia.com>
+> ---
+>  drivers/gpu/drm/drm_atomic_uapi.c | 23 +++++++++++++++++------
+>  1 file changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
+> index fc16fddee5c5..8568c2428670 100644
+> --- a/drivers/gpu/drm/drm_atomic_uapi.c
+> +++ b/drivers/gpu/drm/drm_atomic_uapi.c
+> @@ -27,8 +27,9 @@
+>   * Daniel Vetter <daniel.vetter@ffwll.ch>
+>   */
+>  
+> -#include <drm/drm_atomic_uapi.h>
+>  #include <drm/drm_atomic.h>
+> +#include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_atomic_uapi.h>
+>  #include <drm/drm_framebuffer.h>
+>  #include <drm/drm_print.h>
+>  #include <drm/drm_drv.h>
+> @@ -1059,6 +1060,7 @@ int drm_atomic_set_property(struct drm_atomic_state *state,
+>  		struct drm_plane *plane = obj_to_plane(obj);
+>  		struct drm_plane_state *plane_state;
+>  		struct drm_mode_config *config = &plane->dev->mode_config;
+> +		const struct drm_plane_helper_funcs *plane_funcs = plane->helper_private;
+>  
+>  		plane_state = drm_atomic_get_plane_state(state, plane);
+>  		if (IS_ERR(plane_state)) {
+> @@ -1073,11 +1075,20 @@ int drm_atomic_set_property(struct drm_atomic_state *state,
+>  			break;
+>  		}
+>  
+> -		if (async_flip && plane_state->plane->type != DRM_PLANE_TYPE_PRIMARY) {
+> -			drm_dbg_atomic(prop->dev,
+> -				       "[OBJECT:%d] Only primary planes can be changed during async flip\n",
+> -				       obj->id);
+> -			ret = -EINVAL;
+> +		if (async_flip) {
+> +			/* we always allow primary planes */
+> +			if (plane->type != DRM_PLANE_TYPE_PRIMARY) {
+> +				ret = -EINVAL;
+> +
+> +				if (plane_funcs && plane_funcs->atomic_async_check)
+> +					ret = plane_funcs->atomic_async_check(plane, state);
+> +
+> +				if (ret) {
+> +					drm_dbg_atomic(prop->dev,
+> +						       "[PLANE:%d] does not support async flips\n",
+> +							obj->id);
+> +				}
+> +			}
+>  			break;
+>  		}
+>  
+> -- 
+> 2.46.0
+> 
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/net/fjes/fjes_main.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/fjes/fjes_main.c b/drivers/net/fjes/fjes_main.c
-index fad5b6564464..1fae30798899 100644
-=2D-- a/drivers/net/fjes/fjes_main.c
-+++ b/drivers/net/fjes/fjes_main.c
-@@ -54,13 +54,9 @@ static bool is_extended_socket_device(struct acpi_devic=
-e *device)
- 				 str_buf, sizeof(str_buf) - 1);
- 	str_buf[result] =3D 0;
-
--	if (strncmp(FJES_ACPI_SYMBOL, str_buf, strlen(FJES_ACPI_SYMBOL)) !=3D 0)=
- {
--		kfree(buffer.pointer);
--		return false;
--	}
-+	result =3D strncmp(FJES_ACPI_SYMBOL, str_buf, strlen(FJES_ACPI_SYMBOL));
- 	kfree(buffer.pointer);
--
--	return true;
-+	return result =3D=3D 0;
- }
-
- static int acpi_check_extended_socket_status(struct acpi_device *device)
-=2D-
-2.46.0
-
+-- 
+With best wishes
+Dmitry
 
