@@ -1,134 +1,186 @@
-Return-Path: <linux-kernel+bounces-334553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CFC597D8BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:57:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64BAC97D8BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27F51F23B90
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:57:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DB2F281A79
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FAD1802A8;
-	Fri, 20 Sep 2024 16:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C72C17E01B;
+	Fri, 20 Sep 2024 16:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="PgEzo1fx"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MfOhFd0d"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4300817DFFB
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 16:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68AB2B9B9
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 16:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726851469; cv=none; b=LS93eK5BanBJyAzwXGJXMCTVprvwuBCjnPaFw5fuFs3TSTWL7fXqbvEQwfiC31WeGfGPf4Ya7F7SGX6ajlY+wAaa4ZJbPEsD0A6MhWCUqXTLV2MNg9L8ltxDszPbpR500EVaoTBfDOQOE5i4GqL7oOsCJvy9enVJnB2/2Jzs4tU=
+	t=1726851526; cv=none; b=cM926KqaNTzM5GCJ9fjW8zr8wrw36XL7uuXIXsVqhHn6HPIs5/7214NH1aeTg3oi32onmGohOAFtwf+f5zUPn8dE82egOmzCVf6DPvNmQ3tT+P6Nq0HSw8n+ve/iDNDRID5jIIkz2pmcJErDW8aUPKX6T+ZWozbsOBAv+/dlN9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726851469; c=relaxed/simple;
-	bh=0VndrB7wUbmZML5AQ3UnMNv6I2BM2u35xkfH2xKB9Z8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HCAGkfpX/0tnKX1S2gFm52T7ixATDue6KpcDsIPd/d18iTG0s3q9Xzg0pqZ9MYyZsHe/8MafCJAm5OF2fgVB5wY00KsTaR493MP8GhD9AqgsUOpy+LyOSPuODO70ErA7duMwm5kp1VYTkurwQcft3LgnQb+cbmPGdn6SfA38Fbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=PgEzo1fx; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cbe624c59so19841925e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:57:48 -0700 (PDT)
+	s=arc-20240116; t=1726851526; c=relaxed/simple;
+	bh=GkyOJ/OlUlu/timXxU6QtBE6s88mkLrJPU+vCWjLrOA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uap96mrUswgkI6cV8XaFpKqNTIiZluoywpSL1tITQ9g99T08HateT69DnYQnU7AmhgqM2nC5Ivvz9JJxXX9W2AL7579cHsLJFjiSYz1hcoj6FlsFdPSHPdOaOFNGFyFrk6ldruqnqVAxDbL3+25pKOJtjOzNesMCerV2c77EvLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MfOhFd0d; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6ddd758aaf4so17108207b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:58:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1726851467; x=1727456267; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cPGcaGILxwhfTJ1AkidUV1js05svfUGNV2qC8S2ASMs=;
-        b=PgEzo1fxKw4erEqJdbvBYawafZOkdTH18IloSozw2Iy9pqg1BPRShq9mFLy9c2F1Z/
-         RecKBiQizOtl7ydTCGfUrX7i1gRYmMQX6AqjeSnrzeSUgrYdRzPI4TV+pHQP98EtiFNS
-         ywdHeYpvy5mvUT7gspf+cqYFwah/s5hlD41JHZIlldzNFluurbU7TDAdfXpFW8Ac92EU
-         UIiJmA/vA9HQDKuz37IWqBd1ogrYCagskMwk+O8/6yZPWR44+/1MCDS+DaE4KslIBK07
-         1Q3l9j9PWEps+9V58AvrwoEQkEatjMo18o0q4vH/oNrY3OA3zz0MmJnjjLgI6i6vMoMP
-         As0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726851467; x=1727456267;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1726851522; x=1727456322; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cPGcaGILxwhfTJ1AkidUV1js05svfUGNV2qC8S2ASMs=;
-        b=tnSkwxfFIcPqc/BCDlJSF8BfTEO6+LC3q7YMkoCdIyEPB3hXSVo95VUQ+k7tHlHGkr
-         I5PJrWAI9UD5YO2Ye7BmkLDK5uTc4HGNKHH2onPuywASLxEqWeYYXw5RqutIWPKfLD6W
-         oY20le7xzlyJUuvEHNdIRbZLtmWiMAuIDb9IyvUSAAg/z5qKGXCPW8kdRh+HWUJN37bh
-         dwgLozILMUhhM+imFkUDbs7OYFoTxQlyGior8T0Lx66j8oid09RnkvUkFkzkuzr7N/kK
-         9qDzUBcc09Q7UjU2h5EzHqYfGRS1ABrD9s7JiKfvAgKO1XoTsOSyb18qObkOBGlflKmt
-         3bMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVc976k6Sox+SzyC23TEmv+vdmdKPkzRajXIydvcNhKNOy9hmvWLCXfPx42nJ8vPq9P19zd5TJbJibJYcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJF+RbYqRrWcilOyRjhvR8JU9vsD2rrtV+O9UyFQITJ7+Jbats
-	r1Uyvk66Xuq6pOIqaMcSyZHiubWnkpMtHdDVFTbwfx8ukPZy5EC5yDsMlsBGa04=
-X-Google-Smtp-Source: AGHT+IH47FhS6BitJFEObpSEKWNYV6OlALdb/YS1wlurIrhxIx0joR4JwIU0GtIJDWKAkg4lShG/Ig==
-X-Received: by 2002:a05:600c:1e25:b0:42c:b6e4:e3ac with SMTP id 5b1f17b1804b1-42e7abe228fmr29196115e9.3.1726851465308;
-        Fri, 20 Sep 2024 09:57:45 -0700 (PDT)
-Received: from GHGHG14 ([2a09:bac5:50ca:432::6b:72])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7540e464sm54855295e9.4.2024.09.20.09.57.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 09:57:44 -0700 (PDT)
-Date: Fri, 20 Sep 2024 17:57:30 +0100
-From: Tiago Lam <tiagolam@cloudflare.com>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Jakub Sitnicki <jakub@cloudflare.com>, kernel-team@cloudflare.com
-Subject: Re: [RFC PATCH 1/3] ipv4: Run a reverse sk_lookup on sendmsg.
-Message-ID: <Zu2pev10zUAEnbYm@GHGHG14>
-References: <20240913-reverse-sk-lookup-v1-0-e721ea003d4c@cloudflare.com>
- <20240913-reverse-sk-lookup-v1-1-e721ea003d4c@cloudflare.com>
- <66eacb6317540_29b986294b5@willemb.c.googlers.com.notmuch>
+        bh=Yuengg8SKuG258v3/BqxPdn3H/VM/Idwmrn82JID4+E=;
+        b=MfOhFd0d1bv0ib7LefljJYDljD10bUcDMMfllfrvOKK3hVJaXhlCSoqt6+GXa++idx
+         xtn6dLnDZ3bpS8q1MjHgTogGcwe7wEVDIPEAquZ/JuLB5xBa0rhSd5eDY6iTbFaG9A4K
+         xhXGF0uk8YX5SRM3HEtPQh/gaqjHMoBeYgIE/vCRakncCCumKj9dFuONkmNW+5JX6Ui3
+         HZ6+71uhmRAd5CLH/bN2SFd8fOjNlU/8c64o4oWHJXcbPgt33v8Qivu3tWOMX6oqqaBo
+         2zenAWMhkBytlTo96yH30orYdtBUcssKXtE3Kq8tajsgt/I7l0p+2UEuZHyZIfobgrcs
+         QzHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726851522; x=1727456322;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yuengg8SKuG258v3/BqxPdn3H/VM/Idwmrn82JID4+E=;
+        b=a4W3IEC2/6r2GFAqTvUt2T5mKTRDdSOjyMv1NYU/JMr4Q8S/Xu3pv1GnTWZq+oU4n2
+         0b6SFSzBTsBZATOElzNZ4XqE/hPh/xZuYua09Dl5LiMwbvLZmuylWG5I0iW7nWG/ez4a
+         UYx/nflaAl/2GqoUkg6J65LzkQPj7WRGWM56SxP11MiATWHjq1Jo/vVax4Avr+GUXYO6
+         Vmd05Lg0p22zzdvzj2t4RKCHo++TKljQr+1VnW5ZjFK9rfqzX37j+Nb9kBPhQCxMw09O
+         dzonONp5zjwFnKlcw6uVQRrgKhFN27y5f+9U8CHdFsFjoHL7zzZcNfa0gkHkt16e8TZM
+         P3cA==
+X-Forwarded-Encrypted: i=1; AJvYcCWm7EZ2ZVfOsFozs65q8p1GS6G4v7eFosJxYF3WRzpKrmuyeLKQH9bg2n62IQzljfREwm6MJDdNXMuZjQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy084Xtc6bQhXPXuDund07xKIXoaowLmmO8zZKu/3is1GMldsfT
+	JnaWokxhiVc/n6TGA9Sn9Gvb4F3FmWc3ptDUYAsNxJoEQb4R5SFCZdh70LUxqDiZ7SjYHpTqjtg
+	gBPovJyq9xmL2KkzJ4lINhVT3jgJIOOe3ozN2
+X-Google-Smtp-Source: AGHT+IHdzpdMp4IjA99SMzli7V3Y5kLR6/exTEKpjjTukuZMinUsN29sqVguIdeLyOh/J2LJfnpTD8XwjYFIstv3Xpo=
+X-Received: by 2002:a05:690c:67c5:b0:6d5:90f:d497 with SMTP id
+ 00721157ae682-6dfeed8a6a2mr36754917b3.19.1726851522519; Fri, 20 Sep 2024
+ 09:58:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66eacb6317540_29b986294b5@willemb.c.googlers.com.notmuch>
+References: <66ed837a.050a0220.29194.0057.GAE@google.com>
+In-Reply-To: <66ed837a.050a0220.29194.0057.GAE@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 20 Sep 2024 12:58:31 -0400
+Message-ID: <CAHC9VhQF743KeHEULgA1hqq9OM3ttMmyhwFdavJLpgHT9j7uGw@mail.gmail.com>
+Subject: Re: [syzbot] [lsm?] KASAN: slab-use-after-free Read in smk_access
+To: syzbot <syzbot+a95cf48b5daf4bb16c29@syzkaller.appspotmail.com>
+Cc: casey@schaufler-ca.com, jmorris@namei.org, john.johansen@canonical.com, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	serge@hallyn.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 18, 2024 at 08:45:23AM -0400, Willem de Bruijn wrote:
-> Tiago Lam wrote:
-> > In order to check if egress traffic should be allowed through, we run a
-> > reverse socket lookup (i.e. normal socket lookup with the src/dst
-> > addresses and ports reversed) to check if the corresponding ingress
-> > traffic is allowed in.
-> 
-> The subject and this description makes it sound that the change always
-> runs a reverse sk_lookup on sendmsg.
-> 
-> It also focuses on the mechanism, rather than the purpose.
-> 
-> The feature here adds IP_ORIGDSTADDR as a way to respond from a
-> user configured address. With the sk_lookup limited to this new
-> special case, as a safety to allow it.
-> 
-> If I read this correctly, I suggest rewording the cover letter and
-> commit to make this intent and behavior more explicit.
-> 
+On Fri, Sep 20, 2024 at 10:15=E2=80=AFAM syzbot
+<syzbot+a95cf48b5daf4bb16c29@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    a430d95c5efa Merge tag 'lsm-pr-20240911' of git://git.ker=
+n..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D10469d0058000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dd9ab5893ec519=
+1eb
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Da95cf48b5daf4bb=
+16c29
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D110e6a77980=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10cee20798000=
+0
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/c27c9d8c6782/dis=
+k-a430d95c.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/73c62c975a0c/vmlinu=
+x-a430d95c.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/56164e51e333/b=
+zImage-a430d95c.xz
+>
+> The issue was bisected to:
+>
+> commit 5f8d28f6d7d568dbbc8c5bce94894474c07afd4f
+> Author: Casey Schaufler <casey@schaufler-ca.com>
+> Date:   Wed Jul 10 21:32:26 2024 +0000
+>
+>     lsm: infrastructure management of the key security blob
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D10293fc798=
+0000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D12293fc798=
+0000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D14293fc798000=
+0
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+a95cf48b5daf4bb16c29@syzkaller.appspotmail.com
+> Fixes: 5f8d28f6d7d5 ("lsm: infrastructure management of the key security =
+blob")
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KASAN: slab-out-of-bounds in smk_access+0xae/0x4e0 security/smack/sm=
+ack_access.c:147
+> Read of size 8 at addr ffff8880202b03c0 by task syz-executor367/5216
+>
+> CPU: 0 UID: 60928 PID: 5216 Comm: syz-executor367 Not tainted 6.11.0-syzk=
+aller-02574-ga430d95c5efa #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 08/06/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:93 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+>  print_address_description mm/kasan/report.c:377 [inline]
+>  print_report+0x169/0x550 mm/kasan/report.c:488
+>  kasan_report+0x143/0x180 mm/kasan/report.c:601
+>  smk_access+0xae/0x4e0 security/smack/smack_access.c:147
+>  smack_watch_key+0x2f4/0x3a0 security/smack/smack_lsm.c:4656
+>  security_watch_key+0x86/0x250 security/security.c:4448
+>  keyctl_watch_key+0x2b7/0x480 security/keys/keyctl.c:1813
+>  __do_sys_keyctl security/keys/keyctl.c:2021 [inline]
+>  __se_sys_keyctl+0x106/0xa50 security/keys/keyctl.c:1874
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fbebbbc2fe9
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 71 1d 00 00 90 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fbebbb74238 EFLAGS: 00000246 ORIG_RAX: 00000000000000fa
+> RAX: ffffffffffffffda RBX: 00007fbebbc463e8 RCX: 00007fbebbbc2fe9
+> RDX: 0000000000000004 RSI: 0000000016bf1cf5 RDI: 0000000000000020
+> RBP: 00007fbebbc463e0 R08: 0000000000000000 R09: 00007fbebbb746c0
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00676e697279656b
+> R13: 0000000000000002 R14: 00007ffe798160c0 R15: 00007ffe798161a8
+>  </TASK>
 
-I think that makes sense, given this is really about two things:
-1. Allowing users to use IP_ORIGDSTADDR to set src address and/or port
-on sendmsg();
-2. When they do, allow for that return traffic to exit without any extra
-configuration, thus limiting how users can take advantage of this new
-functionality.
+...
 
-I've made a few changes which hopefully makes that clearer in v2, which
-I'm sending shortly. Thanks for these suggestions!
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
 
-Tiago.
+#syz dup: [syzbot] [audit?] general protection fault in smack_log_callback
+
+--=20
+paul-moore.com
 
