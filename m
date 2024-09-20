@@ -1,163 +1,135 @@
-Return-Path: <linux-kernel+bounces-334056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26FDA97D21B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:59:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD0B97D21C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C62781F229EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:59:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33EED28676C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFABF55897;
-	Fri, 20 Sep 2024 07:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22255558B7;
+	Fri, 20 Sep 2024 07:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="PNr44RVR"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HDNu5Q3+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765555464B
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 07:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230A41C69D
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 07:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726819130; cv=none; b=nXAc8LzCqln7XAJdqDKC+XzC8b3RJ9xO/6ty6UOeLyUofP163Yk9EWem4Ksy8xrhZnx6PtBqwlJ9NfjjJ/m7tjMb3BeE+ZDppVFVV56uGLJP7N2IWZgCx93e0dh4uj+NI7R2mDtDwjba+GYFcS1g527swgwBVzhU8mY6XjGBKnY=
+	t=1726819181; cv=none; b=WrAVkGYHWK/9kiub/a5emBkssVF2wj5AKrxZYjmTCxJ3i4WUJoOVTKpGPvMlBqXkv5PT7S6/7QYlHt0iWcLMRP4se4zURrjY8sDlEPJy0Gs84kMOIQRFbS6DqstLeI+Xh+yQg5j4JUFxDirDw0BQdznYn+Xr9Gem/NdLwo/jtEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726819130; c=relaxed/simple;
-	bh=G8gaXS3CKvy6upathpVQhGzsGg8TbragSm/BWYuq5gs=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NDqzE+oEV3IqdIhq0et0T4Ku7eceWXmOkJYDZJHickM63066tkrdo07gKJFFUoVJHFCAZfT6PCZ08VCH/VrfQegGXYFhQwYnIbIwXg4PmXD7ws3SY76D6rA3IThsOe+3oHF6h7KGPfRN7xVWjWahln739TK+N1yMRLDNVIdBrXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=PNr44RVR; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-536562739baso1682461e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 00:58:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1726819126; x=1727423926; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=G8gaXS3CKvy6upathpVQhGzsGg8TbragSm/BWYuq5gs=;
-        b=PNr44RVRfDF/5JPhE+/WmZjTczCrusm+oDep7dkLfajMf9tLjDyn2MW+/lfwweM/mZ
-         oQWqIsZPKQ5u7C0UjIFz2uzF2Hx9mXZRY08gHKcvp3n3s5e/OYN4T5tTiRjUI74rbs5X
-         /cEIp+cwcUmIDQPPTjwahf4RPWGNlhJziEeGn/2HVsRJvSiYolJI1wsOXgClVGxVwoCo
-         +00q/SqJ9GiaFYnQ7UjbRgXqW7GGh+zA6l2H7j+KmRi6EYZaMJO1cZblSTxRMbcmNUDm
-         Lz9+DatKGNccZqDvKVpWllnlu/TsevTujp0715iCiL9qcxObyzaFdRbxrKJq2XdggtiT
-         JV0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726819126; x=1727423926;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G8gaXS3CKvy6upathpVQhGzsGg8TbragSm/BWYuq5gs=;
-        b=GZJUe/c/1aZo2Lhbb9or46+qWQ4T7tBiL6nTwDc5UYMj8/k50fcWJqqSIvi+mXcsMF
-         T3Z3rpBuuQJFi03IbS0I/sX8LblYRMfEdCfaQnWxrLe28NrmEYrZXZSm2RSKT+uWV4Jn
-         3RQqCmrIkWjGhjfkwLAykSsa6vMrLqp8E5YdnErKdULzC74HPWIErFuVZfHrXhLG66ia
-         xvEttXDPAyN4wlt159OVo6o2mOqVvZbMMDQqyFjlHOIPNl90MpVeYaseMPdr2ekBhuVz
-         GWm+ku4dc0uJuaXJZzskvZphERAUNn/zyl9yD6U1zqgayZvYVRTE1da263XnmlhqNAyJ
-         NK0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUEC5talRXD5NUb99V49yPbrBarxy7gwLDU3n9Yr+wLoI72T+PWLKaODOD3LbYOsmwiTLbOYydUYL3kycQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM73J2/CvEumhkTnz9aq1Ti4b/FgH/B/X0Dn+oRtLFLKi14ZeP
-	5uLThw9uw/h/IFTfXvDwZ2J5yjp75xtdz+Y9u5DIALHK9ulIomw7sx3LHgH11kVKf/V6pJyvQjq
-	VufvouCStg/qQeEFmz0J5sNk1NpaC6BOuZkzn0Q==
-X-Google-Smtp-Source: AGHT+IFWhG3CUQa9G9CqIMZPY+ykvt6XfSEiCGRn8+DLsrcQfk28XzMJQ1zmPWWX6CXejRPycjDQwRCnYNST7lawdRc=
-X-Received: by 2002:a05:6512:12cc:b0:52f:368:5018 with SMTP id
- 2adb3069b0e04-536ac32e5d5mr1155885e87.43.1726819126421; Fri, 20 Sep 2024
- 00:58:46 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 20 Sep 2024 00:58:45 -0700
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <87ed5ec09z.fsf@kernel.org>
+	s=arc-20240116; t=1726819181; c=relaxed/simple;
+	bh=w5G1Ij17lPfi/hJo1VP7d1tAYF0lUuqiaXscYX+oGdE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Oy7UGK+dvpYiLdDUwpFsHsZw65KZet0R8ke2pzxxmDw+lNXJhWjZSGSvoxRBuD+++HSi9SujmUYRzOVo0Y84Ffy5A470jDtaQin8Xu8cPBZ0Cxe1VHi1BQ0EKSzcDwcm4nYItolv69vGnY5fMixrSbAK9Qn+ExPmIHvJQRVj5Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HDNu5Q3+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48JJ401R003647;
+	Fri, 20 Sep 2024 07:59:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=DfTs2mGlvWQtriez7XKGqw
+	RwsAlEuvGslLCdZozCd8o=; b=HDNu5Q3+Itk32JGUum8lVXn9dBKc7mj6UKw7vV
+	rEQ+h50KXfH1j8Uy3bXv3WFUCdSZaq9pUe2JDLpFUF5apq+NauZ8ALqIwXLDE63o
+	Zm3ZrsSuXPZVsfHCrGGHSBBs24qRgrBKlwyKAoJUpBPx/yfmoWgMOYubBGWOtIWZ
+	rDwYb7fJ7QvUUH6ACIEA7wbSUrZvlysl8R5zftfn2DQBlKz3FYC4DFs6p0CaN99S
+	46agEofa8RVDpxJ0RS0hcLobQ/MwjRkXswVS+sJLeV7b+LL2OlR0U/vim/m1BjN3
+	Vz5NcWQJWvqYkBc1TORpcfug6cKtImXM3EWHZMhbSaVDPH7A==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4hf88b0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 07:59:22 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48K7xLB4015492
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 07:59:21 GMT
+Received: from hu-jinlmao-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 20 Sep 2024 00:59:21 -0700
+From: Mao Jinlong <quic_jinlmao@quicinc.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        =?UTF-8?q?=27N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado=27?=
+	<nfraprado@collabora.com>
+CC: Mao Jinlong <quic_jinlmao@quicinc.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1] arm64: defconfig: Enable Ftrace and STM configs
+Date: Fri, 20 Sep 2024 00:59:03 -0700
+Message-ID: <20240920075905.19441-1-quic_jinlmao@quicinc.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814082301.8091-1-brgl@bgdev.pl> <83c562e9-2add-4086-86e7-6e956d2ee70f@kernel.org>
- <87msk49j8m.fsf@kernel.org> <CAMRc=McEWWm8N++4a5LMCAa0GWsQdi0KuSpj3ZuS_he=H0LP+w@mail.gmail.com>
- <87ed5ec09z.fsf@kernel.org>
-Date: Fri, 20 Sep 2024 00:58:45 -0700
-Message-ID: <CAMRc=MdyHx72o=6Kf0AM69tQBLjuvRVepN0UNjt+Kf4LX3PaMA@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the inputs
- of the ath11k on WCN6855
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	ath11k@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2d_a89At265j1FwTzpXSVOrrAJPn_YI7
+X-Proofpoint-GUID: 2d_a89At265j1FwTzpXSVOrrAJPn_YI7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ suspectscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015
+ mlxlogscore=760 adultscore=0 malwarescore=0 phishscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409200055
 
-On Fri, 20 Sep 2024 08:22:16 +0200, Kalle Valo <kvalo@kernel.org> said:
-> Bartosz Golaszewski <brgl@bgdev.pl> writes:
->
->> On Thu, 19 Sep 2024 09:48:41 +0200, Kalle Valo <kvalo@kernel.org> said:
->>> Krzysztof Kozlowski <krzk@kernel.org> writes:
->>>
->>>> On 14/08/2024 10:23, Bartosz Golaszewski wrote:
->>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>>
->>>>> Describe the inputs from the PMU of the ath11k module on WCN6855.
->>>>>
->>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>> ---
->>>>> v1 -> v2:
->>>>> - update the example
->>>>
->>>> I don't understand why this patch is no being picked up. The code
->>>> correct represents the piece of hardware. The supplies should be
->>>> required, because this one particular device - the one described in this
->>>> binding - cannot work without them.
->>>
->>> I have already explained the situation. With supplies changed to
->>> optional I'm happy take the patch.
->>>
->>
->> No, silent NAKing and needless stalling is what you're doing. I responded to
->> your last email with extensive clarifications. You're being told by the
->> experts on the subject matter (Krzysztof and Conor) that the change is correct.
->>
->> The change has no functional impact on the driver code.
->
-> Until now it was possible to use qcom,ath11k-calibration-variant DT
-> property with M.2 devices. If your patch is applied that's not possible
-> anymore.
->
+Ftrace logs can be captured by STM over TMC sink path. We can enable
+ftrace logs along with HW trace of coresight component. The timestamp
+of ftrace logs and hw traces will be in sync which helps to debug.
 
-This is incorrect, why do you keep repeating it? What will be impossible is
-upstreaming DT sources which don't take these supplies - which is what we want.
+Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+---
+ arch/arm64/configs/defconfig | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 4a3999eefa67..c0a56e58e554 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1554,6 +1554,12 @@ CONFIG_NVMEM_SNVS_LPGPR=y
+ CONFIG_NVMEM_SPMI_SDAM=m
+ CONFIG_NVMEM_SUNXI_SID=y
+ CONFIG_NVMEM_UNIPHIER_EFUSE=y
++CONFIG_STM_PROTO_BASIC=m
++CONFIG_STM_PROTO_SYS_T=m
++CONFIG_STM_DUMMY=m
++CONFIG_STM_SOURCE_CONSOLE=m
++CONFIG_STM_SOURCE_HEARTBEAT=m
++CONFIG_STM_SOURCE_FTRACE=m
+ CONFIG_FPGA=y
+ CONFIG_FPGA_MGR_ALTERA_CVP=m
+ CONFIG_FPGA_MGR_STRATIX10_SOC=m
+@@ -1663,7 +1669,7 @@ CONFIG_DEBUG_INFO_REDUCED=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_FS=y
+ # CONFIG_SCHED_DEBUG is not set
+-# CONFIG_FTRACE is not set
++CONFIG_FTRACE=y
+ CONFIG_CORESIGHT=m
+ CONFIG_CORESIGHT_LINK_AND_SINK_TMC=m
+ CONFIG_CORESIGHT_CATU=m
+-- 
+2.46.0
 
->> It's also in line with commit 71839a929d9e ("dt-bindings: net:
->> wireless: qcom,ath11k: describe the ath11k on QCA6390") under which we
->> had literally the same discussion and that you ended up picking up
->> after all.
->
-> I don't care about QCA6390 as it's not really used anywhere anymore. I
-> picked up 71839a929d9e, even though I considered it to be wrong, so that
-> your pwrseq subsystem is not delayed. But WCN6855 is a different matter
-> as it's more widely used.
->
-
-In upstream sources, it's only used in X13s and I added a node for it to
-sc8280xp-crd but that's not upstream yet. Am I missing anything? As I said
-several times: for out-of-tree DTS, this change does *not* matter.
-
->> Arnd: I've added you here to bring this to your attention because it's somewhat
->> related to what we discussed yesterday. It's a change that is very much
->> SoC-specific, that has trouble getting upstream due to the driver's maintainer
->> unwilingness to accept it. Is this a case where a change to DT bindings should
->> go through the SoC rather than the driver tree?
->
-> Like I have said, I'm happy to take the patch if the supplies are
-> optional. Why can't we do that?
->
-
-Because this patch reflects the reality of the chipset. And device-tree is
-supposed to model the reality. It's not there to configure your firmware
-loader.
-
-Bartosz
 
