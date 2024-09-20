@@ -1,133 +1,152 @@
-Return-Path: <linux-kernel+bounces-334179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D753497D388
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:18:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C290997D3B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA743B219DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:18:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FAAD1F255AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359C452F9E;
-	Fri, 20 Sep 2024 09:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nWXnBuNY"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0A213A265;
+	Fri, 20 Sep 2024 09:35:25 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273FF1CD2C
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5D51CD2C;
+	Fri, 20 Sep 2024 09:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726823882; cv=none; b=jJH+pzewPgblkJYJxF/eOO1va7rA9Sd74dWJVTKvCAX5V0eLRSaN+vNnpLQ3y0sdUtX5x5BVgVOV6IdQvy3FnP5joqyWN4+lnDlJQe/bw2OjSU9RWAsXf1IMIGssKNq8ZonZlW1eLlCjfXokQoNiw4G2ugMj5KVDgPg+rByuGuo=
+	t=1726824924; cv=none; b=jpM0PbyqqXVhkbMFARc0VRG+TeomWe2OmEPGSAzKcEx2cLL6cbwDFFh7JKW8s03T0gvGJytB87RKBl1Kttu+zc2DlLs+ayV7UzC+Wc3Y8xFESupUZKY0VUJNaRSXfldNWuHd/B5L3l04LspX/tDYDOEMzYW9QftTgd1Db/p+Hd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726823882; c=relaxed/simple;
-	bh=zbhZuLmkZH4JNEw70muk9rH99tbwjzi1yOc+2Q6FsuI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tthXiKamgDoqPLFi29hDG4nwiY3t3h/UpIuOAaUBvcYZKOxqLVN9WDrf3B1LMLzBArfiO1yYkiL/h8lpAUgtR6n54rDCF5GSHc8wtQ8dXchu99UAAsjXEISOMDt0ixOYoI63/0f1H0UONvh4L2Wa+M/nGj3CvL2iPYSvxjD8USQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nWXnBuNY; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53690eb134bso19306e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 02:18:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726823879; x=1727428679; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+lFk8tXQAtRWRov+FyUw+DOlND+znAP6uIhHjKMCkOc=;
-        b=nWXnBuNYa1af+RZGUCxS2/DGpzXz8ajuakHEj7vIutbYjRGWn29ldzrEHhsT1/4fkb
-         2JkGIsvhE7+U1mODu1Cbh2NHJFyVLMKDviYYZLpXO6V2bb+0Ngurky1Dq4yRStBy2TI5
-         KxmDv/imlMqXphCk5p0kqXJaupVCsjhmDioUAXPo7KSarjJft3q2xZAxn97BRdBgwnVH
-         rl/pt5gnp9ghhq4RB/o7pdvnPTAAtKLSKkzQMVaT/M67Ojl3VbnK+EKxp6mSMbz8Mshk
-         o6rnB/Y4/Sr2ipnx/F2Ys34F0fKBEW1NluDe+ZWNtYzqTHOCNzrOhe9Bb7MYTav9g1Mi
-         5rJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726823879; x=1727428679;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+lFk8tXQAtRWRov+FyUw+DOlND+znAP6uIhHjKMCkOc=;
-        b=bS0M66CuaBRKl18F2npu2YSL9FaFKwaup07zY2W5P2FL0SYFdQInJXhllCyPmh76Ak
-         SUslm60/wTkkUUe5Y/nZoa5202XTBOUfI6ch0E+rca966zIoxy/QuTab/Vy8Eg2y9zEv
-         +E4js8gjToUFP2UXNzIGFjoqOh/75Qp6giiHS+3DNQ3eCsgWxRRDiSt5ONKLv8OLYN3J
-         3a3EhJargJi7W94TZ0dMHznTig9affaIh+7N2u4PQUTKInxbEHYAP+/2A6QRaGpzdhup
-         qGLWMLSaw5e/lO6GuRUwmlg5EhC8B2XV0dAIPNK/JTZvJMsukLGHlFD2E5QrxCMI4umC
-         AfbA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ0ca58MznZBxj/125YF7rlK75z/J+4jgp6SNS/Mr7jiEWgO0M76vHMJiiwDnkGk5uJyjZ+UaRulnMAuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeTOktAW1Ia6bZQiUueqVzCoqk+hFsg6rDN+t4sIxaQE2atfRe
-	JyUyzoifdhCSdma1znUZG0MQYfuNjcnD1QnBxIrnIFzg+PyT368t9H3QaGEMDd1X8e//BJ7ws2C
-	7BHgCJSLYJR2vbyoEwPnKNc6cMAm3eVCfGMg8
-X-Google-Smtp-Source: AGHT+IGUyIDlL02SNNAcH/QvRLTVV1cCj4Jx4XR/xAOmRuwfotB2Vg+l7WNmIIRqJTSsmPZsLrQ01b0WIBQsdccc7K0=
-X-Received: by 2002:a05:6512:1192:b0:535:6a42:90f2 with SMTP id
- 2adb3069b0e04-536ac6a8cc5mr341346e87.6.1726823879081; Fri, 20 Sep 2024
- 02:17:59 -0700 (PDT)
+	s=arc-20240116; t=1726824924; c=relaxed/simple;
+	bh=7NP1yglyeICKsIogBUXfsBSZM8CXbHO3VwClDrLh7wI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=laemcm/UdWvwLhpm5/WrqA//hYDZQMg4pMZZvkChJR6/BTZEmBbbwfYaOyTf2u8V7l+GTkrk4h4usnWJ0WhRpkUwc8doiPfWN+xLKyzRLxhppV6jiaf1L9Q7jwSN+NOhFeeU3LOIDniMhv3oGqbRxiVdtjHipVXccTTVkkrs/DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X96HW71kgzFqmv;
+	Fri, 20 Sep 2024 17:17:59 +0800 (CST)
+Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
+	by mail.maildlp.com (Postfix) with ESMTPS id EBBE1141247;
+	Fri, 20 Sep 2024 17:18:15 +0800 (CST)
+Received: from [10.67.120.168] (10.67.120.168) by
+ kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 20 Sep 2024 17:18:15 +0800
+Message-ID: <595ec9f3-c3cd-66b3-c523-452f88e079ac@hisilicon.com>
+Date: Fri, 20 Sep 2024 17:18:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1726009989.git.ackerleytng@google.com> <3fec11d8a007505405eadcf2b3e10ec9051cf6bf.1726009989.git.ackerleytng@google.com>
-In-Reply-To: <3fec11d8a007505405eadcf2b3e10ec9051cf6bf.1726009989.git.ackerleytng@google.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Fri, 20 Sep 2024 11:17:45 +0200
-Message-ID: <CAGtprH-xw9DFwheTicNStXKhMJTsuXviBnq1PwvrxEHMNkb83A@mail.gmail.com>
-Subject: Re: [RFC PATCH 14/39] KVM: guest_memfd: hugetlb: initialization and cleanup
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk, 
-	jgg@nvidia.com, peterx@redhat.com, david@redhat.com, rientjes@google.com, 
-	fvdl@google.com, jthoughton@google.com, seanjc@google.com, 
-	pbonzini@redhat.com, zhiquan1.li@intel.com, fan.du@intel.com, 
-	jun.miao@intel.com, isaku.yamahata@intel.com, muchun.song@linux.dev, 
-	mike.kravetz@oracle.com, erdemaktas@google.com, qperret@google.com, 
-	jhubbard@nvidia.com, willy@infradead.org, shuah@kernel.org, 
-	brauner@kernel.org, bfoster@redhat.com, kent.overstreet@linux.dev, 
-	pvorel@suse.cz, rppt@kernel.org, richard.weiyang@gmail.com, 
-	anup@brainfault.org, haibo1.xu@intel.com, ajones@ventanamicro.com, 
-	vkuznets@redhat.com, maciej.wieczor-retman@intel.com, pgonda@google.com, 
-	oliver.upton@linux.dev, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-fsdevel@kvack.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.0
+Subject: Re: [PATCH v5 for-next 2/2] RDMA/hns: Disassociate mmap pages for all
+ uctx when HW is being reset
+Content-Language: en-US
+To: Leon Romanovsky <leon@kernel.org>
+CC: <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
+	<linux-kernel@vger.kernel.org>
+References: <20240913122955.1283597-1-huangjunxian6@hisilicon.com>
+ <20240913122955.1283597-3-huangjunxian6@hisilicon.com>
+ <20240916091323.GM4026@unreal>
+From: Junxian Huang <huangjunxian6@hisilicon.com>
+In-Reply-To: <20240916091323.GM4026@unreal>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Sep 11, 2024 at 1:44=E2=80=AFAM Ackerley Tng <ackerleytng@google.co=
-m> wrote:
->
-> ...
-> +}
-> +
-> +static void kvm_gmem_evict_inode(struct inode *inode)
-> +{
-> +       u64 flags =3D (u64)inode->i_private;
-> +
-> +       if (flags & KVM_GUEST_MEMFD_HUGETLB)
-> +               kvm_gmem_hugetlb_teardown(inode);
-> +       else
-> +               truncate_inode_pages_final(inode->i_mapping);
-> +
-> +       clear_inode(inode);
-> +}
-> +
->  static const struct super_operations kvm_gmem_super_operations =3D {
->         .statfs         =3D simple_statfs,
-> +       .evict_inode    =3D kvm_gmem_evict_inode,
-
-Ackerley, can we use free_inode[1] callback to free any special
-metadata associated with the inode instead of relying on
-super_operations?
-
-[1] https://elixir.bootlin.com/linux/v6.11/source/include/linux/fs.h#L719
-
-> ...
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemf100018.china.huawei.com (7.202.181.17)
 
 
->
->         if (size <=3D 0 || !PAGE_ALIGNED(size))
->                 return -EINVAL;
-> --
-> 2.46.0.598.g6f2099f65c-goog
->
+
+On 2024/9/16 17:13, Leon Romanovsky wrote:
+> On Fri, Sep 13, 2024 at 08:29:55PM +0800, Junxian Huang wrote:
+>> From: Chengchang Tang <tangchengchang@huawei.com>
+>>
+>> When HW is being reset, userspace should not ring doorbell otherwise
+>> it may lead to abnormal consequence such as RAS.
+>>
+>> Disassociate mmap pages for all uctx to prevent userspace from ringing
+>> doorbell to HW. Since all resources will be destroyed during HW reset,
+>> no new mmap is allowed after HW reset is completed.
+>>
+>> Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
+>> Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
+>> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+>> ---
+>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 9 +++++++++
+>>  drivers/infiniband/hw/hns/hns_roce_main.c  | 5 +++++
+>>  2 files changed, 14 insertions(+)
+>>
+>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>> index 24e906b9d3ae..4e374b2da101 100644
+>> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>> @@ -7017,6 +7017,12 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
+>>  
+>>  	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
+>>  }
+>> +
+>> +static void hns_roce_v2_reset_notify_user(struct hns_roce_dev *hr_dev)
+>> +{
+>> +	rdma_user_mmap_disassociate(&hr_dev->ib_dev);
+>> +}
+> 
+> There is no need in one line function, please inline it.
+> 
+
+Sure.
+
+>> +
+>>  static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+>>  {
+>>  	struct hns_roce_dev *hr_dev;
+>> @@ -7035,6 +7041,9 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+>>  
+>>  	hr_dev->active = false;
+>>  	hr_dev->dis_db = true;
+>> +
+>> +	hns_roce_v2_reset_notify_user(hr_dev);
+>> +
+>>  	hr_dev->state = HNS_ROCE_DEVICE_STATE_RST_DOWN;
+>>  
+>>  	return 0;
+>> diff --git a/drivers/infiniband/hw/hns/hns_roce_main.c b/drivers/infiniband/hw/hns/hns_roce_main.c
+>> index 4cb0af733587..49315f39361d 100644
+>> --- a/drivers/infiniband/hw/hns/hns_roce_main.c
+>> +++ b/drivers/infiniband/hw/hns/hns_roce_main.c
+>> @@ -466,6 +466,11 @@ static int hns_roce_mmap(struct ib_ucontext *uctx, struct vm_area_struct *vma)
+>>  	pgprot_t prot;
+>>  	int ret;
+>>  
+>> +	if (hr_dev->dis_db) {
+> 
+> How do you clear dis_db after calling to hns_roce_hw_v2_reset_notify_down()? Does it have any locking protection?
+> 
+
+Sorry for the late response, I just came back from vacation.
+
+After calling hns_roce_hw_v2_reset_notify_down(), we will call ib_unregister_device()
+and destory all HW resources eventually, so there is no need to clear dis_db.
+
+Junxian
+
+>> +		atomic64_inc(&hr_dev->dfx_cnt[HNS_ROCE_DFX_MMAP_ERR_CNT]);
+>> +		return -EPERM;
+>> +	}
+>> +
+>>  	rdma_entry = rdma_user_mmap_entry_get_pgoff(uctx, vma->vm_pgoff);
+>>  	if (!rdma_entry) {
+>>  		atomic64_inc(&hr_dev->dfx_cnt[HNS_ROCE_DFX_MMAP_ERR_CNT]);
+>> -- 
+>> 2.33.0
+>>
+> 
 
