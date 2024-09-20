@@ -1,160 +1,192 @@
-Return-Path: <linux-kernel+bounces-334567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1456897D8F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:21:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4186897D8F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BED0D283269
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:21:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC8791F22AD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7862A17CA0B;
-	Fri, 20 Sep 2024 17:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BFF1802AB;
+	Fri, 20 Sep 2024 17:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jsPGw4bS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="c4lUKlfC"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE86C26AF3
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 17:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1488A17E473
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 17:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726852868; cv=none; b=RiIYE+DCkWkF1vItwcI7seB+kbP4v9/fgMNtmTYszQK6nChkE+8l7ZtP8m0T/MYSHKoMCy1rReMz+xMhAqNZSwWtOA4qleOtFlS4kmclxohZ3HdZNhDbGEqfeFWbqt8ao0x+376+hVyns19bv6alUsonqepmYa7wgW8sBCpCwVw=
+	t=1726852882; cv=none; b=A1dnb6l0HvcLM7SM5fxO/MlTF0tHc6XFmNGODJ3I3zbFYe5VBZ/sUyN6Zd2S8Fz+1vQMxPwkeFc8GXVxSC7rs0u2s1VUbe3gA8zGl6AYgMvGRWKbNc4e6srlmzq7+K92Ngq02ozk6AVn3Qc8Urmwy6cdqCcUwVxK/O4BOWawnRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726852868; c=relaxed/simple;
-	bh=o/WQ321vGq5r6GWnXzdiK11oCOXcE9eV07SXcDtvewU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=EOoyu+6+Ud70bktAeDs66LSZAA/AaWP1hcQWUMfeIaR26uhGy4zZO07ayXmI6Gu+XX3iuSBQ/i6co2ja7eveelCJjJ6fvx157Zwx5CWZ2Ta27mi3Iq0JUuvOmr2BhYqGp2fkx99qvDbMSYa5JedHnadXglOuUgGxsUYPboVrMik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jsPGw4bS; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726852867; x=1758388867;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=o/WQ321vGq5r6GWnXzdiK11oCOXcE9eV07SXcDtvewU=;
-  b=jsPGw4bSugGk3sWHuWL/OcbLmaGmQ9uhCAvrY9DGa14j6rGdckTxxtBF
-   WuLKv/0W0sHBTwCtp0j196dp0/OVPhFYp8VNXr701Sz6I8BKyD9pKE8Et
-   tST13yEPDG15MOMOdobBHYIwdXsphTrJrWskvtCBmoXbjbcacf9uy+R6A
-   1O/NDnGZNlnXdeqV8XSyPJNtthbh2VIjfcDiJ3dHXC1oiGQvjOmOhAIsj
-   SKNv6A6KyEJCvdMfrveIMRz5Kz2/Dzqp7N69eDCeBzEZl3uBE0HHZAx7v
-   w12+O5avH/ekONhf5iYzp1wJAnqrggr7LoQdrnhB8DsKL8xg2a0M5ReaJ
-   A==;
-X-CSE-ConnectionGUID: n0Y9y7fZRHKhqmMwYIQM4w==
-X-CSE-MsgGUID: IwklEgRNSCKQLse5jEFf4g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11201"; a="37243883"
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="37243883"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 10:21:06 -0700
-X-CSE-ConnectionGUID: /vQYSv6rRcWIVsnIzuP/2w==
-X-CSE-MsgGUID: GYJzho//Q3mA5ElCx2zANw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="70374302"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 20 Sep 2024 10:21:04 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1srhJV-000EiD-21;
-	Fri, 20 Sep 2024 17:21:01 +0000
-Date: Sat, 21 Sep 2024 01:20:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Andy Chiu <andybnac@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: arch/riscv/kernel/signal.c:129:15: sparse: sparse: incorrect type in
- assignment (different address spaces)
-Message-ID: <202409210356.qCeOh9PA-lkp@intel.com>
+	s=arc-20240116; t=1726852882; c=relaxed/simple;
+	bh=i9faMMDzHAYnkwVom/xxkPsv8RRYuaQOLsFwTh6kj24=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tSOds7Mt1VDjr68N+7RgmLd6KJX0ignNTL5Q01AReAfUIq1RvGlvpuqr9h7AjvM8TUiE/hJryssSI2DyjZXuw8jmKrb+eNZ2L0Bi0hCcibXB+8uZdFBi3X4YNoJ1uZf+7AoJBYAoIWfednnzqmm4MkZQcAYEH3ybSe3qcTcQqoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=c4lUKlfC; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42e7b7bef42so9642115e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 10:21:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726852877; x=1727457677; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fzT2UdLnWWeArmAm4zpcjIK8wgZcrSCFmO4panR9HVc=;
+        b=c4lUKlfCeSuf6Py2FMscuOHqmIWil5HbeXBnIrhEFqc5h3PObXjnFPGtAyZaJ7EAHr
+         LHQ+h4yJfGuqBRXx1i/IyP1NkcKfceUWNZxhv9So2GZuM6g9qNcBj7lKhg4/u4DhQUVo
+         QfB1yO9WL3kMdLB8UIqMKjo7mYN8qWH5pWyc3mA50H1JGiKciqCa2zB3kXV+jC2e1dvK
+         PbQ/PMDbL14SD+0OtBf9EWD69ScWL+hW2Ze0+cdjxlAev8dBZ9JpIjKjzfYyLvkjtgCL
+         W9G9HPi6Ege6L95+ku1+L86br4PiTp/I/90jYJM2oZ5NlUtTnU245vTQNJU9Ae4FxJOK
+         omeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726852877; x=1727457677;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fzT2UdLnWWeArmAm4zpcjIK8wgZcrSCFmO4panR9HVc=;
+        b=L1PVtDh75owXNrIHz9S6a2DX36fP210junE9i303MaJPsb95n6uvQtaxvFTjxU8LQt
+         pEQl2EUga7Y89+/ulhvqU7UNzVg5EZ79lRfDaNtrObmkNkjPBHvTL+lUT8nEAUN5vkeL
+         KliJUEBIJZkNzLm9iG7WcND1oVk3k8LBJC6c/mgnlooAc+tnrr0NsE8RO73rWKpHtRsz
+         0wq5ZbezKxFAI2st6cBBG56Run5i5ybMOeIG//nhyz0n9GDQYZadJPKxU7ZbfBNjRfrr
+         cZ+rs4RCNjqlVWo+XxyYvx/uBW3TMWzGS4EXZpwbHwRRcFxsd2t8VpHECOyxpWzZEkDm
+         hFqQ==
+X-Gm-Message-State: AOJu0YyjgbrORnniiq4Cq8+JJWVd3cR0MViSQOkpOlcG9KquyHWq7ml0
+	rPqd/grRMyeTRmi4d9N7s1sBl03QoVE2BInJKA+/otuS1Oc3jGHG09xgw0oIqXB8zJ4ok3W6SR8
+	w
+X-Google-Smtp-Source: AGHT+IG/9kpp0sAvm+IXmEZsCPzdisZx6rPG+QgpIfKok7M8i5Be0gaqmIqgDa7qYzxZsOb4a9+Uzw==
+X-Received: by 2002:a05:600c:4f55:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-42e7c193efbmr24211705e9.26.1726852877096;
+        Fri, 20 Sep 2024 10:21:17 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:8e69:83a7:a29a:ba83])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-378e780028esm18092097f8f.71.2024.09.20.10.21.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 10:21:16 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Fri, 20 Sep 2024 19:21:12 +0200
+Subject: [PATCH] regulator: do not ignore provided init_data
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240920-regulator-ignored-data-v1-1-7ea4abfe1b0a@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAAev7WYC/x3MywrCMBBG4Vcps3Ygpld9FeliMH/TAUlkUkUof
+ XdDl9/inJ0KTFHo3uxk+GrRnCqul4aeq6QI1lBN3vnO3bxjQ/y8ZMvGGlM2BA6yCY8TRpn6fuh
+ aUI3fhkV/5/gxH8cfs5w5cWgAAAA=
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3021; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=i9faMMDzHAYnkwVom/xxkPsv8RRYuaQOLsFwTh6kj24=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBm7a8L1uNoMc8F0k9yhspRSh3QXxTiECIhw5OSt
+ g4gpTtphd2JAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZu2vCwAKCRDm/A8cN/La
+ hS8MD/4l9QudZGC/jTEq66j+W+z42XkmBnvn9Tebf2PWE9sikLuEG9dqTm1u+U+jEYyBoKCXYJS
+ eu+mljUeGpggG7CZ635EAJL8lLBjdSZ9Ybk8UD7t4ZSGk9uSCr76GuhBLiMZ49jnbc/Qx6O1oCk
+ PPWU5Rig9JaS99vIiET3J08Ru9R3p/7lZvgnq+fwPv5PetVXhiHVWDLwQohCkdXwZ0j4fRXAwBM
+ VoB0M9UKRradggk8O6tV214MUMJTyT4p5GadVcdedX2JykanQRT0URatvUM+4MPpRYeHq/ZIRFo
+ hPdRVDmr8CZL0bGDO/aNQ5UCjXRbj+KRjghth4d87C4yz/UCF/UMYD9CGOvTzSEJwTH8KCTLR7P
+ spIqeFaR/Omm5scyvboD2YdRFWH3qXfJt+9GRevlqjJjLw/8i09W6cM8tlhH7s9xS1ei4ZS57bj
+ 1zoeV4o7+rwnHvKnAu9Qu+40EcHMDUbtaGYNgALGGK5auMZk11KyFxD066gtzcpxT+EzC2UmTFp
+ WJAYyIyMIEh0ubG5lHj7rHZQtzuVHkBh4UgyAZXGYRRGG/OIPamzCIWPn4kIewxcxtP/+vqOOqX
+ Lj7/O14scbAuOkZyDewv3a45BLsPiDZbTtRfM66PahlzCTG4HH3h35l5JP34a6TPQ72iM+nojUm
+ RE+PnFmsyairoLw==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   baeb9a7d8b60b021d907127509c44507539c15e5
-commit: 3aff0c459e77ac0fb1c4d6884433467f797f7357 RISC-V: Drop invalid test from CONFIG_AS_HAS_OPTION_ARCH
-date:   7 months ago
-config: riscv-randconfig-r113-20240920 (https://download.01.org/0day-ci/archive/20240921/202409210356.qCeOh9PA-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 8663a75fa2f31299ab8d1d90288d9df92aadee88)
-reproduce: (https://download.01.org/0day-ci/archive/20240921/202409210356.qCeOh9PA-lkp@intel.com/reproduce)
+On DT platforms, if a regulator init_data is provided in config, it is
+silently ignored in favor of the DT parsing done by the framework.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409210356.qCeOh9PA-lkp@intel.com/
+If the regulator provider passed init_data it must be because it is useful
+somehow. If the driver expects the framework to initialize this data on its
+own, it should leave init_data clear.
 
-sparse warnings: (new ones prefixed by >>)
->> arch/riscv/kernel/signal.c:129:15: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void [noderef] __user *datap @@     got void * @@
-   arch/riscv/kernel/signal.c:129:15: sparse:     expected void [noderef] __user *datap
-   arch/riscv/kernel/signal.c:129:15: sparse:     got void *
->> arch/riscv/kernel/signal.c:129:15: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void [noderef] __user *datap @@     got void * @@
-   arch/riscv/kernel/signal.c:129:15: sparse:     expected void [noderef] __user *datap
-   arch/riscv/kernel/signal.c:129:15: sparse:     got void *
->> arch/riscv/kernel/signal.c:129:15: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void [noderef] __user *datap @@     got void * @@
-   arch/riscv/kernel/signal.c:129:15: sparse:     expected void [noderef] __user *datap
-   arch/riscv/kernel/signal.c:129:15: sparse:     got void *
->> arch/riscv/kernel/signal.c:129:15: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void [noderef] __user *datap @@     got void * @@
-   arch/riscv/kernel/signal.c:129:15: sparse:     expected void [noderef] __user *datap
-   arch/riscv/kernel/signal.c:129:15: sparse:     got void *
+Adjust the regulator registration accordingly.
 
-vim +129 arch/riscv/kernel/signal.c
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+Note that it is probably not problem at the moment since no one complained
+about ignored data.
+---
+ drivers/regulator/core.c | 51 +++++++++++++++++++++++++-----------------------
+ 1 file changed, 27 insertions(+), 24 deletions(-)
 
-8ee0b41898fa26 Greentime Hu 2023-06-05  110  
-8ee0b41898fa26 Greentime Hu 2023-06-05  111  /*
-8ee0b41898fa26 Greentime Hu 2023-06-05  112   * Restore Vector extension context from the user's signal frame. This function
-8ee0b41898fa26 Greentime Hu 2023-06-05  113   * assumes a valid extension header. So magic and size checking must be done by
-8ee0b41898fa26 Greentime Hu 2023-06-05  114   * the caller.
-8ee0b41898fa26 Greentime Hu 2023-06-05  115   */
-8ee0b41898fa26 Greentime Hu 2023-06-05  116  static long __restore_v_state(struct pt_regs *regs, void __user *sc_vec)
-8ee0b41898fa26 Greentime Hu 2023-06-05  117  {
-8ee0b41898fa26 Greentime Hu 2023-06-05  118  	long err;
-8ee0b41898fa26 Greentime Hu 2023-06-05  119  	struct __sc_riscv_v_state __user *state = sc_vec;
-8ee0b41898fa26 Greentime Hu 2023-06-05  120  	void __user *datap;
-8ee0b41898fa26 Greentime Hu 2023-06-05  121  
-8ee0b41898fa26 Greentime Hu 2023-06-05  122  	/* Copy everything of __sc_riscv_v_state except datap. */
-8ee0b41898fa26 Greentime Hu 2023-06-05  123  	err = __copy_from_user(&current->thread.vstate, &state->v_state,
-8ee0b41898fa26 Greentime Hu 2023-06-05  124  			       offsetof(struct __riscv_v_ext_state, datap));
-8ee0b41898fa26 Greentime Hu 2023-06-05  125  	if (unlikely(err))
-8ee0b41898fa26 Greentime Hu 2023-06-05  126  		return err;
-8ee0b41898fa26 Greentime Hu 2023-06-05  127  
-8ee0b41898fa26 Greentime Hu 2023-06-05  128  	/* Copy the pointer datap itself. */
-8ee0b41898fa26 Greentime Hu 2023-06-05 @129  	err = __get_user(datap, &state->v_state.datap);
-8ee0b41898fa26 Greentime Hu 2023-06-05  130  	if (unlikely(err))
-8ee0b41898fa26 Greentime Hu 2023-06-05  131  		return err;
-8ee0b41898fa26 Greentime Hu 2023-06-05  132  	/*
-8ee0b41898fa26 Greentime Hu 2023-06-05  133  	 * Copy the whole vector content from user space datap. Use
-8ee0b41898fa26 Greentime Hu 2023-06-05  134  	 * copy_from_user to prevent information leak.
-8ee0b41898fa26 Greentime Hu 2023-06-05  135  	 */
-8ee0b41898fa26 Greentime Hu 2023-06-05  136  	err = copy_from_user(current->thread.vstate.datap, datap, riscv_v_vsize);
-8ee0b41898fa26 Greentime Hu 2023-06-05  137  	if (unlikely(err))
-8ee0b41898fa26 Greentime Hu 2023-06-05  138  		return err;
-8ee0b41898fa26 Greentime Hu 2023-06-05  139  
-7df56cbc27e423 Andy Chiu    2024-01-15  140  	riscv_v_vstate_set_restore(current, regs);
-8ee0b41898fa26 Greentime Hu 2023-06-05  141  
-8ee0b41898fa26 Greentime Hu 2023-06-05  142  	return err;
-8ee0b41898fa26 Greentime Hu 2023-06-05  143  }
-8ee0b41898fa26 Greentime Hu 2023-06-05  144  #else
-8ee0b41898fa26 Greentime Hu 2023-06-05  145  #define save_v_state(task, regs) (0)
-8ee0b41898fa26 Greentime Hu 2023-06-05  146  #define __restore_v_state(task, regs) (0)
-8ee0b41898fa26 Greentime Hu 2023-06-05  147  #endif
-8ee0b41898fa26 Greentime Hu 2023-06-05  148  
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 1179766811f5..fcafebcebf48 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -5681,32 +5681,35 @@ regulator_register(struct device *dev,
+ 		goto clean;
+ 	}
+ 
+-	init_data = regulator_of_get_init_data(dev, regulator_desc, config,
+-					       &rdev->dev.of_node);
+-
+-	/*
+-	 * Sometimes not all resources are probed already so we need to take
+-	 * that into account. This happens most the time if the ena_gpiod comes
+-	 * from a gpio extender or something else.
+-	 */
+-	if (PTR_ERR(init_data) == -EPROBE_DEFER) {
+-		ret = -EPROBE_DEFER;
+-		goto clean;
+-	}
+-
+-	/*
+-	 * We need to keep track of any GPIO descriptor coming from the
+-	 * device tree until we have handled it over to the core. If the
+-	 * config that was passed in to this function DOES NOT contain
+-	 * a descriptor, and the config after this call DOES contain
+-	 * a descriptor, we definitely got one from parsing the device
+-	 * tree.
+-	 */
+-	if (!cfg->ena_gpiod && config->ena_gpiod)
+-		dangling_of_gpiod = true;
+-	if (!init_data) {
++	if (config->init_data) {
+ 		init_data = config->init_data;
+ 		rdev->dev.of_node = of_node_get(config->of_node);
++
++	} else {
++		init_data = regulator_of_get_init_data(dev, regulator_desc,
++						       config,
++						       &rdev->dev.of_node);
++
++		/*
++		 * Sometimes not all resources are probed already so we need to
++		 * take that into account. This happens most the time if the
++		 * ena_gpiod comes from a gpio extender or something else.
++		 */
++		if (PTR_ERR(init_data) == -EPROBE_DEFER) {
++			ret = -EPROBE_DEFER;
++			goto clean;
++		}
++
++		/*
++		 * We need to keep track of any GPIO descriptor coming from the
++		 * device tree until we have handled it over to the core. If the
++		 * config that was passed in to this function DOES NOT contain a
++		 * descriptor, and the config after this call DOES contain a
++		 * descriptor, we definitely got one from parsing the device
++		 * tree.
++		 */
++		if (!cfg->ena_gpiod && config->ena_gpiod)
++			dangling_of_gpiod = true;
+ 	}
+ 
+ 	ww_mutex_init(&rdev->mutex, &regulator_ww_class);
 
-:::::: The code at line 129 was first introduced by commit
-:::::: 8ee0b41898fa26f66e32237f179b6989c65600d6 riscv: signal: Add sigcontext save/restore for vector
+---
+base-commit: cd87a98b53518e44cf3c1a7c1c07c869ce33bf83
+change-id: 20240920-regulator-ignored-data-78e7a855643e
 
-:::::: TO: Greentime Hu <greentime.hu@sifive.com>
-:::::: CC: Palmer Dabbelt <palmer@rivosinc.com>
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jerome
+
 
