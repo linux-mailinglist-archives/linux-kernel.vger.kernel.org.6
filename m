@@ -1,132 +1,142 @@
-Return-Path: <linux-kernel+bounces-334139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6910397D303
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:52:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724ED97D305
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E606283229
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:52:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25D231F2420E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E94F84A35;
-	Fri, 20 Sep 2024 08:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868A07FBA2;
+	Fri, 20 Sep 2024 08:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFxMDfO6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ti011rLf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E802AE77;
-	Fri, 20 Sep 2024 08:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D028B22EEF
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726822347; cv=none; b=im7ghKUszAK+X9hUgy3ATc50AcOzVtvIrZxUTWJfamp1BYp4m8/9vPOCicjlok+pr0qsiYypjGP5r9tNE22fmdpWip88JKSXZ6FNYjxyxEXnso5LXm0qLVx7UhodLfTVChcMCNXk3AFmhEMv5XZdga99smuojrbUl6JIXM7/l0g=
+	t=1726822386; cv=none; b=Ib68mIAP7xfeZ9Ojl4+W+6PgmOtRYkT2T/mfji0QHnno1kfPO4Cmsrsi5R6M8Z4QpeJYZRhjpLrYZKN8TRnMfnOcqv/qZyDl/E0BOc1AYzxWZIMmddt3DXMu727BoOR7jtTwm2wfbmw+LsrHchqnrKV4nqxbV5iXeKfYnUymxmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726822347; c=relaxed/simple;
-	bh=utnaNPaf6qjYT3lfCRcXfqm/eoc8XViXnZwkwH1E5lY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WviZXcB0d/kLeRyYJMACl077zhFdywScugnVw/E36DG4JxHNcuc3eyyxs9Y09ndSNGpgUu9bYlQSAQQhJS400bxJo7aAPI0Caca1owluC2FaC9qyWT+1RcE1KP3d+6S2I1VFIInOs/etWSN56R+bzjF+cMQI1oNUowDFxfagCUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFxMDfO6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79F6AC4CEC3;
-	Fri, 20 Sep 2024 08:52:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726822347;
-	bh=utnaNPaf6qjYT3lfCRcXfqm/eoc8XViXnZwkwH1E5lY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qFxMDfO6HDqrHJujhpl6lnKs6ESLaNum82xa14u7kEtbPENB1ZbmVB1cbsQgVB2A7
-	 kh1uLOJH0DkU0FqkpGd98/MluXLbyj8EtxrVAElY2d/9WDxQl1UNRN3oeibVGsCHZ0
-	 SgIKfHoWW4GzcvhjrRQRcDUNZ/6f/VG/VV/ZK30ebKohyR0TwvFT9hhLF5u2PyM+xE
-	 EcAuj78M8Ul8m/vQZvvQEqkSmBRQDPT4zpXSs/G3WDC25isGtEaqnwsRvOFmvDHLYr
-	 z7PSMRuLzYSHBbpfXfv2v8vsgeffZJSi074QeDJW9HxuTTjCEraxYU6I2ltHg1GB6r
-	 jtZZuZi4m6nXQ==
-Date: Fri, 20 Sep 2024 10:52:23 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Kimriver Liu <kimriver.liu@siengine.com>
-Cc: jarkko.nikula@linux.intel.com, andriy.shevchenko@linux.intel.com, 
-	mika.westerberg@linux.intel.com, jsd@semihalf.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>
-Subject: Re: [PATCH v11] i2c: designware: fix controller is holding SCL low
- while ENABLE bit is disabled
-Message-ID: <hua4cnnstss2lw5ejau25ktdiujwz3m3ixawnfuz7havwsr7vc@i7jlayooy3ha>
-References: <4ebc4e8882a52620cbca30f1bf25650cbc3723fb.1726197817.git.kimriver.liu@siengine.com>
+	s=arc-20240116; t=1726822386; c=relaxed/simple;
+	bh=U62G/ng4OCDBCfNaF3t7d607ECXcemW0hgJpnqy08cA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AUfz4SfKMqwp8pgQiBjD81+a9Z63hqhAECgmkWijBFlfOI0zh4YS77zRDf+cK0pM4BKAMZs3dZAO+FMQGstfXsqCk1a01RrxtWGy4o0WWXnBD/sXrPvQKpkKLrrrK2G1qnijSjFvxhhLOHpO0FRymR15lF6NYuT+SsDxscCAjdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ti011rLf; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726822385; x=1758358385;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=U62G/ng4OCDBCfNaF3t7d607ECXcemW0hgJpnqy08cA=;
+  b=Ti011rLfEdHHj2QdDbrPEHeyUX6FP915frWiWr9/wAukR9LU0GTbsJGf
+   1wvOv0IKg1lqJzgRvQbiDss0uh5Op9P4FZr9hm9m4rEGSla5kUbet/lOJ
+   TeBXA1JTQBpUcDrqKWqq+vzsOXJrj48qyz2Sg0Cmp6pq3dOakud4Emkql
+   u2YkA85h7ZvGS3cwkyB0thBKG+FDzhDyQAr954KW0SIkM6dyMQrwxbhv8
+   69xF4mdu0vUHJsgeM6mSw/963pgOLnxBWhRu5OvXd88tBTy6GPLDD5yzc
+   DCPRj6IKZtTUrFmClk6FJ19B2AT1eMOhihxLyLA7Qugjg7oMPMtQW2ZrP
+   w==;
+X-CSE-ConnectionGUID: ZajtfNmCTa2g2vdwxVaTGQ==
+X-CSE-MsgGUID: +/tj41q8Q9mnTmpbBPQr9Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="51238962"
+X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
+   d="scan'208";a="51238962"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 01:52:44 -0700
+X-CSE-ConnectionGUID: ac+7hOJWSuOke2n3RrMbqw==
+X-CSE-MsgGUID: VOdUS9/6SfC60J+b/3Jqmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
+   d="scan'208";a="70540520"
+Received: from dhhellew-desk2.ger.corp.intel.com.ger.corp.intel.com (HELO [10.245.245.29]) ([10.245.245.29])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 01:52:40 -0700
+Message-ID: <2924c274-2b01-4b33-87e7-5b66aceba3b0@intel.com>
+Date: Fri, 20 Sep 2024 01:52:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ebc4e8882a52620cbca30f1bf25650cbc3723fb.1726197817.git.kimriver.liu@siengine.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: Move set_pxd_safe() helpers from generic to platform
+To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
+ akpm@linux-foundation.org
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ x86@kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240920053017.2514920-1-anshuman.khandual@arm.com>
+ <3309e9ca-458b-4b10-8409-9fe315b60ae2@intel.com>
+ <925a26e2-bd53-4bf4-b22d-7a0e11581376@arm.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <925a26e2-bd53-4bf4-b22d-7a0e11581376@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Kimriver,
+On 9/19/24 23:42, Anshuman Khandual wrote:
+>> I just did a quick grep and don't see any difference between the _safe
+>> and normal variants.  A quick grep didn't turn up any actual users.
+>>
+>> Did anyone actually double check that these are still needed on x86 in
+>> the first place?
+> arch/x86/mm/init_64.c
 
-On Fri, Sep 13, 2024 at 11:31:46AM GMT, Kimriver Liu wrote:
-> It was observed that issuing the ABORT bit (IC_ENABLE[1]) will not
-> work when IC_ENABLE is already disabled.
-> 
-> Check if the ENABLE bit (IC_ENABLE[0]) is disabled when the controller
-> is holding SCL low. If the ENABLE bit is disabled, the software needs
-> to enable it before trying to issue the ABORT bit. otherwise,
-> the controller ignores any write to ABORT bit.
-> 
-> These kernel logs show up whenever an I2C transaction is
-> attempted after this failure.
-> i2c_designware e95e0000.i2c: timeout waiting for bus ready
-> i2c_designware e95e0000.i2c: timeout in disabling adapter
-> 
-> The patch fixes the issue where the controller cannot be disabled
-> while SCL is held low if the ENABLE bit is already disabled.
-> 
-> Fixes: 2409205acd3c ("i2c: designware: fix __i2c_dw_disable() in case master is holding SCL low")
-> Signed-off-by: Kimriver Liu <kimriver.liu@siengine.com>
-> Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Ahh, the #defines make them immune to grep. :)
 
-I'm sorry for the delay, but I needed to wait for the previous
-batch of fixes to be merged.
-
-[...]
-
-> +/*
-> + * This function waits controller idling before disabling I2C
-> + * When the controller is not in the IDLE state,
-> + * MST_ACTIVITY bit (IC_STATUS[5]) is set.
-> + * Values:
-> + * 0x1 (ACTIVE): Controller not idle
-> + * 0x0 (IDLE): Controller is idle
-> + * The function is called after returning the end of the current transfer
-> + * Returns:
-> + * False when controller is in IDLE state.
-> + * True when controller is in ACTIVE state.
-> + */
-
-I took the liberty of making some small changes to the comment:
-
-+/*
-+ * This function waits for the controller to be idle before disabling I2C
-+ * When the controller is not in the IDLE state, the MST_ACTIVITY bit
-+ * (IC_STATUS[5]) is set.
-+ *
-+ * Values:
-+ * 0x1 (ACTIVE): Controller not idle
-+ * 0x0 (IDLE): Controller is idle
-+ *
-+ * The function is called after completing the current transfer.
-+ *
-+ * Returns:
-+ * False when the controller is in the IDLE state.
-+ * True when the controller is in the ACTIVE state.
-+ */
-
-for an improved clarity and address a few grammatical issues.
-Please verify that it's correct.
-
-I merged your patch to i2c/i2c-host-fixes along with the latest 
-changes proposed by Andy.
-
-Thanks for your work,
-Andi
+Long-term, we should make sure these are still necessary.  Short term
+(in this patch), please just put the #defines in init_64.c if it is the
+only site that needs them.
 
