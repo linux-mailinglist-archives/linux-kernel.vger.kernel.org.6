@@ -1,115 +1,113 @@
-Return-Path: <linux-kernel+bounces-334693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7803697DABA
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:10:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D96597DABF
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C1928388D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:10:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9815D1C212CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B0618DF86;
-	Fri, 20 Sep 2024 23:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BCA18DF8C;
+	Fri, 20 Sep 2024 23:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLiGQUXK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kiVeK4hj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628DE1C693;
-	Fri, 20 Sep 2024 23:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D751C693;
+	Fri, 20 Sep 2024 23:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726873841; cv=none; b=Lj+lLgprfhHTx8uiogrw6YnnYy5dn8Tfk34UJshU67RZ+sa6shI1zY1av3mqVRi0Ca3pHeh6/hGQosdrxPu/N4/3Lo9zk1+Qh2hmzwGAfXvfikVUX45JtT/LBUMDr1XBPKW7oVQ5Pb3/pCesxKUPbthv6+7WMPsuPpt8CGk8I9E=
+	t=1726873991; cv=none; b=SvwB7bl9bMX0mSNMfo4vvSgrZMQtDNID0MKQE2B1BLYj/r5tpa2bFlwY8Jmdy7f+UpTi5I/AxbCWji5nwSeTtlv12DJRwiF3yOsQSDLs1NcJh/WLO8F7TCBnOEHdKrFA7rxrG8gxl1gZMWN+ymSqoOYXMzLFwhLgvwnK/azH28g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726873841; c=relaxed/simple;
-	bh=dxdCDfIcHeRolZri5GdD4pfAYCc4d6GtMLMxCPUuxEE=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=sNh0OdFJHGnot5V1N1diyupUH6kswWp1j4MCiCIUjgl1ZQl+hoS186icraQpag3rsHdOq/oLx1Zc0z7vmymnD0wz9Xzw2UIsqjpgCSZAlAKxpDW6DEze5aw/0Flsddky46sS2rmkomj/y4TGCh6znF7hOa04YV+c4G7fagLGMe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLiGQUXK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3418C4CEC3;
-	Fri, 20 Sep 2024 23:10:40 +0000 (UTC)
+	s=arc-20240116; t=1726873991; c=relaxed/simple;
+	bh=+CbtnYI/5ORGbbRU1OhnMdiA6deltgQ52qYdl/OS+Ok=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=tXOty0ZfUUeuE0dJxuNqWS0ppQY0IV4tzWdIPD10nVZtr3h4f/JxgpOVZUkph6CKRRJ3dkeNjUiqGbjthDQrvu9T1dYYU+x7WxQpRgZi476E+jcvqa447fQ2JgZkY6QrYrTtSYaD7BSCPEvXCbHwNl62c8FH9K5ft5Vn1pvfJp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kiVeK4hj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02F1DC4CEC3;
+	Fri, 20 Sep 2024 23:13:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726873840;
-	bh=dxdCDfIcHeRolZri5GdD4pfAYCc4d6GtMLMxCPUuxEE=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=fLiGQUXKyaP9BlXGOCgM7taDdqE+NBVdXGEz81dgGFw/g0dHYW0+Ad24TOW2H9s+g
-	 RVmzQ46U3+6VOqwQiZrlCPr+biLpfcAmXO36poRXdvGsPnfbMQ0r9TQBxub8Sqq4Y5
-	 eoZMShYX2O8SZjp5pbBGszv0oPxSrooSxOjQ//ITD7D8q8GkXJwR22OhBWp8GISIy3
-	 ZDcPkyeHqWju+WTDQZUkH6dXZGcEJBxupC6mm2+HIYUpfddlA4p/AQQ823OLRcju+t
-	 ZIZpm7Ton4QzPZykPGOKRnIF9+mOGIxcwU13RmzBSwjUnKAdUeGtL++gvNW6Rc1FXS
-	 XUtWkevjCMKyQ==
-Date: Fri, 20 Sep 2024 18:10:39 -0500
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	s=k20201202; t=1726873989;
+	bh=+CbtnYI/5ORGbbRU1OhnMdiA6deltgQ52qYdl/OS+Ok=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=kiVeK4hjoJc9Eu0ncckqydFSpzyBITFhQViNa96hU8zj303xNGFlP5l/AVb7YUrW/
+	 MMYZmViZSBnoL8LJf9qET6QugL0EZ06S1Q362GvIhgI+Ztf0HBFwagdh6B2697zFfC
+	 JH7vqgUw6v8Ym+KYOpW+8mXSPj5ee6M87jdDVRQaFxr+kce6dCfRxRdmBJdhIKFtiX
+	 vAMBJdm9mMoWusz0drX9SKUtl3+xqeAuDZY5oWKan0anGqC4fLVvk6rnAOLSXB7p1Q
+	 Ev+LIz5XEw7DoW2dMADqySR+8NJ6uRPDzC9l8+P/mBUoz/J5Do3KZ6ZXUwPWoSLUGm
+	 /XPnIUTB6M2gw==
+Date: Fri, 20 Sep 2024 18:13:07 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: mhklinux@outlook.com
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, James.Bottomley@hansenpartnership.com,
+	martin.petersen@oracle.com, arnd@arndb.de,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-arch@vger.kernel.org, maz@kernel.org, den@valinux.co.jp,
+	jgowans@amazon.com, dawei.li@shingroup.cn
+Subject: Re: [RFC 04/12] PCI: hv: Annotate the VMBus channel IRQ name
+Message-ID: <20240920231307.GA1073064@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: krzk+dt@kernel.org, tsbogend@alpha.franken.de, 
- devicetree@vger.kernel.org, andi.shyti@kernel.org, 
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
- linux-i2c@vger.kernel.org, conor+dt@kernel.org
-In-Reply-To: <20240920000930.1828086-2-chris.packham@alliedtelesis.co.nz>
-References: <20240920000930.1828086-1-chris.packham@alliedtelesis.co.nz>
- <20240920000930.1828086-2-chris.packham@alliedtelesis.co.nz>
-Message-Id: <172687383994.9882.1653066305378740682.robh@kernel.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: i2c: Add RTL9300 I2C controller
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240604050940.859909-5-mhklinux@outlook.com>
 
-
-On Fri, 20 Sep 2024 12:09:28 +1200, Chris Packham wrote:
-> Add dtschema for the I2C controller on the RTL9300 SoC. The I2C
-> controllers on this SoC are part of the "switch" block which is
-> represented here as a syscon node. The SCL pins are dependent on the I2C
-> controller (GPIO8 for the first controller, GPIO 17 for the second). The
-> SDA pins can be assigned to either one of the I2C controllers (but not
-> both).
+On Mon, Jun 03, 2024 at 10:09:32PM -0700, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
 > 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> In preparation for assigning Linux IRQs to VMBus channels, annotate
+> the IRQ name in the single VMBus channel used for setup and teardown
+> of a virtual PCI device in a Hyper-V guest. The annotation adds the
+> 16-bit PCI domain ID that the Hyper-V vPCI driver assigns to the
+> virtual PCI bus for the device.
+> 
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+
+Seems fine to me.
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
 > ---
+>  drivers/pci/controller/pci-hyperv.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> Notes:
->     Changes in v2:
->     - Use reg property for controller registers
->     - Remove global-control-offset (will be hard coded in driver)
->     - Integrated the multiplexing function. Child nodes now represent the
->       available SDA lines
+> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+> index 5992280e8110..4f70cddb61dc 100644
+> --- a/drivers/pci/controller/pci-hyperv.c
+> +++ b/drivers/pci/controller/pci-hyperv.c
+> @@ -3705,6 +3705,9 @@ static int hv_pci_probe(struct hv_device *hdev,
+>  	hdev->channel->request_addr_callback = vmbus_request_addr;
+>  	hdev->channel->rqstor_size = HV_PCI_RQSTOR_SIZE;
+>  
+> +	snprintf(hdev->channel->irq_name, VMBUS_CHAN_IRQ_NAME_MAX,
+> +				"vpci:%04x", dom);
+> +
+>  	ret = vmbus_open(hdev->channel, pci_ring_size, pci_ring_size, NULL, 0,
+>  			 hv_pci_onchannelcallback, hbus);
+>  	if (ret)
+> @@ -4018,6 +4021,8 @@ static int hv_pci_resume(struct hv_device *hdev)
+>  	hdev->channel->next_request_id_callback = vmbus_next_request_id;
+>  	hdev->channel->request_addr_callback = vmbus_request_addr;
+>  	hdev->channel->rqstor_size = HV_PCI_RQSTOR_SIZE;
+> +	snprintf(hdev->channel->irq_name, VMBUS_CHAN_IRQ_NAME_MAX,
+> +				"vpci:%04x", hbus->bridge->domain_nr);
+>  
+>  	ret = vmbus_open(hdev->channel, pci_ring_size, pci_ring_size, NULL, 0,
+>  			 hv_pci_onchannelcallback, hbus);
+> -- 
+> 2.25.1
 > 
->  .../bindings/i2c/realtek,rtl9300-i2c.yaml     | 82 +++++++++++++++++++
->  MAINTAINERS                                   |  6 ++
->  2 files changed, 88 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.yaml
-> 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.example.dtb: /example-0/switch@1b000000: failed to match any schema with compatible: ['realtek,rtl9302c-switch', 'syscon', 'simple-mfd']
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.example.dtb: i2c@36c: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'clock-frequency' were unexpected)
-	from schema $id: http://devicetree.org/schemas/i2c/realtek,rtl9300-i2c.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240920000930.1828086-2-chris.packham@alliedtelesis.co.nz
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
 
