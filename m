@@ -1,116 +1,115 @@
-Return-Path: <linux-kernel+bounces-334691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4302A97DAB5
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:08:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7803697DABA
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74A8F1C21153
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:08:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C1928388D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABD318DF83;
-	Fri, 20 Sep 2024 23:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B0618DF86;
+	Fri, 20 Sep 2024 23:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mR32iEPI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLiGQUXK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8DF1C693;
-	Fri, 20 Sep 2024 23:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628DE1C693;
+	Fri, 20 Sep 2024 23:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726873702; cv=none; b=TuQKxHLeAq8+PtNqhvP718lupet5CglME1avfgz4jUE/LZYDbsmhYsQTZYbholi6Jl/a7eyZfb659TMrT61bacyhzqvRn8abhfat52LxgabdsvLDNWxFRV5Sds1A5xoChAWjwTq1d4AggK7sst7M9yoKMwRxEsgX5/2DQw+cqHs=
+	t=1726873841; cv=none; b=Lj+lLgprfhHTx8uiogrw6YnnYy5dn8Tfk34UJshU67RZ+sa6shI1zY1av3mqVRi0Ca3pHeh6/hGQosdrxPu/N4/3Lo9zk1+Qh2hmzwGAfXvfikVUX45JtT/LBUMDr1XBPKW7oVQ5Pb3/pCesxKUPbthv6+7WMPsuPpt8CGk8I9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726873702; c=relaxed/simple;
-	bh=n56m61Kl9DwYCLtqidIMx41TFAMLRpqmR7mkeyGZe0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l5jalBS4RGz0bFgIk123b1WmFk3W4YQex6b16+Gro0J50iGNCqZdMTOcIIafeuwmjJ7Y1Agfto8cJfDFNEBhQNawnamG3M4Fz93OAbqxcVMljP8icyhDktzYYZelnsWDfQL9WKzRPao6ghdsb/3FJAdvqtPGwQguHmDO/GysyBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mR32iEPI; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726873700; x=1758409700;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=n56m61Kl9DwYCLtqidIMx41TFAMLRpqmR7mkeyGZe0c=;
-  b=mR32iEPI5jb+6OfXRCDs193q7qz9tLxkD1zMcb8RR4cxOdjh61GIAuYc
-   lB7MEYRHxLTH9breqOpaYzMJNThk+0EcLR+aHJpqSKgXhXsjcbVQ/ED68
-   F6JLML2tEemY1d/+gozV9s2kV+XhhdHwlzjd0S7kuTJiwmCw23IJAnaFF
-   D/yoPz6BUjSLvLjoL9DudJE27OTuf21MzS6lXU3LU9+pfuB16RYo98ZcZ
-   Bg/cv5F16UzAiWmgXMLRmHXW9tpPGxo6WPhPSXXO39ezhD3cKiOTLuGuj
-   HKOOpLcm9xKUggit0qSNsM+0bY/zDPql/YK6U0wOqCccjlBdUHtH6x8JU
-   w==;
-X-CSE-ConnectionGUID: gdRkb6gYRhmA8phCPaVzxQ==
-X-CSE-MsgGUID: wQALtvwLQrixIMvOme/sKA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11201"; a="29687670"
-X-IronPort-AV: E=Sophos;i="6.10,245,1719903600"; 
-   d="scan'208";a="29687670"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 16:08:19 -0700
-X-CSE-ConnectionGUID: mTeLW5O5TNG7Od4wLzJ+XA==
-X-CSE-MsgGUID: S9ImTKaTQASOh24ll39QOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,245,1719903600"; 
-   d="scan'208";a="70457327"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 20 Sep 2024 16:08:17 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1srmjW-000EvB-38;
-	Fri, 20 Sep 2024 23:08:14 +0000
-Date: Sat, 21 Sep 2024 07:08:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vishnu Sankar <vishnuocv@gmail.com>, jikos@kernel.org,
-	bentiss@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, mpearson-lenovo@squebb.ca,
-	vsankar@lenovo.com, Vishnu Sankar <vishnuocv@gmail.com>
-Subject: Re: [PATCH] hid: hid-lenovo: Supporting TP-X12-TAB-1/2 Kbd Hotkeys
- using raw  events.
-Message-ID: <202409210619.eaTT5ACU-lkp@intel.com>
-References: <20240917100432.10887-1-vishnuocv@gmail.com>
+	s=arc-20240116; t=1726873841; c=relaxed/simple;
+	bh=dxdCDfIcHeRolZri5GdD4pfAYCc4d6GtMLMxCPUuxEE=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=sNh0OdFJHGnot5V1N1diyupUH6kswWp1j4MCiCIUjgl1ZQl+hoS186icraQpag3rsHdOq/oLx1Zc0z7vmymnD0wz9Xzw2UIsqjpgCSZAlAKxpDW6DEze5aw/0Flsddky46sS2rmkomj/y4TGCh6znF7hOa04YV+c4G7fagLGMe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLiGQUXK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3418C4CEC3;
+	Fri, 20 Sep 2024 23:10:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726873840;
+	bh=dxdCDfIcHeRolZri5GdD4pfAYCc4d6GtMLMxCPUuxEE=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=fLiGQUXKyaP9BlXGOCgM7taDdqE+NBVdXGEz81dgGFw/g0dHYW0+Ad24TOW2H9s+g
+	 RVmzQ46U3+6VOqwQiZrlCPr+biLpfcAmXO36poRXdvGsPnfbMQ0r9TQBxub8Sqq4Y5
+	 eoZMShYX2O8SZjp5pbBGszv0oPxSrooSxOjQ//ITD7D8q8GkXJwR22OhBWp8GISIy3
+	 ZDcPkyeHqWju+WTDQZUkH6dXZGcEJBxupC6mm2+HIYUpfddlA4p/AQQ823OLRcju+t
+	 ZIZpm7Ton4QzPZykPGOKRnIF9+mOGIxcwU13RmzBSwjUnKAdUeGtL++gvNW6Rc1FXS
+	 XUtWkevjCMKyQ==
+Date: Fri, 20 Sep 2024 18:10:39 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917100432.10887-1-vishnuocv@gmail.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: krzk+dt@kernel.org, tsbogend@alpha.franken.de, 
+ devicetree@vger.kernel.org, andi.shyti@kernel.org, 
+ linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+ linux-i2c@vger.kernel.org, conor+dt@kernel.org
+In-Reply-To: <20240920000930.1828086-2-chris.packham@alliedtelesis.co.nz>
+References: <20240920000930.1828086-1-chris.packham@alliedtelesis.co.nz>
+ <20240920000930.1828086-2-chris.packham@alliedtelesis.co.nz>
+Message-Id: <172687383994.9882.1653066305378740682.robh@kernel.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: i2c: Add RTL9300 I2C controller
 
-Hi Vishnu,
 
-kernel test robot noticed the following build errors:
+On Fri, 20 Sep 2024 12:09:28 +1200, Chris Packham wrote:
+> Add dtschema for the I2C controller on the RTL9300 SoC. The I2C
+> controllers on this SoC are part of the "switch" block which is
+> represented here as a syscon node. The SCL pins are dependent on the I2C
+> controller (GPIO8 for the first controller, GPIO 17 for the second). The
+> SDA pins can be assigned to either one of the I2C controllers (but not
+> both).
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+> 
+> Notes:
+>     Changes in v2:
+>     - Use reg property for controller registers
+>     - Remove global-control-offset (will be hard coded in driver)
+>     - Integrated the multiplexing function. Child nodes now represent the
+>       available SDA lines
+> 
+>  .../bindings/i2c/realtek,rtl9300-i2c.yaml     | 82 +++++++++++++++++++
+>  MAINTAINERS                                   |  6 ++
+>  2 files changed, 88 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.yaml
+> 
 
-[auto build test ERROR on hid/for-next]
-[also build test ERROR on linus/master next-20240920]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+My bot found errors running 'make dt_binding_check' on your patch:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vishnu-Sankar/hid-hid-lenovo-Supporting-TP-X12-TAB-1-2-Kbd-Hotkeys-using-raw-events/20240917-180639
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
-patch link:    https://lore.kernel.org/r/20240917100432.10887-1-vishnuocv%40gmail.com
-patch subject: [PATCH] hid: hid-lenovo: Supporting TP-X12-TAB-1/2 Kbd Hotkeys using raw  events.
-config: parisc-randconfig-r062-20240921 (https://download.01.org/0day-ci/archive/20240921/202409210619.eaTT5ACU-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240921/202409210619.eaTT5ACU-lkp@intel.com/reproduce)
+yamllint warnings/errors:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409210619.eaTT5ACU-lkp@intel.com/
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.example.dtb: /example-0/switch@1b000000: failed to match any schema with compatible: ['realtek,rtl9302c-switch', 'syscon', 'simple-mfd']
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/i2c/realtek,rtl9300-i2c.example.dtb: i2c@36c: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'clock-frequency' were unexpected)
+	from schema $id: http://devicetree.org/schemas/i2c/realtek,rtl9300-i2c.yaml#
 
-All errors (new ones prefixed by >>):
+doc reference errors (make refcheckdocs):
 
-   hppa-linux-ld: drivers/hid/hid-lenovo.o: in function `lenovo_raw_event':
->> hid-lenovo.c:(.text+0x1958): undefined reference to `platform_profile_cycle'
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240920000930.1828086-2-chris.packham@alliedtelesis.co.nz
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
