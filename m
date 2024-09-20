@@ -1,218 +1,240 @@
-Return-Path: <linux-kernel+bounces-334360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 740A997D634
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:36:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2887097D63E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32C6B285E41
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:36:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56B5EB21D8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72CF1178384;
-	Fri, 20 Sep 2024 13:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E69178395;
+	Fri, 20 Sep 2024 13:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dKApCcMV"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2078.outbound.protection.outlook.com [40.107.223.78])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="sdlchPv7"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3F7158DB1;
-	Fri, 20 Sep 2024 13:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726839394; cv=fail; b=XQDQj58mtcn6DVAA5PLF0iluq/+JehGsAmrbNyRxFZBrWFRpYgPo7XI+LxTRio1ch5H0jrFnq/Se2ZdVrMq0Cct1shtMir2Tk6agcJQlgYY2WnCdb0lot/Eu+iW+Io0DmUif2iBcGbExSZuF3GTrumXYrtUzLFWwRx1jWoyjjtw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726839394; c=relaxed/simple;
-	bh=H6kBHMA6ydGLylQ33Oyxu5smRQUIlZP39JdqErOD2XM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=buIq5vXkZkny5DTPGqDBIFKuNC0U/NIjldkENlsMrsKajWc4T8IwwZrjx3xJLPrP9BlEWjx4mw5rBgc2HBdb/6djQwN84pIexD1Zyms4gzuaZt5/FlQ2GoiurEhAs4oZKUen38fXjrdTLzQMCu4E6nyu6+t9MOLhCS663bKogyE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dKApCcMV; arc=fail smtp.client-ip=40.107.223.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oX57JEUWl+HY+ASslq/2LcSeMFGfdiOaXEJ/yfpU/VrkvasEhUf0qeRr3BJRg1xLan+c+UEk/5jGNuIdCHOyrPUDyfbc0ihvLaUKwcGu/Yh8nEvOnScUowAfEMMZpXLha/0lX+WBroPYxnGBqtUrWE6SjvXAm2tFNuUg2QuGkAdRFpuZZs8gUvy7wlfoK/O9cFdVIIjO+++bO/yfeXeTwgkns2/BMEKvZh36bqipgOF9e5xBz/KCgxHHjwrLoUgtH2xokS7iUksFMKiMaMzE3rsnz5WcgFcMkbq2D78MMb+9++ZZgGC+GrzsyQIE7Q3CAWs1Q0LS5jVoS4yw+abM6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2hznJH5y9Q4us3KEMHHgKR/CRGEa8bmp7KBBi71O0Kk=;
- b=oYRB/OxZHZvKfgqaS9xmbAl3Prpvrj4KMC6Ztkkl3vUqzKCO/FKzaFe8Hb1eFcgcDzwhrspd+RT87aFeNv6n/rXSt2GPgLhiO+mjPyvw4985cH2zP+ohHejDD1ICmmB0LgNP/RHjvvUXusHbYIAVh+G9ctIduPiwVf8La7mKMIEtOKg8ukrw2HFCZqQBZ/Hzg7YZF26lTOZ1Grkc5eRAV+c3dG5faUI+NRBmp3q3yhpaO4kxUxYbts1b57huSWd8q2hueRQyR2BH3x6nSWNnZHerA+VSRb4A/GJyMovAkZZXu7WQ0bd4uPN/nGNrJmr3qraPH8xNpWs9ViU6FDxPQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2hznJH5y9Q4us3KEMHHgKR/CRGEa8bmp7KBBi71O0Kk=;
- b=dKApCcMVHiENS8ZK80LPU06vitnEyltXB0XeXb95uUd5Sxalu4jkLP2y4PbIguc6mes/ZJVMF3laCBmYMV+QIRW5UpXnfuSHY0DiY40pkjJlxJrJqUubGcgu2n8qJMfx/8chWo9N3T2vm0r1pHJvyZZscPl6tDBHMpNbvlFfgps=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- LV3PR12MB9356.namprd12.prod.outlook.com (2603:10b6:408:20c::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.22; Fri, 20 Sep
- 2024 13:36:29 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%7]) with mapi id 15.20.7982.016; Fri, 20 Sep 2024
- 13:36:29 +0000
-Date: Fri, 20 Sep 2024 09:36:21 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-Cc: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"Luck, Tony" <tony.luck@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"CobeChen@zhaoxin.com" <CobeChen@zhaoxin.com>,
-	"TimGuo@zhaoxin.com" <TimGuo@zhaoxin.com>,
-	"LeoLiu-oc@zhaoxin.com" <LeoLiu-oc@zhaoxin.com>,
-	Lyle Li <LyleLi@zhaoxin.com>
-Subject: Re: [PATCH v3 3/3] x86/mce: Add CMCI storm switching support for
- Zhaoxin
-Message-ID: <20240920133621.GC286939@yaz-khff2.amd.com>
-References: <20240910092652.13354-1-TonyWWang-oc@zhaoxin.com>
- <20240918055436.15551-1-TonyWWang-oc@zhaoxin.com>
- <20240918055436.15551-4-TonyWWang-oc@zhaoxin.com>
- <CY8PR11MB71344BE2857EA522CF71DBA1896C2@CY8PR11MB7134.namprd11.prod.outlook.com>
- <7a80b9f5-9503-45fa-bbf4-d0dfa97688ff@zhaoxin.com>
- <CY8PR11MB713412D068F202057A71CDE8896C2@CY8PR11MB7134.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY8PR11MB713412D068F202057A71CDE8896C2@CY8PR11MB7134.namprd11.prod.outlook.com>
-X-ClientProxiedBy: BN9PR03CA0884.namprd03.prod.outlook.com
- (2603:10b6:408:13c::19) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73729158DB1
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 13:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726839452; cv=none; b=GV3ZHi+iMcFpePRFVOG5/95Wh/27nqXHMGhy9g22/tIN2e9lO6fOs0ZpzVbN147HHhRFvhsgPmKNRWl8RK7kKw7Uky+B4oC+AiZgcW0i6xLB4ZBOXCHw/A2pYSQ4BmQeJ7+omFTb2EUea9gsuIs9gmsVU5EC4p/JAG+Dn0Up8wc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726839452; c=relaxed/simple;
+	bh=hOqLiThOivw6BibqdtT8D1c8R7QqDuIsn0z9ej131Tc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a8cmSVk16eUYVwGP0SinyOuzUI79MowWm9zatE1ajRadrR22I3Mv/P05KjSPem55yCkY3zjqG99VlnI+Ji83mvoyTzmDBbdoz9mL1FkHpZWJaTRgld+TEyzrL/HuvIXCd0Ned5e48EULd24dodseBCmt+i2A9PCd+iok+kcp5is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=sdlchPv7; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1726839447; x=1727098647;
+	bh=hOqLiThOivw6BibqdtT8D1c8R7QqDuIsn0z9ej131Tc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=sdlchPv7e6N4qFv5XAkj2FB2X3y7TBwdrWhDYsAoPUCvsWcV4mgFDBCK0UI1tBmf0
+	 EulVgO3vLTDBUEa4zBqU5iclWw13MYhg/6wxwF8tXJmr9EegCsQgep3WAkX23noEn6
+	 U/K3BRUP+2PurVpOAojxTvFjzrrLspg/YqY4cZ0HdkIjRQk3N9hbqDqcwA4zllmJGt
+	 ACoR2tTh3lmRvNEZ5O0oSXMax18UkWy96ixfUWOKkCpZU4nOp9hJIFlvLEuAgIomwx
+	 ECrkE1HW8qmQ+uoWmCu+W+c7z0MWU29khzNourC7R7YsGS+tLPVAY4GZQAgmzeHI26
+	 6Kj3bZHla1NdA==
+Date: Fri, 20 Sep 2024 13:37:23 +0000
+To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Cc: gregkh@linuxfoundation.org, tdavies@darkphysics.net, dan.carpenter@linaro.org, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8192e: Fix alignment to open parentheses
+Message-ID: <qdwaM7uxN2Sm0zSi_JF5cMYkIhlMFdluiUK6bLU1XqiHDMaSnMcVpCOseEfvdJKu-3uRr_iAuEBMJPn6Qbix-FaNG0EF8n82K3E7lQ5Zg5M=@protonmail.com>
+In-Reply-To: <e3c09066-3a40-4145-b5b4-4ccf5b755982@gmail.com>
+References: <20240919185445.119969-1-dominik.karol.piatkowski@protonmail.com> <e3c09066-3a40-4145-b5b4-4ccf5b755982@gmail.com>
+Feedback-ID: 117888567:user:proton
+X-Pm-Message-ID: 95c3030774a9faddad1a95c7b02c61b34e53d56a
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|LV3PR12MB9356:EE_
-X-MS-Office365-Filtering-Correlation-Id: 876b782d-afc6-417f-8cb5-08dcd9793bab
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?S3to9YEDq3pz0rjfY+TPBs58Ii84DU6lBStSK+QllqNb7tfqbTnaiEtqbGJH?=
- =?us-ascii?Q?A6Q5BOpbs60HkxQ/0N0aTU1Qd1G8pGVQ0Zc9rEt1Zei+0MeQ0PFvVV7JY2uu?=
- =?us-ascii?Q?3StgkXKm4YsZaFTx3OcxFBaRAquJ6E1BOOSWM8ay4MFX4Tvh2ph98qlzTcEw?=
- =?us-ascii?Q?KDFrNXpB0cTi9CH8WlWlZKLSxrcZohSsG3NAWn8Zy7bUEwOWqRV3KJVV4uPv?=
- =?us-ascii?Q?GAwrXY3sZ2pukZYfnEAFs7OmcMt7rc1rbkjydBnXAj/gPdt/mTdNCyZPv+0c?=
- =?us-ascii?Q?CsRfcpjyisXIhDrE/ccGtni2Ug9fBlIOl68EzC/l7222ThfXnKkKeRXeBbhY?=
- =?us-ascii?Q?n+mlFI0ouY0zkPm6qPT8QWvk3fqU+37ZliBw3S9IZjL9XwY96hxz6J9NOE65?=
- =?us-ascii?Q?OOhYArC2jxOQxPDlNI7CCjbPeO6aTdR+X49baxQ6mhGx+BuohIe3xNOq4yI4?=
- =?us-ascii?Q?U7YvXtjXeOiXnxS6I0FBW9JM4j2K4/AY4FJTrsM/N6o7u+NA3JEXvjpAZqfB?=
- =?us-ascii?Q?jkI73QA4z0aBX93v3PceQgX7HPkGjOuIB/b39RueXt/udVSrA8pBc/sqcHZ3?=
- =?us-ascii?Q?Up/IXLEo7gpRyOIJ9+uB6kbycsqRglK7AOQ3C0pxQlEwL+otz1SKQy7TMEIB?=
- =?us-ascii?Q?0qEppJ2jKRWmKQGzHDrDQ/wolbk1e4Fq22TXpRExO3KYsLMcKnz5jb/FRWzC?=
- =?us-ascii?Q?X1ftq8+MrjYd0CRTgO28bvXPSe8sJnOtt9X3Jh3m9Pkvl41ZgQWkYUhMJF5N?=
- =?us-ascii?Q?LMLkaoUkJ1Ns+8f92hpE1EYN0SETWl/qkidTDj382cA3+gsM8fuCR73vs0S4?=
- =?us-ascii?Q?gc3vWk9U24Dfs0aRCPNf92tJ9lOvHtBBL4zov7lfRXZLdXpRo79b5Whkp6nI?=
- =?us-ascii?Q?y9CH3OtjAnmfOJMoA+mGurXgqsi6r8b3dNo9hcqrWNYmVpMb/g2YqxUlvycT?=
- =?us-ascii?Q?Vnm62lcEqWKDTzG+GJzMB2Q3O1FucVIpi2NtPqDUtbDyOZ2c1owa76OjjKw1?=
- =?us-ascii?Q?sXwRXqdw5B63e9ekWSkVoxbNLtyi+K+QNqI1tpglhBtMj7V44XULtEK253Bv?=
- =?us-ascii?Q?qZVkogK1QqusEgawOZO+x4IAQjTmMrnNe6mOVWsUfeA30londmADrdV2XpPC?=
- =?us-ascii?Q?acLn9hJgsyqoQFwUz/JLSwO0QN8ZzX0E3/jdWCOOucxK34K/hAWfWwo+wV7p?=
- =?us-ascii?Q?FTU7E/ixOxsDT/VjW94jy7ZGETL0rgqu1kMJ8UFO4N5Var5NlYs519hXy6yd?=
- =?us-ascii?Q?pcXcuvu7LWdgbwTfOunDqGjGcw0+n4H/vCumjH1x2w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pCXHb2FUfTWKI9V4SVqZ6kGO+P+FqzPWPGNbG45icywJREotkMJ+ZoWoh6CR?=
- =?us-ascii?Q?IS5uCJjbOTLmBr7JRp2tI6hTX2i9PF6lVubWVUpe9M1NeYHNXKZnbRWRMEnZ?=
- =?us-ascii?Q?/9amwXL8eeseT59FjoSajeTw7TIKqr/SIP3QQdGIyZ17r64AITXT5cp4y2Fu?=
- =?us-ascii?Q?O3OgLBTXXa0LOWcxKdXAVQlRlG6nOvx5Modcimafnsd2q1+7bDnN/SuHcvIs?=
- =?us-ascii?Q?HjuinUG0kl83F1JFRYaLr4Epo26Jsk672fMtZSkeyqW52rWItijncgBMTw8Z?=
- =?us-ascii?Q?4uycMEoU882ZszsM9XRVQ2ZEsgFXwLwAkIx1AwcuiKrYwSL8vJcOp7ZeXw2o?=
- =?us-ascii?Q?kjW+Ta0jedk+YQ8sX9zijnjg79e1wk1uaHZ8LGCFRou+0m0UYU6/Uu7Fx2px?=
- =?us-ascii?Q?5EZdlFOK2bqNDsRZwus/PmxLEPxFKs9Bt7Gq7PmA7kJHcmwuR8DGP6CY4Bdl?=
- =?us-ascii?Q?AG1uai5b5iFjN90CiPsvWLeT9DRNc/ez9QMQxS6xCtOJ0TTQXBSKbiXVpFVI?=
- =?us-ascii?Q?HVKJWjG/5GMgZ7PVoe5OBGHAIslE/WFtSZHW+NlCd6987pJ/SPJO/xKDcvu6?=
- =?us-ascii?Q?IkcalRofNDGLJ7m3/BJr31/hsvX8By1gDT+AxwrUH9/ZX/NKTbovppmRAj2p?=
- =?us-ascii?Q?5zGcXuuM0IYiiVf3/17s/IS7Hv9V2yImIBsFJwdwzcMNLfwWKtFJTzjWu2qY?=
- =?us-ascii?Q?qD/vKIQ+Pl2LceEL7hZCgcIrpY/qw7D3KweFsGdBR+O3brBaCscF8bqLf24B?=
- =?us-ascii?Q?sf/DaKowD7KtRdzm1CGsI7tcmUQtEoGBfpqYhZv+77PbBwBgCYURjye7YweV?=
- =?us-ascii?Q?hUjwuIWkHN2pwqGl/vEGNKbp7loOMLD2QqSWckkIVhs/pR7vM6aIlpRQoDp2?=
- =?us-ascii?Q?0rGmTfVigRG+GRqA6W1Dtv2z4i06qN96Us63eZ6j4WfuYPAXLH+mws6JcTSk?=
- =?us-ascii?Q?1XQqVRSSpD3N2Zyd5COQHMU6nudURsnNJ9qejNUTqsRrdNHAYdEVNJoGf/CZ?=
- =?us-ascii?Q?89N5oSpyofDYzy1RGM2yLPRwBz/X5bK4upWqH2KbgXzOldKSSCRzzrJtl6u/?=
- =?us-ascii?Q?PbUZ7wQWcuF1siUG3bcqpJXiMRrKwbr61BeCMiMwPJJk09AGHQzlr8vx4PBT?=
- =?us-ascii?Q?9itdH7UFfdpPOsHObqptNdo1Ttpm3c90dY/+v7CBGUJLFRbLtK0hDhpeGkMH?=
- =?us-ascii?Q?xb0BL9oOc1a/IfRKSvjOKMCO5zQLwbs68KXTp4XFKw2eYWwtvEGHuSTbhzAj?=
- =?us-ascii?Q?yoqPUV9o9/dggziV1/GA9CQDKW42NGHF7rZWnFHZOQic2MD1fWqKEFy1j7md?=
- =?us-ascii?Q?hmAyz1fTIb2BUQb/oyeTPAsuQVVcL/U0SBlMUztD1ofpwHOHPuTjo0n8Fb7c?=
- =?us-ascii?Q?RySNH3SeAtjTsTtji0Y5Qniwy9r5Kb0p2LUmiGwvDbasgAzjzR6aQZe2WsnI?=
- =?us-ascii?Q?6O317GUGtdO5/udA+KBJ/vqZ2+YlE6HXbYS+j4seB/R6TlUvn6LfIdAjz1Mg?=
- =?us-ascii?Q?VpVU4f1xMcRURKnvESikZjc9g2Fsn2QZQHpnpQKZ1Kq1D8um0UIvq4sn3FRn?=
- =?us-ascii?Q?8dlqPJoOwdnw/UIPFDXQ/ityFlgGBedhibDJmeVP?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 876b782d-afc6-417f-8cb5-08dcd9793bab
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 13:36:29.7367
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eS2oos2S1k2DpmFkwV42R7+Aj+bllzwp6T1NTfS+RmM6592yPKWG35a69eFgUtmGi+8PVDAzlBibNTO+xURPxA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9356
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 20, 2024 at 11:44:59AM +0000, Zhuo, Qiuxu wrote:
-> > From: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-> > [...]
-> > >> --- a/arch/x86/kernel/cpu/mce/zhaoxin.c
-> > >> +++ b/arch/x86/kernel/cpu/mce/zhaoxin.c
-> > >> @@ -63,3 +63,21 @@ void mce_zhaoxin_feature_clear(struct cpuinfo_x86
-> > >> *c) {
-> > >>        intel_clear_lmce();
-> > >>   }
-> > >> +
-> > >> +void mce_zhaoxin_handle_storm(int bank, bool on) {
-> > >> +     unsigned long flags;
-> > >> +     u64 val;
-> > >> +
-> > >> +     raw_spin_lock_irqsave(&cmci_discover_lock, flags);
-> > >> +     rdmsrl(MSR_IA32_MCx_CTL2(bank), val);
-> > >> +     if (on) {
-> > >> +             val &= ~(MCI_CTL2_CMCI_EN |
-> > >> MCI_CTL2_CMCI_THRESHOLD_MASK);
-> > >> +             val |= CMCI_STORM_THRESHOLD;
-> > >> +     } else {
-> > >> +             val &= ~MCI_CTL2_CMCI_THRESHOLD_MASK;
-> > >> +             val |= (MCI_CTL2_CMCI_EN | cmci_threshold[bank]);
-> > >> +     }
-> > >> +     wrmsrl(MSR_IA32_MCx_CTL2(bank), val);
-> > >> +     raw_spin_unlock_irqrestore(&cmci_discover_lock, flags); }
-> > >
-> > > Are there any reasons or comments why it needs to disable/enable the
-> > > CMCI interrupt here during a CMCI storm on/off? If not, then reuse
-> > > mce_intel_handle_storm() to avoid duplicating the code.
-> > >
-> > 
-> > As explained in another email.
-> > The reason is actually mentioned in the cover letter: "because Zhaoxin's UCR
-> > error is not reported through CMCI", and we want to disable CMCI interrupt
-> > when CMCI storm happened.
-> 
-> So, this is just you want to disable CMCI when a CMCI storm happens. 
-> This doesn't explain much to me.
-> What's the problem if not disable CMCI when a CMCI storm happens?
->
+Hi Philipp,
 
-A more direct way to handle an interrupt storm is to turn off the
-interrupt. The proposed AMD solution would also do this.
+On Thursday, September 19th, 2024 at 22:15, Philipp Hortmann <philipp.g.hor=
+tmann@gmail.com> wrote:
+<cut>
+> > diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c b/drivers/s=
+taging/rtl8192e/rtl8192e/r8192E_dev.c
+> > index 2672b1ddf88e..cf1231fe5319 100644
+> > --- a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+> > +++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+<cut>
+> > @@ -335,8 +334,9 @@ static void _rtl92e_read_eeprom_info(struct net_dev=
+ice *dev)
+> >=20
+> > for (i =3D 0; i < 14; i +=3D 2) {
+> > if (!priv->autoload_fail_flag)
+> > - usValue =3D rtl92e_eeprom_read(dev,
+> > - (EEPROM_TxPwIndex_CCK + i) >> 1);
+> > + usValue =3D
+> > + rtl92e_eeprom_read(dev,
+> > + (EEPROM_TxPwIndex_CCK + i) >> 1);
+>=20
+>=20
+> Sorry this is not really increasing readability.
 
-Reprogramming the threshold to a high value does not 100% guarantee that
-a storm will be mitigated. But this is a necessary trade-off given that
-the CMCI is used to report other error types on Intel systems.
+You are right. The problem with this line is that it has 5 levels of nestin=
+g,
+and this makes it hard to fix the readability without having too long lines=
+.
+
+A some kind of rewrite could be helpful in the future, moving the deeply
+nested code into its own functions. For now, I think it is not sanely fixab=
+le.
+
+>=20
+> > else
+> > usValue =3D EEPROM_Default_TxPower;
+> > *((u16 *)(&priv->eeprom_tx_pwr_level_cck[i])) =3D
+> > @@ -345,7 +345,8 @@ static void _rtl92e_read_eeprom_info(struct net_dev=
+ice *dev)
+> > for (i =3D 0; i < 14; i +=3D 2) {
+> > if (!priv->autoload_fail_flag)
+> > usValue =3D rtl92e_eeprom_read(dev,
+> > - (EEPROM_TxPwIndex_OFDM_24G + i) >> 1);
+> > + (EEPROM_TxPwIndex_OFDM_24G + i)
+> > + >> 1);
+>=20
+>=20
+> Sorry this is not really increasing readability. The >> 1 in the next
+>=20
+> line is net nice.
+
+I agree, this was a bad idea. This line is a similar case to the previous o=
+ne,
+with it also having 5 levels of nesting. For now, I think it is also not sa=
+nely
+fixable.
+
+>=20
+> > else
+> > usValue =3D EEPROM_Default_TxPower;
+> > *((u16 *)(&priv->eeprom_tx_pwr_level_ofdm24g[i]))
+> > @@ -1325,8 +1326,8 @@ static void _rtl92e_query_rxphystatus(struct r819=
+2_priv *priv,
+> > } else {
+> > if (rf_rx_num !=3D 0)
+> > pstats->signal_strength =3D precord_stats->signal_strength =3D
+> > - _rtl92e_signal_scale_mapping(priv,
+> > - (long)(total_rssi /=3D rf_rx_num));
+> > + _rtl92e_signal_scale_mapping(priv, (long)
+> > + (total_rssi /=3D rf_rx_num));
+>=20
+>=20
+> I am not happy with this either. There are two =3D in the same line...
+
+Right. The double assignment could be split into separate line, improving
+readability, and probably allowing for nicer formatting.
+
+<cut>
+> > diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/sta=
+ging/rtl8192e/rtl8192e/rtl_core.c
+> > index dc1301f1a0c1..82a1b19fa1b3 100644
+> > --- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
+> > +++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
+<cut>
+> > @@ -406,8 +405,8 @@ static int _rtl92e_qos_assoc_resp(struct r8192_priv=
+ *priv,
+> > }
+> >=20
+> > static int _rtl92e_handle_assoc_response(struct net_device *dev,
+> > - struct rtllib_assoc_response_frame *resp,
+> > - struct rtllib_network *network)
+> > + struct rtllib_assoc_response_frame *resp,
+> > + struct rtllib_network *network)
+>=20
+>=20
+> one space missing...
+
+Is it missing? In my editor it looks okay.
+
+<cut>
+> > diff --git a/drivers/staging/rtl8192e/rtl819x_HTProc.c b/drivers/stagin=
+g/rtl8192e/rtl819x_HTProc.c
+> > index 9c9c0bc0cfde..ec43b5fda06e 100644
+> > --- a/drivers/staging/rtl8192e/rtl819x_HTProc.c
+> > +++ b/drivers/staging/rtl8192e/rtl819x_HTProc.c
+<cut>
+> > @@ -418,8 +416,8 @@ static u8 ht_filter_mcs_rate(struct rtllib_device *=
+ieee, u8 *pSupportMCS,
+> > }
+> >=20
+> > void ht_set_connect_bw_mode(struct rtllib_device *ieee,
+> > - enum ht_channel_width bandwidth,
+> > - enum ht_extchnl_offset Offset);
+> > + enum ht_channel_width bandwidth,
+> > + enum ht_extchnl_offset Offset);
+>=20
+>=20
+> This one is not correct.
+
+Is it incorrect? In my editor it looks okay.
+
+>=20
+>=20
+> Hi Dominik,
+>=20
+> this patch is to long. 1200 Lines are long for a patch. It might work
+> out when it can be checked automatically. But in this case I need go
+> through it line by line.
+
+Fair point - I will keep that in mind and try to keep the patches short in
+the future.
+
+>=20
+> Another issue is that I cannot apply it on top of the following patch
+> series that I see likely to be accepted.
+> https://lore.kernel.org/linux-staging/Zung-0ClV_527-_e@kernel-710/T/#t
+>=20
+> Here a trick to ensure this is not happening. I would look into the
+> coverletter of above mentioned patch series. There are only 8 files
+> changed so there are plenty left untouched. You can work on them.
+
+Thank you for making me aware of this. I will prepare a v2 fixing the files
+that are untouched by the mentioned series.
+
+>=20
+> My opinion is that people who are knew to the kernel community should
+> start with simple patches and then evolve.
+>=20
+> I propose to look for unused macros in:
+>=20
+> r8192E_hw.h
+>=20
+> This is the output of a program I wrote. You need to carefully check if
+> they are really good for removal.
+>=20
+> BCN_TCFG_CW_SHIFT
+> BCN_TCFG_IFS
+> IMR_BcnInt
+> MSR_LINK_ADHOC
+> MSR_LINK_MASTER
+> RRSR_SHORT_OFFSET
+>=20
+> You can find patches in git about the removal of the macros as an example=
+.
+
+Thank you, I will look into these macros.
 
 Thanks,
-Yazen
+
+Dominik Karol
+
+>=20
+> Thanks for your support.
+>=20
+> Bye Philipp
 
