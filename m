@@ -1,294 +1,235 @@
-Return-Path: <linux-kernel+bounces-334687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC0897DAAC
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:00:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D91597DAB1
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBACA28369C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:00:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92F1CB21F1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C239187322;
-	Fri, 20 Sep 2024 23:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="dE1/hys/"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C98118DF78;
+	Fri, 20 Sep 2024 23:03:50 +0000 (UTC)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AFC127E18;
-	Fri, 20 Sep 2024 23:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893EA127E18;
+	Fri, 20 Sep 2024 23:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726873251; cv=none; b=lUotADfkpM9Lb80/kpVMr4CSd704CB/cPrF2FgzvUi03Zhf8USa10rdRbHiQnFxvseZkKspAknFtYdxBdnm0uohKy7zncvdrmHMOvGf9lVCIRfNksn3/licUK2TuIi3TPgo9LOUtWSePdfIN3J+92Alfg2e8oxjnS7FdpUOi/YU=
+	t=1726873430; cv=none; b=tgVW/dnaaGUWEbFKG8tsJyvbq1qyRhknsBONYBVYmbygCj9qy+SE2Bg0M2XtnWQWpXquXzCbtfcLYtdkA8ExfsScCTKkZ8Rz5/sAD10/6xM4oclcv+3LWIO2tHeXpG510zhn1wNCGcWI1ESy/I3P/VmzFMFoabrmdTt8ROSuDnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726873251; c=relaxed/simple;
-	bh=oDTw/TNvmzyXhz2m43ox+4sT9Vh1e5aS1Cvj9VKWnfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q3r5ckKYhO2LSeu/QuXmuE4306ebFrh5aqBEcg08bguKELcS/LKpKrGThKLzQ9RR1TkKTmLjpQC0OVY0xrELyeqBldqsZK4/3iUaPIm5S/wbFuekQhmeA/A3V8ShFouOyv9Lrb0qoABy2I2V40s1H4CNDzOEfp0bKbZOJeO3Lgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=dE1/hys/; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=U+HYAQI0h93LLArZJ8CSYK2FsKFPLrHEU7IRp1uP1/k=; b=dE1/hys/c0TQC1xc
-	NeZCPrkVLasnvNQRg1FRDbsVjbGzhiLa2kqWkmebMZglGar1myRF7t+675l1A5hXHhWXnjHh5abCe
-	OCV0tfdwxuxR5nzxUA3aU+XpfMheHqYgIejIAOcAWW4Hs+diygm1D8TW5U3tP3kfQ8zA4iZFIAaJw
-	sYnVW13tkgrf00nCXD1OZ1hsKYpZ22NDZtDhRtF4TfMZFmLRFuFdi6C9ivOFJ80oY44e1abvRN8xj
-	DSaoVmvep4mjjxhUqmpbUoO0cG7VNieOYejHJ2NGjjAmEfsLapp1xIHdvPiu+jn7wFcb9f0iAX72D
-	dfnGQq840cMpVCh8rg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1srmcG-006bfD-1V;
-	Fri, 20 Sep 2024 23:00:44 +0000
-Date: Fri, 20 Sep 2024 23:00:44 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Bob Gill <gillb5@telus.net>, alex.hung@amd.com,
-	alexander.deucher@amd.com
-Cc: linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-Subject: [REGRESSION] Re: AMDGPU 6.11.0 crash, 6.10.0 git bisect log
-Message-ID: <Zu3-nJ7LpVzoN5Bj@gallifrey>
-References: <c21b734a-1d3d-4286-a3c5-a6ae9b69d847@telus.net>
+	s=arc-20240116; t=1726873430; c=relaxed/simple;
+	bh=OxcfEv9LV44Uf+115ne3sYDX9E+TssMqUoIG6dO5SeU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rQJhtAtW6Gwwc7UInLQIMeMrmsuNg2QDVP8jiTGUdIXtF+C+BJB+xL8YsgV2X6f5+mGUJ1kTsnc6uPWNYjOxZa5cUg2/fLFqMFtD1vCgWAOMnMv1QKZLOvLnRq2wueNs3KSYy9xNpsU6h/g3bGFK5B+DcyVwA4NV7BC1NEjCB70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f758f84dfbso20975071fa.0;
+        Fri, 20 Sep 2024 16:03:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726873424; x=1727478224;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6iPFS2iKcHR05KyOahfVFcvAwOHUoUZTGTIHlLSaJSg=;
+        b=D5pFIiqzWMWDPK73STsF+N4vWGXQYURllbG8wVAi9sYHm4w9GmM/P4HLc4DrZ8T2Af
+         JROXgNHH7hc3/bXt2mRnQj422/KpxP0p/Z5X3/QNWNBr6MP0yv54NNk8qe4l3am1j/xN
+         T6tCjx1yRoH7G+KxmdyWSj2E6lNfjwLJ1voxDTTveoJmcj+ipehZfBbTYGazwN7oDmaz
+         /4altF2hvVlt2OzZyac6MmflQ2uHYVl/hT2Zp2bhNv1LEZCoftDzfLucNEYS4rOTAFJ5
+         8xO9VoDGtM4uKSm22bShd1aEtRAA8DR60c7lZfkVfvwyx5XR9M8dgfMdqxu8HFlijFYn
+         QYhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbOMx21p9uVrUzLd1e6Ap35vyeiiyISxS1Ne9N6TkUHDZyPjY7CT9E0VNwFP3O9y1jxENhraimX9LJBx8u@vger.kernel.org, AJvYcCW1NkmhA5M+iQB3NLVs2vcIozPp+Jtb4+30694BFZ6BsRsp4fAV9/YG4raJ/speqt1gpLTK+frWyqaJ@vger.kernel.org, AJvYcCWM9vHejTtE2SUzNYk4ZUAiB3haUoOeYLp3iIHPHkYnOu7R0OyQZzX/EkCHvYu3imviYm8wgme8L5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwutjQIsNq5lp/kkIp7BaMl61X8QIW4FYrhljB3HibgHKqd/Pr6
+	s/z1VAzqshP8dqN935OZBOXto494PPI3rjYX8Qc5sMmy6iJAGTgfrSwU6/He0RU=
+X-Google-Smtp-Source: AGHT+IGiqQ2LVji2758VQE2Oo00H3hLBLxvTiXrA0yv+E+Rrm2SkxNfHT7jJA3kBwVnONI6q08V2EA==
+X-Received: by 2002:a2e:74f:0:b0:2f7:939f:a47f with SMTP id 38308e7fff4ca-2f7cb3192acmr24344491fa.11.1726873423925;
+        Fri, 20 Sep 2024 16:03:43 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d2e1cb4sm20317781fa.22.2024.09.20.16.03.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Sep 2024 16:03:42 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f762de00fbso28028791fa.2;
+        Fri, 20 Sep 2024 16:03:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUcdEaojfH2Zj51J939tSiGXQ7rJObD1iC1DXf0/+rX2yLGI19MUSvQ3U9O+Tlv/5HCN8LeyoY4Dzc=@vger.kernel.org, AJvYcCUhFeE5kUaGvWdXHGUTl8pdjf9uod1fRMHDpNv+UZWJ9OTGfS/SnrWStwjufcv/sLi5lp8oMAS7SBioh00y@vger.kernel.org, AJvYcCWnkKMF7MGGpLWfseELFcDMRWMkjzmF2xUdfd5c+dV6J9W7IT2yt4ayEEnDVupWTvkHEXdhEpHslmZH@vger.kernel.org
+X-Received: by 2002:a05:651c:1992:b0:2f5:a29:5a42 with SMTP id
+ 38308e7fff4ca-2f7cb3190f8mr31560601fa.14.1726873422580; Fri, 20 Sep 2024
+ 16:03:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c21b734a-1d3d-4286-a3c5-a6ae9b69d847@telus.net>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 22:53:34 up 135 days, 10:07,  1 user,  load average: 0.00, 0.00,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+References: <20240919091834.83572-1-sebastian.reichel@collabora.com> <20240919091834.83572-6-sebastian.reichel@collabora.com>
+In-Reply-To: <20240919091834.83572-6-sebastian.reichel@collabora.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 21 Sep 2024 01:03:26 +0200
+X-Gmail-Original-Message-ID: <CAGb2v66SNkrkXa4Q2gy7fNFZq74WTkxTMYymOKAiYY4HdsRPfg@mail.gmail.com>
+Message-ID: <CAGb2v66SNkrkXa4Q2gy7fNFZq74WTkxTMYymOKAiYY4HdsRPfg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] pmdomain: rockchip: add regulator support
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Elaine Zhang <zhangqing@rock-chips.com>, 
+	=?UTF-8?Q?Adri=C3=A1n_Mart=C3=ADnez_Larumbe?= <adrian.larumbe@collabora.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, devicetree@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Bob Gill (gillb5@telus.net) wrote:
-> Hello.  Kernel 6.11.0 crashes.  6.10.0 builds.  Al Viro and Dr. David Alan
-> Gilbert have been helpful, and asked that I
-> 
-> post a git bisect log.  The last log step seems odd, but the second last
-> step "Remove useless function call" might be what broke.
+On Thu, Sep 19, 2024 at 11:27=E2=80=AFAM Sebastian Reichel
+<sebastian.reichel@collabora.com> wrote:
+>
+> Some power domains require extra voltages to be applied. For example
+> trying to enable the GPU domain on RK3588 fails when the SoC does not
+> have VDD GPU enabled.
+>
+> The solution to temporarily change the device's device tree node has
+> been taken over from the Mediatek power domain driver.
+>
+> The regulator is not acquired at probe time, since that creates circular
+> dependencies. The power domain driver must be probed early, since SoC
+> peripherals need it. Regulators on the other hand depend on SoC
+> peripherals like SPI, I2C or GPIO.
+>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> Tested-by: Adrian Larumbe <adrian.larumbe@collabora.com> # On Rock 5B
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  drivers/pmdomain/rockchip/pm-domains.c | 56 +++++++++++++++++++++++++-
+>  1 file changed, 54 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/ro=
+ckchip/pm-domains.c
+> index 663d390faaeb..4bc17b588419 100644
+> --- a/drivers/pmdomain/rockchip/pm-domains.c
+> +++ b/drivers/pmdomain/rockchip/pm-domains.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/of_clk.h>
+>  #include <linux/clk.h>
+>  #include <linux/regmap.h>
+> +#include <linux/regulator/consumer.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <soc/rockchip/pm_domains.h>
+>  #include <dt-bindings/power/px30-power.h>
+> @@ -89,6 +90,8 @@ struct rockchip_pm_domain {
+>         u32 *qos_save_regs[MAX_QOS_REGS_NUM];
+>         int num_clks;
+>         struct clk_bulk_data *clks;
+> +       struct device_node *node;
+> +       struct regulator *supply;
+>  };
+>
+>  struct rockchip_pmu {
+> @@ -571,18 +574,66 @@ static int rockchip_pd_power(struct rockchip_pm_dom=
+ain *pd, bool power_on)
+>         return 0;
+>  }
+>
+> +static int rockchip_pd_regulator_disable(struct rockchip_pm_domain *pd)
+> +{
+> +       return pd->supply ? regulator_disable(pd->supply) : 0;
+> +}
+> +
+> +static int rockchip_pd_regulator_enable(struct rockchip_pm_domain *pd)
+> +{
+> +       struct rockchip_pmu *pmu =3D pd->pmu;
+> +       struct device_node *main_node;
+> +
+> +       if (!pd->supply) {
+> +               /*
+> +                * Find regulator in current power domain node.
+> +                * devm_regulator_get() finds regulator in a node and its=
+ child
+> +                * node, so set of_node to current power domain node then=
+ change
+> +                * back to original node after regulator is found for cur=
+rent
+> +                * power domain node.
+> +                */
+> +               main_node =3D pmu->dev->of_node;
+> +               pmu->dev->of_node =3D pd->node;
+> +               pd->supply =3D devm_regulator_get(pmu->dev, "domain");
 
-Thank you for doing this!
+How do you differentiate between a power domain not needing a supply,
+vs a power domain that is missing its supply in DT?
 
-My reading is that's fine, I think the next one:
+You're using the normal "devm_regulator_get()" here (no "_optional),
+which gives the dummy supply if no supply is specified in the DT, and
+I think that wouldn't work properly.
 
-tree: git bisect bad
-[a171cce57792b0a6206d532050179a381ad74f8f] drm/amd/display: Check and log for
-function error codes
+I'm trying to work out if having "devm_of_regulator_get()" is needed or
+not.
 
-or the one after it is the culprit?
+Also, this could return -EPROBE_DEFER. I guess it works with the initial
+pm_domain_attach() from the driver core?
 
-Adding the two Alex's from AMD back onto the thread.
-(Also added the [REGRESSION] marker the notes tell us to add)
 
-> My hardware is old corei7 quad core/8 thread Tylersberg/Nehalem with an AMD
-> RX 6500XT.  That's the odd combination.
-> 
-> Thanks in advance,
+Thanks
+ChenYu
 
-Thanks again for the bisect.
 
-Dave
-
-> Bob
-> 
-> Config:  (.config)
-> /data/kernel/bobtest6.10-64
-> 
-> Build line: (last command tells me the job is finished)
-> make menuconfig && make -j $(nproc) && make modules && make modules_install
-> && make install && /data/music/pl.sh
-> 
-> Rule 1: Do not modify ANYTHING in the source tree
-> 
-> git bisect start
-> git bisect bad
-> git bisect good v6.10
-> 
-> Bisecting: 11273 revisions left to test after this (roughly 14 steps)
-> [2c9b3512402ed192d1f43f4531fb5da947e72bd0] Merge tag 'for-linus' of
-> git://git.kernel.org/pub/scm/virt/kvm/kvm
-> 
-> latest kernel:
-> ls -alt /lib/modules | head -2 | tail -1 | tr -s " " | cut -d' ' -f9
-> 6.10.0+
-> 
-> RESULT:  boot 6.10.0+ fails
->          screen black for more than 2 minutes,
->          (caps lock key unresponsive, reset, power
->          buttons on computer case do nothing).  Reset with power bar.
-> 
-> tree: git bisect bad
-> Bisecting: 5677 revisions left to test after this (roughly 13 steps)
-> [280e36f0d5b997173d014c07484c03a7f7750668] nsfs: use cleanup guard
-> 
-> latest kernel:
-> ls -alt /lib/modules | head -2 | tail -1 | tr -s " " | cut -d' ' -f9
-> 6.10.0+
-> 
-> RESULT: boot 6.10.0+ successful
-> tree: git bisect good
-> Bisecting: 2855 revisions left to test after this (roughly 12 steps)
-> [dde1a0e1625c08cf4f958348a83434b2ddecf449] Merge tag 'x86-percpu-2024-07-17'
-> of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> 
-> latest kernel:
-> ls -alt /lib/modules | head -2 | tail -1 | tr -s " " | cut -d' ' -f9
-> 6.10.0+
-> 
-> RESULT: boot 6.10.0+ fails
->         screen black for more than 2 minutes,
->         (caps lock key unresponsive, reset, power
->         buttons on computer case do nothing).  Reset with power bar.
-> 
-> tree: git bisect bad
-> Bisecting: 1478 revisions left to test after this (roughly 11 steps)
-> [32a120f52a4c0121bca8f2328d4680d283693d60] drm/i915/mtl: Skip PLL state
-> verification in TBT mode
-> 
-> latest kernel:
-> ls -alt /lib/modules | head -2 | tail -1 | tr -s " " | cut -d' ' -f9
-> 6.10.0-rc3+
-> 
-> RESULT: boot 6.10.0-rc3+ successful
-> tree: git bisect good
-> Bisecting: 739 revisions left to test after this (roughly 10 steps)
-> [b6a343df46d69070a7073405e470e6348180ea34] drm/amdgpu: initialize GC IP
-> v11.5.2
-> 
-> latest kernel:
-> ls -alt /lib/modules | head -2 | tail -1 | tr -s " " | cut -d' ' -f9
-> 6.10.0-rc3+
-> 
-> RESULT: boot 6.10.0-rc3+ fails
->         screen black for more than 2 minutes,
->         (caps lock key unresponsive, reset, power
->         buttons on computer case do nothing).  Reset with power bar.
-> 
-> tree: git bisect bad
-> Bisecting: 369 revisions left to test after this (roughly 9 steps)
-> [cf1d06ac53a15b83c0a63225606cfe175e33a8a0] accel/ivpu: Increase autosuspend
-> delay to 100ms on 40xx
-> 
-> latest kernel:
-> ls -alt /lib/modules | head -2 | tail -1 | tr -s " " | cut -d' ' -f9
-> 6.10.0-rc1+
-> 
-> RESULT: boot 6.10.0-rc1+ successful
-> tree: git bisect good
-> Bisecting: 184 revisions left to test after this (roughly 8 steps)
-> [0ca9f757a0e27a076395ec1b2002661bcf5c25e8] drm/amd/pm: powerplay: Add
-> `__counted_by` attribute for flexible arrays
-> 
-> latest kernel:
-> ls -alt /lib/modules | head -2 | tail -1 | tr -s " " | cut -d' ' -f9
-> 6.9.0-rc5+
-> 
-> RESULT: boot 6.9.0-rc5+ successful
-> tree: git bisect good
-> Bisecting: 92 revisions left to test after this (roughly 7 steps)
-> [9862ef7bae47b9292a38a0a1b30bff7f56d7815b] drm/amd/display: Use periodic
-> detection for ipx/headless
-> 
-> latest kernel:
-> ls -alt /lib/modules | head -2 | tail -1 | tr -s " " | cut -d' ' -f9
-> 6.10.0-rc3+
-> 
-> RESULT: boot 6.10.0-rc3+ fails
->         screen black for more than 2 minutes,
->         (caps lock key unresponsive, reset, power
->         buttons on computer case do nothing).  Reset with power bar.
-> 
-> tree: git bisect bad
-> Bisecting: 44 revisions left to test after this (roughly 6 steps)
-> [a78313bb206e0c456a989f380c4cbd8af8af7c76] Merge tag
-> 'drm-intel-gt-next-2024-06-12' of
-> https://gitlab.freedesktop.org/drm/i915/kernel into drm-next
-> 
-> latest kernel:
-> ls -alt /lib/modules | head -2 | tail -1 | tr -s " " | cut -d' ' -f9
-> 6.10.0-rc3+
-> 
-> RESULT: boot 6.10.0-rc3+ successful
-> tree: git bisect good
-> Bisecting: 22 revisions left to test after this (roughly 5 steps)
-> [51dbe0239b1fc7c435867ce28e5eb4394b6641e1] drm/amd/display: Fix cursor size
-> issues
-> 
-> latest kernel:
-> ls -alt /lib/modules | head -2 | tail -1 | tr -s " " | cut -d' ' -f9
-> 6.10.0-rc3+
-> 
-> RESULT: boot 6.10.0-rc3+ successful
-> tree: git bisect good
-> Bisecting: 11 revisions left to test after this (roughly 4 steps)
-> [871512e36f9c1c2cb4e62eb860ca0438800e4d63] drm/amd/display: Add workaround
-> to restrict max frac urgent for DPM0
-> 
-> latest kernel:
-> ls -alt /lib/modules | head -2 | tail -1 | tr -s " " | cut -d' ' -f9
-> 6.10.0-rc3+
-> 
-> RESULT: boot 6.10.0-rc3+ fails
->         screen black for more than 2 minutes,
->         (caps lock key unresponsive, reset, power
->         buttons on computer case do nothing).  Reset with power bar.
-> 
-> tree: git bisect bad
-> Bisecting: 5 revisions left to test after this (roughly 3 steps)
-> [5d93060d430b359e16e7c555c8f151ead1ac614b] drm/amd/display: Check HDCP
-> returned status
-> 
-> latest kernel:
-> ls -alt /lib/modules | head -2 | tail -1 | tr -s " " | cut -d' ' -f9
-> 6.10.0-rc3+
-> 
-> RESULT: boot 6.10.0-rc3+ fails
->         screen black for more than 2 minutes,
->         (caps lock key unresponsive, reset, power
->         buttons on computer case do nothing).  Reset with power bar.
-> 
-> tree: git bisect bad
-> Bisecting: 2 revisions left to test after this (roughly 1 step)
-> [e094992bd1caa1fbd42221c7c305fc3b54172b5c] drm/amd/display: Remove useless
-> function call
-> 
-> latest kernel:
-> ls -alt /lib/modules | head -2 | tail -1 | tr -s " " | cut -d' ' -f9
-> 6.10.0-rc3+
-> 
-> RESULT: boot 6.10.0-rc3+ successful
-> 
-> tree: git bisect good
-> [2c2ee1d1329881d8e6bb23c3b9f3b41df8a8055c] drm/amd/display: Check and log
-> for function error codes
-> 
-> latest kernel:
-> ls -alt /lib/modules | head -2 | tail -1 | tr -s " " | cut -d' ' -f9
-> 6.10.0-rc3+
-> 
-> RESULT: boot 6.10.0-rc3+ fails
->         screen black for more than 2 minutes,
->         (caps lock key unresponsive, reset, power
->         buttons on computer case do nothing).  Reset with power bar.
-> 
-> tree: git bisect bad
-> [a171cce57792b0a6206d532050179a381ad74f8f] drm/amd/display: Check and log
-> for function error codes
-> 
-> 
-> 
-> 
-> 
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> +               pmu->dev->of_node =3D main_node;
+> +               if (IS_ERR(pd->supply)) {
+> +                       pd->supply =3D NULL;
+> +                       return 0;
+> +               }
+> +       }
+> +
+> +       return regulator_enable(pd->supply);
+> +}
+> +
+>  static int rockchip_pd_power_on(struct generic_pm_domain *domain)
+>  {
+>         struct rockchip_pm_domain *pd =3D to_rockchip_pd(domain);
+> +       int ret;
+> +
+> +       ret =3D rockchip_pd_regulator_enable(pd);
+> +       if (ret) {
+> +               dev_err(pd->pmu->dev, "Failed to enable supply: %d\n", re=
+t);
+> +               return ret;
+> +       }
+>
+> -       return rockchip_pd_power(pd, true);
+> +       ret =3D rockchip_pd_power(pd, true);
+> +       if (ret)
+> +               rockchip_pd_regulator_disable(pd);
+> +
+> +       return ret;
+>  }
+>
+>  static int rockchip_pd_power_off(struct generic_pm_domain *domain)
+>  {
+>         struct rockchip_pm_domain *pd =3D to_rockchip_pd(domain);
+> +       int ret;
+>
+> -       return rockchip_pd_power(pd, false);
+> +       ret =3D rockchip_pd_power(pd, false);
+> +       if (ret)
+> +               return ret;
+> +
+> +       rockchip_pd_regulator_disable(pd);
+> +       return ret;
+>  }
+>
+>  static int rockchip_pd_attach_dev(struct generic_pm_domain *genpd,
+> @@ -663,6 +714,7 @@ static int rockchip_pm_add_one_domain(struct rockchip=
+_pmu *pmu,
+>
+>         pd->info =3D pd_info;
+>         pd->pmu =3D pmu;
+> +       pd->node =3D node;
+>
+>         pd->num_clks =3D of_clk_get_parent_count(node);
+>         if (pd->num_clks > 0) {
+> --
+> 2.45.2
+>
 
