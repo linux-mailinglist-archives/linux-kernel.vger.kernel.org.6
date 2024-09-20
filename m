@@ -1,54 +1,85 @@
-Return-Path: <linux-kernel+bounces-334327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B2397D5C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:50:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01FF197D5C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECBF71F21BFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:50:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94098B23A95
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996E416A956;
-	Fri, 20 Sep 2024 12:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B30D16DEAB;
+	Fri, 20 Sep 2024 12:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QbiBChjB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="oZzfGvFs"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B1F14BF86;
-	Fri, 20 Sep 2024 12:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C2114B970
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726836609; cv=none; b=aEG57+UM3iN+ChylxP6BuRR6ZXoednTeWByj3E6mYGJynQQjrg9qkpL7YsVY6RH7AkRbXLsiOwsWSKPgdzpFH8cwh6Q//C8fPaDyCqfTAze6ky9Y9uGlV6XF6fjAGyTXyLov6huJrajX8csSlCTPV91oVZOrFAQdh9XLZQihL4w=
+	t=1726836610; cv=none; b=AJJfeVEEzuA8zyJlyOhWOVKuLSIeN0fJCgUPBK+/zivh22AGM0z2dCOx5rTlIXYXRaul14BnCHR3KPcaMPdscSMExVoRs7PoZuxnX/2c7Xo3TJ3QAeRnHJHEbjHB0I9AzMXKr6j1BshOSRbt0DhBjZe8Yii1cS5uZtZxN2315Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726836609; c=relaxed/simple;
-	bh=p6YLJWz9U/S9OuyWWjwWAe0NXusxHGsFmbOEZJtk/3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Lp3zEN8ar9e2cWu6GCtO0QqxS7v9oFnHDrDsXHHpkGLwNCztEtS71wPm9UPPvG+UEQLL+Lqn2LyPWIA3m6UJXqzd7oSoJM9UpoDeeFvODO0Xmk28ZUwd0WZKjiQITWB5aVaNKtcrddsvYuJlqMAvGF85vo8fXImpJ8eUbIM+paE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QbiBChjB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 621D4C4CEC3;
-	Fri, 20 Sep 2024 12:50:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726836608;
-	bh=p6YLJWz9U/S9OuyWWjwWAe0NXusxHGsFmbOEZJtk/3E=;
-	h=Date:From:To:Cc:Subject:From;
-	b=QbiBChjBccXSW/CVzTNDj8R/OSmQP/T8VNxwtjcCrj/OLhh+tgu57zMV+qQLx2wU5
-	 beMuZogRRdczrT7J9/0CLQBFp2wpVap2asHUJz2ODIHZ2btYJ/9mMdWxn6D6KjB4r4
-	 myK0cb5PWvh89yQY6Jm+tjhlObV16JHn4kzGMq5Pr2L4ad9skx4svVHNQUzvcybEXn
-	 rLL0lDYm8b8Cy3NVUZujPtDOTmjnogi+uJRxCjPRd4/fF7ake9RiVvbqHitHPUaEPn
-	 US4avSxL5zyRt4trWSwDA1TuzLa/URmVXoiVT+4W90xFCLZGQRBKxVKrWP7wi9p6mx
-	 32BiGPEL8Vi+Q==
-Date: Fri, 20 Sep 2024 14:50:02 +0200
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] container_of: add container_first() macro
-Message-ID: <Zu1vekikKNR5oUoM@elsanto>
+	s=arc-20240116; t=1726836610; c=relaxed/simple;
+	bh=OBrX2SPJ/cy3El5dwOb+gA0sMiQmSueLxgklcEUTSzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRolITKZ5rJVqVj+C06uSPCAgkvCVJ+tA3qsBRC6Pis10vO0qNJLwdcX/4oIxgTrWGOmhEofTipIVdrvLGkpgfMHfd4etAoTh0HfVriawLzCVOX9YkNzgvREWqcsAC8O+z9sK7i+RzGtNwf/uolmKzeyuCc8XmfOkmVsiNi6+8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=oZzfGvFs; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8a6d1766a7so263320566b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:50:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1726836607; x=1727441407; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BRXulz5VMdOActwNuWRT+AsW1pBw6lAA7iZwsxIHYO0=;
+        b=oZzfGvFsk3XFPi7NMInD6uRvTcqOWhtIoS2C/e9/orIO7b76zlsd3qWIiOcuw0QPIS
+         aS+qNP4ruhc5ATKdVXbuimW0VvO4V55w/fZRG4zm5+QVBjgwv1ii3AWoh7zkxE22rj8N
+         PdkBumJ/0QMUwYaumUk7lm1LTNKmhzFHa10AwYnt27ugytjgG0pBpcOr2Fh5ntp0in4Z
+         fyqhd+jzJqI8lESSZHK/Rmo/Z1qyCbf59xBVyTw7kbZbVXK2wt0dB+mRii/TIQmpKOS3
+         MUHJGpHLibyc1ToxVWkSUYRGGlZnMIsxQOLX3PfYIwtFSroi3uXDL/2V9U+MaC48PWh+
+         iKkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726836607; x=1727441407;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BRXulz5VMdOActwNuWRT+AsW1pBw6lAA7iZwsxIHYO0=;
+        b=h06wqtrd4tw1pRaAfXGiJxHK+C5hBfjjjf2F24TcIlGZ54w8Lk/Y+LaY7oe4d9OqYo
+         IFssXdW/J76k7Acy1UNcIs0U68B3+BZBmBEz3xVs03qPv3OcAkkcGkVoCkwbSk4S9DaL
+         6n6b9xc2WZ5qWmJAoHVoWNgpYEYv16MnBkXDClNpAm0maz5LFZmjFSbQ+Pj+NdsI7hlw
+         keU+3kjcxpdNZa9FtwnElRcMmVy6gYeH7+WA+eynBRlO/bM4y2eyBjNFaTdKvngan/yj
+         gzhV74cANpUXc3g6XXMVXA3/dPWfuw5jrnjkYIzJsWwi62pdazP5ci3Uy4c9ZxwzVq6I
+         2X/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVSk55/1sxVbvn3T2w3fBZkggPsd1vVxlFsXMhEW5Ebj/v9VAn4/tujoYyv92VO/otAydJL2jgSQWjnGq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLrHuoT03nWqeWqojXwaDRikb8kWjTykLCbeJ3gm94D6qucLnZ
+	8cx6FD1jLqv48ZOXGx/VBMGk9HFyTQAbrA9YDdlGnZ+mMv8g7bMS7Wt38cz8hv8=
+X-Google-Smtp-Source: AGHT+IGLI5JfAevbKAytrlds8J1QIXfY6Ge4HV9Rl/H/KbAR0IgFYHFmb2dXYfkU7QHPZn2hH+C85w==
+X-Received: by 2002:a17:907:782:b0:a8d:2ab2:c9b1 with SMTP id a640c23a62f3a-a90d512261amr243385366b.56.1726836607080;
+        Fri, 20 Sep 2024 05:50:07 -0700 (PDT)
+Received: from ziepe.ca ([83.68.141.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f4400sm845161466b.84.2024.09.20.05.50.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 05:50:06 -0700 (PDT)
+Received: from jgg by jggl with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1srd5J-00018q-Fy;
+	Fri, 20 Sep 2024 09:50:05 -0300
+Date: Fri, 20 Sep 2024 09:50:05 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: Chen Ni <nichen@iscas.ac.cn>, will@kernel.org, robin.murphy@arm.com,
+	joro@8bytes.org, nicolinc@nvidia.com, mshavit@google.com,
+	smostafa@google.com, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu/arm-smmu-v3: Convert comma to semicolon
+Message-ID: <Zu1vfRGrBTfEAivT@ziepe.ca>
+References: <20240919035356.2798911-1-nichen@iscas.ac.cn>
+ <7a532573-9e59-41c6-bf57-f50cad502e57@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,47 +88,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <7a532573-9e59-41c6-bf57-f50cad502e57@linux.intel.com>
 
-This is like container_of() but it has an assert to ensure that it's
-using the first struct member.
+On Thu, Sep 19, 2024 at 12:45:18PM +0800, Baolu Lu wrote:
+> On 9/19/24 11:53 AM, Chen Ni wrote:
+> > Replace comma between expressions with semicolons.
+> > 
+> > Using a ',' in place of a ';' can have unintended side effects.
+> > Although that is not the case here, it is seems best to use ';'
+> > unless ',' is intended.
+> > 
+> > Found by inspection.
+> > No functional change intended.
+> > Compile tested only.
+> > 
+> > Signed-off-by: Chen Ni<nichen@iscas.ac.cn>
+> > ---
+> >   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> A typo in commit e3b1be2e73dbe ("iommu/arm-smmu-v3: Reorganize struct
+> arm_smmu_ctx_desc_cfg").
+> 
+> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-Co-developed-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- include/linux/container_of.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Yes should have a fixes line, plese include and resend it..
 
-diff --git a/include/linux/container_of.h b/include/linux/container_of.h
-index 713890c867be..928c5865c1b4 100644
---- a/include/linux/container_of.h
-+++ b/include/linux/container_of.h
-@@ -22,6 +22,24 @@
- 		      "pointer type mismatch in container_of()");	\
- 	((type *)(__mptr - offsetof(type, member))); })
- 
-+/**
-+ * container_first - cast first member of a structure out to the containing
-+ *		     structure
-+ * @ptr:	     the pointer to the member.
-+ * @type:	     the type of the container struct this is embedded in.
-+ * @member:	     the name of the member within the struct.
-+ *
-+ * WARNING: any const qualifier of @ptr is lost.
-+ */
-+#define container_first(ptr, type, member) ({				\
-+	void *__mptr = (void *)(ptr);                                   \
-+	static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
-+		      __same_type(*(ptr), void),                        \
-+		      "pointer type mismatch in container_of()");       \
-+	static_assert(offsetof(type, member) == 0, "not first member");	\
-+	((type *)(__mptr - offsetof(type, member))); })
-+
-+
- /**
-  * container_of_const - cast a member of a structure out to the containing
-  *			structure and preserve the const-ness of the pointer
--- 
-2.34.1
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
+Jason
 
