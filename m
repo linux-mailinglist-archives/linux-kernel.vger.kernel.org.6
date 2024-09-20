@@ -1,67 +1,64 @@
-Return-Path: <linux-kernel+bounces-334128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 431F097D2E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:39:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 188DB97D2E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:40:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC5F21F2501D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:39:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C941F259FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9859512EBEA;
-	Fri, 20 Sep 2024 08:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFD61369B6;
+	Fri, 20 Sep 2024 08:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="KFAIcEyz"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FBD2209D;
-	Fri, 20 Sep 2024 08:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RivngTb6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D4712EBEA;
+	Fri, 20 Sep 2024 08:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726821581; cv=none; b=LaROp3EcN4fq+yUlvthI/UU9QkD2GYpNFxW02aQ+9J6ABYfX6EeieupAF5xjf4vhQLnnSUHYz16Ty+Lq+FwV6cNQg2XGQLc7uQ7XyglGsFkphwBYnnA/+3XcKF8pPWKZNxaLnRvOR2pT5dZYYVBH6HAX2stvESdupIQNlnDr3AA=
+	t=1726821617; cv=none; b=olJI+ouE7nNJ4xJ2fgk63RyQTP5et1JUZRqIkEHoYiOTV+yK4O8rbPp22nCp3RF8UJj0a+/TmC35Vw4ptJHNK8rZQqm6Epzj9y6XLbGcCAhFWFJ2h5BOx1D0wVTZa+4NH3S++25Oi/Vi5VvHZCSPSbMxdtJNvtipc5mQy2jM8NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726821581; c=relaxed/simple;
-	bh=qSFC0CPXsAs0/QR/Ub6gPzLAUS0VertXsdiCQtyDBXM=;
+	s=arc-20240116; t=1726821617; c=relaxed/simple;
+	bh=T6eEFVRQyoo07Wn65ust8kGnoZmk5hgOcPaHEAsIAro=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VtvyS9Ub8+QcntiZyTLoTvhUQMeiNwgZtZatzRAl5sjEbaIOGT9daUPsDCOQvVnnmkJMmDYm8z2NAzLOiXiCwUDtw8ItZMFuMpVcGjll4AgG6ftqImNoxgP6TytQ8KoNUsiNn+I7B6dHelIi3TgdW4Oh8+PoSGvbra29gGU5Zkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=KFAIcEyz; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id 6CD9020C0B12; Fri, 20 Sep 2024 01:39:33 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6CD9020C0B12
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1726821573;
-	bh=y9iGzqI1llZBex/f3DgwQ0iyDZreXOsN5uFJeLWLC0k=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=lh9fUhy4Ifs2zQDAX2e1hC0Ljd57LfW4FFhy0uo7ZoEfG53xSJWDiOA9n7H7pqgD0Eu5EbMQNVGycLJQWpCkyBOZ8d/WCuyxnAEpJv7cnJmc0FfOgUyL8z3trR72/e8beImuqYaZ1B1IGfCvdL6hGe4tvpY2clQGf6pK8FPVwVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RivngTb6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B680FC4CEC3;
+	Fri, 20 Sep 2024 08:40:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726821616;
+	bh=T6eEFVRQyoo07Wn65ust8kGnoZmk5hgOcPaHEAsIAro=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KFAIcEyzo3N44wnyUjHX+yIfCxoZ1f7IibIH4VM1q7HchqKc+rvjqtldgg1EMPqoq
-	 XyQSIijTzQDrLGMFPrvgN5Qn6S5A3m0bgeZXbtEszQXcQGS4FY1Xu75D3S4Z6G+sOj
-	 vIyMyOKk+656L1YCg7aggu7p7T9BS/aLgtM6okP4=
-Date: Fri, 20 Sep 2024 01:39:33 -0700
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: Simon Horman <horms@kernel.org>
-Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Long Li <longli@microsoft.com>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	Erick Archer <erick.archer@outlook.com>,
-	Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: Re: [PATCH net-next] net: mana: Increase the
- DEF_RX_BUFFERS_PER_QUEUE to 1024
-Message-ID: <20240920083933.GA15696@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1726376184-14874-1-git-send-email-shradhagupta@linux.microsoft.com>
- <20240915180835.GA167971@kernel.org>
+	b=RivngTb6Y2tJZX2EcEVdvwZQjnyjsIOsb0U0ekD1XiAs/JuCA1XOwRDGbiMpX7HO0
+	 KtpPrn3yL1Cmr8hVUl2QJqDbg9VkFlB95ie0Id5dyVOq8x9JH2FaL+zDm28XA/pwnP
+	 BKE2QWAQ8q3fYnQ6kkRVjR1YhU9aD40erxUGYBnatZUTBsgMdovSaTb326mpJ0uQNR
+	 G4yJ7cNfOwUkfyqxSDaWELVDadb+8cMCWn/b7JjsAxF2w8TEd28Ia+4F12HvT9AMi6
+	 lO8xw8n1bqtv/XrP3AjM/Qs7JnXxfsBmOXkxIa5Pjy/I7Ta6+JhHf0XRyKmBOUTAwM
+	 /lpcRWu0m/F6g==
+Received: from johan by theta with local (Exim 4.98)
+	(envelope-from <johan@kernel.org>)
+	id 1srZBV-000000001PK-0Nj4;
+	Fri, 20 Sep 2024 10:40:13 +0200
+Date: Fri, 20 Sep 2024 10:40:13 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] phy: qcom: edp: Add runtime PM support
+Message-ID: <Zu007YUYie7bEQvj@hovoldconsulting.com>
+References: <20240907-phy-qcom-edp-enable-runtime-pm-v1-1-8b9ee4210e1e@linaro.org>
+ <ZuqmB3Cn7mGfA2PU@hovoldconsulting.com>
+ <ZurRLf8S1j6s8GPz@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,49 +67,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240915180835.GA167971@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <ZurRLf8S1j6s8GPz@linaro.org>
 
-On Sun, Sep 15, 2024 at 07:08:35PM +0100, Simon Horman wrote:
-> On Sat, Sep 14, 2024 at 09:56:24PM -0700, Shradha Gupta wrote:
-> > Through some experiments, we found out that increasing the default
-> > RX buffers count from 512 to 1024, gives slightly better throughput
-> > and significantly reduces the no_wqe_rx errs on the receiver side.
-> > Along with these, other parameters like cpu usage, retrans seg etc
-> > also show some improvement with 1024 value.
+On Wed, Sep 18, 2024 at 04:10:05PM +0300, Abel Vesa wrote:
+> On 24-09-18 12:05:59, Johan Hovold wrote:
+> > On Sat, Sep 07, 2024 at 06:25:21PM +0300, Abel Vesa wrote:
+> > > Enable runtime PM support by adding proper ops which will handle the
+ 
+> > > clocks and regulators. These resources will now be handled on power_on and
+> > > power_off instead of init and exit PHY ops.
 > > 
-> > Following are some snippets from the experiments
-> > 
-> > ntttcp tests with 512 Rx buffers
-> > ---------------------------------------
-> > connections|  throughput|  no_wqe errs|
-> > ---------------------------------------
-> > 1          |  40.93Gbps | 123,211     |
-> > 16         | 180.15Gbps | 190,120
-> > 128        | 180.20Gbps | 173,508     |
-> > 256        | 180.27Gbps | 189,884     |
-> > 
-> > ntttcp tests with 1024 Rx buffers
-> > ---------------------------------------
-> > connections|  throughput|  no_wqe errs|
-> > ---------------------------------------
-> > 1          |  44.22Gbps | 19,864      |
-> > 16         | 180.19Gbps | 4,430       |
-> > 128        | 180.21Gbps | 2,560       |
-> > 256        | 180.29Gbps | 1,529       |
-> > 
-> > So, increasing the default RX buffers per queue count to 1024
-> > 
-> > Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-> > Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> > No, this is simply a false claim and indicates that you haven't reviewed
+> > how PHY runtime PM works. Core will increment the usage count on init()
+> > and decrement it on exit().
 > 
-> Hi Shradha,
-> 
-> net-next is currently closed other than for bug fixes.
-> Please consider reposting once it re-opens, after v6.12-rc1
-> has been released.
-Noted, thanks Simon
-> 
-> -- 
-> pw-bot: defer
+> Yeah, I guess the better argument here would be that the PHY needs
+> regulators and clocks enabled
+
+No, that's already handled today so is clearly not a valid argument.
+
+> Anyway, ignore this version as it was already NACKed by Dmitry.
+
+No, my feedback is still valid, and you're bound to repeat the same
+mistakes over and over again unless you try to understand what I've been
+saying here.
+
+> > > Also enable these resources on
+> > > probe in order to balance out the disabling that is happening right after.
+> > > Prevent runtime PM from being ON by default as well.
+> > 
+> > And here you just regressed all current systems that do not have udev
+> > rules to enable runtime PM, and which will now be stuck with these
+> > resources always-on (e.g. during DPMS off and system suspend).
+> > 
+> > In fact, you are even regressing systems that would enable runtime PM,
+> > as the runtime suspend callback would not currently be called when you
+> > enter system suspend so the regulators and clocks will be left on.
+> > 
+> > This clearly hasn't been tested and analysed properly.
+
+Johan
 
