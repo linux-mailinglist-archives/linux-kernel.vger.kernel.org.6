@@ -1,110 +1,135 @@
-Return-Path: <linux-kernel+bounces-334229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A1B97D43E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:34:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAA4C97D445
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7547E1C218CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:34:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BD4DB2246B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EC613C9D4;
-	Fri, 20 Sep 2024 10:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8367513D250;
+	Fri, 20 Sep 2024 10:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TQoRwwb9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OUpivb/w"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA95718EB1;
-	Fri, 20 Sep 2024 10:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9320013AD33;
+	Fri, 20 Sep 2024 10:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726828472; cv=none; b=HW5asUTpWd2h2EbHJT5AQI0SWg8gj0KXdFYKkTBgTt2xnnqzxMKF1jSTu4Y8a828SFa5Xipg1htxA3nnxb0Ka/wf3Vk20elCKuw6y+SUULHo3ez86SkfOTQnupXH8FiqxKzDSz2I6MKBKcfX/GUnqY3w+f7vmsWsA5URzYHF3IE=
+	t=1726828697; cv=none; b=kw8nJv6t3Nm7fkjtWu+coTDh12yAFRDxw59CEjzxBgINHffxXPS575/eZYmt6GS0fT1wubVcKbXmYPSVbqIJDxcOy9SA4l+klseY+V2+8u3kU5ml8VrmYmkTEHbcAkFVB5FJZgfxRr0O+w/yTpOTiIO88TRj57Z3kZMHTq4xOBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726828472; c=relaxed/simple;
-	bh=msSfy8aQxcSX26ff0qYOjmm4QfMt+q0fn7mxSUrE3ns=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=R+6+Tx7x3TnGGA62ujGpZ757fRDsA0gj5U5vce29Q1ZzRB0OuFJDakBgTcKip2AjdFG8U/TXnnF3hf1IAwC1DSztgXLVXZd1EaJZtxVPNwbeyMdDqEbvVkAmP5Q3aP8+NaNR36r8TLW1yhRSo2NqkdKFUlR7dA2kuTONdAfxpnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TQoRwwb9; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726828471; x=1758364471;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=msSfy8aQxcSX26ff0qYOjmm4QfMt+q0fn7mxSUrE3ns=;
-  b=TQoRwwb9qZe0bUxFEJcq7ue7S7zjE268G6wul6NZttgMRNEOn4EreAlY
-   VCTFInJ+tO9iMIVcvVz5tQFCEuD6lbINZWGZMSG08u3oiefsv2cadRXVl
-   OyCvq35cKa6SwpPTxYKho6QJEJLvKYOCib1ySlIzLjXvC147DElLZWXFS
-   TP0Yt6NtVeUre5k7yXny+btuvP7Wn3gCpztYlEKG7ZtgStvk1j24v8Nys
-   Pb8/Rmy3+lk+8aH/Uhw58myH/dIeOqxZopNnlO0pC3Fhp48ZqIEZiTR1m
-   hlIh6Sn/lUCvkC6swuG9n+XP0+F53SrkPVDFE5ZRJsz9dCD7l6ptfZuHP
-   w==;
-X-CSE-ConnectionGUID: miWVqdASSjKrq2hq39lKBw==
-X-CSE-MsgGUID: bRJMoSTAQee7jUJig6Peog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="28726201"
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="28726201"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 03:34:30 -0700
-X-CSE-ConnectionGUID: WR/wBH1KRYizccCaLE0iqA==
-X-CSE-MsgGUID: +qTSfa17TM6Vzn5BmgDN0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="100994983"
-Received: from mlehtone-mobl.ger.corp.intel.com (HELO localhost) ([10.245.245.47])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 03:34:27 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 20 Sep 2024 13:34:23 +0300 (EEST)
-To: WangYuli <wangyuli@uniontech.com>
-cc: david.e.box@linux.intel.com, Hans de Goede <hdegoede@redhat.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    tzimmermann@suse.de, lee.jones@linaro.org, lee@kernel.org, 
-    guanwentao@uniontech.com, zhanjun@uniontech.com
-Subject: Re: [PATCH] platform/x86/intel/pmt: Correct the typo
- 'ACCCESS_LOCAL'
-In-Reply-To: <781C12799421D366+20240920031620.1211752-1-wangyuli@uniontech.com>
-Message-ID: <26b8f38f-ff32-81fb-bbe5-aa141239427e@linux.intel.com>
-References: <781C12799421D366+20240920031620.1211752-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1726828697; c=relaxed/simple;
+	bh=8i1Rxs9MnTmHKMKgDdgTC6ulzhSZH1r5exhnwHWEqUg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WCxyC8DsU3m69hkA1cPtWRLCA7zBZnZ1Dh3y2Mj75WyELVVE8/dFgjbrjs+dcAGrfEBLY5oe2nmq/tF/WRTb2G4fI11fG9EsbaqdWbiOHQCoLN564XVBZKKOG+47F98ovcqf1M18ujMghGW9s27XdOqvy90IzBrLoZUOV/AZ414=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OUpivb/w; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48KAc1x5032225;
+	Fri, 20 Sep 2024 05:38:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1726828681;
+	bh=NqYwpS9NyJoR+caapWvLtulQ3v9DdbaKReZdZFv4B14=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=OUpivb/wr+ukIVRF5SEe8QdypaiKpPrJtWfgIcLNJfrFFBJldzP3YQr0F0ZJKBxzW
+	 OA3/S54a6Yqk5o4pskBONIjhLwXzZO+GK+l0OIP1s9j2Ex0cz8GpYSzyGejKlX1AmS
+	 1Cp7mSdQk737UAjvbUlUUCb0K26+qddJOV2TU2iE=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48KAc1UY049239
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 20 Sep 2024 05:38:01 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 20
+ Sep 2024 05:38:00 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 20 Sep 2024 05:38:00 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.226])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48KAbxP2071575;
+	Fri, 20 Sep 2024 05:38:00 -0500
+Date: Fri, 20 Sep 2024 16:07:59 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Andrew Davis <afd@ti.com>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J
+ . Wysocki" <rafael@kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH V4 5/6] arm64: dts: ti: k3-am62: use opp_efuse_table for
+ opp-table syscon
+Message-ID: <20240920103759.vypnmro6imsn52ge@lcpd911>
+References: <20240919082809.174589-1-d-gole@ti.com>
+ <20240919082809.174589-6-d-gole@ti.com>
+ <5a54f481-efaa-4719-ac38-b328a6c67762@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <5a54f481-efaa-4719-ac38-b328a6c67762@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, 20 Sep 2024, WangYuli wrote:
-
-> There is a spelling mistake of 'ACCCESS_LOCAL' which should be
-> instead of 'ACCESS_LOCAL'.
-
-"instead of ACCESS_LOCAL" means opposite of what you intended. I'd just 
-drop "instead of".
- 
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> ---
->  drivers/platform/x86/intel/pmt/class.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Sep 19, 2024 at 11:40:31 -0500, Andrew Davis wrote:
+> On 9/19/24 3:28 AM, Dhruva Gole wrote:
+> > Add another entry in the wkup_conf for the syscon node, and then use
+> > that for the syscon in opp-table.
+> > 
+> > Marking entire wkup_conf as "syscon", "simple-mfd" is wrong and needs to
+> > be addressed similar to how other child-nodes in wkup_conf are implemented
+> > in the same file.
+> > 
+> > Signed-off-by: Dhruva Gole <d-gole@ti.com>
+> > ---
+> > 
+> > **DEPENDS ON:** PATCH 6/6: cpufreq: ti-cpufreq: Update the efuse/rev offsets
+> > 
+> > Link to v1: https://lore.kernel.org/all/20240902093222.2828345-2-d-gole@ti.com/
+> > No changes, just combined it as part of Bryan's AM62A and AM62P series
+> > and sending it all together.
+> > 
+> > ---
+> >   arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi | 7 ++++++-
+> >   arch/arm64/boot/dts/ti/k3-am625.dtsi       | 2 +-
+> >   2 files changed, 7 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
+> > index e0afafd532a5..b2b65e31c7cf 100644
+> > --- a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
+> > +++ b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
+> > @@ -10,7 +10,7 @@
+> >   &cbass_wakeup {
+> >   	wkup_conf: syscon@43000000 {
+> >   		bootph-all;
+> > -		compatible = "syscon", "simple-mfd";
+> > +		compatible = "simple-bus";
 > 
-> diff --git a/drivers/platform/x86/intel/pmt/class.c b/drivers/platform/x86/intel/pmt/class.c
-> index c04bb7f97a4d..7680474c4f96 100644
-> --- a/drivers/platform/x86/intel/pmt/class.c
-> +++ b/drivers/platform/x86/intel/pmt/class.c
-> @@ -207,7 +207,7 @@ static int intel_pmt_populate_entry(struct intel_pmt_entry *entry,
->  		/*
->  		 * Some hardware use a different calculation for the base address
->  		 * when access_type == ACCESS_LOCAL. On the these systems
-> -		 * ACCCESS_LOCAL refers to an address in the same BAR as the
-> +		 * ACCESS_LOCAL refers to an address in the same BAR as the
+> This can be done in a separate patch after this one. You'll also
+> want to change the syscon@43000000 to bus@43000000, and drop the
+> "reg = <>;" line at the same time.
+> 
+> Andrew
+> 
 
-The change is fine.
+Sure Andrew, thanks for pointing this out. I will do this in a separate
+patch.
 
 -- 
- i.
-
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
