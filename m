@@ -1,112 +1,127 @@
-Return-Path: <linux-kernel+bounces-334013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 501C597D162
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:58:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5616997D165
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F061A1F25D98
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:58:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0872B23386
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB3C43AAE;
-	Fri, 20 Sep 2024 06:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EzddszIU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD0A45948;
+	Fri, 20 Sep 2024 06:58:17 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5190B22F1C
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 06:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0682055887;
+	Fri, 20 Sep 2024 06:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726815473; cv=none; b=bxSJN+YjiMqAjKR+gWnE7hmy5OWf6tU64dsKnyvplEG0m1WB/ToHFCvYqzymGD4VjUV1J9J4GWh438bY85yyBRM6P6NwcQcY5vJChbYK25YMDmUR2tcC2Y1Qh5U1hCT8pJkT1h/njaFHsUoGmbxozR+qbGICH6iJMBeBOwfH7q0=
+	t=1726815496; cv=none; b=EM2mjGKNRgXNv/s/yQrT3ChrOkuNosD2MsdLusJFzx45zWsvris7bpb0TxUactlJjPGrgOTpCaQvk6OShK84YzS5/ZLexhTB04PxihZXn2g2K6gXvaRpPRapOTKf0OYEzsZkhcgYiSTqnNWHIeGqepOVwhXkZzf12h2uXf+q2/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726815473; c=relaxed/simple;
-	bh=/3zJTUKcPcY1qJQvysJac6KKiduAoMFXjdnYlQaWmLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HVIqGN/jKPE0pgUg9FERzFvF5cIhGQGVww1+JsXxTPBiPPYofncwQZkxSX1rIc5RSZj920VwCb2O8yQb4djJin7WsyZZ0PW+p0vJogos22k8lzNQlmoKc8JnVh67S64IkIUJyBjQjUnjRd80uB1pBV4dU1U79alHjeRixD5tQbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EzddszIU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726815468;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q+6mbG9HFMsitEGSceaE//8ueiFi32tZoHOiay2lvLg=;
-	b=EzddszIUUuGeyGPAyAl0srr7V0P+kZI2ZoY22ecayVx6c+Bph9PEoP6UwchnaR6y6SaopI
-	SzErNYf6o2uubmPf1q3BMB2ZqS9ZqmOiDxsPWlJrWiG7z9BSvuE/LzmFL/vxjByak/7DiM
-	ustfG9ovP25WlmED08EtpWH5w6zI0Xc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-102-0tpmOPtIMrqS7utymy6Trg-1; Fri,
- 20 Sep 2024 02:57:44 -0400
-X-MC-Unique: 0tpmOPtIMrqS7utymy6Trg-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3B52D192DE05;
-	Fri, 20 Sep 2024 06:57:42 +0000 (UTC)
-Received: from [10.45.224.224] (unknown [10.45.224.224])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A824D1956088;
-	Fri, 20 Sep 2024 06:57:36 +0000 (UTC)
-Message-ID: <0402bea4-bb0a-4d67-9ae2-f534a6076861@redhat.com>
-Date: Fri, 20 Sep 2024 02:57:34 -0400
+	s=arc-20240116; t=1726815496; c=relaxed/simple;
+	bh=IIvsMXaLeg0qRAVTfpic+BSoaYnupJy0Fsa5vsxOLe0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=CPq1HwXUR7Wz4EZRmm1JLQzgRQI8l5Wryjkn1kHnHP0zdsRTIEVz1/TlnO60GOMTolDV5o/Tec/xwHIQGu0J2qUQX11Hgxk0obmdEVGKscIeZfoy68PlVxlAu6G9Xl8/N5ZCz4VsKPySENgqUkhXWhU4sYTMgEPmJrfOK0U/r8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4X939s4KSrz4f3kw0;
+	Fri, 20 Sep 2024 14:57:53 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 498711A08DC;
+	Fri, 20 Sep 2024 14:58:10 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCn28cAHe1ma5lVBw--.14598S3;
+	Fri, 20 Sep 2024 14:58:10 +0800 (CST)
+Subject: Re: [PATCH RFC 5/6] md/raid1: Handle bio_split() errors
+To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, hch@lst.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, martin.petersen@oracle.com,
+ "yukuai (C)" <yukuai3@huawei.com>,
+ "yangerkun@huawei.com" <yangerkun@huawei.com>
+References: <20240919092302.3094725-1-john.g.garry@oracle.com>
+ <20240919092302.3094725-6-john.g.garry@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <bc4c414c-a7aa-358b-71c1-598af05f005f@huaweicloud.com>
+Date: Fri, 20 Sep 2024 14:58:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] x86/entry_64: Add a separate unmitigated
- entry/exit path
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Kaplan <David.Kaplan@amd.com>,
- Daniel Sneddon <daniel.sneddon@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-References: <20240919-selective-mitigation-v1-0-1846cf41895e@linux.intel.com>
- <20240919-selective-mitigation-v1-1-1846cf41895e@linux.intel.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240919-selective-mitigation-v1-1-1846cf41895e@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <20240919092302.3094725-6-john.g.garry@oracle.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCn28cAHe1ma5lVBw--.14598S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cw13Jr45KryUJF13Aw1fJFb_yoW8JFWrpr
+	4UWa4avrW5JFW7KwsxJay29F95ZF10qFyUArWxuw4kArnFqa9rKa1UXr18W3s8ury7G34U
+	Awn5Ganxu3ZFyFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsU
+	UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+Hi,
 
-On 9/19/24 17:52, Pawan Gupta wrote:
-> CPU mitigations are deployed system-wide, but usually not all of the
-> userspace is malicious. Yet, they suffer from the performance impact
-> of the mitigations. This all or nothing approach is due to lack of a
-> way for kernel to know which userspace can be trusted and which cannot.
->
-> For scenarios where an admin can decide which processes to trust, an
-> interface to tell the kernel to possibly skip the mitigation would be
-> useful.
->
-> In preparation for kernel to be able to selectively apply mitigation
-> per-process add a separate kernel entry/exit path that skips the
-> mitigations.
->
-> Originally-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+ÔÚ 2024/09/19 17:23, John Garry Ð´µÀ:
+> Add proper bio_split() error handling. For any error, call
+> raid_end_bio_io() and return;
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>   drivers/md/raid1.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index 6c9d24203f39..c561e2d185e2 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -1383,6 +1383,10 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
+>   	if (max_sectors < bio_sectors(bio)) {
+>   		struct bio *split = bio_split(bio, max_sectors,
+>   					      gfp, &conf->bio_split);
+> +		if (IS_ERR(split)) {
+> +			raid_end_bio_io(r1_bio);
+> +			return;
+> +		}
 
-For the current patch, not all x86 CPU vulnerability mitigations can be 
-disabled. Maybe we should list the subset of mitigations that can be 
-disabled.
+This way, BLK_STS_IOERR will always be returned, perhaps what you want
+is to return the error code from bio_split()?
 
-Cheers,
-Longman
+Thanks,
+Kuai
+
+>   		bio_chain(split, bio);
+>   		submit_bio_noacct(bio);
+>   		bio = split;
+> @@ -1576,6 +1580,10 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
+>   	if (max_sectors < bio_sectors(bio)) {
+>   		struct bio *split = bio_split(bio, max_sectors,
+>   					      GFP_NOIO, &conf->bio_split);
+> +		if (IS_ERR(split)) {
+> +			raid_end_bio_io(r1_bio);
+> +			return;
+> +		}
+>   		bio_chain(split, bio);
+>   		submit_bio_noacct(bio);
+>   		bio = split;
+> 
 
 
