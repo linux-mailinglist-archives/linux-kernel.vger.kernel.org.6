@@ -1,195 +1,245 @@
-Return-Path: <linux-kernel+bounces-334049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F22B97D1FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:48:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8A0997D20A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28E48283E35
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:48:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72E261F21C69
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFC4558BB;
-	Fri, 20 Sep 2024 07:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0F1558BC;
+	Fri, 20 Sep 2024 07:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KYGodaCf"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sk1UThW+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38041C69D;
-	Fri, 20 Sep 2024 07:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726818479; cv=none; b=jyW7Qg+QSs0ieBZNANZUEC7DrtWGJZQXMhO632aqlmynbYm+faTtj3+Op+Ly8/W/VQ6AqmtLfrhl4OFcDy+SqSCkQl3ohXeDv2AgSDs2lMwDARz4Q0Czuv6Tp6fZrMnnmjZJhrNoKdF9CONb4yY8esN28v+4fiJm+pZH7Cl6HX0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726818479; c=relaxed/simple;
-	bh=CLcNs5kqxdJgt6qP0MB0cAqrax1hjoWqC8oMfdnbPjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SS5vj8qNXX7C3d0fw4knuChV3wh2erOzbCaHSFFKW8ZQDmQ1F6EL4DdeoH2oqnBFHS6YMohWrprQ50d1+J1sYpu9QmdWovtJbpCutLtWLtGdGw3Gf6CgJDkrrmhoGBQRSKmbua1wg8qefvpmMWJfi65CcPVq5ekc0JsrpKlHWUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KYGodaCf; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6971720d-3639-4a80-a17b-48489bfadb0a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726818473;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uC/xou3pHrirAtgbyCjJ2O1AHcinEj0qAI+WR7A8lTc=;
-	b=KYGodaCffMFwqwLEfA4IqIH3uk/AnNk6I2VQtOvd++oA2wUT3KPdcVbDa6mY4Qk/lPSzJC
-	86DpiFjAfgoyIdJK0xIV2AEBLy3SGxJ8xBeFl6vjg+wCUCMomZv1TZmO95cOIuyhWL33YP
-	x3S890mP2ZKOQQfmFYc5+Nq2htVhZS0=
-Date: Fri, 20 Sep 2024 15:47:19 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F2D17C9E;
+	Fri, 20 Sep 2024 07:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726818673; cv=fail; b=lP7K4Q9dwHKs+ACa6uyeMGJ+J7ougrVM3/HQj9c/nLq1JcW1lzb2HjZj7xYWSy9qlsmESKo16HZvpxBQEoWkJGwJjU54EpxhyO4ryvsHAd63fcGJgxFpb2PHPo6wChd1ja1SaXtN2BTBo4p0vQApgy+/WXY+9Ota1St700jhnok=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726818673; c=relaxed/simple;
+	bh=01tPPmaXX2tGNwZ6VPi5fts5lJ0OiHZe7P1WqIidleY=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=tOFF6AYfOv4MsYy1HbvMSJNSpMbsXMf6x4BYu6BnZc0zVTff6prb/8sltfyW91KgvY5sUFYqRYpL9KjFtE2fCj6WD8RWZ/8WN9UpP66NoWgZRg7MexMX4v2d2jjQNdy1HZ1TYquDN2GHJVy6T0aIVgTOCCrIQDioC+mvKGl3ecs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sk1UThW+; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726818672; x=1758354672;
+  h=date:from:to:cc:subject:message-id:
+   content-transfer-encoding:mime-version;
+  bh=01tPPmaXX2tGNwZ6VPi5fts5lJ0OiHZe7P1WqIidleY=;
+  b=Sk1UThW+Tx13kVzASPHTfQNdXqwHnHBqfjXjdj2cdca58WAQXg5g89rb
+   YlfTlfPo8l64azpKX8MhuU50XCvhK73MGDQPX8NtO3t33t1jlQ5+vv2gq
+   SBsBmepzAV51fEus5kUiR2F8SWNNdYHJwKs4B7bNK86o5KLObDFVPR06f
+   fg6RI+CZXD/0CwOVrEz7UC5uxeX6TOEynEaS8jcW2waXgtFSQqKbu3p09
+   ph2kQVeykuE9Sbom9vyU5e//aSLq5Gavp4Hj337oFBwtfjKwzafioLr71
+   SHJ9PS0BoA5ccM4AN2vIaqNvK2VOgAIoO3MNenhfyx8i6Zm93mgspGsey
+   Q==;
+X-CSE-ConnectionGUID: sB8LMJ0NSkSx28yWAO+N+w==
+X-CSE-MsgGUID: wdrC1oO9SHykOUbt8X+ifw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="48346084"
+X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
+   d="scan'208";a="48346084"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 00:51:11 -0700
+X-CSE-ConnectionGUID: /PLS8wOhQ0SlBEVUbz6Xtw==
+X-CSE-MsgGUID: IZZO/aHlTcyiveDHDv07Ug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
+   d="scan'208";a="107676288"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Sep 2024 00:51:12 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 20 Sep 2024 00:51:11 -0700
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 20 Sep 2024 00:51:10 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 20 Sep 2024 00:51:10 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.175)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 20 Sep 2024 00:51:10 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TKjEvjOxx5wZ5Ie2+2j8xA/xa6/TKzvrBpOF8EOsA1rGREaCQcx2GcVm4l+XyGeJnsUxfpE5vRxG5Qo7xHW7yH598o9IQSAj9oloaa37H6OMdxAHL9WQCvQK9UsEXobHWWWTyAUkAN4HjSsJROGSwFMdI7qfkpAHL0/AXmLHYMFM46h0/1BAcRN3KyOkO3JnHfyar8Z92c5GS+CEZF0gd4dlxnrOcTohcvw2uGOkXMm0nwW59+KKFVTz24D7Gl2nC3wc+IA9kVVEHG1s1nBaVLDf89WzoFZF5pRsMDzmPs57oTh4VITbEVBMG9sBIwSV+Umkqub9T7WYbifDC8G4WQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FBcOcX48UiA/A/MIHr1CQmLs6R1D7d0FQBqUn8ofPG4=;
+ b=n5ZTSwkgNQlqBk6bXJnjkwJzprJF4wfMdgz8RhTX/Uatrlzk5Y6qZC3TZvWf39c7a0hYQqIsOVV5IgI2lTLB8x22fG9UaiVGoJ52G/F0CijRZZntXpukLiHOpKKQEbLl7ccWMO3/kQMHgz6+Sz4EJ+DYl0YScKkf5DXwjaiBjUFsUsWeUz3Ddvl48icJkHozw69EkWjFveNwLe85v+MaVCIsnmOzQMSXgWCCdU9QXWgrStBlxRsQRz8fSNb2xCHQfnSts8/xR7E7r4+0+k2sHBvxS7GkP2OqMCi7qT+2u+dHQFbVhZQupK4GmkTYxgEX7sX/oaqILziqYBwjpOUSbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by MW5PR11MB5931.namprd11.prod.outlook.com (2603:10b6:303:198::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.22; Fri, 20 Sep
+ 2024 07:51:08 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.7982.018; Fri, 20 Sep 2024
+ 07:51:08 +0000
+Date: Fri, 20 Sep 2024 15:50:57 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Kan Liang <kan.liang@linux.intel.com>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Li Huafei <lihuafei1@huawei.com>,
+	<linux-perf-users@vger.kernel.org>, <oliver.sang@intel.com>
+Subject: [linus:master] [perf/x86/intel]  25dfc9e357:
+ kvm-unit-tests-qemu.pmu.fail
+Message-ID: <202409201525.4877023e-oliver.sang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: SI2PR04CA0012.apcprd04.prod.outlook.com
+ (2603:1096:4:197::14) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [MAINLINE 2/2] rds: ib: Add Dynamic Interrupt Moderation to CQs
-To: =?UTF-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- Allison Henderson <allison.henderson@oracle.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, rds-devel@oss.oracle.com
-References: <20240918083552.77531-1-haakon.bugge@oracle.com>
- <20240918083552.77531-3-haakon.bugge@oracle.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20240918083552.77531-3-haakon.bugge@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|MW5PR11MB5931:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8fa9ecf6-d6bf-4653-4aae-08dcd948fccd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?2OK4++MxnayS8mqg4atPiAer5hbOdjQPIg+Yr5MIvEXZ5ODa8o8HqQ+PPYwg?=
+ =?us-ascii?Q?n2cjde3XrpFbiFWdR8wcBS/JQ5klFLzv3UpJfyKo0Z5dw1FfE0/fpbbeu4gg?=
+ =?us-ascii?Q?FTcw9kNh8R5gY6cMf1xdEAG7DjcvgJiqtTO1IHZtae2g5P0BwLELSOZ9ss4+?=
+ =?us-ascii?Q?YApHb0RQilTJoL/+QB9CurrmyXmQMjfghvVFrBrV4+TH3Z2vexy7KgO/uqrY?=
+ =?us-ascii?Q?WLx4W58CDxMJdNkuNz/l6aVWZ7Ug5TuYPF/ihNdhKRxUtOuLmbUmETs/zTcn?=
+ =?us-ascii?Q?JwYLDgBU0WlVv479MyvE81ZygIHKjmbIrM0fXh+/MBmfA3PtAG5SNMXUfQEQ?=
+ =?us-ascii?Q?nE4c7ep928BiJJqX+G2FzZnszjQgm8GtlrgGCnR6gfF/ylWbqtap8lC7rNBb?=
+ =?us-ascii?Q?rZBQ37NzrGiSXpVdpAHP0aZp3zxQ44PDmDfI82qPXW5HZyuXtxZq0PYcoRmI?=
+ =?us-ascii?Q?EWzi/E3CzPCnwy4GrKbXNcge+NWwSK2LIs5lbNbPKf5Mb4sgzvxhDGLluO+O?=
+ =?us-ascii?Q?QsmkOgCSra3D+3pW2IEtD9Ot2bFgiy1+lnGg+GMKPoX1bBxQwQMFGhjpyYpy?=
+ =?us-ascii?Q?EiGNLNicF8Wuii9Ivp0E2AkfGpMK97I7JHXwkhl6ryFtclDgXwU59CNxATjJ?=
+ =?us-ascii?Q?MBJTUdzDJCeqZweD8xFGsoaOp279bmscKGDiLYGff7a4Tyyah6vzNdL/hVm3?=
+ =?us-ascii?Q?zRpKyczeYZCBXzVAfGx4zHFe63TBXJTS09FOFyEZM0gE8bXJ9lUgoozZDeVs?=
+ =?us-ascii?Q?E2iyd1JYUPYXR8AnwsJZiIkoohJ4lFyT6W/4vZxwzcOIgGug3ZtnaFRJdECy?=
+ =?us-ascii?Q?RaJYLttrCoV0GVI2lwgjEJtyC/y20IujfvFZZhJSqH/aWITO642+qbYTgeTP?=
+ =?us-ascii?Q?3vXyg1arbqwh6IWnJfqRY3ZHDIpXvpJjwd6Gooe+rZWYl92OcXJeSncHW/Ea?=
+ =?us-ascii?Q?cDAX+uxc8ut5a2kaJJ0HUfDL5cxuAvO5Xcde+uXoIjvkcII5hcdkt3ueh/CA?=
+ =?us-ascii?Q?+OBTvWhSg15gQy0wHq6wFvqhcISB8kk6qq4CSEhBKse5F6/pFEL9V6mpaQ95?=
+ =?us-ascii?Q?MEWlc/PTm/7V5zhu9dPYvn0j9OwaJbzJKaqtEb8dySpLlGJ0T34zBMcWUQdn?=
+ =?us-ascii?Q?HbLTdlGJfko64mlaT4oIqBYIPlsn1iAyw8pUVm3h1Qdx3NhBLmRIsthbH8cc?=
+ =?us-ascii?Q?s/7CqILrakL3r1DSlG5s/Q75tV7+Pzdl45qVIr2V14KrVrw27cjZtr5BhU/G?=
+ =?us-ascii?Q?VbwFIwOMpLuwc/FFXL1B50ghuZZETOWwngq5mFHe/7G6JAPKrLMGs0XvB4k/?=
+ =?us-ascii?Q?zn7U9ZC6zM3X8mFSw1GL4OH+zUAELFDwyq5Ywqb3wcOABQ3l0RUp4rO6TS00?=
+ =?us-ascii?Q?QIeVPUk=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?TuS8P7/4gvjgCbdPlNDAuEC0Tu6DwQhHVy7hSg1zOUdIQO0kzKwheo1CxH+M?=
+ =?us-ascii?Q?9Xzbc4hVmOLAtxcw0SclKPXpWcx474gHENi3xR7qxWa8ldilNQj96ht1glCk?=
+ =?us-ascii?Q?GeWxZHGUUgeAHA7Mx1v7uzumbZz+zwPmHJKAcKusVwkN7f2kjpKI3dkx8igr?=
+ =?us-ascii?Q?AyXL9rq4Z8sOsuPIIIU1UVGxTP2NOx01UuxsQZUCa+NZ6R1/9ZR5jAzsMV27?=
+ =?us-ascii?Q?QFeUxQBzrx0awkoEoLW25Ee4PHf3Ua2aMYirZ2E3Pxa940+uSJoK1lmSifDW?=
+ =?us-ascii?Q?NnCQKlI8hu00ryztuGl2zUQUSvbeODiF4R4283cS6JN1INPY1kxjPV7WSiix?=
+ =?us-ascii?Q?jD6th2fx7nzGgvLx5uQb5khM0PY8kjs5WCJ90BwcF6YYKyUYGZy2GHwrTu43?=
+ =?us-ascii?Q?7+7CjQ6zLDDn/T7wL1b5KwkxwLWNE8RTZBHKanT1X/4DT1hEeM6R912wOA6/?=
+ =?us-ascii?Q?h5cUZtYYXoPBJ/aALbGo5jOhVqVGDeXsPxCifOip6MIM0TpahAZq0ciod0Jd?=
+ =?us-ascii?Q?0GKHKK696ZiP6mNX4aKgwU6f2p3JKTMqUPDajC9IXXapVvK9ZK4VbR8WqrVK?=
+ =?us-ascii?Q?H5l2ZcG1rrVFmx6f6QxqflfseytILsPEESV14j4ha823xeVncMP1xYQ98qoe?=
+ =?us-ascii?Q?3KtY70dAsI7Gq1hC+orSatbaC8aTVGdugBMpvSNJopuaGHwx9zjLg12vjxWJ?=
+ =?us-ascii?Q?2gS8c7ZXs27yohy2oaTJKonAokHH7uBZFJEnGyJFhPCN8xe/LNQQTpl4BUyq?=
+ =?us-ascii?Q?nsCX6jCFdzemSa518LPWOjkK4C89LY8EdvuElXnn+w5HWNYGZYhZvdkQYaDf?=
+ =?us-ascii?Q?GkAvOYlGb2qXdVw5stjqfNOp2jT9ApjGrR1D7AvY6tbXD2V9zaY68hjvmUeT?=
+ =?us-ascii?Q?m12hDe2FpEDGlgA+9fXtG6hjv3ALjGZENHl4JJccngwiCwVy5Va5F9j0pOla?=
+ =?us-ascii?Q?kEnNoxbOOi4HiUqkqJS/f2VUrB7ZMVrjyGdLxlege1iaqqu+IzHn2Kbxeicb?=
+ =?us-ascii?Q?3Gb+FJg8WnjHLE45DFv1OAcTBo1cmQ2g1H1ST+QFEIf1ZG7hCWorIfbD50N/?=
+ =?us-ascii?Q?hZNRIrJT0znBgk17CQdsaiu6Y006CMF+vbim0myZmqUtnYFcOCR6pVIZK3W8?=
+ =?us-ascii?Q?KWMI53797kQ45paMrv1KyYk6mJTurhqBmd0SqNCzD6jSz2gss32CW5AZE2hO?=
+ =?us-ascii?Q?pdyzJHx9yBxU5+1OTGxIIooqrVcwp3T69zlfRUngo3ATY9e5/YbyBWuyGDjI?=
+ =?us-ascii?Q?/42RW6XdnFbdGrDhznIDz04Ga5am05e1tids3WDxMeruA1GTqzlgXsuMtuHk?=
+ =?us-ascii?Q?u+Yl6z3YsL3RgrAso8i29x4wZJAxY3+j7Wk3u10da6q4PXUw93Or+Y3tdG9M?=
+ =?us-ascii?Q?MvNlaMqskWN//We0miW9Dr/mp/os/3ldSUv0j80mvtY7lv5GlzI/g6YQsXwr?=
+ =?us-ascii?Q?t3vNqU/itH+6Ku2eDWr8+sar6SpQ+RZorZv7NOglhPzAs8o5wQ7H5Ry9A+WT?=
+ =?us-ascii?Q?ugatFEeM0T7DAESe93KHk5SPAqKsRY4DUKdb3+EC4ZEf8qyirkYjbQTUR+9E?=
+ =?us-ascii?Q?MnkXCPgLOfypo7LLU/8WetqTTXcAYxug0Wgq+oTp?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fa9ecf6-d6bf-4653-4aae-08dcd948fccd
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 07:51:08.2605
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vIN1pt+Kmj5sCF4aVSlshKpr90qN6rLWstMy+EAk6dAppAi9vqfKcZf/qJgs2oVlC8DFNdMXm0rTYLTFF3m/6A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR11MB5931
+X-OriginatorOrg: intel.com
 
-在 2024/9/18 16:35, Håkon Bugge 写道:
-> With the support from ib_core to use Dynamic Interrupt Moderation
-> (DIM) from legacy ULPs, which uses ib_create_cq(), we enable that
-> feature for the receive and send CQs in RDS.
 
-Hi, Haakon
 
-I am interested in this patch series. I just wonder if the performance 
-of rds is increased after DIM is used in legacy ULPs?
-That is, is there any benefit to legacy ULPs after DIM is used?
+Hello,
 
-Do you have any test results about this DIM?
+kernel test robot noticed "kvm-unit-tests-qemu.pmu.fail" on:
 
-Thanks,
-Zhu Yanjun
+commit: 25dfc9e357af8aed1ca79b318a73f2c59c1f0b2b ("perf/x86/intel: Limit th=
+e period on Haswell")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
 
-> 
-> A set of rds-stress runs have been done. bcopy read + write for
-> payload 8448 and 16640 bytes and ack/req of 256 bytes. Number of QPs
-> varies from 8 to 128, number of threads (i.e. rds-stress processes)
-> from one to 16 and a depth of four. A limit has been applied such that
-> the number of processes times the number of QPs never exceeds 128. All
-> in all, 61 rds-stress runs.
-> 
-> For brevity, only the rows showing a +/- 3% deviation or larger from
-> base is listed. The geometric mean of the ratios (IOPS_test /
-> IOPS_base) is calculated for all 61 runs, and that gives the best
-> possible "average" impact of the commits.
-> 
-> In the following, "base" is v6.11-rc7. "test" is the same
-> kernel with the following two commits:
-> 
->         * rds: ib: Add Dynamic Interrupt Moderation to CQs (this commit)
->         * RDMA/core: Enable legacy ULPs to use RDMA DIM
-> 
-> This is executed between two X8-2 with CX-5 using fw 16.35.3502. These
-> BM systems were instantiated with one VF, which were used for the
-> test:
-> 
->                                   base     test
->     ACK    REQ  QPS  THR  DEP     IOPS     IOPS  Percent
->     256   8448    8    1    4   634463   658162      3.7
->     256   8448    8    2    4   862648   997358     15.6
->     256   8448    8    4    4   950458  1113991     17.2
->     256   8448    8    8    4   932120  1127024     20.9
->     256   8448    8   16    4   944977  1133885     20.0
->    8448    256    8    2    4   858663   975563     13.6
->    8448    256    8    4    4   934884  1098854     17.5
->    8448    256    8    8    4   928247  1116015     20.2
->    8448    256    8   16    4   938864  1123455     19.7
->     256   8448   64    1    4   965985   918445     -4.9
->    8448    256   64    1    4   963280   918239     -4.7
->     256  16640    8    2    4   544670   582330      6.9
->     256  16640    8    4    4   554873   597553      7.7
->     256  16640    8    8    4   551799   597479      8.3
->     256  16640    8   16    4   553041   597898      8.1
->   16640    256    8    2    4   544644   578331      6.2
->   16640    256    8    4    4   553944   594627      7.3
->   16640    256    8    8    4   551388   594737      7.9
->   16640    256    8   16    4   552986   596581      7.9
-> Geometric mean of ratios: 1.03
-> 
-> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-> ---
->   net/rds/ib_cm.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/net/rds/ib_cm.c b/net/rds/ib_cm.c
-> index 26b069e1999df..79603d86b6c02 100644
-> --- a/net/rds/ib_cm.c
-> +++ b/net/rds/ib_cm.c
-> @@ -259,6 +259,7 @@ static void rds_ib_cq_comp_handler_recv(struct ib_cq *cq, void *context)
->   static void poll_scq(struct rds_ib_connection *ic, struct ib_cq *cq,
->   		     struct ib_wc *wcs)
->   {
-> +	int ncompleted = 0;
->   	int nr, i;
->   	struct ib_wc *wc;
->   
-> @@ -276,7 +277,10 @@ static void poll_scq(struct rds_ib_connection *ic, struct ib_cq *cq,
->   				rds_ib_mr_cqe_handler(ic, wc);
->   
->   		}
-> +		ncompleted += nr;
->   	}
-> +	if (cq->dim)
-> +		rdma_dim(cq->dim, ncompleted);
->   }
->   
->   static void rds_ib_tasklet_fn_send(unsigned long data)
-> @@ -304,6 +308,7 @@ static void poll_rcq(struct rds_ib_connection *ic, struct ib_cq *cq,
->   		     struct ib_wc *wcs,
->   		     struct rds_ib_ack_state *ack_state)
->   {
-> +	int ncompleted = 0;
->   	int nr, i;
->   	struct ib_wc *wc;
->   
-> @@ -316,7 +321,10 @@ static void poll_rcq(struct rds_ib_connection *ic, struct ib_cq *cq,
->   
->   			rds_ib_recv_cqe_handler(ic, wc, ack_state);
->   		}
-> +		ncompleted += nr;
->   	}
-> +	if (cq->dim)
-> +		rdma_dim(cq->dim, ncompleted);
->   }
->   
->   static void rds_ib_tasklet_fn_recv(unsigned long data)
-> @@ -542,6 +550,7 @@ static int rds_ib_setup_qp(struct rds_connection *conn)
->   	ic->i_scq_vector = ibdev_get_unused_vector(rds_ibdev);
->   	cq_attr.cqe = ic->i_send_ring.w_nr + fr_queue_space + 1;
->   	cq_attr.comp_vector = ic->i_scq_vector;
-> +	cq_attr.flags |= IB_CQ_MODERATE;
->   	ic->i_send_cq = ib_create_cq(dev, rds_ib_cq_comp_handler_send,
->   				     rds_ib_cq_event_handler, conn,
->   				     &cq_attr);
-> @@ -556,6 +565,7 @@ static int rds_ib_setup_qp(struct rds_connection *conn)
->   	ic->i_rcq_vector = ibdev_get_unused_vector(rds_ibdev);
->   	cq_attr.cqe = ic->i_recv_ring.w_nr;
->   	cq_attr.comp_vector = ic->i_rcq_vector;
-> +	cq_attr.flags |= IB_CQ_MODERATE;
->   	ic->i_recv_cq = ib_create_cq(dev, rds_ib_cq_comp_handler_recv,
->   				     rds_ib_cq_event_handler, conn,
->   				     &cq_attr);
+[test failed on linus/master      3352633ce6b221d64bf40644d412d9670e7d56e3]
+[test failed on linux-next/master 5acd9952f95fb4b7da6d09a3be39195a80845eb6]
+
+in testcase: kvm-unit-tests-qemu
+version:=20
+with following parameters:
+
+
+
+
+compiler: gcc-12
+test machine: 8 threads 1 sockets Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz (=
+Haswell) with 16G memory
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new versio=
+n of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202409201525.4877023e-oliver.sang@=
+intel.com
+
+
+...
+=1B[32mPASS=1B[0m msr (1836 tests)
+=1B[31mFAIL=1B[0m pmu (143 tests, 24 unexpected failures, 14 skipped)  <---
+=1B[32mPASS=1B[0m pmu_lbr (3 tests)
+=1B[33mSKIP=1B[0m pmu_pebs (1 tests, 1 skipped)
+...
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20240920/202409201525.4877023e-oliv=
+er.sang@intel.com
+
+
+
+--=20
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
