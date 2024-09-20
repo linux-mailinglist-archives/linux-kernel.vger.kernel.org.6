@@ -1,199 +1,138 @@
-Return-Path: <linux-kernel+bounces-334404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A1F97D6D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:25:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB33097D6D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F7111C21EF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:25:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E44A287219
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678A317BEB8;
-	Fri, 20 Sep 2024 14:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0958317BB3F;
+	Fri, 20 Sep 2024 14:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Y08hE+Eo"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2044.outbound.protection.outlook.com [40.107.20.44])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ys8hyTci"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3681E521;
-	Fri, 20 Sep 2024 14:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726842320; cv=fail; b=jZ4SzlbjAn2dEnikqYFGmyBexem+PzSLtWTi8prkLwFZV5E1idYDv6PL0da68QWNLRVzqGAPtG9B1gES46mdnuTjTPLFVNUhnzO7L9Qw2UTaUc5wl1At6eftTLjDexquF8fSvO79s/uo1WSinta6aIaIZ65YJBTqSLiTsZQR5HI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726842320; c=relaxed/simple;
-	bh=sxBqhhFwWqSTKoVi/Qajx7QY5MpQccQhM4MOT5LxV7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=fdy3vrjEROxOR4HHcXzmQVBK2W6o5sbX34O6YEljIN5ahJxCpTVbzlCFIj2e70OqVmKzC6Nr8CzK3+8+MngNZR0agKUiSSCDBFJh0niogD98pYew4m9BJDr8jl1wVIX0p8KtVxAvxUgeQsOmbqBxne+1+rsqN1hEBb5qJnz71JQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Y08hE+Eo; arc=fail smtp.client-ip=40.107.20.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GuXXEXmSf5LHzty8Y08HPO2Jezx3imxyb+TWIyliWVDdH9ZgosZYfY7/3cwgkbKn9tP3DpqhJvv93YMD/5YoOLFTb9HuStox6JwtZDxk4nc+TqCNs7jhxbj009bOtvWoZimDVeHY8V0jOAYDx0c3o1zwXTXFElR7zY5Llw13eBgNir5ld1dmayCqhqSVP5GHuhPz/IMgwjveQB6AqMOBYGDzW147JNU2dfFOm9pUB4ptbHp5AWxZk7G8UGEAoHc4u9BL1l8iKyMvvxEAQF7+dvPHhZSZDC6zvSkWirPf76Ck+aQwDYrpceCbKnfDmQgbwBrqL3Vv10XyfgrU32pbTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hy5Wqn1iLnWsj9Zb9UnTWx9w/dwvyDGlmBEQmoSXoVY=;
- b=TLGu26ZHbTdk6tfaPtGIIV+NhgCXwrvzK51NTWaG19yUl94B2cV+lCH+oHX4tWNfaN8KwMxkneidnEjFy4cQ/7zTVSTuzPNVJdlDlBfPlCYiuhNjy8a0TteNaRg8qMsyldQgOO+Ct4qJOk0ofOgiS08g8IekFyLoxxiuDEX2vQmLtsrrDaxVbZhfBHz4wPI+7AwZjOCBUuC5T4PF6qJVI+RU74qmFxxUdRNT0dmiZMucODbG+5K8MRzts3CxS0nAUj2Oc35CDe1tWOjYjJTFXbkayykm2Ujy/F6wQA8x8vk4CkHVvVWkQQtAurZ6uDEUAHr0raIlXKbiPiKKgFyuYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hy5Wqn1iLnWsj9Zb9UnTWx9w/dwvyDGlmBEQmoSXoVY=;
- b=Y08hE+EoTkXUAjhkFaRGjbpr8fJypL7Y3HnBPh5VoJGf+BXbK5s8I0MNFxyE2FMH+OKDxyQwT8b36TvQq7ycyVftUR/wi3imj6hppoqLXaJPElw7+10yob4vuKrQPIGS4WPPsz79thBI1gsRB0+qEg+4oR3FoVrYManK4VoPQIdEcKg2oUhwr2Ot/KNIqpkRooFDot5pYakq5z5xLKqYLzbOSuQ1vS16fSfc09Djc1HGcKPGjR5zNIq9pJavUlAKZBrk63zFxihHVTHz21NWB4XJ8cnKhX1HEjlwyKpc9FkKzhdDjUiDDGDS4Om6gdmMLBd14Ps4oo3HDeemPWEM/Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by AS8PR04MB9110.eurprd04.prod.outlook.com (2603:10a6:20b:449::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.22; Fri, 20 Sep
- 2024 14:25:15 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.7982.012; Fri, 20 Sep 2024
- 14:25:15 +0000
-Date: Fri, 20 Sep 2024 17:25:11 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	"ast@kernel.org" <ast@kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"hawk@kernel.org" <hawk@kernel.org>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH net 3/3] net: enetc: reset xdp_tx_in_flight when updating
- bpf program
-Message-ID: <20240920142511.aph5wpmiczcsxfgr@skbuf>
-References: <20240919084104.661180-1-wei.fang@nxp.com>
- <20240919084104.661180-4-wei.fang@nxp.com>
- <Zu1y8DNQWdYI38VA@boxer>
- <PAXPR04MB85101DE84124D424264BB4FD886C2@PAXPR04MB8510.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB85101DE84124D424264BB4FD886C2@PAXPR04MB8510.eurprd04.prod.outlook.com>
-X-ClientProxiedBy: VI1PR10CA0117.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:803:28::46) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD4C17838C;
+	Fri, 20 Sep 2024 14:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726842360; cv=none; b=Q8hMJDdBEX/Md4C3R9ffrfEVv8tsqbEUBJIbG3xa+T/RhhEYY3FoZWJ9r9aBIJkuam9wNKDG4Q6nEPxXNwUuMcMURWqcFloHuWrPF+daAGsvEj4CKaNwX7jXuCfEtW45/E7q37Wx9leBcB1CtsHja+J7KY2vSdRnsAZL/M1XZf8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726842360; c=relaxed/simple;
+	bh=+9pRaSgM2TSiWBfyUh9smEH2QqQGRBBKZosdi4yEFq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hAvP1ZC02cnlZYwGfj4HsKJdB4t+K5Ri9tu+X+DY8QzujBpicIrkBWlHrhLe7y1OSv/lPSsyKMyPvPC4tZdCv+IgYU12SEnpAQ8PR/JqnJtNC9Ezzz8hAHB5K2bMdo5DYLYoSoSCk1q6rUAvWAsPpf2+wg8lI0QMRU2oSK2yCCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ys8hyTci; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726842359; x=1758378359;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+9pRaSgM2TSiWBfyUh9smEH2QqQGRBBKZosdi4yEFq4=;
+  b=Ys8hyTciVuBuEzAcKnr12MVmsp5/tewehsRW85axyM5eHLt0M4H0kEOQ
+   SavJh1Fe2Xeuo0bS4Iyn9TjABDRKBUV41JLEUpLaG612GkGhL98Zf1xS5
+   shTAlRsFpok4h1x8SResBEpwqv58CYNQvsncHIhapC/rAlr3Ry80LmvEw
+   ow2pPItnVl9agXzqSDdFJACvLF/pkyBjhmRyKoWxYPj6gCqcrCc7fqcUW
+   vSxxq0+bGZwt+7qVN9WpDGbcaFT5OypFFF/8dhrLa3ciusCTcVyByKoF5
+   xWGK9aI4zyHake3K02uEjK4c07e+5Upn1i9EkmlTDkyPbcsYycnWf+IqY
+   A==;
+X-CSE-ConnectionGUID: W2eceG8oTTOUBnxU28g6YA==
+X-CSE-MsgGUID: k8odHNbrRVmaZ4Ludhzt7Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="28747481"
+X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
+   d="scan'208";a="28747481"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 07:25:58 -0700
+X-CSE-ConnectionGUID: 5uot3sBDR6OXPe60tNX0Cw==
+X-CSE-MsgGUID: +U59R566SqKvf6rhEoeCGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
+   d="scan'208";a="70448960"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 20 Sep 2024 07:25:54 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1srea0-000EX3-1L;
+	Fri, 20 Sep 2024 14:25:52 +0000
+Date: Fri, 20 Sep 2024 22:25:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andreas Hindborg <a.hindborg@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/14] rust: hrtimer: allow timer restart from timer
+ handler
+Message-ID: <202409202251.Sfvd2aUn-lkp@intel.com>
+References: <20240917222739.1298275-7-a.hindborg@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AS8PR04MB9110:EE_
-X-MS-Office365-Filtering-Correlation-Id: e777a24a-b7f5-477c-5496-08dcd9800b20
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pQIB6F+qtk0Ln+nakjYdH8hqAiJarYIlD6IMmsNhfu8BLWLwGmduxjfEbzYG?=
- =?us-ascii?Q?j+wd+07IT4kYhnWjIiYb7AqDkdK7yZegTeKQ9cYvtMnfUPqcpEI/wPKiW6D4?=
- =?us-ascii?Q?svvtS5Cp2+sNTGnq2qAOcSUAKQjFO/81dSMMzNesJ+L2fLUkb8k6PKFantik?=
- =?us-ascii?Q?Q//OwBTgpI4Mohq40pgsbI4PviRmdGccVmrcJd5IHQn9tD2MdzX7aN4ygU7t?=
- =?us-ascii?Q?DZJ85Md+xOVuNXFjz6GEPDHmUjUmMQKOpqGryDTB6I7qtCefeUsHgnHkriQY?=
- =?us-ascii?Q?MCCG9Z11X7DjpmzZ6gXBBhoKQlr1oQH0hi4P6hpABG678I0XLB38rRUvbh5d?=
- =?us-ascii?Q?sWvy67ls0MKSezL811nP6BQS2lUZJKx09/FbL0tCc6kHLBaQwWuUPGSsLKAd?=
- =?us-ascii?Q?G7ep/aQTJjGIafBYo2/nqdwzL30M22ObG9Y2meGt/QnouW9ptIiV58YstvH2?=
- =?us-ascii?Q?dnU+Tey7rVJGAKtcGxsWSQabvX6k82VDV4NaH9and9lrkZ7UhAH5CFSuCnOf?=
- =?us-ascii?Q?fguL4fdyuqloEnwKpAHtMHxtL+oigHiBXIKiIdVW6J/9WCrmWwayLAHkVYIK?=
- =?us-ascii?Q?oevacot/LX93TaZ2hdz50g0YA6ZLSqT7Ofsex/PxsqXWMK2I9iwVQmrqes4g?=
- =?us-ascii?Q?d/Y6CbrKEcsd9Yj74YU6wnUvlp/cRqk89kOE9vX7ej42VPrd9/JWXV33nbBp?=
- =?us-ascii?Q?y0ZsIU6MsVGfFDjRXLeHoM8pxCwHhpDLWySdL2Ax/nCBQH3dUUFuc40bdqTX?=
- =?us-ascii?Q?cCOBbV+LIDFbPUjRchP5iTO8TitWJzOtiJSyckJIM4PH5RXkNJx6Ty/d/zR5?=
- =?us-ascii?Q?nB5fUEYEPsv1I6y+UsAFqw8axmYg/0Njp6TPeQ8eymD6uRDbeYdtmjhQ3Q5I?=
- =?us-ascii?Q?XbPeNXQQW0qLngmGdtBtlFn9crgpbEHaufsuWNH7qlUhES/YBjfIc5HqYM58?=
- =?us-ascii?Q?2BDRuixGPeYxnnb9K5jFovqIt0eLqp+X4jlOgymoo81DjI/pc5jW/oA8bvNm?=
- =?us-ascii?Q?m8AZzNx3/ne8TcIrb5gfPKLiyW0/kDkYctwb8vSVrnMfuk8MS5j8HIUZ981k?=
- =?us-ascii?Q?sobS+4CkKRVhjGtSZGlS1n7Oj4qwjcT0/eEDa0A4mLO3vXo3ZWQadGX6vOy8?=
- =?us-ascii?Q?Nkmz9t89Bj9NNrXHOqgA/O1FwT+Xit0UiKszXoSTROkltQw085Xvma7J5l1U?=
- =?us-ascii?Q?s5AzsfDQ44ZZNUJQq3OA+RQZdmSj/be5w5vWLThvqqjCqA0BBhiWDUuUgfhv?=
- =?us-ascii?Q?WMwyqiYXApTDXAm7/61kImC6tfL3a/Dai+qBdapavQl1UYcDknR2bjGNoO7J?=
- =?us-ascii?Q?ZkhMqUaKxzZ7ka49IFyyaGUIlpJeqD2TFwm46XaZUBP6+Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?m7Owzn9srrMDWruclAmQ8d9ycsBKfX3BWZplZvgDqpABFPNuIeDH6c9hZ7Zs?=
- =?us-ascii?Q?aUvhgutJE7DdI6Be52f2BITpPQXwF/U5rYUE0unYkh7t4F2/TLXfEfL9c1uh?=
- =?us-ascii?Q?7Uu9BtG4zQel0b5b4Ujd01A64jyEQ6GmGGgwurCKFq+wyD8xu1pdMakVb1zN?=
- =?us-ascii?Q?1W2zXN7vC7kHPn9gRn55iMxXwdfud+iME0DafC54+Y5B3aqXCmCrCpzFHryp?=
- =?us-ascii?Q?r6KpHoYfUTbO3RAaBurhrOggUw9tD6vfaeo6t4UChvHmGZIatzBIlflVxlcc?=
- =?us-ascii?Q?jApKHZY2Jfesu/KfCcWbOMRDQqEZfBV0buSINi8vNMDiZUraJO03PimzCJy+?=
- =?us-ascii?Q?JVmVbYd4KWTxbk45npG3kA9nlr0GOtLVgXwAhpEAIkw2ru7pJjlk6iWSYzWw?=
- =?us-ascii?Q?uuB9K6hLkXztP+odHbf9n5XUveoOr9v/5d5EH8YhmL3wL5j2+yBMWiJ4BVof?=
- =?us-ascii?Q?GL1jRW0TGJPN0uM5L+ceMGvkThEx7ZVHmlcwlXBB+7l/wzWP3l99Nb7vpnsp?=
- =?us-ascii?Q?duJYUw7hQGnqkojC0ba5PVObQ6F5VOA/UM5/aHl+Y6YxoLLVO2OfO0GkbuMT?=
- =?us-ascii?Q?WFU0PQhcfqGPO1eRclMzRpWr5tcdjN3LmWU31Utg2nbHER8+Yc6Me3iQGGpX?=
- =?us-ascii?Q?IxB9fkMbVgYkdjRbPOiceni/ZyXh04m+c4WMU6TKHLi8wv2KYqyA906E35bu?=
- =?us-ascii?Q?eBtBpP2rlU3zVLrDKzYVfntxwisIt7xpdn3W2h0qstpcLWQZLITFfcLaTO4C?=
- =?us-ascii?Q?eHDFie1a1wrL3ryO5mUU7t6tGVh+AHRXzmV2hrVcItZ/9RDhuqP8XRaWXwVs?=
- =?us-ascii?Q?nT3hoCfa9vwIX97mh5/Q1jQbawhIkroLUSaa7legEVRqB0ZHlEXapFAds9W0?=
- =?us-ascii?Q?VYisbYET+77fJrETmWA2hMV93k3F8J9m6HmDJmAO9BruqcWaJkvRJBJ4wtDa?=
- =?us-ascii?Q?u1stP9pIQqadb97yzHKXDiGiZ11VVUeOF2oRsoqqKutYvLyfshdG6LpmRAy2?=
- =?us-ascii?Q?PkI2Z+hkKs10jZXcaGT4gXplUAE6zoPPcsQstxy7wFxQikKiJg1bLiaLRTpA?=
- =?us-ascii?Q?pxScMIRj+wSORPV1qeDy0I91IdO3lTCjcf1PjjoHjvviLP90c6nlq8azbQsK?=
- =?us-ascii?Q?e/6ZpDlHNxjcVzZ21wcj9IMTmIeQOTp0iaXhkQNDSTMr88zZPgC6NoLWMDiX?=
- =?us-ascii?Q?4vsfdS8qnH1K72NuibFa9wtF7uvUeDa1/Ayp6sKK4tVPhCPfdoRNx0dGCBHM?=
- =?us-ascii?Q?lu25/X7MvGXaM8gvIBNGg5HXSO4oBexYeWN3msy1xGSTle9uWtgDCBruvJcB?=
- =?us-ascii?Q?UqaCigwnIFtia9bMP3U+G92GE5liFBbulqq1ub4t9KVNs97ewDOZRIgXV6J/?=
- =?us-ascii?Q?dZQeUZWC4wZpJpkmNTfcRIyP7nOYEadclpfcMR7i7Km7gzeX5Y81cEfycBb9?=
- =?us-ascii?Q?bwu9HnDb9SfhXE9OkVg51uABkcjStB96O+lxIZPfIyU/H0QeL8L1P3bjCUje?=
- =?us-ascii?Q?Rr1Vek4CAdROEQq7F6TqbYeosyWzSkBNPPacN7rQxUUP0w+2clanHMWHDG/f?=
- =?us-ascii?Q?oDQvwjonhqLDgOj9Ir243P7z8TItPkIsWSt5tdi0ua/Z14BS3QVNwbJe1oha?=
- =?us-ascii?Q?7Q=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e777a24a-b7f5-477c-5496-08dcd9800b20
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 14:25:15.4040
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ova1rxVnF68gQkgypHF0edEfnpvzovM2W7slXzu25xfpVl7+pnSat8itt+qJEOh2msoj9LZec7/wz8pXPiNnEw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9110
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917222739.1298275-7-a.hindborg@kernel.org>
 
-On Fri, Sep 20, 2024 at 05:05:14PM +0300, Wei Fang wrote:
-> > zero init is good but shouldn't you be draining these buffers when removing
-> > XDP resources at least? what happens with DMA mappings that are related to
-> > these cached buffers?
-> > 
-> 
-> All the buffers will be freed and DMA will be unmapped when XDP program is
-> installed.
+Hi Andreas,
 
-There is still a problem with the patch you proposed here, which is that
-enetc_reconfigure() has one more call site, from enetc_hwtstamp_set().
-If enetc_free_rxtx_rings() is the one that gets rid of the stale
-buffers, it should also be the one that resets xdp_tx_in_flight,
-otherwise you will still leave the problem unsolved where XDP_TX can be
-interrupted by a change in hwtstamping state, and the software "in flight"
-counter gets out of sync with the ring state.
+kernel test robot noticed the following build errors:
 
-Also, I suspect that the blamed commit is wrong. Also the normal netdev
-close path should be susceptible to this issue, not just enetc_reconfigure().
-Maybe something like ff58fda09096 ("net: enetc: prioritize ability to go
-down over packet processing"). That's when we started rushing the NAPI
-poll routing to finish. I don't think it was possible, before that, to
-close the netdev while there were XDP_TX frames pending to be recycled.
+[auto build test ERROR on 98f7e32f20d28ec452afb208f9cffc08448a2652]
 
-> I am thinking that another solution may be better, which is mentioned
-> in another thread replying to Vladimir, so that xdp_tx_in_flight will naturally drop
-> to 0, and the TX-related statistics will be more accurate.
+url:    https://github.com/intel-lab-lkp/linux/commits/Andreas-Hindborg/rust-time-Add-Ktime-from_ns/20240918-063405
+base:   98f7e32f20d28ec452afb208f9cffc08448a2652
+patch link:    https://lore.kernel.org/r/20240917222739.1298275-7-a.hindborg%40kernel.org
+patch subject: [PATCH v2 06/14] rust: hrtimer: allow timer restart from timer handler
+config: riscv-randconfig-002-20240920 (https://download.01.org/0day-ci/archive/20240920/202409202251.Sfvd2aUn-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 8663a75fa2f31299ab8d1d90288d9df92aadee88)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240920/202409202251.Sfvd2aUn-lkp@intel.com/reproduce)
 
-Please give me some more time to analyze the flow after just your patch 2/3.
-I have a draft reply, but I would still like to test some things.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409202251.Sfvd2aUn-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from arch/riscv/kernel/asm-offsets.c:10:
+   In file included from include/linux/mm.h:2232:
+   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+   |                               ~~~~~~~~~~~ ^ ~~~
+   1 warning generated.
+   clang diag: include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   clang diag: include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   clang diag: include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+>> error[E0053]: method `from` has an incompatible type for trait
+   --> rust/kernel/hrtimer.rs:316:20
+   |
+   316 |     fn from(value: bindings::hrtimer_restart) -> Self {
+   |                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+   |                    |
+   |                    expected `u32`, found `i32`
+   |                    help: change the parameter type to match the trait: `u32`
+   |
+   = note: expected signature `fn(u32) -> TimerRestart`
+   found signature `fn(i32) -> TimerRestart`
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
