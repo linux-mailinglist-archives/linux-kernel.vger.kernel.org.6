@@ -1,196 +1,279 @@
-Return-Path: <linux-kernel+bounces-334031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3785A97D196
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:14:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6E097D17E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAB16284B66
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:14:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45C5284875
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71D8502B1;
-	Fri, 20 Sep 2024 07:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FE5433D6;
+	Fri, 20 Sep 2024 07:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="m4Ky5MlS"
-Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DIQd+rUe"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9902047A5C;
-	Fri, 20 Sep 2024 07:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.244.183.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3E43BBCB
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 07:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726816453; cv=none; b=juN21+iRl7Peqqm54s5L8VokDkrPyFrzm2QJCMePIZpT7fONR8+RrGQYGfy6WuaOqVAg4uXyc9Tv4Cn7jBR2LmiDlqg8lq4rEX6qtrYqMh7tjW4XNK2Ny0O8pQJgjnMOKZUYehcu99Lh4yi6R14RqM0hAodwJ4KN1RIE8W+U0I0=
+	t=1726816241; cv=none; b=Gp1HuXVBqqKTYzZ3E4h+nJKsxaeDP7Tijinr+9n+9Po6QhMF1zw6R16279/uzq/u7s9fTcpc7Y48xudWjZOTGynYKimvgdYwjgbTNutGmhyREMp8oqqMj/L4tSXbOL6y+tXgIndLp1qNG2tyWeICQKJXYDq2nGxoKSF56KGSqz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726816453; c=relaxed/simple;
-	bh=Ng1fd0X4c79Cmx1NfoQBHNzn/OWg1RNTNSNur7U8nPI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=hxxKz6wODNtUTXB80sTAJA7OkFQEwizfWaj1pG/fugJULPZNWZBIMzobvxL237lvJ52tX0ZuspPjQ2MFEbcy4yLGmX6STmnBpNP7yoF3j6lMndU+Vr4pHcsuM4zFp/pPd29l9x71+paL2tmm4cb9zfEarFML4hUd7AU8QddiEAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru; spf=pass smtp.mailfrom=infotecs.ru; dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b=m4Ky5MlS; arc=none smtp.client-ip=91.244.183.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infotecs.ru
-Received: from mx0.infotecs-nt (localhost [127.0.0.1])
-	by mx0.infotecs.ru (Postfix) with ESMTP id 0B446108C193;
-	Fri, 20 Sep 2024 10:08:11 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru 0B446108C193
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
-	t=1726816091; bh=Al/1Tdd2zNa3NOqpripija2KtoWzvtAmlDr9SvF4i1o=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=m4Ky5MlSGy6XPxU/PI8CCMHa1CS41XdtamOH+rM88GVE5X5QSF4hcsynW8DHFiFeN
-	 WgUEnAHjQN4VwHGy+PkkAX50j3GZVVfQ9A+I+XbNkqdKEjgvRkuwd6HdEEJemPQDrT
-	 R4AgKSjOqwJ0c0wa0i0ys+722fFjF2hV3XPnI3Jo=
-Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
-	by mx0.infotecs-nt (Postfix) with ESMTP id 0610930E9EF3;
-	Fri, 20 Sep 2024 10:08:11 +0300 (MSK)
-From: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
-To: "stable@vger.kernel.org" <stable@vger.kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-CC: Jiri Slaby <jirislaby@kernel.org>, Nicolas Pitre <nico@fluxnic.net>,
-	"Sasha Levin" <sashal@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>, Tetsuo Handa
-	<penguin-kernel@i-love.sakura.ne.jp>, Andrew Morton
-	<akpm@linux-foundation.org>, Daniel Starke <daniel.starke@siemens.com>,
-	syzbot <syzbot+dbac96d8e73b61aa559c@syzkaller.appspotmail.com>, "Linus
- Torvalds" <torvalds@linux-foundation.org>
-Subject: [PATCH 5.10/5.15 1/1] tty: add the option to have a tty reject a new
- ldisc
-Thread-Topic: [PATCH 5.10/5.15 1/1] tty: add the option to have a tty reject a
- new ldisc
-Thread-Index: AQHbCyvZbE9r/t6ykEiBblgd3NKiWw==
-Date: Fri, 20 Sep 2024 07:08:10 +0000
-Message-ID: <20240920070809.1145963-2-Ilia.Gavrilov@infotecs.ru>
-References: <20240920070809.1145963-1-Ilia.Gavrilov@infotecs.ru>
-In-Reply-To: <20240920070809.1145963-1-Ilia.Gavrilov@infotecs.ru>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1726816241; c=relaxed/simple;
+	bh=iOZw36aJs+I1mgKqmFudw6V0jNa1MFyd4uljf44PuXg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c3oicf6jqyUHJ+czr7quxw7JDUfakm343ggTHZEdNdHhj1N/tzvcWbYm0GXh0I8vg256EU8BfoeyHMBBCizwPI8AkW1Ys1WK4Xm2EuqfCkcSC9IfXEzOW7QUtbycQCLVjhXEuHyoLfxAoljWkUnIxQKIaoIorDKQ3kZGNUNdvrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DIQd+rUe; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6c3567a143eso13080326d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 00:10:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726816239; x=1727421039; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3yV9lRG1R4yJhw9rlWFDVDZMPfanTpHtZGwhOl/HFqM=;
+        b=DIQd+rUeBANUsawDcBNHdAfBegjHtcD6DNI/7mh6eiaVRhv/ikXCHERrl2bFctZy6Q
+         jzYvFYN6zy5g59tDBLj1gbByw9XrX37Hjryk//pscPe4DFiddlY4yxUHlywxdHhkRzTp
+         LMrdypmGMgUg/S4xHmp2LYpqzOkGXMGA38fvQC6rw1i9zKZE5EHiTXsG1/Bq2a5J4Rq5
+         rGKYMKrHyKBE2HyieH3eX5uZ6VJUW5BfEGx5J6G6dlDQelXa5FNB68zIwQkNhijqjx7d
+         gB32W+MpqJDoHO5MbC8tSOx3tl0T5v4NQd4c65FB2n9K8HDRUUVfaarhJ4IzSrSeIU+P
+         YfUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726816239; x=1727421039;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3yV9lRG1R4yJhw9rlWFDVDZMPfanTpHtZGwhOl/HFqM=;
+        b=reRNRlIfy6ziKcSn4MIIEPAkVi+DxLmqZkpIeq6/qRNF8t1zHvuggKEsjP3wuKuaAS
+         ZRucTe2IhzkHnfrp9WqBc4UiOj8Rnss5YPrVqKd602g7uoV8nUE3TU/TOhInv9YqzNNy
+         j6chEPhujRqJeDZljZxoxi3mPQDI0N+WUk8MIdPWZnEsAq/8UmLAMuQZJOQtAoeIuv8b
+         D48BppPMXtXrEJqJuOuufaxe+NwXSUOVLvWmISEDsP2TTVyIMJ4WTJ7Z7ePG3nIplV7J
+         Zg12rxnHBevlzFL3bwyBj7m9xkt5whTw5Uj/5/O38amNH5e3GbKTeiWy9nmOdOShJMTo
+         C9uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUlarJM60G8uGIfthIdClENkjQ014glXIDFhwKQ0QDenqOuxXuel71cCFQSzmlII1rfMkTjTPWoVgl0Crs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyKAI5QoG6fSJi8xrglX8ZlWxqYiEBQvpZdEGD5KxAvEE2LLa+
+	+0i9ZGkP3ycRmozMiNlOKc7sN8dHl+M2I+0jUI9N6MkGzticDX1iuqTjF6wemSKMfUeYJi1Nf0R
+	m+PVYfuIJgb3s+38G36oHkIrTDHSQZ2X1HjtH
+X-Google-Smtp-Source: AGHT+IE/zEqFDw4bxTIHzfHfmbEBCqAfcea8hS6VNlyAN1cEKS3IQ+w2FK3MjrrxzD9urrX9o3ENlOPHhs8Zz3mGrGs=
+X-Received: by 2002:a05:6214:5785:b0:6c5:f91d:9d2 with SMTP id
+ 6a1803df08f44-6c7bd4d1e5amr25521346d6.14.1726816236088; Fri, 20 Sep 2024
+ 00:10:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KLMS-Rule-ID: 5
-X-KLMS-Message-Action: clean
-X-KLMS-AntiSpam-Status: not scanned, disabled by settings
-X-KLMS-AntiSpam-Interceptor-Info: not scanned
-X-KLMS-AntiPhishing: Clean, bases: 2024/09/20 05:26:00
-X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2024/09/20 04:11:00 #26640789
-X-KLMS-AntiVirus-Status: Clean, skipped
+References: <20240917005116.304090-1-arturacb@gmail.com> <bd5eb792-124f-4eaa-9ff9-a99765d1ef73@linuxfoundation.org>
+In-Reply-To: <bd5eb792-124f-4eaa-9ff9-a99765d1ef73@linuxfoundation.org>
+From: David Gow <davidgow@google.com>
+Date: Fri, 20 Sep 2024 15:10:19 +0800
+Message-ID: <CABVgOSmNcmnRCn5Q05U1wBebSGTM=OdUXuT7SA-poHXUgKubaQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/1] Add KUnit tests for llist
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Artur Alves <arturacb@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, 
+	Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, n@nfraprado.net, andrealmeid@riseup.net, 
+	vinicius@nukelet.com, diego.daniel.professional@gmail.com
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000854559062287bcf3"
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+--000000000000854559062287bcf3
+Content-Type: text/plain; charset="UTF-8"
 
-commit 6bd23e0c2bb6c65d4f5754d1456bc9a4427fc59b upstream.
+On Fri, 20 Sept 2024 at 00:01, Shuah Khan <skhan@linuxfoundation.org> wrote:
+>
+> On 9/16/24 18:51, Artur Alves wrote:
+> > Hi all,
+> >
+> > This is part of a hackathon organized by LKCAMP[1], focused on writing
+> > tests using KUnit. We reached out a while ago asking for advice on what
+> > would be a useful contribution[2] and ended up choosing data structures
+> > that did not yet have tests.
+> >
+> > This patch adds tests for the llist data structure, defined in
+> > include/linux/llist.h, and is inspired by the KUnit tests for the doubly
+> > linked list in lib/list-test.c[3].
+> >
+> > It is important to note that this patch depends on the patch referenced
+> > in [4], as it utilizes the newly created lib/tests/ subdirectory.
+> >
+> > [1] https://lkcamp.dev/about/
+> > [2] https://lore.kernel.org/all/Zktnt7rjKryTh9-N@arch/
+> > [3] https://elixir.bootlin.com/linux/latest/source/lib/list-test.c
+> > [4] https://lore.kernel.org/all/20240720181025.work.002-kees@kernel.org/
+> >
+> > ---
+> > Changes in v3:
+> >      - Resolved checkpatch warnings:
+> >          - Renamed tests for macros starting with 'for_each'
+>
+> Shouldn't this a separate patch to make it easy to review?
+>
 
-... and use it to limit the virtual terminals to just N_TTY.  They are
-kind of special, and in particular, the "con_write()" routine violates
-the "writes cannot sleep" rule that some ldiscs rely on.
+I think that, if this were renaming these in an already existing test
+(like the confusingly similar list test), then yes. But since it's
+only a change from v2, I think we're okay.
 
-This avoids the
+> >          - Removed link from commit message
+> >      - Replaced hardcoded constants with ENTRIES_SIZE
+>
+> Shouldn't this a separate patch to make it easy to review?
 
-   BUG: sleeping function called from invalid context at kernel/printk/prin=
-tk.c:2659
+Again, if we want to change this in other tests (list, hlist) we
+should split it into a separate patch, but I think it's okay for llist
+to go in with these already cleaned up.
 
-when N_GSM has been attached to a virtual console, and gsmld_write()
-calls con_write() while holding a spinlock, and con_write() then tries
-to get the console lock.
+>
+> >      - Updated initialization of llist_node array
+> >      - Fixed typos
+> >      - Update Kconfig.debug message for llist_kunit
+>
+> Are these changes to existing code or warnings on your added code?
 
-Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Jiri Slaby <jirislaby@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Daniel Starke <daniel.starke@siemens.com>
-Reported-by: syzbot <syzbot+dbac96d8e73b61aa559c@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=3Ddbac96d8e73b61aa559c
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20240423163339.59780-1-torvalds@linux-found=
-ation.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[Ilia: In order to adapt this patch to branches 5.10 and 5.15,
-the ldisc_ok() function description has been corrected in the old style.]
-Signed-off-by: Gavrilov Ilia <Ilia.Gavrilov@infotecs.ru>
----
- drivers/tty/tty_ldisc.c    |  6 ++++++
- drivers/tty/vt/vt.c        | 10 ++++++++++
- include/linux/tty_driver.h |  8 ++++++++
- 3 files changed, 24 insertions(+)
+I think these are all changes to the added code since v2. Artur, is that right?
 
-diff --git a/drivers/tty/tty_ldisc.c b/drivers/tty/tty_ldisc.c
-index c23938b8628d..dc5267ac9923 100644
---- a/drivers/tty/tty_ldisc.c
-+++ b/drivers/tty/tty_ldisc.c
-@@ -579,6 +579,12 @@ int tty_set_ldisc(struct tty_struct *tty, int disc)
- 		goto out;
- 	}
-=20
-+	if (tty->ops->ldisc_ok) {
-+		retval =3D tty->ops->ldisc_ok(tty, disc);
-+		if (retval)
-+			goto out;
-+	}
-+
- 	old_ldisc =3D tty->ldisc;
-=20
- 	/* Shutdown the old discipline. */
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index a070f2e7d960..d16b7bdbd442 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -3448,6 +3448,15 @@ static void con_cleanup(struct tty_struct *tty)
- 	tty_port_put(&vc->port);
- }
-=20
-+/*
-+ * We can't deal with anything but the N_TTY ldisc,
-+ * because we can sleep in our write() routine.
-+ */
-+static int con_ldisc_ok(struct tty_struct *tty, int ldisc)
-+{
-+	return ldisc =3D=3D N_TTY ? 0 : -EINVAL;
-+}
-+
- static int default_color           =3D 7; /* white */
- static int default_italic_color    =3D 2; // green (ASCII)
- static int default_underline_color =3D 3; // cyan (ASCII)
-@@ -3576,6 +3585,7 @@ static const struct tty_operations con_ops =3D {
- 	.resize =3D vt_resize,
- 	.shutdown =3D con_shutdown,
- 	.cleanup =3D con_cleanup,
-+	.ldisc_ok =3D con_ldisc_ok,
- };
-=20
- static struct cdev vc0_cdev;
-diff --git a/include/linux/tty_driver.h b/include/linux/tty_driver.h
-index 2f719b471d52..315e475e6a09 100644
---- a/include/linux/tty_driver.h
-+++ b/include/linux/tty_driver.h
-@@ -123,6 +123,13 @@
-  *	Optional: Called under the termios lock
-  *
-  *
-+ * int (*ldisc_ok)(struct tty_struct *tty, int ldisc);
-+ *
-+ *	This routine allows the tty driver to decide if it can deal
-+ *	with a particular ldisc.
-+ *
-+ *	Optional. Called under the tty->ldisc_sem and tty->termios_rwsem.
-+ *
-  * void (*set_ldisc)(struct tty_struct *tty);
-  *
-  * 	This routine allows the tty driver to be notified when the
-@@ -270,6 +277,7 @@ struct tty_operations {
- 	void (*hangup)(struct tty_struct *tty);
- 	int (*break_ctl)(struct tty_struct *tty, int state);
- 	void (*flush_buffer)(struct tty_struct *tty);
-+	int (*ldisc_ok)(struct tty_struct *tty, int ldisc);
- 	void (*set_ldisc)(struct tty_struct *tty);
- 	void (*wait_until_sent)(struct tty_struct *tty, int timeout);
- 	void (*send_xchar)(struct tty_struct *tty, char ch);
---=20
-2.39.2
+> >
+> > Changes in v2:
+> >      - Add MODULE_DESCRIPTION()
+> >      - Move the tests from lib/llist_kunit.c to lib/tests/llist_kunit.c
+> >      - Change the license from "GPL v2" to "GPL"
+> >
+> > Artur Alves (1):
+> >    lib/llist_kunit.c: add KUnit tests for llist
+> >
+> >   lib/Kconfig.debug       |  11 ++
+> >   lib/tests/Makefile      |   1 +
+> >   lib/tests/llist_kunit.c | 358 ++++++++++++++++++++++++++++++++++++++++
+> >   3 files changed, 370 insertions(+)
+> >   create mode 100644 lib/tests/llist_kunit.c
+> >
+>
+> You are combining lot of changes in one single patch. Each change as a separate
+> patch will help reviewers.
+>
+> Adding new test should be a separate patch.
+>
+> - renaming as a separate patch
+>
+
+I think given that these are just changes between patch versions, not
+renaming/modifying already committed code, that this is okay to go in
+as one patch?
+
+The actual patch is only doing one thing: adding a test suite for the
+llist structure. I don't see the point in committing a version of it
+only to immediately rename things and clean bits up separately in this
+case.
+
+
+Cheers,
+-- David
+
+--000000000000854559062287bcf3
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIUqgYJKoZIhvcNAQcCoIIUmzCCFJcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
+4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
+mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
+KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
+VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
+ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
+vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
+BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
+OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
+1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
+ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
+BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
+18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
+bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
+AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
+BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
+A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
+MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
+jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
+0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
+jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
+jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
+C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
+NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
+zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
+A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
+hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
+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
+erg7AgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
+/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFKFQnbTpSq0q
+cOYnlrbegXJIIvA6MFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
+BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
+MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
+LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
+bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
+FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBR
+nRJBmUP+IpudtmSQ/R55Sv0qv8TO9zHTlIdsIf2Gc/zeCi0SamUQkFWb01d7Q+20kcpxNzwV6M7y
+hDRk5uuVFvtVxOrmbhflCo0uBpD9vz/symtfJYZLNyvSDi1PIVrwGNpyRrD0W6VQJxzzsBTwsO+S
+XWN3+x70+QDf7+zovW7KF0/y8QYD6PIN7Y9LRUXct0HKhatkHmO3w6MSJatnqSvsjffIwpNecUMo
+h10c6Etz17b7tbGdxdxLw8njN+UnfoFp3v4irrafB6jkArRfsR5TscZUUKej0ihl7mXEKUBmClkP
+ndcbXHFxS6WTkpjvl7Jjja8DdWJSJmdEWUnFjnQnDrqLqvYjeVMS/8IBF57eyT6yEPrMzA+Zd+f5
+hnM7HuBSGvVHv+c/rlHVp0S364DBGXj11obl7nKgL9D59QwC5/kNJ1whoKwsATUSepanzALdOTn3
+BavXUVE38e4c90il44T1bphqtLfmHZ1T5ZwxjtjzNMKy0Mb9j/jcFxfibCISYbnk661FBe38bhYj
+0DhqINx2fw0bwhpfFGADOZDe5DVhI7AIW/kEMHuIgAJ/HPgyn1+tldOPWiFLQbTNNBnfGv9sDPz0
+hWV2vSAXq35i+JS06BCkbGfE5ci6zFy4pt8fmqMGKFH/t3ELCTYo116lqUTDcVC8DAWN8E55aDGC
+AmowggJmAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
+BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAZ6Vqszmp/3gGFW0sCFu
+eDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgdxDiv2xiYnKbGDT5DI71k+G5D71P
+KVrXH9Q+fnru4BEwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQw
+OTIwMDcxMDM5WjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
+YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
+BAIBMA0GCSqGSIb3DQEBAQUABIIBAHTdyagVZQpc6ltsvt1TN6ojwGHGtWgLr+OZFh83TLiLHxq3
+Z/dQfLPODF/8bMKVSOPBgLxk9vfU5+AynkviAc2lMEVJzapEnnovtmc1ZcD4srAww/LSAxexCLRr
+ElII/vhoYgYSSumScwct4hYZ+MRS56eLgh3jfdMBJK3z2zS50GvwIoWIC3J7a5/ew2NAaov6QM6d
+zq8fI1P7QLjC+x8pbTtaT8LX1nQwv2/LATYb+r87GRHtLYxGxeUvH2eMHCjGRY9rWQZv8PL5bfQq
+zYvDSGdzEpZuddj71bx5N3xuTnRE0V5l6zrEQok2/XPIFOtjD00tt3R0B3ZF/eWDA8M=
+--000000000000854559062287bcf3--
 
