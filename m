@@ -1,158 +1,154 @@
-Return-Path: <linux-kernel+bounces-334109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D727497D2B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:26:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F95597D2BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 166AD1C23B4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:26:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92BC81C2134A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8611613C3D3;
-	Fri, 20 Sep 2024 08:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A9047A66;
+	Fri, 20 Sep 2024 08:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eh021mjM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jMO+YoMY"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24DE13AA4E;
-	Fri, 20 Sep 2024 08:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF7E4C62B
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726820714; cv=none; b=X5aCuA7p2E83R4IjI+ySu0HXVCyW9x09vMOvpziFkeDmP/Vu64o2xMkVXUgRYXF3q8Xj6GJd5u2Ag1o5X+LFvwd6DeMJ96KIBLEJq4JWqwyLb10le+6ujZ/ea9tpJzRvLQ2nSCdce1wk0Ldq/ccKb4fYhD29nYG1mGJciQkPxJE=
+	t=1726820906; cv=none; b=FZSkAM2neCOHsWGtTeKfDMc3HviHBXD+E6maH6MNE8wzvrhiy4/dfoewHnKhSZplFyIzPzf1qG0OFF1Xv05gjhoWTtCUJIJMtkJUGnNVfokuUN9ME3+SF5rp5hslKVupqxo2fHD/Bb8EuxBRJ8VhXRswdayZaWF/D1Pnp4FmnAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726820714; c=relaxed/simple;
-	bh=H1asYJpbEc/Ve9AdnB6jOwTfoQo/irpzHgdMxUR7AOI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BGMoKo8wTBScIe/R/JRsy+wuRtxmC7GaXkqTpKeWnVqpErCkncm7hROJ0JwggkotjX3wLGFZfPQf/3o/TLwbLDyhsJk/1D99XiKDB0KR1lXIT/Dz6AlTVje82mTtBZn6GQvdWVzxyTiJMInzI8m91s/Mqm2AVKe42vqeBUI5H4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eh021mjM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A6EC4CEC3;
-	Fri, 20 Sep 2024 08:25:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726820713;
-	bh=H1asYJpbEc/Ve9AdnB6jOwTfoQo/irpzHgdMxUR7AOI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Eh021mjM3bxxOgxCmpYxOqatsBwUY22jMa8C9n1mgCJczPmZGUr43Fhs32dHrM4O1
-	 oFNPRJcfciplroGrHup741eqTKv38d8Fx4CpRx1YC6pvludQ6zqc+3Rs+yVDZYB2VI
-	 wu7pj64BPXL/R7+YzCioUEpQ1v/ysQ5Cpj5JThbiMR8nfhh2OD4Hl9Sb6d8m+5tmbb
-	 zmfcxIgmQfb/4Fbt6P0hGz4n5wG/o4r/LpqaBM+40GaqQngHUjO7H4S83BUuefEo7O
-	 sJZQt39cnqKIMbboa2yLCD3z3EYniRYSbtK5brTTFh75JzpWswOgERUzB6762Nw6o9
-	 9lrEyPLPO0TRg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Gary Guo" <gary@garyguo.net>,  "Miguel Ojeda" <ojeda@kernel.org>,
-  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
-  "Alice Ryhl" <aliceryhl@google.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 04/14] rust: sync: add `Arc::clone_from_raw`
-In-Reply-To: <19760254-bc0b-49e2-88a0-7088ab55d9b1@proton.me> (Benno Lossin's
-	message of "Thu, 19 Sep 2024 14:15:02 +0000")
-References: <20240917222739.1298275-1-a.hindborg@kernel.org>
-	<20240917222739.1298275-5-a.hindborg@kernel.org>
-	<43b9bc9b-f64c-4421-8cf2-795f1f0ec94a@proton.me>
-	<6J_M8_wAnE5epFRUo8RBkYFL5p36woueX8MHQleKVFw_WOitLFZNQ6808RjS7RmizhQ07qDQpze2G3UDLZgHDA==@protonmail.internalid>
-	<20240918211211.73b1324e.gary@garyguo.net> <87zfo4i3nc.fsf@kernel.org>
-	<1dkKZAT3rq13ubPiaoqilP1uZsSCOiAXnJ8HTUQ4qpWmHpl45XpiJpkaZiT87VYE_I0YpsZZKa7Tz6Fs-kbOlA==@protonmail.internalid>
-	<19760254-bc0b-49e2-88a0-7088ab55d9b1@proton.me>
-Date: Fri, 20 Sep 2024 10:25:13 +0200
-Message-ID: <87bk0iivfa.fsf@kernel.org>
+	s=arc-20240116; t=1726820906; c=relaxed/simple;
+	bh=NScGYUd6179Tb5vwg/DqqbnXhiOkYig3H5YIrnsrsfc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UQ+32JIgvaYlG8CdMa87uBbHua+fIRoFs2g49YVryUbFxMATNQhiRXcSYUUwdUmH1Ii4cujpk7p/F6oOPwCi9kkVlrLnp2l/FuEumvDYDMq+Bg0i83o+z5wyB05JOvfL152DymdgH95kSOUJiO+mJoYfXXU1LRRsrXolS0cfmmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jMO+YoMY; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3780c8d689aso1138580f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:28:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726820903; x=1727425703; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QSY/XwkbAFk0AHpPR2dqnekk1R5T+r9ialJRBpwsOMY=;
+        b=jMO+YoMYyMqhHa2sAPGJqMw3GRTPVCUXEYGoECjdyY13PAiQB2m3M0VDT3zU/k1BYh
+         PPEaeO29pWb3oB+TQEBSs+dXk2N3CT0rpMejPMC3yPjqGTgmIfZV8M2WXhH4TCB5CuY+
+         2FlhCf1CjDdhSclm/MOMrhu1sUgKA/CviSiN3obUfUhcUGXt5af+FPNNr90enOTFx2fY
+         QF4N3zdNfa1tSQ6Xs/yqgoydmKBlvlroxgrb9bBunXJzApc+CkKCwuSK6YBpkLYbqBwT
+         2kN9EIP+oZ8R8QqMqB/MRocrtL1DPr8hHxIXStvmZYA8idJAcpfFJYzY6hH7BFAgyG5+
+         CLpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726820903; x=1727425703;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QSY/XwkbAFk0AHpPR2dqnekk1R5T+r9ialJRBpwsOMY=;
+        b=bSRN8PV8YkKcshqD8syESrezKNc3qlw5F9FeQxSeKLKQQTZ6cDkPbQiIR77zGFhkvY
+         I9iAKqXF4Dh+oRl56LhHgFzQfh4TywheO124Rgtg2/ODwswIwu1zyjgeybOi3rF7DQS3
+         Mzbro2y381E+jtgUwKdygn//LsGYK7kk9V5YFLIIosEbqd9izxn9pGNt5ci1+36YSNxJ
+         w/eRjbeL3AcKxMev4tLkR4VV0cvYYa6RrBaI32dBq60cOmu3RFSGkmaVoiP+/jiYeeCm
+         KZ/wdu/HMJdBZGrh8dSMKEYsTERJCf8pZchh63gCOnmPOrsyYetHfYiI+QPOidTOLbWj
+         qAsg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3oEicd4xDR2pbAysHzvsbMxygMOruvU0WQ3obJVfaAHhk+xk+PmLLep3BiHOvOzZjiSYw8Ot3mfBH1Kg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYaMdi9RjLI9fGGbI3r9MtQjbaEKvPcv0rJnio3mEWyVqSWEVw
+	g3IJ34DM3GFNDpYYn6wUVpI2l9iway6BPN1nL0X5QqD5Vmi9tdcr9JoSgPKB+59xW53mb67IDPh
+	Z
+X-Google-Smtp-Source: AGHT+IEwpW97abutw3SvbbD+fpsLM/YqBbH/+ujjWdJHEh1aCbcZ94oU53Wv3GaurPQr/FG0QEN0Gw==
+X-Received: by 2002:adf:e84b:0:b0:374:cd36:8533 with SMTP id ffacd0b85a97d-37a43197db1mr1010222f8f.54.1726820903286;
+        Fri, 20 Sep 2024 01:28:23 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:b3d5:235d:4ae1:4c0f? ([2a01:e0a:982:cbb0:b3d5:235d:4ae1:4c0f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e7809e0fsm17044622f8f.110.2024.09.20.01.28.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Sep 2024 01:28:22 -0700 (PDT)
+Message-ID: <e8906af4-e769-48ea-8ec4-779ca4be9b8a@linaro.org>
+Date: Fri, 20 Sep 2024 10:28:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] dt-bindings: mmc: convert amlogic,meson-mx-sdio.txt to
+ dtschema
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Rob Herring <robh@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson-mx-sdio-v1-1-b7bfae886211@linaro.org>
+ <20240916174030.GA835203-robh@kernel.org>
+ <9394d785-5954-4d44-8ad0-9b57fbecde25@linaro.org>
+ <CAFBinCAbb5rh4GZZhjFA1jSGJAPNC80vnUY+PC9AdaApLZphmA@mail.gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <CAFBinCAbb5rh4GZZhjFA1jSGJAPNC80vnUY+PC9AdaApLZphmA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
-
-> On 19.09.24 08:00, Andreas Hindborg wrote:
->> "Gary Guo" <gary@garyguo.net> writes:
+On 19/09/2024 18:33, Martin Blumenstingl wrote:
+> Hi Neil,
+> 
+> On Tue, Sep 17, 2024 at 9:13 AM Neil Armstrong
+> <neil.armstrong@linaro.org> wrote:
+> [...]
+>>>> +      reg:
+>>>> +        description:
+>>>> +          the slot (or "port") ID
+>>>> +        maxItems: 1
+>>>
+>>> Aren't there limits in the number of slots the h/w can support?
 >>
->>> On Wed, 18 Sep 2024 18:19:20 +0000
->>> Benno Lossin <benno.lossin@proton.me> wrote:
->>>
->>>> On 18.09.24 00:27, Andreas Hindborg wrote:
->> [...]
->>>>> +    pub unsafe fn clone_from_raw(ptr: *const T) -> Self {
->>>>> +        // SAFETY: The caller promises that this pointer points to data
->>>>> +        // contained in an `Arc` that is still valid.
->>>>> +        let inner = unsafe { ArcInner::container_of(ptr).as_ref() };
->>>>> +
->>>>> +        // INVARIANT: C `refcount_inc` saturates the refcount, so it cannot
->>>>> +        // overflow to zero. SAFETY: By the function safety requirement, there
->>>>> +        // is necessarily a reference to the object, so it is safe to increment
->>>>> +        // the refcount.
->>>>> +        unsafe { bindings::refcount_inc(inner.refcount.get()) };
->>>>> +
->>>>> +        // SAFETY: We just incremented the refcount. This increment is now owned by the new `Arc`.
->>>>> +        unsafe { Self::from_inner(inner.into()) }
->>>>
->>>> The implementation of this function looks a bit strange to me, how about
->>>> this?:
->>>>
->>>>     // SAFETY: this function has the same safety requirements as `from_raw`.
->>>>     let arc = unsafe { Self::from_raw(ptr) };
->>>>     let clone = arc.clone();
->>>>     // Prevent decrementing the refcount.
->>>>     mem::forget(arc);
->>>>     clone
->>>>
->>>> (of course you would need to change the safety requirements of
->>>> `clone_from_raw` to point to `from_raw`)
->>>
->>> Wouldn't this function simply be
->>>
->>> 	// SAFETY: ...
->>> 	let borrow = unsafe { ArcBorrow::from_raw(ptr) }
->>>   	borrow.into()
->>>
->>> ?
->>>
->>> Maybe this function doesn't even need to exist...
->>
->> Maybe that could work. But my use case does not satisfy the safety
->> requirements on `ArcBorrow::from_raw`. The`Arc::into_raw` was not
->> called. Perhaps we can update the requirements for that function?
->
-> If I understood the code correctly, you are essentially doing this:
->
->     let arc = Arc::<T>::new(..);
->     let ptr = Arc::as_ptr(&arc);
->     let ptr = T::raw_get_timer(ptr);
->     let ptr = Timer::raw_get(ptr);
->
->     // ptr is now used by the timer subsystem to fire the timer
->
->     let ptr = ptr.cast::<Timer>();
->     let ptr = T::timer_container_of(ptr);
->     let borrow = ArcBorrow::from_raw(ptr);
->     let arc = borrow.into();
->
-> The only thing that we would have to change would be adding
-> `Arc::as_ptr` as a source in the `ArcBorrow::from_raw` safety
-> requirements.
+>> Good question, let me check
+> allowed values are: 0, 1, 2
+> 
+> For the remaining questions: I also don't know - so let's see what
+> Rob's suggestion is going to be.
 
-Yes, I think so. I agree that `ArcBorrow` is the right way forward here.
-Patch 11 of this series extends `TimerCallback` to be able to have a
-different type for the implementer of `RawCallback` and the type passed
-to `run`. This is to be able to specify `Pin<Box<_>` as the pointer but
-`& _` as the parameter. Those names should probably be changed to
-`CallbackTarget` and `CallbackTargetBorrow`, but they could cover this
-use of `ArcBorrow` as well.
+I did something, I'll post it shortly, no idea if it works
 
-This use is very similar to `ForeignOwnable`, but a slightly different
-use case, since I want to implement for pinned references too. Is there
-a way of aligning this and sharing some trait here?
+Neil
 
-Best regards,
-Andreas
-
+> 
+> 
+> Best regards,
+> Martin
 
 
