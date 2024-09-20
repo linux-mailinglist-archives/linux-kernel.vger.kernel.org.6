@@ -1,279 +1,206 @@
-Return-Path: <linux-kernel+bounces-334406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F81F97D6DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:26:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E50097D6E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D541C2386B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:26:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BA391F25118
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A3617BB24;
-	Fri, 20 Sep 2024 14:26:38 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AB017BEAB;
+	Fri, 20 Sep 2024 14:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="eWXvqCMz"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2076.outbound.protection.outlook.com [40.107.241.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B92517BB32
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 14:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726842398; cv=none; b=IRuMlude2WLlg9EQDZH8iTgvsqic/Y/Fursy003mWmfPt10FvRB6Nz7rst5LEL0XtSmrQU7IMPs/yJK7+nAhPKCaq+Us4pnyNyjFIZ9PNX9WG7XZvKMzdE6ATLZc20f4ctKejBm7wbOpaBPk5M6XfHqSC3sE61LRP6PIYDRVIlM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726842398; c=relaxed/simple;
-	bh=TzJp4J2OqTXc4pPy+1Dt7yswjY+gxUBo9GvrpZd5LmE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Now7/z1w4RfiCxL2sMhYgOhA15Vg6MKx9+XCg02o2ASHlMrg9zq3J4/4/dAN2WqRHBlJA2yKkiMTXc8KGioyNh/0l87ghfkVVQgTRtA5vVmbxCKI13bEPnaJmxr2icZcDC6iNK4zw7y2BGabj/6+bq83Ly5wgCuObfyU9HYhXE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0cd7722f6so4236165ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 07:26:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726842395; x=1727447195;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ab9kvaGxjnKKrLV9AAejHQkW8vzpzTXyhKtnlcip2QE=;
-        b=FRP2RsSpewviwv1q/A12mtKy8RbqY4HL11+RHEmjpou0msZ/MX5H2T5+A0I/yuEOeY
-         uGTbz173srAjDoNWpNtCZA8pPliv4K210pPvyqKbWTOjcBzQk+cq50TPt3itI18Xr8gG
-         Hhvi6QvsYtI5FKSjhm5Wq+UJM/7XHvGX1Rb2O8meKWU1Bw1alKENCVOiYxURrSoqhfQi
-         nAxGOE2QOP9sWC5KGoztSGfKqFQ2n/0q2hDJNHQBQppeOYfVpraU9uPtNHUCtfR49sj0
-         ZBlzoB14DQ2hwtfDtS6W5EHijEm/Vhq8KQFbFld28Ok206lCEys0RrUDoScpfRaGcDKm
-         CbFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXrs9mLt7gjW9fOpRxLK8R7vmwx1HgxNfTaK2RfWYu4kZ/ElV19jNqztoNEgKbc4ZLk5jcPAwoVw6+bAjg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsvrOErs/J81BFNkkj3Pzd0/ipsW7kLt4a696Ny4uXjndO3f6c
-	fkkZ6BSj7o4+gWxJsFixnyaBuswXoYkwoDY6fSZmuLEnAJ9M7hNg39cseo0Whx/t3fpb/utQBxn
-	R/0oObPJHWBlKhoFKqIKK8oy+B+2c8cdcNsi96N2n7LiC0xUo1c83JW0=
-X-Google-Smtp-Source: AGHT+IHeZofzFeA2g4M2K1ddfeOi0NFm7kVhTfhNxQYoMRGTJymSYqzhEPB6oWkM55b2i1u4g7yO64Z7PVjXdca1swJwrdwPhkaj
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786F417BB21;
+	Fri, 20 Sep 2024 14:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726842525; cv=fail; b=jDHms/3HMgc6m3U2Q9cFhK2SIYmEO7C2Di/rRqqeP+h4+AR9Q3pNHYcD+SduHSiUypMBbSSNDyXoqcau3Yc9cSEzeblmdWtbcf74b+fAp9ccEIaJnIXBPw/K/jsloDexqzv+UWW9S/yWQweCYa2RzckIWd2mtoJPm1I+9jEbkrI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726842525; c=relaxed/simple;
+	bh=BEzhEwcaYuT94XGR1O1Bcb5jaFstffp5XUBzQKwuUQU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=QqIJ79EACcPvUqN7ddqMS/RsbW7tJV4dv2f1J7+YceI1fpjl6i4BSGfV/WeuxjsQIOMrtO7H3NP5NDN37+EuzlVYg3T8na1WrabNGtDX1OH+00430bRzvvaM/OYnQPLdkOEjdSE84dqFVYG9rY/b9KuMEwe2Dl0vEjEQ3EEImrM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=eWXvqCMz; arc=fail smtp.client-ip=40.107.241.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QCov+kORE3PUlnpyzMlaia1qGMsZeSDGYZ6DX8BSJex01fK9dHfp+wr5z/1nEQk7MBYP+ZWxs0SibD+LrgPlemwmSxHFyo/kLsEMP+2ekP9sw+AnT86gdYrvjLaw5jKbloNfeCcTterPGR+om3pUxC5DXXy7PfsMicr3sWkso+8YyqXnO5no82vma+J1BwEeSVGM3YLCJuDGjfFAT2Kdu8ETJF1Ul4kNfP/q1tQvjhAkwhCWK9JNpkDtA7K/js8Q3QYEpvUXO5ouayBHtqVPSoDPp961/XUdPo0l8gNVJcPjax2vu2+P/kDciZTOkpfX5NlBB69zaIYS6R0JhwX2hA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xX9dJxSyQLiDKG6TW4PnAPrB1UXqr1MIkUVpD4mWJos=;
+ b=apK/V08iIZrwAvQEWBVsGEwadRx029AHCD273M9Baxuomxx5Ow3N6y6icD+XPN/U1akHjprl0/EHF8nkMxqjtILLcYxrQNm/Ces3tVnaI1rO+bw3C5FCfncYq39tYVl7WPZ1Zfa3FPNiXiy/Ze/vRaO+BfndSf5F7DXXqai8ydYEJbVW0RzwWfpI6fKGdvTvDxauODpKQSRcCKmvZPwzY6I5TaF++lmgNzXIWSklEub4e111K34uQO56t5nSHXxynXHnSX+Ql1bM9iW0cRHUtlOWPDa7M6hRWri6jCeVDl1fak8sA0as54P610eypQGW+YX6Xf9iAdrRBLmr6JkOBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xX9dJxSyQLiDKG6TW4PnAPrB1UXqr1MIkUVpD4mWJos=;
+ b=eWXvqCMzqBAJIe68CrHLF+zgqtStUnKDJwTjYh85Zn674DNugf1Ze0jsbMZ6C3FbZdCj1D5J0CACQdQztTXjRO7uwWXnfA2uYNcX1IzQjmci4Db1kcTuJ7dLvSIx17ngMT36j78fqgFwjsN0by51Y9zE+6saYBtzTrQ1K1Nig9SyUhlH2zuaFzy20FX/93H9FGlbwr+SRsspppgbG/tQcD989+LOs1LbP0ujBCNNvngcJaN6gS4Nmjxu2Rdh/rz2XhZehv0j2ip3vHgnsIyhVfgUC/mdVFZFDfYmgNVpeptUnJfcWNve966len7NE/TG5YlOiG9NF0FrD14jQMuQ3Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AS4PR04MB9576.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::12)
+ by VI0PR04MB11021.eurprd04.prod.outlook.com (2603:10a6:800:26c::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Fri, 20 Sep
+ 2024 14:28:39 +0000
+Received: from AS4PR04MB9576.eurprd04.prod.outlook.com
+ ([fe80::9cf2:8eae:c3d1:2f30]) by AS4PR04MB9576.eurprd04.prod.outlook.com
+ ([fe80::9cf2:8eae:c3d1:2f30%7]) with mapi id 15.20.7982.018; Fri, 20 Sep 2024
+ 14:28:39 +0000
+From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Guoniu Zhou <guoniu.zhou@nxp.com>,
+	Jacopo Mondi <jacopo@jmondi.org>,
+	Christian Hemp <c.hemp@phytec.de>
+Cc: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Stefan Riedmueller <s.riedmueller@phytec.de>,
+	linux-media@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] media: nxp: imx8-isi: add m2m usage_count check in streamoff
+Date: Fri, 20 Sep 2024 17:27:15 +0300
+Message-Id: <20240920142715.2246323-1-laurentiu.palcu@oss.nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AS4P191CA0002.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d5::6) To AS4PR04MB9576.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4fe::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a0e:b0:3a0:922f:8e9a with SMTP id
- e9e14a558f8ab-3a0c9d6f2ffmr30349625ab.17.1726842395072; Fri, 20 Sep 2024
- 07:26:35 -0700 (PDT)
-Date: Fri, 20 Sep 2024 07:26:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ed861b.050a0220.2abe4d.0016.GAE@google.com>
-Subject: [syzbot] [netfs?] KASAN: slab-use-after-free Read in iov_iter_revert
-From: syzbot <syzbot+2625ce08c2659fb9961a@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9576:EE_|VI0PR04MB11021:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8153694e-f6ae-42aa-d66e-08dcd98084fd
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?24xOsKTF+0GMH0lR72Oljn/vvTuxEHMnfwoPRHmCuzEtKD4bSi64DI8fHJmQ?=
+ =?us-ascii?Q?3nStjTkLy9z4oebs2kOHuFPUGmxBdHV4Bk6jWNKFEJl7jC85REQC2pKxi6yq?=
+ =?us-ascii?Q?/KX0Svfc4C9lWymxyvx6ofadr+a07O6RbCsqQZcJ4yzAFXLMxxc4En7t8Ifu?=
+ =?us-ascii?Q?XkA0lT1jdwHR7EMaLgm4t933aJ1mpGQJlsYZIs4/u6+OgxenN9Z3+s6VsLSk?=
+ =?us-ascii?Q?6Z7w5wSK8Ty0hDAK7EVktDIZ/Krd6dDSGF1smAZGMkASHg8b4uJHypmhUWfk?=
+ =?us-ascii?Q?ziYqjHYcuvAZR/wpVoJ7k0+8RybQGvNW7OjqDv2zOGax7Trf64vqfmhNG0Na?=
+ =?us-ascii?Q?xHD3jjy/YMIuOY91y6CxDnYCOzxeFxYfYlWwF37KgvxC9+H1A9Vx4HkQnUXU?=
+ =?us-ascii?Q?8zhSXLxGlQa0fQMIKjd56PA9wGfLmFmhdd4+kr0QJkn0LV2+rZl/s72ajgpI?=
+ =?us-ascii?Q?89uPumVXzwzCvPQMPTM3h2lGiXnTS1y2gwwUr57IfCKiFgkyfTDGWQTy0/6n?=
+ =?us-ascii?Q?X7LPksJdbEPNf7E2eHrC3oIIxdY9c2CNW75nqGTVIeCpgG+uP3fWK7z4r0RW?=
+ =?us-ascii?Q?qjEneCp4pcdHtBIWXytD6KQtJCWLT/oVY1yK29zfQJaTb0nrD7M+p9sD7yZH?=
+ =?us-ascii?Q?pxGEsXVvRWF1rsorgVR2vzC5sNOp0sBh0M/944arHFPdJnQgemsFBhjHR0iu?=
+ =?us-ascii?Q?zSkRzB+jBDPw3dM1ywUio8F+nEArtmQL5fB88GwwVwqGi2SWWTFXt7c5wnEo?=
+ =?us-ascii?Q?ed2yxJwSI5u7kwku2n2Vj1uMQ7OwQh3SC2KRmcfUQai9f/A6blFUPqZ3PFkX?=
+ =?us-ascii?Q?y35HKJ3Mgq/SbnPS5cJ7ZC6b25w4zjfbrZfOw23YNwl0YU4C/IE2sWQAyfyL?=
+ =?us-ascii?Q?lr13ExovRN4RA1tasm2srniAjmmYcNNNAwV61GbZlufPnG4tE2LQO6LRN6KA?=
+ =?us-ascii?Q?m13Kan2n5D6W4G7EmgSsDvdKEoJTaRQnQ3Go02y7KbOYmTLA1Vp/rRPOAAaC?=
+ =?us-ascii?Q?Z5Cohebp2bUWUWQb41bOTWyhYtz+jXDKOvTaUQXQTyIeImIaTP8mYrx08XVx?=
+ =?us-ascii?Q?/9R8+lNFvm5sC1LP51ejPiATQLjsePTe0RK1AGVHfgye5UJYGTMm1ZykYnGw?=
+ =?us-ascii?Q?Rj5KPLg0KT/4n4WqwGM9nD/LyBT62Ry0mnNQcNsMtHfHcTQN31N1CFATg438?=
+ =?us-ascii?Q?PXvUPNlqQjFe+03BksL7OygRl4U/jaeZIxqGatO9wVd+VdhJkxlV9c+zaaFf?=
+ =?us-ascii?Q?E/6dupYLRZ6udp5QUf/eOIwRf4lIBBUxfBtEM0MLRnjMM7B3l/tFJzKn89Sz?=
+ =?us-ascii?Q?luIxg+Iciucpfg5pcyRios7oHryheP9d04GW/dEUDXc7xg=3D=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9576.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?TxnKqM40xOoX5BMt+6TgZ61s8SbgXzQukwqe3f78s8pvJkmrhwpyrTRUCfEW?=
+ =?us-ascii?Q?flqayti0gJxYCbnUQttckFa8ggZXSwqMhJRP71r4L9CGCXVM2DOEO2TS8lMd?=
+ =?us-ascii?Q?PXVeLH36cy0M4FN1w0LuAijE+UyS6cogEewZ/e6i115Kqv2mBVDdn/gxFDs4?=
+ =?us-ascii?Q?U3Pz8Dujv6wkKUCsFChTeRcnV9FnIsTd4gnlvD1GCaeffC7oZpAfNdXgQoOe?=
+ =?us-ascii?Q?7o7gB59eOMO5fVJNB9O75REz/gKs9PjM0rsN+r+gkpwiEAPLib4EnrOQ4E34?=
+ =?us-ascii?Q?dfxox1rD40Zto4ZhA0lVILwXUYlfwtWnrmsftw34lgLzhxB77ssaop7gmmS7?=
+ =?us-ascii?Q?PtLfYDKSPGxemZGRKpuxeTRfm++4bpAZaE2lJPmpDWs36/qYmF5UI0pJovTx?=
+ =?us-ascii?Q?kV8deQvBDF1zKDjkNYgJZNOZLd2fWktcPdOpmdjj48EqvYaJvp5A2NdzYdvt?=
+ =?us-ascii?Q?z+jeQ31NCwYkR/ursGDnaB0nZp5q093xrL/zW9rejRkk87cz1jrfAJIRLgEE?=
+ =?us-ascii?Q?ed2uWW6HT1k2iBT6bYHePb7odVFGqu3jpi6p14+DLoSvX6fu0kJcBhieZHpv?=
+ =?us-ascii?Q?3/Ee8XIqxov/P7/GpmPVvVPIXS5G5YK9E37FIhpIuv0Y27ilEcxgr3bhDjSn?=
+ =?us-ascii?Q?9o3GEoFkY9umAxe3/8QZ7fKc7r1RzLr4vhJ3wUwt7+PuYRjG/kT45anI4nvJ?=
+ =?us-ascii?Q?TvjsTgI4mtYc22YD3YTRc+MOUAq6GE2xKEfdcoBVsjNto6ppFqZyMeYUPYh0?=
+ =?us-ascii?Q?ECznN1ZWz9D9Y2UgOS/wo1EUJg8eBpu3cNhdrJ0zSAXj+DZ1Gjg1ji0LFtxq?=
+ =?us-ascii?Q?qdtWw072E3gLGRSLgJ6xBFsokW4DIglUeTT/YmgLSVEHJDVnxt4STFImZr53?=
+ =?us-ascii?Q?GYhmcmAZcfrPG80o7rW94TfMsjM8BSuopppAf5tTzWYXZcdYURjR410boR4w?=
+ =?us-ascii?Q?y+iyNTQcGTlZZwTN4eJkhxTSCdcfOiaiwm6wzJaRG7GjG76z5pOXW5uV9eDk?=
+ =?us-ascii?Q?OJEBDXuk0e7S6mW97vZeuqc9z2xz0Q6tI5F6xVtanITGx5dEhwAIxK6zkjFK?=
+ =?us-ascii?Q?BpEQQXRPTS9yvQq4p6kKd5RcrN5Qwvm9EB/94Vm71q2vN+e3RG2f7eT9bqrk?=
+ =?us-ascii?Q?xd7YnaRCUknAHhdYcVAnAMrG8gNH7ULPv4yegwNCo7Wed3XEmxnRj0AL5nJw?=
+ =?us-ascii?Q?Ll70HAvZaRrFj9247bNZgde8rbxqBBmjhVeuuLdoG1QKkZQoIRVzddqOPixD?=
+ =?us-ascii?Q?9jp61uqd4QVKKw2Knao3gb/75uDYl41ndRL/tZtMMCDYV3M+r4yBvQJAh/zm?=
+ =?us-ascii?Q?rTiNkCwgSKsFDcAebDzX1hzTysKY8GojTuKWwHWgZv9ZUFE8RPKWqzNJD+L2?=
+ =?us-ascii?Q?JqCA05hUBcZDp0vuPRK2eZX8eA+0lsHskuhplDgq8Y7DtxkYf7LQS3OLXHzr?=
+ =?us-ascii?Q?PBadJSV/A0+EOrdLvd4e5ralMv87NtVAEhE+WUUsUirHoSSE0bAX1zZqy6sB?=
+ =?us-ascii?Q?d18VYujnI/smnbmoUVuH+NQPkxiNzg7DWGaI4LAljDQhzUpAb7kIcuaZYmAI?=
+ =?us-ascii?Q?3ynTWpsGDWlks1ge9QAB/ojJP9EXj+qgzXZOxQgGRGwzkxJyF0y2wm59qRpj?=
+ =?us-ascii?Q?Uw=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8153694e-f6ae-42aa-d66e-08dcd98084fd
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9576.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 14:28:39.2725
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: szBGtCqZ2wzFm1TzdaINaFNWHeHipjElsqGN+tGoa/Kso+dnjRxh9sxBCT7ygC3eMbFd0fIeBZsLC1jVjGsm7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11021
 
-Hello,
+Currently, if streamon/streamoff calls are imbalanced we can end up
+with a negative ISI m2m usage_count. When that happens, the next
+streamon call will not enable the ISI m2m channel.
 
-syzbot found the following issue on:
+So, instead of throwing a warning in streamoff when usage_count drops
+below 0, just make sure we don't get there.
 
-HEAD commit:    a940d9a43e62 Merge tag 'soc-arm-6.12' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14e1469f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=44d46e514184cd24
-dashboard link: https://syzkaller.appspot.com/bug?extid=2625ce08c2659fb9961a
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1785b500580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177244a9980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-a940d9a4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e9929bfe422c/vmlinux-a940d9a4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a6c74ee261ed/bzImage-a940d9a4.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2625ce08c2659fb9961a@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-use-after-free in folioq_folio_order include/linux/folio_queue.h:140 [inline]
-BUG: KASAN: slab-use-after-free in folioq_folio_size include/linux/folio_queue.h:145 [inline]
-BUG: KASAN: slab-use-after-free in iov_iter_folioq_revert lib/iov_iter.c:597 [inline]
-BUG: KASAN: slab-use-after-free in iov_iter_revert lib/iov_iter.c:642 [inline]
-BUG: KASAN: slab-use-after-free in iov_iter_revert+0x503/0x5a0 lib/iov_iter.c:609
-Read of size 1 at addr ffff888027bdfd1d by task kworker/u32:4/101
-
-CPU: 1 UID: 0 PID: 101 Comm: kworker/u32:4 Not tainted 6.11.0-syzkaller-03917-ga940d9a43e62 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: events_unbound netfs_write_collection_worker
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:488
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- folioq_folio_order include/linux/folio_queue.h:140 [inline]
- folioq_folio_size include/linux/folio_queue.h:145 [inline]
- iov_iter_folioq_revert lib/iov_iter.c:597 [inline]
- iov_iter_revert lib/iov_iter.c:642 [inline]
- iov_iter_revert+0x503/0x5a0 lib/iov_iter.c:609
- netfs_retry_write_stream fs/netfs/write_collect.c:181 [inline]
- netfs_retry_writes fs/netfs/write_collect.c:361 [inline]
- netfs_collect_write_results fs/netfs/write_collect.c:529 [inline]
- netfs_write_collection_worker+0x44d2/0x4f80 fs/netfs/write_collect.c:551
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3393
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Allocated by task 5341:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:387
- kmalloc_noprof include/linux/slab.h:690 [inline]
- netfs_buffer_append_folio+0x181/0x750 fs/netfs/misc.c:25
- netfs_write_folio+0x542/0x18f0 fs/netfs/write_issue.c:421
- netfs_writepages+0x2ba/0xb90 fs/netfs/write_issue.c:541
- do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
- filemap_fdatawrite_wbc mm/filemap.c:397 [inline]
- filemap_fdatawrite_wbc+0x148/0x1c0 mm/filemap.c:387
- __filemap_fdatawrite_range+0xba/0x100 mm/filemap.c:430
- v9fs_dir_release+0x429/0x590 fs/9p/vfs_dir.c:219
- __fput+0x3f6/0xb60 fs/file_table.c:431
- task_work_run+0x14e/0x250 kernel/task_work.c:228
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0xaa3/0x2bb0 kernel/exit.c:882
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1031
- get_signal+0x25fb/0x2770 kernel/signal.c:2917
- arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:310
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- irqentry_exit_to_user_mode+0x13f/0x280 kernel/entry/common.c:231
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-
-Freed by task 101:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
- poison_slab_object+0xf7/0x160 mm/kasan/common.c:240
- __kasan_slab_free+0x32/0x50 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2250 [inline]
- slab_free mm/slub.c:4474 [inline]
- kfree+0x12a/0x3b0 mm/slub.c:4595
- netfs_delete_buffer_head+0xa6/0x100 fs/netfs/misc.c:59
- netfs_writeback_unlock_folios fs/netfs/write_collect.c:139 [inline]
- netfs_collect_write_results fs/netfs/write_collect.c:493 [inline]
- netfs_write_collection_worker+0x20f9/0x4f80 fs/netfs/write_collect.c:551
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3393
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-The buggy address belongs to the object at ffff888027bdfc00
- which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 285 bytes inside of
- freed 512-byte region [ffff888027bdfc00, ffff888027bdfe00)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x27bdc
-head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xfdffffff(slab)
-raw: 00fff00000000040 ffff88801ac42c80 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000000100010 00000001fdffffff 0000000000000000
-head: 00fff00000000040 ffff88801ac42c80 dead000000000100 dead000000000122
-head: 0000000000000000 0000000000100010 00000001fdffffff 0000000000000000
-head: 00fff00000000002 ffffea00009ef701 ffffffffffffffff 0000000000000000
-head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 2, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 1, tgid 1 (swapper/0), ts 9199521764, free_ts 9199474394
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1500
- prep_new_page mm/page_alloc.c:1508 [inline]
- get_page_from_freelist+0x1351/0x2e50 mm/page_alloc.c:3446
- __alloc_pages_noprof+0x22b/0x2460 mm/page_alloc.c:4702
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page+0x4e/0xf0 mm/slub.c:2319
- allocate_slab mm/slub.c:2482 [inline]
- new_slab+0x84/0x260 mm/slub.c:2535
- ___slab_alloc+0xdac/0x1870 mm/slub.c:3721
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3811
- __slab_alloc_node mm/slub.c:3864 [inline]
- slab_alloc_node mm/slub.c:4026 [inline]
- __kmalloc_cache_noprof+0x2b4/0x300 mm/slub.c:4185
- kmalloc_noprof include/linux/slab.h:690 [inline]
- kzalloc_noprof include/linux/slab.h:816 [inline]
- device_private_init drivers/base/core.c:3527 [inline]
- device_add+0xccf/0x1a70 drivers/base/core.c:3578
- device_create_groups_vargs+0x1f8/0x270 drivers/base/core.c:4374
- device_create+0xe9/0x130 drivers/base/core.c:4413
- aoechr_init+0x116/0x1c0 drivers/block/aoe/aoechr.c:305
- aoe_init+0x79/0x1f0 drivers/block/aoe/aoemain.c:54
- do_one_initcall+0x128/0x700 init/main.c:1269
- do_initcall_level init/main.c:1331 [inline]
- do_initcalls init/main.c:1347 [inline]
- do_basic_setup init/main.c:1366 [inline]
- kernel_init_freeable+0x69d/0xca0 init/main.c:1580
- kernel_init+0x1c/0x2b0 init/main.c:1469
-page last free pid 1 tgid 1 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1101 [inline]
- free_unref_page+0x64a/0xe40 mm/page_alloc.c:2619
- stack_depot_save_flags+0x2da/0x8f0 lib/stackdepot.c:666
- kasan_save_stack+0x42/0x60 mm/kasan/common.c:48
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:387
- kmalloc_noprof include/linux/slab.h:690 [inline]
- kzalloc_noprof include/linux/slab.h:816 [inline]
- call_usermodehelper_setup+0x9a/0x340 kernel/umh.c:363
- kobject_uevent_env+0x15ff/0x1860 lib/kobject_uevent.c:628
- kset_register+0x1b6/0x2b0 lib/kobject.c:877
- class_register+0x22e/0x340 drivers/base/class.c:203
- aoechr_init+0xb0/0x1c0 drivers/block/aoe/aoechr.c:298
- aoe_init+0x79/0x1f0 drivers/block/aoe/aoemain.c:54
- do_one_initcall+0x128/0x700 init/main.c:1269
- do_initcall_level init/main.c:1331 [inline]
- do_initcalls init/main.c:1347 [inline]
- do_basic_setup init/main.c:1366 [inline]
- kernel_init_freeable+0x69d/0xca0 init/main.c:1580
- kernel_init+0x1c/0x2b0 init/main.c:1469
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Memory state around the buggy address:
- ffff888027bdfc00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888027bdfc80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888027bdfd00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                            ^
- ffff888027bdfd80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888027bdfe00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
+Fixes: cf21f328fcafac ("media: nxp: Add i.MX8 ISI driver")
+Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
+index 9745d6219a166..b71195a3ba256 100644
+--- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
++++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
+@@ -575,6 +575,9 @@ static int mxc_isi_m2m_streamoff(struct file *file, void *fh,
+ 
+ 	mutex_lock(&m2m->lock);
+ 
++	if (m2m->usage_count == 0)
++		goto unlock;
++
+ 	/*
+ 	 * If the last context is this one, reset it to make sure the device
+ 	 * will be reconfigured when streaming is restarted.
+@@ -594,8 +597,7 @@ static int mxc_isi_m2m_streamoff(struct file *file, void *fh,
+ 		mxc_isi_channel_release(m2m->pipe);
+ 	}
+ 
+-	WARN_ON(m2m->usage_count < 0);
+-
++unlock:
+ 	mutex_unlock(&m2m->lock);
+ 
+ 	return 0;
+-- 
+2.34.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
