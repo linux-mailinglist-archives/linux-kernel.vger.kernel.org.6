@@ -1,241 +1,146 @@
-Return-Path: <linux-kernel+bounces-333966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE6B97D0A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:44:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA11297D08B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB6FE1F21CDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:44:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D98A1F24C32
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5651E2AE8C;
-	Fri, 20 Sep 2024 04:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F140728DB3;
+	Fri, 20 Sep 2024 04:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Gr7i9BhJ"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q3G5jYtc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0346479C2
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 04:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0310879D2;
+	Fri, 20 Sep 2024 04:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726807452; cv=none; b=lkDsGlA91Ovs55ESEjxdL2U/lYi2828R/zRhwxlDRHuNlCsVJD1ccwBfUZRnBQS0iyjRfeEMFXoFfrShP0q22x5XU5plp8tW/49hVfI0FgRzir1RDRmS9rMLFJEs9ywkqllnA5gGw9ar7j5SwQbHOXAdXwoJA8e1B3gz2QJydjw=
+	t=1726806562; cv=none; b=Zc5NWk6d6kPCwgZv+6fX0g/MwSNhevG+VDjCun2f0hzGAsGGOnm1fXij/1NEbVvd+lIRUuVsGSrvlQ37cyd/XWGWixeAkExWrW2vuT7duO1FhAdWUrBMjGQ6iIWTca4itMPAEqsAwCLKlaDe+CsUl8QwOMFX5XHsFs+qSwEBZXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726807452; c=relaxed/simple;
-	bh=dXQ4KZEjnb/YAaEmi62WIa7KI4i7ms8EM3iQe0mTNyY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=VX5L2rxcqEiV+BtCkrryYIT6Kl+cTjMoDgwyO1pIUmmwQExXAynH1jIWzcX5//sqoovqxfv1Wkt/4AroPrCbQUTxQa214Yq6tLpNFyFV7gmG3Y0yj9fK4pBQqb89dHv2DgGmlS6etD2DuRt1j9n+ndCE/sWaBfboiUZh22ZpyDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Gr7i9BhJ; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240920044407epoutp011350c4b1121738d5fa9419876025919a~22jlgpihI0571205712epoutp01G
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 04:44:07 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240920044407epoutp011350c4b1121738d5fa9419876025919a~22jlgpihI0571205712epoutp01G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726807447;
-	bh=KrrZvreUocZnG1ZsUMTCFrbAlt2M8tG4240a84PDK/A=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=Gr7i9BhJgKE4HLpxxxBMPt1M/tWez5MZrjDMtH/kR5IFLmnXfA5iSLp6qwAOYxWQi
-	 WuaOV6ZEIBh4/dxqJb/XM2Cn6FyhdcF6w6wOz2gsDJmJMjAYihNxB39vrhCfxEYMUm
-	 RL4NlTSN4vVgpCY3V+bIEGh1E6969lNC54eMc7WA=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240920044406epcas5p34e75d9b0445e4bd42179653e26df6c3f~22jlFLVMB1233612336epcas5p3q;
-	Fri, 20 Sep 2024 04:44:06 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4X90CS6V65z4x9QL; Fri, 20 Sep
-	2024 04:44:04 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BD.4B.19863.49DFCE66; Fri, 20 Sep 2024 13:44:04 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240920041559epcas5p22b8f5ce6dd97df2c852fd4a04cf918ee~22LBji84I0647406474epcas5p2D;
-	Fri, 20 Sep 2024 04:15:59 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240920041559epsmtrp28b5b36fc70a24e0eba301afd59a5309f~22LBi2H_K2949829498epsmtrp24;
-	Fri, 20 Sep 2024 04:15:59 +0000 (GMT)
-X-AuditID: b6c32a50-c73ff70000004d97-76-66ecfd946373
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	70.26.08456.FF6FCE66; Fri, 20 Sep 2024 13:15:59 +0900 (KST)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240920041557epsmtip26fe6da3caf5963ad4bbb3afbcac3ae7d~22K-988FJ0323603236epsmtip2x;
-	Fri, 20 Sep 2024 04:15:57 +0000 (GMT)
-From: "Inbaraj E" <inbaraj.e@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Stephen Boyd'"
-	<sboyd@kernel.org>, <alim.akhtar@samsung.com>, <cw00.choi@samsung.com>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <mturquette@baylibre.com>,
-	<s.nawrocki@samsung.com>
-Cc: <pankaj.dubey@samsung.com>, <gost.dev@samsung.com>
-In-Reply-To: 
-Subject: RE: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-Date: Fri, 20 Sep 2024 09:45:56 +0530
-Message-ID: <011401db0b13$cbd045f0$6370d1d0$@samsung.com>
+	s=arc-20240116; t=1726806562; c=relaxed/simple;
+	bh=7OI69Dbq64XO6NFe8O3Ks+AB5DeVlameRcJBVDTMDzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B9hTM+JSnbkj+7rQzp3bhm/y+bcevO0eIJogSGrmeN7lRcat2pFTOtK9C5vuvv/ZGr3ml91UBBm3rCuqDtHsaL3i5ZbZFToMQOX2+FnE8eDpb0euaZ3rm5KRsZ802ZhOScnOIlOsvTYZ/QoF0XoIX3tlfSjhkQEaUWxbJhjvuig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q3G5jYtc; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726806560; x=1758342560;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7OI69Dbq64XO6NFe8O3Ks+AB5DeVlameRcJBVDTMDzw=;
+  b=Q3G5jYtc1hHAaOWyU1rs+o9TvGf37NusH601BFhwfF2krAyqH6RDUwl8
+   rahp7MFdI3PwA8/Y6sNuuICNlD7ExJIx3XWLmzauo1OGQZhQUvikDptFo
+   /ETx72J2E+b4unk0uz+EiLI5motCYYW8oE8NdgUrTEbHp+xGvj1JbH1qs
+   r6TixXmhzuPfWwDyJqFX6ggHuM4yfwPaI135SxyaU+Sb79xo5NEFMC3L1
+   u0sfWol+Kcyq039JWtzGufYoiXI5oGA//N3CV46KnXEzvTchiViTTIc8L
+   quEqjLDvSei6PGjVsAD6/vMNET3E5Wyk/ziiQSwqdy/a6sf0lQtH9V+/W
+   g==;
+X-CSE-ConnectionGUID: QdHXSsH9Rx6tVZf/ZpBBPA==
+X-CSE-MsgGUID: U34lEFizSLCaEBTsI6eKAw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="25745771"
+X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
+   d="scan'208";a="25745771"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2024 21:29:19 -0700
+X-CSE-ConnectionGUID: mIXwfmt3Q36E5AYC2QmlEg==
+X-CSE-MsgGUID: klCmEn5HRjiekeu+HFuJKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,243,1719903600"; 
+   d="scan'208";a="70404987"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 19 Sep 2024 21:29:17 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1srVGc-000Dxo-1w;
+	Fri, 20 Sep 2024 04:29:14 +0000
+Date: Fri, 20 Sep 2024 12:28:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+	linux-pci@vger.kernel.org, bhelgaas@google.com,
+	manivannan.sadhasivam@linaro.org, logang@deltatee.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, sumanesh.samanta@broadcom.com,
+	sathya.prakash@broadcom.com, sjeaugey@nvidia.com,
+	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+Subject: Re: [PATCH 1/2 v2] PCI/portdrv: Enable reporting inter-switch P2P
+ links
+Message-ID: <202409201219.feYAxGor-lkp@intel.com>
+References: <1726733624-2142-2-git-send-email-shivasharan.srikanteshwara@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMYu0UT7KgXFJ9p8WqzYl/+4ytJPAKVNCMjAc9ECZkCVSVjTgGurbUsr6Fq/7CAAAL6cA==
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOJsWRmVeSWpSXmKPExsWy7bCmpu6Uv2/SDHo+GFk8mLeNzeL6l+es
-	FjcP7GSyOH9+A7vFx557rBaXd81hs5hxfh+TxcVTrhaLtn5htzj8pp3V4t+1jSwO3B7vb7Sy
-	e2xa1cnm0bdlFaPH501yASxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5
-	ibmptkouPgG6bpk5QEcpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OL
-	S/PS9fJSS6wMDQyMTIEKE7IzDh1sZyyYI1dxfdFStgbGZskuRk4OCQETid9TDrKD2EICexgl
-	jhyog7A/MUpcWl/ZxcgFZH9jlJj3cRIbTMO0+UsZIRJ7GSVm3LrCDuG8ZJR4uW0NWBWbgKbE
-	zaP/wKpEBJYySXTe+wG2g1nATGLL3fusXYwcHJwCvBIT/lmDhIUFXCRm/LvEDBJmEVCV+PHE
-	GCTMK2ApcWLtfUYIW1Di5MwnLBBTtCWWLXzNDHGQgsTPp8tYQWwRgTCJZVMPMkPUiEsc/dnD
-	DHKChMBKDomDs9aBrZUA2jXxlTFEr7DEq+Nb2CFsKYnP7/ZCPekjsX/OL0YIO0Pi2PblrBC2
-	vcSBK3NYQMYwA724fpc+RFhWYuqpdUwQa/kken8/YYKI80rsmAdjK0vMPHIfarykxM7LO1km
-	MCrNQvLZLCSfzULywSyEbQsYWVYxSqUWFOempyabFhjq5qWWw6M7OT93EyM4xWoF7GBcveGv
-	3iFGJg7GQ4wSHMxKIrziH16mCfGmJFZWpRblxxeV5qQWH2I0BQb3RGYp0eR8YJLPK4k3NLE0
-	MDEzMzOxNDYzVBLnfd06N0VIID2xJDU7NbUgtQimj4mDU6qBqTPjXv97q85VZ6ZP26p7xWl+
-	w3/p4J028Xef7H8isG3769p19788+zv3iZPKRf6A+wfyt5/r2Sp/NuOr0QJhjeO160pkMxqk
-	+qwvxgcm6r2XuuvGs5Tnhf2Dj/tfBu1e+TPBa0JjfnBVT0HCHZ9y1osLXFZ+sOGqYQ2QqDz5
-	OSmb/1LT4oPfpmnWHROYfMt1qoaKndU5g/sTWfdpcNgUsOlkLfBlmmKz58XPx4nHj7PsefWq
-	drJEhAB/XqRahPvdc7IXPk8qcdS99th47Q2eezJpZXfaHW+fV7jBuWXdE8V4+5Q3BR4fTq3z
-	25uSZh7u0uwxvSV/ysvdimmbS8TDbS95+HCKTfZP5lnAO8PCUomlOCPRUIu5qDgRAKoVYL06
-	BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWy7bCSvO7/b2/SDBZd47B4MG8bm8X1L89Z
-	LW4e2Mlkcf78BnaLjz33WC0u75rDZjHj/D4mi4unXC0Wbf3CbnH4TTurxb9rG1kcuD3e32hl
-	99i0qpPNo2/LKkaPz5vkAliiuGxSUnMyy1KL9O0SuDJWv17MXLBWtuLOeccGxkkSXYycHBIC
-	JhLT5i9l7GLk4hAS2M0oMeH0TRaIhKTE7N/T2SFsYYmV/56zQxQ9Z5S4c3kOI0iCTUBT4ubR
-	f2DdIgJrmSQ6tq8ESzALWEgs/3OdDaJjIZPEh+61QA4HB6cAr8SEf9YgNcICLhIz/l1iBgmz
-	CKhK/HhiDBLmFbCUOLH2PiOELShxcuYTFoiR2hK9D1sZYexlC18zQxynIPHz6TJWEFtEIExi
-	2dSDzBA14hJHf/YwT2AUnoVk1Cwko2YhGTULScsCRpZVjJKpBcW56bnFhgVGeanlesWJucWl
-	eel6yfm5mxjBkaaltYNxz6oPeocYmTgYDzFKcDArifCKf3iZJsSbklhZlVqUH19UmpNafIhR
-	moNFSZz32+veFCGB9MSS1OzU1ILUIpgsEwenVAPTiqBVj+3mF1YfVV5+Sk2uLVOx4TVniM5r
-	9myd2F1b9oSJyWWLsonXt9xeXfD2hF+26YOKNw8l/M+fF7fenH97vqgShyX/wacS709obauW
-	OlaSbhuee128szX7lM57yz9lojH+gQv+OvOm9S/gtZhZu0rW7cDajrn+Lefm3Dp/0mW359VE
-	1coV12f2bdlk51VxbZpn8OKEjN2PL1+cbdvH/8zgiob1/B/+ap8tzBL6zxbU8i0vSVuqEVZf
-	O6E559GEeJF3e15sMCt/0fs2Keh+X2X7C9Pyivc9O639488/6t3Q66F+p7vE8p5kewNLTYx2
-	VZ6j2IppvNPNfNi3sS5Z6X9gSdSNDXUfreIUvimxFGckGmoxFxUnAgDPZTGxIwMAAA==
-X-CMS-MailID: 20240920041559epcas5p22b8f5ce6dd97df2c852fd4a04cf918ee
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300
-References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com>
-	<20240917101016.23238-1-inbaraj.e@samsung.com>
-	<0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
-	<00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
-	<633ff284-101d-4651-833e-a6b01626c9a1@kernel.org> 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1726733624-2142-2-git-send-email-shivasharan.srikanteshwara@broadcom.com>
+
+Hi Shivasharan,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on pci/next]
+[also build test WARNING on next-20240919]
+[cannot apply to pci/for-linus linus/master v6.11]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Shivasharan-S/PCI-portdrv-Enable-reporting-inter-switch-P2P-links/20240919-162626
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/1726733624-2142-2-git-send-email-shivasharan.srikanteshwara%40broadcom.com
+patch subject: [PATCH 1/2 v2] PCI/portdrv: Enable reporting inter-switch P2P links
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20240920/202409201219.feYAxGor-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240920/202409201219.feYAxGor-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409201219.feYAxGor-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/pci/pcie/portdrv.c:86: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    * Determine if device supports Inter switch P2P links.
 
 
+vim +86 drivers/pci/pcie/portdrv.c
 
-> -----Original Message-----
-> From: Inbaraj E <inbaraj.e=40samsung.com>
-> Sent: 20 September 2024 09:35
-> To: 'Krzysztof Kozlowski' <krzk=40kernel.org>; 'Stephen Boyd'
-> <sboyd=40kernel.org>; 'alim.akhtar=40samsung.com'
-> <alim.akhtar=40samsung.com>; 'cw00.choi=40samsung.com'
-> <cw00.choi=40samsung.com>; 'linux-clk=40vger.kernel.org' <linux-
-> clk=40vger.kernel.org>; 'linux-kernel=40vger.kernel.org' <linux-
-> kernel=40vger.kernel.org>; 'linux-samsung-soc=40vger.kernel.org' <linux-
-> samsung-soc=40vger.kernel.org>; 'mturquette=40baylibre.com'
-> <mturquette=40baylibre.com>; 's.nawrocki=40samsung.com'
-> <s.nawrocki=40samsung.com>
-> Cc: 'pankaj.dubey=40samsung.com' <pankaj.dubey=40samsung.com>;
-> 'gost.dev=40samsung.com' <gost.dev=40samsung.com>
-> Subject: RE: =5BPATCH=5D clk: samsung: fsd: Mark PLL_CAM_CSI as critical
->=20
->=20
->=20
-> > -----Original Message-----
-> > From: Krzysztof Kozlowski <krzk=40kernel.org>
-> > Sent: 19 September 2024 17:33
-> > To: Inbaraj E <inbaraj.e=40samsung.com>; 'Stephen Boyd'
-> > <sboyd=40kernel.org>; alim.akhtar=40samsung.com;
-> cw00.choi=40samsung.com;
-> > linux-clk=40vger.kernel.org; linux-kernel=40vger.kernel.org;
-> > linux-samsung- soc=40vger.kernel.org; mturquette=40baylibre.com;
-> > s.nawrocki=40samsung.com
-> > Cc: pankaj.dubey=40samsung.com; gost.dev=40samsung.com
-> > Subject: Re: =5BPATCH=5D clk: samsung: fsd: Mark PLL_CAM_CSI as critica=
-l
-> >
-> > On 19/09/2024 13:33, Inbaraj E wrote:
-> > >
-> > >
-> > >> -----Original Message-----
-> > >> From: Stephen Boyd <sboyd=40kernel.org>
-> > >> Sent: 19 September 2024 15:51
-> > >> To: Inbaraj E <inbaraj.e=40samsung.com>; alim.akhtar=40samsung.com;
-> > >> cw00.choi=40samsung.com; krzk=40kernel.org; linux-clk=40vger.kernel.=
-org;
-> > >> linux- kernel=40vger.kernel.org; linux-samsung-soc=40vger.kernel.org=
-;
-> > >> mturquette=40baylibre.com; s.nawrocki=40samsung.com
-> > >> Cc: pankaj.dubey=40samsung.com; gost.dev=40samsung.com; Inbaraj E
-> > >> <inbaraj.e=40samsung.com>
-> > >> Subject: Re: =5BPATCH=5D clk: samsung: fsd: Mark PLL_CAM_CSI as
-> > >> critical
-> > >>
-> > >> Quoting Inbaraj E (2024-09-17 03:10:16)
-> > >>> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the
-> > >>> CMU_CAM_CSI block. When we gate ACLK or PCLK, the clock
-> framework
-> > >> will
-> > >>> subsequently disables the parent clocks(PLL_CAM_CSI). Disabling
-> > >>> PLL_CAM_CSI is causing sytem level halt.
-> > >>>
-> > >>> It was observed on FSD SoC, when we gate the ACLK and PCLK during
-> > >>> CSI stop streaming through pm_runtime_put system is getting halted.
-> > >>> So marking PLL_CAM_CSI as critical to prevent disabling.
-> > >>>
-> > >>> Signed-off-by: Inbaraj E <inbaraj.e=40samsung.com>
-> > >>> ---
-> > >>
-> > >> Please add a fixes tag. Although this is likely a band-aid fix
-> > >> because marking something critical leaves it enabled forever.
-> > >
-> > > Sure, will add fixes tag. As per HW manual, this PLL_CAM_CSI is
-> > > supplying clock even for CMU SFR access of CSI block, so we can't
-> > > gate this.
-> >
-> > Hm, I am not so sure. The CMU driver should just take appropriate clock=
-.
-> > Sprinkling CLK_CRITICAL looks as substitute of missing clock handling/
->=20
-> As per HW design, PLL_CAM_CSI is responsible for suppling clock to CSI SF=
-R,
-> CMU SFR and some internal block of CAM_CSI. In this some of the clock is =
-not
-> handled by any driver but it is required for CSI to work properly. For ex=
-ample
-> CSI NOC clock. So this is the reason we are marking PLL_CAM_CSI as critic=
-al.
->
+    84	
+    85	/**
+  > 86	 * Determine if device supports Inter switch P2P links.
+    87	 *
+    88	 * Return value: true if inter switch P2P is supported, return false otherwise.
+    89	 */
+    90	static bool pcie_port_is_p2p_supported(struct pci_dev *dev)
+    91	{
+    92		/* P2P link attribute is supported on upstream ports only */
+    93		if (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM)
+    94			return false;
+    95	
+    96		/*
+    97		 * Currently Broadcom PEX switches are supported.
+    98		 */
+    99		if (dev->vendor == PCI_VENDOR_ID_LSI_LOGIC &&
+   100		    (dev->device == PCI_DEVICE_ID_BRCM_PEX_89000_HLC ||
+   101		     dev->device == PCI_DEVICE_ID_BRCM_PEX_89000_LLC))
+   102			return pcie_brcm_is_p2p_supported(dev);
+   103	
+   104		return false;
+   105	}
+   106	
 
-This is clock hierarchy for CMU_CAM_CSI block.
-
-PLL_CAM_CSI -----> DIVIDER --------> CSI_SFR clock
-			=7C
-			=7C----> DIVIDER --------> CMU_SFR clock
-			=7C
-			=7C----> DIVIDER --------> CSI NOC clock.=20
-
-Regards,
-Inbaraj E
-> >
-> >
-> > Best regards,
-> > Krzysztof
-
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
