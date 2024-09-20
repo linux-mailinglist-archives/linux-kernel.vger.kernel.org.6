@@ -1,273 +1,137 @@
-Return-Path: <linux-kernel+bounces-334527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAB897D859
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:29:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0CB797D85B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51B85282AE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:29:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED2661C23140
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F26D17E015;
-	Fri, 20 Sep 2024 16:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C707B1BF37;
+	Fri, 20 Sep 2024 16:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WIivEpfN"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUAAjSLS"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6832E17E003
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 16:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0962566
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 16:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726849778; cv=none; b=YjREDxBzSTG4utv0zNhJNdbOSNLju7zCIbjBr0R5RWoZLvB5+zuXx3104cgBSL+rJcAn0TtR/7EhrfWDkibrW+c/6NvotRBjCZkw2itazj/ZizZuUOs9q61VIaT3CQXslaFllVVPsSZA2QWTcHtYSpjG5ht4yYzO/Pe67kIkpj8=
+	t=1726849875; cv=none; b=qd96NVtDSMbKziiRzYfbNUHDv3BAhSUf0mfVyu/b3irT1uzC15nQnuP28BbsoV3l17KW0YtU94dfNfrloT2NlC56Rs8+CpySdGVbS+kYeIApFbi+I8PfhAUI8fIdLtQ0/Sy4CCpz1ett4M9Il4xRKbJSbK4d8w3iy91mdyfRw5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726849778; c=relaxed/simple;
-	bh=TN0NJfVZUKW3GmXh3PRo+7KhLjpRvz74v7ilmzZY0No=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AHjcFh1waX/yz/EwBQ74bztWPWPNOkedfB4YsT1Lzzdrl1vJ4/y409KGZtg4u8nYkawMI+rFH3LK+KEqqKL8hF3XcOwNF2NtN8gFzsOyZp6Rob4q7xh42iEGCqos3ZboRX5dr1DBPKNVkgn3vDW/os6bHJbAmtpPl18e5snxJx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WIivEpfN; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5356ab89665so2982097e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:29:35 -0700 (PDT)
+	s=arc-20240116; t=1726849875; c=relaxed/simple;
+	bh=TyP++zDgXZYtc1xE2scoPkGOcbpTXvIn5yunvMviT1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ElpJVPUwaMJSDsanlClJJfGFkJmKpe/hBblnp5HFLItOfFAjPSODyDswq1AEB8JjwkXlRm1dyuI8bH/TTMvYWqBDR5us3ZtMiORWpT9gcx75LYgvmJZrVLcmd09M5mqHtQhl3/A9wyvvBgcbnzRexhST9qR4LscjWhL4dF8SBJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUAAjSLS; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-710d2cf2955so1362749a34.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:31:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726849774; x=1727454574; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KfditimrKF4JK7u3yX1xKfHCsL9hDUk5eltnda23Uak=;
-        b=WIivEpfNgvALdSrwWsdug/t2XJKcSYffmyI8j5G6Klfpr0buxMLAMw/TWUUbEVzFsg
-         sbqAoBiDC92qRm+n6wdKujEFXMD9beGfAx9yXWG24AcaAs+KW80barXXnPsUHo4K5WkP
-         BwhQR7i2msXQjI3WeYNANp1FUnYfyHQvRVT7p+K71OXQCJKw6dmLi9jt3YFSrg781Cmo
-         iZTf2Dd8G9MZVb/4dfMcEKrZv1yFEmKZNHYR8/p846lE/bhRfm2ggW5NqDtIWYlsUGjF
-         Juvbp2B8PRHHfUMjH3nOHXdqY5sCOgLFr733HGATiJ5SOVz5iYeiecBW/4xMyXDv2U6O
-         T3ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726849774; x=1727454574;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1726849873; x=1727454673; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KfditimrKF4JK7u3yX1xKfHCsL9hDUk5eltnda23Uak=;
-        b=IDr/0aIWrTq+kEaI5aIh8588LFnyUcZM1mq3qJPC/g6KYardXZQbe3gmRNlHmC6GUw
-         7DMUZeaaQNXXzP6pJpdC3tYJFdBI7AnhretWdbMobP+QsVoWMkxMpwGVpxoGWHjJOKmz
-         JuEFzxspIQijigVzxuu1dyXk5qSgem7dEhHPau5D0BAOoI4Ty8+KkjtXdVU22OZlQmHj
-         +WW4ERR/QeDDUrGRDlVZnJC1ZEfKN313OCXxZKAj6502T191dL5qlg7DmmIPXpgFhM5m
-         dslHu2x8OCnthbGNlCOEV+YOjGTiSm7iLUdNjfk1A4C7/s6FxCUpMdipT3FNRVEOtmGd
-         IL0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXtWXOwoEd6PojcPfV4LS5ND7lED4FrSmPkLGnG+7SnUj0blX6kdCDWRpKg8SzLxuPkUBQp/JfGZdN8KCM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL9/1YaScsDC5WEBJFjWvsswT5j/39snVk3aLJ1qiktp3pYJgz
-	AM3edMhuVvGNmDbzTWB1AAzhD6PZNfV/7wMtaLWHp0yQobAvZ5sx5ROwpe9myDQ=
-X-Google-Smtp-Source: AGHT+IE1LZCxErRgPXK8fC0M6EtENAw/5XRWiIO/oy6Uyv8AOGscn4kh6HaF6ktB+yZZ3J0CygZZ2Q==
-X-Received: by 2002:a05:6512:3087:b0:52e:91ff:4709 with SMTP id 2adb3069b0e04-536ad161af5mr2458077e87.21.1726849774195;
-        Fri, 20 Sep 2024 09:29:34 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870a8700sm2240915e87.221.2024.09.20.09.29.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 09:29:31 -0700 (PDT)
-Date: Fri, 20 Sep 2024 19:29:30 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Tejas Vipin <tejasvipin76@gmail.com>
-Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
-	quic_jesszhan@quicinc.com, dianders@chromium.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/panel: elida-kd35t133: transition to mipi_dsi
- wrapped functions
-Message-ID: <c3wv3r44cmua2hphyjqzb7pp2a32pvs6svcj6s2zohp77qn3cr@4iica7j5bx5l>
-References: <20240917071710.1254520-1-tejasvipin76@gmail.com>
+        bh=+kFNgjU2lRuthexlytRySW/QoHblcc+yb5R2qeY2kiQ=;
+        b=EUAAjSLSoRzq0q0HFr/sK1zOdtfcCEUhR94P8gZ4cQsPddlZ0YB+RRqk3BJZYDwo28
+         SRLRwRjlv2bDSVQm2uY3igdUL23wwq3MMypPptEJod/FA/oPc0y3qDFuzovpK117m3W2
+         x0qzqBbajFplmOHGoH5HKOaRL20u8RQJbJvLsI/9lQUdVmRo6jbjFc6ccfQ+8xFxd+ne
+         6+JlRDw05G1wpkrHhY3JSC78pAohn4qWBt4uF1ZWVELWyDSa/iaQEm5v3U8L0P7G/B6s
+         DTRTDEKODXc7dvkHruxJf/PjBCneaUTVdFspGG1/mUzri1J/B69NwlsT4A2MK6TnfRVG
+         Ijvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726849873; x=1727454673;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+kFNgjU2lRuthexlytRySW/QoHblcc+yb5R2qeY2kiQ=;
+        b=lzzgfS+rSc6gMAMsrywH8xECvPZpzngZc7i5LfUFWkivv9Lk1SrXQHgburhF3m2Dwb
+         rdEkXIMu6czy6vomR+08THUBGD3QTcl+LZy3IiTeV8mUjBVO8Va8lsSB0Wqnc9Ks+mO9
+         08oyBY5w4j4uQEWY1sPPGIFU1uuIeCqtOGt1JfjzzKixrld459AMChSSrmFt3qQ2q4U9
+         ugptbOmPcxer6sWXOhRl04sR/UQR3dPHa2raD3C77mrT+FpnJSHNvQkILNYfV4OIEZK4
+         blskC7bMGs3sgvXVtn32m/EHBc+WhtWxxs66/AK6a+K562poAVVFuYxDTICxQcd5CDTD
+         hDyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVneDgxfkOIdS1vzBurqjPpl9FnU2IJMthSHw+wePWqtrep4yCoGY3mVGOD+ufPZn7EdpRf7lluR7CrZzI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7XDYTE5RC2hM2IEHJ1ovpbURk1JXxtKU0PR0tXQFXKl0yCrS5
+	BQmoQ7Wx4Vc3KAsXIepwiH6zLHyNT1gw3KH8lDYphO+Mmx2+iYAd2+KGkfr8y/USHlKGm0kZj1u
+	s0eTAKT2aCVhmhsaslDxMFxpHm+I=
+X-Google-Smtp-Source: AGHT+IG6kSExes68WvrmTD2Klk+8Mr4krZ64XIuYYOLEOyvVWgd+wL1Sl4mG/cbKjJ2o12LP4IyHlsUuR8XI/I/z6Eg=
+X-Received: by 2002:a05:6830:25d6:b0:710:fa02:94b0 with SMTP id
+ 46e09a7af769-713933e16a2mr1944810a34.0.1726849872894; Fri, 20 Sep 2024
+ 09:31:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917071710.1254520-1-tejasvipin76@gmail.com>
+References: <20240920090959.30755-1-kdipendra88@gmail.com> <ac13994c-b77b-48f2-b2cf-20299f02c2e8@amd.com>
+In-Reply-To: <ac13994c-b77b-48f2-b2cf-20299f02c2e8@amd.com>
+From: Dipendra Khadka <kdipendra88@gmail.com>
+Date: Fri, 20 Sep 2024 22:16:01 +0545
+Message-ID: <CAEKBCKMg0c5AW7YggDMR+Kg7OGq3dXApLK-=RTR71H0KHO73+g@mail.gmail.com>
+Subject: Re: [PATCH] Staging: drivers/gpu/drm/amd/amdgpu: Fix null pointer
+ deference in amdkfd_fence_get_timeline_name
+To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Felix.Kuehling@amd.com, alexander.deucher@amd.com, Xinhui.Pan@amd.com, 
+	airlied@gmail.com, daniel@ffwll.ch, amd-gfx@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 17, 2024 at 12:47:10PM GMT, Tejas Vipin wrote:
-> Changes the elida-kd35t133 panel to use multi style functions for
-> improved error handling.
-> 
-> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
-> ---
->  drivers/gpu/drm/panel/panel-elida-kd35t133.c | 107 ++++++++-----------
->  1 file changed, 45 insertions(+), 62 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-elida-kd35t133.c b/drivers/gpu/drm/panel/panel-elida-kd35t133.c
-> index 00791ea81e90..62abda9559e7 100644
-> --- a/drivers/gpu/drm/panel/panel-elida-kd35t133.c
-> +++ b/drivers/gpu/drm/panel/panel-elida-kd35t133.c
-> @@ -50,55 +50,45 @@ static inline struct kd35t133 *panel_to_kd35t133(struct drm_panel *panel)
->  	return container_of(panel, struct kd35t133, panel);
->  }
->  
-> -static int kd35t133_init_sequence(struct kd35t133 *ctx)
-> +static void kd35t133_init_sequence(struct mipi_dsi_multi_context *dsi_ctx)
->  {
-> -	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-> -	struct device *dev = ctx->dev;
-> -
->  	/*
->  	 * Init sequence was supplied by the panel vendor with minimal
->  	 * documentation.
->  	 */
-> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_POSITIVEGAMMA,
-> -			       0x00, 0x13, 0x18, 0x04, 0x0f, 0x06, 0x3a, 0x56,
-> -			       0x4d, 0x03, 0x0a, 0x06, 0x30, 0x3e, 0x0f);
-> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_NEGATIVEGAMMA,
-> -			       0x00, 0x13, 0x18, 0x01, 0x11, 0x06, 0x38, 0x34,
-> -			       0x4d, 0x06, 0x0d, 0x0b, 0x31, 0x37, 0x0f);
-> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_POWERCONTROL1, 0x18, 0x17);
-> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_POWERCONTROL2, 0x41);
-> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_VCOMCONTROL, 0x00, 0x1a, 0x80);
-> -	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_SET_ADDRESS_MODE, 0x48);
-> -	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_SET_PIXEL_FORMAT, 0x55);
-> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_INTERFACEMODECTRL, 0x00);
-> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_FRAMERATECTRL, 0xa0);
-> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_DISPLAYINVERSIONCTRL, 0x02);
-> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_DISPLAYFUNCTIONCTRL,
-> -			       0x20, 0x02);
-> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_SETIMAGEFUNCTION, 0x00);
-> -	mipi_dsi_dcs_write_seq(dsi, KD35T133_CMD_ADJUSTCONTROL3,
-> -			       0xa9, 0x51, 0x2c, 0x82);
-> -	mipi_dsi_dcs_write(dsi, MIPI_DCS_ENTER_INVERT_MODE, NULL, 0);
-> -
-> -	dev_dbg(dev, "Panel init sequence done\n");
-> -	return 0;
-> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_POSITIVEGAMMA,
-> +				     0x00, 0x13, 0x18, 0x04, 0x0f, 0x06, 0x3a, 0x56,
-> +				     0x4d, 0x03, 0x0a, 0x06, 0x30, 0x3e, 0x0f);
-> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_NEGATIVEGAMMA,
-> +				     0x13, 0x18, 0x01, 0x11, 0x06, 0x38, 0x34,
-> +				     0x06, 0x0d, 0x0b, 0x31, 0x37, 0x0f);
-> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_POWERCONTROL1, 0x18, 0x17);
-> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_POWERCONTROL2, 0x41);
-> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_VCOMCONTROL, 0x00, 0x1a, 0x80);
-> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, MIPI_DCS_SET_ADDRESS_MODE, 0x48);
-> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, MIPI_DCS_SET_PIXEL_FORMAT, 0x55);
-> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_INTERFACEMODECTRL, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_FRAMERATECTRL, 0xa0);
-> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_DISPLAYINVERSIONCTRL, 0x02);
-> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_DISPLAYFUNCTIONCTRL,
-> +				     0x02);
-> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_SETIMAGEFUNCTION, 0x00);
-> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, KD35T133_CMD_ADJUSTCONTROL3,
-> +				     0x51, 0x2c, 0x82);
-> +	if (!dsi_ctx->accum_err)
-> +		mipi_dsi_dcs_write(dsi_ctx->dsi, MIPI_DCS_ENTER_INVERT_MODE, NULL, 0);
+On Fri, 20 Sept 2024 at 16:01, Christian K=C3=B6nig <christian.koenig@amd.c=
+om> wrote:
+>
+> Am 20.09.24 um 11:09 schrieb Dipendra Khadka:
+> > '''
+> > drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c:108:9: error: Null poi=
+nter dereference: fence [nullPointer]
+> >   return fence->timeline_name;
+> >          ^
+> > '''
+> >
+> > The method to_amdgpu_amdkfd_fence can return NULL incase of empty f
+> > or f->ops !=3D &amdkfd_fence_ops.Hence, check has been added .
+> > If fence is null , then null is returned.
+>
+> Well NAK, completely nonsense. Calling the function with a NULL fence is
+> illegal.
 
-Please use mipi_dsi_dcs_write_buffer_multi() instead.
+Thanks for enlightening me .
 
->  }
->  
->  static int kd35t133_unprepare(struct drm_panel *panel)
->  {
->  	struct kd35t133 *ctx = panel_to_kd35t133(panel);
->  	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-> -	int ret;
-> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
->  
-> -	ret = mipi_dsi_dcs_set_display_off(dsi);
-> -	if (ret < 0)
-> -		dev_err(ctx->dev, "failed to set display off: %d\n", ret);
-> -
-> -	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
-> -	if (ret < 0) {
-> -		dev_err(ctx->dev, "failed to enter sleep mode: %d\n", ret);
-> -		return ret;
-> -	}
-> +	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-> +	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
-> +	if (dsi_ctx.accum_err)
-> +		return dsi_ctx.accum_err;
->  
->  	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
->  
-> @@ -112,18 +102,20 @@ static int kd35t133_prepare(struct drm_panel *panel)
->  {
->  	struct kd35t133 *ctx = panel_to_kd35t133(panel);
->  	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-> -	int ret;
-> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
->  
->  	dev_dbg(ctx->dev, "Resetting the panel\n");
-> -	ret = regulator_enable(ctx->vdd);
-> -	if (ret < 0) {
-> -		dev_err(ctx->dev, "Failed to enable vdd supply: %d\n", ret);
-> -		return ret;
-> +	dsi_ctx.accum_err = regulator_enable(ctx->vdd);
-> +	if (dsi_ctx.accum_err) {
-> +		dev_err(ctx->dev, "Failed to enable vdd supply: %d\n",
-> +			dsi_ctx.accum_err);
-> +		return dsi_ctx.accum_err;
->  	}
->  
-> -	ret = regulator_enable(ctx->iovcc);
-> -	if (ret < 0) {
-> -		dev_err(ctx->dev, "Failed to enable iovcc supply: %d\n", ret);
-> +	dsi_ctx.accum_err = regulator_enable(ctx->iovcc);
-> +	if (dsi_ctx.accum_err) {
-> +		dev_err(ctx->dev, "Failed to enable iovcc supply: %d\n",
-> +			dsi_ctx.accum_err);
->  		goto disable_vdd;
->  	}
->  
-> @@ -135,25 +127,16 @@ static int kd35t133_prepare(struct drm_panel *panel)
->  
->  	msleep(20);
->  
-> -	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
-> -	if (ret < 0) {
-> -		dev_err(ctx->dev, "Failed to exit sleep mode: %d\n", ret);
-> -		goto disable_iovcc;
-> -	}
-> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-> +	mipi_dsi_msleep(&dsi_ctx, 250);
->  
-> -	msleep(250);
-> +	kd35t133_init_sequence(&dsi_ctx);
-> +	if (!dsi_ctx.accum_err)
-> +		dev_dbg(ctx->dev, "Panel init sequence done\n");
->  
-> -	ret = kd35t133_init_sequence(ctx);
-> -	if (ret < 0) {
-> -		dev_err(ctx->dev, "Panel init sequence failed: %d\n", ret);
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-> +	if (dsi_ctx.accum_err)
->  		goto disable_iovcc;
-> -	}
+>
+> Regards,
+> Christian.
+>
+> >
+> > Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+> > ---
+> >   drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c | 3 +++
+> >   1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c b/drivers=
+/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c
+> > index 1ef758ac5076..2313babcc944 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_fence.c
+> > @@ -105,6 +105,9 @@ static const char *amdkfd_fence_get_timeline_name(s=
+truct dma_fence *f)
+> >   {
+> >       struct amdgpu_amdkfd_fence *fence =3D to_amdgpu_amdkfd_fence(f);
+> >
+> > +     if (!fence)
+> > +             return NULL;
+> > +
+> >       return fence->timeline_name;
+> >   }
+> >
+>
 
-Move this after the last mipi_dsi_msleep(), merge with the error
-handling.
-
-> -
-> -	ret = mipi_dsi_dcs_set_display_on(dsi);
-> -	if (ret < 0) {
-> -		dev_err(ctx->dev, "Failed to set display on: %d\n", ret);
-> -		goto disable_iovcc;
-> -	}
->  
->  	msleep(50);
-
-mipi_dsi_msleep()
-
->  
-> @@ -163,7 +146,7 @@ static int kd35t133_prepare(struct drm_panel *panel)
->  	regulator_disable(ctx->iovcc);
->  disable_vdd:
->  	regulator_disable(ctx->vdd);
-> -	return ret;
-> +	return dsi_ctx.accum_err;
->  }
->  
->  static const struct drm_display_mode default_mode = {
-> -- 
-> 2.46.0
-> 
-
--- 
-With best wishes
-Dmitry
+Regards,
+Dipendra Khadka
 
