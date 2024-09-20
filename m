@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-334175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F15EB97D37E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:16:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86C2397D37F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 307E41C22623
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A42E2861A2
 	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354FE13A265;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356C813A26F;
 	Fri, 20 Sep 2024 09:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="Kq1TVKFE"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="BC58+kQU"
 Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26AB1CD2C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8352CE555
 	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726823799; cv=none; b=SFQP23dAC7+MuMvF9E9bsC07Dw44oIvokQjR8tZ8YVsdKRkUwTbG7KOb+BI8qL6lG2TWPgPOUG1hl1BXc8IbpbjwLZXDc/xjxRD0LHbRrnOHPluuAl7w2FV3RAiRz+V7OJu9TugbB330+7QbE7sCnxVm81wC1ZY8MO+YiBEBquo=
+	t=1726823799; cv=none; b=KAWHkSzei5FwLo2SDfodJ3rwyE1PG40gulLGJ30FjVhYbfFjvJ81L1s9zNaVwUj8v90WeSbSToiyaN9RuREQ5yGWOtCoj226krYHGJEW3LCggx4zBfmNKRVETyE0Dz9x/P9JDBPUOdI7Plpbu5MaJdHFQuv9j22iZjcnx0XID74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726823799; c=relaxed/simple;
-	bh=H5vO6Wc0mKC3lqWkfyiq3NTWwDenfmeBA7g2i3+29gY=;
+	bh=+OK2RN/HhGbe98BfImomkLcmPOI63V3fyL3D/3hJWYE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=K275eNrG6H3yngWEdtS2V+hWNbr+foLd2CXw7/+nbixgu7A7A48KGl4g7Hgv/dSjeXZ9i5Ko/BJ4kRt3bCRMVd/PF7vyMygbDF8RZD7PmFjFxFPIh0OzNnxA/LhV6t1OTOd31nIBt+Fyhz1/h9MbtpaP3jQFbpjXn6Fe19RwtnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=Kq1TVKFE; arc=none smtp.client-ip=150.107.74.76
+	 MIME-Version:Content-Type; b=Ge29yFzY7tNDVKFbHlHGirB79eUxkzqTMGO9vVdfC6csLxSH8VF32qF8bX+HsZ/P7K//8MNzRJMkN790WRFD9qMQXbKZzD3Bt+JTEt8/GDPRCR+R3/YyJ707A79Uerq7PTKiNM2Gn0DMwAVn/ORoqn3Ft0mC8LLMu6atahr5nEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=BC58+kQU; arc=none smtp.client-ip=150.107.74.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
 	s=201909; t=1726823795;
-	bh=K8jwiabrK5D6Hs2uR3+hfrDgJNW3a1V7tWBTVvI9Zbk=;
+	bh=IA6yN3inZfKzjRZ8fVnZb2zPyxLvv/G18bjmPkyeAS4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Kq1TVKFEXns6vVegA3r5F46NFcgALudM+YJWUOFehfYvdBIFVnscKuaQl/LbziWEM
-	 wYtE+xBrdMDZdw6/PJHFOktD15LB5sEGEJoGzLFOvXX3kD/lp5KT6kelcM0eT2e7Zx
-	 gprbw50+S6tIZth+ThcMVVI0qBP03MbpJ5ypmVbp6ASjAyoxnfaUDTO7S5wTJ2GPUe
-	 6azJC28M167vKNxGW9HJHfGQ5y+2j9kU+GFaJbB1aOEY/p1Ba5hLh0PdaxUZgfvwHl
-	 IuZJMbpl0EhbXoPuIOd4iZTv54Wd8MMlkxGpCwjt2s8QSkH5xPm03VhqvR8qJEHaP8
-	 A8SpmVHn1P1VQ==
+	b=BC58+kQUHYvhPZ1Al97xWzc5nlJVz9/kxlqWQ924vHUxqa9sNhzS5x4DvnsSOTazK
+	 8cVdXcJL0b+IS/S4JY4VlkXGb3ORVwG1f6IhEnKAwmaRIzy0ex3LXbEueEZ+M9WkCo
+	 /FuLjdvknPC0BGbvi50t9qU+tXQdQjcUEHJyws1oaNZ2O8R4oje6s+SFl6TeOLKB5B
+	 LHZBreNeDVCJ0XtkKwv6ed7nhSBQOINmpmLaFMKijRepN9KbjvAdtLt5tkJ2GtPO75
+	 xMVvDtzTGPoxaWAjCE/SoEleQDPnItf9b5amX2MMNZYdihXcBOMEp2x6cqq2SU1kZb
+	 Z1kBDIQ/HCyGw==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X96Fv4gW5z4x9D;
-	Fri, 20 Sep 2024 19:16:35 +1000 (AEST)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X96Ft01KDz4x7B;
+	Fri, 20 Sep 2024 19:16:33 +1000 (AEST)
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-To: linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au, linux-kernel@vger.kernel.org, Narayana Murty N <nnmlinux@linux.ibm.com>
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org, vaibhav@linux.ibm.com, ganeshgr@linux.ibm.com, sbhat@linux.ibm.com
-In-Reply-To: <20240917132445.3868016-1-nnmlinux@linux.ibm.com>
-References: <20240917132445.3868016-1-nnmlinux@linux.ibm.com>
-Subject: Re: [PATCH] powerpc/pseries/eeh: move pseries_eeh_err_inject() outside CONFIG_DEBUG_FS block
-Message-Id: <172682376261.64942.12479934341616104313.b4-ty@ellerman.id.au>
+To: "Jason A . Donenfeld" <Jason@zx2c4.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Christian Zigotzky <chzigotzky@xenosoft.de>
+In-Reply-To: <aded2b257018fe654db759fdfa4ab1a0b5426b1b.1726772140.git.christophe.leroy@csgroup.eu>
+References: <aded2b257018fe654db759fdfa4ab1a0b5426b1b.1726772140.git.christophe.leroy@csgroup.eu>
+Subject: Re: [PATCH] powerpc/vdso32: Fix use of crtsavres for PPC64
+Message-Id: <172682376257.64942.9485115063969411360.b4-ty@ellerman.id.au>
 Date: Fri, 20 Sep 2024 19:16:02 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,18 +63,21 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On Tue, 17 Sep 2024 09:24:45 -0400, Narayana Murty N wrote:
-> Makes pseries_eeh_err_inject() available even when debugfs
-> is disabled (CONFIG_DEBUG_FS=n). It moves eeh_debugfs_break_device()
-> and eeh_pe_inject_mmio_error() out of the CONFIG_DEBUG_FS block
-> and renames it as eeh_break_device().
+On Thu, 19 Sep 2024 20:55:57 +0200, Christophe Leroy wrote:
+> crtsavres.S content is encloded by a #ifndef CONFIG_PPC64
 > 
+> To be used on VDSO32 on PPC64 it's content must available on PPC64 as
+> well.
 > 
+> Replace #ifndef CONFIG_PPC64 by #ifndef __powerpc64__ as __powerpc64__
+> is not set when building VDSO32 on PPC64.
+> 
+> [...]
 
 Applied to powerpc/fixes.
 
-[1/1] powerpc/pseries/eeh: move pseries_eeh_err_inject() outside CONFIG_DEBUG_FS block
-      https://git.kernel.org/powerpc/c/3af2e2f68cc6baf0a11f662d30b0bf981f77bfea
+[1/1] powerpc/vdso32: Fix use of crtsavres for PPC64
+      https://git.kernel.org/powerpc/c/699d53f04829d6b8855ff458f86e4b75ef3e5f0c
 
 cheers
 
