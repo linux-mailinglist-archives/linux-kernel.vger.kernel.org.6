@@ -1,284 +1,326 @@
-Return-Path: <linux-kernel+bounces-334651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBEEE97D9F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 22:08:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D807897D9F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 22:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 088CE1C20C40
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 20:08:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84650B229C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 20:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514AC184550;
-	Fri, 20 Sep 2024 20:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFF2184542;
+	Fri, 20 Sep 2024 20:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LquIpaDo"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFvDYkww"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D1961FCF;
-	Fri, 20 Sep 2024 20:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE2916A94F
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 20:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726862892; cv=none; b=tAbJM2MMuQbejfafK00vmYCbf6pjGHImeNLLWoP3dp6KcgaSuW4O38ITx902K8mCtt3ccTjRSAUCzjzfVVvYrwljSCa9g4/+W6RY1O9hHfwqTLJ/LZPInbO8QfCe+z3ZjOpShNFew7PH/0g7d9kXy4nRKfCD1C/swg2H1TrhXsk=
+	t=1726863708; cv=none; b=iBNb1Z8tJ001yL9C4he30bTnQj4rG30raajp4V09Nt4xPMGB81mUgmZUkntqkJtpFOGfDIcFJ7OAedU4yBuKU1MzP4cyVlZSv/OSeg0kuCs1EQU57/Web6uSaiq4Wif5+AoO6TKonxMOZnVRk6tzuAkyLu3NrRgSmnSQGkzLAaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726862892; c=relaxed/simple;
-	bh=FyCY36yI5w0lTSq34HxZmH4EPDjzQfp2huhYuiHkwRA=;
-	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=lClN/U9l9fMJbdRg8xZ9TXe/OplwTHYtNaNlkaTbJMTkGa0KQUIkksT/dcGVI1ClEv+rq2fncQHXd93cnd1bWV81UBh//UrzNnXbYksMSZn7Hg0oVpSG4Mq+LBOfhDQSlcWtDS+oODv3ShyutXOZmBo9IBfdrS4PJtirzP/DlOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LquIpaDo; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1726863708; c=relaxed/simple;
+	bh=bMEPSv2kVF7+Bmfj9t123gvcgI+oCzcjkKtnoMHWnl0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dqjmc7o+YHGhfJQkZXnmBJnxEat5lWMisjeuzng4ZlLuNkn3/rBNLAkuKogUbb8iIgMs2jfaBwu4peN1P4OoB04Ian7tVUCsHXEZik49t8OgD8LZ88otZIE4u6cO+foa30WbEX27lXIS9thT89c3jR6qZASGYiNMr9d0bkButdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QFvDYkww; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-718d8d6af8fso1792152b3a.3;
-        Fri, 20 Sep 2024 13:08:10 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71788bfe60eso2121959b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 13:21:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726862890; x=1727467690; darn=vger.kernel.org;
-        h=to:cc:date:message-id:subject:mime-version
-         :content-transfer-encoding:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jqXxksIhdYu3U6EyI/SaQCdXTyiEORhvEkCurrA15Ic=;
-        b=LquIpaDooPK9WJ+6Fl04RLTvu2Lrn6TbaaSv0SKcvQN7vcIS4NHJGLuHalpYt4qr2I
-         PuOhgI7RjvTI3bjylnl3X/GUVYx2rrdAChrQNU4QLRrrdUmgocysnwd901OkRWIrxiPp
-         9nnpBkSTTsQhjxcWCiUhDfVK5Qonz8dI1yXbAHIFXs0V2xK0IYcT50CZZZ/JVccJ3Y8W
-         Pnn/nShq/dCY8oTPM4jOxcbPTQ1Oem/hchB5wZQ0cnefXWftd9/OdTFBLQDAVIMajKmp
-         dyARWi6sQpPTlyVInVKwHvGgxg8wOLud0CX+SYLHNqGYyS7uOps4C8mA+wJIblsp1oSG
-         7m1A==
+        d=gmail.com; s=20230601; t=1726863706; x=1727468506; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FTMqPqwuPFmCmq0ZrkAlktDHceHAk8HhbetHzAPo6pQ=;
+        b=QFvDYkwwrnkA9BMpV6AKXd727J09KVRyyi3GgENJyiR5AXLsVoLbseLG8+U0kE4ktZ
+         Y/+2YLnvUZ6kzfRdt9iPpNgGCwfdoLCelMwpt/AQPPJCQHTFVAuvS9Z+Y8zDd8RNbQpt
+         SqzC4Nn9/5wa1jeXhj97zs+G5MRnzHbkiQVq2FOhcAPaJiDwiDdM4RP55csE7FDZ40mJ
+         Me7hvFHjGb4fC3RyCQHE/uuidcwaIH8WnNPW+7OTTFueh4x93FKdl1tqu6ta0jdBA2Ot
+         uUlVuUuZyyJ3pmpedPdvBc7JIxAMYKWR+2QsUPiQlVJIJciWADTmW6d5Vc3PqDff3Avb
+         sHFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726862890; x=1727467690;
-        h=to:cc:date:message-id:subject:mime-version
-         :content-transfer-encoding:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jqXxksIhdYu3U6EyI/SaQCdXTyiEORhvEkCurrA15Ic=;
-        b=vqLlsrzSrtYmEbBXyq/O0zIo/TgXPGSGqzCS5wCM0Mw/N8BIu4dtCmiQg/agMkwG8m
-         nyAMSXZGoLHH7ToXkMjZfGAwKDuxEtGTXOB0qK+lY2Lo7tOAqZBCTrU4RPUBUw7m2tMk
-         s4+7Pf3OM3U3cpU8dGh4f5SWBgrhZHVf1n2EXajuEQzYfw321/swMrV8oFxlzR6J84aj
-         1Uj2n3gVjVqhW1K/giZCnh2XJV/5NbNaBn7/o4acKesqvoBG5wl87wvz7qGF4Dx2d6P8
-         YdNfprdwmOSPbEiKs6oToK+kw5L1FTvUm9d4/WH5xUaUDzhGxas0unktSHpZj/rK2Cm5
-         Q4tw==
-X-Forwarded-Encrypted: i=1; AJvYcCVK1LPJhTKIpa10+2Boy904lODZ6Df7ilD9wOUsgmWSRCtGKmsBRvxnoGCnyNl196W9ttFZcnSyGZSC@vger.kernel.org, AJvYcCVe7pDMJwMjTr3Hw9xyMoHUMj9GmApdyUQBtAfGMdv0VH42C8MjEIj2qowtK++4Nm4mk33fTin5mBTnQRqg@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtfC9offX8Dzfk7mNGFWm9fz4YimPJ9kUUtjbae4P1MGtlNla3
-	NBYilGH/Xxnv9gnfrcH0fFPeMVg2YzBpI5dKRphGHdsKuTO/BTn+
-X-Google-Smtp-Source: AGHT+IFnZTuVUXfi09IMvJbRV9nzRJbWPXCtMyEyTm2x1nnbKFEaAJF7P+WRaiwkpd1Vvtm+qwMHRA==
-X-Received: by 2002:a05:6a20:b68a:b0:1d0:2533:1a42 with SMTP id adf61e73a8af0-1d30a8ecf33mr4553539637.9.1726862890221;
-        Fri, 20 Sep 2024 13:08:10 -0700 (PDT)
-Received: from smtpclient.apple ([2601:645:c600:8760:2cea:7b3a:57f3:3330])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db4998ff14sm11207518a12.66.2024.09.20.13.08.09
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 20 Sep 2024 13:08:09 -0700 (PDT)
-From: James Young <pronoiac@gmail.com>
-Content-Type: text/plain;
-	charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        d=1e100.net; s=20230601; t=1726863706; x=1727468506;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FTMqPqwuPFmCmq0ZrkAlktDHceHAk8HhbetHzAPo6pQ=;
+        b=YHDxkpx+RfNqzxesjHPSOnpPWuQzeO5B9LtbTscoJikmu7CmbHFmSr/snELd7aN2Pk
+         IN/GOJs1JaX7j4xKpkZSanGhRN+lneBnP4bMNL3ipFz6sJ5N6u47n/2qdkAhvmPs1La/
+         qS1FP0ENCLDYrS/evxUXHTsT4lnCLzVSx5YFnA+UXpada6MCW0XKvmg1xf1q7vc26Tha
+         VhYXUo6m4yXSufOt17tFShZf1oanRYmjC7pUfpIwigNRrJqG/eBhNk4k5wRcPCl9JrZG
+         b9siv+YqY9Sc9hHbkEDeB2bWOgEyTVLmrR0rPnqa+/1uXrQOwlehHflXnE4k7bk0kO/b
+         QxOg==
+X-Forwarded-Encrypted: i=1; AJvYcCW03kfRokxGLWTthmQw8RVIedKmA4ja/PDRoBm5i443J1HEtowDxDGd9O18GZelMxBqURRLZB4e59jjcvY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsSElEBNsTPmF7K6XGiIQ/9tRcmrySDY0eeUwgLwbTdOdfB24u
+	m0PBNrknVdpcm6eTCYL5X6QTS+U7VoMapPY1B7qkBogLRyF3nhKs
+X-Google-Smtp-Source: AGHT+IHo5zUSsx2wi0HM7klfzPYPSI8TQWNLHP/Niytv1S4QuOX4QBc+2TurH/N9hquzETnnwxXz8g==
+X-Received: by 2002:a05:6a00:1405:b0:714:3de8:a616 with SMTP id d2e1a72fcca58-7199ca03a00mr6023594b3a.19.1726863705794;
+        Fri, 20 Sep 2024 13:21:45 -0700 (PDT)
+Received: from localhost.localdomain ([183.11.36.73])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71944bc4752sm10219520b3a.203.2024.09.20.13.21.43
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 20 Sep 2024 13:21:45 -0700 (PDT)
+From: Wenyu Huang <huangwenyu1998@gmail.com>
+X-Google-Original-From: Wenyu Huang <huangwenyuu@outlook.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com
+Cc: virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] virtio: Make vring_new_virtqueue support for packed vring
+Date: Sat, 21 Sep 2024 04:21:41 +0800
+Message-Id: <20240920202141.89446-1-huangwenyuu@outlook.com>
+X-Mailer: git-send-email 2.30.1 (Apple Git-130)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: [REGRESSION] Corruption on cifs / smb write on ARM, kernels 6.3-6.9
-Message-Id: <DFC1DAC5-5C6C-4DC2-807A-DAF12E4B7882@gmail.com>
-Date: Fri, 20 Sep 2024 13:07:58 -0700
-Cc: stable@vger.kernel.org,
- regressions@lists.linux.dev,
- linux-cifs@vger.kernel.org,
- David Howells <dhowells@redhat.com>,
- linux-kernel@vger.kernel.org,
- Steve French <sfrench@samba.org>
-To: pronoiac+kernel@gmail.com
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-I was benchmarking some compressors, piping to and from a network share =
-on a NAS, and some consistently wrote corrupted data.
+From: Wenyu Huang <huangwenyu1998@gmail.com>
 
+It's also available for packed ring now.
 
-First, apologies in advance:
-* if I'm not in the right place. I tried to follow the directions from =
-the Regressions guide - =
-https://www.kernel.org/doc/html/latest/admin-guide/reporting-regressions.h=
-tml
-* I know there's a ton of context I don't know
-* I=E2=80=99m trying a different mail app, because the first one looked =
-concussed with plain text. This might be worse.
+Signed-off-by: Wenyu Huang <huangwenyu1998@gmail.com>
+---
+ drivers/virtio/virtio_ring.c | 153 +++++++++++++++++++++--------------
+ 1 file changed, 92 insertions(+), 61 deletions(-)
 
-
-The detailed description:
-I was benchmarking some compressors on Debian on a Raspberry Pi, piping =
-to and from a network share on a NAS, and found that some consistently =
-had issues writing to my NAS. Specifically:
-* lzop
-* pigz - parallel gzip
-* pbzip2 - parallel bzip2
-
-This is dependent on kernel version. I've done a survey, below.
-
-While I tripped over the issue on a Debian port (Debian 12, bookworm, =
-kernel v6.6), I compiled my own vanilla / mainline kernels for testing =
-and reporting this.
-
-
-Even more details:
-The Pi and the Synology NAS are directly connected by Gigabit Ethernet. =
-Both sides are using self-assigned IP addresses. I'll note that at boot, =
-getting the Pi to see the NAS requires some nudging of avahi-autoipd; =
-while I think it's stable before testing, I'm not positive, and =
-reconnection issues might be in play.
-
-The files in question are tars of sparse file systems, about 270 gig, =
-compressing down to 10-30 gig.
-
-Compression seems to work, without complaint; decompression crashes the =
-process, usually within the first gig of the compressed file. The output =
-of the stream doesn't match what ends up written to disk.
-
-Trying decompression during compression gets further along than it does =
-after compression finishes; this might point toward something with =
-writes and caches.
-
-A previous attempt involved rpi-update, which:
-* good: let me install kernels without building myself
-* bad: updated the bootloader and firmware, to bleeding edge, with =
-possible regressions; it definitely muddied the results of my tests
-I started over with a fresh install, and no results involving rpi-update =
-are included in this email.
-
-
-A survey of major branches:
-* 5.15.167, LTS - good
-* 6.1.109, LTS - good
-* 6.2.16 - good
-* 6.3.13 - bad
-* 6.4.16 - bad
-* 6.5.13 - bad
-* 6.6.50, LTS - bad
-* 6.7.12 - bad
-* 6.8.12 - bad
-* 6.9.12 - bad
-* 6.10.9 - good
-* 6.11.0 - good
-
-I tried, but couldn't fully build 4.19.322 or 6.0.19, due to issues with =
-modules.
-
-
-Important commits:
-It looked like both the breakage and the fix came in during rc1 =
-releases.
-
-Breakage, v6.3-rc1:
-I manually bisected commits in fs/smb* and fs/cifs.
-
-3d78fe73fa12 cifs: Build the RDMA SGE list directly from an iterator
-> lzop and pigz worked. last working. test in progress: pbzip2
-
-607aea3cc2a8 cifs: Remove unused code
-> lzop didn't work. first broken
-
-
-Fix, v6.10-rc1:
-I manually bisected commits in fs/smb.
-
-69c3c023af25 cifs: Implement netfslib hooks
-> lzop didn't work. last broken one
-
-3ee1a1fc3981 cifs: Cut over to using netfslib
-> lzop, pigz, pbzip2, all worked. first fixed one
-
-
-To test / reproduce:
-It looks like this, on a mounted network share, with extra pv for =
-progress meters:
-
-cat 1tb-rust-ext4.img.tar.gz | \
-  gzip -d | \
-  lzop -1 > \
-  1tb-rust-ext4.img.tar.lzop
-  # wait 40 minutes
-
-cat 1tb-rust-ext4.img.tar.lzop | \
-  lzop -d | \
-  sha1sum
-  # either it works, and shows the right checksum
-  # or it crashes early, due to a corrupt file, and shows an incorrect =
-checksum
-
-As I re-read this, I realize it might look like the compressor behaves =
-differently. I added a "tee $output | sha1sum; sha1sum $output" and ran =
-it on a broken version. The checksums from the pipe and for the file on =
-disk are different.
-
-
-Assorted info:
-This is a Raspberry Pi 4, with 4 GiB RAM, running Debian 12, bookworm, =
-or a port.
-
-mount.cifs version: 7.0
-
-# cat /proc/sys/kernel/tainted
-1024
-
-# cat /proc/version
-Linux version 6.2.0-3d78fe73f-v8-pronoiac+ (pronoiac@bisect) (gcc =
-(Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #21 =
-SMP PREEMPT Thu Sep 19 16:51:22 PDT 2024
-
-
-DebugData:=20
-/proc/fs/cifs/DebugData
-Display Internal CIFS Data Structures for Debugging
----------------------------------------------------
-CIFS Version 2.41
-Features: =
-DFS,FSCACHE,STATS2,DEBUG,ALLOW_INSECURE_LEGACY,CIFS_POSIX,UPCALL(SPNEGO),X=
-ATTR,ACL
-CIFSMaxBufSize: 16384
-Active VFS Requests: 1
-
-Servers:
-1) ConnectionId: 0x1 Hostname: drums.local
-Number of credits: 8062 Dialect 0x300
-TCP status: 1 Instance: 1
-Local Users To Server: 1 SecMode: 0x1 Req On Wire: 2
-In Send: 1 In MaxReq Wait: 0
-
-        Sessions:
-        1) Address: 169.254.132.219 Uses: 1 Capability: 0x300047        =
-Session Status: 1
-        Security type: RawNTLMSSP  SessionId: 0x4969841e
-        User: 1000 Cred User: 0
-
-        Shares:
-        0) IPC: \\drums.local\IPC$ Mounts: 1 DevInfo: 0x0 Attributes: =
-0x0
-        PathComponentMax: 0 Status: 1 type: 0 Serial Number: 0x0
-        Share Capabilities: None        Share Flags: 0x0
-        tid: 0xeb093f0b Maximal Access: 0x1f00a9
-
-        1) \\drums.local\billions Mounts: 1 DevInfo: 0x20 Attributes: =
-0x5007f
-        PathComponentMax: 255 Status: 1 type: DISK Serial Number: =
-0x735a9af5
-        Share Capabilities: None Aligned, Partition Aligned,    Share =
-Flags: 0x0
-        tid: 0x5e6832e6 Optimal sector size: 0x200      Maximal Access: =
-0x1f01ff
-
-
-        MIDs:
-        State: 2 com: 9 pid: 3117 cbdata: 00000000e003293e mid 962892
-
-        State: 2 com: 9 pid: 3117 cbdata: 000000002610602a mid 962956
-
---
-
-
-
-Let me know how I can help.
-The process of iterating can take hours, and it's not automated, so my =
-resources are limited.
-
-#regzbot introduced: 607aea3cc2a8
-#regzbot fix: 3ee1a1fc3981
-
--James
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index be7309b1e860..664a0c40ee05 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -223,7 +223,7 @@ struct vring_virtqueue {
+ #endif
+ };
+ 
+-static struct virtqueue *__vring_new_virtqueue(unsigned int index,
++static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
+ 					       struct vring_virtqueue_split *vring_split,
+ 					       struct virtio_device *vdev,
+ 					       bool weak_barriers,
+@@ -232,6 +232,15 @@ static struct virtqueue *__vring_new_virtqueue(unsigned int index,
+ 					       void (*callback)(struct virtqueue *),
+ 					       const char *name,
+ 					       struct device *dma_dev);
++static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
++					       struct vring_virtqueue_packed *vring_packed,
++					       struct virtio_device *vdev,
++					       bool weak_barriers,
++					       bool context,
++					       bool (*notify)(struct virtqueue *),
++					       void (*callback)(struct virtqueue *),
++					       const char *name,
++					       struct device *dma_dev);
+ static struct vring_desc_extra *vring_alloc_desc_extra(unsigned int num);
+ static void vring_free(struct virtqueue *_vq);
+ 
+@@ -1160,7 +1169,7 @@ static struct virtqueue *vring_create_virtqueue_split(
+ 	if (err)
+ 		return NULL;
+ 
+-	vq = __vring_new_virtqueue(index, &vring_split, vdev, weak_barriers,
++	vq = __vring_new_virtqueue_split(index, &vring_split, vdev, weak_barriers,
+ 				   context, notify, callback, name, dma_dev);
+ 	if (!vq) {
+ 		vring_free_split(&vring_split, vdev, dma_dev);
+@@ -2064,62 +2073,21 @@ static struct virtqueue *vring_create_virtqueue_packed(
+ 	struct device *dma_dev)
+ {
+ 	struct vring_virtqueue_packed vring_packed = {};
+-	struct vring_virtqueue *vq;
+-	int err;
++	struct virtqueue *vq;
+ 
+ 	if (vring_alloc_queue_packed(&vring_packed, vdev, num, dma_dev))
+-		goto err_ring;
+-
+-	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
+-	if (!vq)
+-		goto err_vq;
+-
+-	vq->vq.callback = callback;
+-	vq->vq.vdev = vdev;
+-	vq->vq.name = name;
+-	vq->vq.index = index;
+-	vq->vq.reset = false;
+-	vq->we_own_ring = true;
+-	vq->notify = notify;
+-	vq->weak_barriers = weak_barriers;
+-#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
+-	vq->broken = true;
+-#else
+-	vq->broken = false;
+-#endif
+-	vq->packed_ring = true;
+-	vq->dma_dev = dma_dev;
+-	vq->use_dma_api = vring_use_dma_api(vdev);
+-	vq->premapped = false;
+-	vq->do_unmap = vq->use_dma_api;
+-
+-	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
+-		!context;
+-	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+-
+-	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
+-		vq->weak_barriers = false;
+-
+-	err = vring_alloc_state_extra_packed(&vring_packed);
+-	if (err)
+-		goto err_state_extra;
+-
+-	virtqueue_vring_init_packed(&vring_packed, !!callback);
++		return NULL;
+ 
+-	virtqueue_init(vq, num);
+-	virtqueue_vring_attach_packed(vq, &vring_packed);
++	vq = __vring_new_virtqueue_packed(index, &vring_packed, vdev, weak_barriers,
++					context, notify, callback, name, dma_dev);
++	if (!vq) {
++		vring_free_packed(&vring_packed, vdev, dma_dev);
++		return NULL;
++	}
+ 
+-	spin_lock(&vdev->vqs_list_lock);
+-	list_add_tail(&vq->vq.list, &vdev->vqs);
+-	spin_unlock(&vdev->vqs_list_lock);
+-	return &vq->vq;
++	to_vvq(vq)->we_own_ring = true;
+ 
+-err_state_extra:
+-	kfree(vq);
+-err_vq:
+-	vring_free_packed(&vring_packed, vdev, dma_dev);
+-err_ring:
+-	return NULL;
++	return vq;
+ }
+ 
+ static int virtqueue_resize_packed(struct virtqueue *_vq, u32 num)
+@@ -2599,7 +2567,7 @@ irqreturn_t vring_interrupt(int irq, void *_vq)
+ EXPORT_SYMBOL_GPL(vring_interrupt);
+ 
+ /* Only available for split ring */
+-static struct virtqueue *__vring_new_virtqueue(unsigned int index,
++static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
+ 					       struct vring_virtqueue_split *vring_split,
+ 					       struct virtio_device *vdev,
+ 					       bool weak_barriers,
+@@ -2612,9 +2580,6 @@ static struct virtqueue *__vring_new_virtqueue(unsigned int index,
+ 	struct vring_virtqueue *vq;
+ 	int err;
+ 
+-	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED))
+-		return NULL;
+-
+ 	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
+ 	if (!vq)
+ 		return NULL;
+@@ -2662,6 +2627,66 @@ static struct virtqueue *__vring_new_virtqueue(unsigned int index,
+ 	return &vq->vq;
+ }
+ 
++static struct virtqueue *__vring_new_virtqueue_packed(unsigned int index,
++					       struct vring_virtqueue_packed *vring_packed,
++					       struct virtio_device *vdev,
++					       bool weak_barriers,
++					       bool context,
++					       bool (*notify)(struct virtqueue *),
++					       void (*callback)(struct virtqueue *),
++					       const char *name,
++					       struct device *dma_dev)
++{
++	struct vring_virtqueue *vq;
++	int err;
++
++	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
++	if (!vq)
++		return NULL;
++
++	vq->vq.callback = callback;
++	vq->vq.vdev = vdev;
++	vq->vq.name = name;
++	vq->vq.index = index;
++	vq->vq.reset = false;
++	vq->we_own_ring = false;
++	vq->notify = notify;
++	vq->weak_barriers = weak_barriers;
++#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
++	vq->broken = true;
++#else
++	vq->broken = false;
++#endif
++	vq->packed_ring = true;
++	vq->dma_dev = dma_dev;
++	vq->use_dma_api = vring_use_dma_api(vdev);
++	vq->premapped = false;
++	vq->do_unmap = vq->use_dma_api;
++
++	vq->indirect = virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
++		!context;
++	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
++
++	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
++		vq->weak_barriers = false;
++
++	err = vring_alloc_state_extra_packed(vring_packed);
++	if (err) {
++		kfree(vq);
++		return NULL;
++	}
++
++	virtqueue_vring_init_packed(vring_packed, !!callback);
++
++	virtqueue_init(vq, vring_packed->vring.num);
++	virtqueue_vring_attach_packed(vq, vring_packed);
++
++	spin_lock(&vdev->vqs_list_lock);
++	list_add_tail(&vq->vq.list, &vdev->vqs);
++	spin_unlock(&vdev->vqs_list_lock);
++	return &vq->vq;
++}
++
+ struct virtqueue *vring_create_virtqueue(
+ 	unsigned int index,
+ 	unsigned int num,
+@@ -2840,7 +2865,6 @@ int virtqueue_reset(struct virtqueue *_vq,
+ }
+ EXPORT_SYMBOL_GPL(virtqueue_reset);
+ 
+-/* Only available for split ring */
+ struct virtqueue *vring_new_virtqueue(unsigned int index,
+ 				      unsigned int num,
+ 				      unsigned int vring_align,
+@@ -2853,12 +2877,19 @@ struct virtqueue *vring_new_virtqueue(unsigned int index,
+ 				      const char *name)
+ {
+ 	struct vring_virtqueue_split vring_split = {};
++	struct vring_virtqueue_packed vring_packed = {};
+ 
+-	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED))
+-		return NULL;
++	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED)) {
++		vring_packed.vring.num = num;
++		vring_packed.vring.desc = pages;
++		return __vring_new_virtqueue_packed(index, &vring_packed,
++						    vdev, weak_barriers,
++						    context, notify, callback,
++						    name, vdev->dev.parent);
++	}
+ 
+ 	vring_init(&vring_split.vring, num, pages, vring_align);
+-	return __vring_new_virtqueue(index, &vring_split, vdev, weak_barriers,
++	return __vring_new_virtqueue_split(index, &vring_split, vdev, weak_barriers,
+ 				     context, notify, callback, name,
+ 				     vdev->dev.parent);
+ }
+-- 
+2.43.0
 
 
