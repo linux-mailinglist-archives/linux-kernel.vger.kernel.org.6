@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-334121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D629397D2CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:33:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB41797D264
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96005286F02
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:33:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A33F62865E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417E852F9E;
-	Fri, 20 Sep 2024 08:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E077E107;
+	Fri, 20 Sep 2024 08:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="V4pl9aBu"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1907D1311AC;
-	Fri, 20 Sep 2024 08:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ozpUVoE1"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D232770E2;
+	Fri, 20 Sep 2024 08:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726821220; cv=none; b=Dl9Nt9vAcf6tUGHSOa1hBLcFHuorLhDVXlqsgZi3yrvLkRVmDbYS8drbvLw4a+Mp8V0XvHivAy28nvRn3uXbe5UZ3X5ZV8l4akavwkGWAmLziEbgwRWUwvFOejgOHEQQuVYHn0Xy5Qc6HdRDHGXUqUWVwzvaehLbA5ND9GEMF9k=
+	t=1726820281; cv=none; b=n7KVoEZ6uvvnIgP/XjQTaAW//dvLyuS3T5LlAqWelI2ZGc3ixoWh5VdYJ+l6RgutY84UcWIC82QELuy+VGIxq0MYrthEmGIpc5JJ0OIam20VfyBS0aszrAFjPZfv79UWINu2TsB2/dg1L0nuy7YQRNUX9dWy0uYksV1IeyRCNN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726821220; c=relaxed/simple;
+	s=arc-20240116; t=1726820281; c=relaxed/simple;
 	bh=hWGgq2pgUIxxCz3y0vgKfzl/6h1fW4m3X1VA+6U0VK8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P8IHUtO2CZub5Vmfr0ACIDBRzUo6/BDzPa7Fp1cBgnotikTo+Ko1n34iDR7DnbOwl7GrXtp/ptmORfuNGSoC9kdEMoIArVQVugtk8G18YqE97u6cZDrs8U3eO4BlQ+P0zsleq2HD8jTy1VM62YIsTGblQT4b3QDN5530bM99ZuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=V4pl9aBu; arc=none smtp.client-ip=117.135.210.2
+	 MIME-Version; b=lYFL8i0/BeJ9fUvLyrkDZxBRntga1DgosqN5j03hnoYeprpQ/1OnwonAyDaEHvLoKPRscIaSzPAB+RXdAPrRomb65EMoy/57KFuVYpVMmwnT1gX+/AZNVSpWH4D2YWSEe6Vt0m63I3e2FlIL5lIBkyCnNONZPkPTnB5g81v3u/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ozpUVoE1; arc=none smtp.client-ip=220.197.31.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
 	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=BEGbI
-	sQTh+g3JWARPrbSM2LwRVGpbQaDzPpAvAWnYdQ=; b=V4pl9aBuUJIsKFrkak15Q
-	uVmU/xH+nTkPjDNTOxgb+uCclBJWF8MCtdevwqFPJF7kKrC+O/6W1W9JBXOquCea
-	gvg8YkUp0rwtC5ZHX+e6IM9RWONt2debIqi0V4AGYKjiqKuHAZZjidAyEteF0Vgz
-	tQqw5laYFZtEyjeVESv9Nk=
+	sQTh+g3JWARPrbSM2LwRVGpbQaDzPpAvAWnYdQ=; b=ozpUVoE1zCGAMAElO+FjF
+	7W546U8aTZ/CJ5ZAnPWfvtDwxgN/J3QY97pwAlZ+/hDFquX3CvAfBKQUSublpUf+
+	HPVqUAhC3AsArLTLL79QLl3Ta+KV8siJ3WOnAPpRxvGU/jRxiiNMCoD/8L1LcDlM
+	i/1mUFLODpYvVFW0pUtzHg=
 Received: from ProDesk.. (unknown [58.22.7.114])
-	by gzsmtp5 (Coremail) with SMTP id tCgvCgCnhO96L+1mX4AKAA--.2137S2;
-	Fri, 20 Sep 2024 16:17:02 +0800 (CST)
+	by gzga-smtp-mta-g2-1 (Coremail) with SMTP id _____wDnr2yIL+1mqL21Gw--.53445S2;
+	Fri, 20 Sep 2024 16:17:16 +0800 (CST)
 From: Andy Yan <andyshrk@163.com>
 To: heiko@sntech.de
 Cc: hjc@rock-chips.com,
@@ -54,11 +54,11 @@ Cc: hjc@rock-chips.com,
 	detlev.casanova@collabora.com,
 	Andy Yan <andy.yan@rock-chips.com>
 Subject: [PATCH v3 00/15] VOP Support for rk3576
-Date: Fri, 20 Sep 2024 16:16:55 +0800
-Message-ID: <20240920081657.6461-1-andyshrk@163.com>
+Date: Fri, 20 Sep 2024 16:17:10 +0800
+Message-ID: <20240920081711.6493-1-andyshrk@163.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <.patch/rk3576_vop_upstream_v3/0001-drm-rockchip-vop2-Add-debugfs-support.patch>
-References: <.patch/rk3576_vop_upstream_v3/0001-drm-rockchip-vop2-Add-debugfs-support.patch>
+In-Reply-To: <.patch/rk3576_vop_upstream_v3/0002-drm-rockchip-Set-dma-mask-to-64-bit.patch>
+References: <.patch/rk3576_vop_upstream_v3/0002-drm-rockchip-Set-dma-mask-to-64-bit.patch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,12 +66,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:tCgvCgCnhO96L+1mX4AKAA--.2137S2
+X-CM-TRANSID:_____wDnr2yIL+1mqL21Gw--.53445S2
 X-Coremail-Antispam: 1Uf129KBjvJXoWxuF1fXF4UAF4UGF13uw4UArb_yoW5Xr15p3
 	98CryrXrZ7CFyjqrn7Gw4UCrWSqwnayay7Ww4fG3ZrA3WSyFnrKr9xuFn8ZrZIq3WxZF4U
 	Crs7X34UGF4IvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UumhwUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqR5gXmVODBG+xwAAsG
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UtWrAUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqR5gXmVODBG+xwABsH
 
 From: Andy Yan <andy.yan@rock-chips.com>
 
