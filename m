@@ -1,133 +1,96 @@
-Return-Path: <linux-kernel+bounces-334171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 012D297D375
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:10:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA18E97D33D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC843282711
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:10:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6122D1F25823
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C6713A268;
-	Fri, 20 Sep 2024 09:10:37 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815DC13AA3E;
+	Fri, 20 Sep 2024 09:02:01 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEDA139D13
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC73813A271;
+	Fri, 20 Sep 2024 09:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726823437; cv=none; b=e9BFplEM056p/osT9MxeaGHN20bc/2RVyP7CX6XJ9uQreCPrln0bvPW1BA7MbkoSKJlykayHEGlET2t5qYGWKVq2kaVgdYO38eXH/sFHr+f+B1Yxvhs9JFxapLYnt4aJj1zc4JvWEI5Cn4NIRwr4rm2vTcPC2ipDG4Ql3+n3iF0=
+	t=1726822921; cv=none; b=g+oeln4Pc4SFLTkdCd+j05nLkmhd7EQ/fmyemhPyGawVsqXPsPt3leUYat82rZoo8sruNoOTjt4J6NUAg+bx8jv7v6XgyN1XD7RFgIBhfejFwL08J/KZ97YiDbqTHE0qUTgy72eHmwvJCpLGq19nys3rgHD4jq7ER1APWToea+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726823437; c=relaxed/simple;
-	bh=DgJEbKRUNdBaOZ1pwvlSKrNJaayM+9t0IHIxvuNr7Xo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZWNikUdEW2B1KzI43gvbHdkz6iL8fA2hDLcAydldsdCHsg0Z5FYuuO0tLHOJlX7pTu3cKX5zHgGfHWz8buiTIJYkq+R0pH/Z4+/GzPunlRIg6PIZwCHm492PFy1NwFK8btRIWSe+AH/FEeDMVbn19G4orFjcsmRU8S9hA0/16dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1srZeN-0007IG-6w; Fri, 20 Sep 2024 11:10:03 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1srZeJ-000Dah-Pf; Fri, 20 Sep 2024 11:09:59 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1srZeJ-001rh8-2C;
-	Fri, 20 Sep 2024 11:09:59 +0200
-Date: Fri, 20 Sep 2024 11:09:59 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/3] mtd: spi-nor: support vcc-supply regulator
-Message-ID: <20240920090959.67y7h57yirtahfuh@pengutronix.de>
-References: <20240920-spi-v1-0-97f220c2e10c@nxp.com>
- <20240920-spi-v1-2-97f220c2e10c@nxp.com>
+	s=arc-20240116; t=1726822921; c=relaxed/simple;
+	bh=+lEB/u9deBbDtkbi6H0U4vhLH9wn/oMD0/ZgHrtiYFs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sDR14ItGezj8k9+9CS3fLowEA+ZDYrEucczlro1AVh9T3JLtEnwlypZjZ8QKsz/YJ2XZYCbyxUqky3Rw55M1DwgKFuasDS+5rSYNs9whM63Tqg9gscJVxcyWeYc1x+5RenIn6g2pWwTutWRRNFAvNrsOlk9KnY82V9pxSaZjr6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4X95wt1j4czjM9B;
+	Fri, 20 Sep 2024 17:01:50 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9EF2C14010C;
+	Fri, 20 Sep 2024 17:01:49 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 20 Sep
+ 2024 17:01:49 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <broonie@kernel.org>, <michal.simek@amd.com>,
+	<naga.sureshkumar.relli@xilinx.com>, <shubhrajyoti.datta@xilinx.com>,
+	<linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] =?UTF-8?q?spi:=20zynqmp-gqspi:=20Undo=20runtime=20PM=20ch?= =?UTF-8?q?anges=20at=20driver=20exit=20time=E2=80=8B?=
+Date: Fri, 20 Sep 2024 17:11:35 +0800
+Message-ID: <20240920091135.2741574-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240920-spi-v1-2-97f220c2e10c@nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On 24-09-20, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> spi nor flash needs power supply to work properly. The power supply
-> maybe software controllable per board design. So add the support
-> for an optional vcc-supply regulator.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/mtd/spi-nor/core.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-> index 9d6e85bf227b..0449afe6bb20 100644
-> --- a/drivers/mtd/spi-nor/core.c
-> +++ b/drivers/mtd/spi-nor/core.c
-> @@ -17,6 +17,7 @@
->  #include <linux/mtd/spi-nor.h>
->  #include <linux/mutex.h>
->  #include <linux/of_platform.h>
-> +#include <linux/regulator/consumer.h>
->  #include <linux/sched/task_stack.h>
->  #include <linux/sizes.h>
->  #include <linux/slab.h>
-> @@ -3462,6 +3463,10 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
->  	if (!nor->bouncebuf)
->  		return -ENOMEM;
->  
-> +	ret = devm_regulator_get_enable_optional(dev, "vcc");
-> +	if (ret)
+It's important to undo pm_runtime_use_autosuspend() with
+pm_runtime_dont_use_autosuspend() at driver exit time.
 
-This returns -ENODEV if no regulator was specified. In general all
-SPI-NOR devices need a VCC supply, so don't use the regulator optional
-API here, please check the regulator API doc.
+So, call pm_runtime_dont_use_autosuspend() at driver exit time
+to fix it.
 
-In contrast to that the dt-bindings should have the vcc-supply as
-optional to not cause a regression for exisiting systems.
+Fixes: 9e3a000362ae ("spi: zynqmp: Add pm runtime support")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/spi/spi-zynqmp-gqspi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Regards,
-  Marco
+diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
+index fcd0ca996684..b9df39e06e7c 100644
+--- a/drivers/spi/spi-zynqmp-gqspi.c
++++ b/drivers/spi/spi-zynqmp-gqspi.c
+@@ -1351,6 +1351,7 @@ static int zynqmp_qspi_probe(struct platform_device *pdev)
+ 
+ clk_dis_all:
+ 	pm_runtime_disable(&pdev->dev);
++	pm_runtime_dont_use_autosuspend(&pdev->dev);
+ 	pm_runtime_put_noidle(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 	clk_disable_unprepare(xqspi->refclk);
+@@ -1379,6 +1380,7 @@ static void zynqmp_qspi_remove(struct platform_device *pdev)
+ 	zynqmp_gqspi_write(xqspi, GQSPI_EN_OFST, 0x0);
+ 
+ 	pm_runtime_disable(&pdev->dev);
++	pm_runtime_dont_use_autosuspend(&pdev->dev);
+ 	pm_runtime_put_noidle(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 	clk_disable_unprepare(xqspi->refclk);
+-- 
+2.34.1
 
-> +		return ret;
-> +
->  	ret = spi_nor_hw_reset(nor);
->  	if (ret)
->  		return ret;
-> 
-> -- 
-> 2.37.1
-> 
-> 
-> 
 
