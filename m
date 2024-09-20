@@ -1,120 +1,104 @@
-Return-Path: <linux-kernel+bounces-334508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE8297D82C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:17:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D2197D823
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C2B6B2474A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:17:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9DC8B24601
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E0B183CBC;
-	Fri, 20 Sep 2024 16:16:42 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF7517DFE3;
+	Fri, 20 Sep 2024 16:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lqTVtOxo"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3540C18005B;
-	Fri, 20 Sep 2024 16:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDDBB665
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 16:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726849001; cv=none; b=UcRrzqAQVioPzlheYEjNhPSva1lpfFBwoST6mjBLzDMTwNtZ9ab/2JMLHARtnnXDo68UZlUULBycB0GMEDG4nVdXj2x54I0V7gs6euVX8FTPpTiQIkFyu/vv7OTGSax+yE61D0gjFyDyMup1ZENktAr1tT2+iFNNWCq70t/2y+M=
+	t=1726848994; cv=none; b=ZQxfr0BeGosI/b/eH+50NgUqtdkwbX/wV38S/vSQ7Wht8phYKV6Nm9Bi+sXFokZ6WQ1tW+CHlsjBWHQ6v6MgrUs+2neVTzp5Nu9S5WGaYR4a3Qfvmha9JKqiEjq2pRxNP4v+UyZAQR6v9XhlRGKljY+WSEx7bgupvpQLm30Hen8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726849001; c=relaxed/simple;
-	bh=5hFXnoW6ooKL6vv2N9VsYM6DZuuYE8fcOIy2YKi8hMw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ERjkFKDMSfrgCQOyoRZze8AHFFkoOZAKP3cMSnM/lHEKA0jbASD997QUGExXfv3sgcOq3uIKu0ynz/AeBjP3/2Deu0FMHgxJU6wy+rruGzrJKqSpvO2lL/Yrt/nV/ORyC0N3169SBnhHZr/tatg4/MGMlBtkzA7U5taVHpsfEKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.159) with Microsoft SMTP Server (TLS) id 14.3.498.0; Fri, 20 Sep
- 2024 19:16:28 +0300
-Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Fri, 20 Sep
- 2024 19:16:27 +0300
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>, Ping-Ke Shih
-	<pkshih@realtek.com>, Kalle Valo <kvalo@codeaurora.org>, "David S. Miller"
-	<davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Dan Carpenter
-	<dan.carpenter@oracle.com>, <linux-wireless@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH 5.10 1/1] rtlwifi: rtl8192de: fix ofdm power compensation
-Date: Fri, 20 Sep 2024 09:16:18 -0700
-Message-ID: <20240920161618.21780-2-n.zhandarovich@fintech.ru>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240920161618.21780-1-n.zhandarovich@fintech.ru>
-References: <20240920161618.21780-1-n.zhandarovich@fintech.ru>
+	s=arc-20240116; t=1726848994; c=relaxed/simple;
+	bh=bxaccqvfXd2RGuRsrng8Sp8ALCQi/k1NgrYH4uDmUdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AJhXgG2ZEEFrfxL61HsVeXsv43zcqpd4z8wpOobwEPV8xGfpX9mAcRunkOZKCnz7/kih3oiMWqwyy7GOR117OMLl+Js+U1/pEP6lNXrRCyk8OUBJbUpqE0UhcTD+6kqCImRQ7NlDTCMbwwoTKNsMERN7aMIFMNk8ijZmCWiK0oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lqTVtOxo; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso29662951fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:16:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726848990; x=1727453790; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ojs9bHvGaP56hqKEftt/MxT/xOMPbuiutorXXfIZh6g=;
+        b=lqTVtOxoK56EYtXLe7+RyFlm1zXfKEsaXJeBYGQTKztiolqdtk2DR0gQDssMvrQc/M
+         eJbbfiOe3g99/uNVG1wmVUeNA0JFQkOHBtsmGh4ZW3f/XRLaMfpyY9gPw9kTs5BgNMzb
+         GhVp25vea1uz3hTBIL06IrN3fd9Z7rO5bZclEgehrv4RoAJ7OZBzIFlHKHV9BNGiAFO9
+         wbi59M/wfxy+QtxtGlc3+ERdRCammpIGFbGh7dwYeC+8DXJPBHxoak+oPdey3oPemCw+
+         naLoSV0XKSFyzODdqF8DlqBRycOqNTHHmNWYuPhFX+5v6oU4wClwRsP0J2w2cnjDSoOV
+         1DmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726848990; x=1727453790;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ojs9bHvGaP56hqKEftt/MxT/xOMPbuiutorXXfIZh6g=;
+        b=VlXHf4BYot/WmondF5FlUUaFzgBW0cRhQhOhihRhQBt68x7HBzNhl3O+oK9QSZlJ0D
+         b6BuN5ibgTVnYP7z1AewXqbWDZTDsxrOfF6Le4aTXYRXAxdfS2XRFUD3rFtUueVF7V0C
+         qg/6Doew4fITHBpxcuhfaa4PzgU/tK7FRDkbAzRAq4rCt4CPdqj5n99Ia0IWN4KJeXOI
+         RIHP7sSNR/9ZBEACzvMBM/kq3qPvWa4j15XJwO/ml1CHX3+IXU/7wJePXOR6F6lI2Eaa
+         UsEt+Qf8Umh/Dzs92/VBFoI1J286v9jzd8rBZjKJGhyX+MnaB28cFiOp2yJmgFjIK93M
+         ItHg==
+X-Forwarded-Encrypted: i=1; AJvYcCXeQUas9QBngMkv/2oQpJdS7y8IVcpCqSyb/mXw5dT0snJBK+zLD2X0cVMN4mMunqVj3yu4ZSmbFQnzY9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym51VXxmRrMgrdWVdtJ6ppwdmLGpILgWGTsDqCw5DJhtAVWVEJ
+	jgr3Ed1LcJfabGZBjrZVGeu7h/7lsdfWjyTW4ldvss2CcIKYlD2MrpWOKFNqvFs=
+X-Google-Smtp-Source: AGHT+IFjuJHBz3zyYZgiHeBiTX9aOszMyNS+dBaoStFCzARqh43splESYieVEXve8IE/eEpFlXFarA==
+X-Received: by 2002:a05:651c:4ca:b0:2f7:58bc:f49d with SMTP id 38308e7fff4ca-2f7cb238066mr19201831fa.0.1726848990184;
+        Fri, 20 Sep 2024 09:16:30 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f79d2e1ca7sm19564801fa.24.2024.09.20.09.16.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 09:16:26 -0700 (PDT)
+Date: Fri, 20 Sep 2024 19:16:24 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: stefan@agner.ch, alison.wang@nxp.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	simona@ffwll.ch, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/fsl-dcu: Remove redundant dev_err()
+Message-ID: <2es6xy5o4j7kciop75lturl6n6k5yykcibgkv5r6tjf7ap3ek3@ia7a4dozi2kl>
+References: <20240918074841.2221210-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240918074841.2221210-1-nichen@iscas.ac.cn>
 
-From: Ping-Ke Shih <pkshih@realtek.com>
+On Wed, Sep 18, 2024 at 03:48:41PM GMT, Chen Ni wrote:
+> There is no need to call the dev_err() function directly to print a
+> custom message when handling an error from platform_get_irq() function
+> as it is going to display an appropriate error message in case of a
+> failure.
+> 
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+>  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
 
-commit 3f79e541593fecc2a90687eb7162e15a499caa33 upstream.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-ofdm_index[] is used to indicate how many power compensation is needed to
-current thermal value. For internal PA module or 2.4G band, the min_index
-is different from other cases.
-
-This issue originally is reported by Dan. He found the size of ofdm_index[]
-is 2, but access index 'i' may be equal to 2 if 'rf' is 2 in case of
-'is2t'.
-
-In fact, the chunk of code is added to wrong place, so move it back to
-proper place, and then power compensation and buffer overflow are fixed.
-
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Link: https://lore.kernel.org/r/20201207031903.7599-1-pkshih@realtek.com
-Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
----
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/dm.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/dm.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/dm.c
-index b3f25a228532..6cc9c7649eda 100644
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/dm.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/dm.c
-@@ -986,18 +986,19 @@ static void rtl92d_dm_txpower_tracking_callback_thermalmeter(
- 			rtlpriv->dm.cck_index);
- 	}
- 	for (i = 0; i < rf; i++) {
--		if (ofdm_index[i] > OFDM_TABLE_SIZE_92D - 1)
-+		if (ofdm_index[i] > OFDM_TABLE_SIZE_92D - 1) {
- 			ofdm_index[i] = OFDM_TABLE_SIZE_92D - 1;
--		else if (ofdm_index[i] < ofdm_min_index)
-+		} else if (internal_pa ||
-+			   rtlhal->current_bandtype == BAND_ON_2_4G) {
-+			if (ofdm_index[i] < ofdm_min_index_internal_pa)
-+				ofdm_index[i] = ofdm_min_index_internal_pa;
-+		} else if (ofdm_index[i] < ofdm_min_index) {
- 			ofdm_index[i] = ofdm_min_index;
-+		}
- 	}
- 	if (rtlhal->current_bandtype == BAND_ON_2_4G) {
- 		if (cck_index > CCK_TABLE_SIZE - 1) {
- 			cck_index = CCK_TABLE_SIZE - 1;
--		} else if (internal_pa ||
--			   rtlhal->current_bandtype == BAND_ON_2_4G) {
--			if (ofdm_index[i] < ofdm_min_index_internal_pa)
--				ofdm_index[i] = ofdm_min_index_internal_pa;
- 		} else if (cck_index < 0) {
- 			cck_index = 0;
- 		}
 -- 
-2.25.1
-
+With best wishes
+Dmitry
 
