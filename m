@@ -1,319 +1,143 @@
-Return-Path: <linux-kernel+bounces-334532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2A897D867
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:36:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9343097D868
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEBA11C212C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:35:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C56D31C22919
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5BF17DFE9;
-	Fri, 20 Sep 2024 16:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E4014A4FF;
+	Fri, 20 Sep 2024 16:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A0oTSivR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ani3vDmJ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A0oTSivR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ani3vDmJ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JGIwn20b"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215361E517;
-	Fri, 20 Sep 2024 16:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8330282F7
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 16:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726850148; cv=none; b=a9g+bBGZLSCWQR/K0jRH3H6TlBFXPEXVMrxC1uTcP9Pu0/gfjU8lXyYMi7R65Op29Hpp3gPsMpxJHln/1Hc2PznxKggPwo4pNxaG2h0ly1d2NdgQNzHLE7FUZ3vpXw40keGVzG7bvniohHvlCT1uJkU/VKeMcGFg1i0I8OuKlL4=
+	t=1726850253; cv=none; b=ONrSdROnNzDU7pk0i5fgNN1ZXSMF64zp41MvPFP0xwGDniEAfJYgLKkzuwyrU+UjOHxOxSdEhrlvqhZxfNnALeK+YsjA+c0OhI8nuQOoE7xHxycs2VQbQcvniOEJDlnJiFXGx3AyplbJsc055Sn1sC/5NXLhFDogIHqBnNLbPNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726850148; c=relaxed/simple;
-	bh=U1K3hjNo+2BD1NjE9tQIDGJc9ZUuXNFJ65+wI/ahEHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZaCzZpEFs2lPPmW1UQxK3oAIeKjEvTpQIr5TC3SN/1r5/EsoIqhKhwoRhwukKJLF2nzvgcq4BNIH4xFnYFfeNhWMovEgToDt25lFMhi19oPFw+vzpEenYu2lSndDuZ85v1mvvCx/SHmt2aGv8Owj1Lrp2LPP8NJGrCLxR+L6OME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A0oTSivR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ani3vDmJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A0oTSivR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ani3vDmJ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3E93E1FC81;
-	Fri, 20 Sep 2024 16:35:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726850144; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pwyo6JrHL24YFWmzvjiKIz8myG6NFWRehZfGJj3iGDY=;
-	b=A0oTSivRRZFrKqPlGBdT1Yxb5n7Dop78y7d0HjMj/qjXrFHFHmjQHyXnV48U/4Ly50eiH9
-	CzlFRgQNILLscTO6Lny/Ap+tl/B9y1EXz4eJrkQSp5Kb5MTK6vFr91+ATfote51GxUHa1p
-	3n5xUrjogTmSFJacFFqxamRg3EpI/ao=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726850144;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pwyo6JrHL24YFWmzvjiKIz8myG6NFWRehZfGJj3iGDY=;
-	b=ani3vDmJ9Bu+0wHng6zC3TgUG5sVMyqRpliCpZ5Y8mJ3AuTFGpwSdb/BWLlV+QE1l89KFH
-	7aMsQ9IC7wyqgpAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726850144; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pwyo6JrHL24YFWmzvjiKIz8myG6NFWRehZfGJj3iGDY=;
-	b=A0oTSivRRZFrKqPlGBdT1Yxb5n7Dop78y7d0HjMj/qjXrFHFHmjQHyXnV48U/4Ly50eiH9
-	CzlFRgQNILLscTO6Lny/Ap+tl/B9y1EXz4eJrkQSp5Kb5MTK6vFr91+ATfote51GxUHa1p
-	3n5xUrjogTmSFJacFFqxamRg3EpI/ao=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726850144;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pwyo6JrHL24YFWmzvjiKIz8myG6NFWRehZfGJj3iGDY=;
-	b=ani3vDmJ9Bu+0wHng6zC3TgUG5sVMyqRpliCpZ5Y8mJ3AuTFGpwSdb/BWLlV+QE1l89KFH
-	7aMsQ9IC7wyqgpAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3154D13AA7;
-	Fri, 20 Sep 2024 16:35:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xcwLDF2k7Wa4cQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 20 Sep 2024 16:35:41 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 16BF1A08BD; Fri, 20 Sep 2024 18:35:08 +0200 (CEST)
-Date: Fri, 20 Sep 2024 18:35:08 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 06/10] ext4: refactor ext4_collapse_range()
-Message-ID: <20240920163508.7467lwwu6xp3rg2d@quack3>
-References: <20240904062925.716856-1-yi.zhang@huaweicloud.com>
- <20240904062925.716856-7-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1726850253; c=relaxed/simple;
+	bh=CLdeFhcXjFW/Rn670pgZvMahwb04Xg2afg6QSLEsW9M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HNs/HjUA+cjCQSEGfFAmtB1RmG8fPOFLBhl/odU9E3739mF66fNwth2znomINOyNQ+tEgTTAOYC3Vl1ayVG6nPViE/lmidgRZ58C2c1lqQ7IPRC1mP4Hy3I5XUa1oedDfdjznSYvd2TSgcMMT1vBnfHDh/eyRuUZV/x8V2J+7CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JGIwn20b; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3db3763e924so223934b6e.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:37:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1726850251; x=1727455051; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aeUoiC4xV3CiCxio8wPUbYZ9DxOg+zY+E1xCmjqF+qE=;
+        b=JGIwn20bV1Jl3+RqvTu6eBnUUzjlhm69/EXrjM1sItTAwffQkPpUm2xD0+k/P9zNEU
+         EcrkwBbhaTnRZGqj1CjUveQ68nYirkXhWFqXVmnLNAGOacknExPmHBQouGr+aAwVMwov
+         ULan7rNbT5Bmf+8sm1xkHP7+epfKPqeqbiGS8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726850251; x=1727455051;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aeUoiC4xV3CiCxio8wPUbYZ9DxOg+zY+E1xCmjqF+qE=;
+        b=SqPswLiUJWEhC0eihUSuS1hiwreMXwQuDEqCBi7YWU5Fh4Yg0L7iucRPX5kX/UAzyw
+         OZ5+wSfx/biGoMUnu2ZsQKD+YfW8QUATr9ael8ClBfchh+DGtyaGGoQIjV3id7lf3mvI
+         Ttd1M6Kp4ITGxQpH8YIg5PFZs7D6Kja0BIEKCeCM2Ftbl5BxySyPm0KRpun8bGxrdtB6
+         LM+kQymKqDAs/z94AFzz7ZAEbasYWSkX9kZE52SjkhflatskPxvYqsEGz2ZcB+nbPUm/
+         ag+z7Rvpo7007gVdajRiRqKWQLFU803UpJ8QRy/bZKHE5ak6bWi/ESpotV/+0hX8lCuQ
+         ltqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbbXAqAmGwXv+tvxS0zJ7D5cCupnYLU/lC38URkfH4tRA4hy6+S0p6g5zWOnbinEJy9ZINk6kx460gGdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRE/QSPZLVLf0n4ZvCYjhbLsNlQFRVokh72GeigWwY5782OZ32
+	16CmcZMhQ5Buhqf6CRHK8vlrIugHpFPLm54EpYz8CeEkurT1ybHeAJ6uNtwgfmlOt24Y7m5RYHQ
+	CeyElc1S3OiLvJxjH+/zaZR8hgnx55TSwLbt4
+X-Google-Smtp-Source: AGHT+IEgc6oFjG/AVNeyCwNJdiZ7/4I53v5fqxBfmjiWXrV2OLBvKIkIyisPGyrs125247P4H7Q2d819NzxIHSA2I1E=
+X-Received: by 2002:a05:6870:870c:b0:277:db1c:7c6a with SMTP id
+ 586e51a60fabf-2803a62c744mr749865fac.7.1726850250833; Fri, 20 Sep 2024
+ 09:37:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904062925.716856-7-yi.zhang@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
+References: <20240830180237.1220027-1-jeffxu@chromium.org> <20240830180237.1220027-5-jeffxu@chromium.org>
+ <e7ea2b84-8d10-40fe-a14f-837bca851ea9@lucifer.local> <fd927106-2fc3-4b96-8014-2c517229bc99@lucifer.local>
+ <CABi2SkUpCf+aOa2sPED8CosG5ccqjFd7ouot8gXi9ECqsHiZhw@mail.gmail.com>
+ <4944ce41-9fe1-4e22-8967-f6bd7eafae3f@lucifer.local> <CABi2SkUgDZtJtRJe+J9UNdtZn=EQzZcbMB685P=1rR7DUhg=6Q@mail.gmail.com>
+ <ZurTHc1C27iqofjp@finisterre.sirena.org.uk>
+In-Reply-To: <ZurTHc1C27iqofjp@finisterre.sirena.org.uk>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Fri, 20 Sep 2024 09:37:17 -0700
+Message-ID: <CABi2SkUQM8girk31jDYMfx8kVoG0xXMwaSDWmu90b4ZmtdmHHQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] selftests/mseal: add more tests for mmap
+To: Mark Brown <broonie@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, akpm@linux-foundation.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, 
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pedro.falcato@gmail.com, willy@infradead.org, vbabka@suse.cz, 
+	Liam.Howlett@oracle.com, rientjes@google.com, keescook@chromium.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 04-09-24 14:29:21, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Simplify ext4_collapse_range() and make the code style the same as
-> ext4_zero_range() and ext4_punch_hole(), refactor it by a) rename
-> variables, b) drop redundant input parameters checking, move others to
-> under i_rwsem, preparing for later refactor, c) rename the three stale
-> error tags.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Hi Mark
 
-Looks good. Feel free to add:
+On Wed, Sep 18, 2024 at 6:18=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> On Fri, Sep 13, 2024 at 03:50:00PM -0700, Jeff Xu wrote:
+>
+> > Even though the number of lines is large in these patches, its main
+> > intention is to test Pedro's in-place change (from can_modify_mm to
+> > can_modify_vma). Before this patch,  the test had a common pattern:
+> > setup memory layout, seal the memory, perform a few mm-api steps, verif=
+y
+> > return code (not zero).  Because of the nature of out-of-loop,  it is
+> > sufficient to just verify the error code in a few cases.
+>
+> > With Pedro's in-loop change, the sealing check happens later in the
+> > stack, thus there are more things and scenarios to verify. And there we=
+re
+> > feedback to me during in-loop change that selftest should be extensive
+> > enough to discover all regressions.  Even though this viewpoint is subj=
+ect
+> > to debate. Since none would want to do it, I thought I would just do it=
+.
+>
+> > So the Patch V3 1/5 is dedicated entirely to increasing the verificatio=
+n
+> > for existing scenarios, this including checking return code code, vma-s=
+ize,
+> > etc after mm api return.
+>
+> > Patch V3 3/5 are for unmap(), during review of V2 of Pedro's in-loop
+> > change, we discovered a bug in unmap(), and unmap() is not atomic.
+> > This leads to 4/5(mmap), 5/5(mremap), which calls munmap().
+> > In addition, I add scenarios to cover cross-multiple-vma cases.
+>
+> > The  high-level goal of mseal test are two folds:
+> > 1> make sure sealing is working correctly under different scenarios,
+> > i.e. sealed mapping are not modified.
+> > 2> For unsealed memory, added mseal code  doesn't regress on regular mm=
+ API.
+>
+> > The goal 2 is as important as 1, that is why tests usually are done in
+> > two phases, one with sealing, the other without.
+>
+> That's vastly more detail than is in the changelogs for the actual
+> patches (which are just a few lines each) or the cover letter of the
+> series.  I don't have the MM knowledge to assess the detail of what
+> you're saying but I can't help but think that it'd help a lot with
+> review if all this detail were part of the actual submission.
+Agreed, will update and give more detail in the next version of the patch.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/extents.c | 80 +++++++++++++++++++++++------------------------
->  1 file changed, 39 insertions(+), 41 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 2fb0c2e303c7..5c0b4d512531 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -5265,43 +5265,35 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
->  	struct inode *inode = file_inode(file);
->  	struct super_block *sb = inode->i_sb;
->  	struct address_space *mapping = inode->i_mapping;
-> -	ext4_lblk_t punch_start, punch_stop;
-> +	ext4_lblk_t start_lblk, end_lblk;
->  	handle_t *handle;
->  	unsigned int credits;
-> -	loff_t new_size, ioffset;
-> +	loff_t start, new_size;
->  	int ret;
->  
-> -	/*
-> -	 * We need to test this early because xfstests assumes that a
-> -	 * collapse range of (0, 1) will return EOPNOTSUPP if the file
-> -	 * system does not support collapse range.
-> -	 */
-> -	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-> -		return -EOPNOTSUPP;
-> +	trace_ext4_collapse_range(inode, offset, len);
->  
-> -	/* Collapse range works only on fs cluster size aligned regions. */
-> -	if (!IS_ALIGNED(offset | len, EXT4_CLUSTER_SIZE(sb)))
-> -		return -EINVAL;
-> +	inode_lock(inode);
->  
-> -	trace_ext4_collapse_range(inode, offset, len);
-> +	/* Currently just for extent based files */
-> +	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
-> +		ret = -EOPNOTSUPP;
-> +		goto out;
-> +	}
->  
-> -	punch_start = offset >> EXT4_BLOCK_SIZE_BITS(sb);
-> -	punch_stop = (offset + len) >> EXT4_BLOCK_SIZE_BITS(sb);
-> +	/* Collapse range works only on fs cluster size aligned regions. */
-> +	if (!IS_ALIGNED(offset | len, EXT4_CLUSTER_SIZE(sb))) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
->  
-> -	inode_lock(inode);
->  	/*
->  	 * There is no need to overlap collapse range with EOF, in which case
->  	 * it is effectively a truncate operation
->  	 */
->  	if (offset + len >= inode->i_size) {
->  		ret = -EINVAL;
-> -		goto out_mutex;
-> -	}
-> -
-> -	/* Currently just for extent based files */
-> -	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
-> -		ret = -EOPNOTSUPP;
-> -		goto out_mutex;
-> +		goto out;
->  	}
->  
->  	/* Wait for existing dio to complete */
-> @@ -5309,7 +5301,7 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
->  
->  	ret = file_modified(file);
->  	if (ret)
-> -		goto out_mutex;
-> +		goto out;
->  
->  	/*
->  	 * Prevent page faults from reinstantiating pages we have released from
-> @@ -5319,43 +5311,46 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
->  
->  	ret = ext4_break_layouts(inode);
->  	if (ret)
-> -		goto out_mmap;
-> +		goto out_invalidate_lock;
->  
->  	/*
->  	 * Need to round down offset to be aligned with page size boundary
->  	 * for page size > block size.
->  	 */
-> -	ioffset = round_down(offset, PAGE_SIZE);
-> +	start = round_down(offset, PAGE_SIZE);
->  	/* Write out all dirty pages */
-> -	ret = filemap_write_and_wait_range(mapping, ioffset, LLONG_MAX);
-> +	ret = filemap_write_and_wait_range(mapping, start, LLONG_MAX);
->  	if (ret)
-> -		goto out_mmap;
-> -	truncate_pagecache(inode, ioffset);
-> +		goto out_invalidate_lock;
-> +	truncate_pagecache(inode, start);
->  
->  	credits = ext4_writepage_trans_blocks(inode);
->  	handle = ext4_journal_start(inode, EXT4_HT_TRUNCATE, credits);
->  	if (IS_ERR(handle)) {
->  		ret = PTR_ERR(handle);
-> -		goto out_mmap;
-> +		goto out_invalidate_lock;
->  	}
->  	ext4_fc_mark_ineligible(sb, EXT4_FC_REASON_FALLOC_RANGE, handle);
->  
-> +	start_lblk = offset >> inode->i_blkbits;
-> +	end_lblk = (offset + len) >> inode->i_blkbits;
-> +
->  	down_write(&EXT4_I(inode)->i_data_sem);
->  	ext4_discard_preallocations(inode);
-> -	ext4_es_remove_extent(inode, punch_start, EXT_MAX_BLOCKS - punch_start);
-> +	ext4_es_remove_extent(inode, start_lblk, EXT_MAX_BLOCKS - start_lblk);
->  
-> -	ret = ext4_ext_remove_space(inode, punch_start, punch_stop - 1);
-> +	ret = ext4_ext_remove_space(inode, start_lblk, end_lblk - 1);
->  	if (ret) {
->  		up_write(&EXT4_I(inode)->i_data_sem);
-> -		goto out_stop;
-> +		goto out_handle;
->  	}
->  	ext4_discard_preallocations(inode);
->  
-> -	ret = ext4_ext_shift_extents(inode, handle, punch_stop,
-> -				     punch_stop - punch_start, SHIFT_LEFT);
-> +	ret = ext4_ext_shift_extents(inode, handle, end_lblk,
-> +				     end_lblk - start_lblk, SHIFT_LEFT);
->  	if (ret) {
->  		up_write(&EXT4_I(inode)->i_data_sem);
-> -		goto out_stop;
-> +		goto out_handle;
->  	}
->  
->  	new_size = inode->i_size - len;
-> @@ -5363,16 +5358,19 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
->  	EXT4_I(inode)->i_disksize = new_size;
->  
->  	up_write(&EXT4_I(inode)->i_data_sem);
-> -	if (IS_SYNC(inode))
-> -		ext4_handle_sync(handle);
->  	ret = ext4_mark_inode_dirty(handle, inode);
-> +	if (ret)
-> +		goto out_handle;
-> +
->  	ext4_update_inode_fsync_trans(handle, inode, 1);
-> +	if (IS_SYNC(inode))
-> +		ext4_handle_sync(handle);
->  
-> -out_stop:
-> +out_handle:
->  	ext4_journal_stop(handle);
-> -out_mmap:
-> +out_invalidate_lock:
->  	filemap_invalidate_unlock(mapping);
-> -out_mutex:
-> +out:
->  	inode_unlock(inode);
->  	return ret;
->  }
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks
+-Jeff
 
