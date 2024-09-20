@@ -1,152 +1,103 @@
-Return-Path: <linux-kernel+bounces-334326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA79397D5C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:49:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B2397D5C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59019B237CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:49:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECBF71F21BFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D296216F27D;
-	Fri, 20 Sep 2024 12:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996E416A956;
+	Fri, 20 Sep 2024 12:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qQKIl+uZ"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QbiBChjB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D62154425
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B1F14BF86;
+	Fri, 20 Sep 2024 12:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726836573; cv=none; b=eNKFR3L6LvM/U6nvkWrp+1UeFKZxuKcPBfKhHKEiPnjvwR51R68vkJ8sO7o3z1tcfeCz8GsFSWrjUSoeTdN2rMWR3eZChpA/cy4RwFlKDNF5CutnUo2/dXbAHDEnBW3NkWoktR5sIybCmh2ZH89oq5aql2EfPrzAuef8lD+2o6U=
+	t=1726836609; cv=none; b=aEG57+UM3iN+ChylxP6BuRR6ZXoednTeWByj3E6mYGJynQQjrg9qkpL7YsVY6RH7AkRbXLsiOwsWSKPgdzpFH8cwh6Q//C8fPaDyCqfTAze6ky9Y9uGlV6XF6fjAGyTXyLov6huJrajX8csSlCTPV91oVZOrFAQdh9XLZQihL4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726836573; c=relaxed/simple;
-	bh=vfRWMFoZU4glUs5++nvdb1GcsWs9asQqDHry4+dOspo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lf//I3rJCIcQcLW+wZpvbubZek3TXHNJL95Mv+fnij0yXyc6Hfb7NxSgpPnPymh9cvd6kAgBSmefz31/WHJxtozr5SAxlZAJPyAqRiSFi3gMF1/eVaP9kOyQ3jumeUTd8WqY/Q2AhcDPdz1X1jr+DGjqO77m73UgiIVb+yLRauQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qQKIl+uZ; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8a765f980dso37204266b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:49:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726836569; x=1727441369; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=vfRWMFoZU4glUs5++nvdb1GcsWs9asQqDHry4+dOspo=;
-        b=qQKIl+uZb8DYP7g9ANCvgkQJyFzlThILOTRpZ8sdj7YImRTnDDVNmHQazFARQdDzWV
-         l8x/GfeWMYDdvXIM4y3vRohbVRqiq+ZzyERBg7nltRugeRNyxGMsRKOb/GHcC3wz5zS1
-         Lu2NlZJu+xdkc2yLnc2Ujr1ZYD1I3MjoSFrLXxlMogo9wI3Vvy1aYgD82JMcF4UH0xtm
-         CpIZZrZP2cnXdXjfs6LOvJT/K8BIpr3EkknqGo7B4KWDqx9XPc0TnSm8ZYJRQFSXsqAu
-         g5y8QR42eBHLSlVCNHaOsv/K3dxgChXRxBc9E+5Su9suLkBbArB1vVosLjBF0anww2vm
-         D1HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726836569; x=1727441369;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vfRWMFoZU4glUs5++nvdb1GcsWs9asQqDHry4+dOspo=;
-        b=v5EbaCls8CVQ0nFaloV/eVr99im/ZyusWTXeCNVTI164IbwOIZx+gma/URDuia0BbO
-         Th0hjOuGgh4yaCGd+6/Qk/fiKcmPthdsEvH/Kmw0uzpdbh0lmtKuNvl0geSJaidWUG6z
-         u+GN1CrHSspwFw7gfDs+b+miHutWZ2YCHpu4+VT9+VLLNFiwb+rc8aiv4T6j+59BCX8y
-         3VqiINItwFS/x/pv9xnmazh6mKitVs055GHwPYa6GU+bAkPb9tQtJRVu450SINSJMOum
-         XOn62PEHOtThU4/nNoqhC8u9mOB4Zo8BY3K+w+zGGjXJBDB/df+DrdNkcXuTgtdka0W8
-         9evw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0HDiJZZk2qzKzc6+Az/wQ91WQP+zTUk1utrOcEhHQnyNC8GIkjlaTw/b16UFCJk65mwn+n/0hczBXl9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyi+D2rKit/blLKz6icaHNupAjmt/9PMwLDMxZZjviPpbbwtKz2
-	icWWOL00dIzmRftgmNxFYcjirR/yAW5vcWw8SOvm6bMZAJEA7GPtaV9vmPFOzRU=
-X-Google-Smtp-Source: AGHT+IHYUaO7wrNEXfc5RiPcetLxkdTyJydMjpOrlno5ScjSovfOahx2tIpdcefS4Wf9kyoxJoj4Ug==
-X-Received: by 2002:a17:907:940f:b0:a8d:2624:1a87 with SMTP id a640c23a62f3a-a90d511a5b7mr100761166b.14.1726836568980;
-        Fri, 20 Sep 2024 05:49:28 -0700 (PDT)
-Received: from [10.138.0.47] ([83.68.141.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610966ccsm846533066b.45.2024.09.20.05.49.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2024 05:49:28 -0700 (PDT)
-Message-ID: <85effc94-b69d-456b-8e26-0c34a757b1f7@linaro.org>
-Date: Fri, 20 Sep 2024 14:49:26 +0200
+	s=arc-20240116; t=1726836609; c=relaxed/simple;
+	bh=p6YLJWz9U/S9OuyWWjwWAe0NXusxHGsFmbOEZJtk/3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Lp3zEN8ar9e2cWu6GCtO0QqxS7v9oFnHDrDsXHHpkGLwNCztEtS71wPm9UPPvG+UEQLL+Lqn2LyPWIA3m6UJXqzd7oSoJM9UpoDeeFvODO0Xmk28ZUwd0WZKjiQITWB5aVaNKtcrddsvYuJlqMAvGF85vo8fXImpJ8eUbIM+paE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QbiBChjB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 621D4C4CEC3;
+	Fri, 20 Sep 2024 12:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726836608;
+	bh=p6YLJWz9U/S9OuyWWjwWAe0NXusxHGsFmbOEZJtk/3E=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QbiBChjBccXSW/CVzTNDj8R/OSmQP/T8VNxwtjcCrj/OLhh+tgu57zMV+qQLx2wU5
+	 beMuZogRRdczrT7J9/0CLQBFp2wpVap2asHUJz2ODIHZ2btYJ/9mMdWxn6D6KjB4r4
+	 myK0cb5PWvh89yQY6Jm+tjhlObV16JHn4kzGMq5Pr2L4ad9skx4svVHNQUzvcybEXn
+	 rLL0lDYm8b8Cy3NVUZujPtDOTmjnogi+uJRxCjPRd4/fF7ake9RiVvbqHitHPUaEPn
+	 US4avSxL5zyRt4trWSwDA1TuzLa/URmVXoiVT+4W90xFCLZGQRBKxVKrWP7wi9p6mx
+	 32BiGPEL8Vi+Q==
+Date: Fri, 20 Sep 2024 14:50:02 +0200
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] container_of: add container_first() macro
+Message-ID: <Zu1vekikKNR5oUoM@elsanto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] firmware: qcom: scm: Allow QSEECOM on Dell XPS 13
- 9345
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-References: <20240919170018.13672-1-alex.vinarskis@gmail.com>
- <20240919170018.13672-3-alex.vinarskis@gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240919170018.13672-3-alex.vinarskis@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 19/09/2024 18:59, Aleksandrs Vinarskis wrote:
-> Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+This is like container_of() but it has an assert to ensure that it's
+using the first struct member.
 
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
+Co-developed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ include/linux/container_of.h | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/include/linux/container_of.h b/include/linux/container_of.h
+index 713890c867be..928c5865c1b4 100644
+--- a/include/linux/container_of.h
++++ b/include/linux/container_of.h
+@@ -22,6 +22,24 @@
+ 		      "pointer type mismatch in container_of()");	\
+ 	((type *)(__mptr - offsetof(type, member))); })
+ 
++/**
++ * container_first - cast first member of a structure out to the containing
++ *		     structure
++ * @ptr:	     the pointer to the member.
++ * @type:	     the type of the container struct this is embedded in.
++ * @member:	     the name of the member within the struct.
++ *
++ * WARNING: any const qualifier of @ptr is lost.
++ */
++#define container_first(ptr, type, member) ({				\
++	void *__mptr = (void *)(ptr);                                   \
++	static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
++		      __same_type(*(ptr), void),                        \
++		      "pointer type mismatch in container_of()");       \
++	static_assert(offsetof(type, member) == 0, "not first member");	\
++	((type *)(__mptr - offsetof(type, member))); })
++
++
+ /**
+  * container_of_const - cast a member of a structure out to the containing
+  *			structure and preserve the const-ness of the pointer
+-- 
+2.34.1
 
 
