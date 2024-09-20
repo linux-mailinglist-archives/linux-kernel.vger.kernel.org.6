@@ -1,201 +1,373 @@
-Return-Path: <linux-kernel+bounces-333932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4C797CFFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAA9D97D004
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4269E286A7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 02:50:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 996F72863EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 02:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B302B1F951;
-	Fri, 20 Sep 2024 02:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C341125A9;
+	Fri, 20 Sep 2024 02:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b="ZcZSdQbp"
-Received: from mail.tlmp.cc (unknown [148.135.17.20])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Ww3Xnubk"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C70182B4;
-	Fri, 20 Sep 2024 02:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B035C148;
+	Fri, 20 Sep 2024 02:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726800589; cv=none; b=tr01dgHiezttoQN21mbGrZVMNU2DlOpuPU5svLBx/9Z4bc/Tod1gxfDq+gN+ATtKOWpLcv2AVeWymwR6JRQEP8Ak9amN1wUItzTQvd6s+KB1MPv3tw257nKw4FjpK2jTZb+01rk6Qshlv+/gpS4LtMDlDu800DdYE14AzrUOpjc=
+	t=1726801015; cv=none; b=LtnJEmtktlvj5EjjJTTy+HKQsrl5fWS3N7sYmDdIOwbmjiuFPxkqIejKGv7j4jQrccbK+wu6dntDHuk7yx0vQWQL5LwuflGkI5ksVEgZITbc2/Xq9xvbLrVOG3n6k3i20nZvh7kqFWNQe8sm52OJuqPXSAPrHYj0i8QOO8vUm94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726800589; c=relaxed/simple;
-	bh=7s7z8s8PYFj605b0pz69iQfPrDeoExUDO/ymT/8WqlQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bojl0zcGnptwQNw7mpFbo4MlP/Md88t6nmWfKu/V/t/eFEMiaUnZlitsfKbzO5PsSa9iXXZtiWqdvdhj2TtS5hvvtsWrtM4hAvNzFJ5vKHT4DvpcWe5ru2Cw+y0U560hc57AbfDa3lsf/G4bqK5s61sPsIXbFvZqSo59TY55wwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc; spf=pass smtp.mailfrom=tlmp.cc; dkim=pass (2048-bit key) header.d=tlmp.cc header.i=@tlmp.cc header.b=ZcZSdQbp; arc=none smtp.client-ip=148.135.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=tlmp.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tlmp.cc
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E02B36983F;
-	Thu, 19 Sep 2024 22:49:42 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tlmp.cc; s=dkim;
-	t=1726800584; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=kqk81g7cDt96LcsILwVIIivCeMHJdyCwfxcWpXlbjK8=;
-	b=ZcZSdQbp0VIvi0hfV0+927P1+M62iDNMPEz8UWh77he1IbyVS8s/xfcerNU97WMcSpe4It
-	R1kVb/4LL5o9xetugpbqxLTEZN4aS7SAknhy4/zhXOdgJLfk66eLW8cLEuet/nekxGdGtE
-	VNe/jAajUxhGXzCTWtAzEB4KygCCsKR4MEmBV/NANbcUiw1aW6eyoAfKFtGrBK6jdc9j/t
-	OfznPOPYLnnXj8aRGZZobGAeY43OmcdTNKwZG3PMqhv/UXZLLPRGmLEuJbtwb9uVMvDr1Y
-	c3xZ0GuAZkcmDtSR7g3pfZ7mjEjwvxr4CMZ6ixa0xKIFJX0AX3fSho3Zu58Aog==
-From: Yiyang Wu <toolmanp@tlmp.cc>
-To: rust-for-linux@vger.kernel.org
-Cc: gregkh@linuxfoundation.org,
-	xiang@kernel.org,
-	gary@garyguo.net,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH RESEND 1/1] rust: error: auto-generate error declarations
-Date: Fri, 20 Sep 2024 10:49:19 +0800
-Message-ID: <20240920024920.215842-2-toolmanp@tlmp.cc>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240920024920.215842-1-toolmanp@tlmp.cc>
-References: <2024091602-bannister-giddy-0d6e@gregkh>
- <20240920024920.215842-1-toolmanp@tlmp.cc>
+	s=arc-20240116; t=1726801015; c=relaxed/simple;
+	bh=IbiM8GAY57qSiGUmYqxSLP5xfyTjQ2twAozTsRrgXx8=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Icni//XV81Ij3zeSZcZ7WuaF4wy/8alrfBjUmSeUW408eWrBJ96yz0iOkPgC9tyV1tSQct1tg1+y5uL3/f+PM+0DrjCvfXzcmKLwjxq+66yi7Tpw7CZEDP0OYz9s9D5I73kJZOCsc5TXOXHN9sDyEKZo8PYSj/6FhdI/9jzBDCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Ww3Xnubk; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1726801003;
+	bh=9zq+alk87NveKNSZoqa4mGW5binU0Cse8JboP4bIcE8=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=Ww3Xnubkc9IWScpaCo4g4eMR1oJIS7aCihQreu4ojNIepiOKrPh57FXKGiHwjWfJ4
+	 eCg0764Rez6KOA9XHv+1LMLYo1iZLxhPgcBsIa2hrO2BIu++IP03kxZ5KcrNy2eWAD
+	 vfN0Jehhg78Dk/Nkdb/P65eRng885zvxSftZRJogwqSzxjj3BjZvvqCdq2raidAxZr
+	 8U75fK39G+QpwKYqEY1GvEVyNZWI7xaagWB9lJpe8UoCUj9kd14iDGmcoCqqrgG6v7
+	 FVipWBEIp5fWDOdgIeRPBuBBrmWPOdS4NhKybiIz5xbHfALOeugvQv1I6wBHutphZY
+	 XQ2Wtl1bJejGQ==
+Received: from [192.168.68.112] (ppp118-210-188-185.adl-adc-lon-bras34.tpg.internode.on.net [118.210.188.185])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id A795165027;
+	Fri, 20 Sep 2024 10:56:40 +0800 (AWST)
+Message-ID: <7aaed8cf171b67300aa5b7e861628278de948a27.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v4 3/6] gpio: aspeed: Create llops to handle hardware
+ access
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Billy Tsai <billy_tsai@aspeedtech.com>, linus.walleij@linaro.org, 
+ brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ joel@jms.id.au, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+ linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com,
+ Peter.Yin@quantatw.com,  Jay_Zhang@wiwynn.com
+Date: Fri, 20 Sep 2024 12:26:38 +0930
+In-Reply-To: <20240919094339.2407641-4-billy_tsai@aspeedtech.com>
+References: <20240919094339.2407641-1-billy_tsai@aspeedtech.com>
+	 <20240919094339.2407641-4-billy_tsai@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-This patch adds a new cmd_errno to convert the include/linux/errno.h
-content into declare_err! macros for better maintainability and readability.
+Hi Billy
 
-Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
----
- rust/.gitignore      |  1 +
- rust/Makefile        | 14 ++++++++++-
- rust/kernel/error.rs | 58 +++-----------------------------------------
- 3 files changed, 18 insertions(+), 55 deletions(-)
+On Thu, 2024-09-19 at 17:43 +0800, Billy Tsai wrote:
+> Add low-level operations (llops) to abstract the register access for GPIO
+> registers and the coprocessor request/release. With this abstraction
+> layer, the driver can separate the hardware and software logic, making it
+> easier to extend the driver to support different hardware register
+> layouts.
+>=20
+> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> ---
+>  drivers/gpio/gpio-aspeed.c | 429 +++++++++++++++++++------------------
+>  1 file changed, 220 insertions(+), 209 deletions(-)
+>=20
+> diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+> index d20e15b2079d..8b334ce7b60a 100644
+> --- a/drivers/gpio/gpio-aspeed.c
+> +++ b/drivers/gpio/gpio-aspeed.c
+> @@ -39,6 +39,10 @@ struct aspeed_bank_props {
+>  struct aspeed_gpio_config {
+>  	unsigned int nr_gpios;
+>  	const struct aspeed_bank_props *props;
+> +	const struct aspeed_gpio_llops *llops;
+> +	const int *debounce_timers_array;
+> +	int debounce_timers_num;
+> +	bool dcache_require;
 
-diff --git a/rust/.gitignore b/rust/.gitignore
-index d3829ffab80b..ba71ef4a9239 100644
---- a/rust/.gitignore
-+++ b/rust/.gitignore
-@@ -5,6 +5,7 @@ bindings_helpers_generated.rs
- doctests_kernel_generated.rs
- doctests_kernel_generated_kunit.c
- uapi_generated.rs
-+errno_generated.rs
- exports_*_generated.h
- doc/
- test/
-diff --git a/rust/Makefile b/rust/Makefile
-index dd76dc27d666..f5a1680fe59c 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -22,6 +22,8 @@ always-$(CONFIG_RUST) += exports_alloc_generated.h exports_helpers_generated.h \
- always-$(CONFIG_RUST) += uapi/uapi_generated.rs
- obj-$(CONFIG_RUST) += uapi.o
- 
-+always-$(CONFIG_RUST) += kernel/errno_generated.rs
-+
- ifdef CONFIG_RUST_BUILD_ASSERT_ALLOW
- obj-$(CONFIG_RUST) += build_error.o
- else
-@@ -289,6 +291,15 @@ $(obj)/uapi/uapi_generated.rs: $(src)/uapi/uapi_helper.h \
-     $(src)/bindgen_parameters FORCE
- 	$(call if_changed_dep,bindgen)
- 
-+quiet_cmd_errno = EXPORTS $@
-+      cmd_errno = \
-+	$(CC) $(c_flags) -E -CC -dD $< \
-+	| sed -E 's/\#define\s*([A-Z0-9]+)\s+([0-9]+)\s+\/\*\s*(.*)\s\*\//declare_err!(\1, "\3.");/' \
-+	| grep -E '^declare_err.*$$' > $@
-+
-+$(obj)/kernel/errno_generated.rs: $(srctree)/include/linux/errno.h FORCE
-+	$(call if_changed,errno)
-+
- # See `CFLAGS_REMOVE_helpers.o` above. In addition, Clang on C does not warn
- # with `-Wmissing-declarations` (unlike GCC), so it is not strictly needed here
- # given it is `libclang`; but for consistency, future Clang changes and/or
-@@ -420,7 +431,8 @@ $(obj)/uapi.o: $(src)/uapi/lib.rs \
- 
- $(obj)/kernel.o: private rustc_target_flags = --extern alloc \
-     --extern build_error --extern macros --extern bindings --extern uapi
--$(obj)/kernel.o: $(src)/kernel/lib.rs $(obj)/alloc.o $(obj)/build_error.o \
-+$(obj)/kernel.o: $(src)/kernel/lib.rs $(obj)/kernel/errno_generated.rs \
-+    $(obj)/alloc.o $(obj)/build_error.o \
-     $(obj)/libmacros.so $(obj)/bindings.o $(obj)/uapi.o FORCE
- 	+$(call if_changed_rule,rustc_library)
- 
-diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-index 6f1587a2524e..bb16b40a8d19 100644
---- a/rust/kernel/error.rs
-+++ b/rust/kernel/error.rs
-@@ -23,60 +23,10 @@ macro_rules! declare_err {
-             pub const $err: super::Error = super::Error(-(crate::bindings::$err as i32));
-         };
-     }
--
--    declare_err!(EPERM, "Operation not permitted.");
--    declare_err!(ENOENT, "No such file or directory.");
--    declare_err!(ESRCH, "No such process.");
--    declare_err!(EINTR, "Interrupted system call.");
--    declare_err!(EIO, "I/O error.");
--    declare_err!(ENXIO, "No such device or address.");
--    declare_err!(E2BIG, "Argument list too long.");
--    declare_err!(ENOEXEC, "Exec format error.");
--    declare_err!(EBADF, "Bad file number.");
--    declare_err!(ECHILD, "No child processes.");
--    declare_err!(EAGAIN, "Try again.");
--    declare_err!(ENOMEM, "Out of memory.");
--    declare_err!(EACCES, "Permission denied.");
--    declare_err!(EFAULT, "Bad address.");
--    declare_err!(ENOTBLK, "Block device required.");
--    declare_err!(EBUSY, "Device or resource busy.");
--    declare_err!(EEXIST, "File exists.");
--    declare_err!(EXDEV, "Cross-device link.");
--    declare_err!(ENODEV, "No such device.");
--    declare_err!(ENOTDIR, "Not a directory.");
--    declare_err!(EISDIR, "Is a directory.");
--    declare_err!(EINVAL, "Invalid argument.");
--    declare_err!(ENFILE, "File table overflow.");
--    declare_err!(EMFILE, "Too many open files.");
--    declare_err!(ENOTTY, "Not a typewriter.");
--    declare_err!(ETXTBSY, "Text file busy.");
--    declare_err!(EFBIG, "File too large.");
--    declare_err!(ENOSPC, "No space left on device.");
--    declare_err!(ESPIPE, "Illegal seek.");
--    declare_err!(EROFS, "Read-only file system.");
--    declare_err!(EMLINK, "Too many links.");
--    declare_err!(EPIPE, "Broken pipe.");
--    declare_err!(EDOM, "Math argument out of domain of func.");
--    declare_err!(ERANGE, "Math result not representable.");
--    declare_err!(ERESTARTSYS, "Restart the system call.");
--    declare_err!(ERESTARTNOINTR, "System call was interrupted by a signal and will be restarted.");
--    declare_err!(ERESTARTNOHAND, "Restart if no handler.");
--    declare_err!(ENOIOCTLCMD, "No ioctl command.");
--    declare_err!(ERESTART_RESTARTBLOCK, "Restart by calling sys_restart_syscall.");
--    declare_err!(EPROBE_DEFER, "Driver requests probe retry.");
--    declare_err!(EOPENSTALE, "Open found a stale dentry.");
--    declare_err!(ENOPARAM, "Parameter not supported.");
--    declare_err!(EBADHANDLE, "Illegal NFS file handle.");
--    declare_err!(ENOTSYNC, "Update synchronization mismatch.");
--    declare_err!(EBADCOOKIE, "Cookie is stale.");
--    declare_err!(ENOTSUPP, "Operation is not supported.");
--    declare_err!(ETOOSMALL, "Buffer or request is too small.");
--    declare_err!(ESERVERFAULT, "An untranslatable error occurred.");
--    declare_err!(EBADTYPE, "Type not supported by server.");
--    declare_err!(EJUKEBOX, "Request initiated, but will not complete before timeout.");
--    declare_err!(EIOCBQUEUED, "iocb queued, will get completion event.");
--    declare_err!(ERECALLCONFLICT, "Conflict with recalled state.");
--    declare_err!(ENOGRACE, "NFS file lock reclaim refused.");
-+    include!(concat!(
-+        env!("OBJTREE"),
-+        "/rust/kernel/errno_generated.rs"
-+    ));
- }
- 
- /// Generic integer kernel error.
--- 
-2.46.0
+Bit of a nitpick, but if we must have it I'd prefer we call this
+`require_dcache`.
+
+> =20
+> +static void aspeed_g4_reg_bit_set(struct aspeed_gpio *gpio, unsigned int=
+ offset,
+> +				  const enum aspeed_gpio_reg reg, bool val)
+> +{
+> +	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+> +	void __iomem *addr =3D bank_reg(gpio, bank, reg);
+> +	u32 temp;
+> +
+> +	if (reg =3D=3D reg_val && gpio->config->dcache_require)
+
+We know gpio->config->dcache_require will be true, because this is the
+g4 handler, right?
+
+> +		temp =3D gpio->dcache[GPIO_BANK(offset)];
+> +	else
+> +		temp =3D ioread32(addr);
+> +
+> +	if (val)
+> +		temp |=3D GPIO_BIT(offset);
+> +	else
+> +		temp &=3D ~GPIO_BIT(offset);
+> +
+> +	if (reg =3D=3D reg_val && gpio->config->dcache_require)
+> +		gpio->dcache[GPIO_BANK(offset)] =3D temp;
+> +	iowrite32(temp, addr);
+> +}
+> +
+> +static u32 aspeed_g4_reg_bits_get(struct aspeed_gpio *gpio, unsigned int=
+ offset,
+> +				  const enum aspeed_gpio_reg reg)
+> +{
+> +	const struct aspeed_gpio_bank *bank =3D to_bank(offset);
+> +	void __iomem *addr =3D bank_reg(gpio, bank, reg);
+> +
+> +	if (reg =3D=3D reg_rdata || reg =3D=3D reg_irq_status)
+> +		return ioread32(addr);
+> +	return !!(ioread32(addr) & GPIO_BIT(offset));
+
+Okay, the semantics here feel a bit concerning. I think we need one
+behaviour or the other, not both.
+
+Perhaps we have two callbacks:
+
+1. get_bit()
+2. get_bank()
+
+where get_bank() is only defined for reg_rdata and reg_irq_status, and
+get_bit() for all registers.
+
+> +}
+> +
+> +static bool aspeed_g4_copro_request(struct aspeed_gpio *gpio, unsigned i=
+nt offset)
+> +{
+> +	if (!copro_ops || !gpio->cf_copro_bankmap)
+> +		return false;
+> +	if (!gpio->cf_copro_bankmap[offset >> 3])
+> +		return false;
+> +	if (!copro_ops->request_access)
+> +		return false;
+> +
+> +	/* Pause the coprocessor */
+> +	copro_ops->request_access(copro_data);
+> +
+> +	/* Change command source back to ARM */
+> +	aspeed_gpio_change_cmd_source(gpio, offset, GPIO_CMDSRC_ARM);
+
+I don't think we need the indirection here, this is already a g4-
+specific callback implementation, we can directly call
+aspeed_g4_privilege_ctrl().
+
+> +
+> +	if (gpio->config->dcache_require)
+> +		/* Update cache */
+> +		gpio->dcache[GPIO_BANK(offset)] =3D
+> +			gpio->config->llops->reg_bits_get(gpio, offset, reg_rdata);
+> +
+> +	return true;
+> +}
+> +
+> +static void aspeed_g4_copro_release(struct aspeed_gpio *gpio, unsigned i=
+nt offset)
+> +{
+> +	if (!copro_ops || !gpio->cf_copro_bankmap)
+> +		return;
+> +	if (!gpio->cf_copro_bankmap[offset >> 3])
+> +		return;
+> +	if (!copro_ops->release_access)
+> +		return;
+> +
+> +	/* Change command source back to ColdFire */
+> +	aspeed_gpio_change_cmd_source(gpio, offset, GPIO_CMDSRC_COLDFIRE);
+
+As above for the request implementation, we can call
+aspeed_g4_privilege_ctrl() directly here.
+
+> +
+> +	/* Restart the coprocessor */
+> +	copro_ops->release_access(copro_data);
+> +}
+> +
+> +static void aspeed_g4_privilege_ctrl(struct aspeed_gpio *gpio, unsigned =
+int offset, int cmdsrc)
+> +{
+> +	/*
+> +	 * The command source register is only valid in bits 0, 8, 16, and 24, =
+so we use
+> +	 * (offset & ~(0x7)) to ensure that reg_bits_set always targets a valid=
+ bit.
+> +	 */
+> +	/* Source 1 first to avoid illegal 11 combination */
+> +	gpio->config->llops->reg_bit_set(gpio, offset & ~(0x7), reg_cmdsrc1, !!=
+(cmdsrc & BIT(1)));
+> +	/* Then Source 0 */
+> +	gpio->config->llops->reg_bit_set(gpio, offset & ~(0x7), reg_cmdsrc0, !!=
+(cmdsrc & BIT(0)));
+
+Both of these can be direct calls to aspeed_g4_reg_bit_set().
+
+> +}
+> +
+> +static void aspeed_g4_privilege_init(struct aspeed_gpio *gpio)
+> +{
+> +	u32 i;
+> +
+> +	/* Switch all command sources to the ARM by default */
+> +	for (i =3D 0; i < DIV_ROUND_UP(gpio->chip.ngpio, 32); i++) {
+> +		aspeed_gpio_change_cmd_source(gpio, (i << 5) + 0, GPIO_CMDSRC_ARM);
+> +		aspeed_gpio_change_cmd_source(gpio, (i << 5) + 8, GPIO_CMDSRC_ARM);
+> +		aspeed_gpio_change_cmd_source(gpio, (i << 5) + 16, GPIO_CMDSRC_ARM);
+> +		aspeed_gpio_change_cmd_source(gpio, (i << 5) + 24, GPIO_CMDSRC_ARM);
+
+Again as this is a g4-specific callback we can directly call
+aspeed_g4_privilege_ctrl().
+
+> +	}
+> +}
+> +
+> +static const struct aspeed_gpio_llops aspeed_g4_llops =3D {
+> +	.copro_request =3D aspeed_g4_copro_request,
+> +	.copro_release =3D aspeed_g4_copro_release,
+> +	.reg_bit_set =3D aspeed_g4_reg_bit_set,
+> +	.reg_bits_get =3D aspeed_g4_reg_bits_get,
+> +	.privilege_ctrl =3D aspeed_g4_privilege_ctrl,
+> +	.privilege_init =3D aspeed_g4_privilege_init,
+> +};
+>  /*
+>   * Any banks not specified in a struct aspeed_bank_props array are assum=
+ed to
+>   * have the properties:
+> @@ -1120,7 +1111,14 @@ static const struct aspeed_bank_props ast2400_bank=
+_props[] =3D {
+> =20
+>  static const struct aspeed_gpio_config ast2400_config =3D
+>  	/* 220 for simplicity, really 216 with two 4-GPIO holes, four at end */
+> -	{ .nr_gpios =3D 220, .props =3D ast2400_bank_props, };
+> +	{
+> +		.nr_gpios =3D 220,
+> +		.props =3D ast2400_bank_props,
+> +		.llops =3D &aspeed_g4_llops,
+> +		.debounce_timers_array =3D debounce_timers,
+> +		.debounce_timers_num =3D ARRAY_SIZE(debounce_timers),
+> +		.dcache_require =3D true,
+> +	};
+> =20
+>  static const struct aspeed_bank_props ast2500_bank_props[] =3D {
+>  	/*     input	  output   */
+> @@ -1132,7 +1130,14 @@ static const struct aspeed_bank_props ast2500_bank=
+_props[] =3D {
+> =20
+>  static const struct aspeed_gpio_config ast2500_config =3D
+>  	/* 232 for simplicity, actual number is 228 (4-GPIO hole in GPIOAB) */
+> -	{ .nr_gpios =3D 232, .props =3D ast2500_bank_props, };
+> +	{
+> +		.nr_gpios =3D 232,
+> +		.props =3D ast2500_bank_props,
+> +		.llops =3D &aspeed_g4_llops,
+> +		.debounce_timers_array =3D debounce_timers,
+> +		.debounce_timers_num =3D ARRAY_SIZE(debounce_timers),
+> +		.dcache_require =3D true,
+> +	};
+> =20
+>  static const struct aspeed_bank_props ast2600_bank_props[] =3D {
+>  	/*     input	  output   */
+> @@ -1148,7 +1153,14 @@ static const struct aspeed_gpio_config ast2600_con=
+fig =3D
+>  	 * We expect ngpio being set in the device tree and this is a fallback
+>  	 * option.
+>  	 */
+> -	{ .nr_gpios =3D 208, .props =3D ast2600_bank_props, };
+> +	{
+> +		.nr_gpios =3D 208,
+> +		.props =3D ast2600_bank_props,
+> +		.llops =3D &aspeed_g4_llops,
+> +		.debounce_timers_array =3D debounce_timers,
+> +		.debounce_timers_num =3D ARRAY_SIZE(debounce_timers),
+> +		.dcache_require =3D true,
+> +	};
+> =20
+>  static const struct of_device_id aspeed_gpio_of_table[] =3D {
+>  	{ .compatible =3D "aspeed,ast2400-gpio", .data =3D &ast2400_config, },
+> @@ -1191,6 +1203,9 @@ static int __init aspeed_gpio_probe(struct platform=
+_device *pdev)
+> =20
+>  	gpio->config =3D gpio_id->data;
+> =20
+> +	if (!gpio->config->llops->reg_bit_set || !gpio->config->llops->reg_bits=
+_get)
+> +		return -EINVAL;
+> +
+
+This will need to clean up gpio->clk. Perhaps you could move it above
+the of_clk_get() call instead?
+
+However, looking through the rest it seems we have a few issues with
+this leak :/
+
+>  	gpio->chip.parent =3D &pdev->dev;
+>  	err =3D of_property_read_u32(pdev->dev.of_node, "ngpios", &ngpio);
+>  	gpio->chip.ngpio =3D (u16) ngpio;
+> @@ -1207,27 +1222,23 @@ static int __init aspeed_gpio_probe(struct platfo=
+rm_device *pdev)
+>  	gpio->chip.label =3D dev_name(&pdev->dev);
+>  	gpio->chip.base =3D -1;
+> =20
+> -	/* Allocate a cache of the output registers */
+> -	banks =3D DIV_ROUND_UP(gpio->chip.ngpio, 32);
+> -	gpio->dcache =3D devm_kcalloc(&pdev->dev,
+> -				    banks, sizeof(u32), GFP_KERNEL);
+> -	if (!gpio->dcache)
+> -		return -ENOMEM;
+> -
+> -	/*
+> -	 * Populate it with initial values read from the HW and switch
+> -	 * all command sources to the ARM by default
+> -	 */
+> -	for (i =3D 0; i < banks; i++) {
+> -		const struct aspeed_gpio_bank *bank =3D &aspeed_gpio_banks[i];
+> -		void __iomem *addr =3D bank_reg(gpio, bank, reg_rdata);
+> -		gpio->dcache[i] =3D ioread32(addr);
+> -		aspeed_gpio_change_cmd_source(gpio, bank, 0, GPIO_CMDSRC_ARM);
+> -		aspeed_gpio_change_cmd_source(gpio, bank, 1, GPIO_CMDSRC_ARM);
+> -		aspeed_gpio_change_cmd_source(gpio, bank, 2, GPIO_CMDSRC_ARM);
+> -		aspeed_gpio_change_cmd_source(gpio, bank, 3, GPIO_CMDSRC_ARM);
+> +	if (gpio->config->dcache_require) {
+> +		/* Allocate a cache of the output registers */
+> +		banks =3D DIV_ROUND_UP(gpio->chip.ngpio, 32);
+> +		gpio->dcache =3D devm_kcalloc(&pdev->dev, banks, sizeof(u32), GFP_KERN=
+EL);
+> +		if (!gpio->dcache)
+> +			return -ENOMEM;
+
+This should also clean up gpio->clk. I don't think you can move it to
+avoid that.
+
+Andrew
+
+> +		/*
+> +		 * Populate it with initial values read from the HW
+> +		 */
+> +		for (i =3D 0; i < banks; i++)
+> +			gpio->dcache[i] =3D
+> +				gpio->config->llops->reg_bits_get(gpio, (i << 5), reg_rdata);
+>  	}
+> =20
+> +	if (gpio->config->llops->privilege_init)
+> +		gpio->config->llops->privilege_init(gpio);
+> +
+>  	/* Set up an irqchip */
+>  	irq =3D platform_get_irq(pdev, 0);
+>  	if (irq < 0)
 
 
