@@ -1,126 +1,80 @@
-Return-Path: <linux-kernel+bounces-334198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7875297D3CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:40:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F15EB97D37E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD591F259D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:40:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 307E41C22623
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8803213A265;
-	Fri, 20 Sep 2024 09:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354FE13A265;
+	Fri, 20 Sep 2024 09:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=outgoing.csail.mit.edu header.i=@outgoing.csail.mit.edu header.b="BDZX8kUC"
-Received: from outgoing2021.csail.mit.edu (outgoing2021.csail.mit.edu [128.30.2.78])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="Kq1TVKFE"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960631CD2C
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.30.2.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26AB1CD2C
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 09:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726825206; cv=none; b=HS2RusEJIQSts3+PrQT6M6yoU6wUDVykkhTM7NAjAIW6nU9B91XGazmsCQUvrT6p5TOXpGn3FOMAsD6UAd6XXq/qh4sriqd0UrMlfU5XY14qT9LaXbgRiUU5Vh6rEtdKBqTJ2jMTkd6ESxtMzkqG8lDCe1JhyOEAp0tP96psh7w=
+	t=1726823799; cv=none; b=SFQP23dAC7+MuMvF9E9bsC07Dw44oIvokQjR8tZ8YVsdKRkUwTbG7KOb+BI8qL6lG2TWPgPOUG1hl1BXc8IbpbjwLZXDc/xjxRD0LHbRrnOHPluuAl7w2FV3RAiRz+V7OJu9TugbB330+7QbE7sCnxVm81wC1ZY8MO+YiBEBquo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726825206; c=relaxed/simple;
-	bh=44HEoMWww84Pcnv/H6Tw7cZpnbaRCQNzD86IDzZyHLg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gxsyen4yj0zOoFwEXfRwg0mjmhI3UA/bz2cb/DWJL6chX2F62TKKgLH/SxkS52UzVnTiTdGhjhCQ9a07TQ9BLTtFr7yrpjlAuAcH/eAyuQMkBYglrM5djs1C6lZNA2c+tObxRHYHImokB5O/wMTPnt9pn5tLUQU0FjHynGraVrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csail.mit.edu; spf=pass smtp.mailfrom=csail.mit.edu; dkim=pass (2048-bit key) header.d=outgoing.csail.mit.edu header.i=@outgoing.csail.mit.edu header.b=BDZX8kUC; arc=none smtp.client-ip=128.30.2.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csail.mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csail.mit.edu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=outgoing.csail.mit.edu; s=test20231205; h=In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rw93B/21NuWVfL/ibqQ+YISfWYXzFqSVN+KXpI2YlJQ=; t=1726825204; x=1727689204; 
-	b=BDZX8kUCXnX43fo3qcOYtcGzpzeGW/cMNjqFIzfxYpoUwrLdN+hPjuGFckTrMoRpcSFRn1bnPoc
-	CWL7PK9DRZOgjYe+FI3Y9Ay7f9Rx7K+zNO4iHZwPg0PeQT3OpQReDcGQx0zVfaHZtaQmaXQbqueKj
-	fYOA1bK5S0ljfLjgj7IT9JSIlsZc1OTEErpctzDOQwqqPtfHD8/V8alV6NjtQhnImTusEPVZxjGwx
-	c2OgSn//KP56EIV1jkxn/nTWM90SUipk0AVwF08PHnbO8CUCSE2mftiIN33ycLMt8W65rANLkVbhb
-	WVb2nadZ2MFtv42ztehghv7Cvr1YC/B82HXw==;
-Received: from [172.179.10.40] (helo=csail.mit.edu)
-	by outgoing2021.csail.mit.edu with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <srivatsa@csail.mit.edu>)
-	id 1srZiO-006Dkk-ES;
-	Fri, 20 Sep 2024 05:14:12 -0400
-Date: Fri, 20 Sep 2024 09:14:06 +0000
-From: "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Saurabh Sengar <ssengar@linux.microsoft.com>, akpm@linux-foundation.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	ssengar@microsoft.com, wei.liu@kernel.org
-Subject: Re: [PATCH v2] mm/vmstat: Defer the refresh_zone_stat_thresholds
- after all CPUs bringup
-Message-ID: <Zu083vRBZRwvvVz5@csail.mit.edu>
-References: <1723443220-20623-1-git-send-email-ssengar@linux.microsoft.com>
- <b1dc2aa1-cd38-4f1f-89e9-6d009a619541@arm.com>
+	s=arc-20240116; t=1726823799; c=relaxed/simple;
+	bh=H5vO6Wc0mKC3lqWkfyiq3NTWwDenfmeBA7g2i3+29gY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=K275eNrG6H3yngWEdtS2V+hWNbr+foLd2CXw7/+nbixgu7A7A48KGl4g7Hgv/dSjeXZ9i5Ko/BJ4kRt3bCRMVd/PF7vyMygbDF8RZD7PmFjFxFPIh0OzNnxA/LhV6t1OTOd31nIBt+Fyhz1/h9MbtpaP3jQFbpjXn6Fe19RwtnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=Kq1TVKFE; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1726823795;
+	bh=K8jwiabrK5D6Hs2uR3+hfrDgJNW3a1V7tWBTVvI9Zbk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Kq1TVKFEXns6vVegA3r5F46NFcgALudM+YJWUOFehfYvdBIFVnscKuaQl/LbziWEM
+	 wYtE+xBrdMDZdw6/PJHFOktD15LB5sEGEJoGzLFOvXX3kD/lp5KT6kelcM0eT2e7Zx
+	 gprbw50+S6tIZth+ThcMVVI0qBP03MbpJ5ypmVbp6ASjAyoxnfaUDTO7S5wTJ2GPUe
+	 6azJC28M167vKNxGW9HJHfGQ5y+2j9kU+GFaJbB1aOEY/p1Ba5hLh0PdaxUZgfvwHl
+	 IuZJMbpl0EhbXoPuIOd4iZTv54Wd8MMlkxGpCwjt2s8QSkH5xPm03VhqvR8qJEHaP8
+	 A8SpmVHn1P1VQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X96Fv4gW5z4x9D;
+	Fri, 20 Sep 2024 19:16:35 +1000 (AEST)
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+To: linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au, linux-kernel@vger.kernel.org, Narayana Murty N <nnmlinux@linux.ibm.com>
+Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org, vaibhav@linux.ibm.com, ganeshgr@linux.ibm.com, sbhat@linux.ibm.com
+In-Reply-To: <20240917132445.3868016-1-nnmlinux@linux.ibm.com>
+References: <20240917132445.3868016-1-nnmlinux@linux.ibm.com>
+Subject: Re: [PATCH] powerpc/pseries/eeh: move pseries_eeh_err_inject() outside CONFIG_DEBUG_FS block
+Message-Id: <172682376261.64942.12479934341616104313.b4-ty@ellerman.id.au>
+Date: Fri, 20 Sep 2024 19:16:02 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b1dc2aa1-cd38-4f1f-89e9-6d009a619541@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-
-Hey Anshuman,
-
-Long time... :-) Hope you are doing great!
-
-On Fri, Sep 20, 2024 at 12:28:44PM +0530, Anshuman Khandual wrote:
-[...] 
-> > @@ -1908,6 +1908,7 @@ static const struct seq_operations vmstat_op = {
-> >  #ifdef CONFIG_SMP
-> >  static DEFINE_PER_CPU(struct delayed_work, vmstat_work);
-> >  int sysctl_stat_interval __read_mostly = HZ;
-> > +static int vmstat_late_init_done;
-> >  
-> >  #ifdef CONFIG_PROC_FS
-> >  static void refresh_vm_stats(struct work_struct *work)
-> > @@ -2110,7 +2111,8 @@ static void __init init_cpu_node_state(void)
-> >  
-> >  static int vmstat_cpu_online(unsigned int cpu)
-> >  {
-> > -	refresh_zone_stat_thresholds();
-> > +	if (vmstat_late_init_done)
-> > +		refresh_zone_stat_thresholds();
-> >  
-> >  	if (!node_state(cpu_to_node(cpu), N_CPU)) {
-> >  		node_set_state(cpu_to_node(cpu), N_CPU);
-> > @@ -2142,6 +2144,14 @@ static int vmstat_cpu_dead(unsigned int cpu)
-> >  	return 0;
-> >  }
-> >  
-> > +static int __init vmstat_late_init(void)
-> > +{
-> > +	refresh_zone_stat_thresholds();
-> > +	vmstat_late_init_done = 1;
-> > +
-> > +	return 0;
-> > +}
-> > +late_initcall(vmstat_late_init);>  #endif
-> >  
-> >  struct workqueue_struct *mm_percpu_wq;
+On Tue, 17 Sep 2024 09:24:45 -0400, Narayana Murty N wrote:
+> Makes pseries_eeh_err_inject() available even when debugfs
+> is disabled (CONFIG_DEBUG_FS=n). It moves eeh_debugfs_break_device()
+> and eeh_pe_inject_mmio_error() out of the CONFIG_DEBUG_FS block
+> and renames it as eeh_break_device().
 > 
-> late_initcall() triggered vmstat_late_init() guaranteed to be called
-> before the last call into vmstat_cpu_online() during a normal boot ?
-> Otherwise refresh_zone_stat_thresholds() will never be called unless
-> there is a CPU online event later.
+> 
 
-The vmstat_late_init() function itself calls
-refresh_zone_stat_thresholds(). So, we don't need another CPU online
-event to happen later just to invoke refresh_zone_stat_thresholds().
+Applied to powerpc/fixes.
 
-Does that address your concern?
+[1/1] powerpc/pseries/eeh: move pseries_eeh_err_inject() outside CONFIG_DEBUG_FS block
+      https://git.kernel.org/powerpc/c/3af2e2f68cc6baf0a11f662d30b0bf981f77bfea
 
-Regards,
-Srivatsa
-Microsoft Linux Systems Group
+cheers
 
