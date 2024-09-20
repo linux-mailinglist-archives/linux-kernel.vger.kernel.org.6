@@ -1,188 +1,252 @@
-Return-Path: <linux-kernel+bounces-334628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0F397D9BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 21:07:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF2B97D9C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 21:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 227692833C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:07:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 412CA1C21459
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636AD17C217;
-	Fri, 20 Sep 2024 19:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3698418308E;
+	Fri, 20 Sep 2024 19:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d8rnQR69"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p1vGYOK3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC25291E
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 19:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B543FB3B;
+	Fri, 20 Sep 2024 19:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726859259; cv=none; b=SIVHW0zkt2psFhvZWaSuiQRUctsIw3JJX7ncEhFULxr7SsTZLZvR6MVYeqXZzpeqlJiMhel/TCnE0jY8jJY5h3p9Vtqsy2Z3PTIwkjxbR54EYYh0HjrULdMMkHzwv2WVK0Im5zW6wGPTHbpmEtGi/jGpPcKEBHFf2jFSW4Euy7o=
+	t=1726859414; cv=none; b=D/CAhor/zhzx0Bi3897Sa+AG8ZDIsi4Io7AtvWXNmoFDAPqZTicv6y4qsdJJRwNlYjhY01dmkI6AUncTeCRUa7K9rHzDZ7NAK6BuljvXe2s3YI3sAimcfvNLRZ9GQRWZmUwfiS+1pxKLdO3hG3KroL8AGWuCd9Vx/mQvJApYJvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726859259; c=relaxed/simple;
-	bh=XYleqDUUULMHmf327GC5FuqVofTnEl06Sl9up1zkKig=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K6I/04H6AVDrfpOcE9bkrc/rvoCqxxvSUGn7lL0LzYIDMTZTQjgWlwuaDBSEBtb1Ppl/ghPaPc02OFGhYptQLiMTeb9pg3TOIgrnAlnHuehx8ST6IBDCgzmbZu1Nd8uIECjt8wT/X3EuteyuymJhJ6w89W/0ysjJ/2o4w03rI/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d8rnQR69; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726859257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=dS1KGNZWGk2nhsYDCIsD8L7gyADHJUWHZbHDXT7ckqE=;
-	b=d8rnQR694+4RvooFyMRgKZvGp5OcW0ZXALNh07v+HN3JYL1zv63/8FXFh5y48oyydpNBB3
-	2PYNQefBjWZqyUQU98pNoCTsFaRgJkiKvuLSy8qB901LG3ZP4Hm+96I3uYu1pzIFTmE080
-	lgoFSsGJos1D4zuMgMnY26IcA2HO6ec=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-198-jaoiHIvdPqyl0OxF8OxWVA-1; Fri,
- 20 Sep 2024 15:07:33 -0400
-X-MC-Unique: jaoiHIvdPqyl0OxF8OxWVA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B07D9192DE06;
-	Fri, 20 Sep 2024 19:07:30 +0000 (UTC)
-Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.33.41])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9F8C219560A3;
-	Fri, 20 Sep 2024 19:07:23 +0000 (UTC)
-From: Wander Lairson Costa <wander@redhat.com>
-To: Andrii Nakryiko <andrii@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	bpf@vger.kernel.org (open list:BPF [RINGBUF]),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Wander Lairson Costa <wander.lairson@gmail.com>,
-	Brian Grech <bgrech@redhat.com>,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: [PATCH] bpf: use raw_spinlock_t in ringbuf
-Date: Fri, 20 Sep 2024 16:06:59 -0300
-Message-ID: <20240920190700.617253-1-wander@redhat.com>
+	s=arc-20240116; t=1726859414; c=relaxed/simple;
+	bh=ez/mPdvd1QIN88nMxftKEiiiI8ySa6ENCbKolxX+7KU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UwcCNT8ZFmmXm+6jzSTuYtKCtgHYray04W7eVcXQ/ojCOOp34JibGA/uaPP1aob3Le4hskyEvRmQZvyL11mCDxEPnJrwZgg5Q9QYeixDZKtPWN4LQh4WBGyvE6UOafanS4+Too8QuS5rRsFek3NMJ6MvaiXkvj+D/VUUIM60gCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p1vGYOK3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48KBMNET017481;
+	Fri, 20 Sep 2024 19:10:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=yQzfz18VMaqcdlFy6t9nYj9x
+	tLCuv3ntbNwrACzqcWU=; b=p1vGYOK3ipqCfQ2br3OWi2k3lKjqb0cwiZvzGVbw
+	92FIt+n0Hn1Ld6VSJwoVdxDEnYTDOw5SN8Qn8NxgcCUd2deuzPoqiN/WR5M69CdX
+	cW8/RBWhBEqVHuExUq2Tor5oiOkyc60e6tWGNWHn8xDRUgm+EN4GYBLtpit9ItcL
+	etp82l99cP0dA1flj6JPUU3Rz8Uz6OD94fDttGoUQ5UFO6aujOhA21XusjBjmaVe
+	sfrQQvo2HkTM6MjOKqHNq2xfbLVwtUqBgJgC/MFZ9E4hoN3/BShGSnwc8BmnqE07
+	dhecDM0iM3iMTHQv0reL/RF89p57GVn79ZIfGw1+NCbNkQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41ry4ab1bf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 19:10:00 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48KJ9gWK030075
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 19:09:42 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 20 Sep 2024 12:09:42 -0700
+Date: Fri, 20 Sep 2024 12:09:41 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Wasim Nazir <quic_wasimn@quicinc.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Andrew Halaney <ahalaney@redhat.com>,
+        Rudraksha Gupta <guptarud@gmail.com>,
+        "Linux regression tracking (Thorsten
+ Leemhuis)" <regressions@leemhuis.info>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH] firmware: qcom: scm: Allow devicetree-less probe
+Message-ID: <20240920120615393-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240920-scm-pdev-v1-1-b76d90e06af7@quicinc.com>
+ <719dc21d-4c4f-4ca5-b46e-a044aa751815@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <719dc21d-4c4f-4ca5-b46e-a044aa751815@quicinc.com>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: z_EekgiUyuQzTsv-0tCc4t0PVKL903_3
+X-Proofpoint-ORIG-GUID: z_EekgiUyuQzTsv-0tCc4t0PVKL903_3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1015 malwarescore=0
+ suspectscore=0 spamscore=0 impostorscore=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409200139
 
-From: Wander Lairson Costa <wander.lairson@gmail.com>
+On Sat, Sep 21, 2024 at 12:11:39AM +0530, Wasim Nazir wrote:
+> 
+> 
+> On 9/20/2024 11:31 PM, Elliot Berman wrote:
+> > Some devicetrees representing Qualcomm Technologies, Inc. SoCs are
+> > missing the SCM node. Users of the SCM device assume the device is
+> > present and the driver also assumes it has probed. This can lead to
+> > unanticipated crashes when there isn't an SCM device. All Qualcomm
+> > Technologies, Inc. SoCs use SCM to communicate with firmware, so create
+> > the platform device if it's not present in the devicetree.
+> > 
+> > Tested that SCM node still probes on:
+> >   - sm8650-qrd with the SCM DT node still present
+> >   - sm845-mtp with the SCM DT node still present
+> >   - sm845-mtp with the node removed
+> > 
+> > Fixes: 449d0d84bcd8 ("firmware: qcom: scm: smc: switch to using the SCM allocator")
+> > Reported-by: Rudraksha Gupta <guptarud@gmail.com>
+> > Closes: https://lore.kernel.org/lkml/692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com/
+> > Link: https://lore.kernel.org/all/CAA8EJpqSKbKJ=y0LAigGdj7_uk+5mezDgnzV5XEzwbxRJgpN1w@mail.gmail.com/
+> > Suggested-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> > Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> > ---
+> >   drivers/firmware/qcom/qcom_scm.c | 75 +++++++++++++++++++++++++++++++++++-----
+> >   1 file changed, 66 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> > index 10986cb11ec0..842ba490cd37 100644
+> > --- a/drivers/firmware/qcom/qcom_scm.c
+> > +++ b/drivers/firmware/qcom/qcom_scm.c
+> > @@ -1954,10 +1954,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
+> >   	init_completion(&scm->waitq_comp);
+> >   	mutex_init(&scm->scm_bw_lock);
+> > -	scm->path = devm_of_icc_get(&pdev->dev, NULL);
+> > -	if (IS_ERR(scm->path))
+> > -		return dev_err_probe(&pdev->dev, PTR_ERR(scm->path),
+> > -				     "failed to acquire interconnect path\n");
+> > +	if (pdev->dev.of_node) {
+> > +		scm->path = devm_of_icc_get(&pdev->dev, NULL);
+> > +		if (IS_ERR(scm->path))
+> > +			return dev_err_probe(&pdev->dev, PTR_ERR(scm->path),
+> > +					"failed to acquire interconnect path\n");
+> > +	}
+> >   	scm->core_clk = devm_clk_get_optional(&pdev->dev, "core");
+> >   	if (IS_ERR(scm->core_clk))
+> > @@ -2012,10 +2014,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
+> >   	if (of_property_read_bool(pdev->dev.of_node, "qcom,sdi-enabled") || !download_mode)
+> >   		qcom_scm_disable_sdi();
+> > -	ret = of_reserved_mem_device_init(__scm->dev);
+> > -	if (ret && ret != -ENODEV)
+> > -		return dev_err_probe(__scm->dev, ret,
+> > -				     "Failed to setup the reserved memory region for TZ mem\n");
+> > +	if (pdev->dev.of_node) {
+> > +		ret = of_reserved_mem_device_init(__scm->dev);
+> > +		if (ret && ret != -ENODEV)
+> > +			return dev_err_probe(__scm->dev, ret,
+> > +					"Failed to setup the reserved memory region for TZ mem\n");
+> > +	}
+> >   	ret = qcom_tzmem_enable(__scm->dev);
+> >   	if (ret)
+> > @@ -2068,6 +2072,11 @@ static const struct of_device_id qcom_scm_dt_match[] = {
+> >   };
+> >   MODULE_DEVICE_TABLE(of, qcom_scm_dt_match);
+> > +static const struct platform_device_id qcom_scm_id_table[] = {
+> > +	{ .name = "qcom-scm" },
+> > +	{}
+> > +};
+> > +
+> >   static struct platform_driver qcom_scm_driver = {
+> >   	.driver = {
+> >   		.name	= "qcom_scm",
+> > @@ -2076,11 +2085,59 @@ static struct platform_driver qcom_scm_driver = {
+> >   	},
+> >   	.probe = qcom_scm_probe,
+> >   	.shutdown = qcom_scm_shutdown,
+> > +	.id_table = qcom_scm_id_table,
+> >   };
+> > +static bool is_qcom_machine(void)
+> > +{
+> > +	struct device_node *np __free(device_node) = NULL;
+> > +	struct property *prop;
+> > +	const char *name;
+> > +
+> > +	np = of_find_node_by_path("/");
+> > +	if (!np)
+> > +		return false;
+> > +
+> > +	of_property_for_each_string(np, "compatible", prop, name)
+> > +		if (!strncmp("qcom,", name, 5))
+> Is this limitation updated in dt-schema also? This static check in code
+> might cause unwanted issues.
 
-The function __bpf_ringbuf_reserve is invoked from a tracepoint, which
-disables preemption. Using spinlock_t in this context can lead to a
-"sleep in atomic" warning in the RT variant. This issue is illustrated
-in the example below:
+arm/qcom.yaml describes the requirement that Qualcomm SoCs would always
+have a "qcom," prefixed compatible.
 
-BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 556208, name: test_progs
-preempt_count: 1, expected: 0
-RCU nest depth: 1, expected: 1
-INFO: lockdep is turned off.
-Preemption disabled at:
-[<ffffd33a5c88ea44>] migrate_enable+0xc0/0x39c
-CPU: 7 PID: 556208 Comm: test_progs Tainted: G
-Hardware name: Qualcomm SA8775P Ride (DT)
-Call trace:
- dump_backtrace+0xac/0x130
- show_stack+0x1c/0x30
- dump_stack_lvl+0xac/0xe8
- dump_stack+0x18/0x30
- __might_resched+0x3bc/0x4fc
- rt_spin_lock+0x8c/0x1a4
- __bpf_ringbuf_reserve+0xc4/0x254
- bpf_ringbuf_reserve_dynptr+0x5c/0xdc
- bpf_prog_ac3d15160d62622a_test_read_write+0x104/0x238
- trace_call_bpf+0x238/0x774
- perf_call_bpf_enter.isra.0+0x104/0x194
- perf_syscall_enter+0x2f8/0x510
- trace_sys_enter+0x39c/0x564
- syscall_trace_enter+0x220/0x3c0
- do_el0_svc+0x138/0x1dc
- el0_svc+0x54/0x130
- el0t_64_sync_handler+0x134/0x150
- el0t_64_sync+0x17c/0x180
+> 
+> Instead can we use this simple check method? I am ok to do some refinement
+> if needed.
+> https://lore.kernel.org/all/20240920181317.391918-1-quic_wasimn@quicinc.com/
 
-Switch the spinlock to raw_spinlock_t to avoid this error.
+We'd like to make sure that SCM device is instead probed in time.
+Returning error isn't preferred as most (all?) users won't retry
+later.
 
-Signed-off-by: Wander Lairson Costa <wander.lairson@gmail.com>
-Reported-by: Brian Grech <bgrech@redhat.com>
-Fixes: 457f44363a88 ("bpf: Implement BPF ring buffer and verifier support for it")
-Signed-off-by: Wander Lairson Costa <wander@redhat.com>
----
- kernel/bpf/ringbuf.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/bpf/ringbuf.c b/kernel/bpf/ringbuf.c
-index e20b90c36131..de3b681d1d13 100644
---- a/kernel/bpf/ringbuf.c
-+++ b/kernel/bpf/ringbuf.c
-@@ -29,7 +29,7 @@ struct bpf_ringbuf {
- 	u64 mask;
- 	struct page **pages;
- 	int nr_pages;
--	spinlock_t spinlock ____cacheline_aligned_in_smp;
-+	raw_spinlock_t spinlock ____cacheline_aligned_in_smp;
- 	/* For user-space producer ring buffers, an atomic_t busy bit is used
- 	 * to synchronize access to the ring buffers in the kernel, rather than
- 	 * the spinlock that is used for kernel-producer ring buffers. This is
-@@ -173,7 +173,7 @@ static struct bpf_ringbuf *bpf_ringbuf_alloc(size_t data_sz, int numa_node)
- 	if (!rb)
- 		return NULL;
- 
--	spin_lock_init(&rb->spinlock);
-+	raw_spin_lock_init(&rb->spinlock);
- 	atomic_set(&rb->busy, 0);
- 	init_waitqueue_head(&rb->waitq);
- 	init_irq_work(&rb->work, bpf_ringbuf_notify);
-@@ -421,10 +421,10 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
- 	cons_pos = smp_load_acquire(&rb->consumer_pos);
- 
- 	if (in_nmi()) {
--		if (!spin_trylock_irqsave(&rb->spinlock, flags))
-+		if (!raw_spin_trylock_irqsave(&rb->spinlock, flags))
- 			return NULL;
- 	} else {
--		spin_lock_irqsave(&rb->spinlock, flags);
-+		raw_spin_lock_irqsave(&rb->spinlock, flags);
- 	}
- 
- 	pend_pos = rb->pending_pos;
-@@ -450,7 +450,7 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
- 	 */
- 	if (new_prod_pos - cons_pos > rb->mask ||
- 	    new_prod_pos - pend_pos > rb->mask) {
--		spin_unlock_irqrestore(&rb->spinlock, flags);
-+		raw_spin_unlock_irqrestore(&rb->spinlock, flags);
- 		return NULL;
- 	}
- 
-@@ -462,7 +462,7 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
- 	/* pairs with consumer's smp_load_acquire() */
- 	smp_store_release(&rb->producer_pos, new_prod_pos);
- 
--	spin_unlock_irqrestore(&rb->spinlock, flags);
-+	raw_spin_unlock_irqrestore(&rb->spinlock, flags);
- 
- 	return (void *)hdr + BPF_RINGBUF_HDR_SZ;
- }
--- 
-2.46.1
-
+> > +			return true;
+> > +
+> > +	return false;
+> > +}
+> > +
+> >   static int __init qcom_scm_init(void)
+> >   {
+> > -	return platform_driver_register(&qcom_scm_driver);
+> > +	struct device_node *np __free(device_node) = NULL;
+> > +	struct platform_device *pdev;
+> > +	int ret;
+> > +
+> > +	ret = platform_driver_register(&qcom_scm_driver);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Some devicetrees representing Qualcomm Technologies, Inc. SoCs are
+> > +	 * missing the SCM node. Find out if we don't have a SCM node *and*
+> > +	 * we are a Qualcomm-compatible SoC. If yes, then create a platform
+> > +	 * device for the SCM driver. Assume scanning the root compatible for
+> > +	 * "qcom," vendor prefix will be faster than searching for the
+> > +	 * SCM DT node.
+> > +	 */
+> > +	if (!is_qcom_machine())
+> > +		return 0;
+> > +
+> > +	np = of_find_matching_node_and_match(NULL, qcom_scm_dt_match, NULL);
+> > +	if (np)
+> > +		return 0;
+> > +
+> > +	pdev = platform_device_alloc(qcom_scm_id_table[0].name, PLATFORM_DEVID_NONE);
+> > +	if (!pdev)
+> > +		return -ENOMEM;
+> > +
+> > +	ret = platform_device_add(pdev);
+> > +	if (ret)
+> > +		platform_device_put(pdev);
+> > +
+> > +	return ret;
+> >   }
+> >   subsys_initcall(qcom_scm_init);
+> > 
+> > ---
+> > base-commit: 2adcf3941db724e1750da7094c34431d9b6b7fcb
+> > change-id: 20240917-scm-pdev-bc8db85fad05
+> > 
+> > Best regards,
 
