@@ -1,314 +1,244 @@
-Return-Path: <linux-kernel+bounces-334599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC2797D978
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:59:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E083297D97D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 20:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59EC61F2271A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:59:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0935283BEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 18:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037EF17F397;
-	Fri, 20 Sep 2024 17:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB3717E44A;
+	Fri, 20 Sep 2024 18:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aIKs9Bsr"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SqT9RRUt"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1FDEBE;
-	Fri, 20 Sep 2024 17:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA84143C49;
+	Fri, 20 Sep 2024 18:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726855139; cv=none; b=E1m6WlxaN3DTBMTu7U8f1WfJNkpcZ5yfIQEeMKNEfjmq5XPMOQaWIVEzp1YluHjaMOuIfG/mPEfLluABCDnfZldEpnPz2uyVdIrNKqE0DH3gSNrSaglDHUH9hdBgb8LjIwOo9IrdNMzDPu15auyVx8DnIWuTxq16iZ3s8xDk39s=
+	t=1726855318; cv=none; b=WLLuKKSNB8cPnjLzvpvmQumSGc+KEF62E5YHObvtBsykTS21pKYEou8bdAC5Dn9vgS0hvjT6lgKNAuisuqsGjECLJ7N/plUz7IuJDvhHG51jlT4p0kUDoTpd23caf81dHS59/btYQcMGY+nZaAZjvfOVf3EpnCjCd18tFGctMLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726855139; c=relaxed/simple;
-	bh=EgzZJ47TSIdqkV4mcxv5gtzJ3Wj3JkzqDsrjv7g373A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p61zmXfEHh77lNvibLxJjhuz5dbMXCpWZAAEVET5Kkx1QmHZV7n7XGrJpZzAPjwZHISAlIJjI2UEVDWwS8CDVwrYD2iaBtaXHxItnTmD1b7DQQyX2qq9QtUYkb1aTjlRYyakE9IYJqrlr/AVULpqqYqVFZHYUvskFXeMu9fCjxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aIKs9Bsr; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1726855318; c=relaxed/simple;
+	bh=6W+CdwnzCI9NJoMF0y+A+2VlZvAeHLpKpEfJdi0Rr5w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=d1Szh2CZLSfmP/Qe0mnf2sCWCb873L6yZrq8HsqEBhjsngRCux4+xoVXXcZ+GCpNNlccOjoMYHHShAvJ3birOBwA1zYYoOGFuuv4cxXm0R3EpNSnUz8g4KJ/HeYdAycXlKMtpvu5GwJ4GQsALc6H1v4cbIF33AlzYk82XPf3JyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SqT9RRUt; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48KH9V4a018621;
-	Fri, 20 Sep 2024 17:58:53 GMT
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48K7w7Xn007280;
+	Fri, 20 Sep 2024 18:01:45 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=cSRhvZr/fyB5veM+2HidkMYMgaeq+nOW+Ry
-	akyBC+io=; b=aIKs9BsrLx17EE4kEaLl4izaU7q8DyR+jCtuvi0wxjQy8vl48D8
-	wtotgt3MGr4IJpW+hvrNRTvFJTQzP2fUXusNftv8oTuH6hKS/YERz7RSFHnQSkUm
-	E2vaYRTVQD5FG3R5IGCUpxxIPC5C2B4PHJXtnTNjHwT6MxgTTf7e4DGjBGyPD1i4
-	mYU14PGhic+MUzic4ec1y+RXXw88ovsbnpR1USKdyoFAoykkMs0KNCnzDNc8dSjF
-	/6rUs+PhPRTr+3xaRVVc9UEd3FJNH5lwuDcQlordawnbcYExMDPFoy33GSm432ZS
-	LjT5Hhw8UKJZDiJEs8DmH/dSMuoQiSYXvtA==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4j72adg-1
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=BnmWo3uauhP14rQ9Q9kY2G
+	Ew/zzZwdaoNnruHWyG220=; b=SqT9RRUtwrsvSUZyU8BoJfjgvF0FX/oqQmq1nv
+	y/+pvY9KM/FRHJ8GZXVqFB9mk74akhMDyXDKUjRLgLGsJLwnLtHfCbXFqKVDxvtR
+	CvF8o1lJcN0e5zTEt7QaEfv+BNmvGuG4MSCS/ALnVcSt4bEcWG3GZQ6A4PM8rzPa
+	muDJ74N/YYHMPQYd5UREEcftBUO2SWw1bp4F/yV9S5BeLUlh6VdwGXzy3vK3ow8x
+	70xBsM4+HTHkZrRLJXcQeAzXdg1d2OWuMduhedMuRrbzZPc7ufYr3NA11ohTmRfW
+	L4K0Um67tCG+J+4paC65IRmgMw5xMtf+LIurV69F1JAz0zOg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4jf2944-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 17:58:52 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48KHwn1W021951;
-	Fri, 20 Sep 2024 17:58:49 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 41n3jmue7n-1
+	Fri, 20 Sep 2024 18:01:44 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48KI1hgA001546
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 17:58:49 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48KHwnZn021946;
-	Fri, 20 Sep 2024 17:58:49 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-wasimn-hyd.qualcomm.com [10.147.246.180])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 48KHwmQq021945
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 17:58:49 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3944840)
-	id CFD8C58D; Fri, 20 Sep 2024 23:28:47 +0530 (+0530)
-From: Wasim Nazir <quic_wasimn@quicinc.com>
-To: Shuah Khan <shuah@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Wasim Nazir <quic_wasimn@quicinc.com>
-Subject: [PATCH] selftest: remoteproc: Add basic test for start/stop sequence
-Date: Fri, 20 Sep 2024 23:28:42 +0530
-Message-ID: <20240920175842.388781-1-quic_wasimn@quicinc.com>
-X-Mailer: git-send-email 2.46.1
+	Fri, 20 Sep 2024 18:01:43 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 20 Sep 2024 11:01:43 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+Date: Fri, 20 Sep 2024 11:01:40 -0700
+Subject: [PATCH] firmware: qcom: scm: Allow devicetree-less probe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240920-scm-pdev-v1-1-b76d90e06af7@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAIO47WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDS0Nz3eLkXN2ClNQy3aRki5QkC9O0xBQDUyWg8oKi1LTMCrBR0bG1tQA
+ htW35WgAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Andrew Halaney <ahalaney@redhat.com>,
+        Rudraksha Gupta <guptarud@gmail.com>,
+        "Linux regression tracking (Thorsten
+ Leemhuis)" <regressions@leemhuis.info>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Bartosz
+ Golaszewski" <brgl@bgdev.pl>,
+        Elliot Berman <quic_eberman@quicinc.com>
+X-Mailer: b4 0.14.1
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ioa0oQ9z-sCsZtf1HP85eJTZLgChXZ8F
-X-Proofpoint-GUID: ioa0oQ9z-sCsZtf1HP85eJTZLgChXZ8F
+X-Proofpoint-ORIG-GUID: SuyJGb0-EA3JBaqg5B1h842TJZH2irpl
+X-Proofpoint-GUID: SuyJGb0-EA3JBaqg5B1h842TJZH2irpl
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- mlxscore=0 malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1011
- adultscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409200131
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
+ mlxscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
+ mlxlogscore=999 adultscore=0 impostorscore=0 spamscore=0
+ lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409200131
 
-Add new basic remoteproc test that check start/stop
-sequence of all subsystems available.
+Some devicetrees representing Qualcomm Technologies, Inc. SoCs are
+missing the SCM node. Users of the SCM device assume the device is
+present and the driver also assumes it has probed. This can lead to
+unanticipated crashes when there isn't an SCM device. All Qualcomm
+Technologies, Inc. SoCs use SCM to communicate with firmware, so create
+the platform device if it's not present in the devicetree.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e062b5328341..aff76edc4242 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18225,6 +18225,7 @@ F:	Documentation/staging/remoteproc.rst
- F:	drivers/remoteproc/
- F:	include/linux/remoteproc.h
- F:	include/linux/remoteproc/
-+F:	tools/testing/selftests/remoteproc/
+Tested that SCM node still probes on:
+ - sm8650-qrd with the SCM DT node still present
+ - sm845-mtp with the SCM DT node still present
+ - sm845-mtp with the node removed
 
- REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
- M:	Bjorn Andersson <andersson@kernel.org>
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 697f13bbbc32..31db0311efdc 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -68,6 +68,7 @@ TARGETS += proc
- TARGETS += pstore
- TARGETS += ptrace
- TARGETS += openat2
-+TARGETS += remoteproc
- TARGETS += resctrl
- TARGETS += riscv
- TARGETS += rlimits
-diff --git a/tools/testing/selftests/remoteproc/Makefile b/tools/testing/selftests/remoteproc/Makefile
-new file mode 100644
-index 000000000000..a84b3934fd36
---- /dev/null
-+++ b/tools/testing/selftests/remoteproc/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
-+TEST_PROGS := remoteproc_test.sh
+Fixes: 449d0d84bcd8 ("firmware: qcom: scm: smc: switch to using the SCM allocator")
+Reported-by: Rudraksha Gupta <guptarud@gmail.com>
+Closes: https://lore.kernel.org/lkml/692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com/
+Link: https://lore.kernel.org/all/CAA8EJpqSKbKJ=y0LAigGdj7_uk+5mezDgnzV5XEzwbxRJgpN1w@mail.gmail.com/
+Suggested-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+---
+ drivers/firmware/qcom/qcom_scm.c | 75 +++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 66 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+index 10986cb11ec0..842ba490cd37 100644
+--- a/drivers/firmware/qcom/qcom_scm.c
++++ b/drivers/firmware/qcom/qcom_scm.c
+@@ -1954,10 +1954,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
+ 	init_completion(&scm->waitq_comp);
+ 	mutex_init(&scm->scm_bw_lock);
+ 
+-	scm->path = devm_of_icc_get(&pdev->dev, NULL);
+-	if (IS_ERR(scm->path))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(scm->path),
+-				     "failed to acquire interconnect path\n");
++	if (pdev->dev.of_node) {
++		scm->path = devm_of_icc_get(&pdev->dev, NULL);
++		if (IS_ERR(scm->path))
++			return dev_err_probe(&pdev->dev, PTR_ERR(scm->path),
++					"failed to acquire interconnect path\n");
++	}
+ 
+ 	scm->core_clk = devm_clk_get_optional(&pdev->dev, "core");
+ 	if (IS_ERR(scm->core_clk))
+@@ -2012,10 +2014,12 @@ static int qcom_scm_probe(struct platform_device *pdev)
+ 	if (of_property_read_bool(pdev->dev.of_node, "qcom,sdi-enabled") || !download_mode)
+ 		qcom_scm_disable_sdi();
+ 
+-	ret = of_reserved_mem_device_init(__scm->dev);
+-	if (ret && ret != -ENODEV)
+-		return dev_err_probe(__scm->dev, ret,
+-				     "Failed to setup the reserved memory region for TZ mem\n");
++	if (pdev->dev.of_node) {
++		ret = of_reserved_mem_device_init(__scm->dev);
++		if (ret && ret != -ENODEV)
++			return dev_err_probe(__scm->dev, ret,
++					"Failed to setup the reserved memory region for TZ mem\n");
++	}
+ 
+ 	ret = qcom_tzmem_enable(__scm->dev);
+ 	if (ret)
+@@ -2068,6 +2072,11 @@ static const struct of_device_id qcom_scm_dt_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, qcom_scm_dt_match);
+ 
++static const struct platform_device_id qcom_scm_id_table[] = {
++	{ .name = "qcom-scm" },
++	{}
++};
 +
-+include ../lib.mk
-diff --git a/tools/testing/selftests/remoteproc/config b/tools/testing/selftests/remoteproc/config
-new file mode 100644
-index 000000000000..a5c237d2f3b4
---- /dev/null
-+++ b/tools/testing/selftests/remoteproc/config
-@@ -0,0 +1 @@
-+CONFIG_REMOTEPROC=y
-diff --git a/tools/testing/selftests/remoteproc/remoteproc_test.sh b/tools/testing/selftests/remoteproc/remoteproc_test.sh
-new file mode 100644
-index 000000000000..88c8f15d8406
---- /dev/null
-+++ b/tools/testing/selftests/remoteproc/remoteproc_test.sh
-@@ -0,0 +1,165 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+#
+ static struct platform_driver qcom_scm_driver = {
+ 	.driver = {
+ 		.name	= "qcom_scm",
+@@ -2076,11 +2085,59 @@ static struct platform_driver qcom_scm_driver = {
+ 	},
+ 	.probe = qcom_scm_probe,
+ 	.shutdown = qcom_scm_shutdown,
++	.id_table = qcom_scm_id_table,
+ };
+ 
++static bool is_qcom_machine(void)
++{
++	struct device_node *np __free(device_node) = NULL;
++	struct property *prop;
++	const char *name;
 +
-+DIR="$(dirname $(readlink -f "$0"))"
++	np = of_find_node_by_path("/");
++	if (!np)
++		return false;
 +
-+KTAP_HELPERS="${DIR}/../kselftest/ktap_helpers.sh"
-+if [ -e "$KTAP_HELPERS" ]; then
-+    source "$KTAP_HELPERS"
-+else
-+    echo -n "1..0 # SKIP $KTAP_HELPERS file not found"
-+	exit 4
-+fi
++	of_property_for_each_string(np, "compatible", prop, name)
++		if (!strncmp("qcom,", name, 5))
++			return true;
 +
-+RPROC_SYS=/sys/class/remoteproc
-+RPROC_SEQ_SLEEP=5
-+rproc_ss_files=
-+num_tests=0
-+test_err=0
-+
-+check_error() {
-+	if [ $? -ne 0 ]; then
-+		test_err=$((test_err+1))
-+		ktap_print_msg "$@"
-+	fi
++	return false;
 +}
 +
-+rproc_seq_test_ss_one() {
-+	ss=$1
-+	rproc=${RPROC_SYS}/$ss
-+	rproc_name=$(cat $rproc/name)
-+	rproc_state=$(cat $rproc/state)
-+	rproc_ssr=$(cat $rproc/recovery)
-+	ktap_print_msg "Testing rproc sequence for $rproc_name"
+ static int __init qcom_scm_init(void)
+ {
+-	return platform_driver_register(&qcom_scm_driver);
++	struct device_node *np __free(device_node) = NULL;
++	struct platform_device *pdev;
++	int ret;
 +
-+	# Reset test_err value
-+	test_err=0
-+	if [ "$rproc_ssr" != "enabled" ]; then
-+		echo enabled > $rproc/recovery
-+		check_error "$rproc_name SSR-enabled failed"
-+	fi
++	ret = platform_driver_register(&qcom_scm_driver);
++	if (ret)
++		return ret;
 +
-+	if [ "$rproc_state" != "running" ]; then
-+		echo start > "$rproc/state"
-+		check_error "$rproc_name state-start failed"
++	/* Some devicetrees representing Qualcomm Technologies, Inc. SoCs are
++	 * missing the SCM node. Find out if we don't have a SCM node *and*
++	 * we are a Qualcomm-compatible SoC. If yes, then create a platform
++	 * device for the SCM driver. Assume scanning the root compatible for
++	 * "qcom," vendor prefix will be faster than searching for the
++	 * SCM DT node.
++	 */
++	if (!is_qcom_machine())
++		return 0;
 +
-+		sleep ${RPROC_SEQ_SLEEP}
++	np = of_find_matching_node_and_match(NULL, qcom_scm_dt_match, NULL);
++	if (np)
++		return 0;
 +
-+		echo stop > "$rproc/state"
-+		check_error "$rproc_name state-stop failed"
-+	else
-+		echo stop > "$rproc/state"
-+		check_error "$rproc_name state-stop failed"
++	pdev = platform_device_alloc(qcom_scm_id_table[0].name, PLATFORM_DEVID_NONE);
++	if (!pdev)
++		return -ENOMEM;
 +
-+		sleep ${RPROC_SEQ_SLEEP}
++	ret = platform_device_add(pdev);
++	if (ret)
++		platform_device_put(pdev);
 +
-+		echo start > "$rproc/state"
-+		check_error "$rproc_name state-start failed"
-+	fi
-+
-+	if [ $test_err -ne 0 ]; then
-+		ktap_test_fail "$rproc_name"
-+	else
-+		ktap_test_pass "$rproc_name"
-+	fi
-+}
-+
-+rproc_seq_test_all_ss() {
-+	# Declare an array to save initial states of each ss
-+	org_ss_to_state=""
-+
-+	# Reset test_err value
-+	test_err=0
-+
-+	for ss in ${rproc_ss_files}; do
-+		rproc=${RPROC_SYS}/$ss
-+		rproc_name=$(cat $rproc/name)
-+		rproc_ssr=$(cat $rproc/recovery)
-+
-+		# Enable SSR-recovery support
-+		if [ "$rproc_ssr" != "enabled" ]; then
-+			echo enabled > $rproc/recovery
-+			check_error "$rproc_name SSR-enabled failed"
-+		fi
-+	done
-+
-+	for ss in ${rproc_ss_files}; do
-+		rproc=${RPROC_SYS}/$ss
-+		rproc_name=$(cat $rproc/name)
-+		rproc_state=$(cat $rproc/state)
-+
-+		# Save initial states for each ss
-+		org_ss_to_state="$org_ss_to_state $rproc_state"
-+
-+		# Initiate start/stop sequence
-+		if [ "$rproc_state" != "running" ]; then
-+			echo start > "$rproc/state"
-+			check_error "$rproc_name state-start failed"
-+		else
-+			echo stop > "$rproc/state"
-+			check_error "$rproc_name state-stop failed"
-+		fi
-+		sleep ${RPROC_SEQ_SLEEP}
-+	done
-+
-+	index=1
-+	for ss in ${rproc_ss_files}; do
-+		rproc=${RPROC_SYS}/$ss
-+		rproc_name=$(cat $rproc/name)
-+		rproc_state=$(cat $rproc/state)
-+
-+		ss_state=$(echo $org_ss_to_state | cut -d' ' -f$index)
-+		# Terminate start/stop sequence
-+		if [ "$ss_state" != "running" ]; then
-+			echo stop > "$rproc/state"
-+			check_error "$rproc_name state-stop failed"
-+		else
-+			echo start > "$rproc/state"
-+			check_error "$rproc_name state-start failed"
-+		fi
-+		index=$((index+1))
-+		sleep ${RPROC_SEQ_SLEEP}
-+	done
-+
-+	if [ $test_err -ne 0 ]; then
-+		ktap_test_fail "for any of $rproc_ss_files"
-+	else
-+		ktap_test_pass "for all $rproc_ss_files"
-+	fi
-+}
-+
-+ktap_print_header
-+
-+if [[ ! -d "${RPROC_SYS}" ]]; then
-+	ktap_skip_all "${RPROC_SYS} doesn't exist."
-+	exit "${KSFT_SKIP}"
-+fi
-+
-+rproc_ss_files=$(find ${RPROC_SYS}/remoteproc* -maxdepth 1 -exec basename {} \;)
-+num_tests=$(echo ${rproc_ss_files} | wc -w)
-+if [[ "${num_tests}" -eq 0 ]]; then
-+	ktap_skip_all "${RPROC_SYS}/remoteproc* doesn't exist."
-+	exit "${KSFT_SKIP}"
-+fi
-+
-+# Total tests will be:
-+# 1) Seq tests for each subsystem sequencially
-+# 2) Seq tests for all subsystems concurrently
-+num_tests=$((num_tests+1))
-+
-+ktap_set_plan "${num_tests}"
-+
-+# Test 1
-+ktap_print_msg "Testing rproc up/down sequence for each subsystem sequencially"
-+for ss in ${rproc_ss_files}; do
-+	rproc_seq_test_ss_one $ss
-+done
-+
-+# Test 2
-+ktap_print_msg "Testing rproc up/down sequence for all subsystems concurrently"
-+rproc_seq_test_all_ss
-+
-+ktap_finished
---
-2.46.1
++	return ret;
+ }
+ subsys_initcall(qcom_scm_init);
+ 
+
+---
+base-commit: 2adcf3941db724e1750da7094c34431d9b6b7fcb
+change-id: 20240917-scm-pdev-bc8db85fad05
+
+Best regards,
+-- 
+Elliot Berman <quic_eberman@quicinc.com>
 
 
