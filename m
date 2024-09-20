@@ -1,213 +1,158 @@
-Return-Path: <linux-kernel+bounces-334671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0DF97DA4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:40:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB53997DA51
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 23:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7527E1C20F08
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 21:40:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96EAC283760
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 21:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDC5187322;
-	Fri, 20 Sep 2024 21:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C38186E5B;
+	Fri, 20 Sep 2024 21:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="PCrgdGG9"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012054.outbound.protection.outlook.com [52.101.66.54])
+	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="sfrcMMTP"
+Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E165C3BBC9;
-	Fri, 20 Sep 2024 21:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726868434; cv=fail; b=M+rFwR8FBKXJyfR908e7L9jNRS2oLCC+rfWu+wDgUxmHsDQWQjfLxXTWRUgd2l0Ngi/DIK8janSHM5I0azmSN1e42XDXVso4whAiaTC5U7N0tpMVYyHYBqkk1pAni0rvV+q/XH1lWT6vuG+LfbxiZ3O+GTv6yjeCrTSB4D0Vlz0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726868434; c=relaxed/simple;
-	bh=kGBBeG/n9F4IjubW+JlT3/t0ZGUjaqSdVj3R4ED9VWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PQUq39e9W+0zw/4Z/IRWIsfrW+3ABeEbrSTGDYhHoclYnBoH8PQaimiDrRb0ITSHrAGx6PaqBEVlLeV3pnbV46DzCSqpXIXrI8EHUEnDdg0wD7vp76bb1gRSVyQdDPy+BqyTWFNMqxatr6GNCFcXVTmj0Yo1ilmUQmQ2YTbGwzE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=PCrgdGG9; arc=fail smtp.client-ip=52.101.66.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wk8Oh/yNceRwdQsZYZ7ImKJqCsWEAT07gK1j30R2hWazDmgcEFxNnDuQZVb9HPiNDanuUM5+hHeSkTqaB+U51S/rxN/FHcoy3u6yuGkctyXC/1uxJjc4xZkq1+O2hK2zyXgKEJQGYc3Yl0g25jdbJ6DBjjNkLHZrFbnCzsgkdQRhpvM1A+VzRAK+IJXNJyC6mIT9Xu/c49gfGfjcq94rSO0Q1C030zBgwPAro6Qcs4pEwsafl7ZeSfg0P+Kwh0wqieJivvlvYFeqHhoNCUpmwEM78lkqSouToa4KFrsbIcwfsHJ6uNe5bIegtTqP8Y3BftpeGyrLmljLIhN5D2ke1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vKIkrTyzfHNQ//U4uk35K5Cp51nMNsuuWNejGC6Fd+w=;
- b=tdd6eMV6Iv5OLPnQZ0dy74lFXKDoxSj8XV0Af0XN62fU4CS3fi9Y6xV3yhsgamfWA7IE65VkMQDrjmy0WTVPySUBdi2u8xWBtm1g7bmmVBqdUdH9D89IM1udV4LPuCptv+fV/cKHkck3xFjYGbpkPC6SEm+yEjuJccZ9I5yvzXh1aN09Jio/j5cvVu2u2/UNCMa3Np665DZrGwjh8U/t75PicUV9LsFUg5leu18v5IbVpQaFRDOw64WNf7MNAC2kyNbQgMqS+oJeiLvAcYpGXSsT7fikxm/cKulz3i9+oRQadWqojtYHzrU9grS3xUOlloL0H62PHKPDtJlNtrb2Pg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vKIkrTyzfHNQ//U4uk35K5Cp51nMNsuuWNejGC6Fd+w=;
- b=PCrgdGG9nlZMGMrSPlJ3Bn42k6+Pqtx5lh1esitKcbblRS6neRviTbem7Y/BJzaE/0D9qs04vEja9/1oNlSEK1dT8hs619eZVnHoG4NRyfyUDwhALX5CzJ+ALlOg2YXhUQUmn079REts+ozbSeIsGg4LSgS2JjlGqob7HyXIjE0Nm7d/3jZrnwMkjECkz2JfNeZIK7xhOe3+KKwWOk1aP6He1r+z44SZhx4olNicykOtYAiMpF8FEhXjcRIcoOk/SvJ69nA3UDQ8l4t92lkfA79TCZwnkakI1IGUTQi0HTic55qvm1YmnrwopS29r9ImPFc4KfS2UiX6VPoQGFkzdg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by GVXPR04MB9735.eurprd04.prod.outlook.com (2603:10a6:150:118::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.22; Fri, 20 Sep
- 2024 21:40:26 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7982.018; Fri, 20 Sep 2024
- 21:40:25 +0000
-Date: Fri, 20 Sep 2024 17:40:15 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-mtd@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 2/3] mtd: spi-nor: support vcc-supply regulator
-Message-ID: <Zu3rv99P6zFnUhYe@lizhi-Precision-Tower-5810>
-References: <20240920-spi-v1-0-97f220c2e10c@nxp.com>
- <20240920-spi-v1-2-97f220c2e10c@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240920-spi-v1-2-97f220c2e10c@nxp.com>
-X-ClientProxiedBy: SJ0PR03CA0140.namprd03.prod.outlook.com
- (2603:10b6:a03:33c::25) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511D03BBC9
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 21:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726868639; cv=none; b=QHcIUt8xYI5dLruEMVL73SQRfH9f/5evWBXzO8Yyf54trckf22zvnOOpZnHGVwK0zSTuHGWfKmiCiqfoX3hMbMLh4FiQKe+2K6DL0fwiMm60RoSwZH3qR9qIIg997XtJJ50yWW0v9TH1O5IKhVFu5wao3o/khiCHniPJLxd9Gig=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726868639; c=relaxed/simple;
+	bh=wVXt34WD3MP8hwh2aEMu8PXCTGj2/9B0oEKrZfoMnh4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o9zFtQF4oeOhVGyxrCh4Cidt7d/Q0mIr5F9tF61Hg8rvmb5zaMcghhyFz4XGkypHc+4uAK47KDCvoXakNAmSFW5xRnutbAAu2mTo7uxe6JMcY3iV8/0nZxpBrqcTcBhhWvzoBXndfwkFfA7PSIyEIPxOLCCGU6UiyiN8t6VU3Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=sfrcMMTP; arc=none smtp.client-ip=81.200.124.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
+Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
+	by ksmg01.maxima.ru (Postfix) with ESMTP id 97D58C0003;
+	Sat, 21 Sep 2024 00:43:45 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 97D58C0003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
+	t=1726868625; bh=WC3ILFut2f0eUKoeHk92ph9UKGLO6mpEKbgxlt9i2W4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=sfrcMMTPsJ/3rdVLHfmRN2+ZOQIjISfUOe+lpW3tkctLsY3jM9dJ/NxZA8jf0hTq3
+	 501oL4PdUEk7uwUTWIlgKBAOfJGVtXgaUimRD76ccBED0L2j7BrzIKBrG3GelbYrRp
+	 L72wLXLY6DFuWQOVtJl0ee2IRoq68yaE+mnm3uNhAjLAkFsA4Kv1zyhooru4ZTuRfx
+	 JdqHeWW2MyZNONULoCElWbRk/aCbAp5vHZCLsbLA9Aj5yvcwX8+4Vhbace+4K63wXZ
+	 euD8RUYn7bUUw7JiUVsHEkwWP6SVeN75EbF5vAdD9X6RwMvl2p8a10wbnNkO76c5er
+	 U1fCLAvlNL6kw==
+Received: from ksmg01.maxima.ru (unknown [81.200.124.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
+	by ksmg01.maxima.ru (Postfix) with ESMTPS;
+	Sat, 21 Sep 2024 00:43:45 +0300 (MSK)
+Received: from localhost.maximatelecom.ru (10.0.247.181) by
+ mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.4; Sat, 21 Sep 2024 00:43:41 +0300
+From: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
+To: Harry Wentland <harry.wentland@amd.com>
+CC: Vitaliy Shevtsov <v.shevtsov@maxima.ru>, Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher
+	<alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?=
+	<christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alvin Lee
+	<alvin.lee2@amd.com>, Charlene Liu <Charlene.Liu@amd.com>, Wayne Lin
+	<wayne.lin@amd.com>, Dillon Varone <dillon.varone@amd.com>, yi-lchen
+	<yi-lchen@amd.com>, Alex Hung <alex.hung@amd.com>, Chris Park
+	<chris.park@amd.com>, Wenjing Liu <wenjing.liu@amd.com>, Tom Chung
+	<chiahsuan.chung@amd.com>, George Shen <george.shen@amd.com>, Hamza Mahfooz
+	<hamza.mahfooz@amd.com>, Samson Tam <samson.tam@amd.com>,
+	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH] drm/amd/display: fix typos in several function pointer checks
+Date: Sat, 21 Sep 2024 02:43:40 +0500
+Message-ID: <20240920214342.14792-1-v.shevtsov@maxima.ru>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GVXPR04MB9735:EE_
-X-MS-Office365-Filtering-Correlation-Id: 64243d62-50ec-492d-9582-08dcd9bcd68c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XzrWdaMpIjrVvqhyvNXs/XbV4uAaA+e44oH/qnAFFbjLQL/X7+ihNBdHFvEf?=
- =?us-ascii?Q?50W2J9E8rB+jYTXPYkleYwWmDK+ihKD99T7OKIRDbVT8zxWgIgVhDeT5nTOr?=
- =?us-ascii?Q?/lw8dGYs32VFkwi7rg5gLkCV0cyAR1RIVkDDAwNWfs8IM3vimc68HbrMpzVQ?=
- =?us-ascii?Q?U7BGQaVCUTH1SSj6fEeL6rUf0al/V3b5PfpK+wS0SG7h4UObEoSv55A0okBr?=
- =?us-ascii?Q?dtFqtZEQQGxigL1Bi3G4PjcCHgpsLti5pJhS90DjIdCMp0UiiweYlbo9rX41?=
- =?us-ascii?Q?phzt3vTNT4oNMempT+digDM1H0Jf2O+k6Tn8aCzz/mx67qcjJBT234Ckiq8y?=
- =?us-ascii?Q?ZyH4/A31qMxrb2yRT1kMkKZzIF4YkuTlboMTGo3KX84wMGiU3qHSB1ooXwUQ?=
- =?us-ascii?Q?s1dfo7X/+55A9iSX3/zfFWw/rHxWFun+/6jYRVN3CRzAYAXe0EmTX7LXP2mk?=
- =?us-ascii?Q?w4rJq0uHmrpmXdahfm6AJeiEHSKLnLwmnuZ7Kc8EWo9ItkVmNwLGdNb6ti+U?=
- =?us-ascii?Q?U40W4ltha6Ni/IevcbN0R8G0hq0UpmaTVw3F4yGXAvFD9NyrkMxj1NGQAG3z?=
- =?us-ascii?Q?/C/xjXpqW5pSq8mlFP4jM6an+4Jhei2sOHDEkmEUml8YSaTbAAfrFBqHzGaO?=
- =?us-ascii?Q?85T6baL4P6xoQYV9u1uSudipdK3xW/XDWNlqt8zMds4m9GiCSDmqMG/6J+yA?=
- =?us-ascii?Q?Tjj7LxOviNGW8KVKSkqNitK2w+65B4SXyIJZM41l8aeKPWqg0858wxy3Xes7?=
- =?us-ascii?Q?ww7KT/xjj267PQtDdciBjuvhVVo0/o04eosHbTPDd/KNU56Sn292Yb6n1cY5?=
- =?us-ascii?Q?EaLoQ2Ccpw7aihPjvAUHL5Id35IpNbnjXsyTZkEKJtdpfvs+z5XfslTrBJpr?=
- =?us-ascii?Q?pdtEve1oK/ENbbeQ8t7cHMaflFFO0BdDlSNAZ9oGRvWtdOMsFmlroQ3T0bhm?=
- =?us-ascii?Q?CneIZTtCTqeml//ik622AHFjEbM0wNGrOlazG5KtrLtNCYJqlCxXDyaLwv6r?=
- =?us-ascii?Q?Cz18PJKr2W08HCHVNahiJ2n2cQ2DqT9GFGLKiTCnJQ+Ulg8MlhS6Nw6t7C3i?=
- =?us-ascii?Q?TSjvLOAzAiWnw6RsrCw7Q45uCNJW9BpT4t03p9PfSwqbfvT7xEYvrHUKoZBe?=
- =?us-ascii?Q?1agVG8byewTwHVuLoULxDGK//XmA2fqvS4wBg5GVBLf6G3tK28iKu17Fs4+s?=
- =?us-ascii?Q?TAzwZ58mP3Lh22fFbDhuUlObHN/YqYMlL5aps+82uhZFy+c9bV3CnLCxnng2?=
- =?us-ascii?Q?ahuajbuXuqFeRw9d8W0CKIB5X1iPiWvdBd5DAGVR8pGi3FVvnd4CCGqQz0UK?=
- =?us-ascii?Q?ikRdjbmJAjDhuwwcXz9OMQdvFV76KOncUaTsxGapmAtTnDoORyrZnEYOReQu?=
- =?us-ascii?Q?2mfjkKZRAhP775w22IZDaaeA2HnCWXWmyPEYAX+e5++xBEXeCg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?uVtckTF2GOOr+9DbNWKnzB8r/Rd0Ya4lHlO3uBtUY3QnoQN2OrgffdT44BXZ?=
- =?us-ascii?Q?b9JdA7WpeLNFdHO4zmnHPAPJ/0INDavJj1FnzROxNonC00ba6hWjlNTJeu7s?=
- =?us-ascii?Q?n8v4Zoc4XXer2U3caHHrDBrls57kUDEhfl6sbxfUDfWF3JI+O3qD6cOuozd5?=
- =?us-ascii?Q?hYR2xDJdVDIGzNk9o4gY+31jREbqMyVGYnPODgQotksQpQJe/gadwhijAClZ?=
- =?us-ascii?Q?Fhudf7aQZ7wVpA74qJTxg2s1T4wOZwxfOMZ15sBBWIiIMa+Uw0yMOluJK8qq?=
- =?us-ascii?Q?CmejY9jPbdnyQc+spJN3JUc/4T9EbwFbejqT7flMqWNX/LHZODYAuz6w/JyT?=
- =?us-ascii?Q?KzxxlAphHb+ZLnr5qVqt6702UlwsEKvQTGQ8j2sV/87CmwM5JqMeH2cHJb6+?=
- =?us-ascii?Q?2uJvAKM40dRR0hGSJKeyxHilpZCOUYciM/stCVH8l3BiWm4c4Ov3s7slIgQG?=
- =?us-ascii?Q?uDQLSE80WkFvblq52NL96v4EkvRv0JmTBoBFXqaUHWZaLl50aiD/4s/GG14W?=
- =?us-ascii?Q?lNv+Kpa4ulMnYpaeoZEg3Eaum2yRR6JT0joNiNCJBznyGbmDYK2SCQtGjdry?=
- =?us-ascii?Q?tKowRwFsWMZiCKPcFoMLanfyaxPKKnJbriDoOLo07AtGJGZfvR3NXuMCiygK?=
- =?us-ascii?Q?B6tRrvo8qPWMY6CcfYALCJ/TVO5455ZzULPS/xYQtbdSM7EJuz1C4KCqcDZc?=
- =?us-ascii?Q?3/7hefGEFQIIPkJ2IgFasepku9Xu0Aii+EZNUNkSySsLdNRaD5q1jaCtzs35?=
- =?us-ascii?Q?moMQZEh4N9fzR9XwcbTsRURCkaraB54X4oFlWnouiTtMYb6MBjKLkokBzEG3?=
- =?us-ascii?Q?l7tkSO70KI0y7rC9035c67bH3hukZiCk14LXC4zRaRCRo0r/H2ppJ5qweRCE?=
- =?us-ascii?Q?3lFBxSe+08/7B8hXOYui5Cxe1PH8ve/R4oKbbDdX4gryb/Nli+yyB/3SuH2g?=
- =?us-ascii?Q?uXvAkz3Aqbfqir1PT8WWj1kXunuA4qUgp5gcp+Kqd7ftXwFrQ87m4ktzdJJf?=
- =?us-ascii?Q?fVsWLL+2w2qjx0G8x9Il7kiagoQTd7JVu695EogOqLNSlXIs+w/DkGWqJIuB?=
- =?us-ascii?Q?2zmveBtkPB5eO4GLk1Z6fCzHoeuUJm4owJ2OkKRbPqkAhnic7szMO/6T5XsO?=
- =?us-ascii?Q?bkxfv8ksg3zGIHKGWdWz4wGmc94NyvoSNYaLerQPCAtn6AxQdADTxsa1vnqD?=
- =?us-ascii?Q?V2RiJ2D47o5yvAFRinof3rYgTTsou2qIBz4fIyaK21S7wyr6v/CBdYWvTOQp?=
- =?us-ascii?Q?Kzl36svyC43guJBvTXycV8RvIWQuJU3EtMWd9gh3uf/uHZOoLRh8bulxmxW3?=
- =?us-ascii?Q?RATnvxSv7S92/AOCxeF+2213BxeKfDE4rQ714KGlIoLiFCXE05XsXAsc4HwR?=
- =?us-ascii?Q?NYO77LO4CaOBhdqS+IG8LRIsQyvP0pruGWAXyywkftNvHTOnoleBYX7EP/qe?=
- =?us-ascii?Q?IklgmlOXExt3W1FV8pu8MKlPl/nFpg4WVDVyIdPPeePffXbuXvyrJfUYalyx?=
- =?us-ascii?Q?zdc7d7nznfKG/8WeCapUgjFxdU6TiRWfB0TH6viOO4OJt/SZznVODaJmUXZ3?=
- =?us-ascii?Q?sPyyOuswUwDvqMFTQGY=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64243d62-50ec-492d-9582-08dcd9bcd68c
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 21:40:25.7887
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: z3WHDsRizpdGRNcFstlOzj6BMVOSJjN3LSuxZwVE/w9TiVf/6VtomCA27AwsQ1ydWz6rS5EfDF8R1JJwMytkZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9735
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
+ (81.200.124.61)
+X-KSMG-Rule-ID: 7
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 187892 [Sep 20 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.5
+X-KSMG-AntiSpam-Envelope-From: v.shevtsov@maxima.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg01.maxima.ru:7.1.1;127.0.0.199:7.1.2;81.200.124.61:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61, {DNS response errors}
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/09/20 19:27:00 #26647840
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Fri, Sep 20, 2024 at 04:54:07PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
->
-> spi nor flash needs power supply to work properly. The power supply
-> maybe software controllable per board design. So add the support
-> for an optional vcc-supply regulator.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/mtd/spi-nor/core.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-> index 9d6e85bf227b..0449afe6bb20 100644
-> --- a/drivers/mtd/spi-nor/core.c
-> +++ b/drivers/mtd/spi-nor/core.c
-> @@ -17,6 +17,7 @@
->  #include <linux/mtd/spi-nor.h>
->  #include <linux/mutex.h>
->  #include <linux/of_platform.h>
-> +#include <linux/regulator/consumer.h>
->  #include <linux/sched/task_stack.h>
->  #include <linux/sizes.h>
->  #include <linux/slab.h>
-> @@ -3462,6 +3463,10 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
->  	if (!nor->bouncebuf)
->  		return -ENOMEM;
->
-> +	ret = devm_regulator_get_enable_optional(dev, "vcc");
-> +	if (ret)
-> +		return ret;
-> +
+Fix several copypaste mistakes in *_disable_link_output() functions where
+an improper function pointer is checked before dereference.
 
-I think devm_regulator_get_enable_optional() should be called in
-spi_nor_probe(). spi_nor_scan() is public API, which may call many time.
-That will cause regulartor reference counter wrong.
+Found by Linux Verification Center (linuxtesting.org) with Svace.
 
-Frank
+Signed-off-by: Vitaliy Shevtsov <v.shevtsov@maxima.ru>
+---
+ drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c | 2 +-
+ drivers/gpu/drm/amd/display/dc/hwss/dcn314/dcn314_hwseq.c | 2 +-
+ drivers/gpu/drm/amd/display/dc/hwss/dcn32/dcn32_hwseq.c   | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
->  	ret = spi_nor_hw_reset(nor);
->  	if (ret)
->  		return ret;
->
-> --
-> 2.37.1
->
+diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c b/drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c
+index d52ce58c6a98..c2364cb66d0b 100644
+--- a/drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c
++++ b/drivers/gpu/drm/amd/display/dc/hwss/dce110/dce110_hwseq.c
+@@ -3258,7 +3258,7 @@ void dce110_disable_link_output(struct dc_link *link,
+ 	 * from enable/disable link output and only call edp panel control
+ 	 * in enable_link_dp and disable_link_dp once.
+ 	 */
+-	if (dmcu != NULL && dmcu->funcs->lock_phy)
++	if (dmcu != NULL && dmcu->funcs->unlock_phy)
+ 		dmcu->funcs->unlock_phy(dmcu);
+ 	dc->link_srv->dp_trace_source_sequence(link, DPCD_SOURCE_SEQ_AFTER_DISABLE_LINK_PHY);
+ }
+diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn314/dcn314_hwseq.c b/drivers/gpu/drm/amd/display/dc/hwss/dcn314/dcn314_hwseq.c
+index 4e93eeedfc1b..5b6cf2a8e38d 100644
+--- a/drivers/gpu/drm/amd/display/dc/hwss/dcn314/dcn314_hwseq.c
++++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn314/dcn314_hwseq.c
+@@ -478,7 +478,7 @@ void dcn314_disable_link_output(struct dc_link *link,
+ 	 * from enable/disable link output and only call edp panel control
+ 	 * in enable_link_dp and disable_link_dp once.
+ 	 */
+-	if (dmcu != NULL && dmcu->funcs->lock_phy)
++	if (dmcu != NULL && dmcu->funcs->unlock_phy)
+ 		dmcu->funcs->unlock_phy(dmcu);
+ 	dc->link_srv->dp_trace_source_sequence(link, DPCD_SOURCE_SEQ_AFTER_DISABLE_LINK_PHY);
+ 
+diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn32/dcn32_hwseq.c b/drivers/gpu/drm/amd/display/dc/hwss/dcn32/dcn32_hwseq.c
+index a36e11606f90..84153682af1a 100644
+--- a/drivers/gpu/drm/amd/display/dc/hwss/dcn32/dcn32_hwseq.c
++++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn32/dcn32_hwseq.c
+@@ -1384,10 +1384,10 @@ void dcn32_disable_link_output(struct dc_link *link,
+ 	link->phy_state.symclk_state = SYMCLK_OFF_TX_OFF;
+ 
+ 	if (signal == SIGNAL_TYPE_EDP &&
+-			link->dc->hwss.edp_backlight_control &&
++			link->dc->hwss.edp_power_control &&
+ 			!link->skip_implict_edp_power_control)
+ 		link->dc->hwss.edp_power_control(link, false);
+-	else if (dmcu != NULL && dmcu->funcs->lock_phy)
++	else if (dmcu != NULL && dmcu->funcs->unlock_phy)
+ 		dmcu->funcs->unlock_phy(dmcu);
+ 
+ 	dc->link_srv->dp_trace_source_sequence(link, DPCD_SOURCE_SEQ_AFTER_DISABLE_LINK_PHY);
+-- 
+2.46.1
+
 
