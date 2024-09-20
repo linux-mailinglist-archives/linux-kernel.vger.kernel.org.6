@@ -1,94 +1,202 @@
-Return-Path: <linux-kernel+bounces-334454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1BEA97D77A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:32:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E596C97D77D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 193361C20BFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:32:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5502BB2303B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAC6178396;
-	Fri, 20 Sep 2024 15:32:10 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE03E17B50A;
+	Fri, 20 Sep 2024 15:32:28 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215E4F4ED;
-	Fri, 20 Sep 2024 15:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE17F1F949
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726846330; cv=none; b=irkB82vnY5cqPb1AK6nugH/cekz5dfjf11eB3J4bsg59+LTHAr/R77Daaw7P1z72002aEiRlLN1noV624kqO8wlRoc7EJhEF6HdcLJrkGLoH9kxysZvDIGCLAWVaw0HpJoxgEWXna9YJ06n62tm1/eHD12XOC2CliBlsHWBVnGg=
+	t=1726846348; cv=none; b=nVNxqb29Qk4gpyG2rZZdwH1DNkb7K0dCC1nFvgCz/ptMzu00z+xf7ozsIdChz/iJB1nYlyffIwHMB6kC24hf4t64X0l7Lok/+c4FT4cgm/Z0ccoHK5y7kDcwNnrcXTSMpPg0QfO5XmeHBDjaHBkHNASqrI3ABzAdnGqCjD1G2SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726846330; c=relaxed/simple;
-	bh=JF70X+ZLnqUMZXHEnErPBJDFd27FkBHHnqQIZJKM0Gg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ie65hWiuRPmrVc0bkEKQ4kNPaxhW+XWz8Z7eJtHorCQVBoOzPoWb4tyubl3nKfFiAfhmGaPNT+M12sS8z/f8yFbXMglPu2N0HZQn3A9Isvhrtum40HRF6cCn4JPjh9H2CXMLvSfQyvYPDgQNgyPu75EvMPWg4XowPzp/Nz7roIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C405C4CEC3;
-	Fri, 20 Sep 2024 15:32:07 +0000 (UTC)
-Date: Fri, 20 Sep 2024 16:32:05 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: "Liao, Chang" <liaochang1@huawei.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, mhiramat@kernel.org,
-	peterz@infradead.org, will@kernel.org, mark.rutland@arm.com,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: uprobes: Optimize cache flushes for xol slot
-Message-ID: <Zu2VdYrLWTJbVOAt@arm.com>
-References: <20240919121719.2148361-1-liaochang1@huawei.com>
- <20240919141824.GB12149@redhat.com>
- <41fdfc47-4161-d2e4-6528-4079b660424f@huawei.com>
+	s=arc-20240116; t=1726846348; c=relaxed/simple;
+	bh=uS/xK6WHlL3yd8HxVpgZrrLaaPnP5yYeifjuIKC26K0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hltVxONzEHdFp582Noseg0AwIZOrwSYDvyPn4xXYUyWaDv18IvebkTzA4WDiM0thojOcEbJaxobHZJh5YgfLcptBB+daDXnFQLOYWTWgM8IC7r7d13vh+HIp3bfKqZ0KMicQFcC4CH6A1gJrKlIUzQceUd8QoBNsYr/R/JR35Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a0cc71ca7aso6085245ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:32:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726846346; x=1727451146;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wnd/VtqZ/fRhOhshf5rIh52ojkBprD6Sw3Rj/+8cUw8=;
+        b=sVKqzzvWzZgJCBdnKN8ZU1JdJ1VukMVtUqkruyRoBCBtuhAVRGSdXGRBZ255C+4xUp
+         nFluiMzstPHGAQHxE0psIlkIADMgqiRjUmEXiredhNnJbsSU77G6o8bSiREiGX7IB/o8
+         4sNBQfJeQTieZ7egnDKuTgFSfuZHS5Gs9Ya5HIhw7/uI9B7CnBJ6AnIuWLrhH39DIusT
+         kvmwlZSkw8tyf9SGzxK6kBR0q6M1RONxgmcwGW8BATkZKiTKZ5DLH0/sPVYpoXVoNJKf
+         bnyfyUsVeLgAnLfzJvgfqALUmoVGdqF9Qh8Yz5zrK5MxaHRjLgjt1RIQtCXfAOoWKSRd
+         NNgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhIxVrxGxcKr01vvMtCeHAadl22LEO/hUVIwp+Xojf9ZHZv9gN109GpKbulZ3ddiWrAra5jK8c/LXvQUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxVUnGYVRI4qKRXNK7KhS59BilwmU3+s8bPf4/p/+JlJGSskpO
+	JnruWt9bXm71ti51ElHXwze1g67OZJ4j0hxdhGd0eFr7Ok31LP6ZaPkovSqGQ7UDQutuHFbOb1u
+	NoQ9DPj0Yzje62T/UkkjgG9dlaPBM85kFcOZzgPs3Pp8nY6k66/rJkeQ=
+X-Google-Smtp-Source: AGHT+IFgtlxRGBgfd3pEN2PL9heoiK+iy1Mt0zN6QQtur3Wqs7YJAnzziX9Jhokx/L1lSzpGJ0K9swJNMkIRt7QqZn+6gwxNGok+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <41fdfc47-4161-d2e4-6528-4079b660424f@huawei.com>
+X-Received: by 2002:a05:6e02:12ea:b0:3a0:ab86:928f with SMTP id
+ e9e14a558f8ab-3a0c9d90ca6mr25233375ab.26.1726846345961; Fri, 20 Sep 2024
+ 08:32:25 -0700 (PDT)
+Date: Fri, 20 Sep 2024 08:32:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ed9589.050a0220.2abe4d.0019.GAE@google.com>
+Subject: [syzbot] [ide?] general protection fault in ata_msense_control
+From: syzbot <syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com>
+To: cassel@kernel.org, dlemoal@kernel.org, linux-ide@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 20, 2024 at 04:58:31PM +0800, Liao, Chang wrote:
-> 
-> 
-> 在 2024/9/19 22:18, Oleg Nesterov 写道:
-> > On 09/19, Liao Chang wrote:
-> >>
-> >> --- a/arch/arm64/kernel/probes/uprobes.c
-> >> +++ b/arch/arm64/kernel/probes/uprobes.c
-> >> @@ -17,12 +17,16 @@ void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
-> >>  	void *xol_page_kaddr = kmap_atomic(page);
-> >>  	void *dst = xol_page_kaddr + (vaddr & ~PAGE_MASK);
-> >>
-> >> +	if (!memcmp(dst, src, len))
-> >> +		goto done;
-> > 
-> > can't really comment, I know nothing about arm64...
-> > 
-> > but don't we need to change __create_xol_area()
-> > 
-> > 	-	area->page = alloc_page(GFP_HIGHUSER);
-> > 	+	area->page = alloc_page(GFP_HIGHUSER | __GFP_ZERO);
-> > 
-> > to avoid the false positives?
-> 
-> Indeed, it would be safer.
-> 
-> Could we tolerate these false positives? Even if the page are not reset
-> to zero bits, if the existing bits are the same as the instruction being
-> copied, it still can execute the correct instruction.
+Hello,
 
-Not if the I-cache has stale data. If alloc_page() returns a page with
-some random data that resembles a valid instruction but there was never
-a cache flush (sync_icache_aliases() on arm64), it's irrelevant whether
-the compare (on the D-cache side) succeeds or not.
+syzbot found the following issue on:
 
-I think using __GFP_ZERO should do the trick. All 0s is a permanently
-undefined instruction, not something we'd use with xol.
+HEAD commit:    2004cef11ea0 Merge tag 'sched-core-2024-09-19' of git://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14362427980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=390864846727e762
+dashboard link: https://syzkaller.appspot.com/bug?extid=37757dc11ee77ef850bb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f5f69f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=154afb00580000
 
--- 
-Catalin
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2004cef1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8654ff1e22d1/vmlinux-2004cef1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/049428496a18/bzImage-2004cef1.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com
+
+program syz-executor305 is using a deprecated SCSI ioctl, please convert it to SG_IO
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 0 UID: 0 PID: 5092 Comm: syz-executor305 Not tainted 6.11.0-syzkaller-07337-g2004cef11ea0 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ata_msense_control_spgt2 drivers/ata/libata-scsi.c:2276 [inline]
+RIP: 0010:ata_msense_control+0x966/0x1cf0 drivers/ata/libata-scsi.c:2358
+Code: b6 04 10 84 c0 0f 85 9b 0f 00 00 4c 89 e8 48 c1 e8 03 0f b6 04 10 84 c0 0f 85 b6 0f 00 00 66 c7 03 00 e4 49 89 ec 49 c1 ec 03 <41> 0f b6 04 14 84 c0 0f 85 cc 0f 00 00 0f b6 5d 00 c0 e3 04 80 e3
+RSP: 0018:ffffc90002d8f068 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: ffffffff9a7036be RCX: 0000000000000000
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffffffff9a7036bd
+RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000003
+R10: ffffffff9a7036b3 R11: fffffbfff34e06d8 R12: 0000000000000000
+R13: ffffffff9a7036bf R14: 0000000000000046 R15: ffff888034faadf8
+FS:  00005555605c5380(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000380 CR3: 000000003dd82000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ata_scsiop_mode_sense drivers/ata/libata-scsi.c:2474 [inline]
+ ata_scsi_rbuf_fill drivers/ata/libata-scsi.c:1815 [inline]
+ ata_scsi_simulate+0x1ae8/0x2320 drivers/ata/libata-scsi.c:4316
+ __ata_scsi_queuecmd+0x21e/0x1030 drivers/ata/libata-scsi.c:4191
+ ata_scsi_queuecmd+0x3bb/0x530 drivers/ata/libata-scsi.c:4234
+ scsi_dispatch_cmd drivers/scsi/scsi_lib.c:1608 [inline]
+ scsi_queue_rq+0x1d7c/0x2e90 drivers/scsi/scsi_lib.c:1850
+ blk_mq_dispatch_rq_list+0xb89/0x1b30 block/blk-mq.c:2032
+ __blk_mq_sched_dispatch_requests+0x424/0x1840 block/blk-mq-sched.c:301
+ blk_mq_sched_dispatch_requests+0xcb/0x140 block/blk-mq-sched.c:331
+ blk_mq_run_hw_queue+0x9a5/0xae0 block/blk-mq.c:2245
+ blk_execute_rq+0x239/0x4b0 block/blk-mq.c:1398
+ sg_scsi_ioctl drivers/scsi/scsi_ioctl.c:593 [inline]
+ scsi_ioctl+0x222f/0x2d80 drivers/scsi/scsi_ioctl.c:901
+ sg_ioctl_common drivers/scsi/sg.c:1109 [inline]
+ sg_ioctl+0x16e9/0x2e80 drivers/scsi/sg.c:1163
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f83297361a9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffb0f41208 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fffb0f413d8 RCX: 00007f83297361a9
+RDX: 0000000020000380 RSI: 0000000000000001 RDI: 0000000000000003
+RBP: 00007f83297a9610 R08: 002367732f766564 R09: 00007fffb0f413d8
+R10: 000000000000001f R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fffb0f413c8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ata_msense_control_spgt2 drivers/ata/libata-scsi.c:2276 [inline]
+RIP: 0010:ata_msense_control+0x966/0x1cf0 drivers/ata/libata-scsi.c:2358
+Code: b6 04 10 84 c0 0f 85 9b 0f 00 00 4c 89 e8 48 c1 e8 03 0f b6 04 10 84 c0 0f 85 b6 0f 00 00 66 c7 03 00 e4 49 89 ec 49 c1 ec 03 <41> 0f b6 04 14 84 c0 0f 85 cc 0f 00 00 0f b6 5d 00 c0 e3 04 80 e3
+RSP: 0018:ffffc90002d8f068 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: ffffffff9a7036be RCX: 0000000000000000
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffffffff9a7036bd
+RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000003
+R10: ffffffff9a7036b3 R11: fffffbfff34e06d8 R12: 0000000000000000
+R13: ffffffff9a7036bf R14: 0000000000000046 R15: ffff888034faadf8
+FS:  00005555605c5380(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000380 CR3: 000000003dd82000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	b6 04                	mov    $0x4,%dh
+   2:	10 84 c0 0f 85 9b 0f 	adc    %al,0xf9b850f(%rax,%rax,8)
+   9:	00 00                	add    %al,(%rax)
+   b:	4c 89 e8             	mov    %r13,%rax
+   e:	48 c1 e8 03          	shr    $0x3,%rax
+  12:	0f b6 04 10          	movzbl (%rax,%rdx,1),%eax
+  16:	84 c0                	test   %al,%al
+  18:	0f 85 b6 0f 00 00    	jne    0xfd4
+  1e:	66 c7 03 00 e4       	movw   $0xe400,(%rbx)
+  23:	49 89 ec             	mov    %rbp,%r12
+  26:	49 c1 ec 03          	shr    $0x3,%r12
+* 2a:	41 0f b6 04 14       	movzbl (%r12,%rdx,1),%eax <-- trapping instruction
+  2f:	84 c0                	test   %al,%al
+  31:	0f 85 cc 0f 00 00    	jne    0x1003
+  37:	0f b6 5d 00          	movzbl 0x0(%rbp),%ebx
+  3b:	c0 e3 04             	shl    $0x4,%bl
+  3e:	80                   	.byte 0x80
+  3f:	e3                   	.byte 0xe3
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
