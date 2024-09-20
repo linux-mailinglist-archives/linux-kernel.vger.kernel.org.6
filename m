@@ -1,141 +1,151 @@
-Return-Path: <linux-kernel+bounces-334264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DB297D4C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:22:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E33597D4C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B24111F260F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:22:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F32D282FC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE6E143C77;
-	Fri, 20 Sep 2024 11:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D45914375C;
+	Fri, 20 Sep 2024 11:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vFmdDWWr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="k9VfDdAI"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F85714290;
-	Fri, 20 Sep 2024 11:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021BA7DA76
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 11:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726831364; cv=none; b=GO6Drtp8K+nRone1/HDmXDFNAjLAJwqZ3nnpFZ3jo5+FeqMQ0HS1d5E8/RWd24He79FmpQjKjHlm18laPFGnRnNzej+GC/xK1qn7/t3PeEAgH4lR6grHanFSEX1qMIsGqYLGxFHPXsdzT3r2+Am4OH6rTMLosmJKTw/eQtk8kII=
+	t=1726831438; cv=none; b=oMb9cnook3Qo/zy+BLBSkvWQccgX0eV8EG2hGwz9ReTPG95LqbQRkUk+dn11PJxbpwH10fCjxXPPEbAzD3ssii6HoXNQnnriRWCRrqcvlTk2U/0QwclpGsmAPlfYbr7mMmCFrGNvdNr9XzGeLGKSSyajYiIKn3Kw885KTcYJfU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726831364; c=relaxed/simple;
-	bh=8tyhqBlECbRr7pRl3MI38dVCFBGcYr6k0Oe3rALWgtk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gg0bxsL0oeyxog7Ow4TJeb0be82MRNl56JLGPWu9KtQ9EQ0AxtZIi3WkY3ElibO3hXeUQ0EF6fUi71PUUldbOHkRRhUrN1K3Bt6u6bQudGwCzWTHd93/LTeHNtXxjrYmoo+040OPJNIgTsyOmMm4zNwYbPpAp0zq52tHNNg32a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vFmdDWWr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5777C4CEC3;
-	Fri, 20 Sep 2024 11:22:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726831364;
-	bh=8tyhqBlECbRr7pRl3MI38dVCFBGcYr6k0Oe3rALWgtk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vFmdDWWrbnEdhFB+UQhjMVWhfI8qZ9jPZMOI5cZ0KjZ2pQrMsGs6lWepSB6d9Wh9w
-	 TktJ6i/HxafCqU/zm6u3XOO6/SUQn/7JkjOaV6cKxOw1Kr10wAyuwLgmLQPcNcAHzZ
-	 VR3cmFKe2FF+AuFUbhe9rCGDStqyEYf0bmBTrgictmG8DxCQW/HLJo4lwNKcAhHpku
-	 6uVhiNWCJC+a0bkLP2veuuBSWvYyL0J5to2QrVBN4Ompu1xrHWX2FUZx6z1QJhaV81
-	 OsgWrhkKNVfCDDas83aCcTo4O+ShtaZhPTfW0/qIZ8//oHZYj0Sw0TPBn8ZkOyv7PS
-	 UKTBPlTMpyqfA==
-Message-ID: <cd40d57c-51d2-480e-80ef-7d87dd96a6b2@kernel.org>
-Date: Fri, 20 Sep 2024 13:22:35 +0200
+	s=arc-20240116; t=1726831438; c=relaxed/simple;
+	bh=AkM238QRWy+ApukMPpqLoxeNHLgL+v1nKMPRGOAfscM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oQcxJCRLdHZyO/U78mWhzTWoavfWLyYTNh6HnNJzDDbeh+Y/r0g/opQ/URnB2qjJmBih3W6wXnpUOedjqciJnqwNcJ5SeuzueTo/+5y34AN2F1yrRZEqnGoceAKaAjtdd8A/T8wuKGbx8I/eNcptjVALJQNHYHtCR5fpVLhZCzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=k9VfDdAI; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48KANihQ015956;
+	Fri, 20 Sep 2024 04:23:30 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=XC5QVxcGw5NnMFktTUGqoKe
+	FvDCdh3rMuwuC6VCuzIg=; b=k9VfDdAIyI6jnPmiVxOnJRIThoFZYQZNsNtgrew
+	EXsgtFh8eZhvU60XbOVP9gllaiW6lEIS9dsvVPmoE5n+cDD/IG4gGrxN9AJvu9j2
+	X3j+H6iT7+Fc1mmyhbOONHLjfRdnGTho+B/egd4L0odLElNWmeqwtEtzy5VweIab
+	pzIgEQNNvC/ZSZrp58HqSGw62WqhnI7aLn0b1qluXDlTYpsMASqQvGVgYCZgFpZs
+	fglvxBj8i39/VKrWIwLKPxkfwhrZg1ktyrgytjK/MBlMFQ8hK49oJuFUDskSMIYX
+	JBM4VveaV/HY7dYzdDJWhMLnXDZtxFOQINbbkP0zG10ZuJg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 41s78rg6m1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 04:23:30 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 20 Sep 2024 04:23:29 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 20 Sep 2024 04:23:29 -0700
+Received: from localhost.localdomain (unknown [10.29.37.241])
+	by maili.marvell.com (Postfix) with ESMTP id 6697E5B6921;
+	Fri, 20 Sep 2024 04:23:25 -0700 (PDT)
+From: Anshumali Gaur <agaur@marvell.com>
+To: <conor.dooley@microchip.com>, <ulf.hansson@linaro.org>, <arnd@arndb.de>,
+        <linus.walleij@linaro.org>, <nikita.shubin@maquefel.me>,
+        <alexander.sverdlin@gmail.com>, <vkoul@kernel.org>, <cyy@cyyself.name>,
+        <krzysztof.kozlowski@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <sgoutham@marvell.com>
+CC: Anshumali Gaur <agaur@marvell.com>
+Subject: [PATCH 0/4] soc: marvell: Add a general purpose RVU physical
+Date: Fri, 20 Sep 2024 16:53:14 +0530
+Message-ID: <20240920112318.2722488-1-agaur@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
- Document the X1E80100 QMP PCIe PHY Gen4 x8
-To: Konrad Dybcio <konradybcio@kernel.org>, Qiang Yu <quic_qianyu@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
- robh@kernel.org, andersson@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- abel.vesa@linaro.org, quic_msarkar@quicinc.com, quic_devipriy@quicinc.com,
- dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
- neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
- <20240913083724.1217691-2-quic_qianyu@quicinc.com>
- <lrcridndulcurod7tc5z76tmfhcf5uqumkw7cijsqicmad2rim@blyor66wt4e4>
- <b36819ed-0e4a-4820-8c38-ac9d2c6f0f28@quicinc.com>
- <2acbaedc-e577-4685-875c-ba599d845b19@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2acbaedc-e577-4685-875c-ba599d845b19@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: aoa1b_FSsOfBUAZ2UI_EcdAdpO1eQBZk
+X-Proofpoint-GUID: aoa1b_FSsOfBUAZ2UI_EcdAdpO1eQBZk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On 19/09/2024 17:37, Konrad Dybcio wrote:
-> On 19.09.2024 4:03 PM, Qiang Yu wrote:
->>
->> On 9/16/2024 11:15 PM, Krzysztof Kozlowski wrote:
->>> On Fri, Sep 13, 2024 at 01:37:20AM -0700, Qiang Yu wrote:
->>>> PCIe 3rd instance of X1E80100 support Gen 4x8 which needs different 8 lane
->>>> capable QMP PCIe PHY. Document Gen 4x8 PHY as separate module.
->>> And this is really different hardware? Not just different number of lanes? We discussed it, but I don't see the explanation in commit msg.
->> Yes, PCIe3 use a different phy that supports 8 lanes and provides
->> additional register set, txz and rxz. It is not a bifurcation mode which
->> actually combines two same phys like PCIe6a. It's also not just different
->> number of lanes. Will explain this in commit msg.
-> 
-> Krzysztof, this PHY is new and has a different hardware revision (v6.30 as
-> opposed to v6.20? of the other ones)
+Resource virtualization unit (RVU) on Marvell's Octeon series of
+silicons maps HW resources from the network, crypto and other functional
+blocks into PCI-compatible physical and virtual functions. Each
+functional block again has multiple local functions (LFs) for
+provisioning to PCI devices. RVU supports multiple PCIe SRIOV physical
+functions (PFs) and virtual functions (VFs). And RVU admin function (AF)
+is the one which manages all the resources (local functions etc) in the
+system.
 
-It's fine for me then, but I expect commit msg to say this. For I am a
-bear of very little brain, and I forget the topic right after I close
-the email.
+Functionality of these PFs and VFs depends on which block LFs are
+attached to them. Depending on usecase some PFs might support IO (ie LFs
+attached) and some may not. For the usecases where PF doesn't (need to)
+support IO, PF's driver will be limited to below functionality.
 
-Best regards,
-Krzysztof
+1. Creating and destroying of PCIe SRIOV VFs
+2. Support mailbox communication between VFs and admin function
+(RVU AF)
+3. PCIe Function level reset (FLR) for VFs
+
+For such PFs, this patch series adds a general purpose driver which
+supports above functionality.  This will avoid duplicating same
+functionality for different RVU PFs.
+
+Next generation of Octeon silicon will have many new RVU blocks added.
+Eg: ML, Octeon (connected as an EP card) to host network packet path etc
+For such functionality there could be only userspace VF drivers hence
+a generic PF driver in Kernel is needed to support these VF drivers.
+
+For reference
+RVU AF driver is at drivers/net/ethernet/marvell/octeontx2/af/
+
+Example RVU PF drivers
+drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+drivers/crypto/marvell/octeontx2/otx2_cptpf_main.c
+
+Example RVU VF drivers
+drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
+drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
+
+Patch-1: This patch adds a generic PF driver with probe() and sriov()
+capabilities.
+Patch-2: This patch adds PF-AF mailbox support to the generic PF driver.
+Patch-3: This patch adds PF-VF mailbox support to the generic PF driver.
+Patch-4: This patch adds FLR handler to the generic PF driver.
+
+Anshumali Gaur (4):
+  soc: marvell: Add a general purpose RVU PF driver
+  soc: marvell: rvu-pf: Add PF to AF mailbox communication support.
+  soc: marvell: rvu-pf: Add mailbox communication btw RVU VFs and PF.
+  soc: marvell: rvu-pf: Handle function level reset (FLR) IRQs for VFs
+
+ drivers/soc/Kconfig                     |    1 +
+ drivers/soc/Makefile                    |    1 +
+ drivers/soc/marvell/Kconfig             |   19 +
+ drivers/soc/marvell/Makefile            |    2 +
+ drivers/soc/marvell/rvu_gen_pf/Makefile |    5 +
+ drivers/soc/marvell/rvu_gen_pf/gen_pf.c | 1087 +++++++++++++++++++++++
+ drivers/soc/marvell/rvu_gen_pf/gen_pf.h |  152 ++++
+ 7 files changed, 1267 insertions(+)
+ create mode 100644 drivers/soc/marvell/Kconfig
+ create mode 100644 drivers/soc/marvell/Makefile
+ create mode 100644 drivers/soc/marvell/rvu_gen_pf/Makefile
+ create mode 100644 drivers/soc/marvell/rvu_gen_pf/gen_pf.c
+ create mode 100644 drivers/soc/marvell/rvu_gen_pf/gen_pf.h
+
+-- 
+2.25.1
 
 
