@@ -1,82 +1,86 @@
-Return-Path: <linux-kernel+bounces-333984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB9F297D103
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:55:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8238E97D104
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A6FF1F21DED
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 05:55:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A74611C210D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 05:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED9928E0F;
-	Fri, 20 Sep 2024 05:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331FB2B2D7;
+	Fri, 20 Sep 2024 05:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="e0OonX4S"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2049.outbound.protection.outlook.com [40.107.223.49])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FDmfhAe0"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2070.outbound.protection.outlook.com [40.107.220.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8173C3BB22
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1453D1F95E
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.70
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726811709; cv=fail; b=NnXabnyqr7k68p/4HL1Kwm/aioCzwFOemruWCkLETHbqHYwFkjTnuET1vaKQeN5QTGMOTQ0ts9kF8EAJsnaCuW9slyKxZ1S4HJlKUBC23n5mwfTbVeG+XsyeI1DXbK4S7LZTfhizM3/z59E5WMaj26TEcU5zdDrHvl/zJFly1p4=
+	t=1726811753; cv=fail; b=f7f+u5U8z9AbbHACxE9pNjbrCN0EFXrI5AYT44HERCXoNOhaVhASalDoAJd6DXIdciT9+rcP1bVeI8qmaaMOGh9ivqLka5DAonM4PS0NMffJn2k9i5hb6jgf52pSbq56aan8rqWq/mmT+ArreLR3M6SfUXAN52DS1uxdC36gU30=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726811709; c=relaxed/simple;
-	bh=vLNsl/e04tlJhD9vsr13TFZYoxmGdLfXA7U5pbFzvco=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pO4oX/JIBGWHSeVjmnZW2BDP1BJB+rhgALmKTp+E+RSSe9Y82Xc0UUAImghehxIHKKiQMjlmHBxdYdOipVIl0/Gnr2D1kdqPz1vTa47+Q3ymbBOQnXUYRfWRlVoGTV9TANwfMY+iQ4d26E0rlt+zidSHBIizjLjru4BfnFidQgQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=e0OonX4S; arc=fail smtp.client-ip=40.107.223.49
+	s=arc-20240116; t=1726811753; c=relaxed/simple;
+	bh=WB7SJlFTb+SsQ0HANb8vV+lMY8Rg8Lx+2/AfIPHil0M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SvBaM4MYc2NatxEM4HbJN32liAyTmvf8CD7pHITdG+JKlCl7eY/sKBYLlSEcqAIEnU8yh/rS8WLUTZPPJGYdRZFWMMGrDT2Jh6KCnXnX0Ne9uTFDnmk4VYcX/DYvt53FjxPubbcgkWUHIeXA4vAww6rqL0tl1PIkks0zGZqSbdE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FDmfhAe0; arc=fail smtp.client-ip=40.107.220.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=djiJZe0taEkm3+5fxuefcHMXLl0NGlisHQiGgpfVc4cVOEevc35S3Unw91hn6i0flrfAF7mLknM/P8SOp8BsxaaPQlzBqOFUGW/pgdB+0/4727pd3gs0m+2FqBPfzSvnghTTY/zlTmDqFqWKW9TpMQgVIif61nmJHAHNoh4o7n5XXBY67RQoVMvKmm5p2HqgvjU5AF/G6H7eZ4aFu+ZwQUEfUjjvQ+LQOh7mfHRT0V388zgE2X8/IXeR3CaIApg5LazdkJt68tHZ1RAEBP0vuTJTU2KaW1ESi4Wf9bIg5gmGUEturfyX5IOq5dicmi3GSCQcISjLKVYCkxPJceakrw==
+ b=yoTdf313aSjUXH+kSXp3/yaj5f2h4U8f3MT6pUUnmf9zJUKO5UMC+wXd+DqaiDL+PvZZ9uc7HBPpy1iWF5LEtbGTuVPN7HpLkd8gRHVqc1ByMHK/TeRzpuNi6Hx212K9ll7QEQ0b6UQokTCCcqJsg48PbcyWdgPANvY7JVObHPJQWr5QIMk3dT6zVPDDrviRUDJCkDJeyR0KbMlCjn2QWLOdXhhQVLqdb6qcVm1SE/gX5wEiC+jh+UQ3kXYqxRcuJzr6/p5Z3RvdeEUSR5s3WW5qUJEnFzbJ6b+/TmgJ3XvIJ8d6SoGxWFjl4qBI/acFEOC3XVs+HVEy/Sjp8gBf3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xAgyXhMKBMB0Ldlvmfh4PJLfFI9/g/lsXUau1Kt+rJM=;
- b=dXuxru7OWgpmmaKuw/7kAz7sqMzW37dYABdF4TPeCSGyqE5/ebaqVSQvBPhSaViaBSlYvql/51aCSLE4ulVqSixxlMgxlF3WUnyE2Hfq2HvWe738juXTE3UtY+TgwL2IxaX3fIjhlavlelKRxnlbRJrzScrv4bR9X5zjU2BSRWynwSB4JbX6D0Idl1Av+D9a2VFdLfOUdn9yJD0a3y5CFBRgo4Lvfaik2k2lrRy6Y7SESc2fmjON2oZVblcfxtJ5q3BB6W4+afI4Md/wCTjXms3D4+qqUI3ZlnbQv+cRSzW8Zn5q7MKWdVhjmKxR0FDh9qQFdmpKgCn+rk/7vNLuTQ==
+ bh=47XTNsDyl8+kL+jRjufp4akVyGY1gJk5zH5TCF53W9A=;
+ b=B1TMgEw1U44B670g+7eYc8ZXkGSyN6W0RKhpJOsn2qUUGBZGNIrOH6a3AqFsxj9YGxxUnWPjddIg3+d57VKiFemGKCisfCod9z+EeDiD26SQVBrxGVQbvHD2ORtVSne7QpHILw3Th7L+UaAXks76WPF5d0Z7rVmsGOWQPnxvor6wI94ZV+2nMQFxc3EnZK9ZE7GwwOz8m/Pb/XQVxgj7LA8a5AeNGcNO3cuZjl4wAnXKfVHBt4/YjDmLdOqehHr4P6ZOIqfXY8duDpT6s0r7NpKXpo5j663JnfOGUiTZGvzBBZCAOV86wQA7zjJIr94Kq4Sn4j9MU71lVucQQ/NlaA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xAgyXhMKBMB0Ldlvmfh4PJLfFI9/g/lsXUau1Kt+rJM=;
- b=e0OonX4S6W+FmmlW1JQlkdYmDc/uhnRqNua/L+x4xRkMEszleJ/pEZth1WkDSCC0+s/h1Lh+Z8tYgzdV4qPP3d1H7Ge3cTmmDfupQH4HWGuZM6TjE4lwn0sI10FzxedN4mgKkUJ9+nOPXb6v6x4wis13lV+GFMpmrYw1BiMQ4/k=
-Received: from BL1PR13CA0352.namprd13.prod.outlook.com (2603:10b6:208:2c6::27)
- by CYXPR12MB9340.namprd12.prod.outlook.com (2603:10b6:930:e4::20) with
+ bh=47XTNsDyl8+kL+jRjufp4akVyGY1gJk5zH5TCF53W9A=;
+ b=FDmfhAe086g5/i4UX/Smi6Mcx/T2nYGGBl1QxvOI3ui305LtAyv3foa9RqlyclhUUE3R5bsOGDzYm+vi36lZpBArgaPNl0c7sT7lY6iXER1R5+5L+WwOoZ7EkT9HKm/oikqYhCiTET84FAmTMiUF7XGJJJPvVg9sVMTBzlO/AVI=
+Received: from MW4P220CA0020.NAMP220.PROD.OUTLOOK.COM (2603:10b6:303:115::25)
+ by SA1PR12MB7319.namprd12.prod.outlook.com (2603:10b6:806:2b5::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.22; Fri, 20 Sep
- 2024 05:55:02 +0000
-Received: from BN1PEPF00004686.namprd03.prod.outlook.com
- (2603:10b6:208:2c6:cafe::a8) by BL1PR13CA0352.outlook.office365.com
- (2603:10b6:208:2c6::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.8 via Frontend
- Transport; Fri, 20 Sep 2024 05:55:02 +0000
+ 2024 05:55:49 +0000
+Received: from MWH0EPF000A6732.namprd04.prod.outlook.com
+ (2603:10b6:303:115:cafe::c9) by MW4P220CA0020.outlook.office365.com
+ (2603:10b6:303:115::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.25 via Frontend
+ Transport; Fri, 20 Sep 2024 05:55:49 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BN1PEPF00004686.mail.protection.outlook.com (10.167.243.91) with Microsoft
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MWH0EPF000A6732.mail.protection.outlook.com (10.167.249.24) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Fri, 20 Sep 2024 05:55:02 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.7918.13 via Frontend Transport; Fri, 20 Sep 2024 05:55:48 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 20 Sep
- 2024 00:55:01 -0500
+ 2024 00:55:47 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 20 Sep
+ 2024 00:55:47 -0500
 Received: from xsjwillw50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 20 Sep 2024 00:55:01 -0500
+ Transport; Fri, 20 Sep 2024 00:55:47 -0500
 From: Ronak Jain <ronak.jain@amd.com>
 To: <michal.simek@amd.com>
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] firmware: xilinx: add support for new SMC call format
-Date: Thu, 19 Sep 2024 22:55:01 -0700
-Message-ID: <20240920055501.2658642-1-ronak.jain@amd.com>
+Subject: [PATCH] firmware: xilinx: fix feature check logic for TF-A specific APIs
+Date: Thu, 19 Sep 2024 22:55:46 -0700
+Message-ID: <20240920055546.2658783-1-ronak.jain@amd.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -86,345 +90,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: ronak.jain@amd.com does not designate
+Received-SPF: None (SATLEXMB05.amd.com: ronak.jain@amd.com does not designate
  permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00004686:EE_|CYXPR12MB9340:EE_
-X-MS-Office365-Filtering-Correlation-Id: b818f501-8a86-483a-4b52-08dcd938c4c7
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A6732:EE_|SA1PR12MB7319:EE_
+X-MS-Office365-Filtering-Correlation-Id: d172a2f3-e10a-42c1-4813-08dcd938e091
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?dEqEwxAI3BOSnp7DlOvg7TaeoUCODGaPAjdDMInzykxnzWsYl7OwYr0sd4+a?=
- =?us-ascii?Q?/YgDM8DKBCI7hI79NQ9wP0fZhgXs1a02qPTwhzN3ZLqON0DfmAwOVg7IvXO7?=
- =?us-ascii?Q?JNz/WHzbC6BnAg1dbqQ1YCgXtAoX4y9/8jVkjqRszaHfi7T5bgwDrdCkfyHM?=
- =?us-ascii?Q?6BJDPV4PU9THJMJrUiTJg4rmx0YRqU24wYQ7o53IVyPuyEQjCYhF+/WLoi4l?=
- =?us-ascii?Q?hA5p4A5Wiy/XbrFC3iFsL+mXkXd+DRyUP7L5nJ+Sg4Xl7O2SJAt9mSDUE9OT?=
- =?us-ascii?Q?es4I9YFkjFJZhYqtpojW+GzQNci84knLq5E57ZRaD/tNxznYCLyJD1EuDLKQ?=
- =?us-ascii?Q?mKmHCgYhqtkARiKu1lTs+mCDqOvNpdCpEKyMqf+97NY6x7jYVfHb6BFVK+e/?=
- =?us-ascii?Q?pdm2uZq0UaEgUcgm4npbbQ5k5/FtgcdjQJuY/UxlraxkQGMEPtU2rHQD20pi?=
- =?us-ascii?Q?T0OG0LK9LeKNvBGoEgSfD85/QhdVBJiynssKHnUUioHod0p18B+F9o5MyEbY?=
- =?us-ascii?Q?P6AwIP6Z0+89Sn2NvAVW+da0aRLbdlE9cvRuVSKcMBNBr4MV0feuoHfLQgR1?=
- =?us-ascii?Q?Tw5zW+Cgm7Z4/M8Teeq0o+74YaFE45vrNexPriDC2d9+uHmwA0tNsn9QkmSk?=
- =?us-ascii?Q?lwt82VFCoCadAzd9mIBaLcJM2+iFxpGJGuYiLOgnCS+AE45UP+0NiQVTwsSd?=
- =?us-ascii?Q?eDcqQWE7NJggsW9sOmfStMSdnqWQJV5Ga8kN3FpsE2Einp+PfMgXc5A0FFDt?=
- =?us-ascii?Q?DCI4cbPFOmXKsKdfZo8MgsckVhSsMlhH01oQEvXjp23a1GLI6qtBEX/2wli3?=
- =?us-ascii?Q?v7OVsdTfV7Pa7zTFdbOfSG0aeQu2aGduAhyd2NrEqt0fnh4CBO10iJJxyOrR?=
- =?us-ascii?Q?iobM5/Asd6j9c5eW8iTRIIOoCLilRNybVWH5kqXYrNH4znIlggvi5bRRHFro?=
- =?us-ascii?Q?ggBMsdKjyVejf+T+NGUE4Z59bsbt9wu1y1dSHaHCNDbQ5N23WQks9hAUo7qE?=
- =?us-ascii?Q?/SJ+fGZOxPCNFKTzg+iaVieyJTUoedii7cAlzF2JwSb8m2Tozt7O4cGrkVVJ?=
- =?us-ascii?Q?38CcdPhG8uRFilj4JF64i93Ln/muj+OVAcJxQSbHOxGuKuGmU8UiWPb/xMA8?=
- =?us-ascii?Q?cM330Dqnj4my/mbEG/A1/BR4aEh9uouKRGF+f3yALvnOC7lgL12PND/X6Oyf?=
- =?us-ascii?Q?zRUWpb0LLuefnHtEYyMyTbcghgb5O02MNqb+5p2Fqx3yaanqrXZwQB5VMuHd?=
- =?us-ascii?Q?68zReTyCGZcsMXeYW+Oy1BHTX11K6qr0VjgwZwH0h72ApebKJXSNTm41Pq5t?=
- =?us-ascii?Q?wSVyPdARvl5djoev4V/Go8jX68Sxs+N6IHg+KObpHUmYOtVdsYbRWQV/nBl3?=
- =?us-ascii?Q?wmMbWHOsKj1Ek+G7i/sYp/xUpiCgM49Rdjlykb6KqtLN1u2MRERRRvG+hLbV?=
- =?us-ascii?Q?tTzk5f+b1Tk/NYbsqDIVrh66eZyh12wN?=
+	=?us-ascii?Q?QYRyqDe/Of0zlQx69JHl2NNKSU10AL833yI8EdGZoYNEKVPrTVISJUb4qsTU?=
+ =?us-ascii?Q?CbbaMrzaIkQNums1i9wYfcfFy6b+IYB87UAiME/DCJYWRbyvndy9fly+Rdo4?=
+ =?us-ascii?Q?vnxaMHUC87CORqPD6ALs187kqqJYpG4kV+mlE2QJQ37JuOAb52UMhVC1uvbl?=
+ =?us-ascii?Q?bXcO8iEOrapkWXliBPnS18jGcmuxwZY5WpZeqDAdnT+y382aoX9PnjWJUG+h?=
+ =?us-ascii?Q?mz3WhZztw3pfzNI79mHHD1+d1q4iOjjCEI9ypeLAzpXADSDODWDI27EQF3Od?=
+ =?us-ascii?Q?B8XUAkXhSbHXMs+01s/rLZVNFwdk93ksY+wF0aNv1uoF7u8UXUVB+rvXXL9e?=
+ =?us-ascii?Q?/KMq0+3VbT9mbl9fTeU+Tcg06UK7+m+LFNMmWW0zIpj1sUwC8Wpwofosxl48?=
+ =?us-ascii?Q?+2zul5naUPnhs08G4JT9lKkWvxGj1oKxXhnnOOJE2YI9OvmJYFxKssZAVhAw?=
+ =?us-ascii?Q?uNc7EoBKHvQpw0qQX2UOvnB1i2ksmp/lxncU2anO3imaQG+eese0U56SkDOG?=
+ =?us-ascii?Q?wjT2oOOtNbpsoaumtn0z+R0ySc0V/MtwqM0g5caaEaVrhXXP5x7x0kgeJfJW?=
+ =?us-ascii?Q?CFa9mQGeBMI9NonYjj/KXX72uXRaaMCgfKg+Ko0WjiqbWPYKFN+bzWplv/pm?=
+ =?us-ascii?Q?NwXwgfG7kCt8j7B4Zdr5iEQrKKOQ/QsNaU65CLjEV9DuxnC8zJNXUlEljl/j?=
+ =?us-ascii?Q?aOC1T1iJTcljuQyVa8KK1GQc4IL2e5PfNSKHvdim7P5HA0CitCqwwm2uwzke?=
+ =?us-ascii?Q?nSxTLOxpIQp8PmGvwigPwX2Xt/rO1U/Ha8u2uym42+s08VE/uS8vo0oFwbR4?=
+ =?us-ascii?Q?g81h7JfInmzKqu0RJoFokIfL33yCwc332plN7JoBXU4iOe6VyNt3lQzCwTga?=
+ =?us-ascii?Q?/0e9oBJnhy+jQ4jfjZ98s+EPetFWHwpCjGck6dTKsnhqLSYoe9lJjpWsk1My?=
+ =?us-ascii?Q?qc196cnnR1TFEBq1cXdCCU+nBulgum5g3ZfxmdN+jHYQVI3FdBmeLv323KBS?=
+ =?us-ascii?Q?dxpfzF7dY0a7Ho0Ss0stmrPuqBoKuEKBBuRHDKZJc12Szip+VY/Gy2vGBjxF?=
+ =?us-ascii?Q?jNKeXpvm8LriYpR0qd1Tp5Q+saacpiEc0ZUO70Qn3RNaLkPljXVOfMUuzLx4?=
+ =?us-ascii?Q?PotSWmhA943rJdNvzCs20W0lTV7ceCvZ+xhJNyOwkrelL5UmF6kBLe/VSPxA?=
+ =?us-ascii?Q?8Bed7vhz/4RhXbkW3xjxMKEAfVfLnw/FrSukckxKRsUX4WhZBimCa3ZCUNEL?=
+ =?us-ascii?Q?VjdAd1SMissv/eRKtj7lblk9kZkGH1EToNmN7tccen9F1yzHgRNGKRovmhub?=
+ =?us-ascii?Q?Bd91VqetT3UltLpDVbqlrVvN18a2YBy/DbHoBrh0/Tjw1IDif1MOiHFlV8Gw?=
+ =?us-ascii?Q?eSgJglZHbc8j4QuDqzTM+auT2d0jAFHGrqvzHZiaEWJVd0POPQAHQrgnifQj?=
+ =?us-ascii?Q?FIgOo+lXaztEQGQkzxDEnDiS3rxKvLeH?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 05:55:02.1934
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 05:55:48.6906
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b818f501-8a86-483a-4b52-08dcd938c4c7
+X-MS-Exchange-CrossTenant-Network-Message-Id: d172a2f3-e10a-42c1-4813-08dcd938e091
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00004686.namprd03.prod.outlook.com
+	MWH0EPF000A6732.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9340
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7319
 
-Added zynqmp_pm_invoke_fw_fn() to use new SMC format in which
-lower 12 bits of SMC id are fixed and firmware header is moved to
-subsequent SMC arguments. The new SMC format supports full request and
-response buffers.
-
-Added zynqmp_pm_get_sip_svc_version() to get SiP SVC version
-number to check if TF-A is newer or older and use the SMC format
-accordingly to handle backward compatibility.
-
-Used new SMC format for PM_QUERY_DATA API as more response values are
-required in it.
+Currently, Linux is passing only API ID for feature of TF-A specific
+APIs but for feature check of TF-A specific APIs, TF-A is checking
+for Module ID + API ID as a result incorrect version is received for
+all TF-A specific APIs. So, fix feature check logic to pass valid
+arguments to get correct version.
 
 Signed-off-by: Ronak Jain <ronak.jain@amd.com>
 Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
 ---
- drivers/firmware/xilinx/zynqmp.c     | 137 ++++++++++++++++++++++++++-
- include/linux/firmware/xlnx-zynqmp.h |  26 ++++-
- 2 files changed, 157 insertions(+), 6 deletions(-)
+ drivers/firmware/xilinx/zynqmp.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index c8be32d9c6af..5ab0dfb2b225 100644
+index 5ab0dfb2b225..0b2ad46c8bce 100644
 --- a/drivers/firmware/xilinx/zynqmp.c
 +++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -3,7 +3,7 @@
-  * Xilinx Zynq MPSoC Firmware layer
-  *
-  *  Copyright (C) 2014-2022 Xilinx, Inc.
-- *  Copyright (C) 2022 - 2023, Advanced Micro Devices, Inc.
-+ *  Copyright (C) 2022 - 2024, Advanced Micro Devices, Inc.
-  *
-  *  Michal Simek <michal.simek@amd.com>
-  *  Davorin Mista <davorin.mista@aggios.com>
-@@ -46,6 +46,7 @@ static DEFINE_HASHTABLE(pm_api_features_map, PM_API_FEATURE_CHECK_MAX_ORDER);
- static u32 ioctl_features[FEATURE_PAYLOAD_SIZE];
- static u32 query_features[FEATURE_PAYLOAD_SIZE];
- 
-+static u32 sip_svc_version;
- static struct platform_device *em_dev;
- 
- /**
-@@ -151,6 +152,9 @@ static noinline int do_fw_call_smc(u32 *ret_payload, u32 num_args, ...)
- 		ret_payload[1] = upper_32_bits(res.a0);
- 		ret_payload[2] = lower_32_bits(res.a1);
- 		ret_payload[3] = upper_32_bits(res.a1);
-+		ret_payload[4] = lower_32_bits(res.a2);
-+		ret_payload[5] = upper_32_bits(res.a2);
-+		ret_payload[6] = lower_32_bits(res.a3);
- 	}
- 
- 	return zynqmp_pm_ret_code((enum pm_ret_status)res.a0);
-@@ -191,6 +195,9 @@ static noinline int do_fw_call_hvc(u32 *ret_payload, u32 num_args, ...)
- 		ret_payload[1] = upper_32_bits(res.a0);
- 		ret_payload[2] = lower_32_bits(res.a1);
- 		ret_payload[3] = upper_32_bits(res.a1);
-+		ret_payload[4] = lower_32_bits(res.a2);
-+		ret_payload[5] = upper_32_bits(res.a2);
-+		ret_payload[6] = lower_32_bits(res.a3);
- 	}
- 
- 	return zynqmp_pm_ret_code((enum pm_ret_status)res.a0);
-@@ -331,6 +338,70 @@ int zynqmp_pm_is_function_supported(const u32 api_id, const u32 id)
- }
- EXPORT_SYMBOL_GPL(zynqmp_pm_is_function_supported);
- 
-+/**
-+ * zynqmp_pm_invoke_fw_fn() - Invoke the system-level platform management layer
-+ *			caller function depending on the configuration
-+ * @pm_api_id:		Requested PM-API call
-+ * @ret_payload:	Returned value array
-+ * @num_args:		Number of arguments to requested PM-API call
-+ *
-+ * Invoke platform management function for SMC or HVC call, depending on
-+ * configuration.
-+ * Following SMC Calling Convention (SMCCC) for SMC64:
-+ * Pm Function Identifier,
-+ * PM_SIP_SVC + PASS_THROUGH_FW_CMD_ID =
-+ *	((SMC_TYPE_FAST << FUNCID_TYPE_SHIFT)
-+ *	((SMC_64) << FUNCID_CC_SHIFT)
-+ *	((SIP_START) << FUNCID_OEN_SHIFT)
-+ *	(PASS_THROUGH_FW_CMD_ID))
-+ *
-+ * PM_SIP_SVC - Registered ZynqMP SIP Service Call.
-+ * PASS_THROUGH_FW_CMD_ID - Fixed SiP SVC call ID for FW specific calls.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+int zynqmp_pm_invoke_fw_fn(u32 pm_api_id, u32 *ret_payload, u32 num_args, ...)
-+{
-+	/*
-+	 * Added SIP service call Function Identifier
-+	 * Make sure to stay in x0 register
-+	 */
-+	u64 smc_arg[SMC_ARG_CNT_64];
-+	int ret, i;
-+	va_list arg_list;
-+	u32 args[SMC_ARG_CNT_32] = {0};
-+	u32 module_id;
-+
-+	if (num_args > SMC_ARG_CNT_32)
-+		return -EINVAL;
-+
-+	va_start(arg_list, num_args);
-+
-+	/* Check if feature is supported or not */
-+	ret = zynqmp_pm_feature(pm_api_id);
-+	if (ret < 0)
-+		return ret;
-+
-+	for (i = 0; i < num_args; i++)
-+		args[i] = va_arg(arg_list, u32);
-+
-+	va_end(arg_list);
-+
-+	module_id = FIELD_GET(PLM_MODULE_ID_MASK, pm_api_id);
-+
-+	if (module_id == 0)
-+		module_id = XPM_MODULE_ID;
-+
-+	smc_arg[0] = PM_SIP_SVC | PASS_THROUGH_FW_CMD_ID;
-+	smc_arg[1] = ((u64)args[0] << 32U) | FIELD_PREP(PLM_MODULE_ID_MASK, module_id) |
-+		      (pm_api_id & API_ID_MASK);
-+	for (i = 1; i < (SMC_ARG_CNT_64 - 1); i++)
-+		smc_arg[i + 1] = ((u64)args[(i * 2)] << 32U) | args[(i * 2) - 1];
-+
-+	return do_fw_call(ret_payload, 8, smc_arg[0], smc_arg[1], smc_arg[2], smc_arg[3],
-+			  smc_arg[4], smc_arg[5], smc_arg[6], smc_arg[7]);
-+}
-+
- /**
-  * zynqmp_pm_invoke_fn() - Invoke the system-level platform management layer
-  *			   caller function depending on the configuration
-@@ -488,6 +559,35 @@ int zynqmp_pm_get_family_info(u32 *family, u32 *subfamily)
- }
- EXPORT_SYMBOL_GPL(zynqmp_pm_get_family_info);
- 
-+/**
-+ * zynqmp_pm_get_sip_svc_version() - Get SiP service call version
-+ * @version:	Returned version value
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_get_sip_svc_version(u32 *version)
-+{
-+	struct arm_smccc_res res;
-+	u64 args[SMC_ARG_CNT_64] = {0};
-+
-+	if (!version)
-+		return -EINVAL;
-+
-+	/* Check if SiP SVC version already verified */
-+	if (sip_svc_version > 0) {
-+		*version = sip_svc_version;
-+		return 0;
+@@ -225,11 +225,14 @@ static int __do_feature_check_call(const u32 api_id, u32 *ret_payload)
+ 	 * Feature check of TF-A APIs is done in the TF-A layer and it expects for
+ 	 * MODULE_ID_MASK bits of SMC's arg[0] to be the same as PM_MODULE_ID.
+ 	 */
+-	if (module_id == TF_A_MODULE_ID)
++	if (module_id == TF_A_MODULE_ID) {
+ 		module_id = PM_MODULE_ID;
++		smc_arg[1] = api_id;
++	} else {
++		smc_arg[1] = (api_id & API_ID_MASK);
 +	}
-+
-+	args[0] = GET_SIP_SVC_VERSION;
-+
-+	arm_smccc_smc(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], &res);
-+
-+	*version = ((lower_32_bits(res.a0) << 16U) | lower_32_bits(res.a1));
-+
-+	return zynqmp_pm_ret_code(XST_PM_SUCCESS);
-+}
-+
- /**
-  * zynqmp_pm_get_trustzone_version() - Get secure trustzone firmware version
-  * @version:	Returned version value
-@@ -552,10 +652,34 @@ static int get_set_conduit_method(struct device_node *np)
-  */
- int zynqmp_pm_query_data(struct zynqmp_pm_query_data qdata, u32 *out)
- {
--	int ret;
-+	int ret, i = 0;
-+	u32 ret_payload[PAYLOAD_ARG_CNT] = {0};
-+
-+	if (sip_svc_version >= SIP_SVC_PASSTHROUGH_VERSION) {
-+		ret = zynqmp_pm_invoke_fw_fn(PM_QUERY_DATA, ret_payload, 4,
-+					     qdata.qid, qdata.arg1,
-+					     qdata.arg2, qdata.arg3);
-+		/* To support backward compatibility */
-+		if (!ret && !ret_payload[0]) {
-+			/*
-+			 * TF-A passes return status on 0th index but
-+			 * api to get clock name reads data from 0th
-+			 * index so pass data at 0th index instead of
-+			 * return status
-+			 */
-+			if (qdata.qid == PM_QID_CLOCK_GET_NAME ||
-+			    qdata.qid == PM_QID_PINCTRL_GET_FUNCTION_NAME)
-+				i = 1;
-+
-+			for (; i < PAYLOAD_ARG_CNT; i++, out++)
-+				*out = ret_payload[i];
  
--	ret = zynqmp_pm_invoke_fn(PM_QUERY_DATA, out, 4, qdata.qid, qdata.arg1, qdata.arg2,
--				  qdata.arg3);
-+			return ret;
-+		}
-+	}
-+
-+	ret = zynqmp_pm_invoke_fn(PM_QUERY_DATA, out, 4, qdata.qid,
-+				  qdata.arg1, qdata.arg2, qdata.arg3);
+ 	smc_arg[0] = PM_SIP_SVC | FIELD_PREP(MODULE_ID_MASK, module_id) | feature_check_api_id;
+-	smc_arg[1] = (api_id & API_ID_MASK);
  
- 	/*
- 	 * For clock name query, all bytes in SMC response are clock name
-@@ -1887,6 +2011,11 @@ static int zynqmp_firmware_probe(struct platform_device *pdev)
+ 	ret = do_fw_call(ret_payload, 2, smc_arg[0], smc_arg[1]);
  	if (ret)
- 		return ret;
- 
-+	/* Get SiP SVC version number */
-+	ret = zynqmp_pm_get_sip_svc_version(&sip_svc_version);
-+	if (ret)
-+		return ret;
-+
- 	ret = do_feature_check_call(PM_FEATURE_CHECK);
- 	if (ret >= 0 && ((ret & FIRMWARE_VERSION_MASK) >= PM_API_VERSION_1))
- 		feature_check_enabled = true;
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 5b938fc2adad..76d85ad82ec0 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -3,7 +3,7 @@
-  * Xilinx Zynq MPSoC Firmware layer
-  *
-  *  Copyright (C) 2014-2021 Xilinx
-- *  Copyright (C) 2022 - 2023, Advanced Micro Devices, Inc.
-+ *  Copyright (C) 2022 - 2024, Advanced Micro Devices, Inc.
-  *
-  *  Michal Simek <michal.simek@amd.com>
-  *  Davorin Mista <davorin.mista@aggios.com>
-@@ -32,6 +32,19 @@
- /* SMC SIP service Call Function Identifier Prefix */
- #define PM_SIP_SVC			0xC2000000
- 
-+/* SMC function ID to get SiP SVC version */
-+#define GET_SIP_SVC_VERSION	(0x8200ff03U)
-+
-+/* SiP Service Calls version numbers */
-+#define SIP_SVC_VERSION_MAJOR		(0U)
-+#define SIP_SVC_VERSION_MINOR		(2U)
-+
-+#define SIP_SVC_PASSTHROUGH_VERSION	((SIP_SVC_VERSION_MAJOR << 16) | \
-+					 SIP_SVC_VERSION_MINOR)
-+
-+/* Fixed ID for FW specific APIs */
-+#define PASS_THROUGH_FW_CMD_ID	GENMASK(11, 0)
-+
- /* PM API versions */
- #define PM_API_VERSION_1	1
- #define PM_API_VERSION_2	2
-@@ -51,6 +64,7 @@
- 
- #define API_ID_MASK		GENMASK(7, 0)
- #define MODULE_ID_MASK		GENMASK(11, 8)
-+#define PLM_MODULE_ID_MASK	GENMASK(15, 8)
- 
- /* Firmware feature check version mask */
- #define FIRMWARE_VERSION_MASK		0xFFFFU
-@@ -62,7 +76,13 @@
- #define GET_CALLBACK_DATA		0xa01
- 
- /* Number of 32bits values in payload */
--#define PAYLOAD_ARG_CNT	4U
-+#define PAYLOAD_ARG_CNT	7U
-+
-+/* Number of 64bits arguments for SMC call */
-+#define SMC_ARG_CNT_64	8U
-+
-+/* Number of 32bits arguments for SMC call */
-+#define SMC_ARG_CNT_32	13U
- 
- /* Number of arguments for a callback */
- #define CB_ARG_CNT     4
-@@ -130,6 +150,7 @@
- 
- enum pm_module_id {
- 	PM_MODULE_ID = 0x0,
-+	XPM_MODULE_ID = 0x2,
- 	XSEM_MODULE_ID = 0x3,
- 	TF_A_MODULE_ID = 0xa,
- };
-@@ -537,6 +558,7 @@ struct zynqmp_pm_query_data {
- };
- 
- int zynqmp_pm_invoke_fn(u32 pm_api_id, u32 *ret_payload, u32 num_args, ...);
-+int zynqmp_pm_invoke_fw_fn(u32 pm_api_id, u32 *ret_payload, u32 num_args, ...);
- 
- #if IS_REACHABLE(CONFIG_ZYNQMP_FIRMWARE)
- int zynqmp_pm_get_api_version(u32 *version);
 -- 
 2.25.1
 
