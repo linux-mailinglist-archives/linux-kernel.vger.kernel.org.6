@@ -1,119 +1,228 @@
-Return-Path: <linux-kernel+bounces-334226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322B097D435
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:32:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5741997D436
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:32:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB4BE1F21C14
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:32:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D83F9B221C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0140513CA8D;
-	Fri, 20 Sep 2024 10:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8198313BC2F;
+	Fri, 20 Sep 2024 10:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kE1Os6Gl"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1Dn/a/Cy";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jLWpAuDH";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1Dn/a/Cy";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jLWpAuDH"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1051BC46;
-	Fri, 20 Sep 2024 10:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8491F1BC46
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 10:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726828335; cv=none; b=ptoT+7snyAwgZp07aT677yg9iQXKlqhscNO92d5YP9DvvC7ePZbyoMkm9PP+T+WnlKycFwkMWggfjGNWqpR8/gG3uCID14bknISLSAL1on+cJR2QNtMMFHj4DQAsLeIiZDLPrNH3vKeSNVe/IpdTKJnSOKYANniR7makkLxfF0I=
+	t=1726828361; cv=none; b=lNrSbNfMrmwKMZ2GLc6atvINE74pg33W1OV8hWQbrRZzTdILRAggc3JbinA8OECnWwXKmWnot2/QQKk3al+yQCLC3gUjXmolXcLZaz9CA9TbGm31mkzYb6RBwV3moLR5bcCPUtqc8AJDgqQd08PbJSEFYujLPKGy7a3jXolYp2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726828335; c=relaxed/simple;
-	bh=QFzruwUB5mDp1IbVvvLIMHWezj5sHK08Q71q6P+wdjg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BDAwdPGCg3smQQo4ig3tlKEl6XFocwEqipDH1YmaEpYlYiZmchYGofeXs8oF0qx14V3WmNRL49+lD1KG/TpJhD/Ut+kWw6XmA6UI2AGShBWfX1Dhr5ViGZYkyHSSrsu0VY8sQbvHByFeJZ5lJkiFEdqvdiqb/6kwqnltqMCRQZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kE1Os6Gl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48K84Yjq005788;
-	Fri, 20 Sep 2024 10:32:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eWR+Ld9pcV0LdcC1SWmp8s/9godB2fW5sczBXNzXy9k=; b=kE1Os6Gl4F21v2hr
-	e29w7PmN4JAI7PK9y9flHO9vFN9VQxAAzjIEJRY31QMy+2tdpHNO5YvbusyPWPwP
-	hLUP4aRD+UVr23SbHnk1n4xSRkAB+0df+IEIrBFok6hf+9IygUm5p/wD0gVjsJR3
-	ICLciloeZqM82no2j3wEGAwtYHrFN6rEcR6/1aj26oFZBPQouQxOEVvZDxY3s2Gi
-	epww0Pmq95tRggC1k/S8vjNe3V/HUSFQVp2Xc7Qwth89Mn4w1mhjHF3xUCVgdcw8
-	FjteJMBNu7aNDzEzVpdZ2CEdgaqhATIB4ItHxkyaarYX7V9fiSdfGKAtF6YZqK0K
-	/YElOQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4jj0t61-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 10:32:10 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48KAW8w9025479
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 20 Sep 2024 10:32:08 GMT
-Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 20 Sep
- 2024 03:32:04 -0700
-Message-ID: <0515c7c9-6eb9-4b2d-9b63-6e7f935f1a6a@quicinc.com>
-Date: Fri, 20 Sep 2024 16:02:01 +0530
+	s=arc-20240116; t=1726828361; c=relaxed/simple;
+	bh=nlrGjBSyG3MwjE5yb2fsfr465lLdwPjOxqbrIgfspvk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=boJv3DkaVhgKbuupKMxqlpunHq+Uo8x3XkoUYninQH+Lki4ESi1uQ+GNP1W7dhCf5Q4TRru3Yy6B+DjrqoblttUh9Ur2z0XkSw05dCfwZVZplvxD7h46gbRMQaEeIORWOykF1dwk+VtD8hkqqcsROVU0ouM1KSUG7hCO41EPsLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1Dn/a/Cy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jLWpAuDH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1Dn/a/Cy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jLWpAuDH; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6F8861F7FB;
+	Fri, 20 Sep 2024 10:32:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726828352; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=j0X4i0heHHNdQhnOO3fFUS6xidmW19WD71uous8/JiE=;
+	b=1Dn/a/CyO8aserIxAXiDSCMKA7FbsTo69KuOJoBPLsrgT0mkQHgCLh7lE6VfMnnIn1KMy6
+	Cm5n6BlyfRI0wT7pZXGYPDRvScy5NHSW8YKMSNL/lRPJxWRmKZSB+lyxSp/fdI22oYeufH
+	0VUvFxdJU1LE8zQJ54RjgCsn4VmmYMM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726828352;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=j0X4i0heHHNdQhnOO3fFUS6xidmW19WD71uous8/JiE=;
+	b=jLWpAuDHaTxFlFxzyFrlGlgvDniSAEaDsBe/gpZKwsA49fdUIblD/HUwInGI1tu5hkXsKU
+	SunvkTksj43oK+Dw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726828352; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=j0X4i0heHHNdQhnOO3fFUS6xidmW19WD71uous8/JiE=;
+	b=1Dn/a/CyO8aserIxAXiDSCMKA7FbsTo69KuOJoBPLsrgT0mkQHgCLh7lE6VfMnnIn1KMy6
+	Cm5n6BlyfRI0wT7pZXGYPDRvScy5NHSW8YKMSNL/lRPJxWRmKZSB+lyxSp/fdI22oYeufH
+	0VUvFxdJU1LE8zQJ54RjgCsn4VmmYMM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726828352;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=j0X4i0heHHNdQhnOO3fFUS6xidmW19WD71uous8/JiE=;
+	b=jLWpAuDHaTxFlFxzyFrlGlgvDniSAEaDsBe/gpZKwsA49fdUIblD/HUwInGI1tu5hkXsKU
+	SunvkTksj43oK+Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 46EE713AA7;
+	Fri, 20 Sep 2024 10:32:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id euIOEEBP7WagBgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 20 Sep 2024 10:32:32 +0000
+From: Takashi Iwai <tiwai@suse.de>
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	tuhaowen <tuhaowen@uniontech.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] parport: Proper fix for array out-of-bounds access
+Date: Fri, 20 Sep 2024 12:32:19 +0200
+Message-ID: <20240920103318.19271-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom-rpmhcc: Add RPMHCC bindings
- for QCS615
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240919-qcs615-clock-driver-v1-0-51c0cc92e3a2@quicinc.com>
- <20240919-qcs615-clock-driver-v1-1-51c0cc92e3a2@quicinc.com>
- <96e54706-3e49-4d78-8edc-fa3a66215a1c@kernel.org>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <96e54706-3e49-4d78-8edc-fa3a66215a1c@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Wuh2_7G_lvQW5wERe4tlLyr6Pp7s8suS
-X-Proofpoint-GUID: Wuh2_7G_lvQW5wERe4tlLyr6Pp7s8suS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1011 phishscore=0 impostorscore=0 bulkscore=0 adultscore=0
- suspectscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
- mlxlogscore=675 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409200075
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.30
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_THREE(0.00)[4];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+The recent fix for array out-of-bounds accesses replaced sprintf()
+calls blindly with snprintf().  However, since snprintf() returns the
+would-be-printed size, not the actually output size, the length
+calculation can still go over the given limit.
 
+Use scnprintf() instead of snprintf(), which returns the actually
+output letters, for addressing the potential out-of-bounds access
+properly.
 
-On 9/19/2024 5:49 PM, Krzysztof Kozlowski wrote:
->>         - qcom,qdu1000-rpmh-clk
->> +      - qcom,qcs615-rpmh-clk
-> This goes before qdu, keep alphabetical order please.
+Fixes: ab11dac93d2d ("dev/parport: fix the array out-of-bounds risk")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
 
-Yes, definitely my bad to miss in both the files.
+The code is very oldfashioned, but I leave as is in this patch for
+making clearer that it's only about the replacements of snprintf().
 
+ drivers/parport/procfs.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/parport/procfs.c b/drivers/parport/procfs.c
+index 3ef486cd3d6d..3880460e67f2 100644
+--- a/drivers/parport/procfs.c
++++ b/drivers/parport/procfs.c
+@@ -51,12 +51,12 @@ static int do_active_device(const struct ctl_table *table, int write,
+ 	
+ 	for (dev = port->devices; dev ; dev = dev->next) {
+ 		if(dev == port->cad) {
+-			len += snprintf(buffer, sizeof(buffer), "%s\n", dev->name);
++			len += scnprintf(buffer, sizeof(buffer), "%s\n", dev->name);
+ 		}
+ 	}
+ 
+ 	if(!len) {
+-		len += snprintf(buffer, sizeof(buffer), "%s\n", "none");
++		len += scnprintf(buffer, sizeof(buffer), "%s\n", "none");
+ 	}
+ 
+ 	if (len > *lenp)
+@@ -87,19 +87,19 @@ static int do_autoprobe(const struct ctl_table *table, int write,
+ 	}
+ 	
+ 	if ((str = info->class_name) != NULL)
+-		len += snprintf (buffer + len, sizeof(buffer) - len, "CLASS:%s;\n", str);
++		len += scnprintf (buffer + len, sizeof(buffer) - len, "CLASS:%s;\n", str);
+ 
+ 	if ((str = info->model) != NULL)
+-		len += snprintf (buffer + len, sizeof(buffer) - len, "MODEL:%s;\n", str);
++		len += scnprintf (buffer + len, sizeof(buffer) - len, "MODEL:%s;\n", str);
+ 
+ 	if ((str = info->mfr) != NULL)
+-		len += snprintf (buffer + len, sizeof(buffer) - len, "MANUFACTURER:%s;\n", str);
++		len += scnprintf (buffer + len, sizeof(buffer) - len, "MANUFACTURER:%s;\n", str);
+ 
+ 	if ((str = info->description) != NULL)
+-		len += snprintf (buffer + len, sizeof(buffer) - len, "DESCRIPTION:%s;\n", str);
++		len += scnprintf (buffer + len, sizeof(buffer) - len, "DESCRIPTION:%s;\n", str);
+ 
+ 	if ((str = info->cmdset) != NULL)
+-		len += snprintf (buffer + len, sizeof(buffer) - len, "COMMAND SET:%s;\n", str);
++		len += scnprintf (buffer + len, sizeof(buffer) - len, "COMMAND SET:%s;\n", str);
+ 
+ 	if (len > *lenp)
+ 		len = *lenp;
+@@ -128,7 +128,7 @@ static int do_hardware_base_addr(const struct ctl_table *table, int write,
+ 	if (write) /* permissions prevent this anyway */
+ 		return -EACCES;
+ 
+-	len += snprintf (buffer, sizeof(buffer), "%lu\t%lu\n", port->base, port->base_hi);
++	len += scnprintf (buffer, sizeof(buffer), "%lu\t%lu\n", port->base, port->base_hi);
+ 
+ 	if (len > *lenp)
+ 		len = *lenp;
+@@ -155,7 +155,7 @@ static int do_hardware_irq(const struct ctl_table *table, int write,
+ 	if (write) /* permissions prevent this anyway */
+ 		return -EACCES;
+ 
+-	len += snprintf (buffer, sizeof(buffer), "%d\n", port->irq);
++	len += scnprintf (buffer, sizeof(buffer), "%d\n", port->irq);
+ 
+ 	if (len > *lenp)
+ 		len = *lenp;
+@@ -182,7 +182,7 @@ static int do_hardware_dma(const struct ctl_table *table, int write,
+ 	if (write) /* permissions prevent this anyway */
+ 		return -EACCES;
+ 
+-	len += snprintf (buffer, sizeof(buffer), "%d\n", port->dma);
++	len += scnprintf (buffer, sizeof(buffer), "%d\n", port->dma);
+ 
+ 	if (len > *lenp)
+ 		len = *lenp;
+@@ -213,7 +213,7 @@ static int do_hardware_modes(const struct ctl_table *table, int write,
+ #define printmode(x)							\
+ do {									\
+ 	if (port->modes & PARPORT_MODE_##x)				\
+-		len += snprintf(buffer + len, sizeof(buffer) - len, "%s%s", f++ ? "," : "", #x); \
++		len += scnprintf(buffer + len, sizeof(buffer) - len, "%s%s", f++ ? "," : "", #x); \
+ } while (0)
+ 		int f = 0;
+ 		printmode(PCSPP);
 -- 
-Thanks & Regards,
-Taniya Das.
+2.43.0
+
 
