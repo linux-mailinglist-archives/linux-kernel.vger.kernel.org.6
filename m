@@ -1,135 +1,135 @@
-Return-Path: <linux-kernel+bounces-333890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB97897CF81
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 02:09:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A74497CF8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 02:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 701F628365C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 00:09:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4DD11F24C6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 00:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AAD8460;
-	Fri, 20 Sep 2024 00:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BF0AD51;
+	Fri, 20 Sep 2024 00:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="EyXvBI25"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="X30gUhDn"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5175710F2
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 00:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5636D26AE4;
+	Fri, 20 Sep 2024 00:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726790979; cv=none; b=Sdl+ZIbAYWUYu54jULU+Wkk1HrwFHlTOCwXZsEYffAP3w4iEXBlFOCqUoQZ7ipqKXYDhgaVi6pOhKak63jv1U3FYgyOA3GTem1UKNvMIWv7B7Ng4J8+4rc2yupX7ogyX2i+oc43kGmr1k6G4bty+IbHZ8qPqhC2O6tQecT//nf8=
+	t=1726791022; cv=none; b=mOamqmsjNkEL7h2fPwByzGRadMN5Pq9N6UZU+EzTxfm2kZQCDP9yI/3vbc0fT0CtOZW6FDfGIskXYRmo0DNuLih3enj8N8v2sr7sORjo+NLTyN6c1yWP38KSn1qQgc0Isv0pKtN9q2MaQSZNavTFDvj4D6iUYzZcz0Vo/J+6jys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726790979; c=relaxed/simple;
-	bh=kb+FOPL0rVZM1kDeaqCOMHkMt+9wNGouZDUALNbJokk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WFVcwZqRhD9gOatkPPJJczrUNj1lKPnTURJHiJQxPdamc9FHxjyXZZt5q1BeAw+3F4UCN9naY+ifV6Kjma+/PntmywSEGCT9LNKAzzUkBoOff4TvIw/ndjnRw32EPUtZPpezT/MpkBCJSUhH75AWGi1AqMi1W+rELkFT13h6WpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=EyXvBI25; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 3DFFF2C062F;
-	Fri, 20 Sep 2024 12:09:33 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1726790973;
-	bh=ssv1KJPv6dWn/2WAVO6iLtBa790Hqw+lnh3qp5W5NL8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EyXvBI259PyhwUB/ld3XDdc8jPOpGkfPGe6g4MBZF1WAW+4NJIrCNqLa+YKTs7uTV
-	 jfnPDkhqjPAjOoMPOEXYK6z1oCWQm4K2TkKtYH2UadKlFlxJQI8K1g5gpSnnNk2f+l
-	 wFAb8mUfcd+2W+1cOGQGftdKfwmE7vz8mKdAlR2mPXn+FTxwx49/m7eE2YIbtJp78c
-	 aauvYsefokAJ2UtuvGIf/JQSf+4QxAAB0JPnK8kKziRySmlgjhGwU6VF4Rg1FUiHua
-	 z6w38jytq7//ufo+jmXaaoNRRt3dgV3HmhzBgguXJJ3sL/7L7q9aE0LgAEGwa9v+3S
-	 Czh3PlwBcuv1A==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B66ecbd3c0003>; Fri, 20 Sep 2024 12:09:32 +1200
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id D426F13ED56;
-	Fri, 20 Sep 2024 12:09:32 +1200 (NZST)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id D159C280968; Fri, 20 Sep 2024 12:09:32 +1200 (NZST)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: andi.shyti@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	tsbogend@alpha.franken.de
-Cc: linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v2 3/3] mips: dts: realtek: Add I2C controllers
-Date: Fri, 20 Sep 2024 12:09:30 +1200
-Message-ID: <20240920000930.1828086-4-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20240920000930.1828086-1-chris.packham@alliedtelesis.co.nz>
-References: <20240920000930.1828086-1-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1726791022; c=relaxed/simple;
+	bh=b7RiFL+EwsKBzpMbYQki80g6DULAZDbVwFsuh7o7zNI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AT1jRAIYn47oTkd7Kd2WcQVnsBFlw+nk2MY5ijUyuDpG5VJgubrOx7/4QAEf07GVt9+adsf0MjKsreOtPglICeQJM8DxSi5W7e2LzyYx0+ILijWtWBRuj7Aefo8yVTOeO4rOio0mC4EL0o4wX72Xz8uX1gAdQplFDY7wqlJqd40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=X30gUhDn; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48JLMWHK026268;
+	Fri, 20 Sep 2024 00:09:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=corp-2023-11-20; bh=RC5Ywg5HZDddIw
+	iL3OFiNiH6QOj3x6OUEL1SQkFbZAs=; b=X30gUhDnNjkmodF0ChbFWz3g/YB/MV
+	t7mA1jYBzOVfPrlyLczv9q7JU8g+6Xj3WBemlks3yIWI7bW6s8t4jiLu0yY25pUQ
+	Qz/490rtmZTjK9Au1NdcHwnrxex7HBIVomHMjWGRiQ7Davwax4c2Q8/R1lEFz1Ge
+	adfkrtoWQzYZN+yUmvUv+7gXseCkFyWDNultE11kX4HCyiFbYLVj920lEKdqZbk7
+	tAAaYpK5LAWcMSfruA+H8PsDKJ81tX38KGGlWEXse39rEtqXKxbshk0jf/ev8Ylx
+	0CSprXpkCtZjHkVK2bBE3d44//xv0M1tLuPjB67ZENNSniFwT2ugpUag==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41n3nfweq6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 20 Sep 2024 00:09:37 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48JMUiMX017868;
+	Fri, 20 Sep 2024 00:09:36 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41nyd17egm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 20 Sep 2024 00:09:36 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48K09ZKB022155;
+	Fri, 20 Sep 2024 00:09:35 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 41nyd17egc-1;
+	Fri, 20 Sep 2024 00:09:35 +0000
+From: Anjali Kulkarni <anjali.k.kulkarni@oracle.com>
+To: davem@davemloft.net, Liam.Howlett@Oracle.com
+Cc: edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, oleg@redhat.com,
+        akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org,
+        mhocko@suse.com, alexjlzheng@tencent.com, willy@infradead.org,
+        michael.christie@oracle.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, shuah@kernel.org,
+        linux-kselftest@vger.kernel.org, anjali.k.kulkarni@oracle.com,
+        peili.io@oracle.com
+Subject: [PATCH net-next 0/2] Threads extension for process connector
+Date: Thu, 19 Sep 2024 17:09:31 -0700
+Message-ID: <20240920000933.185090-1-anjali.k.kulkarni@oracle.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=66ecbd3c a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=EaEq8P2WXUwA:10 a=fm45MGwkAfgIEXGqLe4A:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-19_23,2024-09-19_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ spamscore=0 mlxscore=0 phishscore=0 malwarescore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2408220000 definitions=main-2409190161
+X-Proofpoint-GUID: 42kDqGbW0JiOS-AXbnXX27K0RTCHFbiE
+X-Proofpoint-ORIG-GUID: 42kDqGbW0JiOS-AXbnXX27K0RTCHFbiE
 
-Add the I2C controllers that are part of the RTL9300 SoC.
+Recently we committed a fix to allow processes to receive notifications for
+non-zero exits via the process connector module. Commit is a4c9a56e6a2c.
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
+However, for threads, when it does a pthread_exit(&exit_status) call, the
+kernel is not aware of the exit status with which pthread_exit is called.
+It is sent by child thread to the parent process, if it is waiting in
+pthread_join(). Hence, for a thread exiting abnormally, kernel cannot
+send notifications to any listening processes.
 
-Notes:
-    Changes in v2:
-    - Use reg property
+The exception to this is if the thread is sent a signal which it has not
+handled, and dies along with it's process as a result; for eg. SIGSEGV or
+SIGKILL. In this case, kernel is aware of the non-zero exit and sends a
+notification for it.
 
- arch/mips/boot/dts/realtek/rtl930x.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+For our use case, we cannot have parent wait in pthread_join, one of the
+main reasons for this being that we do not want to track normal
+pthread_exit(), which could be a very large number. We only want to be
+notified of any abnormal exits. Hence, threads are created with
+pthread_attr_t set to PTHREAD_CREATE_DETACHED.
 
-diff --git a/arch/mips/boot/dts/realtek/rtl930x.dtsi b/arch/mips/boot/dts=
-/realtek/rtl930x.dtsi
-index cf1b38b6c353..cc43025cd46c 100644
---- a/arch/mips/boot/dts/realtek/rtl930x.dtsi
-+++ b/arch/mips/boot/dts/realtek/rtl930x.dtsi
-@@ -33,12 +33,30 @@ lx_clk: clock-175mhz {
- 	switch0: switch@1b000000 {
- 		compatible =3D "realtek,rtl9302c-switch", "syscon", "simple-mfd";
- 		reg =3D <0x1b000000 0x10000>;
-+		#address-cells =3D <1>;
-+		#size-cells =3D <1>;
-=20
- 		reboot {
- 			compatible =3D "syscon-reboot";
- 			offset =3D <0x0c>;
- 			value =3D <0x01>;
- 		};
-+
-+		i2c0: i2c@36c {
-+			compatible =3D "realtek,rtl9300-i2c";
-+			reg =3D <0x36c 0x14>;
-+			status =3D "disabled";
-+			#address-cells =3D <1>;
-+			#size-cells =3D <0>;
-+		};
-+
-+		i2c1: i2c@388 {
-+			compatible =3D "realtek,rtl9300-i2c";
-+			reg =3D <0x388 0x14>;
-+			status =3D "disabled";
-+			#address-cells =3D <1>;
-+			#size-cells =3D <0>;
-+		};
- 	};
- };
-=20
---=20
-2.46.1
+To fix this problem, we add a new type PROC_CN_MCAST_NOTIFY to proc connector
+API, which allows a thread to send it's exit status to kernel either when
+it needs to call pthread_exit() with non-zero value to indicate some
+error or from signal handler before pthread_exit().
+
+Anjali Kulkarni (2):
+  connector/cn_proc: Handle threads for proc connector
+  connector/cn_proc: Selftest for threads case
+
+ drivers/connector/cn_proc.c                   | 11 ++-
+ include/linux/cn_proc.h                       |  5 +-
+ include/uapi/linux/cn_proc.h                  |  4 +-
+ kernel/exit.c                                 |  5 +-
+ tools/testing/selftests/connector/Makefile    | 23 ++++-
+ .../testing/selftests/connector/proc_filter.c |  5 +
+ tools/testing/selftests/connector/thread.c    | 87 +++++++++++++++++
+ .../selftests/connector/thread_filter.c       | 93 +++++++++++++++++++
+ 8 files changed, 226 insertions(+), 7 deletions(-)
+ create mode 100644 tools/testing/selftests/connector/thread.c
+ create mode 100644 tools/testing/selftests/connector/thread_filter.c
+
+-- 
+2.45.2
 
 
