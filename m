@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-334167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8578F97D34B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:04:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB9A797D35F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1E4B1F23963
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:04:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 713D01F20F5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD4D13AD05;
-	Fri, 20 Sep 2024 09:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C5B139CE3;
+	Fri, 20 Sep 2024 09:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zv6Qpm/k"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RcAStUtZ"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7275481AC8;
-	Fri, 20 Sep 2024 09:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829091311B6;
+	Fri, 20 Sep 2024 09:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726823072; cv=none; b=Kof0BsQUd96W7GXKGwOBVOnAKSa5Ef+Zn8aIBdCLpaz4ZRfT0W/r48QM+uPNdi5WEDkXCJpRl8dk3qZOuBF5armJf5G1NR2last8weL6ELUHUQA/l3yRMIKA81rqF8l0WxAdGnZiHTSRi/jeVH9cD2ksvYMu+6NRYXi5pc6Xn6E=
+	t=1726823247; cv=none; b=hf41eIG2UTGmMZROZI4YebgBNoO12BYb3R66U8gk0nMLjzApc7eQroZCsSObXA+/H2GpYoYwDLaXHPpd/BoQYAH4U7en+Upaeu5R6uQyxxJkJrhfwUbXkn9TDQQxTJSWIOYJyD/zXgVQtqGx+QUAEH0aZwM6rm4+LH6ENO8AN1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726823072; c=relaxed/simple;
-	bh=xWl3glfa+77O2PEoYwclwHdUxLwyrlo9U6k2GXGC/AE=;
+	s=arc-20240116; t=1726823247; c=relaxed/simple;
+	bh=1W/vNg24ijyt+ohmdhboKpOvG4M/E1Kjs0Nio0YiFuM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YU8WyKkkVcyAZ3Ubc/x5/0pQ4jBpQlr6RRuVf2KNC9RqSo2nytnEvib4od9ALTQeUMf5RIatsOTSR/HIxRK22Udk+Rbx45kT2jE2VivwKcxQhFbAhwPaS4nPmOZGK3GnTg5/hZcH5IVr2+/xLU/I1EJ5798LF19i46NiqRldAyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zv6Qpm/k; arc=none smtp.client-ip=209.85.214.180
+	 MIME-Version; b=WiiRgCt7niJv/e+P6I84SIDX3SR793K11XkSey1WNvcaFd2aZtae2CPhK823b2FGnxMeZtpt+2JMVjKiGR5xO7RIRHflLdPTYwf8TC/wPcByapVtZEXJLu9F0KCr4XVy6Xjlaz0kMtZQa1s7mHhwNiXY0xaD/0jdkPSFPz2gaJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RcAStUtZ; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2068acc8a4fso18414175ad.1;
-        Fri, 20 Sep 2024 02:04:31 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso312393866b.0;
+        Fri, 20 Sep 2024 02:07:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726823071; x=1727427871; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726823244; x=1727428044; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=780SsjLKTyN4z/bv2hI5xqQ2gIRVMpJg4AqmXrMJpqI=;
-        b=Zv6Qpm/kIHWnyHxsTseDly249WDhNeXGgEWiWyBfK72DgFX4LgwXx/D0pWjqmD6ZUt
-         jlK1rC4z3GjT4e3XY18rQD6MP3lLOfgLMcdJx179AKYjMM8AF5zP3OheU5azeKWwltZB
-         Vxlo+L4IsX3M6tHM8dCQRMfUpkgWo8fFzU2U1bAodgGjvd5oVBaCKYxhuueoAcf0F5Vu
-         uDfRT4/R1A8GbL8MU2xgEVqFFFAMWqZDpga/7j8puAIZzregD+txj8C7L+AAfHpgUf67
-         xTCFrjSp3WxtDu5sBoC82RELnWJkS3Kxj0PKpMoZSMvHuihToZ/tlHi98QWnoNwusixW
-         mgDw==
+        bh=qw+m0q1r4IxYHWGNLkcr5AmxGd10neIFyiXitrVL5Fc=;
+        b=RcAStUtZGp0G0pv4ltWZYTF1ktCqbLWmkOB74oQyRE8ZNGqh8xy1mG7WFstCm6q/vw
+         siB0yjoJx1qho7emIf8yYnx4fuUDWcdiZHGQIt5uqg2sGU1twL3N7oTCnhJTUeH+CI/U
+         kib7lmPGqVvvuqAlfned6Ug1Wb7PEmhMxUogsSvYxVj0hev+fR898RynpUwY7YkyP0TT
+         4vM7wsc6qjrZ/V3/0n76Pu2bhmXQR3X/nRQBqfBgFkQXJYbxgYrHE8NG3suKLlTgIEJS
+         eRxNjDe22V/V+9o2VCpWRR6xbUlVLJnpixPzs/P6VJu0GwJTVZdvSLQzq/FG+nrMbwC3
+         fypA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726823071; x=1727427871;
+        d=1e100.net; s=20230601; t=1726823244; x=1727428044;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=780SsjLKTyN4z/bv2hI5xqQ2gIRVMpJg4AqmXrMJpqI=;
-        b=k8GWeJmFENTIHBoWIBA5AesJvP5WTicYmhIAK5N7rq8IovwbSz5icyaYv2mo6PjKJk
-         f/nzxtaC9kr9fp7nhXPCUCyyRG/3ubPZcLcljgHc6I7P8AN8dZ4gJnk97JEU1tWMePy0
-         X94a/feyJti5TTk5wC9t71qwefTEv7EbARxoof8bqUrTvnJVul/fFEJAX+d0lmMFO/gV
-         tIbSujcoT9GrI8Kl1qX6q9uJ7Pip5+stDcGn/aLfJgYgOeQSwa9/zE1nqbMG1NPVHz2b
-         t8pWbQeyFu5izLfpM2LaVkIeEVRJcm9b9h2Gi2BhQbRmL1G8lsZ2AZUgXyxSVzNW41A+
-         Zebw==
-X-Forwarded-Encrypted: i=1; AJvYcCWG7rpG5Mb3ZjEL7a8Jkq5Lu1H0vkUvcel3ZYjmud3YJML1FWw+rVi9/cLaVzwwPfUnpez3X+wWQGS6x/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuDMUlXe3wWJzHoyShwzVBvMqa+P0h+TEVeL1G2BsqumcR5Pz7
-	kt02B8PACD+spwIKWXE6PCjRUHTNwiRXsXdIvVCVudE/ouCcKxCi
-X-Google-Smtp-Source: AGHT+IE53COnOVEaKYnO2R1at+PVph9TPDE2aS9miHsQp/nr41PsWf30JiTDULEsADiPuPKBwzVM1g==
-X-Received: by 2002:a17:90b:2808:b0:2d8:7561:db6a with SMTP id 98e67ed59e1d1-2dd7f4604c1mr2703052a91.22.1726823070698;
-        Fri, 20 Sep 2024 02:04:30 -0700 (PDT)
-Received: from localhost.localdomain ([205.204.117.126])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd6ee9d8ffsm3483881a91.23.2024.09.20.02.04.28
+        bh=qw+m0q1r4IxYHWGNLkcr5AmxGd10neIFyiXitrVL5Fc=;
+        b=IKSswtoSx7OQlUdskNwdvdjkaJRyALTPSILj/TzZozOFyoGq5Td0hM/nVhdXGkesiM
+         3pnBkLfe+Y3PS341GE0ZnZ+dix3BxHn1XjaYQRvcxebFR9zFTvMyXL38eBjddRn8/AtN
+         I6MN/WR/QboqmbD4mp+cXW3szb6Yje4XqGiSN+a07onIZb6nYWkhN2kP+ACC6y5QolFw
+         61BSuXoZbq6TomjYVX4riwndY0IOpgVp5Ajymva4QSTb9rkzz6yw/TjX8BQr8Yu67wcT
+         VnKEQ82YR3bunhgGZB0ynOPDadUoqihL7bi8CuC4oTRNmAL5OMl2g3JGbGeX/1+3a++X
+         MwXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfFa+DUNaOoXRLKohWPIfJVoNh4UG3PzfMAgw3q/oQGAat8hIwyowfL99iUpSX1dOzKVA280jHvwO2qTU=@vger.kernel.org, AJvYcCXBrZwtnRxG35NFH2OK56BNWzCpos46eBh701jT0phZoAJe1V0Z6N9cf/n6YhBq4bC/UmOYyWIuPk5JNdBd@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvSja+Gzni8g83cSWYJxlEFk1Xj60TfZinAlNTHagtvtng4Ie9
+	kHEURyMxt/Kvkh4rjEMjwhFdtcTNqlKfFPl1f64kYpbP549W5qOR
+X-Google-Smtp-Source: AGHT+IGURv5RK6sAdlYpRfsfsm5WwxturaKTgVMCFOMqyn+9eXO0aSm8vLfDdA+3aK8GBMM91F8Tcg==
+X-Received: by 2002:a17:907:980b:b0:a8d:29b7:ece3 with SMTP id a640c23a62f3a-a90d3645713mr245422066b.33.1726823243633;
+        Fri, 20 Sep 2024 02:07:23 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:908:e842:bf20:422c:48db:9094:2fa9])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90c39cbceesm203669766b.132.2024.09.20.02.07.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 02:04:30 -0700 (PDT)
-From: Wardenjohn <zhangwarden@gmail.com>
-To: jpoimboe@kernel.org,
-	mbenes@suse.cz,
-	jikos@kernel.org,
-	pmladek@suse.com,
-	joe.lawrence@redhat.com
-Cc: live-patching@vger.kernel.org,
+        Fri, 20 Sep 2024 02:07:22 -0700 (PDT)
+From: Ole Schuerks <ole0811sch@gmail.com>
+To: mcgrof@kernel.org
+Cc: deltaone@debian.org,
+	jan.sollmann@rub.de,
+	jude.gyimah@rub.de,
+	linux-kbuild@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Wardenjohn <zhangwarden@gmail.com>
-Subject: [PATCH 2/2] Documentation: Add description to klp_patch order interface
-Date: Fri, 20 Sep 2024 17:04:04 +0800
-Message-Id: <20240920090404.52153-3-zhangwarden@gmail.com>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20240920090404.52153-1-zhangwarden@gmail.com>
-References: <20240920090404.52153-1-zhangwarden@gmail.com>
+	masahiroy@kernel.org,
+	ole0811sch@gmail.com,
+	thorsten.berger@rub.de
+Subject: Re: [PATCH v4 02/12] kconfig: Add picosat.c (1/3)
+Date: Fri, 20 Sep 2024 11:07:12 +0200
+Message-Id: <20240920090712.52825-1-ole0811sch@gmail.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <ZtlyCR4EloWbeWG7@bombadil.infradead.org>
+References: <ZtlyCR4EloWbeWG7@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,31 +90,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Update description of klp_patch order sysfs interface to livepatch
-ABI documentation.
+On 9/5/24 10:55, Luis Chamberlain wrote:
+> On Thu, Aug 29, 2024 at 11:23:52PM +0200, Ole Schuerks wrote:
+>> If one has to install some external package first,
+>> then that might diminish the usefulness. While there are extreme cases
+>> where it can take hours to manually identify all the dependencies, first
+>> having to build PicoSAT might take longer than manually resolving the
+>> conflict. Many users might then never install PicoSAT to try out the
+>> conflict resolver, even if they would benefit from it.
+>
+> That's a package dependency problem, ie, a distro thing to consider
+> which packages users should have installed. But isn't the bigger issue
+> the fact that you want some C library not the picosat binary tool? Or
+> would it suffice to just have picosat as a binary installed? I see at
+> least debian has python3 bindings now too python3-pycosat. So what type
+> of picosat integration really is best for the task at hand?
+>
+>> So the question is whether using PicoSAT as an external library is worth
+>> the portability issues and effort, and whether it wouldn't make more sense
+>> to directly include the PicoSAT source file.
+>
+> The pros of an external library are less burden on maintenance, and
+> otherwise we'd be forking PicoSAT, but as I mentioned, I don't see a c
+> library but instead just the picosat binary. An alternative is to use PicoSAT as
+> a git subtree inside Linux on a dedicated directory, this way PicoSAT
+> can evolve and we can update it when we need to. Note a git subtree is
+> not the same thing as a git submodule, those are terrible.
+>
+>> Otherwise, if we go with not including the PicoSAT source, then one could
+>> inform users about the missing package in the GUI, like this:
+>> When PicoSAT is installed:
+>> https://drive.google.com/file/d/1asBfLp1qfOq94a69ZLz2bf3VsUv4IYwL/view?usp=sharing
+>> When PicoSAT is not installed:
+>> https://drive.google.com/file/d/1ytUppyFPtH_G8Gr22X0JAf5wIne-FiJD/view?usp=sharing
+>>
+>> Let us know what you think. Include PicoSAT directly as a source or not,
+>> and then inform the user via the GUI?
+>
+> Do you need the picosat binary or the actual c code for helpers /
+> library?  I don't think we have anything in Linux yet using git
+> subtrees, but I don't see why we wouldn't for generic tooling and
+> this might be a good example use case.
+>
+>   Luis
 
-Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
-
-diff --git a/Documentation/ABI/testing/sysfs-kernel-livepatch b/Documentation/ABI/testing/sysfs-kernel-livepatch
-index 3735d868013d..14218419b9ea 100644
---- a/Documentation/ABI/testing/sysfs-kernel-livepatch
-+++ b/Documentation/ABI/testing/sysfs-kernel-livepatch
-@@ -55,6 +55,14 @@ Description:
- 		An attribute which indicates whether the patch supports
- 		atomic-replace.
- 
-+What:           /sys/kernel/livepatch/<patch>/order
-+Date:           Sep 2024
-+KernelVersion:  6.12.0
-+Contact:        live-patching@vger.kernel.org
-+Description:
-+		This attribute record the order of this livepatch module
-+		applied to the running system.
-+
- What:		/sys/kernel/livepatch/<patch>/<object>
- Date:		Nov 2014
- KernelVersion:	3.19.0
--- 
-2.18.2
-
+The packages mentioned in
+https://lore.kernel.org/all/20240710065255.10338-1-ole0811sch@gmail.com/T/#m34fdf309ecd545d72d898655d8c1a2653d1cdb81
+include the necessary libraries. The Python bindings aren't useful for our
+purposes, unfortunately, since many important features are missing, in
+particular the tracing of which assumptions failed. Using PicoSAT as a
+library seems to be the best solution.
 
