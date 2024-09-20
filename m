@@ -1,160 +1,186 @@
-Return-Path: <linux-kernel+bounces-334555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7661C97D8C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:00:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D53597D8C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A11C2863BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:00:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8C961F24CEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B1017F389;
-	Fri, 20 Sep 2024 17:00:35 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B501618132F;
+	Fri, 20 Sep 2024 17:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="QBFjJ2+1"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D577B2B9B9
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 17:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE0117798F
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 17:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726851635; cv=none; b=Z3x/QvPAkFeXurjbSb4p3niVAoTAHueTFy3y6dLMHUvfkTJ+GtmVIqiEuLwOclWPmf1PBlzkdkiQGd9pSJdogJLIhAhlS1XuBm5jerkeYq/vBVbVZRNPTlKgUWurcRXypy5C6F1n3LsW5uqhbSdsPBc14SUDqgHJOvFSZmdOLpk=
+	t=1726851761; cv=none; b=oHH7p8x3jFZ9HnIOQSP+jTDLEQtGAJgc0DoIplk9M5muZo6gQSAn/pbMVqrh0Rpxo721sKAJa6Xo45YQq1T57IVT/fYiwjMUHflq91avUKux0FXDVXnaR1YIXgnaExcgxpIsAegF7zea7QNw3KpAUlZwloHOuvTLEbFv7x/eXoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726851635; c=relaxed/simple;
-	bh=4j+fUHE3+805kbYfg1lYbt761J4oZtOOvdmszfKJ8RQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=M+/8ustbbdWjzb/Bf+VCOZsMhAnvflLIIuIXHIbMqzSty7cGmWrcXlvcvhuEFcTaDAi0pgMdOsTlrSPeAk6UocdSTWzNHVCtopKR49bk6nTCNunn/bZl9nrTwtl9eM3AqCsyMBn/kzSqFpgDrduhRpQC8zETr/pqnrGUH6XBXAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82ce3316d51so282562239f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 10:00:33 -0700 (PDT)
+	s=arc-20240116; t=1726851761; c=relaxed/simple;
+	bh=/U+zlX7dEyDKa3Dp8FfdEffyRjrenUfcuc193gOz0Sw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=l/2KnXIUE8MWEW6tPLc917A7L0mlNTgQbgMAYlRgEPP/KM7ugUGReppS0HwpzMPInc3NJHbNZ+r9rjRU4GJzC1k7g84eGvNlz86z/KG8Ei6cm0JDnTJYCkOOo8kxg4YTgcUjGuhXr1JJjRX2nNiTNaI3CM0r4QtuCzf/q87ofTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=QBFjJ2+1; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cafda818aso20704515e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 10:02:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1726851758; x=1727456558; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DKtDmkSCvbirKNZj+ZHOSlmw+X9DVZG2Qafk2mDwowU=;
+        b=QBFjJ2+1PDLHAg4WYBWcWFImPULgGT2b0CwOtJX3l9mHXVOP0SYsD3mcQkO+HSyZzo
+         AtDPFCsAL4v2Mc5XlilbhtfVIHXgHjICdAw88PYlsqJmw2dTFcZTUjQ4V7wp+uq16dnJ
+         KiNHw7BDHprQovtbsESgAIehwOqqqUWNBezskCvoxu/UviKwyTRWCBwFaIWO6k25S1ah
+         XxyE7mrz+2m05GySdFTq6QiW8qzPYDZ4hlvv9RZBadqE/BAu5P9sOpB6bImi/6+onNW/
+         ZNMpLBi4LiBbDduEE1WIHk965ihdc4o+cABqk+A1FU07AbJ4RcZ8SCBtm2JcSDLnMJ3Q
+         mdEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726851633; x=1727456433;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kfDdPHt9GI0mh8ly82kMMRpzmCBeMx53wohZf9EjjOU=;
-        b=AwL/F6dsHVfINgPFb/AthVNz2Nvj8WaYDhgwB75og1pK2wJr1B9aaClXmSe+HsIGIW
-         fXti0o+UJDPfZh557c9a/buD6NighS+nRFA2iOA9mw+lGotUVxUtCEZAIN/SB3b1Na8+
-         evOumGr/UBbBr67no57p8pmIrEbAnfmCpJO3p7Hdw/5cwLvYFO/bQHOGiOd6LlrRTRdG
-         OGF6T0fWk7KOd6z0rh0Av3dGDtIWQ9g5atM2E40d5mw1PaYhoLHnMptWqLWfN8CQMikP
-         QIT8IJI1HPHEV/ByMbcYRCUFVao/EqrvzBATp+rb5CtAA75fcUju6xyHZKpI0Wby3Umz
-         rh9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVzVmfCAJY3zcll4m095Dg9T9CMW2sNpHURzjrV4aO6oigW8el+RT3/24+juHDVZY7yDp01eqBQySh54Qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5xErcvOQ4KoMgawEWoXhZkvOLlj47lsnOGFyzjxr8R2OC4B7V
-	oQ9vGD4eqLGXS63aAdSUeapCaODEyO26dEbh1k3vKGCAI3qrzh1GmSnkNGlKpLo9GVqXPh+Ubaf
-	SSq6vJVcHVU0Kh9tgBfqEte6+JKFls4OH8pwkIokdVThrNQKoc2P7S84=
-X-Google-Smtp-Source: AGHT+IGHQLJzZ3Fwb8rhyPaE93K4zYCduyO6cmykcNi4QNNVdsnzFUnAgaEPQ+1hPSwt7ObLXPFgHEAlZ0B43MJ/HEgM61DDf8E8
+        d=1e100.net; s=20230601; t=1726851758; x=1727456558;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DKtDmkSCvbirKNZj+ZHOSlmw+X9DVZG2Qafk2mDwowU=;
+        b=XO4bLJ5T6rrvuolXYepHqjPs/ZY0oYeXyHOpmIskTPp5qT/8TEO00v2Gox8Bb7LW2D
+         OEZWC8amAKuCobf8YFixZX5lFcJ5rpx2h+mg8jmbCbDI75NWnsT682uvyyjI70Mu3Xrz
+         ux7b/zpY5zDT5L9Ah1+XruDsSahuEcBFmxPlbRfoNK+jvHXW3tXnUAh1hGEIJnBNqie9
+         o2gfHIgYoFund+ICJT8VHpgVfeY1YvAfMmhuksKamIdOGin00x1dHAadnnMq49e9C+n2
+         bVAGhKZRPLStJPxrNdifjm0OwKo5JSiF0DWbYYEXUh2u87AoO9BnzJi6QcRDwqBYwB7o
+         poRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtlrbLuDIGVhQXhOn4i1JS9XBRI8Xxct5bLc0wGT3u3XQIEvfZiRLPk/QjrCg78Vbma7n0cPOwOlin+zY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygRaoGxNuQ5Zpmft7no3XJLQ4Xyfejjvhs0UZv2KK0KGNOOrZr
+	T+nQQ0gFY5DrAq0ULsa7uPt9zkiLo8+GLJbI/Pv4qB4b6/6NKdffrumOIbMJdeY=
+X-Google-Smtp-Source: AGHT+IG7/IJmD1g4tZEVBuCZqUTIh3Wpxf4EhfjyDchF/uzZhzX7jOhudwq+E63B0EI69ZBRsT7ggw==
+X-Received: by 2002:a05:600c:1e11:b0:42c:b750:1a1e with SMTP id 5b1f17b1804b1-42e7c01047dmr23546045e9.0.1726851757569;
+        Fri, 20 Sep 2024 10:02:37 -0700 (PDT)
+Received: from [127.0.1.1] ([2a09:bac5:50ca:432::6b:72])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e75450ac2sm54237785e9.24.2024.09.20.10.02.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 10:02:37 -0700 (PDT)
+From: Tiago Lam <tiagolam@cloudflare.com>
+Subject: [RFC PATCH v2 0/3] Allow sk_lookup UDP return traffic to egress
+ when setting src port/address.
+Date: Fri, 20 Sep 2024 18:02:11 +0100
+Message-Id: <20240920-reverse-sk-lookup-v2-0-916a48c47d56@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8e:b0:3a0:b1ea:816 with SMTP id
- e9e14a558f8ab-3a0c9db0144mr31192415ab.25.1726851632712; Fri, 20 Sep 2024
- 10:00:32 -0700 (PDT)
-Date: Fri, 20 Sep 2024 10:00:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66edaa30.050a0220.25340c.0006.GAE@google.com>
-Subject: [syzbot] [netfs?] KMSAN: uninit-value in netfs_clear_buffer
-From: syzbot <syzbot+921873345a95f4dae7e9@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJSq7WYC/22NMQ+CMBSE/wp5s8+0hUhwkpAYR2PcDAOUV2mol
+ LRCNIT/bsXV7e5y990MnpwmD/toBkeT9tr2wYhNBLKt+juhboIHwUTCMpZhKJHzhL5DY203Dqj
+ SWsU7kYlaJhB2gyOlXyvzBpdj8c3O+bU4QRlUq/3Tuvd6OPG182Pz+A974siQUsGpYixuEnmQx
+ o6NMpWjrbQPKJdl+QAejOllxQAAAA==
+To: "David S. Miller" <davem@davemloft.net>, 
+ David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ Jakub Sitnicki <jakub@cloudflare.com>, Tiago Lam <tiagolam@cloudflare.com>, 
+ kernel-team@cloudflare.com
+X-Mailer: b4 0.14.1
 
-Hello,
+Currently, sk_lookup allows an ebpf program to run on the ingress socket
+lookup path, and accept traffic not only on a range of addresses, but
+also on a range of ports. At Cloudflare we use sk_lookup for two main
+cases:
+1. Sharing a single port between multiple services - i.e. two services
+   (or more) use disjoint IP ranges but share the same port;
+2. Receiving traffic on all ports - i.e. a service which accepts traffic
+   on specific IP ranges but any port [1].
 
-syzbot found the following issue on:
+However, one main challenge we face while using sk_lookup for these use
+cases is how to source return UDP traffic:
+- On point 1. above, sometimes this range of addresses are not local
+  (i.e. there's no local routes for these in the server), which means we
+  need IP_TRANSPARENT set to be able to egress traffic from addresses
+  we've received traffic on (or simply IP_FREEBIND in the case of IPv6);
+- And on point 2. above, allowing traffic to a range of ports means a
+  service could get traffic on multiple ports, but currently there's no
+  way to set the source UDP port egress traffic should be sourced from -
+  it's possible to receive the original destination port using the
+  IP_ORIGDSTADDR ancilliary message in recvmsg, but not set it in
+  sendmsg.
 
-HEAD commit:    2f27fce67173 Merge tag 'sound-6.12-rc1' of git://git.kerne..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10da7500580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5d864366be695947
-dashboard link: https://syzkaller.appspot.com/bug?extid=921873345a95f4dae7e9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12bdbfc7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17acc69f980000
+Both of these limitations can be worked around, but in a sub-optimal
+way. Using IP_TRANSPARENT, for instance, requires special privileges.
+And while one could use UDP connected sockets to send return traffic,
+creating a connected socket for each different address a UDP traffic is
+received on does have performance implications.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c167a07d047b/disk-2f27fce6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a68ac6093374/vmlinux-2f27fce6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/72a53f77d2bc/bzImage-2f27fce6.xz
+Given sk_lookup allows services to accept traffic on a range of
+addresses or ports, it seems sensible to also allow return traffic to
+proceed through as well, without needing extra configurations / set ups.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+921873345a95f4dae7e9@syzkaller.appspotmail.com
+This patch sets out to fix both of this issues by:
+1. Allowing users to set the src address/port egress traffic should be
+   sent from, when calling sendmsg();
+2. Validating that this egress traffic comes from a socket that matches
+   an ingress socket in sk_lookup.
+   - If it does, traffic is allowed to proceed;
+   - Otherwise it falls back to the regular egress path.
 
-=====================================================
-BUG: KMSAN: uninit-value in netfs_clear_buffer+0x216/0x4e0 fs/netfs/misc.c:75
- netfs_clear_buffer+0x216/0x4e0 fs/netfs/misc.c:75
- netfs_free_request+0x51f/0x890 fs/netfs/objects.c:146
- netfs_put_request+0x161/0x360 fs/netfs/objects.c:170
- netfs_write_collection_worker+0x7337/0x7c20
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3393
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+The downsides to this is that this runs on the egress hot path, although
+this work tries to minimise its impact by only performing the reverse
+socket lookup when necessary (i.e. only when the src address/port are
+modified). Further performance measurements are to be taken, but we're
+reaching out early for feedback to see what the technical concerns are
+and if we can address them.
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3995 [inline]
- slab_alloc_node mm/slub.c:4038 [inline]
- __kmalloc_cache_noprof+0x4f0/0xb00 mm/slub.c:4185
- kmalloc_noprof include/linux/slab.h:690 [inline]
- netfs_buffer_append_folio+0x2cf/0x8b0 fs/netfs/misc.c:25
- netfs_write_folio+0x1120/0x3050 fs/netfs/write_issue.c:421
- netfs_writepages+0xe60/0x1670 fs/netfs/write_issue.c:541
- do_writepages+0x427/0xc30 mm/page-writeback.c:2683
- filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
- __filemap_fdatawrite_range mm/filemap.c:430 [inline]
- __filemap_fdatawrite mm/filemap.c:436 [inline]
- filemap_fdatawrite+0xbf/0xf0 mm/filemap.c:441
- v9fs_dir_release+0x1f2/0x810 fs/9p/vfs_dir.c:219
- __fput+0x32c/0x1120 fs/file_table.c:431
- ____fput+0x25/0x30 fs/file_table.c:459
- task_work_run+0x268/0x310 kernel/task_work.c:228
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0xd88/0x4050 kernel/exit.c:882
- do_group_exit+0x2fe/0x390 kernel/exit.c:1031
- __do_sys_exit_group kernel/exit.c:1042 [inline]
- __se_sys_exit_group kernel/exit.c:1040 [inline]
- __x64_sys_exit_group+0x3c/0x50 kernel/exit.c:1040
- x64_sys_call+0x3b9a/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[1] https://blog.cloudflare.com/how-we-built-spectrum/
 
-CPU: 0 UID: 0 PID: 2945 Comm: kworker/u8:9 Not tainted 6.11.0-syzkaller-04557-g2f27fce67173 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: events_unbound netfs_write_collection_worker
-=====================================================
-
+Suggested-by: Jakub Sitnicki <jakub@cloudflare.com>
+Signed-off-by: Tiago Lam <tiagolam@cloudflare.com>
+---
+Changes in v2:
+- Amended commit messages and cover letter to make the intent and
+  implementation clearer (Willem de Bruijn);
+- Fixed socket comparison by not using socket cookies and comparing them
+  directly (Eric Dumazet);
+- Fixed misspellings and checkpatch.pl warnings on line lengths (Simon
+  Horman);
+- Fixed usage of start_server_addr() and gcc compilation (Philo Lu);
+- Link to v1: https://lore.kernel.org/r/20240913-reverse-sk-lookup-v1-0-e721ea003d4c@cloudflare.com
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Tiago Lam (3):
+      ipv4: Support setting src port in sendmsg().
+      ipv6: Support setting src port in sendmsg().
+      bpf: Add sk_lookup test to use ORIGDSTADDR cmsg.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ include/net/ip.h                                   |  1 +
+ net/ipv4/ip_sockglue.c                             | 11 +++
+ net/ipv4/udp.c                                     | 35 +++++++++-
+ net/ipv6/datagram.c                                | 79 ++++++++++++++++++++++
+ net/ipv6/udp.c                                     |  8 ++-
+ tools/testing/selftests/bpf/prog_tests/sk_lookup.c | 67 ++++++++++++------
+ 6 files changed, 176 insertions(+), 25 deletions(-)
+---
+base-commit: 6562a89739bbefddb5495c09aaab67c1c3756f36
+change-id: 20240909-reverse-sk-lookup-f7bf36292bc4
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Best regards,
+-- 
+Tiago Lam <tiagolam@cloudflare.com>
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
