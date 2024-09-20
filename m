@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-333986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478B197D109
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:01:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A05A97D10C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4AB1C219DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:01:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E5B283A54
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B88C37171;
-	Fri, 20 Sep 2024 06:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A94E3B192;
+	Fri, 20 Sep 2024 06:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="rkgEL6zp"
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="NGmVz4ry"
 Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78352CA2;
-	Fri, 20 Sep 2024 06:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFB92CA2;
+	Fri, 20 Sep 2024 06:07:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726812084; cv=none; b=LIYzJBgPFp8YICG4wx6WKUCbO6hhYLbd/oJU25ZR9fgnehFXevgg6q8KfxH1Cl/R623LorRvOCXkuiTdiTdaeeHMHPFXEJdyQ2HfVutPbuqWG58Fr1ErARt1fXWf2WKPz5gjJ4rhuggt7MwyU/vQlZpyx8O+vLigBXb8oNsH7Cc=
+	t=1726812462; cv=none; b=Qhgn8d5O/hPlOhJp9ppmBl2m0K/38ipOMLgGdqSk40tCVvmvGAYemvt/nRJJ7UVx4oiWmgEMGuFP9N7vwVtWy2AaT7DyGswjmdiKNpG7NbbWPYst3qF/T7iUOceBUVml5+RR8AAqVDRCOsBV1vlanxmHehX7FdJ7bssv/CFKb3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726812084; c=relaxed/simple;
-	bh=NqrVnwRk2LC6xCvU0FBpyM3JmYvxjjf/JEwXNN+RGnI=;
+	s=arc-20240116; t=1726812462; c=relaxed/simple;
+	bh=oXTPimYX8Gdez+/+pjv11RuNN7snvos5DyD3PaS4v9g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ig0zwnAeP1DJPtOZFoJqPPr+pEtDuCzcYyEfHqUurwd8DuerNiqxCKGfw9pEWTNulD5GjhuNUDOxi7iMVfusuObgBIPd9Gpk16YfuduxALXA45+vYRRtPsJfJaaAEiLsUwP2O8UF3qgitwj8OJjylxbTozJWdVdx/RDAPwCuIjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=rkgEL6zp; arc=none smtp.client-ip=217.92.40.78
+	 Content-Type:Content-Disposition:In-Reply-To; b=TxJA8P8eWXML9+ICpMDuP/MT59hUbKZu/JdOVqcvM2KPZxI08SDZdTZWkQBXQv8Zp0CJ9YYRgzvNABydMYFmRRb/1uAg8c81GKrUYJHXNm4fHK1GJ1d7ae49jWLUKpfMCb1I2g4uCHGfWY08PvyZe1WUkSXua+pdDUxUwCDEpms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=NGmVz4ry; arc=none smtp.client-ip=217.92.40.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8BD4B14835DA;
-	Fri, 20 Sep 2024 08:01:16 +0200 (CEST)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A7B0C1480600;
+	Fri, 20 Sep 2024 08:07:36 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1726812077; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=OuyX7E8GGDXrKC0gVl8fpd9vbnAU6SI1vyySpQJuPOk=;
-	b=rkgEL6zpndmBQ0yN3aeFYODrxtZh6JVtEGP3wC+gcxc4jZ5GTpx0EwTqTNF2ab17a4o8vi
-	3rLRGBvf6vB2NCfEzVqr9MLW7Uk3isNZ1Xwtu3dTd9wr/bOQoUJnDLopnczBSYWGXe7/cG
-	w+bkvs+XOdLW42buh1LJWqaa45LAGkjRYVQbObycalOf9g5e3ZDNMUG0sgTbP60o8P9TMV
-	Xid10WZHfTBf1+qKIUwaiBRY5vLokwZf5n9WrcJmbrwyrHKIlqJa45FoID8lGXD0SUB8x3
-	telG7HxWG6tLIFPJuWqfGODRu5xL7HZiczyOUCxGGh0OH0hmqIX6FrETt+VheQ==
-Date: Fri, 20 Sep 2024 08:01:11 +0200
+	t=1726812457; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=85K2BQJpCVOCfU+gA4w4Ipq2kelzLknvkc+pUv5MI2A=;
+	b=NGmVz4ryeTZAFOBfSYqb9MmdcMqBU05+AIOJrqwo6JjW7Hr2RdG9RM1SBVq0wSRZFJNZkQ
+	4Hw7+K8JtM93bqCcbkvQtmfCnlO64vBNDLwQneXB6+Yy5ydeOZUv0INbrXf0QdiUlNkxJm
+	JskUBCQUi6rVkVLCpknEdp9KzElnTZHDWszBv80zZ5FKW0J14QpuWAWcMkeFCfmbaNx3hz
+	iNWd+kDiEk/85BlOa2+k/79+ONjOvIQGAGPdvNR1urT0WffLuH0zT8cdBN9ER8+RzMSvkh
+	6qfKgkSwt94Y0VTHFRBDiSg05q4YS2VX7ChjnY7NSuyJCKKRBl2YXzm/lW47Ag==
+Date: Fri, 20 Sep 2024 08:07:35 +0200
 From: Alexander Dahl <ada@thorsis.com>
 To: Varshini Rajendran <varshini.rajendran@microchip.com>
 Cc: nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
@@ -49,7 +49,7 @@ Cc: nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v7 12/12] ARM: dts: microchip: sam9x75_curiosity: add
  sam9x75 curiosity board
-Message-ID: <20240920-scored-fried-e2dbb86bf1ba@thorsis.com>
+Message-ID: <20240920-frisbee-create-c4988e6e3e9e@thorsis.com>
 Mail-Followup-To: Varshini Rajendran <varshini.rajendran@microchip.com>,
 	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
 	claudiu.beznea@tuxon.dev, robh@kernel.org, krzk+dt@kernel.org,
@@ -70,6 +70,8 @@ User-Agent: Mutt/2.2.12 (2023-09-09)
 X-Last-TLS-Session-Version: TLSv1.3
 
 Hello,
+
+forgot another comment, sorry for the second mail.  See below.
 
 Am Tue, Sep 03, 2024 at 12:14:38PM +0530 schrieb Varshini Rajendran:
 > Add device tree file for sam9x75 curiosity board.
@@ -173,21 +175,8 @@ Am Tue, Sep 03, 2024 at 12:14:38PM +0530 schrieb Varshini Rajendran:
 > +		};
 > +	};
 
-This is an RGB LED like on other Microchip Curiosity boards, right?
-So three colors in a single package?  What about using the
-"leds-group-multicolor" driver instead of adding these as separate
-LEDs?
-
-See Documentation/devicetree/bindings/leds/leds-group-multicolor.yaml
-for reference.  I tried that lately on the SAM9X60 Curiosity out of
-curiosity, and it's a nice interface from userspace POV.
-
-Besides: According to
-Documentation/devicetree/bindings/leds/common.yaml the group name
-should be 'led-controller' instead of 'leds'.
-
-Greets
-Alex
+Why a seperate pinctrl for each led?  You can add it to a single
+group, attached to the led controller (gpio-leds in this case).
 
 > +
 > +	memory@20000000 {
@@ -395,6 +384,13 @@ Alex
 > +			atmel,pins = <AT91_PIOC 20 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
 > +		};
 > +	};
+
+Related to above.  These three can be configured together in one
+group.  See other microchip board dts files for reference.
+
+Greets
+Alex
+
 > +
 > +	sdmmc0 {
 > +		pinctrl_sdmmc0_default: sdmmc0-default {
