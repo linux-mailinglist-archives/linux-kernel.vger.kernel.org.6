@@ -1,168 +1,184 @@
-Return-Path: <linux-kernel+bounces-334441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E06797D753
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:10:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F4BE97D755
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F8811F21BC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:10:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 624B91C21A9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07BE17C9F9;
-	Fri, 20 Sep 2024 15:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F190817CA02;
+	Fri, 20 Sep 2024 15:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vRSpfDQp"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dATlL6U/"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F6717C7BE
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7136D17C9E7
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726845024; cv=none; b=ZHPQEvYZ74JgXB9mgv0mouClTRlskSDJMzrx+DGeoUOObPF3UDDPV+63IQcx0Oh0J5Dv6LxtkwFPsmdxYUMoQDOQI6l7KvYi1SqXl7IUz6EtuuXGiH0lTmNTr8iSOgZZTOiI3FzrSNSRDo/1HLdZxOLX5BPkAIOgtfEpisxLlsE=
+	t=1726845041; cv=none; b=iLqgSc8uYhOUxDu1rZYNfPjaw0pYoog87RhYkOrCxePygzTXjca4xOQcdXtCxnW1h3Y/u0Bt/QoPCBysgAkIe0ANgVU2wRN6ySguc1/cs0fCvac3mb16JWzfgrdLzh9LqrNZGAbQnPStAJvlqrLGR3tz5v3y73G14gjW461gtFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726845024; c=relaxed/simple;
-	bh=UMPI6dbr3vZF/IEea0Gxx5qCUzLzf9e2xNJR+bN0i6E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tEI9vGaj6c9gmNGOlQIEmtIGgOuXF0/6IbWkDBc/j1K9PABkEc+GA1cfA1wnGz7ZDbYWozhiPTpeG4G0kUfarFIQ2PIqAwMs0ClPGTx2exOyyqasG5Fykon/4OfTL1L2VljblqfegQokU+ZSWRnDQOD+yvj1PSeJrfYAWQyt6cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vRSpfDQp; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb9a0c300so18504685e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:10:19 -0700 (PDT)
+	s=arc-20240116; t=1726845041; c=relaxed/simple;
+	bh=m64zunrpTT7clJ4I9TXVRY5xts3FGhLA4W4pYySMktk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ghubOz8kqjs4qbHVpqfEHEpzO7WSGkKeToW3C4bFTltwBqrlimaDXyTCQR7h+JJBrhQons3niIAy3YJ3yCXbJHMZ70ghva+Qcul6bD4QSqEUgu+D3lYfd0ZGsYrXkskiIMgIt2NJVtLZpGMUgroj95tTslB4wDHL9fJnsPsQeYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dATlL6U/; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-82d24e18dfcso112066739f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:10:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726845018; x=1727449818; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dqxB4KzGedlZDzswgDTRSffnag1Yh8CdsgK618Kt3iI=;
-        b=vRSpfDQpPG23yYCrW0VtQ7XLoaHq31n50/ipJ6+4BjHx2Il8WuwD5IIl1ieAvp2KER
-         opB5a04iboKiKbOwRyX5XXTdYlvEtZP0zjNHxTeiJe8Qo7a3ZeT9e76zHxPNNJ00rnMc
-         8olt9BZJ3hN9hcrfkUMxnWnPtE9cAPNax/0aj0+qegWinn8M2ekD5S2w170cmP7OkN2z
-         EFr9htu0ZlAOPxS09OABBwqDlMy1gg482+O65qr3oyk1miNM4s4WMumyFVvaLQN8zgav
-         H2+wWnV0G76ydeFE+dDHW7PIbw0c5PWfToXshm1jhftk3C3WU93hg00V41ZCk1DwkNWQ
-         p23Q==
+        d=linuxfoundation.org; s=google; t=1726845038; x=1727449838; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DJJMb8RSS4AQiwxpzvIgvhQjhF1XMXFRTCcE2Om75mQ=;
+        b=dATlL6U/v+2GeN31SofkuPALf6Hi01JCzMIKircd038ebje/fsx7IhnQn8V+YKo4R/
+         le4SF6HvQTYec2RhT6o8cCV8qe7D07QkcrpHtach5CJJDtSt/lFIR4EbmIICx27BzMmJ
+         GlIXlx5AVPdWO1YoXyfc9VMhmypgOBBwzl/x4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726845018; x=1727449818;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dqxB4KzGedlZDzswgDTRSffnag1Yh8CdsgK618Kt3iI=;
-        b=PxGsgB7ElldW2t9vAfyFt6TTnzfbgp0QOT4HkE+zu3RD+2e6pXN5Y20I4JRgTpmESt
-         ybkOzhi07HKGZZ87KipTEzEilJCRhTx+YLY/BZ+4A0bcz1ForZuN56/TTsrDSWjusQzP
-         Nywl8OMT/c1ZjprTIHn0282zCwwZdVeshFI1xYN/kJfg1s3iCvUfhUn1CCGMXQ1JocdS
-         EL04mWf+VVOU1o4zm1KNkdTS71lmm3Jsrul5AJofNAW0rtFil+kAKDgZrPLTo10bPm9t
-         9wEzGKrrukOqtD7K8wW0msCHIYPATSdeNpmAi9iPzP+chOjMXoQmhoUBD4SuOrqzh33D
-         dk8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXYWgbCoiB8dzFgM8EA/QEI2A6tAybTyKOeldM6AtDFUfj52vdTLqELIj40wzdrZKGidaPpTVATkE6BtQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8iXqt+hyLDtdZSEa1FSIC0JSr1DQJYsHc+jx5B2AQ8KE299r2
-	BYBPC1cZzrPFxzRQyiw0J9Nq6tsPsreqk9EQu/EIf6ujWz3vuR2dvby5z2RqgFw=
-X-Google-Smtp-Source: AGHT+IG4ybmvfCPFK7GpLPZJ9S6gMbOoQX6B/i66eB46HTLEMiy8K/MDelU5eMphLtP74FLdVw9wMw==
-X-Received: by 2002:a05:600c:1d85:b0:42c:c401:6d67 with SMTP id 5b1f17b1804b1-42e7abe12c9mr21430965e9.6.1726845017829;
-        Fri, 20 Sep 2024 08:10:17 -0700 (PDT)
-Received: from localhost (p5dc68d3d.dip0.t-ipconnect.de. [93.198.141.61])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e75389c88sm54088995e9.0.2024.09.20.08.10.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 08:10:17 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Shenghao Ding <shenghao-ding@ti.com>,
-	Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@opensource.cirrus.com
-Subject: [PATCH] ALSA: Drop explicit initialization of struct i2c_device_id::driver_data to 0
-Date: Fri, 20 Sep 2024 17:10:08 +0200
-Message-ID: <20240920151009.499188-2-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1726845038; x=1727449838;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DJJMb8RSS4AQiwxpzvIgvhQjhF1XMXFRTCcE2Om75mQ=;
+        b=Gaxz2gEiTsVcTwmcpXt3LA2Den9bMSuYZIyL6CTNIuNv2M6yaAYVebvC2tUL7vKGkg
+         uVhO8iBxpWG8bSWQMKttKQR8DGmxWTGrBy7n4hsfMmPxcGJ5hlTxOTZ9wd/33PBSQt4W
+         iksJTGLqc1yunscz1TgpoTRYlrupDnsS5liM6x/FdPXjXwnubmAGG/u1LmYn1h+Sz4mn
+         u5Ah4IMzlrsGTT5ZAiDEcbWjvUTwV9/LBCNZu5GSgbLuK3YnxNsLyfN9xxWxFexq1D8c
+         ehTVkEOzaWOfWVGNBrNj7/rw0g74YQug70bcPA3MnYLDzPVLKHvw93NcmMohnCAkXXez
+         h81A==
+X-Forwarded-Encrypted: i=1; AJvYcCUxjXVGvAciUefuFNlEq49KtGaJkspmhHM8sLXiCoQAIogqLH0tR79WEzKItk40kEyR5ah78w9v1XEjRh4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrrDMlfTFpl2tT1xyW2tFSZab0ZggLXGna3URAUdZFni5owur3
+	8YMejTNiXOgVdcpJjE2xbZhff7/MZaLbW7400v8mLr1SsucWmysIAwnrhvor9lw=
+X-Google-Smtp-Source: AGHT+IHeudTP4G0KwruXvq75Uj6FmS+FTUetpEU0+/iBmXwgBmFFWT6xfJOUNZbgWuHMf51VOQGj8Q==
+X-Received: by 2002:a05:6602:6c17:b0:831:fe52:c602 with SMTP id ca18e2360f4ac-83209eabdb1mr409460239f.15.1726845038296;
+        Fri, 20 Sep 2024 08:10:38 -0700 (PDT)
+Received: from [10.212.145.178] ([12.216.155.19])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d37ebf483esm3601957173.10.2024.09.20.08.10.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Sep 2024 08:10:37 -0700 (PDT)
+Message-ID: <f641378c-e729-4c5d-bf55-24a7fc96b623@linuxfoundation.org>
+Date: Fri, 20 Sep 2024 09:10:37 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2252; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=UMPI6dbr3vZF/IEea0Gxx5qCUzLzf9e2xNJR+bN0i6E=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBm7ZBR/8GCUV4aeWj8Lb2TYNLJVkJrXibxwUuPQ 5Sqo3ZScMyJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZu2QUQAKCRCPgPtYfRL+ Th38B/wPssqPeUx8jeBlsp1PHwKwqwZKv0klqLgfgERAspSV9HlI9RhbIl5FNCUL+XdJvUV62A+ Jy0sEEPwbrSUxzs5FY2CGHw1mLFG38sJVTWAcAQvGAiNQQmpZWeUAmE9ypN2EN4oGnyA+OxmR1W p7uFRCfonXSQay49ptoU+YwMGcVz2sfBfYOOEcaXufzilvyMVasjLMnvG2o5TME6VJQE3FVYVxj XgIuqy6O9iFMl5KHMxWyoGPHtSHoWly2reMtLnsvHUtRZjyUZhy0uJV2GAeYeev3xwORxOoGBQM Pt3kHzQc/wQNGfPt/6j6t/pU32qov0X5Z/ManUH30q8z9FQw
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/1] Add KUnit tests for llist
+To: David Gow <davidgow@google.com>
+Cc: Artur Alves <arturacb@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+ n@nfraprado.net, andrealmeid@riseup.net, vinicius@nukelet.com,
+ diego.daniel.professional@gmail.com, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240917005116.304090-1-arturacb@gmail.com>
+ <bd5eb792-124f-4eaa-9ff9-a99765d1ef73@linuxfoundation.org>
+ <CABVgOSmNcmnRCn5Q05U1wBebSGTM=OdUXuT7SA-poHXUgKubaQ@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CABVgOSmNcmnRCn5Q05U1wBebSGTM=OdUXuT7SA-poHXUgKubaQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-These drivers don't use the driver_data member of struct i2c_device_id,
-so don't explicitly initialize this member.
+On 9/20/24 01:10, David Gow wrote:
+> On Fri, 20 Sept 2024 at 00:01, Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>
+>> On 9/16/24 18:51, Artur Alves wrote:
+>>> Hi all,
+>>>
+>>> This is part of a hackathon organized by LKCAMP[1], focused on writing
+>>> tests using KUnit. We reached out a while ago asking for advice on what
+>>> would be a useful contribution[2] and ended up choosing data structures
+>>> that did not yet have tests.
+>>>
+>>> This patch adds tests for the llist data structure, defined in
+>>> include/linux/llist.h, and is inspired by the KUnit tests for the doubly
+>>> linked list in lib/list-test.c[3].
+>>>
+>>> It is important to note that this patch depends on the patch referenced
+>>> in [4], as it utilizes the newly created lib/tests/ subdirectory.
+>>>
+>>> [1] https://lkcamp.dev/about/
+>>> [2] https://lore.kernel.org/all/Zktnt7rjKryTh9-N@arch/
+>>> [3] https://elixir.bootlin.com/linux/latest/source/lib/list-test.c
+>>> [4] https://lore.kernel.org/all/20240720181025.work.002-kees@kernel.org/
+>>>
+>>> ---
+>>> Changes in v3:
+>>>       - Resolved checkpatch warnings:
+>>>           - Renamed tests for macros starting with 'for_each'
+>>
+>> Shouldn't this a separate patch to make it easy to review?
+>>
+> 
+> I think that, if this were renaming these in an already existing test
+> (like the confusingly similar list test), then yes. But since it's
+> only a change from v2, I think we're okay.
+> 
+>>>           - Removed link from commit message
+>>>       - Replaced hardcoded constants with ENTRIES_SIZE
+>>
+>> Shouldn't this a separate patch to make it easy to review?
+> 
+> Again, if we want to change this in other tests (list, hlist) we
+> should split it into a separate patch, but I think it's okay for llist
+> to go in with these already cleaned up.
+> 
+>>
+>>>       - Updated initialization of llist_node array
+>>>       - Fixed typos
+>>>       - Update Kconfig.debug message for llist_kunit
+>>
+>> Are these changes to existing code or warnings on your added code?
+> 
+> I think these are all changes to the added code since v2. Artur, is that right?
+> 
+>>>
+>>> Changes in v2:
+>>>       - Add MODULE_DESCRIPTION()
+>>>       - Move the tests from lib/llist_kunit.c to lib/tests/llist_kunit.c
+>>>       - Change the license from "GPL v2" to "GPL"
+>>>
+>>> Artur Alves (1):
+>>>     lib/llist_kunit.c: add KUnit tests for llist
+>>>
+>>>    lib/Kconfig.debug       |  11 ++
+>>>    lib/tests/Makefile      |   1 +
+>>>    lib/tests/llist_kunit.c | 358 ++++++++++++++++++++++++++++++++++++++++
+>>>    3 files changed, 370 insertions(+)
+>>>    create mode 100644 lib/tests/llist_kunit.c
+>>>
+>>
+>> You are combining lot of changes in one single patch. Each change as a separate
+>> patch will help reviewers.
+>>
+>> Adding new test should be a separate patch.
+>>
+>> - renaming as a separate patch
+>>
+> 
+> I think given that these are just changes between patch versions, not
+> renaming/modifying already committed code, that this is okay to go in
+> as one patch?
+> 
+> The actual patch is only doing one thing: adding a test suite for the
+> llist structure. I don't see the point in committing a version of it
+> only to immediately rename things and clean bits up separately in this
+> case.
 
-This prepares putting driver_data in an anonymous union which requires
-either no initialization or named designators. But it's also a nice
-cleanup on its own.
+I do think it will help to separate the renaming and adding a new test.
+It makes it easier to follow.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
- sound/aoa/codecs/onyx.c         | 2 +-
- sound/aoa/codecs/tas.c          | 2 +-
- sound/pci/hda/cs35l41_hda_i2c.c | 2 +-
- sound/pci/hda/tas2781_hda_i2c.c | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/sound/aoa/codecs/onyx.c b/sound/aoa/codecs/onyx.c
-index e90e03bb0dc0..ac347a14f282 100644
---- a/sound/aoa/codecs/onyx.c
-+++ b/sound/aoa/codecs/onyx.c
-@@ -1040,7 +1040,7 @@ static void onyx_i2c_remove(struct i2c_client *client)
- }
- 
- static const struct i2c_device_id onyx_i2c_id[] = {
--	{ "MAC,pcm3052", 0 },
-+	{ "MAC,pcm3052" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c,onyx_i2c_id);
-diff --git a/sound/aoa/codecs/tas.c b/sound/aoa/codecs/tas.c
-index be9822ebf9f8..804b2ebbe28f 100644
---- a/sound/aoa/codecs/tas.c
-+++ b/sound/aoa/codecs/tas.c
-@@ -927,7 +927,7 @@ static void tas_i2c_remove(struct i2c_client *client)
- }
- 
- static const struct i2c_device_id tas_i2c_id[] = {
--	{ "MAC,tas3004", 0 },
-+	{ "MAC,tas3004" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c,tas_i2c_id);
-diff --git a/sound/pci/hda/cs35l41_hda_i2c.c b/sound/pci/hda/cs35l41_hda_i2c.c
-index 603e9bff3a71..bb84740c8520 100644
---- a/sound/pci/hda/cs35l41_hda_i2c.c
-+++ b/sound/pci/hda/cs35l41_hda_i2c.c
-@@ -39,7 +39,7 @@ static void cs35l41_hda_i2c_remove(struct i2c_client *clt)
- }
- 
- static const struct i2c_device_id cs35l41_hda_i2c_id[] = {
--	{ "cs35l41-hda", 0 },
-+	{ "cs35l41-hda" },
- 	{}
- };
- 
-diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
-index f58f434e7110..4b9dc84ce6bb 100644
---- a/sound/pci/hda/tas2781_hda_i2c.c
-+++ b/sound/pci/hda/tas2781_hda_i2c.c
-@@ -951,7 +951,7 @@ static const struct dev_pm_ops tas2781_hda_pm_ops = {
- };
- 
- static const struct i2c_device_id tas2781_hda_i2c_id[] = {
--	{ "tas2781-hda", 0 },
-+	{ "tas2781-hda" },
- 	{}
- };
- 
-
-base-commit: 62f92d634458a1e308bb699986b9147a6d670457
--- 
-2.45.2
+thanks,
+-- Shuah
 
 
