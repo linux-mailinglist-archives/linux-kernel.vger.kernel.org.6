@@ -1,114 +1,88 @@
-Return-Path: <linux-kernel+bounces-334092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBBF097D286
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:22:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65AD497D27C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EAE31F2161F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:22:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 122951F25CA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52737E107;
-	Fri, 20 Sep 2024 08:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E739824BD;
+	Fri, 20 Sep 2024 08:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TGGmPIpd"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA1B7D401;
-	Fri, 20 Sep 2024 08:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCC8B2Fn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38924C62B;
+	Fri, 20 Sep 2024 08:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726820501; cv=none; b=eVvUc5CHk0kTyV+dc5AByU9pUZFzg6bH3p2G7ibzwo1osvbn5hCCsg0dyNJefqq8wCCc4MlTEYqlUzWe4LqMBW1Wqj0GF+7sreD/h2qx3kTsm7J92ulJyKotd6H/f/K424H3tg41/Q6L9rts7Nn7j1jDhx40gUc8EO6h557+324=
+	t=1726820466; cv=none; b=l1yolXmbgK7fUQ/syX8M/5qG3z+B05e5Is8ztEcDxYll/IoGeNP5dcO4Gq56XRsog2afaN/OtzgQvJd0HZ4r95luvv6y/T/PkHfua7GDKYo5eetRWaBi51WtFqv7YOF77HJIBj9UXkHqirjhdIBDr0rOQvBtZN1Cf5CXO3jLn54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726820501; c=relaxed/simple;
-	bh=IadptqnbaT9c2K1pNM/SXaZhFjND1guNP3ocQdMNleU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fMdT3962cNj9wsTPlPDh1JiCPpw15SWPdUWpumuUDgYXaX7kfjjXPozWSMqjLbsK/9hZsjipwfirzFbtQA50ujbifk+jI5d93RrGDJjBDuusXIBGr8n6kte6Xq/xOB66GIPLaFd66mhOQeM8bjepextQ1RdT/P/a6lU8il3uDwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TGGmPIpd; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=0GYSG
-	+chUw6Ysv1qyoAIdKhyk6i2g6/WZX6U7MclNH0=; b=TGGmPIpdvvXtsugOEABzZ
-	/I8bOStNtgaFjjNuuYCoL2cRqbQXK2SMdQieRctHtlUT+WOIRXHwcNY+m/KYCoFD
-	1OvtuQxSm1GCKCg6ZIzEUpzNXk5RSXv2np3aQbdG3bynpnZ8AwLfW6nEsd5XktS7
-	a50W+lLehX2fASanH1cXeU=
-Received: from ProDesk.. (unknown [58.22.7.114])
-	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wDX3_dtMO1mi4uaBQ--.13042S2;
-	Fri, 20 Sep 2024 16:21:05 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: heiko@sntech.de
-Cc: hjc@rock-chips.com,
-	krzk+dt@kernel.org,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	s.hauer@pengutronix.de,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	derek.foreman@collabora.com,
-	minhuadotchen@gmail.com,
-	detlev.casanova@collabora.com,
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v3 04/15] drm/rockchip: vop2: Fix the mixer alpha setup for layer 0
-Date: Fri, 20 Sep 2024 16:20:58 +0800
-Message-ID: <20240920082100.6683-1-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240920081626.6433-1-andyshrk@163.com>
-References: <20240920081626.6433-1-andyshrk@163.com>
+	s=arc-20240116; t=1726820466; c=relaxed/simple;
+	bh=caI3Gjh9ysGzGdw73u4qGfOHUpjWFgDmBK+Wo5CFDWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ShjcTpN52ww8ZfRRDg1erQHlYoTc7MBVIAZUXYV5e7ZXfBP0PxX5tkmbELve9MU2m+yhathzeUUJsdy7sm0QaRH5Z8MhPMMUvQJDUM59F286cOK37ssJYmezeI9qbKsN8Y5ocV6wQZQGlR4BiwBGeX3eJMgWSdoSJ8zYO5ssqXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCC8B2Fn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CB12C4CEC3;
+	Fri, 20 Sep 2024 08:21:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726820466;
+	bh=caI3Gjh9ysGzGdw73u4qGfOHUpjWFgDmBK+Wo5CFDWw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HCC8B2Fne8WBGYhAlne31qK/mO1DhHijTNjK2BdSH4twPWRIl6R8KaXPokic/BFOB
+	 ThBnZFcS2+LFFd+M7F1SypZA17bkOGoO+xt6lBwDEoQclOj6U+GJgxGy+jRoPeI+2K
+	 ZveItOQw+bkYKZPn2mUNo2uxvzlDmM5Ksmtt8+lCFuOJvo4oxvaECBucucONjYAqd+
+	 M4LZCn84x/DDYU3HxHPTU1BDiqMSkuTjE6KUNwoG2GllGrNFICfoFsLivN4Ir68cy4
+	 re8NHXdpoSK+yYgCeApfnlIVC8az8vwNhU4cfVGfFPoi4jMoRJ4basTCBpXbPx1sIF
+	 YTXjb5Pd9PI6Q==
+Received: from johan by theta with local (Exim 4.98)
+	(envelope-from <johan@kernel.org>)
+	id 1srYsx-000000000pD-0VIV;
+	Fri, 20 Sep 2024 10:21:03 +0200
+Date: Fri, 20 Sep 2024 10:21:03 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] soc: qcom: pd_mapper: fix ADSP PD maps
+Message-ID: <Zu0wb-RSwnlb0Lma@hovoldconsulting.com>
+References: <20240918-x1e-fix-pdm-pdr-v1-1-cefc79bb33d1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDX3_dtMO1mi4uaBQ--.13042S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XF4rXr13WF4kZr45GFWfKrg_yoWkKFg_G3
-	4fWrn3Grn7GFn8Jw1jka1fGFZ2yan2kF18Ga1DtF90yFykA3Wxta4rXryxX34UCF4rAr97
-	G3W8Xw1rCrnxWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8AWrJUUUUU==
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMxJgXmbtL08ijAACsY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240918-x1e-fix-pdm-pdr-v1-1-cefc79bb33d1@linaro.org>
 
-From: Andy Yan <andy.yan@rock-chips.com>
+On Wed, Sep 18, 2024 at 04:02:39PM +0300, Dmitry Baryshkov wrote:
+> On X1E8 devices root ADSP domain should have tms/pdr_enabled registered.
+> Change the PDM domain data that is used for X1E80100 ADSP.
 
-The alpha setup should start from the second layer, the current calculation
-starts incorrectly from the first layer, a negative offset will be obtained
-in the following formula:
+Please expand the commit message so that it explains why this is
+needed and not just describes what the patch does.
 
-offset = (mixer_id + zpos - 1) * 0x10
+What is the expected impact of this and is there any chance that this is
+related to some of the in-kernel pd-mapper regression I've reported
+(e.g. audio not being registered and failing with a PDR error)?
 
-Fixes: 604be85547ce ("drm/rockchip: Add VOP2 driver")
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Tested-by: Derek Foreman <derek.foreman@collabora.com>
----
+	https://lore.kernel.org/all/ZthVTC8dt1kSdjMb@hovoldconsulting.com/
 
-(no changes since v1)
+> Fixes: bd6db1f1486e ("soc: qcom: pd_mapper: Add X1E80100")
+> Cc: stable@vger.kernel.org
 
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Since the offending commit has not reached mainline yet, there's no need
+for a stable tag.
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-index bff190151ae8..c50d93df8404 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -2282,6 +2282,12 @@ static void vop2_setup_alpha(struct vop2_video_port *vp)
- 		struct vop2_win *win = to_vop2_win(plane);
- 		int zpos = plane->state->normalized_zpos;
- 
-+		/*
-+		 * Need to configure alpha from second layer.
-+		 */
-+		if (zpos == 0)
-+			continue;
-+
- 		if (plane->state->pixel_blend_mode == DRM_MODE_BLEND_PREMULTI)
- 			premulti_en = 1;
- 		else
--- 
-2.34.1
-
+Johan
 
