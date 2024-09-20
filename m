@@ -1,247 +1,196 @@
-Return-Path: <linux-kernel+bounces-334559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8011597D8D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:03:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7120A97D8D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4CF21C21AA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:03:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F18E2826CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97296185944;
-	Fri, 20 Sep 2024 17:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719DE18133F;
+	Fri, 20 Sep 2024 17:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="bwW7vOG5"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dCJdeOtB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE748184533
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 17:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D73017DFFB;
+	Fri, 20 Sep 2024 17:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726851769; cv=none; b=DPZmGXMaWMw5URHN3N0cdNH+8mOALkt3NSRrqZtI3BQToe0vZ3/rsKKzK3tifkEHJSCEZdZNyxoy4jh4gYbUC75X7eXEJU0Cw25FtUJKj+rfUSkdbl071pdBBlEtT1nIMbnWBj+0Rd/DfQ8DoINeWf2gut5q6tP4WjzA2tzN5C8=
+	t=1726851789; cv=none; b=hD1+ONWlvVptsG9bpC1JFam5QdT2dHi3mbnPGsYZ+i1NeMBWdXduWwDgjL/q5DSRgUUN2tdLk/OW9z9KwmrX1QlteRPVYGSwqd5wWtixX2QJxUFLBe3cHhsMYrFcK71j9xJlTfQ9RUlN7JaCkNtL5eNdxpUK0r/q4Pbu+ezEZq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726851769; c=relaxed/simple;
-	bh=6jsLEb0C8rdq7VDmohj4Ns2SNUA7feYh+nsP+pP6g2s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IBLsXZ0KsNiNTVxhZ1l1bygPIxCfjKCXkdgf/1uezCbmqmNksd9IQkhN6lEYvzx4iihbBue6qu2vcZBSoIiwmwjayqJiPuTFWiPAFWqRtkk+x/PosrBnFgY+Bt4lmYDQEtzTflCcfAgbIL9zH0BU7OtlL2805/9xTRgJti94cu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=bwW7vOG5; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so27543715e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 10:02:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1726851766; x=1727456566; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5SJJEI41L6DAw5qSjBYrpeTyLVVZdoMRJaxTx6iDMqc=;
-        b=bwW7vOG5za4XECZQ5gxpZ0GwfAKnv3yuBfN2e1EOMMvJzqxGUX+RxWsZt4fElOZYdf
-         aeiCRXi/DQReBe5ehwKfueEPenONov2eNozWF5jT4XvqUXxi6u9/bcxhTjJUXysBbnhU
-         ncrS2oMoGgUA2sa6EFKr7KWWvkmULBQDATkBmAvXS/JwMAhFRABAZ+3Aa3id8LIUUMhW
-         ow2XYjQLDJh76/+BbcwvKbM3QYMRv+jX/1eers3aaQuJWE2eT2CurPFmVKeZOK2B02oj
-         CRWq18bZy9nBVJ0Rm9CQeOoRSTCk+zfBGZ1NTZFntrSjESSRHr6GZht4Idk819ZEFgFi
-         OJzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726851766; x=1727456566;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5SJJEI41L6DAw5qSjBYrpeTyLVVZdoMRJaxTx6iDMqc=;
-        b=s9XwevH6b8iueU2WCfYVocSEubv4WEevJy3znnN23yQTVYFeJg34MrKD7J/m9+2WGH
-         n5Sjp1u7nsYfPbOGn+TlS0LnulUlGNp5ScKvljEzIVOkOX9Uwy3JMIt91+NW9AKKnKta
-         I554OG7Ix4CpIJmVVApBRTahsQEsAmBIBpMkjm6DHwZVlR/cUb+Jmw7cl5aVrlyE9dPd
-         cpnB6U6+gYrFrqhSOKNzYWNke3+7alEb3DcCM6JYsGtT6PgtXGoYxLZzDdO1g7RjpEtt
-         Ou6bXOz9GmNPBOl9oDvP/cJw06EO5shGcM0Luqt6d+1HTa/KVEa23Y1rKsvMYeUuxqaT
-         EoLA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/H7uHMMypmVSr70DizDFi7WNbjcHgNzL9EbsnWkQTLlWDCOYU3XyCdPfzBxy3fZ6id+4w+cKt486OsKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy8jRLiylLldy1mQyHc//znU5Bt6eOP4OBbgO5N8bhG1pp9xMq
-	eO/KwcT7QGbl1+rsCqceSAQFbsQwSOnIw3X9qQPCf/VqZwwP0pUlGL4uWNALR7Y=
-X-Google-Smtp-Source: AGHT+IH/xVCKh+VVWbY69gd2wFgfenC/+h+2qOLYdNz5m9L1N+IiLpwVhUgpa5NRi45ntZBxsNIhpw==
-X-Received: by 2002:a05:600c:4f0f:b0:42c:b62c:9f0d with SMTP id 5b1f17b1804b1-42e7ac4b1d4mr40135785e9.17.1726851766097;
-        Fri, 20 Sep 2024 10:02:46 -0700 (PDT)
-Received: from [127.0.1.1] ([2a09:bac5:50ca:432::6b:72])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e75450ac2sm54237785e9.24.2024.09.20.10.02.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 10:02:45 -0700 (PDT)
-From: Tiago Lam <tiagolam@cloudflare.com>
-Date: Fri, 20 Sep 2024 18:02:14 +0100
-Subject: [RFC PATCH v2 3/3] bpf: Add sk_lookup test to use ORIGDSTADDR
- cmsg.
+	s=arc-20240116; t=1726851789; c=relaxed/simple;
+	bh=RPmP5BpeCsObG7kLGOtj/G5awciDsbBKj8GC7PwJ0mo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qx4KlQmcFG0aBt3NkwAs29U9Oy04uogjY9tZp6zSJ7Xi+FXlG3g+l4uo/ue7HPyWpUdieJjb4mrtNEKRQQFkMe0QsnTgmxPc0Vlo8ptmFNpUdWQQv3Bj3WOEKXxzarVcRqO5UciScDj0LpUvcUZ4/Sf3JRgS/3vvyRVpVM8tjto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dCJdeOtB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48K8272V019421;
+	Fri, 20 Sep 2024 17:02:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=OCUjlCUatkYPytFkrybTejPy
+	q/kvqSE1ByEn+x7nS7s=; b=dCJdeOtB8om8yn7A+ygEYi0+KbdVVw/zwhbBBDKp
+	sd8528pHRUuhlTyxYHlWDjDvMFdyC4vca5jiKLl+ShY6nzoXrKAgnGJtqVOV+5ZP
+	2R8d0hnm5O/V4VEbwox53UG+Q1lbEyzDNDC6RE1tO6kZZsd2135Mcwloi6nzDE+J
+	mN6JICFxLmM0D/6ngfr4KJyzPTCPl3GLJy1Znhv1fHFMlEtTuAZEcS7jUkrSb2kR
+	hJoZl88oiYViatLG3vsUSz4GzB+gOrR23RHHnyBQ67XOQHPG2v2f5702JiKNpQsm
+	fnlYEw9Z2V9iRP+o8bylfpyqMV0Ep6lNHP6EeCOLf+J8Gg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4hhhyt2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 17:02:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48KH2o6c005257
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 17:02:50 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 20 Sep 2024 10:02:45 -0700
+Date: Fri, 20 Sep 2024 22:32:41 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Antonino Maniscalco <antomani103@gmail.com>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konrad.dybcio@linaro.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Jonathan Corbet <corbet@lwn.net>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v4 10/11] drm/msm/A6xx: Enable preemption for A750
+Message-ID: <20240920170241.2ukib2kpz4qhse7e@hu-akhilpo-hyd.qualcomm.com>
+References: <20240917-preemption-a750-t-v4-0-95d48012e0ac@gmail.com>
+ <20240917-preemption-a750-t-v4-10-95d48012e0ac@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240920-reverse-sk-lookup-v2-3-916a48c47d56@cloudflare.com>
-References: <20240920-reverse-sk-lookup-v2-0-916a48c47d56@cloudflare.com>
-In-Reply-To: <20240920-reverse-sk-lookup-v2-0-916a48c47d56@cloudflare.com>
-To: "David S. Miller" <davem@davemloft.net>, 
- David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- Jakub Sitnicki <jakub@cloudflare.com>, Tiago Lam <tiagolam@cloudflare.com>, 
- kernel-team@cloudflare.com
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240917-preemption-a750-t-v4-10-95d48012e0ac@gmail.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: YtDiBJleAmZhfFMTNIV3vc6QL58ZRIDu
+X-Proofpoint-ORIG-GUID: YtDiBJleAmZhfFMTNIV3vc6QL58ZRIDu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ adultscore=0 impostorscore=0 phishscore=0 priorityscore=1501 clxscore=1015
+ mlxlogscore=999 mlxscore=0 spamscore=0 lowpriorityscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409200124
 
-This patch reuses the framework already in place for sk_lookup, allowing
-it now to send a reply from the server fd directly, instead of having to
-create a socket bound to the original destination address and reply from
-there. It does this by passing the source address and port from where to
-reply from in a IP_ORIGDSTADDR ancillary message passed in sendmsg.
+On Tue, Sep 17, 2024 at 01:14:20PM +0200, Antonino Maniscalco wrote:
+> Initialize with 4 rings to enable preemption.
+> 
+> For now only on A750 as other targets require testing.
+> 
+> Add the "preemption_enabled" module parameter to override this for other
+> A7xx targets.
+> 
+> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 3 ++-
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 6 +++++-
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.h   | 1 +
+>  drivers/gpu/drm/msm/msm_drv.c             | 4 ++++
+>  4 files changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> index 316f23ca9167..0e3041b29419 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> @@ -1240,7 +1240,8 @@ static const struct adreno_info a7xx_gpus[] = {
+>  		.gmem = 3 * SZ_1M,
+>  		.inactive_period = DRM_MSM_INACTIVE_PERIOD,
+>  		.quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
+> -			  ADRENO_QUIRK_HAS_HW_APRIV,
+> +			  ADRENO_QUIRK_HAS_HW_APRIV |
+> +			  ADRENO_QUIRK_PREEMPTION,
+>  		.init = a6xx_gpu_init,
+>  		.zapfw = "gen70900_zap.mbn",
+>  		.a6xx = &(const struct a6xx_info) {
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> index edbcb6d229ba..4760f9469613 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> @@ -2529,6 +2529,7 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *dev)
+>  	struct a6xx_gpu *a6xx_gpu;
+>  	struct adreno_gpu *adreno_gpu;
+>  	struct msm_gpu *gpu;
+> +	extern int enable_preemption;
+>  	bool is_a7xx;
+>  	int ret;
+>  
+> @@ -2567,7 +2568,10 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *dev)
+>  		return ERR_PTR(ret);
+>  	}
+>  
+> -	if (is_a7xx)
+> +	if ((enable_preemption == 1) || (enable_preemption == -1 &&
+> +	    (config->info->quirks & ADRENO_QUIRK_PREEMPTION)))
+> +		ret = adreno_gpu_init(dev, pdev, adreno_gpu, &funcs_a7xx, 4);
+> +	else if (is_a7xx)
+>  		ret = adreno_gpu_init(dev, pdev, adreno_gpu, &funcs_a7xx, 1);
+>  	else if (adreno_has_gmu_wrapper(adreno_gpu))
+>  		ret = adreno_gpu_init(dev, pdev, adreno_gpu, &funcs_gmuwrapper, 1);
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> index 87098567483b..d1cd53f05de6 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> @@ -56,6 +56,7 @@ enum adreno_family {
+>  #define ADRENO_QUIRK_LMLOADKILL_DISABLE		BIT(2)
+>  #define ADRENO_QUIRK_HAS_HW_APRIV		BIT(3)
+>  #define ADRENO_QUIRK_HAS_CACHED_COHERENT	BIT(4)
+> +#define ADRENO_QUIRK_PREEMPTION			BIT(5)
+>  
+>  /* Helper for formating the chip_id in the way that userspace tools like
+>   * crashdec expect.
+> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+> index 9c33f4e3f822..7c64b20f5e3b 100644
+> --- a/drivers/gpu/drm/msm/msm_drv.c
+> +++ b/drivers/gpu/drm/msm/msm_drv.c
+> @@ -58,6 +58,10 @@ static bool modeset = true;
+>  MODULE_PARM_DESC(modeset, "Use kernel modesetting [KMS] (1=on (default), 0=disable)");
+>  module_param(modeset, bool, 0600);
+>  
+> +int enable_preemption = -1;
+> +MODULE_PARM_DESC(enable_preemption, "Enable preemption (A7xx only) (1=on , 0=disable, -1=auto (default))");
+> +module_param(enable_preemption, int, 0600);
+> +
 
-Signed-off-by: Tiago Lam <tiagolam@cloudflare.com>
----
- tools/testing/selftests/bpf/prog_tests/sk_lookup.c | 67 +++++++++++++++-------
- 1 file changed, 45 insertions(+), 22 deletions(-)
+Is adreno_device.c a better place for adreno specific module params?
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/sk_lookup.c b/tools/testing/selftests/bpf/prog_tests/sk_lookup.c
-index ae87c00867ba..df780624c16c 100644
---- a/tools/testing/selftests/bpf/prog_tests/sk_lookup.c
-+++ b/tools/testing/selftests/bpf/prog_tests/sk_lookup.c
-@@ -75,6 +75,7 @@ struct test {
- 	struct inet_addr listen_at;
- 	enum server accept_on;
- 	bool reuseport_has_conns; /* Add a connected socket to reuseport group */
-+	bool dont_bind_reply; /* Don't bind, send direct from server fd. */
- };
- 
- struct cb_opts {
-@@ -363,7 +364,7 @@ static void v4_to_v6(struct sockaddr_storage *ss)
- 	memset(&v6->sin6_addr.s6_addr[0], 0, 10);
- }
- 
--static int udp_recv_send(int server_fd)
-+static int udp_recv_send(int server_fd, bool dont_bind_reply)
- {
- 	char cmsg_buf[CMSG_SPACE(sizeof(struct sockaddr_storage))];
- 	struct sockaddr_storage _src_addr = { 0 };
-@@ -373,7 +374,7 @@ static int udp_recv_send(int server_fd)
- 	struct iovec iov = { 0 };
- 	struct cmsghdr *cm;
- 	char buf[1];
--	int ret, fd;
-+	int fd;
- 	ssize_t n;
- 
- 	iov.iov_base = buf;
-@@ -415,26 +416,37 @@ static int udp_recv_send(int server_fd)
- 		v4_to_v6(dst_addr);
- 	}
- 
--	/* Reply from original destination address. */
--	fd = start_server_addr(SOCK_DGRAM, dst_addr, sizeof(*dst_addr), NULL);
--	if (!ASSERT_OK_FD(fd, "start_server_addr")) {
--		log_err("failed to create tx socket");
--		return -1;
--	}
-+	if (dont_bind_reply) {
-+		/* Reply directly from server fd, specifying the source address
-+		 * and/or port in struct msghdr.
-+		 */
-+		n = sendmsg(server_fd, &msg, 0);
-+		if (CHECK(n <= 0, "sendmsg", "failed\n")) {
-+			log_err("failed to send echo reply");
-+			return -1;
-+		}
-+	} else {
-+		/* Reply from original destination address. */
-+		fd = start_server_addr(SOCK_DGRAM, dst_addr, sizeof(*dst_addr),
-+				       NULL);
-+		if (!ASSERT_OK_FD(fd, "start_server_addr")) {
-+			log_err("failed to create tx socket");
-+			return -1;
-+		}
- 
--	msg.msg_control = NULL;
--	msg.msg_controllen = 0;
--	n = sendmsg(fd, &msg, 0);
--	if (CHECK(n <= 0, "sendmsg", "failed\n")) {
--		log_err("failed to send echo reply");
--		ret = -1;
--		goto out;
-+		msg.msg_control = NULL;
-+		msg.msg_controllen = 0;
-+		n = sendmsg(fd, &msg, 0);
-+		if (CHECK(n <= 0, "sendmsg", "failed\n")) {
-+			log_err("failed to send echo reply");
-+			close(fd);
-+			return -1;
-+		}
-+
-+		close(fd);
- 	}
- 
--	ret = 0;
--out:
--	close(fd);
--	return ret;
-+	return 0;
- }
- 
- static int tcp_echo_test(int client_fd, int server_fd)
-@@ -454,14 +466,14 @@ static int tcp_echo_test(int client_fd, int server_fd)
- 	return 0;
- }
- 
--static int udp_echo_test(int client_fd, int server_fd)
-+static int udp_echo_test(int client_fd, int server_fd, bool dont_bind_reply)
- {
- 	int err;
- 
- 	err = send_byte(client_fd);
- 	if (err)
- 		return -1;
--	err = udp_recv_send(server_fd);
-+	err = udp_recv_send(server_fd, dont_bind_reply);
- 	if (err)
- 		return -1;
- 	err = recv_byte(client_fd);
-@@ -653,7 +665,8 @@ static void run_lookup_prog(const struct test *t)
- 	if (t->sotype == SOCK_STREAM)
- 		tcp_echo_test(client_fd, server_fds[t->accept_on]);
- 	else
--		udp_echo_test(client_fd, server_fds[t->accept_on]);
-+		udp_echo_test(client_fd, server_fds[t->accept_on],
-+			      t->dont_bind_reply);
- 
- 	close(client_fd);
- close:
-@@ -775,6 +788,16 @@ static void test_redirect_lookup(struct test_sk_lookup *skel)
- 			.listen_at	= { INT_IP4, INT_PORT },
- 			.accept_on	= SERVER_B,
- 		},
-+		{
-+			.desc		= "UDP IPv4 redir different ports",
-+			.lookup_prog	= skel->progs.select_sock_a_no_reuseport,
-+			.sock_map	= skel->maps.redir_map,
-+			.sotype		= SOCK_DGRAM,
-+			.connect_to	= { EXT_IP4, EXT_PORT },
-+			.listen_at	= { INT_IP4, INT_PORT },
-+			.accept_on	= SERVER_A,
-+			.dont_bind_reply = true,
-+		},
- 		{
- 			.desc		= "UDP IPv4 redir and reuseport with conns",
- 			.lookup_prog	= skel->progs.select_sock_a,
+-Akhil.
 
--- 
-2.34.1
-
+>  #ifdef CONFIG_FAULT_INJECTION
+>  DECLARE_FAULT_ATTR(fail_gem_alloc);
+>  DECLARE_FAULT_ATTR(fail_gem_iova);
+> 
+> -- 
+> 2.46.0
+> 
 
