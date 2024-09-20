@@ -1,93 +1,83 @@
-Return-Path: <linux-kernel+bounces-334642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5524097D9DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 21:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD1797D9DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 21:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3EC61F23700
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:37:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 365A31F236F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04FCF186E33;
-	Fri, 20 Sep 2024 19:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C090718452E;
+	Fri, 20 Sep 2024 19:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="VFsnIkdV"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="YS+2hZK+"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAD0186617
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 19:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EFA14F98;
+	Fri, 20 Sep 2024 19:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726861009; cv=none; b=cRGniVrWGhKyCLgOppBRmgVSznjNmnYrg61O+G6lVyCocrEJojA6gfwQMlON37x9eQBVzVF4RO82URxVG9eMss08RVjuVP8wS9NKXKnvN6QZRWRYtQihI4JlsC8C76c3St3T6FixJbe9HfYCEEh23beXhQCYKLoIaDDJGUx2JDA=
+	t=1726861117; cv=none; b=cAXNIHKrTNUq2idV/8FDJ3Rdgv2dWEgUxCM4G+E00+y9i+ZEK7SPJssjp4r9VFhjzSP2MddkbAxa5UoBFsg2Ea/xH1/50ukkg9hgXa93EFCFV8lc1MMq1a16KiPHfseNXEGd5xAkG+dfgkoVo0ltKD32RPM7q4Ge3usls/Fs2Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726861009; c=relaxed/simple;
-	bh=FWUAVX80TncB9m90tqjT3S569a7lQWjqB53otGHgEis=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ven29WLYl/ls0zhYVPcSHGfwo+UP40AhHInLrf2zDfVRiXer4q338WeDGrbwJ0LwzVxoGZAPWFqMnAmksDIchdaYvlwRTkOegRA268rXfHcDEgFzUqjRGcIcmqzbXsCvIShFf7AXxyUeuul7MDQcgJVFM8IXotE68FLy5+A17yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=VFsnIkdV; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1726861005; x=1727120205;
-	bh=MX8ZfbYDKOWv75YzIM+14X2Ac72mkrn1kbOyp2I1f9A=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=VFsnIkdV+L6fjUZIOl/2NZSfzwtI8MqpSt1jpui+sb5eTtUsGagQ1Es/gT+3B18Sb
-	 MyDQFeVjCGJYEsnMx6xgJRuEipG4/bZ2PIeDFgVctGcPe+qGPV8BnMkKt93O+5nEiv
-	 kD19JQpl8VjdoOutywl/6uL6Dhsd2anHS6E9BwRT3+vD2+TBbHtAaHNqRHuQwW8FNG
-	 G6Lscxbf/ba14aU4kCif/Z2mkob09qt5GcHQ5Zm/HpnkwVXBj8LM29j4LdOD90p9QX
-	 tCz1DFNvJa1vKRj6ApELliR36zUnNoGDJelUe65J+apWInZ+5/zTe/Q8vmq4BbtZSR
-	 Y5qtigcZTrJAA==
-Date: Fri, 20 Sep 2024 19:36:40 +0000
-To: gregkh@linuxfoundation.org, tdavies@darkphysics.net, philipp.g.hortmann@gmail.com, dan.carpenter@linaro.org
-From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Subject: [PATCH v2 6/6] staging: rtl8192e: rtllib_wx.c: Fix alignment to open parentheses
-Message-ID: <20240920193356.32156-7-dominik.karol.piatkowski@protonmail.com>
-In-Reply-To: <20240920193356.32156-1-dominik.karol.piatkowski@protonmail.com>
-References: <20240920193356.32156-1-dominik.karol.piatkowski@protonmail.com>
-Feedback-ID: 117888567:user:proton
-X-Pm-Message-ID: 70ca165da1c5231c088e787e586883e0795f37ad
+	s=arc-20240116; t=1726861117; c=relaxed/simple;
+	bh=k3aDTGVYK03uiMpHJNkfIDhuqzXCMlDtP8vJvbeZcSw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qQLgyjS5wY2/NhzHr0DUCOr4cQCSSWDgilkf5P4uGrxjzuLAO+klysR/b4JeI+ykpQl56VxgxmwFzoUlcCPNhzPK3cKHqdf5nQ6MtB8dr/p6DnVn9WCSKp8+thqJHeYLvhH//uoGPO6ZdDJBGOpA1pFJfyvNT4T3UrIwMiFNAuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=YS+2hZK+; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4X9N3b0wmtzlgMVY;
+	Fri, 20 Sep 2024 19:38:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1726861113; x=1729453114; bh=k3aDTGVYK03uiMpHJNkfIDhu
+	qzXCMlDtP8vJvbeZcSw=; b=YS+2hZK+SeOdwDRfHxsCOpUxFWQ9mHYvrKTR0lW2
+	X0TgyEAJlsN/HJAr5g/0vuHR4ke1i/CgtLtWpsx90KN4fhUJ7dmEbUoHo6uBsXWW
+	OnOjnivcQpgGNgwPqgnYBzF5lgBtoVd3W0cXM3yL/PYHZD9F+uZFYH6b08dYUBLv
+	YPmHp8FOOrlOQzxwrF/GC96ENtBdm6WkvDq7FYjw6haGRdd4W4mhopmWMljPbCMV
+	093F4Ljh3c+OUoSB+yAAH5kG3p5K3YZGmgew5XkQTU/qqGK9Izr/8erYDomtpjLp
+	ZhTQ6vJZrfF+1KFQX1+AA9c3nYu1ON9FA6tm0tXZLIS8mQ==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id ztG2lnDV2pDJ; Fri, 20 Sep 2024 19:38:33 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4X9N3Y4F0qzlgMVV;
+	Fri, 20 Sep 2024 19:38:33 +0000 (UTC)
+Message-ID: <7dbb4ea6-0a66-47d5-a255-a35d6a0db4e1@acm.org>
+Date: Fri, 20 Sep 2024 12:38:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: ufs: Do not open code read_poll_timeout
+To: Avri Altman <avri.altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240919112442.48491-1-avri.altman@wdc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240919112442.48491-1-avri.altman@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This patch aligns the code to open parentheses to improve readability.
+On 9/19/24 4:24 AM, Avri Altman wrote:
+> ufshcd_wait_for_register practically does just that - replace with
+> read_poll_timeout.
 
-Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@prot=
-onmail.com>
----
- drivers/staging/rtl8192e/rtllib_wx.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/staging/rtl8192e/rtllib_wx.c b/drivers/staging/rtl8192=
-e/rtllib_wx.c
-index c730d921463d..b25343f01f8d 100644
---- a/drivers/staging/rtl8192e/rtllib_wx.c
-+++ b/drivers/staging/rtl8192e/rtllib_wx.c
-@@ -134,8 +134,7 @@ static inline char *rtl819x_translate_scan(struct rtlli=
-b_device *ieee,
- =09=09=09=09((ht_cap->short_gi_40mhz) ? 1 : 0) :
- =09=09=09=09((ht_cap->short_gi_20mhz) ? 1 : 0);
-=20
--=09=09max_mcs =3D ht_get_highest_mcs_rate(ieee, ht_cap->MCS,
--=09=09=09=09=09      MCS_FILTER_ALL);
-+=09=09max_mcs =3D ht_get_highest_mcs_rate(ieee, ht_cap->MCS, MCS_FILTER_AL=
-L);
- =09=09rate =3D MCS_DATA_RATE[is40M][isShortGI][max_mcs & 0x7f];
- =09=09if (rate > max_rate)
- =09=09=09max_rate =3D rate;
---=20
-2.34.1
-
-
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
