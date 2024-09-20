@@ -1,217 +1,223 @@
-Return-Path: <linux-kernel+bounces-334019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A2197D16E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:04:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CDF497D171
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 09:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB5E51F220A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:04:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51801F21F18
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 07:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7066341C72;
-	Fri, 20 Sep 2024 07:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE593BBCB;
+	Fri, 20 Sep 2024 07:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qKtBaoQG"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="Sx6HEyvw"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011017.outbound.protection.outlook.com [52.101.129.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82892CA5
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 07:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726815865; cv=none; b=QE9xzuLpOfabUeIoJpQzRC1oGJxIcF5Y5rxDAVb5z0JscQLITMP3POGRsE1yO25OdDM2sv2pSJKpvO/pvMMGBDQUXwHMl+7y251p7WSv6G5N9Vh0RNYaHq6Q8cfMbLzIJFTMab3yzXwb83fcv/FSGchvP/KOIiqM0Tr5bQVmTQA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726815865; c=relaxed/simple;
-	bh=/NZGPoXKSymMx1PjbyTtLBYVitseKApMOG9T9VuN5m8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=R1t/yOxxWElPXcJEWEE5vUjXAu+65HCNAxBskRCUObFMYTSgthdunA8wOTC4zA7U+UuAmRpDgO4bIOBaO/MAy4enW3inTakBmlOinMZojAFTjcX7xZCbxWKuv1v18MOB1HP4MiqSu6X12+8x/BOaA4Nn7g6QGlWbGsDdfhcrx48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qKtBaoQG; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cacabd2e0so14052445e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 00:04:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726815862; x=1727420662; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AEk9Erg33oAKF+NP+nw1TwEyfMvfxRqOWUUv41eeefs=;
-        b=qKtBaoQGMZSg87oYSvZDyZ9DEkWh/T//SZ0TEKTTK/TGSeZRNyPKGTNXfi0gEdscCF
-         /6fJ2nq/OzfzEyDrofiL7G+vOgJfTf7GOEce3eeVTOW5GiT8TYd5SqJC/u2gxDIW5rxY
-         1Z5YfiFbWclzHuEiLBk6mG3lBbN5/Qlsq3OwfKyJtREiue+tiAtkPjoe9tEZ192N3r6l
-         Z0mFWbTERked87puXd2TR1oDXpZ6rKyg5NGxlOeKTUx5aF7fV0LxOxYwzoBuzUyl8keL
-         NHHvMjYnYThmqRkPA42qiWReTQTWgN8tB2/hyq8kUWzEET+rm8AaXN+t7b4+3X5r05lk
-         NAhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726815862; x=1727420662;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=AEk9Erg33oAKF+NP+nw1TwEyfMvfxRqOWUUv41eeefs=;
-        b=mgQfpdJQwSVHlU8MrGRy8qx+ggPK3DmcIriYfxVuue8udLjOwKZBMgbQYcw6XKNmH5
-         ybyBfQaEb0lUBrSVH+GVLTuY2s+W4RA7c7or/E7JXmzebQvUDmRNffuLPnGHk6rd/O4R
-         IERAOBZxC77R0mD6h/9AzFuHwhrbXgIq69UzTjfetqNvV/PhJc9Je5s70nCkektLssON
-         pVQ7KbZW+KsEhfFmVluohWyhU+LwfbTgKGUh3CkXp1Gu7izUXiRih/rF8BC61XsJFrdE
-         8N3oEeuYPYg7yky908Oh50ptzJBuRNM+eZN8jYp+fpM6u60UJqfzbLIrVpTYrm+T2em9
-         UCRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVP6md2LWM5Q1Dtav+qKhrQUVCoX7md2Bq2hREJ7iEUmwLcBCOWMGdSTNHH0K36j3xDcAdPswLKOgAK4ek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoM+BDQwb2ljXjeXfwLnTNEHKxiZ5uVwm2uA/p61nR+cgdzavs
-	Tty4a2ygmQqLsa/scxuOGdS+35f1wMpC3RATZr9bMcCI4tDRjhnEtJVcQNaKHDM=
-X-Google-Smtp-Source: AGHT+IGNO1dkgtnCZ5YKP/6A9L3EnlKsnH+ZENC9f0ny9GIW8vEezb6z+4c9DmLBMtGeBqMGf/ZOOA==
-X-Received: by 2002:a05:600c:354a:b0:42c:c1f6:6ded with SMTP id 5b1f17b1804b1-42e7ad9afabmr11697595e9.29.1726815861834;
-        Fri, 20 Sep 2024 00:04:21 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:b3d5:235d:4ae1:4c0f? ([2a01:e0a:982:cbb0:b3d5:235d:4ae1:4c0f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7aff08b1sm14316095e9.40.2024.09.20.00.04.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2024 00:04:21 -0700 (PDT)
-Message-ID: <e865e42c-a528-45bb-bdf5-df1cd103e695@linaro.org>
-Date: Fri, 20 Sep 2024 09:04:19 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69AD33985;
+	Fri, 20 Sep 2024 07:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726815902; cv=fail; b=JKL/vMWz2SeJWG1jykVbv9E34ZbNHGdaDso2j+DGJP281xNJjqs+xNpC5cGQNrdD60h3cLALHcKrnstJ7IgkyaEFmVjSkbQI1+s1oA57op7D1ovLTAhsY4BbcGpz00/G602OLXl06bQPO0XY6XkhPZiBf0CfJo30rlLZ+Ignyok=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726815902; c=relaxed/simple;
+	bh=nodMhpNaWezXq4hwY+Og5O/RHaaytlKkTMoxbkxnAqE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ULX+VBc8opvWBnwrpZtFGJjZYLi9TzQMRSoM4cWHTW7zhvqsvDq7y1dI4P8vjkoW9wdt6YozBWlO5GCmZB2BrGpLceGpnTHdz3YewSYmwj/Ql1y97x9t4Xl1SpE+ISEkD6RCednUdHJOXu46AS+2TApD4vr/1Y5pZ+nswwDIILg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=Sx6HEyvw; arc=fail smtp.client-ip=52.101.129.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VvgGXe9jKu7QsPON3Xg+uyzCiVW6651cLFAohD8PY4c9golVR/uj70eY6iCAQDpgke9t9ydbY9z69f+4VCf19lO0S+oT9aa9uPDvfHESHHkMqhlJQnllHXhImsnCmPvkNMS9mQAZUguPxYJ5ysZzJAzemLHeKSGTZRLHiI/2mY9VKd7JQX+QivtF/PpUEBKiuyiNUjscmGlw3y7ipnTkUSywbTGY4qjOP/XSq1XUOTzSVJoZSpugyNs1JU3VrOtNrAd/H/gDs8MqWE42KAA9OVqEjzVgNoxesMWBe8eNJEKu46hH/LfH2NhQnkWZkKaA6CbHIyxNbFAUEtMuddKoJQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WT+f0MdKiNzFohUOdCExpotvyfFFXiCvGtQ8RdiwNs4=;
+ b=N8LFFK7YS5NYQiyRib8WJbxzmOepH/eHHJyuWm9Jfm3i9lHy7ji8qBBBbSEwD8SMJuTxwOehpVHj5XgwvXbSV556WsWMrl9Xn6twUdTpBXKzqHLLeEr1WEivJ2VSH07S2jTbgPoMHEwdAvh5lqxz3fW5odmkOK3Gi+B95Z22wxnUZQn3ZfzEhhElmknjReelUBozoVJqDs/K+hZWRLMEC9V5cyOfIG9MaxePUZ6jD7DurfT9VGLYWsSBxwsZweg53C12eZMbFq+bsTBg+IiNiRAHNHtJquORWnPBZmwlheTY/4zQaNXfR70b51QHlEcQe0PV+HZ0/vfUw5RY2/hVOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
+ (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=wiwynn.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WT+f0MdKiNzFohUOdCExpotvyfFFXiCvGtQ8RdiwNs4=;
+ b=Sx6HEyvw799sJShM/8uQU1xi8ppyHhlwzjb+Lk18VSSXsaUtA+j6liyiJ9gz0ANbr+4RTNGIH1uVR+nL1VCYHdpJ+SuR3j9UZR4P72tJlMdo8OvkmITsDc9p1IHorarD2fuX2o6O5yurHd2fv+pMUDHebmG1eJkkwxkOaGa0uGUwrctuCfj835ud1k3UW1X/+fv/yV322ruaT0ff60KYiLQqK71JCuw1YqtrWIuRysRXaTPPg0ox7qRcpZ0PngX2ocqc7BHL53q99mS96zgeX/HzThsY7Ti3yQZl8PWG1SxSZVvkcw5CUHDtz9d7fdylPET1QtGFjYt+yBj/TCemsg==
+Received: from SG2PR02CA0099.apcprd02.prod.outlook.com (2603:1096:4:92::15) by
+ SG2PR04MB5614.apcprd04.prod.outlook.com (2603:1096:4:1c1::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7982.22; Fri, 20 Sep 2024 07:04:53 +0000
+Received: from SG1PEPF000082E3.apcprd02.prod.outlook.com
+ (2603:1096:4:92:cafe::ab) by SG2PR02CA0099.outlook.office365.com
+ (2603:1096:4:92::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.30 via Frontend
+ Transport; Fri, 20 Sep 2024 07:04:53 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
+ smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
+Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
+ designate 211.20.1.79 as permitted sender) receiver=protection.outlook.com;
+ client-ip=211.20.1.79; helo=localhost.localdomain;
+Received: from localhost.localdomain (211.20.1.79) by
+ SG1PEPF000082E3.mail.protection.outlook.com (10.167.240.6) with Microsoft
+ SMTP Server id 15.20.7918.13 via Frontend Transport; Fri, 20 Sep 2024
+ 07:04:51 +0000
+From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+To: patrick@stwcx.xyz
+Cc: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v19 0/2] Add i2c-mux and eeprom devices for Meta Yosemite4
+Date: Fri, 20 Sep 2024 15:04:47 +0800
+Message-Id: <20240920070449.3871705-1-Delphine_CC_Chiu@wiwynn.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 09/10] drm: bridge: dw_hdmi: Update EDID during hotplug
- processing
-To: Jonas Karlman <jonas@kwiboo.se>, Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Christian Hewitt <christianshewitt@gmail.com>,
- Diederik de Haas <didi.debian@cknow.org>, dri-devel@lists.freedesktop.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240908132823.3308029-1-jonas@kwiboo.se>
- <20240908132823.3308029-10-jonas@kwiboo.se>
- <4bc6a5e6-f2cf-43ab-8555-4f8aaf9f2cd0@linaro.org>
- <0dcb03be-dae1-4dcb-84d8-6ec204eab6ba@kwiboo.se>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <0dcb03be-dae1-4dcb-84d8-6ec204eab6ba@kwiboo.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E3:EE_|SG2PR04MB5614:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 3049a03c-c096-440f-91cf-08dcd942866d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?SfXPjOJBJiCq8jYlKYapLarktRfX2/NA99bgwgZ4yy+XSLAEpz6/FMPvi3+v?=
+ =?us-ascii?Q?I5ohAoRHK87u4Z9gaUCThEVPFgJp8/OZP/EBd8O+pMHaPkQvkonFaiu7lyYO?=
+ =?us-ascii?Q?LVlWjmh2UHzUeMedNxfivShEcNQx02RksoM+7i9cvI9O28m6bwpQg58tKba6?=
+ =?us-ascii?Q?nvt6iThpDAbnRWYoAHVWPfnp9rU63wr1Cm9A3Rkt7mIpvSD0iNY9/SeY+nRM?=
+ =?us-ascii?Q?2NOJnn85ML/wwRdY8vI5eUO1+B1XFkJAjGRgAU+hZctS0FmUxgtGOzaAZEaj?=
+ =?us-ascii?Q?rKV3nqtJYWboAxj8DFj8cBqpUJ4fSNHoQx1wWfHvW30fyfC5czBGHv5t1fns?=
+ =?us-ascii?Q?SXcHZRMkkbhditckjgRsoilJjjUfWAk0q6O/b/XnGBxfPub5pPvr/9R2FBAz?=
+ =?us-ascii?Q?1Qg5Pyu5ho+sE9ktbYAGCgdE0eI5vLIZg0lEwS0hkjABFHMv2+qGWKEkIKQd?=
+ =?us-ascii?Q?Dg4MxFkGquZstKZ80aWxxy5AsdZE46v6bzYtITlXIJqGHWdfzYKgPFLujM2U?=
+ =?us-ascii?Q?GJyqw1dD4JC8zv+Hk6LmTzPizJqrH0i41lfMSwTvJwc4rDxSndmbp3l0FJv0?=
+ =?us-ascii?Q?oZ8cqQvH5A4Y0r2glgsRicF317tTAJ+4RrNPjemFye59uPDiZ0QunMAtoil4?=
+ =?us-ascii?Q?ECT34Eni/qU7J0D6/0nw++ZN6lRbQmESEprN/e9VEfeg3qThJJ6gfCkEK4/V?=
+ =?us-ascii?Q?3NOKpvMzr6KVjCRqi4P/smlHdCFJq9ZdPp9ZwNIcmOBodAz4Tb5H3MbTRRsy?=
+ =?us-ascii?Q?9HcLhVKKvcIWESkpd2OvM8A9wruCT363XOE43KMrpArVxj4yo5PYB7SH7bE6?=
+ =?us-ascii?Q?XASHcfNxLtYgMgG+CiOd1/Kuxp2GZn/wQ20rjmUAQc5xETOCFL9ho9eMhbjG?=
+ =?us-ascii?Q?IWWHWVJMhvLxCZC6DPUpPGbbBvEKqj6fYoNXUu5DtYIVaE3yH58wX/Ji4S7o?=
+ =?us-ascii?Q?/RJMWsJPK6FsHhBI6BbGZOsLzCfzTp7o28RPAk3vFoithmdZuf9eGGT0ELbN?=
+ =?us-ascii?Q?QTVHAfkFVLEldL4mPdQUF17MizIMbGi65nIyHrTV4/NUFRyiHXDTMVDWi6oJ?=
+ =?us-ascii?Q?ES5EOFsMg2GneZesc7gWOCgUjRk9xgP9UUsxEgjHZLrkh3vhfkIUe+rvuezK?=
+ =?us-ascii?Q?i70dQfaU80a1ulexMs0SJZB8jbsBrH/ofBmp+GGFhc9ifvq5k+M6AuBlPLmN?=
+ =?us-ascii?Q?4S6FhE1o99NZ26TCJRwGZPf4t5KNvWuyR043FhnHL294/dMTzmk5J7R/ro7R?=
+ =?us-ascii?Q?G3sWQWU/SVmDxKExg7v+B+4qtVoeA4k8LwuDSkhgE2Oe4A3JqY7D6GiOXYSH?=
+ =?us-ascii?Q?qTR9AHDUktxlCoM7l2KKYy7YNyTUgtEZlrGR3PbMBW5cvfR4y7LYz1Kf1rCF?=
+ =?us-ascii?Q?0J1aVY3ajRE7uoe9NsMaO79xByb31unHJD1sBHu56n69VCYy3mPmHvNMAlR1?=
+ =?us-ascii?Q?UH/WFURVx1ika6BHnJMUCq3TMqPTD95w?=
+X-Forefront-Antispam-Report:
+	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: wiwynn.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 07:04:51.9914
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3049a03c-c096-440f-91cf-08dcd942866d
+X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG1PEPF000082E3.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR04MB5614
 
-On 19/09/2024 22:34, Jonas Karlman wrote:
-> Hi Neil,
-> 
-> On 2024-09-13 10:02, Neil Armstrong wrote:
->> On 08/09/2024 15:28, Jonas Karlman wrote:
->>> Update successfully read EDID during hotplug processing to ensure the
->>> connector diplay_info is always up-to-date.
->>>
->>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
->>> ---
->>> v2: No change
->>> ---
->>>    drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 12 ++++++++++++
->>>    1 file changed, 12 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->>> index c19307120909..7bd9f895f03f 100644
->>> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->>> @@ -2457,6 +2457,18 @@ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
->>>    
->>>    	status = dw_hdmi_detect(hdmi);
->>>    
->>> +	/* Update EDID during hotplug processing (force=false) */
->>> +	if (status == connector_status_connected && !force) {
->>> +		const struct drm_edid *drm_edid;
->>> +
->>> +		drm_edid = dw_hdmi_edid_read(hdmi, connector);
->>> +		if (drm_edid)
->>> +			drm_edid_connector_update(connector, drm_edid);
->>> +		cec_notifier_set_phys_addr(hdmi->cec_notifier,
->>> +			connector->display_info.source_physical_address);
->>> +		drm_edid_free(drm_edid);
->>> +	}
->>> +
->>>    	if (status == connector_status_disconnected)
->>>    		cec_notifier_phys_addr_invalidate(hdmi->cec_notifier);
->>>    
->>
->> I wonder why we should read edid at each dw_hdmi_connector_detect() call,
->> AFAIK it should only be when we have HPD pulses
-> 
-> That is what this change intends to help do.
-> 
-> As stated in the short comment EDID is only updated at HPD processing,
-> i.e. when force=false. To be on the safe side EDID is also only updated
-> here when connected and EDID could be read.
-> 
-> drm_helper_probe_detect() is called with force=true in the
-> fill_modes/get_modes call path that is triggered by userspace
-> or the kernel kms client.
-> 
-> After a HPD interrupt the call to drm_helper_hpd_irq_event() will call
-> check_connector_changed() that in turn calls drm_helper_probe_detect()
-> with force=false to check/detect if connector status has changed. It is
-> in this call chain the EDID may be read and updated in this detect ops.
-> 
-> Reading EDID here at HPD processing may not be fully needed, however it
-> help kernel keep the internal EDID state in better sync with sink when
-> userspace does not act on the HOTPLUG=1 uevent.
+Changelog:
+  - v19
+    - Remove led_gpio pca9552 since there is no binding document.
+    - Add gpio devices on i2c mux 34.
+  - v18
+    - Fix warnings for reg_format reporting by dts checking tool.
+  - v17
+    - Add SoB for the patches.
+  - v16
+    - Reorganized the patches.
+    - Add i2c-mux and resolve the dt-validate errors.
+    - Revise Yosemite 4 devicetree for devices behind i2c-mux.
+    - Add mctp config and sensors for NIC after i2c-mux on bus 15.
+    - Add fan led config for BMC to control according the status of fan.
+  - v15
+    - Add ISL28022 support
+  - v14
+    - Add SQ52205 support
+    - Add GPIO I6 pin
+  - v13
+    - Add RTQ6056-support-on-bus-11 
+  - v12
+    - Fix GPIO linename typo and add missing GPIO pin initial state.
+  - v11
+    - Revise all GPIO line name with bottom line
+  - v10
+    - adjust mgm cpld ioexp bus
+    - add GPIOO7 name
+    - remove mctp driver
+  - v9
+    - add XDP710 support
+    - add RTQ6056 support
+    - add MP5990 support
+  - v8
+    - add fan led config
+  - v7
+    - Revise pca9506 i2c address
+  - v6
+    - Revise i2c duty-cycle for meeting 400khz spec
+  - v5
+    - Support medusa board adc sensors
+    - support NIC eeprom
+  - v4
+    - Re-format gpio linename
+    - Revise i2c device node names
+    - Split patches by logic changes
+  - v3
+    - Correct patch for revising gpio name
+  - v2
+    - Revise mx31790 fan tach config
+    - Add mctp config for NIC
+    - Support mux to cpld
+    - Revise gpio name
+  - v1
+    - Add gpio and eeprom behind i2c-mux
+    - Remove redundant idle-state setting for i2c-mux
+    - Enable adc 15, wdt2,spi gpio for yosemite4 use
+    - Revise quad mode to dual mode to avoid WP pin influnece the SPI
+    - Revise power sensor adm1281 for yosemite4 schematic change
+    - Add gpio pca9506 I/O expander for yosemite4 use
+    - remove space for adm1272 compatible
+    - enable interrupt setting for pca9555
+    - add eeprom for yosemite4 medusa board/BSM use
+    - remove temperature sensor for yosemite4 schematic change
+    - add power sensor for power module reading
+    - Revise adc128d818 adc mode for yosemite4 schematic change
+    - Revise ina233 for yosemite4 schematic change
+    - Remove idle state setting for yosemite4 NIC connection
+    - Initialize bmc gpio state
+    - Revise mx31790 fan tach config
+    - Add mctp config for NIC
+    - Support mux to cpld
+    - Revise gpio name
 
+Ricky CX Wu (2):
+  ARM: dts: aspeed: yosemite4: Revise i2c-mux devices
+  ARM: dts: aspeed: yosemite4: add mctp config and sensors for NIC
 
-I understand but if somehow a dw-hdmi integration fails to have HDP working
-properly, EDID will be read continuously which is really not what we want.
+ .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 567 +++++++++++++++---
+ 1 file changed, 493 insertions(+), 74 deletions(-)
 
-HDMI 1.4b specifies in Section 8.5 and Appendix A:
-============><==========================================
-An HDMI Sink shall not assert high voltage level on its Hot Plug Detect pin when the E-EDID
-is not available for reading.
-An HDMI Sink shall indicate any change to the contents of the E-EDID by driving a low
-voltage level pulse on the Hot Plug Detect pin. This pulse shall be at least 100 msec.
-============><==========================================
-
-So this is OK with the first sentence, and should also work with the second one because
-right after the pulse we will read the EDID again, but I think we should have a much
-more robust way to detect those 100ms pulses, no ?
-
-Maxime, do you have an opinion on this ?
-
-Neil
-
-> 
-> Regards,
-> Jonas
-> 
->>
->> Neil
-> 
+-- 
+2.25.1
 
 
