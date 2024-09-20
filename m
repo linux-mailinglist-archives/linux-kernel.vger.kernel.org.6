@@ -1,129 +1,217 @@
-Return-Path: <linux-kernel+bounces-334440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD85597D751
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:09:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E47DB97D754
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 17:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CAC1B24BED
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:09:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A59262841E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 15:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABCD17C9B9;
-	Fri, 20 Sep 2024 15:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A8017CA1B;
+	Fri, 20 Sep 2024 15:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="fk2X3rrO"
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ok6zyiP7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mbzjsvoo";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ok6zyiP7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mbzjsvoo"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67313BBC1;
-	Fri, 20 Sep 2024 15:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2BB17C7C9
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 15:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726844969; cv=none; b=SjSE0rLz52Qq75h9XENQisYNhwZkEqIIB2pvUDMjTyPUaH2CnKkucg21QsqoQuYhpA7VeNyn5TTgcFdds+GOx3qu/hu6AUMAU+/Hnkk4/kB8zCBEZRq6iMfwPZu8dZqIs5V4mnztWtaxLaSxSJW0wzMol8ARX9EJlZSnZtO0Ycw=
+	t=1726845025; cv=none; b=kD9xUUIQoxsKLgwE0IBAjw0M1T/QDPvf32P6mKRjDtm6bjQtYlgC+H7G6jp9fu/Uu21eyF2WIP5uyrBxk6znT6xSRZEyP2ZeAvvFrTqOZp4EqWTeE/8uYfnBRCf/6anJhJ2/+e7FnlzYTvMBfSpBnF0FF4RVg2j4Ish8jI4z8Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726844969; c=relaxed/simple;
-	bh=rdhZvUrRYqnq10ejxQHRUp3m5b2pphh1v/aFv8MI8FE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g8192gKbtFy64gdnrJXvmSWgAQ5yE3ynBQ2IiZIfIi4+FxkalVuwrF2aGPzi4W/t6JEMHbpILPdH/l8W1hWTivS8iCGJEROH2siHtanq1VVQm73JStwXzBFBYjrKm1iO12Qm09stQldJbjCuLI2qKk30Tjr9yVORUldJ286vy5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=fk2X3rrO; arc=none smtp.client-ip=74.208.4.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
-	s=s1-ionos; t=1726844955; x=1727449755; i=parker@finest.io;
-	bh=rdhZvUrRYqnq10ejxQHRUp3m5b2pphh1v/aFv8MI8FE=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=fk2X3rrO9v8yCTX4Wh2tpc3l02XEC6ND8kgRPnrj3b6QUI6d5fhxDD4+K30XgCIN
-	 hLJ5yxsg6vwGvXXmaKuYN9JMxXk6x83iDNLdEGeO2RS2wBPmq5gNFbR+bj/eJhz1X
-	 ndCGAVhaL4HadcR2UzkypIEfd5Fe5vN6M4M+R04ytITR4uHJMSC/iOEzoILduuOAi
-	 yxET+QcrSdB5f9GdO2YGif6KwUKtbEMNXRkOwNBm68AGc71fe3tAIwHYzbPx/PNT0
-	 Z262IU+M2UMUx7l3jcvod3HH3d7ef1xAQc2QCCMixJKOwAwOoxfs8W5MC+0HszRcE
-	 sc7e7RpyXxyutA+igQ==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
- mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPSA (Nemesis) id
- 0Me9Ie-1sbmYn2RKg-00VTsi; Fri, 20 Sep 2024 17:09:15 +0200
-Date: Fri, 20 Sep 2024 11:09:13 -0400
-From: Parker Newman <parker@finest.io>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Parker Newman
- <pnewman@connecttech.com>
-Subject: Re: [PATCH v2 3/4] serial: 8250_exar: Replace custom EEPROM read
- with eeprom_93cx6
-Message-ID: <20240920110913.66f768d0@SWDEV2.connecttech.local>
-In-Reply-To: <Zu2M5Y_scTkhSyzx@smile.fi.intel.com>
-References: <cover.1726838531.git.pnewman@connecttech.com>
-	<87719d2113970b6ff4979329fb96346a0aca9775.1726838531.git.pnewman@connecttech.com>
-	<Zu2M5Y_scTkhSyzx@smile.fi.intel.com>
-Organization: Connect Tech Inc.
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726845025; c=relaxed/simple;
+	bh=yXc02NtS3lmToqqXwbBB949he71ABPUrozQ3B5MH2IU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GCYbKzS3mZS2a8ZmXqteiUDXmgEqhEX60o/ODHwLIA2rr4ln5aLoamQok1To2pB79OXWP7dbQEJLV32ZbJx2k7L6/V9rVku3vH+2nr3EX6DH71I/LN0oS31lTdawTRTNbZt9bA2gCm3B1J/bhZJhd/voUEYv+wsu1PMMG1zRSGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ok6zyiP7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mbzjsvoo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ok6zyiP7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mbzjsvoo; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 082D21F7CF;
+	Fri, 20 Sep 2024 15:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1726845021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4wlN+6/jgbZmclWvDlwlRlrcwqVrnHC5T48AcREsq+I=;
+	b=ok6zyiP7LzzceDObhnKAWfJ+AEhIxoW1XJT/nCbPpSGWZv2hjyadcG5LERxSVa0TgAe2Q9
+	u0xC+N3ZRbUtAjvcNjz6ShSpIcFUV/5AgabRfU9gxuNgDzdE5wS/JkhdiSaZVpBb4hGKZi
+	sUaaLQBhGArZIvn7atrzVqtVStRzF7I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1726845021;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4wlN+6/jgbZmclWvDlwlRlrcwqVrnHC5T48AcREsq+I=;
+	b=Mbzjsvoovn6tSz4eHkmPw35vYJkHrynW9RGhzRYnr89ZTk/ogw9emma5kcIT2kFyF/yPIt
+	bsv0mB5c48hYYNCQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ok6zyiP7;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Mbzjsvoo
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1726845021; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4wlN+6/jgbZmclWvDlwlRlrcwqVrnHC5T48AcREsq+I=;
+	b=ok6zyiP7LzzceDObhnKAWfJ+AEhIxoW1XJT/nCbPpSGWZv2hjyadcG5LERxSVa0TgAe2Q9
+	u0xC+N3ZRbUtAjvcNjz6ShSpIcFUV/5AgabRfU9gxuNgDzdE5wS/JkhdiSaZVpBb4hGKZi
+	sUaaLQBhGArZIvn7atrzVqtVStRzF7I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1726845021;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4wlN+6/jgbZmclWvDlwlRlrcwqVrnHC5T48AcREsq+I=;
+	b=Mbzjsvoovn6tSz4eHkmPw35vYJkHrynW9RGhzRYnr89ZTk/ogw9emma5kcIT2kFyF/yPIt
+	bsv0mB5c48hYYNCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 526C013AA7;
+	Fri, 20 Sep 2024 15:10:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oUEZFFSQ7WZCWQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 20 Sep 2024 15:10:12 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D35EDA08BD; Fri, 20 Sep 2024 17:09:52 +0200 (CEST)
+Date: Fri, 20 Sep 2024 17:09:52 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhao Mengmeng <zhaomzhao@126.com>
+Cc: jack@suse.com, zhaomengmeng@kylinos.cn, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] udf: refactor udf_current_aext() to handle error
+Message-ID: <20240920150952.bqzxuhnvgh6zx5rg@quack3>
+References: <20240918093634.12906-1-zhaomzhao@126.com>
+ <20240918093634.12906-2-zhaomzhao@126.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:OVnDAoKanvoUIzsp8vHHjIK9LXZlm9qNDbkeITT3yUhXmXwm8Ar
- 2TE+df48TWAtOjLSltJNTHw657a5rm8UXRXlSWfkdhDSlnjwc2bmtHQlpqXSO5m9zur1jwF
- WzkiJQmxCAMh1SJwvEX9NlfTfsqLahu3ftwc1XMtWt2lCelXTv9zCkMpFjitwN2URZdl24D
- 9X1LXAFWthrVGqUorcW/A==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240918093634.12906-2-zhaomzhao@126.com>
+X-Rspamd-Queue-Id: 082D21F7CF
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[126.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[126.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	MISSING_XM_UA(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:5C+7VOKP7bM=;6vHrg+s2129rPTyjBYq+3utQSDL
- 3Qp0AiWI6ELmrQbtoB+sRYCCOeraI9qt6tD9aSVv+SC/W2N2eeuzaj0NgvA6jkKS6+pzxx37u
- op9jN4MRSNImuMdLmjEPUy0vHGNcDOZVxNQoFWHX3HT8ApjpQFwkNgPhhk5fxM8cVLUbmKAFv
- 7dgAFfWF+RzCGPfPLuK71MDBN5RFNhdpDDZWEur3K0zz6XROgklR5QIwCuIQgCzpnC1Q2dPiW
- R0eiepi582F0lqQgxehXBbdQvuwQeXmvedHdpCeQE5JOQYstryHh4ROQKxDRFGnEQyjQR1/hH
- GhZ3T7+Rg2TOJItck4sA2d827tVLhx1I6sMGpk8XWFOxWbqyfeUYN3d9bblrJsg1O1mDfrt+i
- wN0tZYtmEwlhS3iGw7z8cgYC4YG5lPa/LakfHDluftk9v2eTQKyTY+2RQZzxPaN43/6L/OhUN
- WmIe1z/yIbn66gGMNXGutqKLMTGVyUGX7sQJ5fNjohnIof4PmuJP6FLIuKQ5IBAWdeANut33O
- U/ksGl/vUVM6R7l6NUvUT/gd1LUnONmNTJAp9XSNcBShGCx2iu5MaYMhKYA8XH/jbKxv8LNcm
- 632Xdido0moTM+A1qDCmP9+4GQAGsQrqbPm+5HVjs6CkGC+bA+SIjktkjDZoR4BQ03Aru1lmV
- DZYmD9pLPkVHCtM0yPzzfoc8R5NDK8Kwr+7Moq46t/eroGBloYvr+cMvIbnS4mQ9mZB4OwF3g
- LRC0hJG8fH3RAgLLkeptVKaaSFTzmNxiw==
+X-Spam-Level: 
 
-On Fri, 20 Sep 2024 17:55:33 +0300
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+On Wed 18-09-24 17:36:32, Zhao Mengmeng wrote:
+> From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+> 
+> As Jan suggested in links below, refactor udf_current_aext() to
+> differentiate between error and "hit EOF", it now takes pointer to etype
+> to store the extent type, return 0 when get etype success; return -ENODATA
+> when hit EOF; return -EINVAL when i_alloc_type invalid.
+> 
+> Link: https://lore.kernel.org/all/20240912111235.6nr3wuqvktecy3vh@quack3/
+> 
+> Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
 
-> On Fri, Sep 20, 2024 at 10:03:23AM -0400, Parker Newman wrote:
-> > From: Parker Newman <pnewman@connecttech.com>
-> >
-> > Replace the custom 93cx6 EEPROM read functions with the eeprom_93cx6
-> > driver. This removes duplicate code and improves code readability.
-> >
-> > exar_ee_read() calls are replaced with eeprom_93cx6_read() or
-> > eeprom_93cx6_multiread().
-> >
-> > Add "select EEPROM_93CX6" to config SERIAL_8250_EXAR to ensure
-> > eeprom_93cx6 driver is also compiled when 8250_exar driver is selected=
-.
-> >
-> > Note: Old exar_ee_read() and associated functions are removed in next
-> > patch in this series.
->
-> Looks perfect!
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->
-> Let's wait for others and CIs to test all this and then after v6.12-rc1
-> is out (presumably within ~ten days) rebase your series (as I suggested
-> in another reply) and send a v3.
->
+Two comments below.
 
-Sounds good, I will wait for v6.12-rc1, rebase and send v3 with the
-changes you (or others) suggested. I promise I won't forget the Reviewed-b=
-y
-tags this time :).
+> @@ -1999,10 +2000,12 @@ int udf_setup_indirect_aext(struct inode *inode, udf_pblk_t block,
+>  	if (epos->offset + adsize > sb->s_blocksize) {
+>  		struct kernel_lb_addr cp_loc;
+>  		uint32_t cp_len;
+> -		int cp_type;
+> +		int8_t cp_type;
+>  
+>  		epos->offset -= adsize;
+> -		cp_type = udf_current_aext(inode, epos, &cp_loc, &cp_len, 0);
+> +		err = udf_current_aext(inode, epos, &cp_loc, &cp_len, &cp_type, 0);
+> +		if (err < 0)
+> +			goto err_out;
+>  		cp_len |= ((uint32_t)cp_type) << 30;
+>  
+>  		__udf_add_aext(inode, &nepos, &cp_loc, cp_len, 1);
+> @@ -2017,6 +2020,9 @@ int udf_setup_indirect_aext(struct inode *inode, udf_pblk_t block,
+>  	*epos = nepos;
+>  
+>  	return 0;
+> +err_out:
+> +	brelse(epos->bh);
+> +	return err;
+>  }
 
-> Good work!
->
+So here I don't think we want to release epos->bh. Rather we need to
+release 'bh' itself which we have got because we did't replace epos->bh yet
+with it.
 
-Thanks and thanks for the help!
--Parker
+> @@ -2167,9 +2173,12 @@ int8_t udf_next_aext(struct inode *inode, struct extent_position *epos,
+>  {
+>  	int8_t etype;
+>  	unsigned int indirections = 0;
+> +	int err = 0;
+> +
+> +	while ((err = udf_current_aext(inode, epos, eloc, elen, &etype, inc))) {
+> +		if (err || etype != (EXT_NEXT_EXTENT_ALLOCDESCS >> 30))
+> +			break;
+>  
+> -	while ((etype = udf_current_aext(inode, epos, eloc, elen, inc)) ==
+> -	       (EXT_NEXT_EXTENT_ALLOCDESCS >> 30)) {
+>  		udf_pblk_t block;
+>  
+>  		if (++indirections > UDF_MAX_INDIR_EXTS) {
+> @@ -2190,14 +2199,14 @@ int8_t udf_next_aext(struct inode *inode, struct extent_position *epos,
+>  		}
+>  	}
+>  
+> -	return etype;
+> +	return err;
+>  }
+
+This doesn't look right. Probably it gets fixed up in the following patches
+but here should be something like: !err ? etype : -1
+to keep udf_next_aext() compatible with its users.
+
+Otherwise the patch looks good.
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
