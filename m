@@ -1,518 +1,418 @@
-Return-Path: <linux-kernel+bounces-334655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1CCD97DA10
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 22:26:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620C997DA12
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 22:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56571284526
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 20:26:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15912284245
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 20:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B15D18592D;
-	Fri, 20 Sep 2024 20:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597001849D9;
+	Fri, 20 Sep 2024 20:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JjaRMJ2P"
-Received: from smtp.smtpout.orange.fr (smtp-18.smtpout.orange.fr [80.12.242.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IzqRU490"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2081.outbound.protection.outlook.com [40.107.95.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447D717A5BE;
-	Fri, 20 Sep 2024 20:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726863957; cv=none; b=V/JZThEGrmnTcN9g3RKZD5TWXkJpG2Ke0Jl0q9uNhaOwmE87veZkWsCLlQZYe8du3Tm4DKHQy+l4TtzWvXJ0Z6a5Py1KfOXc+u7qm6EkuuBNVfpzEqOFya3PyaIjjc8CFYmec/tyB53l2Bc3xUu5mnAUhCjAdQ7FQJt32qfWkqA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726863957; c=relaxed/simple;
-	bh=wdxl7L9ab6N6pMLE7KC4xJz+RoZj2ag/Gqszly5vPwQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i58+Pad5xV93GXX82UOA+yjvECTgJKhyhFFn1KkJr5FVfVb2j6zogQmDSIr6HycB8daTjOINvmBp8nRIw2uPBPlirRNS6Nhkkdv5h4LkPimNS4ql2QRoG2aL31wZw7OI/m3NUs6E8bM3na+mAFTo+EiAxKO/iicSYTlWDxDL/wI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JjaRMJ2P; arc=none smtp.client-ip=80.12.242.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id rkCEsAP4R8upxrkCEsK3V6; Fri, 20 Sep 2024 22:25:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1726863945;
-	bh=soylroJMGBRTvCSChB7Q0b3qXpOF2F9XAqnaurhKvjk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=JjaRMJ2PScHVbxdpQ0qY15DrqanQFw2CfDhgdpwSl1YL9eQ33X/z0yYI0YvcrkFcf
-	 sjUl7thsTXrYEu51ho/3677yCeGNlKwRoOWbmuEmHvf874AX0TAsgCEaaV8Zybl8gn
-	 aKOf7NJI8usc5F5klFVsComJygjp/X3iDqdozks0AJ42HNqL2slQJDSILA9ddtDIRo
-	 I63D7v12XDcHRTnR+tZgqj0xYZWGbu5X1YLHuzAJ+4gCIN8UvUz62bL+HK31+GkzVQ
-	 ICY42LgjhSpDdZH1nG5aLepX2SbSwh9xwfe2k16ZxN2B1/Vn8TPp2ThoFV/W8JSfXL
-	 TMrT+G10OQnjQ==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 20 Sep 2024 22:25:45 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: [PATCH] clk: sunxi-ng: Constify struct ccu_reset_map
-Date: Fri, 20 Sep 2024 22:25:24 +0200
-Message-ID: <44745f27034fa670605cd16966a39b7fe88fe5a6.1726863905.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B86913E04C
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 20:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726864020; cv=fail; b=dHDsNygBnzoRU7smh6YIjcJtZw+KEEBmjXqwgecG2bw8JKyBs5dOxEathbDmvcxf7ElHyOsGWWwxLNZ5oitvYBiIJahH5Tq5JiyvhCsR3isancZeQ4RItvoG0fj8yP3gIoF5pj3/kyOMFood8aYOo3pEq+33LJOwu4FwXlwd7/Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726864020; c=relaxed/simple;
+	bh=bTZD7UtnU1f9Yrb/qgdogcs4sA7NN0K9OcePKkD/TFI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Pj43Z54yLxcsaRsm3sLhlO2wcc7N9+VzxwjCsz6GEJP70Kvv2b93jMhuvZ+Li+8xjb3hEtKYYzrOV9VTBerpMy/t/Jl7VIipra0QZxpmcgHOJh6t5laYxKBCddMLr7BWQOFvEdeKUG7GviqSD3xLVM09rIiwejde8Cd/d1wh1wY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IzqRU490; arc=fail smtp.client-ip=40.107.95.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UXqCgdm07jiufBEfrA55ZIKNGZoNk8oEcX085c4l/LQutmjNMZNHUuodRIIZHoILs/5fA+vYtVKp0LoLl4rBYtcUaQ72gk/ia6dJU2ebs8x0dwTi8aG1Rlm1mvos03KOBOXwiFstRVd723kO8IQ58IvHjeidBMMpC2JYLloWVflj4T3p+TpfrLnerE8wrPFJ5FY6jRMHMDH1FEwt+mgq2XLSOoXog1Os3lAat8mTMkD1708QnOH2sASKp0HrXaVzSq2Sqe43oPBC7ODet5WkaluEu/kyz8zDTH1p84buyk+YJf7C0ZvR1WQheJ80VjVhTMKC5EUt+u5A7iqrrq9+rQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IvBLUGoTv9qDcdBjMpdKjYLOu4SMXrqqieJu20MSiLI=;
+ b=Th5YM6S8tOCohhYlsK7b3pO9NJG+tV3YckaeLylA/+DofDEfDeaDrbWUTLy0ir9VHn1e058kpUwdd+P1HvO+uTvylPZleQetSXTEdUq6Vv16sgYoRqckev1DOa1eJWm/LdUExMHPWGdsPzrIOlobtLpKpD5c3fWDSfT99Rw7ohw3Sjgwz4hUOYh8yWxmPC5z1xdv+lZIPWO5nYfMw8BT3GiF/bP+2PniuqUHlTAIzLTBcwQReT2lWu0yysfmmTXb3OBhckEehajs5Q526eNUF+vSKyKd4TVpQmT8WZ7mQ18svWulL2+po2OTeViVO/+t8VEU1A3JzByXVFZHy9mmUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IvBLUGoTv9qDcdBjMpdKjYLOu4SMXrqqieJu20MSiLI=;
+ b=IzqRU490YfFNt2xhRnm1p+11iWuDQpp2lGVzetRYY5c0Z6QA8Jgo1uptRkiMW5AB7kLEK2et8xGBbDZ4gTKdB079N4So18sNQf5QkkZto1UwI4y1OjXx/VakACTXnbpD4b5hJni57q5NANqFufiEFEAnPtjBq6iMKbDzkcwCwEc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BN9PR12MB5115.namprd12.prod.outlook.com (2603:10b6:408:118::14)
+ by SN7PR12MB8130.namprd12.prod.outlook.com (2603:10b6:806:32e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.22; Fri, 20 Sep
+ 2024 20:26:54 +0000
+Received: from BN9PR12MB5115.namprd12.prod.outlook.com
+ ([fe80::9269:317f:e85:cf81]) by BN9PR12MB5115.namprd12.prod.outlook.com
+ ([fe80::9269:317f:e85:cf81%2]) with mapi id 15.20.7982.018; Fri, 20 Sep 2024
+ 20:26:53 +0000
+Message-ID: <ece41917-2ea7-4571-83a5-a50c776c6587@amd.com>
+Date: Fri, 20 Sep 2024 16:26:50 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] mm/migrate: Trylock device page in do_swap_page
+To: Alistair Popple <apopple@nvidia.com>,
+ Matthew Brost <matthew.brost@intel.com>
+Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, simona.vetter@ffwll.ch,
+ Philip.Yang@amd.com, akpm@linux-foundation.org, christian.koenig@amd.com
+References: <20240911030337.870160-1-matthew.brost@intel.com>
+ <20240911030337.870160-2-matthew.brost@intel.com>
+ <87mskehjtc.fsf@nvdebian.thelocal>
+ <ZuS/NH/P8Fl+qptx@DUT025-TGLU.fm.intel.com>
+ <87msk5our1.fsf@nvdebian.thelocal>
+Content-Language: en-US
+From: Felix Kuehling <felix.kuehling@amd.com>
+Organization: AMD Inc.
+In-Reply-To: <87msk5our1.fsf@nvdebian.thelocal>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: YQBP288CA0047.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:c01:9d::20) To BN9PR12MB5115.namprd12.prod.outlook.com
+ (2603:10b6:408:118::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN9PR12MB5115:EE_|SN7PR12MB8130:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1d216788-f434-4cd7-cc48-08dcd9b290da
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SVBiZjB6dXNrdHhyRGQ5M0pUNHlZdlIzaEpGejd4eDRsYVVzcFh3ZHAyWks1?=
+ =?utf-8?B?UG5ISkR2OWs1RGUzM1dXYjBBcFVkbE5mbTJBamNhMXJHWnhLeVBZQXQ5Zkti?=
+ =?utf-8?B?OXNqRlN2NVRuTDltVEtRdjROMFpHMlQrT1QzenJWN050MjlCVUVuMnF0Zk44?=
+ =?utf-8?B?TzZGYmh4aUJKbzhMcmZDQTltL21rZmczYTRLRmZsZk5VdmwxYWZVNis4RG12?=
+ =?utf-8?B?UWZ5WGlEZDZra2xDOTZWM1Vhd1NseGVHR004VjY0VHF2WFFMZC93WWRyWkQ5?=
+ =?utf-8?B?K3FjcGJKODZsbjc5bndlVVVOdWk4VnhzRmtORTlSM1JJR2tPbGxpOWd3Vk1l?=
+ =?utf-8?B?djFrMk5GMkJYZGE1Z05BdzdiZ1BRcGllQ2g1UmQvUnN6U2Z5a3FDVWZNS3hZ?=
+ =?utf-8?B?eVVZUEczYUJ5alJ0WmZFWXJ6TnUxTWZhamVwK0hpd0V2NlBNejlibEp4ZXJJ?=
+ =?utf-8?B?bDI5VlNrOWtveHBWL2NmZlBGT3k5T2wvcFBCTTFDUVRjc2NOYkJ5YzNRTjZY?=
+ =?utf-8?B?bStqcTI5emRiVllSRzdMellvQm96OWhzMGJRMHdKR1V0T1A4OTUrNkVIdXYr?=
+ =?utf-8?B?UnB3SWNieCsyVlN1dHRZSWJqbUdVT3BEWTJESmVRbnVBSHhlL0RQZDdQZm5r?=
+ =?utf-8?B?eWw3SHlXVGhiVlRMN3psc1R2NGVWT0FUYi9jUGcxSGZBMzNFUVZ2MGlSWEF2?=
+ =?utf-8?B?MEZzckthVmVaV3lLdjBaVVM0MVRxT3pIWWZicG5iMzlJb3M3RjRhUlhrMU5q?=
+ =?utf-8?B?SkNaYm03Mjd1L2x1cVJQK1dvMmJFZlBqMCtDckkyOVlFOHVWSnQvUkpLYmgv?=
+ =?utf-8?B?aGRoSTZ1aHBJU2JhMmxwQTFwbDJReTRSMFVLcWFQU2JndmhBS2lpbzZXU0dI?=
+ =?utf-8?B?SCtSOWp0MTNEYzdXbHBWUWFvU1VTYytzMTZtellzNk1MSzU4TkM2dXg4Wjhx?=
+ =?utf-8?B?REx5cXRiWDMzdnh6L2lhSzlPL2N1ZTdGbFlwYnRLT3l1Z0wwenlzNTJ3RFdV?=
+ =?utf-8?B?RS95ZWpZbndMSHp0TXNpa0J2dzBsVXhJa1RtR3JGaWppZ1NoRGMxWG1BMDFQ?=
+ =?utf-8?B?WVVnV015Z1BXZ3NnRmd6dzdxY3E4Q05hVUxrQTI3NHRTcnVicXR1MFV2dzJK?=
+ =?utf-8?B?OThSVVlMK0F6blprSXRETnRNb3Z5Y1JaZHVBY29VUjZ5QjNSMHZNbkx2RFl5?=
+ =?utf-8?B?N0FnaGgybWVBcXlPbnIwSXlULy9nVXlOMlNLVDJQTFBDYkN5ZW1FUEZrWWt4?=
+ =?utf-8?B?Z0pKa2RSczcvTk9ZbmdmUnZ2ZjZ1aThHd3R1UG52UWlscTJkN0k3SThKWnJZ?=
+ =?utf-8?B?SFdBc293eG8ybFdqVXV4R0sxS2w5bjdvQUd4UFoxSXJhL3FCVjh0WGxEaStJ?=
+ =?utf-8?B?RE1FZWJJQTR6dENycGdWcHplK3dOcjVYM09YTjhaTDdIUk9PQU1sUi9QVDIv?=
+ =?utf-8?B?bmtjRlh3dm1lTUFwSWxFTGNQS0tlaVlVZGZDMFpEeUpOOFBNY3lZM1JvUS94?=
+ =?utf-8?B?QW5sY0NBVUErRGFKZzhLRlljZWpLUXZQTlY5VS9UaW5odmpPVWZwYXM5ZlJx?=
+ =?utf-8?B?Tk8rdXQyYjhKR2pKeGVzWGZXQUhUa28ya2pqaXdnc3ZDRHlOd1JxTktrQnJs?=
+ =?utf-8?B?eC9QRXlDbGNMN004YXhMa252UVhQaFYzOHNOUlNZWWVHekthUWNTdkpwZjlM?=
+ =?utf-8?B?SGtwRWJySGRGbCtES0N3SGwyY3NWNnVSdysrTmJLNlU2VkhSYjhmdUl6YVV4?=
+ =?utf-8?B?VnAxcWwzWERYenJUWGV3UDd6M2FYTWFXTHdYWFhHNSttL3RWeXYxMTYwNVIy?=
+ =?utf-8?B?T09BeEREblZqRnIwSWU2dz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5115.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dURYeG5yVnZOQkNzTzBqTXF2YUJ1SW5qckRPL0dtcWNSRUFoMldZLzRTOGVi?=
+ =?utf-8?B?V0x1bytocnB3TDFOby9pY3BvNVgvTUp6N2oycG5rYmtZbnN2VVk4R0IxcWVK?=
+ =?utf-8?B?aGRDM1RaWktvUFNXK2tPSjl4R3NHRFRmdjgrTzY3Nmc0eXlBeHgxeHVMb1B5?=
+ =?utf-8?B?RlExaU9OUkU3UEZSN3FpdEFSaDJHa0RRNDh1aVUwMkxjY25QTDFxcmpZc25P?=
+ =?utf-8?B?Z2JuOGt2RjE1ZTBWbWFPYkFMcFJKQ2dHQW45aHExdXFMTGJLR0Nka3F5TmNL?=
+ =?utf-8?B?QkVKd0FZRElMNDNQLzhqL1lUeUlubElnVzFURHBROENoOGxmYkVaYXlSYVhI?=
+ =?utf-8?B?WVBzQlYwbFlQMjRHb3Y3ZjNZV3hzUEtBZlJjTjZhT3BreUt0Z0dKWkQzTjh1?=
+ =?utf-8?B?ZGszNVZsVzQ1TUVzbXByNUV2TDNVYmozclVvV0lRU2F5NFNSd2IzbGtPYS9V?=
+ =?utf-8?B?RUs2aGJPMHZ4UU1wOWhkODgxS2NSdXcyT3krYXFOOHJmcUYyS3dIdTl0M0JN?=
+ =?utf-8?B?amFWd2RNWjVlcjRYN3ZkS0k1QXlKUG85VDU3Wjkra2F6YWZGUjlwR1B5bkRR?=
+ =?utf-8?B?Qm1QZitxTUl4WTI1b2t2T29RdU5VUmQrOENFMDR2cC9zdkQvNDFOV2psd1ZY?=
+ =?utf-8?B?OG5kMEZMWDJGVFhRdUgvTmFHTC9ENXMwajMwSVBJZEpzd2Uwc1BmZ1QwSnkr?=
+ =?utf-8?B?dnZMQ1pEMHprRnBMTm9yMnBnaThJclAxSjZZejhkSnVDVWhLYW52ZWdiTHNr?=
+ =?utf-8?B?SE5KTzQzWlFLYzBvQjFNNFR1RHpPUW9RL1p6ZHlsb21QNE5uUE1KTWN6V2JP?=
+ =?utf-8?B?ZU1PR1JrbklLUWZnL3IrUVhZOG9UMDBTSVBCNjd1eEhUbFlxYzZNVnlGL1VP?=
+ =?utf-8?B?ck9BclhocHEzQ0Nrb2Yrbms3Rk11SlBMNEU0YTBzS0hlMW9nVFNJZzFZeFFr?=
+ =?utf-8?B?Wk53MTFRS0xPV1lteU5wb29oUWV4QnBMUURZWUppTjkxNkhMWlE1c0lrZG9G?=
+ =?utf-8?B?WnpjcFVyWURzeWRZejlUaEwyb0JSU0xUZ0JBbHo3eXJXMHpXWEN1YWhLWEd2?=
+ =?utf-8?B?bEtVNEc2UVhRbktVWFNNeXNsenM2c0l2VnhINWRCa0tLdWtoUU1ib29tYkRm?=
+ =?utf-8?B?bzVHdm5RTGtPYkJ2S2RLQlJMK243SkdVbEtNRFZob1FZajUvZDlLeUEzZmFi?=
+ =?utf-8?B?R3lsV01PQnBkbHFUR0ZaRnl6ODF2aWZNcUI5U0JDb1h2YytpQ1FXOVdyTmRK?=
+ =?utf-8?B?Sk14U1dEM2hPQVJqMUVCenNONzhhTERSMXdaOUFwZGY1WjQ0eG54OUVuMUh2?=
+ =?utf-8?B?SHlVRzVRdHppVEdMZmhnZm12M002UTJkWThVVnVuMWVkTUxOWTRSd3J0Y2FT?=
+ =?utf-8?B?VFdXTnRtdEVET0UyeHp2c2F5NW5pZUV5THVjbU5rbmRQbk5JdEhaazU3cmRm?=
+ =?utf-8?B?TXZHbTAxMzYwdDZBbjdzNU8ycmgxNnNyUUc0SFdodUNEM2I4QkZnYzhYR0VP?=
+ =?utf-8?B?ODVsb0hoaTYwdEMvZEhiTUFYTUV1WjdVakw4OFA1VE1XTjJUc2czZUtCK3Fp?=
+ =?utf-8?B?QnRGRDREM3NaRTcxSkZhYUJONmdQSy9HNWd1NmdLcEZyZFA5aGdEY2JxUFdm?=
+ =?utf-8?B?NjIzWVBSdnBSY1piTVY2TmdRc0N0MWVYdkhBSW44dUJ3Z3l4cXpmMHhpbDdC?=
+ =?utf-8?B?bHhPTUVNV0JhOUFkSW00ZXAwU1M4TWdFdmtDSS9UZ1E3a3o4bC93Q1g1eTM5?=
+ =?utf-8?B?L0RxTWdIVHJhSjZ5TFZyNDVvZ1BsMFNhVFlIZ2lLQkgrNnFYQXNrOVdtOGhF?=
+ =?utf-8?B?UFdDaEFYVjVLMUQ5ejQ5VGloV3dqMm1naXVrWk9NcnFSZnJMMWxybTVMZ0hJ?=
+ =?utf-8?B?akVYV2YvWC8rUlFEOWNaZU1pK2d3MStJdTk1aXl4VjVXcDRxMXBjcTdaTlJ0?=
+ =?utf-8?B?OGZwdUxCS1FHZm0zaEdQb3ZkVkYyUzMxbC9XQ0Z0b094UmtqVE9hajV6QVIz?=
+ =?utf-8?B?SE9DcVFmVHQ5OFZZOFdTV29ZdWc3UFc3ZzNUMjV3UlNXTlNTaEdkamxkUGUw?=
+ =?utf-8?B?bjAybmdjZm53ZVFTakNuN0VzM1ZlQTJScVpLM0QzOXZHNHBlaWY0aERtNG5V?=
+ =?utf-8?Q?Cor2yDGdz+8dQQzvFsZKITA5s?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d216788-f434-4cd7-cc48-08dcd9b290da
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5115.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 20:26:53.8826
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: m2879BjB+7R3bZYRhRBAQeHiI8H2G32lB4GPGFC0RxajH7Ou+ylYSvVrdbjbbH5PMuU7oi6ao2/8ciqFATM1Rg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8130
 
-'struct ccu_reset_map' are not modified in these drivers.
+On 2024-09-18 11:10, Alistair Popple wrote:
+> Matthew Brost <matthew.brost@intel.com> writes:
+>
+>> On Wed, Sep 11, 2024 at 02:53:31PM +1000, Alistair Popple wrote:
+>>> Matthew Brost <matthew.brost@intel.com> writes:
+>>>
+>>> I haven't seen the same in the NVIDIA UVM driver (out-of-tree, I know)
+>> Still a driver.
+> Indeed, and I'm happy to answer any questions about our implementation.
+>
+>>> but theoretically it seems like it should be possible. However we
+>>> serialize migrations of the same virtual address range to avoid these
+>>> kind of issues as they can happen the other way too (ie. multiple
+>>> threads trying to migrate to GPU).
+>>>
+>>> So I suspect what happens in UVM is that one thread wins and installs
+>>> the migration entry while the others fail to get the driver migration
+>>> lock and bail out sufficiently early in the fault path to avoid the
+>>> live-lock.
+>>>
+>> I had to try hard to show this, doubt an actual user could trigger this.
+>>
+>> I wrote a test which kicked 8 threads, each thread did a pthread join,
+>> and then tried to read the same page. This repeats in loop for like 512
+>> pages or something. I needed an exclusive lock in migrate_to_ram vfunc
+>> for it to livelock. Without an exclusive lock I think on average I saw
+>> about 32k retries (i.e. migrate_to_ram calls on the same page) before a
+>> thread won this race.
+>>
+>>  From reading UVM, pretty sure if you tried hard enough you could trigger
+>> a livelock given it appears you take excluvise locks in migrate_to_ram.
+> Yes, I suspect you're correct here and that we just haven't tried hard
+> enough to trigger it.
+>
+>>>> Cc: Philip Yang <Philip.Yang@amd.com>
+>>>> Cc: Felix Kuehling <felix.kuehling@amd.com>
+>>>> Cc: Christian König <christian.koenig@amd.com>
+>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>>> Suggessted-by: Simona Vetter <simona.vetter@ffwll.ch>
+>>>> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
+>>>> ---
+>>>>   mm/memory.c         | 13 +++++++---
+>>>>   mm/migrate_device.c | 60 +++++++++++++++++++++++++++++++--------------
+>>>>   2 files changed, 50 insertions(+), 23 deletions(-)
+>>>>
+>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>> index 3c01d68065be..bbd97d16a96a 100644
+>>>> --- a/mm/memory.c
+>>>> +++ b/mm/memory.c
+>>>> @@ -4046,10 +4046,15 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>>>>   			 * Get a page reference while we know the page can't be
+>>>>   			 * freed.
+>>>>   			 */
+>>>> -			get_page(vmf->page);
+>>>> -			pte_unmap_unlock(vmf->pte, vmf->ptl);
+>>>> -			ret = vmf->page->pgmap->ops->migrate_to_ram(vmf);
+>>>> -			put_page(vmf->page);
+>>>> +			if (trylock_page(vmf->page)) {
+>>>> +				get_page(vmf->page);
+>>>> +				pte_unmap_unlock(vmf->pte, vmf->ptl);
+>>> This is all beginning to look a lot like migrate_vma_collect_pmd(). So
+>>> rather than do this and then have to pass all this context
+>>> (ie. fault_page) down to the migrate_vma_* functions could we instead
+>>> just do what migrate_vma_collect_pmd() does here? Ie. we already have
+>>> the PTL and the page lock so there's no reason we couldn't just setup
+>>> the migration entry prior to calling migrate_to_ram().
+>>>
+>>> Obviously calling migrate_vma_setup() would show the page as not
+>>> migrating, but drivers could easily just fill in the src_pfn info after
+>>> calling migrate_vma_setup().
+>>>
+>>> This would eliminate the whole fault_page ugliness.
+>>>
+>> This seems like it would work and agree it likely be cleaner. Let me
+>> play around with this and see what I come up with. Multi-tasking a bit
+>> so expect a bit of delay here.
+>>
+>> Thanks for the input,
+>> Matt
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+Thanks! Sorry, I'm late catching up after a vacation. Please keep 
+Philip, Christian and myself in the loop with future patches in this area.
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   1533	   2224	      0	   3757	    ead	drivers/clk/sunxi-ng/ccu-sun20i-d1-r.o
+Regards,
+   Felix
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   1597	   2160	      0	   3757	    ead	drivers/clk/sunxi-ng/ccu-sun20i-d1-r.o
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c   | 2 +-
- drivers/clk/sunxi-ng/ccu-sun20i-d1.c     | 2 +-
- drivers/clk/sunxi-ng/ccu-sun4i-a10.c     | 2 +-
- drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c | 2 +-
- drivers/clk/sunxi-ng/ccu-sun50i-a100.c   | 2 +-
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c    | 2 +-
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   | 4 ++--
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c     | 2 +-
- drivers/clk/sunxi-ng/ccu-sun50i-h616.c   | 2 +-
- drivers/clk/sunxi-ng/ccu-sun5i.c         | 2 +-
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c     | 2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c     | 2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c     | 2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c    | 2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c     | 8 ++++----
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c      | 4 ++--
- drivers/clk/sunxi-ng/ccu-sun8i-r.c       | 6 +++---
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c     | 2 +-
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     | 4 ++--
- drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c  | 2 +-
- drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c | 2 +-
- drivers/clk/sunxi-ng/ccu-sun9i-a80.c     | 2 +-
- drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c | 2 +-
- drivers/clk/sunxi-ng/ccu_common.h        | 2 +-
- drivers/clk/sunxi-ng/ccu_reset.h         | 2 +-
- 25 files changed, 33 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c b/drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c
-index de36e21d3eaf..4084714adb15 100644
---- a/drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c
-@@ -91,7 +91,7 @@ static struct clk_hw_onecell_data sun20i_d1_r_hw_clks = {
- 	},
- };
- 
--static struct ccu_reset_map sun20i_d1_r_ccu_resets[] = {
-+static const struct ccu_reset_map sun20i_d1_r_ccu_resets[] = {
- 	[RST_BUS_R_TIMER]	= { 0x11c, BIT(16) },
- 	[RST_BUS_R_TWD]		= { 0x12c, BIT(16) },
- 	[RST_BUS_R_PPU]		= { 0x1ac, BIT(16) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-index 9b5cfac2ee70..9633d4506891 100644
---- a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-@@ -1232,7 +1232,7 @@ static struct clk_hw_onecell_data sun20i_d1_hw_clks = {
- 	},
- };
- 
--static struct ccu_reset_map sun20i_d1_ccu_resets[] = {
-+static const struct ccu_reset_map sun20i_d1_ccu_resets[] = {
- 	[RST_MBUS]		= { 0x540, BIT(30) },
- 	[RST_BUS_DE]		= { 0x60c, BIT(16) },
- 	[RST_BUS_DI]		= { 0x62c, BIT(16) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-index d1a1683baff4..54c794c50828 100644
---- a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-@@ -1382,7 +1382,7 @@ static struct clk_hw_onecell_data sun7i_a20_hw_clks = {
- 	.num	= CLK_NUMBER_SUN7I,
- };
- 
--static struct ccu_reset_map sunxi_a10_a20_ccu_resets[] = {
-+static const struct ccu_reset_map sunxi_a10_a20_ccu_resets[] = {
- 	[RST_USB_PHY0]		= { 0x0cc, BIT(0) },
- 	[RST_USB_PHY1]		= { 0x0cc, BIT(1) },
- 	[RST_USB_PHY2]		= { 0x0cc, BIT(2) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
-index 2c791761a646..cdd9721f9e7d 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
-@@ -166,7 +166,7 @@ static struct clk_hw_onecell_data sun50i_a100_r_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun50i_a100_r_ccu_resets[] = {
-+static const struct ccu_reset_map sun50i_a100_r_ccu_resets[] = {
- 	[RST_R_APB1_TIMER]	=  { 0x11c, BIT(16) },
- 	[RST_R_APB1_BUS_PWM]	=  { 0x13c, BIT(16) },
- 	[RST_R_APB1_PPU]	=  { 0x17c, BIT(16) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a100.c b/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
-index bbaa82978716..1b6a49bc7184 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
-@@ -1061,7 +1061,7 @@ static struct clk_hw_onecell_data sun50i_a100_hw_clks = {
- 	.num = CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun50i_a100_ccu_resets[] = {
-+static const struct ccu_reset_map sun50i_a100_ccu_resets[] = {
- 	[RST_MBUS]		= { 0x540, BIT(30) },
- 
- 	[RST_BUS_DE]		= { 0x60c, BIT(16) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index c255dba2c96d..82d7dcbca1cc 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -858,7 +858,7 @@ static struct clk_hw_onecell_data sun50i_a64_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun50i_a64_ccu_resets[] = {
-+static const struct ccu_reset_map sun50i_a64_ccu_resets[] = {
- 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
- 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
- 	[RST_USB_HSIC]		=  { 0x0cc, BIT(2) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-index c72815841111..d0ce2779c550 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-@@ -179,7 +179,7 @@ static struct clk_hw_onecell_data sun50i_h616_r_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun50i_h6_r_ccu_resets[] = {
-+static const struct ccu_reset_map sun50i_h6_r_ccu_resets[] = {
- 	[RST_R_APB1_TIMER]	=  { 0x11c, BIT(16) },
- 	[RST_R_APB1_TWD]	=  { 0x12c, BIT(16) },
- 	[RST_R_APB1_PWM]	=  { 0x13c, BIT(16) },
-@@ -190,7 +190,7 @@ static struct ccu_reset_map sun50i_h6_r_ccu_resets[] = {
- 	[RST_R_APB1_W1]		=  { 0x1ec, BIT(16) },
- };
- 
--static struct ccu_reset_map sun50i_h616_r_ccu_resets[] = {
-+static const struct ccu_reset_map sun50i_h616_r_ccu_resets[] = {
- 	[RST_R_APB1_TWD]	=  { 0x12c, BIT(16) },
- 	[RST_R_APB2_I2C]	=  { 0x19c, BIT(16) },
- 	[RST_R_APB2_RSB]	=  { 0x1bc, BIT(16) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-index a20b621ad8f1..bd6fc3df911d 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -1076,7 +1076,7 @@ static struct clk_hw_onecell_data sun50i_h6_hw_clks = {
- 	.num = CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun50i_h6_ccu_resets[] = {
-+static const struct ccu_reset_map sun50i_h6_ccu_resets[] = {
- 	[RST_MBUS]		= { 0x540, BIT(30) },
- 
- 	[RST_BUS_DE]		= { 0x60c, BIT(16) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-index 84e406ddf9d1..af1c4f7c3f95 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-@@ -990,7 +990,7 @@ static struct clk_hw_onecell_data sun50i_h616_hw_clks = {
- 	.num = CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun50i_h616_ccu_resets[] = {
-+static const struct ccu_reset_map sun50i_h616_ccu_resets[] = {
- 	[RST_MBUS]		= { 0x540, BIT(30) },
- 
- 	[RST_BUS_DE]		= { 0x60c, BIT(16) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun5i.c b/drivers/clk/sunxi-ng/ccu-sun5i.c
-index 1f4bc0e773a7..c9bf1fdb8a8a 100644
---- a/drivers/clk/sunxi-ng/ccu-sun5i.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun5i.c
-@@ -731,7 +731,7 @@ static struct clk_hw_onecell_data sun5i_a10s_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun5i_a10s_ccu_resets[] = {
-+static const struct ccu_reset_map sun5i_a10s_ccu_resets[] = {
- 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
- 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
- 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-index e8b8d2dd7f2c..c2ad1209633e 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-@@ -1146,7 +1146,7 @@ static struct clk_hw_onecell_data sun6i_a31_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun6i_a31_ccu_resets[] = {
-+static const struct ccu_reset_map sun6i_a31_ccu_resets[] = {
- 	[RST_USB_PHY0]		= { 0x0cc, BIT(0) },
- 	[RST_USB_PHY1]		= { 0x0cc, BIT(1) },
- 	[RST_USB_PHY2]		= { 0x0cc, BIT(2) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-index 6c2a08f722a8..9433dbac038e 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-@@ -668,7 +668,7 @@ static struct clk_hw_onecell_data sun8i_a23_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun8i_a23_ccu_resets[] = {
-+static const struct ccu_reset_map sun8i_a23_ccu_resets[] = {
- 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
- 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
- 	[RST_USB_HSIC]		=  { 0x0cc, BIT(2) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 5e0bc08a9ce3..1ffc5ab9bc3c 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -712,7 +712,7 @@ static struct clk_hw_onecell_data sun8i_a33_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun8i_a33_ccu_resets[] = {
-+static const struct ccu_reset_map sun8i_a33_ccu_resets[] = {
- 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
- 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
- 	[RST_USB_HSIC]		=  { 0x0cc, BIT(2) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-index cb4c6b16c467..a51fb2c10c94 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-@@ -797,7 +797,7 @@ static struct clk_hw_onecell_data sun8i_a83t_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun8i_a83t_ccu_resets[] = {
-+static const struct ccu_reset_map sun8i_a83t_ccu_resets[] = {
- 	[RST_USB_PHY0]		= { 0x0cc, BIT(0) },
- 	[RST_USB_PHY1]		= { 0x0cc, BIT(1) },
- 	[RST_USB_HSIC]		= { 0x0cc, BIT(2) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-index 7683ea08d8e3..a742f83746d1 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-@@ -146,7 +146,7 @@ static struct clk_hw_onecell_data sun50i_a64_de2_hw_clks = {
- 	.num	= CLK_NUMBER_WITH_ROT,
- };
- 
--static struct ccu_reset_map sun8i_a83t_de2_resets[] = {
-+static const struct ccu_reset_map sun8i_a83t_de2_resets[] = {
- 	[RST_MIXER0]	= { 0x08, BIT(0) },
- 	/*
- 	 * Mixer1 reset line is shared with wb, so only RST_WB is
-@@ -156,7 +156,7 @@ static struct ccu_reset_map sun8i_a83t_de2_resets[] = {
- 	[RST_ROT]	= { 0x08, BIT(3) },
- };
- 
--static struct ccu_reset_map sun8i_h3_de2_resets[] = {
-+static const struct ccu_reset_map sun8i_h3_de2_resets[] = {
- 	[RST_MIXER0]	= { 0x08, BIT(0) },
- 	/*
- 	 * Mixer1 reset line is shared with wb, so only RST_WB is
-@@ -166,14 +166,14 @@ static struct ccu_reset_map sun8i_h3_de2_resets[] = {
- 	[RST_WB]	= { 0x08, BIT(2) },
- };
- 
--static struct ccu_reset_map sun50i_a64_de2_resets[] = {
-+static const struct ccu_reset_map sun50i_a64_de2_resets[] = {
- 	[RST_MIXER0]	= { 0x08, BIT(0) },
- 	[RST_MIXER1]	= { 0x08, BIT(1) },
- 	[RST_WB]	= { 0x08, BIT(2) },
- 	[RST_ROT]	= { 0x08, BIT(3) },
- };
- 
--static struct ccu_reset_map sun50i_h5_de2_resets[] = {
-+static const struct ccu_reset_map sun50i_h5_de2_resets[] = {
- 	[RST_MIXER0]	= { 0x08, BIT(0) },
- 	[RST_MIXER1]	= { 0x08, BIT(1) },
- 	[RST_WB]	= { 0x08, BIT(2) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index 13e57db2f8d5..74da5d27af72 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -876,7 +876,7 @@ static struct clk_hw_onecell_data sun50i_h5_hw_clks = {
- 	.num	= CLK_NUMBER_H5,
- };
- 
--static struct ccu_reset_map sun8i_h3_ccu_resets[] = {
-+static const struct ccu_reset_map sun8i_h3_ccu_resets[] = {
- 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
- 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
- 	[RST_USB_PHY2]		=  { 0x0cc, BIT(2) },
-@@ -939,7 +939,7 @@ static struct ccu_reset_map sun8i_h3_ccu_resets[] = {
- 	[RST_BUS_SCR0]		=  { 0x2d8, BIT(20) },
- };
- 
--static struct ccu_reset_map sun50i_h5_ccu_resets[] = {
-+static const struct ccu_reset_map sun50i_h5_ccu_resets[] = {
- 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
- 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
- 	[RST_USB_PHY2]		=  { 0x0cc, BIT(2) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r.c b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-index da6569334d68..2b3e094a32cb 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-@@ -178,7 +178,7 @@ static struct clk_hw_onecell_data sun50i_a64_r_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun8i_a83t_r_ccu_resets[] = {
-+static const struct ccu_reset_map sun8i_a83t_r_ccu_resets[] = {
- 	[RST_APB0_IR]		=  { 0xb0, BIT(1) },
- 	[RST_APB0_TIMER]	=  { 0xb0, BIT(2) },
- 	[RST_APB0_RSB]		=  { 0xb0, BIT(3) },
-@@ -186,14 +186,14 @@ static struct ccu_reset_map sun8i_a83t_r_ccu_resets[] = {
- 	[RST_APB0_I2C]		=  { 0xb0, BIT(6) },
- };
- 
--static struct ccu_reset_map sun8i_h3_r_ccu_resets[] = {
-+static const struct ccu_reset_map sun8i_h3_r_ccu_resets[] = {
- 	[RST_APB0_IR]		=  { 0xb0, BIT(1) },
- 	[RST_APB0_TIMER]	=  { 0xb0, BIT(2) },
- 	[RST_APB0_UART]		=  { 0xb0, BIT(4) },
- 	[RST_APB0_I2C]		=  { 0xb0, BIT(6) },
- };
- 
--static struct ccu_reset_map sun50i_a64_r_ccu_resets[] = {
-+static const struct ccu_reset_map sun50i_a64_r_ccu_resets[] = {
- 	[RST_APB0_IR]		=  { 0xb0, BIT(1) },
- 	[RST_APB0_TIMER]	=  { 0xb0, BIT(2) },
- 	[RST_APB0_RSB]		=  { 0xb0, BIT(3) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-index 2f51ceab8016..a374aeeca3f4 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -1162,7 +1162,7 @@ static struct clk_hw_onecell_data sun8i_r40_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun8i_r40_ccu_resets[] = {
-+static const struct ccu_reset_map sun8i_r40_ccu_resets[] = {
- 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
- 	[RST_USB_PHY1]		=  { 0x0cc, BIT(1) },
- 	[RST_USB_PHY2]		=  { 0x0cc, BIT(2) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-index d24c0d8dfee4..00d04f7ad94d 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-@@ -644,7 +644,7 @@ static struct clk_hw_onecell_data sun8i_v3_hw_clks = {
- 	.num	= CLK_I2S0 + 1,
- };
- 
--static struct ccu_reset_map sun8i_v3s_ccu_resets[] = {
-+static const struct ccu_reset_map sun8i_v3s_ccu_resets[] = {
- 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
- 
- 	[RST_MBUS]		=  { 0x0fc, BIT(31) },
-@@ -679,7 +679,7 @@ static struct ccu_reset_map sun8i_v3s_ccu_resets[] = {
- 	[RST_BUS_UART2]		=  { 0x2d8, BIT(18) },
- };
- 
--static struct ccu_reset_map sun8i_v3_ccu_resets[] = {
-+static const struct ccu_reset_map sun8i_v3_ccu_resets[] = {
- 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
- 
- 	[RST_MBUS]		=  { 0x0fc, BIT(31) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
-index 0975ac58949f..d561c15f5122 100644
---- a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
-@@ -177,7 +177,7 @@ static struct clk_hw_onecell_data sun9i_a80_de_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun9i_a80_de_resets[] = {
-+static const struct ccu_reset_map sun9i_a80_de_resets[] = {
- 	[RST_FE0]	= { 0x0c, BIT(0) },
- 	[RST_FE1]	= { 0x0c, BIT(1) },
- 	[RST_FE2]	= { 0x0c, BIT(2) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
-index e5527c8cc64f..9e2b8d47fc54 100644
---- a/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
-@@ -68,7 +68,7 @@ static struct clk_hw_onecell_data sun9i_a80_usb_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun9i_a80_usb_resets[] = {
-+static const struct ccu_reset_map sun9i_a80_usb_resets[] = {
- 	[RST_USB0_HCI]		= { 0x0, BIT(17) },
- 	[RST_USB1_HCI]		= { 0x0, BIT(18) },
- 	[RST_USB2_HCI]		= { 0x0, BIT(19) },
-diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
-index 756dd8fca6b0..5da9a16b4ec7 100644
---- a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
-@@ -1108,7 +1108,7 @@ static struct clk_hw_onecell_data sun9i_a80_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
--static struct ccu_reset_map sun9i_a80_ccu_resets[] = {
-+static const struct ccu_reset_map sun9i_a80_ccu_resets[] = {
- 	/* AHB0 reset controls */
- 	[RST_BUS_FD]		= { 0x5a0, BIT(0) },
- 	[RST_BUS_VE]		= { 0x5a0, BIT(1) },
-diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
-index 52f1a04269f8..fb37c0fc4fde 100644
---- a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
-+++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
-@@ -477,7 +477,7 @@ static struct clk_hw_onecell_data suniv_hw_clks = {
- 	.num	= CLK_NUMBER,
- };
- 
--static struct ccu_reset_map suniv_ccu_resets[] = {
-+static const struct ccu_reset_map suniv_ccu_resets[] = {
- 	[RST_USB_PHY0]		=  { 0x0cc, BIT(0) },
- 
- 	[RST_BUS_DMA]		=  { 0x2c0, BIT(6) },
-diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu_common.h
-index 329734f8cf42..dd330426a6e5 100644
---- a/drivers/clk/sunxi-ng/ccu_common.h
-+++ b/drivers/clk/sunxi-ng/ccu_common.h
-@@ -50,7 +50,7 @@ struct sunxi_ccu_desc {
- 
- 	struct clk_hw_onecell_data	*hw_clks;
- 
--	struct ccu_reset_map		*resets;
-+	const struct ccu_reset_map	*resets;
- 	unsigned long			num_resets;
- };
- 
-diff --git a/drivers/clk/sunxi-ng/ccu_reset.h b/drivers/clk/sunxi-ng/ccu_reset.h
-index e9b973cae4af..941276a8ec2e 100644
---- a/drivers/clk/sunxi-ng/ccu_reset.h
-+++ b/drivers/clk/sunxi-ng/ccu_reset.h
-@@ -17,7 +17,7 @@ struct ccu_reset_map {
- 
- struct ccu_reset {
- 	void __iomem			*base;
--	struct ccu_reset_map		*reset_map;
-+	const struct ccu_reset_map	*reset_map;
- 	spinlock_t			*lock;
- 
- 	struct reset_controller_dev	rcdev;
--- 
-2.46.1
-
+>>
+>>>> +				ret = vmf->page->pgmap->ops->migrate_to_ram(vmf);
+>>>> +				put_page(vmf->page);
+>>>> +				unlock_page(vmf->page);
+>>>> +			} else {
+>>>> +				pte_unmap_unlock(vmf->pte, vmf->ptl);
+>>>> +			}
+>>>>   		} else if (is_hwpoison_entry(entry)) {
+>>>>   			ret = VM_FAULT_HWPOISON;
+>>>>   		} else if (is_pte_marker_entry(entry)) {
+>>>> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
+>>>> index 6d66dc1c6ffa..049893a5a179 100644
+>>>> --- a/mm/migrate_device.c
+>>>> +++ b/mm/migrate_device.c
+>>>> @@ -60,6 +60,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>>>>   				   struct mm_walk *walk)
+>>>>   {
+>>>>   	struct migrate_vma *migrate = walk->private;
+>>>> +	struct folio *fault_folio = migrate->fault_page ?
+>>>> +		page_folio(migrate->fault_page) : NULL;
+>>>>   	struct vm_area_struct *vma = walk->vma;
+>>>>   	struct mm_struct *mm = vma->vm_mm;
+>>>>   	unsigned long addr = start, unmapped = 0;
+>>>> @@ -88,11 +90,13 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>>>>   
+>>>>   			folio_get(folio);
+>>>>   			spin_unlock(ptl);
+>>>> -			if (unlikely(!folio_trylock(folio)))
+>>>> +			if (unlikely(fault_folio != folio &&
+>>>> +				     !folio_trylock(folio)))
+>>>>   				return migrate_vma_collect_skip(start, end,
+>>>>   								walk);
+>>>>   			ret = split_folio(folio);
+>>>> -			folio_unlock(folio);
+>>>> +			if (fault_folio != folio)
+>>>> +				folio_unlock(folio);
+>>>>   			folio_put(folio);
+>>>>   			if (ret)
+>>>>   				return migrate_vma_collect_skip(start, end,
+>>>> @@ -192,7 +196,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>>>>   		 * optimisation to avoid walking the rmap later with
+>>>>   		 * try_to_migrate().
+>>>>   		 */
+>>>> -		if (folio_trylock(folio)) {
+>>>> +		if (fault_folio == folio || folio_trylock(folio)) {
+>>>>   			bool anon_exclusive;
+>>>>   			pte_t swp_pte;
+>>>>   
+>>>> @@ -204,7 +208,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>>>>   
+>>>>   				if (folio_try_share_anon_rmap_pte(folio, page)) {
+>>>>   					set_pte_at(mm, addr, ptep, pte);
+>>>> -					folio_unlock(folio);
+>>>> +					if (fault_folio != folio)
+>>>> +						folio_unlock(folio);
+>>>>   					folio_put(folio);
+>>>>   					mpfn = 0;
+>>>>   					goto next;
+>>>> @@ -363,6 +368,8 @@ static unsigned long migrate_device_unmap(unsigned long *src_pfns,
+>>>>   					  unsigned long npages,
+>>>>   					  struct page *fault_page)
+>>>>   {
+>>>> +	struct folio *fault_folio = fault_page ?
+>>>> +		page_folio(fault_page) : NULL;
+>>>>   	unsigned long i, restore = 0;
+>>>>   	bool allow_drain = true;
+>>>>   	unsigned long unmapped = 0;
+>>>> @@ -427,7 +434,8 @@ static unsigned long migrate_device_unmap(unsigned long *src_pfns,
+>>>>   		remove_migration_ptes(folio, folio, false);
+>>>>   
+>>>>   		src_pfns[i] = 0;
+>>>> -		folio_unlock(folio);
+>>>> +		if (fault_folio != folio)
+>>>> +			folio_unlock(folio);
+>>>>   		folio_put(folio);
+>>>>   		restore--;
+>>>>   	}
+>>>> @@ -536,6 +544,8 @@ int migrate_vma_setup(struct migrate_vma *args)
+>>>>   		return -EINVAL;
+>>>>   	if (args->fault_page && !is_device_private_page(args->fault_page))
+>>>>   		return -EINVAL;
+>>>> +	if (args->fault_page && !PageLocked(args->fault_page))
+>>>> +		return -EINVAL;
+>>>>   
+>>>>   	memset(args->src, 0, sizeof(*args->src) * nr_pages);
+>>>>   	args->cpages = 0;
+>>>> @@ -799,19 +809,13 @@ void migrate_vma_pages(struct migrate_vma *migrate)
+>>>>   }
+>>>>   EXPORT_SYMBOL(migrate_vma_pages);
+>>>>   
+>>>> -/*
+>>>> - * migrate_device_finalize() - complete page migration
+>>>> - * @src_pfns: src_pfns returned from migrate_device_range()
+>>>> - * @dst_pfns: array of pfns allocated by the driver to migrate memory to
+>>>> - * @npages: number of pages in the range
+>>>> - *
+>>>> - * Completes migration of the page by removing special migration entries.
+>>>> - * Drivers must ensure copying of page data is complete and visible to the CPU
+>>>> - * before calling this.
+>>>> - */
+>>>> -void migrate_device_finalize(unsigned long *src_pfns,
+>>>> -			unsigned long *dst_pfns, unsigned long npages)
+>>>> +static void __migrate_device_finalize(unsigned long *src_pfns,
+>>>> +				      unsigned long *dst_pfns,
+>>>> +				      unsigned long npages,
+>>>> +				      struct page *fault_page)
+>>>>   {
+>>>> +	struct folio *fault_folio = fault_page ?
+>>>> +		page_folio(fault_page) : NULL;
+>>>>   	unsigned long i;
+>>>>   
+>>>>   	for (i = 0; i < npages; i++) {
+>>>> @@ -838,7 +842,8 @@ void migrate_device_finalize(unsigned long *src_pfns,
+>>>>   		src = page_folio(page);
+>>>>   		dst = page_folio(newpage);
+>>>>   		remove_migration_ptes(src, dst, false);
+>>>> -		folio_unlock(src);
+>>>> +		if (fault_folio != src)
+>>>> +			folio_unlock(src);
+>>>>   
+>>>>   		if (is_zone_device_page(page))
+>>>>   			put_page(page);
+>>>> @@ -854,6 +859,22 @@ void migrate_device_finalize(unsigned long *src_pfns,
+>>>>   		}
+>>>>   	}
+>>>>   }
+>>>> +
+>>>> +/*
+>>>> + * migrate_device_finalize() - complete page migration
+>>>> + * @src_pfns: src_pfns returned from migrate_device_range()
+>>>> + * @dst_pfns: array of pfns allocated by the driver to migrate memory to
+>>>> + * @npages: number of pages in the range
+>>>> + *
+>>>> + * Completes migration of the page by removing special migration entries.
+>>>> + * Drivers must ensure copying of page data is complete and visible to the CPU
+>>>> + * before calling this.
+>>>> + */
+>>>> +void migrate_device_finalize(unsigned long *src_pfns,
+>>>> +			unsigned long *dst_pfns, unsigned long npages)
+>>>> +{
+>>>> +	return __migrate_device_finalize(src_pfns, dst_pfns, npages, NULL);
+>>>> +}
+>>>>   EXPORT_SYMBOL(migrate_device_finalize);
+>>>>   
+>>>>   /**
+>>>> @@ -869,7 +890,8 @@ EXPORT_SYMBOL(migrate_device_finalize);
+>>>>    */
+>>>>   void migrate_vma_finalize(struct migrate_vma *migrate)
+>>>>   {
+>>>> -	migrate_device_finalize(migrate->src, migrate->dst, migrate->npages);
+>>>> +	__migrate_device_finalize(migrate->src, migrate->dst, migrate->npages,
+>>>> +				  migrate->fault_page);
+>>>>   }
+>>>>   EXPORT_SYMBOL(migrate_vma_finalize);
 
