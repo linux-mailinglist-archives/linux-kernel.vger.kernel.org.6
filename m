@@ -1,189 +1,234 @@
-Return-Path: <linux-kernel+bounces-334096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9674997D295
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:23:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5D397D2A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 518BE282ED0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:23:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D90B11C20994
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55E513C3EE;
-	Fri, 20 Sep 2024 08:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C19B13B5A0;
+	Fri, 20 Sep 2024 08:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IrnII+mU"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DFF13959D
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kpO6RUvI"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC4A13AA4E;
+	Fri, 20 Sep 2024 08:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726820533; cv=none; b=eSyQcEyt5XE1hwogtbySqUKd5xr3Fum6btg6KYXPvS7fZ62Gzhbj80c2fnXVKKtIJOwIZzdEnwFBJ3IF/BcyVMH5uKl6gYx7oMMAcoqSRY9pncSvzAvKoJ09YP86mOdJLHeNPRXOetMGTXgjFQAkhEQkkUVaC6tlOyTvW29MgAo=
+	t=1726820577; cv=none; b=Bmugu+WwlbIgDCnjkzwUkVnvMYVA9VEGDK+ToE3RDhT1pEirYrWLKGMCN3ULvy6YGwUIWxFaap3/YaVXRxfvNEugP/5bRsduLW4Oq7XgQrRglbPbaYQ2PZkR9Njs6ZWmnXqv7JdbWlZGnflE7zKGXrEtgA+iu3yGsGBIWHe12yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726820533; c=relaxed/simple;
-	bh=u5UZEnOqWdfuUHeVikUajZsnt0hZaQFAsjQx2M6D3WU=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XUT7kV7QYDolImmX7VFHMSYwGflL1gfjFwe7/ec7LCJWKy3BqqRgjioVNtshIlbjqKXlZbkR6R4PbBdQmEHYdMiCVZKdl0aPmjyk0LVmzUeba/9FU3AZduE5X4URMM5F0qwJLc4s+Q381gatLgRMlFMRabcFkhZ/aFXEdaqfjrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IrnII+mU; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f7529203ddso26764801fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 01:22:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1726820529; x=1727425329; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iRbjQAo5tiCbLgDd42XDT9pptGlsd4CX0PrR8LcCUGw=;
-        b=IrnII+mU7PSQaoNzQuKpc9YtK/rvsoZd0Esb9YXuC6p3vnbdVG1V9XL0oihAHHWAPo
-         acu6Plwiid1gXlCRXFlRhBB1hWsCmdAk/G+6W8DPIcy6oVmi5LgfHJ6QhxW4qBfzc2zq
-         L+yKbxTF3grQ6aHhE0JU54txhI7UJNjKFPLwmZME8/cfMVNVeUSIEKOeYrGixZXslCNI
-         GfROr4skg/kfO8vxN/BepjPPVa9UzTp7jjBhbINtpDmjVNczEwOKWxwO1ZolctTpp7J0
-         wzDnE+2IX6pj2g/VcdFFRjxMMvEV4tXYgoGmd0EOq/lTIGRJirFEPRxoUBnpKoLedmVa
-         CXQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726820529; x=1727425329;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iRbjQAo5tiCbLgDd42XDT9pptGlsd4CX0PrR8LcCUGw=;
-        b=dpjWtvTu4LXK9z7mTc06M+6ZPey+y8hiEREzhzDarCLZf8pxP6TbEguIUAdmVNNks1
-         a3i41thqdkwW96NHpCj6z7ocOfFTuSRKfNfym2AzE4CFbrppRSVsgUMJv60JyqpHefGP
-         muHcEtQtKiBuFlv7e8+UC1UwO+9wL6Looz1P5b2+PW6QqPz8PcxNc6JpracGk22qgN4z
-         w95Kt76Usfvg4ZLAVhMnj1b65s0KzzfnjwGQMXegyW6U5D6hGI3oJK5g4G4W8M1rUYec
-         JxlQe/awLnAINaIgpyh72qOxx9IgC6cz7UMEBL3V4/1wfzhLkBvt/WkADpXwbtmun4+s
-         5NeA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7Mv4t8frtpmskste8Ie2RN/+lhyOm8H+TC40k9nwIZ89hMvhiKSoMKkjbdfJvcykY3ofIuPoIX77XMrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws8vj4NyJ4JD+iIulqUL57gWDdpgdp0mxeIe0mlAa0i2XCBS/k
-	8PsEtS0irfC/6LZAvCEz5do8k1EjjKN9zQqU7BtNip5mDAnzpSznWVQp8E2xZB6o1FXTOtvpsdU
-	ouIzB6/KkHPrSQCitZGm/uGvpNcmU/zE5u/AsGJoNOxAldJdup3w=
-X-Google-Smtp-Source: AGHT+IFm0zWqedV49xnMK6e6g1fUxzAO4Bw9XOqBWqSyqcT4SimXa5HqQvffKU2Tm6zoS6jYevpiv7/STJpuqEJ9slU=
-X-Received: by 2002:a2e:a58b:0:b0:2f3:aac3:c2a5 with SMTP id
- 38308e7fff4ca-2f7cb36458amr7593931fa.17.1726820529151; Fri, 20 Sep 2024
- 01:22:09 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 20 Sep 2024 03:22:08 -0500
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <87a5g2bz6j.fsf@kernel.org>
+	s=arc-20240116; t=1726820577; c=relaxed/simple;
+	bh=crGAeVD9C52Z8tCthXUiJX4Yh4qf4cH3Gfydib+n0VI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lz057j+El/EtyF1MRpzi00LP/lCT8Xw6pF7BV3vEVJllPTRT3vJqsV3vsT07DpIP1Un7Vx+UnNq2BfzG+YlXMVWJ54sQwvcoL2lrwJaRiNY9sMTjWli2SWfnZoQ2L9k6oPNIh9nETOcnn8aNQ68SRw2WHipA7A6kuP76bby6BcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kpO6RUvI; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=YF4IX
+	iwSA9TAaPW947dg3/6HfjKE0T8O5IcQwAmdgkA=; b=kpO6RUvIOFZI4NPWffD4K
+	YJ+kLW04RiMwNDBd2VoNlpNA//BjaGzfrQeWsXwDEpQUSq+8jZ313E9oGm//Hmve
+	c4iycugCl9Z/o020OpV+Pgvmv8GaNVYdyIox11KqJZ8/MVt7PF3+keaN0z2BbBNE
+	o2CO4W7ltT/BfBNxgqvQxo=
+Received: from ProDesk.. (unknown [58.22.7.114])
+	by gzga-smtp-mta-g2-4 (Coremail) with SMTP id _____wD3H8y7MO1mK66fCQ--.6610S2;
+	Fri, 20 Sep 2024 16:22:23 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: hjc@rock-chips.com,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	s.hauer@pengutronix.de,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	derek.foreman@collabora.com,
+	minhuadotchen@gmail.com,
+	detlev.casanova@collabora.com,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v3 11/15] drm/rockchip: vop2: Register the primary plane and overlay plane separately
+Date: Fri, 20 Sep 2024 16:22:17 +0800
+Message-ID: <20240920082218.6893-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240920081626.6433-1-andyshrk@163.com>
+References: <20240920081626.6433-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814082301.8091-1-brgl@bgdev.pl> <83c562e9-2add-4086-86e7-6e956d2ee70f@kernel.org>
- <87msk49j8m.fsf@kernel.org> <ed6aceb6-4954-43ad-b631-6c6fda209411@kernel.org> <87a5g2bz6j.fsf@kernel.org>
-Date: Fri, 20 Sep 2024 03:22:07 -0500
-Message-ID: <CAMRc=MeLick_+Czy5MhkX=SxVvR4WCmUZ8CQ5hQBVTe2fscCPg@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the inputs
- of the ath11k on WCN6855
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	ath11k@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3H8y7MO1mK66fCQ--.6610S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGFWxtw4kKr43tFyrKryxuFg_yoWrCr1Upa
+	13ta90vr17WF42gry8JF4jyFWYyan2ka17Crs8Kw1a934fKr93ur4rKFn8AF1ruFnrWFya
+	kFW3K39YgFWjgr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j7fHUUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gNgXmWX0hs3pAAAsH
 
-On Fri, 20 Sep 2024 08:45:56 +0200, Kalle Valo <kvalo@kernel.org> said:
-> Krzysztof Kozlowski <krzk@kernel.org> writes:
->
->> On 19/09/2024 09:48, Kalle Valo wrote:
->>> Krzysztof Kozlowski <krzk@kernel.org> writes:
->>>
->>>> On 14/08/2024 10:23, Bartosz Golaszewski wrote:
->>>>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>>
->>>>> Describe the inputs from the PMU of the ath11k module on WCN6855.
->>>>>
->>>>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>>>> ---
->>>>> v1 -> v2:
->>>>> - update the example
->>>>
->>>> I don't understand why this patch is no being picked up. The code
->>>> correct represents the piece of hardware. The supplies should be
->>>> required, because this one particular device - the one described in this
->>>> binding - cannot work without them.
->>>
->>> I have already explained the situation. With supplies changed to
->>> optional I'm happy take the patch.
->>
->> You did not provide any relevant argument to this case. Your concerns
->> described quite different case and are no applicable to DT based platforms.
->
-> Ok, I'll try to explain my concerns one more time. I'll try to be
-> thorough so will be a longer mail.
->
-> In ath11k we have board files, it's basically board/product specific
-> calibration data which is combined with the calibration data from chip's
-> OTP. Choosing the correct board file is essential as otherwise the
-> performance can be bad or the device doesn't work at all.
->
-> The board files are stored in board-2.bin file in /lib/firmware. ath11k
-> chooses the correct board file based on the information provided by the
-> ath11k firmware and then transfers the board file to firmware. From
-> board-2.bin the correct board file is search based on strings like this:
->
-> bus=pci,vendor=17cb,device=1103,subsystem-vendor=105b,subsystem-device=e0ca,qmi-chip-id=2,qmi-board-id=255
-> bus=pci,vendor=17cb,device=1103,subsystem-vendor=105b,subsystem-device=e0ca,qmi-chip-id=2,qmi-board-id=255,variant=HO_BNM
->
-> But the firmware does not always provide unique enough information for
-> choosing the correct board file and that's why we added the variant
-> property (the second example above). This variant property gives us the
-> means to name the board files uniquely and not have any conflicts. In
-> x86 systems we retrieve it from SMBIOS and in DT systems using
-> qcom,ath11k-calibration-variant property.
->
+From: Andy Yan <andy.yan@rock-chips.com>
 
-No issues here.
+In the upcoming VOP of rk3576, a Window cannot attach to all Video Ports,
+so make sure all VP find it's suitable primary plane, then register the
+remain windows as overlay plane will make code easier.
 
-> If WCN6855 supplies are marked as required, it means that we cannot use
-> qcom,ath11k-calibration-variant DT property anymore with WCN6855 M.2
-> boards. So if we have devices which don't provide unique information
-> then for those devices it's impossible to automatically to choose the
-> correct board file.
->
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
-What you're really trying to say is: we cannot use the following snippet of
-DTS anymore:
+---
 
-	&pcie4_port0 {
-		wifi@0 {
-			compatible = "pci17cb,1103";
-			reg = <0x10000 0x0 0x0 0x0 0x0>;
+Changes in v3:
+- Add comments for why we should treat rk3566 with special care.
 
-			qcom,ath11k-calibration-variant = "LE_X13S";
-		};
-	};
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 100 +++++++++++--------
+ 1 file changed, 61 insertions(+), 39 deletions(-)
 
-First: it's not true. We are not allowed to break existing device-tree sources
-and a change to the schema has no power to do so anyway. You will however no
-longer be able to upstream just this as it will not pass make dtbs_check
-anymore.
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+index b4964c70149f..e293310b3042 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+@@ -2024,22 +2024,29 @@ static int vop2_plane_init(struct vop2 *vop2, struct vop2_win *win,
+ 	return 0;
+ }
+ 
+-static struct vop2_video_port *find_vp_without_primary(struct vop2 *vop2)
++/*
++ * On RK3566 these windows don't have an independent
++ * framebuffer. They can only share/mirror the framebuffer
++ * with smart0, esmart0 and cluster0 respectively.
++ * And RK3566 share the same vop version with Rk3568, so we
++ * need to use soc_id for identification here.
++ */
++static bool vop2_is_mirror_win(struct vop2_win *win)
+ {
+-	int i;
+-
+-	for (i = 0; i < vop2->data->nr_vps; i++) {
+-		struct vop2_video_port *vp = &vop2->vps[i];
+-
+-		if (!vp->crtc.port)
+-			continue;
+-		if (vp->primary_plane)
+-			continue;
++	struct vop2 *vop2 = win->vop2;
+ 
+-		return vp;
++	if (vop2->data->soc_id == 3566) {
++		switch (win->data->phys_id) {
++		case ROCKCHIP_VOP2_SMART1:
++		case ROCKCHIP_VOP2_ESMART1:
++		case ROCKCHIP_VOP2_CLUSTER1:
++			return true;
++		default:
++			return false;
++		}
++	} else {
++		return false;
+ 	}
+-
+-	return NULL;
+ }
+ 
+ static int vop2_create_crtcs(struct vop2 *vop2)
+@@ -2050,7 +2057,9 @@ static int vop2_create_crtcs(struct vop2 *vop2)
+ 	struct drm_plane *plane;
+ 	struct device_node *port;
+ 	struct vop2_video_port *vp;
+-	int i, nvp, nvps = 0;
++	struct vop2_win *win;
++	u32 possible_crtcs;
++	int i, j, nvp, nvps = 0;
+ 	int ret;
+ 
+ 	for (i = 0; i < vop2_data->nr_vps; i++) {
+@@ -2089,42 +2098,55 @@ static int vop2_create_crtcs(struct vop2 *vop2)
+ 	}
+ 
+ 	nvp = 0;
+-	for (i = 0; i < vop2->registered_num_wins; i++) {
+-		struct vop2_win *win = &vop2->win[i];
+-		u32 possible_crtcs = 0;
+-
+-		if (vop2->data->soc_id == 3566) {
+-			/*
+-			 * On RK3566 these windows don't have an independent
+-			 * framebuffer. They share the framebuffer with smart0,
+-			 * esmart0 and cluster0 respectively.
+-			 */
+-			switch (win->data->phys_id) {
+-			case ROCKCHIP_VOP2_SMART1:
+-			case ROCKCHIP_VOP2_ESMART1:
+-			case ROCKCHIP_VOP2_CLUSTER1:
++	/* Register a primary plane for every crtc */
++	for (i = 0; i < vop2_data->nr_vps; i++) {
++		vp = &vop2->vps[i];
++
++		if (!vp->crtc.port)
++			continue;
++
++		for (j = 0; j < vop2->registered_num_wins; j++) {
++			win = &vop2->win[j];
++
++			/* Aready registered as primary plane */
++			if (win->base.type == DRM_PLANE_TYPE_PRIMARY)
++				continue;
++
++			if (vop2_is_mirror_win(win))
+ 				continue;
+-			}
+-		}
+ 
+-		if (win->type == DRM_PLANE_TYPE_PRIMARY) {
+-			vp = find_vp_without_primary(vop2);
+-			if (vp) {
++			if (win->type == DRM_PLANE_TYPE_PRIMARY) {
+ 				possible_crtcs = BIT(nvp);
+ 				vp->primary_plane = win;
++				ret = vop2_plane_init(vop2, win, possible_crtcs);
++				if (ret) {
++					drm_err(vop2->drm, "failed to init primary plane %s: %d\n",
++						win->data->name, ret);
++					return ret;
++				}
+ 				nvp++;
+-			} else {
+-				/* change the unused primary window to overlay window */
+-				win->type = DRM_PLANE_TYPE_OVERLAY;
++				break;
+ 			}
+ 		}
++	}
++
++	/* Register all unused window as overlay plane */
++	for (i = 0; i < vop2->registered_num_wins; i++) {
++		win = &vop2->win[i];
++
++		/* Aready registered as primary plane */
++		if (win->base.type == DRM_PLANE_TYPE_PRIMARY)
++			continue;
++
++		if (vop2_is_mirror_win(win))
++			continue;
+ 
+-		if (win->type == DRM_PLANE_TYPE_OVERLAY)
+-			possible_crtcs = (1 << nvps) - 1;
++		win->type = DRM_PLANE_TYPE_OVERLAY;
+ 
++		possible_crtcs = (1 << nvps) - 1;
+ 		ret = vop2_plane_init(vop2, win, possible_crtcs);
+ 		if (ret) {
+-			drm_err(vop2->drm, "failed to init plane %s: %d\n",
++			drm_err(vop2->drm, "failed to init overlay plane %s: %d\n",
+ 				win->data->name, ret);
+ 			return ret;
+ 		}
+-- 
+2.34.1
 
-Second: this bit is incomplete even if the WCN6855 package is on a detachable
-M.2 card. When a DT property is defined as optional in schema, it doesn't
-mean: "the driver will work fine without it". It means: "the *hardware* does
-not actually need it to function". That's a huge difference. DTS is not a
-configuration file for your convenience.
-
-> So based on this, to me the correct solution here is to make the
-> supplies optional so that qcom,ath11k-calibration-variant DT property
-> can continue to be used with WCN6855 M.2 boards.
->
-
-No, this is the convenient solution. The *correct* solution is to say how the
-ath11k inside the WCN6855 package is really supplied. The dt-bindings should
-define the correct representation, not the convenient one.
-
-Let me give you an analogy: we don't really need to have always-on, fixed
-regulators in DTS. The drivers don't really need them. We do it for
-completeness of the HW description.
-
-Bartosz
 
