@@ -1,199 +1,225 @@
-Return-Path: <linux-kernel+bounces-333959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-333954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A7C97D083
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:13:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B90497D06B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 06:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6565B23821
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB9DF1F244F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 04:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CEF28E0F;
-	Fri, 20 Sep 2024 04:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FxDHTec9"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2D955C3E
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 04:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723D222075;
+	Fri, 20 Sep 2024 04:05:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16084B676
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 04:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726805567; cv=none; b=t0JuH0ND7ZWSxpSkU0IGqRszy1Gef/wZcnQci3MgidzUWLSbATnzPLjcn6yobTVXteXyjEz7qPKURki7CaeP7v4Wt0/nqjKyl2S3PSgANAf/TNpZQqcEj7rXNLBXTqXzTHYXaQpUBN5tzC3Uu/Mqy1CPZp8TdSsFxp7fJutGKW8=
+	t=1726805105; cv=none; b=US195m8ylqqwk8N5jvWm8+EPXagnADevWgayzeFIiOIUlzseCrmjt0LF6PXurZzXxvq9ZoVYyj1BnfmiAB1Ya/fuIkweROzYTWrRzsxv7qhILFnXoCSPoPUnVDUZneYbLijOINhbujqRwu7PRQig9GmX1iqvbYxqHnTHtp9gyo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726805567; c=relaxed/simple;
-	bh=v/JP9+dnSPQ/EzDmys6ognVMWUo7kv+BV4Dmyx0DlF0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=gGEZ+9Xo90jsFjdgFMgAqeH0kLfQE2kVOydyr5eCALtdbr8U6+rMXwXXRRBGIMiYmgQ8LbzLfkziulO/tvEQgNQQ9W8rL8A0PjaSX3YIczJRsjOpMmNXdUv5/lPd1I+cUR2BYaih8iCXwgowvmBfPGrFmW4XZfX3PpH/A0jrRSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FxDHTec9; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240920041238epoutp026ee2629f4723cdf39c0cc10d712cdcda~22IGQ-ycl2114421144epoutp02z
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 04:12:38 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240920041238epoutp026ee2629f4723cdf39c0cc10d712cdcda~22IGQ-ycl2114421144epoutp02z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726805558;
-	bh=aBM3hbgXChryLwT6K57OXYPNbI0aIxRu0X2/9XMYaJI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=FxDHTec9yj2ZZGn2dZOGPeHAHmEYDya7ADLOi8hAEcywN53TjC07rj7GHM2DK3AtM
-	 1DTXJ3xjd9+qQjJeJ7Yva7vAC/MGx8rnoYHV2Uq7/cpFtWZHE8u8oLEQNT53vHUJDD
-	 gDHR33Xo6hV4GxbWpXL9wkU7ZNqhe+nEQ8FWLi3I=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240920041237epcas5p11a04bf5cd4d28dd4d318c503ffa93c3b~22IF-IkVg1270012700epcas5p1t;
-	Fri, 20 Sep 2024 04:12:37 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4X8zW8244Wz4x9Q0; Fri, 20 Sep
-	2024 04:12:36 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E5.C5.19863.236FCE66; Fri, 20 Sep 2024 13:12:34 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240920040449epcas5p196b268539c2dabd69045a45af241ebcc~22BRjN6bu2174021740epcas5p1l;
-	Fri, 20 Sep 2024 04:04:49 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240920040449epsmtrp2d3c54926f2f4f80f95fe32eb8f921242~22BRihgkX2326523265epsmtrp2G;
-	Fri, 20 Sep 2024 04:04:49 +0000 (GMT)
-X-AuditID: b6c32a50-ef5fe70000004d97-3c-66ecf6325074
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8E.D9.19367.164FCE66; Fri, 20 Sep 2024 13:04:49 +0900 (KST)
-Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240920040447epsmtip12931110a4a3846ee98848d5ba8423091~22BP9Q0Yl2097220972epsmtip1V;
-	Fri, 20 Sep 2024 04:04:47 +0000 (GMT)
-From: "Inbaraj E" <inbaraj.e@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Stephen Boyd'"
-	<sboyd@kernel.org>, <alim.akhtar@samsung.com>, <cw00.choi@samsung.com>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <mturquette@baylibre.com>,
-	<s.nawrocki@samsung.com>
-Cc: <pankaj.dubey@samsung.com>, <gost.dev@samsung.com>
-In-Reply-To: <633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
-Subject: RE: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-Date: Fri, 20 Sep 2024 09:34:46 +0530
-Message-ID: <011101db0b12$3c75edc0$b561c940$@samsung.com>
+	s=arc-20240116; t=1726805105; c=relaxed/simple;
+	bh=j7IAgeead1rCr7krXrXLziXRV99UjnK+dVi7TPGlxhs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BGH/UjcAiBaQSlK7ZLtctCwKnnZ7L7jB2YEv/P+eePI9wy24umPFHNvsT5/+EBSVLRrWpfZ47l8SC8WEmVn8ACqDjRtGJPQlNs5S7R6hkL4KhmkicIqTL5EXLVukIr9bSBjyDqxHOUfLuepRqNy5hZfVGlA/OjrhGdLwYdhOur8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 76F65FEC;
+	Thu, 19 Sep 2024 21:05:30 -0700 (PDT)
+Received: from [10.162.43.22] (e116581.arm.com [10.162.43.22])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CDAD23F71A;
+	Thu, 19 Sep 2024 21:04:56 -0700 (PDT)
+Message-ID: <c07d1917-a460-440a-b843-a6866a87d261@arm.com>
+Date: Fri, 20 Sep 2024 09:34:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMYu0UT7KgXFJ9p8WqzYl/+4ytJPAKVNCMjAc9ECZkCVSVjTgGurbUsr6Fq/7A=
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmpq7RtzdpBvfXilo8mLeNzeL6l+es
-	FjcP7GSyOH9+A7vFx557rBaXd81hs5hxfh+TxcVTrhaLtn5htzj8pp3V4t+1jSwO3B7vb7Sy
-	e2xa1cnm0bdlFaPH501yASxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5
-	ibmptkouPgG6bpk5QEcpKZQl5pQChQISi4uV9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OL
-	S/PS9fJSS6wMDQyMTIEKE7Izznxbz1TwW7jiw9setgbGfQJdjJwcEgImErPvf2PsYuTiEBLY
-	wyhx5egMRpCEkMAnRomth2ohEkD2h5utbDAd108fZodI7GSUeDtzFhOE85JRYmHjS1aQKjYB
-	TYmbR/+BzRURWMok0XnvBztIglnATGLL3ftgRZwCdhJLju0GiwsLuEjM+HeJGcRmEVCVmDLv
-	JBOIzStgKXGw6xozhC0ocXLmExaIOfIS29/OYYY4SUHi59NlYDNFBPwkjq97zQxRIy5x9GcP
-	VM1SDoljreEQtovE/JNToN4Rlnh1fAs7hC0l8fndXqi4j8T+Ob8YIewMiWPbl7NC2PYSB67M
-	AbqBA2i+psT6XfoQYVmJqafWMUGs5ZPo/f2ECSLOK7FjHoytLDHzyH2o8ZISOy/vZJnAqDQL
-	yWezkHw2C8kHsxC2LWBkWcUolVpQnJuemmxaYKibl1oOj/Hk/NxNjOBEqxWwg3H1hr96hxiZ
-	OBgPMUpwMCuJ8Ip/eJkmxJuSWFmVWpQfX1Sak1p8iNEUGN4TmaVEk/OBqT6vJN7QxNLAxMzM
-	zMTS2MxQSZz3devcFCGB9MSS1OzU1ILUIpg+Jg5OqQamhWp8c267T+rzDL4+7b6ZocvvaTK2
-	+5+xau3ftihar2HCohb+By5S3ku8BZ+ZT5xTLi2TqX5E/IYf695DkR+9vmUvPHY7YJV8ao7K
-	Bmap0rIAwbdcn6eczPluEPS9dv4HqfKbph/25ZicyzW51PZv4hrHgHztizN3RNyeMzF/p/LJ
-	JAMnY03zO4c4ynfMLb7vvDpx9ne99Oqj6WcXzSm7x3WutTVAvcCAe32JfeicrGfaMb9tkmOM
-	St2i8//otqrNnciUpaYzzz9h7qYbaZziM2eV3W5wnvz2Sx7Hlb1rV1+RKVC8yyiywOn7lI3F
-	e3QOxr5a1DPlY9PE/8y2E3az3inQX3+2e2n+gphJ5048UmIpzkg01GIuKk4EAONOJwk9BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnkeLIzCtJLcpLzFFi42LZdlhJTjfxy5s0g4MTOSwezNvGZnH9y3NW
-	i5sHdjJZnD+/gd3iY889VovLu+awWcw4v4/J4uIpV4tFW7+wWxx+085q8e/aRhYHbo/3N1rZ
-	PTat6mTz6NuyitHj8ya5AJYoLpuU1JzMstQifbsErowz39YzFfwWrvjwtoetgXGfQBcjJ4eE
-	gInE9dOH2bsYuTiEBLYzSrQ0dTBBJCQlZv+ezg5hC0us/Pccqug5o8S8A4tYQBJsApoSN4/+
-	YwRJiAisZZLo2L6SESTBLGAhsfzPdTaIjgVMErenzwcbxSlgJ7Hk2G4wW1jARWLGv0vMIDaL
-	gKrElHknwVbzClhKHOy6xgxhC0qcnPmEBWKotkTvw1aoBfIS29/OYYY4T0Hi59NlrCC2iICf
-	xPF1r5khasQljv7sYZ7AKDwLyahZSEbNQjJqFpKWBYwsqxhFUwuKc9NzkwsM9YoTc4tL89L1
-	kvNzNzGC40wraAfjsvV/9Q4xMnEwHmKU4GBWEuEV//AyTYg3JbGyKrUoP76oNCe1+BCjNAeL
-	kjivck5nipBAemJJanZqakFqEUyWiYNTqoFJaJPKuvUX4xX4qw91qHTNy5dmmnvrdlDkhdTL
-	08+Gfjm37G+GaVrTqknSpQE3Hv489W2P8fOeuqopX+Vy1jqFXW54+rnrvClvDdcyD93Ib9Pn
-	NFspOwZM8HL+s6X44vsVCb1dt9il5bNnfBB89mq6psWE76seH6pbvv/z3d857FLva/O39Ry8
-	LvaIWYvLOD+EkX+ly4OW2MYpTPW9PPxfmB4s0Ap5dvfvlUX37yz3uZ9rc7JXYt3j/5YNMVan
-	3v5ep759hZTerH/l/y/5cvck95/ep844+/HO8xPTFIp+Vlk7Oi9rlc46djj/WZit0IKtzS9s
-	wu7zJHTuPPK3aXLWzkucKm55/SJ37lzM3r5ISYmlOCPRUIu5qDgRAPzvJKYiAwAA
-X-CMS-MailID: 20240920040449epcas5p196b268539c2dabd69045a45af241ebcc
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300
-References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com>
-	<20240917101016.23238-1-inbaraj.e@samsung.com>
-	<0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
-	<00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
-	<633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] mm: Compute first_set_pte to eliminate evaluating
+ redundant ranges
+To: Ryan Roberts <ryan.roberts@arm.com>, Barry Song <baohua@kernel.org>
+Cc: akpm@linux-foundation.org, david@redhat.com, willy@infradead.org,
+ anshuman.khandual@arm.com, hughd@google.com, ioworker0@gmail.com,
+ wangkefeng.wang@huawei.com, baolin.wang@linux.alibaba.com, gshan@redhat.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240916110754.1236200-1-dev.jain@arm.com>
+ <20240916110754.1236200-3-dev.jain@arm.com>
+ <CAGsJ_4wuSqA8vzHCTH6rnVrppQ4k0FUcSu-=6HfAf+oYqz15bQ@mail.gmail.com>
+ <8700274f-b521-444e-8d17-c06039a1376c@arm.com>
+ <ffa62217-8452-41e4-b7ee-0fbd7d3a44c5@arm.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <ffa62217-8452-41e4-b7ee-0fbd7d3a44c5@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
+On 9/19/24 22:25, Ryan Roberts wrote:
+> On 19/09/2024 09:40, Dev Jain wrote:
+>> On 9/19/24 07:04, Barry Song wrote:
+>>> On Mon, Sep 16, 2024 at 11:08 PM Dev Jain <dev.jain@arm.com> wrote:
+>>>> For an mTHP allocation, we need to check, for every order, whether for
+>>>> that order, we have enough number of contiguous PTEs empty. Instead of
+>>>> iterating the while loop for every order, use some information, which
+>>>> is the first set PTE found, from the previous iteration to eliminate
+>>>> some cases. The key to understanding the correctness of the patch
+>>>> is that the ranges we want to examine form a strictly decreasing
+>>>> sequence of nested intervals.
+>>> Could we include some benchmark data here, as suggested by Ryan in this thread?
+>>>
+>>> https://lore.kernel.org/linux-mm/58f91a56-890a-45d0-8b1f-47c4c70c9600@arm.com/
+>> Can you please verify and get some numbers for the following program,
+>> because if I am doing this correctly, it would be a regression :)
+>> https://www.codedump.xyz/cpp/Zuvf8FwvRPH21UO2
+> Some brief comments on the test code:
+>
+> - You don't need to enable/disable the top-level control. Regardless, I don't
+> think this breaks the benchmark.
+>
+> - I think you have an off-by-1 in your for loop condition:
+>
+> for (unsigned long i = 1; (i * border) < size; ++i) {
+>
+> I think this needs to be:
+>
+> for (unsigned long i = 1; (i * border) <= size; ++i) {
+>
+> It just means that the final 32K block will get a single 32K mapping.
+>
+> - You're measuring the whole program; including mmap/munmap and
+> enabling/disabling mTHP. It would be much better to just measure the loop that
+> writes to each page after mTHP is enabled.
+>
+>
+> I modified the code to iterate for 10 seconds and on each iteration, measure
+> only the time spent in the interesting loop. Running on Apple M2 VM:
+>
+> Before the change:
+>
+> ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
+> Average: 0.070028 seconds per GB (iterations=98)
+> ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
+> Average: 0.068495 seconds per GB (iterations=96)
+> ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
+> Average: 0.070207 seconds per GB (iterations=93)
+>
+> After the change:
+>
+> ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
+> Average: 0.076923 seconds per GB (iterations=88)
+> ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
+> Average: 0.072206 seconds per GB (iterations=96)
+> ubuntu@ubuntuvm:~/scan-pte$ sudo ./scan-pte
+> Average: 0.072397 seconds per GB (iterations=89)
+>
+> So this looks pretty clearly slower to me. So suggest we shouldn't take this patch.
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk@kernel.org>
-> Sent: 19 September 2024 17:33
-> To: Inbaraj E <inbaraj.e@samsung.com>; 'Stephen Boyd'
-> <sboyd@kernel.org>; alim.akhtar@samsung.com; cw00.choi@samsung.com;
-> linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; linux-samsung-
-> soc@vger.kernel.org; mturquette@baylibre.com; s.nawrocki@samsung.com
-> Cc: pankaj.dubey@samsung.com; gost.dev@samsung.com
-> Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-> 
-> On 19/09/2024 13:33, Inbaraj E wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Stephen Boyd <sboyd@kernel.org>
-> >> Sent: 19 September 2024 15:51
-> >> To: Inbaraj E <inbaraj.e@samsung.com>; alim.akhtar@samsung.com;
-> >> cw00.choi@samsung.com; krzk@kernel.org; linux-clk@vger.kernel.org;
-> >> linux- kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
-> >> mturquette@baylibre.com; s.nawrocki@samsung.com
-> >> Cc: pankaj.dubey@samsung.com; gost.dev@samsung.com; Inbaraj E
-> >> <inbaraj.e@samsung.com>
-> >> Subject: Re: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
-> >>
-> >> Quoting Inbaraj E (2024-09-17 03:10:16)
-> >>> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the
-> >>> CMU_CAM_CSI block. When we gate ACLK or PCLK, the clock framework
-> >> will
-> >>> subsequently disables the parent clocks(PLL_CAM_CSI). Disabling
-> >>> PLL_CAM_CSI is causing sytem level halt.
-> >>>
-> >>> It was observed on FSD SoC, when we gate the ACLK and PCLK during
-> >>> CSI stop streaming through pm_runtime_put system is getting halted.
-> >>> So marking PLL_CAM_CSI as critical to prevent disabling.
-> >>>
-> >>> Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
-> >>> ---
-> >>
-> >> Please add a fixes tag. Although this is likely a band-aid fix
-> >> because marking something critical leaves it enabled forever.
-> >
-> > Sure, will add fixes tag. As per HW manual, this PLL_CAM_CSI is
-> > supplying clock even for CMU SFR access of CSI block, so we can't gate
-> > this.
-> 
-> Hm, I am not so sure. The CMU driver should just take appropriate clock.
-> Sprinkling CLK_CRITICAL looks as substitute of missing clock handling/
+Thanks for testing!
 
-As per HW design, PLL_CAM_CSI is responsible for suppling clock to
-CSI SFR, CMU SFR and some internal block of CAM_CSI. In this some of
-the clock is not handled by any driver but it is required for CSI to
-work properly. For example CSI NOC clock. So this is the reason we
-are marking PLL_CAM_CSI as critical.
+>
+>
+>> The program does this: disable THP completely -> mmap 1G VMA -> touch the last
+>> page of a 32K sized boundary. That is, 0th till 32K/4K - 2 pages are
+>> empty, while the 32K/4K - 1'th page is touched, and so on -> madvise
+>> the entire VMA -> enable all THPs except 2M -> touch all pages.
+>>
+>> Therefore, we have 0 - 6 PTEs empty, 7th is filled, and so on. Eventually,
+>> kernel will fall down to finding 4 contiguous PTEs empty and allocate
+>> 4K * 4 = 16K mTHP.
+>>
+>> The result without the patches:
+>>
+>> real: 8.250s
+>> user: 0.941s
+>> sys: 7.077s
+>>
+>> real: 8.175s
+>> user: 0.939s
+>> sys: 7.021s
+>>
+>> With the patches:
+>>
+>> real: 8.584s
+>> user: 1.089s
+>> sys: 7.234s
+>>
+>> real: 8.429s
+>> user: 0.954s
+>> sys: 7.220s
+> What HW did you measure this on? I'm guessing this is measuring multiple
+> iterations, otherwise it looks extremely slow. If you were measuring on FVP, for
+> example, that would not give representative performance numbers.
 
-> 
-> 
-> Best regards,
-> Krzysztof
+I measured with qemu.
 
-
+>
+> Thanks,
+> Ryan
+>
+>> You can change the #iterations in the for loop to magnify this,
+>> and the current code surprisingly wins.
+>>
+>>
+>>>> Suggested-by: Ryan Roberts <ryan.roberts@arm.com>
+>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>>> ---
+>>>>    mm/memory.c | 20 ++++++++++++++++++--
+>>>>    1 file changed, 18 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>> index 8bb1236de93c..e81c6abe09ce 100644
+>>>> --- a/mm/memory.c
+>>>> +++ b/mm/memory.c
+>>>> @@ -4633,10 +4633,11 @@ static struct folio *alloc_anon_folio(struct vm_fault
+>>>> *vmf)
+>>>>    {
+>>>>           struct vm_area_struct *vma = vmf->vma;
+>>>>    #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>> +       pte_t *first_set_pte = NULL, *align_pte, *pte;
+>>>>           unsigned long orders;
+>>>>           struct folio *folio;
+>>>>           unsigned long addr;
+>>>> -       pte_t *pte;
+>>>> +       int max_empty;
+>>>>           gfp_t gfp;
+>>>>           int order;
+>>>>
+>>>> @@ -4671,8 +4672,23 @@ static struct folio *alloc_anon_folio(struct vm_fault
+>>>> *vmf)
+>>>>           order = highest_order(orders);
+>>>>           while (orders) {
+>>>>                   addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
+>>>> -               if (pte_range_none(pte + pte_index(addr), 1 << order) == 1 <<
+>>>> order)
+>>>> +               align_pte = pte + pte_index(addr);
+>>>> +
+>>>> +               /* Range to be scanned known to be empty */
+>>>> +               if (align_pte + (1 << order) <= first_set_pte)
+>>>> +                       break;
+>>>> +
+>>>> +               /* Range to be scanned contains first_set_pte */
+>>>> +               if (align_pte <= first_set_pte)
+>>>> +                       goto repeat;
+>>>> +
+>>>> +               /* align_pte > first_set_pte, so need to check properly */
+>>>> +               max_empty = pte_range_none(align_pte, 1 << order);
+>>>> +               if (max_empty == 1 << order)
+>>>>                           break;
+>>>> +
+>>>> +               first_set_pte = align_pte + max_empty;
+>>>> +repeat:
+>>>>                   order = next_order(&orders, order);
+>>>>           }
+>>>>
+>>>> -- 
+>>>> 2.30.2
+>>>>
+>>> Thanks
+>>> barry
 
