@@ -1,192 +1,140 @@
-Return-Path: <linux-kernel+bounces-334062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5B697D22D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:01:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C6697D221
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF4851C23A11
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:01:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E6881C23A71
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C207D13635F;
-	Fri, 20 Sep 2024 08:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9546D5D915;
+	Fri, 20 Sep 2024 08:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="adQyDcw7"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eMJxCrX1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E346BFCA;
-	Fri, 20 Sep 2024 08:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D1438F82;
+	Fri, 20 Sep 2024 08:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726819257; cv=none; b=ISY3ZPUvgIwJlhX56X5Br/PrcwmfSkL/V2DUg5+Z2OXQstfB7mZR9zN6xoUOGRfhcm61chUIi9hEbm7hQmnqq4S23uideWl7RvLxZduMA+rZ9QL/6ggSWRswDov4j9V175xNtJV60p1vHQbmYVJ8LGCzILhgTw4P2B6EFiQ2I+c=
+	t=1726819237; cv=none; b=PeCSA3gZwuEAZHK6+V7iiEAYWIkuHrgobJdB3WuX2tFZVnel77SewpQ3DujfixpQfPaZNX87WtSiGdg1Lk6r5lPf7NnlN9jQILVqlmkEW0ui1FIKu0TkiFuIQdGckVMpM9azdNFyNFuJQHieFLFPlvhgpevEgespxstpR57giS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726819257; c=relaxed/simple;
-	bh=FP8V9FE3quXHgtKd8N7ubCN8ICkoOdkN5v51n5N+VSo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d7uhz2e0CoH0Zd7gMljLQEnDEWI+8dgPi8RKiWfl7MbpfcLpoF1Nxc0pkfHyLRJUve38uREY5FyRT3BE97KdAPjqkI+zrMpmbJVK9t6EHZBH1Bah0+nhQaq2TY+9h43mTQ7qU6uU0oITNpaGCM3cVDPtWa0bqcJREog5oVyLFNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=adQyDcw7; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53661ac5ba1so1800252e87.2;
-        Fri, 20 Sep 2024 01:00:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726819253; x=1727424053; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XjFCFoukJYVr8e7ixtkyrqDFf1DCsdegWZ2J5huFjNA=;
-        b=adQyDcw797RYI5uz/ICJRcl7G99O6ul3HoHg1pilQhEiXogj9W67b7yLYTQuTHoGbz
-         zc3lT0CPmMDpLig0Kgt1C86J46IajKlgU5B67O1P1WOT70UYP9MZ6HwZlZBw2hR9RDcL
-         OpRTMcmHw/A3sUR9V3X/EvqCatM7N6gulQ0CaDkaaKaI+swa26qxsn8t+Q2MTm9qepXg
-         geihGQDkaVNsEwYRiY+Qxsq3PTNMyHaL9FvziiTUTTQGfFHUw9lvNeWa3cTh5WhVoKwi
-         OcMSl96ebQL0IBAxXB7NRiaFfXuwcShRYlyyiVX5nm5r0XRVpMrHbXFtRM2Ut0H4X0cm
-         qSKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726819253; x=1727424053;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XjFCFoukJYVr8e7ixtkyrqDFf1DCsdegWZ2J5huFjNA=;
-        b=i/0WWT+dH4VhjujZJJKiYC6Ep+Dqbfe36QG/iJKNF8i2aaSBVu2fyNs7p6X2TT7sgE
-         RneSt3kAtM6uwFZUn2ucBjKEWDjZCySz0SDiPM1Y/Kr6zoLYRAwhjQb6K5SvppYVUQku
-         fFBqf/VvASOz0kZVeQGObbspXZCKiJieICRkvy9iZDWrajnKvlqnoM3J+Hwk6oBrcyex
-         O1djmo0Ck9V6ZAZfI1hOWa4g24vWEBXKfsfDujIvcmVw54umS/mgbcmJ3ivgqIDztswc
-         sMPit+MAFbJkgRm2cnRXzg3BjchNlA6XNCpivDPhjDRzYRBT8ReUWXENtjnfD0hu4axb
-         8wWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKVWe9b22+WthEw8OJ5EbmOswUXC8iBDyqdwhFYvr/+qNzpsQ0k8LLZ8DPRHhrHimkRTM=@vger.kernel.org, AJvYcCW71qXfOuOkA9n+LlS5mC4gCXY45/l9BSPqjD+MbLhBI5zBddFcVKtyX0v+s5HtV6hDHtC6rL4/xI2OBb+H@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8/uswPb7/37BI9G/kF0L4j3tbHRdMZpeEL4GwK3E9LNz30jjL
-	CV3QaEIHESbz4or/RFoCWQoz/GR33fcZOwPF/8o0+l7q5F0AWqLD
-X-Google-Smtp-Source: AGHT+IGhQHYidMkaZzuMDf6phq55jUr9WtdP3LkYw6wKyUd4sfZpM7gUf5kqMgxMR/bGN4328LcLyQ==
-X-Received: by 2002:a05:6512:124e:b0:530:b76c:65df with SMTP id 2adb3069b0e04-536ac2f4e55mr1129237e87.35.1726819252924;
-        Fri, 20 Sep 2024 01:00:52 -0700 (PDT)
-Received: from localhost.localdomain (2001-14ba-7262-6300-2e4b-7b61-96a9-b101.rev.dnainternet.fi. [2001:14ba:7262:6300:2e4b:7b61:96a9:b101])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870c55d1sm2070030e87.305.2024.09.20.01.00.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 01:00:52 -0700 (PDT)
-From: =?UTF-8?q?Markku=20Ahvenj=C3=A4rvi?= <mankku@gmail.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: mankku@gmail.com,
-	janne.karhunen@gmail.com,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] KVM: nVMX: update VPPR on vmlaunch/vmresume
-Date: Fri, 20 Sep 2024 10:59:43 +0300
-Message-ID: <20240920080012.74405-2-mankku@gmail.com>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <20240920080012.74405-1-mankku@gmail.com>
-References: <20240920080012.74405-1-mankku@gmail.com>
+	s=arc-20240116; t=1726819237; c=relaxed/simple;
+	bh=U0kYuqKVa3ezLzWzDXPQXANGRQyc8VOCBbRvDsHigOM=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=jI9LKJR4mv+f0BS/qopCd6guy/RoQH1u3l0swpeOQ6JCTdyZdy4S4wP/D35F5qUJKyU2i2amvJ6mDeRGwOuFbiPb7y41RtkFna+ryIwAf3ij7nsO3xmfer+eyk98KwKWsUCFomKtyboHw6jmxUB2IO8rrWhSLN4cvK6/vwu77uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eMJxCrX1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48K7lC4F018621;
+	Fri, 20 Sep 2024 08:00:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=b87vCf9lRSBsbtiIt8LJh2
+	zlQ4Za1SW6AsnMRRx3+fo=; b=eMJxCrX174Beh7TQsoEayQAtlM6A8RPjlwNYhf
+	3njVoEbkfkOLU1JzDfMXSHGgNDwubO4tC5f8+NpkRJrXLBNox7Uc5QqNKL8cU3tK
+	Sy9FexiKX7Db6aHYQaEPqnGG+sMSmvPJBUzEoQKcSQA9O0POAhkgSXYxqzaPS+9x
+	Tzl/2kh66rAtrQ79GOyADa9eB/Ykc6idPbnZvOhw4eNENXMcdAS+tehgpsy/5oOJ
+	xrITeUV099m02y7qpy5LzjjMj1gVrW1GyWHg/yeInSRYrx1ec6xGBrkxyRfxyfsY
+	0FxbsalKp8ql2CScfbrvxr2X3mdvTk/zHtr2ZF0UxI96XF0w==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4j70c84-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 08:00:28 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48K80R3c010158
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 20 Sep 2024 08:00:27 GMT
+Received: from lijuang2-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 20 Sep 2024 01:00:22 -0700
+From: Lijuan Gao <quic_lijuang@quicinc.com>
+Subject: [PATCH v2 0/2] dt-bindings: pinctrl: describe qcs615-tlmm
+Date: Fri, 20 Sep 2024 16:00:08 +0800
+Message-ID: <20240920-add_qcs615_pinctrl_driver-v2-0-e03c42a9d055@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIkr7WYC/32NzQ6CMBCEX4Xs2Zq2QP05+R6GkKZdZBOlsMVGQ
+ 3h3K/Hs8ZvMfLNARCaMcC4WYEwUKQwZ9K4A19vhhoJ8ZtBSV/KkpbDet5OLRtXtSIOb+d56poQ
+ sOmOtKWttK4uQ9yNjR6/NfW0y9xTnwO/tKqlv+rOqf9akhBSl6Sonfa0P/niZnuRyZ+/CA5p1X
+ T/Lrz5exAAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, lijuang <quic_lijuang@quicinc.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726819221; l=1366;
+ i=quic_lijuang@quicinc.com; s=20240827; h=from:subject:message-id;
+ bh=U0kYuqKVa3ezLzWzDXPQXANGRQyc8VOCBbRvDsHigOM=;
+ b=o6P570peiqN+5LmJCFz18IC5fxhSZU+B2Ik5uduIf55MbsDDpyfwUHTCxvY5PYyVBvvO2/Zg5
+ m+Q34pgk9fyDQ13mACoZPWsruZCXXM/nGQ2A9xTJJYdmpiCNqg9bzkQ
+X-Developer-Key: i=quic_lijuang@quicinc.com; a=ed25519;
+ pk=1zeM8FpQK/J1jSFHn8iXHeb3xt7F/3GvHv7ET2RNJxE=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: aWZlC_tHQYLR5ogDtmpJD1BZwCB5jEBF
+X-Proofpoint-GUID: aWZlC_tHQYLR5ogDtmpJD1BZwCB5jEBF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ mlxscore=0 malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1015
+ adultscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409200055
 
-Running certain hypervisors under KVM on VMX suffered L1 hangs after
-launching a nested guest. The external interrupts were not processed on
-vmlaunch/vmresume due to stale VPPR, and L2 guest would resume without
-allowing L1 hypervisor to process the events.
+Introduce Top Level Mode Multiplexer dt-binding and driver for Qualcomm
+QCS615 SoC.
 
-The patch ensures VPPR to be updated when checking for pending
-interrupts.
-
-Signed-off-by: Markku Ahvenjärvi <mankku@gmail.com>
-Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
+Signed-off-by: lijuang <quic_lijuang@quicinc.com>
 ---
- arch/x86/kvm/lapic.c      | 9 +++++----
- arch/x86/kvm/lapic.h      | 1 +
- arch/x86/kvm/vmx/nested.c | 5 +++--
- 3 files changed, 9 insertions(+), 6 deletions(-)
+patch made the following modifications and verifications:
+ - Successfully ran dt_binding_check for the current binding file.
+ - Sorted enums, function names, and groups alphabetically.
+ - Specified each tile in DeviceTree referenced with pinctrl-sm8150.c.
+ - Consolidated duplicate functions.
+ - Verified functional with UART function on QCS615 ride board.
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 5bb481aefcbc..7747c7d672ea 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -952,7 +952,7 @@ static int apic_has_interrupt_for_ppr(struct kvm_lapic *apic, u32 ppr)
- 	return highest_irr;
- }
- 
--static bool __apic_update_ppr(struct kvm_lapic *apic, u32 *new_ppr)
-+bool __kvm_apic_update_ppr(struct kvm_lapic *apic, u32 *new_ppr)
- {
- 	u32 tpr, isrv, ppr, old_ppr;
- 	int isr;
-@@ -973,12 +973,13 @@ static bool __apic_update_ppr(struct kvm_lapic *apic, u32 *new_ppr)
- 
- 	return ppr < old_ppr;
- }
-+EXPORT_SYMBOL_GPL(__kvm_apic_update_ppr);
- 
- static void apic_update_ppr(struct kvm_lapic *apic)
- {
- 	u32 ppr;
- 
--	if (__apic_update_ppr(apic, &ppr) &&
-+	if (__kvm_apic_update_ppr(apic, &ppr) &&
- 	    apic_has_interrupt_for_ppr(apic, ppr) != -1)
- 		kvm_make_request(KVM_REQ_EVENT, apic->vcpu);
- }
-@@ -2895,7 +2896,7 @@ int kvm_apic_has_interrupt(struct kvm_vcpu *vcpu)
- 	if (!kvm_apic_present(vcpu))
- 		return -1;
- 
--	__apic_update_ppr(apic, &ppr);
-+	__kvm_apic_update_ppr(apic, &ppr);
- 	return apic_has_interrupt_for_ppr(apic, ppr);
- }
- EXPORT_SYMBOL_GPL(kvm_apic_has_interrupt);
-@@ -2954,7 +2955,7 @@ int kvm_get_apic_interrupt(struct kvm_vcpu *vcpu)
- 		 * triggered KVM_REQ_EVENT already.
- 		 */
- 		apic_set_isr(vector, apic);
--		__apic_update_ppr(apic, &ppr);
-+		__kvm_apic_update_ppr(apic, &ppr);
- 	}
- 
- 	return vector;
-diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
-index 7ef8ae73e82d..1d0bc13a6794 100644
---- a/arch/x86/kvm/lapic.h
-+++ b/arch/x86/kvm/lapic.h
-@@ -106,6 +106,7 @@ int kvm_apic_compare_prio(struct kvm_vcpu *vcpu1, struct kvm_vcpu *vcpu2);
- void kvm_apic_clear_irr(struct kvm_vcpu *vcpu, int vec);
- bool __kvm_apic_update_irr(u32 *pir, void *regs, int *max_irr);
- bool kvm_apic_update_irr(struct kvm_vcpu *vcpu, u32 *pir, int *max_irr);
-+bool __kvm_apic_update_ppr(struct kvm_lapic *apic, u32 *new_ppr);
- void kvm_apic_update_ppr(struct kvm_vcpu *vcpu);
- int kvm_apic_set_irq(struct kvm_vcpu *vcpu, struct kvm_lapic_irq *irq,
- 		     struct dest_map *dest_map);
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 2392a7ef254d..dacc92b150dd 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -3431,10 +3431,11 @@ static int nested_vmx_check_permission(struct kvm_vcpu *vcpu)
- 
- static u8 vmx_has_apicv_interrupt(struct kvm_vcpu *vcpu)
- {
-+	u32 vppr;
- 	u8 rvi = vmx_get_rvi();
--	u8 vppr = kvm_lapic_get_reg(vcpu->arch.apic, APIC_PROCPRI);
-+	__kvm_apic_update_ppr(vcpu->arch.apic, &vppr);
- 
--	return ((rvi & 0xf0) > (vppr & 0xf0));
-+	return ((rvi & 0xf0) > (u8) (vppr & 0xf0));
- }
- 
- static void load_vmcs12_host_state(struct kvm_vcpu *vcpu,
+Changes in v2:
+- Rebased patchset on next-20240919
+- Added 'type: object' before patternProperties
+- Link to v1: https://lore.kernel.org/r/20240910-add_qcs615_pinctrl_driver-v1-0-36f4c0d527d8@quicinc.com
+
+---
+Lijuan Gao (2):
+      dt-bindings: pinctrl: document the QCS615 Top Level Mode Multiplexer
+      pinctrl: qcom: add the tlmm driver for QCS615 platform
+
+ .../bindings/pinctrl/qcom,qcs615-tlmm.yaml         |  124 +++
+ drivers/pinctrl/qcom/Kconfig.msm                   |    7 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-qcs615.c              | 1107 ++++++++++++++++++++
+ 4 files changed, 1239 insertions(+)
+---
+base-commit: 3621a2c9142bd490af0666c0c02d52d60ce0d2a5
+change-id: 20240920-add_qcs615_pinctrl_driver-f6aa6352a4ae
+
+Best regards,
 -- 
-2.44.1
+lijuang <quic_lijuang@quicinc.com>
 
 
