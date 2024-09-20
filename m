@@ -1,114 +1,240 @@
-Return-Path: <linux-kernel+bounces-334338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03EDD97D5E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:58:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F24A97D5EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F926281F61
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEB341C21EF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076FE16F0E8;
-	Fri, 20 Sep 2024 12:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50C2170A01;
+	Fri, 20 Sep 2024 12:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="YyvSUvZm"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJRN2V98"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38DA16BE0D
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2064916F0E8;
+	Fri, 20 Sep 2024 12:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726837072; cv=none; b=cNspnu8gybchS9PdR8W/c++XFmr6kY8PN06qBTseiWgeBURlBbP3zJC88plbpRWzZMG8fykMzB4Oue7h/XvHXjL4sYNVWfiN831PupciVzgdHKHvo9qdVtenE3yOj+niysle9BhY2b9c6F78eYcuzqXmPjY2VbkvhyT9WZnXZog=
+	t=1726837166; cv=none; b=QDTwXqpq6nYslT/ne9bumTjmQipCZc6O+mdWN9DX4dOH01MVyd/ridUxdYOR6y/2F8jqgptuXP1F+vdGk+kpvy4nWiccj9Uu6+m35oZ2tODRm8H8rmRGvC8uUmzK+SVCs1AUnMyKeCjJCePcUx5k4QsQiQDrIgcuo2EVu7hrAWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726837072; c=relaxed/simple;
-	bh=hLhdjNdfiab/2EkfVlmYEGUJYgfZ03Yl0qvBdWvH9h0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EqQRSjMRCi2jAKAHX1SI814srua2G76mNbycbUvmC2SbHe4FJ/rFVSQBMhbaOwu4qz+MU6nxOIrUWv2COKljZ5jXPZOvvrDd3+AVjAapvqsMouNlWZcxv48m1FS0jbQojsDl/3fLh4lkglc5LSozxsMF2nNq5w7g9AU0oNeixv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=YyvSUvZm; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5365cf5de24so2596650e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 05:57:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1726837069; x=1727441869; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SBNOoVCncAgnEXJ28ws1TvOLbbtYMgaYu1jjv19Rj3s=;
-        b=YyvSUvZm8iaaRLENtfE+JQo1dlRfQFOtubPfduUkz1Z5suLIviKugcmO8VvjkPEGWT
-         6QsmhSkeAmV18WFhCtvE1QLoHdNK+Dezq85lt3AHkC5hV2iwhoUjLYWnHrSNn3qG96V+
-         t/oSEhTeG9cyXeoldRLkRlpoigEGfUgSrmK9ge/p5OBNhUqwksXktOlbtHJs3TtuTcnb
-         GzPrPC7MmIOj0LWm/mT38vY6FvDNTWC9FiW8LtScpFIpicVHJlwaEQFY5Yzp/7LVaRPY
-         4YVGLW/m/6GCTysCPvzzkxoV1MFb32Qv01GOIs990HDWoE57uF3DxcPPbD7wVZSfj9Kh
-         rscg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726837069; x=1727441869;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SBNOoVCncAgnEXJ28ws1TvOLbbtYMgaYu1jjv19Rj3s=;
-        b=CK3DUSnAz97k0Armq5rA/GYdS2E5rcG9LUNfH5L6dwzqNF8rMJCh9oPGb4/KiwOPeW
-         fasWLc4k3WcI+iaxa2NRMlWYB1aJg/D+XbGczv543PQOa5fj/aveO5B9pCWOK+O8c7I5
-         uUeBC5B6c37pQc7LJGnzlPEyUxT2DSv1HsblWLvDAwNzfvM3OazBXwsONOhOUCam8/XW
-         7WENi1yXOw5BvWDKxypknJ2avQYyvhBCJrdCJ5OL+EWt9q4c1TeWyhKq5hBUJUteUGBI
-         wH/87ySjF/3HTC74F3458P1WscrHCCRKE0wBrJ1JR/NMVO46TZW5ACGj8Ech05VKnyKG
-         eMFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtmF2LFR/FfNK0QIHciRGyZazJDJBQ/KkkPiS2a7hAjN2rFHyMQI8pMiO9ny9PQfqMnBoYpD3AisQLvUI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRjioH27lEr7oJXH0zLd/rFKeZ8S8k3kjRgp13A0wrlBY6p1si
-	GOucu2C3UHa7hk3uXtfFG2P3ZHb7H0CaPIFPV7XZKUJiZK4R5cqWtOjmhBcn1lw=
-X-Google-Smtp-Source: AGHT+IFL96h96UXHH5KpQ43VZ5dXdoAGDOaXzmRB7FdY2+9mC7tXyfOx4WKLAHcKL9GgYn35Bt0onQ==
-X-Received: by 2002:a05:6512:3b22:b0:52f:1ef:bafe with SMTP id 2adb3069b0e04-536ad16548dmr1571690e87.22.1726837068640;
-        Fri, 20 Sep 2024 05:57:48 -0700 (PDT)
-Received: from ziepe.ca ([83.68.141.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612b99c3sm847972766b.127.2024.09.20.05.57.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 05:57:48 -0700 (PDT)
-Received: from jgg by jggl with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1srdCl-0001Bw-Ez;
-	Fri, 20 Sep 2024 09:57:47 -0300
-Date: Fri, 20 Sep 2024 09:57:47 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: haixiao.yan.cn@windriver.com
-Cc: liangwenpeng@huawei.com, liweihang@huawei.com, dledford@redhat.com,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/hns: Fix UAF for cq async event
-Message-ID: <Zu1xS4dX77jikYw9@ziepe.ca>
-References: <20240920124540.2392571-1-haixiao.yan.cn@windriver.com>
+	s=arc-20240116; t=1726837166; c=relaxed/simple;
+	bh=lls3LxqYGED1bVEP7KNHMcYz/Fj/2kdJdmfvhQuRYgk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HDBMrm6uwikuCN9Tuwre5CflQiheZK2qdCoYCHnY+Ffi1S8AU1khlTYdeybisUXs5HZaDwil0BVXAgfj+frFMl5LTnvCoUT9aaDmgp7ttoZU1QaDbO0njasrPJMDTvDoC/s6JjcsGmdJbJ5BqkBYkhO/zLm2MXnINyIFv1xSGNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJRN2V98; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2ABDC4CECD;
+	Fri, 20 Sep 2024 12:59:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726837165;
+	bh=lls3LxqYGED1bVEP7KNHMcYz/Fj/2kdJdmfvhQuRYgk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PJRN2V98QggHSM/PwPE50JuQTYw0H88Zy1cd0m6eGVc9AwUNIWkesUYpkK3VEK13z
+	 539H6I/PAvExHlRAUjcAXRwbgGazTiqPWiCTmxC/HpInHdboQXohWKdxmt27ujB91u
+	 HMifxcpElMgSQ+TGdFAr5vHEN99x7k0HbCgZsqLCFaPRtrQ7+fsz+F74armL/IG6KQ
+	 /qIzwSr9KIeonNE5PphojiA/Agg3pI7u4totra3ioV/Bi2wHk9Watm7GWpcUs32HWV
+	 ACtSXCP2VgCVM1s77BiTHwzZQsMN1+Y26tAgw4IZerKc5csriR34LuX5SO3HGoU/f0
+	 V5rTzqCEWkHjA==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53654e2ed93so2450300e87.0;
+        Fri, 20 Sep 2024 05:59:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXaAuhDeC01jQ7lndgsMPxqGab2L4nNFxakm3wuxNhGQ6AHk3Tmt9bpFbnMK/hTNpJ+C+O5cLx1P1T0oYdfo6A=@vger.kernel.org, AJvYcCXdruuSMFrGn2sSy/V9K4ujGavEYaFcyJoEdqvJN3jeT3FjTMBPT2QGkzliMsXsBTGACzcEv+shuoC2IXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5znnOX246buFnmenZnEyxwazsA01ptGIrBz8CPqMgVqvAIm81
+	D5Klgzao0N1VNp1cwfXUH63mNAelTfKv+mZVrroJKUQX/m68pdYNcGcMFkCX4fl/6tsnc353vki
+	wqBeqCWI23v1M+XnSqiXuBbsmnjs=
+X-Google-Smtp-Source: AGHT+IEd+GMFo2Er0REvASH1RQ1qF9PMK8eVDI4I9hE/80oeEUEIKwLzPeFbbw6mbFh/W44I8ZAUGy9F1w5VuhgAT5g=
+X-Received: by 2002:a05:6512:3408:b0:530:ae22:a6ea with SMTP id
+ 2adb3069b0e04-536ad3b7e1bmr1482227e87.40.1726837164265; Fri, 20 Sep 2024
+ 05:59:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240920124540.2392571-1-haixiao.yan.cn@windriver.com>
+References: <20240917141725.466514-1-masahiroy@kernel.org> <Zu1Q1yi4bs2plCxl@l-nschier-nb>
+In-Reply-To: <Zu1Q1yi4bs2plCxl@l-nschier-nb>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Fri, 20 Sep 2024 21:58:47 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS7D_d+Kz5+rk3OuN0StY=d3iOOa4Un12HYyF4w89LbTQ@mail.gmail.com>
+Message-ID: <CAK7LNAS7D_d+Kz5+rk3OuN0StY=d3iOOa4Un12HYyF4w89LbTQ@mail.gmail.com>
+Subject: Re: [PATCH 00/23] kbuild: support building external modules in a
+ separate build directory
+To: Nicolas Schier <n.schier@avm.de>
+Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 20, 2024 at 08:45:40PM +0800, haixiao.yan.cn@windriver.com wrote:
-> From: Chengchang Tang <tangchengchang@huawei.com>
-> 
-> [ Upstream commit a942ec2745ca864cd8512142100e4027dc306a42 ]
-> 
-> The refcount of CQ is not protected by locks. When CQ asynchronous
-> events and CQ destruction are concurrent, CQ may have been released,
-> which will cause UAF.
-> 
-> Use the xa_lock() to protect the CQ refcount.
-> 
-> Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
-> Signed-off-by: Chengchang Tang <tangchengchang@huawei.com>
-> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
-> Link: https://lore.kernel.org/r/20240412091616.370789-6-huangjunxian6@hisilicon.com
-> Signed-off-by: Leon Romanovsky <leon@kernel.org>
-> Signed-off-by: Haixiao Yan <haixiao.yan.cn@windriver.com>
-> ---
-> This commit is backporting a942ec2745ca to the branch linux-5.15.y to
-> solve the CVE-2024-38545. Please merge this commit to linux-5.15.y.
+On Fri, Sep 20, 2024 at 7:39=E2=80=AFPM Nicolas Schier <n.schier@avm.de> wr=
+ote:
+>
+> On Tue, Sep 17, 2024 at 11:16:28PM +0900, Masahiro Yamada wrote:
+> >
+> > There has been a long-standing request to support building external
+> > modules in a separate build directory.
+>
+> Thanks a lot, you are making several of my colleages very happy with
+> your patch set!
+>
+> > The first half is cleanups of documents and Makefiles.
+> >
+> > The last part adds KBUILD_EXTMOD_OUTPUT (MO=3D).
+> > This is too big changes, and too late for the current MW.
+> > (I did not test kselftest at all.)
+> > I hope people test this and may uncover some issues.
+>
+> I'm not through all the patches in detail yet, just one observation befor=
+ehand:
+>
+>     $ make KBUILD_OUTPUT=3Dbuild allnoconfig
+>     $ ./scripts/config --file build/.config --enable modules --enable acc=
+essibility
+>     $ make KBUILD_OUTPUT=3Dbuild olddefconfig
+>     $ make KBUILD_OUTPUT=3Dbuild
+>     $ make KBUILD_OUTPUT=3Dbuild CONFIG_SPEAKUP=3Dm MO=3D/tmp/build M=3D~=
++/drivers/accessibility/speakup modules
+>     /home/nschier/src/kbuild-review/drivers/accessibility/speakup/genmap.=
+c:23:10: fatal error: mapdata.h: No such file or directory
+>        23 | #include "mapdata.h"
+>           |          ^~~~~~~~~~~
+>     compilation terminated.
+>     make[3]: *** [/home/nschier/src/kbuild-review/scripts/Makefile.host:1=
+33: genmap.o] Error 1
+>     make[3]: *** Waiting for unfinished jobs....
+>     make[2]: *** [/home/nschier/src/kbuild-review/Makefile:1971: .] Error=
+ 2
+>     make[1]: *** [/home/nschier/src/kbuild-review/Makefile:251: __sub-mak=
+e] Error 2
+>     make: *** [Makefile:251: __sub-make] Error 2
+>     [exit code 2]
+>
+> If I add "EXTRA_CFLAGS=3D-I${MO} and EXTRA_HOSTCFLAGS=3D-I${MO}" to the m=
+odule
+> build command, it works as expected.
+>
+> Patching this into kbuild works for me, too, but I haven't checked whethe=
+r it
+> breaks some other scenarios:
+>
+> diff --git a/scripts/Makefile.host b/scripts/Makefile.host
+> index e01c13a588dd..056c7da2776f 100644
+> --- a/scripts/Makefile.host
+> +++ b/scripts/Makefile.host
+> @@ -97,10 +97,13 @@ hostrust_flags =3D --out-dir $(dir $@) --emit=3Ddep-i=
+nfo=3D$(depfile) \
+>                   $(HOSTRUSTFLAGS_$(target-stem))
+>
+>  # $(objtree)/$(obj) for including generated headers from checkin source =
+files
+> -ifeq ($(KBUILD_EXTMOD),)
+>  ifdef building_out_of_srctree
+> +ifeq ($(KBUILD_EXTMOD),)
+>  hostc_flags   +=3D -I $(objtree)/$(obj)
+>  hostcxx_flags +=3D -I $(objtree)/$(obj)
+> +else
+> +hostc_flags   +=3D -I $(CURDIR)
+> +hostcxx_flags   +=3D -I $(CURDIR)
+>  endif
+>  endif
+>
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index 1bdd77f42289..428a9eb74381 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -190,11 +190,15 @@ endif
+>
+>  # $(src) for including checkin headers from generated source files
+>  # $(obj) for including generated headers from checkin source files
+> -ifeq ($(KBUILD_EXTMOD),)
+>  ifdef building_out_of_srctree
+> +ifeq ($(KBUILD_EXTMOD),)
+>  _c_flags   +=3D $(addprefix -I, $(src) $(obj))
+>  _a_flags   +=3D $(addprefix -I, $(src) $(obj))
+>  _cpp_flags +=3D $(addprefix -I, $(src) $(obj))
+> +else
+> +_c_flags   +=3D $(addprefix -I, $(src) $(obj) $(CURDIR))
+> +_a_flags   +=3D $(addprefix -I, $(src) $(obj) $(CURDIR))
+> +_cpp_flags +=3D $(addprefix -I, $(src) $(obj) $(CURDIR))
+>  endif
+>  endif
+>
+> Is '-I$(MO)' in CFLAGS/HOSTCFLAGS is something we should support by
+> default, or should this be added to the external module's Makefile by
+> the respective developers themselves?
+>
+> Kind regards,
+> Nicolas
 
-Don't you need to send this to the stable maintainers too?
 
-Jason
+
+We can fix it more simply.
+
+
+
+
+diff --git a/scripts/Makefile.host b/scripts/Makefile.host
+index e01c13a588dd..c1dedf646a39 100644
+--- a/scripts/Makefile.host
++++ b/scripts/Makefile.host
+@@ -96,12 +96,10 @@ hostrust_flags =3D --out-dir $(dir $@)
+--emit=3Ddep-info=3D$(depfile) \
+                  $(KBUILD_HOSTRUSTFLAGS) $(HOST_EXTRARUSTFLAGS) \
+                  $(HOSTRUSTFLAGS_$(target-stem))
+
+-# $(objtree)/$(obj) for including generated headers from checkin source fi=
+les
+-ifeq ($(KBUILD_EXTMOD),)
++# $(obj) for including generated headers from checkin source files
+ ifdef building_out_of_srctree
+-hostc_flags   +=3D -I $(objtree)/$(obj)
+-hostcxx_flags +=3D -I $(objtree)/$(obj)
+-endif
++hostc_flags   +=3D -I $(obj)
++hostcxx_flags +=3D -I $(obj)
+ endif
+
+ #####
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 1bdd77f42289..d8ce0f59fd17 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -190,13 +190,11 @@ endif
+
+ # $(src) for including checkin headers from generated source files
+ # $(obj) for including generated headers from checkin source files
+-ifeq ($(KBUILD_EXTMOD),)
+ ifdef building_out_of_srctree
+ _c_flags   +=3D $(addprefix -I, $(src) $(obj))
+ _a_flags   +=3D $(addprefix -I, $(src) $(obj))
+ _cpp_flags +=3D $(addprefix -I, $(src) $(obj))
+ endif
+-endif
+
+ # If $(is-kernel-object) is 'y', this object will be linked to
+vmlinux or modules
+ is-kernel-object =3D $(or $(part-of-builtin),$(part-of-module))
+
+
+
+
+
+However, I'd rather fix each Makefile
+to add necessary include paths explicitly.
+
+
+
+
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
