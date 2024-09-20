@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-334112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB52197D2B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:26:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D430097D2B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 10:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0727DB24539
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:26:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B1231F21E2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 08:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380B613F454;
-	Fri, 20 Sep 2024 08:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8C6143866;
+	Fri, 20 Sep 2024 08:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="lCdjeSIG"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="i4beTXzH"
 Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3E613C827
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7090913D8A4
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 08:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726820722; cv=none; b=HsnK0S5ufgvn8dc9RA75z+pZ2NAEYh8iWCjHU7z6M8cg6m07pP0g4/Q+Q8ciRcqB5TiAPuhiC7E0JMo/Dyqsnq1N+mpK3f0lorVf18eytU4SXfq9hgIWvls608Mh12m7cHLifi7BGiCMcOxT+Wc7CIR+vFzlV7roKaEaEJvfoXI=
+	t=1726820723; cv=none; b=PmVzIVn4KRNTgTg9yZSuoDVHJ24E7fqM3dZFAwMq/3IbYE5Wzgd3R9cJ33nmi3EsYI9iKIOSA1sUSQn09I6EWBkeVQGffaYZD9vc8WsffhEtk+uZCRlu1c33JtiGcvFu6jT//Rhl38e5MmeumIDEvGmQG6SyR+xXojgktcsMfEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726820722; c=relaxed/simple;
-	bh=0pYi2Ni0VLg4Q2jL0VHsJ0rBYp+TMB0afkc/uJHrl6A=;
+	s=arc-20240116; t=1726820723; c=relaxed/simple;
+	bh=BnUK6/AoCSS6+O2NC8KhIqCyJ/Ezt5/FTV26j/3uaAw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bl7TO1/CZGXRXGBIf34IZTFz87bX7cV6RE2HlXOs1cb/KYO8TXlbGj13vumQbBVKoiLnKXR4Uxi2w1qon8puOHuWbJ5nCEBR4X7Ls6gfnEXQljK6ToFmsE5W3ar6LS+dcZZYesj5DMme/ff/YEpvbDXHeihb1ReB7KBYDEXkHPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=lCdjeSIG reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
+	 MIME-Version:Content-Type; b=UhUckjf+xLg9YBlKYfkJv8cNIYsaCsUm3ps70mG2y7tXdHRbn0vJ5oZu3xIw4TBghcXiN6rnc/n20uXS0w8PnwwSMaZPG1ARUUKi2cLo/QAuVls1snizJaZUa3WpQaq0OOhGmNkcRQYkEmRKnuvgOVWf/ekVOIF7bpclQpQfjqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=i4beTXzH reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=ite.com.tw; s=dkim;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=9z9UGdgk9MPxd1ynPoki1CPpX1B3DsdgFQ83VM+CmXk=;
-  b=lCdjeSIGoJN1tPWv3PMdzg+6UcuD+XtNYoQxjBaoAKmljR6Mfm6Gfs0j
-   4FwAKpzv4xcLt2qmS/1cVKgpwV5zPpaIGDeDpv2RXUjZEnuSABJnkKQ0l
-   cSwpTl9a/8vsxEKbhqkYW3Tfr3FQ/gGghpP+QyZ6er3eidoy+S4dFl3LG
-   065KiMZe+4qwkdykf8oFMVpFVlKh9jApFAd7WOWDv6pw0wekO6rvPMmiU
-   Xq/nAjzCUJRqk6urEDUUGdA2BNklq+r9OMWqHf3CofuYs12QE1yG1E5wu
-   LdCpuBj7ayuTNIrb5b03H4keayjSeNIvMv2hG0DRrgy9wvYg1TWDtRo/X
-   Q==;
-X-CSE-ConnectionGUID: LcuEqNKkReGHpFOh6zpF8Q==
-X-CSE-MsgGUID: uCr+x7XfSJqIsspO+mJfFQ==
+  bh=m2FJTguNPM0THfwZyeppm7yUQmpKnPmqDkBNYjXFk08=;
+  b=i4beTXzHZPrysr6836nslFnuTU4MIPZFHs1NkBC/dDFAssezICe1e4vy
+   zX25oUeqb4ubgnDy0BQogQtaIqtHxKfW+oq2n1uzbwcUT4qL5zXxYN5FR
+   M8KX2kOAJhCYVE0h+uYJy6iNFF/MHk418HDEH9kyJs3JOJP4VcJuO/6Xl
+   5W644oxETpluDYGFKbXVqCMdtofBSQrfJ709xDbPb+J7j+XmW3+dBn9TJ
+   Bu5dXw/EPJdeQU4h5EczN3c+/HBs8gKBmZ30wNg17fQoCnf3DfZuBhowm
+   S81matCcLfTFPuMe8ysR5gsHjETY3jnwlmTPMIQpQPXtTNV04XrHLmMTy
+   A==;
+X-CSE-ConnectionGUID: 58PhIuTHTrOtM3xlhW6+aA==
+X-CSE-MsgGUID: ocB2NheZTeOGG9eH2YSvAA==
 Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
-  by ironport.ite.com.tw with ESMTP; 20 Sep 2024 16:25:08 +0800
+  by ironport.ite.com.tw with ESMTP; 20 Sep 2024 16:25:09 +0800
 Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
-	by mse.ite.com.tw with ESMTP id 48K8P3ib024272;
-	Fri, 20 Sep 2024 16:25:03 +0800 (GMT-8)
+	by mse.ite.com.tw with ESMTP id 48K8P4iR024273;
+	Fri, 20 Sep 2024 16:25:04 +0800 (GMT-8)
 	(envelope-from Hermes.Wu@ite.com.tw)
 Received: from LAPTOP-C4GM1L3U.localdomain (192.168.82.6) by
  TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
@@ -70,9 +70,9 @@ To: Pin-yen Lin <treapking@chromium.org>, Andrzej Hajda <a.hajda@samsung.com>,
 	<dri-devel@lists.freedesktop.org>,
         open list <linux-kernel@vger.kernel.org>
 CC: Kenneth Hung <Kenneth.hung@ite.com.tw>, "Hermes.Wu" <Hermes.wu@ite.com.tw>
-Subject: [PATCH v1 2/2] drm/bridge: it6505:  Add MSSC suport
-Date: Fri, 20 Sep 2024 16:24:47 +0800
-Message-ID: <20240920082451.9240-3-Hermes.Wu@ite.com.tw>
+Subject: [PATCH v2 2/2] drm/bridge: it6505:  Add MSSC suport
+Date: Fri, 20 Sep 2024 16:24:48 +0800
+Message-ID: <20240920082451.9240-4-Hermes.Wu@ite.com.tw>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240920082451.9240-1-Hermes.Wu@ite.com.tw>
 References: <20240920082451.9240-1-Hermes.Wu@ite.com.tw>
@@ -87,14 +87,14 @@ Content-Type: text/plain
 X-ClientProxiedBy: TPEMAIL1.internal.ite.com.tw (192.168.15.58) To
  TPEMAIL1.internal.ite.com.tw (192.168.15.58)
 X-TM-SNTS-SMTP:
-	388D328793418E230CC7EE2FD6ECDCBA220317C431FE6CACFE729420A1BDB04D2002:8
-X-MAIL:mse.ite.com.tw 48K8P3ib024272
+	B69D8071F0782D9708C9AAB0DB9B6309E3A7F78D96604FD3BB10CE79014CF0BD2002:8
+X-MAIL:mse.ite.com.tw 48K8P4iR024273
 
 From: "Hermes.Wu" <Hermes.wu@ite.com.tw>
 
-add AUX-I2C functionality to support MCCS. 
+Add AUX i2c funtion for MCCS
 
-Change-Id: I63e1a0e5da67526f89f35605a82944be67dee8ac
+Change-Id: Ia8952f3cde4d9610d6f8a0c3915fc6ffefc6da22
 Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
 ---
  drivers/gpu/drm/bridge/ite-it6505.c | 209 ++++++++++++++++++++++++++--
