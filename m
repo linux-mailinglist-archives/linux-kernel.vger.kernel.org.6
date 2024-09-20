@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-334311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF21D97D590
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:42:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F90D97D594
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781181F23F72
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:42:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B3B1C2146E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602E114D710;
-	Fri, 20 Sep 2024 12:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95C514EC42;
+	Fri, 20 Sep 2024 12:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KY3qdbBY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLBxDlQE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39C238DD3;
-	Fri, 20 Sep 2024 12:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7131E4B2;
+	Fri, 20 Sep 2024 12:43:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726836133; cv=none; b=XbQnPAZ7H8U9qK1+dvp0+eGePT7yUV3xciQ/b84H6islC6GC/FzrjBJVDKn9QTM8mlFBV0rv+Tc4Y9vevM1geGzdkuUMPp37ACG/YwaSxhdsQ9wpwG/xUh64HZdRq1vzzXJ+p3sVeN6pr8bzkbjOB6vncPJfThGKZbSVyNILoPc=
+	t=1726836205; cv=none; b=jw+N8QG0ENgH6+zs+WAgEB1P2dtFHfsLHT0mIveqjVKqXDwlbZ3sveA5MKhehdlGeqpZd/jWHO7Mz6IsT3fLsO1bO2cPBPIr8915ip/5NDQ/gSt/1TUHuybxWvyen8dUVnI2rh42pVf43plQIZCBtmYv+hLJ38mR7TgV2MyWRYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726836133; c=relaxed/simple;
-	bh=rM3zf1xWpimtTUOp6jfcPic1anecVTQCmw8fhG2IIPc=;
+	s=arc-20240116; t=1726836205; c=relaxed/simple;
+	bh=9FEFYPZ9KOO/iv/7HByE/GfQbB+0/yfDRORE71OLN1c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ORSc5M5bh9ItqIIPoMM2explU04Yjt9aQq48N8xlA0N+ecgmxbt9tynNXcYqhufXMNTL8XpCp/xv1UlaBD8HOQsleawioil86zqm17vepvis3oemdDvDD7emWw6gpEkkfi8x8lg9GwJdOD4OHhL52rjZhTZOlPoFMM4oPQXfFbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KY3qdbBY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14E92C4CEC3;
-	Fri, 20 Sep 2024 12:42:08 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=HHVToTzU43QfbdIJ/YYOOj5U7pyeJVpv8rHjFK/LMIH3IoC56mvFevNY99+I9t93oAhoBWtyim+ZFPvl+Y59PKtgQQHwoackJVsATyq76gw38qBa7CNTnI7120BQnYGh17K4Usnoqs5ALNbz6rOMGTvVE1rxy8fGvoGHsT8ehg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cLBxDlQE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB329C4CEC3;
+	Fri, 20 Sep 2024 12:43:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726836133;
-	bh=rM3zf1xWpimtTUOp6jfcPic1anecVTQCmw8fhG2IIPc=;
+	s=k20201202; t=1726836204;
+	bh=9FEFYPZ9KOO/iv/7HByE/GfQbB+0/yfDRORE71OLN1c=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KY3qdbBYj8P8jO3uVcsxoGFUqjDzaYJkwdea58IYeRK5ZAMSbt8SHAnYuJrA/o34s
-	 ZAj/jhIpjZMceO+aNgIz5PuqY4o2E63zDXwrviV2pzEGE5W2lwjYLdqRZHrnP5+VSH
-	 IINlQj82C8AghUsVQAHZKfvsuxGtfYtaom0Jcjm8QGdLxsFRhYR24x4sz1vOEuYw/+
-	 7A12CZG6BgccXyYsPAHwv2mnb7gs45p6mmd51KfEBA08f3ZD1F3wDxyF88JmUK4oqK
-	 EOmb6q896c0GPwitIR8DYuORc58l9KJc1qESNx5fDN6A/xVm9KjuJzmRSVUDs1ou9P
-	 pZ9uUZELTc5Uw==
-Message-ID: <85a223e9-05a4-4034-87a5-57d3eb9409b7@kernel.org>
-Date: Fri, 20 Sep 2024 14:42:07 +0200
+	b=cLBxDlQEtybkGjB66prbdRTwZuBVdzT93kUTdR0i6MoOYAGSOV5dwl0Bcx+3muMET
+	 JyKipgaSRytC2OkVEijHgzDMjlOLTPQGX/7quMhwcq7mGcit45CM1fNZYErugdSMLb
+	 F2A5DTBtb6IiKdf6Baj55A7zFYrMTTYXCYABGfk25TWjxfX74o25D4Ytr/1dk1L6y9
+	 yqRQ6O9e+emHBprJyrd734OAs2+E77Y8lTyS56q2I5E0gmBD7D4p3x9CIkaSAV8Pxt
+	 hGgTvEFhyfCX4iyVFTulFkQBxrr35pJr8yKmpIElqE0OiIgONeAWLhzz0CVAea4CLm
+	 UPv6zRRU4ZfCQ==
+Message-ID: <04ad8ea5-2c76-4007-b9ad-87b935072b8b@kernel.org>
+Date: Fri, 20 Sep 2024 14:43:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,23 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
- Systems remote processors
-To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
- Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org,
- sudeep.holla@arm.com, robin.murphy@arm.com
-References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
- <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
- <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
- <gzlncpyzwm7x4jcxtdrthrlv2dofk7u3oxn4taadwog5tt37wo@ot6s6kwukd4k>
- <20240919093517.GA43740@e130802.arm.com>
- <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
- <20240919145741.GA7940@e130802.arm.com>
+Subject: Re: [PATCH v2] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+To: Inbaraj E <inbaraj.e@samsung.com>, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com
+References: <CGME20240919124112epcas5p1527a15ea137d853dee5625902769580e@epcas5p1.samsung.com>
+ <20240919123954.33000-1-inbaraj.e@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -111,47 +102,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240919145741.GA7940@e130802.arm.com>
+In-Reply-To: <20240919123954.33000-1-inbaraj.e@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 19/09/2024 16:57, Abdellatif El Khlifi wrote:
-> Hi Krzysztof,
+On 19/09/2024 14:39, Inbaraj E wrote:
+> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the CMU_CAM_CSI
+> block. When we gate ACLK or PCLK, the clock framework will subsequently
+> disables the parent clocks(PLL_CAM_CSI). Disabling PLL_CAM_CSI is causing
+> system level halt.
 > 
->>>>> +  '#extsys-id':
->>>>
->>>> '#' is not correct for sure, that's not a cell specifier.
->>>>
->>>> But anyway, we do not accept in general instance IDs.
->>>
->>> I'm happy to replace the instance ID with  another solution.
->>> In our case the remoteproc instance does not have a base address
->>> to use. So, we can't put remoteproc@address
->>>
->>> What do you recommend in this case please ?
->>
->> Waiting one month to respond is a great way to drop all context from my
->> memory. The emails are not even available for me - gone from inbox.
->>
->> Bus addressing could note it. Or you have different devices, so
->> different compatibles. Tricky to say, because you did not describe the
->> hardware really and it's one month later...
->>
-> 
-> Sorry for waiting. I was in holidays.
-> 
-> I'll add more documentation about the external system for more clarity [1].
-> 
-> Basically, Linux runs on the Cortex-A35. The External system is a
-> Cortex-M core. The Cortex-A35 can not access the memory of the Cortex-M.
-> It can only control Cortex-M core using the reset control and status registers mapped
-> in the memory space of the Cortex-A35.
+> It was observed on FSD SoC, when we gate the ACLK and PCLK during CSI stop
+> streaming through pm_runtime_put system is getting halted. So marking
+> PLL_CAM_CSI as critical to prevent disabling.
 
-That's pretty standard.
+No, please do not send new versions while discussion is going.
 
-It does not explain me why bus addressing or different compatible are
-not sufficient here.
+See my replies in previous version.
 
+Also, if this stays, then you miss Cc-stable.
 
 Best regards,
 Krzysztof
