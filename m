@@ -1,78 +1,125 @@
-Return-Path: <linux-kernel+bounces-334270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF5197D4CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:26:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D4797D4D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 13:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9CC1F26CBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:26:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D91828371B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 11:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F70143738;
-	Fri, 20 Sep 2024 11:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9881442E3;
+	Fri, 20 Sep 2024 11:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2/q3lxSI"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJqKzdaz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4B914290;
-	Fri, 20 Sep 2024 11:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9A414290;
+	Fri, 20 Sep 2024 11:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726831565; cv=none; b=izHMr63L9QVhbU0o1qX88LctFSmiAK58dUVwVInEmmlvPWGgFaVkkbf0SXH8PPPm7csAKA+ZrvrGbq9dlo/fjvvkuVpTvKH2uXfcvkjSEk5gjNOwcTiWJklDiQm8ljXg+iqcnpMuxiJe/Ccj12R+fF/pRLiSp3oPIaMpj1CVvxc=
+	t=1726831627; cv=none; b=Pui/SaGF8/f7mIF3UlRnLnjTWZl4AvIKACIBgS9YAGiE7cKIdZwnb4eWAFjOYCloOxskrdvGmWHXDMshu/69TxvNgbs0yxILRfy7snFrLXQ/MF4M6loRx10D6h3+RmrvXYE0fdKqoB/YEFbnQ5mFpk0a2nPJd1IDNwLIY3/duc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726831565; c=relaxed/simple;
-	bh=0FTbkSuwF/nWhLWpO8SYLY2ED+F0e/TeFwLsP00CZgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F5Hxi72P814UCSeFydLIxPkTmoNlihly7Er210gljvvu2Hx5nks4uPsXaZM4XIyNkXEVwdAaSQ6RL4aKQ10+9O6nVqElbS/asmNL9nIkqeUYXOaGNLTiJh5t7W2IJKAHqOI72H7KPgpDASGI8S1b791Vwr+52XcIdl2EDk0NuMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2/q3lxSI; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0FTbkSuwF/nWhLWpO8SYLY2ED+F0e/TeFwLsP00CZgM=; b=2/q3lxSIMR+4wZXiLxymHtJlZH
-	DBK4ZIJsJOA40RmIXCREbMe34xYvvYIrYANb9GxYotRneXQgn/qfEm/YeH28N+18Y14Lr38gMavGV
-	VLcDZUtNEiLJ2LgdRPflJFjtXsO7xUVHh0lIKlhrp390zyncdbC0JjMST5n6vVxKQJk8A4qxUSu1e
-	SP9azR7Z/7sDYlHjlnGLBh5ZxyvfUJSoIfuWBOlug4ttcar9yGhhWunpwvqW2iX8oK2PVMjfhJGOy
-	2RStJcBXT0NZ8caDPkq2fFEBOvP9szFpXcKxgdsvSKWY9S27ZGnDSQUdU7MCI2DgOA4qvumL7vdjw
-	8dYL3X/Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1srblx-0000000C5qv-44iz;
-	Fri, 20 Sep 2024 11:26:01 +0000
-Date: Fri, 20 Sep 2024 04:26:01 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Subject: Re: [GIT PULL] dma-mapping updates for Linux 6.12
-Message-ID: <Zu1byUGU832iWBUp@infradead.org>
-References: <ZuvYnXzbM2qfXQPT@infradead.org>
- <971fbb889da38ca4e60f3dedde29ea43e9338d68.camel@xry111.site>
+	s=arc-20240116; t=1726831627; c=relaxed/simple;
+	bh=Pu+Q8DHoL0edU64i2MkdXyKqaILGDIGkO3K4u29/lmU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=RcOkBGudeUIUKDJeQ0l69x97PbDM9lvcl5U5Edb7wiORRG/+GoyfpIMDA3n56CKO0VwsXy/nqbbRVs/j2PnwfYzpn720R5rzNr1sdjVdi+SXiNQEwGXTRVcwkj65FL05HY6Tf/UyOVo2pJ3Jyx2I06KUjL7zCP6P5IwoWQ9sYss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJqKzdaz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 080DEC4CECD;
+	Fri, 20 Sep 2024 11:27:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726831627;
+	bh=Pu+Q8DHoL0edU64i2MkdXyKqaILGDIGkO3K4u29/lmU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WJqKzdazK7zg+v5FDyOGY2q3YtjXBOFVBu17Znyx05tRwPBc0gqDcBDTDEfauIqo6
+	 eBCo+JwEz+wJ29r+DSDnnAuAbFlWFPXgrcaq53+Cl02Y30859U4ilkXHo/WjMg2nyI
+	 9OFI/7uFrOiLYSzXQPKYrIOMH5CZiaWHrNIUNJmQTvv1/bh7wBCFbyzmZZqN/4M+bP
+	 BsSohYwc/ABAlGbct8KuUvNIrqkD6x7eNi7VZyfbx2I3xl+cnvQ6yypYHuMmsWVMuU
+	 jf4HAlLyu8VdWIUPwQ2KBqr0m5eoZix3hMGxtoFCeWPHzUkXhpUuADFUtsu0YL3BqH
+	 Mdu4cT68WZ9KQ==
+Date: Fri, 20 Sep 2024 13:26:59 +0200
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Florent Revest <revest@chromium.org>,
+ linux-trace-kernel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
+ Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
+ Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>,
+ linux-arch@vger.kernel.org
+Subject: Re: [PATCH v15 00/19] tracing: fprobe: function_graph:
+ Multi-function graph and fprobe on fgraph
+Message-Id: <20240920132659.48d4563d4ab4ff32ba64d65a@kernel.org>
+In-Reply-To: <CAEf4BzZAPjZEZR9m66hPr6srzJwuu=B8zu6cNhxe-7__5+LpHw@mail.gmail.com>
+References: <172639136989.366111.11359590127009702129.stgit@devnote2>
+	<CAEf4BzZAPjZEZR9m66hPr6srzJwuu=B8zu6cNhxe-7__5+LpHw@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <971fbb889da38ca4e60f3dedde29ea43e9338d68.camel@xry111.site>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 20, 2024 at 05:41:51AM +0800, Xi Ruoyao wrote:
-> This breaks using my laptop camera with gstreamer (with "gst-launch-1.0
-> v4l2src ! videoconvert ! autovideosink" or GNOME snapshot).
+On Wed, 18 Sep 2024 23:22:41 +0200
+Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
 
-What camere and driver are you using?
+> On Sun, Sep 15, 2024 at 11:09 AM Masami Hiramatsu (Google)
+> <mhiramat@kernel.org> wrote:
+> >
+> > Hi,
+> >
+> > Here is the 15th version of the series to re-implement the fprobe on
+> > function-graph tracer. The previous version is;
+> >
+> > https://lore.kernel.org/all/172615368656.133222.2336770908714920670.stgit@devnote2/
+> >
+> > This version rebased on Steve's calltime change[1] instead of the last
+> > patch in the previous series, and adds a bpf patch to add get_entry_ip()
+> > for arm64. Note that [1] is not included in this series, so please use
+> > the git branch[2].
+> >
+> 
+> With LPC and Kernel Recipes back-to-back I won't have time to look
+> through the code, but I did manage to run some benchmarks tonight, and
+> they look pretty good now, thanks! Seems like the kprobe regression is
+> gone, and kretprobes are a bit faster. So, nice work, thanks!
+> 
+> BEFORE
+> ======
+> kprobe         :   25.052 ± 0.032M/s
+> kprobe-multi   :   28.102 ± 0.167M/s
+> kretprobe      :   10.724 ± 0.008M/s
+> kretprobe-multi:   11.337 ± 0.054M/s
+> 
+> AFTER
+> =====
+> kprobe         :   25.206 ± 0.026M/s
+> kprobe-multi   :   30.167 ± 0.148M/s
+> kretprobe      :   10.714 ± 0.016M/s
+> kretprobe-multi:   13.436 ± 0.328M/s
 
-> (I had to use "git bisect skip" several times because I encountered
-> kernel panic on boot at some revisions.)
+Thanks for reevaluate the series!
+This results look nice.
 
-Do you have any traces of that?
+Thank you,
 
+> 
+> > [1] https://lore.kernel.org/all/20240914214805.779822616@goodmis.org/
+> > [2] https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/log/?h=topic/fprobe-on-fgraph
+> >
+> 
+> [...]
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
