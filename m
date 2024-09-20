@@ -1,93 +1,188 @@
-Return-Path: <linux-kernel+bounces-334627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D789197D9BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 21:06:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0F397D9BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 21:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B28B1F23771
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:06:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 227692833C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 19:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0DA183CB5;
-	Fri, 20 Sep 2024 19:06:04 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636AD17C217;
+	Fri, 20 Sep 2024 19:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d8rnQR69"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18586291E
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 19:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC25291E
+	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 19:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726859164; cv=none; b=uWXWemEab1g+ikTNxrhj7iss2OydwzQ5UN1pP1kiZVOkvsVjmHgn4SEdWW5Jl/sNb/NvTIg8eOT4+Yu7ZNHKH5ASzoIdhZpBMKCxS+yF+SVn4BRnDWKOUvOaeupDoblym0kRpEirx879JLlyYjOHpPPhxPit/A+LQPZia16xC7A=
+	t=1726859259; cv=none; b=SIVHW0zkt2psFhvZWaSuiQRUctsIw3JJX7ncEhFULxr7SsTZLZvR6MVYeqXZzpeqlJiMhel/TCnE0jY8jJY5h3p9Vtqsy2Z3PTIwkjxbR54EYYh0HjrULdMMkHzwv2WVK0Im5zW6wGPTHbpmEtGi/jGpPcKEBHFf2jFSW4Euy7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726859164; c=relaxed/simple;
-	bh=ZClcruaHXzbCXilN5gpeBeg5BdJWSvqQCgujFKR2ov8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Wiu0uJ7Gaegsn23Xu3e/JP1bOGTEfDOVaFNuEcNmjgTC+M2ne8/OD8pe8u0lA07CI4JslfZ9Ro1TvWMBM2JdZWhSqzrvIOOKpjVzG6wjbIWd/o+ZhGWCSdROzee76oOGldxdWAsnEytaP9tHrz5DPeNh6Et4Ta+ml9rnbjocPeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82cdb749571so254708339f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 12:06:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726859162; x=1727463962;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UUf6CGjR4bWSGj2+PQOxtIYx6vWyI3WMtK3UwHwb85g=;
-        b=M/d+nNM66LI15WReTZI5hD8fbMkjxctRAHpXgo5CEJvT4Gzr6lYzUnovceWFxvvkr7
-         Yx3C3I9zyCZQzEgxCGBIyl6NED06lZmlDq+h08mwT5h2fqL/5tKtnUX5T6EuBzniewLk
-         QI3Jqpu5nwxsB/dUZnxvLtF5nGsZGNHL+xtjrE5teu18jbspvuuLnYbb7DNcl1wEtkZP
-         lnI8ifOVldyPwfQuLjmIBJvdOHCKOgW7AzW5j0ub72zQ4Je9T3LgodtqD2dIWkw/6Co8
-         Y5MXdb+iGubnJwSy5aASIzQrniDduqRf/uozlHGhC0RlokFI7Pf6Y806rgc/DP8KJ3m3
-         4VJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWS3Z9ZCIuRdvqndhQdTs5rH+dep73XC9dXGccm12oITcTjj+v3pheGHTz3Aizx1JU5gwl0wKFZe94mczU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjoyqlY4HNssNsIusprmTBb15zdu9rlE+o8FN8mksNtRNvBtHl
-	3dbukynWgfT55NW4lgMxG246ivRUgO3CXm3JTDIumYrUPv0vPJw8XUR6WQpDrR4xgN/kEEPRglJ
-	rldoYA8kSYosAq2IPm7z2D3kKcOIcQCMcUoOWHaoCHnmtNjfYzT5fqqA=
-X-Google-Smtp-Source: AGHT+IG1hoyGre/j6uvxWbFCcktiEEGo2p2sZKmOGbXrZKIDn00siJgnoZzKJXTwK/2nQSjEHlbmh6LVxOAHL5SyZEdUvibN8dR9
+	s=arc-20240116; t=1726859259; c=relaxed/simple;
+	bh=XYleqDUUULMHmf327GC5FuqVofTnEl06Sl9up1zkKig=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K6I/04H6AVDrfpOcE9bkrc/rvoCqxxvSUGn7lL0LzYIDMTZTQjgWlwuaDBSEBtb1Ppl/ghPaPc02OFGhYptQLiMTeb9pg3TOIgrnAlnHuehx8ST6IBDCgzmbZu1Nd8uIECjt8wT/X3EuteyuymJhJ6w89W/0ysjJ/2o4w03rI/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d8rnQR69; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726859257;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dS1KGNZWGk2nhsYDCIsD8L7gyADHJUWHZbHDXT7ckqE=;
+	b=d8rnQR694+4RvooFyMRgKZvGp5OcW0ZXALNh07v+HN3JYL1zv63/8FXFh5y48oyydpNBB3
+	2PYNQefBjWZqyUQU98pNoCTsFaRgJkiKvuLSy8qB901LG3ZP4Hm+96I3uYu1pzIFTmE080
+	lgoFSsGJos1D4zuMgMnY26IcA2HO6ec=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-198-jaoiHIvdPqyl0OxF8OxWVA-1; Fri,
+ 20 Sep 2024 15:07:33 -0400
+X-MC-Unique: jaoiHIvdPqyl0OxF8OxWVA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B07D9192DE06;
+	Fri, 20 Sep 2024 19:07:30 +0000 (UTC)
+Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.33.41])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9F8C219560A3;
+	Fri, 20 Sep 2024 19:07:23 +0000 (UTC)
+From: Wander Lairson Costa <wander@redhat.com>
+To: Andrii Nakryiko <andrii@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	bpf@vger.kernel.org (open list:BPF [RINGBUF]),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Wander Lairson Costa <wander.lairson@gmail.com>,
+	Brian Grech <bgrech@redhat.com>,
+	Wander Lairson Costa <wander@redhat.com>
+Subject: [PATCH] bpf: use raw_spinlock_t in ringbuf
+Date: Fri, 20 Sep 2024 16:06:59 -0300
+Message-ID: <20240920190700.617253-1-wander@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1546:b0:3a0:98b2:8f2a with SMTP id
- e9e14a558f8ab-3a0c8c9a3eamr37091595ab.10.1726859162172; Fri, 20 Sep 2024
- 12:06:02 -0700 (PDT)
-Date: Fri, 20 Sep 2024 12:06:02 -0700
-In-Reply-To: <000000000000690606061ce1fe7e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66edc79a.050a0220.3195df.000b.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] INFO: task hung in ext4_stop_mmpd
-From: syzbot <syzbot+0dd5b81275fa083055d7@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, clang-built-linux@googlegroups.com, 
-	harshadshirwadkar@gmail.com, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nathan@kernel.org, ndesaulniers@google.com, 
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-syzbot has bisected this issue to:
+From: Wander Lairson Costa <wander.lairson@gmail.com>
 
-commit 21175ca434c5d49509b73cf473618b01b0b85437
-Author: Harshad Shirwadkar <harshadshirwadkar@gmail.com>
-Date:   Thu Apr 1 17:21:29 2021 +0000
+The function __bpf_ringbuf_reserve is invoked from a tracepoint, which
+disables preemption. Using spinlock_t in this context can lead to a
+"sleep in atomic" warning in the RT variant. This issue is illustrated
+in the example below:
 
-    ext4: make prefetch_block_bitmaps default
+BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 556208, name: test_progs
+preempt_count: 1, expected: 0
+RCU nest depth: 1, expected: 1
+INFO: lockdep is turned off.
+Preemption disabled at:
+[<ffffd33a5c88ea44>] migrate_enable+0xc0/0x39c
+CPU: 7 PID: 556208 Comm: test_progs Tainted: G
+Hardware name: Qualcomm SA8775P Ride (DT)
+Call trace:
+ dump_backtrace+0xac/0x130
+ show_stack+0x1c/0x30
+ dump_stack_lvl+0xac/0xe8
+ dump_stack+0x18/0x30
+ __might_resched+0x3bc/0x4fc
+ rt_spin_lock+0x8c/0x1a4
+ __bpf_ringbuf_reserve+0xc4/0x254
+ bpf_ringbuf_reserve_dynptr+0x5c/0xdc
+ bpf_prog_ac3d15160d62622a_test_read_write+0x104/0x238
+ trace_call_bpf+0x238/0x774
+ perf_call_bpf_enter.isra.0+0x104/0x194
+ perf_syscall_enter+0x2f8/0x510
+ trace_sys_enter+0x39c/0x564
+ syscall_trace_enter+0x220/0x3c0
+ do_el0_svc+0x138/0x1dc
+ el0_svc+0x54/0x130
+ el0t_64_sync_handler+0x134/0x150
+ el0t_64_sync+0x17c/0x180
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1427bf00580000
-start commit:   4a39ac5b7d62 Merge tag 'random-6.12-rc1-for-linus' of git:..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1627bf00580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1227bf00580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dd14c10ec1b6af25
-dashboard link: https://syzkaller.appspot.com/bug?extid=0dd5b81275fa083055d7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14fbd177980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=108ea607980000
+Switch the spinlock to raw_spinlock_t to avoid this error.
 
-Reported-by: syzbot+0dd5b81275fa083055d7@syzkaller.appspotmail.com
-Fixes: 21175ca434c5 ("ext4: make prefetch_block_bitmaps default")
+Signed-off-by: Wander Lairson Costa <wander.lairson@gmail.com>
+Reported-by: Brian Grech <bgrech@redhat.com>
+Fixes: 457f44363a88 ("bpf: Implement BPF ring buffer and verifier support for it")
+Signed-off-by: Wander Lairson Costa <wander@redhat.com>
+---
+ kernel/bpf/ringbuf.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+diff --git a/kernel/bpf/ringbuf.c b/kernel/bpf/ringbuf.c
+index e20b90c36131..de3b681d1d13 100644
+--- a/kernel/bpf/ringbuf.c
++++ b/kernel/bpf/ringbuf.c
+@@ -29,7 +29,7 @@ struct bpf_ringbuf {
+ 	u64 mask;
+ 	struct page **pages;
+ 	int nr_pages;
+-	spinlock_t spinlock ____cacheline_aligned_in_smp;
++	raw_spinlock_t spinlock ____cacheline_aligned_in_smp;
+ 	/* For user-space producer ring buffers, an atomic_t busy bit is used
+ 	 * to synchronize access to the ring buffers in the kernel, rather than
+ 	 * the spinlock that is used for kernel-producer ring buffers. This is
+@@ -173,7 +173,7 @@ static struct bpf_ringbuf *bpf_ringbuf_alloc(size_t data_sz, int numa_node)
+ 	if (!rb)
+ 		return NULL;
+ 
+-	spin_lock_init(&rb->spinlock);
++	raw_spin_lock_init(&rb->spinlock);
+ 	atomic_set(&rb->busy, 0);
+ 	init_waitqueue_head(&rb->waitq);
+ 	init_irq_work(&rb->work, bpf_ringbuf_notify);
+@@ -421,10 +421,10 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
+ 	cons_pos = smp_load_acquire(&rb->consumer_pos);
+ 
+ 	if (in_nmi()) {
+-		if (!spin_trylock_irqsave(&rb->spinlock, flags))
++		if (!raw_spin_trylock_irqsave(&rb->spinlock, flags))
+ 			return NULL;
+ 	} else {
+-		spin_lock_irqsave(&rb->spinlock, flags);
++		raw_spin_lock_irqsave(&rb->spinlock, flags);
+ 	}
+ 
+ 	pend_pos = rb->pending_pos;
+@@ -450,7 +450,7 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
+ 	 */
+ 	if (new_prod_pos - cons_pos > rb->mask ||
+ 	    new_prod_pos - pend_pos > rb->mask) {
+-		spin_unlock_irqrestore(&rb->spinlock, flags);
++		raw_spin_unlock_irqrestore(&rb->spinlock, flags);
+ 		return NULL;
+ 	}
+ 
+@@ -462,7 +462,7 @@ static void *__bpf_ringbuf_reserve(struct bpf_ringbuf *rb, u64 size)
+ 	/* pairs with consumer's smp_load_acquire() */
+ 	smp_store_release(&rb->producer_pos, new_prod_pos);
+ 
+-	spin_unlock_irqrestore(&rb->spinlock, flags);
++	raw_spin_unlock_irqrestore(&rb->spinlock, flags);
+ 
+ 	return (void *)hdr + BPF_RINGBUF_HDR_SZ;
+ }
+-- 
+2.46.1
+
 
