@@ -1,378 +1,245 @@
-Return-Path: <linux-kernel+bounces-334329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A3297D5CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:51:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C615097D5CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB2321F22390
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:51:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 894BC287DFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 12:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7493016DEA9;
-	Fri, 20 Sep 2024 12:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A661F14BF86;
+	Fri, 20 Sep 2024 12:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fLlemra/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPWDQBKr"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE91813B29B;
-	Fri, 20 Sep 2024 12:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726836646; cv=fail; b=GrSVZX62Lbq/hKRsGJZJQ2D0ZdZx99s3O4ql7Z7xAUbQHCBJ0gEvn5uzxSGScE17B+JB0N8LQclshR5gpz346I11/JNhXz+aaCDozrBMJ7mmP/jAcKPrM/uVgbipm86Gb7nN98lWpUbW0QZ+s5ceMtVqbrD4wSBFflHoqoShNBw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726836646; c=relaxed/simple;
-	bh=fSWNZHgYi7NXu6Bu3oyVjmNfXHIlW1v4lhZRZXW56/g=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gPmnQZqZBehp0VmA9l4f13C3eLYM9PtaruDJu6y2ac7wzbrh9SbW7d4UQ1dCX0U6UPujqiSOgXg31k+pbDGFTF5EyeE9+5nJ16njvKoFIjmhDDkUaeFO4nFd0C8ZfHiC5+Vbm5H+BHC9tDBSgE8FUn+pGZf4Ar9gZl8AHuv4BmY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fLlemra/; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726836644; x=1758372644;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=fSWNZHgYi7NXu6Bu3oyVjmNfXHIlW1v4lhZRZXW56/g=;
-  b=fLlemra/KhsBbmAasBLgag8kF34AMIVScVLH/eMlPb93CBNeuBfht1Ab
-   GPA2F440eAW/VWAm48tcP2anB+7LiC8gpWIsoBu11paxxVggLFpwQskOA
-   kzNMymHn2JMepbLKtFVwXkznRcc+rwqvZWNSyA0VrwqdbtASVk7BbJphE
-   iXVvdRf/8zMYCtLIOb10fC+hrX/yVRu4fUqDKirJAZPlIkXCaxK4mtLGo
-   txkepDAxs6TtaaA/wUcMHMW0SbXQwM/lRJ3N3I44WvXPRRCzOo5WSgBIo
-   ifkQYkrIDKFI6ou2n0BqhmGxZqJU4MT4zEcI8EaE5gjGqyCAmWtoLAQSB
-   w==;
-X-CSE-ConnectionGUID: 7t3dJUoETWyKNZI4A6RjJw==
-X-CSE-MsgGUID: T0qbYDNcTzGicdz3X+GERA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11200"; a="36427406"
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="36427406"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 05:50:33 -0700
-X-CSE-ConnectionGUID: BFiGtAwjT4Kh2URysGtu/g==
-X-CSE-MsgGUID: pA9HyDbVSJ2c8owRRmwSrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,244,1719903600"; 
-   d="scan'208";a="70532082"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Sep 2024 05:50:33 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 20 Sep 2024 05:50:32 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 20 Sep 2024 05:50:32 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.41) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 20 Sep 2024 05:50:32 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xZfIGjNuRmMnjPmHDG+rsThEO3mKInP/qf4EwAePdr3CdUpOHwEw+2mFs/m60Jh5QX4kOSs05tsmpIeFD39KektbezOEhNsTp0k42pZYYQhjbnVCM2cD50DI2lc7yTEab16GeG3AdVSwyIWM8Imnjc1tlOVgrS+sRYKIyQSB7T4OZUlH0jFc7JOydk/AgJmC5KGK1nYlnC905NMYe0uL08DH3w6ztc6OAqluFhkD2bd1w8r+v3MwSwhPgvi75Q2/huuDDwa8jN4Ilnzw2T0o84INDOtwfkwQR/JLOrcT9TeqUGqjnCQMXocEiRV9+x0A5vBkhUt4nBzu/IbQfE80Ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lRr5uBEXQ2ODjIlChhQZ4MG33nRhCA6K/m8RsykMODo=;
- b=pmUIFBCmiv6WuzGZ80ilZjcryp+3NjRji1iLYyzeUp86YgdJo/e88OITC8DD6e+OZE3Jt0F9j/323fcOh5TbMbxbKkucuSU06M9Jh6FgTeiV9iuNpvUkrBMbd3otIPMWvQwpMnxq7cSSLyuYwv5eft2J3VO/y042wz3nHXhSdGB6IKyiOKAZV0bW3P4ZwHJ0t57og07f2NHoAfaFRIkSLHP4/+SApMijHhYt4N5Ec/aRr83ev0qKtDvrjj7dRqXMl+5H1Xt7+N/Pd+yODvczU+UQyoe0Zs5LKdXpfeIZOgqV5C4BnTXGywdmbkUq+dBaSbe6ibfPXIxPjhkOYGsnJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6117.namprd11.prod.outlook.com (2603:10b6:8:b3::19) by
- MW6PR11MB8411.namprd11.prod.outlook.com (2603:10b6:303:23c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.16; Fri, 20 Sep
- 2024 12:50:29 +0000
-Received: from DM4PR11MB6117.namprd11.prod.outlook.com
- ([fe80::d19:56fe:5841:77ca]) by DM4PR11MB6117.namprd11.prod.outlook.com
- ([fe80::d19:56fe:5841:77ca%4]) with mapi id 15.20.7982.018; Fri, 20 Sep 2024
- 12:50:29 +0000
-Date: Fri, 20 Sep 2024 14:50:17 +0200
-From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-To: Wei Fang <wei.fang@nxp.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <claudiu.manoil@nxp.com>, <vladimir.oltean@nxp.com>,
-	<ast@kernel.org>, <daniel@iogearbox.net>, <hawk@kernel.org>,
-	<john.fastabend@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <bpf@vger.kernel.org>, <stable@vger.kernel.org>,
-	<imx@lists.linux.dev>
-Subject: Re: [PATCH net 2/3] net: enetc: fix the issues of XDP_REDIRECT
- feature
-Message-ID: <Zu1viee7KxkRlYWE@boxer>
-References: <20240919084104.661180-1-wei.fang@nxp.com>
- <20240919084104.661180-3-wei.fang@nxp.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240919084104.661180-3-wei.fang@nxp.com>
-X-ClientProxiedBy: WA1P291CA0002.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:19::26) To DM4PR11MB6117.namprd11.prod.outlook.com
- (2603:10b6:8:b3::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3834716A955;
+	Fri, 20 Sep 2024 12:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726836657; cv=none; b=DJhs4qcqBuhjVoizY/GXqciWxW0GFRYGz42JnqNJAdNk5WpYS5idztYkBUie1kbAA7B1UuW58nHgDOB93gN3Wmqh/1agrQ9foP0TlTTP8LE8Y8uQH52yX9WmCt88CoogJ/gCI2ZZcNmgY4jB0ZkdLGFS23xTx+hmU1EFAiT4Mxw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726836657; c=relaxed/simple;
+	bh=hAgZ+ka00T4iPgRSlHtpXqpUznTxJDKnlbc4iYIWZIc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ksqaAwpQpJ+5cos6YNj2+x/qpBZwTiz6QkIuOC1sjCBy9QfQIRcULup7Ndcafh0SdSizUiOLNZ92z15/fW48Nkc5ufflBT+NatPhltYm7nUiYrwMz6ArWHAh4z1Ni/0SW6gOadM6aLeE1XdynfKZhX+2Dc8QapcH4Iaws/xwNJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPWDQBKr; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c24ebaa427so4750470a12.1;
+        Fri, 20 Sep 2024 05:50:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726836653; x=1727441453; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Q3TNK0Ne4mj4tv9w2rjHOLXOPUridZ81HYwSt+U/uK0=;
+        b=CPWDQBKrAERuQOlia4Uji9zSQdOKH10TU0TD7Xg0UGo3uC8UCBrmRtUWccoeZqHHpI
+         OI8IW681OunbU4Ek75xa46qyV5w7ayvBZiUEKo5iga75S752p4tuCwkjuo8EWxROaveY
+         RvfbmbHpVc2YimZUmtjniW5O7shyINovAH/s1jhntTQTj33/7Wqx4Shbut1uccinlwfG
+         dFe8/3K6gDuUCImnm12d78fzJLeGge6wOjnrqvyztIooj2dKDi7h+BYPoBmOBijsEB8p
+         6JwBNUwL4eEsC3gb3NXyq7uXNzofrsY2rBLQVnXCiS2WRkyvXNT1tlasr2PgTgYMPCzq
+         P9bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726836653; x=1727441453;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q3TNK0Ne4mj4tv9w2rjHOLXOPUridZ81HYwSt+U/uK0=;
+        b=I9GmEkac5rnVl831gu6bJogVp1lfYPJHkC8LO5sOSkH2Ocb29DJY5BQFrBf6X9Pr1I
+         tT/jHRkWO/QRWzECDfPudk+PmwXHK7ShIkNPzdzDfsSDG5WDPpWTmbHuHiIm8JNecY2K
+         8uxEU2BkfrTwA1ErokiHRMqGNEsXXm1oFkjl23v7k1n5xMnfhekTDk9MPEgasvD5GkXM
+         E6bTEXSPkGQlQRpBsciJydQVaOEsen4yz3miK3676cofXQSp8uI8Jqkpv2CTbveuOKSz
+         KgCEr4lFJxw0QQ6+bsDJdI3f7yvaHq/YPgtogf5GSqLoNmkZ/NAw+kG8e4skTxSjkCG+
+         hyyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVE1gcbfV3tBnAgcl0JZKGEQhqIzNxyzJRs2HPSPuMSoS5lXqpkg46IAqU9QJqgnrLz9PQsX9knYXDM@vger.kernel.org, AJvYcCXD6mpZKRwCnt+a0HYxp3rGvdIg4n4yhx5X7/keINudILxlN9/5TNv4v03efvT/dLfYwEBsiH/XfsFYm2pd@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRJYGsQwAxd9bgSjqHrJQD0x5qL4OPnP6c2zUhRM5Kf8kIndun
+	pw2cDeI7BnGTEqDb7aYAhICuLp+3eqSRW19yHdKDND7SeQD/tU+b
+X-Google-Smtp-Source: AGHT+IFaCW38zRvYTrHIZ9b7fyALnjerXHiuZoWu3eQ+kShZryyD398RG9SXF2/Jak1MdAKkSEfnAQ==
+X-Received: by 2002:a17:906:dc92:b0:a8a:7884:c491 with SMTP id a640c23a62f3a-a90c1cba762mr709465866b.17.1726836653259;
+        Fri, 20 Sep 2024 05:50:53 -0700 (PDT)
+Received: from ?IPv6:2001:a61:341e:1201:c434:b5b1:98a6:efed? ([2001:a61:341e:1201:c434:b5b1:98a6:efed])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90612b38bdsm845185066b.110.2024.09.20.05.50.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Sep 2024 05:50:52 -0700 (PDT)
+Message-ID: <60610fe3e5885033c0a1d14db6e2f576367a2e44.camel@gmail.com>
+Subject: Re: [PATCH v3 05/10] iio: backend: extend features
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Angelo Dureghello <adureghello@baylibre.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
+ Sa <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, dlechner@baylibre.com
+Date: Fri, 20 Sep 2024 14:50:52 +0200
+In-Reply-To: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-5-a17b9b3d05d9@baylibre.com>
+References: 
+	<20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+	 <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-5-a17b9b3d05d9@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6117:EE_|MW6PR11MB8411:EE_
-X-MS-Office365-Filtering-Correlation-Id: 41c36d91-23a9-40e5-8863-08dcd972ce8b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?haCjnKr2QrvRv5uTjx5GBX9bB/LMuSmtWPEFASJw52m/I2P83LpgPhjbN3GV?=
- =?us-ascii?Q?2/lmT0T4ZQnHRitq/XoS/7S5SWVL1TlphT55v+TcUXe3rRl+DDXWEDGH2M86?=
- =?us-ascii?Q?sDemcyaszRFVnjiZOR2s9KAcYa6v9iEg5r+cYtL63j34mIfxCMLv0gNDwBTp?=
- =?us-ascii?Q?M3WWYtJMFNock3RNmAc9luc+3aKO5o3jGEQS5kPnRMgNNCgCON6Y/fyhn/oU?=
- =?us-ascii?Q?3ZEyG1My7n7sk96DAxqq54mVohwEZfKlKALnEoclyEAFgkb6gAUXK/Emff2h?=
- =?us-ascii?Q?ew5vg4GpaS6EO+lJgNgxKYnEjVyHSB7/7biN31ulCz0tUXhGgWqhH1WWvfXP?=
- =?us-ascii?Q?KVgfJWSPzRWLZbwRM+cwM//m6pH1hpWRjfy7Ju2Vwe0vsrJb18D2Hl1P87FO?=
- =?us-ascii?Q?q886A/AxMHhyzyYGZJYqnb9Pv6Oeut1OEGGogb2E5OI6/b/+eKWP0zL28AYg?=
- =?us-ascii?Q?w0rfmQjupIZJ9fv+QJ8atueIxJmP4BIH0v3KFviq+1VI3UM+887Vm4PBDVTB?=
- =?us-ascii?Q?nlkgYTsMyrZL0IsvQ/UR8EuqzCvo60p5/CetKSrX11zJo7MQ1QONt5aa9qfM?=
- =?us-ascii?Q?P0HcefFthJrQ5ppg/aELuWjaiziNXLZ0oX461s9U8rymLL+lcKqrOEZBO4Y5?=
- =?us-ascii?Q?w2sUtfMx/yrNJ9BhnwE7+WOjmcRfjLcYSfER5z5UV7Xd7y/ebk+JJ93S3Tmk?=
- =?us-ascii?Q?ho+1e0wCW94cdspTBVJQaZHNNM+QkIv0GolwMLcDdTBLcHrAK2xSLoVBUkSh?=
- =?us-ascii?Q?AFjlseLUrkBlNA7whfuKTq0tmV/PBQ67LG6Rcqhj2AY7GQloUX0qI4z33MMD?=
- =?us-ascii?Q?BscCehQEDhDkGe9v09AU0adhHo+sxyFJeHy5arkasThNRHTTwxNwt3fU7DCA?=
- =?us-ascii?Q?eTHLAw9ec1+iEQXsfsJMr7nVKajyXriOPWc+97UUfIsLN6AeL42h2TgyhHbe?=
- =?us-ascii?Q?h8ri1y8mjH2jqdXgicEnYhi/RuAyZY3OU9UOMGZCu0WEyb455bbitnw3b0es?=
- =?us-ascii?Q?gJZmcAWHXIDjf7gv+7AY9Vc04aPwSUiEjvR3/oQKkgsVa8m1sD5W5mGVr/Xb?=
- =?us-ascii?Q?ZGSLFSofCljsNS3NXKvmSEnSN2PxATwGi89nCNx3Aw7bhdXYEikLUNhTiCcj?=
- =?us-ascii?Q?GfBq6q6ZSyRY4zExB3wLL84yPXORDinnYk83gCZftbLv8m2tIts2lkZmzjJN?=
- =?us-ascii?Q?HmC7dzi+cVRUa2TC8LLR+xs/J1u7gGby/4+pQpA+pxgdSyGAJBv6mvIBG7VF?=
- =?us-ascii?Q?8bg6tDRP37m3Wu/3SFAZdG1uxwjcxslaVWIH4Ru20w=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6117.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?oS0uHOg3h91PnCGWNtwTMtb44tJmMG4ZzHcs6ngN0UVWEsVWmtROJEdSRDcG?=
- =?us-ascii?Q?ED8yITNdzNmhy87MUcjgJ7jUVQkldCuWYCIKdwv1vy4/lD6uGNYLBYFPLDSj?=
- =?us-ascii?Q?eceahqKPTuSIMw29el9pKaYgBV3TN72DoSydX9vgfYURvr/ZGDNM2IQJ92EZ?=
- =?us-ascii?Q?SHMWCaAQV9hoJMluB2CJP+Conw9nBC9z7gCzwY6b3+1DAScTx/FOtkF8SihV?=
- =?us-ascii?Q?y1K46Yqfk7067HdZdgeNh/D5upzXIqH/Gk7I0pzkS5tqyhYOedLf5Jgz9cto?=
- =?us-ascii?Q?4P14BrMCXhZ0T+fcoTl07DaAhQEUYn64KWYwRsIgnEPGv/Qg+yCigH1nRFDC?=
- =?us-ascii?Q?sTXBTzlk4NXX6UrCEr4qVjJ/xhY+B2S4z9UGHXAymULrcL9VNUgIom8JbN4p?=
- =?us-ascii?Q?WpiZt/6rqkNO6xTnRP7orDfEN3dC1gzLYOxC7YpTrDftfBByad6pHQdESi/V?=
- =?us-ascii?Q?RESc8akvbT/ouWLS8InxrI9qfovYVfHmq0/ChMFM2Bo/W8+8+NcUUPM+siHF?=
- =?us-ascii?Q?EbWbtbN0giVBhS2wPCaJl2ElyLINNaFK8f4tXIIRcbwuZjsLnyfePQW0fOcc?=
- =?us-ascii?Q?/6fbFZsRsV8ej0WbMNrh5OIRbprisP8S+5Kn5sJ+SU3wq/C5B6dr6d4tMw0S?=
- =?us-ascii?Q?18bd1qmFtm3S2rm6qDZ5+Pt4htiD3sf4/lSb0gOF6CO8yFx0HrtjYKWgvhe5?=
- =?us-ascii?Q?rpBBhZmUl8ixwhdyWN2MRa3ngHskK778E4ijM9PUhzgyY9LnTcoWD0qJsSJD?=
- =?us-ascii?Q?p0sxyPfS6TL2wGLOpjNbKKmYCwqDa5G2mxSWCn0XEq3LTAYXXx77Z8Vp+50j?=
- =?us-ascii?Q?SYCUq9l6WL1rFuomAJILRo2hr4M4sNU5nNm60QX7ItxE7iHgDxODm4tdhSmM?=
- =?us-ascii?Q?8nmBTJUV2/9EaxkXRRSgC0QqaVpTKDWvPOjCuHwm3dgkGAJBC7m2/LlnDz2u?=
- =?us-ascii?Q?KLWcdS9RvsKCiEcow7wHtJ9eZDRzU+mA7n7PUJqjEiYqhBIJo8yUplKXpnz/?=
- =?us-ascii?Q?DXw86Bwq7T04mtce96Og1w+/rjgh/rnLc+u3mxMZ/lNFn5fpEPdobBjWTdZ+?=
- =?us-ascii?Q?g6GI/u1GwLxxvBI3VQuAK+T54fHZHmkYALkvB7I15eP3mRXDwNoHIHu6fxEe?=
- =?us-ascii?Q?vLt2LGofhNSdOgw2XPWziVPTleKwlXifQFW4wp5s3uJwbbnHmOEFLvrps6rI?=
- =?us-ascii?Q?UsooxINmqzf+eZIBGRodQssCH3AYFhZIlW3R1evH/rqqI4/gc8/WM/xESwSY?=
- =?us-ascii?Q?lBwBZxPUviDgL2hxdB9rO35PkYZyVSUNfyNBRlsRzCScbECdHiBfqUFSZrgi?=
- =?us-ascii?Q?HNvkLwempCXoSQH9ZrhI5ZnLH0qCBVSSpVBe2qZJSyYTGe/C2ijbpZm/Ln0T?=
- =?us-ascii?Q?G8XZU6fVhqTMRGKevn22Qe4eseX3Acnpvtiv/qqgvfGFzsdKGShEnJEFpv0C?=
- =?us-ascii?Q?YYLUgRo4XkoUbynI4Nj/onnQ81R6YrhOsIfQff29ZDrzHufoFhKSvPsP76hf?=
- =?us-ascii?Q?Z8js7lxVqBUI3j71bOmwfGE+D75FV7YJAXN7rrxRVYmQmGwmvy5vOTL9aq7u?=
- =?us-ascii?Q?erJl5jmWt08cNVe6AiFJdFGnlvK1m8oebMEvYecQDM5VFeU5lN+104RFm70o?=
- =?us-ascii?Q?uQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 41c36d91-23a9-40e5-8863-08dcd972ce8b
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6117.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 12:50:29.5698
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PzjA5qeWZpzhCQBZl7TT3UA1A2c8/QMbIiDenEvpdJ5P+z6rWoXN1Jd7QxhP7/dBCisi+iHa4v10w5Ko7daOIH/8nIv0IK9pB39Lxc9jVZU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR11MB8411
-X-OriginatorOrg: intel.com
 
-On Thu, Sep 19, 2024 at 04:41:03PM +0800, Wei Fang wrote:
-> When testing the XDP_REDIRECT function on the LS1028A platform, we
-> found a very reproducible issue that the Tx frames can no longer be
-> sent out even if XDP_REDIRECT is turned off. Specifically, if there
-> is a lot of traffic on Rx direction, when XDP_REDIRECT is turned on,
-> the console may display some warnings like "timeout for tx ring #6
-> clear", and all redirected frames will be dropped, the detaild log
-> is as follows.
-> 
-> root@ls1028ardb:~# ./xdp-bench redirect eno0 eno2
-> Redirecting from eno0 (ifindex 3; driver fsl_enetc) to eno2 (ifindex 4; driver fsl_enetc)
-> [203.849809] fsl_enetc 0000:00:00.2 eno2: timeout for tx ring #5 clear
-> [204.006051] fsl_enetc 0000:00:00.2 eno2: timeout for tx ring #6 clear
-> [204.161944] fsl_enetc 0000:00:00.2 eno2: timeout for tx ring #7 clear
-> eno0->eno2     1420505 rx/s       1420590 err,drop/s      0 xmit/s
->   xmit eno0->eno2    0 xmit/s     1420590 drop/s     0 drv_err/s     15.71 bulk-avg
-> eno0->eno2     1420484 rx/s       1420485 err,drop/s      0 xmit/s
->   xmit eno0->eno2    0 xmit/s     1420485 drop/s     0 drv_err/s     15.71 bulk-avg
-> 
-> By analyzing the XDP_REDIRECT implementation of enetc driver, we
-> found two problems. First, enetc driver will reconfigure Tx and
-> Rx BD rings when a bpf program is installed or uninstalled, but
-> there is no mechanisms to block the redirected frames when enetc
-> driver reconfigures BD rings. So introduce ENETC_TX_DOWN flag to
-> prevent the redirected frames to be attached to Tx BD rings.
-> 
-> Second, Tx BD rings are disabled first in enetc_stop() and then
-> wait for empty. This operation is not safe while the Tx BD ring
-> is actively transmitting frames, and will cause the ring to not
-> be empty and hardware exception. As described in the block guide
-> of LS1028A NETC, software should only disable an active ring after
-> all pending ring entries have been consumed (i.e. when PI = CI).
-> Disabling a transmit ring that is actively processing BDs risks
-> a HW-SW race hazard whereby a hardware resource becomes assigned
-> to work on one or more ring entries only to have those entries be
-> removed due to the ring becoming disabled. So the correct behavior
-> is that the software stops putting frames on the Tx BD rings (this
-> is what ENETC_TX_DOWN does), then waits for the Tx BD rings to be
-> empty, and finally disables the Tx BD rings.
-> 
-> Fixes: c33bfaf91c4c ("net: enetc: set up XDP program under enetc_reconfigure()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-
-Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-
+On Thu, 2024-09-19 at 11:20 +0200, Angelo Dureghello wrote:
+> From: Angelo Dureghello <adureghello@baylibre.com>
+>=20
+> Extend backend features with new calls needed later on this
+> patchset from axi version of ad3552r.
+>=20
+> The follwoing calls are added:
+>=20
+> iio_backend_ext_sync_enable
+> 	enable synchronize channels on external trigger
+> iio_backend_ext_sync_disable
+> 	disable synchronize channels on external trigger
+> iio_backend_ddr_enable
+> 	enable ddr bus transfer
+> iio_backend_ddr_disable
+> 	disable ddr bus transfer
+> iio_backend_set_bus_mode
+> 	select the type of bus, so that specific read / write
+> 	operations are performed accordingly
+> iio_backend_buffer_enable
+> 	enable buffer
+> iio_backend_buffer_disable
+> 	disable buffer
+> iio_backend_data_transfer_addr
+> 	define the target register address where the DAC sample
+> 	will be written.
+>=20
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
 > ---
->  drivers/net/ethernet/freescale/enetc/enetc.c | 43 ++++++++++++++++----
->  drivers/net/ethernet/freescale/enetc/enetc.h |  1 +
->  2 files changed, 35 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
-> index 56e59721ec7d..5830c046cb7d 100644
-> --- a/drivers/net/ethernet/freescale/enetc/enetc.c
-> +++ b/drivers/net/ethernet/freescale/enetc/enetc.c
-> @@ -902,6 +902,7 @@ static bool enetc_clean_tx_ring(struct enetc_bdr *tx_ring, int napi_budget)
->  
->  	if (unlikely(tx_frm_cnt && netif_carrier_ok(ndev) &&
->  		     __netif_subqueue_stopped(ndev, tx_ring->index) &&
-> +		     !test_bit(ENETC_TX_DOWN, &priv->flags) &&
->  		     (enetc_bd_unused(tx_ring) >= ENETC_TXBDS_MAX_NEEDED))) {
->  		netif_wake_subqueue(ndev, tx_ring->index);
->  	}
-> @@ -1377,6 +1378,9 @@ int enetc_xdp_xmit(struct net_device *ndev, int num_frames,
->  	int xdp_tx_bd_cnt, i, k;
->  	int xdp_tx_frm_cnt = 0;
->  
-> +	if (unlikely(test_bit(ENETC_TX_DOWN, &priv->flags)))
-> +		return -ENETDOWN;
-> +
->  	enetc_lock_mdio();
->  
->  	tx_ring = priv->xdp_tx_ring[smp_processor_id()];
-> @@ -2223,18 +2227,24 @@ static void enetc_enable_rxbdr(struct enetc_hw *hw, struct enetc_bdr *rx_ring)
->  	enetc_rxbdr_wr(hw, idx, ENETC_RBMR, rbmr);
->  }
->  
-> -static void enetc_enable_bdrs(struct enetc_ndev_priv *priv)
-> +static void enetc_enable_rx_bdrs(struct enetc_ndev_priv *priv)
->  {
->  	struct enetc_hw *hw = &priv->si->hw;
->  	int i;
->  
-> -	for (i = 0; i < priv->num_tx_rings; i++)
-> -		enetc_enable_txbdr(hw, priv->tx_ring[i]);
-> -
->  	for (i = 0; i < priv->num_rx_rings; i++)
->  		enetc_enable_rxbdr(hw, priv->rx_ring[i]);
->  }
->  
-> +static void enetc_enable_tx_bdrs(struct enetc_ndev_priv *priv)
+> =C2=A0drivers/iio/industrialio-backend.c | 111 ++++++++++++++++++++++++++=
++++++++++++
+> =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 23 ++++++++
+> =C2=A02 files changed, 134 insertions(+)
+>=20
+> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industriali=
+o-
+> backend.c
+> index 20b3b5212da7..f4802c422dbf 100644
+> --- a/drivers/iio/industrialio-backend.c
+> +++ b/drivers/iio/industrialio-backend.c
+> @@ -718,6 +718,117 @@ static int __devm_iio_backend_get(struct device *de=
+v, struct
+> iio_backend *back)
+> =C2=A0	return 0;
+> =C2=A0}
+> =C2=A0
+> +/**
+> + * iio_backend_ext_sync_enable - Enable external synchronization
+> + * @back: Backend device
+> + *
+> + * Enable synchronization by external signal.
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_ext_sync_enable(struct iio_backend *back)
 > +{
-> +	struct enetc_hw *hw = &priv->si->hw;
-> +	int i;
-> +
-> +	for (i = 0; i < priv->num_tx_rings; i++)
-> +		enetc_enable_txbdr(hw, priv->tx_ring[i]);
+> +	return iio_backend_op_call(back, ext_sync_enable);
 > +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_ext_sync_enable, IIO_BACKEND);
 > +
->  static void enetc_disable_rxbdr(struct enetc_hw *hw, struct enetc_bdr *rx_ring)
->  {
->  	int idx = rx_ring->index;
-> @@ -2251,7 +2261,16 @@ static void enetc_disable_txbdr(struct enetc_hw *hw, struct enetc_bdr *rx_ring)
->  	enetc_txbdr_wr(hw, idx, ENETC_TBMR, 0);
->  }
->  
-> -static void enetc_disable_bdrs(struct enetc_ndev_priv *priv)
-> +static void enetc_disable_rx_bdrs(struct enetc_ndev_priv *priv)
+> +/**
+> + * iio_backend_ext_sync_disable - Disable external synchronization
+> + * @back: Backend device
+> + *
+> + * Disable synchronization by external signal.
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_ext_sync_disable(struct iio_backend *back)
 > +{
-> +	struct enetc_hw *hw = &priv->si->hw;
-> +	int i;
-> +
-> +	for (i = 0; i < priv->num_rx_rings; i++)
-> +		enetc_disable_rxbdr(hw, priv->rx_ring[i]);
+> +	return iio_backend_op_call(back, ext_sync_disable);
 > +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_ext_sync_disable, IIO_BACKEND);
 > +
-> +static void enetc_disable_tx_bdrs(struct enetc_ndev_priv *priv)
->  {
->  	struct enetc_hw *hw = &priv->si->hw;
->  	int i;
-> @@ -2259,8 +2278,6 @@ static void enetc_disable_bdrs(struct enetc_ndev_priv *priv)
->  	for (i = 0; i < priv->num_tx_rings; i++)
->  		enetc_disable_txbdr(hw, priv->tx_ring[i]);
->  
-> -	for (i = 0; i < priv->num_rx_rings; i++)
-> -		enetc_disable_rxbdr(hw, priv->rx_ring[i]);
->  }
->  
->  static void enetc_wait_txbdr(struct enetc_hw *hw, struct enetc_bdr *tx_ring)
-> @@ -2452,6 +2469,8 @@ void enetc_start(struct net_device *ndev)
->  
->  	enetc_setup_interrupts(priv);
->  
-> +	enetc_enable_tx_bdrs(priv);
+> +/**
+> + * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate) mode
+> + * @back: Backend device
+> + *
+> + * Enabling DDR, data is generated by the IP at each front
+> + * (raising and falling) of the bus clock signal.
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_ddr_enable(struct iio_backend *back)
+> +{
+> +	return iio_backend_op_call(back, ddr_enable);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_enable, IIO_BACKEND);
 > +
->  	for (i = 0; i < priv->bdr_int_num; i++) {
->  		int irq = pci_irq_vector(priv->si->pdev,
->  					 ENETC_BDR_INT_BASE_IDX + i);
-> @@ -2460,9 +2479,11 @@ void enetc_start(struct net_device *ndev)
->  		enable_irq(irq);
->  	}
->  
-> -	enetc_enable_bdrs(priv);
-> +	enetc_enable_rx_bdrs(priv);
->  
->  	netif_tx_start_all_queues(ndev);
+> +/**
+> + * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate) mo=
+de
+> + * @back: Backend device
+> + *
+> + * Disabling DDR data is generated byt the IP at rising or falling front
+> + * of the interface clock signal (SDR, Single Data Rate).
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_ddr_disable(struct iio_backend *back)
+> +{
+> +	return iio_backend_op_call(back, ddr_disable);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
 > +
-> +	clear_bit(ENETC_TX_DOWN, &priv->flags);
->  }
->  EXPORT_SYMBOL_GPL(enetc_start);
->  
-> @@ -2520,9 +2541,11 @@ void enetc_stop(struct net_device *ndev)
->  	struct enetc_ndev_priv *priv = netdev_priv(ndev);
->  	int i;
->  
-> +	set_bit(ENETC_TX_DOWN, &priv->flags);
+> +/**
+> + * iio_backend_buffer_enable - Enable iio buffering
+> + * @back: Backend device
+> + *
+> + * Enabling the buffer, buffer data is processed and sent out from the
+> + * bus interface.
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_buffer_enable(struct iio_backend *back)
+> +{
+> +	return iio_backend_op_call(back, buffer_enable);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_enable, IIO_BACKEND);
 > +
->  	netif_tx_stop_all_queues(ndev);
->  
-> -	enetc_disable_bdrs(priv);
-> +	enetc_disable_rx_bdrs(priv);
->  
->  	for (i = 0; i < priv->bdr_int_num; i++) {
->  		int irq = pci_irq_vector(priv->si->pdev,
-> @@ -2535,6 +2558,8 @@ void enetc_stop(struct net_device *ndev)
->  
->  	enetc_wait_bdrs(priv);
->  
-> +	enetc_disable_tx_bdrs(priv);
+> +/**
+> + * iio_backend_buffer_disable - Disable iio buffering
+> + * @back: Backend device
+> + *
+> + * Disabling the buffer, buffer data transfer on the bus interface
+> + * is stopped.
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_buffer_disable(struct iio_backend *back)
+> +{
+> +	return iio_backend_op_call(back, buffer_disable);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_buffer_disable, IIO_BACKEND);
 > +
->  	enetc_clear_interrupts(priv);
->  }
->  EXPORT_SYMBOL_GPL(enetc_stop);
-> diff --git a/drivers/net/ethernet/freescale/enetc/enetc.h b/drivers/net/ethernet/freescale/enetc/enetc.h
-> index 97524dfa234c..fb7d98d57783 100644
-> --- a/drivers/net/ethernet/freescale/enetc/enetc.h
-> +++ b/drivers/net/ethernet/freescale/enetc/enetc.h
-> @@ -325,6 +325,7 @@ enum enetc_active_offloads {
->  
->  enum enetc_flags_bit {
->  	ENETC_TX_ONESTEP_TSTAMP_IN_PROGRESS = 0,
-> +	ENETC_TX_DOWN,
->  };
->  
->  /* interrupt coalescing modes */
-> -- 
-> 2.34.1
-> 
-> 
+
+IIRC, both me and Jonathan had some comments about the above 2 calls? Aren'=
+t they
+about buffering? I think I mentioned something about using the same buffer =
+ops as
+typical IIO devices use.
+
+- Nuno S=C3=A1
+
 
