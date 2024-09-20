@@ -1,545 +1,174 @@
-Return-Path: <linux-kernel+bounces-334410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3505297D6E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:29:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 591E097D6E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 16:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C4FDB20EA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:29:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BB071C219B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Sep 2024 14:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512D117BEAB;
-	Fri, 20 Sep 2024 14:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8523C17C217;
+	Fri, 20 Sep 2024 14:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="keSHs3Od"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Jr5DSFeO"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2078.outbound.protection.outlook.com [40.107.21.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6011617BB2A
-	for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 14:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726842556; cv=none; b=IuIAmP3+szIaN4/iYPc9cZ1oaY8qfmxPSczlwv//t8flzX+0JCoWqPaH1yNJk9LPZhdDO4Up8B4n1WZ0TL1h2V/nPweztkmsB2B/XlD2u/Re/UBdzDaxNPzoWQ8LpIMDKeq+7afaRALwVg0y+IZK2pm0vjRbIYQEiaEa7oXZyd8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726842556; c=relaxed/simple;
-	bh=0zq1PlLaF0XLS5V+BH1BCUYfFlf8KTrFx161kq/4xP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rNgDSppnrpd/PuAYoOqzb/qOvDQhQuJSJ42vHz8neudsnzqPWBcS6G2HUHWJJE0pXBglI7dd03trM+7CUU1qOx78NI2NrHU93SSwtYSpQc1Nv/H27pdkAoBU9Kc1OKkOJgPQjyLRUZQsIFkJzfn/vcDGXTPNIv74UhMoRfm0C2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=keSHs3Od; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3780c8d689aso1367251f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 07:29:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1726842551; x=1727447351; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ug30u+FX8a3Qn9eAfXuu/xh4m5BzwPDgoNnMylvURq4=;
-        b=keSHs3OdJAvXmnKdslG0q3A9JgX4agPYfFlGcjAepuqM5EKxOK0iaRD0GcspOIsVfO
-         oSb6ErvKjPz04s/VOVLYNvtOVorYFgLIzGB09DZM8eqWHluU5O0APnSgsrx2vY4+PlzK
-         p9sCXNZzfBB70lVgZbHsGUL3FaYNAdjfRM9Pw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726842551; x=1727447351;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ug30u+FX8a3Qn9eAfXuu/xh4m5BzwPDgoNnMylvURq4=;
-        b=VjzFFnupXOdn93+LHbS8rEYnuEretKcJB+UiQau1NfON0/SsuWRlPl7mtJ8yYcSaJl
-         5vu9mZjKGVP98HLPHMCkyQx5NaVG8GJxKviFsAzVkp2xJNWX0sbUfICyiwtNFrvoWD5D
-         iPao/+fd+G9e3h1i43kh0P0hPgOtw+LSI8UeJurD7MR3fheqEPJRqBMiBnhdnTTNFs/U
-         vHLtxfBrafLvxdPyjfCss18fQojMQQ8kqqkpZudMqdHQfwcPjo69aZPPFMzDjbQsfITL
-         UtBRKEvdEi1HKzRVIbCYu9eLhMZ1jipRPnn+/Nu4pyRwaFCgKPJFJkNuFViLaQRV5jSu
-         mWzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWS9GXF9OHxuhMilH9Ip1xCftTxsU8VTMf5lINEyHPURDZT7OqxAyHe+yFR17ODbON6ZihvOwKR3XfDzMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW1fI8alrcyWR/WV+u5eG9IL2TvxzfLRhxjGQL0Q7DT3GILb80
-	KypzdQmH7bmc1LvMZheSiw4MovaiUnrMvh8uJizRwXFKSGjdw4HsUtqxVzW1iL4=
-X-Google-Smtp-Source: AGHT+IG3fy+6T+kCFnBj5Y2ccrD+mwbI8PUUqGqZVmSp4wfPsOLC49T72LgtOC40Akc2DlpCCUmmzw==
-X-Received: by 2002:adf:f50e:0:b0:374:c1de:5525 with SMTP id ffacd0b85a97d-37a4312aa40mr1866964f8f.6.1726842550405;
-        Fri, 20 Sep 2024 07:29:10 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e78044dfsm17727472f8f.94.2024.09.20.07.29.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 07:29:09 -0700 (PDT)
-Date: Fri, 20 Sep 2024 16:29:07 +0200
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Simona Vetter <simona.vetter@ffwll.ch>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] rust: add untrusted data abstraction
-Message-ID: <Zu2Gs3zk-F2XIg8A@phenom.ffwll.local>
-Mail-Followup-To: Benno Lossin <benno.lossin@proton.me>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240913112643.542914-1-benno.lossin@proton.me>
- <20240913112643.542914-2-benno.lossin@proton.me>
- <ZuRbSxwlz1xWT1pG@phenom.ffwll.local>
- <cf0d6189-e81c-4b7c-ab50-7a297c69b132@proton.me>
- <ZuhTdwCqz61bQEgq@phenom.ffwll.local>
- <26534d80-989d-4b77-9720-84575275890f@proton.me>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB33117BB21;
+	Fri, 20 Sep 2024 14:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726842582; cv=fail; b=OtZwSqQFWwN/9bXVePGETBEYzCj5U4hxc+zabDaNTa09OwyhZ2uP9vW5TiBAY/KdDi/TElCmddGqNXrZUYfhuOI8xHi3NJ2pZW00twJ77nVYYympQB6rdp//OF7HF1HAjfMMTmSrtSAyc57fcxuR7+TtzRdhPv6WKG6b1MZe+qI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726842582; c=relaxed/simple;
+	bh=uRDQrtqmDrseNr3xa1d0zffDcVsh39vBZAwCJVu+1Ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Bc9yoLMjWgwS/7YZxUTADFTmPPdurVYacTg5dX+NS26JLyjlLXJoBXtCVhwViJxn2zSGJNn3Fu9VN98nmODkFO+l/VZd1GrKLe/Z1pwg1u5ctsdT/tyQz2sQDSbGxTQENs17oLErrFtRmgUuIqfzWXFRImGPbAct5TmLCqfmhQY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Jr5DSFeO; arc=fail smtp.client-ip=40.107.21.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AU5cZSPQZ/j7SdYnxmhfbXO570Gf38U9v7kasGxOE4vbOX8xLaxujbtxFE/HzE7kPpoQZC62n/U5GdjhMWFRmzf6Rh2AYyM4XW1ZB1SlLu0MYhqCcowu3iByZbjx9n1HCuK81bBgPTBrCtyRWwFn0yiLBNBQZ5H8ZELatmgj7Ec68z29lYTf5Eh9qZd5DbFbjS59W/krnor3RIzCF6J+ob5kUwvfghYMWR2u5DsHdwlSRLXEF0HBUvdN01cx7s0rkOoYi2kvy0Gp/tjh1avX/2dSZJWO0WHEnNiD6RetAYb8OjZSjbbQ6A9RlL90EKPBcqk+MNyHNcDJUEPrWeFCNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uRDQrtqmDrseNr3xa1d0zffDcVsh39vBZAwCJVu+1Ao=;
+ b=XsHf8JuWHCpK3jgxXd5ZaHUPQSclzUU8/+RmBlNGNUImZAnB+M/IXpF8O8+g+w00KlLf4oU/aMCGsTINQkUT5+tO6MeQ85oxzTZVH2qHXHKuEvfeh7kjynJDfYHeUIuCZOaUIJ8fJwPiCXjC98RQECW+pCIE0xcfZY6rE4G4oe0bJ4ZBegG2InG8k5labVd1HTDTcgKlc08LwYvtbIwINB0UtsERQqOt77DmkYNhMDVDf1ySCrqMXvtdV5Oipq4oWmeXPXFiaSfKAIRXF1seM18+Wmg0avvts71GCiRe//WCL6CA7VBODmNBfwh3wHTtLlpwgbkDjt/NTbLLW5OH4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uRDQrtqmDrseNr3xa1d0zffDcVsh39vBZAwCJVu+1Ao=;
+ b=Jr5DSFeOO870u/uCy/WRMJEXbqdHy+VZzgEEAzUtYn1L1Nmyrl32U+ESdS56+gg9Z4bzaWKQdxMkcBmLVXl1ns/ct1g1WblB7ZxXPfST31mxA6oLuB3LFjAOxBf3YvLA9huAQpezR4WMF9gVaV+tdwxsZNf4+d38M1En2usDqUobQKL4pCj5UiRrfnWfblYlhnsbyhENBDQM8IhqWZen+0YTxNfWQjx//vV/7UY7oXdqjzFO1auzFIuJ8vq7mu3/jVnR79AcYjkVSr3OOEYzuGmgX+zklLii12kGC2hznECFGDFRYIoaOyWvg62vrgvVi/BwEUL8rN8ZIxut9BRGAg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by AM7PR04MB7142.eurprd04.prod.outlook.com (2603:10a6:20b:113::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.18; Fri, 20 Sep
+ 2024 14:29:37 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.7982.012; Fri, 20 Sep 2024
+ 14:29:37 +0000
+Date: Fri, 20 Sep 2024 17:29:30 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	"ast@kernel.org" <ast@kernel.org>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"hawk@kernel.org" <hawk@kernel.org>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: Re: [PATCH net 3/3] net: enetc: reset xdp_tx_in_flight when updating
+ bpf program
+Message-ID: <20240920142930.qo2m7pvxwpgcpkei@skbuf>
+References: <20240919084104.661180-1-wei.fang@nxp.com>
+ <20240919084104.661180-4-wei.fang@nxp.com>
+ <Zu1y8DNQWdYI38VA@boxer>
+ <PAXPR04MB85101DE84124D424264BB4FD886C2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <20240920142511.aph5wpmiczcsxfgr@skbuf>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240920142511.aph5wpmiczcsxfgr@skbuf>
+X-ClientProxiedBy: VE1PR03CA0041.eurprd03.prod.outlook.com
+ (2603:10a6:803:118::30) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26534d80-989d-4b77-9720-84575275890f@proton.me>
-X-Operating-System: Linux phenom 6.9.12-amd64 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AM7PR04MB7142:EE_
+X-MS-Office365-Filtering-Correlation-Id: afa69a6b-07fc-4869-c03e-08dcd980a59b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zGxRKC36+0bgQBZI+Hy+AG7Yz0SHVk0N5GJUowxzcN5MS7jJX1DKrzHhBqIJ?=
+ =?us-ascii?Q?CLnycKljPPxjw4dJKbrWojylrVPyY+5qLadOZTmU1ed5tU+qeX8LHQ5vBa+H?=
+ =?us-ascii?Q?596CcsMbehfM68E36MMXnzHscMC2MdARfbz6k1HFuGbuBczL7etBbjENcBLU?=
+ =?us-ascii?Q?37+sJESqo1VlkvxDryH2rl7e6vq/l1rAnKGwWhwBMzMs1p4KkGU10d3zkk9r?=
+ =?us-ascii?Q?ug9tBHZrQWWs111s6Ocb3BbAjMvPTkyb1wZT5RgKkCk3WAG668E7YbLqWCpR?=
+ =?us-ascii?Q?Wy7KRe0zL2US2p71EXu7DqiLeLosUM3o4oj2Ny1wrPClgM8RxwEbagzrA6eH?=
+ =?us-ascii?Q?s2oCVbNPBpYuI9sENxTRXVQFc2MzK7AfRi3HCFYdPtvmuwd7EU55uQo5IKS4?=
+ =?us-ascii?Q?9r05oA4j3skF7BoSNVv24RRuf3K0H1hhWlMYxa8CYW9i6zX/XSGXiaOwlwMs?=
+ =?us-ascii?Q?/ubmKQPF5zI+2xnVBiSnp6jQv1EOSH7G0FEvfirG67WQbi36vFRg1Njas83l?=
+ =?us-ascii?Q?u1GgKj6GKmxnme3ZS94QjdxV4aD9IQNNyU2y51scbuNt9E3HtMV9YeUwdu3M?=
+ =?us-ascii?Q?29BNFuLygJa35JOUj3ebJhgdd/2WHFsXyDr+O8gRfIB/3nXTBJsVVztxoVRa?=
+ =?us-ascii?Q?Vd8MGg4k5jF4Salv12uk4BvcMoQnhE0gU09rEu8PitafXn08IzOHcEyfm6ua?=
+ =?us-ascii?Q?68E9+cm7/9V5pqmsuav1n93YcE2+Cw6VxrEfa4DrKdNi9UCvizEh52Ury8QL?=
+ =?us-ascii?Q?mLjmy3cFiEN77lHTeuaLOy4sG5bzSt4YfDScIdBNDvu4QlrEaBfXCZeuyJ/9?=
+ =?us-ascii?Q?3hvhhXwWrPzWKeDUmSM/GZ2MnYoX8j8mjEC4rZEYPOFUX0Zzw06T59XMXK3D?=
+ =?us-ascii?Q?vvdBz5nkBw3jUm/Ys8vUbqbtRhGlUnr2E4ndfGDN+vH/jYZbXcgeQhEl+YfC?=
+ =?us-ascii?Q?rkZHrPK2dxaTruD0adxVwjZ1LXsbLWK3Lzg1Plk5yiVxR8B1MeEEXNfNGge2?=
+ =?us-ascii?Q?uItGivEXu/5ltmS31GuXm8/zgpGTV2TVMuV4JLIO4A/FVGMtkO2JiSDym0Q8?=
+ =?us-ascii?Q?6XoCWgaW3QniBSMFBld2HIoEpigysBW6l6RgF1EMbM7p/fqyaqtN4tXcM4Je?=
+ =?us-ascii?Q?f62U1K47aKt8BtMG4d9EksvQ0SHS4Z+P233iskPk4hqE7WeqAbqjib5N9g/O?=
+ =?us-ascii?Q?DsIBXs4kCKvM6c22lsMTbEzi08axUmNsjebDTsreDhBPOIC9JfvB6JLYXl62?=
+ =?us-ascii?Q?bOpeUJ7glAV61/CKTL2eK5Z8XqiMRcYcVQBOdnM+kzv3bNkczJvxpYcKHzYP?=
+ =?us-ascii?Q?jGImU1H9BFe1J1nMsYzLfsIrLetKe6z2/6BpXoTtzWGy6A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?aKfY6A6H8KDO0ZsujWkFCukBdTfwSrzBljP2RvIGPFNSBR1b1HnEelx/yfJD?=
+ =?us-ascii?Q?iAdcFNTP//ivDMXM9eJABmI6M2IC8p+RcMjKCMh8CkZoQuQWP3eKgGz8i3iF?=
+ =?us-ascii?Q?fa/skCE5n7Nh1UR9iyTa8Pn4drJLSd4KTw6+5jU8+aLlVgjO4uVBDSdMQDmS?=
+ =?us-ascii?Q?PMbpP+0T7J6QxM5v0T3wllu8iUdSkxhQNBxBwI5qJmukh8IhjZ2YoD0mF8+o?=
+ =?us-ascii?Q?F1GZffQFzRk463j9QxZAqddaF5irXCUaQM6XC8t8bAT6FD5vOxAhvHxYlVzt?=
+ =?us-ascii?Q?MCYOkmoBp6P8mJnPgTjonFD8GeVMaMoc9vjB8FG3Lqw7GaJWPGUlyFegTvqz?=
+ =?us-ascii?Q?/0F2S1iJyOFNtMyLrqJ+0UQjo3HHikS1Tig5zRdeDXJ19yTUPJJaEmjd/jUd?=
+ =?us-ascii?Q?DoIaPWT/DRRShdsFqdRWyKZwkFzACuDV5k0PJ482yjkvT75Ec8FtjJpH+t3H?=
+ =?us-ascii?Q?iHkb16oriEaA/cdROdCTPjcIe/fSRVuKJZ0M2F2IjKMwOxQk+OP7wWyMzUHe?=
+ =?us-ascii?Q?NVwMubTmBXM5K2cJXsis61nQM8JKOdD/99apDG2IhlrNuayGX9iTjyWw7u+v?=
+ =?us-ascii?Q?Cfe+VGULbwj1Q0IB2CHXepTBFxeMcdM2ltMj1koQ1p+shpgS44oXAJAUGKUo?=
+ =?us-ascii?Q?SUyCttqbyh+G87J4RP0I2A6h09yXh3TUiJmfD5YS5ul0SPHV2yxJ564EYfhN?=
+ =?us-ascii?Q?o5EAtDzhvJqsM14P7myPb5OWyNCOXQBO0ONoTtx8R9RTd0wEjxEPIXaEyjr8?=
+ =?us-ascii?Q?fxyIeCewA+R9jpaTNRtMTP+C4kjUSfYmd6cZvre6tX9o4mfZQ2+AHwiXytsF?=
+ =?us-ascii?Q?KqG93uV9bDzEycq450M5gp06/qR3A2g/JZvzqDcYxjDwH2yBvSgSOxVJQOWn?=
+ =?us-ascii?Q?ikiZPYYOFjb4vMPAdedD7I5t/qry0tZ6GQf0jv/R/pR6mUxUB7C6t+IDJxJp?=
+ =?us-ascii?Q?DkfgJWkbh/lBFJmwUKt2HO5JUOcBeRpJBan578vLCN1gxa/XntNXww5uiPm+?=
+ =?us-ascii?Q?Vch2cc2AV5kfe0O0VAPy+P6Grye+5g0RkQi9ip29Z8AWh8BG928WMy71B1NR?=
+ =?us-ascii?Q?Dw120/UjjBrl0UD79mEg2BeVl3WWiSgjQfGptQVWTXVFIiHGmkO6buQwTsMG?=
+ =?us-ascii?Q?mmSjTsN/0cTlUJpRU56NG7QQRSPG5x0hXfTWRd+BCH8z9M9kiKrmWHy295FK?=
+ =?us-ascii?Q?5w3pztqggyNyTOPUOIjfXFd6sk4xVlOF03v67t3FY18AUmlVOb13DYr3OEXr?=
+ =?us-ascii?Q?cIee8qbf8z2fWCqT/iOKSpip8Q8mYFqA+LgYUHPe3/RVDvU9xDan52R3e2U2?=
+ =?us-ascii?Q?SPbfxrmHEPBkZFJA6iwkH4+TL5RooWuNEx+0uVLZLQpqK+6O+XhsncWmzyBp?=
+ =?us-ascii?Q?aNFU+HChhFF4GJ+CD+Vy6Hujnk1INzhHAK7w0IP0AOObdqo1cBrRO0QB31TY?=
+ =?us-ascii?Q?pJ351ocsUh6LB5PAEoNaiCh3FLzuJ9U2WdvbQ4FUFZghDWGNN9mz42Qr+p1A?=
+ =?us-ascii?Q?1kUhmj2gy4P6n+K+xHwaxrIdMq//DkrHA8X8FD8kuHMy/J3IB5QKhXbey1ul?=
+ =?us-ascii?Q?3pqH5mv/a+9bdgmrNcp6rguNMEylrrev9L1UoJd5Ezfxt4o1pNoJrGTxmKfq?=
+ =?us-ascii?Q?0g=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: afa69a6b-07fc-4869-c03e-08dcd980a59b
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 14:29:37.0348
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KCY8IK9IJM/Hg2LSgTXM5OcjUs/t620jdkuFlMM1QrWrGphNECiw2eR/m8l38Kx4DAkp9B8bEgjCWjTtCV7kCw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB7142
 
-On Wed, Sep 18, 2024 at 03:40:54PM +0000, Benno Lossin wrote:
-> On 16.09.24 17:49, Simona Vetter wrote:
-> > On Fri, Sep 13, 2024 at 04:49:29PM +0000, Benno Lossin wrote:
-> >> On 13.09.24 17:33, Simona Vetter wrote:
-> >>> On Fri, Sep 13, 2024 at 11:26:57AM +0000, Benno Lossin wrote:
-> >>>>  /// Used to transfer ownership to and from foreign (non-Rust) languages.
-> >>>> @@ -532,3 +533,248 @@ unsafe impl AsBytes for str {}
-> >>>>  // does not have any uninitialized portions either.
-> >>>>  unsafe impl<T: AsBytes> AsBytes for [T] {}
-> >>>>  unsafe impl<T: AsBytes, const N: usize> AsBytes for [T; N] {}
-> >>>> +
-> >>>> +/// Untrusted data of type `T`.
-> >>>> +///
-> >>>> +/// When reading data from userspace, hardware or other external untrusted sources, the data must
-> >>>> +/// be validated before it is used for logic within the kernel. To do so, the [`validate()`]
-> >>>> +/// function exists and uses the [`Validator`] trait. For raw bytes validation there also is the
-> >>>> +/// [`validate_bytes()`] function.
-> >>>> +///
-> >>>> +///
-> >>>> +/// [`validate()`]: Self::validate
-> >>>> +/// [`validate_bytes()`]: Self::validate_bytes
-> >>>> +#[repr(transparent)]
-> >>>> +pub struct Untrusted<T: ?Sized>(T);
-> >>>
-> >>> I think we could make this a bit more strict and instead of encouraging
-> >>> people to put all their validation code into a Validator<T>, force
-> >>> them to. Which means assuming apis wrap all untrusted stuff in
-> >>> Untrusted<T> reviewers only need to look at validate implementations and
-> >>> nothing else.
-> >>>
-> >>> If I'm not too wrong with my rust I think this would work with slitting
-> >>> Untrusted<T> into two types:
-> >>>
-> >>> - Untrusted<T> is just a box you can't access, and the type returned by
-> >>>   apis for untrusted data. It doesn't have any of the functions except
-> >>>   validate and new_untrusted so that you can't get at the data at all.
-> >>>
-> >>> - UntrustedUnsafe<T> does have all the accessors needed for validation,
-> >>>   but you can't construct that outside of this module. Maybe simplest to
-> >>>   just nest this within the Untrusted<T> box.
-> >>>
-> >>> - Untrusted::validate does the unboxing and passes a reference to
-> >>>   UntrustedUnsafe<T> to Validator::validate, to guarantee that all the
-> >>>   validation code is in there and nowhere else. Similar for
-> >>>   validate_bytes.
-> >>>
-> >>> Of course people can still bypass this easily, but it gets a bit harder to
-> >>> do so, and easier for reviewers to verify everything.
-> >>
-> >> This is a great idea!
-> >> I think we should also remove `validate_bytes`, then you really must
-> >> implement `Validator`. If we figure out later that people need it, we
-> >> can add it later again. I added it because I thought that implementing
-> >> `Validator` for something very small might be very annoying, but it
-> >> seems like you actually want to force people to implement it :)
-> > 
-> > See further down, I think there's a real use-case for validate_bytes, or
-> > something really close to it at least.
-> 
-> That's good to know, then I will keep it.
-> 
-> >> I think we should discuss the name `UntrustedUnsafe` though, I don't
-> >> really like the `Unsafe` although I understand why you used it. What do
-> >> you think of renaming the current `Untrusted` (and the one that only
-> >> exposes `validate`) to `Unvalidated` and using `Untrusted` as the
-> >> parameter for `Validator::validate`?
-> > 
-> > Much better, I didn't like my naming either.
-> 
-> While designing my LPC slides, I think that we actually don't need two
-> types. We can just have `Untrusted` that exposes nothing except
-> `validate[_bytes]` and have the `Validator::validate` function take the
-> input data directly unwrapped. Thoughts?
+On Fri, Sep 20, 2024 at 05:25:11PM +0300, Vladimir Oltean wrote:
+> That's when we started rushing the NAPI poll routing to finish.
 
-I think the only tricky case is when you want to validate multiple
-untrusted things together. But we could sort that out by making untrusted
-a trait (or at least the validate function that runs on it), and then
-implement it for tuples.
-
-Which is an entirely irrelevant detour out of the way of saying "yes I
-think this works and is much simpler."
- 
-> >> Alternatively, we could use `Unverified`/`Untrusted`, because
-> >> unvalidated is not a "real English word". But then I think we also
-> >> should rename `Validator` to `Verifier` etc.
-> >>
-> >>>> +    /// Gives direct access to the underlying untrusted data.
-> >>>> +    ///
-> >>>> +    /// Be careful when accessing the data, as it is untrusted and still needs to be verified! To
-> >>>> +    /// do so use [`validate()`].
-> >>>> +    ///
-> >>>> +    /// [`validate()`]: Self::validate
-> >>>> +    pub fn untrusted(&self) -> &T {
-> >>>> +        &self.0
-> >>>> +    }
-> >>>> +
-> >>>> +    /// Gives direct access to the underlying untrusted data.
-> >>>> +    ///
-> >>>> +    /// Be careful when accessing the data, as it is untrusted and still needs to be verified! To
-> >>>> +    /// do so use [`validate()`].
-> >>>> +    ///
-> >>>> +    /// [`validate()`]: Self::validate
-> >>>> +    pub fn untrusted_mut(&mut self) -> &mut T {
-> >>>> +        &mut self.0
-> >>>> +    }
-> >>>> +
-> >>>> +    /// Unwraps the data and removes the untrusted marking.
-> >>>> +    ///
-> >>>> +    /// Be careful when accessing the data, as it is untrusted and still needs to be verified! To
-> >>>> +    /// do so use [`validate()`].
-> >>>> +    ///
-> >>>> +    /// [`validate()`]: Self::validate
-> >>>> +    pub fn into_inner_untrusted(self) -> T
-> >>>
-> >>> I don't like the above two since they could be easily and accidentally
-> >>> abused to leak untrusted data. And at least in your example I think
-> >>> they're fallout from being a bit too eager with annotating data as
-> >>> untrusted. The Folio and Mapped itself are just kernel structures, they
-> >>> better be correct. So I don't think it's useful to annotate those as
-> >>> untrusted and rely on Deref to also annotate the actual data as untrusted,
-> >>> because it forces you to peak behind the box a few times.
-> >>
-> >> As I wrote in patch 2, I have no idea if I added the `Untrusted<T>` in
-> >> the correct places, as I don't know folios. I would disagree, that these
-> >> methods are necessary because of marking the entire folio as untrusted,
-> >> they are needed to access the data from within the `Validator::validate`
-> >> function, but with your above suggestion, we can move them to the
-> >> internal type.
-> >>
-> >>> Instead I think we only want to annotate the Folio Deref:
-> >>>
-> >>> impl<S> Deref for Mapped<'_, S> {
-> >>>     type Target = Untrusted<[u8]>;
-> >>>
-> >>> Now there will be folios that we trust because they're kernel internal
-> >>> data and not file cache, so we need more flexibility here. No idea how to
-> >>> best make that happen, but in either case it's only the Deref data itself
-> >>> we don't trust, not any of the structures around it. One example would be
-> >>> gpu page tables. One way to implement this would be to make the Target
-> >>> type a generic of the folio, or well an associated type of the existing
-> >>> generics folio paramater:
-> >>>
-> >>> pub struct Folio<S: FolioType>
-> >>>
-> >>> pub trait FolioType {
-> >>> 	type Data;
-> >>> }
-> >>>
-> >>> impl<T> FolioType for PageCache<T> {
-> >>> 	type Data = Untrusted<[u8]>;
-> >>> }
-> >>>
-> >>> And gpu pagetables would use a something like this instead:
-> >>>
-> >>> impl FolioType for GpuFolios {
-> >>> 	type Data = [struct GpuPTE];
-> >>> }
-> >>>
-> >>> All extremely untested.
-> >>
-> >> What I would like to avoid is having to do this for every possible data
-> >> source. Ideally we could just wrap trusted data sources with `Untrusted`
-> >> and be done with it.
-> >> If the wrapped type is not plain data, but rather a smart pointer or
-> >> other abstraction, then only the underlying data is marked untrusted
-> >> (otherwise how would you even know that the pointer can be used?). So
-> >> for example one might have an `Untrusted<ARef<[u8]>>`.
-> > 
-> > Yeah I think for pure smart pointers this is great, hence why I didn't
-> > object to your Deref implementation. But if there's an entire
-> > datastructure around it (like with pagecache) I think we need to sprinkle
-> > associated types around to make this work.
-> > 
-> > What imo breaks annotations like this is if you have a lot of false
-> > positive cases that force people to jump through hoops and normalize
-> > having random uncecessary "validate" code all over. That defeats the
-> > point.
-> 
-> Agreed.
-> 
-> >> What I think we should do instead is make our APIs that return untrusted
-> >> data just return `Untrusted<Folio>` and implement the following method:
-> >>
-> >>     impl Folio {
-> >>         pub fn read(self: &Untrusted<Self>) -> &Untrusted<[u8]>;
-> >>     }
-> >>
-> >> I think that is the best of both worlds: we don't need to do excessive
-> >> type shenanigans for every type carrying potentially untrusted data and
-> >> we get to have methods specific to untrusted data.
-> >>
-> >> However, I think implementing this method will be a bit difficult with
-> >> the `Untrusted`/`Unvalidated` split. Maybe we can have some `pub(crate)`
-> >> methods on `Unvalidated` to perform some mappings?
-> > 
-> > The thing is, folios are just a pile of contig pages, and there's nothing
-> > in the rules that they only contain untrusted data. Currently in rust code
-> > we have that's the case, but not in general. So we need that associated
-> > type.
-> > 
-> > But I also think Folio here is special, a lot of the other places where I
-> > want this annotation it's the case that the data returned is _always_
-> > untrusted. So we don't need to place associated types all over the
-> > codebase to make this work, it's just that the rfc example you've picked
-> > needs it.
-> 
-> I think we should try to make just wrapping stuff in `Untrusted` work. I
-> don't see how the associated types would help you any more than just
-> implementing stuff on `&Untrusted<Self`.
-
-I guess you could wrap it as Untrusted in each use site when you get the
-data out of the Folio, but that makes the guarantees we get out of these
-annotations much less stringent. Which is why I think for Folio<> (well
-really for Pagecache) we need to go with the associated type or it's a bit
-self-defeating.
-
-> > E.g. copy_from_user is _always_ untrusted, not exception. Network packets
-> > we read are also always untrusted. When you have a device driver and want
-> > to be robust against evil implementations (external bus like usb or cloud
-> > virtual hw with confidential compute), then also everything you ever read
-> > from that device is always untrusted until validated.
-> > 
-> > And the neat thing is if we get this right, there's a lot of cases where
-> > the Untrusted<> wrapper doesn't matter, because we just pass from one
-> > untrusted to another. E.g. for the write() syscall (or an implemenation of
-> > that in an fs) we get a Untrusted<[u8]> from Folio and let copy_from_user
-> > directly write into that. But that only works if the annotations are
-> > exactly right, not too much, not too little.
-> 
-> Yeah this would be very nice, if you never need to look inside of the
-> untrusted data, then you can just move it along.
-> 
-> > Oh another one we need:
-> > 
-> > impl<T: AsBytes> AsBytes for Untrusted<AsBytes>
-> > 
-> > Otherwise you can't write untrusted stuff to userspace, which is really no
-> > issue at all (e.g. networking, where the kernel only parses the headers
-> > and shovels the data to userspace unchecked).
-> 
-> Sure.
-> 
-> >>> Now I think there are cases you can't cover with just validate, where you
-> >>> have multiple input data which needs to be cross-checked to ensure overall
-> >>> validity. But I think that we can cover that by implementing a Validator
-> >>> for tuples and making Untrusted a trait so that we can either Accept
-> >>> Untrusted<(A, B)> or (Untrusted<A>, Untrusted<B>) interchangably when
-> >>> calling validate().
-> >>
-> >> I could imagine us adding conversion functions that can combine
-> >> untrusted values. Additionally, we should probably add a `Context` type
-> >> to `Validator` that is an additional parameter.
-> >>
-> >>> At least with an hour of theorizing and your one example I couldn't come
-> >>> up with anything else.
-> >>
-> >> Yeah, we need more users of this to know the full way to express this
-> >> correctly. I would like to avoid huge refactorings in the future.
-> > 
-> > I think adding it to the copy_*_user functions we already have in
-> > upstream, and then asking Alice to rebase binder should be a really solid
-> > real-world testcase. And I think currently for the things in-flight
-> > copy*user is going to be the main source of untrusted data anyway, not so
-> > much page cache folios.
-> 
-> Sure. I chose tarfs as the use-case, because Greg mentioned to me that
-> it would benefit from adding this API. (I have no prior linux kernel
-> experience, so you giving me some pointers where this will be useful is
-> very helpful!)
-> 
-> >>>> +impl Untrusted<[u8]> {
-> >>>> +    /// Validate the given bytes directly.
-> >>>> +    ///
-> >>>> +    /// This is a convenience method to not have to implement the [`Validator`] trait to be able to
-> >>>> +    /// just parse some bytes. If the bytes that you are validating have some structure and/or you
-> >>>> +    /// will parse it into a `struct` or other rust type, then it is very much recommended to use
-> >>>> +    /// the [`Validator`] trait and the [`validate()`] function instead.
-> >>>> +    ///
-> >>>> +    /// # Examples
-> >>>> +    ///
-> >>>> +    /// ```
-> >>>> +    /// # fn get_untrusted_data() -> &'static Untrusted<[u8]> { &[0; 8] }
-> >>>> +    ///
-> >>>> +    /// let data: &Untrusted<[u8]> = get_untrusted_data();
-> >>>> +    /// let data: Result<&[u8], ()> = data.validate_bytes::<()>(|untrusted| {
-> >>>> +    ///     if untrusted.len() != 2 {
-> >>>> +    ///         return Err(());
-> >>>> +    ///     }
-> >>>> +    ///     if untrusted[0] & 0xf0 != 0 {
-> >>>> +    ///         return Err(());
-> >>>> +    ///     }
-> >>>> +    ///     if untrusted[1] >= 100 {
-> >>>> +    ///         return Err(());
-> >>>> +    ///     }
-> >>>> +    ///     Ok(())
-> >>>> +    /// });
-> >>>> +    /// match data {
-> >>>> +    ///     Ok(data) => pr_info!("successfully validated the data: {data}"),
-> >>>> +    ///     Err(()) => pr_info!("read faulty data from hardware!"),
-> >>>> +    /// }
-> >>>> +    /// ```
-> >>>> +    ///
-> >>>> +    /// [`validate()`]: Self::validate
-> >>>> +    pub fn validate_bytes<E>(
-> >>>
-> >>> I think this is a special case of a somewhat common in-place validation
-> >>> pattern. For example in in complex syscall or ioctl we need to copy
-> >>> structures from userspace anyway and doing yet another copy to put them
-> >>> into a rust structure isn't great, instead we validate in-place. So I
-> >>> think we need something like
-> >>>
-> >>> impl Untrusted<T> {
-> >>> 	pub fn validate_inplace<E>(
-> >>> 		&self,
-> >>> 		validator: impl FnOnce(&T) -> Result<(), E>,
-> >>> 		) -> Result <&T, E> {
-> >>> 		...
-> >>> 	}
-> >>> }
-> >>
-> >> I had thought about in-place validation as well, but I first wanted to
-> >> get a feel for how to do it, since I felt that in-place might make it
-> >> significantly more complicated.
-> >> In your proposal, you give a reference back, but maybe the data started
-> >> out as a `Box<[u8]>` (or how do you usually copy from userspace?), so it
-> >> would be better to be able to also handle owned data.
-> > 
-> > The code in upstream is just MaybUninit<[u8]>.
-> 
-> Where is that stored though? On the heap or the stack?
-> 
-> >> Also, it might be a good idea to just make the copy to kernel and
-> >> validate a single step.
-> > 
-> > Yeah that'd be a nice helper, but I think conceptually you want it to be
-> > two steps: Often for efficiency complex structures are linearized into one
-> > single memory block, so that you can pull it all in with one
-> > copy_from_user. But validation would need to look at each piece (and it's
-> > often mixed, not just an array), probably together with Alice's Range
-> > datatype to make sure we're don't have index confusions.
-> 
-> Yeah that makes sense.
-> 
-> >>> Eventually we might want a _mut version of this too, because often uapi
-> >>> extensions means we need to correctly fill out default values for
-> >>> extensions when being called by old userspace, and that requires
-> >>> mutability. And it really is often an integral part of input validation.
-> >>
-> >> I see, will have to think about how to include this as well.
-> >>
-> >>> Also I think we might need an Iterator for Untrusted<I: IntoIterator> so
-> >>> that we can validate Untrusted<[T]> and things like that with standard map
-> >>> and collect and do it all inplace.
-> >>
-> >> Hmm, so a general iterator for `Unvalidated` might be a bad idea, but
-> >> for the `Untrusted`, it should be fine.
-> > 
-> > Yup that was my thinking too, the idea being that you write a validator
-> > for a single element, and then let Iterator magic handle things when you
-> > need to validate an entire array.
-> > 
-> >>>> +pub trait Validator {
-> >>>> +    /// Type of the input data that is untrusted.
-> >>>> +    type Input: ?Sized;
-> >>>> +    /// Type of the validated data.
-> >>>> +    type Output;
-> >>>
-> >>> So I think the explicit Output makes sense if you have multiple different
-> >>> untrusted input that validate to the same trusted structure, but I'm not
-> >>> sure this makes sense as associated types. Instead I'd go with generics
-> >>> and somethign like this:
-> >>>
-> >>> pub trait Validator<Input: ?Sized> {
-> >>>     type Err;
-> >>>
-> >>>     fn validate(untrusted: &Untrusted<Input>) -> Result<Self, Self::Err>;
-> >>> }
-> >>>
-> >>> That means you can't implement validate for types from other modules
-> >>> directly but need a newtype (I think at least, not sure). But I think
-> >>> that's actually a good thing, since often that means you're validating
-> >>> some generic state plus whatever your own code needs (like the
-> >>> inode::Params<tarfs::INodeData> in your example), and both pieces need to
-> >>> be consisted overall and not just individually (otherwise why does the
-> >>> that other module not do the parsing for you). And so explicitly treating
-> >>> the validated output as an explicit new type just makes sense to me. Plus
-> >>> with derive(Deref) it's trivial to unbox after validation.
-> >>
-> >> There might be the need to validate the same piece of data with
-> >> different ways and I am not convinced adding a newtype for every single
-> >> case is a good way to achieve it.
-> >> Although it would simplify the `Validator` trait... I will think a bit
-> >> about this.
-> > 
-> > Hm, but unless I misunderstand you already need a random type to attach
-> > your current trait too? So not worse if we require that for the
-> > less-common type of multiple ways to validate the same, and simpler for
-> > the common one.
-> 
-> Yes, but you wouldn't have to unwrap the return type. For example with
-> your proposal we have:
-> 
->     struct MyINodeParams(INodeParams);
-> 
->     impl Validator<[u8]> for MyINodeParams {
->         type Err = Error;
-> 
->         fn validate(untrusted: &Untrusted<[u8]>) -> Result<Self> {
->             /*...*/
->             Ok(Self(params))
->         }
->     }
-> 
->     impl MyINodeParams {
->         fn into_inner(self) -> INodeParams {
->             self.0
->         }
->     }
-> 
-> And then you would do:
-> 
->     let params = untrusted.validate::<MyINodeParams>().into_inner();
-> 
-> I find the `into_inner()` a bit annoying (one could just use `.0`
-> instead, but I also don't like that). I find specifying the `Output` a
-> bit cleaner.
-
-Hm right. But I guess with your new plan to only support validate, which
-gets the inner passed in explicitly and returns whatever the closure
-returns?
-
-Cheers, Sima
--- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+routine*
 
