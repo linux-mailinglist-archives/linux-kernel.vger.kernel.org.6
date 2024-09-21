@@ -1,62 +1,58 @@
-Return-Path: <linux-kernel+bounces-334718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B055597DB04
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 02:30:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6650E97DB07
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 02:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E225B1C2113F
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:30:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E7ACB21E47
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5CC65227;
-	Sat, 21 Sep 2024 00:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F02A4685;
+	Sat, 21 Sep 2024 00:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UkYvB4LQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEmen7b0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2D03D64;
-	Sat, 21 Sep 2024 00:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C6F28F5;
+	Sat, 21 Sep 2024 00:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726878628; cv=none; b=kzcfujfSf+QynQDiCuAL8LpN0CN2vzpoDvGgmn60zJ/aUL96YKRM7BIhsYFnU0TaFATary03RoZp4yITw8ST3ZLD8SGBHGWCktKxfAthOJSHkvxZxC4r6jE2Tt1/4au8dykSif8+h5RoCbbeqARLnSbg0nyQTpHWIzkWkpepXZU=
+	t=1726878779; cv=none; b=Iu8DriCowC7CEzSk/+xIdst01K8UC7qEk7mZNDmX2DuQMpQb4xgbU25rzUAoPpuSyxQnv6MFzmkM7wvh0ehrcwxL2Fng6N221RQz0oFiytCxm+oj6/GJeLLGKlGaFb56A4+VyK+tZQXVrnD+RhPYshX4qdEsBMY3b5crF4T8YM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726878628; c=relaxed/simple;
-	bh=0E2hh/Hbwp/4wGH1f5ZmXQBrdqgwQEbctDjx0ejkdOY=;
+	s=arc-20240116; t=1726878779; c=relaxed/simple;
+	bh=BBSx2iDldeOfrcbYfEwO9DZKSzlFh3eC5t4qtwhBVvY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sCjDwO7iM76XrB/dpiyiJbWnv3Jr9p5qXkA1+9wb0+GJYsGmm0//24zxn6ZsLahluLB90MFbEu56zyMrvIF/wwM1vGf+YdJBCufe2eJhlUKSXe+IhcECjgrjvwvFdM4YA+tSlgoCBzRWAL9jTJYAbjNvwszxwJ622VRVsfd0Q7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UkYvB4LQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C46AC4CEC3;
-	Sat, 21 Sep 2024 00:30:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ic4XhI1lvRq61+gve6wzmGbkSODKewhDqMWrhTI/rK+FgFaDu6Kq9rSufHGZCsOk/DSL9p6VgQdpx+IxmroTWQ1HXkvY3HD1f3mYP5bzLT+a4a1bjpdjfWN5gM1/pNq5d0aLXPyDeeZZEuW1GeWAjvsgXLm9YhM7l1OwxvgiICo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YEmen7b0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 416D3C4CEC3;
+	Sat, 21 Sep 2024 00:32:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726878627;
-	bh=0E2hh/Hbwp/4wGH1f5ZmXQBrdqgwQEbctDjx0ejkdOY=;
+	s=k20201202; t=1726878777;
+	bh=BBSx2iDldeOfrcbYfEwO9DZKSzlFh3eC5t4qtwhBVvY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UkYvB4LQKH80ISALZ36rGQY6YcTfsVjpBKsphHukJdoFiRizCHqYGV1zjrw2cf7l8
-	 PDnEiA6fcI5YSnAepKAXzgOUInT+5JLdRWhFzMzVE50DY2LWNkYHj3Br0gcl+8ibsY
-	 wmxpyRG/JP6mnoTzWq/iHYzuqQ9j0mKt2w7nTg7193rjQb0OTCVj1i9hiybfeT5YfG
-	 qvuaqt8SueIPS6YUnB/KJZI6V030iXuzF5SwF3fsh+vd8HcKc5sLR+pocqzYaYRcDI
-	 ygVTm3k2XkUaEbRxyuHUxQU47bgT15DQ77/jYsRBwWghcAr95lYNnHj1eXRzDrgnE2
-	 /fLaVSC+wZp4g==
-Date: Fri, 20 Sep 2024 19:30:26 -0500
+	b=YEmen7b0KBASKUTIF+dEpLiwBZKqQtbppJ5cuqI7D+wm2BEED8PkHS05a+r4ToRS+
+	 qynke/OUcY2I0Xo2aZgoFznIaXnJ0mcj5rrypLWIkWYxu6mU7ae4i8TA26vIH6RvMb
+	 O9dQva7BEEGuaiiqKZ5yJPiQ1n9tmlvGn3Bfh57FC5l2MR5LXH0nahE7OggLz8rDW4
+	 klOzJMuq1ihMrOGE6ghqSVtGkhtxr8nYXIBS8MFXTfJPqX7uAIUkO8K2bvTCP7FAvD
+	 X84xA00bgOsLnlZzTXo0u6yvYLOUYPoEHKl/sxzKViCc02hI/QDGeNo8mHZNmKCN6x
+	 S/pDKlNEcDkyA==
+Date: Fri, 20 Sep 2024 19:32:56 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Taewan Kim <trunixs.kim@samsung.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Byoungtae Cho <bt.cho@samsung.com>, linux-watchdog@vger.kernel.org,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Guenter Roeck <linux@roeck-us.net>,
+To: Keke Li <keke.li@amlogic.com>
+Cc: linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	dan.scally@ideasonboard.com, kieran.bingham@ideasonboard.com,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: watchdog: Document ExynosAutoV920
- watchdog bindings
-Message-ID: <172687862569.155942.9712969028766494667.robh@kernel.org>
-References: <20240913080325.3676181-1-trunixs.kim@samsung.com>
- <CGME20240913080347epcas2p3f92c8fe85b252f8ac2033261db345837@epcas2p3.samsung.com>
- <20240913080325.3676181-2-trunixs.kim@samsung.com>
+Subject: Re: [PATCH v3 5/9] dt-bindings: media: Add amlogic,c3-isp.yaml
+Message-ID: <172687877578.158798.13851279447258537000.robh@kernel.org>
+References: <20240918-c3isp-v3-0-f774a39e6774@amlogic.com>
+ <20240918-c3isp-v3-5-f774a39e6774@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,23 +61,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240913080325.3676181-2-trunixs.kim@samsung.com>
+In-Reply-To: <20240918-c3isp-v3-5-f774a39e6774@amlogic.com>
 
 
-On Fri, 13 Sep 2024 17:03:23 +0900, Taewan Kim wrote:
-> From: Byoungtae Cho <bt.cho@samsung.com>
+On Wed, 18 Sep 2024 14:07:16 +0800, Keke Li wrote:
+> c3-isp is used to process raw image.
 > 
-> Add "samsung-exynosautov920-wdt" compatible to the dt-schema
-> document. ExynosAutoV920 is new SoC for automotive, similar to
-> exynosautov9 but some CPU configurations are quite different.
-> 
-> Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
-> Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
+> Signed-off-by: Keke Li <keke.li@amlogic.com>
 > ---
->  Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+>  .../devicetree/bindings/media/amlogic,c3-isp.yaml  | 85 ++++++++++++++++++++++
+>  1 file changed, 85 insertions(+)
 > 
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
