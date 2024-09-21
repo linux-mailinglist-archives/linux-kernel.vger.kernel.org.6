@@ -1,182 +1,83 @@
-Return-Path: <linux-kernel+bounces-335000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD5297DF89
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 01:16:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B6A397DF8E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 01:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA724281E87
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 23:16:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B671F2163C
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 23:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE4416DEA5;
-	Sat, 21 Sep 2024 23:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BA3155753;
+	Sat, 21 Sep 2024 23:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ZQq7YhIY"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="K5Qao8jo"
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E98623D7;
-	Sat, 21 Sep 2024 23:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726A18BEC;
+	Sat, 21 Sep 2024 23:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726960570; cv=none; b=qyaUkpYBd96MvhHOlhvepQHI+QcMZ2LI0tme3TL0yM9a5PXH560YVNq78hxrB2Xw+BLlRVtTzKYQEPVSlHScl6nAsetQ4DUa2Jk5jPONwm090Zid4YShsRi5W1ajuF6HmT8NbWFyIMN+AfNzjXEaKZG4xqnVQ5aDQNVZpYqB5Ao=
+	t=1726962234; cv=none; b=ZfmSKoRrdUFfw1Ts3FXiPXUELzP6b9Jlex7QeslDyRuA+CnB95iZZqsJTSHrObEZI4PmAAiXC/8ccqBeTGQs61+7ytUx5Qu73HX9ZaCGMvV80bgYLlf/oKWifSi3xYPTvDt1Yr7k96gaQGti3xUG/Uz+wN1lPI/V3ITsSmHSBsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726960570; c=relaxed/simple;
-	bh=2IJ/1fp+irLU94isem+0S4oGECWv/8jutgHjbNmMBks=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R489jXnaVIinCGIGaEs4l0N1HSNiQilMRnELxSne1Cim6h/vdJBOlcOYDq/PQ1GqaB7YGcquK1gPabQvtEf1LumtWVkjqzM1VC+EbSFRMrLf0AW2xspQ+zw9MFFhPKsNjj43av2r8CNhEc0LiaQwIyccdzX4FnZaM6rD3T78N9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ZQq7YhIY; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=g8kKxL7ZKl4uUi3v4aBjQ6Q74kbULsjNPVGjKjNgz/s=; b=ZQq7YhIY5fg//8tZ
-	c2oknXF+nHsadwp41JfA9YYTV8MuN9K34X/hly/msDtiPs7P0B2tX41QW0qvuphZ81c+1Z8YtWE3r
-	HaBRCK/KguoUhfyemh8E9Pgqf6NxVwpXQn3jmPTFY+fO1UsTwDFVhie/puFzYhCtZCxNY35I5TiQr
-	QHyeFIrMOhPhPzScjjr+IC3TdykAereQQTuyyG7uAyL/C2a2bFaoGUSq8IjrWsiouWTbSYzVQbOya
-	B2LOLMxSE3xso43qeiqXVX1yppLLx6Vj66RDb6K8W95/N69yKBdCG+5+SDj3sl8lBwhgukRe3/zb4
-	LbtBZX4TR3JwKx6gYQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1ss9KT-006fhC-30;
-	Sat, 21 Sep 2024 23:15:53 +0000
-From: linux@treblig.org
-To: willemdebruijn.kernel@gmail.com,
-	jasowang@redhat.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [RFC net-next] appletalk: Remove deadcode
-Date: Sun, 22 Sep 2024 00:15:50 +0100
-Message-ID: <20240921231550.297535-1-linux@treblig.org>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1726962234; c=relaxed/simple;
+	bh=+BGAsLE36zVsTJqm7vmjnYCYPyF+jJlfEf5rI9mvhR4=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jud1L8JqYjFNqNCXzZSNnfYoUE7UDzsEMI7D6c5awaj//o+JrvfIOKalZAADrOGuSMEyS3KMJ6uMqP24frYfYV9P2qxudoaAqQmfP/Vuc1EhUauVVo2kC16QqCWySE3puT/RmBzsbzhgJUMuSQbekb16Z7X5+v5kG8J9fxIQ48Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=K5Qao8jo; arc=none smtp.client-ip=217.70.178.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay4-d.mail.gandi.net (unknown [217.70.183.196])
+	by mslow1.mail.gandi.net (Postfix) with ESMTP id 83351C0479;
+	Sat, 21 Sep 2024 23:19:17 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8BA48E0003;
+	Sat, 21 Sep 2024 23:19:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726960750;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Pd5piRkOyvNtkB5wA7K5ClTk4Ahw21GKP2WyPHgRnuc=;
+	b=K5Qao8joQDe13wllMXkZkHrI27p/usJcJ/a8lx6QxKwAdxxR06G4QnWBYkr2rlZEg0ARyy
+	eEql93l6BUSy12eMPOcvImUkcLSPiz8YGLqG8/IFaqaem41asCCKT0nSlGvCtqCuCiVPGb
+	TBgh8nUck7eO0/S3c2FSZ1cQa1VlkYtrYS7yK2h2W+Z0jL8I3zAlQZP/mAiPL2WcSaxm9c
+	+HeI6G4AXrRLUUm07pa3VE9fq8/sJm2ymOwfVp4n1QXWcR4IteBcCb39oukVUVRbwzs9cp
+	k3niH4ine8fwWA7yqgDr4SjB4+OmZBrMzZRBQtgkdk9W9Qm0q8cb//B/wc+acg==
+Date: Sun, 22 Sep 2024 01:19:10 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andreas Kemnade <andreas@kemnade.info>
+Subject: Re: [PATCH] rtc: rc5t619: use proper module tables
+Message-ID: <172696072277.282436.6650836078742883740.b4-ty@bootlin.com>
+References: <20240918212159.1191637-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240918212159.1191637-1-andreas@kemnade.info>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Wed, 18 Sep 2024 23:21:59 +0200, Andreas Kemnade wrote:
+> Avoid requiring MODULE_ALIASES by declaring proper device id tables.
+> 
+> 
 
-alloc_ltalkdev in net/appletalk/dev.c is dead since
-commit 00f3696f7555 ("net: appletalk: remove cops support")
+Applied, thanks!
 
-Removing it (and it's helper) leaves dev.c and if_ltalk.h empty;
-remove them and the Makefile entry.
+[1/1] rtc: rc5t619: use proper module tables
+      https://git.kernel.org/abelloni/c/690286214916
 
-tun.c was including that if_ltalk.h but actually wanted
-the uapi version for LTALK_ALEN, fix up the path.
+Best regards,
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/net/tun.c        |  2 +-
- include/linux/if_ltalk.h |  8 -------
- net/appletalk/Makefile   |  2 +-
- net/appletalk/dev.c      | 46 ----------------------------------------
- 4 files changed, 2 insertions(+), 56 deletions(-)
- delete mode 100644 include/linux/if_ltalk.h
- delete mode 100644 net/appletalk/dev.c
-
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index 5f77faef0ff1..82abe79c98fa 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -71,7 +71,7 @@
- #include <linux/bpf_trace.h>
- #include <linux/mutex.h>
- #include <linux/ieee802154.h>
--#include <linux/if_ltalk.h>
-+#include <uapi/linux/if_ltalk.h>
- #include <uapi/linux/if_fddi.h>
- #include <uapi/linux/if_hippi.h>
- #include <uapi/linux/if_fc.h>
-diff --git a/include/linux/if_ltalk.h b/include/linux/if_ltalk.h
-deleted file mode 100644
-index 4cc1c0b77870..000000000000
---- a/include/linux/if_ltalk.h
-+++ /dev/null
-@@ -1,8 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef __LINUX_LTALK_H
--#define __LINUX_LTALK_H
--
--#include <uapi/linux/if_ltalk.h>
--
--extern struct net_device *alloc_ltalkdev(int sizeof_priv);
--#endif
-diff --git a/net/appletalk/Makefile b/net/appletalk/Makefile
-index 33164d972d37..152312a15180 100644
---- a/net/appletalk/Makefile
-+++ b/net/appletalk/Makefile
-@@ -5,6 +5,6 @@
- 
- obj-$(CONFIG_ATALK) += appletalk.o
- 
--appletalk-y			:= aarp.o ddp.o dev.o
-+appletalk-y			:= aarp.o ddp.o
- appletalk-$(CONFIG_PROC_FS)	+= atalk_proc.o
- appletalk-$(CONFIG_SYSCTL)	+= sysctl_net_atalk.o
-diff --git a/net/appletalk/dev.c b/net/appletalk/dev.c
-deleted file mode 100644
-index 284c8e585533..000000000000
---- a/net/appletalk/dev.c
-+++ /dev/null
-@@ -1,46 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Moved here from drivers/net/net_init.c, which is:
-- *	Written 1993,1994,1995 by Donald Becker.
-- */
--
--#include <linux/errno.h>
--#include <linux/module.h>
--#include <linux/netdevice.h>
--#include <linux/if_arp.h>
--#include <linux/if_ltalk.h>
--
--static void ltalk_setup(struct net_device *dev)
--{
--	/* Fill in the fields of the device structure with localtalk-generic values. */
--
--	dev->type		= ARPHRD_LOCALTLK;
--	dev->hard_header_len 	= LTALK_HLEN;
--	dev->mtu		= LTALK_MTU;
--	dev->addr_len		= LTALK_ALEN;
--	dev->tx_queue_len	= 10;
--
--	dev->broadcast[0]	= 0xFF;
--
--	dev->flags		= IFF_BROADCAST|IFF_MULTICAST|IFF_NOARP;
--}
--
--/**
-- * alloc_ltalkdev - Allocates and sets up an localtalk device
-- * @sizeof_priv: Size of additional driver-private structure to be allocated
-- *	for this localtalk device
-- *
-- * Fill in the fields of the device structure with localtalk-generic
-- * values. Basically does everything except registering the device.
-- *
-- * Constructs a new net device, complete with a private data area of
-- * size @sizeof_priv.  A 32-byte (not bit) alignment is enforced for
-- * this private data area.
-- */
--
--struct net_device *alloc_ltalkdev(int sizeof_priv)
--{
--	return alloc_netdev(sizeof_priv, "lt%d", NET_NAME_UNKNOWN,
--			    ltalk_setup);
--}
--EXPORT_SYMBOL(alloc_ltalkdev);
 -- 
-2.46.1
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
