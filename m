@@ -1,258 +1,212 @@
-Return-Path: <linux-kernel+bounces-334793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE5A897DC33
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF6CA97DC3B
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A01E1C21010
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:21:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFE871C20DFA
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B72D1547CC;
-	Sat, 21 Sep 2024 08:21:28 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360ED155353;
+	Sat, 21 Sep 2024 08:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="e9LQevFx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C5661FCF
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 08:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E03C2AE66;
+	Sat, 21 Sep 2024 08:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726906887; cv=none; b=jRr1vKxaIjqit3tFSDtvrwxsDJguAWKCAFj+1BuJT0nN4gLo1r0sBS6pVw/NMFp+K7LvRypcmDAQNensouJIDC+8Xcw+HPmE2umgr1YtMdt1UbsO8/LebFpiD8LiNz2Qc7yczLsBNhkw6gbIqQs0XP1PsGn7yhVgPDc9d8lLCeo=
+	t=1726907873; cv=none; b=tH5AH1DjsGVdcn+CR2GBqInsd1b3hEOGKQk1ZPYVxkKneCOgDfMSP+xeSDyYVaos95IUWuxuqhFyQvaxJQpZvShISehTP0+k3HmGDoS7YIqvpw9TWOtUtDt8GNV2f5yoqD1wGjWHio4o574xbtinVt7QQhKjucrBa4yyYo7ys34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726906887; c=relaxed/simple;
-	bh=WrDIk/EkBg2f5FsBP8qx7xoEVByyRDTvzpJ6Ec0Ag6o=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IDdfQoiB4kmjno5X653whP0xVj/p2fnCPJiT+zFg2Bmy412dg+ztPGnaMukU36fsMF3dW4kUe2H2GAchG8Dty8Wj5IBuVDkXhn64IT8Um8nh3YR2jSWkzbeSc44WDvpckFb9Nr9y0aOGG387RFU4WUGrDIHSb+qVQ5CqG6VhP/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82aa499f938so301978039f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 01:21:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726906885; x=1727511685;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L38a55/awUqV6LuG1/5e9aAyTS3dm4s4GATY1Z+cqAI=;
-        b=jmGEaqin0b/b3Hn8hC8r9NnnrfrFPej1sKpfsGgIf+AU05FMoZP2n/TMQ3jF2wlAj5
-         4sz6uiaSEnUQkJOBODPcr+Tj1qYRSB1kmCqNAZep3xgNfrXFIeYNgcz6wEIr+rQFGxFP
-         mBLRl7+DW/gO49URtObnHy/wvXnYS7dg+f0MuOOTxpB2LwYfAiGJI7BvBM6fYY+211m+
-         MDMahAxoqpeqyOOL8WtCEgdVe1l9EdgYa2i35oLJuGvZUJpaF4mf8gTUoEUvyWLWWebc
-         Tmt6sDUoANbn2hZKdiGCJuC4OwrhdarPwYCUDPOo6CMw8mGCOP9mWKYgXdbvwFS+oTQ+
-         r7JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUe1iynm1VtswQmLfVtRgOa3B4kKXa72M9DCjm5ddC63ODb8Q6PXwwqCiXi8N1HnQANBwCtOIMZnhhUs6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOIvS7+Kcs+zZkQ3SckghlpsFEFCfJNLSsjg2rttBY+9vSnFaQ
-	uVnjZxFQXkrMiuG8QEt/7r+CBRm8nrgQTLYn/XsHxoix8MsnBucNlMnWy7v+oPym5kdACjzylXQ
-	oOlgxb6mvDixc/CxTH5WKeBHod+sQpN34gq8EXLrFkFVJOfoCqyDVvKg=
-X-Google-Smtp-Source: AGHT+IHnmaFe0AZkBar3w/qV/JlnyqH2VcGfTpjY5iq1L2ifBZL78+GKTJiKkuNL9bT4X7WUVgp04exexGayvxz1or0uLI2FOhw5
+	s=arc-20240116; t=1726907873; c=relaxed/simple;
+	bh=KxxWpvQduRwVza8T/KLp4zvZBV1HMs25Lt6z6qf+pdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KUh7y685Wd5unNFEgs8aG2hIjMuuB+en4e6xZiiiYfWk7QRiA1waoHGiorfOXTFvcCtYNFUQU4F3jLZBtifIqClTYalB+3kBJIDm2Pl5O8AooNWQI7JxI920yHqaSC12TskVnS62LcqIOpn1Trst0qoMO09hKrs566nm0yPuCuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=e9LQevFx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 714C4C4CEC2;
+	Sat, 21 Sep 2024 08:37:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726907872;
+	bh=KxxWpvQduRwVza8T/KLp4zvZBV1HMs25Lt6z6qf+pdg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e9LQevFxhNgopRXOA7UnsLba/AZawJyLHhNOh2xJARcVERaI7stTpmh+6pIJt0k5c
+	 Ye/3r6qG9ZnXN0E26vdTmP/AXz7K78JN6XSHiaUk2DNa9pzU8AWJfAUueJxuvBCMSR
+	 FB9MuczbZnv8gNhXohH1OAq7To9sO+dJmJSx3ma0=
+Date: Sat, 21 Sep 2024 10:37:50 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Benno Lossin <benno.lossin@proton.me>, Gary Guo <gary@garyguo.net>,
+	Yiyang Wu <toolmanp@tlmp.cc>, linux-erofs@lists.ozlabs.org,
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC PATCH 03/24] erofs: add Errno in Rust
+Message-ID: <2024092139-kimono-heap-8431@gregkh>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc>
+ <20240916135634.98554-4-toolmanp@tlmp.cc>
+ <20240916210111.502e7d6d.gary@garyguo.net>
+ <2b04937c-1359-4771-86c6-bf5820550c92@linux.alibaba.com>
+ <ac871d1e-9e4e-4d1b-82be-7ae87b78d33e@proton.me>
+ <9bbbac63-c05f-4f7b-91c2-141a93783cd3@linux.alibaba.com>
+ <239b5d1d-64a7-4620-9075-dc645d2bab74@proton.me>
+ <b5c77d5b-7f6d-4fe5-a711-6376c265ed53@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b2a:b0:39f:5def:a23d with SMTP id
- e9e14a558f8ab-3a0bef529bdmr65625185ab.5.1726906884784; Sat, 21 Sep 2024
- 01:21:24 -0700 (PDT)
-Date: Sat, 21 Sep 2024 01:21:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ee8204.050a0220.3195df.0041.GAE@google.com>
-Subject: [syzbot] [bcachefs?] INFO: task hung in bch2_journal_reclaim_thread (2)
-From: syzbot <syzbot+820dc3b465c69f766a57@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b5c77d5b-7f6d-4fe5-a711-6376c265ed53@linux.alibaba.com>
 
-Hello,
+On Fri, Sep 20, 2024 at 08:49:26AM +0800, Gao Xiang wrote:
+> 
+> 
+> On 2024/9/20 03:36, Benno Lossin wrote:
+> > On 19.09.24 17:13, Gao Xiang wrote:
+> > > Hi Benno,
+> > > 
+> > > On 2024/9/19 21:45, Benno Lossin wrote:
+> > > > Hi,
+> > > > 
+> > > > Thanks for the patch series. I think it's great that you want to use
+> > > > Rust for this filesystem.
+> > > > 
+> > > > On 17.09.24 01:58, Gao Xiang wrote:
+> > > > > On 2024/9/17 04:01, Gary Guo wrote:
+> > > > > > Also, it seems that you're building abstractions into EROFS directly
+> > > > > > without building a generic abstraction. We have been avoiding that. If
+> > > > > > there's an abstraction that you need and missing, please add that
+> > > > > > abstraction. In fact, there're a bunch of people trying to add FS
+> > > > > 
+> > > > > No, I'd like to try to replace some EROFS C logic first to Rust (by
+> > > > > using EROFS C API interfaces) and try if Rust is really useful for
+> > > > > a real in-tree filesystem.  If Rust can improve EROFS security or
+> > > > > performance (although I'm sceptical on performance), As an EROFS
+> > > > > maintainer, I'm totally fine to accept EROFS Rust logic landed to
+> > > > > help the whole filesystem better.
+> > > > 
+> > > > As Gary already said, we have been using a different approach and it has
+> > > > served us well. Your approach of calling directly into C from the driver
+> > > > can be used to create a proof of concept, but in our opinion it is not
+> > > > something that should be put into mainline. That is because calling C
+> > > > from Rust is rather complicated due to the many nuanced features that
+> > > > Rust provides (for example the safety requirements of references).
+> > > > Therefore moving the dangerous parts into a central location is crucial
+> > > > for making use of all of Rust's advantages inside of your code.
+> > > 
+> > > I'm not quite sure about your point honestly.  In my opinion, there
+> > > is nothing different to use Rust _within a filesystem_ or _within a
+> > > driver_ or _within a Linux subsystem_ as long as all negotiated APIs
+> > > are audited.
+> > 
+> > To us there is a big difference: If a lot of functions in an API are
+> > `unsafe` without being inherent from the problem that it solves, then
+> > it's a bad API.
+> 
+> Which one? If you point it out, we will update the EROFS kernel
+> APIs then.
+> 
+> > 
+> > > Otherwise, it means Rust will never be used to write Linux core parts
+> > > such as MM, VFS or block layer. Does this point make sense? At least,
+> > > Rust needs to get along with the existing C code (in an audited way)
+> > > rather than refuse C code.
+> > 
+> > I am neither requiring you to write solely safe code, nor am I banning
+> > interacting with the C side. What we mean when we talk about
+> > abstractions is that we want to minimize the Rust code that directly
+> > interfaces with C. Rust-to-Rust interfaces can be a lot safer and are
+> 
+> We will definitly minimize the API interface between Rust and C in
+> EROFS.
+> 
+> And it can be done incrementally, why not?  I assume your world is
+> not pure C and pure Rust as for the Rust for Linux project, no?
+> 
+> > easier to implement correctly.
+> > 
+> > > My personal idea about Rust: I think Rust is just another _language
+> > > tool_ for the Linux kernel which could save us time and make the
+> > > kernel development better.
+> > 
+> > Yes, but we do have conventions, rules and guidelines for writing such
+> > code. C code also has them. If you want/need to break them, there should
+> > be a good reason to do so. I don't see one in this instance.
+> > >> Or I wonder why not writing a complete new Rust stuff instead rather
+> > > than living in the C world?
+> > 
+> > There are projects that do that yes. But Rust-for-Linux is about
+> > bringing Rust to the kernel and part of that is coming up with good
+> > conventions and rules.
+> 
+> Which rule is broken?  Was they discussed widely around the
+> Linux world?
+> 
+> > 
+> > > > > For Rust VFS abstraction, that is a different and indepenent story,
+> > > > > Yiyang don't have any bandwidth on this due to his limited time.
+> > > > 
+> > > > This seems a bit weird, you have the bandwidth to write your own
+> > > > abstractions, but not use the stuff that has already been developed?
+> > > 
+> > > It's not written by me, Yiyang is still an undergraduate tudent.
+> > > It's his research project and I don't think it's his responsibility
+> > > to make an upstreamable VFS abstraction.
+> > 
+> > That is fair, but he wouldn't have to start from scratch, Wedsons
+> > abstractions were good enough for him to write a Rust version of ext2.
+> 
+> The Wedson one is just broken, I assume that you've read
+> https://lwn.net/Articles/978738/ ?
 
-syzbot found the following issue on:
+Yes, and if you see the patches on linux-fsdevel, people are working to
+get these vfs bindings correct for any filesystem to use.  Please review
+them and see if they will work for you for erofs, as "burying" the
+binding in just one filesystem is not a good idea.
 
-HEAD commit:    1868f9d0260e Merge tag 'for-linux-6.12-ofs1' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12f6ff00580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d29c10b70cc6fdb8
-dashboard link: https://syzkaller.appspot.com/bug?extid=820dc3b465c69f766a57
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > In addition, tarfs and puzzlefs also use those bindings.
+> 
+> These are both toy fses, I don't know who will use these two
+> fses for their customers.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+tarfs is being used by real users as it solves a need they have today.
+And it's a good example of how the vfs bindings would work, although
+in a very simple way.  You have to start somewhere :)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/26c691e641b7/disk-1868f9d0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/dfe97fd5f2eb/vmlinux-1868f9d0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4a385cd95bd6/bzImage-1868f9d0.xz
+> > Miguel Ojeda.
+> > However, we can only reach that longterm goal if maintainers are willing
+> > and ready to put Rust into their subsystems (either by knowing/learning
+> > Rust themselves or by having a co-maintainer that does just the Rust
+> > part). So you wanting to experiment is great. I appreciate that you also
+> > have a student working on this. Still, I think we should follow our
+> > guidelines and create abstractions in order to require as little
+> > `unsafe` code as possible.
+> 
+> I've expressed my point.  I don't think some `guideline`
+> could bring success to RFL.  Since many subsystems needs
+> an incremental way, not just a black-or-white thing.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+820dc3b465c69f766a57@syzkaller.appspotmail.com
+Incremental is good, and if you want to use a .rs file or two in the
+middle of your module, that's fine.  But please don't try to implement
+bindings to common kernel data structures like inodes and dentries and
+superblocks if at all possible and ignore the work that others are doing
+in this area as that's just duplicated work and will cause more
+confusion over time.
 
-INFO: task bch-reclaim/loo:6887 blocked for more than 143 seconds.
-      Not tainted 6.11.0-syzkaller-07462-g1868f9d0260e #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:bch-reclaim/loo state:D stack:25080 pid:6887  tgid:6887  ppid:2      flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5264 [inline]
- __schedule+0x1843/0x4b00 kernel/sched/core.c:6607
- __schedule_loop kernel/sched/core.c:6684 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6699
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6756
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- bch2_journal_reclaim_thread+0x167/0x560 fs/bcachefs/journal_reclaim.c:738
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+It's the same for drivers, I will object strongly if someone attempted
+to create a USB binding for 'struct usb_interface' in the middle of a
+USB driver and instead insist they work on a generic binding that can be
+used by all USB drivers.  I imagine the VFS maintainers have the same
+opinion on their apis as well for valid reasons.
 
-Showing all locks held in the system:
-2 locks held by kworker/u8:0/11:
- #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc90000107d00 ((reaper_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc90000107d00 ((reaper_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
-3 locks held by kworker/u8:1/12:
- #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc90000117d00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc90000117d00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: linkwatch_event+0xe/0x60 net/core/link_watch.c:276
-1 lock held by khungtaskd/30:
- #0: ffffffff8e9389e0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e9389e0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e9389e0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6701
-3 locks held by kworker/u8:4/66:
- #0: ffff88802dfb1948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88802dfb1948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc900020bfd00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc900020bfd00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_dad_work+0xd0/0x16f0 net/ipv6/addrconf.c:4196
-5 locks held by kworker/u8:8/2941:
- #0: ffff88801baeb148 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801baeb148 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc90009b17d00 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc90009b17d00 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcaa8d0 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:580
- #3: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: default_device_exit_batch+0xe9/0xaa0 net/core/dev.c:11930
- #4: ffffffff8e93df78 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:297 [inline]
- #4: ffffffff8e93df78 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x381/0x830 kernel/rcu/tree_exp.h:976
-2 locks held by dhcpcd/4884:
- #0: ffff88806f6926c8 (nlk_cb_mutex-ROUTE){+.+.}-{3:3}, at: __netlink_dump_start+0x119/0x790 net/netlink/af_netlink.c:2404
- #1: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #1: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_dumpit+0x99/0x200 net/core/rtnetlink.c:6505
-2 locks held by getty/4974:
- #0: ffff88814bd6a0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc900031232f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-2 locks held by kworker/u8:10/6132:
-5 locks held by syz-executor/6609:
-1 lock held by bch-reclaim/loo/6887:
- #0: ffff88806664af28 (&j->reclaim_lock){+.+.}-{3:3}, at: bch2_journal_reclaim_thread+0x167/0x560 fs/bcachefs/journal_reclaim.c:738
-1 lock held by syz.2.199/7144:
- #0: ffff88802425c0e0 (&type->s_umount_key#108){++++}-{3:3}, at: __super_lock fs/super.c:58 [inline]
- #0: ffff88802425c0e0 (&type->s_umount_key#108){++++}-{3:3}, at: super_lock+0x27c/0x400 fs/super.c:120
-1 lock held by syz.4.224/7389:
- #0: ffff88802425c0e0 (&type->s_umount_key#108){++++}-{3:3}, at: __super_lock fs/super.c:56 [inline]
- #0: ffff88802425c0e0 (&type->s_umount_key#108){++++}-{3:3}, at: super_lock+0x196/0x400 fs/super.c:120
-1 lock held by syz.2.252/7644:
- #0: ffff88802425c0e0 (&type->s_umount_key#108){++++}-{3:3}, at: __super_lock fs/super.c:58 [inline]
- #0: ffff88802425c0e0 (&type->s_umount_key#108){++++}-{3:3}, at: super_lock+0x27c/0x400 fs/super.c:120
-1 lock held by syz-executor/7707:
-1 lock held by syz-executor/8018:
- #0: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #0: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
-1 lock held by syz-executor/8169:
- #0: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #0: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
-1 lock held by syz-executor/8186:
- #0: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #0: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+thanks,
 
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.11.0-syzkaller-07462-g1868f9d0260e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xff4/0x1040 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 7707 Comm: syz-executor Not tainted 6.11.0-syzkaller-07462-g1868f9d0260e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:hlock_class kernel/locking/lockdep.c:228 [inline]
-RIP: 0010:check_wait_context kernel/locking/lockdep.c:4823 [inline]
-RIP: 0010:__lock_acquire+0x4dc/0x2050 kernel/locking/lockdep.c:5149
-Code: 13 00 00 44 89 3b 44 89 c3 48 89 d8 48 c1 e8 06 48 8d 3c c5 80 97 21 94 be 08 00 00 00 e8 ec f3 88 00 48 0f a3 1d a4 62 b1 12 <73> 27 48 69 c3 c8 00 00 00 48 8d 98 80 16 be 93 48 ba 00 00 00 00
-RSP: 0018:ffffc900033cf510 EFLAGS: 00000057
-RAX: 0000000000000001 RBX: 0000000000000022 RCX: ffffffff817034d4
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff94219780
-RBP: 0000000000000000 R08: ffffffff94219787 R09: 1ffffffff28432f0
-R10: dffffc0000000000 R11: fffffbfff28432f1 R12: ffff88802e8c5a00
-R13: 0000000000000022 R14: 0000000000020022 R15: 0000000000000000
-FS:  0000555586251500(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f26c7f08178 CR3: 000000004783c000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
- rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- rcu_read_lock include/linux/rcupdate.h:849 [inline]
- __d_lookup+0x81/0x7b0 fs/dcache.c:2321
- lookup_fast+0x74/0x4a0 fs/namei.c:1690
- walk_component fs/namei.c:2049 [inline]
- link_path_walk+0x672/0xea0 fs/namei.c:2418
- path_openat+0x266/0x3590 fs/namei.c:3929
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f8b6f37c890
-Code: 48 89 44 24 20 75 93 44 89 54 24 0c e8 19 8f 02 00 44 8b 54 24 0c 89 da 48 89 ee 41 89 c0 bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 77 38 44 89 c7 89 44 24 0c e8 6c 8f 02 00 8b 44
-RSP: 002b:00007fff27a11b50 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f8b6f37c890
-RDX: 0000000000000000 RSI: 00007fff27a11c80 RDI: 00000000ffffff9c
-RBP: 00007fff27a11c80 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000293 R12: 00007fff27a12d00
-R13: 00007f8b6f3f0a14 R14: 00005555862514a8 R15: 0000000000000005
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+greg k-h
 
