@@ -1,117 +1,111 @@
-Return-Path: <linux-kernel+bounces-334777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4CC97DC07
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 09:51:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85EB97DC09
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 09:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 780A6B21B00
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 07:51:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4E102828E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 07:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0C0153565;
-	Sat, 21 Sep 2024 07:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75BA1531E9;
+	Sat, 21 Sep 2024 07:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKa8NzbE"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Vf5j3SRr"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6D7134C4;
-	Sat, 21 Sep 2024 07:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB31615E97
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 07:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726905075; cv=none; b=gn8Z5ZrYXqbTeulWZMxLJnSeDwKkHxjOSYEQP2W8C9/7JsRhZcHANMjpPV+BZVuJIL2DjRUz4jq7L2UtiqTqpdGup58aiyrwQAQ+s9WJKWiLJcPXiAPkj7IFvZETCOWwnOMJph4DP8BlYdvdGk3aQmjPdoegrNXMDDz2k8Df+Pg=
+	t=1726905386; cv=none; b=Y51PgKZ94GfgvlTPjUtd96buTskIx398QukfIItKOoiMLYT+KQgRhWFLicUJuuyz61qQJQnVVX+Ji/DdVl5vFnBgVx60TYl0w9L72Ert57zch4gb0GRGbSzCyz/rcS0MsBtTwNJtXHEUAXbKdyyjC6EDIuZuJ3HYvY70b9oeAII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726905075; c=relaxed/simple;
-	bh=3dkVH2QbyIm7oZjw/33FsvLGZQhFnfzR0P63G8YGECk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qzNcLgIliMUtAGyz9MmXn1Y75vbyPN8ximpN5H+M9NKok28FRmLr5h8nAxKJVap20jcPKSY30o7so2U9Dfo/a195ZWW2DB1fVjzhqHcAzp8Tz+ktHXLbAswb/X6NzJMYpe2KwwjQ4Bigv/zSr+QdGKOINTlNiqyjTZkRaRwwGhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jKa8NzbE; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-718d91eef2eso1768062b3a.1;
-        Sat, 21 Sep 2024 00:51:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726905073; x=1727509873; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sBaYPDTXxYwaESqW8DBuiZi7wSnkr5v5D0zlShXrWOo=;
-        b=jKa8NzbEN8DaoZzDYyobjeX2VEc27QYMwBneGbJJFtaJujoiaGsNO4TsDaUOl1jO0E
-         Si+hQVNvdr+Jjb2qvoyk8qMCakdMLPMBZBzONGbvWLtVSZ2mB3Kv5d/2oSTZpfgjaO/c
-         RYYLronAohvVol0SyBhMrj9aorboJU4bJvX9ClGPvTdG8vO9gIx5nY07MYIctJDo2OeU
-         O7MYI6oyt2mkmeT2U2qyhImHEmu71ow1blfy3hnCejAcQwTyGvRdp5s/rFWTMK60uvKJ
-         vYl0/rvykoJJoKqtyS1vgc2p7xRswepCn2Swxn/+l3d6X8JthpW1kduBFqg4O1cXfify
-         6uxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726905073; x=1727509873;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sBaYPDTXxYwaESqW8DBuiZi7wSnkr5v5D0zlShXrWOo=;
-        b=hZBjsDScnVGYIOQvNLU6zmqvUC3QIWjQZNU2Bi2opBBCLy6lAzr6QSHzRWcP6hWkDP
-         kzU5EiPnhPYEcRIAMt3EecktdH3nQkcxOtjCQ4JtJOlGrra5m2cnXBc1rejqLoL/PpQP
-         o16nDWGMhdMAORHDvbkJ3wgT1Ddoe29hgiTTiUQRQKaCllX+q/wO4WE3MC9btXtN6t8O
-         YFTyNOWuct6uCQa0eUcu1A+VBIQYnnXNsOfJbnNWKXVdwYezV1UNfgdvLJ1TpZSe+RYi
-         vOY3hM1eFuy98W/+MZzKBcR1qm9teCHHdwHTnN1eqAsx1Ge5lBo39ABVdUg7G785l61l
-         ujQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTJmZliQTEHS1laR/wAkAmfZTeoTPZ9Gn7xhwGwtt/0mJFADQ5JdRBkw3QT5Eqwa0IjFxXvML7@vger.kernel.org, AJvYcCWh6cMXuU1UYHWRvb8o5bM4U+drkhAZUi7GuESE2d6QIeE/22JaFFWd5NL04org/UfDQ0y6iQXGiSJluU1D@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzAahregUiuTfZcweKNc+0bVo8smia00JAaPRxDO14MKwdEZTw
-	Lq8g3iuSr3ko15UcFUUVhJByK/1vIch0/Dt3GJ/E4k10tzo1eFLnDHAmvww3Pnge+PbmtQyMnEj
-	ULuRsO6SopBWpIr/HAuDPetZ/u4Q=
-X-Google-Smtp-Source: AGHT+IGZwn+VHNRYjAYnGmPX5f/AYK0jICvMvI2FP0cILSB0OBhtqtYl0eEoesDVuPDwaZJvKMba0MvbHNyHr+foQC8=
-X-Received: by 2002:a05:6a00:660e:b0:717:98e7:3d0 with SMTP id
- d2e1a72fcca58-7198e14025dmr12457725b3a.0.1726905073361; Sat, 21 Sep 2024
- 00:51:13 -0700 (PDT)
+	s=arc-20240116; t=1726905386; c=relaxed/simple;
+	bh=IA+wM59KgilMHvG0jWyMMct10R/+PHODryPdpvVdz6M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RsXhgV3qhQ8L0bLfOhR7C0AqBxDtuPj9/H0q10GJbafmuwDEHwiYEcQ85SASqXgSBYXIJp5pjAkHkyjmPe0p7jMBbVrLnWN83GgIfGmK0T5HTX12Zf8WY0iiX2aP3acs0aXaq/1So/rnR3+1AtSETDiR9wJheVv1v9R5z9y0gQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Vf5j3SRr; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1726905377;
+	bh=jAkLGM/lyQa3sExpXVoRFmK9scx17Ch6bL+pFETgyVc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Vf5j3SRrEJpHEbslAe92R4BsVoYXO9hJyRUW3CiyUiuDXer45bpVeRDumX2bCFG66
+	 rloLnkAKqOBuTb31U/NDDIycokLbTMnlOO16q8j4oSVIwM0XckpDvUSphs3NE15JU7
+	 BZSPsrKpLsWpsH3/rYrSVPt0k4QkNdyzNM6/Mn3A=
+Received: from [IPv6:240e:358:11d4:4800:dc73:854d:832e:6] (unknown [IPv6:240e:358:11d4:4800:dc73:854d:832e:6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 725271A4029;
+	Sat, 21 Sep 2024 03:56:15 -0400 (EDT)
+Message-ID: <9a84a7c6f943209cc87a54075ed22df37ebda5f8.camel@xry111.site>
+Subject: Re: [GIT PULL] dma-mapping updates for Linux 6.12
+From: Xi Ruoyao <xry111@xry111.site>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Date: Sat, 21 Sep 2024 15:56:11 +0800
+In-Reply-To: <Zu5VoW1ZkViSOws3@infradead.org>
+References: <ZuvYnXzbM2qfXQPT@infradead.org>
+	 <971fbb889da38ca4e60f3dedde29ea43e9338d68.camel@xry111.site>
+	 <Zu1byUGU832iWBUp@infradead.org> <Zu2Bd50GdSxF_-eA@infradead.org>
+	 <19e4bdbcda78ace200c78c56eb7173097337b921.camel@xry111.site>
+	 <Zu5VoW1ZkViSOws3@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <linuszeng@tencent.com> <20240913084453.3605621-1-jingxiangzeng.cas@gmail.com>
- <20240916004134.0ef2f50862b59079e1ac2928@linux-foundation.org>
-In-Reply-To: <20240916004134.0ef2f50862b59079e1ac2928@linux-foundation.org>
-From: jingxiang zeng <jingxiangzeng.cas@gmail.com>
-Date: Sat, 21 Sep 2024 15:51:01 +0800
-Message-ID: <CAJqJ8iiVPhhyH1avxGujpYoCuh-0nQwBf3g6JPbg8ouqYgjW+w@mail.gmail.com>
-Subject: Re: [PATCH V2] mm/memcontrol: add per-memcg pgpgin/pswpin counter
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, cgroups@vger.kernel.org, hannes@cmpxchg.org, 
-	linuszeng@tencent.com, linux-kernel@vger.kernel.org, mhocko@kernel.org, 
-	muchun.song@linux.dev, roman.gushchin@linux.dev, shakeel.butt@linux.dev, 
-	yosryahmed@google.com
-Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 16 Sept 2024 at 15:41, Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Fri, 13 Sep 2024 16:44:53 +0800 Jingxiang Zeng <jingxiangzeng.cas@gmail.com> wrote:
->
-> > From: Jingxiang Zeng <linuszeng@tencent.com>
-> >
-> > In proactive memory reclamation scenarios, it is necessary to estimate the
-> > pswpin and pswpout metrics of the cgroup to determine whether to continue
-> > reclaiming anonymous pages in the current batch.  This patch will collect
-> > these metrics and expose them.
-> >
->
-> Please explain the differences between v1 and v2:
+On Fri, 2024-09-20 at 22:12 -0700, Christoph Hellwig wrote:
+> On Sat, Sep 21, 2024 at 01:15:43AM +0800, Xi Ruoyao wrote:
+> > > > What camere and driver are you using?
+> >=20
+> > Bus 003 Device 003: ID 0c45:6366 Microdia Webcam Vitade AF
+> >=20
+> > The driver is uvcvideo.
+> >=20
+> > > And what architecture and platform are you on?=20
+> >=20
+> > A x86_64 laptop (with Core i5-11300H CPU).
+>=20
+> Oh, so it's not arm64, which has the most juicy changes this time
+> around.
+>=20
+> Can you try the following "manual bisect" for me?
+>=20
+> First test f69e342eec008e1bab772d3963c3dd9979293e13 to see if that
+> works.=C2=A0 If it doesn't work come back as I'm a bit lost :)
 
-Currently, the PSWPIN and PSWPOUT fields are only used in proactive memory
-reclamation scenarios, but memory.reclaim is only exposed in cgroup v2, so
-here we simply delete these fields in cgroup v1.
->
-> --- a/mm/memcontrol-v1.c~mm-memcontrol-add-per-memcg-pgpgin-pswpin-counter-v2
-> +++ a/mm/memcontrol-v1.c
-> @@ -2729,8 +2729,6 @@ static const char *const memcg1_stat_nam
->  static const unsigned int memcg1_events[] = {
->         PGPGIN,
->         PGPGOUT,
-> -       PSWPIN,
-> -       PSWPOUT,
->         PGFAULT,
->         PGMAJFAULT,
->  };
-> _
->
+Yes it works (kernel boots fine and camera works fine).
+
+> If it does work, try b5c58b2fdc427e7958412ecb2de2804a1f7c1572 next,
+> if it doesn't work can you send me your dmesg?
+
+It behaves completely erratically on boot.  I cannot get a full log
+because the laptop has no serial output.  And the behavior seems not
+deterministic.  I have some transcript of messages I photoed in several
+boot attempts though:
+
+Oops: general protection fault, probably non-canonical address 0xf5c1150c09=
+0c1cc1: 0000 [#1] PREEMPT SMP
+
+BUG: kernel NULL pointer dereference, address: 0000000000000078
+
+BUG: Bad page map in process systemd-journal pte:150000000b pmd:1641dc067
+
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
