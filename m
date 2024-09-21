@@ -1,108 +1,140 @@
-Return-Path: <linux-kernel+bounces-334881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76C6197DDD3
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:33:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A5DC97DDDF
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D66C281ED8
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 16:33:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B89921F21A3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 16:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C761175D37;
-	Sat, 21 Sep 2024 16:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19ED7178367;
+	Sat, 21 Sep 2024 16:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HKX039vo"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKzzU95P"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C125A26AC1
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 16:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131F41EA91;
+	Sat, 21 Sep 2024 16:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726936375; cv=none; b=PgsdsVmjh1Xu9VAqTbsyzKrNWUunXIZk8dxpL2B8BnjELjyWt26extS3nrlfTAG2vqEIHrDiTbeCTPbIVAbEuzU/UB96AZmxlM/kFfrIHIWfel75M3P3CX8L//UpeUKBVSPAXcmJe/dR1f8wMaY+JK50dqZBsfA6Khgo20X2AOE=
+	t=1726936539; cv=none; b=VOFDxYbSLbkOALo4SK4bSY/FO3hP3o7dY3ppODiVq0dnjKmDQeuAnY6pXUKkorFWzm8ZV52+KzqABjgM7KO1A54rZV8yrEqcJIbq+ZXOIQeXFnI00JjLgMPsbO0qZWMDIyS4QRSi0U+/VWwZrR0S6B0Dr6fx86g2bbY3SBiTbik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726936375; c=relaxed/simple;
-	bh=fSvu0UEtuoFRRtCGFLDXQ+xB3hriWZ18FEEO9Z7nqDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GbbzYXU9vtBp+5ZzA4EDAzvNT8ppd8tNn2xWlG31J9cOjCAzvqJw7ckrccJc75kMR8eLRwvzdINJB3o/BxXGd8xvLcdy0VyU9P0fa+BZDb0io2Bp1zAFr6QYTjnzRx9JylLYuRWrRc9Avdzj436CVzyqx5HLvIQGwHofe2/gOhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HKX039vo; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 21 Sep 2024 12:32:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726936371;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sKPzHX9/1f4+rsnMr7JcyGiXrW+F6CTuBP3VcnzBJJ4=;
-	b=HKX039voxfQjgGHlYxWdImUPJBCj/CzqHtPa4ucVb/xbqNme7NNquX1fQW9pFUMcB7BVXU
-	Wh35D7G8cbYahJh7UI0uOeFJWopzZn6YtacPHPNoufTGxVubPJPBWFGewB7+1LfJa1w/Kt
-	bZ07LHvUQ4Vq/spj4sDwINF5IC4yvGw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Ahmed Ehab <bottaawesome633@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	syzkaller@googlegroups.com, syzbot+f7c41a878676b72c16a6@syzkaller.appspotmail.com
-Subject: Re: [PATCH] bcachefs: Relocate rcu_read_lock()/rcu_read_unlock() to
- snapshot_t()
-Message-ID: <umyvbe5rg5ulikkt6gozv3tklilnpnege5t5n6lo76l7if2l3d@fmdueymcdc5f>
-References: <20240919073603.1827-1-bottaawesome633@gmail.com>
+	s=arc-20240116; t=1726936539; c=relaxed/simple;
+	bh=90AnSxGZrfW27syyqcEP2w/mvdQR7pHKGAwgOQsBT9Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HF//iAWsfQPuQCwKfPdV9S/w8QMb4APauR/pnOnAed7UoWt3eCBgwmjvL9d3+TmrBA3u1WkmvtnKqZNdMaY32sf+9RYUB3BbpoC6zIUMki2oLguh7GF6rirmkoidUfI6ac2w4q8JLrFNx5homiw9Le25DDNi/3OJ8Xi23BQGGEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKzzU95P; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71971d20a95so2111324b3a.3;
+        Sat, 21 Sep 2024 09:35:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726936537; x=1727541337; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wct8se0gk0W+FAPlmyr9rg9BKBDj/W+HmOoVOccWFnk=;
+        b=WKzzU95P/J3apcRsdAZbNbhjVVQTJcrpkYt7U3TMHSyvYZZxOtbF5iX89B95XShaT7
+         ZCryVIwzPCpDCBHDEzpi+jg445wg+fKQox9VzTiTU6wxo3z2GcnLoZaNtzTX+tB0mQ2J
+         k7wxGWl60HpmzIpsPmRzmZoiVasuH1EHKn+k8An4iZ20UaChtuFb+G/DSztmZIDshg/0
+         FY4B7bikIooDYQJ+cgFCQ77b0x14GDuus1TsWhg8jFJ/Hl5/A/q8fiGEPiSu6PY7tJ+7
+         w4CRnVO1cxIDERpYKemFtqG1+sOOxLPHCeYQ4rWnbXAeRPNjN91W5b1kwGk5RI4hU2Vw
+         IdWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726936537; x=1727541337;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wct8se0gk0W+FAPlmyr9rg9BKBDj/W+HmOoVOccWFnk=;
+        b=r/y+sX+V6fHn6UhrSxOah9rAa1lp3ZT65j565CZN+JHsXb0y7O1g18w1tD2L+f+svE
+         fzpyFcUq9UmEHRYgC59iZvTJzw17CnJTuesh8USl0p7HWcdEhU/TrHT0pmEfN+lj6Y3V
+         bahrQVJ9P2De+WeFSB2GyuIqWrgIrsmRQ3hI95YsGo1hM+FscJVgkz8fuqshslCDyY9I
+         4EYI9WC+GkxnArh0++d3WzaU0EIsJT0r7hlzXy5WgliRmJ2r9yR+nS4HWVM+ff0D9aPj
+         cBw+6uyjFMbBd25ZAzhR2vVdXWU/TSEkvJc7A60EIUV3LYb+7eU2Svh3T3gEOUn9nYT6
+         xH6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUtj10IqsF0VXzsWlMGltxWlpV8FFMj0DeTbbZRaA7cb4s9koB5ptFp0F5/5YEiQO8R3wYCbNn5qS5Z@vger.kernel.org, AJvYcCV+LZLvQlrCp+PdraFgj3L5+pcw0lcWP6EdEgevpYra5b5u9zKziQf7oYCwCSC8teqke7gEEFnvbaT0B7TL/A==@vger.kernel.org, AJvYcCVNaPNIvvHMGVGWyjU0NyiAqvMulQBYPzXKhnWB4HIzQzPm8oNgPdvtzHH9pI+H/zPFit8epyAJuyb4tBwD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgRqkP2WUkdzLtBfcdn0P/VNd3fuUM+FyVXAKgje4V485+RlRW
+	K+s2kc2Vb/7/8baf8W/REBVSaEr+XXf8BCZcY2EInWAOEH6uq9Q=
+X-Google-Smtp-Source: AGHT+IGBJ1JndDrkUPvvp6fEBiXc08LVCP356CLVISLaF46fI8rGiU1riP+GLp6rMTl14xEwEF4hvQ==
+X-Received: by 2002:a05:6a00:88e:b0:717:88b6:6b1e with SMTP id d2e1a72fcca58-7199c9f0be9mr8974242b3a.18.1726936537100;
+        Sat, 21 Sep 2024 09:35:37 -0700 (PDT)
+Received: from localhost.localdomain ([183.80.189.93])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944ab4e5fsm11406430b3a.49.2024.09.21.09.35.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Sep 2024 09:35:36 -0700 (PDT)
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Rob Clark <robdclark@gmail.com>,
+	Peter de Kraker <peterdekraker@umito.nl>,
+	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Subject: [PATCH v2 0/3] X1E Dell XPS 9345 support
+Date: Sat, 21 Sep 2024 18:33:30 +0200
+Message-ID: <20240921163455.12577-1-alex.vinarskis@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240919073603.1827-1-bottaawesome633@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 19, 2024 at 10:36:03AM GMT, Ahmed Ehab wrote:
-> Syzbot reports a problem that a warning is triggered due to suspicious
-> use of rcu_dereference_check(). That is triggered by a call of
-> bch2_snapshot_tree_oldest_subvol().
-> 
-> The cause of the warning is that the rcu_read_lock() is called in wrapper
-> methods instead of calling it directly before calling rcu_dereference()
-> in snapshot_t().For example in this case, snapshot_t() is called
-> directly from bch2_snapshot_tree_oldest_subvol() without holding the
-> read lock. This also results in duplicating the rcu_read_lock()
-> and rcu_read_unlock() calls, which may lead to future errors in the case
-> of forgetting to hold the read locks as in this case.
-> 
-> To fix this, move rcu_read_lock() and rcu_read_unlock() to snapshot_t().
-> This will make sure that rcu_dereference_check() is never called without
-> holding the read lock.
-> 
-> Reported-by: <syzbot+f7c41a878676b72c16a6@syzkaller.appspotmail.com>
-> Signed-off-by: Ahmed Ehab <bottaawesome633@gmail.com>
-> ---
->  fs/bcachefs/snapshot.h | 26 +++++++-------------------
->  1 file changed, 7 insertions(+), 19 deletions(-)
-> 
-> diff --git a/fs/bcachefs/snapshot.h b/fs/bcachefs/snapshot.h
-> index eb5ef64221d6..04f18fac56fe 100644
-> --- a/fs/bcachefs/snapshot.h
-> +++ b/fs/bcachefs/snapshot.h
-> @@ -42,15 +42,19 @@ static inline struct snapshot_t *__snapshot_t(struct snapshot_table *t, u32 id)
->  
->  static inline const struct snapshot_t *snapshot_t(struct bch_fs *c, u32 id)
->  {
-> -	return __snapshot_t(rcu_dereference(c->snapshots), id);
-> +	struct snapshot_table *temp;
-> +
-> +	rcu_read_lock();
-> +	temp = rcu_dereference(c->snapshots);
-> +	rcu_read_unlock();
-> +
-> +	return __snapshot_t(temp, id);
+Introduce support for the mentioned laptop.
 
-This is very wrong - as in, you need to study up on how RCU works.
+Very similar to other X1E laptops, device tree was derived by analyzing dtsi of
+existing models and ACPI tables of this laptop [1]. Most notable difference were
+* TZ protected SPI19.
+* Keyboard only working after suspend/resume sequence, will do a follow up patch
+to i2c-hid.
+* Lots of small deviations in LDOs voltages.
 
-We need to be holding rcu_read_lock() while we're accessing the object
-we got to from the rcu pointer, so rcu_read_lock() always needs to be
-taken by the caller.
+Successfully tested with Debian 12 and Gnome, although this required additional
+patches, namely harcode GPU chipid, apply [2] and _revert_ [3] - same as in Abel
+Vesa's branches. Without last two the boot process is terminated by TZ. Firmware
+for GPU/aDSP/cDSP was extracted from Windows, WiFi firmware from upstream
+linux-firmware.
+
+Quite a few things alraedy work, details in patches, quite a few still in WIP or
+TODOs. Since fixing these may take me a while due to lack of documentation,
+sending current progress as its very much usable.
+
+[1] https://github.com/aarch64-laptops/build/blob/master/misc/dell-xps-9345/acpi/DSDT.dsl
+[2] https://lore.kernel.org/all/20240830-x1e80100-bypass-pdc-v1-1-d4c00be0c3e3@linaro.org/
+[3] https://lore.kernel.org/all/20240708-x1e80100-pd-mapper-v1-1-854386af4cf5@linaro.org/
+
+--------
+
+Changes to V1:
+* Fix misalignments due to wrong tab/space conversion
+* Fix regulator namings
+* Fix reasonable warnings from `scripts/checkpatch.pl`
+* Restructure all (sub)nodes alphabetically
+
+
+Aleksandrs Vinarskis (3):
+  dt-bindings: arm: qcom: Add Dell XPS 13 9345
+  firmware: qcom: scm: Allow QSEECOM on Dell XPS 13 9345
+  arm64: dts: qcom: Add support for X1-based Dell XPS 13 9345
+
+ .../devicetree/bindings/arm/qcom.yaml         |   1 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../dts/qcom/x1e80100-dell-tributo-13.dts     | 860 ++++++++++++++++++
+ drivers/firmware/qcom/qcom_scm.c              |   1 +
+ 4 files changed, 863 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/x1e80100-dell-tributo-13.dts
+
+-- 
+2.43.0
+
 
