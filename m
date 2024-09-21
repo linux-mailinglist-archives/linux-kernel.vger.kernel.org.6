@@ -1,71 +1,85 @@
-Return-Path: <linux-kernel+bounces-334817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDBF797DCE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 12:56:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C71397DCE4
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 12:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 047EA1C20BBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:56:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD51328247D
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E79155733;
-	Sat, 21 Sep 2024 10:56:35 +0000 (UTC)
-Received: from smtp134-25.sina.com.cn (smtp134-25.sina.com.cn [180.149.134.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82D014B09C;
+	Sat, 21 Sep 2024 10:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=wp.pl header.i=@wp.pl header.b="pOmm+qkG"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE02605BA
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 10:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FCE4CB36
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 10:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726916194; cv=none; b=KtioRMkkaly67kYjQAGhlN6HkET4r/rgUz/2C+YlFomCsm7Mvzn1HfdKzODhCEiiXKcjikcZyszZtUb8Sscev+gz8DmlsVS/743MPENalqtgYt9SW0sT/aEc1trbhLymFNDBhVVzvKvVgL4ZSy1MjYEacHIgMNWsY8CWlyXygvo=
+	t=1726916295; cv=none; b=Q3KSUo5zJ38NzLgVI5TqJp6bu9udakNGfabnhPxmhWCuwFP3OJ1ReJpBaAIdwzT/YKnTKNenHzHTPHbFcuu8oc65KK5UY6HxYE0srUem+ax/QqoqsEZ+qolCTFsUsnGTRL9psRkyV3Z/4gRZjXhLhEAUbN/A7rghVpIGnDVeZzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726916194; c=relaxed/simple;
-	bh=lY10gHCE2vKZpqASK87/96yU0FlK5vzx1i3nULpMfcM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c6GNXgqhWFU8Arvrp7US260aZr9GaXjIMZiBKjKtMNfk1h/GsKHVfaeMCKMKdC65Nq/nDU2IPcOkRmsYnakzCVG5W7mI4+vteTVxBD9LQXdkbjrSyc72AxR+086DuGEV3TsxWEzuyl+wXQj0uIQ+wWVubUB3iCbhjB21gY5irco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.10.129])
-	by sina.com (10.185.250.21) with ESMTP
-	id 66EEA65300001E2C; Sat, 21 Sep 2024 18:56:23 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7002193408221
-X-SMAIL-UIID: 58381902BBCE4792A08C8F8BBA931190-20240921-185623-1
-From: Hillf Danton <hdanton@sina.com>
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: Edward Adam Davis <eadavis@qq.com>,
-	syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] Bluetooth/l2cap: Fix uaf in l2cap_connect
-Date: Sat, 21 Sep 2024 18:56:09 +0800
-Message-Id: <20240921105609.1025-1-hdanton@sina.com>
-In-Reply-To: <CABBYNZLnohZofm4Tchk7p36XS=HwYmN94DB0FGyiPFJno+evSw@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1726916295; c=relaxed/simple;
+	bh=gBos5W5mRAfutyJyOhn+5L/09YqfpFJwzFVODPP5Ta4=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=pCbFCbtF8ONVIYKeGHzf+2hmNYdnb6QMkxhba81b/FU5epKk3v3ubII4QWPEZDsrsnPVA4DHEYHjSucOE9VT7TAiX7CAvzm7GJlw7vGuo2YnUMAV09XOzzqeUlG/stCgtPGdYq3jX4ZPdgsjdL9IDZLSCS8B94GtUWL0Mklu/jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (1024-bit key) header.d=wp.pl header.i=@wp.pl header.b=pOmm+qkG; arc=none smtp.client-ip=212.77.101.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 25852 invoked from network); 21 Sep 2024 12:58:04 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=1024a;
+          t=1726916284; bh=XZ1zPgh5hBbHBPZOe+hQHqV6mC+CtVY3QnXEJuv4ZBs=;
+          h=From:To:Subject;
+          b=pOmm+qkGosRXs10OUA6yvmr2c2iU+n8NXJN0Txw9t24UrMIG9ESKJQVkXUTneUeWt
+           yPUV35DgOdLkIl4Iz86dUA0zSEhwI5WpyF6LP1xV4ZyG4Z+5E70lYt/pHKhYrYN8tO
+           HydeyrA/Zl6AU4gqahjiUKZAtNNhQY24MKBBVcPo=
+Received: from 83.24.122.130.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.24.122.130])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <davem@davemloft.net>; 21 Sep 2024 12:58:04 +0200
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	olek2@wp.pl,
+	jacob.e.keller@intel.com,
+	andrew@lunn.ch,
+	horms@kernel.org,
+	john@phrozen.org,
+	ralph.hempel@lantiq.com,
+	ralf@linux-mips.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v2 0/1] net: ethernet: lantiq_etop: fix memory disclosure
+Date: Sat, 21 Sep 2024 12:58:00 +0200
+Message-Id: <20240921105801.14578-1-olek2@wp.pl>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-WP-MailID: 8c9c186f11b69236d6471e0ef346831e
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 000000B [8QOU]                               
 
-On Tue, Sep 10, 2024 at 4:56 PM Luiz Augusto von Dentz <luiz.dentz@gmail.com> wrote:
->
-> Maybe something like the following would be a better approach:
->
-> https://gist.github.com/Vudentz/121a15fa4391b2b1f6c7e8d420a6846e
+Changes in v2:
+ - clarified questions about statistics in the commit description
+ - rebased on current master
 
-If your idea is not bad, boy, feel free to win Tested-by from syzbot with it.
+Aleksander Jan Bajkowski (1):
+  net: ethernet: lantiq_etop: fix memory disclosure
+
+ drivers/net/ethernet/lantiq_etop.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+-- 
+2.39.5
+
 
