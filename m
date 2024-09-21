@@ -1,117 +1,138 @@
-Return-Path: <linux-kernel+bounces-334946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7877097DEB4
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 22:03:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DFAC97DEB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 22:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9B971C20CB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:03:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E39C1F21785
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74AF3D556;
-	Sat, 21 Sep 2024 20:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94447868B;
+	Sat, 21 Sep 2024 20:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qdEB+Z/e"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PG35Rsjw"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C15D179BD
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 20:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4A921345;
+	Sat, 21 Sep 2024 20:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726949018; cv=none; b=nrUf0tvHAbLCHq+sbrNjmsVGNmX/bQGDaMQ3jkzA+oOJ+Tbe4mUfCpJCwIYmD4vEVz/gEIdR7deZq7Jn07KmyrHwFJWPtq6mmsRSZyxKHnEf4vK/oiazTXhcotuYfDMjcK2fUWgAQ5V0JFB9kScA8ezaA+kqfWX6W0rr2TcqsM0=
+	t=1726949286; cv=none; b=g4CJO0hlCq+asgU4WBq3CT10eL9btQ9FUB8dKemZD805I3pWVdMMuNIK0F+4tqGYnxCAgAMq1ALvRhiNp8DjswTjBNCo9Qj56PTA/Z0aZNFlMzD3+Gf8Fug/0G9AKhsf0uuuxGMtdHs47uMXgHotXmW7rj77MhSN22BviZJWthw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726949018; c=relaxed/simple;
-	bh=sCMkjBpIFcXMCXZShVhYbKuGYU7egp53f7tzAmFj0l8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BwtNv75obnXJzA2v4NX8WSw+332iMM+ptLk34cG3AotxU5bc0RtE4cPl305flMqpxl63I/K2ZAKXNI1q5vgdLTuR8N7GLRtdD6ptStjy0wtlOBOBhBrUkX3a+JDrQ4bBjnlIBDuXD6SAiAOrf8Feo+DQBNvaSFbTu7D54yDrsns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qdEB+Z/e; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f75e5f3debso29276211fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 13:03:36 -0700 (PDT)
+	s=arc-20240116; t=1726949286; c=relaxed/simple;
+	bh=zZyf+o0TLYdYH2b6DfM2gllt3YUqrIASpHYo/fi1lcU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QYwklN3Z9vi0s3rT1Qh4GLqlIlN2W0NlNRpfp5nOSlIWexBSXwZDv44qUE183w3pqjS6wEYoPgPZrjW0aHNPbJ58uZ+ZgjNrPNr5EjqYoKd8ycT4pe65RNg8evGuw1BsO7GdKZWgXBY+/ym2/B7yhAozrIvjVqDSD4qxD7C3+nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PG35Rsjw; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cb7a2e4d6so27198165e9.0;
+        Sat, 21 Sep 2024 13:08:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726949014; x=1727553814; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=//dPyHa0UWKdAvWVcUz38Rp299z63kJ0pkS+sV7gK0g=;
-        b=qdEB+Z/eSIK7M8FBqjBR3D/iSCr/LPKty9h3zttFCUS8+e3CsU1SFu4g6ewMvORBiz
-         GHwm9InIvVCtDwmalMDyjR13bKfNcpLuo8L4baBqybd2nbNWJbfcKqivj34RYaIDjXbp
-         mdy9hfJa9RroNB9G01dbE8YoIgnA2CncPNH95/ZdXZ2HXtuT0+XMqoQNJal0e5z5w/vO
-         TrUV+ofJZAP9VDdxpPKSgTKSiIMnNZ279+g5tuxwQNItEU8uo8NyEcxVe8T4BaEK9VdQ
-         ZZajp38fT2/CxMa20g9AoXBcM95iZgi020KRiaoWtKkhKJBFU63sCfrN6+wy9TcedXMI
-         2ciw==
+        d=gmail.com; s=20230601; t=1726949283; x=1727554083; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kd71jJ7VubsiY76w8JJjt9nFBD6IrgxryZhRWEULMxg=;
+        b=PG35RsjwUzfxdrNII33ZJFCGGMex8wJWBkKdbiTxmck0eSsZVQFZeomzDAT1YKGOGP
+         vvjIsaRB+kP9Z4yt2tkITZrn+p9KlS47f6rXJaUAvNe5feW2TTyTonGABGUY49BTikEW
+         Vl0ZSD27DdMcTe33wyNwVUAL3nPu6obkEKu70ULbG907QsaSSVHcGRfu+7J9oPDyrPPA
+         2/FYlu3Dx4MWMdL4Dt0X7kA/J4FGhZTW83SLS8II/DC9g0H1dDiV8d+3ZR0k1pumBEHD
+         0woSnzyjpypg1kX/9tAmVDVJtT1Bb/M9l/8nCuKwMthfho/f/saP8rDW/sFbauz8c2cN
+         izyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726949014; x=1727553814;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=//dPyHa0UWKdAvWVcUz38Rp299z63kJ0pkS+sV7gK0g=;
-        b=qYBLTJ/xbOFYI6ILqC41WiSyixq9b/iCwQ7A8K+J+KbcSNqSoOLcZmondAX80CeKyT
-         cNOyiYLNmykUkJZgJYCj0fOPjyE1n7VJrtRmGW5pMv2NjY4Mrh7C5sJ5b5wNvt4asxRk
-         HuoUqHQb1NEWt1+TRr+iuehhRkm5iV2vTzIjuo9fWVN6CYkP9rBcPUPCG5TViUa9xL+V
-         B7RWGwVgnYroLk8hBOFe8F5zdg5b7/nmyN7AtWxVLM0PZU65es0rm4SiATz5xUkHL4Ik
-         3AFP+PX8lYdL3y+v1kImprxEdIminZ78mmpqqwUQzhwiA3km7/OyBI4/nOHG4AP2u8Sk
-         jb8A==
-X-Forwarded-Encrypted: i=1; AJvYcCU476RJC8iCGgkCGgvmrc0lgSCcYL6acXZBUVYdaW75jxJVJ6hw+0/nyMLEpVZ7uvfE7AhjyzaK7qJYaQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd3pCh9v+Epx+AK63NUABpPag92ryVYJhRbayIaJazj2pfxa8q
-	THXjEvuiSXXR85NToiTYJ6TTrGif8mdsMNQ4mM7dfpvNC/eWJO2dNx5Z9cfnm0E=
-X-Google-Smtp-Source: AGHT+IHl3CzloggE6ZkXGgjqllbtSWEeupLOO6YGSpU6Ugo9qQZmUJSybuhb9yX51HmSvfwAxUvdFg==
-X-Received: by 2002:a05:6512:239a:b0:536:a4e1:5fa2 with SMTP id 2adb3069b0e04-536ac2f4e47mr3637916e87.26.1726949014244;
-        Sat, 21 Sep 2024 13:03:34 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870a86b1sm2754817e87.216.2024.09.21.13.03.32
+        d=1e100.net; s=20230601; t=1726949283; x=1727554083;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kd71jJ7VubsiY76w8JJjt9nFBD6IrgxryZhRWEULMxg=;
+        b=HgLLs8peJmDrU9BSPaYPCyQYd4fJPzIXNeuqYi5zVoV7dfX/KxRKHfKrHnmtyKRq4B
+         4o5FaNHoT2s6WmEVUB/VQGgrlWiAERTV8L76gkUZoW8jIL3Wklp+Lc6tYJFxJ+bvnlUw
+         W51OvAvdpxcw5YunVnO0/lPdoXlo6c1Wvz+kJNIwx94yjbn73S6/8W9SzylPZ1mPGGPO
+         9E2kKwjSM0fRHGWRp9jzW8TPo5ZyGGJVSgIrFmNvwwKJH9/OCj2t5gyd9UBGpTBF577s
+         XdcAgL+zIjcIWQSR8p+rLe7kYbQyuGd5Ww3XtwgPqkya0gr4zXk3NJu/w74brDqpS1KN
+         3nIw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdJmyslSDHAYzhlnG/7iJqK1QXIsjCIBraKKB2Fm3+vl+bkltsUrRxxXlgNkDK4W7Pw7oru5rEQ3I=@vger.kernel.org, AJvYcCXMWdZ/k7eW7y8E1Stqtqi4w7dhEnw2Ce1MT8vx8dVc7UYGJBivzXx8mQQ+RGV9o/SoRIueM40Ih+OMSxPf@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBNAHtHZlhOGYJLr+bE0rFMTKekVDTSqKjD6C0OU+rFHq87NzQ
+	XlAz6ZWWtlk1hR5xNHGQvJ+i7T8mbzXBa2qf+egcUYuQMlkzfMpng12/Pw==
+X-Google-Smtp-Source: AGHT+IGvuH5cSOY7zkAbrmFHgLHAqVrwwffhfn9jVew2UIhXUWVjdWES7rp9X/ZzEgHUpW3uVKEaUg==
+X-Received: by 2002:a05:600c:3b17:b0:42c:ba83:3f01 with SMTP id 5b1f17b1804b1-42e7abe8495mr55132435e9.8.1726949282551;
+        Sat, 21 Sep 2024 13:08:02 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:a498:414b:b435:bfeb])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e780e14fsm20673312f8f.117.2024.09.21.13.08.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Sep 2024 13:03:32 -0700 (PDT)
-Date: Sat, 21 Sep 2024 23:03:30 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: tjakobi@math.uni-bielefeld.de
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	=?utf-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>, "Derek J . Clark" <derekjohn.clark@gmail.com>, 
-	Denis Benato <benato.denis96@gmail.com>, Hans de Goede <hdegoede@redhat.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] drm: panel-orientation-quirks: Add quirk for AYA NEO
- GEEK
-Message-ID: <b3rgwasctcww2gicpjmxdnt4333qcnvrt3mydprs4sfkqcksel@qx3lubcwdrjd>
-References: <cover.1726492131.git.tjakobi@math.uni-bielefeld.de>
- <40350b0d63fe2b54e7cba1e14be50917203f0079.1726492131.git.tjakobi@math.uni-bielefeld.de>
+        Sat, 21 Sep 2024 13:08:01 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Sat, 21 Sep 2024 22:07:59 +0200
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
+	mazziesaccount@gmail.com, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] iio: core: remove iio_validate_own_trigger()
+ function
+Message-ID: <20240921200759.GA400156@vamoiridPC>
+References: <20240921181939.392517-1-vassilisamir@gmail.com>
+ <cd1df0c5-d95f-4880-b374-a7544a323d93@metafoo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <40350b0d63fe2b54e7cba1e14be50917203f0079.1726492131.git.tjakobi@math.uni-bielefeld.de>
+In-Reply-To: <cd1df0c5-d95f-4880-b374-a7544a323d93@metafoo.de>
 
-On Mon, Sep 16, 2024 at 03:18:55PM GMT, tjakobi@math.uni-bielefeld.de wrote:
-> From: Joaquín Ignacio Aramendía <samsagax@gmail.com>
+On Sat, Sep 21, 2024 at 12:23:39PM -0700, Lars-Peter Clausen wrote:
+> On 9/21/24 11:19, Vasileios Amoiridis wrote:
+> > The iio_validate_own_trigger() function was added in this commit [1] but it is
+> > the same with the below function called iio_trigger_validate_own_device(). The
+> > bodies of the functions can be found in [2], [3].
+> > 
+> > [1]: https://lore.kernel.org/all/51cd3e3e74a6addf8d333f4a109fb9c5a11086ee.1683541225.git.mazziesaccount@gmail.com/
+> > [2]: https://elixir.bootlin.com/linux/v6.11/source/drivers/iio/industrialio-trigger.c#L732
+> > [3]: https://elixir.bootlin.com/linux/v6.11/source/drivers/iio/industrialio-trigger.c#L752
 > 
-> Add quirk orientation for AYA NEO GEEK. The name appears without
-> spaces in DMI strings. The board name is completely different to
-> the previous models making it difficult to reuse their quirks
-> despite being the same resolution and using the same orientation.
+> The signature of the two functions are different, the order of the
+> parameters is switched. So you can't just swap them out for the
+> `validate_trigger` callback since the signature is not compatible. But maybe
+> you can update the implementation of one of the functions to calling the
+> other function.
 > 
-> Tested by the JELOS team that has been patching their own kernel for a
-> while now and confirmed by users in the AYA NEO and ChimeraOS discord
-> servers.
-> 
-> Signed-off-by: Joaquín Ignacio Aramendía <samsagax@gmail.com>
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> ---
->  drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
->  1 file changed, 6 insertions(+)
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> 
--- 
-With best wishes
-Dmitry
+Hi Lars,
+
+Hmm, I see what you mean. Still though, do you think that we could do some
+cleaning here? I can see 3 approaches:
+
+1) One of the 2 functions calls the other internally and nothing else has
+to change.
+
+1) The default iio_validate_own_trigger() is used only by 2 out of many drivers
+who use the .validate_trigger call. If this is deprecated, many function
+signatures will need to change (swap the args) and then rename the rest.
+
+The default iio_trigger_validate_own_device() is used in almost all of the
+drivers apart from 3 
+	* gyro/st_gyro_core.c
+	* common/st_sensors/st_sensors_trigger.c
+	* trigger/stm32-lptimer-trigger.c
+
+So it will be less noise to change the iio_trigger_validate_own_device()
+in the sense that the signature of 3 functions will need to change
+(swap args) and then rename the rest.
+
+1 is by far the less noisy as only a couple lines need to change but we
+still endup with 2 functions doing the same thing. 2 and 3 require more
+noise but we end up having 1 implementation which looks cleaner.
+
+What would you say?
+
+Cheers,
+Vasilis
+
 
