@@ -1,129 +1,93 @@
-Return-Path: <linux-kernel+bounces-334751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A3297DBB7
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 06:56:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5AD97DBBA
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 07:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 463C7B21AA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 04:56:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC82C1F223E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 05:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76844282FB;
-	Sat, 21 Sep 2024 04:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC4B22331;
+	Sat, 21 Sep 2024 05:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="tmZPrOlQ"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Yzvh+Ycg"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2691C1C693
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 04:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745B023D7;
+	Sat, 21 Sep 2024 05:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726894580; cv=none; b=o/UBmWrfJEJ1ipeaTMddlQLOjHT5kcqcPYwaVyY6BFOn82iXEwjfg9Vxom16oPd4WCmFFQYpfE9M8pcLQOlCJFBCFCbN24+tO0WabcpJChNcE0MvOLV4qn2aRmlbCTr8pBME5o+WU39wOXy4QRKM38eYh+0UB10bwIrwFrN5ZYk=
+	t=1726895525; cv=none; b=k5hldQ0n49OXDn5PTxTaPSOuW5RVQ2r3gFEJJMGy3haV13VwAiEF745Ta2PmyE7wdYPk2t5R6MGkB3Pf+hTG8THrAoZdo+s+gvOMZjtYYCgkZwM2mn5SX2jqHoxglWHFDrJHWUJ/QRHoPQfNAFiWmCzCUTHwL+OFQpyF9z6lyiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726894580; c=relaxed/simple;
-	bh=Hn4fReQotENKNmRSfo2n2nLfnja9kCI0SETHuXmadRw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iri7HDfWr5hjQbpsQUhFVJ87x15QPyDVvBGLZA4dlqU8rzK2mrnPgmS19cRGmDHjGQ1iGQHmvu8OeB/40F+ZFrIGNoDCQ1bAypkiLkUsHsW45YjKfw2Zhwdy0T61rdK4Cr53icwweKL/sYRANook9KHNFmlFnZBO6btUXfJCJ7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=tmZPrOlQ; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53655b9bbcdso3196416e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 21:56:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1726894577; x=1727499377; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hn4fReQotENKNmRSfo2n2nLfnja9kCI0SETHuXmadRw=;
-        b=tmZPrOlQ0qV/sAovR6H7NfVaU3693v2U6zrkzJvotvmnFeKCrPkIOOaPnN6gIBQuyV
-         xFq6+hX9SDh/grUAjhh7LaPt1qLqmSfa4BJJButZwzVobcVKBMBkw/t/XYJw9QAFihQj
-         jACngkda70jLOl/vH+A844P08cz2AgE5GlB4fFlOre96nj74w24Xj8cdlEJvXx0MRi1S
-         FKG5q5azo7NDmuurujbiuaI1Zh6t8wga3SH53S5SRM6EIoDibFRuJgjYueIABWfc4c8V
-         IzVmdWEk4Or0r5smfynbJravtmFkg5ZljLvi/7YGoV6Sd6CFApKIiuhnL8IOkjnXXz+W
-         3VkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726894577; x=1727499377;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hn4fReQotENKNmRSfo2n2nLfnja9kCI0SETHuXmadRw=;
-        b=qyR9aIod577616UWjwXzid9GRGV0yeq2PrlFxd6s/Jzb+B2bcm1RJZPE57pFALCalb
-         lewW1d5mMXxjJ3FUjjT1DGulTZuQQsV2PHy0QGY5GFHoEOBWg/l2OFY5ZW14ifMidyFb
-         2D1IRotiZt+xsYVPmRubV9MZbl+dDgxW+sk3U/NXqAuBkc0/Oxt02Z6QWkkslezveO8d
-         o34wn8dRxaxeac07yhp+P3sFNOWL6P/aGmg24EbIkg17XLeSlpCFFPrtAr40bWN9em0h
-         1oW1JSeQk0P+xI6nxXFId6Jy+bzIaL9xeVJW70tiog2xpCiK08iccUGyxxlN9C4+0Wxo
-         b4rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWltaVsoVAz9V4/uz+1ggTthKOLktmr3x382U6eOILaokrdBWnsXC9PybRjF/gBSXhHYHvTub78jPDzhqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzirlldLt8gw7TfKFP/B6JQXLXgMpBIIvUuAfFt0tFnr82CmQ6
-	R2t+nUXe3Dn7Mz8rBHwSiOKNMrmp5Y+z1dzpMMlQliZ4l5jv6LEzujnpreg+/jnEVnPn94wYLwh
-	hwaIw+u56Q8YGr0/cqvUlmxizW/ua52O+7tvNRg==
-X-Google-Smtp-Source: AGHT+IGA+v7LGeKCraVVm2W3WnYjYpCsEiYRqZiZBxxc6iUgx4AERJeZIH1YVuoDb+oq4aKfLjDqUP1XyHd4Vib/la0=
-X-Received: by 2002:a05:6512:158e:b0:52e:fdeb:9381 with SMTP id
- 2adb3069b0e04-536ad3d72c9mr2962459e87.43.1726894576446; Fri, 20 Sep 2024
- 21:56:16 -0700 (PDT)
+	s=arc-20240116; t=1726895525; c=relaxed/simple;
+	bh=IR/RbcMLxcEW3CRKaS6EynZYpOWxbMRipKXPM/A7enI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kxqx8v2u2LcDM5rFaGTpqcqURhz5DEM5YiDrKu6RzWSOHL9SXV2pgITmJsKdEW6aWyQHIKAx1m2iP2pxVXihMkToq9gSJZDTYfmo/um4MvyOKKHMUWXIbl1SuVue5/ZV7+Kq5hHEXurgHACwFM+RF2lt5GhdNhu0EZmhItzCtig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Yzvh+Ycg; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=aFd39RIctJw4zsfsu+lPZgQI531f+ULw03qXnb91Xg0=; b=Yzvh+YcgcoYLMZhpZPEdHHiyVN
+	1kvkCg24IxEibqg7ahFo5LW7zCQRwuh5PBDUuhWnFqK5/LtS3LNJ2zaYJ1H0SJPzypOJ/BlIrVvxT
+	GPA4mKd3faowmln/RV9d3mwm0/vhmGqeSGGn+qcU40/bMNY0WP1OfWik5UsOJT1bwFYboD/P2s90I
+	MDz6ixA2NX+g7zF3lvudAp0PSUZ2X9ZmlJ0JLKpd1IG8cN+Yf57PYMX38cMMmJAhuMSyFPOpiKJWi
+	JS9eR5L9RDlWA4JyogciWhM7DauCg87ugKE/3qso0y2CHqFeWUtQs5zTJBhcuiXryJTElhpNpN5V4
+	XNW9r6Zg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1srsPZ-0000000DJLL-20CV;
+	Sat, 21 Sep 2024 05:12:01 +0000
+Date: Fri, 20 Sep 2024 22:12:01 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Subject: Re: [GIT PULL] dma-mapping updates for Linux 6.12
+Message-ID: <Zu5VoW1ZkViSOws3@infradead.org>
+References: <ZuvYnXzbM2qfXQPT@infradead.org>
+ <971fbb889da38ca4e60f3dedde29ea43e9338d68.camel@xry111.site>
+ <Zu1byUGU832iWBUp@infradead.org>
+ <Zu2Bd50GdSxF_-eA@infradead.org>
+ <19e4bdbcda78ace200c78c56eb7173097337b921.camel@xry111.site>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814082301.8091-1-brgl@bgdev.pl> <83c562e9-2add-4086-86e7-6e956d2ee70f@kernel.org>
- <87msk49j8m.fsf@kernel.org> <ed6aceb6-4954-43ad-b631-6c6fda209411@kernel.org>
- <87a5g2bz6j.fsf@kernel.org> <CAMRc=MeLick_+Czy5MhkX=SxVvR4WCmUZ8CQ5hQBVTe2fscCPg@mail.gmail.com>
- <b7fdafd6-5029-4b80-b264-11943740b354@quicinc.com>
-In-Reply-To: <b7fdafd6-5029-4b80-b264-11943740b354@quicinc.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Sat, 21 Sep 2024 06:56:05 +0200
-Message-ID: <CAMRc=Mc2sbTrORZr4K4NgdyofNTipR1-QEqNK9mmNT=sd1myHQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] dt-bindings: net: ath11k: document the inputs
- of the ath11k on WCN6855
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Kalle Valo <kvalo@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jeff Johnson <jjohnson@kernel.org>, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	ath11k@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19e4bdbcda78ace200c78c56eb7173097337b921.camel@xry111.site>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Sep 20, 2024 at 11:02=E2=80=AFPM Jeff Johnson <quic_jjohnson@quicin=
-c.com> wrote:
->
-> >
-> > Let me give you an analogy: we don't really need to have always-on, fix=
-ed
-> > regulators in DTS. The drivers don't really need them. We do it for
-> > completeness of the HW description.
->
-> Again, since I'm a DT n00b:
-> Just to make sure I understand, you are saying that with this change any
-> existing .dts/.dtb files will still work with an updated driver, so the n=
-ew
-> properties are not required to be populated on existing devices.
->
+On Sat, Sep 21, 2024 at 01:15:43AM +0800, Xi Ruoyao wrote:
+> > > What camere and driver are you using?
+> 
+> Bus 003 Device 003: ID 0c45:6366 Microdia Webcam Vitade AF
+> 
+> The driver is uvcvideo.
+> 
+> > And what architecture and platform are you on? 
+> 
+> A x86_64 laptop (with Core i5-11300H CPU).
 
-There are no driver updates. No functional change.
+Oh, so it's not arm64, which has the most juicy changes this time
+around.
 
-> However a new driver with support for these properties will utilize them =
-when
-> they are present, and the current ath11k .dts files will need to be updat=
-ed to
-> include these properties for pci17cb,1103, i.e. the following needs updat=
-ing:
-> arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
+Can you try the following "manual bisect" for me?
 
-What new driver? The dts is being updated in a separate series[1]. It
-makes this platform use the new power sequencing subsystem for
-wcn6855. All other changes required to make it work are already
-upstream. There's no change to ath11k.
+First test f69e342eec008e1bab772d3963c3dd9979293e13 to see if that
+works.  If it doesn't work come back as I'm a bit lost :)
 
-Bart
+If it does work, try b5c58b2fdc427e7958412ecb2de2804a1f7c1572 next,
+if it doesn't work can you send me your dmesg?
 
-[1] https://lore.kernel.org/all/20240905122023.47251-1-brgl@bgdev.pl/
+We'll then work from there.
 
