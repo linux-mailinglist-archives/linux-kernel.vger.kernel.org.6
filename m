@@ -1,195 +1,93 @@
-Return-Path: <linux-kernel+bounces-334941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8D297DEA9
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 21:50:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E0B97DEAC
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 21:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27871282263
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 19:50:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F6AE2815EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 19:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12077126C02;
-	Sat, 21 Sep 2024 19:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AE484D02;
+	Sat, 21 Sep 2024 19:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxlPos2w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRq77pPO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AE92207A;
-	Sat, 21 Sep 2024 19:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA972868D;
+	Sat, 21 Sep 2024 19:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726948183; cv=none; b=tImnfZlfjNgZnvwwrIjzj3bfIK4/3h4T0I2HfFhYwIc7eiyhQ2YMFIcTP0FAqTO1+d+hWK9gbVPH1N019hv2ykqAUaYvCUWHTcdJnNyn2CLIL6LR3beMPO0oV8hvVvYSHFGGCWqUKAv+ggiR6v/HIsZmr9UUFFcb6WkB+lgeP1A=
+	t=1726948453; cv=none; b=d+C56d1AQ/bPGSBDQXpXs+yryjGwPXO0zifa/KM87yae8W/59aurlwsyckhb3LMs37UYzYdBLgUVYEEdVMACWfXcQs2MDPkAlKJ6mh17G4vmBeFYgS8xsW/KIG+dQwP4CM8yLKdTuSC4+LZg85w03LMjmnd8U4wGUG5UAgAPjm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726948183; c=relaxed/simple;
-	bh=GyW5qcG4VHURUn7l9UbukhxZDZOp3cCpAGUdYYIDVAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S0Dx6I9QZgHTx3SPgQcxWyx+lbjXi83h+eSpx61BMLX1Zfn+CEyQD7USIPYiBaLJfCB7iyQ7WYMzZdamPuTp9UHvcVrh+oU2IhjRGzf4rywvK/zos9/TdIIsLO4g59Bkf7OL02u/SMLDt0DoZ3MMWqkAXn/bF1YD5MZjiZpCHqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxlPos2w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A625AC4CEC2;
-	Sat, 21 Sep 2024 19:49:41 +0000 (UTC)
+	s=arc-20240116; t=1726948453; c=relaxed/simple;
+	bh=qbXKiapCk2YXBtlswI/GeCkM3I4qQK1mE6LOkTqbgGc=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=A4pJFAfCrzgUHNwP36dPC+d6fMAlRQqg+6I8qky+ZpSQNLYHptEp4+kndyXrXF4qGkmvaRNXSRtvnDvV/iTfVSNDs6Gx8tw2+hagwTX8Lwmxuln8nP9162A6bYJH0lZcOXdpIzXPycw4LtHpS8GY3UDPkR+ZT7kp1+iCJI1BIuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRq77pPO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 928A2C4CEC2;
+	Sat, 21 Sep 2024 19:54:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726948182;
-	bh=GyW5qcG4VHURUn7l9UbukhxZDZOp3cCpAGUdYYIDVAY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uxlPos2w5FHgKlymMk0wB47bTleRHxvbVqulFxoLoRk6zM0gaolbwyqBdeVVr2Khw
-	 6q8h3FlKZqQcAtXCinhWaCqbqPn5wkI27oC47zTyPWp4t0ylpFbQkBNCXWaDPP5M88
-	 Bnb1eeOVMubmY0TDoWp8AAQst71suk/zuUaMNOylGnU8KChb262+B1owZZKzUAO7t6
-	 UD8jltyfj3qp9N3j1z1DnYxYTY3vY+Olx5uWXflQ5GOdmekcWxcfHr8f6h9pbiZNpL
-	 T6zF9KMx6Ic9qSprx1T3x3ETlLQktjj0IkGfudP+gO3LGpNiPVDX/3RkBWXtzyhFbS
-	 VsfrbfucOkQBg==
-Date: Sat, 21 Sep 2024 12:49:39 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
-	Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Asutosh Das <quic_asutoshd@quicinc.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	"Theodore Y. Ts'o" <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"bartosz.golaszewski" <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v6 09/17] soc: qcom: ice: add HWKM support to the ICE
- driver
-Message-ID: <20240921194939.GB2187@quark.localdomain>
-References: <7uoq72bpiqmo2olwpnudpv3gtcowpnd6jrifff34ubmfpijgc6@k6rmnalu5z4o>
- <66953e65-2468-43b8-9ccf-54671613c4ab@linaro.org>
- <ivibs6qqxhbikaevys3iga7s73xq6dzq3u43gwjri3lozkrblx@jxlmwe5wiq7e>
- <98cc8d71d5d9476297a54774c382030d@quicinc.com>
- <CAA8EJpp_HY+YmMCRwdteeAHnSHtjuHb=nFar60O_PwLwjk0mNA@mail.gmail.com>
- <9bd0c9356e2b471385bcb2780ff2425b@quicinc.com>
- <20240912231735.GA2211970@google.com>
- <CAA8EJpq3sjfB0BsJTs3_r_ZFzhrrpy-A=9Dx9ks2KrDNYCntdg@mail.gmail.com>
- <20240913045716.GA2292625@google.com>
- <egtwyk2rp3mtnw2ry6npq5xjfhjvtnymbxy66zevtdi7yvaav4@gcnmrmtqro4b>
+	s=k20201202; t=1726948452;
+	bh=qbXKiapCk2YXBtlswI/GeCkM3I4qQK1mE6LOkTqbgGc=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=GRq77pPOLe6gr6d9BPlks466UbXW7OYl28xtmU6JuzZkWJ02+5gUCZIZ0mmAR/9KX
+	 pmPcJXwAQQvrVnMlw98BsPKhVMxveWNFf8i+YiDrolOikLDgus/Khv6ZIBfFgjYMxw
+	 WMxbe9FZAwbE1Gu9N4HD3rlcEgYrpFHlDDALBHG4RaFbtH1EPFvUwndYnEUTBBneJP
+	 3v7ADTsOQlc5+qkpy0jXspklwroqKv7xBigNgqcvWCagop4cG2tp4LyCx/UzgwQG4J
+	 f3D9i3nzYjmERHNkqiuAoqQKWp4CE1TOkpbQGQMMvxNTEc9l+IY2WSv8YuNFLmEonH
+	 MsjIu2bnnRGRQ==
+Message-ID: <cae4d71b611c36dab4003fa4ec3bab61.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <egtwyk2rp3mtnw2ry6npq5xjfhjvtnymbxy66zevtdi7yvaav4@gcnmrmtqro4b>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d9e0ade6-8a7e-4ba4-974f-142ad246ce5d@linaro.org>
+References: <67cf80cf-d96d-4249-ac34-6085d4b32948@suswa.mountain> <d9e0ade6-8a7e-4ba4-974f-142ad246ce5d@linaro.org>
+Subject: Re: drivers/spmi/spmi-pmic-arb.c:1782 spmi_pmic_arb_register_buses() error: uninitialized symbol 'ret'.
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+To: Abel Vesa <abel.vesa@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, oe-kbuild@lists.linux.dev
+Date: Sat, 21 Sep 2024 12:54:10 -0700
+User-Agent: alot/0.10
 
-Hi Dmitry,
+Quoting Neil Armstrong (2024-09-18 03:34:22)
+> On 18/09/2024 12:29, Dan Carpenter wrote:
+> > 9799873717398e8 Abel Vesa 2024-05-07  1767    struct device_node *child;
+> > 9799873717398e8 Abel Vesa 2024-05-07  1768    int ret;
+> > 9799873717398e8 Abel Vesa 2024-05-07  1769
+> > 9799873717398e8 Abel Vesa 2024-05-07  1770    /* legacy mode doesn't pr=
+ovide child node for the bus */
+> > 9799873717398e8 Abel Vesa 2024-05-07  1771    if (of_device_is_compatib=
+le(node, "qcom,spmi-pmic-arb"))
+> > 9799873717398e8 Abel Vesa 2024-05-07  1772            return spmi_pmic_=
+arb_bus_init(pdev, node, pmic_arb);
+> > 9799873717398e8 Abel Vesa 2024-05-07  1773
+> > 9799873717398e8 Abel Vesa 2024-05-07  1774    for_each_available_child_=
+of_node(node, child) {
+> > 9799873717398e8 Abel Vesa 2024-05-07  1775            if (of_node_name_=
+eq(child, "spmi")) {
+> > 9799873717398e8 Abel Vesa 2024-05-07  1776                    ret =3D s=
+pmi_pmic_arb_bus_init(pdev, child, pmic_arb);
+> > 9799873717398e8 Abel Vesa 2024-05-07  1777                    if (ret)
+> > 9799873717398e8 Abel Vesa 2024-05-07  1778                            r=
+eturn ret;
+> > 9799873717398e8 Abel Vesa 2024-05-07  1779            }
+> > 9799873717398e8 Abel Vesa 2024-05-07  1780    }
+> > 9799873717398e8 Abel Vesa 2024-05-07  1781
+> > 9799873717398e8 Abel Vesa 2024-05-07 @1782    return ret;
+> >=20
+> > Is it possible to not have an spmi node?
+>=20
+> It's possible but not allowed per the bindings.
+>=20
 
-On Fri, Sep 13, 2024 at 03:21:07PM +0300, Dmitry Baryshkov wrote:
-> > > > > > > Once ICE has moved to a HWKM mode, the firmware key programming
-> > > > > > currently does not support raw keys.
-> > > > > > > This support is being added for the next Qualcomm chipset in Trustzone to
-> > > > > > support both at he same time, but that will take another year or two to hit
-> > > > > > the market.
-> > > > > > > Until that time, due to TZ (firmware) limitations , the driver can only
-> > > > > > support one or the other.
-> > > > > > >
-> > > > > > > We also cannot keep moving ICE modes, due to the HWKM enablement
-> > > > > > being a one-time configurable value at boot.
-> > > > > >
-> > > > > > So the init of HWKM should be delayed until the point where the user tells if
-> > > > > > HWKM or raw keys should be used.
-> > > > >
-> > > > > Ack.
-> > > > > I'll work with Bartosz to look into moving to HWKM mode only during the first key program request
-> > > > >
-> > > >
-> > > > That would mean the driver would have to initially advertise support for both
-> > > > HW-wrapped keys and raw keys, and then it would revoke the support for one of
-> > > > them later (due to the other one being used).  However, runtime revocation of
-> > > > crypto capabilities is not supported by the blk-crypto framework
-> > > > (Documentation/block/inline-encryption.rst), and there is no clear path to
-> > > > adding such support.  Upper layers may have already checked the crypto
-> > > > capabilities and decided to use them.  It's too late to find out that the
-> > > > support was revoked in the middle of an I/O request.  Upper layer code
-> > > > (blk-crypto, fscrypt, etc.) is not prepared for this.  And even if it was, the
-> > > > best it could do is cleanly fail the I/O, which is too late as e.g. it may
-> > > > happen during background writeback and cause user data to be thrown away.
-> > > 
-> > > Can we check crypto capabilities when the user sets the key?
-> > 
-> > I think you mean when a key is programmed into a keyslot?  That happens during
-> > I/O, which is too late as I've explained above.
-> > 
-> > > Compare this to the actual HSM used to secure communication or
-> > > storage. It has certain capabilities, which can be enumerated, etc.
-> > > But then at the time the user sets the key it is perfectly normal to
-> > > return an error because HSM is out of resources. It might even have
-> > > spare key slots, but it might be not enough to be able to program the
-> > > required key (as a really crazy example, consider the HSM having at
-> > > this time a single spare DES key slot, while the user wants to program
-> > > 3DES key).
-> > 
-> > That isn't how the kernel handles inline encryption keyslots.  They are only
-> > programmed as needed for I/O.  If they are all in-use by pending I/O requests,
-> > then the kernel waits for an I/O request to finish and reprograms the keyslot it
-> > was using.  There is never an error reported due to lack of keyslots.
-> 
-> Does that mean that the I/O can be outstanding for the very long period
-> of time? Or that if the ICE hardware has just a single keyslot, but
-> there are two concurrent I/O processes using two different keys, the
-> framework will be constantly swapping the keys programmed to the HW?
-
-Yes for both.  Of course, system designers are supposed to put in enough
-keyslots for this to not be much of a problem.
-
-So, the "wait for a keyslot" logic in the block layer is necessary in general so
-that applications don't unnecessarily get I/O errors.  But in a properly tuned
-system this logic should be rarely executed.
-
-And in cases where the keyslots really are a bottleneck, users can of course
-just use software encryption instead.
-
-Note that the number of keyslots is reported in sysfs.
-
-> I think it might be prefereable for the drivers and the framework to
-> support "preprogramming" of the keys, when the key is programmed to the
-> hardware when it is set by the user.
-
-This doesn't sound particularly useful.  If there are always enough keyslots,
-then keyslots never get evicted and there is no advantage to this.  If there are
-*not* always enough keyslots, then it's sometimes necessary to evict keyslots,
-so it would not be desirable to have them permanently reserved.
-
-It could make sense to have some sort of hints mechanism, where frequently-used
-keys can be marked as high-priority to keep programmed in a keyslot.  I don't
-see much of a need for this though, given that the eviction policy is already
-LRU, so it already prefers to keep frequently-used keys in a keyslot.
-
-> Another option might be to let the drivers validate the keys being set
-> by userspace. This way in our case the driver might report that it
-> supports both raw and wrapped keys, but start rejecting the keys once
-> it gets notified that the user has programmed other kind of keys. This
-> way key setup can fail, but the actual I/O can not. WDYT?
-
-Well, that has the same effect as the crypto capabilities check which is already
-done.  The problem is that your proposal effectively revokes a capability, and
-that is racy.
-
-- Eric
+Seems that we should just return 0 here then and squelch the warning.
 
