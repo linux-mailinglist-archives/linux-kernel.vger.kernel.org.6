@@ -1,192 +1,80 @@
-Return-Path: <linux-kernel+bounces-334849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC85A97DD61
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 15:43:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE12497DD63
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 15:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 097FF1C20D78
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 13:43:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B382B2160D
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 13:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D13B15383E;
-	Sat, 21 Sep 2024 13:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FF7170A22;
+	Sat, 21 Sep 2024 13:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="v1sh366T"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VDSvv7Wy"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2747D24211
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 13:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7230A5381E;
+	Sat, 21 Sep 2024 13:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726926211; cv=none; b=OMNtxCBfNoxcZn1zA/RTwbjtNAZUcDyf+7Dgu5Bj2RbxiIPKqgoKpjtZBAGIzSrk4FmZv01e8eHc1akt9AAw8BY9lEAxoJF0KkxNaH0BO2M6iISkxaEp+TGF7tIVevgN7avppFji3voNGG3ZIxxMdk6Bvaz9YIrmn3qgTAPoZXQ=
+	t=1726926694; cv=none; b=Q/INNP4QUSST5wUraHkfEJugaVLl3Sm/9HHyE5S/CuoRWZ5/Wfsxp8pbIs8k8OCb0KnUyZ3VpVl3lFrW3vvcfF9ZAEatqazf3kQIju4qiRSWq/iK//KleGWIra2f6csuKpLanuRX7YVNMVC78qv4GYExjGHBy0mBlJ/CL+Ni53s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726926211; c=relaxed/simple;
-	bh=f/S5tqYDkgNy2de/Gqhu6aFRQaTs2wnU8McFvHuusW0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uOY5xGAFEUDWsKXCCsusflxN4x39HoI7aoLiLMn69CmilcJ8rCVyzRgv4svl5EI4bJEnCG3x5vbnsRebvY03gMwdhkpw8GKfHs053l8Ehh+ZHLF0Vaierir8vdj5NKGamnrp8vxTMAiHpyXDSgd0Pjud43MuHIpOM0FTmzjgSW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=v1sh366T; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d0912e0a-4aaf-43e0-96d8-9ba2e5b620d5@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726926206;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KeEPkbs5lYn6h5yvboGSznL9u6javel9buGKcJFljDQ=;
-	b=v1sh366TvPIJdxhk22HMSSWbLvfxjUtKa6Qx+1tlWNhuQ5AXbLs0s22lcEbQIvXg5wisVX
-	/i2ZLqlDvhSy1CyOq7F2B+sLaP0eIo5JZquwqyLZLMDHJ4h7b7VZ7YuilS1ZvpFZUvIX1G
-	Vd7MFNEjLuuoXFr2CKyz116QNpWV2YY=
-Date: Sat, 21 Sep 2024 21:43:12 +0800
+	s=arc-20240116; t=1726926694; c=relaxed/simple;
+	bh=uEPHwKOwDwyDpCgNG2Eql15E7gXc08kmI5OWv67JbMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OQ+KBzSPxBxKqUPC+oLNJAam2zH+JAZCN0fbfvhxXXR/61zhiPa34a4EGbIV86ZcOsLmZL3K2kH2YaBbJDJJgB1sSBClkQWBsIndGmhadGuos1OwvdnGed2eIL02mY8h7uUsxbAYmb1tE3KuFnu/ZlsDonqYWv44o/xBvGp3hm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VDSvv7Wy; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BvAi/YqAza3e3jdL6+tl6Tsbxzn6R4jK+oLVTD1k83M=; b=VDSvv7Wy0jUviHcxSX44GcZL6x
+	wb7bLgZekg8xQ0dV47Vh1YAisUoLLTjOS5kVaDKWdGVPNOJQUd9a+AE5z/ZYSGNqs/FG+Y3PaHu9Z
+	0mGPuerxnpnaHWJLTRURwt5AKtSI9NDqUmdyr93gyzN9t/F4J3+txqjR+SHF89v+52UP6i7+mw7wN
+	VmxH2iudg0nceBoMxUFIGyIbNjKFsTBSNYVl+9uzPl80DpUanQYbqaDsLCKTHeHuSMN/xX7y9CX0m
+	0NyiMR25F73GENfOQuOrc1ig8wU/48vN/8Jp+ufDaKTuEiIMGnI1A0wwKaTn6HwrzwLLPDi+ptQhi
+	8bquAzYQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1ss0WB-0000000Dlfq-17SY;
+	Sat, 21 Sep 2024 13:51:23 +0000
+Date: Sat, 21 Sep 2024 06:51:23 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Subject: Re: [GIT PULL] dma-mapping updates for Linux 6.12
+Message-ID: <Zu7PW07FmBgs_dpI@infradead.org>
+References: <ZuvYnXzbM2qfXQPT@infradead.org>
+ <971fbb889da38ca4e60f3dedde29ea43e9338d68.camel@xry111.site>
+ <Zu1byUGU832iWBUp@infradead.org>
+ <Zu2Bd50GdSxF_-eA@infradead.org>
+ <19e4bdbcda78ace200c78c56eb7173097337b921.camel@xry111.site>
+ <Zu5VoW1ZkViSOws3@infradead.org>
+ <9a84a7c6f943209cc87a54075ed22df37ebda5f8.camel@xry111.site>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [MAINLINE 2/2] rds: ib: Add Dynamic Interrupt Moderation to CQs
-To: =?UTF-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- Allison Henderson <allison.henderson@oracle.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, rds-devel@oss.oracle.com
-References: <20240918083552.77531-1-haakon.bugge@oracle.com>
- <20240918083552.77531-3-haakon.bugge@oracle.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20240918083552.77531-3-haakon.bugge@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9a84a7c6f943209cc87a54075ed22df37ebda5f8.camel@xry111.site>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-在 2024/9/18 16:35, Håkon Bugge 写道:
-> With the support from ib_core to use Dynamic Interrupt Moderation
-> (DIM) from legacy ULPs, which uses ib_create_cq(), we enable that
-> feature for the receive and send CQs in RDS.
-> 
-> A set of rds-stress runs have been done. bcopy read + write for
-> payload 8448 and 16640 bytes and ack/req of 256 bytes. Number of QPs
-> varies from 8 to 128, number of threads (i.e. rds-stress processes)
-> from one to 16 and a depth of four. A limit has been applied such that
-> the number of processes times the number of QPs never exceeds 128. All
-> in all, 61 rds-stress runs.
-> 
-> For brevity, only the rows showing a +/- 3% deviation or larger from
-> base is listed. The geometric mean of the ratios (IOPS_test /
-> IOPS_base) is calculated for all 61 runs, and that gives the best
-> possible "average" impact of the commits.
-> 
-> In the following, "base" is v6.11-rc7. "test" is the same
-> kernel with the following two commits:
-> 
->         * rds: ib: Add Dynamic Interrupt Moderation to CQs (this commit)
->         * RDMA/core: Enable legacy ULPs to use RDMA DIM
-> 
-> This is executed between two X8-2 with CX-5 using fw 16.35.3502. These
-> BM systems were instantiated with one VF, which were used for the
-> test:
-> 
->                                   base     test
->     ACK    REQ  QPS  THR  DEP     IOPS     IOPS  Percent
->     256   8448    8    1    4   634463   658162      3.7
->     256   8448    8    2    4   862648   997358     15.6
->     256   8448    8    4    4   950458  1113991     17.2
->     256   8448    8    8    4   932120  1127024     20.9
->     256   8448    8   16    4   944977  1133885     20.0
->    8448    256    8    2    4   858663   975563     13.6
->    8448    256    8    4    4   934884  1098854     17.5
->    8448    256    8    8    4   928247  1116015     20.2
->    8448    256    8   16    4   938864  1123455     19.7
->     256   8448   64    1    4   965985   918445     -4.9
->    8448    256   64    1    4   963280   918239     -4.7
->     256  16640    8    2    4   544670   582330      6.9
->     256  16640    8    4    4   554873   597553      7.7
->     256  16640    8    8    4   551799   597479      8.3
->     256  16640    8   16    4   553041   597898      8.1
->   16640    256    8    2    4   544644   578331      6.2
->   16640    256    8    4    4   553944   594627      7.3
->   16640    256    8    8    4   551388   594737      7.9
->   16640    256    8   16    4   552986   596581      7.9
-> Geometric mean of ratios: 1.03
-> 
-> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-> ---
->   net/rds/ib_cm.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/net/rds/ib_cm.c b/net/rds/ib_cm.c
-> index 26b069e1999df..79603d86b6c02 100644
-> --- a/net/rds/ib_cm.c
-> +++ b/net/rds/ib_cm.c
-> @@ -259,6 +259,7 @@ static void rds_ib_cq_comp_handler_recv(struct ib_cq *cq, void *context)
->   static void poll_scq(struct rds_ib_connection *ic, struct ib_cq *cq,
->   		     struct ib_wc *wcs)
->   {
-> +	int ncompleted = 0;
->   	int nr, i;
->   	struct ib_wc *wc;
->   
-> @@ -276,7 +277,10 @@ static void poll_scq(struct rds_ib_connection *ic, struct ib_cq *cq,
->   				rds_ib_mr_cqe_handler(ic, wc);
->   
->   		}
-> +		ncompleted += nr;
->   	}
-> +	if (cq->dim)
-> +		rdma_dim(cq->dim, ncompleted);
->   }
->   
->   static void rds_ib_tasklet_fn_send(unsigned long data)
-> @@ -304,6 +308,7 @@ static void poll_rcq(struct rds_ib_connection *ic, struct ib_cq *cq,
->   		     struct ib_wc *wcs,
->   		     struct rds_ib_ack_state *ack_state)
->   {
-> +	int ncompleted = 0;
->   	int nr, i;
->   	struct ib_wc *wc;
->   
-> @@ -316,7 +321,10 @@ static void poll_rcq(struct rds_ib_connection *ic, struct ib_cq *cq,
->   
->   			rds_ib_recv_cqe_handler(ic, wc, ack_state);
->   		}
-> +		ncompleted += nr;
->   	}
-> +	if (cq->dim)
-> +		rdma_dim(cq->dim, ncompleted);
->   }
->   
->   static void rds_ib_tasklet_fn_recv(unsigned long data)
-> @@ -542,6 +550,7 @@ static int rds_ib_setup_qp(struct rds_connection *conn)
->   	ic->i_scq_vector = ibdev_get_unused_vector(rds_ibdev);
->   	cq_attr.cqe = ic->i_send_ring.w_nr + fr_queue_space + 1;
->   	cq_attr.comp_vector = ic->i_scq_vector;
-> +	cq_attr.flags |= IB_CQ_MODERATE;
+On Sat, Sep 21, 2024 at 03:56:11PM +0800, Xi Ruoyao wrote:
+> because the laptop has no serial output.  And the behavior seems not
+> deterministic.  I have some transcript of messages I photoed in several
+> boot attempts though:
 
-cq_attr.flags is added IB_CQ_MODERATE here.
-
->   	ic->i_send_cq = ib_create_cq(dev, rds_ib_cq_comp_handler_send,
->   				     rds_ib_cq_event_handler, conn,
->   				     &cq_attr);
-> @@ -556,6 +565,7 @@ static int rds_ib_setup_qp(struct rds_connection *conn)
->   	ic->i_rcq_vector = ibdev_get_unused_vector(rds_ibdev);
->   	cq_attr.cqe = ic->i_recv_ring.w_nr;
->   	cq_attr.comp_vector = ic->i_rcq_vector;
-> +	cq_attr.flags |= IB_CQ_MODERATE;
-
-Why is cq_attr.flags add IB_CQ_MODERATE again?
-Is this cq_attr.flags changed before this line?
-
-Zhu Yanjun
-
->   	ic->i_recv_cq = ib_create_cq(dev, rds_ib_cq_comp_handler_recv,
->   				     rds_ib_cq_event_handler, conn,
->   				     &cq_attr);
+Can you send me the photos of the messages?  Probably best offlist
+as the lists don't like attachments.
 
 
