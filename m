@@ -1,77 +1,85 @@
-Return-Path: <linux-kernel+bounces-334726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E4B097DB29
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 03:13:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C81F97DB2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 03:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE99E1C20A61
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:13:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2373BB21640
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9835246BF;
-	Sat, 21 Sep 2024 01:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E71153AC;
+	Sat, 21 Sep 2024 01:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7LjhjN3"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bE3Q2YIT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB4836C;
-	Sat, 21 Sep 2024 01:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDD823D7;
+	Sat, 21 Sep 2024 01:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726881190; cv=none; b=Jo1UTiPfQpIR22FHQF3VSGj+0bfDRSXerZCXaEX8kNI2+QC6whybEaBx7ZLn0sIqgpdZzoBM8EtBdGG0umUQGJ54AuHuUICC5RrzOgcAV3+Q3SdXdx1rLeL4/45aU0o6Vqu7bh1woCQS9cPxMcPDrfB70lV0LPTtTETALLQ4m2s=
+	t=1726881747; cv=none; b=UMjGSteeQfL5hprfSuiiQ7LKt2QV/UNV9+hVO+eHeL2Xkd5jUJ1O8RFzcILElcjhZYxjOEx0YaIOJrH4xmZOPBNQoT8HnMuFbIwobVEUnxTCdo+ujAN3V+Fxz8BHdeBhKEat6v1lOnZl+U6vxK5TLZzxJNt+Pl6CWo1Q6Ykdfc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726881190; c=relaxed/simple;
-	bh=ApJBXp8aU52y3hgoyxSgPpJcY20lFPBpYtQwSED9mO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tE4Hq9YRu34aBSGZzZmUqc9it06V2Ebh7k8JgoRqwnRIBCcwMQdgcsID8REcCA3Ut1fq4+5beiyuKQBKixd9/XSCb+rSWxeNorFoELd1USAZ6P4IR+gkik6lGCYfztoRuQuZXtBKuTRY7Wl4nhCcDhX3dhjIrHWtPIkHvmogdT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g7LjhjN3; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20570b42f24so29786495ad.1;
-        Fri, 20 Sep 2024 18:13:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726881188; x=1727485988; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KhWTpLUtCJ0kiQ1X7/HJbn73e+6H15QHc9kTJn9s/H8=;
-        b=g7LjhjN3mGy8idV5EHk81zJZjC4DUZNf+G0eAsDNzM7hKkLTOrLLxTjYzqfv2he8RS
-         tfPESMAyvjnvIw0JRwW5SkdU4ST1AdTWVpp+MzaRcQb2SYHt21kM2Ilvhygw9JAh/TDY
-         Sa5SpTRTdwDPxdWaWlXcSzcElS54wyqGewXtjNhl68+/KlzJyu9J6llhQOTFTmhde+gH
-         dm1R41JsdpPgZQAsDMk1UyhksXsHdJAibe6MwLVIc/hWIjHnlu7gMfbA737B5wZaogva
-         nlod7RujLiwCxukERsm9iH3zNl+K5f9Yj3oCf7e1l9KQbEhFAdtcBPSGmlG2HSt4blpl
-         3Imw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726881188; x=1727485988;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KhWTpLUtCJ0kiQ1X7/HJbn73e+6H15QHc9kTJn9s/H8=;
-        b=d5f6mnK17ufky9wZ0EyIK6I0Aha4+l7z+pvvLSACYyIFp2qvNWu29/jxE7FKcU4PMr
-         21Qz6sEsmXjv6mptT0TTdmtLLH/zqcniYcKaN3d8+DeiJVu42V7Nwltn3U8wuO36an3x
-         bz+iY7k1TqpG41fW0nkcE0cUMBVDwO/DWPUDaZHBrYptRSYO0R+0XabXivV31iyVx7Pu
-         LlfaCWFPJhg77t0Eau/fcNmR2UupdPaCVCdrqt6Hg17/GSu7ePxQhu1Rz1taM9tOpWLJ
-         XPUgORbzqdjhgM2noeCRytuM/dh7b6Bb5siCwXO0NfDC3daXg3O9rxc+0yPefBHk0x7V
-         68cg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwxWcD4WYEbW1etJtfx9w2zk+PXz9En/NAlSc0pFrIU4g4P+WrgMkOf9nEDNi6AKEtxdFm81RjVlttZgrs@vger.kernel.org, AJvYcCXxei4h0XLmRezSZx5fp/PJknBh3eOBEUAv6bFdHzUeTK4JZdgq5ddxxIWwA3J4HU6Y/ontF5+BDaHnYSIz@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrXJzi9koPd4LynD+Oq83vx+zmwXjHOpnZn7o41lMYSXRGvPt0
-	yF2C24Jyy/AXsaJCE0hMzsRt2S6w2iGOR2b9vPodpu5WiSoSW0OS
-X-Google-Smtp-Source: AGHT+IFb/4FuUoDCmoFChGv5caoTFoY7jrMIDatYtcYptR4hgzZ4J7g/uEd8146atPwtf85TrjOdYA==
-X-Received: by 2002:a17:902:e54e:b0:205:894b:b5b0 with SMTP id d9443c01a7336-208d83a1cabmr71344795ad.33.1726881187970;
-        Fri, 20 Sep 2024 18:13:07 -0700 (PDT)
-Received: from gmail.com ([24.130.68.0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207945da7b8sm100732825ad.16.2024.09.20.18.13.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 18:13:07 -0700 (PDT)
-Date: Fri, 20 Sep 2024 18:13:05 -0700
-From: Chang Yu <marcus.yu.56@gmail.com>
-To: dhowells@redhat.com
-Cc: jlayton@kernel.org, netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	marcus.yu.56@gmail.com, skhan@linuxfoundation.org
-Subject: [PATCH] netfs: Fix a KMSAN uninit-value error in netfs_clear_buffer
-Message-ID: <Zu4doSKzXfSuVipQ@gmail.com>
+	s=arc-20240116; t=1726881747; c=relaxed/simple;
+	bh=KtakCcC2qdSEMD5iIVCn5JcCYsCNY/eSfJ41UJSWcUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fnK3voyqzxMzLzwVB7rJDbRH7pzFbJf11DWGIUpBJimX3uWUVGRxLmUtRYbU0IlYzj4wa9XYey7mJO0JgSiBffxzPzE+sGsfBI7HfYaCLYChzbF3+6HMlfyk6TAS18/DGVVD+wFxDjN572m18APXl8C9rBVNH34v6WJNEu6pl6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bE3Q2YIT; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726881746; x=1758417746;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KtakCcC2qdSEMD5iIVCn5JcCYsCNY/eSfJ41UJSWcUM=;
+  b=bE3Q2YITTUzJWvccKt+U7sWRfN9fGZnSdcynqmXqzS4gjBgoh5NGe7wS
+   Gl/wG0sP/beTzOCwLZSaJkuBfws75nwmhj3bA9GfulpM9+BwRhziO9UTs
+   g76Yt2JDWmDBDT1QDPT0TatSQjbqYZRKbYnqI+7APtmLHcA6dTdsG8bUS
+   oxGnYkwDLozbihdxtfcM1WtVIugcyZ/3wUGNGLgzz03OlV/pPoRdO0b2+
+   yNhutIfdht0BnsQa1eu0yE8DHgwmHXHUaRvjPln2u5K5oc/K2fCtX98pc
+   5G0pyAh6X/WAoflUQI4kMIZl8/NqxJNzUvvekBtttDhG2Y76kE9pPh0XB
+   g==;
+X-CSE-ConnectionGUID: aCjp79nLQ7OoEXheowol3g==
+X-CSE-MsgGUID: iX7aoUMYR7K+XYJ9Mn0jcg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11201"; a="37276764"
+X-IronPort-AV: E=Sophos;i="6.10,245,1719903600"; 
+   d="scan'208";a="37276764"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 18:22:25 -0700
+X-CSE-ConnectionGUID: m0vQv04lRSeYrzZoNsQZtQ==
+X-CSE-MsgGUID: FdnzwO0zSYK0lqdXGTlIqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,245,1719903600"; 
+   d="scan'208";a="93810647"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 20 Sep 2024 18:22:20 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sropG-000F1C-2D;
+	Sat, 21 Sep 2024 01:22:18 +0000
+Date: Sat, 21 Sep 2024 09:21:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tao Chen <chen.dylane@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: oe-kbuild-all@lists.linux.dev, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+	Tao Chen <chen.dylane@gmail.com>
+Subject: Re: [PATCH bpf-next 2/2] bpf: Add BPF_CALL_FUNC* to simplify code
+Message-ID: <202409210926.ErxhBmi5-lkp@intel.com>
+References: <20240920153706.919154-1-chen.dylane@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,32 +88,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240920153706.919154-1-chen.dylane@gmail.com>
 
-Use kzalloc instead of kmalloc in netfs_buffer_append_folio to fix
-a KMSAN uninit-value error in netfs_clear_buffer
+Hi Tao,
 
-Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
-Reported-by: syzbot+921873345a95f4dae7e9@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=921873345a95f4dae7e9
-Fixes: cd0277ed0c18 ("netfs: Use new folio_queue data type and iterator instead of xarray iter")
----
- fs/netfs/misc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 0ad0982ce0e2..6f967b6d30b6 100644
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -22,7 +22,7 @@ int netfs_buffer_append_folio(struct netfs_io_request *rreq, struct folio *folio
- 		return -EIO;
- 
- 	if (!tail || folioq_full(tail)) {
--		tail = kmalloc(sizeof(*tail), GFP_NOFS);
-+		tail = kzalloc(sizeof(*tail), GFP_NOFS);
- 		if (!tail)
- 			return -ENOMEM;
- 		netfs_stat(&netfs_n_folioq);
+[auto build test ERROR on bpf-next/master]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Tao-Chen/bpf-Add-BPF_CALL_FUNC-to-simplify-code/20240920-233936
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20240920153706.919154-1-chen.dylane%40gmail.com
+patch subject: [PATCH bpf-next 2/2] bpf: Add BPF_CALL_FUNC* to simplify code
+config: openrisc-defconfig (https://download.01.org/0day-ci/archive/20240921/202409210926.ErxhBmi5-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240921/202409210926.ErxhBmi5-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409210926.ErxhBmi5-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from kernel/bpf/core.c:21:
+   kernel/bpf/core.c: In function '___bpf_prog_run':
+>> include/linux/filter.h:464:38: error: called object is not a function or function pointer
+     464 | #define BPF_CALL_FUNC(x)        ((x) + (u8 *)__bpf_call_base)
+         |                                 ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+   kernel/bpf/core.c:2010:26: note: in expansion of macro 'BPF_CALL_FUNC'
+    2010 |                 BPF_R0 = BPF_CALL_FUNC(insn->imm)(BPF_R1, BPF_R2, BPF_R3,
+         |                          ^~~~~~~~~~~~~
+   include/linux/filter.h:466:38: error: called object is not a function or function pointer
+     466 | #define BPF_CALL_FUNC_ARGS(x)   ((x) + (u8 *)__bpf_call_base_args)
+         |                                 ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   kernel/bpf/core.c:2015:26: note: in expansion of macro 'BPF_CALL_FUNC_ARGS'
+    2015 |                 BPF_R0 = BPF_CALL_FUNC_ARGS(insn->imm)(BPF_R1, BPF_R2,
+         |                          ^~~~~~~~~~~~~~~~~~
+
+
+vim +464 include/linux/filter.h
+
+   463	
+ > 464	#define BPF_CALL_FUNC(x)	((x) + (u8 *)__bpf_call_base)
+   465	
+
 -- 
-2.46.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
