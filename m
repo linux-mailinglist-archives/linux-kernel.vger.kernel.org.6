@@ -1,307 +1,299 @@
-Return-Path: <linux-kernel+bounces-334783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46BB497DC16
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:11:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C74997DC18
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A02CCB22144
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:10:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B198F282708
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6260015445D;
-	Sat, 21 Sep 2024 08:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A5214F9F8;
+	Sat, 21 Sep 2024 08:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cvbBu6PI"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ARn3heeN"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2066.outbound.protection.outlook.com [40.107.237.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9495D15098F;
-	Sat, 21 Sep 2024 08:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726906243; cv=none; b=i2q4vmGnLULM3Vn423h7pNGsqmfhMnNiFC4yD5bQTqbF5/D4wME/I6sr//cxrUa3YnfVDaYX3RXQzs/a70oLYGYX0Jxyv9aHl0Qyg9qGcuGknDb2Og0jmuDERaLbJD2BJMfBuiOrIMzpZwbMMr3wiHYcHEJ3HywKxHvfEWOP3bY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726906243; c=relaxed/simple;
-	bh=hIiykcwMUHrmR8fPg9W7KtQVG1INi5KWpVc/i10zqTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MC/5aqi2+96wKH50Rs/6iDdVqXL0Y4Gs3eozV7D5TjUmpWz2WO/t+/bq9nkKevdiiUO7gxUC19yoc6tp7VvKrTVF41L2sO/e2mZasCJnd4hpNrqJHSb9pxEcGs1v/3Hb0XZiPC4pJVjlBzm4W/otI3+d9dhH+jj52Wwa2d+7nS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cvbBu6PI; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso472406866b.0;
-        Sat, 21 Sep 2024 01:10:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726906240; x=1727511040; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ewVnOv5AHYUNwqENpFQHGDlvppKV6TVLikXGgL6txgQ=;
-        b=cvbBu6PIxHI0YGauBDtbDVf9OhGtIG3PU774ix3PDZe5ge3WLmZyJt+WjXnOaJUKD/
-         Yw7fEEFuwzuawExwE2ZcVWzpKqL+uZA4nyuuN2cGu8iN3zgJXm8QAIxkDzZPZXOKhiy9
-         aSqsnfayTbEeA0JngToYClIkTnEzAoNNxNLVViDy1GeaSBPZ9xFF9MiR0V2jzY/3shSU
-         Igg24MZe0js+FBAYcuRMOhZILq5Yg67vwrlJIbTPjRNNKmofKa9EUMT6bAJmiVSyLxrn
-         ysqOThP7H2tybXhhsCzHLe0mEUszEvjBLM8JuArEccelfTpPfbbM2rzMS+5cjQ+1CeHf
-         qQMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726906240; x=1727511040;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ewVnOv5AHYUNwqENpFQHGDlvppKV6TVLikXGgL6txgQ=;
-        b=lWuzPWB0S5BDkIZ9kvEp+44Znvt2U/+Xrcwg9+c8kcSNu5+yvqb5kiy4w0z1n7K83Q
-         C02uOhY3DQhzl1/3lBq+ROVdzgN8DvUsr4+6a130xkqk5hIqzWt/7EWhOe17PBK10o7s
-         nXgegYbRN+zCKP8wFq0k+nQipkVszjyEbrUHUBBHWzDV5wnRZNLoblSA1tq2lF6RWRYD
-         lVlIsqZfpFIU9jwxYMISzZEY+NUgOwUf29l1cxHQh/6jA1E5Tq31Jx3Vy22+WQrxYPH8
-         w+xAdVr3gqStUiZj5MshOaWAdUb0HQ/aZCw++n74zFU59s/taUId+LGdVWSRB+9yZX0k
-         IAgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVH+xOlrKk5bIKD2mju6xNyRZ2XS8rXq+ttmD5QH6JCOuW9r8vuMV9RfP+MOP4iPJTTSyqBg5QsoH41g0c=@vger.kernel.org, AJvYcCXOTv8YTIUEW3s1OBdg99DBu9mWjiOPQc+Ah5CP0ACj5RuT6muBWLigb/VZT6eM7DfN6aM2OLlPdHwnbTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgpnbeQR7E1W8XBMvsjwlKolMGL+Z4OHIcnGzmD6jvmePE01gL
-	2+u+oqLQyZzFPDbjPPUueafwB6Uk6Hofz5kjqX2Wka9l9HKKlCos
-X-Google-Smtp-Source: AGHT+IFcPdvp9vYOkPt75UxWmFpkBRFuJtBTwoTQqXlUrmCI2lxcPqmc0U0fva3KZ3xyMoniYeaVzQ==
-X-Received: by 2002:a17:907:268e:b0:a8a:754a:e1c1 with SMTP id a640c23a62f3a-a90c1c73fabmr952458966b.8.1726906239535;
-        Sat, 21 Sep 2024 01:10:39 -0700 (PDT)
-Received: from localhost ([185.220.101.78])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9061321568sm940425466b.191.2024.09.21.01.10.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Sep 2024 01:10:38 -0700 (PDT)
-Date: Sat, 21 Sep 2024 11:10:37 +0300
-From: Maxim Mikityanskiy <maxtram95@gmail.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
-	Rui Salvaterra <rsalvaterra@gmail.com>,
-	Sui Jingfeng <suijingfeng@loongson.cn>,
-	Bjorn Helgaas <bhelgaas@google.com>, Peter Wu <peter@lekensteyn.nl>,
-	Lukas Wunner <lukas@wunner.de>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda: intel: Fix Optimus when GPU has no sound
-Message-ID: <Zu5_faxUwoIl09fW@mail.gmail.com>
-References: <20240904203955.245085-1-maxtram95@gmail.com>
- <871q1ygov9.wl-tiwai@suse.de>
- <ZttEUjeYFzdznYKM@mail.gmail.com>
- <87wmjndbha.wl-tiwai@suse.de>
- <ZtxZBUjlF8TeIUKC@mail.gmail.com>
- <87jzfncvm0.wl-tiwai@suse.de>
- <ZtyMWSA0bg1SjFSU@mail.gmail.com>
- <87ed5vcp23.wl-tiwai@suse.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D162F14293
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 08:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726906517; cv=fail; b=osX1/aOBe8Y30mly9AJ/KsQUInp/F64z36k6dd/uomDaP2YRrog+9jP/qJrVN7vkcLhFofYwBMC0/WPsKagrof6m7tcZ4NtSmiYs0ElKsafd+foZoWYmiKQA0YvC+9uHo7+kt/0I9T90L37XPYVH3x2a+oYFW7IyOuuEw86jfuA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726906517; c=relaxed/simple;
+	bh=4M3Lt9EsTky63UBwAlK/TYBDpAsDeTYk/vU9/2ANsGE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=NiLgFwbuMfAew531IobmvKcYhyKW2pCc+PHf4GRnUl/SYp3ptXQBB27GnKN2ktcaFgcL+dC+1oCi04p/5lT0o89Dj9bv3nlq6We6ybJ0Cc+PxnFuv9t3yoRISIinpj1pJweUmp/1jL1IJ1oPIJAqOhkD8Tb58NYCYqw77J790lU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ARn3heeN; arc=fail smtp.client-ip=40.107.237.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X+UxsLdHScMEMS/LJsda3+5mSkYlApRV7O3Y9MP1AjJFZo0jJZ0JSUqtIGk786P77ZuFKJdY9uzKzIGpcennrCS9o93xp7123D10AN3gcpyFysNldW4cq5NbgysQBjb8WSu1M+cOVY/WoO6TbhVc1vcoY+mfRO7Mw4DCXNpT5q9jW5DL5lT7gx0fU5FPPagVJ3r3gAC9yxp5P2fRLgfYguBOY7UuzJyFkNDkEx0fN8Pi324rlk+4QEYhW+uvHmqEbaRZiFn8IX/LY9tAAv9dDxraO9QwtmvCBhAU1bu9N8zYZKOZrRHet7xDkokZZp48CLqcQZtAKlci3WwFkEtChg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CFm6qNHqopUsUpm1NhBab+Mj4g+F25KVgHXNRlz44fQ=;
+ b=I6NcuatRbH1zCA61cwYiYhlMCOnp+DGWtMTRrk+noInRwIrM9llsm3HTWL0qw8xOP0OwmYgtvCpKZhW3bSUSdDZtVMAmUSJ1lJYuykOMbZJy842TM+yyn4TMO+x/NiscOJGg5DBVBXMoiYEI7JUPbUjTz4Li3UNQhmmttuE7G0cfFWRdjzMoLSyssE2gfITD0/6zwaCTmzTwStsKPSzga8X4nURTFZblirH06mwbclsI44Bl9W8IRsiQPRXZerDqQ5VfccM5EigntAzn/UAzwBYN4GMXDUTz+Bg9tPWniMx6o2EQCGggP2bSjeOCuc6a6vZON9eHcUaR78kAuG97Gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CFm6qNHqopUsUpm1NhBab+Mj4g+F25KVgHXNRlz44fQ=;
+ b=ARn3heeNKSrZLtUC3htoPDipdEW649q+KgrxJwFjhCeVxfWhQpbXQf0e2BRVSerMSZcf0q9uvlvwRk1TNyPSB533jicF2OJjiAU8M4aL6UfWPq7OOXcILyMNjmtVPfeebJYQShpHgh6r6LEuk/eqljMsEMQYm1u4xVPk+MTMxtlB21G9macCktKkZtvSb4loRwopwjqSB9OPCkBXB5LU4MJvncyvEPlE5Rd8rQ3I+INR4YO4QwgZkLfKzXFjtL7+iIkEM/r3sUnjNmIV10r+jBvJZO3uLqgjlK8A9DoNjLWFtUa5t4Nenoq9nabgFkr9e2g8PjkjGCmpcnbKFKOUmg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MW4PR12MB7261.namprd12.prod.outlook.com (2603:10b6:303:229::22)
+ by SJ2PR12MB8133.namprd12.prod.outlook.com (2603:10b6:a03:4af::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.22; Sat, 21 Sep
+ 2024 08:15:12 +0000
+Received: from MW4PR12MB7261.namprd12.prod.outlook.com
+ ([fe80::d231:4655:2e3d:af1b]) by MW4PR12MB7261.namprd12.prod.outlook.com
+ ([fe80::d231:4655:2e3d:af1b%4]) with mapi id 15.20.7982.022; Sat, 21 Sep 2024
+ 08:15:11 +0000
+From: Bruno Faccini <bfaccini@nvidia.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	rppt@kernel.org,
+	ziy@nvidia.com,
+	ttabi@nvidia.com,
+	jhubbard@nvidia.com,
+	Bruno Faccini <bfaccini@nvidia.com>
+Subject: [PATCH] mm/fake-numa: per-phys node fake size
+Date: Sat, 21 Sep 2024 01:13:49 -0700
+Message-Id: <20240921081348.10016-1-bfaccini@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MW3PR05CA0024.namprd05.prod.outlook.com
+ (2603:10b6:303:2b::29) To MW4PR12MB7261.namprd12.prod.outlook.com
+ (2603:10b6:303:229::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ed5vcp23.wl-tiwai@suse.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR12MB7261:EE_|SJ2PR12MB8133:EE_
+X-MS-Office365-Filtering-Correlation-Id: 205c3f63-f799-4892-927c-08dcda158382
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?cUgW2OZFaVZDqYxtPTlWVLgkJy8yVcB4BcY5S6dHxnvpWYCnAU+rTdVNf1DF?=
+ =?us-ascii?Q?NAjUU0m6cjbdcHukv8ueYaoh0nBksZJdfYAGGGstE+Kud9kNpVfF7tJPsNQ5?=
+ =?us-ascii?Q?pX5iEO2SobBVDXR99DY62yMCQCyuiwOPmoWsd9fokb9WL4UJKBGCSLz829hq?=
+ =?us-ascii?Q?TwGQv5ExrvN2HgBsfm+ANFC19psPGkkuxV2T7Z3xYvxlCzdNMiCcrUp+drd3?=
+ =?us-ascii?Q?tiWVlSBzowDJ0fX95DWk8wxpFqeQ0A79dhG7lJdKufr3tadO6+cv4285gXwI?=
+ =?us-ascii?Q?ao43wF5Meaup6RQKaYkVOnyxoYYtmQTypQvDvwRmOJjht6l04xscVI+A3c6U?=
+ =?us-ascii?Q?2Wt8y2lQViXWVCDV/QrNfuurRyPI9fUXabkwPO9dirvyT+ScO2bxftu3aMy8?=
+ =?us-ascii?Q?H9FcJXjrYJt5bMDbY8cYJf/rKHI63eR9vWWmSJ+TSdp/rqqex046Rx4+6DmF?=
+ =?us-ascii?Q?XlTD0beYF18Zqlqu8lPESmzCbSFEvcmE+7Dt2Q3ZZ7NQv0CmAHkZO0WsoSYy?=
+ =?us-ascii?Q?2if6KuIU6btGIEjoPsTS7ymWqte/VCYmSfomaDRKvsV9ri0e8Tnl2b8h7FuM?=
+ =?us-ascii?Q?b7Ql4T06giIA1FwY2UiYfzSO3d8zkHoUoPQU594Z4Cm2OeaXtC8qf8YkV/eR?=
+ =?us-ascii?Q?Q+YbMGH0yrVZtiCoLQaLNfU4v8MPPt1SpnAAGEtyPseowslkNQ5N8q2EwIOb?=
+ =?us-ascii?Q?o+AVQ0CGKxvjudEQSA+jd/6JjqR6L5caM4T7sqPY37FizOpM5Z8uh2N3aB8U?=
+ =?us-ascii?Q?iKVYntV+Nd5DbV+gXPwXQa0YH8xlR6xpTYKzCWt4VPQ1NAXqKFnj2KJFI1Q4?=
+ =?us-ascii?Q?cHNXA9QntT8gxhoNS361bXyJs7BmYaxvCQPpEa9A8MOgeI/kEbue+mF2wT1Y?=
+ =?us-ascii?Q?ox48csCsf1+BL0pAKa8S9cUWqfd37Xi29CTncrDBGaq/j6QJifPEfHXhrNFW?=
+ =?us-ascii?Q?9IQlioDkAty10La6h66bRPnH37qcG50s0YjfXAXBBAL97vQ59ACp3Gk6BwHo?=
+ =?us-ascii?Q?P3USr7sfsGHZgQ28dzOX+IA5nsKwUWZJoZei5Va7lUfX9a2gprjLnEEr9sqT?=
+ =?us-ascii?Q?iMICHA1sTfK3ApFc0YzDgMzF3cGWnlJ49Dllhz0VoTdjNDt+C/x1uLvFKuCE?=
+ =?us-ascii?Q?7X1yZ1NRdJm/cWhgZxR670CxgrAHzAdsDhaZS7v9I888+wIED1Nqvr03m0kV?=
+ =?us-ascii?Q?cCfGZ2Ql8tTig1zvcY1lRpaO/IkHi7fpnr5ySDHqFLsKNLUGM0BhJ82D+Mep?=
+ =?us-ascii?Q?zoiLd0rlhLuwIupUJPAeNhqYkvIpNUbyrp7NF/XhnQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR12MB7261.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PfsLtrYjPAMTFFsReSHLszO0L4Cb5CIEqlmnzKwej+kd0s7KOeeMztKExJ1h?=
+ =?us-ascii?Q?jpHTVw8N3pe4DjLTdRBG/R1OKKuNO0K5nBzszpZCyQkz/eBTL8jcAmD/0QWE?=
+ =?us-ascii?Q?eRmO8/VbQbXOPhU0/T+SCkqF36ubynNcDfCNh4YTpOpgdR5oXqMXU3Nrs53W?=
+ =?us-ascii?Q?sXjmyT8inNdCirtfVSpq+M6k57692KSr8egDWHHQrbknObv/Y8kH/tAlyPNl?=
+ =?us-ascii?Q?/yiIaFuTG9s0fovwyskxgRErWSf6AFpzBvU13ilo2XbSqboa6CUN4tNdfnh+?=
+ =?us-ascii?Q?BE86D2rgya0JKd+GNCvPBY73kh6SWxvyIoe5YLXwSp09iWujWyuhc3ySRk+m?=
+ =?us-ascii?Q?RVed+mF6MkNQvwIMXNRX23gjl92sOlr/tUNeq5jD0Tkfvc3u77pzJAq4Kv/t?=
+ =?us-ascii?Q?Y1WWge1gMgVxJgoeJtGleZyI0nJpQUEsgIObsnapifGmBYZV1IL87Q5UiRTH?=
+ =?us-ascii?Q?0EmrgcAl0M7ntLIyu5SJCzWBelJT/1+kwJZzKiWt4dma3k4wLxNvkABW/4Q2?=
+ =?us-ascii?Q?DeJie8R1agO6emKaBVgtg5Au4tX8M3Rt+wfDX34frumkXG2nur9cKe5QPtTq?=
+ =?us-ascii?Q?zG9KumeaXt7LWNbJCB7WWjSb952O955+8y5K5ibgR0vVRViSq8eaxQSDkhAr?=
+ =?us-ascii?Q?DP1mCLh+W9zCdiC4Qc+GhJxkPluDSY3r1T0DiBy1nL4kl/qDpl9cNo94EURQ?=
+ =?us-ascii?Q?Lgrl2sJ/obil48+2EpXNs1RilWlVK0RzqTthW6aTz6WRX2jOoEj+kAQ/OjC7?=
+ =?us-ascii?Q?5Cn12smAdQH/V0uS8lh/sa0KHRFBkfDAURHXXCbKCu4LV8pZr61CyyiLGwnF?=
+ =?us-ascii?Q?lJQbjP3/nmrKDxWXMtlWGXgTbq8AliEVJNcI+Hm++YKKoG+1uvNh+TEW2vY+?=
+ =?us-ascii?Q?XgQdGsnhl9UVlLlaIUgzHhNY5bmFS0d/AQt0W0Tr35OEA6VxBOpFytDRSqAW?=
+ =?us-ascii?Q?mAUWSoL1HyOmgQyjDjrpGRqj3EYKOMj4ERcGV1MrUn5rQaPybtCr/D1DKEiQ?=
+ =?us-ascii?Q?kmJemDIWkW9u80zTelhibZk6cfdhtJFFLY1v+Q4dg97I7eIN3ztwRo/6fuMy?=
+ =?us-ascii?Q?ti47r8KnBigMreRoWWzl1Pnq7etnIikZhzaQzcR7COHPMgjKz+ZbCrazD3Gk?=
+ =?us-ascii?Q?iCglH5KUCHO78dy/L3qq7sGs579mtqiNnHvCocvlDukLxOtMg/HqZmmgmoD2?=
+ =?us-ascii?Q?uMh6Ls9fug68omXjVlE7lvUmwLINaFlVOCMuhSOMk5yrQN9rHEr1++RLFn13?=
+ =?us-ascii?Q?Wmds/liVhpBorOQq16o9uzJ0TfbZyMFWxC3Q0z+oIpuNjeqtXwwh4Rh/J6lR?=
+ =?us-ascii?Q?4ydXai36s35Jc4cDHR9g2vCg7BPrMq5CykM//6ta/vv0j3tzsaBCSEpa6r6Z?=
+ =?us-ascii?Q?WmtGhlSAYbCIMGeLT5WvKu3uxLtFJHis9ECGhWeJBJEparzUz39wAoEhYRFN?=
+ =?us-ascii?Q?D2M8KeYMsKQ2V3rCgnHxDTirzhifDT0EP9kvmE2yxIDQoiCJWWnO5J9eyeix?=
+ =?us-ascii?Q?DMwrq9m45AKQPx8o3pll6cJOWfsIZ+D+VLT5scYXJ46xZ8a/BpbROZo0ZTfJ?=
+ =?us-ascii?Q?+O0JneaHxFu90r1i2CuV24IwLMUSKML08bjt+a1C?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 205c3f63-f799-4892-927c-08dcda158382
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB7261.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2024 08:15:11.6511
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eA+q6RV1sDy3oGRk9KK34Bx1XuEYCbgsD0ELLZvokBR6+xdghWf+PYP4IQSlhbbQ518HSgl11ZFWSd2fjBt0+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8133
 
-On Sat, 07 Sep 2024 at 20:10:44 +0200, Takashi Iwai wrote:
-> On Sat, 07 Sep 2024 19:24:41 +0200,
-> Maxim Mikityanskiy wrote:
-> > 
-> > On Sat, 07 Sep 2024 at 17:49:11 +0200, Takashi Iwai wrote:
-> > > On Sat, 07 Sep 2024 15:45:41 +0200,
-> > > Maxim Mikityanskiy wrote:
-> > > > 
-> > > > On Sat, 07 Sep 2024 at 12:06:25 +0200, Takashi Iwai wrote:
-> > > > > On Fri, 06 Sep 2024 20:05:06 +0200,
-> > > > > Maxim Mikityanskiy wrote:
-> > > > > > 
-> > > > > > On Thu, 05 Sep 2024 at 16:24:26 +0200, Takashi Iwai wrote:
-> > > > > > > On Wed, 04 Sep 2024 22:39:55 +0200,
-> > > > > > > Maxim Mikityanskiy wrote:
-> > > > > > > > 
-> > > > > > > > Lenovo IdeaPad Z570 with NVIDIA GeForce Ge 520M doesn't have sound on
-> > > > > > 
-> > > > > > Spotted a typo: s/520M/540M/
-> > > > > > 
-> > > > > > > > the discrete GPU. snd_hda_intel probes the device and schedules
-> > > > > > > > azx_probe_continue(), which fails at azx_first_init(). The driver ends
-> > > > > > > > up probed, but calls azx_free() and stops the chip. However, from the
-> > > > > > > > runtime PM point of view, the device remains active, because the PCI
-> > > > > > > > subsystem makes it active on probe, and it's still bound. It prevents
-> > > > > > > > vga_switcheroo from turning off the DGPU (pci_create_device_link() syncs
-> > > > > > > > power management for the video and audio devices).
-> > > > > > > > 
-> > > > > > > > Fix it by forcing the device to the suspended state in azx_free().
-> > > > > > > > 
-> > > > > > > > Fixes: 07f4f97d7b4b ("vga_switcheroo: Use device link for HDA controller")
-> > > > > > > > Signed-off-by: Maxim Mikityanskiy <maxtram95@gmail.com>
-> > > > > > > 
-> > > > > > > What if this device probe is skipped (e.g. adding your device entry to
-> > > > > > > driver_denylist[] in hda_intel.c)?  Is the device also in the
-> > > > > > > runtime-suspended state?
-> > > > > > 
-> > > > > > I added the following:
-> > > > > > 
-> > > > > > { PCI_DEVICE_SUB(0x10de, 0x0bea, 0x0000, 0x0000) },
-> > > > > > 
-> > > > > > The probe was apparently skipped (the device is not attached to a
-> > > > > > driver), runtime_status=suspended, runtime_usage=0, the GPU goes to
-> > > > > > DynOff.
-> > > > > 
-> > > > > OK, that's good.
-> > > > > 
-> > > > > > However, I'm not sure whether it's a good idea to blacklist 540M
-> > > > > > entirely, as there might be other laptops with this GPU that have sound,
-> > > > > > and AFAIK there are variants of Lenovo Z570 with other NVIDIA GPUs.
-> > > > > 
-> > > > > You should specify the PCI SSID of your device instead of 0:0 in the
-> > > > > above, so that it's picked up only for yours.
-> > > > 
-> > > > Where can I get it?
-> > > > 
-> > > > # cat /sys/bus/pci/devices/0000\:01\:00.1/subsystem_vendor
-> > > > 0x0000
-> > > > # cat /sys/bus/pci/devices/0000\:01\:00.1/subsystem_device
-> > > > 0x0000
-> > > 
-> > > Ouch, Lenovo didn't set it right.
-> > > Alternatively we may introduce a deny list based on DMI.  Hmm...
-> > 
-> > A DMI-based quirk sounds better than blocking any NVIDIA 540M, it would
-> > also allow handling alternative GPUs on this laptop model.
-> > 
-> > But could you explain what's wrong with a generic approach that I
-> > suggest (probe_continue failed => mark as suspended)? It doesn't require
-> > any lists. Any drawbacks?
-> 
-> As you noticed, it will leave the device bound with driver, i.e. this
-> looks as if it were operative.  It means that the sound driver is
-> still responsible for suspend/resume or whatever action even though
-> it's totally useless.  In that sense, it makes more sense to give it
-> away at the early stage before actually binding it, and the deny list
-> is exactly for that.
+Determine fake numa node size on a per-phys node basis to
+handle cases where there are big differences of reserved
+memory size inside physical nodes, this will allow to get
+the expected number of nodes evenly interleaved.
 
-Thanks for your feedback!
+Consider a system with 2 physical Numa nodes where almost
+all reserved memory sits into a single node, computing the
+fake-numa nodes (fake=N) size as the ratio of all
+available/non-reserved memory can cause the inability to
+create N/2 fake-numa nodes in the physical node.
 
-Do you happen to know whether there is a way for a driver to unbind
-itself after probe() returned success? I've never seen anything like
-this, but it would be a perfect solution: no lists and no driver bound
-after the delayed initialization fails.
+Signed-off-by: Bruno Faccini <bfaccini@nvidia.com>
+---
+ mm/numa_emulation.c | 66 ++++++++++++++++++++++++++-------------------
+ 1 file changed, 39 insertions(+), 27 deletions(-)
 
-> Apart from that, the suggested change itself can be applied
-> independently from the deny list update, too.  It'd be good for other
-> similar devices, too.
+diff --git a/mm/numa_emulation.c b/mm/numa_emulation.c
+index 031fb9961bf7..0c72c85cfc10 100644
+--- a/mm/numa_emulation.c
++++ b/mm/numa_emulation.c
+@@ -77,20 +77,19 @@ static int __init emu_setup_memblk(struct numa_meminfo *ei,
+ }
+ 
+ /*
+- * Sets up nr_nodes fake nodes interleaved over physical nodes ranging from addr
+- * to max_addr.
++ * Sets up nr_nodes fake nodes interleaved over all physical nodes
+  *
+  * Returns zero on success or negative on error.
+  */
+ static int __init split_nodes_interleave(struct numa_meminfo *ei,
+ 					 struct numa_meminfo *pi,
+-					 u64 addr, u64 max_addr, int nr_nodes)
++					 int nr_nodes)
+ {
+ 	nodemask_t physnode_mask = numa_nodes_parsed;
+-	u64 size;
+-	int big;
+-	int nid = 0;
+-	int i, ret;
++	int nid = 0, physnodes_with_mem = 0;
++	int i, ret, phys_blk;
++	static u64 sizes[MAX_NUMNODES] __initdata;
++	static int bigs[MAX_NUMNODES] __initdata;
+ 
+ 	if (nr_nodes <= 0)
+ 		return -1;
+@@ -100,25 +99,41 @@ static int __init split_nodes_interleave(struct numa_meminfo *ei,
+ 		nr_nodes = MAX_NUMNODES;
+ 	}
+ 
+-	/*
+-	 * Calculate target node size.  x86_32 freaks on __udivdi3() so do
+-	 * the division in ulong number of pages and convert back.
+-	 */
+-	size = max_addr - addr - mem_hole_size(addr, max_addr);
+-	size = PFN_PHYS((unsigned long)(size >> PAGE_SHIFT) / nr_nodes);
++	/* count physical nodes with memory */
++	for_each_node_mask(i, physnode_mask) {
++		phys_blk = emu_find_memblk_by_nid(i, pi);
++		if (phys_blk < 0)
++			continue;
++		physnodes_with_mem++;
++	}
+ 
+ 	/*
+-	 * Calculate the number of big nodes that can be allocated as a result
+-	 * of consolidating the remainder.
++	 * Calculate target fake nodes sizes for each physical node with memory.
++	 * x86_32 freaks on __udivdi3() so do the division in ulong number of
++	 * pages and convert back.
+ 	 */
+-	big = ((size & ~FAKE_NODE_MIN_HASH_MASK) * nr_nodes) /
+-		FAKE_NODE_MIN_SIZE;
++	for_each_node_mask(i, physnode_mask) {
++		phys_blk = emu_find_memblk_by_nid(i, pi);
++		if (phys_blk < 0)
++			continue;
+ 
+-	size &= FAKE_NODE_MIN_HASH_MASK;
+-	if (!size) {
+-		pr_err("Not enough memory for each node.  "
+-			"NUMA emulation disabled.\n");
+-		return -1;
++		sizes[i] = pi->blk[phys_blk].end - pi->blk[phys_blk].start -
++			   mem_hole_size(pi->blk[phys_blk].start, pi->blk[phys_blk].end);
++		sizes[i] = PFN_PHYS((unsigned long)(sizes[i] >> PAGE_SHIFT) /
++			   nr_nodes * physnodes_with_mem);
++
++		/*
++		 * Calculate the number of big nodes that can be allocated as a result
++		 * of consolidating the remainder.
++		 */
++		bigs[i] = ((sizes[i] & ~FAKE_NODE_MIN_HASH_MASK) * nr_nodes) / physnodes_with_mem /
++			  FAKE_NODE_MIN_SIZE;
++		sizes[i] &= FAKE_NODE_MIN_HASH_MASK;
++		if (!sizes[i]) {
++			pr_err("Not enough memory for each node inside physical numa node %d. NUMA emulation disabled.\n",
++			       i);
++			return -1;
++		}
+ 	}
+ 
+ 	/*
+@@ -138,16 +150,16 @@ static int __init split_nodes_interleave(struct numa_meminfo *ei,
+ 			}
+ 			start = pi->blk[phys_blk].start;
+ 			limit = pi->blk[phys_blk].end;
+-			end = start + size;
++			end = start + sizes[i];
+ 
+-			if (nid < big)
++			if (nid < bigs[i])
+ 				end += FAKE_NODE_MIN_SIZE;
+ 
+ 			/*
+ 			 * Continue to add memory to this fake node if its
+ 			 * non-reserved memory is less than the per-node size.
+ 			 */
+-			while (end - start - mem_hole_size(start, end) < size) {
++			while (end - start - mem_hole_size(start, end) < sizes[i]) {
+ 				end += FAKE_NODE_MIN_SIZE;
+ 				if (end > limit) {
+ 					end = limit;
+@@ -169,7 +181,7 @@ static int __init split_nodes_interleave(struct numa_meminfo *ei,
+ 			 * next node, this one must extend to the end of the
+ 			 * physical node.
+ 			 */
+-			if (limit - end - mem_hole_size(end, limit) < size)
++			if (limit - end - mem_hole_size(end, limit) < sizes[i])
+ 				end = limit;
+ 
+ 			ret = emu_setup_memblk(ei, pi, nid++ % nr_nodes,
+@@ -432,7 +444,7 @@ void __init numa_emulation(struct numa_meminfo *numa_meminfo, int numa_dist_cnt)
+ 		unsigned long n;
+ 
+ 		n = simple_strtoul(emu_cmdline, &emu_cmdline, 0);
+-		ret = split_nodes_interleave(&ei, &pi, 0, max_addr, n);
++		ret = split_nodes_interleave(&ei, &pi, n);
+ 	}
+ 	if (*emu_cmdline == ':')
+ 		emu_cmdline++;
+-- 
+2.34.1
 
-I was trying to avoid lists, because it's a maintainance nightmare (the
-lists are never complete, there might be false positives, etc.), and
-we'd need to add another type of a list for DMI quirks. Moreover, adding
-both my change and a list entry has a drawback that similarly broken
-devices will use different workaround code (i.e. less robust), and the
-ones that use the generic fallback will never get on the list, because
-no one will report it.
-
-As a maintainer, what's your preferred approach?
-
-1. Unbind ourselves on failure in azx_probe_continue() (but I don't know
-whether it's possible).
-
-2. Add a DMI deny list to hda_intel.
-
-3. Add a DMI check to quirk_nvidia_hda (i.e. don't enable a non-existent
-HDA if it's not enabled by BIOS on this laptop model).
-
-4. Driver becomes a stub no failure in azx_probe_continue() (this
-patch).
-
-5. Some combo of 4 and 2/3?
-
-> Though, a slight concern is the sequence of runtime PM you applied in
-> the patch.  Is it a standard idiom to perform pm_runtime_disable(),
-> set_suspended() and enable()?
-
-I'm not an expert in PM. Before I wrote this code, I was meditating on
-the docs for a few hours, and what I understood was:
-
-1. As we are disabling the device (below in the same function), we need
-set_suspended() to just update the state.
-
-2. set_suspended() must be called with PM disabled (see the comment
-above the function).
-
-3. Disable and enable must come in pairs, because there is refcounting.
-
-I've seen set_suspended() after disable() on device remove (e.g.,
-rt9120_remove()). For hda_intel, assuming that disable/enable are
-already paired, adding a new disable without a matching enable would
-break refcounting. Hence such a sequence.
-
-I'd love to hear an opinion from someone more experienced in PM.
-
-> Also, azx_free() is the common
-> destructor, hence it's called also at the regular driver unbinding.
-> I'm not entirely sure whether it's OK to call there also at
-> unbinding.
-
-I don't have hardware to test this flow, but theoretically it looks OK
-to me: we set the suspended state as we disable the device.
-
-> 
-> thanks,
-> 
-> Takashi
-> 
-> > 
-> > > 
-> > > 
-> > > Takashi
-> > > 
-> > > 
-> > > > 
-> > > > Is it not the right place?
-> > > > 
-> > > > > 
-> > > > > Takashi
-> > > > > 
-> > > > > > Another way to make vga_switcheroo work is to disable quirk_nvidia_hda,
-> > > > > > although I don't know whether it can be done without recompiling the
-> > > > > > kernel. In this case, 0000:01:00.1 doesn't even appear on the bus.
-> > > > > > 
-> > > > > > (Note that I need to set nouveau.modeset=2 either way, otherwise it
-> > > > > > stays in DynPwr if the screen is on.)
-> > > > > > 
-> > > > > > > 
-> > > > > > > 
-> > > > > > > thanks,
-> > > > > > > 
-> > > > > > > Takashi
-> > > > > > > 
-> > > > > > > > ---
-> > > > > > > >  sound/pci/hda/hda_intel.c | 14 +++++++++++++-
-> > > > > > > >  1 file changed, 13 insertions(+), 1 deletion(-)
-> > > > > > > > 
-> > > > > > > > diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-> > > > > > > > index b79020adce63..65fcb92e11c7 100644
-> > > > > > > > --- a/sound/pci/hda/hda_intel.c
-> > > > > > > > +++ b/sound/pci/hda/hda_intel.c
-> > > > > > > > @@ -1361,8 +1361,20 @@ static void azx_free(struct azx *chip)
-> > > > > > > >  	if (use_vga_switcheroo(hda)) {
-> > > > > > > >  		if (chip->disabled && hda->probe_continued)
-> > > > > > > >  			snd_hda_unlock_devices(&chip->bus);
-> > > > > > > > -		if (hda->vga_switcheroo_registered)
-> > > > > > > > +		if (hda->vga_switcheroo_registered) {
-> > > > > > > >  			vga_switcheroo_unregister_client(chip->pci);
-> > > > > > > > +
-> > > > > > > > +			/* Some GPUs don't have sound, and azx_first_init fails,
-> > > > > > > > +			 * leaving the device probed but non-functional. As long
-> > > > > > > > +			 * as it's probed, the PCI subsystem keeps its runtime
-> > > > > > > > +			 * PM status as active. Force it to suspended (as we
-> > > > > > > > +			 * actually stop the chip) to allow GPU to suspend via
-> > > > > > > > +			 * vga_switcheroo.
-> > > > > > > > +			 */
-> > > > > > > > +			pm_runtime_disable(&pci->dev);
-> > > > > > > > +			pm_runtime_set_suspended(&pci->dev);
-> > > > > > > > +			pm_runtime_enable(&pci->dev);
-> > > > > > > > +		}
-> > > > > > > >  	}
-> > > > > > > >  
-> > > > > > > >  	if (bus->chip_init) {
-> > > > > > > > -- 
-> > > > > > > > 2.46.0
-> > > > > > > > 
 
