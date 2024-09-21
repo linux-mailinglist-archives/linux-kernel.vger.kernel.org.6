@@ -1,100 +1,209 @@
-Return-Path: <linux-kernel+bounces-334715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8ACC97DAF9
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 02:23:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD06D97DAFC
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 02:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E41031C20F9C
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:23:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83EFA282F07
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D37E15C3;
-	Sat, 21 Sep 2024 00:23:43 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F3F257B;
+	Sat, 21 Sep 2024 00:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FZDJ9VnZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8986F23BE
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 00:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C0110E6;
+	Sat, 21 Sep 2024 00:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726878223; cv=none; b=nxWHYfFRhL/06GbhVeD4YH2QefKPlYny2RYKD+wlBlNou6PYpy5BFGtDtVXxarLzBb2tbgWnzmPc1subFULBCPov2rQEmTCXgtVRsRH5dOH2teunMM93zRPkH9QYmyiD4gc9NkHCxQ1UhD2IH2DxcDrPoJDSIVsJGkZOR+kpz+c=
+	t=1726878304; cv=none; b=eAQOhdeI4XDAqxZCGx+Tfi8ztzkwpP8ZsbTsUM4jExR/Tqpn9c3JtLOWeTYF23rmMnD3mdIumQYUbUY3ZorN6kMDmkwrWS3UpoZ9nN1pfcQC9UqMTbeniR2DGEjKzfqiK1V8JHzclrGSy8SrRoCK6NcwVdWEOU3wBtN36ulOyNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726878223; c=relaxed/simple;
-	bh=u3rB5hTcQZuAa3rbKg+NZtZmddC3KHjKGLwztVJusSY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hfx2dE9UbstUvkqWwSEJl/pFq0L+5eyuEBPmR6t++OaZi0wnqEqdNJ1E5q7i7HUyo4XjDl7WOrAbMLKikAB5ug3o4Mbv8qFax19mmcCcZBehmOxQ4Y2lH4RXMBj5NQgYZD9wsm0IRt1rtt3vKRcQHDwymcdHvO6GSAN1e21/EuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0a2c95e81so32545205ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 17:23:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726878220; x=1727483020;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zyv9c9d6atwEArdssp7ggLPbXX30xCj+fHgKHGN4Xao=;
-        b=ExSyT4xzrWNE2/oz09DyrjbtbrzuqVRcJRd8y20RzriG5ZuE0ctR9icQa2igB0+V9l
-         LmbGTABAdfQF80iLJazK7Y2ydlr14G1VOQQQEShBHwDU9jPoJePCszi+rM785AVGgEAm
-         zowXo+sVW6gORBnzM2cLlUrpXz+vyloJgNr6ifu2QvHRL4eebfXThPPTlFtV9N34SaC1
-         3H/TM0TSvrg+GrwNF9Oh13VkPtOLiVdpXSmzQIOicPLZa9qbtoS2pgfW2EQQNrmHcGcO
-         ouJ4APuqyymcLAZYjXbxEAiNfIVcbRCdn8Rmn8zlLgMmJUXpT3T8AQvhVTFXSS/S7vqJ
-         ETMQ==
-X-Gm-Message-State: AOJu0YwYpChbSZWMIh3WKws4+m/IQl6B0GghNPQBqkXwxh0YdMMXgILp
-	CHCKkMMvJAHLS6V8m50xKrj73JCbBP3/h4AQvT4FK1mQWjXSzsAtR6Z8yZ5zEe71uL6nyCzolBA
-	i8+IeegkEctvyyYjHQVdROWNKXwYo4j4GS6CzT5dGKSE4sKiBACRevKc=
-X-Google-Smtp-Source: AGHT+IE6q+nEU4Y1AUHYw3pEc0tK42TWbDeZnJyb+wjbke+bJbf3QCt8oSKR2Tg14y26tBFCrahY5fDI0cLsWhTrKqdQzm1kpV9r
+	s=arc-20240116; t=1726878304; c=relaxed/simple;
+	bh=myBcqF/KQGuPoP9RYMYc2B6DAYHbjrD3pZNXUMO3jpw=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=ml+PdrxoUNDB+TUKPa4TzLj7d0tUumFAA1oLWtuHJ68vzigXOcjm4+LPVXpMR/xyzIKVu2ilIhueC/lT0SVMLtsfDr/RwmwVy+Bmg1sZ6Vy1IxMfKU1eVz87mPDiBDU6G81J0YYIQiZV0uhiNzZ5Yg+yvTtFSYsZaGCC9UZemFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FZDJ9VnZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2684AC4CEC3;
+	Sat, 21 Sep 2024 00:25:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726878303;
+	bh=myBcqF/KQGuPoP9RYMYc2B6DAYHbjrD3pZNXUMO3jpw=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=FZDJ9VnZisFBe1oIcyZ+weuArltlrJaTUECWdhP6bAXFe04J6o6R9KSytJ3okPWFf
+	 bEo1Fwy+eItZgDFTShbHZTr8lf9sppNeBCxQVt6kTHMppMpqU3NjTXfOfsYbK4opNX
+	 nWbJMLwEbFo+L4T/sRZ/fl2dMYAGK/Fa4xkz6HaXIND0lOBrrQN/efUxPc4zc/cK2E
+	 I1xbfrnwzYT7YVtH2/qThCv1Rp5YsDscQ0NdFpsFsZmn5RKPH/yLkiXW9QxQllgrR5
+	 ULSY57dB5x/KvNvsGLWAMvlvZmWQbv4x20N+CgV7L+ddDJtaUY9ZLl6XiAD9fCEbD5
+	 ZddGdzrlAIfuQ==
+Date: Fri, 20 Sep 2024 19:25:02 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc7:b0:39f:5521:2cd4 with SMTP id
- e9e14a558f8ab-3a0c8d3978amr47903515ab.26.1726878220637; Fri, 20 Sep 2024
- 17:23:40 -0700 (PDT)
-Date: Fri, 20 Sep 2024 17:23:40 -0700
-In-Reply-To: <66edaa30.050a0220.25340c.0006.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ee120c.050a0220.3195df.001f.GAE@google.com>
-Subject: Re: [syzbot] [PATCH] netfs: Fix a KMSAN uninit-value error in netfs_clear_buffer
-From: syzbot <syzbot+921873345a95f4dae7e9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+Cc: Merck Hung <merckhung@gmail.com>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+In-Reply-To: <20240920-jg-blackrock-for-upstream-v2-0-9bf2f1b2191c@oldschoolsolutions.biz>
+References: <20240920-jg-blackrock-for-upstream-v2-0-9bf2f1b2191c@oldschoolsolutions.biz>
+Message-Id: <172687817265.147669.10724647062896729336.robh@kernel.org>
+Subject: Re: [PATCH v2 0/2] arm64: dts: qcom: sc8280xp-wdk2023: dt
+ definition for WDK2023
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
+On Fri, 20 Sep 2024 19:47:23 +0200, Jens Glathe wrote:
+> "Microsoft Windows Dev Kit 2023" aka "Blackrock" aka "Project Volterra"
+> 
+> Device tree for the Windows Dev Kit 2023. This work
+> is based on the initial work of Merck Hung <merckhung@gmail.com>.
+> 
+> Supported features:
+> - USB type-c and type-a ports
+> - minidp connector
+> - built-in r8152 Ethernet adapter
+> - PCIe devices
+> - nvme
+> - ath11k WiFi (WCN6855)
+> - WCN6855 Bluetooth
+> - A690 GPU
+> - Venus codec
+> - ADSP and CDSP
+> - GPIO keys
+> - Audio definition (works via USB)
+> 
+> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Signed-off-by: Merck Hung <merckhung@gmail.com>
+> 
+> Original work: https://github.com/merckhung/linux_ms_dev_kit/blob/ms-dev-kit-2023-v6.3.0/arch/arm64/boot/dts/qcom/sc8280xp-microsoft-dev-kit-2023.dts
+> 
+> This dt is more or less deducted from the Thinkpad X13s.
+> It contains a lot of guesswork, and also a lot of research on
+> what works with the Windows Dev Kit.
+> 
+> It is in use and under development since May 2023, pretty stable now.
+> 
+> ---
+> Changes in v2:
+> - removed whitespaces and breaks
+> - added compatibility binding
+> - added feature list
+> - reformatted Signed-off list
+> - Link to v1: https://lore.kernel.org/r/5f5487e1-e458-4a3a-af02-c52e50ca1964@oldschoolsolutions.biz
+> 
+> ---
+> Jens Glathe (2):
+>       arm64: dts: qcom: sc8280xp-wdk2023: dt definition for WDK2023
+>       dt-bindings: arm: qcom: Add Microsoft Windows Dev Kit 2023
+> 
+>  Documentation/devicetree/bindings/arm/qcom.yaml    |    1 +
+>  arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+>  .../boot/dts/qcom/sc8280xp-microsoft-blackrock.dts | 1332 ++++++++++++++++++++
+>  3 files changed, 1334 insertions(+)
+> ---
+> base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+> change-id: 20240920-jg-blackrock-for-upstream-7c7aca20e832
+> 
+> Best regards,
+> --
+> Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> 
+> 
+> 
 
-Subject: [PATCH] netfs: Fix a KMSAN uninit-value error in netfs_clear_buffer
-Author: marcus.yu.56@gmail.com
 
-#syz test
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-Use kzalloc instead of kmalloc in netfs_buffer_append_folio to fix a KMSAN uninit-value error in netfs_clear_buffer
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
----
- fs/netfs/misc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 0ad0982ce0e2..6f967b6d30b6 100644
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -22,7 +22,7 @@ int netfs_buffer_append_folio(struct netfs_io_request *rreq, struct folio *folio
- 		return -EIO;
- 
- 	if (!tail || folioq_full(tail)) {
--		tail = kmalloc(sizeof(*tail), GFP_NOFS);
-+		tail = kzalloc(sizeof(*tail), GFP_NOFS);
- 		if (!tail)
- 			return -ENOMEM;
- 		netfs_stat(&netfs_n_folioq);
--- 
-2.46.0
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y qcom/sc8280xp-microsoft-blackrock.dtb' for 20240920-jg-blackrock-for-upstream-v2-0-9bf2f1b2191c@oldschoolsolutions.biz:
+
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: /: dp1-connector@0: 'anyOf' conditional failed, one must be fixed:
+	'reg' is a required property
+	'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: /firmware/qseecom: failed to match any schema with compatible: ['qcom,qseecom-sc8280xp', 'qcom,qseecom']
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: /firmware/qseecom: failed to match any schema with compatible: ['qcom,qseecom-sc8280xp', 'qcom,qseecom']
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: bluetooth: 'vddaon-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: bluetooth: 'vddwlcx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: bluetooth: 'vddwlmx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: bluetooth: 'vddbtcmx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: bluetooth: 'vddrfa1p8-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: pcie@1c00000: Unevaluated properties are not allowed ('pcie-vdda-supply', 'vdda-supply' were unexpected)
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc8280xp.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: phy@1c06000: 'phy-supply', 'pll-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: pcie@1c20000: max-link-speed: 16 is not one of [1, 2, 3, 4]
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc8280xp.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: pcie@1c20000: Unevaluated properties are not allowed ('#address-cells', '#interrupt-cells', '#size-cells', 'aspm-no-l0s', 'bus-range', 'device_type', 'dma-coherent', 'interconnect-names', 'interconnects', 'interrupt-map', 'interrupt-map-mask', 'linux,pci-domain', 'max-link-speed', 'msi-map', 'num-lanes', 'pcie-vdda-supply', 'pcie@0', 'perst-gpios', 'phy-names', 'phys', 'power-domains', 'ranges', 'required-opps', 'vdda-supply', 'vddpe-3v3-supply', 'wake-gpios' were unexpected)
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc8280xp.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: pcie@1c20000: max-link-speed: 16 is not one of [1, 2, 3, 4]
+	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: phy@1c24000: 'phy-supply', 'pll-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: phy@88e5000: 'phy-supply', 'vdda-phy-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/phy/qcom,usb-snps-femto-v2.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: phy@88e7000: 'phy-supply', 'vdda-phy-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/phy/qcom,usb-snps-femto-v2.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: phy@88e8000: 'phy-supply', 'vdda-phy-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/phy/qcom,usb-snps-femto-v2.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: phy@88e9000: 'phy-supply', 'vdda-phy-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/phy/qcom,usb-snps-femto-v2.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: phy@88ea000: 'phy-supply', 'vdda-phy-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/phy/qcom,usb-snps-femto-v2.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: phy@88ef000: 'phy-supply', 'pll-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: phy@88f1000: 'phy-supply', 'pll-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: phy@88eb000: 'phy-supply', 'pll-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: phy@8902000: 'phy-supply', 'vdda-phy-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/phy/qcom,usb-snps-femto-v2.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: phy@8903000: 'phy-supply', 'pll-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: usb@a4f8800: usb@a400000:phy-names: 'oneOf' conditional failed, one must be fixed:
+	'usb2-port0' is not one of ['usb2-phy', 'usb3-phy']
+	'usb2-port0' does not match '^usb(2-([0-9]|1[0-4])|3-[0-3])$'
+	'usb3-port0' is not one of ['usb2-phy', 'usb3-phy']
+	'usb3-port0' does not match '^usb(2-([0-9]|1[0-4])|3-[0-3])$'
+	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: usb@a400000: phy-names: 'oneOf' conditional failed, one must be fixed:
+	'usb2-port0' is not one of ['usb2-phy', 'usb3-phy']
+	'usb2-port0' does not match '^usb(2-([0-9]|1[0-4])|3-[0-3])$'
+	'usb3-port0' is not one of ['usb2-phy', 'usb3-phy']
+	'usb3-port0' does not match '^usb(2-([0-9]|1[0-4])|3-[0-3])$'
+	from schema $id: http://devicetree.org/schemas/usb/snps,dwc3.yaml#
+arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dtb: phy@aec2a00: 'phy-supply', 'pll-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
+
+
+
+
 
 
