@@ -1,99 +1,133 @@
-Return-Path: <linux-kernel+bounces-334869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A2F97DDB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 17:38:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A0D97DDB5
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 17:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 158AF281F43
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 15:38:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F6381C20C35
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 15:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3441741DA;
-	Sat, 21 Sep 2024 15:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE79174EFC;
+	Sat, 21 Sep 2024 15:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="nS9ZcpEc";
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="AX9aX2vu"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lG9mNQC7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA04155CA8
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 15:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDE326AC1;
+	Sat, 21 Sep 2024 15:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726933134; cv=none; b=izQzqAQPVKCKZ7vtv5TLe9+SreAObNi9kZOexOJVuFRv1qW75A3kFJvZfPmnPDC0AqcW0+Jd5FtYbL7t7j/L5WJcm3AuR1qDrdXKAc4/mnC6hFP5ICmFDQs5AfUt4rnTFb9jv5/M5W1WBM0h08Z47/OsNzQgBl+54Vtm+lIimPw=
+	t=1726933216; cv=none; b=r/rnQMAZ7JeVa4xyipwUZtlDGC1bRgwRFBjiwOVtFB/VzZwid80y8TbCwT6I/viRF0oVki+8QhZuK1afpPDXHXjo0Bdggur1/Pbwf1qn59p/TdbkkvdC0f5vmidS98YWeBYLzVEOEVMBgQeAAeCBSuyD6HF2ZcdOUbeDQrtZkmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726933134; c=relaxed/simple;
-	bh=pxxmCge3/fbp/g+GpHmeh7A8aAwf0mMZVrly2uBj+B8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hj4qGsXyMvYApK98ZEjWrY1t1rG0OgR/nB0mAdMTFmQDIVFNj9/m1BzHEEE0OTLiOQOWGMOY681RrOVhmaWsEuLBVmdGLn0kZLbcd6iUmtjAUbuTpLJWzNs/UoV7gq1ddvdf9Iw6s1QL7T+uGfCnhTOLljUW1XJrE7D+6uzRn+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=nS9ZcpEc; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=AX9aX2vu; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=nS9ZcpEcaMQYl7xuGFbn/1Dbn7dwNnYa09gvcHBIVMpjEj8D3dOrpvC6FK0rcyKMCnpAalRdhfIdNMEumRDhq3iaIlywlFVRUzwCDndqufD2ja2mxu5d1q3aIfECIJ7xm5tHUXwGFE7q+KGtdyZu++92OTjC/L+fV1O+rCO+5jDdxx5ZVyrMCrm4Uh2kCfvV2QT/OnZRguaF4ZD32/NxkHCEmvNOHz3HD98s03KQe2VRMOJxL72YR3z0GGZd7MHXP93N3B5wANseIYM77XRaSMUSKkDxaeoFyHwrOKyhCvRNPvjz6vhJu2Fv7VV9NLjMk9ScFkLP7UsR/Obh9DEgOA==; s=purelymail3; d=lkcamp.dev; v=1; bh=pxxmCge3/fbp/g+GpHmeh7A8aAwf0mMZVrly2uBj+B8=; h=Received:Date:Subject:To:From;
-DKIM-Signature: a=rsa-sha256; b=AX9aX2vuVkXGKG4NM+fEWBG9+dKaGdWwmcnIg5WnXlRKICuCf+xtT1DkHXmj3LebfiYLyFl+ykk2gq57gDZ31dtf+oAN8gZ/CW0zxgEReeaadV6tm2+2CQEU/XfmJ7FJNqKHA8hPmRpVpIJwtpEx1r65IwPylMaAQWag6cP9296BzHIm8oFdWhBeIX7hICC0OkM4F1vhIUJ0OUDY/kFbybw9MTslg8eimR9HsyuDCRVxy1Kbbcp6ay9WNOcyfMVhoGxh3BDKIkIduNT2NOmHnmfkMcbXAdQ9ItAJCFACtK4QI+RJcaISDN4KXKjIrl+3znzDZTl/EaMwGeIMVO9+zw==; s=purelymail3; d=purelymail.com; v=1; bh=pxxmCge3/fbp/g+GpHmeh7A8aAwf0mMZVrly2uBj+B8=; h=Feedback-ID:Received:Date:Subject:To:From;
-Feedback-ID: 40580:7130:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1611511204;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Sat, 21 Sep 2024 15:38:39 +0000 (UTC)
-Message-ID: <bf02d1e2-c912-4e43-9396-7e056d1b92ef@lkcamp.dev>
-Date: Sat, 21 Sep 2024 12:38:35 -0300
+	s=arc-20240116; t=1726933216; c=relaxed/simple;
+	bh=4CxDI76mPU+av0PlDueKI0ZftQmM4Hg/wO91AfGb+BA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=PtlP3vk+um/EU/6DVebNEGjGeYMOvmnqVBncZnnUjh14rEP1pvQXSjC5e6honFtHVy5epkmuT0QfeMq/lRwjylu4t5cyXBnwXand1TVw+jKP+NiMo3S9+cDHWhHtb7U1yfvilIg2qmgVObQc1FPF5cFQdpdHhzkK8XtyMso/q/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lG9mNQC7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA0FAC4CEC2;
+	Sat, 21 Sep 2024 15:40:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726933216;
+	bh=4CxDI76mPU+av0PlDueKI0ZftQmM4Hg/wO91AfGb+BA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lG9mNQC7KEW0nXIn7zBz5m8fkpiHVe3caQ+vTqDQ94XVbQ/227S55P+MKY20GpX5H
+	 4KU0o3f7qzva6l/UwbINxrjW5n1l5SrmdIDrv59UyVxsxuQWkvJ0Hh9Wbv+8mvn262
+	 lntcnMyG4rNTn85JvYEliF9w8Qb4bCABaP2LOGEJZFdqPBJYulocBOBVVNYttNKIkP
+	 /Fe8mTztkd0KlQcnpwaC186EHifE2hVJpWg9Ben3t+BAaWaHM94zeWFVf6ICM7gZ7j
+	 xU+In4yGI/PJ/pGC9NJRpTMfhfQ1DuXi+qGSERgGBbCImYeJO/sidvktarMkrJHPZL
+	 I5+N4x5jDYB4A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: sm750fb: Rename variable
- sm750_hw_cursor_setData2
-To: Fabricio Gasperin <fgasperin@lkcamp.dev>,
- Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
- Teddy Wang <teddy.wang@siliconmotion.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht
-References: <20240921152124.11560-1-fgasperin@lkcamp.dev>
-Content-Language: en-US
-From: Vinicius Peixoto <vpeixoto@lkcamp.dev>
-In-Reply-To: <20240921152124.11560-1-fgasperin@lkcamp.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 21 Sep 2024 18:40:12 +0300
+Message-Id: <D4C2QDK9WGUH.KQCJ19C43ONW@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Roberto Sassu"
+ <roberto.sassu@huaweicloud.com>, "Linux regressions mailing list"
+ <regressions@lists.linux.dev>
+Cc: <keyrings@vger.kernel.org>, "linux-integrity@vger.kernel.org"
+ <linux-integrity@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>,
+ "Pengyu Ma" <mapengyu@gmail.com>
+Subject: Re: [regression] significant delays when secureboot is enabled
+ since 6.10
+X-Mailer: aerc 0.18.2
+References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
+ <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
+ <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
+ <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
+ <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
+ <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
+ <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
+ <D43JXBFOOB2O.3U6ZQ7DASR1ZW@kernel.org>
+ <7e47f97aede88b87fbb9c9284db2005764bfbedd.camel@huaweicloud.com>
+ <D46RE2BWMGJ4.25VA7IVYTJ8MO@kernel.org>
+ <D46RWPQ211ZS.12EYKZY053BH@kernel.org>
+ <0b22c2c4b4a998fb44bb08be60a359acb9ecb8da.camel@HansenPartnership.com>
+ <D46XX6HNU686.50X57ZWI2GUX@kernel.org>
+ <7586c7e6e6028a734a8cac3d4b1a8504e6cd4b21.camel@HansenPartnership.com>
+ <D46ZV5RXW7Z9.26N1IRXNRLV9X@kernel.org>
+In-Reply-To: <D46ZV5RXW7Z9.26N1IRXNRLV9X@kernel.org>
 
-Hi Fabricio,
+On Sun Sep 15, 2024 at 7:22 PM EEST, Jarkko Sakkinen wrote:
+> On Sun Sep 15, 2024 at 6:00 PM EEST, James Bottomley wrote:
+> > On Sun, 2024-09-15 at 17:50 +0300, Jarkko Sakkinen wrote:
+> > > On Sun Sep 15, 2024 at 4:59 PM EEST, James Bottomley wrote:
+> > > > On Sun, 2024-09-15 at 13:07 +0300, Jarkko Sakkinen wrote:
+> > > > > On Sun Sep 15, 2024 at 12:43 PM EEST, Jarkko Sakkinen wrote:
+> > > > > > When it comes to boot we should aim for one single
+> > > > > > start_auth_session during boot, i.e. different phases would
+> > > > > > leave that session open so that we don't have to load the
+> > > > > > context every single time.=C2=A0 I think it should be doable.
+> > > > >=20
+> > > > > The best possible idea how to improve performance here would be
+> > > > > to transfer the cost from time to space. This can be achieved by
+> > > > > keeping null key permanently in the TPM memory during power
+> > > > > cycle.
+> > > >=20
+> > > > No it's not at all.=C2=A0 If you look at it, the NULL key is only u=
+sed
+> > > > to encrypt the salt for the start session and that's the operating
+> > > > taking a lot of time.=C2=A0 That's why the cleanest mitigation woul=
+d be
+> > > > to save and restore the session.=C2=A0 Unfortunately the timings yo=
+u
+> > > > already complain about still show this would be about 10x longer
+> > > > than a no-hmac extend so I'm still waiting to see if IMA people
+> > > > consider that an acceptable tradeoff.
+> > >=20
+> > > The bug report does not say anything about IMA issues. Please read
+> > > the bug reports before commenting ;-) I will ignore your comment
+> > > because it is plain misleading information.
+> > >=20
+> > > https://bugzilla.kernel.org/show_bug.cgi?id=3D219229
+> >
+> > Well, given that the kernel does no measured boot extends after the EFI
+> > boot stub (which isn't session protected) finishes, what's your theory
+> > for the root cause?
+>
+> I don't think there is a silver bullet. Based on benchmark which showed
+> 80% overhead from throttling the context reducing number of loads and
+> saves will cut a slice of the fat.
+>
+> Since it is the low-hanging fruit I'll start with that. In other words,
+> I'm not going touch session loading and saving. I'll start with null
+> key loading and saving.
 
-On 9/21/24 12:21, Fabricio Gasperin wrote:
-> Rename function sm750_hw_cursor_setData2 to sm_750_hw_cursor_setdata2
-> 
-> Change made in order to silence the camelCase warning from checkpatch.pl
-> 
-> Signed-off-by: Fabricio Gasperin <fgasperin@lkcamp.dev>
-> ---
->   drivers/staging/sm750fb/sm750_cursor.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/sm750fb/sm750_cursor.c b/drivers/staging/sm750fb/sm750_cursor.c
-> index eea4d1bd36ce..e95f39b51a2f 100644
-> --- a/drivers/staging/sm750fb/sm750_cursor.c
-> +++ b/drivers/staging/sm750fb/sm750_cursor.c
-> @@ -131,7 +131,7 @@ void sm750_hw_cursor_setData(struct lynx_cursor *cursor, u16 rop,
->   	}
->   }
->   
-> -void sm750_hw_cursor_setData2(struct lynx_cursor *cursor, u16 rop,
-> +void sm750_hw_cursor_setdata2(struct lynx_cursor *cursor, u16 rop,
->   			      const u8 *pcol, const u8 *pmsk)
-I think you missed one other occurrence of this function in the header 
-(drivers/staging/sm750fb/sm750_cursor.h), which causes it to fail to 
-build. Please fix the function name there as well. I think those are the 
-only two occurrences of it, though.
+"my theory" worked pretty well. It brought the boot time back to 8.7s,
+which can be explained with encryption overhead pretty well.
 
->   {
->   	int i, j, count, pitch, offset;
+I'd suggest reading the bug report next time before solving a problem
+that did not exist. We care about users, not unfinished patch sets.
 
-Thanks,
-Vinicius
+BR, Jarkko
 
