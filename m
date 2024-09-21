@@ -1,60 +1,63 @@
-Return-Path: <linux-kernel+bounces-334720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9638097DB0C
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 02:51:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4479797DB10
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 02:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B86711C21334
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:51:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E53C11F21F79
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FEE3D7A;
-	Sat, 21 Sep 2024 00:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF752F3E;
+	Sat, 21 Sep 2024 00:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="skeOAPTI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LSoK4n68"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED59C15C3;
-	Sat, 21 Sep 2024 00:51:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF59E15C3;
+	Sat, 21 Sep 2024 00:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726879887; cv=none; b=sa9dYtk/wa18EVByys6lZEXoquAS+oeOhQein9sfjNdQ3N9vEWOkTW9jGwXsu0ahxKh87pkVtH16qMLUiw9V6xFt0RYF0WGy9aOkwsv0VoSbiaAC5kG79GF7IHrrkCDU2dE1HtB5+uae+m2VaCFv2+Ihe0qLN378w07YK8d/nX8=
+	t=1726879967; cv=none; b=qpLPRwQo6SDnoYfx+IxchD/N3rMgy6WYJCH3DhVb327/ok1vslnYrnkDI3E4s8jYLWoWjImKpRT7zk6JqA0axt1xhM3dvi44VSPzVmOeNpUUmRpZo9EMEq5nj81DfTdJDu466xqD+BQdN8vKXCSRUcopuv+Wg1bKxoqQzPPVdeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726879887; c=relaxed/simple;
-	bh=xfWEe9VXimdKEOoSPZSqdLphGcQU8Jjk+vswELSDzKw=;
+	s=arc-20240116; t=1726879967; c=relaxed/simple;
+	bh=Ew4IcMCEa8YzyxrVwkXd+y/Nq+B0O5bzEquyaZoikgM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lbaoMATRiVOy1/t2/wkZ0rU8QGTPeiOcLu0NM+Jo8UdFdsZ349DSW55wa7xJHP+VnECOnUvH4SK9Eu+9YAP0iaRCpQfh+ROoogmW/kJIRmWlGlqc2ss3rWML5CEJBtPdcMJfQajilaZZ/S+8mcsdpoSeb52lArkHugxL0/jLyfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=skeOAPTI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FCFAC4CEC3;
-	Sat, 21 Sep 2024 00:51:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fSZBCvKImaNU2YAcf/vuKhKjREFR6BByr4qvXpnaQAi2N+fG6TR8gO/HR4V106GClOevsWjoLQXO57JRC3zIsF9lL6tj3uhuZTniI/Czp6lc226pTx7JVY655+hQndUSJ9qikYJi0G19Zg3uy0CsvAQHX5FIMbN2aNlEYpI171A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LSoK4n68; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F1DEC4CEC3;
+	Sat, 21 Sep 2024 00:52:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726879886;
-	bh=xfWEe9VXimdKEOoSPZSqdLphGcQU8Jjk+vswELSDzKw=;
+	s=k20201202; t=1726879966;
+	bh=Ew4IcMCEa8YzyxrVwkXd+y/Nq+B0O5bzEquyaZoikgM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=skeOAPTIlhpkJyDgBSPs5lSqa5ttldDH1qhOvFY47o2jtPOmt98dPmGz2ZWeIYbBn
-	 X5TX4p2FOFvPG3+S99hf4SM363DCLmO9ZYVKtY4t+9TQ5vNxzOG+pBi50upxD6S9Oi
-	 KZWFSdcoLA/PyNC3GhxFRXlRA9+nm3NECq8E1mh/jd2yDdkVRyhtBolDiRz3Rxadcs
-	 UgibMqjG1YgTR9+FwBYkFPvwkq1A5ZNzlHw8rWSfMk0k+TZPTHX3mtyAVWOYs4qQVM
-	 xDkHRrGyyF3Y/b47s7Z80nPQNR+r3EocThTdC49Re83f/2tZD0zoXuxVqrb86RSxcJ
-	 +7aptXJOWuuiQ==
-Date: Fri, 20 Sep 2024 19:51:25 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andreas Kemnade <andreas@kemnade.info>, tony@atomide.com,
-	Sebastian Reichel <sre@kernel.org>, linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
+	b=LSoK4n68mb6GjY/LyqV67r3PQRcQypBSo/NljlG18Oq5RoxyH4/sszulryAkIqVB9
+	 Fi7lZVmH6hx//DPBp0v6qlDA83EyXzaeYx3AaxTiM9HzxmD/ZVP3TY9+Q+Og5oBqC5
+	 Q8vQavEhHSaL6g2xFOs+aekyXpf6D8LVlHJkWt3y1VOYq54pFbHb1d9QcEvYAptWw8
+	 lGw+lSjirlGvgnXqXA+iZNRKYmgPGKrVuz/ZXDJ9bTa7M063+o3vkKO2/VayY0baFd
+	 tkLsAWjQeaejMPIb32iHV7vMQuWpIQa0JDY5qaV7pgW8BsDBoqqLF53DmvYf8Pqu7v
+	 z+2fu7fTARfrQ==
+Date: Fri, 20 Sep 2024 19:52:45 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: mfd: twl: add charger node also for
- TWL603x
-Message-ID: <20240921005125.GA165161-robh@kernel.org>
-References: <20240918084132.928295-1-andreas@kemnade.info>
- <20240918084132.928295-3-andreas@kemnade.info>
- <c38c9ada-e054-4a14-9265-25065048ae54@kernel.org>
+	linux-renesas-soc@vger.kernel.org,
+	Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow
+ 'input-schmitt-{enable,disable}' and 'drive-open-drain' properties
+Message-ID: <172687996507.184385.8256447340209726726.robh@kernel.org>
+References: <20240918120909.284930-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240918120909.284930-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,40 +66,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c38c9ada-e054-4a14-9265-25065048ae54@kernel.org>
+In-Reply-To: <20240918120909.284930-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Wed, Sep 18, 2024 at 12:47:22PM +0200, Krzysztof Kozlowski wrote:
-> On 18/09/2024 10:41, Andreas Kemnade wrote:
-> > Also the TWL603X devices have a charger, so allow to specify it here.
-> > 
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > ---
-> >  .../devicetree/bindings/mfd/ti,twl.yaml        | 18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> > index e94b0fd7af0f8..4064a228cb0fc 100644
-> > --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> > +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> > @@ -105,6 +105,11 @@ allOf:
-> >              regulator-initial-mode: false
-> >  
-> >        properties:
-> > +        bci:
-> 
-> charger
-> 
-> > +          type: object
-> 
-> additionalProperties: true
-> 
-> Each node must end with additionalProperties or unevaluated. I think you
-> never tested it, because dtschema reports this.
 
-This is under an if/then schema is why there's no errors.
+On Wed, 18 Sep 2024 13:09:07 +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> On the RZ/V2H(P) SoC we can configure the 'input-schmitt-{enable,disable}'
+> and 'drive-open-drain' of multiplexed pins. Update the binding
+> documentation to include these properties.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  .../devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml     | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-This schema probably should have been 3 with a ti,twl-common.yaml schema 
-for the common properties, but I'm not sure it is worth changing now.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Rob
 
