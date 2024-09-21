@@ -1,117 +1,174 @@
-Return-Path: <linux-kernel+bounces-334760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4E1497DBD2
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:19:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75F6197DBD6
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 959A9B2169B
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 06:19:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A74291C21300
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 06:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAFC149DFD;
-	Sat, 21 Sep 2024 06:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C489014A096;
+	Sat, 21 Sep 2024 06:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DzKpLavB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="PjtdbXOd"
+Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C6674BF8;
-	Sat, 21 Sep 2024 06:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F333874BF8;
+	Sat, 21 Sep 2024 06:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726899574; cv=none; b=WptLbGngk9glkcUFhORgFVWDGGOw6yBs/xsRTriy52EylwQ5nODsbmLU0t4Re9aksjZB70njrk6ArU9vvNEq/ybKtb6Yv3ywSuMbf61e1wol7y1TGQb+6idT8UXh13Rig3LzOK6/w0IVH0OfN+EVO8bBl8foOGNHsDWc4sZDcfA=
+	t=1726899898; cv=none; b=kJopWH7P3on+1XGSMFvEbkBvIpdLmClSGjhL+2O1YdOfEdNrH4mbegi7QiEyWeaS+4pI22KiCkyRFBNYwr9JDnW0u6psFMWvIJ1GvoQiNRZ3NOUnOXjjhNbI0ohtv8Sp0gno5zr4GsKbuJolnPda/Ka26NAcyxGJy15Ct0dVDwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726899574; c=relaxed/simple;
-	bh=r8lyuqxjz8ntpV/jzePgsOO5DLCwExmP0IlwCT3nMdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vi1V6bfb/94sUecA7aYsPTv8IjQeCIwekdJbqwP3dbIIUSIDVVN5mbVbRsL42q3MkHYKrCnV84X7KDnATmReWrvnS1DU3AoK6VcpegvrGP5q6T5Zqblp1IgNmT+f1+ALbltIyXk+38s0boZVUTJq01qfjpvrKffihxSBqF5ho0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DzKpLavB; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726899573; x=1758435573;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=r8lyuqxjz8ntpV/jzePgsOO5DLCwExmP0IlwCT3nMdM=;
-  b=DzKpLavBnons08vYafGDI4x8lybPu4DrUzYgK/PFsGru/vXBYrLEZ/sr
-   LtrWrGQ9NYVFL0UdKkbMmTeJtXi78ftvLBUlOeDARI5qsAcreFR/igomu
-   ORnhpmrZX0CK8C49Mrcqaj0RhchUcMc7k+0sIAnG2SXn7STG43bd/dEBp
-   MXFvb1Ef9xIIz1mDq6H4qq83go407DDyd1OEvgwkvwpR6j9je8f7e6aAd
-   YjnqWN8b8UiYiLQlNsKtjm/IvgcERoq7uQTtJ37NxK+I9/uPxF5nnWEWp
-   am2FOkzUZ8DZW0Ay+bLZuMbXmMnGQ0IPlSCtyK1+oEK42yANjU9AwIzTt
-   Q==;
-X-CSE-ConnectionGUID: wpFM0WaZQUq1a7y1kDj80A==
-X-CSE-MsgGUID: +oT52yvGQqOUUeEWxShW3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11201"; a="37285751"
-X-IronPort-AV: E=Sophos;i="6.10,246,1719903600"; 
-   d="scan'208";a="37285751"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 23:19:32 -0700
-X-CSE-ConnectionGUID: L6VGEUdDRSGrzJM3HAbwOQ==
-X-CSE-MsgGUID: wP5rVOxqRUKhTrYn0zxL/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,246,1719903600"; 
-   d="scan'208";a="75080919"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 20 Sep 2024 23:19:30 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1srtSp-000FAb-3D;
-	Sat, 21 Sep 2024 06:19:28 +0000
-Date: Sat, 21 Sep 2024 14:18:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vishnu Sankar <vishnuocv@gmail.com>, jikos@kernel.org,
-	bentiss@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, mpearson-lenovo@squebb.ca,
-	vsankar@lenovo.com, Vishnu Sankar <vishnuocv@gmail.com>
-Subject: Re: [PATCH] hid: hid-lenovo: Supporting TP-X12-TAB-1/2 Kbd Hotkeys
- using raw  events.
-Message-ID: <202409211318.ZsE7JGOi-lkp@intel.com>
-References: <20240917100432.10887-1-vishnuocv@gmail.com>
+	s=arc-20240116; t=1726899898; c=relaxed/simple;
+	bh=5mH7mMTVTr3FhqnocQwFbpDBgHlshX4tmQnu+pFtNeg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nNbsoADrbW53LlrcK0Iiy2ypHkMQeMTsVeBzMcC17MHrJB7/DFaGQXY0uV5aDjWBEmeG3GIwctJDQG974SRUXUNpb2fCyokrKGrXyiC74XstBZ8B4FojHdlffMwTg0nlMk1NTb8BQN3Sz3EbdATX9JHLxARiV2+OXil2JWN+u5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=PjtdbXOd; arc=none smtp.client-ip=216.71.153.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1726899895; x=1758435895;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=5mH7mMTVTr3FhqnocQwFbpDBgHlshX4tmQnu+pFtNeg=;
+  b=PjtdbXOdHq6WslT53E1xD0fW9IDBqPoW9cAYnzz+iAT178+eCZ551Xsl
+   bo03xYW3uW0u0GqsY3z4Pm9TphorQbxHEq0LRtPpdOwCf7BlHx+nD7DMh
+   7a9pMbCNfv/Pml2aBKzXAWcMGlbnjedADeu1AwkoH+MSKBZj3HRh5Bxul
+   EU4fj7yLUDqDZhZJ5YZUWABGZxz3kyQH9mD6QSpwgB+3jeg1vYX4T1dXc
+   MJOxIXk79VKAKjDbgDW27Cv58wF1VimHHwGKSe+gFQOGYwrxnbFfETeG9
+   FaspC2fkZpRQBhunCwaNMzdWujdi5uYwGDoZvWIKmu2OmmIwVfTRzCywG
+   A==;
+X-CSE-ConnectionGUID: jI2AIvWBRJSV86V50oa9JQ==
+X-CSE-MsgGUID: KPN99nuQQSWDd2TJnyjcYw==
+X-IronPort-AV: E=Sophos;i="6.10,246,1719849600"; 
+   d="scan'208";a="28226048"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 21 Sep 2024 14:24:54 +0800
+IronPort-SDR: 66ee5885_OR5yk4Ajn5bE8ZwbPgxAlxJWPJJ6Ot9cOKbeCoAScoOaDCi
+ dNp8p5jImZ0Ir7uQvo5ozLPV7p2IbBTGQBLkXeQ==
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Sep 2024 22:24:21 -0700
+WDCIronportException: Internal
+Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Sep 2024 23:24:53 -0700
+From: Avri Altman <avri.altman@wdc.com>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bart Van Assche <bvanassche@acm.org>,
+	Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH v4] scsi: ufs: Zero utp_upiu_req at the beginning of each command
+Date: Sat, 21 Sep 2024 09:23:06 +0300
+Message-Id: <20240921062306.56019-1-avri.altman@wdc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240917100432.10887-1-vishnuocv@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Vishnu,
+This patch introduces a previously missing step: zeroing the
+`utp_upiu_req` structure at the beginning of each upiu transaction. This
+ensures that the upiu request fields are properly initialized,
+preventing potential issues caused by residual data from previous
+commands.
 
-kernel test robot noticed the following build errors:
+While at it, re-use some of the common initializations for query and
+command upiu.
 
-[auto build test ERROR on hid/for-next]
-[also build test ERROR on linus/master next-20240920]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Avri Altman <avri.altman@wdc.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Vishnu-Sankar/hid-hid-lenovo-Supporting-TP-X12-TAB-1-2-Kbd-Hotkeys-using-raw-events/20240917-180639
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
-patch link:    https://lore.kernel.org/r/20240917100432.10887-1-vishnuocv%40gmail.com
-patch subject: [PATCH] hid: hid-lenovo: Supporting TP-X12-TAB-1/2 Kbd Hotkeys using raw  events.
-config: i386-randconfig-062-20240921 (https://download.01.org/0day-ci/archive/20240921/202409211318.ZsE7JGOi-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240921/202409211318.ZsE7JGOi-lkp@intel.com/reproduce)
+---
+Changes in v4:
+ - Remove a redundant argument (Bart)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409211318.ZsE7JGOi-lkp@intel.com/
+Changes in v3:
+ - initialize *ucd_req_ptr once (Bart)
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+Changes in v2:
+ - Simplify things (Bart)
+---
+ drivers/ufs/core/ufshcd.c | 36 ++++++++++++++++++++++--------------
+ 1 file changed, 22 insertions(+), 14 deletions(-)
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_powersave.o
->> ERROR: modpost: "platform_profile_cycle" [drivers/hid/hid-lenovo.ko] undefined!
-
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 8ea5a82503a9..9187cf5c949c 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -2761,7 +2761,6 @@ void ufshcd_prepare_utp_scsi_cmd_upiu(struct ufshcd_lrb *lrbp, u8 upiu_flags)
+ 	ucd_req_ptr->sc.exp_data_transfer_len = cpu_to_be32(cmd->sdb.length);
+ 
+ 	cdb_len = min_t(unsigned short, cmd->cmd_len, UFS_CDB_SIZE);
+-	memset(ucd_req_ptr->sc.cdb, 0, UFS_CDB_SIZE);
+ 	memcpy(ucd_req_ptr->sc.cdb, cmd->cmnd, cdb_len);
+ 
+ 	memset(lrbp->ucd_rsp_ptr, 0, sizeof(struct utp_upiu_rsp));
+@@ -2864,6 +2863,26 @@ static void ufshcd_comp_scsi_upiu(struct ufs_hba *hba, struct ufshcd_lrb *lrbp)
+ 	ufshcd_prepare_utp_scsi_cmd_upiu(lrbp, upiu_flags);
+ }
+ 
++static void __ufshcd_setup_cmd(struct ufshcd_lrb *lrbp, struct scsi_cmnd *cmd, u8 lun, int tag)
++{
++	memset(lrbp->ucd_req_ptr, 0, sizeof(*lrbp->ucd_req_ptr));
++
++	lrbp->cmd = cmd;
++	lrbp->task_tag = tag;
++	lrbp->lun = lun;
++	ufshcd_prepare_lrbp_crypto(cmd ? scsi_cmd_to_rq(cmd) : NULL, lrbp);
++}
++
++static void ufshcd_setup_scsi_cmd(struct ufs_hba *hba, struct ufshcd_lrb *lrbp,
++				  struct scsi_cmnd *cmd, u8 lun, int tag)
++{
++	__ufshcd_setup_cmd(lrbp, cmd, lun, tag);
++	lrbp->intr_cmd = !ufshcd_is_intr_aggr_allowed(hba);
++	lrbp->req_abort_skip = false;
++
++	ufshcd_comp_scsi_upiu(hba, lrbp);
++}
++
+ /**
+  * ufshcd_upiu_wlun_to_scsi_wlun - maps UPIU W-LUN id to SCSI W-LUN ID
+  * @upiu_wlun_id: UPIU W-LUN id
+@@ -2997,16 +3016,8 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+ 	ufshcd_hold(hba);
+ 
+ 	lrbp = &hba->lrb[tag];
+-	lrbp->cmd = cmd;
+-	lrbp->task_tag = tag;
+-	lrbp->lun = ufshcd_scsi_to_upiu_lun(cmd->device->lun);
+-	lrbp->intr_cmd = !ufshcd_is_intr_aggr_allowed(hba);
+ 
+-	ufshcd_prepare_lrbp_crypto(scsi_cmd_to_rq(cmd), lrbp);
+-
+-	lrbp->req_abort_skip = false;
+-
+-	ufshcd_comp_scsi_upiu(hba, lrbp);
++	ufshcd_setup_scsi_cmd(hba, lrbp, cmd, ufshcd_scsi_to_upiu_lun(cmd->device->lun), tag);
+ 
+ 	err = ufshcd_map_sg(hba, lrbp);
+ 	if (err) {
+@@ -3034,11 +3045,8 @@ static int ufshcd_queuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd)
+ static void ufshcd_setup_dev_cmd(struct ufs_hba *hba, struct ufshcd_lrb *lrbp,
+ 			     enum dev_cmd_type cmd_type, u8 lun, int tag)
+ {
+-	lrbp->cmd = NULL;
+-	lrbp->task_tag = tag;
+-	lrbp->lun = lun;
++	__ufshcd_setup_cmd(lrbp, NULL, lun, tag);
+ 	lrbp->intr_cmd = true; /* No interrupt aggregation */
+-	ufshcd_prepare_lrbp_crypto(NULL, lrbp);
+ 	hba->dev_cmd.type = cmd_type;
+ }
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
 
