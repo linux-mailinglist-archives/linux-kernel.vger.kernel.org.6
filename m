@@ -1,93 +1,146 @@
-Return-Path: <linux-kernel+bounces-334752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5AD97DBBA
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 07:12:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC74397DBBF
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 07:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC82C1F223E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 05:12:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D710A1C21695
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 05:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC4B22331;
-	Sat, 21 Sep 2024 05:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DE9282F7;
+	Sat, 21 Sep 2024 05:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Yzvh+Ycg"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Id95Uh0T"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745B023D7;
-	Sat, 21 Sep 2024 05:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BAA320E;
+	Sat, 21 Sep 2024 05:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726895525; cv=none; b=k5hldQ0n49OXDn5PTxTaPSOuW5RVQ2r3gFEJJMGy3haV13VwAiEF745Ta2PmyE7wdYPk2t5R6MGkB3Pf+hTG8THrAoZdo+s+gvOMZjtYYCgkZwM2mn5SX2jqHoxglWHFDrJHWUJ/QRHoPQfNAFiWmCzCUTHwL+OFQpyF9z6lyiU=
+	t=1726895819; cv=none; b=AhRpCnDtRt6AOMzfJ/OWMkI6BktAYv8as769h70mNFy3uqsxZ92vMbwsjYY1YSjZIVtVK/OMxE88r/OKHBvPiOWCScvuxDBzO1sV6ChHRK8bUYxnFdkaExT49D4Ai0pVn0ZBmyrG6gYlG29e+uE1K3ajrD62LXr1Av6VWR6H57Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726895525; c=relaxed/simple;
-	bh=IR/RbcMLxcEW3CRKaS6EynZYpOWxbMRipKXPM/A7enI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kxqx8v2u2LcDM5rFaGTpqcqURhz5DEM5YiDrKu6RzWSOHL9SXV2pgITmJsKdEW6aWyQHIKAx1m2iP2pxVXihMkToq9gSJZDTYfmo/um4MvyOKKHMUWXIbl1SuVue5/ZV7+Kq5hHEXurgHACwFM+RF2lt5GhdNhu0EZmhItzCtig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Yzvh+Ycg; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=aFd39RIctJw4zsfsu+lPZgQI531f+ULw03qXnb91Xg0=; b=Yzvh+YcgcoYLMZhpZPEdHHiyVN
-	1kvkCg24IxEibqg7ahFo5LW7zCQRwuh5PBDUuhWnFqK5/LtS3LNJ2zaYJ1H0SJPzypOJ/BlIrVvxT
-	GPA4mKd3faowmln/RV9d3mwm0/vhmGqeSGGn+qcU40/bMNY0WP1OfWik5UsOJT1bwFYboD/P2s90I
-	MDz6ixA2NX+g7zF3lvudAp0PSUZ2X9ZmlJ0JLKpd1IG8cN+Yf57PYMX38cMMmJAhuMSyFPOpiKJWi
-	JS9eR5L9RDlWA4JyogciWhM7DauCg87ugKE/3qso0y2CHqFeWUtQs5zTJBhcuiXryJTElhpNpN5V4
-	XNW9r6Zg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1srsPZ-0000000DJLL-20CV;
-	Sat, 21 Sep 2024 05:12:01 +0000
-Date: Fri, 20 Sep 2024 22:12:01 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Subject: Re: [GIT PULL] dma-mapping updates for Linux 6.12
-Message-ID: <Zu5VoW1ZkViSOws3@infradead.org>
-References: <ZuvYnXzbM2qfXQPT@infradead.org>
- <971fbb889da38ca4e60f3dedde29ea43e9338d68.camel@xry111.site>
- <Zu1byUGU832iWBUp@infradead.org>
- <Zu2Bd50GdSxF_-eA@infradead.org>
- <19e4bdbcda78ace200c78c56eb7173097337b921.camel@xry111.site>
+	s=arc-20240116; t=1726895819; c=relaxed/simple;
+	bh=ScQl6UYtagc5vPNtjCqcvlPuXz//URKuWT/fOGD5SFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZmGVm8saB313DlgjSl78ZoKuHelf8Y7zTvDvL74+cHuiDv4utHxN97pJmNZdLGhfliW3wXZBAgYgz0RI/dgw53wkSWuYQ0t1JNVAuDpwRaQAxMgGXLh5QpK9osbga4KWRydQG/Y08+XTViq2SZtXTz2FfpamLm+5+2xtjWm9dpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Id95Uh0T; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726895806;
+	bh=qyx/dHX7YUt7tYPdVE5RWKeFUCXghcIpaCAzPuASVKA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Id95Uh0TMdJVZiDEBKIrjFEpwJCF9A1H/c/voUcjFf9gh5bnQcyoiu77PbCHWvM3W
+	 07SUJ5XFJ8nnlFheNhmmfp67Edcp66LSRIN+sZtk6Dx7qT/FKHKN4U2uBdr9ptL2TI
+	 i2l/2ihF0fwG2U1K7e+zjqDAVcGdzywGlICGZSYVoPd08ashLz7hRLEG9uP0eKD4et
+	 WnrPQk8az/kxSzG1Zcx0HtL+3UahEY0p1xW2HUb5SOlfBnB+84L/VJkKd+7CUttfHS
+	 hkQjphjGLYEu1d41Yc+Lds62wBd7ORIZgL4MmDam0uJX2o0Pjuqb67bI8Vw2P9H9uV
+	 988q5puR1c9TQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X9ctj1Syrz4x8Y;
+	Sat, 21 Sep 2024 15:16:44 +1000 (AEST)
+Date: Sat, 21 Sep 2024 15:16:42 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kamlesh Gurudasani <kamlesh@ti.com>
+Cc: Danny Tsen <dtsen@linux.ibm.com>, <linux-crypto@vger.kernel.org>,
+ <stable@vger.kernel.org>, <herbert@gondor.apana.org.au>,
+ <leitao@debian.org>, <nayna@linux.ibm.com>, <appro@cryptogams.org>,
+ <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+ <mpe@ellerman.id.au>, <ltcgcw@linux.vnet.ibm.com>, <dtsen@us.ibm.com>
+Subject: Re: [PATCH v3] crypto: Removing CRYPTO_AES_GCM_P10.
+Message-ID: <20240921151642.60b89e86@canb.auug.org.au>
+In-Reply-To: <87ldzmll80.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
+References: <20240919113637.144343-1-dtsen@linux.ibm.com>
+	<87ldzmll80.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19e4bdbcda78ace200c78c56eb7173097337b921.camel@xry111.site>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: multipart/signed; boundary="Sig_/jhSltXngbv+WsRpVn7yvHAs";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Sat, Sep 21, 2024 at 01:15:43AM +0800, Xi Ruoyao wrote:
-> > > What camere and driver are you using?
-> 
-> Bus 003 Device 003: ID 0c45:6366 Microdia Webcam Vitade AF
-> 
-> The driver is uvcvideo.
-> 
-> > And what architecture and platform are you on? 
-> 
-> A x86_64 laptop (with Core i5-11300H CPU).
+--Sig_/jhSltXngbv+WsRpVn7yvHAs
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Oh, so it's not arm64, which has the most juicy changes this time
-around.
+Hi Kamlesh,
 
-Can you try the following "manual bisect" for me?
+On Fri, 20 Sep 2024 15:07:19 +0530 Kamlesh Gurudasani <kamlesh@ti.com> wrot=
+e:
+>
+> Danny Tsen <dtsen@linux.ibm.com> writes:
+>=20
+> > Data mismatch found when testing ipsec tunnel with AES/GCM crypto.
+> > Disabling CRYPTO_AES_GCM_P10 in Kconfig for this feature.
+> >
+> > Fixes: fd0e9b3e2ee6 ("crypto: p10-aes-gcm - An accelerated AES/GCM stit=
+ched implementation")
+> > Fixes: cdcecfd9991f ("crypto: p10-aes-gcm - Glue code for AES/GCM stitc=
+hed implementation")
+> > Fixes: 45a4672b9a6e2 ("crypto: p10-aes-gcm - Update Kconfig and Makefil=
+e")
+> >
+> > Signed-off-by: Danny Tsen <dtsen@linux.ibm.com> =20
+> nitpick
+> checkpatch complains
+> Please use correct Fixes: style 'Fixes: <12 chars of sha1> ("<title line>=
+")' -
+> ie: 'Fixes: 45a4672b9a6e ("crypto: p10-aes-gcm - Update Kconfig and
+> Makefile")'
+>=20
+> There is no rule for 12 characters, but it is generally preferred.
+> I guess it is just a typo for you as you have correctly added other
+> Fixes tag.
 
-First test f69e342eec008e1bab772d3963c3dd9979293e13 to see if that
-works.  If it doesn't work come back as I'm a bit lost :)
+It should be at least 12 hex digits i.e. more is fine.  It is possible
+that some commits need more than 12 hex digits of the SHA1 to be
+uniquely identified in some git repositories already.  I guess
+checkpatch needs a patch.
 
-If it does work, try b5c58b2fdc427e7958412ecb2de2804a1f7c1572 next,
-if it doesn't work can you send me your dmesg?
+> Also, just to understand,
+>=20
+> "A Fixes: tag indicates that the patch fixes an issue in a previous
+>  commit. It is used to make it easy to determine where a bug originated,
+>  which can help review a bug fix"
+>=20
+> from=20
+> https://docs.kernel.org/process/submitting-patches.html
+>=20
+> should there not be just single Fixes tag? as bug originated from one
+> commit, may be the commit that actually broke the functionality.
 
-We'll then work from there.
+While we generally prefer that a patch only fix one bug, it is very
+possible that the bug may have been introduced in more than one commit
+e.g. in different files.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/jhSltXngbv+WsRpVn7yvHAs
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbuVroACgkQAVBC80lX
+0GzFnwf/e23oe9Qw1Ca7dvh9xkyu30hNMVeham1rhS6bKpc17gT0szzMz8eWWdln
+m4DiWnBXv3x7L07rJ22+fiEtO9N6KZMKW5PWJzEQElsBzmMJfrSwgo/eUnODTZZx
+3LpE0RV0scL9+XdTaM1nOjy5nOHXG33QR3llmtXuJ/PG+RrEARjBXctl6tF/8uzp
+UI8R/NmiDozwvMXb+xGaTfxemK9CDZX0HRgY28XdRlz+Tz8j3FwEJQ7vdAJanzgp
+poRsA7urS2fg2KQBRVFL2oFaW/9OVWuoYmB4eXF971g0qOyBCMg8smG5n4TdRKsM
+8uHloMPT9uun/CL6E4onHEIgjddfvQ==
+=S5Bm
+-----END PGP SIGNATURE-----
+
+--Sig_/jhSltXngbv+WsRpVn7yvHAs--
 
