@@ -1,110 +1,182 @@
-Return-Path: <linux-kernel+bounces-334999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8785297DF86
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 01:15:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD5297DF89
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 01:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8A471C20C5D
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 23:15:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA724281E87
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 23:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B528115380B;
-	Sat, 21 Sep 2024 23:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE4416DEA5;
+	Sat, 21 Sep 2024 23:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="QU7L+5Yt";
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="FP/AhXTb"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ZQq7YhIY"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794F153365
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 23:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E98623D7;
+	Sat, 21 Sep 2024 23:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726960535; cv=none; b=tH7qAg8ZG6fYp6JnEBrf9kKwrzAJri9dYTmB/U7DZL4uHcf/Q0xZiHddsbdkbKlU4pN2zDMmiG6XxCCnRLeiUQSnveAPS9ivNXRxDGSm2rRpAZlGawCylw1g16rWQwiiqw9fah2Jmchx82mqgoj+bFAmsDBp835HLmoR1E1oSvI=
+	t=1726960570; cv=none; b=qyaUkpYBd96MvhHOlhvepQHI+QcMZ2LI0tme3TL0yM9a5PXH560YVNq78hxrB2Xw+BLlRVtTzKYQEPVSlHScl6nAsetQ4DUa2Jk5jPONwm090Zid4YShsRi5W1ajuF6HmT8NbWFyIMN+AfNzjXEaKZG4xqnVQ5aDQNVZpYqB5Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726960535; c=relaxed/simple;
-	bh=BdCHZ4PAVP32GgB5s6IOXQZbkDK93jN9b4wimAr6nhI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rifwTHZk5xu/M9WfczWghyBZAydS4tChE1qogxgIdDlFgyEfrET9EFBN2vkyKnCR/9DCzZnwGmyHJb8ubCFj/LjghVzPIx/ZJ9z9+sL8/p4cWy+j5Yjak6eZE4ZQaQGi4ZBli/qU4kxH+Pswq5Mg6suoBL5KweUwhFICWjF/zVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=QU7L+5Yt; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=FP/AhXTb; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
-Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=QU7L+5YtvCLNmytvy9JinCNFNEVpxdYjqRcOlChAo+3NsW79F/HxL80hQwZWi3Wv7x0u+eE3jw/y2qKdo4zwl12MREjKrOss9RapaenA4ri2seYF7FDA23/VEWKUpYs4r1sNXnSzLypFPxKJenSWz+bU4KKeNS7SvH6TdeX2HNYZrlj9zjknrmcNNRhRp+VMupE+y/Jk3Pmu4zoK0wcgQ7fwO0NUT4+jyfsNDxb92L0Q1pUfzkTzSakAq5pB1LnLEfMSgfZWSjo/qeXoCNXWKtad89AbVRs6aXvDLEKQuNxIBTn8EbHL8Vgr2TaenLEwStqe6VIpRSzMx8HUC/4PBA==; s=purelymail3; d=lkcamp.dev; v=1; bh=BdCHZ4PAVP32GgB5s6IOXQZbkDK93jN9b4wimAr6nhI=; h=Received:Date:Subject:To:From;
-DKIM-Signature: a=rsa-sha256; b=FP/AhXTbX/WCQNRDzpYyHUAWH4/vhL8CGjBrL3+XPoE5ct50Jafp/ItX7djP/pUwerpqBkUF3JbJ69ssnVYwjgriAQ50CSQDg9AIKo15/62nNpZCZABpbox9zagaAsZEPriWzSQTVZCU4nmEVJ+tEBV0VtWD7HKH+SyBIjIIS/OUlCKq6m64ZkD5YahAl6AzCcO0R9+GN0KTIK8Z4ChjusTEL1jHr3qSDiFd/TEdNAvKrJKz4QmPWCxtNWFErqNGCe51b0xH9Ei2DWYIQHcPgNLcICT8VdtFDZTCp8VVZybeUfUqpDRPDpEPavouoJL6eULTCgwXg647R0KyiLwoBA==; s=purelymail3; d=purelymail.com; v=1; bh=BdCHZ4PAVP32GgB5s6IOXQZbkDK93jN9b4wimAr6nhI=; h=Feedback-ID:Received:Date:Subject:To:From;
-Feedback-ID: 40580:7130:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1183207272;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Sat, 21 Sep 2024 23:15:28 +0000 (UTC)
-Message-ID: <04b041a2-d38c-4399-b4a5-1506b5a23e55@lkcamp.dev>
-Date: Sat, 21 Sep 2024 20:15:24 -0300
+	s=arc-20240116; t=1726960570; c=relaxed/simple;
+	bh=2IJ/1fp+irLU94isem+0S4oGECWv/8jutgHjbNmMBks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R489jXnaVIinCGIGaEs4l0N1HSNiQilMRnELxSne1Cim6h/vdJBOlcOYDq/PQ1GqaB7YGcquK1gPabQvtEf1LumtWVkjqzM1VC+EbSFRMrLf0AW2xspQ+zw9MFFhPKsNjj43av2r8CNhEc0LiaQwIyccdzX4FnZaM6rD3T78N9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ZQq7YhIY; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=g8kKxL7ZKl4uUi3v4aBjQ6Q74kbULsjNPVGjKjNgz/s=; b=ZQq7YhIY5fg//8tZ
+	c2oknXF+nHsadwp41JfA9YYTV8MuN9K34X/hly/msDtiPs7P0B2tX41QW0qvuphZ81c+1Z8YtWE3r
+	HaBRCK/KguoUhfyemh8E9Pgqf6NxVwpXQn3jmPTFY+fO1UsTwDFVhie/puFzYhCtZCxNY35I5TiQr
+	QHyeFIrMOhPhPzScjjr+IC3TdykAereQQTuyyG7uAyL/C2a2bFaoGUSq8IjrWsiouWTbSYzVQbOya
+	B2LOLMxSE3xso43qeiqXVX1yppLLx6Vj66RDb6K8W95/N69yKBdCG+5+SDj3sl8lBwhgukRe3/zb4
+	LbtBZX4TR3JwKx6gYQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1ss9KT-006fhC-30;
+	Sat, 21 Sep 2024 23:15:53 +0000
+From: linux@treblig.org
+To: willemdebruijn.kernel@gmail.com,
+	jasowang@redhat.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [RFC net-next] appletalk: Remove deadcode
+Date: Sun, 22 Sep 2024 00:15:50 +0100
+Message-ID: <20240921231550.297535-1-linux@treblig.org>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/1] Add KUnit tests for kfifo
-To: Diego Vieira <diego.daniel.professional@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- Brendan Higgins <brendan.higgins@linux.dev>, David Gow
- <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
-Cc: n@nfraprado.net, andrealmeid@riseup.net, vinicius@nukelet.com,
- ~lkcamp/patches@lists.sr.ht
-References: <20240903213649.21467-1-diego.daniel.professional@gmail.com>
-Content-Language: en-US
-From: Vinicius Peixoto <vpeixoto@lkcamp.dev>
-In-Reply-To: <20240903213649.21467-1-diego.daniel.professional@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi all,
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-On 9/3/24 18:36, Diego Vieira wrote:
-> Hi all,
-> 
-> This is part of a hackathon organized by LKCAMP [1], focused on writing
-> tests using KUnit. We reached out a while ago asking for advice on what would
-> be a useful contribution [2] and ended up choosing data structures that did
-> not yet have tests.
-> 
-> This patch series depends on the patch that moves the KUnit tests on lib/
-> into lib/tests/ [3].
-> 
-> This patch adds tests for the kfifo data structure, defined in
-> include/linux/kfifo.h, and is inspired by the KUnit tests for the doubly
-> linked list in lib/tests/list-test.c (previously at lib/list-test.c) [4].
-> 
-> [1] https://lkcamp.dev/about/
-> [2] https://lore.kernel.org/all/Zktnt7rjKryTh9-N@arch/
-> [3] https://lore.kernel.org/all/20240720181025.work.002-kees@kernel.org/
-> [4] https://elixir.bootlin.com/linux/latest/source/lib/list-test.c
-> 
-> ---
-> Changes in v2:
->      - Add MODULE_DESCRIPTION()
->      - Move the tests from lib/kfifo-test.c to lib/tests/kfifo_kunit.c
-> 
-> Diego Vieira (1):
->    lib/tests/kfifo_kunit.c: add tests for the kfifo structure
-> 
->   lib/Kconfig.debug       |  14 +++
->   lib/tests/Makefile      |   1 +
->   lib/tests/kfifo_kunit.c | 224 ++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 239 insertions(+)
->   create mode 100644 lib/tests/kfifo_kunit.c
-> 
+alloc_ltalkdev in net/appletalk/dev.c is dead since
+commit 00f3696f7555 ("net: appletalk: remove cops support")
 
-Gentle ping, is there any chance could we get some opinions on this? :-)
+Removing it (and it's helper) leaves dev.c and if_ltalk.h empty;
+remove them and the Makefile entry.
 
-I know that this patch is quite big, plus LPC just ended and people are 
-probably very busy, but we would really appreciate some feedback on this 
-one. Thanks in advance!
+tun.c was including that if_ltalk.h but actually wanted
+the uapi version for LTALK_ALEN, fix up the path.
 
-Vinicius
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/net/tun.c        |  2 +-
+ include/linux/if_ltalk.h |  8 -------
+ net/appletalk/Makefile   |  2 +-
+ net/appletalk/dev.c      | 46 ----------------------------------------
+ 4 files changed, 2 insertions(+), 56 deletions(-)
+ delete mode 100644 include/linux/if_ltalk.h
+ delete mode 100644 net/appletalk/dev.c
+
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 5f77faef0ff1..82abe79c98fa 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -71,7 +71,7 @@
+ #include <linux/bpf_trace.h>
+ #include <linux/mutex.h>
+ #include <linux/ieee802154.h>
+-#include <linux/if_ltalk.h>
++#include <uapi/linux/if_ltalk.h>
+ #include <uapi/linux/if_fddi.h>
+ #include <uapi/linux/if_hippi.h>
+ #include <uapi/linux/if_fc.h>
+diff --git a/include/linux/if_ltalk.h b/include/linux/if_ltalk.h
+deleted file mode 100644
+index 4cc1c0b77870..000000000000
+--- a/include/linux/if_ltalk.h
++++ /dev/null
+@@ -1,8 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef __LINUX_LTALK_H
+-#define __LINUX_LTALK_H
+-
+-#include <uapi/linux/if_ltalk.h>
+-
+-extern struct net_device *alloc_ltalkdev(int sizeof_priv);
+-#endif
+diff --git a/net/appletalk/Makefile b/net/appletalk/Makefile
+index 33164d972d37..152312a15180 100644
+--- a/net/appletalk/Makefile
++++ b/net/appletalk/Makefile
+@@ -5,6 +5,6 @@
+ 
+ obj-$(CONFIG_ATALK) += appletalk.o
+ 
+-appletalk-y			:= aarp.o ddp.o dev.o
++appletalk-y			:= aarp.o ddp.o
+ appletalk-$(CONFIG_PROC_FS)	+= atalk_proc.o
+ appletalk-$(CONFIG_SYSCTL)	+= sysctl_net_atalk.o
+diff --git a/net/appletalk/dev.c b/net/appletalk/dev.c
+deleted file mode 100644
+index 284c8e585533..000000000000
+--- a/net/appletalk/dev.c
++++ /dev/null
+@@ -1,46 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * Moved here from drivers/net/net_init.c, which is:
+- *	Written 1993,1994,1995 by Donald Becker.
+- */
+-
+-#include <linux/errno.h>
+-#include <linux/module.h>
+-#include <linux/netdevice.h>
+-#include <linux/if_arp.h>
+-#include <linux/if_ltalk.h>
+-
+-static void ltalk_setup(struct net_device *dev)
+-{
+-	/* Fill in the fields of the device structure with localtalk-generic values. */
+-
+-	dev->type		= ARPHRD_LOCALTLK;
+-	dev->hard_header_len 	= LTALK_HLEN;
+-	dev->mtu		= LTALK_MTU;
+-	dev->addr_len		= LTALK_ALEN;
+-	dev->tx_queue_len	= 10;
+-
+-	dev->broadcast[0]	= 0xFF;
+-
+-	dev->flags		= IFF_BROADCAST|IFF_MULTICAST|IFF_NOARP;
+-}
+-
+-/**
+- * alloc_ltalkdev - Allocates and sets up an localtalk device
+- * @sizeof_priv: Size of additional driver-private structure to be allocated
+- *	for this localtalk device
+- *
+- * Fill in the fields of the device structure with localtalk-generic
+- * values. Basically does everything except registering the device.
+- *
+- * Constructs a new net device, complete with a private data area of
+- * size @sizeof_priv.  A 32-byte (not bit) alignment is enforced for
+- * this private data area.
+- */
+-
+-struct net_device *alloc_ltalkdev(int sizeof_priv)
+-{
+-	return alloc_netdev(sizeof_priv, "lt%d", NET_NAME_UNKNOWN,
+-			    ltalk_setup);
+-}
+-EXPORT_SYMBOL(alloc_ltalkdev);
+-- 
+2.46.1
+
 
