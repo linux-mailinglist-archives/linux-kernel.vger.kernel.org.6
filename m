@@ -1,116 +1,145 @@
-Return-Path: <linux-kernel+bounces-334943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E2297DEAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 21:57:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D204D97DEB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 22:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1AB02816C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 19:57:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73E95B2150C
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E083126BE0;
-	Sat, 21 Sep 2024 19:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4E53D556;
+	Sat, 21 Sep 2024 20:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0gPQhbL"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l1uNoTzD"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2BA7581A
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 19:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428B7179BD
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 20:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726948631; cv=none; b=PQfcWGCTVmAHFYSK29i1AoUROc70TwXXoWZ++CXv9U92x5CDxQsk9iUugexaiEG4lUYH6hNx6xMvHtruO+B0GRqWGpxfQqVGXNn/dRiwUEpQFYbgUBOi4rNsNyDJRY2JrJPN5kE1YGyauFWJiexfudNjeU/LVnALG+LK41n4K3o=
+	t=1726948944; cv=none; b=pXhJLDkf7jXX3nHL65qG2zgkGZ0MQxztV1inh67EjzYwLj9wzuZfwMpTdx7aOpxPxA4VhSBdPETjr0pkuT9bspFrv6g2Zu36Cr8UA53CC8W2b8OXpH/Ur9ATEm0St1Seyj2lhMkfa36gY7u4uYECZJSMKSiGgbaL0i4ogiUJPkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726948631; c=relaxed/simple;
-	bh=P0yvwIw4/C32i1K3Ca/Q+dUMGKZrikS92mEUTx5/M/o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ugvwg5hM08zslc+GejbDhPFFpEsJjG8hGqjLQ9HZF5Hjw8cLrc939YYBGPZCYZcwXLRlTC72/BIex4h+BAPm6ADdBK9d1hRo3B8V8LKKpM6X8IgG6iSjTMxcoIhn83EN2/RVOBopWKi6WyQRnorNzk4+FNSpL1zfNqbApbpMEQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0gPQhbL; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2057835395aso35361865ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 12:57:09 -0700 (PDT)
+	s=arc-20240116; t=1726948944; c=relaxed/simple;
+	bh=cw+QtSHhLrewoprxKaGC5OJwziVpW/LTgWb1hcd7w68=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uILpzq2UHr2d8yCRccdnNu/MpLR7+jP7/bty8yjK/+GLwyyPoISLuLP+beb1j3zpebvfcQXcUQoNeOGPhzwnP9cgopZm2Z+UAYKIABJ5tCIapNzIgz7l8VQU3qoLCyeABOdENm//y0fUmRyGE6QHwmT6grgYrtvpsduFUnBkpns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l1uNoTzD; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53661ac5ba1so3251478e87.2
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 13:02:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726948629; x=1727553429; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tL6Q4yRMI5cAA833hyiACaaa+MFKJlXA+BVwOAtvywo=;
-        b=g0gPQhbLPuP5f2iKQkreXCuaSgsUERk+l2XWvhzdT/5b+4LgGnl0micrR7H0xx1Yjl
-         pMJKkm6Mnj71Sb8ctsD9sVZEvJ0yNUPtlAYlxMp9xfThnPEuIgX53SspK0eh9J0oLKMU
-         VFTanwaB6y/YmPc0zuFiAPyeXlXIUrK9NB88IlYlNOBP64WWDEgkv/Efj7tcIj5fevEw
-         t1Pkgk2ia4+ReFyuiP4+ikUIkuDhJFW/uysyd6FUvDqWWyX93Bkcj7oDhU6vzZ4lirDA
-         WCnzNIsAJChRhzTWu3BAy+EOlFdBNQhItK2lY/+FxSDmNK7jk/9cOGf6+dQQo+Tu/e8Q
-         QS1A==
+        d=linaro.org; s=google; t=1726948940; x=1727553740; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kTuF7VDXjW3MP//Do+X4ZOnzlFNZp1xwHs6Kru9/7Nk=;
+        b=l1uNoTzDKlcyw7rNg7NUPCt5RMMzphJ7GaVIZx3RfZz+SXpl0NqvZMTNys5yjCj1Vj
+         ORXgRkgr+zd9CkZTrXo9UamuMFgzV1QvmppY4+kgBG6M4mieRYMWftqdfCouWGcn5l5h
+         Lp3lsq/GCn3VNcoZVx0ztnG1yeppUivbUex3+fnVJOP3CCxmfzUPqwDi1l0qUb0hfz/q
+         +UhZC2+E0m8mU2hHeUl8SVUERF0BXIaSsc3W8mh9rHebYte7Csb9qPK95epd9k0h4fEX
+         uLiMOwpPP7YYA555ccwW9c395YsAPTmg3eaG7y3/5LY1Ae8NPBA4pe+lyzhOo4i6unwo
+         zB1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726948629; x=1727553429;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tL6Q4yRMI5cAA833hyiACaaa+MFKJlXA+BVwOAtvywo=;
-        b=oO0JNsAn3zgHXxWY/FtGavomp8W1WEZxUCO8BI1P7Hubci3R2b+lzCEcnm6VElXPFr
-         ebkujwoRsxdjD3gI34BL8YhQqEpYusbcOQhbaCldrInxEzH+ODzpDBnmBB5kIwGLS/4d
-         L1Q7GNOLcvXec7vm8JN6+7wzV3h48IRHDfb0HyNtlmZ68HG4ZHDDQzTZCUCLNJ1tt6Pv
-         B9B8mbviMA7csm81NX3MoXQevTWK2Ci3FXzK1LQgVCjFp35knPxVD5SaPBcGYs1jPNO6
-         cY6jAw9sxCa9FeB0rzaNXVR37ziqoXQ/V1f23bDcO7Shrxs6om6IJT1VKLqRTYezabd8
-         Hxpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVg4KDbW/tSu9YITYnnecBETofH++HGtkqz6XI6NT6vJnCB6x7o0EXUZYFV0K7GZWcOBJjBXmYW+qO0DeM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhYJ7NjPwh6ymR1mYRtAcE/hK5QrKO0wrfiyhyLWCA6uxf3iJa
-	wKyDrEW5Gx9l5OB4CpVEna5t2j01GNIGavNRGLVVue4FyGjt9hFQ
-X-Google-Smtp-Source: AGHT+IHOVPLtF44VuR8xtKWdO1Sdnkq7LicaBWc92K+g37O0VEZI4c3J/dixnkEOEekfoeeN1wANdA==
-X-Received: by 2002:a17:903:181:b0:206:9640:e751 with SMTP id d9443c01a7336-208d830ed11mr115040245ad.3.1726948628817;
-        Sat, 21 Sep 2024 12:57:08 -0700 (PDT)
-Received: from tc.. (c-67-171-216-181.hsd1.or.comcast.net. [67.171.216.181])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2079472fb94sm112006355ad.253.2024.09.21.12.57.08
+        d=1e100.net; s=20230601; t=1726948940; x=1727553740;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kTuF7VDXjW3MP//Do+X4ZOnzlFNZp1xwHs6Kru9/7Nk=;
+        b=lpa1OlvcY76gywHXvHnuFcQDlU0JZuIF5Z9MgrcYqxzB3y+1kt/06g1CYzsxHlwDbJ
+         JnU9/XcHpZaVip0cypYdyoLJQJRQVsDq4xz4CFPtaTuCucT+7gCjqacZH37KUEIeSJij
+         avz8mVxT+mO1YzI6Fv6eSz8Uuqaua7FSvzkfCLa/lUNpVGcbvu6egiy/CEuK4tgM6XjQ
+         xH44ddeDZikFnf9YZ9ma0baZB7lvFhFeyyEblrNBjdSidexxmz6hBdUMtWLQOa91/m/Z
+         40yzRQ+xO/jt9+z25xsGHUUjk295YfRlZa29jMX7+g1S0OC+lVuXZHe3fFH3a03GshBZ
+         M1bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbirF+kgAYY6qwcR3/xrpuniIjOUkBhjGQj0+DDbzHsBdhAr1L6h7fHymydvvl7eEpdEDXsb/Q43QAqV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBFNDzkZ1BaKnQC3+DJlhhsA5ck5zGV454X8S5/O1icEkv4mVs
+	pCfpivTn0tbe3HwFbk2VaxUb8t/i9jaR3AbagCaYUdheWqS/kdvktruIoTZxVlM=
+X-Google-Smtp-Source: AGHT+IEDzyk+nJzl32SGwrI75keSU5xM11P46cZbubinLNPy/qZYltSBZ5PHAiu73gulR1QeFvg7+g==
+X-Received: by 2002:a05:6512:114b:b0:52b:bf8e:ffea with SMTP id 2adb3069b0e04-536ac320139mr3789472e87.40.1726948940203;
+        Sat, 21 Sep 2024 13:02:20 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870b8cc0sm2685207e87.271.2024.09.21.13.02.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Sep 2024 12:57:08 -0700 (PDT)
-From: Leo Stone <leocstone@gmail.com>
-To: sj@kernel.org,
-	akpm@linux-foundation.org,
-	ruanjinjie@huawei.com
-Cc: Leo Stone <leocstone@gmail.com>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org
-Subject: [PATCH] mm/damon: fix sparse warning for zero initializer
-Date: Sat, 21 Sep 2024 12:54:45 -0700
-Message-ID: <20240921195511.364023-1-leocstone@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Sat, 21 Sep 2024 13:02:18 -0700 (PDT)
+Date: Sat, 21 Sep 2024 23:02:16 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: tjakobi@math.uni-bielefeld.de
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	=?utf-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>, "Derek J . Clark" <derekjohn.clark@gmail.com>, 
+	Denis Benato <benato.denis96@gmail.com>, Hans de Goede <hdegoede@redhat.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] drm: panel-orientation-quirks: Add quirk for AYA NEO
+ 2 model
+Message-ID: <gnllphvuffajfbh3aczda5z7t3ytjexf5a6wuuzsz6pla6e2kz@m564uc2ogn4q>
+References: <cover.1726492131.git.tjakobi@math.uni-bielefeld.de>
+ <2b35545b77a9fd8c9699b751ca282226dcecb1dd.1726492131.git.tjakobi@math.uni-bielefeld.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <2b35545b77a9fd8c9699b751ca282226dcecb1dd.1726492131.git.tjakobi@math.uni-bielefeld.de>
 
-sparse warns about zero initializing an array with {0,}, change it to
-the equivalent {0}.
+On Mon, Sep 16, 2024 at 03:18:51PM GMT, tjakobi@math.uni-bielefeld.de wrote:
+> From: Joaquín Ignacio Aramendía <samsagax@gmail.com>
+> 
+> Add quirk orientation for AYA NEO 2. The name appears without spaces in
+> DMI strings. That made it difficult to reuse the 2021 match. Also the
+> display is larger in resolution.
+> 
+> Tested by the JELOS team that has been patching their own kernel for a
+> while now and confirmed by users in the AYA NEO and ChimeraOS discord
+> servers.
+> 
+> Signed-off-by: Joaquín Ignacio Aramendía <samsagax@gmail.com>
+> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+> ---
+>  drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> index 2166208a961d..3044927c0c5c 100644
+> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> @@ -184,6 +184,12 @@ static const struct dmi_system_id orientation_data[] = {
+>  		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "T103HAF"),
+>  		},
+>  		.driver_data = (void *)&lcd800x1280_rightside_up,
+> +	}, {	/* AYA NEO AYANEO 2 */
+> +		.matches = {
+> +		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AYANEO"),
+> +		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "AYANEO 2"),
+> +		},
+> +		.driver_data = (void *)&lcd1200x1920_rightside_up,
 
-Fixes the sparse warning:
-mm/damon/tests/vaddr-kunit.h:69:47: warning: missing braces around initializer
+I thought that AYANEO should come after AYADEVICE, but the array doesn't
+seem really sorted. Thus:
 
-Signed-off-by: Leo Stone <leocstone@gmail.com>
----
- mm/damon/tests/vaddr-kunit.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-diff --git a/mm/damon/tests/vaddr-kunit.h b/mm/damon/tests/vaddr-kunit.h
-index a339d117150f..3dad8dfd9005 100644
---- a/mm/damon/tests/vaddr-kunit.h
-+++ b/mm/damon/tests/vaddr-kunit.h
-@@ -66,7 +66,7 @@ static int __link_vmas(struct maple_tree *mt, struct vm_area_struct *vmas,
- static void damon_test_three_regions_in_vmas(struct kunit *test)
- {
- 	static struct mm_struct mm;
--	struct damon_addr_range regions[3] = {0,};
-+	struct damon_addr_range regions[3] = {0};
- 	/* 10-20-25, 200-210-220, 300-305, 307-330 */
- 	struct vm_area_struct vmas[] = {
- 		(struct vm_area_struct) {.vm_start = 10, .vm_end = 20},
+If I hear no objections and if noone beats me, I'll apply the series
+within few days.
+
+
+>  	}, {	/* AYA NEO 2021 */
+>  		.matches = {
+>  		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AYADEVICE"),
+> -- 
+> 2.44.2
+> 
+
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
