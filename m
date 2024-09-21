@@ -1,120 +1,104 @@
-Return-Path: <linux-kernel+bounces-334837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77EE297DD33
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 14:22:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9AD97DD36
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 14:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A6A1C20E20
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 12:22:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51F5D1F21B95
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 12:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2745170A23;
-	Sat, 21 Sep 2024 12:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0441D16F8EF;
+	Sat, 21 Sep 2024 12:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="uRNzYsU+"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEn4sQhD"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E85C1714A1
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 12:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B5C137E;
+	Sat, 21 Sep 2024 12:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726921346; cv=none; b=DnZ5vsN6m1HqJmB6q37OjDYs/8B/r9Jpdae9a7hANNcTFKF/2ogKXxbpp/DbJkFApPa/T6H++OlzVLSV6IUObdFViQkF5gtZzNJBauaYcu/VadirR6P6X3+j7nx30etEeUPMhJt5rVgaUeX76ats0rhOUEQGDETwPTcNnstXNf0=
+	t=1726921486; cv=none; b=i91rTtbXo5BU3YBSzBjyT1609miwD1hg0JVcyRIQZ8K7bggYthQ3xH8FXzwO59ZeD7OhcxEi0DU45pyzGfCnecXY0OkVbm6si2BERRnrfnrCHmWdEd91TaVJqybkp/KqIyqNhMGW93RrOXb8CgLWxz1Ps4SxBIkTdHkImJGYdZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726921346; c=relaxed/simple;
-	bh=tt+1ziUrp7YEZ1KW7m/nhGSU8fM0G6RypBSbDkSUwG8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QagthO6LOyvcCQUhSlMGcOIGC0aU59zSym4kG4PFv0dcJMCag89ZUXDXBLi5201iYW22f0bPMeWN7t49Qed4i54RJ82qOCloUKfaTN3zGhVsmwmgVE12Qwxa30vm4F5UtBsSd5zcXAl3bWYg9VErVgvYaXb5/LFfaWANLQbF3nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=uRNzYsU+; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1726921342; x=1727180542;
-	bh=tt+1ziUrp7YEZ1KW7m/nhGSU8fM0G6RypBSbDkSUwG8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=uRNzYsU+j/rgKI3qYVwkgz8CKDU3MK/+jApon0cqND5JXWuvRW+jig54EbnfKNaun
-	 l/WXx575RqndXck5e51ZdXBlkyjfZVwD+IFuC9YoCEJ7fsZoXKuZg8Jgmj7DOkkRxT
-	 fDcAoa1+vLypxCWxIulvOSUIBui4dtW1IceSvVF+G9qZX7UC3V8c0AIqnOuwEnmXpS
-	 TBvE3/pyxxwuzp9q6lKdd5b2I/KdgqH2/mZMKjjS7eQTSXDR2bl/nAQh3NfCuJwk7I
-	 pm22h6TQlYtKbnBWqkdvQfqWTg7OXiZQ3lDk8doVuI1vMjxlKFdQ8gse9LjeclBgAe
-	 K5YRYoEyb2nCQ==
-Date: Sat, 21 Sep 2024 12:22:20 +0000
-To: gregkh@linuxfoundation.org, tdavies@darkphysics.net, philipp.g.hortmann@gmail.com, dan.carpenter@linaro.org
-From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Subject: [PATCH 2/2] staging: rtl8192e: r8192E_dev.c: Rename btMsr variable
-Message-ID: <20240921122113.30009-3-dominik.karol.piatkowski@protonmail.com>
-In-Reply-To: <20240921122113.30009-1-dominik.karol.piatkowski@protonmail.com>
-References: <20240921122113.30009-1-dominik.karol.piatkowski@protonmail.com>
-Feedback-ID: 117888567:user:proton
-X-Pm-Message-ID: 4791aeab4bf3734d7676fb36c82107f9aa347f53
+	s=arc-20240116; t=1726921486; c=relaxed/simple;
+	bh=Lm5wT3nctgKw603dwlAmokov0gKbgWJJS54F9VbU9Wc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o05dQ8RHLcN+doF+etaPIqx02wf6RU5XTNozjJBaAEQr/3yyr7Pz0Q5sskMlGKvBSmjAa8ZhttbfYRWS3vDPO0ss8zLjxXEapQ2BjpMCGYeHksoOneBmT9DT5pfRAm1+o/QvP+KqvD0dnZi/zLvu4QNIX5T4PNXMRgNFq+Ex9i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aEn4sQhD; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53654dbde59so3781633e87.1;
+        Sat, 21 Sep 2024 05:24:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726921483; x=1727526283; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BnV4AAkppYdl3VxpkVdBWhDkeq1tyHDu6V34X7mplIs=;
+        b=aEn4sQhD8vkSZF6exOfNB1HXli4naG8OE8uXoFsZRFVKnw5rUknwATcooGRC/MlqHQ
+         jNjwjR7qnNM00GFgNigRAbF9Q6RWtBCnMFDzXn3uWUrJLv/jgTDJnG0vQhjcvMhfITrf
+         iKsICk8VpjxEFQjKAKQf4Ux2M7fqG0l5hGN+3WQxgeq1diQb9S4cazCnmgtxzODTkVjn
+         du6WEsILsUfk1/4hczT5SrKb7jikrmmyR43IgEPa3PrXVl4g7phXGSEsNIV90YI50rs5
+         74JTa3amWeQSLEayTD+u10tsw7lFEibBel1DefjN81VToeHU6QHCjksIaVFlf6/i6IaA
+         H8Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726921483; x=1727526283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BnV4AAkppYdl3VxpkVdBWhDkeq1tyHDu6V34X7mplIs=;
+        b=CPCHZ2O22Zkdxw3r/d1Ero5s/z6ltdlt+cv68K/DOt3KlHRvmvHuOBbNXwErncT5nk
+         MyLDBvOLyQE9M2SiUL+EbUGxcFE5PBJW2h/OUwR775gQhPNx5tUyEtd6fOOVLImLoZsN
+         R48jYJlrOm9UWBZC6TzywPsQ0d4IkMaSXfQqk1o7gP0iou8Bm593tuQeiXh2FOeKm5C4
+         pHhT0j4uCHXJ2G4o7BZzVDGMajE3xYCIKtTrmdfJrssz3GSbbIB+GWCcsXUB2R0HoKqU
+         ILYgARU5U5GTL0YdLUmaJIwqHtCXpsrJCY2YNovdtZwnAla6psU4vPaS8s1R0iuF/OXo
+         GJlA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHBxmL/S0Fu2EU1krEaOUQtWURZDR32p8Aza1GVGOsySEUMuNzLrRlJoT+V3MzCHptnH5EHVq8XZtsCvyG@vger.kernel.org, AJvYcCVW4p+PzxWvgZ1i1TqWlB51BU25Dg/Hu4FAnux+jnWAcIINwFkaatfAbPlzyI4YdDe6jqVCdWIoBP2+@vger.kernel.org, AJvYcCXCb3uqtYJeKBC+4FQHhzOCVY3/c6VwcBEmkERNWT7RIZhV/HK7GOgYmlFtGgbrb0dKDbwanaJrruBz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg8ooDKa1EPe9/AX01H5ml/qSCTKVbjnNHrqTLvYM5WhM5k+rO
+	fme/9l7hvc2vjv9z7oPxZ8a+rEDPMeIw8RBWyhkcBcYzxNsdfabTmFn3rJVd4hZ1dDscq/YDsrq
+	1jxDpGMBAafgAoIfsn6dBykh6zp6Sss7u
+X-Google-Smtp-Source: AGHT+IHoWHrGLBUT8JY+piHvjihWgo99vAImbbX2yX9mk8Be7SSOMzH323JpYw94nPlLuAepPzXyxgM4onEBHNSwyKg=
+X-Received: by 2002:a05:6512:a8d:b0:533:3fc8:43fb with SMTP id
+ 2adb3069b0e04-536ab7c7c4emr2435107e87.0.1726921482619; Sat, 21 Sep 2024
+ 05:24:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240920080154.1595808-1-michal.vokac@ysoft.com> <20240920080154.1595808-3-michal.vokac@ysoft.com>
+In-Reply-To: <20240920080154.1595808-3-michal.vokac@ysoft.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Sat, 21 Sep 2024 09:24:31 -0300
+Message-ID: <CAOMZO5BrmuWdiEo6xi8ChT01jfLMaLAb88iUhS1kt6qqr_h7pQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] arm64: dts: imx: Add imx8mp-iota2-lumpy board
+To: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Petr Benes <petr.benes@ysoft.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Herburger <gregor.herburger@ew.tq-group.com>, 
+	Hiago De Franco <hiago.franco@toradex.com>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>, Michael Walle <mwalle@kernel.org>, 
+	Alexander Stein <alexander.stein@ew.tq-group.com>, Mathieu Othacehe <m.othacehe@gmail.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-This patch renames btMsr to msr in rtl92e_set_reg function in order to
-avoid using camel case.
+Hi Michal,
 
-Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@prot=
-onmail.com>
----
- drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+On Fri, Sep 20, 2024 at 5:02=E2=80=AFAM Michal Vok=C3=A1=C4=8D <michal.voka=
+c@ysoft.com> wrote:
 
-diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c b/drivers/stagi=
-ng/rtl8192e/rtl8192e/r8192E_dev.c
-index 675e0e263697..db375ba9a223 100644
---- a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-+++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-@@ -52,29 +52,29 @@ void rtl92e_set_reg(struct net_device *dev, u8 variable=
-, u8 *val)
- =09case HW_VAR_MEDIA_STATUS:
- =09{
- =09=09enum rt_op_mode op_mode =3D *((enum rt_op_mode *)(val));
--=09=09u8 btMsr =3D rtl92e_readb(dev, MSR);
-+=09=09u8 msr =3D rtl92e_readb(dev, MSR);
-=20
--=09=09btMsr &=3D ~MSR_LINK_MASK;
-+=09=09msr &=3D ~MSR_LINK_MASK;
-=20
- =09=09switch (op_mode) {
- =09=09case RT_OP_MODE_INFRASTRUCTURE:
--=09=09=09btMsr |=3D MSR_LINK_MANAGED;
-+=09=09=09msr |=3D MSR_LINK_MANAGED;
- =09=09=09break;
-=20
- =09=09case RT_OP_MODE_IBSS:
--=09=09=09btMsr |=3D MSR_LINK_ADHOC;
-+=09=09=09msr |=3D MSR_LINK_ADHOC;
- =09=09=09break;
-=20
- =09=09case RT_OP_MODE_AP:
--=09=09=09btMsr |=3D MSR_LINK_MASTER;
-+=09=09=09msr |=3D MSR_LINK_MASTER;
- =09=09=09break;
-=20
- =09=09default:
--=09=09=09btMsr |=3D MSR_LINK_NONE;
-+=09=09=09msr |=3D MSR_LINK_NONE;
- =09=09=09break;
- =09=09}
-=20
--=09=09rtl92e_writeb(dev, MSR, btMsr);
-+=09=09rtl92e_writeb(dev, MSR, msr);
- =09}
- =09break;
-=20
---=20
-2.34.1
+> +&usb_dwc3_1 {
+> +       dr_mode =3D "host";
+> +       pinctrl-names =3D "default";
 
-
+Per Rob's robot message, this pinctrl-names entry should be removed.
 
