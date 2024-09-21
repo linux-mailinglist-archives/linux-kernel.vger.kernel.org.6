@@ -1,91 +1,178 @@
-Return-Path: <linux-kernel+bounces-334797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68CE697DC45
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 11:04:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E29297DC4B
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 11:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 898B9282696
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 09:04:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5BB91F21ED6
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 09:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B5A153800;
-	Sat, 21 Sep 2024 09:04:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564C615572B;
+	Sat, 21 Sep 2024 09:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XaZKm2dB"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8E6F9DF
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 09:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EF3154C00
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 09:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726909445; cv=none; b=s+Uwv3bZ9yLcOYVmFbs2/a6rH0IwZzO7NM88I53VTOOkFqTukO3rZ9Pc2HuGf9khl5Xn09DC3yP3/cuQCD3qjxvIFamGcfs4MOqVSADnX9DYc3PAh8vLHLWqadCU7DGZTaPzhMN/ikcoRz1up7bTw6pQMatSodxCSSWIWpDJDnA=
+	t=1726909898; cv=none; b=ExxAwpHeNAbXJF4cEeHrQz+3rtEHffLPSSMtG3GtG8QiVlo83KVSeFjwcvtiYXlB+2IfJilAKfVXQYnIrjOD58s09mpMrObxnCTYNuUd4kiw3+8eCYQEShF4FCe+ZRvOVb7bsGm9h8+APd5kbwS47SOhre9VvTMuVv0nJgGvp5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726909445; c=relaxed/simple;
-	bh=FjAXqBOq+CPPb4BT+P79g+jjcwids8X+giETE77YKlk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EMXzdY3jn+t0zHH8cEAwq8QQy9eBC3tOUsTgWoZ+OS9pqCVFGkZ2tGUo0LwBcfx4T9jVLd54jwnsjkWxJWZWxTtlfTz1qOF8r7Co3CYUVTAK4/rC/jQlFKRsL2VhUTp8DU8bOY+KD0CH2szG4uyjSVgGDABezcz64Fr8TazwB/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82cdc7b7debso274554839f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 02:04:02 -0700 (PDT)
+	s=arc-20240116; t=1726909898; c=relaxed/simple;
+	bh=LpJePFkpOCrmRcm2bsO+S0TBF/81jncGa0BOoDbOWMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dbl7u0GOPdHoxcI3LQws6R+pWgutGa/QdbQE3rijj3FrLdiVuTtV+NYSrpZf3Gp0GqhC03LMV3Be4wTCCdle4vZIRa2uT5OY+BsY8nb9lUJLSKT5r675t7KDpglKLoV8UIzSIiwui8fzuuphyj43XX8UrWwIwNaRn9ZLPcJG8gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XaZKm2dB; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so25831915e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 02:11:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726909894; x=1727514694; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C+92qmWOWTsTas7qxFq00TXpzuJdYrOV4QtxxZMwe1U=;
+        b=XaZKm2dBv5HUY4/EEmQCJIUGMHQ4CeVCcMeCBRv/7r4dGPocjvRrDllm+9khqqlfiN
+         U1b44TufL6gh+wBAUyt5YA+oyVoaDGogH1kt3EJrS4nZoZ/ew/yFq4roBLEbeeWyJbxT
+         pvL763sYKqQ46woOOhQKtdPhFHmA7xlpE9EB8Y2GDCjbxbcn5Fa/Uqnp8EwkTx3KvbvG
+         oK2KiQ864VjeXm3XQ55y87bxb7q2uATZFTTI5dJvm33I5b5bkJPGe3g4MGRTERhUfI04
+         lTahfcj81KqD8lKZX8+EpW6mTSKesBEVfCvxq+VYrIsh5svyTQDnvXezX7G2zzEnh27U
+         bOOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726909442; x=1727514242;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x7C8sUsknAKI4dWXYDaWFFCB7+f9DNSi3s450iQOSGo=;
-        b=D+d6cpPLdJNkV4j100SzLLzidA2Pj+6sd0NSr1IJ5SrEZ0UHyXroiO2v8hcj4H2VOc
-         7kOQ10eL2P4Doz/fKV8bzbcFzI2JKA/VyWcLlgse0VX5ODp7Zvb8gpLaeJ4pVxTtHUKx
-         UTL2ntodZBiTK6JuvW+s/OmG9SBUjjLVfHqmULOfgZN3uN5oW/QPQAz+gAQlm4phINSZ
-         45Ys5wGnMXhrJ6qqy5oNF2x5owO+KYREMOqv1NvDoZa08RujEuqCajQG0GE17yQ9zGsu
-         oIml7pJXbQZroPXMDKBBihW6VEPc1rSjUhMXE1YBShhPvKb066jrPb4bLI9e7vENZ6zd
-         bOlA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlMva+JzU5m0qA7872XaC6XhGeYzsXxYikbKTpqC03MUK8nWAgVBAL0eN0gX3pdl33gsw5WaWcUNA2x28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwalzZW9+hUg3tSJTJKiFw7RbsN5DbpufzasKFlBapOODKXL/pD
-	n0LAd0X4Q80JgiVucRzbGIWAQv1TGxyB6GkJBcz/wtiKH8XT6qwhpvc1+iI02thEI43+otIYdS/
-	vFR/pYuyOm2R9KK4u4wVmKYLn/aPe+PUJVuTXpjIj01sy0XJrf4GHJes=
-X-Google-Smtp-Source: AGHT+IFtmZ2BIuyp1nsyCOgp/9XnNJTxSSL1J46oLWYLKdYfdEOp9mBn7LRABAD3LUQlw9cg7Wo68HeJm6Q38adEteMKJev38bjk
+        d=1e100.net; s=20230601; t=1726909894; x=1727514694;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C+92qmWOWTsTas7qxFq00TXpzuJdYrOV4QtxxZMwe1U=;
+        b=gP5lM9z7BgsFSjRlbYqb2icVJ+rojdDDSlUoQJsgkl5f36LEIwcicDKv1gyFksLbDY
+         80BnLg1afAHp5Xtt6t28IVcILkR0eEupRW97E9rHq0S85SjOZ/WcIXMqgHcV9cyeNrXr
+         lG65EppNP5nHDVb7522FsalypxXefMK4piwlQ2eT8p5IL4Szpds3LAULVJGsloyWYyXI
+         5i5fL75HyQo4tqEf4CWL6cJBllmYhPZp7l0/TtBxSjPDYjahqYthcy1epzCHM0W1VLdG
+         bZjyoerEyxrF4m69Hd44U1o6quKyRYK9upcrpSKJ8+cstTo1uymJmGNIUpt47ninnJTh
+         OUqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWIl8vz1u2VFHQqShPWlEmrCPFHGFQs9VTFqSmya3uDA7JXi65/KZZpfR54ZEQuIB2hPXmxyRm3sXbRloc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyufRl35OBEfcGEKtJPsp4NPEsoUEsSJF43/Z5QhfH13nHOXI/h
+	dpMap2kPNlckJeyw1XcyXRNECRA/tGHutsTF25gJ90ZdynDW96Ss6pmEVbjPHbs=
+X-Google-Smtp-Source: AGHT+IFV5E3ga/jxa4eXGMk8POq04Bbel4E3r0fgnVOV8eR2jCM6IsYm+TrLRuBiPpwnTwd1oYZTXw==
+X-Received: by 2002:adf:fcc6:0:b0:374:caf6:ca2f with SMTP id ffacd0b85a97d-37a4318a753mr2912540f8f.45.1726909893833;
+        Sat, 21 Sep 2024 02:11:33 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:a0b5:bea5:b768:cc22])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e78044dfsm19461798f8f.94.2024.09.21.02.11.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Sep 2024 02:11:33 -0700 (PDT)
+Date: Sat, 21 Sep 2024 11:11:31 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Michal Marek <mmarek@suse.com>, 
+	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
+	aardelean@baylibre.com, dlechner@baylibre.com, jstephan@baylibre.com
+Subject: Re: [PATCH v2 01/10] dt-bindings: iio: adc: ad7606: Set the correct
+ polarity
+Message-ID: <7mk56pxpgnlu637xo7yypzfdienyh3doch3l3fkinpqbwihf33@nu7v35gdw5zn>
+References: <20240920-ad7606_add_iio_backend_support-v2-0-0e78782ae7d0@baylibre.com>
+ <20240920-ad7606_add_iio_backend_support-v2-1-0e78782ae7d0@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20cc:b0:3a0:98cd:3754 with SMTP id
- e9e14a558f8ab-3a0c8c5d347mr50671075ab.4.1726909441914; Sat, 21 Sep 2024
- 02:04:01 -0700 (PDT)
-Date: Sat, 21 Sep 2024 02:04:01 -0700
-In-Reply-To: <20240921080949.909-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ee8c01.050a0220.3195df.0044.GAE@google.com>
-Subject: Re: [syzbot] [netfs?] KASAN: slab-use-after-free Read in iov_iter_advance
-From: syzbot <syzbot+7c48153a9d788824044b@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot tried to test the proposed patch but the build/boot failed:
-
-./include/linux/sprintf.h:11:54: error: unknown type name 'va_list'
-./include/linux/sprintf.h:13:71: error: unknown type name 'va_list'
-./include/linux/sprintf.h:15:72: error: unknown type name 'va_list'
-./include/linux/sprintf.h:17:70: error: unknown type name 'va_list'
-./include/linux/sprintf.h:18:73: error: unknown type name 'va_list'
-./include/linux/sprintf.h:21:55: error: unknown type name 'va_list'
-./include/linux/fs.h:2666:9: error: implicit declaration of function 'vsnprintf' [-Werror=implicit-function-declaration]
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fon5yzoippkxiyy4"
+Content-Disposition: inline
+In-Reply-To: <20240920-ad7606_add_iio_backend_support-v2-1-0e78782ae7d0@baylibre.com>
 
 
-Tested on:
+--fon5yzoippkxiyy4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-commit:         1868f9d0 Merge tag 'for-linux-6.12-ofs1' of git://git...
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d85e1e571a820894
-dashboard link: https://syzkaller.appspot.com/bug?extid=7c48153a9d788824044b
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=165bee9f980000
+Hello Guillaume,
 
+On Fri, Sep 20, 2024 at 05:33:21PM +0000, Guillaume Stols wrote:
+> According to the datasheet, "Data is clocked in from SDI on the falling
+> edge of SCLK, while data is clocked out on DOUTA on the rising edge of
+> SCLK".
+> Also, even if not stated textually in the datasheet, it is made clear on
+> the diagrams that sclk idles at high.
+>=20
+> So the documentation is erroneously stating that spi-cpha is required, and
+> the example is erroneously setting both spi-cpol and spi-cpha.
+
+I would expect that the communication with the chip is at least
+unreliable if not outright broken with the wrong polarity. So maybe add
+something like:
+
+	On $MyMachine dropping the spi-cpha property reduces IO errors / fixes
+	measurement readout / improves somehow differently.
+
+to the commit log?
+
+> Fixes: 416f882c3b40 ("dt-bindings: iio: adc: Migrate AD7606 documentation=
+ to yaml")
+> Fixes: 6e33a125df66 ("dt-bindings: iio: adc: Add docs for AD7606 ADC")
+>=20
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+
+The empty line between Fixes and S-o-b is unusual. Assuming you resend
+anyway, please drop it.
+
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> index 69408cae3db9..75334a033539 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> @@ -29,8 +29,6 @@ properties:
+>    reg:
+>      maxItems: 1
+> =20
+> -  spi-cpha: true
+> -
+>    spi-cpol: true
+> =20
+>    avcc-supply: true
+> @@ -117,7 +115,7 @@ properties:
+>  required:
+>    - compatible
+>    - reg
+> -  - spi-cpha
+> +  - spi-cpol
+
+Adding cpol seems unrelated to this patch. (And you remove it again in
+patch #2.)
+
+>    - avcc-supply
+>    - vdrive-supply
+>    - interrupts
+
+Best regards
+Uwe
+
+--fon5yzoippkxiyy4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbujbUACgkQj4D7WH0S
+/k5zDwf/UzSdDFwznnAQVwNU4Up1WB/17Sc+fFsZK7NmAl7vGDK+ucYNoVFnLlpj
+8rnZS4oVghQvHP4XVec0RdAN6IUraFrp65HErNSk1w/ggR/AyjQ+tkksGzWzpcQu
+NOm257ZP6D5f8CaSqw3C2z613vDtCLthp4Fnhr96EGM0d4Dz8CEB0/Afd5r8Axda
+r0nMXbg1xGlhoOnEUxKSOJHTtiFlyVx1nke+odinSs26zkmlY+suaeoTSDIQTw9d
+dFO+w2ICYF0qoTrDK2hOiIeW6pfUzkcmbAEhgXHTgWXvxnaMpxJtLUy7KqaAyIkE
+TehREFAYgFWvNzKEpIz/Ny6tGNbp7A==
+=LDVO
+-----END PGP SIGNATURE-----
+
+--fon5yzoippkxiyy4--
 
