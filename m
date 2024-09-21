@@ -1,171 +1,209 @@
-Return-Path: <linux-kernel+bounces-334976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A49797DF27
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 23:55:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 268A497DF50
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 00:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D29BD281182
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 21:55:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D70AA281F05
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 22:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580D5154BE2;
-	Sat, 21 Sep 2024 21:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3CF7DA6E;
+	Sat, 21 Sep 2024 22:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgEdkJIP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="Iq5wSdtN"
+Received: from mx.kolabnow.com (mx.kolabnow.com [212.103.80.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933E37581A;
-	Sat, 21 Sep 2024 21:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31720EBE;
+	Sat, 21 Sep 2024 22:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.103.80.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726955723; cv=none; b=jWFAGXxoDLjde0Fp15eddkSs7LVIQ3xdrB+GSW/GlHjH1rLyKUaGqIzDOMbrtIsl88sDSjE2oy4SW7t9xrTIj6Xwhd7h4LmVhjHm/JfkkfS/rg7Mm9ESEwBqqL2l7Rgu72qs5vlJoqT+b7p4OovlzLmFPQ+AsC57WJSBfaxisyg=
+	t=1726956275; cv=none; b=RUYWsn4Y8VxJXpNhxaph7k1imTxyYBmzIwOTzltvDHIfOHbLEq0eIdpMOWqqPGzYpls30vQ20Yam+GE6cd5saLwQhxh+luIhKtqi7yRKO93pxlKqZvGDFgB5qe1B3J/53VmCbo9QVPi2z5NKg3L1WY20j9zDrjpqCmfs2NYf4DU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726955723; c=relaxed/simple;
-	bh=7XS9d2bm31MIgbCRQRhtMz2AwzaZBiZvT13Za+UkIoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qkywL2ajtHMXbwFJaXEXe7Q8Q1FU4h16hzsIaTkMS18+Zfd5tI0ui6yVPhH8CaBf9fkM8SQ8hJQF/GCVoowx0286oYhiZmuVtUPoBcjeY9cHKfJFQhTghwoyb9vwi5ekMiAl8q03qv09c/E9AY8DWeJZy9o1CH/fL+6l7SPhf90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgEdkJIP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11575C4CEC2;
-	Sat, 21 Sep 2024 21:55:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726955723;
-	bh=7XS9d2bm31MIgbCRQRhtMz2AwzaZBiZvT13Za+UkIoc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MgEdkJIPxrf+IsjksNAka5e894adZO2xiw3E4Oi1ItXgDf6zbhW3e3tugNrm8lgej
-	 zP7W3Q0LLKRDTCi3FL/sC+TGwRQw2VRtgTU8WDiIpEm1CV+8h1PyHgc69Na5a+tfNx
-	 dkHKKNA616KvO+ej3YDMlTFBgGAfnMxmcngiR0Sl3DkpftmZ9hGH4QtPSGlGiidgxo
-	 TyDYpWAHZZ4zdY0dtyWAUmXi9lrmsm4LccmKVoCDrvH6Kr7x2iJB3Z/d358Wpr06PT
-	 X5s3PqvcMn2oiTd0Hzt+F70+it2VI8cgb1y6434AVSo+Xm+T1M2krDsRCrreZzWMES
-	 rPT0kJbNItIlQ==
-Date: Sat, 21 Sep 2024 22:55:16 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Michal Marek <mmarek@suse.com>,
-	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-	aardelean@baylibre.com, dlechner@baylibre.com,
-	jstephan@baylibre.com
-Subject: Re: [PATCH v2 02/10] dt-bindings: iio: adc: ad7606: Make corrections
- on spi conditions
-Message-ID: <20240921-playgroup-regally-f26c17be26dc@spud>
-References: <20240920-ad7606_add_iio_backend_support-v2-0-0e78782ae7d0@baylibre.com>
- <20240920-ad7606_add_iio_backend_support-v2-2-0e78782ae7d0@baylibre.com>
+	s=arc-20240116; t=1726956275; c=relaxed/simple;
+	bh=+/53jj+UpO74LBrKxvFpEk62+Y1azlF7xuXXd9WPa5I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=K57nViN1To+ww5o2Pl6ZwvRPAadwU5ga/lwrue6c4J3F579GApB96Lx8MDqXJ+dcNUXBQy8G1J9N6+hGmfA/wHK4i9qah5NcGxXsqKd9uoIbbPON9QNHVJksD8tfzbsh9l5+iVqYs3tMixXZgLm4bnkxlWhW2wO87/KjPu2DNO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it; spf=pass smtp.mailfrom=vaga.pv.it; dkim=pass (2048-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b=Iq5wSdtN; arc=none smtp.client-ip=212.103.80.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vaga.pv.it
+Received: from localhost (unknown [127.0.0.1])
+	by mx.kolabnow.com (Postfix) with ESMTP id 583E12F2D5A;
+	Sat, 21 Sep 2024 23:58:11 +0200 (CEST)
+Authentication-Results: ext-mx-out013.mykolab.com (amavis);
+ dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
+ header.d=kolabnow.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
+	content-transfer-encoding:content-type:content-type:mime-version
+	:message-id:date:date:subject:subject:from:from:received
+	:received:received; s=dkim20240523; t=1726955888; x=1728770289;
+	 bh=lbXmCZEV/t8nONBA5lZliCrm/aSb+rxZyZG+sl2Dhbc=; b=Iq5wSdtN2vFR
+	5IY6iNABbYKZzHWqPdctLkOFhjEFJs4m41mmTmpRS/yg7ExjKp8Zc9rMx7tomhiV
+	M7QpEabA1mKGVtxDLKZ8a2VQ0UkIfNZFhz/2OUF4X2JmKdDIGDG6o64yjx4HXhWP
+	BxY82AVRhm6rIbsdzKBXAewkKNLp8tDiZYbvWcjNa6aNdYzqA9zt8TVSvPbEgmNN
+	MsEOJq0LhgdD4OCIV4IHtmgzmt2ls7/Whp/+fdjKcU0nCrq+MDXFAEyeSimViLYa
+	/ngzgXu/FYt1SXiSv+SeNfJgevVP3Ouw6cguVSFB/n30ipRBLCL/DDhc86nxeiin
+	+dDxfYpnZA==
+X-Virus-Scanned: amavis at mykolab.com
+X-Spam-Flag: NO
+X-Spam-Score: -0.9
+X-Spam-Level:
+Received: from mx.kolabnow.com ([127.0.0.1])
+ by localhost (ext-mx-out013.mykolab.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id pKMtM8lv-d33; Sat, 21 Sep 2024 23:58:08 +0200 (CEST)
+Received: from int-mx009.mykolab.com (unknown [10.9.13.9])
+	by mx.kolabnow.com (Postfix) with ESMTPS id 3BB7D2F2D59;
+	Sat, 21 Sep 2024 23:58:07 +0200 (CEST)
+Received: from ext-subm010.mykolab.com (unknown [10.9.6.10])
+	by int-mx009.mykolab.com (Postfix) with ESMTPS id E688A211D841;
+	Sat, 21 Sep 2024 23:58:06 +0200 (CEST)
+From: Federico Vaga <federico.vaga@vaga.pv.it>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Davide Benini <davide.benini@gmail.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Federico Vaga <federico.vaga@vaga.pv.it>
+Subject: [PATCH] doc:it_IT: update I2C summary
+Date: Sat, 21 Sep 2024 23:57:29 +0200
+Message-Id: <20240921215729.23796-1-federico.vaga@vaga.pv.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MpOwvn7LyuIJqbDl"
-Content-Disposition: inline
-In-Reply-To: <20240920-ad7606_add_iio_backend_support-v2-2-0e78782ae7d0@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Update Italian translation following these changes
 
---MpOwvn7LyuIJqbDl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+commit d77367fff7c0 ("docs: i2c: summary: document use of inclusive language")
+commit 20738cb9fa7a ("docs: i2c: summary: be clearer with 'controller/target' and 'adapter/client' pairs")
+commit 1e926ea19003 ("docs: i2c: summary: document 'local' and 'remote' targets")
+commit d77367fff7c0 ("docs: i2c: summary: document use of inclusive language")
+commit a5b88cb9fdff ("docs: i2c: summary: update speed mode description")
+commit 75d148c90a34 ("docs: i2c: summary: update I2C specification link")
+commit d18b822c8f62 ("docs: i2c: summary: start sentences consistently.")
 
-On Fri, Sep 20, 2024 at 05:33:22PM +0000, Guillaume Stols wrote:
-> The SPI conditions are not always required, because there is also a
-> parallel interface. The way used to detect that the SPI interface is
-> used is to check if the reg value is between 0 and 256.
+Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
+---
+ .../translations/it_IT/i2c/summary.rst        | 72 ++++++++++++-------
+ 1 file changed, 46 insertions(+), 26 deletions(-)
 
-And, yaknow, not that the bus you're on is a spi bus? I don't think this
-comment is relevant to the binding, especially given you have a property
-for it.
+diff --git a/Documentation/translations/it_IT/i2c/summary.rst b/Documentation/translations/it_IT/i2c/summary.rst
+index 1535e13a32e2..99a5b36cfb44 100644
+--- a/Documentation/translations/it_IT/i2c/summary.rst
++++ b/Documentation/translations/it_IT/i2c/summary.rst
+@@ -3,21 +3,17 @@ Introduzione a I2C e SMBus
+ ==========================
+ 
+ I²C (letteralmente "I al quadrato C" e scritto I2C nella documentazione del
+-kernel) è un protocollo sviluppato da Philips. É un protocollo lento a 2 fili
+-(a velocità variabile, al massimo 400KHz), con un'estensione per le velocità
+-elevate (3.4 MHz). Questo protocollo offre un bus a basso costo per collegare
+-dispositivi di vario genere a cui si accede sporadicamente e utilizzando
+-poca banda. Alcuni sistemi usano varianti che non rispettano i requisiti
+-originali, per cui non sono indicati come I2C, ma hanno nomi diversi, per
+-esempio TWI (Interfaccia a due fili), IIC.
++kernel) è un protocollo sviluppato da Philips. É un protocollo a 2 fili (a
++velocità variabile, solitamente fino a 400KHz, e in modalità alta velocità fino
++a 5 MHz). Questo protocollo offre un bus a basso costo per collegare dispositivi
++di vario genere a cui si accede sporadicamente e utilizzando poca banda. I2C è
++ampiamente usato nei sistemi integrati. Alcuni sistemi usano varianti che non
++rispettano i requisiti originali, per cui non sono indicati come I2C, ma hanno
++nomi diversi, per esempio TWI (Interfaccia a due fili), IIC.
+ 
+ L'ultima specifica ufficiale I2C è la `"Specifica I2C-bus e manuale utente"
+-(UM10204) <https://www.nxp.com/webapp/Download?colCode=UM10204>`_
+-pubblicata da NXP Semiconductors. Tuttavia, è necessario effettuare il login
+-al sito per accedere al PDF. Una versione precedente della specifica
+-(revisione 6) è archiviata
+-`qui <https://web.archive.org/web/20210813122132/
+-https://www.nxp.com/docs/en/user-guide/UM10204.pdf>`_.
++(UM10204) <https://www.nxp.com/docs/en/user-guide/UM10204.pdf>`_ pubblicata da
++NXP Semiconductors, al momento della scrittura si tratta della versione 7
+ 
+ SMBus (Bus per la gestione del sistema) si basa sul protocollo I2C ed è
+ principalmente un sottoinsieme di protocolli e segnali I2C. Molti dispositivi
+@@ -27,38 +23,62 @@ SMBus. I più comuni dispositivi collegati tramite SMBus sono moduli RAM
+ configurati utilizzando EEPROM I2C, e circuiti integrati di monitoraggio
+ hardware.
+ 
+-Poiché SMBus è principalmente un sottoinsieme del bus I2C,
+-possiamo farne uso su molti sistemi I2C. Ci sono però sistemi che non
+-soddisfano i vincoli elettrici sia di SMBus che di I2C; e altri che non possono
+-implementare tutta la semantica o messaggi comuni del protocollo SMBus.
++Poiché SMBus è principalmente un sottoinsieme del bus I2C, possiamo farne uso su
++molti sistemi I2C. Ci sono però sistemi che non soddisfano i vincoli elettrici
++sia di SMBus che di I2C; e altri che non possono implementare tutta la semantica
++o messaggi comuni del protocollo SMBus.
+ 
+ 
+ Terminologia
+ ============
+ 
+-Utilizzando la terminologia della documentazione ufficiale, il bus I2C connette
+-uno o più circuiti integrati *master* e uno o più circuiti integrati *slave*.
++Il bus I2C connette uno o più circuiti integrati controllori a dei dispositivi.
+ 
+ .. kernel-figure::  ../../../i2c/i2c_bus.svg
+-   :alt:    Un semplice bus I2C con un master e 3 slave
++   :alt:    Un semplice bus I2C con un controllore e 3 dispositivi
+ 
+    Un semplice Bus I2C
+ 
+-Un circuito integrato  **master** è un nodo che inizia le comunicazioni con gli
+-slave. Nell'implementazione del kernel Linux è chiamato **adattatore** o bus. I
+-driver degli adattatori si trovano nella sottocartella ``drivers/i2c/busses/``.
++Un circuito integrato **controllore** (*controller*) è un nodo che inizia le
++comunicazioni con i dispositivi (*targets*). Nell'implementazione del kernel
++Linux è chiamato **adattatore** o bus. I driver degli adattatori si trovano
++nella sottocartella ``drivers/i2c/busses/``.
+ 
+ Un **algoritmo** contiene codice generico che può essere utilizzato per
+ implementare una intera classe di adattatori I2C. Ciascun driver dell'
+ adattatore specifico dipende da un driver dell'algoritmo nella sottocartella
+ ``drivers/i2c/algos/`` o include la propria implementazione.
+ 
+-Un circuito integrato **slave** è un nodo che risponde alle comunicazioni
+-quando indirizzato dal master. In Linux è chiamato **client** (dispositivo). I
+-driver dei dispositivi sono contenuti in una cartella specifica per la
++Un circuito integrato **dispositivo** è un nodo che risponde alle comunicazioni
++quando indirizzato dal controllore. In Linux è chiamato **client**. Nonostante i
++dispositivi siano circuiti integrati esterni al sistema, Linux può agire come
++dispositivo (se l'hardware lo permette) e rispondere alla richieste di altri
++controllori sul bus. Questo verrà chiamato **dispositivo locale** (*local
++target*). Negli altri casi si parla di **dispositivo remoto** (*remote target*).
++
++I driver dei dispositivi sono contenuti in una cartella specifica per la
+ funzionalità che forniscono, ad esempio ``drivers/media/gpio/`` per espansori
+ GPIO e ``drivers/media/i2c/`` per circuiti integrati relativi ai video.
+ 
+ Per la configurazione di esempio in figura, avrai bisogno di un driver per il
+ tuo adattatore I2C e driver per i tuoi dispositivi I2C (solitamente un driver
+ per ciascuno dispositivo).
++
++Sinonimi
++--------
++
++Come menzionato precedentemente, per ragioni storiche l'implementazione I2C del
++kernel Linux usa "adatattore" (*adapter*) per i controllori e "client" per i
++dispositivi. Un certo numero di strutture dati usano questi sinonimi nei loro
++nomi. Dunque, durante le discussioni riguardanti l'implementazione dovrete
++essere a coscienza anche di questi termini. Tuttavia si preferiscono i termini
++ufficiali.
++
++Terminologia obsoleta
++---------------------
++
++Nelle prime specifiche di I2C, il controllore veniva chiamato "master" ed i
++dispositivi "slave". Questi termini sono stati resi obsoleti con la versione 7
++della specifica. Inoltre, il loro uso viene scoraggiato dal codice di condotta
++del kernel Linux. Tuttavia, potreste ancora trovare questi termini in pagine non
++aggiornate. In generale si cerca di usare i termini controllore e dispositivo.
+-- 
+2.39.5
 
-> There is also a correction on the spi-cpha that is not required when SPI
-> interface is selected, while spi-cpol is.
-
-I don't see this change in your patch, there's no cpha in the before.
-
->=20
-> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-> ---
->  .../devicetree/bindings/iio/adc/adi,ad7606.yaml      | 20 ++++++++++++++=
-+++---
->  1 file changed, 17 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> index 75334a033539..12995ebcddc2 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-> @@ -112,18 +112,32 @@ properties:
->        assumed that the pins are hardwired to VDD.
->      type: boolean
-> =20
-> +  parallel-interface:
-> +    description:
-> +      If the parallel interface is used, be it directly or through a bac=
-kend,
-> +      this property must be defined.
-> +    type: boolean
-
-The type you would want here is actually "flag", but I'm not sure why a
-property is needed. If you're using the parallel interface, why would
-you still be on a spi bus? I think I'm a bit confused here as to how
-this interface is supposed to be used.
-
-Thanks,
-Conor.
-
-> +
->  required:
->    - compatible
->    - reg
-> -  - spi-cpol
->    - avcc-supply
->    - vdrive-supply
->    - interrupts
->    - adi,conversion-start-gpios
-> =20
-> -allOf:
-> -  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +oneOf:
-> +  - required:
-> +      - parallel-interface
-> +  - allOf:
-> +      - properties:
-> +          parallel-interface: false
-> +          spi-cpol: true
-> +      - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +      - required:
-> +          - spi-cpol
-> =20
-> +allOf:
->    - if:
->        properties:
->          compatible:
->=20
-> --=20
-> 2.34.1
->=20
-
---MpOwvn7LyuIJqbDl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZu9AxAAKCRB4tDGHoIJi
-0szEAQD4Iua6jaPHHboIFBdWnkPMYPyE+5xnMxpdufGnjSD69wEA48k/jKGNfYl5
-OXlmWcAd7ECPvIYd92IB0YOa0CDpmgM=
-=bMUj
------END PGP SIGNATURE-----
-
---MpOwvn7LyuIJqbDl--
 
