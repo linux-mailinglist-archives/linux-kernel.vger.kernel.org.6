@@ -1,182 +1,258 @@
-Return-Path: <linux-kernel+bounces-334810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EBF897DC71
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 11:45:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E09A97DC75
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 11:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF93E1F21D8A
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 09:45:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBACC1F20EF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 09:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE64156F5D;
-	Sat, 21 Sep 2024 09:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31487156F3C;
+	Sat, 21 Sep 2024 09:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+tgV2iV"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="kPcN2B7R";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hNKAzwol"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74026153803;
-	Sat, 21 Sep 2024 09:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F2B1547DB;
+	Sat, 21 Sep 2024 09:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726911892; cv=none; b=MosNikk/cb6qc+uAIlI9jCMHZQ5m6kZ2/I91fsqXXrJk/v+MSAgMRRyejqd1fRpMCBy+6A2h07PqOfGVJGh7h7BK/N+7qIHJTLhspDqTjnx7YyQCgI/L7lwXGn7wmEvfJUV2e1mrnqOJwZr6DhdVQnNdZ1KYBH5qWOZ538O+bJo=
+	t=1726912166; cv=none; b=p/hMT3C0h+aMBDDoz5j6/2X/Tq1hl2J66dkNyXxrlkcJOlUs6HJJb9VZH4P4WMjWjukUzMeHd57zKPTDnh56IuxuHoAg2v7tNg9yaE9CEqY4Pybg1kG81fGgc1OJ5qRWRed2K1fUvqE6zf7mOTfopdA+nQweXVudUcJaAVjrsRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726911892; c=relaxed/simple;
-	bh=6Phqsl9iMeUtupsVAY2eZ8WVBngHTyrcT+r5eK72yfU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h2uyWfZrec4iwJh4JQi0mbYLcUOEjv7DEPmQkg0EUWDf7A5K4fqP2xx7GHcPd4ShkyB6p5hxUsYLKtOeF27TbsmTbfC/n30SGebM5RNCgfEHTWxQ088zISHb/Qwy1f1+sDaYDWhwaFUeradd6mjttD1epfrHXtOZnPxoBcfDf+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+tgV2iV; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6dbb24ee34dso24414067b3.2;
-        Sat, 21 Sep 2024 02:44:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726911889; x=1727516689; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iT/pooyDWx+cXonngBHeD7hY6o8n6hEZ+T12BUFn3eU=;
-        b=g+tgV2iVKL0S39gv64nB2vdg0Mt5sISh/OndWkEjkXyfnMVYmIpSBMF1Tni+VLShsK
-         VCeyisjYlEYUCrMbHelW6qJ31k7BFg94xeZX1AncxkshsOMrL/zItKuoThJjMewqrpnP
-         iTG6Ux3Ie02yT2idxJV9Or1eAbQAQiLAXTzKf9kyhRNMi0SYegveeBwaeaPcApiSUtdE
-         yDkZ0O9ERK06ph2ab4LczSdBi1O6v4IMuJkg1jJh/Yqoyw6tRHmieWYqdjX0trqiHRCI
-         1uDJanSsnB0ieKaowrPJICXkorTlAtkmiQWnnGLU0gSPZqbQluvLntf7G8PJhgUjL0ae
-         jNZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726911889; x=1727516689;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iT/pooyDWx+cXonngBHeD7hY6o8n6hEZ+T12BUFn3eU=;
-        b=uabcHsI0EvIS6jlFntPzcn1/cNmj0N39a/NmuhbiM/mcJKsw3WsvJ8pAmElj4tardq
-         gPFDvDqzhmJqZb/MfxJI0DEWV4T03IPPXZ9BFrQpRjAYciNq69yXlM+NKxmilrJ4c4yq
-         84lL1v660saP0kpAq0ncLIH+suf77bzOLf3BeLkaXXzqLbv99TFVJ88um+GS/02yZ3YD
-         sgIo/99eC0v1lcDnJw/SGZT4Y+Lp4fwkZDTokuWS2gAOqyOuERTS4iUA0yE2m9mDMiw5
-         sKrOMZq+DUS9ZCO5zoRtSyWCvgUOH7ivhgZllryO1O0IyFRXEi4Ejg8FMVZ5snLufgZd
-         YnWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRPCGyQ/GU4Vgq9tALOpAK/b/quRrr1adBBj4kgCMS424RAQHaqy1YQ9Ah8fgS70JAIyY+Km4fQ9OonF/3OPA=@vger.kernel.org, AJvYcCW+5qSsmapN+f8d+ALIa8SmsS0wxQzRabfYmMejqrJYcKpog2hTnFrp4185IQaDabcs+QrPhzIc27yZysU6@vger.kernel.org, AJvYcCXApA+kf9kVHOm5BV9T5ESJP+/8cUGyustOGnv+zqkz/9urjFqbEqMfKhDd/bgRH26v0/HlIC2CBjAF02TX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxugJfu0pwnFN13bSHuu5Dyhi8S+4i/42m7MqqwhI09DJPsbx72
-	xhwrLtKnlRrg+P0GgcUwDCRzqgZz+twal1d030zco1EcytBpPoXfVzPcGiApm96YM0Aw1NnLaDt
-	f+XUzjS0gUxVK86WFAdfvgRgfxSLxBMM8LKY=
-X-Google-Smtp-Source: AGHT+IH7ANdlTlvW/Mj7eVhLgLzw9ibdGPzl72d8JbFblPa9x1BA+ryCfZKd5D4ZNR1894gY3DwL4D76QQESJDYX57Y=
-X-Received: by 2002:a05:690c:d81:b0:6dd:d82c:4923 with SMTP id
- 00721157ae682-6dfeec1393amr60883837b3.7.1726911889342; Sat, 21 Sep 2024
- 02:44:49 -0700 (PDT)
+	s=arc-20240116; t=1726912166; c=relaxed/simple;
+	bh=tgx+3pBSjApEr890aFzX07FED1DeO0aZCWgQ84s9U9k=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=i/XEvFAbt1mqdwieSs1eNEr32Bayr/sGwJgNAk8Rjjpvvk4hpBluhOaBRs1UsFCXJIDIg8v297WehH8mfXO8gzv1RIjHc/zA54k177jvA2ppT+vdSuOaAHu0+TBnGPB4x+duEKJwCC4ELrhF/3ggXylhJDbgH6GQg4KMepp3sHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=kPcN2B7R; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hNKAzwol; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id C154411402D7;
+	Sat, 21 Sep 2024 05:49:22 -0400 (EDT)
+Received: from phl-imap-01 ([10.202.2.91])
+  by phl-compute-08.internal (MEProxy); Sat, 21 Sep 2024 05:49:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1726912162;
+	 x=1726998562; bh=h0Jb1B7I+y06bdcTrt0fdeas11Z535afVAejtBFKrG0=; b=
+	kPcN2B7RA9kRn0+TzAE3V8skD+UchLnA79S5rAfW/NeLLSAtK577PPOMFVf8maRZ
+	SrWHA+47esFdSxo/70X/SbJcsmFDBsgSCjYPjEE6xg3qMAN3vnvWprWQXPDoEeUs
+	5JWeT+EWLBds9iiGNqHwKjy97oIWwDiGT4Dgsp1P2iHrpiZjwb203lufXsSE2qp2
+	W5eeK0eoIK6M0uAqRACG/sRqSwHq9mUtgjj08FiFPI9DdKssEYy7pFGc3fLPV/+m
+	ZQ9C97gl5XBD5mNZs1DptmGCT6bdAfAAwQowR9txkD1sBWlYc7W/rX4eAySALck0
+	sF8MhjUmKVHp1YcQZxuDiw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1726912162; x=
+	1726998562; bh=h0Jb1B7I+y06bdcTrt0fdeas11Z535afVAejtBFKrG0=; b=h
+	NKAzwolICKQ8aU9b8+PYtSgXB+B3rTII3fO46zZeG3RfFT8SKkFPh3l7cnEdmNPn
+	5FW9eHGuX3WqJx/zh7wWqm8Pv3as4/WNqU2YdAQvBAVLtdSPAcvoCbCGMGrfsmZS
+	Dnxd2BNipwWLce/du5RZCV5jhaMPHtavDjN+1e99m5tMwW8pTlYJ6HNNwggEx9QT
+	70YbS8NoCXxtyQfhQTwqQXwR5ii9yLNEk1CkJYQP+zM7cZwmNZIcwKK7m+dU+b+y
+	k/8NiRcG0wopd4wN7sSlEhj8OAVYMeJ4ONCmBb1AVMlGqo3A332tXjav4DaBZ7Dz
+	xfzMDJSnBrI73SZgJnCWA==
+X-ME-Sender: <xms:opbuZoiXtwgur3zYJ9uoDigcH2wZoCPBVuDp6WnRh0IWcZ9auWqgWg>
+    <xme:opbuZhDRpZHCDcQvuqliPDUaOTiUqbK-SAXSXeIVD_pAC1UVHEjqh_ijtObo4g0S9
+    lyWEvZKtXES4oWiVWg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudelhedgvddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedfnfhukhgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvg
+    hvqeenucggtffrrghtthgvrhhnpeehtedugfelgeeltdevvedtleffhfetgfdtjefhkefg
+    udejfeeuueefvdejuddutdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggprhgtphhtthhopeei
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegtohhrvghnthhinhdrtghhrghrhi
+    esghhmrghilhdrtghomhdprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhn
+    uhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrth
+    drtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehplhgrthhfohhrmhdqughrihhvvghrqdigkeeisehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghhrhhishhtohhphhgvrdhjrghi
+    lhhlvghtseifrghnrgguohhordhfrh
+X-ME-Proxy: <xmx:opbuZgG8jo-sU_9TK8VX0lhayofVtlo5UYm2mx7TAB4g-w4d3_ev_A>
+    <xmx:opbuZpReftBCj_km3GpZwZNFM5ZolFZf27SiGnyQRDRd_1CD5JE92g>
+    <xmx:opbuZlwBexPPaDk8nW0SPiOeh9fvCPayDk6qqkdtCRaAWGWwh7RtZg>
+    <xmx:opbuZn7YTljcwRmhSGZ8Z3w1D5QaiZwXWCQvZDGlbXKkLARSrOxzoA>
+    <xmx:opbuZns7TaOK46EOMXoqCx6t6gzqo1n1rI6kAT8f4zptE6TfMvoEKNmp>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 339993360077; Sat, 21 Sep 2024 05:49:22 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240916135634.98554-1-toolmanp@tlmp.cc> <20240916135634.98554-11-toolmanp@tlmp.cc>
-In-Reply-To: <20240916135634.98554-11-toolmanp@tlmp.cc>
-From: Jianan Huang <jnhuang95@gmail.com>
-Date: Sat, 21 Sep 2024 17:44:34 +0800
-Message-ID: <CAJfKizpW1rQuVfB3cNKVsEMYvHBegGcy5fgxqTBrr0wGsjjpjw@mail.gmail.com>
-Subject: Re: [RFC PATCH 10/24] erofs: add device_infos implementation in Rust
-To: Yiyang Wu <toolmanp@tlmp.cc>
-Cc: linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Date: Sat, 21 Sep 2024 21:49:01 +1200
+From: "Luke Jones" <luke@ljones.dev>
+To: "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
+ platform-driver-x86@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, "Hans de Goede" <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ corentin.chary@gmail.com
+Message-Id: <c9b0780a-a6f9-4902-b801-2ae5bde1bae3@app.fastmail.com>
+In-Reply-To: <33519933-f171-4bbe-adad-dbe51115cc0a@wanadoo.fr>
+References: <20240918094250.82430-1-luke@ljones.dev>
+ <20240918094250.82430-2-luke@ljones.dev>
+ <33519933-f171-4bbe-adad-dbe51115cc0a@wanadoo.fr>
+Subject: Re: [PATCH v3 1/5] platform/x86: asus-armoury: move existing tunings to
+ asus-armoury module
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Yiyang Wu via Linux-erofs <linux-erofs@lists.ozlabs.org> =E4=BA=8E2024=E5=
-=B9=B49=E6=9C=8816=E6=97=A5=E5=91=A8=E4=B8=80 21:57=E5=86=99=E9=81=93=EF=BC=
-=9A
->
-> Add device_infos implementation in rust. It will later be used
-> to be put inside the SuperblockInfo. This mask and spec can later
-> be used to chunk-based image file block mapping.
->
-> Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
-> ---
->  fs/erofs/rust/erofs_sys/devices.rs | 47 ++++++++++++++++++++++++++++++
->  1 file changed, 47 insertions(+)
->
-> diff --git a/fs/erofs/rust/erofs_sys/devices.rs b/fs/erofs/rust/erofs_sys=
-/devices.rs
-> index 097676ee8720..7495164c7bd0 100644
-> --- a/fs/erofs/rust/erofs_sys/devices.rs
-> +++ b/fs/erofs/rust/erofs_sys/devices.rs
-> @@ -1,6 +1,10 @@
->  // Copyright 2024 Yiyang Wu
->  // SPDX-License-Identifier: MIT or GPL-2.0-or-later
->
-> +use super::alloc_helper::*;
-> +use super::data::raw_iters::*;
-> +use super::data::*;
-> +use super::*;
->  use alloc::vec::Vec;
->
->  /// Device specification.
-> @@ -21,8 +25,51 @@ pub(crate) struct DeviceSlot {
->      reserved: [u8; 56],
->  }
->
-> +impl From<[u8; 128]> for DeviceSlot {
-> +    fn from(data: [u8; 128]) -> Self {
-> +        Self {
-> +            tags: data[0..64].try_into().unwrap(),
-> +            blocks: u32::from_le_bytes([data[64], data[65], data[66], da=
-ta[67]]),
-> +            mapped_blocks: u32::from_le_bytes([data[68], data[69], data[=
-70], data[71]]),
-> +            reserved: data[72..128].try_into().unwrap(),
-> +        }
-> +    }
-> +}
-> +
->  /// Device information.
->  pub(crate) struct DeviceInfo {
->      pub(crate) mask: u16,
->      pub(crate) specs: Vec<DeviceSpec>,
->  }
-> +
-> +pub(crate) fn get_device_infos<'a>(
-> +    iter: &mut (dyn ContinuousBufferIter<'a> + 'a),
-> +) -> PosixResult<DeviceInfo> {
-> +    let mut specs =3D Vec::new();
-> +    for data in iter {
-> +        let buffer =3D data?;
-> +        let mut cur: usize =3D 0;
-> +        let len =3D buffer.content().len();
-> +        while cur + 128 <=3D len {
+On Sat, 21 Sep 2024, at 7:13 PM, Christophe JAILLET wrote:
+> Le 18/09/2024 =C3=A0 11:42, Luke D. Jones a =C3=A9crit :
+> > The fw_attributes_class provides a much cleaner interface to all of =
+the
+> > attributes introduced to asus-wmi. This patch moves all of these ext=
+ra
+> > attributes over to fw_attributes_class, and shifts the bulk of these
+> > definitions to a new kernel module to reduce the clutter of asus-wmi
+> > with the intention of deprecating the asus-wmi attributes in future.
+> >=20
+> > The work applies only to WMI methods which don't have a clearly defi=
+ned
+> > place within the sysfs and as a result ended up lumped together in
+> > /sys/devices/platform/asus-nb-wmi/ with no standard API.
+> >=20
+> > Where possible the fw attrs now implement defaults, min, max, scalar,
+> > choices, etc. As en example dgpu_disable becomes:
+> >=20
+> > /sys/class/firmware-attributes/asus-armoury/attributes/dgpu_disable/
+> > =E2=94=9C=E2=94=80=E2=94=80 current_value
+> > =E2=94=9C=E2=94=80=E2=94=80 display_name
+> > =E2=94=9C=E2=94=80=E2=94=80 possible_values
+> > =E2=94=94=E2=94=80=E2=94=80 type
+> >=20
+> > as do other attributes.
+> >=20
+> > Signed-off-by: Luke D. Jones <luke@ljones.dev>
+>=20
+> Hi,
+>=20
+> a few nitpick below, should it help.
 
+every review is helpful, thank you :)
+=20
+> > +/* Boolean style enumeration, base macro. Requires adding show/stor=
+e */
+> > +#define __ATTR_GROUP_ENUM(_attrname, _fsname, _possible, _dispname)=
+     \
+> > + __ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);    \
+> > + __ATTR_SHOW_FMT(possible_values, _attrname, "%s\n", _possible); \
+> > + static struct kobj_attribute attr_##_attrname##_type =3D          \
+> > + __ASUS_ATTR_RO_AS(type, enum_type_show);                \
+> > + static struct attribute *_attrname##_attrs[] =3D {                \
+> > + &attr_##_attrname##_current_value.attr,                 \
+> > + &attr_##_attrname##_display_name.attr,                  \
+> > + &attr_##_attrname##_possible_values.attr,               \
+> > + &attr_##_attrname##_type.attr, NULL                     \
+>=20
+> It would be more readable if ", NULL" was on its own line, IMHO.
 
-It is better to use macros instead of hardcode, like:
-const EROFS_DEVT_SLOT_SIZE: usize =3D size_of::<DeviceSlot>();
-Also works to the other similar usages in this patch set.
+Ah yes, I didn't see this. Fixed, plus all following.
+=20
+> > + };                                                              \
+> > + static const struct attribute_group _attrname##_attr_group =3D {  \
+> > + .name =3D _fsname, .attrs =3D _attrname##_attrs             \
+> > + }
+> > +
+> > +#define ATTR_GROUP_BOOL_RO(_attrname, _fsname, _wmi, _dispname) \
+> > + __ATTR_CURRENT_INT_RO(_attrname, _wmi);                 \
+> > + __ATTR_GROUP_ENUM(_attrname, _fsname, "0;1", _dispname)
+> > +
+> > +#define ATTR_GROUP_BOOL_RW(_attrname, _fsname, _wmi, _dispname) \
+> > + __ATTR_CURRENT_INT_RW(_attrname, 0, 1, _wmi);           \
+> > + __ATTR_GROUP_ENUM(_attrname, _fsname, "0;1", _dispname)
+> > +
+> > +/*
+> > + * Requires <name>_current_value_show(), <name>_current_value_show()
+> > + */
+> > +#define ATTR_GROUP_BOOL_CUSTOM(_attrname, _fsname, _dispname)      =
+     \
+> > + static struct kobj_attribute attr_##_attrname##_current_value =3D \
+> > + __ASUS_ATTR_RW(_attrname, current_value);               \
+> > + __ATTR_GROUP_ENUM(_attrname, _fsname, "0;1", _dispname)
+> > +
+> > +#define ATTR_GROUP_ENUM_INT_RO(_attrname, _fsname, _wmi, _possible,=
+ _dispname) \
+> > + __ATTR_CURRENT_INT_RO(_attrname, _wmi);                           =
+     \
+> > + __ATTR_GROUP_ENUM(_attrname, _fsname, _possible, _dispname)
+> > +
+> > +/*
+> > + * Requires <name>_current_value_show(), <name>_current_value_show()
+> > + * and <name>_possible_values_show()
+> > + */
+> > +#define ATTR_GROUP_ENUM_CUSTOM(_attrname, _fsname, _dispname)      =
+       \
+> > + __ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);      \
+> > + static struct kobj_attribute attr_##_attrname##_current_value =3D =
+  \
+> > + __ASUS_ATTR_RW(_attrname, current_value);                 \
+> > + static struct kobj_attribute attr_##_attrname##_possible_values =3D=
+ \
+> > + __ASUS_ATTR_RO(_attrname, possible_values);               \
+> > + static struct kobj_attribute attr_##_attrname##_type =3D          =
+  \
+> > + __ASUS_ATTR_RO_AS(type, enum_type_show);                  \
+> > + static struct attribute *_attrname##_attrs[] =3D {                =
+  \
+> > + &attr_##_attrname##_current_value.attr,                   \
+> > + &attr_##_attrname##_display_name.attr,                    \
+> > + &attr_##_attrname##_possible_values.attr,                 \
+> > + &attr_##_attrname##_type.attr, NULL                       \
+>=20
+> It would be more readable if ", NULL" was on its own line, IMHO.
+>=20
+> > + };                                                                \
+> > + static const struct attribute_group _attrname##_attr_group =3D {  =
+  \
+> > + .name =3D _fsname, .attrs =3D _attrname##_attrs               \
+> > + }
+>=20
+> ...
+>=20
+> > +static const struct dmi_system_id asus_rog_ally_device[] =3D {
+> > + {
+> > + .matches =3D {
+> > + DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
+> > + },
+> > + },
+> > + {
+> > + .matches =3D {
+> > + DMI_MATCH(DMI_BOARD_NAME, "RC72L"),
+> > + },
+> > + },
+> > + { },
+>=20
+> I think that an ending comma is not expected after a terminator.
 
-Thanks,
-Jianan
+Never really been clear on this myself. A massive amount of other code d=
+oes include the comma so that's what I followed. And then a massive amou=
+nt of other code uses the opposite so I could follow that too.. but I wo=
+rk in most of the asus stuff and it looks like that's what is common the=
+re so I'll remove the comma.
 
->
-> +            let slot_data: [u8; 128] =3D buffer.content()[cur..cur + 128=
-].try_into().unwrap();
-> +            let slot =3D DeviceSlot::from(slot_data);
-> +            cur +=3D 128;
-> +            push_vec(
-> +                &mut specs,
-> +                DeviceSpec {
-> +                    tags: slot.tags,
-> +                    blocks: slot.blocks,
-> +                    mapped_blocks: slot.mapped_blocks,
-> +                },
-> +            )?;
-> +        }
-> +    }
-> +
-> +    let mask =3D if specs.is_empty() {
-> +        0
-> +    } else {
-> +        (1 << (specs.len().ilog2() + 1)) - 1
-> +    };
-> +
-> +    Ok(DeviceInfo { mask, specs })
-> +}
-> --
-> 2.46.0
->
+Many thanks for taking the time to review.
+
+> > +};
+> > +
+> >   #endif /* !_ASUS_WMI_H_ */
+>=20
+> ...
+>=20
+> CJ
+>=20
+>=20
 
