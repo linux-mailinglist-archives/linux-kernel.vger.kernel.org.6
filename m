@@ -1,139 +1,171 @@
-Return-Path: <linux-kernel+bounces-334977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F1197DF29
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 23:55:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A49797DF27
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 23:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B69F31C20AE5
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 21:55:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D29BD281182
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 21:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F0E16C444;
-	Sat, 21 Sep 2024 21:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580D5154BE2;
+	Sat, 21 Sep 2024 21:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PKcNHr2o"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgEdkJIP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DBE282FB;
-	Sat, 21 Sep 2024 21:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933E37581A;
+	Sat, 21 Sep 2024 21:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726955724; cv=none; b=aWyoq84PkaLKHxWt4pwf9QR0XFghKvYlDZNVlivY7ML+AtTXSq6uDpuEyBSmRrBzzQHCAPDhjb+e+Tbknf3SyP3e+BAQxxKCyLBh2Jxz6voJimuZj8V/LGRShda2NYsI7dPu5/j1ltclE1q1Z+F+Vmubjoo9s72Z1zrIdSBn63I=
+	t=1726955723; cv=none; b=jWFAGXxoDLjde0Fp15eddkSs7LVIQ3xdrB+GSW/GlHjH1rLyKUaGqIzDOMbrtIsl88sDSjE2oy4SW7t9xrTIj6Xwhd7h4LmVhjHm/JfkkfS/rg7Mm9ESEwBqqL2l7Rgu72qs5vlJoqT+b7p4OovlzLmFPQ+AsC57WJSBfaxisyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726955724; c=relaxed/simple;
-	bh=M7rzspFpNHiw0JHMriMhB/4WhesrZv5SnNHM7+eIVaU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oXjBNqTcPOpdqpgWxsp5RwS2s+3nXjcD06XgrinKbwHZUSpGNSIb59hmiUAwOr7UNPPMYl5aV+wO/faExQoikMElG0tHP3A0nEt8DS3+DSbBvvI+eLdXEHeu/lW5uLOQahfcU71Ahm391bgShewjgh8hWY9ArWXQFlxaAj5QBrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PKcNHr2o; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5365cf5de24so3964915e87.1;
-        Sat, 21 Sep 2024 14:55:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726955720; x=1727560520; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aQnjiul16NJW8ioc7z7DKN4GAxwl3Hiyi8Nik5GXGq8=;
-        b=PKcNHr2oNP0xxAGofsqUFiJVUxSJRAhg1ak8Z5vuAXFp6SMfYnTMK16up7tK1BjgY8
-         FqtmFJyimATYp1vesuS9Lu2ve3s770rosS1HyONl7hYsXlqC9um0p9Zu/LLFbRFnNCC/
-         QIIivcFUx/gFX1PltXDWk6WXDDG1d781OhFQ3s+d0AMocs7WFhrgwF2PqW8jQgndPt7V
-         LfAMfBY+DWy8nKCqAMLhiIakLWaXXzf1icutQDfx7CLlbrKT5KygUe2gwD++ZDIz71gK
-         dF0g6S61bmmsvrnkla0Lj+Mkfl1V63Sa1VvRTwVSqWMVAhQkCwgNFqPr3/M9uja55faS
-         sayA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726955720; x=1727560520;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aQnjiul16NJW8ioc7z7DKN4GAxwl3Hiyi8Nik5GXGq8=;
-        b=L8yFTad6oMgEAd1GVQwb7JJjF0q4InKu+3BSfUhMcDFDb0NjZ1tuCCl/SLrmj+PpvZ
-         yzoAiqyFx/8RtNr5JN9eBvNId5j5tg/f4ooNwkzVftmxvwzrvcLf3t5CCl+WkLvxZaWu
-         9BUBimw7GHHmXE1Eac838bTtTF+ZXadAq2lwMVObV377SEXH/WNanLsXgBEqxxigwNHg
-         F3/tixm/ivtUEMEy57DM5p+Tp5KJbg1fVWFrvLglb0wb5q9H4FZgVFZiva0i7W+q9oWn
-         COKYV4PVDBpH5qsRcpghqF7PRs8LKeSklIGn84zybgt6oiL1D4nth/1IYtZaTsIVYVv+
-         dFQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWbeYXjo2J2lZiCJJ9ahts9VGerKuJXK1BcEs/ei1SxCNgOfCtIq7Gyz8mWGMg8USlcxnOMaHAg5pe6CuA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynANl9KQJgMETs+UuqgPsh5JWKO/P6kQSysygVX8cZx4hRVN25
-	xZrrq6t1X5YPfJEH/Kb1E1JN/7y5y4sEBDx0pnO57uLJxLZP4/YcJYetxEGemxA=
-X-Google-Smtp-Source: AGHT+IEDAImrve36sPYrWHGEjLLO2d/w0swTfPqqskrj4mxtrHVyQmJ/44pO1NU15tg0YaISYjUHPw==
-X-Received: by 2002:a05:6512:3043:b0:535:6892:3be3 with SMTP id 2adb3069b0e04-536ad3d7281mr3708035e87.41.1726955720236;
-        Sat, 21 Sep 2024 14:55:20 -0700 (PDT)
-Received: from dau-work-pc.zonatelecom.ru ([185.149.163.197])
-        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-536870467d8sm2730819e87.43.2024.09.21.14.55.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Sep 2024 14:55:19 -0700 (PDT)
-From: Anton Danilov <littlesmilingcloud@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Anton Danilov <littlesmilingcloud@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Suman Ghosh <sumang@marvell.com>,
-	Shigeru Yoshida <syoshida@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH net] ipv4: ip_gre: Fix drops of small packets in ipgre_xmit
-Date: Sun, 22 Sep 2024 00:54:11 +0300
-Message-Id: <20240921215410.638664-1-littlesmilingcloud@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1726955723; c=relaxed/simple;
+	bh=7XS9d2bm31MIgbCRQRhtMz2AwzaZBiZvT13Za+UkIoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qkywL2ajtHMXbwFJaXEXe7Q8Q1FU4h16hzsIaTkMS18+Zfd5tI0ui6yVPhH8CaBf9fkM8SQ8hJQF/GCVoowx0286oYhiZmuVtUPoBcjeY9cHKfJFQhTghwoyb9vwi5ekMiAl8q03qv09c/E9AY8DWeJZy9o1CH/fL+6l7SPhf90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgEdkJIP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11575C4CEC2;
+	Sat, 21 Sep 2024 21:55:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726955723;
+	bh=7XS9d2bm31MIgbCRQRhtMz2AwzaZBiZvT13Za+UkIoc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MgEdkJIPxrf+IsjksNAka5e894adZO2xiw3E4Oi1ItXgDf6zbhW3e3tugNrm8lgej
+	 zP7W3Q0LLKRDTCi3FL/sC+TGwRQw2VRtgTU8WDiIpEm1CV+8h1PyHgc69Na5a+tfNx
+	 dkHKKNA616KvO+ej3YDMlTFBgGAfnMxmcngiR0Sl3DkpftmZ9hGH4QtPSGlGiidgxo
+	 TyDYpWAHZZ4zdY0dtyWAUmXi9lrmsm4LccmKVoCDrvH6Kr7x2iJB3Z/d358Wpr06PT
+	 X5s3PqvcMn2oiTd0Hzt+F70+it2VI8cgb1y6434AVSo+Xm+T1M2krDsRCrreZzWMES
+	 rPT0kJbNItIlQ==
+Date: Sat, 21 Sep 2024 22:55:16 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Michal Marek <mmarek@suse.com>,
+	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+	aardelean@baylibre.com, dlechner@baylibre.com,
+	jstephan@baylibre.com
+Subject: Re: [PATCH v2 02/10] dt-bindings: iio: adc: ad7606: Make corrections
+ on spi conditions
+Message-ID: <20240921-playgroup-regally-f26c17be26dc@spud>
+References: <20240920-ad7606_add_iio_backend_support-v2-0-0e78782ae7d0@baylibre.com>
+ <20240920-ad7606_add_iio_backend_support-v2-2-0e78782ae7d0@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="MpOwvn7LyuIJqbDl"
+Content-Disposition: inline
+In-Reply-To: <20240920-ad7606_add_iio_backend_support-v2-2-0e78782ae7d0@baylibre.com>
 
-Regression Description:
 
-Depending on the GRE tunnel device options, small packets are being
-dropped. This occurs because the pskb_network_may_pull function fails due
-to insufficient space in the network header. For example, if only the key
-option is specified for the tunnel device, packets of sizes up to 27
-(including the IPv4 header itself) will be dropped. This affects both
-locally originated and forwarded packets.
+--MpOwvn7LyuIJqbDl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-How to reproduce (for local originated packets):
+On Fri, Sep 20, 2024 at 05:33:22PM +0000, Guillaume Stols wrote:
+> The SPI conditions are not always required, because there is also a
+> parallel interface. The way used to detect that the SPI interface is
+> used is to check if the reg value is between 0 and 256.
 
-  ip link add dev gre1 type gre ikey 1.9.8.4 okey 1.9.8.4 \
-          local <your-ip> remote <any-ip>
+And, yaknow, not that the bus you're on is a spi bus? I don't think this
+comment is relevant to the binding, especially given you have a property
+for it.
 
-  ip link set mtu 1400 dev gre1
-  ip link set up dev gre1
-  ip address add 192.168.13.1/24 dev gre1
-  ping -s 1374 -c 10 192.168.13.2
-  tcpdump -vni gre1
-  tcpdump -vni <your-ext-iface> 'ip proto 47'
-  ip -s -s -d link show dev gre1
+> There is also a correction on the spi-cpha that is not required when SPI
+> interface is selected, while spi-cpol is.
 
-Solution:
+I don't see this change in your patch, there's no cpha in the before.
 
-Use the pskb_may_pull function instead the pskb_network_may_pull.
+>=20
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad7606.yaml      | 20 ++++++++++++++=
++++---
+>  1 file changed, 17 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/=
+Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> index 75334a033539..12995ebcddc2 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
+> @@ -112,18 +112,32 @@ properties:
+>        assumed that the pins are hardwired to VDD.
+>      type: boolean
+> =20
+> +  parallel-interface:
+> +    description:
+> +      If the parallel interface is used, be it directly or through a bac=
+kend,
+> +      this property must be defined.
+> +    type: boolean
 
-Fixes: 80d875cfc9d3 ("ipv4: ip_gre: Avoid skb_pull() failure in ipgre_xmit()")
+The type you would want here is actually "flag", but I'm not sure why a
+property is needed. If you're using the parallel interface, why would
+you still be on a spi bus? I think I'm a bit confused here as to how
+this interface is supposed to be used.
 
-Signed-off-by: Anton Danilov <littlesmilingcloud@gmail.com>
----
- net/ipv4/ip_gre.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
+Conor.
 
-diff --git a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
-index 5f6fd382af38..115272ba2726 100644
---- a/net/ipv4/ip_gre.c
-+++ b/net/ipv4/ip_gre.c
-@@ -664,7 +664,7 @@ static netdev_tx_t ipgre_xmit(struct sk_buff *skb,
- 
- 		tnl_params = (const struct iphdr *)skb->data;
- 
--		if (!pskb_network_may_pull(skb, pull_len))
-+		if (!pskb_may_pull(skb, pull_len))
- 			goto free_skb;
- 
- 		/* ip_tunnel_xmit() needs skb->data pointing to gre header. */
--- 
-2.39.2
+> +
+>  required:
+>    - compatible
+>    - reg
+> -  - spi-cpol
+>    - avcc-supply
+>    - vdrive-supply
+>    - interrupts
+>    - adi,conversion-start-gpios
+> =20
+> -allOf:
+> -  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +oneOf:
+> +  - required:
+> +      - parallel-interface
+> +  - allOf:
+> +      - properties:
+> +          parallel-interface: false
+> +          spi-cpol: true
+> +      - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +      - required:
+> +          - spi-cpol
+> =20
+> +allOf:
+>    - if:
+>        properties:
+>          compatible:
+>=20
+> --=20
+> 2.34.1
+>=20
 
+--MpOwvn7LyuIJqbDl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZu9AxAAKCRB4tDGHoIJi
+0szEAQD4Iua6jaPHHboIFBdWnkPMYPyE+5xnMxpdufGnjSD69wEA48k/jKGNfYl5
+OXlmWcAd7ECPvIYd92IB0YOa0CDpmgM=
+=bMUj
+-----END PGP SIGNATURE-----
+
+--MpOwvn7LyuIJqbDl--
 
