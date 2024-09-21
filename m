@@ -1,131 +1,214 @@
-Return-Path: <linux-kernel+bounces-334742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24DE497DB84
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 04:50:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1231897DB88
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 05:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00D41B2198E
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 02:50:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352E21C2103F
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 03:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DD31C693;
-	Sat, 21 Sep 2024 02:50:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DA317BA6;
+	Sat, 21 Sep 2024 03:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3a1Zjq4"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD9B17BA6
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 02:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867981392;
+	Sat, 21 Sep 2024 03:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726887006; cv=none; b=vCsf2jpGcMUtxhW50W1KE/rkrAAlCsD9FR/t0uIEgvbW6JzxsvkH8sOy7fiSFyNcGHk7UFX4Pg7R5b3wzow+WHWPESQcw9xLWazKbaydqqvoM5D7AD8bx9N+q4artIo7CDBnXimWiwSTy4fiVS8WM2vwJ+qs9/SufNaphzNvInQ=
+	t=1726888090; cv=none; b=U7b0RY6L0q9S9tAJ40XIjBnOMe+sKQkBbzJrjUXPed7HITAS57+88xScTSeRzcchBjLFv/+RPQk5EGuE87eySrYZldgeQyg0ITzcNP15vvy/SPcJFk30HOcKJ7HeUUtVR56HZAXr2itYtLR41hJGTwHL2RgFT1r2ATGy9IYGj9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726887006; c=relaxed/simple;
-	bh=CK283M+utC8yXEWnXhib6RyS4VG/Uvx1WxK0m4/Ow+4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RrehF761zc9iMQqdFANbvFzD9+63BuGeuHYNDWJzdfFpKsBmdrZLtJHH6eKcqgMaGIadSe06CUHqji/gaEDIQij4gQ3HQegFN4itcqEf4Uf2QyrbYzaC9wd9EFPSbbX8phFcAqGIPdrsVSwgJ9scFwhkxZ6WCMq2Fn08Va/gtTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a04c2472f6so30140435ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 19:50:03 -0700 (PDT)
+	s=arc-20240116; t=1726888090; c=relaxed/simple;
+	bh=LZVbErFfdKReI9mkBeeh5ZXf6bErNE5bJsJsom7s8WA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bDQVSccurclpDUAUa7/6AlGQyj4Zeo3blsv/rLPL9Ew3H/A/WbXGvBjFXVgz6saJO3Ay6CBRYc4udH0QNNqulKD3rJbyU9394rI2qSTvXbjw5dZxZjm1A+X/mXriWrTGAgFCh/nGfvk9OG1f2HTZMlIJIH9gc1dgKMU727QcwEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3a1Zjq4; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71971d2099cso2020989b3a.2;
+        Fri, 20 Sep 2024 20:08:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726888088; x=1727492888; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mPprQAVUrVHm/tsPhdS3MV1vYtw/SA39EWRwyCJlFa8=;
+        b=l3a1Zjq4735pisGMpokJH6lzUVvYSakQ3273GYc4XHPgMF6iSISiK1nG0tH/kyCoNV
+         hFTnXe06cGad8G5PZKAwRztES+VkL0O9dnHCzxKlCynKlQjMaZoByWjLCRKuBTSVl5sj
+         UiASSJ0LCWXFGU2equ+ftJ3GZCunPJqbX7kbV3a+zrQ0Yg3r3hIP33fqOIfMPciRw4Z3
+         XHvuEOmltlmqbv5F/jXEUywNjXQ7vGtft1EyPfRDBOa8Si51AlWYBB9XV5gXxi6xYyaL
+         rgrFTMA4NtMNQMXKEHz5DWt1gelhE0McMOla/ZOJVO9D6MV32p9S8l7ChdJ/NuAAxeD/
+         wjFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726887003; x=1727491803;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1726888088; x=1727492888;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mOCm5+AOP1YcJpXUziKRaj0OTSw08/b+YKj0XLQtrHQ=;
-        b=gyGFk9snLBcNCI2DFShEBp17GTOotsVrqns0DJ8y8tai6sqkFxn5RFSbsgQ1FGmFAE
-         SeXG7wAGOlF8uPxCZVqPRn6twh5/xtTR8/cYqRKw0NOE2FUvcMg3ZnHIaS42DtJBRR72
-         jiTqEfksKAbGOiYsxltodESpx3bnbgRDS/lZ1ab6IHQmLXkFW+KJQh9xLjvvLjf3ymnU
-         iZi038tEOvuEHCwWVzgxSSa/JSajGgA9edq1IZxUArNPf+oHJD9rQEjmfGdmafZ4zYgd
-         JLOng70rID3TmV4PMx96mYpyNQ8WvK8c5+Dl710NoyyX8yeugpdr35ET73CwUp9MJP3H
-         KpfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+L7HIJOWmdaV+Kkx3THxlvMoYixBpN6/vi6NucTx1lIS01h2La72xgPquyuY/D+HsCytcx3ggLk9gURM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxbn24mgIvMpKN5cUETGPRl6k4s/uxZjwdCP8KYMpqWKrspmcsQ
-	RpumCowjznGlUej/gj/rgldVzHy7uYzvTy5RHLkwvDA6IAfINsScXOpvfOwi0b+wLbzNRGisGRi
-	cfIvw8enHzwsbGVU49ubeji0u2PHLFUhRljXgLZklo5Kqi+dJG/OPPYg=
-X-Google-Smtp-Source: AGHT+IHu27xXHxU2Ve3KeaHrWvcBEcxf/FoIJtJegp/Eg8zS8nvXAGzIthlGLlUCeq0x/fSofc365URIy8Q28YEJj/C0Jrc0sc63
+        bh=mPprQAVUrVHm/tsPhdS3MV1vYtw/SA39EWRwyCJlFa8=;
+        b=Yn7nsvjbfXQzgt6dIqjJldJy/adxNA1m5LuSSyPIG9WTNSKpqxL6a/c35qjiWwZ86P
+         3ZEi/bLl5gK7eTKbY2BWdmi2S+LUk7BaLK9EIIA3ZQycetyKBWZMjrqQoLTCUg7fQeBX
+         jN34eneBJOBPaBnHADF3HuNNqfoXeJ93NyZeQrmLw0oEBJ9YmGX8PkO73nlF214fXC4S
+         j45RsaZgGo4iInXfCje1UcmL807QDrlOTRhONFyp1bGU9AaOqTHdOQR7bahXqsywMX0K
+         TqoqqxrNJdbflny1WrNIUKtcZ/lCJFAWWts2TZqp3R2wyEkzQcH6WFAYA5GuXdYCl5+l
+         0zDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVO7IGkEhq5H0TtRG957vKQRytlR5SBk1ZIeylMX6NKsHjtkBMxOuB71Zsd/WCHCUaX6bVnt9z9S5nBuss=@vger.kernel.org, AJvYcCVargJgOtaUIvsWzDzKbmGafGZWewxE5ipCityD1UaWUK4J9cF78zUTSJWRR811l1PzjytpQjxru0ouP2JVrbz0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp5M625b07ywoQ8cPHOAWBaaEutvAhHmT14Xz8lXe9u4opxxsK
+	7Iy5lzED0Xq+vC00bYUn86ggsjVnUyL0/s2jDuca65pj86TSa4Ik
+X-Google-Smtp-Source: AGHT+IGud+/cz2OldIIDXbv/r7jevJ8fNdwPc07GJiHTkcSOJWKBWyvy0GWD6HR8I1bMhawIFMeSnA==
+X-Received: by 2002:a05:6a21:3318:b0:1d2:e889:1513 with SMTP id adf61e73a8af0-1d30a900ce7mr7850720637.17.1726888057927;
+        Fri, 20 Sep 2024 20:07:37 -0700 (PDT)
+Received: from [10.0.0.100] (201-0-94-15.dsl.telesp.net.br. [201.0.94.15])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944ab54f4sm10468681b3a.56.2024.09.20.20.07.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Sep 2024 20:07:37 -0700 (PDT)
+Message-ID: <0e349fb3-857c-48b9-87f3-8865fe2d42f1@gmail.com>
+Date: Sat, 21 Sep 2024 00:07:32 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2d:b0:3a0:9c99:32d6 with SMTP id
- e9e14a558f8ab-3a0c8d2e4femr37935555ab.24.1726887002713; Fri, 20 Sep 2024
- 19:50:02 -0700 (PDT)
-Date: Fri, 20 Sep 2024 19:50:02 -0700
-In-Reply-To: <20240921020615.822-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ee345a.050a0220.3195df.0027.GAE@google.com>
-Subject: Re: [syzbot] [netfs?] KASAN: slab-use-after-free Read in iov_iter_advance
-From: syzbot <syzbot+7c48153a9d788824044b@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/1] Add KUnit tests for llist
+To: Shuah Khan <skhan@linuxfoundation.org>, David Gow <davidgow@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+ n@nfraprado.net, andrealmeid@riseup.net, vinicius@nukelet.com,
+ diego.daniel.professional@gmail.com
+References: <20240917005116.304090-1-arturacb@gmail.com>
+ <bd5eb792-124f-4eaa-9ff9-a99765d1ef73@linuxfoundation.org>
+ <CABVgOSmNcmnRCn5Q05U1wBebSGTM=OdUXuT7SA-poHXUgKubaQ@mail.gmail.com>
+ <f641378c-e729-4c5d-bf55-24a7fc96b623@linuxfoundation.org>
+Content-Language: en-US
+From: Artur Alves Cavalcante de Barros <arturacb@gmail.com>
+In-Reply-To: <f641378c-e729-4c5d-bf55-24a7fc96b623@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 9/20/24 12:10 PM, Shuah Khan wrote:
+> On 9/20/24 01:10, David Gow wrote:
+>> On Fri, 20 Sept 2024 at 00:01, Shuah Khan <skhan@linuxfoundation.org> 
+>> wrote:
+>>>
+>>> On 9/16/24 18:51, Artur Alves wrote:
+>>>> Hi all,
+>>>>
+>>>> This is part of a hackathon organized by LKCAMP[1], focused on writing
+>>>> tests using KUnit. We reached out a while ago asking for advice on what
+>>>> would be a useful contribution[2] and ended up choosing data structures
+>>>> that did not yet have tests.
+>>>>
+>>>> This patch adds tests for the llist data structure, defined in
+>>>> include/linux/llist.h, and is inspired by the KUnit tests for the 
+>>>> doubly
+>>>> linked list in lib/list-test.c[3].
+>>>>
+>>>> It is important to note that this patch depends on the patch referenced
+>>>> in [4], as it utilizes the newly created lib/tests/ subdirectory.
+>>>>
+>>>> [1] https://lkcamp.dev/about/
+>>>> [2] https://lore.kernel.org/all/Zktnt7rjKryTh9-N@arch/
+>>>> [3] https://elixir.bootlin.com/linux/latest/source/lib/list-test.c
+>>>> [4] https://lore.kernel.org/all/20240720181025.work.002- 
+>>>> kees@kernel.org/
+>>>>
+>>>> ---
+>>>> Changes in v3:
+>>>>       - Resolved checkpatch warnings:
+>>>>           - Renamed tests for macros starting with 'for_each'
+>>>
+>>> Shouldn't this a separate patch to make it easy to review?
+>>>
+>>
+>> I think that, if this were renaming these in an already existing test
+>> (like the confusingly similar list test), then yes. But since it's
+>> only a change from v2, I think we're okay.
+>>
+>>>>           - Removed link from commit message
+>>>>       - Replaced hardcoded constants with ENTRIES_SIZE
+>>>
+>>> Shouldn't this a separate patch to make it easy to review?
+>>
+>> Again, if we want to change this in other tests (list, hlist) we
+>> should split it into a separate patch, but I think it's okay for llist
+>> to go in with these already cleaned up.
+>>
+>>>
+>>>>       - Updated initialization of llist_node array
+>>>>       - Fixed typos
+>>>>       - Update Kconfig.debug message for llist_kunit
+>>>
+>>> Are these changes to existing code or warnings on your added code?
+>>
+>> I think these are all changes to the added code since v2. Artur, is 
+>> that right?
+>>
+>>>>
+>>>> Changes in v2:
+>>>>       - Add MODULE_DESCRIPTION()
+>>>>       - Move the tests from lib/llist_kunit.c to lib/tests/ 
+>>>> llist_kunit.c
+>>>>       - Change the license from "GPL v2" to "GPL"
+>>>>
+>>>> Artur Alves (1):
+>>>>     lib/llist_kunit.c: add KUnit tests for llist
+>>>>
+>>>>    lib/Kconfig.debug       |  11 ++
+>>>>    lib/tests/Makefile      |   1 +
+>>>>    lib/tests/llist_kunit.c | 358 +++++++++++++++++++++++++++++++++++ 
+>>>> +++++
+>>>>    3 files changed, 370 insertions(+)
+>>>>    create mode 100644 lib/tests/llist_kunit.c
+>>>>
+>>>
+>>> You are combining lot of changes in one single patch. Each change as 
+>>> a separate
+>>> patch will help reviewers.
+>>>
+>>> Adding new test should be a separate patch.
+>>>
+>>> - renaming as a separate patch
+>>>
+>>
+>> I think given that these are just changes between patch versions, not
+>> renaming/modifying already committed code, that this is okay to go in
+>> as one patch?
+>>
+>> The actual patch is only doing one thing: adding a test suite for the
+>> llist structure. I don't see the point in committing a version of it
+>> only to immediately rename things and clean bits up separately in this
+>> case.
+> 
+> I do think it will help to separate the renaming and adding a new test.
+> It makes it easier to follow.
+> 
+> thanks,
+> -- Shuah
+> 
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in p9_client_create
+Hi, Shuah!
 
-------------[ cut here ]------------
-kmem_cache of name 'syzkaller' already exists
-WARNING: CPU: 1 PID: 7290 at mm/slab_common.c:107 kmem_cache_sanity_check mm/slab_common.c:107 [inline]
-WARNING: CPU: 1 PID: 7290 at mm/slab_common.c:107 __kmem_cache_create_args+0xb0/0x3c0 mm/slab_common.c:294
-Modules linked in:
-CPU: 1 UID: 0 PID: 7290 Comm: syz-executor302 Not tainted 6.11.0-syzkaller-07341-gbaeb9a7d8b60-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:kmem_cache_sanity_check mm/slab_common.c:107 [inline]
-RIP: 0010:__kmem_cache_create_args+0xb0/0x3c0 mm/slab_common.c:294
-Code: 98 48 3d d0 de 11 8e 74 25 48 8b 7b 60 48 89 ee e8 35 ae 3c 09 85 c0 75 e0 90 48 c7 c7 18 bb 59 8d 48 89 ee e8 01 38 80 ff 90 <0f> 0b 90 90 be 20 00 00 00 48 89 ef e8 bf af 3c 09 48 85 c0 0f 85
-RSP: 0018:ffffc90002fef8f0 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffff8880289cec80 RCX: ffffffff814e16a9
-RDX: ffff88806be39e00 RSI: ffffffff814e16b6 RDI: 0000000000000001
-RBP: ffffffff9023f4c1 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000008004 R14: ffffc90002fef9f0 R15: 0000000000020018
-FS:  000055558975d380(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f479381ae40 CR3: 00000000794e6000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- kmem_cache_create_usercopy include/linux/slab.h:361 [inline]
- p9_client_create+0xec8/0x11c0 net/9p/client.c:1042
- v9fs_session_init+0x1f8/0x1a80 fs/9p/v9fs.c:410
- v9fs_mount+0xc6/0xa50 fs/9p/vfs_super.c:122
- legacy_get_tree+0x10c/0x220 fs/fs_context.c:662
- vfs_get_tree+0x92/0x380 fs/super.c:1800
- do_new_mount fs/namespace.c:3507 [inline]
- path_mount+0x14e6/0x1f20 fs/namespace.c:3834
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount fs/namespace.c:4032 [inline]
- __x64_sys_mount+0x294/0x320 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f47937e7f39
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdc8834e28 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f47937e7f39
-RDX: 0000000020000040 RSI: 0000000020000000 RDI: 0000000000000000
-RBP: 00007f479383104e R08: 0000000020000300 R09: 0000000000000006
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffdc8834e3c
-R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+The renaming is in the test suite that I'm adding, as suggested by Rae 
+Moar[1]. I'm not modifying any existing code; all my changes are in the 
+new code that I'm adding.
 
+I'm sorry, but it isn't clear to me. Could you please provide an example 
+of what you're suggesting?
 
-Tested on:
+Would you prefer that I undo the renaming, submit the patch with the 
+checkpatch warnings, and then follow up with a new patch to rename the 
+test cases and resolve the warnings?
 
-commit:         baeb9a7d Merge tag 'sched-rt-2024-09-17' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14a8ff00580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5a0a1caedf9d578f
-dashboard link: https://syzkaller.appspot.com/bug?extid=7c48153a9d788824044b
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16402ca9980000
+[1]
+https://lore.kernel.org/all/20240903214027.77533-1-arturacb@gmail.com/T/#mc29a53b120d2f8589f8bd882ab972d15c8a3d202
 
+Thanks for your time,
+- Artur
 
