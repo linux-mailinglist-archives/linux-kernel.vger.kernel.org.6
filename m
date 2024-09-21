@@ -1,93 +1,121 @@
-Return-Path: <linux-kernel+bounces-334780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37AD597DC13
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:05:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DC7897DC14
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD39D1F22146
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:05:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 976791F21B73
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DC08C07;
-	Sat, 21 Sep 2024 08:05:43 +0000 (UTC)
-Received: from outgoing.selfhost.de (mordac.selfhost.de [82.98.82.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D29815098F;
+	Sat, 21 Sep 2024 08:10:09 +0000 (UTC)
+Received: from mail115-79.sinamail.sina.com.cn (mail115-79.sinamail.sina.com.cn [218.30.115.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4012F41
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 08:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.98.82.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363CC8C07
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 08:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726905943; cv=none; b=Gl0G5YOlrkaEYA5xA928JP4tTqVrFlRKEyNnooy+3VZOvLzK0qs8Cz+1e0rtYZ4+P+3ypPQxu323Gk8FAR3+oimOPAOp8KSzlsDIot7EJO53XIwGlI98GkwZohy6nh5awkHMVyU4gYvBfUR78HlFgQZlDVKgoI1RGcaSgxXdNVE=
+	t=1726906208; cv=none; b=mK7BAYrHwwDjwgcwuSH5O5a6D9oRz933BcO+ygx8wE+BM105Hz9S9JNt+SxrIvEshFvVhaTXFcQTQlLQalKKozM2ldfzc6XDjvjLBw89A+hfTdPAJLjiOMBs3q5Ie2f4GuUVWDLutMInHOFhEnZAY1tzhB0gQooY3V8lC0I8TEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726905943; c=relaxed/simple;
-	bh=AtLz/usv0W73PVsD4gOVRs7NTWRnSxRNnoRRwVOzlaQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=BmslOLqR7OF2RcN1PKrhdxP6svKOAHHjkYHGtJPBT+TRgrippFcFOnoOsBjkn2olFEgMY+wWLuOkPqp2z3d2Li/B2VWOH6VSDqLhRWF9LyCqOYRQOsceHeeZZlq4Vii6LVv3jOepoXhOTxVRbL5kK1DnqsCsA81ZFtDTAeV5LFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=afaics.de; spf=none smtp.mailfrom=afaics.de; arc=none smtp.client-ip=82.98.82.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=afaics.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=afaics.de
-Received: (qmail 11761 invoked from network); 21 Sep 2024 07:58:56 -0000
-Received: from unknown (HELO mailhost.afaics.de) (postmaster@xqrsonfo.mail.selfhost.de@87.160.249.214)
-  by mailout.selfhost.de with ESMTPA; 21 Sep 2024 07:58:56 -0000
-Received: from cecil.afaics.de (p200300e31f1da20268fdfffffe6f0e76.dip0.t-ipconnect.de [2003:e3:1f1d:a202:68fd:ffff:fe6f:e76])
-	by marvin.afaics.de (OpenSMTPD) with ESMTP id 0de61920;
-	Sat, 21 Sep 2024 09:58:55 +0200 (CEST)
-Subject: Re: [syzbot] [nfs?] INFO: task hung in nfsd_umount
-To: NeilBrown <neilb@suse.de>,
- syzbot <syzbot+b568ba42c85a332a88ee@syzkaller.appspotmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Dai.Ngo@oracle.com,
- chuck.lever@oracle.com, kolga@netapp.com, linux-kernel@vger.kernel.org,
- linux-nfs@vger.kernel.org, syzkaller-bugs@googlegroups.com, tom@talpey.com
-References: <000000000000f8ed54061ca0d9a5@google.com>
- <9825cc5ff85d4a2a4ce1c955f49681bef8d03442.camel@kernel.org>
- <172039726840.11489.12386749198888516742@noble.neil.brown.name>
-From: Harald Dunkel <harri@afaics.de>
-Message-ID: <42600ff8-512f-bea1-848c-2cc1c823cb76@afaics.de>
-Date: Sat, 21 Sep 2024 09:58:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Firefox/91.0 SeaMonkey/2.53.18.2
+	s=arc-20240116; t=1726906208; c=relaxed/simple;
+	bh=arS2scEpmG3WHoLm1tUusLwiaZoyGo7kBMor/6i6NHs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bRc7YXa3f8LLTL9irvYQGx9niOUG479yJiqVhbci/VypRqzCQFc6ljTnndVgju5MlPSgLIF5NRBNjXAF99gWMWyGggqX9G5mC6e7SqtvxbBxoPMyom4RCsjqyGouk+elYraHTcl4T3lWSNwKFkD3KVZbX1BBKXMMlLAbckmVwwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.10.129])
+	by sina.com (10.185.250.22) with ESMTP
+	id 66EE7F5400007027; Sat, 21 Sep 2024 16:09:58 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8354357602640
+X-SMAIL-UIID: 7934C01215794E4ABA2455DBA7E680FC-20240921-160958-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+7c48153a9d788824044b@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [netfs?] KASAN: slab-use-after-free Read in iov_iter_advance
+Date: Sat, 21 Sep 2024 16:09:49 +0800
+Message-Id: <20240921080949.909-1-hdanton@sina.com>
+In-Reply-To: <66ed861a.050a0220.2abe4d.0015.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <172039726840.11489.12386749198888516742@noble.neil.brown.name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-NeilBrown wrote:
+On Fri, 20 Sep 2024 07:26:34 -0700
+> syzbot found the following issue on:
 > 
-> We can guess though.  It isn't waiting for a lock - that would show in
-> the above list - so it might be waiting for a wakeup, or might be
-> spinning.
-> The only wake-up I can imagine is in one of the memory-allocation calls,
-> but if the system were running out of memory we would probably see
-> messages about that.
-> 
+> HEAD commit:    a430d95c5efa Merge tag 'lsm-pr-20240911' of git://git.kern..
+> git tree:       upstream
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c7d69f980000
 
-I have seen something like this. I am running NFS inside a container,
-using legacy cgroup. When it got stuck it claimed I cannot login
-into the container due to out of memory. When it happens again, I
-can send you the exact error message. The next hung nfsd is overdue,
-anyway.
+#syz test
 
-> I wonder if it could be looping in svc_xprt_destroy_all(), and sitting
-> in the msleep() when the hang is detected so there are no locks to
-> report.   I can't see while it would block there.
-> 
-> It would really help to get a full task list.
-> There is a sysctl for that: /proc/sys/kernel/hung_task_all_cpu_backtrace
-> 
-> Could that be enabled?
-> 
-
-I have enabled it on my NFS server (echo 1 >/proc/.../hung_task_all_cpu_backtrace).
-
-
-Regards
-
-Harri
+--- x/fs/netfs/write_collect.c
++++ y/fs/netfs/write_collect.c
+@@ -548,7 +548,9 @@ void netfs_write_collection_worker(struc
+ 		return;
+ 	}
+ 
++	mutex_lock(&ictx->wb_lock);
+ 	netfs_collect_write_results(wreq);
++	mutex_unlock(&ictx->wb_lock);
+ 
+ 	/* We're done when the app thread has finished posting subreqs and all
+ 	 * the queues in all the streams are empty.
+--- l/net/9p/client.c
++++ c/net/9p/client.c
+@@ -8,6 +8,7 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
++#include <linux/sprintf.h>
+ #include <linux/module.h>
+ #include <linux/errno.h>
+ #include <linux/fs.h>
+@@ -979,6 +980,7 @@ struct p9_client *p9_client_create(const
+ 	int err;
+ 	struct p9_client *clnt;
+ 	char *client_id;
++	static int fcc = 0;
+ 
+ 	clnt = kmalloc(sizeof(*clnt), GFP_KERNEL);
+ 	if (!clnt)
+@@ -991,6 +993,11 @@ struct p9_client *p9_client_create(const
+ 	client_id = utsname()->nodename;
+ 	memcpy(clnt->name, client_id, strlen(client_id) + 1);
+ 
++	clnt->name[__NEW_UTS_LEN] = 0;
++	if (__NEW_UTS_LEN <= snprintf(clnt->name, __NEW_UTS_LEN, "9pfcc%d", ++fcc)) {
++		kfree(clnt);
++		return ERR_PTR(-ENOMEM);
++	}
+ 	spin_lock_init(&clnt->lock);
+ 	idr_init(&clnt->fids);
+ 	idr_init(&clnt->reqs);
+@@ -1039,7 +1046,7 @@ struct p9_client *p9_client_create(const
+ 	 * followed by data accessed from userspace by read
+ 	 */
+ 	clnt->fcall_cache =
+-		kmem_cache_create_usercopy("9p-fcall-cache", clnt->msize,
++		kmem_cache_create_usercopy(clnt->name, clnt->msize,
+ 					   0, 0, P9_HDRSZ + 4,
+ 					   clnt->msize - (P9_HDRSZ + 4),
+ 					   NULL);
+--
 
