@@ -1,262 +1,213 @@
-Return-Path: <linux-kernel+bounces-334889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5CCF97DDEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:45:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E2A97DDF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ED7CB21483
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 16:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E11621F218F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 16:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1912B175D4C;
-	Sat, 21 Sep 2024 16:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BB6178364;
+	Sat, 21 Sep 2024 16:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vmvQkQz7"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TcYH+AQ7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C661514C9
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 16:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619BF1547DA;
+	Sat, 21 Sep 2024 16:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726937144; cv=none; b=ELrqh0qhRnRz/17oJI3zu45JT8RXdL3LDKcSpEGf8x7PYMPt5c2tEIomOnLjKIAeAV+T+maPoJvDC4fdMFRpNZ6c1W0ci6e1urHL/QuKi3FT9jKS6+M2hiFcu0rxrLBAjqg2p+EA004A3h+K6SdprA6C6sosy8d4qMO5YLuba58=
+	t=1726937223; cv=none; b=ptSSzsj8CS4KnLtH0oHm9Vg9eyXwk2M0m01wCgSN2/SD5qfbdBiM270+zWbm6ekNRvA3fX8qgDunYUTXPIfcHMohBPKloldt6uPuPRlE7l9yAaNOmZC0uC76CaP004wgwTTYtvTw/x7f0pg6evcxxrnKppw67w5FjnLyrochOu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726937144; c=relaxed/simple;
-	bh=oLLDjpM/8aA+Mikd7HVUUzW/DmPjCx2KJeRPL/RYebY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e/wvAEngjHxDFPIdfDTUEKeKigMYX4NlOqIoD7dEMmO6vqOjJApcVsEcThM/7j1JgyA/3+VLHuouvMutLlHM+dL3mvHL5knziPLNLPtArQXTB6SVUhvoKG3cQky6HSXQ1UNudFyTF+ekTiAz0h/A1hVS0PdneLeNUoP6S4oSjjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vmvQkQz7; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37a413085cbso1298149f8f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 09:45:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726937140; x=1727541940; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=11BcDD5IihY8sHkWDN4bZKYEHZDz5Md3HLgNTNoCcv8=;
-        b=vmvQkQz72MPVdBlwdv0SyO9V/nPM1S1tBQno0dRhQTjyZbQtxgcAnfc51R504mNeZ+
-         SA+6j93+f+NDiN/ULZ9pu1L0DYjcu+orgrhXblt1o06fVheGPcA9cIVbPIIWEuH5AP4P
-         6QvAZ1Lh7PlazRrPj2JZq3zggolcRRP3Fqqn32JwBPjuVH+HLD2f78BcoDHhgeJ1ol2x
-         MFspv+4evj/6R+bpMDasETJw3LDqurevE0kQ3/9U8LSaaKeIW9s4K0/JkEQfungcO0EL
-         43wL70CEjUOGEvxAa8oSUQj1OrKySrN/X81CT4plEk7SVKfLF8mpiVLReX5pU6Vc6Qw9
-         elaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726937140; x=1727541940;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=11BcDD5IihY8sHkWDN4bZKYEHZDz5Md3HLgNTNoCcv8=;
-        b=O5/8rNkxg2RyBEFwG1d7aGFi/xrJ5/rH6CHwQKCmvTVGn7GVCVpcmKSM9/A6Az2TYL
-         1yetZsC+DLgLUFH5r97jWs7uWRoktPLCbAbllX7AVrteMCgsiTCP7S7Hr5XGljwJhL97
-         4pQhkBMqixFO1vXaxoLd3qe+0GakOXI3dfEAICac5i8xfJUZRisVk+eqgudYlICZlZ8e
-         df1dEUBuGlL07fqQALP97UVZHHvVOHm/3GvQSoF2CigqjNugW3lHPakTr92rHrVjlelV
-         msDATSoWJN7l4f27c2XDgSQLdfgYgHJyQKQzKudg0CBnl1I42qerb0j1wFgsOGyG9PwF
-         S7qw==
-X-Forwarded-Encrypted: i=1; AJvYcCWeaXbKUytbU/K4PP02ijUm/XdGhjWUyNEqv175X1Vt4qaEyoDNJHSvr0Ww77xgOyI6fx+73Yo6tEz2WMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+eDLHz2tU8E+cpK+9RXaLikLfXHpraBVx++WRPUOXQLFONXtZ
-	CS3OEB9XCOXvBgjUi6EHiBZ5bRMPFiIsbK1aP7wrDeLLwzqZJ3d3Kosgw3XN+Uk=
-X-Google-Smtp-Source: AGHT+IGJxFMVH30eOyDamIi8EJSOxXEIYis2TfZ8Ked9m32LuYuazdpkQsz44vOA8nV3YSdj2nd1Vw==
-X-Received: by 2002:adf:f6cd:0:b0:374:d2a3:d213 with SMTP id ffacd0b85a97d-37a414f4b94mr3768151f8f.18.1726937140340;
-        Sat, 21 Sep 2024 09:45:40 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:7001:d575:d71f:f3b? ([2a01:e0a:982:cbb0:7001:d575:d71f:f3b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37a47b58bfdsm3004926f8f.14.2024.09.21.09.45.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 Sep 2024 09:45:39 -0700 (PDT)
-Message-ID: <11cdd74f-683c-458e-bb18-8a0d8f8904e8@linaro.org>
-Date: Sat, 21 Sep 2024 18:45:38 +0200
+	s=arc-20240116; t=1726937223; c=relaxed/simple;
+	bh=/JWw/VWWmEDHnNUvCBQmuBP3eyIudZl9rrFt6xIrO08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SqlrbTyuUPwb7rfGTU0aLVS/59wko4L13LJFHs8sTH1FbTMlU61/EzTDDULdY5jRV2Oy2zfNf8fkRtUZcNx3J8bgNF2qOJNMu9w/mlepDVjlu8RZCVasirpnMszp33biXoOkOXRF6mASXNvW3sorf5HZdQ7alWzJbLQ/vnjlIEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TcYH+AQ7; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726937221; x=1758473221;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/JWw/VWWmEDHnNUvCBQmuBP3eyIudZl9rrFt6xIrO08=;
+  b=TcYH+AQ7tnnIZyEwFoGCqYkYH7o4ComyKhbAg5o0kVju19cho0PnZrhD
+   ymyDAmm0GhcD2uxzwjeo1zCfz4HGr4ENpWm9hlaWfNK4MlWMSvEycoQIN
+   BTyf565oKr3rLRWGYaMBYHXMsPAXDNtes+VQjW+b2qOIIk9ZGZtGG+QsY
+   3E+3ESXkGmlQF65ltpjtqnbz1Ho8PyLFThF20kAbv1qYnTkiggCyZZNSb
+   mJ/wABT55f1MfS9FY3rvkOw09ojVEj1stazxlOX5xfInQt9V6c5y4f4aI
+   zs/LLv5InGQqPPyAyO1vG2TAOsDtSdBiIQANscCAvehP8dKEpogdnvAkC
+   w==;
+X-CSE-ConnectionGUID: uHpk3KRwTeKcIq53Py5o/g==
+X-CSE-MsgGUID: TXC7V7/eQDS4Lfs4M5IB6A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="36515177"
+X-IronPort-AV: E=Sophos;i="6.10,247,1719903600"; 
+   d="scan'208";a="36515177"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2024 09:47:00 -0700
+X-CSE-ConnectionGUID: YERgT9MgRVekrX2cx5DFYg==
+X-CSE-MsgGUID: 0YeFy8izTQ27zoy1u4yyMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,247,1719903600"; 
+   d="scan'208";a="75572583"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 21 Sep 2024 09:46:57 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ss3G2-000Fbv-2R;
+	Sat, 21 Sep 2024 16:46:54 +0000
+Date: Sun, 22 Sep 2024 00:45:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+	Keguang Zhang <keguang.zhang@gmail.com>
+Subject: Re: [PATCH v9 2/2] mtd: rawnand: Add Loongson-1 NAND Controller
+ Driver
+Message-ID: <202409220010.vctkHddZ-lkp@intel.com>
+References: <20240920-loongson1-nand-v9-2-9cc7b9345a03@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/11] Preemption support for A7XX
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Antonino Maniscalco <antomani103@gmail.com>,
- Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Jonathan Corbet <corbet@lwn.net>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- Sharat Masetty <smasetty@codeaurora.org>
-References: <20240917-preemption-a750-t-v4-0-95d48012e0ac@gmail.com>
- <c70392bb-bda1-48c7-824e-23d6f92f54ef@linaro.org>
- <20240920170949.vp3642gghhey3pjb@hu-akhilpo-hyd.qualcomm.com>
-Content-Language: en-GB
-From: Neil Armstrong <neil.armstrong@linaro.org>
-In-Reply-To: <20240920170949.vp3642gghhey3pjb@hu-akhilpo-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240920-loongson1-nand-v9-2-9cc7b9345a03@gmail.com>
 
-Le 20/09/2024 à 19:09, Akhil P Oommen a écrit :
-> On Wed, Sep 18, 2024 at 09:46:33AM +0200, Neil Armstrong wrote:
->> Hi,
->>
->> On 17/09/2024 13:14, Antonino Maniscalco wrote:
->>> This series implements preemption for A7XX targets, which allows the GPU to
->>> switch to an higher priority ring when work is pushed to it, reducing latency
->>> for high priority submissions.
->>>
->>> This series enables L1 preemption with skip_save_restore which requires
->>> the following userspace patches to function:
->>>
->>> https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/30544
->>>
->>> A flag is added to `msm_submitqueue_create` to only allow submissions
->>> from compatible userspace to be preempted, therefore maintaining
->>> compatibility.
->>>
->>> Preemption is currently only enabled by default on A750, it can be
->>> enabled on other targets through the `enable_preemption` module
->>> parameter. This is because more testing is required on other targets.
->>>
->>> For testing on other HW it is sufficient to set that parameter to a
->>> value of 1, then using the branch of mesa linked above, `TU_DEBUG=hiprio`
->>> allows to run any application as high priority therefore preempting
->>> submissions from other applications.
->>>
->>> The `msm_gpu_preemption_trigger` and `msm_gpu_preemption_irq` traces
->>> added in this series can be used to observe preemption's behavior as
->>> well as measuring preemption latency.
->>>
->>> Some commits from this series are based on a previous series to enable
->>> preemption on A6XX targets:
->>>
->>> https://lkml.kernel.org/1520489185-21828-1-git-send-email-smasetty@codeaurora.org
->>>
->>> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
->>> ---
->>> Changes in v4:
->>> - Added missing register in pwrup list
->>> - Removed and rearrange barriers
->>> - Renamed `skip_inline_wptr` to `restore_wptr`
->>> - Track ctx seqno per ring
->>> - Removed secure preempt context
->>> - NOP out postamble to disable it instantly
->>> - Only emit pwrup reglist once
->>> - Document bv_rptr_addr
->>> - Removed unused A6XX_PREEMPT_USER_RECORD_SIZE
->>> - Set name on preempt record buffer
->>> - Link to v3: https://lore.kernel.org/r/20240905-preemption-a750-t-v3-0-fd947699f7bc@gmail.com
->>>
->>> Changes in v3:
->>> - Added documentation about preemption
->>> - Use quirks to determine which target supports preemption
->>> - Add a module parameter to force disabling or enabling preemption
->>> - Clear postamble when profiling
->>> - Define A6XX_CP_CONTEXT_SWITCH_CNTL_LEVEL fields in a6xx.xml
->>> - Make preemption records MAP_PRIV
->>> - Removed user ctx record (NON_PRIV) and patch 2/9 as it's not needed
->>>     anymore
->>> - Link to v2: https://lore.kernel.org/r/20240830-preemption-a750-t-v2-0-86aeead2cd80@gmail.com
->>>
->>> Changes in v2:
->>> - Added preept_record_size for X185 in PATCH 3/7
->>> - Added patches to reset perf counters
->>> - Dropped unused defines
->>> - Dropped unused variable (fixes warning)
->>> - Only enable preemption on a750
->>> - Reject MSM_SUBMITQUEUE_ALLOW_PREEMPT for unsupported targets
->>> - Added Akhil's Reviewed-By tags to patches 1/9,2/9,3/9
->>> - Added Neil's Tested-By tags
->>> - Added explanation for UAPI changes in commit message
->>> - Link to v1: https://lore.kernel.org/r/20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com
->>>
->>> ---
->>> Antonino Maniscalco (11):
->>>         drm/msm: Fix bv_fence being used as bv_rptr
->>>         drm/msm/A6XX: Track current_ctx_seqno per ring
->>>         drm/msm: Add a `preempt_record_size` field
->>>         drm/msm: Add CONTEXT_SWITCH_CNTL bitfields
->>>         drm/msm/A6xx: Implement preemption for A7XX targets
->>>         drm/msm/A6xx: Sync relevant adreno_pm4.xml changes
->>>         drm/msm/A6xx: Use posamble to reset counters on preemption
->>>         drm/msm/A6xx: Add traces for preemption
->>>         drm/msm/A6XX: Add a flag to allow preemption to submitqueue_create
->>>         drm/msm/A6xx: Enable preemption for A750
->>>         Documentation: document adreno preemption
->>>
->>>    Documentation/gpu/msm-preemption.rst               |  98 +++++
->>>    drivers/gpu/drm/msm/Makefile                       |   1 +
->>>    drivers/gpu/drm/msm/adreno/a2xx_gpu.c              |   2 +-
->>>    drivers/gpu/drm/msm/adreno/a3xx_gpu.c              |   2 +-
->>>    drivers/gpu/drm/msm/adreno/a4xx_gpu.c              |   2 +-
->>>    drivers/gpu/drm/msm/adreno/a5xx_gpu.c              |   6 +-
->>>    drivers/gpu/drm/msm/adreno/a6xx_catalog.c          |   7 +-
->>>    drivers/gpu/drm/msm/adreno/a6xx_gpu.c              | 325 ++++++++++++++-
->>>    drivers/gpu/drm/msm/adreno/a6xx_gpu.h              | 174 ++++++++
->>>    drivers/gpu/drm/msm/adreno/a6xx_preempt.c          | 440 +++++++++++++++++++++
->>>    drivers/gpu/drm/msm/adreno/adreno_gpu.h            |   9 +-
->>>    drivers/gpu/drm/msm/msm_drv.c                      |   4 +
->>>    drivers/gpu/drm/msm/msm_gpu.c                      |   2 +-
->>>    drivers/gpu/drm/msm/msm_gpu.h                      |  11 -
->>>    drivers/gpu/drm/msm/msm_gpu_trace.h                |  28 ++
->>>    drivers/gpu/drm/msm/msm_ringbuffer.h               |  18 +
->>>    drivers/gpu/drm/msm/msm_submitqueue.c              |   3 +
->>>    drivers/gpu/drm/msm/registers/adreno/a6xx.xml      |   7 +-
->>>    .../gpu/drm/msm/registers/adreno/adreno_pm4.xml    |  39 +-
->>>    include/uapi/drm/msm_drm.h                         |   5 +-
->>>    20 files changed, 1117 insertions(+), 66 deletions(-)
->>> ---
->>> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
->>> change-id: 20240815-preemption-a750-t-fcee9a844b39
->>>
->>> Best regards,
->>
->> I've been running vulkan-cts (1.3.7.3-0-gd71a36db16d98313c431829432a136dbda692a08 from Yocto)
->> on SM8650-QRD, SM8550-QRD & SM8450-HDK boards with enable_preemption in default value
->> and forced to 1, and I've seen no regression so far
->>
->> On SM8550, I've seen a few:
->> platform 3d6a000.gmu: [drm:a6xx_hfi_send_msg.constprop.0 [msm]] *ERROR* Message HFI_H2F_MSG_GX_BW_PERF_VOTE id 2743 timed out waiting for response
->> platform 3d6a000.gmu: [drm:a6xx_hfi_send_msg.constprop.0 [msm]] *ERROR* Unexpected message id 2743 on the response queue
->> but it's unrelated to preempt
->>
->> and on SM8450:
->> platform 3d6a000.gmu: [drm:a6xx_gmu_set_oob [msm]] *ERROR* Timeout waiting for GMU OOB set GPU_SET: 0x0
->> msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 7.3.0.1: hangcheck detected gpu lockup rb 0!
->> msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 7.3.0.1:     completed fence: 331235
->> msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 7.3.0.1:     submitted fence: 331236
->> adreno 3d00000.gpu: [drm:a6xx_irq [msm]] *ERROR* gpu fault ring 0 fence 50de4 status 00800005 rb 0000/0699 ib1 0000000000000000/0000 ib2 0000000000000000/0000
->> msm_dpu ae01000.display-controller: [drm:recover_worker [msm]] *ERROR* 7.3.0.1: hangcheck recover!
->> msm_dpu ae01000.display-controller: [drm:recover_worker [msm]] *ERROR* 7.3.0.1: offending task: deqp-vk (/usr/lib/vulkan-cts/deqp-vk)
->> msm_dpu ae01000.display-controller: [drm:recover_worker [msm]] *ERROR* 7.3.0.1: hangcheck recover!
->> leading to a VK_ERROR_DEVICE_LOST, but again unrelated to preempt support.
->>
->> So you can also add:
->> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
->> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8450-HDK
->>
-> 
-> Niel,
-> 
-> On my x1e device, all submissions were somehow going into only a single
-> ring, even the compositor's. Not sure why. So effectively preemption was
-> not really exercised. I had to force one of the two benchmark I ran
-> using the "highprio" mesa debug flag force submittions to ring 0.
-> 
-> If possible it is a good idea to check the new preemption traces to
-> ensure preemption kicks in.
+Hi Keguang,
 
-Sure I'll run the test again on a750 and check if preemption kicks in.
+kernel test robot noticed the following build warnings:
 
-Neil
+[auto build test WARNING on 62f92d634458a1e308bb699986b9147a6d670457]
 
-> 
-> -Akhil
-> 
->> Thanks,
->> Neil
+url:    https://github.com/intel-lab-lkp/linux/commits/Keguang-Zhang-via-B4-Relay/dt-bindings-mtd-Add-Loongson-1-NAND-Controller/20240920-191936
+base:   62f92d634458a1e308bb699986b9147a6d670457
+patch link:    https://lore.kernel.org/r/20240920-loongson1-nand-v9-2-9cc7b9345a03%40gmail.com
+patch subject: [PATCH v9 2/2] mtd: rawnand: Add Loongson-1 NAND Controller Driver
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240922/202409220010.vctkHddZ-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240922/202409220010.vctkHddZ-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409220010.vctkHddZ-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/mtd/nand/raw/loongson1_nand.c:349:17: warning: cast to smaller integer type 'u32' (aka 'unsigned int') from 'char *' [-Wpointer-to-int-cast]
+     349 |         if (IS_ALIGNED((u32)op->buf, chip->buf_align) &&
+         |                        ^~~~~~~~~~~~
+   include/linux/align.h:13:30: note: expanded from macro 'IS_ALIGNED'
+      13 | #define IS_ALIGNED(x, a)                (((x) & ((typeof(x))(a) - 1)) == 0)
+         |                                            ^
+>> drivers/mtd/nand/raw/loongson1_nand.c:349:17: warning: cast to smaller integer type 'u32' (aka 'unsigned int') from 'char *' [-Wpointer-to-int-cast]
+     349 |         if (IS_ALIGNED((u32)op->buf, chip->buf_align) &&
+         |                        ^~~~~~~~~~~~
+   include/linux/align.h:13:44: note: expanded from macro 'IS_ALIGNED'
+      13 | #define IS_ALIGNED(x, a)                (((x) & ((typeof(x))(a) - 1)) == 0)
+         |                                                          ^
+   2 warnings generated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
+   Depends on [n]: MAILBOX [=y] && (ARCH_OMAP2PLUS || ARCH_K3)
+   Selected by [y]:
+   - TI_K3_M4_REMOTEPROC [=y] && REMOTEPROC [=y] && (ARCH_K3 || COMPILE_TEST [=y])
+
+
+vim +349 drivers/mtd/nand/raw/loongson1_nand.c
+
+   333	
+   334	static int ls1x_nand_dma_transfer(struct ls1x_nfc *nfc,
+   335					  struct ls1x_nfc_op *op)
+   336	{
+   337		struct nand_chip *chip = &nfc->chip;
+   338		struct dma_chan *chan = nfc->dma_chan;
+   339		struct device *dev = chan->device->dev;
+   340		struct dma_async_tx_descriptor *desc;
+   341		enum dma_data_direction data_dir =
+   342		    op->is_write ? DMA_TO_DEVICE : DMA_FROM_DEVICE;
+   343		enum dma_transfer_direction xfer_dir =
+   344		    op->is_write ? DMA_MEM_TO_DEV : DMA_DEV_TO_MEM;
+   345		char *dma_buf = NULL;
+   346		dma_addr_t dma_addr;
+   347		int ret;
+   348	
+ > 349		if (IS_ALIGNED((u32)op->buf, chip->buf_align) &&
+   350		    IS_ALIGNED(op->len, chip->buf_align)) {
+   351			dma_addr = dma_map_single(dev, op->buf, op->len, data_dir);
+   352			if (dma_mapping_error(dev, dma_addr)) {
+   353				dev_err(dev, "failed to map DMA buffer\n");
+   354				return -ENXIO;
+   355			}
+   356		} else if (!op->is_write) {
+   357			dma_buf = dma_alloc_coherent(dev, op->dma_len, &dma_addr,
+   358						     GFP_KERNEL);
+   359			if (!dma_buf)
+   360				return -ENOMEM;
+   361		} else {
+   362			dev_err(dev, "subpage writing not supported\n");
+   363			return -EOPNOTSUPP;
+   364		}
+   365	
+   366		desc = dmaengine_prep_slave_single(chan, dma_addr, op->dma_len,
+   367						   xfer_dir, DMA_PREP_INTERRUPT);
+   368		if (!desc) {
+   369			dev_err(dev, "failed to prepare DMA descriptor\n");
+   370			ret = PTR_ERR(desc);
+   371			goto err;
+   372		}
+   373		desc->callback = ls1x_nand_dma_callback;
+   374		desc->callback_param = nfc;
+   375	
+   376		nfc->dma_cookie = dmaengine_submit(desc);
+   377		ret = dma_submit_error(nfc->dma_cookie);
+   378		if (ret) {
+   379			dev_err(dev, "failed to submit DMA descriptor\n");
+   380			goto err;
+   381		}
+   382	
+   383		dev_dbg(dev, "issue DMA with cookie=%d\n", nfc->dma_cookie);
+   384		dma_async_issue_pending(chan);
+   385	
+   386		ret = wait_for_completion_timeout(&nfc->dma_complete,
+   387						  msecs_to_jiffies(2000));
+   388		if (!ret) {
+   389			dmaengine_terminate_sync(chan);
+   390			reinit_completion(&nfc->dma_complete);
+   391			ret = -ETIMEDOUT;
+   392			goto err;
+   393		}
+   394		ret = 0;
+   395	
+   396		if (dma_buf)
+   397			memcpy(op->buf, dma_buf + op->aligned_offset, op->len);
+   398	err:
+   399		if (dma_buf)
+   400			dma_free_coherent(dev, op->dma_len, dma_buf, dma_addr);
+   401		else
+   402			dma_unmap_single(dev, dma_addr, op->len, data_dir);
+   403	
+   404		return ret;
+   405	}
+   406	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
