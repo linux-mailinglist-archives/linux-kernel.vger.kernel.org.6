@@ -1,158 +1,121 @@
-Return-Path: <linux-kernel+bounces-334928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302D697DE6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:55:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9DCE97DE70
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 21:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4A9281E7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:55:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05A131C20A95
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 19:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E78B7DA7B;
-	Sat, 21 Sep 2024 18:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A32A3B784;
+	Sat, 21 Sep 2024 19:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjPywhe5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b6ZZWItZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEA72207A;
-	Sat, 21 Sep 2024 18:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026506FBF
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 19:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726944924; cv=none; b=Km0EpnsHLPXXdNl/jGmDWLwtAqb6zw2uVmCy1azo4ZftWAJsWajGs3lfg5ulegOannHPZIzyYd192aVK9yvKiDjZvjTiUsCq8TGKb2VYPtSCDMyBk1sBADzP2VqHqdwKCOW0kyhfcLL6aZl7y0tAezgnHN8k4gL8WTIAbIp++aM=
+	t=1726945677; cv=none; b=NayiU0IqTaYuVz+6frZLoJAVVgag7puk1jtbuL3NRFT90IrFAJEp9JVOEGK81ELJO6nPNhL2J0lLJZ3ZeS2iogrwDN1VAlgd9cilHOnLQzuJkw5D100Qv3hY1pefM5BEJrQIVH7mvpYEX/NcbWl8JiFMH0XBsi5Whm2p2cZ6BYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726944924; c=relaxed/simple;
-	bh=EW3RqMHmcEVsqOD5+PwtqaAXSNldoK2gO0jXhV+18kA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OeIBBLiA+fg/1kM4bCwBExEVs9ydUrpdn++DrSIFXIz0OrUZUyqSxi3gWoll1Zn+eMKS25IX/E0n2AhW8IaS6HJEJMpb/CuezddZ6iMSvJGyGdvNP7kkx6dz+qknwIGiK82MqgaYVOXhGXgwja2XNR6Fve90gmsiSBrssjYepec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjPywhe5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ABA3C4CEC2;
-	Sat, 21 Sep 2024 18:55:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726944924;
-	bh=EW3RqMHmcEVsqOD5+PwtqaAXSNldoK2gO0jXhV+18kA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RjPywhe58rjvE4SbSbM1Npo55fwjBx5SLQftNBpgzlj0/V6ahO8ptaZKylyPqONha
-	 w/lbemqX0tGsVB7Odo/aIKA7Kk0ffms22xNqzLEhAKznt7F2W5OJJbt1wrxIrWKStR
-	 l/3q0oJ+882ddwqXdm3p6DfA/t5u5VGZNluqJLKf8pihowiEgogxQ85KjlxatQXb/T
-	 yz6tCz3Ph/+Ql8f2CNfsd7+72n0Qu0xDFii00dpuT6kWdr/aN5OIbqVi5QbdSoKFPP
-	 aEKejnbbmA+lg8AiOANAHpXRNzndXwZBYRCyPthQZqfAxwK0wS7BCSX+NaU9rsNmES
-	 S1ar0JM1+9iOw==
-Date: Sat, 21 Sep 2024 11:55:19 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>
-Cc: axboe@kernel.dk, song@kernel.org, yukuai3@huawei.com, agk@redhat.com,
-	snitzer@kernel.org, mpatocka@redhat.com, adrian.hunter@intel.com,
-	quic_asutoshd@quicinc.com, ritesh.list@gmail.com,
-	ulf.hansson@linaro.org, andersson@kernel.org,
-	konradybcio@kernel.org, kees@kernel.org, gustavoars@kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-hardening@vger.kernel.org, quic_srichara@quicinc.com,
-	quic_varada@quicinc.com
-Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
-Message-ID: <20240921185519.GA2187@quark.localdomain>
-References: <20240916085741.1636554-1-quic_mdalam@quicinc.com>
- <20240916085741.1636554-2-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1726945677; c=relaxed/simple;
+	bh=pyaCrcHB/Mr5VF2u4W6E8iy8EGG7VcpVDbY8a1Z1+Ao=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WAywYyhUN5Bbv8pb6yoBb1jP5QR5Z4LDlTnet3IGtrlem2aGTXyEeyCiJVGCgyUz4XeymSb4wjVKRUb8lZELu2o1r5kTqUVhNOIjlbrO3XlNHxCupNXtsBeLjj0d2NQdP+d40J3rCmYWNKvoETZzbh7Vf1Gzld0aOvwlx64cRrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b6ZZWItZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726945674;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0LRRxfCp9iMgUROo0MKIcSdudEZHsVNL3LfcU6gReA8=;
+	b=b6ZZWItZYaZPKfVScN6mmyy3U05NiNKLXiT7/Sc61cD3adrlISn26rzVxVT8wNzJkqBATq
+	Mbt+IrQGRJ/uEryGW7kvJtP3g44NLRc3MUbhMfrUTJR0YPnQdjFbxtvgzIqVpJ0u+CHMJ/
+	2c3HXYK0p0DeNCMGkjEmjRIMn/uq4zU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-421-JfhGa0kZNW6whnrB37FXNw-1; Sat,
+ 21 Sep 2024 15:07:51 -0400
+X-MC-Unique: JfhGa0kZNW6whnrB37FXNw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5E55A192E276;
+	Sat, 21 Sep 2024 19:07:50 +0000 (UTC)
+Received: from llong.com (unknown [10.45.224.27])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B35AC19560AB;
+	Sat, 21 Sep 2024 19:07:44 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Frederic Weisbecker <frederic@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Phil Auld <pauld@redhat.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v4 0/4] sched: Miscellaneous isolation related cleanups
+Date: Sat, 21 Sep 2024 15:07:16 -0400
+Message-ID: <20240921190720.106195-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916085741.1636554-2-quic_mdalam@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi,
+ v4:
+  - Make "isolcpus=nohz" equivalent to "nohz_full" as suggested by
+    Federic.
+  - Update the scheduler code to use HK_TYPE_KERNEL_NOISE.
 
-On Mon, Sep 16, 2024 at 02:27:39PM +0530, Md Sadre Alam wrote:
-> QCOM SDCC controller supports Inline Crypto Engine
-> This driver will enables inline encryption/decryption
-> for ICE. The algorithm supported by ICE are XTS(AES)
-> and CBC(AES).
-> 
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> ---
-> 
-> Change in [v2]
-> 
-> * Added dm-inlinecrypt driver support
-> 
-> * squash the patch blk-crypto: Add additional algo modes for Inline
->   encryption and md: dm-crypt: Add additional algo modes for inline
->   encryption and added in this
-> 
-> Change in [v1]
-> 
-> * This patch was not included in [v1]
-> 
->  block/blk-crypto.c           |  21 +++
->  drivers/md/Kconfig           |   8 +
->  drivers/md/Makefile          |   1 +
->  drivers/md/dm-inline-crypt.c | 316 +++++++++++++++++++++++++++++++++++
->  include/linux/blk-crypto.h   |   3 +
->  5 files changed, 349 insertions(+)
->  create mode 100644 drivers/md/dm-inline-crypt.c
+ v3:
+  - Fix incorrect housekeeping_nohz_full_setup() flags setting.
 
-Thanks for working on this!  Android uses a similar device-mapper target called
-dm-default-key
-(https://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/drivers/md/dm-default-key.c),
-and I've been looking for the best way to get the functionality upstream.  The
-main challenge is that dm-default-key is integrated with fscrypt, such that if
-fscrypt encrypts the data, then the data isn't also encrypted with the block
-device key.  There are also cases such as f2fs garbage collection in which
-filesystems read/write raw data without en/decryption by any key.  So
-essentially a passthrough mode is supported on individual I/O requests.
+ v2:
+  - Remove HK_TYPE_SCHED and related dead code
+  - Change consolidated name from HK_TYPE_NOHZ_FULL to
+    HK_TYPE_KERNEL_NOSISE as suggested by Frederic and update
+    isolation.c as well.
 
-It looks like this patch not only does not support that, but it ignores the
-existence of fscrypt (or any other use of inline encryption by filesystems)
-entirely, and overrides any filesystem-provided key with the block device's.  At
-the very least, this case would need to be explicitly not supported initially,
-i.e. dm-inlinecrypt would error out if the upper layer already provided a key.
+This series contains a number of miscellaneous sched/isolation related
+cleanups. Other than reducing the number of cpumasks in the housekeeping
+structure, there should be no other functional change.
 
-But I would like there to be an agreed-upon way to extend the code to support
-the pass-through mode, so that filesystem and block device level encryption work
-properly together.  It can indeed be done with a device-mapper target (as
-Android does already), whether it's called "dm-inlinecrypt" or "dm-default-key",
-but not in a standalone way: pass-through requests also require an addition to
-struct bio and some support in block and filesystem code.  Previously, people
-have said that supporting this functionality natively in the block layer would
-be a better fit than a dm target (e.g., see the thread
-https://lore.kernel.org/all/1658316391-13472-1-git-send-email-israelr@nvidia.com/T/#u).
-I'd appreciate people's feedback on which approach they'd prefer.
+[v1] https://lore.kernel.org/lkml/20240818234520.90186-1-longman@redhat.com/
+[v2] https://lore.kernel.org/lkml/20240904171441.1048072-1-longman@redhat.com/
+[v3] https://lore.kernel.org/lkml/20240904183650.1053708-1-longman@redhat.com/
 
-Anyway, assuming the device-mapper target approach, I also have some other
-feedback on this patch:
+Waiman Long (4):
+  sched/core: Remove HK_TYPE_SCHED
+  sched/isolation: Make "isolcpus=nohz" equivalent to "nohz_full"
+  sched/isolation: Consolidate housekeeping cpumasks that are always
+    identical
+  sched: Unify HK_TYPE_{TIMER|TICK|MISC} to HK_TYPE_KERNEL_NOISE
 
-New algorithms should not be added in the same patch as a new dm target.  Also,
-I do not see why there is any need for the new algorithms you are adding
-(AES-128-XTS, AES-128-CBC, and AES-256-CBC).  XTS is preferable to CBC, and
-AES-256 is preferable to AES-128.  AES-256-XTS is already supported, both by
-blk-crypto and by Qualcomm ICE.  So you should just use AES-256-XTS.
+ .../admin-guide/kernel-parameters.txt         |  4 +++-
+ include/linux/sched/isolation.h               | 21 +++++++++++-------
+ kernel/sched/core.c                           | 12 +++++-----
+ kernel/sched/fair.c                           | 19 +++-------------
+ kernel/sched/isolation.c                      | 22 ++++++++-----------
+ 5 files changed, 34 insertions(+), 44 deletions(-)
 
-There are also a lot of miscellaneous issues with the proposed code.  Missing
-->io_hints and ->status methods, truncating IVs to 32 bits, unnecessarily using
-a custom algorithm name syntax that doesn't make the IV generation method
-explicit, unnecessarily splitting bios, incrementing IVs every 512 bytes instead
-of each sector, etc.  I can comment on all of these in detail if you want, but
-to start it might be helpful to just check out dm-default-key
-(https://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/drivers/md/dm-default-key.c)
-and maybe base your code on that, as it has handled these issues already.  E.g.,
-its syntax is aligned with dm-crypt's, it implements ->io_hints and ->status,
-and it calculates the maximum DUN correctly so that it can be determined
-correctly whether the inline encryption hardware can be used or not.
+-- 
+2.43.5
 
-Finally, the commit message needs to summarize what the patch does and what its
-motivation is.  Currently it just talks about the Qualcomm ICE driver and
-doesn't actually say anything about dm-inlinecrypt.  Yes, the motivation for
-dm-inlinecrypt involves being able to take advantage of inline encryption
-hardware such as Qualcomm ICE, but it's not explained.
-
-Thanks,
-
-- Eric
 
