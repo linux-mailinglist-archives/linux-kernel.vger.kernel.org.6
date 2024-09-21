@@ -1,147 +1,140 @@
-Return-Path: <linux-kernel+bounces-334974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF11C97DF1F
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 23:42:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0970497DF21
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 23:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5D481C20A31
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 21:42:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62FDDB2100F
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 21:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7A2153BE8;
-	Sat, 21 Sep 2024 21:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516BE153BF8;
+	Sat, 21 Sep 2024 21:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="bXZon0CE"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yd0aZS+X"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C6618C0C;
-	Sat, 21 Sep 2024 21:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B86D18C0C
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 21:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726954969; cv=none; b=QtT/F0yUvq7dScEJnJRhWjEpa2cfzJyNr/h4FDpJhU+6AKi0WqWzfNJ75y+SZEqx9r+CZdGZjoxLy94C6mdFCcJ8lh5CdJMb/x1bjgl6UNfNAxzQtLq1HHsM23mMD5+8z0OzvYtAF9wW7s66wbqYDeRf3wOjnOajzADMS/1euAE=
+	t=1726954997; cv=none; b=sVmAmBrOqtFbxlx687gcE+oM8R6fYwrfpvYInRX80LqwXo3Kpqlmf46sZ6I/ExRDziQPiMYqQ2vvV2sChQrel5uM1RvurkAYvhROXzxm8vQMYNFRmC0fSNitXrSYHCgoWBUPd05Hv0j9cNeNdQM+eBdDDbHBqh+nS50gVejfrHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726954969; c=relaxed/simple;
-	bh=3453U1dwI9YwljGOwhoJjEpBMw95sjMLum9O2euVRKk=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=AM11ssxWijDRqhYgxIOBeMB6a0DYFZv7ZVdi3ftsUKACVy5gPt1YZPBWvSoG9cTEqKUd5ba9qud9X8eCxGb9CVEhGYs1/l5uDsVnhZ1/4pmVW1vboG+pHYBENFW15D00QDL+lXGK3KvMHU0AALoU9lsUuqaDZT+i8iD5+4yzv3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=bXZon0CE; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1726954997; c=relaxed/simple;
+	bh=xx9cnyaQk8owjM+Fhi+pz3uyfUXXmLCkLdaXxWh+BPg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tQaObiQrzU6XaGsI9b/EQgscRZ3OUnzWXpHl7znqsyQmq1aMTOYJLQ/LaNh6Cv9dBvRSQYCpNfj1OJtvN3lgGaNNzDsiUEMU6YcCnDsqTBcdAM2C8pRYDxcztYtferSt43yfFKfOLL6npA/22TkO5sQ30jJUtt3YUKaY5w1G7Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yd0aZS+X; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-375e5c12042so1700371f8f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 14:43:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726954994; x=1727559794; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yb4OyiPNxrTvGPVFmvMiyAR8oFtRRhpHywjs9QOCzAQ=;
+        b=Yd0aZS+X4cvjKlkP9f143/TZhO5V5XpBY0sXGE9EazmFe4BVdjvpU2ABphTlVKw5dM
+         T8ccc2WLBxLuYS3ji5uwxmYgf43TmQzyoP36pROL4AB6wuWm7+rrIotbSAwJdbCXQmqg
+         LH1Kz8u3Q5KSkTbsm2TY3uh286DTzJJg6EhMHZjuq/aaa3/4tf7Reft5ZzdqOagOwqCC
+         oGjgsvfoUvoINQQbuwDwI9katllEKWwnyRBuA4yh7NrLmeMRc6Nb7u04+O7Ag0r+m21j
+         HMfivVedHaXhwNjutILul2eTGQQ2FXVyvH18ulVZXRUjZntFR82WwYbc877qKw3vziPa
+         SfUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726954994; x=1727559794;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=yb4OyiPNxrTvGPVFmvMiyAR8oFtRRhpHywjs9QOCzAQ=;
+        b=RA/ySZrR936juVmEKbUxZ1TqYiiPFh5oF9L44Ay4UgF1EfiAQw4Cw1RGLQWfbAJkov
+         GAZJ/yWIwyOIJfmacShy1XGmdZTk9r9wl15Js2VfykJWNyDQm7ONvTzZ1lQuhLEPhmgO
+         q9NNLTzLA9Uhbp70CBkirSHpJKrS7hph46xRhewikFHV9AlnAfTgtQ+y1dzbyy9iulRe
+         eIytZ9PskicgEKFf6NCaqpABHZWyH2/SDKYiU49IlES983E3MigP+kQewdJNkmUyMuOl
+         6jtv+U0ogao9c73kFbfSEwei+gZkhD4Tg7A/Id6DDWO6TF/L/5n0v+ZbTIaTY4FBQ1H8
+         ehxA==
+X-Forwarded-Encrypted: i=1; AJvYcCXH70CtKbsw39fovHuVJ4jhwobDm0OtnfSg5i+tVZuWLzOP4RoUSMx4m4KES2dnOosc3V+mMI9Ir1wjMNY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywcrmb7A08h4b2iEMQsB08cJnTB3lONnhIpFLLEpgzMawzag5Iv
+	eeChXM+KVpqwCNIJYq6NYFecZ7hK+oDErxzgz7zx0Cxs49L4Keh4XenIYOVb
+X-Google-Smtp-Source: AGHT+IHegw/BddhsJ7E2GHhXUjYBEK8DEWnZB4ZEfyUMYoNCepCPvbjtWa1J71AM7bpfW/mmTBKFkA==
+X-Received: by 2002:a5d:6b43:0:b0:374:bcdc:625f with SMTP id ffacd0b85a97d-37a42398cb5mr3295798f8f.51.1726954994060;
+        Sat, 21 Sep 2024 14:43:14 -0700 (PDT)
+Received: from giga-mm-1.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e71f062esm21042133f8f.7.2024.09.21.14.43.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Sep 2024 14:43:13 -0700 (PDT)
+Message-ID: <68fa22ebdc896adffe42c0f101339c61f2dce86a.camel@gmail.com>
+Subject: Re: [PATCH 2/4] soc: marvell: rvu-pf: Add PF to AF mailbox
+ communication support.
+From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+To: Anshumali Gaur <agaur@marvell.com>, conor.dooley@microchip.com, 
+	ulf.hansson@linaro.org, arnd@arndb.de, linus.walleij@linaro.org, 
+	nikita.shubin@maquefel.me, vkoul@kernel.org, cyy@cyyself.name, 
+	krzysztof.kozlowski@linaro.org, linux-kernel@vger.kernel.org, 
+	sgoutham@marvell.com
+Date: Sat, 21 Sep 2024 23:43:33 +0200
+In-Reply-To: <20240920112318.2722488-3-agaur@marvell.com>
+References: <20240920112318.2722488-1-agaur@marvell.com>
+	 <20240920112318.2722488-3-agaur@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1726954964;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+uMN5w6qYS2BUoqj10TXa1/0/97pCNoqt/rmAX2GPAo=;
-	b=bXZon0CEaBK6v6rzxU5YRfCFhLhOOwREJFeHmkWn7lduwYxSWtn2lAFcrOmfCS3bciGYbk
-	pMd/4I3Lg8oP50TVKstEVU6tGTLBsQ1BXAa/PPCDYmbdE1HcYM5stO3A8OOUT/IpTV/rl/
-	clHx+rU1bt++AGbwb+x8LlHIFv+4/eouASANroc9R7gjhYfWyeB28axdPItPbb4Rk4QKti
-	9HG8G1/zvxLl7OESAeDw1IpLhnqUm3n500p1iauva2FmVvp92mDuuSACR/GoFXJ6p0jvXe
-	1VgK1qWwW8zUeWeyToAGgM5OqTAS9JKYY4xNjH2KnWeWtt1SJSvu3Y8s846HjQ==
-Date: Sat, 21 Sep 2024 23:42:43 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Florian Klink <flokli@flokli.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Sebastian Reichel <sebastian.reichel@collabora.com>, Kever Yang
- <kever.yang@rock-chips.com>, =?UTF-8?Q?Tam=C3=A1s_Sz=C5=B1cs?=
- <tszucs@protonmail.ch>, FUKAUMI Naoki <naoki@radxa.com>, Muhammed Efe Cetin
- <efectn@protonmail.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: enable automatic fan control on
- Orange Pi 5+
-In-Reply-To: <20240921183810.225322-1-flokli@flokli.de>
-References: <20240921183810.225322-1-flokli@flokli.de>
-Message-ID: <d90eae7de77a77f023d995c4cc5d6c42@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Hello Florian,
+Hi Anshumali!
 
-Thanks for the patch.  Please, see a comment below.
+On Fri, 2024-09-20 at 16:53 +0530, Anshumali Gaur wrote:
+> Resource provisioning for virtual functions (VFs) is done by RVU admin
+> function (AF). RVU PF and AF shares a memory region which can be used
+> for communication. This patch adds support for mailbox communication
+> between PF and AF, notification of messages is via IRQs.
+>=20
+> Example mailbox messages types and structures can be found at
+> drivers/net/ethernet/marvell/octeontx2/af/mbox.h
+>=20
+> Signed-off-by: Anshumali Gaur <agaur@marvell.com>
+>=20
 
-On 2024-09-21 20:38, Florian Klink wrote:
-> This links the PWM fan on Orange Pi 5+ as an active cooling device
-> managed automatically by the thermal subsystem, with a target SoC
-> temperature of 65C and a minimum-spin interval from 55C to 65C to
-> ensure airflow when the system gets warm.
-> 
-> This is pretty much the same as '4a152231b050 ("arm64: dts: rockchip:
-> enable automatic fan control on Rock 5B")', except for the Orange Pi
-> 5+ board.
-> 
-> Signed-off-by: Florian Klink <flokli@flokli.de>
-> ---
->  .../dts/rockchip/rk3588-orangepi-5-plus.dts   | 30 +++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-> b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-> index e74871491ef5..8569e862b6ee 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-> @@ -351,6 +351,36 @@ &i2s2m0_sdi
->  	status = "okay";
->  };
-> 
-> +&package_thermal {
-> +	polling-delay = <1000>;
+[]
+
+> +#define M(_name, _id, _fn_name, _req_type, _rsp_type)			\
+> +static struct _req_type __maybe_unused					\
+> +*gen_pf_mbox_alloc_msg_ ## _fn_name(struct mbox *mbox)			\
+> +{									\
+> +	struct _req_type *req;						\
+> +	u16 id =3D _id;							\
+> +									\
+> +	req =3D (struct _req_type *)otx2_mbox_alloc_msg_rsp(		\
+> +		&mbox->mbox, 0, sizeof(struct _req_type),		\
+> +		sizeof(struct _rsp_type));				\
+> +	if (!req)							\
+> +		return NULL;						\
+> +	req->hdr.sig =3D OTX2_MBOX_REQ_SIG;				\
+> +	req->hdr.id =3D id;						\
+> +	trace_otx2_msg_alloc(mbox->mbox.pdev, id, sizeof(*req));	\
+> +	return req;							\
+> +}
 > +
-> +	trips {
-> +		package_fan0: package-fan0 {
-> +			temperature = <55000>;
-> +			hysteresis = <2000>;
-> +			type = "active";
-> +		};
-> +
-> +		package_fan1: package-fan1 {
-> +			temperature = <65000>;
-> +			hysteresis = <2000>;
-> +			type = "active";
-> +		};
-> +	};
-> +
-> +	cooling-maps {
-> +		map1 {
-> +			trip = <&package_fan0>;
-> +			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
-> +		};
-> +
-> +		map2 {
-> +			trip = <&package_fan1>;
-> +			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
-> +		};
+> +MBOX_MESSAGES
+> +#undef M
 
-These two cooling maps should be named map0 and map1 instead, i.e.
-their numbering shoud start from zero, because there are no package
-cooling maps in the parent dtsi file(s).
+While checkpatch is wondering about _name:
 
-Having them named map1 and map2 in rk3588-rock-5b.dts was a small
-mistake that slipped by somehow, and I've already submitted a small
-patch [1] that fixes that mistake.
+WARNING: Argument '_name' is not used in function-like macro
+#399: FILE: drivers/soc/marvell/rvu_gen_pf/gen_pf.h:77:
++#define M(_name, _id, _fn_name, _req_type, _rsp_type)			\
 
-[1] 
-https://lore.kernel.org/linux-rockchip/335ecd5841ab55f333e17bb391d0e1264fac257b.1726954592.git.dsimic@manjaro.org/T/#u
+... I ask myself what actually happens here with "M" and "MBOX_MESSAGES"?
 
-> +	};
-> +};
-> +
->  /* phy1 - M.KEY socket */
->  &pcie2x1l0 {
->  	reset-gpios = <&gpio4 RK_PA5 GPIO_ACTIVE_HIGH>;
+--=20
+Alexander Sverdlin.
+
 
