@@ -1,88 +1,182 @@
-Return-Path: <linux-kernel+bounces-334809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1363B97DC69
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 11:32:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EBF897DC71
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 11:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01A41F21E9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 09:32:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF93E1F21D8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 09:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94301552E3;
-	Sat, 21 Sep 2024 09:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE64156F5D;
+	Sat, 21 Sep 2024 09:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="B4jB1mQr"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+tgV2iV"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81676D1B9;
-	Sat, 21 Sep 2024 09:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74026153803;
+	Sat, 21 Sep 2024 09:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726911122; cv=none; b=Akn1h9oBxhAlzJDaoYgpWCwegpDsIx2sl1kAklDsM2XD1y7qiembnK+iy+FDgomKkQBv4Z7yCqsQWTlh5f+66OjgrJTT4bn49Yk8w9J/3jAg5hYVv9SSbEGWiunzTxSoZJT7ugkUDn88tZg7rFibSJrLmGnE+MDde9rPDTXO8b8=
+	t=1726911892; cv=none; b=MosNikk/cb6qc+uAIlI9jCMHZQ5m6kZ2/I91fsqXXrJk/v+MSAgMRRyejqd1fRpMCBy+6A2h07PqOfGVJGh7h7BK/N+7qIHJTLhspDqTjnx7YyQCgI/L7lwXGn7wmEvfJUV2e1mrnqOJwZr6DhdVQnNdZ1KYBH5qWOZ538O+bJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726911122; c=relaxed/simple;
-	bh=WNoZYh7Aa5ofSeqYmpxILxX7PF2FWl6gdpEVXaqy+jE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RF5uBU7YKJTR/wmAVHusGPrHK9lTdhf8YDZgByxh6v0iyycaGxLtNOwhLfOXnlV5yqEhbp+oIFdwEdyqaAF89AmsCnu3UJVn4MznO0T0RYXVJ2jJnPq8o28tU0WYVLLsC8drUhk6E6l+0yFgFsrxVjFnPnBIXjxpTbBWwwCWQj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=B4jB1mQr; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=vjE19+EA/AopPzWy7APV3m/MroOy6WxqyOwkBypTXlE=; b=B4jB1mQrvycPEIxXWp9oKEB6FE
-	r3PmgGys6yEuDajmiBGW6LtMY9h2RINQSDIZe5a50C5vU/l1ThmC1rKJsa/sxHndsUrvDX8dPYfiO
-	DnV9ajAgYzXpvurCVzoEABSoI5u7Do5cSEEy8w8vz8O8FeO9XNQ/C2HZsWAgvU24lF/EyqRG2TqHO
-	DtHvXciIerbMn59YDFRhHzLCzrID9vudyrppiUT5/EL7jRZJwIDPkOheD1Vp4dcKASoA8AEHdBbac
-	m0hWL6MU3YC96dTpKxLuGVsabCACOrC+X/iA4Gd8Vtsyo0rdcL/uKBZ6GN+fPbRh1EY8VNbybvh43
-	1n8cWfSg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1srwIu-003kPm-0D;
-	Sat, 21 Sep 2024 17:31:38 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 21 Sep 2024 17:31:37 +0800
-Date: Sat, 21 Sep 2024 17:31:37 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Danny Tsen <dtsen@linux.ibm.com>
-Cc: linux-crypto@vger.kernel.org, stable@vger.kernel.org, leitao@debian.org,
-	nayna@linux.ibm.com, appro@cryptogams.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	mpe@ellerman.id.au, ltcgcw@linux.vnet.ibm.com, dtsen@us.ibm.com
-Subject: Re: [PATCH v3] crypto: Removing CRYPTO_AES_GCM_P10.
-Message-ID: <Zu6SeXGNAqzVJuPS@gondor.apana.org.au>
-References: <20240919113637.144343-1-dtsen@linux.ibm.com>
+	s=arc-20240116; t=1726911892; c=relaxed/simple;
+	bh=6Phqsl9iMeUtupsVAY2eZ8WVBngHTyrcT+r5eK72yfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h2uyWfZrec4iwJh4JQi0mbYLcUOEjv7DEPmQkg0EUWDf7A5K4fqP2xx7GHcPd4ShkyB6p5hxUsYLKtOeF27TbsmTbfC/n30SGebM5RNCgfEHTWxQ088zISHb/Qwy1f1+sDaYDWhwaFUeradd6mjttD1epfrHXtOZnPxoBcfDf+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+tgV2iV; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6dbb24ee34dso24414067b3.2;
+        Sat, 21 Sep 2024 02:44:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726911889; x=1727516689; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iT/pooyDWx+cXonngBHeD7hY6o8n6hEZ+T12BUFn3eU=;
+        b=g+tgV2iVKL0S39gv64nB2vdg0Mt5sISh/OndWkEjkXyfnMVYmIpSBMF1Tni+VLShsK
+         VCeyisjYlEYUCrMbHelW6qJ31k7BFg94xeZX1AncxkshsOMrL/zItKuoThJjMewqrpnP
+         iTG6Ux3Ie02yT2idxJV9Or1eAbQAQiLAXTzKf9kyhRNMi0SYegveeBwaeaPcApiSUtdE
+         yDkZ0O9ERK06ph2ab4LczSdBi1O6v4IMuJkg1jJh/Yqoyw6tRHmieWYqdjX0trqiHRCI
+         1uDJanSsnB0ieKaowrPJICXkorTlAtkmiQWnnGLU0gSPZqbQluvLntf7G8PJhgUjL0ae
+         jNZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726911889; x=1727516689;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iT/pooyDWx+cXonngBHeD7hY6o8n6hEZ+T12BUFn3eU=;
+        b=uabcHsI0EvIS6jlFntPzcn1/cNmj0N39a/NmuhbiM/mcJKsw3WsvJ8pAmElj4tardq
+         gPFDvDqzhmJqZb/MfxJI0DEWV4T03IPPXZ9BFrQpRjAYciNq69yXlM+NKxmilrJ4c4yq
+         84lL1v660saP0kpAq0ncLIH+suf77bzOLf3BeLkaXXzqLbv99TFVJ88um+GS/02yZ3YD
+         sgIo/99eC0v1lcDnJw/SGZT4Y+Lp4fwkZDTokuWS2gAOqyOuERTS4iUA0yE2m9mDMiw5
+         sKrOMZq+DUS9ZCO5zoRtSyWCvgUOH7ivhgZllryO1O0IyFRXEi4Ejg8FMVZ5snLufgZd
+         YnWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRPCGyQ/GU4Vgq9tALOpAK/b/quRrr1adBBj4kgCMS424RAQHaqy1YQ9Ah8fgS70JAIyY+Km4fQ9OonF/3OPA=@vger.kernel.org, AJvYcCW+5qSsmapN+f8d+ALIa8SmsS0wxQzRabfYmMejqrJYcKpog2hTnFrp4185IQaDabcs+QrPhzIc27yZysU6@vger.kernel.org, AJvYcCXApA+kf9kVHOm5BV9T5ESJP+/8cUGyustOGnv+zqkz/9urjFqbEqMfKhDd/bgRH26v0/HlIC2CBjAF02TX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxugJfu0pwnFN13bSHuu5Dyhi8S+4i/42m7MqqwhI09DJPsbx72
+	xhwrLtKnlRrg+P0GgcUwDCRzqgZz+twal1d030zco1EcytBpPoXfVzPcGiApm96YM0Aw1NnLaDt
+	f+XUzjS0gUxVK86WFAdfvgRgfxSLxBMM8LKY=
+X-Google-Smtp-Source: AGHT+IH7ANdlTlvW/Mj7eVhLgLzw9ibdGPzl72d8JbFblPa9x1BA+ryCfZKd5D4ZNR1894gY3DwL4D76QQESJDYX57Y=
+X-Received: by 2002:a05:690c:d81:b0:6dd:d82c:4923 with SMTP id
+ 00721157ae682-6dfeec1393amr60883837b3.7.1726911889342; Sat, 21 Sep 2024
+ 02:44:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240919113637.144343-1-dtsen@linux.ibm.com>
+References: <20240916135634.98554-1-toolmanp@tlmp.cc> <20240916135634.98554-11-toolmanp@tlmp.cc>
+In-Reply-To: <20240916135634.98554-11-toolmanp@tlmp.cc>
+From: Jianan Huang <jnhuang95@gmail.com>
+Date: Sat, 21 Sep 2024 17:44:34 +0800
+Message-ID: <CAJfKizpW1rQuVfB3cNKVsEMYvHBegGcy5fgxqTBrr0wGsjjpjw@mail.gmail.com>
+Subject: Re: [RFC PATCH 10/24] erofs: add device_infos implementation in Rust
+To: Yiyang Wu <toolmanp@tlmp.cc>
+Cc: linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 19, 2024 at 07:36:37AM -0400, Danny Tsen wrote:
-> Data mismatch found when testing ipsec tunnel with AES/GCM crypto.
-> Disabling CRYPTO_AES_GCM_P10 in Kconfig for this feature.
-> 
-> Fixes: fd0e9b3e2ee6 ("crypto: p10-aes-gcm - An accelerated AES/GCM stitched implementation")
-> Fixes: cdcecfd9991f ("crypto: p10-aes-gcm - Glue code for AES/GCM stitched implementation")
-> Fixes: 45a4672b9a6e2 ("crypto: p10-aes-gcm - Update Kconfig and Makefile")
-> 
-> Signed-off-by: Danny Tsen <dtsen@linux.ibm.com>
+Yiyang Wu via Linux-erofs <linux-erofs@lists.ozlabs.org> =E4=BA=8E2024=E5=
+=B9=B49=E6=9C=8816=E6=97=A5=E5=91=A8=E4=B8=80 21:57=E5=86=99=E9=81=93=EF=BC=
+=9A
+>
+> Add device_infos implementation in rust. It will later be used
+> to be put inside the SuperblockInfo. This mask and spec can later
+> be used to chunk-based image file block mapping.
+>
+> Signed-off-by: Yiyang Wu <toolmanp@tlmp.cc>
 > ---
->  arch/powerpc/crypto/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  fs/erofs/rust/erofs_sys/devices.rs | 47 ++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+>
+> diff --git a/fs/erofs/rust/erofs_sys/devices.rs b/fs/erofs/rust/erofs_sys=
+/devices.rs
+> index 097676ee8720..7495164c7bd0 100644
+> --- a/fs/erofs/rust/erofs_sys/devices.rs
+> +++ b/fs/erofs/rust/erofs_sys/devices.rs
+> @@ -1,6 +1,10 @@
+>  // Copyright 2024 Yiyang Wu
+>  // SPDX-License-Identifier: MIT or GPL-2.0-or-later
+>
+> +use super::alloc_helper::*;
+> +use super::data::raw_iters::*;
+> +use super::data::*;
+> +use super::*;
+>  use alloc::vec::Vec;
+>
+>  /// Device specification.
+> @@ -21,8 +25,51 @@ pub(crate) struct DeviceSlot {
+>      reserved: [u8; 56],
+>  }
+>
+> +impl From<[u8; 128]> for DeviceSlot {
+> +    fn from(data: [u8; 128]) -> Self {
+> +        Self {
+> +            tags: data[0..64].try_into().unwrap(),
+> +            blocks: u32::from_le_bytes([data[64], data[65], data[66], da=
+ta[67]]),
+> +            mapped_blocks: u32::from_le_bytes([data[68], data[69], data[=
+70], data[71]]),
+> +            reserved: data[72..128].try_into().unwrap(),
+> +        }
+> +    }
+> +}
+> +
+>  /// Device information.
+>  pub(crate) struct DeviceInfo {
+>      pub(crate) mask: u16,
+>      pub(crate) specs: Vec<DeviceSpec>,
+>  }
+> +
+> +pub(crate) fn get_device_infos<'a>(
+> +    iter: &mut (dyn ContinuousBufferIter<'a> + 'a),
+> +) -> PosixResult<DeviceInfo> {
+> +    let mut specs =3D Vec::new();
+> +    for data in iter {
+> +        let buffer =3D data?;
+> +        let mut cur: usize =3D 0;
+> +        let len =3D buffer.content().len();
+> +        while cur + 128 <=3D len {
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+It is better to use macros instead of hardcode, like:
+const EROFS_DEVT_SLOT_SIZE: usize =3D size_of::<DeviceSlot>();
+Also works to the other similar usages in this patch set.
+
+Thanks,
+Jianan
+
+>
+> +            let slot_data: [u8; 128] =3D buffer.content()[cur..cur + 128=
+].try_into().unwrap();
+> +            let slot =3D DeviceSlot::from(slot_data);
+> +            cur +=3D 128;
+> +            push_vec(
+> +                &mut specs,
+> +                DeviceSpec {
+> +                    tags: slot.tags,
+> +                    blocks: slot.blocks,
+> +                    mapped_blocks: slot.mapped_blocks,
+> +                },
+> +            )?;
+> +        }
+> +    }
+> +
+> +    let mask =3D if specs.is_empty() {
+> +        0
+> +    } else {
+> +        (1 << (specs.len().ilog2() + 1)) - 1
+> +    };
+> +
+> +    Ok(DeviceInfo { mask, specs })
+> +}
+> --
+> 2.46.0
+>
 
