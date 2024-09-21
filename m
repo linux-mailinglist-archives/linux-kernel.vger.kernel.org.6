@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-334719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6650E97DB07
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 02:33:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9638097DB0C
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 02:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E7ACB21E47
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:33:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B86711C21334
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F02A4685;
-	Sat, 21 Sep 2024 00:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FEE3D7A;
+	Sat, 21 Sep 2024 00:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEmen7b0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="skeOAPTI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C6F28F5;
-	Sat, 21 Sep 2024 00:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED59C15C3;
+	Sat, 21 Sep 2024 00:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726878779; cv=none; b=Iu8DriCowC7CEzSk/+xIdst01K8UC7qEk7mZNDmX2DuQMpQb4xgbU25rzUAoPpuSyxQnv6MFzmkM7wvh0ehrcwxL2Fng6N221RQz0oFiytCxm+oj6/GJeLLGKlGaFb56A4+VyK+tZQXVrnD+RhPYshX4qdEsBMY3b5crF4T8YM8=
+	t=1726879887; cv=none; b=sa9dYtk/wa18EVByys6lZEXoquAS+oeOhQein9sfjNdQ3N9vEWOkTW9jGwXsu0ahxKh87pkVtH16qMLUiw9V6xFt0RYF0WGy9aOkwsv0VoSbiaAC5kG79GF7IHrrkCDU2dE1HtB5+uae+m2VaCFv2+Ihe0qLN378w07YK8d/nX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726878779; c=relaxed/simple;
-	bh=BBSx2iDldeOfrcbYfEwO9DZKSzlFh3eC5t4qtwhBVvY=;
+	s=arc-20240116; t=1726879887; c=relaxed/simple;
+	bh=xfWEe9VXimdKEOoSPZSqdLphGcQU8Jjk+vswELSDzKw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ic4XhI1lvRq61+gve6wzmGbkSODKewhDqMWrhTI/rK+FgFaDu6Kq9rSufHGZCsOk/DSL9p6VgQdpx+IxmroTWQ1HXkvY3HD1f3mYP5bzLT+a4a1bjpdjfWN5gM1/pNq5d0aLXPyDeeZZEuW1GeWAjvsgXLm9YhM7l1OwxvgiICo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YEmen7b0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 416D3C4CEC3;
-	Sat, 21 Sep 2024 00:32:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lbaoMATRiVOy1/t2/wkZ0rU8QGTPeiOcLu0NM+Jo8UdFdsZ349DSW55wa7xJHP+VnECOnUvH4SK9Eu+9YAP0iaRCpQfh+ROoogmW/kJIRmWlGlqc2ss3rWML5CEJBtPdcMJfQajilaZZ/S+8mcsdpoSeb52lArkHugxL0/jLyfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=skeOAPTI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FCFAC4CEC3;
+	Sat, 21 Sep 2024 00:51:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726878777;
-	bh=BBSx2iDldeOfrcbYfEwO9DZKSzlFh3eC5t4qtwhBVvY=;
+	s=k20201202; t=1726879886;
+	bh=xfWEe9VXimdKEOoSPZSqdLphGcQU8Jjk+vswELSDzKw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YEmen7b0KBASKUTIF+dEpLiwBZKqQtbppJ5cuqI7D+wm2BEED8PkHS05a+r4ToRS+
-	 qynke/OUcY2I0Xo2aZgoFznIaXnJ0mcj5rrypLWIkWYxu6mU7ae4i8TA26vIH6RvMb
-	 O9dQva7BEEGuaiiqKZ5yJPiQ1n9tmlvGn3Bfh57FC5l2MR5LXH0nahE7OggLz8rDW4
-	 klOzJMuq1ihMrOGE6ghqSVtGkhtxr8nYXIBS8MFXTfJPqX7uAIUkO8K2bvTCP7FAvD
-	 X84xA00bgOsLnlZzTXo0u6yvYLOUYPoEHKl/sxzKViCc02hI/QDGeNo8mHZNmKCN6x
-	 S/pDKlNEcDkyA==
-Date: Fri, 20 Sep 2024 19:32:56 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Keke Li <keke.li@amlogic.com>
-Cc: linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	dan.scally@ideasonboard.com, kieran.bingham@ideasonboard.com,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v3 5/9] dt-bindings: media: Add amlogic,c3-isp.yaml
-Message-ID: <172687877578.158798.13851279447258537000.robh@kernel.org>
-References: <20240918-c3isp-v3-0-f774a39e6774@amlogic.com>
- <20240918-c3isp-v3-5-f774a39e6774@amlogic.com>
+	b=skeOAPTIlhpkJyDgBSPs5lSqa5ttldDH1qhOvFY47o2jtPOmt98dPmGz2ZWeIYbBn
+	 X5TX4p2FOFvPG3+S99hf4SM363DCLmO9ZYVKtY4t+9TQ5vNxzOG+pBi50upxD6S9Oi
+	 KZWFSdcoLA/PyNC3GhxFRXlRA9+nm3NECq8E1mh/jd2yDdkVRyhtBolDiRz3Rxadcs
+	 UgibMqjG1YgTR9+FwBYkFPvwkq1A5ZNzlHw8rWSfMk0k+TZPTHX3mtyAVWOYs4qQVM
+	 xDkHRrGyyF3Y/b47s7Z80nPQNR+r3EocThTdC49Re83f/2tZD0zoXuxVqrb86RSxcJ
+	 +7aptXJOWuuiQ==
+Date: Fri, 20 Sep 2024 19:51:25 -0500
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andreas Kemnade <andreas@kemnade.info>, tony@atomide.com,
+	Sebastian Reichel <sre@kernel.org>, linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: mfd: twl: add charger node also for
+ TWL603x
+Message-ID: <20240921005125.GA165161-robh@kernel.org>
+References: <20240918084132.928295-1-andreas@kemnade.info>
+ <20240918084132.928295-3-andreas@kemnade.info>
+ <c38c9ada-e054-4a14-9265-25065048ae54@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,18 +63,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240918-c3isp-v3-5-f774a39e6774@amlogic.com>
+In-Reply-To: <c38c9ada-e054-4a14-9265-25065048ae54@kernel.org>
 
-
-On Wed, 18 Sep 2024 14:07:16 +0800, Keke Li wrote:
-> c3-isp is used to process raw image.
+On Wed, Sep 18, 2024 at 12:47:22PM +0200, Krzysztof Kozlowski wrote:
+> On 18/09/2024 10:41, Andreas Kemnade wrote:
+> > Also the TWL603X devices have a charger, so allow to specify it here.
+> > 
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > ---
+> >  .../devicetree/bindings/mfd/ti,twl.yaml        | 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> > index e94b0fd7af0f8..4064a228cb0fc 100644
+> > --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> > +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> > @@ -105,6 +105,11 @@ allOf:
+> >              regulator-initial-mode: false
+> >  
+> >        properties:
+> > +        bci:
 > 
-> Signed-off-by: Keke Li <keke.li@amlogic.com>
-> ---
->  .../devicetree/bindings/media/amlogic,c3-isp.yaml  | 85 ++++++++++++++++++++++
->  1 file changed, 85 insertions(+)
+> charger
 > 
+> > +          type: object
+> 
+> additionalProperties: true
+> 
+> Each node must end with additionalProperties or unevaluated. I think you
+> never tested it, because dtschema reports this.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+This is under an if/then schema is why there's no errors.
 
+This schema probably should have been 3 with a ti,twl-common.yaml schema 
+for the common properties, but I'm not sure it is worth changing now.
+
+Rob
 
