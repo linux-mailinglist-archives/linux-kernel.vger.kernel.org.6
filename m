@@ -1,92 +1,117 @@
-Return-Path: <linux-kernel+bounces-334759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 381E697DBCF
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:01:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4E1497DBD2
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C05211F21DA9
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 06:01:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 959A9B2169B
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 06:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0BD26AFC;
-	Sat, 21 Sep 2024 06:01:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAFC149DFD;
+	Sat, 21 Sep 2024 06:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DzKpLavB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A32D18EA2
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 06:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C6674BF8;
+	Sat, 21 Sep 2024 06:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726898464; cv=none; b=PcqgP9D6RU49x6b5c2X/gmpr9/E/ArqqF1spY39K9vCWxrQoneSGMCXdQH6Uk4EblhMoBWQvNbS/j1w7M68/1lGptdBFmfhDzf6cLKjcSI0Oea5KCHIDlydPNRrDkHdq0TA2AqNWt0ygA/1WGxPP+DrSatsXl9lkyYNoK3HU6iw=
+	t=1726899574; cv=none; b=WptLbGngk9glkcUFhORgFVWDGGOw6yBs/xsRTriy52EylwQ5nODsbmLU0t4Re9aksjZB70njrk6ArU9vvNEq/ybKtb6Yv3ywSuMbf61e1wol7y1TGQb+6idT8UXh13Rig3LzOK6/w0IVH0OfN+EVO8bBl8foOGNHsDWc4sZDcfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726898464; c=relaxed/simple;
-	bh=vN88r/MWcIw5d13Xx8PMvww6v1/dCuW8rflRaYlS16Q=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AFGyPmq7EppK9gg+0jlphUjXXMiE7v1cjWjYm6dndxYpwCeph3DHvAwzLCXQsltM+19QjkV+GeCpVfN7KNHL063GqE4E2kSUWNG9NK91UMudmoYFTMqWtsnTChFOF0kur2wjCr+aosponN/tqOtGRIYWsZS/xWSGGJ02e9Y8GUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39f53b1932aso34274365ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 23:01:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726898462; x=1727503262;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fPE27Bxeqa1YzxxNvweV1dkh1rye+Erw/a4Knu+irIo=;
-        b=cjNlY6Wb815gL8Iz//r/vxzJWhwN5M9kP4e3XBN0jgFAzR9u/N0eOKeDz/3IPdcNE0
-         VzgS93Q9Z0BdL49zbifanX0O2x9UYIketEJ//Koy8JrJIT+lEqU07pzXqscxnsJq2Sca
-         Saw79aYiCaPcVFVHsdwFculxcdocRah2Zyexad4t1R1qL7Bz/v1NXtTB3DNeYynrBTrm
-         x0CRSXMyJSp3MbBRzP0yoEXqjPfojW0c3BBlD8oUV+Ug/X+OUkA3gr/3wZQ82Z4zmK8G
-         eE0t3XyprqPk0d+llbrTrAUkSYfSHtgugy9bSsXIX4DqyCUOvvZAKGvO2+0WE32ZmLD0
-         MsSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVROMoeiztcC6fiXEzFDNgvQxtlbAfZL2f/8/E42XdCN24dlY1UthexjVuncWSw2FviinGgr7xZLkQmlXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxaqjv3MQHtahe+y6OhueZ5mqIgxsmWZ4Ip6CgcyfksgP/u+cQb
-	uUyWYnOaGcNMESipwL4PeSyxAL2eDVqGWcC52+1Fw1c0fpPutZHifrQdQX9dTrEv/OrsIXM1sDf
-	RrncxdMVQ9abdX2A2ODOeR1ZBvjGcvG1P499euS2H+TlHUqfrkgaCCp0=
-X-Google-Smtp-Source: AGHT+IHiU5ABqWw8MT4I428svEJdSH46l8oMw5JLZ7htSE0pJmmsAQ+YsW/7MJb2Gh0BtC/vU5A2OlT/Tu2dUtk8Wth0nY9hYDL5
+	s=arc-20240116; t=1726899574; c=relaxed/simple;
+	bh=r8lyuqxjz8ntpV/jzePgsOO5DLCwExmP0IlwCT3nMdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vi1V6bfb/94sUecA7aYsPTv8IjQeCIwekdJbqwP3dbIIUSIDVVN5mbVbRsL42q3MkHYKrCnV84X7KDnATmReWrvnS1DU3AoK6VcpegvrGP5q6T5Zqblp1IgNmT+f1+ALbltIyXk+38s0boZVUTJq01qfjpvrKffihxSBqF5ho0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DzKpLavB; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726899573; x=1758435573;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=r8lyuqxjz8ntpV/jzePgsOO5DLCwExmP0IlwCT3nMdM=;
+  b=DzKpLavBnons08vYafGDI4x8lybPu4DrUzYgK/PFsGru/vXBYrLEZ/sr
+   LtrWrGQ9NYVFL0UdKkbMmTeJtXi78ftvLBUlOeDARI5qsAcreFR/igomu
+   ORnhpmrZX0CK8C49Mrcqaj0RhchUcMc7k+0sIAnG2SXn7STG43bd/dEBp
+   MXFvb1Ef9xIIz1mDq6H4qq83go407DDyd1OEvgwkvwpR6j9je8f7e6aAd
+   YjnqWN8b8UiYiLQlNsKtjm/IvgcERoq7uQTtJ37NxK+I9/uPxF5nnWEWp
+   am2FOkzUZ8DZW0Ay+bLZuMbXmMnGQ0IPlSCtyK1+oEK42yANjU9AwIzTt
+   Q==;
+X-CSE-ConnectionGUID: wpFM0WaZQUq1a7y1kDj80A==
+X-CSE-MsgGUID: +oT52yvGQqOUUeEWxShW3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11201"; a="37285751"
+X-IronPort-AV: E=Sophos;i="6.10,246,1719903600"; 
+   d="scan'208";a="37285751"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 23:19:32 -0700
+X-CSE-ConnectionGUID: L6VGEUdDRSGrzJM3HAbwOQ==
+X-CSE-MsgGUID: wP5rVOxqRUKhTrYn0zxL/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,246,1719903600"; 
+   d="scan'208";a="75080919"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 20 Sep 2024 23:19:30 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1srtSp-000FAb-3D;
+	Sat, 21 Sep 2024 06:19:28 +0000
+Date: Sat, 21 Sep 2024 14:18:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vishnu Sankar <vishnuocv@gmail.com>, jikos@kernel.org,
+	bentiss@kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, mpearson-lenovo@squebb.ca,
+	vsankar@lenovo.com, Vishnu Sankar <vishnuocv@gmail.com>
+Subject: Re: [PATCH] hid: hid-lenovo: Supporting TP-X12-TAB-1/2 Kbd Hotkeys
+ using raw  events.
+Message-ID: <202409211318.ZsE7JGOi-lkp@intel.com>
+References: <20240917100432.10887-1-vishnuocv@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e3:b0:3a0:a311:6773 with SMTP id
- e9e14a558f8ab-3a0c8d3ace3mr51673275ab.21.1726898462441; Fri, 20 Sep 2024
- 23:01:02 -0700 (PDT)
-Date: Fri, 20 Sep 2024 23:01:02 -0700
-In-Reply-To: <00000000000070a181061bc8b256@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ee611e.050a0220.3195df.0035.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] kernel BUG in __jump_label_patch
-From: syzbot <syzbot+03cfa0c5a0bcba3bf195@syzkaller.appspotmail.com>
-To: ardb@kernel.org, bp@alien8.de, dave.hansen@linux.intel.com, 
-	djwong@kernel.org, hpa@zytor.com, jbaron@akamai.com, jpoimboe@kernel.org, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, peterz@infradead.org, 
-	rostedt@goodmis.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240917100432.10887-1-vishnuocv@gmail.com>
 
-syzbot suspects this issue was fixed by commit:
+Hi Vishnu,
 
-commit 224fa3552029a3d14bec7acf72ded8171d551b88
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Wed Jul 31 10:43:21 2024 +0000
+kernel test robot noticed the following build errors:
 
-    jump_label: Fix the fix, brown paper bags galore
+[auto build test ERROR on hid/for-next]
+[also build test ERROR on linus/master next-20240920]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1719ff00580000
-start commit:   2c9b3512402e Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f463ee48656fea03
-dashboard link: https://syzkaller.appspot.com/bug?extid=03cfa0c5a0bcba3bf195
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=128eca3d980000
+url:    https://github.com/intel-lab-lkp/linux/commits/Vishnu-Sankar/hid-hid-lenovo-Supporting-TP-X12-TAB-1-2-Kbd-Hotkeys-using-raw-events/20240917-180639
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
+patch link:    https://lore.kernel.org/r/20240917100432.10887-1-vishnuocv%40gmail.com
+patch subject: [PATCH] hid: hid-lenovo: Supporting TP-X12-TAB-1/2 Kbd Hotkeys using raw  events.
+config: i386-randconfig-062-20240921 (https://download.01.org/0day-ci/archive/20240921/202409211318.ZsE7JGOi-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240921/202409211318.ZsE7JGOi-lkp@intel.com/reproduce)
 
-If the result looks correct, please mark the issue as fixed by replying with:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409211318.ZsE7JGOi-lkp@intel.com/
 
-#syz fix: jump_label: Fix the fix, brown paper bags galore
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_powersave.o
+>> ERROR: modpost: "platform_profile_cycle" [drivers/hid/hid-lenovo.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
