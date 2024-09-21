@@ -1,187 +1,128 @@
-Return-Path: <linux-kernel+bounces-334857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC4397DD72
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 16:43:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4395297DD75
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 16:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 776C31C20AC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 14:43:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCC181F22071
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 14:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CAC61714D0;
-	Sat, 21 Sep 2024 14:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8261F172BD0;
+	Sat, 21 Sep 2024 14:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BndzGlEm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YP4dKu1N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D55F1DA4E
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 14:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F65A47;
+	Sat, 21 Sep 2024 14:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726929775; cv=none; b=F8almePbSOCgfzlNrjdvWErMARBd/sJ5Q6u8Lz/Z9WP7P1j/MZoKmAMOmR7fXpSvBErHH4juQ2mBQ6Z6oEJ42GqlWFm7dzwvNP/3iEmQEUlZBOYebXxQ2Evl4KyTpKJnHu854aHIgVPK1eU4x+mhWSWSdLsr+ccMZmJ9tmyqssU=
+	t=1726929812; cv=none; b=ewtckpHPad5B38ZHFEfiuKlvwR3eqRBbAEOGiZdq0fmEkEIBgjR7jKPbpnFNWVfEyMCs1Cd33LCyIvhiIz4mFWFO1Sf+Ua826Ayuy5agAZxbe8QjYGPos4nawBNGBubD9UCtQ9pyXct6gWmZUNpGYyYSL87gRoVRogLPstSiNgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726929775; c=relaxed/simple;
-	bh=PPD7Bpz6RGT4OOk1QNpfg/JTJHQyQi9pktwucIl4icQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZPnFxxEA9KDLK722EDVkcASNUXTS8JXLBCpmUT2ZMPEejmkRGl83DkcBTxU+F4wM0SX3GxXC1zkFsEII66QuIb+4WIeQwFWtTiZ2BTwcFIh5/DSVqP7+2QTwS2UENxUEQUjBDYqgra2gtL1e0e2Cq8Id1GDx1H8PIra+1+M0WW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BndzGlEm; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726929773; x=1758465773;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PPD7Bpz6RGT4OOk1QNpfg/JTJHQyQi9pktwucIl4icQ=;
-  b=BndzGlEmwu3+6xASrSo0Dg9sg4TKDag2v2nGtHGUwspVYoovAkAi0l6b
-   0JGTtrfcQtmM2XdHgbeKw9lcFAAeve/2XQYmXquD8ZzSc/00gfV3nO9i/
-   /aAg+Ny3h+AF6xgaNIgSSChTCpuEs2J7Hm4pdxlfEKeORAHQeCJ31aDxJ
-   9ddBMgQvYTY5CFPWu7tXpweZGwKCvD94ZN65braVupay86Lw1cEKsjC0M
-   GxzWidBwW2JafVnkC1Qe+JUoGiEzGMuigiRIudaaiBhBJGstSoT2mD1eR
-   lj15GQXVFsDc/pqhxi4NWeplNtPNg3AtRLBOBRzHnAnub1n1sWwTbVtI7
-   A==;
-X-CSE-ConnectionGUID: XCUcHwxXTQ6al2XM7jQtJQ==
-X-CSE-MsgGUID: j+fGJDx8S5mt4L6q1uHyFg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="26077194"
-X-IronPort-AV: E=Sophos;i="6.10,247,1719903600"; 
-   d="scan'208";a="26077194"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2024 07:42:52 -0700
-X-CSE-ConnectionGUID: /yVqmYj2TomAXje2G01TFw==
-X-CSE-MsgGUID: T6ZvZgOWTtyyV8QRsuZAxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,247,1719903600"; 
-   d="scan'208";a="70892298"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 21 Sep 2024 07:42:51 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ss1Jw-000FUV-2M;
-	Sat, 21 Sep 2024 14:42:48 +0000
-Date: Sat, 21 Sep 2024 22:42:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Steven Davis <goldside000@outlook.com>, akpm@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Steven Davis <goldside000@outlook.com>
-Subject: Re: [PATCH] irq_work: Improve CPU Responsiveness in irq_work_sync
- with cond_resched()
-Message-ID: <202409212211.Lopmt0MK-lkp@intel.com>
-References: <SJ2P223MB10263844181902531B671FB6F7622@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1726929812; c=relaxed/simple;
+	bh=AYjfX6QtoC+tkfQrAv+7NvJ+mMxH4NZ1wh5FCk9yJ+c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QPJHSAE8rDP/oo7RMS3AtwImdwkD+5VNSJEot8HtCee0SqNATrp0z6MXCldvp9+nHly/uYCfQ0qKaYjixojkonULN0WxF/WEnQ5RLUwKsj6BTk0/79Ed9u8F6xpT87PQ1gKkU11d6gU/9D+3GtpBhoX/rQRmdIbRfqDfUr1y2js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YP4dKu1N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 662A6C4CEC2;
+	Sat, 21 Sep 2024 14:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726929812;
+	bh=AYjfX6QtoC+tkfQrAv+7NvJ+mMxH4NZ1wh5FCk9yJ+c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YP4dKu1NqIGv2RhiWlOJnIyfm6WBolm5cpHOY+SlypIt6jbxddiWXKpaoHISKSFCs
+	 pFX7EbEpcoZ3EBcDwHxHvJpvb0zgvJVIvt2kUmbNA0WoDSrxmWDoj2FNO7oTaYXxcI
+	 9dqQDSbZTocs+EQ69LG7b/rnU7maMEFMs7EI1YVYfeeRoIlalAmFaPVUr/CzvXl5Op
+	 hmo/vYJX6i7dlCe173DreciGhKnwvX340crqw6GIlYx2YomcqmNShwt2okO0h97WsO
+	 u/kUpKe/kcH0eBqaJamcppZfvRSO8+zK8uWrvcTZb2SlDpByKl15T+t5TVtOz9/38u
+	 zjU335G/iJp+Q==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53654e2ed93so3504752e87.0;
+        Sat, 21 Sep 2024 07:43:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6T2AbXyToMfImP9YKSqUSdVyRrnuQynDFtDL2MQrD6ZUurr/CoTd4+zAfIEyfFypteuv/fgMn/DR1@vger.kernel.org, AJvYcCUqzR5c9IpWAAsPik0gIi9lAK+6r+KFOi8Ls5eek11MJ2+oTk5Kd7wHT4Z1dKd7kIz4VGUdunD0ocl9@vger.kernel.org, AJvYcCVfFceSNN+9B+9XQD04VhPpqC38SSkB1Y1XYPYv7zBY1LIQOY8ewqJKEn2/r0QKxB82R4mFHW1arHfMG7Oz@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHEDOglXpioquCGUxVMihjE+mF20fMffVqzIhm97Ia2BPTK6po
+	cymtqRe4My2yjUesVysjPQB99nVfoAOCgiSBzUUhMj2f6job7cRf6245tRRz8I/AgcCSu4puOpM
+	hnNMlcQRthywXsLlHbVTiPvXePA==
+X-Google-Smtp-Source: AGHT+IGEb52VaJ0u4g5ADO/n2NfdfmYbTGCQllZh18kPm0xS082MqorrNkMgCmujvaXD4j4prw1u7QnUeiPv9ISuvBA=
+X-Received: by 2002:a05:6512:3d23:b0:535:69a2:5f9e with SMTP id
+ 2adb3069b0e04-536ad3d48d8mr3403286e87.51.1726929810775; Sat, 21 Sep 2024
+ 07:43:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SJ2P223MB10263844181902531B671FB6F7622@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
+References: <20240919-pcie_ep_range-v1-0-b3e9d62780b7@nxp.com>
+In-Reply-To: <20240919-pcie_ep_range-v1-0-b3e9d62780b7@nxp.com>
+From: Rob Herring <robh@kernel.org>
+Date: Sat, 21 Sep 2024 09:43:17 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ7Of-0H+qW-ts7cVkeK0+4BR5mxocx00eVFKHaLfj45Q@mail.gmail.com>
+Message-ID: <CAL_JsqJ7Of-0H+qW-ts7cVkeK0+4BR5mxocx00eVFKHaLfj45Q@mail.gmail.com>
+Subject: Re: [PATCH 0/9] PCI-EP: Add 'ranges' support for PCI endpoint devices
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>, Jesper Nilsson <jesper.nilsson@axis.com>, 
+	Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org, 
+	imx@lists.linux.dev, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Steven,
+On Thu, Sep 19, 2024 at 5:03=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
+>
+> The PCI bus device tree supports 'ranges' properties that indicate
+> how to convert PCI addresses to CPU addresses. Many PCI controllers
+> are dual-role controllers, supporting both Root Complex (RC) and
+> Endpoint (EP) modes. The EP side also needs similar information for
+> proper address translation.
+>
+> This commit introduces several changes to add 'ranges' support for
+> PCI endpoint devices:
+>
+> 1. **Modify of_address.c**: Add support for the new `device_type`
+>    "pci-ep", enabling it to parse 'ranges' using the same functions
+>    as for PCI devices.
+>
+> 2. **Update DesignWare PCIe EP driver**: Enhance the driver to
+>    support 'ranges' when 'addr_space' is missing, maintaining
+>    compatibility with existing drivers.
+>
+> 3. **Update binding documentation**: Modify the device tree bindings
+>    to include 'ranges' support and make 'addr_space' an optional
+>    entry in 'reg-names'.
+>
+> 4. **Add i.MX8QXP EP support**: Incorporate support for the
+>    i.MX8QXP PCIe EP in the driver.
+>
+> i.MX8QXP PCIe dts is upstreaming.  Below is pcie-ep part.
+>
+> pcieb_ep: pcie-ep@5f010000 {
+>                 compatible =3D "fsl,imx8q-pcie-ep";
+>                 reg =3D <0x5f010000 0x00010000>;
+>                 reg-names =3D "dbi";
+>                 #address-cells =3D <3>;
+>                 #size-cells =3D <2>;
+>                 device_type =3D "pci-ep";
+>                 ranges =3D <0x82000000 0 0x80000000 0x70000000 0 0x100000=
+00>;
 
-kernel test robot noticed the following build errors:
+How does a PCI endpoint set PCI addresses? Those get assigned by the
+PCI host system. They can't be static in DT.
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.11 next-20240920]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+If you need the PCI address, just read your BAR registers.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Steven-Davis/irq_work-Improve-CPU-Responsiveness-in-irq_work_sync-with-cond_resched/20240918-232606
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/SJ2P223MB10263844181902531B671FB6F7622%40SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
-patch subject: [PATCH] irq_work: Improve CPU Responsiveness in irq_work_sync with cond_resched()
-config: parisc-allnoconfig (https://download.01.org/0day-ci/archive/20240921/202409212211.Lopmt0MK-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240921/202409212211.Lopmt0MK-lkp@intel.com/reproduce)
+In general, why do you need this when none of the other PCI endpoint
+drivers have needed this?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409212211.Lopmt0MK-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   kernel/irq_work.c: In function 'irq_work_sync':
->> kernel/irq_work.c:311:13: error: invalid storage class for function 'run_irq_workd'
-     311 | static void run_irq_workd(unsigned int cpu)
-         |             ^~~~~~~~~~~~~
->> kernel/irq_work.c:316:13: error: invalid storage class for function 'irq_workd_setup'
-     316 | static void irq_workd_setup(unsigned int cpu)
-         |             ^~~~~~~~~~~~~~~
->> kernel/irq_work.c:323:35: error: initializer element is not constant
-     323 |         .setup                  = irq_workd_setup,
-         |                                   ^~~~~~~~~~~~~~~
-   kernel/irq_work.c:323:35: note: (near initialization for 'irqwork_threads.setup')
-   kernel/irq_work.c:325:35: error: initializer element is not constant
-     325 |         .thread_fn              = run_irq_workd,
-         |                                   ^~~~~~~~~~~~~
-   kernel/irq_work.c:325:35: note: (near initialization for 'irqwork_threads.thread_fn')
->> kernel/irq_work.c:329:19: error: invalid storage class for function 'irq_work_init_threads'
-     329 | static __init int irq_work_init_threads(void)
-         |                   ^~~~~~~~~~~~~~~~~~~~~
-   In file included from arch/parisc/include/asm/alternative.h:18,
-                    from arch/parisc/include/asm/barrier.h:5,
-                    from include/asm-generic/bitops/generic-non-atomic.h:7,
-                    from include/linux/bitops.h:29,
-                    from include/linux/kernel.h:23,
-                    from arch/parisc/include/asm/bug.h:5,
-                    from include/linux/bug.h:5,
-                    from kernel/irq_work.c:9:
-   kernel/irq_work.c:335:16: error: initializer element is not constant
-     335 | early_initcall(irq_work_init_threads);
-         |                ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/init.h:270:55: note: in definition of macro '____define_initcall'
-     270 |                 __attribute__((__section__(__sec))) = fn;
-         |                                                       ^~
-   include/linux/init.h:280:9: note: in expansion of macro '__unique_initcall'
-     280 |         __unique_initcall(fn, id, __sec, __initcall_id(fn))
-         |         ^~~~~~~~~~~~~~~~~
-   include/linux/init.h:282:35: note: in expansion of macro '___define_initcall'
-     282 | #define __define_initcall(fn, id) ___define_initcall(fn, id, .initcall##id)
-         |                                   ^~~~~~~~~~~~~~~~~~
-   include/linux/init.h:289:41: note: in expansion of macro '__define_initcall'
-     289 | #define early_initcall(fn)              __define_initcall(fn, early)
-         |                                         ^~~~~~~~~~~~~~~~~
-   kernel/irq_work.c:335:1: note: in expansion of macro 'early_initcall'
-     335 | early_initcall(irq_work_init_threads);
-         | ^~~~~~~~~~~~~~
->> kernel/irq_work.c:335:1: error: expected declaration or statement at end of input
-
-
-vim +/run_irq_workd +311 kernel/irq_work.c
-
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  310  
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07 @311  static void run_irq_workd(unsigned int cpu)
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  312  {
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  313  	irq_work_run_list(this_cpu_ptr(&lazy_list));
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  314  }
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  315  
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07 @316  static void irq_workd_setup(unsigned int cpu)
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  317  {
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  318  	sched_set_fifo_low(current);
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  319  }
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  320  
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  321  static struct smp_hotplug_thread irqwork_threads = {
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  322  	.store                  = &irq_workd,
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07 @323  	.setup			= irq_workd_setup,
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  324  	.thread_should_run      = irq_workd_should_run,
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  325  	.thread_fn              = run_irq_workd,
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  326  	.thread_comm            = "irq_work/%u",
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  327  };
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  328  
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07 @329  static __init int irq_work_init_threads(void)
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  330  {
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  331  	if (IS_ENABLED(CONFIG_PREEMPT_RT))
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  332  		BUG_ON(smpboot_register_percpu_thread(&irqwork_threads));
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  333  	return 0;
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07  334  }
-b4c6f86ec2f648 Sebastian Andrzej Siewior 2021-10-07 @335  early_initcall(irq_work_init_threads);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Rob
 
