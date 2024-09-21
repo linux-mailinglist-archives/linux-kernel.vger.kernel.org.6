@@ -1,93 +1,116 @@
-Return-Path: <linux-kernel+bounces-334942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E0B97DEAC
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 21:54:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E2297DEAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 21:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F6AE2815EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 19:54:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1AB02816C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 19:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AE484D02;
-	Sat, 21 Sep 2024 19:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E083126BE0;
+	Sat, 21 Sep 2024 19:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRq77pPO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0gPQhbL"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA972868D;
-	Sat, 21 Sep 2024 19:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2BA7581A
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 19:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726948453; cv=none; b=d+C56d1AQ/bPGSBDQXpXs+yryjGwPXO0zifa/KM87yae8W/59aurlwsyckhb3LMs37UYzYdBLgUVYEEdVMACWfXcQs2MDPkAlKJ6mh17G4vmBeFYgS8xsW/KIG+dQwP4CM8yLKdTuSC4+LZg85w03LMjmnd8U4wGUG5UAgAPjm8=
+	t=1726948631; cv=none; b=PQfcWGCTVmAHFYSK29i1AoUROc70TwXXoWZ++CXv9U92x5CDxQsk9iUugexaiEG4lUYH6hNx6xMvHtruO+B0GRqWGpxfQqVGXNn/dRiwUEpQFYbgUBOi4rNsNyDJRY2JrJPN5kE1YGyauFWJiexfudNjeU/LVnALG+LK41n4K3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726948453; c=relaxed/simple;
-	bh=qbXKiapCk2YXBtlswI/GeCkM3I4qQK1mE6LOkTqbgGc=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=A4pJFAfCrzgUHNwP36dPC+d6fMAlRQqg+6I8qky+ZpSQNLYHptEp4+kndyXrXF4qGkmvaRNXSRtvnDvV/iTfVSNDs6Gx8tw2+hagwTX8Lwmxuln8nP9162A6bYJH0lZcOXdpIzXPycw4LtHpS8GY3UDPkR+ZT7kp1+iCJI1BIuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRq77pPO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 928A2C4CEC2;
-	Sat, 21 Sep 2024 19:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726948452;
-	bh=qbXKiapCk2YXBtlswI/GeCkM3I4qQK1mE6LOkTqbgGc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=GRq77pPOLe6gr6d9BPlks466UbXW7OYl28xtmU6JuzZkWJ02+5gUCZIZ0mmAR/9KX
-	 pmPcJXwAQQvrVnMlw98BsPKhVMxveWNFf8i+YiDrolOikLDgus/Khv6ZIBfFgjYMxw
-	 WMxbe9FZAwbE1Gu9N4HD3rlcEgYrpFHlDDALBHG4RaFbtH1EPFvUwndYnEUTBBneJP
-	 3v7ADTsOQlc5+qkpy0jXspklwroqKv7xBigNgqcvWCagop4cG2tp4LyCx/UzgwQG4J
-	 f3D9i3nzYjmERHNkqiuAoqQKWp4CE1TOkpbQGQMMvxNTEc9l+IY2WSv8YuNFLmEonH
-	 MsjIu2bnnRGRQ==
-Message-ID: <cae4d71b611c36dab4003fa4ec3bab61.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1726948631; c=relaxed/simple;
+	bh=P0yvwIw4/C32i1K3Ca/Q+dUMGKZrikS92mEUTx5/M/o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ugvwg5hM08zslc+GejbDhPFFpEsJjG8hGqjLQ9HZF5Hjw8cLrc939YYBGPZCYZcwXLRlTC72/BIex4h+BAPm6ADdBK9d1hRo3B8V8LKKpM6X8IgG6iSjTMxcoIhn83EN2/RVOBopWKi6WyQRnorNzk4+FNSpL1zfNqbApbpMEQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0gPQhbL; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2057835395aso35361865ad.3
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 12:57:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726948629; x=1727553429; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tL6Q4yRMI5cAA833hyiACaaa+MFKJlXA+BVwOAtvywo=;
+        b=g0gPQhbLPuP5f2iKQkreXCuaSgsUERk+l2XWvhzdT/5b+4LgGnl0micrR7H0xx1Yjl
+         pMJKkm6Mnj71Sb8ctsD9sVZEvJ0yNUPtlAYlxMp9xfThnPEuIgX53SspK0eh9J0oLKMU
+         VFTanwaB6y/YmPc0zuFiAPyeXlXIUrK9NB88IlYlNOBP64WWDEgkv/Efj7tcIj5fevEw
+         t1Pkgk2ia4+ReFyuiP4+ikUIkuDhJFW/uysyd6FUvDqWWyX93Bkcj7oDhU6vzZ4lirDA
+         WCnzNIsAJChRhzTWu3BAy+EOlFdBNQhItK2lY/+FxSDmNK7jk/9cOGf6+dQQo+Tu/e8Q
+         QS1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726948629; x=1727553429;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tL6Q4yRMI5cAA833hyiACaaa+MFKJlXA+BVwOAtvywo=;
+        b=oO0JNsAn3zgHXxWY/FtGavomp8W1WEZxUCO8BI1P7Hubci3R2b+lzCEcnm6VElXPFr
+         ebkujwoRsxdjD3gI34BL8YhQqEpYusbcOQhbaCldrInxEzH+ODzpDBnmBB5kIwGLS/4d
+         L1Q7GNOLcvXec7vm8JN6+7wzV3h48IRHDfb0HyNtlmZ68HG4ZHDDQzTZCUCLNJ1tt6Pv
+         B9B8mbviMA7csm81NX3MoXQevTWK2Ci3FXzK1LQgVCjFp35knPxVD5SaPBcGYs1jPNO6
+         cY6jAw9sxCa9FeB0rzaNXVR37ziqoXQ/V1f23bDcO7Shrxs6om6IJT1VKLqRTYezabd8
+         Hxpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVg4KDbW/tSu9YITYnnecBETofH++HGtkqz6XI6NT6vJnCB6x7o0EXUZYFV0K7GZWcOBJjBXmYW+qO0DeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhYJ7NjPwh6ymR1mYRtAcE/hK5QrKO0wrfiyhyLWCA6uxf3iJa
+	wKyDrEW5Gx9l5OB4CpVEna5t2j01GNIGavNRGLVVue4FyGjt9hFQ
+X-Google-Smtp-Source: AGHT+IHOVPLtF44VuR8xtKWdO1Sdnkq7LicaBWc92K+g37O0VEZI4c3J/dixnkEOEekfoeeN1wANdA==
+X-Received: by 2002:a17:903:181:b0:206:9640:e751 with SMTP id d9443c01a7336-208d830ed11mr115040245ad.3.1726948628817;
+        Sat, 21 Sep 2024 12:57:08 -0700 (PDT)
+Received: from tc.. (c-67-171-216-181.hsd1.or.comcast.net. [67.171.216.181])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2079472fb94sm112006355ad.253.2024.09.21.12.57.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Sep 2024 12:57:08 -0700 (PDT)
+From: Leo Stone <leocstone@gmail.com>
+To: sj@kernel.org,
+	akpm@linux-foundation.org,
+	ruanjinjie@huawei.com
+Cc: Leo Stone <leocstone@gmail.com>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	skhan@linuxfoundation.org
+Subject: [PATCH] mm/damon: fix sparse warning for zero initializer
+Date: Sat, 21 Sep 2024 12:54:45 -0700
+Message-ID: <20240921195511.364023-1-leocstone@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <d9e0ade6-8a7e-4ba4-974f-142ad246ce5d@linaro.org>
-References: <67cf80cf-d96d-4249-ac34-6085d4b32948@suswa.mountain> <d9e0ade6-8a7e-4ba4-974f-142ad246ce5d@linaro.org>
-Subject: Re: drivers/spmi/spmi-pmic-arb.c:1782 spmi_pmic_arb_register_buses() error: uninitialized symbol 'ret'.
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-To: Abel Vesa <abel.vesa@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, oe-kbuild@lists.linux.dev
-Date: Sat, 21 Sep 2024 12:54:10 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 
-Quoting Neil Armstrong (2024-09-18 03:34:22)
-> On 18/09/2024 12:29, Dan Carpenter wrote:
-> > 9799873717398e8 Abel Vesa 2024-05-07  1767    struct device_node *child;
-> > 9799873717398e8 Abel Vesa 2024-05-07  1768    int ret;
-> > 9799873717398e8 Abel Vesa 2024-05-07  1769
-> > 9799873717398e8 Abel Vesa 2024-05-07  1770    /* legacy mode doesn't pr=
-ovide child node for the bus */
-> > 9799873717398e8 Abel Vesa 2024-05-07  1771    if (of_device_is_compatib=
-le(node, "qcom,spmi-pmic-arb"))
-> > 9799873717398e8 Abel Vesa 2024-05-07  1772            return spmi_pmic_=
-arb_bus_init(pdev, node, pmic_arb);
-> > 9799873717398e8 Abel Vesa 2024-05-07  1773
-> > 9799873717398e8 Abel Vesa 2024-05-07  1774    for_each_available_child_=
-of_node(node, child) {
-> > 9799873717398e8 Abel Vesa 2024-05-07  1775            if (of_node_name_=
-eq(child, "spmi")) {
-> > 9799873717398e8 Abel Vesa 2024-05-07  1776                    ret =3D s=
-pmi_pmic_arb_bus_init(pdev, child, pmic_arb);
-> > 9799873717398e8 Abel Vesa 2024-05-07  1777                    if (ret)
-> > 9799873717398e8 Abel Vesa 2024-05-07  1778                            r=
-eturn ret;
-> > 9799873717398e8 Abel Vesa 2024-05-07  1779            }
-> > 9799873717398e8 Abel Vesa 2024-05-07  1780    }
-> > 9799873717398e8 Abel Vesa 2024-05-07  1781
-> > 9799873717398e8 Abel Vesa 2024-05-07 @1782    return ret;
-> >=20
-> > Is it possible to not have an spmi node?
->=20
-> It's possible but not allowed per the bindings.
->=20
+sparse warns about zero initializing an array with {0,}, change it to
+the equivalent {0}.
 
-Seems that we should just return 0 here then and squelch the warning.
+Fixes the sparse warning:
+mm/damon/tests/vaddr-kunit.h:69:47: warning: missing braces around initializer
+
+Signed-off-by: Leo Stone <leocstone@gmail.com>
+---
+ mm/damon/tests/vaddr-kunit.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/damon/tests/vaddr-kunit.h b/mm/damon/tests/vaddr-kunit.h
+index a339d117150f..3dad8dfd9005 100644
+--- a/mm/damon/tests/vaddr-kunit.h
++++ b/mm/damon/tests/vaddr-kunit.h
+@@ -66,7 +66,7 @@ static int __link_vmas(struct maple_tree *mt, struct vm_area_struct *vmas,
+ static void damon_test_three_regions_in_vmas(struct kunit *test)
+ {
+ 	static struct mm_struct mm;
+-	struct damon_addr_range regions[3] = {0,};
++	struct damon_addr_range regions[3] = {0};
+ 	/* 10-20-25, 200-210-220, 300-305, 307-330 */
+ 	struct vm_area_struct vmas[] = {
+ 		(struct vm_area_struct) {.vm_start = 10, .vm_end = 20},
+-- 
+2.43.0
+
 
