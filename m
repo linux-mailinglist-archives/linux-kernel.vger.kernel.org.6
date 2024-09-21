@@ -1,128 +1,171 @@
-Return-Path: <linux-kernel+bounces-334858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4395297DD75
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 16:43:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A936497DD77
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 16:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCC181F22071
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 14:43:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C83D1F21E98
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 14:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8261F172BD0;
-	Sat, 21 Sep 2024 14:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52167171E69;
+	Sat, 21 Sep 2024 14:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YP4dKu1N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="G5drAkqf"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F65A47;
-	Sat, 21 Sep 2024 14:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF2CA47;
+	Sat, 21 Sep 2024 14:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726929812; cv=none; b=ewtckpHPad5B38ZHFEfiuKlvwR3eqRBbAEOGiZdq0fmEkEIBgjR7jKPbpnFNWVfEyMCs1Cd33LCyIvhiIz4mFWFO1Sf+Ua826Ayuy5agAZxbe8QjYGPos4nawBNGBubD9UCtQ9pyXct6gWmZUNpGYyYSL87gRoVRogLPstSiNgw=
+	t=1726929830; cv=none; b=WjEP6BZXj6HEA7+fqXrOe5gJc7Bz7BdKoIKgPaXuxDhfa6pqQtmiObWiArGNTt8QZkMJIyx5oFlqNlEy8jReiGOLmkNHWYGFB2eKUNNHNn9ICitzRCYHeaf9/2Ul3rzEV6gYgkBdYWKdSkct3fYwjMA63FlexJ09esYbxfGCpx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726929812; c=relaxed/simple;
-	bh=AYjfX6QtoC+tkfQrAv+7NvJ+mMxH4NZ1wh5FCk9yJ+c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QPJHSAE8rDP/oo7RMS3AtwImdwkD+5VNSJEot8HtCee0SqNATrp0z6MXCldvp9+nHly/uYCfQ0qKaYjixojkonULN0WxF/WEnQ5RLUwKsj6BTk0/79Ed9u8F6xpT87PQ1gKkU11d6gU/9D+3GtpBhoX/rQRmdIbRfqDfUr1y2js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YP4dKu1N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 662A6C4CEC2;
-	Sat, 21 Sep 2024 14:43:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726929812;
-	bh=AYjfX6QtoC+tkfQrAv+7NvJ+mMxH4NZ1wh5FCk9yJ+c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YP4dKu1NqIGv2RhiWlOJnIyfm6WBolm5cpHOY+SlypIt6jbxddiWXKpaoHISKSFCs
-	 pFX7EbEpcoZ3EBcDwHxHvJpvb0zgvJVIvt2kUmbNA0WoDSrxmWDoj2FNO7oTaYXxcI
-	 9dqQDSbZTocs+EQ69LG7b/rnU7maMEFMs7EI1YVYfeeRoIlalAmFaPVUr/CzvXl5Op
-	 hmo/vYJX6i7dlCe173DreciGhKnwvX340crqw6GIlYx2YomcqmNShwt2okO0h97WsO
-	 u/kUpKe/kcH0eBqaJamcppZfvRSO8+zK8uWrvcTZb2SlDpByKl15T+t5TVtOz9/38u
-	 zjU335G/iJp+Q==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53654e2ed93so3504752e87.0;
-        Sat, 21 Sep 2024 07:43:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6T2AbXyToMfImP9YKSqUSdVyRrnuQynDFtDL2MQrD6ZUurr/CoTd4+zAfIEyfFypteuv/fgMn/DR1@vger.kernel.org, AJvYcCUqzR5c9IpWAAsPik0gIi9lAK+6r+KFOi8Ls5eek11MJ2+oTk5Kd7wHT4Z1dKd7kIz4VGUdunD0ocl9@vger.kernel.org, AJvYcCVfFceSNN+9B+9XQD04VhPpqC38SSkB1Y1XYPYv7zBY1LIQOY8ewqJKEn2/r0QKxB82R4mFHW1arHfMG7Oz@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHEDOglXpioquCGUxVMihjE+mF20fMffVqzIhm97Ia2BPTK6po
-	cymtqRe4My2yjUesVysjPQB99nVfoAOCgiSBzUUhMj2f6job7cRf6245tRRz8I/AgcCSu4puOpM
-	hnNMlcQRthywXsLlHbVTiPvXePA==
-X-Google-Smtp-Source: AGHT+IGEb52VaJ0u4g5ADO/n2NfdfmYbTGCQllZh18kPm0xS082MqorrNkMgCmujvaXD4j4prw1u7QnUeiPv9ISuvBA=
-X-Received: by 2002:a05:6512:3d23:b0:535:69a2:5f9e with SMTP id
- 2adb3069b0e04-536ad3d48d8mr3403286e87.51.1726929810775; Sat, 21 Sep 2024
- 07:43:30 -0700 (PDT)
+	s=arc-20240116; t=1726929830; c=relaxed/simple;
+	bh=YymUbj4zzCEBemmQ4etvgd/sDwTI9w4pDoipO5vM0gc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=unKW8Thfn0ds+nT1CukvR7zfHdVqVQuNBF5d+AB9yyYSsVdMw/abno7MjvBzIRj2bHS8rr9aKEmkAhh8e0bq9wt+JYE9SgUKPuMACl1VNGpdO0eqo0aVR0HjgkP18zDjHoGb3UE78ll5WXnrxAEab+OLapHHdnM/pMGLJ5UgtAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=G5drAkqf; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726929801; x=1727534601; i=markus.elfring@web.de;
+	bh=Ze5CkP7MQHmwCuO1XBfTk19h4/iqKy8mgsPeFXpqRQg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=G5drAkqfR3T4Lzq/W+k4zvI48iRxKH9NhGenbapWZpTC+mRt3vs9RdVJcssk9Vk2
+	 u2kS4OSLTf8WNfhBPqoGf4VWPd3OWMXh34CrdaRs8TqyT37myKPPj2OM4OGgKPONM
+	 2+mjN73NJobh2mubr4SIZcvwj/9KK9PDDCTs9Kjk7ytbg4TbXGEuHGPvmHq5gp1lh
+	 8RxqzGLgSf2cKLnnXtzEhn/iI7AYjS05ub2B4wlpxj53vUsalO7Hy3VO4aID24YQC
+	 TgvLoaGMclKcymfy1SJHW+zPZHMgtJcLpy3arOot/FSx9J57l8voTfSjuv7A/kHd8
+	 4/NcLCjPtpgX6tGbMg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MtPre-1rxA3C3fcE-014EHH; Sat, 21
+ Sep 2024 16:43:20 +0200
+Message-ID: <6658a046-9d4e-4f18-8405-f5dadcf410ee@web.de>
+Date: Sat, 21 Sep 2024 16:43:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240919-pcie_ep_range-v1-0-b3e9d62780b7@nxp.com>
-In-Reply-To: <20240919-pcie_ep_range-v1-0-b3e9d62780b7@nxp.com>
-From: Rob Herring <robh@kernel.org>
-Date: Sat, 21 Sep 2024 09:43:17 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ7Of-0H+qW-ts7cVkeK0+4BR5mxocx00eVFKHaLfj45Q@mail.gmail.com>
-Message-ID: <CAL_JsqJ7Of-0H+qW-ts7cVkeK0+4BR5mxocx00eVFKHaLfj45Q@mail.gmail.com>
-Subject: Re: [PATCH 0/9] PCI-EP: Add 'ranges' support for PCI endpoint devices
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Abraham I <kishon@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Jingoo Han <jingoohan1@gmail.com>, 
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>, Jesper Nilsson <jesper.nilsson@axis.com>, 
-	Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org, 
-	imx@lists.linux.dev, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: ath11k@lists.infradead.org, ath12k@lists.infradead.org,
+ linux-wireless@vger.kernel.org, Jeff Johnson <jjohnson@kernel.org>,
+ Kalle Valo <kvalo@kernel.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@inria.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] wifi: ath: Use dev_kfree_skb_any(skb) call only once in three
+ functions
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:y0mbzl/D0kDzSIz9D2uwsK9cknnXkWfSJZHPGL5XJMRJJAIdscy
+ +8DFodCZeGr6Wqe7bh7idUQQpYUkJhOR2atAs/O0QSaeUF8eg87hnkzt945WatRXdo1lzFW
+ hxGVI0XOwZnVnSWOl8Piok6njIJVA/QPmn5ZOL70Dxzw1D2Js+hET8+H5Ll1DCV8ojMUQje
+ hiC/6o05XlXklUeT5k14g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2UyM1PGgl5E=;0iXHIZBz4wWxEax5Cnp5LoA5N3L
+ ig9vOrQ27CnYRQczpkylS0WkR9ZigT+00f2fqrRj3Igps62vsdCdEvJ8fFYOBMSXuVAbYnb1O
+ ZbphnlosBXm3ZENoWjHQe/Q1B698OHtFjQ43OZJ7X5kEWJUGt0C5xA8pD2UHjyAFxpHc5LD+7
+ y5lYpprn72gOJAuURoMFo9p9XByK/2YGDPs8HL9rBtZ9vR1gbwCNpMqVDtPV6WVHQee1suBBG
+ DVWjKmTEeU3pz28r6ZsYOk8UAxw9n8uoD171QPtgvGv5K03Rmo5IqkQ2klJvQm2x3w24ad/hF
+ bBKaxp2HJW5jn1gClzdI1xnAlcfNKWVqrJZnPMkHqG+/vZvIyvGCmJNjHmJmMvoIAAuLet6vR
+ CHGuFM69WsvUGaC5iIK2PCMVIQe29R83TFr0F80QnbzXtJ0lE/5mAD9Ii4wYkjAt109/+MPa0
+ gYCCgSf4evynNpmrIswOSZb1izL8MGrGjxd79BZyQS5W1zso+nmOqAxTUYMg+DUri58vPOxch
+ YFo69Fe76byWPGJPklWs1hz2Q5Xx4YWeYU75f+jMIv2FrQqI2W3pPIElpwApW/fYh855c9lhe
+ hFXwtaDRzpOhdwE7Ukguq60UGeaIF9PQnU+ZRf0SiwIKxli2Vttj5JuvEWAYdHKExwGMNQ5ad
+ J3xOJkTsOrzhQQ4nTje15miz+mSMG6OVNfMNMgndEJ2tjbvJ/hxkxD9NoQkeS8Bo3skbwyqSm
+ elIvE5mxY2amLC20Sj6vpLL8SamElNcYSd9RJ31JhjTReDkvVnOW+2RUbxFL0xN8WnAKiBxZe
+ XF3/1GseKFM4oIS6S/WQdwjw==
 
-On Thu, Sep 19, 2024 at 5:03=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
->
-> The PCI bus device tree supports 'ranges' properties that indicate
-> how to convert PCI addresses to CPU addresses. Many PCI controllers
-> are dual-role controllers, supporting both Root Complex (RC) and
-> Endpoint (EP) modes. The EP side also needs similar information for
-> proper address translation.
->
-> This commit introduces several changes to add 'ranges' support for
-> PCI endpoint devices:
->
-> 1. **Modify of_address.c**: Add support for the new `device_type`
->    "pci-ep", enabling it to parse 'ranges' using the same functions
->    as for PCI devices.
->
-> 2. **Update DesignWare PCIe EP driver**: Enhance the driver to
->    support 'ranges' when 'addr_space' is missing, maintaining
->    compatibility with existing drivers.
->
-> 3. **Update binding documentation**: Modify the device tree bindings
->    to include 'ranges' support and make 'addr_space' an optional
->    entry in 'reg-names'.
->
-> 4. **Add i.MX8QXP EP support**: Incorporate support for the
->    i.MX8QXP PCIe EP in the driver.
->
-> i.MX8QXP PCIe dts is upstreaming.  Below is pcie-ep part.
->
-> pcieb_ep: pcie-ep@5f010000 {
->                 compatible =3D "fsl,imx8q-pcie-ep";
->                 reg =3D <0x5f010000 0x00010000>;
->                 reg-names =3D "dbi";
->                 #address-cells =3D <3>;
->                 #size-cells =3D <2>;
->                 device_type =3D "pci-ep";
->                 ranges =3D <0x82000000 0 0x80000000 0x70000000 0 0x100000=
-00>;
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Sep 2024 16:32:09 +0200
 
-How does a PCI endpoint set PCI addresses? Those get assigned by the
-PCI host system. They can't be static in DT.
+A dev_kfree_skb_any(skb) call was immediately used after a return code
+check in three function implementations.
+Thus use such a function call only once instead directly before the checks=
+.
 
-If you need the PCI address, just read your BAR registers.
+This issue was transformed by using the Coccinelle software.
 
-In general, why do you need this when none of the other PCI endpoint
-drivers have needed this?
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/net/wireless/ath/ath11k/dp_rx.c  | 6 ++----
+ drivers/net/wireless/ath/ath12k/dp_mon.c | 4 +---
+ drivers/net/wireless/ath/ath12k/dp_rx.c  | 6 ++----
+ 3 files changed, 5 insertions(+), 11 deletions(-)
 
-Rob
+diff --git a/drivers/net/wireless/ath/ath11k/dp_rx.c b/drivers/net/wireles=
+s/ath/ath11k/dp_rx.c
+index c087d8a0f5b2..eb8e5fbdd77a 100644
+=2D-- a/drivers/net/wireless/ath/ath11k/dp_rx.c
++++ b/drivers/net/wireless/ath/ath11k/dp_rx.c
+@@ -1808,11 +1808,9 @@ static int ath11k_dp_rx_msdu_coalesce(struct ath11k=
+ *ar,
+ 		/* Free up all buffers of the MSDU */
+ 		while ((skb =3D __skb_dequeue(msdu_list)) !=3D NULL) {
+ 			rxcb =3D ATH11K_SKB_RXCB(skb);
+-			if (!rxcb->is_continuation) {
+-				dev_kfree_skb_any(skb);
+-				break;
+-			}
+ 			dev_kfree_skb_any(skb);
++			if (!rxcb->is_continuation)
++				break;
+ 		}
+ 		return -ENOMEM;
+ 	}
+diff --git a/drivers/net/wireless/ath/ath12k/dp_mon.c b/drivers/net/wirele=
+ss/ath/ath12k/dp_mon.c
+index 5c6749bc4039..21780f06b4ae 100644
+=2D-- a/drivers/net/wireless/ath/ath12k/dp_mon.c
++++ b/drivers/net/wireless/ath/ath12k/dp_mon.c
+@@ -2102,16 +2102,14 @@ int ath12k_dp_mon_srng_process(struct ath12k *ar, =
+int mac_id, int *budget,
+ 								  skb, napi, ppdu_id);
+
+ 			peer =3D ath12k_peer_find_by_id(ab, ppdu_info->peer_id);
+-
++			dev_kfree_skb_any(skb);
+ 			if (!peer || !peer->sta) {
+ 				ath12k_dbg(ab, ATH12K_DBG_DATA,
+ 					   "failed to find the peer with peer_id %d\n",
+ 					   ppdu_info->peer_id);
+-				dev_kfree_skb_any(skb);
+ 				continue;
+ 			}
+
+-			dev_kfree_skb_any(skb);
+ 			pmon->dest_skb_q[i] =3D NULL;
+ 		}
+
+diff --git a/drivers/net/wireless/ath/ath12k/dp_rx.c b/drivers/net/wireles=
+s/ath/ath12k/dp_rx.c
+index 91e3393f7b5f..c0b59ac247bf 100644
+=2D-- a/drivers/net/wireless/ath/ath12k/dp_rx.c
++++ b/drivers/net/wireless/ath/ath12k/dp_rx.c
+@@ -1804,11 +1804,9 @@ static int ath12k_dp_rx_msdu_coalesce(struct ath12k=
+ *ar,
+ 		/* Free up all buffers of the MSDU */
+ 		while ((skb =3D __skb_dequeue(msdu_list)) !=3D NULL) {
+ 			rxcb =3D ATH12K_SKB_RXCB(skb);
+-			if (!rxcb->is_continuation) {
+-				dev_kfree_skb_any(skb);
+-				break;
+-			}
+ 			dev_kfree_skb_any(skb);
++			if (!rxcb->is_continuation)
++				break;
+ 		}
+ 		return -ENOMEM;
+ 	}
+=2D-
+2.46.0
+
 
