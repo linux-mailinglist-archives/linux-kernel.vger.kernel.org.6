@@ -1,86 +1,110 @@
-Return-Path: <linux-kernel+bounces-334998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8B097DF85
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 01:15:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8785297DF86
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 01:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58298281E77
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 23:15:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8A471C20C5D
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 23:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32788171066;
-	Sat, 21 Sep 2024 23:15:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B528115380B;
+	Sat, 21 Sep 2024 23:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="QU7L+5Yt";
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="FP/AhXTb"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7652B170A3D
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 23:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794F153365
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 23:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726960504; cv=none; b=nLpOyVXCQ1+4+tBf7oyaLhbvfkYewgDKoX15HVQ7QnxJkwSQKx1qr2UgPATYb1kbmHOdfIzA3UUQeXi+D6yF7kEHCzHrrTBtk/O/fb6uakn37iD+unJMcaCgulrXy4qba0Ece5+W56EHU1LHNnZj/nL9J9NMYJTNP9cyCveu6Uc=
+	t=1726960535; cv=none; b=tH7qAg8ZG6fYp6JnEBrf9kKwrzAJri9dYTmB/U7DZL4uHcf/Q0xZiHddsbdkbKlU4pN2zDMmiG6XxCCnRLeiUQSnveAPS9ivNXRxDGSm2rRpAZlGawCylw1g16rWQwiiqw9fah2Jmchx82mqgoj+bFAmsDBp835HLmoR1E1oSvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726960504; c=relaxed/simple;
-	bh=mItxw1fkw3i4TCyf9ebcM+X15V1kKeMltS4+tw9Rx8g=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QyV+Q9VxU1oPfIoVAh+wzq94cP/mSOavaK/4IKXok2THpzosjPLxGxqCYGNdd3Oh74uMLC5mKdnS0Go9MGjipvsho4RTegTdnKFE+y+4D5cTk0khVreEYtttH2PeglR3hvRAJc49I1ggb+m5Q8bvXqdNaU+qc8swM8yYNWnC+HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a1957c7cf3so4112865ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 16:15:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726960502; x=1727565302;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=62wSWw2loLJjz1X/sJsuWKexTVDeA4/FS0eDPKVrNpw=;
-        b=r3fT7duRX6w6lqx6OHHdonCi5pi3YTk84o2VkLenGQ8XHijnp3s/hpzGoE8J6Beidn
-         xnPmuMHdgKcGhyiYSyIM5LFxV7WdxXFTsG4Al8X/VRklFwF1jqHTEbt4ge68fQe0tDYd
-         VFDSLIr9tEIfYRhlBf40k+Z3eRl7QVOF+TvrjpPKmLAtsJSJ9Msz3+Mm/sB8QbmQWl9k
-         7jtF6GuQ1sHB8rvMkAzC6MNAZ1GNgWOBXry6ofslasHLJuT5iKVubzQsgnROKhEv6/AD
-         m9iIdcOGgrSb/36vx6/boVFhaOQTvxHleh7ljElhxCdVGv+yc6skMhNHfZLIGmdp8lPC
-         J/xw==
-X-Gm-Message-State: AOJu0YxxC4uMRnyKZ1k0OxZNWxNeHhOAV8s+fSysOle0aLtL6sB1aC2Q
-	LbsRHRj6zhfidCs6LAT/Vb0A4TnjbxEK8zcXLt+xmSo48e8PpnDFbTyZmJBjSEDRm+A+GY8XWjq
-	HeOSxsAqzIlSHmcn8Vl8FKDBanuCE/H9dPZxROjTVYJohnkN3KcIgsa0=
-X-Google-Smtp-Source: AGHT+IEAj7QY8FVAPzxWwLqFG0N2BA6eOcefaZyUK88MqoQ3ayKEHaLjXuJ70QI/bAzWVC6y3yDuE+RdPyyQPXzikUR7zcxign6V
+	s=arc-20240116; t=1726960535; c=relaxed/simple;
+	bh=BdCHZ4PAVP32GgB5s6IOXQZbkDK93jN9b4wimAr6nhI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rifwTHZk5xu/M9WfczWghyBZAydS4tChE1qogxgIdDlFgyEfrET9EFBN2vkyKnCR/9DCzZnwGmyHJb8ubCFj/LjghVzPIx/ZJ9z9+sL8/p4cWy+j5Yjak6eZE4ZQaQGi4ZBli/qU4kxH+Pswq5Mg6suoBL5KweUwhFICWjF/zVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=QU7L+5Yt; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=FP/AhXTb; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=QU7L+5YtvCLNmytvy9JinCNFNEVpxdYjqRcOlChAo+3NsW79F/HxL80hQwZWi3Wv7x0u+eE3jw/y2qKdo4zwl12MREjKrOss9RapaenA4ri2seYF7FDA23/VEWKUpYs4r1sNXnSzLypFPxKJenSWz+bU4KKeNS7SvH6TdeX2HNYZrlj9zjknrmcNNRhRp+VMupE+y/Jk3Pmu4zoK0wcgQ7fwO0NUT4+jyfsNDxb92L0Q1pUfzkTzSakAq5pB1LnLEfMSgfZWSjo/qeXoCNXWKtad89AbVRs6aXvDLEKQuNxIBTn8EbHL8Vgr2TaenLEwStqe6VIpRSzMx8HUC/4PBA==; s=purelymail3; d=lkcamp.dev; v=1; bh=BdCHZ4PAVP32GgB5s6IOXQZbkDK93jN9b4wimAr6nhI=; h=Received:Date:Subject:To:From;
+DKIM-Signature: a=rsa-sha256; b=FP/AhXTbX/WCQNRDzpYyHUAWH4/vhL8CGjBrL3+XPoE5ct50Jafp/ItX7djP/pUwerpqBkUF3JbJ69ssnVYwjgriAQ50CSQDg9AIKo15/62nNpZCZABpbox9zagaAsZEPriWzSQTVZCU4nmEVJ+tEBV0VtWD7HKH+SyBIjIIS/OUlCKq6m64ZkD5YahAl6AzCcO0R9+GN0KTIK8Z4ChjusTEL1jHr3qSDiFd/TEdNAvKrJKz4QmPWCxtNWFErqNGCe51b0xH9Ei2DWYIQHcPgNLcICT8VdtFDZTCp8VVZybeUfUqpDRPDpEPavouoJL6eULTCgwXg647R0KyiLwoBA==; s=purelymail3; d=purelymail.com; v=1; bh=BdCHZ4PAVP32GgB5s6IOXQZbkDK93jN9b4wimAr6nhI=; h=Feedback-ID:Received:Date:Subject:To:From;
+Feedback-ID: 40580:7130:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1183207272;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Sat, 21 Sep 2024 23:15:28 +0000 (UTC)
+Message-ID: <04b041a2-d38c-4399-b4a5-1506b5a23e55@lkcamp.dev>
+Date: Sat, 21 Sep 2024 20:15:24 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156d:b0:3a0:4a91:224f with SMTP id
- e9e14a558f8ab-3a0c8c61ae4mr59887675ab.1.1726960502615; Sat, 21 Sep 2024
- 16:15:02 -0700 (PDT)
-Date: Sat, 21 Sep 2024 16:15:02 -0700
-In-Reply-To: <CAABpPxT0rTdOOWFrLLLtQg7UQTDgACdg-hojvtB6S22Fp77ycw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ef5376.050a0220.3195df.0070.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] general protection fault in prt_str
-From: syzbot <syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, pvmohammedanees2003@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/1] Add KUnit tests for kfifo
+To: Diego Vieira <diego.daniel.professional@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow
+ <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com
+Cc: n@nfraprado.net, andrealmeid@riseup.net, vinicius@nukelet.com,
+ ~lkcamp/patches@lists.sr.ht
+References: <20240903213649.21467-1-diego.daniel.professional@gmail.com>
+Content-Language: en-US
+From: Vinicius Peixoto <vpeixoto@lkcamp.dev>
+In-Reply-To: <20240903213649.21467-1-diego.daniel.professional@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi all,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On 9/3/24 18:36, Diego Vieira wrote:
+> Hi all,
+> 
+> This is part of a hackathon organized by LKCAMP [1], focused on writing
+> tests using KUnit. We reached out a while ago asking for advice on what would
+> be a useful contribution [2] and ended up choosing data structures that did
+> not yet have tests.
+> 
+> This patch series depends on the patch that moves the KUnit tests on lib/
+> into lib/tests/ [3].
+> 
+> This patch adds tests for the kfifo data structure, defined in
+> include/linux/kfifo.h, and is inspired by the KUnit tests for the doubly
+> linked list in lib/tests/list-test.c (previously at lib/list-test.c) [4].
+> 
+> [1] https://lkcamp.dev/about/
+> [2] https://lore.kernel.org/all/Zktnt7rjKryTh9-N@arch/
+> [3] https://lore.kernel.org/all/20240720181025.work.002-kees@kernel.org/
+> [4] https://elixir.bootlin.com/linux/latest/source/lib/list-test.c
+> 
+> ---
+> Changes in v2:
+>      - Add MODULE_DESCRIPTION()
+>      - Move the tests from lib/kfifo-test.c to lib/tests/kfifo_kunit.c
+> 
+> Diego Vieira (1):
+>    lib/tests/kfifo_kunit.c: add tests for the kfifo structure
+> 
+>   lib/Kconfig.debug       |  14 +++
+>   lib/tests/Makefile      |   1 +
+>   lib/tests/kfifo_kunit.c | 224 ++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 239 insertions(+)
+>   create mode 100644 lib/tests/kfifo_kunit.c
+> 
 
-Reported-by: syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com
-Tested-by: syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com
+Gentle ping, is there any chance could we get some opinions on this? :-)
 
-Tested on:
+I know that this patch is quite big, plus LPC just ended and people are 
+probably very busy, but we would really appreciate some feedback on this 
+one. Thanks in advance!
 
-commit:         88264981 Merge tag 'sched_ext-for-6.12' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12df9e9f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8d53350f32cb0be2
-dashboard link: https://syzkaller.appspot.com/bug?extid=37186860aa7812b331d5
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13426c27980000
-
-Note: testing is done by a robot and is best-effort only.
+Vinicius
 
