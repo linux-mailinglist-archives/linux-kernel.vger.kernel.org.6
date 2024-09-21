@@ -1,178 +1,268 @@
-Return-Path: <linux-kernel+bounces-334791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C6A997DC30
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:18:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BEB597DC32
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95CC81F21BD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:18:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DAF81F21CC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C862916DEB3;
-	Sat, 21 Sep 2024 08:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE03161FCF;
+	Sat, 21 Sep 2024 08:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FgAGc/r6"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Tg9Hkdgv"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5B516C453
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 08:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE7914293
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 08:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726906667; cv=none; b=qNCzYsOgUMrwS1IoQhyl+TRAr0JbdyoPlLp6dW3j9zEoRRD1axSPjwYfs66EpeZyG+HfmBF483YgkSNN7zl3saATZSky8pdlU1OqAjegwjhENXDxXpOkGTwyFIG6Us9Hcf0G8lo/ic3O/IVU7N0slzqjTcAZTeqanm+VXFBnHaQ=
+	t=1726906776; cv=none; b=BnsSa8Jcbu35KLoWGRSshQGH4V/njmXn/RgZX5ri69GIBmVEW0yO/dAst/+GUhma8g5p0Kkc/Ep9y2hnXPw1lWZqWeaoBzScSl5FZSvN2EtO3gCkQ94Lk+MBGXeQT9/nPZwVV4913MaXr3evZmypbKRM4h1XlQZbdfxc/v/08/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726906667; c=relaxed/simple;
-	bh=ScCRd7+z7cwAGX0LzQnkBaj1sUTBN7g+ylhI1wBf8No=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d7caA8GAB2YDObqJpmy6eiNqt4FoXjaiSvhAjRoIFBD/Ef6WaOc0K9ePKi6w3rcZ27rCWLQU9YYyooyDmaxe19KIIlC4l+kr5m311lw0gid2aVwgpAddh0YeUZkuU/yHCmYtKy76eFxxATZwnkxedwYsAKugNs6jD1jl03H+Oko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FgAGc/r6; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f029e9c9cfso31217751fa.2
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 01:17:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726906663; x=1727511463; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SVsyILzzvjiOy2yaVn/07EEy8eWz3i45ZaANjyZGvio=;
-        b=FgAGc/r6hwECoNVRH2jY/GLNV6Euzokvoicg9b4kf8Q4uWunuFtmN1A/CMWijzQRC+
-         ZaOha+cA77nYgaZxF7vRf8W+LDab0uVOJa3JVOat4SsgV1NInJwdNeq+LYjC5wCsOB08
-         R2Krb7pHj3WltBQerXzi6wKSFpjliAiLoMROecUhToSYj68hCS5s05kRc1b9LncdA0vG
-         qseqR60LjwsBG3l85Pu226YoDhuWpRIYy2RmFbZU1mQZaO7qZRVYeup1YfoPqxdZSId/
-         dX9MSOAGR7Ms4f3wjb0W2Jrk1lkE1i8JAQDiBP8J0mGlYvuikwqcNRNBiija0hjETCWg
-         FLWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726906663; x=1727511463;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SVsyILzzvjiOy2yaVn/07EEy8eWz3i45ZaANjyZGvio=;
-        b=sh/PsuhcWLwLixvI5fTaUN29yquOCAeEtBQPPlo7KbeI8UAffNBtWpDckBz+zOMAfD
-         NgpBRIJe+IsccGepwEaL5xnfSQvl9voGLNCrKhZ30UXNMlkaUKzFOB+a53g7wY8QJJA5
-         SYmB+MY/bzTUArdQdjMRUUqUdb3CNYaQIC2e1OvobvlO471aifSP81JT/uDumT/KY+Tv
-         hQEHUq1w4ShSC0pwiNVhNtYQKcgkBV0vX7mQku1TRfalHT+AVf/jTcwCJhv0fyrAUYkN
-         HfQwunY148qsdhj/Gm5BhtHhOl0LTmO1+tCO5HoeuNSps4EAA6tNQ8Ofh7SR7oOVjJYN
-         GQJg==
-X-Gm-Message-State: AOJu0YxLw77IAqq1sZTGqQuObzx5St/t22jiNqQyrDsu7kBCVWK4hnzo
-	TQiVN0gBSe8Kf9jd5fKpT8k30+zQ2V7/nZje6ehh0z5bJa2KHSir9nUknAe6CSo=
-X-Google-Smtp-Source: AGHT+IFPY/W2L+v0opGRZsevBEm6pIXjNTUdy2RRjJsvIyR13eOixR1PdLXWb9cbd5UYsG/wDpqcXg==
-X-Received: by 2002:a05:6512:1095:b0:530:e0fd:4a97 with SMTP id 2adb3069b0e04-536ac17ba54mr4389006e87.0.1726906663478;
-        Sat, 21 Sep 2024 01:17:43 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870968d1sm2466380e87.175.2024.09.21.01.17.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Sep 2024 01:17:42 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 21 Sep 2024 11:17:32 +0300
-Subject: [PATCH 4/4] drm/msm/mdss: reuse defined bitfields for UBWC 2.0
+	s=arc-20240116; t=1726906776; c=relaxed/simple;
+	bh=Uh3pUleVwnOCeT4tby6kuWJ42ZkB1YImOcA5MLQA58c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FmwiW9c9I5+IrpBN0b2ViuawfqcDgACGCxmrdW3WL8UWkQ2YnUxc5S4tLsEWov4p5PgXsXTGa5NM5IlEvLtvk/cxtWKov2CXjNJUK84CY7g3G/q84Q+bucVz4ZtaZ8xllmE4WFcydBDn9fQN6WFQ5mQG9Phy7dA4HOf4bldexVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Tg9Hkdgv; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <8af383e9-d90d-492d-81e5-91d8edfe1508@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1726906771;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cgodr5AMxP6TMSfm1kF9swOspK+DBO+lozScTDn6Nwo=;
+	b=Tg9HkdgvwgorOjNwtbeB4xYmrKrs94noPsAhFHF2wLkR0XR9uWdIyc/WlM88eoqvAXJpXP
+	qBM9CT9SMHT8rGKWmGiYB7bNMIk8DElqC/297JPTyR8kT7D+EpZBWbsTL55x5FIBDl1NO6
+	s/QbNaE4LGpFqCOPwcRgXxg/0h+vWvk=
+Date: Sat, 21 Sep 2024 16:19:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240921-msm-mdss-ubwc-v1-4-411dcf309d05@linaro.org>
-References: <20240921-msm-mdss-ubwc-v1-0-411dcf309d05@linaro.org>
-In-Reply-To: <20240921-msm-mdss-ubwc-v1-0-411dcf309d05@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2564;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=ScCRd7+z7cwAGX0LzQnkBaj1sUTBN7g+ylhI1wBf8No=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBm7oEfFUNz63SZIIIv4PSfaBvDuI15ysOw/396a
- 6UffauUniqJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZu6BHwAKCRCLPIo+Aiko
- 1dLUCACLFFbWklq276VM0/8R0H4sDEzmkz4gKnwfDpRPWAfsBCwUuuo+yznN+gqcNrh5FQKRyJq
- 4a6Lq5j9qgRAt92C9N3elKB+wQXyIy8k06pGS/gL/eWnx/2YpQJ1seTn0GcN9iEOEHyv2petgEK
- uT1h8YyflDQfylQpRjWCdItA7GaFNpShxp4W2cqcCf5LyFC7c3I1Pcvquel4wv1n15N8mc5xtvt
- PuSQ22r/G0Mlmt8BKBd0jpa/dGfK6YwDmSPZsYy0whHFOajAVpZXDaQBoGunDeJyGmpA0tRhLGr
- BQfl+po4ZAG2aTUqjR8nNkWJlMSoXHaIS+8hTXCMv7Qr31zK
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Subject: Re: [PATCH v3 2/5] sysctl: support encoding values directly in the
+ table entry
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+Cc: "Eric W . Biederman" <ebiederm@xmission.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
+ Joel Granados <j.granados@samsung.com>,
+ Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org,
+ Dave Young <dyoung@redhat.com>
+References: <cover.1726365007.git.wen.yang@linux.dev>
+ <95ca2bfb46a3aaef026623cd1a08c3c39366d5df.1726365007.git.wen.yang@linux.dev>
+ <37ce9602-185d-4e8e-98d3-1097eb1f9ee2@t-8ch.de>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Wen Yang <wen.yang@linux.dev>
+In-Reply-To: <37ce9602-185d-4e8e-98d3-1097eb1f9ee2@t-8ch.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Follow other msm_mdss_setup_ubwc_dec_nn functions and use individual
-bits instead of just specifying the value to be programmed to the
-UBWC_STATIC register.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/msm/msm_mdss.c | 17 +++++++++++++----
- drivers/gpu/drm/msm/msm_mdss.h |  1 -
- 2 files changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
-index 7704e1c9eb2a..0b49187c52de 100644
---- a/drivers/gpu/drm/msm/msm_mdss.c
-+++ b/drivers/gpu/drm/msm/msm_mdss.c
-@@ -166,8 +166,16 @@ static int _msm_mdss_irq_domain_add(struct msm_mdss *msm_mdss)
- static void msm_mdss_setup_ubwc_dec_20(struct msm_mdss *msm_mdss)
- {
- 	const struct msm_mdss_data *data = msm_mdss->mdss_data;
-+	u32 value = MDSS_UBWC_STATIC_UBWC_SWIZZLE(data->ubwc_swizzle) |
-+		    MDSS_UBWC_STATIC_HIGHEST_BANK_BIT(data->highest_bank_bit);
- 
--	writel_relaxed(data->ubwc_static, msm_mdss->mmio + REG_MDSS_UBWC_STATIC);
-+	if (data->unknown_3)
-+		value |= MDSS_UBWC_STATIC_UNKNOWN_3;
-+
-+	if (data->ubwc_enc_version == UBWC_1_0)
-+		value |= MDSS_UBWC_STATIC_UNKNOWN_8;
-+
-+	writel_relaxed(value, msm_mdss->mmio + REG_MDSS_UBWC_STATIC);
- }
- 
- static void msm_mdss_setup_ubwc_dec_30(struct msm_mdss *msm_mdss)
-@@ -577,7 +585,8 @@ static const struct msm_mdss_data qcm2290_data = {
- static const struct msm_mdss_data sc7180_data = {
- 	.ubwc_enc_version = UBWC_2_0,
- 	.ubwc_dec_version = UBWC_2_0,
--	.ubwc_static = 0x1e,
-+	.ubwc_swizzle = 6,
-+	.unknown_3 = true,
- 	.highest_bank_bit = 0x1,
- 	.reg_bus_bw = 76800,
- };
-@@ -628,7 +637,7 @@ static const struct msm_mdss_data sm6350_data = {
- 	.ubwc_enc_version = UBWC_2_0,
- 	.ubwc_dec_version = UBWC_2_0,
- 	.ubwc_swizzle = 6,
--	.ubwc_static = 0x1e,
-+	.unknown_3 = true,
- 	.highest_bank_bit = 1,
- 	.reg_bus_bw = 76800,
- };
-@@ -651,7 +660,7 @@ static const struct msm_mdss_data sm6115_data = {
- 	.ubwc_enc_version = UBWC_1_0,
- 	.ubwc_dec_version = UBWC_2_0,
- 	.ubwc_swizzle = 7,
--	.ubwc_static = 0x11f,
-+	.unknown_3 = true,
- 	.highest_bank_bit = 0x1,
- 	.reg_bus_bw = 76800,
- };
-diff --git a/drivers/gpu/drm/msm/msm_mdss.h b/drivers/gpu/drm/msm/msm_mdss.h
-index 69095c18ab4a..521d4e6b8043 100644
---- a/drivers/gpu/drm/msm/msm_mdss.h
-+++ b/drivers/gpu/drm/msm/msm_mdss.h
-@@ -11,7 +11,6 @@ struct msm_mdss_data {
- 	/* can be read from register 0x58 */
- 	u32 ubwc_dec_version;
- 	u32 ubwc_swizzle;
--	u32 ubwc_static;
- 	u32 highest_bank_bit;
- 	bool unknown_3;
- 	bool macrotile_mode;
+On 2024/9/15 14:25, Thomas Weißschuh wrote:
+> On 2024-09-15 10:08:28+0000, Wen Yang wrote:
+>> Eric points out: "by turning .extra1 and .extra2 into longs instead of
+>> keeping them as pointers and needing constants to be pointed at somewhere
+>> .. The only people I can see who find a significant benefit by
+>> consolidating all of the constants into one place are people who know how
+>> to stomp kernel memory."
+>>
+>> This patch supports encoding values directly in table entries through the
+>> following work:
+>> - extra1/extra2 and min/max are placed in one union to ensure that the
+>>    previous code is not broken, then we have time to gradually remove these
+>>    unnecessary extra1/extra2;
+> 
+> The union shouldn't be necessary for backward compatibility.
+> It could just as well be a struct.
+> The union however saves some space.
+> 
+>> - two bits were used to represent the information of the above union:
+>>    SYSCTL_FLAG_MIN: 0, using extra1. 1, using min.
+>>    SYSCTL_FLAG_MAX: 0, using extra2. 1, using max.
+>> - since the proc file's mode field only uses 9 bits(777), we could use the
+>>    additional two bits(S_ISUID and S_ISGID) to temporarily represent
+>>    SYSCTL_FLAG_MIN and SYSCTL_FLAG_MAX.
+>> - added some helper macros.
+>>
+>> By introducing long min/max to replace void * extra1/extra2 in most cases,
+>> unnecessary variables can be removed to save memory and avoid attacks.
+>>
+>> Signed-off-by: Wen Yang <wen.yang@linux.dev>
+>> Cc: Luis Chamberlain <mcgrof@kernel.org>
+>> Cc: Kees Cook <keescook@chromium.org>
+>> Cc: Joel Granados <j.granados@samsung.com>
+>> Cc: Eric W. Biederman <ebiederm@xmission.com>
+>> Cc: Christian Brauner <brauner@kernel.org>
+>> Cc: Dave Young <dyoung@redhat.com>
+>> Cc: linux-kernel@vger.kernel.org
+>> ---
+>>   fs/proc/proc_sysctl.c  |  8 +++--
+>>   include/linux/sysctl.h | 71 ++++++++++++++++++++++++++++++++++++------
+>>   2 files changed, 67 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+>> index 90c99eb1abf6..e88d1dca2a80 100644
+>> --- a/fs/proc/proc_sysctl.c
+>> +++ b/fs/proc/proc_sysctl.c
+>> @@ -848,8 +848,11 @@ static int proc_sys_getattr(struct mnt_idmap *idmap,
+>>   		return PTR_ERR(head);
+>>   
+>>   	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
+>> -	if (table)
+>> +	if (table) {
+>>   		stat->mode = (stat->mode & S_IFMT) | table->mode;
+>> +		stat->mode &= ~SYSCTL_FLAG_MIN;
+>> +		stat->mode &= ~SYSCTL_FLAG_MAX;
+>> +	}
+>>   
+>>   	sysctl_head_finish(head);
+>>   	return 0;
+>> @@ -1163,7 +1166,8 @@ static int sysctl_check_table(const char *path, struct ctl_table_header *header)
+>>   		if (!entry->proc_handler)
+>>   			err |= sysctl_err(path, entry, "No proc_handler");
+>>   
+>> -		if ((entry->mode & (S_IRUGO|S_IWUGO)) != entry->mode)
+>> +		if ((entry->mode & (S_IRUGO|S_IWUGO|SYSCTL_FLAG_MIN|SYSCTL_FLAG_MAX))
+>> +		    != entry->mode)
+>>   			err |= sysctl_err(path, entry, "bogus .mode 0%o",
+>>   				entry->mode);
+>>   	}
+>> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+>> index 20e3914ec53f..8e27e8350ca8 100644
+>> --- a/include/linux/sysctl.h
+>> +++ b/include/linux/sysctl.h
+>> @@ -28,6 +28,7 @@
+>>   #include <linux/rbtree.h>
+>>   #include <linux/uidgid.h>
+>>   #include <uapi/linux/sysctl.h>
+>> +#include <uapi/linux/stat.h>
+>>   
+>>   /* For the /proc/sys support */
+>>   struct completion;
+>> @@ -61,6 +62,37 @@ extern const int sysctl_vals[];
+>>   
+>>   extern const unsigned long sysctl_long_vals[];
+>>   
+>> +#define SYSCTL_NUM_ZERO                         (0L)
+>> +#define SYSCTL_NUM_ONE                          (1L)
+>> +#define SYSCTL_NUM_TWO                          (2L)
+>> +#define SYSCTL_NUM_THREE                        (3L)
+>> +#define SYSCTL_NUM_FOUR                         (4L)
+>> +#define SYSCTL_NUM_FIVE                         (5L)
+>> +#define SYSCTL_NUM_SIX                          (6L)
+>> +#define SYSCTL_NUM_SEVEN                        (7L)
+>> +#define SYSCTL_NUM_EIGHT                        (8L)
+>> +#define SYSCTL_NUM_NINE                         (9L)
+>> +#define SYSCTL_NUM_TEN                          (10L)
+>> +#define SYSCTL_NUM_SIXTEEN                      (16L)
+>> +#define SYSCTL_NUM_THIRTY_ONE                   (31L)
+>> +#define SYSCTL_NUM_NEG_THIRTY_ONE               (-31L)
+>> +#define SYSCTL_NUM_ONE_HUNDRED                  (100L)
+>> +#define SYSCTL_NUM_TWO_HUNDRED                  (200L)
+>> +#define SYSCTL_NUM_S8_MAX                       (127L)
+>> +#define SYSCTL_NUM_U8_MAX                       (255L)
+>> +#define SYSCTL_NUM_FIVE_HUNDRED                 (500L)
+>> +#define SYSCTL_NUM_ONE_THOUSAND                 (1000L)
+>> +#define SYSCTL_NUM_THREE_THOUSAND               (3000L)
+>> +#define SYSCTL_NUM_16K                          (16 * 1024L)
+>> +#define SYSCTL_NUM_16M                          (16 * 1024 * 1024L)
+>> +#define SYSCTL_NUM_SEC_PER_HOUR                 (60 * 60L)
+>> +#define SYSCTL_NUM_U16_MAX                      (65535L)
+>> +#define SYSCTL_NUM_SEC_PER_DAY                  (24 * 60 * 60L)
+>> +#define SYSCTL_NUM_MS_PER_DAY                   (24 * 60 * 60 * 1000L)
+>> +#define SYSCTL_NUM_INT_MAX                      (INT_MAX)
+>> +#define SYSCTL_NUM_NEG_ONE                      (-1)
+>> +#define SYSCTL_NUM_LONG_MAX                     (LONG_MAX)
+> 
+> Are all those constants really needed?
+> In the past they were useful as they referenced the array of constants.
+> But now people can just use the number directly, or even better a
+> subsystem-specific constant.
+> 
 
--- 
-2.39.5
+Okay, we will make the modifications according to your suggestions.
 
+>> +
+>>   typedef int proc_handler(const struct ctl_table *ctl, int write, void *buffer,
+>>   		size_t *lenp, loff_t *ppos);
+>>   
+>> @@ -131,6 +163,9 @@ static inline void *proc_sys_poll_event(struct ctl_table_poll *poll)
+>>   #define DEFINE_CTL_TABLE_POLL(name)					\
+>>   	struct ctl_table_poll name = __CTL_TABLE_POLL_INITIALIZER(name)
+>>   
+>> +#define  SYSCTL_FLAG_MIN			S_ISUID
+>> +#define  SYSCTL_FLAG_MAX			S_ISGID
+> 
+> Is it ever useful to have only one of these flags?
+> IMO this could be a single flag.
+>
+
+There are a few  edge cases that require two flags, such as the 
+following code snippet:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/net/sctp/sysctl.c#n103
+
+	[SCTP_RTO_MIN_IDX] = {
+		.procname	= "rto_min",
+		.data		= &init_net.sctp.rto_min,
+...
+		.extra1         = SYSCTL_ONE,
+		.extra2         = &init_net.sctp.rto_max
+	},
+
+extra1 points to a constant unsigned integer, but extra2 points to a 
+field in the struct sctp.association structure
+
+>> +
+>>   /* A sysctl table is an array of struct ctl_table: */
+>>   struct ctl_table {
+>>   	const char *procname;		/* Text ID for /proc/sys, or zero */
+>> @@ -139,8 +174,16 @@ struct ctl_table {
+>>   	umode_t mode;
+>>   	proc_handler *proc_handler;	/* Callback for text formatting */
+>>   	struct ctl_table_poll *poll;
+>> -	void *extra1;
+>> -	void *extra2;
+>> +	union {
+>> +		struct {
+>> +			void *extra1;
+>> +			void *extra2;
+>> +		};
+>> +		struct {
+>> +			long min;
+>> +			long max;
+>> +		};
+>> +	};
+>>   } __randomize_layout;
+>>   
+>>   struct ctl_node {
+>> @@ -214,42 +257,50 @@ struct ctl_table_root {
+>>   
+>>   static inline unsigned int sysctl_range_min_u8(const struct ctl_table *table)
+>>   {
+>> -	return (table->extra1) ? *(unsigned int *) table->extra1 : 0;
+>> +	return (table->mode & SYSCTL_FLAG_MIN) ? table->min :
+>> +	       (table->extra1) ? *(unsigned int *) table->extra1 : 0;
+> 
+> All these repetitive functions could probably be replaced by one macro.
+> Keeping the users more direct and avoiding all the repetition.
+> 
+
+Okay, we will make the modifications according to your suggestions and 
+send v4 soon.
+
+--
+Best wishes,
+Wen
 
