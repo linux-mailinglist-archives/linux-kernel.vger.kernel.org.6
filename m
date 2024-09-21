@@ -1,123 +1,117 @@
-Return-Path: <linux-kernel+bounces-334771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76FF97DBF9
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 09:21:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C84E997DBFC
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 09:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72A1A1F21E71
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 07:21:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76FBB1F21F4B
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 07:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D3414BF9B;
-	Sat, 21 Sep 2024 07:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE2814EC46;
+	Sat, 21 Sep 2024 07:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iR7HXi+s"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cOdXXBdq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6812C9D
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 07:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDC941C89
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 07:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726903304; cv=none; b=tRqvmrdNZve/CeiRzUXP8EyAoHzXsp9ATxtVNlK4WQUcM/CNOsWA3rxTU/PR/6AySsKSe2ZKCFPMZJ/Fddg6GMLvSOX1H4sXYP0U6+g1HqzMuPYrDO3+VuiihqQRAXlB76qc3ZyWTuCXYZwsw4WZlzRLHTu2O8U+5591rywycj8=
+	t=1726903823; cv=none; b=Z26JtIgvA5IYD8zo/i7a7ym0vHWGVfQgxJCJukZMQzK3QJTliQR1THffmkik68No4ja+G3wTb9uBBzZBSxTcdmtNLrO0ZETgU56VfHht0h42k4FMEYxsPUfgqGJzwNi5irfUCRu5x9kuibVHEUtJcWDomF7Y1PsJV+/Wc/pfAIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726903304; c=relaxed/simple;
-	bh=fiG3hOaA7XA752vx2vS+8PIWI70Gh9F5G6AZUWz4/Ms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gwj87IZLSInzt6Es/t18Qr05FkQMXYA9tIA3ebOqAuevoVWUgp1qWbZObZtqZigcRsFneChn2wfkRiFQlIUcN3PVYEOFJEc3P5bGDmVFFSyX2JDj4m7UFFBuVYyMWhp8hXgPksJcj98Ivic6fubGVBQLjTkdTUaUKBu60MAA/Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iR7HXi+s; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-536a2759f0eso3617048e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 00:21:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726903301; x=1727508101; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IZZdu3nG9tnEBLi6sg75S4kfE8Xv5x2MAWLMz7iRXfI=;
-        b=iR7HXi+sU5pB3h3tYBFTzCwe4pL5lnrPhBdW62pF+lfQFhS7rzHWR2qFX4nQrx3VxM
-         dw1UieZd/iitT0xEb/kVaKkLT1rqPBCsPMo2HhOKXa7r2hwNyflhj5mbT2E1UdEmSa6d
-         yHio0HvRjSLRXPwETH0IM2tTQd4hsqKxgxOsAu08CqB9pSgeHvpyeAyymDZtfttiToFC
-         W4VuPT0GZ036aJ74ZbYqT/xjXFRovfBKVUbmhgO1QhRz/9BQjtDxPTbule7Puqa6+ePP
-         fdOPPDAQ4zRZQAfWaX9fL7+wZ91pNwCk/i0J5jVrQdwIaz+Teo3zMNwINLwVTbEn+OAD
-         6wCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726903301; x=1727508101;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IZZdu3nG9tnEBLi6sg75S4kfE8Xv5x2MAWLMz7iRXfI=;
-        b=AMsg7qJI7AVU9ywb4GGxTiGM3XBojXWmCpAN2XJ8EV/XCVBlyAb8Lsxu2puYgDh6CZ
-         9QI6rWdOlRhwe0mVwyjgrHyVCZa65YoY1UUotC8bAP6NCiEYoYhJBwkxbd5X0t+95rvr
-         EitXB4mIm93dSf491nVfSZG6Az0CfzKFns3AuSSKITQ4DCXXYaExj/x0hdQiE692u4ba
-         NMJIIwXY4sqq/FCcXx4ahlHRct5dhOc0V/y9H3HpZmLbDwIhYoiptXaB7Ga0YqCe2FOn
-         9hPmfDVizlshjsowDIrVAP77GdKAB3m8gno/O0KxEjboehRxbLpQgAWpnGCdy4+ZTq0Q
-         NVSg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9rotMpHZzoD5XcJk1cGUEqpSVvRkzrPO4GDaN9OIYoMW84zMk16PjqCRPSWLqVXuJ7QoIJFEOl8TNP0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+U1DUjgxtlE1+8mx3/56RNOF1OlS94dg1GVNfzCO67VdVtj4d
-	3ZMgHKetZHcEdGDQ5jtJn7nKcD8cS1nkwUohKMZbL6VDRpC7HqQ/dIQpOFpVGew=
-X-Google-Smtp-Source: AGHT+IF0hxBF9skV/bG11iGeIxzhShS9O/B6D8X6Tmf+0dBjjxjYBBlzJE0px7XHVZWrZjZWJvNHzw==
-X-Received: by 2002:a05:6512:3ca8:b0:52f:cdb0:11c0 with SMTP id 2adb3069b0e04-536ad16b1fcmr2786192e87.21.1726903301102;
-        Sat, 21 Sep 2024 00:21:41 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5368704e995sm2501278e87.106.2024.09.21.00.21.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Sep 2024 00:21:39 -0700 (PDT)
-Date: Sat, 21 Sep 2024 10:21:36 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Elliot Berman <quic_eberman@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Andrew Halaney <ahalaney@redhat.com>, Rudraksha Gupta <guptarud@gmail.com>, 
-	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH] firmware: qcom: scm: Allow devicetree-less probe
-Message-ID: <fqdmcct5b5sxv3rpxiksmzpjbpcwmyuwpb5epjnhgpzxh344pp@pxggownwv44n>
-References: <20240920-scm-pdev-v1-1-b76d90e06af7@quicinc.com>
+	s=arc-20240116; t=1726903823; c=relaxed/simple;
+	bh=z+hccMl8T/g4EuK4dkYhejTd+uidfLcfUtyLjsHtcDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lsRsx8V1N0ocJFTI02+WnGqTiXEXLoyxDS++GTKBEUAKgXz2H/SzZWjyaTW5ATicswHvBL+OfrkpbZzyurUAvt3MPYfgUOcZu4bjRKDzNceEbdb9clPAYnPapza0e/Md94nIsNzhAbdZcAlLOZ6IUTDkziaX0uRfArMuEaIUVtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cOdXXBdq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726903820;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KzvMnsM+vzdU7NKDHCnrJ1kjDqhwnForMED4ERX1KeI=;
+	b=cOdXXBdqBSctfNecprqw74/CUy6Ev+26I1NcoIZUFKo8dblJ8qEjcEJKWkk1RpK9UQN86L
+	75MOFJZEgUOwLVUPbwbJnJnR02JWlIDPN9fxKA3Q4pprVMXNCFIr3Cp0Zp3MDMgC6KvB9Q
+	xH+WhvflpeM9WOBGoB/ZQb/Kagto5rk=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-648-xsEMrhcCOm6jF64Lgyb3jQ-1; Sat,
+ 21 Sep 2024 03:30:16 -0400
+X-MC-Unique: xsEMrhcCOm6jF64Lgyb3jQ-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E9C3219137A7;
+	Sat, 21 Sep 2024 07:30:14 +0000 (UTC)
+Received: from [10.45.224.28] (unknown [10.45.224.28])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7C68230001A1;
+	Sat, 21 Sep 2024 07:30:09 +0000 (UTC)
+Message-ID: <031a122c-f480-4dbc-8022-ca829f4ce500@redhat.com>
+Date: Sat, 21 Sep 2024 03:30:07 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240920-scm-pdev-v1-1-b76d90e06af7@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/2] cpu/bugs: cgroup: Add a cgroup knob to bypass CPU
+ mitigations
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Kaplan <David.Kaplan@amd.com>,
+ Daniel Sneddon <daniel.sneddon@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
+References: <20240919-selective-mitigation-v1-0-1846cf41895e@linux.intel.com>
+ <20240919-selective-mitigation-v1-2-1846cf41895e@linux.intel.com>
+ <5f48073d-8b4e-4569-af4f-3a9b5586d7ad@redhat.com>
+ <20240920075448.djesnjetefwa4yl4@desk>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240920075448.djesnjetefwa4yl4@desk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri, Sep 20, 2024 at 11:01:40AM GMT, Elliot Berman wrote:
-> Some devicetrees representing Qualcomm Technologies, Inc. SoCs are
-> missing the SCM node. Users of the SCM device assume the device is
-> present and the driver also assumes it has probed. This can lead to
-> unanticipated crashes when there isn't an SCM device. All Qualcomm
-> Technologies, Inc. SoCs use SCM to communicate with firmware, so create
-> the platform device if it's not present in the devicetree.
 
-Which devicetrees? I assume that this mostly concerns arm32 machines,
-but I don't see if you have tested this on any of them. Also on some of
-those machines SCM require additional clocks, I don't see that being
-handled in the patch.
+On 9/20/24 03:54, Pawan Gupta wrote:
+>>>    static int cpu_local_stat_show(struct seq_file *seq, void *v)
+>>>    {
+>>>    	struct cgroup __maybe_unused *cgrp = seq_css(seq)->cgroup;
+>>> @@ -5290,6 +5326,12 @@ static struct cftype cgroup_base_files[] = {
+>>>    		.name = "cpu.stat.local",
+>>>    		.seq_show = cpu_local_stat_show,
+>>>    	},
+>>> +	{
+>>> +		.name = "cpu.skip_mitigation",
+>>> +		.flags = CFTYPE_NOT_ON_ROOT,
+>>> +		.seq_show = cpu_skip_mitigation_show,
+>>> +		.write = cgroup_skip_mitigation_write,
+>>> +	},
+>>>    	{ }	/* terminate */
+>>>    };
+>> Since this control knob is effective only for x86_64, should we enable this
+>> only for this architecture?
+> This should be under a CONFIG option that depends on the architecture
+> selected. I don't see a reason why it will not be useful for other archs.
 
-If we are to manually instantiate SCM node, I'd prefer for it to be
-explicit, e.g. MSM8x60, create SCM device, using this-and-that clock.
+Using a CONFIG option looks fine to me. I just want to make sure that 
+arches that don't support it won't have a useless control knob show up.
 
-> Tested that SCM node still probes on:
->  - sm8650-qrd with the SCM DT node still present
->  - sm845-mtp with the SCM DT node still present
->  - sm845-mtp with the node removed
-> 
-> Fixes: 449d0d84bcd8 ("firmware: qcom: scm: smc: switch to using the SCM allocator")
-> Reported-by: Rudraksha Gupta <guptarud@gmail.com>
-> Closes: https://lore.kernel.org/lkml/692cfe9a-8c05-4ce4-813e-82b3f310019a@gmail.com/
-> Link: https://lore.kernel.org/all/CAA8EJpqSKbKJ=y0LAigGdj7_uk+5mezDgnzV5XEzwbxRJgpN1w@mail.gmail.com/
-> Suggested-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> ---
->  drivers/firmware/qcom/qcom_scm.c | 75 +++++++++++++++++++++++++++++++++++-----
->  1 file changed, 66 insertions(+), 9 deletions(-)
+Cheers,
+Longman
 
--- 
-With best wishes
-Dmitry
 
