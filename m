@@ -1,42 +1,47 @@
-Return-Path: <linux-kernel+bounces-334841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213FE97DD42
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 14:37:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8276197DD43
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 14:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB3141F21C67
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 12:37:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B39381C20D84
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 12:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE03161310;
-	Sat, 21 Sep 2024 12:37:32 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A007238DE1;
-	Sat, 21 Sep 2024 12:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD550156C7B;
+	Sat, 21 Sep 2024 12:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="GB+uyXdY"
+Received: from classfun.cn (unknown [129.204.178.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DD838DE1;
+	Sat, 21 Sep 2024 12:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726922252; cv=none; b=oJIOQR9OL3hQBDrUjigmDUr+WulIXO6kPs5G0l429Qp51G8cN4QJ6BKW6+mKu0Mgk6EBBA3ibID/vKAqfbmXHQMAFsSo7bLsFEl/6aRxkaBnnLdRkH6TrZbFwJHbd0zPBinHvkzoO9nFA/vFcHQHdvNbueloCXhv14AQeWb/pmg=
+	t=1726922260; cv=none; b=SGlkeFdoSvn15qRJXdBLtrMo/E56OIBIXWy/0rWPyUlMJ39WeeHiODqwjIHnNT6WvF+hMmwhhGFoGOYfK79sEMsdkDcnHy+pgX26KwyxJM9y1QcvQUlZ8oY+mp8CCwlEhb2xsp6G516u9b22d8v9FvAc1UeffT8I9o0emmhCErE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726922252; c=relaxed/simple;
-	bh=2amqPYcUihSipIQL5OIHzynIAtbxt3aDa1E1bTMvrgI=;
+	s=arc-20240116; t=1726922260; c=relaxed/simple;
+	bh=vAPIl4pwG8XIOK0ubXrjS3Bek6TxDXFPz8Bm4puAIkE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=duca2aDUn7ezVVNVmeBzeEcnZZ4wM4xK2ETjs8quNSQ8bmekUheyTCtH5+lREL4qHoop9Qum+enEfjsOJlVho1sMSJyo78YBCP3ikgz9fa8Gr3KFGdydb34mS4m4jlYhNV292Zhg4SWtbg/IyR0tlkWnarlQwPovMqq0gLDt5Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.53] (ip5f5aef34.dynamic.kabel-deutschland.de [95.90.239.52])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 9175C61E5FE05;
-	Sat, 21 Sep 2024 14:36:23 +0200 (CEST)
-Message-ID: <f9bbc8a7-4292-47a1-8987-b931284a7738@molgen.mpg.de>
-Date: Sat, 21 Sep 2024 14:36:21 +0200
+	 In-Reply-To:Content-Type; b=RSan6ZZQTLVg8vUjSMJbKrN1PJKFJJXtG3jqVMPJBa8/sYgQAVm80WpTD/hXO1u3Rv14/ZZPp4+hvqUOkSZ/uXp323rEfXrB1lvHStl/sFe7LDmYzQiAcaceUdmNvI8DkVqodJqgvYA5Eb+ZuKm6TIYSuzTcaToAQAEzeqLBDuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=GB+uyXdY; arc=none smtp.client-ip=129.204.178.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
+Received: from [192.168.0.160] (unknown [120.40.111.43])
+	(Authenticated sender: bigfoot)
+	by classfun.cn (Postfix) with ESMTPSA id D4ECF7887A;
+	Sat, 21 Sep 2024 20:37:25 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn D4ECF7887A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
+	s=default; t=1726922247;
+	bh=zcS472w9hdKS/lPmVwyG5rcF8C7SmDI7kxfAxfhqsnY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GB+uyXdYfJRz0dXGsIXpKaiDqbDCUJEP+daNCcKr1frd4VfcjjR1/iJL9FFTflSUo
+	 jn9mbTwOOCE2H1lmqvyBnyODxmkQ/KwwX1fEtG4aqButCTKdxHSrbcCLjoesVTiO1u
+	 GWb9kKBgVJg0nikD0p2AL5V5uC1YGIm2H7Lt+3GQ=
+Message-ID: <2ff6ab4b-14a6-40ac-beb6-9c21e50cf7fe@classfun.cn>
+Date: Sat, 21 Sep 2024 20:37:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,36 +49,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, James.Bottomley@HansenPartnership.com,
- roberto.sassu@huawei.com, mapengyu@gmail.com,
- Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Peter Huewe <peterhuewe@gmx.de>,
- Jason Gunthorpe <jgg@ziepe.ca>, keyrings@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240921120811.1264985-1-jarkko@kernel.org>
+Subject: Re: [PATCH v3 3/3] arm64: dts: rockchip: add dts for Ariaboard
+ Photonicat RK3568
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, dsimic@manjaro.org,
+ heiko@sntech.de, jonas@kwiboo.se, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Junhao Xie <bigfoot@classfun.cn>
+References: <1a7d017a-8317-462b-8698-03cc7099a74f@classfun.cn>
+ <20240918022005.487551-1-amadeus@jmu.edu.cn>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20240921120811.1264985-1-jarkko@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Junhao Xie <bigfoot@classfun.cn>
+In-Reply-To: <20240918022005.487551-1-amadeus@jmu.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Dear Jarkko,
+On 2024/9/18 10:20, Chukun Pan wrote:
+>> I seem to have misunderstood the rules in dt-bindings before.
+>> The following looks better:
+> 
+> Please also update other regulators to unify the naming.
+Thanks, I will update in PATCH v5.
 
+Best regards,
+Junhao
 
-Thank you for working on this and your patches.
-
-Am 21.09.24 um 14:08 schrieb Jarkko Sakkinen:
-> This patch set aims to fix:
-> https://bugzilla.kernel.org/show_bug.cgi?id=219229.
-
-If I am not mistaken this is about reducing the boot time, right? It’d 
-be great if you documented the numbers in the commit messages.
-
-
-Kind regards,
-
-Paul
 
