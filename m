@@ -1,479 +1,192 @@
-Return-Path: <linux-kernel+bounces-334813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCCD097DCD6
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 12:30:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6461997DCDA
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 12:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E23B6B2159C
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:30:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43C21F21A31
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0EB1547CE;
-	Sat, 21 Sep 2024 10:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082821547F0;
+	Sat, 21 Sep 2024 10:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="anjPekdZ"
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Soq95gx9"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D7916F27E
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 10:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5367D2C9D
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 10:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726914619; cv=none; b=nwpRFA89wNUmPa6oCfXNOX5TfN67UFc0tbi9e+bcrvVuh55ZUs3bqKxRCaeTpXqDSiLaD/jR/XF+FnRMNYrEeckjzIyQ8m8Fzt1WRgt5ca2BR+3oBOf/9bt0ManF6qhH6IiBoT99D/Aepy7za4DOSjoZVap/f5d4dXw99ZG3k9g=
+	t=1726915099; cv=none; b=IAy0unG9ze7s3SDnZiHVPMBHaCMWRQvQ2saqcnQ68ihwPj7vA5x2AIJGRNhkmAQnfTcNo2IeX8SlDNP2nHeZaGgCoEK9BEzSrNQ9HTpiDDa8VdKQB/+rlmEsnZ1O96PPR6/3PjyV9CTPtaxbxezjzA6SuUqPXINH0FnaO1Lu7Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726914619; c=relaxed/simple;
-	bh=VvG/JRhYD+YgwYNiBZbB03QIasBYS3NIaLOyfWg3Yr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FTke2KlpzzsNm7wyyQBcwu4jvTeIkhTkG0lfMbfz8PRBP2SEs6pQ7ETdqP+mh9SfsZ0c3jzriiK76H5vLkegOBHRGbWQKHu1M7+4fHYfngrg00KYWBhduPEdGzlbGWiBQ5RwlXL5NJBUJvVayn7ZKLuPyEM05kFV+ehJ3zyee0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=anjPekdZ; arc=none smtp.client-ip=83.166.143.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X9lhm3PK8zld2;
-	Sat, 21 Sep 2024 12:23:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1726914216;
-	bh=YwcGMU98XB5r3e3xk8Pb31K7iMPEMOYw4NZzCKRMdrE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=anjPekdZsMQ78Xcf8WkBjOTrA63uZKWDiAx8Pl0ldNY/xBwuJ5fs7d9ruxvdUXvQi
-	 u1z4/4fQCINYqFiAkevZtlr6ylt/anwzCeKmDXbcc5m1+oV6O3WEe4zg8V9F2rsAmR
-	 mt+3YiM5fLiViTkmhcZtVy63awKzB06GsptgHmTs=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4X9lhk2lqsz8Q1;
-	Sat, 21 Sep 2024 12:23:34 +0200 (CEST)
-Date: Sat, 21 Sep 2024 12:23:22 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Matthieu Buffet <matthieu@buffet.re>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-Subject: Re: [RFC PATCH v1 4/7] landlock: Add UDP send+recv access control
-Message-ID: <20240921.ohCheQuoh1eu@digikod.net>
-References: <20240916122230.114800-1-matthieu@buffet.re>
- <20240916122230.114800-5-matthieu@buffet.re>
+	s=arc-20240116; t=1726915099; c=relaxed/simple;
+	bh=/c480nBLQIxrIgEsRcjizH6hW6B/oRLJRkaT9ucdyLw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ON0zLaDQmagwC5+qe/55F2mnzhi9fW3S5hJD7lTsQ72HdTDwfFi6W4593XXc75cfNDUSCAWALZL0jezwhwgl7CskFXUO3JEjb7sLbv7XsLp2y3J0uKkOIV8YiwxW2ZCs8SKnKQtGfIB/tX3nS4SUmSBb4BU37Uc7yFGYPEujncA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Soq95gx9; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48L3ZSoH020639;
+	Sat, 21 Sep 2024 10:38:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:content-transfer-encoding
+	:mime-version; s=pp1; bh=+KWORPeSJNnYHKPUC/+D2RgrnP4L87qsmYvEGxn
+	GsGI=; b=Soq95gx9HXNUpxWjJQ/o9OrZ9fG1fJhnN3Erfe3u5zW0//OiKHboscC
+	+gQmt2cijb0qt3c4WDrhvJ09hV2QgpdO7XnwY+nKHE50tZSWyEe1yGPAxlfou/l8
+	Sos7n5Tbgp0SNMHuLxRkECBGvJXL4nq+ovi/6yBRg+y5nEgjhAF3odpC2pxjMMcb
+	9kT/o/6KlPTSmd0r/XW59uFaOjlC6+uaYxSnzZL+qcT0YO10Ij6+tGzg6zjrXomU
+	nXYm3Kkv1Dj8JIz9V0QsAEBKPrZpSAsbeKnxvWlPjcbV9fvf+ubUsOCTIWPyy4jX
+	WkcgnIZnTb6wrzZ+YgVaR3TaUD7Wnqg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41sntvsa7p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 21 Sep 2024 10:37:59 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48LAbwDK030568;
+	Sat, 21 Sep 2024 10:37:58 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41sntvsa7k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 21 Sep 2024 10:37:58 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48L6UbIE030625;
+	Sat, 21 Sep 2024 10:37:57 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41npanv0b3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 21 Sep 2024 10:37:57 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48LAbtkD53543276
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 21 Sep 2024 10:37:55 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 466EF20043;
+	Sat, 21 Sep 2024 10:37:55 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 436A420040;
+	Sat, 21 Sep 2024 10:37:50 +0000 (GMT)
+Received: from li-4f5ba44c-27d4-11b2-a85c-a08f5b49eada.ibm.com.com (unknown [9.43.3.44])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sat, 21 Sep 2024 10:37:49 +0000 (GMT)
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+To: akpm@linux-foundation.org
+Cc: Hari Bathini <hbathini@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Baoquan he <bhe@redhat.com>,
+        Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
+Subject: [PATCH linux-next v3] kexec/crash: no crash update when kexec in progress
+Date: Sat, 21 Sep 2024 16:07:45 +0530
+Message-ID: <20240921103745.560430-1-sourabhjain@linux.ibm.com>
+X-Mailer: git-send-email 2.46.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: wMAXGuOH2kq_dOGs8E5y7uv0SrYy_m_Z
+X-Proofpoint-GUID: YKaJhgw807CeiwvpUPvZCy5Emqg2xOId
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240916122230.114800-5-matthieu@buffet.re>
-X-Infomaniak-Routing: alpha
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-21_05,2024-09-19_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015
+ priorityscore=1501 adultscore=0 mlxlogscore=999 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409210078
 
-On Mon, Sep 16, 2024 at 02:22:27PM +0200, Matthieu Buffet wrote:
-> Add support for two UDP access rights, complementing the two previous
-> LANDLOCK_ACCESS_NET_CONNECT_UDP and LANDLOCK_ACCESS_NET_BIND_UDP:
-> 
-> - LANDLOCK_ACCESS_NET_RECVMSG_UDP: to prevent a process from receiving
+The following errors are observed when kexec is done with SMT=off on
+powerpc.
 
-I'm wondering what would make the most sense between NET_RECVMSG_UDP and
-NET_RECVFROM_UDP.  Is one more known or understood than the other?  Same
-for sendmsg vs. sendto.
+[  358.458385] Removing IBM Power 842 compression device
+[  374.795734] kexec_core: Starting new kernel
+[  374.795748] kexec: Waking offline cpu 1.
+[  374.875695] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+[  374.935833] kexec: Waking offline cpu 2.
+[  375.015664] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+snip..
+[  375.515823] kexec: Waking offline cpu 6.
+[  375.635667] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+[  375.695836] kexec: Waking offline cpu 7.
 
->   datagrams. Just removing LANDLOCK_ACCESS_NET_BIND_UDP is not enough:
->   it can just send a first datagram or call connect() and get an
->   ephemeral port assigned, without ever calling bind(). This access right
->   allows blocking a process from receiving UDP datagrams, without
->   preventing them to bind() (which may be required to set source ports);
-> 
-> - LANDLOCK_ACCESS_NET_SENDMSG_UDP: to prevent a process from sending
->   datagrams. Just removing LANDLOCK_ACCESS_NET_CONNECT_UDP is not enough:
->   the process can call sendmsg() with an unconnected socket and an
->   arbitrary destination address.
-> 
-> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
-> ---
->  include/uapi/linux/landlock.h |  18 ++-
->  security/landlock/limits.h    |   2 +-
->  security/landlock/net.c       | 205 +++++++++++++++++++++++++++++-----
->  3 files changed, 193 insertions(+), 32 deletions(-)
-> 
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index 7f9aa1cd2912..7ea3d1adb8c3 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -287,15 +287,25 @@ struct landlock_net_port_attr {
->   *   receive datagrams from (if you create a client-specific socket for a
->   *   client-specific process, e.g. using the established-over-unconnected
->   *   method)
-> - *
-> - * Note that ``bind(0)`` means binding to an ephemeral kernel-assigned port,
-> - * in the range configured in ``/proc/sys/net/ipv4/ip_local_port_range``
-> - * globally (or on a per-socket basis with ``setsockopt(IP_LOCAL_PORT_RANGE)``).
-> + * - %LANDLOCK_ACCESS_NET_RECVMSG_UDP: receive datagrams on the given local port
-> + *   (this is a distinct right from %LANDLOCK_ACCESS_NET_BIND_UDP, because you
-> + *   may want to allow a process to set its datagrams source port using bind()
-> + *   but not be able to receive datagrams)
-> + * - %LANDLOCK_ACCESS_NET_SENDMSG_UDP: send datagrams to the given remote port
-> + *   (this is a distinct right from %LANDLOCK_ACCESS_NET_CONNECT_UDP, because
-> + *   you may want to allow a process to set which client it wants to receive
-> + *   datagrams from using connect(), and not be able to send datagrams)
-> + *
-> + * Note that ``bind(0)`` has special semantics, meaning bind on any port in the
-> + * range configured in ``/proc/sys/net/ipv4/ip_local_port_range`` globally (or
-> + * on a per-socket basis with ``setsockopt(IP_LOCAL_PORT_RANGE)``).
->   */
->  /* clang-format off */
->  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
->  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
->  #define LANDLOCK_ACCESS_NET_BIND_UDP			(1ULL << 2)
->  #define LANDLOCK_ACCESS_NET_CONNECT_UDP			(1ULL << 3)
-> +#define LANDLOCK_ACCESS_NET_RECVMSG_UDP			(1ULL << 4)
-> +#define LANDLOCK_ACCESS_NET_SENDMSG_UDP			(1ULL << 5)
->  /* clang-format on */
->  #endif /* _UAPI_LINUX_LANDLOCK_H */
-> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-> index 182b6a8d2976..e2697348310c 100644
-> --- a/security/landlock/limits.h
-> +++ b/security/landlock/limits.h
-> @@ -22,7 +22,7 @@
->  #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
->  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
->  
-> -#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_UDP
-> +#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_SENDMSG_UDP
->  #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
->  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
->  
-> diff --git a/security/landlock/net.c b/security/landlock/net.c
-> index becc62c02cc9..9a3c44ad3f26 100644
-> --- a/security/landlock/net.c
-> +++ b/security/landlock/net.c
-> @@ -10,6 +10,8 @@
->  #include <linux/net.h>
->  #include <linux/socket.h>
->  #include <net/ipv6.h>
-> +#include <net/transp_v6.h>
-> +#include <net/ip.h>
->  
->  #include "common.h"
->  #include "cred.h"
-> @@ -61,6 +63,45 @@ static const struct landlock_ruleset *get_current_net_domain(void)
->  	return dom;
->  }
->  
-> +static int get_addr_port(const struct sockaddr *address, int addrlen,
-> +			 bool in_udpv6_sendmsg_ctx, __be16 *port)
-> +{
-> +	/* Checks for minimal header length to safely read sa_family. */
-> +	if (addrlen < offsetofend(typeof(*address), sa_family))
-> +		return -EINVAL;
-> +
-> +	switch (address->sa_family) {
-> +	case AF_UNSPEC:
+To avoid kexec kernel boot failure on PowerPC, all the present CPUs that
+are offline are brought online during kexec. For more information, refer
+to commit e8e5c2155b00 ("powerpc/kexec: Fix orphaned offline CPUs across
+kexec"). Bringing the CPUs online triggers the crash hotplug handler,
+crash_handle_hotplug_event(), to update the kdump image. Since the
+system is on the kexec kernel boot path and the kexec lock is held, the
+crash_handle_hotplug_event() function fails to acquire the same lock to
+update the kdump image, resulting in the error messages mentioned above.
 
-Please create a simple patch refactoring this code, but without any
-semantic change, and then include the UDP specific part in the patch
-adding support for UDP control.  This helps verify (and test) what is
-the code refactoring and what is the actual change, and it could also
-help for backports.  Moving this code to a standalone helper should then
-be the first patch of this series.
+To fix this, return from crash_handle_hotplug_event() without printing
+the error message if kexec is in progress.
 
-> +		/*
-> +		 * Backward compatibility games: AF_UNSPEC is mapped to AF_INET
-> +		 * by `bind` (v4+v6), `connect` (v4) and `sendmsg` (v4), but
+The same applies to the crash_check_hotplug_support() function. Return
+0 if kexec is in progress because kernel is not in a position to update
+the kdump image.
 
-Instead of backticks, just name these syscalls as functions: bind(),
-connect()...
+Cc: Hari Bathini <hbathini@linux.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: kexec@lists.infradead.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org
+Acked-by: Baoquan he <bhe@redhat.com>
+Reported-by: Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
+Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+---
+Changelog:
 
-> +		 * interpreted as "no address" by `sendmsg` (v6). In that case
-> +		 * this call must succeed (even if `address` is shorter than a
-> +		 * `struct sockaddr_in`), and caller must check for this
-> +		 * condition.
+Since v1:
+ - Keep the kexec_in_progress check within kexec_trylock() - Baoquan He
+ - Include the reason why PowerPC brings offline CPUs online
+   during the kexec kernel boot path - Baoquan He
+ - Rebased on top of #next-20240910 to avoid conflict with the patch below
+   https://lore.kernel.org/all/20240812041651.703156-1-sourabhjain@linux.ibm.com/T/#u
 
-Weird dance, but good catch.
+V2 RESEND: https://lore.kernel.org/all/20240911112111.108056-1-sourabhjain@linux.ibm.com/
+ - Update linuxppc-dev mailing list address
 
-> +		 */
-> +		if (in_udpv6_sendmsg_ctx) {
-> +			*port = 0;
+Since v2:
+ - Rebased it on top of #next-20240920
 
-Why set the port to zero?  In udp_sendmsg(), it looks like such a port
-would return -EINVAL right?
+---
+ kernel/crash_core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-And in this case, why ignoring the following addrlen check?
+diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+index c1048893f4b6..078fe5bc5a74 100644
+--- a/kernel/crash_core.c
++++ b/kernel/crash_core.c
+@@ -505,7 +505,8 @@ int crash_check_hotplug_support(void)
+ 	crash_hotplug_lock();
+ 	/* Obtain lock while reading crash information */
+ 	if (!kexec_trylock()) {
+-		pr_info("kexec_trylock() failed, kdump image may be inaccurate\n");
++		if (!kexec_in_progress)
++			pr_info("kexec_trylock() failed, kdump image may be inaccurate\n");
+ 		crash_hotplug_unlock();
+ 		return 0;
+ 	}
+@@ -547,7 +548,8 @@ static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu,
+ 	crash_hotplug_lock();
+ 	/* Obtain lock while changing crash information */
+ 	if (!kexec_trylock()) {
+-		pr_info("kexec_trylock() failed, kdump image may be inaccurate\n");
++		if (!kexec_in_progress)
++			pr_info("kexec_trylock() failed, kdump image may be inaccurate\n");
+ 		crash_hotplug_unlock();
+ 		return;
+ 	}
+-- 
+2.46.0
 
-Couldn't we just remove this in_udpv6_sendmsg_ctx argument, extract the
-port as long as we can, and only deal with the in_udpv6_sendmsg case in
-hook_socket_sendmsg()
-
-> +			return 0;
-> +		}
-> +		fallthrough;
-> +	case AF_INET:
-> +		if (addrlen < sizeof(struct sockaddr_in))
-> +			return -EINVAL;
-> +		*port = ((struct sockaddr_in *)address)->sin_port;
-> +		return 0;
-> +#if IS_ENABLED(CONFIG_IPV6)
-> +	case AF_INET6:
-> +		if (addrlen < SIN6_LEN_RFC2133)
-> +			return -EINVAL;
-> +		*port = ((struct sockaddr_in6 *)address)->sin6_port;
-> +		return 0;
-> +#endif /* IS_ENABLED(CONFIG_IPV6) */
-> +	}
-> +
-> +	return -EAFNOSUPPORT;
-> +}
-> +
->  static int current_check_access_socket(struct socket *const sock,
->  				       struct sockaddr *const address,
->  				       const int addrlen,
-> @@ -73,39 +114,18 @@ static int current_check_access_socket(struct socket *const sock,
->  		.type = LANDLOCK_KEY_NET_PORT,
->  	};
->  	const struct landlock_ruleset *const dom = get_current_net_domain();
-> +	int err;
->  
->  	if (!dom)
->  		return 0;
->  	if (WARN_ON_ONCE(dom->num_layers < 1))
->  		return -EACCES;
->  
-> -	/* Checks if it's a (potential) UDP or TCP socket. */
-> -	if (sock->type != SOCK_STREAM && sock->type != SOCK_DGRAM)
-> -		return 0;
-> -
-> -	/* Checks for minimal header length to safely read sa_family. */
-> -	if (addrlen < offsetofend(typeof(*address), sa_family))
-> -		return -EINVAL;
-> -
-> -	switch (address->sa_family) {
-> -	case AF_UNSPEC:
-> -	case AF_INET:
-> -		if (addrlen < sizeof(struct sockaddr_in))
-> -			return -EINVAL;
-> -		port = ((struct sockaddr_in *)address)->sin_port;
-> -		break;
-> -
-> -#if IS_ENABLED(CONFIG_IPV6)
-> -	case AF_INET6:
-> -		if (addrlen < SIN6_LEN_RFC2133)
-> -			return -EINVAL;
-> -		port = ((struct sockaddr_in6 *)address)->sin6_port;
-> -		break;
-> -#endif /* IS_ENABLED(CONFIG_IPV6) */
-> -
-> -	default:
-> -		return 0;
-> -	}
-> +	err = get_addr_port(address, addrlen, false, &port);
-> +	if (err == -EAFNOSUPPORT)
-> +		return 0; // restrictions are not applicable to this socket family
-
-Comments need to be /* Like this and before the commented code. */
-See https://docs.kernel.org/process/maintainer-tip.html#comment-style
-
-> +	else if (err != 0)
-> +		return err;
->  
->  	/* Specific AF_UNSPEC handling. */
->  	if (address->sa_family == AF_UNSPEC) {
-> @@ -174,6 +194,27 @@ static int current_check_access_socket(struct socket *const sock,
->  	return -EACCES;
->  }
->  
-> +static int check_access_port(const struct landlock_ruleset *const dom,
-> +			     access_mask_t access_request, __be16 port)
-> +{
-> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_NET] = {};
-> +	const struct landlock_rule *rule;
-> +	const struct landlock_id id = {
-> +		.key.data = (__force uintptr_t)port,
-> +		.type = LANDLOCK_KEY_NET_PORT,
-> +	};
-> +	BUILD_BUG_ON(sizeof(port) > sizeof(id.key.data));
-> +
-> +	rule = landlock_find_rule(dom, id);
-> +	access_request = landlock_init_layer_masks(
-> +		dom, access_request, &layer_masks, LANDLOCK_KEY_NET_PORT);
-> +	if (landlock_unmask_layers(rule, access_request, &layer_masks,
-> +				   ARRAY_SIZE(layer_masks)))
-> +		return 0;
-> +
-> +	return -EACCES;
-> +}
-> +
->  static int hook_socket_bind(struct socket *const sock,
->  			    struct sockaddr *const address, const int addrlen)
->  {
-> @@ -215,9 +256,119 @@ static int hook_socket_connect(struct socket *const sock,
->  					   access_request);
->  }
->  
-> +static int hook_socket_sendmsg(struct socket *const sock,
-> +			       struct msghdr *const msg, const int size)
-
-We can probably constify these references.
-
-> +{
-> +	const struct landlock_ruleset *const dom = get_current_net_domain();
-> +	const struct sockaddr *address = (const struct sockaddr *)msg->msg_name;
-> +	int err;
-> +	__be16 port;
-> +
-> +	if (sock->type != SOCK_DGRAM)
-> +		return 0;
-> +	if (sock->sk->sk_protocol != IPPROTO_UDP)
-> +		return 0;
-> +	if (!dom)
-> +		return 0;
-
-I'd prefer this !dom check to be the first (like for most other hooks)
-because it makes it clear that Landlock doesn't mess with not sandboxed
-tasks.  Moreover in this case it would avoid two pointer dereferences.
-
-> +	if (WARN_ON_ONCE(dom->num_layers < 1))
-> +		return -EACCES;
-
-This num_layers check can stay just after to the dom check though.
-
-> +
-> +	/*
-> +	 * Don't mimic all checks udp_sendmsg() and udpv6_sendmsg() do. Just
-> +	 * read what we need for access control, and fail if we can't (e.g.
-> +	 * because the input buffer is too short) with the same error codes as
-> +	 * they do. Selftests enforce that these error codes do not diverge
-> +	 * with the actual implementation's ones.
-> +	 */
-> +
-> +	/*
-> +	 * If there is a more specific address in the message, it will take
-> +	 * precedence over any connect()ed address. Base our access check on it.
-> +	 */
-> +	if (address) {
-> +		const bool in_udpv6_sendmsg =
-> +			(sock->sk->sk_prot == &udpv6_prot);
-> +
-> +		err = get_addr_port(address, msg->msg_namelen, in_udpv6_sendmsg,
-> +				    &port);
-> +		if (err != 0)
-> +			return err;
-> +
-> +		/*
-> +		 * In `udpv6_sendmsg`, AF_UNSPEC is interpreted as "no address".
-> +		 * In that case, the call above will succeed but without
-> +		 * returning a port.
-> +		 */
-> +		if (in_udpv6_sendmsg && address->sa_family == AF_UNSPEC)
-> +			address = NULL;
-> +	}
-> +
-> +	/*
-> +	 * Without a message-specific destination address, the socket must be
-> +	 * connect()ed to an address, base our access check on that one.
-> +	 */
-> +	if (!address) {
-
-If the address is not specified, I think we should just allow the
-request and let the network stack handle the rest.  The advantage of
-this approach would be that if the socket was previously allowed to be
-connected, the check is only done once and they will be almost no
-performance impact when calling sendto/write/recvfrom/read on this
-"connected" socket.
-
-> +		/*
-> +		 * We could let this through and count on `udp_sendmsg` and
-> +		 * `udpv6_sendmsg` to error out, but they could change in the
-> +		 * future and open a hole here without knowing. Enforce an
-> +		 * error, and enforce in selftests that we don't diverge in
-> +		 * behaviours compared to them.
-
-This is a good approach for this patch, but if we allow connected
-sockets to be freely used when the address is not specified, this check
-should not be required because we would allow such action anyway and the
-network stack would handle the other error cases.
-
-> +		 */
-> +		if (sock->sk->sk_state != TCP_ESTABLISHED)
-> +			return -EDESTADDRREQ;
-> +
-> +		port = inet_sk(sock->sk)->inet_dport;
-> +	}
-> +
-> +	return check_access_port(dom, LANDLOCK_ACCESS_NET_SENDMSG_UDP, port);
-
-
-What about something like this (with the appropriate comments)?
-
-if (!address)
-	return 0;
-
-if (address->sa_family == AF_UNSPEC && sock->sk->sk_prot == &udpv6_prot)
-	return 0;
-
-err = get_addr_port(address, msg->msg_namelen, &port);
-if (err)
-	return err;
-
-return check_access_port(dom, LANDLOCK_ACCESS_NET_SENDMSG_UDP, port);
-
-> +}
-> +
-> +static int hook_socket_recvmsg(struct socket *const sock,
-> +			       struct msghdr *const msg, const int size,
-> +			       const int flags)
-> +{
-> +	const struct landlock_ruleset *const dom = get_current_net_domain();
-> +	struct sock *sk = sock->sk;
-> +	int err;
-> +	__be16 port_bigendian;
-> +	int ephemeral_low;
-> +	int ephemeral_high;
-> +	__u16 port_hostendian;
-> +
-> +	if (sk->sk_protocol != IPPROTO_UDP)
-> +		return 0;
-
-ditto
-
-> +	if (!dom)
-> +		return 0;
-> +	if (WARN_ON_ONCE(dom->num_layers < 1))
-> +		return -EACCES;
-> +
-> +	/* "fast" path: socket is bound to an explicitly allowed port */
-> +	port_bigendian = inet_sk(sk)->inet_sport;
-> +	err = check_access_port(dom, LANDLOCK_ACCESS_NET_RECVMSG_UDP,
-> +				port_bigendian);
-> +	if (err != -EACCES)
-> +		return err;
-
-We should be able to follow the same policy for "connected" sockets.
-
-> +
-> +	/*
-> +	 * Slow path: socket is bound to an ephemeral port. Need a second check
-> +	 * on port 0 with different semantics ("any ephemeral port").
-> +	 */
-> +	inet_sk_get_local_port_range(sk, &ephemeral_low, &ephemeral_high);
-
-Is it to handle recvmsg(with port 0)?
-
-> +	port_hostendian = ntohs(port_bigendian);
-> +	if (ephemeral_low <= port_hostendian &&
-> +	    port_hostendian <= ephemeral_high)
-> +		return check_access_port(dom, LANDLOCK_ACCESS_NET_RECVMSG_UDP,
-> +					 0);
-> +
-> +	return -EACCES;
-> +}
-> +
->  static struct security_hook_list landlock_hooks[] __ro_after_init = {
->  	LSM_HOOK_INIT(socket_bind, hook_socket_bind),
->  	LSM_HOOK_INIT(socket_connect, hook_socket_connect),
-> +	LSM_HOOK_INIT(socket_sendmsg, hook_socket_sendmsg),
-> +	LSM_HOOK_INIT(socket_recvmsg, hook_socket_recvmsg),
->  };
->  
->  __init void landlock_add_net_hooks(void)
-> -- 
-> 2.39.5
-> 
-> 
 
