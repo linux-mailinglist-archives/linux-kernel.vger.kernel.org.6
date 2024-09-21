@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-334916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D564497DE3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:23:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA9797DE46
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126361C20BEB
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:23:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FEC02818D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0254F881;
-	Sat, 21 Sep 2024 18:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35DA5589B;
+	Sat, 21 Sep 2024 18:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6hlAXlS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8bTlHye"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC62322094;
-	Sat, 21 Sep 2024 18:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E7A3A1DB;
+	Sat, 21 Sep 2024 18:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726943024; cv=none; b=smpbd5zc0aDvfXW0Uj9JsHA5q7ubhYREiQXI+1ssQdLx7w5UF+jC5/EMLcl1h7J+xEjDJpXiSN9T0tOTVf0Pxp9v0Xz89o8PtWAqra1Z76O3dSU+izJuyBOSZAMwyJQnIgZ4kQzrS+VJu/c7DzC9AdaTR64yThON2PsM80qTmMg=
+	t=1726943286; cv=none; b=FaOOGiwlUjkDVDF3X8EMURl6vyl1RrUrokUvhWpjpDTOhl3DAt4M7Uw6W+sFHDOQ2BpNZHdiGfu3G+5qVI4QscPKv34YhycIgyMV2S3l8M3zEjS2DHOGyR8Y6Z83lrbN2ygIvM5+fkuZM/0HopwGafJCvsq6F+5LyAroBX+WAKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726943024; c=relaxed/simple;
-	bh=yfKssePOYgdVSn8I5leQaKY5/lR3CsAYoqDNczzTFLQ=;
+	s=arc-20240116; t=1726943286; c=relaxed/simple;
+	bh=6hOWPfd3ZYHL+xDZpgc0KUbDKKurxsi3+lzwJ5nnlQk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uBsxh0Bi6MABwy2pm+afj3UnLUB6esGW/85yOR0jbm9/KWnHACQz18iMRkeEAcv71ELWHuu2wSwRWMK1/1sLRvpli0Iff/Zj4z7j2e1sD1ZIYgQSlVK9JVwm2tqLyDAd/1OAg+RsV28AVhqrlJqDYN1asYPH5ujREkUVhOW1BFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6hlAXlS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C0E1C4CEC2;
-	Sat, 21 Sep 2024 18:23:35 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=qUZco5l/iAbM08dq9UK8mCETmwvlvWVYGzuYAVdWT7gTboGMjDzciG8OwDWMx9s56wxi7u6oZ4DY6a8mvkx5ktoMe5vDlyyowq2F+lbhvR4DJrolmDRGFqQtbJKoc8z9iYPhrHTD0ysrD2BqWW9ZlMWxW30WXcEQYAlhrJnRgj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8bTlHye; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 282FFC4CEC2;
+	Sat, 21 Sep 2024 18:27:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726943024;
-	bh=yfKssePOYgdVSn8I5leQaKY5/lR3CsAYoqDNczzTFLQ=;
+	s=k20201202; t=1726943285;
+	bh=6hOWPfd3ZYHL+xDZpgc0KUbDKKurxsi3+lzwJ5nnlQk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U6hlAXlS2oD/M5iFUk7jqXC6b1rgKXD9DTJSSBXr3l1GigWEbbt9Axa6+9ZSpODmd
-	 vfOvPNfQLLrwb85pYQ3Apyi2eefOFc9DaCMC7pQav2im5QbmQuRDgLOmJSJDEeKAYE
-	 33fWnA9MzlANuN/PyxW1zI2gKz/8eD9wt5LbZ5FqhkxEFnSHeUe1FVyxQbGvc00mFl
-	 sJOgEIJ4fAj7Zfg4IoTnHw/uaAoeB8LVrel7wLEI3+TeFFGbw0ZG2C0ZM4+3W13Jxq
-	 ySHo/v3ryO1AYeEimOlicGkChRWvIvh+CTM+Ylf/TFOiifmuk2qLtFyvlVnj8MM7D2
-	 sUD45YK1ZmdVw==
-Message-ID: <78d9c6f9-5667-4ecf-92c9-73e9e4b9b424@kernel.org>
-Date: Sat, 21 Sep 2024 20:23:33 +0200
+	b=E8bTlHyelV5EBBhpdfxwYEsROsir6GfWsjs6xiayN5utVw1LWK+L2ZyLbkPUDpX39
+	 Zx5l0UYv56uIcsMH5zHfByQngcjhWqE8zj1lrpuSr4hG3y9J3SYT3qc79mvkR3cm0Z
+	 Ica9E79CfxsE9+tvAM5/aDmp889JC+qoK/A8ySmL7rsu9moQT6Ycs85gLpQvNZfGQ5
+	 yancqoQzOZ1MXbxM2XBQOrfHOFE5474MggGkUVNtxq9vJdk009T8X7rWFd4ygZVKW+
+	 G2Nj/Wo8P2kxiGmO4NBG4B9B5q8qwoPSFDi0gsR+OF+RQdAJNE908Hdy3oaXLVaK1f
+	 cmG8YOzXyE/Yw==
+Message-ID: <d9fcd8dd-ae50-43d9-bc86-af23f5823891@kernel.org>
+Date: Sat, 21 Sep 2024 20:27:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,21 +49,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: display/msm: Document MDSS on SA8775P
-To: Mahadevan <quic_mahap@quicinc.com>, robdclark@gmail.com,
- quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org, sean@poorly.run,
- marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- swboyd@chromium.org, konrad.dybcio@linaro.org, danila@jiaxyga.com,
- bigfoot@classfun.cn, neil.armstrong@linaro.org, mailingradian@gmail.com,
- quic_jesszhan@quicinc.com, andersson@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_kalyant@quicinc.com,
- quic_jmadiset@quicinc.com, quic_vpolimer@quicinc.com
-References: <20240912071437.1708969-1-quic_mahap@quicinc.com>
- <20240912071437.1708969-2-quic_mahap@quicinc.com>
+Subject: Re: [PATCH v2 3/4] dt-bindings: usb: Add Diodes Incorporated
+ PI5USB30213A Type-C Controller
+To: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Shawn Guo <shawnguo@kernel.org>, Petr Benes <petr.benes@ysoft.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Herburger <gregor.herburger@ew.tq-group.com>,
+ Hiago De Franco <hiago.franco@toradex.com>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+ Michael Walle <mwalle@kernel.org>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Mathieu Othacehe <m.othacehe@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20240920080154.1595808-1-michal.vokac@ysoft.com>
+ <20240920080154.1595808-4-michal.vokac@ysoft.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,31 +115,23 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240912071437.1708969-2-quic_mahap@quicinc.com>
+In-Reply-To: <20240920080154.1595808-4-michal.vokac@ysoft.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/09/2024 09:14, Mahadevan wrote:
+On 20/09/2024 10:01, Michal Vokáč wrote:
+> From: Petr Benes <petr.benes@ysoft.com>
 > 
-> +        clocks = <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
-> +                 <&gcc GCC_DISP_HF_AXI_CLK>,
-> +                 <&dispcc0 MDSS_DISP_CC_MDSS_MDP_CLK>;
-> +
-> +        interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
-> +        interrupt-controller;
-> +        #interrupt-cells = <1>;
-> +
-> +        iommus = <&apps_smmu 0x1000 0x402>;
-> +
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +        ranges;
-> +
-> +        status = "disabled";
+> Diodes Incorporated PI5USB30213A Type-C Controller supports host,
+> device, and dual-role mode based on voltage levels detected on CC
+> pin. Supports dual differential channel, 2:1 USB 3.0 Mux/Demux,
+> USB Type-C specification 1.1.
+> 
+> Signed-off-by: Petr Benes <petr.benes@ysoft.com>
+> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
 
-Uh no, it cannot be disabled. What would be the point of it? Please
-reach to your colleagues for some internal review before posting (see
-also go/upstream in internal systems).
+
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
