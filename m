@@ -1,112 +1,123 @@
-Return-Path: <linux-kernel+bounces-334925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B1B97DE62
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:52:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A9EF97DE67
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78CC6281AAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:52:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D48E1C20C4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9244CE13;
-	Sat, 21 Sep 2024 18:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B95884D02;
+	Sat, 21 Sep 2024 18:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qZTm9SwR"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yeoYbb2S"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284B71F957
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 18:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B3E1F957
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 18:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726944749; cv=none; b=o+2ImCEDxvqz1O0DYYrJWm/u+T7WXAWEbHRVnHJALvpBtHzsceOzZIguHM2eD+PchsaLSXfxU5d0nM0Lw/Cu9boO4coQEXMfE5aUH86LH731ZuAgBxymIHDmlj7Q0khZkTOTMu87BzXsxXxwFI6e02UoBqY+7Z9/laHS+qZWWYI=
+	t=1726944756; cv=none; b=jjsjwQ3L5MErYVKshX0XYKf19+d6BsgqqG3aW+MwpQgFT4DrBLi6K/vR1JINocQZpPaPSB2xai9fsl5jrVKe5some6w968wBG30WtuG1ijsIDuVwmvRnnl7TZz0cwoHezEPLpaDtYdgEYEnF44nqpf6VaevXQZtEyiK+3g3QI+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726944749; c=relaxed/simple;
-	bh=y0vAhj+gJuLQudmeoh9YJwu94U8sUi5+oxqlubJ7LKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pzpv+6biDbnHdcYMxsj5NJbsFkE5pPCLW38VktyIugYfwOutz+I1eq7KSXDFClKeXyZBhXEB6MV5611sfVAnTUFLgjiIwY9SbasmoRhPXAzwZmCsXZsRxEVYA2RrKn/FJjn/xmzk4rU58s4BDPLTc0ZtoTluuIRq+/0aZgqO0vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qZTm9SwR; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 21 Sep 2024 14:52:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726944745;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HIx0jmfjYu+XHxpUO64KOWWTIAZrIVAT4metLc5p5p4=;
-	b=qZTm9SwRiG24At1Xtl/MMXuVAyIRFnMOyOZtNugsXy8H1E5bHTs1K0VPEangX/9URaLNCj
-	uC5imfNVOycp20CSzhsM/eMJhWQaKSOUsmZxq6hh7r04YGiJiHS1qf4NpqYi5iXDzu6cni
-	uo1MZNWW3JMCHC6twt4/srN7krk0Z/w=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Mohammed Anees <pvmohammedanees2003@gmail.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com
-Subject: Re: [PATCH] bcachefs: Fix NULL pointer dereference in
- bch2_opt_to_text
-Message-ID: <vhgla2z2s2mlsjiniqs6no5d6p7ksq5ipgogd2covx3wejeys7@ha32mumxipi3>
-References: <20240916210310.14014-1-pvmohammedanees2003@gmail.com>
+	s=arc-20240116; t=1726944756; c=relaxed/simple;
+	bh=bS8qi5sb9l6qZWoXE7ybyqltpxGbc0CNIgBhoQKKvII=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cApKf9ZDRJouYT5BuyGVk2duneRE8ML2KBjConnWCQfVwOovOEuNm66MVI01MJx2U9u1qYiTJMI6MnchoM7XrBshcCM2fkvqaIMPR4nRdJF2OP4TfDRXRrJD5XCo5jUSrW6T2jEDQXnRwnC+BjGQm3AWTQqsI4B3J5qSXut7dds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yeoYbb2S; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6d3f017f80eso23166117b3.1
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 11:52:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726944753; x=1727549553; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9YOWHzzVwKmpVXuH6tT4H74KWT1SKFzuJzeXObWQIF0=;
+        b=yeoYbb2SxEMIkQaVolqPtiElSAVP/KEuGK9DusQtHrhMF41IK1mOa/JEj+lCZN4fxI
+         6ThKBtLeT/Ur+NLXvsoIVH/Jh45qTGy27bXJxJt2Z3dEm8phUz474LQOGqpYG+/Q2Vn2
+         Pb/edwpa/PxHiJm7y+haitROLsXYR8gWHt0DxURI6v7CfMKfOH9/89I7XZoZq+4WBKr3
+         iHW0OY/yw9qrJXqAbz/k94k7utkGhq40YPuLa/W/orenjVAf1LvRhQy7/z7i//eiq2Vq
+         m8vG3wkTedShrcyt0msHBe/gGZXsT1zM+jrDPfBjtdgMjLkOsSfhu5cHUmjohA7OOg7F
+         HGAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726944753; x=1727549553;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9YOWHzzVwKmpVXuH6tT4H74KWT1SKFzuJzeXObWQIF0=;
+        b=ovuM4spHGrWr/V3IeDozbbSUCiPmLs01b/lrMD3wziMFaY7HbHcNKEDYBLqX+Udkfs
+         C5NtUD5l21y1IMYY3t/wi7ox6zIu335z3/Mv5UOZhphSL7rsz9AXZ3KLPt3NFGKE1hYw
+         +I5lR+Umd6mVovSEZo1PE48P8Uy8uf7B980I5UhT8eTgHHA+j53t6tpdZrbeJ6qtDVsZ
+         JCS2T+h1XWkv2bdkSd3KI4Uz+8vZcDSZPM/o29F781mhKiZRXVGuDepG5TrOZlLwnq/Q
+         VAnFvsJYpPNj8dlxxjmkIFhck+ngFNBR4PN7sHN57IhZF9A0rQbOReok2VTfLEsNx1tl
+         ojZw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5VlK+bc3TxG1qNJEOMoQkttpPdZZf7N8u3jztOvb2JG/cQOvuGFP4717SnABf+onNiHrKem3PaknpB5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywXJH5vweBOaa+RpgQSh33fXbH2JN6XN133fB2MUoPmYHTtuCD
+	NOhmx0awq7IA9/VOVXL4JpMuUMQOjQzLSEb+anjsrrNFM+uB9HeKH6aaHkBQtJ1ckt2oAELDdnp
+	OYrPCxQhtDzMNFeUGbJjX5lxuXizFlsIjrznCuA==
+X-Google-Smtp-Source: AGHT+IG5tWL7XQk5lTl4IxHn8rt6ybrJDIlTwRt+uw8pRlg2OHh+fLMthOUKic2sFVqZrPqkaKCtAgCb23pQ48rnvJM=
+X-Received: by 2002:a05:690c:48c4:b0:6db:a7d3:6410 with SMTP id
+ 00721157ae682-6dfeefe5f02mr62623227b3.44.1726944753473; Sat, 21 Sep 2024
+ 11:52:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916210310.14014-1-pvmohammedanees2003@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20240912071437.1708969-1-quic_mahap@quicinc.com>
+ <20240912071437.1708969-2-quic_mahap@quicinc.com> <78d9c6f9-5667-4ecf-92c9-73e9e4b9b424@kernel.org>
+In-Reply-To: <78d9c6f9-5667-4ecf-92c9-73e9e4b9b424@kernel.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sat, 21 Sep 2024 20:52:22 +0200
+Message-ID: <CAA8EJppc7jUfVx7Fw=tBjWGdp7ULb2pbK9x-re+1bNq2kxMR4A@mail.gmail.com>
+Subject: Re: [PATCH 1/5] dt-bindings: display/msm: Document MDSS on SA8775P
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mahadevan <quic_mahap@quicinc.com>, robdclark@gmail.com, quic_abhinavk@quicinc.com, 
+	sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com, 
+	daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	swboyd@chromium.org, konrad.dybcio@linaro.org, danila@jiaxyga.com, 
+	bigfoot@classfun.cn, neil.armstrong@linaro.org, mailingradian@gmail.com, 
+	quic_jesszhan@quicinc.com, andersson@kernel.org, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_kalyant@quicinc.com, 
+	quic_jmadiset@quicinc.com, quic_vpolimer@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 16, 2024 at 09:03:10PM GMT, Mohammed Anees wrote:
-> syzbot has found an general protection fault in prt_str [1].
-> 
-> In the prt_str function, a NULL pointer dereference occurs when the
-> parameter str is NULL, which is called in bch2_opt_to_text when
-> opt->type is BCH_OPT_STR. If an invalid index v or incorrect
-> flag is passed to ptr_str, then this could lead to this issue.
+On Sat, 21 Sept 2024 at 20:23, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On 12/09/2024 09:14, Mahadevan wrote:
+> >
+> > +        clocks = <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
+> > +                 <&gcc GCC_DISP_HF_AXI_CLK>,
+> > +                 <&dispcc0 MDSS_DISP_CC_MDSS_MDP_CLK>;
+> > +
+> > +        interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
+> > +        interrupt-controller;
+> > +        #interrupt-cells = <1>;
+> > +
+> > +        iommus = <&apps_smmu 0x1000 0x402>;
+> > +
+> > +        #address-cells = <2>;
+> > +        #size-cells = <2>;
+> > +        ranges;
+> > +
+> > +        status = "disabled";
+>
+> Uh no, it cannot be disabled. What would be the point of it? Please
+> reach to your colleagues for some internal review before posting (see
+> also go/upstream in internal systems).
 
-this fix looks wrong; if opt->choices[v] is NULL it's almost definitely
-because of a missing bounds check - I don't believe there are any string
-lists where we have gaps in the options.
+Rob, can we make it part of dt-validate maybe? Error out if schema
+_examples_ have disabled nodes.
 
-Can you add a proper bounds check?
-
-> 
-> [1] https://syzkaller.appspot.com/bug?extid=37186860aa7812b331d5
-> 
-> Reported-and-tested-by: syzbot+37186860aa7812b331d5@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=37186860aa7812b331d5
-> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
-> ---
->  fs/bcachefs/opts.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/bcachefs/opts.c b/fs/bcachefs/opts.c
-> index e10fc1da7..72b87251c 100644
-> --- a/fs/bcachefs/opts.c
-> +++ b/fs/bcachefs/opts.c
-> @@ -420,8 +420,12 @@ void bch2_opt_to_text(struct printbuf *out,
->  	case BCH_OPT_STR:
->  		if (flags & OPT_SHOW_FULL_LIST)
->  			prt_string_option(out, opt->choices, v);
-> -		else
-> -			prt_str(out, opt->choices[v]);
-> +		else {
-> +			if (opt->choices[v] == NULL)
-> +				pr_err("Invalid flags or index v passed to the function\n");
-
-Also, don't use pr_err(); just do prt_printf(out, "(invalid option %u)", v);
-
-> +			else
-> +				prt_str(out, opt->choices[v]);
-> +		}
->  		break;
->  	case BCH_OPT_FN:
->  		opt->fn.to_text(out, c, sb, v);
-> -- 
-> 2.46.0
-> 
+-- 
+With best wishes
+Dmitry
 
