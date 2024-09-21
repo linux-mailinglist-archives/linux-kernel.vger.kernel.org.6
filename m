@@ -1,541 +1,257 @@
-Return-Path: <linux-kernel+bounces-334921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE8BB97DE4F
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:30:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A30B397DE58
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAF06282846
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:30:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BBD4B2151C
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CA2136328;
-	Sat, 21 Sep 2024 18:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607CB54BD8;
+	Sat, 21 Sep 2024 18:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTw7nXNW"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b="T1NF7p1R"
+Received: from sender3-of-o57.zoho.com (sender3-of-o57.zoho.com [136.143.184.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D57A126C0E;
-	Sat, 21 Sep 2024 18:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726943388; cv=none; b=Qq1h3KH3HDYOBJ2fXoXp3IkNsu0Wb5X2Zs4Gkh+G6+g8dGfGnsUbQDCkrD8jJcZT5CSpWZ4nVAi9z4bIh0XNcplt7kIcSEfII/jBLBS39D2aIZuGfhcrwIdPhJ9SkJjocpz9OU8Ts9WW5+ZDDEbSzreMMgaQ1C2XvsEFmFi/dIk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726943388; c=relaxed/simple;
-	bh=ekTk/BraV82buLufnICZKY1Rnh8Bv0roWDrMMrVUuLQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FuxDkAQbvvf3ryzzme4BYFWiMBOxpy8sg1v8FrszhtJnMzIVhvAk2TKN/pgFKnWLzntInj8GYd5yT2uv26v78yQAdGtS0jwrko98ufyWN1qKHNmcc3WefQPcbryP3fVTO1mUQISOhSfquka4e2MZBiX/xrWvMhv2/+Cf8RJEMLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DTw7nXNW; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20530659f78so1856945ad.1;
-        Sat, 21 Sep 2024 11:29:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726943386; x=1727548186; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RheAxqDG+nz9DrtIQ8XGCcpYtNo5wQYUHudSWVGTjXo=;
-        b=DTw7nXNWouNi7EsbutzwBjAtKgVecZfU/aznTZ8UzBw/gsCTXvBEzGhefOUfULbp+b
-         Gg2oBcqvK9IgWOwEz+MmQz2DW2e6PepKRem8lPliy6gvDZ1IbJuTGHOs/50iTBzNNJe2
-         ierL2KOxGlgjHkzv5ExUlDRJXivASesXNassgWfYxqAK1eXAtYOkB1pvhAFuyNHpYzIB
-         GBMcEsgXyaRK6DsJ2T1aDfsEgVuVXsWegQgUA2hXkZgLegFLfRlGaAxRRsa6FM2lD3LQ
-         s5+JeTLvzQ2C/uqxdvGH6nBLR2Bg0+6SXNeoWZIPGIPpaW3u6539ardvkBseES39llak
-         TzdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726943386; x=1727548186;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RheAxqDG+nz9DrtIQ8XGCcpYtNo5wQYUHudSWVGTjXo=;
-        b=wB2TvtKbniKVBb18P3zHsFY59tLp8rnclikG8ynMrIG3ui0knWKjYFWg8l1PsKTah5
-         NkKPtdv05z5sImZjCoYL/S26AKVRv+Z6EPOlHM4tPRDebp0cPZoYf5mQ+U+EsL64CXQq
-         03WFQaLLoCVgSxRxkp8HCbmCjVjthOl6SnNDrsGtjfUyh7uyfFEjt/V2bKb6VTij2ubm
-         3N4JptEbgGKO3iCdM1JPN/i1sYBMRVMLg7zIV0D6/P51zs+q4nRRnsUCIHZ7eVfJx21+
-         Ar/+9iOIKH5SgIPmFB9Iwu91OVUNMvOZcJqCWovgFBuKqn56Ii6bwqHZD/KAOgI9Ugdb
-         m17g==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ3fHsdETNl5jvSmo8wwHvbSdvzFGSUlEiyVtPor4RGAn1ZcHzmwOWGr6ZeeKbABocWrPL8RCRaFdXLRJ7@vger.kernel.org, AJvYcCXnCrAYGNsr6+CATptJH7ID4DTiEuN1DvCdAS6OaPSoKDYIJqcjS2Vcdz0yBwlk+ofvCBg9585PZ8PU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8lcqqrtm5/bo/5ZmGvy3eHFdILHq0wmHqQKNJaC6JWnIT3QBE
-	rgISYXi1BgtKjlIyDfHxylVHrTx3PHQJXWHqBUPY3F07cLrSoSv+
-X-Google-Smtp-Source: AGHT+IHE/aM2ulaBEPXoWigX81zgljG6C+cJKZhvdp2ZNIWgwmhfeOVQDGk7tuh+7RDJXEDrUY5Y+w==
-X-Received: by 2002:a17:902:dacb:b0:207:da7:bd0a with SMTP id d9443c01a7336-208d85483b2mr41639175ad.12.1726943385704;
-        Sat, 21 Sep 2024 11:29:45 -0700 (PDT)
-Received: from localhost.localdomain ([221.220.134.146])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db4998b96csm11080441a12.59.2024.09.21.11.29.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Sep 2024 11:29:44 -0700 (PDT)
-From: Jianfeng Liu <liujianfeng1994@gmail.com>
-To: linux-rockchip@lists.infradead.org
-Cc: Jianfeng Liu <liujianfeng1994@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] arm64: dts: rockchip: Add ArmSoM W3 board
-Date: Sun, 22 Sep 2024 02:28:55 +0800
-Message-ID: <20240921182917.64756-4-liujianfeng1994@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240921182917.64756-1-liujianfeng1994@gmail.com>
-References: <20240921182917.64756-1-liujianfeng1994@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE63B3BB48;
+	Sat, 21 Sep 2024 18:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726943915; cv=pass; b=DaCxcdBHBZlzl80N9uJ844kHe5WOf3nIdGwjm2SnjbnwX72DW6ON3fK08pi3ZYGd0GQifWjiBGNUV8QHhAlVWCWxK+Se9Bn8GnfMSBtb46+kPhg/psqaJKdGlKsnDZrf0k3fwwKElaEjQeTE4hwfXNnqFg4SowLtXbH6XpDI1xI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726943915; c=relaxed/simple;
+	bh=WpadbEHEfXCgwZTQEX+7bHS29I7aOtuKslLsrT04Dzw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GTZjLdyoNt/lFMNkqGZ/q9reNk0CQg5KyHTM/C9eAvlNpk0albWLsKVfUpu9P24zzgXTFZ7XRlTXHofhaFRnPUmhNRVvYe5i5JyXeXSPD2IltEfHj5FNvI1E/hTPFHPdpiLHSEB31gXDODU0qExGXtRuSqsQW0F1Lq2nNrZLcnQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com; spf=pass smtp.mailfrom=apertussolutions.com; dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b=T1NF7p1R; arc=pass smtp.client-ip=136.143.184.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apertussolutions.com
+ARC-Seal: i=1; a=rsa-sha256; t=1726943834; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Isu+KNxmEdff4Yf8v+8NIVgqd1KCyNgZK+jRYblRct4+s63Fu1VdgNY+M14Y2pOA4BelJ1fkDlz6rpFcX2n9z+5hFvWgLO6UoLBdT3BokM9arPI4q4s+oaIj4sTIuuP1sl1/fJIdkhZjBibY1wVUqBQU0DG+TGZ9FlNn4/7RqWk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726943834; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=epVfrURWgC20QBuvtkf5SBZ7wdGePGXbAnPnMOgBIC8=; 
+	b=akg5M36Efr83ZaGZr4tah8q5qwThdoBARKYSFfDrSEnLwQRYUe3CojwDtZhe7qga86BxANRNPH7H/t9vDdPD24UZCYUnEsc+4bJAPdb0yWs9nh+0CSkk6oN0MnLZclXDF3ziTf3S6u7Wf5N9qqYIseUjEIpRuaKjIt3gamJqESI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=apertussolutions.com;
+	spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
+	dmarc=pass header.from=<dpsmith@apertussolutions.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726943834;
+	s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=epVfrURWgC20QBuvtkf5SBZ7wdGePGXbAnPnMOgBIC8=;
+	b=T1NF7p1RrY7do2w/YnOlDlPCBTTaewBsDGRb3wToOj7vxq+uyrWbNkuXqe0v7ikm
+	fVyli/s99EXCa5tZkKzlfoMHeiNKS4LpdfvPMyvXyJTPWh5mC9Broq5SqKNAS9Y+uvq
+	X+P/OtTvPsQH9O+fB8+5pkmUQS7yT6rtiL+YDmWk=
+Received: by mx.zohomail.com with SMTPS id 1726943833180834.882107651291;
+	Sat, 21 Sep 2024 11:37:13 -0700 (PDT)
+Message-ID: <c466ed57-35a8-41c0-9647-c70e588ad1d3@apertussolutions.com>
+Date: Sat, 21 Sep 2024 14:36:58 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
+ early measurements
+To: Andy Lutomirski <luto@amacapital.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ "Eric W. Biederman" <ebiederm@xmission.com>,
+ Eric Biggers <ebiggers@kernel.org>,
+ Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+ linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+ mingo@redhat.com, bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+ ardb@kernel.org, mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
+ peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, nivedita@alum.mit.edu,
+ herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
+ dwmw2@infradead.org, baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
+ andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-7-ross.philipson@oracle.com>
+ <20240531021656.GA1502@sol.localdomain>
+ <874jaegk8i.fsf@email.froward.int.ebiederm.org>
+ <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
+ <87ttflli09.ffs@tglx>
+ <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
+ <1a1f0c41-70de-4f46-b91d-6dc7176893ee@apertussolutions.com>
+ <8a0b59a4-a5a2-42ae-bc1c-1ddc8f2aad16@apertussolutions.com>
+ <CALCETrX8caT5qvCUu24hQfxUF_wUC2XdGpS2YFP6SR++7FiM3Q@mail.gmail.com>
+Content-Language: en-US
+From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+In-Reply-To: <CALCETrX8caT5qvCUu24hQfxUF_wUC2XdGpS2YFP6SR++7FiM3Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-W3 is the carrier board for LM7 System on Module.
+On 9/13/24 23:57, Andy Lutomirski wrote:
+> On Thu, Sep 12, 2024 at 5:34 PM Daniel P. Smith
+> <dpsmith@apertussolutions.com> wrote:
+>>
+>> Hey again,
+>>
+>> On 9/4/24 21:01, Daniel P. Smith wrote:
+>>> Hi Luto.
+>>>
+>>> On 8/28/24 23:17, Andy Lutomirski wrote:
+>>>> On Thu, Aug 15, 2024 at 12:10 PM Thomas Gleixner <tglx@linutronix.de>
+>>>> wrote:
+>>>>>
+>>>>> On Thu, Aug 15 2024 at 13:38, Daniel P. Smith wrote:
+>>>>>> On 5/31/24 09:54, Eric W. Biederman wrote:
+>>>>>>> Eric Biggers <ebiggers@kernel.org> writes:
+>>>>>>>> That paragraph is also phrased as a hypothetical, "Even if we'd
+>>>>>>>> prefer to use
+>>>>>>>> SHA-256-only".  That implies that you do not, in fact, prefer
+>>>>>>>> SHA-256 only.  Is
+>>>>>>>> that the case?  Sure, maybe there are situations where you *have*
+>>>>>>>> to use SHA-1,
+>>>>>>>> but why would you not at least *prefer* SHA-256?
+>>>>>>>
+>>>>>>> Yes.  Please prefer to use SHA-256.
+>>>>>>>
+>>>>>>> Have you considered implementing I think it is SHA1-DC (as git has)
+>>>>>>> that
+>>>>>>> is compatible with SHA1 but blocks the known class of attacks where
+>>>>>>> sha1 is actively broken at this point?
+>>>>>>
+>>>>>> We are using the kernel's implementation, addressing what the kernel
+>>>>>> provides is beyond our efforts. Perhaps someone who is interested in
+>>>>>> improving the kernel's SHA1 could submit a patch implementing/replacing
+>>>>>> it with SHA1-DC, as I am sure the maintainers would welcome the help.
+>>>>>
+>>>>> Well, someone who is interested to get his "secure" code merged should
+>>>>> have a vested interested to have a non-broken SHA1 implementation if
+>>>>> there is a sensible requirement to use SHA1 in that new "secure" code,
+>>>>> no?
+>>>>>
+>>>>> Just for the record. The related maintainers can rightfully decide to
+>>>>> reject known broken "secure" code on a purely technical argument.
+>>>>>
+>>>>
+>>>> Wait, hold on a second.
+>>>>
+>>>> SHA1-DC isn't SHA1.  It's a different hash function that is mostly
+>>>> compatible with SHA1, is different on some inputs, and is maybe more
+>>>> secure.  But the _whole point_ of using SHA1 in the TPM code (well,
+>>>> this really should be the whole point for new applications) is to
+>>>> correctly cap the SHA1 PCRs so we can correctly _turn them off_ in the
+>>>> best way without breaking compatibility with everything that might
+>>>> read the event log.  I think that anyone suggesting using SHA1-DC for
+>>>> this purpose should give some actual analysis as to why they think
+>>>> it's an improvement, let alone even valid.
+>>>
+>>> I would say at a minimum it is to provide a means to cap the PCRs.
+>>> Devices with TPM1.2 are still prevalent in the wild for which members of
+>>> the TrenchBoot community support, and there are still valid (and secure)
+>>> verification uses for SHA1 that I outlined in my previous response.
+>>>
+>>>> Ross et al, can you confirm that your code actually, at least by
+>>>> default and with a monstrous warning to anyone who tries to change the
+>>>> default, caps SHA1 PCRs if SHA256 is available?  And then can we maybe
+>>>> all stop hassling the people trying to develop this series about the
+>>>> fact that they're doing their best with the obnoxious system that the
+>>>> TPM designers gave them?
+>>>
+>>> Our goal is to keep control in the hands of the user, not making
+>>> unilateral decisions on their behalf. In the currently deployed
+>>> solutions it is left to the initrd (user) to cap the PCRs. After some
+>>> thinking, we can still ensure user control and give an option to cap the
+>>> PCRs earlier. We hope to post a v11 later this week or early next week
+>>> that introduces a new policy field to the existing measurement policy
+>>> framework. Will add/update the kernel docs with respect to the policy
+>>> expansion. We are also looking the best way we might add a warning to
+>>> the kernel log if the SHA1 bank is used beyond capping the PCRs.
+>>
+>> As the attempt was made to lay in the policy logic, it started to become
+>> convoluted and unnecessarily complicated. Thus creating more risk with
+>> all the bookkeeping and yet sha1 hashes still have to be sent, the null
+>> hash in this case, since the TPM driver will reject extends that do not
+>> have hashes for all active banks. At this point, we have opted to keep
+>> the logic simple and add a section to our documentation advising of the
+>> potential risk should one choose to incorporate SHA1 in their
+>> attestations of the platform.
+>>
+> 
+> I've read the TPM standard a bit, but it's been awhile, and it's too
+> complicated anyway.  So, can you remind me (and probably 3/4 of the
+> other people on this thread, too):
 
-W3 features:
-- 1x 2.5GbE Realtek RTL8125 Ethernet
-- 2x HDMI Type A out
-- 1x HDMI Type A in
-- 1x USB 3.1 Type C
-- 2x USB 2.0 Type A
-- 2x USB 3.0 Type A
-- 1x PCIE 2.0 M.2 E Key (1 lane)
-- 1x PCIE 3.0 PCIe (4 lanes)
-- 1x TF scard slot
-- 1x MIPI CSI
-- 1x MIPI DSI
-- 1x ES8316 audio jack
-- 1x FAN connector
-- 1x RTC
-- 40-pin expansion header
+Sure, but honestly if you were to ask me in person, I would have given 
+you the explanation as provided in the Secure Launch Overview in the 
+documentation patch.
 
-Add support for ArmSoM LM7 board.
+> What, exactly, is your patchset doing that requires hashing at all?
+> (I assume it's extending a PCR and generating an event log entry.).
+> What, exactly, does it mean to "cap" a PCR?  How is this different
+> from what your patchset does?
 
-Signed-off-by: Jianfeng Liu <liujianfeng1994@gmail.com>
 
----
+The SINIT ACM is provided a structure that basically says, here is an 
+address and size of what it will execute next. It will use that 
+information to take its transitive trust measurement of the kernel 
+before handing control to the Linux kernel. The Secure Launch code is 
+responsible for ensuring everything that can influences its execution to 
+be measured and stored into the TPM for attestations to be made at a 
+latter time. The most important part is the transitive trust measurement 
+of the next part to be executed, the initramfs. Specifically, the Secure 
+Launch code must be able to handle the situation where the initramfs 
+independent of the kernel and loaded separately. Additionally, the 
+policy function provided for optional system state to also be measured 
+and recorded, as the attestation evaluator might want them.
 
-Changes in v2:
-- Change name of led nodes to fix underscores in node names.
-- Remove property "pinctrl-names" and "pinctrl-0" from pcie2x1l0,
-  pcie2x1l2 and pcie3x4. PCIE works fine without these properties.
-- Link to v1: https://lore.kernel.org/all/20240918165008.169917-1-liujianfeng1994@gmail.com/
+At the end of the day, this capability is strictly a passive (mostly, 
+see note [1] below) solution with the responsibility to maintain the 
+DRTM trust chain by taking meaningful measurements. This includes the 
+next component in the trust chain and then hand execution to that next 
+component.
 
- arch/arm64/boot/dts/rockchip/Makefile         |   1 +
- .../boot/dts/rockchip/rk3588-armsom-w3.dts    | 390 ++++++++++++++++++
- 2 files changed, 391 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-armsom-w3.dts
+The TCG specs and good practices provide that a component in either SRTM 
+or DRTM trust chains should extend a non-event record to the tpm and/or 
+its log. This is to indicate the transition point from one component in 
+the trust chain to the next component. Under the client profile, 
+firmware is required to do this by extending an event of type 
+EV_SEPARATOR before "Ready to Boot".
 
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 09423070c99..b0ed12f41f0 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -125,6 +125,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-display-vz.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-io-expander.dtbo
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-sige7.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-armsom-w3.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-coolpi-cm5-evb.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-coolpi-cm5-genbook.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-edgeble-neu6a-io.dtb
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-armsom-w3.dts b/arch/arm64/boot/dts/rockchip/rk3588-armsom-w3.dts
-new file mode 100644
-index 00000000000..44a12622a1a
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-armsom-w3.dts
-@@ -0,0 +1,390 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
-+#include "rk3588-armsom-lm7.dtsi"
-+
-+/ {
-+	model = "ArmSoM W3";
-+	compatible = "armsom,w3", "armsom,lm7", "rockchip,rk3588";
-+
-+	aliases {
-+		mmc1 = &sdmmc;
-+		mmc2 = &sdio;
-+	};
-+
-+	analog-sound {
-+		compatible = "audio-graph-card";
-+		label = "rk3588-es8316";
-+
-+		widgets = "Microphone", "Mic Jack",
-+			  "Headphone", "Headphones";
-+
-+		routing = "MIC2", "Mic Jack",
-+			  "Headphones", "HPOL",
-+			  "Headphones", "HPOR";
-+
-+		dais = <&i2s0_8ch_p0>;
-+		hp-det-gpio = <&gpio1 RK_PD5 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&hp_detect>;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&led_rgb_b>;
-+
-+		led_blue: led-0 {
-+			function = LED_FUNCTION_STATUS;
-+			color = <LED_COLOR_ID_BLUE>;
-+			gpios = <&gpio0 RK_PB7 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		led_red: led-1 {
-+			function = LED_FUNCTION_STATUS;
-+			color = <LED_COLOR_ID_RED>;
-+			gpios = <&gpio4 RK_PC5 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "none";
-+		};
-+	};
-+
-+	fan: pwm-fan {
-+		compatible = "pwm-fan";
-+		cooling-levels = <0 120 150 180 210 240 255>;
-+		fan-supply = <&vcc5v0_sys>;
-+		pwms = <&pwm1 0 50000 0>;
-+		#cooling-cells = <2>;
-+	};
-+
-+	rfkill {
-+		compatible = "rfkill-gpio";
-+		label = "rfkill-pcie-wlan";
-+		radio-type = "wlan";
-+		shutdown-gpios = <&gpio4 RK_PA2 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	rfkill-bt {
-+		compatible = "rfkill-gpio";
-+		label = "rfkill-m2-bt";
-+		radio-type = "bluetooth";
-+		shutdown-gpios = <&gpio3 RK_PD5 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	vcc3v3_pcie2x1l0: vcc3v3-pcie2x1l0-regulator {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpios = <&gpio1 RK_PD2 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pcie2_0_vcc3v3_en>;
-+		regulator-name = "vcc3v3_pcie2x1l0";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		startup-delay-us = <50000>;
-+		vin-supply = <&vcc5v0_sys>;
-+	};
-+
-+	vcc3v3_pcie2x1l2: vcc3v3-pcie2x1l2-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc3v3_pcie2x1l2";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		startup-delay-us = <5000>;
-+		vin-supply = <&vcc_3v3_s3>;
-+	};
-+
-+	vcc3v3_pcie30: vcc3v3-pcie30-regulator {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpios = <&gpio1 RK_PA4 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pcie3_vcc3v3_en>;
-+		regulator-name = "vcc3v3_pcie30";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		startup-delay-us = <5000>;
-+		vin-supply = <&vcc5v0_sys>;
-+	};
-+
-+	vcc5v0_host: vcc5v0-host-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc5v0_host";
-+		regulator-boot-on;
-+		regulator-always-on;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		enable-active-high;
-+		gpio = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vcc5v0_host_en>;
-+		vin-supply = <&vcc5v0_sys>;
-+	};
-+};
-+
-+&combphy0_ps {
-+	status = "okay";
-+};
-+
-+&combphy1_ps {
-+	status = "okay";
-+};
-+
-+&combphy2_psu {
-+	status = "okay";
-+};
-+
-+&i2c6 {
-+	status = "okay";
-+
-+	hym8563: rtc@51 {
-+		compatible = "haoyu,hym8563";
-+		reg = <0x51>;
-+		#clock-cells = <0>;
-+		clock-output-names = "hym8563";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&hym8563_int>;
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <RK_PB0 IRQ_TYPE_LEVEL_LOW>;
-+		wakeup-source;
-+	};
-+};
-+
-+&i2c7 {
-+	status = "okay";
-+
-+	es8316: audio-codec@11 {
-+		compatible = "everest,es8316";
-+		reg = <0x11>;
-+		clocks = <&cru I2S0_8CH_MCLKOUT>;
-+		clock-names = "mclk";
-+		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
-+		assigned-clock-rates = <12288000>;
-+		#sound-dai-cells = <0>;
-+
-+		port {
-+			es8316_p0_0: endpoint {
-+				remote-endpoint = <&i2s0_8ch_p0_0>;
-+			};
-+		};
-+	};
-+};
-+
-+&i2s0_8ch {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2s0_lrck
-+		     &i2s0_mclk
-+		     &i2s0_sclk
-+		     &i2s0_sdi0
-+		     &i2s0_sdo0>;
-+	status = "okay";
-+
-+	i2s0_8ch_p0: port {
-+		i2s0_8ch_p0_0: endpoint {
-+			dai-format = "i2s";
-+			mclk-fs = <256>;
-+			remote-endpoint = <&es8316_p0_0>;
-+		};
-+	};
-+};
-+
-+&package_thermal {
-+	polling-delay = <1000>;
-+
-+	trips {
-+		package_fan0: package-fan0 {
-+			temperature = <55000>;
-+			hysteresis = <2000>;
-+			type = "active";
-+		};
-+
-+		package_fan1: package-fan1 {
-+			temperature = <65000>;
-+			hysteresis = <2000>;
-+			type = "active";
-+		};
-+	};
-+
-+	cooling-maps {
-+		map1 {
-+			trip = <&package_fan0>;
-+			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
-+		};
-+
-+		map2 {
-+			trip = <&package_fan1>;
-+			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
-+		};
-+	};
-+};
-+
-+&pcie2x1l0 {
-+	reset-gpios = <&gpio4 RK_PA5 GPIO_ACTIVE_HIGH>;
-+	vpcie3v3-supply = <&vcc3v3_pcie2x1l0>;
-+	status = "okay";
-+};
-+
-+&pcie2x1l2 {
-+	reset-gpios = <&gpio3 RK_PB0 GPIO_ACTIVE_HIGH>;
-+	vpcie3v3-supply = <&vcc3v3_pcie2x1l2>;
-+	status = "okay";
-+};
-+
-+&pcie30phy {
-+	status = "okay";
-+};
-+
-+&pcie3x4 {
-+	reset-gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
-+	vpcie3v3-supply = <&vcc3v3_pcie30>;
-+	status = "okay";
-+};
-+
-+&pinctrl {
-+	hym8563 {
-+		hym8563_int: hym8563-int {
-+			rockchip,pins = <0 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	leds {
-+		led_rgb_b: led-rgb-b {
-+			rockchip,pins = <0 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	sound {
-+		hp_detect: hp-detect {
-+			rockchip,pins = <1 RK_PD5 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pcie2 {
-+		pcie2_0_vcc3v3_en: pcie2-0-vcc-en {
-+			rockchip,pins = <1 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	pcie3 {
-+		pcie3_vcc3v3_en: pcie3-vcc3v3-en {
-+			rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
-+	usb {
-+		vcc5v0_host_en: vcc5v0-host-en {
-+			rockchip,pins = <4 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+};
-+
-+&pwm1 {
-+	status = "okay";
-+};
-+
-+&sdmmc {
-+	max-frequency = <200000000>;
-+	no-sdio;
-+	no-mmc;
-+	bus-width = <4>;
-+	cap-mmc-highspeed;
-+	cap-sd-highspeed;
-+	cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_LOW>;
-+	disable-wp;
-+	sd-uhs-sdr104;
-+	vmmc-supply = <&vcc_3v3_s3>;
-+	vqmmc-supply = <&vccio_sd_s0>;
-+	status = "okay";
-+};
-+
-+&sdio {
-+	max-frequency = <200000000>;
-+	no-sd;
-+	no-mmc;
-+	non-removable;
-+	bus-width = <4>;
-+	cap-sdio-irq;
-+	disable-wp;
-+	keep-power-in-suspend;
-+	wakeup-source;
-+	sd-uhs-sdr12;
-+	sd-uhs-sdr25;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	vmmc-supply = <&vcc3v3_pcie2x1l0>;
-+	vqmmc-supply = <&vcc_1v8_s3>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sdiom0_pins>;
-+	status = "okay";
-+};
-+
-+&uart6 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart6m1_xfer &uart6m1_ctsn &uart6m1_rtsn>;
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	pinctrl-0 = <&uart2m0_xfer>;
-+	status = "okay";
-+};
-+
-+&u2phy1 {
-+	status = "okay";
-+};
-+
-+&u2phy1_otg {
-+	status = "okay";
-+};
-+
-+&u2phy2 {
-+	status = "okay";
-+};
-+
-+&u2phy2_host {
-+	/* connected to USB hub, which is powered by vcc5v0_sys */
-+	phy-supply = <&vcc5v0_sys>;
-+	status = "okay";
-+};
-+
-+&u2phy3 {
-+	status = "okay";
-+};
-+
-+&u2phy3_host {
-+	phy-supply = <&vcc5v0_host>;
-+	status = "okay";
-+};
-+
-+&usbdp_phy1 {
-+	status = "okay";
-+};
-+
-+&usb_host0_ehci {
-+	status = "okay";
-+};
-+
-+&usb_host0_ohci {
-+	status = "okay";
-+};
-+
-+&usb_host1_ehci {
-+	status = "okay";
-+};
-+
-+&usb_host1_ohci {
-+	status = "okay";
-+};
-+
-+&usb_host1_xhci {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&usb_host2_xhci {
-+	status = "okay";
-+};
--- 
-2.43.0
+I did not see the term actually defined in the client profile, but the 
+term "cap" refers to the specific action of hashing a value across a set 
+of PCRs. This is to reflect that certain events have occurred and will 
+result in a different but predictable change to the PCR value. Often 
+times this is to ensure that if there are TPM objects sealed to the 
+system with either that event having or have not occurred, they cannot 
+be unsealed. Thus, one has "capped" the PCRs as a means to close access 
+to the “acceptable” system state.
 
+To close and reiterate, Secure Launch only responsibility is to send 
+measurements to the TPM. The TPM and TPM driver has an expectation that 
+every PCR extend event contains a hash for every active algorithm bank. 
+For Secure Launch, to send SHA1 measurements has zero impact on the 
+security of the system. Whether those measurements are used for TPM 
+integrity reporting and security policy enforcement by user space or an 
+enterprise is outside the scope of the Secure Launch capability and the 
+kernel.
+
+[1] A future expansion of Secure Launch will be to enable usage of 
+Intel's Hardware Shield, link below, to provide runtime trustworthy 
+determination of SMM. The full extent of this capability can only be 
+achieved under a DRTM launch of the system with Intel TXT. When enabled,
+this can be used to verify the SMM protections are in place and inform 
+the kernel's memory management which regions of memory are safe from SMM 
+tampering.
+
+https://www.intel.com/content/dam/www/central-libraries/us/en/documents/drtm-based-computing-whitepaper.pdf
+
+> With that answered, it will hopefully be easy to see that you're
+> making the right call :)
+> 
+> --Andy
+> 
 
