@@ -1,111 +1,93 @@
-Return-Path: <linux-kernel+bounces-334779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85EB97DC09
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 09:56:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37AD597DC13
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4E102828E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 07:56:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD39D1F22146
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75BA1531E9;
-	Sat, 21 Sep 2024 07:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Vf5j3SRr"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DC08C07;
+	Sat, 21 Sep 2024 08:05:43 +0000 (UTC)
+Received: from outgoing.selfhost.de (mordac.selfhost.de [82.98.82.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB31615E97
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 07:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4012F41
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 08:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.98.82.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726905386; cv=none; b=Y51PgKZ94GfgvlTPjUtd96buTskIx398QukfIItKOoiMLYT+KQgRhWFLicUJuuyz61qQJQnVVX+Ji/DdVl5vFnBgVx60TYl0w9L72Ert57zch4gb0GRGbSzCyz/rcS0MsBtTwNJtXHEUAXbKdyyjC6EDIuZuJ3HYvY70b9oeAII=
+	t=1726905943; cv=none; b=Gl0G5YOlrkaEYA5xA928JP4tTqVrFlRKEyNnooy+3VZOvLzK0qs8Cz+1e0rtYZ4+P+3ypPQxu323Gk8FAR3+oimOPAOp8KSzlsDIot7EJO53XIwGlI98GkwZohy6nh5awkHMVyU4gYvBfUR78HlFgQZlDVKgoI1RGcaSgxXdNVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726905386; c=relaxed/simple;
-	bh=IA+wM59KgilMHvG0jWyMMct10R/+PHODryPdpvVdz6M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RsXhgV3qhQ8L0bLfOhR7C0AqBxDtuPj9/H0q10GJbafmuwDEHwiYEcQ85SASqXgSBYXIJp5pjAkHkyjmPe0p7jMBbVrLnWN83GgIfGmK0T5HTX12Zf8WY0iiX2aP3acs0aXaq/1So/rnR3+1AtSETDiR9wJheVv1v9R5z9y0gQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Vf5j3SRr; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1726905377;
-	bh=jAkLGM/lyQa3sExpXVoRFmK9scx17Ch6bL+pFETgyVc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Vf5j3SRrEJpHEbslAe92R4BsVoYXO9hJyRUW3CiyUiuDXer45bpVeRDumX2bCFG66
-	 rloLnkAKqOBuTb31U/NDDIycokLbTMnlOO16q8j4oSVIwM0XckpDvUSphs3NE15JU7
-	 BZSPsrKpLsWpsH3/rYrSVPt0k4QkNdyzNM6/Mn3A=
-Received: from [IPv6:240e:358:11d4:4800:dc73:854d:832e:6] (unknown [IPv6:240e:358:11d4:4800:dc73:854d:832e:6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 725271A4029;
-	Sat, 21 Sep 2024 03:56:15 -0400 (EDT)
-Message-ID: <9a84a7c6f943209cc87a54075ed22df37ebda5f8.camel@xry111.site>
-Subject: Re: [GIT PULL] dma-mapping updates for Linux 6.12
-From: Xi Ruoyao <xry111@xry111.site>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Date: Sat, 21 Sep 2024 15:56:11 +0800
-In-Reply-To: <Zu5VoW1ZkViSOws3@infradead.org>
-References: <ZuvYnXzbM2qfXQPT@infradead.org>
-	 <971fbb889da38ca4e60f3dedde29ea43e9338d68.camel@xry111.site>
-	 <Zu1byUGU832iWBUp@infradead.org> <Zu2Bd50GdSxF_-eA@infradead.org>
-	 <19e4bdbcda78ace200c78c56eb7173097337b921.camel@xry111.site>
-	 <Zu5VoW1ZkViSOws3@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+	s=arc-20240116; t=1726905943; c=relaxed/simple;
+	bh=AtLz/usv0W73PVsD4gOVRs7NTWRnSxRNnoRRwVOzlaQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=BmslOLqR7OF2RcN1PKrhdxP6svKOAHHjkYHGtJPBT+TRgrippFcFOnoOsBjkn2olFEgMY+wWLuOkPqp2z3d2Li/B2VWOH6VSDqLhRWF9LyCqOYRQOsceHeeZZlq4Vii6LVv3jOepoXhOTxVRbL5kK1DnqsCsA81ZFtDTAeV5LFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=afaics.de; spf=none smtp.mailfrom=afaics.de; arc=none smtp.client-ip=82.98.82.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=afaics.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=afaics.de
+Received: (qmail 11761 invoked from network); 21 Sep 2024 07:58:56 -0000
+Received: from unknown (HELO mailhost.afaics.de) (postmaster@xqrsonfo.mail.selfhost.de@87.160.249.214)
+  by mailout.selfhost.de with ESMTPA; 21 Sep 2024 07:58:56 -0000
+Received: from cecil.afaics.de (p200300e31f1da20268fdfffffe6f0e76.dip0.t-ipconnect.de [2003:e3:1f1d:a202:68fd:ffff:fe6f:e76])
+	by marvin.afaics.de (OpenSMTPD) with ESMTP id 0de61920;
+	Sat, 21 Sep 2024 09:58:55 +0200 (CEST)
+Subject: Re: [syzbot] [nfs?] INFO: task hung in nfsd_umount
+To: NeilBrown <neilb@suse.de>,
+ syzbot <syzbot+b568ba42c85a332a88ee@syzkaller.appspotmail.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Dai.Ngo@oracle.com,
+ chuck.lever@oracle.com, kolga@netapp.com, linux-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, syzkaller-bugs@googlegroups.com, tom@talpey.com
+References: <000000000000f8ed54061ca0d9a5@google.com>
+ <9825cc5ff85d4a2a4ce1c955f49681bef8d03442.camel@kernel.org>
+ <172039726840.11489.12386749198888516742@noble.neil.brown.name>
+From: Harald Dunkel <harri@afaics.de>
+Message-ID: <42600ff8-512f-bea1-848c-2cc1c823cb76@afaics.de>
+Date: Sat, 21 Sep 2024 09:58:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Firefox/91.0 SeaMonkey/2.53.18.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <172039726840.11489.12386749198888516742@noble.neil.brown.name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 2024-09-20 at 22:12 -0700, Christoph Hellwig wrote:
-> On Sat, Sep 21, 2024 at 01:15:43AM +0800, Xi Ruoyao wrote:
-> > > > What camere and driver are you using?
-> >=20
-> > Bus 003 Device 003: ID 0c45:6366 Microdia Webcam Vitade AF
-> >=20
-> > The driver is uvcvideo.
-> >=20
-> > > And what architecture and platform are you on?=20
-> >=20
-> > A x86_64 laptop (with Core i5-11300H CPU).
->=20
-> Oh, so it's not arm64, which has the most juicy changes this time
-> around.
->=20
-> Can you try the following "manual bisect" for me?
->=20
-> First test f69e342eec008e1bab772d3963c3dd9979293e13 to see if that
-> works.=C2=A0 If it doesn't work come back as I'm a bit lost :)
+NeilBrown wrote:
+> 
+> We can guess though.  It isn't waiting for a lock - that would show in
+> the above list - so it might be waiting for a wakeup, or might be
+> spinning.
+> The only wake-up I can imagine is in one of the memory-allocation calls,
+> but if the system were running out of memory we would probably see
+> messages about that.
+> 
 
-Yes it works (kernel boots fine and camera works fine).
+I have seen something like this. I am running NFS inside a container,
+using legacy cgroup. When it got stuck it claimed I cannot login
+into the container due to out of memory. When it happens again, I
+can send you the exact error message. The next hung nfsd is overdue,
+anyway.
 
-> If it does work, try b5c58b2fdc427e7958412ecb2de2804a1f7c1572 next,
-> if it doesn't work can you send me your dmesg?
+> I wonder if it could be looping in svc_xprt_destroy_all(), and sitting
+> in the msleep() when the hang is detected so there are no locks to
+> report.   I can't see while it would block there.
+> 
+> It would really help to get a full task list.
+> There is a sysctl for that: /proc/sys/kernel/hung_task_all_cpu_backtrace
+> 
+> Could that be enabled?
+> 
 
-It behaves completely erratically on boot.  I cannot get a full log
-because the laptop has no serial output.  And the behavior seems not
-deterministic.  I have some transcript of messages I photoed in several
-boot attempts though:
-
-Oops: general protection fault, probably non-canonical address 0xf5c1150c09=
-0c1cc1: 0000 [#1] PREEMPT SMP
-
-BUG: kernel NULL pointer dereference, address: 0000000000000078
-
-BUG: Bad page map in process systemd-journal pte:150000000b pmd:1641dc067
+I have enabled it on my NFS server (echo 1 >/proc/.../hung_task_all_cpu_backtrace).
 
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+Regards
+
+Harri
 
