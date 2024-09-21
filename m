@@ -1,124 +1,112 @@
-Return-Path: <linux-kernel+bounces-334923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78CBF97DE5C
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05FB897DE5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CCEC2817A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:45:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A824281A67
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A29C44C6F;
-	Sat, 21 Sep 2024 18:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0892744C6F;
+	Sat, 21 Sep 2024 18:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flokli.de header.i=@flokli.de header.b="H842euL1"
-Received: from mail.flokli.de (mail.flokli.de [116.203.226.116])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="r0NeH4Vv"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3548320E;
-	Sat, 21 Sep 2024 18:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.226.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8BA2AEF1
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 18:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726944327; cv=none; b=cA1g5GBITLWSL3ZOYrUUue1YR8iygiBrFLDV8CYP5FWHtLIrBYKRPDzngV3LK15fTsSe68IXRk74ZfwCKbp1Dyi4DLQ3O/FxVZvAgs5Vq6MDj63UIefrgJ9nZQbNYsyDQZd4jOqcb1SmMOMKr53hieYmB8H54sDvcqDyLMcN0Dc=
+	t=1726944455; cv=none; b=NdqYlPGnsr6MB5xf+Y7p+bi4snncGYh9T4PjgmbbjvF7wF1+TqMWXYAg5cQaXc4fvgeusDmYA7x6fzZE5bWLdA1cP1/Q2Rjj8P/L/neXv3E7iabost8mencR08CXncImKHw/Ecq+75dNows7+++BHP0tI5nhSU9Dq+GkI8PWTVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726944327; c=relaxed/simple;
-	bh=6hQQPrPgMjqVKwcLlVZjQ9AJ7sSgiCwigaAx46FEvpg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FyynsKyJ5jcUPAxAZt5bvWvKsjFiqW8CZ5FoR6qtJQlXFQCWctLN9jp8Z7qVu0jeJaFp3DPRpjD2OIN2nmZIs4niuaPsgsZZW1AevlHgl5qI7GCi93Yz8aOfHjs7TgVADSm2aTy0QDQ8pIwBisgYhAJmRti1ojqIpLajCR7oY3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=flokli.de; spf=pass smtp.mailfrom=flokli.de; dkim=pass (1024-bit key) header.d=flokli.de header.i=@flokli.de header.b=H842euL1; arc=none smtp.client-ip=116.203.226.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=flokli.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flokli.de
-From: Florian Klink <flokli@flokli.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flokli.de; s=mail;
-	t=1726943902; bh=LdeSOtI+tbdp74aNkMRYpdTnLpUe4xv3Q3ma2Gb4eRQ=;
-	h=From:To:Cc:Subject:Date;
-	b=H842euL1DdokvOuLO/5C5y2aSaeYMuftNGmY8G8siXBGrk7MMAWECUvby8Sh1voE+
-	 8F3yKiIvLWcYbKrGtjTeEDSxrOSwCjlqmu8n6I4/vKDwzSLYEOPVQxCOBVsCrdrYot
-	 ISZdV1RZ/6LmzWVcI9mKJYUv6G6ByeZtAvw2kaks=
-To: 
-Cc: Florian Klink <flokli@flokli.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	=?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	Muhammed Efe Cetin <efectn@protonmail.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: rockchip: enable automatic fan control on Orange Pi 5+
-Date: Sat, 21 Sep 2024 21:38:00 +0300
-Message-ID: <20240921183810.225322-1-flokli@flokli.de>
+	s=arc-20240116; t=1726944455; c=relaxed/simple;
+	bh=7cfx5tCkGc7zfwaJh93vtOWLZ3JbMAGGKDDBGOj2Gqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hNYZgKUZAUww+3bGO8nQx8MECTneiENgZUAFLEFP/GT2YuKsez/JFHBnQQ8yhzXAw+UnAApUfFejDUD/5KVJe+bH14v2KTVPwNuaH6of4ylcdTKSs3sjwaPJhdQm1aUDH7EtQ2gx2g5OKxk/oVPR678Xbxt7jdVm/8w0tPqza+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=r0NeH4Vv; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 21 Sep 2024 14:47:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1726944450;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rvxa6KYGFv8Y/A02rpKkgoV4akVO6+7XDKnGOTjf4RE=;
+	b=r0NeH4Vv6USFHMMStmcpvTQ/Svq6l96NGHnNJJtTda3M2RmB/nApkPkgv//SUaOLu5/fqs
+	fo9tH9j6YBjdX90+J/8rAkPPUm2udrs1AIBIsJ9uAqsAQPg07K4KUmOxXdwsuryI+tWkzf
+	M54vh8ZsEbKBDIMtVc+dbUwca1DRP6M=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] bcachefs: add GFP_ZERO flag in btree_bounce_alloc
+Message-ID: <frpohbqgpyhd6fkwkd5h6efqiph27mgmcbex3bipmksyc2vocp@tfz6oynigmgi>
+References: <20240916224746.692973-1-pZ010001011111@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240916224746.692973-1-pZ010001011111@proton.me>
+X-Migadu-Flow: FLOW_OUT
 
-This links the PWM fan on Orange Pi 5+ as an active cooling device
-managed automatically by the thermal subsystem, with a target SoC
-temperature of 65C and a minimum-spin interval from 55C to 65C to
-ensure airflow when the system gets warm.
+On Mon, Sep 16, 2024 at 10:47:57PM GMT, Piotr Zalewski wrote:
+> Add __GFP_ZERO flag to kvmalloc call in btree_bounce_alloc to mitigate
+> later uinit-value use KMSAN warning[1].
+> 
+> After applying the patch reproducer still triggers stack overflow[2] but
+> it seems unrelated to the uninit-value use warning. After further
+> investigation it was found that stack overflow occurs because KMSAN adds
+> additional function calls. Backtrace of where the stack magic number gets 
+> smashed was added as a reply to syzkaller thread[3].
+> 
+> I confirmed that task's stack magic number gets smashed after the code path
+> where KSMAN detects uninit-value use is executed, so it can be assumed that
+> it doesn't contribute in any way to uninit-value use detection.
+> 
+> [1] https://syzkaller.appspot.com/bug?extid=6f655a60d3244d0c6718
+> [2] https://lore.kernel.org/lkml/66e57e46.050a0220.115905.0002.GAE@google.com
+> [3] https://lore.kernel.org/all/rVaWgPULej8K7HqMPNIu8kVNyXNjjCiTB-QBtItLFBmk0alH6fV2tk4joVPk97Evnuv4ZRDd8HB5uDCkiFG6u81xKdzDj-KrtIMJSlF6Kt8=@proton.me
+> 
+> Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
 
-This is pretty much the same as '4a152231b050 ("arm64: dts: rockchip:
-enable automatic fan control on Rock 5B")', except for the Orange Pi
-5+ board.
+Oh hey, nice find :)
 
-Signed-off-by: Florian Klink <flokli@flokli.de>
----
- .../dts/rockchip/rk3588-orangepi-5-plus.dts   | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+We should be able to fix this in a more performant way, though; btree
+node resort is a path where we do care about performance, we don't want
+to touch the whole buffer more times than necessary.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-index e74871491ef5..8569e862b6ee 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-@@ -351,6 +351,36 @@ &i2s2m0_sdi
- 	status = "okay";
- };
- 
-+&package_thermal {
-+	polling-delay = <1000>;
-+
-+	trips {
-+		package_fan0: package-fan0 {
-+			temperature = <55000>;
-+			hysteresis = <2000>;
-+			type = "active";
-+		};
-+
-+		package_fan1: package-fan1 {
-+			temperature = <65000>;
-+			hysteresis = <2000>;
-+			type = "active";
-+		};
-+	};
-+
-+	cooling-maps {
-+		map1 {
-+			trip = <&package_fan0>;
-+			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
-+		};
-+
-+		map2 {
-+			trip = <&package_fan1>;
-+			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
-+		};
-+	};
-+};
-+
- /* phy1 - M.KEY socket */
- &pcie2x1l0 {
- 	reset-gpios = <&gpio4 RK_PA5 GPIO_ACTIVE_HIGH>;
--- 
-2.46.0
+Can you try zeroing out the portion after what we consumed, after we
+sort into the bounce buffer?
 
+> ---
+>  fs/bcachefs/btree_io.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
+> index 56ea9a77cd4a..3ac8b37f97d7 100644
+> --- a/fs/bcachefs/btree_io.c
+> +++ b/fs/bcachefs/btree_io.c
+> @@ -121,7 +121,7 @@ static void *btree_bounce_alloc(struct bch_fs *c, size_t size,
+>  	BUG_ON(size > c->opts.btree_node_size);
+>  
+>  	*used_mempool = false;
+> -	p = kvmalloc(size, __GFP_NOWARN|GFP_NOWAIT);
+> +	p = kvmalloc(size, __GFP_ZERO|__GFP_NOWARN|GFP_NOWAIT);
+>  	if (!p) {
+>  		*used_mempool = true;
+>  		p = mempool_alloc(&c->btree_bounce_pool, GFP_NOFS);
+> -- 
+> 2.46.0
+> 
+> 
 
