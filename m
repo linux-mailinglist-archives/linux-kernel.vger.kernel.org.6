@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-334807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC7597DC64
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 11:30:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A820D97DC65
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 11:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E9CD1C2113F
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 09:30:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F263281397
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 09:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B927155A2F;
-	Sat, 21 Sep 2024 09:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95C128399;
+	Sat, 21 Sep 2024 09:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GfOM9E+6"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OsifxauJ"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014E16D1B9
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 09:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A536D1B9
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 09:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726911044; cv=none; b=uS6rhEoGC9L8E3XiVWlTGBAQGISYaSlLfms56CCd5q2Mdoih7P2SNwsc0dt5um07qYIh7PyRVFkVfGd8r2cd5JM2bTMg0dV0D+QJaUw7x4S4LBoezhWcv6Szg56MhjPHZXANNnAXmQ1E8FYc+sjjbmKod6IcwE7YmNQY3U6LMjA=
+	t=1726911052; cv=none; b=bw1WdgyzD13DUNa0h+tYRu6Qyhto7cVyQ7fpWsy7LCPfNhXReUHp9MLnSdP58z+YR+JePOm5KXOGDqjrxd4Bi/awGAmQuhg5Z+w4adgg1xxfF5s+s6RMaCdynSuA6BNj/EivLpkus3uswW1Ny28G7ZEHlTRfvnR6w+XFWzYdk6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726911044; c=relaxed/simple;
-	bh=n5Vk/PreYILiin5QAwkgphv/7jk50vHBmmmY4tsIfCc=;
+	s=arc-20240116; t=1726911052; c=relaxed/simple;
+	bh=JwE61o8q0edt07pIbKoZqTxQeKySTvYNmWczW4YEWfY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z0PVyCkifJ+ugXbO9FIYxu5kDGsva4ADsQC5RFv/GeSnWEFnW9HSQf0ZcH4BkLpQiU7QnZahTFpce9y4hc/zMo6LeIkwHEILTk7+j6pI5FoIthwCp9XDDZq58iAeKQDrVQqTd+TpfCQf0+50oi76+qFuUdtFr90kJz+Foi1anhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GfOM9E+6; arc=none smtp.client-ip=95.215.58.172
+	 MIME-Version:Content-Type; b=qBUa0/uEWKZhskvgwCi08ACCwrMClwD0pONTMvOYr1upf0BoyJBdGs5vaCKBVI0rybFe1ZcoDLa9rjZvevRwB5W7FPgr5G7DL1cP0h6y+L1TipKNQyyWYDdYzrFg/0K72CYr03xjBqjJ95GVMTUnx97GLINsN/jSuQT4RRk7jv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OsifxauJ; arc=none smtp.client-ip=95.215.58.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726911040;
+	t=1726911048;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bPVId7sEVW66QbA2u8IGY8vlBSHfd+6xCgbL1e+6EAE=;
-	b=GfOM9E+6rIvw3QfiVp5SXDvPrUrf+SJ0zyPbfZll9ZvVMCO0S7sSDKNSnx8tzwuK0KxWsI
-	qLWfuFQD4qJvjFoOtpY+gq03Jt5BoaFJywfGcC2RtYJROVm1ueu3gAS9o4pNIclK5uqVWz
-	aNOOi9FH7j/w4ANRzPJu90fNRDg18aE=
+	bh=n1NVT4WVVFlw5e6dUVZZDmk9E4e373jbM0EWgdrWWFA=;
+	b=OsifxauJfeHUt14JYBN7UBPug1XZKy3V8bbspYmNqauTgUIBKmu1lI3l52wxWAK6pPPC+c
+	rs08KbbH8Uds9//9xAwuYr4DQvfXBbMBe1Wp4vdXleLzyGX+Kk1jDfDgcgYHjy8tzpPjaR
+	rbyCj3H0gl1KX+1+6ll59T5ZakkaEaM=
 From: Wen Yang <wen.yang@linux.dev>
 To: "Eric W . Biederman" <ebiederm@xmission.com>,
 	Luis Chamberlain <mcgrof@kernel.org>,
@@ -51,9 +51,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	Wen Yang <wen.yang@linux.dev>,
 	Dave Young <dyoung@redhat.com>
-Subject: [PATCH v4 4/5] sysctl: delete mmap_rnd_bits_{min/max} and mmap_rnd_compat_bits_{min/max} to save 16 bytes
-Date: Sat, 21 Sep 2024 17:29:03 +0800
-Message-Id: <5f753895a5f31cac65ddeb56b58fc17553785163.1726910671.git.wen.yang@linux.dev>
+Subject: [PATCH v4 5/5] sysctl: delete six_hundred_forty_kb to save 4 bytes
+Date: Sat, 21 Sep 2024 17:29:04 +0800
+Message-Id: <20d67551ed7fa9c774d2b128ad9bc298a0a55c9d.1726910671.git.wen.yang@linux.dev>
 In-Reply-To: <cover.1726910671.git.wen.yang@linux.dev>
 References: <cover.1726910671.git.wen.yang@linux.dev>
 Precedence: bulk
@@ -66,9 +66,9 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-By directly encoding CONFIG_ARCH_MMAP_RND_BITS_{MIN/MAX} and
-CONFIG_ARCH_MMAP_RND_COMPAT_BITS_{MIN/MAX} into the ctl_table's min/max
-field, unnecessary global variables can be removed, saving 16 bytes.
+By directly encoding specific numbers into the min/max field,
+unnecessary global variable six_hundred_forty_kb can be removed,
+saving 4 bytes
 
 Signed-off-by: Wen Yang <wen.yang@linux.dev>
 Cc: Luis Chamberlain <mcgrof@kernel.org>
@@ -80,79 +80,41 @@ Cc: Christian Brauner <brauner@kernel.org>
 Cc: Dave Young <dyoung@redhat.com>
 Cc: linux-kernel@vger.kernel.org
 ---
- include/linux/mm.h |  4 ----
- kernel/sysctl.c    | 12 ++++++------
- mm/mmap.c          |  4 ----
- 3 files changed, 6 insertions(+), 14 deletions(-)
+ kernel/sysctl.c | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 344541f8cba0..e74726059401 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -87,13 +87,9 @@ extern int sysctl_legacy_va_layout;
- #endif
- 
- #ifdef CONFIG_HAVE_ARCH_MMAP_RND_BITS
--extern const int mmap_rnd_bits_min;
--extern int mmap_rnd_bits_max __ro_after_init;
- extern int mmap_rnd_bits __read_mostly;
- #endif
- #ifdef CONFIG_HAVE_ARCH_MMAP_RND_COMPAT_BITS
--extern const int mmap_rnd_compat_bits_min;
--extern const int mmap_rnd_compat_bits_max;
- extern int mmap_rnd_compat_bits __read_mostly;
- #endif
- 
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 86de15638e31..05197d46007d 100644
+index 05197d46007d..c8460b5e0605 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -2196,10 +2196,10 @@ static struct ctl_table vm_table[] = {
- 		.procname	= "mmap_rnd_bits",
- 		.data		= &mmap_rnd_bits,
- 		.maxlen		= sizeof(mmap_rnd_bits),
--		.mode		= 0600,
-+		.mode		= 0600 | SYSCTL_FLAG_MIN | SYSCTL_FLAG_MAX,
- 		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= (void *)&mmap_rnd_bits_min,
--		.extra2		= (void *)&mmap_rnd_bits_max,
-+		.min		= CONFIG_ARCH_MMAP_RND_BITS_MIN,
-+		.max		= CONFIG_ARCH_MMAP_RND_BITS_MAX,
- 	},
- #endif
- #ifdef CONFIG_HAVE_ARCH_MMAP_RND_COMPAT_BITS
-@@ -2207,10 +2207,10 @@ static struct ctl_table vm_table[] = {
- 		.procname	= "mmap_rnd_compat_bits",
- 		.data		= &mmap_rnd_compat_bits,
- 		.maxlen		= sizeof(mmap_rnd_compat_bits),
--		.mode		= 0600,
-+		.mode		= 0600 | SYSCTL_FLAG_MIN | SYSCTL_FLAG_MAX,
- 		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= (void *)&mmap_rnd_compat_bits_min,
--		.extra2		= (void *)&mmap_rnd_compat_bits_max,
-+		.min		= CONFIG_ARCH_MMAP_RND_COMPAT_BITS_MIN,
-+		.max		= CONFIG_ARCH_MMAP_RND_COMPAT_BITS_MAX,
- 	},
- #endif
- };
-diff --git a/mm/mmap.c b/mm/mmap.c
-index ee8f91eaadb9..b5f8949af4a0 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -63,13 +63,9 @@
- #endif
+@@ -90,13 +90,6 @@ EXPORT_SYMBOL_GPL(sysctl_long_vals);
  
- #ifdef CONFIG_HAVE_ARCH_MMAP_RND_BITS
--const int mmap_rnd_bits_min = CONFIG_ARCH_MMAP_RND_BITS_MIN;
--int mmap_rnd_bits_max __ro_after_init = CONFIG_ARCH_MMAP_RND_BITS_MAX;
- int mmap_rnd_bits __read_mostly = CONFIG_ARCH_MMAP_RND_BITS;
- #endif
- #ifdef CONFIG_HAVE_ARCH_MMAP_RND_COMPAT_BITS
--const int mmap_rnd_compat_bits_min = CONFIG_ARCH_MMAP_RND_COMPAT_BITS_MIN;
--const int mmap_rnd_compat_bits_max = CONFIG_ARCH_MMAP_RND_COMPAT_BITS_MAX;
- int mmap_rnd_compat_bits __read_mostly = CONFIG_ARCH_MMAP_RND_COMPAT_BITS;
- #endif
+ #if defined(CONFIG_SYSCTL)
  
+-/* Constants used for minimum and maximum */
+-
+-#ifdef CONFIG_PERF_EVENTS
+-static const int six_hundred_forty_kb = 640 * 1024;
+-#endif
+-
+-
+ static const int ngroups_max = NGROUPS_MAX;
+ static const int cap_last_cap = CAP_LAST_CAP;
+ 
+@@ -1964,10 +1957,10 @@ static struct ctl_table kern_table[] = {
+ 		.procname	= "perf_event_max_stack",
+ 		.data		= &sysctl_perf_event_max_stack,
+ 		.maxlen		= sizeof(sysctl_perf_event_max_stack),
+-		.mode		= 0644,
++		.mode		= 0644 | SYSCTL_FLAG_MIN | SYSCTL_FLAG_MAX,
+ 		.proc_handler	= perf_event_max_stack_handler,
+-		.extra1		= SYSCTL_ZERO,
+-		.extra2		= (void *)&six_hundred_forty_kb,
++		.min		= 0,
++		.max		= 640 * 1024,
+ 	},
+ 	{
+ 		.procname	= "perf_event_max_contexts_per_stack",
 -- 
 2.25.1
 
