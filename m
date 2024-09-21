@@ -1,145 +1,131 @@
-Return-Path: <linux-kernel+bounces-334956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0689397DEDF
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 22:48:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F0E297DEE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 22:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE0191C20DEA
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:48:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9301F1C20CF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DD613AD05;
-	Sat, 21 Sep 2024 20:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A1013D52E;
+	Sat, 21 Sep 2024 20:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKg+nXU1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eoyjk6ri"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C7963B9;
-	Sat, 21 Sep 2024 20:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBE613CFA5
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 20:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726951672; cv=none; b=ALvg/0ER+gVokWnq42VYW95imXBU5ONyfSN26u2cfnBr7c/ni2tKlGXMrkR3owQB/N7QZETqu71ws6BZJPTnssKIXdeUd6P4r6pFSoBSULiVYuWUoMTJVHTlMXTr8keAiTge6+9ckB0MfhoTPNJLgeUEMS02CmjdTl4NYoKjEXQ=
+	t=1726951770; cv=none; b=f1/syMjb13RvRn6GPbSTBcAXby9CR+wXPk4bFch8l8tRSsHA7VlbrcAaDk0kHrSpBWj+Op5UGZkTUH8kI/0ik7gcZ3jECsF0TcCB2JMZ5T65ojE1+u08dzk4HrdAxiu1ABV2nxQAti6MDY/RlFnONiZOZ1KezR0M5pIPEP7vPjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726951672; c=relaxed/simple;
-	bh=rH7Dd3F/dN69MjOyihHAnz5rb6ZghANW3/Yr+QCK5vc=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=YqzpRQeoUUzQQmlbFzEKSvSaXJ2jYCI0+sya/ESKeZ1QINjmjXk5f+/4MHdiDaxiQcjajn7A8sJOl+Nm4Luwp/ftu8A/YdjLY2kW9yp5jC6W8tLZ7pH/3n2pTg5fEkJPwRlyatFhfcBGx09RN77mP7E0rDEcUBEWtMb7AwdHTvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hKg+nXU1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50464C4CEC2;
-	Sat, 21 Sep 2024 20:47:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726951671;
-	bh=rH7Dd3F/dN69MjOyihHAnz5rb6ZghANW3/Yr+QCK5vc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=hKg+nXU1aYxGePNWhTIE8dsBsIfsAqTtDNnuthtmAZE5rUruPkUtzAK/P7Y3jQpuQ
-	 0iGCWRteM1b38mWRKlI34PpfmUlGmdTSd7QlDzcgjq9JZdFvvxOEAd+jdR3dMVBd1P
-	 wPl8X5jzLfN06q+FcQjH+qv7C0dZeZ2AYlhyqfqbbCZ/vFNhnoMFNHYPfpfWiqUdgs
-	 UFkeDAV5K358rvaQRFHISVEuA2fvulH7az9mxmh854UFfTCXoQnDa6qvW6Z0lwSB6M
-	 IxSoNEPk488RziMwMnaB5dfkgmKSPJiJRz4qg76SVbMLimGtlmNT27GradvHf7Da9k
-	 S857xSA9cfrFg==
-Message-ID: <d87530b846d0dc9e78789234cfcb602a.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1726951770; c=relaxed/simple;
+	bh=DpMS7wUdHk5IVkgVUMOVgwFSAzOkqlQUSFAK20B9Mtg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q10iWg+YTEw0hr+MUwihB7i43fmuw4MYy431ERFGFWcmhOh9EtQ6vNO9c6TJsXXgr67Hd/H7b8B6u/VeOvK0VXz4cwweImNPRbcsDru57d8W1ozNDZ62ESUriwxYrWUDMPJBu3NA2FyEXLaCJlFR8oOSxit+YHgHjJwZHL/9SS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eoyjk6ri; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3787ddbd5a2so1766639f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 13:49:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726951767; x=1727556567; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DpMS7wUdHk5IVkgVUMOVgwFSAzOkqlQUSFAK20B9Mtg=;
+        b=eoyjk6ri0XCGPUDlNwh+SbE80qYIW9k97Z3KnY1soLb3Fpr/cK3FX0zk3INcU4eOWT
+         BTG+nUp1KDzEPDAb2iY++xsNIauG9n0vzOAiD24J3Fz7WqoV3Ath2iYoOm4Eeudu6WdF
+         ko1rUCb7BfsKMl7zQ+n3JrTEyiVn1xGw61ozR+vQ360h+lYTvz+Bh+619QOtTmkZa8Zl
+         HXeMkVxVbKwsz5amt6IQ2kj4JSP7jQb+pCtCSdXkNLud8K7GqxALELa5xLi0Go3/yCpk
+         U3eqI7NZMkObbbGOKhlmmNnUoCDbP2P6K4tsspyg/6KnTFE3P2E2xm2aPei+Na9+3P9H
+         ATlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726951767; x=1727556567;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DpMS7wUdHk5IVkgVUMOVgwFSAzOkqlQUSFAK20B9Mtg=;
+        b=tDA+Zaf4QuOcpu+O791edATLSZlWX33HQLVlgzzA9qDDyEIOo9gkzpBgeSUlS00OA9
+         u1BGDOU7+TPOGlJ6i7UPOuGeHvG/hLTrb4KgPli0Bxp5QfQ6BdnF4lGdhfs4lR+CQ52+
+         WB/9SplLE2mcgUgaO/Nacu+7YYmG5lXYqnOrUA5cM93Aj+CthfkhBibmmahJUI0/1/q2
+         nQPLZIGtbBjYMD939VVO7F33ulqCaR/v6zPQpyqp4hQXEGUl0ef0bl1aBgghgd4hFF1r
+         eEJtXdBu3XuLP4LiHtAM7Vkqgd/PiZg0KTc+2W9zmojsINt0PHbop5Y6sSEx5CX0+9YZ
+         Jokw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2BqAdEKbck0EUYuhy8COZAezzIkcbPJ9t+lhW7yOddJs5XtIz0JWoGR0IK3EPB1FfymOgBc1Imsw93JQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXF/j2s9X8zaurH7zclCszFuLJ8mdqJs5uHfrTdGml9zW4Tj2W
+	dgHdRdtYHjsRradQEZUOqBmifO147vC3xiNj96jvIcqTIMfbVaNmCFP9BY1xZhK+K2Tt9d6r7Cv
+	t7a6ihZza1eXY+O6EeZ5hE8qDWYE=
+X-Google-Smtp-Source: AGHT+IFbJfBXdTc6O4Y015mD/nF5MMHpcTtHpNY9+A/YDKXDqQd8e4KejNmxH9971L1jk1/lD6FsWn/GbbPD6Hp8inc=
+X-Received: by 2002:a5d:4d8f:0:b0:374:b3a3:3f83 with SMTP id
+ ffacd0b85a97d-37a423989e7mr3719363f8f.53.1726951766939; Sat, 21 Sep 2024
+ 13:49:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <CA+fCnZeiVRiO76h+RR+uKkWNNGGNsVt_yRGGod+fmC8O519T+g@mail.gmail.com>
+ <20240921071005.909660-1-snovitoll@gmail.com>
+In-Reply-To: <20240921071005.909660-1-snovitoll@gmail.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Sat, 21 Sep 2024 22:49:15 +0200
+Message-ID: <CA+fCnZfQT3j=GpomTZU3pa-OiQXMOGX1tOpGdmdpMWy4a7XVEw@mail.gmail.com>
+Subject: Re: [PATCH v4] mm: x86: instrument __get/__put_kernel_nofault
+To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Cc: akpm@linux-foundation.org, bp@alien8.de, brauner@kernel.org, 
+	dave.hansen@linux.intel.com, dhowells@redhat.com, dvyukov@google.com, 
+	glider@google.com, hpa@zytor.com, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mingo@redhat.com, 
+	ryabinin.a.a@gmail.com, tglx@linutronix.de, vincenzo.frascino@arm.com, 
+	x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZtcBHvI9JxgH9iFT@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com> <12d0909b1612fb6d2caa42b4fda5e5ae63d623a3.1724159867.git.andrea.porta@suse.com> <2113b8df52164733a0ee3860bb793d6e.sboyd@kernel.org> <ZtcBHvI9JxgH9iFT@apocalypse>
-Subject: Re: [PATCH 05/11] vmlinux.lds.h: Preserve DTB sections from being discarded after init
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>, Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Catalin Marinas <catalin.marinas@arm.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, Conor Dooley <conor+dt@kernel.org>, David S. Miller <davem@davemloft.net>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, Eric Dumazet <edumazet@google.com>, Florian Fainelli <florian.fainelli@broadcom.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jakub Kicinski <kuba@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Stefan Wahren <wahrenst@gmx.net>, Will Deacon <will@kernel.o
- rg>, devicetree@vger.kernel.org, linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, netdev@vger.kernel.org, linux-kbuild@vger.kernel.org
-To: Andrea della Porta <andrea.porta@suse.com>, Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 21 Sep 2024 13:47:49 -0700
-User-Agent: alot/0.10
 
-Quoting Andrea della Porta (2024-09-03 05:29:18)
-> On 12:46 Fri 30 Aug     , Stephen Boyd wrote:
-> > Quoting Andrea della Porta (2024-08-20 07:36:07)
-> > > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/=
-vmlinux.lds.h
-> > > index ad6afc5c4918..3ae9097774b0 100644
-> > > --- a/include/asm-generic/vmlinux.lds.h
-> > > +++ b/include/asm-generic/vmlinux.lds.h
-> >=20
-> > It would be nice to keep the initdata properties when this isn't used
-> > after init as well. Perhaps we need another macro and/or filename to
-> > indicate that the DTB{O} can be thrown away after init/module init.
->=20
-> We can certainly add some more filename extension that would place the
-> relevant data in a droppable section.=20
-> Throwing away the dtb/o after init is like the actual KERNEL_DTB macro th=
-at
-> is adding teh data to section .init.data, but this would mean t would be
-> useful only at very early init stage, just like for CONFIG_OF_UNITTEST.
-> Throwing after module init could be more difficult though, I think,
-> for example we're not sure when to discard the section in case of deferred
-> modules probe.
->=20
+On Sat, Sep 21, 2024 at 9:09=E2=80=AFAM Sabyrzhan Tasbolatov
+<snovitoll@gmail.com> wrote:
+>
+> Instrument copy_from_kernel_nofault(), copy_to_kernel_nofault(),
+> strncpy_from_kernel_nofault() where __put_kernel_nofault,
+> __get_kernel_nofault macros are used.
+>
+> __get_kernel_nofault needs instrument_memcpy_before() which handles
+> KASAN, KCSAN checks for src, dst address, whereas for __put_kernel_nofaul=
+t
+> macro, instrument_write() check should be enough as it's validated via
+> kmsan_copy_to_user() in instrument_put_user().
+>
+> __get_user_size was appended with instrument_get_user() for KMSAN check i=
+n
+> commit 888f84a6da4d("x86: asm: instrument usercopy in get_user() and
+> put_user()") but only for CONFIG_CC_HAS_ASM_GOTO_OUTPUT.
+>
+> copy_from_to_kernel_nofault_oob() kunit test triggers 4 KASAN OOB
+> bug reports as expected, one for each copy_from/to_kernel_nofault call.
+>
+> Reported-by: Andrey Konovalov <andreyknvl@gmail.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D210505
+> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
 
-This patch can fix a modpost warning seen in linux-next because I have
-added DT overlays from KUnit tests while kbuild has properly marked the
-overlay as initdata that is discarded. See [1] for details. In KUnit I
-doubt this really matters because most everything runs from __init code
-(even if it isn't marked that way).
+I tried running the tests with this patch applied, but unfortunately
+the added test fails on arm64, most likely due to missing annotations
+in arm64 asm code.
 
-I'm thinking that we need to make dtbo Makefile target put the blob in
-the rodata section so it doesn't get thrown away and leave the builtin
-DTB as part of init.rodata. Did you already do that? I see the kbuild
-tree has removed the commit that caused the warning, but I suspect this
-may still be a problem. See [2] for the next series where overlays
-applied in the test happen from driver probe so __ref is added.
+We need to either mark the added test as x86-only via
+KASAN_TEST_NEEDS_CONFIG_ON or add annotations for arm64.
 
-If we simply copy the wrap command and make it so that overlays always
-go to the .rodata section we should be good. Maybe there's some way to
-figure out what is being wrapped so we don't have to copy the whole
-thing.
+With annotations for arm64, the test might still fail for other
+architectures, but I think that's fine: hopefully relevant people will
+add annotations in time. But I consider both x86 and arm64 important,
+so we should keep the tests working there.
 
-Finally, it's unfortunate that the DTBO is copied when an overlay is
-applied. We'll waste memory after this patch, so of_overlay_fdt_apply()
-could be taught to reuse the blob passed in instead of copying it.
+If you decide to add annotations for arm64, please also test both
+KASAN_SW_TAGS and KASAN_HW_TAGS modes.
 
------8<----
-diff --git a/scripts/Makefile.dtbs b/scripts/Makefile.dtbs
-index 55998b878e54..070e08082cd3 100644
---- a/scripts/Makefile.dtbs
-+++ b/scripts/Makefile.dtbs
-@@ -51,11 +51,25 @@ quiet_cmd_wrap_S_dtb =3D WRAP    $@
- 		echo '.balign STRUCT_ALIGNMENT';					\
- 	} > $@
-=20
-+quiet_cmd_wrap_S_dtbo =3D WRAP    $@
-+      cmd_wrap_S_dtbo =3D {								\
-+		symbase=3D__$(patsubst .%,%,$(suffix $<))_$(subst -,_,$(notdir $*));	\
-+		echo '\#include <asm-generic/vmlinux.lds.h>';				\
-+		echo '.section .rodata,"a"';						\
-+		echo '.balign STRUCT_ALIGNMENT';					\
-+		echo ".global $${symbase}_begin";					\
-+		echo "$${symbase}_begin:";						\
-+		echo '.incbin "$<" ';							\
-+		echo ".global $${symbase}_end";						\
-+		echo "$${symbase}_end:";						\
-+		echo '.balign STRUCT_ALIGNMENT';					\
-+	} > $@
-+
- $(obj)/%.dtb.S: $(obj)/%.dtb FORCE
- 	$(call if_changed,wrap_S_dtb)
-=20
- $(obj)/%.dtbo.S: $(obj)/%.dtbo FORCE
--	$(call if_changed,wrap_S_dtb)
-+	$(call if_changed,wrap_S_dtbo)
-=20
- # Schema check
- # ------------------------------------------------------------------------=
----
-
-[1] https://lore.kernel.org/all/20240909112728.30a9bd35@canb.auug.org.au/
-[2] https://lore.kernel.org/all/20240910094459.352572-1-masahiroy@kernel.or=
-g/
+Thanks!
 
