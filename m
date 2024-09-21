@@ -1,184 +1,163 @@
-Return-Path: <linux-kernel+bounces-334851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EB497DD64
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 15:51:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D056197DD67
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 15:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBCC2B217E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 13:51:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96473281F26
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 13:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FAE170A2B;
-	Sat, 21 Sep 2024 13:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZgSWdGfi"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F28E5381E
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 13:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEEF170A22;
+	Sat, 21 Sep 2024 13:52:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAC7137E;
+	Sat, 21 Sep 2024 13:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726926706; cv=none; b=kOR6lQULp1WNyFaOTSUn5KAN/IjeUXSY+GYyhEdSm2BanMBM+7MagtI7owrg+PdRXPfloNrCBcV55RGlewnGT9h+JcYLWMdrfrE8PfdWLw3520WL2+DAm8IUM6pFfrTaXepKWOUEHEfDHgEAW4lgLgCNyHApjShx2f+y8mpPP8w=
+	t=1726926754; cv=none; b=pP6oxhurHD2XYdhZR3dVd9iRzCtH3otE6ftS088JErLXL+Dav4gk778Uy8Xeaboc9cuqYJ30Ff0ADTU5bEpsJm1JZjrqbmJkKvu5yB7Mi+Pa1TLsstZJcpujVochrF3JipwjHdFriJuvkx4b7OBBOzddem43V4QqFxqJBGkVY6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726926706; c=relaxed/simple;
-	bh=6nI3Dz3gIFEVc72j50dXce4137Z5MixftS/Z5i0v970=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JNx5BgUaOR5Q8ofQeM1MHxchh75c1TCr9j7C6sBDHngorTnw2LFHbajQXse3B4p3NW86yXDfZ39x6ab2qaMHp575tY1ooN4I+yoAO1I4egn2h8nWFOAokUaZfZs18QoqA8lHflLtAep1n46IiURp2pooAGD0AP4H67LjdqX8ZBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZgSWdGfi; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8a6d1766a7so394194866b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 06:51:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726926703; x=1727531503; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0MFL6BailCJB3061a8fsY3OzkrReKVjvVUW19uyfz2E=;
-        b=ZgSWdGfi8rKOAW0hnNMSGppzEJxW0kRXgOOWpRkujZn/p2B6rU3gS96fJsgmEVWtBX
-         9/L/QzsTcg5AEq/2ETgaslTBpQGdb8gFQCM86txh4BewstKcmGAjmEg/ZCg+yoEWgg4v
-         mUEfQXYzdacMPwjRlvWCqf1F9amGJFsQayaEo8b+7CxoIZjVc/y3uAFfTQ3SNzlK6ff4
-         oecug/c3xoVgm2uPg65xaVvwPthroFxY70LIwqG8pl2ywuho7/GS1Eg5niwA6Vc0tIU9
-         rldu+GoSq/ejp7K2iaT8Q7yrlLS7ouaiyEK/4NAVpx4Ika8RFsQ7I+fjCOIL3S4UsIYT
-         WsMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726926703; x=1727531503;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0MFL6BailCJB3061a8fsY3OzkrReKVjvVUW19uyfz2E=;
-        b=BESf7sw+RSMMQ58lnOQLpY4AoEtqbEStU+av0pUSAMvK3+1KjCpHkhFtHCKPXEvBcL
-         HpIY2AT02W49QPZmU78LMe+qcwt9j0wWrUoo1qiGrh/rhNUQ9/ZZ5uwPnA+T0JXu84/x
-         ZNQJkLKSEaSZ1dAxxAbJ4ORltzomvLIvj5ydzZKw4LvxUeGhWvT+2XCbLGVl4k7NdiZF
-         EUbMIWGWGXuWxvkquGW60nte3ZQvgnO1EyUuT87XVrUZJRzNeoZWoyTibOLYhgIg/7Pi
-         0jACtVXouU+8i0xZDsZHYQeaZCurEBNdtl5Tjmmkt+Ix/Mrj5hK5Aw6M76vWJo6YP+G8
-         IFww==
-X-Forwarded-Encrypted: i=1; AJvYcCVl19BVfG0vuRT4atKvdSZZsodMJ1oLh4hJUIY4+R+fnBEyt/TdndsKvgNzFqhNeeQRO4TSGlrU2aEMU1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4a6zqO81xWeT+Yb8mfJMOWqYMWUaN0eccW9kwF1Jmeior7BFq
-	/NGwMUqExMsolqpzi+pLWILA9odSLiXpr+1OMVJ/DFuUOi/bNfUH
-X-Google-Smtp-Source: AGHT+IGTNIq/QmYS7w8UykA2MiPqJw15goy+S/ZQArhH1a3LM7SDHLzMd8LYMunf7YgDHCp+EOPgrQ==
-X-Received: by 2002:a17:907:e20b:b0:a86:7b01:7dcc with SMTP id a640c23a62f3a-a90d4fe6f35mr525311566b.18.1726926702514;
-        Sat, 21 Sep 2024 06:51:42 -0700 (PDT)
-Received: from [192.168.0.105] (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a906109676esm976883366b.33.2024.09.21.06.51.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 21 Sep 2024 06:51:42 -0700 (PDT)
-Message-ID: <3fc0202a-d0b7-479f-8528-fed30e0e458c@gmail.com>
-Date: Sat, 21 Sep 2024 15:51:41 +0200
+	s=arc-20240116; t=1726926754; c=relaxed/simple;
+	bh=qMv7gTePJk54ZB7Nmrg64rjcTnOcPV/5olBEQKg7R3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XOD8Q/ND1tXcMa9yLPIE0KKOnCb/gLT3DUj82mQ6XYm8g08cCVoibntRapUeGQIXe+iJNi3p131lkjtrGq1UHJKp+c6hP6SQY1nI3FpFHehlXucQixS9UkTh4ay9DZCF74S6Fkl9KHZG/b4aDjE8y8cNAljYf3as8z0VyiMjBB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 92306FEC;
+	Sat, 21 Sep 2024 06:52:53 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 198FB3F66E;
+	Sat, 21 Sep 2024 06:52:21 -0700 (PDT)
+Date: Sat, 21 Sep 2024 15:52:15 +0200
+From: Mark Rutland <mark.rutland@arm.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	Aishwarya.TCV@arm.com
+Subject: Re: [tip: locking/urgent] jump_label: Fix static_key_slow_dec() yet
+ again
+Message-ID: <Zu7Pj7lFc5VYhi1h@J2N7QTR9R3>
+References: <875xsc4ehr.ffs@tglx>
+ <172563367463.2215.5542972042769938731.tip-bot2@tip-bot2>
+ <fefd460f-ae33-44cc-9143-d1de4ab64b35@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] staging: rtl8192e: rtllib_rx.c: Fix alignment to
- open parentheses
-To: =?UTF-8?Q?Dominik_Karol_Pi=C4=85tkowski?=
- <dominik.karol.piatkowski@protonmail.com>, gregkh@linuxfoundation.org,
- tdavies@darkphysics.net, dan.carpenter@linaro.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240920193356.32156-1-dominik.karol.piatkowski@protonmail.com>
- <20240920193356.32156-4-dominik.karol.piatkowski@protonmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240920193356.32156-4-dominik.karol.piatkowski@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fefd460f-ae33-44cc-9143-d1de4ab64b35@sirena.org.uk>
 
-On 9/20/24 21:36, Dominik Karol Piątkowski wrote:
-> This patch aligns the code to open parentheses to improve readability.
+On Tue, Sep 10, 2024 at 09:16:20PM +0100, Mark Brown wrote:
+> On Fri, Sep 06, 2024 at 02:41:14PM -0000, tip-bot2 for Peter Zijlstra wrote:
 > 
-> Signed-off-by: Dominik Karol Piątkowski <dominik.karol.piatkowski@protonmail.com>
-> ---
->   drivers/staging/rtl8192e/rtllib_rx.c | 91 +++++++++++++---------------
->   1 file changed, 42 insertions(+), 49 deletions(-)
+> > The following commit has been merged into the locking/urgent branch of tip:
 > 
-> diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
-> index 8fe224a83dd6..e58be8e07917 100644
-> --- a/drivers/staging/rtl8192e/rtllib_rx.c
-> +++ b/drivers/staging/rtl8192e/rtllib_rx.c
-> @@ -409,12 +409,10 @@ static bool add_reorder_entry(struct rx_ts_record *ts,
->   
->   	while (list->next != &ts->rx_pending_pkt_list) {
->   		if (SN_LESS(reorder_entry->seq_num, ((struct rx_reorder_entry *)
-> -		    list_entry(list->next, struct rx_reorder_entry,
-> -		    list))->seq_num))
-> +		    list_entry(list->next, struct rx_reorder_entry, list))->seq_num))
->   			list = list->next;
-> -		else if (SN_EQUAL(reorder_entry->seq_num,
-> -			((struct rx_reorder_entry *)list_entry(list->next,
-> -			struct rx_reorder_entry, list))->seq_num))
-> +		else if (SN_EQUAL(reorder_entry->seq_num, ((struct rx_reorder_entry *)
-> +			 list_entry(list->next, struct rx_reorder_entry, list))->seq_num))
->   			return false;
+> > jump_label: Fix static_key_slow_dec() yet again
+> > 
+> > While commit 83ab38ef0a0b ("jump_label: Fix concurrency issues in
+> > static_key_slow_dec()") fixed one problem, it created yet another,
+> > notably the following is now possible:
+> 
+> This patch, which is now in -next appears to have caused the KVM unit
+> tests to start exploding badly on some arm64 systems (at least N1SDP and
+> Cavium TX2).  I've bisected the issue, but not analyzed it at all beyond
+> noting that the commit looks relevant to the failure.  None of the other
+> tests we run on these platforms seem to trigger the issue.
+> 
+> Before producing any output the tests trigger a warning:
+
+FWIW, I believe this has been fixed. The old version of the patch was
+broken:
+
+  de752774f38bb766 ("jump_label: Fix static_key_slow_dec() yet again")
+
+... and I could get that to explode consistently when running the
+kvm:smccc_filter test.
+
+The version that eventually made it into tip locking/urgent works
+fine for me:
+
+  1d7f856c2ca449f0 ("jump_label: Fix static_key_slow_dec() yet again")
+
+... and I don't see any warnings even if I repeatedly run the entire KVM
+selftest suite.
+
+Mark.
+
+> <4>[   17.303495] ------------[ cut here ]------------
+> <4>[   17.308364] WARNING: CPU: 1 PID: 279 at kernel/jump_label.c:266 static_key_dec+0x68/0x74
+> <4>[   17.316706] Modules linked in: crct10dif_ce arm_spe_pmu coresight_replicator coresight_funnel coresight_tmc coresight_stm stm_core coresight_tpiu arm_cmn coresight cfg80211 rfkill fuse dm_mod ip_tables x_tables ipv6
+> <4>[   17.336080] CPU: 1 UID: 0 PID: 279 Comm: qemu-system-aar Not tainted 6.11.0-rc7-00006-g3a0c7230588b #10
+> <4>[   17.345719] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> <4>[   17.352927] pc : static_key_dec+0x68/0x74
+> <4>[   17.357183] lr : __static_key_slow_dec_cpuslocked+0x24/0x84
+> <4>[   17.363003] sp : ffff800083c8ba80
+> 
+> ....
+> 
+> <4>[   17.440381] Call trace:
+> <4>[   17.443074]  static_key_dec+0x68/0x74
+> <4>[   17.446984]  static_key_slow_dec+0x2c/0x80
+> <4>[   17.451327]  preempt_notifier_dec+0x18/0x24
+> <4>[   17.455759]  kvm_destroy_vm+0x208/0x2b0
+> <4>[   17.459845]  kvm_vm_release+0x80/0xb0
+> <4>[   17.463754]  __fput+0xcc/0x2d4
+> <4>[   17.467057]  ____fput+0x10/0x1c
+> <4>[   17.470446]  task_work_run+0x78/0xd4
+> <4>[   17.474268]  do_exit+0x2c8/0x90c
+> 
+> then the test times out and all the remaining cores splat on:
+> 
+> 4>[   18.067930] registering preempt_notifier while notifiers disabled
+> <4>[   18.067935] WARNING: CPU: 2 PID: 470 at kernel/sched/core.c:4729 preempt_notifier_register+0x24/0x58
+> 
+> The bisect seems to converge fairly smoothly:
+> 
+> git bisect start
+> # status: waiting for both good and bad commits
+> # bad: [6708132e80a2ced620bde9b9c36e426183544a23] Add linux-next specific files for 20240910
+> git bisect bad 6708132e80a2ced620bde9b9c36e426183544a23
+> # status: waiting for good commit(s), bad commit known
+> # good: [028ac237a57e1bcb07c7130b11527c0e025e4bef] Merge branch 'for-linux-next-fixes' of https://gitlab.freedesktop.org/drm/misc/kernel.git
+> git bisect good 028ac237a57e1bcb07c7130b11527c0e025e4bef
+> # good: [b66d58fce82c825b3dbb57a46b9a74f081ef7ec7] Merge branch 'main' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+> git bisect good b66d58fce82c825b3dbb57a46b9a74f081ef7ec7
+> # good: [a636a90415dbc59f005369e3053996f859f0af50] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux
+> git bisect good a636a90415dbc59f005369e3053996f859f0af50
+> # bad: [8e5ac35ddecbeddce79e915c226baaf577a2be6e] Merge branch 'driver-core-next' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+> git bisect bad 8e5ac35ddecbeddce79e915c226baaf577a2be6e
+> # bad: [1bcadc80ec6a46fb7193999935aaa299b4916569] Merge branch 'master' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+> git bisect bad 1bcadc80ec6a46fb7193999935aaa299b4916569
+> # good: [c2d0e416bdd9c83db3c9bb1f19433d5ba34e18c2] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git
+> git bisect good c2d0e416bdd9c83db3c9bb1f19433d5ba34e18c2
+> # bad: [723da3b00882e1d13038fc48ba2602af9de4dd2e] Merge branch into tip/master: 'locking/core'
+> git bisect bad 723da3b00882e1d13038fc48ba2602af9de4dd2e
+> # bad: [a70a5c33a65ee54048e4ae479e3479d765a1bbc2] Merge branch into tip/master: 'core/core'
+> git bisect bad a70a5c33a65ee54048e4ae479e3479d765a1bbc2
+> # good: [85e511df3cec46021024176672a748008ed135bf] sched/eevdf: Allow shorter slices to wakeup-preempt
+> git bisect good 85e511df3cec46021024176672a748008ed135bf
+> # good: [20f13385b5836d00d64698748565fc6d3ce9b419] posix-timers: Consolidate timer setup
+> git bisect good 20f13385b5836d00d64698748565fc6d3ce9b419
+> # good: [42db2c2cb5ac3572380a9489b8f8bbe0e534dfc7] timekeeping: Use time_after() in timekeeping_check_update()
+> git bisect good 42db2c2cb5ac3572380a9489b8f8bbe0e534dfc7
+> # bad: [3a0c7230588b40caf1d81270ceaa3aa5c0355bc0] Merge branch into tip/master: 'perf/urgent'
+> git bisect bad 3a0c7230588b40caf1d81270ceaa3aa5c0355bc0
+> # bad: [de752774f38bb766941ed1bf910ba5a9f6cc6bf7] jump_label: Fix static_key_slow_dec() yet again
+> git bisect bad de752774f38bb766941ed1bf910ba5a9f6cc6bf7
+> # good: [fe513c2ef0a172a58f158e2e70465c4317f0a9a2] static_call: Replace pointless WARN_ON() in static_call_module_notify()
+> git bisect good fe513c2ef0a172a58f158e2e70465c4317f0a9a2
+> # first bad commit: [de752774f38bb766941ed1bf910ba5a9f6cc6bf7] jump_label: Fix static_key_slow_dec() yet again
 
 
-Hi Domenik,
-
-I hope to not stress you beyond limits.
-
-Thanks for deviding the patch. I can apply it now to my repo.
-First two patches are looking good.
-
-I prefer to have a comma at the end of the line. This line does not 
-increase readablility to me.
-
-((struct rx_reorder_entry *)
-list_entry(list->next, struct rx_reorder_entry, list))->seq_num))
-
-Sometimes it is better to change less.
-
-The change does not perfectly fit to the description: There you say 
-...aligns the code to open parentheses... but you do not need to remove 
-line breaks or shorten code to achieve this.
-
-Smaller patches lead to an earlier acceptance. This typically leads to 
-more confidence at the beginning for newbies. There is no question about 
-that you know what you are doing. But there are some corners where the 
-kernel is special.
-
-Find more below.
-
-
-> ...
-> @@ -876,9 +874,9 @@ static int rtllib_rx_check_duplicate(struct rtllib_device *ieee,
->   	frag = WLAN_GET_SEQ_FRAG(sc);
->   
->   	if (!ieee->ht_info->cur_rx_reorder_enable ||
-> -		!ieee->current_network.qos_data.active ||
-> -		!is_data_frame(skb->data) ||
-> -		is_legacy_data_frame(skb->data)) {
-> +	    !ieee->current_network.qos_data.active ||
-> +	    !is_data_frame(skb->data) ||
-> +	    is_legacy_data_frame(skb->data)) {
->   		if (!ieee80211_is_beacon(hdr->frame_control)) {
->   			if (is_duplicate_packet(ieee, hdr))
->   				return -1;
-> @@ -887,7 +885,7 @@ static int rtllib_rx_check_duplicate(struct rtllib_device *ieee,
->   		struct rx_ts_record *ts = NULL;
->   
->   		if (rtllib_get_ts(ieee, (struct ts_common_info **)&ts, hdr->addr2,
-> -			(u8)frame_qos_tid((u8 *)(skb->data)), RX_DIR, true)) {
-> +				  (u8)frame_qos_tid((u8 *)(skb->data)), RX_DIR, true)) {
-
-I am understanding the logic behind this but I cannot really say that 
-this increases the readability. It increases the readability of the if 
-condition but I am losing readability of the overall code and it 
-increases the issue with the too long lines.
-
-I have not looked into the remaining patches.
-
-I need some support from another reviewer.
-
-Your patches are working fine on hardware.
-
-Bye Philipp
-
->   			if ((fc & (1 << 11)) && (frag == ts->rx_last_frag_num) &&
->   			    (WLAN_GET_SEQ_SEQ(sc) == ts->rx_last_seq_num))
->   				return -1;
 
