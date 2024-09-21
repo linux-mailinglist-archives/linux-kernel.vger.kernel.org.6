@@ -1,253 +1,523 @@
-Return-Path: <linux-kernel+bounces-334729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF7197DB34
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 03:47:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF4F597DB41
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 03:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7702D1F21961
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:47:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0497F1C210D8
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6743563D5;
-	Sat, 21 Sep 2024 01:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983528489;
+	Sat, 21 Sep 2024 01:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="UI6m4QvX"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lx5RxW4s"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571AC257B;
-	Sat, 21 Sep 2024 01:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B277ECC;
+	Sat, 21 Sep 2024 01:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726883232; cv=none; b=pFhKoNCjx4hCY6O/6Z9GxLoIODpFW8vAMrZjTy4L8iyZOkqJpYalPQSnT2qJdeUz92rItkrrNAC3kJSk90IYyIvNd+nKWaP45858/VtcMlOwi1ncGy33lU4dFgciR2gqIK/WU6Uy6c6s3ir5vLdd668SPmstvbj7JpIO9lCkeCw=
+	t=1726883611; cv=none; b=iofBso1uSJvr5oxncjtyx3aBopBSCKZYNOvW0iG3gOAkkSLvgIMdo1/qred4b10LetYoTVS0fp8xxONwu5Ccp1vFICzbQyTy7/dJ21lwayo/qjKME5sMQVS72F2pOUXjsYFFZKwsrX5jXh8QheNug+KSaT6wGL5lLgVVApnoDmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726883232; c=relaxed/simple;
-	bh=omUdyrJz5osRPwJqsMBoIH/LTF2YXFcsMDuwMsRC1+E=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KiW8kFrFBzrAFJZhdFinZQ4GFOOfU6L772XnqEa5r8RM1umbjWkCQQgoGZ61erQmWwe0cq+jmGV8C3A6VWPWeKslNLL2bZ6ZzFkFy+uzEezKFw4/rvlCDvTHBDzwhMCiQPtPA1JzjbHGO4iXn93ZqgjIBsW1U2nhz2Sb7yaEJTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=UI6m4QvX; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1726883219; bh=i/x0DGw/KxYjUM8BAxxUj6prqrZf45lcbHT0KVJ57YE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=UI6m4QvXhYYYzaD1adIgj7C5/ehQL+NI8EUrKSg9pc8GEogdrfDp/3WiooU7DaGZ0
-	 e0nBzG2Kwq9mKLXHur4pCqqmbaHgsJXcqeavKr4UusEJTOIhU035BaXm93LCfTlZty
-	 vLK3WjTlAPAKRphml8tLRx3IwI+Eqo0YUsNkmlHk=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id A352C206; Sat, 21 Sep 2024 09:40:53 +0800
-X-QQ-mid: xmsmtpt1726882853t0xh4e1bh
-Message-ID: <tencent_EA71777E46CCD36D236B696043AA444DD705@qq.com>
-X-QQ-XMAILINFO: NvH2zBBgt3uT/jFPnVvtskaTrz2TQOnLhyhU/mWNZOCODfnSCnmO0Nq+zhuqhE
-	 eGCc3oPSTcdNRBvXA67rrmrFZtRi1yX9YyTkq4B0OiZHsPm/A/gFJxcJvhIEJG3xi9RtUMytfxaq
-	 YXe28OO47YSo69TTYjCovQnlQijGrsStCc3IJUHLzVsIxrhW/p9f9dogw5rH0G60Skqwgw8pXFnX
-	 l1X0M6eKUhLreX2acY5rKHOuE0JokU+CERskL+990sUwQz3EluiQTJC7rfs9UuFU3AWeHL3GgINm
-	 HCrBLjJMtSTC4tW94x+xF0o5ix7x5rZ/yvRQamrn/nkzwhIqDqrPrVNZUvRLY2wpcA4ynxcrKfSr
-	 ofl9THxYP6KPWthxwPMNQxhspb+D28f9MdvnAqnepkty7zLJt19gcTkR5hjJb3DwQZvn/1SG/HLx
-	 qDwCygQIEFSUOa5n+/rN10H5VvPXDDFbtZLPd4xmnUz2l0Rg031n0vB8rXvMtJNt7LDzu1/33bVj
-	 sYhVCl0xdJayXaUjucrIZDLhL4ACvwkAVsxRK0sLzfXLdMvNbxH7zkVqS/9w6SVoPoQpC0BIgNCF
-	 1wytXoHujB4Qbycox2uTHbp1BnNV4CDwAx4zhRQu+xJ5GFNHILF5a1lh4QaZwVc9+q9fDGLDjOXd
-	 HkfLKiqmO9dYo4i16v6zHjv+nA1o7b4Eu/PfzDcutn+yHS3CiriE9WwZ07xLvwsE7mdwhE95DrVk
-	 NDgG/0E2V+TS+/g2f5HHU12mpueYUpNIMrjk9I6/SFwZ5h77bLFHghe1t9bTW9ju70n3Rl0o3URb
-	 X7ABp72dvugexEemdBqGNbjXzsfJh68G9IsxYNxh7dYX33ruOSYrBx1f6yqRnFdKbhOaYxZjVhfH
-	 3qz0R/1op+wa01pB9F9C20uRBVF0jdrxTwzz66pE+uOOcxlyh3HFu/9Lc8cWnMUtMnVcA7yO13WH
-	 d6fWH6/2pE/IpyYMG/mw==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: luiz.dentz@gmail.com
-Cc: eadavis@qq.com,
-	johan.hedberg@gmail.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	marcel@holtmann.org,
-	syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] Bluetooth/l2cap: Fix uaf in l2cap_connect
-Date: Sat, 21 Sep 2024 09:40:52 +0800
-X-OQ-MSGID: <20240921014052.1185980-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <CABBYNZJ73acaaO7m8eEk=PSGrSHE+ZxKUEnm3spaDjULRT7ifg@mail.gmail.com>
-References: <CABBYNZJ73acaaO7m8eEk=PSGrSHE+ZxKUEnm3spaDjULRT7ifg@mail.gmail.com>
+	s=arc-20240116; t=1726883611; c=relaxed/simple;
+	bh=XTJsGq7nACH6xvgH0UirAVDsChmA2ZB+dEZukQjNjy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZHXxw1gzNTt799q37YanizeboQfCcfhxSNFW4WBwlf38SE0lW/WJA8N6nbUecHAcwtI8cEbKaywJ7XGyAriMyHLc2Q7CQHSU98yLvLYOegNJMhxP1blxXagmRey54axEHNhTq9BBQtULJ9++hlA+kgXui8CLVBp96XhLhMUmx2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lx5RxW4s; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726883608; x=1758419608;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XTJsGq7nACH6xvgH0UirAVDsChmA2ZB+dEZukQjNjy4=;
+  b=lx5RxW4sh1ahE24vnYLclrbJ2LWfpa0rkCwa55tdRmjY7TFcUf8b9wyW
+   Fvb8t2kW2+RlPRLjck2jcHx54uh1+WA+oWW8Dy386H6xUwBIDtAdGKaiU
+   9WKT4BRoer9hOvr6VcqMRAudQz5oTdNNBkAq95SA0aoD54e60w/Jn2l7D
+   5JTd6/y/qhfyod0IL/fdaWWGEaMeoDyLHRxSFuiSz2n4+LKNg3ednzrVj
+   wMgu3juF9DA2/Wpn2SDeItLMtQ+YAKDp23eqvyYHx7SI/4aHEkHRcG4BC
+   12scC69OfSO9yGahpZWk0sQHGlCZ6zsbaOjlHUlCJmTaoVZ4JQjhS2gxl
+   w==;
+X-CSE-ConnectionGUID: oVkAkmZBRPukL4BKuZUfKA==
+X-CSE-MsgGUID: cEszo2pcTNuCkhGj3VM7YA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11201"; a="29801350"
+X-IronPort-AV: E=Sophos;i="6.10,245,1719903600"; 
+   d="scan'208";a="29801350"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 18:53:27 -0700
+X-CSE-ConnectionGUID: TCEjqr4KR3G1FnFOu4+O0A==
+X-CSE-MsgGUID: gR9TPEPVSFqryQ9sonq41w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,245,1719903600"; 
+   d="scan'208";a="70533065"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 20 Sep 2024 18:53:22 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1srpJH-000F27-0y;
+	Sat, 21 Sep 2024 01:53:19 +0000
+Date: Sat, 21 Sep 2024 09:52:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tao Chen <chen.dylane@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sparclinux@vger.kernel.org, Tao Chen <chen.dylane@gmail.com>
+Subject: Re: [PATCH bpf-next 2/2] bpf: Add BPF_CALL_FUNC* to simplify code
+Message-ID: <202409210927.QzQakLAf-lkp@intel.com>
+References: <20240920153706.919154-1-chen.dylane@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240920153706.919154-1-chen.dylane@gmail.com>
 
-On Fri, 20 Sep 2024 11:07:05 -0400, Luiz Augusto von Dentz wrote:
-> On Tue, Sep 10, 2024 at 4:56 PM Luiz Augusto von Dentz
-> <luiz.dentz@gmail.com> wrote:
-> >
-> > Hi Edward,
-> >
-> > On Sun, Sep 8, 2024 at 3:22 AM Edward Adam Davis <eadavis@qq.com> wrote:
-> > >
-> > > [Syzbot reported]
-> > > BUG: KASAN: slab-use-after-free in l2cap_connect.constprop.0+0x10d8/0x1270 net/bluetooth/l2cap_core.c:3949
-> > > Read of size 8 at addr ffff8880241e9800 by task kworker/u9:0/54
-> > >
-> > > CPU: 0 UID: 0 PID: 54 Comm: kworker/u9:0 Not tainted 6.11.0-rc6-syzkaller-00268-g788220eee30d #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-> > > Workqueue: hci2 hci_rx_work
-> > > Call Trace:
-> > >  <TASK>
-> > >  __dump_stack lib/dump_stack.c:93 [inline]
-> > >  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
-> > >  print_address_description mm/kasan/report.c:377 [inline]
-> > >  print_report+0xc3/0x620 mm/kasan/report.c:488
-> > >  kasan_report+0xd9/0x110 mm/kasan/report.c:601
-> > >  l2cap_connect.constprop.0+0x10d8/0x1270 net/bluetooth/l2cap_core.c:3949
-> > >  l2cap_connect_req net/bluetooth/l2cap_core.c:4080 [inline]
-> > >  l2cap_bredr_sig_cmd net/bluetooth/l2cap_core.c:4772 [inline]
-> > >  l2cap_sig_channel net/bluetooth/l2cap_core.c:5543 [inline]
-> > >  l2cap_recv_frame+0xf0b/0x8eb0 net/bluetooth/l2cap_core.c:6825
-> > >  l2cap_recv_acldata+0x9b4/0xb70 net/bluetooth/l2cap_core.c:7514
-> > >  hci_acldata_packet net/bluetooth/hci_core.c:3791 [inline]
-> > >  hci_rx_work+0xaab/0x1610 net/bluetooth/hci_core.c:4028
-> > >  process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
-> > >  process_scheduled_works kernel/workqueue.c:3312 [inline]
-> > >  worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
-> > >  kthread+0x2c1/0x3a0 kernel/kthread.c:389
-> > >  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-> > >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> > > ...
-> > >
-> > > Freed by task 5245:
-> > >  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
-> > >  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
-> > >  kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
-> > >  poison_slab_object+0xf7/0x160 mm/kasan/common.c:240
-> > >  __kasan_slab_free+0x32/0x50 mm/kasan/common.c:256
-> > >  kasan_slab_free include/linux/kasan.h:184 [inline]
-> > >  slab_free_hook mm/slub.c:2256 [inline]
-> > >  slab_free mm/slub.c:4477 [inline]
-> > >  kfree+0x12a/0x3b0 mm/slub.c:4598
-> > >  l2cap_conn_free net/bluetooth/l2cap_core.c:1810 [inline]
-> > >  kref_put include/linux/kref.h:65 [inline]
-> > >  l2cap_conn_put net/bluetooth/l2cap_core.c:1822 [inline]
-> > >  l2cap_conn_del+0x59d/0x730 net/bluetooth/l2cap_core.c:1802
-> > >  l2cap_connect_cfm+0x9e6/0xf80 net/bluetooth/l2cap_core.c:7241
-> > >  hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
-> > >  hci_conn_failed+0x1c3/0x370 net/bluetooth/hci_conn.c:1265
-> > >  hci_abort_conn_sync+0x75a/0xb50 net/bluetooth/hci_sync.c:5583
-> > >  abort_conn_sync+0x197/0x360 net/bluetooth/hci_conn.c:2917
-> > >  hci_cmd_sync_work+0x1a4/0x410 net/bluetooth/hci_sync.c:328
-> > >  process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
-> > >  process_scheduled_works kernel/workqueue.c:3312 [inline]
-> > >  worker_thread+0x6c8/0xed0 kernel/workqueue.c:3389
-> > >  kthread+0x2c1/0x3a0 kernel/kthread.c:389
-> > >  ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-> > >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> > >
-> > > [Analysis]
-> > > There was a data race when accessing conn in hci_rx_work and hci_cmd_sync_work.
-> > > This is because the hci dev lock was prematurely exited when executing
-> > > hci_acldata_macket() in hci_rx_work, which resulted in it being released
-> > > by hci_cmd_sync_work when accessing conn outside the lock.
-> > >
-> > > Reported-and-tested-by: syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com
-> > > Closes: https://syzkaller.appspot.com/bug?extid=c12e2f941af1feb5632c
-> > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> > > ---
-> > >  net/bluetooth/hci_core.c   | 3 ++-
-> > >  net/bluetooth/l2cap_core.c | 2 --
-> > >  2 files changed, 2 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-> > > index f25a21f532aa..4f7b45bb863f 100644
-> > > --- a/net/bluetooth/hci_core.c
-> > > +++ b/net/bluetooth/hci_core.c
-> > > @@ -3776,18 +3776,19 @@ static void hci_acldata_packet(struct hci_dev *hdev, struct sk_buff *skb)
-> > >
-> > >         hci_dev_lock(hdev);
-> > >         conn = hci_conn_hash_lookup_handle(hdev, handle);
-> > > -       hci_dev_unlock(hdev);
-> > >
-> > >         if (conn) {
-> > >                 hci_conn_enter_active_mode(conn, BT_POWER_FORCE_ACTIVE_OFF);
-> > >
-> > >                 /* Send to upper protocol */
-> > >                 l2cap_recv_acldata(conn, skb, flags);
-> > > +               hci_dev_unlock(hdev);
-> > >                 return;
-> > >         } else {
-> > >                 bt_dev_err(hdev, "ACL packet for unknown connection handle %d",
-> > >                            handle);
-> > >         }
-> > > +       hci_dev_unlock(hdev);
-> >
-> > This is sort of risky, we shouldn't be calling this deep into the
-> > stack with hci_dev_lock held.
-I haven't thought of any better way yet. I understand what you mean, holding
-hci_dev_lock for a long time.
-At present, it is not impossible to try some strong drugs.
-> >
-> > >
-> > >         kfree_skb(skb);
-> > >  }
-> > > diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
-> > > index 9988ba382b68..b948b0a3b2f2 100644
-> > > --- a/net/bluetooth/l2cap_core.c
-> > > +++ b/net/bluetooth/l2cap_core.c
-> > > @@ -4072,10 +4072,8 @@ static int l2cap_connect_req(struct l2cap_conn *conn,
-> > >         if (cmd_len < sizeof(struct l2cap_conn_req))
-> > >                 return -EPROTO;
-> > >
-> > > -       hci_dev_lock(hdev);
-> > >         if (hci_dev_test_flag(hdev, HCI_MGMT))
-> > >                 mgmt_device_connected(hdev, hcon, NULL, 0);
-> > > -       hci_dev_unlock(hdev);
-> >
-> > So this might explain why things gets freed while processing the
-> > request, we are locking to call mgmt_device_connected which I suspect
-> > is no longer needed ever since:
-> >
-> > commit db11223571d489d1aab575a4ac4b7352d2d54e2f
-> > Author: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-> > Date:   Tue Oct 25 14:12:58 2022 -0700
-> >
-> >     Bluetooth: btusb: Default CONFIG_BT_HCIBTUSB_POLL_SYNC=y
-> >
-> >     poll_sync has been proven to fix races of USB data and event endpoints
-> >     so this enables it by default.
-> >
-> >     Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-> >     Tested-by: Tedd Ho-Jeong An <tedd.an@intel.com>
-> >
-> > Anyway syzbot don't use btusb so I think this might be due some
-> > command pending that the emulator is not responding and instead
-> > sending data, and then there is the issue that 7b064edae38d
-> > ("Bluetooth: Fix authentication if acl data comes before remote
-> > feature evt") attempted to fix which I think it actually made it worse
-> > by moving the call to mgmt_device_connected into l2cap_core.c it sort
-> > move the problem but didn't fix the actual problem.
-I think 7B064edae38d is used to solve another issue.
-> >
-> > Maybe something like the following would be a better approach:
-> >
-> > https://gist.github.com/Vudentz/121a15fa4391b2b1f6c7e8d420a6846e
-> 
-> Any comments? Are you still planning to work on this?
-Sorry for late.
-> 
-> > >
-> > >         l2cap_connect(conn, cmd, data, L2CAP_CONN_RSP);
-> > >         return 0;
-> > > --
-> > > 2.43.0
-> > >
-> >
-> >
-> > --
-> > Luiz Augusto von Dentz
+Hi Tao,
 
-BR,
-Edward
+kernel test robot noticed the following build errors:
 
+[auto build test ERROR on bpf-next/master]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Tao-Chen/bpf-Add-BPF_CALL_FUNC-to-simplify-code/20240920-233936
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20240920153706.919154-1-chen.dylane%40gmail.com
+patch subject: [PATCH bpf-next 2/2] bpf: Add BPF_CALL_FUNC* to simplify code
+config: arm-randconfig-001-20240921 (https://download.01.org/0day-ci/archive/20240921/202409210927.QzQakLAf-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 8663a75fa2f31299ab8d1d90288d9df92aadee88)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240921/202409210927.QzQakLAf-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409210927.QzQakLAf-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from kernel/bpf/core.c:21:
+   In file included from include/linux/filter.h:9:
+   In file included from include/linux/bpf.h:21:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> kernel/bpf/core.c:2010:36: error: called object type 'u8 *' (aka 'unsigned char *') is not a function or function pointer
+    2010 |                 BPF_R0 = BPF_CALL_FUNC(insn->imm)(BPF_R1, BPF_R2, BPF_R3,
+         |                          ~~~~~~~~~~~~~~~~~~~~~~~~^
+   kernel/bpf/core.c:2015:41: error: called object type 'u8 *' (aka 'unsigned char *') is not a function or function pointer
+    2015 |                 BPF_R0 = BPF_CALL_FUNC_ARGS(insn->imm)(BPF_R1, BPF_R2,
+         |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+   1 warning and 2 errors generated.
+
+
+vim +2010 kernel/bpf/core.c
+
+  1744	
+  1745	select_insn:
+  1746		goto *jumptable[insn->code];
+  1747	
+  1748		/* Explicitly mask the register-based shift amounts with 63 or 31
+  1749		 * to avoid undefined behavior. Normally this won't affect the
+  1750		 * generated code, for example, in case of native 64 bit archs such
+  1751		 * as x86-64 or arm64, the compiler is optimizing the AND away for
+  1752		 * the interpreter. In case of JITs, each of the JIT backends compiles
+  1753		 * the BPF shift operations to machine instructions which produce
+  1754		 * implementation-defined results in such a case; the resulting
+  1755		 * contents of the register may be arbitrary, but program behaviour
+  1756		 * as a whole remains defined. In other words, in case of JIT backends,
+  1757		 * the AND must /not/ be added to the emitted LSH/RSH/ARSH translation.
+  1758		 */
+  1759		/* ALU (shifts) */
+  1760	#define SHT(OPCODE, OP)					\
+  1761		ALU64_##OPCODE##_X:				\
+  1762			DST = DST OP (SRC & 63);		\
+  1763			CONT;					\
+  1764		ALU_##OPCODE##_X:				\
+  1765			DST = (u32) DST OP ((u32) SRC & 31);	\
+  1766			CONT;					\
+  1767		ALU64_##OPCODE##_K:				\
+  1768			DST = DST OP IMM;			\
+  1769			CONT;					\
+  1770		ALU_##OPCODE##_K:				\
+  1771			DST = (u32) DST OP (u32) IMM;		\
+  1772			CONT;
+  1773		/* ALU (rest) */
+  1774	#define ALU(OPCODE, OP)					\
+  1775		ALU64_##OPCODE##_X:				\
+  1776			DST = DST OP SRC;			\
+  1777			CONT;					\
+  1778		ALU_##OPCODE##_X:				\
+  1779			DST = (u32) DST OP (u32) SRC;		\
+  1780			CONT;					\
+  1781		ALU64_##OPCODE##_K:				\
+  1782			DST = DST OP IMM;			\
+  1783			CONT;					\
+  1784		ALU_##OPCODE##_K:				\
+  1785			DST = (u32) DST OP (u32) IMM;		\
+  1786			CONT;
+  1787		ALU(ADD,  +)
+  1788		ALU(SUB,  -)
+  1789		ALU(AND,  &)
+  1790		ALU(OR,   |)
+  1791		ALU(XOR,  ^)
+  1792		ALU(MUL,  *)
+  1793		SHT(LSH, <<)
+  1794		SHT(RSH, >>)
+  1795	#undef SHT
+  1796	#undef ALU
+  1797		ALU_NEG:
+  1798			DST = (u32) -DST;
+  1799			CONT;
+  1800		ALU64_NEG:
+  1801			DST = -DST;
+  1802			CONT;
+  1803		ALU_MOV_X:
+  1804			switch (OFF) {
+  1805			case 0:
+  1806				DST = (u32) SRC;
+  1807				break;
+  1808			case 8:
+  1809				DST = (u32)(s8) SRC;
+  1810				break;
+  1811			case 16:
+  1812				DST = (u32)(s16) SRC;
+  1813				break;
+  1814			}
+  1815			CONT;
+  1816		ALU_MOV_K:
+  1817			DST = (u32) IMM;
+  1818			CONT;
+  1819		ALU64_MOV_X:
+  1820			switch (OFF) {
+  1821			case 0:
+  1822				DST = SRC;
+  1823				break;
+  1824			case 8:
+  1825				DST = (s8) SRC;
+  1826				break;
+  1827			case 16:
+  1828				DST = (s16) SRC;
+  1829				break;
+  1830			case 32:
+  1831				DST = (s32) SRC;
+  1832				break;
+  1833			}
+  1834			CONT;
+  1835		ALU64_MOV_K:
+  1836			DST = IMM;
+  1837			CONT;
+  1838		LD_IMM_DW:
+  1839			DST = (u64) (u32) insn[0].imm | ((u64) (u32) insn[1].imm) << 32;
+  1840			insn++;
+  1841			CONT;
+  1842		ALU_ARSH_X:
+  1843			DST = (u64) (u32) (((s32) DST) >> (SRC & 31));
+  1844			CONT;
+  1845		ALU_ARSH_K:
+  1846			DST = (u64) (u32) (((s32) DST) >> IMM);
+  1847			CONT;
+  1848		ALU64_ARSH_X:
+  1849			(*(s64 *) &DST) >>= (SRC & 63);
+  1850			CONT;
+  1851		ALU64_ARSH_K:
+  1852			(*(s64 *) &DST) >>= IMM;
+  1853			CONT;
+  1854		ALU64_MOD_X:
+  1855			switch (OFF) {
+  1856			case 0:
+  1857				div64_u64_rem(DST, SRC, &AX);
+  1858				DST = AX;
+  1859				break;
+  1860			case 1:
+  1861				AX = div64_s64(DST, SRC);
+  1862				DST = DST - AX * SRC;
+  1863				break;
+  1864			}
+  1865			CONT;
+  1866		ALU_MOD_X:
+  1867			switch (OFF) {
+  1868			case 0:
+  1869				AX = (u32) DST;
+  1870				DST = do_div(AX, (u32) SRC);
+  1871				break;
+  1872			case 1:
+  1873				AX = abs((s32)DST);
+  1874				AX = do_div(AX, abs((s32)SRC));
+  1875				if ((s32)DST < 0)
+  1876					DST = (u32)-AX;
+  1877				else
+  1878					DST = (u32)AX;
+  1879				break;
+  1880			}
+  1881			CONT;
+  1882		ALU64_MOD_K:
+  1883			switch (OFF) {
+  1884			case 0:
+  1885				div64_u64_rem(DST, IMM, &AX);
+  1886				DST = AX;
+  1887				break;
+  1888			case 1:
+  1889				AX = div64_s64(DST, IMM);
+  1890				DST = DST - AX * IMM;
+  1891				break;
+  1892			}
+  1893			CONT;
+  1894		ALU_MOD_K:
+  1895			switch (OFF) {
+  1896			case 0:
+  1897				AX = (u32) DST;
+  1898				DST = do_div(AX, (u32) IMM);
+  1899				break;
+  1900			case 1:
+  1901				AX = abs((s32)DST);
+  1902				AX = do_div(AX, abs((s32)IMM));
+  1903				if ((s32)DST < 0)
+  1904					DST = (u32)-AX;
+  1905				else
+  1906					DST = (u32)AX;
+  1907				break;
+  1908			}
+  1909			CONT;
+  1910		ALU64_DIV_X:
+  1911			switch (OFF) {
+  1912			case 0:
+  1913				DST = div64_u64(DST, SRC);
+  1914				break;
+  1915			case 1:
+  1916				DST = div64_s64(DST, SRC);
+  1917				break;
+  1918			}
+  1919			CONT;
+  1920		ALU_DIV_X:
+  1921			switch (OFF) {
+  1922			case 0:
+  1923				AX = (u32) DST;
+  1924				do_div(AX, (u32) SRC);
+  1925				DST = (u32) AX;
+  1926				break;
+  1927			case 1:
+  1928				AX = abs((s32)DST);
+  1929				do_div(AX, abs((s32)SRC));
+  1930				if (((s32)DST < 0) == ((s32)SRC < 0))
+  1931					DST = (u32)AX;
+  1932				else
+  1933					DST = (u32)-AX;
+  1934				break;
+  1935			}
+  1936			CONT;
+  1937		ALU64_DIV_K:
+  1938			switch (OFF) {
+  1939			case 0:
+  1940				DST = div64_u64(DST, IMM);
+  1941				break;
+  1942			case 1:
+  1943				DST = div64_s64(DST, IMM);
+  1944				break;
+  1945			}
+  1946			CONT;
+  1947		ALU_DIV_K:
+  1948			switch (OFF) {
+  1949			case 0:
+  1950				AX = (u32) DST;
+  1951				do_div(AX, (u32) IMM);
+  1952				DST = (u32) AX;
+  1953				break;
+  1954			case 1:
+  1955				AX = abs((s32)DST);
+  1956				do_div(AX, abs((s32)IMM));
+  1957				if (((s32)DST < 0) == ((s32)IMM < 0))
+  1958					DST = (u32)AX;
+  1959				else
+  1960					DST = (u32)-AX;
+  1961				break;
+  1962			}
+  1963			CONT;
+  1964		ALU_END_TO_BE:
+  1965			switch (IMM) {
+  1966			case 16:
+  1967				DST = (__force u16) cpu_to_be16(DST);
+  1968				break;
+  1969			case 32:
+  1970				DST = (__force u32) cpu_to_be32(DST);
+  1971				break;
+  1972			case 64:
+  1973				DST = (__force u64) cpu_to_be64(DST);
+  1974				break;
+  1975			}
+  1976			CONT;
+  1977		ALU_END_TO_LE:
+  1978			switch (IMM) {
+  1979			case 16:
+  1980				DST = (__force u16) cpu_to_le16(DST);
+  1981				break;
+  1982			case 32:
+  1983				DST = (__force u32) cpu_to_le32(DST);
+  1984				break;
+  1985			case 64:
+  1986				DST = (__force u64) cpu_to_le64(DST);
+  1987				break;
+  1988			}
+  1989			CONT;
+  1990		ALU64_END_TO_LE:
+  1991			switch (IMM) {
+  1992			case 16:
+  1993				DST = (__force u16) __swab16(DST);
+  1994				break;
+  1995			case 32:
+  1996				DST = (__force u32) __swab32(DST);
+  1997				break;
+  1998			case 64:
+  1999				DST = (__force u64) __swab64(DST);
+  2000				break;
+  2001			}
+  2002			CONT;
+  2003	
+  2004		/* CALL */
+  2005		JMP_CALL:
+  2006			/* Function call scratches BPF_R1-BPF_R5 registers,
+  2007			 * preserves BPF_R6-BPF_R9, and stores return value
+  2008			 * into BPF_R0.
+  2009			 */
+> 2010			BPF_R0 = BPF_CALL_FUNC(insn->imm)(BPF_R1, BPF_R2, BPF_R3,
+  2011							       BPF_R4, BPF_R5);
+  2012			CONT;
+  2013	
+  2014		JMP_CALL_ARGS:
+  2015			BPF_R0 = BPF_CALL_FUNC_ARGS(insn->imm)(BPF_R1, BPF_R2,
+  2016								    BPF_R3, BPF_R4,
+  2017								    BPF_R5,
+  2018								    insn + insn->off + 1);
+  2019			CONT;
+  2020	
+  2021		JMP_TAIL_CALL: {
+  2022			struct bpf_map *map = (struct bpf_map *) (unsigned long) BPF_R2;
+  2023			struct bpf_array *array = container_of(map, struct bpf_array, map);
+  2024			struct bpf_prog *prog;
+  2025			u32 index = BPF_R3;
+  2026	
+  2027			if (unlikely(index >= array->map.max_entries))
+  2028				goto out;
+  2029	
+  2030			if (unlikely(tail_call_cnt >= MAX_TAIL_CALL_CNT))
+  2031				goto out;
+  2032	
+  2033			tail_call_cnt++;
+  2034	
+  2035			prog = READ_ONCE(array->ptrs[index]);
+  2036			if (!prog)
+  2037				goto out;
+  2038	
+  2039			/* ARG1 at this point is guaranteed to point to CTX from
+  2040			 * the verifier side due to the fact that the tail call is
+  2041			 * handled like a helper, that is, bpf_tail_call_proto,
+  2042			 * where arg1_type is ARG_PTR_TO_CTX.
+  2043			 */
+  2044			insn = prog->insnsi;
+  2045			goto select_insn;
+  2046	out:
+  2047			CONT;
+  2048		}
+  2049		JMP_JA:
+  2050			insn += insn->off;
+  2051			CONT;
+  2052		JMP32_JA:
+  2053			insn += insn->imm;
+  2054			CONT;
+  2055		JMP_EXIT:
+  2056			return BPF_R0;
+  2057		/* JMP */
+  2058	#define COND_JMP(SIGN, OPCODE, CMP_OP)				\
+  2059		JMP_##OPCODE##_X:					\
+  2060			if ((SIGN##64) DST CMP_OP (SIGN##64) SRC) {	\
+  2061				insn += insn->off;			\
+  2062				CONT_JMP;				\
+  2063			}						\
+  2064			CONT;						\
+  2065		JMP32_##OPCODE##_X:					\
+  2066			if ((SIGN##32) DST CMP_OP (SIGN##32) SRC) {	\
+  2067				insn += insn->off;			\
+  2068				CONT_JMP;				\
+  2069			}						\
+  2070			CONT;						\
+  2071		JMP_##OPCODE##_K:					\
+  2072			if ((SIGN##64) DST CMP_OP (SIGN##64) IMM) {	\
+  2073				insn += insn->off;			\
+  2074				CONT_JMP;				\
+  2075			}						\
+  2076			CONT;						\
+  2077		JMP32_##OPCODE##_K:					\
+  2078			if ((SIGN##32) DST CMP_OP (SIGN##32) IMM) {	\
+  2079				insn += insn->off;			\
+  2080				CONT_JMP;				\
+  2081			}						\
+  2082			CONT;
+  2083		COND_JMP(u, JEQ, ==)
+  2084		COND_JMP(u, JNE, !=)
+  2085		COND_JMP(u, JGT, >)
+  2086		COND_JMP(u, JLT, <)
+  2087		COND_JMP(u, JGE, >=)
+  2088		COND_JMP(u, JLE, <=)
+  2089		COND_JMP(u, JSET, &)
+  2090		COND_JMP(s, JSGT, >)
+  2091		COND_JMP(s, JSLT, <)
+  2092		COND_JMP(s, JSGE, >=)
+  2093		COND_JMP(s, JSLE, <=)
+  2094	#undef COND_JMP
+  2095		/* ST, STX and LDX*/
+  2096		ST_NOSPEC:
+  2097			/* Speculation barrier for mitigating Speculative Store Bypass.
+  2098			 * In case of arm64, we rely on the firmware mitigation as
+  2099			 * controlled via the ssbd kernel parameter. Whenever the
+  2100			 * mitigation is enabled, it works for all of the kernel code
+  2101			 * with no need to provide any additional instructions here.
+  2102			 * In case of x86, we use 'lfence' insn for mitigation. We
+  2103			 * reuse preexisting logic from Spectre v1 mitigation that
+  2104			 * happens to produce the required code on x86 for v4 as well.
+  2105			 */
+  2106			barrier_nospec();
+  2107			CONT;
+  2108	#define LDST(SIZEOP, SIZE)						\
+  2109		STX_MEM_##SIZEOP:						\
+  2110			*(SIZE *)(unsigned long) (DST + insn->off) = SRC;	\
+  2111			CONT;							\
+  2112		ST_MEM_##SIZEOP:						\
+  2113			*(SIZE *)(unsigned long) (DST + insn->off) = IMM;	\
+  2114			CONT;							\
+  2115		LDX_MEM_##SIZEOP:						\
+  2116			DST = *(SIZE *)(unsigned long) (SRC + insn->off);	\
+  2117			CONT;							\
+  2118		LDX_PROBE_MEM_##SIZEOP:						\
+  2119			bpf_probe_read_kernel_common(&DST, sizeof(SIZE),	\
+  2120				      (const void *)(long) (SRC + insn->off));	\
+  2121			DST = *((SIZE *)&DST);					\
+  2122			CONT;
+  2123	
+  2124		LDST(B,   u8)
+  2125		LDST(H,  u16)
+  2126		LDST(W,  u32)
+  2127		LDST(DW, u64)
+  2128	#undef LDST
+  2129	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
