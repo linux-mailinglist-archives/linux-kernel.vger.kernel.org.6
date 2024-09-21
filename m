@@ -1,410 +1,163 @@
-Return-Path: <linux-kernel+bounces-334981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D5697DF55
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 00:16:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570DE97DF57
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 00:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E08AF1C20B34
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 22:16:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 020561F2167B
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 22:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94DD015381A;
-	Sat, 21 Sep 2024 22:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B8QZbN+K"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AB415382F;
+	Sat, 21 Sep 2024 22:17:23 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E70A5589B
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 22:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAED3257B
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 22:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726956973; cv=none; b=HMFFKuwv658fXIiL3cEHK0tQXKQeRuvAqz7pzPL6NX7GLK3s6ub+LZoC/io0S0ElpYnGbO+r4no1Lgd9+9wNDkLyppe7VosOiZln3LYQovIZPxEKaJNeTeURnuj4lhhwHO8TQduamODKaI6KI/9Kn1PB+ML1W/nXlpQcXH0xcbo=
+	t=1726957043; cv=none; b=aZkSn/qLJC8Xcy3Q6gPiwC1T70Y/e+TGF+MlcHSRa/ibrRX2ntIXddhhh7SbrJdSNy5sgWAsyyYlRnMjdspnjyIPshLsVzQ61cLGaOmnAk2Vnwd5Seul/Frq0YKrqH/riZByEPDYxvhlg4bhOWOyFvYJOcdW3Jf1v73f0AioQII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726956973; c=relaxed/simple;
-	bh=Zkoh0a4qGltUAKmHR9FGWFg6MDTJlGAvGMnThTC6UyA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=WzSO9NmKUxqCt0lUeZTxqOrV2TRdLnrACPaVv7rahnZ3QXwClZoEv52ypn4Z+QdT+5S6E3RB5SbkdEWSySRGeloED6sSJ4R0MWr9NvDh9TGvH4EKACn/nyTHlYDhG3HHxwrEwjcCM52UMo9ZtOmF5C4UjqTYPv3cXVeDiXxqg5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B8QZbN+K; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f75c0b78fbso31624891fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 15:16:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726956969; x=1727561769; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ckfl6SQv6q8jyTaGcaY4OqBeiycSnSOtTpecfUzSiXA=;
-        b=B8QZbN+Ke2xQoHC7r2QwwcK+y48Acew2v3ZSd3IfNCff8/yqgQVCT4TSFy7oCstaHg
-         byRlh2J2s2yO+9etjMvScE5OaSCZN+czYyLwOtwqmODtd5leU9y9ut3nIR+tvACvhyHE
-         819Lt6c3vCABenDEL1yxrikyTvOr5Ye2C8EPWvfrUt/GltBuwIjjBvutDnixAuN0s1CN
-         o07JnNQhQyDyIoHTKYBxASbnd6COUEIjR9XRK3MJUbPgSkJD1itmOaGNzTZiky0wTMqQ
-         0V4YFJREfcHfXlRzEK/LIyFdzSej8rMHpXQyEldkBD2LHrUa11cSDBbbZbyWp6Ek5atg
-         nowQ==
+	s=arc-20240116; t=1726957043; c=relaxed/simple;
+	bh=IFh4Maj6UW5RQOm/qPtBr9XXOIvoJz+mSd3EUAtYbok=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mZ0Ajtn98j0Z2LW1bu0LqJZivpC/ki7/A8djXSkbnIx7UJi7Dqntuo/KWpQgImhAQzBYeKBEKpUjD9gIuyyY/A6RcqXaclh2zVbCHBqBQjZCp1bkrAVSrGqGjo9B6c6K7nzF0konl2BLfKU4k+owbmkXQbu2hZxutoaOmKjgOlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82cf2a9da36so271883439f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 15:17:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726956969; x=1727561769;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ckfl6SQv6q8jyTaGcaY4OqBeiycSnSOtTpecfUzSiXA=;
-        b=IGHe2RxCenpW2JFnsD0ujoDjTbtR3IZwT0t69p8nuKVDbXIneQ9BwGDjpmiM/xKlH4
-         xXSpCvibKpQOwSjW8yHM3ReVc1ykQICmJif6+odXEt42tjSdq4NlSRcJxU+NhwXeN0rr
-         RBlD4CT7+Vb8YqII6XBTpu0zmF/rBxmpJBj/6/Q/E1wS74t666GXVhWjtd9B59rlTVSv
-         WaFzMBpTUjjx6prbiwVOidu7PBa5DPlnetifkx6XrauEreF5Ln/PpGj+KkqyMvy9wUEO
-         gyi2YuXEn/GQaivUXtoOpMgkgg6TKUleAhtdoHUSe9qUBsI9ZKyiAZ/LbIov8UnTSkGc
-         ESpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXikDwHEoHgsMm1+si5iAWmKSU1XLbVZZREGiPS2dEoMvGYID3hol4sMiOQWi6iuewuZc3Rcc6CmHlWUe8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcL+FKeAMZDhXsHZJ+/nrUAgiYaOlUXVNsu7HKkIyLVvpOX9+N
-	a0M4QpxvS7AnDVozcNwmNla2sLub7sz4fRHkcU4z24vtqilq0q0/t2yNX0qEEMPXfsMKW+CiMSK
-	R/Z0eGzMsZ9wBkVdMQtRAe8RKjVP5X3/Nyz8/vi4Iw/XaRsvxchA=
-X-Google-Smtp-Source: AGHT+IGEpr593XqJoupoZk9m9wSdYpt8YpMHD2Za5MsLsuckIqbB/NSNQ9Z5SqEzZwIdRvx7Fv8zobplR0U61X1fEb8=
-X-Received: by 2002:a05:6512:3d1f:b0:533:483f:957b with SMTP id
- 2adb3069b0e04-536ac34393fmr3816436e87.61.1726956969054; Sat, 21 Sep 2024
- 15:16:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726957041; x=1727561841;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lKEaZ3XUYzDkpvxFCKTLsuZp4TPmFkXohdjsHzPWWys=;
+        b=Olc/hwjqcOFRIeWebqa/TAUuxNrADn+VSgy4L8zYmuyRwqNiOiP909bvTOXehnY3WA
+         rkXF4fq+DNUkF1yDPNC657gbhI5qZCpm3jq2zy06HoERMwUl/2OX2i8Ti9MB35Oy/orx
+         GknlaEUIM4jqG3QaPs9GTUG5E6MpQ9ByCVIwhBzL7rEF5jZdqANCPag3lTQqCPWpJ1H5
+         iARlc1+Jxz6HNXcqyflBk1Bz31gWAgzmVjokpREDxlLfvb+JQ6vV27czoAcv1oxTA6cP
+         CoUndJR5ryqaZ8dSobHSoHMLMnpL398y/X3NkvzY6IubkEv4XD0o2iQSuK3S4IDeCWaz
+         eJTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZQ88D8sFWshU3S6rqueZ+5Q6GmyhQ9qoI+fsXwINgtK5N5FIc5ylGeXe+Wbv3dHoNOg1kPUia7hMECdI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/hjw1PNBoXhL2WtZWZNAJu9x5mcB4HQ6ShP4o/Yo4y1O2Ps6g
+	jro3eKt5TeoF/8aXyDcpdWklG21oEnyWputgzEVNtq/AO3YuHjD44qcpSlWm7QcGd2S/u70rx82
+	eMjlAZ8Jrnk5pbTHuInpROabcGYq5Xew1YOXtuovtCUOWT5SDxFkXl/I=
+X-Google-Smtp-Source: AGHT+IG4YkzFZmYXrTvyeOyU7sGRS+Xv1+JyJgn602d4bdKPOA4Bn/DiIhoLr9thMjr5uyzLccXtxub8ygEYIjhTvjTvOHVDF3Eu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Sun, 22 Sep 2024 00:15:57 +0200
-Message-ID: <CACRpkdaSYE1jPCSi8jE7QZ9=yxo2oYM7c4uwBsYBFgqWey3Mog@mail.gmail.com>
-Subject: [GIT PULL] pin control changes for v6.12
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+X-Received: by 2002:a05:6e02:12ee:b0:3a0:aac2:a0a4 with SMTP id
+ e9e14a558f8ab-3a0c8c926e7mr52957165ab.9.1726957040938; Sat, 21 Sep 2024
+ 15:17:20 -0700 (PDT)
+Date: Sat, 21 Sep 2024 15:17:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ef45f0.050a0220.3195df.006d.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_btree_pos_to_text
+From: syzbot <syzbot+cf7b2215b5d70600ec00@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+Hello,
 
-this is the bulk of pin control changes for v6.12, not a lot this time
-but the Sophgo SoC is a bit interesting RISC-V thing for image analysis,
-and the Mobil EyeQ5 automotive SoC is interesting because it is *new*
-MIPS stuff.
+syzbot found the following issue on:
 
-Details are in the signed tag.
+HEAD commit:    a940d9a43e62 Merge tag 'soc-arm-6.12' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15ac44a9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1653f803fffa3848
+dashboard link: https://syzkaller.appspot.com/bug?extid=cf7b2215b5d70600ec00
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1276469f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17731207980000
 
-I managed to pull some Intel ACPI ID patch into the devel branch first
-and then sent the same as fix, so it appears in the diffstat but the
-commit IDs should be the same and resolve just fine.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-a940d9a4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/371e11b6a9e5/vmlinux-a940d9a4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/920eb0c53785/bzImage-a940d9a4.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/613a2d63144c/mount_0.gz
 
-Please pull it in!
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cf7b2215b5d70600ec00@syzkaller.appspotmail.com
 
-Yours,
-Linus Walleij
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/btree_cache.h:126!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5111 Comm: read_btree_node Not tainted 6.11.0-syzkaller-03917-ga940d9a43e62 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:bch2_btree_id_root fs/bcachefs/btree_cache.h:126 [inline]
+RIP: 0010:bch2_btree_pos_to_text+0x1ee/0x1f0 fs/bcachefs/btree_cache.c:1295
+Code: 00 00 fc ff df e9 70 ff ff ff 89 d9 80 e1 07 38 c1 0f 8c 7a ff ff ff 48 89 df e8 2d 90 ec fd e9 6d ff ff ff e8 b3 4b 85 fd 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
+RSP: 0018:ffffc9000315f448 EFLAGS: 00010293
+RAX: ffffffff840ede8d RBX: 00000000000000de RCX: ffff88801e138000
+RDX: 0000000000000000 RSI: 00000000000000de RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff840edd7a R09: 0000000000000000
+R10: ffffc9000315f5e0 R11: fffff5200062bec1 R12: ffff8880410b0000
+R13: ffff888041280000 R14: ffff888041280000 R15: ffffc9000315f5e0
+FS:  0000000000000000(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000559507bd4640 CR3: 000000003f78a000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ btree_node_read_work+0x486/0x1260 fs/bcachefs/btree_io.c:1308
+ bch2_btree_node_read+0x2433/0x2a10
+ bch2_btree_node_fill+0xcd1/0x1320 fs/bcachefs/btree_cache.c:886
+ bch2_btree_node_get_noiter+0x9b3/0xf50 fs/bcachefs/btree_cache.c:1155
+ found_btree_node_is_readable fs/bcachefs/btree_node_scan.c:85 [inline]
+ try_read_btree_node fs/bcachefs/btree_node_scan.c:190 [inline]
+ read_btree_nodes_worker+0x122c/0x20b0 fs/bcachefs/btree_node_scan.c:239
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bch2_btree_id_root fs/bcachefs/btree_cache.h:126 [inline]
+RIP: 0010:bch2_btree_pos_to_text+0x1ee/0x1f0 fs/bcachefs/btree_cache.c:1295
+Code: 00 00 fc ff df e9 70 ff ff ff 89 d9 80 e1 07 38 c1 0f 8c 7a ff ff ff 48 89 df e8 2d 90 ec fd e9 6d ff ff ff e8 b3 4b 85 fd 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
+RSP: 0018:ffffc9000315f448 EFLAGS: 00010293
+RAX: ffffffff840ede8d RBX: 00000000000000de RCX: ffff88801e138000
+RDX: 0000000000000000 RSI: 00000000000000de RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff840edd7a R09: 0000000000000000
+R10: ffffc9000315f5e0 R11: fffff5200062bec1 R12: ffff8880410b0000
+R13: ffff888041280000 R14: ffff888041280000 R15: ffffc9000315f5e0
+FS:  0000000000000000(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000559507bd4640 CR3: 0000000011a04000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b=
-:
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-are available in the Git repository at:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v6.12-1
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-for you to fetch changes up to 264c13114bd71ddfd7b25c7b94f6cda4587eca25:
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-  Merge tag 'intel-pinctrl-v6.12-1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel into devel
-(2024-09-11 10:27:30 +0200)
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-----------------------------------------------------------------
-This is the bulk of pin control changes for the v6.12 kernel cycle:
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-Core changes:
-
-- Add support for "input-schmitt-microvolt" property, as used in the
-  Sophgo SoC.
-
-New drivers:
-
-- Mobileye EyeQ5 pin controller, I think this is an automotive SoC.
-
-- Rockchip rk3576 pin control support.
-
-- Sophgo CV1800 series pin controllers: CV1800B, CV1812H and SG2000.
-
-Improvements:
-
-- Gradual improvements to Renesas, Samsung, Qualcomm, Nuvoton
-  and a few other drivers.
-
-----------------------------------------------------------------
-Andrei Stefanescu (3):
-      pinctrl: s32cc: enable the input buffer for a GPIO
-      pinctrl: s32cc: configure PIN_CONFIG_DRIVE_PUSH_PULL
-      pinctrl: s32cc: add update and overwrite options when setting pinconf
-
-Andy Shevchenko (11):
-      pinctrl: intel: Move debounce validation out of the lock
-      pinctrl: intel: Refactor __intel_gpio_set_direction() to be more usef=
-ul
-      pinctrl: intel: Add __intel_gpio_get_direction() helper
-      pinctrl: intel: Implement high impedance support
-      pinctrl: intel: Constify intel_get_community() returned object
-      pinctrl: intel: Introduce for_each_intel_gpio_group() helper et al.
-      pinctrl: stmfx: Use string_choices API instead of ternary operator
-      pinctrl: renesas: rzg2l: Replace of_node_to_fwnode() with more
-suitable API
-      pinctrl: intel: Inline intel_gpio_community_irq_handler()
-      pinctrl: baytrail: Drop duplicate return statement
-      pinctrl: intel: Constify struct intel_pinctrl parameter
-
-Biju Das (1):
-      pinctrl: renesas: rzg2l: Use dev_err_probe()
-
-Christophe JAILLET (3):
-      pinctrl: ti: ti-iodelay: Fix some error handling paths
-      pinctrl: ti: ti-iodelay: Constify struct ti_iodelay_reg_data
-      pinctrl: meson: Constify some structures
-
-Detlev Casanova (1):
-      dt-bindings: pinctrl: Add rk3576 pinctrl support
-
-Fabio Estevam (1):
-      pinctrl: imx: Switch to LATE_SYSTEM_SLEEP_PM_OPS()
-
-Geert Uytterhoeven (1):
-      pinctrl: Join split messages and remove double whitespace
-
-Inochi Amaoto (8):
-      dt-bindings: pincfg-node: Add "input-schmitt-microvolt" property
-      pinctrl: pinconf-generic: Add support for
-"input-schmitt-microvolt" property
-      dt-bindings: pinctrl: Add pinctrl for Sophgo CV1800 series SoC.
-      pinctrl: sophgo: add support for CV1800B SoC
-      pinctrl: sophgo: add support for CV1812H SoC
-      pinctrl: sophgo: add support for SG2000 SoC
-      pinctrl: sophgo: add support for SG2002 SoC
-      pinctrl: sophgo: cv18xx: fix missed __iomem type identifier
-
-Javier Carrasco (2):
-      pinctrl: ti-iodelay: Constify struct regmap_config
-      pinctrl: realtek: Constify struct regmap_config
-
-Krzysztof Kozlowski (1):
-      dt-bindings: pinctrl: qcom: add missing type to GPIO hogs
-
-Lad Prabhakar (3):
-      pinctrl: renesas: rzg2l: Return -EINVAL if the pin doesn't
-support PIN_CFG_OEN
-      pinctrl: renesas: rzg2l: Introduce single macro for digital
-noise filter configuration
-      pinctrl: renesas: rzg2l: Move pinconf_to_config_argument() call
-outside of switch cases
-
-Li Zetao (1):
-      pinctrl: Remove redundant null pointer checks in
-pinctrl_remove_device_debugfs()
-
-Liao Chen (2):
-      pinctrl: pinctrl-zynq: fix module autoloading
-      pinctrl: bcm2835: fix module autoloading
-
-Linus Walleij (6):
-      Merge tag 'intel-pinctrl-v6.11-1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel into devel
-      Merge tag 'renesas-pinctrl-for-v6.12-tag1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers
-into devel
-      Merge branch 'ib-sophgo-pintrl' into devel
-      Merge tag 'samsung-pinctrl-6.12' of
-https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung into
-devel
-      Merge tag 'renesas-pinctrl-for-v6.12-tag2' of
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers
-into devel
-      Merge tag 'intel-pinctrl-v6.12-1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel into devel
-
-Mika Westerberg (1):
-      pinctrl: meteorlake: Add Arrow Lake-H/U ACPI ID
-
-Oliver Rhodes (1):
-      dt-bindings: pinctrl: renesas: Document RZ/G2M v3.0 (r8a774a3) PFC su=
-pport
-
-Peng Fan (1):
-      pinctrl: samsung: Use scope based of_node_put() cleanups
-
-Rayyan Ansari (4):
-      dt-bindings: pinctrl: qcom,apq8064-pinctrl: convert to dtschema
-      dt-bindings: pinctrl: qcom,ipq8064-pinctrl: convert to dtschema
-      dt-bindings: pinctrl: qcom,ipq4019-pinctrl: convert to dtschema
-      dt-bindings: pinctrl: qcom,apq8084-pinctrl: convert to dtschema
-
-Rob Herring (Arm) (2):
-      pinctrl: samsung: Use of_property_present()
-      pinctrl: mediatek: Use of_property_read_bool()
-
-Shen Lichuan (4):
-      pinctrl: samsung: Use kmemdup_array instead of kmemdup for
-multiple allocation
-      pinctrl: renesas: Switch to use kmemdup_array()
-      drivers/pinctrl: Switch to use kmemdup_array()
-      pinctrl: freescale: imx-scmi: Use kmemdup_array instead of
-kmemdup for multiple allocation
-
-Steven Liu (1):
-      pinctrl: rockchip: Add rk3576 pinctrl support
-
-Th=C3=A9o Lebrun (2):
-      Revert "dt-bindings: pinctrl: mobileye,eyeq5-pinctrl: add bindings"
-      pinctrl: eyeq5: add platform driver
-
-Tomer Maimon (7):
-      dt-bindings: pinctrl: npcm8xx: remove non-existent groups and functio=
-ns
-      pinctrl: nuvoton: npcm8xx: remove non-existent pins, groups, function=
-s
-      pinctrl: nuvoton: npcm8xx: clear polarity before set both edge
-      pinctrl: nuvoton: npcm8xx: add gpi35 and gpi36
-      pinctrl: nuvoton: npcm8xx: add pin 250 to DDR pins group
-      pinctrl: nuvoton: npcm8xx: modify clkrun and serirq pin configuration
-      pinctrl: nuvoton: npcm8xx: modify pins flags
-
-Vishnu Reddy (1):
-      pinctrl: samsung: Add support for pull-up and pull-down
-
-Wang Jianzheng (3):
-      pinctrl: sunxi: Use devm_clk_get_enabled() helpers
-      pinctrl: mvebu: Fix devinit_dove_pinctrl_probe function
-      pinctrl: k210: Use devm_clk_get_enabled() helpers
-
-Yan Zhen (1):
-      pinctrl: madera: Simplify with dev_err_probe()
-
-Yang Yingliang (1):
-      pinctrl: single: fix missing error code in pcs_probe()
-
-Yu Jiaoliang (1):
-      pinctrl: nomadik: Use kmemdup_array instead of kmemdup for
-multiple allocation
-
- .../bindings/pinctrl/mobileye,eyeq5-pinctrl.yaml   | 242 -------
- .../bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml  |  70 +-
- .../devicetree/bindings/pinctrl/pincfg-node.yaml   |   3 +
- .../bindings/pinctrl/qcom,apq8064-pinctrl.txt      |  95 ---
- .../bindings/pinctrl/qcom,apq8064-pinctrl.yaml     | 110 +++
- .../bindings/pinctrl/qcom,apq8084-pinctrl.txt      | 188 -----
- .../bindings/pinctrl/qcom,apq8084-pinctrl.yaml     | 129 ++++
- .../bindings/pinctrl/qcom,ipq4019-pinctrl.txt      |  85 ---
- .../bindings/pinctrl/qcom,ipq4019-pinctrl.yaml     | 103 +++
- .../bindings/pinctrl/qcom,ipq8064-pinctrl.txt      | 101 ---
- .../bindings/pinctrl/qcom,ipq8064-pinctrl.yaml     | 108 +++
- .../bindings/pinctrl/qcom,pmic-gpio.yaml           |   1 +
- .../bindings/pinctrl/qcom,sdm845-pinctrl.yaml      |   1 +
- .../devicetree/bindings/pinctrl/renesas,pfc.yaml   |   1 +
- .../bindings/pinctrl/rockchip,pinctrl.yaml         |   1 +
- .../bindings/pinctrl/sophgo,cv1800-pinctrl.yaml    | 122 ++++
- drivers/pinctrl/Kconfig                            |  16 +
- drivers/pinctrl/Makefile                           |   2 +
- drivers/pinctrl/bcm/pinctrl-bcm2835.c              |   1 +
- drivers/pinctrl/cirrus/pinctrl-madera-core.c       |   9 +-
- drivers/pinctrl/core.c                             |   2 +-
- drivers/pinctrl/freescale/pinctrl-imx-scmi.c       |   2 +-
- drivers/pinctrl/freescale/pinctrl-imx.c            |   7 +-
- drivers/pinctrl/freescale/pinctrl-imx8mq.c         |   2 +-
- drivers/pinctrl/intel/pinctrl-baytrail.c           |   7 +-
- drivers/pinctrl/intel/pinctrl-intel.c              | 324 +++++----
- drivers/pinctrl/intel/pinctrl-intel.h              |   3 +-
- drivers/pinctrl/intel/pinctrl-lynxpoint.c          |   2 +-
- drivers/pinctrl/intel/pinctrl-meteorlake.c         |   1 +
- drivers/pinctrl/mediatek/pinctrl-paris.c           |   7 +-
- drivers/pinctrl/meson/pinctrl-amlogic-c3.c         |  12 +-
- drivers/pinctrl/meson/pinctrl-amlogic-t7.c         |  12 +-
- drivers/pinctrl/meson/pinctrl-meson-a1.c           |  12 +-
- drivers/pinctrl/meson/pinctrl-meson-axg-pmx.c      |  12 +-
- drivers/pinctrl/meson/pinctrl-meson-axg-pmx.h      |   2 +-
- drivers/pinctrl/meson/pinctrl-meson-axg.c          |  24 +-
- drivers/pinctrl/meson/pinctrl-meson-g12a.c         |  24 +-
- drivers/pinctrl/meson/pinctrl-meson-gxbb.c         |  16 +-
- drivers/pinctrl/meson/pinctrl-meson-gxl.c          |  16 +-
- drivers/pinctrl/meson/pinctrl-meson-s4.c           |  12 +-
- drivers/pinctrl/meson/pinctrl-meson.c              |  25 +-
- drivers/pinctrl/meson/pinctrl-meson.h              |   8 +-
- drivers/pinctrl/meson/pinctrl-meson8-pmx.c         |   6 +-
- drivers/pinctrl/meson/pinctrl-meson8.c             |  16 +-
- drivers/pinctrl/meson/pinctrl-meson8b.c            |  16 +-
- drivers/pinctrl/mvebu/pinctrl-dove.c               |  42 +-
- drivers/pinctrl/nomadik/pinctrl-abx500.c           |   3 +-
- drivers/pinctrl/nomadik/pinctrl-nomadik.c          |   3 +-
- drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c          |  64 +-
- drivers/pinctrl/nxp/pinctrl-s32cc.c                |  51 +-
- drivers/pinctrl/pinconf-generic.c                  |   2 +
- drivers/pinctrl/pinctrl-eyeq5.c                    | 575 +++++++++++++++
- drivers/pinctrl/pinctrl-k210.c                     |  35 +-
- drivers/pinctrl/pinctrl-rockchip.c                 | 207 ++++++
- drivers/pinctrl/pinctrl-rockchip.h                 |   1 +
- drivers/pinctrl/pinctrl-single.c                   |   3 +-
- drivers/pinctrl/pinctrl-stmfx.c                    |   5 +-
- drivers/pinctrl/pinctrl-utils.c                    |   4 +-
- drivers/pinctrl/pinctrl-zynq.c                     |   1 +
- drivers/pinctrl/pinmux.c                           |   7 +-
- drivers/pinctrl/realtek/pinctrl-rtd.c              |   2 +-
- drivers/pinctrl/renesas/pinctrl-rzg2l.c            | 117 ++--
- drivers/pinctrl/renesas/pinctrl-rzv2m.c            |   3 +-
- drivers/pinctrl/renesas/pinctrl.c                  |   3 +-
- drivers/pinctrl/samsung/pinctrl-exynos-arm.c       |  14 +
- drivers/pinctrl/samsung/pinctrl-exynos.c           |  16 +-
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c          |  14 +
- drivers/pinctrl/samsung/pinctrl-samsung.c          | 108 ++-
- drivers/pinctrl/samsung/pinctrl-samsung.h          |  21 +
- drivers/pinctrl/sophgo/Kconfig                     |  54 ++
- drivers/pinctrl/sophgo/Makefile                    |   7 +
- drivers/pinctrl/sophgo/pinctrl-cv1800b.c           | 462 ++++++++++++
- drivers/pinctrl/sophgo/pinctrl-cv1812h.c           | 771 +++++++++++++++++=
-++++
- drivers/pinctrl/sophgo/pinctrl-cv18xx.c            | 765 +++++++++++++++++=
-+++
- drivers/pinctrl/sophgo/pinctrl-cv18xx.h            | 155 +++++
- drivers/pinctrl/sophgo/pinctrl-sg2000.c            | 771 +++++++++++++++++=
-++++
- drivers/pinctrl/sophgo/pinctrl-sg2002.c            | 542 +++++++++++++++
- drivers/pinctrl/sunxi/pinctrl-sunxi.c              |  14 +-
- drivers/pinctrl/ti/pinctrl-ti-iodelay.c            |  58 +-
- include/dt-bindings/pinctrl/pinctrl-cv1800b.h      |  63 ++
- include/dt-bindings/pinctrl/pinctrl-cv1812h.h      | 127 ++++
- include/dt-bindings/pinctrl/pinctrl-cv18xx.h       |  19 +
- include/dt-bindings/pinctrl/pinctrl-sg2000.h       | 127 ++++
- include/dt-bindings/pinctrl/pinctrl-sg2002.h       |  79 +++
- include/linux/pinctrl/pinconf-generic.h            |   3 +
- 85 files changed, 6002 insertions(+), 1274 deletions(-)
- delete mode 100644
-Documentation/devicetree/bindings/pinctrl/mobileye,eyeq5-pinctrl.yaml
- delete mode 100644
-Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.yaml
- delete mode 100644
-Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.yaml
- delete mode 100644
-Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.yaml
- delete mode 100644
-Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.yaml
- create mode 100644
-Documentation/devicetree/bindings/pinctrl/sophgo,cv1800-pinctrl.yaml
- create mode 100644 drivers/pinctrl/pinctrl-eyeq5.c
- create mode 100644 drivers/pinctrl/sophgo/Kconfig
- create mode 100644 drivers/pinctrl/sophgo/Makefile
- create mode 100644 drivers/pinctrl/sophgo/pinctrl-cv1800b.c
- create mode 100644 drivers/pinctrl/sophgo/pinctrl-cv1812h.c
- create mode 100644 drivers/pinctrl/sophgo/pinctrl-cv18xx.c
- create mode 100644 drivers/pinctrl/sophgo/pinctrl-cv18xx.h
- create mode 100644 drivers/pinctrl/sophgo/pinctrl-sg2000.c
- create mode 100644 drivers/pinctrl/sophgo/pinctrl-sg2002.c
- create mode 100644 include/dt-bindings/pinctrl/pinctrl-cv1800b.h
- create mode 100644 include/dt-bindings/pinctrl/pinctrl-cv1812h.h
- create mode 100644 include/dt-bindings/pinctrl/pinctrl-cv18xx.h
- create mode 100644 include/dt-bindings/pinctrl/pinctrl-sg2000.h
- create mode 100644 include/dt-bindings/pinctrl/pinctrl-sg2002.h
+If you want to undo deduplication, reply with:
+#syz undup
 
