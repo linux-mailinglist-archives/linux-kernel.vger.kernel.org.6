@@ -1,89 +1,90 @@
-Return-Path: <linux-kernel+bounces-334735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8283497DB74
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 04:28:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FDE797DB77
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 04:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E96E9B213EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 02:28:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEF531F2173A
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 02:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4DA8489;
-	Sat, 21 Sep 2024 02:28:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412BD17BA1;
+	Sat, 21 Sep 2024 02:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pFjd9xMe"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5C622301
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 02:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB7115E97
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 02:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726885685; cv=none; b=hdsOrZq+RBTJZw6lHDC1JGuPmfOQd+wGU0mQCYhWAvkVWg8ntoQI3Y1Jl6wJlxXnDmql944IOUUbCfF+DFYMQLENfmHYxK6IXzfvNCGBEhx4f17xEsB3ptmc7LJm9TpYimx0gZ+Ls/3kIqat1Yz0/wKhNZ5Ow2h2bt2O+qPOrDM=
+	t=1726885749; cv=none; b=ia5qcs/m2sRlbBAeAcma1FR84K8iLhjoCwtPGS/6IrODSjwBl640hamYY6LrgjJpb3btnva2Fipe9WwtaNm87YRYO1IT4xSSH2a6or5Ab8JMVReNXVYDjIxapp1zR4Q/JlaL2pQLygmjWYlFBYqjmt0aw37cXGHwLRM0bwwsEGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726885685; c=relaxed/simple;
-	bh=Sf/yzFQmkJpemzBUSSHu8EYMjfz2GGlqtPerwLWt16s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jWu4VLw/SpO4GkDCuEAMTTGkfBi3jVn3s4hooNwmp4j7IE9HimZGDnwp+ssG2JGxZhJ60dDJFs1BAsmckukCJFIaX8tatE0opwtJEqLxH+sqXk7jLhxlnW7lGd+BGBoVO5Xwa/HjHJbeliPZcq3QEG4CYyAjz58foi2T12391dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39f5605c674so35933715ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Sep 2024 19:28:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726885683; x=1727490483;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yMaBaEBkg/OpyzN2Uqpyv+3f9rsnvjhbKblOU2k1UIY=;
-        b=ELX8sDSFhUQNqGPA1kxRxf1HryygAz/r9jyMNf4DGTwkvQ8MEt4L0KPwtmfjg5oMwN
-         DUPiUd/GUSb0zUFBNLaZwKLYOEFUmh7fTvfXZJK/MlSIGuD1lpX9rLaIQXthB+KQ7CSJ
-         NZpDcXOkofoZyOSoLFU+uATsbIaiNEcWxWUE6oZBo9rhP1xkseNVmRe+wayjkYM28fag
-         iSkDEonCJ/d2XnSHYjiX/U7UDFwKwDpKDYhZiYQBF8UpUD+lG19fw0scEYQ2ayLYK0vz
-         HU/cYOYpY69j/KVArRjdBPD+8bxrz+q75XR1Pz5oZOYURfnHfkSAaQCrxFB6/qGNxAxN
-         T82Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWbEcKYviTnhWoE3jqvO0A5wzola3toXQmSi/CfUH9SJ+qL/bIQ+ABaeJZJmrGPJffG+NcuqjgRNwu3c08=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5DqURZ6/Mrf7Xgmv7kafmCAKMy0T0xKwe/n9GcH+CpqzOCjcW
-	hqYHXB9quNienNHK301PLfRiJiQtBYCZQUF51JIfPa16hEQu2z+Auk8GKEMiNI4HWORJ0uMaIvU
-	6aJK5YGEZwEXzfL2uRmhdGwT+UTM4okkfqMsZgWFLb2YoaYOMjdcJBTM=
-X-Google-Smtp-Source: AGHT+IEBX0mqdaKQMXd3phHkA5Bo7NhLiKl7gSe+Czm+rTbLUAbFma0yjB0JcMYuUWElVfz8LxXmUdnVRWORvK/jjNt9gxUoUyj0
+	s=arc-20240116; t=1726885749; c=relaxed/simple;
+	bh=Q+9ubO9p6FjOwXPy94zOE+C1TH3tXKwjSOieBL6q5d0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ip1T5ZFzCQkIC2o3pC76EPlnSDj9MEYHd8m9TI8E93uS6gN2rOtAcfz+MVq2VdOxUzaMl1ToWA/okIB9OmYxG5pLI7a91huWLZeK+y4NqMghP5Utt2Lf7ubd62DW+d+qTGUrk0/5IWjcPIuns+E/oTI/gPmpMLffYG0IfynUCMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pFjd9xMe; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <525e9a31-31ee-4acf-a25c-8bf3a617283f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1726885745;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JCscfEp+Ym80CC3dMZxCPMQuoLupJ/Y+JmyiHw8Mmfc=;
+	b=pFjd9xMejfPGUiSPhej4ygvK6DHI8WPs35hiuMloySd7XfpzfajQ/DuYhuCSPhCqICam4K
+	jy7xzDksghJnNR4DgyUNZY3/9K99LBzpP57mDq9u8EkD+dhUsrwNzR/pfYpp6o/NAn/4wO
+	6nPWjXq9X60wQzoyVHPgUKC4zX2mFwY=
+Date: Sat, 21 Sep 2024 10:28:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c2f:b0:3a0:b23a:81f2 with SMTP id
- e9e14a558f8ab-3a0c8ceaf88mr47172195ab.12.1726885682790; Fri, 20 Sep 2024
- 19:28:02 -0700 (PDT)
-Date: Fri, 20 Sep 2024 19:28:02 -0700
-In-Reply-To: <tencent_8A28BB01332A9E381B7A4BFB1BAB2512BA08@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66ee2f32.050a0220.3195df.0025.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] WARNING: bad unlock balance in ocfs2_inode_cache_io_unlock
-From: syzbot <syzbot+0e4e71041c9609d922a2@syzkaller.appspotmail.com>
-To: eadavis@qq.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [MAINLINE 0/2] Enable DIM for legacy ULPs and use it in RDS
+To: Christoph Hellwig <hch@infradead.org>,
+ Haakon Bugge <haakon.bugge@oracle.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+ Allison Henderson <allison.henderson@oracle.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ OFED mailing list <linux-rdma@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "rds-devel@oss.oracle.com" <rds-devel@oss.oracle.com>
+References: <20240918083552.77531-1-haakon.bugge@oracle.com>
+ <Zuwyf0N_6E6Alx-H@infradead.org>
+ <C00EA178-ED20-4D56-B6F2-200AC72F3A39@oracle.com>
+ <Zu191hsvJmvBlJ4J@infradead.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <Zu191hsvJmvBlJ4J@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+在 2024/9/20 21:51, Christoph Hellwig 写道:
+> On Fri, Sep 20, 2024 at 09:46:06AM +0000, Haakon Bugge wrote:
+>>> I would much prefer if you could move RDS off that horrible API finally
+>>> instead of investing more effort into it and making it more complicated.
+>>
+>> ib_alloc_cq() and family does not support arming the CQ with the IB_CQ_SOLICITED flag, which RDS uses.
+> 
+> Then work on supporting it.  RDS and SMC are the only users, so one
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Some other open source projects are also the users.
 
-Reported-by: syzbot+0e4e71041c9609d922a2@syzkaller.appspotmail.com
-Tested-by: syzbot+0e4e71041c9609d922a2@syzkaller.appspotmail.com
+Zhu Yanjun
 
-Tested on:
+> of the maintainers needs to drive it.
+> 
 
-commit:         5f567360 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1210ff00580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dedbcb1ff4387972
-dashboard link: https://syzkaller.appspot.com/bug?extid=0e4e71041c9609d922a2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=107fcca9980000
-
-Note: testing is done by a robot and is best-effort only.
 
