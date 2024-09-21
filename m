@@ -1,128 +1,191 @@
-Return-Path: <linux-kernel+bounces-334815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E85A97DCDF
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 12:48:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE2997DCE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 12:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 395361F21BDC
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:48:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CBDB282D2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC523143887;
-	Sat, 21 Sep 2024 10:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="UL1ooa6q"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BBB14B09C;
+	Sat, 21 Sep 2024 10:53:24 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD063F9D2
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 10:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D412D3F9D2
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 10:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726915718; cv=none; b=OYyLdIAKzI670pXFTDXRs1HjyTIqi9fgfnrqOntmc/xOOxIfLHEFUVOFHfuWv8dOJEhJjA0mS56T5zQggLq1C7+Rbe2WcxOuK6/KkutEQXcwWW5TJiUpRPtY2uDffuhaD73l4lE1F9mkLcmjL0nBt2WmotXZoy4A6PxpXJY2UUU=
+	t=1726916004; cv=none; b=uJxto34Vy7S4meU5Od4Y7h9g7tH0+D0/1ox5hUiOkVhMFxlVfC3PFLgT1TuSskssa3771XoHaF/cJ3dxjqs61o/CpsXVQZsDYYw4YX5cBwhTha9C1z/Dux9oUF3Q0fA8YNcuj4yoZXkwA3XnrVf3V7aQlHoC5K10+xuuTw8D0HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726915718; c=relaxed/simple;
-	bh=g9kiHrXkqsfI/28vZba8ulLy2ta3fAcyD9NpsM9ZGXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aGLIbhR9ype3/V7wi5MkLN7+wQPfU3gfz8hbBUMq9S2wRxMMm8aM9COsZy3vlMYyI9/9TyW6/TNaVMFfDIm8+lJyAJtXEz1C16EyhzPrGywQ1Urp6Mub25GrsEnM8Di3zKLUOZ6J0aig96DuZQY1XAlUVWfTjzq4E0BFS4iO91M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=UL1ooa6q; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=P3bv
-	kYNnKt6ZkBdvSojIEb4FdcCH6jNXKKsInk9U00E=; b=UL1ooa6qroHiGVwOaTjq
-	DMsRWfFs/ZMXjU/DQHVwHEmNcXoC/uSLuCw0jyvplAS7tBbe0nKAhf/EpH1O+pRH
-	NRxR2ZIkMKlxwClKd1tz6xwW+9ysiHUzS8HN0O7wn5iZqv786EFDgxjkRugiivtf
-	heAgqXBYQyNyb015QB4vhJYORe567JxoJNxvOlRNtKvttOhWn0EpWJWlRQuV2zqn
-	Wp89aJy2tiGBpx74hx6+v2l/tPjQmj0unIqxCXKN2E2OhRZ0d6n+uYi2wn5k83WP
-	zymeymXAwkg0jZugpVz6VPfloXnfPo+llfiHH7pjVr75VUCjREJ6uslXjR7CIpMP
-	Ag==
-Received: (qmail 3638682 invoked from network); 21 Sep 2024 12:48:24 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Sep 2024 12:48:24 +0200
-X-UD-Smtp-Session: l3s3148p1@gUAX5Z4iwIYgAwDwn0Nz2qARpwvTE8dN
-Date: Sat, 21 Sep 2024 12:48:23 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] i2c-host for v6.12
-Message-ID: <Zu6kd12bDlNNGxZj@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-References: <ihephcck34arr3hvxj3pjtmk3p4dobyrblhawhsf4wi42h3344@zkelbpeexnbg>
+	s=arc-20240116; t=1726916004; c=relaxed/simple;
+	bh=AFvePqPOibw3XxCBpwPa6uxRG/zrMpMaNR/mwPlopIE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZiQDRAjEloY6CdF0qtvWESCSE5uGesVYYSspULpmJ9ASQWfuwChYuQerlXRUtq0RzA148SrXPmnHlB/sk6/CG9ut23ILVfNYif9wPqyepgOwHSQcdeyjd0NSw6G14ndM/shUSUQjq4XMYOMYm/+H+qo2fMhkcIdRahmg2Dijonc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0a4db9807so43900545ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 03:53:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726916002; x=1727520802;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0im4ZtA1MbWQfH6dH4YY0xWeggVJqcB4tgmnXcGu5HM=;
+        b=TxNq6ZjKrTBqrz3RCWKuZvKRsIHZKHQ8RReMPEg8MUlw7mpBDpOrQ7rPG94u2tZdiK
+         w4KyyOcHHc1P+2iIiXh4o0Ysbl9cTI0jsmcDHxAUOpQz63UNkEdUrXZnUrT5IZf8aV1E
+         s0aR/Pqh0dtztbo+N7en6RV8pWv+HwtuJZSQsm0/iHLkpOlXdwLrOdS7gLCjiFCJMBbe
+         mw22Zf0YiHfyli0pXKwmTDHbvYZQ/J7H3WS5ERKJFZW0ozjikjxUKtDnyxS+/ORK+NEp
+         oRbJhpd/tjTY7nQlTJ59u5WPzvbWz2t9iiWXB86FhgBYx2RnLeW5Km+qYlhVlFgTXk4q
+         4MaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqqLzewS27bSyLn5bdy5E+QlM9DgLd4oW8qNHvNRUaoXA/jVDm7IQACIG4QAzLtsqvVW0FVCT96it5gVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3/ler95lDA436FFI2j5CyDVP5zhjCICjADv+h1lHpkgwcnw5L
+	mzrG3J20cveCOemT8n8oMz+uZeEVkshPRqbkkpoCe9tdc6zlv30eBI3NHUnTbNJVueyUd0LodU8
+	/qrHEAM7IwZn64BbTiCNpFpzD65zYt78ykUHYE7s9W9QVa5OB3bTzNUA=
+X-Google-Smtp-Source: AGHT+IFa2sh7TtWNLxvQ93uiIz4x3v9RBDL/dog0GxRrw9wxM6ca6f8Q2OrV0KiAFrPS4sFacLlENNzPTC8jn4135s31WF7etNZz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5e470Z/EQlzL7dwa"
-Content-Disposition: inline
-In-Reply-To: <ihephcck34arr3hvxj3pjtmk3p4dobyrblhawhsf4wi42h3344@zkelbpeexnbg>
+X-Received: by 2002:a05:6e02:174c:b0:3a0:bc39:2d7a with SMTP id
+ e9e14a558f8ab-3a0c9d2ca01mr52829595ab.13.1726916002053; Sat, 21 Sep 2024
+ 03:53:22 -0700 (PDT)
+Date: Sat, 21 Sep 2024 03:53:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66eea5a2.050a0220.3195df.004b.GAE@google.com>
+Subject: [syzbot] [bcachefs?] general protection fault in __copy_super
+From: syzbot <syzbot+18a5c5e8a9c856944876@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    a430d95c5efa Merge tag 'lsm-pr-20240911' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=124e6a77980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1653f803fffa3848
+dashboard link: https://syzkaller.appspot.com/bug?extid=18a5c5e8a9c856944876
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=129f68a9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1539e29f980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-a430d95c.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/66a65abf87c4/vmlinux-a430d95c.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/09c88015f9aa/bzImage-a430d95c.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/97dbec0f4717/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+18a5c5e8a9c856944876@syzkaller.appspotmail.com
+
+bcachefs (/dev/loop0): error reading default superblock: checksum error, type crc32c_nonzero: got 151109cf should be 29d2fb78
+bcachefs (/dev/loop0): error reading superblock: checksum error, type crc32c_nonzero: got 151109cf should be 29d2fb78
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000002: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
+CPU: 0 UID: 0 PID: 5098 Comm: syz-executor282 Not tainted 6.11.0-syzkaller-02574-ga430d95c5efa #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__copy_super+0x59/0xe70 fs/bcachefs/super-io.c:552
+Code: 44 24 10 80 3c 18 00 74 12 4c 89 f7 e8 90 71 b5 fd 48 ba 00 00 00 00 00 fc ff df 4d 8b 3e 49 8d 5c 24 10 48 89 d8 48 c1 e8 03 <0f> b6 04 10 84 c0 0f 85 2e 0c 00 00 0f b7 2b 49 8d 5f 10 48 89 d8
+RSP: 0018:ffffc90002f8f2f0 EFLAGS: 00010202
+RAX: 0000000000000002 RBX: 0000000000000010 RCX: ffff888000ebc880
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff888044d807d8
+RBP: 0000000000000000 R08: ffffffff84457905 R09: 00000000ffffffff
+R10: dffffc0000000000 R11: fffffbfff2845f24 R12: 0000000000000000
+R13: ffff888044d80000 R14: ffff888044d807d8 R15: ffff88803fb32800
+FS:  00005555893e4380(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555cf75a4000 CR3: 0000000011efe000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bch2_sb_to_fs+0xab/0x150 fs/bcachefs/super-io.c:610
+ bch2_fs_alloc+0xd5c/0x20b0 fs/bcachefs/super.c:828
+ bch2_fs_open+0x8cc/0xdf0 fs/bcachefs/super.c:2115
+ bch2_fs_get_tree+0x731/0x1700 fs/bcachefs/fs.c:1943
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2b30c1706a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe211af6b8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffe211af6d0 RCX: 00007f2b30c1706a
+RDX: 0000000020000240 RSI: 0000000020005dc0 RDI: 00007ffe211af6d0
+RBP: 0000000000000004 R08: 00007ffe211af710 R09: 0000000000005da0
+R10: 0000000001000000 R11: 0000000000000282 R12: 0000000001000000
+R13: 00007ffe211af710 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__copy_super+0x59/0xe70 fs/bcachefs/super-io.c:552
+Code: 44 24 10 80 3c 18 00 74 12 4c 89 f7 e8 90 71 b5 fd 48 ba 00 00 00 00 00 fc ff df 4d 8b 3e 49 8d 5c 24 10 48 89 d8 48 c1 e8 03 <0f> b6 04 10 84 c0 0f 85 2e 0c 00 00 0f b7 2b 49 8d 5f 10 48 89 d8
+RSP: 0018:ffffc90002f8f2f0 EFLAGS: 00010202
+RAX: 0000000000000002 RBX: 0000000000000010 RCX: ffff888000ebc880
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffff888044d807d8
+RBP: 0000000000000000 R08: ffffffff84457905 R09: 00000000ffffffff
+R10: dffffc0000000000 R11: fffffbfff2845f24 R12: 0000000000000000
+R13: ffff888044d80000 R14: ffff888044d807d8 R15: ffff88803fb32800
+FS:  00005555893e4380(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555cf75a4000 CR3: 0000000011efe000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	44 24 10             	rex.R and $0x10,%al
+   3:	80 3c 18 00          	cmpb   $0x0,(%rax,%rbx,1)
+   7:	74 12                	je     0x1b
+   9:	4c 89 f7             	mov    %r14,%rdi
+   c:	e8 90 71 b5 fd       	call   0xfdb571a1
+  11:	48 ba 00 00 00 00 00 	movabs $0xdffffc0000000000,%rdx
+  18:	fc ff df
+  1b:	4d 8b 3e             	mov    (%r14),%r15
+  1e:	49 8d 5c 24 10       	lea    0x10(%r12),%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	0f b6 04 10          	movzbl (%rax,%rdx,1),%eax <-- trapping instruction
+  2e:	84 c0                	test   %al,%al
+  30:	0f 85 2e 0c 00 00    	jne    0xc64
+  36:	0f b7 2b             	movzwl (%rbx),%ebp
+  39:	49 8d 5f 10          	lea    0x10(%r15),%rbx
+  3d:	48 89 d8             	mov    %rbx,%rax
 
 
---5e470Z/EQlzL7dwa
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On Fri, Sep 13, 2024 at 01:20:01PM +0200, Andi Shyti wrote:
-> Hi Wolfram,
->=20
-> This turned out to be a fairly loaded pull request, covering a
-> variety of topics. There are four new platforms added, but the
-> bulk of it consists of cleanups and refactors.
->=20
-> I didn=E2=80=99t plan to have a second pull request during this merge
-> window. Everything that was submitted is included in this one.
->=20
-> Wishing you a great weekend and a fantastic conference week,
-> which I=E2=80=99m sorry to miss!
->=20
-> Andi
->=20
-> The following changes since commit da3ea35007d0af457a0afc87e84fddaebc4e0b=
-63:
->=20
->   Linux 6.11-rc7 (2024-09-08 14:50:28 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags=
-/i2c-host-6.12
->=20
-> for you to fetch changes up to f56f4ba2fc1dbefd3242946f2fad35338a60e3bc:
->=20
->   i2c: designware: Use pci_get_drvdata() (2024-09-11 12:52:46 +0200)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Thanks, pulled!
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
---5e470Z/EQlzL7dwa
-Content-Type: application/pgp-signature; name="signature.asc"
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
------BEGIN PGP SIGNATURE-----
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmbupHIACgkQFA3kzBSg
-KbaQPRAAll8ZCqWdTbc5W7PgMalyxIAEeeZ37hraYLsElpZpCnbg9E48eVlgtroi
-15a50xdMOGlon91Yea3oZ3XZTNFmHhg/prypHXoR3PLZvosP0CF8/96PZNkzXfng
-pE02aObW40R5Gp+lnUvy2Dh6e8dBscRIVyAsFM2kWDIQYwqLMzVYVBWxiN/15IaM
-QmScryHLK+quvCrodVveRlrwZimN8tA+Gy6IS5AvjCVbpvz8ZlYfybQ99lqXhpmT
-ZwNa3KLSi4L4pUFyX8aN7toB8K7g1KJNjEStj61ADOK1kDpxA6jJ7+8tGOpzgwNv
-CS/ufLgqZ609sRvq6Cg/6QO+eGwkPxa+WasgmwMLPYoQbSkipLpblQpIRGjMZIZm
-RJIW0TVJmSsvq13rfwf+EwqnoaRhe1atTclrWyvdyxtWd/mDlKD6ClE6060LSOxx
-3GcWoYsKjfx6ahtRIunmwOjEw1wg4oVpaXEVBNu99Bqc7zLconS/AqJldJFNcdiI
-d+L4yqRDanWx2drtrZzAP6z4QOH54w+FcMsy9YxfmRnX5sSVtR1dFC2FaU0IzmbS
-1cgnqJ4ZXN7vQwU0uZ0b3kqRTVYzAE3OOBM9QGodIW3dDGb/vjSL32Rjpq962yMX
-+3j7adruq3xrbYuQ/7KYbiaT/qumo6MbpOVNT4QzCOyIV2I/FSM=
-=VUJp
------END PGP SIGNATURE-----
-
---5e470Z/EQlzL7dwa--
+If you want to undo deduplication, reply with:
+#syz undup
 
