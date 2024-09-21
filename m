@@ -1,214 +1,253 @@
-Return-Path: <linux-kernel+bounces-334743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1231897DB88
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 05:08:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F6B97DB89
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 05:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352E21C2103F
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 03:08:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 938E5B21C0F
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 03:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DA317BA6;
-	Sat, 21 Sep 2024 03:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8A417BA1;
+	Sat, 21 Sep 2024 03:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3a1Zjq4"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="eh+vzL1v";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="knBlsNWN"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867981392;
-	Sat, 21 Sep 2024 03:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57A5A32
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 03:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726888090; cv=none; b=U7b0RY6L0q9S9tAJ40XIjBnOMe+sKQkBbzJrjUXPed7HITAS57+88xScTSeRzcchBjLFv/+RPQk5EGuE87eySrYZldgeQyg0ITzcNP15vvy/SPcJFk30HOcKJ7HeUUtVR56HZAXr2itYtLR41hJGTwHL2RgFT1r2ATGy9IYGj9U=
+	t=1726888469; cv=none; b=IsHHmx5gXGLpFiNyIbgPMS32B6UI7VRa7mmkZQM3p+23oF1uTyeHSDdMEUx+0rfd7NWzexGZvxg522XJdISoacJreqIn7W323tQxgGSNHUeLRC9+TjCC1jx3KK8PLGIG+EpVLHNDEaABza6M/g30++zkSdYIxCWPfZbxJMUpDCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726888090; c=relaxed/simple;
-	bh=LZVbErFfdKReI9mkBeeh5ZXf6bErNE5bJsJsom7s8WA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bDQVSccurclpDUAUa7/6AlGQyj4Zeo3blsv/rLPL9Ew3H/A/WbXGvBjFXVgz6saJO3Ay6CBRYc4udH0QNNqulKD3rJbyU9394rI2qSTvXbjw5dZxZjm1A+X/mXriWrTGAgFCh/nGfvk9OG1f2HTZMlIJIH9gc1dgKMU727QcwEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3a1Zjq4; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71971d2099cso2020989b3a.2;
-        Fri, 20 Sep 2024 20:08:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726888088; x=1727492888; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mPprQAVUrVHm/tsPhdS3MV1vYtw/SA39EWRwyCJlFa8=;
-        b=l3a1Zjq4735pisGMpokJH6lzUVvYSakQ3273GYc4XHPgMF6iSISiK1nG0tH/kyCoNV
-         hFTnXe06cGad8G5PZKAwRztES+VkL0O9dnHCzxKlCynKlQjMaZoByWjLCRKuBTSVl5sj
-         UiASSJ0LCWXFGU2equ+ftJ3GZCunPJqbX7kbV3a+zrQ0Yg3r3hIP33fqOIfMPciRw4Z3
-         XHvuEOmltlmqbv5F/jXEUywNjXQ7vGtft1EyPfRDBOa8Si51AlWYBB9XV5gXxi6xYyaL
-         rgrFTMA4NtMNQMXKEHz5DWt1gelhE0McMOla/ZOJVO9D6MV32p9S8l7ChdJ/NuAAxeD/
-         wjFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726888088; x=1727492888;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mPprQAVUrVHm/tsPhdS3MV1vYtw/SA39EWRwyCJlFa8=;
-        b=Yn7nsvjbfXQzgt6dIqjJldJy/adxNA1m5LuSSyPIG9WTNSKpqxL6a/c35qjiWwZ86P
-         3ZEi/bLl5gK7eTKbY2BWdmi2S+LUk7BaLK9EIIA3ZQycetyKBWZMjrqQoLTCUg7fQeBX
-         jN34eneBJOBPaBnHADF3HuNNqfoXeJ93NyZeQrmLw0oEBJ9YmGX8PkO73nlF214fXC4S
-         j45RsaZgGo4iInXfCje1UcmL807QDrlOTRhONFyp1bGU9AaOqTHdOQR7bahXqsywMX0K
-         TqoqqxrNJdbflny1WrNIUKtcZ/lCJFAWWts2TZqp3R2wyEkzQcH6WFAYA5GuXdYCl5+l
-         0zDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVO7IGkEhq5H0TtRG957vKQRytlR5SBk1ZIeylMX6NKsHjtkBMxOuB71Zsd/WCHCUaX6bVnt9z9S5nBuss=@vger.kernel.org, AJvYcCVargJgOtaUIvsWzDzKbmGafGZWewxE5ipCityD1UaWUK4J9cF78zUTSJWRR811l1PzjytpQjxru0ouP2JVrbz0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp5M625b07ywoQ8cPHOAWBaaEutvAhHmT14Xz8lXe9u4opxxsK
-	7Iy5lzED0Xq+vC00bYUn86ggsjVnUyL0/s2jDuca65pj86TSa4Ik
-X-Google-Smtp-Source: AGHT+IGud+/cz2OldIIDXbv/r7jevJ8fNdwPc07GJiHTkcSOJWKBWyvy0GWD6HR8I1bMhawIFMeSnA==
-X-Received: by 2002:a05:6a21:3318:b0:1d2:e889:1513 with SMTP id adf61e73a8af0-1d30a900ce7mr7850720637.17.1726888057927;
-        Fri, 20 Sep 2024 20:07:37 -0700 (PDT)
-Received: from [10.0.0.100] (201-0-94-15.dsl.telesp.net.br. [201.0.94.15])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944ab54f4sm10468681b3a.56.2024.09.20.20.07.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Sep 2024 20:07:37 -0700 (PDT)
-Message-ID: <0e349fb3-857c-48b9-87f3-8865fe2d42f1@gmail.com>
-Date: Sat, 21 Sep 2024 00:07:32 -0300
+	s=arc-20240116; t=1726888469; c=relaxed/simple;
+	bh=9uxdS2+sz8Ljlxfzd7jb2B80Y3gW74YuYU4Mxxsy50k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Nem6udUwXdn03n/KkSEPxRpDpObQXS7lIVxrJH8vscw6OSPJrJTwIpmnVKhLFBoWQK1jcC2+w2cEAz9gty5JgpB0RHVU1WhaPyXm4IDKerDVsr1LwcSjZ8piJAveM2TPsKCmDfewqocm9hz5//KFd3GeTRxzJxfUSp+26dfTnCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=eh+vzL1v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=knBlsNWN; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id CA04313802A4;
+	Fri, 20 Sep 2024 23:14:25 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Fri, 20 Sep 2024 23:14:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1726888465; x=1726974865; bh=PnRuJsut7rBR5NjmMpKD/
+	vSSKLif7oZAlNskIUa76/8=; b=eh+vzL1v4ipdmLLKcohL/RIZHKmpxRVx/z1HG
+	FloAKSmOruXYwvY0FoRejS/tRvEUCRbOgu/7uZbSmVKFi5ZUA2JSDwljyEmkFTsB
+	9pYxz3B1gMO5P46zjf+V0YW7FAxyr4jSU/kjJPvY+RW92UcqAiazJbxaIH5i5JgF
+	du2xiVUsvLVpnenAvb4SzGsIEmo6PWEWA5f/4KbibZYgE5NUmkQwyavxwLauRKHA
+	jJqkJQCu9PxTWf9NLDcZ4NmfBZU1sAtpMiMUWy4qnVI+JmS2Y8LaA2msLKG1OrNh
+	VQVTQutTasn5qebBT0kr+Y2iCUi8RGR5OJjKmakMfOB6r7HTg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:message-id
+	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1726888465; x=1726974865; bh=PnRuJsut7rBR5NjmMpKD/vSSKLif7oZAlNs
+	kIUa76/8=; b=knBlsNWNlw8iR3Hj2X0Z993EgQeOu3AdobbwkLHYCUFuObjWQYQ
+	ydlgLCNABp3iY7NcYxs5jS8SjKx7vHHqgi+1cwRjjXN4FGNzfabY98P5BkUgffQF
+	ROpQ6nksmuD0UDx/1yaUS20QF82bSODRrbY8+cnD1Gq1WyBzuDwlvoeLYBA8uX7E
+	nknHY53UjEapzSdQcVGfP6G5Zzj5Ov1ijhOh7/AZs9KTQVyTSgBzudb+Mx9eis7J
+	uwfboLLtSaZ1aEaUdFksJz23MUxnfrwjc7zYNmNjwtYaYJ7X2fRugMobDotCptIE
+	yU/g+PVXjwNTkj8mVz4pczv6kfuvnS1CqqA==
+X-ME-Sender: <xms:ETruZvgwfg8kSSZNL_FtLKSfhmT5qEIIKhDT6Rs83yJOrNwvyn4ovw>
+    <xme:ETruZsDFT3W3bKs3BuiErbxM6VHYnxIvrquiweYUc_aXbAcAHZplCTHPg8xRYJMRH
+    8xsmfCYmqdbjeRHeJY>
+X-ME-Received: <xmr:ETruZvEKAmPINUckS_-yZE26dpd_9t00aFYL47ensnrm5bGUG1lpuab5_oFLOa_ZTkntuDfY7XXhQ787hVMMqKpEEHCUITBnnLI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudelgedgieekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvve
+    fukfggtggusehttdertddttddvnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohht
+    ohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtth
+    gvrhhnpeetfeeiteefveegvdfggeffheetleejkeekleeugeffffdtgfdtteetkeevvddv
+    gfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggt
+    hhhirdhjphdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepthhorhhvrghlughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgt
+    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurhgtvghf
+    ohhrghgvrdhnvghtpdhrtghpthhtohepthhifigrihesshhushgvrdguvg
+X-ME-Proxy: <xmx:ETruZsSawlZhKz33BURx1OpMejv16aCI3_-eBFAQb2zj2Ds77Mdi3g>
+    <xmx:ETruZszB26j7J7jHk6VTztUh0VKomqyWnu_yWmfoxSyu_icUzhB-XQ>
+    <xmx:ETruZi5opWaUtA0T6SOQe6J5jUFogB-uBIoVfX3IHegFnk6dgaZUhQ>
+    <xmx:ETruZhxBDLFvTHgbJcktmCa_N2goIjLspaYrtc0x6NC6rQEVoxKffw>
+    <xmx:ETruZmtXApEmfMDqil68BazWJW0Ec5jDa89YXbvyvf5-_hgtWTNwXfEV>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 20 Sep 2024 23:14:23 -0400 (EDT)
+Date: Sat, 21 Sep 2024 12:14:21 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
+	tiwai@suse.de
+Subject: [GIT PULL] firewire updates for v6.12
+Message-ID: <20240921031421.GA227826@workstation.local>
+Mail-Followup-To: torvalds@linux-foundation.org,
+	linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
+	tiwai@suse.de
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/1] Add KUnit tests for llist
-To: Shuah Khan <skhan@linuxfoundation.org>, David Gow <davidgow@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
- n@nfraprado.net, andrealmeid@riseup.net, vinicius@nukelet.com,
- diego.daniel.professional@gmail.com
-References: <20240917005116.304090-1-arturacb@gmail.com>
- <bd5eb792-124f-4eaa-9ff9-a99765d1ef73@linuxfoundation.org>
- <CABVgOSmNcmnRCn5Q05U1wBebSGTM=OdUXuT7SA-poHXUgKubaQ@mail.gmail.com>
- <f641378c-e729-4c5d-bf55-24a7fc96b623@linuxfoundation.org>
-Content-Language: en-US
-From: Artur Alves Cavalcante de Barros <arturacb@gmail.com>
-In-Reply-To: <f641378c-e729-4c5d-bf55-24a7fc96b623@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 9/20/24 12:10 PM, Shuah Khan wrote:
-> On 9/20/24 01:10, David Gow wrote:
->> On Fri, 20 Sept 2024 at 00:01, Shuah Khan <skhan@linuxfoundation.org> 
->> wrote:
->>>
->>> On 9/16/24 18:51, Artur Alves wrote:
->>>> Hi all,
->>>>
->>>> This is part of a hackathon organized by LKCAMP[1], focused on writing
->>>> tests using KUnit. We reached out a while ago asking for advice on what
->>>> would be a useful contribution[2] and ended up choosing data structures
->>>> that did not yet have tests.
->>>>
->>>> This patch adds tests for the llist data structure, defined in
->>>> include/linux/llist.h, and is inspired by the KUnit tests for the 
->>>> doubly
->>>> linked list in lib/list-test.c[3].
->>>>
->>>> It is important to note that this patch depends on the patch referenced
->>>> in [4], as it utilizes the newly created lib/tests/ subdirectory.
->>>>
->>>> [1] https://lkcamp.dev/about/
->>>> [2] https://lore.kernel.org/all/Zktnt7rjKryTh9-N@arch/
->>>> [3] https://elixir.bootlin.com/linux/latest/source/lib/list-test.c
->>>> [4] https://lore.kernel.org/all/20240720181025.work.002- 
->>>> kees@kernel.org/
->>>>
->>>> ---
->>>> Changes in v3:
->>>>       - Resolved checkpatch warnings:
->>>>           - Renamed tests for macros starting with 'for_each'
->>>
->>> Shouldn't this a separate patch to make it easy to review?
->>>
->>
->> I think that, if this were renaming these in an already existing test
->> (like the confusingly similar list test), then yes. But since it's
->> only a change from v2, I think we're okay.
->>
->>>>           - Removed link from commit message
->>>>       - Replaced hardcoded constants with ENTRIES_SIZE
->>>
->>> Shouldn't this a separate patch to make it easy to review?
->>
->> Again, if we want to change this in other tests (list, hlist) we
->> should split it into a separate patch, but I think it's okay for llist
->> to go in with these already cleaned up.
->>
->>>
->>>>       - Updated initialization of llist_node array
->>>>       - Fixed typos
->>>>       - Update Kconfig.debug message for llist_kunit
->>>
->>> Are these changes to existing code or warnings on your added code?
->>
->> I think these are all changes to the added code since v2. Artur, is 
->> that right?
->>
->>>>
->>>> Changes in v2:
->>>>       - Add MODULE_DESCRIPTION()
->>>>       - Move the tests from lib/llist_kunit.c to lib/tests/ 
->>>> llist_kunit.c
->>>>       - Change the license from "GPL v2" to "GPL"
->>>>
->>>> Artur Alves (1):
->>>>     lib/llist_kunit.c: add KUnit tests for llist
->>>>
->>>>    lib/Kconfig.debug       |  11 ++
->>>>    lib/tests/Makefile      |   1 +
->>>>    lib/tests/llist_kunit.c | 358 +++++++++++++++++++++++++++++++++++ 
->>>> +++++
->>>>    3 files changed, 370 insertions(+)
->>>>    create mode 100644 lib/tests/llist_kunit.c
->>>>
->>>
->>> You are combining lot of changes in one single patch. Each change as 
->>> a separate
->>> patch will help reviewers.
->>>
->>> Adding new test should be a separate patch.
->>>
->>> - renaming as a separate patch
->>>
->>
->> I think given that these are just changes between patch versions, not
->> renaming/modifying already committed code, that this is okay to go in
->> as one patch?
->>
->> The actual patch is only doing one thing: adding a test suite for the
->> llist structure. I don't see the point in committing a version of it
->> only to immediately rename things and clean bits up separately in this
->> case.
-> 
-> I do think it will help to separate the renaming and adding a new test.
-> It makes it easier to follow.
-> 
-> thanks,
-> -- Shuah
-> 
+Hi Linus,
 
-Hi, Shuah!
+Please pull FireWire subsystem updates for v6.11.
 
-The renaming is in the test suite that I'm adding, as suggested by Rae 
-Moar[1]. I'm not modifying any existing code; all my changes are in the 
-new code that I'm adding.
+This updates includes a significant change to the processing context for
+isochronous packets. Hopefully, many developers will test it before the
+official release.
 
-I'm sorry, but it isn't clear to me. Could you please provide an example 
-of what you're suggesting?
+I hope you have a pleasant trip ;)
 
-Would you prefer that I undo the renaming, submit the patch with the 
-checkpatch warnings, and then follow up with a new patch to rename the 
-test cases and resolve the warnings?
 
-[1]
-https://lore.kernel.org/all/20240903214027.77533-1-arturacb@gmail.com/T/#mc29a53b120d2f8589f8bd882ab972d15c8a3d202
+The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
 
-Thanks for your time,
-- Artur
+  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git tags/firewire-updates-6.12
+
+for you to fetch changes up to f1cba5212e252243a539e079813bc96fbf53e241:
+
+  firewire: core: rename cause flag of tracepoints event (2024-09-12 22:30:38 +0900)
+
+----------------------------------------------------------------
+firewire updates for v6.12
+
+The batch of changes includes the followwing:
+
+- Replacing tasklet with usual workqueue for isochronous context
+- Replacing IDR with XArray
+- Utilizing guard macro where possible
+- Printing deprecation warning when enabling debug parameter of
+  firewire-ohci module
+
+Additionally, it includes a single patch for sound subsystem which the
+subsystem maintainer acked:
+
+- Switching to nonatomic PCM operation
+
+In FireWire subsystem, tasklet has been used as the bottom half of 1394
+OHCi hardIRQ so long. In the recent kernel updates, BH workqueue has
+been available, and some developers have proposed replacing tasklet with
+BH workqueue. While it is fortunate that developers are still considering
+the legacy subsystem, a simple replacement is not necessarily suitable.
+
+As a first step towards dropping tasklet, I've investigated the
+feasibility for 1394 OHCI isochronous context, and concluded that usual
+workqueue is available. In the context, the batch of packets is processed
+in the specific queue, thus the timing jitter caused by task scheduling is
+not so critical. Additionally, DMA transmission can be scheduled
+per-packet basis, therefore the context can be sleep between the operation
+of transmissions. Furthermore, in-kernel protocol implementation involves
+some CPU-bound tasks, which can sometimes consumes CPU time so long. These
+characteristics suggest that usual workqueue is suitable, through BH
+workqueues are not.
+
+The replacement with usual workqueue allows unit drivers to process the
+content of packets in non-atomic context. It brings some reliefs to some
+drivers in sound subsystem that spin-lock is not mandatory anymore during
+isochronous packet processing.
+
+----------------------------------------------------------------
+Takashi Sakamoto (55):
+      firewire: ohci: use TCODE_LINK_INTERNAL consistently
+      firewire: ohci: minor code refactoring to localize text table
+      firewire: core: use common helper function to serialize phy configuration packet
+      firewire: core: utilize kref to maintain fw_node with reference counting
+      firewire: ohci: add static inline functions to serialize/deserialize data of AT DMA
+      firewire: ohci: use static inline functions to serialize data of AT DMA
+      firewire: ohci: add static inline functions to serialize/deserialize data of IT DMA
+      firewire: ohci: use static inline functions to serialize data of IT DMA
+      firewire: core: use guard macro to maintain static packet data for phy configuration
+      firewire: core: use guard macro to maintain the list of card
+      firewire: core: use guard macro to maintain the list of cdev clients
+      firewire: ohci: use guard macro to serialize accesses to phy registers
+      firewire: core: use guard macro to maintain RCU scope for transaction address handler
+      firewire: core: use guard macro to access to IDR for fw_device
+      firewire: core: use guard macro to maintain the list of address handler for transaction
+      firewire: core: use guard macro to disable local IRQ
+      firewire: core: use guard macro to maintain list of events for userspace clients
+      firewire: core: use guard macro to maintain IDR of isochronous resources for userspace clients
+      firewire: core: use guard macro to maintain isochronous context for userspace client
+      firewire: core: use guard macro to maintain list of receivers for phy configuration packets
+      firewire: core: use guard macro to maintain list of asynchronous transaction
+      firewire: core: use guard macro to maintain properties of fw_card
+      firewire: ohci: use guard macro to maintain bus time
+      firewire: ohci: use guard macro to maintain image of configuration ROM
+      firewire: ohci: use guard macro to serialize operations for isochronous contexts
+      firewire: core: correct range of block for case of switch statement
+      firewire: core: replace IDR with XArray to maintain fw_device
+      firewire: core: use lock in Xarray instead of local R/W semaphore
+      firewire: core: minor code refactoring to release client resource
+      firewire: core: add helper functions to convert to parent resource structure
+      firewire: core: add helper function to detect data of iso resource structure
+      firewire: core: code refactoring to use idr_for_each_entry() macro instead of idr_for_each() function
+      firewire: core: use xarray instead of idr to maintain client resource
+      firewire: ohci: use helper macro for compiler aligned attribute
+      firewire: ohci: remove unused wrapper macro for dev_info()
+      firewire: core/ohci: minor refactoring for computation of configuration ROM size
+      firewire: ohci: fix error path to detect initiated reset in TI TSB41BA3D phy
+      firewire: core: update fw_device outside of device_find_child()
+      firewire: ohci: deprecate debug parameter
+      firewire: ohci: obsolete direct usage of printk_ratelimit()
+      firewire: core: allocate workqueue to handle isochronous contexts in card
+      firewire: core: add local API to queue work item to workqueue specific to isochronous contexts
+      firewire: ohci: operate IT/IR events in sleepable work process instead of tasklet softIRQ
+      firewire: core: non-atomic memory allocation for isochronous event to user client
+      ALSA: firewire: use nonatomic PCM operation
+      firewire: core: use WARN_ON_ONCE() to avoid superfluous dumps
+      firewire: core: expose kernel API to schedule work item to process isochronous context
+      firewire: core: fulfill documentation of fw_iso_context_flush_completions()
+      firewire: core: move workqueue handler from 1394 OHCI driver to core function
+      firewire: core: use mutex to coordinate concurrent calls to flush completions
+      Revert "firewire: core: use mutex to coordinate concurrent calls to flush completions"
+      Revert "firewire: core: move workqueue handler from 1394 OHCI driver to core function"
+      firewire: core: add helper function to retire descriptors
+      firewire: core: update documentation of kernel APIs for flushing completions
+      firewire: core: rename cause flag of tracepoints event
+
+ Documentation/driver-api/firewire.rst    |   2 +
+ drivers/firewire/core-card.c             |  91 ++++++++++++++++++-------------
+ drivers/firewire/core-cdev.c             | 400 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------------------------------------------------------------------
+ drivers/firewire/core-device.c           | 202 +++++++++++++++++++++++++++++++-------------------------------------
+ drivers/firewire/core-iso.c              |  49 +++++++++++++++--
+ drivers/firewire/core-topology.c         |   7 +--
+ drivers/firewire/core-transaction.c      | 151 +++++++++++++++++++++------------------------------
+ drivers/firewire/core.h                  |  28 +++++++---
+ drivers/firewire/ohci-serdes-test.c      |  66 +++++++++++++++++++++++
+ drivers/firewire/ohci.c                  | 574 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------------------------------------------------------------------------
+ drivers/firewire/ohci.h                  | 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/firewire.h                 |  22 ++++++++
+ include/trace/events/firewire.h          |   4 +-
+ sound/firewire/amdtp-stream.c            |  34 +++++++++---
+ sound/firewire/bebob/bebob_pcm.c         |   1 +
+ sound/firewire/dice/dice-pcm.c           |   1 +
+ sound/firewire/digi00x/digi00x-pcm.c     |   1 +
+ sound/firewire/fireface/ff-pcm.c         |   1 +
+ sound/firewire/fireworks/fireworks_pcm.c |   1 +
+ sound/firewire/isight.c                  |   1 +
+ sound/firewire/motu/motu-pcm.c           |   1 +
+ sound/firewire/oxfw/oxfw-pcm.c           |   1 +
+ sound/firewire/tascam/tascam-pcm.c       |   1 +
+ 23 files changed, 1065 insertions(+), 774 deletions(-)
+
+
+Regards
+
+Takashi Sakamoto
 
