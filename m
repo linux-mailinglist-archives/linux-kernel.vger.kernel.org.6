@@ -1,58 +1,83 @@
-Return-Path: <linux-kernel+bounces-334724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49C9A97DB17
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 02:57:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C0EA97DB21
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 03:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B89A6B20E6C
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 00:56:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D48D1C206A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 01:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5423C39;
-	Sat, 21 Sep 2024 00:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFA246BF;
+	Sat, 21 Sep 2024 01:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cm+WOWxG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LbkNmNg0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452CB257D;
-	Sat, 21 Sep 2024 00:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3770164D;
+	Sat, 21 Sep 2024 01:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726880210; cv=none; b=XnVJqlupf2zucFFHFsZPy2lS2K0PwStfUt40SJGJPteSPV6xu9VILNyXsCXm4UkmpAOXVK+DmX5Eq9ZRqj+Cp8kKp9fyawPEyWBgdkGfEYnJx7L6iZgG2WrTYdhVgSnwwNzDAf8bU3dgmtLkWSSVTsj1BSvaltItPpfTM4HJGE8=
+	t=1726881087; cv=none; b=eMBWBB4QFW50rLmok+6qafB6ts3C9BJWhNevzMEprHs2b4ewTe5X2ZNarrHJfQOM56fNt2mkfG/FJXaXCYqwOJhDya3BANSrT85h4gPBCqrEmRNsAvK1mYMGsTUZQQZDCQkPA2Ts/eNF85jXF/w8yM84qZcd6NJYBwsN/DdOLBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726880210; c=relaxed/simple;
-	bh=lDJ009p2D/pUJQr1simWECFgi0I9G+uGt/YBTgsS7uw=;
+	s=arc-20240116; t=1726881087; c=relaxed/simple;
+	bh=knB1T1YQd0DVg/q5DSjwZOV+QhV/i2GJx7TftXT/vMw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xq9pLga8YatkrvTIYAJuapNxE0h+CjLftoxL0KDfV86yzRgKdU4YNkl7yvmMej+WV9I5RVhPAtbUmnric9yqrwZrWbnqdmqXih9/IUj/v4xT6F4J08whj+ZP1kO2xf+uJ1DYHVuz2rrUIhUxRcCgfyD/p26J4GrIxEjTHfPsvNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cm+WOWxG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93A8CC4CEC3;
-	Sat, 21 Sep 2024 00:56:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726880209;
-	bh=lDJ009p2D/pUJQr1simWECFgi0I9G+uGt/YBTgsS7uw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cm+WOWxGpGnZtBTiftR6hnhBsFi3I2Xb5pbMXl9fG8X2/MXb064sRRhBluWl720ep
-	 vNcNn9sQQ84V7L9gXHV1bYmV6utCRgday0dRL9JWCYyvAT3TGkitYxVjRGMpinDXiW
-	 CIXL0H4uCxgVzX21/OdGkFPPmBqRe01xWW0gkA6XRalEfQbDI/QsGwymX8Geyr4QIs
-	 ZF0uWIzR7r3j/TfGcNke4iStZqFELe8GcgOq7zEfktxBIB+YVWxsSMlL/u86r6E0mQ
-	 t7e3PFTC9Sk3MpapiGSdxT8INAjiXM3UbSl5QJ+vUrbUD2P+x80tTt7ycN4CcUlpL4
-	 LY5jIwAP9OCVw==
-Date: Fri, 20 Sep 2024 19:56:48 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Manikandan Muralidharan <manikandan.m@microchip.com>
-Cc: sam@ravnborg.org, tzimmermann@suse.de, dri-devel@lists.freedesktop.org,
-	quic_jesszhan@quicinc.com, thierry.reding@gmail.com,
-	airlied@gmail.com, mripard@kernel.org, conor+dt@kernel.org,
-	maarten.lankhorst@linux.intel.com, krzk+dt@kernel.org,
-	devicetree@vger.kernel.org, neil.armstrong@linaro.org,
-	simona@ffwll.ch, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: display: panel-simple: Document
- support for Microchip AC69T88A
-Message-ID: <172688020813.189327.3194453889234095156.robh@kernel.org>
-References: <20240919091548.430285-1-manikandan.m@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nDT7pQ2B4HmarurpOLta77MCNwytGPsVa3F1N7IMQSlv68lqc1HEdY9KQIRR0qR7f4BtgblbpomiS7ePHdS63dtVTzw0FKvY395Rv5i4AkMEeT76U4bqeocWr7ooaIzya12EBmP+NVtEGNm+qC8YEC5RyUUtLeKGuSb8Mc1ttEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LbkNmNg0; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726881084; x=1758417084;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=knB1T1YQd0DVg/q5DSjwZOV+QhV/i2GJx7TftXT/vMw=;
+  b=LbkNmNg0tNcREXAXTDQWcVblqIuNCQqyv3PBVXWnTLDhVUqsUSiT4jr0
+   LRqsFQwAiDgNkvboPcS+7LfhUlao18vnLBj7/607XlOiLkKZl42uSTGZj
+   zD6HKMldDoQi6AURSxBLOWMfkvWjqTwz9OCHoRe1k6U1uctCFdH3oHwtj
+   0Te6DnemWWsX3Wsv8y3Pfw9rBfCnNGPZB+SmmkMxV/FlSiPbkkwN7cstm
+   LTpUKfQm6DsZWoQW0Gy2bpfcIJ0hiqBU/za/If539ceLLVW/rSHIUufAV
+   xGJUd3H8aEs/jXNjjoJy2cNvyHLeGJxMN2AyWJYOUlvVrfVeHY9z4DqQ6
+   A==;
+X-CSE-ConnectionGUID: dvmS6K6bTVSU9R4uZRjJBQ==
+X-CSE-MsgGUID: 89qJx7rRQKOzOzvKEVAcHg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11201"; a="25776279"
+X-IronPort-AV: E=Sophos;i="6.10,245,1719903600"; 
+   d="scan'208";a="25776279"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2024 18:11:23 -0700
+X-CSE-ConnectionGUID: bPZnKP4qQsG0tk2teks7CA==
+X-CSE-MsgGUID: vVZ0dxTkS3WZEUkcvmAmSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,245,1719903600"; 
+   d="scan'208";a="101325655"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 20 Sep 2024 18:11:20 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sroec-000F0V-0k;
+	Sat, 21 Sep 2024 01:11:18 +0000
+Date: Sat, 21 Sep 2024 09:11:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mariel Tinaco <Mariel.Tinaco@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+	Dimitri Fedrau <dima.fedrau@gmail.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v4 2/2] iio: dac: support the ad8460 Waveform DAC
+Message-ID: <202409210849.cRodncgA-lkp@intel.com>
+References: <20240912095435.18639-3-Mariel.Tinaco@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,23 +86,127 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240919091548.430285-1-manikandan.m@microchip.com>
+In-Reply-To: <20240912095435.18639-3-Mariel.Tinaco@analog.com>
 
+Hi Mariel,
 
-On Thu, 19 Sep 2024 14:45:47 +0530, Manikandan Muralidharan wrote:
-> Add Microchip AC69T88A 5" LVDS interface (800x480) TFT LCD panel
-> compatible string
-> 
-> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
-> ---
-> changes in v2:
-> - Replace microchip,ac69t88a-lvds-panel with
-> microchip,ac69t88a
-> ---
->  .../devicetree/bindings/display/panel/panel-simple.yaml         | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+kernel test robot noticed the following build warnings:
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+[auto build test WARNING on fec496684388685647652ab4213454fbabdab099]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Mariel-Tinaco/dt-bindings-iio-dac-add-docs-for-ad8460/20240912-175718
+base:   fec496684388685647652ab4213454fbabdab099
+patch link:    https://lore.kernel.org/r/20240912095435.18639-3-Mariel.Tinaco%40analog.com
+patch subject: [PATCH v4 2/2] iio: dac: support the ad8460 Waveform DAC
+config: sparc-randconfig-r071-20240921 (https://download.01.org/0day-ci/archive/20240921/202409210849.cRodncgA-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.1.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409210849.cRodncgA-lkp@intel.com/
+
+smatch warnings:
+drivers/iio/dac/ad8460.c:545 ad8460_write_event_value() warn: unsigned 'fault' is never less than zero.
+drivers/iio/dac/ad8460.c:545 ad8460_write_event_value() warn: error code type promoted to positive: 'fault'
+drivers/iio/dac/ad8460.c:567 ad8460_read_event_value() warn: unsigned 'fault' is never less than zero.
+drivers/iio/dac/ad8460.c:567 ad8460_read_event_value() warn: error code type promoted to positive: 'fault'
+drivers/iio/dac/ad8460.c:585 ad8460_write_event_config() warn: unsigned 'fault' is never less than zero.
+drivers/iio/dac/ad8460.c:585 ad8460_write_event_config() warn: error code type promoted to positive: 'fault'
+drivers/iio/dac/ad8460.c:605 ad8460_read_event_config() warn: unsigned 'fault' is never less than zero.
+drivers/iio/dac/ad8460.c:605 ad8460_read_event_config() warn: error code type promoted to positive: 'fault'
+
+vim +/fault +545 drivers/iio/dac/ad8460.c
+
+   528	
+   529	static int ad8460_write_event_value(struct iio_dev *indio_dev,
+   530					    const struct iio_chan_spec *chan,
+   531					    enum iio_event_type type,
+   532					    enum iio_event_direction dir,
+   533					    enum iio_event_info info, int val, int val2)
+   534	{
+   535		struct ad8460_state *state = iio_priv(indio_dev);
+   536		unsigned int fault;
+   537	
+   538		if (type != IIO_EV_TYPE_THRESH)
+   539			return -EINVAL;
+   540	
+   541		if (info != IIO_EV_INFO_VALUE)
+   542			return -EINVAL;
+   543	
+   544		fault = ad8460_select_fault_type(chan->type, dir);
+ > 545		if (fault < 0)
+   546			return fault;
+   547	
+   548		return ad8460_set_fault_threshold(state, fault, val);
+   549	}
+   550	
+   551	static int ad8460_read_event_value(struct iio_dev *indio_dev,
+   552					   const struct iio_chan_spec *chan,
+   553					   enum iio_event_type type,
+   554					   enum iio_event_direction dir,
+   555					   enum iio_event_info info, int *val, int *val2)
+   556	{
+   557		struct ad8460_state *state = iio_priv(indio_dev);
+   558		unsigned int fault;
+   559	
+   560		if (type != IIO_EV_TYPE_THRESH)
+   561			return -EINVAL;
+   562	
+   563		if (info != IIO_EV_INFO_VALUE)
+   564			return -EINVAL;
+   565	
+   566		fault = ad8460_select_fault_type(chan->type, dir);
+ > 567		if (fault < 0)
+   568			return fault;
+   569	
+   570		return ad8460_get_fault_threshold(state, fault, val);
+   571	}
+   572	
+   573	static int ad8460_write_event_config(struct iio_dev *indio_dev,
+   574					     const struct iio_chan_spec *chan,
+   575					     enum iio_event_type type,
+   576					     enum iio_event_direction dir, int val)
+   577	{
+   578		struct ad8460_state *state = iio_priv(indio_dev);
+   579		unsigned int fault;
+   580	
+   581		if (type != IIO_EV_TYPE_THRESH)
+   582			return -EINVAL;
+   583	
+   584		fault = ad8460_select_fault_type(chan->type, dir);
+ > 585		if (fault < 0)
+   586			return fault;
+   587	
+   588		return ad8460_set_fault_threshold_en(state, fault, val);
+   589	}
+   590	
+   591	static int ad8460_read_event_config(struct iio_dev *indio_dev,
+   592					    const struct iio_chan_spec *chan,
+   593					    enum iio_event_type type,
+   594					    enum iio_event_direction dir)
+   595	{
+   596		struct ad8460_state *state = iio_priv(indio_dev);
+   597		unsigned int fault;
+   598		bool en;
+   599		int ret;
+   600	
+   601		if (type != IIO_EV_TYPE_THRESH)
+   602			return -EINVAL;
+   603	
+   604		fault = ad8460_select_fault_type(chan->type, dir);
+ > 605		if (fault < 0)
+   606			return fault;
+   607	
+   608		ret = ad8460_get_fault_threshold_en(state, fault, &en);
+   609		if (ret)
+   610			return ret;
+   611	
+   612		return en;
+   613	}
+   614	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
