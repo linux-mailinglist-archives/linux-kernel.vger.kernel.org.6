@@ -1,268 +1,258 @@
-Return-Path: <linux-kernel+bounces-334792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BEB597DC32
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:19:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE5A897DC33
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 10:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DAF81F21CC9
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:19:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A01E1C21010
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 08:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE03161FCF;
-	Sat, 21 Sep 2024 08:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Tg9Hkdgv"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B72D1547CC;
+	Sat, 21 Sep 2024 08:21:28 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE7914293
-	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 08:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C5661FCF
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 08:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726906776; cv=none; b=BnsSa8Jcbu35KLoWGRSshQGH4V/njmXn/RgZX5ri69GIBmVEW0yO/dAst/+GUhma8g5p0Kkc/Ep9y2hnXPw1lWZqWeaoBzScSl5FZSvN2EtO3gCkQ94Lk+MBGXeQT9/nPZwVV4913MaXr3evZmypbKRM4h1XlQZbdfxc/v/08/Y=
+	t=1726906887; cv=none; b=jRr1vKxaIjqit3tFSDtvrwxsDJguAWKCAFj+1BuJT0nN4gLo1r0sBS6pVw/NMFp+K7LvRypcmDAQNensouJIDC+8Xcw+HPmE2umgr1YtMdt1UbsO8/LebFpiD8LiNz2Qc7yczLsBNhkw6gbIqQs0XP1PsGn7yhVgPDc9d8lLCeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726906776; c=relaxed/simple;
-	bh=Uh3pUleVwnOCeT4tby6kuWJ42ZkB1YImOcA5MLQA58c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FmwiW9c9I5+IrpBN0b2ViuawfqcDgACGCxmrdW3WL8UWkQ2YnUxc5S4tLsEWov4p5PgXsXTGa5NM5IlEvLtvk/cxtWKov2CXjNJUK84CY7g3G/q84Q+bucVz4ZtaZ8xllmE4WFcydBDn9fQN6WFQ5mQG9Phy7dA4HOf4bldexVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Tg9Hkdgv; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <8af383e9-d90d-492d-81e5-91d8edfe1508@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726906771;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cgodr5AMxP6TMSfm1kF9swOspK+DBO+lozScTDn6Nwo=;
-	b=Tg9HkdgvwgorOjNwtbeB4xYmrKrs94noPsAhFHF2wLkR0XR9uWdIyc/WlM88eoqvAXJpXP
-	qBM9CT9SMHT8rGKWmGiYB7bNMIk8DElqC/297JPTyR8kT7D+EpZBWbsTL55x5FIBDl1NO6
-	s/QbNaE4LGpFqCOPwcRgXxg/0h+vWvk=
-Date: Sat, 21 Sep 2024 16:19:01 +0800
+	s=arc-20240116; t=1726906887; c=relaxed/simple;
+	bh=WrDIk/EkBg2f5FsBP8qx7xoEVByyRDTvzpJ6Ec0Ag6o=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IDdfQoiB4kmjno5X653whP0xVj/p2fnCPJiT+zFg2Bmy412dg+ztPGnaMukU36fsMF3dW4kUe2H2GAchG8Dty8Wj5IBuVDkXhn64IT8Um8nh3YR2jSWkzbeSc44WDvpckFb9Nr9y0aOGG387RFU4WUGrDIHSb+qVQ5CqG6VhP/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82aa499f938so301978039f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 01:21:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726906885; x=1727511685;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L38a55/awUqV6LuG1/5e9aAyTS3dm4s4GATY1Z+cqAI=;
+        b=jmGEaqin0b/b3Hn8hC8r9NnnrfrFPej1sKpfsGgIf+AU05FMoZP2n/TMQ3jF2wlAj5
+         4sz6uiaSEnUQkJOBODPcr+Tj1qYRSB1kmCqNAZep3xgNfrXFIeYNgcz6wEIr+rQFGxFP
+         mBLRl7+DW/gO49URtObnHy/wvXnYS7dg+f0MuOOTxpB2LwYfAiGJI7BvBM6fYY+211m+
+         MDMahAxoqpeqyOOL8WtCEgdVe1l9EdgYa2i35oLJuGvZUJpaF4mf8gTUoEUvyWLWWebc
+         Tmt6sDUoANbn2hZKdiGCJuC4OwrhdarPwYCUDPOo6CMw8mGCOP9mWKYgXdbvwFS+oTQ+
+         r7JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUe1iynm1VtswQmLfVtRgOa3B4kKXa72M9DCjm5ddC63ODb8Q6PXwwqCiXi8N1HnQANBwCtOIMZnhhUs6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOIvS7+Kcs+zZkQ3SckghlpsFEFCfJNLSsjg2rttBY+9vSnFaQ
+	uVnjZxFQXkrMiuG8QEt/7r+CBRm8nrgQTLYn/XsHxoix8MsnBucNlMnWy7v+oPym5kdACjzylXQ
+	oOlgxb6mvDixc/CxTH5WKeBHod+sQpN34gq8EXLrFkFVJOfoCqyDVvKg=
+X-Google-Smtp-Source: AGHT+IHnmaFe0AZkBar3w/qV/JlnyqH2VcGfTpjY5iq1L2ifBZL78+GKTJiKkuNL9bT4X7WUVgp04exexGayvxz1or0uLI2FOhw5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 2/5] sysctl: support encoding values directly in the
- table entry
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-Cc: "Eric W . Biederman" <ebiederm@xmission.com>,
- Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
- Joel Granados <j.granados@samsung.com>,
- Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org,
- Dave Young <dyoung@redhat.com>
-References: <cover.1726365007.git.wen.yang@linux.dev>
- <95ca2bfb46a3aaef026623cd1a08c3c39366d5df.1726365007.git.wen.yang@linux.dev>
- <37ce9602-185d-4e8e-98d3-1097eb1f9ee2@t-8ch.de>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Wen Yang <wen.yang@linux.dev>
-In-Reply-To: <37ce9602-185d-4e8e-98d3-1097eb1f9ee2@t-8ch.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:b2a:b0:39f:5def:a23d with SMTP id
+ e9e14a558f8ab-3a0bef529bdmr65625185ab.5.1726906884784; Sat, 21 Sep 2024
+ 01:21:24 -0700 (PDT)
+Date: Sat, 21 Sep 2024 01:21:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66ee8204.050a0220.3195df.0041.GAE@google.com>
+Subject: [syzbot] [bcachefs?] INFO: task hung in bch2_journal_reclaim_thread (2)
+From: syzbot <syzbot+820dc3b465c69f766a57@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    1868f9d0260e Merge tag 'for-linux-6.12-ofs1' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12f6ff00580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d29c10b70cc6fdb8
+dashboard link: https://syzkaller.appspot.com/bug?extid=820dc3b465c69f766a57
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/26c691e641b7/disk-1868f9d0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dfe97fd5f2eb/vmlinux-1868f9d0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4a385cd95bd6/bzImage-1868f9d0.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+820dc3b465c69f766a57@syzkaller.appspotmail.com
+
+INFO: task bch-reclaim/loo:6887 blocked for more than 143 seconds.
+      Not tainted 6.11.0-syzkaller-07462-g1868f9d0260e #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:bch-reclaim/loo state:D stack:25080 pid:6887  tgid:6887  ppid:2      flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5264 [inline]
+ __schedule+0x1843/0x4b00 kernel/sched/core.c:6607
+ __schedule_loop kernel/sched/core.c:6684 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6699
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6756
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+ bch2_journal_reclaim_thread+0x167/0x560 fs/bcachefs/journal_reclaim.c:738
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Showing all locks held in the system:
+2 locks held by kworker/u8:0/11:
+ #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc90000107d00 ((reaper_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc90000107d00 ((reaper_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+3 locks held by kworker/u8:1/12:
+ #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc90000117d00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc90000117d00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: linkwatch_event+0xe/0x60 net/core/link_watch.c:276
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e9389e0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8e9389e0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8e9389e0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6701
+3 locks held by kworker/u8:4/66:
+ #0: ffff88802dfb1948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff88802dfb1948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc900020bfd00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc900020bfd00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_dad_work+0xd0/0x16f0 net/ipv6/addrconf.c:4196
+5 locks held by kworker/u8:8/2941:
+ #0: ffff88801baeb148 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ #0: ffff88801baeb148 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+ #1: ffffc90009b17d00 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
+ #1: ffffc90009b17d00 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
+ #2: ffffffff8fcaa8d0 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:580
+ #3: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: default_device_exit_batch+0xe9/0xaa0 net/core/dev.c:11930
+ #4: ffffffff8e93df78 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:297 [inline]
+ #4: ffffffff8e93df78 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x381/0x830 kernel/rcu/tree_exp.h:976
+2 locks held by dhcpcd/4884:
+ #0: ffff88806f6926c8 (nlk_cb_mutex-ROUTE){+.+.}-{3:3}, at: __netlink_dump_start+0x119/0x790 net/netlink/af_netlink.c:2404
+ #1: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #1: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_dumpit+0x99/0x200 net/core/rtnetlink.c:6505
+2 locks held by getty/4974:
+ #0: ffff88814bd6a0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900031232f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
+2 locks held by kworker/u8:10/6132:
+5 locks held by syz-executor/6609:
+1 lock held by bch-reclaim/loo/6887:
+ #0: ffff88806664af28 (&j->reclaim_lock){+.+.}-{3:3}, at: bch2_journal_reclaim_thread+0x167/0x560 fs/bcachefs/journal_reclaim.c:738
+1 lock held by syz.2.199/7144:
+ #0: ffff88802425c0e0 (&type->s_umount_key#108){++++}-{3:3}, at: __super_lock fs/super.c:58 [inline]
+ #0: ffff88802425c0e0 (&type->s_umount_key#108){++++}-{3:3}, at: super_lock+0x27c/0x400 fs/super.c:120
+1 lock held by syz.4.224/7389:
+ #0: ffff88802425c0e0 (&type->s_umount_key#108){++++}-{3:3}, at: __super_lock fs/super.c:56 [inline]
+ #0: ffff88802425c0e0 (&type->s_umount_key#108){++++}-{3:3}, at: super_lock+0x196/0x400 fs/super.c:120
+1 lock held by syz.2.252/7644:
+ #0: ffff88802425c0e0 (&type->s_umount_key#108){++++}-{3:3}, at: __super_lock fs/super.c:58 [inline]
+ #0: ffff88802425c0e0 (&type->s_umount_key#108){++++}-{3:3}, at: super_lock+0x27c/0x400 fs/super.c:120
+1 lock held by syz-executor/7707:
+1 lock held by syz-executor/8018:
+ #0: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+1 lock held by syz-executor/8169:
+ #0: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+1 lock held by syz-executor/8186:
+ #0: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
+ #0: ffffffff8fcb73c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.11.0-syzkaller-07462-g1868f9d0260e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xff4/0x1040 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 7707 Comm: syz-executor Not tainted 6.11.0-syzkaller-07462-g1868f9d0260e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+RIP: 0010:hlock_class kernel/locking/lockdep.c:228 [inline]
+RIP: 0010:check_wait_context kernel/locking/lockdep.c:4823 [inline]
+RIP: 0010:__lock_acquire+0x4dc/0x2050 kernel/locking/lockdep.c:5149
+Code: 13 00 00 44 89 3b 44 89 c3 48 89 d8 48 c1 e8 06 48 8d 3c c5 80 97 21 94 be 08 00 00 00 e8 ec f3 88 00 48 0f a3 1d a4 62 b1 12 <73> 27 48 69 c3 c8 00 00 00 48 8d 98 80 16 be 93 48 ba 00 00 00 00
+RSP: 0018:ffffc900033cf510 EFLAGS: 00000057
+RAX: 0000000000000001 RBX: 0000000000000022 RCX: ffffffff817034d4
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff94219780
+RBP: 0000000000000000 R08: ffffffff94219787 R09: 1ffffffff28432f0
+R10: dffffc0000000000 R11: fffffbfff28432f1 R12: ffff88802e8c5a00
+R13: 0000000000000022 R14: 0000000000020022 R15: 0000000000000000
+FS:  0000555586251500(0000) GS:ffff8880b8900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f26c7f08178 CR3: 000000004783c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+ rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ __d_lookup+0x81/0x7b0 fs/dcache.c:2321
+ lookup_fast+0x74/0x4a0 fs/namei.c:1690
+ walk_component fs/namei.c:2049 [inline]
+ link_path_walk+0x672/0xea0 fs/namei.c:2418
+ path_openat+0x266/0x3590 fs/namei.c:3929
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_openat fs/open.c:1446 [inline]
+ __se_sys_openat fs/open.c:1441 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8b6f37c890
+Code: 48 89 44 24 20 75 93 44 89 54 24 0c e8 19 8f 02 00 44 8b 54 24 0c 89 da 48 89 ee 41 89 c0 bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 77 38 44 89 c7 89 44 24 0c e8 6c 8f 02 00 8b 44
+RSP: 002b:00007fff27a11b50 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f8b6f37c890
+RDX: 0000000000000000 RSI: 00007fff27a11c80 RDI: 00000000ffffff9c
+RBP: 00007fff27a11c80 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000293 R12: 00007fff27a12d00
+R13: 00007f8b6f3f0a14 R14: 00005555862514a8 R15: 0000000000000005
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 2024/9/15 14:25, Thomas Weißschuh wrote:
-> On 2024-09-15 10:08:28+0000, Wen Yang wrote:
->> Eric points out: "by turning .extra1 and .extra2 into longs instead of
->> keeping them as pointers and needing constants to be pointed at somewhere
->> .. The only people I can see who find a significant benefit by
->> consolidating all of the constants into one place are people who know how
->> to stomp kernel memory."
->>
->> This patch supports encoding values directly in table entries through the
->> following work:
->> - extra1/extra2 and min/max are placed in one union to ensure that the
->>    previous code is not broken, then we have time to gradually remove these
->>    unnecessary extra1/extra2;
-> 
-> The union shouldn't be necessary for backward compatibility.
-> It could just as well be a struct.
-> The union however saves some space.
-> 
->> - two bits were used to represent the information of the above union:
->>    SYSCTL_FLAG_MIN: 0, using extra1. 1, using min.
->>    SYSCTL_FLAG_MAX: 0, using extra2. 1, using max.
->> - since the proc file's mode field only uses 9 bits(777), we could use the
->>    additional two bits(S_ISUID and S_ISGID) to temporarily represent
->>    SYSCTL_FLAG_MIN and SYSCTL_FLAG_MAX.
->> - added some helper macros.
->>
->> By introducing long min/max to replace void * extra1/extra2 in most cases,
->> unnecessary variables can be removed to save memory and avoid attacks.
->>
->> Signed-off-by: Wen Yang <wen.yang@linux.dev>
->> Cc: Luis Chamberlain <mcgrof@kernel.org>
->> Cc: Kees Cook <keescook@chromium.org>
->> Cc: Joel Granados <j.granados@samsung.com>
->> Cc: Eric W. Biederman <ebiederm@xmission.com>
->> Cc: Christian Brauner <brauner@kernel.org>
->> Cc: Dave Young <dyoung@redhat.com>
->> Cc: linux-kernel@vger.kernel.org
->> ---
->>   fs/proc/proc_sysctl.c  |  8 +++--
->>   include/linux/sysctl.h | 71 ++++++++++++++++++++++++++++++++++++------
->>   2 files changed, 67 insertions(+), 12 deletions(-)
->>
->> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
->> index 90c99eb1abf6..e88d1dca2a80 100644
->> --- a/fs/proc/proc_sysctl.c
->> +++ b/fs/proc/proc_sysctl.c
->> @@ -848,8 +848,11 @@ static int proc_sys_getattr(struct mnt_idmap *idmap,
->>   		return PTR_ERR(head);
->>   
->>   	generic_fillattr(&nop_mnt_idmap, request_mask, inode, stat);
->> -	if (table)
->> +	if (table) {
->>   		stat->mode = (stat->mode & S_IFMT) | table->mode;
->> +		stat->mode &= ~SYSCTL_FLAG_MIN;
->> +		stat->mode &= ~SYSCTL_FLAG_MAX;
->> +	}
->>   
->>   	sysctl_head_finish(head);
->>   	return 0;
->> @@ -1163,7 +1166,8 @@ static int sysctl_check_table(const char *path, struct ctl_table_header *header)
->>   		if (!entry->proc_handler)
->>   			err |= sysctl_err(path, entry, "No proc_handler");
->>   
->> -		if ((entry->mode & (S_IRUGO|S_IWUGO)) != entry->mode)
->> +		if ((entry->mode & (S_IRUGO|S_IWUGO|SYSCTL_FLAG_MIN|SYSCTL_FLAG_MAX))
->> +		    != entry->mode)
->>   			err |= sysctl_err(path, entry, "bogus .mode 0%o",
->>   				entry->mode);
->>   	}
->> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
->> index 20e3914ec53f..8e27e8350ca8 100644
->> --- a/include/linux/sysctl.h
->> +++ b/include/linux/sysctl.h
->> @@ -28,6 +28,7 @@
->>   #include <linux/rbtree.h>
->>   #include <linux/uidgid.h>
->>   #include <uapi/linux/sysctl.h>
->> +#include <uapi/linux/stat.h>
->>   
->>   /* For the /proc/sys support */
->>   struct completion;
->> @@ -61,6 +62,37 @@ extern const int sysctl_vals[];
->>   
->>   extern const unsigned long sysctl_long_vals[];
->>   
->> +#define SYSCTL_NUM_ZERO                         (0L)
->> +#define SYSCTL_NUM_ONE                          (1L)
->> +#define SYSCTL_NUM_TWO                          (2L)
->> +#define SYSCTL_NUM_THREE                        (3L)
->> +#define SYSCTL_NUM_FOUR                         (4L)
->> +#define SYSCTL_NUM_FIVE                         (5L)
->> +#define SYSCTL_NUM_SIX                          (6L)
->> +#define SYSCTL_NUM_SEVEN                        (7L)
->> +#define SYSCTL_NUM_EIGHT                        (8L)
->> +#define SYSCTL_NUM_NINE                         (9L)
->> +#define SYSCTL_NUM_TEN                          (10L)
->> +#define SYSCTL_NUM_SIXTEEN                      (16L)
->> +#define SYSCTL_NUM_THIRTY_ONE                   (31L)
->> +#define SYSCTL_NUM_NEG_THIRTY_ONE               (-31L)
->> +#define SYSCTL_NUM_ONE_HUNDRED                  (100L)
->> +#define SYSCTL_NUM_TWO_HUNDRED                  (200L)
->> +#define SYSCTL_NUM_S8_MAX                       (127L)
->> +#define SYSCTL_NUM_U8_MAX                       (255L)
->> +#define SYSCTL_NUM_FIVE_HUNDRED                 (500L)
->> +#define SYSCTL_NUM_ONE_THOUSAND                 (1000L)
->> +#define SYSCTL_NUM_THREE_THOUSAND               (3000L)
->> +#define SYSCTL_NUM_16K                          (16 * 1024L)
->> +#define SYSCTL_NUM_16M                          (16 * 1024 * 1024L)
->> +#define SYSCTL_NUM_SEC_PER_HOUR                 (60 * 60L)
->> +#define SYSCTL_NUM_U16_MAX                      (65535L)
->> +#define SYSCTL_NUM_SEC_PER_DAY                  (24 * 60 * 60L)
->> +#define SYSCTL_NUM_MS_PER_DAY                   (24 * 60 * 60 * 1000L)
->> +#define SYSCTL_NUM_INT_MAX                      (INT_MAX)
->> +#define SYSCTL_NUM_NEG_ONE                      (-1)
->> +#define SYSCTL_NUM_LONG_MAX                     (LONG_MAX)
-> 
-> Are all those constants really needed?
-> In the past they were useful as they referenced the array of constants.
-> But now people can just use the number directly, or even better a
-> subsystem-specific constant.
-> 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Okay, we will make the modifications according to your suggestions.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
->> +
->>   typedef int proc_handler(const struct ctl_table *ctl, int write, void *buffer,
->>   		size_t *lenp, loff_t *ppos);
->>   
->> @@ -131,6 +163,9 @@ static inline void *proc_sys_poll_event(struct ctl_table_poll *poll)
->>   #define DEFINE_CTL_TABLE_POLL(name)					\
->>   	struct ctl_table_poll name = __CTL_TABLE_POLL_INITIALIZER(name)
->>   
->> +#define  SYSCTL_FLAG_MIN			S_ISUID
->> +#define  SYSCTL_FLAG_MAX			S_ISGID
-> 
-> Is it ever useful to have only one of these flags?
-> IMO this could be a single flag.
->
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-There are a few  edge cases that require two flags, such as the 
-following code snippet:
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/net/sctp/sysctl.c#n103
-
-	[SCTP_RTO_MIN_IDX] = {
-		.procname	= "rto_min",
-		.data		= &init_net.sctp.rto_min,
-...
-		.extra1         = SYSCTL_ONE,
-		.extra2         = &init_net.sctp.rto_max
-	},
-
-extra1 points to a constant unsigned integer, but extra2 points to a 
-field in the struct sctp.association structure
-
->> +
->>   /* A sysctl table is an array of struct ctl_table: */
->>   struct ctl_table {
->>   	const char *procname;		/* Text ID for /proc/sys, or zero */
->> @@ -139,8 +174,16 @@ struct ctl_table {
->>   	umode_t mode;
->>   	proc_handler *proc_handler;	/* Callback for text formatting */
->>   	struct ctl_table_poll *poll;
->> -	void *extra1;
->> -	void *extra2;
->> +	union {
->> +		struct {
->> +			void *extra1;
->> +			void *extra2;
->> +		};
->> +		struct {
->> +			long min;
->> +			long max;
->> +		};
->> +	};
->>   } __randomize_layout;
->>   
->>   struct ctl_node {
->> @@ -214,42 +257,50 @@ struct ctl_table_root {
->>   
->>   static inline unsigned int sysctl_range_min_u8(const struct ctl_table *table)
->>   {
->> -	return (table->extra1) ? *(unsigned int *) table->extra1 : 0;
->> +	return (table->mode & SYSCTL_FLAG_MIN) ? table->min :
->> +	       (table->extra1) ? *(unsigned int *) table->extra1 : 0;
-> 
-> All these repetitive functions could probably be replaced by one macro.
-> Keeping the users more direct and avoiding all the repetition.
-> 
-
-Okay, we will make the modifications according to your suggestions and 
-send v4 soon.
-
---
-Best wishes,
-Wen
+If you want to undo deduplication, reply with:
+#syz undup
 
