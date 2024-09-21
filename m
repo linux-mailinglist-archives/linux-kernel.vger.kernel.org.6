@@ -1,523 +1,262 @@
-Return-Path: <linux-kernel+bounces-334892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A44297DDF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:50:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5CCF97DDEE
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FD46B215DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 16:50:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ED7CB21483
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 16:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32211175D4A;
-	Sat, 21 Sep 2024 16:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1912B175D4C;
+	Sat, 21 Sep 2024 16:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="ocGVMENa"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vmvQkQz7"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372601547DA;
-	Sat, 21 Sep 2024 16:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C661514C9
+	for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 16:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726937394; cv=none; b=e0gkt0euEMpkemQGT7SKWLjuZnrtxR+FH2yjKmHtvHzLCxKSYvHnDIKFIA0dHLEFDArlmzOx4hosgk3jvxtyAgDImQBUGJucY1Dc/gpGhnVKRpSWLchY7r0YrL7A/25ebPI6I6tEj/6s8as0weezY8TQ6yOCaP2htxY913fOM8o=
+	t=1726937144; cv=none; b=ELrqh0qhRnRz/17oJI3zu45JT8RXdL3LDKcSpEGf8x7PYMPt5c2tEIomOnLjKIAeAV+T+maPoJvDC4fdMFRpNZ6c1W0ci6e1urHL/QuKi3FT9jKS6+M2hiFcu0rxrLBAjqg2p+EA004A3h+K6SdprA6C6sosy8d4qMO5YLuba58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726937394; c=relaxed/simple;
-	bh=fLocS4rkXo+cdkcTNrdh1/o+NMlSqRy+YLYt+PO+GGQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RByJiRYR0S2yRYwNHA10fSKjl1Frzhq3uNiAXikiJO/T8piisYJqi1d/iGXkdqzEmtuxkbtv8m095qxMPBcDVrl0DIuiDlZ47tNBdZSA1xS3koPkQH+g2HNU7SRJ3dRXNo9YNuc+fpeZAmOFG2b32MfDNH/NZVqk+BYjn6G7iH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=ocGVMENa; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1726936994;
-	bh=fLocS4rkXo+cdkcTNrdh1/o+NMlSqRy+YLYt+PO+GGQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ocGVMENak0htCIEdzZaI6MH19tiedl9wKo4gdrjhKDrnYGSWc++fA77KsvqvX25Ua
-	 7Dw1e6ZEqfbavp5f1Es4SuWNiVwLivyYEVuNR/CNEIfYP032LbVFz9qgxlNkMYvZM1
-	 RYOY+uykGq9SSX07SsRILAtj+KoB9W/fi6exnFSuSvdBTOYv+bm2vlikqLC9xOxNdg
-	 JxCcLP+4NGl2lqgL3wu7N8HSW1k7p745xFArmc6H3sKKxEwe+WhOoLW/IoJJ8tG6je
-	 u2jmWs1shIxWSQpB2qVg6Mjkrt2kYK37OiMBqqLAJgTMgvqabvQqgeEpTqe7VNzEVY
-	 EWMinWrtdwtsQ==
-Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4X9w6f0QLxz1LVV;
-	Sat, 21 Sep 2024 12:43:05 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	John Stultz <jstultz@google.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	maged.michael@gmail.com,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	rcu@vger.kernel.org,
-	linux-mm@kvack.org,
-	lkmm@lists.linux.dev
-Subject: [RFC PATCH 1/1] hpref: Hazard Pointers with Reference Counter
-Date: Sat, 21 Sep 2024 18:42:10 +0200
-Message-Id: <20240921164210.256278-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1726937144; c=relaxed/simple;
+	bh=oLLDjpM/8aA+Mikd7HVUUzW/DmPjCx2KJeRPL/RYebY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e/wvAEngjHxDFPIdfDTUEKeKigMYX4NlOqIoD7dEMmO6vqOjJApcVsEcThM/7j1JgyA/3+VLHuouvMutLlHM+dL3mvHL5knziPLNLPtArQXTB6SVUhvoKG3cQky6HSXQ1UNudFyTF+ekTiAz0h/A1hVS0PdneLeNUoP6S4oSjjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vmvQkQz7; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37a413085cbso1298149f8f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 09:45:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726937140; x=1727541940; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=11BcDD5IihY8sHkWDN4bZKYEHZDz5Md3HLgNTNoCcv8=;
+        b=vmvQkQz72MPVdBlwdv0SyO9V/nPM1S1tBQno0dRhQTjyZbQtxgcAnfc51R504mNeZ+
+         SA+6j93+f+NDiN/ULZ9pu1L0DYjcu+orgrhXblt1o06fVheGPcA9cIVbPIIWEuH5AP4P
+         6QvAZ1Lh7PlazRrPj2JZq3zggolcRRP3Fqqn32JwBPjuVH+HLD2f78BcoDHhgeJ1ol2x
+         MFspv+4evj/6R+bpMDasETJw3LDqurevE0kQ3/9U8LSaaKeIW9s4K0/JkEQfungcO0EL
+         43wL70CEjUOGEvxAa8oSUQj1OrKySrN/X81CT4plEk7SVKfLF8mpiVLReX5pU6Vc6Qw9
+         elaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726937140; x=1727541940;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=11BcDD5IihY8sHkWDN4bZKYEHZDz5Md3HLgNTNoCcv8=;
+        b=O5/8rNkxg2RyBEFwG1d7aGFi/xrJ5/rH6CHwQKCmvTVGn7GVCVpcmKSM9/A6Az2TYL
+         1yetZsC+DLgLUFH5r97jWs7uWRoktPLCbAbllX7AVrteMCgsiTCP7S7Hr5XGljwJhL97
+         4pQhkBMqixFO1vXaxoLd3qe+0GakOXI3dfEAICac5i8xfJUZRisVk+eqgudYlICZlZ8e
+         df1dEUBuGlL07fqQALP97UVZHHvVOHm/3GvQSoF2CigqjNugW3lHPakTr92rHrVjlelV
+         msDATSoWJN7l4f27c2XDgSQLdfgYgHJyQKQzKudg0CBnl1I42qerb0j1wFgsOGyG9PwF
+         S7qw==
+X-Forwarded-Encrypted: i=1; AJvYcCWeaXbKUytbU/K4PP02ijUm/XdGhjWUyNEqv175X1Vt4qaEyoDNJHSvr0Ww77xgOyI6fx+73Yo6tEz2WMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+eDLHz2tU8E+cpK+9RXaLikLfXHpraBVx++WRPUOXQLFONXtZ
+	CS3OEB9XCOXvBgjUi6EHiBZ5bRMPFiIsbK1aP7wrDeLLwzqZJ3d3Kosgw3XN+Uk=
+X-Google-Smtp-Source: AGHT+IGJxFMVH30eOyDamIi8EJSOxXEIYis2TfZ8Ked9m32LuYuazdpkQsz44vOA8nV3YSdj2nd1Vw==
+X-Received: by 2002:adf:f6cd:0:b0:374:d2a3:d213 with SMTP id ffacd0b85a97d-37a414f4b94mr3768151f8f.18.1726937140340;
+        Sat, 21 Sep 2024 09:45:40 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:7001:d575:d71f:f3b? ([2a01:e0a:982:cbb0:7001:d575:d71f:f3b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37a47b58bfdsm3004926f8f.14.2024.09.21.09.45.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 21 Sep 2024 09:45:39 -0700 (PDT)
+Message-ID: <11cdd74f-683c-458e-bb18-8a0d8f8904e8@linaro.org>
+Date: Sat, 21 Sep 2024 18:45:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/11] Preemption support for A7XX
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Antonino Maniscalco <antomani103@gmail.com>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Jonathan Corbet <corbet@lwn.net>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ Sharat Masetty <smasetty@codeaurora.org>
+References: <20240917-preemption-a750-t-v4-0-95d48012e0ac@gmail.com>
+ <c70392bb-bda1-48c7-824e-23d6f92f54ef@linaro.org>
+ <20240920170949.vp3642gghhey3pjb@hu-akhilpo-hyd.qualcomm.com>
+Content-Language: en-GB
+From: Neil Armstrong <neil.armstrong@linaro.org>
+In-Reply-To: <20240920170949.vp3642gghhey3pjb@hu-akhilpo-hyd.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Boqun Feng's patch series and LPC talk gave me a few ideas I wanted to
-try. I figured we could improve the concept of reference counters by
-adding a hazard-pointer protected fast-path to them.
+Le 20/09/2024 à 19:09, Akhil P Oommen a écrit :
+> On Wed, Sep 18, 2024 at 09:46:33AM +0200, Neil Armstrong wrote:
+>> Hi,
+>>
+>> On 17/09/2024 13:14, Antonino Maniscalco wrote:
+>>> This series implements preemption for A7XX targets, which allows the GPU to
+>>> switch to an higher priority ring when work is pushed to it, reducing latency
+>>> for high priority submissions.
+>>>
+>>> This series enables L1 preemption with skip_save_restore which requires
+>>> the following userspace patches to function:
+>>>
+>>> https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/30544
+>>>
+>>> A flag is added to `msm_submitqueue_create` to only allow submissions
+>>> from compatible userspace to be preempted, therefore maintaining
+>>> compatibility.
+>>>
+>>> Preemption is currently only enabled by default on A750, it can be
+>>> enabled on other targets through the `enable_preemption` module
+>>> parameter. This is because more testing is required on other targets.
+>>>
+>>> For testing on other HW it is sufficient to set that parameter to a
+>>> value of 1, then using the branch of mesa linked above, `TU_DEBUG=hiprio`
+>>> allows to run any application as high priority therefore preempting
+>>> submissions from other applications.
+>>>
+>>> The `msm_gpu_preemption_trigger` and `msm_gpu_preemption_irq` traces
+>>> added in this series can be used to observe preemption's behavior as
+>>> well as measuring preemption latency.
+>>>
+>>> Some commits from this series are based on a previous series to enable
+>>> preemption on A6XX targets:
+>>>
+>>> https://lkml.kernel.org/1520489185-21828-1-git-send-email-smasetty@codeaurora.org
+>>>
+>>> Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+>>> ---
+>>> Changes in v4:
+>>> - Added missing register in pwrup list
+>>> - Removed and rearrange barriers
+>>> - Renamed `skip_inline_wptr` to `restore_wptr`
+>>> - Track ctx seqno per ring
+>>> - Removed secure preempt context
+>>> - NOP out postamble to disable it instantly
+>>> - Only emit pwrup reglist once
+>>> - Document bv_rptr_addr
+>>> - Removed unused A6XX_PREEMPT_USER_RECORD_SIZE
+>>> - Set name on preempt record buffer
+>>> - Link to v3: https://lore.kernel.org/r/20240905-preemption-a750-t-v3-0-fd947699f7bc@gmail.com
+>>>
+>>> Changes in v3:
+>>> - Added documentation about preemption
+>>> - Use quirks to determine which target supports preemption
+>>> - Add a module parameter to force disabling or enabling preemption
+>>> - Clear postamble when profiling
+>>> - Define A6XX_CP_CONTEXT_SWITCH_CNTL_LEVEL fields in a6xx.xml
+>>> - Make preemption records MAP_PRIV
+>>> - Removed user ctx record (NON_PRIV) and patch 2/9 as it's not needed
+>>>     anymore
+>>> - Link to v2: https://lore.kernel.org/r/20240830-preemption-a750-t-v2-0-86aeead2cd80@gmail.com
+>>>
+>>> Changes in v2:
+>>> - Added preept_record_size for X185 in PATCH 3/7
+>>> - Added patches to reset perf counters
+>>> - Dropped unused defines
+>>> - Dropped unused variable (fixes warning)
+>>> - Only enable preemption on a750
+>>> - Reject MSM_SUBMITQUEUE_ALLOW_PREEMPT for unsupported targets
+>>> - Added Akhil's Reviewed-By tags to patches 1/9,2/9,3/9
+>>> - Added Neil's Tested-By tags
+>>> - Added explanation for UAPI changes in commit message
+>>> - Link to v1: https://lore.kernel.org/r/20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com
+>>>
+>>> ---
+>>> Antonino Maniscalco (11):
+>>>         drm/msm: Fix bv_fence being used as bv_rptr
+>>>         drm/msm/A6XX: Track current_ctx_seqno per ring
+>>>         drm/msm: Add a `preempt_record_size` field
+>>>         drm/msm: Add CONTEXT_SWITCH_CNTL bitfields
+>>>         drm/msm/A6xx: Implement preemption for A7XX targets
+>>>         drm/msm/A6xx: Sync relevant adreno_pm4.xml changes
+>>>         drm/msm/A6xx: Use posamble to reset counters on preemption
+>>>         drm/msm/A6xx: Add traces for preemption
+>>>         drm/msm/A6XX: Add a flag to allow preemption to submitqueue_create
+>>>         drm/msm/A6xx: Enable preemption for A750
+>>>         Documentation: document adreno preemption
+>>>
+>>>    Documentation/gpu/msm-preemption.rst               |  98 +++++
+>>>    drivers/gpu/drm/msm/Makefile                       |   1 +
+>>>    drivers/gpu/drm/msm/adreno/a2xx_gpu.c              |   2 +-
+>>>    drivers/gpu/drm/msm/adreno/a3xx_gpu.c              |   2 +-
+>>>    drivers/gpu/drm/msm/adreno/a4xx_gpu.c              |   2 +-
+>>>    drivers/gpu/drm/msm/adreno/a5xx_gpu.c              |   6 +-
+>>>    drivers/gpu/drm/msm/adreno/a6xx_catalog.c          |   7 +-
+>>>    drivers/gpu/drm/msm/adreno/a6xx_gpu.c              | 325 ++++++++++++++-
+>>>    drivers/gpu/drm/msm/adreno/a6xx_gpu.h              | 174 ++++++++
+>>>    drivers/gpu/drm/msm/adreno/a6xx_preempt.c          | 440 +++++++++++++++++++++
+>>>    drivers/gpu/drm/msm/adreno/adreno_gpu.h            |   9 +-
+>>>    drivers/gpu/drm/msm/msm_drv.c                      |   4 +
+>>>    drivers/gpu/drm/msm/msm_gpu.c                      |   2 +-
+>>>    drivers/gpu/drm/msm/msm_gpu.h                      |  11 -
+>>>    drivers/gpu/drm/msm/msm_gpu_trace.h                |  28 ++
+>>>    drivers/gpu/drm/msm/msm_ringbuffer.h               |  18 +
+>>>    drivers/gpu/drm/msm/msm_submitqueue.c              |   3 +
+>>>    drivers/gpu/drm/msm/registers/adreno/a6xx.xml      |   7 +-
+>>>    .../gpu/drm/msm/registers/adreno/adreno_pm4.xml    |  39 +-
+>>>    include/uapi/drm/msm_drm.h                         |   5 +-
+>>>    20 files changed, 1117 insertions(+), 66 deletions(-)
+>>> ---
+>>> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+>>> change-id: 20240815-preemption-a750-t-fcee9a844b39
+>>>
+>>> Best regards,
+>>
+>> I've been running vulkan-cts (1.3.7.3-0-gd71a36db16d98313c431829432a136dbda692a08 from Yocto)
+>> on SM8650-QRD, SM8550-QRD & SM8450-HDK boards with enable_preemption in default value
+>> and forced to 1, and I've seen no regression so far
+>>
+>> On SM8550, I've seen a few:
+>> platform 3d6a000.gmu: [drm:a6xx_hfi_send_msg.constprop.0 [msm]] *ERROR* Message HFI_H2F_MSG_GX_BW_PERF_VOTE id 2743 timed out waiting for response
+>> platform 3d6a000.gmu: [drm:a6xx_hfi_send_msg.constprop.0 [msm]] *ERROR* Unexpected message id 2743 on the response queue
+>> but it's unrelated to preempt
+>>
+>> and on SM8450:
+>> platform 3d6a000.gmu: [drm:a6xx_gmu_set_oob [msm]] *ERROR* Timeout waiting for GMU OOB set GPU_SET: 0x0
+>> msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 7.3.0.1: hangcheck detected gpu lockup rb 0!
+>> msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 7.3.0.1:     completed fence: 331235
+>> msm_dpu ae01000.display-controller: [drm:hangcheck_handler [msm]] *ERROR* 7.3.0.1:     submitted fence: 331236
+>> adreno 3d00000.gpu: [drm:a6xx_irq [msm]] *ERROR* gpu fault ring 0 fence 50de4 status 00800005 rb 0000/0699 ib1 0000000000000000/0000 ib2 0000000000000000/0000
+>> msm_dpu ae01000.display-controller: [drm:recover_worker [msm]] *ERROR* 7.3.0.1: hangcheck recover!
+>> msm_dpu ae01000.display-controller: [drm:recover_worker [msm]] *ERROR* 7.3.0.1: offending task: deqp-vk (/usr/lib/vulkan-cts/deqp-vk)
+>> msm_dpu ae01000.display-controller: [drm:recover_worker [msm]] *ERROR* 7.3.0.1: hangcheck recover!
+>> leading to a VK_ERROR_DEVICE_LOST, but again unrelated to preempt support.
+>>
+>> So you can also add:
+>> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
+>> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8450-HDK
+>>
+> 
+> Niel,
+> 
+> On my x1e device, all submissions were somehow going into only a single
+> ring, even the compositor's. Not sure why. So effectively preemption was
+> not really exercised. I had to force one of the two benchmark I ran
+> using the "highprio" mesa debug flag force submittions to ring 0.
+> 
+> If possible it is a good idea to check the new preemption traces to
+> ensure preemption kicks in.
 
-This API combines hazard pointers and reference counters.
-It uses hazard pointers as fast-paths, and falls back to reference
-counters either explicitly when the reader expects to hold the object
-for a long time, or when no hazard pointer slots are available.
+Sure I'll run the test again on a750 and check if preemption kicks in.
 
-This prototype is implemented in userspace within the liburcu project,
-and depends on librseq for per-cpu data structure allocation, indexing,
-and updates.
+Neil
 
-- The top of this liburcu feature branch can be found at:
-  https://github.com/compudj/userspace-rcu-dev/tree/hpref
-  (it's implemented within liburcu for convenience, but it does
-  not actually use RCU).
-
-- librseq can be found at:
-  https://git.kernel.org/pub/scm/libs/librseq/librseq.git/
-
-This leverages the fact that both synchronization mechanisms aim to
-guarantee existence of objects, and those existence guarantees can be
-chained. Each mechanism achieves its purpose in a different way with
-different tradeoffs. The hazard pointers are faster to read and scale
-better than reference counters, but they consume more memory than a
-per-object reference counter.
-
-The fall-back to reference counter allows bounding the number of
-hazard pointer slots to a fixed size for the entire system:
-nr_cpus * N, where N=8 as it fills a single 64 bytes cache line on
-64-bit architectures.
-
-Porting it to the Linux kernel should be straightforward. We might
-want to pick heavily contented reference counts such as the mm_struct
-mm_count field as a starting point to see if it provides significant
-performance gains.
-
-The hpref read-side performs well even compared to RCU in my benchmarks:
-
-    Results:
-
-    CPU(s):                  16
-      On-line CPU(s) list:   0-15
-    Vendor ID:               AuthenticAMD
-      Model name:            AMD Ryzen 7 PRO 6850U with Radeon Graphics
-
-    8 readers, 1 writer, 10s
-
-    test_urcu_mb         (smp_mb)             nr_reads    829829784 nr_writes     18057836 nr_ops    847887620
-    test_hpref_benchmark (smp_mb)             nr_reads   2040376076 nr_writes      2993246 nr_ops   2043369322
-    test_hpref_benchmark (barrier/membarrier) nr_reads  10609164704 nr_writes      2208432 nr_ops  10611373136
-    test_urcu_bp         (barrier/membarrier) nr_reads  20242102863 nr_writes       599484 nr_ops  20242702347
-    test_urcu            (barrier/membarrier) nr_reads  20714490759 nr_writes       782045 nr_ops  20715272804
-    test_urcu_qsbr                            nr_reads  40774708959 nr_writes      3512904 nr_ops  40778221863
-
-References:
-
-[1]: M. M. Michael, "Hazard pointers: safe memory reclamation for
-     lock-free objects," in IEEE Transactions on Parallel and
-     Distributed Systems, vol. 15, no. 6, pp. 491-504, June 2004
-
-Link: https://lore.kernel.org/lkml/j3scdl5iymjlxavomgc6u5ndg3svhab6ga23dr36o4f5mt333w@7xslvq6b6hmv/
-Link: https://lpc.events/event/18/contributions/1731/
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Change-Id: I6369064a0e1a1f9632394df31ff41c76905d17e3
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: John Stultz <jstultz@google.com>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Zqiang <qiang.zhang1211@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: maged.michael@gmail.com
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: rcu@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: lkmm@lists.linux.dev
----
- include/urcu/hpref.h | 222 +++++++++++++++++++++++++++++++++++++++++++
- src/Makefile.am      |   6 +-
- src/hpref.c          |  78 +++++++++++++++
- 3 files changed, 305 insertions(+), 1 deletion(-)
- create mode 100644 include/urcu/hpref.h
- create mode 100644 src/hpref.c
-
-diff --git a/include/urcu/hpref.h b/include/urcu/hpref.h
-new file mode 100644
-index 00000000..300f7d4e
---- /dev/null
-+++ b/include/urcu/hpref.h
-@@ -0,0 +1,222 @@
-+// SPDX-FileCopyrightText: 2024 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-+//
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+
-+#ifndef _URCU_HPREF_H
-+#define _URCU_HPREF_H
-+
-+/*
-+ * HPREF: Hazard pointers with reference counters
-+ *
-+ * This API combines hazard pointers and reference counters.
-+ * It uses hazard pointers as fast-paths, and fall-back to reference
-+ * counters either explicitly when the reader expects to hold the object
-+ * for a long time, or when no hazard pointer slots are available.
-+ *
-+ * This leverages the fact that both synchronization mechanisms aim to
-+ * guarantee existence of objects, and those existence guarantees can be
-+ * chained. Each mechanism achieves its purpose in a different way with
-+ * different tradeoffs. The hazard pointers are faster to read and scale
-+ * better than reference counters, but they consume more memory than a
-+ * per-object reference counter.
-+ *
-+ * The fall-back to reference counter allows bounding the number of
-+ * hazard pointer slots to a fixed size for the entire system:
-+ * nr_cpus * N, where N=8 as it fills a single 64 bytes cache line on
-+ * 64-bit architectures.
-+ *
-+ * References:
-+ *
-+ * [1]: M. M. Michael, "Hazard pointers: safe memory reclamation for
-+ *      lock-free objects," in IEEE Transactions on Parallel and
-+ *      Distributed Systems, vol. 15, no. 6, pp. 491-504, June 2004
-+ */
-+
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <poll.h>
-+#include <stdbool.h>
-+#include <rseq/mempool.h>	/* Per-CPU memory */
-+#include <rseq/rseq.h>
-+
-+#include <urcu/ref.h>
-+#include <urcu/uatomic.h>
-+#include <urcu/compiler.h>
-+
-+struct hpref_node {
-+	struct urcu_ref refcount;
-+	void (*release)(struct hpref_node *node);
-+};
-+
-+struct hpref_slot {
-+	/* Use rseq to set from reader only if zero. */
-+	struct hpref_node *node;
-+};
-+
-+#define NR_PERCPU_SLOTS_BITS	3
-+#define HPREF_NR_PERCPU_SLOTS	(1U << NR_PERCPU_SLOTS_BITS)
-+/*
-+ * The emergency slot is only used for short critical sections
-+ * (would be preempt off in when porting this code to the kernel): only
-+ * to ensure we have a free slot for taking a reference count as
-+ * fallback.
-+ */
-+#define HPREF_EMERGENCY_SLOT	(HPREF_NR_PERCPU_SLOTS - 1)
-+
-+struct hpref_percpu_slots {
-+	struct hpref_slot slots[HPREF_NR_PERCPU_SLOTS];
-+	unsigned int current_slot;
-+};
-+
-+enum hpref_type {
-+	HPREF_TYPE_HP,
-+	HPREF_TYPE_REF,
-+};
-+
-+struct hpref_ctx {
-+	struct hpref_slot *slot;
-+	struct hpref_node *hp;
-+	enum hpref_type type;
-+};
-+
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
-+extern struct hpref_percpu_slots *hpref_percpu_slots;
-+
-+void hpref_release(struct urcu_ref *ref);
-+
-+/*
-+ * hpref_synchronize: Wait for any reader possessing a hazard pointer to
-+ *                    @node to clear its hazard pointer slot.
-+ */
-+void hpref_synchronize(struct hpref_node *node);
-+
-+/*
-+ * hpref_synchronize_put: Wait for any reader possessing a hazard
-+ *                        pointer to clear its slot and put reference
-+ *                        count.
-+ */
-+void hpref_synchronize_put(struct hpref_node *node);
-+
-+static inline
-+void hpref_node_init(struct hpref_node *node,
-+		void (*release)(struct hpref_node *node))
-+{
-+	urcu_ref_init(&node->refcount);
-+	node->release = release;
-+}
-+
-+/*
-+ * hpref_promote_hp_to_ref: Promote hazard pointer to reference count.
-+ */
-+static inline
-+void hpref_promote_hp_to_ref(struct hpref_ctx *ctx)
-+{
-+	if (ctx->type == HPREF_TYPE_REF)
-+		return;
-+	urcu_ref_get(&ctx->hp->refcount);
-+	uatomic_store(&ctx->slot->node, NULL, CMM_RELEASE);
-+	ctx->slot = NULL;
-+	ctx->type = HPREF_TYPE_REF;
-+}
-+
-+/*
-+ * hpref_hp_get: Obtain a reference to a stable object, protected either
-+ *               by hazard pointer (fast-path) or using reference
-+ *               counter as fall-back.
-+ */
-+static inline
-+bool hpref_hp_get(struct hpref_node **node_p, struct hpref_ctx *ctx)
-+{
-+	int cpu = rseq_current_cpu_raw();
-+	struct hpref_percpu_slots *cpu_slots = rseq_percpu_ptr(hpref_percpu_slots, cpu);
-+	struct hpref_slot *slot = &cpu_slots->slots[cpu_slots->current_slot];
-+	bool use_refcount = false;
-+	struct hpref_node *node, *node2;
-+	unsigned int next_slot;
-+
-+retry:
-+	node = uatomic_load(node_p, CMM_RELAXED);
-+	if (!node)
-+		return false;
-+	/* Use rseq to try setting current slot hp. Store B. */
-+	if (rseq_load_cbne_store__ptr(RSEQ_MO_RELAXED, RSEQ_PERCPU_CPU_ID,
-+				(intptr_t *) &slot->node, (intptr_t) NULL,
-+				(intptr_t) node, cpu)) {
-+		slot = &cpu_slots->slots[HPREF_EMERGENCY_SLOT];
-+		use_refcount = true;
-+		/*
-+		 * This may busy-wait for another reader using the
-+		 * emergency slot to transition to refcount.
-+		 */
-+		caa_cpu_relax();
-+		goto retry;
-+	}
-+	/* Memory ordering: Store B before Load A. */
-+	cmm_smp_mb();
-+	node2 = uatomic_load(node_p, CMM_RELAXED);	/* Load A */
-+	if (node != node2) {
-+		uatomic_store(&slot->node, NULL, CMM_RELAXED);
-+		if (!node2)
-+			return false;
-+		goto retry;
-+	}
-+	ctx->type = HPREF_TYPE_HP;
-+	ctx->hp = node;
-+	ctx->slot = slot;
-+	if (use_refcount) {
-+		hpref_promote_hp_to_ref(ctx);
-+		return true;
-+	}
-+	/*
-+	 * Increment current slot (racy increment is OK because it is
-+	 * just a position hint). Skip the emergency slot.
-+	 */
-+	next_slot = uatomic_load(&cpu_slots->current_slot, CMM_RELAXED) + 1;
-+	if (next_slot >= HPREF_EMERGENCY_SLOT)
-+		next_slot = 0;
-+	uatomic_store(&cpu_slots->current_slot, next_slot, CMM_RELAXED);
-+	return true;
-+}
-+
-+static inline
-+void hpref_put(struct hpref_ctx *ctx)
-+{
-+	if (ctx->type == HPREF_TYPE_REF) {
-+		urcu_ref_put(&ctx->hp->refcount, hpref_release);
-+	} else {
-+		/* Release HP. */
-+		uatomic_store(&ctx->slot->node, NULL, CMM_RELEASE);
-+	}
-+	ctx->hp = NULL;
-+}
-+
-+/*
-+ * hpref_set_pointer: Store pointer @node to @ptr, with RCU publication
-+ *                    guarantees.
-+ */
-+static inline
-+void hpref_set_pointer(struct hpref_node **ptr, struct hpref_node *node)
-+{
-+	if (__builtin_constant_p(node) && node == NULL)
-+		uatomic_store(ptr, NULL, CMM_RELAXED);
-+	else
-+		uatomic_store(ptr, node, CMM_RELEASE);
-+}
-+
-+/*
-+ * Return the content of the hpref context hazard pointer field.
-+ */
-+static inline
-+struct hpref_node *hpref_ctx_pointer(struct hpref_ctx *ctx)
-+{
-+	return ctx->hp;
-+}
-+
-+#ifdef __cplusplus
-+}
-+#endif
-+
-+#endif /* _URCU_HPREF_H */
-diff --git a/src/Makefile.am b/src/Makefile.am
-index b555c818..7312c9f7 100644
---- a/src/Makefile.am
-+++ b/src/Makefile.am
-@@ -19,7 +19,8 @@ RCULFHASH = rculfhash.c rculfhash-mm-order.c rculfhash-mm-chunk.c \
- lib_LTLIBRARIES = liburcu-common.la \
- 		liburcu.la liburcu-qsbr.la \
- 		liburcu-mb.la liburcu-bp.la \
--		liburcu-memb.la liburcu-cds.la
-+		liburcu-memb.la liburcu-cds.la \
-+		liburcu-hpref.la
- 
- #
- # liburcu-common contains wait-free queues (needed by call_rcu) as well
-@@ -50,6 +51,9 @@ liburcu_cds_la_SOURCES = rculfqueue.c rculfstack.c lfstack.c \
- 	workqueue.c workqueue.h $(RCULFHASH) $(COMPAT)
- liburcu_cds_la_LIBADD = liburcu-common.la
- 
-+liburcu_hpref_la_SOURCES = hpref.c
-+liburcu_hpref_la_LIBADD = -lrseq
-+
- pkgconfigdir = $(libdir)/pkgconfig
- pkgconfig_DATA = liburcu-cds.pc liburcu.pc liburcu-bp.pc liburcu-qsbr.pc \
- 	liburcu-mb.pc liburcu-memb.pc
-diff --git a/src/hpref.c b/src/hpref.c
-new file mode 100644
-index 00000000..f63530f5
---- /dev/null
-+++ b/src/hpref.c
-@@ -0,0 +1,78 @@
-+// SPDX-FileCopyrightText: 2024 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-+//
-+// SPDX-License-Identifier: LGPL-2.1-or-later
-+
-+/*
-+ * HPREF: Hazard pointers with reference counters
-+ */
-+
-+#define _LGPL_SOURCE
-+#include <urcu/hpref.h>
-+#include <rseq/mempool.h>	/* Per-CPU memory */
-+
-+static struct rseq_mempool *mempool;
-+struct hpref_percpu_slots *hpref_percpu_slots;
-+
-+void hpref_release(struct urcu_ref *ref)
-+{
-+	struct hpref_node *node = caa_container_of(ref, struct hpref_node, refcount);
-+
-+	node->release(node);
-+}
-+
-+/*
-+ * hpref_synchronize: Wait for any reader possessing a hazard pointer to
-+ *                    @node to clear its hazard pointer slot.
-+ */
-+void hpref_synchronize(struct hpref_node *node)
-+{
-+	int nr_cpus = rseq_get_max_nr_cpus(), cpu;
-+
-+	/* Memory ordering: Store A before Load B. */
-+	cmm_smp_mb();
-+	/* Scan all CPUs slots. */
-+	for (cpu = 0; cpu < nr_cpus; cpu++) {
-+		struct hpref_percpu_slots *cpu_slots = rseq_percpu_ptr(hpref_percpu_slots, cpu);
-+		struct hpref_slot *slot;
-+		unsigned int i;
-+
-+		for (i = 0; i < HPREF_NR_PERCPU_SLOTS; i++) {
-+			slot = &cpu_slots->slots[i];
-+			/* Busy-wait if node is found. */
-+			while (uatomic_load(&slot->node, CMM_ACQUIRE) == node)	/* Load B */
-+				caa_cpu_relax();
-+		}
-+	}
-+}
-+
-+/*
-+ * hpref_synchronize_put: Wait for any reader possessing a hazard
-+ *                        pointer to clear its slot and put reference
-+ *                        count.
-+ */
-+void hpref_synchronize_put(struct hpref_node *node)
-+{
-+	if (!node)
-+		return;
-+	hpref_synchronize(node);
-+	urcu_ref_put(&node->refcount, hpref_release);
-+}
-+
-+static __attribute__((constructor))
-+void hpref_init(void)
-+{
-+	mempool = rseq_mempool_create("hpref", sizeof(struct hpref_percpu_slots), NULL);
-+	if (!mempool)
-+		abort();
-+	hpref_percpu_slots = rseq_mempool_percpu_zmalloc(mempool);
-+	if (!hpref_percpu_slots)
-+		abort();
-+}
-+
-+static __attribute__((destructor))
-+void hpref_exit(void)
-+{
-+	rseq_mempool_percpu_free(hpref_percpu_slots);
-+	if (rseq_mempool_destroy(mempool))
-+		abort();
-+}
--- 
-2.39.2
+> 
+> -Akhil
+> 
+>> Thanks,
+>> Neil
 
 
