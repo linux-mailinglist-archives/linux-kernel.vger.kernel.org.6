@@ -1,174 +1,105 @@
-Return-Path: <linux-kernel+bounces-334877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2204397DDC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:04:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 250E797DD04
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 14:01:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B21B1282811
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 16:04:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CBA4B21733
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 12:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69585175D39;
-	Sat, 21 Sep 2024 16:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC8916DECC;
+	Sat, 21 Sep 2024 12:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b="ElKmbHez"
-Received: from mail.rosalinux.ru (mail.rosalinux.ru [195.19.76.54])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MdsUFmxQ"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D8638DE1;
-	Sat, 21 Sep 2024 16:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.19.76.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B1015E97;
+	Sat, 21 Sep 2024 12:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726934677; cv=none; b=GNjNyrv8070egu3uSZOrvepFskSIh2an3HzyIRtdmnpxjQtFac2B0fEgsVI01pTPHzumH5V+Gs3oXgSu5qdBaG6SWWg0wd6tAyMN4hGz999fj8Z7J+nsJA5WA6QT7143mgi3y86b440k87gi5uwU+qfo1WySjWfOJJMw5d6S8zE=
+	t=1726920064; cv=none; b=K3qkng4rVYJJTiYV+yI40aAldPf0z0WQsIdXLIwnLs6gEDgKVRMcNDiaJEaLLqqdPEEpsRdU56X0WnJCrndgLmT2LnylPo3s4Lw4s6YvH85dpg12X56gplVu9pPweymsUHEhNmXz4NwMAHmgXOXacirB1mmkqDNSyqzrSM6edjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726934677; c=relaxed/simple;
-	bh=H5F90rB58uGzcWaFnaZV/LE4qBTOYOpGICqjNo/uK20=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aTq4Sgpf2nmBfWzApp4bK1x2zbNgOOVskaW+IC3IhwcNwsaaqVVb4RMKzhvxx/UdnJF0wcZnU6Txi5EvCO4FvCzwjQ0n+6FV5MoAbIt+NrYVnzl23YIy4apB5ox0PfRYlO55ClmPQXhe78dBHJfDmxnHvLoZEavRQKMa8jx5NdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru; spf=pass smtp.mailfrom=rosalinux.ru; dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b=ElKmbHez; arc=none smtp.client-ip=195.19.76.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosalinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosalinux.ru
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rosalinux.ru (Postfix) with ESMTP id 62215FC20D6C5;
-	Sat, 21 Sep 2024 19:04:18 +0300 (MSK)
-Received: from mail.rosalinux.ru ([127.0.0.1])
-	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id j-VzKUJ4tFvU; Sat, 21 Sep 2024 19:04:18 +0300 (MSK)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rosalinux.ru (Postfix) with ESMTP id 2E6E31F0C6EF;
-	Sat, 21 Sep 2024 19:04:18 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rosalinux.ru 2E6E31F0C6EF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosalinux.ru;
-	s=1D4BB666-A0F1-11EB-A1A2-F53579C7F503; t=1726934658;
-	bh=ssdv2fMp3zp3i+dXzmOSC1VQ7A/1Z1y2ZcLf3tqNFl8=;
-	h=From:To:Date:Message-ID:MIME-Version;
-	b=ElKmbHez+sOVcTWiazVaAXZLkhfoXA8uTxs+i1RDUi7cbPq/zAGGMY7Uaw/QSkOYS
-	 NUUDGmGFFVb/B+ci9a7RJ1f+kygaVfk/94Rtv1qxfSGpmJPF1WifpmawfOjrj7JUOG
-	 /WT02xFLPUdAnuYTcBoZ39MoXKpbVEgptjvA1PL4AQPcLms5XmzQ076nTaOkMC0vyl
-	 6CaVQiOxiVVUmOTxiVkXOSdEwF2UAH9hZtFCw13ximRL7YZAxU9M8XYfYo5gTZOR5u
-	 rlhOoxKrKb5f8626OiDeKdtTvN/UxVFHG7Kd9lwmJqF9T1gwJxYbPWkPXqUyCYK2Vn
-	 KsX8UwCl3y6HA==
-X-Virus-Scanned: amavisd-new at rosalinux.ru
-Received: from mail.rosalinux.ru ([127.0.0.1])
-	by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 95v4ZdzvCY0P; Sat, 21 Sep 2024 19:04:18 +0300 (MSK)
-Received: from localhost.localdomain (unknown [89.169.48.235])
-	by mail.rosalinux.ru (Postfix) with ESMTPSA id 06375FC20D6C5;
-	Sat, 21 Sep 2024 19:04:16 +0300 (MSK)
-From: Mikhail Lobanov <m.lobanov@rosalinux.ru>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mikhail Lobanov <m.lobanov@rosalinux.ru>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Rodolfo Giometti <giometti@linux.it>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH v2] usb: oxu210hp-hcd: Fix double locking of oxu->mem_lock spinlock
-Date: Sat, 21 Sep 2024 07:49:12 -0400
-Message-ID: <20240921114914.8802-1-m.lobanov@rosalinux.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726920064; c=relaxed/simple;
+	bh=8QTHG8jxUhGVDFlIspvQ15r0RW8cCkaBmB0+zHq1Uf8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=pn5sTcXQwrWNxSxMXT6ATxZsixxbp3WAkNZcpmozHzzh1uTboNV6mnDxHiimMTENqWcfZWI1TpV+pW7LFeP4mzYBP/nyAQ5ThMhzYCz6VX9RP2IYgB+Gok95EV2n54416aLIt+Y0LTpPkaAgswkzfnjtRnnfgHW8FOtFbpYpDIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MdsUFmxQ; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726920028; x=1727524828; i=markus.elfring@web.de;
+	bh=JL/4ckLfitYF+pRt2eRaZg8quX2Y5roO5htoFv4Za5w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=MdsUFmxQIwi24aIRGvzHxQmeyd2kbndS3tVGeeQ8rdSMAvA4GhsGQmAqIpB6T/ro
+	 BuuyO0Ft38fQMS9uzp3GU9SXqdXO42sn7S3Yo0v3xfd3CCcrSbMiohXK7Xupa8BIK
+	 1yr3dxqGgRGIwkiNL8HaMt3ONc+M63jyPHXDoGZ6gA6pnjz9Ch/QUcBlE8S/XnsPW
+	 7nM2iLz9AjswqZHOwoSrASYpqNMd8TBCX5z2iNiXtoO6z6klBnPiBAY+cESvuKlOK
+	 U6OOQoov99POuoiXoKtAPONhArSPtewbH1feuJU17zvEGAIwv+g6ofzklMVv+GIkD
+	 TBQ2/th1E70YguK6oA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M3V26-1srQp42I3G-00GWEi; Sat, 21
+ Sep 2024 14:00:28 +0200
+Message-ID: <d5a19bb5-f940-4f07-9f98-c670d96cc839@web.de>
+Date: Sat, 21 Sep 2024 14:00:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: linux-wireless@vger.kernel.org, James Minor <james.minor@ni.com>,
+ Kalle Valo <kvalo@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Steve deRosier <steve.derosier@lairdtech.com>,
+ Julia Lawall <julia.lawall@inria.fr>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/3] ath6kl: Adjustments for ath6kl_sdio_power_on()
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:4l7fWbY10L+DahbXYsA8l9XHwHGUdt+CoPhEr4Y5zc3171WD6d2
+ tNU6muIuuqKQRw3MTH9W4W74GNvdCipLUKvckwlLY9rguyI1wTQn8Yp/ZlEB1f4/YsqdOsQ
+ iqMMKtV74QAYpk3pNQW1DyS5MZz20abndVp6SIAp0BiZJieHg+T+mlLMDhnLqyDuxb8TpB4
+ t0GWs41oAfprerzUzuecA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:d3bEMTh4P/w=;ZM4/63AimS9cPPOTQwWFSebQdXz
+ ATK1HhowpD5abb237ZdCpfLIRXtrD1NTaHHtELECbuv474xe1o6yxC8yHMqRHQWJVvSFEw0XY
+ KbreDuMGh+3/A/9Mlyc1BsSImaAPxwTj1Jyf43to+eVSbdBd940AZRDk88ch+8cZmiibvuBbQ
+ b/BLa4pGCSbCGx/kWtv3V2EIyTGmGeUbHk28RNLUMErluXyqmnBDJU9x7CDNQUlSOqhbvrgpu
+ jOAIP/RaDyvAfdy7AtiIM2wkia9aquGnsyegR57UfL9cMNHA7KcF8dA1cPVm2A1Bz8xRXYMGY
+ HNayDT1mNxQA3kcmym6SrRgkxxFusCq2VTZYmqaveZCizNbIPt21+Jcv5uNWA3j7+cpMDsnDB
+ awB2+NNYGAxtlErVgQP1dvPuxge8g3IF/CXwaifmOfkj6yopofr3nvFVJNvK83AdyGlkHjps+
+ f1ZLMbLMhPCnQlszYzQcuF4TqsOGihoiAeN0sTkkLQRRCnF+MXSUhxTr5AKX5wROmMUWiSWoM
+ gmzwjd6vNq0Z6+YaX6VYMYHg+0g5M6k3XaN4U9MDK0/bbtDc2csTkveQ1UhntBU9+vkwtwPSF
+ vBKwBlX/iOB6GlTg81nqxhRuP1XmuWhyTwwfoxBnjO82ha7bRpGwW2vRDxvSHK55IC5LqUskt
+ lzXhCmAATMl+Inli99BDlp4a2CH3OcuAhtHyJBuNKMhEvqKu12OPqF378fMlG6eDSP/tbSHh/
+ 8v+km7nbxfJ/tcyz2Ikay34puEkWzipkmwr/7bkDMvrFzBaUUkueqRXGQdTmZLVhgE8orkORv
+ m3++YU3BnMxNib3Me5s2FWJw==
 
-Initially, the function oxu_qh_alloc() acquired the spinlock oxu->mem_loc=
-k,
-and then called the function ehci_qtd_alloc(), which also attempted
-to acquire the same spinlock. This would lead to a deadlock.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 21 Sep 2024 13:43:21 +0200
 
-Remove the locking from the function ehci_qtd_alloc(). Now, oxu_qh_alloc(=
-)
-can call ehci_qtd_alloc() without causing double locking. In all other
-cases where ehci_qtd_alloc() is called, acquire the spinlock before the
-call, maintaining spinlock locking as in the previous implementation.
+A few update suggestions were taken into account
+from static source code analysis.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Markus Elfring (3):
+  Use sdio_release_host(func) call only once
+  Omit a label
+  Reduce scopes for two variables
 
-Fixes: b92a78e582b1 ("usb host: Oxford OXU210HP HCD driver.")
-Signed-off-by: Mikhail Lobanov <m.lobanov@rosalinux.ru>
----
-v1->v2: remove bogus mutex mentioning from commit description and update
-the commit message to use spinlock.
-link to v1: https://lore.kernel.org/lkml/20240916174326.118495-1-m.lobano=
-v@rosalinux.ru/
+ drivers/net/wireless/ath/ath6kl/sdio.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
- drivers/usb/host/oxu210hp-hcd.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+=2D-
+2.46.0
 
-diff --git a/drivers/usb/host/oxu210hp-hcd.c b/drivers/usb/host/oxu210hp-=
-hcd.c
-index 3f871fe62b90..fa24cf89dadb 100644
---- a/drivers/usb/host/oxu210hp-hcd.c
-+++ b/drivers/usb/host/oxu210hp-hcd.c
-@@ -977,8 +977,6 @@ static struct ehci_qtd *ehci_qtd_alloc(struct oxu_hcd=
- *oxu)
- 	int i;
- 	struct ehci_qtd *qtd =3D NULL;
-=20
--	spin_lock(&oxu->mem_lock);
--
- 	for (i =3D 0; i < QTD_NUM; i++)
- 		if (!oxu->qtd_used[i])
- 			break;
-@@ -997,8 +995,6 @@ static struct ehci_qtd *ehci_qtd_alloc(struct oxu_hcd=
- *oxu)
- 		oxu->qtd_used[i] =3D 1;
- 	}
-=20
--	spin_unlock(&oxu->mem_lock);
--
- 	return qtd;
- }
-=20
-@@ -1601,7 +1597,9 @@ static struct list_head *qh_urb_transaction(struct =
-oxu_hcd *oxu,
- 	/*
- 	 * URBs map to sequences of QTDs: one logical transaction
- 	 */
-+	spin_lock(&oxu->mem_lock);
- 	qtd =3D ehci_qtd_alloc(oxu);
-+	spin_unlock(&oxu->mem_lock);
- 	if (unlikely(!qtd))
- 		return NULL;
- 	list_add_tail(&qtd->qtd_list, head);
-@@ -1630,7 +1628,9 @@ static struct list_head *qh_urb_transaction(struct =
-oxu_hcd *oxu,
- 		/* ... and always at least one more pid */
- 		token ^=3D QTD_TOGGLE;
- 		qtd_prev =3D qtd;
-+		spin_lock(&oxu->mem_lock);
- 		qtd =3D ehci_qtd_alloc(oxu);
-+		spin_unlock(&oxu->mem_lock);
- 		if (unlikely(!qtd))
- 			goto cleanup;
- 		qtd->urb =3D urb;
-@@ -1686,7 +1686,9 @@ static struct list_head *qh_urb_transaction(struct =
-oxu_hcd *oxu,
- 			break;
-=20
- 		qtd_prev =3D qtd;
-+		spin_lock(&oxu->mem_lock);
- 		qtd =3D ehci_qtd_alloc(oxu);
-+		spin_unlock(&oxu->mem_lock);
- 		if (unlikely(!qtd))
- 			goto cleanup;
- 		if (likely(len > 0)) {
-@@ -1724,7 +1726,9 @@ static struct list_head *qh_urb_transaction(struct =
-oxu_hcd *oxu,
- 		}
- 		if (one_more) {
- 			qtd_prev =3D qtd;
-+			spin_lock(&oxu->mem_lock);
- 			qtd =3D ehci_qtd_alloc(oxu);
-+			spin_unlock(&oxu->mem_lock);
- 			if (unlikely(!qtd))
- 				goto cleanup;
- 			qtd->urb =3D urb;
---=20
-2.43.0
 
