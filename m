@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-334915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-334916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA2F97DE38
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:20:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D564497DE3D
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 20:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C498F1F218DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:20:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 126361C20BEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 18:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C719744C6F;
-	Sat, 21 Sep 2024 18:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0254F881;
+	Sat, 21 Sep 2024 18:23:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFvpl14q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6hlAXlS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0A222094;
-	Sat, 21 Sep 2024 18:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC62322094;
+	Sat, 21 Sep 2024 18:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726942848; cv=none; b=o/qdtnKT7gFrdC8gaJic2v0t4GgIvrB6LIU6T62HIBSw/55EREH9nSG4NmpO9ImUYGt3vbYsLIc0xVm5DZVNesvMV3DjwwTUHjtJKU1i4h/StS0Ago7XoXzABXWAVNn44AjrXjanIHrH6GQwNbT8BAc3LMu2Hw7Wn0iso2CaSPQ=
+	t=1726943024; cv=none; b=smpbd5zc0aDvfXW0Uj9JsHA5q7ubhYREiQXI+1ssQdLx7w5UF+jC5/EMLcl1h7J+xEjDJpXiSN9T0tOTVf0Pxp9v0Xz89o8PtWAqra1Z76O3dSU+izJuyBOSZAMwyJQnIgZ4kQzrS+VJu/c7DzC9AdaTR64yThON2PsM80qTmMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726942848; c=relaxed/simple;
-	bh=jGWTXU2FmyEE3RyNInUPd012PyW1YlOkrWhl1b6PIY4=;
+	s=arc-20240116; t=1726943024; c=relaxed/simple;
+	bh=yfKssePOYgdVSn8I5leQaKY5/lR3CsAYoqDNczzTFLQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TLnqHk1tCSHazyJdgPVIB0eEjQt3UyBgScpXkK5Ev9GFBNQNOiBGHfbmuTivKVEcuoOxWA9eg/AxDtfz3FS7jUd51A7j7703EaPPzFI59oQJol7FcLkND40fJCuFbDf+a8kBs5bfhvTHvukHiwH1BXCeldLJyBaO4+Bnfe1syDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFvpl14q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C1F1C4CEC2;
-	Sat, 21 Sep 2024 18:20:41 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=uBsxh0Bi6MABwy2pm+afj3UnLUB6esGW/85yOR0jbm9/KWnHACQz18iMRkeEAcv71ELWHuu2wSwRWMK1/1sLRvpli0Iff/Zj4z7j2e1sD1ZIYgQSlVK9JVwm2tqLyDAd/1OAg+RsV28AVhqrlJqDYN1asYPH5ujREkUVhOW1BFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6hlAXlS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C0E1C4CEC2;
+	Sat, 21 Sep 2024 18:23:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726942847;
-	bh=jGWTXU2FmyEE3RyNInUPd012PyW1YlOkrWhl1b6PIY4=;
+	s=k20201202; t=1726943024;
+	bh=yfKssePOYgdVSn8I5leQaKY5/lR3CsAYoqDNczzTFLQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BFvpl14qlVw6jIz/O0e8ADaeANBfS1HNPXN6kdZM10f89xnWuEXxykMITjdN1PM9r
-	 dAcvNLYGFndUQipjEdFGGmQz+rH4jhQjx3Un907TbgFyqAMUnq0mZbySsYMoydHVHP
-	 EomM3t1Q2KAjSj6cSGWWPmCNFKZmK1SwApm7+Xj7wFxXs4we4Z1JBrmn4gmv5iWGxU
-	 Tz54aaAjCmNVWgQhshChhYQL6e0E9Cg+7mi7u1s8DqTJvcIjqp1FmmBSQ/S64fU50/
-	 WBJO21Vnij2rYF9CDVlCiDk2b2s4aBRcitoy7arXRVMjLEqUGVatB5+x2n5jvvH/E0
-	 /HZqJZoGv+BOg==
-Message-ID: <e37a0542-d405-4d15-84d2-4c7b1385d3ef@kernel.org>
-Date: Sat, 21 Sep 2024 20:20:39 +0200
+	b=U6hlAXlS2oD/M5iFUk7jqXC6b1rgKXD9DTJSSBXr3l1GigWEbbt9Axa6+9ZSpODmd
+	 vfOvPNfQLLrwb85pYQ3Apyi2eefOFc9DaCMC7pQav2im5QbmQuRDgLOmJSJDEeKAYE
+	 33fWnA9MzlANuN/PyxW1zI2gKz/8eD9wt5LbZ5FqhkxEFnSHeUe1FVyxQbGvc00mFl
+	 sJOgEIJ4fAj7Zfg4IoTnHw/uaAoeB8LVrel7wLEI3+TeFFGbw0ZG2C0ZM4+3W13Jxq
+	 ySHo/v3ryO1AYeEimOlicGkChRWvIvh+CTM+Ylf/TFOiifmuk2qLtFyvlVnj8MM7D2
+	 sUD45YK1ZmdVw==
+Message-ID: <78d9c6f9-5667-4ecf-92c9-73e9e4b9b424@kernel.org>
+Date: Sat, 21 Sep 2024 20:23:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,27 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
- Systems remote processors
-To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
- Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org,
- sudeep.holla@arm.com, robin.murphy@arm.com
-References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
- <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
- <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
- <gzlncpyzwm7x4jcxtdrthrlv2dofk7u3oxn4taadwog5tt37wo@ot6s6kwukd4k>
- <20240919093517.GA43740@e130802.arm.com>
- <222b3b11-151a-4ad0-91ea-54ae8f280bcb@kernel.org>
- <20240919145741.GA7940@e130802.arm.com>
- <85a223e9-05a4-4034-87a5-57d3eb9409b7@kernel.org>
- <20240920141958.GA288724@e130802.arm.com>
- <7784248d-4372-4cf1-a01a-5b731b3f6b96@kernel.org>
- <20240920163851.GA385919@e130802.arm.com>
+Subject: Re: [PATCH 1/5] dt-bindings: display/msm: Document MDSS on SA8775P
+To: Mahadevan <quic_mahap@quicinc.com>, robdclark@gmail.com,
+ quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org, sean@poorly.run,
+ marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ swboyd@chromium.org, konrad.dybcio@linaro.org, danila@jiaxyga.com,
+ bigfoot@classfun.cn, neil.armstrong@linaro.org, mailingradian@gmail.com,
+ quic_jesszhan@quicinc.com, andersson@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_kalyant@quicinc.com,
+ quic_jmadiset@quicinc.com, quic_vpolimer@quicinc.com
+References: <20240912071437.1708969-1-quic_mahap@quicinc.com>
+ <20240912071437.1708969-2-quic_mahap@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -115,86 +109,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240920163851.GA385919@e130802.arm.com>
+In-Reply-To: <20240912071437.1708969-2-quic_mahap@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/09/2024 18:38, Abdellatif El Khlifi wrote:
-> Hi Krzysztof,
+On 12/09/2024 09:14, Mahadevan wrote:
 > 
->>>>>>>>> +  '#extsys-id':
->>>>>>>>
->>>>>>>> '#' is not correct for sure, that's not a cell specifier.
->>>>>>>>
->>>>>>>> But anyway, we do not accept in general instance IDs.
->>>>>>>
->>>>>>> I'm happy to replace the instance ID with  another solution.
->>>>>>> In our case the remoteproc instance does not have a base address
->>>>>>> to use. So, we can't put remoteproc@address
->>>>>>>
->>>>>>> What do you recommend in this case please ?
->>>>>>
->>>>>> Waiting one month to respond is a great way to drop all context from my
->>>>>> memory. The emails are not even available for me - gone from inbox.
->>>>>>
->>>>>> Bus addressing could note it. Or you have different devices, so
->>>>>> different compatibles. Tricky to say, because you did not describe the
->>>>>> hardware really and it's one month later...
->>>>>>
->>>>>
->>>>> Sorry for waiting. I was in holidays.
->>>>>
->>>>> I'll add more documentation about the external system for more clarity [1].
->>>>>
->>>>> Basically, Linux runs on the Cortex-A35. The External system is a
->>>>> Cortex-M core. The Cortex-A35 can not access the memory of the Cortex-M.
->>>>> It can only control Cortex-M core using the reset control and status registers mapped
->>>>> in the memory space of the Cortex-A35.
->>>>
->>>> That's pretty standard.
->>>>
->>>> It does not explain me why bus addressing or different compatible are
->>>> not sufficient here.
->>>
->>> Using an instance ID was a design choice.
->>> I'm happy to replace it with the use of compatible and match data (WIP).
->>>
->>> The match data will be pointing to a data structure containing the right offsets
->>> to be used with regmap APIs.
->>>
->>> syscon node is used to represent the Host Base System Control register area [1]
->>> where the external system reset registers are mapped (EXT_SYS*).
->>>
->>> The nodes will look like this:
->>>
->>> syscon@1a010000 {
->>>         compatible = "arm,sse710-host-base-sysctrl", "simple-mfd", "syscon";
->>>         reg = <0x1a010000 0x1000>;
->>>
->>>         #address-cells = <1>;
->>>         #size-cells = <1>;
->>>
->>>         remoteproc@310 {
->>>             compatible = "arm,sse710-extsys0";
->>>             reg = <0x310 4>;
->>
->> Uh, why do you create device nodes for one word? This really suggests it
->> is part of parent device and your split is artificial.
-> 
-> The external system registers (described by the remoteproc node) are part
-> of the parent device (the Host Base System Control register area) described
-> by syscon.
-> 
-> In case of the external system 0 , its registers are located at offset 0x310
-> (physical address: 0x1a010310)
-> 
-> When instantiating the devices without @address, the DTC compiler
-> detects 2 nodes with the same name (remoteproc).
+> +        clocks = <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
+> +                 <&gcc GCC_DISP_HF_AXI_CLK>,
+> +                 <&dispcc0 MDSS_DISP_CC_MDSS_MDP_CLK>;
+> +
+> +        interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
+> +        interrupt-controller;
+> +        #interrupt-cells = <1>;
+> +
+> +        iommus = <&apps_smmu 0x1000 0x402>;
+> +
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        ranges;
+> +
+> +        status = "disabled";
 
-There should be no children at all. DT is not for instantiating your
-drivers. I claim you have only one device and that's
-arm,sse710-host-base-sysctrl. If you create child node for one word,
-that's not a device.
+Uh no, it cannot be disabled. What would be the point of it? Please
+reach to your colleagues for some internal review before posting (see
+also go/upstream in internal systems).
 
 Best regards,
 Krzysztof
