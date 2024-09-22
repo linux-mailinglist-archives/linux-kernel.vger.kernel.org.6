@@ -1,148 +1,96 @@
-Return-Path: <linux-kernel+bounces-335332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04ACB97E435
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:24:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1743B97E439
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FB611C20F91
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:24:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15D011C20E5C
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7F580BF8;
-	Sun, 22 Sep 2024 23:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD1A811F1;
+	Sun, 22 Sep 2024 23:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LddSTxUM"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="h/WJXJZR";
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="vWpyJ0i4"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651177711B;
-	Sun, 22 Sep 2024 23:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9FB7711B
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 23:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727047490; cv=none; b=Dh/twibltOFDK9D8G/tl8Y6wnsThkSRccogbh0wKbnze848r8lpG0mEFGdRnroTKd0in+LfUeMjtmcGmAyiwQausqHI1gOdI9PZL6LfhBH5+U3RDqPj836j6dUEEu9BkToYBLn7UGQzAdtGQfzP+9aR6OzyNCTvGCvJDLK9Spx8=
+	t=1727047635; cv=none; b=GGSVlclnxv0qhXg+V/NuZxWS8kwMjCH5GsjHb62QVktNSmMAUhBHfJmPZlp9ZFlUL/rsbJPUJv/HMu1MjKrpLbuMoXW3jZRUCUslkfIhFbDwAFm/RPKBqfv/UXMrUho3IOUNWN0ERl9XvzZ8zgPdJw5fB/y/7NXLqglTVWP8q5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727047490; c=relaxed/simple;
-	bh=9egvdmA4WX9bHRnk8S1fHALDRS+LgDw4seE8JrM8D6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nUb29YqY//co7JLhoN+u52X3+LSl6BxHw+WuHzA4qOm1yzFxqBrj3rtBqMAKXKWJYht96HGnbL+H4vcbzmFgDp0VLWGNF35sPJCL05ltX5B8HxDfK4y90yKLc8pgMAJdyoNN3gszu6FUVEXke3y6aTwItlLj01CjiYm6CEQmizk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=LddSTxUM; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1727047482;
-	bh=JM+RKZj0M+lOVVuosO43GXc+1Ln+21ezimFGHW45vUI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LddSTxUMsFDK/iq12PD9c4R64hppwukbuGtVMYP+5cD6PMZLB+CPrTfPbCRHqxLG/
-	 BwQidGcKdsoSgYeou+lQSJXeMI57+27JlpKYsXNaSESZfRZDYYEjD2d+bnK/Bqx2GM
-	 g+0TLvkedmfe+yczgx9U5DI4rcGtl14Ss1XWTiqaF447+MCyo1VkzSYmIWUxyp42HY
-	 K9pmVJhO8vklp9uHeKzFBjJJ/3tFhElhbZg+2l841SeOAnb4SEDY7rRrzjpYK+kQev
-	 HZsKb9d11U/LPRjhgXUX+7eEaiVK6kAW6skUl1nf5HhYWppxUTD+bVZK9Qg9CgV6KY
-	 dWpt9zwV56Hyg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XBhzY5tgfz4w2N;
-	Mon, 23 Sep 2024 09:24:41 +1000 (AEST)
-Date: Mon, 23 Sep 2024 09:24:41 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jason Gunthorpe
- <jgg@ziepe.ca>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>, Nicolin Chen
- <nicolinc@nvidia.com>
-Subject: Re: linux-next: manual merge of the iommufd tree with the mm tree
-Message-ID: <20240923092441.23da0552@canb.auug.org.au>
-In-Reply-To: <20240816125429.7a55b08c@canb.auug.org.au>
-References: <20240816125429.7a55b08c@canb.auug.org.au>
+	s=arc-20240116; t=1727047635; c=relaxed/simple;
+	bh=9YL4wAd4v+E4FK1bs4+yob1Kh/6TWXfN7JoWPVrcA58=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e1bG3onL1xhKJfii54wFWl5u9KUPJJHIFFtm43+zP5oWAW4d7D8GhNR+XTGLX8K2lVl+H9AQIWRgLfvYtgvke8pWHrtt2O/1UkXNUg99mArhBlD6IP/5ecxhSGpE19nOhGt3sXJjSuGh2KA/j6vcJ59ICEp14wwvVRU7y/FOj5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=h/WJXJZR; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=vWpyJ0i4; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=h/WJXJZRi4V8mTZyPC4ljRfMJMzd0yLj10ITGPw02M3O9hyOPlBP0k34iDuntDYHZdeTmKfYHCM1z9YJBJ1+IUmmwd3Qz3BXQivnQgxC4tGEPofgp3G3QVe2osqW2zQkR3qebrpugIBUPRJD5MCArE86QCzvF7iRigP2I04vuGD5pl1X6fYnrjobcic/JJ/+YoJTC68il/svn2TF4DEgevmlicPPtPxGn/o5OtNoogNeZzshnj1BcnveKoZ3BhBR11tA4Q4aRDFp1XeJj3pV7pQ3NNKlcYbGP9MD9G3qVfaYeYW6B0FYq256CmsHGqmS/qHdde8xgHHdTIo39dEZ5w==; s=purelymail3; d=lkcamp.dev; v=1; bh=9YL4wAd4v+E4FK1bs4+yob1Kh/6TWXfN7JoWPVrcA58=; h=Received:From:To:Subject:Date;
+DKIM-Signature: a=rsa-sha256; b=vWpyJ0i45wcQEWFFjkwUSooNU3Bs32QvAT4/+pswbw/7psc9V3jQoXvZ3OTmhbl439O1Eh27Br/3DoPuXxOItqSlDg+L9n7Yq666clSXJCFve7K8dp3gnvC7yPMUYbX3ehlOf646ol0WpRYYbKO3dJhWIu7BcxJ2TEdmomPANygKU4VZeskOjuYPGXHwajQy2rw2c8knv/BP3wgQk8mO9f5jCmNFA46AjspNs9HbllOj/EbctcG/ISHfXyxp0pyx4ZRP5vsQo711XVrgPiV6UrTcBq+0GJEPCkbTtSWK8WXH/fTO08cl4jUuib5Gav2jpG6jQYGeTMsR14/A6nz4BA==; s=purelymail3; d=purelymail.com; v=1; bh=9YL4wAd4v+E4FK1bs4+yob1Kh/6TWXfN7JoWPVrcA58=; h=Feedback-ID:Received:From:To:Subject:Date;
+Feedback-ID: 40580:7130:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 163052307;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Sun, 22 Sep 2024 23:26:51 +0000 (UTC)
+From: Vinicius Peixoto <vpeixoto@lkcamp.dev>
+To: Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	~lkcamp/patches@lists.sr.ht
+Cc: Vinicius Peixoto <vpeixoto@lkcamp.dev>
+Subject: [PATCH 0/1] Add KUnit tests for lib/crc16.c
+Date: Sun, 22 Sep 2024 20:26:39 -0300
+Message-ID: <20240922232643.535329-1-vpeixoto@lkcamp.dev>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/i02N.AXFM6P/AW1UdQShWlv";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/i02N.AXFM6P/AW1UdQShWlv
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
+Content-Type: text/plain; charset=UTF-8
 
 Hi all,
 
-On Fri, 16 Aug 2024 12:54:29 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the iommufd tree got a conflict in:
->=20
->   drivers/iommu/iommufd/selftest.c
->=20
-> between commit:
->=20
->   e843cce9dd23 ("fault-inject-improve-build-for-config_fault_injection=3D=
-n-fix")
->=20
-> from the mm-nonmm-unstable branch of the mm tree and commit:
->=20
->   4be8b00b2b0f ("iommufd: Reorder include files")
->=20
-> from the iommufd tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> diff --cc drivers/iommu/iommufd/selftest.c
-> index 6bfb7fa5da7d,b60687f57bef..000000000000
-> --- a/drivers/iommu/iommufd/selftest.c
-> +++ b/drivers/iommu/iommufd/selftest.c
-> @@@ -3,14 -3,13 +3,14 @@@
->    *
->    * Kernel side components to support tools/testing/selftests/iommu
->    */
-> - #include <linux/slab.h>
-> - #include <linux/iommu.h>
-> - #include <linux/xarray.h>
-> - #include <linux/file.h>
-> - #include <linux/debugfs.h>
->   #include <linux/anon_inodes.h>
-> ++#include <linux/debugfs.h>
->   #include <linux/fault-inject.h>
-> + #include <linux/file.h>
-> + #include <linux/iommu.h>
->   #include <linux/platform_device.h>
-> + #include <linux/slab.h>
-> + #include <linux/xarray.h>
->   #include <uapi/linux/iommufd.h>
->  =20
->   #include "../iommu-priv.h"
+This patch was developed during a hackathon organized by LKCAMP [1],
+with the objective of writing KUnit tests, both to introduce people to
+the kernel development process and to learn about different subsystems
+(with the positive side effect of improving the kernel test coverage, of
+course).
 
-This is now a conflict between the iommufd tree and Linus' tree.
+We noticed there were tests for CRC32 in lib/crc32test.c and thought it
+would be nice to have something similar for CRC16, since it seems to be
+widely used in network drivers (as well as in some ext4 code).
+
+Although this patch turned out quite big, most of the LOCs come from
+tables containing randomly-generated test data that we use to validate
+the kernel's implementation of CRC-16.
+
+We would really appreciate any feedback/suggestions on how to improve
+this. Thanks! :-)
+
+Vinicius Peixoto (1):
+  lib/crc16_kunit.c: add KUnit tests for crc16
+
+ lib/Kconfig.debug |   8 +
+ lib/Makefile      |   1 +
+ lib/crc16_kunit.c | 715 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 724 insertions(+)
+ create mode 100644 lib/crc16_kunit.c
 
 --=20
-Cheers,
-Stephen Rothwell
+2.43.0
 
---Sig_/i02N.AXFM6P/AW1UdQShWlv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbwpzkACgkQAVBC80lX
-0GztkQf/V9mUo53kFcQQ6VEMq8istptTs9+UqhdqZVjenrHJW3WTo8U5tP9GKP/1
-J5EIwJa5GsbSm4AO2pGlaRrCo82jfgKVj9POEr/027PbVIqDAw/xeEdGvEDIA4xR
-zbrzuCNXQ+dL6dhieNkP91CytX7dvVvY4a947z5kiuO+2d7eCnAekjWdn/DANwDn
-7MJ93CMsKNuoXvpXCBbNlzGWwnQKw01HQ47KhNGjVHYcYiOHP1Hq2pGTiIHsWZzK
-VAN5ACJmJAZmN9Dx3NMQq1GPqg6j3pWJPxvl2C3/qOj3+r0OfWMaPTrfs+1B++Ay
-njcMBUYqDTk9pL3nVv8Dog8EBCkASg==
-=5WBG
------END PGP SIGNATURE-----
-
---Sig_/i02N.AXFM6P/AW1UdQShWlv--
 
