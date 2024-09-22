@@ -1,133 +1,218 @@
-Return-Path: <linux-kernel+bounces-335225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA5197E2CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:44:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8ED297E2D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F36CA1C20D14
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:43:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 844C52812EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F0D3BB30;
-	Sun, 22 Sep 2024 17:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c198BLR1"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878D139FCF;
+	Sun, 22 Sep 2024 17:46:22 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5418F482E2;
-	Sun, 22 Sep 2024 17:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAE0EEDB
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 17:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727027016; cv=none; b=q73elEyDX6HeSI7yQ+7+D5RRIbAphlZ29TCc7vTnaU68lm0XgrRkZKccsEFFdV1jcWH0KRzlJRnOj3PkOwUnfXCeK6T5xmEIS7uYBthaI4y2pFYCbhdriqUTni+fegGkumEqJb1y8l7JyuX3LjMXlKSnIhT8Gqp2aQ/1mAxjEdE=
+	t=1727027182; cv=none; b=uAa/RwcpmCIaoM+SujtbleOufe4edw6KcdIQFYbJ/uTZRa/yE9qh1/c9B5m9FXzuAoRRMgqYCl70iluJe6jayoXzIM/tnS90zqRZYW+yXyh2z6uhV+xSBuCVlKnYhM2GhQtbElmeTdeViqI9G7+yoOs1yxCYG7OPc1979kqMG7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727027016; c=relaxed/simple;
-	bh=yy9gl9pQz3F5fgfnipmdtFV0zJl13QipSJnEg+3xNDo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fCTQIwtgFKFODJVCASD+SI91hS7wjgq2ieK/UUwGI63rMoD+pdrvwXpa32bZAI/3zy/oN12nhmoVsME7EoOvGu4JgDcIs1+SukQC5yn76A09DI8jlF9d1N2Lr226uBfjjcbDOVFziCjx10oBwSHZbBmtGIbn6wbB15O9c9ZtgHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c198BLR1; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cbbb1727eso31759925e9.2;
-        Sun, 22 Sep 2024 10:43:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727027014; x=1727631814; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wXLPtmmwbw0kH9maBt8kI0QUZhZ3U60BovT7L6yY3xs=;
-        b=c198BLR1AJpnOAz31J9rRuxTuLQjRol54f2Vbaa3SHHXU0bK5oW5jqQLrOmq/gfJUi
-         AhIJThAcfD+53aZFAVHWP/9VPh/+8hL4K91jQfpQUuwWbHhyBOMokFwHJoiDPIGFMXsy
-         Hg2yD9/dL47npRz+sDWuHeZlA2hXPFGmewtZjGT6dXPe/6bL67Z+76dWyhOFULba87Mn
-         d8rKpkPRpx13Q7rQwaEgv2lTpLE8OnwgXd6TT0/FOi+ltjI5blrBx3a3CQDfkMcB4vLO
-         YkS5tr4xG9REhNieMhQg2sm9UB+nVcYw0kdGIeOaLgH/LNAPVhp4nA6Mcp0TZU5WkrlJ
-         ILNw==
+	s=arc-20240116; t=1727027182; c=relaxed/simple;
+	bh=Q+bddzHwkK2Nu9MCTXdGS7cq3kWB67sECu1dEG+PJ1U=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l/5/TWK3uJH6xBySVBGhAnHY4TtHSpIGvxJP7zz1Qk3v9D1r9S0cvKu+l+NNIyj+mJICqbuTjkKk5IqxxwV/Nnt329SndF9AXDSlrJjHhPJ87T61IhwCfb7aLRi08qVeUSS9Hhye8+7/R+mL4DZEOauPuxqYrFLCtSZ6jU0xIN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82cdc7b7debso337119839f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 10:46:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727027014; x=1727631814;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wXLPtmmwbw0kH9maBt8kI0QUZhZ3U60BovT7L6yY3xs=;
-        b=C4YIdCSFf//uwj50Sx1P1WYxKUIUmQBH0DQKsGm2xGdT7v+7HqckaGUTm4F6yMQqz9
-         rNezTPOPCXYhT09g2VCx64Wr6HcASP0Cf+S5QjomrFuDBxhsqREQnunY3qaRxBcUzpZk
-         3U6NQ7WS8yFW+hR6bayoAfD8fAUY7b3OIaoKxXvwnMn6BknTGr2GvKPnqKplE0oao48i
-         oG2KHLeK95LpUP8UuwK79cIwXKlyPQh4jZgxYtMPUocAsBEBWxCJ9LjP58Q5LwrCfcEO
-         AWos4XG63/7RqFsfjLU2RNa5su8A6gWkmcjsIfvK/VCUOWIx1v+FpC4KABum0A0c47dP
-         w2pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ0Duc/Hfh4RQGaAbE+yGVsSJx2YDBzxzoZJuWVyZpGu2VbiOLNuvCg9sXKWEGWyC8rF/YSAzVvMOl4i8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9iSaW5qmkmJGohUF6goJCf108p61mrbJmM3I84Bs60lUsbHiy
-	u64uha90biIfHXQFnEXtpEofFgUNv1vHu/393MgXSWTeolDQSCJp
-X-Google-Smtp-Source: AGHT+IHphXu0dGNfZ9BDNAw2gAnN60BBDuqllWZxOcm2vfWqG7Fy/AldhWq3sNJHPEbqGKEbIpHQ2w==
-X-Received: by 2002:a05:600c:4695:b0:42c:ae30:fc4d with SMTP id 5b1f17b1804b1-42e7abe12b1mr74954615e9.7.1727027013486;
-        Sun, 22 Sep 2024 10:43:33 -0700 (PDT)
-Received: from playground.localdomain ([86.127.146.72])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7ae60ad0sm80758535e9.1.2024.09.22.10.43.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 10:43:32 -0700 (PDT)
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Liu Ying <victor.liu@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/3] arm64: dts: imx8ulp: add AVD-SIM node
-Date: Sun, 22 Sep 2024 13:42:25 -0400
-Message-Id: <20240922174225.75948-4-laurentiumihalcea111@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240922174225.75948-1-laurentiumihalcea111@gmail.com>
-References: <20240922174225.75948-1-laurentiumihalcea111@gmail.com>
+        d=1e100.net; s=20230601; t=1727027179; x=1727631979;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2GZGILpo84C84oDf7lkUCqjURmbaY/I1uZq6HFexLnc=;
+        b=UyAta8g0HYJm3TRm88+hHlkKiI75QIZMLK0ir2yWldRbnxgi4JvD+FnNkVnwR/dl90
+         hcZhKQbDuVII5Tdw5zlfPe9f91dof6rVm57252rSteWz+VlusTE5uskyZg+eNwxYBfOv
+         TXlFcyv+9YQqjFpzP8UpV4KjUijnIMxQHk9dZW63F/PRjzysBQ+9L/kigirja4BHn7Nm
+         kNE140/E7QHSCpHXn34sKLcyBPF+3rJQFXwugtAMI1t1Yl4kYazDr6rrNaTjvarhXz3M
+         r4tWix2/7sQNllcaG4lYn10r2jd4+Bwag9sLcQ/ZFTpq+nUy4EIRhrQMc8s7pp7kHEI5
+         geiw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbItH7obTlvgImmFmVPsA+2jTvAY1GlpVdvKpe6jqwf3AP9n2Ma5xahTFU4avs5InhezZpgxCZ9HJpH/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2JvRSQFQAhtgXghuTIJxd2GnawpaCv+49e/gYDGRWNsfsMM13
+	iByAzsDL5jfarnh/WOmx7g4gvJwYrJya6uQEWaeMqIg1BQjccmzC6MuGzvY6F3ECNfn/8aFZmAZ
+	Re4Ji0xV8jiHkDoS4UEXUbqddEMCLnb8YUuxD0vWYF7+fH+P+OObsz1E=
+X-Google-Smtp-Source: AGHT+IFcOunlSgil0zRZA616kW6EiJ6VF1dWpASBC+DfN7Xk2mvbx2FjMY46Q68DrtilSDAJsZYv+GIdnhU33JEJ7FYAJ2GevKys
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1522:b0:3a0:98ab:7957 with SMTP id
+ e9e14a558f8ab-3a0c8d29354mr62490705ab.24.1727027179595; Sun, 22 Sep 2024
+ 10:46:19 -0700 (PDT)
+Date: Sun, 22 Sep 2024 10:46:19 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f057eb.050a0220.a27de.0004.GAE@google.com>
+Subject: [syzbot] [net?] KMSAN: kernel-infoleak in move_addr_to_user (7)
+From: syzbot <syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, willemdebruijn.kernel@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+Hello,
 
-Add node for imx8ulp's AVD-SIM module. This also
-includes its children.
+syzbot found the following issue on:
 
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
-Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+HEAD commit:    88264981f208 Merge tag 'sched_ext-for-6.12' of git://git.k..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=172c4107980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=547de13ee0a4d284
+dashboard link: https://syzkaller.appspot.com/bug?extid=346474e3bf0b26bd3090
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d7c19f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c81c27980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d83fc781c223/disk-88264981.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1ed4c5969fba/vmlinux-88264981.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/76a67bd894be/bzImage-88264981.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+BUG: KMSAN: kernel-infoleak in _inline_copy_to_user include/linux/uaccess.h:180 [inline]
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0xbc/0x110 lib/usercopy.c:26
+ instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+ _inline_copy_to_user include/linux/uaccess.h:180 [inline]
+ _copy_to_user+0xbc/0x110 lib/usercopy.c:26
+ copy_to_user include/linux/uaccess.h:209 [inline]
+ move_addr_to_user+0x28b/0x400 net/socket.c:292
+ ____sys_recvmsg+0x232/0x620 net/socket.c:2829
+ ___sys_recvmsg+0x223/0x840 net/socket.c:2864
+ do_recvmmsg+0x4f6/0xfd0 net/socket.c:2958
+ __sys_recvmmsg net/socket.c:3037 [inline]
+ __do_sys_recvmmsg net/socket.c:3060 [inline]
+ __se_sys_recvmmsg net/socket.c:3053 [inline]
+ __x64_sys_recvmmsg+0x397/0x490 net/socket.c:3053
+ x64_sys_call+0x2e5d/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:300
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ packet_recvmsg+0x176a/0x2500 net/packet/af_packet.c:3585
+ sock_recvmsg_nosec+0x22f/0x2b0 net/socket.c:1052
+ ____sys_recvmsg+0x541/0x620 net/socket.c:2820
+ ___sys_recvmsg+0x223/0x840 net/socket.c:2864
+ do_recvmmsg+0x4f6/0xfd0 net/socket.c:2958
+ __sys_recvmmsg net/socket.c:3037 [inline]
+ __do_sys_recvmmsg net/socket.c:3060 [inline]
+ __se_sys_recvmmsg net/socket.c:3053 [inline]
+ __x64_sys_recvmmsg+0x397/0x490 net/socket.c:3053
+ x64_sys_call+0x2e5d/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:300
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ eth_header_parse+0xb8/0x110 net/ethernet/eth.c:204
+ dev_parse_header include/linux/netdevice.h:3158 [inline]
+ packet_rcv+0xefc/0x2050 net/packet/af_packet.c:2253
+ dev_queue_xmit_nit+0x114b/0x12a0 net/core/dev.c:2347
+ xmit_one net/core/dev.c:3584 [inline]
+ dev_hard_start_xmit+0x17d/0xa20 net/core/dev.c:3604
+ __dev_queue_xmit+0x3576/0x55e0 net/core/dev.c:4424
+ dev_queue_xmit include/linux/netdevice.h:3094 [inline]
+ __bpf_tx_skb net/core/filter.c:2152 [inline]
+ __bpf_redirect_common net/core/filter.c:2196 [inline]
+ __bpf_redirect+0x148c/0x1610 net/core/filter.c:2203
+ ____bpf_clone_redirect net/core/filter.c:2475 [inline]
+ bpf_clone_redirect+0x37e/0x500 net/core/filter.c:2447
+ ___bpf_prog_run+0x13fe/0xe0f0 kernel/bpf/core.c:2010
+ __bpf_prog_run512+0xc5/0xf0 kernel/bpf/core.c:2253
+ bpf_dispatcher_nop_func include/linux/bpf.h:1257 [inline]
+ __bpf_prog_run include/linux/filter.h:701 [inline]
+ bpf_prog_run include/linux/filter.h:708 [inline]
+ bpf_test_run+0x546/0xd20 net/bpf/test_run.c:433
+ bpf_prog_test_run_skb+0x182f/0x24d0 net/bpf/test_run.c:1094
+ bpf_prog_test_run+0x6b1/0xac0 kernel/bpf/syscall.c:4320
+ __sys_bpf+0x6aa/0xd90 kernel/bpf/syscall.c:5735
+ __do_sys_bpf kernel/bpf/syscall.c:5824 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5822 [inline]
+ __x64_sys_bpf+0xa0/0xe0 kernel/bpf/syscall.c:5822
+ x64_sys_call+0x2cce/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:322
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4092 [inline]
+ slab_alloc_node mm/slub.c:4135 [inline]
+ kmem_cache_alloc_node_noprof+0x6bf/0xb80 mm/slub.c:4187
+ kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:587
+ pskb_expand_head+0x226/0x1a60 net/core/skbuff.c:2275
+ skb_ensure_writable+0x496/0x520 net/core/skbuff.c:6214
+ __bpf_try_make_writable net/core/filter.c:1677 [inline]
+ bpf_try_make_writable net/core/filter.c:1683 [inline]
+ bpf_try_make_head_writable net/core/filter.c:1691 [inline]
+ ____bpf_clone_redirect net/core/filter.c:2469 [inline]
+ bpf_clone_redirect+0x1c5/0x500 net/core/filter.c:2447
+ ___bpf_prog_run+0x13fe/0xe0f0 kernel/bpf/core.c:2010
+ __bpf_prog_run512+0xc5/0xf0 kernel/bpf/core.c:2253
+ bpf_dispatcher_nop_func include/linux/bpf.h:1257 [inline]
+ __bpf_prog_run include/linux/filter.h:701 [inline]
+ bpf_prog_run include/linux/filter.h:708 [inline]
+ bpf_test_run+0x546/0xd20 net/bpf/test_run.c:433
+ bpf_prog_test_run_skb+0x182f/0x24d0 net/bpf/test_run.c:1094
+ bpf_prog_test_run+0x6b1/0xac0 kernel/bpf/syscall.c:4320
+ __sys_bpf+0x6aa/0xd90 kernel/bpf/syscall.c:5735
+ __do_sys_bpf kernel/bpf/syscall.c:5824 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5822 [inline]
+ __x64_sys_bpf+0xa0/0xe0 kernel/bpf/syscall.c:5822
+ x64_sys_call+0x2cce/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:322
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Bytes 12-17 of 20 are uninitialized
+Memory access of size 20 starts at ffff88812112fa48
+Data copied to user address 0000000020000ac0
+
+CPU: 0 UID: 0 PID: 5234 Comm: syz-executor312 Not tainted 6.11.0-syzkaller-08481-g88264981f208 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+=====================================================
+
+
 ---
- arch/arm64/boot/dts/freescale/imx8ulp.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8ulp.dtsi b/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-index e32d5afcf4a9..1ffa4da23042 100644
---- a/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-@@ -614,6 +614,19 @@ per_bridge5: bus@2d800000 {
- 			#size-cells = <1>;
- 			ranges;
- 
-+			avd_sim: syscon@2da50000 {
-+				compatible = "nxp,imx8ulp-avd-sim-reset", "syscon";
-+				reg = <0x2da50000 0x38>;
-+				clocks = <&pcc5 IMX8ULP_CLK_AVD_SIM>;
-+				#reset-cells = <1>;
-+
-+				mux: mux-controller {
-+					compatible = "mmio-mux";
-+					#mux-control-cells = <1>;
-+					mux-reg-masks = <0x8 0x00000200>;
-+				};
-+			};
-+
- 			cgc2: clock-controller@2da60000 {
- 				compatible = "fsl,imx8ulp-cgc2";
- 				reg = <0x2da60000 0x10000>;
--- 
-2.34.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
