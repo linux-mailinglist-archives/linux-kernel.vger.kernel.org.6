@@ -1,185 +1,120 @@
-Return-Path: <linux-kernel+bounces-335218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 191B697E2AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:09:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5531997E2B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A165728151D
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:09:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A79B1F21766
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FC92D052;
-	Sun, 22 Sep 2024 17:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FEA2CCC2;
+	Sun, 22 Sep 2024 17:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RVdVgmwq"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nb+9EgtL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9868A5227
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 17:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBD917C64;
+	Sun, 22 Sep 2024 17:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727024971; cv=none; b=nunW+QbrY+rTxrWcu5bseNSo6Sd2aELOCe4F0YPb4Iifxb6fsXiB3/C/OGLUrWsjaqOBiY6N0GJvFhVShmPhMcvPiXXvFycp8IWTcEeB42wP1yjIhPdo+SVbntEi6u1WVYJ75lvcL7NFhQXoq8bZQhq8pGV3sQC+0njUIqh5S4M=
+	t=1727025709; cv=none; b=EMPyE7jazQDLuEhAFJ7KGJSOHFTbWgu6XfRqXaRT6AK1FnNF/rma4cuMMxELcJw6hZ+zWvUB8/Y2A/8nQyZyo/YTfu6LewedadEk17mZMgtO0ot0cOJvEAZvdXd0wm4c9edAuuJh2K3ABhbXwEdyZwSrP5Tbviyk5TW1VpdTWag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727024971; c=relaxed/simple;
-	bh=7kPmqFQNL8wHbsPJ1aFo4mgkSTjutG+BY+1kZiG8quU=;
+	s=arc-20240116; t=1727025709; c=relaxed/simple;
+	bh=7pKcc7GpsW8tmnEy7weHXD0ST3IevhpacWw79bD/TYo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bQo4mG/jr1+1h+rr5nybiQFSfF8YDX0+gQ9bhuXX85Ud27b4vhaBsnwo2+88hqiQiFSpV/OcOOgCVjdQE7TOsOp9pt26IIrbAXjdTd7yIxbq3LJ71loyPjd26XN7qpY+QQwpal7sBEqvYlQjPJvn2rf/f3RijIvrW8e2JtCFCjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RVdVgmwq; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cbc38a997so22343225e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 10:09:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727024968; x=1727629768; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=L0rIrXzxLzm1RYymakq/5yWW79oFHaAAUNk6PTkjpnU=;
-        b=RVdVgmwq2gl2Qr+72ogBtUR1SOZjuyexkfBIdXMRmgMec1gsqU1ivluOcDZScjHaXj
-         c7kg7yLNaBxQ37vi9OnjnQk56KQVhdsiCEuCcEbWXL6vl57lNhQmVb6RvHyaWbkePkGX
-         ZBLoX9P/8+LsgmLH38Vu30KcmqqmTzayP9VLFaIHqnNcIr6rOeb3HIxw82B/DPi/ELFQ
-         O5QVDkdG0mHgIoGNmIKpicnub/wj46rLFc9lr1xCB4bRTl4TYUDoFKKWiUAzy1nz6Nzi
-         SuKDJal/0e3BUEzQIQj2g1CxNhyryqIWRDzqSbedZhHTeSx/EFOmk9hBxZMAsDT98Gzz
-         jXgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727024968; x=1727629768;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L0rIrXzxLzm1RYymakq/5yWW79oFHaAAUNk6PTkjpnU=;
-        b=tq5QATWBENnWFWGksSg87nJRZqvXlJNne7YsD1HiUheNpxX4mkveCE82/i2qHXT+H8
-         2lCYpyYYrbjDNZsonmxF0BkQnuG19rZ1wt8DS7sTbsd30puHI8Dxzzw3EDziFBM11AvB
-         YEyI8cPJiqhvl4KM/Er1NXxO0MPv0B4ovo4+ZaJlUe5/kaHecp19+R3Vx89GN4fCjSgi
-         iHHry/y177FBsn6fEzj9J25drEnwb9Yi15KSOR348+pDnJ8puqK0FJURj4gfLiAlE1al
-         tRtJsPhoQf+GineGw52dNuTz50lbuLaupap5Iwo4bLdiQ9AGyN/8/EzN4cuQ4J7f4ibG
-         1lhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCjvZOb/Lb9oktg85PTyIK5I4RA+/NoFDJWMGQqgkxHhAlNb84kMljJgpovSklQVi6bHPd4eCz05qWrBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9HSgF00GJQph0B2Rk7IolVic4PIkgH8jBj1F6HqJOj6ILm/Pf
-	0/BONkPsGD6v2q1IJPMg5TeSm+Q7HshsDm7e2q9THiy1qMNqr0hot/pFTnKRew==
-X-Google-Smtp-Source: AGHT+IHnnuaHgxDj+rS3r9lgGu134/fQ270qm0dfx4TIlDOErD+D6Q+2jXX//mse26TLw59cSmOqYw==
-X-Received: by 2002:a05:600c:1ca2:b0:42c:b8e5:34d5 with SMTP id 5b1f17b1804b1-42e7a9fe8dbmr52478745e9.15.1727024967852;
-        Sun, 22 Sep 2024 10:09:27 -0700 (PDT)
-Received: from thinkpad (i53873832.versanet.de. [83.135.56.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e801d66f6sm55926815e9.29.2024.09.22.10.09.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 10:09:27 -0700 (PDT)
-Date: Sun, 22 Sep 2024 19:09:25 +0200
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>, vkoul@kernel.org,
-	kishon@kernel.org, robh@kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org,
-	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com,
-	dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
-	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Add support for PCIe3 on x1e80100
-Message-ID: <20240922170925.qcuwja6oaqlbng5j@thinkpad>
-References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
- <36bd9f69-e263-08a1-af07-45185ea03671@quicinc.com>
- <6f1118eb-89cf-4fd4-a35d-e8b98b0b7a8d@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DQlU1QU4w4r5BK8WxBv8yLRn8gBR9RjwffjC829rIBhQmRN3L2UwjSVkju65j8EhViK6tgzcQHBHtpMGwUfEEUA/Gf8ZnlC1/MXImUPZge7Lxyumf5nUj21PKVCH5nM4R7g5xnpl3YIUUsGfe4LYV9aah3T8EAp2VNG80MwRrkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nb+9EgtL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACECEC4CEC3;
+	Sun, 22 Sep 2024 17:21:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727025709;
+	bh=7pKcc7GpsW8tmnEy7weHXD0ST3IevhpacWw79bD/TYo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nb+9EgtL43OXnf6rYLrlo/HWfZ14nOLLmY4iua7TvMO387RLLJQ8wRNtFcfxyNtsV
+	 s+3nsZVC7j6OWB+URexMvupe6yRubJZO/3tHIiuLVPzCJOX3J1BiEJyzzXUdS5QAoF
+	 /32UJvFA1rALzHP8s2ddlvUV5JF2OBFHSVb5AvJeQHKErtfpOXOPOW4WQBLtcYxRIV
+	 P6Jy11o6jvqOH6KFiIn/Wbzwz2viTzBxREwPOazWjUKyPd1NGGk8dphqTD4zJzlzkc
+	 JU0LDRSU+uyWQVpJGTgxcCwu0BxT/0Sx4TNIj+RmtNW10pJKRwsgslpi32v9J4gcfT
+	 8eSUgT8e1Kzzg==
+Date: Sun, 22 Sep 2024 18:21:43 +0100
+From: Simon Horman <horms@kernel.org>
+To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com,
+	shradhagupta@linux.microsoft.com, ahmed.zaki@intel.com,
+	leon@kernel.org, colin.i.king@gmail.com,
+	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ernis@microsoft.com
+Subject: Re: [PATCH v2] net: mana: Add get_link and get_link_ksettings in
+ ethtool
+Message-ID: <20240922172143.GF3426578@kernel.org>
+References: <1726867103-19295-1-git-send-email-ernis@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6f1118eb-89cf-4fd4-a35d-e8b98b0b7a8d@quicinc.com>
+In-Reply-To: <1726867103-19295-1-git-send-email-ernis@linux.microsoft.com>
 
-On Thu, Sep 19, 2024 at 10:14:06PM +0800, Qiang Yu wrote:
+On Fri, Sep 20, 2024 at 02:18:23PM -0700, Erni Sri Satya Vennela wrote:
+> Add support for the ethtool get_link and get_link_ksettings
+> operations. Display standard port information using ethtool.
 > 
-> On 9/14/2024 11:59 AM, Krishna Chaitanya Chundru wrote:
-> > Hi qiang,
-> > 
-> > In next series can you add logic in controller driver
-> > to have new ops for this x1e80100 since this hardware
-> > has smmuv3 support but currently the ops_1_9_0 ops which
-> > is being used has configuring bdf to sid table which will
-> > be not present for this devices.
-> > 
-> Sure, bdf2sid map is not supported and required since we use smmuv3 for
-> pcie on x1e80100. Can I add a new ops which is same as ops_1_9_0 basically
-> and only config_sid callback is removed. Or add a new flag to determine if
-> we need to config bdf2sid map like no_l0s.
+> Before the change:
+> $ethtool enP30832s1
+> > No data available
 > 
-> Hi Mani, what do you think about this?
+> After the change:
+> $ethtool enP30832s1
+> > Settings for enP30832s1:
+>         Supported ports: [  ]
+>         Supported link modes:   Not reported
+>         Supported pause frame use: No
+>         Supports auto-negotiation: No
+>         Supported FEC modes: Not reported
+>         Advertised link modes:  Not reported
+>         Advertised pause frame use: No
+>         Advertised auto-negotiation: No
+>         Advertised FEC modes: Not reported
+>         Speed: Unknown!
+>         Duplex: Full
+>         Auto-negotiation: off
+>         Port: Other
+>         PHYAD: 0
+>         Transceiver: internal
+>         Link detected: yes
 > 
+> Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> Reviewed-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> ---
+> Changes in v2:
+> * Remove support for displaying auto-negotiation details
+> * Change PORT_DA to PORT_OTHER
 
-Good question. IMO it is better to add a new ops even though it duplictes the
-callbacks. Because the newer platforms are not going to need this bdf2sid map
-anyway. But if we add a flag to determine that, then the check will become,
+Hi Erni, Haiyang, all
 
-	if (pcie->cfg->ops->config_sid && !pcie->cfg->smmuv3)
-		...
+Thanks for the update, it looks like it addresses the review of v1 by Jakub.
+However, I am assuming that as a non-bug-fix, this is targeted at net-next.
+And net-next is currently closed for the v6.12 merge window.  Please
+consider reposting this patch once net-next reopens.  That will occur after
+v6.12-rc1 has been released.  Which I expect to be about a week from now.
 
-And this doesn't look good as both conditions are false for X1E80100 i.e., it
-doesn't need bdf2sid mapping and it is also a SMMUv3 platform. Moreover having
-two checks here makes it confusing also.
+Also, for networking patches please tag non-bug fixes for
+net-next (and bug fixes for net, being sure to include a Fixes tag).
 
-So let's use a new callback. But please mention the IP revision in comments as
-like other ops.
+	Subject: [PATCH net-next] ...
 
-- Mani
-
-> Thanks,
-> Qiang
-> > 
-> > - Krishna Chaitanya.
-> > 
-> > On 9/13/2024 2:07 PM, Qiang Yu wrote:
-> > > This series add support for PCIe3 on x1e80100.
-> > > 
-> > > PCIe3 needs additional set of clocks, regulators and new set of PCIe QMP
-> > > PHY configuration compare other PCIe instances on x1e80100. Hence add
-> > > required resource configuration and usage for PCIe3.
-> > > 
-> > > v2->v1:
-> > > 1. Squash [PATCH 1/8], [PATCH 2/8],[PATCH 3/8] into one patch and
-> > > make the
-> > >     indentation consistent.
-> > > 2. Put dts patch at the end of the patchset.
-> > > 3. Put dt-binding patch at the first of the patchset.
-> > > 4. Add a new patch where opp-table is added in dt-binding to avoid dtbs
-> > >     checking error.
-> > > 5. Remove GCC_PCIE_3_AUX_CLK, RPMH_CXO_CLK, put in
-> > > TCSR_PCIE_8L_CLKREF_EN
-> > >     as ref.
-> > > 6. Remove lane_broadcasting.
-> > > 7. Add 64 bit bar, Remove GCC_PCIE_3_PIPE_CLK_SRC,
-> > >     GCC_CFG_NOC_PCIE_ANOC_SOUTH_AHB_CLK is changed to
-> > >     GCC_CFG_NOC_PCIE_ANOC_NORTH_AHB_CLK.
-> > > 8. Add Reviewed-by tag.
-> > > 9. Remove [PATCH 7/8], [PATCH 8/8].
-> > > 
-> > > Qiang Yu (5):
-> > >    dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the X1E80100
-> > >      QMP PCIe PHY Gen4 x8
-> > >    dt-bindings: PCI: qcom: Add OPP table for X1E80100
-> > >    phy: qcom: qmp: Add phy register and clk setting for x1e80100 PCIe3
-> > >    clk: qcom: gcc-x1e80100: Fix halt_check for pipediv2 clocks
-> > >    arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100
-> > > 
-> > >   .../bindings/pci/qcom,pcie-x1e80100.yaml      |   4 +
-> > >   .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |   3 +
-> > >   arch/arm64/boot/dts/qcom/x1e80100.dtsi        | 202 ++++++++++++++++-
-> > >   drivers/clk/qcom/gcc-x1e80100.c               |  10 +-
-> > >   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      | 211 ++++++++++++++++++
-> > >   .../qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h    |  25 +++
-> > >   drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h |  19 ++
-> > >   7 files changed, 468 insertions(+), 6 deletions(-)
-> > >   create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h
-> > >   create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h
-> > > 
+Please see https://docs.kernel.org/process/maintainer-netdev.html
 
 -- 
-மணிவண்ணன் சதாசிவம்
+pw-bot: defer
 
