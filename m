@@ -1,249 +1,172 @@
-Return-Path: <linux-kernel+bounces-335065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FDD097E083
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 10:12:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C666E97E085
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 10:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24E9D1C209A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 08:12:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FFDF1F212BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 08:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7663156993;
-	Sun, 22 Sep 2024 08:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8878A193084;
+	Sun, 22 Sep 2024 08:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ASacI3/c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3596F28F4
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 08:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CD528F4;
+	Sun, 22 Sep 2024 08:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726992746; cv=none; b=mkOE76WaMNsAMJD6lo8sQuSQb+L1xKdbvLGzJjdrXsWRMmbKJgNJQeC6kpMBpaBgkUciCQr2/aMW+Y5DKQvPIHMCwYKd3WSuzg2VtLl9m3/e72H7TDgmapU4j5rGJ7AumyZVPviozsbtdtbRCmo8TMmKEAQTQ4Z5938KVYmWf1c=
+	t=1726992775; cv=none; b=s7twtjfz9PqY8qxPvc780T9CGAeqm6+0aohz4lCdAxjNfv880Zs9eo9cs0TJc63KyrrGugeFaBDQkOsUQ2p5uGpFDvYiWHkpbHasbDLKXxq4CtrhCP4sXKC5nOXU/389nBgRSyR3WyYS5/6Dtjn4atqGNyi32QSdeS+7Bu7Ukn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726992746; c=relaxed/simple;
-	bh=3ud95PH78zSAE3tJ/PsX1w2swk30wIPtdSkCoKtmw8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=uYcqW1hckBHCIDxf75VGt7qxQkUx0laR5V+5p7DTdAQCP9b8DVAMMotmrKqxJEqcwcmO8qC+dgXoKOoJwyAjzjm6/tDWyyTVFYshUDI3Gsw9KjnjP8NsraeJF9oi52BpsiSb06STaOamueOz+/eGltWCrb+HAm6BE9SzCbWID10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F171C4CEC3;
-	Sun, 22 Sep 2024 08:12:23 +0000 (UTC)
-Date: Sun, 22 Sep 2024 04:12:19 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, Thorsten Blum
- <thorsten.blum@toblux.com>, Vincent Donnefort <vdonnefort@google.com>
-Subject: [GIT PULL] ring-buffer: Updates for 6.12
-Message-ID: <20240922041219.2906a1ab@rorschach.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726992775; c=relaxed/simple;
+	bh=u+gqaeFBc/xXWtTw8bAcjlVJ7TwL8P7TRF1D+jnozJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dhr+MkJNidjae4l4eZxSYFXDsB3Axl57mrrSaVl5yKQqTvV/aKaUo8tgD/qza9jLsXyQwdX5QlYPC5/b+nW/r95B6lpr//BVB7s3cbCf77/sYdYTU2/E0lMtNQbsMry/fORTd/n3o6KqKuVYoZcCg40If+GpKfnSPwIqtp79rSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ASacI3/c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 393C4C4CEC3;
+	Sun, 22 Sep 2024 08:12:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726992775;
+	bh=u+gqaeFBc/xXWtTw8bAcjlVJ7TwL8P7TRF1D+jnozJ8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ASacI3/cMIAmIgKFgAqNXnA6GlgFpQ3KFHPhj2sF9oXSBAnYxNfQFTLcELWaHnubq
+	 not5fopLFJdbv5JcdCXktihKScLdF9T7li34eSNiddNCXs+xIQT5KGbjHDpY5UKpKW
+	 uUeKmdxkXtUvOj/9P1DowauF9ldKgZTafGc3/aH4zQkPM+MjdP793XTq3jcHmSc6HO
+	 vQ22LSxoMeuuW/IfbQJhShO0lif3sQwjOdMx3w2qehz2zC6T3LHoPOHlTU3VjCMW7+
+	 xgIV29cmne+QAq3p22bTu7j5M3w5UjXETTPtkEjcFfcAGzFttyuXcbmrK7YU3JRy/B
+	 325L+pRg7Zisw==
+Message-ID: <f9b04df3-18f7-416e-a973-422bcf341d3a@kernel.org>
+Date: Sun, 22 Sep 2024 10:12:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: display: rockchip-vop: Split rk3288-vop
+ into big and lit
+To: Jonas Karlman <jonas@kwiboo.se>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Sandy Huang <hjc@rock-chips.com>,
+ Heiko Stuebner <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240921222007.2301868-1-jonas@kwiboo.se>
+ <20240921222007.2301868-2-jonas@kwiboo.se>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240921222007.2301868-2-jonas@kwiboo.se>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 22/09/2024 00:20, Jonas Karlman wrote:
+> The Rockchip RK3288 SoC contain two different Visual Output Processor
+> (VOP) blocks, VOP_BIG and VOP_LIT. The VOP blocks support different max
+> output resolution, 3840x2160 and 2560x1600.
+> 
+> Add compatible to differentiate between the two VOP blocks.
+> 
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> ---
+>  .../display/rockchip/rockchip-vop.yaml        | 36 +++++++++++--------
+>  1 file changed, 21 insertions(+), 15 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
+> index b339b7e708c6..ce4169b030af 100644
+> --- a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
+> +++ b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
+> @@ -17,21 +17,27 @@ maintainers:
+>  
+>  properties:
+>    compatible:
+> -    enum:
+> -      - rockchip,px30-vop-big
+> -      - rockchip,px30-vop-lit
+> -      - rockchip,rk3036-vop
+> -      - rockchip,rk3066-vop
+> -      - rockchip,rk3126-vop
+> -      - rockchip,rk3188-vop
+> -      - rockchip,rk3228-vop
+> -      - rockchip,rk3288-vop
+> -      - rockchip,rk3328-vop
+> -      - rockchip,rk3366-vop
+> -      - rockchip,rk3368-vop
+> -      - rockchip,rk3399-vop-big
+> -      - rockchip,rk3399-vop-lit
+> -      - rockchip,rv1126-vop
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - rockchip,rk3288-vop-big
+> +              - rockchip,rk3288-vop-lit
+> +          - const: rockchip,rk3288-vop
+> +      - enum:
+> +          - rockchip,px30-vop-big
+> +          - rockchip,px30-vop-lit
+> +          - rockchip,rk3036-vop
+> +          - rockchip,rk3066-vop
+> +          - rockchip,rk3126-vop
+> +          - rockchip,rk3188-vop
+> +          - rockchip,rk3228-vop
+> +          - rockchip,rk3288-vop
 
-Linus,
+I think this one should be dropped. You will update all in-kernel users,
+so it won't be needed here and all other projects should probably follow up.
 
-ring-buffer: Updates for v6.12:
+Best regards,
+Krzysztof
 
-- Merged v6.11-rc3 into trace/ring-buffer/core
-
-  The v6.11 ring buffer pull request was not made due to Mathieu Desnoyers
-  making a comment to the pull request. Mathieu and I resolved it on IRC,
-  but we did not let Linus know that it was resolved. Linus did not do the
-  pull thinking it still had some unresolved issues.
-
-  The ring buffer work for 6.12 was dependent on both this pull request as
-  well as the reserve_mem kernel command line option that was going upstream
-  through the memory management tree. The ring buffer repo was being used by
-  others so it could not be rebased. In order to continue the work, the
-  v6.11-rc3 branch was pulled in to get access to the reserve_mem work.
-
-This has the 6.11 pull request that did not make it into 6.11, which was:
-
-  tracing/ring-buffer: Have persistent buffer across reboots
-
-  This allows for the tracing instance ring buffer to stay persistent across
-  reboots. The way this is done is by adding to the kernel command line:
-
-    trace_instance=boot_map@0x285400000:12M
-
-  This will reserve 12 megabytes at the address 0x285400000, and then map
-  the tracing instance "boot_map" ring buffer to that memory. This will
-  appear as a normal instance in the tracefs system:
-
-    /sys/kernel/tracing/instances/boot_map
-
-  A user could enable tracing in that instance, and on reboot or kernel
-  crash, if the memory is not wiped by the firmware, it will recreate the
-  trace in that instance. For example, if one was debugging a shutdown of a
-  kernel reboot:
-
-   # cd /sys/kernel/tracing
-   # echo function > instances/boot_map/current_tracer
-   # reboot
-  [..]
-   # cd /sys/kernel/tracing
-   # tail instances/boot_map/trace
-         swapper/0-1       [000] d..1.   164.549800: restore_boot_irq_mode <-native_machine_shutdown
-         swapper/0-1       [000] d..1.   164.549801: native_restore_boot_irq_mode <-native_machine_shutdown
-         swapper/0-1       [000] d..1.   164.549802: disconnect_bsp_APIC <-native_machine_shutdown
-         swapper/0-1       [000] d..1.   164.549811: hpet_disable <-native_machine_shutdown
-         swapper/0-1       [000] d..1.   164.549812: iommu_shutdown_noop <-native_machine_restart
-         swapper/0-1       [000] d..1.   164.549813: native_machine_emergency_restart <-__do_sys_reboot
-         swapper/0-1       [000] d..1.   164.549813: tboot_shutdown <-native_machine_emergency_restart
-         swapper/0-1       [000] d..1.   164.549820: acpi_reboot <-native_machine_emergency_restart
-         swapper/0-1       [000] d..1.   164.549821: acpi_reset <-acpi_reboot
-         swapper/0-1       [000] d..1.   164.549822: acpi_os_write_port <-acpi_reboot
-
-  On reboot, the buffer is examined to make sure it is valid. The validation
-  check even steps through every event to make sure the meta data of the
-  event is correct. If any test fails, it will simply reset the buffer, and
-  the buffer will be empty on boot.
-
-The new changes for 6.12 are:
-
-- Allow the tracing persistent boot buffer to use the "reserve_mem" option
-
-  Instead of having the admin find a physical address to store the persistent
-  buffer, which can be very tedious if they have to administrate several
-  different machines, allow them to use the "reserve_mem" option that will
-  find a location for them. It is not as reliable because of KASLR, as the
-  loading of the kernel in different locations can cause the memory
-  allocated to be inconsistent. Booting with "nokaslr" can make reserve_mem
-  more reliable.
-
-- Have function graph tracer handle offsets from a previous boot.
-
-  The ring buffer output from a previous boot may have different addresses
-  due to kaslr. Have the function graph tracer handle these by using the
-  delta from the previous boot to the new boot address space.
-
-- Only reset the saved meta offset when the buffer is started or reset
-
-  In the persistent memory meta data, it holds the previous address space
-  information, so that it can calculate the delta to have function tracing
-  work. But this gets updated after being read to hold the new address
-  space. But if the buffer isn't used for that boot, on reboot, the delta is
-  now calculated from the previous boot and not the boot that holds the data
-  in the ring buffer. This causes the functions not to be shown. Do not save
-  the address space information of the current kernel until it is being
-  recorded.
-
-- Add a magic variable to test the valid meta data
-
-  Add a magic variable in the meta data that can also be used for
-  validation. The validator of the previous buffer doesn't need this magic
-  data, but it can be used if the meta data is changed by a new kernel, which
-  may have the same format that passes the validator but is used
-  differently. This magic number can also be used as a "versioning" of the
-  meta data.
-
-- Align user space mapped ring buffer sub buffers to improve TLB entries
-
-  Linus mentioned that the mapped ring buffer sub buffers were misaligned
-  between the meta page and the sub-buffers, so that if the sub-buffers were
-  bigger than PAGE_SIZE, it wouldn't allow the TLB to use bigger entries.
-
-- Add new kernel command line "traceoff" to disable tracing on boot for instances
-
-  If tracing is enabled for a boot instance, there needs a way to be able to
-  disable it on boot so that new events do not get entered into the ring
-  buffer and be mixed with events from a previous boot, as that can be
-  confusing.
-
-- Allow trace_printk() to go to other instances
-
-  Currently, trace_printk() can only go to the top level instance. When
-  debugging with a persistent buffer, it is really useful to be able to add
-  trace_printk() to go to that buffer, so that you have access to them after
-  a crash.
-
-- Do not use "bin_printk()" for traces to a boot instance
-
-  The bin_printk() saves only a pointer to the printk format in the ring
-  buffer, as the reader of the buffer can still have access to it. But this
-  is not the case if the buffer is from a previous boot. If the
-  trace_printk() is going to a "persistent" buffer, it will use the slower
-  version that writes the printk format into the buffer.
-
-- Add command line option to allow trace_printk() to go to an instance
-
-  Allow the kernel command line to define which instance the trace_printk()
-  goes to, instead of forcing the admin to set it for every boot via the
-  tracefs options.
-
-- Start a document that explains how to use tracefs to debug the kernel
-
-- Add some more kernel selftests to test user mapped ring buffer
-
-
-Please pull the latest trace-ring-buffer-v6.12 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-ring-buffer-v6.12
-
-Tag SHA1: a75472cfcdca7aab3512c18a4be525b1054b5c0f
-Head SHA1: 75d7ff9aa0ae1a8d1b3f9c8c87dde3a4fbe9a2cf
-
-
-Dan Carpenter (1):
-      tracing: Fix NULL vs IS_ERR() check in enable_instances()
-
-Steven Rostedt (10):
-      Merge tag 'v6.11-rc3' into trace/ring-buffer/core
-      tracing: Fix ifdef of snapshots to not prevent last_boot_info file
-      tracing/fgraph: Have fgraph handle previous boot function addresses
-      ring-buffer: Don't reset persistent ring-buffer meta saved addresses
-      ring-buffer: Add magic and struct size to boot up meta data
-      tracing: Add "traceoff" flag to boot time tracing instances
-      tracing: Allow trace_printk() to go to other instance buffers
-      tracing: Have trace_printk not use binary prints if boot buffer
-      tracing: Add option to set an instance to be the trace_printk destination
-      tracing/Documentation: Start a document on how to debug with tracing
-
-Steven Rostedt (Google) (14):
-      ring-buffer: Allow mapped field to be set without mapping
-      ring-buffer: Add ring_buffer_alloc_range()
-      ring-buffer: Add ring_buffer_meta data
-      tracing: Implement creating an instance based on a given memory region
-      ring-buffer: Add output of ring buffer meta page
-      ring-buffer: Add test if range of boot buffer is valid
-      ring-buffer: Validate boot range memory events
-      tracing: Add option to use memmapped memory for trace boot instance
-      ring-buffer: Save text and data locations in mapped meta data
-      tracing/ring-buffer: Add last_boot_info file to boot instance
-      tracing: Handle old buffer mappings for event strings and functions
-      tracing: Update function tracing output for previous boot buffer
-      tracing: Add last boot delta offset for stack traces
-      tracing: Allow boot instances to use reserve_mem boot memory
-
-Thorsten Blum (1):
-      ring-buffer: Use vma_pages() helper function
-
-Vincent Donnefort (3):
-      ring-buffer: Align meta-page to sub-buffers for improved TLB usage
-      selftests/ring-buffer: Verify the entire meta-page padding
-      selftests/ring-buffer: Handle meta-page bigger than the system
-
-----
- Documentation/admin-guide/kernel-parameters.txt |  45 ++
- Documentation/trace/debugging.rst               | 159 ++++
- Documentation/trace/ftrace.rst                  |  12 +
- include/linux/ring_buffer.h                     |  20 +
- kernel/trace/ring_buffer.c                      | 949 +++++++++++++++++++++---
- kernel/trace/trace.c                            | 372 +++++++++-
- kernel/trace/trace.h                            |  14 +-
- kernel/trace/trace_functions_graph.c            |  23 +-
- kernel/trace/trace_output.c                     |  17 +-
- tools/testing/selftests/ring-buffer/map_test.c  |  24 +
- 10 files changed, 1483 insertions(+), 152 deletions(-)
- create mode 100644 Documentation/trace/debugging.rst
----------------------------
 
