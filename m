@@ -1,256 +1,540 @@
-Return-Path: <linux-kernel+bounces-335084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8696697E0D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 12:15:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A37F97E0E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 12:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F28CB20AF9
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 10:15:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE61C28127F
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 10:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C90C15382E;
-	Sun, 22 Sep 2024 10:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129C2149E17;
+	Sun, 22 Sep 2024 10:21:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="EueiuIlz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="a4uQ9P9p"
-Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="w6B+oLdh"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B924524D7;
-	Sun, 22 Sep 2024 10:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B46824BD;
+	Sun, 22 Sep 2024 10:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727000127; cv=none; b=pDfOC6XEDGnRH2EnFzWWjgGQGws8BIKxyr9aGiWsHWpe8YBg3dsgzSXdJkQdRtFK5HHo2zM5p9ZmHYivhHaGeYvAfQV2CkCRHN1W85QruOS+nz+eLrXKJ9hND/TYbBUN+iGqGVfBis0sE9KkisvdVJdJdjqeTcO0BZJTcg8gygc=
+	t=1727000472; cv=none; b=B0fVaBQ6Y6DoOADZrNAZXKskoZZe5EYrTGE9bttZ3YYbdjog7sgYlFvx8M5KdsIGw4scybZmBEo3Qi7BAmlXfaylwVDjsJm9HceiVDAohxiomh1Ris/5tXYWOGI7T61aKmHqJ5wXSMI4EmSdCL6nhPb4Tpx5qLc9ZjLRCJMwU94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727000127; c=relaxed/simple;
-	bh=o1laS0iBNe7sZJ2IkaOVgaenqSTEu3eJl+BG4qqQvyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LNCR7X4vmNylUZ/zEJJbP+29LnWF630fFQaYslzOiXqKKzh9pN5n4Nn0XKDV9qJSc+n3lDcnhEFkrFaOrKpSMZxifBuThXXlCsIENll/Rgt3Gh62vcgJ6+C0sDQL5QRYEpIS++r08tX52am56WrC3jATzPypWiyBOdKANxraO5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=EueiuIlz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=a4uQ9P9p; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id 7274413802E8;
-	Sun, 22 Sep 2024 06:15:22 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-07.internal (MEProxy); Sun, 22 Sep 2024 06:15:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727000122;
-	 x=1727086522; bh=z3lbEBj7Hn2s5ZLm0g8ZucXx9EFzxLsl8v8/hMTPYTA=; b=
-	EueiuIlzEqXC/HuTT4YJR6uW6W0RF5jeP1pt/5NtgA3mHkJffAT06sq7ZXWj6tE0
-	3UE/kNlbFYeoPEF7vME9u6FkmejuLmKcAHQQARFKzQcfg51SpDcfkdRuiDBbhnXV
-	m6tD4lLCYX00y2SmpBbQ2J7Q6Y3dpbeR1s3prUS9XGosyYk/P/qDBhFBfSWJ6f/n
-	PPAXOeSuxMK5/eV2y5AGha9PUhgUaiVJy2f/zWuqauxKtnQVi4m+Sg2tjZcT6fou
-	kxDfFWzfQaytj8+yGaGLe4g7dISYJVKvYlN3c87APUoxJFEuvBBVAeEGHYu37Hzo
-	KKovOmo4crU67+igrRKm4w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727000122; x=
-	1727086522; bh=z3lbEBj7Hn2s5ZLm0g8ZucXx9EFzxLsl8v8/hMTPYTA=; b=a
-	4uQ9P9pLwxohNrVy8IYw7QFArMLxkhAPgfhXX0iI96KOOF5IOE9HK0ddktmewCOU
-	eXAoJeDO9X5GHakoTr367Ar4Mc66Ey47cQqVTLWsGzKFWuFk1MU3Agunt+hW4llJ
-	ePozVk94Z/dGCVgu5nMBi2fW5j0YR7SX+Zmd2tO3E+z1oweOzaUp6TdKCKfPyI6X
-	htG7uXZzF2lAMYx9XATdESOh135yOmuWEmy4H+khgwAAsxE7wGtLtU2ABnLJK1tK
-	lEaV9PDv3l5T8CVEKNat2LucYzlFl4/ihljUNcoDIN2ajlPun9K7kgtMORpMJXeh
-	oIXWvuTm6i+hF6L8OqRcw==
-X-ME-Sender: <xms:Oe7vZg6Ke4jBOF5549ojEMHJduRLwdBJMGn1i-F2g3V-RjT77iPiGw>
-    <xme:Oe7vZh54gMvHnCGnJqqO87RGIzVvwDL5LAGI-batwUqGI-3WChqjesNWfNe8R-mFQ
-    22QkYpocdIXbDrSZGY>
-X-ME-Received: <xmr:Oe7vZvdwpshLx7ilN3i3Oto1Jvty7G0GDe1zdtJG5J0wjT0QkZedqbfRC1KbIsZB5Y9ffr__OsJS_WBkcSPaYPysodqUHLNLuQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeljedgvdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
-    necuhfhrohhmpefpihhklhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhoug
-    gvrhhluhhnugesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeevteeg
-    tddvvdfhtdekgefhfeefheetheekkeegfeejudeiudeuleegtdehkeekteenucevlhhush
-    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshho
-    uggvrhhluhhnugesrhgrghhnrghtvggthhdrshgvpdhnsggprhgtphhtthhopeelpdhmoh
-    guvgepshhmthhpohhuthdprhgtphhtthhopehtohhmihdrvhgrlhhkvghinhgvnhesihgu
-    vggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohephhhvvghrkhhuihhlqdgtihhstghoseigshegrghllhdr
-    nhhlpdhrtghpthhtohepshgrkhgrrhhirdgrihhluhhssehlihhnuhigrdhinhhtvghlrd
-    gtohhmpdhrtghpthhtoheplhgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhn
-    sghorghrugdrtghomhdprhgtphhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotg
-    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehtohhmihdrvhgrlhhkvghi
-    nhgvnhdorhgvnhgvshgrshesihguvggrshhonhgsohgrrhgurdgtohhm
-X-ME-Proxy: <xmx:Oe7vZlJv85IEj4KTLckYocqJeIJ_tydFAnYp_FuinpQy2tyI276qGw>
-    <xmx:Oe7vZkLWhT8rWUi0OxMnK66Eg8dXhe9yLBAAEdPmSfl-JnFcqrh_jA>
-    <xmx:Oe7vZmwiOoxBis7-WOdCY6dLexmWNhrjwfrtQXFQpcz4c6L3tznVrg>
-    <xmx:Oe7vZoJB28V-IvYFC9G4QEoBq54wEuQWcl3sQjpavhi8ob4cetVriA>
-    <xmx:Ou7vZpUI64SHGm_GRIMM7XPXKH0El4ZaZVw6C-OIOGjvlVY585djA0gM>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 22 Sep 2024 06:15:21 -0400 (EDT)
-Date: Sun, 22 Sep 2024 12:15:19 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Subject: Re: [PATCH 3/4] media: renesas: Use state cleanup macros
-Message-ID: <20240922101519.GA3490560@ragnatech.se>
-References: <20240917-scoped-state-v1-0-b8ba3fbe5952@ideasonboard.com>
- <20240917-scoped-state-v1-3-b8ba3fbe5952@ideasonboard.com>
+	s=arc-20240116; t=1727000472; c=relaxed/simple;
+	bh=AqutN8Rp4xr64uA7iGd20GtzJ3zFhQeFxEf1rQBQiq0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AkV9e6AGZ5pUlGrDwiLMDkP8tC396hrTJWsVD7UiMBW2f1DbbQFcegiQnZi96ntKHN1HiXZ1hG/7TscfjnAeq9g/uxoqgQbD4g/6Ios5v5GRnBlg2qN1+unsTW3r6g29YLJb5vncX9/mz2UzW/cYC2ab3/S6R2Vq88AnVWV3IWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=w6B+oLdh; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1727000468;
+	bh=AqutN8Rp4xr64uA7iGd20GtzJ3zFhQeFxEf1rQBQiq0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=w6B+oLdhJxQedXSkAVG8HuyPsrQqfuiZYnbPPj1bKrnXW8EPz7uipzzNnAFh997jw
+	 6/MWJJ9tH9YIPcUAinYtJ4Xqs0ZWq2U/O9ErDWpDRiLv9qoEv33GyOZO8ROSELKc+G
+	 4HOMqZpJrs48pPX6Zbv5AEZu6YSPVx8qvdDZ9x6KogDonC/QX5V8e4z6pKbB6AVAIU
+	 ZdVdmZwkkaISVMKrEyazff+Ny3LOvO4HuaQxdvxarAU9/Fxor8dKo1IWJo2UmPeDyJ
+	 bN4EDR56Sgrzq5dmHsIG/aVxNa9Y4N92FlW4tdUISdYz0Tb/8mFq/qabIJe3My2lwk
+	 nx/nf18WBmXtg==
+Received: from thinkos.internal.efficios.com (ip148.ip-54-37-222.eu [54.37.222.148])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XBMbD2lXHz1LkR;
+	Sun, 22 Sep 2024 06:20:56 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	John Stultz <jstultz@google.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	maged.michael@gmail.com,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	rcu@vger.kernel.org,
+	linux-mm@kvack.org,
+	lkmm@lists.linux.dev
+Subject: [RFC PATCH v1 1/1] hpref: Hazard Pointers with Reference Counter
+Date: Sun, 22 Sep 2024 12:20:02 +0200
+Message-Id: <20240922102002.321008-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240917-scoped-state-v1-3-b8ba3fbe5952@ideasonboard.com>
 
-Hi Tomi,
+Boqun Feng's patch series and LPC talk gave me a few ideas I wanted to
+try. I figured we could improve the concept of reference counters by
+adding a hazard-pointer protected fast-path to them.
 
-Thanks for your work. I like the scoped management.
+This API combines hazard pointers and reference counters.
+It uses hazard pointers as fast-paths, and falls back to reference
+counters either explicitly when the reader expects to hold the object
+for a long time, or when no hazard pointer slots are available.
 
-On 2024-09-17 17:09:31 +0300, Tomi Valkeinen wrote:
-> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> 
-> Use the new subdev state cleanup macros.
-> 
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> ---
->  drivers/media/platform/renesas/rcar-csi2.c            | 14 ++++----------
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c |  9 ++++-----
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c   |  9 ++-------
->  3 files changed, 10 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rcar-csi2.c b/drivers/media/platform/renesas/rcar-csi2.c
-> index c419ddb4c5a2..03ef6566271f 100644
-> --- a/drivers/media/platform/renesas/rcar-csi2.c
-> +++ b/drivers/media/platform/renesas/rcar-csi2.c
-> @@ -1163,27 +1163,24 @@ static void rcsi2_stop(struct rcar_csi2 *priv)
->  static int rcsi2_s_stream(struct v4l2_subdev *sd, int enable)
->  {
->  	struct rcar_csi2 *priv = sd_to_csi2(sd);
-> -	struct v4l2_subdev_state *state;
->  	int ret = 0;
->  
->  	if (!priv->remote)
->  		return -ENODEV;
->  
-> -	state = v4l2_subdev_lock_and_get_active_state(&priv->subdev);
-> +	CLASS(v4l2_subdev_lock_and_get_active_state, state)(&priv->subdev);
->  
->  	if (enable && priv->stream_count == 0) {
->  		ret = rcsi2_start(priv, state);
->  		if (ret)
-> -			goto out;
-> +			return ret;
+This prototype is implemented in userspace within the liburcu project,
+and depends on librseq for per-cpu data structure allocation, indexing,
+and updates.
 
-As ret is now only used in this branch maybe we can move the declaration 
-of it here? At least I think you should remove the assignment to 0 above 
-as that behavior is not needed anymore but, at lest to me, keeping it 
-indicates there is an intent in initializing it.
+- The top of this liburcu feature branch can be found at:
+  https://github.com/compudj/userspace-rcu-dev/tree/hpref
+  (it's implemented within liburcu for convenience, but it does
+  not actually use RCU).
 
-With that fixed,
+- librseq can be found at:
+  https://git.kernel.org/pub/scm/libs/librseq/librseq.git/
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This leverages the fact that both synchronization mechanisms aim to
+guarantee existence of objects, and those existence guarantees can be
+chained. Each mechanism achieves its purpose in a different way with
+different tradeoffs. The hazard pointers are faster to read and scale
+better than reference counters, but they consume more memory than a
+per-object reference counter.
 
->  	} else if (!enable && priv->stream_count == 1) {
->  		rcsi2_stop(priv);
->  	}
->  
->  	priv->stream_count += enable ? 1 : -1;
-> -out:
-> -	v4l2_subdev_unlock_state(state);
->  
-> -	return ret;
-> +	return 0;
->  }
->  
->  static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
-> @@ -1274,18 +1271,15 @@ static irqreturn_t rcsi2_irq(int irq, void *data)
->  
->  static irqreturn_t rcsi2_irq_thread(int irq, void *data)
->  {
-> -	struct v4l2_subdev_state *state;
->  	struct rcar_csi2 *priv = data;
->  
-> -	state = v4l2_subdev_lock_and_get_active_state(&priv->subdev);
-> +	CLASS(v4l2_subdev_lock_and_get_active_state, state)(&priv->subdev);
->  
->  	rcsi2_stop(priv);
->  	usleep_range(1000, 2000);
->  	if (rcsi2_start(priv, state))
->  		dev_warn(priv->dev, "Failed to restart CSI-2 receiver\n");
->  
-> -	v4l2_subdev_unlock_state(state);
-> -
->  	return IRQ_HANDLED;
->  }
->  
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> index e68fcdaea207..63b846f3e468 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> @@ -238,7 +238,6 @@ static int rzg2l_csi2_calc_mbps(struct rzg2l_csi2 *csi2)
->  	struct v4l2_subdev *source = csi2->remote_source;
->  	const struct rzg2l_csi2_format *format;
->  	const struct v4l2_mbus_framefmt *fmt;
-> -	struct v4l2_subdev_state *state;
->  	struct v4l2_ctrl *ctrl;
->  	u64 mbps;
->  
-> @@ -250,10 +249,10 @@ static int rzg2l_csi2_calc_mbps(struct rzg2l_csi2 *csi2)
->  		return -EINVAL;
->  	}
->  
-> -	state = v4l2_subdev_lock_and_get_active_state(&csi2->subdev);
-> -	fmt = v4l2_subdev_state_get_format(state, RZG2L_CSI2_SINK);
-> -	format = rzg2l_csi2_code_to_fmt(fmt->code);
-> -	v4l2_subdev_unlock_state(state);
-> +	scoped_v4l2_subdev_lock_and_get_active_state(&csi2->subdev) {
-> +		fmt = v4l2_subdev_state_get_format(state, RZG2L_CSI2_SINK);
-> +		format = rzg2l_csi2_code_to_fmt(fmt->code);
-> +	}
->  
->  	/*
->  	 * Calculate hsfreq in Mbps
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> index ac8ebae4ed07..0b9e8a7cf22a 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-> @@ -36,14 +36,9 @@ static const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsigned int c
->  
->  struct v4l2_mbus_framefmt *rzg2l_cru_ip_get_src_fmt(struct rzg2l_cru_dev *cru)
->  {
-> -	struct v4l2_subdev_state *state;
-> -	struct v4l2_mbus_framefmt *fmt;
-> +	CLASS(v4l2_subdev_lock_and_get_active_state, state)(&cru->ip.subdev);
->  
-> -	state = v4l2_subdev_lock_and_get_active_state(&cru->ip.subdev);
-> -	fmt = v4l2_subdev_state_get_format(state, 1);
-> -	v4l2_subdev_unlock_state(state);
-> -
-> -	return fmt;
-> +	return v4l2_subdev_state_get_format(state, 1);
->  }
->  
->  static int rzg2l_cru_ip_s_stream(struct v4l2_subdev *sd, int enable)
-> 
-> -- 
-> 2.43.0
-> 
+The fall-back to reference counter allows bounding the number of
+hazard pointer slots to a fixed size for the entire system:
+nr_cpus * N, where N=8 as it fills a single 64 bytes cache line on
+64-bit architectures.
 
+Porting it to the Linux kernel should be straightforward. We might
+want to pick heavily contented reference counts such as the mm_struct
+mm_count field as a starting point to see if it provides significant
+performance gains.
+
+The hpref read-side performs well even compared to RCU in my benchmarks:
+
+    Results:
+
+    CPU(s):                  16
+      On-line CPU(s) list:   0-15
+    Vendor ID:               AuthenticAMD
+      Model name:            AMD Ryzen 7 PRO 6850U with Radeon Graphics
+
+    8 readers, 1 writer, 10s
+
+    test_rwlock                               nr_reads    190461165 nr_writes           12 nr_ops    190461177
+    test_mutex                                nr_reads    248594205 nr_writes     26088306 nr_ops    274682511
+    test_urcu_mb         (smp_mb)             nr_reads    829829784 nr_writes     18057836 nr_ops    847887620
+    test_perthreadlock                        nr_reads   1623365032 nr_writes      1244814 nr_ops   1624609846
+    test_hpref_benchmark (smp_mb)             nr_reads   1994298193 nr_writes     22293162 nr_ops   2016591355
+    test_hpref_benchmark (barrier/membarrier) nr_reads  15208690879 nr_writes      1893785 nr_ops  15210584664
+    test_urcu_bp         (barrier/membarrier) nr_reads  20242102863 nr_writes       599484 nr_ops  20242702347
+    test_urcu            (barrier/membarrier) nr_reads  20714490759 nr_writes       782045 nr_ops  20715272804
+    test_urcu_qsbr                            nr_reads  40774708959 nr_writes      3512904 nr_ops  40778221863
+
+References:
+
+[1]: M. M. Michael, "Hazard pointers: safe memory reclamation for
+     lock-free objects," in IEEE Transactions on Parallel and
+     Distributed Systems, vol. 15, no. 6, pp. 491-504, June 2004
+
+Link: https://lore.kernel.org/lkml/j3scdl5iymjlxavomgc6u5ndg3svhab6ga23dr36o4f5mt333w@7xslvq6b6hmv/
+Link: https://lpc.events/event/18/contributions/1731/
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Change-Id: I6369064a0e1a1f9632394df31ff41c76905d17e3
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: John Stultz <jstultz@google.com>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Zqiang <qiang.zhang1211@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: maged.michael@gmail.com
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: rcu@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: lkmm@lists.linux.dev
+---
+Changes since v0:
+- Re-load cpu and cpu_slots when rseq critical section aborts,
+- Remove the notion of "current_slot" hint from the hpref_hp_get
+  fast-path. Just try all slots instead. Removing this counter
+  management improves performance of the fast path by about 50%.
+---
+ include/urcu/hpref.h | 229 +++++++++++++++++++++++++++++++++++++++++++
+ src/Makefile.am      |   6 +-
+ src/hpref.c          |  78 +++++++++++++++
+ 3 files changed, 312 insertions(+), 1 deletion(-)
+ create mode 100644 include/urcu/hpref.h
+ create mode 100644 src/hpref.c
+
+diff --git a/include/urcu/hpref.h b/include/urcu/hpref.h
+new file mode 100644
+index 00000000..34f2bb9b
+--- /dev/null
++++ b/include/urcu/hpref.h
+@@ -0,0 +1,229 @@
++// SPDX-FileCopyrightText: 2024 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
++//
++// SPDX-License-Identifier: LGPL-2.1-or-later
++
++#ifndef _URCU_HPREF_H
++#define _URCU_HPREF_H
++
++/*
++ * HPREF: Hazard pointers with reference counters
++ *
++ * This API combines hazard pointers and reference counters.
++ * It uses hazard pointers as fast-paths, and fall-back to reference
++ * counters either explicitly when the reader expects to hold the object
++ * for a long time, or when no hazard pointer slots are available.
++ *
++ * This leverages the fact that both synchronization mechanisms aim to
++ * guarantee existence of objects, and those existence guarantees can be
++ * chained. Each mechanism achieves its purpose in a different way with
++ * different tradeoffs. The hazard pointers are faster to read and scale
++ * better than reference counters, but they consume more memory than a
++ * per-object reference counter.
++ *
++ * The fall-back to reference counter allows bounding the number of
++ * hazard pointer slots to a fixed size for the entire system:
++ * nr_cpus * N, where N=8 as it fills a single 64 bytes cache line on
++ * 64-bit architectures.
++ *
++ * References:
++ *
++ * [1]: M. M. Michael, "Hazard pointers: safe memory reclamation for
++ *      lock-free objects," in IEEE Transactions on Parallel and
++ *      Distributed Systems, vol. 15, no. 6, pp. 491-504, June 2004
++ */
++
++#include <stdlib.h>
++#include <unistd.h>
++#include <poll.h>
++#include <stdbool.h>
++#include <rseq/mempool.h>	/* Per-CPU memory */
++#include <rseq/rseq.h>
++
++#include <urcu/ref.h>
++#include <urcu/uatomic.h>
++#include <urcu/compiler.h>
++
++struct hpref_node {
++	struct urcu_ref refcount;
++	void (*release)(struct hpref_node *node);
++};
++
++struct hpref_slot {
++	/* Use rseq to set from reader only if zero. */
++	struct hpref_node *node;
++};
++
++#define NR_PERCPU_SLOTS_BITS	3
++#define HPREF_NR_PERCPU_SLOTS	(1U << NR_PERCPU_SLOTS_BITS)
++/*
++ * The emergency slot is only used for short critical sections
++ * (would be preempt off in when porting this code to the kernel): only
++ * to ensure we have a free slot for taking a reference count as
++ * fallback.
++ */
++#define HPREF_EMERGENCY_SLOT	(HPREF_NR_PERCPU_SLOTS - 1)
++
++struct hpref_percpu_slots {
++	struct hpref_slot slots[HPREF_NR_PERCPU_SLOTS];
++};
++
++enum hpref_type {
++	HPREF_TYPE_HP,
++	HPREF_TYPE_REF,
++};
++
++struct hpref_ctx {
++	struct hpref_slot *slot;
++	struct hpref_node *hp;
++	enum hpref_type type;
++};
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++extern struct hpref_percpu_slots *hpref_percpu_slots;
++
++void hpref_release(struct urcu_ref *ref);
++
++/*
++ * hpref_synchronize: Wait for any reader possessing a hazard pointer to
++ *                    @node to clear its hazard pointer slot.
++ */
++void hpref_synchronize(struct hpref_node *node);
++
++/*
++ * hpref_synchronize_put: Wait for any reader possessing a hazard
++ *                        pointer to clear its slot and put reference
++ *                        count.
++ */
++void hpref_synchronize_put(struct hpref_node *node);
++
++static inline
++void hpref_node_init(struct hpref_node *node,
++		void (*release)(struct hpref_node *node))
++{
++	urcu_ref_init(&node->refcount);
++	node->release = release;
++}
++
++/*
++ * hpref_promote_hp_to_ref: Promote hazard pointer to reference count.
++ */
++static inline
++void hpref_promote_hp_to_ref(struct hpref_ctx *ctx)
++{
++	if (ctx->type == HPREF_TYPE_REF)
++		return;
++	urcu_ref_get(&ctx->hp->refcount);
++	uatomic_store(&ctx->slot->node, NULL, CMM_RELEASE);
++	ctx->slot = NULL;
++	ctx->type = HPREF_TYPE_REF;
++}
++
++/*
++ * hpref_hp_get: Obtain a reference to a stable object, protected either
++ *               by hazard pointer (fast-path) or using reference
++ *               counter as fall-back.
++ */
++static inline
++bool hpref_hp_get(struct hpref_node **node_p, struct hpref_ctx *ctx)
++{
++	int cpu = rseq_current_cpu_raw(), ret;
++	struct hpref_percpu_slots *cpu_slots = rseq_percpu_ptr(hpref_percpu_slots, cpu);
++	struct hpref_node *node, *node2;
++	struct hpref_slot *slot;
++	unsigned int slot_nr;
++
++	node = uatomic_load(node_p, CMM_RELAXED);
++	if (!node)
++		return false;
++retry:
++	for (slot_nr = 0; slot_nr < HPREF_NR_PERCPU_SLOTS; /* inc in loop. */) {
++		slot = &cpu_slots->slots[slot_nr];
++		/* Use rseq to try setting slot hp. Store B. */
++		ret = rseq_load_cbne_store__ptr(RSEQ_MO_RELAXED, RSEQ_PERCPU_CPU_ID,
++					(intptr_t *) &slot->node, (intptr_t) NULL,
++					(intptr_t) node, cpu);
++		if (!ret)
++			break;	/* Success. */
++		if (ret < 0) {
++			/*
++			 * Abort due to preemption/migration/signal
++			 * delivery or CPU number mismatch.
++			 */
++			cpu = rseq_current_cpu_raw();
++			cpu_slots = rseq_percpu_ptr(hpref_percpu_slots, cpu);
++		}
++		if (slot_nr == HPREF_EMERGENCY_SLOT) {
++			/*
++			 * This may busy-wait for another reader using the
++			 * emergency slot to transition to refcount.
++			 */
++			caa_cpu_relax();
++		} else {
++			slot_nr++;
++		}
++		goto retry;
++	}
++	/* Memory ordering: Store B before Load A. */
++	cmm_smp_mb();
++	node2 = uatomic_load(node_p, CMM_RELAXED);	/* Load A */
++	/*
++	 * If @node_p content has changed since the first load,
++	 * clear the hazard pointer and try again.
++	 */
++	if (node != node2) {
++		uatomic_store(&slot->node, NULL, CMM_RELAXED);
++		if (!node2)
++			return false;
++		node = node2;
++		goto retry;
++	}
++	ctx->type = HPREF_TYPE_HP;
++	ctx->hp = node;
++	ctx->slot = slot;
++	if (slot_nr == HPREF_EMERGENCY_SLOT)
++		hpref_promote_hp_to_ref(ctx);
++	return true;
++}
++
++static inline
++void hpref_put(struct hpref_ctx *ctx)
++{
++	if (ctx->type == HPREF_TYPE_REF) {
++		urcu_ref_put(&ctx->hp->refcount, hpref_release);
++	} else {
++		/* Release HP. */
++		uatomic_store(&ctx->slot->node, NULL, CMM_RELEASE);
++	}
++	ctx->hp = NULL;
++}
++
++/*
++ * hpref_set_pointer: Store pointer @node to @ptr, with RCU publication
++ *                    guarantees.
++ */
++static inline
++void hpref_set_pointer(struct hpref_node **ptr, struct hpref_node *node)
++{
++	if (__builtin_constant_p(node) && node == NULL)
++		uatomic_store(ptr, NULL, CMM_RELAXED);
++	else
++		uatomic_store(ptr, node, CMM_RELEASE);
++}
++
++/*
++ * Return the content of the hpref context hazard pointer field.
++ */
++static inline
++struct hpref_node *hpref_ctx_pointer(struct hpref_ctx *ctx)
++{
++	return ctx->hp;
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _URCU_HPREF_H */
+diff --git a/src/Makefile.am b/src/Makefile.am
+index b555c818..7312c9f7 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -19,7 +19,8 @@ RCULFHASH = rculfhash.c rculfhash-mm-order.c rculfhash-mm-chunk.c \
+ lib_LTLIBRARIES = liburcu-common.la \
+ 		liburcu.la liburcu-qsbr.la \
+ 		liburcu-mb.la liburcu-bp.la \
+-		liburcu-memb.la liburcu-cds.la
++		liburcu-memb.la liburcu-cds.la \
++		liburcu-hpref.la
+ 
+ #
+ # liburcu-common contains wait-free queues (needed by call_rcu) as well
+@@ -50,6 +51,9 @@ liburcu_cds_la_SOURCES = rculfqueue.c rculfstack.c lfstack.c \
+ 	workqueue.c workqueue.h $(RCULFHASH) $(COMPAT)
+ liburcu_cds_la_LIBADD = liburcu-common.la
+ 
++liburcu_hpref_la_SOURCES = hpref.c
++liburcu_hpref_la_LIBADD = -lrseq
++
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = liburcu-cds.pc liburcu.pc liburcu-bp.pc liburcu-qsbr.pc \
+ 	liburcu-mb.pc liburcu-memb.pc
+diff --git a/src/hpref.c b/src/hpref.c
+new file mode 100644
+index 00000000..f63530f5
+--- /dev/null
++++ b/src/hpref.c
+@@ -0,0 +1,78 @@
++// SPDX-FileCopyrightText: 2024 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
++//
++// SPDX-License-Identifier: LGPL-2.1-or-later
++
++/*
++ * HPREF: Hazard pointers with reference counters
++ */
++
++#define _LGPL_SOURCE
++#include <urcu/hpref.h>
++#include <rseq/mempool.h>	/* Per-CPU memory */
++
++static struct rseq_mempool *mempool;
++struct hpref_percpu_slots *hpref_percpu_slots;
++
++void hpref_release(struct urcu_ref *ref)
++{
++	struct hpref_node *node = caa_container_of(ref, struct hpref_node, refcount);
++
++	node->release(node);
++}
++
++/*
++ * hpref_synchronize: Wait for any reader possessing a hazard pointer to
++ *                    @node to clear its hazard pointer slot.
++ */
++void hpref_synchronize(struct hpref_node *node)
++{
++	int nr_cpus = rseq_get_max_nr_cpus(), cpu;
++
++	/* Memory ordering: Store A before Load B. */
++	cmm_smp_mb();
++	/* Scan all CPUs slots. */
++	for (cpu = 0; cpu < nr_cpus; cpu++) {
++		struct hpref_percpu_slots *cpu_slots = rseq_percpu_ptr(hpref_percpu_slots, cpu);
++		struct hpref_slot *slot;
++		unsigned int i;
++
++		for (i = 0; i < HPREF_NR_PERCPU_SLOTS; i++) {
++			slot = &cpu_slots->slots[i];
++			/* Busy-wait if node is found. */
++			while (uatomic_load(&slot->node, CMM_ACQUIRE) == node)	/* Load B */
++				caa_cpu_relax();
++		}
++	}
++}
++
++/*
++ * hpref_synchronize_put: Wait for any reader possessing a hazard
++ *                        pointer to clear its slot and put reference
++ *                        count.
++ */
++void hpref_synchronize_put(struct hpref_node *node)
++{
++	if (!node)
++		return;
++	hpref_synchronize(node);
++	urcu_ref_put(&node->refcount, hpref_release);
++}
++
++static __attribute__((constructor))
++void hpref_init(void)
++{
++	mempool = rseq_mempool_create("hpref", sizeof(struct hpref_percpu_slots), NULL);
++	if (!mempool)
++		abort();
++	hpref_percpu_slots = rseq_mempool_percpu_zmalloc(mempool);
++	if (!hpref_percpu_slots)
++		abort();
++}
++
++static __attribute__((destructor))
++void hpref_exit(void)
++{
++	rseq_mempool_percpu_free(hpref_percpu_slots);
++	if (rseq_mempool_destroy(mempool))
++		abort();
++}
 -- 
-Kind Regards,
-Niklas Söderlund
+2.39.2
+
 
