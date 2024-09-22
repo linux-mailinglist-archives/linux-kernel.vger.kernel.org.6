@@ -1,82 +1,59 @@
-Return-Path: <linux-kernel+bounces-335161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7903F97E213
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:52:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3852397E21C
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E6A281168
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 14:52:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69DDF1C20DB3
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 14:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88E5BE6F;
-	Sun, 22 Sep 2024 14:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B115D515;
+	Sun, 22 Sep 2024 14:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FNJa+YJz"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=flokli.de header.i=@flokli.de header.b="GUA8Ibtq"
+Received: from mail.flokli.de (mail.flokli.de [116.203.226.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BB928F1;
-	Sun, 22 Sep 2024 14:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC85BA27;
+	Sun, 22 Sep 2024 14:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.226.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727016753; cv=none; b=qP5A6oHZtd8dCidk76yRv8jd98gg2jn35yqxk/SQq/IbJkIoDyCLxHQyw3iDFEHMy4WHUEHSIjbN1AkYzqSx+o+/pa7O7LB4M32x+5rdnIXXERlQZTOLtcI5cx9vl0Wgz12zozDVMbQ+/LAM/py3KpSfIxmk9ZV8y9rzxbnE20E=
+	t=1727017171; cv=none; b=nfJ+o7fArdBRqZEVqyMR8TF9mueKZ2AmvXStUE7KvJ/6I1a1+eCH6qO4qx8+8J+px0E2c/xsW4Fyl/Zcv2iQSfOa/JpWjgkFTPPsxtt1T3iehzn5Da+42zg3jF6fIeKb6t51MFiu/e06AHeta/LuhiizVeih03TMTFM48FBujN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727016753; c=relaxed/simple;
-	bh=8dXv+L5cy+r+yw1U4RxDN/TXZy6iJHWclJaV5+Onno0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EGTkXnrhxs7OKxGhq34HyRyOppxkJtdnkLLVu+2kEnINNlEIuAZjKm7Fvs+L3qrcgtJgVaKegjoZ3C0pPdG/R68PGXeAYtZ/hvhE+Qb4jjNhNinpnfUEw8+E4yJ4WplyIzr/yVYNddp5ovuGD4Cj89HT5DzLKEj3N4tZ2CpSplE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FNJa+YJz; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7c6b4222fe3so2256778a12.3;
-        Sun, 22 Sep 2024 07:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727016751; x=1727621551; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=WOgd2QunxMIvSdCybNEpeSDnURu734zoL6YtUhoHgls=;
-        b=FNJa+YJzD/8O3IN7JiR3s9XZt6nk9ZZ1MsMZ+euuYp0aP4eVprjwuRDc/IeOFgofQ5
-         dmZMd4Cu74sLfDZMipAqL6j8/CENIIQwd3t8R9Ok/inNlSslObIa2lCXDJPB0qmUVMdP
-         h1pMuAFUSUT6cLaMupjF4E3Iamj3ELFgyaEHJiJgiCG7EtuCL2BwlDBxQ/oFP3dpq6UC
-         G0IbAdOheAkIiTFsKP2GSdd72elBRWf5jDz0iat/SCH+VgmSK7TOYKTDNrH82qsfnwYg
-         1ZXmmdpj13wRF0G9n7vRo4jhFPsKHntvGYQx3muroI/q+JlvS1lkPDlm1ZF68b0z9LxW
-         CZmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727016751; x=1727621551;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WOgd2QunxMIvSdCybNEpeSDnURu734zoL6YtUhoHgls=;
-        b=X2yrHS0M3tvthPI757Y6KBtIEq80jaRnY0No3N4e+hUUxgtnBcN8zW1WBiKRXjC0SI
-         v5tcjy2bjqRY0RzqOgzCG7/9VqxJy8LSnVuJSnw7Uxmu8nEkCodKcG38mpI6xBAHO+u8
-         +7CV2w6dOCOLnhUVjBzYpAuR61EV2PujdQ1ZvchWtZ3wZ13iZ2NHEMu7VKZPD+YQ+717
-         FTTmZQatyIGIpA4bToN3AGhsb6r+wc3xkvb3haC9gaDmxEzkI1ydRUKf2iLaY/Z3q5LI
-         rS97uI/ZNcW2xbXUEe1YVIF22D11CbQLeiOpt/ef1l1ojYMjPRBcfCd+FTq71UXeQraB
-         NT6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ6vB1EOxT1Ps/CzLZfqKcrGt425bNMRggnsba34xSp8svPOENIKoAA7TejdCcTZWEnCr7+yEFAX4J3JU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5qDrrjTfi+jKweGdWWsVjGstEnkwfm+xAK5ZOCirkOs+fzzZw
-	vvK0Ie7ps0yyd5DkBnGWmwgdnX8Cuz8h0BOJWNad1cMXiqQQpNulIetm2A==
-X-Google-Smtp-Source: AGHT+IF4el3/MzilIndSxikMQiUble/sAn2HPuAXgPrW4Oc7667+skBjv9AFNdZDdK2tgH+m0f+Y4A==
-X-Received: by 2002:a17:90b:1c83:b0:2c4:e333:35e5 with SMTP id 98e67ed59e1d1-2dd80cf1067mr10407145a91.36.1727016750728;
-        Sun, 22 Sep 2024 07:52:30 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd6ef95ad9sm7628223a91.56.2024.09.22.07.52.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 07:52:29 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-To: "Serge E . Hallyn" <serge@hallyn.com>
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Deven Bowers <deven.desai@linux.microsoft.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Fan Wu <wufan@linux.microsoft.com>
-Subject: [PATCH] ipe: Add missing terminator to list of unit tests
-Date: Sun, 22 Sep 2024 07:52:26 -0700
-Message-ID: <20240922145226.491815-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1727017171; c=relaxed/simple;
+	bh=AgOP0Ok4FSxiKdpNFexjZ88fW1kw6PEgKOe6RQbWgMU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j6CDAm7kffFqjVD8wU2e62hq8Bw3RFCEXwvC1wtHRO7HY8T7xlBFnC9Zimo74ATLe/Iw+FYQNmfe1yjplwhakBkx6PeOSsi7enA8j1oRUnfCXqot1hcNBqiQeZ0WkFJz1fSCjRqYIMp85Y83mYkoEc7vm3HR9bkqr6UT2sEbAqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=flokli.de; spf=pass smtp.mailfrom=flokli.de; dkim=pass (1024-bit key) header.d=flokli.de header.i=@flokli.de header.b=GUA8Ibtq; arc=none smtp.client-ip=116.203.226.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=flokli.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flokli.de
+From: Florian Klink <flokli@flokli.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flokli.de; s=mail;
+	t=1727017164; bh=wzNkufJNs8JPj15IvW3yIEGMtLG/2YOpr4iUk3QGOrA=;
+	h=From:To:Cc:Subject:Date;
+	b=GUA8IbtqGOgl4JXHafk152p32hTzOHE4TkzL7n35QqLyoHdhIQRC7/TMiD/+p0gQZ
+	 Oi9drzI9lZz2CFkck6JCxJdfgvpLhtFSGDi2S9iFMiuiyXR8bwP87sEk0v5VjFWN4k
+	 PPFFGXKKECoBGyECWReZiWaW0roT/RQo6gbgRous=
+To: 
+Cc: Florian Klink <flokli@flokli.de>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Ondrej Jirman <megi@xff.cz>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] arm64: dts: rockchip: enable automatic fan control on Orange Pi 5+
+Date: Sun, 22 Sep 2024 17:55:29 +0300
+Message-ID: <20240922145538.256235-2-flokli@flokli.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,31 +62,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add missing terminator to list of unit tests to avoid random crashes seen
-when running the test.
+This links the PWM fan on Orange Pi 5+ as an active cooling device
+managed automatically by the thermal subsystem, with a target SoC
+temperature of 65C and a minimum-spin interval from 55C to 65C to
+ensure airflow when the system gets warm.
 
-Fixes: 10ca05a76065 ("ipe: kunit test for parser")
-Cc: Deven Bowers <deven.desai@linux.microsoft.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Fan Wu <wufan@linux.microsoft.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+This is pretty much the same as '4a152231b050 ("arm64: dts: rockchip:
+enable automatic fan control on Rock 5B")', except for the Orange Pi
+5+ board.
+
+Signed-off-by: Florian Klink <flokli@flokli.de>
+Reviewed-by: Dragan Simic <dsimic@manjaro.org>
 ---
- security/ipe/policy_tests.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/security/ipe/policy_tests.c b/security/ipe/policy_tests.c
-index 89521f6b9994..5f1654deeb04 100644
---- a/security/ipe/policy_tests.c
-+++ b/security/ipe/policy_tests.c
-@@ -286,6 +286,7 @@ static void ipe_parser_widestring_test(struct kunit *test)
- static struct kunit_case ipe_parser_test_cases[] = {
- 	KUNIT_CASE_PARAM(ipe_parser_unsigned_test, ipe_policies_gen_params),
- 	KUNIT_CASE(ipe_parser_widestring_test),
-+	{ }
+Notes:
+   Changes in v2:
+    - Updated map{1,2} to map{0,1} for the same reasons as [1]
+
+   Link to v1: https://lore.kernel.org/linux-rockchip/20240921183810.225322-1-flokli@flokli.de/T/#u
+
+[1] https://lore.kernel.org/linux-rockchip/335ecd5841ab55f333e17bb391d0e1264fac257b.1726954592.git.dsimic@manjaro.org/T/#u
+ .../dts/rockchip/rk3588-orangepi-5-plus.dts   | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+index e74871491ef5..d91438752006 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
+@@ -351,6 +351,36 @@ &i2s2m0_sdi
+ 	status = "okay";
  };
  
- static struct kunit_suite ipe_parser_test_suite = {
++&package_thermal {
++	polling-delay = <1000>;
++
++	trips {
++		package_fan0: package-fan0 {
++			temperature = <55000>;
++			hysteresis = <2000>;
++			type = "active";
++		};
++
++		package_fan1: package-fan1 {
++			temperature = <65000>;
++			hysteresis = <2000>;
++			type = "active";
++		};
++	};
++
++	cooling-maps {
++		map0 {
++			trip = <&package_fan0>;
++			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
++		};
++
++		map1 {
++			trip = <&package_fan1>;
++			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
++		};
++	};
++};
++
+ /* phy1 - M.KEY socket */
+ &pcie2x1l0 {
+ 	reset-gpios = <&gpio4 RK_PA5 GPIO_ACTIVE_HIGH>;
 -- 
-2.45.2
+2.46.0
 
 
