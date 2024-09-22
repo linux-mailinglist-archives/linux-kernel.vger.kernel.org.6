@@ -1,147 +1,241 @@
-Return-Path: <linux-kernel+bounces-335013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C887897DFB4
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 03:03:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAE6897DFBA
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 03:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EEF82818AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 01:03:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16353B20E4E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 01:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8231917D4;
-	Sun, 22 Sep 2024 01:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B0E191F7C;
+	Sun, 22 Sep 2024 01:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d8aVp+mc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iD17Jsmn"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8440A191496
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 01:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABA51917CD
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 01:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726966997; cv=none; b=Ev7TuZWeLZSna/QjmbjR89ia+dbILQqoV6r2x6XvrDZpTBKni0UoSUOvZBB1D/65mNnuV0p4P4zGIkr4yc7kxCeGZ9GfjfyMTV9CVE1S0zb9S6egOTOtxsFg78go7s1HRXwevsy7Y2CIaQhc4h4ik/FmYhC01L3lKyu/Jwh+HFI=
+	t=1726967501; cv=none; b=rDtOMGwe/DYAyEAFB1nZP7iCEUJMHZZdS1c98AaTQ1xwzva+5/EZKYqpPe/yI0J8ZNqAknil8BJio5u/pGcrUsBhJMg18Bu+Ju5EavFnoRzKcQOXQvj765/i5AylO/jsOMBrauYYvuKhUHIoaIxizK7Vm8CM9au8GaPK4J6Yyfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726966997; c=relaxed/simple;
-	bh=H0IsrwFjVCT305wYMo1V/pgErnNTTuDG4Za4HOFuKe8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SSRenX5Q+Z+yKRMZpyMddHCgsC02Eoy+CWV6412GBSSv/B2B2A+dEf7xmZYoCCziaxppAG/LF1qfRoQCZJq5W0RomQnIG3t9gQHnGhq5xYERr7sec1lxi7/w0j1qdyFEsioqDb/nGvksPvQ4Vcfykq3GV1ZwusEybBXYgdnHf0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d8aVp+mc; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726966996; x=1758502996;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=H0IsrwFjVCT305wYMo1V/pgErnNTTuDG4Za4HOFuKe8=;
-  b=d8aVp+mcMEbjxjsyJr5HjQQgu0JyLABUjby+oxYnQtuJNZ87SU5i8M9T
-   V348wnXKQSOQIDqyRLyo/NHIdHde9AQ13ZuATwGx4AdQGSdH7etI6iL8m
-   DtHfAlQCdsBZTlYvWraGVZPOrT3UgZ3F7a5t3JL5LfMs0y4uWSn3n2Dz0
-   cySc4gBW7v38J2HMsJbUG6iOmwYr5wuNyGwEGByVTP5I+Pv0V6OyD+wrG
-   xg3kXHYry/W6oGrGayEAbr0wsWBObOHxmjC0anoI/qsmMay3nur+dQ1M9
-   la08DpMGbpkvXNmrKVd+4Bct94lla7qEqWGPVqXhbKJlsagUeNT7mgE+G
-   Q==;
-X-CSE-ConnectionGUID: Q7fv2LIIQ0uBQJZ8PiJkvA==
-X-CSE-MsgGUID: lWWdoCPLTcKwT5Kul76Qxw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="25459712"
-X-IronPort-AV: E=Sophos;i="6.10,248,1719903600"; 
-   d="scan'208";a="25459712"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2024 18:03:15 -0700
-X-CSE-ConnectionGUID: qw0JEnpgREmt+qMStZ79Sg==
-X-CSE-MsgGUID: vbq+IR0gSECzR1CS/YCZlw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,248,1719903600"; 
-   d="scan'208";a="70726277"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 21 Sep 2024 18:03:11 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ssB0G-000Fuo-1d;
-	Sun, 22 Sep 2024 01:03:08 +0000
-Date: Sun, 22 Sep 2024 09:02:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	David Vernet <dvernet@meta.com>
-Subject: kernel/sched/ext.c:3701:16: error: 'struct task_group' has no member
- named 'idle'
-Message-ID: <202409220859.UiCAoFOW-lkp@intel.com>
+	s=arc-20240116; t=1726967501; c=relaxed/simple;
+	bh=mkPZTZ4+7X6YfRtxtJvsGondZDr3cT+dPb4FafRwtlc=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=pfMYrF0towSWvckSoFD9QmcEmriZcMahv0MwVDbyNQYT7/bESxMf8Xlo8057F7FBOHuOuhnJ1VfuSDvzjFkKKBxnVO+Ebu2mKryUI4RPgCFShmXYR/f3JOO/Y6KLHffYDCVoBjPDbKHowWxVN6kZ3m/UAT+IPLKEayaK+IUE6Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iD17Jsmn; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c2460e885dso2294a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 18:11:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726967497; x=1727572297; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2KUuVhA2iLT4DM8BXrMGBBR4oEH2j4WLFiTg/43RbgU=;
+        b=iD17JsmnF63TWL61UBkCOk+f84qtZUYIeuK3yrghPIiJuXNAGzAu+g4RkSCi73pYXo
+         0FjSJONUGguXFtJQ5zCrHDtsKMn9uEAJOLOHkGODSSoctFoiaEsZEJGoe3gViEc6KiZy
+         QuG1r1z4wZX7k2T+OPk6JD9Dle/Wc1lP41GTML4fuivfbTOTCD5p0wYG4VUI/y9B7nJw
+         clvC0PcsIY1mvkb0aKPTXAnFLaAvajFPyjfiW3yvvWcN3SIh4XxvGMJCmdvebjWJWntj
+         ANIgfu9yycWFyuphNvDa+C4eYW65TL0Aa0VS1cpE9n4T4HBWWz360GD7mHRPoCCS3JRb
+         XIiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726967497; x=1727572297;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2KUuVhA2iLT4DM8BXrMGBBR4oEH2j4WLFiTg/43RbgU=;
+        b=M3matoHSPEeS5Jv9aVcNUG8Z91PtgGu+8VaXeyP3pJ7mo/PKKxc6R8R2SN3Aj000p9
+         nUIZx1T01PvW7quHiFYOxMKg9tPGyiVgG+9ulHzREzVbm7HfZfxRTTnx4BNNnhMtjoh+
+         TqTC1UmPyq35UjotIgCEydwwFq5h6TtUl7CYAR10ZMA5luZlt1BUt3hwq1H+u8Mmohl+
+         HMgK6U8uwXcPIB3lzapR8qnMUCNTXArZUyAL2Ctdvj5q/HTrLr3P+2TCPFe5pPwKMv0F
+         6OmHXugBIHW0Y1FIa9nFmWpN+T1QKIqVZCH5xVr8P65mrL6UTU3ocO2O1hK3fzG7fHZa
+         7nxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiZVip9F/bJrZfviLLQIGiP9KvhG8uSKC5TItIl4GpVJIe/vuegK0kSxjFtQrHjuaYzGv1kjgh28xMpLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfE+Zx5tj7UOoNDFep0z5EYjINnVb6Ut/04vhITTK8QaGt5i5E
+	3qr0Vf1xh3zj2pjjjjdPr3oDHjjwrf5EBdSNKhUi3ZskzCHsBKWgkV2q3MTQYzTEKJUAy7eF/uG
+	oWAEpQeV+bZ/N+6aAoXeafLmowf0rufDAqSBB
+X-Google-Smtp-Source: AGHT+IGDmCMq0c04L7WDXF6pJrRZIraPcPIIO/dV9PrR/c2TmXM8wUqd7VfSgbRwDhKV1hUl4eLr7f40znDL+x9wu5o=
+X-Received: by 2002:a05:6402:26c2:b0:5c4:6376:bb68 with SMTP id
+ 4fb4d7f45d1cf-5c5b846d1aemr39682a12.3.1726967496849; Sat, 21 Sep 2024
+ 18:11:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From: Jann Horn <jannh@google.com>
+Date: Sun, 22 Sep 2024 03:10:59 +0200
+Message-ID: <CAG48ez1xYXWfvTy4N7Ut9MAs2+GGWNOwYgQb6zToRpJfQEacfg@mail.gmail.com>
+Subject: lockdep detected circular locking between rtnl_mutex and
+ pm_chain_head.rwsem [wireguard and r8152]
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	"Jason A. Donenfeld" <Jason@zx2c4.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-pm@vger.kernel.org, wireguard@lists.zx2c4.com, 
+	Network Development <netdev@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>, 
+	kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   88264981f2082248e892a706b2c5004650faac54
-commit: 8195136669661fdfe54e9a8923c33b31c92fc1da sched_ext: Add cgroup support
-date:   2 weeks ago
-config: sparc-randconfig-002-20240922 (https://download.01.org/0day-ci/archive/20240922/202409220859.UiCAoFOW-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240922/202409220859.UiCAoFOW-lkp@intel.com/reproduce)
+Hi!
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409220859.UiCAoFOW-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from kernel/sched/build_policy.c:63:
-   kernel/sched/ext.c: In function 'scx_cgroup_warn_missing_idle':
->> kernel/sched/ext.c:3701:16: error: 'struct task_group' has no member named 'idle'
-    3701 |         if (!tg->idle)
-         |                ^~
-   kernel/sched/ext.c: In function 'scx_ops_disable_workfn':
-   kernel/sched/ext.c:4455:17: error: implicit declaration of function 'stack_trace_print'; did you mean 'event_trace_printk'? [-Wimplicit-function-declaration]
-    4455 |                 stack_trace_print(ei->bt, ei->bt_len, 2);
-         |                 ^~~~~~~~~~~~~~~~~
-         |                 event_trace_printk
-   kernel/sched/ext.c: In function 'scx_ops_exit_kind':
-   kernel/sched/ext.c:4834:30: error: implicit declaration of function 'stack_trace_save'; did you mean 'stack_tracer_enable'? [-Wimplicit-function-declaration]
-    4834 |                 ei->bt_len = stack_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
-         |                              ^~~~~~~~~~~~~~~~
-         |                              stack_tracer_enable
---
-   kernel/sched/core.c: In function 'cpu_idle_read_s64':
->> kernel/sched/core.c:9626:27: error: 'struct task_group' has no member named 'idle'
-    9626 |         return css_tg(css)->idle;
-         |                           ^~
-   kernel/sched/core.c: In function 'cpu_idle_write_s64':
->> kernel/sched/core.c:9634:15: error: implicit declaration of function 'sched_group_set_idle'; did you mean 'scx_group_set_idle'? [-Wimplicit-function-declaration]
-    9634 |         ret = sched_group_set_idle(css_tg(css), idle);
-         |               ^~~~~~~~~~~~~~~~~~~~
-         |               scx_group_set_idle
-   kernel/sched/core.c: In function 'cpu_idle_read_s64':
-   kernel/sched/core.c:9627:1: warning: control reaches end of non-void function [-Wreturn-type]
-    9627 | }
-         | ^
+While trying out a kernel at commit
+88264981f2082248e892a706b2c5004650faac54 (latest mainline) with
+lockdep enabled, I hit a lockdep warning - it looks like wireguard
+takes the rtnl_lock in a PM callback (meaning pm_chain_head.rwsem is
+already held), while r8152 registers a PM callback in a context where
+the rtnl_lock is held, and this makes lockdep unhappy. But I don't
+know enough about the PM code to know which of those is the problem or
+whether this race could even occur. I'm also not sure whether this is
+a regression - I don't usually run lockdep kernels on this machine.
 
 
-vim +3701 kernel/sched/ext.c
+[ 1749.181131] PM: suspend entry (s2idle)
+[ 1749.209736] Filesystems sync: 0.028 seconds
 
-  3694	
-  3695	static void scx_cgroup_warn_missing_idle(struct task_group *tg)
-  3696	{
-  3697		if (scx_ops_enable_state() == SCX_OPS_DISABLED ||
-  3698		    cgroup_warned_missing_idle)
-  3699			return;
-  3700	
-> 3701		if (!tg->idle)
-  3702			return;
-  3703	
-  3704		pr_warn("sched_ext: \"%s\" does not implement cgroup cpu.idle\n",
-  3705			scx_ops.name);
-  3706		cgroup_warned_missing_idle = true;
-  3707	}
-  3708	
+[ 1749.220240] ======================================================
+[ 1749.220242] WARNING: possible circular locking dependency detected
+[ 1749.220244] 6.11.0-slowkasan+ #140 Not tainted
+[ 1749.220247] ------------------------------------------------------
+[ 1749.220249] systemd-sleep/5239 is trying to acquire lock:
+[ 1749.220252] ffffffffb1156c88 (rtnl_mutex){+.+.}-{3:3}, at:
+wg_pm_notification (drivers/net/wireguard/device.c:81
+drivers/net/wireguard/device.c:64)
+[ 1749.220265]
+but task is already holding lock:
+[ 1749.220267] ffffffffb077e170 ((pm_chain_head).rwsem){++++}-{3:3},
+at: blocking_notifier_call_chain_robust (kernel/notifier.c:128
+kernel/notifier.c:353 kernel/notifier.c:341)
+[ 1749.220277]
+which lock already depends on the new lock.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+[ 1749.220279]
+the existing dependency chain (in reverse order) is:
+[ 1749.220281]
+-> #1 ((pm_chain_head).rwsem){++++}-{3:3}:
+[ 1749.220287] down_write (./arch/x86/include/asm/preempt.h:79
+kernel/locking/rwsem.c:1304 kernel/locking/rwsem.c:1315
+kernel/locking/rwsem.c:1580)
+[ 1749.220292] blocking_notifier_chain_register (kernel/notifier.c:272
+kernel/notifier.c:290)
+[ 1749.220295] rtl8152_open (drivers/net/usb/r8152.c:6994)
+[ 1749.220300] __dev_open (net/core/dev.c:1476)
+[ 1749.220304] __dev_change_flags (net/core/dev.c:8837)
+[ 1749.220308] dev_change_flags (net/core/dev.c:8909)
+[ 1749.220311] do_setlink (net/core/rtnetlink.c:2900)
+[ 1749.220315] __rtnl_newlink (net/core/rtnetlink.c:3696)
+[ 1749.220318] rtnl_newlink (net/core/rtnetlink.c:3744)
+[ 1749.220322] rtnetlink_rcv_msg (net/core/rtnetlink.c:6646)
+[ 1749.220325] netlink_rcv_skb (net/netlink/af_netlink.c:2550)
+[ 1749.220329] netlink_unicast (net/netlink/af_netlink.c:1331
+net/netlink/af_netlink.c:1357)
+[ 1749.220332] netlink_sendmsg (net/netlink/af_netlink.c:1901)
+[ 1749.220335] ____sys_sendmsg (net/socket.c:730 net/socket.c:745
+net/socket.c:2603)
+[ 1749.220339] ___sys_sendmsg (net/socket.c:2659)
+[ 1749.220342] __sys_sendmsg (net/socket.c:2686)
+[ 1749.220344] do_syscall_64 (arch/x86/entry/common.c:52
+arch/x86/entry/common.c:83)
+[ 1749.220348] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+[ 1749.220352]
+-> #0 (rtnl_mutex){+.+.}-{3:3}:
+[ 1749.220357] __lock_acquire (kernel/locking/lockdep.c:3159
+kernel/locking/lockdep.c:3277 kernel/locking/lockdep.c:3901
+kernel/locking/lockdep.c:5199)
+[ 1749.220362] lock_acquire (kernel/locking/lockdep.c:467
+kernel/locking/lockdep.c:5824 kernel/locking/lockdep.c:5787)
+[ 1749.220365] __mutex_lock (kernel/locking/mutex.c:610
+kernel/locking/mutex.c:752)
+[ 1749.220369] wg_pm_notification (drivers/net/wireguard/device.c:81
+drivers/net/wireguard/device.c:64)
+[ 1749.220372] notifier_call_chain (kernel/notifier.c:93)
+[ 1749.220375] blocking_notifier_call_chain_robust
+(kernel/notifier.c:129 kernel/notifier.c:353 kernel/notifier.c:341)
+[ 1749.220378] pm_notifier_call_chain_robust
+(./include/linux/notifier.h:207 kernel/power/main.c:104)
+[ 1749.220382] pm_suspend (kernel/power/suspend.c:367
+kernel/power/suspend.c:588 kernel/power/suspend.c:625)
+[ 1749.220386] state_store (kernel/power/main.c:746)
+[ 1749.220389] kernfs_fop_write_iter (fs/kernfs/file.c:334)
+[ 1749.220393] vfs_write (fs/read_write.c:590 fs/read_write.c:683)
+[ 1749.220397] ksys_write (fs/read_write.c:736)
+[ 1749.220399] do_syscall_64 (arch/x86/entry/common.c:52
+arch/x86/entry/common.c:83)
+[ 1749.220402] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+[ 1749.220406]
+other info that might help us debug this:
+
+[ 1749.220408]  Possible unsafe locking scenario:
+
+[ 1749.220409]        CPU0                    CPU1
+[ 1749.220411]        ----                    ----
+[ 1749.220413]   rlock((pm_chain_head).rwsem);
+[ 1749.220416]                                lock(rtnl_mutex);
+[ 1749.220420]                                lock((pm_chain_head).rwsem);
+[ 1749.220423]   lock(rtnl_mutex);
+[ 1749.220426]
+*** DEADLOCK ***
+
+[ 1749.220428] 5 locks held by systemd-sleep/5239:
+[ 1749.220430] #0: ffff888125d2e3f8 (sb_writers#6){.+.+}-{0:0}, at:
+ksys_write (fs/read_write.c:736)
+[ 1749.220439] #1: ffff8881e5cb9888 (&of->mutex){+.+.}-{3:3}, at:
+kernfs_fop_write_iter (fs/kernfs/file.c:326)
+[ 1749.220447] #2: ffff888460aee2d8 (kn->active#166){.+.+}-{0:0}, at:
+kernfs_fop_write_iter (fs/kernfs/file.c:326)
+[ 1749.220455] #3: ffffffffb0757008
+(system_transition_mutex){+.+.}-{3:3}, at: pm_suspend
+(kernel/power/suspend.c:574 kernel/power/suspend.c:625)
+[ 1749.220463] #4: ffffffffb077e170
+((pm_chain_head).rwsem){++++}-{3:3}, at:
+blocking_notifier_call_chain_robust (kernel/notifier.c:128
+kernel/notifier.c:353 kernel/notifier.c:341)
+[ 1749.220471]
+stack backtrace:
+[ 1749.220474] CPU: 1 UID: 0 PID: 5239 Comm: systemd-sleep Not tainted
+6.11.0-slowkasan+ #140
+[ 1749.220478] Hardware name: [...]
+[ 1749.220480] Call Trace:
+[ 1749.220483]  <TASK>
+[ 1749.220485] dump_stack_lvl (lib/dump_stack.c:124)
+[ 1749.220491] print_circular_bug (kernel/locking/lockdep.c:2077)
+[ 1749.220496] check_noncircular (kernel/locking/lockdep.c:2203)
+[...]
+[ 1749.220519] __lock_acquire (kernel/locking/lockdep.c:3159
+kernel/locking/lockdep.c:3277 kernel/locking/lockdep.c:3901
+kernel/locking/lockdep.c:5199)
+[...]
+[ 1749.220546] lock_acquire (kernel/locking/lockdep.c:467
+kernel/locking/lockdep.c:5824 kernel/locking/lockdep.c:5787)
+[...]
+[ 1749.220577] __mutex_lock (kernel/locking/mutex.c:610
+kernel/locking/mutex.c:752)
+[...]
+[ 1749.220627] wg_pm_notification (drivers/net/wireguard/device.c:81
+drivers/net/wireguard/device.c:64)
+[ 1749.220631] notifier_call_chain (kernel/notifier.c:93)
+[ 1749.220636] blocking_notifier_call_chain_robust
+(kernel/notifier.c:129 kernel/notifier.c:353 kernel/notifier.c:341)
+[...]
+[ 1749.220649] pm_notifier_call_chain_robust
+(./include/linux/notifier.h:207 kernel/power/main.c:104)
+[ 1749.220652] pm_suspend (kernel/power/suspend.c:367
+kernel/power/suspend.c:588 kernel/power/suspend.c:625)
+[ 1749.220656] state_store (kernel/power/main.c:746)
+[ 1749.220661] kernfs_fop_write_iter (fs/kernfs/file.c:334)
+[ 1749.220665] vfs_write (fs/read_write.c:590 fs/read_write.c:683)
+[...]
+[ 1749.220693] ksys_write (fs/read_write.c:736)
+[...]
+[ 1749.220701] do_syscall_64 (arch/x86/entry/common.c:52
+arch/x86/entry/common.c:83)
+[ 1749.220704] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+[ 1749.220708] RIP: 0033:0x7fe2e2917240
+[...]
+[ 1749.220735]  </TASK>
+[ 1749.223599] Freezing user space processes
+[ 1749.226307] Freezing user space processes completed (elapsed 0.002 seconds)
 
