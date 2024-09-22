@@ -1,127 +1,105 @@
-Return-Path: <linux-kernel+bounces-335053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6916997E05D
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 08:43:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E96CA97E062
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 08:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC101C20A31
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 06:43:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BB5DB20FCC
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 06:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49C6175D26;
-	Sun, 22 Sep 2024 06:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A3418DF6D;
+	Sun, 22 Sep 2024 06:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oltgBHBY"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA66936C;
-	Sun, 22 Sep 2024 06:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="Wd6ayejO"
+Received: from forward203b.mail.yandex.net (forward203b.mail.yandex.net [178.154.239.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97B9188007
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 06:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726987421; cv=none; b=n/xtOlJBkB8Zfoo0VgW3M2kVqUlbaI/JLyxL7awAdF6ssLidlMKrKTw4kP/7SJL8GrVACzmpaGyEn3icz8NmUI7CKWFFAOtwe2xojr/mCuX1X3M0AXgwPziQqBBpZJtxoR3RAMzg00jqfA9KwiPNf++bJUJISejjzheTFVIjOaU=
+	t=1726988378; cv=none; b=TrHgVqI8maoD2f6iY8/CfYlkgcgvbw7+SPwDmO3p5kkxflzgJCT5KiLutXbayRJ52B5rJzrx7s/qievXQ3RjIkryTPdBTNy4xZ5YYu6GQVTT0t6jYOg1Cxo9hlh13K6z1CzAPArKZneeflpXDAidNclyD6e0JXQCp0PQSaebo1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726987421; c=relaxed/simple;
-	bh=xi0Mj3BHyk/+gZCsFUtoUEc3poWGKYyP5uYQ4e63+B0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D6xTmVPU2SmD6cCCjRIYP6rdNND8fp+fXATv4hXMHWVH8FW9A7wuAeANU1nMp4v3v8Qxp5WtX2ZFZxLtCwuCyvAPPrG2hDY325cQYE5fWqiHaZ+0femJTUVWbyWXBZg01TnbZOFRECXArqsCBE+rn4bpWfsKoCpWEeXVApfe9pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oltgBHBY; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=gKbH5mnZTMhCwIfpq6td43lHTDTQMFxZnIWMkbj6e+w=;
-	b=oltgBHBYXxQyFXs0q98Yrtd0EVaa4xPX1/9Ov5BvKeGf+6Q+Kfq/tFvNJbvJbn
-	m9ITwuAWtJrLI8HiIWjwkUG/ifJZizOGvbYSfTw8NxQjuA5GAax4/r4vSRjeGYwy
-	StqZUjf38+ceS4+p8AgVwqWz6mb5MaghM4hrIAIauIkJ8=
-Received: from localhost (unknown [36.33.37.137])
-	by gzga-smtp-mta-g3-4 (Coremail) with SMTP id _____wD3_3NpvO9mL2ZAFQ--.51857S2;
-	Sun, 22 Sep 2024 14:42:49 +0800 (CST)
-Date: Sun, 22 Sep 2024 14:42:49 +0800
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: tytso@mit.edu
-Cc: adilger.kernel@dilger.ca,
-	syzbot <syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, qianqiang.liu@163.com
-Subject: [PATCH] ext4: fix out-of-bounds issue in ext4_xattr_set_entry
-Message-ID: <Zu+8aQBJgMn7xVws@thinkpad.lan>
-References: <Zu+vI3EipxSsPOMe@thinkpad.lan>
- <66efba95.050a0220.3195df.008c.GAE@google.com>
+	s=arc-20240116; t=1726988378; c=relaxed/simple;
+	bh=OEZgsz+8+tmSsJ2uXHlC8hMkZczxuQ/9soZrJNT/wMg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J+Snn0zVh8AJvVfnTgEVx2y1C6JCr8KusvUEdBDAdySVhqAkw0ZFJhOiFgTLm+lDC5/WGTDeILOGnSgQJpOZ12WihEArK4R7WnsV6Q0D5nuVzwaHjY1DaZ5hOVxe/FqA4KuvRXtWczhluXmj2QEcJSKySKSU37llMcS2FnJCqk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=Wd6ayejO; arc=none smtp.client-ip=178.154.239.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
+Received: from forward102b.mail.yandex.net (forward102b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d102])
+	by forward203b.mail.yandex.net (Yandex) with ESMTPS id D3FF264177
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 09:52:40 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net [IPv6:2a02:6b8:c10:2222:0:640:c513:0])
+	by forward102b.mail.yandex.net (Yandex) with ESMTPS id 3BC73609A4;
+	Sun, 22 Sep 2024 09:52:33 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id VqK6swHKgGk0-SKf1IWSs;
+	Sun, 22 Sep 2024 09:52:32 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
+	t=1726987952; bh=cR0z3zHJ6ex0YlacTW/7IBtcte6v9l8dGs3WdWJYB9I=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=Wd6ayejOlu4Dm9SN+krk9SQNNqYKMZB5+a1OWuF8MAO1z7oNXb0mXr9EzL3HPXZmm
+	 YKcI4+j24DVph0Vln+CR4cR8Ac9hilPg9yKs3u1LThp2nQdoJmgUIglCR/Rmzjae1P
+	 Hmy7C27I69vxRDRfmxQhBOHytUSIhd0lsLMrCU64=
+Authentication-Results: mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+From: Nikita Shubin <nikita.shubin@maquefel.me>
+To: Arnd Bergmann <arnd@arndb.de>,
+	soc@kernel.org
+Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] net: cirrus: use u8 for addr to calm down sparse
+Date: Sun, 22 Sep 2024 09:52:12 +0300
+Message-ID: <20240922065212.7483-1-nikita.shubin@maquefel.me>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66efba95.050a0220.3195df.008c.GAE@google.com>
-X-CM-TRANSID:_____wD3_3NpvO9mL2ZAFQ--.51857S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Kr1kurWUKw47AryxWFy8Krg_yoW8tF1fpa
-	n8GryxArW8XryqyFW3KF1UAw1UWrs5Gr4UWrWfJr1UZFyxJw48XF9YgryDXFWqgrWjkF98
-	CF1DJrn8Ww15Z37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UT6wXUUUUU=
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiYBRiambvta5peAAAs-
+Content-Transfer-Encoding: 8bit
 
-syzbot has found an out-of-bounds issue in ext4_xattr_set_entry:
+ep93xx_eth.c:805:40: sparse: sparse: incorrect type in argument 2
+				     (different address spaces)
+ep93xx_eth.c:805:40: sparse: expected unsigned char const [usertype] *addr
+ep93xx_eth.c:805:40: sparse: got void [noderef] __iomem *
 
-==================================================================
-BUG: KASAN: out-of-bounds in ext4_xattr_set_entry+0x8ce/0x1f60 fs/ext4/xattr.c:1781
-Read of size 18446744073709551572 at addr ffff888036426850 by task syz-executor264/5095
-
-CPU: 0 UID: 0 PID: 5095 Comm: syz-executor264 Not tainted 6.11.0-syzkaller-03917-ga940d9a43e62 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- __asan_memmove+0x29/0x70 mm/kasan/shadow.c:94
- ext4_xattr_set_entry+0x8ce/0x1f60 fs/ext4/xattr.c:1781
-[...]
-==================================================================
-
-This issue is caused by a negative size in memmove.
-We need to check for this.
-
-Fixes: dec214d00e0d ("ext4: xattr inode deduplication")
-Reported-by: syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f792df426ff0f5ceb8d1
-Tested-by: syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com
-Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202409212354.9CiUem7B-lkp@intel.com/
+Fixes: 858555bb5598 ("net: cirrus: add DT support for Cirrus EP93xx")
+Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
 ---
- fs/ext4/xattr.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/cirrus/ep93xx_eth.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 46ce2f21fef9..336badb46246 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -1776,7 +1776,14 @@ static int ext4_xattr_set_entry(struct ext4_xattr_info *i,
- 	} else if (s->not_found) {
- 		/* Insert new name. */
- 		size_t size = EXT4_XATTR_LEN(name_len);
--		size_t rest = (void *)last - (void *)here + sizeof(__u32);
-+		size_t rest;
-+
-+		if (last < here) {
-+			ret = -ENOSPC;
-+			goto out;
-+		} else {
-+			rest = (void *)last - (void *)here + sizeof(__u32);
-+		}
+diff --git a/drivers/net/ethernet/cirrus/ep93xx_eth.c b/drivers/net/ethernet/cirrus/ep93xx_eth.c
+index 2523d9c9d1b8..c2007cd86416 100644
+--- a/drivers/net/ethernet/cirrus/ep93xx_eth.c
++++ b/drivers/net/ethernet/cirrus/ep93xx_eth.c
+@@ -771,6 +771,7 @@ static int ep93xx_eth_probe(struct platform_device *pdev)
+ 	struct resource *mem;
+ 	void __iomem *base_addr;
+ 	struct device_node *np;
++	u8 addr[ETH_ALEN];
+ 	u32 phy_id;
+ 	int irq;
+ 	int err;
+@@ -802,7 +803,8 @@ static int ep93xx_eth_probe(struct platform_device *pdev)
+ 		goto err_out;
+ 	}
  
- 		memmove((void *)here + size, here, rest);
- 		memset(here, 0, size);
+-	eth_hw_addr_set(dev, base_addr + 0x50);
++	memcpy_fromio(addr, base_addr + 0x50, ETH_ALEN);
++	eth_hw_addr_set(dev, addr);
+ 	dev->ethtool_ops = &ep93xx_ethtool_ops;
+ 	dev->netdev_ops = &ep93xx_netdev_ops;
+ 	dev->features |= NETIF_F_SG | NETIF_F_HW_CSUM;
 -- 
-2.34.1
-
--- 
-Best,
-Qianqiang Liu
+2.43.2
 
 
