@@ -1,128 +1,177 @@
-Return-Path: <linux-kernel+bounces-335112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB6097E120
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 13:26:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8483197E123
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 13:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17C1B1C20845
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 11:26:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C6C4280DBC
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 11:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF04D193099;
-	Sun, 22 Sep 2024 11:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A6E193401;
+	Sun, 22 Sep 2024 11:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCSHUvni"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jB74Jf8M"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F44193094;
-	Sun, 22 Sep 2024 11:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E029193090;
+	Sun, 22 Sep 2024 11:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727004403; cv=none; b=oKTRkU8jY4tCg0LCHYem4eTRnD2BJRIkkORFDTLy25d4lzCe3l3cGkF8j7RTlBCIzzJK5LFwZ8UKxCDdM267mEuuepUUsFcQNQXdxPbrLbjR9doZMsaIEJ9kKWmaS4VsQ7uvPCHBMiUhHFWDo2Z2j8urLVicHfmprb8+/9ofm/I=
+	t=1727004463; cv=none; b=kunjL3K2hPZkoyO11bsfac5C+I9QkET/0btkma1BxgnCX7bYAMtTULWeMkuiUGXWx5UTnkpKxKWo9hZuE31HYDglnRgbhgFAtyrzYnheINEDKd/cvEd/N28gIHAEjK5FOC0+suprr3TI8ouPJYjFFelc7Lf0Qkimhq31VaPEAaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727004403; c=relaxed/simple;
-	bh=jgfGQViqUIdHjvc61m7hGg88QFYHSOGWQ2YxIC2zik8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=usdbGHCt4BeTBd3QSeCmEnlyJ2PCA2RDG4FRj0Dn076ecJc5w3quZokTPcCFqfICFMm1J1TtmweOGO4jlpYRy3LGkASgWjLzOV8q/GxXFIQFvTDxCvuJSoGWLA0IRJPyolwAyT2xgvQW1RXyMRlHkm7867/MG3vRgDETwjTq2/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eCSHUvni; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71923d87be4so2557611b3a.0;
-        Sun, 22 Sep 2024 04:26:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727004401; x=1727609201; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=S1miczS/djrM1oRLmVfvqYPndy7eaWSYP+ZNheNjm3E=;
-        b=eCSHUvniy7AkJCgEity+Zw74XdZ3FWtIa7Xxf7512iK7wZ42FqRrBVv+AX5jA49qK2
-         GcoOtkeAhzeanoKG8ae/OXq3kqsDjkMy12crAhyT9RIT/mGsusQAuBNPvd/EsC+bCmXH
-         7ZOisclqlALoMczcRH0CnNZfrAoS/uJ2HS4ilc0dQ3jHs+6yxuuzELCsvmKqpT258Aca
-         ft6yFE6RBGHCqrqB1Gz5zURmfKDjnmE1uD4uqBJJWFA0VaKWfguw3OgaAS3+Ozz7JNjv
-         Sr8K/CktNphC7uvpOfi6xfJag2e/Qsc0CEL02bdFUh34wHdwtKOR9TEoMLbPMlN01hIs
-         SS2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727004401; x=1727609201;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S1miczS/djrM1oRLmVfvqYPndy7eaWSYP+ZNheNjm3E=;
-        b=wCX8+E5qQ1dl2JbnDV9S4op5GK18JsWQpAhC28VbI/CxbfDfQrs9Yi4lHwO/PD74oW
-         Tpe93yLU1cbsSSOgK6ylMSdhvi7nS+aPif+qqMzj47iqYVGnzZTFJyBlNprqqmBfxjBR
-         KTQSFjFRYXVJCXUi4RsKq8YispOn5F4CbUhUu0aU1WxznaX0OT3Pt2BMAR7xBv/j7W5V
-         DP0ugrwi+Ia9PxTtpnolGcGp+TLEi8+XHDvPpdgaYoZmXlniQLzxxxaGg+uS4w7+ooHh
-         qtl5eAfhLoOqWGnJqJYIy9pgSYVcQEodgrdGnC1tN4xFw2f79mElqm+cRkfjY8bbjCpl
-         NtOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVF+ztHHZaXgztL2hLnSD/MPy7SKj2b4kXEuD2wY0DKcyVTunsPBOg+oPX9PhNHoh5yrd9lbrcwr0CTdmw=@vger.kernel.org, AJvYcCWlECZQCjdRNv8Z9jG+vqeST1LFcAZgkM4mHFGF2xTVsYATYfctTCMCZHYjeTlCbWcuIGK1YHKGApK8qf774XhoKw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJSb0OOFfSm2UnHbf0wM4TY9DoFQlXlSGrU6ccIjZy0o+y7Ghr
-	6ypvIqwldrSmFEqhr0I+uYRXbDfn9g4IeJcDCtMVmh+8Vz6nVZ1r
-X-Google-Smtp-Source: AGHT+IHVw/icyDor2IkF5AqqLi1A7+poPdoQ9oEoGbQ+zgeaGFzMdkWA+9IO6XSm9jVTpVhXInjesA==
-X-Received: by 2002:a05:6a21:3a81:b0:1cf:489a:52c1 with SMTP id adf61e73a8af0-1d30a9674bcmr12370487637.18.1727004401072;
-        Sun, 22 Sep 2024 04:26:41 -0700 (PDT)
-Received: from localhost.localdomain ([103.175.62.244])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71944bc3456sm12430339b3a.197.2024.09.22.04.26.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 04:26:40 -0700 (PDT)
-From: Masum Reza <masumrezarock100@gmail.com>
-To: 
-Cc: masumrezarock100@gmail.com,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Ze Gao <zegao2021@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Yunseong Kim <yskelg@gmail.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] perf evsel: display dmesg command of showing a hardcoded path
-Date: Sun, 22 Sep 2024 16:56:16 +0530
-Message-ID: <20240922112619.149429-1-masumrezarock100@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1727004463; c=relaxed/simple;
+	bh=Ubr4xKaup2BgtEQmSwvzn5S3OcK/SRHS8d9QmBMPRyo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=pmMvLF/iCbcdZBiF1XPf9IIOlpkBW0t+2Sxhyoy//H4rEmJWXkz23jhbYKFRtmIB75GGYwHAMna40hnwp5idw6oAHrVCPm/A1mzHO86bP8vxv8t+NeNoSTbxS53XmZkaGQTPG60iGHa6rFHEnKohav6qeh+urFoD6vzQ/5a4GaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jB74Jf8M; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48MBRFGa103698;
+	Sun, 22 Sep 2024 06:27:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1727004435;
+	bh=XnxBUT2Dw6S9B2FDDYplj2ilPkQZxh4zWUn9GXdLhak=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=jB74Jf8MwZLGqfp7x/iKwk5hLDDyZBFVTGWWBYgYfMr095Y9tZbYUDOh2jqrexcHf
+	 eTgnpxQY+TwTGX6BAwCvFbq6s9QwC58YGBwUtxXnjJPYmoJQtkbUT7mmT5T+u2b5Hp
+	 7GNUZptp0pnK5wz6AvwA2KhsUTSE9FTiDQnZsPiQ=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48MBRFLX015637
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 22 Sep 2024 06:27:15 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 22
+ Sep 2024 06:27:15 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 22 Sep 2024 06:27:15 -0500
+Received: from [10.249.130.82] ([10.249.130.82])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48MBR8F3009533;
+	Sun, 22 Sep 2024 06:27:09 -0500
+Message-ID: <0dbde87b-593f-4b14-8929-b78e189549ad@ti.com>
+Date: Sun, 22 Sep 2024 16:57:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
+From: Beleswar Prasad Padhi <b-padhi@ti.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Lu Baolu
+	<baolu.lu@linux.intel.com>, <andersson@kernel.org>,
+        <afd@ti.com>, <nm@ti.com>, <hnagalla@ti.com>
+CC: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin
+ Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Kevin Tian
+	<kevin.tian@intel.com>, <linux-remoteproc@vger.kernel.org>,
+        <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        Jason Gunthorpe
+	<jgg@nvidia.com>
+References: <20240812072811.9737-1-baolu.lu@linux.intel.com>
+ <ZsdktJEqR9BOgivK@p14s> <99c874f1-3d85-43b2-a3a0-40e1e0c25696@ti.com>
+Content-Language: en-US
+In-Reply-To: <99c874f1-3d85-43b2-a3a0-40e1e0c25696@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-In non-FHS compliant distros like NixOS, nothing resides in `/bin`
-and `/usr/bin`. Instead dynamically symlinked into
-`/run/current-system/sw/bin/`, the executable resides in `/nix/store`.
 
-With this patch,`/bin` prefix from the dmesg command in the error
-message is stripped.
+On 29-08-2024 11:47, Beleswar Prasad Padhi wrote:
+> Hi All,
+>
+> On 22/08/24 21:47, Mathieu Poirier wrote:
+>> Hi Baolu,
+>>
+>> Sorry for the late reply, this slipped through the cracks.
+>>
+>> On Mon, Aug 12, 2024 at 03:28:11PM +0800, Lu Baolu wrote:
+>> > An iommu domain is allocated in rproc_enable_iommu() and is 
+>> attached to
+>> > rproc->dev.parent in the same function.
+>> > > Use iommu_paging_domain_alloc() to make it explicit.
+>> > > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+>> > Link: 
+>> https://lore.kernel.org/r/20240610085555.88197-13-baolu.lu@linux.intel.com
+>> > ---
+>> >  drivers/remoteproc/remoteproc_core.c | 6 +++---
+>> >  1 file changed, 3 insertions(+), 3 deletions(-)
+>> > > diff --git a/drivers/remoteproc/remoteproc_core.c 
+>> b/drivers/remoteproc/remoteproc_core.c
+>> > index f276956f2c5c..eb66f78ec8b7 100644
+>> > --- a/drivers/remoteproc/remoteproc_core.c
+>> > +++ b/drivers/remoteproc/remoteproc_core.c
+>> > @@ -109,10 +109,10 @@ static int rproc_enable_iommu(struct rproc 
+>> *rproc)
+>> >          return 0;
+>> >      }
+>> >  > -    domain = iommu_domain_alloc(dev->bus);
+>> > -    if (!domain) {
+>> > +    domain = iommu_paging_domain_alloc(dev);
+>>
+>> I'm a little hesitant here.  Function iommu_domain_alloc() passes 
+>> NULL two the
+>> second argument of __iommu_domain_alloc() while 
+>> iommu_paging_domain_alloc()
+>> provides a 'dev'.  I don't have any HW to test on and I am not 
+>> familiar enough
+>> with the IOMMU subsystem to confidently more forward.
+>>
+>> I am asking the Qualcomm (Bjorn and friends) and TI crew (Beleswar, 
+>> Andrew,
+>> Nishanth and Hari) to test this patch on their IOMMU devices and get 
+>> back to me
+>> with a "Tested-by".
+>
+>
+> Just a heads-up. Currently, I am seeing boot failures while booting 
+> remotecores in TI's IOMMU devices with mainline kernel. Working on the 
+> the fix, once it is done, will apply the above patch and test it ASAP.
 
-Link: https://github.com/NixOS/nixpkgs/pull/258027
 
-Signed-off-by: Masum Reza <masumrezarock100@gmail.com>
+Since commit 17de3f5fdd35, the IOMMU framework has changed how it 
+handles callback ops, moving away from using bus->iommu_ops. The 
+omap-iommu driver has not yet been updated to align with these framework 
+changes. Therefore, omap-iommu, and hence, omap-remoteproc have been 
+broken since 17de3f5fdd35.
 
----
- tools/perf/util/evsel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch is a step in the right direction for adapting the 
+remoteproc_core framework to the newer IOMMU framework by looking for 
+iommu_ops attached to the dev structure instead of dev->bus. Due to time 
+constraints, I was unable to update the omap-iommu driver to accommodate 
+these changes, so, I could not test this patch. However, logically, this 
+patch LGTM. So,
 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index bc603193c477..7a06b7cfdc7e 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -3342,7 +3342,7 @@ int evsel__open_strerror(struct evsel *evsel, struct target *target,
- 
- 	return scnprintf(msg, size,
- 	"The sys_perf_event_open() syscall returned with %d (%s) for event (%s).\n"
--	"/bin/dmesg | grep -i perf may provide additional information.\n",
-+	"\"dmesg | grep -i perf\" may provide additional information.\n",
- 			 err, str_error_r(err, sbuf, sizeof(sbuf)), evsel__name(evsel));
- }
- 
--- 
-2.46.0
+Acked-by: Beleswar Padhi <b-padhi@ti.com>
 
+Thanks,
+Beleswar
+
+>
+> Thanks,
+> Beleswar
+>
+>>
+>> Thanks,
+>> Mathieu
+>>
+>> > +    if (IS_ERR(domain)) {
+>> >          dev_err(dev, "can't alloc iommu domain\n");
+>> > -        return -ENOMEM;
+>> > +        return PTR_ERR(domain);
+>> >      }
+>> >  >      iommu_set_fault_handler(domain, rproc_iommu_fault, rproc);
+>> > -- > 2.34.1
+>> >
 
