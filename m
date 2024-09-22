@@ -1,99 +1,87 @@
-Return-Path: <linux-kernel+bounces-335036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460ED97E02D
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 06:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8511797E031
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 07:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C99701F2141B
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 04:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5A821F214B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 05:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7704417622D;
-	Sun, 22 Sep 2024 04:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3QqjYo4H"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B94717622D;
+	Sun, 22 Sep 2024 05:17:04 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FE61714DC;
-	Sun, 22 Sep 2024 04:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF20130E58
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 05:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726981136; cv=none; b=UrTTnB9rdnU/LIACgY9XS6M0/Fl3egNcN9Rvo1WN6wAYII6yq6lxDno1S0DI5/ia/HcbZkBKt0qT7z1RVrDJsCn7VVgdCyjFSjAuymjVBDkpcAClJ3iyY1a0C1nEy3dpMeMvZ1KmRAJsE//NXkZClpC1fY3i47N2Fd5d5M4+Tdk=
+	t=1726982224; cv=none; b=XKBqgLkrTtE400ZrqDvoalrTaw1K+l8HQcYbswjuL6fgcflbFrgI2NhwwG4yi0DZDvEBVsphpBS+gQRMVRWQkVBK77rZKTPu14bcGjXdJXB1kQBfBa9ECgP1Og5W7rUY8j16vk8ikrZijaxNGtVPnWC7wkF2EPbrQji3T/BwWZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726981136; c=relaxed/simple;
-	bh=YXSLY+t5FY79TwoYTLkj4tm4Eecv8wZq12EaL5qdblk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pqi16JUxsuWwyC/nk8p5YdFLo8TnKzrJ6UERuj/WPCP5lrXP4ocOC90e1wAagRJBGBh8aydIgK0DpLFFEIN7ls9ANOnYMXIsiE38Sw8cKVCDErEotviPqMpxM7mleOsYnkXz7y1J7tNf352xGBiFIyDkOGjMt+BiEzgyqzZwo9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3QqjYo4H; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=N2RfHzIMHib6uiU/FDsboA5V6UkKty537wvUbBdRcbI=; b=3QqjYo4H2cax8ZRWJhRojE20AL
-	WPZBJCUCrR5OmbFxHR06Njpup8WdcSv611N9et6Fj+vHpqIKFxfheVuslkvbrFv2kW9iD5tmFAqUm
-	J8iiGGNJ8VaGmCwgDM758xXiPeRCpDIwF9raWIgA3JPyMTTf4SDPgTyj7W55j0Cp3OVRak/9DUyr8
-	WRJO2tCCuzcgm4AgEHYe8kOljWwTMBwIhFqXnquL7E2+aN/lJZhF6T+qR1N+e3fu4PvbHPJnfQyyV
-	OOn2f2SKhnSMpYau1AMgbjJBFNv6Jk2VnXFEeUQG50mWnFnb8mcT+kqugFxYXNZ18X+Nkcmp8FxGy
-	jbAOccQw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1ssEgL-0000000EiSq-22fH;
-	Sun, 22 Sep 2024 04:58:49 +0000
-Date: Sat, 21 Sep 2024 21:58:49 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Subject: Re: [GIT PULL] dma-mapping updates for Linux 6.12
-Message-ID: <Zu-kCdMau6127_vM@infradead.org>
-References: <ZuvYnXzbM2qfXQPT@infradead.org>
- <971fbb889da38ca4e60f3dedde29ea43e9338d68.camel@xry111.site>
- <Zu1byUGU832iWBUp@infradead.org>
- <Zu2Bd50GdSxF_-eA@infradead.org>
- <19e4bdbcda78ace200c78c56eb7173097337b921.camel@xry111.site>
- <Zu5VoW1ZkViSOws3@infradead.org>
- <9a84a7c6f943209cc87a54075ed22df37ebda5f8.camel@xry111.site>
- <Zu7PW07FmBgs_dpI@infradead.org>
- <38bc765eaba8a646a87ce14e1ff06f28d449fcd5.camel@xry111.site>
+	s=arc-20240116; t=1726982224; c=relaxed/simple;
+	bh=u3aJKD0qxvXUofIHR8tXKRPSZiPzraTfdjsDnxXVHPA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kjA/9qSMFtrRbzcTWtcGxKt5YIobD6sed9afAWgDN/glAw0ZBZvA2m2UhFhO9Oapf/sfhyUZsuPerc8LNbX3fQNunj26DPpKkk/8QBmfviZELUtftipSdE5JXD2tMTW85gEgBO9WI2ReVxaI1MZYblTnzwTX8EoOEcWS6Z04FQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a0cbb9da2aso19082675ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 22:17:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726982221; x=1727587021;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Psx6VuxbYKYb4G/dbN6AYCxrxa30dk6LCa9p2hkRmLE=;
+        b=EQnb6SvNiZzXhQxtaP8rZn8RETr2gpCYt1n9trWbpiPtXOZMqIKB5D/PHp0W6gTM8o
+         bCucYMAz7V7cW4+Dbf57f7zrPgYmx8YjdHGy5GidI1d8hKCRe4OuYPJyAjuEXlxr0Vk7
+         mXcIF3RcxzN61qT1yDq2bLSzIQpruN/2D3ZanQIt/7a2PfN8hR6uThlifvK1LaKWwAt7
+         0nT4zdFpSf/M+iFuFhAMjr9p7A9Kh6H91hBiF/w2KT5qZJlZg2pcs0vZ5NB1gqPnzYzY
+         s+JHz8S4FkL6hBeiSpOA/3l98ewOg6h1Zpt0YpqoD9AVr4TPAXFhEC5RpLLWkV1YoGjS
+         8+nw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWTp7Jzu3WPpofEw7gvIq/OnkhnBUYLMZL3fMzwwKDjQVzCh9zrDOCATkfxzurFqVv+Q3gCOEAr7j5okg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3kUKCJk17NV+J4uZMNJlJ9LZK0hhSpCBEUKbLxfFXTDI/ZPUU
+	DDf0UGbO6UiqoZMLaShf8TWzSmZlRxy8eP7UJR9YXQrcBfsg926YbPDaz8F9R0PM6Oa4LCW7+l9
+	q4/Y1GxQ2GxWsvIHPUCAQzl8DAyO3gN7wMy1vvsz5k/gl2s1VCMh5yfI=
+X-Google-Smtp-Source: AGHT+IEcNp/Wi7vHC498qRWn+623Ya2w/cPYvNUpbgczvsf+u2zTYovVM7w887Sq+VBQjIdmrK19zJ5YboChFFY/Xdb2E4efwq00
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <38bc765eaba8a646a87ce14e1ff06f28d449fcd5.camel@xry111.site>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Received: by 2002:a05:6e02:b42:b0:3a0:933a:2a0a with SMTP id
+ e9e14a558f8ab-3a0c8c7cc0bmr56340085ab.7.1726982221591; Sat, 21 Sep 2024
+ 22:17:01 -0700 (PDT)
+Date: Sat, 21 Sep 2024 22:17:01 -0700
+In-Reply-To: <tencent_8F67C9C6DBD2F6867309802EEE2ED84C8406@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66efa84d.050a0220.3195df.0086.GAE@google.com>
+Subject: Re: [syzbot] [udf?] general protection fault in udf_read_folio
+From: syzbot <syzbot+ddf8715339c89280b6fc@syzkaller.appspotmail.com>
+To: eadavis@qq.com, jack@suse.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Sep 22, 2024 at 01:49:35AM +0800, Xi Ruoyao wrote:
-> On Sat, 2024-09-21 at 06:51 -0700, Christoph Hellwig wrote:
-> > On Sat, Sep 21, 2024 at 03:56:11PM +0800, Xi Ruoyao wrote:
-> > > because the laptop has no serial output.  And the behavior seems not
-> > > deterministic.  I have some transcript of messages I photoed in several
-> > > boot attempts though:
-> > 
-> > Can you send me the photos of the messages?  Probably best offlist
-> > as the lists don't like attachments.
-> 
-> I've got something better: one attempt to boot
-> b5c58b2fdc427e7958412ecb2de2804a1f7c1572 succeeded and I got a dmesg
-> containing some Oops traces.
-> 
-> The camera does *not* work.  And when I rebooted the system it hung
-> (presumably related to these Oops). 
+Hello,
 
-So that oops actually comes from the sounds code and looks unrelated
-to DMA.  I suspect that oops is what caused your crashes and thus
-messed up the DMA bisection.  Can you try to boot with CONFIG_SND
-disabled and see where the bisection for the video issues lands?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-(Sorry that all this is such a mess)
+Reported-by: syzbot+ddf8715339c89280b6fc@syzkaller.appspotmail.com
+Tested-by: syzbot+ddf8715339c89280b6fc@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         88264981 Merge tag 'sched_ext-for-6.12' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=133b6c27980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5b5c53071a819d59
+dashboard link: https://syzkaller.appspot.com/bug?extid=ddf8715339c89280b6fc
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=146b5e9f980000
+
+Note: testing is done by a robot and is best-effort only.
 
