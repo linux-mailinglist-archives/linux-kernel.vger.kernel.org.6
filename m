@@ -1,93 +1,79 @@
-Return-Path: <linux-kernel+bounces-335207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A9997E292
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 18:56:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 037F397E293
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 18:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 323D8281700
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:56:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131091C211E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E2E2B2CC;
-	Sun, 22 Sep 2024 16:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D37224CF;
+	Sun, 22 Sep 2024 16:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4YgRILk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaK4vU0j"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC4826AED;
-	Sun, 22 Sep 2024 16:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F1B2BAF1;
+	Sun, 22 Sep 2024 16:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727024204; cv=none; b=Km8cXPrx/EP0v7wpE1+tRX8ALzo0uKAChWdQM0TG5lsfPTwQv+66PsHvRl61JN3t5cyNJzaIMF+0Zd/ZqzSmcojJJpG9pSX1T2LnVW7HhIjX543gTqG9O/4V5u0hsdFhyFDQ4XyIwEnEyd8FsASRtcnW/ApVOHqvJLUBXbVKaHA=
+	t=1727024310; cv=none; b=ANgM8EJaTXZDJWNDxx0NYeCb8qwKbIgoixpWFlgpsNcLoMAkdW+ESXw9uWvVc3ebAf1Q0EkyySsE/q75Xk5BVVFVBZP8jKmp5RIyL9Vjzjo+6gFeBBRyzKvDoh+9Cj/5RKu2QCEq51ftnZuKjmafKqr+17r4glob043eKNNAPdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727024204; c=relaxed/simple;
-	bh=IzUiiBWxKOEoxrsutv2RysTy/iP/OHwPa08dPre7tQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qq3cWWlQX8LsfIiJJD+Y3MA6F5hJOHgoeUC3AwWchHSdeh3rn5olcDmKXOV0NcNCRaTN0g71geHFENi8welwtl5itVLJh7kooMwfNkmqOqx8FvSiKDc3KjZPMwBRRQSjQeWlkVZrFs34PAm6PaeXUdIallCE2wnThBTgM2WKxKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q4YgRILk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12AE3C4CEC3;
-	Sun, 22 Sep 2024 16:56:40 +0000 (UTC)
+	s=arc-20240116; t=1727024310; c=relaxed/simple;
+	bh=jNLGMMFl1HpPDCVhPGotmGUZ/mE3XWTiqr6uX/cB80Q=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=eyIbjaWRu7DmHebqYGd/i2b4bncMp2nZR7aHjJOv/2Jmqqem3mlDrMpr+1f9oHOx+eAf4fgnMKd/qU6CJebxe1Ot7l3zVGyYlKf3T9Z3xLGwzYrJuwmiiJiv6Oy3ADfP91Cpiu3niFcNAX7VXWiEO322Yl2ibPE+nu40dYwBytA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaK4vU0j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F52C4CEC3;
+	Sun, 22 Sep 2024 16:58:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727024203;
-	bh=IzUiiBWxKOEoxrsutv2RysTy/iP/OHwPa08dPre7tQ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q4YgRILk12OshWT6BnrLKMqHDUe3Lx64bSH519hGw6a7t7JDwI4sg7P8a1NX1tN93
-	 bzCjrvaFzvobs/I+k+DScvkFIyCobfOCXWEyUyFNGWL0pTdexv2hO//0YNqjnUUfEN
-	 UVCt/QCY9w0IIxsBpkhZkT0Z45S06+4BrPACZ4tJVBKFeAhn8l8i52LDeuAanK+X+d
-	 xT30buhmoOFV+SoPTGjtA5NKA/kut0lO721Fet6CB35nKA7UgrLdxBrVIuCYZZ+Noz
-	 SQPXAartD/M4n8gNubeSeSdsjCXvMIClxRL8v7YXUeGFnliuWsoENwgovMXFCsdx4n
-	 B63hxDr1g2sxg==
-Date: Sun, 22 Sep 2024 17:56:38 +0100
-From: Simon Horman <horms@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: GR-Linux-NIC-Dev@marvell.com, netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Himanshu Madhani <himanshu.madhani@qlogic.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Manish Chopra <manishc@marvell.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shahed Shaikh <shshaikh@marvell.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	Manish Chopra <manish.chopra@qlogic.com>
-Subject: Re: [PATCH] qlcnic: Use common error handling code in four functions
-Message-ID: <20240922165638.GB3426578@kernel.org>
-References: <7c98349a-bfa5-409b-847e-ed8439e80afd@web.de>
+	s=k20201202; t=1727024310;
+	bh=jNLGMMFl1HpPDCVhPGotmGUZ/mE3XWTiqr6uX/cB80Q=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=DaK4vU0j7U+eWTuqPYM4tTqKKGSvI1Qds3dNUdTcJIvKJiCgX+FQELlAVauGbyTyH
+	 JWVsiIzGjzUz7GLNE2/JQ0m0VqLVn164mSsYl7WAVlpVuX7Cy0am2XyzZyidlXS2g2
+	 xxd09RYbt1OkOgSTxrfyrIXH6/WFMXHG9G80g+rplkdI1u2QrOJtn45nDmgHr9zVkZ
+	 hpsxi3+NcZorR/3VtcggEFbIb4mUL+FRn4alKNOX3y4HQk0ceRSBHJ/roJCzFJ9vYo
+	 3AbvtO6aZmn22gMy3c6P93q7ujfNwcKY1MkK7PDajDSmFHXPbCOK8Ffdq6msPbwy5V
+	 FD45+yUeSqrEw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB1FE3806655;
+	Sun, 22 Sep 2024 16:58:33 +0000 (UTC)
+Subject: Re: [GIT PULL] perf tools changes for v6.12
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240919143330.492157-1-acme@kernel.org>
+References: <20240919143330.492157-1-acme@kernel.org>
+X-PR-Tracked-List-Id: <linux-perf-users.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240919143330.492157-1-acme@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-for-v6.12-1-2024-09-19
+X-PR-Tracked-Commit-Id: 1de5b5dcb8353f36581c963df2d359a5f151a0be
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 891e8abed532423d3b918b0c445dc8919bc445b5
+Message-Id: <172702431255.2797494.9066269254241132576.pr-tracker-bot@kernel.org>
+Date: Sun, 22 Sep 2024 16:58:32 +0000
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>, Andi Kleen <ak@linux.intel.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Brian Norris <briannorris@chromium.org>, Charlie Jenkins <charlie@rivosinc.com>, Chen Ni <nichen@iscas.ac.cn>, Dan Carpenter <dan.carpenter@linaro.org>, Disha Goel <disgoel@linux.ibm.com>, "Dr . David Alan Gilbert" <linux@treblig.org>, Howard Chu <howardchu95@gmail.com>, James Clark <james.clark@linaro.org>, Kajol Jain <kjain@linux.ibm.com>, Leo Yan <leo.yan@arm.com>, Martin Liska <martin.liska@hey.com>, Song Liu <song@kernel.org>, Tiezhu Yang <yangtiezhu@loongson.cn>,
+  Veronika Molnarova <vmolnaro@redhat.com>, Weilin Wang <weilin.wang@intel.com>, Zixian Cai <fzczx123@gmail.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c98349a-bfa5-409b-847e-ed8439e80afd@web.de>
 
-On Thu, Sep 19, 2024 at 09:50:13PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 19 Sep 2024 21:30:45 +0200
-> 
-> Add jump targets so that a bit of exception handling can be better reused
-> at the end of four function implementations.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The pull request you sent on Thu, 19 Sep 2024 16:33:29 +0200:
 
-Hi Markus,
+> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-for-v6.12-1-2024-09-19
 
-This is an old driver, that doesn't appear to have been under active
-development for quite some time. Unless there is a way to exercise these
-changes I don't think that clean-ups of this nature are worth the risk of
-regressions they might introduce.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/891e8abed532423d3b918b0c445dc8919bc445b5
 
-If we can see bugs in error paths, let's fix them.
-Else, let's leave them be.
+Thank you!
 
 -- 
-pw-bot: rejected
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
