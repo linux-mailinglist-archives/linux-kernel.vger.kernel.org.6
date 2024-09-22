@@ -1,127 +1,150 @@
-Return-Path: <linux-kernel+bounces-335158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BF497E205
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:36:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E13B797E207
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 626761F21459
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 14:36:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CE681F21178
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 14:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD1BBA2D;
-	Sun, 22 Sep 2024 14:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72634B664;
+	Sun, 22 Sep 2024 14:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QdUj98mk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RiOdYEiG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6734A28;
-	Sun, 22 Sep 2024 14:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3AF6FBF
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 14:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727015761; cv=none; b=BNqz29ZHslZcvpBY6+CkeSXVF54kfjlBR5V6eA58I0kckoD8U6TOLhJ+oEnV4Cpfn0ccRoNNdCn/4RuMZH3csRzMUNQwatjPY2Kp8sUdOsOUI3WkPrPaHLWGjvYF1guRob5zIwkOx4HQliXT9IsLw57R2SY0oRROkkj3bknEla0=
+	t=1727015992; cv=none; b=QN8IGOuBlpDOuuGMM4HC1odjA+GGwK0cCA8MCZMjCtYSALoveME+CNVvR+J6vL5ut3AXx6RrhLGCvLmdDM6C1WJ7KPcWJI4fKNOQpQCa64oZ2jqg29IlcFfvtmlYesT/3HBQy1xo8/eEoq9hGd3744Ks7WcPPTGvQD/yuXKBZpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727015761; c=relaxed/simple;
-	bh=MgBrF8Sihn06O4NfpD4mZkdZrwfHrkD3e11Tj7IRdyM=;
+	s=arc-20240116; t=1727015992; c=relaxed/simple;
+	bh=JgOeLL0IYvmkBbS/pYNCgrjdwSOsXQKq/hWzgtqUvQ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O7sAghSjhYPPyHmPGTf9qOqXs3EknpB8oA901dTxh7C8IqgridjfFpU4GJCrCr61lentW9Y1ItAOcCI/mWGynuucskbEFT3JHU/sBtqtKJ85l0JvXe7LQLN39MoiMIW43CriOKqv2jStqk/RTdgUwUxNZsXaSI+Cu2+8HHh+ENI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QdUj98mk; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727015760; x=1758551760;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MgBrF8Sihn06O4NfpD4mZkdZrwfHrkD3e11Tj7IRdyM=;
-  b=QdUj98mkPgcTyoSY9L2cuuFlkhwO5D6o3vZoxp5Zm0bqE5PMEz6Tu9F7
-   2uyisHmvbBCUs7PmRGITPOC4r6NI5RcYxOsLAUYNjqIvnxwSXQinOkyJF
-   N/coTriY/tmO45KWK/n3ZKSL5e9aDNx4HhDPI0CIZp/iqncZc/oE9A4Tp
-   OS+F+GxMLKie4ImlEyPN1aM4bxUOVKWl37Yz9JteD7XWHL85qreJs+g6A
-   UlnPkmQeZ02/zWg+O0eTa3PL/jEq0OqzV4nhb3CR8JkZlu1q805zoeeO1
-   rvR4TNgiqac0NtuMpnDUKlUicbX6L5JHXW6XPUmzg/2UmFChc1ItK6GpP
-   A==;
-X-CSE-ConnectionGUID: 7oh7ubNBRTWcD+w7h7UsFg==
-X-CSE-MsgGUID: 7Akn30kSSbOMxCAt9xpEDw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="48491956"
-X-IronPort-AV: E=Sophos;i="6.10,249,1719903600"; 
-   d="scan'208";a="48491956"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2024 07:36:00 -0700
-X-CSE-ConnectionGUID: 7AzAfHvITCmOcnJWAv7D4Q==
-X-CSE-MsgGUID: Ps3lp4cIR2WDiOm+/iWsug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,249,1719903600"; 
-   d="scan'208";a="70962687"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 22 Sep 2024 07:35:55 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ssNgn-000GNM-0d;
-	Sun, 22 Sep 2024 14:35:53 +0000
-Date: Sun, 22 Sep 2024 22:35:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Subject: Re: [PATCH v3 3/4] gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs
- support
-Message-ID: <202409222107.1XGvOBqS-lkp@intel.com>
-References: <20240919134732.2626144-4-andrei.stefanescu@oss.nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FnEomR2/g/rzc6Ip+pKBR3jmrFrFtGHTSncZAPtmTYuQVTHyI+Z8ouMvX3e6vuAn943sqglbvIBcszXbjPW+mIQyw1SeJ3wFLuUkiZLOj2tzjiCIkDAPGqPEyft+JkUJzbZuBzlRtaCK/2PoL4RKdA0ROL0hNXWZO3aC84/RmLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RiOdYEiG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727015990;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/vzo5yzIRVQBZ2gEsbSHUGsht80CRLIfxnN8cJiG0Sg=;
+	b=RiOdYEiGd1Cqg1QDVuGrPpRMaEboPK8cH9mO43lyx9Au9Xj5KJcB84TwGz28BYL/UrkXrz
+	Uqgau5oNhtjRD0Z/J7LoHEABeeWmHFIP3Neir3kUgZ2IFZ2EzfrYQ7w/+KzOaR0pzbei25
+	mhxf/Ck6HnGTO/QilpZWH0zc9Dpdg1s=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-YQ2wLZ_mO7yMR6mnMZ0BdA-1; Sun,
+ 22 Sep 2024 10:39:44 -0400
+X-MC-Unique: YQ2wLZ_mO7yMR6mnMZ0BdA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AEA9618F655A;
+	Sun, 22 Sep 2024 14:39:42 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.28])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0A1BD3000235;
+	Sun, 22 Sep 2024 14:39:38 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun, 22 Sep 2024 16:39:30 +0200 (CEST)
+Date: Sun, 22 Sep 2024 16:39:25 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	"Liao, Chang" <liaochang1@huawei.com>, mhiramat@kernel.org,
+	peterz@infradead.org, mark.rutland@arm.com,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: uprobes: Optimize cache flushes for xol slot
+Message-ID: <20240922143858.GD9426@redhat.com>
+References: <20240919121719.2148361-1-liaochang1@huawei.com>
+ <20240919141824.GB12149@redhat.com>
+ <41fdfc47-4161-d2e4-6528-4079b660424f@huawei.com>
+ <Zu2VdYrLWTJbVOAt@arm.com>
+ <20240920173223.GA20847@redhat.com>
+ <20240922140910.GA31288@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240919134732.2626144-4-andrei.stefanescu@oss.nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240922140910.GA31288@willie-the-truck>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Andrei,
+On 09/22, Will Deacon wrote:
+>
+> On Fri, Sep 20, 2024 at 07:32:23PM +0200, Oleg Nesterov wrote:
+> > On 09/20, Catalin Marinas wrote:
+> > >
+> > > On Fri, Sep 20, 2024 at 04:58:31PM +0800, Liao, Chang wrote:
+> > > >
+> > > >
+> > > > 在 2024/9/19 22:18, Oleg Nesterov 写道:
+> > > > > On 09/19, Liao Chang wrote:
+> > > > >>
+> > > > >> --- a/arch/arm64/kernel/probes/uprobes.c
+> > > > >> +++ b/arch/arm64/kernel/probes/uprobes.c
+> > > > >> @@ -17,12 +17,16 @@ void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
+> > > > >>  	void *xol_page_kaddr = kmap_atomic(page);
+> > > > >>  	void *dst = xol_page_kaddr + (vaddr & ~PAGE_MASK);
+> > > > >>
+> > > > >> +	if (!memcmp(dst, src, len))
+> > > > >> +		goto done;
+> > > > >
+> > > > > can't really comment, I know nothing about arm64...
+> > > > >
+> > > > > but don't we need to change __create_xol_area()
+> > > > >
+> > > > > 	-	area->page = alloc_page(GFP_HIGHUSER);
+> > > > > 	+	area->page = alloc_page(GFP_HIGHUSER | __GFP_ZERO);
+> > > > >
+> > > > > to avoid the false positives?
+> > > >
+> > > > Indeed, it would be safer.
+> > > >
+> > > > Could we tolerate these false positives? Even if the page are not reset
+> > > > to zero bits, if the existing bits are the same as the instruction being
+> > > > copied, it still can execute the correct instruction.
+> > >
+> > > Not if the I-cache has stale data. If alloc_page() returns a page with
+> > > some random data that resembles a valid instruction but there was never
+> > > a cache flush (sync_icache_aliases() on arm64), it's irrelevant whether
+> > > the compare (on the D-cache side) succeeds or not.
+> >
+> > But shouldn't the page fault paths on arm64 flush I-cache ?
+> >
+> > If alloc_page() returns a page with some random data that resembles a valid
+> > instruction, user-space can't execute this instruction until
+> > special_mapping_fault() installs the page allocated in __create_xol_area().
+> >
+> > Again, I know nothing about arm64/icache/etc, I am just curious and trying
+> > to understand...
+>
+> We defer the icache maintenance until set_pte_at() time, where we call
+> __sync_icache_dcache() if we're installing a present, executable user
+> eintry.
 
-kernel test robot noticed the following build errors:
+And to me this looks as if __sync_icache_dcache() must be called when
+user space tries to fault-in the page allocated in __create_xol_area()
+and returned by special_mapping_fault().
 
-[auto build test ERROR on brgl/gpio/for-next]
-[also build test ERROR on driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus robh/for-next linus/master v6.11 next-20240920]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+So I still don't understand the problem.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrei-Stefanescu/drivers-provide-devm_platform_get_and_ioremap_resource_byname/20240919-215018
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-patch link:    https://lore.kernel.org/r/20240919134732.2626144-4-andrei.stefanescu%40oss.nxp.com
-patch subject: [PATCH v3 3/4] gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs support
-config: powerpc-randconfig-r133-20240921 (https://download.01.org/0day-ci/archive/20240922/202409222107.1XGvOBqS-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20240922/202409222107.1XGvOBqS-lkp@intel.com/reproduce)
+Oleg.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409222107.1XGvOBqS-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test_module.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb-serial-simple.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
->> ERROR: modpost: "__udivdi3" [drivers/gpio/gpio-siul2-s32g2.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
