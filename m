@@ -1,156 +1,230 @@
-Return-Path: <linux-kernel+bounces-335335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0696097E43D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:29:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C67897E41F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B29EB281266
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:29:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B39EBB20D49
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F48A80C0C;
-	Sun, 22 Sep 2024 23:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6261B7711B;
+	Sun, 22 Sep 2024 23:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="YpXbytu5"
-Received: from sonic309-19.consmr.mail.sg3.yahoo.com (sonic309-19.consmr.mail.sg3.yahoo.com [106.10.244.82])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KuSSenUf"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1ED7711B
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 23:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024F62CCC2;
+	Sun, 22 Sep 2024 23:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727047748; cv=none; b=SnhThZgHNSHHCqIgInuqmXUK4CNiX2dRCQf8vy36jvKcFHDLXIz4qbSt0qX8eB1gdWCdctxyNLHbFr6PYNFl0wh1Q5jWzT4r09+m7bpXehBSGYTM28b23sjnwMcc2VWmUDBk7tPh0am+BE/u4kgIYHXufKyLlXvnRLMOwk0W1oI=
+	t=1727046227; cv=none; b=TdYNi+RTI/sRoFT1HtdKPyqPHPwtdIKG+RxYit6b4cc5p3pM2DY+D7Mg+MyK1hoCKGTZozlA6h9mt+JHQoTwkP3hKJ3lBI137jerv/kZztgnBzRssnZKi8TFfCRLBIUO80v4pxzluC2uIiEhSghbdZfnOiOF9DPgPJBqJcURjDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727047748; c=relaxed/simple;
-	bh=d2VPowojLvE6pIFJNTWiXJSjA8DovhDJFtzR9cLp9K4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=Y0+vw1KECmo92F6acwj5fD2ccgrr0JojKLR4WTvEgHtj4H05IeOlBpk3N9YQQaH+jhmYY6T/WJaK4o1XSQDuRc0dFfufXM95wvb1LHXorhLYaSiXR46PxcM1AMubHYSewmMfm6Oa12mtr25/fJb6JM7HVTDiZ1If7E1OdPwjDD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=YpXbytu5; arc=none smtp.client-ip=106.10.244.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1727047744; bh=NdwgXXN+vaZk8Zb8F01/IiMP/PymZkaowWVo3D+MKn8=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=YpXbytu5yNJ9otvFu+Ipm8GGjBOgcm6N5Oe+IlGSwcFB/AcOMuE+PQT35Kby+ObT0n1UQl5ls9WW5rxr/FYuSwN4iQUc7Wq+rbOzEzNMjK9/2VV3hqs1pAMEzaI8QvtO65y1oeQSSGnNaOG3SY+utOmHZUYl6KNStTbBCCXDdcnpBY+PsBH5v+uBS3nZCDUuzym0G1KvQJUT8qCHaWE8VtEL3YN2aDdRIqeP6A1/zHwBMds/boyeCfXn3Gm2XNaEz31orB/HZDuptwZoiT1rl2qUupY6wXdklrsuLGNRn9lf1FMED/MuTz5N+qs7129aMhovLA1v/eY66v9D8F1aRA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1727047744; bh=qBBXWEEUdySMMO7uMr9T10BoMuCnJmkDjVT9ozw+tn0=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=PyyWiY+05WavDN4x/PueZedEd+pTZLBW4HuN/MtSSzmFUXrX+upLZQvjAVCu7Fw1nGC3X54XU81McQx7dzRzbh+phJ+Pq5vgz8ut3XMf2WRhOJcG0vJ7i4NNq0k3FpejsqsNwDUpXI5Lyp2i7Dt0+ZifLnMwvESiiXodqjUJ5HxbqAZNoG6v0C3/thZm0sPKKe1r47bBdMj93nC1B5FxwwmlbX0ECsqRGNhT1eYMlRXSA23YlzwPwLXAjFfjbWIQdw/ZNf6ImpOWFLQMF8xmQKiBPNfxU86SPlM4YWB546r+MARBIiTCx3BnIUNGCooh90wMzRRpKgyhQb7kGRp8Hw==
-X-YMail-OSG: mcCKfdcVM1k8rU5PHk8h.r1wN1mY1gQefdiU0geabbU88pf3AjbW8SCjxzbIdwL
- MpIlTl_9pshkBZpQBCTMKTgI54lH_i_0nA6aimjWhfzF6t72gviy.ymiI2vI8fLitgwx.wuDVMD3
- 8qiRhaFW.GzaTQI6NN.aJj8QxWO.KjBtmfUvyHXQJnfuQpPXVI0iokdrw7u_JR8.9E0R3MaGeW9x
- 9kdIja4uHDHEdilcVoUxkd0RiO5boMGiLY5YNgv0SMVx82KWW.z_y5oIhE8SP8QA1HU.O3KptkEa
- AYBS85.r54jwHFVYT_shGydKxj5qOiVLDE32kL8HRECdnswzSVoRod0ekjtTd_ruP.elbbT17U4r
- y6rHnbQVb56dLes6.96XQtieK0clDOWIQc5yfhMM29Mdde25rtrX3jm4LcRZuvslyxiXbZ_DGTtu
- K9B6poRNanA7eU1UltNCQ4hJ_TIRVoBTdqW0if5ks0WFcbsXvT6tm0wrmIPRnykaI1JQ2Md8Y4C9
- FhSlBkb1Y11Fdy7CQHILuLAvsrRnPxN19g1ESjyCITUc8JLcmB77E1_u8W0zr.W8X25yJXXwKDgL
- SgqA45jB.Q.YoqE6aO3Y9EUY2prMRVNlvDHpPMkLnFUrBuPxgvVJvL9luQQnVcijD2XTX9ulmcC4
- mD2855Jq9mP3OJ92XGNY5qKuzaBX62WpIlm9SthccKiH61AlOvRJ2enOGWb96NVygv1hD.Xqu99e
- NW29ecthx.4GXih6NUJVLfMAXekj0l1CMuVSkFHYuRBC7Wl2IoJqDgdepSFoYZ63ilfF63uyX1Io
- YrogjQ2BqX5y0QzGTRRMu_74RTtLsD2E4ibRin2KscmEITpBH6mSgtrci7wubo72pXBLVUc.VDHp
- 0jYpssiI2cjL2nxS588oNx4WWrLR9AmZxeQaNSG.SezbvccjxZS9zkwojJw6z5YtPKMgiMBI8CKw
- K.iZDKzzwCxMAlzZAeUDetHBfg93TDyw8y2JpVuyPjey7T7uAwb1BR1ZwzoThtuy9h_9nGjKc.wN
- .OuTfFnSZg_J1YgmhYdO.RXdCn0_FyjIa3jfO7CBkMdpyHZMD18BtKgZFQtREPOSLOHOwnAKnWUP
- EX83pqLqSMO61AeXTLcvSozmK4ZgA9DsfzwvtPATyWIekoSZKTVJnhCInEp5lGo8esNtsua.IdH6
- g4QNsqwnbC7NP3rw762GgiAEtC2cbTKwHEwcrdmSViBO7PoMqEO7K_NsHvGW.bhUjJj4sP5FNoxT
- NpCv3z1zMRV_Ff6wtjye0ZmH65uNPpR.8.7DNMhV8pIU7vnFvsQl4kpJKm2Ae_.UwNArdv.tAMtW
- 6IiRV0tGPyHoVMDBJ1oc3MNnr4SC7XThQ92FkzZiqGsGDlGQqrgOgSvsK.ZiitcGzf.3LnMeWswD
- G2mMsm7gv5DlFz8BnCzgXlArdm9_mzNu3kXMdI_4r6G7ylzN9.bAkuh_TzFamXzfwhEPHViaoBjI
- 5l..IBnzlqZ9vKQph3ocaKhSwrp_ypg8FqzTb5Z6POOdWdKlw.H2bNh383CbCIreN2ChZRrZP9d3
- bKB9wMWtZBOA.MhyRiqt9.iI6gJM2kkmuq3pLlQGjwf6E2rDp51PWma7NjfuQraJ38pAVlH3t02F
- V6p8oJVSZvbTGa57GWvGbPev683BKEmVdSJ2yEeXfDOhodOdNR16EVijCcrD5NEGJFNBl7U_ViEP
- 5XnC5hZNW_AbOBH0Ahlh7JdaClgKVD3YNHHG2q.4ykcvuHEGZiHeEqH5qJ6i_uBix0xRhHHvIhzq
- H53gAKi1yty9RQUNlZMZDyZUhnSk.d_2MLFBMDtnISj2C04FO7b6Y9mD.zfH2rSBsQdwJM0HWgoU
- RYTvYLK7dCbQm2_199xd01JcOtkfT1i7e6hmRE9PuNbjl3A5b.Pg_77mfpH5O0_skqhmFfclHm8U
- snuwogGGiLEOqi1c_MCynfZjxwENLLGRGwJJwPAH96Mp0nEuAxizT2bDFk.9zTjoaxItNf.jn6TV
- 1SsLLUm60IYRRBK8JUDqwSWwLeDG47Vkmo1H2WqXxlGS9_4dkFkcmKnOEuWGE0_Mqxfi15qYaRoi
- hZiwSsFHyAjawXy6JSp3On9YcxkUljmjfF8NjmB1clVk8hsXpNcXiEJSbrrgxAherXMQyRgkmde7
- jT77mkmAwBipKc4HGY2Crjxu8bmHEpkHuDVSV.oWQbxAVS8DSgptSNHcDafndZyIwSsJQfSyHF4H
- HXwY9pbTU1gDg4InmcpPnWRLxrO94p8Z76Msczl7MLPI1T7EtTi0eaJspJKGvqcE-
-X-Sonic-MF: <abdul.rahim@myyahoo.com>
-X-Sonic-ID: e76e49aa-2261-4d83-bb69-b1c751c7bbf5
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.sg3.yahoo.com with HTTP; Sun, 22 Sep 2024 23:29:04 +0000
-Received: by hermes--production-sg3-fc85cddf6-kzxtv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7a694d7ff6fbf021b26f5be229f8bfcd;
-          Sun, 22 Sep 2024 22:58:34 +0000 (UTC)
-From: Abdul Rahim <abdul.rahim@myyahoo.com>
-To: perex@perex.cz,
-	tiwai@suse.com,
-	broonie@kernel.org,
-	shuah@kernel.org
-Cc: Abdul Rahim <abdul.rahim@myyahoo.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] selftest: alsa: check if user has alsa installed
-Date: Mon, 23 Sep 2024 04:28:18 +0530
-Message-ID: <20240922225824.18918-1-abdul.rahim@myyahoo.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1727046227; c=relaxed/simple;
+	bh=wwfVNmUoXYIZO2OGaY8HrUPJD64dGCIlWxNjBolaHW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VV8z8+w8kMQlvzA+ky1/S6w5TPsXh9YHTBR5um+dPH7enRyghYgaxhimJUv+aG+HdSJ24D85dfVUz2nLsARLILh1Lx/DuZV/xlKpKUc5Mkp4Jp8aominciYARU40qWPbaG5Vw9+pmwkvnRtVU9fvbHXsAkPAvY2ynT6ECI/mKWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KuSSenUf; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42bb7298bdeso48164575e9.1;
+        Sun, 22 Sep 2024 16:03:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727046224; x=1727651024; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xMtXe+qwhue24/Vh2nNTzw9kAkSswIX5YjJHpwdrdMg=;
+        b=KuSSenUfjYKtyuDKYwRVFh+BdphvEIzS8+1f3QpkqwDyi7U6xizEGdPsEnzh9Pf840
+         fnChQXp3SKFFEWkJbeADn+4muQceIWYlbF4bXiHADbh/49Dpe8BPi3LXmdkGLXik2s8s
+         rYoEdKqUiVqrUcIZm0WjxsDC5+GxvRF1/Gn2D//jVTe3OB3m1a7gYkxqmZOJRf7pmkan
+         2RP5lI5n/ObWpKMDnMe1IsZu/6MMgS6yTKpdl9fqDynLa0D4dKC2K7N5exmzV2M6yJCG
+         fRCXeF4QMbo/63Rv+2yZ3vs/gfwjxJb+r2fU+bhyw2dDKVEWrqeZ7bkyqQLKEBlOcIVn
+         JWrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727046224; x=1727651024;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xMtXe+qwhue24/Vh2nNTzw9kAkSswIX5YjJHpwdrdMg=;
+        b=OVRaWcG2kP4AjUMiScQKy1FggbVjBCyOg6azJwBzeyyYj94LMTCoWwNRVz8YY6jy5f
+         kbaCQ/YlC6/7SepTnTRSi7uvYcnHXuOWuZFT9WeLPVZvdfpr/gUllQVwbjkzUGZCz5od
+         uiIPdmyxP7O+/QUjw2zwzCzVlr/kDmRE8s8h51VfMuSVer+Y5QkNvZbzienn0gbMpjQC
+         tjYa7sUPWVsQ5G307kiMAHqTa4+EPM98M/pF4jrU7Qju/XaOgJoQO9QpCMzPNu09TCc8
+         8QmaTOKDz8cieBh7vrzK8Hsfim5LHvTBg+KE5zsW6YB6nm+Q/x98VbUJ76EBSk7OM03c
+         xkbg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/A2zUOjq1v5YqTcZcodIC2FiWiOCEFdz2IVpiba8Two2DeCYLgbybclBa4OrvC7PqBgT3kxkuHTAJxBIQ@vger.kernel.org, AJvYcCVYDnJxN+DDoIhsrbGAf2YfvL+HsJ6y2+MOGptCmc0mOfxYWRQOo9Tr4IvoGNUeS4ejMlluB595PjTO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrLHzWq/+viLXuUUEDJqqekzMPRz/39ii6BsYnyhL2P/gzsau5
+	js0JcKHn9Vh5L83ZUPuIk8Yc7e4AYzTxu6BnRC3iK9AwOR+VYLEF
+X-Google-Smtp-Source: AGHT+IHERED460bQf26PbmaFiMNdgb9tgvoFaNMY39SyzQWOQGcp5md0bmH5ap7eDnGkjMkPcyv6Zg==
+X-Received: by 2002:a05:600c:190e:b0:42c:b555:43dd with SMTP id 5b1f17b1804b1-42e7abe4184mr108137915e9.3.1727046223890;
+        Sun, 22 Sep 2024 16:03:43 -0700 (PDT)
+Received: from [192.168.1.130] ([86.127.146.72])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e801d66f6sm61765435e9.29.2024.09.22.16.03.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Sep 2024 16:03:42 -0700 (PDT)
+Message-ID: <48b93ab0-7285-4cdc-9bea-ac41a5dcdb2f@gmail.com>
+Date: Mon, 23 Sep 2024 02:03:38 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-References: <20240922225824.18918-1-abdul.rahim.ref@myyahoo.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: dsp: fix power domain count
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Daniel Baluta
+ <daniel.baluta@nxp.com>, Shengjiu Wang <shengjiu.wang@nxp.com>,
+ Iuliana Prodan <iuliana.prodan@nxp.com>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240918182117.86221-1-laurentiumihalcea111@gmail.com>
+ <20240918182117.86221-2-laurentiumihalcea111@gmail.com>
+ <Zusguvhu+pld8UOi@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <Zusguvhu+pld8UOi@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Currently, if alsa development package is not installed on the user's
-system then the make command would print a `pagefull` of errors. In
-particular one error message is repeated 3 times. This error is returned
-by `pkg-config` and since it is not being handeled appropriately,
-repeated calls to `pkg-config` prints the same message again.
 
-This patch adds check for alsa package installation. If alsa is not
-installed, a short and consize error is returned. Also, it does not
-affect the compilation of other tests.
 
-Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
----
-
-Current output:
-```
-make[3]: Entering directory '/mnt/ubuntu/abdul_linux/mainline_dev/tools/testing/selftests/alsa'
-Makefile:4: *** Package alsa not found, please install alsa development package or add directory containing `alsa.pc` in PKG_CONFIG_PATH.  Stop.
-make[3]: Leaving directory '/mnt/ubuntu/abdul_linux/mainline_dev/tools/testing/selftests/alsa'
-make[3]: Entering directory '/mnt/ubuntu/abdul_linux/mainline_dev/tools/testing/selftests/amd-pstate'
-```
-
-Previous output:
-```
-make[3]: Entering directory '/mnt/ubuntu/abdul_linux/mainline_compile/tools/testing/selftests/alsa'
-Package alsa was not found in the pkg-config search path.
-Perhaps you should add the directory containing `alsa.pc'
-to the PKG_CONFIG_PATH environment variable
-Package 'alsa', required by 'virtual:world', not found
-Package alsa was not found in the pkg-config search path.
-Perhaps you should add the directory containing `alsa.pc'
-to the PKG_CONFIG_PATH environment variable
-Package 'alsa', required by 'virtual:world', not found
-Package alsa was not found in the pkg-config search path.
-Perhaps you should add the directory containing `alsa.pc'
-to the PKG_CONFIG_PATH environment variable
-Package 'alsa', required by 'virtual:world', not found
-gcc  -isystem /mnt/ubuntu/abdul_linux/mainline_compile/usr/include -L/mnt/ubuntu/abdul_linux/mainline_compile/tools/testing/selftests/alsa       -Wl,-rpath=./ -D_GNU_SOURCE=  -shared -fPIC conf.c  -lasound -lpthread -o /mnt/ubuntu/abdul_linux/mainline_compile/tools/testing/selftests/      alsa/libatest.so
-In file included from conf.c:18:
-alsa-local.h:11:10: fatal error: alsa/asoundlib.h: No such file or directory
-   11 | #include <alsa/asoundlib.h>
-      |          ^~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[3]: *** [Makefile:24: /mnt/ubuntu/abdul_linux/mainline_compile/tools/testing/selftests/alsa/libatest.so] Error 1
-```
-
- tools/testing/selftests/alsa/Makefile | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/tools/testing/selftests/alsa/Makefile b/tools/testing/selftests/alsa/Makefile
-index 25be68025290..944279160fed 100644
---- a/tools/testing/selftests/alsa/Makefile
-+++ b/tools/testing/selftests/alsa/Makefile
-@@ -1,5 +1,9 @@
- # SPDX-License-Identifier: GPL-2.0
- #
-+ifneq ($(shell pkg-config --exists alsa && echo 0 || echo 1),0)
-+$(error Package alsa not found, please install alsa development package or \
-+	add directory containing `alsa.pc` in PKG_CONFIG_PATH)
-+endif
- 
- CFLAGS += $(shell pkg-config --cflags alsa) $(KHDR_INCLUDES)
- LDLIBS += $(shell pkg-config --libs alsa)
--- 
-2.46.0
+On 9/18/2024 9:49 PM, Frank Li wrote:
+> On Wed, Sep 18, 2024 at 02:21:13PM -0400, Laurentiu Mihalcea wrote:
+>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>
+>> Per the current binding, QM/QXP DSPs are supposed
+>> to have 4 power domains, while the rest just 1.
+>> For QM/QXP, the 4 power domains are: DSP, DSP_RAM,
+>> MU13A, MU13B.
+>>
+>> First off, drop MU13A from the count. This is attached
+>> to the platform device of lsio_mu13. This decreases the
+>> count to 3.
+>>
+>> Secondly, drop DSP and DSP_RAM from the count for QXP.
+>> These are attached to the platform devices of the lpcgs
+>> (used as clock providers for the DSP).
+>>
+>> With this in mind, the number of required power domains for
+>> QXP is 1 (MU13B), while for QM it's 3 (MU13B, DSP, DSP_RAM).
+>>
+>> Additionally, two extra power domains may be required in the
+>> case of QM/QXP DSPs. These are IRQSTR_DSP and MU2A. For the nodes
+>> using the "-hifi4" compatibles these PDs are optional, while for
+>> nodes using the "-dsp" compatibles these are mandatory.
+>>
+>> These changes reflect all of this information.
+> Can you wrap message to 75 char?
+Shall fix in V2.
+>
+>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> ---
+>>  .../devicetree/bindings/dsp/fsl,dsp.yaml      | 62 +++++++++++++++----
+>>  1 file changed, 49 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+>> index 9af40da5688e..e2f016af1048 100644
+>> --- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+>> +++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+>> @@ -51,8 +51,6 @@ properties:
+>>      description:
+>>        List of phandle and PM domain specifier as documented in
+>>        Documentation/devicetree/bindings/power/power_domain.txt
+>> -    minItems: 1
+>> -    maxItems: 4
+>>
+>>    mboxes:
+>>      description:
+>> @@ -97,16 +95,55 @@ allOf:
+>>        properties:
+>>          compatible:
+>>            contains:
+>> -            enum:
+>> -              - fsl,imx8qxp-dsp
+>> -              - fsl,imx8qm-dsp
+>> -              - fsl,imx8qxp-hifi4
+>> -              - fsl,imx8qm-hifi4
+>> +            const: fsl,imx8qxp-hifi4
+>>      then:
+>>        properties:
+>>          power-domains:
+>> -          minItems: 4
+>> -    else:
+>> +          maxItems: 3
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: fsl,imx8qxp-dsp
+>> +    then:
+>> +      properties:
+>> +        power-domains:
+>> +          minItems: 3
+>> +          maxItems: 3
+> I remember only need maxItems, if minItems == maxItems.
+Might be off here but from my own testing and from looking at dtschema/fixups.py it would seem that's not really applicable to subschemas under "then"/"else" blocks.
+>
+> Frank
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: fsl,imx8qm-dsp
+>> +    then:
+>> +      properties:
+>> +        power-domains:
+>> +          minItems: 5
+>> +          maxItems: 5
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: fsl,imx8qm-hifi4
+>> +    then:
+>> +      properties:
+>> +        power-domains:
+>> +          minItems: 3
+>> +          maxItems: 5
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - fsl,imx8mp-dsp
+>> +              - fsl,imx8mp-hifi4
+>> +              - fsl,imx8ulp-dsp
+>> +              - fsl,imx8ulp-hifi4
+>> +    then:
+>>        properties:
+>>          power-domains:
+>>            maxItems: 1
+>> @@ -157,10 +194,9 @@ examples:
+>>                   <&adma_lpcg IMX_ADMA_LPCG_OCRAM_IPG_CLK>,
+>>                   <&adma_lpcg IMX_ADMA_LPCG_DSP_CORE_CLK>;
+>>          clock-names = "ipg", "ocram", "core";
+>> -        power-domains = <&pd IMX_SC_R_MU_13A>,
+>> -                        <&pd IMX_SC_R_MU_13B>,
+>> -                        <&pd IMX_SC_R_DSP>,
+>> -                        <&pd IMX_SC_R_DSP_RAM>;
+>> +        power-domains = <&pd IMX_SC_R_MU_13B>,
+>> +                        <&pd IMX_SC_R_IRQSTR_DSP>,
+>> +                        <&pd IMX_SC_R_MU_2A>;
+>>          mbox-names = "txdb0", "txdb1", "rxdb0", "rxdb1";
+>>          mboxes = <&lsio_mu13 2 0>, <&lsio_mu13 2 1>, <&lsio_mu13 3 0>, <&lsio_mu13 3 1>;
+>>          memory-region = <&dsp_reserved>;
+>> --
+>> 2.34.1
+>>
 
 
