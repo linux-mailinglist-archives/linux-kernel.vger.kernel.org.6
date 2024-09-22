@@ -1,184 +1,157 @@
-Return-Path: <linux-kernel+bounces-335044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DCBC97E047
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 08:17:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF77E97E049
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 08:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C6B42816D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 06:17:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A49E61F21429
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 06:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7509818F2CF;
-	Sun, 22 Sep 2024 06:17:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D5E18DF79;
+	Sun, 22 Sep 2024 06:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NPY20O26"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YjfIIQnk"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D24A11712;
-	Sun, 22 Sep 2024 06:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C523B11712
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 06:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726985826; cv=none; b=tRacZ8UgAPrPsT4l0Jc3bdg2QMQJgYFSE/FFVmnfVpLcWr0uA3CFT4M891Op1aK0AqwPTHH0aUnvbtgm46ivQbP5QGwg5y8h/ajOFqKFGXMXNtN/zaQx8H1fXmMHIXo1sgKVxKXCrAOBBlR+8fCDHMLjoVJ8leVsEeVGWSX/mY8=
+	t=1726985996; cv=none; b=Okjr1s+7/JWNWUFe5SX+EwO0uEjky9xT60WjBwQXQotsXfW1qLaMiioYqW3OYUHTck7y0TxnS7GHhHzijFkb4eozvCydbombuXBGb5EC6yrQap3ARi5ZZvVUH3nCFVxT6W3rj4KmrVG/jTyTTvsEQnVH9xw4UOiCF3+JprLx2W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726985826; c=relaxed/simple;
-	bh=Dn2ictoSHLp+l35mgClPZL8BskA+nsyYSb4MVFpd50Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cnUtuatnWNgQQAmOjfllv1BdsG9OCw9qnpT45LmluD3ex+xUVHfZwUI9oRfZSI84eOGtTJmClrveFx4mCO318xbaGFX1LwW5enk6g/QL9x+Zk66Yq597XJsFCsfG1AIXdskRcDY6hWQdc1E0gJV77hxM94FmnUu4veGozibkPIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NPY20O26; arc=none smtp.client-ip=209.85.167.50
+	s=arc-20240116; t=1726985996; c=relaxed/simple;
+	bh=mT/Xp8IOBrnKtZ5WSBQDU8PqaOhKuApPXozFLdMKsiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tRMNgAgZVvSdOGMgNFLskz0lVNdNGgvmyZxPI4Ol9StsnhPbzjgSSl+K2vU7UnblpaRlbYvgVzOufRHG5Zi96iJNsJMzMkvIQkFnNS0b0C6j0JGOxJP8ET9YJtEGZowoZdo89znNcecN/JgyHEx0dG9WynQaxahjsFtdG9Hhb5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YjfIIQnk; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53659867cbdso4675708e87.3;
-        Sat, 21 Sep 2024 23:17:04 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2068bee21d8so34265035ad.2
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Sep 2024 23:19:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726985823; x=1727590623; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dn2ictoSHLp+l35mgClPZL8BskA+nsyYSb4MVFpd50Y=;
-        b=NPY20O26Dq2/eI6WKMzi+3vqIJ/6b1mcOcVjrf10Wrm0Jrw53XkbXUXVsfi0zQvv6y
-         7BdKaKIgpsKKHwLq/fy04WxuwtMbdkBhatZ2OQ6B6K1zzuPBsCBPxHbRhmvzUaXVPyLu
-         aoniPjXl9fWAKcQUh8BJewYMN+Sqf+SzfdNreU3wB/Lz4Lb7Ubecj4Ta4gaMdbOvNalq
-         DAUILnJAS/ouVoy5YHy8+T0vbgYrPgso9ChsBxeT6dzYj9tChiMpDRj54FvZFJrewCvU
-         WNqHqj+/fDNccrBrgqSmiCwDFRPmqqFrLRQ8ppKszocyJyiGqYnSXqVzlMFevX7pxFgs
-         BMmg==
+        d=gmail.com; s=20230601; t=1726985994; x=1727590794; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3xQ9V6HSaf4CAgLfVMwdW/11tmA/ZODg6WnRklyW9P8=;
+        b=YjfIIQnkRtlvMafC15JRTNwbkN2UUpgU40im465dYZXa1JarL1cXsP0G0yFYldkni0
+         4HOSM549PuFhxgNX3NZKcMq5kw6rBv8EXLYY4obIBbfqR+mqI4zV5ZbtB6PhxBqkgXoY
+         ZfWEETuBnHNGZ6xvVgboDEz5duzeRInttSDR1GJEDwXBpb+yDVDiocW4fJtMP6K44KMo
+         Ql9sDrp57aMj1EyEgkvRmOmUzsw1yfNRVjZA8YQE2htzysnP3e0DtTjGFU+QuFAXajyn
+         sxoSNrpma0Y1DEZnyIB8N19vucKgu/Lhf6dFoo5YJfp08I4D+v6cJfhfYzvVGw7/jfaN
+         e+jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726985823; x=1727590623;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dn2ictoSHLp+l35mgClPZL8BskA+nsyYSb4MVFpd50Y=;
-        b=sK0TOp1fyHeZl2IC0Qlhll2LvFq0kf5VFrJZqi7iVSJw1UWVUHLbNEbyfjr+ZUK7iU
-         77RDoFOcI7+JarUlQ2sHgBDnsLcNc6OpPjs88ZQOTGD1V0TvFnuj+ROoHY048Ul1jqSA
-         Sxq4anilMxu4L9zKc88x1kKQz3zxsTsszTJpwGY1lRxltEMY4OMOSbWUmUCDrKfyqj/q
-         9xtNDGtpozzfuAd9vy1omFBy4I8RCFh/5JPobVytyoBU0NvbFyYFiaKzVN89g9Uoo2FC
-         ZHcSrk1CV99Ypf31CMDFTht7jyjUnCBEnWFepxa5d8h9LMp0hPI8V+TriFGIsTcgKNH2
-         eK8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXBSmAonaIClu1r+mFVwxfq8KA+/kBS+6u5EgkdFOkxXsoUUuIkOfS2VVwaC2rjd44dDR6g@vger.kernel.org, AJvYcCXUvYRdidsewcbAu4dVQpw6irRJmibHQN7qH7idHIfPgCNjewErJ+1K7oNDO+X3utwxMki2mASNe2iWJnk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoBxgaVxdBDki+96nC4yH2zbMTrcSlI+hzVBOpCUdeuCTxmbH8
-	Fhuk/O6xVPIOF9mQG65a1St4ZmyBy7a1M45eK9Ptp4aCkyPaNEWJhcgQXS+6lWTia2I/LPWyhWu
-	fMvKZb4hCZyFaZWPskwtYnm0iNIo=
-X-Google-Smtp-Source: AGHT+IF4dGVz7RZXvuU7SyII+eRSMktamN/N3uSQWpidMLchgA4iceWv6VyclTJtuGP+eZ/1xhxc3P2N1rufYmv/8KE=
-X-Received: by 2002:a05:6512:6d1:b0:52c:d628:c77c with SMTP id
- 2adb3069b0e04-536ac32f044mr5163363e87.43.1726985822724; Sat, 21 Sep 2024
- 23:17:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726985994; x=1727590794;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3xQ9V6HSaf4CAgLfVMwdW/11tmA/ZODg6WnRklyW9P8=;
+        b=GjjaSj8ikLa3L/xxDSyta3Hj6CGLIcIrg8nQtBVmrZhW/ujCu3IM8uwbuYAJAJzaCX
+         1Bzkdf0ccLYFajbgyFBMvxJC4mC11k5b65zetLo5iWeB/aayYtCp+SKxBlf4QnZnROpK
+         aVF12fMYJ7lwMFQVx4A9ho+n4dbyletJNS3nRKKJjLuRzVOvj7ZvLarpKf+AbISfFflx
+         V+hSWbPCag2MSl2EbFHRjfAxzeKuniN/k00PjDmH6SNFBynHSX0Tc7+VQJVPaOxBKiV3
+         3Y09Jw6znGnUrXNBkTJ1IOUqn/G/xryhQfUadfAHI7WubuzZJcD1EqzSscLpuDLvBlOW
+         Y4Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1kqbRLoPAHkJD76gpQ022nnFl09pK2mlJWQriRrqpcGMocK2LFCiZZJ2Yc3lIjbP1eUymgqMMsLaq+X0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd/4cbw6GiIV/+rONBB4U0y3SCTZy6+jK5Axl4qGyu5Q+6b4Pg
+	YA6sc4PsFo/IEQlfU10c7QY6B6ZbjVl5ilq/ZlLXOK8Q95GrTTWS
+X-Google-Smtp-Source: AGHT+IHco0PIIsbh+MV6+539AZjban0BxjLXSZCarpWMLofXWVD3xMzTIYoyBh0YTzpmrUpdjtCTNg==
+X-Received: by 2002:a17:903:191:b0:207:1913:8bae with SMTP id d9443c01a7336-208d8397c1amr90751845ad.14.1726985993913;
+        Sat, 21 Sep 2024 23:19:53 -0700 (PDT)
+Received: from [10.3.80.76] ([59.152.80.69])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794730629sm116259225ad.247.2024.09.21.23.19.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 21 Sep 2024 23:19:53 -0700 (PDT)
+Message-ID: <d470e0ef-0193-478c-a858-d6498758aa9a@gmail.com>
+Date: Sun, 22 Sep 2024 11:49:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
- <20240807-b4-slab-kfree_rcu-destroy-v2-7-ea79102f428c@suse.cz>
- <6fcb1252-7990-4f0d-8027-5e83f0fb9409@roeck-us.net> <07d5a214-a6c2-4444-8122-0a7b1cdd711f@suse.cz>
- <73f9e6d7-f5c0-4cdc-a9c4-dde3e2fb057c@roeck-us.net> <474b0519-b354-4370-84ac-411fd3d6d14b@suse.cz>
-In-Reply-To: <474b0519-b354-4370-84ac-411fd3d6d14b@suse.cz>
-From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Date: Sun, 22 Sep 2024 15:16:50 +0900
-Message-ID: <CAB=+i9SQHqVrfUbuSgsKbD07k37MUsPcU7NMSYgwXhLL+UhF2w@mail.gmail.com>
-Subject: Re: [PATCH v2 7/7] kunit, slub: add test_kfree_rcu() and test_leak_destroy()
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Guenter Roeck <linux@roeck-us.net>, KUnit Development <kunit-dev@googlegroups.com>, 
-	Brendan Higgins <brendanhiggins@google.com>, David Gow <davidgow@google.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Joel Fernandes <joel@joelfernandes.org>, 
-	Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Zqiang <qiang.zhang1211@gmail.com>, Julia Lawall <Julia.Lawall@inria.fr>, 
-	Jakub Kicinski <kuba@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
-	"Uladzislau Rezki (Sony)" <urezki@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	rcu@vger.kernel.org, Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, 
-	Jann Horn <jannh@google.com>, Mateusz Guzik <mjguzik@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panel: elida-kd35t133: transition to mipi_dsi wrapped
+ functions
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ quic_jesszhan@quicinc.com, dianders@chromium.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240917071710.1254520-1-tejasvipin76@gmail.com>
+ <c3wv3r44cmua2hphyjqzb7pp2a32pvs6svcj6s2zohp77qn3cr@4iica7j5bx5l>
+Content-Language: en-US
+From: Tejas Vipin <tejasvipin76@gmail.com>
+In-Reply-To: <c3wv3r44cmua2hphyjqzb7pp2a32pvs6svcj6s2zohp77qn3cr@4iica7j5bx5l>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Sep 22, 2024 at 6:25=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> On 9/21/24 23:08, Guenter Roeck wrote:
-> > On 9/21/24 13:40, Vlastimil Babka wrote:
-> >> +CC kunit folks
-> >>
-> >> On 9/20/24 15:35, Guenter Roeck wrote:
-> >>> Hi,
-> >>
-> >> Hi,
-> >>
-> >>> On Wed, Aug 07, 2024 at 12:31:20PM +0200, Vlastimil Babka wrote:
-> >>>> Add a test that will create cache, allocate one object, kfree_rcu() =
-it
-> >>>> and attempt to destroy it. As long as the usage of kvfree_rcu_barrie=
-r()
-> >>>> in kmem_cache_destroy() works correctly, there should be no warnings=
- in
-> >>>> dmesg and the test should pass.
-> >>>>
-> >>>> Additionally add a test_leak_destroy() test that leaks an object on
-> >>>> purpose and verifies that kmem_cache_destroy() catches it.
-> >>>>
-> >>>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> >>>
-> >>> This test case, when run, triggers a warning traceback.
-> >>>
-> >>> kmem_cache_destroy TestSlub_kfree_rcu: Slab cache still has objects w=
-hen called from test_leak_destroy+0x70/0x11c
-> >>> WARNING: CPU: 0 PID: 715 at mm/slab_common.c:511 kmem_cache_destroy+0=
-x1dc/0x1e4
-> >>
-> >> Yes that should be suppressed like the other slub_kunit tests do. I ha=
-ve
-> >> assumed it's not that urgent because for example the KASAN kunit tests=
- all
-> >> produce tons of warnings and thus assumed it's in some way acceptable =
-for
-> >> kunit tests to do.
-> >>
-> >
-> > I have all tests which generate warning backtraces disabled. Trying to =
-identify
-> > which warnings are noise and which warnings are on purpose doesn't scal=
-e,
-> > so it is all or nothing for me. I tried earlier to introduce a patch se=
-ries
-> > which would enable selective backtrace suppression, but that died the d=
-eath
-> > of architecture maintainers not caring and people demanding it to be pe=
-rfect
-> > (meaning it only addressed WARNING: backtraces and not BUG: backtraces,
-> > and apparently that wasn't good enough).
->
-> Ah, didn't know, too bad.
->
-> > If the backtrace is intentional (and I think you are saying that it is)=
-,
-> > I'll simply disable the test. That may be a bit counter-productive, but
-> > there is really no alternative for me.
->
-> It's intentional in the sense that the test intentionally triggers a
-> condition that normally produces a warning. Many if the slub kunit test d=
-o
-> that, but are able to suppress printing the warning when it happens in th=
-e
-> kunit context. I forgot to do that for the new test initially as the warn=
-ing
-> there happens from a different path that those that already have the kuni=
-t
-> suppression, but we'll implement that suppression there too ASAP.
 
-We might also need to address the concern of the commit
-7302e91f39a ("mm/slab_common: use WARN() if cache still has objects on
-destroy"),
-the concern that some users prefer WARN() over pr_err() to catch
-errors on testing systems
-which relies on WARN() format, and to respect panic_on_warn.
 
-So we might need to call WARN() instead of pr_err() if there are errors in
-slub error handling code in general, except when running kunit tests?
+On 9/20/24 9:59 PM, Dmitry Baryshkov wrote:
+> On Tue, Sep 17, 2024 at 12:47:10PM GMT, Tejas Vipin wrote:
+>> Changes the elida-kd35t133 panel to use multi style functions for
+>> improved error handling.
+>>
+>> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+>> ---
+>>  drivers/gpu/drm/panel/panel-elida-kd35t133.c | 107 ++++++++-----------
+>>  1 file changed, 45 insertions(+), 62 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/panel/panel-elida-kd35t133.c b/drivers/gpu/drm/panel/panel-elida-kd35t133.c
+>> index 00791ea81e90..62abda9559e7 100644
+>> --- a/drivers/gpu/drm/panel/panel-elida-kd35t133.c
+>> +++ b/drivers/gpu/drm/panel/panel-elida-kd35t133.c
+>> @@ -135,25 +127,16 @@ static int kd35t133_prepare(struct drm_panel *panel)
+>>  
+>>  	msleep(20);
+>>  
+>> -	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+>> -	if (ret < 0) {
+>> -		dev_err(ctx->dev, "Failed to exit sleep mode: %d\n", ret);
+>> -		goto disable_iovcc;
+>> -	}
+>> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
+>> +	mipi_dsi_msleep(&dsi_ctx, 250);
+>>  
+>> -	msleep(250);
+>> +	kd35t133_init_sequence(&dsi_ctx);
+>> +	if (!dsi_ctx.accum_err)
+>> +		dev_dbg(ctx->dev, "Panel init sequence done\n");
+>>  
+>> -	ret = kd35t133_init_sequence(ctx);
+>> -	if (ret < 0) {
+>> -		dev_err(ctx->dev, "Panel init sequence failed: %d\n", ret);
+>> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+>> +	if (dsi_ctx.accum_err)
+>>  		goto disable_iovcc;
+>> -	}
+> 
+> Move this after the last mipi_dsi_msleep(), merge with the error
+> handling.
+> 
+>> -
+>> -	ret = mipi_dsi_dcs_set_display_on(dsi);
+>> -	if (ret < 0) {
+>> -		dev_err(ctx->dev, "Failed to set display on: %d\n", ret);
+>> -		goto disable_iovcc;
+>> -	}
+>>  
+>>  	msleep(50);
+> 
+> mipi_dsi_msleep()
 
-Thanks,
-Hyeonggon
+Is this necessary though? Converting this msleep to mipi_dsi_msleep and
+moving the previous dsi_ctx.accum_err check to below this seems
+redundant. If the check is placed above msleep, then we need to only
+check for the error once. If its placed below mipi_dsi_msleep, we end up
+checking for the error twice (once as written in the code, once in the
+code generated by the macro) which is unnecessary.
+
+-- 
+Tejas Vipin
 
