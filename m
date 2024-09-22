@@ -1,97 +1,91 @@
-Return-Path: <linux-kernel+bounces-335293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F6697E3AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:12:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D416897E3B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86F4A280F96
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 21:12:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F9331F2123D
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 21:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E61677101;
-	Sun, 22 Sep 2024 21:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uIKkx/Q2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4F577105;
+	Sun, 22 Sep 2024 21:13:19 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBD16CDCC;
-	Sun, 22 Sep 2024 21:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED70745CB;
+	Sun, 22 Sep 2024 21:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727039558; cv=none; b=SSY0bHEYIkJNO6yBWCnKkelsQwBeQA8qh1T3RNBfy/sHZ99/QpBK4UNnba2Z/EX91xx3Zm4kObr2KLlmaEK34kDdCSEYej51AbRUivJAdMtJeWIl7GEoSYzuTQcAaOM37gXl8wN+zUcatAK7K17g9D7x0IKXb/wXdNYJFzZ9Cxc=
+	t=1727039599; cv=none; b=b1DfgRfGgGsFNEHxzH355I6EYL06v1+mE3YSTZathFM0OfOfuSoi6j3mJ5Hn2esuYIBVFCsnV1xx8JqjbJhq/jwDSoN6Gf8P+9bdX1KHu2WfsQbYZ15HBTGFG0CQBiH68a0he80mH+Hgq90hGtIbPDuKrmuicAnIZtZm9VfbLbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727039558; c=relaxed/simple;
-	bh=Af3MCPphLi9T5OufNL1FwKlpj2eIIwiy0ezVtjS6q0Y=;
+	s=arc-20240116; t=1727039599; c=relaxed/simple;
+	bh=gkUfyCEyStS2izTtvpfZiyUL5tUDETyPehUxD8S3VzU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jXBh/M6QKPR4chLtknjW0y28WaQhW4zCNqrG2FiE/k/CZID4Axe9NlOUJfZA3Zh2Esd5tCpc4OfkD78+jXhZ7myc3P9DMsE+MMWJGpIbZc4URKwSIjC+HU4fB2iK9SpvDDXyJl6foKB0czUkUZOGkdf2qgeFokkC/Qk/27w7MGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uIKkx/Q2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECFCBC4CEC3;
-	Sun, 22 Sep 2024 21:12:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727039557;
-	bh=Af3MCPphLi9T5OufNL1FwKlpj2eIIwiy0ezVtjS6q0Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uIKkx/Q2X8a3bWCGtrYl3Lq43WA2mpeDsWNQf8nydDP8iceg8Le5fTE5Y1BfnH5RV
-	 +EULVkJitD5+//TnuzYSNVipjClDUrXmM7aIzDyt8ZiklhD2inl5sZZHEGbntNNwy8
-	 P8S2tzSp1slYDtmKHRLe3RWIeAlSOnSZa3b7AOa+Uf5tV49TXCHnSx2KHfT6O4+GWk
-	 ZlQz5kT/D5wfN5eHC1Qdb/TwKoyazbhX+6XCdeUsGycKyWLO7ZNtakQ4KgG+t0vOly
-	 XhoHzNM35drFeiYLFKRMWMabPO8LVnRhkmQx7YYyUxqyNJfpC3Jj1b3XWk2+FOmXNY
-	 4bXzxuLfVcoyA==
-Date: Sun, 22 Sep 2024 22:12:32 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	Naresh Solanki <naresh.solanki@9elements.com>,
-	Patrick Rudolph <patrick.rudolph@9elements.com>,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: hwmon: pmbus: add ti tps25990 support
-Message-ID: <20240922-delouse-yo-yo-c97d0774ec97@spud>
-References: <20240920-tps25990-v2-0-f3e39bce5173@baylibre.com>
- <20240920-tps25990-v2-1-f3e39bce5173@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=okw9Uhf5PKn5O1yMqd2AzvLxjcsyJ928xatWlhb1Ribt+P7aPerZOmAbU/6fgAGXezMVcLzQ2f5p45JB+k5M1fXpaEn21B4b9Zuld+B8e1w87EnxvTXFXvzdv5mxC4mJ+8HkYjK44Ge13424HWcQnKA56WmhE3b83qtg6eYzsOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from [78.30.37.63] (port=38090 helo=gnumonks.org)
+	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <pablo@gnumonks.org>)
+	id 1ssTt8-00CnH3-Qe; Sun, 22 Sep 2024 23:13:05 +0200
+Date: Sun, 22 Sep 2024 23:13:01 +0200
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH v2 0/2] netfilter: nf_tables: Fix percpu address space
+ issues in nf_tables_api.c
+Message-ID: <ZvCIXZTx6iRFG373@calendula>
+References: <20240829154739.16691-1-ubizjak@gmail.com>
+ <Ztc16pw4r3Tf_U7h@calendula>
+ <CAFULd4bUoeviAnomH38rGRa55KSkz3_L49Jqw3Tit4UCdywpnQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nFeNr7/F8ILTzGvI"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240920-tps25990-v2-1-f3e39bce5173@baylibre.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFULd4bUoeviAnomH38rGRa55KSkz3_L49Jqw3Tit4UCdywpnQ@mail.gmail.com>
+X-Spam-Score: -1.8 (-)
 
+On Sun, Sep 22, 2024 at 11:04:56AM +0200, Uros Bizjak wrote:
+> On Tue, Sep 3, 2024 at 6:14 PM Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+> >
+> > Hi,
+> >
+> > On Thu, Aug 29, 2024 at 05:29:30PM +0200, Uros Bizjak wrote:
+> > > Use {ERR_PTR,IS_ERR,PTR_ERR}_PCPU() macros when crossing between generic
+> > > and percpu address spaces and add __percpu annotation to *stats pointer
+> > > to fix percpu address space issues.
+> >
+> > IIRC, you submitted patch 1/2 in this series to the mm tree.
+> >
+> > Let us know if this patch gets upstreamed via MM tree (if mm
+> > maintainers are fine with it) or maybe MM maintainers prefer an
+> > alternative path for this.
+> 
+> Dear maintainers,
+> 
+> I would just like to inform you that patch 1/2 got mainlined [1] as
+> commit a759e37fb467.
 
---nFeNr7/F8ILTzGvI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for your follow up to notify this, I will place this in
+nf-next.
 
-On Fri, Sep 20, 2024 at 06:56:12PM +0200, Jerome Brunet wrote:
-> Add DT binding for the Texas Instruments TPS25990 eFuse
->=20
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
---nFeNr7/F8ILTzGvI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvCIQAAKCRB4tDGHoIJi
-0qMjAP9j+2kLi3Snt3QjbxO8A0L1QDvNTdvEOfxIKreHqgvmRAEArTjvJkF83O3g
-bf/jVwkrdw457HrdVpnb0Kdf8ZLLWwE=
-=CS5W
------END PGP SIGNATURE-----
-
---nFeNr7/F8ILTzGvI--
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a759e37fb46708029c9c3c56c3b62e6f24d85cf5
+> 
+> Best regards,
+> Uros.
 
