@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-335232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4306C97E2E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 20:22:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D8B97E2E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 20:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66C5D1C20E52
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 18:22:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4806AB21177
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 18:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4806C4776E;
-	Sun, 22 Sep 2024 18:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37B347A6A;
+	Sun, 22 Sep 2024 18:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="ewRP9qBs"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTZT6My7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545BC2A1DF
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 18:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407B42F43;
+	Sun, 22 Sep 2024 18:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727029355; cv=none; b=Bxa8NtprnSLAGbw86O0lgFdyZiAhAXZzA+G3LndMNi7ZJkOItsvMT4WB82djQI2TMPWtlQ/bmoK+ji49lnRjUQ8HChY+aB7/r+cTXnCs3C3/hOrVhxlukAaN5hQUoS5WYZDNVeUIfnHd3GWmbQx7t/FXOEGoMEpJbuKedeCiBMM=
+	t=1727031098; cv=none; b=sOvKOKj+0Jbm03FNyx9HDGTPmjfDi/NvL3FtrhnFiwcK8kYCZATmQ9XVz8nLsF7kKe1Zll28+NrKl4RVQclIZ3uA9L/9gYa49mT8MHhdAARGIpfT3r7x5Hf2i3qtb6URCbdS42t8e4yigutt9Vc7qeIYgTwOm8/ZSfd1B1KNkI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727029355; c=relaxed/simple;
-	bh=b/R2SwfuMm037MMujP7PtuDdEuxKb9MvubIzT8juS5U=;
+	s=arc-20240116; t=1727031098; c=relaxed/simple;
+	bh=QdpXL2C+5bVKvVSMyQQv5nMllIH08YYKXAnkZFZ+sGw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kbbCloki7lDlwHgmDHcJ8IR85B2oRCojywyK6LLAJ0+Rs6q43CEjH02oFCs1KG7bLSj94fdbwuzIkREYZE5Ofk0KZwScS+jfwOHoAzNeDoVXWZvywJwJ7OgIxs3Gml21UT+XotzFJn/DdL2q2lFvd1aovSKlZYjfWRxKWEMHvyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=ewRP9qBs; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5365aec6fc1so3865414e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 11:22:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1727029351; x=1727634151; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZNA03ERbIlH39Szbd3vyP1tsJQ3hmLb/bAIchoa/XuQ=;
-        b=ewRP9qBsRrAp8n5kMrRrWvxYj6f0Bpf7lgYEpdj+t2nWL8BUHk/HiTHNJQ6kZZcLmK
-         9WDlpxvjYFrfnfoRvVHdjFN1tf5f7KS9RBZatK4g3dieBZa9aM1wvZmV6TNYAqGsyXRG
-         +23XNeby+4rqFZDfcRFszQwG7tJ5bLrZ0DB+ph/QqaCpbNRzJiINiRaxJ7ms4CWrGdQ5
-         REMn5JWlInpo6FNCq0ErmaKHGBY0Y9p+nUQnUsoWrOEn6Xm48iL/QhWozJKXXv7IXjFV
-         UPZdeHDICPu1pEix0lswuyJPy6CcJppYp/Ki1sn5U6syW+SyQ47Eego/355WAyeGis1F
-         UTkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727029351; x=1727634151;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZNA03ERbIlH39Szbd3vyP1tsJQ3hmLb/bAIchoa/XuQ=;
-        b=QW/y3Pd1jszQfrv5+mEseL8UxdVhA+ihmWe6SVs0MCxX8yBAkrpjxLVSKniWlkVBGX
-         hPQ2RZeYOoVwM9h5TMMNCSYyVqAG0wTdeSEKUHz8rlBtwAahOPFugi+xBNOqanANt1PZ
-         N6jz5IMLjCWHo8TROhuCvSOkl47M6SwLj7aTPxSxVNKXB1FuZnXAmqniiQcVwa212C4f
-         ZhpKTrCBNLH9IoHws8bVTNfFvy+ko86e30eCZi0EcYOl5+nRbkEPvFOKuNPB0nTYXXS4
-         P6bfb85HmybwoeMppLOQeA7D4NByJjAjmA6K9704N2JEda7P+nuFRSJTiTpFfEZqwcNP
-         jTww==
-X-Forwarded-Encrypted: i=1; AJvYcCW/N7Y/DLhfPIbfW5sF92wwI/n90egpDhefDdR6ZadvAT5J51TSqPluveU5m0bpvof5mQD4Z6YTBcCG5YA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi3Spt9hh5yj0QDKQBci4Hodf32b4I+EswC0e01rKJpS1Y9IXU
-	dQ0vd7UAER5g31F7iHSlK9ea7JE+AuaZT7s37VgWo8b7aGVW5a9DOI3LdUd6cDs=
-X-Google-Smtp-Source: AGHT+IE5L/5PeUJb6j6IAjoz++K1l5ogr9SpTnOKfhAFOJDA44xV8TO6/MXVnyIM4wQHcvS7dNeUDA==
-X-Received: by 2002:a05:6512:3b86:b0:536:796b:4d72 with SMTP id 2adb3069b0e04-536ac340923mr4941606e87.55.1727029350990;
-        Sun, 22 Sep 2024 11:22:30 -0700 (PDT)
-Received: from [192.168.1.18] (176.111.185.181.kyiv.nat.volia.net. [176.111.185.181])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53687096936sm3021955e87.150.2024.09.22.11.22.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Sep 2024 11:22:30 -0700 (PDT)
-Message-ID: <298aa961-5827-4fa9-bfdc-66267d08198c@blackwall.org>
-Date: Sun, 22 Sep 2024 21:22:28 +0300
+	 In-Reply-To:Content-Type; b=nLdrsaXwPzrC/wX9lkiH+h4tau+s0BdKLoNaImXhj/YMFfbHoXWuLWn8TAB56p71PxGt9kU9KkX5Jd9kO74xGiHf4YXdrkgZalZcWxB2Yk8TNDVYbIsQYfA7glNPcb7R9kVAX3YEcRrERyZ/7XhZWGk6xKVqhFh8+Om+tR+qQAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TTZT6My7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AF83C4CEC3;
+	Sun, 22 Sep 2024 18:51:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727031097;
+	bh=QdpXL2C+5bVKvVSMyQQv5nMllIH08YYKXAnkZFZ+sGw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TTZT6My7l1XHaLHtT8R5lHc4tjLDn4YF58ihmGaMNYwFf9fTKQqkJ29FgseoKSkAI
+	 Cnm8dRf8kTTw9j4zPlX5sQFXExLNHLDjWsilsHVODruMPFcPvaUsywEBPq42eZ17jI
+	 fT3FXEEvZAiZGZGwq34oV/UOSiry0vK9rQ7Lp7RDY63IhTcDAmJbooQqhZ2VrS3sWB
+	 zVp5kWnTHBix80g6m7z9b6v54O5NrhvWSdJtrabbjHaA0/MmpB9hoJqPDhHsrJyBWT
+	 eUuX7csfLk63jreaakq/+1fNfj7fOt5fTA6siruYIEewIcdl8ztQzeGmXQFiOmz1x0
+	 tsUegUaMqOROA==
+Message-ID: <86595df6-6048-499e-8ac2-d63fbb0c7b9f@kernel.org>
+Date: Sun, 22 Sep 2024 20:51:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,255 +49,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH net-next] net: bridge: drop packets with a local
- source
-To: Thomas Martitz <tmartitz-oss@avm.de>, Roopa Prabhu <roopa@nvidia.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Johannes Nixdorf <jnixdorf-oss@avm.de>, bridge@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240919085803.105430-1-tmartitz-oss@avm.de>
- <934bf1f6-3f1c-4de4-be91-ba1913d1cb0e@blackwall.org>
- <7aa4c66e-d0dc-452f-aebd-eb02a1b15a44@avm.de>
- <34a42cfa-9f72-4a66-be63-e6179e04f86e@blackwall.org>
- <74baea7a-318c-482b-9e27-4a9b057b58f3@avm.de>
+Subject: Re: [PATCH] dt-bindings: usb: add missing compatible arraylist
+To: Karan Sanghavi <karansanghvi98@gmail.com>,
+ Roger Quadros <rogerq@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <ZvBNLRc8xnAoGvoc@Emma>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <74baea7a-318c-482b-9e27-4a9b057b58f3@avm.de>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZvBNLRc8xnAoGvoc@Emma>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 9/20/24 16:28, Thomas Martitz wrote:
-> Am 20.09.24 um 08:42 schrieb Nikolay Aleksandrov:
->> On 19/09/2024 14:13, Thomas Martitz wrote:
->>> Am 19.09.24 um 12:33 schrieb Nikolay Aleksandrov:
->>>> On 19/09/2024 11:58, Thomas Martitz wrote:
->>>>> Currently, there is only a warning if a packet enters the bridge
->>>>> that has the bridge's or one port's MAC address as source.
->>>>>
->>>>> Clearly this indicates a network loop (or even spoofing) so we
->>>>> generally do not want to process the packet. Therefore, move the check
->>>>> already done for 802.1x scenarios up and do it unconditionally.
->>>>>
->>>>> For example, a common scenario we see in the field:
->>>>> In a accidental network loop scenario, if an IGMP join
->>>>> loops back to us, it would cause mdb entries to stay indefinitely
->>>>> even if there's no actual join from the outside. Therefore
->>>>> this change can effectively prevent multicast storms, at least
->>>>> for simple loops.
->>>>>
->>>>> Signed-off-by: Thomas Martitz <tmartitz-oss@avm.de>
->>>>> ---
->>>>>    net/bridge/br_fdb.c   |  4 +---
->>>>>    net/bridge/br_input.c | 17 ++++++++++-------
->>>>>    2 files changed, 11 insertions(+), 10 deletions(-)
->>>>>
->>>>
->>>> Absolutely not, I'm sorry but we're not all going to take a performance hit
->>>> of an additional lookup because you want to filter src address. You can filter
->>>> it in many ways that won't affect others and don't require kernel changes
->>>> (ebpf, netfilter etc). To a lesser extent there is also the issue where we might
->>>> break some (admittedly weird) setup.
->>>>
->>>
->>> Hello Nikolay,
->>>
->>> thanks for taking a look at the patch. I expected concerns, therefore the RFC state.
->>>
->>> So I understand that performance is your main concern. Some users might
->>> be willing to pay for that cost, however, in exchange for increased
->>> system robustness. May I suggest per-bridge or even per-port flags to
->>> opt-in to this behavior? We'd set this from our userspace. This would
->>> also address the concern to not break weird, existing setups.
->>>
->>
->> That is the usual way these things are added, as opt-in. A flag sounds good
->> to me, if you're going to make it per-bridge take a look at the bridge bool
->> opts, they were added for such cases.
->>
+On 22/09/2024 19:00, Karan Sanghavi wrote:
+> Added the vice versa order for compatible property in the yaml file so
+> that the dtb can parse for the order mentioned in the dts file
+> k3-am642-sk.dts for ti,j721e-usb.yaml
 > 
-> Alright. I'll approach this. It may take a little while because the LPC
-> talks are so amazing that I don't want to miss anything.
-> 
-> I'm currently considering a per-bridge flag because that's fits our use
-> case. A per-port flag would also work, though, and may fit the code
-> there better because it's already checking for other port flags
-> (BR_PORT_LOCKED, BR_LEARNING). Do you have a preference?
-> 
+> This is highly ambiguous to me as where exactly the changes needs to be
+> added is it in the dts file or is the yaml where we have to reverse the
+> order already mentioned or do we have to add the another order as I have
+> done ?
 
-Hi,
-Sorry for the delayed response, but I was traveling over the weekend
-and I got some more time to think about this. There is a more subtle
-problem with this change - you're introducing packet filtering based on
-fdb flags in the bridge, but it's not the bridge's job to filter
-packets. We have filtering subsystems - netfilter, tc or ebpf, if they
-lack some functionality you need to achieve this, then extend them.
-Just because it's easy to hard-code this packet filter in the bridge
-doesn't make it right, use the right subsystem if you want to filter.
-For example you can extend nft's bridge matching capabilities.
-More below.
-
-> But on the performance topic: In our environment (home routers for
-> end-users) the bridge ports are always in BR_LEARNING mode (and this is
-> the default port mode). In this mode, I don't actually introduce an
-> additional lookup. br_fdb_update() is currenty always called for the source
-> MAC and in that function there is already the check for BR_FDB_LOCAL and
-> the warning. I basically only added the drop as a result of that test. So
-> when you are worried about an additional lookup, are you considering
-> scenarios where BR_LEARNING is not set on the ports? I do wonder how
-> common these are, I currently don't have a good feeling for that. I hope
-> you can expand a bit on that and enlighten me.
-> 
-> If you prefer, I could also make a patch that limits drop to BR_LEARNING
-> mode. I could extend br_fdb_update() to return an indication and make
-> the drop conditional on that (after the existing call). Something
-> like the below pseudo-code:
-> 
-> 	if (p->flags & BR_LEARNING) {
-> 		if (br_fdb_update(br, p, eth_hdr(skb)->h_source, vid, 0) & BR_FDB_LOCAL)
-> 			goto drop;
-> 	}
-> 
-
-Oh no, this is worse.. definitely not.
-
-> Although that would risk breaking existing weird set-ups. So unless you
-> signal preference for this I will not persue that any further.
-> 
-> 
->>> This would be analogous to the check added for MAB in 2022
->>> (commit a35ec8e38cdd "bridge: Add MAC Authentication Bypass (MAB) support").
->>>
->>> While there are maybe other methods, only in the bridge code I may
->>> access the resulting FDB to test for the BR_FDB_LOCAL flag. There's
->>> typically not only a single MAC adress to check for, but such a local
->>> FDB is maintained for the enslaved port's MACs as well. Replicating
->>> the check outside of the bridge receive code would be orders more
->>> complex. For example, you need to update the filter each time a port is
->>> added or removed from the bridge.
->>>
->>
->> That is not entirely true, you can make a solution that dynamically compares
->> the mac addresses of net devices with src mac of incoming frames, you may need
->> to keep a list of the ports themselves or use ebpf though. It isn't complicated
->> at all, you just need to keep that list updated when adding/removing ports
->> you can even do it with a simple ip monitor and a bash script as a poc, there's nothing
->> complicated about it and we won't have to maintain another bridge option forever.
-> 
-> I'm really trying to be open-minded about other possible ways, but I'm struggling.
-> 
-> For one, you know we're making a firmware for our home routers. We control all the
-> code, from boot-loader to kernel to user space, so it's often both easier and more 
-> reliable to make small modifications to the kernel than to come up with complex
-> user space. In other words, we don't have any eBPF tooling in place currently and
-> that would be a major disruption to our workflow. We don't even use LLVM, just GCC
-> everywhere. I'd have to justify introducing all the eBPF tooling and processes (in
-> order to avoid having a small patch to kernel) to my colleagues and my manager. I
-> don't think that'd work out well. I'm pretty sure other companies in our field are
-> in the same situation.
-
-That really is your problem, it doesn't change the fact it can be solved
-using eBPF or netfilter. I'm sorry but this is not an argument for this
-mailing list or for accepting a patch. It really is a pretty simple
-solution - take ipmonitor (from iproute2/ip), strip all and just look
-for NEWLINK then act on master changes: on new master add port/mac to
-table and vice-versa. What's so complex? You can also do it with
-netfilter and nftables, just update a matching nft table on master
-changes. Moreover these events are not usually many. In fact since you
-control user-space entirely I'd add it to the enslave/release pieces in
-whatever network management tools you're using, so when an interface is
-enslaved its mac is added to that filter and removed when it's released,
-then you won't need to have a constantly running process to monitor,
-even simpler.
-
-Actually it took me about 15 minutes to get a working solution to this
-problem just by reusing the ipmonitor and iproute2 netlink code with a
-nft table hooked on port's ingress. It is that simple, but I'd prefer to
-do it in the network manager on port add/del and avoid monitoring
-altogether.
+If you do not understand the problem being fixed thus not know how to
+fix it, I don't quite get why you decided to send a patch...
 
 > 
-> Furthermore, from what I understand, an eBPF filter would not perform as good
-> (performance also matters for us!) because there is no hook at this point. I'd need
-> to hook earlier, perhaps using XDP (?), and that might have to process many more
-> packets than those that enter the bridge. On the user space side, I'd need to have
-> a daemon that update bpf maps or something like that to keep the list updated. I'm
-> new to eBPF, so sorry if it seems more complex to me than it is.
+> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
+> index 95ff9791baea..822653217c43 100644
+> --- a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
+> +++ b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
+> @@ -17,6 +17,9 @@ properties:
+>        - items:
+>            - const: ti,j721e-usb
+>            - const: ti,am64-usb
+> +      - items:
+> +          - const: ti,am64-usb
+> +          - const: ti,j721e-usb
 
-It will process the same amount of packets that the bridge would.
+Sorry, this does not look right - duplicates above compatibles. Nothing
+in the commit msg explains why this order is needed (in terms of hardware).
 
-> 
-> For netfilter, I looked into that also, but the NF_BR_LOCAL_IN hook is too late. One
-> of the biggest problems we try to solve is that looping IGMP packets enter the bridge
-> and acually refresh MDBs that should normally timeout (we send JOINs for the addresses
-> out but the MDB should only refresh when JOINs from other systems are received). Then,
-> even if the filter location would fit, I'd effectively just re-implement the bridge's
-> FDB lookup which rings bells that it's not an effective approach.
-> 
-> So both alternatives you projected are not a good fit to the actual problem and may
-> require vastly more complex user space.
-
-Is that all the research? You read 2 minutes of webpages and diagonally
-scanned some source code, did you see the other bridge netfilter
-hooks? You can extend netfilter and match in any of them if you insist
-on having a kernel solution. For example match in NF_BR_PRE_ROUTING.
-You can extend nft's bridge support and match anything you need.
-
-> 
-> So I did consider alternatives, however making the check that's already there also
-> drop the packets, is the most effective solution to our problems from my point of
-> view.
-> 
-
-Again just because it's easy to hardcode the filter there, doesn't make
-it right. If you want to filter then either extend one of the filtering
-subsystems or do a hybrid solution.
-
-> 
->>
->>> Since a very similar check exists already using a per-port opt-in flag,
->>> would a similar approach acceptable for you? If yes, I'd send a
->>> follow-up shortly.
->>>
->>
->> Yeah, that would work although I try to limit the new options as the bridge
->> has already too many options.
-> 
-> I understand that. I hope that new options are still possible if they're justified.
-> 
-
-This is not justified because the bridge is not about packet filtering
-and hardcoding a packet filter in it is not ok.
-
-Cheers,
- Nik
-
->>
->>> PS: I haven't spottet you, but in case you're at LPC in Vienna we can
->>> chat in person about it, I'm here.
->>>
->>
->> That would've been nice, but unfortunately I couldn't make it this year.
-> 
-> Too bad. I hope we get a chance on another conference. I first need to convince
-> my managers that this trip was useful use of the company's resources, though!
-> 
-> Best regards,
-> Thomas Martitz
-> 
->>
->> Cheers,
->>   Nik
->>
->>> Best regards.
->>>
->>>
->>>> Cheers,
->>>>    Nik
->>>>
->>>
->>
->>
-> 
+Best regards,
+Krzysztof
 
 
