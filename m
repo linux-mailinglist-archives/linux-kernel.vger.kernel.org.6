@@ -1,120 +1,132 @@
-Return-Path: <linux-kernel+bounces-335263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2256E97E33A
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 22:26:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CCE297E3BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D16EF281330
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 20:26:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3825E1F2151B
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 21:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E472355886;
-	Sun, 22 Sep 2024 20:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0436778B4E;
+	Sun, 22 Sep 2024 21:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="y+Cetb23"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674F6446CF
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 20:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="UwHc0Xap"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00E12B9B4;
+	Sun, 22 Sep 2024 21:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727036795; cv=none; b=mBblh4BmVsqiQk8whTO6G3Y3lGxLbbyzn3p+zWRO/HMhLOwgLCgbLugnTRZXEsYFYRTJ6xlTkCOKggPOZkKnSyyqGbx52l/42OBrQjYnNdrByyDWJMj/Y0+vJp0QAswxExPUYFn0/FBw6wyiriDGV0g4Q8dOlVzBdhRS8LTL9Js=
+	t=1727041322; cv=none; b=lQmj52KX7RlKiSH6Z5OdBASK4iaEcERQSruLQdv84deXIGWr2pGyN7ehaGXMW/lhFVZfwpDhtPZHIiH0WNrtWx87r8IGWR/UGwXc+zuDcqoQCVXFE/KsAms5/C92SUU8gfN82xhVxI4pLXIA3Ouicn+7qAuGYZZBC6wLbfH/Wf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727036795; c=relaxed/simple;
-	bh=30E2ZrcpqAJXR/rQlNeag+vBjVRGwF9eqgwqsjL4Qyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B8hdRznb0oy0wXtACP7NFJ8P6micmA4V1IG8xoNL9OiFJKQ0fBhasuBr/65hzn29VLhC4EIliybB5U7rOZZ9y+Wmvqcx76n8w0QjTEGU1AGZodyLFS1QAH2fY494lXjJUtsA1hBlJ/rkU5L1wziIVIpKoM3aZEn77Hg7qac3lWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=y+Cetb23; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 1C76114C1E1;
-	Sun, 22 Sep 2024 22:26:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1727036790;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r7dZ8UIKFzbGUVg3pSKlD91524IzhscrWvBGhjOvt7w=;
-	b=y+Cetb23XgV5Ris3lDR3faJ2AdBYrWTZnR63raarh4QYi8UZ79ta+gE/JggRqU5a9MCl0w
-	dpAZ4v5F7p8q3IYJq1gjV6qCMlBF2EV3vz4ev1jDNNTUd+7wqx7wOw/qWlGV2BFwiBOq13
-	gETITZulgpjVcdTIFTnBlten8BGwASBT4JdlAjt8YiWsTa/g4BDhSgatus3VStsVvmWj4d
-	zdS+cZuV7XMJWotrAo8BAF2uv0rX6QEqikN7Y784d77SAf6YGEOc1LzCiwawuH5zViT4Io
-	ISxrDKhNN6Zw61n5SBRQCGg3CQxx4G6rSKF14UTyeIThsTvGvXwLa5vG0B5XOg==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id a9b140c5;
-	Sun, 22 Sep 2024 20:26:25 +0000 (UTC)
-Date: Mon, 23 Sep 2024 05:26:10 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>, v9fs@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	xingwei lee <xrivendell7@gmail.com>,
-	sam sun <samsun1006219@gmail.com>, lvc-project@linuxtesting.org,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>
-Subject: Re: [PATCH] 9p: cap xattr max size to XATTR_SIZE_MAX
-Message-ID: <ZvB9YsV8BZSFoDrC@codewreck.org>
-References: <4091309.WcpKHNDlqE@silver>
- <20240901-075b24ce58df695232e3d345-pchelkin@ispras.ru>
+	s=arc-20240116; t=1727041322; c=relaxed/simple;
+	bh=RbsB7lsvyOsZ0dTvImk2Oj3Ixw6IoZl8Fz3E0VPnKfo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nYOOEUJHMK1sWIYMzifTPl9zhki17/lHfjXZLECt9yuYRQh79baFhHsuQxtGHROw0ih5fRGZ+JBcKfZDBPHbHIkoEJx9LA+NXgsFDxdR/gAdlnrnQQDYXJanFLUmQQy3LpIlnKDiA98flPjzBzMHTHXR8APkGdKZS3l2F0CtuwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=UwHc0Xap; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id CBA23888B7;
+	Sun, 22 Sep 2024 23:41:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1727041313;
+	bh=OeoZq3/qGvqIVWMMmedNVeIHba/YDnXg02p2YwetYOg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UwHc0Xap3IpcE094oz0WCJgf3L1yZOLS648xCIUrQrGeYvLJIJ0hqS80r8aIqmahr
+	 hS1U4Dim52wR8jqV42VmF3GUiArIaZCS/M0spfB+zeOS7NyafFCltURLaawlpDSMoY
+	 Fwb9kz4lIMsooliYL07055+YbF8CWCWb9A5BsXLG6pdAtLLtmT373F6Pejja8QMh5u
+	 +JzbtupSmVsIWa7Yw0WDC4ifVRHGVmIXC2nEatX4RVFDI9VIQUG2zSt9xse28+ti0i
+	 +EJVvZNbAmE1RNxfiScf4vg9Px17c8DUNzs9Jkw/Cn685tFCB2l3UShkgtT3t5tQWS
+	 JQJllBRIk73Uw==
+Message-ID: <4bbee009-3985-4679-a85e-76f4259ff8d6@denx.de>
+Date: Sun, 22 Sep 2024 22:28:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240901-075b24ce58df695232e3d345-pchelkin@ispras.ru>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/1] pwm: imx27: workaround of the pwm output bug when
+ decrease the duty cycle
+To: Frank Li <Frank.Li@nxp.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, festevam@gmail.com,
+ francesco@dolcini.it, imx@lists.linux.dev, jun.li@nxp.com,
+ kernel@pengutronix.de, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pwm@vger.kernel.org, p.zabel@pengutronix.de, pratikmanvar09@gmail.com,
+ robh@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org,
+ ukleinek@kernel.org, xiaoning.wang@nxp.com
+References: <20240917192510.3031493-1-Frank.Li@nxp.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <20240917192510.3031493-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Fedor Pchelkin wrote on Sun, Sep 01, 2024 at 10:16:55AM +0300:
-> the issue is still present in upstream kernel [1].
+Hi,
 
-Right, I didn't register the end of discussion, thanks for the reminder
+On 9/17/24 9:25 PM, Frank Li wrote:
 
-> Considering the remark from Christian that limiting the allocation to
-> XATTR_SIZE_MAX seems too Linux-specific, maybe just fail silently with
-> __GFP_NOWARN flag passed to the allocator and return ENOMEM? I submitted
-> the patch [2] sometime ago which looks still applicable to the mainline
-> kernel. It was superseded with current discussion.
+[...]
 
-Hmm, at high level, I don't really see the problem of being
-linux-specific here - we're writing a linux client.
-Something larger might work in the very specific case of the acl call
-here, but normal userspace getxattr will be truncated to XATTR_SIZE_MAX
-anyway (in do_getxattr), and returning a size larger than that will
-yield odd behavior for userspace: calling getxattr with a zero size will
-return a size larger than XATTR_SIZE_MAX, then trying to call getxattr
-with the returned size will just fail as the buffer is silently
-truncated to a shorter size without any way to work around that; it
-sounds more coherent to me to just say we can't do it in the first
-place.
+> @@ -223,6 +224,8 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+>   	struct pwm_imx27_chip *imx = to_pwm_imx27_chip(chip);
+>   	unsigned long long c;
+>   	unsigned long long clkrate;
+> +	unsigned long flags;
+> +	int val;
+>   	int ret;
+>   	u32 cr;
+>   
+> @@ -263,7 +266,69 @@ static int pwm_imx27_apply(struct pwm_chip *chip, struct pwm_device *pwm,
 
-Anyway, I guess a malicious server has an infinite number of way to
-cause nuisance to our clients here so this is the least of our worry,
-and not giving a warning is better than giving one, so if we're not
-doing anything else adding NOWARN is probably for the best but I'm
-really not sure I agree there...
+[...]
 
-I'm getting less involved with linux as real life commitments increase,
-so I'll just defer to whatever eminent folks think about here --
-Christian (Brauner), please take your pick of either of these (or
-anything else) and I'll apply it:
-(just adding nowarn to the acl path that warned)
-https://lore.kernel.org/lkml/20240202121319.21743-1-pchelkin@ispras.ru/
-or
-(limit to XATTR_SIZE_MAX in 9p's xattr_handler->get() op)
-https://lore.kernel.org/all/20240304-xattr_maxsize-v1-1-322357ec6bdf@codewreck.org/
+> +	c = clkrate * 1500;
+> +	do_div(c, NSEC_PER_SEC);
+> +
+> +	local_irq_save(flags);
+> +	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
 
+I think the multi-write I mentioned in v5 for > 500 kHz case could 
+further improve the patch, let's see what others think:
 
+if (state->period < 2000) { /* 2000ns = 500 kHz */
+    /* Best effort attempt to fix up >500 kHz case */
+    udelay(6); /* 2us per FIFO entry, 3 FIFO entries written => 6 us */
+    writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
+    writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
+    /* Last write is outside, after this conditional */
+} else if (duty_cycles ...
 
-(and I see vfs_getxattr_alloc() hasn't been updated to error on
-size > XATTR_SIZE_MAX either, but we don't use it anyway)
+> +	if (duty_cycles < imx->duty_cycle && val < MX3_PWMSR_FIFOAV_2WORDS) {
+> +		val = readl_relaxed(imx->mmio_base + MX3_PWMCNR);
+> +		/*
+> +		 * If counter is close to period, controller may roll over when
+> +		 * next IO write.
+> +		 */
 
-Thanks,
--- 
-Dominique Martinet | Asmadeus
+c is only used in this if (duty_cycles ...) { } conditional, the 
+do_div() above can be moved here:
+
+	c = clkrate * 1500;
+	do_div(c, NSEC_PER_SEC);
+
+> +		if ((val + c >= duty_cycles && val < imx->duty_cycle) ||
+> +		    val + c >= period_cycles)
+> +			writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
+> +	}
+> +	writel_relaxed(duty_cycles, imx->mmio_base + MX3_PWMSAR);
+> +	local_irq_restore(flags);
 
