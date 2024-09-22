@@ -1,176 +1,182 @@
-Return-Path: <linux-kernel+bounces-335325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77FDE97E422
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:08:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 657C197E423
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32C132812B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:08:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FD921C20FED
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2485D80038;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FEA780BF8;
 	Sun, 22 Sep 2024 23:08:24 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F336674416
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33206F2F2
 	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 23:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727046503; cv=none; b=Iz1ORVGNXCvVI7NNBjReB0ZNBN/nbPgQjZRSyOnbch94M+dlVgj59TwTuBXFWqXDuM1Apy0zF73pe79E5lYPBb97sf9yIU5qNEyJrDjsd+MOlQn5as5ek7WEsrMLlTZJBzwjeI6h48Epwe9w6o5RvOP1k/S4kE6iTdaHeutX9j0=
+	t=1727046503; cv=none; b=gwPj7KrUdzYUQkM9o3BZ1wRSGFq8g+iy3bMZzDYcpaRF4czYwMUgg4cOy0P2dWQ9uGvn9/oCDY74lAtB3SJ6CE2nkiO/rZJ4LU0vvpInILWoKpqwTSzUrOGSXBUmiY58ATD9T/Uwy6x1Je9fIrCVw/j/xd4qYBCZZSTwXc21eL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727046503; c=relaxed/simple;
-	bh=rUa9EFClsvfyt2NZuiWReC6iCj1gDwPT59fvYhl4aBs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tVM8rIb7Z7n0gw9+CNVb/WwH2tebQBjo3gqc5IkvqakHEMEuDEkRSncCYkQTUrfw/1/D/FDuFX8fWhBhJlGro8YmN3Zxrvy0hhOABubt8N04xsUwnOQ2kMXfNmtDSnrvA/Msk3WP6v3L9DfIzQJEtrTld3zrLluGTKWilD0cAxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+	bh=VEMKNRhtM8106fxnnmEHNXFe77uEvoQwoECzdjmjkBw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OBmrPMBBWD9je/fEFeUyUCQDKUABq3jvEFycl7aQxbsY5cto+Z51pYjtRgIrB33PoxOL/D0ckE5XTDHHTWX4J6DayBNx8avnj+qRmTcRQBfyig2HUmdj5zblnezh0LqQPJz2LmgjKQD3qvRn9Az7xAT6VCyXYYkPD7diddn50Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a0ce7e621aso19946365ab.1
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39f5605c674so60792885ab.3
         for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 16:08:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1727046501; x=1727651301;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=189c+GqSoxNF0lHpzbMHiD/SgorbPgCvDdH1tZjf+90=;
-        b=Mc43LA25n/IJYct/D1qVYPylCbmr04a0Bke2rL73kvrj8epfO1lWfiZA2K0N3IpzTa
-         ovs5xqL3f6lzwnIM5Zo3ihWiFrO+HRvpX76HvJKptbVSXRg6FqAbhj2sXmwoi1Re3IOZ
-         bU51olO5UkDh9Qrh1nCILBqhKCOL9IFuFSYzEOtaRSfDXkLH0znXwtA1ykeJMoXVl+g+
-         EqTtvJWVqFzk6XZI2rZLf6hIix+X4SBevJs1U9Jbmsvk0yzq5Zdz5wr1O0wWdOe1cnrE
-         LVoqRBil1OM/X3GTXnjR59kGCfhCn+/EH94ghN9Gvk1fe7xz2J7EpmcbkGjMRzuRXT7d
-         BoWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVs0nDmJ+cePk9WnuhtU2tK10bUCfwyjCXHXxnx47btlBZJwiCrVlEHRQTsCH3wIee7r2uk0cECKtULmOs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/DmZs3qaKbsUwrxkCnKskVKHqZ57c/zAawFXC6rvdM/2RgA9y
-	fyTrDDSOa7C5Ehti/VCYj0Jkz/aDW3QF+inFa65tWKSDhb+a6UKkbuUZVtPn9ihH6UMKRKoaYkU
-	Jj5OcOuBi7cbwUjOKOVNPSy93LILQdyj6Fna1P9bhxfDb1JGnbElX++o=
-X-Google-Smtp-Source: AGHT+IF2UGVMv5HlwCYWWQv9n1GABvmzsN0BiMbdRV80sAEd9zP7bjeJRN7W8Vuz+XBpVFFxr3jra1Lzb+TejzN9FkNR02Va5iaL
+        bh=EKzSJ/WaGJM/ku5gQoaoOIrRJShwWPCCrXWi3XodAHg=;
+        b=r+DFsS1BuBIpPcjxwmQQSWvPfWcv5eyRh9F6VGlcmO7lwEKeV0qs/ZyDS0l+HP1Btq
+         yXqUF4uf40tHuXyzRcGeRt51lYAO5QT40EOMTPWq1PhzHwcMmKMLpABivSwsWBfrZv7p
+         JdTPXKsc/ImjAy07J3qgiLgNVHshHld43fGkjIfA9DoermKRbrFNHDAxPXgDI4uVZBwd
+         MCxEc0g43j3n3OR8MoNFPIDjR3tlF48itkedrBACkeAPQ5PL69BDlvKEz8gckunR4z/d
+         cTysajDrXXh61Ywj/kKKdW6r93DesLwTKGWaLFIIvoBXoVD+DnaLKtt2bezYtWruwFTv
+         hLgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ0wf/XgqEFnGHHkPVTpJtaAbOE3yfHUFpf7QxQHcQIIM8wJztIyIW3nqIuC8iZUjOK5Pa2xkVxJKzWU4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVhTGPdA02izOex4G+fGmsI08O5HBOgA07JFNbFlvK5YnI280p
+	JFWcD1LNThk1SwByEYCeocfPprsX5AI7llLMgVEJiBdzVd2/CuQq6VvZeoRLsDATEh6M0xK9XgN
+	M7YBsgIxvaOm1obZzj6C3QEjoaDDzQY/7TCr2GQtOSCsav/AGjD0LZR8=
+X-Google-Smtp-Source: AGHT+IHLDjB33A3pCGradFc/31YGrEYQVjlq9w3rRdYgCR6dbgkKL+Q/KSRP1Azpj/pA/wl8TmwEnkv/vrmlh+E/PEOVEYYYUZ44
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13aa:b0:3a0:97ba:d1e with SMTP id
- e9e14a558f8ab-3a0c9d3839cmr80362295ab.13.1727046500931; Sun, 22 Sep 2024
- 16:08:20 -0700 (PDT)
-Date: Sun, 22 Sep 2024 16:08:20 -0700
+X-Received: by 2002:a92:c544:0:b0:3a0:91e7:67cc with SMTP id
+ e9e14a558f8ab-3a0c8ceecd2mr85137885ab.13.1727046501203; Sun, 22 Sep 2024
+ 16:08:21 -0700 (PDT)
+Date: Sun, 22 Sep 2024 16:08:21 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f0a364.050a0220.a27de.0009.GAE@google.com>
-Subject: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_file
-From: syzbot <syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <66f0a365.050a0220.a27de.000a.GAE@google.com>
+Subject: [syzbot] [wireless?] KMSAN: uninit-value in ath9k_hif_usb_reg_in_cb
+From: syzbot <syzbot+e5388ea6d2de83957e35@syzkaller.appspotmail.com>
+To: kvalo@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, toke@toke.dk
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    1ec6d097897a Merge tag 's390-6.12-1' of git://git.kernel.o..
+HEAD commit:    bdf56c7580d2 Merge tag 'slab-for-6.12' of git://git.kernel..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=178e6c27980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6265dd30e362bb47
-dashboard link: https://syzkaller.appspot.com/bug?extid=b93b65ee321c97861072
+console output: https://syzkaller.appspot.com/x/log.txt?x=131524a9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b82e97dfbc92f0
+dashboard link: https://syzkaller.appspot.com/bug?extid=e5388ea6d2de83957e35
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-1ec6d097.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0b74fa2b2b4e/vmlinux-1ec6d097.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1ed852a3c5d1/bzImage-1ec6d097.xz
+disk image: https://storage.googleapis.com/syzbot-assets/b415ca186bb1/disk-bdf56c75.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4ce89ea52bab/vmlinux-bdf56c75.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9f99c9bf1bec/bzImage-bdf56c75.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
+Reported-by: syzbot+e5388ea6d2de83957e35@syzkaller.appspotmail.com
 
-netlink: 'syz.0.0': attribute type 61 has an invalid length.
-loop0: detected capacity change from 0 to 32768
-=======================================================
-WARNING: The mand mount option has been deprecated and
-         and is ignored by this kernel. Remove the mand
-         option from the mount to silence this warning.
-=======================================================
-JBD2: Ignoring recovery information on journal
-ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
-loop0: detected capacity change from 32768 to 0
-syz.0.0: attempt to access beyond end of device
-loop0: rw=0, sector=17058, nr_sectors = 1 limit=0
-(syz.0.0,5105,0):ocfs2_assign_bh:2416 ERROR: status = -5
-(syz.0.0,5105,0):ocfs2_inode_lock_full_nested:2511 ERROR: status = -5
-(syz.0.0,5105,0):ocfs2_prepare_inode_for_write:2262 ERROR: status = -5
-(syz.0.0,5105,0):ocfs2_file_write_iter:2441 ERROR: status = -5
-loop0: detected capacity change from 0 to 32767
-OCFS2: ERROR (device loop0): int ocfs2_validate_inode_block(struct super_block *, struct buffer_head *): Invalid dinode #17058: signature = DE01
-On-disk corruption discovered. Please run fsck.ocfs2 once the filesystem is unmounted.
-OCFS2: File system is now read-only.
-(syz.0.0,5105,0):ocfs2_assign_bh:2416 ERROR: status = -30
-(syz.0.0,5105,0):ocfs2_inode_lock_full_nested:2511 ERROR: status = -30
-(syz.0.0,5105,0):ocfs2_inode_lock_tracker:2695 ERROR: status = -30
-(syz.0.0,5105,0):ocfs2_xattr_get:1335 ERROR: status = -30
-(syz.0.0,5105,0):ocfs2_truncate_file:460 ERROR: bug expression: le64_to_cpu(fe->i_size) != i_size_read(inode)
-(syz.0.0,5105,0):ocfs2_truncate_file:460 ERROR: Inode 17058, inode i_size = 0 != di i_size = 108086391056891904, i_flags = 0xeef82700
-------------[ cut here ]------------
-kernel BUG at fs/ocfs2/file.c:460!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5105 Comm: syz.0.0 Not tainted 6.11.0-syzkaller-08068-g1ec6d097897a #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ocfs2_truncate_file+0x1381/0x1560 fs/ocfs2/file.c:454
-Code: 40 01 00 00 48 c7 c6 57 c7 11 8e ba cc 01 00 00 48 c7 c1 60 54 49 8c 4d 89 e8 4d 89 f9 50 41 56 e8 04 32 18 00 48 83 c4 10 90 <0f> 0b e8 c8 b6 37 08 f3 0f 1e fa 65 44 8b 3d 98 6b 7a 7c bf 07 00
-RSP: 0018:ffffc90002ddf280 EFLAGS: 00010282
-RAX: f6e02d0dd3845c00 RBX: ffff88801237542c RCX: f6e02d0dd3845c00
-RDX: ffffc9000b6e1000 RSI: 0000000000004984 RDI: 0000000000004985
-RBP: ffffc90002ddf4b0 R08: ffffffff81746dac R09: 1ffff11003f8519a
-R10: dffffc0000000000 R11: ffffed1003f8519b R12: 1ffff1100246ea84
-R13: 00000000000042a2 R14: 0180000000000000 R15: 0000000000000000
-FS:  00007f29d21ff6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f29d24b84b8 CR3: 0000000011ee4000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ocfs2_setattr+0x1217/0x1f50 fs/ocfs2/file.c:1209
- notify_change+0xbca/0xe90 fs/attr.c:503
- do_truncate+0x220/0x310 fs/open.c:65
- handle_truncate fs/namei.c:3395 [inline]
- do_open fs/namei.c:3778 [inline]
- path_openat+0x2e1e/0x3590 fs/namei.c:3933
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_creat fs/open.c:1506 [inline]
- __se_sys_creat fs/open.c:1500 [inline]
- __x64_sys_creat+0x123/0x170 fs/open.c:1500
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+=====================================================
+BUG: KMSAN: uninit-value in __skb_set_length include/linux/skbuff.h:3190 [inline]
+BUG: KMSAN: uninit-value in ath9k_hif_usb_reg_in_cb+0x84d/0x9b0 drivers/net/wireless/ath/ath9k/hif_usb.c:756
+ __skb_set_length include/linux/skbuff.h:3190 [inline]
+ ath9k_hif_usb_reg_in_cb+0x84d/0x9b0 drivers/net/wireless/ath/ath9k/hif_usb.c:756
+ __usb_hcd_giveback_urb+0x572/0x840 drivers/usb/core/hcd.c:1650
+ usb_hcd_giveback_urb+0x157/0x720 drivers/usb/core/hcd.c:1734
+ dummy_timer+0xd3f/0x6aa0 drivers/usb/gadget/udc/dummy_hcd.c:1987
+ __run_hrtimer kernel/time/hrtimer.c:1691 [inline]
+ __hrtimer_run_queues+0x564/0xe40 kernel/time/hrtimer.c:1755
+ hrtimer_interrupt+0x3ab/0x1490 kernel/time/hrtimer.c:1817
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1026 [inline]
+ __sysvec_apic_timer_interrupt+0xa6/0x3a0 arch/x86/kernel/apic/apic.c:1043
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1037 [inline]
+ sysvec_apic_timer_interrupt+0x7e/0x90 arch/x86/kernel/apic/apic.c:1037
+ asm_sysvec_apic_timer_interrupt+0x1f/0x30 arch/x86/include/asm/idtentry.h:702
+ __preempt_count_dec_and_test arch/x86/include/asm/preempt.h:94 [inline]
+ __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
+ _raw_spin_unlock_irqrestore+0x33/0x60 kernel/locking/spinlock.c:194
+ spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
+ dummy_pullup+0x273/0x320 drivers/usb/gadget/udc/dummy_hcd.c:924
+ usb_gadget_disconnect_locked+0x1f8/0x5b0 drivers/usb/gadget/udc/core.c:777
+ gadget_unbind_driver+0xe6/0x5f0 drivers/usb/gadget/udc/core.c:1666
+ device_remove drivers/base/dd.c:566 [inline]
+ __device_release_driver drivers/base/dd.c:1272 [inline]
+ device_release_driver_internal+0x58a/0x990 drivers/base/dd.c:1295
+ driver_detach+0x360/0x540 drivers/base/dd.c:1358
+ bus_remove_driver+0x465/0x500 drivers/base/bus.c:742
+ driver_unregister+0x8d/0x100 drivers/base/driver.c:274
+ usb_gadget_unregister_driver+0x55/0xa0 drivers/usb/gadget/udc/core.c:1731
+ raw_release+0x1bc/0x400 drivers/usb/gadget/legacy/raw_gadget.c:462
+ __fput+0x32c/0x1120 fs/file_table.c:431
+ ____fput+0x25/0x30 fs/file_table.c:459
+ task_work_run+0x268/0x310 kernel/task_work.c:228
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xce/0x170 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x1e0 arch/x86/entry/common.c:89
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f29d237def9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f29d21ff038 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
-RAX: ffffffffffffffda RBX: 00007f29d2535f80 RCX: 00007f29d237def9
-RDX: 0000000000000000 RSI: 000000000000000a RDI: 0000000020000240
-RBP: 00007f29d23f0b76 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f29d2535f80 R15: 00007ffc3f5b0328
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ocfs2_truncate_file+0x1381/0x1560 fs/ocfs2/file.c:454
-Code: 40 01 00 00 48 c7 c6 57 c7 11 8e ba cc 01 00 00 48 c7 c1 60 54 49 8c 4d 89 e8 4d 89 f9 50 41 56 e8 04 32 18 00 48 83 c4 10 90 <0f> 0b e8 c8 b6 37 08 f3 0f 1e fa 65 44 8b 3d 98 6b 7a 7c bf 07 00
-RSP: 0018:ffffc90002ddf280 EFLAGS: 00010282
-RAX: f6e02d0dd3845c00 RBX: ffff88801237542c RCX: f6e02d0dd3845c00
-RDX: ffffc9000b6e1000 RSI: 0000000000004984 RDI: 0000000000004985
-RBP: ffffc90002ddf4b0 R08: ffffffff81746dac R09: 1ffff11003f8519a
-R10: dffffc0000000000 R11: ffffed1003f8519b R12: 1ffff1100246ea84
-R13: 00000000000042a2 R14: 0180000000000000 R15: 0000000000000000
-FS:  00007f29d21ff6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f29d21bd9a0 CR3: 0000000011ee4000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+Uninit was created at:
+ __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4725
+ alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2263
+ alloc_pages_noprof+0x1bf/0x1e0 mm/mempolicy.c:2343
+ alloc_slab_page mm/slub.c:2413 [inline]
+ allocate_slab+0x320/0x12c0 mm/slub.c:2579
+ new_slab mm/slub.c:2632 [inline]
+ ___slab_alloc+0x12ef/0x35e0 mm/slub.c:3819
+ __slab_alloc mm/slub.c:3909 [inline]
+ __slab_alloc_node mm/slub.c:3962 [inline]
+ slab_alloc_node mm/slub.c:4123 [inline]
+ kmem_cache_alloc_noprof+0x57a/0xb20 mm/slub.c:4142
+ skb_clone+0x303/0x550 net/core/skbuff.c:2084
+ dev_queue_xmit_nit+0x4d0/0x12a0 net/core/dev.c:2315
+ xmit_one net/core/dev.c:3584 [inline]
+ dev_hard_start_xmit+0x17d/0xa20 net/core/dev.c:3604
+ __dev_queue_xmit+0x3576/0x55e0 net/core/dev.c:4424
+ dev_queue_xmit include/linux/netdevice.h:3094 [inline]
+ neigh_connected_output+0x5a0/0x690 net/core/neighbour.c:1594
+ neigh_output include/net/neighbour.h:542 [inline]
+ ip6_finish_output2+0x2347/0x2ba0 net/ipv6/ip6_output.c:141
+ __ip6_finish_output net/ipv6/ip6_output.c:215 [inline]
+ ip6_finish_output+0xbb8/0x14b0 net/ipv6/ip6_output.c:226
+ NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+ ip6_output+0x356/0x620 net/ipv6/ip6_output.c:247
+ dst_output include/net/dst.h:450 [inline]
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ ndisc_send_skb+0xb9f/0x14c0 net/ipv6/ndisc.c:511
+ ndisc_send_rs+0x97e/0xae0 net/ipv6/ndisc.c:721
+ addrconf_rs_timer+0x488/0x6f0 net/ipv6/addrconf.c:4042
+ call_timer_fn+0x49/0x580 kernel/time/timer.c:1794
+ expire_timers kernel/time/timer.c:1845 [inline]
+ __run_timers kernel/time/timer.c:2419 [inline]
+ __run_timer_base+0x84e/0xe90 kernel/time/timer.c:2430
+ run_timer_base kernel/time/timer.c:2439 [inline]
+ run_timer_softirq+0x3a/0x70 kernel/time/timer.c:2449
+ handle_softirqs+0x1a0/0x7c0 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu+0x68/0x120 kernel/softirq.c:637
+ irq_exit_rcu+0x12/0x20 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1037 [inline]
+ sysvec_apic_timer_interrupt+0x83/0x90 arch/x86/kernel/apic/apic.c:1037
+ asm_sysvec_apic_timer_interrupt+0x1f/0x30 arch/x86/include/asm/idtentry.h:702
+
+CPU: 0 UID: 0 PID: 7385 Comm: syz.1.489 Tainted: G        W          6.11.0-syzkaller-04744-gbdf56c7580d2 #0
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+=====================================================
 
 
 ---
