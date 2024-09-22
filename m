@@ -1,185 +1,110 @@
-Return-Path: <linux-kernel+bounces-335179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B3C97E249
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:27:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5480797E24C
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D367D1F21279
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 15:27:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15414281181
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 15:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565B0EAC7;
-	Sun, 22 Sep 2024 15:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0643E107B6;
+	Sun, 22 Sep 2024 15:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OpXHqz0Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DIYqdxIC"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E5B632
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 15:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E23C632;
+	Sun, 22 Sep 2024 15:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727018871; cv=none; b=mq42lXD/wLQOOUqBd/tlnm1M1c+xCs8/++kmkLUFsvLDb2O6ZnwK7eLkh4AKW9wX6Qv3s2J3maSKoBXvAhM1HQOLaMKT7nuIxOCxsSoxeQasFSGsc+qbmpQHSk+YChdDkAW9OlP3qKYWcTB5L6wSO49Z/MS4BKqMLUaNJFCOle8=
+	t=1727018898; cv=none; b=jc3DWjmgF8T0lRt/e29dLO878QrUrxIMvsAaYJNs54fuBSHHTEjzsIPD3oJs24uymA5DwI2aImjwUlR/WlqSF2wRdoQFxTqzeLKlOt08HQtsFoO74OB3vfW/wRzfDCZamsnu286PAbJJ6krp7ksmwO3s0PYB+5wMyaAgsFnrVSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727018871; c=relaxed/simple;
-	bh=5KxbnNxFTyBpHlxGL2EYcm6h4Y1pBVBEDHpol40RRP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CuwkeY5H1BtwNH5NtmphIud0jc18lkfbZVLx17uinGI2CdNgpQhnrzsaLV9jXhvm8vBtvWviMN/4fXWzZgPgPAEENC9PCc1dXur/+TGlxKnyeQyoCWFyf6GVVM5XMKdziUzJbj0TkZHOX4BfWsT6c3aJLdSKYf3MOzMvaJAy2X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OpXHqz0Y; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727018869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WmAfg/OBadr+At/TXJr37YT1rjHHfOwPshCtnw9S2o0=;
-	b=OpXHqz0Yw0ub5Noj3v1iU3gRoInbCkfatFmjFOcDj4Hm55OQJUPNBsjK4U123C913wd8Dn
-	F5b29nG4C7mRVQ4e8oyuH4NSJE2+z+5QklwMneuWqx3YK6BQMcx6J1QIas9vItbfL2Gg90
-	xFhf0QBRyuA4u+ZOJhWakCv4crTO198=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-452-y9Mf_d30PSGznNZhHB5JkA-1; Sun,
- 22 Sep 2024 11:27:45 -0400
-X-MC-Unique: y9Mf_d30PSGznNZhHB5JkA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5089E190ECE8;
-	Sun, 22 Sep 2024 15:27:43 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.14])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0FCFA19560AB;
-	Sun, 22 Sep 2024 15:27:36 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 22 Sep 2024 17:27:30 +0200 (CEST)
-Date: Sun, 22 Sep 2024 17:27:23 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv4 02/14] uprobe: Add support for session consumer
-Message-ID: <20240922152722.GA12833@redhat.com>
-References: <20240917085024.765883-1-jolsa@kernel.org>
- <20240917085024.765883-3-jolsa@kernel.org>
- <20240917120250.GA7752@redhat.com>
- <Zul7UCsftY_ZX6wT@krava>
+	s=arc-20240116; t=1727018898; c=relaxed/simple;
+	bh=MlOVCIZr0b+xfTsVyWc2m4Wd8mDINI3qkQYSzCkBm/4=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=NKR5Mxri0vLSO/bePx4868QQ2HixLz7Kl5Ye+SU/JwnmblXWQmpLvzkiMvDixElooerGy+oymNulhtPVH5OZRFIIhU1H2uzglTPKabaSb8etxdyUD/ckCUZZfC+UF3C0sE7bdEDInzi6WiYoPWI9MKOH6FA6RdrEbPJwv6Tf4xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DIYqdxIC; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7a9ae0e116cso412694685a.1;
+        Sun, 22 Sep 2024 08:28:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727018896; x=1727623696; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4FLqwzyjIHd1Z44gTOSWyBuwpGemYzWSR8FwZR5ykbY=;
+        b=DIYqdxICL3I+iDL0rm8810R16U+TDTYn/v8sM5fSh1Rj6YppKcRCS5e4x5B3dxljSh
+         IMfL0XdLGkgprEXcRPhW5CRZo973FtkVopD1lGuj3NTgtpGincd7r+Z10sbmZ5Qqsg66
+         AljAd0bZFUtYI4tVcEaWxXZrTXbxF2h4fxCtFEtQ4EqEuC3reufZvL0kBYisuTMvTfDj
+         enhIAUy7Yd+E36q56SsmNs1/EWLNDAScgrbZWiLCbgLip3q/xMw5R1SxjaCcBTEEJtuk
+         OiJpI6ryL5TFkOHhEtbzaeUAm7/0eWoN/0G0Er66t7YvFn34uJ7gQKV4hyTyb0FRynUY
+         2AzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727018896; x=1727623696;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4FLqwzyjIHd1Z44gTOSWyBuwpGemYzWSR8FwZR5ykbY=;
+        b=l/lSpL/DpZnq4ufmj7thvAzp0MJTNBjWs4Yp8ccQN0TDStsZUhbQDM0ESdgu3qeGst
+         vkInBmwg/H15FXeBUha17tQ5MJKndm/ArIfy84H5eMH0zgD9mjEC01ZBSIK6P2094kCd
+         wa2ORr40X+GJipeIcfMprYQn/cQ9VaZNeNaQhVdsnTH+UYFDUvbvoFarZunUJspUH4Hu
+         VWfF2rDrKYkwVn25cnM9b8Un3UbLSr5zPynwx3OeQna2t4Vya2h5+UyrYCTCJcm9hego
+         P0EscusAKTs4ZqQTr54Fv7JAameP6JBKYr090qUh0+t/5D9H2u2dB1aXS8rKqcgRHWmw
+         /cDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUof5V5Mg2EeTvdznSh0IXPH6JFPGBKtqHTeeaX/r+i2FKEtp8UHUeKYxClLaVzaUD1t2s1F4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwEQC4puTuaaDR5TRvlFAlNtFU23daLYBTEzY6xBRHZHc10BEL
+	CxM2Wn3qG9GX8wJUx1vHurLUvpLb/S9c5yqBvRa7BFP0HG5nHgSP
+X-Google-Smtp-Source: AGHT+IEKP7MO4f/h0LRuNTfLEIxZifEzmlbNIE51B4D1m5hsifHgSMoOU5ljZ4hxqEQu2TqIDClDNA==
+X-Received: by 2002:a05:620a:1aa7:b0:7a9:b739:3763 with SMTP id af79cd13be357-7acb80ccc18mr1516287685a.28.1727018895895;
+        Sun, 22 Sep 2024 08:28:15 -0700 (PDT)
+Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7acb07ddd98sm391774485a.21.2024.09.22.08.28.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 08:28:15 -0700 (PDT)
+Date: Sun, 22 Sep 2024 11:28:14 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: linux@treblig.org, 
+ willemdebruijn.kernel@gmail.com, 
+ jasowang@redhat.com, 
+ davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, 
+ "Dr. David Alan Gilbert" <linux@treblig.org>
+Message-ID: <66f0378ecf981_3b28232942a@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20240921231550.297535-1-linux@treblig.org>
+References: <20240921231550.297535-1-linux@treblig.org>
+Subject: Re: [RFC net-next] appletalk: Remove deadcode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zul7UCsftY_ZX6wT@krava>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Damn, sorry for delay :/
+linux@ wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> alloc_ltalkdev in net/appletalk/dev.c is dead since
+> commit 00f3696f7555 ("net: appletalk: remove cops support")
+> 
+> Removing it (and it's helper) leaves dev.c and if_ltalk.h empty;
+> remove them and the Makefile entry.
+> 
+> tun.c was including that if_ltalk.h but actually wanted
+> the uapi version for LTALK_ALEN, fix up the path.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-And sorry, still can't understand, see below...
-
-On 09/17, Jiri Olsa wrote:
->
-> On Tue, Sep 17, 2024 at 02:03:17PM +0200, Oleg Nesterov wrote:
-> >
-> > To me this code should do:
-> >
-> > 		if (!uc->ret_handler || UPROBE_HANDLER_REMOVE || UPROBE_HANDLER_IGNORE)
-> > 			continue;
-> >
-> > 		if (!ri)
-> > 			ri = alloc_return_instance();
-> >
-> > 		if (rc == UPROBE_HANDLER_IWANTMYCOOKIE)
-> > 			ri = push_consumer(...);
-> >
-> > And,
-> >
-> > >  handle_uretprobe_chain(struct return_instance *ri, struct pt_regs *regs)
-> > ...
-> > >  	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
-> > >  				 srcu_read_lock_held(&uprobes_srcu)) {
-> > > +		ric = return_consumer_find(ri, &ric_idx, uc->id);
-> > > +		if (ric && ric->rc == UPROBE_HANDLER_IGNORE)
-> > > +			continue;
-> > >  		if (uc->ret_handler)
-> > > -			uc->ret_handler(uc, ri->func, regs);
-> > > +			uc->ret_handler(uc, ri->func, regs, ric ? &ric->cookie : NULL);
-> > >  	}
-> >
-> > the UPROBE_HANDLER_IGNORE check above and the new ric->rc member should die,
-> >
-> > 		if (!uc->ret_handler)
-> > 			continue;
-> >
-> > 		ric = return_consumer_find(...);
-> > 		uc->ret_handler(..., ric ? &ric->cookie : NULL);
-> >
-> > as we have already discussed, the session ret_handler(data) can simply do
-> >
-> > 		// my ->handler() wasn't called or it didn't return
-> > 		// UPROBE_HANDLER_IWANTMYCOOKIE
-> > 		if (!data)
-> > 			return;
-> >
-> > at the start.
-> >
-> > Could you explain why this can't work?
->
-> I'll try ;-) it's for the case when consumer does not use UPROBE_HANDLER_IWANTMYCOOKIE
->
-> let's have 2 consumers on single uprobe, consumer-A returning UPROBE_HANDLER_IGNORE
-> and the consumer-B returning zero, so we want the return uprobe installed, but we
-> want just consumer-B to be executed
->
->   - so uprobe gets installed and handle_uretprobe_chain goes over all consumers
->     calling ret_handler callback
->
->   - but we don't know consumer-A needs to be ignored, and it does not
->     expect cookie so we have no way to find out it needs to be ignored
-
-How does this differ from the case when consumer-A returns _REMOVE but another
-consumer returns 0?
-
-But what I really can't understand is
-
-	and it does not
-	expect cookie so we have no way to find out it needs to be ignored
-
-If we change the code as I suggested above, push_consumer() won't be called
-if consumer-A returns UPROBE_HANDLER_IGNORE.
-
-This means that handle_uretprobe_chain() -> return_consumer_find() will
-return NULL, so handle_uretprobe_chain() won't pass the valid cookie to
-consumer-A's ret_handler callback, it will pass data => NULL.
-
-So, again, why can't consumer-A's ret_handler callback do
-
-	// my ->handler() wasn't called or it didn't return
-	// UPROBE_HANDLER_IWANTMYCOOKIE
-	if (!data)
-		return;
-
-at the start?
-
-Why the UPROBE_HANDLER_IGNORE case is more problematic than the
-UPROBE_HANDLER_REMOVE case?
-
-Oleg.
-
+Reviewed-by: Willem de Bruijn <willemb@google.com>
 
