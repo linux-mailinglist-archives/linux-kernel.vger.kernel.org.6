@@ -1,224 +1,213 @@
-Return-Path: <linux-kernel+bounces-335024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A746B97DFDB
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 04:16:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B2797DFDF
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 04:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F8A5B210EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 02:16:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C06601C20936
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 02:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E834019307E;
-	Sun, 22 Sep 2024 02:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A95244366;
+	Sun, 22 Sep 2024 02:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ayCHKsG8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dhIUDuZf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E75F6F076;
-	Sun, 22 Sep 2024 02:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726971377; cv=none; b=eYl1W087mfhRsTN1RVnhbtbLvpTraeAyAwEbT6YeJBIcc3CYwjjwNjkjVSXM06xz44/Zeix7kzZbuC8GPGYiifuV90IoGIiR4FVqLszL/e/1h6D7zOtSAcr4JymCvTh7MGaNXiV/12T3ytYFNQtvFXhzHYAOdB1kWRnoARsR92A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726971377; c=relaxed/simple;
-	bh=p3dOT3PBe6CvN1hB07Bxt6SIreaDWBgyB/iJcsSnDQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SFscpD6ZygDNEO4Lu/A+sBb4ggMmaxOfdW2CydCQ7c9NwxkqYEs8sg5xfoWCn7vRygkuxkY0U8QeA+iI3Jz4aqjNengBuT1hyxfD6pGwaaf9tpGnc2lhs2Yi/8j2qEu5QiS73XeNzVUyFG+wRt0BzpYmaApK2lJtLq7C2JFaMWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ayCHKsG8; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F68C11712;
+	Sun, 22 Sep 2024 02:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726973252; cv=fail; b=LJP95ged2zaGSQA7RNgB07Yc/nHFm4U2ee+zBDbupmgcpgREqxKk1/zkPS+6DyjktISjaOlBKh8yp/giUu54NnAIVtZLa+XW910/PTHXXWxMYhesakpEccPREhcVX1icZCa7XZTqDPfVBq8+7CToT1U2MFlWD6FFQGO6gR+q6Vk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726973252; c=relaxed/simple;
+	bh=gD/C6mU8TKyXN46DBYE2omlwf0CzMahIe7/iAVSKbFg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ulFRMNd4ncqQ7+z1yae9C+aHA7MumTSlFGql9CI3N/2XkgV4tkRrGL87rAhIGqbUOyvhucU2BC/HQIzsSJ+qJtVu5av+MQ3JKtGTFsal2d0Kx8OHM7G0TBpZv1eTTWk7qWTAQQyMKJa67LfZfwgjV1Gz8gpVYUJYoI/5ujKqwTE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dhIUDuZf; arc=fail smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726971375; x=1758507375;
+  t=1726973251; x=1758509251;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=p3dOT3PBe6CvN1hB07Bxt6SIreaDWBgyB/iJcsSnDQs=;
-  b=ayCHKsG8Ozk9grrrhbmNN74apKuH9gHbi3gMWXEDIi3kzeF06Ofs5gjS
-   KSxvE0cP3oLTWCFULIqAm3PvKMajcaf2iIlQqIPY6KnwC1UQ1VEMcrxOg
-   1RitTkZlaDnaz6PZJJjwlkcxIp03ys5NezYZnp4hPxgX34NAmM6aqgiZJ
-   kbVkILLvsRJVscxV6Cd44ya9h+MTETbvHoAJfYIwMFTgz/ziiQ3fNnkJ/
-   OACY6fFjaUjuQdCZedjW0+NQFA0M0jhH76UMrTw02wlnHrT+9zZ5K2NYd
-   HRwJas9PlzcIqHgF2M9Xca00GBJk26WKE4nXrPOT/SMjidDR4p/pU62IN
+   in-reply-to:mime-version;
+  bh=gD/C6mU8TKyXN46DBYE2omlwf0CzMahIe7/iAVSKbFg=;
+  b=dhIUDuZfAezLb+ZItciHb3DeXkU0TtVExzrb8J4ldixz0ybVUS0GU5F2
+   iPw1Ki1wJFLVh8vijYkRS/931lxekMuxP2wEwb4Ee6Mi2qV3HuGyMqHbw
+   kQPgDycY4Tgb1cLT3TgDax3GXMlqhbFOlzmo4Z74JiYjaqKZxKwUh776f
+   QTE+hm5eREMk+gLYzQ5sGxrYVqrqBa0k4jhyvC+K4lTqF7MohPEMVK2o2
+   oXrgHD0LqOVzOsauPNVZWm+MjvpAVA6L1DNt6ae1iG4KnKRsJKV0Benj3
+   PgMbSxDPn9RygOgXXgv1hZdMSVM7oXLzGr+PKDxBZXIUHppnYlhOLzkIq
    Q==;
-X-CSE-ConnectionGUID: 2aExlym4Rxe3ugVTx/a96Q==
-X-CSE-MsgGUID: /5gOuW3NSRyxVym0AJyf2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="26129163"
+X-CSE-ConnectionGUID: g8Ri1k70T6WcRbbOV7ZcVg==
+X-CSE-MsgGUID: 0rDjDAKgSQmOzQRoWaFNlg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="43414681"
 X-IronPort-AV: E=Sophos;i="6.10,248,1719903600"; 
-   d="scan'208";a="26129163"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2024 19:16:14 -0700
-X-CSE-ConnectionGUID: 3IuFOfnvQCW4cjKW132ggQ==
-X-CSE-MsgGUID: cPQYkJ3lRHm6HNRoTY8eIw==
+   d="scan'208";a="43414681"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2024 19:47:31 -0700
+X-CSE-ConnectionGUID: dRLEfbkFTzuVBwgAspFAaQ==
+X-CSE-MsgGUID: bgVIWIgZQ7i1ukx6KuYHwA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,248,1719903600"; 
-   d="scan'208";a="70848038"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 21 Sep 2024 19:16:12 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ssC8w-000Fxe-08;
-	Sun, 22 Sep 2024 02:16:10 +0000
-Date: Sun, 22 Sep 2024 10:15:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Fabricio Gasperin <fgasperin@lkcamp.dev>,
-	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	Teddy Wang <teddy.wang@siliconmotion.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH] staging: sm750fb: Rename variable
- sm750_hw_cursor_setData2
-Message-ID: <202409221050.Gx1KK7qA-lkp@intel.com>
-References: <20240921152124.11560-1-fgasperin@lkcamp.dev>
+   d="scan'208";a="71012670"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Sep 2024 19:47:31 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sat, 21 Sep 2024 19:47:30 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sat, 21 Sep 2024 19:47:30 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Sat, 21 Sep 2024 19:47:30 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.170)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sat, 21 Sep 2024 19:47:29 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=snj/nzHPxySXVE163ZtieizYB0lsILXjSIhT4XNbzKwp4U0cp1hVzEJNUkRS0j8CzIG+QPpcCLQRVrsqM5oq62P2/MmjAycFp9hKBfBIURQ4PvD5cILPvvoqd+ayckzuj7cg93Ir7ooTlJgYAOZg1Llas/OdYc/JTTZKSn82w9L1TcHBK+1MTm5svZ52pg3soC4voJq4oZcCsMVcrmQnllFM+lcagcHT9/2V7zwHMH7ziNCc2e7+6oH55pI0bDgJzYOkAFrsMsvVhIPUYOlkgdH2RJWTwwtNaYNzFvKQDiAAeiFBULksyGEIn1zJM8YOS0Cj6Mtwr2RQR4TjR19WSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=khzaAhk3/ez0/+wtdqlbDoZEpXQMAWJLRmnYbdzcfo4=;
+ b=gwo9m6Phe6UK0+Q59cbuavVxINJPFQwzcflbHVtPO5do5QAzAp3Pou88wgmetjqYaYKh1xmhVV0OyM8Yic6H79z1MyhGI/jrByP3Sy6KYmjEfTj2hnf/eDMj3J3iUR8Lo90G3fYuzVZySYYtblIYG9huOwf1yCCe+mq+auVyyukRSf/FfkTC5RcCrSjFwyODImnMT2CCMImKcdtI5EvU7Sf5V7YUZ1u8QRrs0sQ4k0AzSFWF072NLduhkQmuirVDI5sxdCQz1UCClDKdyjdYmvmU8js4c9ulSAIf8LCOquw6HdKntAfhUFDdnGx+Y6nFmVVzp6TqjPIi21MAWJSGkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by SA1PR11MB8318.namprd11.prod.outlook.com (2603:10b6:806:373::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.24; Sun, 22 Sep
+ 2024 02:47:28 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%7]) with mapi id 15.20.7962.027; Sun, 22 Sep 2024
+ 02:47:28 +0000
+Date: Sun, 22 Sep 2024 04:47:25 +0200
+From: Dan Williams <dan.j.williams@intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Linux regressions
+ mailing list" <regressions@lists.linux.dev>
+CC: Dan Williams <dan.j.williams@intel.com>, LKML
+	<linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
+	<stable@vger.kernel.org>
+Subject: Re: [regression] frozen usb mouse pointer at boot
+Message-ID: <66ef853de5f16_10a0a2946e@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+References: <3724e8e8-ab71-4f64-8ba1-c5c9a617632f@leemhuis.info>
+ <2024091128-imperial-purchase-f5e7@gregkh>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <2024091128-imperial-purchase-f5e7@gregkh>
+X-ClientProxiedBy: MW4PR03CA0079.namprd03.prod.outlook.com
+ (2603:10b6:303:b6::24) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240921152124.11560-1-fgasperin@lkcamp.dev>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SA1PR11MB8318:EE_
+X-MS-Office365-Filtering-Correlation-Id: b9cc005a-6ab3-4d01-df2f-08dcdab0e57d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?iBJMy9PRpGEVxDJ2wBRvbOyYo1KwM+Z7/XL19lnzdbSD9k6yzSzW54yI8WfP?=
+ =?us-ascii?Q?s4sDGoOjhpYGnl7MSt2Kc2OgEnvQg+tRrnUTHFixe06McobXjyb5PKLb/URN?=
+ =?us-ascii?Q?0qn6DVRk7Xq7rzlZ4WsaAVus+28PMssIU17W/ZXdesFjWY/G+XS+Qxk6URTx?=
+ =?us-ascii?Q?Tksc4oR23IE1c9cbbQynzcexlK23GOA0ieIJdBwoZmeCrxvk7eTR9xB4r7zS?=
+ =?us-ascii?Q?J759dPiwrgFJJVG0/WkclqZ5l8wxRRWxtkwwDBd7OeyrjcMkVEpkCYWo13Yw?=
+ =?us-ascii?Q?bU69qw+g9TOSEDiD8PJAiAk41Ev0k2G6QVemaCuPn1Lml0L5cvOwjwISSVDX?=
+ =?us-ascii?Q?6Ew2C6UKsOq+2ad3H+z4ofEFiHqmaftW8WBIF1gmntaCIAEvl6o2Fr6n5hzQ?=
+ =?us-ascii?Q?o3NRi+lVmImVE/1XZNnl0D/CrQGMFDwB6VHb1mn8vkS3Ty0iRQxyQKtH2oS7?=
+ =?us-ascii?Q?/6S/8cpyzzE+Wq03/kuObadV/A41h4zq02p+pHX5r1ysTkvyjslv4zHtC0Uq?=
+ =?us-ascii?Q?07IqonmWp0BOwS4Ka+W3SWkzXel7cuKjlPrVPRF4jnbA7iw9ftO5OhL420GI?=
+ =?us-ascii?Q?aNgD/fC4FwiCd2qlofhALElyCj6wSg8vgrA2ROdZxNNeg9Xolr42ABvxSKbB?=
+ =?us-ascii?Q?xvgcjX2NOHrHMJu3IyIWP11gjF8S/BkTt6wvVlcwyOqzbEw/yY4CZUCgyPW/?=
+ =?us-ascii?Q?+WaI8PoFbRoBQycMw64MslrdlFBi/Ujw4TaSqXLccazkVpq5pMbp4ReOGU6v?=
+ =?us-ascii?Q?vZF1vpOJxXte8VwDFvrgsXcnwkzwCne976SgHZ/g3SZivj4aOgKWqnnaog63?=
+ =?us-ascii?Q?JQhnFDuyTMpLkJVsaIjruFSuvx7YKLuzHSyLs8mj28I/D2lfzEL2rgOUFItp?=
+ =?us-ascii?Q?0YYRtI2oeXbK6zmbcwsHz4FWVTY0iP3kBCicl4z3ncpEtxR0bo8QZfnfUxQD?=
+ =?us-ascii?Q?pbMPEM6VJieWXUBnXINvA3I8QDAHUzZylEmFYNzwiPnVooHWw2PcCvxyizIr?=
+ =?us-ascii?Q?VAugJDCkOiWg9Ht/xkI2xWLa+ExWk+k2E5WXhONNGBAErFBqrZXMZH0373Ym?=
+ =?us-ascii?Q?TXZ/FxYCMwfN6lm19Eni3zW16cWUo7ZyB8lM8pALJFLwe2EXvImq7E+zSGMT?=
+ =?us-ascii?Q?MNvILe7P8jTVPwZsoLejYr/kdISv5Ewu+dUqKczUb5YOHcvuEZJi8XwC3Odi?=
+ =?us-ascii?Q?BXA89ww2/apF/wuiWUevQWurTM1N/2w881r6eBpA5GlD6XatZ/cGNY+oWN1t?=
+ =?us-ascii?Q?kjdv8+hTMm9y8v65p7azKEvnTZytIfz0uKCjo7A4FQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?/JkhsSklEl14EXy8Q7BG4ducYsMCW4QhHBg8odgfsH8greMGq/v6J5SwnOKe?=
+ =?us-ascii?Q?X2Y6awcE0GIMX2EJRoCOqRKOdqQWEtewwGZhqyw2Yb+g+EQ205CXDyPU+not?=
+ =?us-ascii?Q?cLn4kcGstdwDWHVArfmdU3cCNSAcvNfdSPV9zlp1V4hm2sgCf8GceLd19ruJ?=
+ =?us-ascii?Q?mmX6wLUTNnjliEENNeZREbxYlKqBZqKvkCL4SijuEfWPZESNvYlQBLo7VKZH?=
+ =?us-ascii?Q?iAZgiKawG0JEa629allyk11jvjLj08bgOqSRVY0uQeiL3i5BWbzlKC2vY88i?=
+ =?us-ascii?Q?B/0IErmJeDLiX/CEbjmcwnt6jsR0RzcPIseSsXZtK+Oh2eudiDNj2ryLEMmO?=
+ =?us-ascii?Q?qMGThhi94qwEjdp0KNHACBjZdu+tpjaN4mP1NkgGdDDq6+10f2LqLSrKHzsj?=
+ =?us-ascii?Q?DvNn50EoX7A86voDl7L2zLkGU5eZmIH/obSN4Xqhgq5KyuFoQ65vt4crJ4M0?=
+ =?us-ascii?Q?ZLmAWMKXRT7vZiSB+UsednpevB9mO3xFVoqavjoIAj8qJT7NuSnyUBsYl0Tp?=
+ =?us-ascii?Q?6j1pgo40ZX2YYzOeFTkrc/WAa0NN62eOr5HqE3ixQiGTkhW27lLegWPzR7/u?=
+ =?us-ascii?Q?9pAQiNzziV0i8FRNhZZn8AWQS169WkN7lf8tTj5KFn5kxTpm7kb9vEUy/g/d?=
+ =?us-ascii?Q?K/Yp1PbGzV7baMptCtWo0U8pDBPtSHe1jTsNIeGQoB4yJ4xkbxs5pi6GFym3?=
+ =?us-ascii?Q?PDAxmligLDb/QD7w/4CGkhTqpfPBexmpBIxZeCbLBZaRPNhkgr4GyL+IBPJY?=
+ =?us-ascii?Q?xmIoNbh4nasPtc6STaBoQvYOKEmllTuaw0BARq2yp8qBecfMcfdRZhFChfHo?=
+ =?us-ascii?Q?PV5HHSeG52VGFavHyu00hhuP1PjjpYzh9ciDo/mfOyrU1zgNkjCNZ8/TlIal?=
+ =?us-ascii?Q?+diS9sNPbVJvAhWebeMUtLdwQ2xOoZVeTXv0dfOR4PBqVBMQuWejeHAnD6WT?=
+ =?us-ascii?Q?FxH9Z63ULIEUjXf2vOxSoW43OuIQ+lO11we6mtgOpt1QlHVKRBt1NGM5duw5?=
+ =?us-ascii?Q?sdf/uTPILj1DELmS2lVBI6vhNG6PCIcY0QBnfH1j4d0EfNtT9kTCWKb3zCuU?=
+ =?us-ascii?Q?0J0nw9HKIOrmEc8UbrtYDmziQg/PT4HOs8lstDTDaZI8Ss4cxtiiMTK+wce5?=
+ =?us-ascii?Q?w32Thh2hlF7a3hE5Y15nQsm4LwMy8LdR7VTsLDYUE8zeZvbUrKyUpPIy+IfD?=
+ =?us-ascii?Q?ZWYezJGKIFqjwJ55ZYIUwuS01AYFWXXs6MEuO9c6Jd62aDmOumrQFaHzg567?=
+ =?us-ascii?Q?akKR8xAdv6lazc4STDDe6Y2TqZBjkas4+bzKscAqeONJ9S6nIwm/5+ZfnNCQ?=
+ =?us-ascii?Q?0LRAokcB2zulUxG/4pG0M33HJdDuxAlEyC7w+OQe+xLk5pk2RUvRa0sMdB1V?=
+ =?us-ascii?Q?KimheG+w5zJWq12RvaC86SvxDG6xaIDyn/tUiTvS0wPCMS4iQjgp6uBuTmPD?=
+ =?us-ascii?Q?mUDKnlYL1ptUav9psqWAV8CWM5saR5C4r2tpUub+77iuq0DVmG7VFF+oREf+?=
+ =?us-ascii?Q?jxyr4g/fX7ripAqWXERM+yM4hMZbOaGEk47cWbH3liD3xooOm0nL0M1k51I/?=
+ =?us-ascii?Q?rbutb8sSzmuf+7lRWVoThn84NPN9STUCcT9fAzyp7yqjtq/XEHZbFjiZ2XtD?=
+ =?us-ascii?Q?wg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9cc005a-6ab3-4d01-df2f-08dcdab0e57d
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2024 02:47:28.0338
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: S98pcl7jZCbI0NBvkhtSKijvjNtWhzL16kf2MirksXIfUFB3CH3bK8C8x1hHVqFY7CmwZMgq0bh1qnMwvJXSEeQvKj0GfBxbKvcRITEp7Sk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8318
+X-OriginatorOrg: intel.com
 
-Hi Fabricio,
+Greg Kroah-Hartman wrote:
+[..]
+> 
+> This is odd.
+> 
+> Does the latest 6.10.y release also show this problem?
+> 
+> I can't duplicate this here, and it's the first I've heard of it (given
+> that USB mice are pretty popular, I would suspect others would have hit
+> it as well...)
 
-kernel test robot noticed the following build warnings:
+Sorry for missing this earlier. One thought is that userspace has a
+dependency on uevent_show() flushing device probing. In other words the
+side effect of taking the device_lock() in uevent_show() is that udev
+might enjoy some occasions where the reading the uevent flushes probing
+before the udev rule runs. With this change, uevent_show() no longer
+waits for any inflight probes to complete.
 
-[auto build test WARNING on staging/staging-testing]
+One idea to fix this problem is to create a special case sysfs attribute
+type that takes the device_lock() before kernfs_get_active() to avoid
+the deadlock on attribute teardown.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Fabricio-Gasperin/staging-sm750fb-Rename-variable-sm750_hw_cursor_setData2/20240921-232248
-base:   staging/staging-testing
-patch link:    https://lore.kernel.org/r/20240921152124.11560-1-fgasperin%40lkcamp.dev
-patch subject: [PATCH] staging: sm750fb: Rename variable sm750_hw_cursor_setData2
-config: um-allmodconfig (https://download.01.org/0day-ci/archive/20240922/202409221050.Gx1KK7qA-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 8663a75fa2f31299ab8d1d90288d9df92aadee88)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240922/202409221050.Gx1KK7qA-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409221050.Gx1KK7qA-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/staging/sm750fb/sm750_cursor.c:6:
-   In file included from include/linux/mm.h:2228:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/staging/sm750fb/sm750_cursor.c:9:
-   In file included from include/linux/fb.h:5:
-   In file included from include/uapi/linux/fb.h:6:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:25:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/staging/sm750fb/sm750_cursor.c:9:
-   In file included from include/linux/fb.h:5:
-   In file included from include/uapi/linux/fb.h:6:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:25:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/staging/sm750fb/sm750_cursor.c:9:
-   In file included from include/linux/fb.h:5:
-   In file included from include/uapi/linux/fb.h:6:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:25:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     693 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     701 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     709 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     718 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     727 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     736 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
->> drivers/staging/sm750fb/sm750_cursor.c:134:6: warning: no previous prototype for function 'sm750_hw_cursor_setdata2' [-Wmissing-prototypes]
-     134 | void sm750_hw_cursor_setdata2(struct lynx_cursor *cursor, u16 rop,
-         |      ^
-   drivers/staging/sm750fb/sm750_cursor.c:134:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     134 | void sm750_hw_cursor_setdata2(struct lynx_cursor *cursor, u16 rop,
-         | ^
-         | static 
-   14 warnings generated.
-
-
-vim +/sm750_hw_cursor_setdata2 +134 drivers/staging/sm750fb/sm750_cursor.c
-
-   133	
- > 134	void sm750_hw_cursor_setdata2(struct lynx_cursor *cursor, u16 rop,
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I'll take a look. Thanks for forwarding the report Thorsten!
 
