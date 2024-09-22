@@ -1,95 +1,185 @@
-Return-Path: <linux-kernel+bounces-335217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30E2397E2A8
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:08:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 191B697E2AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFA251F217C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:08:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A165728151D
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C922BD0D;
-	Sun, 22 Sep 2024 17:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FC92D052;
+	Sun, 22 Sep 2024 17:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bjezbULS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RVdVgmwq"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828B92AEFC;
-	Sun, 22 Sep 2024 17:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9868A5227
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 17:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727024899; cv=none; b=IYi+L+eApRRWMimK0S5TNY1yNyla+/ymT6/Wme+7SUXZvPq/4BVvIFaOHbSNx57SYQ0n1O30Yeym9Y9f5b26BI9rokU/8zdkka6qYqjm4qeexZvLdtRbRZSjn6+KukpIbBI6VpeG5ZudLBydRqtgM1YdngPhdmV1KBodwxTudks=
+	t=1727024971; cv=none; b=nunW+QbrY+rTxrWcu5bseNSo6Sd2aELOCe4F0YPb4Iifxb6fsXiB3/C/OGLUrWsjaqOBiY6N0GJvFhVShmPhMcvPiXXvFycp8IWTcEeB42wP1yjIhPdo+SVbntEi6u1WVYJ75lvcL7NFhQXoq8bZQhq8pGV3sQC+0njUIqh5S4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727024899; c=relaxed/simple;
-	bh=kadefyW4xflqn3+lS+RNRI2zmfP1nPl+qO/iqN2/xcw=;
+	s=arc-20240116; t=1727024971; c=relaxed/simple;
+	bh=7kPmqFQNL8wHbsPJ1aFo4mgkSTjutG+BY+1kZiG8quU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nK6OVRuYO1y8T2kNRoVi3S+DtXBDZZ6Wm0Yh53z8ymyZ6MYg/XGQUpSO61XLi3V84Y/5wJcAq4a2NR1A4mQmwMmRQEiVgkPQjpphOB/lREx7xLeijunZxMAVmi8hKsaJFt+eXjdj1zXqfNselEoh4S1srkgv2a8yQJNEGv+AMD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bjezbULS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF8BDC4CEC3;
-	Sun, 22 Sep 2024 17:08:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727024899;
-	bh=kadefyW4xflqn3+lS+RNRI2zmfP1nPl+qO/iqN2/xcw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bjezbULS1wB/4SSlIDBN25u70vDwPdKTT/f5jD/vGrDOv7BApMqCTeUrBQTlnKu/C
-	 sIc2KGV1QEGTPRgnALMZXOGHxgUnvYa/WIndbYH68CQ6aN6JooCSi55b9ORFKhr8F4
-	 HV06P9w6djaE6yuZpKFchgMoXMIMWpKdhVsaJDnvXZS27701B/3rYUpoSqiiA+ClXL
-	 +SubP87Owne6PQtjb9GK6/SQYPZvBwQ7aKotKsof+daX6D4rU+YR+T//e4UprFNAaH
-	 YZGeXikpq9UZGt4dGOYOQYVrUiozCd0xQPF26lVXFmeFh2L+5G/n6RxA8j231cSpY+
-	 gJBTxawEiniEA==
-Date: Sun, 22 Sep 2024 18:08:11 +0100
-From: Simon Horman <horms@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: netdev@vger.kernel.org, Christian Marangi <ansuelsmth@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Nick Child <nnac123@linux.ibm.com>, Paolo Abeni <pabeni@redhat.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Taku Izumi <izumi.taku@jp.fujitsu.com>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Julia Lawall <julia.lawall@inria.fr>,
-	Yasuaki Ishimatsu <yasu.isimatu@gmail.com>
-Subject: Re: [PATCH] net: fjes: Refactor a string comparison in
- is_extended_socket_device()
-Message-ID: <20240922170811.GE3426578@kernel.org>
-References: <9ec752a8-49e9-40fd-8ed9-fed29d53f37b@web.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bQo4mG/jr1+1h+rr5nybiQFSfF8YDX0+gQ9bhuXX85Ud27b4vhaBsnwo2+88hqiQiFSpV/OcOOgCVjdQE7TOsOp9pt26IIrbAXjdTd7yIxbq3LJ71loyPjd26XN7qpY+QQwpal7sBEqvYlQjPJvn2rf/f3RijIvrW8e2JtCFCjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RVdVgmwq; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cbc38a997so22343225e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 10:09:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727024968; x=1727629768; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=L0rIrXzxLzm1RYymakq/5yWW79oFHaAAUNk6PTkjpnU=;
+        b=RVdVgmwq2gl2Qr+72ogBtUR1SOZjuyexkfBIdXMRmgMec1gsqU1ivluOcDZScjHaXj
+         c7kg7yLNaBxQ37vi9OnjnQk56KQVhdsiCEuCcEbWXL6vl57lNhQmVb6RvHyaWbkePkGX
+         ZBLoX9P/8+LsgmLH38Vu30KcmqqmTzayP9VLFaIHqnNcIr6rOeb3HIxw82B/DPi/ELFQ
+         O5QVDkdG0mHgIoGNmIKpicnub/wj46rLFc9lr1xCB4bRTl4TYUDoFKKWiUAzy1nz6Nzi
+         SuKDJal/0e3BUEzQIQj2g1CxNhyryqIWRDzqSbedZhHTeSx/EFOmk9hBxZMAsDT98Gzz
+         jXgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727024968; x=1727629768;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L0rIrXzxLzm1RYymakq/5yWW79oFHaAAUNk6PTkjpnU=;
+        b=tq5QATWBENnWFWGksSg87nJRZqvXlJNne7YsD1HiUheNpxX4mkveCE82/i2qHXT+H8
+         2lCYpyYYrbjDNZsonmxF0BkQnuG19rZ1wt8DS7sTbsd30puHI8Dxzzw3EDziFBM11AvB
+         YEyI8cPJiqhvl4KM/Er1NXxO0MPv0B4ovo4+ZaJlUe5/kaHecp19+R3Vx89GN4fCjSgi
+         iHHry/y177FBsn6fEzj9J25drEnwb9Yi15KSOR348+pDnJ8puqK0FJURj4gfLiAlE1al
+         tRtJsPhoQf+GineGw52dNuTz50lbuLaupap5Iwo4bLdiQ9AGyN/8/EzN4cuQ4J7f4ibG
+         1lhA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCjvZOb/Lb9oktg85PTyIK5I4RA+/NoFDJWMGQqgkxHhAlNb84kMljJgpovSklQVi6bHPd4eCz05qWrBU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9HSgF00GJQph0B2Rk7IolVic4PIkgH8jBj1F6HqJOj6ILm/Pf
+	0/BONkPsGD6v2q1IJPMg5TeSm+Q7HshsDm7e2q9THiy1qMNqr0hot/pFTnKRew==
+X-Google-Smtp-Source: AGHT+IHnnuaHgxDj+rS3r9lgGu134/fQ270qm0dfx4TIlDOErD+D6Q+2jXX//mse26TLw59cSmOqYw==
+X-Received: by 2002:a05:600c:1ca2:b0:42c:b8e5:34d5 with SMTP id 5b1f17b1804b1-42e7a9fe8dbmr52478745e9.15.1727024967852;
+        Sun, 22 Sep 2024 10:09:27 -0700 (PDT)
+Received: from thinkpad (i53873832.versanet.de. [83.135.56.50])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e801d66f6sm55926815e9.29.2024.09.22.10.09.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 10:09:27 -0700 (PDT)
+Date: Sun, 22 Sep 2024 19:09:25 +0200
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Qiang Yu <quic_qianyu@quicinc.com>
+Cc: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>, vkoul@kernel.org,
+	kishon@kernel.org, robh@kernel.org, andersson@kernel.org,
+	konradybcio@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org,
+	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com,
+	dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
+	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] Add support for PCIe3 on x1e80100
+Message-ID: <20240922170925.qcuwja6oaqlbng5j@thinkpad>
+References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
+ <36bd9f69-e263-08a1-af07-45185ea03671@quicinc.com>
+ <6f1118eb-89cf-4fd4-a35d-e8b98b0b7a8d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <9ec752a8-49e9-40fd-8ed9-fed29d53f37b@web.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6f1118eb-89cf-4fd4-a35d-e8b98b0b7a8d@quicinc.com>
 
-On Fri, Sep 20, 2024 at 02:24:50PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 20 Sep 2024 13:56:44 +0200
+On Thu, Sep 19, 2024 at 10:14:06PM +0800, Qiang Yu wrote:
 > 
-> Assign the return value from a strncmp() call to a local variable
-> so that an if statement can be omitted accordingly.
+> On 9/14/2024 11:59 AM, Krishna Chaitanya Chundru wrote:
+> > Hi qiang,
+> > 
+> > In next series can you add logic in controller driver
+> > to have new ops for this x1e80100 since this hardware
+> > has smmuv3 support but currently the ops_1_9_0 ops which
+> > is being used has configuring bdf to sid table which will
+> > be not present for this devices.
+> > 
+> Sure, bdf2sid map is not supported and required since we use smmuv3 for
+> pcie on x1e80100. Can I add a new ops which is same as ops_1_9_0 basically
+> and only config_sid callback is removed. Or add a new flag to determine if
+> we need to config bdf2sid map like no_l0s.
 > 
-> This issue was detected by using the Coccinelle software.
+> Hi Mani, what do you think about this?
 > 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Hi Markus,
+Good question. IMO it is better to add a new ops even though it duplictes the
+callbacks. Because the newer platforms are not going to need this bdf2sid map
+anyway. But if we add a flag to determine that, then the check will become,
 
-This is an old driver, that doesn't appear to have been under active
-development for quite some time.  And I don't think that clean-ups of this
-nature are worth the risk of regressions they might introduce.
+	if (pcie->cfg->ops->config_sid && !pcie->cfg->smmuv3)
+		...
 
-If we can see bugs, let's fix them.
-Else, let's leave it be.
+And this doesn't look good as both conditions are false for X1E80100 i.e., it
+doesn't need bdf2sid mapping and it is also a SMMUv3 platform. Moreover having
+two checks here makes it confusing also.
+
+So let's use a new callback. But please mention the IP revision in comments as
+like other ops.
+
+- Mani
+
+> Thanks,
+> Qiang
+> > 
+> > - Krishna Chaitanya.
+> > 
+> > On 9/13/2024 2:07 PM, Qiang Yu wrote:
+> > > This series add support for PCIe3 on x1e80100.
+> > > 
+> > > PCIe3 needs additional set of clocks, regulators and new set of PCIe QMP
+> > > PHY configuration compare other PCIe instances on x1e80100. Hence add
+> > > required resource configuration and usage for PCIe3.
+> > > 
+> > > v2->v1:
+> > > 1. Squash [PATCH 1/8], [PATCH 2/8],[PATCH 3/8] into one patch and
+> > > make the
+> > >     indentation consistent.
+> > > 2. Put dts patch at the end of the patchset.
+> > > 3. Put dt-binding patch at the first of the patchset.
+> > > 4. Add a new patch where opp-table is added in dt-binding to avoid dtbs
+> > >     checking error.
+> > > 5. Remove GCC_PCIE_3_AUX_CLK, RPMH_CXO_CLK, put in
+> > > TCSR_PCIE_8L_CLKREF_EN
+> > >     as ref.
+> > > 6. Remove lane_broadcasting.
+> > > 7. Add 64 bit bar, Remove GCC_PCIE_3_PIPE_CLK_SRC,
+> > >     GCC_CFG_NOC_PCIE_ANOC_SOUTH_AHB_CLK is changed to
+> > >     GCC_CFG_NOC_PCIE_ANOC_NORTH_AHB_CLK.
+> > > 8. Add Reviewed-by tag.
+> > > 9. Remove [PATCH 7/8], [PATCH 8/8].
+> > > 
+> > > Qiang Yu (5):
+> > >    dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the X1E80100
+> > >      QMP PCIe PHY Gen4 x8
+> > >    dt-bindings: PCI: qcom: Add OPP table for X1E80100
+> > >    phy: qcom: qmp: Add phy register and clk setting for x1e80100 PCIe3
+> > >    clk: qcom: gcc-x1e80100: Fix halt_check for pipediv2 clocks
+> > >    arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100
+> > > 
+> > >   .../bindings/pci/qcom,pcie-x1e80100.yaml      |   4 +
+> > >   .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |   3 +
+> > >   arch/arm64/boot/dts/qcom/x1e80100.dtsi        | 202 ++++++++++++++++-
+> > >   drivers/clk/qcom/gcc-x1e80100.c               |  10 +-
+> > >   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      | 211 ++++++++++++++++++
+> > >   .../qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h    |  25 +++
+> > >   drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h |  19 ++
+> > >   7 files changed, 468 insertions(+), 6 deletions(-)
+> > >   create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h
+> > >   create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h
+> > > 
 
 -- 
-pw-bot: rejected
+மணிவண்ணன் சதாசிவம்
 
