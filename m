@@ -1,110 +1,98 @@
-Return-Path: <linux-kernel+bounces-335173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13CC497E238
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:11:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B843D97E23B
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83749B20CE0
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 15:11:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD862812CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 15:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8B9D26D;
-	Sun, 22 Sep 2024 15:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C23EDF44;
+	Sun, 22 Sep 2024 15:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OLytZqJJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i2RWZ9A8"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6713E28F4;
-	Sun, 22 Sep 2024 15:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7CC28F4
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 15:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727017887; cv=none; b=CjLRpA2w3YpgSpxPM1u+LKrTia+tQrmQ7ZqGD+4a/MrrPe+DXnVS/J+rinMAo2nsk2Xwj83vZ2VXDOwy6sZnTe8rmZ7/o8Sy3NHut85NpZZhjA/LIJmt6Ki1NmrGjzczYCcFeI1vtjazzu+pxFAdGxfIHx1o44j8N/WsLkOKVr8=
+	t=1727018035; cv=none; b=OV0oz3VQchXtjz5Ko7ByBE4G9WciZRAKUQ+yerabdBxz7+5HZ/NEa0zNix7GgiLKMHZUBDWGPcqzI8oLXBlFzCi5EkXEBhgE2/MPdirhxvXlIgYYBoEUVJzuagLdMvN+lZZHkjYr9wJ1WwTdRo42UvXPQWtLrGBEDFCEX/I9HbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727017887; c=relaxed/simple;
-	bh=i9XCB8m7qYule9muylEf116wS7isyCTJubzHPe8ofZg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ba+vPZY8F4f5oxOHqwnDA91jIj8ZmQ+pdqBhk+mOrL1fAK9w6rMQE2Kqr8pa8PAZZzpqsrVkOPHmPGUpB71EfLliWXTdoceyvsBojQrLry1QLilb+Cf+n1X+sF4JUvE1CwbdVDASRYSU6AIUnK6DbnwHCxLZQz0KSQqmTZO7FEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OLytZqJJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3E58C4CEC6;
-	Sun, 22 Sep 2024 15:11:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727017886;
-	bh=i9XCB8m7qYule9muylEf116wS7isyCTJubzHPe8ofZg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OLytZqJJUd7VwLMxOF6xDjhI/ZZcBeJV6FnnllQvG3BlF4rhSsa96t+5fCucXWf2A
-	 D7NrCx0V2MlaKc7/CASDrLGm3oh6BqC1EEnPTdYcWC0gxtWIH5pzBGSeCK9VLZghdl
-	 Z5CYylP0YQCigRgwkf3oMgRf6bv3pwBhbxDdtw6v7bxvmbjHEjOBLbzfcPqWs0RJHS
-	 azW9f/WwGZv3XxnCDF6+ugNeE32eRB3pb8DIjFfs72tKo66rnGxWY2XejeyqHPwrof
-	 eagtZI70RV904N+nrcPzM9JNsH1OAO9glYPfZX73eV1TjQENjVirydD6ggTJDI0tU+
-	 NaK9i8r746omw==
-From: SeongJae Park <sj@kernel.org>
-To: Leo Stone <leocstone@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	ruanjinjie@huawei.com,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH] mm/damon: fix sparse warning for zero initializer
-Date: Sun, 22 Sep 2024 08:11:20 -0700
-Message-ID: <20240922151121.469051-1-sj@kernel.org>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20240921195511.364023-1-leocstone@gmail.com>
-References: 
+	s=arc-20240116; t=1727018035; c=relaxed/simple;
+	bh=DITuMDZ/je2j00C6gikU0EBY+BfjNP9apIvwpojVw7o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wk5ivRuP9tD8pIU54zJU4FjEwIaB9Uj5NFRML92S74epsP6HQ5scra2KRO2ZXVbZYXTPVY0DgkWfysF6P3npFrJrEGv6qIkwuer+81vLib00VZHYA6CPW4VEUtSKfssAPGcZCEL3VZHa4re9yWhgYXFR+akr+LgmruA13DHqzXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i2RWZ9A8; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c3d20eed0bso4112354a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 08:13:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727018032; x=1727622832; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DITuMDZ/je2j00C6gikU0EBY+BfjNP9apIvwpojVw7o=;
+        b=i2RWZ9A8ksABZGI4ZrudJKP1ugMXTai8CHWWDdxWbFdPUI8WjaTxn4k60MXWIIszBv
+         ef4lCNPYLCJCydJSdcFGmMSrEpyIy2eyBMMiDK2QuywJpJhRk7AYUnVf5Q6Pl65HkXkP
+         pm6j8pQaQBdK3M3Cp+tQmIoLiI4e9WDH2+02OM+C8DJdyCSgRvJpwlkR2Jyld8Q/XsE9
+         e9DDCRVe+TuGOeugtLJCOeXwNjkPGMUs3xGN/Ximl9Y8r4wae0rod6F/ouk66byhUvf/
+         IvOUNLc3DPYmPbXiqHaf3Ih1I6BVEyjhPY300ZrE7SHqXWzllCzHiQQndDmK7NwnyXEO
+         0A/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727018032; x=1727622832;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DITuMDZ/je2j00C6gikU0EBY+BfjNP9apIvwpojVw7o=;
+        b=khLirpZ2eJKoB7xxCZ89cpsyzTCcSwPDt6iW5uxz5kVcmVUttv7IM48wnfar47OO/D
+         U2AmeVPnHTfuGYVQysWjm3XF7P44ucC5rUFi6fj5USL4YE7NV/x8OKagjgk8iFx1vrSI
+         vGisHiEzqU6dAayQPskTM5kc1Mm5Nd5pDy/Oq7OWvVzQq8d6SvoqSkE8Cd+QwV6V7UP2
+         AI45JbCZHf0fBiLT/fHcm2hB9CAMX8rRTmHwrsn9DaYsWDjN+mB0MorJD9HP+1y3uUAo
+         gn3pg1USr/Juqu8JdtCfjTG9EI8kAeCU86RsLVpD+3BMRFJkDotqw6Zw0toPWRI9pWHU
+         bIAw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+lRcAGOUdJJEqSNhLDComrq7MuARKD016O1AXEfnBmLQyteMUuSoiqNqxVmhjfD//Ke54UUxT76xU1ec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzChZn7rZMCQgLdbAgZ8F+6yiGKKgS8cydevdEnCHaLziweqcyk
+	cCDPYOdKGn6GlWuTZtpZghe0cGxxxf6+iX6LSSI/oBipMDCsoDzQfJR/0Xx+stxNvVXqw8vpSFc
+	XXsUrK3h7Bq5azbdNKdYR76tMsZo/+raIYi3udYc3CEzhfS/Zy7JR
+X-Google-Smtp-Source: AGHT+IFO1Mw95Td1RElq1v3vq3/nV8brRo0pqFdb8Cva1USzZhkv5rOQbsNWpaRtP79wO8Eyt6TbthYA0/Kagg5IUOo=
+X-Received: by 2002:a05:6402:27d1:b0:5c4:9e2:a21d with SMTP id
+ 4fb4d7f45d1cf-5c464a3e4eamr6433238a12.12.1727018032149; Sun, 22 Sep 2024
+ 08:13:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240922150746.185408-1-wangtaowt166@163.com>
+In-Reply-To: <20240922150746.185408-1-wangtaowt166@163.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Sun, 22 Sep 2024 17:13:39 +0200
+Message-ID: <CANn89i+xbEwk4u3jzO42B-583uD1NiC39k+foteHr6pT5vtzMA@mail.gmail.com>
+Subject: Re: [PATCH] netdev: support netdev_budget for napi thread poll
+To: tao <wangtaowt166@163.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, jiri@resnulli.us, 
+	bigeasy@linutronix.de, lorenzo@kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Leo,
+On Sun, Sep 22, 2024 at 5:08=E2=80=AFPM tao <wangtaowt166@163.com> wrote:
+>
+> For napi thread poll, we expect the net.core.netdev_budget to be availabl=
+e.
+>
+> In the loop, poll as many packets as possible to netdev_budget
+>
 
+We do not 'expect' net.core.netdev_budget to be available, we have
+better cond_resched() calls.
 
-Thank you for this patch!
-
-On Sat, 21 Sep 2024 12:54:45 -0700 Leo Stone <leocstone@gmail.com> wrote:
-
-> sparse warns about zero initializing an array with {0,}, change it to
-> the equivalent {0}.
-> 
-> Fixes the sparse warning:
-> mm/damon/tests/vaddr-kunit.h:69:47: warning: missing braces around initializer
-> 
-> Signed-off-by: Leo Stone <leocstone@gmail.com>
-
-Reviewed-by: SeongJae Park <sj@kernel.org>
-
-I also think below tag would be good to add?
-
-17ccae8bb5c9 ("mm/damon: add kunit tests")
-
-Thanks,
-SJ
-
-> ---
->  mm/damon/tests/vaddr-kunit.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/damon/tests/vaddr-kunit.h b/mm/damon/tests/vaddr-kunit.h
-> index a339d117150f..3dad8dfd9005 100644
-> --- a/mm/damon/tests/vaddr-kunit.h
-> +++ b/mm/damon/tests/vaddr-kunit.h
-> @@ -66,7 +66,7 @@ static int __link_vmas(struct maple_tree *mt, struct vm_area_struct *vmas,
->  static void damon_test_three_regions_in_vmas(struct kunit *test)
->  {
->  	static struct mm_struct mm;
-> -	struct damon_addr_range regions[3] = {0,};
-> +	struct damon_addr_range regions[3] = {0};
->  	/* 10-20-25, 200-210-220, 300-305, 307-330 */
->  	struct vm_area_struct vmas[] = {
->  		(struct vm_area_struct) {.vm_start = 10, .vm_end = 20},
-> -- 
-> 2.43.0
+Please provide reasoning, and keep in mind net-next is currently closed.
 
