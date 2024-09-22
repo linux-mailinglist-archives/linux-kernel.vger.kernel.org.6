@@ -1,118 +1,118 @@
-Return-Path: <linux-kernel+bounces-335085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD13997E0DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 12:20:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 104FC97E0E0
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 12:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE5E01C20A97
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 10:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50DF21F2124A
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 10:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D551714B9;
-	Sun, 22 Sep 2024 10:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435FC193065;
+	Sun, 22 Sep 2024 10:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ATmmYZs4"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0fxh4Te"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32049824BD
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 10:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11274171088;
+	Sun, 22 Sep 2024 10:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727000420; cv=none; b=LPAkrxq2kztvXEDgm0NEOPjitTEuaihVSaxlYEIsqRHHUgpe1UPu5jwUOHvpvdDKPagmirAwFfR6UizpOn3VnH7GcC7+Qym3A22fmx/0snd3JBPj596O1KbP4FQKkd5nuT8gb2ZHQ1BZ+w4p2IPPQxZAWBHE/9WYY+36a/l5B8I=
+	t=1727000460; cv=none; b=VfVVyrOsCpKc9cz8ghCoTFgBQHuTLdFbhqK96SCpwRfnCHGd6n3vSIzEAtnfe35lQP/GSr0FckGkmOX5zQELTrQFgoXu1sr9cfdeXdliIOGsDomRXwzgkWEXmtqmBPJ9txUiEzYYAPjmjzjeRiAsIol0uAnsGz9wzDV1bvD4QVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727000420; c=relaxed/simple;
-	bh=bsgIG2b9IRaNGZrcciakwDpWqVLlObEUtHNnOW34j7Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XekVaTfXCUVFSrI7h0yQgIYtLw8ShiiaXtJOitllcUhTVf9K5EMUz3XCfCZe9kzceihnHkNV5RUeXRlTe75UlhWsfPjRE/WtxgQ4RcHzx3ZFc6lORqVBrR4ryhIOjzw12d63/SmC1Ql5/sEDJ/6q3PhLQejXgvFa4Pvpb4+nhpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ATmmYZs4; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c42f406e29so4975612a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 03:20:18 -0700 (PDT)
+	s=arc-20240116; t=1727000460; c=relaxed/simple;
+	bh=yPWN0XWyy9cZhHF2ut81Am2moEqz7TnAc7F+vtgkCE0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NfZIgx6WC5GrF5PjFZTTmn8ujW1h8CvB9ge8rp0OW82B/SrqzhGETPUoC3APVmzZVo0VsGaqQAv7hoEVFZKDnLvtT2JG/6V1cKw1C+4TW+ct9FR7pyLHRYn4dW2D+UFO7OCJjo6F9goXqc8m8yuJStY78VkeX/gnPlRLhyHv2UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0fxh4Te; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-205909afad3so40563995ad.2;
+        Sun, 22 Sep 2024 03:20:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727000417; x=1727605217; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727000458; x=1727605258; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YaGWABS4I7HUh6XY4HJVhFxlD56Ov8UWk8EJPDWLQro=;
-        b=ATmmYZs4i5U+sG5FGYnC1yUdo665OD/zbXHrZ3IKirmQzaCzLQOjurLjDLIWOR9hE7
-         uT+MvgSQFsM71fSlS1uo2F/bkiAiIrEH2Sh5oskfg83OSaJ4sNdGlijft39C/qPGBTJJ
-         4GzIe1XpvQ6e416GrpazW+ps3AOkJDmSuBQQq02ZN1HZKftWE3oWnZXCKjOLx4KXTZB5
-         m86aQRlin69DUiTduNWzy/jnPe+o6+PAJCmY/H24IZQuH9xL3nHiq4/QtAkNaUnEM8z7
-         6vAjMwXyN18UMXd4QgJboDadYsnPiOxqJJhjjXXQU6vAElUkpyi1vwcFaXU5NyNW+JH0
-         aAAw==
+        bh=RdphpHCR8aVbgwIQ4xKroiJuMuvQa/f/rPNkLNXJpng=;
+        b=e0fxh4TestRp3kpU99wJ5u20dG/RMcoxbcZszrcY7m5CCXJDUKfmxrEop7IfVjNtMF
+         DQKmvigp75Huw3XL9O1jT+6JGdOvkQIprCFi2PrT5J/t6cFYk2sZL11vjdlPBDY/scS5
+         jZr+yWwP5RQm3kN+m1JokUxhJXkl0DqjSbf2l0YS+snbDl0j+wBTsqmxjZhuKna9+zRd
+         T/5voAFbNHOfcJAhsBMoCls2IWCnkNmMc8TeDgvJplcMR3y2BpxHbeZouFQCWdzGr3I8
+         VuJy2lwTfEjPyHRo3pA4/pZkeEwB5Mh3IZQURNhkOw/oLCY53fBTApPhcLQMSxzhDPcr
+         BYig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727000417; x=1727605217;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727000458; x=1727605258;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YaGWABS4I7HUh6XY4HJVhFxlD56Ov8UWk8EJPDWLQro=;
-        b=ZjGq6UJT2+fivMt9kAqd+giLVVjlLFleZ4W4OTSquawzzYAOEmVbmp7TkFKaiq4blE
-         ikQ4yXxERp9EKJma47jEIRisAPTBXtLoffRJC7NR2QQrzJmIDgj4kbCMEUgl0vab83SY
-         N5zJgPdmU3CGL8omvkTvnFQkrJybDmrpAI0yq9jHPUnZ4mAr+Ue1z3peYZSUyp0w9ium
-         kssCQRDPEOBST41atJ6NFCrSBW98HMDWX6KUv4tECbpgeSUR+X27v9zp6nmuhOnHvK+B
-         rVLzMylYxbvu+GFKrHpbp0PMLkTo3arspyplTQ+i3DpfTl8qahKBSS+zCjgTp7C1Fhqc
-         2VRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiY/MOyqrHnP27iLVKzh6EzRtf9j5MeLapg2xRRZr0pzLZQai08gL3AybjslBkCLFxO9TycNsSgZQabDY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywEWKH0K1iQwNBXMhE9gGx4FNnLJbOM8LnVU70QsLMiqvFuZyN
-	XFeI0OQ59BGgW9a5Wl9/BiGF06s3FwPbye/Jfsy2IBDz6Yd7YftkJNbbEuR4KT6Lp4oMbens8H3
-	HWvaWnZ/JEEr+JtMEBlbkLKMNiNrIE1utfs6u
-X-Google-Smtp-Source: AGHT+IEsDNb2+DSRGbnVAWrPEHMyZYRrt+/s/KOa5w1WX+cAVNqKX9U41iAi4BHvg6ueilq/iDLR8iPZC1+UnEZ76HI=
-X-Received: by 2002:a05:6402:40c8:b0:5c0:ab6f:652a with SMTP id
- 4fb4d7f45d1cf-5c464663952mr7784640a12.3.1727000416555; Sun, 22 Sep 2024
- 03:20:16 -0700 (PDT)
+        bh=RdphpHCR8aVbgwIQ4xKroiJuMuvQa/f/rPNkLNXJpng=;
+        b=ZBhbOR00W83WnqfHRQFXt9rBOxK/2kQj2QxmkSRnrEfj0Y6Zlf49aEtKe+v8ZqTb6Z
+         aMBvCxjYTSVbtASayK6cyM6St2buZL+NLwX46jU+5ocTMxlGZQj8ajciOGwFbQ1U2i5i
+         /zy7pDn3pC264fB6jj168aNC7p5cQ432tpbt7Cr46OmGMF1BFlPmq2j5kxhCn4HaOuym
+         AGnpKBFAy7yDk7Jv1T/gXu/0HT0ocu3KthgNcWliMj1gWTg8bAb+mFsphfFxCjotbdmE
+         FZA5vxnmaHKy1oEQPIgT3EgEkk7fAGdIS88KjtCHN2qQUJoNe2VgLc01Ae1P73d3ic/d
+         ZPrw==
+X-Forwarded-Encrypted: i=1; AJvYcCW0NtpmCe5OiY6dk5STHfErplTHGanih05zBzN07T8yqEoW8rRvehmbMUEg4ooRA51+9IUtwo9dNqVS@vger.kernel.org, AJvYcCWYVuGNWpzfek4e8I2/JfyG6rq9FZHz6/IiANYNLmOPhOlRgvanzql/9fHU7gU4A3FGlGWnjrNjOdYVVicQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaSUYJXuNQ0GBA2hANTpdS6LGpuVsuYvPfdGqf9wcCeX6YlfFI
+	qvU9MF35pFhxswc/7DZzXMhgXBpNDlg4OGLVyCBXdFv3GOgwbSiV
+X-Google-Smtp-Source: AGHT+IHJFkRgYfEyGcG2xVh86zCa2dDUxlM9NiNctUcc86+jKhYpj9NQ0sCDUu7kuXl6CrzEV+ZQ+g==
+X-Received: by 2002:a17:902:cf05:b0:208:d857:1014 with SMTP id d9443c01a7336-208d8573fb1mr110231715ad.28.1727000458325;
+        Sun, 22 Sep 2024 03:20:58 -0700 (PDT)
+Received: from localhost.localdomain (111-240-85-119.dynamic-ip.hinet.net. [111.240.85.119])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946f3558sm118619615ad.183.2024.09.22.03.20.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 03:20:58 -0700 (PDT)
+From: Min-Hua Chen <minhuadotchen@gmail.com>
+To: andyshrk@163.com
+Cc: andy.yan@rock-chips.com,
+	conor+dt@kernel.org,
+	derek.foreman@collabora.com,
+	detlev.casanova@collabora.com,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	heiko@sntech.de,
+	hjc@rock-chips.com,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	minhuadotchen@gmail.com,
+	robh@kernel.org,
+	s.hauer@pengutronix.de
+Subject: [PATCH v3 06/15] drm/rockchip: vop2: include rockchip_drm_drv.h
+Date: Sun, 22 Sep 2024 18:20:32 +0800
+Message-ID: <20240922102032.564-1-minhuadotchen@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240920082122.6742-1-andyshrk@163.com>
+References: <20240920082122.6742-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240921215410.638664-1-littlesmilingcloud@gmail.com>
-In-Reply-To: <20240921215410.638664-1-littlesmilingcloud@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Sun, 22 Sep 2024 12:20:03 +0200
-Message-ID: <CANn89iKP3VPExdyZt+eLFk3rE5=6yRckTPySfh5MvcEqPNm6aA@mail.gmail.com>
-Subject: Re: [RFC PATCH net] ipv4: ip_gre: Fix drops of small packets in ipgre_xmit
-To: Anton Danilov <littlesmilingcloud@gmail.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Suman Ghosh <sumang@marvell.com>, Shigeru Yoshida <syoshida@redhat.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 21, 2024 at 11:55=E2=80=AFPM Anton Danilov
-<littlesmilingcloud@gmail.com> wrote:
+>Move rockchip_drm_drv.h in rockchip_drm_vop2.h to fix the follow
+>sparse warning:
 >
-> Regression Description:
+>ARCH=arm64 LLVM=1 make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+>mrproper defconfig all  -j12
 >
-> Depending on the GRE tunnel device options, small packets are being
-> dropped. This occurs because the pskb_network_may_pull function fails due
-> to insufficient space in the network header. For example, if only the key
-> option is specified for the tunnel device, packets of sizes up to 27
-> (including the IPv4 header itself) will be dropped. This affects both
-> locally originated and forwarded packets.
+>drivers/gpu/drm/rockchip/rockchip_vop2_reg.c:502:24: sparse:
+>warning: symbol 'vop2_platform_driver' was not declared. Should it
+>be static?
 >
-> How to reproduce (for local originated packets):
+>It is also beneficial for the upcoming support for rk3576.
 >
->   ip link add dev gre1 type gre ikey 1.9.8.4 okey 1.9.8.4 \
->           local <your-ip> remote <any-ip>
->
->   ip link set mtu 1400 dev gre1
->   ip link set up dev gre1
->   ip address add 192.168.13.1/24 dev gre1
->   ping -s 1374 -c 10 192.168.13.2
+>Fixes: 604be85547ce ("drm/rockchip: Add VOP2 driver")
+>Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+>Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
 
-This size does not match the changelog ? (packets of sizes up to 27...)
+Reviewed-by: Min-Hua Chen <minhuadotchen@gmail.com>
 
->   tcpdump -vni gre1
->   tcpdump -vni <your-ext-iface> 'ip proto 47'
->   ip -s -s -d link show dev gre1
-
-Please provide a real selftest, because in this particular example,
-the path taken by the packets should not reach the
-pskb_network_may_pull(skb, pull_len)),
-because dev->header_ops should be NULL ?
 
