@@ -1,150 +1,169 @@
-Return-Path: <linux-kernel+bounces-335213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E0E097E29F
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:02:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 631DC97E2A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBA68280FB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:02:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19DFD280F33
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050062B9B0;
-	Sun, 22 Sep 2024 17:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D002CCB7;
+	Sun, 22 Sep 2024 17:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAybw/64"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gl51o3We"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6021CFB9;
-	Sun, 22 Sep 2024 17:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C447EED6
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 17:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727024515; cv=none; b=iCNFw9TRB+wCTYZonMzqiLPX2JRuCFwJMWzWTq8/eUH/SdrBEXiRXI2Hyw9aPr9spLiFAMeQvpNZzqSXU10gr0vIkXMsJtuWLlUsTqZ02F1rimp+HGNp8AOOf50RZVcia+0yOkdEVNnrvjDzwu7cqSGdfiMZxNzlPIsPaE8CJbw=
+	t=1727024709; cv=none; b=ATe1U4FiPYB7Dd2cRYzGoJvLHIjjF6FyMxj3kQocE9c+K94TMHEhi/raB/4fInvbQ1v0vy9R/U/l8w78boRhd7Pg5MO5Op8Z4jMEKWX9Ey8t8T8Z/Lor3QCC788519P7Kk9IVI6HZ/5EqpApaO5Zn69ArzxJyhPBaaXsEgZQE2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727024515; c=relaxed/simple;
-	bh=W0Q3t1cD54SXXSBH7q4jVSfQ0CDLGNlbuw5viLLpA7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O1KrcMoUqgV29/8CyWKcQjp8DwrmG706NVuBlHba2yA0ZO3N5scsSe1Kb3zXwmz4CCLllm2iIaSYrmlKGJmEbLFXZVFzAdt8SFvyagzbyZBwD+o2pO8NLRG18zjmEOQ5+Z8HtCpuxR69qOvXZw4c966soxlRueQCWHDIaH1dtOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FAybw/64; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42e748f78d6so28006775e9.0;
-        Sun, 22 Sep 2024 10:01:53 -0700 (PDT)
+	s=arc-20240116; t=1727024709; c=relaxed/simple;
+	bh=hKouXnSohzO0zQ+wjR/Dh6OTuSEbhD97eR3Ipl28BtI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r3IhIgbuEEHFLEY/mOyz46MO6APAOgrazLpt7vBkKQXGMwXNXyRhKW9UHFGy8xFh+cUV/VVdGBmGR5RfaGcgupq3ty9ojYhKnI2qaAWmVehOjLSPcyqFx5oowIbDJpHRUmEU9VPShKFZi0g9vYArvMgVxgzNeZ1+TMhBrPG/+b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gl51o3We; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so34553665e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 10:05:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727024512; x=1727629312; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e6OYj2UJLtKO0PzA2lDG8Hf51QXdlmbxTS6bMeQGk50=;
-        b=FAybw/646ad8wCLqdeUJPrL57SCol+w9qHfNKJwW/RYRFeXfmKZtL4DqtTt+jaKgef
-         0nSx1uKncFCni2+SMDU2wupQlmvUlv8xdSlUVLLmO/Bh8io5Ux+vaY1zR50xNFK8bcO+
-         OXkwlKj9b72pcw1HgHaSJ9f51ZrS4uX/QXG9mCbDxjs5IIg8oqgQHJHy+D8LeahUe9mV
-         nU3cywUkN3VFF6m4smT237SDooxclgT6N6yFGLi7xSZwH8vAaO7saw0WhRXn9HR2wMvg
-         PfmCRv0ob4/DFV5/iORApc9S3luFb6vo6gPi4IIo3BOjRJYkbmfBi6SqSlXThiysW6eO
-         jbcQ==
+        d=google.com; s=20230601; t=1727024706; x=1727629506; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=veWNnGSV8JPvO7ZEpQhYz2qiIqFZBxeslk/SL0SM1dY=;
+        b=gl51o3WejSPMf5yAPFevTRkybfLSTSltDTboBh4WigGKk+cTFeJ9zkdQEj45eS3HdL
+         xTbcinxhjzlXIRuD4hJSw5DUhNNMdRdtwzFNb8mu9bCgLY00qxpWgblh2ozvz3l24+pW
+         I/V+CHIARfTKl1nr2iJimWLSCdZZ1VA6YfFxQQ+bBLD99XOdw+UYM6DlCGpiDUwD+3D/
+         wTQ9CPs13uZPEEFmAHgXFSt/B4U4ys/3SkMNXaLt3ik60k6T7pZKLqTGOx5ekASDXFiA
+         1yaRNiw3Xd8nf2HpZrWjpA+4OaGPZOEuHPyaoLsL09dTMJvneh2UQxCfLcyiNlSZCDvR
+         MXIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727024512; x=1727629312;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e6OYj2UJLtKO0PzA2lDG8Hf51QXdlmbxTS6bMeQGk50=;
-        b=umWQAif1DxoGf+nzFm5YjVIpcmGt3xeXIC0duDw8fhbcYAjjAmbRSB+eTjAwSbhfCY
-         Li+mc31CjzlyssTThxKAYRfIcJWHbhC6Y4ppSyRwajKDVebn5xmSZAvk9pECDwKaXmPA
-         U7COxhzQmmMWslEE6eSI/6uP5M/YN3ov706+JOzaO87E2SX04MMOB4jl51P064vMptwr
-         yqYF4vIG23N63TY0mepHtyvTNhW85//vOUls0w5BJl88dOYtiHE0CtCQtZ8BgpZ3WS6c
-         aW/MbN67w2x5kPjFCYd2JtyDj7KYzOrkKUkJXGlTG2juws3r/GXhzD5gueQUgZv+dafy
-         V7Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFLbqVpYE8s0drJg1GNtJeyGcDzO+SjxrKV3jII4Y3Zq3HiyWXHFoKC3Y1o8sDNQS/wepSuK8iJ2zN@vger.kernel.org, AJvYcCWjcXei0g/oON2AGHR3R4ZIAcMMCsJ2heKFY4f1FZ9ju5h2tNRz2XIevFckFQnUScMmAz8kzTvG@vger.kernel.org, AJvYcCX74z/0nY6T28K7a3Yd0NdQoNBxHd15p/rzRj+b+/T5uI0e7FnDngbwXOMaOiq9XxnKldGFildvVaN/CpL3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVV+AGMrDH14c5SoETEQtP+VPQNiwvHQLNSYmdmXyarclC3EGn
-	iuczfEjSBXgyVu6TJ3xg26w6h5EwuXTy2IDaSIc03srwfRBAjzBy
-X-Google-Smtp-Source: AGHT+IF+lPG/TGg29MYlU3BmR+FnM5mK3gvHfmebpJCRc6aD+5GdQAF0EcnCJztjRJv/IukZAZEtFw==
-X-Received: by 2002:a05:600c:358e:b0:428:1310:b6b5 with SMTP id 5b1f17b1804b1-42e7c1a3916mr61839915e9.34.1727024511350;
-        Sun, 22 Sep 2024 10:01:51 -0700 (PDT)
-Received: from localhost ([94.19.228.143])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e754c643csm104582835e9.45.2024.09.22.10.01.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 10:01:50 -0700 (PDT)
-Date: Sun, 22 Sep 2024 20:01:49 +0300
-From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-sunxi@lists.linux.dev, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, wens@csie.org, jernej.skrabec@gmail.com,
-	samuel@sholland.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Ondrej Jirman <megi@xff.cz>
-Subject: Re: [PATCH] arm64: dts: allwinner: pinephone: Add mount matrix to
- accelerometer
-Message-ID: <ZvBNfeg9uowsM9ub@skv.local>
-Mail-Followup-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
-	Dragan Simic <dsimic@manjaro.org>, linux-sunxi@lists.linux.dev,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Ondrej Jirman <megi@xff.cz>
-References: <129f0c754d071cca1db5d207d9d4a7bd9831dff7.1726773282.git.dsimic@manjaro.org>
+        d=1e100.net; s=20230601; t=1727024706; x=1727629506;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=veWNnGSV8JPvO7ZEpQhYz2qiIqFZBxeslk/SL0SM1dY=;
+        b=J8XNEFERyxY3Oeo54D6ZKW4SInUO+3fcL+jhizlyeQLRF1i22yqxbSEZ2CcHS9Bcll
+         B4HKZV07Xnx85IIbIho7EPq5VGx3zqTCe0W28Yies34SGaqREH/qUMW2HuHghv+mkT2N
+         C5EhLzMiw5CunmmKdpplaK8nGJgN50IROwwWUimwmgYtKcplKhkl9BnxvzqgWl4F8NiQ
+         YBLTtBFX0nrhE6CrhfpV6uqra8FZSfWwSjeAjWDJLSpBID8/R96n/54XWcjeRglCyJkP
+         RlDLIOvqa77Nl2svqPVMuX1b5EPHiNkIxNwAdt4VZ49+5iyZiHSjzgC0kg9kfJ3qgcyY
+         LWlg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOAZcLUlEXHdKwsHb1vZlJcnLDSpYfaOA+sbNuCp8dyioBuJND0Rpoa5vxtNoSDIyZiRdxsnL25wdqR84=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUs5YCAlD8COjzjkLu+bKAfDy76TtxjCJAp9thUxFm4vNDimtB
+	eKRlmms1xR4WeU7Nu/aU3LakC+wl9XsSe9iugrhwcLRcqmYiKPhFbhPtkSQom14Bt7THyxWpnPt
+	CfqoZAsDAoO2kUpLyNhNTuA9j84hpt9AW+7cY
+X-Google-Smtp-Source: AGHT+IHoRj232ud+Ogb0cPaaHYQs3nhgibC+IH2EwIfqZg/zoPtqI0ieL1JHiQCGJqS5QB6NuSYTV7Ec7TzO2+EbIxk=
+X-Received: by 2002:a05:600c:1d1b:b0:426:5fbc:f319 with SMTP id
+ 5b1f17b1804b1-42e7c1a97b3mr64548645e9.33.1727024705648; Sun, 22 Sep 2024
+ 10:05:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <129f0c754d071cca1db5d207d9d4a7bd9831dff7.1726773282.git.dsimic@manjaro.org>
+References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
+ <20240915-alice-file-v10-5-88484f7a3dcf@google.com> <202409151325.09E4F3C2F@keescook>
+ <CAH5fLghA0tLTwCDBRrm+GAEWhhY7Y8qLtpj0wwcvTK_ZRZVgBw@mail.gmail.com>
+ <39306b5d-82a5-48df-bfd3-5cc2ae52bedb@schaufler-ca.com> <CAH5fLgjWkK0gXsGcT3gLEhYZvgnW9FPuV1eOZKRagEVvL5cGpw@mail.gmail.com>
+ <afe99ad2-bb53-4e80-bc43-f48b03b014cf@schaufler-ca.com>
+In-Reply-To: <afe99ad2-bb53-4e80-bc43-f48b03b014cf@schaufler-ca.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Sun, 22 Sep 2024 19:04:53 +0200
+Message-ID: <CAH5fLgiWZzOQt+B90c59gvMkdut=owMMbN1Gd1G8+ZMCRkJvVA@mail.gmail.com>
+Subject: Re: [PATCH v10 5/8] rust: security: add abstraction for secctx
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24-09-19 21:15, Dragan Simic wrote:
-> The way InvenSense MPU-6050 accelerometer is mounted on the user-facing side
-> of the Pine64 PinePhone mainboard, which makes it rotated 90 degrees counter-
-> clockwise, [1] requires the accelerometer's x- and y-axis to be swapped, and
-> the direction of the accelerometer's y-axis to be inverted.
-> 
-> Rectify this by adding a mount-matrix to the accelerometer definition in the
-> Pine64 PinePhone dtsi file.
-> 
-> [1] https://files.pine64.org/doc/PinePhone/PinePhone%20mainboard%20bottom%20placement%20v1.1%2020191031.pdf
-> 
-> Fixes: 91f480d40942 ("arm64: dts: allwinner: Add initial support for Pine64 PinePhone")
-> Cc: stable@vger.kernel.org
-> Helped-by: Ondrej Jirman <megi@xff.cz>
-> Helped-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> ---
-> 
-> Notes:
->     See also the linux-sunxi thread [2] that has led to this patch, which
->     provides a rather detailed analysis with additional details and pictures.
->     This patch effectively replaces the patch submitted in that thread.
->     
->     [2] https://lore.kernel.org/linux-sunxi/20240916204521.2033218-1-andrej.skvortzov@gmail.com/T/#u
-> 
->  arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-> index 6eab61a12cd8..b844759f52c0 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
-> @@ -212,6 +212,9 @@ accelerometer@68 {
->  		interrupts = <7 5 IRQ_TYPE_EDGE_RISING>; /* PH5 */
->  		vdd-supply = <&reg_dldo1>;
->  		vddio-supply = <&reg_dldo1>;
-> +		mount-matrix = "0", "1", "0",
-> +			       "-1", "0", "0",
-> +			       "0", "0", "1";
->  	};
->  };
->  
+On Sun, Sep 22, 2024 at 6:50=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+>
+> On 9/22/2024 8:08 AM, Alice Ryhl wrote:
+> > On Mon, Sep 16, 2024 at 5:40=E2=80=AFPM Casey Schaufler <casey@schaufle=
+r-ca.com> wrote:
+> >> On 9/15/2024 2:07 PM, Alice Ryhl wrote:
+> >>> On Sun, Sep 15, 2024 at 10:58=E2=80=AFPM Kees Cook <kees@kernel.org> =
+wrote:
+> >>>> On Sun, Sep 15, 2024 at 02:31:31PM +0000, Alice Ryhl wrote:
+> >>>>> Add an abstraction for viewing the string representation of a secur=
+ity
+> >>>>> context.
+> >>>> Hm, this may collide with "LSM: Move away from secids" is going to h=
+appen.
+> >>>> https://lore.kernel.org/all/20240830003411.16818-1-casey@schaufler-c=
+a.com/
+> >>>>
+> >>>> This series is not yet landed, but in the future, the API changes sh=
+ould
+> >>>> be something like this, though the "lsmblob" name is likely to chang=
+e to
+> >>>> "lsmprop"?
+> >>>> security_cred_getsecid()   -> security_cred_getlsmblob()
+> >>>> security_secid_to_secctx() -> security_lsmblob_to_secctx()
+> >> The referenced patch set does not change security_cred_getsecid()
+> >> nor remove security_secid_to_secctx(). There remain networking interfa=
+ces
+> >> that are unlikely to ever be allowed to move away from secids. It will
+> >> be necessary to either retain some of the secid interfaces or introduc=
+e
+> >> scaffolding around the lsm_prop structure.
+> >>
+> >> Binder is currently only supported in SELinux, so this isn't a real is=
+sue
+> >> today. The BPF LSM could conceivably support binder, but only in cases=
+ where
+> >> SELinux isn't enabled. Should there be additional LSMs that support bi=
+nder
+> >> the hooks would have to be changed to use lsm_prop interfaces, but I h=
+ave
+> >> not included that *yet*.
+> >>
+> >>> Thanks for the heads up. I'll make sure to look into how this
+> >>> interacts with those changes.
+> >> There will be a follow on patch set as well that replaces the LSMs use
+> >> of string/length pairs with a structure. This becomes necessary in cas=
+es
+> >> where more than one active LSM uses secids and security contexts. This
+> >> will affect binder.
+> > When are these things expected to land?
+>
+> I would like them to land in 6.14, but history would lead me to think
+> it will be later than that. A lot will depend on how well the large set
+> of LSM changes that went into 6.12 are received.
+>
+> >  If this patch series gets
+> > merged in the same kernel cycle as those changes, it'll probably need
+> > special handling.
+>
+> Yes, this is the fundamental downside of the tree merge development model=
+.
 
-I've applied the patch to next-20240920, built and run on a
-device. Sensor now works as expected. Screen rotating in Phosh
-according to the device orientation.
+Okay. I'm hoping to land this series in 6.13 so hopefully we won't
+need to do anything special.
 
-Reviewed-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-
--- 
-Best regards,
-Andrey Skvortsov
+Alice
 
