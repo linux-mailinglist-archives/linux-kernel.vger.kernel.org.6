@@ -1,99 +1,100 @@
-Return-Path: <linux-kernel+bounces-335201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC0B997E282
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 18:41:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E5EB97E284
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 18:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59C261F21251
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:41:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F8831F21054
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CEE427453;
-	Sun, 22 Sep 2024 16:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B9F2D60C;
+	Sun, 22 Sep 2024 16:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="ZUOxvaUM"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CF9AD52
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 16:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SaV3z9sA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0CF2BAE5;
+	Sun, 22 Sep 2024 16:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727023285; cv=none; b=mDPgK9OXo0a74MUYhFjVwxlrAlf97P9Kb67ctflweh9Lh5Z6kHlKEBqxSfTA6LHKhvBQX7rV8H1KnA2r5mT8lTRty5mO1Tah6EX7bWmKNuiVvYLIk3vZGYHFiSg/85s8xqNu/IeTwB3lwiGh0coJidFXxayxSdE8sNnsGjNLVuw=
+	t=1727023290; cv=none; b=Ssxwzr1zM5z3J7LD8uJTqnqOKJHu2k0p4eP15p9pyPHcxHEXsv1NltoLNH7Uj9ENxDNfx/2XjRKjyW1MpUZRt3pryr6uFjlktiW+vHodMCI8QEqyGRwwe3RITLGhdQEPul/hx9L3OTO/VKUZ0pVxJ6sjiouyUUNdAL289xUSXGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727023285; c=relaxed/simple;
-	bh=H3ITRVHeVK3MQetuvUo+jYd7fzfi4mDme8vBdLJR1bI=;
+	s=arc-20240116; t=1727023290; c=relaxed/simple;
+	bh=2o1PO5xwp6BUFqZ3PWOi/5u+0WeXqkLXlUA+//QHjEM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IHcoDEJ2cRbN7X7/pcPKj4tvVxha/toVB+owztIDKBKYvPoJtzTwRkrDFqexRwBqtRNfjfRr5DT7AqdJN/c6Gjf8s+6kml7RgZ3YvpHloXLZzKj4gjrfajMYNhqlOZL0XxkhegKxM8BjIMIdsXdJkJEOPBmPGIGTP62zL6Tp4aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=ZUOxvaUM; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id CE44614C1E1;
-	Sun, 22 Sep 2024 18:41:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1727023274;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1P1Jf0ApaFd/B8Qm3MqF7vJhOb3M7CqnXehx+3pU5eg=;
-	b=ZUOxvaUMPkXN0wei9pFj8ede5uEJwaXlYsc39HlxDAOcpwPljh4l664/2WJjlrGorEs4+O
-	BN9ITDY1xV7z61C4MSWveMRb9KC/XS5AKJebr5dig1bqhMqtkYKeDCUiU2SYArGZnXV1bM
-	OHoR4GDi46ljuybAclwtD7+CCrT14F5D7qTeAMBJAGqokbxTVd065C2ZCZz2lbGLmQSdH0
-	CyOWZvY+uLb8yv7DzT35N3JBsHjCNJnx6L5Qa7TKhwc/39J1S/vVi/R0GR3MxBiwfHJuJ6
-	OMMjHhDy6LqdR6eD6q5bh2BrC9gj2UfNkAXMlcNJjB88k13jtUA0Aft1fhDglQ==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 0ff33cac;
-	Sun, 22 Sep 2024 16:41:10 +0000 (UTC)
-Date: Mon, 23 Sep 2024 01:40:55 +0900
-From: asmadeus@codewreck.org
-To: Pedro Falcato <pedro.falcato@gmail.com>
-Cc: syzbot <syzbot+3c5d43e97993e1fa612b@syzkaller.appspotmail.com>,
-	cl@linux.com, ericvh@kernel.org, linux-kernel@vger.kernel.org,
-	linux_oss@crudebyte.com, lucho@ionkov.net,
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev,
-	vbabka@suse.cz
-Subject: Re: [syzbot] [v9fs?] WARNING in p9_client_create (2)
-Message-ID: <ZvBIl8b9RRK9jgtJ@codewreck.org>
-References: <66f0092d.050a0220.3195df.009b.GAE@google.com>
- <CAKbZUD08BQeK0R-KuU07=QUCW7GHbmZ0RgfUcOpzKd+Yv4b5CQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RcQJGOKgILXq+/Q3h08W483+zSi1YQR3yQSqh6X633TLEBXbT2/taRvLBnwOzcpSZ2RbA0e7sCXERqY3oP6YnarwFF7aB//FwMxFu9RwGQc8kRzxfD+937FpFiWO0R72rY5RmmFoXh+BDw1xn9sDSI2Au9L6RjOjHqQOIn2a6Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SaV3z9sA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3E77C4CEC6;
+	Sun, 22 Sep 2024 16:41:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727023289;
+	bh=2o1PO5xwp6BUFqZ3PWOi/5u+0WeXqkLXlUA+//QHjEM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SaV3z9sA/bVMDyq0QMXBqWCuIrgcXII0QH0Kw9ejoGU5EfamowQ4M9v+MBu68qUNF
+	 jGZo9+cR+bsrOKq+ZaUi6m3oJPT+/9Fth/rAV/56q7H7iDstMdahnQASYRmZrXm+qI
+	 VvrMgwhztlUZ/Feu9dJrPUCCER+PNL78RVMQDJP3j4CyKFm59cVIxFXGzgvRalPEFU
+	 Nc/FiZ9KrHxG6PruvLChUWfLpixMf3cFqafR0y46pUdcDtdPb5dQdGi04jkRbjoXuI
+	 ixuO0Yl9yAkxwhCOXLNSOhTUQI8EiwodPsLy1we/fSFIF7hpGpXXoSwsHx53Oj0GV5
+	 tTvq3Rnv0id+A==
+Date: Sun, 22 Sep 2024 17:41:25 +0100
+From: Simon Horman <horms@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Igal Liberman <igal.liberman@freescale.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Madalin Bucur <madalin.bucur@nxp.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Sean Anderson <sean.anderson@seco.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: fman: Use of_node_put(muram_node) call only once in
+ read_dts_node()
+Message-ID: <20240922164125.GA3426578@kernel.org>
+References: <e7caae09-70fd-431a-9df2-4c3068851a35@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKbZUD08BQeK0R-KuU07=QUCW7GHbmZ0RgfUcOpzKd+Yv4b5CQ@mail.gmail.com>
+In-Reply-To: <e7caae09-70fd-431a-9df2-4c3068851a35@web.de>
 
-Pedro Falcato wrote on Sun, Sep 22, 2024 at 03:59:17PM +0100:
-> This was one of the issues I actually ran into when using virtme.
-> Fix was submitted here back in August:
-> https://lore.kernel.org/v9fs/20240807094725.2193423-1-pedro.falcato@gmail.com/
+On Thu, Sep 19, 2024 at 06:15:23PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 19 Sep 2024 18:05:28 +0200
 > 
-> No replies nor was it picked up. Can it go through the slab tree?
+> A of_node_put(muram_node) call was immediately used after a return code
+> check for a of_address_to_resource() call in this function implementation.
+> Thus use such a function call only once instead directly before the check.
+> 
+> This issue was transformed by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Sorry, we're not getting many patches for 9p so I've been slacking and
-trying to batch a bit for when I can find time to pick them up -- don't
-hesitate to ping again if nobody replied in a week or two.
+Hi Markus,
 
-In this particular case I remember thinking it was a shame we're
-creating a cache for this when most mounts will be sharing the same
-msize but never found time to actually consider how to share the
-caches... But this isn't anything wrong with the patch itself, sorry for
-the delay.
-(and now I'm thinking about it, I guess the slab code has something to
-regroup identical caches? Just looked and didn't find it but I recall
-something like that...)
+I agree with Jacob Keller's comment elsewhere that this seems
+to be a reasonable change.
 
-Anyway, I've just picked that patch up (don't expect any trouble but
-will be queued to next later today), I'll send it to Linus in a week.
+However, I am assuming this is targeted at net-next.
+And net-next is currently closed for the v6.12 merge window.
+Please consider reposting this patch once net-next reopens.
+That will occur after v6.12-rc1 has been released. Which
+I expect to be about a week from now.
 
-(I'm also adding the syzbot reported by so this gets closed even if it
-came later)
+Also, for networking patches please tag non-bug fixes for
+net-next (and bug fixes for net, being sure to include a Fixes tag).
 
-Thanks!
+	Subject: [PATCH net-next] ...
+
+Please see https://docs.kernel.org/process/maintainer-netdev.html
+
 -- 
-Dominique Martinet | Asmadeus
+pw-bot: defer
 
