@@ -1,125 +1,147 @@
-Return-Path: <linux-kernel+bounces-335215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D395297E2A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:05:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EBD97E2A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B035B20FA4
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:05:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FC92B20FAA
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E4D43687;
-	Sun, 22 Sep 2024 17:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20762B9B0;
+	Sun, 22 Sep 2024 17:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tb4geJDS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lsEXIJbe"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386AB29CF4;
-	Sun, 22 Sep 2024 17:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E58B2581;
+	Sun, 22 Sep 2024 17:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727024712; cv=none; b=BdqTrlRlbhkF3jflYMdphe2RskisUGMaeiEKKcgQ7FuxwXW452Z/E38+ICe2ceF6T7tZRqwgz6lUQIHvq+c/kcuc+4GfM538HaiOGa7lmOfTezrsvVCVB34IYCG7Z+0ZodARrJHPPRhtAo4yU45Cz/wk5K+Bg3SHv9KfQPKSujE=
+	t=1727024884; cv=none; b=T5H+8V2TYlzbIYPfDW+i/zP0LWW8RXtBbFBkGszMWImeeRzTHp/qIY6CJHFcuHYUlUfAUM6sv+1iXHwQ0WTYbHraGOr0j+w1S+8Ig+oeVKFN/exgNhMdYbp6GnaJSuuUeuHw+0DTGkmRT/N5q15jOGBEE3+T6FuUV3ESt8oToHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727024712; c=relaxed/simple;
-	bh=xslP7AXvSkVuMhvWM8OqO8/hx8E19JC6RLFtS4kykIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbqXVGA9TCheo8WHYX+yBl+wNr8iinqqV3mbMS4uyACK7z6cQSx1KxzYLEFZBTRyDnNqfZQxgRTXHaGr4NaKLNGRNzCiy9DvsdPL1ODBZ+LHVuRhx9O3Zu4d1oAbKA5cCZUHRTB0701UDyVVfLd3B+x9imdBHFYdBZZleQPzhus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tb4geJDS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56A0DC4CEC3;
-	Sun, 22 Sep 2024 17:05:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727024711;
-	bh=xslP7AXvSkVuMhvWM8OqO8/hx8E19JC6RLFtS4kykIs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tb4geJDSEjrBGmuC/mExVwIo6ha8m2jYkGkBj6kXi1blEi1GLSYSFSqGqpmc2AI+2
-	 hE/VCggXEajkvH8VgpSKngkjiqvndvC3W0abooMx5qm4UQKTqHdlOEtyCHecucJiMv
-	 ugt8vGVu17Y4/xUw+j8E59YCXF2ZvXkysByUFwbKmbTkxEdUKEeDoidIhqM+lrCRt3
-	 wCi4IJOATxtu4RH1yUmnEKcVwNVUxs7PVHmtJJl6kriN8LdEDsmtyY/XgK/LykjZ9D
-	 YDgwkmB8+/bqRfPsOb+lKZVhaJ7ljk4xspNvEDsFdNsLW28wEdFhw7OX2JLtKbg4Zo
-	 PEeZzaC3VC6UQ==
-Date: Sun, 22 Sep 2024 18:05:07 +0100
-From: Simon Horman <horms@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Clayton Rayment <clayton.rayment@xilinx.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Julia Lawall <julia.lawall@inria.fr>
-Subject: Re: [PATCH] net: xilinx: axienet: Use common error handling code in
- axienet_mdio_write()
-Message-ID: <20240922170507.GD3426578@kernel.org>
-References: <330c2b9e-9a15-4442-8288-07f66760f856@web.de>
+	s=arc-20240116; t=1727024884; c=relaxed/simple;
+	bh=x7s8RISRd78v3+3BDolULM9nVmrkU4bjG9Pa+rjeYWU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NQVovl39yQCurI+eDmsI+8wfJahD3E17OHLOsmg6UfjFuzB6clkuXnjZxfXqo7QeSM7jnXR8QQOrTiVUqqK0pLhidv1yOJLrE9+lL5xFV3JSaEQVVOERkMk1e4jHLWGV0kuZ/TQvfpz5rKozIDFLEkNFEI3LeOsxTa1rfPhaPpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lsEXIJbe; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8a789c4fc5so779020766b.0;
+        Sun, 22 Sep 2024 10:08:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727024880; x=1727629680; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UfUFTKvz+3D7GwXrYdNdqlyY+ceafuxUEvLi56eVGDo=;
+        b=lsEXIJbecYBYyF9H6af/z8xvewCER75qEMXCj3fcJSZwa5Dw/IdOW6Vabm/VAIcgUY
+         4YXvKEEIRJx9x65HlZrkjonsd94O4w2RF43sqxJ36a76cLv9x2WwlYwrbjmUlKpAhCTN
+         cv/FnVg2hxPxS4lGvpNAF3Nc7G8/l9Dlalq5TObBXlr1rbqDm+gvhOno7p5Li7DECd5A
+         sGPdNn+aTFk1NfZYsYNNjkJkF/bf3cZTt0ae9EvH9BfCb89RKuWx7U9X61JA//aYvU6C
+         kkb3JFJj3NNEWDiHXpbWDqGi9yq2YJSi0N+LJLMPgSSGpgbVN9qEPbH63D2i+agoUn8T
+         JvIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727024880; x=1727629680;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UfUFTKvz+3D7GwXrYdNdqlyY+ceafuxUEvLi56eVGDo=;
+        b=jbkaUY+kP6G0kXDRM8blHnXyX6G2K9KUQo5Q0W8QzNvDB3k4tucfy68aXuWvXMeQdD
+         V3gLus87F3xutpX72x8QmPATrXIIpGMDFeekprGmOYtZ2hu8bkmGJMGvo1PcFjZuu7UF
+         ioqJns3YZZMbo28HMp1ekn+uQ36y6uB/aZSW6ZsTMzVdDIxje/xEMXlGcV67Q7+dTuTM
+         o7jcCBzmd/lbfx8pY5DHzWDHx2O50MmeOKINFzpgeaF7z6dCbzybBAIdDI0+GjNoH836
+         g5yJUK80rj9d0jNtHIBIKjSiMbBEnkSTa3FUNYN1BKa/uiPWjU/AvMhtf42Smc6QN73k
+         ENxA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhLCaQnBq15IKIiQB96FeX4uhSExwktVvL60VPp3aY6WPaIoMUZQh9ZwHnfEKjeuLTu+rlNehCZQItHr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnEtzTwzf49MeJhSbHU7Ogq06QRpU14uGF+O7CATgNo2kA/Qpa
+	6GxY5EhX7GsRnoihJ2tPNLGdzQfK71r0ahib2vQH2LXmZDA44WM7SzTk/IbT
+X-Google-Smtp-Source: AGHT+IHhorG+TYexZcYTn6Yu61PuNduE83pZTN8Btpz4Dy0RGopV9j/L9lvjMv9tECSMa7GyDPcD0g==
+X-Received: by 2002:a17:907:1b20:b0:a90:34e8:6761 with SMTP id a640c23a62f3a-a90c1c37176mr1416981866b.6.1727024879593;
+        Sun, 22 Sep 2024 10:07:59 -0700 (PDT)
+Received: from localhost.localdomain ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f429bsm1098376866b.61.2024.09.22.10.07.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 10:07:59 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH v2] xfs: Use try_cmpxchg() in xlog_cil_insert_pcp_aggregate()
+Date: Sun, 22 Sep 2024 19:07:16 +0200
+Message-ID: <20240922170746.11361-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <330c2b9e-9a15-4442-8288-07f66760f856@web.de>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 20, 2024 at 01:01:45PM +0200, Markus Elfring wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 20 Sep 2024 12:43:39 +0200
-> Subject: [PATCH] net: xilinx: axienet: Use common error handling code in axienet_mdio_write()
-> 
-> Add a label so that a bit of exception handling can be better reused
-> at the end of this function implementation.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+Use !try_cmpxchg instead of cmpxchg (*ptr, old, new) != old in
+xlog_cil_insert_pcp_aggregate().  x86 CMPXCHG instruction returns
+success in ZF flag, so this change saves a compare after cmpxchg.
 
+Also, try_cmpxchg implicitly assigns old *ptr value to "old" when
+cmpxchg fails. There is no need to re-read the value in the loop.
 
-Hi Markus,
+Note that the value from *ptr should be read using READ_ONCE to
+prevent the compiler from merging, refetching or reordering the read.
 
-This change seems reasonable to me.  However, I am assuming that as a
-non-bug-fix, this is targeted at net-next.  And net-next is currently
-closed for the v6.12 merge window.  Please consider reposting this patch
-once net-next reopens.  That will occur after v6.12-rc1 has been released.
-Which I expect to be about a week from now.
+No functional change intended.
 
-Also, for networking patches please tag non-bug fixes for
-net-next (and bug fixes for net, being sure to include a Fixes tag).
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Chandan Babu R <chandan.babu@oracle.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>
+---
+v2: Move cilpcp variable into the loop scope. Initialize cilcpc and
+    old variables at the declaration time. Use alternative form of
+    the while loop.
+---
+ fs/xfs/xfs_log_cil.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-	Subject: [PATCH net-next] ...
-
-Please see https://docs.kernel.org/process/maintainer-netdev.html
-
-...
-
-> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c b/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
-
-...
-
-> @@ -153,12 +151,9 @@ static int axienet_mdio_write(struct mii_bus *bus, int phy_id, int reg,
->  		     XAE_MDIO_MCR_OP_WRITE_MASK));
-> 
->  	ret = axienet_mdio_wait_until_ready(lp);
-> -	if (ret < 0) {
-> -		axienet_mdio_mdc_disable(lp);
-> -		return ret;
-> -	}
-
-Please add a blank line here.
-
-> +disable_mdc:
->  	axienet_mdio_mdc_disable(lp);
-> -	return 0;
-> +	return ret;
->  }
-> 
->  /**
-
+diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
+index 391a938d690c..d4e06e6f050f 100644
+--- a/fs/xfs/xfs_log_cil.c
++++ b/fs/xfs/xfs_log_cil.c
+@@ -156,9 +156,8 @@ xlog_cil_insert_pcp_aggregate(
+ 	struct xfs_cil		*cil,
+ 	struct xfs_cil_ctx	*ctx)
+ {
+-	struct xlog_cil_pcp	*cilpcp;
+-	int			cpu;
+-	int			count = 0;
++	int	cpu;
++	int	count = 0;
+ 
+ 	/* Trigger atomic updates then aggregate only for the first caller */
+ 	if (!test_and_clear_bit(XLOG_CIL_PCP_SPACE, &cil->xc_flags))
+@@ -171,13 +170,11 @@ xlog_cil_insert_pcp_aggregate(
+ 	 * structures that could have a nonzero space_used.
+ 	 */
+ 	for_each_cpu(cpu, &ctx->cil_pcpmask) {
+-		int	old, prev;
++		struct xlog_cil_pcp	*cilpcp = per_cpu_ptr(cil->xc_pcp, cpu);
++		int			old = READ_ONCE(cilpcp->space_used);
+ 
+-		cilpcp = per_cpu_ptr(cil->xc_pcp, cpu);
+-		do {
+-			old = cilpcp->space_used;
+-			prev = cmpxchg(&cilpcp->space_used, old, 0);
+-		} while (old != prev);
++		while (!try_cmpxchg(&cilpcp->space_used, &old, 0))
++			;
+ 		count += old;
+ 	}
+ 	atomic_add(count, &ctx->space_used);
 -- 
-pw-bot: defer
+2.42.0
+
 
