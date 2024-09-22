@@ -1,177 +1,274 @@
-Return-Path: <linux-kernel+bounces-335114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8483197E123
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 13:27:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F80797E125
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 13:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C6C4280DBC
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 11:27:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52BE11C2087C
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 11:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A6E193401;
-	Sun, 22 Sep 2024 11:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF90193094;
+	Sun, 22 Sep 2024 11:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jB74Jf8M"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUwgncnf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E029193090;
-	Sun, 22 Sep 2024 11:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EC461FCF
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 11:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727004463; cv=none; b=kunjL3K2hPZkoyO11bsfac5C+I9QkET/0btkma1BxgnCX7bYAMtTULWeMkuiUGXWx5UTnkpKxKWo9hZuE31HYDglnRgbhgFAtyrzYnheINEDKd/cvEd/N28gIHAEjK5FOC0+suprr3TI8ouPJYjFFelc7Lf0Qkimhq31VaPEAaY=
+	t=1727004488; cv=none; b=LgGKeKFG+zXIaosNuV7/5FXStiOqVy2/ZcEBCVSZVu5IPz+kiRk9elgbCW816e0ETDluW2qZ2v74x+ivkoXkPb7P+CHwnboOKBAAmpur7GBaTiXXbafk/qho8OxvnKe5eD8+uTKg7Y3rcm2HWh1ltpTD0p++RFISGpXXWZclSTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727004463; c=relaxed/simple;
-	bh=Ubr4xKaup2BgtEQmSwvzn5S3OcK/SRHS8d9QmBMPRyo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=pmMvLF/iCbcdZBiF1XPf9IIOlpkBW0t+2Sxhyoy//H4rEmJWXkz23jhbYKFRtmIB75GGYwHAMna40hnwp5idw6oAHrVCPm/A1mzHO86bP8vxv8t+NeNoSTbxS53XmZkaGQTPG60iGHa6rFHEnKohav6qeh+urFoD6vzQ/5a4GaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jB74Jf8M; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48MBRFGa103698;
-	Sun, 22 Sep 2024 06:27:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727004435;
-	bh=XnxBUT2Dw6S9B2FDDYplj2ilPkQZxh4zWUn9GXdLhak=;
-	h=Date:Subject:From:To:CC:References:In-Reply-To;
-	b=jB74Jf8MwZLGqfp7x/iKwk5hLDDyZBFVTGWWBYgYfMr095Y9tZbYUDOh2jqrexcHf
-	 eTgnpxQY+TwTGX6BAwCvFbq6s9QwC58YGBwUtxXnjJPYmoJQtkbUT7mmT5T+u2b5Hp
-	 7GNUZptp0pnK5wz6AvwA2KhsUTSE9FTiDQnZsPiQ=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48MBRFLX015637
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 22 Sep 2024 06:27:15 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 22
- Sep 2024 06:27:15 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 22 Sep 2024 06:27:15 -0500
-Received: from [10.249.130.82] ([10.249.130.82])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48MBR8F3009533;
-	Sun, 22 Sep 2024 06:27:09 -0500
-Message-ID: <0dbde87b-593f-4b14-8929-b78e189549ad@ti.com>
-Date: Sun, 22 Sep 2024 16:57:07 +0530
+	s=arc-20240116; t=1727004488; c=relaxed/simple;
+	bh=fnmfCtJOa+dLKyUhUiAMRD/7Tu1Z2ytRhWNlEzmdR7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DvyUwxP8tjjiJiXViIs7f0PsYX9RSJpy/0jhfSDGR7fUQJJm3WVAAoL7H4oAVqiWIaHWagHql21J4Ya++IMde7V4n8sF3Atd2afdmnOX224YEIhhdrCdp5CuqEw1b0Oot697MnjuYL+QKC4/ZlfaqK+B2uyUpZ4IQWNKJDHT0iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HUwgncnf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6762C4CEC3;
+	Sun, 22 Sep 2024 11:28:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727004488;
+	bh=fnmfCtJOa+dLKyUhUiAMRD/7Tu1Z2ytRhWNlEzmdR7g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HUwgncnfZLM1lCB4cb/Bdu6aIW0n85q5SDO+u7d6A1Ov8lTdUP5TuNzzpkIotC7r2
+	 xd9AUdXPZXfOB+H9go3qU0npXXcuQwLaa3xJ/dGuDKF/ycSzqybpRAS1/R+i0/xhXb
+	 2uxrfke+YeP3MA+sH9JHIHSWM0DYcyiq/ka16VW312XGTdBvCDS7JOxwOItriNF+ZX
+	 BMgKDCgloH7L8AwYlS0jUCMlLXHw0Eh7F6f8T43Tp9e8+GaBO7vtf1WvoKxsmM2QGA
+	 0WAoJrXuntNhrjmvXB1HXIXee8dl/Lp3GPWcrVkOM4rQNneJ+V4JWaeeYCx8Ar75Ii
+	 wli+D5XtloKnA==
+Date: Sun, 22 Sep 2024 12:28:04 +0100
+From: Vinod Koul <vkoul@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL]: Dmaengine subsystem updates for v6.12
+Message-ID: <Zu//RAyNOZP1Zs+2@vaman>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
-From: Beleswar Prasad Padhi <b-padhi@ti.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Lu Baolu
-	<baolu.lu@linux.intel.com>, <andersson@kernel.org>,
-        <afd@ti.com>, <nm@ti.com>, <hnagalla@ti.com>
-CC: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin
- Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Kevin Tian
-	<kevin.tian@intel.com>, <linux-remoteproc@vger.kernel.org>,
-        <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        Jason Gunthorpe
-	<jgg@nvidia.com>
-References: <20240812072811.9737-1-baolu.lu@linux.intel.com>
- <ZsdktJEqR9BOgivK@p14s> <99c874f1-3d85-43b2-a3a0-40e1e0c25696@ti.com>
-Content-Language: en-US
-In-Reply-To: <99c874f1-3d85-43b2-a3a0-40e1e0c25696@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hIflacAybTVCYR77"
+Content-Disposition: inline
 
 
-On 29-08-2024 11:47, Beleswar Prasad Padhi wrote:
-> Hi All,
->
-> On 22/08/24 21:47, Mathieu Poirier wrote:
->> Hi Baolu,
->>
->> Sorry for the late reply, this slipped through the cracks.
->>
->> On Mon, Aug 12, 2024 at 03:28:11PM +0800, Lu Baolu wrote:
->> > An iommu domain is allocated in rproc_enable_iommu() and is 
->> attached to
->> > rproc->dev.parent in the same function.
->> > > Use iommu_paging_domain_alloc() to make it explicit.
->> > > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
->> > Link: 
->> https://lore.kernel.org/r/20240610085555.88197-13-baolu.lu@linux.intel.com
->> > ---
->> >  drivers/remoteproc/remoteproc_core.c | 6 +++---
->> >  1 file changed, 3 insertions(+), 3 deletions(-)
->> > > diff --git a/drivers/remoteproc/remoteproc_core.c 
->> b/drivers/remoteproc/remoteproc_core.c
->> > index f276956f2c5c..eb66f78ec8b7 100644
->> > --- a/drivers/remoteproc/remoteproc_core.c
->> > +++ b/drivers/remoteproc/remoteproc_core.c
->> > @@ -109,10 +109,10 @@ static int rproc_enable_iommu(struct rproc 
->> *rproc)
->> >          return 0;
->> >      }
->> >  > -    domain = iommu_domain_alloc(dev->bus);
->> > -    if (!domain) {
->> > +    domain = iommu_paging_domain_alloc(dev);
->>
->> I'm a little hesitant here.  Function iommu_domain_alloc() passes 
->> NULL two the
->> second argument of __iommu_domain_alloc() while 
->> iommu_paging_domain_alloc()
->> provides a 'dev'.  I don't have any HW to test on and I am not 
->> familiar enough
->> with the IOMMU subsystem to confidently more forward.
->>
->> I am asking the Qualcomm (Bjorn and friends) and TI crew (Beleswar, 
->> Andrew,
->> Nishanth and Hari) to test this patch on their IOMMU devices and get 
->> back to me
->> with a "Tested-by".
->
->
-> Just a heads-up. Currently, I am seeing boot failures while booting 
-> remotecores in TI's IOMMU devices with mainline kernel. Working on the 
-> the fix, once it is done, will apply the above patch and test it ASAP.
+--hIflacAybTVCYR77
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Linus,
 
-Since commit 17de3f5fdd35, the IOMMU framework has changed how it 
-handles callback ops, moving away from using bus->iommu_ops. The 
-omap-iommu driver has not yet been updated to align with these framework 
-changes. Therefore, omap-iommu, and hence, omap-remoteproc have been 
-broken since 17de3f5fdd35.
+Here is the dmaengine subsystem update for v6.12. This is a unique PR
+that it has more new driver and device support than updates. Couple of
+new device support, AMD, Rcar, Intel and New drivers in Freescale,
+Loonsoon, AMD and LPC32XX with DT conversion and mode updates etc.
 
-This patch is a step in the right direction for adapting the 
-remoteproc_core framework to the newer IOMMU framework by looking for 
-iommu_ops attached to the dev structure instead of dev->bus. Due to time 
-constraints, I was unable to update the omap-iommu driver to accommodate 
-these changes, so, I could not test this patch. However, logically, this 
-patch LGTM. So,
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-Acked-by: Beleswar Padhi <b-padhi@ti.com>
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-Thanks,
-Beleswar
+are available in the Git repository at:
 
->
-> Thanks,
-> Beleswar
->
->>
->> Thanks,
->> Mathieu
->>
->> > +    if (IS_ERR(domain)) {
->> >          dev_err(dev, "can't alloc iommu domain\n");
->> > -        return -ENOMEM;
->> > +        return PTR_ERR(domain);
->> >      }
->> >  >      iommu_set_fault_handler(domain, rproc_iommu_fault, rproc);
->> > -- > 2.34.1
->> >
+  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dm=
+aengine-6.12-rc1
+
+for you to fetch changes up to e0bee4bcdc3238ebcae6e5960544b9e3d0a62abf:
+
+  dmaengine: loongson1-apb-dma: Fix the build warning caused by the size of=
+ pdev_irqname (2024-09-02 13:56:32 +0530)
+
+----------------------------------------------------------------
+dmaengine updates for v6.12
+
+ New support:
+  - Support for AMD Versal Gen 2 DMA IP
+  - Rcar RZ/G3S SoC dma controller
+  - Support for Intel Diamond Rapids and Granite Rapids-D dma controllers
+  - Support for Freescale ls1021a-qdma controller
+  - New driver for Loongson-1 APB DMA
+  - New driver for AMD QDMA
+  - Pl08x in LPC32XX router dma driver
+
+ Updates:
+  - Support for dpdma cyclic dma mode
+  - XML conversion for marvell xor dma bindings
+  - Dma clocks documentation for imx dma
+
+----------------------------------------------------------------
+Abin Joseph (2):
+      dt-bindings: dmaengine: zynqmp_dma: Add a new compatible string
+      dmaengine: zynqmp_dma: Add support for AMD Versal Gen 2 DMA IP
+
+Amit Vadhavana (1):
+      dmaengine: Fix spelling mistakes
+
+Arnd Bergmann (1):
+      dmaengine: avoid non-constant format string
+
+Chen Ni (1):
+      dmaengine: idxd: Convert comma to semicolon
+
+Christophe JAILLET (1):
+      dma: ipu: Remove include/linux/dma/ipu-dma.h
+
+Claudiu Beznea (1):
+      dt-bindings: dma: rz-dmac: Document RZ/G3S SoC
+
+Fabio Estevam (2):
+      dt-bindings: dma: fsl,imx-dma: Document the DMA clocks
+      dmaengine: imx-dma: Remove i.MX21 support
+
+Fenghua Yu (2):
+      dmaengine: idxd: Add a new DSA device ID for Granite Rapids-D platform
+      dmaengine: idxd: Add new DSA and IAA device IDs for Diamond Rapids pl=
+atform
+
+Frank Li (2):
+      dt-bindings: fsl-qdma: allow compatible string fallback to fsl,ls1021=
+a-qdma
+      dt-bindings: dma: fsl-mxs-dma: Add compatible string "fsl,imx8qxp-dma=
+-apbh"
+
+Joy Zou (2):
+      dmaengine: fsl-edma: change to guard(mutex) within fsl_edma3_xlate()
+      dmaengine: fsl-edma: add edma src ID check at request channel
+
+Keguang Zhang (3):
+      dt-bindings: dma: Add Loongson-1 APB DMA
+      dmaengine: Loongson1: Add Loongson-1 APB DMA driver
+      dmaengine: loongson1-apb-dma: Fix the build warning caused by the siz=
+e of pdev_irqname
+
+Nishad Saraf (1):
+      dmaengine: amd: qdma: Add AMD QDMA driver
+
+Piotr Wojtaszczyk (1):
+      dmaengine: Add dma router for pl08x in LPC32XX SoC
+
+Rohit Visavalia (1):
+      dmaengine: xilinx: dpdma: Add support for cyclic dma mode
+
+Shresth Prasad (1):
+      dt-bindings: dma: mv-xor-v2: Convert to dtschema
+
+Thorsten Blum (1):
+      dmaengine: dmatest: Explicitly cast divisor to u32
+
+Yue Haibing (1):
+      dmaengine: ti: k3-udma: Remove unused declarations
+
+ .../devicetree/bindings/dma/fsl,imx-dma.yaml       |   14 +
+ .../devicetree/bindings/dma/fsl,mxs-dma.yaml       |   15 +
+ .../devicetree/bindings/dma/fsl-qdma.yaml          |   13 +-
+ .../bindings/dma/loongson,ls1b-apbdma.yaml         |   65 ++
+ .../devicetree/bindings/dma/marvell,xor-v2.yaml    |   61 ++
+ .../devicetree/bindings/dma/mv-xor-v2.txt          |   28 -
+ .../devicetree/bindings/dma/renesas,rz-dmac.yaml   |    1 +
+ .../bindings/dma/xilinx/xlnx,zynqmp-dma-1.0.yaml   |    4 +-
+ MAINTAINERS                                        |    9 +
+ arch/arm/mach-lpc32xx/Kconfig                      |    1 +
+ drivers/dma/Kconfig                                |   20 +
+ drivers/dma/Makefile                               |    3 +
+ drivers/dma/acpi-dma.c                             |    4 +-
+ drivers/dma/altera-msgdma.c                        |    4 +-
+ drivers/dma/amba-pl08x.c                           |    2 +-
+ drivers/dma/amd/Kconfig                            |   14 +
+ drivers/dma/amd/Makefile                           |    3 +
+ drivers/dma/amd/qdma/Makefile                      |    5 +
+ drivers/dma/amd/qdma/qdma-comm-regs.c              |   64 ++
+ drivers/dma/amd/qdma/qdma.c                        | 1143 ++++++++++++++++=
+++++
+ drivers/dma/amd/qdma/qdma.h                        |  266 +++++
+ drivers/dma/at_hdmac.c                             |    6 +-
+ drivers/dma/bcm-sba-raid.c                         |    4 +-
+ drivers/dma/bcm2835-dma.c                          |    2 +-
+ drivers/dma/dmaengine.c                            |    2 +-
+ drivers/dma/dmatest.c                              |    2 +-
+ drivers/dma/ep93xx_dma.c                           |    4 +-
+ drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.h            |    6 +-
+ drivers/dma/fsl-edma-main.c                        |   27 +-
+ drivers/dma/hisi_dma.c                             |    2 +-
+ drivers/dma/idma64.c                               |    4 +-
+ drivers/dma/idxd/init.c                            |    6 +
+ drivers/dma/idxd/perfmon.c                         |    4 +-
+ drivers/dma/idxd/submit.c                          |    2 +-
+ drivers/dma/imx-dma.c                              |    3 -
+ drivers/dma/ioat/init.c                            |    2 +-
+ drivers/dma/lgm/lgm-dma.c                          |    2 +-
+ drivers/dma/loongson1-apb-dma.c                    |  660 +++++++++++
+ drivers/dma/lpc32xx-dmamux.c                       |  195 ++++
+ drivers/dma/ls2x-apb-dma.c                         |    4 +-
+ drivers/dma/mediatek/mtk-cqdma.c                   |    4 +-
+ drivers/dma/mediatek/mtk-hsdma.c                   |    2 +-
+ drivers/dma/mv_xor.c                               |    4 +-
+ drivers/dma/mv_xor.h                               |    2 +-
+ drivers/dma/mv_xor_v2.c                            |    2 +-
+ drivers/dma/nbpfaxi.c                              |    2 +-
+ drivers/dma/of-dma.c                               |    4 +-
+ drivers/dma/owl-dma.c                              |    2 +-
+ drivers/dma/ppc4xx/adma.c                          |    2 +-
+ drivers/dma/ppc4xx/dma.h                           |    2 +-
+ drivers/dma/ptdma/ptdma.h                          |    2 +-
+ drivers/dma/qcom/bam_dma.c                         |    4 +-
+ drivers/dma/qcom/gpi.c                             |    2 +-
+ drivers/dma/qcom/qcom_adm.c                        |    2 +-
+ drivers/dma/sh/shdmac.c                            |    2 +-
+ drivers/dma/ste_dma40.h                            |    2 +-
+ drivers/dma/ste_dma40_ll.h                         |    2 +-
+ drivers/dma/tegra20-apb-dma.c                      |    2 +-
+ drivers/dma/ti/k3-udma.h                           |    1 -
+ drivers/dma/xgene-dma.c                            |    2 +-
+ drivers/dma/xilinx/xilinx_dpdma.c                  |  101 +-
+ drivers/dma/xilinx/zynqmp_dma.c                    |   27 +-
+ include/linux/dma/ipu-dma.h                        |  174 ---
+ include/linux/dma/k3-udma-glue.h                   |    2 -
+ include/linux/pci_ids.h                            |    3 +
+ include/linux/platform_data/amd_qdma.h             |   36 +
+ 66 files changed, 2791 insertions(+), 275 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/loongson,ls1b-apb=
+dma.yaml
+ create mode 100644 Documentation/devicetree/bindings/dma/marvell,xor-v2.ya=
+ml
+ delete mode 100644 Documentation/devicetree/bindings/dma/mv-xor-v2.txt
+ create mode 100644 drivers/dma/amd/Kconfig
+ create mode 100644 drivers/dma/amd/Makefile
+ create mode 100644 drivers/dma/amd/qdma/Makefile
+ create mode 100644 drivers/dma/amd/qdma/qdma-comm-regs.c
+ create mode 100644 drivers/dma/amd/qdma/qdma.c
+ create mode 100644 drivers/dma/amd/qdma/qdma.h
+ create mode 100644 drivers/dma/loongson1-apb-dma.c
+ create mode 100644 drivers/dma/lpc32xx-dmamux.c
+ delete mode 100644 include/linux/dma/ipu-dma.h
+ create mode 100644 include/linux/platform_data/amd_qdma.h
+
+--=20
+~Vinod
+
+--hIflacAybTVCYR77
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmbv/0QACgkQfBQHDyUj
+g0dxkQ/8C55V0KHLzDxmV0o0rPYOC8cDK853s9l7xoSvRxxntlF0yJ9ppZFC7HfV
+rwDKUHM3HSoD1ezNG1GUP8DGLrnCELFBOLEOx/uOvF1ygYOXz3yw3f+JyfrBeLP3
+Uyen8byXoSoVOYinbjCERJ48FsRqOp348CvwtaK85tb39jjh72w1AYliBV5T0fI2
+MkQcAYtPzRGHfPX8VI/iMtF0SFcF9D+IwSBoG90bBfaXTGCPXZ6fmcGhnou0hPLC
+JdtWYgz5mADMyFpD9OgoPXHZ4eFIEwGeZK0okrw26zDe4GgfkjgHS8MdUmsC4oC2
+q3+voqx09ToEs5Gcpr+L9ZL2yFCAW1a2IPIw0Iqd8lM9hQxf9g5QXeJqQkCFdoqc
+knNJ+63JEOCmcyKlLUC3kS0fTG9LXwauw5cyXqm2Lh+K8cCB7Xbqgo0DeqScx879
+eR0k/qe+webCP1UY5iHih708aLaGokpfKbI+/NkvAcUzswQkr4vaJIDO2d/kh3/V
+BT9OP+XRjkGX9/Rq5Kso+sz/5t5zduQqZDHu3LeFU4RRQqNOWMqhbuTZodhtZPi9
+aKcnC2RvEQ00qUSVDczIRuSh2vCgmuJmQHp43/Zjgbr/fdVXZcLbdkQ1FQxcEa+k
+FTN61T0SoHhTPLH3TnsaAEHTT52VF9w3RlbvfjaAAfuFJOe73Ys=
+=Alzr
+-----END PGP SIGNATURE-----
+
+--hIflacAybTVCYR77--
 
