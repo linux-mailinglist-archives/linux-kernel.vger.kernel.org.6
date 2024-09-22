@@ -1,112 +1,123 @@
-Return-Path: <linux-kernel+bounces-335055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB5A97E061
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 08:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4DF97E064
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 09:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F24C6B2100A
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 06:57:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05636B20F83
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 07:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB3418F2CF;
-	Sun, 22 Sep 2024 06:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549C119307E;
+	Sun, 22 Sep 2024 07:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="J3WZbU3e"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivwm1e57"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C234D2AE66
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 06:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BDD13D893;
+	Sun, 22 Sep 2024 07:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726988226; cv=none; b=M23NwU8vnBQMkN0VFPLrm9SzChUollMLtapKPXjHsQtCUkee9JeTGwPw5C3786dL+aaK25fP/vzxcIOJVGtKpO3+oMKiYkF8Cg+mMGG+dToaFgzUma4LZYy7+356BiZKI6uaUnGwAiqO3ppCdj8sB3Afm60tmyivL/EIqnUwmDs=
+	t=1726988923; cv=none; b=XpRZ3FA878aHkXrFryR25b42bbvxI/51CdW+z6VBpiZOnQX2lsY4qEtckHyIVJkc4pbgH7JftJ9Kcz/4507DNoYc+0D86mNthVB7TZOlE9Oavo7LmaucGSGQaRisOsl7W7fv2sjqWR9ePOE7uBYkVItpGedc5Pwc5K0HDT1Jl5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726988226; c=relaxed/simple;
-	bh=fLH2JhS+Mxvs30aCPCSU4p0Fws3QoUZ8WOpiHW4hIy4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EaEvE7ioySkkSt73sK1ODhxVc7SJMuDXB0ARIH4+yxzk79/biXEEBQ2LswRUQo5opZk18WeH6r0F1UDePbJG2VMPJrdjC+fcgGmlW54HOmv+Z28iGvqyPHIkPL5ohLphHwWx7tonjtKsyY7991PzGJDauzM9ou9l3xlGV3tLKYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=J3WZbU3e; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1726988223;
-	bh=fLH2JhS+Mxvs30aCPCSU4p0Fws3QoUZ8WOpiHW4hIy4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=J3WZbU3eVU2urWWzcaCEkIyCEpkhGR9Yc5OR9kCCyRqu0RrpKGhViJYcUtW5MKxfk
-	 5qLRiZ29ovhLNeIFG3U+JnDBQU0+CfwgX6QWlVOzI0TzU3hWahEv4Kv7yV0XBmoxjZ
-	 oMWSdfkmHUnf2j0PHo8hxtB/2XCUCJNhCxcM+c4E=
-Received: from [IPv6:240e:358:118b:a200:dc73:854d:832e:2] (unknown [IPv6:240e:358:118b:a200:dc73:854d:832e:2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id B8E6E1A3FD6;
-	Sun, 22 Sep 2024 02:57:01 -0400 (EDT)
-Message-ID: <11368b7c0b7370aea61b3dda73e462fb70f306a7.camel@xry111.site>
-Subject: Re: [GIT PULL] dma-mapping updates for Linux 6.12
-From: Xi Ruoyao <xry111@xry111.site>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Date: Sun, 22 Sep 2024 14:56:57 +0800
-In-Reply-To: <Zu-kCdMau6127_vM@infradead.org>
-References: <ZuvYnXzbM2qfXQPT@infradead.org>
-	 <971fbb889da38ca4e60f3dedde29ea43e9338d68.camel@xry111.site>
-	 <Zu1byUGU832iWBUp@infradead.org> <Zu2Bd50GdSxF_-eA@infradead.org>
-	 <19e4bdbcda78ace200c78c56eb7173097337b921.camel@xry111.site>
-	 <Zu5VoW1ZkViSOws3@infradead.org>
-	 <9a84a7c6f943209cc87a54075ed22df37ebda5f8.camel@xry111.site>
-	 <Zu7PW07FmBgs_dpI@infradead.org>
-	 <38bc765eaba8a646a87ce14e1ff06f28d449fcd5.camel@xry111.site>
-	 <Zu-kCdMau6127_vM@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+	s=arc-20240116; t=1726988923; c=relaxed/simple;
+	bh=Pl7LYO3PH7IY3j9QY3/tjp3FFfGRuEsI3T5Rp9sTW6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tW3ahb8nfDI6ifFyK9WE6K+OjqDjVxSPnT7LVzCPXCB+RYCtpHOwfXyE9BgY4Y64TQNgctAf41gQYSqodelvmtS5Nj+4vpb3YarKjI901TpuzmmTiCzlfJ81KEopXwnIUqE4Nb24UkjddB/5CkB/lIvWXfWQRkgeT4b7eJxSdEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivwm1e57; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A5E7C4CEC3;
+	Sun, 22 Sep 2024 07:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726988923;
+	bh=Pl7LYO3PH7IY3j9QY3/tjp3FFfGRuEsI3T5Rp9sTW6U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ivwm1e571wNQdXqM6SOXXlWAWg8UkYarzwFQC5sWGuzkMmdX95fCmpn0YJq60zBHy
+	 PxvhmAjic/dTRGPHGEIyWAOQ68Z7cXvDH/ahPQSwfwHfr4mVBMNFP3DI2AKkR/j6KH
+	 D7ucUtNXJwAWbQsTKeTnWSrXxSJUz0cfOijaLz7+G33K4TlvqaH9+xbBVLtjNvBURK
+	 A7N05XyA7EIVnp2IHIi2VjT6k3m8jUi7eAlEFzEd7AfUp2ZiUXqMS3G4TZOXwZMHjE
+	 jQSQdwE23Sn0ikDmaHeFzTtoPTaMdvX84sO1GwpC5jVJqk5mVjCCuphrUnyUH5DYbU
+	 5UGvBXXsxj61Q==
+Date: Sun, 22 Sep 2024 03:08:41 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <keescook@chromium.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, Trevor Gross <tmgross@umich.edu>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v7 2/4] uaccess: always export _copy_[from|to]_user with
+ CONFIG_RUST
+Message-ID: <Zu_CeRfMKyyt4E5O@sashalap>
+References: <20240528-alice-mm-v7-0-78222c31b8f4@google.com>
+ <20240528-alice-mm-v7-2-78222c31b8f4@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240528-alice-mm-v7-2-78222c31b8f4@google.com>
 
-On Sat, 2024-09-21 at 21:58 -0700, Christoph Hellwig wrote:
-> On Sun, Sep 22, 2024 at 01:49:35AM +0800, Xi Ruoyao wrote:
-> > On Sat, 2024-09-21 at 06:51 -0700, Christoph Hellwig wrote:
-> > > On Sat, Sep 21, 2024 at 03:56:11PM +0800, Xi Ruoyao wrote:
-> > > > because the laptop has no serial output.=C2=A0 And the behavior see=
-ms not
-> > > > deterministic.=C2=A0 I have some transcript of messages I photoed i=
-n several
-> > > > boot attempts though:
-> > >=20
-> > > Can you send me the photos of the messages?=C2=A0 Probably best offli=
-st
-> > > as the lists don't like attachments.
-> >=20
-> > I've got something better: one attempt to boot
-> > b5c58b2fdc427e7958412ecb2de2804a1f7c1572 succeeded and I got a dmesg
-> > containing some Oops traces.
-> >=20
-> > The camera does *not* work.=C2=A0 And when I rebooted the system it hun=
-g
-> > (presumably related to these Oops).=20
->=20
-> So that oops actually comes from the sounds code and looks unrelated
-> to DMA.=C2=A0 I suspect that oops is what caused your crashes and thus
-> messed up the DMA bisection.=C2=A0 Can you try to boot with CONFIG_SND
-> disabled and see where the bisection for the video issues lands?
+On Tue, May 28, 2024 at 02:58:03PM +0000, Alice Ryhl wrote:
+>From: Arnd Bergmann <arnd@arndb.de>
+>
+>Rust code needs to be able to access _copy_from_user and _copy_to_user
+>so that it can skip the check_copy_size check in cases where the length
+>is known at compile-time, mirroring the logic for when C code will skip
+>check_copy_size. To do this, we ensure that exported versions of these
+>methods are available when CONFIG_RUST is enabled.
+>
+>Alice has verified that this patch passes the CONFIG_TEST_USER_COPY test
+>on x86 using the Android cuttlefish emulator.
 
-With SND disabled, b5c58b2fdc427e7958412ecb2de2804a1f7c1572 boots fine
-(no oops), but the camera does not work.=20
-f69e342eec008e1bab772d3963c3dd9979293e13 boots fine and the camera works
-fine.
+Hi folks,
 
-So the first bad commit is b5c58b2fdc427e7958412ecb2de2804a1f7c1572.
+I've noticed a build failure using GCC 9.5.0 on arm64 allmodconfig
+builds:
 
+In file included from ./arch/arm64/include/asm/preempt.h:6,
+                  from ./include/linux/preempt.h:79,
+                  from ./include/linux/alloc_tag.h:11,
+                  from ./include/linux/percpu.h:5,
+                  from ./include/linux/context_tracking_state.h:5,
+                  from ./include/linux/hardirq.h:5,
+                  from drivers/net/ethernet/mellanox/mlx4/cq.c:37:
+In function 'check_copy_size',
+     inlined from 'mlx4_init_user_cqes' at ./include/linux/uaccess.h:203:7:
+./include/linux/thread_info.h:244:4: error: call to '__bad_copy_from' declared with attribute error: copy source size is too small
+   244 |    __bad_copy_from();
+       |    ^~~~~~~~~~~~~~~~~
+make[7]: *** [scripts/Makefile.build:244: drivers/net/ethernet/mellanox/mlx4/cq.o] Error 1
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+I do not have CONFIG_RUST enabled in those builds.
+
+I've bisected the issue (twice!) and bisection points to this patch
+which landed upstream as 1f9a8286bc0c ("uaccess: always export
+_copy_[from|to]_user with CONFIG_RUST").
+
+Reverting said commit on top of Linus's tree fixes the build breakage.
+
+-- 
+Thanks,
+Sasha
 
