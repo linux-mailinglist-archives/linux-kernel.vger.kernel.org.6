@@ -1,106 +1,147 @@
-Return-Path: <linux-kernel+bounces-335288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D0C97E39B
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A2297E39A
 	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52CC9281103
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 21:04:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA05281192
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 21:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F372C76F1B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E502276F17;
 	Sun, 22 Sep 2024 21:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JwBha2NW"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Va1pjudg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC708C07;
-	Sun, 22 Sep 2024 21:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F96EEDB;
+	Sun, 22 Sep 2024 21:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727039066; cv=none; b=Itwr2h4kwMAQFoqp2STvYgDQIBPLRWlxiEiFpykn4b2bUQri1m0qJ3KjOiUUXdE5QnfrjKjJzhxMJEs5KZl8drS3xPXiNN2ulrg4BNePJYPUPYV/xfUb+upwS7kIAl9BkP3LtR857GIR+Hw6f140kVyFR9oRlKKa35SbE61kWPU=
+	t=1727039066; cv=none; b=VTo9cEQKqxzaZJe7xHnNntl6Oxqb+REskpiz0zun5UzRfS8cDj67SiDQKEzTsOELHakVkhYFWWZOgy68MO65HHcH/YIBTZ8aMm6jLyebI5g0pGe1N6dVmYEg4ZYH6aJLigA9mzgn68rHoHLTgEaqWjCXBI1CqT+/KAReb9UMUDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727039066; c=relaxed/simple;
-	bh=biAARFvH1GibeXEvxfSGDsj4N5w0YpZ5Rsb1ExkxDd8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dlETyiLUnsVHCr9UvrEH2tJN7/cPh++UGDpI/DWMoka9z+t2Z/eo3PR+iYP7T8mVgrcggZLC3ZDWNiBh0qnU7zViWxw3XPNH7lAAuk7inxADHPSlEGCLGHirq5Sogqb4FW70AXwqkcfILdiMMufjg3t6xaMYKWgBmfU3KfQe7kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JwBha2NW; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e1a819488e3so2848141276.3;
-        Sun, 22 Sep 2024 14:04:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727039064; x=1727643864; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9sLL1YRqiZUoWwvJdj6ouIVhIgSLLyYmmYz/rdh46/s=;
-        b=JwBha2NWnSfpX6l1KdolhJkSKMqsQh68apRLkgJ4msje9Qybqs+JccEvNNEn3Ur0Wn
-         GTyu1OYCpQKu6+yYatXLF0R1NFKXuusTf1nQj/wlJliORz3U4ugziHvTcgjuVMbSG+RE
-         QtCK5EoOprkw5EgX75bJQ8fNZipWnBPZYsACQ3LEhCtvJqt7nPH7Ilz2RS2ObHkqStBT
-         Cl29/aTpnsRQtgR1vpq6sH3b97h5Ja//KA7i2Yon/Fr5Rv8ZViELUnb6DGtA6LHlRNXD
-         CJQcbMrLhAkL4BTD+5O3KFjYciiDgBTZokoppYSFi5gObGU7OFUzitallhTUP9voMc91
-         kBbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727039064; x=1727643864;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9sLL1YRqiZUoWwvJdj6ouIVhIgSLLyYmmYz/rdh46/s=;
-        b=c1BeIvLnOJ4MOSAO9A7eBmxQ/8L2U4mw3Z7H/Xn00UUGI6MWoCKKRDm6OZLAdj8dT0
-         u8+GeIT2+F2SRlCTWKaSBVABw5189/STi6nQ6Nc6SUfQ9chWQU7sVmfhe+Y9JFhZ309I
-         68Dh998oCDWX3xNTeLoUwGFdHKKqTj3wOFU5tUuU/o6E5XTfj3rrHtb8B/XKxMakujtW
-         iTxdBfNKtiIMzrLkkzRrZGynbZu6kc23lruMIzpdbiCDTVqIATBHe56ACEgdy3JJN2Y+
-         n/8jlw0siYnareKlYsOQsrk4D7wvJmjaMF2SW+Df1URWcEHVL2b9vl6QhpPSqPDzXo/m
-         Tzpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBfxx3DPDwny1meYFxvzoIi2bSGSGLs6pMrhNT5EQoeVTsfbx/t/BUEwsqiZRD15pm/OfAII4RZmsqdFE=@vger.kernel.org, AJvYcCVPIRBAUtemGPql1YDzZBYQYOfshDkASuGeMUG7+Cwf1UYVmlx4c06vLN44em/l2WhMD9X1wwXp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygl9e1i1l+5kPr2fIIZmiB+kLAurdodq4r16mlM94yiJWXih3k
-	9m/hU5iWY/A89WUBPUr6Y7ZTOVpvBKy0/lyIGUSgHWJeLuTefW+S
-X-Google-Smtp-Source: AGHT+IHWLg2skq46AMW9oHhq6uebUn442VU8dWAyqkW+88qG1CuzJ8QBvzKysLL3nnX9jJQMezHw8A==
-X-Received: by 2002:a05:6902:dca:b0:e0e:7fb3:cf88 with SMTP id 3f1490d57ef6-e2252fc700fmr4616915276.57.1727039063956;
-        Sun, 22 Sep 2024 14:04:23 -0700 (PDT)
-Received: from [10.0.1.200] (c-71-56-174-87.hsd1.va.comcast.net. [71.56.174.87])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e202537629bsm1615176276.11.2024.09.22.14.04.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Sep 2024 14:04:23 -0700 (PDT)
-Message-ID: <ef4422fd-f4aa-44dd-b1ff-350761db59d5@gmail.com>
-Date: Sun, 22 Sep 2024 17:04:22 -0400
+	bh=3UZwWZ/k8yycOfVfCgYu9zo+m7c/YEuQ6FtR8R0xTh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DsVSkffS9sduWLdVtynwC8GqSU0rpH+tHoSQt50kCA3B6oHGyD2/3WtysbmwadOBsKXRD7sXF7FgnfJYNWtprKU9uSEsRvFodH05ptSMZLTg1un/US+l36/bNaxA4NRhWf4meyTcYoWDtu2sTqToZDT1lpbcbhHKXcYsEifZ9JM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Va1pjudg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CB66C4CEC4;
+	Sun, 22 Sep 2024 21:04:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727039065;
+	bh=3UZwWZ/k8yycOfVfCgYu9zo+m7c/YEuQ6FtR8R0xTh0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Va1pjudgIYjoEoPXeHt2pN9mwSb5dki3yKACWIFNnwd3m9XsizclebNpSMogJLvkG
+	 ZcXuGuODPk6IkjL1wEOHRQZSPqIiQCt21qN8nrRTqbcBu0RjmOvOz3RsvnxDzeONwe
+	 dLj/vB1Rhtv3eBDsSQJXa3IvNbkc6A5zJwzj8VyLvoEp8wpOfs+HQ5d4zLQxy7Y6Xf
+	 2WQQ9Kzm+uWSIbu9daAC79Tx/oyh27LDr92D+yBr+h9fkgHsqEREBfJDGD56RJnLSG
+	 uEaE2d0oXy144dPVNpyi1whBZB+kgMyLPJloQLWSh7zibNB29p6wkV5WKsATKfR48p
+	 BwHuKGGBEWBoA==
+Date: Sun, 22 Sep 2024 23:04:22 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chester Lin <chester62515@gmail.com>, 
+	Matthias Brugger <mbrugger@suse.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	NXP S32 Linux Team <s32@nxp.com>
+Subject: Re: [PATCH v3 2/4] dt-bindings: gpio: add support for NXP
+ S32G2/S32G3 SoCs
+Message-ID: <e6u3kui5md4km5xvjzlq5cfgwvtb73c763uep4j5ysaokmmucr@gz5nxiebg7gu>
+References: <20240919134732.2626144-1-andrei.stefanescu@oss.nxp.com>
+ <20240919134732.2626144-3-andrei.stefanescu@oss.nxp.com>
+ <20240920-reapply-amusement-a37cf13fd910@squawk>
+ <16950e81-e0ef-4e7c-b0ef-4f56415dceed@oss.nxp.com>
+ <bd5a2d24-164c-4707-a5fd-6584e444ee0b@kernel.org>
+ <20240921-party-glass-bfb7099c7ded@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/ipv4: Fix circular deadlock in do_ip_setsockop
-To: Eric Dumazet <edumazet@google.com>
-Cc: syzbot+e4c27043b9315839452d@syzkaller.appspotmail.com,
- alibuda@linux.alibaba.com, davem@davemloft.net, dsahern@kernel.org,
- dust.li@linux.alibaba.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, schnelle@linux.ibm.com,
- syzkaller-bugs@googlegroups.com, wenjia@linux.ibm.com
-References: <00000000000055b6570622575dba@google.com>
- <20240917235027.218692-2-srikarananta01@gmail.com>
- <CANn89iLxa6V7BZSzmj5A979M2ZObj-CcDD_izeKqtRCZj-+pmQ@mail.gmail.com>
-Content-Language: en-US
-From: Ananta Srikar Puranam <srikarananta01@gmail.com>
-In-Reply-To: <CANn89iLxa6V7BZSzmj5A979M2ZObj-CcDD_izeKqtRCZj-+pmQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240921-party-glass-bfb7099c7ded@spud>
 
-On 22/09/24 12:11 pm, Eric Dumazet wrote:
-> I think you missed an earlier conversation about SMC being at fault here.
+On Sat, Sep 21, 2024 at 10:58:46PM +0100, Conor Dooley wrote:
+> On Fri, Sep 20, 2024 at 03:40:31PM +0200, Krzysztof Kozlowski wrote:
+> > On 20/09/2024 15:33, Andrei Stefanescu wrote:
+> > > Hi Conor,
+> > > 
+> > > Thank you for your review!
+> > > 
+> > > On 20/09/2024 15:46, Conor Dooley wrote:
+> > >> On Thu, Sep 19, 2024 at 04:47:22PM +0300, Andrei Stefanescu wrote:
+> > >>> Add support for the GPIO driver of the NXP S32G2/S32G3 SoCs.
+> > >>>
+> > >>> Signed-off-by: Phu Luu An <phu.luuan@nxp.com>
+> > >>> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
+> > >>> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> > >>> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+> > >>> ---
+> > >>>  .../bindings/gpio/nxp,s32g2-siul2-gpio.yaml   | 107 ++++++++++++++++++
+> > >>>  1 file changed, 107 insertions(+)
+> > >>>  create mode 100644 Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.yaml
+> > >>>
+> > >>> diff --git a/Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.yaml b/Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.yaml
+> > >>> new file mode 100644
+> > >>> index 000000000000..0548028e6745
+> > >>> --- /dev/null
+> > >>> +++ b/Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.yaml
+> > >>> @@ -0,0 +1,107 @@
+> > >>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause
+> > >>> +# Copyright 2024 NXP
+> > >>> +%YAML 1.2
+> > >>> +---
+> > >>> +$id: http://devicetree.org/schemas/gpio/nxp,s32g2-siul2-gpio.yaml#
+> > >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > >>> +
+> > >>> +title: NXP S32G2 SIUL2 GPIO controller
+> > >>> +
+> > >>> +maintainers:
+> > >>> +  - Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
+> > >>> +  - Larisa Grigore <larisa.grigore@nxp.com>
+> > >>> +  - Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+> > >>> +
+> > >>> +description:
+> > >>> +  Support for the SIUL2 GPIOs found on the S32G2 and S32G3
+> > >>> +  chips. It includes an IRQ controller for all pins which have
+> > >>> +  an EIRQ associated.
+> > >>> +
+> > >>> +properties:
+> > >>> +  compatible:
+> > >>> +    items:
+> > >>> +      - const: nxp,s32g2-siul2-gpio
+> > >>
+> > >> Commit message and binding description say s32g2 and s32g3, but there's
+> > >> only a compatible here for g2.
+> > > 
+> > > Yes, the SIUL2 GPIO hardware is the same for both S32G2 and S32G3 SoCs. I plan
+> > > to reuse the same compatible when I add the SIUL2 GPIO device tree node for
+> > > the S32G3 boards. Would that be ok?
+> > 
+> > There are only few exceptions where re-using compatible is allowed. Was
+> > S32G on them? Please consult existing practice/maintainers and past reviews.
 
-You're right, I missed the earlier discussion about SMC. I apologize for 
-the oversight and thank you for pointing it out. As a first-time 
-contributor, I'll be more diligent in researching existing discussions 
-before submitting patches in the future.
+Just in case this was not clear - comment "please consult existing..."
+was towards Andrei, not you Conor.
+
+> 
+> Pretty sure I had a similar conversation about another peripheral on
+> these devices, and it was established that these are not different fusings
+> etc, but rather are independent SoCs that reuse an IP core. Given that,
+> I'd expect to see a fallback compatible used here, as is the norm.
+
+Yep.
 
 Best regards,
-Srikar
-
+Krzysztof
 
 
