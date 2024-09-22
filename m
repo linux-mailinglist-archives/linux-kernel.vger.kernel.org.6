@@ -1,274 +1,102 @@
-Return-Path: <linux-kernel+bounces-335115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F80797E125
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 13:28:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE71497E12B
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 13:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52BE11C2087C
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 11:28:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5D401F21368
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 11:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF90193094;
-	Sun, 22 Sep 2024 11:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9968219340E;
+	Sun, 22 Sep 2024 11:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUwgncnf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Wa2mPyKJ"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EC461FCF
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 11:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C98A13C9C7;
+	Sun, 22 Sep 2024 11:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727004488; cv=none; b=LgGKeKFG+zXIaosNuV7/5FXStiOqVy2/ZcEBCVSZVu5IPz+kiRk9elgbCW816e0ETDluW2qZ2v74x+ivkoXkPb7P+CHwnboOKBAAmpur7GBaTiXXbafk/qho8OxvnKe5eD8+uTKg7Y3rcm2HWh1ltpTD0p++RFISGpXXWZclSTc=
+	t=1727004807; cv=none; b=FETrHMoS2bikYyZwORbhVvv9xp1+HD1Cz3zM0OxnjsOXGDVD9WGEHp9UgbpuDUsvDTiesv2THV2heLguO5BwqU3quHj8DVVemprkQtDd66u358CHcBCIt2Ra9T4tMdSumwb+HztUVEgcjsOaND5nObf5/J9HZPopC68O2jpmSfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727004488; c=relaxed/simple;
-	bh=fnmfCtJOa+dLKyUhUiAMRD/7Tu1Z2ytRhWNlEzmdR7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DvyUwxP8tjjiJiXViIs7f0PsYX9RSJpy/0jhfSDGR7fUQJJm3WVAAoL7H4oAVqiWIaHWagHql21J4Ya++IMde7V4n8sF3Atd2afdmnOX224YEIhhdrCdp5CuqEw1b0Oot697MnjuYL+QKC4/ZlfaqK+B2uyUpZ4IQWNKJDHT0iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HUwgncnf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6762C4CEC3;
-	Sun, 22 Sep 2024 11:28:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727004488;
-	bh=fnmfCtJOa+dLKyUhUiAMRD/7Tu1Z2ytRhWNlEzmdR7g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=HUwgncnfZLM1lCB4cb/Bdu6aIW0n85q5SDO+u7d6A1Ov8lTdUP5TuNzzpkIotC7r2
-	 xd9AUdXPZXfOB+H9go3qU0npXXcuQwLaa3xJ/dGuDKF/ycSzqybpRAS1/R+i0/xhXb
-	 2uxrfke+YeP3MA+sH9JHIHSWM0DYcyiq/ka16VW312XGTdBvCDS7JOxwOItriNF+ZX
-	 BMgKDCgloH7L8AwYlS0jUCMlLXHw0Eh7F6f8T43Tp9e8+GaBO7vtf1WvoKxsmM2QGA
-	 0WAoJrXuntNhrjmvXB1HXIXee8dl/Lp3GPWcrVkOM4rQNneJ+V4JWaeeYCx8Ar75Ii
-	 wli+D5XtloKnA==
-Date: Sun, 22 Sep 2024 12:28:04 +0100
-From: Vinod Koul <vkoul@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: Dmaengine subsystem updates for v6.12
-Message-ID: <Zu//RAyNOZP1Zs+2@vaman>
+	s=arc-20240116; t=1727004807; c=relaxed/simple;
+	bh=/joLZmqkYGiWhew8IGitd+Ug4iIKNkPkowzkrEBRnFI=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=HMxWcHzcGvFHFgmAYQBU7qCaHBaqJMiRnSnE18ErjkcX2y5RSGfNnkOiRt5H6KpJSq5imcogV32lgZKAMiL2R+POsQVf2kKGjXTw9Ds02c01TA0LlcAJwtastlS7PM27Np8hgKbUnHfEXq47EzkJYYYrUSkpZwHwIkyD21Y1swA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Wa2mPyKJ; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1727004497; bh=VV+n9amUUkI7Y+C+ADQWGYSEkc3QvEW9zBZXsNeT2BQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Wa2mPyKJSWPwfYp6gtPqEW+5+IJeJtNzdA8Q4SZnYmuuHNAkkeZxrp06dcZ1VeXF3
+	 EFFB5Qlbc+wVL05x7JBtcidk7I4dMzVVc6wGkiASbrVKzqPvPdoz/hIfelrF/aXY1x
+	 TpB5/jbTl2ZFJzfd7TDMxRfqYvcth+LZQ3bEdhck=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 70CB188B; Sun, 22 Sep 2024 19:28:12 +0800
+X-QQ-mid: xmsmtpt1727004492tsz6caa32
+Message-ID: <tencent_AC4A33669E2C1B724B1C1BCA2552BA67BB08@qq.com>
+X-QQ-XMAILINFO: ObFHHlrAm440/tR/OQKOlqS65Gu4z/JNGVE55Os+dmyyH4i0cvTeVBNIv+NT+l
+	 BFp7dngJwqoNP5OTmoVyruFEdQ4A5OvVwiau4+daA/jWeMqUQ+6JJhZw2UcSFOZRIDfEqud8QHQm
+	 CSqKyJnRUYVVfw6ypqG7P4UmGtPHnh4xwCF8todbU9oHiyke0OWp9mLr9ldtT+KbzwtiCUEoag19
+	 pZV7vNqt3yUbuMYHN8pQPwSU+WiF786k3Nn4G78mL24RTCDEuoTJxRb9S1RqGkhBnyZ4GlUrF56x
+	 YNx8Z4uGkL4KHET973JPFrpJdsWEuouVctEQHog8HsDgR39GYF8X5oAJfUbjnN+9Ym4XKNiF4Qds
+	 gydfPQqtjPOrLdnW433R+LYbiOAkYh2ZZLpTpyQXeNR8+aaFM5y2URkwAc9UVzKMf50rqlqDaEyM
+	 owhCsB1gRq+LCgq3TPvJhtCKHpqMNh9PppzlZvquo1Y+ykY7LkOLXc9f+7oPcssX20g2J52JOHyb
+	 ZMznc/fmJUEwamWCjsINPskza0+o9vyyu7046UVt/yYJFii0KlapKWyDL3lPF2KZ/A+RElKrLrX/
+	 PiUNwZYmG+g3nBRlXLdXPO/L1Bc9M6BkSK5g6DURkArdh4Of00MEg2klkVEhb8vyati6Et7lFSaW
+	 54KYM19kkt1w2njkaR6Prewjx+D/b5NP4NED0mM4GekPM6NO/QWlinBDoKiJaiDVpFr0Q4aYk3Ki
+	 cUh9urRcFUlHMhCFnuymsG5r5DG80NIzqtPPIQSZS8Ph7H/rMScBNwNUZ936x3/gNqz2c9bSNo1K
+	 An8nRqJ+Xg2aw+JBamLTYvpVLlnCtgGZUAeP124tNP/dE7k3L3HnmEhAM17medhBGHpt7ADISEdO
+	 lZCZHCy3Gu2diP7hXZ4CpUPnGaEtm0Yjz1haopGcsKE87NHz46ttM=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+1b2d1134e0b675176a15@syzkaller.appspotmail.com
+Cc: dhowells@redhat.com,
+	jarkko@kernel.org,
+	jmorris@namei.org,
+	keyrings@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	paul@paul-moore.com,
+	serge@hallyn.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [keyrings?] [lsm?] [ext4?] possible deadlock in keyring_clear (2)
+Date: Sun, 22 Sep 2024 19:28:13 +0800
+X-OQ-MSGID: <20240922112812.2082719-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <66eff723.050a0220.1b7b75.0000.GAE@google.com>
+References: <66eff723.050a0220.1b7b75.0000.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hIflacAybTVCYR77"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+Use GFP_NOFS
 
---hIflacAybTVCYR77
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+#syz test
 
-Hi Linus,
+diff --git a/lib/assoc_array.c b/lib/assoc_array.c
+index 388e656ac974..b6fd9e909b79 100644
+--- a/lib/assoc_array.c
++++ b/lib/assoc_array.c
+@@ -977,7 +977,7 @@ struct assoc_array_edit *assoc_array_insert(struct assoc_array *array,
+ 	 */
+ 	BUG_ON(assoc_array_ptr_is_meta(object));
+ 
+-	edit = kzalloc(sizeof(struct assoc_array_edit), GFP_KERNEL);
++	edit = kzalloc(sizeof(struct assoc_array_edit), GFP_NOFS);
+ 	if (!edit)
+ 		return ERR_PTR(-ENOMEM);
+ 	edit->array = array;
 
-Here is the dmaengine subsystem update for v6.12. This is a unique PR
-that it has more new driver and device support than updates. Couple of
-new device support, AMD, Rcar, Intel and New drivers in Freescale,
-Loonsoon, AMD and LPC32XX with DT conversion and mode updates etc.
-
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dm=
-aengine-6.12-rc1
-
-for you to fetch changes up to e0bee4bcdc3238ebcae6e5960544b9e3d0a62abf:
-
-  dmaengine: loongson1-apb-dma: Fix the build warning caused by the size of=
- pdev_irqname (2024-09-02 13:56:32 +0530)
-
-----------------------------------------------------------------
-dmaengine updates for v6.12
-
- New support:
-  - Support for AMD Versal Gen 2 DMA IP
-  - Rcar RZ/G3S SoC dma controller
-  - Support for Intel Diamond Rapids and Granite Rapids-D dma controllers
-  - Support for Freescale ls1021a-qdma controller
-  - New driver for Loongson-1 APB DMA
-  - New driver for AMD QDMA
-  - Pl08x in LPC32XX router dma driver
-
- Updates:
-  - Support for dpdma cyclic dma mode
-  - XML conversion for marvell xor dma bindings
-  - Dma clocks documentation for imx dma
-
-----------------------------------------------------------------
-Abin Joseph (2):
-      dt-bindings: dmaengine: zynqmp_dma: Add a new compatible string
-      dmaengine: zynqmp_dma: Add support for AMD Versal Gen 2 DMA IP
-
-Amit Vadhavana (1):
-      dmaengine: Fix spelling mistakes
-
-Arnd Bergmann (1):
-      dmaengine: avoid non-constant format string
-
-Chen Ni (1):
-      dmaengine: idxd: Convert comma to semicolon
-
-Christophe JAILLET (1):
-      dma: ipu: Remove include/linux/dma/ipu-dma.h
-
-Claudiu Beznea (1):
-      dt-bindings: dma: rz-dmac: Document RZ/G3S SoC
-
-Fabio Estevam (2):
-      dt-bindings: dma: fsl,imx-dma: Document the DMA clocks
-      dmaengine: imx-dma: Remove i.MX21 support
-
-Fenghua Yu (2):
-      dmaengine: idxd: Add a new DSA device ID for Granite Rapids-D platform
-      dmaengine: idxd: Add new DSA and IAA device IDs for Diamond Rapids pl=
-atform
-
-Frank Li (2):
-      dt-bindings: fsl-qdma: allow compatible string fallback to fsl,ls1021=
-a-qdma
-      dt-bindings: dma: fsl-mxs-dma: Add compatible string "fsl,imx8qxp-dma=
--apbh"
-
-Joy Zou (2):
-      dmaengine: fsl-edma: change to guard(mutex) within fsl_edma3_xlate()
-      dmaengine: fsl-edma: add edma src ID check at request channel
-
-Keguang Zhang (3):
-      dt-bindings: dma: Add Loongson-1 APB DMA
-      dmaengine: Loongson1: Add Loongson-1 APB DMA driver
-      dmaengine: loongson1-apb-dma: Fix the build warning caused by the siz=
-e of pdev_irqname
-
-Nishad Saraf (1):
-      dmaengine: amd: qdma: Add AMD QDMA driver
-
-Piotr Wojtaszczyk (1):
-      dmaengine: Add dma router for pl08x in LPC32XX SoC
-
-Rohit Visavalia (1):
-      dmaengine: xilinx: dpdma: Add support for cyclic dma mode
-
-Shresth Prasad (1):
-      dt-bindings: dma: mv-xor-v2: Convert to dtschema
-
-Thorsten Blum (1):
-      dmaengine: dmatest: Explicitly cast divisor to u32
-
-Yue Haibing (1):
-      dmaengine: ti: k3-udma: Remove unused declarations
-
- .../devicetree/bindings/dma/fsl,imx-dma.yaml       |   14 +
- .../devicetree/bindings/dma/fsl,mxs-dma.yaml       |   15 +
- .../devicetree/bindings/dma/fsl-qdma.yaml          |   13 +-
- .../bindings/dma/loongson,ls1b-apbdma.yaml         |   65 ++
- .../devicetree/bindings/dma/marvell,xor-v2.yaml    |   61 ++
- .../devicetree/bindings/dma/mv-xor-v2.txt          |   28 -
- .../devicetree/bindings/dma/renesas,rz-dmac.yaml   |    1 +
- .../bindings/dma/xilinx/xlnx,zynqmp-dma-1.0.yaml   |    4 +-
- MAINTAINERS                                        |    9 +
- arch/arm/mach-lpc32xx/Kconfig                      |    1 +
- drivers/dma/Kconfig                                |   20 +
- drivers/dma/Makefile                               |    3 +
- drivers/dma/acpi-dma.c                             |    4 +-
- drivers/dma/altera-msgdma.c                        |    4 +-
- drivers/dma/amba-pl08x.c                           |    2 +-
- drivers/dma/amd/Kconfig                            |   14 +
- drivers/dma/amd/Makefile                           |    3 +
- drivers/dma/amd/qdma/Makefile                      |    5 +
- drivers/dma/amd/qdma/qdma-comm-regs.c              |   64 ++
- drivers/dma/amd/qdma/qdma.c                        | 1143 ++++++++++++++++=
-++++
- drivers/dma/amd/qdma/qdma.h                        |  266 +++++
- drivers/dma/at_hdmac.c                             |    6 +-
- drivers/dma/bcm-sba-raid.c                         |    4 +-
- drivers/dma/bcm2835-dma.c                          |    2 +-
- drivers/dma/dmaengine.c                            |    2 +-
- drivers/dma/dmatest.c                              |    2 +-
- drivers/dma/ep93xx_dma.c                           |    4 +-
- drivers/dma/fsl-dpaa2-qdma/dpaa2-qdma.h            |    6 +-
- drivers/dma/fsl-edma-main.c                        |   27 +-
- drivers/dma/hisi_dma.c                             |    2 +-
- drivers/dma/idma64.c                               |    4 +-
- drivers/dma/idxd/init.c                            |    6 +
- drivers/dma/idxd/perfmon.c                         |    4 +-
- drivers/dma/idxd/submit.c                          |    2 +-
- drivers/dma/imx-dma.c                              |    3 -
- drivers/dma/ioat/init.c                            |    2 +-
- drivers/dma/lgm/lgm-dma.c                          |    2 +-
- drivers/dma/loongson1-apb-dma.c                    |  660 +++++++++++
- drivers/dma/lpc32xx-dmamux.c                       |  195 ++++
- drivers/dma/ls2x-apb-dma.c                         |    4 +-
- drivers/dma/mediatek/mtk-cqdma.c                   |    4 +-
- drivers/dma/mediatek/mtk-hsdma.c                   |    2 +-
- drivers/dma/mv_xor.c                               |    4 +-
- drivers/dma/mv_xor.h                               |    2 +-
- drivers/dma/mv_xor_v2.c                            |    2 +-
- drivers/dma/nbpfaxi.c                              |    2 +-
- drivers/dma/of-dma.c                               |    4 +-
- drivers/dma/owl-dma.c                              |    2 +-
- drivers/dma/ppc4xx/adma.c                          |    2 +-
- drivers/dma/ppc4xx/dma.h                           |    2 +-
- drivers/dma/ptdma/ptdma.h                          |    2 +-
- drivers/dma/qcom/bam_dma.c                         |    4 +-
- drivers/dma/qcom/gpi.c                             |    2 +-
- drivers/dma/qcom/qcom_adm.c                        |    2 +-
- drivers/dma/sh/shdmac.c                            |    2 +-
- drivers/dma/ste_dma40.h                            |    2 +-
- drivers/dma/ste_dma40_ll.h                         |    2 +-
- drivers/dma/tegra20-apb-dma.c                      |    2 +-
- drivers/dma/ti/k3-udma.h                           |    1 -
- drivers/dma/xgene-dma.c                            |    2 +-
- drivers/dma/xilinx/xilinx_dpdma.c                  |  101 +-
- drivers/dma/xilinx/zynqmp_dma.c                    |   27 +-
- include/linux/dma/ipu-dma.h                        |  174 ---
- include/linux/dma/k3-udma-glue.h                   |    2 -
- include/linux/pci_ids.h                            |    3 +
- include/linux/platform_data/amd_qdma.h             |   36 +
- 66 files changed, 2791 insertions(+), 275 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dma/loongson,ls1b-apb=
-dma.yaml
- create mode 100644 Documentation/devicetree/bindings/dma/marvell,xor-v2.ya=
-ml
- delete mode 100644 Documentation/devicetree/bindings/dma/mv-xor-v2.txt
- create mode 100644 drivers/dma/amd/Kconfig
- create mode 100644 drivers/dma/amd/Makefile
- create mode 100644 drivers/dma/amd/qdma/Makefile
- create mode 100644 drivers/dma/amd/qdma/qdma-comm-regs.c
- create mode 100644 drivers/dma/amd/qdma/qdma.c
- create mode 100644 drivers/dma/amd/qdma/qdma.h
- create mode 100644 drivers/dma/loongson1-apb-dma.c
- create mode 100644 drivers/dma/lpc32xx-dmamux.c
- delete mode 100644 include/linux/dma/ipu-dma.h
- create mode 100644 include/linux/platform_data/amd_qdma.h
-
---=20
-~Vinod
-
---hIflacAybTVCYR77
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmbv/0QACgkQfBQHDyUj
-g0dxkQ/8C55V0KHLzDxmV0o0rPYOC8cDK853s9l7xoSvRxxntlF0yJ9ppZFC7HfV
-rwDKUHM3HSoD1ezNG1GUP8DGLrnCELFBOLEOx/uOvF1ygYOXz3yw3f+JyfrBeLP3
-Uyen8byXoSoVOYinbjCERJ48FsRqOp348CvwtaK85tb39jjh72w1AYliBV5T0fI2
-MkQcAYtPzRGHfPX8VI/iMtF0SFcF9D+IwSBoG90bBfaXTGCPXZ6fmcGhnou0hPLC
-JdtWYgz5mADMyFpD9OgoPXHZ4eFIEwGeZK0okrw26zDe4GgfkjgHS8MdUmsC4oC2
-q3+voqx09ToEs5Gcpr+L9ZL2yFCAW1a2IPIw0Iqd8lM9hQxf9g5QXeJqQkCFdoqc
-knNJ+63JEOCmcyKlLUC3kS0fTG9LXwauw5cyXqm2Lh+K8cCB7Xbqgo0DeqScx879
-eR0k/qe+webCP1UY5iHih708aLaGokpfKbI+/NkvAcUzswQkr4vaJIDO2d/kh3/V
-BT9OP+XRjkGX9/Rq5Kso+sz/5t5zduQqZDHu3LeFU4RRQqNOWMqhbuTZodhtZPi9
-aKcnC2RvEQ00qUSVDczIRuSh2vCgmuJmQHp43/Zjgbr/fdVXZcLbdkQ1FQxcEa+k
-FTN61T0SoHhTPLH3TnsaAEHTT52VF9w3RlbvfjaAAfuFJOe73Ys=
-=Alzr
------END PGP SIGNATURE-----
-
---hIflacAybTVCYR77--
 
