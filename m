@@ -1,202 +1,226 @@
-Return-Path: <linux-kernel+bounces-335326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 657C197E423
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:08:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0063297E425
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FD921C20FED
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:08:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831EA1F2149C
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FEA780BF8;
-	Sun, 22 Sep 2024 23:08:24 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8629978C7D;
+	Sun, 22 Sep 2024 23:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Xo95JDKo"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33206F2F2
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 23:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A29433D6
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 23:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727046503; cv=none; b=gwPj7KrUdzYUQkM9o3BZ1wRSGFq8g+iy3bMZzDYcpaRF4czYwMUgg4cOy0P2dWQ9uGvn9/oCDY74lAtB3SJ6CE2nkiO/rZJ4LU0vvpInILWoKpqwTSzUrOGSXBUmiY58ATD9T/Uwy6x1Je9fIrCVw/j/xd4qYBCZZSTwXc21eL8=
+	t=1727046925; cv=none; b=Ge70V4kbwzxiTd+6dpdwOhuGxEHjHWxWvHqDQEtB5LoWcneZB6muE/bDjFDMadrn9MFKQdjcAmpjcc9XymYW5zSyrFUtbrpm+HJwfdqRPGRtu0Idncehzd1pG4YCVJeALR757bVkRuygbUAQnE/qEKzEor3u7dBVC0ruVkef51o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727046503; c=relaxed/simple;
-	bh=VEMKNRhtM8106fxnnmEHNXFe77uEvoQwoECzdjmjkBw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OBmrPMBBWD9je/fEFeUyUCQDKUABq3jvEFycl7aQxbsY5cto+Z51pYjtRgIrB33PoxOL/D0ckE5XTDHHTWX4J6DayBNx8avnj+qRmTcRQBfyig2HUmdj5zblnezh0LqQPJz2LmgjKQD3qvRn9Az7xAT6VCyXYYkPD7diddn50Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39f5605c674so60792885ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 16:08:21 -0700 (PDT)
+	s=arc-20240116; t=1727046925; c=relaxed/simple;
+	bh=IOKFUjrmEw81LaaNRTH/ux2RuIwuKk4fePPJpmJ/xQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BsxgUJZnDCp4azjZAAZLqQd7nDpNOJ0gXqkwmDiLtLIwhhB6WHpyP9Va01LXct9djfdZjPWaYwg0TGAC8mdC4JX9FFEf4ANXprWY71/nyyPtfPoXrLKtZxY9fXI01MecJ2AoeVOSE42pDaXzMyYpr1mS3xJNtrHkbNy1bcYE4g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Xo95JDKo; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7198cb6bb02so2654215b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 16:15:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727046923; x=1727651723; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UlsXTJCziqLDA1kEeYpppJidhLEUsbWQlazGKgEoouE=;
+        b=Xo95JDKo5sA84jZJM63vo79qX7S8Rk0oOR2Kp7ITmtxDERy4+PqDyEl/hsPN+o2pvD
+         2/RLK26ypWwNLId99pjzQ7/AN6W19NPpEA+ZC8WCnxaf2FnuOKpliByR4nL7zG6onaW0
+         /08k7Oam45liXPawKT2ZwcSSWLye+uj7Q2zijLWm0TFGI6tpOIiFAo96siCVu9rt1wI3
+         CQ5a7SbkcvMI3FjsjsCBfMHU7XLgNwO4Vox7gI87LPWYPK9H3tfP/KEtFHJpCPQpraZm
+         UT8t7gZWwcIE7OHw33C4qahxqgCLAOo7sLVK8dR5xET9r4f3zGqFenxNvIjIygvWzxAN
+         cZ/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727046501; x=1727651301;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EKzSJ/WaGJM/ku5gQoaoOIrRJShwWPCCrXWi3XodAHg=;
-        b=r+DFsS1BuBIpPcjxwmQQSWvPfWcv5eyRh9F6VGlcmO7lwEKeV0qs/ZyDS0l+HP1Btq
-         yXqUF4uf40tHuXyzRcGeRt51lYAO5QT40EOMTPWq1PhzHwcMmKMLpABivSwsWBfrZv7p
-         JdTPXKsc/ImjAy07J3qgiLgNVHshHld43fGkjIfA9DoermKRbrFNHDAxPXgDI4uVZBwd
-         MCxEc0g43j3n3OR8MoNFPIDjR3tlF48itkedrBACkeAPQ5PL69BDlvKEz8gckunR4z/d
-         cTysajDrXXh61Ywj/kKKdW6r93DesLwTKGWaLFIIvoBXoVD+DnaLKtt2bezYtWruwFTv
-         hLgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ0wf/XgqEFnGHHkPVTpJtaAbOE3yfHUFpf7QxQHcQIIM8wJztIyIW3nqIuC8iZUjOK5Pa2xkVxJKzWU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVhTGPdA02izOex4G+fGmsI08O5HBOgA07JFNbFlvK5YnI280p
-	JFWcD1LNThk1SwByEYCeocfPprsX5AI7llLMgVEJiBdzVd2/CuQq6VvZeoRLsDATEh6M0xK9XgN
-	M7YBsgIxvaOm1obZzj6C3QEjoaDDzQY/7TCr2GQtOSCsav/AGjD0LZR8=
-X-Google-Smtp-Source: AGHT+IHLDjB33A3pCGradFc/31YGrEYQVjlq9w3rRdYgCR6dbgkKL+Q/KSRP1Azpj/pA/wl8TmwEnkv/vrmlh+E/PEOVEYYYUZ44
+        d=1e100.net; s=20230601; t=1727046923; x=1727651723;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UlsXTJCziqLDA1kEeYpppJidhLEUsbWQlazGKgEoouE=;
+        b=AGp4CCJ6empLVTfdSYlJy2TX6dPMVpGRmhd1UAtrQXiDpX6io0D6jl6aOC1EZ0Hv2K
+         snfeVvRPr8BSwf3oAV66pjNMNIxc0y3BJMGYiFg40nJn5susAknrgec5t4ZxW9Y2cgcZ
+         kr5E2kBtGiV4jU/kdmRsgnq2qyhCyTkKrOgq5DmkV32IaagX1L07ON/FCAviWTb8xWIh
+         u17moeISsmYiKFXz3of50j7aCZYSMut0BBNGrT/5dIR0RW3CxI0tVBWioc7KMTjtvLJH
+         PANL5+E5eUQbi/O3YzTAngjez8wlKs9Hpcwfp2ckDezOe9SYX8P270SRPzPbF+4cC3du
+         Oxpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdObO2kYEapnO211BD88GxCvNeiuUizSxnmi6ralxlJZ2R8kAauprkeV3gnlkFYAMiE6ZZupoZoHNSvOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHQyL8dadNS2DIl3ZfGqXFdvoDArNIL0CdPffypN33wrM3WQKs
+	i1+P1nu1LotjFVvoCpZjHzXH3qvNYmPil9fpGgOnD/1bqt1/LopFUdvA5aWTfvsPzGU5DSexCv9
+	M
+X-Google-Smtp-Source: AGHT+IFLGsoYS4nkygjOYQ6T6MjfnuxG4sxP2bIE6luDvx3JVi00ybPnZU93vr6k1Rs5zWvJ3g1fxw==
+X-Received: by 2002:a05:6a21:398a:b0:1d2:e807:7854 with SMTP id adf61e73a8af0-1d30ca2035emr11435044637.22.1727046922936;
+        Sun, 22 Sep 2024 16:15:22 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944b7b127sm12782575b3a.125.2024.09.22.16.15.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 16:15:22 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1ssVnT-008k5e-0I;
+	Mon, 23 Sep 2024 09:15:19 +1000
+Date: Mon, 23 Sep 2024 09:15:19 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: syzbot <syzbot+bf0143df12877cb1a21b@syzkaller.appspotmail.com>
+Cc: chandan.babu@oracle.com, djwong@kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [xfs?] INFO: task hung in xfs_ail_push_all_sync
+Message-ID: <ZvClBwxeuRQKnM8S@dread.disaster.area>
+References: <66eebc5f.050a0220.3195df.0053.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c544:0:b0:3a0:91e7:67cc with SMTP id
- e9e14a558f8ab-3a0c8ceecd2mr85137885ab.13.1727046501203; Sun, 22 Sep 2024
- 16:08:21 -0700 (PDT)
-Date: Sun, 22 Sep 2024 16:08:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f0a365.050a0220.a27de.000a.GAE@google.com>
-Subject: [syzbot] [wireless?] KMSAN: uninit-value in ath9k_hif_usb_reg_in_cb
-From: syzbot <syzbot+e5388ea6d2de83957e35@syzkaller.appspotmail.com>
-To: kvalo@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, toke@toke.dk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66eebc5f.050a0220.3195df.0053.GAE@google.com>
 
-Hello,
+On Sat, Sep 21, 2024 at 05:30:23AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    a430d95c5efa Merge tag 'lsm-pr-20240911' of git://git.kern..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15569d00580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d9ab5893ec5191eb
+> dashboard link: https://syzkaller.appspot.com/bug?extid=bf0143df12877cb1a21b
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109e6a77980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/f8549392ace4/disk-a430d95c.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/9b866ef0c06c/vmlinux-a430d95c.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/9d6691641029/bzImage-a430d95c.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/dd50a033ca89/mount_2.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+bf0143df12877cb1a21b@syzkaller.appspotmail.com
+> 
+> INFO: task syz.0.75:6468 blocked for more than 143 seconds.
+>       Not tainted 6.11.0-syzkaller-02574-ga430d95c5efa #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz.0.75        state:D stack:24864 pid:6468  tgid:6446  ppid:6378   flags:0x00004004
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5188 [inline]
+>  __schedule+0x17ae/0x4a10 kernel/sched/core.c:6529
+>  __schedule_loop kernel/sched/core.c:6606 [inline]
+>  schedule+0x14b/0x320 kernel/sched/core.c:6621
+>  xfs_ail_push_all_sync+0x236/0x310 fs/xfs/xfs_trans_ail.c:726
+>  xfs_log_quiesce+0xdf/0x5b0 fs/xfs/xfs_log.c:1018
+>  xfs_fs_freeze+0x8d/0x1a0 fs/xfs/xfs_super.c:936
+>  freeze_super+0x81b/0xee0 fs/super.c:2107
+>  fs_bdev_freeze+0x1ac/0x320 fs/super.c:1484
+>  bdev_freeze+0xd6/0x220 block/bdev.c:257
+>  xfs_fs_goingdown+0xa9/0x160 fs/xfs/xfs_fsops.c:446
+>  xfs_file_ioctl+0x12d4/0x19e0 fs/xfs/xfs_ioctl.c:1473
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>  __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fc862d7def9
+> RSP: 002b:00007fc863b4a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007fc862f36058 RCX: 00007fc862d7def9
+> RDX: 0000000020000080 RSI: 000000008004587d RDI: 0000000000000006
+> RBP: 00007fc862df0b76 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007fc862f36058 R15: 00007ffd1aceae18
+>  </TASK>
 
-syzbot found the following issue on:
+Not a bug.
 
-HEAD commit:    bdf56c7580d2 Merge tag 'slab-for-6.12' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=131524a9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b82e97dfbc92f0
-dashboard link: https://syzkaller.appspot.com/bug?extid=e5388ea6d2de83957e35
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+The reproducer is mounting the filesystem, then some other thread
+is immediately resizing the block device underneath the filesystem
+to zero length.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+In the cases where the test "passes", this happens:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b415ca186bb1/disk-bdf56c75.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4ce89ea52bab/vmlinux-bdf56c75.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9f99c9bf1bec/bzImage-bdf56c75.xz
+[  215.851387][ T6299] XFS (loop0): Mounting V5 Filesystem bfdc47fc-10d8-4eed-a562-11a831b3f791
+[  215.895695][ T6299] XFS (loop0): Ending clean mount
+[  215.953257][ T6299] loop0: detected capacity change from 32768 to 0
+[  215.963786][ T6299] syz.0.70: attempt to access beyond end of device
+[  215.963786][ T6299] loop0: rw=432129, sector=768, nr_sectors = 128 limit=0
+[  215.978206][   T45] XFS (loop0): log I/O error -5
+[  215.984613][   T45] XFS (loop0): Filesystem has been shut down due to log error (0x2).
+[  215.992720][   T45] XFS (loop0): Please unmount the filesystem and rectify the problem(s).
+[  216.011609][ T6230] XFS (loop0): Unmounting Filesystem bfdc47fc-10d8-4eed-a562-11a831b3f791o
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e5388ea6d2de83957e35@syzkaller.appspotmail.com
+The loop device change of size happens about 600ms after the mount
+finishes, and the next IO that is issued is a log IO. That gets
+errored out and the filesystem shuts itseld down.
 
-=====================================================
-BUG: KMSAN: uninit-value in __skb_set_length include/linux/skbuff.h:3190 [inline]
-BUG: KMSAN: uninit-value in ath9k_hif_usb_reg_in_cb+0x84d/0x9b0 drivers/net/wireless/ath/ath9k/hif_usb.c:756
- __skb_set_length include/linux/skbuff.h:3190 [inline]
- ath9k_hif_usb_reg_in_cb+0x84d/0x9b0 drivers/net/wireless/ath/ath9k/hif_usb.c:756
- __usb_hcd_giveback_urb+0x572/0x840 drivers/usb/core/hcd.c:1650
- usb_hcd_giveback_urb+0x157/0x720 drivers/usb/core/hcd.c:1734
- dummy_timer+0xd3f/0x6aa0 drivers/usb/gadget/udc/dummy_hcd.c:1987
- __run_hrtimer kernel/time/hrtimer.c:1691 [inline]
- __hrtimer_run_queues+0x564/0xe40 kernel/time/hrtimer.c:1755
- hrtimer_interrupt+0x3ab/0x1490 kernel/time/hrtimer.c:1817
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1026 [inline]
- __sysvec_apic_timer_interrupt+0xa6/0x3a0 arch/x86/kernel/apic/apic.c:1043
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1037 [inline]
- sysvec_apic_timer_interrupt+0x7e/0x90 arch/x86/kernel/apic/apic.c:1037
- asm_sysvec_apic_timer_interrupt+0x1f/0x30 arch/x86/include/asm/idtentry.h:702
- __preempt_count_dec_and_test arch/x86/include/asm/preempt.h:94 [inline]
- __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
- _raw_spin_unlock_irqrestore+0x33/0x60 kernel/locking/spinlock.c:194
- spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
- dummy_pullup+0x273/0x320 drivers/usb/gadget/udc/dummy_hcd.c:924
- usb_gadget_disconnect_locked+0x1f8/0x5b0 drivers/usb/gadget/udc/core.c:777
- gadget_unbind_driver+0xe6/0x5f0 drivers/usb/gadget/udc/core.c:1666
- device_remove drivers/base/dd.c:566 [inline]
- __device_release_driver drivers/base/dd.c:1272 [inline]
- device_release_driver_internal+0x58a/0x990 drivers/base/dd.c:1295
- driver_detach+0x360/0x540 drivers/base/dd.c:1358
- bus_remove_driver+0x465/0x500 drivers/base/bus.c:742
- driver_unregister+0x8d/0x100 drivers/base/driver.c:274
- usb_gadget_unregister_driver+0x55/0xa0 drivers/usb/gadget/udc/core.c:1731
- raw_release+0x1bc/0x400 drivers/usb/gadget/legacy/raw_gadget.c:462
- __fput+0x32c/0x1120 fs/file_table.c:431
- ____fput+0x25/0x30 fs/file_table.c:459
- task_work_run+0x268/0x310 kernel/task_work.c:228
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xce/0x170 kernel/entry/common.c:218
- do_syscall_64+0xda/0x1e0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+In the case where it has hung:
 
-Uninit was created at:
- __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4725
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2263
- alloc_pages_noprof+0x1bf/0x1e0 mm/mempolicy.c:2343
- alloc_slab_page mm/slub.c:2413 [inline]
- allocate_slab+0x320/0x12c0 mm/slub.c:2579
- new_slab mm/slub.c:2632 [inline]
- ___slab_alloc+0x12ef/0x35e0 mm/slub.c:3819
- __slab_alloc mm/slub.c:3909 [inline]
- __slab_alloc_node mm/slub.c:3962 [inline]
- slab_alloc_node mm/slub.c:4123 [inline]
- kmem_cache_alloc_noprof+0x57a/0xb20 mm/slub.c:4142
- skb_clone+0x303/0x550 net/core/skbuff.c:2084
- dev_queue_xmit_nit+0x4d0/0x12a0 net/core/dev.c:2315
- xmit_one net/core/dev.c:3584 [inline]
- dev_hard_start_xmit+0x17d/0xa20 net/core/dev.c:3604
- __dev_queue_xmit+0x3576/0x55e0 net/core/dev.c:4424
- dev_queue_xmit include/linux/netdevice.h:3094 [inline]
- neigh_connected_output+0x5a0/0x690 net/core/neighbour.c:1594
- neigh_output include/net/neighbour.h:542 [inline]
- ip6_finish_output2+0x2347/0x2ba0 net/ipv6/ip6_output.c:141
- __ip6_finish_output net/ipv6/ip6_output.c:215 [inline]
- ip6_finish_output+0xbb8/0x14b0 net/ipv6/ip6_output.c:226
- NF_HOOK_COND include/linux/netfilter.h:303 [inline]
- ip6_output+0x356/0x620 net/ipv6/ip6_output.c:247
- dst_output include/net/dst.h:450 [inline]
- NF_HOOK include/linux/netfilter.h:314 [inline]
- ndisc_send_skb+0xb9f/0x14c0 net/ipv6/ndisc.c:511
- ndisc_send_rs+0x97e/0xae0 net/ipv6/ndisc.c:721
- addrconf_rs_timer+0x488/0x6f0 net/ipv6/addrconf.c:4042
- call_timer_fn+0x49/0x580 kernel/time/timer.c:1794
- expire_timers kernel/time/timer.c:1845 [inline]
- __run_timers kernel/time/timer.c:2419 [inline]
- __run_timer_base+0x84e/0xe90 kernel/time/timer.c:2430
- run_timer_base kernel/time/timer.c:2439 [inline]
- run_timer_softirq+0x3a/0x70 kernel/time/timer.c:2449
- handle_softirqs+0x1a0/0x7c0 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0x68/0x120 kernel/softirq.c:637
- irq_exit_rcu+0x12/0x20 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1037 [inline]
- sysvec_apic_timer_interrupt+0x83/0x90 arch/x86/kernel/apic/apic.c:1037
- asm_sysvec_apic_timer_interrupt+0x1f/0x30 arch/x86/include/asm/idtentry.h:702
+231.577098][ T6447] loop0: detected capacity change from 0 to 32768
+[  231.590389][ T6447] XFS (loop0): Mounting V5 Filesystem bfdc47fc-10d8-4eed-a562-11a831b3f791
+[  231.642021][ T6447] XFS (loop0): Ending clean mount
+[  231.713195][ T6447] loop0: detected capacity change from 32768 to 0
+[  231.727969][ T6467] xfsaild/loop0: attempt to access beyond end of device
+[  231.727969][ T6467] loop0: rw=4097, sector=2, nr_sectors = 1 limit=0
+[  231.742236][ T6467] xfsaild/loop0: attempt to access beyond end of device
+[  231.742236][ T6467] loop0: rw=4097, sector=12, nr_sectors = 4 limit=0
+....
 
-CPU: 0 UID: 0 PID: 7385 Comm: syz.1.489 Tainted: G        W          6.11.0-syzkaller-04744-gbdf56c7580d2 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-=====================================================
+The loop dev changes size about 700ms afte the mount, and the log IO
+has already completed. Hence the next IOs are from the user driven
+shutdown (not sure where that is coming from - nothing in syzbot
+logs, and no C reproducer was provided) freezing the device before
+shutting down the filesystem. These error out, but don't cause a
+shutdown because the default XFS config for async metadata writeback
+failures is "retry forever":
 
+.....
+[  231.849797][   T52] kworker/1:1: attempt to access beyond end of device
+[  231.849797][   T52] loop0: rw=4097, sector=18560, nr_sectors = 64 limit=0
+[  231.933061][ T6467] XFS (loop0): Failing async write on buffer block 0x2. Retrying async write.
+[  231.942187][ T6467] XFS (loop0): Failing async write on buffer block 0x10. Retrying async write.
+[  231.951196][ T6467] XFS (loop0): Failing async write on buffer block 0xc. Retrying async write.
+[  231.960108][ T6467] xfsaild/loop0: attempt to access beyond end of device
+[  231.960108][ T6467] loop0: rw=4097, sector=2, nr_sectors = 1 limit=0
+[  231.973536][ T6467] xfsaild/loop0: attempt to access beyond end of device
+[  231.973536][ T6467] loop0: rw=4097, sector=12, nr_sectors = 4 limit=0
+[  232.053094][ T6467] XFS (loop0): Failing async write on buffer block 0x2. Retrying async write.
+[  232.061978][ T6467] XFS (loop0): Failing async write on buffer block 0x10. Retrying async write.
+[  232.070960][ T6467] XFS (loop0): Failing async write on buffer block 0xc. Retrying async write.
+[  232.143152][ T6467] XFS (loop0): Failing async write on buffer block 0x2. Retrying async write.
+[  232.152027][ T6467] XFS (loop0): Failing async write on buffer block 0x10. Retrying async write.
+.....
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+And so the user driven shutdown hangs at this point waiting for
+metadata to flush.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+This is expected behaviour. If the user wants metadata writes to
+fail immediately in this situation, then they need to do:
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+# echo 1 > /sys/fs/xfs/<dev>/error/metadata/EIO/max_retries
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+So on IO error the writeback code will only retry once before
+failing and shutting down the filesystem immediately.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+So, no bug here, just syzbot not understanding how metadata IO
+errors are handled by different filesystems. Hence:
 
-If you want to undo deduplication, reply with:
-#syz undup
+#syz invalid
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
