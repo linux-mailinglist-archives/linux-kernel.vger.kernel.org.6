@@ -1,237 +1,167 @@
-Return-Path: <linux-kernel+bounces-335338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113AE97E445
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:55:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E5D497E446
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D322BB20D8B
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:55:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1BF61F2157E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588C281AC1;
-	Sun, 22 Sep 2024 23:55:45 +0000 (UTC)
-Received: from out28-85.mail.aliyun.com (out28-85.mail.aliyun.com [115.124.28.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299BC78C8B;
+	Sun, 22 Sep 2024 23:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WC+ievag"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85C242042;
-	Sun, 22 Sep 2024 23:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1518C7E1
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 23:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727049344; cv=none; b=t/AOj/vZy0w+PpDgggbWdLFNc5tm2zLeC8eWhnI1B4aGZhWXEksqDp2MeYHaIQFDIpCqnBXUuEdeBMES2T2SmcxurbELkIIt8IztZlYRK/jpCNJHVJgLm1JPUVOl16bEgDSr+TQDgRMOv0Z0kPAvK21oDySZyodAOMRVADyuDHw=
+	t=1727049460; cv=none; b=Bqnih3v0BIHhtClQkz9zXIJYfLbn60hyTo6s2OWXPoCCkMbgSSJQWwYt6L1/o6DBxvr147i1g58ZfkBX980PT71bHttNc5u6mrI7aOeXXf1Jw3aSIMJ75qcTmr4yBqNefBCOIBEndafte1nce3ZDKhRcSWXMR4KD95pSkbj9YBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727049344; c=relaxed/simple;
-	bh=V6gp0Uk7RbpnyDUOqVK5X6HdHQDAce7AF24wSEJbj+M=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:Message-Id:
-	 MIME-Version:Content-Type; b=sKPbWOLMpadbgpL2xp117NKVIgXI05AIxMEsa0p4gg5KQ2eQhAckV+t5O8pUQ9jU2vWNrI7+p2GGbDgXTawqLB/Ko7DCHmRJR8BqzVUmUnmVfp0agzCrNgrVSS56cnvh7AgJXlB9i6tZJLcfZcMQyp3uZon7PLTNj9KrE+ZfFn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e16-tech.com; spf=pass smtp.mailfrom=e16-tech.com; arc=none smtp.client-ip=115.124.28.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e16-tech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e16-tech.com
-Received: from 192.168.2.112(mailfrom:wangyugui@e16-tech.com fp:SMTPD_---.ZQEkZnP_1727049328)
-          by smtp.aliyun-inc.com;
-          Mon, 23 Sep 2024 07:55:29 +0800
-Date: Mon, 23 Sep 2024 07:55:29 +0800
-From: Wang Yugui <wangyugui@e16-tech.com>
-To: James Young <pronoiac@gmail.com>
-Subject: Re: [REGRESSION] Corruption on cifs / smb write on ARM, kernels 6.3-6.9
-Cc: pronoiac+kernel@gmail.com,
- stable@vger.kernel.org,
- regressions@lists.linux.dev,
- linux-cifs@vger.kernel.org,
- David Howells <dhowells@redhat.com>,
- linux-kernel@vger.kernel.org,
- Steve French <sfrench@samba.org>
-In-Reply-To: <DFC1DAC5-5C6C-4DC2-807A-DAF12E4B7882@gmail.com>
-References: <DFC1DAC5-5C6C-4DC2-807A-DAF12E4B7882@gmail.com>
-Message-Id: <20240923075527.3B9A.409509F4@e16-tech.com>
+	s=arc-20240116; t=1727049460; c=relaxed/simple;
+	bh=CAD1Nttxi1tuaZ4G5Nuq1uTbsGqc46vm2EtT7QAKfXg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MnUukLrPp8ZGOyvZKKsE4jjHQgYcn+Ml9q+cWseLElEUwuewMcG5FHlzKI3+nOq3bKz3IjoECdc/O++aKCgWCSICEDz122cUaWwpoHepKHf+J91ZMLhtoWIxS+g8Lxu36QS6wDTUZLJFAu8feI7YA5NWby3aczPNBZV0Cs/lrWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WC+ievag; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5011f85bca0so1153796e0c.0
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 16:57:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727049458; x=1727654258; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CAD1Nttxi1tuaZ4G5Nuq1uTbsGqc46vm2EtT7QAKfXg=;
+        b=WC+ievagM+dA+ni02oS3qBu0dY+k0x0kJnBAkUnJZE23sEsXcSdEVYemY0y9mYJhqO
+         vmRETFvOsnTeA1l4uEBzLZy+7U7tHZY75TM4iGtldpiSAdb7iRxkdrGXsxrVL7EPWQCt
+         D2qMIaF7SBeIU6cGSNhDRcMLTLULE5NAdQq/a6ESc5zcpopMkq4UjBJfFyyCw+U9DjMl
+         MBoFWJRRyD1SrY85z7yGCTy4t1mRkFSoCpqT2yWbmo0JxclVgQGFv8FFrP6RUcTycoq1
+         ooXDcoIGKrwhSa2q80+bEStZ9Rmh0icuBD//VbW/sot5GLeiqeicLQ89O7oOUdqOb/bE
+         L3jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727049458; x=1727654258;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CAD1Nttxi1tuaZ4G5Nuq1uTbsGqc46vm2EtT7QAKfXg=;
+        b=tX4otMto7YAbDHKzcEuQtcXZbhpXG0ZYFg8EMR4AX56RhyKSy+7/y9yWEPVmC+urZA
+         VOlVQ1Y0GgSOpu+L5/7ndAYzDkBP0hUelci5M2ZxZW8OgLEBIz5ZMriR2hUu/xJxpYVp
+         4WA7z9Hvmah0nkcAE7mgFwzebEbt9TNgo0eCXSY3pYg/5EPhgiuGNT0OycAzcWAeOngX
+         mu0Nt0Lx8Dy77/UaEaNaKnIGOyCt5QSs97u2ERRJ4atl/DWrIA/bA2b4l9sWF0hWDQe2
+         T71kU0k+CfWmH34yA7U36dngYEn9Wutv13QHtHqWcfVBE1oHEUxAkTIPEsE5NyIKSJVj
+         MO6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVxbtFaFbM2wy2evbv1//I0ULL1a7wbee1xxU3PST3LD3Od7wT0B/hnXH4j8UNQmZfEQ43hfypXj3uu/uc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTuGKJy5wPT01DVuGkQUDASW1pdELgD4lxmP90bFWmTf12XH7g
+	zSPVT5OwHtY3ZoV44h2ynsp4J9MCyf2DIEvRY2fWbVzrOHSSnnjujb4PybjwMwoxBqx6/Jwv0kg
+	1SbXD2zgK/amH1fqj3CgX0iRjxcw=
+X-Google-Smtp-Source: AGHT+IEqkLE6FvrpXESDtzTTE4utfGcHu21lxH/e6PT9sOSdS7qUrgSqHOXjoAZkp2rkESz9wImJXQXD6+nyNnhGbaY=
+X-Received: by 2002:a05:6122:1826:b0:502:6d58:4501 with SMTP id
+ 71dfb90a1353d-503e03c1293mr5952762e0c.2.1727049457758; Sun, 22 Sep 2024
+ 16:57:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="GB2312"
-Content-Transfer-Encoding: 8bit
-X-Mailer: Becky! ver. 2.81.07 [en]
+References: <20240821074541.516249-1-hanchuanhua@oppo.com> <20240821074541.516249-3-hanchuanhua@oppo.com>
+ <CAMgjq7BpOqgKoeQEPCL9ai3dvVPv7wJe3k_g1hDjAVeCLpZ=7w@mail.gmail.com>
+ <CAJD7tka+ZONNFKw=1FM22b-JTPkiKZaKuM3Upyu6pf4=vN_CRg@mail.gmail.com>
+ <20240903130757.f584c73f356c03617a2c8804@linux-foundation.org>
+ <CAGsJ_4wjgPS1Pj_RbLcpXH3dx2StCdSiUo5AL7vQFPZGyzESAQ@mail.gmail.com>
+ <CAJD7tkaXvm95mRH04OX0KJtiBuTaaDyyJQirbAjUV0B+DjaWJA@mail.gmail.com>
+ <94eb70cd-b508-42ef-b5d2-acc29e22eb0e@gmail.com> <CAGsJ_4yX7xmyDokYgc_H7MaxcOptcLeQs-SB1O22bSRHFdvVhQ@mail.gmail.com>
+ <bf232555-3653-40c7-bbdc-a8fe58a93a9e@gmail.com> <CAJD7tkYu2v2VnMizVeOTHTNXXbdnd+UqaKhTRfrTC7THUiPPdA@mail.gmail.com>
+In-Reply-To: <CAJD7tkYu2v2VnMizVeOTHTNXXbdnd+UqaKhTRfrTC7THUiPPdA@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 23 Sep 2024 07:57:25 +0800
+Message-ID: <CAGsJ_4wd=6kuwg7v=_ARb+Ay15M8SU776Vjb4rmtiVp8vQg-qA@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] mm: support large folios swap-in for sync io devices
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Usama Arif <usamaarif642@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Kairui Song <ryncsn@gmail.com>, hanchuanhua@oppo.com, linux-mm@kvack.org, 
+	baolin.wang@linux.alibaba.com, chrisl@kernel.org, david@redhat.com, 
+	hannes@cmpxchg.org, hughd@google.com, kaleshsingh@google.com, 
+	linux-kernel@vger.kernel.org, mhocko@suse.com, minchan@kernel.org, 
+	nphamcs@gmail.com, ryan.roberts@arm.com, senozhatsky@chromium.org, 
+	shakeel.butt@linux.dev, shy828301@gmail.com, surenb@google.com, 
+	v-songbaohua@oppo.com, willy@infradead.org, xiang@kernel.org, 
+	ying.huang@intel.com, hch@infradead.org, Hailong Liu <hailong.liu@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, Sep 5, 2024 at 7:36=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com> =
+wrote:
+>
+> [..]
+> > >
+> > > On the other hand, if you read the code of zRAM, you will find zRAM h=
+as
+> > > exactly the same mechanism as zeromap but zRAM can even do more
+> > > by same_pages filled. since zRAM does the job in swapfile layer, ther=
+e
+> > > is no this kind of consistency issue like zeromap.
+> > >
+> > > So I feel for zRAM case, we don't need zeromap at all as there are du=
+plicated
+> > > efforts while I really appreciate your job which can benefit all swap=
+files.
+> > > i mean, zRAM has the ability to check "zero"(and also non-zero but sa=
+me
+> > > content). after zeromap checks zeromap, zRAM will check again:
+> > >
+> >
+> > Yes, so there is a reason for having the zeromap patches, which I have =
+outlined
+> > in the coverletter.
+> >
+> > https://lore.kernel.org/all/20240627105730.3110705-1-usamaarif642@gmail=
+.com/
+> >
+> > There are usecases where zswap/zram might not be used in production.
+> > We can reduce I/O and flash wear in those cases by a large amount.
+> >
+> > Also running in Meta production, we found that the number of non-zero f=
+illed
+> > complete pages were less than 1%, so essentially its only the zero-fill=
+ed pages
+> > that matter.
+> >
+> > I believe after zeromap, it might be a good idea to remove the page_sam=
+e_filled
+> > check from zram code? Its not really a problem if its kept as well as I=
+ dont
+> > believe any zero-filled pages should reach zram_write_page?
+>
+> I brought this up before and Sergey pointed out that zram is sometimes
+> used as a block device without swap, and that use case would benefit
+> from having this handling in zram. That being said, I have no idea how
+> many people care about this specific scenario.
 
-> I was benchmarking some compressors, piping to and from a network share on a NAS, and some consistently wrote corrupted data.
-> 
-> 
-> First, apologies in advance:
-> * if I'm not in the right place. I tried to follow the directions from the Regressions guide - https://www.kernel.org/doc/html/latest/admin-guide/reporting-regressions.html
-> * I know there's a ton of context I don't know
-> * I¡¯m trying a different mail app, because the first one looked concussed with plain text. This might be worse.
-> 
-> 
-> The detailed description:
-> I was benchmarking some compressors on Debian on a Raspberry Pi, piping to and from a network share on a NAS, and found that some consistently had issues writing to my NAS. Specifically:
-> * lzop
-> * pigz - parallel gzip
-> * pbzip2 - parallel bzip2
-> 
-> This is dependent on kernel version. I've done a survey, below.
-> 
-> While I tripped over the issue on a Debian port (Debian 12, bookworm, kernel v6.6), I compiled my own vanilla / mainline kernels for testing and reporting this.
-> 
-> 
-> Even more details:
-> The Pi and the Synology NAS are directly connected by Gigabit Ethernet. Both sides are using self-assigned IP addresses. I'll note that at boot, getting the Pi to see the NAS requires some nudging of avahi-autoipd; while I think it's stable before testing, I'm not positive, and reconnection issues might be in play.
-> 
-> The files in question are tars of sparse file systems, about 270 gig, compressing down to 10-30 gig.
-> 
-> Compression seems to work, without complaint; decompression crashes the process, usually within the first gig of the compressed file. The output of the stream doesn't match what ends up written to disk.
-> 
-> Trying decompression during compression gets further along than it does after compression finishes; this might point toward something with writes and caches.
-> 
-> A previous attempt involved rpi-update, which:
-> * good: let me install kernels without building myself
-> * bad: updated the bootloader and firmware, to bleeding edge, with possible regressions; it definitely muddied the results of my tests
-> I started over with a fresh install, and no results involving rpi-update are included in this email.
-> 
-> 
-> A survey of major branches:
-> * 5.15.167, LTS - good
-> * 6.1.109, LTS - good
-> * 6.2.16 - good
-> * 6.3.13 - bad
-> * 6.4.16 - bad
-> * 6.5.13 - bad
-> * 6.6.50, LTS - bad
-> * 6.7.12 - bad
-> * 6.8.12 - bad
-> * 6.9.12 - bad
-> * 6.10.9 - good
-> * 6.11.0 - good
-> 
-> I tried, but couldn't fully build 4.19.322 or 6.0.19, due to issues with modules.
-> 
-> 
-> Important commits:
-> It looked like both the breakage and the fix came in during rc1 releases.
-> 
-> Breakage, v6.3-rc1:
-> I manually bisected commits in fs/smb* and fs/cifs.
-> 
-> 3d78fe73fa12 cifs: Build the RDMA SGE list directly from an iterator
-> > lzop and pigz worked. last working. test in progress: pbzip2
-> 
-> 607aea3cc2a8 cifs: Remove unused code
-> > lzop didn't work. first broken
-> 
-> 
-> Fix, v6.10-rc1:
-> I manually bisected commits in fs/smb.
-> 
-> 69c3c023af25 cifs: Implement netfslib hooks
-> > lzop didn't work. last broken one
-> 
-> 3ee1a1fc3981 cifs: Cut over to using netfslib
-> > lzop, pigz, pbzip2, all worked. first fixed one
-> 
-> 
-> To test / reproduce:
-> It looks like this, on a mounted network share, with extra pv for progress meters:
-> 
-> cat 1tb-rust-ext4.img.tar.gz | \
->   gzip -d | \
->   lzop -1 > \
->   1tb-rust-ext4.img.tar.lzop
->   # wait 40 minutes
-> 
-> cat 1tb-rust-ext4.img.tar.lzop | \
->   lzop -d | \
->   sha1sum
->   # either it works, and shows the right checksum
->   # or it crashes early, due to a corrupt file, and shows an incorrect checksum
-> 
-> As I re-read this, I realize it might look like the compressor behaves differently. I added a "tee $output | sha1sum; sha1sum $output" and ran it on a broken version. The checksums from the pipe and for the file on disk are different.
-> 
-> 
-> Assorted info:
-> This is a Raspberry Pi 4, with 4 GiB RAM, running Debian 12, bookworm, or a port.
-> 
-> mount.cifs version: 7.0
-> 
-> # cat /proc/sys/kernel/tainted
-> 1024
-> 
-> # cat /proc/version
-> Linux version 6.2.0-3d78fe73f-v8-pronoiac+ (pronoiac@bisect) (gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40) #21 SMP PREEMPT Thu Sep 19 16:51:22 PDT 2024
-> 
-> 
-> DebugData: 
-> /proc/fs/cifs/DebugData
-> Display Internal CIFS Data Structures for Debugging
-> ---------------------------------------------------
-> CIFS Version 2.41
-> Features: DFS,FSCACHE,STATS2,DEBUG,ALLOW_INSECURE_LEGACY,CIFS_POSIX,UPCALL(SPNEGO),XATTR,ACL
-> CIFSMaxBufSize: 16384
-> Active VFS Requests: 1
-> 
-> Servers:
-> 1) ConnectionId: 0x1 Hostname: drums.local
-> Number of credits: 8062 Dialect 0x300
-> TCP status: 1 Instance: 1
-> Local Users To Server: 1 SecMode: 0x1 Req On Wire: 2
-> In Send: 1 In MaxReq Wait: 0
-> 
->         Sessions:
->         1) Address: 169.254.132.219 Uses: 1 Capability: 0x300047        Session Status: 1
->         Security type: RawNTLMSSP  SessionId: 0x4969841e
->         User: 1000 Cred User: 0
-> 
->         Shares:
->         0) IPC: \\drums.local\IPC$ Mounts: 1 DevInfo: 0x0 Attributes: 0x0
->         PathComponentMax: 0 Status: 1 type: 0 Serial Number: 0x0
->         Share Capabilities: None        Share Flags: 0x0
->         tid: 0xeb093f0b Maximal Access: 0x1f00a9
-> 
->         1) \\drums.local\billions Mounts: 1 DevInfo: 0x20 Attributes: 0x5007f
->         PathComponentMax: 255 Status: 1 type: DISK Serial Number: 0x735a9af5
->         Share Capabilities: None Aligned, Partition Aligned,    Share Flags: 0x0
->         tid: 0x5e6832e6 Optimal sector size: 0x200      Maximal Access: 0x1f01ff
-> 
-> 
->         MIDs:
->         State: 2 com: 9 pid: 3117 cbdata: 00000000e003293e mid 962892
-> 
->         State: 2 com: 9 pid: 3117 cbdata: 000000002610602a mid 962956
-> 
-> --
-> 
-> 
-> 
-> Let me know how I can help.
-> The process of iterating can take hours, and it's not automated, so my resources are limited.
-> 
-> #regzbot introduced: 607aea3cc2a8
-> #regzbot fix: 3ee1a1fc3981
+Hi Usama/Yosry,
 
-I checked 607aea3cc2a8, it just removed some code in #if 0 ... #endif.
-so this regression is not introduced in 607aea3cc2a8,  but the reproduce
-frequency is changed here.
+We successfully gathered page_same_filled data for zram on Android.
+Interestingly,
+our findings differ from yours on zswap.
 
+Hailong discovered that around 85-86% of the page_same_filled data
+consists of zeros,
+while about 15% are non-zero. We suspect that on Android or similar
+systems, some
+graphics or media data might be duplicated at times, such as a red
+block displayed
+on the screen.
 
-Another issue in 6.6.y maybe related
-https://lore.kernel.org/linux-fsdevel/9e8f8872-f51b-4a09-a92c-49218748dd62@meta.com/T/
+Does this suggest that page_same_filled could still provide some
+benefits in zram
+cases?
 
-Do this regression still happen after the following patches are applied?
-
-a60cc288a1a2 :Luis Chamberlain: test_xarray: add tests for advanced multi-index use
-a08c7193e4f1 :Sidhartha Kumar: mm/filemap: remove hugetlb special casing in filemap.c
-6212eb4d7a63 :Hongbo Li: mm/filemap: avoid type conversion
-
-de60fd8ddeda :Kairui Song: mm/filemap: return early if failed to allocate memory for split
-b2ebcf9d3d5a :Kairui Song: mm/filemap: clean up hugetlb exclusion code
-a4864671ca0b :Kairui Song: lib/xarray: introduce a new helper xas_get_order
-6758c1128ceb :Kairui Song: mm/filemap: optimize filemap folio adding
-
-
-Best Regards
-Wang Yugui (wangyugui@e16-tech.com)
-2024/09/23
-
+Thanks
+Barry
 
