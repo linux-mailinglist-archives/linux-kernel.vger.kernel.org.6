@@ -1,158 +1,177 @@
-Return-Path: <linux-kernel+bounces-335104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A1097E114
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 13:19:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7C797E109
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 13:12:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74AEE2813E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 11:19:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F6882812E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 11:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5A7193065;
-	Sun, 22 Sep 2024 11:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECD9156F2B;
+	Sun, 22 Sep 2024 11:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dk8l3LTs"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UGj59EG/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D753B15350D
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 11:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B6C7DA7D
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 11:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727003973; cv=none; b=nNCACbIt18L2+9kqgwgF9fv9TaU+bmV9dj1sxj7+OS56GXC688AmENUFhA2Kc+nl4mSr7JJofATxUu2y4dwu3bPtzLBXu1KiUdMYhujdUVTYIv8cPVe7SUP7TqzrWeanmHjEV35xFJS+Gmn9LOk2cC4dBx/w+VGNC5kg49Q4pqE=
+	t=1727003520; cv=none; b=J/m+HqaUfM3czjcvg0EXw7z0EHN99DzXJqTeUfu4IH5hfuKwl0KOc46A9kJLBAcuh+0fBloyiEgxqg/WCsUyPHfuujXAELS/tMSuuxcb2DdCOlwTGm8X2/J8iYSw2or9aTFZmsyr8dXi1v51x3Jg2liz7rhqlkNdx0xDrZCP0SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727003973; c=relaxed/simple;
-	bh=VGN0VKXEhkV8GBwMmdoKpsclTqZfTlhDFlwjz/lH6TA=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=U/nxSOKu/yM2I0om9jRLhq+vze8jucrmVrbUgmdgytRWaVAuRvEGmRUcJovgHwVo362RREmUO2+9aaSFIeY7gbB05wU12VNRI7SSn65I7iCNMocqjqbGShRPjfKoLHBvcg5iJV122fnjYlw7J3GTEXNHVy8JLK6PKN+kl6OOGGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dk8l3LTs; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71781f42f75so3323341b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 04:19:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727003970; x=1727608770; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0XGOYj44mxYlAIPacdVz2Xqqf2VHJVuoXCavyaxAiLM=;
-        b=dk8l3LTsC1lnUQ9HNE82WExVI2FzQIpT+hwstJCquNvf+MkMgJtxdF2qbpEPEcQk8R
-         Qo6uJUe+crYIagneOweYHpppypF8szTnsG1HqNSxS0HLHWcpFntAchE14XOlJsspJZZp
-         i6HStajgZCMVSPexLkxkmdYlL/gRUd8CgI4RfKtlIoIELmuYYxn2yzu7Iw2r5xnEJcmb
-         ISMlsnM0dE34KHiOjW0H7q4V9FlopwMYGqpvHbwkY6sNs7+ha4ThnDQSwn3ird1FOGi0
-         XCyAroF9N6ldGS7fyXlxeMWFqZmqSQ1rkjx2uIXQLZG6dcovTQXsUPPF/FopMTq3raAF
-         L3CQ==
+	s=arc-20240116; t=1727003520; c=relaxed/simple;
+	bh=Zm62jqP31LLEV8eAvtyRXUOqY22kE1R2CJ8Uc28Ijd8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ERyKq3yLkNXfuvTeXWg8WyXrt+ZPXehtJzFobGAPEHvdKBNALA6B+zJn5swnlRxN3MZ6xxt31SBABLSfmQSlUQRvZ3u1lVMEXFBDo9fd7aqGXB+fUiJuKbpd4Ce0gS6bt4sjeP4e89kbfs5Ue8RsjunKZFerlP+rppzCIcQMj14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UGj59EG/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727003516;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g3ZBnZpol239OQHpIN/pJOeGZb3vp6k4LhbA2BN3D44=;
+	b=UGj59EG/SKY7wcJTMrX3Brgqq1+4Sq8XN1UZL2B92FntNoB9M9r2mloiwQHp1agGwnotOi
+	Nt9KegIwJ4vfrEHt4C/kuTJrJ/IytZ+IgGJm1tYgeBW5vFsKDciu6uwMMMgd4qNI87vP6L
+	eZJbiMsHgtVZhFHh+JDB93Gti6FUxf0=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-423-J2eoDMmVMamzfhRoWRnLIA-1; Sun, 22 Sep 2024 07:11:53 -0400
+X-MC-Unique: J2eoDMmVMamzfhRoWRnLIA-1
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5c25e0a50bfso2295361a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 04:11:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727003970; x=1727608770;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
+        d=1e100.net; s=20230601; t=1727003512; x=1727608312;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0XGOYj44mxYlAIPacdVz2Xqqf2VHJVuoXCavyaxAiLM=;
-        b=w0CfC2Cf8f6EnqSSJJo/8Xgh1Vspv3yDJ6xuQli9uaVpifA2AXpIjYJlJdOOY0C3UO
-         wW+nCKDEIMwH22qKaoKzvxnov9rwdEUkBPQYiji4wakjyGTYXMG06WlniTXWbu8+jLkL
-         Ox9PIcq4T3XeIelfimht83OPe4BePyEXzywhpULgZf3GuiKpNZsjj4e5GDzQvD53O4rR
-         6DYQrG6ksWSum5t2TDTJzDpsvsGYCskTSAhHivmxXedT3gu7PfSeMQckMi/kfhXjS5Ex
-         eZLJ7y2gKg6+Up1g2/5ueUsCxhzOuHnNUAW8SIYZG8DT9Y93IT2YZUgDdiX98TKqp4l7
-         lVQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcJaa+CuTbLvb8ZRfzKGofCA/+4kFwiLHxVe13+9b4imp36KHH4hInMCl/Qy8z0UaIeDCPslc0zsVbl6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZv5WTRTgCWMBudVrSFPZe+SDdVT5PZIJx/0O+5HknaWYPF4xk
-	XZX2kh53oCgC1LJxFUG1+icxAAfGMOVuf1aUNwvVoi/Ma2doBZyP
-X-Google-Smtp-Source: AGHT+IEarJPEGCPBYFymlyfwJIi6kol8+OpmLQWTv1Xlfmdw6aA8QyOeHPPTb+TJxBDxV5NMZGWPRg==
-X-Received: by 2002:a05:6a00:4b0c:b0:717:8deb:c195 with SMTP id d2e1a72fcca58-7199ce0c432mr12177581b3a.21.1727003970167;
-        Sun, 22 Sep 2024 04:19:30 -0700 (PDT)
-Received: from dw-tp ([171.76.87.135])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944a974dcsm12412341b3a.32.2024.09.22.04.19.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 04:19:29 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Luming Yu <luming.yu@shingroup.cn>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, jialong.yang@shingroup.cn, luming.yu@gmail.com
-Cc: Luming Yu <luming.yu@shingroup.cn>
-Subject: Re: [RFC PATCH] powerpc/tlb: enable arch want batched unmap tlb flush
-In-Reply-To: <9BC3D1299ECE8428+20240918092515.2121-2-luming.yu@shingroup.cn>
-Date: Sun, 22 Sep 2024 16:39:53 +0530
-Message-ID: <87frpsymf2.fsf@gmail.com>
-References: <9BC3D1299ECE8428+20240918092515.2121-2-luming.yu@shingroup.cn>
+        bh=g3ZBnZpol239OQHpIN/pJOeGZb3vp6k4LhbA2BN3D44=;
+        b=eHcegW7MyT6COIaicO8n2LesZDJ5rF8avBtEMSyg0WQ0/4dYFacfzJGPo12m2RVFjR
+         XpdxZ4Xcoi8qkMRdmsaYU2F5uiH+iJ9WFdNxGC4oAzJ0zIb1yOunswrqCGtTsnoRCnis
+         sXcdyDnkDIQTWlkIvT7j8Sv+dDde4RxFoyFojoNEYYa4+ZQN73cp4Y3od/U65WMdTsGD
+         DOJu3BH/z2Top8nhU0LTA9hI0HvW10U7zvAIBKC92zAZyGONeXDZg/0A7hqWx09AQFyZ
+         fqopqcOqATTZw1+Z3Gj8SC4fWDA8OlLcxOT7W71qvysewT9TbVmSQqv7yuwv8GW/cLrC
+         yH1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUk/eeQKCvLLaExOUt1afdnQ3z5JAPEDxQi9PRgXL3o8w7CDq10TwX7U/1rNVy2GIV36gYGOx+q/iL6m0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFq80RutA8ZOq6YHqhqiiioHAS2J+rZrCjmIs97zviWRiBrfLI
+	0yEMG2+VOVX9XeOvWdsimqYVw/H/zPGuDYj1MtUjZMaUU0cc6O7rtMebgWMbTVIlFTm9Y5rGh9w
+	NiK7tq/PsDrBglR6b0AxBVCGMb2KdfbECPpZsnnjEWnOD4r9gvgZGaqx05Box4w==
+X-Received: by 2002:a05:6402:3483:b0:5b9:df62:15cd with SMTP id 4fb4d7f45d1cf-5c464a7cb46mr6531226a12.32.1727003511751;
+        Sun, 22 Sep 2024 04:11:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE5M48FaOWEpZJt4RV/5sAmb77W7F27nxy3AkRbG2aRvqpsuzvbNrDF+cJStQAyjxOd/XY6uA==
+X-Received: by 2002:a05:6402:3483:b0:5b9:df62:15cd with SMTP id 4fb4d7f45d1cf-5c464a7cb46mr6531202a12.32.1727003511353;
+        Sun, 22 Sep 2024 04:11:51 -0700 (PDT)
+Received: from [10.101.3.85] (ip-185-104-138-99.ptr.icomera.net. [185.104.138.99])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb94a01sm9020655a12.91.2024.09.22.04.11.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Sep 2024 04:11:50 -0700 (PDT)
+Message-ID: <a90d08d5-265a-4ba2-99f9-68fa18960b27@redhat.com>
+Date: Sun, 22 Sep 2024 13:11:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] drm: panel-orientation-quirks: Add quirk for AYA NEO
+ 2 model
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ tjakobi@math.uni-bielefeld.de
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ =?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>,
+ Denis Benato <benato.denis96@gmail.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1726492131.git.tjakobi@math.uni-bielefeld.de>
+ <2b35545b77a9fd8c9699b751ca282226dcecb1dd.1726492131.git.tjakobi@math.uni-bielefeld.de>
+ <gnllphvuffajfbh3aczda5z7t3ytjexf5a6wuuzsz6pla6e2kz@m564uc2ogn4q>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <gnllphvuffajfbh3aczda5z7t3ytjexf5a6wuuzsz6pla6e2kz@m564uc2ogn4q>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Luming Yu <luming.yu@shingroup.cn> writes:
+Hi,
 
-> From: Yu Luming <luming.yu@gmail.com>
->
-> ppc always do its own tracking for batch tlb. By trivially enabling
-> the ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH in ppc, ppc arch can re-use
-> common code in rmap and reduce overhead and do optimization it could not
-> have without a tlb flushing context at low architecture level.
+On 21-Sep-24 10:02 PM, Dmitry Baryshkov wrote:
+> On Mon, Sep 16, 2024 at 03:18:51PM GMT, tjakobi@math.uni-bielefeld.de wrote:
+>> From: Joaquín Ignacio Aramendía <samsagax@gmail.com>
+>>
+>> Add quirk orientation for AYA NEO 2. The name appears without spaces in
+>> DMI strings. That made it difficult to reuse the 2021 match. Also the
+>> display is larger in resolution.
+>>
+>> Tested by the JELOS team that has been patching their own kernel for a
+>> while now and confirmed by users in the AYA NEO and ChimeraOS discord
+>> servers.
+>>
+>> Signed-off-by: Joaquín Ignacio Aramendía <samsagax@gmail.com>
+>> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+>> ---
+>>  drivers/gpu/drm/drm_panel_orientation_quirks.c | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+>> index 2166208a961d..3044927c0c5c 100644
+>> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
+>> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+>> @@ -184,6 +184,12 @@ static const struct dmi_system_id orientation_data[] = {
+>>  		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "T103HAF"),
+>>  		},
+>>  		.driver_data = (void *)&lcd800x1280_rightside_up,
+>> +	}, {	/* AYA NEO AYANEO 2 */
+>> +		.matches = {
+>> +		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AYANEO"),
+>> +		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "AYANEO 2"),
+>> +		},
+>> +		.driver_data = (void *)&lcd1200x1920_rightside_up,
+> 
+> I thought that AYANEO should come after AYADEVICE, but the array doesn't
+> seem really sorted
 
-I looked at this patch and other than the compile failure, this patch
-still won't optimize anything. The idea of this config is that we want
-to batch all the tlb flush operation at the end. By returning false from
-should_defer_flush() (in this patch), we are saying we cannot defer
-the flush and hence we do tlb flush in the same context of unmap.
+It is sorted but it is sorted by the Vendor - Model in the comments,
+not by the DMI strings since sometimes those are e.g. "SYS_VENDOR",
+"Default String" and stuff like that.
 
-Anyway, I took a quick look at ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
-and I have a quick PoC for the same. I will soon post it.
+The entire series looks good to me:
 
--ritesh
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
->
-> Signed-off-by: Luming Yu <luming.yu@shingroup.cn>
-> ---
->  arch/powerpc/Kconfig                |  1 +
->  arch/powerpc/include/asm/tlbbatch.h | 30 +++++++++++++++++++++++++++++
->  2 files changed, 31 insertions(+)
->  create mode 100644 arch/powerpc/include/asm/tlbbatch.h
->
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index e94e7e4bfd40..e6db84dd014a 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -175,6 +175,7 @@ config PPC
->  	select ARCH_WANT_IPC_PARSE_VERSION
->  	select ARCH_WANT_IRQS_OFF_ACTIVATE_MM
->  	select ARCH_WANT_LD_ORPHAN_WARN
-> +	select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
->  	select ARCH_WANT_OPTIMIZE_DAX_VMEMMAP	if PPC_RADIX_MMU
->  	select ARCH_WANTS_MODULES_DATA_IN_VMALLOC	if PPC_BOOK3S_32 || PPC_8xx
->  	select ARCH_WEAK_RELEASE_ACQUIRE
-> diff --git a/arch/powerpc/include/asm/tlbbatch.h b/arch/powerpc/include/asm/tlbbatch.h
-> new file mode 100644
-> index 000000000000..484628460057
-> --- /dev/null
-> +++ b/arch/powerpc/include/asm/tlbbatch.h
-> @@ -0,0 +1,30 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ARCH_PPC_TLBBATCH_H
-> +#define _ARCH_PPC_TLBBATCH_H
-> +
-> +struct arch_tlbflush_unmap_batch {
-> +	/*
-> +         *
-> +	 */
-> +};
-> +
-> +static inline void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
-> +{
-> +}
-> +
-> +static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *batch,
-> +						struct mm_struct *mm,
-> +						unsigned long uarddr)
-> +{
-> +}
-> +
-> +static inline bool arch_tlbbatch_should_defer(struct mm_struct *mm)
-> +{
-> +	/*ppc always do tlb flush in batch*/
-> +	return false;
-> +}
-> +
-> +static inline void arch_flush_tlb_batched_pending(struct mm_struct *mm)
-> +{
-> +}
-> +#endif /* _ARCH_PPC_TLBBATCH_H */
-> -- 
-> 2.42.0.windows.2
+for the series.
+
+> Thus:
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+> If I hear no objections and if noone beats me, I'll apply the series
+> within few days.
+
+I'm currently travelling so if you can apply this series
+to drm-misc-fixes that would be great.
+
+Regards,
+
+Hans
+
+
+> 
+> 
+>>  	}, {	/* AYA NEO 2021 */
+>>  		.matches = {
+>>  		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AYADEVICE"),
+>> -- 
+>> 2.44.2
+>>
+> 
+
 
