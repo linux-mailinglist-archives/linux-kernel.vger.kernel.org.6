@@ -1,142 +1,132 @@
-Return-Path: <linux-kernel+bounces-335195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ECDE97E272
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 18:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C5E797E276
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 18:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A89601F2131D
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:21:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94BF61F21454
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249C837703;
-	Sun, 22 Sep 2024 16:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6ED8286A8;
+	Sun, 22 Sep 2024 16:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QfC7q5qI"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PFyb9MGT"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EB928683;
-	Sun, 22 Sep 2024 16:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE95ABA2E;
+	Sun, 22 Sep 2024 16:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727022054; cv=none; b=ERfsWCCp0AwhPcY0kD0xndPJc0+uEpX3CgyfmvuFAtYU+ySRqGgqxxarGerTyFeTrvLDql3QkgLT0GWz8DAm9Hcge4+/WsTKNtRzgopOBssKGqgyh/xCOuJSXan6xIWH60FeWek+g+KIdfK1n3Q8+mhxkO8gJ5lTQ2DzSu3Hr98=
+	t=1727022214; cv=none; b=e2pmoAcJ6Jg0XhkOgnhFJu2oCD4H54nSyCA45CaQTL5NxJhgoHcTLCyUmjiiP+VC3d8m4VvsYlkPv5vcz4N7AFd7NwmCiMJZ0w+T780ytyPYpTm+6hpAFKzLXLhYSYqkf8TzP09QG8/tvBBSvMDjqpYfemDwpeOjUVGe+dmXnYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727022054; c=relaxed/simple;
-	bh=cXmEY9dZWA53S3l3c1iklwSAeE8snbgR1wHS2LgirSo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eSJRCLC+jqorBb/bI4ORxXa41NsYdgNFbsDB1tDE47m0ds6HH9fONRvagjsiJjbvxkEzUU1pUm1PPfM4e5JfLDkrCArHDdvVLmJYMtd1a7wyjXURgDRYnShz5XUJ0tYK6JYxqB2QY//Mc/JA16n86KFg7MBQnP9NDNWIMY8Yk9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QfC7q5qI; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1727022214; c=relaxed/simple;
+	bh=dgbk0GepYMfUAgep3wFQBc6FfyQBzJrgxVP1kPHTNks=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AtQ14gCjziQr9+D3769c11hb5izrYtcgzbX3JxIgqvkgLW8NaJ2dDt1IVfAltAy4VMVURFy7YKpNYf0QA524+gmIvJClpArvAIeykTNc8knZvk1s/NGi8nzaGZq4Q3E0qLChJQeo+TgrGjosOOifE52S5j5hWaPILcBPuB16nxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PFyb9MGT; arc=none smtp.client-ip=209.85.219.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cbc22e1c4so27729235e9.2;
-        Sun, 22 Sep 2024 09:20:52 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e1a819488e3so2777366276.3;
+        Sun, 22 Sep 2024 09:23:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727022051; x=1727626851; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727022211; x=1727627011; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vqB2cHmlKDTiUxg67u2DrxaLXAyKOwFS9Hm6s6rWktQ=;
-        b=QfC7q5qIVLoEp2eXELFU69KK5TEveY0eqwpwNyFNXpF2zCkvgbM3HtSelSWoofAAuK
-         1mtHASHdoT0wTe6DffsF6hbPD+RcOAGW9CH04E+1u+wQ90q7qVszeINcNvD/hKoYTO7H
-         LSsOzTTVwGD8n6cbzXXPJMUZxQoePI12kljT3NyNWUf+yHUvd7P4pHyIcPLehVktCY5o
-         o1KWOQA9t2eVc/VMcuJPnLqtBGNeOExvdhOflGo1GxE+LlSDnl5yhZgbxG78SiYEPM9x
-         RBYcuT5BU+7OsgxuCUm4GjB8FDnKxQe9wcStNa9ltzreAOjdJu4BtLfU3VZQOuMPTqaq
-         DY2w==
+        bh=wEHQZ7aV2v97Y8TR3PMXm+WQO/EG3K5hYw1BGfIK/c4=;
+        b=PFyb9MGTGQCVlFSmFzEDKsVu7QugHHEql6MGbr9FHZsWgT7AGW9AzUxcydY2H3JTz0
+         T7y9RG7Ly/7cp8LN3e9LxKyH3FCVOHtoftcssiYBeKEDRH7yWb74TPUtelZQ16mqi+yx
+         rXOVwuXmyklDL2vJkyi3w5PFcfwnkuvEhQmc4vHhpm7NUS7IOgCRqLIVgy1MOg8WurWC
+         jskL4Z4hkn3vxrvcARWP/GtA4LTLr05295cPBE3J0Ia4G+YFibSCm0QGaPT72JoWbOsB
+         6j0x2Mmdn2w203Lds0LsxqBZZJ4fZFUf8ciiPocJk/6lKsBrLK4WGTXB7tcBVP5mT5Sm
+         XjyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727022051; x=1727626851;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727022211; x=1727627011;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vqB2cHmlKDTiUxg67u2DrxaLXAyKOwFS9Hm6s6rWktQ=;
-        b=Fp+jwBdd0GtORMjOgN0mmNTt5mVAnHgvAqWfqYl5NUqaqhB0byWvHSow7SSjlx4+C7
-         PInfpCLAFb6l7zVjqWDnJawBM6OIF4Yg0O4eHUiike25btZJZ1vh0ZLZYSy7Scqd1c57
-         vhImqrwCv8LnZagMKvK+DMbaST6FbtfTdq9zmcYPA4G+s5IzqCX/xZ/BBkv/uNIZhXp/
-         R0sc41U4yGfZQcdDggSx2MSsM/cWQ8HLbtprVIUXbMYSU/qUUYuytdTslhBghUKIv7l9
-         szEEimuvFchFUVNnedo2KxaRTQ+iFpvaspr3qFfXzGeFdp8e/PIUziuSpzZKCvBss0L0
-         yvPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVF+VgUomhMRv7jUvpJFiszCE+Ay+ScJPdQSSHHSaPDOrjk1GnK4M7Oi0oyCxiee9xxkzdNq4S+SzdLXufP@vger.kernel.org, AJvYcCW0nSHtTK84gurHSffMXc8zRXMuUY04Ol8yQG8JKidbBYB1ni8VwhQ7S+QoQ1b/Un6hwNWQsQaim4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxBCbqo5BsL1r8wcG+k5wjjepwKsQAIzjK7f8TIgwM1i3IMm3/
-	NmngKjfYIN9R4j2mXEqzMcSHZrrLVD+p9pRV7/NuxKeuHvscGF1l
-X-Google-Smtp-Source: AGHT+IHU9iElYWUCW4iIIagtb/y6yTklM6puZPDad1jDa/kBBI8YnBsVF+pmMxeTux/kd09PQlQNtQ==
-X-Received: by 2002:a05:600c:1c04:b0:428:1b0d:8657 with SMTP id 5b1f17b1804b1-42e7ad8e706mr67269765e9.22.1727022051084;
-        Sun, 22 Sep 2024 09:20:51 -0700 (PDT)
-Received: from localhost.localdomain ([2a04:ee41:82:7577:7367:3ea8:c47e:88f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e754c6dbcsm104566485e9.46.2024.09.22.09.20.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 09:20:50 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: jic23@kernel.org,
-	lars@metafoo.de
-Cc: andy.shevchenko@gmail.com,
-	u.kleine-koenig@pengutronix.de,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vasileios Amoiridis <vassilisamir@gmail.com>
-Subject: [PATCH RFC v1 2/2] iio: light: rpr0521: Drop unnecessary checks for timestamp value
-Date: Sun, 22 Sep 2024 18:20:41 +0200
-Message-Id: <20240922162041.525896-3-vassilisamir@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240922162041.525896-1-vassilisamir@gmail.com>
-References: <20240922162041.525896-1-vassilisamir@gmail.com>
+        bh=wEHQZ7aV2v97Y8TR3PMXm+WQO/EG3K5hYw1BGfIK/c4=;
+        b=UQE8fum0RcGQ/O2+M9quIRoIRy0+NQjaPRoexO/MTkQdSX5f8xIT3ncub1KzK4YFvJ
+         t/UannrelNYQ+CPhDMlvxbqzZnnaSSqICNKECtsQi+v+QZsH4NhgEhWqGV75Zet9YnnP
+         zCvlqkfDoI7kshdVPYnn+3R8NsATEOxJPDPQNV2Mas/2JY3fD5toOFoRRKRvxShvxVRo
+         hceKH/Bug6FGoiSUMD8bU9B3RGf8BvrgIb+rx6C4nsx2f8yMNWnDwpkv3Ec6jXMlihY+
+         QyG8NGtdm6QsVTVFJE2K+WhfJciVtIA6qv1gFLIyh60BpbtjRdQzxjwN50EzZJpfeW8x
+         17/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVi3sKTSk6FMlDc1eUG34OOO5r8uYLln24vy8E1iXrDZRY6SZKUnmEexwFVCeXslFCv4jrlB2foC6pG46z2VQEn@vger.kernel.org, AJvYcCVjg9iRK7g3wbX2TyAxX80bI549omt7JkPYcv3irGjVyGBp3JWkdVTjib5gLf5u6YG/Vrhk2pjzqAzpQcQq@vger.kernel.org, AJvYcCW2UKJxY4W/Dj35v8wFfCoJNyeWC1fgaSfBTd/k6T3O8W/KGUOkOTDCakI6bVNLRFG2KW4WMKmV@vger.kernel.org, AJvYcCWYXpaTClPBpycVFLzVpnnhwfku3/7dvqhqU5jBa4mELJWz4yPYQMrocGaNWS0AXvTYdKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymI5l2EsgISGdjAdU/4ikDK58b038RXTenoiTDze/IO2TbyrQs
+	n41XlVfMyVRktSVgjIQ19NrQMz+SNN81PcJHqmY+GCJOmJ2NnqWFf1uakIFYEfLvvl+X2+PP72H
+	Z3zmmYu+qJk/evLKVHHVCQBlCj50=
+X-Google-Smtp-Source: AGHT+IF0UyOWjybQXZgWQIKE9WssLRn86JYKnQHBctQJAEy/AvR8IQWn2xGNT5sKqRgFleUnd1kKm56erKflXFLSF9k=
+X-Received: by 2002:a05:6902:2609:b0:e1d:1746:52da with SMTP id
+ 3f1490d57ef6-e2252f34709mr5427596276.21.1727022210713; Sun, 22 Sep 2024
+ 09:23:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240920-reverse-sk-lookup-v2-0-916a48c47d56@cloudflare.com> <20240920-reverse-sk-lookup-v2-1-916a48c47d56@cloudflare.com>
+In-Reply-To: <20240920-reverse-sk-lookup-v2-1-916a48c47d56@cloudflare.com>
+From: ericnetdev dumazet <erdnetdev@gmail.com>
+Date: Sun, 22 Sep 2024 18:23:19 +0200
+Message-ID: <CAHTyZGwm4pHZg1eSdF6bbk7_WcJ4k25YzWtRKbfWNC_e6gUNVQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 1/3] ipv4: Support setting src port in sendmsg().
+To: Tiago Lam <tiagolam@cloudflare.com>
+Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, Jakub Sitnicki <jakub@cloudflare.com>, 
+	kernel-team@cloudflare.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The rpr0521_trigger_consumer_handler() is registered as the trigger
-threaded handler in the devm_iio_triggered_buffer_setup() function.
-This function is being called in 2 ways:
+Le ven. 20 sept. 2024 =C3=A0 19:03, Tiago Lam <tiagolam@cloudflare.com> a =
+=C3=A9crit :
+>
+> sendmsg() doesn't currently allow users to set the src port from which
+> egress traffic should be sent from. This is possible if a user wants to
+> configure the src address from which egress traffic should be sent from
+> - with the IP_PKTINFO ancillary message, a user is currently able to
+>   specify a source address to egress from when calling sendmsg().
+> However, this still requires the user to set the IP_TRANSPARENT flag
+> using setsockopt(), which happens to require special privileges in the
+> case of IPv4.
+>
+> To support users setting the src port for egress traffic when using
+> sendmsg(), this patch extends the ancillary messages supported by
+> sendmsg() to support the IP_ORIGDSTADDR ancillary message, reusing the
+> same cmsg and struct used in recvmsg() - which already supports
+> specifying a port.
+>
+> Additionally, to avoid having to have special configurations, such as
+> IP_TRANSPARENT, this patch allows egress traffic that's been configured
+> using (the newly added) IP_ORIGDSTADDR to proceed if there's an ingress
+> socket lookup (sk_lookup) that matches that traffic - by performing a
+> reserve sk_lookup. Thus, if the sk_lookup reverse call returns a socket
+> that matches the egress socket, we also let the egress traffic through -
+> following the principle of, allowing return traffic to proceed if
+> ingress traffic is allowed in. In case no match is found in the reverse
+> sk_lookup, traffic falls back to the regular egress path.
+>
+> This reverse lookup is only performed in case an sk_lookup ebpf program
+> is attached and the source address and/or port for the return traffic
+> have been modified using the (newly added) IP_ORIGDSTADDR in sendmsg.
 
-a) when there is a registered trigger being trigger like sysfs or hrt.
-The call of the trigger handler (which is the iio_pollfunc_store_time())
-follows which saves the timestamp and then, wakes up the trigger
-threaded handler.
+Is it compatible with SO_REUSEPORT ?
 
-b) The irq handler is using the iio_trigger_poll_nested() which wakes
-up the trigger threaded handler.
+Most heavy duty UDP servers use SO_REUSEPORT to spread incoming
+packets to multiple sockets.
 
-In both cases, the pf->timestamp has already been assigned a value
-so there is no need to check if it is 0, neither to 0 it after
-the push to the buffer.
-
-Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
----
- drivers/iio/light/rpr0521.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/drivers/iio/light/rpr0521.c b/drivers/iio/light/rpr0521.c
-index 56f5fbbf79ac..ae6a22b91b8d 100644
---- a/drivers/iio/light/rpr0521.c
-+++ b/drivers/iio/light/rpr0521.c
-@@ -446,13 +446,8 @@ static irqreturn_t rpr0521_trigger_consumer_handler(int irq, void *p)
- 	int err;
- 
- 	/* Use irq timestamp when reasonable. */
--	if (iio_trigger_using_own(indio_dev) && data->irq_timestamp) {
-+	if (iio_trigger_using_own(indio_dev))
- 		pf->timestamp = data->irq_timestamp;
--		data->irq_timestamp = 0;
--	}
--	/* Other chained trigger polls get timestamp only here. */
--	if (!pf->timestamp)
--		pf->timestamp = iio_get_time_ns(indio_dev);
- 
- 	err = regmap_bulk_read(data->regmap, RPR0521_REG_PXS_DATA,
- 		data->scan.channels,
-@@ -463,7 +458,6 @@ static irqreturn_t rpr0521_trigger_consumer_handler(int irq, void *p)
- 	else
- 		dev_err(&data->client->dev,
- 			"Trigger consumer can't read from sensor.\n");
--	pf->timestamp = 0;
- 
- 	iio_trigger_notify_done(indio_dev->trig);
- 
--- 
-2.25.1
-
+How is the reverse lookup going to choose the 'right' socket ?
 
