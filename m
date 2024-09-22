@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-335328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60F997E428
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:16:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB9C497E42B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBE1B1C20FC6
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:16:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7431C20F94
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E964C7DA95;
-	Sun, 22 Sep 2024 23:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266F47F7C3;
+	Sun, 22 Sep 2024 23:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNbSNihx"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iPHj4WNj"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38997581A;
-	Sun, 22 Sep 2024 23:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E891B7581A;
+	Sun, 22 Sep 2024 23:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727046967; cv=none; b=j4nBBuMBSbQjzduCWvc14DqeSn9tChQiw6ZpF8F7cGvyBLCRUGKd0INVbC9lN8wnvKBe7blCrCx0+MrfYd2Bp7gYVH6U3CcmI83s4mcSPqrioJEeh9pFq5dQ751msFdfNHJc5Y7DSH6wbVM4AY1X8snuooyHaMfu0LLf8wwfPZI=
+	t=1727047164; cv=none; b=QZEZsCuqcfTgW0vinWU2DNXZMf5FYgHbvIeuq/9fSK1C8ogUWCHb7NrdEHJIqVPTCv4gAwnIM93XEsemlGJQkcx+J1mX+y2edhSzmMK8WMlU+4ZALnaUwji4ZQBdzSo3Pu9CPhwCojnmn4syl6xZmUZccs3L31c2VK0hFJoKlIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727046967; c=relaxed/simple;
-	bh=fx3QNRbAVm1b74xZ/F/27pxOipNT34BcVyOmdEBu3bU=;
+	s=arc-20240116; t=1727047164; c=relaxed/simple;
+	bh=/fsL83JiV5QpzmbHyytfrwF5t0swH4mJJm8/vQzPfT0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JyDkmvNhjOstNrRG6G9CQ7Nsw2o4YEB83gkYvI4vyBpq2aSy7RPYC3eiAcWQ0ptqSZ/vovoMzKtIezQKjZ2u/MAyR0Q6RexC6HNDaQZBPGat6k4HobWqlEhxvinNQmvvqE+TZ7k/s7yi6xGXgScSxZ421ADXDnnx1IUTExHhfrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNbSNihx; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:Content-Type; b=d2rzAQB0oYOrK4cvYqMqvPY9FWNpizbbKSavQe6vzgK3N/j9l1C8AMpN/yVOgYOfXSAxHhCXSpn94PJzQ/aEj6PyRQBbQnCtHBoPQEa8KCpZLfaw/81sDfXtKBWGBzlbXoa3J5X3PlHLOGSgKeaCMFXFDK47oatB3KSjX98Ufqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iPHj4WNj; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42cafda818aso35954815e9.2;
-        Sun, 22 Sep 2024 16:16:05 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42e5e758093so31574215e9.1;
+        Sun, 22 Sep 2024 16:19:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727046964; x=1727651764; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727047161; x=1727651961; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XQKrIsMaR5H73uXstbYvKgdNX2p28gN7WwxvuQwKaBw=;
-        b=jNbSNihxf6nYP1HPexLQqi7j3j6CLrDGDmfaNsi1hboB7+qur8ZU4h6Q0mCSVRbbxC
-         rwh09f74xRXZxr3jUyB7eYt1qFV2ZGReuFFkRkxDbsHlQLKOIgvS5lhnSWR0WxDlZvj/
-         MGNNO8BxFi7U/CF8+m9WfFoOqzFX7DIBmTZxE0h0/jvrrTxuxZ/EN93I4QMqyU/Xi/kl
-         Kqu3OoYcwqoS8QO8LyA2cwif7FCZD+nImQj6mQfZfx3iYUHSDL7tog4y8gPoGt1edSvb
-         R6bhIcN9crwsRzDDS9XvZJBzUXmrC/GAbgSoTYU5PWpXlBS5NIPbqqc/c5/VgFQCpv6j
-         /N9Q==
+        bh=3QmeQYM479yzZexFRDFHjQcwG9TTAWkIzn56oUaf14U=;
+        b=iPHj4WNjZA2uEuHjtq7to1Bpt6fTPGxNwILnARt1bxMUOKCWA1Wjqmb6uh+j2pPhun
+         cvlEfSbxXs4HhfFZ41MG/7x7gtl+MxuQkHQccX7T9pILhO+6euXEtryK+4I3hzF7QuVb
+         tdftv+ahP3vK187nphtBmw7iQjizKJBke68IUnCvBJ1c/acPiqj7wv/iI6JcmpmgM3Ng
+         R6aHAEcUmJuRpt9/HRWO/gJYcMoZHIwUmCV4p97ISyc/U++H1HmtZ5onlGTT3tgWJOx0
+         nthaGmhIqu7izUg2iEBle4YtF8gx8gjIpDsYazEXUJVLy2nOaAQDwT54oEmcFG5S/Ha1
+         cj2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727046964; x=1727651764;
+        d=1e100.net; s=20230601; t=1727047161; x=1727651961;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XQKrIsMaR5H73uXstbYvKgdNX2p28gN7WwxvuQwKaBw=;
-        b=Jwu1K0Nq475Au3eIQVtIlB1ge+cAlDUD4TDEUdJS74XeqfZBg7VbeOK84RvmldBnh8
-         NV46G0UC3gspT41NGS320Yz4dHM9r49Gk9KXq2dP6V3udVrvuU9n2MAKCw6d5yiZj5Hx
-         hhhnHNrjt6Yw7jX2Zu33462NW/AGf0wMcVDtQTYzRH6bkpekeMvSeNZ2nkYylVJYrlHA
-         Q6Ax9qLK3Tw1ku85xv46itmccEzz36rbWacC3uiKuZ+rwnTIH1KR+/B1ICCCX6676KiC
-         g2vXjUEjcS9MeiVdtVD+5OHQfhiqtfflyUa+6KJDn8MG+7DFIMIOLe7brWdYBes+yo3A
-         K7Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2qv7fngsfUcRViA6LjUxmLC3kz+LNxMPCVHxggB6jHgVi3LZnZuoM7pH8uQ0Bgj945Wk3QQTXt22I@vger.kernel.org, AJvYcCVnVrqAoqL0WCPUXk7qVWWpDK3hFT6kQb68JOmPs46uU3Mo557MdRPVA1GuVJ+rD6DA2ixuXGMsU7k8ZogN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkorKsL4qZeYCfO/Lf3ayoWqWg4jDLj+Ek+tB1y/2DkIi66xwz
-	I6PtgtGQ9dmxhHOxO+oWoOO5JfMdd6CRF7UjGZZtMuycVj2TQfbr
-X-Google-Smtp-Source: AGHT+IEDinjp0rRpmKvDlaxodTCIjSMZRPmtYU8gpGpSTP+j0fpbwp/LZwEehvOmUrmngjmPQEGmIw==
-X-Received: by 2002:a05:600c:1c29:b0:42c:b4a2:a1aa with SMTP id 5b1f17b1804b1-42e7c16e861mr77676245e9.17.1727046963880;
-        Sun, 22 Sep 2024 16:16:03 -0700 (PDT)
+        bh=3QmeQYM479yzZexFRDFHjQcwG9TTAWkIzn56oUaf14U=;
+        b=fGpYgBHgyCyivi1v54mJ9Nx2LECn0HPxVP/vVVXvawr4yI6OjLAYx18r/3B4ZP/dtX
+         TXUCgBt2+sp6kS43PSfsAOmCvKvKLmTIymso4ItJ3fN4bPXyTf8VlCKCxaSmHt42vMOE
+         D12zQ5nTuZVaEwZ9kR9TF/ALrxWFYuRcVpg+WBSsNEVpUlIuW5lNTM88uPP8GQtY6Axu
+         fYceY2vKYYOCynVUsTo4kmNkGHzmfSuzhvLHem4++TJtORmt90LVsZk+hwlwmmUM2+gs
+         acIm3OO7Mu/jsTwX3a3j6GDuQTMmrTN4lOxpOjNuTshKvuZz0SVKOcIGh4ZBsGw24eQH
+         I8Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUKbY5ueUYFSVfF8ob5Yhy3yP3k3kTyeNRDjnBUuSwtUNerdEYyGAGKJs42HU+rxoS47IAW8WSlXM42@vger.kernel.org, AJvYcCVuDzxgdOlSBIIAxIZqa9xFGzHewlNgVpQEEamvcIWyeZxJgbJCqWZIHs/h7/rk+z3Qnw0PvSth8Pdzg9F4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxREASIQeJzBY3WSr9STTx8u+8g9WoKW2Jyx4njPrRSmVGWJgsz
+	WIgVeQmywyz9lGgboi6PJL99J/Sb4I6uihIU0QBMWPLYOb1ULjYp
+X-Google-Smtp-Source: AGHT+IGZZw5+3WxxKggocLFzJxwqoSd1f5PjjLcsXXYGL35zdx9oJLvHztzhdL/betnYcPItTEYQ7Q==
+X-Received: by 2002:a05:600c:4e92:b0:42c:bde5:9082 with SMTP id 5b1f17b1804b1-42e7ac225b4mr82073095e9.17.1727047161066;
+        Sun, 22 Sep 2024 16:19:21 -0700 (PDT)
 Received: from [192.168.1.130] ([86.127.146.72])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7afeb1c2sm84618145e9.36.2024.09.22.16.16.01
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e7af895b8sm85431855e9.14.2024.09.22.16.19.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Sep 2024 16:16:02 -0700 (PDT)
-Message-ID: <1652f001-742c-4ef0-abee-c9645a3ae63f@gmail.com>
-Date: Mon, 23 Sep 2024 02:15:59 +0300
+        Sun, 22 Sep 2024 16:19:20 -0700 (PDT)
+Message-ID: <d02ea50c-249a-4221-8884-cd6674075184@gmail.com>
+Date: Mon, 23 Sep 2024 02:19:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,7 +75,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: imx8qm: enable dsp node for rproc usage
+Subject: Re: [PATCH 4/5] arm64: dts: imx8qm: add node for VPU dsp
 Content-Language: en-US
 To: Frank Li <Frank.li@nxp.com>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -86,83 +86,72 @@ Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <20240918182117.86221-1-laurentiumihalcea111@gmail.com>
- <20240918182117.86221-6-laurentiumihalcea111@gmail.com>
- <ZusjSPQ0vpqIUtlL@lizhi-Precision-Tower-5810>
+ <20240918182117.86221-5-laurentiumihalcea111@gmail.com>
+ <ZusijsRFJPtFc0h8@lizhi-Precision-Tower-5810>
 From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-In-Reply-To: <ZusjSPQ0vpqIUtlL@lizhi-Precision-Tower-5810>
+In-Reply-To: <ZusijsRFJPtFc0h8@lizhi-Precision-Tower-5810>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 9/18/2024 10:00 PM, Frank Li wrote:
-> On Wed, Sep 18, 2024 at 02:21:17PM -0400, Laurentiu Mihalcea wrote:
+On 9/18/2024 9:57 PM, Frank Li wrote:
+> On Wed, Sep 18, 2024 at 02:21:16PM -0400, Laurentiu Mihalcea wrote:
 >> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 >>
->> Set the status of the dsp node to "okay" and assign
->> its reserved memory regions.
-> wrap at 75 chars.
->
-> Add dsp node and related reserved memory regions.
+>> Add DT node for i.MX8QM's DSP, which is found in
+>> the VPU subsystem.
+>>
+>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> ---
+>>  arch/arm64/boot/dts/freescale/imx8qm.dtsi | 27 +++++++++++++++++++++++
+> why not add a file imx8qm-ss-vpu.dtsi to keep consistent with others.
+
+Don't see much value in doing so right now. It's just two extra nodes (should stay that way AFAICT).
+
 >
 > Frank
 >
->> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->> ---
->>  arch/arm64/boot/dts/freescale/imx8qm-mek.dts | 27 ++++++++++++++++++++
 >>  1 file changed, 27 insertions(+)
 >>
->> diff --git a/arch/arm64/boot/dts/freescale/imx8qm-mek.dts b/arch/arm64/boot/dts/freescale/imx8qm-mek.dts
->> index 62203eed6a6c..7ee69ce7b193 100644
->> --- a/arch/arm64/boot/dts/freescale/imx8qm-mek.dts
->> +++ b/arch/arm64/boot/dts/freescale/imx8qm-mek.dts
->> @@ -92,6 +92,27 @@ vdevbuffer: memory@90400000 {
->>  			reg = <0 0x90400000 0 0x100000>;
->>  			no-map;
->>  		};
->> +
->> +		dsp_reserved: dsp@92400000 {
->> +			reg = <0 0x92400000 0 0x1000000>;
->> +			no-map;
->> +		};
->> +
->> +		dsp_vdev0vring0: vdev0vring0@942f0000 {
-> 'vdev0vring0' should be genernal name, such as 'memory'
-
-Driver expects reserved memory node names to have a certain format.
-If possible and if too problematic I'd rather have this fixed in a separate patch series.
-
->
->> +			reg = <0 0x942f0000 0 0x8000>;
->> +			no-map;
->> +		};
->> +
->> +		dsp_vdev0vring1: vdev0vring1@942f8000 {
->> +			reg = <0 0x942f8000 0 0x8000>;
->> +			no-map;
->> +		};
->> +
->> +		dsp_vdev0buffer: vdev0buffer@94300000 {
->> +			compatible = "shared-dma-pool";
->> +			reg = <0 0x94300000 0 0x100000>;
->> +			no-map;
->> +		};
+>> diff --git a/arch/arm64/boot/dts/freescale/imx8qm.dtsi b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+>> index f8b577ebdbef..ae0165a44dcd 100644
+>> --- a/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+>> +++ b/arch/arm64/boot/dts/freescale/imx8qm.dtsi
+>> @@ -581,6 +581,33 @@ mipi_pll_div2_clk: clock-controller-mipi-div2-pll {
+>>  		clock-output-names = "mipi_pll_div2_clk";
 >>  	};
 >>
->>  	lvds_backlight0: backlight-lvds0 {
->> @@ -640,6 +661,12 @@ &sai7 {
->>  	status = "okay";
->>  };
->>
->> +&vpu_dsp {
->> +	memory-region = <&dsp_vdev0buffer>, <&dsp_vdev0vring0>,
->> +			<&dsp_vdev0vring1>, <&dsp_reserved>;
->> +	status = "okay";
->> +};
+>> +	vpu_subsys_dsp: bus@55000000 {
+>> +		compatible = "simple-bus";
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges = <0x55000000 0x0 0x55000000 0x1000000>;
 >> +
->>  &iomuxc {
->>  	pinctrl-names = "default";
->>  	pinctrl-0 = <&pinctrl_hog>;
+>> +		vpu_dsp: dsp@556e8000 {
+>> +			compatible = "fsl,imx8qm-hifi4";
+>> +			reg = <0x556e8000 0x88000>;
+>> +			clocks = <&clk_dummy>,
+>> +				 <&clk_dummy>,
+>> +				 <&clk_dummy>;
+>> +			clock-names = "ipg", "ocram", "core";
+>> +			power-domains = <&pd IMX_SC_R_MU_13B>,
+>> +					<&pd IMX_SC_R_DSP>,
+>> +					<&pd IMX_SC_R_DSP_RAM>,
+>> +					<&pd IMX_SC_R_IRQSTR_DSP>,
+>> +					<&pd IMX_SC_R_MU_2A>;
+>> +			mbox-names = "tx", "rx", "rxdb";
+>> +			mboxes = <&lsio_mu13 0 0>,
+>> +				 <&lsio_mu13 1 0>,
+>> +				 <&lsio_mu13 3 0>;
+>> +			firmware-name = "imx/dsp/hifi4.bin";
+>> +			status = "disabled";
+>> +		};
+>> +	};
+>> +
+>>  	/* sorted in register address */
+>>  	#include "imx8-ss-cm41.dtsi"
+>>  	#include "imx8-ss-audio.dtsi"
 >> --
 >> 2.34.1
 >>
