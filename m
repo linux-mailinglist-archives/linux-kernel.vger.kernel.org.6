@@ -1,116 +1,123 @@
-Return-Path: <linux-kernel+bounces-335228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E615A97E2D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:51:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A3697E2DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 233521C203B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:51:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8341F21793
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73FD383A2;
-	Sun, 22 Sep 2024 17:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFB739FCF;
+	Sun, 22 Sep 2024 17:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugcolgZT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="L7oRpyYX"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC0228F4;
-	Sun, 22 Sep 2024 17:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECFAD2C6A3;
+	Sun, 22 Sep 2024 17:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727027493; cv=none; b=KWjlJSrlWQsnOwNuR4EGZlU3q7K2JfFW94W2BDP6bTD2MNxA94tx+o7E29irNGYj0AkL8RhHuZLVBTzc/oIxFTSlaJuM7zi91iRkxCiE2S3xiWOnlXH1eZwQAyK3PadbkY1KeNfJxv03Ktp06dDm0LevaETV4gpCYEQm9cZHP3c=
+	t=1727027758; cv=none; b=Gk6mw8MJuMeZ5aPptpun0xO2Fl3xSa1qgcR2G5VMUOVm4lnDnXKmsxf2h1rBQMcpJAJOPaItn4nVaZG8RcNCFFwW07YvNh6rVMz0qcQ43wYs6W6Jg7DBzHlIGboTRPxoiVnZJV0UoMu6/96pmGgdjrRfeN+FlOh+RYJmnre04F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727027493; c=relaxed/simple;
-	bh=jrKwbHXXO1kCrYfMrjaKi/Cs9E6R903V1bh7/PKaI3w=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=X8L+ecyMgUh+xZAYr6S7U9+OEO0E6jyyF8adUlTGKSdo3SN8HlP/jr4os6lxajylQz1OiNlwZsSE4nJHQsWJI/wuI+47yFUt4eC7W0tCO4rO67vnLd3yQjalS3DRmhMQO/2eBit83SzjqLR5vyjwa6sn7B32Y/QzDTybWqegIGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ugcolgZT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A1CC4CEC3;
-	Sun, 22 Sep 2024 17:51:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727027492;
-	bh=jrKwbHXXO1kCrYfMrjaKi/Cs9E6R903V1bh7/PKaI3w=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=ugcolgZTzGEG3+CjpfJ/Qt1VI3ff4D5VnA1dC2+LT1B6p6Ba19Lmq/JiscFTElCVY
-	 6rFVnYSviUBaLw4nZcnXb/1TX2YYSP1zwC5aRKBQYsYk1Fc+Ztv9TFY3l28DYRe6a9
-	 Ge+5r3k0hOgoHM8A8B7SCsOy+PmN/QmgrPQMosPD+Ak3pw/GnwVo/tDzyuZrak+zii
-	 sb1ObggvrnGvgEAMJKsYSPV0vHCMqC9bq/y62EoJ2QXiQT+6UOC2plT/8xZrPa5jzz
-	 JMogbab8zAbvaiS9nlp0OfH37NaHcK2TAs3sWonzvQ9xma7/dCOQOiY7VwQ7Jspv0H
-	 2t9J221NLNLYA==
+	s=arc-20240116; t=1727027758; c=relaxed/simple;
+	bh=rQdLXE6SJslozte+20DMd3ULCl+9niKgzb7QGtWzBH4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SsVp+JcAjzWVlAwZlAAJgG7b3gqMVguJWSDmLWwjvEZ6uJZY/bDAibWje4p5Jg321LihR1bHh9Y+AUTHtGKPpgD7iQp44VQ8qvoc/3iUpHvLlsXmjtOws7Gm0P+2TlWhmvEHc/GkcLikAezJ4RSMZ2bznUZzzhdPtQ4arzntJvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=L7oRpyYX; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727027717; x=1727632517; i=markus.elfring@web.de;
+	bh=8Xi69eSUzOhZdivbJL/GWaVVhyX+HV7P0O/k/Oi2vxo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=L7oRpyYXoQIF7GKMBVvEZCTuX951Dwj1FeFDaXA8KA3J+8o/daKaOFS14+hcCW/B
+	 Ii2L9UCV3p8qcSKou0Fiqv/4KVitsBuKiTa/Xe6qXcGQgw/0YeOWLLjqbSjn1FMA7
+	 9B3D43F9z8eV/r237/tvixRyNxUBHZM0TGk8+QZwRqJTw0YIXK4WwV5jpzFejCS7q
+	 ygehR7gkpYW/x2m7pqaf2/op23Q+ThTq2hAt0iJTiCNrYTzBo3UVVc5dM3MzaCOO6
+	 1iAso01FV6m1mMQiopA2Iab18M/d/9GI3bq9spJuM3g86teFyVReaKJo6nNF+CfBP
+	 JHzr24BXhtb4YTmV7w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMp8Y-1sbrt30ZRk-00IOXU; Sun, 22
+ Sep 2024 19:55:17 +0200
+Message-ID: <3aca8eab-f4d2-4474-acc9-c5c94dcb9162@web.de>
+Date: Sun, 22 Sep 2024 19:55:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: xilinx: axienet: Use common error handling code in
+ axienet_mdio_write()
+To: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Clayton Rayment <clayton.rayment@xilinx.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Michal Simek <michal.simek@amd.com>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@inria.fr>
+References: <330c2b9e-9a15-4442-8288-07f66760f856@web.de>
+ <20240922170507.GD3426578@kernel.org>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240922170507.GD3426578@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Date: Sun, 22 Sep 2024 20:51:28 +0300
-Message-Id: <D4D05FKB9VSG.33COYTJHUX6EM@kernel.org>
-Cc: <James.Bottomley@HansenPartnership.com>, <roberto.sassu@huawei.com>,
- <mapengyu@gmail.com>, "Mimi Zohar" <zohar@linux.ibm.com>, "David Howells"
- <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James Morris"
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Peter Huewe"
- <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
- <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20240921120811.1264985-1-jarkko@kernel.org>
-In-Reply-To: <20240921120811.1264985-1-jarkko@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:BQfgsFRLT2S9FhcY8igdpU/vi1LOYwCsrB93WR1PBKVAH2GultZ
+ gVpnTvNWtu5Tnf2ztuXKyhCHTxrE6EFPHi2ST1GzuL2x2rSWZIynHAvTGE0MAOyV1GsbvA0
+ uwz96XyFI1aGl5M8UlrQBnY4O/WmaoA+CaMqmHf7mzJumL/ZZkSbQf0MsTl6UsI5ov910GX
+ oTsVdX0m/6+PUvPOgu02Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TMuK3USvNnY=;6/YoGWwgLpZ6/85IYs0BFG+23/g
+ 0ttnj3BFgUg/EXE+hy6e/asHDcEyTWZIeUX8Qloj/1sakFC3hqu54Na5sVCORM2IgYtUW9gOL
+ k+ehxXvop2fhZkgINoL6Gs8Cqc9fdbmMcCoCt3BqdDwzykvSJofpxCk3f2mmsvFw7u2hRyZjk
+ 8MZjSDHkAfIQeDP3HBZnr2gQ+YMKvgCUCNF1SoyH99fvBeaFubFNQi9SHlS0ov7QYE5ko90Du
+ G3jk5VazTSPofI7aBolLEdE1pGQdKUOfaLnycaJN4yc+5PllCqzLViVIesexDZ+37m50etK4o
+ +d08ZOxdIzqdIJhIs50j5A0Cu4uuKAktEhFCmqGNuDoxvKyvDEXvbB6pvjZAfz9Jm7ygbkWfv
+ m7d9OLqGUpOIwLpNqYfYBX1Gjvdr7jOBULcXpgy4TM5W6UpKp8Jqxl4di+81TY8o5PJq2EgLT
+ 1jcAjINi5e16rRRsS1tqDuYwlr/J4fNww8BD9j4SWnL1EUPdlixrJTNKaLRrB7H02cwgVGvky
+ aEYyfwNZ22dwyxLCgq80bRVWMyUpOMslo+mJkOmK4zSpVPagQw5UFe+cXyVc8GgBfFrgemst2
+ fo6ngc0tyas+RRsJYWjo6u+IXOI5yeKFKSvEdzpODxAWzFU0bjpF5m5Q+cqCD1hb3DAXY8c0R
+ DkUcNA401iNwoWEdT5L0lym9u1krNbH4S4sFp1y79YX9SLqd9qeX2q9KrnQ/thIteSxn6XJLw
+ z6FNX1N72SPyL3+46fzqTNbGELJW+LzLwvG3MWldqJ4aBw3toeTW+zRlKJ2E8dWPRM2rxIMhX
+ iQPV/n6h+MjDR2unXStgoRXg==
 
-On Sat Sep 21, 2024 at 3:08 PM EEST, Jarkko Sakkinen wrote:
-> This patch set aims to fix:
-> https://bugzilla.kernel.org/show_bug.cgi?id=3D219229.
->
-> The baseline for the series is the v6.11 tag.
->
-> v4:
-> https://lore.kernel.org/linux-integrity/20240918203559.192605-1-jarkko@ke=
-rnel.org/
-> v3:
-> https://lore.kernel.org/linux-integrity/20240917154444.702370-1-jarkko@ke=
-rnel.org/
-> v2:
-> https://lore.kernel.org/linux-integrity/20240916110714.1396407-1-jarkko@k=
-ernel.org/
-> v1:
-> https://lore.kernel.org/linux-integrity/20240915180448.2030115-1-jarkko@k=
-ernel.org/
->
-> Jarkko Sakkinen (5):
->   tpm: Return on tpm2_create_null_primary() failure
->   tpm: Implement tpm2_load_null() rollback
->   tpm: flush the null key only when /dev/tpm0 is accessed
->   tpm: Allocate chip->auth in tpm2_start_auth_session()
->   tpm: flush the auth session only when /dev/tpm0 is open
->
->  drivers/char/tpm/tpm-chip.c       |  14 ++++
->  drivers/char/tpm/tpm-dev-common.c |   8 +++
->  drivers/char/tpm/tpm-interface.c  |  10 ++-
->  drivers/char/tpm/tpm2-cmd.c       |   3 +
->  drivers/char/tpm/tpm2-sessions.c  | 109 ++++++++++++++++++------------
->  include/linux/tpm.h               |   2 +
->  6 files changed, 102 insertions(+), 44 deletions(-)
+>> Add a label so that a bit of exception handling can be better reused
+>> at the end of this function implementation.
+=E2=80=A6
+> This change seems reasonable to me.
+
+Thanks for this positive feedback.
 
 
-Roberto, James, speaking of digest cache. This patch set has no aim to
-fix those issues but I do believe that it should improve also that=20
-feature.
+>                                      However, I am assuming that as a
+> non-bug-fix,
 
-If I don't get soon patch reviews for the patch set, I'll pick the 2nd
-best option: disable bus encryption on all architectures including x86
-and ARM64 (being by default on).
+Would you like to categorise my update suggestion as a correction for
+a coding style issue?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.11#n526
 
-It's a force majeure situation. I know this would sort out the issue
-but I really cannot send these as a pull request with zero reviewe-by's.
 
-I expect this to be closed by tomorrow.
+>              this is targeted at net-next.  And net-next is currently
+> closed for the v6.12 merge window.  Please consider reposting this patch
+> once net-next reopens.
 
-BR, Jarkko
+Will a patch resend really be needed for the proposed adjustment?
+
+Can both development branches benefit from this refactoring?
+
+Regards,
+Markus
 
