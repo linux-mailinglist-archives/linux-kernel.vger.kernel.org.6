@@ -1,83 +1,127 @@
-Return-Path: <linux-kernel+bounces-335152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 577C197E1F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:03:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B56197E1F1
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 043EA1F211E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 14:03:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F73E1F214F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 14:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494BA4C6C;
-	Sun, 22 Sep 2024 14:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A906FBF;
+	Sun, 22 Sep 2024 14:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aTaq48gZ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FMigkMuG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707D063D;
-	Sun, 22 Sep 2024 14:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888C163D;
+	Sun, 22 Sep 2024 14:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727013806; cv=none; b=AzbZy/KXh6WWZxEiSHtiNWNhEQuxhAwiAJVezp5dqDPZjwQbNXW7M/5GqZbrphgC+QVuGnnsatZjVknoyObUhsQ68BWfkcgXdaGsok7z3gTme5TLgHwHPC5GnJhrsaumhM4bDgCHEnNyhGxq25Xs61Q7vmuwd/mK4v93aIUdBGI=
+	t=1727014157; cv=none; b=DbMwrq/2OUFSngnqP/ZlNFbf7NxAs35ntvxClxCIq7+F3n3XSmqMWFYwGW6VvGutWEBS80DKxmuBSXXpfNqcOtA3nQsrX/ZTS64x1ekXoT7f7oaAFaTSMpx0kL5Hj9XhhP84h3Pe44jFdcQTP1YqK8Hs0E/TGV5JCPlkZ78bgkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727013806; c=relaxed/simple;
-	bh=k86zEx3ofrkqw4phrOzlxuLf0+ZDRjH+ULGWkEejKYU=;
+	s=arc-20240116; t=1727014157; c=relaxed/simple;
+	bh=4cbjSwV1hEvFOITCR8e5fXcH066EpaFxjqWOysM0esY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RpC2uD/8aeC0r09XA43JqlMcO2RuFyi7jrIdVu17Opt2YtNiZBAAfS1vulplXA1nODESsNFNY7wBZgv+GJNAcZbjargCvvXlJC/FVGFsE8BL86WggMh34PUs5ACMfYhQW7AEFQ/QFyOZ6dbsGbP6N1658bLvw/CfDzJfFHxJ9A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aTaq48gZ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=k86zEx3ofrkqw4phrOzlxuLf0+ZDRjH+ULGWkEejKYU=; b=aTaq48gZWOxdFMQfvjVewBTOpL
-	e/kNvnNjxHlyz5IkGwG2u+7+TPcL1QEMLaZAweehMHCkZCdyRmrDB0i6a5/qRTHudSyLdxnjHu65p
-	QxtvPz0giYgaNyLswyyIXsJKKGGVAkGIxFgBLtV4BqMGiplU44YxX7Xo+/jHZWFAqv8+/BnoTXNlb
-	je4/1VCMgXxGErqW9Exk68Bndba2V5WvU3Y+rR5MQyYFLMMr8vKNJny+obP5iVoFGjlUk7wvK9BOy
-	t5XZVuNaqhSA53IFGVi9Gu1v9l7f0ow8rkSzlLt6cjHKTqNHb9bnTu55AN0mymBTVpYHZrtcJ8nMo
-	jcu/RkfA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1ssNBK-0000000FEJA-0fz5;
-	Sun, 22 Sep 2024 14:03:22 +0000
-Date: Sun, 22 Sep 2024 07:03:22 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Xi Ruoyao <xry111@xry111.site>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [GIT PULL] dma-mapping updates for Linux 6.12
-Message-ID: <ZvAjqjrWj_AXK6DX@infradead.org>
-References: <Zu2Bd50GdSxF_-eA@infradead.org>
- <19e4bdbcda78ace200c78c56eb7173097337b921.camel@xry111.site>
- <Zu5VoW1ZkViSOws3@infradead.org>
- <9a84a7c6f943209cc87a54075ed22df37ebda5f8.camel@xry111.site>
- <Zu7PW07FmBgs_dpI@infradead.org>
- <38bc765eaba8a646a87ce14e1ff06f28d449fcd5.camel@xry111.site>
- <Zu-kCdMau6127_vM@infradead.org>
- <11368b7c0b7370aea61b3dda73e462fb70f306a7.camel@xry111.site>
- <Zu_FDfHZAVzPv1lq@infradead.org>
- <20240922103236.GA11337@unreal>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ownhcWFdUz+UDC36jnN79g0Cnv0Y1Y1reNwVkntWs+hi0U+/kQBpz2ApQxfVNqByTgvmxXZesEcDN+kdL8zbxZQo8AWjG1X0M1/3bXm01d1jqFwn1JjzNJmKfwA+0E16tgsz2z7TVklwH827YwCXkdZOASsD3rtO/L/hH76M5xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FMigkMuG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3280DC4CEC3;
+	Sun, 22 Sep 2024 14:09:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727014157;
+	bh=4cbjSwV1hEvFOITCR8e5fXcH066EpaFxjqWOysM0esY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FMigkMuGQUnyYCLlp7jO+pCXv0G1eCStZn9Nw28iipxMY/8jhNOsZPyHYzRqKfeYM
+	 A/iuWlWPSQnINyhvoA9Nqdyy4fnSXaYtM0417eaAghJ7jewTPz7ydwAreS5IR92OK2
+	 KcyKoep+Gdv26ym4VgcsSeLKV9NgXOJlWgBwy8Z+u/SJXbeR+2aGSmKaQtfJ04NXGs
+	 e1qPmB59epal/QmckXkPI0u2E39FY7Gr8TibWxdPxwABNHLkeGSYdYI39aDazo2Pg2
+	 vJAP000d89l7xGF4sXC84/eR1PZU+jLHcToEDVJMHscV1tipSKOOUqQUqkufSAEqFM
+	 lWK/opz17Wj9g==
+Date: Sun, 22 Sep 2024 15:09:11 +0100
+From: Will Deacon <will@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	"Liao, Chang" <liaochang1@huawei.com>, mhiramat@kernel.org,
+	peterz@infradead.org, mark.rutland@arm.com,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: uprobes: Optimize cache flushes for xol slot
+Message-ID: <20240922140910.GA31288@willie-the-truck>
+References: <20240919121719.2148361-1-liaochang1@huawei.com>
+ <20240919141824.GB12149@redhat.com>
+ <41fdfc47-4161-d2e4-6528-4079b660424f@huawei.com>
+ <Zu2VdYrLWTJbVOAt@arm.com>
+ <20240920173223.GA20847@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240922103236.GA11337@unreal>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240920173223.GA20847@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sun, Sep 22, 2024 at 01:32:36PM +0300, Leon Romanovsky wrote:
-> Another chunk that is missing according to this BZ
-> https://bugzilla.kernel.org/show_bug.cgi?id=219292:
+On Fri, Sep 20, 2024 at 07:32:23PM +0200, Oleg Nesterov wrote:
+> On 09/20, Catalin Marinas wrote:
+> >
+> > On Fri, Sep 20, 2024 at 04:58:31PM +0800, Liao, Chang wrote:
+> > >
+> > >
+> > > 在 2024/9/19 22:18, Oleg Nesterov 写道:
+> > > > On 09/19, Liao Chang wrote:
+> > > >>
+> > > >> --- a/arch/arm64/kernel/probes/uprobes.c
+> > > >> +++ b/arch/arm64/kernel/probes/uprobes.c
+> > > >> @@ -17,12 +17,16 @@ void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
+> > > >>  	void *xol_page_kaddr = kmap_atomic(page);
+> > > >>  	void *dst = xol_page_kaddr + (vaddr & ~PAGE_MASK);
+> > > >>
+> > > >> +	if (!memcmp(dst, src, len))
+> > > >> +		goto done;
+> > > >
+> > > > can't really comment, I know nothing about arm64...
+> > > >
+> > > > but don't we need to change __create_xol_area()
+> > > >
+> > > > 	-	area->page = alloc_page(GFP_HIGHUSER);
+> > > > 	+	area->page = alloc_page(GFP_HIGHUSER | __GFP_ZERO);
+> > > >
+> > > > to avoid the false positives?
+> > >
+> > > Indeed, it would be safer.
+> > >
+> > > Could we tolerate these false positives? Even if the page are not reset
+> > > to zero bits, if the existing bits are the same as the instruction being
+> > > copied, it still can execute the correct instruction.
+> >
+> > Not if the I-cache has stale data. If alloc_page() returns a page with
+> > some random data that resembles a valid instruction but there was never
+> > a cache flush (sync_icache_aliases() on arm64), it's irrelevant whether
+> > the compare (on the D-cache side) succeeds or not.
+> 
+> But shouldn't the page fault paths on arm64 flush I-cache ?
+> 
+> If alloc_page() returns a page with some random data that resembles a valid
+> instruction, user-space can't execute this instruction until
+> special_mapping_fault() installs the page allocated in __create_xol_area().
+> 
+> Again, I know nothing about arm64/icache/etc, I am just curious and trying
+> to understand...
 
+We defer the icache maintenance until set_pte_at() time, where we call
+__sync_icache_dcache() if we're installing a present, executable user
+eintry. That also elides the maintenance if PG_arch_1 is set (i.e. the
+kernel only takes responsibility for the freshly allocated page).
 
-Can you send me a formal patch for this so that I can get a pull request
-to Linus by Monday night or Tuesday morning?
+Will
+
+> 
+> Oleg.
+> 
 
