@@ -1,100 +1,104 @@
-Return-Path: <linux-kernel+bounces-335062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E55C97E07C
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 09:59:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9403197E07F
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 10:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 206F21F212F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 07:59:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B59FF281485
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 08:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40F719309D;
-	Sun, 22 Sep 2024 07:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262AF1885BA;
+	Sun, 22 Sep 2024 08:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bA9t9Rfo"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2A+Ceo/m"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2670193084;
-	Sun, 22 Sep 2024 07:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190388BEC
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 08:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726991933; cv=none; b=HBqdxl0W73JrzofntJgXzuWAAZHrAGe8/C2Ji07xoiyTc99ZjHVzryKUltG2n1mqp93qwAymzF7NA1CgPNHg+K93JIIcDgwXCxllaaiHlA/3SY3RP+SAQWOdR1eh2o5pr+8vDriwCKGVBKK5cJG/0DNlhTJXNqgahCJoVTxcEE0=
+	t=1726992283; cv=none; b=Lnry8bzQluG6Ml5rPYtlPfwciEyKKYJMSy1S9hD+sSwyDI3uIxA6mO/gnXhBk8yC+cyKgPip2ld+mLHXBp2vnTm1piQsFxIMjDgRFBUHRy6dh9id7uSa5zZKU0I5z3wpa2wuj5WIDbKo9iuOK448Kp/C/KG47ORX1CNPpKXwvZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726991933; c=relaxed/simple;
-	bh=NinLGJbLvvUeaYpI3hdBGPHp4bubibtbjmH6hixDR54=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=io5JOLlRilVmvmanxLhfpphkH3jEoc7pS1Cn8ryMwE1Zfm6Oame6NEZrzzGHRAfa4VUvlj0trYN0NvPNStkYVOl9f5ftib3H3hiZfazzTusEwaQFVXXgwuGYqqQwEOxC/ghYLIoP4HRg3DaF73OCQtp0dT9DIEB/rXJBJ2bnIU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bA9t9Rfo; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-206bd1c6ccdso32781875ad.3;
-        Sun, 22 Sep 2024 00:58:51 -0700 (PDT)
+	s=arc-20240116; t=1726992283; c=relaxed/simple;
+	bh=kFIP/wTtIov8gaYYZQRMLUa2A9DFJiPU6vH9pzNhHsQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=imelwDfF7zhmUs4anhQYURjcwFLPBjpMHV2wqAwDnB44WayCUjX3gvaJ7V0iRV9UXVsNDZ3jNVL+lqkl3Y29yH/MaVZ0sh9QjBFizGsnmPngI0n8WFKrCrIc3FTCXGA8H4KTS2N5K8wNxUVQn+ph4aGehPjOU3F1NgvS8V65VxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2A+Ceo/m; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e1e275db7faso5065543276.2
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 01:04:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726991931; x=1727596731; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LVjfLNaC5tM0o32TL0s4C4MdQKG3/t0bwJT6TE9NJ4Y=;
-        b=bA9t9Rfororcl1FE45Neu6EeJGks2SlqGTZSHnVKgRPvGPwfifhljeHNlikSwIoY9k
-         unt4QfsSlg5KyZoAs1cq/t75a1vb+o6KdtCSjB3wb6qsDHyafJTLRAfqCBVvBkOMX9H0
-         r4eJXs1RbQ0qpGF7jk88rt02ofawO9vFk7SIax6Wb1VukaGglRrod7veGUEyAQzMCoGb
-         HLzt1rfATjl2cgyS0B2njerPGFvStejUxzuyZW1RJJsKrYkq8OkZXG9Di4JPE4pSDnxG
-         9vVrzRMZ27c1ZT0ATn8Lcn8pV7tL/Lo4lzOGn/HEFARa5ukiXXhfPBnKsjpz/BvjhfXS
-         rPbw==
+        d=google.com; s=20230601; t=1726992281; x=1727597081; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=adTV4LWKS4uJp5V1QRRytEhV0K8481uxq0Gm1t+3V0s=;
+        b=2A+Ceo/mCLjMseVjbvCsXAzMAtClcjttl1YTiDqOWLqd/53n8rIPguhmtIjfU5g2Nd
+         uvLD2CFVNvlANd3hFk2G5rpBXxoM0i4RfU+VTAJRbXgA4qNsVHqjpdQY9bif3/tqeZb3
+         kNSDrACfotPkZeHu3iSC/mPwjPyElnvfar4t8vxBRXdwA3etmOZsA8m9EeCEqeKlatt6
+         86wLJxGO/gHtIagnG/yu1aPVXErtu+tOWWdXxin3KmKxw/2z5WtA/asvFPc+VVbngVDq
+         ShQmpwQLwW7CMVaQ2NQYWtbQvAC21hVT+8X7pA6+ICNJT5EoWJhMxqNQEbhGOi7AqWHa
+         tojw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726991931; x=1727596731;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LVjfLNaC5tM0o32TL0s4C4MdQKG3/t0bwJT6TE9NJ4Y=;
-        b=RdXYbSxAIKYI1Z8rcxfFFjc8XtvncgUSSaJMI3YDgWrMnBipF0YxsZOGZdFPZRlYFp
-         EW08HGpLaLHIWb1uN3EwkGS8NlhwrZ+XDh64WvCBok15e6SFZdT0TUvMyqKn4MlRxQbu
-         00EvPkMG+P1LpTNfXb/4kC3jZVzgD+0NZLEy7NVdKz08TnuApWYCri5+mzm+82MJzfeC
-         OlR14eRN6T1tFl8cTY9n/lB4XJKkcAS0kKkMEyv/vuxeooTC+r1na974CcbXXzvfFDzX
-         SRSgAHdyBZcrjK7k88LyDidn6UgXBGZ1Of/aSOb/PW/b2n5gNBL/Mw8pfzn7QTYGB9Cx
-         B+iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUp8RIMvCnQCkxnWY1HI9Em8ILGTiRrhgw/cj5hkjtpJVtnhbKQapn5OHMhGYjd8S6z4Ikj04hVtlXX0w==@vger.kernel.org, AJvYcCWz3z888YsWGnHcrzGtFkmj5ZtseLtWCdabojUwSGBjbO8dDYKyuLG7Zqy0qjTJrrwXimoqJNilZq+RXLPS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWLHD2sIPSrvjFk2Hy4ju8O93qpjh9yHnSrFmTJM3tYqLk50U+
-	AZyDsLP+KX2M4QXJzeQTl9MPIjeG6ksylCM3NEcbMFC7UMlh4Udx
-X-Google-Smtp-Source: AGHT+IFPh6nNRMGhxDMacNCP3sqv9jOrAPjBmoh1Q/2goBXvG09Ru0tF/utZWX7Gruxb4QfZE6diOQ==
-X-Received: by 2002:a17:902:d488:b0:206:8c4a:7bbb with SMTP id d9443c01a7336-208d8592f02mr115174935ad.58.1726991930966;
-        Sun, 22 Sep 2024 00:58:50 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:b28c:8c72:94bf:ec28])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794731ac9sm117060945ad.261.2024.09.22.00.58.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 00:58:50 -0700 (PDT)
-Date: Sun, 22 Sep 2024 00:58:47 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: javier.carrasco.cruz@gmail.com, kees@kernel.org,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: ims-pcu - fix a mutex usage error
-Message-ID: <Zu_ONyU6H0dZBKB-@google.com>
-References: <20240921071501.263450-1-dolinux.peng@gmail.com>
+        d=1e100.net; s=20230601; t=1726992281; x=1727597081;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=adTV4LWKS4uJp5V1QRRytEhV0K8481uxq0Gm1t+3V0s=;
+        b=ZyKPNRWJAX/NZIi4RWCSL59o2ycwNLLhXDAhgDALE/K88+RgTp+RBdLmcIXNLYmkJm
+         Yrt3oraF6/j9f8zeU/i6aNXH0Qr6gvF03HaGIYuulhn+3fQOKOHu7jLCpyYZPOsO35/U
+         P3GpgZmRwD/TGtA3qERaW6UC0pTSGPY5wsLrLxHiNiUWuPdAdN1D6c/JjGpUFv5yXGKF
+         1cEmnPl1IpxCXPjYaLQAG80ziwmgf2sP9v4rxw4JkI5M0kCttILQJdyzPvWnKtz1Jo4a
+         7x2c1f+QuL0Bw/7f6Egdy6r1LZRSAIBAzUBOBXFRGLdL81bEc/9zBEQrCT2BIJktJmWs
+         lD9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVAfzRmauJ9+W21vCifwRTN1/t2GPRyEFEHw8e8+beRXb7YSpSI7bR4A9tpSkdmfbXyVL/1ygNhOmiUknw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJn0dP5bdTwB7UDIboRt1QImCaLo0+2CpLyuKhjCFZwaJFskUZ
+	sJJcEq4Kv0sa2vegcrBjyEP1G3gF2l86kDh3BMXC4xI3/wyODqS89aipJ80t5MyFfatctmvNbGW
+	Fpw==
+X-Google-Smtp-Source: AGHT+IEwJweEbOI6acnK6ZpOXs1qSrEZoBam4fT1Yp4H3oBzQF0AOvkHVngY0fb2QytEVzzPX/dijXmQN5w=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:b20e:0:b0:e20:298c:541 with SMTP id
+ 3f1490d57ef6-e2250cd4633mr6150276.9.1726992281039; Sun, 22 Sep 2024 01:04:41
+ -0700 (PDT)
+Date: Sun, 22 Sep 2024 01:04:39 -0700
+In-Reply-To: <20240917112028.278005-1-den-plotnikov@yandex-team.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240921071501.263450-1-dolinux.peng@gmail.com>
+Mime-Version: 1.0
+References: <20240917112028.278005-1-den-plotnikov@yandex-team.ru>
+Message-ID: <Zu_Pl4QiBsA_yK1g@google.com>
+Subject: Re: [PATCH] kvm/debugfs: add file to get vcpu steal time statistics
+From: Sean Christopherson <seanjc@google.com>
+To: Denis Plotnikov <den-plotnikov@yandex-team.ru>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, yc-core@yandex-team.ru, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Donglin,
+On Tue, Sep 17, 2024, Denis Plotnikov wrote:
+> It's helpful to know whether some other host activity affects a virtual
+> machine to estimate virtual machine quality of sevice.
+> The fact of virtual machine affection from the host side can be obtained
+> by reading "preemption_reported" counter via kvm entries of sysfs, but
+> the exact vcpu waiting time isn't reported to the host.
+> This patch adds this reporting.
+> 
+> Signed-off-by: Denis Plotnikov <den-plotnikov@yandex-team.ru>
+> ---
+>  arch/x86/include/asm/kvm_host.h |  1 +
+>  arch/x86/kvm/debugfs.c          | 17 +++++++++++++++++
 
-On Sat, Sep 21, 2024 at 03:15:01PM +0800, Donglin Peng wrote:
-> The mutex_lock_interruptible should be switched to scoped_cond_guard(mutex_intr, ...)
-> instead of scoped_cond_guard(mutex, ..).
+Using debugfs is undesirable, as it's (a) not ABI and (b) not guaranteed to be
+present as KVM (correctly) ignores debugfs setup errors.
 
-Thank you for the patch but I already got a fix for this issue:
-
-https://lore.kernel.org/r/20240910-input-misc-ims-pcu-fix-mutex-intr-v1-1-bdd983685c43@baylibre.com
-
-Thanks.
-
--- 
-Dmitry
+Using debugfs is also unnecessary.  The total steal time is available in guest
+memory, and by definition that memory is shared with the host.  To query total
+steal time from userspace, use MSR filtering to trap writes (and reflect writes
+back into KVM) so that the GPA of the steal time structure is known, and then
+simply read the actual steal time from guest memory as needed.
 
