@@ -1,158 +1,186 @@
-Return-Path: <linux-kernel+bounces-335319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CBDD97E413
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 00:33:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9156197E414
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 00:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7EF1C20F37
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 22:33:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB9F281087
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 22:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCF56F2E7;
-	Sun, 22 Sep 2024 22:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iroSkONY"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEFA74063;
+	Sun, 22 Sep 2024 22:36:20 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A897E1;
-	Sun, 22 Sep 2024 22:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF458376E9
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 22:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727044429; cv=none; b=oE435jewXc/g+jLUSMOuypHyHkVS9bsApqIleps/wIQGf9si9Kh40rGCjIz0WLgDz3RPwpodPl8SDyqMLAra2j+Ng5V1kkYv117nqsH4uySZSNpaGZoPNmhgfU/IggnOP6hrg/kdi6tJPA6aJ+ycyWnqyoKBZBzewT2hw81fVS4=
+	t=1727044580; cv=none; b=c60HuEGnORcuS5/mHZKKh+Sm4eud9LxUjj2vENVSpKZzZxqMY3tHrLnwNv45PSKjI/aTUi2buzz6j6J8NE/nIvOj44Thdv0e33Y1xZ5aGeNGIHP3MbWr/N7Vd0doDUDw7mspzcZwmc6t6JNuxyUptgTeJ9l/tac1DzggBZX0yI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727044429; c=relaxed/simple;
-	bh=W2hGVH/6fnxEZq+LLWNfI4sIqA+vacvowMBZUudZpqg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sQgK1Tb0IJZRw0L3SuzOZNgZGvKg/9lwgbKElILlijIVEFfEQgLj7s6Qhz32JPtb3/6vreWDxYZY4W754ABBNHf0V0A/QobZTJ+XvkmJUhVboctWjoYXzaerETlH6XaHYAlpxiVMfXDKylV3RgSOzr/gEVhxwpHBiiqGuHZ1G24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=iroSkONY; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1727044416;
-	bh=CW/Lnbngr6zHnhaSKXE2qJS74STqdwwRXmEaM/UjuSI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iroSkONY0sjkhnj/eE7HYgoqKtdicVQoEGP0Sjt17e0gWYNnjbnvXGdU6CBHX0Fmy
-	 O86Ji1VGT3Mvjr3ZSRtG/SJYWPu2vzLiXSDcZ33G8kYZA5cP2OAnEmQiQj//OL5i3X
-	 1ovybxbQpI6sO33L/tgukf8suIiIPO6Ztu7lIW4A7SEiYSNFk8sKq39RmVis2Lw+QG
-	 DBA23IkIZ64nUG5VOn+ULbYaTNex4NSDfLHav/AIGrZimCASX2EugriAiBrfqsvEKN
-	 EfHnKSaKyVCZFXzPeOKfzYxQaBwiHMIGubGiQo/9oOqGjOzVNaCO20YZag2F6ffLuK
-	 nqhsaTS/AzPlg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XBgrb3zGhz4w2M;
-	Mon, 23 Sep 2024 08:33:35 +1000 (AEST)
-Date: Mon, 23 Sep 2024 08:33:14 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jan Kara <jack@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Josef Bacik
- <josef@toxicpanda.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Yafang Shao <laoar.shao@gmail.com>
-Subject: Re: linux-next: manual merge of the ext3 tree with the mm-stable
- tree
-Message-ID: <20240923083314.7b750219@canb.auug.org.au>
-In-Reply-To: <20240906111900.5fcf345e@canb.auug.org.au>
-References: <20240906111900.5fcf345e@canb.auug.org.au>
+	s=arc-20240116; t=1727044580; c=relaxed/simple;
+	bh=rrztqsF7OwV8X/8o/MH2nesdKEqI0oNje9Kh9RGNGfQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=btWnwySvswtRddZoT9hxAQxaoJPROpQ55r0RcTiLAjqdyiM3gPapRXAxEefJk4LsTFizEzOhm6QXhlu6O5EBcjAI72k+7pqWLKVLHtO3nTrlx0+NuvkXGNuMGIG77u025V2yL6ZuNbivkiIeiu/CwLFT+3Vmk8Ak9rBGoOtwyPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a1925177fdso16568205ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 15:36:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727044578; x=1727649378;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iL62wxxyf2BpRpsU5hflOQFY9hc2nxQLvKroPtdHQxE=;
+        b=oG5ePz7nMWnssjMwqeTAuf6ItUKDQBHPIbkjlTYJfvvSkN7ix6W7xKVeYfGKwE6b9X
+         Tk85d6kISl49Ls/ki6IY0pKbelB4lfRnTqNlQ0NkUGaY7FtDc4pVu28RfBeQBLS0O+ai
+         nAu3c4f5yjK6BVjVYL5fUt30Srmp2XjXr7kXqZT7+N4ArNi3Am/CGk5ml8ISX5/Et59n
+         ldhQJqomccf+YGxq5RxKt2wUoGisw1OMrrebv8ns0VghiufxVqnwV+9BCsmbSA0qXFuE
+         sGEqXfHyG1WEhmPmOHYc5QoCplmZqJ+CbESnlIh8rCfITWVdqVJhkvEa+Tjyd6COw2gV
+         dwgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNzJWtTCUsrzdwuzeMKEBLvqb8d0kYn0IHYpGMvkhCmZVzoDR0F9fFWJgO5Zh3/OeDwGWPhUkd0M7AOm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2YuUq8XeJvgpOscyhtAVcs8W81nqQIQnIzhnHon0L+xjkhxdi
+	0BqguIeDelPELyaN7U9N3Iu0b+8zQqYdSM0q/0lM7bpJK66hCzuRdWlGs28U2yOHwwIZWbjsqO8
+	fyKfBe3YcETiZcgDKBFn+qaJ6WngDDWN2dxh5TymcUyhdBdg4hXJSwCg=
+X-Google-Smtp-Source: AGHT+IH9jWsMkXxh99DaVhP2wGXf9XeHPJzHQmMixq0twgjJbVBWeGbGgFkzeauvMQJbn3iEZOuiuTv5RlHFs6t+4DKFYhXfKeb7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/HA=1Rqd_I+Vz0LP.o3+Kcbx";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Received: by 2002:a05:6e02:1648:b0:39f:7a06:2a62 with SMTP id
+ e9e14a558f8ab-3a0c8c5d451mr84764035ab.5.1727044578080; Sun, 22 Sep 2024
+ 15:36:18 -0700 (PDT)
+Date: Sun, 22 Sep 2024 15:36:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f09be2.050a0220.a27de.0008.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_btree_iter_verify_entry_exit (2)
+From: syzbot <syzbot+dc1f3e7147b8fc81e0ac@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/HA=1Rqd_I+Vz0LP.o3+Kcbx
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+syzbot found the following issue on:
 
-On Fri, 6 Sep 2024 11:19:00 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the fs-next tree got a conflict in:
->=20
->   mm/filemap.c
->=20
-> between commit:
->=20
->   0a2d82946be6 ("mm: allow read-ahead with IOCB_NOWAIT set")
->=20
-> from the mm-stable tree and commit:
->=20
->   d23805138ac0 ("fsnotify: generate pre-content permission event on page =
-fault")
->=20
-> from the ext3 tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> diff --cc mm/filemap.c
-> index 4fdd2e49f9dc,b722ce0ca6c5..000000000000
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@@ -46,7 -46,7 +46,8 @@@
->   #include <linux/pipe_fs_i.h>
->   #include <linux/splice.h>
->   #include <linux/rcupdate_wait.h>
->  +#include <linux/sched/mm.h>
-> + #include <linux/fsnotify.h>
->   #include <asm/pgalloc.h>
->   #include <asm/tlbflush.h>
->   #include "internal.h"
-> @@@ -3303,8 -3391,17 +3407,19 @@@ vm_fault_t filemap_fault(struct vm_faul
->   	if (unlikely(index >=3D max_idx))
->   		return VM_FAULT_SIGBUS;
->  =20
->  +	trace_mm_filemap_fault(mapping, index);
->  +
-> + 	/*
-> + 	 * If we have pre-content watchers then we need to generate events on
-> + 	 * page fault so that we can populate any data before the fault.
-> + 	 */
-> + 	ret =3D __filemap_fsnotify_fault(vmf, &fpin);
-> + 	if (unlikely(ret)) {
-> + 		if (fpin)
-> + 			fput(fpin);
-> + 		return ret;
-> + 	}
-> +=20
->   	/*
->   	 * Do we have something in the page cache already?
->   	 */
+HEAD commit:    4a39ac5b7d62 Merge tag 'random-6.12-rc1-for-linus' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12caffc7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dd14c10ec1b6af25
+dashboard link: https://syzkaller.appspot.com/bug?extid=dc1f3e7147b8fc81e0ac
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=130c4b00580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=129f269f980000
 
-This is now a conflict between the ext3 tree Linus' tree.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-4a39ac5b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e77a3b8ac098/vmlinux-4a39ac5b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f8ee7a5fea46/bzImage-4a39ac5b.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/01f24a788ecc/mount_0.gz
 
---=20
-Cheers,
-Stephen Rothwell
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dc1f3e7147b8fc81e0ac@syzkaller.appspotmail.com
 
---Sig_/HA=1Rqd_I+Vz0LP.o3+Kcbx
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+  u64s 7 type reflink_p POS_MIN len 0 ver 0: idx 18446744069414584320 front_pad 4096 back_pad 0
+  missing range 18446744069414580224-18446744069414584320, fixing
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/btree_iter.c:268!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5096 Comm: syz-executor359 Not tainted 6.11.0-syzkaller-05319-g4a39ac5b7d62 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:bch2_btree_iter_verify_entry_exit+0x51b/0x550 fs/bcachefs/btree_iter.c:267
+Code: c1 fd ff ff 44 89 e1 80 e1 07 38 c1 0f 8c c6 fd ff ff be 08 00 00 00 4c 89 e7 e8 30 01 e7 fd e9 b4 fd ff ff e8 b6 7c 7f fd 90 <0f> 0b e8 ae 7c 7f fd 90 0f 0b e8 a6 7c 7f fd 90 0f 0b e8 9e 7c 7f
+RSP: 0018:ffffc90002e5d958 EFLAGS: 00010293
+RAX: ffffffff8414624a RBX: 0000000000000992 RCX: ffff88801edbc880
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff84145db0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffc90002e5dfd0
+R13: 0000000000000000 R14: ffffc90002e5dfe0 R15: dffffc0000000000
+FS:  000055559175c380(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005572bbd324a8 CR3: 0000000000b40000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bch2_btree_iter_peek_upto+0x600/0x6f90 fs/bcachefs/btree_iter.c:2281
+ bch2_trans_update_extent fs/bcachefs/btree_update.c:299 [inline]
+ bch2_trans_update+0x5f9/0x2550 fs/bcachefs/btree_update.c:514
+ bch2_btree_insert_trans+0x26f/0x550 fs/bcachefs/btree_update.c:646
+ gc_trigger_reflink_p_segment fs/bcachefs/reflink.c:195 [inline]
+ __trigger_reflink_p+0x2a08/0x2ec0 fs/bcachefs/reflink.c:234
+ bch2_trigger_reflink_p+0x297/0x380 fs/bcachefs/reflink.c:253
+ bch2_key_trigger fs/bcachefs/bkey_methods.h:87 [inline]
+ bch2_gc_mark_key+0x6b5/0x10e0 fs/bcachefs/btree_gc.c:633
+ bch2_gc_btree fs/bcachefs/btree_gc.c:669 [inline]
+ bch2_gc_btrees fs/bcachefs/btree_gc.c:728 [inline]
+ bch2_check_allocations+0x1d1b/0x7870 fs/bcachefs/btree_gc.c:1135
+ bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:183
+ bch2_run_recovery_passes+0x19e/0x820 fs/bcachefs/recovery_passes.c:230
+ bch2_fs_recovery+0x24f9/0x38b0 fs/bcachefs/recovery.c:859
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
+ bch2_fs_get_tree+0xd61/0x1700 fs/bcachefs/fs.c:1956
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fea8a61c1ea
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd032097c8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffd032097e0 RCX: 00007fea8a61c1ea
+RDX: 0000000020005d80 RSI: 0000000020000000 RDI: 00007ffd032097e0
+RBP: 0000000000000004 R08: 00007ffd03209820 R09: 0000000000005d93
+R10: 0000000000000008 R11: 0000000000000282 R12: 0000000000000008
+R13: 00007ffd03209820 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bch2_btree_iter_verify_entry_exit+0x51b/0x550 fs/bcachefs/btree_iter.c:267
+Code: c1 fd ff ff 44 89 e1 80 e1 07 38 c1 0f 8c c6 fd ff ff be 08 00 00 00 4c 89 e7 e8 30 01 e7 fd e9 b4 fd ff ff e8 b6 7c 7f fd 90 <0f> 0b e8 ae 7c 7f fd 90 0f 0b e8 a6 7c 7f fd 90 0f 0b e8 9e 7c 7f
+RSP: 0018:ffffc90002e5d958 EFLAGS: 00010293
+RAX: ffffffff8414624a RBX: 0000000000000992 RCX: ffff88801edbc880
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff84145db0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffc90002e5dfd0
+R13: 0000000000000000 R14: ffffc90002e5dfe0 R15: dffffc0000000000
+FS:  000055559175c380(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055c54a0790f8 CR3: 0000000000b40000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbwmyoACgkQAVBC80lX
-0GzNbAgAnEhTClcgBVkFabSEi/lMy8gw8v2fNkLRuxRNIG7OUiXkSPfbjTRcG7PV
-5ODgM6CtUM2Bi13CeZP9s7AeQclYJNT7ULDrioNGh7b68BPhjLP0V0Faaj/bOL6m
-s5tfaw16EAaKnq6IFuC+iqrjwdVYVrqEcQgKLm1S1QtnXcYWt9PKifKZK5vWyMI/
-Bxlz8ql2A87HEQ7YbD9uElcyd/Lsw0mToo1sMTOl2UF/0jMdrMjFqW3cD65xyvtv
-h+EnrjbDksDoi4Hanu1xtVDhpE3NOeQZsnNOjbsPrCC6WuITXc2MxAjJxtoEXzkY
-ajzV2gphJpW93Wn5VkTMc4O3ItrzFw==
-=6Y2a
------END PGP SIGNATURE-----
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---Sig_/HA=1Rqd_I+Vz0LP.o3+Kcbx--
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
