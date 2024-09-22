@@ -1,117 +1,143 @@
-Return-Path: <linux-kernel+bounces-335303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D5F97E3E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 00:02:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F8697E3E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 00:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBB7028120B
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 22:02:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C93931F214B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 22:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB7C78B60;
-	Sun, 22 Sep 2024 22:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AB378C93;
+	Sun, 22 Sep 2024 22:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LiX06BHX"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xP4JnxgT"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7896BEAC7;
-	Sun, 22 Sep 2024 22:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56461E885
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 22:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727042519; cv=none; b=OFS0lPQ6jfXFWxKwieqF0Y0jDSO4LEeOs8kN40NJrfZlaHx6vEqfJiNJBsKs6/aGxwygPa1IJsWpYHfPozqXbAXglIcc88Fig5XtftJ5QVk035hw5VWgwBV1MwwZ/Kty5M6SnrB47thMtyC4NZfeH6g1UZkQF9c/ekLY+zCoWOw=
+	t=1727042776; cv=none; b=CWm9GTRGjSxtoWdjq+QgS6+MGKaGLoIiUqQOGsI2ey346zy71UWMj2a50DHkAr/SZg5pPExVD82dIeo9+Wt/Rc3eHJ0u6jxG7wpe5z76h2YrePhT1uC0N6Vn4Bj5UnItlrIpNhmkxHLeYEM+ibDShsg5ecnPIeK0aX0OWChg3vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727042519; c=relaxed/simple;
-	bh=fS4a1kXxnswN7aBUZhu6dvo/+bd36iWsLAtO9bouZ6I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qw9bHtjSN6vzEyashjaoCC73VoqU1juRK1lS0latwU5GPos2q3uzdDdSkAGeM13ONe5xFfwpU6c17bpafZqY6WlLniIp80vUXQ+Pv8/S+EMk6QBfALK4vWVoY8u25/XQMuOILB8gud10xrgwtUeDleHPOj0nIM6dGjA508jR73w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LiX06BHX; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2d885019558so2392661a91.2;
-        Sun, 22 Sep 2024 15:01:58 -0700 (PDT)
+	s=arc-20240116; t=1727042776; c=relaxed/simple;
+	bh=hcNq7bjFvbvpdj0qA7YBfamGaYA4jHsTYXCJx/ynmns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d032KGnyohiCx48LFwh+378U2xD4BoC2yOZ63vosBu8FXISl11+z1zsoEBzlxNRE+o1lHH4MbDts9lN+PnqI4gpSWE9DtA7OJzQI5crXIyglls2p+fGzUzRs9ARqv24D7gBVWBVQFplvSxhEoYL6h7bXvaOIA5/htm0a2qSM4WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xP4JnxgT; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cbb08a1a5so35099525e9.3
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 15:06:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727042518; x=1727647318; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eSCRJZUOB9g6O0lwt3GxN02pQdeoPp+qwkmsxF5882c=;
-        b=LiX06BHXITKvFovflsO2hVwOiQUhbOS0uFJWbfLBu7SFBOpJ7OUGEXmswUeQGTm/Mh
-         xmWV9cCQ+P+7xRUPw5du/3EWJZmgFSPX1vHG5AjIxztbCOzWz2WbUpLhpYdHToGyMY7n
-         l09Mh04NdeOFG0fVabhzmwZJxnEMXf0+09eMAI8xe9Nzc5Xa1fCQcjz7nBJZ4Z0CsOO1
-         0H77yIvT03YFgr7xnoJU/RS/6nh0tPiiCN5fRT3ONqK0Ix2q0Bnr1Rz6XqwvHX0qE/Ow
-         WU/yaW05v3vul566VCRJ9iRebtubm62BdlLzgXpd93KOkCfEgZMYl8lRAZ/+orS7lLVF
-         pm1w==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727042772; x=1727647572; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hcNq7bjFvbvpdj0qA7YBfamGaYA4jHsTYXCJx/ynmns=;
+        b=xP4JnxgT+teuzI29MnpVSPX6/XGoMTWpY2I5xQZfbH57FFLEBTa1Ok/F8DivYfOv8E
+         qsq7FtXLem9lHp/FC96he1jYSDYxHMkWp10L1rcJXC1aep5thBAt7lx5ikFszAlF4Z+m
+         oWrm6Q/05YyevyqiMKdQniGs3aGbidqT/oz+uKA0x0f5NVZAMCHyltNz+tAz3RCeYbcS
+         agzUW49LcbaxI+KUBsmx/MnOSkofnDONKgMvLEjQ7FpSu3/p02PcOdmPxOdFmq2+uwDu
+         +GfMicJlAdSgssNkFhYPpJIOb4zf1FJC/jbYIuMqScjGVdK/bdDscmcHiPSaDRmhGgI0
+         5rfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727042518; x=1727647318;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eSCRJZUOB9g6O0lwt3GxN02pQdeoPp+qwkmsxF5882c=;
-        b=jwYzvGM8tTKRNZeedsnU9XwVgD+Axhwsf/LyDuV91lk6SR1/6Do6a9BfA4WG8md/n+
-         Fb+6jwdSs4HpdBmWtIcY1s3krWcAiABvkFrwBxU6CPYzVU3m79t91VC+VQ0Z8wIWwbNX
-         4bAVWZ4PvG5Oe9ng3143EA20lWNj5pPrx4DYbBlbMQPCoc4utl1ntaK3KfxEOr7ECx3U
-         lbLnuAFTFdx9P1119+2yruBiTADTePkMZThWX0Y7JdNX8J9pk6nPcLFRUQ2wvateP2O7
-         g1PZepskzkavpU++EulgFQq15dTVbQZcUvwPMoexLA8R46sOGr858CIsyu5jpB8SMR3b
-         o/PA==
-X-Forwarded-Encrypted: i=1; AJvYcCWb0aJxWFbWwDA0mqrmirZV1wXBUFFhh44qenNuemaSDzCoNjMWSqSeMbtjTLlluL1pO8NeLNSpvJujIO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9sgM4ENK0gcvquvLJdBOE7dJjhmqZpgI9U4ckDi57b/0gEZGW
-	L94RI5wtezRtDSde3WrijCILlX+6IygMJXqsS/QEalIZ94eXfKOaUo7ss8YHQUPXpUZXzqTQdfI
-	U0knhqUwp383uJgHZAH4m9hlRxbk=
-X-Google-Smtp-Source: AGHT+IG3nE2V2crJIfpeakBwHpaz9jFPPsQaDlReuFCanqQtM/UhaShFxFrd2PrOeQmIs9Fdzd5tYEEAoCedGT+YkX4=
-X-Received: by 2002:a17:90a:68c3:b0:2d8:8c82:10a with SMTP id
- 98e67ed59e1d1-2dd80c465f4mr12957062a91.5.1727042517603; Sun, 22 Sep 2024
- 15:01:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727042772; x=1727647572;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hcNq7bjFvbvpdj0qA7YBfamGaYA4jHsTYXCJx/ynmns=;
+        b=alNJKTRNnqeYgcVF3VWLJLPe7PZcPHQjthuGBsdXjBh1CXyCaJEElKZHUB9qskxr5V
+         8cQsPu2+wD0I5LXmN9DE7S3hfVjZzMp79w23H8CnCZqCqsEXOTg3Z99KpfJXZelPL0my
+         SGuDEtzyCEa2REy/My88V5EzqagqdaksSmEtcQsShxOMEv3OsfkAGKoLOr9hmY77dkG6
+         TISIRhzhxbNkS5kDz5wjYMf17z4WgCcAok4sniGah14ylXnqB09ukgzQThrXDTDjAXR1
+         lUvVYym6iPDJorWZSFsfBrmFYJfY5w/V+6LnkcmowQLCHGfT8GrIsEVmVh6PLXtgtPzz
+         evQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEmGQJST2IYIBQXfq+vAEzZjHy8hJpwn4fDZk1KKx0eJr7YAFJ0NJ6QNzmo6Gpu4R+kG8y/AK7fouxDOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqFYghu3l95KOVM8U88Lb2qxT2TfBIeocznp/x3e/e5V6DeoHV
+	Hs4WKDDtJyvN6/X9PWShzvfjKmHNmborC8odKsB+P9/lNpOVZEPmGRQ85jfI8uI=
+X-Google-Smtp-Source: AGHT+IFAKBeMqzPEszgXWfY2q+crMa2r6AzcOK87gchBPbHJqZfcWB75VcqYM4PCILxWwRlTRsW8lQ==
+X-Received: by 2002:a05:600c:c89:b0:42c:b037:5fce with SMTP id 5b1f17b1804b1-42e89fa08dfmr12521005e9.3.1727042771439;
+        Sun, 22 Sep 2024 15:06:11 -0700 (PDT)
+Received: from localhost (lfbn-nic-1-357-249.w90-116.abo.wanadoo.fr. [90.116.189.249])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f99ebsm23010824f8f.63.2024.09.22.15.06.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 15:06:09 -0700 (PDT)
+Date: Mon, 23 Sep 2024 00:06:07 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>, Arnd Bergmann <arnd@arndb.de>, Sean Young <sean@mess.org>, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] bus: ts-nbus: Fix an error handling path in
+ ts_nbus_probe()
+Message-ID: <jquslj55xt7febemfgu4dinvok77dgpi4h3pqcxgraepioog3e@h2xfsnypdzku>
+References: <6c887c85434edb17d2217c5198c48018dfa97923.1710606677.git.christophe.jaillet@wanadoo.fr>
+ <053af1f0-546e-416b-b8bc-22837e908ae0@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1725945912.git.huibo.wang@amd.com> <fcddd32c625acef93ac1fd74b472d26d36626ecb.1725945912.git.huibo.wang@amd.com>
-In-Reply-To: <fcddd32c625acef93ac1fd74b472d26d36626ecb.1725945912.git.huibo.wang@amd.com>
-From: Lai Jiangshan <jiangshanlai@gmail.com>
-Date: Mon, 23 Sep 2024 06:01:46 +0800
-Message-ID: <CAJhGHyDB6A1NNNW84jxwL=LToPXqLDb1kZ_kd9N-M+aWCV-kkQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] KVM: SVM: Inject MCEs when restricted injection is active
-To: Melody Wang <huibo.wang@amd.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Ashish Kalra <ashish.kalra@amd.com>, 
-	Michael Roth <michael.roth@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zwqbhu3hcdysiyxz"
+Content-Disposition: inline
+In-Reply-To: <053af1f0-546e-416b-b8bc-22837e908ae0@wanadoo.fr>
+
+
+--zwqbhu3hcdysiyxz
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hello
+On Sun, Sep 22, 2024 at 03:32:44PM +0200, Christophe JAILLET wrote:
+> Le 16/03/2024 =E0 17:31, Christophe JAILLET a =E9crit=A0:
+> > If of_platform_populate() fails, we must shutdown the FPGA, as already =
+done
+> > in the remove function.
+> >=20
+> > Fixes: 5b143d2a6ede ("bus: add driver for the Technologic Systems NBUS")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> > Compile tested only.
+> >=20
+> > This patch is speculative and based on the output of one of my scripts =
+that
+> > tries to spot calls in .remove function that are not also in the error
+> > handling path of the probe. I'm not familiar with the pwm_ API.
+> >=20
+> > I don't think that the locking in the remove function is needed here.
+> >=20
+> > Review with care.
+> > ---
+>=20
+> I sent this patch a few months ago, but it never got any feed-back.
 
-On Tue, Sep 10, 2024 at 2:06=E2=80=AFPM Melody Wang <huibo.wang@amd.com> wr=
-ote:
+The patch looks right. I don't know how the ts_nbus works, but I'd hope
+that at the moment ts_nbus_remove() is called, there are no more devices
+on that bus that rely on the PWM being on. In that case the locking in
+ts_nbus_remove() could be dropped, too.
 
-> @@ -5153,7 +5160,7 @@ void sev_snp_cancel_injection(struct kvm_vcpu *vcpu=
-)
->
->         /*
->          * KVM only injects a single event each time (prepare_hv_injectio=
-n),
-> -        * so when events.nmi is true, the vector will be zero
-> +        * so when events.nmi is true, the mce and vector will be zero
->          */
+Best regards
+Uwe
 
-This comment seems ambiguous, and in the following code,
-events.nmi/mce/vector appears to be able to be true simultaneously,
-rather than being mutually exclusive.
+--zwqbhu3hcdysiyxz
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
->         if (hvdb->events.vector)
->                 svm->vmcb->control.event_inj |=3D hvdb->events.vector |
-> @@ -5162,6 +5169,9 @@ void sev_snp_cancel_injection(struct kvm_vcpu *vcpu=
-)
->         if (hvdb->events.nmi)
->                 svm->vmcb->control.event_inj |=3D SVM_EVTINJ_TYPE_NMI;
->
-> +       if (hvdb->events.mce)
-> +               svm->vmcb->control.event_inj |=3D MC_VECTOR | SVM_EVTINJ_=
-TYPE_EXEPT;
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbwlMsACgkQj4D7WH0S
+/k4kAwf8DI7GZkk4aA1vR7EG8Qw1mcFHaJAzT7tVeKlZO+L0hfn/xgJy6f94sEu2
+wWEdrBjUUi6TXtP0WbByLd9JHH9Yef7dm0oZ5ePHYG5eTxYa3YIwNBqtvvTNjczp
+KE0rRZdzJCFV6pUYM/f2xfytfABwrWaVfhkUqzCGTuxG7II+znohT2KyrRihn00h
+P0zNUEocyU05h3kCbzp2NMGL+GzkLZwqTpSNQwswWJfvcNn545fXqrrxQPPe1CXe
+W3rQesTKgv5FZ26uurVu5NdOeDL1lHPKn+NuWLJvQ4si6z722ZrYRXIxLW2UHZ55
+ydsD1yuCDVL6ZvULVY+UgqPB2e3VZQ==
+=44gJ
+-----END PGP SIGNATURE-----
+
+--zwqbhu3hcdysiyxz--
 
