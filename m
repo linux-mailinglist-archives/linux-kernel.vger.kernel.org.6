@@ -1,150 +1,131 @@
-Return-Path: <linux-kernel+bounces-335092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD8397E0E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 12:33:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA5497E0F1
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 12:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0F7A1C208CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 10:33:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E21C61F21324
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 10:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D2914F121;
-	Sun, 22 Sep 2024 10:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB235175D26;
+	Sun, 22 Sep 2024 10:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="KhKdHH4O"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V9Y7LDq2"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B086813C67E
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 10:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F245524D7;
+	Sun, 22 Sep 2024 10:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727001201; cv=none; b=X10Ddfiliw1ujB482nH5lQ3N8QhJO6jgLX/bDicLEpBB69H1r1Qjal8xn0cxTXe+p4FKWyJWMFx4LkZzkiXzUz8LvKcJ6ZnlEkIzK7pY2OfRfkhQxDRhJAYv5Fl+yOLihw+HT6XdyB71/EH7HNQ9IxPpq6VcItpm2FKyf7NvVJk=
+	t=1727001538; cv=none; b=TCEoNXETYojpq1z1hK5wj7eV61wcqak5aHzvtgKxHcFpuM4bJh1J5IFIWHcltuYqsKa7fHuIflSqDdC01wEmTRx+UiV001rbGrk6OTlDjP+xPBMVNUyobblo3XtpjCuARmixLRNE6mlIcylKaSfx/eRrRM/fd8OYs7C+ERltblM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727001201; c=relaxed/simple;
-	bh=/Q1V5qjwd/t0sqYmppQNCSsxC2bsWSxzR/kG8t+yFlM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=Rzdhp3JRw4Z2w6m+Q9J9kL++9l5PGcCGOz+HShLUg7Xp/5S0LDDxZlzyHgqxbfUPaLO5dlOo/VNVp5IeZbPT671ROjycZbm6H9wAQwn8V8mfo0YBPCZC8vFPsjbH6d8cGjM5TO/JK8bP9sRMm94g0n23m2d6c5/C4ct/G3Nwl38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=KhKdHH4O; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1727001538; c=relaxed/simple;
+	bh=VG8wPAJlOh7wH7VZbFM1FggN+JzxIWkCE5thtmcsAyw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=upqOB5oR1HdsyO0gekHfJKBhevQhNZnK+lqf2WEer+UPlDCPBZhZI2GwscmW3VlWQ6m4L7fT7WyZ5XebZlZA9Pqf2KffW4KAKxuz868ZeTb9czujPOS+bA1CZfn958waL9WVDsATYmNRzJhTr4FlKB0o2L6S3pwiyqNsOgVFpy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V9Y7LDq2; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2d877e9054eso2436855a91.3;
+        Sun, 22 Sep 2024 03:38:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727001536; x=1727606336; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uYFzsddciP2dhrvjy4QZaLUgZ3fluZaJRBZ4LzxsQdQ=;
+        b=V9Y7LDq22RLTmAkWzFKjwoPPkgSizDVjHhvvX9BAm+9/cre9YfJnp13GR2hQ/9yYkC
+         m2MJs2ZEoKQ955yLiTL/W+a5CszeaoATkAcAwaTb103t0/98ai8uA9pKXtEhGTzUB6ul
+         KBjeidjrUK+5KjcuBASrd4yWQsXdLfFqAq6Fyz/kUI28QZooo2WAse/VRMxt23dmSLJx
+         mFZEZDatTXAXypuwc4WHdssmUH/FK+vfYG6lRA+DLnY2Bt3RaROcot9hAzQxQtgq9CR2
+         IBvlmDsYsa1B6Io0pM3c0rAuruGLiWIfOwuUuAV9HjYsNFMDllgcpePYCMLgF4Pky6Na
+         n7+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727001536; x=1727606336;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uYFzsddciP2dhrvjy4QZaLUgZ3fluZaJRBZ4LzxsQdQ=;
+        b=iF00kUYbeHAzvin3Srx4Z/Fz0tJevo+MoMgtSwwK4RZcJ1yse1JXH0VfKjW13AoCjh
+         t5XeFmxwva7rS3ndsqDwBkcWgT28IoZvaEtk7zn5nCcq6aYMjiTKkiDUM5yeJ7Dvi/MN
+         6vxUTcyz6SB7rdvwzBB65PuPs06bIar0OjbXvZCJJiBO7uj21k6dogQfb5HY142MAOzJ
+         ZSJINF4zQuNIVHbBT5QcL/m+ohdbbkjlfWrx7CukX7YOpFfjj0HO/dkbiS8sQgbgClkj
+         j1IJ7Mf531fNewgqo6aDPJVqCNn1wm8yDQ/PCrgPGTAp6p2U8iS9Sd1Ehos3mLvTjuf0
+         oDPw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2amRQzZU8W0jU0yAdd+Nu4TD2UKZcKWKR52oxrocHzSTKldtK44MdOYkJByb93o0H2fDUMWKKwYQXaPq1@vger.kernel.org, AJvYcCWDg18W5El+Gg7lMOvlM2AgEoumNJn0mn3P4FSHwCc/wpAdcyXqO9UCz2UueJxjMRiq+Su8LFDg/A00Sgpb@vger.kernel.org
+X-Gm-Message-State: AOJu0YznhWmA8hV05EsXZjo36FZaqBrnF87bYhIE7Z4+OVI9PBrBQS3/
+	OHni4hi11CLn2kPSQJ64FnltTnX610jEAI/WLp7LbiA46D58oHLyQ6KDQg==
+X-Google-Smtp-Source: AGHT+IHylK8Omp5kXM0sa2aS8a2vC0yRnn4oCQirRZ/15SzF/TczC9anJd49liFLbVbPHGgyng4Vug==
+X-Received: by 2002:a17:90b:3c4a:b0:2dd:5e86:8c2f with SMTP id 98e67ed59e1d1-2dd7f452285mr9607651a91.21.1727001536130;
+        Sun, 22 Sep 2024 03:38:56 -0700 (PDT)
+Received: from localhost.localdomain (111-240-85-119.dynamic-ip.hinet.net. [111.240.85.119])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd7f7c0ff7sm5235084a91.5.2024.09.22.03.38.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 03:38:55 -0700 (PDT)
+From: Min-Hua Chen <minhuadotchen@gmail.com>
+To: 
+Cc: Min-Hua Chen <minhuadotchen@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] proc: fix casts to/from restricted fmode_t
+Date: Sun, 22 Sep 2024 18:38:29 +0800
+Message-ID: <20240922103831.130355-1-minhuadotchen@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1727001195;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rh5mxOysEWdlr7zB3dIq9Xe2btAHsCpup+ruaFZk4EM=;
-	b=KhKdHH4ObK+KAa3ylcl/wZq36CKLW9XGQbMTs3L/PVLTKtzN6mah6aJfCG38zpVnZ9+WWU
-	FN9Yu0Uj7sgJ7XXprTjbI6UVwNg5ynCR49Xon30JpoX3Pxd/H16jLNAZjzSA9ERIyqS5Qr
-	CledCoNU9+F591nNaaPK/hIx5LBdCDNLDxO/HLUEkmD4RTm6EOdcNuxs9Y2atEyUD1lIWx
-	BsooqPkyy/7oHJbcCdkfIJ4YWK+wlfinkjt7sOSXt22w1uRBqecWy0Mt9YeQHONeYEtB95
-	OGSa+w1znwU/9ks2KwjbP9CZgwfMUwuASQshHjGt3NgnA2w1dMNLr63HdNHLDQ==
-Content-Type: multipart/signed;
- boundary=cf4d01d20a3b9d5a9a49968868fe9e6d1f0f8308e15edb5bdb79c6fb1446;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Sun, 22 Sep 2024 12:33:05 +0200
-Message-Id: <D4CQTRYUPQHL.1Y42CT0P8ZOWQ@cknow.org>
-To: "Andy Yan" <andyshrk@163.com>, <heiko@sntech.de>
-Cc: <hjc@rock-chips.com>, <krzk+dt@kernel.org>, <robh@kernel.org>,
- <conor+dt@kernel.org>, <s.hauer@pengutronix.de>,
- <devicetree@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>, <derek.foreman@collabora.com>,
- <minhuadotchen@gmail.com>, <detlev.casanova@collabora.com>, "Andy Yan"
- <andy.yan@rock-chips.com>
-Subject: Re: [PATCH v3 06/15] drm/rockchip: vop2: include rockchip_drm_drv.h
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-References: <20240920081626.6433-1-andyshrk@163.com>
- <20240920082122.6742-1-andyshrk@163.com>
-In-Reply-To: <20240920082122.6742-1-andyshrk@163.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
---cf4d01d20a3b9d5a9a49968868fe9e6d1f0f8308e15edb5bdb79c6fb1446
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Peform a __force cast to fix the following sparse warnings:
 
-On Fri Sep 20, 2024 at 10:21 AM CEST, Andy Yan wrote:
-> From: Andy Yan <andy.yan@rock-chips.com>
+fs/proc/base.c:2320:25: sparse: warning: cast to restricted fmode_t
+fs/proc/base.c:2377:42: sparse: warning: cast from restricted fmode_t
+fs/proc/base.c:2477:48: sparse: warning: cast from restricted fmode_t
 
-Maybe ``From: Min-Hua Chen <minhuadotchen@gmail.com>``?
+No functional changes intended.
 
-It's very minor and Min-Hua gave their 'Reviewed-by' tag to your patch,
-but they found the problem and I thought it was just for practical
-reasons you made it part of this patch set.
+Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
+---
+ fs/proc/base.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> Move rockchip_drm_drv.h in rockchip_drm_vop2.h to fix the follow
-> sparse warning:
->
-> ARCH=3Darm64 LLVM=3D1 make C=3D1 CF=3D'-fdiagnostic-prefix -D__CHECK_ENDI=
-AN__'
-> mrproper defconfig all  -j12
->
-> drivers/gpu/drm/rockchip/rockchip_vop2_reg.c:502:24: sparse:
-> warning: symbol 'vop2_platform_driver' was not declared. Should it
-> be static?
->
-> It is also beneficial for the upcoming support for rk3576.
->
-> Fixes: 604be85547ce ("drm/rockchip: Add VOP2 driver")
-> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-> Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
->
-> ---
->
-> Changes in v3:
-> - Split it from 10/15, as it fix a exiting compile warning.
->
->  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 1 -
->  drivers/gpu/drm/rockchip/rockchip_drm_vop2.h | 1 +
->  2 files changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/d=
-rm/rockchip/rockchip_drm_vop2.c
-> index 4776a227e62c..a7f9f88869a6 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> @@ -35,7 +35,6 @@
->  #include <uapi/linux/videodev2.h>
->  #include <dt-bindings/soc/rockchip,vop2.h>
-> =20
-> -#include "rockchip_drm_drv.h"
->  #include "rockchip_drm_gem.h"
->  #include "rockchip_drm_vop2.h"
->  #include "rockchip_rgb.h"
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/d=
-rm/rockchip/rockchip_drm_vop2.h
-> index 59cd6b933bfb..bc001f715847 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-> @@ -9,6 +9,7 @@
-> =20
->  #include <linux/regmap.h>
->  #include <drm/drm_modes.h>
-> +#include "rockchip_drm_drv.h"
->  #include "rockchip_drm_vop.h"
-> =20
->  #define VOP2_VP_FEATURE_OUTPUT_10BIT        BIT(0)
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index b31283d81c52..cb32961dfb4a 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -2317,7 +2317,7 @@ static struct dentry *
+ proc_map_files_instantiate(struct dentry *dentry,
+ 			   struct task_struct *task, const void *ptr)
+ {
+-	fmode_t mode = (fmode_t)(unsigned long)ptr;
++	fmode_t mode = (__force fmode_t)(unsigned long)ptr;
+ 	struct proc_inode *ei;
+ 	struct inode *inode;
+ 
+@@ -2374,7 +2374,7 @@ static struct dentry *proc_map_files_lookup(struct inode *dir,
+ 
+ 	if (vma->vm_file)
+ 		result = proc_map_files_instantiate(dentry, task,
+-				(void *)(unsigned long)vma->vm_file->f_mode);
++				(void *)(__force unsigned long)vma->vm_file->f_mode);
+ 
+ out_no_vma:
+ 	mmap_read_unlock(mm);
+@@ -2474,7 +2474,7 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
+ 				      buf, len,
+ 				      proc_map_files_instantiate,
+ 				      task,
+-				      (void *)(unsigned long)p->mode))
++				      (void *)(__force unsigned long)p->mode))
+ 			break;
+ 		ctx->pos++;
+ 	}
+-- 
+2.43.0
 
-
---cf4d01d20a3b9d5a9a49968868fe9e6d1f0f8308e15edb5bdb79c6fb1446
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZu/yZAAKCRDXblvOeH7b
-bhyOAQCgfugbYkLTEQoVYnYjY2LIP0tmj3SFSFrsw3hSRtqOHwD/cMGxEu1QU1Nj
-DLQj4kuQxg314p3e5CtjLIAFUNlzLQI=
-=a3i5
------END PGP SIGNATURE-----
-
---cf4d01d20a3b9d5a9a49968868fe9e6d1f0f8308e15edb5bdb79c6fb1446--
 
