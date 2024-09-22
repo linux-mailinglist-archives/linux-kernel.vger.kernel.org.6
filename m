@@ -1,161 +1,97 @@
-Return-Path: <linux-kernel+bounces-335035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1520497E02B
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 06:53:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03C1097E02E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 07:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 226561C2097A
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 04:53:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C44F281789
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 05:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A43175D5E;
-	Sun, 22 Sep 2024 04:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69D7155A26;
+	Sun, 22 Sep 2024 05:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J2TlOz22"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="L/LLS03U"
+Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58C813F43E
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 04:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E775A2C9D
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 05:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726980799; cv=none; b=YqrYuTWRaqB/rYL2MCia0UsidzaDxSMDa4b1qa7sE0twoEktoVShS3enWPomZ3IbqDyMvkew1HqCgIWDqfY8VQ+kFA921VphvXgv6TPnyhnXilrz1MB0XizU1kVYSottqLo3AymGBfHU6m37sk98g/RdIqPdGuwXGN5va9wyAsw=
+	t=1726981390; cv=none; b=kMo1E9MsOhYv4s09XKLuCygH/H21vq5on5EyVvoxr5qnGFlY9HkHNgUfWplwOcSjB49/4N6xZRycHxtkb7zfQglip7OMOYTgocXk7bjWwgi0pr+wTcXP8vprq1+NEFDoz1uEb98w8sZHmt7Ca5NWnOc9DYH/gvvHsdegsDr6A4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726980799; c=relaxed/simple;
-	bh=5sPAcp14oAGaMblHFYuYSWG6YFrLMixhPDa5MzibQiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oTCsnFtyLD3zq3VaLDahDBJlxK0RlTD0kxPColoWkkkCHYYhPG/va1C1Xu3177otY9BOHlPITyeF5MFBGQf2w8coFM9gcUvx3Shs3Dg/apHFK2dBmSp4r6o8NL7Tsa++HWQGimzXXlyMIkNbkeuOusZPJ3bLjnOUrWsHi1aAWIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J2TlOz22; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726980798; x=1758516798;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=5sPAcp14oAGaMblHFYuYSWG6YFrLMixhPDa5MzibQiY=;
-  b=J2TlOz222nftDVp7nX632qUUgQUrT/srRaRY8ZRJ4GU7OhXSSngunQcq
-   0Su1yVirMXJ10qQZGZEeWkqLh3Vk1r6bGQgQkQrLsWLgEzTZ25EyCJC/z
-   pHrtE3BGiN15q1mb1lpctxzAQIAoSZX5piGmB0yBv3Ki9Kf080+AiEuMs
-   RHaijQU+F5ffOYFAA4Hl78F6da7PgUAL6Kghwud9mSGP9hfgf1rFROjH1
-   t1CTmWpb295Kvc9znTYU4TMiAWAb5SY7cwmYFaDqkRnQH7Z/S055ofMw2
-   RRcmXv0/kcQRUclXY5wg3GqbFM3fdFkCvC07D+bDezTlxoCkrdoX22a8j
-   A==;
-X-CSE-ConnectionGUID: prmrPelOS2qQrMDA2zB46g==
-X-CSE-MsgGUID: 7TfwuY9BRJ2wq0IIIdkeTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="43417182"
-X-IronPort-AV: E=Sophos;i="6.10,248,1719903600"; 
-   d="scan'208";a="43417182"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2024 21:53:17 -0700
-X-CSE-ConnectionGUID: /umQf+ypQyaq6gRJQQE18Q==
-X-CSE-MsgGUID: COQ3buR6SZKuBfdET9hvZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,248,1719903600"; 
-   d="scan'208";a="94055201"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 21 Sep 2024 21:53:16 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ssEav-000G2g-1C;
-	Sun, 22 Sep 2024 04:53:13 +0000
-Date: Sun, 22 Sep 2024 12:52:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20240919 1/14]
- kernel/sched/ext.c:3351:24: error: returning 'struct cgroup_hdr *' from a
- function with incompatible return type 'struct cgroup *'
-Message-ID: <202409221235.gxUlE6Vm-lkp@intel.com>
+	s=arc-20240116; t=1726981390; c=relaxed/simple;
+	bh=MrGgYU52955gu5WxHVvH9OxvSr9R1ccxeJRD9f3EFMA=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=fYcBod05Pp+Zt9THze+peJvduOiG1K+zEOdli9nCKoQlhjfg1EoEWKVrQBpydMnW6s04jI/XNResy3XVwA82Oq6ki9L61eboMl3kRa+s0Xf+J1Br3EI+CWvpSxKO07fhgZNU62PNxk7pvOdQljJUNLczfOIzJJ2tCadganSYwog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=L/LLS03U; arc=none smtp.client-ip=203.205.221.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1726981380; bh=rLIxChQwuio7BiJpebU+iR2qcqd+AgwdA5rqzEAqN/E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=L/LLS03UWLG4IKZ4fIPZN3qGal8PRL0SblLs5lxqOAnwVGGFfNAiX84kg/unfg9vZ
+	 5b+IiThQ7q5PWSG16+XN0abtxL3o0NlGtq9tIyUmln38luY9jmqUpAUgLIcqgxbtiB
+	 oqqkcFRokzxaCL6AdD6O5e/WQ1JKYaaC9f2xF5BA=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
+	id E3812C52; Sun, 22 Sep 2024 12:56:56 +0800
+X-QQ-mid: xmsmtpt1726981016txcnhlvza
+Message-ID: <tencent_8F67C9C6DBD2F6867309802EEE2ED84C8406@qq.com>
+X-QQ-XMAILINFO: NDgMZBR9sMmaGd6CTsWuwfQ8F9Cin5XGTQprHs7HZHq9C8ajSoNOsyntra6A2V
+	 ykTEwyL9drf1uzI6uHTFFlY7qi81c2mYpeLzpVsrY0Vznaq3K8tQS+lrOttNL9bmvyA+0M2bzgF2
+	 vQJSApBs8TauUBaYNbedVoFPSUr02xSe8GGIF0OdAYt+qdlgHfFLs5TxGSfVrxDFTAiH8Af5NK5B
+	 ob7xuVw4EtkSgq8ofUdtKnKG8F3WRpQUXlwzyM6XZgpH4dXcHvwFDRrOws3WHs3kT+a+eNsvSAHI
+	 Z/bRwxSEHcEFHtMfmoCdOFE1lx4QsBAPPsU83GmEgozl70vS1lU4fbvG3RSBgLuFJzH6PypFtmFo
+	 ewY9JoR3aLKfop5zM3LSO+I0/rvRnWR1gWPAsZE8eveF9+6UXzMLqIa74JnJWzscQja3jj89Hws2
+	 +JTsvphrDZEAapdgsnuOhYjg1+GsuOzZQ1wDE03AXw9mK8gJn0W4Bkq6op/2+paVNF0cDIMn4PAu
+	 y+GFmGnuFQ3CSnG75Y76YrJVKk5/cTSGWAhjkCoOAUM/IE3vKA2wPsiiEpHv+3hFDxp4rgSM4L4B
+	 0lYWS65A8oQ0lhuqEGJg7XQBHlNhfAAWeswdDNFkC/t/8t9CrCM6yEvcv3cd70CkT9HYY5ab4EhH
+	 28LSpA7OEyPlHY0WsMTj6+MT3nEHhnRg6SXZOJXxbGpGy2qQ0MJIQl6bsG/SjN8uRh4ALHfF8piC
+	 Kwl+bXn/If5pnP79tNA/jE1SsqOSzb/6z/HofLkrwoyAcfhqnWe6blSqvfRP6mKTZNuVETjjHmNt
+	 +ltVxd2PUQLxbjd/YA2JN52Jz7/knq/JubbQUYkpLfnjZL/lKCn1o9OFaFlv48KM4ZeDIvVde8h1
+	 g+upfCTTLrCVfJ3OunrYbGbS7gLNqsVxWCGkSQz7LnE8Y+Nfqg7NNROL5zR3XTdA==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+ddf8715339c89280b6fc@syzkaller.appspotmail.com
+Cc: jack@suse.com,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [udf?] general protection fault in udf_read_folio
+Date: Sun, 22 Sep 2024 12:56:56 +0800
+X-OQ-MSGID: <20240922045655.1723197-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <66eefd0c.050a0220.3195df.0061.GAE@google.com>
+References: <66eefd0c.050a0220.3195df.0061.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Gustavo,
+In erofs_bread(),
+	folio = read_mapping_folio(buf->mapping, index, NULL);
+file is NULL, it triger this issue.
 
-First bad commit (maybe != root cause):
+#syz test
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240919
-head:   c4fe76eb6cabd44e576f30024974d06c9bd5d6ca
-commit: f86858bda9d881af35ad0e29d88afc58a02d0f09 [1/14] cgroup: Avoid -Wflex-array-member-not-at-end warnings
-config: sparc-randconfig-002-20240922 (https://download.01.org/0day-ci/archive/20240922/202409221235.gxUlE6Vm-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240922/202409221235.gxUlE6Vm-lkp@intel.com/reproduce)
+diff --git a/fs/udf/inode.c b/fs/udf/inode.c
+index 4726a4d014b6..fb8121edee8f 100644
+--- a/fs/udf/inode.c
++++ b/fs/udf/inode.c
+@@ -220,7 +220,7 @@ static void udf_adinicb_read_folio(struct folio *folio)
+ 
+ static int udf_read_folio(struct file *file, struct folio *folio)
+ {
+-	struct udf_inode_info *iinfo = UDF_I(file_inode(file));
++	struct udf_inode_info *iinfo = UDF_I(folio->mapping->host);
+ 
+ 	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB) {
+ 		udf_adinicb_read_folio(folio);
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409221235.gxUlE6Vm-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from kernel/sched/build_policy.c:63:
-   kernel/sched/ext.c: In function 'tg_cgrp':
->> kernel/sched/ext.c:3351:24: error: returning 'struct cgroup_hdr *' from a function with incompatible return type 'struct cgroup *' [-Wincompatible-pointer-types]
-    3351 |                 return &cgrp_dfl_root.cgrp;
-         |                        ^~~~~~~~~~~~~~~~~~~
-   kernel/sched/ext.c: In function 'scx_cgroup_warn_missing_idle':
-   kernel/sched/ext.c:3709:16: error: 'struct task_group' has no member named 'idle'
-    3709 |         if (!tg->idle)
-         |                ^~
-   kernel/sched/ext.c: In function 'scx_ops_disable_workfn':
-   kernel/sched/ext.c:4473:17: error: implicit declaration of function 'stack_trace_print'; did you mean 'event_trace_printk'? [-Wimplicit-function-declaration]
-    4473 |                 stack_trace_print(ei->bt, ei->bt_len, 2);
-         |                 ^~~~~~~~~~~~~~~~~
-         |                 event_trace_printk
-   kernel/sched/ext.c: In function 'scx_ops_exit_kind':
-   kernel/sched/ext.c:4852:30: error: implicit declaration of function 'stack_trace_save'; did you mean 'stack_tracer_enable'? [-Wimplicit-function-declaration]
-    4852 |                 ei->bt_len = stack_trace_save(ei->bt, SCX_EXIT_BT_LEN, 1);
-         |                              ^~~~~~~~~~~~~~~~
-         |                              stack_tracer_enable
-   kernel/sched/ext.c: In function 'scx_bpf_task_cgroup':
->> kernel/sched/ext.c:7052:31: error: initialization of 'struct cgroup *' from incompatible pointer type 'struct cgroup_hdr *' [-Wincompatible-pointer-types]
-    7052 |         struct cgroup *cgrp = &cgrp_dfl_root.cgrp;
-         |                               ^
->> kernel/sched/ext.c:7065:22: error: assignment to 'struct cgroup *' from incompatible pointer type 'struct cgroup_hdr *' [-Wincompatible-pointer-types]
-    7065 |                 cgrp = &cgrp_dfl_root.cgrp;
-         |                      ^
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [y]:
-   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
-
-
-vim +3351 kernel/sched/ext.c
-
-f0e1a0643a59bf Tejun Heo 2024-06-18  3339  
-8195136669661f Tejun Heo 2024-09-04  3340  #ifdef CONFIG_EXT_GROUP_SCHED
-8195136669661f Tejun Heo 2024-09-04  3341  static struct cgroup *tg_cgrp(struct task_group *tg)
-8195136669661f Tejun Heo 2024-09-04  3342  {
-8195136669661f Tejun Heo 2024-09-04  3343  	/*
-8195136669661f Tejun Heo 2024-09-04  3344  	 * If CGROUP_SCHED is disabled, @tg is NULL. If @tg is an autogroup,
-8195136669661f Tejun Heo 2024-09-04  3345  	 * @tg->css.cgroup is NULL. In both cases, @tg can be treated as the
-8195136669661f Tejun Heo 2024-09-04  3346  	 * root cgroup.
-8195136669661f Tejun Heo 2024-09-04  3347  	 */
-8195136669661f Tejun Heo 2024-09-04  3348  	if (tg && tg->css.cgroup)
-8195136669661f Tejun Heo 2024-09-04  3349  		return tg->css.cgroup;
-8195136669661f Tejun Heo 2024-09-04  3350  	else
-8195136669661f Tejun Heo 2024-09-04 @3351  		return &cgrp_dfl_root.cgrp;
-8195136669661f Tejun Heo 2024-09-04  3352  }
-8195136669661f Tejun Heo 2024-09-04  3353  
-
-:::::: The code at line 3351 was first introduced by commit
-:::::: 8195136669661fdfe54e9a8923c33b31c92fc1da sched_ext: Add cgroup support
-
-:::::: TO: Tejun Heo <tj@kernel.org>
-:::::: CC: Tejun Heo <tj@kernel.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
