@@ -1,218 +1,108 @@
-Return-Path: <linux-kernel+bounces-335226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8ED297E2D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:46:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C156C97E2D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 844C52812EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:46:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CA33B21117
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878D139FCF;
-	Sun, 22 Sep 2024 17:46:22 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C22353839C;
+	Sun, 22 Sep 2024 17:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Phewedz9"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAE0EEDB
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 17:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0C929406
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 17:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727027182; cv=none; b=uAa/RwcpmCIaoM+SujtbleOufe4edw6KcdIQFYbJ/uTZRa/yE9qh1/c9B5m9FXzuAoRRMgqYCl70iluJe6jayoXzIM/tnS90zqRZYW+yXyh2z6uhV+xSBuCVlKnYhM2GhQtbElmeTdeViqI9G7+yoOs1yxCYG7OPc1979kqMG7U=
+	t=1727027204; cv=none; b=gvDz6SMfnZiriex/U2pR3QQHZBAeEwfkNcLaL7gO2RfIkMC1N6EmepQJKyTjlYrfTqzBbHdbpZEWUxTZnAJJq3Smq40s47bW1WhVgV9UUbBOj4TOlBwcqHbjc9YGLMZxTV6H6I7QuzkSIIO3SmT3a660oWGU6nynrFqrJfsEdhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727027182; c=relaxed/simple;
-	bh=Q+bddzHwkK2Nu9MCTXdGS7cq3kWB67sECu1dEG+PJ1U=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=l/5/TWK3uJH6xBySVBGhAnHY4TtHSpIGvxJP7zz1Qk3v9D1r9S0cvKu+l+NNIyj+mJICqbuTjkKk5IqxxwV/Nnt329SndF9AXDSlrJjHhPJ87T61IhwCfb7aLRi08qVeUSS9Hhye8+7/R+mL4DZEOauPuxqYrFLCtSZ6jU0xIN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82cdc7b7debso337119839f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 10:46:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727027179; x=1727631979;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1727027204; c=relaxed/simple;
+	bh=yT+e9cLg5KAO0dTu4tupxiWtJbh7rtcCL19uffi9RgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Fyh6gs9n5sJcMfSooOZmmuNNqwZiW+ngLkop0nTwSgXbh4uHD2gw5/d7wIUL3WodDec3lk5y0XOpEQEJDQT/K1HgTf9J2h4s4RCMTQKisGLf19IbdZq/o9dxk6mlEEblPlRZzuDoLapUw6PrGcdmR2Ad9AZVoY3KswcoZSDihGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Phewedz9; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37a33e55d01so2689552f8f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 10:46:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727027201; x=1727632001; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2GZGILpo84C84oDf7lkUCqjURmbaY/I1uZq6HFexLnc=;
-        b=UyAta8g0HYJm3TRm88+hHlkKiI75QIZMLK0ir2yWldRbnxgi4JvD+FnNkVnwR/dl90
-         hcZhKQbDuVII5Tdw5zlfPe9f91dof6rVm57252rSteWz+VlusTE5uskyZg+eNwxYBfOv
-         TXlFcyv+9YQqjFpzP8UpV4KjUijnIMxQHk9dZW63F/PRjzysBQ+9L/kigirja4BHn7Nm
-         kNE140/E7QHSCpHXn34sKLcyBPF+3rJQFXwugtAMI1t1Yl4kYazDr6rrNaTjvarhXz3M
-         r4tWix2/7sQNllcaG4lYn10r2jd4+Bwag9sLcQ/ZFTpq+nUy4EIRhrQMc8s7pp7kHEI5
-         geiw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbItH7obTlvgImmFmVPsA+2jTvAY1GlpVdvKpe6jqwf3AP9n2Ma5xahTFU4avs5InhezZpgxCZ9HJpH/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2JvRSQFQAhtgXghuTIJxd2GnawpaCv+49e/gYDGRWNsfsMM13
-	iByAzsDL5jfarnh/WOmx7g4gvJwYrJya6uQEWaeMqIg1BQjccmzC6MuGzvY6F3ECNfn/8aFZmAZ
-	Re4Ji0xV8jiHkDoS4UEXUbqddEMCLnb8YUuxD0vWYF7+fH+P+OObsz1E=
-X-Google-Smtp-Source: AGHT+IFcOunlSgil0zRZA616kW6EiJ6VF1dWpASBC+DfN7Xk2mvbx2FjMY46Q68DrtilSDAJsZYv+GIdnhU33JEJ7FYAJ2GevKys
+        bh=gnvWdvuJww5fvZzybivqOBV/MrLD4R7C4eLuYWt9SS4=;
+        b=Phewedz9BjlAikKbrWeEEiHRB0GLODjO6HUqXT//Jt+oFcd8vz+5NoAdMTtdz8nrdE
+         xPldcDqQGO7lXTgD+xG03rsPYjnuJH7Z3YxH7M2cjRiJAS+ahdqgfNDhoX7CmMFXfpds
+         J0jtl+UMEJzQgXMQ7sKy1cPVXbHzmE7Z2LW1wDdD/o2+P29R2FvOjazFCwMDus7kMfKI
+         cu5aOqb9H8u8k0WekOx89OTWYvZkJwkeSKFR83lHJyM/YPjBoUkXLe5hwAD/eDv9i9ps
+         mFRzCeRo6Kr/Dcy7rvFZLOd48OxBjvAm/3/aOyFu/LDSFBlRSF0U19j18qPxRZPssqSr
+         oU+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727027201; x=1727632001;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gnvWdvuJww5fvZzybivqOBV/MrLD4R7C4eLuYWt9SS4=;
+        b=YirOhtJsmhpnUoLE8xp3jxEVSJToE9F97iu1FXY7JYgdMJ07Fy0tWdiz5i/b4gTFcj
+         b8kcWwTvLcKNQrSNCSMeaYLY/VVXSVynITW1X2CDF/xfkzPwuPczMo2fBUHG4sp8CHGE
+         BzAW5Wdjmx0YIOjIyl1Wp3C2m9cUJAXxJBYj68Zawtzj4bh18tdtOJVDYBWcvrxetBJn
+         Gunl6t6rZy09WaoIYT1V0XXlVlj3ScSnYqjYnpelT1nTMGk5fkLewnhZoqpsVOF4FaWN
+         ppTirPDG27TRUA5QXgCeTN4qC2wGCFotIWg9BUFetAVs+ohnGoTPt8lDGu589CzkiYYY
+         NIRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUg3aPxH4w2YgaZFgwL7IYIkwO6jxYHTAvPZ0nwFDTz5y08hP94eFkByfVF4EOoYf6Ii2PPXAXrHxvcWzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN3vqRzd3pvwWbNBrImKs0ZaJQbZ/8zg3IQ5B2ZLgfnwouMocw
+	wAL9R9KSoiE7spyBXpTPvau6PJmNylfCrekfhI5bCucm/qmLLt9I
+X-Google-Smtp-Source: AGHT+IEAmoezQCA58M7TxZTjw6/mEmIIL64WX7bl++fzagineoSx+pCSZHhasoNQ7HRuUt+XEqcSwQ==
+X-Received: by 2002:a5d:4488:0:b0:377:9867:9028 with SMTP id ffacd0b85a97d-37a431ad4dbmr4816905f8f.44.1727027200813;
+        Sun, 22 Sep 2024 10:46:40 -0700 (PDT)
+Received: from MacBook-Pro.local ([79.115.63.226])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f649dsm22543392f8f.53.2024.09.22.10.46.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 10:46:40 -0700 (PDT)
+Date: Sun, 22 Sep 2024 20:46:38 +0300
+From: Tudor Gheorghiu <tudor.reda@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>,
+	Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+	Linux Driver Project Developer List <driverdev-devel@linuxdriverproject.org>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8712: use kmalloc_array
+Message-ID: <ZvBX_mugFRQHMq1r@MacBook-Pro.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1522:b0:3a0:98ab:7957 with SMTP id
- e9e14a558f8ab-3a0c8d29354mr62490705ab.24.1727027179595; Sun, 22 Sep 2024
- 10:46:19 -0700 (PDT)
-Date: Sun, 22 Sep 2024 10:46:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f057eb.050a0220.a27de.0004.GAE@google.com>
-Subject: [syzbot] [net?] KMSAN: kernel-infoleak in move_addr_to_user (7)
-From: syzbot <syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, willemdebruijn.kernel@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+use kmalloc_array instead of kmalloc with multiply
 
-syzbot found the following issue on:
-
-HEAD commit:    88264981f208 Merge tag 'sched_ext-for-6.12' of git://git.k..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=172c4107980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=547de13ee0a4d284
-dashboard link: https://syzkaller.appspot.com/bug?extid=346474e3bf0b26bd3090
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d7c19f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14c81c27980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d83fc781c223/disk-88264981.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1ed4c5969fba/vmlinux-88264981.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/76a67bd894be/bzImage-88264981.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
-BUG: KMSAN: kernel-infoleak in _inline_copy_to_user include/linux/uaccess.h:180 [inline]
-BUG: KMSAN: kernel-infoleak in _copy_to_user+0xbc/0x110 lib/usercopy.c:26
- instrument_copy_to_user include/linux/instrumented.h:114 [inline]
- _inline_copy_to_user include/linux/uaccess.h:180 [inline]
- _copy_to_user+0xbc/0x110 lib/usercopy.c:26
- copy_to_user include/linux/uaccess.h:209 [inline]
- move_addr_to_user+0x28b/0x400 net/socket.c:292
- ____sys_recvmsg+0x232/0x620 net/socket.c:2829
- ___sys_recvmsg+0x223/0x840 net/socket.c:2864
- do_recvmmsg+0x4f6/0xfd0 net/socket.c:2958
- __sys_recvmmsg net/socket.c:3037 [inline]
- __do_sys_recvmmsg net/socket.c:3060 [inline]
- __se_sys_recvmmsg net/socket.c:3053 [inline]
- __x64_sys_recvmmsg+0x397/0x490 net/socket.c:3053
- x64_sys_call+0x2e5d/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:300
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- packet_recvmsg+0x176a/0x2500 net/packet/af_packet.c:3585
- sock_recvmsg_nosec+0x22f/0x2b0 net/socket.c:1052
- ____sys_recvmsg+0x541/0x620 net/socket.c:2820
- ___sys_recvmsg+0x223/0x840 net/socket.c:2864
- do_recvmmsg+0x4f6/0xfd0 net/socket.c:2958
- __sys_recvmmsg net/socket.c:3037 [inline]
- __do_sys_recvmmsg net/socket.c:3060 [inline]
- __se_sys_recvmmsg net/socket.c:3053 [inline]
- __x64_sys_recvmmsg+0x397/0x490 net/socket.c:3053
- x64_sys_call+0x2e5d/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:300
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- eth_header_parse+0xb8/0x110 net/ethernet/eth.c:204
- dev_parse_header include/linux/netdevice.h:3158 [inline]
- packet_rcv+0xefc/0x2050 net/packet/af_packet.c:2253
- dev_queue_xmit_nit+0x114b/0x12a0 net/core/dev.c:2347
- xmit_one net/core/dev.c:3584 [inline]
- dev_hard_start_xmit+0x17d/0xa20 net/core/dev.c:3604
- __dev_queue_xmit+0x3576/0x55e0 net/core/dev.c:4424
- dev_queue_xmit include/linux/netdevice.h:3094 [inline]
- __bpf_tx_skb net/core/filter.c:2152 [inline]
- __bpf_redirect_common net/core/filter.c:2196 [inline]
- __bpf_redirect+0x148c/0x1610 net/core/filter.c:2203
- ____bpf_clone_redirect net/core/filter.c:2475 [inline]
- bpf_clone_redirect+0x37e/0x500 net/core/filter.c:2447
- ___bpf_prog_run+0x13fe/0xe0f0 kernel/bpf/core.c:2010
- __bpf_prog_run512+0xc5/0xf0 kernel/bpf/core.c:2253
- bpf_dispatcher_nop_func include/linux/bpf.h:1257 [inline]
- __bpf_prog_run include/linux/filter.h:701 [inline]
- bpf_prog_run include/linux/filter.h:708 [inline]
- bpf_test_run+0x546/0xd20 net/bpf/test_run.c:433
- bpf_prog_test_run_skb+0x182f/0x24d0 net/bpf/test_run.c:1094
- bpf_prog_test_run+0x6b1/0xac0 kernel/bpf/syscall.c:4320
- __sys_bpf+0x6aa/0xd90 kernel/bpf/syscall.c:5735
- __do_sys_bpf kernel/bpf/syscall.c:5824 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5822 [inline]
- __x64_sys_bpf+0xa0/0xe0 kernel/bpf/syscall.c:5822
- x64_sys_call+0x2cce/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:322
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4092 [inline]
- slab_alloc_node mm/slub.c:4135 [inline]
- kmem_cache_alloc_node_noprof+0x6bf/0xb80 mm/slub.c:4187
- kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:587
- pskb_expand_head+0x226/0x1a60 net/core/skbuff.c:2275
- skb_ensure_writable+0x496/0x520 net/core/skbuff.c:6214
- __bpf_try_make_writable net/core/filter.c:1677 [inline]
- bpf_try_make_writable net/core/filter.c:1683 [inline]
- bpf_try_make_head_writable net/core/filter.c:1691 [inline]
- ____bpf_clone_redirect net/core/filter.c:2469 [inline]
- bpf_clone_redirect+0x1c5/0x500 net/core/filter.c:2447
- ___bpf_prog_run+0x13fe/0xe0f0 kernel/bpf/core.c:2010
- __bpf_prog_run512+0xc5/0xf0 kernel/bpf/core.c:2253
- bpf_dispatcher_nop_func include/linux/bpf.h:1257 [inline]
- __bpf_prog_run include/linux/filter.h:701 [inline]
- bpf_prog_run include/linux/filter.h:708 [inline]
- bpf_test_run+0x546/0xd20 net/bpf/test_run.c:433
- bpf_prog_test_run_skb+0x182f/0x24d0 net/bpf/test_run.c:1094
- bpf_prog_test_run+0x6b1/0xac0 kernel/bpf/syscall.c:4320
- __sys_bpf+0x6aa/0xd90 kernel/bpf/syscall.c:5735
- __do_sys_bpf kernel/bpf/syscall.c:5824 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5822 [inline]
- __x64_sys_bpf+0xa0/0xe0 kernel/bpf/syscall.c:5822
- x64_sys_call+0x2cce/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:322
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Bytes 12-17 of 20 are uninitialized
-Memory access of size 20 starts at ffff88812112fa48
-Data copied to user address 0000000020000ac0
-
-CPU: 0 UID: 0 PID: 5234 Comm: syz-executor312 Not tainted 6.11.0-syzkaller-08481-g88264981f208 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-=====================================================
-
-
+Signed-off-by: Tudor Gheorghiu <tudor.reda@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/staging/rtl8712/rtl871x_xmit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/staging/rtl8712/rtl871x_xmit.c b/drivers/staging/rtl8712/rtl871x_xmit.c
+index 408616e9afcf..a0f29fab3dce 100644
+--- a/drivers/staging/rtl8712/rtl871x_xmit.c
++++ b/drivers/staging/rtl8712/rtl871x_xmit.c
+@@ -117,7 +117,7 @@ int _r8712_init_xmit_priv(struct xmit_priv *pxmitpriv,
+ 	/*init xmit_buf*/
+ 	_init_queue(&pxmitpriv->free_xmitbuf_queue);
+ 	_init_queue(&pxmitpriv->pending_xmitbuf_queue);
+-	pxmitpriv->pxmitbuf = kmalloc(NR_XMITBUFF * sizeof(struct xmit_buf), GFP_ATOMIC);
++	pxmitpriv->pxmitbuf = kmalloc_array(NR_XMITBUFF, sizeof(struct xmit_buf), GFP_ATOMIC);
+ 	if (!pxmitpriv->pxmitbuf)
+ 		goto clean_up_frame_buf;
+ 	pxmitbuf = (struct xmit_buf *)pxmitpriv->pxmitbuf;
+-- 
+2.43.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
