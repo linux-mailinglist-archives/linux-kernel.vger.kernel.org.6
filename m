@@ -1,166 +1,158 @@
-Return-Path: <linux-kernel+bounces-335337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B44397E440
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:35:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9994597E43F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 01:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB4A1C20E5D
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:35:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D00112811FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 23:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2285823A9;
-	Sun, 22 Sep 2024 23:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C64D80BF7;
+	Sun, 22 Sep 2024 23:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PspyYap1"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FKqqwVih"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD79A768E7;
-	Sun, 22 Sep 2024 23:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE238FC12
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 23:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727048143; cv=none; b=kwZOL47c98QLY5qWNWGKfI+RG5S1Btk2iGBakI1sWks1nmN234/OX6suXxEslPomdeIIvdPMt/N87Ls+DWPnegC1q7ogRnzyq1HmSNOYD9kwyoKnjkILVjYIXoVnZDIj4YosNUxjfFiIszTjb4o3I87y2GG1oN7XBq5iXhmpA/g=
+	t=1727048118; cv=none; b=PQDXC9vVuB7U46fDZbl5fWSAV99KLg2Q9nF4ulvh3p3NUe5urkVuUIWXO5nQBULXBbwM/f6K/x/qpuyTArkjgofUy5d15Jsefw+dKjQV0XJHXFiEXrGMGGHAr4vrKb1ZmMaoKlsbDjxBo1/7htYhq3fAM6GR9b66KFU/z+00DCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727048143; c=relaxed/simple;
-	bh=9E9Vd3oqfcEY88ItHZvQHnivGZTM4ubhD0H+LkTPPDw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QWqlGvQXZNNfFEao9OO+6VxG4gCq/D1b9XpVy10Vsdei6F6g3NBu2GqiiWH4u7u5sLFa2cpDUOGhyKDRAs/il/tZ1kidTUTCLi0cYcO504T/O97MssDvkEoV1buIDGDbbfv7HnbpdJlWL6sWSm6R6vw1W2c6ihZIiyaTNNP16U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PspyYap1; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4585e250f9dso23830611cf.1;
-        Sun, 22 Sep 2024 16:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727048141; x=1727652941; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/PEJwHOdY7wkPp0EG+MaZgMxqJRwsEBUudUxGaSPXa0=;
-        b=PspyYap17PQO9+U8giO3G8FgkNf4a0xQLynMHr1xNibE7g7bP30s0G3m1BRM9yOfKq
-         5zpEvzf0Yqaep1pFQDD4laRFjmXIEBRedpcEVJiZysk1fk0lKJnIZxFWeZmjADEflTB5
-         NPBmRCDCRXmVjJ9QedB/Q7v01LGTzqe55EHqx8NhNFUwrSP4XWTZbnHodT3ctA2UmUty
-         z+MmNa8ephbviz5oxxTDyq487Zq+insZhS2+SQLHOrsONkZpKmPKPTGFhOm/9vwqJerD
-         Rt7sbGK3CevsgvdPVqX/Uo5YUkl5i43wBG6kVUVY0NpSm1ZvRkySyCyjrNHlBMFYbDqT
-         jKsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727048141; x=1727652941;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/PEJwHOdY7wkPp0EG+MaZgMxqJRwsEBUudUxGaSPXa0=;
-        b=gFMb3zut557DVhxE2+eUR4LY5Wb4TNaAUqwQVD3VIXyWt+I8td8crYIyEU49f/U42C
-         goVYR9CRhWYdXgvI/QrFkTbzSE6T2Gw/GHEF/NsdbOeX5AWbMVAhcguSQaanbjIQhTwS
-         NGiMJHujTAq20m0zfaZDwjtV0OGjSddJ5ujY0zvFIXCKr9sgBiVk26/sy4wAR5H/gxcG
-         o2eTh7UhW5RHtP9YIF+tFMBJp5WuSbgPbA79W3QEuOc9sVxS6WzLEJdncTKDdDACvtN0
-         IDg9vUgdWTsfdP5/ZtZri4Lsc3Q4lRChoGmpiwPxqqtz8unVSMSjtOLyPQxLw9S74ck9
-         5paQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLGDGGUXkl4S2sRjBgL1MpO/yrpjy+XBBdNWf6vz77vzQyYOBCvCe/rqaambtfPOKzsYHhd1H8jpREdws=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr/y6N6+3GSdG6zxzGfc/Vt/4k2dhoLIEK2bbTzXxB+pZYBqHL
-	A0GNsRQYv8tZ/buxH59qcd+UZ+7tr8kOJSge5JoUkbBEq6rldcIp
-X-Google-Smtp-Source: AGHT+IHCNMlo2XNAIETIqPMq0YQaisDQ+va5DNyj6dh95cu537MVSDNcpnQLCfcAI9GJRE8a4CBp1w==
-X-Received: by 2002:ac8:5914:0:b0:455:9ef:8895 with SMTP id d75a77b69052e-45b204e0575mr144933911cf.11.1727048140583;
-        Sun, 22 Sep 2024 16:35:40 -0700 (PDT)
-Received: from localhost.localdomain (d24-150-189-55.home.cgocable.net. [24.150.189.55])
-        by smtp.googlemail.com with ESMTPSA id d75a77b69052e-45b17919f40sm41426341cf.79.2024.09.22.16.35.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 16:35:40 -0700 (PDT)
-From: Dennis Lam <dennis.lamerice@gmail.com>
-To: kent.overstreet@linux.dev
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+24beef64217854da05a4@syzkaller.appspotmail.com,
-	Dennis Lam <dennis.lamerice@gmail.com>
-Subject: [PATCH] bcachefs: fix divide by zero error in util.c
-Date: Sun, 22 Sep 2024 19:33:44 -0400
-Message-ID: <20240922233343.121427-2-dennis.lamerice@gmail.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1727048118; c=relaxed/simple;
+	bh=nQ5I3uy+Wm2X5CETfU5dty7+4o29kC4F2qCeuzyK5G8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cIQW7qvLukQcYiDAnFOMzLWq1QscQ6pY03w+7WMJwe+ktKHbnNXQMehX6ddadiPnXAoExikvVtNJzLp+bDA/xJ9JlVQDZlpE6ZHiT+enpq06PG0yPflCN8ZLhmlAdVVUXaLIoYLvGPgIzXGAbj2DKK+jZFgVO/UyH3IiAAIj60c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FKqqwVih; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727048117; x=1758584117;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=nQ5I3uy+Wm2X5CETfU5dty7+4o29kC4F2qCeuzyK5G8=;
+  b=FKqqwVih0XKPJzUM0IiemAtd+sY63FGK3hBPwReOMjqfl12NA/WwtT5d
+   /MJnJ+vezvZcmdrXBIldoPAh0l8iiKsEbZujTWcRgTUE2ICSG1N+4w4uO
+   kQk44N/Y/du9qowKbGI4kt+u6WwQ4VebBC0vUOgt+He1N2BMtfBDss+/L
+   PSJQqprjmllXxbrZX+socKRMf9il8qFb4Y+//9JoW5k5pFsrPUEk2UCKS
+   ZzLoGz9ORiByyII+M+iW9jknjNGPaWnfOeVUGO5syAspr/Yi3gQ+FwcaV
+   jc53Frt219c2RWWOCqDBYlNAZ63rCWv7zC01iqRnJ6WtnreoLpYd+G3pU
+   Q==;
+X-CSE-ConnectionGUID: Z9Dke8aHSKyABh469txh5g==
+X-CSE-MsgGUID: UXbV7MrkSuSMB9nPxx7U9A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="26139217"
+X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
+   d="scan'208";a="26139217"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2024 16:35:16 -0700
+X-CSE-ConnectionGUID: J5YEviEZQQSvK0LeClKd8A==
+X-CSE-MsgGUID: vvBEIjJATT6o0ZsU9lQEvQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
+   d="scan'208";a="71168794"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 22 Sep 2024 16:35:15 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ssW6i-000Gjy-2L;
+	Sun, 22 Sep 2024 23:35:12 +0000
+Date: Mon, 23 Sep 2024 07:34:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: arch/powerpc/include/asm/switch_to.h:53:2: error: call to
+ '__compiletime_assert_256' declared with 'error' attribute: BUILD_BUG failed
+Message-ID: <202409230705.hFpB3jMt-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This patch aims to fix a bug found by syzbot where a crash occurs due to
-a divide by zero error in the bcachefs subsystem [1].
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   de5cb0dcb74c294ec527eddfe5094acfdb21ff21
+commit: c2e5d70cf05b48bfbd5b6625bbd0ec3052cecd5d powerpc/83xx: Fix build failure with FPU=n
+date:   7 months ago
+config: powerpc-randconfig-001-20240923 (https://download.01.org/0day-ci/archive/20240923/202409230705.hFpB3jMt-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 8663a75fa2f31299ab8d1d90288d9df92aadee88)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240923/202409230705.hFpB3jMt-lkp@intel.com/reproduce)
 
-Bcachefs has a file called util.c that uses the function div_u64 to perform
-division using 64-bit values. The function's parameters uses a 64-bit dividend
-and a 32-bit divisor to perform its division, however sometimes in this file
-a 64-bit divisor is passed using this function. When in use, the 64-bit value
-is passed as a 32-bit value, creating the possibility of a division by zero error.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409230705.hFpB3jMt-lkp@intel.com/
 
-Therefore, this fix replaces the function div_u64 with div64_u64 where the
-dividend and divisor is a 64-bit value to perform the correct division.
+All errors (new ones prefixed by >>):
 
-[1] https://syzkaller.appspot.com/bug?extid=24beef64217854da05a4
+   In file included from drivers/cpufreq/pmac32-cpufreq.c:21:
+   In file included from include/linux/pmu.h:12:
+   In file included from include/linux/rtc.h:17:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/powerpc/include/asm/hardirq.h:6:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/powerpc/include/asm/io.h:24:
+   In file included from include/linux/mm.h:2188:
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/cpufreq/pmac32-cpufreq.c:38:
+>> arch/powerpc/include/asm/switch_to.h:53:2: error: call to '__compiletime_assert_256' declared with 'error' attribute: BUILD_BUG failed
+      53 |         BUILD_BUG();
+         |         ^
+   include/linux/build_bug.h:59:21: note: expanded from macro 'BUILD_BUG'
+      59 | #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
+         |                     ^
+   include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^
+   include/linux/compiler_types.h:435:2: note: expanded from macro 'compiletime_assert'
+     435 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^
+   include/linux/compiler_types.h:423:2: note: expanded from macro '_compiletime_assert'
+     423 |         __compiletime_assert(condition, msg, prefix, suffix)
+         |         ^
+   include/linux/compiler_types.h:416:4: note: expanded from macro '__compiletime_assert'
+     416 |                         prefix ## suffix();                             \
+         |                         ^
+   <scratch space>:106:1: note: expanded from here
+     106 | __compiletime_assert_256
+         | ^
+   1 warning and 1 error generated.
 
-Reported-and-tested-by: syzbot+24beef64217854da05a4@syzkaller.appspotmail.com
-Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
----
- fs/bcachefs/util.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/fs/bcachefs/util.c b/fs/bcachefs/util.c
-index 1b8554460af4..cea162b99864 100644
---- a/fs/bcachefs/util.c
-+++ b/fs/bcachefs/util.c
-@@ -64,7 +64,7 @@ static int bch2_pow(u64 n, u64 p, u64 *res)
- 	*res = 1;
- 
- 	while (p--) {
--		if (*res > div_u64(U64_MAX, n))
-+		if (*res > div64_u64(U64_MAX, n))
- 			return -ERANGE;
- 		*res *= n;
- 	}
-@@ -140,14 +140,14 @@ static int __bch2_strtou64_h(const char *cp, u64 *res)
- 
- 	parse_or_ret(cp, parse_unit_suffix(cp, &b));
- 
--	if (v > div_u64(U64_MAX, b))
-+	if (v > div64_u64(U64_MAX, b))
- 		return -ERANGE;
- 	v *= b;
- 
--	if (f_n > div_u64(U64_MAX, b))
-+	if (f_n > div64_u64(U64_MAX, b))
- 		return -ERANGE;
- 
--	f_n = div_u64(f_n * b, f_d);
-+	f_n = div64_u64(f_n * b, f_d);
- 	if (v + f_n < v)
- 		return -ERANGE;
- 	v += f_n;
-@@ -360,7 +360,7 @@ void bch2_pr_time_units(struct printbuf *out, u64 ns)
- {
- 	const struct time_unit *u = bch2_pick_time_units(ns);
- 
--	prt_printf(out, "%llu %s", div_u64(ns, u->nsecs), u->name);
-+	prt_printf(out, "%llu %s", div64_u64(ns, u->nsecs), u->name);
- }
- 
- static void bch2_pr_time_units_aligned(struct printbuf *out, u64 ns)
-@@ -477,7 +477,7 @@ void bch2_time_stats_to_text(struct printbuf *out, struct bch2_time_stats *stats
- 			bool is_last = eytzinger0_next(i, NR_QUANTILES) == -1;
- 
- 			u64 q = max(quantiles->entries[i].m, last_q);
--			prt_printf(out, "%llu ", div_u64(q, u->nsecs));
-+			prt_printf(out, "%llu ", div64_u64(q, u->nsecs));
- 			if (is_last)
- 				prt_newline(out);
- 			last_q = q;
-@@ -511,7 +511,7 @@ void bch2_ratelimit_increment(struct bch_ratelimit *d, u64 done)
- {
- 	u64 now = local_clock();
- 
--	d->next += div_u64(done * NSEC_PER_SEC, d->rate);
-+	d->next += div64_u64(done * NSEC_PER_SEC, d->rate);
- 
- 	if (time_before64(now + NSEC_PER_SEC, d->next))
- 		d->next = now + NSEC_PER_SEC;
+vim +53 arch/powerpc/include/asm/switch_to.h
+
+    38	
+    39	#ifdef CONFIG_PPC_FPU
+    40	extern void enable_kernel_fp(void);
+    41	extern void flush_fp_to_thread(struct task_struct *);
+    42	extern void giveup_fpu(struct task_struct *);
+    43	extern void save_fpu(struct task_struct *);
+    44	static inline void disable_kernel_fp(void)
+    45	{
+    46		msr_check_and_clear(MSR_FP);
+    47	}
+    48	#else
+    49	static inline void save_fpu(struct task_struct *t) { }
+    50	static inline void flush_fp_to_thread(struct task_struct *t) { }
+    51	static inline void enable_kernel_fp(void)
+    52	{
+  > 53		BUILD_BUG();
+    54	}
+    55	#endif
+    56	
+
 -- 
-2.46.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
