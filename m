@@ -1,202 +1,196 @@
-Return-Path: <linux-kernel+bounces-335165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 261CF97E21D
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:59:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76AC497E220
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 459381C20ECA
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 14:59:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F04228131E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 15:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA54E567;
-	Sun, 22 Sep 2024 14:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA4AEAEB;
+	Sun, 22 Sep 2024 15:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fs9ty3fZ"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jb1oDkJ3"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E259BA50
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 14:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7408F79DE
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 15:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727017172; cv=none; b=pCYcSvfT0Xj34/Y1Apg4Y4z/yXLZdw/MdIpLn0lhAt4ImpKXgcEmQz7ACd6P/HNhiqhMD5r+YnhVtSRmEBwQboIQo2IDrm/x4vkJ0onyQXkT8/RqcDFpoCe9Lz5cf14zQb57dpGEnqaXJxuAUtUHHVLdfmd7s9pL2lT1HD90wT8=
+	t=1727017315; cv=none; b=Tvhl+WzY70joIDyu1B+IADIFnrgoRkDf8T0SBu91AqMzrmpUWwVbCYWl2loCXFc8pEhsVHskOS3LRrWH9RzDCRkG9CleK5EwzLQ0aw2W9v6zx//uUmoYxvbraE4pDF0fymqQMTTegh6EAm2em7CdyjMSbPtSaHnoZZlwRE1evt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727017172; c=relaxed/simple;
-	bh=Jm9+rgdUUT9Nl7PoDsYwNBXvSFmpBtKorU3aLbdbm0c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aPOHlMgBnHSTwAAVDBPzqiB7qZNKsMZrD8qu5ouF3QqP1ujAXIa6D6P3NwgdFmIAnNGhURmXJV1jj2PTfvcezLvaPm5Mpdb8ujxMOCEkE3Me1+GnoSu6kPwsL5BFqg2BxeRsVk+dMYZhcGQOO1DNaWSNca5tIK5IB2UAj7e24AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fs9ty3fZ; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-501213e5ad4so2738654e0c.0
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 07:59:29 -0700 (PDT)
+	s=arc-20240116; t=1727017315; c=relaxed/simple;
+	bh=s0cShEYCAg+X7bWLg16m54ENQ3s7Xz+W1wGNdQR3+kE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LYuB2Yv62w6/5p66Y/kls8WxVq57/XHPgZxAfSOaCriPlnGJIk8iVawcpWTrrpkp207OuZdXCDWHxtkJTMe42m9+3iovEbsJ65w0TEhuxjAevsZOaJSoRfyB+TVHj0iZcn8BI3VMrcfrPDR9IN2/IerT2ghCH77yh+IXLww5DfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jb1oDkJ3; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-42cb0ed9072so32819595e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 08:01:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727017168; x=1727621968; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e5rjV7FhoGP2f/5V+yY+L2fJJOFCeIghdK+g8s1QwnU=;
-        b=fs9ty3fZtQuiTufT5x9WYqsKMm+ymp8XERGayShACku18eebWES/VFrtYPbrqb/wZZ
-         +eecuXwXxKJhXPzs3GuSMCgEm57UbK6HEWB8HbQOgrW2O2exoBfGJdgWpfdNVSuAcTeS
-         nQinRAcQZzcBxNQ02Jw6lVQrzA/ejP8My2sbPqR5ZceMX34+/kBieHOLEMpyeTAEMNf9
-         ABAbNFMjrZIoy/JsGLsJuEY1GFstusS9J8zW3a+nOIvxAT/pVe057tY8vy+ji014xcaE
-         98qYZ8IDV1CaIxmYQ3LMC7vT5NayR/5alWkL4QuLjbZBLO9v1qtPX5BIsWkeCXcJ0CMQ
-         hWEQ==
+        d=google.com; s=20230601; t=1727017312; x=1727622112; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ncjkm+xBj4wAiYMDJEPjMYUCoBiTLntYFoQkyKAzX14=;
+        b=Jb1oDkJ3H7aBKFNJEWFyPgBQBBR97CB1W++3olg361eINWwG+xHmdarp+p6WWQCcZp
+         nZV6r3LOF7jz4oyY6YLBIByvHkQzxUCYQaO2cgY0CZ6bF0eJ8dlP3vCa5auqWHvB8FMM
+         Kk2CU5+fBYg+yvhmdUYOoxxPYlMe8pYH3d4AH03VH7a9WHb/v8JNqNDHpXSPkRwFF++x
+         qtsOhA4N82/+EX2t4fsgEHPbqEYVdvmitOGsjJcFABdSfsGqRXcQxTXe769OnQd5BAeY
+         QzbcCDw//nIxtm5nn34rSOinnCyZyxwmzJRzf/Gwa05BYxdJVnlH1Krpnb2WvgI6PBZj
+         rTEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727017168; x=1727621968;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e5rjV7FhoGP2f/5V+yY+L2fJJOFCeIghdK+g8s1QwnU=;
-        b=CuO/hXH6MKzAEVYkC09CANfwyimsSRPRRqeLC7V4CTLAKyNIjdT+wJ183wsFsUDfMQ
-         Fv6v/DcTbXewWstHBbDrJqXVz62w6iMGNAGzS/iY4te97Z//ktitYB+jrbNcv/n9pj5m
-         5ZeDY6IfvpPRphuhI8/VfiTRiNRAE+dqtCkQdeG3iURhFvMoAcVkX4ZBFVM55LQPgaAG
-         ULY7smuaaNdTYp4Wg1snHlxEcXX00OAIqLnoO8Q0s4QaUQezaUTfKk1/S6yu3AgvnLJy
-         79AtslMD6makrWinmKQ7/fWGrVOAIlsSsGDDCr1rA0gpRJYtV8rH9yddpx5KHIQdaHJr
-         1VKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwIVMUrO1R6DUIKVJXmN0ttuulHXpv2Nfsc5V0dq8pJdF0sZIdc5Kk8Yj6Mxb1s44mFmfiDd+ycm+lfoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCWPaQAe6XvgG2SqGjE8HMY+GdCRZLVDx2iHwbo0f0WuawJuj7
-	P+RKgf3R1Yk1QZD0GyAfaIlq6YLppRPQuvUagXaSgwnXHL+A6jNJsMG++oev5LK49xt5O0/Yseq
-	hg0NfhXm1WVUnhgU64LiFzvdsgYU=
-X-Google-Smtp-Source: AGHT+IHbE+QjPwJEc/YbejKgBqha2motfb9kzkvErGAzd8qbaZhambs8aRWfpj2nCor/0FOW+p2ZXA3NAwlUYLxZYZI=
-X-Received: by 2002:a05:6122:3b08:b0:502:c218:383f with SMTP id
- 71dfb90a1353d-503c9cfe08fmr7924839e0c.7.1727017168434; Sun, 22 Sep 2024
- 07:59:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727017312; x=1727622112;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ncjkm+xBj4wAiYMDJEPjMYUCoBiTLntYFoQkyKAzX14=;
+        b=oTKK2euI+reYjdzDIJGY8hEWM4SrvedUupOJ80LbXSPovsTF2prM/E5Hahq5oDQ7S2
+         ycaJHgbdd791exC0+46ojALONknJVFAm07m+ILZWTwRrdexakXRHFNYr8fJfIMNicdIv
+         stAKR40Kn0fdfWtinHFoPU95sgJf7zwnL4vPlpBZ3Fp/H+VxDd14BcDPT/cq5qXnKgaj
+         lRnQjM8hC3phMGzUEZpstJnOIyRwbPicvidn/HbqXMDvAOKegJ229o4DVWkbK6vfFakt
+         DFiazaOlLQm+Hy7DTaqvVV9k5+gbtd2X3TvJljYeC8u5ENNOA7j+Hsf+Rc7GKs1jKl7A
+         hpyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUe2bCPJtmcqT5yBYhfPEbdhG8c57GMfig2C2uekl/hOZAQJfiyGDNgNuVfRiyCYkzbfRDNLeRy/lGJsG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpK6gv04EWdd13MWp5jbgGeo/JKgvAsqrLZJuuogYa3GfIBI0V
+	NHwsWjfsJu2nSFNWZDDgYeT86+jKfVSqC9VmLjOgKCnEQ83d040RzjWrRPOWZoFHIvufZ3+e91I
+	wRU+P2Eyqk61MEQ==
+X-Google-Smtp-Source: AGHT+IECOclje4KsJl4Qt6l3KZ6Ti1CSsZjZP+0DmuLkcdwDN8cc/Ojour1aePp9l+ZstwUCPP+UzAnPRELuCaU=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a05:600c:1515:b0:42c:b32e:6ba7 with SMTP
+ id 5b1f17b1804b1-42e7ad85690mr98575e9.6.1727017311494; Sun, 22 Sep 2024
+ 08:01:51 -0700 (PDT)
+Date: Sun, 22 Sep 2024 15:01:49 +0000
+In-Reply-To: <CAHC9VhQX0k68fwWF08eMCiMsewRRSqN3q=QwirV_0XjoJ4wo5A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <66f0092d.050a0220.3195df.009b.GAE@google.com>
-In-Reply-To: <66f0092d.050a0220.3195df.009b.GAE@google.com>
-From: Pedro Falcato <pedro.falcato@gmail.com>
-Date: Sun, 22 Sep 2024 15:59:17 +0100
-Message-ID: <CAKbZUD08BQeK0R-KuU07=QUCW7GHbmZ0RgfUcOpzKd+Yv4b5CQ@mail.gmail.com>
-Subject: Re: [syzbot] [v9fs?] WARNING in p9_client_create (2)
-To: syzbot <syzbot+3c5d43e97993e1fa612b@syzkaller.appspotmail.com>
-Cc: asmadeus@codewreck.org, cl@linux.com, ericvh@kernel.org, 
-	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
-	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev, vbabka@suse.cz
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <CAHC9VhQX0k68fwWF08eMCiMsewRRSqN3q=QwirV_0XjoJ4wo5A@mail.gmail.com>
+X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
+Message-ID: <20240922150149.3133570-1-aliceryhl@google.com>
+Subject: Re: [PATCH v10 5/8] rust: security: add abstraction for secctx
+From: Alice Ryhl <aliceryhl@google.com>
+To: paul@paul-moore.com
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, 
+	arve@android.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, brauner@kernel.org, casey@schaufler-ca.com, 
+	cmllamas@google.com, dan.j.williams@intel.com, dxu@dxuuu.xyz, 
+	gary@garyguo.net, gregkh@linuxfoundation.org, jmorris@namei.org, 
+	joel@joelfernandes.org, kees@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	maco@android.com, ojeda@kernel.org, peterz@infradead.org, 
+	rust-for-linux@vger.kernel.org, serge@hallyn.com, surenb@google.com, 
+	tglx@linutronix.de, tkjos@android.com, tmgross@umich.edu, 
+	viro@zeniv.linux.org.uk, wedsonaf@gmail.com, willy@infradead.org, 
+	yakoyoku@gmail.com
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 22, 2024 at 1:10=E2=80=AFPM syzbot
-<syzbot+3c5d43e97993e1fa612b@syzkaller.appspotmail.com> wrote:
+On Tue, Sep 17, 2024 at 3:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
 >
-> Hello,
+> On Mon, Sep 16, 2024 at 11:40=E2=80=AFAM Casey Schaufler <casey@schaufler=
+-ca.com> wrote:
+> > On 9/15/2024 2:07 PM, Alice Ryhl wrote:
+> > > On Sun, Sep 15, 2024 at 10:58=E2=80=AFPM Kees Cook <kees@kernel.org> =
+wrote:
+> > >> On Sun, Sep 15, 2024 at 02:31:31PM +0000, Alice Ryhl wrote:
+> > >>> Add an abstraction for viewing the string representation of a secur=
+ity
+> > >>> context.
+> > >> Hm, this may collide with "LSM: Move away from secids" is going to h=
+appen.
+> > >> https://lore.kernel.org/all/20240830003411.16818-1-casey@schaufler-c=
+a.com/
+> > >>
+> > >> This series is not yet landed, but in the future, the API changes sh=
+ould
+> > >> be something like this, though the "lsmblob" name is likely to chang=
+e to
+> > >> "lsmprop"?
+> > >> security_cred_getsecid() =C2=A0 -> security_cred_getlsmblob()
+> > >> security_secid_to_secctx() -> security_lsmblob_to_secctx()
+> >
+> > The referenced patch set does not change security_cred_getsecid()
+> > nor remove security_secid_to_secctx(). There remain networking interfac=
+es
+> > that are unlikely to ever be allowed to move away from secids. It will
+> > be necessary to either retain some of the secid interfaces or introduce
+> > scaffolding around the lsm_prop structure ...
 >
-> syzbot found the following issue on:
+> First, thanks for CC'ing the LSM list Alice, I appreciate it.
 >
-> HEAD commit:    bdf56c7580d2 Merge tag 'slab-for-6.12' of git://git.kerne=
-l..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D152d7fc798000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D4540f5bcdd31e=
-3de
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D3c5d43e97993e1f=
-a612b
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D15c98b00580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D151424a998000=
-0
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/cec9f3c675f1/dis=
-k-bdf56c75.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/21e06ae5b159/vmlinu=
-x-bdf56c75.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/1e936c954b8b/b=
-zImage-bdf56c75.xz
->
-> The issue was bisected to:
->
-> commit 4c39529663b93165953ecf9b1a9ea817358dcd06
-> Author: Pedro Falcato <pedro.falcato@gmail.com>
-> Date:   Wed Aug 7 09:07:46 2024 +0000
->
->     slab: Warn on duplicate cache names when DEBUG_VM=3Dy
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D111f269f98=
-0000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D131f269f98=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D151f269f98000=
-0
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+3c5d43e97993e1fa612b@syzkaller.appspotmail.com
-> Fixes: 4c39529663b9 ("slab: Warn on duplicate cache names when DEBUG_VM=
-=3Dy")
->
-> ------------[ cut here ]------------
-> kmem_cache of name '9p-fcall-cache' already exists
-> WARNING: CPU: 0 PID: 5221 at mm/slab_common.c:108 kmem_cache_sanity_check=
- mm/slab_common.c:107 [inline]
-> WARNING: CPU: 0 PID: 5221 at mm/slab_common.c:108 __kmem_cache_create_arg=
-s+0xa7/0x350 mm/slab_common.c:294
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 5221 Comm: syz-executor647 Not tainted 6.11.0-syzkalle=
-r-04744-gbdf56c7580d2 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 08/06/2024
-> RIP: 0010:kmem_cache_sanity_check mm/slab_common.c:107 [inline]
-> RIP: 0010:__kmem_cache_create_args+0xa7/0x350 mm/slab_common.c:294
-> Code: 8e 48 8b 1b 48 39 eb 74 25 48 8b 7b f8 4c 89 fe e8 ae 72 d5 09 85 c=
-0 75 e8 90 48 c7 c7 03 a5 08 8e 4c 89 fe e8 5a 36 7d ff 90 <0f> 0b 90 90 4c=
- 89 ff be 20 00 00 00 e8 08 74 d5 09 48 85 c0 0f 85
-> RSP: 0018:ffffc90003c07788 EFLAGS: 00010246
-> RAX: 158c5a6442ad7f00 RBX: ffff88814cccd428 RCX: ffff88802c34bc00
-> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-> RBP: ffffffff8ea168a0 R08: ffffffff8155af72 R09: 1ffff92000780e8c
-> R10: dffffc0000000000 R11: fffff52000780e8d R12: 0000000000020018
-> R13: 0000000000000000 R14: ffffc90003c07860 R15: ffffffff8d2c41c0
-> FS:  0000555573dac380(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020001000 CR3: 0000000075df4000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  kmem_cache_create_usercopy include/linux/slab.h:361 [inline]
->  p9_client_create+0xba5/0x1110 net/9p/client.c:1042
->  v9fs_session_init+0x1e4/0x1b80 fs/9p/v9fs.c:410
->  v9fs_mount+0xcf/0xaa0 fs/9p/vfs_super.c:122
->  legacy_get_tree+0xee/0x190 fs/fs_context.c:662
->  vfs_get_tree+0x90/0x2b0 fs/super.c:1800
->  do_new_mount+0x2be/0xb40 fs/namespace.c:3507
->  do_mount fs/namespace.c:3847 [inline]
->  __do_sys_mount fs/namespace.c:4055 [inline]
->  __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f29cf818069
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f=
-7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffd4a6d8418 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007f29cf8610e8 RCX: 00007f29cf818069
-> RDX: 00000000200002c0 RSI: 0000000020000080 RDI: 0000000000000000
-> RBP: 00000000000f4240 R08: 0000000020000380 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffd4a6d8430
-> R13: 00007ffd4a6d8450 R14: 00007ffd4a6d8530 R15: 0000000000000001
->  </TASK>
+> As Kees and Casey already pointed out, there are relevant LSM changes
+> that are nearing inclusion which might be relevant to the Rust
+> abstractions. =C2=A0I don't think there is going to be anything too
+> painful, but I must admit that my Rust knowledge has sadly not
+> progressed much beyond the most basic "hello world" example.
 
-This was one of the issues I actually ran into when using virtme.
-Fix was submitted here back in August:
-https://lore.kernel.org/v9fs/20240807094725.2193423-1-pedro.falcato@gmail.c=
-om/
+We discussed this email in-person at Plumbers. I'll outline what we
+discussed here.
 
-No replies nor was it picked up. Can it go through the slab tree?
+> This brings up the point I really want to discuss: what portions of
+> the LSM framework are currently accessible to Rust,
 
---=20
-Pedro
+It's relatively limited. I'm adding a way to access the secctx as a
+string, and a way to manipulate `struct cred`. Basically it just lets
+you take and drop refcounts on the credential and pass a credential to
+functions.
+
+Other than what is in this patch series, Binder also needs a few other
+methods. Here are the signatures:
+
+fn binder_set_context_mgr(mgr: &Credential) -> Result;
+fn binder_transaction(from: &Credential, to: &Credential) -> Result;
+fn binder_transfer_binder(from: &Credential, to: &Credential) -> Result;
+fn binder_transfer_file(from: &Credential, to: &Credential, file: &File) ->=
+ Result;
+
+These methods just call into the equivalent C functions. The `Result`
+return type can hold either an "Ok" which indicates success, or an "Err"
+which indicates an error. In the latter case, it will hold whichever
+errno that the C api returns.
+
+> and what do we
+> (the LSM devs) need to do to preserve the Rust LSM interfaces when the
+> LSM framework is modified?  While the LSM framework does not change
+> often, we do modify both the LSM hooks (the security_XXX() calls that
+> serve as the LSM interface/API) and the LSM callbacks (the individual
+> LSM hook implementations) on occasion as they are intentionally not
+> part of any sort of stable API.
+
+That's fine. None of the Rust APIs are stable either.
+
+Rust uses the bindgen tool to convert C headers into Rust declarations,
+so changes to the C api will result in a build failure. This makes it
+easy to discover issues.
+
+> In a perfect world we/I would have a
+> good enough understanding of the Rust kernel abstractions and would
+> submit patches to update the Rust code as appropriate, but that isn't
+> the current situation and I want to make sure the LSM framework and
+> the Rust interfaces don't fall out of sync. =C2=A0Do you watch the LSM li=
+st
+> or linux-next for patches that could affect the Rust abstractions? =C2=A0=
+Is
+> there something else you would recommend?
+
+Ideally, you would add a CONFIG_RUST build to your CI setup so that you
+catch issues early. Of course, if something slips through, then we run
+build tests on linux-next too, so anything that falls through the cracks
+should get caught by that.
+
+If anything needs Rust changes, you can CC the rust-for-linux list and
+me, and we will take a look. Same applies to review of Rust code.
+
+Alice
+
 
