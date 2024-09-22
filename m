@@ -1,118 +1,150 @@
-Return-Path: <linux-kernel+bounces-335212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5727197E29B
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:00:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E0E097E29F
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C75E1F218C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:00:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBA68280FB7
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B722B9C6;
-	Sun, 22 Sep 2024 17:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050062B9B0;
+	Sun, 22 Sep 2024 17:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZzJrNWrq"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAybw/64"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18391CFB9;
-	Sun, 22 Sep 2024 17:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6021CFB9;
+	Sun, 22 Sep 2024 17:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727024435; cv=none; b=uJkr9UWNtzHGk8Usc/qyyIxojj08ygZHlCnn5m9gfEArUIrTBfjTbymNsr9nD7fh77hwz84O+2TuG8voYS8K8FAP1w/XE3pv+hSMGrxLQLcgjXYgDc1konJXCly0GH6GKat6GuYWd1CBN/HCKS3M/gzlKaCtE5sBcq/+chqGw0I=
+	t=1727024515; cv=none; b=iCNFw9TRB+wCTYZonMzqiLPX2JRuCFwJMWzWTq8/eUH/SdrBEXiRXI2Hyw9aPr9spLiFAMeQvpNZzqSXU10gr0vIkXMsJtuWLlUsTqZ02F1rimp+HGNp8AOOf50RZVcia+0yOkdEVNnrvjDzwu7cqSGdfiMZxNzlPIsPaE8CJbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727024435; c=relaxed/simple;
-	bh=Xex4P2H5XpIBZGIjpjiNxh93l99KWf8IG8XW6ulLUDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HbIjFvs0kXHcjGEpXwpsSUCBu1bmiWtkDzgAV2upCJhNBYwQc1N/qQJESE482YhRIra3TJSyZnBPy4EhmqzSy908o7U97h7tVqc/FjPv0WhIBZipBPcf92cBBBXr/vKUvmaJUsGpTRkHGP6tiyHzAQglnV6rSCjZ8mCrCG0+u1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZzJrNWrq; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1727024515; c=relaxed/simple;
+	bh=W0Q3t1cD54SXXSBH7q4jVSfQ0CDLGNlbuw5viLLpA7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O1KrcMoUqgV29/8CyWKcQjp8DwrmG706NVuBlHba2yA0ZO3N5scsSe1Kb3zXwmz4CCLllm2iIaSYrmlKGJmEbLFXZVFzAdt8SFvyagzbyZBwD+o2pO8NLRG18zjmEOQ5+Z8HtCpuxR69qOvXZw4c966soxlRueQCWHDIaH1dtOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FAybw/64; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2068bee21d8so36003455ad.2;
-        Sun, 22 Sep 2024 10:00:33 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42e748f78d6so28006775e9.0;
+        Sun, 22 Sep 2024 10:01:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727024433; x=1727629233; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uGCNBFtzzfr7LREvT1rKgJ6X9oNvivfwjJCxXKomsyc=;
-        b=ZzJrNWrqIBo65os5nLFbhUeve94cEps0fuCZCxULNyk/Bc3rTlB0Lb40TKx370zgAp
-         1g1roSs9aUF7ujTDQAykf8vR8UdHdxtQoDIZoQZaG+g+ThhaDXgaQptkkPK4Mev5OSGp
-         bWtYT+exYTWJhGrw9ZQoAqZCkyceQb/qZMrkJj5mjmwxpau7ULMI9yx7EdafCfpSRS4G
-         5lXsB9epiVO+N8teWUVcqb/6Kd7K7RHBct06PXl5gsk+qNlyTMh+erWNaK0Sh7ElfzOq
-         UAoI0Oyp31iTdDkD0OwuG5kmIysLrT8kEhreRYzmUnb2Drql2P80MuowwU0n5pFn2YQH
-         BkAA==
+        d=gmail.com; s=20230601; t=1727024512; x=1727629312; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e6OYj2UJLtKO0PzA2lDG8Hf51QXdlmbxTS6bMeQGk50=;
+        b=FAybw/646ad8wCLqdeUJPrL57SCol+w9qHfNKJwW/RYRFeXfmKZtL4DqtTt+jaKgef
+         0nSx1uKncFCni2+SMDU2wupQlmvUlv8xdSlUVLLmO/Bh8io5Ux+vaY1zR50xNFK8bcO+
+         OXkwlKj9b72pcw1HgHaSJ9f51ZrS4uX/QXG9mCbDxjs5IIg8oqgQHJHy+D8LeahUe9mV
+         nU3cywUkN3VFF6m4smT237SDooxclgT6N6yFGLi7xSZwH8vAaO7saw0WhRXn9HR2wMvg
+         PfmCRv0ob4/DFV5/iORApc9S3luFb6vo6gPi4IIo3BOjRJYkbmfBi6SqSlXThiysW6eO
+         jbcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727024433; x=1727629233;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1727024512; x=1727629312;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uGCNBFtzzfr7LREvT1rKgJ6X9oNvivfwjJCxXKomsyc=;
-        b=TYK0IRQGZeyv2VO/7t7guCJoRIqnRr+e43xEIOGZVpiWkb2Omho51hw0kJlqd5a5eK
-         aJ66Mg+I6iV0prJ8r6k5hL9ZgF3hfcSpEHY/yrCEBqxpHzKKrmUDof5pRrUzQvbb5rv/
-         AjIU5xLSmOXwV80NoFQXBxtouyAUbIGIORVsRC2z4pRFZ4BP6/dic2vW2Vc4FwQb/RZ/
-         lAa1+Djoo/V9WNSeZjc2bMIP98EN9tBZ+A2KR2XkpwXttFr+7pNBXkilsJqrLgMUlHaz
-         TMqvBk9WSFIKfJqc8Sfh7fg9owgC6Qc9xmdcK620kc4CPF0BnMFgvzf2KX33kKqWOA72
-         N6WA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZbnMp52DIjOJzgjFO9SXYTWhiwzcVmtW+vq6DDCadEs/Yio1vORWEo95lhNAi8Fg4iSmXSxDLBd9F@vger.kernel.org, AJvYcCWFuKuB7fN8RotfA1AqL0GbCHLP+gOxs4MsWht7K6SWBCazP5caJihieKwDq1fV6+j+j0L8xfKD4tBiUDwv@vger.kernel.org, AJvYcCWLWNWV7BuWsQMIOjYg4s5aaDDHnRKyIbJMsxWl8l1ImBu/5KQYvQwsy+V0FPv7SieoyQjxQDQ1YSmX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQKx+nlcjCH+Dw0LZpG+blu7zLSNgfH0udOC1+pb/khEPx8g2B
-	Vh3laFGqEVTTNYu3/rzd6A5+UaK5FZpjEVrbb6N3HygieMmthI3X/sw8PVA214M=
-X-Google-Smtp-Source: AGHT+IGUPMaydTjShZ2+bQHHB0JQAQ2UoiJ14DkcjFrcCFXqcP6x5zDbhX1WN83T42b4uA0TTBpdgQ==
-X-Received: by 2002:a17:903:2409:b0:206:ca91:1df8 with SMTP id d9443c01a7336-208d854ec49mr138635355ad.53.1727024432980;
-        Sun, 22 Sep 2024 10:00:32 -0700 (PDT)
-Received: from Emma ([2401:4900:1c94:b281:5054:ff:fe53:2787])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794600fadsm122155475ad.70.2024.09.22.10.00.31
+        bh=e6OYj2UJLtKO0PzA2lDG8Hf51QXdlmbxTS6bMeQGk50=;
+        b=umWQAif1DxoGf+nzFm5YjVIpcmGt3xeXIC0duDw8fhbcYAjjAmbRSB+eTjAwSbhfCY
+         Li+mc31CjzlyssTThxKAYRfIcJWHbhC6Y4ppSyRwajKDVebn5xmSZAvk9pECDwKaXmPA
+         U7COxhzQmmMWslEE6eSI/6uP5M/YN3ov706+JOzaO87E2SX04MMOB4jl51P064vMptwr
+         yqYF4vIG23N63TY0mepHtyvTNhW85//vOUls0w5BJl88dOYtiHE0CtCQtZ8BgpZ3WS6c
+         aW/MbN67w2x5kPjFCYd2JtyDj7KYzOrkKUkJXGlTG2juws3r/GXhzD5gueQUgZv+dafy
+         V7Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFLbqVpYE8s0drJg1GNtJeyGcDzO+SjxrKV3jII4Y3Zq3HiyWXHFoKC3Y1o8sDNQS/wepSuK8iJ2zN@vger.kernel.org, AJvYcCWjcXei0g/oON2AGHR3R4ZIAcMMCsJ2heKFY4f1FZ9ju5h2tNRz2XIevFckFQnUScMmAz8kzTvG@vger.kernel.org, AJvYcCX74z/0nY6T28K7a3Yd0NdQoNBxHd15p/rzRj+b+/T5uI0e7FnDngbwXOMaOiq9XxnKldGFildvVaN/CpL3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVV+AGMrDH14c5SoETEQtP+VPQNiwvHQLNSYmdmXyarclC3EGn
+	iuczfEjSBXgyVu6TJ3xg26w6h5EwuXTy2IDaSIc03srwfRBAjzBy
+X-Google-Smtp-Source: AGHT+IF+lPG/TGg29MYlU3BmR+FnM5mK3gvHfmebpJCRc6aD+5GdQAF0EcnCJztjRJv/IukZAZEtFw==
+X-Received: by 2002:a05:600c:358e:b0:428:1310:b6b5 with SMTP id 5b1f17b1804b1-42e7c1a3916mr61839915e9.34.1727024511350;
+        Sun, 22 Sep 2024 10:01:51 -0700 (PDT)
+Received: from localhost ([94.19.228.143])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e754c643csm104582835e9.45.2024.09.22.10.01.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 10:00:32 -0700 (PDT)
-Date: Sun, 22 Sep 2024 17:00:29 +0000
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-To: Roger Quadros <rogerq@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Karan Sanghavi <karansanghvi98@gmail.com>
-Subject: [PATCH] dt-bindings: usb: add missing compatible arraylist
-Message-ID: <ZvBNLRc8xnAoGvoc@Emma>
+        Sun, 22 Sep 2024 10:01:50 -0700 (PDT)
+Date: Sun, 22 Sep 2024 20:01:49 +0300
+From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: linux-sunxi@lists.linux.dev, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, wens@csie.org, jernej.skrabec@gmail.com,
+	samuel@sholland.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Ondrej Jirman <megi@xff.cz>
+Subject: Re: [PATCH] arm64: dts: allwinner: pinephone: Add mount matrix to
+ accelerometer
+Message-ID: <ZvBNfeg9uowsM9ub@skv.local>
+Mail-Followup-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+	Dragan Simic <dsimic@manjaro.org>, linux-sunxi@lists.linux.dev,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Ondrej Jirman <megi@xff.cz>
+References: <129f0c754d071cca1db5d207d9d4a7bd9831dff7.1726773282.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <129f0c754d071cca1db5d207d9d4a7bd9831dff7.1726773282.git.dsimic@manjaro.org>
 
-Added the vice versa order for compatible property in the yaml file so
-that the dtb can parse for the order mentioned in the dts file
-k3-am642-sk.dts for ti,j721e-usb.yaml
+On 24-09-19 21:15, Dragan Simic wrote:
+> The way InvenSense MPU-6050 accelerometer is mounted on the user-facing side
+> of the Pine64 PinePhone mainboard, which makes it rotated 90 degrees counter-
+> clockwise, [1] requires the accelerometer's x- and y-axis to be swapped, and
+> the direction of the accelerometer's y-axis to be inverted.
+> 
+> Rectify this by adding a mount-matrix to the accelerometer definition in the
+> Pine64 PinePhone dtsi file.
+> 
+> [1] https://files.pine64.org/doc/PinePhone/PinePhone%20mainboard%20bottom%20placement%20v1.1%2020191031.pdf
+> 
+> Fixes: 91f480d40942 ("arm64: dts: allwinner: Add initial support for Pine64 PinePhone")
+> Cc: stable@vger.kernel.org
+> Helped-by: Ondrej Jirman <megi@xff.cz>
+> Helped-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> ---
+> 
+> Notes:
+>     See also the linux-sunxi thread [2] that has led to this patch, which
+>     provides a rather detailed analysis with additional details and pictures.
+>     This patch effectively replaces the patch submitted in that thread.
+>     
+>     [2] https://lore.kernel.org/linux-sunxi/20240916204521.2033218-1-andrej.skvortzov@gmail.com/T/#u
+> 
+>  arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+> index 6eab61a12cd8..b844759f52c0 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+> @@ -212,6 +212,9 @@ accelerometer@68 {
+>  		interrupts = <7 5 IRQ_TYPE_EDGE_RISING>; /* PH5 */
+>  		vdd-supply = <&reg_dldo1>;
+>  		vddio-supply = <&reg_dldo1>;
+> +		mount-matrix = "0", "1", "0",
+> +			       "-1", "0", "0",
+> +			       "0", "0", "1";
+>  	};
+>  };
+>  
 
-This is highly ambiguous to me as where exactly the changes needs to be
-added is it in the dts file or is the yaml where we have to reverse the
-order already mentioned or do we have to add the another order as I have
-done ?
+I've applied the patch to next-20240920, built and run on a
+device. Sensor now works as expected. Screen rotating in Phosh
+according to the device orientation.
 
-Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
----
- Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+Reviewed-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
 
-diff --git a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
-index 95ff9791baea..822653217c43 100644
---- a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
-+++ b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
-@@ -17,6 +17,9 @@ properties:
-       - items:
-           - const: ti,j721e-usb
-           - const: ti,am64-usb
-+      - items:
-+          - const: ti,am64-usb
-+          - const: ti,j721e-usb
- 
-   reg:
-     maxItems: 1
 -- 
-2.43.0
-
+Best regards,
+Andrey Skvortsov
 
