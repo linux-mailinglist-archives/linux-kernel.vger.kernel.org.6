@@ -1,73 +1,55 @@
-Return-Path: <linux-kernel+bounces-335141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A39397E1C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 14:55:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B5E497E1C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 15:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FB131F213A8
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 12:55:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C41E2814BC
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 13:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB68139D;
-	Sun, 22 Sep 2024 12:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640B517FD;
+	Sun, 22 Sep 2024 13:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YuA5kkhG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xIERoA5p"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770877E1
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 12:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33B12F50
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 13:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727009728; cv=none; b=P5RQ2ZJKO/MdO7Qe9Q444EhsnsGtcAeYyv70DCmm78SdG4GjweHtzjnvD1S0P4FJaA+XMhYo/YJYh4IE++1N4IBqvbQLv7OQmnH9VQcCeY9tyUKmsfLbdV3tEYEsI/4lARPgR4/rLQIOiUZ/w3afJl2k1YtEMUt+ppabNBojCNw=
+	t=1727010103; cv=none; b=fQk5WvVaTBJ4gqgink4WjI+2jtsXygN09Om9vblP5M1g2YqHMhVd4rDtLCL4TMeqAHH3FJHtFmYfPvPktCTAy3E77RkzCZdXVRDZgBthcCbfs3lPpRuV3HGZHXsFvzy0X5zgjduTQFWGdJ0vCzlDVvQZs/ZMAQf2+BOKExoi5fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727009728; c=relaxed/simple;
-	bh=3tWYqI7ESR2PkD5yF7Ujend92FQEIquO3TcqsrQJ2v4=;
+	s=arc-20240116; t=1727010103; c=relaxed/simple;
+	bh=w7ignNwAUjgKE88MKV4rSraNJf+14vjnp7NEQZSGUXM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GaohKECES9cm9r7XejElQwhwFNVkehquXPgNm5A3ir1HW+p/P37N5atmD7HVeE7lVJ7ORXqRI2UyBVvSzuO4qKM542KK2P/3peun44XGFQrB1TVIc4A7caipduKdm9XRDWPgOE5j+3nR/YNEhI/AL2cEWKtoT/PhUBpsmbgsxcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YuA5kkhG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727009725;
+	 Content-Type:Content-Disposition:In-Reply-To; b=WOLFdnYRBnhZg+nf9bXtYxoeKRqCduYT6AY+/aZyQXIFJP0TJdjnFCFlQVMe6vLXRKZQNJf1Hz/y3A2KGt07t5GeqpkYOUFi/toG4k2CEv3yRR5rOnDbLoSVC+c9zCI6BIWLWWZ/aEd/8YSGBXALIVNXjX6sTCZ6TD5SdzSSSoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xIERoA5p; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 22 Sep 2024 09:01:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727010098;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=HJu5OA2N3X4rk8YmNnrd6Eec6y1gkJFQlhfmBaY80jU=;
-	b=YuA5kkhG2PBWcdOKOYBrbOKrIIR9eDlcDMhs/h1nmvJKKmpgIe+sUB6DEALsmVtlCEwGBF
-	k1VvyvQHErzVvuBzibYa7OZshSwSlZxHoz3FSt5nLQ+0MjNesVo1i2rYILGGGjdRPzIdbY
-	ceJPA77quskxIt03nN2JRdX4b6Q3uLs=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-272-oI5VGB6EPci41-_kRMOg6w-1; Sun,
- 22 Sep 2024 08:55:18 -0400
-X-MC-Unique: oI5VGB6EPci41-_kRMOg6w-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E6D051979062;
-	Sun, 22 Sep 2024 12:55:16 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 087ED19560A3;
-	Sun, 22 Sep 2024 12:55:12 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 22 Sep 2024 14:55:04 +0200 (CEST)
-Date: Sun, 22 Sep 2024 14:54:59 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "qiwu.chen" <qiwuchen55@gmail.com>
-Cc: corbet@lwn.net, mhocko@suse.com, jani.nikula@intel.com,
-	akpm@linux-foundation.org, brauner@kernel.org, paulmck@kernel.org,
-	linux-doc@vger.kernel.org, "qiwu.chen" <qiwu.chen@transsion.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] exit: dump current pt_regs info on global init
- exit
-Message-ID: <20240922125458.GA9426@redhat.com>
-References: <20240922095504.7182-1-qiwu.chen@transsion.com>
- <20240922095504.7182-2-qiwu.chen@transsion.com>
+	bh=DU7kZSFllaH5n+JDlLu+UutJOi6tO+GS2RXmP75/jP0=;
+	b=xIERoA5peMzoBRBFk5qxr9XpCyFBFKpUwp4ETwDt9Qr+Y00VC3NjzUC0/TviCShozBLmmQ
+	rggOTbTeH5sA42j0Awzegu62PDIt7ndl2xmOKsYv9NgxJ58cKjMNdcBge3y559GmwRoN2h
+	Et1Qw+h4rKfgYJthaGEMbiqSg8Upmwc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] bcachefs: add GFP_ZERO flag in btree_bounce_alloc
+Message-ID: <bkmt2z7b6o3bhbzkwvkg4gr6ikem6ojclg63g26qg4gxi67uhv@w4gstbihgwtj>
+References: <20240916224746.692973-1-pZ010001011111@proton.me>
+ <frpohbqgpyhd6fkwkd5h6efqiph27mgmcbex3bipmksyc2vocp@tfz6oynigmgi>
+ <uDWtvpxzXCkjTZVPdrrhrF_wVv8J6JS1gb1Cy_l6uM6houxjn23qXxT4u8YxzVRJrh0LnMIBOa8Zl_NIVyWZPblDTblYi_VJ357130uk0q4=@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,31 +58,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240922095504.7182-2-qiwu.chen@transsion.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <uDWtvpxzXCkjTZVPdrrhrF_wVv8J6JS1gb1Cy_l6uM6houxjn23qXxT4u8YxzVRJrh0LnMIBOa8Zl_NIVyWZPblDTblYi_VJ357130uk0q4=@proton.me>
+X-Migadu-Flow: FLOW_OUT
 
-Add lkml.
+On Sun, Sep 22, 2024 at 12:40:07PM GMT, Piotr Zalewski wrote:
+> 
+> On Saturday, September 21st, 2024 at 8:47 PM, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> 
+> > On Mon, Sep 16, 2024 at 10:47:57PM GMT, Piotr Zalewski wrote:
+> > 
+> > > Add __GFP_ZERO flag to kvmalloc call in btree_bounce_alloc to mitigate
+> > > later uinit-value use KMSAN warning[1].
+> > > 
+> > > After applying the patch reproducer still triggers stack overflow[2] but
+> > > it seems unrelated to the uninit-value use warning. After further
+> > > investigation it was found that stack overflow occurs because KMSAN adds
+> > > additional function calls. Backtrace of where the stack magic number gets
+> > > smashed was added as a reply to syzkaller thread[3].
+> > > 
+> > > I confirmed that task's stack magic number gets smashed after the code path
+> > > where KSMAN detects uninit-value use is executed, so it can be assumed that
+> > > it doesn't contribute in any way to uninit-value use detection.
+> > > 
+> > > [1] https://syzkaller.appspot.com/bug?extid=6f655a60d3244d0c6718
+> > > [2] https://lore.kernel.org/lkml/66e57e46.050a0220.115905.0002.GAE@google.com
+> > > [3] https://lore.kernel.org/all/rVaWgPULej8K7HqMPNIu8kVNyXNjjCiTB-QBtItLFBmk0alH6fV2tk4joVPk97Evnuv4ZRDd8HB5uDCkiFG6u81xKdzDj-KrtIMJSlF6Kt8=@proton.me
+> > > 
+> > > Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
+> > 
+> > 
+> > Oh hey, nice find :)
+> 
+> Hi!
+> 
+> > We should be able to fix this in a more performant way, though; btree
+> > node resort is a path where we do care about performance, we don't want
+> > to touch the whole buffer more times than necessary.
+> > 
+> > Can you try zeroing out the portion after what we consumed, after we
+> > sort into the bounce buffer?
+> 
+> Do you mean something like this? :
+> diff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
+> index 56ea9a77cd4a..c737ece6f628 100644
+> --- a/fs/bcachefs/btree_io.c
+> +++ b/fs/bcachefs/btree_io.c
+> @@ -1195,6 +1195,10 @@ int bch2_btree_node_read_done(struct bch_fs *c, struct bch_dev *ca,
+>  	set_btree_bset(b, b->set, &b->data->keys);
+>  
+>  	b->nr = bch2_key_sort_fix_overlapping(c, &sorted->keys, iter);
+> +	memset((uint8_t*)(sorted + 1) + b->nr.live_u64s * sizeof(u64), 0,
+> +			btree_buf_bytes(b) -
+> +			sizeof(struct btree_node) -
+> +			b->nr.live_u64s * sizeof(u64));
+>  
+>  	u64s = le16_to_cpu(sorted->keys.u64s);
+>  	*sorted = *b->data;
+> 
+> I tested that above doesn't trigger uinit-value usage.
+> 
+> Best regards, Piotr Zalewski
 
-On 09/22, qiwu.chen wrote:
->
-> @@ -847,10 +848,12 @@ void __noreturn do_exit(long code)
->  		 * If the last thread of global init has exited, panic
->  		 * immediately to get a useable coredump.
->  		 */
-> -		if (unlikely(is_global_init(tsk)))
-> +		if (unlikely(is_global_init(tsk))) {
-> +			/* dump the pt_regs of current thread for debugging. */
-> +			show_regs(task_pt_regs(tsk));
->  			panic("Attempted to kill init! exitcode=0x%08x\n",
->  				tsk->signal->group_exit_code ?: (int)code);
+Yeah, I think that should do it :)
 
-Well, this means that show_regs() will be called twice if CONFIG_DEBUG_BUGVERBOSE
-at least on x86, see dump_stack() in panic(). See also show_regs_if_on_stack()
-in show_trace_log_lvl().
-
-Not good...
-
-Oleg.
-
+Send it, I'll apply it...
 
