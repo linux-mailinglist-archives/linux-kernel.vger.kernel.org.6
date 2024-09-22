@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-335259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A8A97E330
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 22:21:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B6797E333
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 22:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DCC7B20977
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 20:21:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A892B2811F1
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 20:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB8F42047;
-	Sun, 22 Sep 2024 20:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19B956B7C;
+	Sun, 22 Sep 2024 20:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HIPOxPFV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2T2Fuut"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F40047A4C;
-	Sun, 22 Sep 2024 20:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F94219E4;
+	Sun, 22 Sep 2024 20:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727036477; cv=none; b=Ie6AerpWHtu3smACqgHE1KCLSRDm4ok6ZbW8HSxUpYjkvNESDt+4xR4W8BI+tafGZFvjtEegoy+uly9DHxLiTeBdBaBy9mO9TyYpwrwdNwp+K3dYrxk/Ew40SNVSX7boCvGIVuURkPqbodr4agcuLGd/kLwO+RhMUbtxU3xd6E8=
+	t=1727036566; cv=none; b=ts5KnvzoBfBS2hWwCD9Ja52+fEWdtVUPhz7V9Jwo0Iv7fUWLFYD3+5SmEPbpDTH5j2fGEM8AZukmECY4iViJYWhFDh+NIa5P/G2ljUwJxs71XvvTrwVDiE/fU9YbO4VhJnVtpZsWRUHm0q2+tBdpIkfRwv9mat69S6j2qeymr1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727036477; c=relaxed/simple;
-	bh=InhEVXvKe00XKGjJ0zyePEOYAcKMa68cdzla8J9zOr4=;
+	s=arc-20240116; t=1727036566; c=relaxed/simple;
+	bh=IwqEyvZSJsJl6gyXXgtY6Vt8slQzaQblVIKgW9WRdmo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hfov7v4qb8b1SfC8yWBVSWeTIL1Hcjp9hoQXEeVKOLIsOzlZ5nYybiSWbQJxyXYEzpIkNtt9FTaL864X6i0QFYV2u+NRmE5mQWumyNvynjw4oQ0u0clhgFDgoJoyyw0NUtCgSqNPta3onQQX+zSyE/Rlxn2aP+oQiKZ26V4qs7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HIPOxPFV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3EC5C4CEC3;
-	Sun, 22 Sep 2024 20:21:10 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=OrqAlxu3JC3Qya+tLg9b5pcUwbfmAVx4GJ9XNfliEfsKYSNSr2y7pV79rFQjrfuW0AGv1TQOZ8yTIoktpXctWcXm+orlD6FhfMOECgNEJNV2TuGwnr4pQVW+eOpQzqwFDlWXsgq/BJAw3Z93RNublnM3eClCqLbk/YyXAG5CpAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2T2Fuut; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52A07C4CEC3;
+	Sun, 22 Sep 2024 20:22:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727036477;
-	bh=InhEVXvKe00XKGjJ0zyePEOYAcKMa68cdzla8J9zOr4=;
+	s=k20201202; t=1727036565;
+	bh=IwqEyvZSJsJl6gyXXgtY6Vt8slQzaQblVIKgW9WRdmo=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HIPOxPFV4y2v+s1byS7VmY+eMlF/84VYPCP3JDSGlXXYyhEvszRdYsjepLXXo7W7j
-	 95IGNKnpZJZzKmk/50ysSe1L0MBcdDts2KP322kwtHRH13qsvjnPFXsAMxa807VDtb
-	 lg7nOV7V6mYwraZVhy1r2gEuDqAbXki60IIpRtAty39YNkrsaJ/JhvXipMT3nENJyv
-	 KRf2ubFSuSmrTRiWveeQkIGl3O057SLtVopYM/PooHJHRPqG7aUVKEM0UWJZZpMrYT
-	 Dr0fjiosjI38ldD2KX9ARq+tZr0dliXT3xQP9MclAhA24A6+iah7VQnEPB3LH/pxEw
-	 kRpbzOEN0EtlA==
-Message-ID: <275b1b46-4ed0-44d8-a240-93a422e96bbf@kernel.org>
-Date: Sun, 22 Sep 2024 22:21:08 +0200
+	b=i2T2FuutSnIB1v01XrgRpYQBhSYjiL8PE6QJLZvCqUipXG5rlcvFymWft6QZZArWC
+	 EU2pW+wtO2EoMpQ8yAFUcunO3MEBe8IM7cI6u31p2etXTzaZR35oOZ1pjbvXiA6HaD
+	 m1B7RjqPdl78Bur/wPO69tXjvlwRN6jFeCK9520+SEO3b3bJOGx3VfSFeAjOJUngwC
+	 tyBPGX5Nt42tc0dXg6xFbb+e6u3967BXxr8JNcsDms9Wspcap+uEjpxdxRXmeqejMj
+	 NvX5u5/F5faLtL40KEnRpN/7FCwedMokxNLl7Dp6kqcy/Enw+BMnE1LdiJiS7rJ2ii
+	 pzCilyuQq3opg==
+Message-ID: <25221af1-5cd3-4d5e-a3d2-7528c5ec3545@kernel.org>
+Date: Sun, 22 Sep 2024 22:22:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 5/5] remoteproc: add support for Microchip IPC
- remoteproc platform driver
-To: Valentina.FernandezAlanis@microchip.com, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, peterlin@andestech.com,
- dminus@andestech.com, Conor.Dooley@microchip.com, conor+dt@kernel.org,
- ycliang@andestech.com, jassisinghbrar@gmail.com, robh@kernel.org,
- krzk+dt@kernel.org, andersson@kernel.org, mathieu.poirier@linaro.org
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
- <20240912170025.455167-6-valentina.fernandezalanis@microchip.com>
- <6f1fa401-e9ca-466f-990a-52bc37899bf4@kernel.org>
- <1ece2f4b-6f2d-452f-b2af-18d0895f9443@microchip.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: PCI: xilinx-cpm: Add compatible
+ string for CPM5 host1
+To: Thippeswamy Havalige <thippesw@amd.com>, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, robh@kernel.org, bhelgaas@google.com,
+ devicetree@vger.kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org
+Cc: bharat.kumar.gogada@amd.com, michal.simek@amd.com, lpieralisi@kernel.org,
+ linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240922061318.2653503-1-thippesw@amd.com>
+ <20240922061318.2653503-2-thippesw@amd.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,99 +104,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <1ece2f4b-6f2d-452f-b2af-18d0895f9443@microchip.com>
+In-Reply-To: <20240922061318.2653503-2-thippesw@amd.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 18/09/2024 17:51, Valentina.FernandezAlanis@microchip.com wrote:
-> On 16/09/2024 21:18, Krzysztof Kozlowski wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>
->> On 12/09/2024 19:00, Valentina Fernandez wrote:
->>> The Microchip family of RISC-V SoCs typically has one or more clusters.
->>> These clusters can be configured to run in Asymmetric Multi-Processing
->>> (AMP) mode.
->>>
->>> Add a remoteproc platform driver to be able to load and boot firmware
->>> to the remote processor(s).
->>
->> ...
->>
->>> +
->>> +static int mchp_ipc_rproc_prepare(struct rproc *rproc)
->>> +{
->>> +     struct mchp_ipc_rproc *priv = rproc->priv;
->>> +     struct device_node *np = priv->dev->of_node;
->>> +     struct rproc_mem_entry *mem;
->>> +     struct reserved_mem *rmem;
->>> +     struct of_phandle_iterator it;
->>> +     u64 device_address;
->>> +
->>> +     reinit_completion(&priv->start_done);
->>> +
->>> +     of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
->>> +     while (of_phandle_iterator_next(&it) == 0) {
->>> +             /*
->>> +              * Ignore the first memory region which will be used vdev
->>> +              * buffer. No need to do extra handlings, rproc_add_virtio_dev
->>> +              * will handle it.
->>> +              */
->>> +             if (!strcmp(it.node->name, "vdev0buffer"))
->>
->> What? If you ignore the first, then why are you checking names? This
->> does not make sense. Especially that your binding did not say anything
->> about these phandles being somehow special.
+On 22/09/2024 08:13, Thippeswamy Havalige wrote:
+> The Xilinx Versal premium series has CPM5 block which supports two typeA
+> Root Port controller functionality at Gen5 speed.
 > 
-> The idea in the code above is to skip the vdev buffer allocation and 
-> carveout registration. Later, when the remoteproc virtio driver 
-> registers the virtio device (rproc_add_virtio_dev), it will attempt to 
-> find the carveout. Since the carveout wasn’t registered, it will use the 
-> first memory region from the parent by calling 
-> of_reserved_mem_device_init_by_idx.
+> Add compatible string to distinguish between two CPM5 rootport controller1.
+> since Legacy and error interrupt register and bits for both the controllers
+> are at different offsets.
 > 
-> This behavior is based on some existing platform drivers. However, upon 
-> further inspection, it seems that some newer drivers use 
-> rproc_of_resm_mem_entry_init to allocate vdev buffers.
-> 
-> I will restructure this section and rephase/drop the comment.
-> 
-> With regards the bindings, I'll explain better all the memory regions 
-> for v2.
-> 
-> Just for everyone’s information, we have the following use cases:
-> 
-> Early boot: Remote processors are booted by another entity before Linux, 
-> so we only need to attach. For this mode, we require the resource table 
-> as a memory region in the device tree.
-> 
-> Late boot - Linux is responsible for loading the firmware and starting 
-> it on the remote processors. For this, we need the region used for the 
-> firmware image.
-> 
-> In both cases, rpmsg communication is optional. This means that the vdev 
-> buffers and vrings memory regions are also optional.
-> 
-> There could also be a mixed case where we start with early boot mode by 
-> attaching to an existing remoteproc, and then stop, start, and load 
-> another firmware once Linux has booted. In this case, we would require 
-> the resource table and firmware image region, and optionally, vdev 
-> buffers and vrings.
-> 
->>
->>> +                     continue;
->>> +
->>> +             if (!strcmp(it.node->name, "rsc-table"))
->>
->> Nope.
-> Since the resource table is only needed for early boot mode and does not 
-> need to be a carveout region, we are skipping that.
-> 
-> I will work on making the resource table a fixed index in the 
-> memory-region property so that it doesn't have a fixed name.
+> Signed-off-by: Thippeswamy Havalige <thippesw@amd.com>
 
-The list of memory-regions already HAS fixed indices. All this is not
-only confusing, but incorrect. I commented that if I call the node
-"rsc-not-a-table" your code will stop working.
+
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
