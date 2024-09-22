@@ -1,228 +1,103 @@
-Return-Path: <linux-kernel+bounces-335071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC1597E09C
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 10:40:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16DD797E09F
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 10:48:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 293F1280BFC
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 08:40:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7E481C20A41
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 08:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B10A193422;
-	Sun, 22 Sep 2024 08:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465A929D06;
+	Sun, 22 Sep 2024 08:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="TNBeKhOK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="prLWwB3Q"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621E7134C4;
-	Sun, 22 Sep 2024 08:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="XmVPvsdp"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFCC176AC3;
+	Sun, 22 Sep 2024 08:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726994414; cv=none; b=qet9QJVvYR/M44WRosuxBlAxowftx0J4lD8qFpSABhYi4pkGxJp7Kio1ZZt0/E1mRVCJaUfjlo9mkcWUsR0t7G7//0HR7FyzTYBYvF/qyUJJyoWw5AvIVyJtTVNdOAk86lBuTriHfacDx1dzR23TWoAJr245nI7gFBj7IWHQTik=
+	t=1726994877; cv=none; b=ttSjG220Q+gjE5jFQ/CMa2zHn/ADVKsJv3HJ93g7yJ8wd0JZaC1gBxSJuDC2dO9gg0k3db+aLAssNWdNW9ulnas93CfN8LtxZWvY1Qz4NcABmTOyRdWfwIUWgOul4LN+ChWL9m9umz20NBig/qOPFElPVq1O5qD3yGlaZHxBRsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726994414; c=relaxed/simple;
-	bh=NvtNCWYLxAUUYaf1ZV3bfcHr8aPZfVyTOA42rrYChrw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gpf+vzVPDAVWKpM9mSqnObbTguzLkp1In/kFzt7vZjb5gN3HRCZK479fGvGNCnTqQ35UVQK5KZ7R23KEpHs4qlUCxLlODpX8vRZb2Z3bQANqXvZq2yOHOxtJB1lJUaAOmX5ooS5XaS8/uAnL2JCIOQPtP7xVCj5Eae2PlX9YAVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=TNBeKhOK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=prLWwB3Q; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfout.phl.internal (Postfix) with ESMTP id 584DB1380284;
-	Sun, 22 Sep 2024 04:40:11 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Sun, 22 Sep 2024 04:40:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1726994411; x=1727080811; bh=L8BCOmBV7Q
-	cjMxVuy7I8eLqXWe+XQi090UTPa04zCPk=; b=TNBeKhOKoEd9adPkKsRGNaXRNz
-	9IoMMiqZR597YU7Spsvyg/+hj4x5drB5c5wOUtpLVGLHry8FipEFyEnsOL5r6oVJ
-	zo80eq6IN9ehZcj9fHtJNPjA3c5hZftD9lOJMwZDYQGMb0ar04tW8aCL80LgVHFJ
-	M8b6pzC8T5UenQyEG0PL4B8hw3faio6DK5Gh6nLxX0Y/ExLyoAJTuWJW66jVqmTX
-	7bl3qdMsCrXhw/iE4Xy+vQOyTjE15yCZNTVXYk7OBbMBzunRBYDvHmIQZ060CXdD
-	yExbjvO5rjAbYATtP3IJuYHupKMiJrxeB9xIWPCSeY5c0vnf3JmzD4KrFbow==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1726994411; x=1727080811; bh=L8BCOmBV7QcjMxVuy7I8eLqXWe+X
-	Qi090UTPa04zCPk=; b=prLWwB3Qd+m4HjjF7HpB+BP5Yh1RWxH9T/lFAHcVuHOe
-	haogI+PFD6ZzqH9UolQ7VhkE/27kQKOdpS6drsmvCUHCzGTmjTh4QBT6jVUKt6tC
-	6RzAC+VAsFxDJl+zGy1u4Tk21mJgl87w31JFF/UE6U80MyPOpfBL/yOaZiY+vc2u
-	Y86RVKt+HUGXHDfBnlTzLvnCIJl09uDeUjFCvDaApQJ4ZJQqAIGusO3CReKdGrvb
-	qbs1wW5L3rGa2tEZGhKHbovwXDx5/dQsWlW02tyTVxoq0thmO3wU43vSpSZAlRWO
-	BzpVPnKKizsFBK1P2x2ossAHdlRUMR07Dipxapt4ng==
-X-ME-Sender: <xms:6tfvZlOw7KrUmnVHAAWWV7Z3HAuVQtwftWJGSqPwMkegSCKwou3LKg>
-    <xme:6tfvZn_Bqzt9cJeZagDq7fNRvWjQgUbAXdQuXyik5HDW1B9ocMZ5xpzJ3xtymA7rh
-    oezZC1ecVFEuN6oZg>
-X-ME-Received: <xmr:6tfvZkTVbTLRtkQv_orXBfg67KhrJ4tj8i07iA6SilCmzpKN8-ekBw7c1d8CcO9Y0OlJsz6Do_bsLmbzhgGVS7fJZmcJuR2xDTl-sySHX-Kp8w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeljedgtdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucgfrhhlucfvnfffucdlje
-    dtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpeff
-    rghnihgvlhcuighuuceougiguhesugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnh
-    epvdefkeetuddufeeigedtheefffekuedukeehudffudfffffggeeitdetgfdvhfdvnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepugiguhesug
-    iguhhuuhdrgiihiidpnhgspghrtghpthhtohepudekpdhmohguvgepshhmthhpohhuthdp
-    rhgtphhtthhopegvugguhiiikeejsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrnh
-    hivghlsehiohhgvggrrhgsohigrdhnvghtpdhrtghpthhtohepshhhuhgrhheskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopegrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhhnhdrfhgrshht
-    rggsvghnugesghhmrghilhdrtghomhdprhgtphhtthhopehmrghrthhinhdrlhgruheslh
-    hinhhugidruggvvhdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohephihonhhghhhonhhgrdhsohhngheslhhinhhugidruggvvh
-X-ME-Proxy: <xmx:6tfvZhtS8v3WG-JpGU7cDOCtiwXzFc4Y1XuprJKXDucsu0P3O4_i2g>
-    <xmx:6tfvZtf7GC1EfCwgDM-Ssyq--1C_TOhuHvC1gC0JQnsoQWpEOeeZOg>
-    <xmx:6tfvZt0AAcNrB_bbC-FseMoQZF_KxIwvrVYjXxsRPg4JeE_8vuI7KA>
-    <xmx:6tfvZp99jdLKtbs4EP1p5eCEimJizrJGk4XkB_mKv8vVkHPyQ0YUUA>
-    <xmx:69fvZgWbQ2b7du7rNDLwYlbrZBzzZg5wYjrC-51lH6cF4Uhp_zKO-PWD>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 22 Sep 2024 04:40:08 -0400 (EDT)
-Date: Sun, 22 Sep 2024 02:40:07 -0600
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: daniel@iogearbox.net, shuah@kernel.org, andrii@kernel.org, 
-	ast@kernel.org, john.fastabend@gmail.com, martin.lau@linux.dev, song@kernel.org, 
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, 
-	jolsa@kernel.org, mykolal@fb.com, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH bpf-next v2 1/2] bpf: verifier: Support eliding map
- lookup nullness
-Message-ID: <x32qvwnfnouk2zbvllwi7xy6w7jyjp6ifobumuohf4fy32sy2x@gczdukjvjo36>
-References: <cover.1726458273.git.dxu@dxuuu.xyz>
- <3b54139f8d4877e0487daebdd799c3878ee27ed0.1726458273.git.dxu@dxuuu.xyz>
- <a1b7e902e6f8be05f7d42bf340484b64583e1389.camel@gmail.com>
+	s=arc-20240116; t=1726994877; c=relaxed/simple;
+	bh=A9QRinL2AqDGsnSuFzchYLYIA5QIF5TFYfI4vFEGbG8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=UGk+gLlOcHLUmZuuxvOwJCP8kn9TKrnQRP0O5UvRfoYX5eGyZ0Sq0VuEMr8v956aZHdcUmhrSosALskWBMf84rFL9hbpZ1X4MyxQTsSo5v3/B2zrwlorzjvjpgQG0KQS2EfdzP7w4/bxoQ3Q90RgqOUvvA4zH9t2TlM0A13kFrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=XmVPvsdp reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=lg0wJWyar9THY53fKkciHpwQH2L/jJMZlVEM8o1rz1s=; b=X
+	mVPvsdp6k9NERp0+PK9YwrBNw+bldEgPU750LM8G/LXiWn04lTIFwhfAjdqduaPZ
+	LIJZv6MZw9bErYw0UIsZ1+KL00t/CPVERbA2x7p/SPnJO2rYgVC2FrBNUhbJmex/
+	DHQwxOkWvUCqTvAOny7Ms3wFNmNOxNulKDHNQBjlXY=
+Received: from 00107082$163.com ( [111.35.191.143] ) by
+ ajax-webmail-wmsvr-40-140 (Coremail) ; Sun, 22 Sep 2024 16:47:25 +0800
+ (CST)
+Date: Sun, 22 Sep 2024 16:47:25 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: kent.overstreet@linux.dev
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [BUG?] bcachefs performance: read is way too slow when a file
+ has no overwrite
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20240922083148.10070-1-00107082@163.com>
+References: <79f17c7a.65f.19217621c47.Coremail.00107082@163.com>
+ <20240922083148.10070-1-00107082@163.com>
+X-NTES-SC: AL_Qu2ZBPWSu0Av4yeYZ+kXn0oTju85XMCzuv8j3YJeN500hyX/8xgmcnBuOXvk4sOPLhGSvxe4fyJl+MlZT4xGdLLpf0YaJlFpAJf5Y3zAafAL
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a1b7e902e6f8be05f7d42bf340484b64583e1389.camel@gmail.com>
+Message-ID: <3fcdf5b3.203d.19218ea100b.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:jCgvCgD3n02e2e9m+90CAA--.27548W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMxpiqmbvz7duQQABs+
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Fri, Sep 20, 2024 at 03:05:35PM GMT, Eduard Zingerman wrote:
-> On Sun, 2024-09-15 at 21:45 -0600, Daniel Xu wrote:
-> > This commit allows progs to elide a null check on statically known map
-> > lookup keys. In other words, if the verifier can statically prove that
-> > the lookup will be in-bounds, allow the prog to drop the null check.
-> > 
-> > This is useful for two reasons:
-> > 
-> > 1. Large numbers of nullness checks (especially when they cannot fail)
-> >    unnecessarily pushes prog towards BPF_COMPLEXITY_LIMIT_JMP_SEQ.
-> > 2. It forms a tighter contract between programmer and verifier.
-> > 
-> > For (1), bpftrace is starting to make heavier use of percpu scratch
-> > maps. As a result, for user scripts with large number of unrolled loops,
-> > we are starting to hit jump complexity verification errors.  These
-> > percpu lookups cannot fail anyways, as we only use static key values.
-> > Eliding nullness probably results in less work for verifier as well.
-> > 
-> > For (2), percpu scratch maps are often used as a larger stack, as the
-> > currrent stack is limited to 512 bytes. In these situations, it is
-> > desirable for the programmer to express: "this lookup should never fail,
-> > and if it does, it means I messed up the code". By omitting the null
-> > check, the programmer can "ask" the verifier to double check the logic.
-> 
-> Nit: maybe add a few lines why tools/testing/selftests/bpf/progs/iters.c
->      has to be changed.
-
-Ack.
-
-> 
-> [...]
-> 
-> > +/* Returns constant key value if possible, else -1 */
-> > +static long get_constant_map_key(struct bpf_verifier_env *env,
-> > +				 struct bpf_reg_state *key)
-> > +{
-> > +	struct bpf_func_state *state = func(env, key);
-> > +	struct bpf_reg_state *reg;
-> > +	int stack_off;
-> > +	int slot;
-> > +	int spi;
-> > +
-> > +	if (key->type != PTR_TO_STACK)
-> > +		return -1;
-> > +	if (!tnum_is_const(key->var_off))
-> > +		return -1;
-> > +
-> > +	stack_off = key->off + key->var_off.value;
-> > +	slot = -stack_off - 1;
-> > +	if (slot >= state->allocated_stack)
-> > +		/* Stack uninitialized */
-> > +		return -1;
-> 
-> I'm not sure verifier guarantees that key->off is negative.
-> E.g. the following simple program:
-> 
->     0: (b7) r1 = 16                       ; R1_w=16
->     1: (bf) r2 = r10                      ; R2_w=fp0 R10=fp0
->     2: (0f) r2 += r1
->     mark_precise: frame0: last_idx 2 first_idx 0 subseq_idx -1 
->     mark_precise: frame0: regs=r1 stack= before 1: (bf) r2 = r10
->     mark_precise: frame0: regs=r1 stack= before 0: (b7) r1 = 16
->     3: R1_w=16 R2_w=fp16
-> 
-> => I think 'slot' should be checked to be >= 0.
-
-Ah, so in case stack grows "up" right? Which seems invalid but probably
-good to check.
-
-> 
-> > +
-> > +	spi = slot / BPF_REG_SIZE;
-> > +	reg = &state->stack[spi].spilled_ptr;
-> > +	if (!tnum_is_const(reg->var_off))
-> > +		/* Stack value not statically known */
-> > +		return -1;
-> > +
-> > +	return reg->var_off.value;
-> > +}
-> > +
-> >  static int get_helper_proto(struct bpf_verifier_env *env, int func_id,
-> >  			    const struct bpf_func_proto **ptr)
-> >  {
-> > @@ -10511,6 +10557,15 @@ static int check_helper_call(struct bpf_verifier_env *env, struct bpf_insn *insn
-> >  			env->insn_aux_data[insn_idx].storage_get_func_atomic = true;
-> >  	}
-> >  
-> > +	/* Logically we are trying to check on key register state before
-> > +	 * the helper is called, so process here. Otherwise argument processing
-> > +	 * may clobber the spilled key values.
-> > +	 */
-> > +	regs = cur_regs(env);
-> > +	if (func_id == BPF_FUNC_map_lookup_elem)
-> > +		meta.const_map_key = get_constant_map_key(env, &regs[BPF_REG_2]);
-> 
-> Nit: there is a long 'switch (func_id)' slightly below this point,
->      maybe move this check there?
-
-I had that initially but discovered that verifier marks the stack value
-as unknown as part of check_func_arg(). I _think_ it was:
-
-        if (is_spilled_reg(&state->stack[spi]) &&
-            (state->stack[spi].spilled_ptr.type == SCALAR_VALUE ||
-             env->allow_ptr_leaks)) {
-                if (clobber) {
-                        __mark_reg_unknown(env, &state->stack[spi].spilled_ptr);
-                        for (j = 0; j < BPF_REG_SIZE; j++)
-                                scrub_spilled_slot(&state->stack[spi].slot_type[j]);
-                }
-                goto mark;
-        }
-
-I remember spending some time debugging it. Which is why I left that
-comment above this code.
-
-Thanks for reviewing!
+CkF0IDIwMjQtMDktMjIgMTY6MzE6NDgsICJEYXZpZCBXYW5nIiA8MDAxMDcwODJAMTYzLmNvbT4g
+d3JvdGU6Cj4+SGksIAo+PgoKPmJ0cmVlX2lvIHdyaXRlIHBhdHRlcm4sIGNvbGxlY3RlZCBmcm9t
+IGJ0cmVlX25vZGVfd3JpdGVfZW5kaW8sIAo+aXMga2luZCBvZiB1bmlmb3JtL2ZsYXQgZGlzdHJp
+YnV0ZWQsIG5vdCBvbiBibG9jay1mcmllbmRseSBzaXplCj5ib3VuZGFyaWVzIChJIHRoaW5rKToK
+PgkrLS0tLS0tLS0tKy0tLS0tLS0tLS0tLSsKPgl8IHNlY3RvcnMgfCBwZXJjZW50YWdlIHwKPgkr
+LS0tLS0tLS0tKy0tLS0tLS0tLS0tLSsKPgl8ICAgIDEgICAgfCAgIDkuMDIxJSAgIHwKPgl8ICAg
+IDMgICAgfCAgIDEuNDQwJSAgIHwKPgl8ICAgIDQgICAgfCAgIDEuMjQ5JSAgIHwKPgl8ICAgIDIg
+ICAgfCAgIDEuMTU3JSAgIHwKPgl8ICAgIDUgICAgfCAgIDAuODA0JSAgIHwKPgl8ICAgIDYgICAg
+fCAgIDAuNDA5JSAgIHwKPgl8ICAgIDE0ICAgfCAgIDAuMjU5JSAgIHwKPgl8ICAgIDE1ICAgfCAg
+IDAuMjUzJSAgIHwKPgl8ICAgIDE2ICAgfCAgIDAuMjI4JSAgIHwKPgl8ICAgIDcgICAgfCAgIDAu
+MjI2JSAgIHwKPgl8ICAgIDExICAgfCAgIDAuMjIzJSAgIHwKPgl8ICAgIDEwICAgfCAgIDAuMjIz
+JSAgIHwKPgl8ICAgIDEzICAgfCAgIDAuMjIyJSAgIHwKPgl8ICAgIDkgICAgfCAgIDAuMjEzJSAg
+IHwKPgl8ICAgIDEyICAgfCAgIDAuMjAyJSAgIHwKPgl8ICAgIDQxICAgfCAgIDAuMTk0JSAgIHwK
+Pgl8ICAgIDE3ICAgfCAgIDAuMTgzJSAgIHwKPgl8ICAgIDggICAgfCAgIDAuMTgyJSAgIHwKPgl8
+ICAgIDE4ICAgfCAgIDAuMTY3JSAgIHwKPgl8ICAgIDIwICAgfCAgIDAuMTY3JSAgIHwKPgl8ICAg
+IDE5ICAgfCAgIDAuMTYzJSAgIHwKPgl8ICAgIDIxICAgfCAgIDAuMTYwJSAgIHwKPgl8ICAgMjA1
+ICAgfCAgIDAuMTU4JSAgIHwKPgl8ICAgIDIyICAgfCAgIDAuMTQ1JSAgIHwKPgl8ICAgIDIzICAg
+fCAgIDAuMTE3JSAgIHwKPgl8ICAgIDI0ICAgfCAgIDAuMDkzJSAgIHwKPgl8ICAgIDUxICAgfCAg
+IDAuMDg5JSAgIHwKPgl8ICAgIDI1ICAgfCAgIDAuMDgwJSAgIHwKPgl8ICAgMjA0ICAgfCAgIDAu
+MDc5JSAgIHwKPgkrLS0tLS0tLS0tKy0tLS0tLS0tLS0tLSsKPgoKT29wcy4uLndyb25nIHdlaWdo
+dCB1c2VkIHRvIGNhbGN1bGF0ZSBwZXJjZW50YWdlLCBpdCBzaG91bGQgYmUKKy0tLS0tLS0tLSst
+LS0tLS0tLS0tLS0rCnwgc2VjdG9ycyB8IHBlcmNlbnRhZ2UgfAorLS0tLS0tLS0tKy0tLS0tLS0t
+LS0tLSsKfCAgICAxICAgIHwgIDQ1LjEwNSUgICB8CnwgICAgMyAgICB8ICAgNy4yMDAlICAgfAp8
+ICAgIDQgICAgfCAgIDYuMjQ0JSAgIHwKfCAgICAyICAgIHwgICA1Ljc4NSUgICB8CnwgICAgNSAg
+ICB8ICAgNC4wMTglICAgfAp8ICAgIDYgICAgfCAgIDIuMDQ1JSAgIHwKfCAgICAxNCAgIHwgICAx
+LjI5NiUgICB8CnwgICAgMTUgICB8ICAgMS4yNjQlICAgfAp8ICAgIDE2ICAgfCAgIDEuMTQxJSAg
+IHwKfCAgICA3ICAgIHwgICAxLjEyOSUgICB8CnwgICAgMTEgICB8ICAgMS4xMTclICAgfAp8ICAg
+IDEwICAgfCAgIDEuMTEzJSAgIHwKfCAgICAxMyAgIHwgICAxLjExMSUgICB8CnwgICAgOSAgICB8
+ICAgMS4wNjUlICAgfAp8ICAgIDEyICAgfCAgIDEuMDExJSAgIHwKfCAgICA0MSAgIHwgICAwLjk3
+MSUgICB8CnwgICAgMTcgICB8ICAgMC45MTMlICAgfAp8ICAgIDggICAgfCAgIDAuOTEyJSAgIHwK
+fCAgICAxOCAgIHwgICAwLjgzNiUgICB8CnwgICAgMjAgICB8ICAgMC44MzUlICAgfAp8ICAgIDE5
+ICAgfCAgIDAuODEyJSAgIHwKfCAgICAyMSAgIHwgICAwLjc5OSUgICB8CnwgICAyMDUgICB8ICAg
+MC43OTElICAgfAp8ICAgIDIyICAgfCAgIDAuNzI0JSAgIHwKfCAgICAyMyAgIHwgICAwLjU4NyUg
+ICB8CnwgICAgMjQgICB8ICAgMC40NjUlICAgfAp8ICAgIDUxICAgfCAgIDAuNDQzJSAgIHwKfCAg
+ICAyNSAgIHwgICAwLjM5OCUgICB8CnwgICAyMDQgICB8ICAgMC4zOTYlICAgfAorLS0tLS0tLS0t
+Ky0tLS0tLS0tLS0tLSsKCgpEYXZpZAo=
 
