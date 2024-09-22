@@ -1,59 +1,62 @@
-Return-Path: <linux-kernel+bounces-335268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F4B297E347
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 22:41:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 411C197E34B
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 22:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 912471C20B41
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 20:41:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9C4B1F2121F
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 20:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C145B5B5D6;
-	Sun, 22 Sep 2024 20:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510B161FEA;
+	Sun, 22 Sep 2024 20:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTwVt5JH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qHQbSKsi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EB32AEFC;
-	Sun, 22 Sep 2024 20:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFF555898;
+	Sun, 22 Sep 2024 20:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727037691; cv=none; b=F54Cj6wPw2eSlgVgEBFJfcLVNCgRsTTMaOJgZ/XsLweET6oAmIP6wuLCvYNPRMvgE4zfS/d58JKM9sxG5SRH2OOHUVaVBxXu2m5/iyAZo6fZGJSn8Vas00zJCMBe82+//4tTrprk/wE8X75oaEMu8jZQY9n8qGxbPCMgiPzThDQ=
+	t=1727037828; cv=none; b=WapioEpX5MiXExfj91KyRHJkX9/LI46VbwD2bGNiB7eXou++z4CGK8wxDDBtOrul1lDaTQ+D6/IvelJWMk62kjMaE3SeNxBwb+z6Xnn3qbdQ5pObdEd44sGXmfSjClM8cFa/HO//tjMvBZgwKzOfun9rT94pBItddQikqjvslYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727037691; c=relaxed/simple;
-	bh=TkUxFG1M5+wekJl8pvU0XXiK2GmJAhCAiAC/2sJes8E=;
+	s=arc-20240116; t=1727037828; c=relaxed/simple;
+	bh=M4TF5ayIuFRvWwOsi5XVMxki7jlOEntStSvxNGBxNL4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fb+nKqR0JkinXXY0cZD/RDC1Bm9pnpsBbt7zCqg2zDC6QJGPmugxR2KpWjx0W2ae7rE1L/xU9yusPKPo1N2apG8zUBnn7N6zUnnm2VWPbCYwZVekisoMquGe1GQYPS4/TzX+PaTT1yQV4bKar+owVoeAy4Idhn9iiaXaux8Prx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTwVt5JH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F386BC4CEC3;
-	Sun, 22 Sep 2024 20:41:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fMjiiE+rzTOMXWrN6DFza5W08pmBLE06nmUqZsCQuo3qObIV/aQIIBzDygcRmmbpeg/4x70X1vLGXaCG2N5G6+dwDtYBTbvpkpPdaLy3+jte11llYa0Xh1XzbjX24bvyN77dEGNlPRzwmheHgjiuUkE0Ibg/oTI8J99S5T8d/mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qHQbSKsi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52048C4CEC3;
+	Sun, 22 Sep 2024 20:43:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727037690;
-	bh=TkUxFG1M5+wekJl8pvU0XXiK2GmJAhCAiAC/2sJes8E=;
+	s=k20201202; t=1727037828;
+	bh=M4TF5ayIuFRvWwOsi5XVMxki7jlOEntStSvxNGBxNL4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RTwVt5JHcfQMMSdTaK+TixFFSGAjfPL9P4RFz8+A22jlWfEQEViYyGVIiSiC0wYzI
-	 r8nXv2x5f0QE8EjULVjwEnhzcQA9TzlxmoU8k/yueofUs+8Gpb/sJpWbwiD+XcKxzM
-	 1dERKmfs+MMT7ZQQ0D5FPU+3ULnQIyAH107Oaz4uw029s6JM2nTwXNoT06/iJ8264Q
-	 0PbNWZgHygVmx7xdeixS8JAla8eY8nHq5va9s65gn4qH9hDXsRWIQrAifj6nXQduPJ
-	 iZGWAUBMycMZgStv+R4ePcjTgIJex9np1H8zSTTBS8VUxVipIdeoNJjDl5K4795qud
-	 7HIvnXhCsNTyg==
-Date: Sun, 22 Sep 2024 22:41:27 +0200
+	b=qHQbSKsi8PW6RN/qJntYotqc/YBS+PsVmGjJufBBnnUUuwR+qwRACId4ct8dhIjK1
+	 hx1XTohgh+2ZWm9isbcDRzuJR1AMGF2+nKEBvpBPQ568OgQs+qdbMCaBAgRpDfklYr
+	 FYYXyJuCQhSsNCu5MT09WpIw/tMxrkaSo3YzwX87ifEZ+eJpEA7rxrh2/TnMqk8FMI
+	 Fc6mvSUq0wd11kP3oSzUkJOh8RCQptWAhTQmLDldIS5b3lykgtP+F7qI2aSGab8bm7
+	 +va9Jth56cU39irEJORCLzp+d86PVR8ah/uV5KpHD8oeouPS5i1BcPoNFTObv4DHTf
+	 QArRDI9Rix9dg==
+Date: Sun, 22 Sep 2024 22:43:44 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Liu Ying <victor.liu@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] dt-bindings: reset: add schema for imx8ulp SIM
- reset
-Message-ID: <axvgokxy2cq2hgi4nkiosbrhvxmmy7wvebm37ryl42r6lkkk42@vtuhb2nt5en7>
-References: <20240922174225.75948-1-laurentiumihalcea111@gmail.com>
- <20240922174225.75948-2-laurentiumihalcea111@gmail.com>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, konradybcio@kernel.org, ivo.ivanov.ivanov1@gmail.com
+Subject: Re: [PATCH v4 01/20] dt-bindings: arm: cpus: Add Apple A7-A11 CPU
+ cores
+Message-ID: <34fubbbf6jlqjs6q2f73oohkijhudvzni63dtillg4d4fxjm6i@e7oogteye2oe>
+References: <20240919161443.10340-1-towinchenmi@gmail.com>
+ <20240919161443.10340-2-towinchenmi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,21 +65,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240922174225.75948-2-laurentiumihalcea111@gmail.com>
+In-Reply-To: <20240919161443.10340-2-towinchenmi@gmail.com>
 
-On Sun, Sep 22, 2024 at 01:42:23PM -0400, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Fri, Sep 20, 2024 at 12:05:50AM +0800, Nick Chan wrote:
+> Add the following CPU cores:
 > 
-> Add schema for imx8ulp's SIM reset controller.
+> - apple,cyclone: A7 cores
+> - apple,typhoon: A8 cores
+> - apple,twister: A9 cores
+> - apple,hurricane-zephyr: A10 logical cores
+> - apple,monsoon: A11 performance cores
+> - apple,mistral: A11 efficiency cores
 > 
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> In the Apple A10, there are physical performance-efficiency cores that
+> forms logical cores to software depending on the current p-state, and
+> only one type of core may be active at one time.
+> 
+> This follows the existing newest-first order.
+> 
+> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
 > ---
->  .../reset/nxp,imx8ulp-avd-sim-reset.yaml      | 58 +++++++++++++++++++
->  1 file changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/nxp,imx8ulp-avd-sim-reset.yaml
+>  Documentation/devicetree/bindings/arm/cpus.yaml | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Best regards,
 Krzysztof
