@@ -1,147 +1,95 @@
-Return-Path: <linux-kernel+bounces-335216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1EBD97E2A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:08:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E2397E2A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FC92B20FAA
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:08:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFA251F217C9
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20762B9B0;
-	Sun, 22 Sep 2024 17:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C922BD0D;
+	Sun, 22 Sep 2024 17:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lsEXIJbe"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bjezbULS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E58B2581;
-	Sun, 22 Sep 2024 17:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828B92AEFC;
+	Sun, 22 Sep 2024 17:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727024884; cv=none; b=T5H+8V2TYlzbIYPfDW+i/zP0LWW8RXtBbFBkGszMWImeeRzTHp/qIY6CJHFcuHYUlUfAUM6sv+1iXHwQ0WTYbHraGOr0j+w1S+8Ig+oeVKFN/exgNhMdYbp6GnaJSuuUeuHw+0DTGkmRT/N5q15jOGBEE3+T6FuUV3ESt8oToHc=
+	t=1727024899; cv=none; b=IYi+L+eApRRWMimK0S5TNY1yNyla+/ymT6/Wme+7SUXZvPq/4BVvIFaOHbSNx57SYQ0n1O30Yeym9Y9f5b26BI9rokU/8zdkka6qYqjm4qeexZvLdtRbRZSjn6+KukpIbBI6VpeG5ZudLBydRqtgM1YdngPhdmV1KBodwxTudks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727024884; c=relaxed/simple;
-	bh=x7s8RISRd78v3+3BDolULM9nVmrkU4bjG9Pa+rjeYWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NQVovl39yQCurI+eDmsI+8wfJahD3E17OHLOsmg6UfjFuzB6clkuXnjZxfXqo7QeSM7jnXR8QQOrTiVUqqK0pLhidv1yOJLrE9+lL5xFV3JSaEQVVOERkMk1e4jHLWGV0kuZ/TQvfpz5rKozIDFLEkNFEI3LeOsxTa1rfPhaPpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lsEXIJbe; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8a789c4fc5so779020766b.0;
-        Sun, 22 Sep 2024 10:08:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727024880; x=1727629680; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UfUFTKvz+3D7GwXrYdNdqlyY+ceafuxUEvLi56eVGDo=;
-        b=lsEXIJbecYBYyF9H6af/z8xvewCER75qEMXCj3fcJSZwa5Dw/IdOW6Vabm/VAIcgUY
-         4YXvKEEIRJx9x65HlZrkjonsd94O4w2RF43sqxJ36a76cLv9x2WwlYwrbjmUlKpAhCTN
-         cv/FnVg2hxPxS4lGvpNAF3Nc7G8/l9Dlalq5TObBXlr1rbqDm+gvhOno7p5Li7DECd5A
-         sGPdNn+aTFk1NfZYsYNNjkJkF/bf3cZTt0ae9EvH9BfCb89RKuWx7U9X61JA//aYvU6C
-         kkb3JFJj3NNEWDiHXpbWDqGi9yq2YJSi0N+LJLMPgSSGpgbVN9qEPbH63D2i+agoUn8T
-         JvIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727024880; x=1727629680;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UfUFTKvz+3D7GwXrYdNdqlyY+ceafuxUEvLi56eVGDo=;
-        b=jbkaUY+kP6G0kXDRM8blHnXyX6G2K9KUQo5Q0W8QzNvDB3k4tucfy68aXuWvXMeQdD
-         V3gLus87F3xutpX72x8QmPATrXIIpGMDFeekprGmOYtZ2hu8bkmGJMGvo1PcFjZuu7UF
-         ioqJns3YZZMbo28HMp1ekn+uQ36y6uB/aZSW6ZsTMzVdDIxje/xEMXlGcV67Q7+dTuTM
-         o7jcCBzmd/lbfx8pY5DHzWDHx2O50MmeOKINFzpgeaF7z6dCbzybBAIdDI0+GjNoH836
-         g5yJUK80rj9d0jNtHIBIKjSiMbBEnkSTa3FUNYN1BKa/uiPWjU/AvMhtf42Smc6QN73k
-         ENxA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhLCaQnBq15IKIiQB96FeX4uhSExwktVvL60VPp3aY6WPaIoMUZQh9ZwHnfEKjeuLTu+rlNehCZQItHr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnEtzTwzf49MeJhSbHU7Ogq06QRpU14uGF+O7CATgNo2kA/Qpa
-	6GxY5EhX7GsRnoihJ2tPNLGdzQfK71r0ahib2vQH2LXmZDA44WM7SzTk/IbT
-X-Google-Smtp-Source: AGHT+IHhorG+TYexZcYTn6Yu61PuNduE83pZTN8Btpz4Dy0RGopV9j/L9lvjMv9tECSMa7GyDPcD0g==
-X-Received: by 2002:a17:907:1b20:b0:a90:34e8:6761 with SMTP id a640c23a62f3a-a90c1c37176mr1416981866b.6.1727024879593;
-        Sun, 22 Sep 2024 10:07:59 -0700 (PDT)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f429bsm1098376866b.61.2024.09.22.10.07.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 10:07:59 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH v2] xfs: Use try_cmpxchg() in xlog_cil_insert_pcp_aggregate()
-Date: Sun, 22 Sep 2024 19:07:16 +0200
-Message-ID: <20240922170746.11361-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1727024899; c=relaxed/simple;
+	bh=kadefyW4xflqn3+lS+RNRI2zmfP1nPl+qO/iqN2/xcw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nK6OVRuYO1y8T2kNRoVi3S+DtXBDZZ6Wm0Yh53z8ymyZ6MYg/XGQUpSO61XLi3V84Y/5wJcAq4a2NR1A4mQmwMmRQEiVgkPQjpphOB/lREx7xLeijunZxMAVmi8hKsaJFt+eXjdj1zXqfNselEoh4S1srkgv2a8yQJNEGv+AMD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bjezbULS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF8BDC4CEC3;
+	Sun, 22 Sep 2024 17:08:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727024899;
+	bh=kadefyW4xflqn3+lS+RNRI2zmfP1nPl+qO/iqN2/xcw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bjezbULS1wB/4SSlIDBN25u70vDwPdKTT/f5jD/vGrDOv7BApMqCTeUrBQTlnKu/C
+	 sIc2KGV1QEGTPRgnALMZXOGHxgUnvYa/WIndbYH68CQ6aN6JooCSi55b9ORFKhr8F4
+	 HV06P9w6djaE6yuZpKFchgMoXMIMWpKdhVsaJDnvXZS27701B/3rYUpoSqiiA+ClXL
+	 +SubP87Owne6PQtjb9GK6/SQYPZvBwQ7aKotKsof+daX6D4rU+YR+T//e4UprFNAaH
+	 YZGeXikpq9UZGt4dGOYOQYVrUiozCd0xQPF26lVXFmeFh2L+5G/n6RxA8j231cSpY+
+	 gJBTxawEiniEA==
+Date: Sun, 22 Sep 2024 18:08:11 +0100
+From: Simon Horman <horms@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: netdev@vger.kernel.org, Christian Marangi <ansuelsmth@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Nick Child <nnac123@linux.ibm.com>, Paolo Abeni <pabeni@redhat.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Taku Izumi <izumi.taku@jp.fujitsu.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Yasuaki Ishimatsu <isimatu.yasuaki@jp.fujitsu.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Julia Lawall <julia.lawall@inria.fr>,
+	Yasuaki Ishimatsu <yasu.isimatu@gmail.com>
+Subject: Re: [PATCH] net: fjes: Refactor a string comparison in
+ is_extended_socket_device()
+Message-ID: <20240922170811.GE3426578@kernel.org>
+References: <9ec752a8-49e9-40fd-8ed9-fed29d53f37b@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9ec752a8-49e9-40fd-8ed9-fed29d53f37b@web.de>
 
-Use !try_cmpxchg instead of cmpxchg (*ptr, old, new) != old in
-xlog_cil_insert_pcp_aggregate().  x86 CMPXCHG instruction returns
-success in ZF flag, so this change saves a compare after cmpxchg.
+On Fri, Sep 20, 2024 at 02:24:50PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 20 Sep 2024 13:56:44 +0200
+> 
+> Assign the return value from a strncmp() call to a local variable
+> so that an if statement can be omitted accordingly.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Also, try_cmpxchg implicitly assigns old *ptr value to "old" when
-cmpxchg fails. There is no need to re-read the value in the loop.
+Hi Markus,
 
-Note that the value from *ptr should be read using READ_ONCE to
-prevent the compiler from merging, refetching or reordering the read.
+This is an old driver, that doesn't appear to have been under active
+development for quite some time.  And I don't think that clean-ups of this
+nature are worth the risk of regressions they might introduce.
 
-No functional change intended.
+If we can see bugs, let's fix them.
+Else, let's leave it be.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Chandan Babu R <chandan.babu@oracle.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>
----
-v2: Move cilpcp variable into the loop scope. Initialize cilcpc and
-    old variables at the declaration time. Use alternative form of
-    the while loop.
----
- fs/xfs/xfs_log_cil.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
-
-diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
-index 391a938d690c..d4e06e6f050f 100644
---- a/fs/xfs/xfs_log_cil.c
-+++ b/fs/xfs/xfs_log_cil.c
-@@ -156,9 +156,8 @@ xlog_cil_insert_pcp_aggregate(
- 	struct xfs_cil		*cil,
- 	struct xfs_cil_ctx	*ctx)
- {
--	struct xlog_cil_pcp	*cilpcp;
--	int			cpu;
--	int			count = 0;
-+	int	cpu;
-+	int	count = 0;
- 
- 	/* Trigger atomic updates then aggregate only for the first caller */
- 	if (!test_and_clear_bit(XLOG_CIL_PCP_SPACE, &cil->xc_flags))
-@@ -171,13 +170,11 @@ xlog_cil_insert_pcp_aggregate(
- 	 * structures that could have a nonzero space_used.
- 	 */
- 	for_each_cpu(cpu, &ctx->cil_pcpmask) {
--		int	old, prev;
-+		struct xlog_cil_pcp	*cilpcp = per_cpu_ptr(cil->xc_pcp, cpu);
-+		int			old = READ_ONCE(cilpcp->space_used);
- 
--		cilpcp = per_cpu_ptr(cil->xc_pcp, cpu);
--		do {
--			old = cilpcp->space_used;
--			prev = cmpxchg(&cilpcp->space_used, old, 0);
--		} while (old != prev);
-+		while (!try_cmpxchg(&cilpcp->space_used, &old, 0))
-+			;
- 		count += old;
- 	}
- 	atomic_add(count, &ctx->space_used);
 -- 
-2.42.0
-
+pw-bot: rejected
 
