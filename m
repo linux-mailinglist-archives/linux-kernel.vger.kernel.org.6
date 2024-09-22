@@ -1,106 +1,150 @@
-Return-Path: <linux-kernel+bounces-335091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26AD797E0E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 12:32:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD8397E0E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 12:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D29BB20C3F
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 10:32:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0F7A1C208CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 10:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5E3149C6F;
-	Sun, 22 Sep 2024 10:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D2914F121;
+	Sun, 22 Sep 2024 10:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iU/RolNA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="KhKdHH4O"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A183C092;
-	Sun, 22 Sep 2024 10:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B086813C67E
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 10:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727001168; cv=none; b=li1iYxojYPQBL+hqOI5fchi13FXjKO2Y/d+X5+x2JBXxUcSDrZu0rRlnXSb+lxRZizh/8RhYkBxUu/EUOl5/AUbHQqUtoRvjyjwIIQvPJw/oVPoKy8h+/Q4tHxGmKy/jAnVj44lYEuFTzj3hwnbZGbsOv+g8qnVTi/3TzqtHWOY=
+	t=1727001201; cv=none; b=X10Ddfiliw1ujB482nH5lQ3N8QhJO6jgLX/bDicLEpBB69H1r1Qjal8xn0cxTXe+p4FKWyJWMFx4LkZzkiXzUz8LvKcJ6ZnlEkIzK7pY2OfRfkhQxDRhJAYv5Fl+yOLihw+HT6XdyB71/EH7HNQ9IxPpq6VcItpm2FKyf7NvVJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727001168; c=relaxed/simple;
-	bh=BhbO5ipZDRxehMltOLlsjNEgp8qOVf114X9DSmKelLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GdlDMrveZRHg0k9QEn2qtnrrVOzIXGlOBaPlkp8zt4a0Cvmj2KW6qNDjtJAUHZnxXwgcBG+/W5YjWGxGh7AaKj2nRPQ8wlOmWWChUjZcc5SYYNBU/K9Uwi696+N99d30NyKJVrDIoQS45uQRvYciXUkT2DeGgwvgNtO1AMiMxNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iU/RolNA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1B19C4CEC3;
-	Sun, 22 Sep 2024 10:32:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727001167;
-	bh=BhbO5ipZDRxehMltOLlsjNEgp8qOVf114X9DSmKelLk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iU/RolNAxYoqIMb4RoEtyr8yk6jQIZRvpP5AIocuduFOCye3foeUix7WuzyjSPuka
-	 xsz1CELcbtjgkGFVUoM8XnO2hBWlnmJMhF06cBk8xRDzYMOJz8z3+MufdG3B2ts8Xk
-	 U54SqQBmxXF3UxSOdngnOJVdudybdeYg9gtUA+lr0td0B+5mSSUS+TXEF+y0UGpK8E
-	 FLuzaSHTl5Ytl5vHN4U+F4swQyoYC25+xB1Nh/KXVn6Qvybzh/u9tlWc1hXZtxRLWc
-	 un6WmRrB3MLt3K/4kYXq/NApI9QUuMuqoosOWeEpTeh46C8oLDeqL1M1JsNyFWe+3/
-	 CYWdGrYQJn/1Q==
-Date: Sun, 22 Sep 2024 13:32:36 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Xi Ruoyao <xry111@xry111.site>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [GIT PULL] dma-mapping updates for Linux 6.12
-Message-ID: <20240922103236.GA11337@unreal>
-References: <Zu1byUGU832iWBUp@infradead.org>
- <Zu2Bd50GdSxF_-eA@infradead.org>
- <19e4bdbcda78ace200c78c56eb7173097337b921.camel@xry111.site>
- <Zu5VoW1ZkViSOws3@infradead.org>
- <9a84a7c6f943209cc87a54075ed22df37ebda5f8.camel@xry111.site>
- <Zu7PW07FmBgs_dpI@infradead.org>
- <38bc765eaba8a646a87ce14e1ff06f28d449fcd5.camel@xry111.site>
- <Zu-kCdMau6127_vM@infradead.org>
- <11368b7c0b7370aea61b3dda73e462fb70f306a7.camel@xry111.site>
- <Zu_FDfHZAVzPv1lq@infradead.org>
+	s=arc-20240116; t=1727001201; c=relaxed/simple;
+	bh=/Q1V5qjwd/t0sqYmppQNCSsxC2bsWSxzR/kG8t+yFlM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=Rzdhp3JRw4Z2w6m+Q9J9kL++9l5PGcCGOz+HShLUg7Xp/5S0LDDxZlzyHgqxbfUPaLO5dlOo/VNVp5IeZbPT671ROjycZbm6H9wAQwn8V8mfo0YBPCZC8vFPsjbH6d8cGjM5TO/JK8bP9sRMm94g0n23m2d6c5/C4ct/G3Nwl38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=KhKdHH4O; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zu_FDfHZAVzPv1lq@infradead.org>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1727001195;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rh5mxOysEWdlr7zB3dIq9Xe2btAHsCpup+ruaFZk4EM=;
+	b=KhKdHH4ObK+KAa3ylcl/wZq36CKLW9XGQbMTs3L/PVLTKtzN6mah6aJfCG38zpVnZ9+WWU
+	FN9Yu0Uj7sgJ7XXprTjbI6UVwNg5ynCR49Xon30JpoX3Pxd/H16jLNAZjzSA9ERIyqS5Qr
+	CledCoNU9+F591nNaaPK/hIx5LBdCDNLDxO/HLUEkmD4RTm6EOdcNuxs9Y2atEyUD1lIWx
+	BsooqPkyy/7oHJbcCdkfIJ4YWK+wlfinkjt7sOSXt22w1uRBqecWy0Mt9YeQHONeYEtB95
+	OGSa+w1znwU/9ks2KwjbP9CZgwfMUwuASQshHjGt3NgnA2w1dMNLr63HdNHLDQ==
+Content-Type: multipart/signed;
+ boundary=cf4d01d20a3b9d5a9a49968868fe9e6d1f0f8308e15edb5bdb79c6fb1446;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Sun, 22 Sep 2024 12:33:05 +0200
+Message-Id: <D4CQTRYUPQHL.1Y42CT0P8ZOWQ@cknow.org>
+To: "Andy Yan" <andyshrk@163.com>, <heiko@sntech.de>
+Cc: <hjc@rock-chips.com>, <krzk+dt@kernel.org>, <robh@kernel.org>,
+ <conor+dt@kernel.org>, <s.hauer@pengutronix.de>,
+ <devicetree@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <linux-rockchip@lists.infradead.org>, <derek.foreman@collabora.com>,
+ <minhuadotchen@gmail.com>, <detlev.casanova@collabora.com>, "Andy Yan"
+ <andy.yan@rock-chips.com>
+Subject: Re: [PATCH v3 06/15] drm/rockchip: vop2: include rockchip_drm_drv.h
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+References: <20240920081626.6433-1-andyshrk@163.com>
+ <20240920082122.6742-1-andyshrk@163.com>
+In-Reply-To: <20240920082122.6742-1-andyshrk@163.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, Sep 22, 2024 at 12:19:41AM -0700, Christoph Hellwig wrote:
-> On Sun, Sep 22, 2024 at 02:56:57PM +0800, Xi Ruoyao wrote:
-> > With SND disabled, b5c58b2fdc427e7958412ecb2de2804a1f7c1572 boots fine
-> > (no oops), but the camera does not work. 
-> > f69e342eec008e1bab772d3963c3dd9979293e13 boots fine and the camera works
-> > fine.
-> > 
-> > So the first bad commit is b5c58b2fdc427e7958412ecb2de2804a1f7c1572.
-> 
-> Thanks a lot for the bisection!
+--cf4d01d20a3b9d5a9a49968868fe9e6d1f0f8308e15edb5bdb79c6fb1446
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+
+On Fri Sep 20, 2024 at 10:21 AM CEST, Andy Yan wrote:
+> From: Andy Yan <andy.yan@rock-chips.com>
+
+Maybe ``From: Min-Hua Chen <minhuadotchen@gmail.com>``?
+
+It's very minor and Min-Hua gave their 'Reviewed-by' tag to your patch,
+but they found the problem and I thought it was just for practical
+reasons you made it part of this patch set.
+
+> Move rockchip_drm_drv.h in rockchip_drm_vop2.h to fix the follow
+> sparse warning:
+>
+> ARCH=3Darm64 LLVM=3D1 make C=3D1 CF=3D'-fdiagnostic-prefix -D__CHECK_ENDI=
+AN__'
+> mrproper defconfig all  -j12
+>
+> drivers/gpu/drm/rockchip/rockchip_vop2_reg.c:502:24: sparse:
+> warning: symbol 'vop2_platform_driver' was not declared. Should it
+> be static?
+>
+> It is also beneficial for the upcoming support for rk3576.
+>
+> Fixes: 604be85547ce ("drm/rockchip: Add VOP2 driver")
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
+>
+> ---
+>
+> Changes in v3:
+> - Split it from 10/15, as it fix a exiting compile warning.
+>
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 1 -
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop2.h | 1 +
+>  2 files changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/d=
+rm/rockchip/rockchip_drm_vop2.c
+> index 4776a227e62c..a7f9f88869a6 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> @@ -35,7 +35,6 @@
+>  #include <uapi/linux/videodev2.h>
+>  #include <dt-bindings/soc/rockchip,vop2.h>
+> =20
+> -#include "rockchip_drm_drv.h"
+>  #include "rockchip_drm_gem.h"
+>  #include "rockchip_drm_vop2.h"
+>  #include "rockchip_rgb.h"
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/d=
+rm/rockchip/rockchip_drm_vop2.h
+> index 59cd6b933bfb..bc001f715847 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+> @@ -9,6 +9,7 @@
+> =20
+>  #include <linux/regmap.h>
+>  #include <drm/drm_modes.h>
+> +#include "rockchip_drm_drv.h"
+>  #include "rockchip_drm_vop.h"
+> =20
+>  #define VOP2_VP_FEATURE_OUTPUT_10BIT        BIT(0)
 
 
-Christoph,
+--cf4d01d20a3b9d5a9a49968868fe9e6d1f0f8308e15edb5bdb79c6fb1446
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Another chunk that is missing according to this BZ
-https://bugzilla.kernel.org/show_bug.cgi?id=219292:
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index b839683da0ba..cf3b89e681a3 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -926,7 +926,7 @@ bool dma_addressing_limited(struct device *dev)
-                         dma_get_required_mask(dev))
-                return true;
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZu/yZAAKCRDXblvOeH7b
+bhyOAQCgfugbYkLTEQoVYnYjY2LIP0tmj3SFSFrsw3hSRtqOHwD/cMGxEu1QU1Nj
+DLQj4kuQxg314p3e5CtjLIAFUNlzLQI=
+=a3i5
+-----END PGP SIGNATURE-----
 
--       if (unlikely(ops))
-+       if (unlikely(ops) || use_dma_iommu(dev)
-                return false;
-        return !dma_direct_all_ram_mapped(dev);
- }
-
-Sorry for such a mess.
-
-Thanks
+--cf4d01d20a3b9d5a9a49968868fe9e6d1f0f8308e15edb5bdb79c6fb1446--
 
