@@ -1,121 +1,93 @@
-Return-Path: <linux-kernel+bounces-335004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F6997DF90
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 01:50:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E03997DF92
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 02:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6CFC28219B
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Sep 2024 23:50:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D5B71C20B3E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 00:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B286E376E9;
-	Sat, 21 Sep 2024 23:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC14B28FF;
+	Sun, 22 Sep 2024 00:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Glmel5/F"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TcezTFof"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F36014EC7E;
-	Sat, 21 Sep 2024 23:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5F680B
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 00:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726962614; cv=none; b=Rn9rNRXgKW1ZAgrk3wnQghtz6vn3cN4RdhrKwzUIfBge8XIP5WFqGAlV6LkvgpXFdHyyABpkMOSXyr4ga1xoVt7AeuJ2VH25cAQ+9pVDbWecw3S72QkgMCEqiTqtRjWrQRBoLceHCcMcCq5kVMrWphchWxWMXROIuGM1s2YGLXo=
+	t=1726963617; cv=none; b=kCC/B6vLtO8hRKOWhD6o+Qqlmq6hEN8d+4JGOR0h6Iw3VSxDNysAKGVi0vmWcUbNBdKfaXt5vByJ4n7VWyQ0PGBTt7zikTOzIeQp+U/rBW9ZuS3m1O8+kFhpV6Edqem7/AEPxANC2zBgXvb1YJHMkprgxWrOsY4hZPUs5uPENZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726962614; c=relaxed/simple;
-	bh=Tot4drm5qTnCFQzRPkGAWUK9uG5MeaXdN7y1JGa8fEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K/SmRzyORGk4QdpjPjVRXmKK5BBuLc1lDYsCXCegUJNZCuNj8GrbBL4M1jXug+3PIo0pxPsx1xaCSkCzNvwI8KgiwC3MUsSCtXtEXfLJMJqeQiF8gua32ElfuagoNlgZ1uEztJ/WAvdmH7q/d5HK2fRbgFh+Y2kr99nwN9soBNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Glmel5/F; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726962612; x=1758498612;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Tot4drm5qTnCFQzRPkGAWUK9uG5MeaXdN7y1JGa8fEk=;
-  b=Glmel5/FHEqj8umXmdYKGUVrIvJH7rlY3WeILKBsys9wNY/PqJn7JPR2
-   PfnVubtqz8eRkrcXp8jjBLOpiXvRKyDZbZsB6P5Qr/pZdIC3m1+SVMCww
-   QwJzsiwshVqkqyyuPiq2jqT6Pdj7fSDKbHhQiMeXTepRyPnLShzngkF3d
-   z/7aCYSBpN1bTGz4EA6TjVbVnFC1bgK8WAg/BLLrxBd0YIsoFnTMfMtV3
-   ba1JfG+xgCB8WcgiFxSCi2kQNCqmn8/CtpmuP4tm6PKFXWFduIzjsrc0t
-   rVddtsgQw5RajHDKpF//R+4lAufXXM8p2yMJ8GxYlIp/zRl1yHmOnmk4G
-   w==;
-X-CSE-ConnectionGUID: a2Blw5kYRaqjxtYQfP9hzg==
-X-CSE-MsgGUID: KU3Ab3XET6Cl3X7zrCgJcQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="43409368"
-X-IronPort-AV: E=Sophos;i="6.10,248,1719903600"; 
-   d="scan'208";a="43409368"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2024 16:50:12 -0700
-X-CSE-ConnectionGUID: khLwQGLARwq7p964KjTuZA==
-X-CSE-MsgGUID: KS7lRIMcThaWW/rPPsS2NQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,248,1719903600"; 
-   d="scan'208";a="70558343"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 21 Sep 2024 16:50:10 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ss9rb-000Ft0-1l;
-	Sat, 21 Sep 2024 23:50:07 +0000
-Date: Sun, 22 Sep 2024 07:49:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Fabricio Gasperin <fgasperin@lkcamp.dev>,
-	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-	Teddy Wang <teddy.wang@siliconmotion.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH] staging: sm750fb: Rename variable
- sm750_hw_cursor_setData2
-Message-ID: <202409220704.MXWsOMfL-lkp@intel.com>
-References: <20240921152124.11560-1-fgasperin@lkcamp.dev>
+	s=arc-20240116; t=1726963617; c=relaxed/simple;
+	bh=WKyntDpY5RfpkJ3slVwHqlKCBjPxUylJnKPiT5ID+wg=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=TNn50UPGr5OOqQ8d91mJ0W+SzyoIhSc8uJ2QIljrIrwp/I2G5QqdhgjtQRByBiCkMB7tLHoU27oyqnXRMskT6zk9JbHB71QvrHDe+fudyLpaO4nz/vdY98W2pNNdFjcTpFgz4oLS2X50K2HAp+gSTd+83IoWzFkQeZE2z1mEdoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TcezTFof; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726963614;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=08s6M0VfFhuosAR80HkD/E3XEVyWoGIAF2KhFDbJcRY=;
+	b=TcezTFofa8sWV/u3dwgx+vtSi13DAdP/6y0oj2DdzJM4Hk4fNSfy0pA6wi2AvkuiUQToqT
+	QCcmlH7TY5lKtwen23FvlnubjHC/8Ycm89mhyAlEngikr8iRhxAvSp5TYqErd5P7ld2Lkk
+	tygfP+G8IfNUbiBj2pcgGHtI3m5T7bY=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-vSH2yiwgMliaspwAsY6mqQ-1; Sat,
+ 21 Sep 2024 20:06:52 -0400
+X-MC-Unique: vSH2yiwgMliaspwAsY6mqQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3FCDE19B9AB4;
+	Sun, 22 Sep 2024 00:06:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0A3F3195608A;
+	Sun, 22 Sep 2024 00:06:48 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <Zu4doSKzXfSuVipQ@gmail.com>
+References: <Zu4doSKzXfSuVipQ@gmail.com>
+To: Chang Yu <marcus.yu.56@gmail.com>
+Cc: dhowells@redhat.com, jlayton@kernel.org, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    skhan@linuxfoundation.org
+Subject: Re: [PATCH] netfs: Fix a KMSAN uninit-value error in netfs_clear_buffer
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240921152124.11560-1-fgasperin@lkcamp.dev>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <557229.1726963607.1@warthog.procyon.org.uk>
+Date: Sun, 22 Sep 2024 01:06:47 +0100
+Message-ID: <557230.1726963607@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi Fabricio,
+Chang Yu <marcus.yu.56@gmail.com> wrote:
 
-kernel test robot noticed the following build warnings:
+> -		tail = kmalloc(sizeof(*tail), GFP_NOFS);
+> +		tail = kzalloc(sizeof(*tail), GFP_NOFS);
 
-[auto build test WARNING on staging/staging-testing]
+I'm deliberately not doing that because of the performance hit.  That's 31
+pointers of which, in many cases, we're only going to use the first couple.
+There's a bitmask indicating which pointers need putting and a counter that
+indicates how many are used.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Fabricio-Gasperin/staging-sm750fb-Rename-variable-sm750_hw_cursor_setData2/20240921-232248
-base:   staging/staging-testing
-patch link:    https://lore.kernel.org/r/20240921152124.11560-1-fgasperin%40lkcamp.dev
-patch subject: [PATCH] staging: sm750fb: Rename variable sm750_hw_cursor_setData2
-config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20240922/202409220704.MXWsOMfL-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240922/202409220704.MXWsOMfL-lkp@intel.com/reproduce)
+David
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409220704.MXWsOMfL-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/staging/sm750fb/sm750_cursor.c:134:6: warning: no previous prototype for 'sm750_hw_cursor_setdata2' [-Wmissing-prototypes]
-     134 | void sm750_hw_cursor_setdata2(struct lynx_cursor *cursor, u16 rop,
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/sm750_hw_cursor_setdata2 +134 drivers/staging/sm750fb/sm750_cursor.c
-
-   133	
- > 134	void sm750_hw_cursor_setdata2(struct lynx_cursor *cursor, u16 rop,
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
