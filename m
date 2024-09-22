@@ -1,136 +1,141 @@
-Return-Path: <linux-kernel+bounces-335143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEF1697E1C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 15:13:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F033197E1CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 15:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F924281471
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 13:13:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B67282811A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 13:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14069139D;
-	Sun, 22 Sep 2024 13:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91543322E;
+	Sun, 22 Sep 2024 13:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JPcXpHcK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Irk/UfnB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E4A63D
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 13:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5537637;
+	Sun, 22 Sep 2024 13:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727010825; cv=none; b=W4J8PG6rapjB6CUd4KbkkS0un+6zZTLbGh6aICDuyQCorkxQ0/0IWnBBDKiYK7+282DyilqIzyrKuxeLgiPIo7rfug5uyt7ZrkoPXOgTunKudXr0Fmgei32k9CpKaF5LPrDAETl0EXristhnmXEnf64UN6spbYbhmM7BADYDquE=
+	t=1727010999; cv=none; b=pmhPUazS9Zt7J+MvT/IjzjG607Kr0LjwX5cRqXhRs0O39hYCAk4pHQjytWaBgCMTwLm4J1bHs0GjXwa3dCt3Y6ClxpMSad1OOCSNFiFxaRMttRFNtkolc1Rw3s1Qfew5srqPNfSQi0Q/0fV9RdJre2XuHZfL1dntG0uw0hIhcR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727010825; c=relaxed/simple;
-	bh=MiyF+tn+kcoh4mdbhtWHrOJ89UifnjpVtmP4/woYPFY=;
+	s=arc-20240116; t=1727010999; c=relaxed/simple;
+	bh=3rRxgBShBqpcovq3vY/cbRQuMcbMgN8wYzfCKoUgETc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/DDCFqYD+2qVbcCW7yfYH11RUNhavmlzEUGOGQcOMLZKX+cbmOn0TX1T/Z5zj7DkR0MaEuohy3GYWXboys54TkP4uxK3i2C4v+xRd8ZwD/jvtsWb+K5U11TuluEQw25KYbJJEh9SK1i+nGBEvdjRfZPTMopn8gChzjz8kEU1zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JPcXpHcK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727010822;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o6w+52ZmAtp9Rr2ZpQpdI5p+hg7WT52Y4HB3TS11h84=;
-	b=JPcXpHcKJq1wRy1W3VI5h0/ryTjagr3mbDEmd7ZMAE+svAv6c6cAntN51Fmn1OrqRS1gsC
-	FeZFBPjJkeum0Nul94/EygLO3arOTSEt3W0bbIdVT1rI/bMG5fGN0C7q7XwH3wnhiSEeth
-	VX4jAzhPTnljAm6vkJDXKUKGkdMOG8w=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-350-5sZz3x38MweqNU-bHaTFTw-1; Sun,
- 22 Sep 2024 09:13:41 -0400
-X-MC-Unique: 5sZz3x38MweqNU-bHaTFTw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F6DD1934BCB;
-	Sun, 22 Sep 2024 13:13:39 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id F1E2C19560AD;
-	Sun, 22 Sep 2024 13:13:35 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 22 Sep 2024 15:13:26 +0200 (CEST)
-Date: Sun, 22 Sep 2024 15:13:22 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "qiwu.chen" <qiwuchen55@gmail.com>
-Cc: corbet@lwn.net, mhocko@suse.com, jani.nikula@intel.com,
-	akpm@linux-foundation.org, brauner@kernel.org, paulmck@kernel.org,
-	linux-doc@vger.kernel.org, "qiwu.chen" <qiwu.chen@transsion.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] panic: add option to dump task maps info in
- panic_print
-Message-ID: <20240922131321.GC9426@redhat.com>
-References: <20240922095504.7182-1-qiwu.chen@transsion.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tUeG8QPJ9GeSYsAAWRevUhypyU4ivffRyPA9nX6nFxavTRG9HKaKTU+eOtVxMtzMuHQXSWcgaqHlh7iXYENxzPGZduswyvFaARNPyWkwnH9aq/x7KtvJJWw0OroEOruN5E/3WZyZr+PAqcdtT8Uvryywv8Bcm+lO6LbHxi9Cjrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Irk/UfnB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23012C4CEC3;
+	Sun, 22 Sep 2024 13:16:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727010998;
+	bh=3rRxgBShBqpcovq3vY/cbRQuMcbMgN8wYzfCKoUgETc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Irk/UfnBn6jTTFmkWa1K7ZeS+4/YWB2bCmxuN1B7ZVJjaodHUx5aFeM2ehw4DuxzX
+	 b66W57SuuU7jqJa8j5lZiqkwHxV6rQrPUxovtTUFwA8cGYLkaPmtqtc1RzOa1sXNe2
+	 tfMXAghm/WeLXreLVI59kwqR3Wj0xO/kfP35KdhSVKK/BsioPfZFm6SLhwKQKS4j8j
+	 oHewziQjOaM/JwLiDQjfw9MVNft6DoB21oX7ltnQ/rVSi4zGoBODdHKuTMCpmTNip8
+	 6hQAqjYOnKo8GZCFWZ7WBtEWoxOXDQKqvnCGjGVmdCNW3V/loH39rSJoGii63rnXW1
+	 LKPS7udjAsubA==
+Date: Sun, 22 Sep 2024 09:16:36 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Alice Ryhl <aliceryhl@google.com>, Tariq Toukan <tariqt@nvidia.com>,
+	linux-rdma@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Kees Cook <keescook@chromium.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Trevor Gross <tmgross@umich.edu>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v7 2/4] uaccess: always export _copy_[from|to]_user with
+ CONFIG_RUST
+Message-ID: <ZvAYtImQujuiHIVe@sashalap>
+References: <20240528-alice-mm-v7-0-78222c31b8f4@google.com>
+ <20240528-alice-mm-v7-2-78222c31b8f4@google.com>
+ <Zu_CeRfMKyyt4E5O@sashalap>
+ <de6cb179-b21f-4e2d-a329-da5c4a138878@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20240922095504.7182-1-qiwu.chen@transsion.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <de6cb179-b21f-4e2d-a329-da5c4a138878@app.fastmail.com>
 
-On 09/22, qiwu.chen wrote:
+On Sun, Sep 22, 2024 at 07:52:34AM +0000, Arnd Bergmann wrote:
+>On Sun, Sep 22, 2024, at 07:08, Sasha Levin wrote:
+>> On Tue, May 28, 2024 at 02:58:03PM +0000, Alice Ryhl wrote:
+>>>From: Arnd Bergmann <arnd@arndb.de>
+>>>
+>>>Rust code needs to be able to access _copy_from_user and _copy_to_user
+>>>so that it can skip the check_copy_size check in cases where the length
+>>>is known at compile-time, mirroring the logic for when C code will skip
+>>>check_copy_size. To do this, we ensure that exported versions of these
+>>>methods are available when CONFIG_RUST is enabled.
+>>>
+>>>Alice has verified that this patch passes the CONFIG_TEST_USER_COPY test
+>>>on x86 using the Android cuttlefish emulator.
+>>
+>> Hi folks,
+>>
+>> I've noticed a build failure using GCC 9.5.0 on arm64 allmodconfig
+>> builds:
+>>
+>> In file included from ./arch/arm64/include/asm/preempt.h:6,
+>>                   from ./include/linux/preempt.h:79,
+>>                   from ./include/linux/alloc_tag.h:11,
+>>                   from ./include/linux/percpu.h:5,
+>>                   from ./include/linux/context_tracking_state.h:5,
+>>                   from ./include/linux/hardirq.h:5,
+>>                   from drivers/net/ethernet/mellanox/mlx4/cq.c:37:
+>> In function 'check_copy_size',
+>>      inlined from 'mlx4_init_user_cqes' at
+>> ./include/linux/uaccess.h:203:7:
+>> ./include/linux/thread_info.h:244:4: error: call to '__bad_copy_from'
+>> declared with attribute error: copy source size is too small
+>>    244 |    __bad_copy_from();
+>>        |    ^~~~~~~~~~~~~~~~~
+>> make[7]: *** [scripts/Makefile.build:244:
+>> drivers/net/ethernet/mellanox/mlx4/cq.o] Error 1
+>>
+>> I do not have CONFIG_RUST enabled in those builds.
+>>
+>> I've bisected the issue (twice!) and bisection points to this patch
+>> which landed upstream as 1f9a8286bc0c ("uaccess: always export
+>> _copy_[from|to]_user with CONFIG_RUST").
+>>
+>> Reverting said commit on top of Linus's tree fixes the build breakage.
 >
-> +	for_each_vma(vmi, vma) {
-> +		struct file *file = vma->vm_file;
-> +		int flags = vma->vm_flags;
-> +		unsigned long long pgoff = ((loff_t)vma->vm_pgoff) << PAGE_SHIFT;
-> +		struct anon_vma_name *anon_name = NULL;
-> +		struct mm_struct *mm = vma->vm_mm;
-> +		char buf[256] = {0};
-> +		const char *name = NULL;
-> +
-> +		if (mm)
-> +			anon_name = anon_vma_name(vma);
-> +
-> +		if (file) {
-> +			if (anon_name) {
-> +				snprintf(buf, sizeof(buf), "[anon_shmem:%s]", anon_name->name);
-> +				name = buf;
-> +			} else {
-> +				char *f_path = d_path(file_user_path(file), buf, sizeof(buf));
-> +
-> +				name = IS_ERR(f_path) ? "?" : f_path;
-> +			}
-> +			goto print;
-> +		}
-> +
-> +		if (vma->vm_ops && vma->vm_ops->name) {
-> +			name = vma->vm_ops->name(vma);
-> +			if (name)
-> +				goto print;
-> +		}
-> +
-> +		name = arch_vma_name(vma);
-> +		if (!name) {
-> +			if (mm) {
-> +				if (vma_is_initial_heap(vma))
-> +					name = "[heap]";
-> +				else if (vma_is_initial_stack(vma))
-> +					name = "[stack]";
-> +			} else
-> +				name = "[vdso]";
-> +
-> +			if (anon_name) {
-> +				snprintf(buf, sizeof(buf), "[anon:%s]", anon_name->name);
-> +				name = buf;
-> +			}
-> +		}
-> +
+>Right, it seems we still need the fix I posted in
+>
+>https://lore.kernel.org/lkml/20230418114730.3674657-1-arnd@kernel.org/
+>
+>Tariq, should I resend this with your Reviewed-by, or can you
+>apply it from the old version and make sure it finds its way
+>into mainline and 6.11?
 
-Wouldn't it be better to export/reuse get_vma_name() rather than duplicate
-its code ?
+The patch above fixes the build issue for me, thanks!
 
-Oleg.
-
+-- 
+Thanks,
+Sasha
 
