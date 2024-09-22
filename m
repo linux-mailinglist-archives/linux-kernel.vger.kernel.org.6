@@ -1,152 +1,179 @@
-Return-Path: <linux-kernel+bounces-335060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF7C97E076
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 09:48:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A6197E07A
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 09:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C2E81C20912
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 07:48:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9873F1F215BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 07:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01CFC193084;
-	Sun, 22 Sep 2024 07:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61660193400;
+	Sun, 22 Sep 2024 07:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="ZdPaISEe"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="WTg4SCK7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ck9fR1vA"
+Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B2315572B;
-	Sun, 22 Sep 2024 07:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384E71714DF;
+	Sun, 22 Sep 2024 07:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726991327; cv=none; b=apZfuvrU/KbWRj8dqAUWg1LURUGHpBpJ7/UnLNGCb/FCk3LJ/vYJJs0qb5oGrGUgA5llfgN503BAatOz67XcdxG78uW6OIH7g1D8BE1oNjugOSNYuyA1Rq0+/CXEOT2ukxRGC2+LK70pOW7Pd126h7wyoxc3M7jGQWQm1Jv7/FU=
+	t=1726991608; cv=none; b=BXB/2dtCLHKOP0x9RBh4xCPipG0QFV2JRVfcklxlxuBYN+rCyfnKr10ORsPo8N4J9RRvz7BNUrmORINtrQoPokKQVbjU0dfd22Qz13YbN8MYGIFHoZmpC9gfeFH/Ovobk78jC0L8pDpQSlEvtvtbYHr79c9kP6amFJp3wCc5huk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726991327; c=relaxed/simple;
-	bh=vj89NnEO3dY9ymXcJzbHblA4gmtlMtSWhJT/+5TqzD4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ue5VM3kzXzMknz5l5htQDdiQzENLkIKe3qPVvKbYFpkCcLDNJCvA4apB4GUtTTOgUITMp1i2kWJA+GUJpG2yV1+Zt3TEBkKLgi5vmJHJb95qH5ynLfFt6I9ZZR1ESKikLgrOx/7ofdTLKegjqybP8+L2+K8CGzre3v1wn6bV9f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=ZdPaISEe; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1726991322;
-	bh=vj89NnEO3dY9ymXcJzbHblA4gmtlMtSWhJT/+5TqzD4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZdPaISEemDKOOHayARAO5nS+VbU1ofrn5bcbePIQOVWcLhZ4HhVZRYpeGk9HY/TSa
-	 lG//+kwIWsQbu1p+8lDZM+S1yEGkOs7iLaEAlvO8z8D/d5U4pBf9L9OJxglypYg2Xy
-	 H4a4tgsyF5gv3FevVw9uug7Y6J372T4QT0N5a9cbXblTwYXLljxQxJPesROpXNvg1Z
-	 rsvBuN133yFnn/Qj13GkUfvxEjuQwNn8yowXKnJCT5nEup+H4rsGDcMEZcWL9z9SIg
-	 zSlSSMyRsJc8Pm09Hv+L+prx9QeQmFvGTMj6gkFtjXXoZCjimnuBKdt3fOaZsGd8m+
-	 LMLteOSGKL61w==
-Received: from [172.17.2.162] (unknown [178.208.16.192])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XBJCX3vk2z1LPp;
-	Sun, 22 Sep 2024 03:48:40 -0400 (EDT)
-Message-ID: <8185fa8b-f6de-4bed-9fd1-73b72fc6d716@efficios.com>
-Date: Sun, 22 Sep 2024 09:47:56 +0200
+	s=arc-20240116; t=1726991608; c=relaxed/simple;
+	bh=RnxEDmqYi58xxblh/2elLK2On8jjWvn31+HcyDQs2Tw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=sWpfrrwW48KzwRe55/oMopc0+s90iT2FaV141Xp7U4XczDIKHUR5eKLVP6MkI7UopQwBMnOueHdnXHTP5WysAGpiekxvmG5dkOREFHbCJAg9RkMoh8jj0MNg5aDEtViIOzIUa99OhxOPLV/tSM4p2ph2L/kZBSVJpIrmfvgLjT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=WTg4SCK7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ck9fR1vA; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 23371138025D;
+	Sun, 22 Sep 2024 03:53:25 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Sun, 22 Sep 2024 03:53:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1726991605;
+	 x=1727078005; bh=QtaWawvvQ39ZGWhwZAM+wk43O+xWu43ctkOGufDANlo=; b=
+	WTg4SCK7ZKahfqfM7lYYiEhNtnIT0IibS25Lmi3UMz0l+2y2dAGGeMnlK2t8QiVy
+	EybR2vMJHg3SLiTlUlx5zTE2wE+pEwvVsOFZFVFiy5wZXRmZ9en7886qHfvcRYyE
+	NccWP3g7D/QTiGby+/yywFDH77VWh3CgdGH2qF/G9I0LseT9xxPGDWqRRZPcLaKM
+	z9kw4rOWEH+knInCrC/Tw65c4VNVgY/knK/v7RR4CDZ8dkqv6DwuA/MsEyDAwXfv
+	ub+ysd6CjEJPvpwgiSAYEXoQy4yfwd14kdAeSJcfWw8Cg69AuddDnVU0qH5N6aGy
+	TtiPUOyQ5LzlBKcePhlyyA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1726991605; x=
+	1727078005; bh=QtaWawvvQ39ZGWhwZAM+wk43O+xWu43ctkOGufDANlo=; b=c
+	k9fR1vAujL8EsBM/M/jMAiGA9sgre59FmPS2yUud9KMxJV23y55+sL/YArc+CPIL
+	nCZqYm++XJU+1WkpjRRCAYBiGDxI0DZh7dZl4MpGrakzyjP3RZ8G+uDvtlcumbZx
+	nUyIc202eBe7enpc5rwLr8ZojRcEcnSl36yN0hkWpye+rxCdhG0yLtJMmdRmDDvx
+	/F7WxqY5UlxgxFezlCIKYqSaGQPNmR5Cri/O67MMID88jgouh76zjhT+D96adPBK
+	+zgg9yYiRk4jiAES0Mh4nYAbVYBzCjYHDVP447gh9Gqm/bj5TQx9U94u+XoDryDs
+	yVIy4weu5Sm0D/3/fpgQA==
+X-ME-Sender: <xms:88zvZswUEe2sIgNs0yt2yBoqQvSu0HGeqvenebB_of12vDntz6exHw>
+    <xme:88zvZgQ_-6QUgvc1UjCL9PHzCytuckCD-jcSE1PsvhtFdRBakC7ckCPfm0qk4h-jq
+    Vj5qL9dY2rRSNdO7KQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudeliedguddviecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpeefhfehteffuddvgfeigefhjeetvdekteekjeef
+    keekleffjeetvedvgefhhfeihfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegr
+    rhhnuggsrdguvgdpnhgspghrtghpthhtohepvdekpdhmohguvgepshhmthhpohhuthdprh
+    gtphhtthhopegrrhhvvgesrghnughrohhiugdrtghomhdprhgtphhtthhopehmrggtohes
+    rghnughrohhiugdrtghomhdprhgtphhtthhopehtkhhjohhssegrnhgurhhoihgurdgtoh
+    hmpdhrtghpthhtohepkhgvvghstghoohhksegthhhrohhmihhumhdrohhrghdprhgtphht
+    thhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopegrlhgvgidrghgrhi
+    hnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgr
+    ihhlrdgtohhmpdhrtghpthhtohepfigvughsohhnrghfsehgmhgrihhlrdgtohhmpdhrtg
+    hpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhm
+X-ME-Proxy: <xmx:88zvZuXEp4Bhxe9GDs-ul9i_Z0tkpoiWXCY1dW3JxLluX97LKT9sdw>
+    <xmx:88zvZqj_U-D4jl8Oj5nzSUNgzrUl4UTFUqMpDEn91ANnRScnkzGoCQ>
+    <xmx:88zvZuCOmJbNoqqAo7D2V4q9w6INEpLlqhr-FAMWy-IMiNYx9KbuyA>
+    <xmx:88zvZrKxuKaU8JX0j-NMpJeAVmsN5JaKtJbiAYljYofS5Jy9bJHPyg>
+    <xmx:9czvZniffzmKKfYuyl9bawBoSXrPdUytsChDbU5Vu3BO6S47wQ4ODYSL>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 867632220071; Sun, 22 Sep 2024 03:53:23 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/1] hpref: Hazard Pointers with Reference Counter
-To: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney"
- <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
- Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Alan Stern <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Mateusz Guzik <mjguzik@gmail.com>, rcu@vger.kernel.org, linux-mm@kvack.org,
- lkmm@lists.linux.dev, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-References: <20240921164210.256278-1-mathieu.desnoyers@efficios.com>
- <CAJhGHyBOwwBhCW96MyFGPVWed2ko37mLeHzta2BzL6T-TzUnmg@mail.gmail.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <CAJhGHyBOwwBhCW96MyFGPVWed2ko37mLeHzta2BzL6T-TzUnmg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Date: Sun, 22 Sep 2024 07:52:34 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Sasha Levin" <sashal@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Tariq Toukan" <tariqt@nvidia.com>, linux-rdma@vger.kernel.org
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Matthew Wilcox" <willy@infradead.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Kees Cook" <keescook@chromium.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Wedson Almeida Filho" <wedsonaf@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ "Benno Lossin" <benno.lossin@proton.me>,
+ "Andreas Hindborg" <a.hindborg@samsung.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+ "Todd Kjos" <tkjos@android.com>, "Martijn Coenen" <maco@android.com>,
+ "Joel Fernandes" <joel@joelfernandes.org>,
+ "Carlos Llamas" <cmllamas@google.com>,
+ "Suren Baghdasaryan" <surenb@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, "Christian Brauner" <brauner@kernel.org>
+Message-Id: <de6cb179-b21f-4e2d-a329-da5c4a138878@app.fastmail.com>
+In-Reply-To: <Zu_CeRfMKyyt4E5O@sashalap>
+References: <20240528-alice-mm-v7-0-78222c31b8f4@google.com>
+ <20240528-alice-mm-v7-2-78222c31b8f4@google.com> <Zu_CeRfMKyyt4E5O@sashalap>
+Subject: Re: [PATCH v7 2/4] uaccess: always export _copy_[from|to]_user with
+ CONFIG_RUST
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 2024-09-21 23:07, Lai Jiangshan wrote:
->> +/*
->> + * hpref_hp_get: Obtain a reference to a stable object, protected either
->> + *               by hazard pointer (fast-path) or using reference
->> + *               counter as fall-back.
->> + */
->> +static inline
->> +bool hpref_hp_get(struct hpref_node **node_p, struct hpref_ctx *ctx)
->> +{
->> +       int cpu = rseq_current_cpu_raw();
->> +       struct hpref_percpu_slots *cpu_slots = rseq_percpu_ptr(hpref_percpu_slots, cpu);
->> +       struct hpref_slot *slot = &cpu_slots->slots[cpu_slots->current_slot];
->> +       bool use_refcount = false;
->> +       struct hpref_node *node, *node2;
->> +       unsigned int next_slot;
->> +
->> +retry:
->> +       node = uatomic_load(node_p, CMM_RELAXED);
->> +       if (!node)
->> +               return false;
->> +       /* Use rseq to try setting current slot hp. Store B. */
->> +       if (rseq_load_cbne_store__ptr(RSEQ_MO_RELAXED, RSEQ_PERCPU_CPU_ID,
->> +                               (intptr_t *) &slot->node, (intptr_t) NULL,
->> +                               (intptr_t) node, cpu)) {
->> +               slot = &cpu_slots->slots[HPREF_EMERGENCY_SLOT];
-> 
-> Can @cpu be possibly changed? if it can, it seems @cpu and @cpu_slots
-> should be updated first.
+On Sun, Sep 22, 2024, at 07:08, Sasha Levin wrote:
+> On Tue, May 28, 2024 at 02:58:03PM +0000, Alice Ryhl wrote:
+>>From: Arnd Bergmann <arnd@arndb.de>
+>>
+>>Rust code needs to be able to access _copy_from_user and _copy_to_user
+>>so that it can skip the check_copy_size check in cases where the length
+>>is known at compile-time, mirroring the logic for when C code will skip
+>>check_copy_size. To do this, we ensure that exported versions of these
+>>methods are available when CONFIG_RUST is enabled.
+>>
+>>Alice has verified that this patch passes the CONFIG_TEST_USER_COPY test
+>>on x86 using the Android cuttlefish emulator.
+>
+> Hi folks,
+>
+> I've noticed a build failure using GCC 9.5.0 on arm64 allmodconfig
+> builds:
+>
+> In file included from ./arch/arm64/include/asm/preempt.h:6,
+>                   from ./include/linux/preempt.h:79,
+>                   from ./include/linux/alloc_tag.h:11,
+>                   from ./include/linux/percpu.h:5,
+>                   from ./include/linux/context_tracking_state.h:5,
+>                   from ./include/linux/hardirq.h:5,
+>                   from drivers/net/ethernet/mellanox/mlx4/cq.c:37:
+> In function 'check_copy_size',
+>      inlined from 'mlx4_init_user_cqes' at 
+> ./include/linux/uaccess.h:203:7:
+> ./include/linux/thread_info.h:244:4: error: call to '__bad_copy_from' 
+> declared with attribute error: copy source size is too small
+>    244 |    __bad_copy_from();
+>        |    ^~~~~~~~~~~~~~~~~
+> make[7]: *** [scripts/Makefile.build:244: 
+> drivers/net/ethernet/mellanox/mlx4/cq.o] Error 1
+>
+> I do not have CONFIG_RUST enabled in those builds.
+>
+> I've bisected the issue (twice!) and bisection points to this patch
+> which landed upstream as 1f9a8286bc0c ("uaccess: always export
+> _copy_[from|to]_user with CONFIG_RUST").
+>
+> Reverting said commit on top of Linus's tree fixes the build breakage.
 
-Indeed, if migration happens between rseq_current_cpu_raw() and
-execution of rseq_load_cbne_store__ptr(), it will cause this
-second operation to fail. This in turn could cause the reader
-to retry for a long time (possibly forever) until it finally
-migrates back to the original CPU. As you suggest, we should
-re-load cpu and cpu_slots after failure here. More specifically,
-we should re-load those when the rseq c.s. fails with -1, which
-means it was abort or there was a cpu number mismatch. If the
-rseq c.s. returns 1, this means the slot did not contain NULL,
-so all we need to do is move over to the next slot.
+Right, it seems we still need the fix I posted in
 
-While applying your suggested change, I noticed that I can
-improve the fast-path by removing the notion of "current_slot"
-number, and thus remove increment of this hint from the
-fast path. The fast path will instead just scan all 8 slots
-trying to find a NULL one. This also lessens the odds that
-the fast-path must fallback to refcount in case of concurrent
-use. It provides a 50% performance improvement for the fast
-path with barrier/membarrier pairing.
+https://lore.kernel.org/lkml/20230418114730.3674657-1-arnd@kernel.org/
 
-I've updated the https://github.com/compudj/userspace-rcu-dev/tree/hpref
-volatile feature branch with these changes. I'll give others some
-time to provide feedback on the overall idea before sending out
-an updated patch.
+Tariq, should I resend this with your Reviewed-by, or can you
+apply it from the old version and make sure it finds its way
+into mainline and 6.11?
 
-Thanks for your feedback!
-
-Mathieu
-
-> 
->> +               use_refcount = true;
->> +               /*
->> +                * This may busy-wait for another reader using the
->> +                * emergency slot to transition to refcount.
->> +                */
->> +               caa_cpu_relax();
->> +               goto retry;
->> +       }
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+     Arnd
 
