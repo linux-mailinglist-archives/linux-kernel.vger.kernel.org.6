@@ -1,63 +1,84 @@
-Return-Path: <linux-kernel+bounces-335250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6846E97E319
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 22:01:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FAC997E31B
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 22:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71FE11C20E08
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 20:01:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B7DB1C20EF9
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 20:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463914AEE6;
-	Sun, 22 Sep 2024 20:01:00 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93D4535D4;
+	Sun, 22 Sep 2024 20:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CMQoBKX0"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF15B64A;
-	Sun, 22 Sep 2024 20:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D6A2B9B4;
+	Sun, 22 Sep 2024 20:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727035259; cv=none; b=KtGOkAPEd8SD+0ixELgCa47CP9N9LcpcPBkLsjd5DzJyvPPMRJxlZXtZ5ZJM3b8mcxRuPCyCvv2PW6kxeHIvV8I3Pj5DfUQLuQevOiMT0mnoLGnqg/qkGEO2a5RN4s5K3DMtIo4mJC6iDIptoMO367yLU5NRkkwUn4MfHEkrpOA=
+	t=1727035754; cv=none; b=cO/08PO3grtNzgbaWWEKVNo77xphZ0mFB4qbghfqLoXyq5aQBZ57G0cDeYybDyiHZndc6LgwxWZ8IQDN0LKRxutS8isDN0O/RDcGDRx77WTSVItQTMlW4MB5QQLQVpJB9nKr2HOFR3gzOF2LI27sGuqu5bePP5CQLuihJROHn34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727035259; c=relaxed/simple;
-	bh=PW73CFLoy1NujT1AOoNJA5nr+mK6Zvt6HHl6bir/aZ8=;
-	h=From:Subject:Date:Message-ID:To; b=EdYlo36qXKRwTMphA5fJ3RnDEFk1EAkfF7j9kJtvr5oQAUHsW7r1yWac6OMU92fjooEx5DEuaqxVX6CyeirOyoaZeGLiu+hfpR/Nlr2KrEIz9sYcN45wwT4OhLMecoNUSy502Ox8Er12e6bQ6HgnXlRtRVzbJfvQ6a/T8WkYwYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EA25C4CEC3;
-	Sun, 22 Sep 2024 20:00:59 +0000 (UTC)
-From: Clark Williams <williams@redhat.com>
-Subject: [ANNOUNCE] 6.1.111-rt42
-Date: Sun, 22 Sep 2024 20:00:24 -0000
-Message-ID: <172703522458.2716474.12619418194249809374@demetrius.lan>
-To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Tom Zanussi <tom.zanussi@linux.intel.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <joseph.salisbury@oracle.com>
+	s=arc-20240116; t=1727035754; c=relaxed/simple;
+	bh=SS3jauSDhrqRWDR9up5YQ3qpObbPBj/jW/EE6FvRPdk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AVvvjbKPlBfpPQpCmgdMj1SyYcPTHvXIBbY3ePppcBDk4jgPJaWwCLX2Ho/9nj3rey+8MdtFkGwkKo9/BgL41nHkM6ZBxdKC1f8X/UoCvFdhYAOdRTEPWn1dn6LnEbDLk2Z3DdqYorPdhO1rqA7RFTtluhj3cabOlxaW3KVUkyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CMQoBKX0; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=A1cuQtqLLbryb2DoQJX2kyo1+PieA+BcFdbNxEWCQ4w=; b=CMQoBKX0/Hj4yiC1+wm/59n/T8
+	HsK2CuN9Gz76R4oz5grpx6e0AzMbIM1dBX6MA2dnl3VQvvfMH1H5nOZGmVtitEuePuSNHRaTOzOPk
+	FowF9cbRYritPafvVDHA7IpJCRsFwLtOY4iOJCdxZpw36cGrmPJ5ok/F/LhSIOiNLuyw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ssSt8-0084to-Bp; Sun, 22 Sep 2024 22:08:58 +0200
+Date: Sun, 22 Sep 2024 22:08:58 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: net/ethernet/broadcom: Add error pointer check
+ in bcmsysport.c
+Message-ID: <13fbb6c3-661f-477a-b33b-99303cd11622@lunn.ch>
+References: <20240922181739.50056-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240922181739.50056-1-kdipendra88@gmail.com>
 
-Hello RT-list!
+On Sun, Sep 22, 2024 at 06:17:37PM +0000, Dipendra Khadka wrote:
+> Smatch reported following:
+> '''
+> drivers/net/ethernet/broadcom/bcmsysport.c:2343 bcm_sysport_map_queues() error: 'dp' dereferencing possible ERR_PTR()
+> drivers/net/ethernet/broadcom/bcmsysport.c:2395 bcm_sysport_unmap_queues() error: 'dp' dereferencing possible ERR_PTR()
+> '''
+> 
+> Adding error pointer check before dereferencing 'dp'.
 
-I'm pleased to announce the 6.1.111-rt42 stable release.
+This driver is not in staging, so your subject is wrong.
 
-You can get this release via the git tree at:
+Please take a look at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
 
-  branch: v6.1-rt
-  Head SHA1: ae643a2f60520f03fb176d684febadb445b51095
+    Andrew
 
-Or to build 6.1.111-rt42 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.1.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v6.x/patch-6.1.111.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/6.1/patch-6.1.111-rt42.patch.xz
-
-
-Enjoy!
-Clark
+---
+pw-bot: cr
 
