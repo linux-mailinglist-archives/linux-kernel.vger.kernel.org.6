@@ -1,87 +1,124 @@
-Return-Path: <linux-kernel+bounces-335322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A9397E417
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 00:45:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E5897E41C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 00:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A00D2812DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 22:45:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D907E2812A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 22:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDDF7DA81;
-	Sun, 22 Sep 2024 22:45:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027697347E;
+	Sun, 22 Sep 2024 22:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6omWkX5"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C877711F
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 22:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A852576F
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 22:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727045104; cv=none; b=SKKgtVrnyf5sUkJG1PFxOuxwaGycbaLioXhuODR/qBTAC8VHFOpE56pwC2THPwe1pJU01ryd5+QiPVwQzTUXAsa7J87VBdn56hQJuXjgOhe+agAqsl/G2GPbixy5eRIR0vcs0lqGlTKC2v1aJeyBdShUIcddpuBTV810OlmSaYg=
+	t=1727045446; cv=none; b=H8FxJZYur5jI3imiDVqtUiMJsgNgdienNnT5kOGUiW+0WJGfqAiNajcOb36p5heCgraKHJBHAoLI2Agk1Q/AeuUYBFvsEHph6/KY5OrfMMZvoEmhwuEX1akAdaiZ2t6JH7Zp1/kSdfGvejDDqDJ1owsV4Cg+nRygBAEaClbGnj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727045104; c=relaxed/simple;
-	bh=OEDG/BvuDgICtGHAiDm1OAnNHey4PHCRDp55AsJxVbE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=PWmnQXhB++G5dNCnZcz7mTSweGxHn7OLGH9oZsRp/T4aAb+Q+tiz6GVDfPzljxeI3B5NNJGNcCvCqVxWveJyPRVYY6z5dLvg6rsNgBVzSfKPeBGC5ukVDH4ZBFRQzmKMILYbU3b/EvlW+e8JjwlxN5w+U9QzJrYLwf8UvS2DIO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a195122f09so8549805ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 15:45:03 -0700 (PDT)
+	s=arc-20240116; t=1727045446; c=relaxed/simple;
+	bh=8LGXTDwinNibFmXBnGmW/BehSv6FmYe0U5txD7PxTqc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UIXA27EqcVqy8r684U+7iLn53Mgvd1osL/sXWdzv+kXjjlYNBR8L0/+WDqraXnjJ6KqkzD29eQ473J/2iKdMD+LYKaDlREChlu+i+bEEzbTQvvHRlVJoJR4L451WsYstSFawlO0MktpPHm2Kaj1dzYLdJb3t7Ebf9Nk0RE/Iwzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6omWkX5; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7cf5e179b68so3062558a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 15:50:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727045444; x=1727650244; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=evzGl8uzkkF6Z8ZPOLxJr88+fFCholgWD2WVWd/Pyk4=;
+        b=G6omWkX5sXFnjoxGJzqWDByem4aAczU90pxIsPgpvCe9b6nncEseihSME7Dp9mRu01
+         aDMSp8t4lfGh3zTbXaCagbWXx6PeaQ0tWxTJukkZGJJmgUnt/JzaO7n1AOntVhsN/F2J
+         MiUUxlFoeJiQg5/aDKm+RC4SYszNWTCmkNRMZZ8zo1Jofssus9TgiGvmguotI829simz
+         /ypu3A80Zts4HlDEWow+QW+843rLQuM+GzEgquGJYYgX9iYTHTO5vvMmuRMSjyeqIjsc
+         NsAiKwUmdn0Gj0S9bbJlNpMwr5VNRB1wsiMm4Ys3odX4ZOzpBlnXt7QcLyvcl4LF0aPo
+         fgYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727045102; x=1727649902;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A6epvmkcx0DNV6MYkuIx20m5d9Ex6Fo9NBiXQ26uPd0=;
-        b=wSuSj1o8imV3OM6iGtETaFgp75l5+dDPMDheXUJjBXtLYrgPStD5NpyQnoQM5KdBkY
-         ++DG1H0F01C+Lb6NRi1V20fYfsCZ3ZUueQhXswUN8Sd9QPEAJJ0DaayaKANLWgQg4q7+
-         EXynfP3S4RrtnC8T5OgLZG91Gzz7O+rklwhoiUT9pmUU+qTnQ4aid7E1GzyJ6hz4N44D
-         3HPkBRWoEZssDU0xmcS0OD8R03X17sh5ROQVdQmWrSlRKrigq0FLahKL6i1KipSvoZ60
-         GAbC87fsvYBhaV92Wg/2ZSyMJvS5A7mnjhODsLs+e7ni2DRHfLc0QLR6uYY2j6ptehzI
-         tPpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAuElEoKi/TjpHc/nJS5vnPxyXwtdR6ajRw/SBgSuJZa5eLJdzu+e8/ugb2qSBb4G4awwK56nZ5hI8ncQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrTnqpneHeBkOlGPQvz2v8SEOAz7C69Tx4U75MBUYwjCp6h/rA
-	/AGR0EKqKwBH+xeKNBd6zOvRIgdyeJnhDNo6xAeMfIISl61z8yK8UL+wF64QryA+OUuhNw99cHC
-	mJm19AlK8EpQYCUVYWQ0PX7l838EUXGn3ezTcSvpF8oM1AM4z4lqjfD8=
-X-Google-Smtp-Source: AGHT+IEg31oToMUph2W8XQQBPcOt0acreoXu0Sa+bdw0u3ScT0JX/+p9M+6Bn072KzhTaipmQ1A8oocscDM/NnXgfMsJmkT/rbKg
+        d=1e100.net; s=20230601; t=1727045444; x=1727650244;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=evzGl8uzkkF6Z8ZPOLxJr88+fFCholgWD2WVWd/Pyk4=;
+        b=CW65WU/+0bPM5XXfch5/oovLl/hFMJ3hhka6sQNO6BhWOwz7g8qbQ510An0T8n2Q7G
+         CuIPF0EBLy/f6UoEqaykchQU1oYmxXBtXmwc5bkp4FrgI11nLM7qJopNvRrwZyDPwu1s
+         NZIUVf93X8q4+7bgBME+Rl4ffwE39KHs9dqQKr4KTVyxze80exGMiFq+e3+M3bSA+HPM
+         km1aAGkdQm/l4/N5rOHxt4XQ9gtxsyresFVxzRw1ioAwVq3XE2mRxvBnRjdM0K5ykxvF
+         bTtiOzbxDxa9AhZI01jScAAoHjhHOWAS4cjStIki/0dhXGoFei5pnfuNIar+z3Fpi0PF
+         dB3A==
+X-Gm-Message-State: AOJu0Yz3C3STJiRh7CAZ5+As838c78A1I725n3cxbHwrvT7rFhVJGIBp
+	Y65Zv1QCuWW6bRLGOAvy/0udY1ZemfmOuTAT+xy+YHBeQ2IJe8rR
+X-Google-Smtp-Source: AGHT+IH3DGatcC/vW3zVDuqzQuR/K8bbe8zAiuq+7oCVJudmHp0v+DyC9IdaXInKc7bu2f40GoFToA==
+X-Received: by 2002:a05:6a21:2d86:b0:1cc:e101:ee64 with SMTP id adf61e73a8af0-1d30a8a653fmr15411761637.1.1727045444196;
+        Sun, 22 Sep 2024 15:50:44 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db4999cfb7sm14386680a12.79.2024.09.22.15.50.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 15:50:43 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Huang Ying <ying.huang@intel.com>
+Subject: [PATCH] resource, kunit: add dependency on SPARSEMEM
+Date: Sun, 22 Sep 2024 15:50:41 -0700
+Message-ID: <20240922225041.603186-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e3:b0:3a0:a311:6773 with SMTP id
- e9e14a558f8ab-3a0c8d3ace3mr76687665ab.21.1727045102536; Sun, 22 Sep 2024
- 15:45:02 -0700 (PDT)
-Date: Sun, 22 Sep 2024 15:45:02 -0700
-In-Reply-To: <20240922222313.115922-5-dennis.lamerice@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f09dee.050a0220.1b7b75.000f.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] divide error in __bch2_strtoh
-From: syzbot <syzbot+24beef64217854da05a4@syzkaller.appspotmail.com>
-To: dennis.lamerice@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Building allmodconfig images on systems with SPARSEMEM=n results in
+the following message.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+WARNING: unmet direct dependencies detected for GET_FREE_REGION
+  Depends on [n]: SPARSEMEM [=n]
+  Selected by [m]:
+  - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
-Reported-by: syzbot+24beef64217854da05a4@syzkaller.appspotmail.com
-Tested-by: syzbot+24beef64217854da05a4@syzkaller.appspotmail.com
+and the build ultimately fails.
 
-Tested on:
+GET_FREE_REGION depends on SPARSEMEM, so any configuration selecting it
+also depends on SPARSEMEM. Add the missing dependency.
 
-commit:         de5cb0dc Merge branch 'address-masking'
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16423880580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e851828834875d6f
-dashboard link: https://syzkaller.appspot.com/bug?extid=24beef64217854da05a4
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14cc3880580000
+Effectively that means that RESOURCE_KUNIT_TEST is now restricted to
+systems with SPARSEMEM=y, but that can not be helped.
 
-Note: testing is done by a robot and is best-effort only.
+Fixes: 99185c10d5d9 ("resource, kunit: add test case for region_intersects()")
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ lib/Kconfig.debug | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index bc8faa4509e1..52184c51b6dc 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -2635,7 +2635,7 @@ config HASH_KUNIT_TEST
+ 
+ config RESOURCE_KUNIT_TEST
+ 	tristate "KUnit test for resource API" if !KUNIT_ALL_TESTS
+-	depends on KUNIT
++	depends on KUNIT && SPARSEMEM
+ 	default KUNIT_ALL_TESTS
+ 	select GET_FREE_REGION
+ 	help
+-- 
+2.45.2
+
 
