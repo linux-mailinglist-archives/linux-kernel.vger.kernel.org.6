@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-335138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80F9397E19C
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 14:46:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1689297E19E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 14:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12C5D1F2138A
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 12:46:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95C601F212DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 12:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937CDA5F;
-	Sun, 22 Sep 2024 12:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899DA4A15;
+	Sun, 22 Sep 2024 12:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Go69QIJq"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TNDHxiVn"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C98B645
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 12:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8074433E1
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 12:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727009201; cv=none; b=TZDN1304DUHDUva2MdBAwIzLNza2y9/SXC20k0D/31GygVqz7AEbo/NMC6lBXz1Od8oopDElWgbu5iWu/qqjCjxvL6X0BEa9TCMHwTJIaTswn+xiaSZl3KbTuxWNv1q5P+Z+QnDwGEdVb1Ar8/DVTjbLA/3E04S3I2jFpcMg9gM=
+	t=1727009204; cv=none; b=lLmyrG640TgckePR3xcRh1M+5G4Vji66QqoAxrd6yAGS9Ht0XHbNamH12Bccxp6zJfJDfhIxeGkkvok3Lux71BaixFPerygV7wydFfoJ6SC7uAxz6wy5s6a8BjNCZzvEjTXG4yJuT1sbJo/Jn8nLPPiZIQfTu3azrG3NoL9/GUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727009201; c=relaxed/simple;
-	bh=BedMeTFlaZKXlzAnbgttJ1p76Oqk/1ykyt/NlNqTGos=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bViFpJ4QG1Azo0vVG+FG8r+4XLNhw/TsBS+RxdRUX2SMZiAGgSsP0BHSxhBjlg3tsJ2eSn4lO3cZtvIIL2cznzmXn/zC3OHdn0sOacedPy9rZbJq3man/1AU8q8KIyk2PHaA/x9gLGGchzNiV+NykmCecUPRim54A4C2fiQ37CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Go69QIJq; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1727009204; c=relaxed/simple;
+	bh=8ePD+2m1CM3zdKo4/0z1aKBWmtRs1LNpXPlC45ftoYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=i92Vr2hxwvlgm9AZCGqkgXuU0Le5uz1+K4Xw2+Lig87QHgS9fTILLS1RCsh5Tfd1PNs/Uocw9rbpqK8D/SID+92GjnCrv/A8axZxf3frS6dKcXLyRguAdSw2Hi2gYEenprRNPY8lwNVxLEyj05iGKXd9fZeBbtf/VIlxihSi1Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TNDHxiVn; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2054feabfc3so31216005ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 05:46:39 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2054e22ce3fso34061265ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 05:46:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727009199; x=1727613999; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1d6ErifsnrSsT38T4JJA8Y82xn33h3c3g8IFMCA75zg=;
-        b=Go69QIJqRubyAj/5HQrdbYut2LSrltslnBt2UCOT0b52McJaBhXUHfb7gGvEiPx0GF
-         U+DKOzWNo6QtUjl5r/9E0Cu8nBC1lmCCrdW5LYPKelR1WnYVGQnlJg9K3t2x/rlbWB+4
-         NJ8qBT+FSNvL+KoH+Z9+bT/Q/6FSwc1EngSiFLvClJnCjGsUewtk06oforLq5FTPOBND
-         cYSCkh7d9j+U5J4pPycGJQvn571wA/bJR2cr1AmTGdDa4cW90NaEcO3kwlmdQgekaVB0
-         +Yr8ZmaIlTbs4oh4CGInYWEooL+tBlCeJAJUjUeHWzSgxJeCSzrX6UOBSVoUBfEPx4lT
-         L2Sw==
+        d=gmail.com; s=20230601; t=1727009203; x=1727614003; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9FTwL6+9o13ypVh56/VhhZXYdy2Ls+PjrT2/i5xc+EE=;
+        b=TNDHxiVn6W57QbWCniTLcYHvkJUa4zZ+HQdzlTpcKiQbb6kskijt23PFWriuFhYc5I
+         yQbzBHT0SU3HTi0uGBP5xBSfq2ScnsFBJ9oeuo85vkOfu5pQxkdRaiggc88k4JGBRL1d
+         +dC+wFuRFQ+4Ik34iszV/oBwlOoWtOOLmsvrcc0WEFM+2ktCzajKfJyaLI71SRtntL/S
+         H4L1p8HAJyODrsGVV9M2r+1zFqsxBCaPdIwxtOiNPQio98zEYfIw+KODGKigkIxFjX9s
+         jdiWkt/xKILzDVt9VunfOoq5YZBx9ZywDO9Ld6AObOdysFMcbtlsVKbqUVPchfsFMZD1
+         kaXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727009199; x=1727613999;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1d6ErifsnrSsT38T4JJA8Y82xn33h3c3g8IFMCA75zg=;
-        b=gHhyD72JxD6YQ8Pk0mkMY88bonEzBhklJ6XYxmOEiBwqgWhVTtLk7f1lTAKvOYcfTC
-         FE0bDKQ23q3qY4S8mIZ6FwZjoU3nZSQHtKDTCTsTfV/EdhEtkDzNTWQV88H5KRS7mMUf
-         q0EYaoOUhqySC/jdhK/rSP5XzpcQQOgJnz1QKXPLWgs/P6eCUf3wd7wmr/8EXxKAS+oo
-         fH1OCnFPpecWn61arDfr0m0mKGd1esX0jiftENZ5x8GBJdln++QPTGJeWnz/mL8QmRt/
-         yUdjFjyajL5QkFaBU7nvayNvvt8H67+xBcVAZdBG8aZTXJ0B5IDSsfmK9+sykKcBNZMX
-         RagQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDN0/adZJKkptdc4KORPlj7txWLpUPHb0WMIhnJnpSgRfy6+NJmkY9zb0SVMwiGNfr7Mxkzz8VsvxUT1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHrsMNvYe76A4uH6pcNFXgpEsnTGg2vLxl5jwqwnzvcAB2ZRKS
-	vcPDa6oPwA84AtXcorhlqhS1pNnCno5fmAezmZs09c1VppeA/+b1GIUJ/w==
-X-Google-Smtp-Source: AGHT+IEErnc4kiN4jb2LvbdfB67R2vqvkV0zBOBcvy8te6zsBl9Cd9Yo6sEVpe89ph9ouy1i+Tc59Q==
-X-Received: by 2002:a17:902:e5cd:b0:206:9caf:1e09 with SMTP id d9443c01a7336-208d98bd28cmr89162375ad.61.1727009198583;
-        Sun, 22 Sep 2024 05:46:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727009203; x=1727614003;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9FTwL6+9o13ypVh56/VhhZXYdy2Ls+PjrT2/i5xc+EE=;
+        b=DkqP7WbAM7Lh/y44xNJNID+89CBEQ9oplwXkWQpeSeRsgNSPsJR9M9mAd+4diw2j0z
+         Mu7ok2ODfD1nC3Tpa9BKeQW3HlHolxCug0/x1hatk2wJ/oOjq9R6hMMR6M0zYTzfobA7
+         qkUwWch/Vklt+ALoDQTVdwmCYV4Py0LvtA9Gzig83n+1vutOx7cgzNKAs6G5VWyEY2/L
+         U5ftpt60j9XeRbpGeVV7PqHhuo1kpXW4Ng00w+kdgpM7EEF2FdJwOn1kimQMlpFB45mv
+         XkmJNP8juyi57H3iTNebfIRqqTGPi0bRRXypCFroKVdUcI2cLJ7Ytx7YlkbvyBfLlZa2
+         I2Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3xZJmNBF7KkbV5SFHoqEzI6N9LBrlNTaSaGUr4k1xSWvXzFwFUCli9HsWmmMIAZV1g9mD+zr71Wrfp0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbIP1eRWmkUcjCsgufa1dAYhHUTSJpfX8hBXIDwLfwK3vbD23G
+	98L0jSjC9wE9H6Sx3XnUlnLQEoZpNGiHfQAcClDHGQQMgu9AwqLHO28Y/A==
+X-Google-Smtp-Source: AGHT+IEk1HF1yfwHvH3U4VgVuiMqv2Jw5XGtTnEzdU9HnMvAVoMYKCqf2ajoA2E7c7OpBZqgCqBz2w==
+X-Received: by 2002:a17:902:c941:b0:206:93e7:5837 with SMTP id d9443c01a7336-208d83f0519mr130599345ad.39.1727009202707;
+        Sun, 22 Sep 2024 05:46:42 -0700 (PDT)
 Received: from dw-tp.. ([171.76.87.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d19aasm119420975ad.127.2024.09.22.05.46.34
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d19aasm119420975ad.127.2024.09.22.05.46.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 05:46:36 -0700 (PDT)
+        Sun, 22 Sep 2024 05:46:42 -0700 (PDT)
 From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To: linuxppc-dev@lists.ozlabs.org
 Cc: Michael Ellerman <mpe@ellerman.id.au>,
@@ -73,10 +75,12 @@ Cc: Michael Ellerman <mpe@ellerman.id.au>,
 	LKML <linux-kernel@vger.kernel.org>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
 	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFC / PoC v1 0/1] powerpc: Add support for batched unmap TLB flush
-Date: Sun, 22 Sep 2024 18:16:23 +0530
-Message-ID: <cover.1727001426.git.ritesh.list@gmail.com>
+Subject: [RFC / PoC v1 1/1] powerpc: Add support for batched unmap TLB flush
+Date: Sun, 22 Sep 2024 18:16:24 +0530
+Message-ID: <589d5262da605ae6d84a02bac477009f4655b705.1727001426.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <cover.1727001426.git.ritesh.list@gmail.com>
+References: <cover.1727001426.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,95 +89,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello All,
+=== NOT FOR MERGE YET ===
 
-This is a quick PoC to add ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH support to
-powerpc for book3s64. The ISA in 6.10 of "Translation Table Update
-Synchronization Requirements" says that the architecture allows for optimizing
-the translation cache invalidation by doing it in bulk later after the PTE
-change has been done.
-That means if we can add ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH support, it will be
-possible to utilize optimizations in reclaim and migrate pages path which can
-defer the tlb invalidations to be done in bulk after all the page unmap
-operations has been completed.
+This adds the support for ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH.
+More details are added to the cover letter.
 
-This a quick PoC for the same. Note that this may not be a complete patch yet,
-TLB on Power is already complex from the hardware side :) and then many
-optimizations done in the software (e.g. exit_lazy_flush_tlb to avoid tlbies).
-But since the current patch looked somewhat sane to me, I wanted to share to get
-an early feedback from people who are well versed with this side of code.
-
-Meanwhile I have many TODOs to look into which I am working in parallel for this
-work. Later will also get some benchmarks w.r.t promotion / demotion.
-
-I ran a micro-benchmark which was shared in other commits that adds this
-support on other archs. I can see some good initial improvements.
-
-without patch (perf report showing 7% in radix__flush_tlb_page_psize, even with
-single thread)
-==================
-root# time ./a.out
-real    0m23.538s
-user    0m0.191s
-sys     0m5.270s
-
-# Overhead  Command  Shared Object               Symbol
-# ........  .......  ..........................  .............................................
-#
-     7.19%  a.out    [kernel.vmlinux]            [k] radix__flush_tlb_page_psize
-     5.63%  a.out    [kernel.vmlinux]            [k] _raw_spin_lock
-     3.21%  a.out    a.out                       [.] main
-     2.93%  a.out    [kernel.vmlinux]            [k] page_counter_cancel
-     2.58%  a.out    [kernel.vmlinux]            [k] page_counter_try_charge
-     2.56%  a.out    [kernel.vmlinux]            [k] _raw_spin_lock_irq
-     2.30%  a.out    [kernel.vmlinux]            [k] try_to_unmap_one
-
-with patch
-============
-root# time ./a.out
-real    0m8.593s
-user    0m0.064s
-sys     0m1.610s
-
-# Overhead  Command  Shared Object               Symbol
-# ........  .......  ..........................  .............................................
-#
-     5.10%  a.out    [kernel.vmlinux]            [k] _raw_spin_lock
-     3.55%  a.out    [kernel.vmlinux]            [k] __mod_memcg_lruvec_state
-     3.13%  a.out    a.out                       [.] main
-     3.00%  a.out    [kernel.vmlinux]            [k] page_counter_try_charge
-     2.62%  a.out    [kernel.vmlinux]            [k] _raw_spin_lock_irq
-     2.58%  a.out    [kernel.vmlinux]            [k] page_counter_cancel
-     2.22%  a.out    [kernel.vmlinux]            [k] try_to_unmap_one
-
-
-<micro-benchmark>
-====================
-#define PAGESIZE 65536
-#define SIZE (1 * 1024 * 1024 * 10)
-int main()
-{
-        volatile unsigned char *p = mmap(NULL, SIZE, PROT_READ | PROT_WRITE,
-                                         MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-
-        memset(p, 0x88, SIZE);
-
-        for (int k = 0; k < 10000; k++) {
-                /* swap in */
-                for (int i = 0; i < SIZE; i += PAGESIZE) {
-                        (void)p[i];
-                }
-
-                /* swap out */
-                madvise(p, SIZE, MADV_PAGEOUT);
-        }
-}
-
-
-
-Ritesh Harjani (IBM) (1):
-  powerpc: Add support for batched unmap TLB flush
-
+---
  arch/powerpc/Kconfig                          |  1 +
  arch/powerpc/include/asm/book3s/64/tlbflush.h |  5 +++
  arch/powerpc/include/asm/tlbbatch.h           | 14 ++++++++
@@ -181,6 +102,99 @@ Ritesh Harjani (IBM) (1):
  4 files changed, 52 insertions(+)
  create mode 100644 arch/powerpc/include/asm/tlbbatch.h
 
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 0b8b2e3a6381..c3a23c1894dd 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -171,6 +171,7 @@ config PPC
+ 	select ARCH_USE_CMPXCHG_LOCKREF		if PPC64
+ 	select ARCH_USE_MEMTEST
+ 	select ARCH_USE_QUEUED_RWLOCKS		if PPC_QUEUED_SPINLOCKS
++	select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH if PPC64 && PPC_BOOK3S_64
+ 	select ARCH_WANT_DEFAULT_BPF_JIT
+ 	select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT
+ 	select ARCH_WANT_IPC_PARSE_VERSION
+diff --git a/arch/powerpc/include/asm/book3s/64/tlbflush.h b/arch/powerpc/include/asm/book3s/64/tlbflush.h
+index fd642b729775..f872537715e7 100644
+--- a/arch/powerpc/include/asm/book3s/64/tlbflush.h
++++ b/arch/powerpc/include/asm/book3s/64/tlbflush.h
+@@ -222,4 +222,9 @@ static inline bool cputlb_use_tlbie(void)
+ 	return tlbie_enabled;
+ }
+
++bool arch_tlbbatch_should_defer(struct mm_struct *mm);
++void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *batch,
++			       struct mm_struct *mm, unsigned long uaddr);
++void arch_flush_tlb_batched_pending(struct mm_struct *mm);
++void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch);
+ #endif /*  _ASM_POWERPC_BOOK3S_64_TLBFLUSH_H */
+diff --git a/arch/powerpc/include/asm/tlbbatch.h b/arch/powerpc/include/asm/tlbbatch.h
+new file mode 100644
+index 000000000000..fa738462a242
+--- /dev/null
++++ b/arch/powerpc/include/asm/tlbbatch.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2024 IBM Corporation.
++ */
++#ifndef _ASM_POWERPC_TLBBATCH_H
++#define _ASM_POWERPC_TLBBATCH_H
++
++#include <linux/cpumask.h>
++
++struct arch_tlbflush_unmap_batch {
++	struct cpumask cpumask;
++};
++
++#endif /* _ASM_POWERPC_TLBBATCH_H */
+diff --git a/arch/powerpc/mm/book3s64/radix_tlb.c b/arch/powerpc/mm/book3s64/radix_tlb.c
+index 9e1f6558d026..2b1b2f7429fc 100644
+--- a/arch/powerpc/mm/book3s64/radix_tlb.c
++++ b/arch/powerpc/mm/book3s64/radix_tlb.c
+@@ -11,6 +11,7 @@
+ #include <linux/mmu_context.h>
+ #include <linux/sched/mm.h>
+ #include <linux/debugfs.h>
++#include <linux/smp.h>
+
+ #include <asm/ppc-opcode.h>
+ #include <asm/tlb.h>
+@@ -1585,3 +1586,34 @@ static int __init create_tlb_single_page_flush_ceiling(void)
+ }
+ late_initcall(create_tlb_single_page_flush_ceiling);
+
++#ifdef CONFIG_ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
++bool arch_tlbbatch_should_defer(struct mm_struct *mm)
++{
++	if (!radix_enabled())
++		return false;
++	return true;
++}
++
++void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *batch,
++			       struct mm_struct *mm,
++			       unsigned long uaddr)
++{
++	cpumask_or(&batch->cpumask, &batch->cpumask, mm_cpumask(mm));
++}
++
++void arch_flush_tlb_batched_pending(struct mm_struct *mm)
++{
++	flush_tlb_mm(mm);
++}
++
++static inline void tlbiel_flush_all_lpid(void *arg)
++{
++	tlbiel_all_lpid(true);
++}
++
++void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
++{
++	on_each_cpu_mask(&batch->cpumask, tlbiel_flush_all_lpid, NULL, 1);
++	cpumask_clear(&batch->cpumask);
++}
++#endif
 --
 2.46.0
 
