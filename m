@@ -1,123 +1,77 @@
-Return-Path: <linux-kernel+bounces-335229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A3697E2DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:56:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FC697E2DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 20:01:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8341F21793
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:56:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01B4C28121D
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 18:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFB739FCF;
-	Sun, 22 Sep 2024 17:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5252B9C6;
+	Sun, 22 Sep 2024 18:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="L7oRpyYX"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="Tb/pRIl4"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECFAD2C6A3;
-	Sun, 22 Sep 2024 17:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097C57E1
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 18:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727027758; cv=none; b=Gk6mw8MJuMeZ5aPptpun0xO2Fl3xSa1qgcR2G5VMUOVm4lnDnXKmsxf2h1rBQMcpJAJOPaItn4nVaZG8RcNCFFwW07YvNh6rVMz0qcQ43wYs6W6Jg7DBzHlIGboTRPxoiVnZJV0UoMu6/96pmGgdjrRfeN+FlOh+RYJmnre04F4=
+	t=1727028080; cv=none; b=dkBAj3snJ8dh7IBq84YD6fH4+NBi4aKQqdx1vGi4aoIhYN1oYC/fWUN9mznexYdPBrTWaV+ms2OeqBypDpGwRSWdfLb3Z6ZP8EIutdk3HSCrjlzmEZxvJ6NWKFtNQAAa/JThvLErtjdGuGnqbOfVLyu0TJt0wpXjBmyrtT5T6To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727027758; c=relaxed/simple;
-	bh=rQdLXE6SJslozte+20DMd3ULCl+9niKgzb7QGtWzBH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SsVp+JcAjzWVlAwZlAAJgG7b3gqMVguJWSDmLWwjvEZ6uJZY/bDAibWje4p5Jg321LihR1bHh9Y+AUTHtGKPpgD7iQp44VQ8qvoc/3iUpHvLlsXmjtOws7Gm0P+2TlWhmvEHc/GkcLikAezJ4RSMZ2bznUZzzhdPtQ4arzntJvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=L7oRpyYX; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727027717; x=1727632517; i=markus.elfring@web.de;
-	bh=8Xi69eSUzOhZdivbJL/GWaVVhyX+HV7P0O/k/Oi2vxo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=L7oRpyYXoQIF7GKMBVvEZCTuX951Dwj1FeFDaXA8KA3J+8o/daKaOFS14+hcCW/B
-	 Ii2L9UCV3p8qcSKou0Fiqv/4KVitsBuKiTa/Xe6qXcGQgw/0YeOWLLjqbSjn1FMA7
-	 9B3D43F9z8eV/r237/tvixRyNxUBHZM0TGk8+QZwRqJTw0YIXK4WwV5jpzFejCS7q
-	 ygehR7gkpYW/x2m7pqaf2/op23Q+ThTq2hAt0iJTiCNrYTzBo3UVVc5dM3MzaCOO6
-	 1iAso01FV6m1mMQiopA2Iab18M/d/9GI3bq9spJuM3g86teFyVReaKJo6nNF+CfBP
-	 JHzr24BXhtb4YTmV7w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMp8Y-1sbrt30ZRk-00IOXU; Sun, 22
- Sep 2024 19:55:17 +0200
-Message-ID: <3aca8eab-f4d2-4474-acc9-c5c94dcb9162@web.de>
-Date: Sun, 22 Sep 2024 19:55:13 +0200
+	s=arc-20240116; t=1727028080; c=relaxed/simple;
+	bh=pobvNIkZbinovFfRdYlFAtZnq2HS/QDmmUxoi6pc/Yw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uet1Nt4Q6MCCfqyGMl0MKyLx7iEJbnMSE21zqKysxoNUFG6eDTXkBjwSSFIjepWJQM0mH+kYxR5/+drEMXaXtN8K0ynevFFN74mDBmGD1anPHD6Pj7s1wnY4sjs0kYJ4kLrTMeozy1IkocxikA/5meXhhXpu7Vfpd1mvmhMJNKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=Tb/pRIl4; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Fiona Behrens <me@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1727028063; bh=b8X6oPZ7f9mqNV+UOmLjTpR7eDHxHaxiCPOgh+NHx9s=;
+	h=From:To:Cc:Subject:Date;
+	b=Tb/pRIl4SstJb/effMp6XJKLXCUPZPhvSpcPxv+N9O1gGVG6nmouIFTbIUcA5iuVL
+	 4x0AlfJ2dz+sZh+28SwLpDRA0JNefIWGLN8qRoXlUszkzHSzDl0yOzEho803ZZZFyO
+	 p84ChXrIejWlpTqyUjY+r/xwac/Xzze/5qh6emp4=
+To: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Fiona Behrens <me@kloenk.dev>
+Subject: [PATCH] mailmap: update mail for Fiona Behrens
+Date: Sun, 22 Sep 2024 19:57:29 +0200
+Message-ID: <20240922175729.233070-1-me@kloenk.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: xilinx: axienet: Use common error handling code in
- axienet_mdio_write()
-To: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Clayton Rayment <clayton.rayment@xilinx.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Michal Simek <michal.simek@amd.com>,
- Paolo Abeni <pabeni@redhat.com>,
- Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall <julia.lawall@inria.fr>
-References: <330c2b9e-9a15-4442-8288-07f66760f856@web.de>
- <20240922170507.GD3426578@kernel.org>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240922170507.GD3426578@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:BQfgsFRLT2S9FhcY8igdpU/vi1LOYwCsrB93WR1PBKVAH2GultZ
- gVpnTvNWtu5Tnf2ztuXKyhCHTxrE6EFPHi2ST1GzuL2x2rSWZIynHAvTGE0MAOyV1GsbvA0
- uwz96XyFI1aGl5M8UlrQBnY4O/WmaoA+CaMqmHf7mzJumL/ZZkSbQf0MsTl6UsI5ov910GX
- oTsVdX0m/6+PUvPOgu02Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:TMuK3USvNnY=;6/YoGWwgLpZ6/85IYs0BFG+23/g
- 0ttnj3BFgUg/EXE+hy6e/asHDcEyTWZIeUX8Qloj/1sakFC3hqu54Na5sVCORM2IgYtUW9gOL
- k+ehxXvop2fhZkgINoL6Gs8Cqc9fdbmMcCoCt3BqdDwzykvSJofpxCk3f2mmsvFw7u2hRyZjk
- 8MZjSDHkAfIQeDP3HBZnr2gQ+YMKvgCUCNF1SoyH99fvBeaFubFNQi9SHlS0ov7QYE5ko90Du
- G3jk5VazTSPofI7aBolLEdE1pGQdKUOfaLnycaJN4yc+5PllCqzLViVIesexDZ+37m50etK4o
- +d08ZOxdIzqdIJhIs50j5A0Cu4uuKAktEhFCmqGNuDoxvKyvDEXvbB6pvjZAfz9Jm7ygbkWfv
- m7d9OLqGUpOIwLpNqYfYBX1Gjvdr7jOBULcXpgy4TM5W6UpKp8Jqxl4di+81TY8o5PJq2EgLT
- 1jcAjINi5e16rRRsS1tqDuYwlr/J4fNww8BD9j4SWnL1EUPdlixrJTNKaLRrB7H02cwgVGvky
- aEYyfwNZ22dwyxLCgq80bRVWMyUpOMslo+mJkOmK4zSpVPagQw5UFe+cXyVc8GgBfFrgemst2
- fo6ngc0tyas+RRsJYWjo6u+IXOI5yeKFKSvEdzpODxAWzFU0bjpF5m5Q+cqCD1hb3DAXY8c0R
- DkUcNA401iNwoWEdT5L0lym9u1krNbH4S4sFp1y79YX9SLqd9qeX2q9KrnQ/thIteSxn6XJLw
- z6FNX1N72SPyL3+46fzqTNbGELJW+LzLwvG3MWldqJ4aBw3toeTW+zRlKJ2E8dWPRM2rxIMhX
- iQPV/n6h+MjDR2unXStgoRXg==
+Content-Transfer-Encoding: 8bit
 
->> Add a label so that a bit of exception handling can be better reused
->> at the end of this function implementation.
-=E2=80=A6
-> This change seems reasonable to me.
+Remove old mails of Fiona Behrens
 
-Thanks for this positive feedback.
+Signed-off-by: Fiona Behrens <me@kloenk.dev>
+---
+ .mailmap | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/.mailmap b/.mailmap
+index 7c7f171d0e55..0c798d53e784 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -206,6 +206,9 @@ Felix Moeller <felix@derklecks.de>
+ Fenglin Wu <quic_fenglinw@quicinc.com> <fenglinw@codeaurora.org>
+ Filipe Lautert <filipe@icewall.org>
+ Finn Thain <fthain@linux-m68k.org> <fthain@telegraphics.com.au>
++Fiona Behrens <me@kloenk.dev>
++Fiona Behrens <me@kloenk.dev> <me@kloenk.de>
++Fiona Behrens <me@kloenk.dev> <fin@nyantec.com>
+ Franck Bui-Huu <vagabon.xyz@gmail.com>
+ Frank Rowand <frowand.list@gmail.com> <frank.rowand@am.sony.com>
+ Frank Rowand <frowand.list@gmail.com> <frank.rowand@sony.com>
+-- 
+2.39.3 (Apple Git-146)
 
->                                      However, I am assuming that as a
-> non-bug-fix,
-
-Would you like to categorise my update suggestion as a correction for
-a coding style issue?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?h=3Dv6.11#n526
-
-
->              this is targeted at net-next.  And net-next is currently
-> closed for the v6.12 merge window.  Please consider reposting this patch
-> once net-next reopens.
-
-Will a patch resend really be needed for the proposed adjustment?
-
-Can both development branches benefit from this refactoring?
-
-Regards,
-Markus
 
