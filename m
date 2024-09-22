@@ -1,203 +1,91 @@
-Return-Path: <linux-kernel+bounces-335236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7EEE97E2EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 20:58:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A927D97E2F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 21:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 963D41F21782
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 18:58:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 541581F215F8
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA1F47F4D;
-	Sun, 22 Sep 2024 18:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF71147F7A;
+	Sun, 22 Sep 2024 19:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZtIMU4Bw"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fizMX9st"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7027B39FCF
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 18:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEFD6AA7;
+	Sun, 22 Sep 2024 19:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727031504; cv=none; b=CpuYAgYOw1SwkNHyrM6bl95NgqZSSDIQ4l2FmOb3HWqPDoSLTkjIOMJM6L3IuEftVm42YHi+Y8OCZfi5Me3UxU1AhlOlHYSy33qIfq8nlmzEWryVvj1602SScTFD/EgxRH2S/GJOgLKLDi71rkGnNLIIyHiZgNSMj1EsmLj849M=
+	t=1727031627; cv=none; b=g6qGvSYDaG5HbDL+Pe1psEKgtSmQeKdnG20duyAWs+SoEgQmnE4SEmDtVfLTVZf7OOMEzclwfHr2KOPN8j3aT4mxK+27n6FpBBdAk7y9ptY/2nJskbR75HbYkmmalqRBYAlwOL+lI9bZAYUcl3BMlve8mqoLHGVkM6cXRGK4mUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727031504; c=relaxed/simple;
-	bh=h/YfGkHYHlLaaxOTb25/fnshKzd0TKyDfjJiM7H9D+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GF2Noxe+I1CVsW23Z4steMxMUH+lXZ8vLy71lRldn1M1mPuTo15+VHaUHDDD/FwlhaIY4DmfZTmFsy/n3Jq29LDoaMkcU0Vd5/xPZJ+oXshW2F3FLZs5fRx/9SMNF4/hpblY5pz+J52snLYZ5pH9x75MMNtWEkdx8am2BrtklxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZtIMU4Bw; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42caeb4d671so5436475e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 11:58:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727031501; x=1727636301; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=srXCF3GjT+sML6K1TGBPeCTfqMEzivDKM+gZ5j0yqOM=;
-        b=ZtIMU4BwfW8fTl+z6NzOre+cswYS5H/32Tn/8d8w2KMLMFpeSqWtIvsMd0N6s9h1mo
-         kSQGDkggGuTw+VUuXmyADnw1sKBu9U8B+/AlwANaS4UVvvLeWWUOcMm6jBE6pK9iRBWP
-         xLulA7q6nJxmPFdKL1586dyFt4z+4mkukPYwGLQpuSUBdGiDnYriO1H8OnsXhZaVhflg
-         +9E3rXDfWaVSoWvUwSYPvQMzs1XnP0RuNwkrBYus5+5yMjY7DB4rCXJSyCN6j+cVJGNn
-         nhBeuKc+Np1ubMOv/oXxbzBpVformkuOMTqEumcmswgfvC9XRhmlxbkvNqi3r//rcYzE
-         kjQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727031501; x=1727636301;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=srXCF3GjT+sML6K1TGBPeCTfqMEzivDKM+gZ5j0yqOM=;
-        b=Aod17daj7IGJIi5GFrnC6tIw/+KulXxsjaGZ9nFkWR9KkmvsQ4s5qQpecIdlFLyL6T
-         2UJkj+xuRie2Fdd2WBKi9j92YLL0cRmtcZBfWpt9wC7zqiyV9xj+B/zAYpBZi/2shwY/
-         eo+qC0Dr5s1m+kmniotF/BlRx+2X3MXupb+9F1hgteSP9/PxMz3Pd5zNgXgs2aDRz23a
-         RbPhlPlyNmZHEUPw+ky1YpkvPpDER1on9hJvaL1F3Zu8DVjxu/lUI8YAP3dXMIxNxm5t
-         nGULFub8AJJgqdSpT3D2gL/YNlTGq1bRz9EQ38dhMNjD+8vc7DwbyWbEURSSSXNymerB
-         +eFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0Seya5AfUJ+mOfbO/O/3DkzZSxMdpnhijESzU72PYbO72dPFHjPXBX24jT6rnTBZI/49r/2l4ZQhuu2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXfg2gkudLjceVO7/bdGw3wtspOjVVGbkBV/pzCwnMH0ZK7qwm
-	PAPCV1XU/VFVR9k7s/yHfymNzG4ss3Tgz0c1gDoJ5oaWCkoJrDYmNS4jiy0BXh8=
-X-Google-Smtp-Source: AGHT+IHZquMeazYNyJPZMeSCNUX701wi0Xg7LwAbqqiU7ZiaJYTRA0ilROtSz9w2/YsISW1xDch0+Q==
-X-Received: by 2002:a05:6000:1fa4:b0:374:bde8:3b46 with SMTP id ffacd0b85a97d-37a4225220dmr2728679f8f.2.1727031500580;
-        Sun, 22 Sep 2024 11:58:20 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e73f62dasm22602370f8f.49.2024.09.22.11.58.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Sep 2024 11:58:19 -0700 (PDT)
-Message-ID: <082b7e7f-93b8-4b6f-b258-334ad50940cb@linaro.org>
-Date: Sun, 22 Sep 2024 20:58:17 +0200
+	s=arc-20240116; t=1727031627; c=relaxed/simple;
+	bh=qbjUX2exvh1Fjhx27QOtodw5p57GnEZdWqSE5L8X3ig=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Nyzn4Q3U4qb1fW4ub1SeiwLVm9ZmkRbCp8suXTi3+k0TUl8NF5ssmbkWN4nvx8A0knuilLN4jYzBkrBsu88jky972TirNyiFSqh/B9riqZ4ngtCW8PQeuRub93ikFHsg9dn6C5EUwq5VfdSJoukPf4tpymUY+oiMODRCZ3vqC/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fizMX9st; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2EB8C4CEC3;
+	Sun, 22 Sep 2024 19:00:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727031626;
+	bh=qbjUX2exvh1Fjhx27QOtodw5p57GnEZdWqSE5L8X3ig=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=fizMX9stz9DWI4OkVhZXDLvrsNS2NVFyNAJDuDJ6BebCpjv9nHf70hq5TqFTj1pZD
+	 al7a4PYfI/mmmWuZHRluYUOQ4+VsjDA7ajDZV4G0bmW7JVj/l7XIBFFk+Lo+EqgaiV
+	 +Jp0qIYlriQJ0swVO2uSrV4nceF4EyjMNLvF5hzY5x/gn0t4LqhF05NJ0iJF3W5pdY
+	 x1163YznP/FnkNrGY3E9orqM+cds4b++fv/BF5qgkCfm6ltqqN99N/yvckGWoTUwOR
+	 4q0YviryawAds3Hsrdx5p+gMFrraQpiTcPTaLbCgqkTFMatwarJonCGwhsapktNYZp
+	 +qm9030+FyBxQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C733806655;
+	Sun, 22 Sep 2024 19:00:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: sse710: Add the External
- Systems remote processors
-To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: mathieu.poirier@linaro.org, Adam.Johnston@arm.com,
- Hugues.KambaMpiana@arm.com, Drew.Reed@arm.com, andersson@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org,
- sudeep.holla@arm.com, robin.murphy@arm.com
-References: <CANLsYkwOrtXxObL5MKf30OrUYB_uT=DnGEXUtfjH503r_LyMQA@mail.gmail.com>
- <20240822170951.339492-1-abdellatif.elkhlifi@arm.com>
- <20240822170951.339492-2-abdellatif.elkhlifi@arm.com>
- <gzlncpyzwm7x4jcxtdrthrlv2dofk7u3oxn4taadwog5tt37wo@ot6s6kwukd4k>
- <20240919093517.GA43740@e130802.arm.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240919093517.GA43740@e130802.arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2] net: ipv6: select DST_CACHE from IPV6_RPL_LWTUNNEL
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172703162901.2820125.2053441078890055489.git-patchwork-notify@kernel.org>
+Date: Sun, 22 Sep 2024 19:00:29 +0000
+References: <20240916-ipv6_rpl_lwtunnel-dst_cache-v2-1-e36be2c3a437@linutronix.de>
+In-Reply-To: <20240916-ipv6_rpl_lwtunnel-dst_cache-v2-1-e36be2c3a437@linutronix.de>
+To: =?utf-8?q?Thomas_Wei=C3=9Fschuh_=3Cthomas=2Eweissschuh=40linutronix=2Ede=3E?=@codeaurora.org
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, alex.aring@gmail.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, horms@kernel.org
 
-On 19/09/2024 11:35, Abdellatif El Khlifi wrote:
-> Hi Krzysztof,
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Mon, 16 Sep 2024 20:57:13 +0200 you wrote:
+> The rpl sr tunnel code contains calls to dst_cache_*() which are
+> only present when the dst cache is built.
+> Select DST_CACHE to build the dst cache, similar to other kconfig
+> options in the same file.
+> Compiling the rpl sr tunnel without DST_CACHE will lead to linker
+> errors.
 > 
->>> Add devicetree binding schema for the External Systems remote processors
->>>
->>> The External Systems remote processors are provided on the Corstone-1000
->>> IoT Reference Design Platform via the SSE-710 subsystem.
->>>
->>> For more details about the External Systems, please see Corstone SSE-710
->>> subsystem features [1].
->>>
->>
->> Do not attach (thread) your patchsets to some other threads (unrelated
->> or older versions). This buries them deep in the mailbox and might
->> interfere with applying entire sets.
->>
->>> [1]: https://developer.arm.com/documentation/102360/0000/Overview-of-Corstone-1000/Corstone-SSE-710-subsystem-features
->>>
->>> Signed-off-by: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
->>> ---
->>>  .../remoteproc/arm,sse710-extsys.yaml         | 90 +++++++++++++++++++
->>>  1 file changed, 90 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml b/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
->>> new file mode 100644
->>> index 000000000000..827ba8d962f1
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/remoteproc/arm,sse710-extsys.yaml
->>> @@ -0,0 +1,90 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/remoteproc/arm,sse710-extsys.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: SSE-710 External System Remote Processor
->>> +
->>> +maintainers:
->>> +  - Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
->>> +  - Hugues Kamba Mpiana <hugues.kambampiana@arm.com>
->>> +
->>> +description: |
->>
->> dt-preserve-formatting
-> 
-> Do you mean I should remove the '|' please ? (I didn't find examples of use of
-> dt-preserve-formatting in Documentation/devicetree/bindings/)
+> [...]
 
-I am sorry, it was supposed to be expanded from VIM snippet, but I did
-not finish the expansion. The point was to remove '|' because it is not
-needed.
+Here is the summary with links:
+  - [net,v2] net: ipv6: select DST_CACHE from IPV6_RPL_LWTUNNEL
+    https://git.kernel.org/netdev/net/c/93c21077bb9b
 
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-
-Best regards,
-Krzysztof
 
 
