@@ -1,169 +1,125 @@
-Return-Path: <linux-kernel+bounces-335214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 631DC97E2A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:05:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D395297E2A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 19:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19DFD280F33
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:05:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B035B20FA4
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 17:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D002CCB7;
-	Sun, 22 Sep 2024 17:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E4D43687;
+	Sun, 22 Sep 2024 17:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gl51o3We"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tb4geJDS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C447EED6
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 17:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386AB29CF4;
+	Sun, 22 Sep 2024 17:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727024709; cv=none; b=ATe1U4FiPYB7Dd2cRYzGoJvLHIjjF6FyMxj3kQocE9c+K94TMHEhi/raB/4fInvbQ1v0vy9R/U/l8w78boRhd7Pg5MO5Op8Z4jMEKWX9Ey8t8T8Z/Lor3QCC788519P7Kk9IVI6HZ/5EqpApaO5Zn69ArzxJyhPBaaXsEgZQE2o=
+	t=1727024712; cv=none; b=BdqTrlRlbhkF3jflYMdphe2RskisUGMaeiEKKcgQ7FuxwXW452Z/E38+ICe2ceF6T7tZRqwgz6lUQIHvq+c/kcuc+4GfM538HaiOGa7lmOfTezrsvVCVB34IYCG7Z+0ZodARrJHPPRhtAo4yU45Cz/wk5K+Bg3SHv9KfQPKSujE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727024709; c=relaxed/simple;
-	bh=hKouXnSohzO0zQ+wjR/Dh6OTuSEbhD97eR3Ipl28BtI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r3IhIgbuEEHFLEY/mOyz46MO6APAOgrazLpt7vBkKQXGMwXNXyRhKW9UHFGy8xFh+cUV/VVdGBmGR5RfaGcgupq3ty9ojYhKnI2qaAWmVehOjLSPcyqFx5oowIbDJpHRUmEU9VPShKFZi0g9vYArvMgVxgzNeZ1+TMhBrPG/+b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gl51o3We; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so34553665e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 10:05:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727024706; x=1727629506; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=veWNnGSV8JPvO7ZEpQhYz2qiIqFZBxeslk/SL0SM1dY=;
-        b=gl51o3WejSPMf5yAPFevTRkybfLSTSltDTboBh4WigGKk+cTFeJ9zkdQEj45eS3HdL
-         xTbcinxhjzlXIRuD4hJSw5DUhNNMdRdtwzFNb8mu9bCgLY00qxpWgblh2ozvz3l24+pW
-         I/V+CHIARfTKl1nr2iJimWLSCdZZ1VA6YfFxQQ+bBLD99XOdw+UYM6DlCGpiDUwD+3D/
-         wTQ9CPs13uZPEEFmAHgXFSt/B4U4ys/3SkMNXaLt3ik60k6T7pZKLqTGOx5ekASDXFiA
-         1yaRNiw3Xd8nf2HpZrWjpA+4OaGPZOEuHPyaoLsL09dTMJvneh2UQxCfLcyiNlSZCDvR
-         MXIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727024706; x=1727629506;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=veWNnGSV8JPvO7ZEpQhYz2qiIqFZBxeslk/SL0SM1dY=;
-        b=J8XNEFERyxY3Oeo54D6ZKW4SInUO+3fcL+jhizlyeQLRF1i22yqxbSEZ2CcHS9Bcll
-         B4HKZV07Xnx85IIbIho7EPq5VGx3zqTCe0W28Yies34SGaqREH/qUMW2HuHghv+mkT2N
-         C5EhLzMiw5CunmmKdpplaK8nGJgN50IROwwWUimwmgYtKcplKhkl9BnxvzqgWl4F8NiQ
-         YBLTtBFX0nrhE6CrhfpV6uqra8FZSfWwSjeAjWDJLSpBID8/R96n/54XWcjeRglCyJkP
-         RlDLIOvqa77Nl2svqPVMuX1b5EPHiNkIxNwAdt4VZ49+5iyZiHSjzgC0kg9kfJ3qgcyY
-         LWlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOAZcLUlEXHdKwsHb1vZlJcnLDSpYfaOA+sbNuCp8dyioBuJND0Rpoa5vxtNoSDIyZiRdxsnL25wdqR84=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUs5YCAlD8COjzjkLu+bKAfDy76TtxjCJAp9thUxFm4vNDimtB
-	eKRlmms1xR4WeU7Nu/aU3LakC+wl9XsSe9iugrhwcLRcqmYiKPhFbhPtkSQom14Bt7THyxWpnPt
-	CfqoZAsDAoO2kUpLyNhNTuA9j84hpt9AW+7cY
-X-Google-Smtp-Source: AGHT+IHoRj232ud+Ogb0cPaaHYQs3nhgibC+IH2EwIfqZg/zoPtqI0ieL1JHiQCGJqS5QB6NuSYTV7Ec7TzO2+EbIxk=
-X-Received: by 2002:a05:600c:1d1b:b0:426:5fbc:f319 with SMTP id
- 5b1f17b1804b1-42e7c1a97b3mr64548645e9.33.1727024705648; Sun, 22 Sep 2024
- 10:05:05 -0700 (PDT)
+	s=arc-20240116; t=1727024712; c=relaxed/simple;
+	bh=xslP7AXvSkVuMhvWM8OqO8/hx8E19JC6RLFtS4kykIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CbqXVGA9TCheo8WHYX+yBl+wNr8iinqqV3mbMS4uyACK7z6cQSx1KxzYLEFZBTRyDnNqfZQxgRTXHaGr4NaKLNGRNzCiy9DvsdPL1ODBZ+LHVuRhx9O3Zu4d1oAbKA5cCZUHRTB0701UDyVVfLd3B+x9imdBHFYdBZZleQPzhus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tb4geJDS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56A0DC4CEC3;
+	Sun, 22 Sep 2024 17:05:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727024711;
+	bh=xslP7AXvSkVuMhvWM8OqO8/hx8E19JC6RLFtS4kykIs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tb4geJDSEjrBGmuC/mExVwIo6ha8m2jYkGkBj6kXi1blEi1GLSYSFSqGqpmc2AI+2
+	 hE/VCggXEajkvH8VgpSKngkjiqvndvC3W0abooMx5qm4UQKTqHdlOEtyCHecucJiMv
+	 ugt8vGVu17Y4/xUw+j8E59YCXF2ZvXkysByUFwbKmbTkxEdUKEeDoidIhqM+lrCRt3
+	 wCi4IJOATxtu4RH1yUmnEKcVwNVUxs7PVHmtJJl6kriN8LdEDsmtyY/XgK/LykjZ9D
+	 YDgwkmB8+/bqRfPsOb+lKZVhaJ7ljk4xspNvEDsFdNsLW28wEdFhw7OX2JLtKbg4Zo
+	 PEeZzaC3VC6UQ==
+Date: Sun, 22 Sep 2024 18:05:07 +0100
+From: Simon Horman <horms@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Clayton Rayment <clayton.rayment@xilinx.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Julia Lawall <julia.lawall@inria.fr>
+Subject: Re: [PATCH] net: xilinx: axienet: Use common error handling code in
+ axienet_mdio_write()
+Message-ID: <20240922170507.GD3426578@kernel.org>
+References: <330c2b9e-9a15-4442-8288-07f66760f856@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
- <20240915-alice-file-v10-5-88484f7a3dcf@google.com> <202409151325.09E4F3C2F@keescook>
- <CAH5fLghA0tLTwCDBRrm+GAEWhhY7Y8qLtpj0wwcvTK_ZRZVgBw@mail.gmail.com>
- <39306b5d-82a5-48df-bfd3-5cc2ae52bedb@schaufler-ca.com> <CAH5fLgjWkK0gXsGcT3gLEhYZvgnW9FPuV1eOZKRagEVvL5cGpw@mail.gmail.com>
- <afe99ad2-bb53-4e80-bc43-f48b03b014cf@schaufler-ca.com>
-In-Reply-To: <afe99ad2-bb53-4e80-bc43-f48b03b014cf@schaufler-ca.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Sun, 22 Sep 2024 19:04:53 +0200
-Message-ID: <CAH5fLgiWZzOQt+B90c59gvMkdut=owMMbN1Gd1G8+ZMCRkJvVA@mail.gmail.com>
-Subject: Re: [PATCH v10 5/8] rust: security: add abstraction for secctx
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <330c2b9e-9a15-4442-8288-07f66760f856@web.de>
 
-On Sun, Sep 22, 2024 at 6:50=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
->
-> On 9/22/2024 8:08 AM, Alice Ryhl wrote:
-> > On Mon, Sep 16, 2024 at 5:40=E2=80=AFPM Casey Schaufler <casey@schaufle=
-r-ca.com> wrote:
-> >> On 9/15/2024 2:07 PM, Alice Ryhl wrote:
-> >>> On Sun, Sep 15, 2024 at 10:58=E2=80=AFPM Kees Cook <kees@kernel.org> =
-wrote:
-> >>>> On Sun, Sep 15, 2024 at 02:31:31PM +0000, Alice Ryhl wrote:
-> >>>>> Add an abstraction for viewing the string representation of a secur=
-ity
-> >>>>> context.
-> >>>> Hm, this may collide with "LSM: Move away from secids" is going to h=
-appen.
-> >>>> https://lore.kernel.org/all/20240830003411.16818-1-casey@schaufler-c=
-a.com/
-> >>>>
-> >>>> This series is not yet landed, but in the future, the API changes sh=
-ould
-> >>>> be something like this, though the "lsmblob" name is likely to chang=
-e to
-> >>>> "lsmprop"?
-> >>>> security_cred_getsecid()   -> security_cred_getlsmblob()
-> >>>> security_secid_to_secctx() -> security_lsmblob_to_secctx()
-> >> The referenced patch set does not change security_cred_getsecid()
-> >> nor remove security_secid_to_secctx(). There remain networking interfa=
-ces
-> >> that are unlikely to ever be allowed to move away from secids. It will
-> >> be necessary to either retain some of the secid interfaces or introduc=
-e
-> >> scaffolding around the lsm_prop structure.
-> >>
-> >> Binder is currently only supported in SELinux, so this isn't a real is=
-sue
-> >> today. The BPF LSM could conceivably support binder, but only in cases=
- where
-> >> SELinux isn't enabled. Should there be additional LSMs that support bi=
-nder
-> >> the hooks would have to be changed to use lsm_prop interfaces, but I h=
-ave
-> >> not included that *yet*.
-> >>
-> >>> Thanks for the heads up. I'll make sure to look into how this
-> >>> interacts with those changes.
-> >> There will be a follow on patch set as well that replaces the LSMs use
-> >> of string/length pairs with a structure. This becomes necessary in cas=
-es
-> >> where more than one active LSM uses secids and security contexts. This
-> >> will affect binder.
-> > When are these things expected to land?
->
-> I would like them to land in 6.14, but history would lead me to think
-> it will be later than that. A lot will depend on how well the large set
-> of LSM changes that went into 6.12 are received.
->
-> >  If this patch series gets
-> > merged in the same kernel cycle as those changes, it'll probably need
-> > special handling.
->
-> Yes, this is the fundamental downside of the tree merge development model=
-.
+On Fri, Sep 20, 2024 at 01:01:45PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 20 Sep 2024 12:43:39 +0200
+> Subject: [PATCH] net: xilinx: axienet: Use common error handling code in axienet_mdio_write()
+> 
+> Add a label so that a bit of exception handling can be better reused
+> at the end of this function implementation.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Okay. I'm hoping to land this series in 6.13 so hopefully we won't
-need to do anything special.
 
-Alice
+Hi Markus,
+
+This change seems reasonable to me.  However, I am assuming that as a
+non-bug-fix, this is targeted at net-next.  And net-next is currently
+closed for the v6.12 merge window.  Please consider reposting this patch
+once net-next reopens.  That will occur after v6.12-rc1 has been released.
+Which I expect to be about a week from now.
+
+Also, for networking patches please tag non-bug fixes for
+net-next (and bug fixes for net, being sure to include a Fixes tag).
+
+	Subject: [PATCH net-next] ...
+
+Please see https://docs.kernel.org/process/maintainer-netdev.html
+
+...
+
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c b/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
+
+...
+
+> @@ -153,12 +151,9 @@ static int axienet_mdio_write(struct mii_bus *bus, int phy_id, int reg,
+>  		     XAE_MDIO_MCR_OP_WRITE_MASK));
+> 
+>  	ret = axienet_mdio_wait_until_ready(lp);
+> -	if (ret < 0) {
+> -		axienet_mdio_mdc_disable(lp);
+> -		return ret;
+> -	}
+
+Please add a blank line here.
+
+> +disable_mdc:
+>  	axienet_mdio_mdc_disable(lp);
+> -	return 0;
+> +	return ret;
+>  }
+> 
+>  /**
+
+-- 
+pw-bot: defer
 
