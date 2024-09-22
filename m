@@ -1,113 +1,348 @@
-Return-Path: <linux-kernel+bounces-335191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5099B97E266
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 18:12:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A255097E26C
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 18:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E44ADB20A54
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:12:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6C691F2146E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 16:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCDD17C64;
-	Sun, 22 Sep 2024 16:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5968228DC1;
+	Sun, 22 Sep 2024 16:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hC89t6Hk"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kRenC6FD"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2422913
-	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 16:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D479E2CA7
+	for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 16:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727021569; cv=none; b=VDlCUNvHFfYsG9QZ6uNEmKxVT6IOD/Y6oPuxtW2sTsH9LL/SmsQLFMpSzDlT6OJoVFBUYOXoL/VfRE+zBMzliZ7ZFieU7uPUyDAZAy0NxsNDH0Jd35y1jQnHl7Kc1/WxmIc6dc4hx3npvYEJvX0Wz+WZGx1EIQFkEiGsoWZXQuE=
+	t=1727021892; cv=none; b=XE68wagoVX/U4a95yX4Cq2FdxU5ztOIiZK8kUjg95DxkzMxeYZLMT6mHaKjZWLKBqz/Bf5lU1rj419SlakWDMNRsVfCJWsVXJEA01RMgN3JJOe3qOiaahUIImfz3UY944yqYKPJHciXM06ndUWGaugtIfvnL8zLp7bCp1+atJs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727021569; c=relaxed/simple;
-	bh=PxbF7KIDgeswLzBAgkyjDFXslQAxh69mkGfEpa9Lr58=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xjm7k8psIcD9j6N2UIjvmYxw5de9YUi1X2468Ex6ChNHRgGNJJe0ie3VantbbQxuxs6W6kkPNItvToewyQtZl1PB5N+fZD7u/Xw3WPFv1iQP3uMoi8YPZi+biBmHeh4asMqfAVrTQ9VlH1VOo7zXQnrzOiN9y5L4F//EUD3v71I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hC89t6Hk; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so4495557e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 09:12:46 -0700 (PDT)
+	s=arc-20240116; t=1727021892; c=relaxed/simple;
+	bh=l+pHHFaaTt0v8pBAAKbKlDUDZo041W6MKNZhaK3bKtI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kPSlniPGj4DNdW7j3Rt8T+hCKnDldwHWx+nSFzz0kG0D432YQL5UKzHExzCf8GCaqUfEopFbJUDaPJORlw8THYwSLcccWkWCINVt8EMT9ZObh4/7VyDt9XpZ7J2eAEvtkeIr3wNg+AwropLijji/iBm1wmUf9lMyQh1QTIE8dm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kRenC6FD; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-205428e6facso52300525ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Sep 2024 09:18:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727021565; x=1727626365; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QNw0/2euWwO8oJrG8EqU+t5rpgVcNTbYcUPfD5tgmnk=;
-        b=hC89t6HkWu8PdML5Q1iVuTMCT7zROFumgF4TS01T13mpgJVwVYnuw39cAxhU+C7wKW
-         HIJiTVL33WdZY/rqH8jfIvAm6+OSLEnzcjbP/ELcyXeAw0LKmI3jLJEM32Kd+m9Kjv9+
-         Mz9RrJcMgGW1d1KYyYPr2NGrHpfDDPKc1FMhXBy8LsRtdxfqvIc5cIEd3DS08m26TgwB
-         7IohrJ+moVOD/mCOGKXwAgbQQlhCh8DECIdnu6pR0khV3gmyEbTXEysZqsNwDFkuOHRD
-         S2/U+QZYQlXATYo/DMeuak7qLz7u8rbTC7yY2KN9vjgqahabyk9v3ihngSmBW6Am7M1q
-         yjJA==
+        d=google.com; s=20230601; t=1727021889; x=1727626689; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q8C0hzk3cftIt6mgnsy72jgk6JMieI7UypLC5PItOVw=;
+        b=kRenC6FDlisiR0LIXr9EZid0GCVay9zER9psxiZ2U02GiCleEsNYlQEqWa0lKpec0N
+         sfz+uFq06RPGxvHs6xMjf+3kdSBv9HRuRTjtefg6SPyQs6n2nMTOqQOuMtGqAysGCBvm
+         jw8/Y7eamrlqa4vLhfdzAOHyGXorms/4uyJbGByi9zlxZnOuP/hF4Sw00q0SYLRSzcnI
+         7tCfosBqTsjCBIHjr9jf+ockMs+ojZOTzmpgJ69ZRHVaJ8mJBRkkf6H0vharWx776xKo
+         Qtx3qkLnzWZgi4FgDF5/GF8WycGm4ceBnnvIXisMAfVUkNw+1FwvBNrIfB8Ii3YNS6za
+         KYCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727021565; x=1727626365;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QNw0/2euWwO8oJrG8EqU+t5rpgVcNTbYcUPfD5tgmnk=;
-        b=pfcw3IkW1UDjG5K+iczj4Q9PeL/KaraoBDfHD2aP6XDC9chO/cGrsxLBLDBBTINpqB
-         OtyFLKhHuZ6oPvAxwybGnx9zZXRGWzOHHReEcymM1rfCgPPNxB6WQ7iSA/L8Gm9CXLwE
-         QZ/USBHwXaQE95HND72AumTF5h0cU8TgHetIfvG+w8EIsbo/ZRU/6aB8sn5NHh1pzyuf
-         uxCPtZIiln+cFvzfm3M51GWSa7+fScYEQvSz60QxMfPYWHT/DMcC/wFiptf9zYTsVV/V
-         Yn1e8bJEHjweyT1JAKZr1dONj0Vk/cRiXO54Og/zolGTCwEJuKA1WaxJcljSOKsQcTJl
-         phSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIZol+ZytOLGqwmF8EK8Lb3wLTNRlBfcclv3I8l060mKvM4kCLAQfwq3OQK3vyTx1IilFeNWjyozRGYps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSV0d8vM1FudzR7jgtcnSRmCPPfC/ETtdIf9DBO2EK7pW1kQoe
-	PywvBjNgHnwIIsNLejeCh/fg+rnHxqscUtquxvcudQzuQFmDDLH9ELg0X2Q6ARlSc3MD+NT7Wk6
-	2NfM=
-X-Google-Smtp-Source: AGHT+IHrHkrXionuyJuSlC4/JFdsVtuuk2CJnoDi1RT/0/wLn7DmA/8XyDMWQDAf7QEs6P814vwmVQ==
-X-Received: by 2002:a05:6512:3d1d:b0:52c:daa4:2f5c with SMTP id 2adb3069b0e04-536ac33452emr4622850e87.42.1727021564722;
-        Sun, 22 Sep 2024 09:12:44 -0700 (PDT)
-Received: from eriador.lan (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5369d5632absm1938905e87.247.2024.09.22.09.12.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2024 09:12:43 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	tjakobi@math.uni-bielefeld.de
-Subject: Re: [PATCH 0/3] Panel orientation quirks for AYA NEO handhelds
-Date: Sun, 22 Sep 2024 19:12:40 +0300
-Message-ID: <172702155424.1364397.1004758299220219518.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1726492131.git.tjakobi@math.uni-bielefeld.de>
-References: <cover.1726492131.git.tjakobi@math.uni-bielefeld.de>
+        d=1e100.net; s=20230601; t=1727021889; x=1727626689;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q8C0hzk3cftIt6mgnsy72jgk6JMieI7UypLC5PItOVw=;
+        b=ecHvW8wnznQ5xU3AfnxIsm3QeYWX+qtfdv+N6y8CsTxanC6NmQx1mEgXlT9pUeXAxi
+         AgPCXjz47ZxS4WO/sX8YiVtxa1eTFtkoVOZRjscmFv4AKwCi6EJxc83mvAG9O4JdEWzB
+         GVOO3kYtBisqvnkbbv+nkD30z0Z8fIz4GjZ7GYbTQutBbVrfjRJ9YCsMKD8yFhEpd+FS
+         iP+9tEMD0wR0lb6k0x65oj5TV1RYwWDENY5wqC4vK3y6GAnLJdxvdgyyDuFMUZvX6D5N
+         7bPS3XoG/epICFWyU1eEP5rdt/BGsPv73taGgkbjrWQhREvrOrjoqt/nbZA1D53WYHQ6
+         aexg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFvaf3b3veCFZbAWCYS+S+97gt+gFUUiixNrExHpwPtFaOlmnvbSiUd4PyGprk4zTSWVd/SqRW3l0IQFE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOszd3RLmDtTsNoKadym0pqB43EYCFmnqV9kjOI/3iKt3oCD2p
+	fTXrYihx6WsGOMX+zyCN6bzh92SONU2jYcdUibBqaNJH7RsOfObQQ4Emir0UsB0aOktZf5JaSlW
+	dzg==
+X-Google-Smtp-Source: AGHT+IEosLx2lddQGGIDPXkRP/2Rd2dCs7XcOgrC4ORS29XnzMIqTpa4/aNZsQ/utBFHJOxiR3G+rfv6gqs=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:e543:b0:206:c5ec:1445 with SMTP id
+ d9443c01a7336-208d8549200mr2148095ad.8.1727021888940; Sun, 22 Sep 2024
+ 09:18:08 -0700 (PDT)
+Date: Sun, 22 Sep 2024 09:17:58 -0700
+In-Reply-To: <20240920154422.2890096-1-vkuznets@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240920154422.2890096-1-vkuznets@redhat.com>
+Message-ID: <ZvBDNpFG6SbDYDDl@google.com>
+Subject: Re: [PATCH] KVM: selftests: x86: Avoid using SSE/AVX instructions
+From: Sean Christopherson <seanjc@google.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	Jan Richter <jarichte@redhat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, 16 Sep 2024 15:18:49 +0200, tjakobi@math.uni-bielefeld.de wrote:
-> From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-> 
-> Hello,
-> 
-> this is a re-submit of panel orientation quirks for some of the handheld
-> devices by vendor AYA NEO.
-> 
-> [...]
+On Fri, Sep 20, 2024, Vitaly Kuznetsov wrote:
+> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+> index 48d32c5aa3eb..3f1b24ed7245 100644
+> --- a/tools/testing/selftests/kvm/Makefile
+> +++ b/tools/testing/selftests/kvm/Makefile
+> @@ -238,6 +238,7 @@ CFLAGS += -Wall -Wstrict-prototypes -Wuninitialized -O2 -g -std=gnu99 \
+>  	-fno-stack-protector -fno-PIE -I$(LINUX_TOOL_INCLUDE) \
+>  	-I$(LINUX_TOOL_ARCH_INCLUDE) -I$(LINUX_HDR_PATH) -Iinclude \
+>  	-I$(<D) -Iinclude/$(ARCH_DIR) -I ../rseq -I.. $(EXTRA_CFLAGS) \
+> +	-march=x86-64-v2 \
 
-Applied to drm-misc-next, thanks!
+I would rather go straight to playing nice with AVX.  Not because I care about
+being able to use AVX, but because pretty much every instance where KVM selftests
+punts setup to individual tests eventually leads to gross copy+paste code.
 
-[1/3] drm: panel-orientation-quirks: Add quirk for AYA NEO 2 model
-      commit: 361ebf5ef843b0aa1704c72eb26b91cf76c3c5b7
-[2/3] drm: panel-orientation-quirks: Add quirk for AYA NEO Founder edition
-      commit: d7972d735ca80a40a571bf753c138263981a5698
-[3/3] drm: panel-orientation-quirks: Add quirk for AYA NEO GEEK
-      commit: 428656feb972ca99200fc127b5aecb574efd9d3d
+The diff ends up being bigger than I was hoping, but that's largely because tests
+are already manually enabling stuff in XCR0 (see above copy+paste complaint).
 
-Best regards,
+I can post the below later this week (probably as multiple patches).
+
+Note, -march=x86-64-v3 is there just to make it easy to test, I won't actually
+include that in the patches :-)
+
+---
+ tools/testing/selftests/kvm/Makefile          |  1 +
+ .../selftests/kvm/include/x86_64/processor.h  |  5 ++++
+ .../selftests/kvm/lib/x86_64/processor.c      | 24 +++++++++++++++++++
+ tools/testing/selftests/kvm/x86_64/amx_test.c | 23 ++++--------------
+ .../testing/selftests/kvm/x86_64/cpuid_test.c |  6 ++++-
+ .../selftests/kvm/x86_64/sev_smoke_test.c     | 11 ---------
+ .../testing/selftests/kvm/x86_64/state_test.c |  5 ----
+ .../selftests/kvm/x86_64/xcr0_cpuid_test.c    | 11 ++++++---
+ 8 files changed, 47 insertions(+), 39 deletions(-)
+
+diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+index 960cf6a77198..7ef4b3cc403d 100644
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@ -238,6 +238,7 @@ else
+ LINUX_TOOL_ARCH_INCLUDE = $(top_srcdir)/tools/arch/$(ARCH)/include
+ endif
+ CFLAGS += -Wall -Wstrict-prototypes -Wuninitialized -O2 -g -std=gnu99 \
++	-march=x86-64-v3 \
+ 	-Wno-gnu-variable-sized-type-not-at-end -MD -MP -DCONFIG_64BIT \
+ 	-fno-builtin-memcmp -fno-builtin-memcpy \
+ 	-fno-builtin-memset -fno-builtin-strnlen \
+diff --git a/tools/testing/selftests/kvm/include/x86_64/processor.h b/tools/testing/selftests/kvm/include/x86_64/processor.h
+index e247f99e0473..645200e95f89 100644
+--- a/tools/testing/selftests/kvm/include/x86_64/processor.h
++++ b/tools/testing/selftests/kvm/include/x86_64/processor.h
+@@ -1049,6 +1049,11 @@ static inline void vcpu_set_cpuid(struct kvm_vcpu *vcpu)
+ 	vcpu_ioctl(vcpu, KVM_GET_CPUID2, vcpu->cpuid);
+ }
+ 
++static inline void vcpu_get_cpuid(struct kvm_vcpu *vcpu)
++{
++	vcpu_ioctl(vcpu, KVM_GET_CPUID2, vcpu->cpuid);
++}
++
+ void vcpu_set_cpuid_property(struct kvm_vcpu *vcpu,
+ 			     struct kvm_x86_cpu_property property,
+ 			     uint32_t value);
+diff --git a/tools/testing/selftests/kvm/lib/x86_64/processor.c b/tools/testing/selftests/kvm/lib/x86_64/processor.c
+index 974bcd2df6d7..636b29ba8985 100644
+--- a/tools/testing/selftests/kvm/lib/x86_64/processor.c
++++ b/tools/testing/selftests/kvm/lib/x86_64/processor.c
+@@ -506,6 +506,8 @@ static void vcpu_init_sregs(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
+ 
+ 	sregs.cr0 = X86_CR0_PE | X86_CR0_NE | X86_CR0_PG;
+ 	sregs.cr4 |= X86_CR4_PAE | X86_CR4_OSFXSR;
++	if (kvm_cpu_has(X86_FEATURE_XSAVE))
++		sregs.cr4 |= X86_CR4_OSXSAVE;
+ 	sregs.efer |= (EFER_LME | EFER_LMA | EFER_NX);
+ 
+ 	kvm_seg_set_unusable(&sregs.ldt);
+@@ -519,6 +521,20 @@ static void vcpu_init_sregs(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
+ 	vcpu_sregs_set(vcpu, &sregs);
+ }
+ 
++static void vcpu_init_xcrs(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
++{
++	struct kvm_xcrs xcrs = {
++		.nr_xcrs = 1,
++		.xcrs[0].xcr = 0,
++		.xcrs[0].value = kvm_cpu_supported_xcr0(),
++	};
++
++	if (!kvm_cpu_has(X86_FEATURE_XSAVE))
++		return;
++
++	vcpu_xcrs_set(vcpu, &xcrs);
++}
++
+ static void set_idt_entry(struct kvm_vm *vm, int vector, unsigned long addr,
+ 			  int dpl, unsigned short selector)
+ {
+@@ -675,6 +691,7 @@ struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
+ 	vcpu = __vm_vcpu_add(vm, vcpu_id);
+ 	vcpu_init_cpuid(vcpu, kvm_get_supported_cpuid());
+ 	vcpu_init_sregs(vm, vcpu);
++	vcpu_init_xcrs(vm, vcpu);
+ 
+ 	/* Setup guest general purpose registers */
+ 	vcpu_regs_get(vcpu, &regs);
+@@ -686,6 +703,13 @@ struct kvm_vcpu *vm_arch_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
+ 	mp_state.mp_state = 0;
+ 	vcpu_mp_state_set(vcpu, &mp_state);
+ 
++	/*
++	 * Refresh CPUID after setting SREGS and XCR0, so that KVM's "runtime"
++	 * updates to guest CPUID, e.g. for OSXSAVE and XSAVE state size, are
++	 * reflected into selftests' vCPU CPUID cache, i.e. so that the cache
++	 * is consistent with vCPU state.
++	 */
++	vcpu_get_cpuid(vcpu);
+ 	return vcpu;
+ }
+ 
+diff --git a/tools/testing/selftests/kvm/x86_64/amx_test.c b/tools/testing/selftests/kvm/x86_64/amx_test.c
+index 903940c54d2d..f4ce5a185a7d 100644
+--- a/tools/testing/selftests/kvm/x86_64/amx_test.c
++++ b/tools/testing/selftests/kvm/x86_64/amx_test.c
+@@ -86,6 +86,8 @@ static inline void __xsavec(struct xstate *xstate, uint64_t rfbm)
+ 
+ static void check_xtile_info(void)
+ {
++	GUEST_ASSERT((xgetbv(0) & XFEATURE_MASK_XTILE) == XFEATURE_MASK_XTILE);
++
+ 	GUEST_ASSERT(this_cpu_has_p(X86_PROPERTY_XSTATE_MAX_SIZE_XCR0));
+ 	GUEST_ASSERT(this_cpu_property(X86_PROPERTY_XSTATE_MAX_SIZE_XCR0) <= XSAVE_SIZE);
+ 
+@@ -122,29 +124,12 @@ static void set_tilecfg(struct tile_config *cfg)
+ 	}
+ }
+ 
+-static void init_regs(void)
+-{
+-	uint64_t cr4, xcr0;
+-
+-	GUEST_ASSERT(this_cpu_has(X86_FEATURE_XSAVE));
+-
+-	/* turn on CR4.OSXSAVE */
+-	cr4 = get_cr4();
+-	cr4 |= X86_CR4_OSXSAVE;
+-	set_cr4(cr4);
+-	GUEST_ASSERT(this_cpu_has(X86_FEATURE_OSXSAVE));
+-
+-	xcr0 = xgetbv(0);
+-	xcr0 |= XFEATURE_MASK_XTILE;
+-	xsetbv(0x0, xcr0);
+-	GUEST_ASSERT((xgetbv(0) & XFEATURE_MASK_XTILE) == XFEATURE_MASK_XTILE);
+-}
+-
+ static void __attribute__((__flatten__)) guest_code(struct tile_config *amx_cfg,
+ 						    struct tile_data *tiledata,
+ 						    struct xstate *xstate)
+ {
+-	init_regs();
++	GUEST_ASSERT(this_cpu_has(X86_FEATURE_XSAVE) &&
++		     this_cpu_has(X86_FEATURE_OSXSAVE));
+ 	check_xtile_info();
+ 	GUEST_SYNC(1);
+ 
+diff --git a/tools/testing/selftests/kvm/x86_64/cpuid_test.c b/tools/testing/selftests/kvm/x86_64/cpuid_test.c
+index 8c579ce714e9..e79a6577254f 100644
+--- a/tools/testing/selftests/kvm/x86_64/cpuid_test.c
++++ b/tools/testing/selftests/kvm/x86_64/cpuid_test.c
+@@ -37,7 +37,11 @@ static void test_guest_cpuids(struct kvm_cpuid2 *guest_cpuid)
+ 
+ 		GUEST_ASSERT_EQ(eax, guest_cpuid->entries[i].eax);
+ 		GUEST_ASSERT_EQ(ebx, guest_cpuid->entries[i].ebx);
+-		GUEST_ASSERT_EQ(ecx, guest_cpuid->entries[i].ecx);
++		__GUEST_ASSERT(ecx == guest_cpuid->entries[i].ecx,
++			       "CPUID.0x%x.0x%x.ECX 0%x != 0x%x",
++			       guest_cpuid->entries[i].function,
++			       guest_cpuid->entries[i].index,
++			       ecx, guest_cpuid->entries[i].ecx);
+ 		GUEST_ASSERT_EQ(edx, guest_cpuid->entries[i].edx);
+ 	}
+ 
+diff --git a/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c b/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
+index 2e9197eb1652..59a5a2227944 100644
+--- a/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
++++ b/tools/testing/selftests/kvm/x86_64/sev_smoke_test.c
+@@ -70,12 +70,6 @@ static void test_sync_vmsa(uint32_t policy)
+ 
+ 	double x87val = M_PI;
+ 	struct kvm_xsave __attribute__((aligned(64))) xsave = { 0 };
+-	struct kvm_sregs sregs;
+-	struct kvm_xcrs xcrs = {
+-		.nr_xcrs = 1,
+-		.xcrs[0].xcr = 0,
+-		.xcrs[0].value = XFEATURE_MASK_X87_AVX,
+-	};
+ 
+ 	vm = vm_sev_create_with_one_vcpu(KVM_X86_SEV_ES_VM, guest_code_xsave, &vcpu);
+ 	gva = vm_vaddr_alloc_shared(vm, PAGE_SIZE, KVM_UTIL_MIN_VADDR,
+@@ -84,11 +78,6 @@ static void test_sync_vmsa(uint32_t policy)
+ 
+ 	vcpu_args_set(vcpu, 1, gva);
+ 
+-	vcpu_sregs_get(vcpu, &sregs);
+-	sregs.cr4 |= X86_CR4_OSFXSR | X86_CR4_OSXSAVE;
+-	vcpu_sregs_set(vcpu, &sregs);
+-
+-	vcpu_xcrs_set(vcpu, &xcrs);
+ 	asm("fninit\n"
+ 	    "vpcmpeqb %%ymm4, %%ymm4, %%ymm4\n"
+ 	    "fldl %3\n"
+diff --git a/tools/testing/selftests/kvm/x86_64/state_test.c b/tools/testing/selftests/kvm/x86_64/state_test.c
+index 1c756db329e5..141b7fc0c965 100644
+--- a/tools/testing/selftests/kvm/x86_64/state_test.c
++++ b/tools/testing/selftests/kvm/x86_64/state_test.c
+@@ -145,11 +145,6 @@ static void __attribute__((__flatten__)) guest_code(void *arg)
+ 
+ 		memset(buffer, 0xcc, sizeof(buffer));
+ 
+-		set_cr4(get_cr4() | X86_CR4_OSXSAVE);
+-		GUEST_ASSERT(this_cpu_has(X86_FEATURE_OSXSAVE));
+-
+-		xsetbv(0, xgetbv(0) | supported_xcr0);
+-
+ 		/*
+ 		 * Modify state for all supported xfeatures to take them out of
+ 		 * their "init" state, i.e. to make them show up in XSTATE_BV.
+diff --git a/tools/testing/selftests/kvm/x86_64/xcr0_cpuid_test.c b/tools/testing/selftests/kvm/x86_64/xcr0_cpuid_test.c
+index 95ce192d0753..c8a5c5e51661 100644
+--- a/tools/testing/selftests/kvm/x86_64/xcr0_cpuid_test.c
++++ b/tools/testing/selftests/kvm/x86_64/xcr0_cpuid_test.c
+@@ -48,16 +48,16 @@ do {									\
+ 
+ static void guest_code(void)
+ {
+-	uint64_t xcr0_reset;
++	uint64_t initial_xcr0;
+ 	uint64_t supported_xcr0;
+ 	int i, vector;
+ 
+ 	set_cr4(get_cr4() | X86_CR4_OSXSAVE);
+ 
+-	xcr0_reset = xgetbv(0);
++	initial_xcr0 = xgetbv(0);
+ 	supported_xcr0 = this_cpu_supported_xcr0();
+ 
+-	GUEST_ASSERT(xcr0_reset == XFEATURE_MASK_FP);
++	GUEST_ASSERT(initial_xcr0 == supported_xcr0);
+ 
+ 	/* Check AVX */
+ 	ASSERT_XFEATURE_DEPENDENCIES(supported_xcr0,
+@@ -79,6 +79,11 @@ static void guest_code(void)
+ 	ASSERT_ALL_OR_NONE_XFEATURE(supported_xcr0,
+ 				    XFEATURE_MASK_XTILE);
+ 
++	vector = xsetbv_safe(0, XFEATURE_MASK_FP);
++	__GUEST_ASSERT(!vector,
++		       "Expected success on XSETBV(FP), got vector '0x%x'",
++		       vector);
++
+ 	vector = xsetbv_safe(0, supported_xcr0);
+ 	__GUEST_ASSERT(!vector,
+ 		       "Expected success on XSETBV(0x%lx), got vector '0x%x'",
+
+base-commit: 3f8df6285271d9d8f17d733433e5213a63b83a0b
 -- 
-With best wishes
-Dmitry
 
 
