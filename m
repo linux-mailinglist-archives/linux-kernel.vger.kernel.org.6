@@ -1,60 +1,91 @@
-Return-Path: <linux-kernel+bounces-335105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED9B97E116
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 13:21:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03AE197E119
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 13:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E23FE281385
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 11:21:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76E89B20E72
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Sep 2024 11:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFFD193065;
-	Sun, 22 Sep 2024 11:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE2F193090;
+	Sun, 22 Sep 2024 11:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flokli.de header.i=@flokli.de header.b="UtGneW1D"
-Received: from mail.flokli.de (mail.flokli.de [116.203.226.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BA5oJnt2"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274F63B7AC;
-	Sun, 22 Sep 2024 11:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.226.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9513B7AC;
+	Sun, 22 Sep 2024 11:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727004088; cv=none; b=ZiPakmtw7m6d53VGrShXMK7GXveGh8rBcmcYzAWDoJF67bMRiLSq767JUY2wcNLnFa4QpJ0k+Cp2Z4uiNIHmkawhdBdV+LE+M1MzaU2hH8wOzgBHMHTrKVCN4wTLkHPybqBTDGuOhbmS5itspflckaLL5MrhN0vpmX+YjWDKHu0=
+	t=1727004213; cv=none; b=gbhuxDamy4f0xIRFsRv9RBaqEAnTM2W1a1KgeJglCWcXVD3vT7B6MkV+V8YapVwcGTHlFNGslLAF6+PNM9XoNQc73Gilr1UsCGLvMJ/bIc/bubMXfi6zvBP9Gaqh/i6WU3URijQA2B1fGgRk8bw9WAqc61YYfC6IqdGGXX2JZ+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727004088; c=relaxed/simple;
-	bh=9gW+dAUsSzMNbOy50TO99NdJ8ORNAysNtlIeDT5JpZ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qh2Ar6KRT6OqMGCPenkCGDtlY3lybMq2Ptbt/BcZ3PzEQyNeHPJfla3oQvWTSc8uM9RM9daVaxPwUPmYDVJq5zoyHIT2gkyVB7PHzvlTtKknLtAhJ6Vev0BifwkKcZDMX9CBc2szJ+9mVRu4ZkQ1LWmtNrVbnGqbQnSEtptRQQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=flokli.de; spf=pass smtp.mailfrom=flokli.de; dkim=pass (1024-bit key) header.d=flokli.de header.i=@flokli.de header.b=UtGneW1D; arc=none smtp.client-ip=116.203.226.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=flokli.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flokli.de
-From: Florian Klink <flokli@flokli.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flokli.de; s=mail;
-	t=1727004081; bh=GuRo2k0T9oiOFVzmZlE5UWzPH3hTNSPfo+s1LYF8J38=;
-	h=From:To:Cc:Subject:Date;
-	b=UtGneW1D2ul2axDXdozrtFWvUGfQCDuiXu1h0PdFHUc+XZx/AfVMrfD9roNuP2JbQ
-	 sxWuFSYDM4Ars5fUvHd8D1no56FoFYcYYtQ+nnmMc9wX0EJDvSafukxTx5hU4R9ZkY
-	 dDJV1nNBAN662PTZDcXRI+oD1/B+OaUuiDogFDjQ=
+	s=arc-20240116; t=1727004213; c=relaxed/simple;
+	bh=60A3xtkTT/KvaXL3VOHB0ChVGkhP0gPJfEPwVoyFjI0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZJ1fdWNo1C8ZP3Hth5XSEPdNMbZ/ZM7oFX1o86h2j6GOIGzVHKvFiJ+ZW9PklLDWyn9O2A/gw7iPNnNAbCEUUCz8XV04dExe6o2cfKk2DdRHN2bvMZxqZtjJPAwKSNpVU2MaivWDeEY8kt7qKEK4V4uV1Rgbqfhw0Wa32r/W+1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BA5oJnt2; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-718e9c8bd83so3155878b3a.1;
+        Sun, 22 Sep 2024 04:23:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727004211; x=1727609011; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y4XvrkkHqY+npY99j8P05tKxMHoVnzvwXiNTajRAyns=;
+        b=BA5oJnt2TpZkXTS1KSCJulV2/+lxW9mx1phvBTeN15h3I/VWHG5l1XXvSxCxaalykH
+         bWKmzJQRunKKY/z22kFIcKA68syIsZcT+6T9q9KuEOwDG1Mw9fI82/8XP8ho7iB0MZjE
+         okf/Y3iqfgT4NIfKGMfGqMhl0smlkOBXYA49F/8tqEGTMa2QgpePl2U8/lgtRu1b4SsA
+         aYbohWOQ6K6WiOoMEc7enc6mwY0uTOzoR7FcKFX8DxA5kaJwRIcIA1GdaQ9FQIxPFrU7
+         G0yOMfi2YL/NqLBa2H9plGM1vNoBgaPQ6K6iP52MFNfIbjomV8qnTJli60Zl0x3bNoau
+         /9uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727004211; x=1727609011;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y4XvrkkHqY+npY99j8P05tKxMHoVnzvwXiNTajRAyns=;
+        b=Qn5GmFRaHDaiT3qFRW9KNq3DiFt5Nq49YKawgfDB3Qyw2GW0d2fHOnQCxkcWy1P/7y
+         Erzcr2K0HuHIpaDQfqjU9dWgHLnTTZpd87z+Qz7RyU9xSlZfzIoc2kkGlSlxHfHVh+Jc
+         3RhNm/cgXrXszOznaeItNdCDC9ZaOD34SzfJtI/3kMcXh7yNomjgQpfCs+TeLyWZFBce
+         HYOmVzQchkfuCnxvYDUam83POQwetGpR8AJQjINBBQjEF5JTKh/tnfI/+IUijusaziZc
+         AvUE47C4lAmeoK/qPMc4K7/gCw8PbxEflfoaFrGk1M1S+yHn9Fz2K4ozKlG/Dz1kMYz+
+         2Caw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4/JdhF1LTllD0fPQlws7AxlCVqOCUIJxVVMV+LMC1Kec+5G8XaivMly110DRyRw6AU8fuRY3QMucyDUFCCdpERQ==@vger.kernel.org, AJvYcCXDcYA0iHRiwnfbYN/aSj/BnmTdJDuH8m3bU0VSa6WOZxgXCnw857FEJlReY0U0rdTDnuHBn/lBb9o6iNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiogcHaR3n8e+8/ZavIEZidEl714byTEamb+VWFOB/K96qL4rR
+	r/+j8YwyMBkZSKcoWDFmjrCTCZInEQqhAiflGklkZqMKyK+MCYV9
+X-Google-Smtp-Source: AGHT+IGe/D4+othuBwijX06o3xD3WHBhm/yUnZsI3Rg66EvBVbXR6EQQXOXJALO4mX6xIZ5hwW9KWA==
+X-Received: by 2002:a05:6a20:c888:b0:1d2:e793:cc0 with SMTP id adf61e73a8af0-1d30a8f2e43mr12712524637.7.1727004210710;
+        Sun, 22 Sep 2024 04:23:30 -0700 (PDT)
+Received: from localhost.localdomain ([103.175.62.244])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71944b97e51sm12353079b3a.162.2024.09.22.04.23.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Sep 2024 04:23:30 -0700 (PDT)
+From: Masum Reza <masumrezarock100@gmail.com>
 To: 
-Cc: Florian Klink <flokli@flokli.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	=?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>,
-	Ondrej Jirman <megi@xff.cz>,
-	Muhammed Efe Cetin <efectn@protonmail.com>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
+Cc: masumrezarock100@gmail.com,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Ze Gao <zegao2021@gmail.com>,
+	Yang Jihong <yangjihong1@huawei.com>,
+	John Titor <50095635+JohnRTitor@users.noreply.github.com>,
+	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: rockchip: enable automatic fan control on Orange Pi 5+
-Date: Sun, 22 Sep 2024 14:21:03 +0300
-Message-ID: <20240922112113.251431-1-flokli@flokli.de>
+Subject: [PATCH] perf evsel: display dmesg command of showing a hardcoded path
+Date: Sun, 22 Sep 2024 16:52:23 +0530
+Message-ID: <20240922112226.141756-1-masumrezarock100@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,61 +94,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This links the PWM fan on Orange Pi 5+ as an active cooling device
-managed automatically by the thermal subsystem, with a target SoC
-temperature of 65C and a minimum-spin interval from 55C to 65C to
-ensure airflow when the system gets warm.
+In non-FHS compliant distros like NixOS, nothing resides in `/bin`
+and `/usr/bin`. Instead dynamically symlinked into
+`/run/current-system/sw/bin/`, the executable resides in `/nix/store`.
 
-This is pretty much the same as '4a152231b050 ("arm64: dts: rockchip:
-enable automatic fan control on Rock 5B")', except for the Orange Pi
-5+ board.
+With this patch,`/bin` prefix from the dmesg command in the error
+message is stripped.
 
-Signed-off-by: Florian Klink <flokli@flokli.de>
+Link: https://github.com/NixOS/nixpkgs/pull/258027
 ---
- .../dts/rockchip/rk3588-orangepi-5-plus.dts   | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ tools/perf/util/evsel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-index e74871491ef5..d91438752006 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts
-@@ -351,6 +351,36 @@ &i2s2m0_sdi
- 	status = "okay";
- };
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index bc603193c477..7a06b7cfdc7e 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -3342,7 +3342,7 @@ int evsel__open_strerror(struct evsel *evsel, struct target *target,
  
-+&package_thermal {
-+	polling-delay = <1000>;
-+
-+	trips {
-+		package_fan0: package-fan0 {
-+			temperature = <55000>;
-+			hysteresis = <2000>;
-+			type = "active";
-+		};
-+
-+		package_fan1: package-fan1 {
-+			temperature = <65000>;
-+			hysteresis = <2000>;
-+			type = "active";
-+		};
-+	};
-+
-+	cooling-maps {
-+		map0 {
-+			trip = <&package_fan0>;
-+			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
-+		};
-+
-+		map1 {
-+			trip = <&package_fan1>;
-+			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
-+		};
-+	};
-+};
-+
- /* phy1 - M.KEY socket */
- &pcie2x1l0 {
- 	reset-gpios = <&gpio4 RK_PA5 GPIO_ACTIVE_HIGH>;
+ 	return scnprintf(msg, size,
+ 	"The sys_perf_event_open() syscall returned with %d (%s) for event (%s).\n"
+-	"/bin/dmesg | grep -i perf may provide additional information.\n",
++	"\"dmesg | grep -i perf\" may provide additional information.\n",
+ 			 err, str_error_r(err, sbuf, sizeof(sbuf)), evsel__name(evsel));
+ }
+ 
 -- 
 2.46.0
 
