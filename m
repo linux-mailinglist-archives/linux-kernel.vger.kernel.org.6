@@ -1,211 +1,154 @@
-Return-Path: <linux-kernel+bounces-336128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 131F497EF81
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:48:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED5D97EF86
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA837280DD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:48:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C859C280E42
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1BF19F111;
-	Mon, 23 Sep 2024 16:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE1F19F125;
+	Mon, 23 Sep 2024 16:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E+TEjqHM"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Med12sKp"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0FE13D625
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD34DF60;
+	Mon, 23 Sep 2024 16:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727110081; cv=none; b=QqTn8SVSesEi6OA55RYizbm0O904HhPb1EVg/McQPTgzNDleXK3jkPuq0RrzAs2tbWj4fqqRiszfGyUXlk7U0kAzF91fpSl7dCKO+kfdlJQCtoAi5ARwhZKsiIMxh31UiLioluWqGgfKaD9MY+Z0lvTBNcDuS2zEDX8zOJdMYkc=
+	t=1727110135; cv=none; b=KqL71kg1IP2HgeSW5SRrykVEmk7BvtJj0Q8qbZDqgHNtEwHlutWvJ8/0C4EoZVmpwGfdPR/ABCWgogOS2+jpixgCsR7UrqxZtWRW1GlzonCqNRSz82B+yMNPPUypOThmTR44nkS4cLii9PVO2Ve/1zpHr7DN0NIsL1tRerbhZXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727110081; c=relaxed/simple;
-	bh=/p30FrVYVuYfEnt6kv72Q1UcFg9YJf1SQEiA395yPXI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GBHn7dscPtfsgD0e6SZH3Qu44VEVSMnUWOZUtnPJLvDUUxcb3wps6umHk4Qg8waVcDD278W0CupFCII1r51khj6XsZ24pdZ+NQ7WRqDGOfVblHjolx1l4q2FxI7LPDwXSJYI08UNDYSVjTRDD8rugFGc05wFD7kxskxlW5HGg4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=E+TEjqHM; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6c354415c19so33861516d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:47:59 -0700 (PDT)
+	s=arc-20240116; t=1727110135; c=relaxed/simple;
+	bh=X4iwtPBM51ziRrceO3QdT6g1PRZE4IhgMtL2UmG7LZ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=axK6btIHE6atQJ4+81aDXFk2MuMEr1Rb6/UYyAnsm+iSi3AsumuoC0+QiUj2WrTJwVjBLEiGxMQmEgwPeLseawAO1+aZc9wh0NZakdVhJecWCxntrWb93v7rQvMoZdGZ4GLVKwVnpWmOIUpJH2donqBY0o3NXb0OtC5t2Hl2lLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Med12sKp; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42cc8782869so43787385e9.2;
+        Mon, 23 Sep 2024 09:48:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727110079; x=1727714879; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5jkCqUIg3Xe8RRG1JyAgfDxC/SwDY13wlpSpEmGTb8k=;
-        b=E+TEjqHMKv3x5ugJyyL+OmEu/00vAcMVBRYLDiEYIGy0/JFy5jHnrNwMB7JX8c79hi
-         QOm8my84uosjQpS95oSHx7Dkyb6Br5nVy2EDwDgYCdEa/uvT4Tig6CcjzRMHzU+I7Cq8
-         I8rQh0qeFR85O6s3L3qYpJa+GLU3RmDHETfXo=
+        d=gmail.com; s=20230601; t=1727110132; x=1727714932; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GSWdaUAIYBXCymZNBFOL2fQ+V5QkB1tVGt6L1heAaJ4=;
+        b=Med12sKpMfMo87oPQRC5+S4fURs+vpSEa4mpk4SMj1GxTgLHu2o/SrYRwoBItQM/HT
+         /Sijsu4MzLqdgmf3FmeLsbaQRIr25dtSpUDuuaFLDh1X/SGFxRiuGuxsXFYNlfOc3f70
+         CVnW3l62sPMuJvCAiIrqiNKBowd1HGAI4P7o4Iui/i+U3fZMQvGyQRAsmCfh21PAGxfS
+         lDkXflarmDpIiD7Joi+ex3WDRTX7UfJXyh9vTh8ktq3b2IFFJrRLZDt+E7aNeqRkpNfY
+         bfkF+S8B3exm9E/ZJGLH3cqukt0OFJxL7oF8vXTeDnXMFIhbWBOk0cqyFKeabEwPAD/Q
+         ojyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727110079; x=1727714879;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5jkCqUIg3Xe8RRG1JyAgfDxC/SwDY13wlpSpEmGTb8k=;
-        b=NjWIzuHY45bXTSgMnBpJLw4QLwMGBkhgnlvZjVCSBTkd/+E+sYaU13bUu2KYJI9BjF
-         AXfSwpKR2CF+8+xzqrEqNTyh7vZIazm49hDD63gPawXr6yGqu+56V5axf4LygjLNnJsY
-         QbTIeLKpspRed1rSfbCnqUjYu0FxdqO5M+H5RTTAH8/wPMmfTfYL5DPk3c1ppBHD6n8z
-         9wS04PeRau9eiZ6bSiHHnSwY5U/S9Af3kPIc5Q97VpI25nxyJ8cq7G7CvlV31xa3l0V0
-         8vE5pCAJYspBiVyh8/sLx8Sjr2jPHcEeTAddnXwqekfpuwvtX4njB0nL5+ImsKbxLb7B
-         lfjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzlJp2ETFVyRukmuAr5R2v3GzW3O6sNKihvZNJu9RhT4yfOHsx8QzLLCNDDr7/g7cOwrtoLXsyHO5VxzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMCD3JXzY1AIqyOgVGlLhGPeDmIFGwniHnnsISsqyRrj+5Gc+U
-	G0zxKwLGb/Da0JgeEstwEjsLc1P3xtqe1qRaYNDccCdycQOTAa2JDFVmK2u6ba1o9jdVZ2KPbiI
-	+IZ4pvnX5gISEGPGld3XXMWzlnS12AovCBJU+
-X-Google-Smtp-Source: AGHT+IG2yd0efpRRzhPAk2QTdSce9Tjc0IthclvMuhkAgRnoOsrG4G3REAz+LXZA408Gybkvd7KwLETYZ59qfR+vU8Q=
-X-Received: by 2002:a05:6214:469b:b0:6c3:6a68:499f with SMTP id
- 6a1803df08f44-6c7bc73066bmr168626116d6.19.1727110078647; Mon, 23 Sep 2024
- 09:47:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727110132; x=1727714932;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GSWdaUAIYBXCymZNBFOL2fQ+V5QkB1tVGt6L1heAaJ4=;
+        b=dMIyZgOLDrDFJEvgoP5wMm9qQkxfjx/FDqsLsVJJ72pBkEu/VHfzBQczz7oRuDloKz
+         yX3pwumVAB/5aar69cswJRRdfRipfLkJWYRW9tKdlcR38b5IQ42KY9jKEN1TovLTXvhn
+         v1i5gpDcF9kSLgMxWoCPcPA2c7JiQk4MF06n1xbXky/Ykk5RCOt4tfzGv7+5XTIaZhyZ
+         3CbBBdS3lc6dHbDXa9x7C2KasteDjyj1E/IdRuVfvs541bXI/vyQUbTmMurhftAG4g+q
+         QQ/7eBImF0FKdi8+kyAKY9C7j2XpnpniFd1uNnBaQrpAicdhmwJ7Wr2Cb7ZpEYPUe7jL
+         FF5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUOdYh+et/mjT4+DoWztH1sMCET5pqUSjgKTdd7cdobwneOwK/sL06bu8gKPjM34Se+izBeI9QbZLfLkg==@vger.kernel.org, AJvYcCX9BBpPTsJwUos0AuEKTqqyjA1Z7Y06Tu5p0R9fYo1DBHHBBMEicjtB1vFmm2ts51RiJlkzzSYv@vger.kernel.org, AJvYcCXaRtyQ0eYxtFfAdPSQjCgrFtHMvxZJA5La1e8ynULZsuibWs+wsVMOjdsQi2ZMjfpKi5xnN1zJVZ94FW2q@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3oZbeD1begBwxo9dOrg+oWd5LfoY4HmsNw2MdS+Cqs2j/FOlQ
+	pZjgSegsvNyrPzj6sXj6jLgsNUtR6LHRNDRSj61p6ce/i4Hb3yBV
+X-Google-Smtp-Source: AGHT+IHPU6wCXBsJs8+wEQmq9WExOqEQI5tcapZXJYh3UOfJ8NuHwYDjCC/t/ElcVLnRjtCsF6u3SA==
+X-Received: by 2002:a5d:664a:0:b0:374:bb00:31eb with SMTP id ffacd0b85a97d-37a42252c99mr6787406f8f.6.1727110132022;
+        Mon, 23 Sep 2024 09:48:52 -0700 (PDT)
+Received: from localhost.localdomain ([94.19.228.143])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e78002besm25041308f8f.67.2024.09.23.09.48.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 09:48:51 -0700 (PDT)
+From: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+To: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org
+Cc: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v3] zram: don't free statically defined names
+Date: Mon, 23 Sep 2024 19:48:43 +0300
+Message-ID: <20240923164843.1117010-1-andrej.skvortzov@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815004617.2325269-1-philipchen@chromium.org>
- <CA+cxXhneUKWr+VGOjmOtWERA53WGcubjWBuFbVBBuJhNhSoBcQ@mail.gmail.com>
- <66d89eaeb0a4b_1e9158294e1@iweiny-mobl.notmuch> <CA+cxXhmexXuXJg2qgbDJO7MXqpJzuDH1_Hru=7Ei9jus=FGwew@mail.gmail.com>
-In-Reply-To: <CA+cxXhmexXuXJg2qgbDJO7MXqpJzuDH1_Hru=7Ei9jus=FGwew@mail.gmail.com>
-From: Philip Chen <philipchen@chromium.org>
-Date: Mon, 23 Sep 2024 09:47:46 -0700
-Message-ID: <CA+cxXhmnsysKE-pTCkx38U5r+ofM6_2nFS5R1_rW3p3FbmiSLw@mail.gmail.com>
-Subject: Re: [PATCH] virtio_pmem: Add freeze/restore callbacks
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Pankaj Gupta <pankaj.gupta.linux@gmail.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	virtualization@lists.linux.dev, nvdimm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi maintainers,
+When CONFIG_ZRAM_MULTI_COMP isn't set ZRAM_SECONDARY_COMP can hold
+default_compressor, because it's the same offset as ZRAM_PRIMARY_COMP,
+so we need to make sure that we don't attempt to kfree() the
+statically defined compressor name.
 
-Are there any other concerns I should address for this patch?
+This is detected by KASAN.
 
-On Mon, Sep 9, 2024 at 4:52=E2=80=AFPM Philip Chen <philipchen@chromium.org=
-> wrote:
->
-> Hi
->
-> On Wed, Sep 4, 2024 at 10:54=E2=80=AFAM Ira Weiny <ira.weiny@intel.com> w=
-rote:
-> >
-> > Philip Chen wrote:
-> > > Hi maintainers,
-> > >
-> > > Can anyone let me know if this patch makes sense?
-> > > Any comment/feedback is appreciated.
-> > > Thanks in advance!
-> >
-> > I'm not an expert on virtio but the code looks ok on the surface.  I've
-> > discussed this with Dan a bit and virtio-pmem is not heavily tested.
->
-> Thanks for your comments.
-> I think this specific patch is not heavily involved with virtio spec deta=
-ils.
-> This patch simply provides the basic freeze/restore PM callbacks for
-> virtio_pmem, like people already did for the other virtio drivers.
->
-> >
-> > Based on our discussion [1] I wonder if there is a way we can recreate =
-this
-> > with QEMU to incorporate into our testing?
->
-> Yes, these are how I test on crosvm, but I believe the same steps can
-> be applied to QEMU:
-> (1) Set pm_test_level to TEST_PLATFORM (build time change)
-> (2) Write something to pmem
-> (3) Make the device go through a freeze/restore cycle by writing
-> `disk` to `/sys/power/state`
-> (4) Validate the data written to pmem in (2) is still preserved
->
-> Note:
-> (a) The freeze/restore PM routines are sometimes called as the backup
-> for suspend/resume PM routines in a suspend/resume cycle.
-> In this case, we can also test freeze/restore PM routines with
-> suspend/resume: i.e. skip (1) and write `mem` to `sys/power/state` in
-> (3).
-> (b) I also tried to set up QEMU for testing. But QEMU crashes when I
-> try to freeze the device even without applying this patch.
-> Since the issue seems to be irrelevant to pmem and most likely a QEMU
-> setup problem on my end, I didn't spend more time enabling QEMU.
->
->
->
-> >
-> > Ira
-> >
-> > [1] https://lore.kernel.org/lkml/CA+cxXhnb2i5O7_BiOfKLth5Zwp5T62d6F6c39=
-vnuT53cUkU_uw@mail.gmail.com/
-> >
-> > >
-> > > On Wed, Aug 14, 2024 at 5:46=E2=80=AFPM Philip Chen <philipchen@chrom=
-ium.org> wrote:
-> > > >
-> > > > Add basic freeze/restore PM callbacks to support hibernation (S4):
-> > > > - On freeze, delete vq and quiesce the device to prepare for
-> > > >   snapshotting.
-> > > > - On restore, re-init vq and mark DRIVER_OK.
-> > > >
-> > > > Signed-off-by: Philip Chen <philipchen@chromium.org>
-> > > > ---
-> > > >  drivers/nvdimm/virtio_pmem.c | 24 ++++++++++++++++++++++++
-> > > >  1 file changed, 24 insertions(+)
-> > > >
-> > > > diff --git a/drivers/nvdimm/virtio_pmem.c b/drivers/nvdimm/virtio_p=
-mem.c
-> > > > index c9b97aeabf85..2396d19ce549 100644
-> > > > --- a/drivers/nvdimm/virtio_pmem.c
-> > > > +++ b/drivers/nvdimm/virtio_pmem.c
-> > > > @@ -143,6 +143,28 @@ static void virtio_pmem_remove(struct virtio_d=
-evice *vdev)
-> > > >         virtio_reset_device(vdev);
-> > > >  }
-> > > >
-> > > > +static int virtio_pmem_freeze(struct virtio_device *vdev)
-> > > > +{
-> > > > +       vdev->config->del_vqs(vdev);
-> > > > +       virtio_reset_device(vdev);
-> > > > +
-> > > > +       return 0;
-> > > > +}
-> > > > +
-> > > > +static int virtio_pmem_restore(struct virtio_device *vdev)
-> > > > +{
-> > > > +       int ret;
-> > > > +
-> > > > +       ret =3D init_vq(vdev->priv);
-> > > > +       if (ret) {
-> > > > +               dev_err(&vdev->dev, "failed to initialize virtio pm=
-em's vq\n");
-> > > > +               return ret;
-> > > > +       }
-> > > > +       virtio_device_ready(vdev);
-> > > > +
-> > > > +       return 0;
-> > > > +}
-> > > > +
-> > > >  static unsigned int features[] =3D {
-> > > >         VIRTIO_PMEM_F_SHMEM_REGION,
-> > > >  };
-> > > > @@ -155,6 +177,8 @@ static struct virtio_driver virtio_pmem_driver =
-=3D {
-> > > >         .validate               =3D virtio_pmem_validate,
-> > > >         .probe                  =3D virtio_pmem_probe,
-> > > >         .remove                 =3D virtio_pmem_remove,
-> > > > +       .freeze                 =3D virtio_pmem_freeze,
-> > > > +       .restore                =3D virtio_pmem_restore,
-> > > >  };
-> > > >
-> > > >  module_virtio_driver(virtio_pmem_driver);
-> > > > --
-> > > > 2.46.0.76.ge559c4bf1a-goog
-> > > >
-> >
-> >
+==================================================================
+  Call trace:
+   kfree+0x60/0x3a0
+   zram_destroy_comps+0x98/0x198 [zram]
+   zram_reset_device+0x22c/0x4a8 [zram]
+   reset_store+0x1bc/0x2d8 [zram]
+   dev_attr_store+0x44/0x80
+   sysfs_kf_write+0xfc/0x188
+   kernfs_fop_write_iter+0x28c/0x428
+   vfs_write+0x4dc/0x9b8
+   ksys_write+0x100/0x1f8
+   __arm64_sys_write+0x74/0xb8
+   invoke_syscall+0xd8/0x260
+   el0_svc_common.constprop.0+0xb4/0x240
+   do_el0_svc+0x48/0x68
+   el0_svc+0x40/0xc8
+   el0t_64_sync_handler+0x120/0x130
+   el0t_64_sync+0x190/0x198
+==================================================================
+
+Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+Fixes: 684826f8271a ("zram: free secondary algorithms names")
+Cc: <stable@vger.kernel.org>
+---
+
+Changes in v2:
+ - removed comment from source code about freeing statically defined compression
+ - removed part of KASAN report from commit description
+ - added information about CONFIG_ZRAM_MULTI_COMP into commit description
+
+Changes in v3:
+ - modified commit description based on Sergey's comment
+ - changed start for-loop to ZRAM_PRIMARY_COMP
+
+
+ drivers/block/zram/zram_drv.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index c3d245617083d..ad9c9bc3ccfc5 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -2115,8 +2115,10 @@ static void zram_destroy_comps(struct zram *zram)
+ 		zram->num_active_comps--;
+ 	}
+ 
+-	for (prio = ZRAM_SECONDARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
+-		kfree(zram->comp_algs[prio]);
++	for (prio = ZRAM_PRIMARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
++		/* Do not free statically defined compression algorithms */
++		if (zram->comp_algs[prio] != default_compressor)
++			kfree(zram->comp_algs[prio]);
+ 		zram->comp_algs[prio] = NULL;
+ 	}
+ 
+-- 
+2.45.2
+
 
