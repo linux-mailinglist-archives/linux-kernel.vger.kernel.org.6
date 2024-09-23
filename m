@@ -1,54 +1,46 @@
-Return-Path: <linux-kernel+bounces-336163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B8997EFF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:49:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62FB797EFE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FEEF1C215F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:49:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2527D28252F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C40D19F430;
-	Mon, 23 Sep 2024 17:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF4219F13C;
+	Mon, 23 Sep 2024 17:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Vj2GTC40"
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040AF19E98E;
-	Mon, 23 Sep 2024 17:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="G6/4pfx5"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE782907;
+	Mon, 23 Sep 2024 17:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727113775; cv=none; b=JvnE18Uu1zfcs6a4aVSmkMD6ZZNL1aUiF8Ddc3gY3a51k3RO4H3n4fXsYIrIMhr/Zw8pCVpC7nAHiTGfWk372MhCulmcomy2TBVB8E22DaGy/ATKY3UeM8Ox+EIyHcglxOfDrG4Hmxug1tMsrbEVSLBnaPKNNgRya5PF8OsRGU0=
+	t=1727113252; cv=none; b=REuVxL1ViPMEt6pTpU3uL1vvV3G03aw29XcUZd9W5XgHcZScTvdU8I0wgOV9M/lv3LyV3wCKvxb7vkNPZ6O9hXCYkPS2fiY/0iuU7wd4dSSn9LFHBZBtyfulZ899eQnea6nbIeYhW/xbwLq2lQK2fjMH0qX4qG5t3QLUBl5iIK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727113775; c=relaxed/simple;
-	bh=fW/2G+S1k2HxLvPCQ/EgaFLF7W5MmBH3WEeAVb5ugJI=;
+	s=arc-20240116; t=1727113252; c=relaxed/simple;
+	bh=pi34iohdoaF/UgYjqbNePgoY5eJI/IB5qUXN/WAy1+k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LYaXnpD2WnEQ9xjwGr0ZXYmqqjw7QAJYirChs+/ZR/4yTJBvqpPBRjYocNOWZB4v57L3QQzL9qZi3RxuOCTiugjCABlE2iLgE0HRk7KadJ96S56jD9R6At4s5lekB/ny29rgMj8wegMS8M1bEuj3bJMPSCyQmu4Od3eZvT0AniE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Vj2GTC40; arc=none smtp.client-ip=80.12.242.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id sn2xskkHDKyjDsn2xsMS1L; Mon, 23 Sep 2024 19:40:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1727113228;
-	bh=tA69b6jolyXcZI7KcLlBCkaVX/5x0DGi73pMrAgE16E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Vj2GTC40KZEfkWANLsirjwuwRTvW18DQUjoQXtxyvIXnFeyM6JR2DME7kwLNnqaTV
-	 AMcJEoI5NKxrE66RkPZpveBPCYQatztilCPJqF/KYoxYoyCn0/hOllSifh5lq/gWZa
-	 mWrdHpQ3E5+nyBn0TtBeY2F0T/zp92t1XHgShNmIkp1bxhttiOfu2Pdvi06DDysrvV
-	 leWrWB4UBQD4KjyReF6dR4FI7G46gPiwm87iJ8UvUUGqRoLnPkMAM3Ln/VqnN0Vjvm
-	 78hZ60nv3FpzsKWtrznDF+He003apMVOE+8AuM9u9VxnQutvNjA8+zyJfWFOvPzQSw
-	 szQhA4W64cqVA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 23 Sep 2024 19:40:28 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <c8a4e62e-6c24-4b06-ac86-64cc4697bc2f@wanadoo.fr>
-Date: Mon, 23 Sep 2024 19:40:27 +0200
+	 In-Reply-To:Content-Type; b=RRsEBZGt22JFc4xJyLrgxouOI5NL6tv/2WXY+BeD5EkFrVkhDN+4snwyZN95gRdzam8+i03IJNtGz1ZhB45TL/B/S+a6opeW0gEQcjBmxdXEGO/vCcnQ8827rPir2Y8BEQ3t60KPs9euaz0nrCwzA4/saE0/k4mey4GIZ3XrIZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=G6/4pfx5; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.106.151] (unknown [131.107.174.23])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A62B420C5D8F;
+	Mon, 23 Sep 2024 10:40:45 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A62B420C5D8F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1727113245;
+	bh=Gr2uFb3EZBrN1Pu/nsPBCk8f40iLSgy4wKQYWk5B0o0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G6/4pfx5PN3ECtNoXB7dwRE54GVwJBZ5FGkGi0WfRQlXthBXk9iypPYEMtd9VXfnJ
+	 qicFgvqmH4TRCtH0Sk7l/JjDf72iFprFVvxHgKbV2pBwLOvMc2+CdJcGjlBTuaqjwV
+	 CbYAXyQFMf3T6+QeDJ+f3AlyJTArmK+8WD7trRtU=
+Message-ID: <e824b125-0ab0-4e1f-9411-abbc1984c124@linux.microsoft.com>
+Date: Mon, 23 Sep 2024 10:40:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,90 +48,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] zram: don't free statically defined names
-To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
- Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
- Minchan Kim <minchan@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, Jens Axboe <axboe@kernel.dk>,
- Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20240923164843.1117010-1-andrej.skvortzov@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240923164843.1117010-1-andrej.skvortzov@gmail.com>
+Subject: Re: [PATCH] ipe: Add missing terminator to list of unit tests
+To: Paul Moore <paul@paul-moore.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: "Serge E . Hallyn" <serge@hallyn.com>,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Deven Bowers <deven.desai@linux.microsoft.com>
+References: <20240922145226.491815-1-linux@roeck-us.net>
+ <CAHC9VhRWhknpRkKv7-yZza-kr1Bq2nhch8bYm9BsfDpurFir9Q@mail.gmail.com>
+Content-Language: en-US
+From: Fan Wu <wufan@linux.microsoft.com>
+In-Reply-To: <CAHC9VhRWhknpRkKv7-yZza-kr1Bq2nhch8bYm9BsfDpurFir9Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 23/09/2024 à 18:48, Andrey Skvortsov a écrit :
-> When CONFIG_ZRAM_MULTI_COMP isn't set ZRAM_SECONDARY_COMP can hold
-> default_compressor, because it's the same offset as ZRAM_PRIMARY_COMP,
-> so we need to make sure that we don't attempt to kfree() the
-> statically defined compressor name.
-> 
-> This is detected by KASAN.
-> 
-> ==================================================================
->    Call trace:
->     kfree+0x60/0x3a0
->     zram_destroy_comps+0x98/0x198 [zram]
->     zram_reset_device+0x22c/0x4a8 [zram]
->     reset_store+0x1bc/0x2d8 [zram]
->     dev_attr_store+0x44/0x80
->     sysfs_kf_write+0xfc/0x188
->     kernfs_fop_write_iter+0x28c/0x428
->     vfs_write+0x4dc/0x9b8
->     ksys_write+0x100/0x1f8
->     __arm64_sys_write+0x74/0xb8
->     invoke_syscall+0xd8/0x260
->     el0_svc_common.constprop.0+0xb4/0x240
->     do_el0_svc+0x48/0x68
->     el0_svc+0x40/0xc8
->     el0t_64_sync_handler+0x120/0x130
->     el0t_64_sync+0x190/0x198
-> ==================================================================
-> 
-> Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-> Fixes: 684826f8271a ("zram: free secondary algorithms names")
-> Cc: <stable@vger.kernel.org>
-> ---
-> 
-> Changes in v2:
->   - removed comment from source code about freeing statically defined compression
->   - removed part of KASAN report from commit description
->   - added information about CONFIG_ZRAM_MULTI_COMP into commit description
-> 
-> Changes in v3:
->   - modified commit description based on Sergey's comment
->   - changed start for-loop to ZRAM_PRIMARY_COMP
-> 
-> 
->   drivers/block/zram/zram_drv.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-> index c3d245617083d..ad9c9bc3ccfc5 100644
-> --- a/drivers/block/zram/zram_drv.c
-> +++ b/drivers/block/zram/zram_drv.c
-> @@ -2115,8 +2115,10 @@ static void zram_destroy_comps(struct zram *zram)
->   		zram->num_active_comps--;
->   	}
->   
-> -	for (prio = ZRAM_SECONDARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
-> -		kfree(zram->comp_algs[prio]);
-> +	for (prio = ZRAM_PRIMARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
-> +		/* Do not free statically defined compression algorithms */
-> +		if (zram->comp_algs[prio] != default_compressor)
-> +			kfree(zram->comp_algs[prio]);
 
-Hi,
 
-maybe kfree_const() to be more future proof and less verbose?
+On 9/22/2024 5:27 PM, Paul Moore wrote:
+> On Sun, Sep 22, 2024 at 10:52 AM Guenter Roeck <linux@roeck-us.net> wrote:
+>>
+>> Add missing terminator to list of unit tests to avoid random crashes seen
+>> when running the test.
+>>
+>> Fixes: 10ca05a76065 ("ipe: kunit test for parser")
+>> Cc: Deven Bowers <deven.desai@linux.microsoft.com>
+>> Cc: Paul Moore <paul@paul-moore.com>
+>> Cc: Fan Wu <wufan@linux.microsoft.com>
+>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>> ---
+>>   security/ipe/policy_tests.c | 1 +
+>>   1 file changed, 1 insertion(+)
+> 
+> I'm guessing Fan doesn't have his tree setup yet, but if I can get an
+> ACK from Fan I can send this up via the LSM tree for the next
+> v6.12-rcX release.
+> 
+>> diff --git a/security/ipe/policy_tests.c b/security/ipe/policy_tests.c
+>> index 89521f6b9994..5f1654deeb04 100644
+>> --- a/security/ipe/policy_tests.c
+>> +++ b/security/ipe/policy_tests.c
+>> @@ -286,6 +286,7 @@ static void ipe_parser_widestring_test(struct kunit *test)
+>>   static struct kunit_case ipe_parser_test_cases[] = {
+>>          KUNIT_CASE_PARAM(ipe_parser_unsigned_test, ipe_policies_gen_params),
+>>          KUNIT_CASE(ipe_parser_widestring_test),
+>> +       { }
+>>   };
+>>
+>>   static struct kunit_suite ipe_parser_test_suite = {
+> 
 
-CJ
+Yes this looks good to me.
 
->   		zram->comp_algs[prio] = NULL;
->   	}
->   
-
+Acked-by: Fan Wu <wufan@linux.microsoft.com>
 
