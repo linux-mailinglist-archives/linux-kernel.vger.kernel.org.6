@@ -1,116 +1,122 @@
-Return-Path: <linux-kernel+bounces-336152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3201297EFCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:18:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F6497EFCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC8221F22108
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:18:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87441B21710
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0D119F125;
-	Mon, 23 Sep 2024 17:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE51419F40C;
+	Mon, 23 Sep 2024 17:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgB2MJ1A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QC2T+nEQ"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FF81474BC
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 17:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7E319F134
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 17:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727111930; cv=none; b=XfryCUCOSNzeo3eny+5sLwyX6I7E3DsFzPR4t009F8am6GZc6QV+xG4dsq3L2CnF2acX/pzXglW+6ejG8FannwudHeZIm2vt21cq0ca1hJo76nwAtanJ17KD6VAKk+/cMuhuKKdH+KbZ93E7cJkICeOAbmsPFGnO6phcwYWpOto=
+	t=1727111963; cv=none; b=Z1UVvMWY8WNSQ5alC9JmZVedkg5LVyev8uIP38P6UqojZPrZZl/9YGDQ3dtRDawtB8o568FH284TJLVL9HpXajTcX5idV1l5JyjIhPdnHc1+j7PWVoWrDoB6AQ3aO/KRZ3GVXutYxiBtBpoDhjIVdYYgyN+Lc36dJr2A5NFc7Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727111930; c=relaxed/simple;
-	bh=SsKDtEbKl8KglAPeWxmOGNPbtBShCT5tjVuXyO1KJ4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nd+K6ZlN5+zR/1zg4adHpESyPfkkOW7DOHqWIOazNMZAGRloLdARCUPmcOupaxHGk//4t24UUAs5n/8cM5NtWE8q01wrSB5Iygjl6eqyBnGms+2nldQxgtnnqslDFKit0T7rrM6T4TOM2Q6mmIrhIhjB4MXoosSyXY9DS7T7uu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgB2MJ1A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E0C5C4CEC4;
-	Mon, 23 Sep 2024 17:18:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727111929;
-	bh=SsKDtEbKl8KglAPeWxmOGNPbtBShCT5tjVuXyO1KJ4Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OgB2MJ1A/Tvy9yu31wKQsGmwRUzQeEbcUV8gh05j5NxzE5E94LBIdpoIXj3oy7gEC
-	 C+/fKbD139h/x51+ni9rog9ck6+0aJjkzeTnrqfEV53gpXhrig3xuyMaUIIxcmhDY9
-	 kmfnhCE2yCpcpxBuYEQBuqmV0wNds1HEueTSeC8gTxSf0uTVRRK0d6Rq2YwAHae+WG
-	 gKXfHgB+GZae29r36rJVyaVReepsRVANGP7HWrpNLyFt8+BYRi9yt5e6KSRtKyXtc+
-	 HraMqY2C+XKpvgr3wYF0rPC5+6PHf0sd3I1qqsKHcgGh/Liysg/8vfOJESy4Cm5Y+8
-	 mU5vXRd3UX16g==
-Date: Mon, 23 Sep 2024 07:18:48 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com,
-	David Vernet <void@manifault.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [GIT PULL] sched_ext: Fixes for v6.12-rc1
-Message-ID: <ZvGi-Ciqmy8U5g_j@slm.duckdns.org>
-References: <ZvGfmIJt-5gg9EwU@slm.duckdns.org>
+	s=arc-20240116; t=1727111963; c=relaxed/simple;
+	bh=8CzslkZb0sUznqump5kOXrXFXRvqNxrUKdCua2E89hI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b7egL2rWZEd+pruLs4BvtYfT7EodpwrS401frpIm2OtLUxMKQnLbt1JSNaZxKh2dSOJhh9+NhwdGXukDNtTuLWtNi65acP9EI+9RYMKN617JBwpmIVNniMKVaouWVLkc0/ZUAUtygyE99pogVdOXDijDwJByGemVI/1FSBSwpN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=QC2T+nEQ; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c5bca6603aso1750783a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:19:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1727111959; x=1727716759; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/88YtmKHLqGAFWhvYULFA4aDXhjl5wiNzxfGpypDRso=;
+        b=QC2T+nEQ4zjm1hAyc8Ust5SwR2l6+krMKc6TwZOyxoTy5ejx5G+/lCixQ7eEH9+xU6
+         +TyMoBepH2b7ooGUZ5to8kDCm4kM2txTsZpErLjXqIP9LP6qtlmXMko6zMeRT9dHOt6I
+         0om6YGh05gsSkwzdWTPuj/oOapBu5qa00OLp0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727111959; x=1727716759;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/88YtmKHLqGAFWhvYULFA4aDXhjl5wiNzxfGpypDRso=;
+        b=W2ea/mtXTAEay0D8pYfWIL9lk4tkhPZ3pPuKb1fA3gKVPdt+PefnMDkbgWwA7W6Tde
+         4M+bT7zLGRQZeHL3AHRHdZhqhlpzbwMl4c0Yi0g9n0zw14JxKPnXcsesN28THAzIwWjL
+         9OMaHorKPbHY3PgPZBX5p/+pcw5IH062qhF0eJLrsVqXWyJTsi0wkpd/d4HF0KzSynR9
+         A9Qq6sKIRsRYpPOQX9rhiWPzRacjeoEb7D0Ulo0I9zS3K/WbE+LT7WElQzvNrnq3Uxoh
+         p/dWEiKWnEcp4obtojXKSgDk0uhit8G4drwQ4S8B7XEUrByUTwkE7ptw+a6a8AKVn/uE
+         dR/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWfKuW28UWfBCVjGMXGqcNcNlrRmMzsVLuX1zzJ9VuWICDBtdUBOim5QeWZKg9jAiU+kLUBPYU7hX04MQo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhHRaKAvM0lZ1flmxC7d4yRY27cSJiWjDsunvRQgs9bcd9cpBf
+	TJzEYp4J7/d8r8OJL/mHoUuNk2073Tksd08jFUyXwndhLgEUhFgmxmC50oveJ2XC3HNuJGQ23Gg
+	Dny8=
+X-Google-Smtp-Source: AGHT+IEJqVjW957xFzVzk3IsfONTp0QVPM0g0RJUk/2Ik/DEL1aix4f9e0MFLLVyC9W3Kz6T/DawXw==
+X-Received: by 2002:a05:6402:3588:b0:5c4:2b73:636d with SMTP id 4fb4d7f45d1cf-5c464df28efmr9267627a12.35.1727111959490;
+        Mon, 23 Sep 2024 10:19:19 -0700 (PDT)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c42bb8a218sm10648146a12.62.2024.09.23.10.19.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 10:19:14 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9018103214so669711466b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:19:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVzNCxiwUj/o1OmY5jL1DP3KeZEpUsOe2rmVYMYCArZQ3feO4YIDsaR601NKJeUDY31OjDOeM34YyMTd/M=@vger.kernel.org
+X-Received: by 2002:a17:907:25c1:b0:a8f:f799:e7c9 with SMTP id
+ a640c23a62f3a-a90d566c9bdmr1174018266b.2.1727111953883; Mon, 23 Sep 2024
+ 10:19:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZvGfmIJt-5gg9EwU@slm.duckdns.org>
+References: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
+In-Reply-To: <dtolpfivc4fvdfbqgmljygycyqfqoranpsjty4sle7ouydycez@aw7v34oibdhm>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 23 Sep 2024 10:18:57 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
+Message-ID: <CAHk-=whQTx4xmWp9nGiFofSC-T0U_zfZ9L8yt9mG5Qvx8w=_RQ@mail.gmail.com>
+Subject: Re: [GIT PULL] bcachefs changes for 6.12-rc1
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Forgot to cc Peter and Ingo for the fixes that touch sched core. Cc'ing and
-quoting whole body.
+On Sat, 21 Sept 2024 at 12:28, Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> We're now using an rhashtable instead of the system inode hash table;
+> this is another significant performance improvement on multithreaded
+> metadata workloads, eliminating more lock contention.
 
-On Mon, Sep 23, 2024 at 07:04:24AM -1000, Tejun Heo wrote:
-> The following changes since commit 88264981f2082248e892a706b2c5004650faac54:
-> 
->   Merge tag 'sched_ext-for-6.12' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext (2024-09-21 09:44:57 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.12-rc1-fixes
-> 
-> for you to fetch changes up to 431844b65f4c1b988ccd886f2ed29c138f7bb262:
-> 
->   sched_ext: Provide a sysfs enable_seq counter (2024-09-23 06:53:02 -1000)
-> 
-> ----------------------------------------------------------------
-> sched_ext: Fixes for v6.12-rc1
-> 
-> - Three build fixes.
-> 
-> - The fix for a stall bug introduced by a recent optimization in sched core
->   (SM_IDLE).
-> 
-> - Addition of /sys/kernel/sched_ext/enable_seq. While not a fix, it is a
->   simple addition that distro people want to be able to tell whether an SCX
->   scheduler has ever been loaded on the system.
-> 
-> ----------------------------------------------------------------
-> Andrea Righi (1):
->       sched_ext: Provide a sysfs enable_seq counter
-> 
-> Pat Somaru (1):
->       sched, sched_ext: Disable SM_IDLE/rq empty path when scx_enabled()
-> 
-> Tejun Heo (1):
->       sched_ext: Fix build when !CONFIG_STACKTRACE
-> 
-> Yu Liao (2):
->       sched: Add dummy version of sched_group_set_idle()
->       sched: Put task_group::idle under CONFIG_GROUP_SCHED_WEIGHT
-> 
->  Documentation/scheduler/sched-ext.rst | 10 ++++++++++
->  kernel/sched/core.c                   |  3 ++-
->  kernel/sched/ext.c                    | 24 +++++++++++++++++++++---
->  kernel/sched/sched.h                  | 10 ++++++----
->  tools/sched_ext/scx_show_state.py     |  1 +
->  5 files changed, 40 insertions(+), 8 deletions(-)
-> 
-> -- 
-> tejun
+So I've pulled this, but I reacted to this issue - what is the load
+where the inode hash table is actually causing issues?
 
--- 
-tejun
+Because honestly, the reason we're using that "one single lock" for
+the inode hash table is that nobody has ever bothered.
+
+In particular, it *should* be reasonably straightforward (lots of
+small details, but not fundamentally hard) to just make the inode hash
+table be a "bl" hash - with the locking done per-bucket, not using one
+global lock.
+
+But nobody has ever seemed to care before. Because the inode hash just
+isn't all that heavily used, since normal loads don't look up inodes
+directly (they look up dentries, and you find the inodes off those -
+and the *dentry* hash scales well thanks to both RCU and doing the
+bucket lock thing).
+
+So the fact that bcachefs cares makes me go "Why?"
+
+Normal filesystems *never* call ilookup() and friends.  Why does
+bcachefs do it so much that you decided that you need to use a whole
+other hashtable?
+
+                   Linus
 
