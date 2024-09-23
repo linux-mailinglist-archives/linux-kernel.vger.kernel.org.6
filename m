@@ -1,180 +1,180 @@
-Return-Path: <linux-kernel+bounces-335785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9DA997EAA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:24:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B53C397EAA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4823CB21388
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:24:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8B971C214D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABA0198857;
-	Mon, 23 Sep 2024 11:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62B7198838;
+	Mon, 23 Sep 2024 11:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LfmRKmnq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XMCNhzdL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oAi6riAL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ufx7qkml"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCGuEWA/"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9495C944E;
-	Mon, 23 Sep 2024 11:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DE7197A87;
+	Mon, 23 Sep 2024 11:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727090687; cv=none; b=mar9OKghAnVr3uCgvAXcmXGJjjJ4d824R+ibcF2bitJX0z9OekQUXpCTzgQfb+UiKDA07t+vJa408Wq05G5Lb3AnDKd9nLtJ8BuxlCnoe0B7dKrzUihMwBUzfJQzVVlPUT4/rSOpDLl47/ZtxIdjaKgXUsG2kZGydfxhrLhZXis=
+	t=1727090702; cv=none; b=qmAfjDaMe64CqbV9h3aAgLuzbelnyD8ccspqFgmrGZqX7V/65SnspexjIKc9L7jGLqLskNw1Bsx3DFHJk1SDpAkOywHldOJ9BXNpmM4Skx3N1Buu2sLY1vDCyz/EGbcV3WHGRotmXq/8mg/UenywuEeyQwCbZHOEXbVomCuWdak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727090687; c=relaxed/simple;
-	bh=TDMHdTKfATd/dykqfdr8JyYigMdMf6pQbZ437Da5dCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UoIVkO9MDjskTq9GhBtZ1fBdOZNTgGUCMaUBhWpTdKDJG7BfpDwjEr3pk7FXkISgjNIYx4OnfU/M3GSRUMjONRrx/xeXx/tnrt9xoCmfsF9KG9stq4qcp/DevozRzcDR9GXxh24AFfwbKo7fcoBot1RZ+QH5O2Jb41E6prhpk6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LfmRKmnq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XMCNhzdL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oAi6riAL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ufx7qkml; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9BE2521EFF;
-	Mon, 23 Sep 2024 11:24:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727090683; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7/KdNH7ixd2/09AxnzQSLbxMpALLTS1WnI8+v7RLZc8=;
-	b=LfmRKmnqjjIdnOPmvvu4dKL873achQT+wvmcGOxNYdt8/Vn7by21hQQRPEzo2Pt8kIlPOa
-	Xd5zCGAx5Y3FCxF+UCxQH9VHQWAb8tAwuuFk2k/EtYmHHLqkMNNqJ2WQHHeyt7hdF57zal
-	sTdRhlEVxvjpB/4oRAyarHR0IQZl4g0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727090683;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7/KdNH7ixd2/09AxnzQSLbxMpALLTS1WnI8+v7RLZc8=;
-	b=XMCNhzdLdyVPOb5Rh6zPOfGAjZqpDNoU1RU5H2p62ErqP2zAlikZev/R95J9+bEFaNmsI6
-	uriKRuqMSY5s7bAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727090682; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7/KdNH7ixd2/09AxnzQSLbxMpALLTS1WnI8+v7RLZc8=;
-	b=oAi6riALFaab8eKPk7cq6ZR2WHLl0JnJW7z6UaxNSjPsWRVI05k209AOBKShdRmihAgbXy
-	qYGuUdFYEkGsUKt20ziO8/IRbOD+jAny7W9Rj57wbi72rO1XhZOgjemd7xt/ZdtBMOUqoQ
-	nmttandoSJFm8A+xoujydudx7PXXdP4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727090682;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7/KdNH7ixd2/09AxnzQSLbxMpALLTS1WnI8+v7RLZc8=;
-	b=Ufx7qkmlISh57+kAKK52RONXoU0sqac5vQlowIDOyzT3T2CaWA/iUshRUiEKrTDxB7dfv7
-	H5IuDSI2QUddRqDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8D9441347F;
-	Mon, 23 Sep 2024 11:24:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OeN+IvpP8WZnKAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 23 Sep 2024 11:24:42 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 487C0A0844; Mon, 23 Sep 2024 13:24:38 +0200 (CEST)
-Date: Mon, 23 Sep 2024 13:24:38 +0200
-From: Jan Kara <jack@suse.cz>
-To: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
-Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>,
-	Jan Kara <jack@suse.cz>,
-	Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] ext4: mark fc as ineligible using an handle in
- ext4_xattr_set()
-Message-ID: <20240923112438.gjn33ztjtimly4eu@quack3>
-References: <20240923104909.18342-1-luis.henriques@linux.dev>
- <20240923104909.18342-3-luis.henriques@linux.dev>
+	s=arc-20240116; t=1727090702; c=relaxed/simple;
+	bh=qQiTKXuo0kHzJt4uiWRrF0gmBXqNwXV3dFzct12/lgA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G30mQygrhIUkopBddJKSZbDkjrwYcyyThdDhb/ld7/8OrOfTjS+shfnUNkmM8YcVJScRaJ0AeZbRVKY9UgfxNRE82ZTnmNlqFUhssODX1isP6+6Z8RlKQmlf1jG37jgPIuDmo282WcG8JLpxDCxS4FpawygoZmItgbpZp4rNBJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CCGuEWA/; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d8abac30ddso3420731a91.0;
+        Mon, 23 Sep 2024 04:25:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727090700; x=1727695500; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VRwFjm7CQd3Vf7oTyyEsm7717+Av8FqIgULwHZDZliI=;
+        b=CCGuEWA/5Oa8MqLCZ/YuxrNANaEiiRhYiur5D3fvDwqdwr+KP7QiOs5RXyzG+7MYJ9
+         Tp42aPmdYwLeQpD1uWfQjYeDy1D+nEdVC+1dfQPRxq3CzYxL/w9l0176VB+5FHYoNdtg
+         y7SsQpsnLZIeMQ8/un0QRfwsjGI/TSdB1I1T2neOLSzryv51tuufkA6t04WDVaWscsgu
+         hrhJ7BDbIhfoYqhAPlwFJmDfp93BymFI9dN/G4Dh0lj8ZmM/bgmsRq9rmoSW7lHY7O4a
+         GqXWHE6oPpyQ2BtqqaEBVlX2niqsEmXJAspmx9M+k7PcHreaRri+qIzB0YIbIIno0UQr
+         YYpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727090700; x=1727695500;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VRwFjm7CQd3Vf7oTyyEsm7717+Av8FqIgULwHZDZliI=;
+        b=Wi+wPzlPTbzCkSDFYiGyXvPDs2ITTJGiF0zX63B5c1f556XUlqpgnjhtUs7dYy3jbG
+         k+vmNSzxdLzFsiSRxRyqnMBbYMpPeqvp1PEF/Xq0iVQmF2vwcxDomd9g8wt6hVfEIfNN
+         ZVv8BsQnerFDycEJKNKnCBqqolJvkzjcdib9jTbgN82Bn7hhBEMwDGODtNTVOyoTD5H2
+         duKSLON/qlnUGYUEAtovaekr5d0JZWI7oo5HVNx9M/ElMyoT0oxXI6ch4ax8xdBCKHda
+         7JbEf5M43Ken3COHUSs9bzFSyGZGgtX5biSYbsINLCxryKG8xxEJOxmP0ynFDkd3YtkW
+         dceQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXSQT81g/wt5LDPCLlQSxHBCrPN6X+5a40M3u2+seh8sSyBRSNFkjUnMmtCCd4b7UxLHCukAuwKoMefdKs@vger.kernel.org, AJvYcCX1SyEyw5QK9jJxPBxobnUYtOnC0eaWylTC50CxFgiJDDOX22z9MQVHnIXtMOG78VUw1dXY2mLSXJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPR4Zh9JwXflFFr9bci+6wZH5KoEDjeFY6qJn4Xs6NuxYjlYQ2
+	evxZTKTOYVxkx3XrHDIGMvlX7BMS/QKYsLuugba6ZYlMUTpt0/lp+a1Z51EAb9GCGoL0CihqcNJ
+	cZGu4JO/OSxeZ//aJLeUZ0uHsnVk=
+X-Google-Smtp-Source: AGHT+IHWAhxgsNA0+BMNiFP14NiLvyOlck0PQLPBT4UGGZacZuY7sMwjZ8zEsgyrcvTZ69NG+hTBPfhPpFMxORQ/dro=
+X-Received: by 2002:a17:90b:3511:b0:2c9:9f50:3f9d with SMTP id
+ 98e67ed59e1d1-2dd7f37f2c7mr15838289a91.5.1727090699817; Mon, 23 Sep 2024
+ 04:24:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923104909.18342-3-luis.henriques@linux.dev>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[mit.edu,dilger.ca,suse.cz,gmail.com,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email,linux.dev:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+References: <20240921124117.82156-1-aha310510@gmail.com> <f70ee386-d8eb-4d28-99fd-9d40e5d93ca8@kernel.org>
+ <CAO9qdTGAgBux-M3GxZdBbBpsUm0V_E8fyWSjZuA7jA8bH-Qf4g@mail.gmail.com>
+In-Reply-To: <CAO9qdTGAgBux-M3GxZdBbBpsUm0V_E8fyWSjZuA7jA8bH-Qf4g@mail.gmail.com>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Mon, 23 Sep 2024 20:24:48 +0900
+Message-ID: <CAO9qdTFgU1TrfGTgOf=+TgwyNpk-dof2sCHr9+Ut7O+MMHaf5w@mail.gmail.com>
+Subject: Re: [PATCH] ata: libata: fix ALL_SUB_MPAGES not to be performed when
+ CDL is not supported
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: cassel@kernel.org, syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com, 
+	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon 23-09-24 11:49:09, Luis Henriques (SUSE) wrote:
-> Calling ext4_fc_mark_ineligible() with a NULL handle is racy and may result
-> in a fast-commit being done before the filesystem is effectively marked as
-> ineligible.  This patch moves the call to this function so that an handle
-> can be used.  If a transaction fails to start, then there's not point in
-> trying to mark the filesystem as ineligible, and an error will eventually be
-> returned to user-space.
-> 
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+Jeongjun Park <aha310510@gmail.com> wrote:
+>
+> Damien Le Moal <dlemoal@kernel.org> wrote:
+> >
+> > On 2024/09/21 14:41, Jeongjun Park wrote:
+> > > In the previous commit 602bcf212637 ("ata: libata: Improve CDL resource
+> > > management"), the ata_cdl structure was added and the ata_cdl structure
+> > > memory was allocated with kzalloc(). Because of this, if CDL is not
+> > > supported, dev->cdl is a NULL pointer, so additional work should never
+> > > be done.
+> > >
+> > > However, even if CDL is not supported now, if spg is ALL_SUB_MPAGES,
+> > > dereferencing dev->cdl will result in a NULL pointer dereference.
+> > >
+> > > Therefore, I think it is appropriate to check dev->flags in
+> > > ata_scsiop_mode_sense() if spg is ALL_SUB_MPAGES to see if CDL is supported.
+> > >
+> > > Reported-by: syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com
+> > > Tested-by: syzbot+37757dc11ee77ef850bb@syzkaller.appspotmail.com
+> > > Fixes: 602bcf212637 ("ata: libata: Improve CDL resource management")
+> > > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> > > ---
+> > >  drivers/ata/libata-scsi.c | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> > > index 3328a6febc13..6f5527f12b0e 100644
+> > > --- a/drivers/ata/libata-scsi.c
+> > > +++ b/drivers/ata/libata-scsi.c
+> > > @@ -2442,7 +2442,9 @@ static unsigned int ata_scsiop_mode_sense(struct ata_scsi_args *args, u8 *rbuf)
+> > >       if (spg) {
+> > >               switch (spg) {
+> > >               case ALL_SUB_MPAGES:
+> > > -                     break;
+> > > +                     if (dev->flags & ATA_DFLAG_CDL)
+> > > +                             break;
+> > > +                     fallthrough;
+> >
+> > I do not think this is correct at all. If the user request all sub mpages, we
+> > need to give that list regardless of CDL support. What needs to be fixed is that
+> > if CDL is NOT supported, we should not try to add the information for the T2A
+> > and T2B sub pages. So the fix should be this:
+>
+> Okay. But after looking into it further, I think it would be more appropriate to
+> also check the ATA_DFLAG_CDL_ENABLED flag when checking if CDL is
+> not supported. So it seems like it would be better to modify the condition as
+> below.
+>
+> What do you think?
+>
+> if (!(dev->flags & ATA_DFLAG_CDL
+>       dev->flags & ATA_DFLAG_CDL_ENABLED) || !dev->cdl)
+>         return 0;
 
-Looks good. Feel free to add:
+if (!(dev->flags & ATA_DFLAG_CDL &&
+      dev->flags & ATA_DFLAG_CDL_ENABLED) || !dev->cdl)
+        return 0;
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/xattr.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-> index 46ce2f21fef9..aea9e3c405f1 100644
-> --- a/fs/ext4/xattr.c
-> +++ b/fs/ext4/xattr.c
-> @@ -2559,6 +2559,8 @@ ext4_xattr_set(struct inode *inode, int name_index, const char *name,
->  
->  		error = ext4_xattr_set_handle(handle, inode, name_index, name,
->  					      value, value_len, flags);
-> +		ext4_fc_mark_ineligible(inode->i_sb, EXT4_FC_REASON_XATTR,
-> +					handle);
->  		error2 = ext4_journal_stop(handle);
->  		if (error == -ENOSPC &&
->  		    ext4_should_retry_alloc(sb, &retries))
-> @@ -2566,7 +2568,6 @@ ext4_xattr_set(struct inode *inode, int name_index, const char *name,
->  		if (error == 0)
->  			error = error2;
->  	}
-> -	ext4_fc_mark_ineligible(inode->i_sb, EXT4_FC_REASON_XATTR, NULL);
->  
->  	return error;
->  }
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> Regards,
+> Jeongjun Park
+>
+> >
+> > diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> > index 3328a6febc13..6ffa975746a6 100644
+> > --- a/drivers/ata/libata-scsi.c
+> > +++ b/drivers/ata/libata-scsi.c
+> > @@ -2256,10 +2256,15 @@ static inline u16 ata_xlat_cdl_limit(u8 *buf)
+> >  static unsigned int ata_msense_control_spgt2(struct ata_device *dev, u8 *buf,
+> >                                              u8 spg)
+> >  {
+> > -       u8 *b, *cdl = dev->cdl->desc_log_buf, *desc;
+> > +       u8 *b, *cdl, *desc;
+> >         u32 policy;
+> >         int i;
+> >
+> > +       if (!(dev->flags & ATA_DFLAG_CDL) || !dev->cdl)
+> > +               return 0;
+> > +
+> > +       cdl = dev->cdl->desc_log_buf;
+> > +
+> >         /*
+> >          * Fill the subpage. The first four bytes of the T2A/T2B mode pages
+> >          * are a header. The PAGE LENGTH field is the size of the page
+> >
+> >
+> > >               case CDL_T2A_SUB_MPAGE:
+> > >               case CDL_T2B_SUB_MPAGE:
+> > >               case ATA_FEATURE_SUB_MPAGE:
+> > > --
+> >
+> > --
+> > Damien Le Moal
+> > Western Digital Research
+> >
 
