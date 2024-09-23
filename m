@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-336238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92AA697F0F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:02:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A5BD97F0F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BF621F223D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:02:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB7731C2190A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5BC1A2876;
-	Mon, 23 Sep 2024 19:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A821A2C22;
+	Mon, 23 Sep 2024 19:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="COcN/ZZh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BkWVNrK3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1F11974F4
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 19:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9E51A286E
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 19:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727118035; cv=none; b=Rk0M8QOsPsF+Pyd4avRJ6hcgQHCA30MV/ka5CmzpfFjOX1da4wHkGWw70XEMDmx3aCHnntHrWu/htJDsFs5fNPAAN4bYwI1n7rXjsdqrcdyrKErynTPGm9l87ZdO0802vNapj/KhuZD9iUk8PNvrRaYKE4ylZC4Ai9hEC5xELbQ=
+	t=1727118036; cv=none; b=vBbKLMqxX8fPf4IyR8jwtni8Xl0Gs544O007/SZp2qhCtC0zUtdhhC7RCov5suvxlpdlrQxdcuf2Ghlydnc7AWBACvsj/QXektdy/CCi0xVPtdC/ALxckONczU6w4OsPaR+QKwdvHaq3qpxl3ruir3WkH2LqyTr6ROzRu0qBAOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727118035; c=relaxed/simple;
-	bh=lNBL5OYiJpvcnKfUa3RpueVyJhUTgz3pkJkPdWIAvlY=;
+	s=arc-20240116; t=1727118036; c=relaxed/simple;
+	bh=QOZu0TndXYoRKoqbvRlULpsc4VkwSX2Xi/rDYZBWrA4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Upt/FbrAFkEn8zDdlm4ZnYExN4akvrnpNcO+xkUvbr5p2lYlPGwhrC5Da42LYRL53yF+UjRdbM3oXKL5Z3dz2mSQojecoNglHlmsscGNIkG9q3MqfZ32HbWS4daKhaQMoWN5/t9f3EmBH0QoJWqrWohh/2MPvpSWvSU/UIa1Dug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=COcN/ZZh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F065CC4AF0B;
-	Mon, 23 Sep 2024 19:00:34 +0000 (UTC)
+	 MIME-Version; b=MprX8Su/hYy1ACkjqfiZKmVVrBdCDi9fGTcKg2+eRlrPvomT+YjHF+RTQSLrtMqAu1dUSpZzN7AKi7KQs/sxGfVLLDQx+EvXtjtZKZ5wTp89eY8RrQsGRs2EdCbfiUjVhmwpbax3DZuN0ApC+x7CkMK6WItnvlByNWXzC/AXmrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BkWVNrK3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1E3CC4CEC4;
+	Mon, 23 Sep 2024 19:00:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727118035;
-	bh=lNBL5OYiJpvcnKfUa3RpueVyJhUTgz3pkJkPdWIAvlY=;
+	s=k20201202; t=1727118036;
+	bh=QOZu0TndXYoRKoqbvRlULpsc4VkwSX2Xi/rDYZBWrA4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=COcN/ZZhJmbdtfNEmeWmwcuxT6wpu/2pdsfpULo6imyt/PagGO45zy96TCVc2iWnj
-	 jYs2vfnXf4vZrEsH2wcP8MeMfpV4WOa0oHLY7CjytwvJtA6tueaTA1O0sQhAkd5Qe0
-	 s/5SHO/avLdJy771yjFPN1+93YIRGAwFvA2/lVLHOBt+8M/hAqreUoA77ONoV+TYGg
-	 wfzxrGl+U8KQ9oEAcyjkSieR9WpPMlRC8n1NJryH+3Qz8HKWELKjeY9vzuRiaA7HV4
-	 HyDVSnV2LBkbRlJvHNMx9e00iltFPHWdmJqNJm8QrLR2EY8u7MOPulArTASxGHV4Hb
-	 9ilCPL6VgxFuw==
+	b=BkWVNrK3nAHbwpVl39FzNq+qTpN+usMAiK7TWWrRfWUBbn2s5Gd5wxgPwGhchCedZ
+	 8B1A9ybUbwK7+iqJdYVKis2kw1bzcLLjOeIm9RTdoRHc8SRThVnNp5gZQOmVf3ziQ/
+	 IaTVDjXJ6h0QJUYWRfbQqlqP0z40d0EymI8FKpVXP5WLWQYsMEDp/SHY1Q5XQJI/lf
+	 7up450BL2ltuugD2M891uvbxvJcg4gnwoBfU+jM+3KNZETWEZzim47KYSIsgP2Yseb
+	 B+KVE0PJYTbEDARoWYmPDqfvC3rJFc2ZbtDvveEa5HD0vosfL0yzQUNSwx43lRvz2n
+	 Hq6+gJHEh9tMA==
 From: Tejun Heo <tj@kernel.org>
 To: void@manifault.com
 Cc: kernel-team@meta.com,
@@ -47,9 +47,9 @@ Cc: kernel-team@meta.com,
 	sched-ext@meta.com,
 	aboorvad@linux.ibm.com,
 	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 2/8] sched_ext: Remove SCX_OPS_PREPPING
-Date: Mon, 23 Sep 2024 08:59:29 -1000
-Message-ID: <20240923190020.1446325-3-tj@kernel.org>
+Subject: [PATCH 3/8] sched_ext: Initialize in bypass mode
+Date: Mon, 23 Sep 2024 08:59:30 -1000
+Message-ID: <20240923190020.1446325-4-tj@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240923190020.1446325-1-tj@kernel.org>
 References: <20240923190020.1446325-1-tj@kernel.org>
@@ -61,86 +61,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The distinction between SCX_OPS_PREPPING and SCX_OPS_ENABLING is not used
-anywhere and only adds confusion. Drop SCX_OPS_PREPPING.
+scx_ops_enable() used preempt_disable() around the task iteration loop to
+switch tasks into SCX to guarantee forward progress of the task which is
+running scx_ops_enable(). However, in the gap between setting
+__scx_ops_enabled and preeempt_disable(), an external entity can put tasks
+including the enabling one into SCX prematurely, which can lead to
+malfunctions including stalls.
+
+The bypass mode can wrap the entire enabling operation and guarantee forward
+progress no matter what the BPF scheduler does. Use the bypass mode instead
+to guarantee forward progress while enabling.
+
+While at it, release and regrab scx_tasks_lock between the two task
+iteration locks in scx_ops_enable() for clarity as there is no reason to
+keep holding the lock between them.
 
 Signed-off-by: Tejun Heo <tj@kernel.org>
 ---
- kernel/sched/ext.c | 29 +++++++----------------------
- 1 file changed, 7 insertions(+), 22 deletions(-)
+ kernel/sched/ext.c | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
 
 diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 95ed822fa563..2422b2abee6e 100644
+index 2422b2abee6e..1b4b6439cd1a 100644
 --- a/kernel/sched/ext.c
 +++ b/kernel/sched/ext.c
-@@ -778,7 +778,6 @@ enum scx_tg_flags {
- };
+@@ -5030,6 +5030,14 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+ 	queue_delayed_work(system_unbound_wq, &scx_watchdog_work,
+ 			   scx_watchdog_timeout / 2);
  
- enum scx_ops_enable_state {
--	SCX_OPS_PREPPING,
- 	SCX_OPS_ENABLING,
- 	SCX_OPS_ENABLED,
- 	SCX_OPS_DISABLING,
-@@ -786,7 +785,6 @@ enum scx_ops_enable_state {
- };
- 
- static const char *scx_ops_enable_state_str[] = {
--	[SCX_OPS_PREPPING]	= "prepping",
- 	[SCX_OPS_ENABLING]	= "enabling",
- 	[SCX_OPS_ENABLED]	= "enabled",
- 	[SCX_OPS_DISABLING]	= "disabling",
-@@ -4971,12 +4969,12 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
++	/*
++	 * Once __scx_ops_enabled is set, %current can be switched to SCX
++	 * anytime. This can lead to stalls as some BPF schedulers (e.g.
++	 * userspace scheduling) may not function correctly before all tasks are
++	 * switched. Init in bypass mode to guarantee forward progress.
++	 */
++	scx_ops_bypass(true);
++
+ 	/*
+ 	 * Lock out forks, cgroup on/offlining and moves before opening the
+ 	 * floodgate so that they don't wander into the operations prematurely.
+@@ -5089,7 +5097,6 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+ 	 * disabled.
+ 	 */
+ 	spin_lock_irq(&scx_tasks_lock);
+-
+ 	scx_task_iter_init(&sti);
+ 	while ((p = scx_task_iter_next_locked(&sti))) {
+ 		/*
+@@ -5118,22 +5125,19 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+ 		spin_lock_irq(&scx_tasks_lock);
  	}
+ 	scx_task_iter_exit(&sti);
++	spin_unlock_irq(&scx_tasks_lock);
  
  	/*
--	 * Set scx_ops, transition to PREPPING and clear exit info to arm the
-+	 * Set scx_ops, transition to ENABLING and clear exit info to arm the
- 	 * disable path. Failure triggers full disabling from here on.
+-	 * All tasks are prepped but are still ops-disabled. Ensure that
+-	 * %current can't be scheduled out and switch everyone.
+-	 * preempt_disable() is necessary because we can't guarantee that
+-	 * %current won't be starved if scheduled out while switching.
++	 * All tasks are prepped but the tasks are not enabled. Switch everyone.
  	 */
- 	scx_ops = *ops;
+-	preempt_disable();
++	WRITE_ONCE(scx_switching_all, !(ops->flags & SCX_OPS_SWITCH_PARTIAL));
  
--	WARN_ON_ONCE(scx_ops_set_enable_state(SCX_OPS_PREPPING) !=
-+	WARN_ON_ONCE(scx_ops_set_enable_state(SCX_OPS_ENABLING) !=
- 		     SCX_OPS_DISABLED);
- 
- 	atomic_set(&scx_exit_kind, SCX_EXIT_NONE);
-@@ -5129,23 +5127,6 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
- 	 */
- 	preempt_disable();
- 
--	/*
--	 * From here on, the disable path must assume that tasks have ops
--	 * enabled and need to be recovered.
--	 *
--	 * Transition to ENABLING fails iff the BPF scheduler has already
--	 * triggered scx_bpf_error(). Returning an error code here would lose
--	 * the recorded error information. Exit indicating success so that the
--	 * error is notified through ops.exit() with all the details.
--	 */
--	if (!scx_ops_tryset_enable_state(SCX_OPS_ENABLING, SCX_OPS_PREPPING)) {
--		preempt_enable();
--		spin_unlock_irq(&scx_tasks_lock);
--		WARN_ON_ONCE(atomic_read(&scx_exit_kind) == SCX_EXIT_NONE);
--		ret = 0;
--		goto err_disable_unlock_all;
--	}
--
  	/*
  	 * We're fully committed and can't fail. The PREPPED -> ENABLED
  	 * transitions here are synchronized against sched_ext_free() through
-@@ -5176,7 +5157,11 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+ 	 * scx_tasks_lock.
+ 	 */
+-	WRITE_ONCE(scx_switching_all, !(ops->flags & SCX_OPS_SWITCH_PARTIAL));
+-
++	spin_lock_irq(&scx_tasks_lock);
+ 	scx_task_iter_init(&sti);
+ 	while ((p = scx_task_iter_next_locked(&sti))) {
+ 		const struct sched_class *old_class = p->sched_class;
+@@ -5150,12 +5154,12 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+ 		check_class_changed(task_rq(p), p, old_class, p->prio);
+ 	}
+ 	scx_task_iter_exit(&sti);
+-
+ 	spin_unlock_irq(&scx_tasks_lock);
+-	preempt_enable();
++
+ 	scx_cgroup_unlock();
  	cpus_read_unlock();
  	percpu_up_write(&scx_fork_rwsem);
++	scx_ops_bypass(false);
  
--	/* see above ENABLING transition for the explanation on exiting with 0 */
-+	/*
-+	 * Returning an error code here would lose the recorded error
-+	 * information. Exit indicating success so that the error is notified
-+	 * through ops.exit() with all the details.
-+	 */
- 	if (!scx_ops_tryset_enable_state(SCX_OPS_ENABLED, SCX_OPS_ENABLING)) {
- 		WARN_ON_ONCE(atomic_read(&scx_exit_kind) == SCX_EXIT_NONE);
- 		ret = 0;
+ 	/*
+ 	 * Returning an error code here would lose the recorded error
+@@ -5196,6 +5200,7 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+ err_disable_unlock_all:
+ 	scx_cgroup_unlock();
+ 	percpu_up_write(&scx_fork_rwsem);
++	scx_ops_bypass(false);
+ err_disable_unlock_cpus:
+ 	cpus_read_unlock();
+ err_disable:
 -- 
 2.46.0
 
