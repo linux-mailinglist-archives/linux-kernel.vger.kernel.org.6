@@ -1,243 +1,202 @@
-Return-Path: <linux-kernel+bounces-335929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE9697ECA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:01:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5929697ECB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 421601C21670
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:01:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCA9F1F22194
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2C919CC16;
-	Mon, 23 Sep 2024 14:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CD519CCF3;
+	Mon, 23 Sep 2024 14:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xB6CXoxh"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2084.outbound.protection.outlook.com [40.107.236.84])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MhNSNbRq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACE82B9A8;
-	Mon, 23 Sep 2024 14:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727100050; cv=fail; b=MaZvygzGaWQum++XsM22CFxRzMfoJHDjYSSpfndIe237wGJzfRHPXMg3DGl6a/14TPiN+bPW4v14U81wJ8cjgeHwPRgcG4KTmc1/4f3XnQosw6ln6mmfvBQ2IcLIi1GFLyXxM9vke9gADrz2jCXPRSPxVZByNcfnt2N9IDhVTJY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727100050; c=relaxed/simple;
-	bh=hhEfoWTmH5AjSLndPPMIwJMgWZ85dOedHmgyuXZes3E=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MVj/KPTb2e+CfQ+nkjLNVCI2VefYRtTiATtrVQLEtzCWlpZ6eedJqKNvOuW8zIX7ZfpfQI6xqTI5fFRfPIkk7Bh+ywHETKDK1+kSxxMzG8oMcYfKEf9SKtc+f6l01nucPyLOIk9snSdQYqNBxqLsRpr5au2dsz0P/Z/RRmrlhcs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xB6CXoxh; arc=fail smtp.client-ip=40.107.236.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Gu39bdfifBEu1q03zYFKjkl/Oa1dQWXVElU+LFoQ0KZIUPKpHchZagC3ji33t5sv9V7jeSe9B7OJObPJKM39JbyNo6ruoWUnrpIqEIKfib27TUiWuL1+lZ+lDmBFkd9o8bf1s0Tg0vsw5vNPWXPqzw43zbIZuE9Kzwpe9VdqLUwnnXu4CBhs2vLjPN054Sh52VjUiYvPmCH/VQRiqPcqdXCe4rv614jrvgHxNTvxXmr6wllANZwvb7XaDen8JO7jsZbw1uLabgiX8Ph9d1ps8//GBwWNoHszEie2jqPPrUIDzGNLxX6Y9ZZLIAdU3omIlzJe9afeGFPFAGQsC4Qjig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RiEsEBFbyyM/GCeR+uQq4wSZjae7dU16hQQ7ZHpik4U=;
- b=RNxf8eMMF24jio+4rpEekOTOt9pgU4SKnmjzi9BZPuKO4FjWbnSr1SZtr6Rmko7k5CAny9Y6RDGkoR6vH0G0LGBl7Tagke+yRlybxoW0EjM/CfExEb8euVrafJ3xd2GXp9jxEcD520z/b7o38O0R6hiP1dfxrmCBUPp9sIMrCWk4Lf+Q5vfpywa/FHoKMXat/UfntlBM2dpkG2VVTUGFC9COgFQBjXoHlI3qa767QjiOMk/RrMErerlQu//cNPPmUq8gMMHg9DQtKLOhqqOzbmZsElbnK8tzYJdZEZR7bfThYM8SU9N+Iwi7AxasPu0BBbsjvch5aQNG/gMq6nBecQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RiEsEBFbyyM/GCeR+uQq4wSZjae7dU16hQQ7ZHpik4U=;
- b=xB6CXoxhtgNBSifzyRzkNdEuB6v2riYDcAyfbL4W0Q+Dm732T5jfWGk28noq9wQHYIrPVWTQMumWt1aUcO1yV9H8HUJNIDGLt6sNhVr2MZ/UnAEtjBag9gUaaZzOV1zreGdrO88WT40H7WsdHRbJvi2WZOd2C1u2SyylLjNJew4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by CY5PR12MB9053.namprd12.prod.outlook.com (2603:10b6:930:37::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Mon, 23 Sep
- 2024 14:00:45 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.7982.012; Mon, 23 Sep 2024
- 14:00:45 +0000
-Message-ID: <af565f2c-1cb3-4ad9-a482-420afc8e6e41@amd.com>
-Date: Mon, 23 Sep 2024 16:00:39 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dma-buf: Add syntax highlighting to code listings in the
- document
-To: Tommy Chiang <ototot@chromium.org>, Sumit Semwal <sumit.semwal@linaro.org>
-Cc: linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-References: <20240119033126.1802711-1-ototot@chromium.org>
- <CAH2knV03g8_z8326yd=pQV11X3N1VFc_DqXzVjMgM4Q0C+8awg@mail.gmail.com>
- <CAH2knV3RZdnu36+dDQGU834G+82dOqtyHY4RhRow5tb0VXWpqg@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <CAH2knV3RZdnu36+dDQGU834G+82dOqtyHY4RhRow5tb0VXWpqg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FRYP281CA0009.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10::19)
- To PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5645519CC2F;
+	Mon, 23 Sep 2024 14:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727100090; cv=none; b=eNuPGyMyprBpyUMFU8Mqcb0wZeGlej5ko8Vmo9zOd7jDRGkFGWh5exOdvAdhrq72hZ0/GCYyBN6CqwDuqJupdxxLUlQe+FSMwSaPxHDrFlW7bGjtJnVP1DDrTNO6uI1Fp2PzEo27HwGDsCPfSVw3J8KzAR6VUEZ3KVxWDNUiDes=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727100090; c=relaxed/simple;
+	bh=TDxJeNsX77d/AfYhaxIHfAmgAtUhf4SXC556pfTCPbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mBe8yEb2SInYruZHtkMsR9PvbTuZxkh05G3Nef3CXXYK3zedtLP89ofclAs3HX1s8qfDemsaGHbus6rF2SanXh2uwgTA6VleEutmruhXoGcPPadoqxpXg/TH3UP/5H50vHWqpUdK4es/Cp14QEi3IoEqUjMVoQ0/isgf0eSeQZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MhNSNbRq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0E66C4CEC4;
+	Mon, 23 Sep 2024 14:01:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727100089;
+	bh=TDxJeNsX77d/AfYhaxIHfAmgAtUhf4SXC556pfTCPbk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MhNSNbRqCwy+YMzoy579HhiNfi3E0A+H/wjlBWV8wI1T2s8Tdvz5ChfUafCuOFhSj
+	 PN7j3/3o6/oHBHp6PqHR9dRC+NV3Qg/F9yiB3sAGTpZKnjjqLNySNV65vgIzxFaNKv
+	 ome/Zv+pM0B/CBeukIUYTM/+ZTgJPzrhXUKIIZqmG8DLnLo0Hz8wK61JR4GhmE02+i
+	 ZZJZgpXXVXDUmNyupcQZXeg3lmFIehTEe9uYfhPiNYfS5AncUMVDibqgk7par06NLg
+	 dYT41tNLyNYZs68xovohwKHApun5U0fnXGq6ZslPylwpx4fsqoQg4Icm0JVI3UKNO0
+	 agSC0vFY1VZ4A==
+Date: Mon, 23 Sep 2024 15:01:25 +0100
+From: Simon Horman <horms@kernel.org>
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Rafal Romanowski <rafal.romanowski@intel.com>,
+	netdev@vger.kernel.org
+Subject: Re: drivers/net/ethernet/intel/igb/igb_main.c:7895:6-11: ERROR:
+ invalid reference to the index variable of the iterator on line 7890 (fwd)
+Message-ID: <20240923140125.GG3426578@kernel.org>
+References: <alpine.DEB.2.22.394.2409131949580.3731@hadrien>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CY5PR12MB9053:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7382a360-e59b-42e8-92e9-08dcdbd81e84
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eWNpOCtOVElIS3RsdEczWGl6SjZrYTVNTFd3eldmT0pzUFBxamh0ZVdsQnpT?=
- =?utf-8?B?VzV4anp3b0xjbVBEVS8zdUVieEk1UnptV0JLU3MwMkJVU3UzZzhRZXVPR2g4?=
- =?utf-8?B?YVF1ZHJvSWhoTnJ2WTQ5QXUrT2x0NWN4U3JUaDNSa2xzQXUxY2xFVEtkY0RL?=
- =?utf-8?B?N3JTS3h0cXdaeG1MNmpHV0hiRGl3MWorbHhLOHpTKzIzbVY2bU10aU9BbWxL?=
- =?utf-8?B?WHRMb1hKQjlkbGR1dEwyL0d2YmFyakdJckVaZXQ2SitYOThVTmlZZFpGNWt3?=
- =?utf-8?B?eDJ2YSt4OEdsNDZZL0pFVzR4TiszbE5NVnJzRlpHV1hmQmRrd0MzdXkzTGMr?=
- =?utf-8?B?ZEIybkpwR3o3SytqcFJ6TGhpaEhQU3ZKRENZRWtTWFEzd2F5bW43dzdIbW5q?=
- =?utf-8?B?cVpINFhjb1hrNTZrSUw5RVBCUjd0NTBDUkVjekpHWFR2cC9CWVZ4Y0pUWDll?=
- =?utf-8?B?UEhnSEdNNXVpK25LMDBYTTFyNFRkc3BLMFpvY2JiMXlDRTdOakVMQlFnNUJY?=
- =?utf-8?B?UkFHcFhUK1ZtQWhYL1g1cTJGazJjYmRmUzBzSHZFRUZuQXlKMXpnOGhkdGVB?=
- =?utf-8?B?SzlsYjNjZmhzWjNmeERjVDQzWitNaHpuMTR4ZnVEWUU5Rk15Q0pNaWpYT0E3?=
- =?utf-8?B?VTFRVlVyaWVXeHR3T1RBOERob2dHMVRYeHlTck1mN1BaVlNUMnNuTVVBU05l?=
- =?utf-8?B?M2c2Qkk2ODBjNVcrVGF1bkNQSmtmYlFPQ2VwRU5PV0QyRFZlMkhjc1Z4S0FN?=
- =?utf-8?B?QWp1bEdkN0Fkay8yaWJTSDA4L2FQeEpOaUNIeDkvWS9CUW93YmlGNnVXcnZ4?=
- =?utf-8?B?S1ZKQkVYSjFpNnhYaVhTNHBiMndoOUsycnlSRENKNU9ieGtDUGlUeWtIL0Rh?=
- =?utf-8?B?VEludG5Wb3paU2txa2VDK1liSThsQzhzMzlsWVVBZXRWeUs2YTBQL2JNdldi?=
- =?utf-8?B?Uk1wSk5tVWM0aXMrb3pJY05ZdktOeDh4UlFqeFVnc0x6c2Z0aTVndnROWTFa?=
- =?utf-8?B?bk55cytuczZxOUl3NU1HWXl2UUdFN3NERFEyb0dpMi9ieDZOUWJ4NmJzcW9L?=
- =?utf-8?B?RWhGT25iYVE5TDQwRmxRUlh3emZnN3R2OHhEQnJWQlZpSU5kUFVTR1RtcFpG?=
- =?utf-8?B?cEYwRk93TFY4a1NDbkgzcElXS1didk9GUWN4YXFCL3BXendDRFRSenJJK0ZH?=
- =?utf-8?B?c043WHFyUEZJK0hibCtHb3VKTXVpc2FIVDQrOFZVNGxnSk9NanJSMURaa1Zs?=
- =?utf-8?B?L240M2gvMHdudU45dzlrZDZlZEpTNnpXTVkvWk92ZG9hYVNKUTRqZlNLSjlP?=
- =?utf-8?B?YWc2VU1WVjlzbmE5WWZaZ1BUZDlISUFjWWZZY01UUmxUY1lNVlIrcncrSGts?=
- =?utf-8?B?TTlpS1JBcFlua240MENSNUptVHlkaE0yRWxCQzJWdEYwbGRZNVY3Wm5PakRO?=
- =?utf-8?B?QnMrQkVnOXpJUDlrREVHWHV0RS9XTzZ4YjJFNCtIZHlZeFUzc0FBdVkvblI1?=
- =?utf-8?B?S1dhRW96aDdpVjE3TzkvQWZJZVkyVFdDVW0wVEtCL21VcmZiaCttWWdmcnM4?=
- =?utf-8?B?UVVmWlBzYll6T0hjU1lKN1l4SGZIZnQwOXEwRlNZVDl5MTRGTkVrOFI5VGpm?=
- =?utf-8?B?c3IrNHgwaVd3QWpFalhMTjNTSTZqbnZLVUZWc2RhK2dhWFZyM21DcFVhcE0w?=
- =?utf-8?B?R1Q5K1lrVi80dU5nUTRDL0xaZlFxbEhLM2lLemk0blBiY0dSejBidTlnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WmVQLzlvWEJ1dGdFdng3Yk42VlJYWlgzUjBTVTB5Q3FzU3g4SzloaGFvWW1K?=
- =?utf-8?B?QmNrODFpbjE3OTdmbVdSS0xncnh1MTdwTndPdDdzYmxMb3VONGc2eHZ3YmY4?=
- =?utf-8?B?ekFyQjRYVFNFb0NtNFFlY09iajFvaHYwZURVTHVrWGhkd2wvUmsyNFMxYkQz?=
- =?utf-8?B?YkNOZ1JiRkUxN0xLZjRQdkJXZWFxM05PYVBPdEc1SFZnWURhcXFraXRlOUNG?=
- =?utf-8?B?dUFIaEJIQ3hRaE1Xbm9peTBUWW5IZzYvZzV1dFJ6eCs5YW80WnBjQVUrR28w?=
- =?utf-8?B?WnZiV1dCVzFqU0Y3Uk9sQ0xqWHhRa0JrREdtM1VMWjY0dFFmYXV4aFBDWDUv?=
- =?utf-8?B?aUl0Z09KZTJCU1dmeGtvUXRzZkNtRHFVTGxxUmVnQnNvOVN4aHVmaGg1aCtH?=
- =?utf-8?B?NytlYzV2c1g0TXE4MzRlcWJQSFZOdlhXVlB1dFpPVllaZ3g4TzI4ZzVDdmx5?=
- =?utf-8?B?eEUxVXZuYVhTRUtSZE9PZlJNV01NeVhIaGZpYjRSRGIwZ2s0bEh6d25TVFkz?=
- =?utf-8?B?VkpycUtYbE9JaUZNa3VLMi9JempWL0RFajVZUFlDclJOL0owNWRtc1BqNzZ3?=
- =?utf-8?B?Z0FBNUFVWTBuTUpNczZRVC9hVTY3dEFWMkd1cUFtY0FiemVwUmMzU3U1dHV1?=
- =?utf-8?B?TnQ2WGlxUmIzZ1pxdlBXQ0RRMWZCdHB2Z0VmL1RNYm44ank5VE5ZN0JKVDRw?=
- =?utf-8?B?SlpkTGVKZjRMc3J3QnFqTFB1Z2NtYnRsYzdHR2VZdGlsMHFiN09qeXZtVUJ2?=
- =?utf-8?B?S2dRcWVpL3dYU3Fja1F5c3dJeGVwZ05mdzZpb3JJOTVlbndsdE1aeXltRXVF?=
- =?utf-8?B?MFg4QUZqZkRxWVhQZVRZd2xKK3JkVUNsY3FUTXdwYlAxV1k0M2FwaGhHV1VD?=
- =?utf-8?B?QjZKV1NOYk9hbEQrV1RHSkFVRzdPb1doRGtvNVRrc1pyM3ZHeHYzNEl4ME1E?=
- =?utf-8?B?S3ZSS29QZEp1UjJkMTBuWG9rVzBORUNmeXBIb3NMRThBempubmRKTlRIYURH?=
- =?utf-8?B?RTVCWkFINTJ0U3RMSkdLcklQY1ozMHJCcmhjNHh3NmhITjM5L09IUHBwWDQr?=
- =?utf-8?B?M3Z5eGQ4clBwKzRIeHcwZVRCK3ZITUtJaGlHbThpem9kQTc3ZFVUNUtyNmh5?=
- =?utf-8?B?ZXNwNDcyWEF5NmFvdzh4bWVxbUwwVUlScHNHWEJRYW9XeXZTbW5pK0N2VVNy?=
- =?utf-8?B?WWJHV1BhSnk1eVRnUk1BTExVclRMZHJKajZVNGlROE0reCtuR1c4VTdURkc1?=
- =?utf-8?B?Qm5Fanl2SytpbENpUVpCWVkwNThhS3hBTlFlMmErMHZFLzl3WG5ZN082QUpT?=
- =?utf-8?B?eDd6dTVCRVljdTF6ZzBGOVpLT2w4eERuRlpNdDRKYThMU0ExeGVVb2hyNVY4?=
- =?utf-8?B?Zkp4MU5BSVN0MnROalZVc0U1ZnpTcEo0VGxPbE5OZnBGVVA5UklrbTBOMnVl?=
- =?utf-8?B?Sk9ZY2FzQ1pnN0hlMjNRU1NiUDB2WG1GdmprenUweDJyOHVOT3FndHpZOFcw?=
- =?utf-8?B?NlNUT01LdlpCRjRlOTF1bDlYRFhNNjNBblAvNTl5RlF6VUFLZ2xRQ0xtYi9y?=
- =?utf-8?B?NHlrR3M0M3hFK1VNUE1vNDQvSFJjRTkrMjEwTUdGRThiREkwWE5XNk1iVFIv?=
- =?utf-8?B?Z2htdk8yK3Mrc01BTUF3WHJYYTNrSFJtaHBjZkVSQkZXRVNLNWxjZzcwQUtB?=
- =?utf-8?B?NTBXbWxqM2x1Z3p3T0poL3gyREZ1bXBlUVBCZjdwR1o2RTVGbG55OEN3ZE1r?=
- =?utf-8?B?K1lMTW1Fcy9VSXNzL0w1cVgydnNDSS9IVkprMURNV0Z1azZ4SWZhcTFnTWVH?=
- =?utf-8?B?dXdLTXJsaktPUVFGTm5hVHNTN2N2VFB1NEc3Mkp4VVM3NVBhdW1YY2FMa1NI?=
- =?utf-8?B?eEY1ZzNyT1YyOHNoTVRrOWVvQ3RSNzZvc1FOZUlnRXhtd2FyRjU5MEliR2Zw?=
- =?utf-8?B?d1R1Q29tU1d1NmlkdGNJNEovWEdMUHN4b1E0RzVqa21sSENUQ1lqb0xkWGJD?=
- =?utf-8?B?VW9Xc3hGOWRORHZxc0R5R0ZPc0huWndRYUQ0R1lLMVJOQkZHU2VXdm5tamZo?=
- =?utf-8?B?N296SDNqaWlaWGJSS0YwY094a0xodTd3UktWTkRBVVVrTXh1VW9lTTA3dzg3?=
- =?utf-8?Q?pUQ9mENpXfK+gcwVlGaRFXdFe?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7382a360-e59b-42e8-92e9-08dcdbd81e84
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 14:00:45.2475
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZElz3Isfoy8od8WuCdFp3iYmnWbeqb/9ZIqSIgE2HTj0iWhwkNZUJd7eL7kxoPu/
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB9053
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.22.394.2409131949580.3731@hadrien>
 
-Nothing wrong with this, I just didn't had time to double check it 
-myself and then forgotten about it.
++   Dan Carpenter, Rafal Romanowski, netdev
 
-Going to push it to drm-misc-next.
+On Fri, Sep 13, 2024 at 07:51:48PM +0200, Julia Lawall wrote:
+> On line 7895, entry is never NULL, even if you are at the end (which is
+> the same as the beginning) of the list.
+> 
+> julia
 
-Regards,
-Christian.
+Hi Julia, all,
 
+Unless I am mistaken (it often happens) this is an issue
+from about a year ago what was fixed within the same
+time frame by Dan Carpenter in:
 
-Am 23.09.24 um 11:22 schrieb Tommy Chiang:
-> Ping.
-> Please let me know if I'm doing something wrong.
->
-> On Mon, Feb 19, 2024 at 11:00 AM Tommy Chiang <ototot@chromium.org> wrote:
->> Kindly ping :)
->>
->> On Fri, Jan 19, 2024 at 11:33 AM Tommy Chiang <ototot@chromium.org> wrote:
->>> This patch tries to improve the display of the code listing
->>> on The Linux Kernel documentation website for dma-buf [1] .
->>>
->>> Originally, it appears that it was attempting to escape
->>> the '*' character, but looks like it's not necessary (now),
->>> so we are seeing something like '\*' on the webite.
->>>
->>> This patch removes these unnecessary backslashes and adds syntax
->>> highlighting to improve the readability of the code listing.
->>>
->>> [1] https://docs.kernel.org/driver-api/dma-buf.html
->>>
->>> Signed-off-by: Tommy Chiang <ototot@chromium.org>
->>> ---
->>>   drivers/dma-buf/dma-buf.c | 15 +++++++++------
->>>   1 file changed, 9 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
->>> index 8fe5aa67b167..e083a0ab06d7 100644
->>> --- a/drivers/dma-buf/dma-buf.c
->>> +++ b/drivers/dma-buf/dma-buf.c
->>> @@ -1282,10 +1282,12 @@ EXPORT_SYMBOL_NS_GPL(dma_buf_move_notify, DMA_BUF);
->>>    *   vmap interface is introduced. Note that on very old 32-bit architectures
->>>    *   vmalloc space might be limited and result in vmap calls failing.
->>>    *
->>> - *   Interfaces::
->>> + *   Interfaces:
->>>    *
->>> - *      void \*dma_buf_vmap(struct dma_buf \*dmabuf, struct iosys_map \*map)
->>> - *      void dma_buf_vunmap(struct dma_buf \*dmabuf, struct iosys_map \*map)
->>> + *   .. code-block:: c
->>> + *
->>> + *     void *dma_buf_vmap(struct dma_buf *dmabuf, struct iosys_map *map)
->>> + *     void dma_buf_vunmap(struct dma_buf *dmabuf, struct iosys_map *map)
->>>    *
->>>    *   The vmap call can fail if there is no vmap support in the exporter, or if
->>>    *   it runs out of vmalloc space. Note that the dma-buf layer keeps a reference
->>> @@ -1342,10 +1344,11 @@ EXPORT_SYMBOL_NS_GPL(dma_buf_move_notify, DMA_BUF);
->>>    *   enough, since adding interfaces to intercept pagefaults and allow pte
->>>    *   shootdowns would increase the complexity quite a bit.
->>>    *
->>> - *   Interface::
->>> + *   Interface:
->>> + *
->>> + *   .. code-block:: c
->>>    *
->>> - *      int dma_buf_mmap(struct dma_buf \*, struct vm_area_struct \*,
->>> - *                    unsigned long);
->>> + *     int dma_buf_mmap(struct dma_buf *, struct vm_area_struct *, unsigned long);
->>>    *
->>>    *   If the importing subsystem simply provides a special-purpose mmap call to
->>>    *   set up a mapping in userspace, calling do_mmap with &dma_buf.file will
->>> --
->>> 2.43.0.381.gb435a96ce8-goog
->>>
+- 4690aea589e7 ("igb: Fix an end of loop test")
+  https://git.kernel.org/netdev/net/c/4690aea589e7
 
+> ---------- Forwarded message ----------
+> Date: Sat, 14 Sep 2024 01:43:11 +0800
+> From: kernel test robot <lkp@intel.com>
+> To: oe-kbuild@lists.linux.dev
+> Cc: lkp@intel.com, Julia Lawall <julia.lawall@inria.fr>
+> Subject: drivers/net/ethernet/intel/igb/igb_main.c:7895:6-11: ERROR: invalid
+>     reference to the index variable of the iterator on line 7890
+> 
+> BCC: lkp@intel.com
+> CC: oe-kbuild-all@lists.linux.dev
+> CC: linux-kernel@vger.kernel.org
+> TO: Jinjie Ruan <ruanjinjie@huawei.com>
+> CC: Paolo Abeni <pabeni@redhat.com>
+> CC: Jacob Keller <jacob.e.keller@intel.com>
+> CC: Tony Nguyen <anthony.l.nguyen@intel.com>
+> CC: Simon Horman <horms@kernel.org>
+> 
+> Hi Jinjie,
+> 
+> FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   196145c606d0f816fd3926483cb1ff87e09c2c0b
+> commit: c1fec890458ad101ddbbc52cdd29f7bba6aa2b10 ethernet/intel: Use list_for_each_entry() helper
+> date:   12 months ago
+> :::::: branch date: 18 hours ago
+> :::::: commit date: 12 months ago
+> config: microblaze-randconfig-r052-20240913 (https://download.01.org/0day-ci/archive/20240914/202409140131.Y6Qnoc6t-lkp@intel.com/config)
+> compiler: microblaze-linux-gcc (GCC) 14.1.0
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Reported-by: Julia Lawall <julia.lawall@inria.fr>
+> | Closes: https://lore.kernel.org/r/202409140131.Y6Qnoc6t-lkp@intel.com/
+> 
+> cocci warnings: (new ones prefixed by >>)
+> >> drivers/net/ethernet/intel/igb/igb_main.c:7895:6-11: ERROR: invalid reference to the index variable of the iterator on line 7890
+>    drivers/net/ethernet/intel/igb/igb_main.c:7895:15-20: ERROR: invalid reference to the index variable of the iterator on line 7890
+> 
+> vim +7895 drivers/net/ethernet/intel/igb/igb_main.c
+> 
+> 83c21335c87622 Yury Kylulin     2017-03-07  7854
+> b476deab8f412b Colin Ian King   2017-04-27  7855  static int igb_set_vf_mac_filter(struct igb_adapter *adapter, const int vf,
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7856  				 const u32 info, const u8 *addr)
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7857  {
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7858  	struct pci_dev *pdev = adapter->pdev;
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7859  	struct vf_data_storage *vf_data = &adapter->vf_data[vf];
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7860  	struct vf_mac_filter *entry = NULL;
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7861  	int ret = 0;
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7862
+> 1b8b062a99dc76 Corinna Vinschen 2018-01-17  7863  	if ((vf_data->flags & IGB_VF_FLAG_PF_SET_MAC) &&
+> 1b8b062a99dc76 Corinna Vinschen 2018-01-17  7864  	    !vf_data->trusted) {
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7865  		dev_warn(&pdev->dev,
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7866  			 "VF %d requested MAC filter but is administratively denied\n",
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7867  			  vf);
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7868  		return -EINVAL;
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7869  	}
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7870  	if (!is_valid_ether_addr(addr)) {
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7871  		dev_warn(&pdev->dev,
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7872  			 "VF %d attempted to set invalid MAC filter\n",
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7873  			  vf);
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7874  		return -EINVAL;
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7875  	}
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7876
+> 584af82154f56e Karen Sornek     2021-08-31  7877  	switch (info) {
+> 584af82154f56e Karen Sornek     2021-08-31  7878  	case E1000_VF_MAC_FILTER_CLR:
+> 584af82154f56e Karen Sornek     2021-08-31  7879  		/* remove all unicast MAC filters related to the current VF */
+> c1fec890458ad1 Jinjie Ruan      2023-09-19  7880  		list_for_each_entry(entry, &adapter->vf_macs.l, l) {
+> 584af82154f56e Karen Sornek     2021-08-31  7881  			if (entry->vf == vf) {
+> 584af82154f56e Karen Sornek     2021-08-31  7882  				entry->vf = -1;
+> 584af82154f56e Karen Sornek     2021-08-31  7883  				entry->free = true;
+> 584af82154f56e Karen Sornek     2021-08-31  7884  				igb_del_mac_filter(adapter, entry->vf_mac, vf);
+> 584af82154f56e Karen Sornek     2021-08-31  7885  			}
+> 584af82154f56e Karen Sornek     2021-08-31  7886  		}
+> 584af82154f56e Karen Sornek     2021-08-31  7887  		break;
+> 584af82154f56e Karen Sornek     2021-08-31  7888  	case E1000_VF_MAC_FILTER_ADD:
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7889  		/* try to find empty slot in the list */
+> c1fec890458ad1 Jinjie Ruan      2023-09-19 @7890  		list_for_each_entry(entry, &adapter->vf_macs.l, l) {
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7891  			if (entry->free)
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7892  				break;
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7893  		}
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7894
+> 4827cc37796a02 Yury Kylulin     2017-03-07 @7895  		if (entry && entry->free) {
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7896  			entry->free = false;
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7897  			entry->vf = vf;
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7898  			ether_addr_copy(entry->vf_mac, addr);
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7899
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7900  			ret = igb_add_mac_filter(adapter, addr, vf);
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7901  			ret = min_t(int, ret, 0);
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7902  		} else {
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7903  			ret = -ENOSPC;
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7904  		}
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7905
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7906  		if (ret == -ENOSPC)
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7907  			dev_warn(&pdev->dev,
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7908  				 "VF %d has requested MAC filter but there is no space for it\n",
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7909  				 vf);
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7910  		break;
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7911  	default:
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7912  		ret = -EINVAL;
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7913  		break;
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7914  	}
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7915
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7916  	return ret;
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7917  }
+> 4827cc37796a02 Yury Kylulin     2017-03-07  7918
+> 
+> :::::: The code at line 7895 was first introduced by commit
+> :::::: 4827cc37796a02ece7097e01dad8e08f537ac815 igb/igbvf: Add VF MAC filter request capabilities
+> 
+> :::::: TO: Yury Kylulin <yury.kylulin@intel.com>
+> :::::: CC: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+> 
 
