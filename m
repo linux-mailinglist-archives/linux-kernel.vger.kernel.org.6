@@ -1,88 +1,97 @@
-Return-Path: <linux-kernel+bounces-335540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDD497E733
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:07:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E265397E72F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DF181C2107A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:07:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7251FB209AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F9A57C8D;
-	Mon, 23 Sep 2024 08:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC7E5FB95;
+	Mon, 23 Sep 2024 08:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ag23fwXv"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="VwRqGhpt"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A002C9D;
-	Mon, 23 Sep 2024 08:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4417ACA6F;
+	Mon, 23 Sep 2024 08:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727078864; cv=none; b=qwEPtwgaZAxT4m2VPYJSZ2676KrV3NqaXaJL8vCAgYfYDDBEgLCmSc9NJo3NSdnnZVMgdiJT3lE2FxIADyKLUDWxAmcLa9eKU29Ad/7N5Kb51e8dgO1+FzfI7TRq0Wg4c665Bl7CPyaJNDoVY3+5Ly6HXug7GGQ3l/+g2YkXpZE=
+	t=1727078813; cv=none; b=tg/cYbwhyPHDUbuWDqy2I9kXSl52hpe1SvCa98VNGHu4gJp2JOLSDXL3Pt0wQ/oCMp8Ssz1tjwdGxLsUMj6gkHK76k6sL8FIezj7/wjU/aOZdM21EMLvDPykYZknAnDHEqtRkPRfBf/KV4iLgkAmqDkVNki+b7bGl30OG4VS/BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727078864; c=relaxed/simple;
-	bh=XN506Irq1YGFWH9rhZPynkDP1nbO1RwV+6v4MGauZQY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RAiVBblTzVDw3cA/CXunWy60igHXYX1TlWvrpURsFVjOCp/1TDdhvpA6iWHUIW3GWa0SXkdeBcu1kpGdSdTJxTTaMhc24hLNcsF209pB4y/75TF7TGICY8KQwTVKAW5Pj1IeZZdpYb0N9z+4RQ1GbD8mvoSgl7de8N1vwpDMCZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ag23fwXv; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727078859;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vtdcH2O9rkRNxjdgWC5uJjmAqWJGi1QC5VKqyCJu5So=;
-	b=ag23fwXvMaJ2cYNMVDbzvoMDybGHP+9xQxvqoehpY+9GGBwrdeCeUpFzJNHdpAygfrWUw6
-	aQYrG+ZR5qjb0hWzBcgU5Exag7MiZCEyveZ1L0UDX9eTSjmK1QES2Y2jVRNcXQVFl5Gi+D
-	bdSwa+kYklv1RaiT3iwz4jZmIFxscHE=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] NFSD: Remove unnecessary posix_acl_entry pointer initialization
-Date: Mon, 23 Sep 2024 10:05:46 +0200
-Message-ID: <20240923080546.230198-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1727078813; c=relaxed/simple;
+	bh=GewCYpn7wGDokXcE/Vr2HFRzlGkSFHvHRMly3QB/peg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dbSFl+50Qn/9n9JTcupYHnTLsF6dCjbFA0G8mGyEzZtbcJur8YquQhtzoVl1Gi+bhJ6uh0Xwj7qE7YWJjySFX4RBIiJciOYE9M8yCZPoEGrAF7uPO9+OLy9zLRCEs1tdRfQ9c0rEDLtniskI2eUvUb08Pokv/QtvW6SsIOggo20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=VwRqGhpt; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1727078811;
+	bh=5KtvWm6qpjSQg+2gDWl73WfOq7D5a6uUcZ0pBi0T1zs=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=VwRqGhptmGPmicXYLwfjXw8EkJxL4xu4YU/gvJYn3qIfU/rX0NZBXtgpyofiIin31
+	 tRul/v7v2aOjaMSewLTOF5KVY8MWt/QVfQB4PRD+76hv5fokvJ/lqI0+XozVCAm16l
+	 CyF8vY0fA9gUjQuU0NpIuny80jobLl+vMMbBcW14=
+Received: from [IPv6:240e:456:1020:3a44:c13d:8652:53f6:a6b8] (unknown [IPv6:240e:456:1020:3a44:c13d:8652:53f6:a6b8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 5C0651A3F81;
+	Mon, 23 Sep 2024 04:06:45 -0400 (EDT)
+Message-ID: <b9bc6db245775b0a2e990467f414071e82b06a29.camel@xry111.site>
+Subject: Re: [PATCH] LoongArch: vDSO: Tune the chacha20 implementation
+From: Xi Ruoyao <xry111@xry111.site>
+To: Huacai Chen <chenhuacai@kernel.org>, "Jason A . Donenfeld"
+ <Jason@zx2c4.com>
+Cc: WANG Xuerui <kernel@xen0n.name>, Christophe Leroy	
+ <christophe.leroy@csgroup.eu>, linux-crypto@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, Jinyang He	
+ <hejinyang@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, Arnd
+ Bergmann	 <arnd@arndb.de>
+Date: Mon, 23 Sep 2024 16:06:41 +0800
+In-Reply-To: <CAAhV-H68HOsX4=yZAmnCMW0VWf5SsqEckcHJQytSzjK8dHHW6g@mail.gmail.com>
+References: <20240919091359.7023-1-xry111@xry111.site>
+	 <CAAhV-H68HOsX4=yZAmnCMW0VWf5SsqEckcHJQytSzjK8dHHW6g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-The posix_acl_entry pointer pe is already initialized by the
-FOREACH_ACL_ENTRY() macro. Remove the unnecessary initialization.
+On Mon, 2024-09-23 at 15:15 +0800, Huacai Chen wrote:
+> > +#define line3=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 st=
+ate12, state13, state14, state15
+> > +
+> > +#define=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 line1_perm=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 state5, state6, state7, state4
+> > +#define=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 line2_perm=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 state10, state11, state8, state9
+> > +#define=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 line3_perm=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 state15, state12, state13, state14
+> > +
+> > +#define=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 copy=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 copy0, copy1, copy2, co=
+py3
+> The indentation here is strange, it seems some of them are spaces and
+> some of them are tabs.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- fs/nfsd/nfs4acl.c | 2 --
- 1 file changed, 2 deletions(-)
+Oops indeed.  The tabs after "#define" should be a space instead.
 
-diff --git a/fs/nfsd/nfs4acl.c b/fs/nfsd/nfs4acl.c
-index 96e786b5e544..936ea1ad9586 100644
---- a/fs/nfsd/nfs4acl.c
-+++ b/fs/nfsd/nfs4acl.c
-@@ -198,8 +198,6 @@ summarize_posix_acl(struct posix_acl *acl, struct posix_acl_summary *pas)
- 	memset(pas, 0, sizeof(*pas));
- 	pas->mask = 07;
- 
--	pe = acl->a_entries + acl->a_count;
--
- 	FOREACH_ACL_ENTRY(pa, acl, pe) {
- 		switch (pa->e_tag) {
- 			case ACL_USER_OBJ:
--- 
-2.46.1
+Jason: can you edit it for me or do you want a new revision of the patch
+to fix it?
 
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
