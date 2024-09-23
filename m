@@ -1,224 +1,182 @@
-Return-Path: <linux-kernel+bounces-336259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D7097F134
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:32:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1519D97F136
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64E42282EF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:32:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F151E1C218F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8020419FA8C;
-	Mon, 23 Sep 2024 19:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DDA21A01DB;
+	Mon, 23 Sep 2024 19:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eN1patVj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KhGKvI/i"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7F11CA84;
-	Mon, 23 Sep 2024 19:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B281990BE;
+	Mon, 23 Sep 2024 19:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727119960; cv=none; b=BmqaWg8T3qSZ2ZFJEy90D1gSrjZlXGQbAo3UbAcOoXQQYvWiVi+0lt0j3yERvoSMQiP3j8b7yrQgnRKnPKLTpz5e+x6m5F7xLKcsu6Xl4W1nmI0CLoaCkyb1hnYRIfE0LwvIzk6s+qKnf6zkcHtvj58tEZ0XfFWMTz6LjbMOU+4=
+	t=1727120087; cv=none; b=Soh83WFm15dksOMaAJczzCfKCwTTD3K6l5Kg0JeeD5Om0a0i5Ws6OOqiLhd0OgBLZiTQjvMIfKOCmk+QxyL3xY09unRj3HelgnU8XiX5X5js+XLHfuGSnfztlLq56vJZlQ5MAQw1XZPg0cTaCFqnt+8psrWu2HdJxTLCwXX/3LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727119960; c=relaxed/simple;
-	bh=DABQX/iCGMJU8NuVOhReQv5tbV8tfe8JZw5vnzcAeNo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QX0B0ra02RYwVkqFwAxvs+pn8emdFOSIZQHxbdPsNUlL8+rAqOvjLaL+avdq74nfbUzIWCiIVlsU+1bOFXjvn+JmY6dYahAAh/3Day+zZyTfo3fF7/kaRnZPxJgkLUDG7hgKh14HmZ/S0lIsTn6UJQ7A3TLITqWj+9R40kcbBHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eN1patVj; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1727120087; c=relaxed/simple;
+	bh=biyHAEvDNhcaETv/82KwAxsk9sxH7MzhnIvKQ2imhro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=utGirms9NTSZeTsgYF0fY22/XV8Jx8Qr4nZxP25/QHiYFSnhEhcbbjnLolRgsHeOY5Mk1wpHhLvXJYj2ZHj0UdIoGhY/nN50H7rXTPPrMRW1hDceyhRIoFWkXjlMhtS5QYTOmuZ2Ocror+6hLbXKMIbyqim3FGr0AbQRWbrZh2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KhGKvI/i; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727119959; x=1758655959;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=DABQX/iCGMJU8NuVOhReQv5tbV8tfe8JZw5vnzcAeNo=;
-  b=eN1patVjzkDqgaxfqET6Va8rJ2tb8OQRLy/r/YExzzZA2bo2E6ga3C+X
-   hZpIvSR5EKpqcpnxgxLIxTOaILugFuaH9sh/1kBlfnKy1PCocnKOgaOxJ
-   98s7RuUKTJtegfTX5HpKdSGKgQ3e/d4gQws6UiWnHwf80ijwUH6AviXh4
-   nAqoX0XhQ9Ow0qmTS6cuJ3xnakOEI6APHG0MVO2t5PeWgLMRuAQ+4nb/7
-   3pcB928K9Dfe0Z+hWRfkXBpZA7HETOjC9m3ANqZh8nSE+0Lx5byFfDzgq
-   Hh5jomuwE45c8YD95w5NihJKzelbgNQ4cSNk0WJsbR9jgSfjztAVCbudc
+  t=1727120086; x=1758656086;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=biyHAEvDNhcaETv/82KwAxsk9sxH7MzhnIvKQ2imhro=;
+  b=KhGKvI/i7Ar9vuENILnrhfp3Udq5afwMAn7/i60FSVcW2ZHC9pjnvrAr
+   QNXb9G5pa1vgdAMAeqIcfaX0rOM5f9TAeWn2Lnw84PDdMfAKckZYItc6w
+   +aJdsSR8Aica0MODj6ec4Sswzl5v8pMx3lcfGhnWs+mCHEP2z29agdEVN
+   RlmUeOZD4RIKx+GrOUZEseLBwboV2EnNYuE1lwKRcACyERLmRGoGRWnQI
+   O0tzpDCV92ZGMSVd++wQ9d8Svu3CIXoZI+w6DgC2DiaYVxlhLfHjzsm4d
+   72/afzKQR5epn9IKOoI2f2e2veTFKaLzRgb6oERgvT3lCMrMM3V0yhXo/
    A==;
-X-CSE-ConnectionGUID: kBX1Hn/fTN+zh/1Whnbp7A==
-X-CSE-MsgGUID: gC/O4xu4RECgfqjOZDPSSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="26181069"
+X-CSE-ConnectionGUID: BLeTXRSIRLWGzshW6Vyj2g==
+X-CSE-MsgGUID: c5J75qcXRweHM0U4SdfRdw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="26237739"
 X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
-   d="scan'208";a="26181069"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 12:32:38 -0700
-X-CSE-ConnectionGUID: r5QOLSUETqmSPiXUBqiJxQ==
-X-CSE-MsgGUID: fJe58bA8S/ym19qMbLWPoQ==
+   d="scan'208";a="26237739"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 12:34:45 -0700
+X-CSE-ConnectionGUID: hjUbnBAdTUiViA+UhhG5SA==
+X-CSE-MsgGUID: W3oIlJfKSAa45oNHKW0Nvw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
-   d="scan'208";a="71440777"
-Received: from spandruv-desk1.amr.corp.intel.com ([10.125.110.193])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 12:32:38 -0700
-Message-ID: <c7c2665bf433a1648a3f7dff20ac9976ef1defe3.camel@linux.intel.com>
-Subject: Re: [PATCH v2] HID: ishtp-hid-client: replace fake-flex arrays with
- flex-array members
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Kees Cook <kees@kernel.org>
-Cc: Erick Archer <erick.archer@outlook.com>, Jiri Kosina <jikos@kernel.org>,
-  Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org,
- linux-input@vger.kernel.org,  linux-hardening@vger.kernel.org
-Date: Mon, 23 Sep 2024 12:32:37 -0700
-In-Reply-To: <20240923002249.it.617-kees@kernel.org>
-References: <20240923002249.it.617-kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+   d="scan'208";a="101896288"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 23 Sep 2024 12:34:42 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ssopT-000HXm-2S;
+	Mon, 23 Sep 2024 19:34:39 +0000
+Date: Tue, 24 Sep 2024 03:33:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dipendra Khadka <kdipendra88@gmail.com>, andrew@lunn.ch,
+	florian.fainelli@broadcom.com, davem@davemloft.net,
+	edumazet@google.com, bcm-kernel-feedback-list@broadcom.com,
+	kuba@kernel.org, pabeni@redhat.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Dipendra Khadka <kdipendra88@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 net] net: Add error pointer check in bcmsysport.c
+Message-ID: <202409240323.wQPM6V1v-lkp@intel.com>
+References: <20240923053900.1310-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923053900.1310-1-kdipendra88@gmail.com>
 
-T24gU3VuLCAyMDI0LTA5LTIyIGF0IDE3OjIyIC0wNzAwLCBLZWVzIENvb2sgd3JvdGU6Cj4gRnJv
-bTogRXJpY2sgQXJjaGVyIDxlcmljay5hcmNoZXJAb3V0bG9vay5jb20+Cj4gCj4gT25lLWVsZW1l
-bnQgYXJyYXlzIGFzIGZha2UgZmxleCBhcnJheXMgYXJlIGRlcHJlY2F0ZWRbMV0gYXMgdGhlCj4g
-a2VybmVsCj4gaGFzIHN3aXRjaGVkIHRvIEM5OSBmbGV4aWJsZS1hcnJheSBtZW1iZXJzIGluc3Rl
-YWQuIFRoaXMgY2FzZSwKPiBob3dldmVyLAo+IGhhcyBtb3JlIGNvbXBsZXhpdHkgYmVjYXVzZSBp
-dCBpcyBhIGZsZXhpYmxlIGFycmF5IG9mIGZsZXhpYmxlIGFycmF5cwo+IGFuZCB0aGlzIHBhdGNo
-IG5lZWRzIHRvIGJlIHJlYWR5IHRvIGVuYWJsZSB0aGUgbmV3IGNvbXBpbGVyIGZsYWcKPiAtV2Zs
-ZXgtYXJyYXktbWVtYmVyLW5vdC1hdC1lbmQgKGNvbWluZyBpbiBHQ0MtMTQpIGdsb2JhbGx5Lgo+
-IAo+IFNvLCBkZWZpbmUgYSBuZXcgc3RydWN0IHR5cGUgZm9yIHRoZSBzaW5nbGUgcmVwb3J0czoK
-PiAKPiBzdHJ1Y3QgcmVwb3J0IHsKPiDCoMKgwqDCoMKgwqDCoMKgdWludDE2X3Qgc2l6ZTsKPiDC
-oMKgwqDCoMKgwqDCoMKgc3RydWN0IGhvc3RpZl9tc2dfaGRyIG1zZzsKPiB9IF9fcGFja2VkOwo+
-IAo+IGJ1dCB3aXRob3V0IHRoZSBwYXlsb2FkIChmbGV4IGFycmF5KSBpbiBpdC4gQW5kIGFkZCB0
-aGlzIHBheWxvYWQgdG8KPiB0aGUKPiAiaG9zdGlmX21zZyIgc3RydWN0dXJlLiBUaGlzIHdheSwg
-aW4gdGhlICJyZXBvcnRfbGlzdCIgc3RydWN0dXJlIHdlCj4gY2FuCj4gZGVjbGFyZSBhIGZsZXgg
-YXJyYXkgb2Ygc2luZ2xlIHJlcG9ydHMgd2hpY2ggbm93IGRvIG5vdCBjb250YWluCj4gYW5vdGhl
-cgo+IGZsZXggYXJyYXkuCj4gCj4gc3RydWN0IHJlcG9ydF9saXN0IHsKPiDCoMKgwqDCoMKgwqDC
-oMKgWy4uLl0KPiDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgcmVwb3J0IHJlcG9ydHNbXTsKPiB9IF9f
-cGFja2VkOwo+IAo+IFRoZXJlZm9yZSwgdGhlICJzdHJ1Y3QgaG9zdGlmX21zZyIgaXMgbm93IG1h
-ZGUgdXAgb2YgYSBoZWFkZXIgYW5kIGEKPiBwYXlsb2FkLiBBbmQgdGhlICJzdHJ1Y3QgcmVwb3J0
-IiB1c2VzIG9ubHkgdGhlICJob3N0aWZfbXNnIiBoZWFkZXIuCj4gVGhlIHBlcmZlY3Qgc29sdXRp
-b24gd291bGQgYmUgZm9yIHRoZSAicmVwb3J0IiBzdHJ1Y3R1cmUgdG8gdXNlIHRoZQo+IHdob2xl
-ICJob3N0aWZfbXNnIiBzdHJ1Y3R1cmUgYnV0IHRoaXMgaXMgbm90IHBvc3NpYmxlIGR1ZSB0byBu
-ZXN0ZWQKPiBmbGV4aWJsZSBhcnJheXMuIEFueXdheSwgdGhlIGVuZCByZXN1bHQgaXMgZXF1aXZh
-bGVudCBzaW5jZSB0aGlzCj4gcGF0Y2gKPiBkb2VzIGF0dGVtcHQgdG8gY2hhbmdlIHRoZSBiZWhh
-dmlvdXIgb2YgdGhlIGNvZGUuCj4gCj4gTm93IGFzIHdlbGwsIHdlIGhhdmUgbW9yZSBjbGFyaXR5
-IGFmdGVyIHRoZSBjYXN0IGZyb20gdGhlIHJhdyBieXRlcwo+IHRvCj4gdGhlIG5ldyBzdHJ1Y3R1
-cmVzLiBSZWZhY3RvciB0aGUgY29kZSBhY2NvcmRpbmdseSB0byB1c2UgdGhlIG5ldwo+IHN0cnVj
-dHVyZXMuCj4gCj4gQWxzbywgdXNlICJjb250YWluZXJfb2YoKSIgd2hlbmV2ZXIgd2UgbmVlZCB0
-byByZXRyaWV2ZSBhIHBvaW50ZXIgdG8KPiB0aGUgZmxleGlibGUgc3RydWN0dXJlLCB0aHJvdWdo
-IHdoaWNoIHdlIGNhbiBhY2Nlc3MgdGhlIGZsZXhpYmxlCj4gYXJyYXkKPiBpZiBuZWVkZWQuCj4g
-Cj4gTGluazoKPiBodHRwczovL3d3dy5rZXJuZWwub3JnL2RvYy9odG1sL25leHQvcHJvY2Vzcy9k
-ZXByZWNhdGVkLmh0bWwjemVyby1sZW5ndGgtYW5kLW9uZS1lbGVtZW50LWFycmF5cwo+IMKgWzFd
-Cj4gQ2xvc2VzOiBodHRwczovL2dpdGh1Yi5jb20vS1NQUC9saW51eC9pc3N1ZXMvMzMzCj4gU2ln
-bmVkLW9mZi1ieTogRXJpY2sgQXJjaGVyIDxlcmljay5hcmNoZXJAb3V0bG9vay5jb20+Cj4gTGlu
-azoKPiBodHRwczovL2xvcmUua2VybmVsLm9yZy9yL0FTOFBSMDJNQjcyMzc2MENCOTM5NDIzNzBF
-OTJGMDA2MzhCRjcyQEFTOFBSMDJNQjcyMzcuZXVycHJkMDIucHJvZC5vdXRsb29rLmNvbQo+IFtr
-ZWVzOiB0d2Vha2VkIGNvbW1pdCBsb2cgYW5kIGRyb3BwZWQgc3RydWN0X3NpemUoKSB1c2VzXQo+
-IFNpZ25lZC1vZmYtYnk6IEtlZXMgQ29vayA8a2Vlc0BrZXJuZWwub3JnPgpBY2tlZC1ieTogU3Jp
-bml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5jb20+Cgo+
-IC0tLQo+IMKgdjI6IC0gdXBkYXRlIGJhc2VkIG9uIGZlZWRiYWNrCj4gwqByZmM6Cj4gaHR0cHM6
-Ly9sb3JlLmtlcm5lbC5vcmcvbGttbC9BUzhQUjAyTUI3MjM3NjBDQjkzOTQyMzcwRTkyRjAwNjM4
-QkY3MkBBUzhQUjAyTUI3MjM3LmV1cnByZDAyLnByb2Qub3V0bG9vay5jb20vCj4gLS0tCj4gwqBk
-cml2ZXJzL2hpZC9pbnRlbC1pc2gtaGlkL2lzaHRwLWhpZC1jbGllbnQuYyB8IDI1ICsrKysrKysr
-KystLS0tLS0tLQo+IC0tCj4gwqBkcml2ZXJzL2hpZC9pbnRlbC1pc2gtaGlkL2lzaHRwLWhpZC5o
-wqDCoMKgwqDCoMKgwqAgfCAxMSArKysrKy0tLS0KPiDCoDIgZmlsZXMgY2hhbmdlZCwgMTkgaW5z
-ZXJ0aW9ucygrKSwgMTcgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaGlk
-L2ludGVsLWlzaC1oaWQvaXNodHAtaGlkLWNsaWVudC5jCj4gYi9kcml2ZXJzL2hpZC9pbnRlbC1p
-c2gtaGlkL2lzaHRwLWhpZC1jbGllbnQuYwo+IGluZGV4IGZiZDRmOGVhMTk1MS4uY2IwNGNkMWQ5
-ODBiIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvaGlkL2ludGVsLWlzaC1oaWQvaXNodHAtaGlkLWNs
-aWVudC5jCj4gKysrIGIvZHJpdmVycy9oaWQvaW50ZWwtaXNoLWhpZC9pc2h0cC1oaWQtY2xpZW50
-LmMKPiBAQCAtNzAsMTAgKzcwLDEwIEBAIHN0YXRpYyB2b2lkIHByb2Nlc3NfcmVjdihzdHJ1Y3Qg
-aXNodHBfY2wKPiAqaGlkX2lzaHRwX2NsLCB2b2lkICpyZWN2X2J1ZiwKPiDCoMKgwqDCoMKgwqDC
-oMKgdW5zaWduZWQgY2hhciAqcGF5bG9hZDsKPiDCoMKgwqDCoMKgwqDCoMKgc3RydWN0IGRldmlj
-ZV9pbmZvICpkZXZfaW5mbzsKPiDCoMKgwqDCoMKgwqDCoMKgaW50IGksIGo7Cj4gLcKgwqDCoMKg
-wqDCoMKgc2l6ZV90wqDCoHBheWxvYWRfbGVuLCB0b3RhbF9sZW4sIGN1cl9wb3MsIHJhd19sZW47
-Cj4gK8KgwqDCoMKgwqDCoMKgc2l6ZV90wqDCoHBheWxvYWRfbGVuLCB0b3RhbF9sZW4sIGN1cl9w
-b3MsIHJhd19sZW4sIG1zZ19sZW47Cj4gwqDCoMKgwqDCoMKgwqDCoGludCByZXBvcnRfdHlwZTsK
-PiDCoMKgwqDCoMKgwqDCoMKgc3RydWN0IHJlcG9ydF9saXN0ICpyZXBvcnRzX2xpc3Q7Cj4gLcKg
-wqDCoMKgwqDCoMKgY2hhciAqcmVwb3J0czsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgcmVwb3J0
-ICpyZXBvcnQ7Cj4gwqDCoMKgwqDCoMKgwqDCoHNpemVfdCByZXBvcnRfbGVuOwo+IMKgwqDCoMKg
-wqDCoMKgwqBzdHJ1Y3QgaXNodHBfY2xfZGF0YSAqY2xpZW50X2RhdGEgPQo+IGlzaHRwX2dldF9j
-bGllbnRfZGF0YShoaWRfaXNodHBfY2wpOwo+IMKgwqDCoMKgwqDCoMKgwqBpbnQgY3Vycl9oaWRf
-ZGV2ID0gY2xpZW50X2RhdGEtPmN1cl9oaWRfZGV2Owo+IEBAIC0yODAsMTQgKzI4MCwxMyBAQCBz
-dGF0aWMgdm9pZCBwcm9jZXNzX3JlY3Yoc3RydWN0IGlzaHRwX2NsCj4gKmhpZF9pc2h0cF9jbCwg
-dm9pZCAqcmVjdl9idWYsCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjYXNlIEhP
-U1RJRl9QVUJMSVNIX0lOUFVUX1JFUE9SVF9MSVNUOgo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlcG9ydF90eXBlID0gSElEX0lOUFVUX1JFUE9SVDsK
-PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXBvcnRz
-X2xpc3QgPSAoc3RydWN0IHJlcG9ydF9saXN0ICopcGF5bG9hZDsKPiAtwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlcG9ydHMgPSAoY2hhciAqKXJlcG9ydHNf
-bGlzdC0+cmVwb3J0czsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoHJlcG9ydCA9IHJlcG9ydHNfbGlzdC0+cmVwb3J0czsKPiDCoAo+IMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGZvciAoaiA9IDA7IGogPCByZXBv
-cnRzX2xpc3QtPm51bV9vZl9yZXBvcnRzOwo+IGorKykgewo+IC3CoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlY3ZfbXNnID0gKHN0
-cnVjdCBob3N0aWZfbXNnCj4gKikocmVwb3J0cyArCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHNp
-emVvZih1aW50MTZfdCkpOwo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJlcG9ydF9sZW4gPSAqKHVpbnQxNl90ICopcmVwb3J0
-czsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqBwYXlsb2FkID0gcmVwb3J0cyArIHNpemVvZih1aW50MTZfdCkKPiArCj4gLcKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoHNpemVvZihzdHJ1Y3QKPiBob3N0aWZfbXNnX2hkcik7Cj4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgcmVjdl9tc2cgPSBjb250YWluZXJfb2YoJnJlcG9ydC0+bXNnLAo+ICvCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHN0cnVjdAo+IGhvc3RpZl9t
-c2csIGhkcik7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgcmVwb3J0X2xlbiA9IHJlcG9ydC0+c2l6ZTsKPiArwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwYXls
-b2FkID0gcmVjdl9tc2ctPnBheWxvYWQ7Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHBheWxvYWRfbGVuID0gcmVwb3J0X2xl
-biAtCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBzaXplb2Yoc3RydWN0Cj4gaG9zdGlmX21zZ19o
-ZHIpOwo+IMKgCj4gQEAgLTMwNCw3ICszMDMsNyBAQCBzdGF0aWMgdm9pZCBwcm9jZXNzX3JlY3Yo
-c3RydWN0IGlzaHRwX2NsCj4gKmhpZF9pc2h0cF9jbCwgdm9pZCAqcmVjdl9idWYsCj4gwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgMCk7Cj4gwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqB9Cj4gwqAKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqByZXBvcnRzICs9IHNpemVvZih1aW50MTZfdCkgKwo+IHJlcG9y
-dF9sZW47Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgcmVwb3J0ICs9IHNpemVvZigqcmVwb3J0KSArCj4gcGF5bG9hZF9sZW47
-Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfQo+IMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGJyZWFrOwo+IMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZGVmYXVsdDoKPiBAQCAtMzE2LDEyICszMTUs
-MTIgQEAgc3RhdGljIHZvaWQgcHJvY2Vzc19yZWN2KHN0cnVjdCBpc2h0cF9jbAo+ICpoaWRfaXNo
-dHBfY2wsIHZvaWQgKnJlY3ZfYnVmLAo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqB9Cj4gwqAKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaWYgKCFjdXJfcG9z
-ICYmIGN1cl9wb3MgKyBwYXlsb2FkX2xlbiArCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc2l6ZW9mKHN0cnVjdCBob3N0aWZf
-bXNnKSA8Cj4gdG90YWxfbGVuKQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBtc2df
-bGVuID0gcGF5bG9hZF9sZW4gKyBzaXplb2Yoc3RydWN0IGhvc3RpZl9tc2cpOwo+ICvCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoIWN1cl9wb3MgJiYgY3VyX3BvcyArIG1zZ19sZW4g
-PCB0b3RhbF9sZW4pCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgKytjbGllbnRfZGF0YS0+bXVsdGlfcGFja2V0X2NudDsKPiDCoAo+IC3CoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqBjdXJfcG9zICs9IHBheWxvYWRfbGVuICsgc2l6ZW9mKHN0cnVj
-dCBob3N0aWZfbXNnKTsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcGF5bG9hZCAr
-PSBwYXlsb2FkX2xlbiArIHNpemVvZihzdHJ1Y3QgaG9zdGlmX21zZyk7Cj4gK8KgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoGN1cl9wb3MgKz0gbXNnX2xlbjsKPiArwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgcGF5bG9hZCArPSBtc2dfbGVuOwo+IMKgCj4gwqDCoMKgwqDCoMKgwqDC
-oH0gd2hpbGUgKGN1cl9wb3MgPCB0b3RhbF9sZW4pOwo+IMKgfQo+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2hpZC9pbnRlbC1pc2gtaGlkL2lzaHRwLWhpZC5oCj4gYi9kcml2ZXJzL2hpZC9pbnRlbC1p
-c2gtaGlkL2lzaHRwLWhpZC5oCj4gaW5kZXggMzVkZGRjNTAxNWIzLi4yYmMxOWU4YmExM2UgMTAw
-NjQ0Cj4gLS0tIGEvZHJpdmVycy9oaWQvaW50ZWwtaXNoLWhpZC9pc2h0cC1oaWQuaAo+ICsrKyBi
-L2RyaXZlcnMvaGlkL2ludGVsLWlzaC1oaWQvaXNodHAtaGlkLmgKPiBAQCAtMzEsNiArMzEsNyBA
-QCBzdHJ1Y3QgaG9zdGlmX21zZ19oZHIgewo+IMKgCj4gwqBzdHJ1Y3QgaG9zdGlmX21zZyB7Cj4g
-wqDCoMKgwqDCoMKgwqDCoHN0cnVjdCBob3N0aWZfbXNnX2hkcsKgwqDCoGhkcjsKPiArwqDCoMKg
-wqDCoMKgwqB1aW50OF90IHBheWxvYWRbXTsKPiDCoH0gX19wYWNrZWQ7Cj4gwqAKPiDCoHN0cnVj
-dCBob3N0aWZfbXNnX3RvX3NlbnNvciB7Cj4gQEAgLTUyLDE1ICs1MywxNyBAQCBzdHJ1Y3QgaXNo
-dHBfdmVyc2lvbiB7Cj4gwqDCoMKgwqDCoMKgwqDCoHVpbnQxNl90IGJ1aWxkOwo+IMKgfSBfX3Bh
-Y2tlZDsKPiDCoAo+ICtzdHJ1Y3QgcmVwb3J0IHsKPiArwqDCoMKgwqDCoMKgwqB1aW50MTZfdCBz
-aXplOwo+ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBob3N0aWZfbXNnX2hkciBtc2c7Cj4gK30gX19w
-YWNrZWQ7Cj4gKwo+IMKgLyogc3RydWN0IGZvciBJU0hUUCBhZ2dyZWdhdGVkIGlucHV0IGRhdGEg
-Ki8KPiDCoHN0cnVjdCByZXBvcnRfbGlzdCB7Cj4gwqDCoMKgwqDCoMKgwqDCoHVpbnQxNl90IHRv
-dGFsX3NpemU7Cj4gwqDCoMKgwqDCoMKgwqDCoHVpbnQ4X3TCoG51bV9vZl9yZXBvcnRzOwo+IMKg
-wqDCoMKgwqDCoMKgwqB1aW50OF90wqBmbGFnczsKPiAtwqDCoMKgwqDCoMKgwqBzdHJ1Y3Qgewo+
-IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB1aW50MTZfdMKgwqDCoMKgwqDCoMKgwqBz
-aXplX29mX3JlcG9ydDsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdWludDhfdCBy
-ZXBvcnRbMV07Cj4gLcKgwqDCoMKgwqDCoMKgfSBfX3BhY2tlZCByZXBvcnRzWzFdOwo+ICvCoMKg
-wqDCoMKgwqDCoHN0cnVjdCByZXBvcnQgcmVwb3J0c1tdOwo+IMKgfSBfX3BhY2tlZDsKPiDCoAo+
-IMKgLyogSE9TVElGIGNvbW1hbmRzICovCgo=
+Hi Dipendra,
 
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on net/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dipendra-Khadka/net-Add-error-pointer-check-in-bcmsysport-c/20240923-134407
+base:   net/main
+patch link:    https://lore.kernel.org/r/20240923053900.1310-1-kdipendra88%40gmail.com
+patch subject: [PATCH v2 net] net: Add error pointer check in bcmsysport.c
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240924/202409240323.wQPM6V1v-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240924/202409240323.wQPM6V1v-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409240323.wQPM6V1v-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/net/ethernet/broadcom/bcmsysport.c:2341:10: error: call to undeclared function 'PRT_ERR'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    2341 |                 return PRT_ERR(dp);
+         |                        ^
+   drivers/net/ethernet/broadcom/bcmsysport.c:2341:10: note: did you mean 'PTR_ERR'?
+   include/linux/err.h:49:33: note: 'PTR_ERR' declared here
+      49 | static inline long __must_check PTR_ERR(__force const void *ptr)
+         |                                 ^
+   1 error generated.
+
+
+vim +/PRT_ERR +2341 drivers/net/ethernet/broadcom/bcmsysport.c
+
+  2330	
+  2331	static int bcm_sysport_map_queues(struct net_device *dev,
+  2332					  struct net_device *slave_dev)
+  2333	{
+  2334		struct dsa_port *dp = dsa_port_from_netdev(slave_dev);
+  2335		struct bcm_sysport_priv *priv = netdev_priv(dev);
+  2336		struct bcm_sysport_tx_ring *ring;
+  2337		unsigned int num_tx_queues;
+  2338		unsigned int q, qp, port;
+  2339	
+  2340		if (IS_ERR(dp))
+> 2341			return PRT_ERR(dp);
+  2342	
+  2343		/* We can't be setting up queue inspection for non directly attached
+  2344		 * switches
+  2345		 */
+  2346		if (dp->ds->index)
+  2347			return 0;
+  2348	
+  2349		port = dp->index;
+  2350	
+  2351		/* On SYSTEMPORT Lite we have twice as less queues, so we cannot do a
+  2352		 * 1:1 mapping, we can only do a 2:1 mapping. By reducing the number of
+  2353		 * per-port (slave_dev) network devices queue, we achieve just that.
+  2354		 * This need to happen now before any slave network device is used such
+  2355		 * it accurately reflects the number of real TX queues.
+  2356		 */
+  2357		if (priv->is_lite)
+  2358			netif_set_real_num_tx_queues(slave_dev,
+  2359						     slave_dev->num_tx_queues / 2);
+  2360	
+  2361		num_tx_queues = slave_dev->real_num_tx_queues;
+  2362	
+  2363		if (priv->per_port_num_tx_queues &&
+  2364		    priv->per_port_num_tx_queues != num_tx_queues)
+  2365			netdev_warn(slave_dev, "asymmetric number of per-port queues\n");
+  2366	
+  2367		priv->per_port_num_tx_queues = num_tx_queues;
+  2368	
+  2369		for (q = 0, qp = 0; q < dev->num_tx_queues && qp < num_tx_queues;
+  2370		     q++) {
+  2371			ring = &priv->tx_rings[q];
+  2372	
+  2373			if (ring->inspect)
+  2374				continue;
+  2375	
+  2376			/* Just remember the mapping actual programming done
+  2377			 * during bcm_sysport_init_tx_ring
+  2378			 */
+  2379			ring->switch_queue = qp;
+  2380			ring->switch_port = port;
+  2381			ring->inspect = true;
+  2382			priv->ring_map[qp + port * num_tx_queues] = ring;
+  2383			qp++;
+  2384		}
+  2385	
+  2386		return 0;
+  2387	}
+  2388	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
