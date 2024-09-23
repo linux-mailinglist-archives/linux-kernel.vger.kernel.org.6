@@ -1,120 +1,136 @@
-Return-Path: <linux-kernel+bounces-336092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0853397EF02
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:16:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4D897EF04
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A27282BCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:16:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51376282B62
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BF319EEBF;
-	Mon, 23 Sep 2024 16:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3465D19E96E;
+	Mon, 23 Sep 2024 16:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bf4b60Zb"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YMHhifpi"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED0419CC03
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E1D197A97
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727108182; cv=none; b=g+O2X2LZhiegsUiOnQXA6mPcZJpKa8K+jYGP1D53bdZB7wYaGx9zzaW0uxeKfZrWonQ5QZM+MlyilOWLyvkooqGjGPpA2IJ7XN10dMu1l0ldEWKYGI4uyjSnJooZ9kxB3i5ALmr5vGmhGKzrclc6mIrLB8enVw6piyaivMZeEVI=
+	t=1727108193; cv=none; b=F5djDm861xuftSCkdyFhIDDL1dBvaMt+5Aa8egyTdVrd/c5KQdr1LJOGlrmOmTlCouurxR52KWxkw/67O4LubTMMNz2Dcw2954so70SNej47D9hVU30B/w1KWncAPfRFVgja+zzdIMvilmRelBy+l3fG1k15hMQHSOnrvBXvXjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727108182; c=relaxed/simple;
-	bh=Jgi9WZn3ocScTDIXMurCWzHK1+wuwKcb7pJ9lWRo+vM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IEtjVMJabN2AonHnLQpYyfxVw0r5klsIlx2H1mme4jxia9TRz1S1cm1AnDmCtFeRaVMO9ebnE4LvLwNE/FGIbUwcGIEI6HYMxdGaOHIvajNInf/R9w4lvgl7BLzm01VoM9Z4nuQjYHkt8OfQTmJ586DYLGw85Xhjz0EAgVEJXSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bf4b60Zb; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7d916b6a73aso2844128a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:16:20 -0700 (PDT)
+	s=arc-20240116; t=1727108193; c=relaxed/simple;
+	bh=PaVCnBOKk2NESWPONQlxx6ZgFkfE6jLEf8fYtjJKjb8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=U33VluWl/4TCdmFx4ARlfTSwE5EGLiK6ZmgY0ujGF61rj56mn3rrJvP76Y66MIIVo2bpG50loUfTw0nOm7EWivQ8fqkb4WCGnr9VwXD+jq4f/NIz27eyyU8WyI6UUlYr+dxA4C02AhSj0S5OYkFmNtQZVNjc7Fjj586/N/kIifI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YMHhifpi; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a09c977dfbso14776405ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:16:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727108180; x=1727712980; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V3TDWYxveihy7Zr7fGwjiPX+G3CzpwHb+Ud3Z6ThKWQ=;
-        b=bf4b60Zb54mV+ypBdlZZPgOJe6MThH1fSIk3ZkIFtWptDsRCxXEBWN+ibsPADi7oW4
-         FUJMPuZQLpNqcwdshO//kx01eMNBX9tvtQ3DaFyODq36VAyV6JoVam9uATd4cD1h6eDx
-         gv1L/0uZ4zn9lKTXCBSaQOxQRfEAFrhzKafeE=
+        d=linuxfoundation.org; s=google; t=1727108191; x=1727712991; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=P5jMyl1o/1TmcmM08X17fpAg4ADxzwYCfdFzHbbaa3w=;
+        b=YMHhifpipIKLWvy/w02AZkCFkO32+0xzVUmxERUJt0kTVnVSwPnAAgKLlSI4E45bdu
+         8d/jbtNRvc9QX15qgv3be3JdiYVz+Zxdc8YFqwAA1cuzvdYmyjro6HYHr0AqUJajMkUz
+         tMLeLH2SmGLTCLGLDSnS5+73I1HK1pHL47oJs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727108180; x=1727712980;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V3TDWYxveihy7Zr7fGwjiPX+G3CzpwHb+Ud3Z6ThKWQ=;
-        b=QWdncij87gvaeLOih2U4HAntfBqx2qkzKD3prXDSymBdNlwEYaugWdOwxnnPdnq81n
-         heN6o2XZzE7vND0cVdRaUJJP7vbN7kWBx1otno3zI/Yi7kzS1CTLHVEuzkWS3NaDv7r4
-         2Gwq8mVVLGKJxq+FQ+6PO5jZ52VGyC6hYxCaoHc+tHI9TWLrhY2NjmVvLQZzsE1ldNeu
-         Vcc315P40QslqflQK5JkyJ0//v+M8uLMELhJdCkjd9+/3pI17mL/TZhTOlpJhRV0GaJu
-         y95FTIxkUVYf+wmbRO13+0ORUyeKONaSl/ZVKFWHZ+MvkFr7/ek+216aUk647qtjojlQ
-         IOFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUV0AgLUp6AfeNb/4crblYTviMgW7X7FyFIZwl8h3FVSyhQxzGqvIZw/NDZMrU2qMWcL3n6FiYO8rbiZvg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFwbA6t4vz13SQa+1qKaOU6/d5D7LmgqCjX7EKjPAA8tTpMtix
-	ww4pAiGNWC2s1sVwSakRLU7rzyfbNWZQhjIASxCNTtUDQqg7ZgDxvYAsQyvkTg==
-X-Google-Smtp-Source: AGHT+IHVkQZwGgU1tvKl6k0F2v8TePIa8llrR7z9ZGmNXnGWkDebtWD+GohgUHbySm8F8jMBfv0+Cg==
-X-Received: by 2002:a17:90a:c70d:b0:2dd:4f6b:6394 with SMTP id 98e67ed59e1d1-2dd80c7ecc7mr15271796a91.19.1727108180174;
-        Mon, 23 Sep 2024 09:16:20 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:fd63:e1cf:ea96:b4b0])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dd6ef93b2fsm9619831a91.49.2024.09.23.09.16.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 09:16:19 -0700 (PDT)
-Date: Tue, 24 Sep 2024 01:16:15 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
-	Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
-	Minchan Kim <minchan@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	stable@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v2] zram: don't free statically defined names
-Message-ID: <20240923161615.GG38742@google.com>
-References: <20240923161108.991709-1-andrej.skvortzov@gmail.com>
+        d=1e100.net; s=20230601; t=1727108191; x=1727712991;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P5jMyl1o/1TmcmM08X17fpAg4ADxzwYCfdFzHbbaa3w=;
+        b=ZYYj1hJenSh32O8Iwd54EDDcidwpS5EMAq+5n2SAU/sqgbpicpq1PtL4SzsMF/yBUY
+         aUZcJSr6fI5VTQo/Ijmm6ISwZ1k946pWYnQ8nyjyKHq8lRWAUiyoNqH/hklulzc4uqF5
+         CvZjB3y0xEweQVMvCERKx7xfA64yDJSFDAAsTGDyOvM/bVm7lIwv+nubl/PM5wMgtVAx
+         B5aurYBZSND2/WVRKvCSHsXlS8Ii24BQcQzP8Zx5EABqBU2RZzqrHQvIuZYLdOoa2KwL
+         +1lcuE1Zeq9GbDj8aB8C2LxKMj6ptO3l4K9dtfJglfLNrzauN8AfMnGc7RtPDbFmnoE7
+         7nXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQZoEwLxlr5ujXB+ks9wnr8lY7JUc3Q5LgEcsAIrRwvUTZ6OAp7WWtruhDs7l64THxbNBHHpBH9ZF3r4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfptuGIYgTjLc5OnYR8Xtes7Y0hliKIfdv7Vn3w57J6+Sl0rCH
+	30u/mk8zAFLeh2NQ6fmABGB1HOWQEf3dvZozsKqs8TlKHQ+qO4N50KnjkZ17UrJbqWH8UHkIssE
+	F
+X-Google-Smtp-Source: AGHT+IEavZikzUvEoQrnouuHC7VsGydWDHWwaU5JCQGMN+RAYA4mkhllBoYUAIZRqWeOopdM8/dwBQ==
+X-Received: by 2002:a05:6e02:1a63:b0:3a0:9f85:d74e with SMTP id e9e14a558f8ab-3a0c8d0ba04mr100943395ab.16.1727108190886;
+        Mon, 23 Sep 2024 09:16:30 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d37ed1901dsm5162715173.115.2024.09.23.09.16.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 09:16:30 -0700 (PDT)
+Message-ID: <9abe1f61-3379-44b5-8b8a-517c3df34daa@linuxfoundation.org>
+Date: Mon, 23 Sep 2024 10:16:29 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240923161108.991709-1-andrej.skvortzov@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] selftests: livepatch: test livepatching a kprobed
+ function
+To: Marcos Paulo de Souza <mpdesouza@suse.com>,
+ Michael Vetter <mvetter@suse.com>, linux-kselftest@vger.kernel.org,
+ live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240920115631.54142-1-mvetter@suse.com>
+ <5e544e68ad83fcdeb3502f1273f18e3d33dc8804.camel@suse.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <5e544e68ad83fcdeb3502f1273f18e3d33dc8804.camel@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On (24/09/23 19:11), Andrey Skvortsov wrote:
-> The change is similar to that is used in comp_algorithm_set.
-> default_compressor is used for ZRAM_PRIMARY_COMP only, but if
-> CONFIG_ZRAM_MULTI_COMP isn't set, then ZRAM_PRIMARY_COMP and
-> ZRAM_SECONDARY_COMP are the same.
+On 9/23/24 08:45, Marcos Paulo de Souza wrote:
+> On Fri, 2024-09-20 at 13:56 +0200, Michael Vetter wrote:
+>> This patchset adds a test for livepatching a kprobed function.
+>>
+>> Thanks to Petr and Marcos for the reviews!
+>>
+>> V3:
+>> Save and restore kprobe state also when test fails, by integrating it
+>> into setup_config() and cleanup().
+>> Rename SYSFS variables in a more logical way.
+>> Sort test modules in alphabetical order.
+>> Rename module description.
+>>
+>> V2:
+>> Save and restore kprobe state.
+>>
+>> Michael Vetter (3):
+>>    selftests: livepatch: rename KLP_SYSFS_DIR to SYSFS_KLP_DIR
+>>    selftests: livepatch: save and restore kprobe state
+>>    selftests: livepatch: test livepatching a kprobed function
+>>
 > 
-> This is detected by KASAN.
+> Thanks for the new version! LGTM, so the series is
 > 
-> ==================================================================
->  Call trace:
->   kfree+0x60/0x3a0
->   zram_destroy_comps+0x98/0x198 [zram]
->   zram_reset_device+0x22c/0x4a8 [zram]
->   reset_store+0x1bc/0x2d8 [zram]
->   dev_attr_store+0x44/0x80
->   sysfs_kf_write+0xfc/0x188
->   kernfs_fop_write_iter+0x28c/0x428
->   vfs_write+0x4dc/0x9b8
->   ksys_write+0x100/0x1f8
->   __arm64_sys_write+0x74/0xb8
->   invoke_syscall+0xd8/0x260
->   el0_svc_common.constprop.0+0xb4/0x240
->   do_el0_svc+0x48/0x68
->   el0_svc+0x40/0xc8
->   el0t_64_sync_handler+0x120/0x130
->   el0t_64_sync+0x190/0x198
-> ==================================================================
+> Reviewed-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 > 
-> Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
-> Fixes: 684826f8271a ("zram: free secondary algorithms names")
-> Cc: <stable@vger.kernel.org>
+>>   tools/testing/selftests/livepatch/Makefile    |  3 +-
+>>   .../testing/selftests/livepatch/functions.sh  | 13 +++-
+>>   .../selftests/livepatch/test-kprobe.sh        | 62
+>> +++++++++++++++++++
+>>   .../selftests/livepatch/test_modules/Makefile |  3 +-
+>>   .../livepatch/test_modules/test_klp_kprobe.c  | 38 ++++++++++++
+>>   5 files changed, 114 insertions(+), 5 deletions(-)
+>>   create mode 100755 tools/testing/selftests/livepatch/test-kprobe.sh
+>>   create mode 100644
+>> tools/testing/selftests/livepatch/test_modules/test_klp_kprobe.c
+>>
+> 
 
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Assuming this is going through livepatch tree:
+
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
+
 
