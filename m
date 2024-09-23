@@ -1,145 +1,158 @@
-Return-Path: <linux-kernel+bounces-336402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD4D4983A55
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:17:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F972983A4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B9B5282F03
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:17:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6639282D46
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A252130E58;
-	Mon, 23 Sep 2024 23:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D971E127E37;
+	Mon, 23 Sep 2024 23:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZDMhwB2k"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJK/PUQc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190768C06;
-	Mon, 23 Sep 2024 23:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5DE23DE;
+	Mon, 23 Sep 2024 23:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727133438; cv=none; b=kUp5E+hnJ3OQiqZsg+vuB+3dEGi17XWwsq6EKLxdckrW0+DZCCavhtBOmwP+bGAgjTkKjsB8gxaHb9ZPuqca6Szc6EoE32etjCqzin3JJFPrQbTQEqsNXL1hyY3kzxGJvhO9RSOVquy77flNSy0YSnDv64RlGkkHQQWzrUA45Ac=
+	t=1727133427; cv=none; b=BsNlzA0tcnAOrdkisIQe+0Hj/G80BWW9DX/M0j9xiZGjVZHLlyDZUjTanHcprjI0JanvLuczZGA/yRmui7h3kTZm4RKuV17wXQ0ra9j6E3A9Zukuq1H7+u2e8/nQrhcrNDq4uacr2Wsai08wCFqKy2j1rR1kf3OYbVzCe2eysoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727133438; c=relaxed/simple;
-	bh=0nsbGQ5ZG+++6fMb6NiR0gGaP+XrX2RMKND9mwuNB3c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ubX5kEb/PQGEe4HocS+d7jTYFklM06vFDR1ZmKGBOtdEqxV0MIjMRFvJvSnXHDw4PAEGtSTsLSnfxeN36zdAuSgKloDkJVvIbH/DxUYhDPCbFiDTgy9scZF/44po1Qa8ppjeXXQUWWpYxS0wHOYBkK/+8x8eiRO+O6cy0oFYWPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZDMhwB2k; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c5b9d2195eso2927918a12.1;
-        Mon, 23 Sep 2024 16:17:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727133434; x=1727738234; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ngRtzW5JM4PktiK1i50Y+IhfPwDmKMxpAqupnEmiErk=;
-        b=ZDMhwB2ke70yQ2Z32apIjRGlLZxCq8CUu2EXhROdU8PyJPDcKPMnRt2vTp9n9M0grH
-         OodDi38OhhmrN0D1h2lpj3wWS4bkcF+eJJ5AbmLgnlZeEURHhPt7j/T5Hi9Aeaf5nT/7
-         n8cDlnBg3FxsFwg7bE2uq6tT2vDJwhes27r0UMn+9VmtEy1z7i0HXTPFtNq7u+5QYSNy
-         fDPhH5nm10wAk2tBDhlV/GJXO5o+nXWvglEQcv26SeBsNOwGlmi3hnldIpXQgYelOhpR
-         klAWDnyzkMMvSaZb5bP0VTb6/uNySiAcdNJTk7mIGujSwGkE8v8HC3bah3Yll1B7bhr8
-         LcSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727133434; x=1727738234;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ngRtzW5JM4PktiK1i50Y+IhfPwDmKMxpAqupnEmiErk=;
-        b=qn91G3z4ZZfdldf8wwk6uQWPyK+TzmX3c2HqG9lZABj6vsfY/tGvWWQVuyn6bay0t8
-         rqdKBNzK6x9pyUFTpLte87M9qS28vHrLe+O4xiLEMKpQXxWxzFWvi0nH5Hq7GdOQODIE
-         31QnhZGu3lakNXRuskpr9heQrskPDKhFiJTD/PE4WOW87UOFYgfFr5h5d4Rs3l3Z3kr4
-         Z4536TS/35l+mUVCXVSbvTdpaQHaGgF01189LmWVv221vkS6m5ZOjQfhNnsyIw+KOWxf
-         lEuIX/dMDyWzLbETGYO2Z88YM2pGowpbHnRL1/Ekr4bkkMGI5D+ZRuMMZl4EQeu+zhrY
-         1nDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDaTC20vLN4OrnQA4I4zNfXwmUkwB6K0cmSJv+BsQRrlxuzAPvIdsEVug6UnwmgzRjAHVXBUGvcQnQ@vger.kernel.org, AJvYcCUcvR3tXGgL9YvArsOblEDZMcUhvsmX1H5/fQ5sHuYDOmF3enSi0svdWY57A0QDXFx18ehOI6O4uvNu@vger.kernel.org, AJvYcCVPBEqpVcZPNOmLy2cPCJiizDq6r7riIPCyQzSniPcZj5K8ZYR3o3xajzz0nYgmTbuR4YuCA4RtVqDoNw==@vger.kernel.org, AJvYcCVlLXgK/VIf4NWsw0ECR+zuPL5W+PQO9YVnPGbospNLuI2UWNpgLO0ToNxYPEJqRGpcUVmlpI3ERXniPGWGyg==@vger.kernel.org, AJvYcCWDuHH4/mRADIINpPSp6WLBpWj24z16psjfwVvrQUxeUqOmxPhaD1Z+zPj0heLg00mq2lmsQwFybgrup6ag@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm82CJeUreG28o2EfFvQKlGqfsL3WAsDotnI4cMUlTEc9WSIMH
-	4VcpzadhFw5S9PLsE6NxRZSmNJ9zCo//aAEXOQAsHcBplZ3ocoAr26D/zJ4gaLNHDdMJMnD7Vp2
-	rpe2aSqQhqK7TVMgPTsJ8leiCdWA=
-X-Google-Smtp-Source: AGHT+IH8LipBtLSxEtozQ2rg05n3Ixckwwsb8tD+R3wx/CmXcuSVcLfSG+Z/gs1ubLzXvUowuTAPkX6CdLZ8O6/puxQ=
-X-Received: by 2002:a05:6402:3506:b0:5c5:c2a7:d53a with SMTP id
- 4fb4d7f45d1cf-5c5c2a7d69amr3583016a12.12.1727133434103; Mon, 23 Sep 2024
- 16:17:14 -0700 (PDT)
+	s=arc-20240116; t=1727133427; c=relaxed/simple;
+	bh=UG4UGsKvX+wo2WitQPf+2gQC75xr/D3jMlaQj0ZBjE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GhkEtZl84bF3PcvRkLpwHF1p41PCgo3873NTbUWwaXeRHG1pjEPCi/HR2c8OujvrxpbIPeGxFIBsgKj1n3WAfetAmHn87w/vQfQowlglJzOICDTyZHtZ4ygCEIZFrYQ3MoD0JQS5jmHDJYPTXOeHJWTfsqR1DsZgnq20ErtfOp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJK/PUQc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA2D6C4CEC4;
+	Mon, 23 Sep 2024 23:17:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727133426;
+	bh=UG4UGsKvX+wo2WitQPf+2gQC75xr/D3jMlaQj0ZBjE8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rJK/PUQcr11Ke/mGT5Csom2T1JI2blUSICf8algmmr8FoU/le19MjhPgrj5WwGGVq
+	 juI9bs5nAjIia4RBEv2noI0AdLx3I7zIsezLIGcYX2mb8nXZtG8E6HfN6Y2xdgUpBK
+	 8Iphs1PMwNHVs6j7OFgjlIAdwPF+rfEcLtT79/ujx1Ms7vUNSRLXfvWA0Z5D1MuyMW
+	 /6QUswAdwf2Bit3Yi1Fr8PhpsNvTPB2v9dbOysL/nuVnX5P3Xbr6XcdESFs8LkpGr0
+	 GeQ6cSyiZoME+9fzVqQwpg/PyV42WLA/F0cdSBdYJ3BR0/hPLQwiw0GbIQbOslNHsg
+	 mhcXAJgmUuIGA==
+Date: Tue, 24 Sep 2024 01:17:01 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Rob Clark <robdclark@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>,
+	Asahi Lina <lina@asahilina.net>, stable@vger.kernel.org,
+	Luben Tuikov <ltuikov89@gmail.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Danilo Krummrich <dakr@redhat.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] drm/sched: Fix dynamic job-flow control race
+Message-ID: <ZvH27TgYcJbHeiZn@pollux.localdomain>
+References: <20240913202301.16772-1-robdclark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923150756.902363-1-dhowells@redhat.com> <20240923150756.902363-2-dhowells@redhat.com>
-In-Reply-To: <20240923150756.902363-2-dhowells@redhat.com>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 23 Sep 2024 18:17:00 -0500
-Message-ID: <CAH2r5mv75LkMnB4ZAWO+sxQwjMne1gKb5EGC3i7kc7h=L0emSA@mail.gmail.com>
-Subject: Re: [PATCH 1/8] netfs: Fix mtime/ctime update for mmapped writes
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, Steve French <sfrench@samba.org>, 
-	Marc Dionne <marc.dionne@auristor.com>, Paulo Alcantara <pc@manguebit.com>, 
-	Jeff Layton <jlayton@kernel.org>, Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev, 
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, 
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel test robot <oliver.sang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913202301.16772-1-robdclark@gmail.com>
 
-added to cifs-2.6.git for-next since it is important as it fixes a
-regression affecting cifs.ko
+On Fri, Sep 13, 2024 at 01:23:01PM -0700, Rob Clark wrote:
+> From: Rob Clark <robdclark@chromium.org>
+> 
+> Fixes a race condition reported here: https://github.com/AsahiLinux/linux/issues/309#issuecomment-2238968609
+> 
+> The whole premise of lockless access to a single-producer-single-
+> consumer queue is that there is just a single producer and single
+> consumer.  That means we can't call drm_sched_can_queue() (which is
+> about queueing more work to the hw, not to the spsc queue) from
+> anywhere other than the consumer (wq).
+> 
+> This call in the producer is just an optimization to avoid scheduling
+> the consuming worker if it cannot yet queue more work to the hw.  It
+> is safe to drop this optimization to avoid the race condition.
+> 
+> Suggested-by: Asahi Lina <lina@asahilina.net>
+> Fixes: a78422e9dff3 ("drm/sched: implement dynamic job-flow control")
+> Closes: https://github.com/AsahiLinux/linux/issues/309
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
 
-On Mon, Sep 23, 2024 at 10:08=E2=80=AFAM David Howells <dhowells@redhat.com=
-> wrote:
->
-> The cifs flag CIFS_INO_MODIFIED_ATTR, which indicates that the mtime and
-> ctime need to be written back on close, got taken over by netfs as
-> NETFS_ICTX_MODIFIED_ATTR to avoid the need to call a function pointer to
-> set it.
->
-> The flag gets set correctly on buffered writes, but doesn't get set by
-> netfs_page_mkwrite(), leading to occasional failures in generic/080 and
-> generic/215.
->
-> Fix this by setting the flag in netfs_page_mkwrite().
->
-> Fixes: 73425800ac94 ("netfs, cifs: Move CIFS_INO_MODIFIED_ATTR to netfs_i=
-node")
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202409161629.98887b2-oliver.sang@i=
-ntel.com
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: Steve French <sfrench@samba.org>
-> cc: Paulo Alcantara <pc@manguebit.com>
-> cc: linux-cifs@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
+Applied to drm-misc-fixes, thanks!
+
 > ---
->  fs/netfs/buffered_write.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
-> index d7eae597e54d..b3910dfcb56d 100644
-> --- a/fs/netfs/buffered_write.c
-> +++ b/fs/netfs/buffered_write.c
-> @@ -552,6 +552,7 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, s=
-truct netfs_group *netfs_gr
->                 trace_netfs_folio(folio, netfs_folio_trace_mkwrite);
->         netfs_set_group(folio, netfs_group);
->         file_update_time(file);
-> +       set_bit(NETFS_ICTX_MODIFIED_ATTR, &ictx->flags);
->         if (ictx->ops->post_modify)
->                 ictx->ops->post_modify(inode);
->         ret =3D VM_FAULT_LOCKED;
->
->
-
-
---=20
-Thanks,
-
-Steve
+>  drivers/gpu/drm/scheduler/sched_entity.c | 4 ++--
+>  drivers/gpu/drm/scheduler/sched_main.c   | 7 ++-----
+>  include/drm/gpu_scheduler.h              | 2 +-
+>  3 files changed, 5 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
+> index 58c8161289fe..567e5ace6d0c 100644
+> --- a/drivers/gpu/drm/scheduler/sched_entity.c
+> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
+> @@ -380,7 +380,7 @@ static void drm_sched_entity_wakeup(struct dma_fence *f,
+>  		container_of(cb, struct drm_sched_entity, cb);
+>  
+>  	drm_sched_entity_clear_dep(f, cb);
+> -	drm_sched_wakeup(entity->rq->sched, entity);
+> +	drm_sched_wakeup(entity->rq->sched);
+>  }
+>  
+>  /**
+> @@ -612,7 +612,7 @@ void drm_sched_entity_push_job(struct drm_sched_job *sched_job)
+>  		if (drm_sched_policy == DRM_SCHED_POLICY_FIFO)
+>  			drm_sched_rq_update_fifo(entity, submit_ts);
+>  
+> -		drm_sched_wakeup(entity->rq->sched, entity);
+> +		drm_sched_wakeup(entity->rq->sched);
+>  	}
+>  }
+>  EXPORT_SYMBOL(drm_sched_entity_push_job);
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+> index ab53ab486fe6..6f27cab0b76d 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1013,15 +1013,12 @@ EXPORT_SYMBOL(drm_sched_job_cleanup);
+>  /**
+>   * drm_sched_wakeup - Wake up the scheduler if it is ready to queue
+>   * @sched: scheduler instance
+> - * @entity: the scheduler entity
+>   *
+>   * Wake up the scheduler if we can queue jobs.
+>   */
+> -void drm_sched_wakeup(struct drm_gpu_scheduler *sched,
+> -		      struct drm_sched_entity *entity)
+> +void drm_sched_wakeup(struct drm_gpu_scheduler *sched)
+>  {
+> -	if (drm_sched_can_queue(sched, entity))
+> -		drm_sched_run_job_queue(sched);
+> +	drm_sched_run_job_queue(sched);
+>  }
+>  
+>  /**
+> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
+> index fe8edb917360..9c437a057e5d 100644
+> --- a/include/drm/gpu_scheduler.h
+> +++ b/include/drm/gpu_scheduler.h
+> @@ -574,7 +574,7 @@ void drm_sched_entity_modify_sched(struct drm_sched_entity *entity,
+>  
+>  void drm_sched_tdr_queue_imm(struct drm_gpu_scheduler *sched);
+>  void drm_sched_job_cleanup(struct drm_sched_job *job);
+> -void drm_sched_wakeup(struct drm_gpu_scheduler *sched, struct drm_sched_entity *entity);
+> +void drm_sched_wakeup(struct drm_gpu_scheduler *sched);
+>  bool drm_sched_wqueue_ready(struct drm_gpu_scheduler *sched);
+>  void drm_sched_wqueue_stop(struct drm_gpu_scheduler *sched);
+>  void drm_sched_wqueue_start(struct drm_gpu_scheduler *sched);
+> -- 
+> 2.46.0
+> 
 
