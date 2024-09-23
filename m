@@ -1,57 +1,84 @@
-Return-Path: <linux-kernel+bounces-336012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 772E397EE03
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:21:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72CDD97EDFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 160CA1F224D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:21:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3AD11C21524
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DA719D07F;
-	Mon, 23 Sep 2024 15:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B4919D07C;
+	Mon, 23 Sep 2024 15:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="dFnDf6sp"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="s/dNUkOP"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550C919E97D
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A1F126C01
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727104863; cv=none; b=JkyMW/xNJik2qcEhJXPoSEzzWGfF5LlOG84OGnbcULG4yohhyYU/HPv0KQLKKsrMudGx7XU2EJpG34nwbKgqD1dLagy8A0IKfWWodt0rZGwQUPSBHhEFveGU/wjz5wzo2T9b3Ql3iV7fIBy2onHfYqW3ZhwQ5Kzp0L/ZAmnDp/E=
+	t=1727104853; cv=none; b=rDH9mm7HuoV4z+b1NgKTc4hJvJsh4fowe31rZcW/TkTrYzmUe4mbJJZgyBnjXx1Y8d3Xcx2gbCwfv/Gvb0KNCB+myNw78am2etUNdnm4jErq3fN6CDjz33k8pPCm9t54xh6rNSc/OwagX3ht24W/Lme3JGStJ6dqTNAk9Ej+YMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727104863; c=relaxed/simple;
-	bh=qRK8erESDoj/VGuxUkzCOARJof2dyb53GE6yLTCVJFI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B5GxjX91NaK1Fzc/kXelKEJ/mRtzPPZgWpGa0ETDe91QQGdw7SckdAL4nHZVgrwdTyfctiym5445Bh47mtC7l+4W1W8HFIQWJsJjwyIN3hBRNEziJj2CSFgLqXf2vyCdajnSU9WqgAdXaFQFhvFOdwx1yLhqbDGhk6q+3iqVokY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=dFnDf6sp; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1727104853; x=1727364053;
-	bh=0JfDey84iUMift6zk9vaR/CUHVMn8iF7HIi/NrhHSk0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=dFnDf6spcQaDgTLolhxQWtRgOJLbrQ4uHwF093qDyE7QZ91aizMj90HjGa/IUKOZc
-	 gg2VfRTXEIEFxvTKXQ711EDk/af6XJYLhQcHnZbevhTa8sS6O0feP0cl/miVlofKLL
-	 ahPUx49s6ixRn449ArOnLXUo0p7Ra86xT7r9RmesQtmEvohmRJsMKlv1wrEH22STWl
-	 hqpp5x/imm3OupKk4kIaXsCrDkX23zzQH+s4a+SioNeaXMPtyLWpd6Xey0xiYiXLUp
-	 X3M1mRcEG7gauKhavMqRFc0TeBRFAWrnZfisje5GaroqOZPN2z515v+aqnKpZ1wEhv
-	 JnurBrAoKcG3A==
-Date: Mon, 23 Sep 2024 15:20:43 +0000
-To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH] rust: alloc: pass `old_layout` to `Allocator`
-Message-ID: <eaad9eb3-dca9-4943-a58e-06824e8811c2@proton.me>
-In-Reply-To: <CAH5fLgievsJOe7QET+Wh2c0upygv-nhSnOuTN8K_QkruLwOPgA@mail.gmail.com>
-References: <20240911225449.152928-2-dakr@kernel.org> <20240921153315.70860-1-dakr@kernel.org> <CAH5fLgievsJOe7QET+Wh2c0upygv-nhSnOuTN8K_QkruLwOPgA@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 87f1742c4bb8bcf29568e811e3ed5914f8c136ea
+	s=arc-20240116; t=1727104853; c=relaxed/simple;
+	bh=vKBpEr8O+D7ExVGut9veGE2mR2TIETvN9JQ4yQqPujs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KkxXV1wMOBXzLNdPJA0Tp3Xo1ceGv5GLzzgyMequn8RuVwhSb64EsxYNieyf11h4cU6V2WHnl6vKJOg67uc3jCk4YheIYNnghT0nLYUXMGxJJmRVtbH7dSJy7eyjH0emk3StPiRIrj9CuuXqZOMDvAN/idGF+waQhkQeJYtP7pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=s/dNUkOP; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6dbb24ee34dso37016827b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:20:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1727104850; x=1727709650; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=poRSdZdkWlG53VRrOh20DrpVgj0f/RBf0PQe7rcKx5A=;
+        b=s/dNUkOPthTXCqWPuJkZkoJ8vA6Z3FRBsb2dhXwVJAH6RhJIAWwWX0U1I/y6xEUjAb
+         E1pvZ0I+nUDL1dubsfeU6yJ82m25mMMkXD4BxIXugTQQhFizUYfaPbq5etezwk+OyeBd
+         f13pdCNBU0VQtMUbm6ZulitYe68gwdnuK8TdkiRfBnN0FyFc75eCHCQcIwITIFLhzYHq
+         J7O7Qt5JYecmlg/d9lM5GUAIyD7UGz/H3WunHPJo4hzHHKxh71rf1+/c8qx3/efjW0MK
+         hI+GjNtsUhsshhH8q0XgefLnNZDiG7UorKcJvKrf56N9n5b4xYVM0/o2yX2jx90kqhNY
+         9iBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727104850; x=1727709650;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=poRSdZdkWlG53VRrOh20DrpVgj0f/RBf0PQe7rcKx5A=;
+        b=Upv+rWjrhEoofebZmhT1IQG2qkFBB6kscQ02W2KnxFSO/9eSiYiDw0Q8l3VCo5Xulj
+         dqy3DGc2vE4eK2zxjTszu/Q8aeIgZ8uMc/GGZs6NiblyBQDKTMaUPqT3B3lvawbCncl4
+         XhKD7A5emqSDkEg8XSRhkmn/STLMl5l1d3pC+SwyLSfapMyFKvwgQfObkWPyMUj0Hypi
+         X+WqXusc83+mEVadc3RcHME+AeGF8azVjeOcmSi+dbh0SsPTL+N5zdyReu7WF8iec98V
+         esUuRs2cqwxL2JbJsXMXCDLYktwRcLL9RnB65538cpP8pjrFu1lRVYkW7tHX+WHtnSbH
+         a9Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSWkoqf7aZx+vW4hYNit9n7R732aH2oqbCPkKazPRmYWQ0+1k4APMMYIEOWIYJ0VE2zPHuwojmCPqikAo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXRYx9Y5Xj3Wh9wypV2hO4EifLGehK1eYs5uhzJaTkJJwztTqH
+	tzm3Vcd70UhaDOOXHH21tTuDCYtHjE7keNuH4aSCZWc1mivLA/uk1uH3UeFdJ6I=
+X-Google-Smtp-Source: AGHT+IFt15Tfa7Wq9qzctFgh8LC8TmY47SF5NHHCKmEXZy8J/U/RH98AYMytAVrK5ZyczDbliAyRZA==
+X-Received: by 2002:a05:690c:25c2:b0:6dd:bbb4:bcc7 with SMTP id 00721157ae682-6dfeeffb0dcmr104927277b3.44.1727104850550;
+        Mon, 23 Sep 2024 08:20:50 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6dbe2ecffeesm34201287b3.79.2024.09.23.08.20.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 08:20:47 -0700 (PDT)
+Date: Mon, 23 Sep 2024 11:20:46 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>,
+	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, Qu Wenruo <wqu@suse.com>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH] btrfs: also add stripe entries for NOCOW writes
+Message-ID: <20240923152046.GA159452@perftesting>
+References: <20240923064549.14224-1-jth@kernel.org>
+ <71088008-c105-4eb9-9199-882091eafe07@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,52 +86,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <71088008-c105-4eb9-9199-882091eafe07@gmx.com>
 
-On 23.09.24 15:56, Alice Ryhl wrote:
-> On Sat, Sep 21, 2024 at 5:33=E2=80=AFPM Danilo Krummrich <dakr@kernel.org=
-> wrote:
->> @@ -84,11 +92,18 @@ unsafe fn call(
->>          &self,
->>          ptr: Option<NonNull<u8>>,
->>          layout: Layout,
->> +        old_layout: Layout,
->>          flags: Flags,
->>      ) -> Result<NonNull<[u8]>, AllocError> {
->>          let size =3D aligned_size(layout);
->>          let ptr =3D match ptr {
->> -            Some(ptr) =3D> ptr.as_ptr(),
->> +            Some(ptr) =3D> {
->> +                if old_layout.size() =3D=3D 0 {
->> +                    ptr::null()
->> +                } else {
->> +                    ptr.as_ptr()
->> +                }
->> +            }
->=20
-> This is making Allocator work with zero-sized types, which deviates
-> from std. We should not do that without a reason. What is the reason?
+On Mon, Sep 23, 2024 at 04:58:34PM +0930, Qu Wenruo wrote:
+> 
+> 
+> 在 2024/9/23 16:15, Johannes Thumshirn 写道:
+> > From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> > 
+> > NOCOW writes do not generate stripe_extent entries in the RAID stripe
+> > tree, as the RAID stripe-tree feature initially was designed with a
+> > zoned filesystem in mind and on a zoned filesystem, we do not allow NOCOW
+> > writes. But the RAID stripe-tree feature is independent from the zoned
+> > feature, so we must also allow NOCOW writes for zoned filesystems.
+> > 
+> > Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> 
+> Sorry I'm going to repeat myself again, I still believe if we insert an
+> RST entry at falloc() time, it will be more consistent with the non-RST
+> code.
+> 
+> Yes, I known preallocated space will not need any read nor search RST
+> entry, and we just fill the page cache with zero at read time.
+> 
+> But the point of proper (not just dummy) RST entry for the whole
+> preallocated space is, we do not need to touch the RST entry anymore for
+> NOCOW/PREALLOCATED write at all.
+> 
+> This makes the RST NOCOW/PREALLOC writes behavior to align with the
+> non-RST code, which doesn't update any extent item, but only modify the
+> file extent for PREALLOC writes.
 
-The global allocator doesn't support it, but the `Allocator` trait from
-std handles zero-sized allocations. For example, this code runs as
-expected:
+I see what you're getting at here, but it creates a huge amount of problems
+later down the line.
 
-    #![feature(allocator_api)]
-   =20
-    use std::alloc::{self, Allocator, Layout};
-   =20
-    fn main() {
-        let alloc: &dyn Allocator =3D &alloc::Global;
-        let ptr =3D alloc.allocate(Layout::new::<()>()).unwrap().cast::<u8>=
-();
-        unsafe { alloc.deallocate(ptr, Layout::new::<()>()) };
-    }
+I prealloc an extent, I map that logical extent to a physical extent and then I
+insert a RST entry for that mapping.  Now I rip out one of my disks, and now I
+have to update RST entries for extents I'm not going to rewrite because they're
+prealloc.
 
-https://play.rust-lang.org/?version=3Dnightly&mode=3Ddebug&edition=3D2021&g=
-ist=3D0a2d12ee6dabf16f2ebd67cc6faa864e
+RST is a logical->physical mapping.  We do not need to update or insert anything
+until we create that logical->physical mapping.  Keeping the rules consistent
+across the different layers will make it easier to reason about and easier to
+maintain.  Adding an index at endio time for NOCOW makes sense, we now have
+created a thing on disk that we need to have a mapping for.  The same goes for
+prealloc, adding an entry at prealloc time doesn't make logical sense as we
+haven't yet instantiated that space on disk.  Thanks,
 
----
-Cheers,
-Benno
-
+Josef
 
