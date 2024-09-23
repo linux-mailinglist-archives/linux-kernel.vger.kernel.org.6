@@ -1,135 +1,124 @@
-Return-Path: <linux-kernel+bounces-335721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D701197E9A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:15:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B3E97E9A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F96C1F21094
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:15:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3195E1F211CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF934196C9B;
-	Mon, 23 Sep 2024 10:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC91195F04;
+	Mon, 23 Sep 2024 10:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="BLye5v/T"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fpJCmsqD"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A611946CD;
-	Mon, 23 Sep 2024 10:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D68194A54
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727086492; cv=none; b=QFtlvJdfI5W0XDGl/l0DWw1k/Ro7wOqlfVWlXxHFhc0U3jlOtH1YE0na3eoayvY81lzW7Sj0dqCV8bQ288B8ZBPr7O89DmVXv2sHLnoe+mZqMcGEQrFFgWbMYmj8r6OUZDto64IsI7AI6cdridEaIRUftxQMpYGuC03USZUCsr8=
+	t=1727086491; cv=none; b=iCsBH0JBJWcoYLeNixrbYmeF0foVVNI6gx3rLRb/9BeRstujFvRfTgTRYI+0XkKjXD4RCf3t7ayJ7/I2vWP//jbc0GHP/DkE8vZ2Z2LJGJ5DdET0FatENwNV86HB1OJCAHoy+Zjnz6w2yj811+iwUu1aDUcaoTyeWbuJdaSYWBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727086492; c=relaxed/simple;
-	bh=4naAvuRiTLh/W08mGlC6sR55eAP2/bE+rIZw3yBKwIw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jOX+wKDib8aN5hQ4BwCG05glye2zrJgFXVlzMiPGBAENB1DKHkHBNuLrd6KxifDlw6Y4vMDZhn//R8MmEJLyRmFQlxRW8+sBAOmW115C3uBxEFWMvBjHuZiYTQ9EOmZe5cpCJRobF6nKRpsUS11WFdNRVi/7ZVX9CCK5LRxOV1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=BLye5v/T; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: a64aa178799411efb66947d174671e26-20240923
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=gbUKc5+M4A13tRhLrQDCXFDg4LvyvHUNk+/1687J63Y=;
-	b=BLye5v/Tw+C33mJcqD2PHgoj51pf5r3SInQlFIx4NwyOTNED3kD95PR+glE15XnKxEn7OyW/R08j985zrQEICjtptJHR67GFVIQ7nUcgqELQYAfKbMft4sXogTz0H37yffoMExJGqem4EBuFnoQ8zbbX4c2KVPI3AqJoWzUQT1I=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:672d9825-9eba-4cec-90d9-caf44858dce2,IP:0,U
-	RL:0,TC:0,Content:1,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:1
-X-CID-META: VersionHash:6dc6a47,CLOUDID:472b1c18-b42d-49a6-94d2-a75fa0df01d2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:ni
-	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: a64aa178799411efb66947d174671e26-20240923
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <pablo.sun@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1772811456; Mon, 23 Sep 2024 18:14:42 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 23 Sep 2024 18:14:41 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs13n1.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Mon, 23 Sep 2024 18:14:38 +0800
-Message-ID: <bf45531a-eacf-22a9-65f1-f6474a2ca843@mediatek.com>
-Date: Mon, 23 Sep 2024 18:14:38 +0800
+	s=arc-20240116; t=1727086491; c=relaxed/simple;
+	bh=KlNHg/5ZKE5qrB8hmfVL3SotEkE21J3fncPu64aclHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L30Ob1r2kvHg5fpS+omD9kawhnv+1gKP7C/bxaQ1qIjCRn/C3F2mTCWHvUvtR7LW7Z/hkk/sHjkawFiY1BKLHr364qMTT64Q76cVQSD1YCvJLAo4fKoaP4e4DvgB4etvzmTSH4zHhhbbO5ORQ2IaK7q+rIYuXJbIQJCEcyslicM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fpJCmsqD; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5365392cfafso4165011e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 03:14:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727086488; x=1727691288; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mae6Avg1FIHgSG+BcO4YtIKpdaFqrjXa2Kuld6x2i8c=;
+        b=fpJCmsqDbnXaL+Z723PU4VyQ/9CNPo5vvNi49OTil8spul6x56JI4HwdoRF6al5J9w
+         YMH5C2uNB0HrXNycXq7Zm7BUf4ytq1aC8H48SE+xjwB9lsHwuTeVFu24wT/rxU9IUD8L
+         S9HfU+ZBmn4kUQSdZ9QO4ohN/W2XjWDPZhOIWbfAE6RgxH/vzyHpMTL34pANqO44Yug/
+         SSPdp2VVFK4z3gAfVi2tdLx9e3aLXx2h0HjZe7p0KZ6Xfs+cCueKr3PIE39woQJdLGTi
+         iuXdfBnF5M5LOfYpPr4N7R64EcmGyso8ZhgCy88P42ckDlogr3f4BKAfyoTMJNkaO6yn
+         PIGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727086488; x=1727691288;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mae6Avg1FIHgSG+BcO4YtIKpdaFqrjXa2Kuld6x2i8c=;
+        b=RpXfMyNTeO7pPJSU3YUa1Uw9CIGZxhKKg8fGxvg8EUBxoux3Iq1pMjK5Bn1OTw2/pu
+         dzP9SensWDYTPbmIpEjKxGVzg7muzbX22tz+VsrFULnliWVAgwrAQiHoRYEbdgcPtY15
+         7Ltl+nZiCNMbOk//f2X81LuT2K7Fk0IxvNVbk/cGoX+LHbOje0sk7F2hZER8MD7FmGMe
+         5XReElNAKiJtHfsy2gMBxM96AYoFA1EDiiGuPKBFM85Z2JQPMHQ4//TetKfADWmQhEwb
+         zujcmcpCm75yc0gvTO6d/8vtw9HN0mOa9gyBirJ3ZZz3h0C6ei4oRSwSkBgsmca1XTjS
+         15DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfn6WzuS4qZmvC4XMCKDX6moHCqxVfU/Px19a3cuOeC3n+E9kJMoFo1FbSeCFN4lu2+ldVzi1rtqzXqm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE/cfj8wBMKv23f/Po0LOPIhakJnJS4wJHc3xZabyS1ilrfk7b
+	1uGeoETr5hyhwQQlKHD818F+GubUQXnh04eJu+WrvAoJ1NqhqnHAecCj2Bi2PIk=
+X-Google-Smtp-Source: AGHT+IEJ4FRJFjtM6OZF/5c9q24G7P4XNARCEcNGCmeR31EtaLklWtVoHKAsqQj4SgCYxhyH7gIfAg==
+X-Received: by 2002:a05:6512:acb:b0:536:a4e9:9cf7 with SMTP id 2adb3069b0e04-536ac3400e3mr5563017e87.56.1727086487564;
+        Mon, 23 Sep 2024 03:14:47 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5368895db54sm3140244e87.112.2024.09.23.03.14.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 03:14:46 -0700 (PDT)
+Date: Mon, 23 Sep 2024 13:14:43 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Hermes Wu <Hermes.Wu@ite.com.tw>
+Cc: Pin-yen Lin <treapking@chromium.org>, 
+	Kenneth Hung <Kenneth.hung@ite.com.tw>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/3] drm/bridge: it6505: HDCP CTS fail on repeater
+ items
+Message-ID: <4viir5prnuvpp76npblwmdrwlttm5daumvdnocipdsn6geyxvf@2yfcytjb3ono>
+References: <20240923094826.13471-1-Hermes.Wu@ite.com.tw>
+ <20240923094826.13471-3-Hermes.Wu@ite.com.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH 5/5] arm64: dts: mediatek: mt8390-genio-700-evk: Enable
- Mali GPU
-Content-Language: en-US
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-References: <20240920134111.19744-1-pablo.sun@mediatek.com>
- <20240920134111.19744-6-pablo.sun@mediatek.com>
- <eb17085d-78ff-4833-a4de-17b9327d776c@collabora.com>
-From: Pablo Sun <pablo.sun@mediatek.com>
-In-Reply-To: <eb17085d-78ff-4833-a4de-17b9327d776c@collabora.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923094826.13471-3-Hermes.Wu@ite.com.tw>
 
-Hi Angelo,
-
-On 9/23/24 16:45, AngeloGioacchino Del Regno wrote:
-[snipped]
+On Mon, Sep 23, 2024 at 05:48:28PM GMT, Hermes Wu wrote:
+> From: Hermes Wu <Hermes.wu@ite.com.tw>
 > 
-> Is there any real difference between MT8390 and MT8188 in terms of the 
-> GPU OPPs?
+> Changes in v3:
+>  -add detials about fail item and changes.
 > 
-> I see that on MT8188, frequencies up to 880MHz want a DVDD_SRAM_GPU of 
-> 0.750V,
-> then 0.775/0.762/0.750 (bin1-4/5/6) on 915MHz, and 0.800/0.775/0.750 
-> (bin1-4/5/6)
-> on 950MHz.
 > 
-> Those never call for 0.850V...! So is MT8188 (Chromebooks) wrong, or is 
-> MT8390
-> different in that?
+> Fix HDCP CTS fail items on UNIGRAF DRP-100
+> 
+> DUT must Support 127 devices.
+> DUT must check BSTATUS when recive CP_IRQ.
+> DUT must enable encription when R0' is ready.
+> DUT must retry V' check 3 times.
+> it6505 must read DRP-100 KSV FIFO by FIFO mode.
+> it6505 should restart HDCP within 5s if KSV not ready.
 
-To the best of my knowledge, MT8390 and MT8188 has identical GPU
-subsystem. Thus, the OPP table should have no difference.
+Still not readable.
 
-To be specific, I list the link to the OPP table of Genio 700 EVK
-(MT8390) in reference in [1]. It should match the setting in Chromebook
-kernel branches.
+English text, please. Split the patch to fix one issue at a time.
+Describe the _reason_ for the change. Annotate fixes with Fixes tags.
 
-The "typical" voltage in the datasheet is the voltage that would work
-for all frequency settings. As long as it is smaller than the maximum
-operating voltage, setting voltages higher than the ones specified in
-the OPP table does not damage the hardware.
+> 
+> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
+> ---
+>  drivers/gpu/drm/bridge/ite-it6505.c | 112 ++++++++++++++++++----------
+>  1 file changed, 74 insertions(+), 38 deletions(-)
 
-But this 0.85V setting is indeed not optimal. We should follow the
-voltages described in the OPP table, if we want power savings.
-
-I also considered model the regulator setting with 
-'regulator-coupled-with' and 'regulator-coupled-max-spread', but I am 
-not entirely sure how to describe the relation that "DVDD_GPU_SRAM 
-should follow DVDD_GPU
-if and only if DVDD_GPU is higher than 0.75V" - should I simply
-set min-voltage to 0.75V and set 'regulator-coupled-with' ?
-
-[1]: 
-https://gitlab.com/mediatek/aiot/rity/meta-mediatek-bsp/-/blob/kirkstone/recipes-kernel/dtbo/mt8390/gpu-mali.dts
-
-Many thanks,
-Pablo
-
+-- 
+With best wishes
+Dmitry
 
