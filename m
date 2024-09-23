@@ -1,149 +1,127 @@
-Return-Path: <linux-kernel+bounces-335558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF06897E76B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:19:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EFC397E76E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A13E5281709
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:19:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97142B20B63
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AD319341D;
-	Mon, 23 Sep 2024 08:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB989193428;
+	Mon, 23 Sep 2024 08:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LeYVMNc/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PFNKGmcP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E72B6F2EB;
-	Mon, 23 Sep 2024 08:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBD9192D7E;
+	Mon, 23 Sep 2024 08:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727079590; cv=none; b=S/MB5YycTgH2zVRoUC/y74/136Y0ZH+82I7m4GLCz8bdtqSWC9qVru9qXoFj8S+PxRWcdOq/PN9g0LkGENKgCkIa38IrZrwYXgKKNY0zXKQMky0Wp48tVPELKR/8AQ3mUK2to6oynJ1TsR1JD0ls6nrzRkhbu5P6ReS/QAPzjWo=
+	t=1727079629; cv=none; b=I1ziOxUhzGA3ZM+z4myxdDJsqCa7wSYXcIOAwVvChchWWhNH215HkUVkPcO2egea0DfWtgG6BidLwoyJ7AhorLkqEcSsLyLU3PeQ9GG3l853Nc/BTVaucVniDaXsNx0jOAkPoWhwg5xGrzgF+y9aVCpY7TX+GqLEXB8/WefUcSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727079590; c=relaxed/simple;
-	bh=gQ1xXXNFSQ0hMp/hqA4GAQ7kD/mpS6i/zp2Gmw3vPRw=;
+	s=arc-20240116; t=1727079629; c=relaxed/simple;
+	bh=gtX1ufG1d7RliMXAfdW/G9khgrDwtNsLvgPMiBUHbGw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E2pi1cxRPiHMQpefEVMvFXojwvCQRywqKWoTHrq68faLrSFg8fI+YWai8I5se7YFJl/eAIf/cg2eU3lpHBLT6X01fvhnYNzoiI9ydRxEpOJfVt3dstQp/aLEPsjwo/9iS5joblMe64QoQULSS0TEMKpij9hDLV8S7cGP4Cpp3Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LeYVMNc/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CEB1C4CEC4;
-	Mon, 23 Sep 2024 08:19:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727079589;
-	bh=gQ1xXXNFSQ0hMp/hqA4GAQ7kD/mpS6i/zp2Gmw3vPRw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LeYVMNc/c1PpcDq/PGTNH8EeH683lhQ22/Ye7Wa4pPsxVuDDsLY7Q9JyzQS1As9ys
-	 1FxD65e/lBiV5VktoD0dv2pZ7FLgoeIFKJEwS9agXwshH7aqAKWq63ZP+UjytmPKLu
-	 yAIQUsTNGCMG1aQpwo4+9E1W77uhKT3AXbPHR4683BNeokwEgHhRfR2eHDuZoIv+nH
-	 WB483aJV+y58kgAC0/JTULv4RpA1WkJEg+q+q2T6+pLYIygf3JBmgW7xmVAplusijv
-	 wrTGbbhIB55EzaYYVnuIWO5abH1Uweoc6XHXEdDjVa2BsDSfs8pb/9aWkxwrnz6+mn
-	 A7DeNA4vO15LA==
-Date: Mon, 23 Sep 2024 10:19:46 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
-	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>, 
-	Luis de Arquer <ldearquer@gmail.com>, Algea Cao <algea.cao@rock-chips.com>
-Subject: Re: [PATCH v6 1/3] drm/bridge: synopsys: Add DW HDMI QP TX
- Controller support library
-Message-ID: <20240923-spirited-wealthy-pelican-4e15dc@penduick>
-References: <20240906-b4-rk3588-bridge-upstream-v6-0-a3128fb103eb@collabora.com>
- <20240906-b4-rk3588-bridge-upstream-v6-1-a3128fb103eb@collabora.com>
- <20240909-horned-congenial-curassow-ebc5fa@houat>
- <f8b17995-ce53-45ab-8e68-c7087dbc9786@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DvupyBjwmj/QyRS+mKrzucasUv+WGdrRNhMz1gPAwBHhe0hTvpGz+ru3m2bRHYI71RtBESHx7+Jr7Sx2lW/o6aOElWvoDwupCy4loBRDulsOI/cv8xu1ImI1kbyvoysEjEDC5bONPTVHUs69tjU9kk15HxH4VZWirT5wWiwg8zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PFNKGmcP; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727079628; x=1758615628;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gtX1ufG1d7RliMXAfdW/G9khgrDwtNsLvgPMiBUHbGw=;
+  b=PFNKGmcP4Vvl65jbrzfYIFmIIlrQeAiG+HNERX1uwrmqra/o626vcFrc
+   yzk/FaSeKZCdAfoWJ4pPCO9X8cJYk4G1ZS2C2N4DNV2NajFRvCySoaHKe
+   Oa6G4GD/lYce4cii4iAAUoja76s7KXlqyjhn6jbTxGTe1A/doyEpvymhQ
+   n/sEm0o9+ewrWS8oM34aYEn8TqDUb25PksMLUuytWi3cWNvHuhW94G33n
+   2BpXKLs9uHhS95cEiCF3yMhRu1ePZ8crQk1f3Zx8XuBhXGrPnVF3KhhgY
+   3uAxJ9B3UXCHw8cXHTrj3+7swdpy22OidIsxRU7FCnMf0oSLfokMjOv58
+   w==;
+X-CSE-ConnectionGUID: c5ovfAp3TkuzS3QRPjIE0w==
+X-CSE-MsgGUID: a1fCMfZlTheKnZ561ptxBg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="25965081"
+X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
+   d="scan'208";a="25965081"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 01:20:27 -0700
+X-CSE-ConnectionGUID: LCOiF/VeRMCRb3MnIbVbEw==
+X-CSE-MsgGUID: 6sn05GnwThWzlcG2uR+v5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
+   d="scan'208";a="71137228"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa008.fm.intel.com with SMTP; 23 Sep 2024 01:20:20 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 23 Sep 2024 11:20:18 +0300
+Date: Mon, 23 Sep 2024 11:20:18 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fix  dereferencing freed memory 'fw'
+Message-ID: <ZvEkwqxArMQij8VG@kuha.fi.intel.com>
+References: <20240922105212.28099-1-kdipendra88@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="bjmxjjuhmv2zdjhq"
-Content-Disposition: inline
-In-Reply-To: <f8b17995-ce53-45ab-8e68-c7087dbc9786@collabora.com>
-
-
---bjmxjjuhmv2zdjhq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240922105212.28099-1-kdipendra88@gmail.com>
 
-On Sat, Sep 14, 2024 at 10:12:29PM GMT, Cristian Ciocaltea wrote:
-> Hi Maxime,
->=20
-> On 9/9/24 6:13 PM, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Fri, Sep 06, 2024 at 04:17:40AM GMT, Cristian Ciocaltea wrote:
-> >> +static enum drm_connector_status
-> >> +dw_hdmi_qp_bridge_detect(struct drm_bridge *bridge)
-> >> +{
-> >> +	struct dw_hdmi_qp *hdmi =3D bridge->driver_private;
-> >> +	enum drm_connector_status status;
-> >> +
-> >> +	status =3D hdmi->phy.ops->read_hpd(hdmi, hdmi->phy.data);
-> >> +
-> >> +	dev_dbg(hdmi->dev, "%s conn=3D%d scramb=3D%d\n", __func__,
-> >> +		status =3D=3D connector_status_connected, hdmi->scramb_enabled);
-> >> +
-> >> +	if (hdmi->scramb_enabled) {
-> >> +		cancel_delayed_work_sync(&hdmi->scramb_work);
-> >> +
-> >> +		if (status =3D=3D connector_status_connected)
-> >> +			dw_hdmi_qp_check_and_set_scramb(hdmi);
-> >> +	}
-> >> +
-> >> +	return status;
-> >> +}
-> >=20
-> > Unfortunately, that won't work. The HDMI Spec has (HDMI 2.0, Section
-> > 6.1.3.1 - Scrambling Control):
-> >=20
-> > The minimum time period between the write to the Scrambling_Enable bit,
-> > and the transmission of a scrambled video signal is not specified;
-> > however the Source shall not begin transmission of a scrambled video
-> > signal before writing a 1 to the Scrambling_Enable bit. The maximum time
-> > period between the write to the Scrambling_Enable bit and the
-> > transmission of a scrambled video signal shall be 100 ms.
-> >=20
-> > So you need to disable the output and enable it again.
-> >=20
-> > vc4 does just that, you can have a look here:
-> > https://elixir.bootlin.com/linux/v6.10.9/source/drivers/gpu/drm/vc4/vc4=
-_hdmi.c#L410
->=20
-> Thanks for all the details and references!
->=20
-> Unfortunately I had to drop the scrambling setup for now [1], as I
-> encountered some issues while attempting to get this implemented as
-> suggested.  Will get back to this and submit it separately when done.
+Hi Dipendra,
 
-Yeah, I think that's the best way forward for now :)
+Thanks for the patch. You forgot the susbsytem and driver from your
+subject line:
+https://docs.kernel.org/process/submitting-patches.html#the-canonical-patch-format
 
-Maxime
---bjmxjjuhmv2zdjhq
-Content-Type: application/pgp-signature; name="signature.asc"
+On Sun, Sep 22, 2024 at 10:52:11AM +0000, Dipendra Khadka wrote:
+> smatch reported dereferencing freed memory as below:
+> '''
+> drivers/usb/typec/tipd/core.c:1196 tps6598x_apply_patch() error: dereferencing freed memory 'fw'
+> '''
+> 
+> Invoking release_firware(fw) just after checking ret.
+> 
+> Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
 
------BEGIN PGP SIGNATURE-----
+This is a use-after-free case, so please add the Fixes tag:
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZvEkmgAKCRAnX84Zoj2+
-dtqIAYCEGRZltZdX05vOCUhg+bOJmCXtzlvHsgM0R0lqKkF47Ts4/UIXsS4SIBrh
-GzywXicBfA+E1AnqXzojQFvunTAvhnbNDmkORCYsD6W+6g1tpbLD2aeqkSlYNen/
-ghfb0s5gfA==
-=WJBj
------END PGP SIGNATURE-----
+Fixes: 916b8e5fa73d ("usb: typec: tipd: add error log to provide firmware name and size")
 
---bjmxjjuhmv2zdjhq--
+> ---
+>  drivers/usb/typec/tipd/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+> index ea768b19a7f1..eb5596e3406a 100644
+> --- a/drivers/usb/typec/tipd/core.c
+> +++ b/drivers/usb/typec/tipd/core.c
+> @@ -1191,11 +1191,11 @@ static int tps6598x_apply_patch(struct tps6598x *tps)
+>  	dev_info(tps->dev, "Firmware update succeeded\n");
+>  
+>  release_fw:
+> -	release_firmware(fw);
+>  	if (ret) {
+>  		dev_err(tps->dev, "Failed to write patch %s of %zu bytes\n",
+>  			firmware_name, fw->size);
+>  	}
+> +	release_firmware(fw);
+>  
+>  	return ret;
+>  };
+> -- 
+> 2.43.0
+
+thanks,
+
+-- 
+heikki
 
