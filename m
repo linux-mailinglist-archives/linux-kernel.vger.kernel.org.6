@@ -1,354 +1,116 @@
-Return-Path: <linux-kernel+bounces-335998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8764397EDDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:14:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE66697EDE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6B8FB21908
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:14:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75FFF1F21103
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F43319CC2C;
-	Mon, 23 Sep 2024 15:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C4319E7EF;
+	Mon, 23 Sep 2024 15:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+wmTvJs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="HtQzKfwZ"
+Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7258C1CA84
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406F619CC12;
+	Mon, 23 Sep 2024 15:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727104456; cv=none; b=Io1nQFXa+WKEbt2RVe2zxdL1458ZdCV/T4nTlbvtt2VYOAtoP8nO4kS5o9yZEd/qI5pgLnmQ3VxloDubokxFBA09o//XWw5iw9q6gkOWV+LsyNJIW2Ct9ygR/wzmrUkQrxocwN78qKCirqt06U294R3P/lnehVXM/SA8iNvgqFk=
+	t=1727104463; cv=none; b=l38URCsIvTqsUGYNoxIC3r6cJgleJPQCUTLUJOd2nx/jeBl2yULCmrdp4IbpzStVa+dImthxn1PAML+/9IqkktLtV4yh3dzjmtJlISLedf1sw1chzbXstcKjzyey3fnoREguL4QfkWZ2CvppSfBQGm1rGg0JdCqm/J+wq143f8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727104456; c=relaxed/simple;
-	bh=c/XXRobTRjGPee+5chK/rhgH+RuWlN3dQsj/Y/D8XvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JIfe2K4ZhFa0fQxkMm1OoWH9wGw1Qc0TWOjeYTdCWxO9L0CiXPJX7iv+TSgVAUVNubUjaOBfO1KzZsNJYkvxoAinnrq9krliO2kyHapLmYDFpu9NgcsH9DWlSWBazgJwtGbVQvtSeRy+7pnZOKjJ3z7NL21M1vGJJ1e+IuGv0uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+wmTvJs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAFD1C4CEC4;
-	Mon, 23 Sep 2024 15:14:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727104456;
-	bh=c/XXRobTRjGPee+5chK/rhgH+RuWlN3dQsj/Y/D8XvM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a+wmTvJs/tsgtB5QnpxSjOYZoKDLt9V09pJulgNywqzT0ulg/kXoTz1ACmiJVrQLu
-	 hOlqIk1zL04VPrq11cZ2DsDpQFQiRUTEpWL42/XDrnOYdpCymhdM1rHnGJO4kcC33m
-	 VVzj35lIP+249D5GizFMPDqtei9fMlcP+dRkrwD82cjk4/Z0FJ2bgP+1alcGi8nLVL
-	 bJ6qsAZuNOBThMftdD3Q8DN3DzkIcquFhtvK+J9CZ8jtBqzuogExDgqPN2e4pXOasc
-	 0WCjbTUesnY6Q6YsbSCSo9aMHPfTausbcgUp3tZmn7aKd+ty5igAMZu+KA8DJnsEG9
-	 9XMKPxXYo7Pww==
-Date: Mon, 23 Sep 2024 15:14:13 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com,
-	Daeho Jeong <daehojeong@google.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: introduce device aliasing file
-Message-ID: <ZvGFxTDW-6aa3FUe@google.com>
-References: <20240913212810.912171-1-daeho43@gmail.com>
- <cef0eeba-6089-44c6-b08e-308f8ee36f6a@kernel.org>
- <CACOAw_xW_UsNLy-j6tySmOLzqR6LDDDCZnpx4Uj8PF=ZTuVRag@mail.gmail.com>
- <ff63da2f-77f8-40f3-a111-1defec6adb04@kernel.org>
+	s=arc-20240116; t=1727104463; c=relaxed/simple;
+	bh=WDXytlOPylaw8vHOvWAB3UnxkSH7kzqKouEgQkROwF0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q7MbsvW0AE5iCMP02KfkEgSijOQoddPE7SDBBqDEjn4rDNb0SDTc1hkcqcnh5fwBI7tDwd20R7XGEJ7Y2x9anbMitsK/7GUP17NiuD9PviDPjk3D+MYQYQ0I6/H2TnTK9JEEBRLnhfdSIFHG/JeCBWU1xyvNyw4AnRXakkgtjNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=HtQzKfwZ; arc=none smtp.client-ip=81.19.3.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+	s=20160406-ysoft-com; t=1727104460;
+	bh=fh4wDkjBwieGfhDRU61EZTzebRURhMzm9ZL/62vlTqk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HtQzKfwZXc09ashZIl9PXG9ggz7wC78fzF3VDzc/iAgFScPIH1rIMMB5j3YgKhqB+
+	 mdCmMRuhvyuoermkQTkIbKIxolsg3O6kSrALoAez6WZhKJHH9ytyqRkIZN5fitveYL
+	 XReUFh29j3rEFjWYY/0EEK2zGBWbHSr+qssS6pV4=
+Received: from vokac-nb.ysoft.local (unknown [10.1.8.111])
+	by uho.ysoft.cz (Postfix) with ESMTP id ED723A025E;
+	Mon, 23 Sep 2024 17:14:19 +0200 (CEST)
+From: =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Petr Benes <petr.benes@ysoft.com>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Herburger <gregor.herburger@ew.tq-group.com>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Michael Walle <mwalle@kernel.org>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Mathieu Othacehe <m.othacehe@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
+Subject: [PATCH v3 0/4] Add support for new IMX8MP based board
+Date: Mon, 23 Sep 2024 17:14:13 +0200
+Message-ID: <20240923151417.1665431-1-michal.vokac@ysoft.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ff63da2f-77f8-40f3-a111-1defec6adb04@kernel.org>
 
-On 09/23, Chao Yu wrote:
-> On 2024/9/20 23:38, Daeho Jeong wrote:
-> > On Thu, Sep 19, 2024 at 6:14 AM Chao Yu <chao@kernel.org> wrote:
-> > > 
-> > > On 2024/9/14 5:28, Daeho Jeong wrote:
-> > > > From: Daeho Jeong <daehojeong@google.com>
-> > > > 
-> > > > F2FS should understand how the device aliasing file works and support
-> > > > deleting the file after use. A device aliasing file can be created by
-> > > > mkfs.f2fs tool and it can map the whole device with an extrent, not
-> > > > using node blocks. The file space should be pinned and normally used for
-> > > > read-only usages.
-> > > > 
-> > > > Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> > > > ---
-> > > >    fs/f2fs/data.c         |  5 +++++
-> > > >    fs/f2fs/extent_cache.c | 10 ++++++++++
-> > > >    fs/f2fs/f2fs.h         |  5 +++++
-> > > >    fs/f2fs/file.c         | 36 ++++++++++++++++++++++++++++++++----
-> > > >    fs/f2fs/inode.c        | 10 ++++++++--
-> > > >    fs/f2fs/sysfs.c        |  2 ++
-> > > >    6 files changed, 62 insertions(+), 6 deletions(-)
-> > > > 
-> > > > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > > > index 6457e5bca9c9..9ce92093ba1e 100644
-> > > > --- a/fs/f2fs/data.c
-> > > > +++ b/fs/f2fs/data.c
-> > > > @@ -3423,6 +3423,11 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
-> > > > 
-> > > >        if (!f2fs_lookup_read_extent_cache_block(inode, index,
-> > > >                                                 &dn.data_blkaddr)) {
-> > > > +             if (IS_DEVICE_ALIASING(inode)) {
-> > > > +                     err = -ENODATA;
-> > > > +                     goto out;
-> > > > +             }
-> > > > +
-> > > >                if (locked) {
-> > > >                        err = f2fs_reserve_block(&dn, index);
-> > > >                        goto out;
-> > > > diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-> > > > index fd1fc06359ee..03883963b991 100644
-> > > > --- a/fs/f2fs/extent_cache.c
-> > > > +++ b/fs/f2fs/extent_cache.c
-> > > > @@ -401,6 +401,11 @@ void f2fs_init_read_extent_tree(struct inode *inode, struct page *ipage)
-> > > >        if (atomic_read(&et->node_cnt) || !ei.len)
-> > > >                goto skip;
-> > > > 
-> > > > +     if (IS_DEVICE_ALIASING(inode)) {
-> > > > +             et->largest = ei;
-> > > > +             goto skip;
-> > > > +     }
-> > > > +
-> > > >        en = __attach_extent_node(sbi, et, &ei, NULL,
-> > > >                                &et->root.rb_root.rb_node, true);
-> > > >        if (en) {
-> > > > @@ -463,6 +468,11 @@ static bool __lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
-> > > >                goto out;
-> > > >        }
-> > > > 
-> > > > +     if (IS_DEVICE_ALIASING(inode)) {
-> > > > +             ret = false;
-> > > > +             goto out;
-> > > > +     }
-> > > > +
-> > > >        en = __lookup_extent_node(&et->root, et->cached_en, pgofs);
-> > > >        if (!en)
-> > > >                goto out;
-> > > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > > > index ac19c61f0c3e..59179b9b3a83 100644
-> > > > --- a/fs/f2fs/f2fs.h
-> > > > +++ b/fs/f2fs/f2fs.h
-> > > > @@ -208,6 +208,7 @@ struct f2fs_mount_info {
-> > > >    #define F2FS_FEATURE_CASEFOLD                       0x00001000
-> > > >    #define F2FS_FEATURE_COMPRESSION            0x00002000
-> > > >    #define F2FS_FEATURE_RO                             0x00004000
-> > > > +#define F2FS_FEATURE_DEVICE_ALIAS            0x00008000
-> > > > 
-> > > >    #define __F2FS_HAS_FEATURE(raw_super, mask)                         \
-> > > >        ((raw_super->feature & cpu_to_le32(mask)) != 0)
-> > > > @@ -3001,6 +3002,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
-> > > >    #define F2FS_DIRSYNC_FL                     0x00010000 /* dirsync behaviour (directories only) */
-> > > >    #define F2FS_PROJINHERIT_FL         0x20000000 /* Create with parents projid */
-> > > >    #define F2FS_CASEFOLD_FL            0x40000000 /* Casefolded file */
-> > > > +#define F2FS_DEVICE_ALIAS_FL         0x80000000 /* File for aliasing a device */
-> > > > 
-> > > >    #define F2FS_QUOTA_DEFAULT_FL               (F2FS_NOATIME_FL | F2FS_IMMUTABLE_FL)
-> > > > 
-> > > > @@ -3016,6 +3018,8 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
-> > > >    /* Flags that are appropriate for non-directories/regular files. */
-> > > >    #define F2FS_OTHER_FLMASK   (F2FS_NODUMP_FL | F2FS_NOATIME_FL)
-> > > > 
-> > > > +#define IS_DEVICE_ALIASING(inode)    (F2FS_I(inode)->i_flags & F2FS_DEVICE_ALIAS_FL)
-> > > > +
-> > > >    static inline __u32 f2fs_mask_flags(umode_t mode, __u32 flags)
-> > > >    {
-> > > >        if (S_ISDIR(mode))
-> > > > @@ -4478,6 +4482,7 @@ F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
-> > > >    F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
-> > > >    F2FS_FEATURE_FUNCS(compression, COMPRESSION);
-> > > >    F2FS_FEATURE_FUNCS(readonly, RO);
-> > > > +F2FS_FEATURE_FUNCS(device_alias, DEVICE_ALIAS);
-> > > > 
-> > > >    #ifdef CONFIG_BLK_DEV_ZONED
-> > > >    static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
-> > > > diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> > > > index 168f08507004..0f4af6b303ff 100644
-> > > > --- a/fs/f2fs/file.c
-> > > > +++ b/fs/f2fs/file.c
-> > > > @@ -727,6 +727,11 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
-> > > > 
-> > > >        trace_f2fs_truncate_blocks_enter(inode, from);
-> > > > 
-> > > > +     if (IS_DEVICE_ALIASING(inode) && from) {
-> > > > +             err = -EINVAL;
-> > > > +             goto out_err;
-> > > > +     }
-> > > > +
-> > > >        free_from = (pgoff_t)F2FS_BLK_ALIGN(from);
-> > > > 
-> > > >        if (free_from >= max_file_blocks(inode))
-> > > > @@ -741,6 +746,21 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
-> > > >                goto out;
-> > > >        }
-> > > > 
-> > > > +     if (IS_DEVICE_ALIASING(inode)) {
-> > > > +             struct extent_tree *et = F2FS_I(inode)->extent_tree[EX_READ];
-> > > > +             struct extent_info ei = et->largest;
-> > > > +             unsigned int i;
-> > > > +
-> > > > +             for (i = 0; i < ei.len; i++)
-> > > > +                     f2fs_invalidate_blocks(sbi, ei.blk + i);
-> > > > +
-> > > > +             dec_valid_block_count(sbi, inode, ei.len);
-> > > > +             f2fs_update_time(sbi, REQ_TIME);
-> > > > +
-> > > > +             f2fs_put_page(ipage, 1);
-> > > > +             goto out;
-> > > > +     }
-> > > > +
-> > > >        if (f2fs_has_inline_data(inode)) {
-> > > >                f2fs_truncate_inline_inode(inode, ipage, from);
-> > > >                f2fs_put_page(ipage, 1);
-> > > > @@ -776,7 +796,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 from, bool lock)
-> > > >        /* lastly zero out the first data page */
-> > > >        if (!err)
-> > > >                err = truncate_partial_data_page(inode, from, truncate_page);
-> > > > -
-> > > > +out_err:
-> > > >        trace_f2fs_truncate_blocks_exit(inode, err);
-> > > >        return err;
-> > > >    }
-> > > > @@ -994,7 +1014,8 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> > > >                return -EPERM;
-> > > > 
-> > > >        if ((attr->ia_valid & ATTR_SIZE)) {
-> > > > -             if (!f2fs_is_compress_backend_ready(inode))
-> > > > +             if (!f2fs_is_compress_backend_ready(inode) ||
-> > > > +                             IS_DEVICE_ALIASING(inode))
-> > > >                        return -EOPNOTSUPP;
-> > > >                if (is_inode_flag_set(inode, FI_COMPRESS_RELEASED) &&
-> > > >                        !IS_ALIGNED(attr->ia_size,
-> > > > @@ -1855,7 +1876,7 @@ static long f2fs_fallocate(struct file *file, int mode,
-> > > >                return -EIO;
-> > > >        if (!f2fs_is_checkpoint_ready(F2FS_I_SB(inode)))
-> > > >                return -ENOSPC;
-> > > > -     if (!f2fs_is_compress_backend_ready(inode))
-> > > > +     if (!f2fs_is_compress_backend_ready(inode) || IS_DEVICE_ALIASING(inode))
-> > > >                return -EOPNOTSUPP;
-> > > > 
-> > > >        /* f2fs only support ->fallocate for regular file */
-> > > > @@ -3264,6 +3285,9 @@ int f2fs_pin_file_control(struct inode *inode, bool inc)
-> > > >        struct f2fs_inode_info *fi = F2FS_I(inode);
-> > > >        struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-> > > > 
-> > > > +     if (IS_DEVICE_ALIASING(inode))
-> > > > +             return -EINVAL;
-> > > > +
-> > > >        if (fi->i_gc_failures >= sbi->gc_pin_file_threshold) {
-> > > >                f2fs_warn(sbi, "%s: Enable GC = ino %lx after %x GC trials",
-> > > >                          __func__, inode->i_ino, fi->i_gc_failures);
-> > > > @@ -3294,6 +3318,9 @@ static int f2fs_ioc_set_pin_file(struct file *filp, unsigned long arg)
-> > > >        if (f2fs_readonly(sbi->sb))
-> > > >                return -EROFS;
-> > > > 
-> > > > +     if (!pin && IS_DEVICE_ALIASING(inode))
-> > > > +             return -EOPNOTSUPP;
-> > > > +
-> > > >        ret = mnt_want_write_file(filp);
-> > > >        if (ret)
-> > > >                return ret;
-> > > > @@ -4711,7 +4738,8 @@ static int f2fs_preallocate_blocks(struct kiocb *iocb, struct iov_iter *iter,
-> > > >        else
-> > > >                return 0;
-> > > > 
-> > > > -     map.m_may_create = true;
-> > > > +     if (!IS_DEVICE_ALIASING(inode))
-> > > > +             map.m_may_create = true;
-> > > >        if (dio) {
-> > > >                map.m_seg_type = f2fs_rw_hint_to_seg_type(sbi,
-> > > >                                                inode->i_write_hint);
-> > > > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > > > index aef57172014f..f118e955ba88 100644
-> > > > --- a/fs/f2fs/inode.c
-> > > > +++ b/fs/f2fs/inode.c
-> > > > @@ -367,6 +367,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
-> > > >                return false;
-> > > >        }
-> > > > 
-> > > > +     if ((fi->i_flags & F2FS_DEVICE_ALIAS_FL) && !f2fs_sb_has_device_alias(sbi)) {
-> > > > +             f2fs_warn(sbi, "%s: inode (ino=%lx) has device alias flag, but the feature is off",
-> > > > +                       __func__, inode->i_ino);
-> > > > +             return false;
-> > > > +     }
-> > > 
-> > > Do we need to do sanity check device_alias feature flag w/
-> > > sb.devs[].path format? and related inode?
-> > 
-> > Sorry, I am not sure I got your point. Could you elaborate it more?
-> 
-> Oh, sorry, I misunderstand it. alias_filename won't be stored in sb.devs[].path,
-> please ignore it.
-> 
-> Another point is: what do you think of doing sanity check on extent_info of
-> device_alias inode?
-> 
-> we can check whether its extent points to whole region of target alias device or
-> not?
+Hi,
 
-Chao, I think we can add this later, as I'd like to queue this in the merge
-window. Wdyt?
+this series adds support for a new member in our IOTA platform.
+The board is based on the i.MX8MP SoC. The first two patches
+add support for most of the board functionality except USB Type-C
+port and some other minor things.
 
-> 
-> Thanks,
-> 
-> > 
-> > > 
-> > > > +
-> > > >        return true;
-> > > >    }
-> > > > 
-> > > > @@ -818,8 +824,6 @@ void f2fs_evict_inode(struct inode *inode)
-> > > >        f2fs_bug_on(sbi, get_dirty_pages(inode));
-> > > >        f2fs_remove_dirty_inode(inode);
-> > > > 
-> > > > -     f2fs_destroy_extent_tree(inode);
-> > > 
-> > > For hardlink inode, it missed to call f2fs_destroy_extent_tree()?
-> > 
-> > Got it.
-> > 
-> > > 
-> > > Thanks,
-> > > 
-> > > > -
-> > > >        if (inode->i_nlink || is_bad_inode(inode))
-> > > >                goto no_delete;
-> > > > 
-> > > > @@ -874,6 +878,8 @@ void f2fs_evict_inode(struct inode *inode)
-> > > >                goto retry;
-> > > >        }
-> > > > 
-> > > > +     f2fs_destroy_extent_tree(inode);
-> > > > +
-> > > >        if (err) {
-> > > >                f2fs_update_inode_page(inode);
-> > > >                if (dquot_initialize_needed(inode))
-> > > > diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> > > > index fee7ee45ceaa..bf64f4cc3522 100644
-> > > > --- a/fs/f2fs/sysfs.c
-> > > > +++ b/fs/f2fs/sysfs.c
-> > > > @@ -1281,6 +1281,7 @@ F2FS_SB_FEATURE_RO_ATTR(sb_checksum, SB_CHKSUM);
-> > > >    F2FS_SB_FEATURE_RO_ATTR(casefold, CASEFOLD);
-> > > >    F2FS_SB_FEATURE_RO_ATTR(compression, COMPRESSION);
-> > > >    F2FS_SB_FEATURE_RO_ATTR(readonly, RO);
-> > > > +F2FS_SB_FEATURE_RO_ATTR(device_alias, DEVICE_ALIAS);
-> > > > 
-> > > >    static struct attribute *f2fs_sb_feat_attrs[] = {
-> > > >        ATTR_LIST(sb_encryption),
-> > > > @@ -1297,6 +1298,7 @@ static struct attribute *f2fs_sb_feat_attrs[] = {
-> > > >        ATTR_LIST(sb_casefold),
-> > > >        ATTR_LIST(sb_compression),
-> > > >        ATTR_LIST(sb_readonly),
-> > > > +     ATTR_LIST(sb_device_alias),
-> > > >        NULL,
-> > > >    };
-> > > >    ATTRIBUTE_GROUPS(f2fs_sb_feat);
-> > > 
-> 
+[PATCH 3] adds new device tree binding for a Diodes Incorporated
+PI5USB30213A Type-C Controller and [PATCH 4] enables that port on
+the IOTA2 Lumpy board.
+
+We also wrote a driver for that Type-C port controller. I would like
+to get that driver upstream as well but I expect it will take much
+more iterations and effort to get it into mainline-ready shape so
+I intentionally excluded it from this series. AFAIK it should not
+be a problem to accept a device tree binding for a HW that does not
+have a driver in the kernel yet.
+
+Michal Vokáč (2):
+  dt-bindings: arm: Add i.MX8MP IOTA2 Lumpy board
+  arm64: dts: imx: Add imx8mp-iota2-lumpy board
+
+Petr Benes (2):
+  dt-bindings: usb: Add Diodes Incorporated PI5USB30213A Type-C
+    Controller
+  arm64: dts: imx8mp-iota2: Enable the USB Type-C port
+
+ .../devicetree/bindings/arm/fsl.yaml          |   1 +
+ .../bindings/usb/diodes,pi5usb30213a.yaml     |  88 +++
+ arch/arm64/boot/dts/freescale/Makefile        |   1 +
+ .../boot/dts/freescale/imx8mp-iota2-lumpy.dts | 517 ++++++++++++++++++
+ 4 files changed, 607 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/diodes,pi5usb30213a.yaml
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-iota2-lumpy.dts
+
+-- 
+2.43.0
+
 
