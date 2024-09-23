@@ -1,149 +1,97 @@
-Return-Path: <linux-kernel+bounces-335790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0F097EACB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:32:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2804797EADC
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 047EFB21439
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:32:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E08B5281FFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFE7198A07;
-	Mon, 23 Sep 2024 11:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CE619882E;
+	Mon, 23 Sep 2024 11:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VCWMvZCu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="Ykg4XVGy"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7913D74418;
-	Mon, 23 Sep 2024 11:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B811EEE6;
+	Mon, 23 Sep 2024 11:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727091136; cv=none; b=AjC2+CaS0C8qH1zlpoC/NdgJGhu5YsWlkzJsO24BZTUUojRDag4XaSS1xtwmvjt2MoNAJsdoLu81VeUOjOA0tIx67RrAb/FzF9Uy9/TFI/R9/Gkv46tOWzezggMR0aMzsYe7+WnIVRAHq/QgyaePl5o1dmWB2MIAp3nqvctFBoU=
+	t=1727091366; cv=none; b=qkEmdi8UFXoe081xjxjXX4Jw4MpOcqEiRikneiWTqmx3Vlc2Xx+eYdC6bCCjuWPjfr5VEebYN4KFGdy2RHE7A4ispsbqmIj38hpiEDEkBSsr6hPY/f7Xn02Oef1OEFWg25/Ci6hPYQnHyb+o5L9L5GG3zqetoy/7oobvHcaQhBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727091136; c=relaxed/simple;
-	bh=ctmnRTJsdh71QUFXB0hkKNeYU6LdcLOUgkoeRx5CPnk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=m+oM0gLbDUin3bvyJwCWLCwXYxWmvFYpXow4qOlGTJPWYFoO8eh0OFAyxCnPlIX3IoEfGpkY8UEmdzV28hBBrJptj74Q76YMWY+Y565NU1Rd5FmH31Y1Qvnj6uNNZ1zbSl6DqCuM8y4hlDhHBwYUOSZ2xhYymGrWC0mQBnWKAe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VCWMvZCu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48NAeBvx032019;
-	Mon, 23 Sep 2024 11:31:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:in-reply-to:message-id:references:subject:to; s=
-	qcppdkim1; bh=edL4kj+IIfPayS0gSR4CifL0/4nry9js71xAxy7RmWA=; b=VC
-	WMvZCuc5/MVvlb03vbfTMOQulvjl47doMrP49JmRjxWxPLjBqH8Ktk1Sqx+PVgJO
-	PiRKrC//72Kk4FSau7nP6K+lZKm5yOjb0exxqpZvuj9knJ6AIcOF1njS+2z5BUiI
-	c0QHpEaA7Q8wNkKw4pMX3Szh5hnUYk2fyH7FFukXjt04GDxbPV93RxThNQM8VFKf
-	n7Lxh9RtvxN7tp+8oj0EvrJ0zHm1ZyRxz8IaeT+dHa2NUcFcrmND475sFXEOCzN3
-	KGgt36VDmclCEfiaSoV5v7mFcLP1MLwcCxdgi+d41VsX0pS8YSZxjT9srDw+fviA
-	0dmNzJjpxB7JU862B2Ow==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sn3s4g0g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 11:31:58 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48NBVs3L028952;
-	Mon, 23 Sep 2024 11:31:54 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 41sq7kstdv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 23 Sep 2024 11:31:54 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48NBVsf8028947;
-	Mon, 23 Sep 2024 11:31:54 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-mukhopad-hyd.qualcomm.com [10.147.244.250])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 48NBVr2q028943;
-	Mon, 23 Sep 2024 11:31:54 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 3978529)
-	id 9D6C35009E2; Mon, 23 Sep 2024 17:01:51 +0530 (+0530)
-From: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-To: vkoul@kernel.org, kishon@kernel.org, konradybcio@kernel.org,
-        andersson@kernel.org, simona@ffwll.ch, dmitry.baryshkov@linaro.org,
-        abel.vesa@linaro.org, robdclark@gmail.com, quic_abhinavk@quicinc.com,
-        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
-        daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, quic_khsieh@quicinc.com, konrad.dybcio@linaro.org,
-        quic_parellan@quicinc.com, quic_bjorande@quicinc.com
-Cc: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        quic_riteshk@quicinc.com, quic_vproddut@quicinc.com
-Subject: [PATCH v3 5/5] drm/msm/dp: Add DisplayPort controller for SA8775P
-Date: Mon, 23 Sep 2024 17:01:50 +0530
-Message-Id: <20240923113150.24711-6-quic_mukhopad@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240923113150.24711-1-quic_mukhopad@quicinc.com>
-References: <20240923113150.24711-1-quic_mukhopad@quicinc.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: kXKGx-0dPFfaIC7xCVsqhsNoOXpGogAp
-X-Proofpoint-ORIG-GUID: kXKGx-0dPFfaIC7xCVsqhsNoOXpGogAp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- mlxscore=0 impostorscore=0 spamscore=0 malwarescore=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 clxscore=1015
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409230085
+	s=arc-20240116; t=1727091366; c=relaxed/simple;
+	bh=rCIvbFJgAUngHJRgl6SjykPegVp22wXHEMb6XUL0PPg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iJxeWV2q+gMMjn6hZ7xRZiYKEnGtkAM+Px7YdfobOAXxvMcjCje9qKH8XW5IJfZPANqwU5pGO4PddTacK9MSemr4OZOeb24Qw57PdBLhJVejvb7pqzhmi4/bYMKKojbcpGsDTXBP2tf1ztjYqea5Mx6fh8Zm0K/ihz7aYVc9jXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=Ykg4XVGy; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost.localdomain (unknown [109.252.164.162])
+	by mail.ispras.ru (Postfix) with ESMTPSA id BE39540755ED;
+	Mon, 23 Sep 2024 11:35:53 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru BE39540755ED
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1727091353;
+	bh=It7Y3Smu6B14ewAZlJHqNThmQkADJ+N/1pQcFTizDzs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ykg4XVGy5ty07cpPZbUKdNSOoZLLd6y1MB+JDQOonj5yOjvtkavif8dcHq51ZObBj
+	 oRh7QQPThTmc8fVQmJq9avkwx4SklSKHT4dMcwJgiSmbjRYeomDqh996doKM9h6ujj
+	 N8kqUasP645J+Jmt7wMnItKm0frqFTX6/iQZer14=
+From: Elena Salomatkina <esalomatkina@ispras.ru>
+To: Saeed Mahameed <saeedm@nvidia.com>
+Cc: Elena Salomatkina <esalomatkina@ispras.ru>,
+	Leon Romanovsky <leon@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxim Mikityanskiy <maximmi@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Maor Dickman <maord@nvidia.com>,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net/mlx5e: Fix NULL deref in mlx5e_tir_builder_alloc()
+Date: Mon, 23 Sep 2024 14:34:55 +0300
+Message-Id: <20240923113455.24541-1-esalomatkina@ispras.ru>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The Qualcomm SA8775P platform comes with 2 DisplayPort controllers
-for each mdss, having different base offsets than the previous
-SoCs. The support for all 4 DPTX have been added here, and
-validation of MDSS0 DPTX0 and DPTX1 have been conducted.
+In mlx5e_tir_builder_alloc() kvzalloc() may return NULL
+which is dereferenced on the next line in a reference
+to the modify field.
 
-Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: a6696735d694 ("net/mlx5e: Convert TIR to a dedicated object")
+Signed-off-by: Elena Salomatkina <esalomatkina@ispras.ru>
 ---
-v2: No change
+ drivers/net/ethernet/mellanox/mlx5/core/en/tir.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-v3: Fixed review comments from Konrad and Bjorn
-	-Added all the necessary DPTX controllers for this platform.
-
----
- drivers/gpu/drm/msm/dp/dp_display.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-index e1228fb093ee..2195779584dc 100644
---- a/drivers/gpu/drm/msm/dp/dp_display.c
-+++ b/drivers/gpu/drm/msm/dp/dp_display.c
-@@ -118,6 +118,14 @@ struct msm_dp_desc {
- 	bool wide_bus_supported;
- };
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/tir.c b/drivers/net/ethernet/mellanox/mlx5/core/en/tir.c
+index d4239e3b3c88..72310452fce5 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en/tir.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en/tir.c
+@@ -23,6 +23,8 @@ struct mlx5e_tir_builder *mlx5e_tir_builder_alloc(bool modify)
+    struct mlx5e_tir_builder *builder;
  
-+static const struct msm_dp_desc sa8775p_dp_descs[] = {
-+	{ .io_start = 0xaf54000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
-+	{ .io_start = 0xaf5c000, .id = MSM_DP_CONTROLLER_1, .wide_bus_supported = true },
-+	{ .io_start = 0x22154000, .id = MSM_DP_CONTROLLER_2, .wide_bus_supported = true },
-+	{ .io_start = 0x2215c000, .id = MSM_DP_CONTROLLER_3, .wide_bus_supported = true },
-+	{}
-+};
-+
- static const struct msm_dp_desc sc7180_dp_descs[] = {
- 	{ .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
- 	{}
-@@ -162,6 +170,7 @@ static const struct msm_dp_desc x1e80100_dp_descs[] = {
- };
+    builder = kvzalloc(sizeof(*builder), GFP_KERNEL);
++   if (!builder)
++       return NULL;
+    builder->modify = modify;
  
- static const struct of_device_id dp_dt_match[] = {
-+	{ .compatible = "qcom,sa8775p-dp", .data = &sa8775p_dp_descs },
- 	{ .compatible = "qcom,sc7180-dp", .data = &sc7180_dp_descs },
- 	{ .compatible = "qcom,sc7280-dp", .data = &sc7280_dp_descs },
- 	{ .compatible = "qcom,sc7280-edp", .data = &sc7280_dp_descs },
+    return builder;
 -- 
-2.17.1
+2.33.0
 
 
