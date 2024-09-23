@@ -1,80 +1,120 @@
-Return-Path: <linux-kernel+bounces-335827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA3EF97EB3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:04:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEF4697EB42
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75A3C1F22538
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:04:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A30B9281A03
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E54E36AF2;
-	Mon, 23 Sep 2024 12:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94172195FEF;
+	Mon, 23 Sep 2024 12:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BU+45pDj"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="HKll8kdr"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6397C1990C4;
-	Mon, 23 Sep 2024 12:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899AA433D6;
+	Mon, 23 Sep 2024 12:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727093047; cv=none; b=gQdIyyDBuLR1JRkiatFUf7/i2rT3PBSuoPYLcYEnAe62dxdQcJ3Ezf95Eo1V7X8SQxnnDAe/B0c+2py3WTTrMCRCAVtv+/37NNRt7c3inZjRb6wdW7qia/32+5xoNNfoK9I5u0YD6tZgR7rrPUKIp+ujUMuWIEq/SN6WiM27Z/E=
+	t=1727093127; cv=none; b=CegKhKXz4oky9u7u+peMs5uZC/X7kXHxWyYgnLv80jmeKCdluA6ci7iPe/0hTOHx7it9ROEZKzKhcfbV3yRbIPlTU+F2aRlq0iubu5bE1gk7LNlSBaXAmrqhTGN/aftuIoYKTjHyoybgH/XC1Ex6UmXRBIqfwZdHKjHCX98KPrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727093047; c=relaxed/simple;
-	bh=60JPb/SxVp0k0GzxfIDVVzpaHFf60YyWCTt78PnVF3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p5eYt+Wpwx5Dy9lKTTI0ebuQMXCHnHHmN28ytHA90B1mQubRZ2KyiEv1baDB59syAsnlI1Sy8pysi3Nw7hCGO89HTD32HKVBbCFnaBzbVaYPNpvwlDRrfKCNZQnAt4wL7ggqZRn50mkcTFncbM+QBvQ9HO2Hvl0UAe24g3geJRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BU+45pDj; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9WrfLD09J1aGLdGEu8N8g2HJpWPSa/jlk0R+UCPenVE=; b=BU+45pDj5KRKiUpsDZUJiKgPK5
-	pja6PIM1vIPcO2X+9uUUG83uCwoyMWiM9UmGYHuErTQf5eqag/NLL/M8QTGXc6PNl0Ad3SjqByzG9
-	67lli4krgmyQLqXB8Mzd/WpYEoWDY+TmQ2VLvagnCAzk3PG7XN/jxxxhkJldaLxvr8nvxj0zuhT0S
-	1pinKBDdQ5YAOIZEZmn2jX47uj8Ih0ykohCe2BbuHjK6qreyVxbypa8mBRrKIQhdzj3afIVnjTJ7o
-	kwB3HzatUz6yCumDx6jKP/E3OEEFS5ExAQGDgOj9bo8cpOllIB4ZEX3JAwr8YTrObpWRzM8MpJ2Ui
-	O57KfSAQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sshnI-0000000H8IN-2ahM;
-	Mon, 23 Sep 2024 12:03:56 +0000
-Date: Mon, 23 Sep 2024 05:03:56 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2] xfs: Use try_cmpxchg() in
- xlog_cil_insert_pcp_aggregate()
-Message-ID: <ZvFZLKMVMMig4ZCh@infradead.org>
-References: <20240922170746.11361-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1727093127; c=relaxed/simple;
+	bh=e6/cCkl9xt+sSAhW7MJqEIlIIHBhlH0yspIFy+Cgd60=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=lyhTE4uEqnWFz3wUCm9xNuZelggL/x4aD0RJrO9DfdeDaD+H49pVkO3IGPrT52sYie3RpBj6SMbaAL5jLg4SfEjRnqOyNn6ahm5WoZ32X6YjoCQ7h/ZN3TA4Q75RMuSyqKSvxLX8z3BDTCOBWgGsPlYUcKv0lrXv58W93M3gy2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=HKll8kdr; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1727093111;
+	bh=e6/cCkl9xt+sSAhW7MJqEIlIIHBhlH0yspIFy+Cgd60=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=HKll8kdr8JeTpP9+fAjO87d06BuPszrfmhYVBj6izpnVsQPqW22ZmZPCY3b0hlbFM
+	 KvpvuzmefTt86A7azqp1KKx1RYdPguV+Q5fFkkOmZmfEYgXdfgiUKUyAx2SuAVsa8R
+	 hCLQ+sTGr0Pul8TQhI52Piq6vf2H/5DhsPgyV0as=
+Date: Mon, 23 Sep 2024 14:05:08 +0200 (GMT+02:00)
+From: linux@weissschuh.net
+To: 1127955419@qq.com
+Cc: christian@heusel.eu, nathan@kernel.org, masahiroy@kernel.org,
+	nicolas@fjasle.eu, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, zachwade.k@gmail.com
+Message-ID: <13565319-6dc6-4f15-ae02-3b3e760efa01@weissschuh.net>
+In-Reply-To: <tencent_7DE03EC9AEAFF374BDAB9CCCF4C047EF2305@qq.com>
+References: <tencent_7DE03EC9AEAFF374BDAB9CCCF4C047EF2305@qq.com>
+Subject: Re: [PATCH] kbuild: add package-dbg to pacman packages
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240922170746.11361-1-ubizjak@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <13565319-6dc6-4f15-ae02-3b3e760efa01@weissschuh.net>
 
->  {
-> -	struct xlog_cil_pcp	*cilpcp;
-> -	int			cpu;
-> -	int			count = 0;
-> +	int	cpu;
-> +	int	count = 0;
+Hi,
 
-This should not be reformatted, but maye Carlos can fix it up when
-applying the patch.  Otherwise looks good:
+Sep 23, 2024 13:58:06 1127955419@qq.com:
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+> From: Li XingYang <1127955419@qq.com>
+>
+> The current pacman package does not include the debuginfo package
+> add debuginfo package that include vmlinux
+> vmlinux is very useful when debugging the kernel using crash
+
+This is already implemented in
+"kbuild: add debug package to pacman PKGBUILD"
+which is in the kbuild tree.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git/=
+commit/?h=3Dkbuild&id=3D4929f5b95f6b20ae10f2c409fb2ca58253e73706
+
+>
+> Signed-off-by: Li XingYang <1127955419@qq.com>
+> ---
+> scripts/package/PKGBUILD | 14 +++++++++++++-
+> 1 file changed, 13 insertions(+), 1 deletion(-)
+>
+> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> index 663ce300dd06..4b5c435e5eaa 100644
+> --- a/scripts/package/PKGBUILD
+> +++ b/scripts/package/PKGBUILD
+> @@ -5,7 +5,7 @@
+> pkgbase=3D${PACMAN_PKGBASE:-linux-upstream}
+> pkgname=3D("${pkgbase}" "${pkgbase}-api-headers")
+> if grep -q CONFIG_MODULES=3Dy include/config/auto.conf; then
+> -=C2=A0=C2=A0 pkgname+=3D("${pkgbase}-headers")
+> +=C2=A0=C2=A0 pkgname+=3D("${pkgbase}-headers" "${pkgbase}-dbg")
+> fi
+> pkgver=3D"${KERNELRELEASE//-/_}"
+> # The PKGBUILD is evaluated multiple times.
+> @@ -100,6 +100,18 @@ _package-api-headers() {
+> =C2=A0=C2=A0=C2=A0 ${MAKE} headers_install INSTALL_HDR_PATH=3D"${pkgdir}/=
+usr"
+> }
+>
+> +_package-dbg() {
+> +=C2=A0=C2=A0 pkgdesc=3D"debuginfo for the ${pkgdesc} kernel"
+> +
+> +=C2=A0=C2=A0 export MAKEFLAGS=3D"${KBUILD_MAKEFLAGS}"
+> +=C2=A0=C2=A0 cd "${objtree}"
+> +=C2=A0=C2=A0 local builddir=3D"${pkgdir}/usr/${MODLIB}/build"
+> +=C2=A0=C2=A0 mkdir -p "${builddir}"
+> +
+> +=C2=A0=C2=A0 echo "Installing vmlinux..."
+> +=C2=A0=C2=A0 cp vmlinux "${builddir}/vmlinux"
+> +}
+> +
+> for _p in "${pkgname[@]}"; do
+> =C2=A0=C2=A0=C2=A0 eval "package_$_p() {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 $(declare -f "_package${_p#$pk=
+gbase}")
+> --
+> 2.46.1
 
 
