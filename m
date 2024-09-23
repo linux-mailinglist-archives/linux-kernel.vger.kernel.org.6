@@ -1,126 +1,192 @@
-Return-Path: <linux-kernel+bounces-335461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF0997E615
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:37:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A7997E5ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75EE2B20A9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:37:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16CFF1C2061F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 06:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927891C2BF;
-	Mon, 23 Sep 2024 06:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F777175AB;
+	Mon, 23 Sep 2024 06:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihmIBQ+z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="JwiuYy+2"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2046.outbound.protection.outlook.com [40.107.255.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98F112E5B;
-	Mon, 23 Sep 2024 06:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727073453; cv=none; b=aPLKXGSMcLkIsL5gkA8LTclI89/sJCmnNR3RtSQCvSjeizk0uG/VLhax5LSY8NekQcN+AurtxhpGoWgIRovJw8N73N4EfgPfqBjjpcm9qc6PlLKjDSR6IUKxmk5CnDsLuM1OAwq0O4ICAC1OTPX0TwCl2zDoreJG2KPYfG72mLc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727073453; c=relaxed/simple;
-	bh=YU5IHHmdIwhRVsCe/Ns40p8QPGMWO6o0pZ2uibjaigM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q/DSl2TTvaIVwDLJb3AkP3UzOqtAC5okA276b84SzpNSCfHBPbX/qKRcmAjhOVw6wnqIR5apy2grVg3sRVv08aXzY93vkvutT40GGfRHgK//JiOArsx7gF3h7MMM0OlQVY3AhHIPjdpHPGBmoSyrUahbaqaYLawzGGjYsffqjdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ihmIBQ+z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 874E1C4CEC4;
-	Mon, 23 Sep 2024 06:37:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727073451;
-	bh=YU5IHHmdIwhRVsCe/Ns40p8QPGMWO6o0pZ2uibjaigM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ihmIBQ+zGDDXAyKxoZWjS7S63fCG7SqoU0IcFRn7pV3iCPR6CScg4eMUtrGrstZKu
-	 54no9xbdAL4wzBtbf9pDq6wB5nWIjuuLQcTlr3DMWCNDqS78Z1LJ3m0lTqEKk5Hi6x
-	 c8htul2IhYQOltrFn85mNzcrRG68GC/HUUf4+fzySgIPBUyHdi6X2kXc5mEyPtnzm+
-	 QMmhdhLqPvtpaCMrlhDgPO/YcMzqNtH4mgz4hZ7ZafJqyBfhoRrkXSgjfoA4X07q2B
-	 sxkKbSQDlUaaDYCBRYKiCYGj01K+MpkyJLWom4Brw6ITnhpBaJPZi5X2aGrOnUL9qL
-	 FDo0V3YvzpouQ==
-From: Mike Rapoport <rppt@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Rapoport <rppt@kernel.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-s390@vger.kernel.org
-Subject: memblock: updates for 6.12-rc1
-Date: Mon, 23 Sep 2024 09:37:07 +0300
-Message-ID: <20240923063707.40017-1-rppt@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD19B10A3E
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727072523; cv=fail; b=HJqrl53oSDcrvb+BMKW12UqdciH6LmAvXtdN+KkJZiQ57+kcCqv2Yd7zAy1jCxatRdy5RMiDSbsa2XjkuY+v+SWhXc8OU07PY9T0wAaiqbWsQhE7x88ziiCqQTU43MmxR0QA8Kz+Age6uZ7xNu51B9D0H5udL80GRrSwVuJttKg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727072523; c=relaxed/simple;
+	bh=07i1Y94hA/V3brUMBr6vBwNMw1MJuk6NGAYLNFbhkQg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=YmM9NYJexljwCxzSfGb0k1j82PdLPNb7jtEfrIFEpl4GP8fOoN1ZxZFd933KAm673+i1CoGk9nRrOmRVVgM+7+WKAwmqnxh/rB/ve7sb3VYkv0QNwuVyEGmMaFnQOxKVKmJAVgb/fjOdiLGcPsXz5gh121UQpK2MjfPFIYXr7nk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=JwiuYy+2; arc=fail smtp.client-ip=40.107.255.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t1oV1Q6QycdNMC+qA1poWxsI0//lcb2XOpIHeXfzxoVdt4zhH3I5xBcFmHzXq40JROjjvasV1DE/XJOa42VPMxakD7Saqj9p56LXxVzUJ7f73yUKbG5kqTBYmismGbhWu1kVABVWmFhQ1m+EKuuHgtAZ5TnSwNHHr7TJXG1+P5InjQLgVOAH5V7w2EJdWrzOBsG3qnO61R+/91hwNGltgLmAWqTdRNDlHdR7QjBsIoD8ALmYnYwCaEMGpZUmICTshGaZtzXFPEg6c+TRvyt5d3h4fjO9m283I+WxhcCIWX4Nm0gN/bnIJu34TeRW/Zfkun26qe/IOm6Fwycq6hTq9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N8i4d5da9yORPmkip5timpzrA2WyEM4mn5EMx6DjBug=;
+ b=qFFmrYAQ1PRKa/lFLRKahdYOqYZpSaTgoI/0+DfewInfJlO8rUY25DgW7TgayPFuY4huo410Rm9yc50q9od7p8AiJDkPSnNfU/AynTe2QdIk5UoADEdxVG1xH3md9rfzV854CwutJT+81GUoW8n8OZY7GLI0anvLqBbugIqWN7iJBPuHKbSMurls4E99FmRSbqHdI/490mlfRw4iZp4pdNYRlX6duYaSOhM52B7a16alOwBD0KLMlTy8YC5XoXFGdCxb7eTS67reztsWsq3+T2KeL637mUIf0RLhvMqQqSeqUbcBwNYTEVjll8CRQmp7P6ZnSI5Zt1nRPi+RYmKoWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N8i4d5da9yORPmkip5timpzrA2WyEM4mn5EMx6DjBug=;
+ b=JwiuYy+2ksHuZGhGeBuCXfBh8gNCTxASlZSag6PgaBk2VbcEzcXoFwxa4Zz0IS9FFLH6jFxFWYYkagxmbu2DoPauD7N8r3s7NJBmRx+3QPN5bqimiCXE60duFv0qdAwyyFav+Bmr+VUbDiKNr+aThMRnWdz7cSM1quPoPq+HklSA4jno4mZY8YoXvS60Qj5lMqcMmQNFY1yRXLhHSF+5Pe/dzFB9p033LxlWzSKphBwCZWzFnVuQ4zy+pNyS3oB2Lu9iK4cvxfQ5152SBndeLm0hiUJZqWFLTm7F3ylttEAM2xNOjwyXJfKSKQqGaAWHrdhYMqDpmAP26SpPx4z/Tw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PSAPR06MB4486.apcprd06.prod.outlook.com (2603:1096:301:89::11)
+ by KL1PR06MB6273.apcprd06.prod.outlook.com (2603:1096:820:ec::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Mon, 23 Sep
+ 2024 06:21:56 +0000
+Received: from PSAPR06MB4486.apcprd06.prod.outlook.com
+ ([fe80::43cb:1332:afef:81e5]) by PSAPR06MB4486.apcprd06.prod.outlook.com
+ ([fe80::43cb:1332:afef:81e5%5]) with mapi id 15.20.7982.022; Mon, 23 Sep 2024
+ 06:21:56 +0000
+From: Wu Bo <bo.wu@vivo.com>
+To: linux-kernel@vger.kernel.org
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net,
+	Wu Bo <wubo.oduw@gmail.com>,
+	Wu Bo <bo.wu@vivo.com>
+Subject: [PATCH] f2fs: do not set STATX_DIOALIGN if dio is not supported
+Date: Mon, 23 Sep 2024 00:37:32 -0600
+Message-Id: <20240923063732.2730521-1-bo.wu@vivo.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0179.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:28::35) To PSAPR06MB4486.apcprd06.prod.outlook.com
+ (2603:1096:301:89::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PSAPR06MB4486:EE_|KL1PR06MB6273:EE_
+X-MS-Office365-Filtering-Correlation-Id: 37f6ef91-d6ab-496b-d0ae-08dcdb9805bc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?XjM8xb6WfSpjqSGJGNO5xtAywNEC6YDeK+U3aLXWfpFPH51CHaYybVnw624B?=
+ =?us-ascii?Q?pq2SqopJ+3K/0ix+4+tSxSR4TCFtu/txvgFJMRUaeWFUnAYBLOofyCXXIN55?=
+ =?us-ascii?Q?UMSsdn8cHju7dLffMKvVYVjp+o+Y+9LVxINq1segol7ehKL0FWpBYWeBtDiy?=
+ =?us-ascii?Q?VVoI6ibqXALXhtXe9Qv0y5t/OePjBoOumDG2G/8yXwfxtt8JyKJGbJYeYVSm?=
+ =?us-ascii?Q?awvxr6UIyYQ5zPC+YuPtpzmJ/yIeCkWzbglLjnT5HLN2NKt6UsJDMqQ38HMg?=
+ =?us-ascii?Q?j1YI+f+d7mCsOm4RVMNmvSgBFGQ8xMl4GRgGJhxE3pir3ex20I+1AYCsSW6c?=
+ =?us-ascii?Q?y/hNPDpqMxNfnPgKs/EGjo3DlhKdGkaiWUUBIkAwGEsM2tvvTnVE7Tk7GCly?=
+ =?us-ascii?Q?ork2eLspj1wPm1ztvM6+YzT4k6eYoJ2tPNEpClW6ll7axrpcxsklDxTKcI2W?=
+ =?us-ascii?Q?LijliMd2IL2nWy91yYsGN4YYhrUuq+/Rq0MhEuO0J0h+YBq4+7mNt8jol4Bh?=
+ =?us-ascii?Q?MwXJljvFzF5QHbEFL0VFbLVBf4Z7cj4KmMOsYZAaq5N8cO/5pdBZrMbM7yxk?=
+ =?us-ascii?Q?vDupHugkpJm5gAkU/HQNZdPDA/2udKsSgMssMLPmX7ZCcwUIahxfTE80zFY5?=
+ =?us-ascii?Q?p92QWHeg3bGzGoXTHQT4hN93xHJ/8lOR7jQJq1RJSuClLp/a1nx44S35JRwj?=
+ =?us-ascii?Q?cixWqUGwICM2GqmxBBHom8utKf13Bd82yo/kEpjuOWkpxG+9V0Fgc9YQzZ7C?=
+ =?us-ascii?Q?UTjeT/URoBlCPN3YTVx49jVj3q3llu1IjmUev9V2pHN+3ylxc/DF7rOYXjed?=
+ =?us-ascii?Q?/HKcIhEfIRxs0OTXUQjQ6mSKgreRj6Gxj2I0jSPKoF7fP4cWGGKju62HxKoy?=
+ =?us-ascii?Q?PfAgLLOR8idLE1Ni9CB6x7noCx83RAU63koP9dcQMldvdBeoD5qTMvelVRSm?=
+ =?us-ascii?Q?X6hd9i3XYXyrmi7uaLpJ0QdiQ1ktsidTX+z7TkYqo4vbwK8pwOTJZblmaQSa?=
+ =?us-ascii?Q?uSPxMUMSvB/+vGq25fw9I4rcn5kGvvxA8NYUvCeaWn0/c+750gcdft7bYqaE?=
+ =?us-ascii?Q?cPpjYnfgV1hvtdoObuAT74RZQdoxXJfr4nlBK+ucRhRT9dH3fqh23FWYCOIK?=
+ =?us-ascii?Q?+xwrd5oHpuvMBEq4B6Z0jLF4aJksO/1huRQoJqbhVri2Xq45LNpg4l854ZBH?=
+ =?us-ascii?Q?D7DnJhtoNpupuZOaIJv7UovpVzi5m+lx3Zu+y6LtHYA4e6NA7I/Z29HI51Jc?=
+ =?us-ascii?Q?ZQWy2JVuA+WlLJ41puYBMUis6mnOMZ4bUBWUK3UtYBRUe8sMs9W2ZoLGSkE0?=
+ =?us-ascii?Q?yqQmYwCN3/6lN7ag6k4boiOs9zO2mqVr7Di2UFhJAY3HEQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB4486.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?i7yL8/+yyp8/vaixGEw/rFADmhJKbgskRFeNH9WTreHSrcxuValRRSi8TyJR?=
+ =?us-ascii?Q?s+AoxdjU+nySduH8JqpLvP2qE6Uzd1ar1ZEmC4sRgowBTsDouR7XPE3YsKx7?=
+ =?us-ascii?Q?bqxdGsbSX0G7tmQbY5IFdODodecXoPN4jwDUegjal++Z/8UEKef2aoNBulFA?=
+ =?us-ascii?Q?3Oet56Q9if2zf6cVVOy0e0DKPnm1xGttUpvL3F69e5Sw6wIXcU5Zzjqou/ck?=
+ =?us-ascii?Q?Rrcup+IYVto8HXcS2WILPbMTk7wm3JnZo/szewlBADC5jHfO0z7toePq2ZcB?=
+ =?us-ascii?Q?hEbahbC1fzzpJhibj6y07TP6tB0HH2frFRAqvlfPJ8o52cNurU9vQ+vFCcyo?=
+ =?us-ascii?Q?kfhyJG8xifPEL1jvgA86Rlsw/g6RA7cnZY8dfVhZfSZQK9Y76BEt16BBMydL?=
+ =?us-ascii?Q?YK6l/botA8pRcdlBk5hhZb5/9kUztDz0T5/oQCDJ2dNPno77ktuLR/ZaymRU?=
+ =?us-ascii?Q?+LYBWx7QXW1CAUJNUJZUlmPeKQXuYQbXcb/+XBG9kQXEBDAHGKPdx3n3X/Qj?=
+ =?us-ascii?Q?LwYCxo58toJ5Rvi7X6MdU9I1iD4R3mw143+1EAfFJGBgRlg4Nc/8wVyjQOEC?=
+ =?us-ascii?Q?efIE89+bdr8Ly9t8UAjOZ2lFIVLYP3gYTMDKmnBP76o8OkERHdS59jnF11e/?=
+ =?us-ascii?Q?t4LUypUhc5x1j3pXTr012cgyFLo89mzIQusTBRVW+7V6yOSuuo3spbCxjjm7?=
+ =?us-ascii?Q?2dzyaInOHEAgKDfF+rnCvZ2Sdr4M5vdiltYnmZ2f8Yca5mnElb9dosPFmxDn?=
+ =?us-ascii?Q?BLnIkZip2x6uFrB2TZqe3dSJCSg9UN6PY4cXgFGM7T6M1GTVIkuiK42pmwI0?=
+ =?us-ascii?Q?5GNWZlThuWc6wX6jxF0cu4MeMuA9zxlq8cRTYtHhL4bGcllyi9wv8VqPY+bV?=
+ =?us-ascii?Q?JUMd4pNzL7jzZZKg6BAGF2do7hMy2S5b4ouuCTr5mhVNA0p5v7ZVr/eBRYpE?=
+ =?us-ascii?Q?qyH8V5cxKgyxUlgObNRyAWSjd6VOx+NY1OraPzmA8tgKSDCCIBriOli+VoNQ?=
+ =?us-ascii?Q?V6wHo7RbHr7Z6XLW7+8VU39Vx1R0KWTHehW2fJ7VPzEh9KYAVLVepu1/HFY2?=
+ =?us-ascii?Q?rOgw4+kmje5VwVsejhRrihGUX55O8SZ7/xAUpf1JVcIJ+0klhXgiUHzJjYzo?=
+ =?us-ascii?Q?c2nlecO3CCdCxuTp+x+uZUTLF2UqMNzZEK0gsHaEiDB7VYzEqz9UcPBsAScg?=
+ =?us-ascii?Q?ZChPaExtJO2Bz5XvEbLwnSfc/1JZv8/vUB03ojEQi+9WENHlbTCww/nMk86Y?=
+ =?us-ascii?Q?VC8eUp0o/KHPI+O5LlASID/mavvOUe3KJwUTTIrxjWyV0mloGA0NLiZ1qh7p?=
+ =?us-ascii?Q?TXYmwMQJ00KOOg3QyvO3/43nIQpunqpjh+tRUkoKIdBQL3l7foWbJNGR4JWJ?=
+ =?us-ascii?Q?k/3ng3mv8GtpbgRBbWoEFqBLneloVqEyR1Ag0adVybBqiUN+0iFVDmxKgGdg?=
+ =?us-ascii?Q?xS5Zh1KkiNB9qHoqbDshgrFkQulOvainjwterM7rCUz+ab5jEXjlO3GWNRd1?=
+ =?us-ascii?Q?tzmWwg8sNtO899cjDsmzN4DJPTh+8O+llJTSRQQh9VtzHlb2e2o5KMSzhk/G?=
+ =?us-ascii?Q?EZki63RM2qQNs8m+Mgd3Ae+NNu7M2/yzeNAJVkEo?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37f6ef91-d6ab-496b-d0ae-08dcdb9805bc
+X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB4486.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 06:21:56.0695
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pWFMALCb7guTiFUkInIniPar17634EufSGZ0TTA5C31QsDoYB56fsGr/NAk4a9DiYYCk7vLGBk1VhdVjnM9cHw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6273
 
-Hi Linus,
+According to the definition of statx.stx_mask:
+It simply informs the caller which values are supported by the kernel
+and filesystem via the statx.stx_mask field.
+(quote from the "Linux Programmer's Manual").
 
-The following changes since commit de9c2c66ad8e787abec7c9d7eff4f8c3cdd28aed:
+Therefore, if the filesystem does not support DIO, it should not set
+the STATX_DIOALIGN flag.
 
-  Linux 6.11-rc2 (2024-08-04 13:50:53 -0700)
+Signed-off-by: Wu Bo <bo.wu@vivo.com>
+---
+ fs/f2fs/file.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-are available in the Git repository at:
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 168f08507004..bbb66be0deba 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -908,14 +908,13 @@ int f2fs_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 	 * f2fs sometimes supports DIO reads but not DIO writes.  STATX_DIOALIGN
+ 	 * cannot represent that, so in that case we report no DIO support.
+ 	 */
+-	if ((request_mask & STATX_DIOALIGN) && S_ISREG(inode->i_mode)) {
++	if ((request_mask & STATX_DIOALIGN) && S_ISREG(inode->i_mode) &&
++			!f2fs_force_buffered_io(inode, WRITE)) {
+ 		unsigned int bsize = i_blocksize(inode);
+ 
+ 		stat->result_mask |= STATX_DIOALIGN;
+-		if (!f2fs_force_buffered_io(inode, WRITE)) {
+-			stat->dio_mem_align = bsize;
+-			stat->dio_offset_align = bsize;
+-		}
++		stat->dio_mem_align = bsize;
++		stat->dio_offset_align = bsize;
+ 	}
+ 
+ 	flags = fi->i_flags;
+-- 
+2.25.1
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock tags/memblock-v6.12-rc1
-
-for you to fetch changes up to cb088e38aab4c7e9ce711c18c66e851c8f4227bb:
-
-  s390/mm: get estimated free pages by memblock api (2024-08-11 19:19:07 +0300)
-
-----------------------------------------------------------------
-memblock: updates for 6.12-rc1
-
-* new memblock_estimated_nr_free_pages() helper to replace totalram_pages()
-  which is less accurate when CONFIG_DEFERRED_STRUCT_PAGE_INIT is set
-* fixes for memblock tests
-
-----------------------------------------------------------------
-Wei Yang (11):
-      memblock tests: include memory_hotplug.h in mmzone.h as kernel dose
-      memblock tests: include export.h in linkage.h as kernel dose
-      tools/testing: abstract two init.h into common include directory
-      memblock test: fix implicit declaration of function 'virt_to_phys'
-      memblock test: add the definition of __setup()
-      memblock test: fix implicit declaration of function 'memparse'
-      memblock test: fix implicit declaration of function 'isspace'
-      memblock test: fix implicit declaration of function 'strscpy'
-      mm/memblock: introduce a new helper memblock_estimated_nr_free_pages()
-      kernel/fork.c: get estimated free pages by memblock api
-      s390/mm: get estimated free pages by memblock api
-
- arch/s390/mm/init.c                              |  2 +-
- include/linux/memblock.h                         |  1 +
- kernel/fork.c                                    |  2 +-
- mm/memblock.c                                    | 17 ++++++++
- tools/include/linux/compiler.h                   |  4 --
- tools/{testing/memblock => include}/linux/init.h | 19 ++++++---
- tools/include/linux/linkage.h                    |  2 +
- tools/include/linux/mm.h                         |  6 +++
- tools/include/linux/pfn.h                        |  1 +
- tools/include/linux/string.h                     |  3 ++
- tools/lib/cmdline.c                              | 53 ++++++++++++++++++++++++
- tools/testing/memblock/Makefile                  |  2 +-
- tools/testing/memblock/linux/kernel.h            |  2 +
- tools/testing/memblock/linux/mmzone.h            |  1 +
- tools/testing/radix-tree/linux/init.h            |  2 -
- tools/testing/radix-tree/maple.c                 |  2 +-
- 16 files changed, 104 insertions(+), 15 deletions(-)
- rename tools/{testing/memblock => include}/linux/init.h (76%)
- create mode 100644 tools/lib/cmdline.c
- delete mode 100644 tools/testing/radix-tree/linux/init.h
 
