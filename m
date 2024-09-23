@@ -1,112 +1,123 @@
-Return-Path: <linux-kernel+bounces-335822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1772497EB32
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:02:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB3CC97EAFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 528971F220E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:02:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE127281D10
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 11:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0E6198836;
-	Mon, 23 Sep 2024 12:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8F3198A19;
+	Mon, 23 Sep 2024 11:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xwM3n/Ww"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tBPbh6gO"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F5136AF2
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 12:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5ED80043
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 11:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727092961; cv=none; b=MidmtgqWc1+Ek+rnbXKUT1cZa0Ebjw0o4hc9qNZjF7KfhaFKyR/V6b4zq9IBrAFcIIb/xaT+aRMwNv4TpU1PIhSQoeougktGqUSfTlRSfrgt7Mk9Y7lvz2Ijbm7C4kzshbKvemGFT8ea/548y/JM5vRAe3vZVnf5tMh3PeWrmoI=
+	t=1727092068; cv=none; b=NArEWsccViT3p9BDsKg83GzITPwL2S1kOLLAlMQbO14GrLmgnyuEDV5xJocYqV1Cg8ppAOtxvwXkY3IOnmRumzZQPPYS+giL5gmZPQs/y04Xic17HXorukDNmsjykTHER3EfFIqCjVyA51KKUSvyPeIMpZv89CDRU9qYkuThl5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727092961; c=relaxed/simple;
-	bh=IvZUnWEEwtJBrX0C0B8heXZmuNKkdtrz+/xYCRUqA8o=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WpVm472pIDYf3ng4vEKmKkTy036htveM2EdB0jjo6lydXlQjaP1LLvorQe7e3eOi98dAZ92AaEDECOjQlhj/A2/aJwMm2EUHhFkDknSEyNULNIpwJ8gTEqoDNJSWiEXptQZQMc57NS0/40OVgq3Oj2mjW5V4BwxtNm1flaUNIU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xwM3n/Ww; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-207302f244aso32184815ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 05:02:35 -0700 (PDT)
+	s=arc-20240116; t=1727092068; c=relaxed/simple;
+	bh=3SbgIdRUjYzuNhjnvUZP+Nr40Ibrmk6328EEhkaeYtA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NF24KtXum3FwASHymp/OGGFVEeJTq+rP4oD20EPodCMPDUkmiTopxfYVJfJT6Umhq4DQyToGtOldHybUU1Ueeh42Yay2vyM8Iiq9RzwhBtKAhLZfGWKYhE16VnRb5nRHha+orzPjq/ypp00TbJCGmqJJ1MdQIRMFOa0GqU32dbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tBPbh6gO; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5365cc68efaso22948e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 04:47:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727092955; x=1727697755; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GFr6vxdUJL3MJwqVUaF07T8lI8KCh6OBnGa3LNPrPOg=;
-        b=xwM3n/WwG2vd7Z4p91w5XZ6x97LQaR31QqLG2lAfMjccgifY/KceQC75M8ESkkdbKh
-         szTJK+tPuh00GM/2xCJg1qekjruw9yekBSoRPWA8L9UtGT+kMKLVxG8vjqq9RjpyXvpy
-         3IsEUO+BQ1qHWHm2AQO7mblXin6Ml8pEIabP0JwPjPSgjkp+Yf+t9CDYQ9mEZ9f77ONd
-         I0xSAVboTBFXXI0gotR0hhxvZMw8KSeaHG+qq75s9pTaTjtBT3z+KlEsT388fpZGKgqy
-         5jOsa0TEhVqsoOlP9vLsHflCfvt7i7yLAL284QQ1DwhhPw8r0kEpt8pwvY2uNgQ3d8YL
-         g2VQ==
+        d=linaro.org; s=google; t=1727092065; x=1727696865; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0djd4G/7ZZ9d24oyrx0WPtUTMtYC0XKPiOilllFoMEI=;
+        b=tBPbh6gOD3GaLZ7DyKBNFx1DpLo8rwv+dTlgCgNQUrCc2+UYpAGMxW9cvJr3Jb36AS
+         qQejXXznQGAXuD9G7ILoZQ8Wiyrqa6C6j2wm36ZH/y365mPUhKfd8OFflokshGYV0UQU
+         izDUgDGBcFO/3CI30m/dRFV5bOgZoPF1kcxVZER388hROIoz+CvpZZsmTgeRnVnHlKhx
+         j5qL0RL+lM6fo/o2tsx0dnKcgfO1bk0wHyRxcfVL9RcVoV6mnJpTy3BZWtLoFZbCJwAd
+         0BpsKz7AboD43uQyb0wz2H5fhRRhcOgtozCHwMULMOpXOW3ZX275S9VkTav4UWIxfcP+
+         /bsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727092955; x=1727697755;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GFr6vxdUJL3MJwqVUaF07T8lI8KCh6OBnGa3LNPrPOg=;
-        b=AMi+GUT/oUa9d+OtDfDjWE12VdhiiLwZjkEvkh2nXGZfqvb7VkwVhas0HLj91ZZwrG
-         fppO7APTI9AamK0i/QXkGMb/dLaovQiwZoErAhZIsyWGMwPnIPQSsgl1+iruMhzV2J6v
-         9LyMunbEGiHsqX7K5oaL7bYwVuAB0E0MRGksxJmGG+Adveg4j+6JSiWV45AZxfQ6vvpQ
-         yQql5npy25YtN2nIlsAQhpXIe/BGzoee2toPTDCPmqvXfZ75vfTqu+82IVG8tm9RRfl8
-         VvLImcB5G+zzO/+tnG6+3d3meAyErohEtdkWxZmFsCvu/reuXEHSZsPZIGHpQxzd/oNq
-         6CSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSMSpcVQ1WtKZ6zWJgSb3dKkV/XpMKy0eSpGvxPpJaEWhOOIfgv6jkzIWeAfp7JymB1OwFZmuP5FzvwIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKuTG4nB4HWCSf4uvV25jV5w0Jy/CW6FFYQc/I4cqadBhryktI
-	dsOECDFuKFh4kN+XpnDSguVwRKqcESbTg3Plk0LhTAX08Lw4CgxyP7DP7Se0m3vBcZSR7Vs21sj
-	dBg==
-X-Google-Smtp-Source: AGHT+IEzIfiOWVAmnllUJ4P4EA/eChnQTcqs5HjwigF762cm3txY3x/6niburLV6pAX5GE7eUr1i6RUXpp4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:ec8c:b0:205:79b7:b36e with SMTP id
- d9443c01a7336-208d96f5defmr357005ad.0.1727092954784; Mon, 23 Sep 2024
- 05:02:34 -0700 (PDT)
-Date: Mon, 23 Sep 2024 04:46:30 -0700
-In-Reply-To: <0288f7f5-4ae8-4097-b00c-f1b747f80183@yandex-team.ru>
+        d=1e100.net; s=20230601; t=1727092065; x=1727696865;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0djd4G/7ZZ9d24oyrx0WPtUTMtYC0XKPiOilllFoMEI=;
+        b=s2JngYLC2HIz35gUZ/zozxoZ0m3tSZnbfs6nZkuQAyPr6UQB4LQS1BhD/5I31aMN3d
+         C7j/eJAlIYz5R5xlJFwhgFdV9ifVlt4/jtLKmOBO/gQTKZMJaY6wDfZak++6izTI3LKh
+         L6qvo6IDGIWitaj07xe8VQO/kiPLGeWDx6kcTmqvoSgoUNTaDePGAY9/9HYyj/7v6oj8
+         skPLWVYqk9rO5g8zx7pb6hyUp6xF9cAydHzLowcKAqmw/FDWFr7OUxikelaRuDLVBREZ
+         4/9Bd0mNiWF/m7HTDPfzZT+LGnYn2r0pqMgsIGOvu271GXM1veX90INBmc9e8oZ2f2Jv
+         fEiw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtwSCap+yWbZV9JLgKI97Qnu7EUKuYXxkkzkpPTueVZOaQ4I5S1S7REzIx9Kb3iV6Bx7MM4lNobUEELrM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytndA0VwlWw3jiH9b6Xxl0E5Fg0u24MuZgwji3eA1SvHCtNCIU
+	kSrfsNxANkbuT6ZFTwm6TBut6gf1H0UAJH/vntehzUKSPcxDuprscvN7ci6RWO8=
+X-Google-Smtp-Source: AGHT+IGOWlf1E3MK25Ig9GpguOQfG2ei5zN70UwUJJU5oIGPcT/EQOZr978PoKbxaP0b1IeYvBKH9w==
+X-Received: by 2002:a05:6512:10d0:b0:52c:df51:20bc with SMTP id 2adb3069b0e04-536ad164335mr5499187e87.16.1727092065029;
+        Mon, 23 Sep 2024 04:47:45 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5368704678asm3244982e87.5.2024.09.23.04.47.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 04:47:44 -0700 (PDT)
+Date: Mon, 23 Sep 2024 14:47:42 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, konradybcio@kernel.org, 
+	andersson@kernel.org, simona@ffwll.ch, abel.vesa@linaro.org, robdclark@gmail.com, 
+	quic_abhinavk@quicinc.com, sean@poorly.run, marijn.suijten@somainline.org, 
+	airlied@gmail.com, daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, quic_khsieh@quicinc.com, konrad.dybcio@linaro.org, 
+	quic_parellan@quicinc.com, quic_bjorande@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, quic_riteshk@quicinc.com, 
+	quic_vproddut@quicinc.com
+Subject: Re: [PATCH v3 5/5] drm/msm/dp: Add DisplayPort controller for SA8775P
+Message-ID: <vdzxghgr3uhj36mjqnphagf2mftpsnqg3mubjo7gfiexcrdb55@6i2s7s4a4qr4>
+References: <20240923113150.24711-1-quic_mukhopad@quicinc.com>
+ <20240923113150.24711-6-quic_mukhopad@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240917112028.278005-1-den-plotnikov@yandex-team.ru>
- <Zu_Pl4QiBsA_yK1g@google.com> <0288f7f5-4ae8-4097-b00c-f1b747f80183@yandex-team.ru>
-Message-ID: <ZvFVFulBrzHqj2SE@google.com>
-Subject: Re: [PATCH] kvm/debugfs: add file to get vcpu steal time statistics
-From: Sean Christopherson <seanjc@google.com>
-To: Denis Plotnikov <den-plotnikov@yandex-team.ru>
-Cc: kvm@vger.kernel.org, pbonzini@redhat.com, yc-core@yandex-team.ru, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923113150.24711-6-quic_mukhopad@quicinc.com>
 
-On Mon, Sep 23, 2024, Denis Plotnikov wrote:
-> On 9/22/24 11:04, Sean Christopherson wrote:
-> > On Tue, Sep 17, 2024, Denis Plotnikov wrote:
-> > > It's helpful to know whether some other host activity affects a virtual
-> > > machine to estimate virtual machine quality of sevice.
-> > > The fact of virtual machine affection from the host side can be obtained
-> > > by reading "preemption_reported" counter via kvm entries of sysfs, but
-> > > the exact vcpu waiting time isn't reported to the host.
-> > > This patch adds this reporting.
-> > > 
-> > > Signed-off-by: Denis Plotnikov <den-plotnikov@yandex-team.ru>
-> > > ---
-> > >   arch/x86/include/asm/kvm_host.h |  1 +
-> > >   arch/x86/kvm/debugfs.c          | 17 +++++++++++++++++
-> > 
-> > Using debugfs is undesirable, as it's (a) not ABI and (b) not guaranteed to be
-> > present as KVM (correctly) ignores debugfs setup errors.
-> > 
-> > Using debugfs is also unnecessary.  The total steal time is available in guest
-> > memory, and by definition that memory is shared with the host.  To query total
-> > steal time from userspace, use MSR filtering to trap writes (and reflect writes
-> > back into KVM) so that the GPA of the steal time structure is known, and then
-> > simply read the actual steal time from guest memory as needed.
-> Thanks for the reply!
-> Just to clarify, by reading the actual steal time from guest memory do you
-> mean by using some kind of new vcpu ioctl?
+On Mon, Sep 23, 2024 at 05:01:50PM GMT, Soutrik Mukhopadhyay wrote:
+> The Qualcomm SA8775P platform comes with 2 DisplayPort controllers
+> for each mdss, having different base offsets than the previous
+> SoCs. The support for all 4 DPTX have been added here, and
+> validation of MDSS0 DPTX0 and DPTX1 have been conducted.
 
-No, I mean by using the host userspace VMA to read the memory.
+I'd prefer if there was a word 'only' in the last phrase, but I can live
+without it.
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+
+> 
+> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+> ---
+> v2: No change
+> 
+> v3: Fixed review comments from Konrad and Bjorn
+> 	-Added all the necessary DPTX controllers for this platform.
+> 
+> ---
+>  drivers/gpu/drm/msm/dp/dp_display.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+
+-- 
+With best wishes
+Dmitry
 
