@@ -1,119 +1,167 @@
-Return-Path: <linux-kernel+bounces-336085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7246A97EEEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:11:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CF8E97EECA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:03:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3191D281706
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:11:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 104D81F2105B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1490819E964;
-	Mon, 23 Sep 2024 16:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46BF27715;
+	Mon, 23 Sep 2024 16:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Nb/PCPfG"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Mit84Inw"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41ED6197A8A
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910801FC8
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727107871; cv=none; b=qYnFPNiAVbFweaJE5pfxtPoJahuEJ34Tuh61fXQn2D3BsyCB5+truiombivDedwwQpoIgCa0jyuwpPZE0pzAxrfm6KLBCdwUWsJHFbUq0xAXuXF8O8mvFQDKUo8wNW1JI5AMmk/ieK6h4i1lgBDCJeX4hT12CAASi/wh/jqNiwc=
+	t=1727107375; cv=none; b=J+zgeXGDCtQfRHwfSmfUwRlu0v3Rt2f8oW894pG/JVsM+pRHFoYviuLV9sMJMN8NCormTy7abx+KXN+xNhVnPBuCGrZgyQ7Sg0Lyw5aC6F2IhwwL/XSNs50rpD2HqWH044po7dDnLnq31yKukbHtAbCwFz5aVQuX49lqUg0Gp5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727107871; c=relaxed/simple;
-	bh=H0qQM/QpZlzFIJDKYf5nR5cykF3LyCuPz3uQnKwfl8A=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=bxqpJuyTLS1eRGi+FHjInuw3F10TD9PqdKARzKJb40MiWaoIomivc4Ay5ZqaW/5bKYjn3O/1qU26d80ZWNr9OEbpI0nRsxtYFBy6yopd8CgMq022lryx2voByLRZyRK6fiQG0BFMFTzOrI6lGQcKKNn/3O4SKBnZhlOfsgjrvvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Nb/PCPfG; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8A2D240E021D;
-	Mon, 23 Sep 2024 16:02:39 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id eY01NWPrd9CF; Mon, 23 Sep 2024 16:02:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1727107355; bh=cY4lWJG4vLdBW/vBl9oCJ0OXT+42w3dInHnJUip1Axc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Nb/PCPfGFZJytmlp9vQ1+yPE0VT+qfQd1qjrAjChGoAx5EQa8bdhxQ9VhIfQpavTh
-	 L3Dqbp5RGoOauK3XSKNxMzEhj9y1VaW5Gj/Uu5l4DwfM3SJQ9bjHE2ly90AdRFxRh0
-	 Ko7mh766HGiEPtEr4eOzGh0mpQNkP3mp8vL5OTK6sHWyfNnElvyt0R5RsKU2Q+JURp
-	 4yDAKjl57hqbJyd3aDR4HI89sXoXU9KB3XwAz8I0MQbD0UjnwYrPTngttd0xS2cLg2
-	 a8yoRihEyOHG9slhuSsaZugi5nG0mTLXJl8K+5Siw3sPNvZPQSvxZyIPR09t62Ic73
-	 0J2OE2vUdlMn+RTXwCBZQAkYNlLILKT9rT9Fza0sVbsYpcm81Fbt4AinBWDmnC9/wO
-	 vfMOYkBAPjAYsoGrhGjqlbbWedOx2myYPnSKEGYxWpidAn66pYPbRXaTS00SayqkwR
-	 KmZV36X3h8zd09fZtHPf0O9620sYDjWwT1upFumCAXBNWoPCL4S/6zdDvRlvlC/OPy
-	 ncdvKzQT9etr+20NZlBc+zgPoiwtE3BUFC9ZvtYU4BBKW1lIj3hAGFCTMy2B6Z2ChR
-	 tXcO0v9AHn39y+Zxp9w+cCtaD66vJT+xTFtd8NhOV0f4qDbY2HxwSgt0+8j6Z9Crv/
-	 JDqeMPJMqou4RGhXADyAjAsU=
-Received: from [127.0.0.1] (dynamic-176-007-010-021.176.7.pool.telefonica.de [176.7.10.21])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E3FDD40E01FF;
-	Mon, 23 Sep 2024 16:02:31 +0000 (UTC)
-Date: Mon, 23 Sep 2024 18:02:28 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: John Allen <john.allen@amd.com>, x86@kernel.org
-CC: linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_x86/CPU/AMD=3A_Only_apply_Zenble?=
- =?US-ASCII?Q?ed_fix_for_Zen2_during_late_microcode_load?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240923154112.26985-1-john.allen@amd.com>
-References: <20240923154112.26985-1-john.allen@amd.com>
-Message-ID: <3C79F091-A19B-4BAD-8582-56961830AF25@alien8.de>
+	s=arc-20240116; t=1727107375; c=relaxed/simple;
+	bh=6TuVerOEXrd71O5paKQU3CUKJdwlYlsaDFlvF9rRkm0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NeafymR5Z3xs1G1SIm3lH25KK2dz7SmtuA8sky9OZ5FgmZ6M+/fedJhwGmPSSXZzqq+TyL+0iqdYPj2Ll11fOWVEmcm9Ut5t1ojLbtIpl3jOeF6mTI6PEI+na4PZ9SKcV0b8Joy0Gz6jMFENQ+H2DYvfHfMiavgvO46EcwEGTQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Mit84Inw; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-82aa6be8457so147747439f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 09:02:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1727107373; x=1727712173; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U7TYhe1rpxxrqplqnvp9IfDZ+pr34hbFyuUI8EXCDkc=;
+        b=Mit84InwB9n5c6VqFOdM/3q1ipZZhXwUcp4wN9GYsEkUAazp0zM3iDxDp2UvXMM3HN
+         SMKeRaNwFa/Tt3YXvxuphcLPQoLS0ZuHz3Q6TLsH6btcxqHO0lgBwL644oBr8j4Y2CuY
+         DIOJKltcdzmcHkACYWaLHwZwfkg1kLVm8lx18=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727107373; x=1727712173;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U7TYhe1rpxxrqplqnvp9IfDZ+pr34hbFyuUI8EXCDkc=;
+        b=IwIgqr7QsrdNWhhAlMVQxTX/dBCcBDGZB+M+EamdEMLnNH9+9VwdrqLrWIdP3N7Pkx
+         4FY4QTJ+98/tbGaoHgH7N81NvNXCYmbC5DVA0fKAc2tOhdqvKKdZ8pGZMbq+5pQzzG8t
+         eIuQzNMdP8WZo59bL85R23u8wLf8FJ7vQehP+AimYRJEKAhfWpv55U03Mf21C2hImo/B
+         KfktfoPtdVxfIOpK3DpAQwWx+TSz38sN4hQW8viKzxRTvukZ6nzTsdV97nQy9DXNZziB
+         qfGUG/IZDp2uBAR9TXHPFvB5y4r/mY8rryA+PT9o2kEE6fEyW3SkeJKqXUWNgmgPhJaO
+         VUXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVii9tuOjOihpFw8/jli5dMMNoBy9FZzzoT3vnFvyf+kUVKfAiPVrTe5WIMZVgGtr6c4hwYsfrVythVbI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN7If4uASCdRc042jQ6QXfW/nrqkbU+RkM7bpIaJUUZ+serpm8
+	Ks2FuKokJ+Xr8cY4N+NmPq5ou7jMw/9pEhtmLwNzf5Fs1YkEfK6YqIoxp2uyXek=
+X-Google-Smtp-Source: AGHT+IFbTlKf8TKMANszqjy1yElT6pwu6gCQvDIujsaJntV8C2slJwQVG9f9umm5t1EUKhexryb9bQ==
+X-Received: by 2002:a05:6602:2c93:b0:82c:f7b1:a9fb with SMTP id ca18e2360f4ac-8323b9df004mr10698439f.5.1727107372503;
+        Mon, 23 Sep 2024 09:02:52 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-82d492b34b6sm560153439f.23.2024.09.23.09.02.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 09:02:51 -0700 (PDT)
+Message-ID: <db8b758e-9051-4ee0-b0e7-3b54eda0c71b@linuxfoundation.org>
+Date: Mon, 23 Sep 2024 10:02:49 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] kselftests: mm: Fix wrong __NR_userfaultfd value
+To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>,
+ "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+ Andrea Arcangeli <aarcange@redhat.com>, Kim Phillips <kim.phillips@arm.com>
+Cc: kernel@collabora.com, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240912103151.1520254-1-usama.anjum@collabora.com>
+ <a9ae7dc4-275d-43c3-bf4c-b0090cb6bb12@linuxfoundation.org>
+ <3cb9d266-4d4b-4031-8603-da7fd9e3ad47@collabora.com>
+ <b3caeb96-2f48-4efd-a56c-e91dae891b48@linuxfoundation.org>
+ <0b847784-a95f-4ed5-a0fb-1b7b4023df13@collabora.com>
+ <e2a4d2b4-ca3f-4d21-82d5-b87bc9de9358@linuxfoundation.org>
+ <e4e2095e-3280-4bfc-8129-80b8d00d146d@collabora.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <e4e2095e-3280-4bfc-8129-80b8d00d146d@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On September 23, 2024 5:41:12 PM GMT+02:00, John Allen <john=2Eallen@amd=2E=
-com> wrote:
->A problem was introduced with f69759b ("x86/CPU/AMD: Move Zenbleed check =
-to
+On 9/22/24 23:35, Muhammad Usama Anjum wrote:
+> ...
+> 
+>>> grep -rnIF "#define __NR_userfaultfd"
+>>> tools/include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
+>>> arch/x86/include/generated/uapi/asm/unistd_32.h:374:#define
+>>> __NR_userfaultfd 374
+>>> arch/x86/include/generated/uapi/asm/unistd_64.h:327:#define
+>>> __NR_userfaultfd 323
+>>> arch/x86/include/generated/uapi/asm/unistd_x32.h:282:#define
+>>> __NR_userfaultfd (__X32_SYSCALL_BIT + 323)
+>>> arch/arm/include/generated/uapi/asm/unistd-eabi.h:347:#define
+>>> __NR_userfaultfd (__NR_SYSCALL_BASE + 388)
+>>> arch/arm/include/generated/uapi/asm/unistd-oabi.h:359:#define
+>>> __NR_userfaultfd (__NR_SYSCALL_BASE + 388)
+>>> include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
+>>>
+>>> The number is dependent on the architecture. The above data shows that:
+>>> x86    374
+>>> x86_64    323
+>>
+>> Correct and the generated header files do the right thing and it is good to
+>> include them as this patch does.
+>>
+>> This is a good find and fix. I wish you explained this in your changelog.
+>> Please add more details when you send v2.
+> I'm sending v2
+> 
+>>
+>> There could be other issues lurking based on what I found.
+>>
+>> The other two files are the problem where they hard code it to 282 without
+>> taking the __NR_SYSCALL_BASE for the arch into consideration:
+>>
+>> tools/include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
+>> include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
+>>
+>>>
+>>> I'm unable to find the history of why it is set to 282 in unistd.h and
+>>> when this problem happened.
+>>
+>> According to git history it is added in the following commit to
+>> include/uapi/asm-generic/unistd.h:
+>>
+>> 09f7298100ea9767324298ab0c7979f6d7463183
+>> Subject: [PATCH] userfaultfd: register uapi generic syscall (aarch64)
+>>
+>> and it is added in the following commit to
+>> tools/include/uapi/asm-generic/unistd.h
+>> 34b009cfde2b8ce20a69c7bfd6bad4ce0e7cd970
+>> Subject: [PATCH] tools include: Grab copies of arm64 dependent unistd.h
+>> files
+>>
+>> I think, the above defines from include/uapi/asm-generic/unistd.h and
+>> tools/include/uapi/asm-generic/unistd.h should be removed.
+>>
+>> Maybe others familiar with userfaultfd can determine the best course of
+>> action.
+>> We might have other NR_ defines in these two files that are causing
+>> problems
+>> for tests and tools that we haven't uncovered yet.
+> Added authors of these patches.
+> 
 
-Use 12 chars for the commit id=2E
+Thank you. Would you be able top follow up on this and send patches
+to remove these defines if it deemed to be the correct solution?
 
->the Zen2 init function") where a bit in the DE_CFG MSR is getting set aft=
-er
->a microcode late load=2E
->
->The problem is that the microcode late load path calls into
->amd_check_microcode and subsequently zen2_zenbleed_check=2E Since the pat=
-ch
->removes the cpu_has_amd_erratum check from zen2_zenbleed_check, this will
+thanks,
+-- Shuah
 
-End all function names with "()"=2E
-
->cause all non-Zen2 cpus to go through the function and set the bit in the
->DE_CFG MSR=2E
->
->Call into the zenbleed fix path on Zen2 cpus only=2E
-
-s/cpus/CPUs/g
-
-And yes, it should be cc:stable=2E
-
-With all that addressed, you can add:
-
-Acked-by: me
-
-to the patch=2E
-
-Thx=2E
-
---=20
-Sent from a small device: formatting sucks and brevity is inevitable=2E 
 
