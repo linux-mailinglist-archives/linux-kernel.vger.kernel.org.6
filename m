@@ -1,120 +1,177 @@
-Return-Path: <linux-kernel+bounces-336009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E443A97EDFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:20:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 264E297EE02
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 208E61C21310
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:20:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81B62824CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E6519CC2C;
-	Mon, 23 Sep 2024 15:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F50419E966;
+	Mon, 23 Sep 2024 15:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dr+c6A3N"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PH89QFpX"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52368126C01
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAB1126C01;
+	Mon, 23 Sep 2024 15:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727104836; cv=none; b=Z3ysPcZkyqG4nX5rwPnRDW+HCY4Q8W5e/vmz5iYI24y4qAow2jqzUu+d24PFZtSuOGqsMZmSzZ+S1SsFJBbiOWikgf0+I+eW2pZ+mGFzN+YoSmmcWQFYab5HDVvFER7w4BD/Sd5u8e0MgzlSGOtjjZBXLYEAtfRIi//GxJng4jo=
+	t=1727104859; cv=none; b=pfMVIUtyMxaXkAfi9Au/cznB6IgSkBLD9anxVlEk75l/JL3WM6TDhYla6KTvvcOeBNJG1LqpIGSPaOdoMjHqbY9VpWZii5eWXixhFuwLz96jj+8iUhV8XA93iZpg9tZOwVSWL3Z7pHeAJ/xtUVjjfyPlpLExpHZwI//Ou5ERs6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727104836; c=relaxed/simple;
-	bh=co6ioMQ02V+r7uOOhlp3pHUwIbfMsiQy8IXRFurCexI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aABL636H69BctBLJQ8eT+2Qiz7Euf5/UleOui4qWv6kYGDQh4f1rjfsdK6pv/rbAj43pvgW0mURpe/lNR4jz9LCDcjNVFdlco+gJoAFoeBLXCrRZQEnLP59fzmeauhS3DyLHl13NYwKXoZs+z0+8DGgPFsMbRzYgfype40BncUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dr+c6A3N; arc=none smtp.client-ip=209.85.218.50
+	s=arc-20240116; t=1727104859; c=relaxed/simple;
+	bh=YSWCktVxHghjtszXZwcauDiq7p2MJW8gBplodPVyGFo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d0mjAP0hEBDVOSQ47jEweZ6zHZYX8zdAHEpQvIukISQEaFyzUonF3ReK1aew9J35fH/+aoMgVTUcLQRPNPd4hw1B5OYawpUnnEbF54NVNRT+Nji0C8yzq06fVX9qo/G2vyv3/i6VIHHwCZo08ckn/RzIeOceAb3cB0cOqihm1Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PH89QFpX; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a90349aa7e5so671230366b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:20:34 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f754d4a6e4so43155061fa.3;
+        Mon, 23 Sep 2024 08:20:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727104833; x=1727709633; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VAoybQCw+SSRlMGkzjtBvNGKOwn68kaOmQ5Cr4iAn7E=;
-        b=Dr+c6A3NQQPi39H4GWgJQV9g6mV8SV7XMWSMhBLuyf5XxTiY5HpQ5U5+nfUAMIiQfh
-         clTQvVDYQx/6WBUqhXKqwhLrFDYH8VG1oetQvKOO7rz3k8tqZqZbjVynnb/ov0YgQIYx
-         Oy6alDQ1WJpKzatM5shcbekzF0y5Vu1uOPMHpVsNJExJF1ksIpaqB22PynYsEU0t7xqV
-         Y3bktYd8LZTKgCSl+yjtfKoXeUy26YVEqjKTE/S4qZi/WVyOGC+Ngi01JLBRKzmlALAD
-         zWYNtQiw/UMjMC6tFZ1Wi1Ys4M2+hbyb9II4j+R7cV7Y9RhsTnLuXbTqhBdiXURJFBH2
-         byTQ==
+        d=gmail.com; s=20230601; t=1727104855; x=1727709655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4YKpJjkT/dP6ztSbjaCFugg3gOx+PZd6e/Lb/+M/JDA=;
+        b=PH89QFpXpQfcktpdv+wE3gOyylDxe6B9KawlvzIvIZLek8B13q34K6P99RofEyh2x9
+         rwJSEizVuQf1fm9y7iiFQvzCqa0m0Sd9q6k4HDKPRrhzQUEsfTLjFiJnSj0N01CMn7nL
+         4n7mi0FrSzvMFgu1rnKHdsxWESbXaOtzSpR8AemLrE8R5hOnWl88FEkr2S9QcC1hdfR1
+         qNZf4jwEcinoOWiQT4V6kJccyu1tjD16CaefXlvDR4TdDgDjHGiJ0AYWe2RQVUGDsCwA
+         Y1fWl2R3AEKdODVbUDaLMRx6rle6FwA12rXcVDjd6snTYQnRi7MybGXOtrbWUkhhHGhc
+         sBUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727104833; x=1727709633;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VAoybQCw+SSRlMGkzjtBvNGKOwn68kaOmQ5Cr4iAn7E=;
-        b=S+3CKNyuD5UftzeaSnajijVPDLtzfbWyGAIAeEOFcrZ5bqZxJiakOZUS0+I1zwR0at
-         8SVzZBIPe6/AC4G2AKbRgRqGg2buvYLNs5OX4aIHRhESN/wd5aiK3z6BhSAdJe4NYwGS
-         F7rkjecmvnPb6aIt05EJRyRFDxzZ79cgBiEZUKczLOEYu/ASq5vl1WQlxkyRWLq63Xa+
-         94mOhpgZdlNlONbHMCP2ioHF2D1Hvn1I6nfC8IbPAfJok9KuaqdDUkaO3ALbS9ULebeF
-         /F5tXHYE5g0n5zDxmt7E7rwrvynovHdjz/XMcm9gl9G2eNWJWEyTeJ/XkckI9NEcv8Sp
-         +qYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKwbYEBganKRhKq+67qeO0fWb9fnBBiJhiAtH/Wuk8ZQemeNy6h7mIG/stye0fzorWz2S8E3+1+khdMu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVSJKPXf/73TA7hyUyRKuxj6cRTTNHlzjAFZzhgHvuhInH9agR
-	GFPSajvLakgWHM3Oy+vxUYZ6eTY8LICNzMlqOofFLkns1/Y89U4A
-X-Google-Smtp-Source: AGHT+IEKHyP7+CWpuJe3pV9TPfqpvuYPi0TJx5uONwNak/pvlUj2NWuHdDJxFuhb1UuOhDoqj9ImYQ==
-X-Received: by 2002:a17:907:2ce6:b0:a7a:9ca6:527 with SMTP id a640c23a62f3a-a90d5671b3cmr1377721866b.8.1727104833258;
-        Mon, 23 Sep 2024 08:20:33 -0700 (PDT)
-Received: from localhost.localdomain (62-178-82-42.cable.dynamic.surfer.at. [62.178.82.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90610f151esm1242929866b.48.2024.09.23.08.20.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 08:20:32 -0700 (PDT)
-From: Christian Gmeiner <christian.gmeiner@gmail.com>
-To: Melissa Wen <mwen@igalia.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Christian Gmeiner <cgmeiner@igalia.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/v3d: Use v3d_perfmon_find(..)
-Date: Mon, 23 Sep 2024 17:19:59 +0200
-Message-ID: <20240923152000.185980-1-christian.gmeiner@gmail.com>
-X-Mailer: git-send-email 2.46.1
+        d=1e100.net; s=20230601; t=1727104855; x=1727709655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4YKpJjkT/dP6ztSbjaCFugg3gOx+PZd6e/Lb/+M/JDA=;
+        b=WRShlQYZh6H7bce6CDWen+KuRrRes6mj9JyPKjOhnBWM5dagpgVt774akl1sZIBggP
+         hNK9AIledz1ih/pEIn0YOzTuhRyha3o8U52WB1Da1kCqgdTmYQR3OQ5xah4ClqXLmT5S
+         vfavwH24md3CNfPpwVKdZGrfNiST2wG+YvVOF9lyhhTsIlew52kAdJCjMID8N4iN7199
+         DC5wFBJK+eMtQ+So+DoQ9KqbF8QRGLFx+FybVr9ixGwzJYz6hbC57jqJpV6CV1FUVtWG
+         lP2kGmZR528KRf4mHAFZpTKC/I5AXdHrV57ib3sFbzZhrGfd617Vdb00a9KKaCjvsnZ6
+         Wv9A==
+X-Forwarded-Encrypted: i=1; AJvYcCU4OMmKQR9DVyrbMrC4Fi2XxYkIBYsfZ0HugZdHFYKCKdLHJlWrv7NTiJowmzI+o+P9D95kQrVgNDYCFJNe@vger.kernel.org, AJvYcCVVQ2zqZZPVDjmeG92+6E5BUZSDR/TYtX0xT/HdqhKQVH36cORIMWH+fuWAdSg2qTbDa5/YbDrwPv+EFK5XNQM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLVkbVYICi2MdovvMY0gqBwL4xmHXsl51unM9zKn2FdcZtQ8eO
+	GOuVakrUYKE82lEBKP4Qnn7GQx9bdrZpOcVsm9Tt/AGQtuw8vSu13yY5nDOGGKV5ZPjNZc+u9z9
+	xfSkaLPFLCzcWgKQmGspTGfGGyzk=
+X-Google-Smtp-Source: AGHT+IEL2czF2KjlS+h6a4/EK6zHMexJS+PrFlJf2J3D4oheXFf9W5E4gcN9lgiTM0lnOJgvx6EsHQbhXGdz9TrRP2A=
+X-Received: by 2002:a2e:a98a:0:b0:2f7:5a95:3a11 with SMTP id
+ 38308e7fff4ca-2f7cc3576c4mr52982621fa.6.1727104855203; Mon, 23 Sep 2024
+ 08:20:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CABBYNZLnohZofm4Tchk7p36XS=HwYmN94DB0FGyiPFJno+evSw@mail.gmail.com>
+ <20240921105609.1025-1-hdanton@sina.com> <CABBYNZLqXfAc7_YO+goAf7fnAsmJ+j9V0cjmPMX4+MhoDhzOCA@mail.gmail.com>
+ <CANp29Y7bbvUckx7c+Bke28p5AzNCw7kYfXr87DsAD2DtUm99Xw@mail.gmail.com>
+In-Reply-To: <CANp29Y7bbvUckx7c+Bke28p5AzNCw7kYfXr87DsAD2DtUm99Xw@mail.gmail.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Mon, 23 Sep 2024 11:20:41 -0400
+Message-ID: <CABBYNZLKMu296VLeEcyMZBw1HFivMA=L6xOZRHHcKwWZb7PQ4g@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth/l2cap: Fix uaf in l2cap_connect
+To: Aleksandr Nogikh <nogikh@google.com>
+Cc: Hillf Danton <hdanton@sina.com>, Edward Adam Davis <eadavis@qq.com>, 
+	syzbot+c12e2f941af1feb5632c@syzkaller.appspotmail.com, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Christian Gmeiner <cgmeiner@igalia.com>
+Hi Aleksandr,
 
-Replace the open coded v3d_perfmon_find(..) with the real
-thing.
+On Mon, Sep 23, 2024 at 10:37=E2=80=AFAM Aleksandr Nogikh <nogikh@google.co=
+m> wrote:
+>
+> On Mon, Sep 23, 2024 at 4:33=E2=80=AFPM Luiz Augusto von Dentz
+> <luiz.dentz@gmail.com> wrote:
+> >
+> > Hi Hillf,
+> >
+> > On Sat, Sep 21, 2024 at 6:56=E2=80=AFAM Hillf Danton <hdanton@sina.com>=
+ wrote:
+> > >
+> > > On Tue, Sep 10, 2024 at 4:56=E2=80=AFPM Luiz Augusto von Dentz <luiz.=
+dentz@gmail.com> wrote:
+> > > >
+> > > > Maybe something like the following would be a better approach:
+> > > >
+> > > > https://gist.github.com/Vudentz/121a15fa4391b2b1f6c7e8d420a6846e
+> > >
+> > > If your idea is not bad, boy, feel free to win Tested-by from syzbot =
+with it.
+> >
+> > Is there a way to quickly check a patch with syzbot?
+>
+> You can send a `#syz test` command in a reply to syzbot and attach the
+> patch-to-test to the email message.
+>
+> See https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testin=
+g-patches
 
-Signed-off-by: Christian Gmeiner <cgmeiner@igalia.com>
----
- drivers/gpu/drm/v3d/v3d_perfmon.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Thanks, lets see if this works:
 
-diff --git a/drivers/gpu/drm/v3d/v3d_perfmon.c b/drivers/gpu/drm/v3d/v3d_perfmon.c
-index cd7f1eedf17f..54a486a9b74c 100644
---- a/drivers/gpu/drm/v3d/v3d_perfmon.c
-+++ b/drivers/gpu/drm/v3d/v3d_perfmon.c
-@@ -402,11 +402,7 @@ int v3d_perfmon_get_values_ioctl(struct drm_device *dev, void *data,
- 	if (req->pad != 0)
- 		return -EINVAL;
- 
--	mutex_lock(&v3d_priv->perfmon.lock);
--	perfmon = idr_find(&v3d_priv->perfmon.idr, req->id);
--	v3d_perfmon_get(perfmon);
--	mutex_unlock(&v3d_priv->perfmon.lock);
+#syz test
+
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index d6976db02c06..b2f8f9c5b610 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -3782,6 +3782,8 @@ static void hci_acldata_packet(struct hci_dev
+*hdev, struct sk_buff *skb)
+
+        hci_dev_lock(hdev);
+        conn =3D hci_conn_hash_lookup_handle(hdev, handle);
++       if (conn && hci_dev_test_flag(hdev, HCI_MGMT))
++               mgmt_device_connected(hdev, conn, NULL, 0);
+        hci_dev_unlock(hdev);
+
+        if (conn) {
+diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+index 1c82dcdf6e8f..b87c0f1dab9e 100644
+--- a/net/bluetooth/hci_event.c
++++ b/net/bluetooth/hci_event.c
+@@ -3706,7 +3706,7 @@ static void hci_remote_features_evt(struct
+hci_dev *hdev, void *data,
+                goto unlock;
+        }
+
+-       if (!ev->status && !test_bit(HCI_CONN_MGMT_CONNECTED, &conn->flags)=
+) {
++       if (!ev->status) {
+                struct hci_cp_remote_name_req cp;
+                memset(&cp, 0, sizeof(cp));
+                bacpy(&cp.bdaddr, &conn->dst);
+diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+index 9988ba382b68..6544c1ed7143 100644
+--- a/net/bluetooth/l2cap_core.c
++++ b/net/bluetooth/l2cap_core.c
+@@ -4066,17 +4066,9 @@ static void l2cap_connect(struct l2cap_conn
+*conn, struct l2cap_cmd_hdr *cmd,
+ static int l2cap_connect_req(struct l2cap_conn *conn,
+                             struct l2cap_cmd_hdr *cmd, u16 cmd_len, u8 *da=
+ta)
+ {
+-       struct hci_dev *hdev =3D conn->hcon->hdev;
+-       struct hci_conn *hcon =3D conn->hcon;
 -
-+	perfmon = v3d_perfmon_find(v3d_priv, req->id);
- 	if (!perfmon)
- 		return -EINVAL;
- 
--- 
-2.46.1
+        if (cmd_len < sizeof(struct l2cap_conn_req))
+                return -EPROTO;
 
+-       hci_dev_lock(hdev);
+-       if (hci_dev_test_flag(hdev, HCI_MGMT))
+-               mgmt_device_connected(hdev, hcon, NULL, 0);
+-       hci_dev_unlock(hdev);
+-
+        l2cap_connect(conn, cmd, data, L2CAP_CONN_RSP);
+        return 0;
+ }
 
