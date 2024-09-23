@@ -1,138 +1,85 @@
-Return-Path: <linux-kernel+bounces-336016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33F097EE0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:25:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80D397EE15
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:25:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 581CE1F22001
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:25:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 050361C2110E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADB719D885;
-	Mon, 23 Sep 2024 15:24:51 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083FE19CD0E;
+	Mon, 23 Sep 2024 15:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYeic13N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6AB126C01;
-	Mon, 23 Sep 2024 15:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6D080BFF
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727105091; cv=none; b=HdruVo5B4s2EldTl8Bkp1JFmP/dN3BiMNysdRXjsQ8c7tiVjg0pBcw15/pOD3BKvBy8125dO4L/lh8iODpSDJJRqvO7CXV8f8UmWu+wVH/T+lrZ5nng+bje6zaEInqSLEjkn6/pQiQErh/WHW3GpM+gvL5wx90dQGIPRjYKDSVw=
+	t=1727105136; cv=none; b=oFprZwxPFxVZUKvwUBuQhX3URkeLY/XGsOD7Y4QGknbJ6AMC9DzpQDJkgARcBEEuXvvw7MAAsxGRZCs9OSoDTpu/deiYv11PgouWZOC/B8BUWwUcYqVfUSY3Q7YDrySnZDD1gsDvHKi9rY3oQGZGNBmDNcHnPDJUow3oF5/4zB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727105091; c=relaxed/simple;
-	bh=C1gjPPJeHTZTDIWmb8bkK9FphtbQ+n/jUOV5Pvvts9U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QnWD3IB1fu4HdDqMi7xnEEh3dZBmQcNOGNltnSsaciUaPORx2X5qwicr+ipBCRrlmQD7GdjtxzIImKURVw264xAeAPPubNot2mOtCAgwD6A7QucnlzjGlEc/3EIOJej1dTQkUp5zcfTMFWO+NXFdF+RXdoYaDsg0mVTTgd5sDJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XC6HK5Mz2z1ymHD;
-	Mon, 23 Sep 2024 23:24:45 +0800 (CST)
-Received: from kwepemj200016.china.huawei.com (unknown [7.202.194.28])
-	by mail.maildlp.com (Postfix) with ESMTPS id 788CF1A0188;
-	Mon, 23 Sep 2024 23:24:44 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- kwepemj200016.china.huawei.com (7.202.194.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 23 Sep 2024 23:24:40 +0800
-Message-ID: <61ece1e6-50b0-55e5-985c-5db8090cf82b@huawei-partners.com>
-Date: Mon, 23 Sep 2024 18:24:36 +0300
+	s=arc-20240116; t=1727105136; c=relaxed/simple;
+	bh=ACUHe5kDZc77KXWyN6kCP9hWgXL3XrVwmt23+q+O0yw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mFNIR6LvCkq4rVt+4c+SOs8zvLELQmVVIrvtUF0AxkVK//o8y14Yvl7ScaxUesjj54isqJfXm7JxJt/sNhtDLkbFlthErfiDhDDftAFMCNH3Xj4iZA4LJzyWDBbWTNfUK0zzy4af5BjKVET4f6F8TSw9CNZ1m3kmGxuvbpkkxcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYeic13N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C28F6C4CEC4;
+	Mon, 23 Sep 2024 15:25:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727105135;
+	bh=ACUHe5kDZc77KXWyN6kCP9hWgXL3XrVwmt23+q+O0yw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cYeic13N/Suai6Y/iGjlRzD+lC/DEDTySMBorpKsOpMgPRns43QLMui9pQPcrWIsN
+	 cbRX2qk99p3XLGL4UqEgbQe17uVrogkXpx8U5KzT6rPArEWs7l5Mg1fqinQeZQ4Zbc
+	 LPnD7lMQM049aN4A+5Wv8BkaZfNsf2yMfxsjb8FlkhJvhlX7a0XjBIb0MGgDYYhVu8
+	 sX1MzGJWef6CqNAkHM5cn1Nu9ohV9lN/OPb/GkRbI0w8KaAxaxjisfatRnc7/E5zq4
+	 jL/SRDGJuKcbncgO7MFY54A68dciYT2koO/zidnAQ5Xp8VFC9oKibg89doJf8gemix
+	 qXro/NSetAwnQ==
+Date: Mon, 23 Sep 2024 05:25:34 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Yu Liao <liaoyu15@huawei.com>
+Cc: xiexiuqi@huawei.com, peterz@infradead.org, mingo@redhat.com,
+	linux-kernel@vger.kernel.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org
+Subject: Re: [RFC PATCH 1/2] sched: Add dummy version of
+ sched_group_set_idle()
+Message-ID: <ZvGIbtGCReTl8SVD@slm.duckdns.org>
+References: <20240923135431.2440320-1-liaoyu15@huawei.com>
+ <20240923135431.2440320-2-liaoyu15@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 1/7] samples/landlock: Fix port parsing in
- sandboxer
-Content-Language: ru
-To: Matthieu Buffet <matthieu@buffet.re>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
-	<mic@digikod.net>
-CC: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, Paul Moore
-	<paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn"
-	<serge@hallyn.com>, <linux-security-module@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, Konstantin
- Meskhidze <konstantin.meskhidze@huawei.com>, yusongping
-	<yusongping@huawei.com>, <artem.kuzin@huawei.com>
-References: <20240916122230.114800-1-matthieu@buffet.re>
- <20240916122230.114800-2-matthieu@buffet.re>
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <20240916122230.114800-2-matthieu@buffet.re>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- kwepemj200016.china.huawei.com (7.202.194.28)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923135431.2440320-2-liaoyu15@huawei.com>
 
-On 9/16/2024 3:22 PM, Matthieu Buffet wrote:
-> Unlike LL_FS_RO and LL_FS_RW, LL_TCP_* are currently optional: either
-> don't specify them and these access rights won't be in handled_accesses,
-> or specify them and only the values passed are allowed.
+On Mon, Sep 23, 2024 at 09:54:30PM +0800, Yu Liao wrote:
+> Fix the following error when build with CONFIG_GROUP_SCHED_WEIGHT &&
+> !CONFIG_FAIR_GROUP_SCHED:
 > 
-> If you want to specify that no port can be bind()ed, you would think
-> (looking at the code quickly) that setting LL_TCP_BIND="" would do it.
-> Due to a quirk in the parsing logic and the use of atoi() returning 0 with
-> no error checking for empty strings, you end up allowing bind(0) (which
-> means bind to any ephemeral port) without realising it. The same occurred
-> when leaving a trailing/leading colon (e.g. "80:").
+> kernel/sched/core.c:9634:15: error: implicit declaration of function
+> 'sched_group_set_idle'; did you mean 'scx_group_set_idle'? [-Wimplicit-function-declaration]
+>   9634 |         ret = sched_group_set_idle(css_tg(css), idle);
+>        |               ^~~~~~~~~~~~~~~~~~~~
+>        |               scx_group_set_idle
 > 
-> To reproduce:
-> export LL_FS_RO="/" LL_FS_RW="" LL_TCP_BIND=""
-> 
-> ---8<----- Before this patch:
-> ./sandboxer strace -e bind nc -n -vvv -l -p 0
-> Executing the sandboxed command...
-> bind(3, {sa_family=AF_INET, sin_port=htons(0),
->       sin_addr=inet_addr("0.0.0.0")}, 16) = 0
-> Listening on 0.0.0.0 37629
-> 
-> ---8<----- Expected:
-> ./sandboxer strace -e bind nc -n -vvv -l -p 0
-> Executing the sandboxed command...
-> bind(3, {sa_family=AF_INET, sin_port=htons(0),
->       sin_addr=inet_addr("0.0.0.0")}, 16) = -1 EACCES (Permission denied)
-> nc: Permission denied
-> 
-> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
-> ---
->   samples/landlock/sandboxer.c | 13 ++++++++++++-
->   1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index e8223c3e781a..a84ae3a15482 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -168,7 +168,18 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
->   
->   	env_port_name_next = env_port_name;
->   	while ((strport = strsep(&env_port_name_next, ENV_DELIMITER))) {
-> -		net_port.port = atoi(strport);
-> +		char *strport_num_end = NULL;
-> +
-> +		if (strcmp(strport, "") == 0)
-> +			continue;
-> +
-> +		errno = 0;
-> +		net_port.port = strtol(strport, &strport_num_end, 0);
-> +		if (errno != 0 || strport_num_end == strport) {
-> +			fprintf(stderr,
-> +				"Failed to parse port at \"%s\"\n", strport);
-> +			goto out_free_name;
-> +		}
+> Fixes: e179e80c5d4f ("sched: Introduce CONFIG_GROUP_SCHED_WEIGHT")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202409220859.UiCAoFOW-lkp@intel.com/
+> Signed-off-by: Yu Liao <liaoyu15@huawei.com>
 
-Probably it'll be better to make a separate function for strtol
-conversion (e.g. [1])? It might be needed for the socket type
-control patchset [2].
+Applied to sched_ext/for-6.12.
 
-[1] 
-https://lore.kernel.org/all/20240904104824.1844082-18-ivanov.mikhail1@huawei-partners.com/
-[2] 
-https://lore.kernel.org/all/20240904104824.1844082-19-ivanov.mikhail1@huawei-partners.com/
+Thanks.
 
->   		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_NET_PORT,
->   				      &net_port, 0)) {
->   			fprintf(stderr,
+-- 
+tejun
 
