@@ -1,101 +1,89 @@
-Return-Path: <linux-kernel+bounces-336322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE17D98392A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:41:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE33D98392F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7FFE1C21955
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:41:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE551B21127
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148E284D0E;
-	Mon, 23 Sep 2024 21:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A3784E0A;
+	Mon, 23 Sep 2024 21:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MqbruLIU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Xnlo3TkP"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FBA17BCC
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 21:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1D483A09
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 21:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727127692; cv=none; b=nf3yPFMwm6tSyHgwtHetzZIHo+gSuNERY4kZkjCa+iVNP0VHIO1du8bRLCGz6JmCzBtQ1NSc8JdfrarFSC2R0HdkvPIMQxxCgPe//+Ga/Pqd/Wsp5XgNILC2uU+hJRJsCLm+DBea8xbA8YC9GN6RpnP4S9kcdCa8WhB2PTB7yco=
+	t=1727127858; cv=none; b=IbPPu3gpwbrMccdPHkHok1PcuVZIOHJ2Lt8M8kPX79jxyytDGCsaMY/0fmO/8RvZ4iVytUAVF4T1VmIS9RGu409iVXrih+S/GnNPsb5bx6yBr3oLjao4r8IolpdMkGROqvKtxBMcLIF+q6wvfDuct521WXGsU7wdeHqqYmnlrdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727127692; c=relaxed/simple;
-	bh=qxyvCNYSHdgx/DVQkQTMhEEiuC5CFh7mYE+UyDoM7v8=;
+	s=arc-20240116; t=1727127858; c=relaxed/simple;
+	bh=3Jpn/X5KBq6gi+lv98QCZ9YS55FSIrlWsuwDXyfN3Kg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BMTmMbzf7YIc7hhmLprBPP9+JFAVJBDa+Au+KP1i3r/F0/m3v5liIy3P+RkMOGnYlg99dWBWXOwbysrIYR7/t9DxO2YhZCH/ARElI6J6lENouhGzEoCitJ5e5TSEl69FLhnsppHeuTiL2CUcLTbzVO00xzCAPgTRMgmD5/v021k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MqbruLIU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95A3AC4CEC4;
-	Mon, 23 Sep 2024 21:41:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727127690;
-	bh=qxyvCNYSHdgx/DVQkQTMhEEiuC5CFh7mYE+UyDoM7v8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MqbruLIUBVxPG/hnOB/6fUOzwIA7K0KrsvNU0kqz6+MmWX8EYGocC10wdhbZvaGsd
-	 hlxjtyn4NRmkxMe+C7H38HzvCiJ4n1tqImWmX3ittyRQQuPFLIp49vtptkGg4dLA8W
-	 II8u6QOk6e2b0lbYsJ1k/F/Jsaq8zbQhuaD5Hx+qNrkPwATEa7AV4KgOb4zAI9pz66
-	 FckWlMLH609wx84Y9fmSdA3yPDkFrmB85P/mWdr+TwkJFzPxn/ncsR0X1DuIXQDFwI
-	 QhwsMDOH2yeWSwenpeEIH1/y/bQlVM+x3atlP7hhneJQSWj+fqVoFL7Zv62ueBYYUx
-	 bOOCSb5kON/AQ==
-Date: Mon, 23 Sep 2024 23:41:27 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Steven Davis <goldside000@outlook.com>
-Cc: akpm@linux-foundation.org, ankur.a.arora@oracle.com,
-	linux-kernel@vger.kernel.org, peterz@infradead.org,
-	tglx@linutronix.de
-Subject: Re: [PATCH] irq_work: Replace wait loop with rcuwait_wait_event
-Message-ID: <ZvHghxL6ce-2y7Wx@pavilion.home>
-References: <SJ2P223MB10267BCF19A4A37747A52330F7632@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iMWQnDIKutDePY6qEhPTmC/rK5K652fU1vseh9zeU7Rn67o27IvhDtHo4OYZEUEW2FKF7/TAW43s6sstn8IQgUm1lnt0Wqs+VzxU4Q8bzNrSq5WF7rNqHdMq7vx+RwuGuKOf/HCYhpVVXs3+rmIlhlBobgBRZDexh0eEmitI3P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Xnlo3TkP; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 23 Sep 2024 17:44:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727127854;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rb0xYVxxQiA42gtCtHSH89wzqw5/G1A/qKd+mtPVpas=;
+	b=Xnlo3TkPrKxUmeATil2Z9BfcAexpTECzW8KLMbrgpcRDtAnAm+AQ86OKabHJCS9EdLX5SD
+	MiTKbLjPsygBEFq7bM5k1GNtb1tX+8jL1Cs1+V2qZXCDiOuqRHwQFfp5+B5nRQSgyvStpe
+	jtdO7Zh8HZNIvXEpAnKFQrWRp5fjzWY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, syzbot+6f655a60d3244d0c6718@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] bcachefs: memset bounce buffer portion to 0 after
+ key_sort_fix_overlapping
+Message-ID: <b4ajhopcv477r3ot6rz4lvhjpunuggoysdksn3aqbl5x4ivjjw@6opkd6jmr2ch>
+References: <20240922151618.737458-2-pZ010001011111@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <SJ2P223MB10267BCF19A4A37747A52330F7632@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
+In-Reply-To: <20240922151618.737458-2-pZ010001011111@proton.me>
+X-Migadu-Flow: FLOW_OUT
 
-Le Thu, Sep 19, 2024 at 11:43:26AM -0400, Steven Davis a écrit :
-> The previous implementation of irq_work_sync used a busy-wait
-> loop with cpu_relax() to check the status of IRQ work. This
-> approach, while functional, could lead to inefficiencies in
-> CPU usage.
+On Sun, Sep 22, 2024 at 03:18:01PM GMT, Piotr Zalewski wrote:
+> Zero-initialize part of allocated bounce buffer which wasn't touched by
+> subsequent bch2_key_sort_fix_overlapping to mitigate later uinit-value
+> use KMSAN bug[1].
 > 
-> This commit replaces the busy-wait loop with the rcuwait_wait_event
-> mechanism. This change leverages the RCU wait mechanism to handle
-> waiting for IRQ work completion more efficiently, improving CPU
-> responsiveness and reducing unnecessary CPU usage.
+> After applying the patch reproducer still triggers stack overflow[2] but
+> it seems unrelated to the uninit-value use warning. After further
+> investigation it was found that stack overflow occurs because KMSAN adds
+> too many function calls[3]. Backtrace of where the stack magic number gets
+> smashed was added as a reply to syzkaller thread[3].
 > 
-> Signed-off-by: Steven Davis <goldside000@outlook.com>
-> ---
->  kernel/irq_work.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> It was confirmed that task's stack magic number gets smashed after the code
+> path where KSMAN detects uninit-value use is executed, so it can be assumed
+> that it doesn't contribute in any way to uninit-value use detection.
 > 
-> diff --git a/kernel/irq_work.c b/kernel/irq_work.c
-> index 2f4fb336dda1..2b092a1d07a9 100644
-> --- a/kernel/irq_work.c
-> +++ b/kernel/irq_work.c
-> @@ -295,8 +295,7 @@ void irq_work_sync(struct irq_work *work)
->  		return;
->  	}
->  
-> -	while (irq_work_is_busy(work))
-> -		cpu_relax();
-> +	rcuwait_wait_event(&work->irqwait, !irq_work_is_busy(work), TASK_UNINTERRUPTIBLE);
+> [1] https://syzkaller.appspot.com/bug?extid=6f655a60d3244d0c6718
+> [2] https://lore.kernel.org/lkml/66e57e46.050a0220.115905.0002.GAE@google.com
+> [3] https://lore.kernel.org/all/rVaWgPULej8K7HqMPNIu8kVNyXNjjCiTB-QBtItLFBmk0alH6fV2tk4joVPk97Evnuv4ZRDd8HB5uDCkiFG6u81xKdzDj-KrtIMJSlF6Kt8=@proton.me
+> 
+> Reported-by: syzbot+6f655a60d3244d0c6718@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=6f655a60d3244d0c6718
+> Fixes: ec4edd7b9d20 ("bcachefs: Prep work for variable size btree node buffers")
+> Suggested-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
 
-So you can remove the CONFIG_PREEMPT_RT special case in this function, right?
-
-Thanks.
-
->  }
->  EXPORT_SYMBOL_GPL(irq_work_sync);
->  
-> -- 
-> 2.39.5
-> 
+Thanks! Applied.
 
