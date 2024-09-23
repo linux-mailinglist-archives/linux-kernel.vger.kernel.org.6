@@ -1,144 +1,150 @@
-Return-Path: <linux-kernel+bounces-335847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8C197EB72
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:23:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED29197EB76
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 015B21F22A64
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:23:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 293681C213FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CA6194A59;
-	Mon, 23 Sep 2024 12:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7791198838;
+	Mon, 23 Sep 2024 12:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VwHN02O/"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q/lWSkzt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C073545003;
-	Mon, 23 Sep 2024 12:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A3B195B14;
+	Mon, 23 Sep 2024 12:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727094211; cv=none; b=YpJjApG3zjCeWdOpy6OTkb22JErOgIvsK9fgBpO2D26vYmz8+5Wz/8JTBYxoBy1L2r4Vx7u2F1uqy5pUPymT5se7IMm7BaCfVlG6+vxY3qYOtlIzJ4v0Uz6Q3vmWHHuu3tqI6lopDPp7k/8v6vKz9/Xm6WHUPil8RoaXVG3tudQ=
+	t=1727094308; cv=none; b=tKRaMhoWwqKhU2muh8AwmvdzlljZ6Bp/2UoXld2CHPnont7iOe96AWVsdlc4O5EFeskCxoTQPQT+jHXoU5BXbD6MDgLIMFHIY0btu3Sli8ZEekF/3iNzzYMontOAJgKitcnJ0QFru7P3D1zZ623hqQULkZ/Qn58cWy6fSvvwiVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727094211; c=relaxed/simple;
-	bh=0SVd0zGyyh9qGrjrN2czD3IyjJNAo/bzeR+YGYsuev0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oH4O439o+ZwxAGDKzxgMAP9+rM18WF/1mdJpUX6MIyCggeBENd/mt+Bt2FdgecjHSnKPReWGQ+l2RgyLm3y8yurTyDT1tEm7uhs9n6ezMkjECsdrr35VKB7kWbfjgZu1siuCeKKMZ6/+j3IdueJvoOrrJdR8DpLErA/U1i2nF2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VwHN02O/; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8d3cde1103so297676566b.2;
-        Mon, 23 Sep 2024 05:23:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727094207; x=1727699007; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z3XKdtRE5qtz9cJHXcmgIftYO/sGI6l5+NatJXHoVAc=;
-        b=VwHN02O/Ev+rHk7YZE20sWRpU1OeXUxLlGd3QbbGLHGF0TcPNIRxtWxZRfA5+gL+wW
-         CNc0v10ByrN7N/CVsQhdQ/RvU4s0BjUKyHxXqcoImunQBy0jcSteTM6srEbDw/aKvN3d
-         QTXUMnFf5BjGiZUuSoyN+MFDqmHZH4MSIYPYNnCc4cg5l16mm16+Mc3uXdWxmkuD7iOZ
-         ZszemFRgEP3CC4mWMQJmW51rzGm6q/bBwGHA6+/BGu3XFJy/kqKpArYUZg0MvY0EGRge
-         +vjkLUdKpB89+nje+pXrztqTubbz0+9EYk8uLTDL9lMosb/GmVsQ3fd0YOCHNMzYId7k
-         +l4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727094207; x=1727699007;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z3XKdtRE5qtz9cJHXcmgIftYO/sGI6l5+NatJXHoVAc=;
-        b=T3gruB5wcowhN2zs9x2BrndtLxkF/B3Jzb0xOaQPREdEfhg49z9inKOMF+VxIy6mcm
-         PMDsAt+NDGqvQKBFc73BT+ZV1SGXdrE2dGKNjqJiuI6R8DICEMATlmlCVo/q0C+9bGPC
-         dUeIjiMlAXlEBQneYdJOrZ7HC6T0REi/MNABcR7z20SkXKGHdK3NDJ24iRlX7F6nC3Jj
-         w4ozUIcIvr1q7KQMgVfiwfz+ByxrGElvQ1g8K9LXxKuXpfBSSOXW1dG0w7OrbsFC/X6+
-         UKj364z1LlbGDe/i/WYc4yuIHPcDUWjtbJT+E+2itwAUD7fgi/CMzCOTzMaOkvun3jnE
-         7Bdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPOF6NSAfl4sr3xJ/yMHv9U+vbtW41HhuImNnkzCNUaabEtSGCgjufxLd2n08gSnXkgkSWQhGghxcpnRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC/6KYd4QzIuUmgUWFLuoWcyAggeAi2N6Ub/T7EzgqD7d+Z1TX
-	bGd22CyJjk/QECYBcNK0ArYr6fX1hZuZgaqBUlClq5WG4kDylHiKpGM8lfIn
-X-Google-Smtp-Source: AGHT+IGbn9glsOBF0IKYgFxvCTz3POKB5ljAhE/ff1b62PtxZ+6iYHeIkm10ei4XYF5EpCH3rOSpKw==
-X-Received: by 2002:a17:907:d3cd:b0:a86:820e:2ac6 with SMTP id a640c23a62f3a-a90d5614617mr1180551066b.22.1727094206963;
-        Mon, 23 Sep 2024 05:23:26 -0700 (PDT)
-Received: from fedora.iskraemeco.si ([193.77.86.250])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a90bce77c68sm665296166b.66.2024.09.23.05.23.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 05:23:26 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>
-Subject: [PATCH v3] xfs: Use try_cmpxchg() in xlog_cil_insert_pcp_aggregate()
-Date: Mon, 23 Sep 2024 14:22:17 +0200
-Message-ID: <20240923122311.914319-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1727094308; c=relaxed/simple;
+	bh=h4cH91m5em/5rDUKA0Cs9JpjBe/axcjRaRvO0Nm9gnw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gROjkpkGyHb7eyphkbjpEphmK8yzXQF7q588oK96RtRB593gcFa2U1WwpwCQpnxf2AsKRHAlD/fOnHSV693ZEADE/T7qQdvYE+GPRqq/DUNDSC0xFFcbtG15IY7TWhJpzj3HcBlh8X5jdXxwnYpGp13k+jV37eEDYq7ZKHfPd6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q/lWSkzt; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727094307; x=1758630307;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=h4cH91m5em/5rDUKA0Cs9JpjBe/axcjRaRvO0Nm9gnw=;
+  b=Q/lWSkztH4gMdMGii3ok+sGSZa3ttFms65sTrYfbp/zpdIXihLcpengV
+   2Bs4yTrZV5jACajlHG0haIzdUASPXqa2p1Xb5XNYaRSX9qo0UNi7eZg5p
+   LHADyXH87mDF/K0QbcmIFtQNfqNG50ZlV+1r1QJzWDl7Ghx92Ar4ALRoO
+   iTplSj7JidGyBR0H89MniDee4MowFXXCIl3Ce0+jOOTVhAcinki5TSLV0
+   eNb433/0a6tQlOjPfKGvBGol+aiiooDPCgi2zcUX2UcVbv61vgpoLLFXS
+   rxCTpNljMxjFgvDtojx3iGNJ2BjexIB27d/gXXI76uhnGT8v9wPAHWOm0
+   Q==;
+X-CSE-ConnectionGUID: MfNyBP68SlKwOcXHW0W8aQ==
+X-CSE-MsgGUID: SR65dRoUTSa+hfAdmDAkTw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="36609193"
+X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
+   d="scan'208";a="36609193"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 05:25:02 -0700
+X-CSE-ConnectionGUID: zy+WpUlEQISDyo/3dS7Y2A==
+X-CSE-MsgGUID: fhWCAP9yRgyxfhiTceYCrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
+   d="scan'208";a="75600431"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 05:24:57 -0700
+Message-ID: <63402e46-2b4f-43c3-aa9f-cbdc0b7a30d5@intel.com>
+Date: Mon, 23 Sep 2024 15:24:52 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mmc: sdhci-esdhc-imx: enable quirks SDHCI_QUIRK_NO_LED
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, haibo.chen@nxp.com,
+ ulf.hansson@linaro.org
+Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, imx@lists.linux.dev, linux-mmc@vger.kernel.org,
+ s32@nxp.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+References: <20240923062016.1165868-1-peng.fan@oss.nxp.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240923062016.1165868-1-peng.fan@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Use !try_cmpxchg instead of cmpxchg (*ptr, old, new) != old in
-xlog_cil_insert_pcp_aggregate().  x86 CMPXCHG instruction returns
-success in ZF flag, so this change saves a compare after cmpxchg.
+On 23/09/24 09:20, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Enable SDHCI_QUIRK_NO_LED for i.MX7ULP, i.MX8MM, i.MX8QXP and
+> i.MXRT1050. Even there is LCTL register bit, there is no IOMUX PAD
+> for it. So there is no sense to enable LED for SDHCI for these SoCs.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Also, try_cmpxchg implicitly assigns old *ptr value to "old" when
-cmpxchg fails. There is no need to re-read the value in the loop.
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Note that the value from *ptr should be read using READ_ONCE to
-prevent the compiler from merging, refetching or reordering the read.
-
-No functional change intended.
-
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Reviewed-by: Christoph Hellwig <hch@infradead.org>
-Cc: Chandan Babu R <chandan.babu@oracle.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>
----
-v2: Move cilpcp variable into the loop scope. Initialize cilcpc and
-    old variables at the declaration time. Use alternative form of
-    the while loop.
-v3: Undo reformatting of variable declarations
----
- fs/xfs/xfs_log_cil.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
-index 391a938d690c..80da0cf87d7a 100644
---- a/fs/xfs/xfs_log_cil.c
-+++ b/fs/xfs/xfs_log_cil.c
-@@ -156,7 +156,6 @@ xlog_cil_insert_pcp_aggregate(
- 	struct xfs_cil		*cil,
- 	struct xfs_cil_ctx	*ctx)
- {
--	struct xlog_cil_pcp	*cilpcp;
- 	int			cpu;
- 	int			count = 0;
- 
-@@ -171,13 +170,11 @@ xlog_cil_insert_pcp_aggregate(
- 	 * structures that could have a nonzero space_used.
- 	 */
- 	for_each_cpu(cpu, &ctx->cil_pcpmask) {
--		int	old, prev;
-+		struct xlog_cil_pcp	*cilpcp = per_cpu_ptr(cil->xc_pcp, cpu);
-+		int			old = READ_ONCE(cilpcp->space_used);
- 
--		cilpcp = per_cpu_ptr(cil->xc_pcp, cpu);
--		do {
--			old = cilpcp->space_used;
--			prev = cmpxchg(&cilpcp->space_used, old, 0);
--		} while (old != prev);
-+		while (!try_cmpxchg(&cilpcp->space_used, &old, 0))
-+			;
- 		count += old;
- 	}
- 	atomic_add(count, &ctx->space_used);
--- 
-2.46.1
+> ---
+>  drivers/mmc/host/sdhci-esdhc-imx.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
+> index 8f0bc6dca2b0..ef3a44f2dff1 100644
+> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
+> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+> @@ -238,6 +238,7 @@ struct esdhc_platform_data {
+>  
+>  struct esdhc_soc_data {
+>  	u32 flags;
+> +	u32 quirks;
+>  };
+>  
+>  static const struct esdhc_soc_data esdhc_imx25_data = {
+> @@ -309,10 +310,12 @@ static struct esdhc_soc_data usdhc_imx7ulp_data = {
+>  			| ESDHC_FLAG_HAVE_CAP1 | ESDHC_FLAG_HS200
+>  			| ESDHC_FLAG_PMQOS | ESDHC_FLAG_HS400
+>  			| ESDHC_FLAG_STATE_LOST_IN_LPMODE,
+> +	.quirks = SDHCI_QUIRK_NO_LED,
+>  };
+>  static struct esdhc_soc_data usdhc_imxrt1050_data = {
+>  	.flags = ESDHC_FLAG_USDHC | ESDHC_FLAG_STD_TUNING
+>  			| ESDHC_FLAG_HAVE_CAP1 | ESDHC_FLAG_HS200,
+> +	.quirks = SDHCI_QUIRK_NO_LED,
+>  };
+>  
+>  static struct esdhc_soc_data usdhc_imx8qxp_data = {
+> @@ -321,6 +324,7 @@ static struct esdhc_soc_data usdhc_imx8qxp_data = {
+>  			| ESDHC_FLAG_HS400 | ESDHC_FLAG_HS400_ES
+>  			| ESDHC_FLAG_STATE_LOST_IN_LPMODE
+>  			| ESDHC_FLAG_CLK_RATE_LOST_IN_PM_RUNTIME,
+> +	.quirks = SDHCI_QUIRK_NO_LED,
+>  };
+>  
+>  static struct esdhc_soc_data usdhc_imx8mm_data = {
+> @@ -328,6 +332,7 @@ static struct esdhc_soc_data usdhc_imx8mm_data = {
+>  			| ESDHC_FLAG_HAVE_CAP1 | ESDHC_FLAG_HS200
+>  			| ESDHC_FLAG_HS400 | ESDHC_FLAG_HS400_ES
+>  			| ESDHC_FLAG_STATE_LOST_IN_LPMODE,
+> +	.quirks = SDHCI_QUIRK_NO_LED,
+>  };
+>  
+>  struct pltfm_imx_data {
+> @@ -1687,6 +1692,7 @@ static int sdhci_esdhc_imx_probe(struct platform_device *pdev)
+>  
+>  	imx_data->socdata = device_get_match_data(&pdev->dev);
+>  
+> +	host->quirks |= imx_data->socdata->quirks;
+>  	if (imx_data->socdata->flags & ESDHC_FLAG_PMQOS)
+>  		cpu_latency_qos_add_request(&imx_data->pm_qos_req, 0);
+>  
 
 
