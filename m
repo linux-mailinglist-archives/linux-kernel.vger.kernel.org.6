@@ -1,157 +1,350 @@
-Return-Path: <linux-kernel+bounces-335882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF6E97EBF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:02:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0125897EBFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CC7A2827F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:02:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 238711C20EED
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FE41991BB;
-	Mon, 23 Sep 2024 13:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D152198857;
+	Mon, 23 Sep 2024 13:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H1zGM78N"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="C/QdCn7W"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740F4198A10;
-	Mon, 23 Sep 2024 13:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FC8196455
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 13:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727096544; cv=none; b=p5NlGXp3S0Mud+iJkfnuE1AMQBY0uaSv14Ti1pH4XdyI6NZp1qcSnCyJaQuejPtPgW1sRPXMuLbZ6KaCj/D45R5hid2qgl8pV9ZUjDTy1kh0LIkI1G53/7wDRkBGHfd+pliGiLUdrIcQv3qJz4VacBI1Rdk5S0DZxMaZiAAespE=
+	t=1727096612; cv=none; b=V0IfiVPbKFHsjBFDxI/gKdaioS0yKShM3Vx0mfPsvNlQmEwUUMsCG3mY7GuiIuuSsSpku6LljsyLaBnkdjthuthafg+D5JiCoGX32/3E4dlaoX8oBHU7Mc+uzn1nvwWf0w1ZT7NM23nFO97cUaAJ/kHPYn/2ty5uKPq5VTz7rFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727096544; c=relaxed/simple;
-	bh=g66APNyY+apsUeoTdGyh09zrCNpmxNDntcexfqQ7y88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RK0aNyqLbr14Tf2c90mmXzn3dTl0+u/meuqwhkyTQ+QSYKs3pqKZrJBaAZOoji4Wv3A1vRdvH8P4/cBWnEtBgf/b8CAGuaDZsoAOAofm4sCbCQUOOWWom809n4bFWEuFd/rn5TlVjMZNxwX+1VOSikH0AEBLCsaxeSJa0H3c650=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H1zGM78N; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727096542; x=1758632542;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=g66APNyY+apsUeoTdGyh09zrCNpmxNDntcexfqQ7y88=;
-  b=H1zGM78NIm4afY/SSYkKoeSWvR8SVIjP9NcDmG8m2pSA/zGI+CEqvXm4
-   15jXRYQy8bkIwYPwDGhpS8F9exescqzYSs4zwGDGJXRg06th34f7ctKSt
-   WxESOSkha5JCkJIN6YXSEiDukL24NQLpk+gaWZ0lvfYNLdiKx2hc4o7sE
-   lJeQeZ2qM5V4Je1fqPzy6Bmkmx0q220PJZam69Uovrx4JDrg50TteKnlv
-   J1xdS2KaGotOQMKXHxPCRsW4s3gOdv9/JMTo00PCQac+MCsPLq/YuJrAJ
-   atnq/yDIjhq35E5dj9BoeWQg2tAdGgp3P883Nja9N9TRu5WqnBvSGwMiQ
-   A==;
-X-CSE-ConnectionGUID: fCXQrHVaRhO/MTb/S2DDuQ==
-X-CSE-MsgGUID: pEf0syRQRwaP4Ni2aPi1Fw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="29827100"
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="29827100"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 06:02:22 -0700
-X-CSE-ConnectionGUID: 45rcmCbpRAmjR69Hr55KTw==
-X-CSE-MsgGUID: uASOnsfySV+hHK6rrUSe0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,251,1719903600"; 
-   d="scan'208";a="75832396"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 06:02:20 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1ssihl-0000000BzyR-39VX;
-	Mon, 23 Sep 2024 16:02:17 +0300
-Date: Mon, 23 Sep 2024 16:02:17 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Viresh Kumar <vireshk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	stable@vger.kernel.org, Ferry Toth <fntoth@gmail.com>
-Subject: Re: [PATCH v3 1/1] dmaengine: dw: Select only supported masters for
- ACPI devices
-Message-ID: <ZvFm2TOGGPa7W4rF@smile.fi.intel.com>
-References: <20240920155820.3340081-1-andriy.shevchenko@linux.intel.com>
- <ajcqxw6in7364m6bp2wncym65mlqf57fxr6pc4aor3xbokx2cu@2wve6fdtu3vz>
- <ZvElEesYTX-89u_g@smile.fi.intel.com>
- <7cy2ho5lysh4tqk3vqz6rv67dadsi33bszx234vpu7bvslnddp@ed6zxezx7nwf>
- <ZvFecC6u0rFczFR9@smile.fi.intel.com>
- <onfkegjjn7psbhc44fhjmp5ttbuthiscpccywaxxwabalpmudo@xhfdlxi762o6>
+	s=arc-20240116; t=1727096612; c=relaxed/simple;
+	bh=Ove3L3BSfoCTMLs6EgReDh0zoAt3oF6Ly4/dt67jBSA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WsZQYyszrmdMaMW0JbsXKw+Gz6dqxikPGrISIQPY6rvOPRI7OY6TKeou0NMVt9ztmGYNPa3vvp6vsw+MTpUKewzNwWpa9wT+ypWBkx6wcPZ4HbaxI3x7c4VArnZl1n8jeTOb+gUOmNTjAuzEKal+rbsfMz4Shw1ii/kQ1n5t2Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=C/QdCn7W; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53653682246so4473975e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 06:03:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1727096607; x=1727701407; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CVcx1KWj97AoUyMrh8lgNL2QRY1e59cxTG7tBGdTdos=;
+        b=C/QdCn7Wh7KvFwFmedT9u4GcwPV9n2GGHYScfIjb214237aLabZfNmsnYINAbtNC2s
+         l4KwSqOlM2HnBlEMtEb2dSEdXxbeAkH0Wbc3DSjmUenVxyWWUVwzGXbcKFTK9Myzxf30
+         ZkcpndK90gaKwHh4wQ3Hv+/wDVSIeu7GNlBr7YhkX43sPDbr/vEMqmqBTHN7oqFEPb5u
+         +Nwi6ttvmrdEtSeec2r75/vbytXVSlcQkLrUumxheHdhSSF5Aqo/cftWN2pCwAp4QN0U
+         ZQr7j9c0dXPPRrvHZ3P0yQ0yOzbNREvd9pukOLgxIkiulHWEcLJ/I2iO/AdzrG2Tb14c
+         kVFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727096607; x=1727701407;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CVcx1KWj97AoUyMrh8lgNL2QRY1e59cxTG7tBGdTdos=;
+        b=usm0HlTCsVcNFYTnzHuF1s+rHvCJtZviUogoEeRUd58DZHdtzFOhYwMhAxInmHQ+LA
+         7YguXZtnr9f7SDSYZhut/OSINJRshRXUazs54hTfmMhs0y4G6ufBBFK7RE1vRkwGfLGq
+         L8eYVQLaBv3P4x7U+18fcQISv4GinQg6LgUcmnxpbcL3HTOGBDgLDK+uhZWeDP80dE9c
+         hHCmh6YSyehY6eLtvFvQgKLn38xqplTqxr9jdt/W1eb6yxGddvZaqIIerGpyfPOmQh+C
+         ZVuNQGeLvPrxze/7OK1kRy6MJVuaefoLzuBAKhbWnrP+7meGfc6BcjiAQK1v2EdT0HSQ
+         H/Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTtNEX9ev2LuWJ14e/kQwTSoYMHoY6cY4MAJg3i00aY5N81k2BnfbZWtjO8PyB+/Cam3C0VyIOc4u5rPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV/upYqNFuWAWFzWCJ3FtXVXspWQocosph98F2Eivvd48bn7tW
+	W6F4dd+7mycv52x9don3Xmg75XopLW0reQhRXIbrhrr9/FxZ1w8WGg0toZZ0RaQ=
+X-Google-Smtp-Source: AGHT+IHFl1ARzxSegLxQgrCowJEOWjJLRn1KdPZcEGzeQRjWkg0xnr9cgnFcUjTOHOny/7W+xCSIpw==
+X-Received: by 2002:a05:6512:6d1:b0:52e:74d5:89ae with SMTP id 2adb3069b0e04-536ac32e458mr5810813e87.39.1727096607129;
+        Mon, 23 Sep 2024 06:03:27 -0700 (PDT)
+Received: from [192.168.1.18] (176.111.185.181.kyiv.nat.volia.net. [176.111.185.181])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870a4777sm3257216e87.210.2024.09.23.06.03.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Sep 2024 06:03:26 -0700 (PDT)
+Message-ID: <f6d3b34c-49d5-4d20-9e76-6c5158e56acd@blackwall.org>
+Date: Mon, 23 Sep 2024 16:03:25 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <onfkegjjn7psbhc44fhjmp5ttbuthiscpccywaxxwabalpmudo@xhfdlxi762o6>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH net-next] net: bridge: drop packets with a local
+ source
+To: Thomas Martitz <tmartitz-oss@avm.de>, Roopa Prabhu <roopa@nvidia.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Johannes Nixdorf <jnixdorf-oss@avm.de>, bridge@lists.linux.dev,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240919085803.105430-1-tmartitz-oss@avm.de>
+ <934bf1f6-3f1c-4de4-be91-ba1913d1cb0e@blackwall.org>
+ <7aa4c66e-d0dc-452f-aebd-eb02a1b15a44@avm.de>
+ <34a42cfa-9f72-4a66-be63-e6179e04f86e@blackwall.org>
+ <74baea7a-318c-482b-9e27-4a9b057b58f3@avm.de>
+ <298aa961-5827-4fa9-bfdc-66267d08198c@blackwall.org>
+ <6372b85a-216c-472b-82de-2b4d2ca22008@avm.de>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <6372b85a-216c-472b-82de-2b4d2ca22008@avm.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 23, 2024 at 03:46:04PM +0300, Serge Semin wrote:
-> On Mon, Sep 23, 2024 at 03:26:24PM +0300, Andy Shevchenko wrote:
-> > On Mon, Sep 23, 2024 at 02:57:27PM +0300, Serge Semin wrote:
-> > > On Mon, Sep 23, 2024 at 11:21:37AM +0300, Andy Shevchenko wrote:
-> > > > On Mon, Sep 23, 2024 at 01:01:08AM +0300, Serge Semin wrote:
-> > > > > On Fri, Sep 20, 2024 at 06:56:17PM +0300, Andy Shevchenko wrote:
-
-...
-
-
-> > Yes, I still prefer mine.
-> > 
-> > > But, again IMO, it seems to be
-> > > better to add the default_{m,p}_master/d{p,m}_master/etc fields to the
-> > > dw_dma_platform_data structure since the platform-specific controller
-> > > settings have been consolidated in there. The dw_dma_chip_pdata
-> > > structure looks as more like generic driver data storage.
-> > 
-> > I don't think that is correct place for it. The platform data is specific
-> > to the DMA controller as a whole and having there the master configuration
-> > will mean to have the arrays of them. This OTOH will break the OF setup
-> > where this comes from the slave descriptions and may not be provided with
-> > DMA controller, making it imbalanced. Yes, I may agree with you that chip data
-> > is not a good place either, but at least it isolates the case to PCI + ACPI /
-> > pure ACPI devices (and in particular we won't need to alter Intel Quark case).
+On 9/23/24 10:26, Thomas Martitz wrote:
+> Am 22.09.24 um 20:22 schrieb Nikolay Aleksandrov:
+>> On 9/20/24 16:28, Thomas Martitz wrote:
+>>> Am 20.09.24 um 08:42 schrieb Nikolay Aleksandrov:
+>>>> On 19/09/2024 14:13, Thomas Martitz wrote:
+>>>>> Am 19.09.24 um 12:33 schrieb Nikolay Aleksandrov:
+>>>>>> On 19/09/2024 11:58, Thomas Martitz wrote:
+>>>>>>> Currently, there is only a warning if a packet enters the bridge
+>>>>>>> that has the bridge's or one port's MAC address as source.
+>>>>>>>
+>>>>>>> Clearly this indicates a network loop (or even spoofing) so we
+>>>>>>> generally do not want to process the packet. Therefore, move the check
+>>>>>>> already done for 802.1x scenarios up and do it unconditionally.
+>>>>>>>
+>>>>>>> For example, a common scenario we see in the field:
+>>>>>>> In a accidental network loop scenario, if an IGMP join
+>>>>>>> loops back to us, it would cause mdb entries to stay indefinitely
+>>>>>>> even if there's no actual join from the outside. Therefore
+>>>>>>> this change can effectively prevent multicast storms, at least
+>>>>>>> for simple loops.
+>>>>>>>
+>>>>>>> Signed-off-by: Thomas Martitz <tmartitz-oss@avm.de>
+>>>>>>> ---
+>>>>>>>    net/bridge/br_fdb.c   |  4 +---
+>>>>>>>    net/bridge/br_input.c | 17 ++++++++++-------
+>>>>>>>    2 files changed, 11 insertions(+), 10 deletions(-)
+>>>>>>>
+>>>>>>
+>>>>>> Absolutely not, I'm sorry but we're not all going to take a performance hit
+>>>>>> of an additional lookup because you want to filter src address. You can filter
+>>>>>> it in many ways that won't affect others and don't require kernel changes
+>>>>>> (ebpf, netfilter etc). To a lesser extent there is also the issue where we might
+>>>>>> break some (admittedly weird) setup.
+>>>>>>
+>>>>>
+>>>>> Hello Nikolay,
+>>>>>
+>>>>> thanks for taking a look at the patch. I expected concerns, therefore the RFC state.
+>>>>>
+>>>>> So I understand that performance is your main concern. Some users might
+>>>>> be willing to pay for that cost, however, in exchange for increased
+>>>>> system robustness. May I suggest per-bridge or even per-port flags to
+>>>>> opt-in to this behavior? We'd set this from our userspace. This would
+>>>>> also address the concern to not break weird, existing setups.
+>>>>>
+>>>>
+>>>> That is the usual way these things are added, as opt-in. A flag sounds good
+>>>> to me, if you're going to make it per-bridge take a look at the bridge bool
+>>>> opts, they were added for such cases.
+>>>>
+>>>
+>>> Alright. I'll approach this. It may take a little while because the LPC
+>>> talks are so amazing that I don't want to miss anything.
+>>>
+>>> I'm currently considering a per-bridge flag because that's fits our use
+>>> case. A per-port flag would also work, though, and may fit the code
+>>> there better because it's already checking for other port flags
+>>> (BR_PORT_LOCKED, BR_LEARNING). Do you have a preference?
+>>>
+>>
+>> Hi,
+>> Sorry for the delayed response, but I was traveling over the weekend
+>> and I got some more time to think about this. There is a more subtle
+>> problem with this change - you're introducing packet filtering based on
+>> fdb flags in the bridge, but it's not the bridge's job to filter
+>> packets. We have filtering subsystems - netfilter, tc or ebpf, if they
+>> lack some functionality you need to achieve this, then extend them.
+>> Just because it's easy to hard-code this packet filter in the bridge
+>> doesn't make it right, use the right subsystem if you want to filter.
+>> For example you can extend nft's bridge matching capabilities.
+>> More below.
 > 
-> > Ideally, we should parse the additional properties from ACPI for this kind
-> > of DMA controllers to get this from the _slave_ resources. Currently this is
-> > not done, but anyone may propose a such
+> Hi,
 > 
-> I guess it would also mean to fix all the firmware as well, wouldn't it?
-
-Nope, legacy will use current defaults. Only new will be more flexible.
-
-> Do the Intel/AMD/etc ACPI firmware currently provide such a data?
-
-I can't tell for AMD for sure, neither for Intel as a whole (not
-a product related engineer). I can tell only for my experience and
-I haven't known any of Intel devices with such IP that has it different.
-
-> In anyway it would be inapplicable for the legacy hardware anyway.
-
-Exactly!
-
-> > (would you like to volunteer?).
+> Alright, I understand that you basically object to the whole idea of
+> filtering in the bridge code directly (based on fdb flags). While that
+> makes some sense, I found that basically the same filter that I already
+> exists for mac802.11 use cases:
 > 
-> not really.) Maybe in some long-distance future when I get to meet a
-> device on the ACPI-based platform with the DW DMAC + some peripheral
-> experiencing the denoted problem, I'll think about implementing what
-> we've discussed here.
-
-Something is telling me that this will never be needed IRL.
-
-...
-
-> > TL;DR: If you are okay with your authorship in v3, I prefer it over other
-> > versions with the explanations given in this email thread.
+>                 } else if (READ_ONCE(fdb_src->dst) != p ||
+>                            test_bit(BR_FDB_LOCAL, &fdb_src->flags)) { <-- drop if local source on ingress
+>                         /* FDB mismatch. Drop the packet without roaming. */
+>                         goto drop;
 > 
-> Ok. Let's leave it as of your preference.
+> In fact, this very code motivated me because I'm just adding one more
+> condition to an existing drop mechanism after all. In this area there
+> are also further drops based on fdb flags. 
+> 
 
-Thanks!
+I was expecting you'd bring this code up :) but you've also taken it out
+of context. It is a part of a larger feature which also creates locked
+fdbs, and enforces certain policies which give user-space a chance to
+authenticate user macs, i.e. MAC Authentication Bypass. Creating and
+managing such fdbs can only be done from the bridge but also with the
+help of user-space.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> Anyway, dropping isn't actually my main intent, although it's a welcome
+> side effect because it immediately stops loops. What I'm after most is
+> avoiding local proccessing, both in the IGMP/MLD snooping code and up in
+> the stack. In my opinion, it would be good if the bridge code can be more
+> resilient against loops (and spoofers) by not processing its own packets
+> as if it came from somebody else. My main issue is: the IGMP/MLD snooping
+> code becomes convinced that there are subscribers on the network even if
+> here aren't, just by processing IGMP/MLD joins that were send out a moment
+> ago. That said, we could still decide to forward these packets and not
+> filter them completely.
+> 
+> And I still think that should also be the default, especially if we block
+> only local processing but not forwarding. You don't feel this robustness
+> is not necessary (or consider the performance impact too high) then I
+> accept that and withdraw my proposal. I just thought it would be a useful
+> addition to the bridge's out-of-the-box stability.
+> 
 
+You can decide to filter, I don't mind, but do it within the filtering
+subsystems and not in the bridge. This is better for everyone -
+interested parties would take the performance hit, but also you get more
+flexibility and matching opportunities, tomorrow you might decide to
+have more complex criteria.
 
+> All that said, I'll explore a netfilter solution (see below) to avoid
+> maintaing out-of-tree patches.
+> 
+> 
+>>
+>>
+>>> Although that would risk breaking existing weird set-ups. So unless you
+>>> signal preference for this I will not persue that any further.
+>>>
+>>>
+>>>>> This would be analogous to the check added for MAB in 2022
+>>>>> (commit a35ec8e38cdd "bridge: Add MAC Authentication Bypass (MAB) support").
+>>>>>
+>>>>> While there are maybe other methods, only in the bridge code I may
+>>>>> access the resulting FDB to test for the BR_FDB_LOCAL flag. There's
+>>>>> typically not only a single MAC adress to check for, but such a local
+>>>>> FDB is maintained for the enslaved port's MACs as well. Replicating
+>>>>> the check outside of the bridge receive code would be orders more
+>>>>> complex. For example, you need to update the filter each time a port is
+>>>>> added or removed from the bridge.
+>>>>>
+>>>>
+>>>> That is not entirely true, you can make a solution that dynamically compares
+>>>> the mac addresses of net devices with src mac of incoming frames, you may need
+>>>> to keep a list of the ports themselves or use ebpf though. It isn't complicated
+>>>> at all, you just need to keep that list updated when adding/removing ports
+>>>> you can even do it with a simple ip monitor and a bash script as a poc, there's nothing
+>>>> complicated about it and we won't have to maintain another bridge option forever.
+>>>
+>>> I'm really trying to be open-minded about other possible ways, but I'm struggling.
+>>>
+>>> For one, you know we're making a firmware for our home routers. We control all the
+>>> code, from boot-loader to kernel to user space, so it's often both easier and more 
+>>> reliable to make small modifications to the kernel than to come up with complex
+>>> user space. In other words, we don't have any eBPF tooling in place currently and
+>>> that would be a major disruption to our workflow. We don't even use LLVM, just GCC
+>>> everywhere. I'd have to justify introducing all the eBPF tooling and processes (in
+>>> order to avoid having a small patch to kernel) to my colleagues and my manager. I
+>>> don't think that'd work out well. I'm pretty sure other companies in our field are
+>>> in the same situation.
+>>
+>> That really is your problem, it doesn't change the fact it can be solved
+>> using eBPF or netfilter. I'm sorry but this is not an argument for this
+>> mailing list or for accepting a patch. It really is a pretty simple
+>> solution - take ipmonitor (from iproute2/ip), strip all and just look
+>> for NEWLINK then act on master changes: on new master add port/mac to
+>> table and vice-versa. What's so complex? You can also do it with
+>> netfilter and nftables, just update a matching nft table on master
+>> changes. Moreover these events are not usually many. In fact since you
+>> control user-space entirely I'd add it to the enslave/release pieces in
+>> whatever network management tools you're using, so when an interface is
+>> enslaved its mac is added to that filter and removed when it's released,
+>> then you won't need to have a constantly running process to monitor,
+>> even simpler.
+>>
+>> Actually it took me about 15 minutes to get a working solution to this
+>> problem just by reusing the ipmonitor and iproute2 netlink code with a
+>> nft table hooked on port's ingress. It is that simple, but I'd prefer to
+>> do it in the network manager on port add/del and avoid monitoring
+>> altogether.
+> 
+> 
+> Impressive!
+> 
+> 
+>>
+>>>
+>>> Furthermore, from what I understand, an eBPF filter would not perform as good
+>>> (performance also matters for us!) because there is no hook at this point. I'd need
+>>> to hook earlier, perhaps using XDP (?), and that might have to process many more
+>>> packets than those that enter the bridge. On the user space side, I'd need to have
+>>> a daemon that update bpf maps or something like that to keep the list updated. I'm
+>>> new to eBPF, so sorry if it seems more complex to me than it is.
+>>
+>> It will process the same amount of packets that the bridge would.
+> 
+> 
+> If we add vlan devices the tagged packets that don't enter the bridge would still be
+> processed by eBPF.
+> 
+
+This processing could come down to a simple conditional statement
+depending on how much vlan filtering you need. You wouldn't notice
+its impact if implemented properly.
+
+> On top, we have also a custom hook that may consume packets for other reasons before
+> they enter the bridge. But that's not your problem.
+> 
+> 
+>>
+>>>
+>>> For netfilter, I looked into that also, but the NF_BR_LOCAL_IN hook is too late. One
+>>> of the biggest problems we try to solve is that looping IGMP packets enter the bridge
+>>> and acually refresh MDBs that should normally timeout (we send JOINs for the addresses
+>>> out but the MDB should only refresh when JOINs from other systems are received). Then,
+>>> even if the filter location would fit, I'd effectively just re-implement the bridge's
+>>> FDB lookup which rings bells that it's not an effective approach.
+>>>
+>>> So both alternatives you projected are not a good fit to the actual problem and may
+>>> require vastly more complex user space.
+>>
+>> Is that all the research? You read 2 minutes of webpages and diagonally
+>> scanned some source code, did you see the other bridge netfilter
+>> hooks? You can extend netfilter and match in any of them if you insist
+>> on having a kernel solution. For example match in NF_BR_PRE_ROUTING.
+>> You can extend nft's bridge support and match anything you need.
+> 
+> 
+> Thank you very much for this! I literally looked for NF_HOOK in br_input.c
+> to find suitable entry points and the NF_BR_PRE_ROUTING hook didn't occur
+> to me (it's handled differently). I really should have looked more carefully
+> over the entire file.
+> 
+> Also, I should have known it anyway, I'm working with the bridge code for
+> quite a long time already and considered myself experienced in this area
+> (have to reconsider this now...).
+> 
+> So sorry for my incomplete research, NF_BR_PRE_ROUTING seems like a nice
+> fit actually. I'll explore this further, and assuming this works, we can
+> drop my proposal altogether. From a first look it should work, altough we
+> wouldn't be able to just block out local processing (can just have drop or
+> not) if need arises and we have to re-implement MAC lookup.
+> 
+> I have to apologize for wasting your time but at least I have lerned a lesson.
+> 
+> Best regards.
+
+No need to apologize, it's good to have these discussions and to make
+things clearer.
+
+Cheers,
+ Nik
 
