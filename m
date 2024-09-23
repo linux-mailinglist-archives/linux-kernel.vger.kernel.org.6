@@ -1,188 +1,259 @@
-Return-Path: <linux-kernel+bounces-336181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B5497F047
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:16:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1063D97F04C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 20:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A204E282E35
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:16:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D531C213E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC661A01AB;
-	Mon, 23 Sep 2024 18:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C61B1A01C3;
+	Mon, 23 Sep 2024 18:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTJwnhu1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IfrfJElC"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFEA101DE;
-	Mon, 23 Sep 2024 18:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63A418054;
+	Mon, 23 Sep 2024 18:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727115399; cv=none; b=SFMOqGLmu95EmLxeQFmxYHgXzOr1KD5D0HuaeldxU0xC8voD/s+pWh2sP5KYRRY0DGC8YzmX1VRtaMK9E1FSORDITSrFbJoUWM2m/coIjcSfsNzfPAokd15xPI17bm3v+ONMG9PFRZUignNRLvBl/4gVKOA57sDQZvFfHfJlulA=
+	t=1727115481; cv=none; b=gsDp8JkTORgtaCOYWJ1gHUOYPiSPoySw/Nru01nS/FP0UHWYRjKv1nY3O8cGlN3JPIFfN610+T3MnqJ6R21PXLlhpg8w6IqVGwIlrQd8uZIZVHrX4mz048IeN6ygbjmUVoAxx47h3ECYiyIW+POTbDKNnGXVG0aifXOqwgRW5e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727115399; c=relaxed/simple;
-	bh=UpKtJGv072LI/6W86eXNjipHjl/buFg4OTYSd1Vr/g8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d4en4kWApi7IvG7PMkicDYHYHD8hb52rACq4l2XpOT5y4H2AjyATr3IFxVvItR1eNIuWngQMMRv93lb6pHA36uovpB5iw9aksJHu+bBLpX8eFW1+eAVYy6v7Nuu67S21p7/haxvAzrY5oQX25TjjJMD5pKx0XQmQfCR3frPvcAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTJwnhu1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F9ECC4CEC4;
-	Mon, 23 Sep 2024 18:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727115398;
-	bh=UpKtJGv072LI/6W86eXNjipHjl/buFg4OTYSd1Vr/g8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hTJwnhu1yx7tc0bAlCF9reyJ8Ye4MK/apmDuDflxL2RmLmMXvOYnMiEsIgiLuVdpp
-	 Geh3y5vw9vIjMZQ8BxsTchQ4LdbAqag8Z0jHPIRVWcwPLVTnmEIRsNvyWM6Xy2kFCl
-	 Mgt/L3acL6hQOma7EW73q8AcMPvfZZo91mSFDd9Gf3Knr3ybPJpa/usx45Z/cNN6sG
-	 Us/5jGuEJupc8hRKDlpLg7366Js72CYQkycpZDrexICfN/woMtkocDdDucSBcpwLS5
-	 4uChMguGLSKo04Z98RQID/FRjW+DDsQjQLhge4lFtz0H8Jxgj438u2tvqyRjovLpF9
-	 cVMGefu2DlaUg==
-Received: by pali.im (Postfix)
-	id 144B7775; Mon, 23 Sep 2024 20:16:32 +0200 (CEST)
-Date: Mon, 23 Sep 2024 20:16:31 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Jerry Lv <Jerry.Lv@axis.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Kernel <Kernel@axis.com>
-Subject: Re: [PATCH] power: supply: bq27xxx_battery: Do not return ENODEV
- when busy
-Message-ID: <20240923181631.3plimohmg4vnjwtb@pali>
-References: <20240913-foo-fix2-v1-1-a0f499404f3a@axis.com>
- <20240913212715.gmchsmmaqrhksmhx@pali>
- <VI1PR02MB1007663D83495B0594DE794C7F4662@VI1PR02MB10076.eurprd02.prod.outlook.com>
- <20240914082447.mrxtfgazkpaeqetu@pali>
- <VI1PR02MB1007675ED9E1F1DBC6A915680F46F2@VI1PR02MB10076.eurprd02.prod.outlook.com>
+	s=arc-20240116; t=1727115481; c=relaxed/simple;
+	bh=OTcgGagByDmAq1xgkKc9MGaM+p/XaNHJCknjP+vYYdw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=suO5g01eh4XP2EQ/INPtOIENTWGIBSY2DCRZf3+S+grh0BmO9vk16R6No6qk1UKe5NV6Wlmy4K0wM0CcocDojp1jP0ERln55OqlpV8p7m5ShzxMhZxPGuEYLNDCSO9QsMo9JRcZaOi5oNAG75dT9WyXopl+/bytlWLA0mCjS0tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IfrfJElC; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e1a74ee4c75so4007532276.3;
+        Mon, 23 Sep 2024 11:17:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727115478; x=1727720278; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RPHbLsUciMoisbHksOYRgNERxa176twS9ytYk58G1Wk=;
+        b=IfrfJElCojcryZo/F51Me82VrcvXkDtCAi/IP9A6rx8wP6VbRElbwgyI7XnuXq/zqJ
+         PqDGAxpzYaEntJDMfvq3iZdETO4cwEP6m3NWK7o4xenOz6HkDILpPdzZJaPUoC2GWh0L
+         RMKjfnaAGkHzcrUmGPCxkXEX/GDTX7GrFj1QykjA3qTa5VU7Hi58tYxjLJI5acbvE/3a
+         jJBteva6SHg87DZ6M2OyeAAbU0u6/djbqQNqt06rdRSWfoDzzn0JMaUIIQm/+DPN2nQ+
+         BcjAAm5oFMVIVqfi6afHXOHIPymqB+kxl38SuAjSl6YsK07qiHOtl1W97kLhbEaqKNBP
+         Bt2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727115478; x=1727720278;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RPHbLsUciMoisbHksOYRgNERxa176twS9ytYk58G1Wk=;
+        b=YxXJtvzbGaJE97pjqAH4oU1+QRgQWR8vMxmAsKqjX+NMyykio2eryaBwU1m6yHkbKy
+         Va+7w4o019vaG3d2qY54GHiFy5jlRtOyhrSStBR29LWfd+WU4LXN400H0LsbMm2SMJGE
+         k1ODfygmybFjPoFdyrfVnvhmqrSvuhZZ67n/pg57edMVCkt7S1hHEtVU9sKimquEwMI9
+         7JBAYcjknTTqVk0ZqDAtOYCFgvEEqgRIbiNpL3sLlLU8EATy/dP2immltUoRQw6CAlAy
+         ZDea997zd3ivMW2UlZpeD2j4m7ASQCjQj9MbxNdSc5E95Jtz+C9EDwAGhAsKa52Z7Bk/
+         B1NA==
+X-Forwarded-Encrypted: i=1; AJvYcCVs6TdGwC+WJM63SWTvhNB9zaUwcJQHLSogmgYh4V2x+Z7JdySXRnRsPlqK/gLVCDROfNotUhUE8P8jbXU=@vger.kernel.org, AJvYcCWzWMLYDQvz71ioaDZsTIF1/FxMA2n3Qm9WxYVQHUELDddBw9jCE94bYTel8iFxZBHK8/tbPtOnLC0kviRgdWN9BA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVOnEiGg2y7YWVa5H4t0Gn54B8me8arGG7BaThxgwTW3V9cEtD
+	13l595CAqJSIGiuETP32YDwtUka/dkBQjwfIbNjRzdDJhiW73jNqPWn/oY4q9J7GgH0ZkrqQdHW
+	2bMY8sePf633qYFy+txw7U44TQbw=
+X-Google-Smtp-Source: AGHT+IGGBMpMk5WqgdtJ2P5UcHz1zogtkgDfh7kuG9kbQZ/sMKxhVDgz0PYoDDwbzVf5Ieg7v/+oMB3gwNabGBP8tNI=
+X-Received: by 2002:a05:6902:c0a:b0:e16:5177:7598 with SMTP id
+ 3f1490d57ef6-e2250c3bd55mr9524762276.16.1727115477886; Mon, 23 Sep 2024
+ 11:17:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <VI1PR02MB1007675ED9E1F1DBC6A915680F46F2@VI1PR02MB10076.eurprd02.prod.outlook.com>
-User-Agent: NeoMutt/20180716
+References: <ZuH8qhuZB6mr9JvR@x1> <CAH0uvog5akiwUp+28w5u7+-j_fYvQLWahJ6YvEzWjdCz3Ky9Wg@mail.gmail.com>
+ <CAH0uvoj_2An0QQgCSenZiK8XubS=amyrxhAWK7ragAFfi+Hnqg@mail.gmail.com> <8ad3ada6-f719-43ca-bf16-0095be555302@oracle.com>
+In-Reply-To: <8ad3ada6-f719-43ca-bf16-0095be555302@oracle.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Mon, 23 Sep 2024 11:17:47 -0700
+Message-ID: <CAH0uvohqECsYgCkJKop6ubv3iOpRGEUyj7=LXLfJobisdMKfcw@mail.gmail.com>
+Subject: Re: perf trace: substruct BTF based pretty printing
+To: Alan Maguire <alan.maguire@oracle.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Namhyung Kim <namhyung@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for detailed information about i2c NAK. In this case try to
-consider if it would not be better to add retry logic in the
-bq27xxx_battery_i2c_read() function.
+Hello Alan,
 
-If it is common that bq chipset itself returns i2c NAKs during normal
-operations then this affects any i2c read operation done by
-bq27xxx_battery_i2c_read() function.
+On Mon, Sep 23, 2024 at 10:48=E2=80=AFAM Alan Maguire <alan.maguire@oracle.=
+com> wrote:
+>
+> On 23/09/2024 18:42, Howard Chu wrote:
+> > Hello,
+> >
+> > On Wed, Sep 11, 2024 at 6:29=E2=80=AFPM Howard Chu <howardchu95@gmail.c=
+om> wrote:
+> >>
+> >> Hello Arnaldo,
+> >>
+> >> On Wed, Sep 11, 2024 at 1:25=E2=80=AFPM Arnaldo Carvalho de Melo
+> >> <acme@kernel.org> wrote:
+> >>>
+> >>> Hi Howard,
+> >>>
+> >>>         Not really a requirement on you to do work, just a some notes=
+ to
+> >>> add to our discussion/experiment on using BTF to pretty print syscall
+> >>> (and tracepoints/whatever) arguments:
+> >>>
+> >>> root@number:~# perf trace -e setitimer -p 5444 |& head -5
+> >>>      0.000 ( 0.017 ms): Xwayland/5444 setitimer(value: (struct __kern=
+el_old_itimerval){})                   =3D 0
+> >>>      0.050 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kern=
+el_old_itimerval){})                   =3D 0
+> >>>      0.142 ( 0.005 ms): Xwayland/5444 setitimer(value: (struct __kern=
+el_old_itimerval){})                   =3D 0
+> >>>      0.174 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kern=
+el_old_itimerval){})                   =3D 0
+> >>>      0.293 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kern=
+el_old_itimerval){})                   =3D 0
+> >
+> > First of all I bypass the from_user check to make perf trace use BTF
+> > output instead of just printing an address:
+> >
+> >         for (i =3D 0, field =3D sc->args; field; ++i, field =3D field->=
+next) {
+> >                 // XXX We're only collecting pointer payloads _from_ us=
+er space
+> >                 /*if (!sc->arg_fmt[i].from_user)*/
+> >                         /*continue;*/
+> >
+> > Got the bad output:
+> >
+> >    500.218 ( 0.015 ms): a.out/112335 setitimer(value: (struct
+> > __kernel_old_itimerval){})                   =3D 0
+> >
+> > But after switching on emit_zeroes from btf_dump_type_data_opts:
+> >
+> > dump_data_opts.compact   =3D true;
+> > dump_data_opts.skip_names =3D !arg->trace->show_arg_names;
+> > dump_data_opts.emit_zeroes =3D true; // this
+> >
+> > My output is good:
+> >
+> >  96058.828 ( 0.010 ms): a.out/104347 setitimer(value: (struct
+> > __kernel_old_itimerval){.it_interval =3D (struct
+> > __kernel_old_timeval){.tv_sec =3D (__kernel_long_t)0,.tv_usec =3D
+> > (__kernel_long_t)500000,},.it_value =3D (struct
+> > __kernel_old_timeval){.tv_sec =3D (__kernel_long_t)0,.tv_usec =3D
+> > (__kernel_long_t)500000,},}) =3D 0
+> >
+> > So I think this is btf_dump's problem... Because most of the time we
+> > want to omit the zeroes, but that will have the side effect of not
+> > being able to print the whole output. I'll figure something out.
+> >
+>
+> One thing we could think about is if there's a way for BTF data dump to
+> better represent the fact that a structure is all 0s; currently we will
+> show "{}" since we skip emitting zeroed data, but maybe - at the
+> toplevel only - "{ 0 }" would be more expressive? Thanks!
 
-So this issue is not related just to reading "flags", but to anything.
-That is why I think that retry should be handled at lower layer.
+I think if the struct is filled with 0, showing "{ 0 }" is a really good id=
+ea.
 
-On Monday 23 September 2024 08:14:13 Jerry Lv wrote:
-> Hi Pali,
-> 
-> Thanks for your excellent suggestion, I will change the code accordingly.
-> 
-> About the question: 
-> Anyway, which bus is BQ27Z561-R2 using (i2c?)? And how is EBUSY indicated or transferred over wire?
-> --- Yes, we connect the gauge BQ27Z561 to I2C. When it's busy, the feedback we got from the logic analyser is "NAK".
-> 
-> 
-> Best Regards,
-> Jerry Lv
-> 
-> ________________________________________
-> From: Pali Rohár <pali@kernel.org>
-> Sent: Saturday, September 14, 2024 4:24 PM
-> To: Jerry Lv
-> Cc: Sebastian Reichel; linux-pm@vger.kernel.org; linux-kernel@vger.kernel.org; Kernel
-> Subject: Re: [PATCH] power: supply: bq27xxx_battery: Do not return ENODEV when busy
-> 
-> Hello Jerry,
-> 
-> I think that this issue should be handled in different way.
-> 
-> First thing is to propagate error and not change it to -ENODEV. This is
-> really confusing and makes debugging harder.
-> 
-> Second thing, if bq27xxx_read() returns -EBUSY, sleep few milliseconds
-> and call bq27xxx_read() again.
-> 
-> This should cover the issue which you are observing and also fixing the
-> problem which you introduced in your change (interpreting error code as
-> bogus cache data).
-> 
-> Anyway, which bus is BQ27Z561-R2 using (i2c?)? And how is EBUSY
-> indicated or transferred over wire?
-> 
-> Pali
-> 
-> On Saturday 14 September 2024 02:57:39 Jerry Lv wrote:
-> > Hi Pali,
-> >
-> > (Sorry for inconvineient! previous email was rejected by some email list for some HTML part, so I edit it and send it again.)
-> >
-> > Yes, bq27xxx_read() will return -EBUSY, and bq27xxx_read() will be called in many functions.
-> >
-> > In our product, some different applications may access the gauge BQ27Z561-R2, and we see many times the returned error code is -ENODEV.
-> > After debugging it by oscillograph and adding some debug info, we found the device is busy sometimes, and it will recover very soon(a few milliseconds).
-> > So, we want to exclude the busy case before return -ENODEV.
-> >
-> > Best Regards,
-> > Jerry
-> >
-> > On Friday 13 September 2024 16:45:37 Jerry Lv wrote:
-> > > Multiple applications may access the device gauge at the same time, so the
-> > > gauge may be busy and EBUSY will be returned. The driver will set a flag to
-> > > record the EBUSY state, and this flag will be kept until the next periodic
-> > > update. When this flag is set, bq27xxx_battery_get_property() will just
-> > > return ENODEV until the flag is updated.
-> >
-> > I did not find any evidence of EBUSY. Which function and to which caller
-> > it returns? Do you mean that bq27xxx_read() returns -EBUSY?
-> >
-> > > Even if the gauge was busy during the last accessing attempt, returning
-> > > ENODEV is not ideal, and can cause confusion in the applications layer.
-> >
-> > It would be better to either propagate correct error or return old value
-> > from cache...
-> >
-> > > Instead, retry accessing the gauge to update the properties is as expected.
-> > > The gauge typically recovers from busy state within a few milliseconds, and
-> > > the cached flag will not cause issues while updating the properties.
-> > >
-> > > Signed-off-by: Jerry Lv <Jerry.Lv@axis.com>
-> > > ---
-> > >  drivers/power/supply/bq27xxx_battery.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
-> > > index 750fda543308..eefbb5029a3b 100644
-> > > --- a/drivers/power/supply/bq27xxx_battery.c
-> > > +++ b/drivers/power/supply/bq27xxx_battery.c
-> > > @@ -2029,7 +2029,7 @@ static int bq27xxx_battery_get_property(struct power_supply *psy,
-> > >                bq27xxx_battery_update_unlocked(di);
-> > >        mutex_unlock(&di->lock);
-> > >
-> > > -     if (psp != POWER_SUPPLY_PROP_PRESENT && di->cache.flags < 0)
-> > > +     if (psp != POWER_SUPPLY_PROP_PRESENT && di->cache.flags < 0 && di->cache.flags != -EBUSY)
-> > >                return -ENODEV;
-> >
-> > ... but ignoring error and re-using the error return value as flags in
-> > code later in this function is bad idea.
-> >
-> > >
-> > >        switch (psp) {
-> > >
-> > > ---
-> > > base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
-> > > change-id: 20240913-foo-fix2-a0d79db86a0b
-> > >
-> > > Best regards,
-> > > --
-> > > Jerry Lv <Jerry.Lv@axis.com>
-> > >
-> >
+Thanks,
+Howard
+>
+> Alan
+>
+> > Thanks,
+> > Howard
+> >>
+> >> First glance, yes this is a substruct, but we should be able to
+> >> collect those substruct data in BPF, since it is substruct, not
+> >> substruct pointer. It seems to be the same -p problem we discussed
+> >> here:
+> >>
+> >> Before:
+> >> ```
+> >> perf $ perf trace -e open -p 3792392
+> >>          ? (         ):  ... [continued]: open())
+> >>                        =3D -1 ENOENT (No such file or directory)
+> >>          ? (         ):  ... [continued]: open())
+> >>                        =3D -1 ENOENT (No such file or directory)
+> >> ```
+> >>
+> >> We can see there's no output.
+> >>
+> >> After:
+> >> ```
+> >> perf $ perf trace -e open -p 3792392
+> >>      0.000 ( 0.123 ms): a.out/3792392 open(filename: "DINGZHEN",
+> >> flags: WRONLY)                             =3D -1 ENOENT (No such file
+> >> or directory)
+> >>   1000.398 ( 0.116 ms): a.out/3792392 open(filename: "DINGZHEN",
+> >> flags: WRONLY)                             =3D -1 ENOENT (No such file
+> >> or directory)
+> >> ```
+> >>
+> >> I will test and fix it later.
+> >>
+> >> Thanks,
+> >> Howard
+> >>
+> >>> root@number:~# strace -e setitimer -p 5444 |& head -5
+> >>> strace: Process 5444 attached
+> >>> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D5000}, i=
+t_value=3D{tv_sec=3D0, tv_usec=3D5000}}, NULL) =3D 0
+> >>> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D0}, it_v=
+alue=3D{tv_sec=3D0, tv_usec=3D0}}, NULL) =3D 0
+> >>> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D5000}, i=
+t_value=3D{tv_sec=3D0, tv_usec=3D5000}}, NULL) =3D 0
+> >>> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D0}, it_v=
+alue=3D{tv_sec=3D0, tv_usec=3D0}}, NULL) =3D 0
+> >>> root@number:~#
+> >>> root@number:~#
+> >>> root@number:~# grep -w value /sys/kernel/tracing/events/syscalls/sys_=
+enter_rseq/format
+> >>> root@number:~# grep -w value /sys/kernel/tracing/events/syscalls/sys_=
+enter_setitimer/format
+> >>>         field:struct __kernel_old_itimerval * value;    offset:24;   =
+   size:8; signed:0;
+> >>> print fmt: "which: 0x%08lx, value: 0x%08lx, ovalue: 0x%08lx", ((unsig=
+ned long)(REC->which)), ((unsigned long)(REC->value)), ((unsigned long)(REC=
+->ovalue))
+> >>> root@number:~# pahole __kernel_old_itimerval
+> >>> struct __kernel_old_itimerval {
+> >>>         struct __kernel_old_timeval it_interval;         /*     0    =
+16 */
+> >>>         struct __kernel_old_timeval it_value;            /*    16    =
+16 */
+> >>>
+> >>>         /* size: 32, cachelines: 1, members: 2 */
+> >>>         /* last cacheline: 32 bytes */
+> >>> };
+> >>>
+> >>> root@number:~# pahole -E __kernel_old_itimerval
+> >>> struct __kernel_old_itimerval {
+> >>>         struct __kernel_old_timeval {
+> >>>                 /* typedef __kernel_long_t */ long int           tv_s=
+ec;                 /*     0     8 */
+> >>>                 /* typedef __kernel_long_t */ long int           tv_u=
+sec;                /*     8     8 */
+> >>>         } it_interval; /*     0    16 */
+> >>>         struct __kernel_old_timeval {
+> >>>                 /* typedef __kernel_long_t */ long int           tv_s=
+ec;                 /*    16     8 */
+> >>>                 /* typedef __kernel_long_t */ long int           tv_u=
+sec;                /*    24     8 */
+> >>>         } it_value; /*    16    16 */
+> >>>
+> >>>         /* size: 32, cachelines: 1, members: 2 */
+> >>>         /* last cacheline: 32 bytes */
+> >>> };
+> >>>
+> >>> root@number:~#
+>
 
