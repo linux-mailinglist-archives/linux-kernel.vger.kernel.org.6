@@ -1,142 +1,158 @@
-Return-Path: <linux-kernel+bounces-335547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F29C97E748
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:09:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 422C397E74D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D85AAB20A60
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:09:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 738591C20D90
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35516F2F4;
-	Mon, 23 Sep 2024 08:09:44 +0000 (UTC)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF53974070;
+	Mon, 23 Sep 2024 08:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ioPB8iUO"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589D512B63;
-	Mon, 23 Sep 2024 08:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03801A269
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727078984; cv=none; b=RjC1GwCnW6S5/Xq5vx1EliG3neznpwyovRC4zFOCaRiWCdmmy+zBO8562UNaIWXozxDaCfm6gs+poD9aCBlMrCjZxRaNL0MlKjyGXUyoJ1GGBzsyyriZunp3/4cPUqnoF4cxEDuE+qbwxdVT/WX1DniwSNenQ8cI6KDuhD+YjDk=
+	t=1727079127; cv=none; b=Ngi+/6kliU5D/lTOGsQXT2JaI8CngMlViUVBy8isyDwqzr27rblfujlngBgKtWNZ33DxcZrP9QQWU3cWfMRhyLbr3Bl4QZaD4ybD1+rKzZ2Jgzx+y47fQ8c5YOGsG/0s9NH/JwnuWgfTVrpoDyQQ4SNBVtIjYGXQZmynCRZgmfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727078984; c=relaxed/simple;
-	bh=2oCoAamTl23tvB7DpmO/hzKdR4ddgZhgnAs4YN6S9/Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B4SmUxz46kXvrwCOZNLuzEOY0nZmX4InbJ6QE1aEax+tFt4J3TKjkdGww9mc29KRwB8zVhK0e4jK4FPTDIw9vZRysLcqbMLYduQvbM6aqTmB7lbCkN39ec9PvuNPxnAVMXxjAnWo2Tc8dJNK/iNIhK2z3wZkRa4xY7vYCUehNXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6ddceaaa9ddso33077187b3.1;
-        Mon, 23 Sep 2024 01:09:42 -0700 (PDT)
+	s=arc-20240116; t=1727079127; c=relaxed/simple;
+	bh=AiGF/8OSi083BWf/+PHyVvxx5NeIHzd+1QlsFeZZvwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GSLsc62fCaWko9vDAd8hzd8qyqWcFTfVp2NScd1T1bJ/VXm7FiUHYxeosq/O+0x4sFJ7DVruKwdxUwEHVyYa4UerV651zlmDiGG0hdHbpLi1Q890tXeOtXltu6i1RNqZkYQdif7WlUYk2HBIGHE2Jlk6LF7h0eV+d819RKEhnvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ioPB8iUO; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42e748f78d6so31703015e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 01:12:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727079123; x=1727683923; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3gjbHPJoKqedubSBXHd39Fm+ElqRQN46xlLk23QoYic=;
+        b=ioPB8iUO4+ltjiuEUiU59nNxVhEFomooLfMRRmMh0+v07ULSd36wE0TGwAtF1IRRD7
+         c4vPodGddYbPGFMckuhGmsBDgFWh8Ka0lbnk+6pPqZPhK7H7qyjxkK3W1ApLOR/BJwMs
+         ReqmqCfKQjCjwsWOCX82fNsbm/y6NC3Z0MIs3dSEh86ppU2NQDXcVzMhtqxpouksJiEk
+         gcFYd6hbYPX5gYlxR3hY9iWNjVhlRYsf+f2G3m07dEfw7Hg3kcb3XaTRQtTXSbei3XWQ
+         His4TZnKjq7ayRtS/LvSfF3Sr2MyO+R4Wk95Vs+Vbvnxq8zId28sKaJo5m6lR++DpqSJ
+         /LAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727078980; x=1727683780;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wVY9Ax26xUoEWznErAID4sAsODNFBa3xi8aRIp4xJOM=;
-        b=VFGNJzeMBr2wDFaY3Ft3SY++hDJZfkgUMAfwXRQCr0tItskXnFnXRxzgZIIp/OoAhg
-         Zxb7TO7pEvmltPQIdZh+3FrnySrPT0qIvqu6H4yRTAJRUW0Y39yUwjQwUGoKn98hqlH/
-         3tEICR/yiGtqTDAzN4+XUkoG8TByYkqzxA9YvvoT+Css/ppMR3x2nrE0Xn88OskKPL6M
-         DYHAjhVPuSxNJ4CwRzCGlHWGEUTVttRrK6KtO0HF77Q90TarKPw7mVLFZ3mPRvHWPZCf
-         89S2Pd5jCANJqM5jbdof9Zo8KRpUEamh0knQcdYTqeqgUkWiSplBpWpVJfgGNbiRzZOh
-         u5xA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBjinRctOly3HXiSF7rwDmUmRqs0jJfQNnE2TBGJ66AxCAZ3TIjoF21YaHfDQ8l9+GYBrzKJ7K7hWFOpw=@vger.kernel.org, AJvYcCVSbOuBYCxAgpsaXThKxQPKjcZ4pRdbOr80ejNoUnagMr6oU/nXy+gdX2jHIOZZDgBVBTlTI8T2VpgS9w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWFRWn71XwxEoCigk0aITNTGFpU2zfSwh0lZamgNLjlZvCmv4T
-	2cgbZpJk8e3BViUWh5gdA0Pis47AUQpcwrLnULhikyCT9SyeV/n8A9Qo9U7u
-X-Google-Smtp-Source: AGHT+IGPXcalhm2A5oNYJ6gWuWSG6lr3aQlrZFkkp5/cbMPU3DKyCQr7gwmSZH/bHcDIaFKrAmN78w==
-X-Received: by 2002:a05:690c:4711:b0:6db:cd39:4dae with SMTP id 00721157ae682-6dfeeed0d14mr59808827b3.33.1727078980355;
-        Mon, 23 Sep 2024 01:09:40 -0700 (PDT)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6dde9fec28esm22865747b3.42.2024.09.23.01.09.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2024 01:09:40 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6b747f2e2b7so30238847b3.3;
-        Mon, 23 Sep 2024 01:09:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUfT4JUuEH3wGDyZXMl8gQg58Nv4Xg+setItgqXampNHX8nLerGyW7bSnSWp2JH/OMT/aFBJEPaCH/g1XQ=@vger.kernel.org, AJvYcCW/Wek+nS3PFEra8yW8wT+0vqbf/9c/uQn8SpofyFZsOlgunX2XnUlVsjyfkFnxZSQc62hgaG350gelDg==@vger.kernel.org
-X-Received: by 2002:a05:690c:b8e:b0:6d3:4c37:d652 with SMTP id
- 00721157ae682-6dfeed618admr92197177b3.24.1727078979858; Mon, 23 Sep 2024
- 01:09:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727079123; x=1727683923;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3gjbHPJoKqedubSBXHd39Fm+ElqRQN46xlLk23QoYic=;
+        b=YX8w9c9S06SdP0swOj1NQ20FD9VYbOFXD1agNeHMSb3PjiPEZ509fcOSrZAKeJd8jG
+         q8/zdNyzujAzbmjqYbMfA/+Ahks/e9K+HCWY9DVVvVOdqoNA3GoJIWH/Es2y4umECKPE
+         vDPAEQaO6RM7f6hjoUcCvxpb396bswkLIoLxfTzEmP74yk4RbciHwXtYkYQnM/xteFqJ
+         e5RKTAKbeM9dhbtErhtcPsa/deh3ui6iz8qva2txyn2v2nAWSL0D8vsPq4fuSQOxv2Id
+         JnbxlhdVT97JUBAjDN5KgLQ67goVxL3gmW1i/GdiU5whuwvigkQSy31KQrpRRX8EEAjM
+         OY1w==
+X-Forwarded-Encrypted: i=1; AJvYcCW4rWIDGU4GTQB0nT+pEmnqoZDcqZm2FIdqDvbDBSBn2UZmIlVYMdxno4q55dfaakEM7gDwA9bKDx37wnU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRZYwSClSM6UQSgD4xUUj8bCsskL/EZrplwWrZNcBMaH9bLYon
+	kIuF7FS/1sU1dZyxciV12nF1Q7+Xj/8dnYR9hyQph0WbrBc19hGdYNxkUn/ZOsM=
+X-Google-Smtp-Source: AGHT+IFCTMzSYCRN9wyg4jJGEvRCfYk8ba3b68pLdJTZ5C4ZJFE06ZrWNcTI6lqNc3I+z/+RmQf/lA==
+X-Received: by 2002:a05:600c:1c95:b0:42c:de2f:da27 with SMTP id 5b1f17b1804b1-42e7c15b393mr79858795e9.2.1727079122928;
+        Mon, 23 Sep 2024 01:12:02 -0700 (PDT)
+Received: from blmsp ([2001:4091:a245:8155:f78b:11e0:5100:a478])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378e71f06a4sm23718726f8f.23.2024.09.23.01.12.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 01:12:02 -0700 (PDT)
+Date: Mon, 23 Sep 2024 10:12:01 +0200
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>, "Felipe Balbi (Intel)" <balbi@kernel.org>, 
+	Raymond Tan <raymond.tan@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux@ew.tq-group.com
+Subject: Re: [PATCH v2 1/2] can: m_can: set init flag earlier in probe
+Message-ID: <zqk3dsg6qdr7nvul34cv5qygtrcq3h2kpwojr7e4nsbgvo2i6a@xbmfcgtb3uad>
+References: <ac8c49fffac582176ba1899a85db84e0f5d5c7a6.1726745009.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920023317.f20c9ecbb2a2f4bf382d831c@linux-foundation.org>
- <CAMuHMdW-4_WvazciLPedP6R6XnEnHqsEh+3s7M5159zcmHit9w@mail.gmail.com> <CAHk-=wjUiO3qUVR6ydhGjby3yf_KQO5+m7Hfb4H09kXXPogZ7g@mail.gmail.com>
-In-Reply-To: <CAHk-=wjUiO3qUVR6ydhGjby3yf_KQO5+m7Hfb4H09kXXPogZ7g@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 23 Sep 2024 10:09:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU3mfA_SuPqw8ZjkECnP456R=K49fg2yHdOznrSzvTjAg@mail.gmail.com>
-Message-ID: <CAMuHMdU3mfA_SuPqw8ZjkECnP456R=K49fg2yHdOznrSzvTjAg@mail.gmail.com>
-Subject: Re: [GIT PULL] MM updates for 6.12-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Huang Ying <ying.huang@intel.com>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ac8c49fffac582176ba1899a85db84e0f5d5c7a6.1726745009.git.matthias.schiffer@ew.tq-group.com>
 
-Hi Linus,
+On Thu, Sep 19, 2024 at 01:27:27PM GMT, Matthias Schiffer wrote:
+> While an m_can controller usually already has the init flag from a
+> hardware reset, no such reset happens on the integrated m_can_pci of the
+> Intel Elkhart Lake. If the CAN controller is found in an active state,
+> m_can_dev_setup() would fail because m_can_niso_supported() calls
+> m_can_cccr_update_bits(), which refuses to modify any other configuration
+> bits when CCCR_INIT is not set.
+> 
+> To avoid this issue, set CCCR_INIT before attempting to modify any other
+> configuration flags.
+> 
+> Fixes: cd5a46ce6fa6 ("can: m_can: don't enable transceiver when probing")
+> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> ---
+> 
+> v2: no changes
+> 
+>  drivers/net/can/m_can/m_can.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+> index 012c3d22b01dd..47481afb9add3 100644
+> --- a/drivers/net/can/m_can/m_can.c
+> +++ b/drivers/net/can/m_can/m_can.c
+> @@ -1681,6 +1681,14 @@ static int m_can_dev_setup(struct m_can_classdev *cdev)
+>  		return -EINVAL;
+>  	}
+>  
+> +	/* Forcing standby mode should be redundant, as the chip should be in
+> +	 * standby after a reset. Write the INIT bit anyways, should the chip
+> +	 * be configured by previous stage.
+> +	 */
 
-On Sun, Sep 22, 2024 at 6:35=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Sun, 22 Sept 2024 at 02:32, Geert Uytterhoeven <geert@linux-m68k.org> =
-wrote:
-> >     kernel/resource.c: In function =E2=80=98gfr_start=E2=80=99:
-> >     ./include/linux/minmax.h:93:30: error: conversion from =E2=80=98lon=
-g long
-> > unsigned int=E2=80=99 to =E2=80=98resource_size_t=E2=80=99 {aka =E2=80=
-=98unsigned int=E2=80=99} changes value
-> > from =E2=80=9818446744073709551615=E2=80=99 to =E2=80=984294967295=E2=
-=80=99 [-Werror=3Doverflow]
-> >
-> > Due to
-> >
-> >     #define PHYSMEM_END  (-1ULL)
-> >
-> > not being correct on 32-bit without LPAE.
->
-> Hmm. Can you check if making it be
->
->       #define PHYSMEM_END  ((phys_addr_t)-1)
->
-> fixes things for you?
+Could you please update the comment to reflect your findings?
 
-That fixes the warning/error, as expected.
+Best
+Markus
 
-> That said, it would probably be even better if we got rid of these
-> games entirely, and m68k just defined MAX_PHYSMEM_BITS instead. Maybe
-> as a config option, since I assume it's going to be either 24 or 32
-> depending on CPU (or are there other choices? I used to know the old
-> m68k, but...)
-
-Indeed, on 68000 and 68008 it could be 24 resp. 20 ;-)
-But all systems with a MMU (and even MC68328 without MMU) do support
-a 32-bit external address space, so 32 seems fine.
-
-BTW, other 32-bit architectures are suffering from the same issue
-(kisskb shows mips, xtensa, parisc, powerpc failures).
-
-BTW2, the following may not work with the default PHYSMEM_END due
-to integer overflow, on both 32-bit and 64-bit:
-
-mm/sparse.c:    unsigned long max_sparsemem_pfn =3D (PHYSMEM_END + 1) >>
-PAGE_SHIFT;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> +	err = m_can_cccr_update_bits(cdev, CCCR_INIT, CCCR_INIT);
+> +	if (err)
+> +		return err;
+> +
+>  	if (!cdev->is_peripheral)
+>  		netif_napi_add(dev, &cdev->napi, m_can_poll);
+>  
+> @@ -1732,11 +1740,7 @@ static int m_can_dev_setup(struct m_can_classdev *cdev)
+>  		return -EINVAL;
+>  	}
+>  
+> -	/* Forcing standby mode should be redundant, as the chip should be in
+> -	 * standby after a reset. Write the INIT bit anyways, should the chip
+> -	 * be configured by previous stage.
+> -	 */
+> -	return m_can_cccr_update_bits(cdev, CCCR_INIT, CCCR_INIT);
+> +	return 0;
+>  }
+>  
+>  static void m_can_stop(struct net_device *dev)
+> -- 
+> TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+> Amtsgericht München, HRB 105018
+> Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+> https://www.tq-group.com/
+> 
 
