@@ -1,108 +1,145 @@
-Return-Path: <linux-kernel+bounces-336157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9867597EFE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:38:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B8997EFF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:49:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7D98282433
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:38:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FEEF1C215F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE50019F12C;
-	Mon, 23 Sep 2024 17:37:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C40D19F430;
+	Mon, 23 Sep 2024 17:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O0qanL2I"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Vj2GTC40"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C4336124
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 17:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040AF19E98E;
+	Mon, 23 Sep 2024 17:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727113079; cv=none; b=EqI/wl6srA9xloRF/tj2LKn2yjrcSiNoAHLm8BM9/bfNVGa455WfAf9tKeJTaVOORRDRpqqtNuvXsY2JR04b5pqwnM8w77rX2nFdjR9+SKfpurrRsyleodKcuBBEmH4kgUoR7t1tRZTR4ueYtB25cKGxt4z0WAIivpjH0ILmFsc=
+	t=1727113775; cv=none; b=JvnE18Uu1zfcs6a4aVSmkMD6ZZNL1aUiF8Ddc3gY3a51k3RO4H3n4fXsYIrIMhr/Zw8pCVpC7nAHiTGfWk372MhCulmcomy2TBVB8E22DaGy/ATKY3UeM8Ox+EIyHcglxOfDrG4Hmxug1tMsrbEVSLBnaPKNNgRya5PF8OsRGU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727113079; c=relaxed/simple;
-	bh=X1fWsAcZf0vbkhOtuDK1DITR89lqk4uOXmmpbSYbyoQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qQnTxfkafz19w2nGmhuGbayfLCAv/oNxV/fOT7P2EeLbh6SgZv/yJ6FiL9+16u+AfIsORY2zpQbJ0r9Ms1zPdQ0JOro7kzqXsckqqdnP6ssowS6+6KyfOIaUVqrCs+2S35Li6yYhu7C9dS0FpgU7tlwGBwEvqm8f8iWRiW/iKUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O0qanL2I; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727113077; x=1758649077;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=X1fWsAcZf0vbkhOtuDK1DITR89lqk4uOXmmpbSYbyoQ=;
-  b=O0qanL2I4PpTvLxHHFpQ+Mnn92MCdhy2Z77fUCMwWgEhZDcSNafc8cw8
-   bg1OHD/sQTbEdc7o2Z5GksJfui5x1uUkFSKKS51p1rv1c/Ax37g5ntvPT
-   i8UYWl2UuZZeF56oJWOGTf2p7by6ZTC6aBT+GamjqsioRBC3pIz1nllEn
-   dniAAqL51wTXs8r7xEbjnJgv3lFjNHiGHK/m2mpRnEkXOXXbquNEqpTqa
-   dkK/fbn62dnd9lBWCw116cL3OAk5ksnJDy/27QDH93TpkEdq/Aefr8OvD
-   mWbXV44Z+yK8Ewwohu74uBSkdLCb9nGbXOsrgJKaw0eBHaD4cKpU6WmON
-   g==;
-X-CSE-ConnectionGUID: vDp9SLcaR9eZAO5/HGxwkA==
-X-CSE-MsgGUID: pMTVHmmaT3mFMD3Qzl5isQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11204"; a="37453839"
-X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
-   d="scan'208";a="37453839"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 10:37:57 -0700
-X-CSE-ConnectionGUID: /dl40x+IR0imLTCsrv5r8g==
-X-CSE-MsgGUID: SAUYPfOfTPevchEwN1hFiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,252,1719903600"; 
-   d="scan'208";a="76071308"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 10:37:57 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH] x86/cpu: Add two Intel CPU model numbers
-Date: Mon, 23 Sep 2024 10:37:50 -0700
-Message-ID: <20240923173750.16874-1-tony.luck@intel.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1727113775; c=relaxed/simple;
+	bh=fW/2G+S1k2HxLvPCQ/EgaFLF7W5MmBH3WEeAVb5ugJI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LYaXnpD2WnEQ9xjwGr0ZXYmqqjw7QAJYirChs+/ZR/4yTJBvqpPBRjYocNOWZB4v57L3QQzL9qZi3RxuOCTiugjCABlE2iLgE0HRk7KadJ96S56jD9R6At4s5lekB/ny29rgMj8wegMS8M1bEuj3bJMPSCyQmu4Od3eZvT0AniE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Vj2GTC40; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id sn2xskkHDKyjDsn2xsMS1L; Mon, 23 Sep 2024 19:40:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1727113228;
+	bh=tA69b6jolyXcZI7KcLlBCkaVX/5x0DGi73pMrAgE16E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Vj2GTC40KZEfkWANLsirjwuwRTvW18DQUjoQXtxyvIXnFeyM6JR2DME7kwLNnqaTV
+	 AMcJEoI5NKxrE66RkPZpveBPCYQatztilCPJqF/KYoxYoyCn0/hOllSifh5lq/gWZa
+	 mWrdHpQ3E5+nyBn0TtBeY2F0T/zp92t1XHgShNmIkp1bxhttiOfu2Pdvi06DDysrvV
+	 leWrWB4UBQD4KjyReF6dR4FI7G46gPiwm87iJ8UvUUGqRoLnPkMAM3Ln/VqnN0Vjvm
+	 78hZ60nv3FpzsKWtrznDF+He003apMVOE+8AuM9u9VxnQutvNjA8+zyJfWFOvPzQSw
+	 szQhA4W64cqVA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 23 Sep 2024 19:40:28 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <c8a4e62e-6c24-4b06-ac86-64cc4697bc2f@wanadoo.fr>
+Date: Mon, 23 Sep 2024 19:40:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] zram: don't free statically defined names
+To: Andrey Skvortsov <andrej.skvortzov@gmail.com>,
+ Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>,
+ Minchan Kim <minchan@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>, Jens Axboe <axboe@kernel.dk>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20240923164843.1117010-1-andrej.skvortzov@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240923164843.1117010-1-andrej.skvortzov@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Pantherlake is a mobile CPU. Diamond Rapids next generation Xeon.
+Le 23/09/2024 à 18:48, Andrey Skvortsov a écrit :
+> When CONFIG_ZRAM_MULTI_COMP isn't set ZRAM_SECONDARY_COMP can hold
+> default_compressor, because it's the same offset as ZRAM_PRIMARY_COMP,
+> so we need to make sure that we don't attempt to kfree() the
+> statically defined compressor name.
+> 
+> This is detected by KASAN.
+> 
+> ==================================================================
+>    Call trace:
+>     kfree+0x60/0x3a0
+>     zram_destroy_comps+0x98/0x198 [zram]
+>     zram_reset_device+0x22c/0x4a8 [zram]
+>     reset_store+0x1bc/0x2d8 [zram]
+>     dev_attr_store+0x44/0x80
+>     sysfs_kf_write+0xfc/0x188
+>     kernfs_fop_write_iter+0x28c/0x428
+>     vfs_write+0x4dc/0x9b8
+>     ksys_write+0x100/0x1f8
+>     __arm64_sys_write+0x74/0xb8
+>     invoke_syscall+0xd8/0x260
+>     el0_svc_common.constprop.0+0xb4/0x240
+>     do_el0_svc+0x48/0x68
+>     el0_svc+0x40/0xc8
+>     el0t_64_sync_handler+0x120/0x130
+>     el0t_64_sync+0x190/0x198
+> ==================================================================
+> 
+> Signed-off-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+> Fixes: 684826f8271a ("zram: free secondary algorithms names")
+> Cc: <stable@vger.kernel.org>
+> ---
+> 
+> Changes in v2:
+>   - removed comment from source code about freeing statically defined compression
+>   - removed part of KASAN report from commit description
+>   - added information about CONFIG_ZRAM_MULTI_COMP into commit description
+> 
+> Changes in v3:
+>   - modified commit description based on Sergey's comment
+>   - changed start for-loop to ZRAM_PRIMARY_COMP
+> 
+> 
+>   drivers/block/zram/zram_drv.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+> index c3d245617083d..ad9c9bc3ccfc5 100644
+> --- a/drivers/block/zram/zram_drv.c
+> +++ b/drivers/block/zram/zram_drv.c
+> @@ -2115,8 +2115,10 @@ static void zram_destroy_comps(struct zram *zram)
+>   		zram->num_active_comps--;
+>   	}
+>   
+> -	for (prio = ZRAM_SECONDARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
+> -		kfree(zram->comp_algs[prio]);
+> +	for (prio = ZRAM_PRIMARY_COMP; prio < ZRAM_MAX_COMPS; prio++) {
+> +		/* Do not free statically defined compression algorithms */
+> +		if (zram->comp_algs[prio] != default_compressor)
+> +			kfree(zram->comp_algs[prio]);
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- arch/x86/include/asm/intel-family.h | 5 +++++
- 1 file changed, 5 insertions(+)
+Hi,
 
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index 44949f972826..1a42f829667a 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -135,6 +135,8 @@
- 
- #define INTEL_LUNARLAKE_M		IFM(6, 0xBD)
- 
-+#define INTEL_PANTHERLAKE_L		IFM(6, 0xCC)
-+
- /* "Small Core" Processors (Atom/E-Core) */
- 
- #define INTEL_ATOM_BONNELL		IFM(6, 0x1C) /* Diamondville, Pineview */
-@@ -178,4 +180,7 @@
- #define INTEL_FAM5_QUARK_X1000		0x09 /* Quark X1000 SoC */
- #define INTEL_QUARK_X1000		IFM(5, 0x09) /* Quark X1000 SoC */
- 
-+/* Family 19 */
-+#define INTEL_PANTHERCOVE_X		IFM(19, 0x01) /* Diamond Rapids */
-+
- #endif /* _ASM_X86_INTEL_FAMILY_H */
--- 
-2.46.1
+maybe kfree_const() to be more future proof and less verbose?
+
+CJ
+
+>   		zram->comp_algs[prio] = NULL;
+>   	}
+>   
 
 
