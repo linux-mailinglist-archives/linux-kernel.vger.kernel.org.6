@@ -1,169 +1,128 @@
-Return-Path: <linux-kernel+bounces-336067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F7D97EEBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:00:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C227697EEBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9141F22561
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:00:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F320A1C20370
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D105419E999;
-	Mon, 23 Sep 2024 16:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B933419CC3D;
+	Mon, 23 Sep 2024 16:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JXaH2H3E"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KBKdHHeX"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2EB19E997
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B470947F4A
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727107213; cv=none; b=esZPo3sjWLY1HxU8ufc4yiK/MtRsHrxEDM9Kh2w2W1gUEvbOwuq6AO3ixjoqx5lc/g6uC+AF3tcDdfM+LHO+sJJH6qdsodKVH2De59Gzgv8X4UVsIYOahMTfX3OiJdnPqiDlK+Yo1F3Z6+/mEFADKEW5cQNfK/+KZHxba9e61iI=
+	t=1727107232; cv=none; b=sOXKEvz4+mPDzwkQqC/8b0edKLZKqOa9tiEuUWtmzwW2q/tBv0klBnko+4TJt0aZ2Kh81Jh1l3U7ftZWCSyln2m2Wx15QBnGVAJWaJ8xCzm9OQgSM1W5zJaDeKkIdmWJWM1bOGB3/Gcm5uxbxZp+w6M+x2LYvSfYiL8OiA9rbE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727107213; c=relaxed/simple;
-	bh=qj7DaoRlIWX6NLsPirWOuOANvT+LJGyu1Zv9Q2wmZwI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=TRW4R8XvpIGQORIvP4uE7VRxUtCc8Q8yX92FNnT+hc5O/mxMP3lOsc/HB/5FwZudMa+/wLbqIVvuY18jyDvRsedWW5oNKHW0xJyqiHy2medQ1sL9WuVaQ6geXrisvuESHDcVWMp4HkCJIyB+nl2d8Qc07EgQW07f91LNmicfk2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JXaH2H3E; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1727107232; c=relaxed/simple;
+	bh=HnnZXl6t2SP9KFfGoCRAgd1V5dELYV1Xc0nr7ISnYko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tA6151YeaVL9KPmJUVttUSAcyHcGmW1sOP7hC2f84yEYgQlEHF30IChOtNC0ZFg8EyROJiCcY70ZVafGPBzj/0Ub40j7gUaGFVBqyUlDlkK7gVCTG2SfOpWBbRj/CTLTLlcMawu2G38j1AoWvKx9c4qhMhM8ImA/v0JmemZIqRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KBKdHHeX; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727107210;
+	s=mimecast20190719; t=1727107229;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6wufZYUaRfdDOylxiBpmrq0uRSbAgGnFclsfc0VtO7c=;
-	b=JXaH2H3Ef9u9XEt1v82QLIvrSdViWZOxLvuGffYNrlaMh7gwQ4t285w/ul/fLuXbTX1r2r
-	OMambc9+IQC6KPvvDV5YTCQhrwmZ5wglyBT69qmo5If+um/H+LcdfvVbcIarktJGD4APy5
-	Qspj5WNFISDExQpn7QJmsQuF0+ZrqQc=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+	bh=cxg5RZKuwS9yIPxC79el7eGj1kEOjwEq2LIarjz7NnI=;
+	b=KBKdHHeXCIYswiu92G2T6aWtsVdxtxtk5vHTsU37OyT20+HYoG7eaIBUvvCHJsu1bWbYiE
+	TqzBanLLJ+6HMEEzYBLoUKMgiEqnL50eD8GzQXxIbfivizhb7+qky9vAYbn0HEOvrI2q8H
+	inFmrYCZ3CU0R0+l3oPp7MM3RODRKXw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-199-fG_seZ7NPmOCVFXjPOnkLg-1; Mon,
- 23 Sep 2024 12:00:07 -0400
-X-MC-Unique: fG_seZ7NPmOCVFXjPOnkLg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-RiOgxZ2KOO-S_GrVQacELg-1; Mon,
+ 23 Sep 2024 12:00:28 -0400
+X-MC-Unique: RiOgxZ2KOO-S_GrVQacELg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4A2DE18EA96C;
-	Mon, 23 Sep 2024 16:00:05 +0000 (UTC)
-Received: from [10.45.226.79] (unknown [10.45.226.79])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3ED9F1954B3A;
-	Mon, 23 Sep 2024 16:00:02 +0000 (UTC)
-Date: Mon, 23 Sep 2024 17:59:58 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Dipendra Khadka <kdipendra88@gmail.com>
-cc: Ming-Hung Tsai <mingnus@gmail.com>, agk@redhat.com, snitzer@kernel.org, 
-    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Return error code for failure input for sscanf in
- parse_cblock_range()
-In-Reply-To: <CAEKBCKMv4-dhWU=a2UnX2rBcQjVTJcF+wg6z6f3qtjA4td-62Q@mail.gmail.com>
-Message-ID: <28e1f99d-eb8e-2357-0afb-a9bb0d5b0a06@redhat.com>
-References: <20240922164702.49615-1-kdipendra88@gmail.com> <CAAYit8TfBD40aRchLiOWsvqwpAR0x6nW9zObza4vLVzg93N+eA@mail.gmail.com> <87139a89-4256-fceb-5ca2-c1077b036eef@redhat.com> <CAEKBCKMv4-dhWU=a2UnX2rBcQjVTJcF+wg6z6f3qtjA4td-62Q@mail.gmail.com>
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8FC9E195FE2E;
+	Mon, 23 Sep 2024 16:00:26 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.32.189])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 292311922ACC;
+	Mon, 23 Sep 2024 16:00:10 +0000 (UTC)
+Date: Mon, 23 Sep 2024 12:00:07 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: andrea.righi@linux.dev, David Vernet <void@manifault.com>,
+	Giovanni Gherdovich <giovanni.gherdovich@suse.com>,
+	Kleber Sacilotto de Souza <kleber.souza@canonical.com>,
+	Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched_ext: Provide a sysfs enable_seq counter
+Message-ID: <20240923160007.GA313849@pauld.westford.csb>
+References: <20240921193921.75594-1-andrea.righi@linux.dev>
+ <ZvCKPkwwC9-o2dsQ@mtj.duckdns.org>
+ <20240923104548.GA308802@pauld.westford.csb>
+ <ZvGJ_xT2LhYJHQbZ@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463811712-612676868-1727107203=:2868575"
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZvGJ_xT2LhYJHQbZ@slm.duckdns.org>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
----1463811712-612676868-1727107203=:2868575
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-
-
-
-On Mon, 23 Sep 2024, Dipendra Khadka wrote:
-
-> Hi,
+On Mon, Sep 23, 2024 at 05:32:15AM -1000 Tejun Heo wrote:
+> Hello,
 > 
-> On Mon, 23 Sept 2024 at 20:55, Mikulas Patocka <mpatocka@redhat.com> wrote:
-> >
-> >
-> >
-> > On Mon, 23 Sep 2024, Ming-Hung Tsai wrote:
-> >
-> > > On Mon, Sep 23, 2024 at 12:47 AM Dipendra Khadka <kdipendra88@gmail.com> wrote:
-> > > >
-> > > > Smatch reported following:
-> > > > '''
-> > > > drivers/md/dm-cache-target.c:3204 parse_cblock_range() warn: sscanf doesn't return error codes
-> > > > drivers/md/dm-cache-target.c:3217 parse_cblock_range() warn: sscanf doesn't return error codes
-> > > > '''
-> > > >
-> > > > Since, the only negative value that is returned by sscanf is -1.
-> > > > Returning -ENVAL when sscanf returns -1.
-> > > >
-> > > > Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
-> > > > ---
-> > > >  drivers/md/dm-cache-target.c | 8 ++++----
-> > > >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > > >
-> > > > diff --git a/drivers/md/dm-cache-target.c b/drivers/md/dm-cache-target.c
-> > > > index 17f0fab1e254..c35d65e310d6 100644
-> > > > --- a/drivers/md/dm-cache-target.c
-> > > > +++ b/drivers/md/dm-cache-target.c
-> > > > @@ -3200,8 +3200,8 @@ static int parse_cblock_range(struct cache *cache, const char *str,
-> > > >          * Try and parse form (ii) first.
-> > > >          */
-> > > >         r = sscanf(str, "%llu-%llu%c", &b, &e, &dummy);
-> > > > -       if (r < 0)
-> > > > -               return r;
-> > > > +       if (r == -1)
-> > > > +               return -EINVAL;
-> > > >
-> > > >         if (r == 2) {
-> > > >                 result->begin = to_cblock(b);
-> > > > @@ -3213,8 +3213,8 @@ static int parse_cblock_range(struct cache *cache, const char *str,
-> > > >          * That didn't work, try form (i).
-> > > >          */
-> > > >         r = sscanf(str, "%llu%c", &b, &dummy);
-> > > > -       if (r < 0)
-> > > > -               return r;
-> > > > +       if (r == -1)
-> > > > +               return -EINVAL;
-> > > >
-> > > >         if (r == 1) {
-> > > >                 result->begin = to_cblock(b);
-> > >
-> > >
-> > > Could you please clarify how to reproduce unexpected results? From
-> > > what I observe, the kernel's sscanf doesn't return -1 on an empty
-> > > input. Even if a negative value other than -EINVAL is returned, it is
-> > > handled by the callers.
-> > >
-> > > Hank
-> >
-> > I applied the patch, but I deleted the conditions "if (r == -1) return
-> > -EINVAL;"
-> >
-> > sscanf in the kernel doesn't return negative numbers.
-> >
+> On Mon, Sep 23, 2024 at 12:45:48PM +0200, Phil Auld wrote:
+> ...
+> > It's not a per scheduler counter, though. It's global. We want to know
 > 
-> Do I have to send v2 with
-> if (r != 2)
->  return -EINVAL;
+> Yeah, the sequence is global but we can report the sequence at which a given
+> scheduler is loaded on each scheduler. That way, e.g., you can tell whether
+> a particular scheduler instance is the same one you looked at the last time
+> too.
 > 
-> or what should I do now?
-> > Mikulas
+> > that a (any) scx scheduler has been loaded at some time in the past. It's
+> > really only interesting when 0 or > 0. The actual non-zero number and which
+> > scheduler(s) don't matter that much.
 > 
-> Best Regards,
-> Dipendra
+> Not necessarily. e.g. You can also detect scheduler failing or being updated
+> for other reasons.
 
-You can do nothing :)
+Sure, but the primary purpose is practically boolean. 
 
-I fixed the patch and I'll send it to Linus in this merge window.
+> 
+> > And it needs to persist when the scheduler is unloaded (I didn't look but
+> > I uspect the per scheduler attrs come and go?).
+> 
+> Yes, the load sequence number should stay persistent across all schedulers,
+> but each scheduler should report the sequence number at which *it* was
+> loaded. Note that this doesn't really change anything now. If you only care
+> whether any SCX scheduler has ever been loaded, you'd always look under
+> root.
+>
 
-Mikulas
----1463811712-612676868-1727107203=:2868575--
+In my testing root is not there is nothing is loaded. 
+
+Cheers,
+Phil
+
+
+> Thanks.
+> 
+> -- 
+> tejun
+> 
+
+-- 
 
 
