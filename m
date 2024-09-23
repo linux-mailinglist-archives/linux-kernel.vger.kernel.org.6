@@ -1,234 +1,220 @@
-Return-Path: <linux-kernel+bounces-335982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA8297ED80
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:56:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52CD097ED8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E6F21F21C5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:56:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4184B21601
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A4419922E;
-	Mon, 23 Sep 2024 14:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935C9199FC6;
+	Mon, 23 Sep 2024 15:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Lvrq3og6"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="K7mS27/V"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2068.outbound.protection.outlook.com [40.107.244.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7136EB64
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 14:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727103404; cv=none; b=lLCmqi6WVnNZ6HZ2yrtfGAmfb9FmQ3/5Kk/HXopPa5gclFVfXTv2hdHscVEWJgNBjPkOL8w2zCBmdoRuCdIH63le4kRPiEvO8vVTUpenE56nxIrZnibWcmBKj1yRziVhxxK1gWxpdya8XHLmW9goq77iQ1O0ZZ9Ue9QZ8ajn7n0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727103404; c=relaxed/simple;
-	bh=e22mNRillFBW32mztpvK1diPoQjV90XAmUjZurDugUk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=C+OwP5FQQ5+0vzr1G0RahivCRhXsskB8jFznJFdvo+qWMzgYUQ84HckT3c24Qh0CbvFy6d49ZY3ByRflvMDTBvQSP9aq8Hg63+lJFswdPwTn5kTXzX+i/mJ7iGnWH7V1byDfnn2bXXo5dg8E3rNsFYB2Q6t0tGQqY0sFlUO1WQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Lvrq3og6; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48N0sTZS001815;
-	Mon, 23 Sep 2024 14:56:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	V1tf7BgoiLGC62QzBmmrzaJMJOmh0Dy4BIG91+gmD34=; b=Lvrq3og6znaOR7HB
-	l/1ouu73YvbpltXIOPYd1IKgFaJGQwWk3UGEAb0odvyiSJL0TYI9KfRENAksWUJR
-	ewXpkQ3T56/9jg24h9056wsN5Z+xG/+gI8/JMyL4QF2bbWWcgVRJAXG1THF5TVS8
-	nVy0uhCzPeSnTXMLkGxBouy8QDxZ8Qp2jeHedOiHBycL3HU/Vwq8D0KLpbK1O5UL
-	dC77TVcDrPaezDPtkcXHyvIO5Gcivohvez/jl/T6Xw6bJd1alBQmUPhLzJZ9Ft/p
-	8+wTt1L3jfwfF+M81b/NOzAsJ3B3s9MKLji+lrdCBg7flk+UVzBk7EaldSeiEt3+
-	BAkGng==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41snvavnt2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 14:56:37 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48NCba18020844;
-	Mon, 23 Sep 2024 14:56:36 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 41tb62xrj7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 14:56:36 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48NEuZkX46268872
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 23 Sep 2024 14:56:35 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8EC5158043;
-	Mon, 23 Sep 2024 14:56:35 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1828558063;
-	Mon, 23 Sep 2024 14:56:34 +0000 (GMT)
-Received: from li-34d1fccc-27cd-11b2-a85c-c167793e56f7.ibm.com (unknown [9.179.21.109])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 23 Sep 2024 14:56:33 +0000 (GMT)
-Message-ID: <516106abdf5c922ee19dffd9eb69ea3f9e20e54a.camel@linux.ibm.com>
-Subject: Re: [sched_ext/for-6.11]: Issue with BPF Scheduler during CPU
- Hotplug
-From: Aboorva Devarajan <aboorvad@linux.ibm.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: void@manifault.com, linux-kernel@vger.kernel.org
-Date: Mon, 23 Sep 2024 20:26:32 +0530
-In-Reply-To: <Zul6l-S_JulEnDQw@mtj.duckdns.org>
-References: <Zo3PgETt43iFersn@slm.duckdns.org>
-	 <dde4b09001da2641f9679b9409727e2147c5e9a6.camel@linux.ibm.com>
-	 <daf2370f5456cbf1660bbdc13621559fb3f2f6cc.camel@linux.ibm.com>
-	 <Zq1NksrG9blyN-KR@slm.duckdns.org>
-	 <e3069da05fb1676f8faad88b9a4dfc4a6cef4175.camel@linux.ibm.com>
-	 <Zru5_UmEmWhNaPyo@slm.duckdns.org>
-	 <fa56b39990dd0b90f971018f5abb7352c60af3b1.camel@linux.ibm.com>
-	 <ZsTwoWJQcnsJhYbe@slm.duckdns.org>
-	 <3da12c96daecaa055c478816f5e86c7b44a04d53.camel@linux.ibm.com>
-	 <ZszKI2GA-8yparh_@slm.duckdns.org> <Zul6l-S_JulEnDQw@mtj.duckdns.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-26.el8_10) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: O20UId6MD7qWEPQZXoc26Mr_u2ufIlIl
-X-Proofpoint-GUID: O20UId6MD7qWEPQZXoc26Mr_u2ufIlIl
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FB577F13
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727103795; cv=fail; b=XHUUrvMMspv4c9wB6gn2xdsXzlQwo7+OY9mLyqKUZXGhO0x0l3uB78pdC856rwaSBqGoKMQaoU68rVUEgV27GCAxQROBhYJ+uWNaWJbwgeft+PfZTnoSQhe+/9vg5uyA+U0CSu9HVSHez+mpV4bNkj3/H1gERpgnemsHOPgLthE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727103795; c=relaxed/simple;
+	bh=Je/YFPOwiNxaH5uWZOSacbo6N/p4MZjEGEwV/mif1RU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bmT9XUuZ+ubUOg/Y9ZWaRPBgI4uot7B9gOi9NRLPTKAFUbKPFvxNBC1tvNKtfuwusDt5kDrEGEnltieL1gA0JqTHoymk+E+BibU7vfn66l0Lt/CyHtQACXj35IEOo2j1rBCi7qEhY2jBYTmIPbkC659j1wchF1n6apm0QhHUgac=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=K7mS27/V; arc=fail smtp.client-ip=40.107.244.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mHd4hniV/vvbxcm2Fpa0LN8TfEOCeqKtes2TFi5dRaasVaoR6pHHz2XUPwt6Ck+El7/eZ2vI7A1QoSSGbiepNf5sJKGiBuMMXG3YUqjopATNab0iFePIJYXzn/9JXH+CS2hN74YRcLNVlzBytmgAqW4VJqFmZSIvthlGDa/d6QzIrQURruBEG77dVx4gElmYVidoDgQybgEDdJS1jRy+o3Ta7Pbj0YtG0NG7vyLyjJXjSvPnKjCJ4JKc6EvPAijAKkjvgZgDp0r4HVixkvmRuWLB8PZFdh5vTmhd6sax49lduSIBF1ISdbBTN2nNkZpUXQA8DOMhWKqK1Up6B+mH1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5lw0ZqxfmYnNZwWkHmXv1IptJoQrPFBoh/j/j5uIerg=;
+ b=tSQNHfd23eokBQMoZw5BObTeJDnCzRZLvIpWhsQNeVUKjpDRntNvu4YnrIGrGZiF2aAZoX38k78RMvTBbH7rrZkkYn5O6+5XF1aZu3OOmXBZ5NvJwjJUVuA0zkeEwVlgwMMhwRdGY3WSuFP9CAxqKOhJHCjlyxTOoOPFJHqKFj1/csg6QEr2NKT6GTF2ciekZ+E5hi2QuT/ojF92WvVKrBzC0rvTrwOSRVLgrJzNXemo8iqhgcV0El5+cQZXHkkIbEWl7Ii+xIzxJg4XDPzI4uNqJW5z60bfgCOOPq0akbnrUMMGzjzzTGceF12Qcq+9zlQgFw9g3ItZZmB5N3SbdQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5lw0ZqxfmYnNZwWkHmXv1IptJoQrPFBoh/j/j5uIerg=;
+ b=K7mS27/VHqnQtwFcRcCquUT+vja/skU7UNaPIYQMJQ/1cKhlQCblD6wRQfWWd3xJw+Lo1KLEjENStCQImd7lOezT4e3Mm6FqyiR+cXUL/DgMAOMIdqWcTAwFy6RM0M2gcQixb1u1p3a+sptgzCXB19v1+ZmSuWnhJ7ArR6qVJDw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
+ MW6PR12MB8998.namprd12.prod.outlook.com (2603:10b6:303:249::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7982.25; Mon, 23 Sep 2024 15:03:11 +0000
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6%5]) with mapi id 15.20.7982.022; Mon, 23 Sep 2024
+ 15:03:11 +0000
+Message-ID: <668fac7d-79e1-4cb6-bdf4-e15808cedc46@amd.com>
+Date: Mon, 23 Sep 2024 22:03:03 +0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/6] iommu/amd: Use 128-bit cmpxchg operation to update
+ DTE
+Content-Language: en-US
+To: linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Cc: joro@8bytes.org, robin.murphy@arm.com, vasant.hegde@amd.com,
+ jgg@nvidia.com, kevin.tian@intel.com, jon.grimm@amd.com,
+ santosh.shukla@amd.com, pandoh@google.com, kumaranand@google.com
+References: <20240916171805.324292-1-suravee.suthikulpanit@amd.com>
+From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
+In-Reply-To: <20240916171805.324292-1-suravee.suthikulpanit@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR03CA0121.apcprd03.prod.outlook.com
+ (2603:1096:4:91::25) To DM8PR12MB5445.namprd12.prod.outlook.com
+ (2603:10b6:8:24::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-23_11,2024-09-23_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 clxscore=1011 spamscore=0 mlxscore=0
- adultscore=0 impostorscore=0 bulkscore=0 malwarescore=0 suspectscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409230109
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|MW6PR12MB8998:EE_
+X-MS-Office365-Filtering-Correlation-Id: c2f8b3c8-0a2e-416d-bdca-08dcdbe0d74c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cXRqRHg0KzFnRS9yaGxJQWVlSWdCRzI3M2g0NUtpaVlHTFk4SytaSHZWMGR5?=
+ =?utf-8?B?dE8vZHNEQWdUbXJ1QjEzTW1XNGg0cmJab1JxU2RNV2RXUmhqZFdVelhFOEh0?=
+ =?utf-8?B?bmxhUng1L2hhUmVxT25FWjdmcVNhaFdpa2tPVlNyNGVpTVdwNmJ3dytPMVhQ?=
+ =?utf-8?B?cDZXZjdvalhodXB4OFFnK0EzY3hNL3lnRXpiUlp4WWRGWDFoNU5VNnE4R0xO?=
+ =?utf-8?B?Y1k2cytiRVMzZVNqY1NVZnZJVXFOT0gyNHdVTHkvR0EwdFIzbDc5Ym9DZjZ6?=
+ =?utf-8?B?MldqZTkwTzQxSVFDblptWktrTS91TU9qK1RkMjdTYUdydzk4UUdhaVdpSERL?=
+ =?utf-8?B?VjEzMm13YmQxUmZ5YzNiYkh0RmxvSnliaUUzZnY4bHpxNXNEUGE2dDJHOGpr?=
+ =?utf-8?B?RmNSaDd2VE9jVXlQSG5SNmVlUk5lVXNFTzNrUGZrRWx4Z1NQSU5rUWFHM3Iz?=
+ =?utf-8?B?Vld4YXJyeVlKcEM1ZExGTy9VRktaQjl2R0ozWWRqTmtLN05SL1ByMldsUSti?=
+ =?utf-8?B?QzBGZjl0YUxPL25JNGVaRWVwZlAvMVFTYXBHM0VJaGxJZ3FDN1pSRTUvMzJ5?=
+ =?utf-8?B?VTB3U21CQ2l3eWZWcjJ4eWdrRU9KUkJVamRSK09XM3I2dXgwMFAwZWNia2hp?=
+ =?utf-8?B?Mld2RWNrMnlBamZzTkgrOHhad2xXUWdYTGRxa1VGY3ZFanhMSjNXSGxmUHZC?=
+ =?utf-8?B?UzF1a3ZpVzltVjJWMDFzWjVxY0tKVi9wYld0Z3dpVW0xZ0RHM1Y2OFJMa09z?=
+ =?utf-8?B?TEpuRldEWXRXY3RURU1jQW55RFhmeE9lb1JYZUlHMmFFaGxjMEpBREFrTmUz?=
+ =?utf-8?B?Nlh3NDQvaldQVXg1SUV2a3NRSnZ3Um9rNHdvalJVSDNkakY2N0JPUHBHN2xV?=
+ =?utf-8?B?VnZ2bkxkbm9xZE1vanBBV0RQVjJlWkV4dTlqKzFqVWl0Um5CWEN1TVpiNGl3?=
+ =?utf-8?B?OUF0MHVtK3B4ZlVjbkx0ZldTRjJmbytmYTlCdThNVFJRb0cyalp0VlAxSkVs?=
+ =?utf-8?B?WVVvR0pNWkFFQm9KTmtnWldoY085dE0zazdEY0k5UUw2WUtCT2tVeU9mMkdq?=
+ =?utf-8?B?MlVKWXVEQU9kQStWREFVRFFYeUF1WlVtRk9Oa0tYbUtUZUpUSExKSGo4WE8v?=
+ =?utf-8?B?TXA4ZlVaUWprQ0s4UFIrMVdLS3o5OG52eWtNenVvRndGdHEyY3hmMC8vYWY5?=
+ =?utf-8?B?clhndTBBM2lvMlB3eGJpaE9zRnR6cU1hcHlCZTlNSkpQa3NjR1ZNdFpObnlQ?=
+ =?utf-8?B?ajhkQXp5dk1tOVQ0ZmYzOFE3dlRhcm8zbDVrZ3YvN0RZYnhuZ2xLN2hra2Fh?=
+ =?utf-8?B?NW83TXVidzRncTZ6OUtJUWdBa1NKUTA1K2dZTDFZd29sMmRoZ2dRZk5UeXpt?=
+ =?utf-8?B?emRLam9TL0xHMEU5SHRYS2pKTlhiZTBMR2gvMnoweDY0SG1aY0NUajd3TDFC?=
+ =?utf-8?B?MVhiaVlpd201eWwwekFsRXpqWU96b05vUWZiNWcrYWlMdzRHZ3RZN1FtV2ky?=
+ =?utf-8?B?Si9qL3BodThlRjlwMW03ekxvQzM2c3lPdkhYd0R3c1oxQ1dZTEg4eFVDaGJI?=
+ =?utf-8?B?QkFTcHF6Y05sd0ZuRXVWd2t0Um1OREptSC9aL210R0kvWlhlWTlTb0tOaW9T?=
+ =?utf-8?B?aForV1lURG9pSjVDUzYzYUtYbGNRbzM0VmpwVEduK05GbTl6YnFLSFZadExs?=
+ =?utf-8?B?VWdKYk8rMUFVeWliTVowWUNRMkFiS2ZJSE5WVTBwbWRuOUpPRENPMXBiSTZv?=
+ =?utf-8?B?MHp3VFBpbnc3ZzJiem5GSXVlTGFDWGJLQ3JKTURoTno1RlpnMnRyVDZSa0J1?=
+ =?utf-8?Q?ZaWM7vHtaKXPzPdJfpjhRp5uc1reXfO4rbzUg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SktENmJQSFJuZk8xQWZYSmtBTnpXNUNVOUxPM1lTdVZpdnRicUNXRUFHS0VJ?=
+ =?utf-8?B?TnJ4em5LTmNLWThjZnQ0V2ZRTlRQNGxiaTdNQjVEZThDY28zS3V0R1Q5YmJR?=
+ =?utf-8?B?U3ZSTnJqeXliSjkrVGgvUjJOYnBUQTVINGlJN29zUHptRTNnZ2taMkpTVGhU?=
+ =?utf-8?B?YzFuTVh1c3NIRlpkM3l2SmYwNDFJYUNqcDhua3pBQ2Job081eHZDbDdWWFJY?=
+ =?utf-8?B?Z0lrMkZuckl5TUlTbk1VODRDaVFnSGpCNklBYzAxdzYxNTVCSGs0UmVqd0lJ?=
+ =?utf-8?B?MHRFL2RNOEw3MDFhU0Z3VkF5U1QxWWVXNE5MM2tncnVMUWRwbjFjdXAvYUhx?=
+ =?utf-8?B?RmFCeXdaT1NISjhFTk0xWjlodGdmQ2d3OWFrZ2s1bEJzczZHeEFiUE5KTEpt?=
+ =?utf-8?B?VzU5Y3l1akpxV3BlTHMzVDNyYzdveWhDS0pqMEpmSzNOR001U2w1WmJSV3Q1?=
+ =?utf-8?B?bVRQcDBPKzFqaUpaaFYwbzFkbklRcE9wU0dkbWU4Zy9hcDJMWWhRTGx4ZDdP?=
+ =?utf-8?B?RjJQbyt2dmZnRWNmYmFxalNybm9DdDFLbFBDdTV3V0lrV1RQSHdBUnJmSklq?=
+ =?utf-8?B?VzZKVi9EeVFVNHV2dnByajRPOS9zeFloUkFaaUVOUElTb1dFVDQ4S2xkV1pj?=
+ =?utf-8?B?bUJ5RnFIMGN6ZDlaT2JxUi9Zb2FEVjdhejdnRkxWaThjRjJpanhFSCtMRkpV?=
+ =?utf-8?B?dlJaRS9pcWs0YlFURHF5NWRIMlB4a2JmVmZGUHhWdzRWVmNQSzcwNEI1WnpK?=
+ =?utf-8?B?UFUzR0ltK3pHbGRjRmlCUlRyZHUrcDg3OUxOa085ekU0NkZnOXNRU1pCVkZw?=
+ =?utf-8?B?WGJScW5kQUZjczNuT1J2ZnhaaHNIRERvcUc0RXZ1Qy9pY0h4MzBPQklYUlA2?=
+ =?utf-8?B?OFhZY3BGNnJKcVZCbklFMjdZYjdnMWZGb2dVT245TThUZ2VVcUtJVjQ1Zklu?=
+ =?utf-8?B?N2VaekwxblBTZDFnV2NVcCs1VnJoSnFaa1BVdG5FSkxPVGZkbnNMYkg1UUlI?=
+ =?utf-8?B?c2dQWU1UREpQTnVKT2dOMDZEdUVhaGIxRXRoUHNQOEUzNk9NcSszZFJZODRF?=
+ =?utf-8?B?S2dQSnpnSk5saGRTWDdJZ0lTRnFkZlVKSGN2cTZOUGI3VnIzcWpSQVFwT2xT?=
+ =?utf-8?B?cCt1dEJoN1orQ1YrQ1lNNloyczB4enF3bDZkdTdqMkJicWs2K3VNNzI0bXd3?=
+ =?utf-8?B?djNmNnZaOU9DQ1NWM1dYcFlxSndGVUZ2NTFmY0Q4aEhRVVhINDhKY2pxSXBK?=
+ =?utf-8?B?SmEvdDEzb1BYcXQybnRtMXpQd1NFNVExeVdtaHhYQnpmR0lIMTRZN1k3YTRR?=
+ =?utf-8?B?RUowNFBoYUNZek4wN2RYRzJXS2wwRjhrSFRKdXVISEVtN2ZXRithbkhZNmVr?=
+ =?utf-8?B?YnZxTms2Rjc4N2tvT0FwcitZNTFOUGlteUNacGxLUHRVSXpJampRQ255NVJx?=
+ =?utf-8?B?eENZS1ZBWHo4ZE84VFJ5Ujc1L0h1OTNjYlFjZlBaK1BaN3lnYjhJRnR2ckdI?=
+ =?utf-8?B?K1J6cUdOZENDT256Q2doanFUb01iRGZzV1ZZQWp3MEcvNUhkTXpldVVCVFVk?=
+ =?utf-8?B?RnVpYTQzUURlUWtCd3IyYi91MDZHYTRHS21ISTBmcWZBY1VaM1NUK1FQRXZj?=
+ =?utf-8?B?UlZWWnErNTFDQUttckllMFU3QkFyeUEzU0F3ZlRtQnJDQlAzSDJxem9VNW1F?=
+ =?utf-8?B?emhPMmY3V0EzTnY2ZEdIazlHVnNUaG84dWl5Mkh3VnV0M2ZnUUp1dXZRd2VJ?=
+ =?utf-8?B?Y2VvMHA4YkttMlZpZE9WSk5kSUlsVExwenc4SSswVS82c1RVeEdrRHpURnVX?=
+ =?utf-8?B?UU5xZjVhMi8vMHNYQmNOUnlqLys3YlVESDhEb1hkRUZ1ZCtEQ0E5bU1vcERC?=
+ =?utf-8?B?UXAzODlsRFFrZXNWQk9sa2pPUGMwUFFLZ2prcVVUTWxmT2kvajhjMDgwcVor?=
+ =?utf-8?B?OUNHa3dmMlJHV2xpNjBSM0dGdEtRbVU2bndNUTMzUTR1T1YrZFN6NDY1RG55?=
+ =?utf-8?B?UUhJR1dJUTBkRHA4c1liR0VxZmFjbDRrRklSVFhNNjkrSjlkd3RRZm9tQ2Rh?=
+ =?utf-8?B?aWk1dWNsd0JzNjRJRjlCUUlBbkFnb3RBcUpIVU9WY1NmQjRsNVIxUy94U1lW?=
+ =?utf-8?Q?ZRXuaOXLGLQaUKbVtzOsGpP4Q?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c2f8b3c8-0a2e-416d-bdca-08dcdbe0d74c
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 15:03:11.6332
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FPAYsO1j8GVMy59DVMP5iA1LzjapW11ruDBIAzzcTIrVuhbHwctDuFfMeAfG5bXf7yJj3fjcNYhzZgGD1ZFuzQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8998
 
-On Tue, 2024-09-17 at 14:48 +0200, Tejun Heo wrote:
-> Hello, Aboorva.
+
+
+On 9/17/2024 12:17 AM, Suravee Suthikulpanit wrote:
+> This series modifies current implementation to use 128-bit cmpxchg to
+> update DTE when needed as specified in the AMD I/O Virtualization
+> Techonology (IOMMU) Specification.
 > 
-> On Mon, Aug 26, 2024 at 08:32:03AM -1000, Tejun Heo wrote:
-> > On Fri, Aug 23, 2024 at 02:50:01PM +0530, Aboorva Devarajan wrote:
-> > ...
-> > > I applied this patch to the almost latest sched-ext (for-6.12) branch upto
-> > > commit 89909296a51e792 ("sched_ext: Don't use double locking to migrate
-> > > tasks across CPUs") and let the test run for over 20 hours, and it completed
-> > > without any hangs on both x86 and PowerPC.
-> > > 
-> > > So, indeed, making sure that both scx_fork_rwsem and cpu_hotplug_lock (read)
-> > > are only held together simulataneously when they can both be acquired seems
-> > > to be resolving the deadlock.
-> > 
-> > Thanks a lot for confirming. Let me think it over a bit re. what should be
-> > applied.
+> Please note that I have verified with the hardware designer, and they have
+> confirmed that the IOMMU hardware has always been implemented with 256-bit
+> read. The next revision of the IOMMU spec will be updated to correctly
+> describe this part.  Therefore, I have updated the implementation to avoid
+> unnecessary flushing.
 > 
-> Sorry about the delay. It ended up a bit invasive and took longer. Can you
-> please verify the following branch fixes the problem?
+> Changes in v4:
+>    * Patch 1: Update commit message
+>    * Patch 2:
+>      - Move get_dte256, clone_alias, dump_dte to patch 4
+>      - Introduce write_upper, write_lower
+>      - Introduce iommu_flush_sync_dte
+>      - Reimplement update_dte256
+>    * Patch 3: Remove spinlock since it is moved inside update_dte256()
+>    * Patch 4: Update clone_alias() and dump_dte()
+>    * Patch 5: Update clear_dte_entry()
 > 
->  https://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-enable-locking-fix
+> v3: https://lore.kernel.org/lkml/20240906121308.5013-1-suravee.suthikulpanit@amd.com/
+> v2: https://lore.kernel.org/lkml/20240829180726.5022-1-suravee.suthikulpanit@amd.com/
+> v1: https://lore.kernel.org/lkml/20240819161839.4657-1-suravee.suthikulpanit@amd.com/
 > 
-> Thanks.
+> Thanks,
+> Suravee
+> 
+> Suravee Suthikulpanit (6):
+>    iommu/amd: Disable AMD IOMMU if CMPXCHG16B feature is not supported
+>    iommu/amd: Introduce helper function to update 256-bit DTE
+>    iommu/amd: Modify set_dte_entry() to use 256-bit DTE helpers
+>    iommu/amd: Introduce helper function get_dte256()
+>    iommu/amd: Modify clear_dte_entry() to avoid in-place update
+>    iommu/amd: Lock DTE before updating the entry with WRITE_ONCE()
+> 
+>   drivers/iommu/amd/amd_iommu.h       |   2 +
+>   drivers/iommu/amd/amd_iommu_types.h |  10 +-
+>   drivers/iommu/amd/init.c            |  23 +-
+>   drivers/iommu/amd/iommu.c           | 332 ++++++++++++++++++++--------
+>   4 files changed, 265 insertions(+), 102 deletions(-)
 > 
 
-Hi Tejun,
+I am rebasing and will resend this patch series.
 
-I've run CPU hotplug tests and verified that with the above specified branch on both
-Power10 and x86 the originally reported hang is no longer seen.
-
-------------------------------------------------------------------------------------------
-On x86: 
-
-https://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-enable-locking-fix
-
-Upto - a3b4678ca086 ("sched_ext: Decouple locks in scx_ops_enable()")
-
-I kept the tests running for over 48 hours, and I didn't encounter any hangs or lockups.
-------------------------------------------------------------------------------------------
-
-On Power10:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-enable-locking-fix
-
-Upto - a3b4678ca086 ("sched_ext: Decouple locks in scx_ops_enable()") +
-Patches to support struct_ops on PowerPC
-
-After running the tests for over 4 hours, I didn’t observe the original issue, but I hit
-another crash, which seems specific to PowerPC which is related to instruction patching.
-However, the originally reported hang appears to be resolved.
-------------------------------------------------------------------------------------------
-
-Sharing the crash logs observed in PowerPC here for general reference, FYI:
-
-
-[ 8638.891964] Kernel attempted to read user page (a8) - exploit attempt? (uid: 0)
-[ 8638.892002] BUG: Kernel NULL pointer dereference on read at 0x000000a8
-[ 8638.892019] Faulting instruction address: 0xc0000000004e7cc0
-[ 8638.892038] Oops: Kernel access of bad area, sig: 11 [#1]
-[ 8638.892060] LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=2048 NUMA PowerNV
-[ 8638.892080] Modules linked in: nf_conntrack_netlink nfnetlink xfrm_user xfrm_algo xt_addrtype
-br_netfilter xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT nf_reject_ipv4 xt_tcpudp
- ip6table_mangle ip6table_nat iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6
-nf_defrag_ipv4 ebtable_filter ebtables vhost_vsock vmw_vsock_virtio_transport_common ip6tabl
-e_filter ip6_tables vhost vhost_iotlb iptable_filter vsock bridge stp llc kvm_hv kvm joydev
-input_leds mac_hid at24 ofpart cmdlinepart uio_pdrv_genirq ibmpowernv opal_prd ipmi_powernv 
-powernv_flash uio binfmt_misc sch_fq_codel nfsd mtd ipmi_devintf ipmi_msghandler auth_rpcgss
-jc42 ramoops reed_solomon ip_tables x_tables autofs4 raid10 raid456 async_raid6_recov async
-_memcpy async_pq async_xor async_tx raid1 raid0 dm_mirror dm_region_hash dm_log mlx5_ib ib_uverbs
-ib_core mlx5_core hid_generic usbhid hid ast i2c_algo_bit drm_shmem_helper drm_kms_hel
-per vmx_crypto drm mlxfw crct10dif_vpmsum crc32c_vpmsum psample tls tg3 ahci libahci
-drm_panel_orientation_quirks
-[ 8638.892621] CPU: 62 UID: 0 PID: 5591 Comm: kworker/62:2 Not tainted 6.11.0-rc4+ #2
-[ 8638.892663] Hardware name: 8335-GTW POWER9 0x4e1203 opal:skiboot-v6.5.3-35-g1851b2a06 PowerNV
-[ 8638.892693] Workqueue: events bpf_prog_free_deferred
-[ 8638.892735] NIP:  c0000000004e7cc0 LR: c0000000004e7bbc CTR: c0000000003a9b30
-[ 8638.892798] REGS: c000000ea4cbf7f0 TRAP: 0300   Not tainted  (6.11.0-rc4+)
-[ 8638.892862] MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 42a00284  XER: 00000000
-[ 8638.892915] CFAR: c0000000004e7bb8 DAR: 00000000000000a8 DSISR: 40000000 IRQMASK: 1 
-[ 8638.892915] GPR00: c0000000004e7bbc c000000ea4cbfa90 c000000002837f00 0000000000000005 
-[ 8638.892915] GPR04: 0000000000000015 0000000000000009 0000000000000009 c000000004840b00 
-[ 8638.892915] GPR08: ffffffffffffffff 00000000ffffe000 ffffffffffffffff 000001937b55db50 
-[ 8638.892915] GPR12: 0000000000200000 c000007ffdfac300 c0000000031b1fc8 0000000000010000 
-[ 8638.892915] GPR16: c00000000000018e 000000007fffffff 0000000000000000 000000000000e1c0 
-[ 8638.892915] GPR20: 61c8864680b583eb 0000000000000000 0000000000000000 00000000000de1d5 
-[ 8638.892915] GPR24: 0000000000000000 c000000003da4408 c000000003da4400 c000000003da43f8 
-[ 8638.892915] GPR24: 0000000000000000 c000000003da4408 c000000003da4400 c000000003da43f8 
-[ 8638.892915] GPR28: 0000000000000000 0000000000000000 0000000000000000 c000000ea4cbfa90 
-[ 8638.893350] NIP [c0000000004e7cc0] walk_to_pmd+0x80/0x240
-[ 8638.893380] LR [c0000000004e7bbc] __get_locked_pte+0x4c/0xd0
-[ 8638.893398] Call Trace:
-[ 8638.893407] [c000000ea4cbfa90] [c000000ea4cbfb20] 0xc000000ea4cbfb20 (unreliable)
-[ 8638.893429] [c000000ea4cbfaf0] [c0000000004e7bbc] __get_locked_pte+0x4c/0xd0
-[ 8638.893457] [c000000ea4cbfb40] [c0000000000b1dd0] patch_instructions+0x130/0x630
-[ 8638.893500] [c000000ea4cbfc10] [c000000000123180] bpf_arch_text_invalidate+0x80/0xd0
-[ 8638.893552] [c000000ea4cbfc60] [c0000000003a7508] bpf_prog_pack_free+0x138/0x2f0
-[ 8638.893584] [c000000ea4cbfd10] [c0000000003a7e38] bpf_jit_binary_pack_free+0x48/0xa0
-[ 8638.893617] [c000000ea4cbfd50] [c000000000123258] bpf_jit_free+0x88/0x100
-[ 8638.893667] [c000000ea4cbfd90] [c0000000003a9d70] bpf_prog_free_deferred+0x240/0x280
-[ 8638.893725] [c000000ea4cbfde0] [c0000000001a6828] process_scheduled_works+0x268/0x520
-[ 8638.893767] [c000000ea4cbfee0] [c0000000001a9ed0] worker_thread+0x3f0/0x590
-[ 8638.893809] [c000000ea4cbff80] [c0000000001b37b0] kthread+0x1a0/0x1c0
-[ 8638.893862] [c000000ea4cbffe0] [c00000000000d030] start_kernel_thread+0x14/0x18
-[ 8638.893913] Code: 3cc20157 3b63c4f8 3b45c500 3929c510 3b26c508 3940ffff e87b0000 e8ba0000
-81290000 e8d90000 38830010 7d494830 <e87d00a8> 7ce42a14 7d2948f8 7d073214 
-[ 8638.894003] ---[ end trace 0000000000000000 ]---
-[ 8639.098185] pstore: backend (nvram) writing error (-1)
-[ 8639.098205] 
-[ 8639.098215] note: kworker/62:2[5591] exited with irqs disabled
-[ 8798.806603] ------------[ cut here ]------------
-[ 8798.806631] WARNING: CPU: 62 PID: 3769 at kernel/kthread.c:76 kthread_set_per_cpu+0x40/0xd0
-[ 8798.806653] Modules linked in: nf_conntrack_netlink nfnetlink xfrm_user xfrm_algo xt_addrtype
-br_netfilter xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT nf_reject_ipv4 xt_tcpudp ip6table_mangle
-ip6table_nat iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv
-------------------------------------------------------------------------------------------
-
-We will look at this issue as it is specific to PowerPC.
-
-But I can confirm that the originally reported hang (deadlock) is no longer present.
-
-Thanks much,
-Aboorva
-
+Suravee
 
