@@ -1,110 +1,146 @@
-Return-Path: <linux-kernel+bounces-335994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC1497EDCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:12:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D04A97EDD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 17:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94B69280CE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:12:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 850A31C2133E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58D219D084;
-	Mon, 23 Sep 2024 15:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEED199FC6;
+	Mon, 23 Sep 2024 15:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FLXL/g1E"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ktzeup+f"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A414019D093
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6876019C571
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 15:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727104189; cv=none; b=RzFoJU/dHOtWVtGcxVCan/aqZdzpLysStiTI/ccbASfFaEfxHJPNOFrq5UYhTqIW7rCFEZ8qw1PiGEehk7tIuLQllKg3nQZ5tugME6/N5SaXaJtzwr4DD+PMZ9OS4BhJk1rBV3gjZpMFnqj42JYKCFQI1CQOuBMYWs3OgnyOxu0=
+	t=1727104205; cv=none; b=hDruhlYout9v6jxTn/PF456zJrh1abSUzWwq6R82mKhOLnRmzjxTRdwaTAiPqTlj7uPsvlBaqGL5grK2vIdiLsahtTAhGai5eGQxCGBn/B5jGRTV0KBSUN45CpMlHFmt1SlYmW8M+/VOdvCOy5hQRRsf9gHY85GY3x1J++4GsWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727104189; c=relaxed/simple;
-	bh=MlhF8ehNpI88dBp1nv0Vi4Pyk5dAvOsVXpOwtTVYI/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pIKllq7wH8MJTZKRvyCh58lv5KrM60Cr2UXNlOXE00+Cg8sV45E6G9cIlPHZBC5VnfOp1ahsKt0u64r8DK8FkAReQhmrnJ5Rwmhu9N5zZ+LyPc4QUeqj0hbXSDTIU41DijAl2J1Hjye/r1fnFP+deJzKmcTYcX/3sTSCeuapczA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FLXL/g1E; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a08dc09ac6so27203685ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:09:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727104187; x=1727708987; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ti7v3Fv6sTAv0PRGJJlgJgiyxrO+5APnMuVBlCHcds4=;
-        b=FLXL/g1EEnDO0QBP7q0To7XwSaBGCHIZYA1LlalIawZhQCV4TtpSgfubR+eOA2SO59
-         iCdNSa2saj54Jm7HEsNDs443J1Zsqqo7E4luvKJPJH9/3FkQYNwJ7T+IFd/y4B2fM8a4
-         fQRI9FVFCk5IkqduEcY/1208kpvH4eE4lnP+c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727104187; x=1727708987;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ti7v3Fv6sTAv0PRGJJlgJgiyxrO+5APnMuVBlCHcds4=;
-        b=gFge/ARkaeUH2H62SQ3da025Pj+0C8c4xvmqcU4Ym2f6l4YgqTBtYaF7traWDfTXqH
-         T6iBbvy3I3CuQPtksZV+dHaFTbyMVSTxnc3ZzhyT+baBBBj6b2HHtPgMhCWyoNglf6R7
-         6yiq2Es+qM01NFaB/1jamUv0mBLWF2bnzOYg23zI5JT9f8m2VCAu4idoJlC9MJLEO/Ss
-         SHQhGgxIw/xiqd40NlG3OoWSDgeb0u0ate4ULs5Yj5XQ9v9j6hW4uyW0ZyMxGnTrRPz+
-         sBBZ9EHuKC7NNfCo9ntdjelgShltSyfxSza9qzk/ggzudOL6BrdB7YuCvjQ0sC+Nlb/J
-         qS/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWkvnMD8jpiIHxUajSyav3CaOcBWG2T1HzI799Xi/sLpEG878tVmts+5xnNI6hYRLl6Ng0vaqOlX43nASc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI5PpApkh3qfMGMgSOWiukDBbBOPsEzW0qXFDoqqt4+KRtcvTR
-	BHuUZO7+N04l0IFv52/JOlMLesAYKLvoY5K+8yfEFvUGcCkRK1iu9zEO0I9FLxg=
-X-Google-Smtp-Source: AGHT+IGVEsquzlM9GoMVthtYSTofa1uUH3CuC0IK5mwuQqFAaLQIwX4GCYrj62qn7WM+7uXx7NF/6w==
-X-Received: by 2002:a05:6e02:20ea:b0:3a0:9179:7651 with SMTP id e9e14a558f8ab-3a0c8b982demr97956755ab.0.1727104186559;
-        Mon, 23 Sep 2024 08:09:46 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a0b6e604f7sm39552135ab.61.2024.09.23.08.09.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2024 08:09:46 -0700 (PDT)
-Message-ID: <ab02dafc-e181-44db-bdaf-ae5ff9e01f38@linuxfoundation.org>
-Date: Mon, 23 Sep 2024 09:09:44 -0600
+	s=arc-20240116; t=1727104205; c=relaxed/simple;
+	bh=ijhp16POiHizSJGgEi26Badq+/FU3wzLsgnRMp6h734=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=KeauoIujqMhppjmzE3lDAJBsXja/isLck6VAdl8unBhIWtn7z3ei24CbRLipB+MVNXCCC8qkalE7fb9FG4ENph5jqxuAgjfaW9GC7YiyDCjqgL4zqh8Usi61PybqNEifbhWPjp+e6WmNE/S2RMRzRlDgvYN/Qm0Qp/DZi5OMhYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ktzeup+f; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727104203;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vmr7RFW+MecNdPbgzm3dl1w/hvFse0J+pQkI+OsPXBE=;
+	b=Ktzeup+fFRtjgPwsQX3j2YEszErzeErdg05qhTN9LCKMUb6Uzz3rwpManDS6OWPTcl4lsy
+	bf2i1X8RDlX+2XbOXQLRlWk9omUA67cxuM2oV0bOpukYKRPPq7/xRl9mqgQrj4tkgvyjR9
+	Pqyglu2X760VvkGSmD3UfEbd/UHs5wc=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-375-mGH_bdRcOt2KJRX8X9Ix6Q-1; Mon,
+ 23 Sep 2024 11:09:59 -0400
+X-MC-Unique: mGH_bdRcOt2KJRX8X9Ix6Q-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C275219C9618;
+	Mon, 23 Sep 2024 15:09:58 +0000 (UTC)
+Received: from [10.45.226.79] (unknown [10.45.226.79])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ED63419560AA;
+	Mon, 23 Sep 2024 15:09:56 +0000 (UTC)
+Date: Mon, 23 Sep 2024 17:09:53 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Ming-Hung Tsai <mingnus@gmail.com>
+cc: Dipendra Khadka <kdipendra88@gmail.com>, agk@redhat.com, 
+    snitzer@kernel.org, dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Return error code for failure input for sscanf in
+ parse_cblock_range()
+In-Reply-To: <CAAYit8TfBD40aRchLiOWsvqwpAR0x6nW9zObza4vLVzg93N+eA@mail.gmail.com>
+Message-ID: <87139a89-4256-fceb-5ca2-c1077b036eef@redhat.com>
+References: <20240922164702.49615-1-kdipendra88@gmail.com> <CAAYit8TfBD40aRchLiOWsvqwpAR0x6nW9zObza4vLVzg93N+eA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] pm: cpupower: Clean up bindings gitignore
-To: "John B. Wyatt IV" <jwyatt@redhat.com>
-Cc: linux-pm@vger.kernel.org, Thomas Renninger <trenn@suse.com>,
- Shuah Khan <shuah@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- linux-kernel@vger.kernel.org, John Kacur <jkacur@redhat.com>,
- "John B. Wyatt IV" <sageofredondo@gmail.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240919195626.26833-1-jwyatt@redhat.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240919195626.26833-1-jwyatt@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="-1463811712-1299825780-1727104198=:2867396"
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 9/19/24 13:56, John B. Wyatt IV wrote:
-> Add SPDX identifier to the gitignore. Remove the comment and .i file
-> since the file it references was removed in another patch. This patch
-> depends on Min-Hua Chen's 'pm: cpupower: rename raw_pylibcpupower.i'.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+---1463811712-1299825780-1727104198=:2867396
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+
+
+On Mon, 23 Sep 2024, Ming-Hung Tsai wrote:
+
+> On Mon, Sep 23, 2024 at 12:47 AM Dipendra Khadka <kdipendra88@gmail.com> wrote:
+> >
+> > Smatch reported following:
+> > '''
+> > drivers/md/dm-cache-target.c:3204 parse_cblock_range() warn: sscanf doesn't return error codes
+> > drivers/md/dm-cache-target.c:3217 parse_cblock_range() warn: sscanf doesn't return error codes
+> > '''
+> >
+> > Since, the only negative value that is returned by sscanf is -1.
+> > Returning -ENVAL when sscanf returns -1.
+> >
+> > Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+> > ---
+> >  drivers/md/dm-cache-target.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/md/dm-cache-target.c b/drivers/md/dm-cache-target.c
+> > index 17f0fab1e254..c35d65e310d6 100644
+> > --- a/drivers/md/dm-cache-target.c
+> > +++ b/drivers/md/dm-cache-target.c
+> > @@ -3200,8 +3200,8 @@ static int parse_cblock_range(struct cache *cache, const char *str,
+> >          * Try and parse form (ii) first.
+> >          */
+> >         r = sscanf(str, "%llu-%llu%c", &b, &e, &dummy);
+> > -       if (r < 0)
+> > -               return r;
+> > +       if (r == -1)
+> > +               return -EINVAL;
+> >
+> >         if (r == 2) {
+> >                 result->begin = to_cblock(b);
+> > @@ -3213,8 +3213,8 @@ static int parse_cblock_range(struct cache *cache, const char *str,
+> >          * That didn't work, try form (i).
+> >          */
+> >         r = sscanf(str, "%llu%c", &b, &dummy);
+> > -       if (r < 0)
+> > -               return r;
+> > +       if (r == -1)
+> > +               return -EINVAL;
+> >
+> >         if (r == 1) {
+> >                 result->begin = to_cblock(b);
 > 
-> Signed-off-by: John B. Wyatt IV <jwyatt@redhat.com>
-> Signed-off-by: John B. Wyatt IV <sageofredondo@gmail.com>
-> ---
 > 
-> Changes in v2:
-> 	- Rewrote commit description to use the paragraph format.
+> Could you please clarify how to reproduce unexpected results? From
+> what I observe, the kernel's sscanf doesn't return -1 on an empty
+> input. Even if a negative value other than -EINVAL is returned, it is
+> handled by the callers.
 > 
+> Hank
 
-Thank you. Applied to
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux.git/?h=cpupower
+I applied the patch, but I deleted the conditions "if (r == -1) return 
+-EINVAL;"
 
-I will send this one and the other fix to Rafael late on today. It will
-go into rc1 or rc2 depending on the timing.
+sscanf in the kernel doesn't return negative numbers.
 
-thanks,
--- Shuah
+Mikulas
+---1463811712-1299825780-1727104198=:2867396--
+
 
