@@ -1,236 +1,608 @@
-Return-Path: <linux-kernel+bounces-335604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 490D097E7FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:57:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6E7E97E801
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BBC41C213B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:57:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD9D11C213C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 08:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E0E194137;
-	Mon, 23 Sep 2024 08:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FFE1946C7;
+	Mon, 23 Sep 2024 08:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cM23nBol"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IQMa2awP"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCA25F873
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727081860; cv=fail; b=bH9Xs/2c2LT0FxQGx5euFiASn6a0dS86ONKDHSSvxCZrGY1sSenvPkcisdfA+x5H2LZib6Bzs1uk89uC+jyVIUD5taGeG5Y/8oyGxC5ohLskBmGgK7uvG9FFSbi52Y9gUbIUR8oygjDzgjM+WqRm+bmsk53BMOMDc+la2KXuxZo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727081860; c=relaxed/simple;
-	bh=3JyttdKqhd3NaqH7/osb4rUKtOV+NgXwZiA0ImGQW8w=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=kHxFWaN5iPDWrRl6T1YktRJWfJ3kKInjMPr1EJIEunHbAMHIm1f3ic3BAcRC4/DwtTLT94CX9ApcyjpKJarifeQOJfPOm9ffwRgdIHoFhnf2MABrvtJU5lLLIdCCjYnjwCYOcldMmJURPeISx8Pn8FqP816mlffDb1o7f/AxNQs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cM23nBol; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727081856; x=1758617856;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=3JyttdKqhd3NaqH7/osb4rUKtOV+NgXwZiA0ImGQW8w=;
-  b=cM23nBol2gx0EG+jd476jymDTUR7IXGq6iUkIjeQFR2NFQsAtkhMntYt
-   j4X36nCLZTTYgQARWT7qvh+jkXBkC68rjGC+NvPQwbIvdSIfV3xMECbFg
-   QxY4vtBMo7KG1J2yh9vUdy4usmFq2l9SYf9GOw8+rXailP8F8w3ZGj/mg
-   SO5romne212WkPxXlCswBHS8CceJKEudt800pHRjvw2r4IGsmxPPYHBRC
-   KUV8sxTI5UGLf8Dd2I49HIwKmlYZUqXqO2ve1x11gvwn3SDCeoTBhbiUg
-   2UwohZs7X08WYin259qkR/53of/lvN9wh57fQP+S5BDZ36y89IInNjbU3
-   w==;
-X-CSE-ConnectionGUID: h1Wwg52nSxmsxjELf7sVJQ==
-X-CSE-MsgGUID: Z9ULmqwySeuSiZXAamaebg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11202"; a="26138119"
-X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
-   d="scan'208";a="26138119"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2024 01:57:25 -0700
-X-CSE-ConnectionGUID: /scE7JJbQ9ar5jWazDFNjA==
-X-CSE-MsgGUID: AsE2GH+ZTH6bZgOGiDzS1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,250,1719903600"; 
-   d="scan'208";a="70895681"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Sep 2024 01:57:25 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 23 Sep 2024 01:57:24 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 23 Sep 2024 01:57:24 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.174)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 23 Sep 2024 01:57:24 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OA3S774Jk9ETYIqVDJxbGJ56jT+gU5XZRKEUiEk9wGbLcdn404L1XSLePhBlzHma3gMUp5w7CkdEZg0fAxeR40bung7Uvnq8+9vehohwVWat3ZSCo5su07uhu5aBJLZipz0WtKVGdhNN1sTpu8SXnvYYyitF9dRVeqd0yr8Zp01bd2AYIB1kIUjw5Z6v1H5MKWjGuPXaX2gx7+DlsLjGhBjn8jyaLwL4aSBqccRjqhHtb+nWxpxmMwDzfV2vq2hquF4y8QiwoZ+hpXE4xaAiHIm2XWS6t9VZfstmxZzKbge+bCTeVuJy5llZc5M+H/RYD91vIgTISalnRbY6RhRQbg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wym2xXNd/Qa1zqA2lW248TSQ9lLckLEVIdlULWXlOuQ=;
- b=lo+AAkKV3Hl6OH7KzBkqKDSNVepB35JNZAjZmvqvhw3hJtA9h4mhEb47zCI7aezhutrmliyVbhXN7qBTmR8c73WRqd0wtZsBBZC2D41PMw6ZHH7Z2pLyJv/p+TAa4ArbfGjirHC+M+CMMcIkMLPpMiea69flxWDsoK9K2NQ4iI+CkzhD1k90imvCFOSC8fvYnovIU21dBtcPhJcHWpY4QJEpOmZpZT1C5c5Ab9MBms9LY8VB9ZQGHUJP2xTHP2ARdAXtniIIWdAow18/fWIijXQLyhzf+HX0B9zR5TPA5zIl3CRB1opM46CWhhRdBQQqoXCsrrv/i7tEBBs16ElrnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
- by MW5PR11MB5786.namprd11.prod.outlook.com (2603:10b6:303:191::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Mon, 23 Sep
- 2024 08:57:15 +0000
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6%6]) with mapi id 15.20.7982.022; Mon, 23 Sep 2024
- 08:57:15 +0000
-Message-ID: <db2c96f3-c35d-42ee-a4e6-5233ccbac7bb@intel.com>
-Date: Mon, 23 Sep 2024 10:57:09 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ice: Unbind the workqueue
-To: Frederic Weisbecker <frederic@kernel.org>, Tony Nguyen
-	<anthony.l.nguyen@intel.com>
-CC: LKML <linux-kernel@vger.kernel.org>, Larysa Zaremba
-	<larysa.zaremba@intel.com>, "intel-wired-lan@lists.osuosl.org"
-	<intel-wired-lan@lists.osuosl.org>
-References: <20240922222420.18009-1-frederic@kernel.org>
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Content-Language: en-US
-In-Reply-To: <20240922222420.18009-1-frederic@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA2P291CA0032.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1f::21) To MN6PR11MB8102.namprd11.prod.outlook.com
- (2603:10b6:208:46d::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29BB1940B0
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 08:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727081873; cv=none; b=gFFwH1qoi635Qir8fX0xMXS0soziYLPyieYo2SqriamqIaO/L7/T9qWI8wDD5YI72pPN/99+cn3JZhvYtWVu5JP+iO3M8TJMurhMPZ1msMfs0bKkIrBrggm3mAcQbU3UGPEB8snUlhVql7SYm4kPgYW69ff1ULpCrqPkEJIFDy0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727081873; c=relaxed/simple;
+	bh=YQLVJWieLc9zhq7jmy4TnD6AHo1rVXcY0n4zS46y+yM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XDZpoU4jI/oX/4wtl+4w3UWcvZiqWSqdsxU21O+GQQCg2r4x+hDJSSbgSxTzj5LQPNwhyXp+3WL+HQHeM1E5kx6cRjktz2JTxReQFelcs/6LQ4B5XLwbXrvUNacxXQGBx4QWQQVmjA56MGNLsoo+dvoF3R+VLMpdxBjXrA3Y+Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IQMa2awP; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a90188ae58eso508118366b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 01:57:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727081869; x=1727686669; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nyM4DmjzVCW3YthPxYZVDbKycspXMq2IxqBbSvHv/5w=;
+        b=IQMa2awP/P+SZp+yMneEi9n88tMfNjwPsrJDu6qsfO0K3BB4KgD+HtFGn0waBCnS/3
+         v1Om2MoNeUSPx+pvpq4ciGMOY0n9Md3WuHz1R4AaoYWUG4YvWfXTNLh6cLHqE/HoOw9Z
+         vUBcnzCJO10dpDEZEQcmCl3Fc+JE5V+Zuvx88/gkoWfrTH1Fu8tED0nQO/IaU4EWOJPA
+         s1efXGPROAsMZ0IbTkumfp+JFxLY3hAYTfpSjBgSiKWF5h0GeBC0joz9Z6YEyoHTK+ed
+         UN66MaGDJAdLT/qiVxIbBd+tfLG7Zspp47vZzB8DbxxgLLlxhbroQGvlpKICNfadliuP
+         cCUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727081869; x=1727686669;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nyM4DmjzVCW3YthPxYZVDbKycspXMq2IxqBbSvHv/5w=;
+        b=KxD96Rafkvs9EBax+nEliZ5nIoNHbF9VcexfKwH+kqQWD1tI5J5s5/ugSH4pAD5o5O
+         tETiezx09QNuAEOHUGQX1PRyAWM+GeafttFas0VZOKAOW2J/UHPqSbkVfGR6CEcvR9mn
+         h/yn4k0GFAJfpVYPbUO+1o1l24uI1kMCiTFWrJqtHEVHunUaqTc5c3O4or2vgmqlZ65j
+         LxUNhK2L0XD2L6kKwsHkuwsyvt8x9Zwgz5ldGkTOuAIv7vlW6z5fbjnERufhRrcH0i0Q
+         4p3zRkca4tDWpqKBq9pgWZNcjo+lr3Pz5MqJzvzhx+i8uq02f74G6ZEywyv9n9lCwulT
+         sHmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbXsHsMaHTG/px1eUTpOi/+8XK3YheQgqeVlULRasYmNk+ANsSxWG/OGE3xcJ6CT9CGXgYmqBwBfgLf+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3DUQ6fgXgfGJ3QPPjAcPQANWya5nOZdiKQLiN97Dc1XdmC+N6
+	c3k/RoAAakd5mPgzt9LALQUk+aW1fL9CkC49hFlOV6maeuNuDNlAKP56B8qQIrwcrRck1K4B8Ne
+	FLVULCUlHfi2s8wrX7pmjozO/jsuwpOahB0nr
+X-Google-Smtp-Source: AGHT+IFBPfRX57lRyRY6QWrqTAVc830bow6tdsOH6p/OCZ0hm+eQY5vQFVbDFlUHINDv5XT+RQbV9caB6pOLUDNz2nA=
+X-Received: by 2002:a17:907:9450:b0:a8d:7b7d:8c39 with SMTP id
+ a640c23a62f3a-a90d59266demr1116511566b.43.1727081868591; Mon, 23 Sep 2024
+ 01:57:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|MW5PR11MB5786:EE_
-X-MS-Office365-Filtering-Correlation-Id: 15929a21-4529-4a6c-675c-08dcdbadb881
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bDhBelBFVTZvSVNJZmJsT1piNllxdGd5Z0RObFRsT1NiYTVrdGtwTFRULzZY?=
- =?utf-8?B?UnVQR1F3bC9kNThRTkZST1lQZDEvcnFFbGhBQjQ5czRsRXBWQnA5SlI4MWFO?=
- =?utf-8?B?SmZaYlRuSFJ1bXgwOXQrS2VVVWlhb3g0MTJYcEswZXBJb0JRWlBmRi96VUta?=
- =?utf-8?B?S1h0TlM4ZGtSUEVDNENPQmRlWEJXdG9PWjUrbWRKRU1MSGtVcFF4QitoZlBj?=
- =?utf-8?B?Zi85aU9FQ0UxSnBKVXh5U3hwQS9JdzJ3NmxMUG9BdDdrK2ZRcE4vc0I4anda?=
- =?utf-8?B?V3Bka2VOc0RRSmV4QWYwaS9STzVMSkxQM0piQnBwVW9HQkxaK3dkb0pRNlpi?=
- =?utf-8?B?MFIvWnUwd1hBTHcyTWRTMWZ0bWV5Tkxzb1ZUY2M3bmtlZVdTdHZrUTAvUHpZ?=
- =?utf-8?B?OWNxUitRTzhiVEhXdjBOUkgxTFVtbGg0SUVSS3BGaCtkOGtrQWhlSzJwMXZh?=
- =?utf-8?B?K3VCUFJmRHBOMzJKcnE1SjhyYnlsTzdzSURpeXhraFNmUnZFOHF6WndMYnV2?=
- =?utf-8?B?dXZjRjRwejZuRGhqajk2bGZ6RVg5amd1NW1YYlZkRFBmbE02UlBKSkRkMW0x?=
- =?utf-8?B?OW1rc1djS1NhNjU4Q1c1c0ZNb25rdVdoMnlTNmd6NUptS2kzOThoRGFvT0FK?=
- =?utf-8?B?MjZJWnZma1h4Q0VFb2g5cTlwZkp0Z01xL3J1V0RlcHhxNkhVc3pOMXVXNVdW?=
- =?utf-8?B?dlNvek03SlhzM1ZJcWx2ZU9JYUNMQ1A0OUNqQUplWnZoVW5SOWJNTWw1QkJz?=
- =?utf-8?B?VTRtdzhkOEx2ODJJU2NIUlNhZE1FWmEwSGpSMWYxNWtXYjJNaDJoNCt5bjVY?=
- =?utf-8?B?Nk4yZUJmWVdsaDJOR0lNZkRxVXZUd0xOdVlNaUYrdDAzeFJwb1BmTC9ob2JQ?=
- =?utf-8?B?MkpsODBwblhQN2U2WEV2Y1M2ZXRoTW1mS3V2VG1uNFZzeFkzcEsyMjJ4azBS?=
- =?utf-8?B?ZEg1K3dDb1pZVGJMOFRUZHRvMGVERDRDN0IrUCtjelZ0bzF2UlIzdTN1UUJD?=
- =?utf-8?B?RmM0NUhabVV0eTFhNXhrMldUNjlnZkRVK29yRlovQW1nS3o0YzAxeU5heHFQ?=
- =?utf-8?B?RktJTEdrd3hGVmovaHFUUUsyUnlYbFozM2pxT2o3OUdqSzI1Z0JHTFB1b2VH?=
- =?utf-8?B?ZEEyQ29qWG1BcVZzV2NxQ2VuZVNnSEtHcXd5WU5tTG9CSkpuKzFrVjFMdy9H?=
- =?utf-8?B?VWtkNkNOcXF2ZWhSR012b3Z5TFFicVFJaG05WGorYmg0R1hPWWpsbEJiTVhp?=
- =?utf-8?B?dFVucEEyYlRobk00eFR2dENRQjVLaEpVSUtWcDhOd01vOEE5NFJONUtNUkhF?=
- =?utf-8?B?Ymk3YVZEam5DMGlTeUhyUjBkUUtvMzJycDNqcFU1N25zVER6Nlh5OXZ2NXFr?=
- =?utf-8?B?Vnl5MnEyQ3RLRWtuT0g1bC83aE1Dd05LOWlLTkpDcVVYVWdsbHMwcHEzOXhF?=
- =?utf-8?B?Y3d4SDErQXYrcEpYdG0wZFdta0xxVW1MN1VBaFU3Y2tuVk5tU3c2b3ROT2RR?=
- =?utf-8?B?UWN1bmphZHluNlFPaDRBOVpsWTFpd0RqVTdvTmJTSXhOMTJ4VnlxMXErbFhG?=
- =?utf-8?B?MjdiczJrcVdsb2Rjek1pSGZYWE5vOEF4V2FxeTk4YUoxTEpZcWlFUnp1eUdE?=
- =?utf-8?B?UmJLTHRDTkVudW4xYkFIbkRXUUpURWhOeXdNNHFhd0JJZlVxSWdYaGhZOEhm?=
- =?utf-8?B?Z25GTk5hMWNaR0oxM1RFQjdtZ3VLRkF6SVRsWHBDcjZQM3l1RDZ0WFlRPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SlNITDVYZjFIWGE0WGpra1Q0aEVHYVZGSUtTV0pzeGtLZVRpRzg2Vm52UkZY?=
- =?utf-8?B?bTJxdlAvSkFvTTVzSlpRUENUT1IzUlpvWkRiZUFqRExGVWxmbXVGcVRYellD?=
- =?utf-8?B?R2JNWnEzZm5zY2ZsTmdqRFhnei91Y2w1cWc2emdnL29qTlptbnJocytKc291?=
- =?utf-8?B?dVUvZ3BES1pzdzBlOHVBNENxVWNYc09RU0x4R0ErQUxqOGNwTUNKZk1naHRQ?=
- =?utf-8?B?Z1pyQVF5ejlzMFVjWWJsdkcxYTB2US90NjZIRnR2RHhrSzVWUXBDVFdaS1Mr?=
- =?utf-8?B?NDlvUXZTV3V6N3NDTWFXU2FPaWd2alIvNW1wQzd3c1MzVmduSzlpSG5HNTJX?=
- =?utf-8?B?c1RvbFkzRUVGNldRR0FkbjRpZFQxMS8zUEJtQWxnc3NnYWJsb2JhUnk4cVhX?=
- =?utf-8?B?WXpTMW92YUozNXRjU00rN3lSVmp6bU8zdjVGakhFY2xwMGF1WENDVm1rV0Ni?=
- =?utf-8?B?VHk5RjFzbXdhQzhkSDk4K3RFM2RVMGVqSzY1SWJodWp0VWpQMFZ4SWFlYytu?=
- =?utf-8?B?b1dyRXgzdWRqQzJJd3hTT05zWkhOaDU4NTJlcThMN1p0dkp2WDd2bGRFZWhV?=
- =?utf-8?B?U3k4N0d0S3kxUDlZOVdMRlpNaFUzQmJnZmFmeUh1Y0JqczRjL1BjZmV5VWdl?=
- =?utf-8?B?WXFXV0x1RlpNODcwa1FZOXk2VnpHQjRjeExMdXRxakVTVVlORVFoSUNpaTlH?=
- =?utf-8?B?Q1FSdis5a2tzTW5hclRER25QNHdReFdmSFZ2TG9BUFRiekVvT1hiclBRMjVZ?=
- =?utf-8?B?TFVYNVc0bmRMM256S09GTnlGRWZCMVRWWjV3Rko3eUkyMnJmaGk4OWRMRkdS?=
- =?utf-8?B?UGNMZm91UklTVkwreVROTS9DTGtoeXRBSVlEM1FFWnpEK2NjRFY5alVlQXht?=
- =?utf-8?B?ekw4SVdaZDU1b0tEeHc3RFBVYWtGOFNoQW9iZStYNGk2UDk3c2huT1VDdHdR?=
- =?utf-8?B?TmJPaXhYWDBrOU9jc3REL0xISWdkN0hKUWFNNEVVakgwOWQ4bXBtYnNEek83?=
- =?utf-8?B?NEJrVUhGczIyTXN2c3Z4Qzdtc3ZFaDkwdmpCTVN4TnhEeGtjOFhKbzJMdnMx?=
- =?utf-8?B?VGhrc2pNeHlvWHpCWGE1TFcvRDZKTzdOUS9RU3lXellDNjNtZHZwMk9pSSsv?=
- =?utf-8?B?bml5bTBmdk8zTlI5Wmh6L0liU1p0VEtrQzE1NElxU3NQdjZuZzBXaGc2TWlJ?=
- =?utf-8?B?SDlQTHVid3lwZEludEZLSVZXekgrazBkdUgxTlJBRUFDR1Y1TklVb0l5a2xp?=
- =?utf-8?B?UXZRZmlyUWhGODY2L25rakxCVmF4VVpKK1M1M1VmaTBWQVhlVGF2OHUzUGhv?=
- =?utf-8?B?Vlgwd3FBNmh4U05ZUnl0c1NXSVlLbXVFUlhIMlJNN2pERWtqNEpuclBJd1p2?=
- =?utf-8?B?cmdNY2tmSFMyMkYyRjJnTEhtM0l4WDRhbjlSWnFDbTIxUVcxSlFyVXVZUy9r?=
- =?utf-8?B?WWdlSlNuS2g2V3J4Q3ltVkNxYWdRNDVzYjNNb3RxRU9tZFBjTFVLaVNtd1JJ?=
- =?utf-8?B?WVExK1lEbU9sa2VWSWpGb3dQU3hKRlBRUmF4b0lDZllqOFJGaGNwRDBHSk15?=
- =?utf-8?B?Z1c3dlEwUzN5K2tDQmZUWEJBeFhNN2c0NFBJODFXZDVLUm1CcVZOQjRSWWpn?=
- =?utf-8?B?aTBtbEh1Q0J4dlNFMkJPUmxkbkNTNk1PaGVCamNUNzU2ZFZOemxFMnMycDlz?=
- =?utf-8?B?V2dhWm1RdnBoL3o3NkJZdmNRNG9Hc280MFI5a0xZVENuMEM2SjM0d1hwcG8v?=
- =?utf-8?B?bkhyQW44S0pDdFBPQUI4bHo1eFNSR3Z5dnRncXM0V0dNUFBiT2NYM0FXOG83?=
- =?utf-8?B?dUM3R1RRM3R4SVFQbjl0NFZlQ3VwNkRBWjJzNUFRWVZsQnNjNTk3dnY4UXhV?=
- =?utf-8?B?cWVnMEhkSGdlQ3hoTUFFRGp2VVJPVVR5NnV2aU9abkhrdXVjT21GbERKSkla?=
- =?utf-8?B?NUxCMzN3R1RCNXRWUUpOZzBxWSt1WUx6MElqOTdqa1pkR2NidEo3VU84NXQr?=
- =?utf-8?B?NWlnOWQ3aDdZaWxZMk9wV09qemppVE9KVUxjUnp5L2N6aWtSQ0xrdjBPWWg5?=
- =?utf-8?B?Z045QTZ4dWh6a0hUL0xXaUhQYmtwL2FXR3czdWxFQnZ0TWxoQkI4S3VxQmRV?=
- =?utf-8?B?T2xVbGplREtUTERCRi9DekZmOGNlaU5mRDFrbFFvTER0NXQrTm8vWFR5SFR0?=
- =?utf-8?B?Ync9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15929a21-4529-4a6c-675c-08dcdbadb881
-X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 08:57:15.2935
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Suv0boeKou4sFnsbA9lgo/sMHg4xJeEjeUXbPmKBOhu0cdBF0imZZybgTIz319zXmf2wuGfnmm7A4FOIW1X6PJdRL2nPCxlpKne5x8uSX7Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR11MB5786
-X-OriginatorOrg: intel.com
+References: <20240921215410.638664-1-littlesmilingcloud@gmail.com>
+ <CANn89iKP3VPExdyZt+eLFk3rE5=6yRckTPySfh5MvcEqPNm6aA@mail.gmail.com> <ZvB8stjbrXoez86t@dau-work-pc.sunlink.ru>
+In-Reply-To: <ZvB8stjbrXoez86t@dau-work-pc.sunlink.ru>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 23 Sep 2024 10:57:34 +0200
+Message-ID: <CANn89iJoMcxe6xAOE=QGfqmOa1p+_ssSr_2y4KUJr-Qap3xk0Q@mail.gmail.com>
+Subject: Re: [RFC PATCH net] ipv4: ip_gre: Fix drops of small packets in ipgre_xmit
+To: Anton Danilov <littlesmilingcloud@gmail.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Suman Ghosh <sumang@marvell.com>, Shigeru Yoshida <syoshida@redhat.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/23/24 00:24, Frederic Weisbecker wrote:
-> The ice workqueue doesn't seem to rely on any CPU locality and should
-> therefore be able to run on any CPU. In practice this is already
-> happening through the unbound ice_service_timer that may fire anywhere
-> and queue the workqueue accordingly to any CPU.
-> 
-> Make this official so that the ice workqueue is only ever queued to
-> housekeeping CPUs on nohz_full.
-> 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
->   drivers/net/ethernet/intel/ice/ice_main.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
-> index ea780d468579..70990f42ac05 100644
-> --- a/drivers/net/ethernet/intel/ice/ice_main.c
-> +++ b/drivers/net/ethernet/intel/ice/ice_main.c
-> @@ -5924,7 +5924,7 @@ static int __init ice_module_init(void)
->   
->   	ice_adv_lnk_speed_maps_init();
->   
-> -	ice_wq = alloc_workqueue("%s", 0, 0, KBUILD_MODNAME);
-> +	ice_wq = alloc_workqueue("%s", WQ_UNBOUND, 0, KBUILD_MODNAME);
->   	if (!ice_wq) {
->   		pr_err("Failed to create workqueue\n");
->   		return status;
+On Sun, Sep 22, 2024 at 10:23=E2=80=AFPM Anton Danilov
+<littlesmilingcloud@gmail.com> wrote:
+>
+> On Sun, Sep 22, 2024 at 12:20:03PM +0200, Eric Dumazet wrote:
+>
+> Hi Eric,
+>
+> > Please provide a real selftest, because in this particular example,
+> > the path taken by the packets should not reach the
+> > pskb_network_may_pull(skb, pull_len)),
+> > because dev->header_ops should be NULL ?
+>
+> I sincerely apologize for providing an inaccurate example of the commands
+> needed to reproduce the issue. I understand that this may have caused
+> confusion, and I'm truly sorry for any inconvenience.
+>
+> Here are the correct commands and their results.
+>
+>
+>   ip l add name mgre0 type gre local 192.168.71.177 remote 0.0.0.0 ikey 1=
+.9.8.4 okey 1.9.8.4
+>   ip l s mtu 1400 dev mgre0
+>   ip a add 192.168.13.1/24 dev mgre0
+>   ip l s up dev mgre0
+>   ip n add 192.168.13.2 lladdr 192.168.69.50 dev mgre0
 
-Thank you for the patch, it would make sense for our iwl-next tree,
-with such assumption:
-Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+This looks much better. I was hoping that we could capture this in a
+new test (added in tools/testing/selftests/net)
 
-@Tony, do you want it resent with target tree in the subject?
+Please also move the buggy "tnl_params =3D (const struct iphdr
+*)skb->data;" line as in :
+
+diff --git a/net/ipv4/ip_gre.c b/net/ipv4/ip_gre.c
+index 5f6fd382af38a32d9e22633cdb2e9fd01f1795e4..f1f31ebfc7934467fd10776c3cb=
+221f9cff9f9dd
+100644
+--- a/net/ipv4/ip_gre.c
++++ b/net/ipv4/ip_gre.c
+@@ -662,11 +662,11 @@ static netdev_tx_t ipgre_xmit(struct sk_buff *skb,
+                if (skb_cow_head(skb, 0))
+                        goto free_skb;
+
+-               tnl_params =3D (const struct iphdr *)skb->data;
+-
+-               if (!pskb_network_may_pull(skb, pull_len))
++               if (!pskb_may_pull(skb, pull_len))
+                        goto free_skb;
+
++               tnl_params =3D (const struct iphdr *)skb->data;
++
+                /* ip_tunnel_xmit() needs skb->data pointing to gre header.=
+ */
+                skb_pull(skb, pull_len);
+                skb_reset_mac_header(skb);
+
+
+>
+>
+>   ip -s -s -d l ls dev mgre0
+>     19: mgre0@NONE: <NOARP,UP,LOWER_UP> mtu 1400 qdisc noqueue state UNKN=
+OWN mode DEFAULT group default qlen 1000
+>         link/gre 192.168.71.177 brd 0.0.0.0 promiscuity 0  allmulti 0 min=
+mtu 0 maxmtu 0
+>         gre remote any local 192.168.71.177 ttl inherit ikey 1.9.8.4 okey=
+ 1.9.8.4 \
+>           addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 6553=
+6 gso_max_segs 65535 \
+>           tso_max_size 65536 tso_max_segs 65535 gro_max_size 65536
+>
+>         RX:  bytes packets errors dropped  missed   mcast
+>                  0       0      0       0       0       0
+>         RX errors:  length    crc   frame    fifo overrun
+>                          0      0       0       0       0
+>         TX:  bytes packets errors dropped carrier collsns
+>                  0       0      0       0       0       0
+>         TX errors: aborted   fifo  window heartbt transns
+>                          0      0       0       0       0
+>
+>
+>   ping -n -c 10 -s 1374 192.168.13.2
+>     PING 192.168.13.2 (192.168.13.2) 1374(1402) bytes of data.
+>
+>     --- 192.168.13.2 ping statistics ---
+>     10 packets transmitted, 0 received, 100% packet loss, time 9237ms
+>
+>
+>   ip -s -s -d l ls dev mgre0
+>     19: mgre0@NONE: <NOARP,UP,LOWER_UP> mtu 1400 qdisc noqueue state UNKN=
+OWN mode DEFAULT group default qlen 1000
+>         link/gre 192.168.71.177 brd 0.0.0.0 promiscuity 1  allmulti 0 min=
+mtu 0 maxmtu 0
+>         gre remote any local 192.168.71.177 ttl inherit ikey 1.9.8.4 okey=
+ 1.9.8.4 \
+>           addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 6553=
+6 gso_max_segs 65535 \
+>           tso_max_size 65536 tso_max_segs 65535 gro_max_size 65536
+>
+>         RX:  bytes packets errors dropped  missed   mcast
+>                  0       0      0       0       0       0
+>         RX errors:  length    crc   frame    fifo overrun
+>                          0      0       0       0       0
+>         TX:  bytes packets errors dropped carrier collsns
+>              13960      10      0      10       0       0
+>         TX errors: aborted   fifo  window heartbt transns
+>                      0      0       0       0       0
+>
+>
+>   tcpdump -vni mgre0
+>     tcpdump: listening on mgre0, link-type LINUX_SLL (Linux cooked v1), s=
+napshot length 262144 bytes
+>     21:51:19.481523 IP (tos 0x0, ttl 64, id 52595, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 1, =
+length 1376
+>     21:51:19.481547 IP (tos 0x0, ttl 64, id 52595, offset 1376, flags [no=
+ne], proto ICMP (1), length 26)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     21:51:20.526751 IP (tos 0x0, ttl 64, id 53374, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 2, =
+length 1376
+>     21:51:20.526773 IP (tos 0x0, ttl 64, id 53374, offset 1376, flags [no=
+ne], proto ICMP (1), length 26)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     21:51:21.550751 IP (tos 0x0, ttl 64, id 54124, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 3, =
+length 1376
+>     21:51:21.550775 IP (tos 0x0, ttl 64, id 54124, offset 1376, flags [no=
+ne], proto ICMP (1), length 26)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     21:51:22.574748 IP (tos 0x0, ttl 64, id 55109, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 4, =
+length 1376
+>     21:51:22.574766 IP (tos 0x0, ttl 64, id 55109, offset 1376, flags [no=
+ne], proto ICMP (1), length 26)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     21:51:23.598748 IP (tos 0x0, ttl 64, id 56011, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 5, =
+length 1376
+>     21:51:23.598771 IP (tos 0x0, ttl 64, id 56011, offset 1376, flags [no=
+ne], proto ICMP (1), length 26)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     21:51:24.622758 IP (tos 0x0, ttl 64, id 57009, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 6, =
+length 1376
+>     21:51:24.622783 IP (tos 0x0, ttl 64, id 57009, offset 1376, flags [no=
+ne], proto ICMP (1), length 26)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     21:51:25.646748 IP (tos 0x0, ttl 64, id 57277, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 7, =
+length 1376
+>     21:51:25.646775 IP (tos 0x0, ttl 64, id 57277, offset 1376, flags [no=
+ne], proto ICMP (1), length 26)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     21:51:26.670750 IP (tos 0x0, ttl 64, id 57869, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 8, =
+length 1376
+>     21:51:26.670773 IP (tos 0x0, ttl 64, id 57869, offset 1376, flags [no=
+ne], proto ICMP (1), length 26)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     21:51:27.694751 IP (tos 0x0, ttl 64, id 58317, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 9, =
+length 1376
+>     21:51:27.694774 IP (tos 0x0, ttl 64, id 58317, offset 1376, flags [no=
+ne], proto ICMP (1), length 26)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     21:51:28.718751 IP (tos 0x0, ttl 64, id 58558, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 10,=
+ length 1376
+>     21:51:28.718775 IP (tos 0x0, ttl 64, id 58558, offset 1376, flags [no=
+ne], proto ICMP (1), length 26)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>
+>
+>   tcpdump -vni enp11s0.100 'ip proto 47'
+>     tcpdump: listening on enp11s0.100, link-type EN10MB (Ethernet), snaps=
+hot length 262144 bytes
+>     21:51:19.481696 IP (tos 0x0, ttl 64, id 32563, offset 0, flags [DF], =
+proto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 52595, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 1, =
+length 1376
+>     21:51:20.526767 IP (tos 0x0, ttl 64, id 33363, offset 0, flags [DF], =
+proto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 53374, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 2, =
+length 1376
+>     21:51:21.550768 IP (tos 0x0, ttl 64, id 34260, offset 0, flags [DF], =
+proto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 54124, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 3, =
+length 1376
+>     21:51:22.574761 IP (tos 0x0, ttl 64, id 34922, offset 0, flags [DF], =
+proto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 55109, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 4, =
+length 1376
+>     21:51:23.598764 IP (tos 0x0, ttl 64, id 35042, offset 0, flags [DF], =
+proto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 56011, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 5, =
+length 1376
+>     21:51:24.622775 IP (tos 0x0, ttl 64, id 36024, offset 0, flags [DF], =
+proto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 57009, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 6, =
+length 1376
+>     21:51:25.646766 IP (tos 0x0, ttl 64, id 36133, offset 0, flags [DF], =
+proto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 57277, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 7, =
+length 1376
+>     21:51:26.670766 IP (tos 0x0, ttl 64, id 36417, offset 0, flags [DF], =
+proto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 57869, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 8, =
+length 1376
+>     21:51:27.694767 IP (tos 0x0, ttl 64, id 37006, offset 0, flags [DF], =
+proto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 58317, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 9, =
+length 1376
+>     21:51:28.718767 IP (tos 0x0, ttl 64, id 37825, offset 0, flags [DF], =
+proto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 58558, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 63847, seq 10,=
+ length 1376
+>
+>
+>   ping -n -c 10 -s 1376 192.168.13.2
+>     PING 192.168.13.2 (192.168.13.2) 1376(1404) bytes of data.
+>
+>     --- 192.168.13.2 ping statistics ---
+>     10 packets transmitted, 0 received, 100% packet loss, time 9198ms
+>
+>
+>   ip -s -s -d l ls dev mgre0
+>     19: mgre0@NONE: <NOARP,UP,LOWER_UP> mtu 1400 qdisc noqueue state UNKN=
+OWN mode DEFAULT group default qlen 1000
+>         link/gre 192.168.71.177 brd 0.0.0.0 promiscuity 0  allmulti 0 min=
+mtu 0 maxmtu 0
+>         gre remote any local 192.168.71.177 ttl inherit ikey 1.9.8.4 okey=
+ 1.9.8.4 addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 g=
+so_max_segs 65535 tso_max_size 65536 tso_max_segs 65535 gro_max_size 65536
+>         RX:  bytes packets errors dropped  missed   mcast
+>                  0       0      0       0       0       0
+>         RX errors:  length    crc   frame    fifo overrun
+>                          0      0       0       0       0
+>         TX:  bytes packets errors dropped carrier collsns
+>              28200      30      0      10       0       0
+>         TX errors: aborted   fifo  window heartbt transns
+>                          0      0       0       0       0
+>
+>
+>   tcpdump -vni mgre0
+>     tcpdump: listening on mgre0, link-type LINUX_SLL (Linux cooked v1), s=
+napshot length 262144 bytes
+>     22:01:34.176810 IP (tos 0x0, ttl 64, id 40388, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 1, =
+length 1376
+>     22:01:34.176830 IP (tos 0x0, ttl 64, id 40388, offset 1376, flags [no=
+ne], proto ICMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:35.183742 IP (tos 0x0, ttl 64, id 40516, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 2, =
+length 1376
+>     22:01:35.183765 IP (tos 0x0, ttl 64, id 40516, offset 1376, flags [no=
+ne], proto ICMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:36.207750 IP (tos 0x0, ttl 64, id 40684, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 3, =
+length 1376
+>     22:01:36.207774 IP (tos 0x0, ttl 64, id 40684, offset 1376, flags [no=
+ne], proto ICMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:37.230738 IP (tos 0x0, ttl 64, id 41578, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 4, =
+length 1376
+>     22:01:37.230756 IP (tos 0x0, ttl 64, id 41578, offset 1376, flags [no=
+ne], proto ICMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:38.254761 IP (tos 0x0, ttl 64, id 42099, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 5, =
+length 1376
+>     22:01:38.254789 IP (tos 0x0, ttl 64, id 42099, offset 1376, flags [no=
+ne], proto ICMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:39.278748 IP (tos 0x0, ttl 64, id 42506, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 6, =
+length 1376
+>     22:01:39.278771 IP (tos 0x0, ttl 64, id 42506, offset 1376, flags [no=
+ne], proto ICMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:40.302738 IP (tos 0x0, ttl 64, id 42527, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 7, =
+length 1376
+>     22:01:40.302754 IP (tos 0x0, ttl 64, id 42527, offset 1376, flags [no=
+ne], proto ICMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:41.326733 IP (tos 0x0, ttl 64, id 42989, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 8, =
+length 1376
+>     22:01:41.326749 IP (tos 0x0, ttl 64, id 42989, offset 1376, flags [no=
+ne], proto ICMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:42.350750 IP (tos 0x0, ttl 64, id 43576, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 9, =
+length 1376
+>     22:01:42.350773 IP (tos 0x0, ttl 64, id 43576, offset 1376, flags [no=
+ne], proto ICMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:43.374743 IP (tos 0x0, ttl 64, id 44118, offset 0, flags [+], p=
+roto ICMP (1), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 10,=
+ length 1376
+>     22:01:43.374762 IP (tos 0x0, ttl 64, id 44118, offset 1376, flags [no=
+ne], proto ICMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>
+>
+>   tcpdump -vni enp11s0.100 'ip proto 47'
+>     tcpdump: listening on enp11s0.100, link-type EN10MB (Ethernet), snaps=
+hot length 262144 bytes
+>     22:01:34.176825 IP (tos 0x0, ttl 64, id 5066, offset 0, flags [DF], p=
+roto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 40388, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 1, =
+length 1376
+>     22:01:34.176832 IP (tos 0x0, ttl 64, id 5067, offset 0, flags [DF], p=
+roto GRE (47), length 56)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 36
+>         IP (tos 0x0, ttl 64, id 40388, offset 1376, flags [none], proto I=
+CMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:35.183758 IP (tos 0x0, ttl 64, id 5567, offset 0, flags [DF], p=
+roto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 40516, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 2, =
+length 1376
+>     22:01:35.183768 IP (tos 0x0, ttl 64, id 5568, offset 0, flags [DF], p=
+roto GRE (47), length 56)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 36
+>         IP (tos 0x0, ttl 64, id 40516, offset 1376, flags [none], proto I=
+CMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:36.207767 IP (tos 0x0, ttl 64, id 5741, offset 0, flags [DF], p=
+roto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 40684, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 3, =
+length 1376
+>     22:01:36.207778 IP (tos 0x0, ttl 64, id 5742, offset 0, flags [DF], p=
+roto GRE (47), length 56)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 36
+>         IP (tos 0x0, ttl 64, id 40684, offset 1376, flags [none], proto I=
+CMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:37.230751 IP (tos 0x0, ttl 64, id 5785, offset 0, flags [DF], p=
+roto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 41578, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 4, =
+length 1376
+>     22:01:37.230758 IP (tos 0x0, ttl 64, id 5786, offset 0, flags [DF], p=
+roto GRE (47), length 56)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 36
+>         IP (tos 0x0, ttl 64, id 41578, offset 1376, flags [none], proto I=
+CMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:38.254780 IP (tos 0x0, ttl 64, id 5937, offset 0, flags [DF], p=
+roto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 42099, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 5, =
+length 1376
+>     22:01:38.254795 IP (tos 0x0, ttl 64, id 5938, offset 0, flags [DF], p=
+roto GRE (47), length 56)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 36
+>         IP (tos 0x0, ttl 64, id 42099, offset 1376, flags [none], proto I=
+CMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:39.278764 IP (tos 0x0, ttl 64, id 6876, offset 0, flags [DF], p=
+roto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 42506, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 6, =
+length 1376
+>     22:01:39.278775 IP (tos 0x0, ttl 64, id 6877, offset 0, flags [DF], p=
+roto GRE (47), length 56)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 36
+>         IP (tos 0x0, ttl 64, id 42506, offset 1376, flags [none], proto I=
+CMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:40.302749 IP (tos 0x0, ttl 64, id 7410, offset 0, flags [DF], p=
+roto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 42527, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 7, =
+length 1376
+>     22:01:40.302757 IP (tos 0x0, ttl 64, id 7411, offset 0, flags [DF], p=
+roto GRE (47), length 56)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 36
+>         IP (tos 0x0, ttl 64, id 42527, offset 1376, flags [none], proto I=
+CMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:41.326744 IP (tos 0x0, ttl 64, id 7913, offset 0, flags [DF], p=
+roto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 42989, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 8, =
+length 1376
+>     22:01:41.326753 IP (tos 0x0, ttl 64, id 7914, offset 0, flags [DF], p=
+roto GRE (47), length 56)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 36
+>         IP (tos 0x0, ttl 64, id 42989, offset 1376, flags [none], proto I=
+CMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:42.350766 IP (tos 0x0, ttl 64, id 8422, offset 0, flags [DF], p=
+roto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 43576, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 9, =
+length 1376
+>     22:01:42.350776 IP (tos 0x0, ttl 64, id 8423, offset 0, flags [DF], p=
+roto GRE (47), length 56)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 36
+>         IP (tos 0x0, ttl 64, id 43576, offset 1376, flags [none], proto I=
+CMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>     22:01:43.374756 IP (tos 0x0, ttl 64, id 9410, offset 0, flags [DF], p=
+roto GRE (47), length 1424)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 1404
+>         IP (tos 0x0, ttl 64, id 44118, offset 0, flags [+], proto ICMP (1=
+), length 1396)
+>         192.168.13.1 > 192.168.13.2: ICMP echo request, id 54476, seq 10,=
+ length 1376
+>     22:01:43.374766 IP (tos 0x0, ttl 64, id 9411, offset 0, flags [DF], p=
+roto GRE (47), length 56)
+>         192.168.71.177 > 192.168.69.50: GREv0, Flags [key present], key=
+=3D0x1090804, length 36
+>         IP (tos 0x0, ttl 64, id 44118, offset 1376, flags [none], proto I=
+CMP (1), length 28)
+>         192.168.13.1 > 192.168.13.2: ip-proto-1
+>
 
