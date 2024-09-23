@@ -1,211 +1,269 @@
-Return-Path: <linux-kernel+bounces-335957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 637F797ED23
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:23:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D4197ED24
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242F0283015
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:23:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EF09283DB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBA319DF43;
-	Mon, 23 Sep 2024 14:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96F619E7F7;
+	Mon, 23 Sep 2024 14:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UpUQXHn7"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2053.outbound.protection.outlook.com [40.107.236.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nsulgRRg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="so/QAP2B";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jloADnid";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P/GdsNwE"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902FA2AD25;
-	Mon, 23 Sep 2024 14:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727101329; cv=fail; b=F/gB5NNPe1wr4p/sIO+iiwFxFE3cguBqeVHbN3rnQr4NJ1pxsCjFNunCYRkXwFp2M+haqMbLH+/DRRO1EaKfiJXILoaFS3r2ANTEXpUyRaaECaCoccKBwaJqJK+eqVX1HBEFtqf+ekSHYn7QKb5R3uO62Qzbjf7GSRfEp6g0bMU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727101329; c=relaxed/simple;
-	bh=9drg+rj4Iu9ykaNtPQV6xLa5pi6+ai9X7JL1KCXeMio=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=M0FNrrynvTGK0oJmq/bS79+XWRpNI63CVcJQ6x7nzU4E2MGl1M7L6RIgCbZXmV/mY/6qPW6aYg1Rh3k8IL6TdA4znxragPjuVjeNxBcJUriD0PuG++XqKZN5yEvaMvx9KnqULo5ZJZn0x2mLXe2sV+P/DzDyqmfGqx0Xi9hyQf0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UpUQXHn7; arc=fail smtp.client-ip=40.107.236.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F9BTh9eGn+9qVVsC2/RaJGu85FnYh6gVYWubjRh8XI/MoCks4VSVeJD2wAbUCgRmSOS04sq/+JjEVZpaf22Vk8i7il1FRo6LrP4jzvXgken6ie5q4R3w5RDPkzEANmmKVB9sSpmq9E08N2iPc1aFUthg+X75p7lh3nVUvPtxXQ0lpNQlkqVmNebOopeRacriMEg+c4LcvqQ/mSjJzH2Sb7uPrjQvw2T+/jfpTL4KkoHOFOCY1aPVX7L6ikg5gLcYufMIQa4PjDK5hDI022iMidUAFKxTCpFUGgmE7MRPorBOyMXgn6htiGuSybIacLAcplOVwtwY40DCOmRjUvwkoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AOwGisqqMBJSEmslpnQoQQBMhh/nFH6XSl/ei1yY74M=;
- b=Ak++71vZEZ9uin9UgMISFdDdaL45Qhl1smT6R9lhfnNju2j5w87OEIdmku5nJK+v4We0wOXdDIbIDily15EETQZiSMZhIwVxKjrGTZMp4f5mSq18PmFr+nIiWMytNeAK8lSkTplB2cwEahVAOazSALkohuJHSLfaeJE2/6vqfvhyrIhC0knwgA+84MCl59v/FJfx44PCHv3gzxFloBd8hGcMjnJRdpohQPImU++vMKgujiU3B27qRAmRtu85CLWneRjQbkWwKroLF7U10j9Q2rw+neLrrrvKbpy/BIYN24JTra9F4NBuoSHpiv4dNZIbRLgpnsIN9rRmJAJmShaMcw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AOwGisqqMBJSEmslpnQoQQBMhh/nFH6XSl/ei1yY74M=;
- b=UpUQXHn7RrTzRQL7azbH1VnwWGVOOzFy5L6dsykFIdOOOMxS+bsmS+fdI0eAlMgjY5MrYB7WIJZ9DBO3mog5XLaGzSWU9KJJU+LpmILETsJ7Otkg+9xg6WjjVb9CMNdo7mnZELGm8CorOzmNU7m/tdEp0p4JtQRGsW2Y5vBPWeM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by CH3PR12MB7761.namprd12.prod.outlook.com (2603:10b6:610:153::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.25; Mon, 23 Sep
- 2024 14:22:02 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%4]) with mapi id 15.20.7982.022; Mon, 23 Sep 2024
- 14:22:02 +0000
-Message-ID: <a2daaa7b-f4b9-4cf2-9cba-2cadd6f09ab6@amd.com>
-Date: Mon, 23 Sep 2024 09:21:57 -0500
-User-Agent: Mozilla Thunderbird
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v7 02/24] x86/resctrl: Add ABMC feature in the command
- line options
-To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
- fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
- tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
- kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
- jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
- daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
- ilpo.jarvinen@linux.intel.com, peternewman@google.com,
- maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
-References: <cover.1725488488.git.babu.moger@amd.com>
- <a08d9391f48252410ab084ab90bd5f20b5d4a4f0.1725488488.git.babu.moger@amd.com>
- <da731387-dd85-4c01-bc0d-936559ebb783@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <babu.moger@amd.com>
-In-Reply-To: <da731387-dd85-4c01-bc0d-936559ebb783@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR11CA0178.namprd11.prod.outlook.com
- (2603:10b6:806:1bb::33) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F8F19DF85
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 14:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727101335; cv=none; b=U8EZqk0/E99P5txdXuUVQFmgKZR7Jp+TlQokOjl1mAnrlI9cra1idP7PXo8Mblu84S2DQvhdUYhh6owJ63bN61CfFg9I1qF5etPxiGPivhmNDY47JWcNZUIxBxnrJg0sNieSGTlxtHcj3LXJ3m58FyCbCZ5LvTRf3rArj7AhySk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727101335; c=relaxed/simple;
+	bh=91iiJ5Nh4in6QXaX8KoMwrdnENSodqtP99G3Ia2T7Ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fdOQ6vquljj15pwm/J6ZpNSq4dm44oUsBUDro1U9ZUbIwtnM8SnZs9Ime6fSwrz95EFIqEnfItKAgkN5MYDketXq2B1mpuDVJ0Ko81ZwSG4Z8z13AnNKdAbqvo6iNEcWuqbbten5Dz6up0g/2kKU86KTCl5Pq+SRLiB9NFvt16I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nsulgRRg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=so/QAP2B; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jloADnid; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P/GdsNwE; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 31E0821DE0;
+	Mon, 23 Sep 2024 14:22:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727101330; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XRsI6u4+vgDrTmAPsgmuRGF6Cg6elkqpDAkrilrEhN4=;
+	b=nsulgRRgW1/167dAtVQFBNJYK8hWOdERHqoMfaSVQhu6uBJk3qykaVNHV3zAfdLoXs2pEf
+	Ls9d/ocuQqska7HacEy65sjS5JoTTCDnyWIwgTo1yH2zozfuQRXKjgWUWUw0fgTqzjeB9t
+	UnrHLvUyExHBudZm667Kf+PCXX9RPAg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727101330;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XRsI6u4+vgDrTmAPsgmuRGF6Cg6elkqpDAkrilrEhN4=;
+	b=so/QAP2BO1wk+syXN0AdkJOjrFLRcQodeMhtFtk6MdPx7CLYmJyMkx+TXmwK57EerRTNKM
+	aTGCCWDC8QLkcYDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=jloADnid;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="P/GdsNwE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727101329; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XRsI6u4+vgDrTmAPsgmuRGF6Cg6elkqpDAkrilrEhN4=;
+	b=jloADnidvNmpXrmMY6FNuhlKmVNGRXRMJu/nJNEaa0PYSPpB5CYegjL8hmeP1UOUezAZ7T
+	20IQXmM54AtZNbEB4UQVBT/xOpxuQNcpYg7DeX045uHEcQoL02aVHXG2U2LY93P+7yLUa2
+	RDusgm1roCHAoPmcyPzCd9a/KInQS9Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727101329;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XRsI6u4+vgDrTmAPsgmuRGF6Cg6elkqpDAkrilrEhN4=;
+	b=P/GdsNwE4/1GNA6LqK68nh+xijCy1oB3Nt2PfWjy6h4nsnAXnz8XL1seREY9aDCi4X5alY
+	QU+X5stcdTORTvDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 244B813A64;
+	Mon, 23 Sep 2024 14:22:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MjjYCJF58WYiYQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 23 Sep 2024 14:22:09 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id AB884A0844; Mon, 23 Sep 2024 16:22:08 +0200 (CEST)
+Date: Mon, 23 Sep 2024 16:22:08 +0200
+From: Jan Kara <jack@suse.cz>
+To: Gianfranco Trad <s323713@studenti.polito.it>
+Cc: kernel test robot <lkp@intel.com>, oe-kbuild@lists.linux.dev,
+	Dan Carpenter <error27@gmail.com>, jack@suse.com,
+	linux-kernel@vger.kernel.org,
+	syzbot+8901c4560b7ab5c2f9df@syzkaller.appspotmail.com
+Subject: Re: [PATCH] udf: fix uninit-value use in udf_get_fileshortad
+Message-ID: <20240923142208.qjqi2hix4g7v2dmv@quack3>
+References: <202409230809.5ozgjLm9-lkp@intel.com>
+ <8084185d-b4cf-4c30-a67e-28b9b590306d@studenti.polito.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|CH3PR12MB7761:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f67e0c8-0fab-4642-e315-08dcdbdb176a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?d0NOemluM0IzQjIzQnptODgyUURlSnZxWWhMcHV5RzVWK1Q5MFFXNUZDUm1Q?=
- =?utf-8?B?WXc2WVJrVWNVMVVoQm1FVWU4djRsVTFYUmNlc2JtL012bzhucEV3R3ZyaDNz?=
- =?utf-8?B?aDlvUEpSRGE5blJMWU1uUHVkRjVlbXlGMzh3anlvaHp1ZVF0dGdwSWlsbTFY?=
- =?utf-8?B?RnUvZVRRNk5oclUxaUtzbmhYZSsxYldWMHdxb3VySWNQZ1ZTSmRHNTN3ODBI?=
- =?utf-8?B?VDdYaFFpV0NMbVlYU2R5UzF1eTY4eHB4Ryt2WTc4SDdQZ0pwVlBFMFg3WmdX?=
- =?utf-8?B?V29tV3RLTU5ZRitCQStoUno4VUM4cjFDMnFBemZYc2oyQ0hxMFIxdWNCaWdo?=
- =?utf-8?B?WkRLR1M5d3JMNnZTZTRZZHN6ZWdXQzdOaFlkUXlrbDF5OHFwL3JzOWdtVWZy?=
- =?utf-8?B?V25MY2pONmVHeUdZMTZPaXhNd3N2dXpaWGw1bnBVMElmL0dyUEhXZE9Hd2VZ?=
- =?utf-8?B?eXhqQ3dZWDhyWHhDUE85bTdSbTJ5WmlJL0JpTmZ1MC9jWG1FUEJFV3VCdmQw?=
- =?utf-8?B?Uzc4a21YQXBTUHVJdUY5c0NYTWRuZjBzSHhiSUhJSVBDbHV1akJkbTR5SGdh?=
- =?utf-8?B?aEQxOGVheWxHZmVuM0crSDd6RVovQi9BK041K1hjVFR0ZkpTbFNMTi8wQVFD?=
- =?utf-8?B?U2ZERENoMXR0d2NldnVUNW85R2NUQlpRbi9WMitlaCtaWEhwWkl5UWw0THBB?=
- =?utf-8?B?bEpFZlRNdnhNTzJpRlhOYUhud0tPOVUvWkZhM3Z5b2NPRVhreElGZldNdFFw?=
- =?utf-8?B?TGNvWTFDbStxa3RRZ1JPd0FTTnIvRzVhRGRIdHFZd2V4Z0xxNHJxMDZYMkYz?=
- =?utf-8?B?dFVBeWpMVWk2TGlrQkwxeXdieVJ2YkFVWFpmcTA3Sk5xYzJYNnZmSGs5ZU1U?=
- =?utf-8?B?VHdlRTA2R0xocTNsdVlHL0sxNlhROEtoVnowZThHTmtjMUxlSzF5ZWRkekFM?=
- =?utf-8?B?OXpHWUIyRmJNamJETVVhZHY2VStJT3U4RUxwYURuOXAxT3NrekdtbFRHM3FW?=
- =?utf-8?B?ZjRMRzArQytDcGl3Mm0xQ0RlQXNPakY5bmtqQyt0ZlFjVTd2bXF2b0txNjhn?=
- =?utf-8?B?bmROWDdRcTVKTmtmMzE5N0RaemNmaGI3YVduSXU0aVJmekNJODlqMWtUVU5I?=
- =?utf-8?B?bVgvbHUzT2ZYOGVoYWxEZDE0YkZEOTl5aWxaRERTS3dMQXdFL0pkZSsvNXF6?=
- =?utf-8?B?c2xoc2pNTUxxUHQ5WEkxV2dVM0VjVVZhR01uK2ltRUR2QXcrRUVOcndWL2Iw?=
- =?utf-8?B?Qi9kNEJCSTdMTU5Ba0N4d1UxS0dPT0ZkaFFtWWwrY0QzTzdCaWw3MGM1Z3ZZ?=
- =?utf-8?B?RGtqZG91Qjl4UlFyYzR4M3IwaDhFd2lVcC9uekhkZHZhMzJsT3FrNXVWUXA5?=
- =?utf-8?B?TjllQUx0RHA3N1U2ZkdiR1lJM3pOTUs4UWNVRjNGSzFCVVhGSzVhVlQzeHYy?=
- =?utf-8?B?eGp3aGtVVERGc1ZiMlh2Tm01UkJEVHdZMW0zKzdZM3Q5ZGY3bEc3UWk1cXRO?=
- =?utf-8?B?emRlaERmSkQ3NUZSMGJxdE40ZTMwSnByczQ5T3FKVW1zR2tHS0puSkJMQWNC?=
- =?utf-8?B?d21ZUHpRVXBTTmdCaUFXWElaVzNVdnFuQ2FlSVlkYUgrUExaem1nN093MC9y?=
- =?utf-8?B?UlAyV3ovWWI2MFhFSWRPTkUvL1FDU3BsNGxuY3h5RDVvdVAyd1JjRUtPZDd6?=
- =?utf-8?B?c1M5MnBjTzhmMmc1U085Mm5WSUFDWC9CTkcrOFEzaHIxYU5mMVBKSXVBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RHptVTFLaDZZY2p0aVpHNjNSZWxibGJ6UE90Y3VDUms1bG5yZ3VBTjVPcERp?=
- =?utf-8?B?MHlUdzVHTVZEeXBFMTBRcEx4cVYyeDJ2RkVVZU9lSXhmd1UxU3MxcDIrVE9l?=
- =?utf-8?B?Z2hORU9COXBSOUxKTVVvejdpMUZ0djBZS21yQXJzYW1ZZGM0V3BUVmRkSTRl?=
- =?utf-8?B?Q1lCWjkrUkZRN2dvY050VE1ta1pXTUM1OHFSeHlJdXRVampOR2ErNFl5SUh1?=
- =?utf-8?B?WUNUaVVDTCt1Ylh4ZUNoNStPWWdLMXNTZ0Rsam91THpMVE5vQXZOQjFzTDF0?=
- =?utf-8?B?aDgvOS9SRVdFOHVWd2tkRDRET3BWNzNvRHh0WElKYWJSemNNblNlK1VGVXpm?=
- =?utf-8?B?b1lVb1pyVUZoZVpJQnRVL3dEWC9YRWRQamhSUUhLbEtJaDRTTXZmRWNMZkR2?=
- =?utf-8?B?WWQyMVlSc2hLOGpYWnJNSklzQUpzZ2dTOGNCVEErZzJMdlVrVVMwazFBdzRt?=
- =?utf-8?B?eFhtTklJZ2tKS2tyeGZaaGkvS1BZbHFWV0d5dlBWQmExMUZ3N0dpQVU2QVdv?=
- =?utf-8?B?MlcreWJyQktBK2Q0SmJyL2Q1SHhJQ3VKQnMrRlh5cnBiWDZxeVNaQWE3cmZw?=
- =?utf-8?B?dnErRjR4OXIrSlJZaVByZ1JpbXc2aVhGS0Y4QjBRalRNc1VDRS8wcU1xd2pr?=
- =?utf-8?B?UlFHelM3Zit4cUFtTGZidjJhbXpPVVJHalFVcjBxRUhTQW51ZXM5T1U2YXpE?=
- =?utf-8?B?R2NPYzE3Z082Y0ZXS1ArK2xNKzcrTjYvaElNUHg2U2YxRHVOa2NhUGNlb21q?=
- =?utf-8?B?UU10Q3ZqcFJaQ1VROTFrZ002TlU4WmlTbHJVS2xOSzkvaWpzaUMxYzBnUzJW?=
- =?utf-8?B?YmFYLzY3aHBzV2RxQVlsSDRPZ3hva05UZG5aSUVPTjBiSEtycHVxcE9UNFNa?=
- =?utf-8?B?dU9wQnNpL3duRWM3WUdiemxHU1piS0swZmE5dHJmc00wcm1EYmZ4Uk0xb045?=
- =?utf-8?B?eHF3QWQ0Q2FDS1VkbmVzNWg0bTFqRjFlUzZWc0N1SEZOTlNMZnQxaXNmU1J4?=
- =?utf-8?B?Y25icnVSa3d5NVZhWEtpRUVseHVlZ2pwRmdRMmg1bGpIdzU4ZEp1WFJ6NjlR?=
- =?utf-8?B?MjYrU3BCK3cyYVBPMVh5a1FyZVhKaldqbzFJeElqZzAySlh3b2JETytQRjBW?=
- =?utf-8?B?TERLUTZQd3I4bWtLQ0ZVWTFzOFNyQzRud3dOdHNvTStURUdPTTVUdHB0LzUv?=
- =?utf-8?B?MlBNRVY5a0dpb2FHN08xbWN5T2VEYmpxanlBMUJsMk1xU1dxMnYvTkNDcXFq?=
- =?utf-8?B?RjBOQ2VZZjNIVkxpeGZmNGo4N0RXY1JMbWJvUTdDVkQxaFhmNHdLbFFWK1FV?=
- =?utf-8?B?ZnRKNWFRekNCNSt4aHArZ0c0ZVo1cXNkRS9WcTZWQm9YajRTWFdXQ2VGcGVM?=
- =?utf-8?B?eHROVVFaRjc4aEhGenlPbVRneFowZW5mV0J1dzFrMGRubm5hbk1SUEhGSjda?=
- =?utf-8?B?K2Vsdnh5OFB4SE5nZmZYdjFvTVlkRmVNWDJJVWhDZFdWTEJtSE5NT1NFYmJ3?=
- =?utf-8?B?SXRtUjE1blZ0TGdkK1NDQW56VnhGQ25HaHZ4bFczUm5uMmtLaHZOTkkvVDE5?=
- =?utf-8?B?Z2VFMXVOMm9yVVRCdlFpTUp1UUxOM2MrYzgwdTkvK0tZaVYwa09TSDByRUpN?=
- =?utf-8?B?ZjQ4ckRMNnl1TitMVHcwMzIxMi9sSlBGdTBidzRLYmc5NzIyaUxiZnlRTGhG?=
- =?utf-8?B?Wi9Za0F4cm10dytyT1hibE9US1JXRVlCcEgvVm9tWEM0TUU0Y2Zid1MvVEpY?=
- =?utf-8?B?Y1hnUThrQkQ3UHNRa2x5cndqZ0xMTmgvdTFDSy9VRi93ZUdydTBHV0dUMXgw?=
- =?utf-8?B?VUpncU1sTWdEcEJndlBCZDQySUdZN1dZbEpPanNZNlBNaDhlRjh0ckcrRVVS?=
- =?utf-8?B?Z1dOVVlQcmxSdjNRUTBKRGJwdmdZak1XWTdNOHQvbVlzNDUycTRDY0U2ZjRm?=
- =?utf-8?B?Qnp2L2oveDJ3WWhDZEFualc2S0dzc2kzMVV3NFpsbzU1SlNMdmZFR0R3Rk9P?=
- =?utf-8?B?endEZTJFWTZFenpZT3BiN3owanBYdUMzaFErTDNwaTdOV0Q5OWFKQU1QN1dS?=
- =?utf-8?B?RE5wbWE2QXcvaWlVaGhuMy9CSTJXdlk4SnlHVDR3TXJ2Q0NyMzRHSXl2bDNy?=
- =?utf-8?Q?gBqE=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f67e0c8-0fab-4642-e315-08dcdbdb176a
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 14:22:01.9920
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BdVmPQG77Dse/qQgDk+k963yYttQu6a9KqZDXyhplTjUVSEU2KYpS5N2iANfRPDB
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7761
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8084185d-b4cf-4c30-a67e-28b9b590306d@studenti.polito.it>
+X-Rspamd-Queue-Id: 31E0821DE0
+X-Spam-Score: -2.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[8901c4560b7ab5c2f9df];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[intel.com,lists.linux.dev,gmail.com,suse.com,vger.kernel.org,syzkaller.appspotmail.com];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,intel.com:email,linuxfoundation.org:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,appspotmail.com:email,linux.dev:email,01.org:url]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Reinette,
+On Mon 23-09-24 11:23:48, Gianfranco Trad wrote:
+> Hello,
+> On 23/09/24 02:26, kernel test robot wrote:
+> > BCC: lkp@intel.com
+> > CC: oe-kbuild-all@lists.linux.dev
+> > In-Reply-To: <20240919195227.412583-1-gianf.trad@gmail.com>
+> > References: <20240919195227.412583-1-gianf.trad@gmail.com>
+> > TO: Gianfranco Trad <gianf.trad@gmail.com>
+> > TO: jack@suse.com
+> > CC: linux-kernel@vger.kernel.org
+> > CC: skhan@linuxfoundation.org
+> > CC: Gianfranco Trad <gianf.trad@gmail.com>
+> > CC: syzbot+8901c4560b7ab5c2f9df@syzkaller.appspotmail.com
+> > 
+> > Hi Gianfranco,
+> > 
+> > kernel test robot noticed the following build warnings:
+> > 
+> > [auto build test WARNING on brauner-vfs/vfs.all]
+> > [also build test WARNING on linus/master v6.11 next-20240920]
+> > [If your patch is applied to the wrong git tree, kindly drop us a note.
+> > And when submitting patch, we suggest to use '--base' as documented in
+> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > 
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Gianfranco-Trad/udf-fix-uninit-value-use-in-udf_get_fileshortad/20240920-035519
+> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+> > patch link:    https://lore.kernel.org/r/20240919195227.412583-1-gianf.trad%40gmail.com
+> > patch subject: [PATCH] udf: fix uninit-value use in udf_get_fileshortad
+> > :::::: branch date: 3 days ago
+> > :::::: commit date: 3 days ago
+> > config: mips-randconfig-r073-20240922 (https://download.01.org/0day-ci/archive/20240923/202409230809.5ozgjLm9-lkp@intel.com/config)
+> > compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 8663a75fa2f31299ab8d1d90288d9df92aadee88)
+> > 
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Reported-by: Dan Carpenter <error27@gmail.com>
+> > | Closes: https://lore.kernel.org/r/202409230809.5ozgjLm9-lkp@intel.com/
+> > 
+> > smatch warnings:
+> > fs/udf/inode.c:2223 udf_current_aext() error: we previously assumed 'epos->bh' could be null (see line 2204)
+> Given this error my initial guess is to update the patch to check the
+> assumption of epos->bh not null.
 
-On 9/19/24 11:00, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> On 9/4/24 3:21 PM, Babu Moger wrote:
->> Add the command line option to enable or disable the new resctrl feature
->> ABMC (Assignable Bandwidth Monitoring Counters).
-> 
-> This does not reflect the fs and arch separation that this version highlights
-> since ABMC is not a resctrl feature.
-> 
-> This can get confusing and I think this interface is indeed for the
-> architecture where hardware features are enabled/disabled (highlighted
-> by how the parameter is connected to the X86_FEATURE_ flag) ... so
-> perhaps something like:
-> 
-> 	Add the command line option to enable or disable exposing
-> 	the ABMC (Assignable Bandwidth Monitoring Counters) hardware
-> 	feature to resctrl.
+Yes, epos->bh can definitely be NULL here. Generally the check looks really
+suspicious. I was trying to find your original patch but for some reason
+neither LKML archive nor my mailbox have it. What is the motivation of the
+added check? Are you checking for overflow on alen? In that case it would
+be best to just use check_add_overflow() helper when computing alen few
+lines above...
 
-Sure.
+								Honza
 
+> > vim +2223 fs/udf/inode.c
+> > 
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2193
+> > ff116fc8d1d439 Jan Kara        2007-05-08  2194  int8_t udf_current_aext(struct inode *inode, struct extent_position *epos,
+> > 5ca4e4be841e38 Pekka Enberg    2008-10-15  2195  			struct kernel_lb_addr *eloc, uint32_t *elen, int inc)
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2196  {
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2197  	int alen;
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2198  	int8_t etype;
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2199  	uint8_t *ptr;
+> > 5ca4e4be841e38 Pekka Enberg    2008-10-15  2200  	struct short_ad *sad;
+> > 5ca4e4be841e38 Pekka Enberg    2008-10-15  2201  	struct long_ad *lad;
+> > 48d6d8ff7dca80 Marcin Slusarz  2008-02-08  2202  	struct udf_inode_info *iinfo = UDF_I(inode);
+> > 28de7948a89676 Cyrill Gorcunov 2007-07-21  2203
+> > cb00ea3528eb3c Cyrill Gorcunov 2007-07-19 @2204  	if (!epos->bh) {
+> > ff116fc8d1d439 Jan Kara        2007-05-08  2205  		if (!epos->offset)
+> > ff116fc8d1d439 Jan Kara        2007-05-08  2206  			epos->offset = udf_file_entry_alloc_offset(inode);
+> > 382a2287bf9cd2 Jan Kara        2020-09-25  2207  		ptr = iinfo->i_data + epos->offset -
+> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2208  			udf_file_entry_alloc_offset(inode) +
+> > 48d6d8ff7dca80 Marcin Slusarz  2008-02-08  2209  			iinfo->i_lenEAttr;
+> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2210  		alen = udf_file_entry_alloc_offset(inode) +
+> > 48d6d8ff7dca80 Marcin Slusarz  2008-02-08  2211  							iinfo->i_lenAlloc;
+> > cb00ea3528eb3c Cyrill Gorcunov 2007-07-19  2212  	} else {
+> > ff116fc8d1d439 Jan Kara        2007-05-08  2213  		if (!epos->offset)
+> > ff116fc8d1d439 Jan Kara        2007-05-08  2214  			epos->offset = sizeof(struct allocExtDesc);
+> > ff116fc8d1d439 Jan Kara        2007-05-08  2215  		ptr = epos->bh->b_data + epos->offset;
+> > 28de7948a89676 Cyrill Gorcunov 2007-07-21  2216  		alen = sizeof(struct allocExtDesc) +
+> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2217  			le32_to_cpu(((struct allocExtDesc *)epos->bh->b_data)->
+> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2218  							lengthAllocDescs);
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2219  	}
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2220
+> > 48d6d8ff7dca80 Marcin Slusarz  2008-02-08  2221  	switch (iinfo->i_alloc_type) {
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2222  	case ICBTAG_FLAG_AD_SHORT:
+> > 2aa242080b8dda Gianfranco Trad 2024-09-19 @2223  		if (unlikely(alen < 0 && epos->offset == epos->bh->b_size))
+> > 2aa242080b8dda Gianfranco Trad 2024-09-19  2224  			return -1;
+> The check would be inserted up here in the if clause. But if the patch
+> doesn't look good, I can redesign it in a better way. If so, I'm more than
+> glad to follow your advice.
+> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2225  		sad = udf_get_fileshortad(ptr, alen, &epos->offset, inc);
+> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2226  		if (!sad)
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2227  			return -1;
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2228  		etype = le32_to_cpu(sad->extLength) >> 30;
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2229  		eloc->logicalBlockNum = le32_to_cpu(sad->extPosition);
+> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2230  		eloc->partitionReferenceNum =
+> > 48d6d8ff7dca80 Marcin Slusarz  2008-02-08  2231  				iinfo->i_location.partitionReferenceNum;
+> > 28de7948a89676 Cyrill Gorcunov 2007-07-21  2232  		*elen = le32_to_cpu(sad->extLength) & UDF_EXTENT_LENGTH_MASK;
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2233  		break;
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2234  	case ICBTAG_FLAG_AD_LONG:
+> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2235  		lad = udf_get_filelongad(ptr, alen, &epos->offset, inc);
+> > 4b11111aba6c80 Marcin Slusarz  2008-02-08  2236  		if (!lad)
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2237  			return -1;
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2238  		etype = le32_to_cpu(lad->extLength) >> 30;
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2239  		*eloc = lelb_to_cpu(lad->extLocation);
+> > 28de7948a89676 Cyrill Gorcunov 2007-07-21  2240  		*elen = le32_to_cpu(lad->extLength) & UDF_EXTENT_LENGTH_MASK;
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2241  		break;
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2242  	default:
+> > fcbf7637e6647e Steve Magnani   2017-10-12  2243  		udf_debug("alloc_type = %u unsupported\n", iinfo->i_alloc_type);
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2244  		return -1;
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2245  	}
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2246
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2247  	return etype;
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2248  }
+> > ^1da177e4c3f41 Linus Torvalds  2005-04-16  2249
+> > 
+> Thanks for your time,
 > 
-> Patch looks good to me.
-
+> --Gian
+> 
 -- 
-Thanks
-Babu Moger
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
