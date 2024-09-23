@@ -1,148 +1,163 @@
-Return-Path: <linux-kernel+bounces-335383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2610797E4DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 04:52:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7A7E97E4DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 04:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0F8C28163A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 02:52:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D88DA1C20FF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 02:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A274A33;
-	Mon, 23 Sep 2024 02:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE0833D1;
+	Mon, 23 Sep 2024 02:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="f53XrlFe"
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JUdDdNDD"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E324C7D;
-	Mon, 23 Sep 2024 02:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E75635
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 02:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727059965; cv=none; b=uwtzoQf46NZEpFi9hZ4iqJkCVAtI/u/Zp4dp049P2fjYOU2bHKmzb1alN/6V9vFrIqs4QrYS/Igm5c03q/5JAfeOcXxgKOEDeHQfol68OD3qwOU6rV9jraM0qWBug/BGsQX1v5qU837CjHicGfKY657oSOrQ5g1oqr3AKTMF5TE=
+	t=1727059931; cv=none; b=AKKfZZmK0cCNscW+pisI2OX6gZ2xCD4l0qD+BRv1Lu4ue4y2YlEpi++9gI1KTrdVVafCl8oeeZmN+GTewvQKo711GWluLUsLFX8tFGMXAzocMQbWvs3MBkOgO6PKJb3EfloW4IxoGH4I3MXjk90nd2iuGVhLmFybNa58lV8sumA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727059965; c=relaxed/simple;
-	bh=JFaT0LYZbAmveZeB0SFySL/06wDYX5gBwrzQ14Dn2kU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n6Iz0G4QnTROyVqE4FsA4vpkUsfbTuX9qKG7opWCqEt6AO/1Hc94rULnC0mNVdSBH/w1AFAZWoQdAN1mzK6dK40F+tYtK4bJyu/bDAr63sJyGK+QDoMkajPGFby0u4p+rEpXkVWAwc8PQY/VM73GeWGtWoFOa0kK1PS2B4uhHuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=f53XrlFe; arc=none smtp.client-ip=54.204.34.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1727059919;
-	bh=rZHvVfowzI3daZqCxdNalDtcmaBy5OTc9UKJrJPe1mo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=f53XrlFeEtrqr5cPv+pWYgX2YjjKCKkuIQ3ANJdprcsk6/pKt16SrCUadWxh2JnAU
-	 ZAyacolnx/7IHnf1UjPCu/qp07FKvXHI4d6/LQe8dHM1zguowfbvx7qUY4me58dFy1
-	 wFuAvGkfdWoFZB7WHprDc7Ad/eipm2p+LheU84ag=
-X-QQ-mid: bizesmtpsz3t1727059912tzvaznk
-X-QQ-Originating-IP: 8rFUNVYVcjqggWqMvlS/s0Rj40wgSb1NTrKgqlyk7DQ=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 23 Sep 2024 10:51:50 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 12430750089845987053
-From: WangYuli <wangyuli@uniontech.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com,
-	hello@felixjara.me,
-	wangyuli@uniontech.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com
-Subject: [PATCH v2] Bluetooth: btusb: Add MT7925 support for ID 0x13d3:0x3608
-Date: Mon, 23 Sep 2024 10:51:47 +0800
-Message-ID: <423A85B62ADD708B+20240923025147.693748-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1727059931; c=relaxed/simple;
+	bh=T95bhtE4ahzeAXj9o+UbB8jJyiaq+V9Y+k+RIg5NH3M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s8cxPUMZjgbc8PNi6Ed5c0BvGXGmJTrxo9dACGwGKnyGrUhJ6k9sWDczAhz+ev3KGY0h/YjNGI6Ke3vrTwmD7OsInIJRfyQiXrgiXanmggTMSX7AgpZyKUOy3u2AcmC/N0gKQPbEpKVZsfZP68sAQRMkksnBZoX2o3VqB82FDwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JUdDdNDD; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1727059920; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=r4XJOtNI53//80tJmFNGm+o5EdJOnmpi3+8PaJ8QvK8=;
+	b=JUdDdNDDGY6+5nhAvYwwgL6210Wn8HvURx757tOX48IYkGihj2sbczdJwhuofDxci88KEaIFkBClUPHeLFhRzHw1a0tlq/imr4RiDv7pHXo3QE0VjbnJARA2f5ATaz6IclhGOeRMFia4vNp/cv2bFlgY4oRJyIIuc5TRZvn9vxI=
+Received: from 30.221.132.125(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WFRyaS8_1727059919)
+          by smtp.aliyun-inc.com;
+          Mon, 23 Sep 2024 10:52:00 +0800
+Message-ID: <e758ca0a-0ee7-4dff-8379-6d43397fddf0@linux.alibaba.com>
+Date: Mon, 23 Sep 2024 10:51:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ocfs2: Fix deadlock in ocfs2_get_system_file_inode
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>,
+ ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+ syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com
+References: <20240921175034.11222-1-pvmohammedanees2003@gmail.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20240921175034.11222-1-pvmohammedanees2003@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Transfer-Encoding: 7bit
 
-From: Félix Jara <hello@felixjara.me>
 
-Add compatibility Bluetooth device MT7925 for Asus UM5606 with
-ID 13d3:3608.
 
-The device info from /sys/kernel/debug/usb/devices as below.
+On 9/22/24 1:50 AM, Mohammed Anees wrote:
+> syzbot has found a possible deadlock in ocfs2_get_system_file_inode [1].
+> 
+> The scenario is depicted here,
+> 
+> 	CPU0					CPU1
+> lock(&ocfs2_file_ip_alloc_sem_key);
+>                                lock(&osb->system_file_mutex);
+>                                lock(&ocfs2_file_ip_alloc_sem_key);
+> lock(&osb->system_file_mutex);
+> 
+> The function calls which could lead to this are:
+> 
+> CPU0
+> ocfs2_write_begin - lock(&ocfs2_file_ip_alloc_sem_key);
+> .
 
-T:  Bus=03 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=13d3 ProdID=3608 Rev= 1.00
-S:  Manufacturer=MediaTek Inc.
-S:  Product=Wireless_Device
-S:  SerialNumber=000000000
-C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
-A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
-E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
-I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
-E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
 
-Tested in Asus Zenbook S 16 UM5606XA
+From the report link, it's ocfs2_mknod(), but not
+ocfs2_write_begin().
 
-Co-developed-by: Félix Jara <hello@felixjara.me>
-Signed-off-by: Félix Jara <hello@felixjara.me>
-Tested-by: Félix Jara <hello@felixjara.me>
-Link: https://github.com/openSUSE/kernel/pull/10
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/bluetooth/btusb.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> .
+> .
+> ocfs2_get_system_file_inode - lock(&osb->system_file_mutex);
+> 
+> CPU1 -
+> ocfs2_get_system_file_inode - lock(&osb->system_file_mutex);
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index cd22b34542d5..4adae0be8222 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -512,6 +512,11 @@ static const struct usb_device_id blacklist_table[] = {
- 						     BTUSB_WIDEBAND_SPEECH |
- 						     BTUSB_VALID_LE_STATES },
- 
-+	/* MediaTek MT7925 Bluetooth devices */
-+	{ USB_DEVICE(0x13d3, 0x3608), .driver_info = BTUSB_MEDIATEK |
-+						     BTUSB_WIDEBAND_SPEECH |
-+						     BTUSB_VALID_LE_STATES },
-+
- 	/* Additional Realtek 8723AE Bluetooth devices */
- 	{ USB_DEVICE(0x0930, 0x021d), .driver_info = BTUSB_REALTEK },
- 	{ USB_DEVICE(0x13d3, 0x3394), .driver_info = BTUSB_REALTEK },
--- 
-2.45.2
+From the report link, it is in the flow of ocfs2_fill_super().
+I'm not sure how it actually happens since user has to mount ocfs2
+before doing any operations, e.g. create a file.
+Anyway, since many flows will call ocfs2_get_system_file_inode(),
+so it will theoretically happen.
+
+> .
+> .
+> .
+> ocfs2_read_virt_blocks - lock(&ocfs2_file_ip_alloc_sem_key);
+> 
+> This issue can be resolved by making the down_read -> down_read_try
+> in the ocfs2_read_virt_blocks.
+> 
+> [1] https://syzkaller.appspot.com/bug?extid=e0055ea09f1f5e6fabdd
+> 
+> Reported-and-tested-by: syzbot+e0055ea09f1f5e6fabdd@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=e0055ea09f1f5e6fabdd
+> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
+> ---
+>  fs/ocfs2/extent_map.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
+> index 70a768b62..f83d0a3b6 100644
+> --- a/fs/ocfs2/extent_map.c
+> +++ b/fs/ocfs2/extent_map.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+>  #include <linux/fiemap.h>
+> +#include <linux/delay.h>
+>  
+>  #include <cluster/masklog.h>
+>  
+> @@ -961,6 +962,8 @@ int ocfs2_read_virt_blocks(struct inode *inode, u64 v_block, int nr,
+>  	int rc = 0;
+>  	u64 p_block, p_count;
+>  	int i, count, done = 0;
+> +	int retries, max_retries = 5;
+> +	int retry_delay_ms = 30;
+>  
+>  	trace_ocfs2_read_virt_blocks(
+>  	     inode, (unsigned long long)v_block, nr, bhs, flags,
+> @@ -973,7 +976,18 @@ int ocfs2_read_virt_blocks(struct inode *inode, u64 v_block, int nr,
+>  	}
+>  
+>  	while (done < nr) {
+> -		down_read(&OCFS2_I(inode)->ip_alloc_sem);
+> +		retries = 0;
+> +		while (retries < max_retries) {
+> +			if (down_read_trylock(&OCFS2_I(inode)->ip_alloc_sem))
+> +				break; // Lock acquired
+> +			msleep(retry_delay_ms);
+> +			retries++;
+> +		}
+
+I'd like just use down_read_trylock() and fail directly if can't.
+
+Thanks,
+Joseph
+
+> +		if (retries == max_retries) {
+> +			rc = -EAGAIN;
+> +			mlog(ML_ERROR, "Cannot acquire lock\n");
+> +			break;
+> +		}
+>  		rc = ocfs2_extent_map_get_blocks(inode, v_block + done,
+>  						 &p_block, &p_count, NULL);
+>  		up_read(&OCFS2_I(inode)->ip_alloc_sem);
 
 
