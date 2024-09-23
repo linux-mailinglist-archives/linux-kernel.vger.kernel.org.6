@@ -1,194 +1,129 @@
-Return-Path: <linux-kernel+bounces-335702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B61B97E95A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:06:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794DB97E970
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D37D31C212DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:06:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318121F21FA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D56195FEF;
-	Mon, 23 Sep 2024 10:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99EB198E6D;
+	Mon, 23 Sep 2024 10:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="iwf/esCn"
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bhrt3YB3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9492195809;
-	Mon, 23 Sep 2024 10:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B118198A33
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727085972; cv=none; b=Kc/eRQC0UkRnn6mYY5198r7yPY0+Cz/cTlZ61hjDOWDCmRrTQnyCrv1UeXyLMWlH9wPiAZUMvf26pLPJSrBibixiMtiBwZE1XBQLKTF2C41t4PqZIjW8J4pyrNXYs3SAzgqT1fEGCuOT3IX/lB1ieuy/6UhDmq2nXvbCO7h2NQA=
+	t=1727085983; cv=none; b=upVVt+9sg0lyLuOxqXj4v/VOorMT7aCy4rASz9eBou29Vx8P0ACVZ7+2SCfWx1iMgFFsdmx1X3uyaFop6TVEfoHHzKxsIdl0d06fe9NX4uVPD7yv6k3G7WP2scPGbgLeOkIf40/CSjvtbLahSws1LqJsT5vz4p/JDZP/pYvxyYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727085972; c=relaxed/simple;
-	bh=5++EG5YPR8G36zcQsH8ZUeN+eishUBKNaNN9MgfrI14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=phH3bgzDhAuv8BGVMremvHOapV+7wNPI0hcSPZm5joYyHDeouUpeA7233lzjNdvNOa09Qg705H4FXd5Zs3lW1qi6+UGAlqHD2cwh3M3w4z0aVJxmu0fjrntotZampWToJYYfTvjIdNY0bcG/25p195x6QZqrxItzq/aa+Sunang=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=iwf/esCn; arc=none smtp.client-ip=15.184.224.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1727085955;
-	bh=BBFkSpdkqkXzOv7hw0jDfkWRq2N7z6ltN378fMvMfd0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=iwf/esCnQY0IUxVjZWI/Opzdqdj9jhNpRukqQTwpttbJmi1dGHp1KaSGbbD+bGf7k
-	 FfJW8EDcJR3Nr13ZsTvI1fnn7d0JejMLsVZGKmTmU47T5knByQhO0x8OJ0HFRASnkp
-	 SvqqF1oMFEHV5zKIMzYGAfpS+RpoOQVEdeEpS62s=
-X-QQ-mid: bizesmtpsz13t1727085952teleyq
-X-QQ-Originating-IP: DWjoYKT1vymwUPdyRIsvl3RwFkVa8GXG3DpnfPbDnkg=
-Received: from [10.20.254.18] ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 23 Sep 2024 18:05:50 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 13227385092718996023
-Message-ID: <80515DEDE931DC2A+7fa48c7a-2955-4afb-821f-a0108a72009f@uniontech.com>
-Date: Mon, 23 Sep 2024 18:05:51 +0800
+	s=arc-20240116; t=1727085983; c=relaxed/simple;
+	bh=ffdTghOFx9Phzzc1FWGmgEO2YF5UBj0UtTzQ1iFJsbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ktxAboimEEFnW/dbJ0YRBDOdu6SOFepWJBqQneFq+jK/pOc+dy929vWDdIqd9sXEKPG/ABaS0b2+YK3tKUWp279LfoJ2YZK2tgqHbIU6W+CrEj7Z8yLC6gW81KBo2bQ/hV/KAqHgAR0fXt0+VSMGiMm54qgVwXu/gt50ZRCOQfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bhrt3YB3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727085980;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dq8TPXh68jq07smKwqZDTyjG2zcMrGlhnVptGr1W454=;
+	b=bhrt3YB3WdRgXZj5Pyq2tXUgMPXlle5pcXC4yM1Gt+jlGsKn6tYoxjk3CF+WsxMa8pLVgP
+	c7R2R1wdZT+ahmHSJxV9Nm9m3Ojs0fWKA8ZXVub4YP70vlpIZNoNTCQChhLRdnAN664AUm
+	U8I9gzGZSOE0Xvl7Vi5LPVaDS38vGsU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-696-h668ctPPOdamdY9T6s2B6Q-1; Mon,
+ 23 Sep 2024 06:06:18 -0400
+X-MC-Unique: h668ctPPOdamdY9T6s2B6Q-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7F735190DE2B;
+	Mon, 23 Sep 2024 10:06:13 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.16])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9D1C630001A1;
+	Mon, 23 Sep 2024 10:06:06 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 23 Sep 2024 12:06:01 +0200 (CEST)
+Date: Mon, 23 Sep 2024 12:05:53 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv4 02/14] uprobe: Add support for session consumer
+Message-ID: <20240923100552.GA20793@redhat.com>
+References: <20240917085024.765883-1-jolsa@kernel.org>
+ <20240917085024.765883-3-jolsa@kernel.org>
+ <20240917120250.GA7752@redhat.com>
+ <Zul7UCsftY_ZX6wT@krava>
+ <20240922152722.GA12833@redhat.com>
+ <ZvEhL114tyhLmfB1@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/bridge: Optimizing read-write locks in ebtables.c
-To: Eric Dumazet <edumazet@google.com>
-Cc: pablo@netfilter.org, kadlec@netfilter.org, roopa@nvidia.com,
- razor@blackwall.org, davem@davemloft.net, kuba@kernel.org,
- pabeni@redhat.com, netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- bridge@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <EC5AC714C75A855E+20240923091535.77865-1-yushengjin@uniontech.com>
- <CANn89i+4wbef3k6at_Kf+8MBmU4HhE9nxMRvROR_OxsZptffjA@mail.gmail.com>
-From: yushengjin <yushengjin@uniontech.com>
-In-Reply-To: <CANn89i+4wbef3k6at_Kf+8MBmU4HhE9nxMRvROR_OxsZptffjA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZvEhL114tyhLmfB1@krava>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-
-在 23/9/2024 下午5:29, Eric Dumazet 写道:
-> On Mon, Sep 23, 2024 at 11:16 AM yushengjin <yushengjin@uniontech.com> wrote:
->> When conducting WRK testing, the CPU usage rate of the testing machine was
->> 100%. forwarding through a bridge, if the network load is too high, it may
->> cause abnormal load on the ebt_do_table of the kernel ebtable module, leading
->> to excessive soft interrupts and sometimes even directly causing CPU soft
->> deadlocks.
->>
->> After analysis, it was found that the code of ebtables had not been optimized
->> for a long time, and the read-write locks inside still existed. However, other
->> arp/ip/ip6 tables had already been optimized a lot, and performance bottlenecks
->> in read-write locks had been discovered a long time ago.
->>
->> Ref link: https://lore.kernel.org/lkml/20090428092411.5331c4a1@nehalam/
->>
->> So I referred to arp/ip/ip6 modification methods to optimize the read-write
->> lock in ebtables.c.
->>
->> test method:
->> 1) Test machine creates bridge :
->> ``` bash
->> brctl addbr br-a
->> brctl addbr br-b
->> brctl addif br-a enp1s0f0 enp1s0f1
->> brctl addif br-b enp130s0f0 enp130s0f1
->> ifconfig br-a up
->> ifconfig br-b up
->> ```
->> 2) Testing with another machine:
->> ``` bash
->> ulimit -n 2048
->> ./wrk -t48 -c2000 -d6000 -R10000 -s request.lua http://4.4.4.2:80/4k.html &
->> ./wrk -t48 -c2000 -d6000 -R10000 -s request.lua http://5.5.5.2:80/4k.html &
->> ```
->>
->> Signed-off-by: yushengjin <yushengjin@uniontech.com>
->> ---
->>   include/linux/netfilter_bridge/ebtables.h |  47 +++++++-
->>   net/bridge/netfilter/ebtables.c           | 132 ++++++++++++++++------
->>   2 files changed, 145 insertions(+), 34 deletions(-)
->>
->> diff --git a/include/linux/netfilter_bridge/ebtables.h b/include/linux/netfilter_bridge/ebtables.h
->> index fd533552a062..dd52dea20fb8 100644
->> --- a/include/linux/netfilter_bridge/ebtables.h
->> +++ b/include/linux/netfilter_bridge/ebtables.h
->> @@ -93,7 +93,6 @@ struct ebt_table {
->>          char name[EBT_TABLE_MAXNAMELEN];
->>          struct ebt_replace_kernel *table;
->>          unsigned int valid_hooks;
->> -       rwlock_t lock;
->>          /* the data used by the kernel */
->>          struct ebt_table_info *private;
->>          struct nf_hook_ops *ops;
->> @@ -124,4 +123,50 @@ static inline bool ebt_invalid_target(int target)
->>
->>   int ebt_register_template(const struct ebt_table *t, int(*table_init)(struct net *net));
->>   void ebt_unregister_template(const struct ebt_table *t);
->> +
->> +/**
->> + * ebt_recseq - recursive seqcount for netfilter use
->> + *
->> + * Packet processing changes the seqcount only if no recursion happened
->> + * get_counters() can use read_seqcount_begin()/read_seqcount_retry(),
->> + * because we use the normal seqcount convention :
->> + * Low order bit set to 1 if a writer is active.
->> + */
->> +DECLARE_PER_CPU(seqcount_t, ebt_recseq);
->> +
->> +/**
->> + * ebt_write_recseq_begin - start of a write section
->> + *
->> + * Begin packet processing : all readers must wait the end
->> + * 1) Must be called with preemption disabled
->> + * 2) softirqs must be disabled too (or we should use this_cpu_add())
->> + * Returns :
->> + *  1 if no recursion on this cpu
->> + *  0 if recursion detected
->> + */
->> +static inline unsigned int ebt_write_recseq_begin(void)
->> +{
->> +       unsigned int addend;
->> +
->> +       addend = (__this_cpu_read(ebt_recseq.sequence) + 1) & 1;
->> +
->> +       __this_cpu_add(ebt_recseq.sequence, addend);
->> +       smp_mb();
->> +
->> +       return addend;
->> +}
->> +
->> +/**
->> + * ebt_write_recseq_end - end of a write section
->> + * @addend: return value from previous ebt_write_recseq_begin()
->> + *
->> + * End packet processing : all readers can proceed
->> + * 1) Must be called with preemption disabled
->> + * 2) softirqs must be disabled too (or we should use this_cpu_add())
->> + */
->> +static inline void ebt_write_recseq_end(unsigned int addend)
->> +{
->> +       smp_wmb();
->> +       __this_cpu_add(ebt_recseq.sequence, addend);
->> +}
-> Why not reusing xt_recseq, xt_write_recseq_begin(), xt_write_recseq_end(),
-> instead of copy/pasting them ?
+On 09/23, Jiri Olsa wrote:
 >
-> This was added in
->
-> commit 7f5c6d4f665bb57a19a34ce1fb16cc708c04f219    netfilter: get rid
-> of atomic ops in fast path
-They used different seqcounts, I'm worried it might have an impact.
->
-> If this is an include mess, just move them in a separate include file.
+> change below should do what you proposed originally
 
-Can i copy  ebt_write_recseq_begin(), ebt_write_recseq_endend to
-include/linux/netfilter/x_tables.h ?
+LGTM, just one nit below.
 
-Or add a parameter in xt_write_recseq_begin() , xt_write_recseq_end()  to
-clarify whether it is xt_recseq or ebt_recseq.
+But I guess you need to do this on top of bpf/bpf.git, Andrii has already
+applied your series.
 
+And to remind, 02/14 must be fixed in any case unless I am totally confused,
+handler_chain() can leak return_instance.
+
+> also on top of that.. I discussed with Andrii the possibility of dropping
+> the UPROBE_HANDLER_IWANTMYCOOKIE completely and setup cookie for any consumer
+> that has both 'handler' and 'ret_handler' defined, wdyt?
+
+Up to you. As I said from the very beginning I won't insist on _IWANTMYCOOKIE.
+
+>  	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
+>  				 srcu_read_lock_held(&uprobes_srcu)) {
+> +		ric = return_consumer_find(ri, &ric_idx, uc->id);
+>  		if (uc->ret_handler)
+> -			uc->ret_handler(uc, ri->func, regs);
+> +			uc->ret_handler(uc, ri->func, regs, ric ? &ric->cookie : NULL);
+>  	}
+>  	srcu_read_unlock(&uprobes_srcu, srcu_idx);
+
+return_consumer_find() makes no sense if !uc->ret_handler, can you move
+
+		ric = return_consumer_find(ri, &ric_idx, uc->id);
+
+into the "if (uc->ret_handler)" block?
+
+Oleg.
 
 
