@@ -1,107 +1,109 @@
-Return-Path: <linux-kernel+bounces-336108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF76B97EF52
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:32:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE1797EF53
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A54191F22477
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:32:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CC7B1F21E78
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF2119E995;
-	Mon, 23 Sep 2024 16:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EF119E975;
+	Mon, 23 Sep 2024 16:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxSPPala"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DVO4w1U1"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257AA28E7;
-	Mon, 23 Sep 2024 16:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D74D28E7
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 16:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727109152; cv=none; b=LuvW0bQEu4JDUpA3DV2J1xppxKhdDEmYuwDdUktZ6GPt5FtwP/kSdQ+S7mxyaQ6r6nPZcL3niiufjW5ZkryB3OjMlpkP3AAt3ysXwTKbqltTnnkemTINe7oDylB/QRwinG/lu2JQC6q46vMkV5mKH38XTMJCbcA7vSZNn8yXcYA=
+	t=1727109267; cv=none; b=u6H1GNCgrC3BGqmuPV4HtTR1D3c7LRtOBspF9xM9LBkkeyB2s39W4xbI842ST3sUQMmsv8JEMSlLL+IFcoJb3Wz60OgqS/ycD8EpDSacUYieBvvla9OOPRvmI7CVHzjqaMbFeQfMnfFrYalMvHHqVkHf7/RrrpbXs3NbXX/Ny0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727109152; c=relaxed/simple;
-	bh=YO604i0btXRLSH/R8dJ9t/pxBIj0haKRMoLVAQlx9K0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NJq8R14RBUs5FWX0+m7NglU1N18RVSPuDtJfleDqAgKHrsUEULTnFKbZ1tdysLEqpzaoXMNXTi2fgNFFRWEopWMsaChbDHvzN7wK7txCKav24cdmz4AhMQhq+PVJsORjfDWJpejOHsiKRTA0buh0W9wtslOtViGLPytfXxL0V5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxSPPala; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 272C4C4CEC4;
-	Mon, 23 Sep 2024 16:32:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727109149;
-	bh=YO604i0btXRLSH/R8dJ9t/pxBIj0haKRMoLVAQlx9K0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rxSPPala991VsSBaiVSimW1aA+GV1B5vn9mkxN1LmSZxWdLQG/XYFTNRuHm5mNdKd
-	 DgD9a3TrfhGbYBBuhurhDF/4OLsFVl7ZtpE/ezJFPFBiVyJXQRUHX8TUXY5fQ2UErq
-	 uhw79E2wStEWwWgcGBE0FUm0Q9iSjZQ4kS4BkA8NQCrW8av3I/RxEpkj4jTy9jyfdd
-	 FrQlonj0kt0r51u6AvtOBzM3nk1jKG+xFIrVjr735jOx9JGJg2JOZ/IWKrxsSyd5zc
-	 kmhYpD/U/kEytV1rjqYC1QuYzLLzLGckNjteEJMtsg/2NmLCgXzsOldSe2prWE6iyB
-	 ZHSSnHzbd59qw==
-From: SeongJae Park <sj@kernel.org>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
+	s=arc-20240116; t=1727109267; c=relaxed/simple;
+	bh=h4v9OYnRZNhMPn+5djLjpHSOScNpyCT0LoeVjQVY24w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=orPFlJvM8aoKGMOxqForbYymXNft+XSpuCoPG8VC+5Z2kfmFTrOEHJmTfFq3oFkHE1WxJRHANIf1vdGXdSuRFDVDvzBu2rdDNrSt+XCjALNpEvjB3IYZUNHv7GwnoSz0FnWV2oFcnur+TwpEphWISgVhHrjmkPDx06kS61yjLFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DVO4w1U1; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 23 Sep 2024 18:34:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727109262;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CgkOyvRzcQt8DWIWxTPwt0/lbMq45yhB4pZdSeTlzrw=;
+	b=DVO4w1U1RlWamzPtBfj73uNHbpawrbsvYZJuW/z8NbaqpRa8yvNgjMKhPauHHvHvGxJa29
+	118l47++JmY5ebEK5w9HdRUm+Hv+YK1RcN7oSPya/ysV9K1eBjcNAiFcblMeoP4RCpb9YI
+	ddSMCpjAS5DXif7Ns7wqPK8TB2Mc0a8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Andrea Righi <andrea.righi@linux.dev>
+To: Phil Auld <pauld@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+	Giovanni Gherdovich <giovanni.gherdovich@suse.com>,
+	Kleber Sacilotto de Souza <kleber.souza@canonical.com>,
+	Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/damon: Update DAMON doc URL
-Date: Mon, 23 Sep 2024 09:32:26 -0700
-Message-ID: <20240923163226.550729-1-sj@kernel.org>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20240923100615.14160-1-didi.debian@cknow.org>
-References: 
+Subject: Re: [PATCH] sched_ext: Provide a sysfs enable_seq counter
+Message-ID: <ZvGYjKAB07VJW7jq@gpd3>
+References: <20240921193921.75594-1-andrea.righi@linux.dev>
+ <ZvCKPkwwC9-o2dsQ@mtj.duckdns.org>
+ <20240923104548.GA308802@pauld.westford.csb>
+ <ZvGJ_xT2LhYJHQbZ@slm.duckdns.org>
+ <20240923160007.GA313849@pauld.westford.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923160007.GA313849@pauld.westford.csb>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Diederik,
-
-On Mon, 23 Sep 2024 12:05:58 +0200 Diederik de Haas <didi.debian@cknow.org> wrote:
-
-> The old URL doesn't really work anymore and as the documentation has
-> been integrated in the main kernel documentation site, change the URL to
-> point to that.
-
-Nice finding!  Thank you for fixing this!
-
-Nonetheless, I'd prefer having 'mm/damon/Kconfig:' as the prefix of the commit
-subject.
-
+On Mon, Sep 23, 2024 at 12:00:07PM -0400, Phil Auld wrote:
+> On Mon, Sep 23, 2024 at 05:32:15AM -1000 Tejun Heo wrote:
+> > Hello,
+> > 
+> > On Mon, Sep 23, 2024 at 12:45:48PM +0200, Phil Auld wrote:
+> > ...
+> > > It's not a per scheduler counter, though. It's global. We want to know
+> > 
+> > Yeah, the sequence is global but we can report the sequence at which a given
+> > scheduler is loaded on each scheduler. That way, e.g., you can tell whether
+> > a particular scheduler instance is the same one you looked at the last time
+> > too.
+> > 
+> > > that a (any) scx scheduler has been loaded at some time in the past. It's
+> > > really only interesting when 0 or > 0. The actual non-zero number and which
+> > > scheduler(s) don't matter that much.
+> > 
+> > Not necessarily. e.g. You can also detect scheduler failing or being updated
+> > for other reasons.
 > 
-> Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
-
-Other than the trivial nit,
-
-Reviewed-by: SeongJae Park <sj@kernel.org>
-
-
-Thanks,
-SJ
-
-> ---
->  mm/damon/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Sure, but the primary purpose is practically boolean. 
 > 
-> diff --git a/mm/damon/Kconfig b/mm/damon/Kconfig
-> index fecb8172410c..35b72f88983a 100644
-> --- a/mm/damon/Kconfig
-> +++ b/mm/damon/Kconfig
-> @@ -9,7 +9,7 @@ config DAMON
->  	  access frequency of each memory region. The information can be useful
->  	  for performance-centric DRAM level memory management.
->  
-> -	  See https://damonitor.github.io/doc/html/latest-damon/index.html for
-> +	  See https://www.kernel.org/doc/html/latest/mm/damon/index.html for
->  	  more information.
->  
->  config DAMON_KUNIT_TEST
-> -- 
-> 2.45.2
+> > 
+> > > And it needs to persist when the scheduler is unloaded (I didn't look but
+> > > I uspect the per scheduler attrs come and go?).
+> > 
+> > Yes, the load sequence number should stay persistent across all schedulers,
+> > but each scheduler should report the sequence number at which *it* was
+> > loaded. Note that this doesn't really change anything now. If you only care
+> > whether any SCX scheduler has ever been loaded, you'd always look under
+> > root.
+> >
+> 
+> In my testing root is not there is nothing is loaded. 
+
+Right, there's no root if no sched_ext scheduler is loaded. Maybe we
+should always keep root present, or have a global counter and one
+per-sched?
+
+-Andrea
 
