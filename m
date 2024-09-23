@@ -1,78 +1,99 @@
-Return-Path: <linux-kernel+bounces-336365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D8C983A31
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:14:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69DA2983A3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Sep 2024 01:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD2EE1F22918
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:38:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2C7E283034
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 22:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227CF15884D;
-	Mon, 23 Sep 2024 22:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B80126BE0;
+	Mon, 23 Sep 2024 22:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhMh7tHl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="dz4+1e7/"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B441553A1;
-	Mon, 23 Sep 2024 22:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727130893; cv=none; b=lVpiAHv1C7gKEQamyelF6t5wryleH3NK5RSyhzjaUsL8C/U7myeGErlP/L0kBxM+dJ3TwGViTR3nfOC0OECi1OGuVm0yz+eJdWSqUGLTfcSAPZRlzRFD9/V6qKul/5+VCstNr6QYrEGaq9C7g2xFB1e2TDVJxceNeQvgaw4hh0Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727130893; c=relaxed/simple;
-	bh=xU4bii3jbR5ofF0oZImLG78/3mzj5EK9lhpf3Jpr9JI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=RoduvsuWYdUaaVA+j8nZ6R++XYtv1m2V3ZHNmXrLi5X2cqQpmRzYnNAtfsEm55nPJMskjc8unjGib8Lrkg20QXNep1ovrUkrQyUZKxoaGxXxbpHkPaO4+F5t3C3uhVnaP/QIYT3QgJ2kdyr2LOwsYXDYzQAtZ7v1qn/E8m8sHOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qhMh7tHl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5959FC4CEC4;
-	Mon, 23 Sep 2024 22:34:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727130893;
-	bh=xU4bii3jbR5ofF0oZImLG78/3mzj5EK9lhpf3Jpr9JI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=qhMh7tHl96bdh7xutYWeC9bJgFrTuYh3CwXAHXYDYJnKaqwZw9OvUpdYPil4EAqQd
-	 fcOYHTkIgbQHgdKgMrhLvQfOIP9WjgDLs8QqAMXvL1T8nDWZ1b7zNpV6jzyZGsJQIw
-	 ZoSmcR312ZDXUb07Ov0yWePEbiVKtj7nVJ37GdcN4VmuBAW2lFmpMWqAanTgofsedR
-	 4jT676S45cQgWpGR9HQwmwpGM+SU7QbeLpG1p9mxz+RyQORr5uSEL7fLEXOaQrTVTn
-	 M9gO1ZIuN+T4nPi9VBIm/Ft014q/KoeHA1WGntN6qpbhfL9+N3P6OZcD/VWVzJ/VtU
-	 uah4kckkeFTBw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0633809A8F;
-	Mon, 23 Sep 2024 22:34:56 +0000 (UTC)
-Subject: Re: [GIT PULL] clk changes for the merge window
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240923182958.818256-1-sboyd@kernel.org>
-References: <20240923182958.818256-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240923182958.818256-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
-X-PR-Tracked-Commit-Id: f00b45db02ae4e0288bb719a9935b966733c7e91
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9ab27b018649c9504e894496cb4d7d8afcffd897
-Message-Id: <172713089538.3509221.460543698981703314.pr-tracker-bot@kernel.org>
-Date: Mon, 23 Sep 2024 22:34:55 +0000
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B31884E14;
+	Mon, 23 Sep 2024 22:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727131027; cv=pass; b=Qk+OtDvU4m2TDSQtZZIjcFC/g0YPLNPhNvkfCJQPV7v4/nDsvF7NNXsyE9K0h0yWi5CVaq7iKtvJd8II3vbQZiOk2RnAa/E3EIIIrjkZTPIi5UB5e6+YZC368ndkxOoz/jMX7MQqouX4e+oaKLlFpjmeLwqJ5x9M4W3/UMBkrrE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727131027; c=relaxed/simple;
+	bh=u0mvGAUsuusyPrkhDzUdEAF0FETvghc3W7PmEUB5JWo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CU94lMrpv957eFGW38zshligKjVKibDyQSoRNKi9NN6t5D87WtyFB7zdNajcyQuruHHJXA2hnHNGkH2vscKGy9Eb/un6INNpLnD8XNJjckUSYSzaoQs2M6wgUS/Ou7Q7ANedIRH5c3Yu59tjGCaiUnYmX4IsDqWLI7kRKqS4BAw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=dz4+1e7/; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1727130994; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=etfvqn6nE9bSw12FIbfJjgCORXBDGGvV9maXWJaQnkhh0rxOqHDnHlz7YIqv4BYx7SoLUvprqJVEcqHmzlYTkjJDJ+yUP208bEq/Kuvqt5+V7HxY+7KXSEGcNGRtfX2l3fsAlfyJ0PqnO0UpzLDWbSsRY6mUoAsfS6I1hiABPrQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1727130994; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+t7REgL0vRbD5ozbKxnGHX+D3ka+R93Qijxfle7UDkw=; 
+	b=caAMCQASvh6dv59R7g9ZGrEmIYXI4sXujsjyPHqcmiT1F8cQr3uPVKefSzqrcbFD5kjc8FmeRvMhlqCVfD5L3imxGm9MZoOfgjWPVXI1otXetnaa+V9Kto7NFzzI7VcuRUj/SfewxIapq7Yb+LUiEfiQWdSJIRqthqp4mdfXRfM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727130994;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=+t7REgL0vRbD5ozbKxnGHX+D3ka+R93Qijxfle7UDkw=;
+	b=dz4+1e7/rELveWVtwg4DVhx47h7EuwGhj6wtaSdKerqaaZFFwgcgicUrFHJtGFrN
+	iUeAOyKrKgGoYWl+8U5FsfXsVwWlWAST8tkJPRcAIMaiSUFqKe7SBOT+SX6yB6LNNMw
+	qamG/u3aI9vslBmysAeaBAe2+ochwSJFpcC5UBX4=
+Received: by mx.zohomail.com with SMTPS id 1727130994054161.20850860095402;
+	Mon, 23 Sep 2024 15:36:34 -0700 (PDT)
+Message-ID: <40099a01-cac2-4b65-bb96-3dfdb106a4eb@collabora.com>
+Date: Tue, 24 Sep 2024 01:36:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] media: platform: synopsys: Add support for hdmi
+ input driver
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+ Shreeya Patel <shreeya.patel@collabora.com>, heiko@sntech.de,
+ mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
+ shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
+ hverkuil-cisco@xs4all.nl
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+References: <20240719124032.26852-1-shreeya.patel@collabora.com>
+ <20240719124032.26852-5-shreeya.patel@collabora.com>
+ <c5b9be4d-16ee-45f7-b980-d2e0e4b3ef23@xs4all.nl>
+Content-Language: en-US
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <c5b9be4d-16ee-45f7-b980-d2e0e4b3ef23@xs4all.nl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-The pull request you sent on Mon, 23 Sep 2024 11:29:56 -0700:
+On 7/23/24 11:48, Hans Verkuil wrote:
+>> +	val = hdmirx_readl(hdmirx_dev, DMA_STATUS11);
+>> +	field_type = (val & HDMIRX_TYPE_MASK) >> 7;
+>> +	hdmirx_get_pix_fmt(hdmirx_dev);
+> Hold on, this changes the pixel format based on the detected video format.
+> Does that mean this hardware does not have a colorspace conversion block?
+> All the HDMI receiver hardware I have seen always had a CSC matrix and
+> could convert between 4:4:4, 4:2:2 and 4:2:0.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9ab27b018649c9504e894496cb4d7d8afcffd897
-
-Thank you!
+TRM doesn't mention that CSC is supported.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Best regards,
+Dmitry
+
 
