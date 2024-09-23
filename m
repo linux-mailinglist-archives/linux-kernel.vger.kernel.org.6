@@ -1,149 +1,129 @@
-Return-Path: <linux-kernel+bounces-336255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF3E97F122
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:12:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD11D97F12F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E6CE282158
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:12:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 210BB1F21ECE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 19:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176DE1A08DF;
-	Mon, 23 Sep 2024 19:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585FB1A01C5;
+	Mon, 23 Sep 2024 19:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Fy2HA/PH"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lzQRuxGV"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23CE19E996
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 19:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E1915E86;
+	Mon, 23 Sep 2024 19:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727118756; cv=none; b=T3e2KZ/B0V9ZeB3PerIhJG0fvnSbWt7MTRSHFftKyuSYKMqGVnoyWJP5tNofiUKckdv3QVr5HzQ1c+B7gHsmvmkaIfQyrWhqZ4CaGFS05AqGEDVucZR/j0Y+68eFn32ofJc41tDtUlhg5zo2B5RKmsd2MqqpvTJBUFzC+4DLxxs=
+	t=1727119762; cv=none; b=fy4oYj0nZT7XNExq60KeZzMPKijH3VZp0op5/In3WDYy8Vp48sBKk02VHC4ExKIRvq/sgWLxEAkRhA3/rC/DhIzNLoAju+YPnNTdeil2PzXekGSyAxZLAHpDnrxcQ4pQbcyaNYEBQIhtuFq7U3VyKmKJ8ruKUBgz8Rh5zAJ6FPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727118756; c=relaxed/simple;
-	bh=xf364lZIbnjp5yXv/kYTrKS69WYtJ5dXPHV7dU2ANQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qkhayn03CRd8KBhwKAxypuDAJtvqwj7Cg58uIgzMTaBaau0nkZlAL6S9VGmNqHafibyzPEaqdjbfA37IG2ZFfEaaow0hOgOuNOE7VBdDjQGfg9j76gSVPiLNxDRUMOjj994rQEe8OYZur9wmUV6GUnOEtr5KNYwj4DLXetFw/bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Fy2HA/PH; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso7315528e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 12:12:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727118751; x=1727723551; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FTdpdNtDHKc5MwXK6gfkOgHrOXbWdY15It+qZL/P+lM=;
-        b=Fy2HA/PHwzwmDH+z/zYibcHxGIhdToC7rf4xSL7rMhvnn+RI9geRIzlu1Ws4pWY1Oq
-         8KXogjlpOi8wCw1JOddBjZdMu5mj58BpwuI/vvTfVtoGMgjb340R4ApqF2aFn04JwU4f
-         z1Tbmfv9asK5yZIsPQc4/Wz1zJyxQvppfOr1o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727118751; x=1727723551;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FTdpdNtDHKc5MwXK6gfkOgHrOXbWdY15It+qZL/P+lM=;
-        b=stFHgOXHTFlwVNmgCYdeyXV/olsRE8vTROPiNKiBnoKnZrVV20KLPFP3+dMMgTujO2
-         iYwzJoOEMWLUzwaz2++CQi4C4nSMeRMTwOpsoB8/3GqJPZWvC2djEMuCtn7bNX4CGf2Y
-         yLD3TCD4U9Y77910ChinR5bxYd30z04eiibnCuA+y6O2EmBfD5Wb86UoApTEKY1hPzIe
-         DPxi35NnCZ9bMsZQK/5w2W5ArLqy40ZWz4rAC1BC1vB62zoL6HCUnj1U+Y4BonOG/7Ho
-         PR87Nx8LAEZc8HjLGUALDWzl8vXYUn6/pAPzyTaesimPTzBd3ioxVWg0zi2HHwB4njfq
-         1OPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPxWPEiC0Dp2zj6DJboHtiGLjq66x12cwlmhT3jm0CzeH9mbGL5LILnJbucFBuzgepMVIsoRGKNEoXEFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9dAHbav1oAUzWxRF8kj+KjwnPYRmSCkW0H7NbJFzXa8j2if7h
-	np9PSmdw+6l1Sn6MXq9uY1JnRJv2dw+sJt8suBS4cP0ICFZHqc9sbxMvKOFE9UJs8wS2gmg9CtN
-	gxRuu
-X-Google-Smtp-Source: AGHT+IH3gVxZqtoKurRB0/wq+1Os864JiXBIc8QU5lHtwJ0kfjWKHi5Y13czA/YsBNQacKFtzOl1eQ==
-X-Received: by 2002:a05:6512:1106:b0:536:73b5:d961 with SMTP id 2adb3069b0e04-536ac34022bmr9744306e87.54.1727118751104;
-        Mon, 23 Sep 2024 12:12:31 -0700 (PDT)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-536870b8e68sm3355253e87.293.2024.09.23.12.12.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2024 12:12:30 -0700 (PDT)
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53659867cbdso6533132e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 12:12:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXRoXnldzy8IOzajp6A0COyha3tnQe1BGJK75chm2Xdkpyo7tsEygwXhoslyXfA/0QnEEqs/ia232z8Ugc=@vger.kernel.org
-X-Received: by 2002:a05:6512:280d:b0:533:4505:5b2a with SMTP id
- 2adb3069b0e04-536ac2f5b48mr8261806e87.28.1727118750042; Mon, 23 Sep 2024
- 12:12:30 -0700 (PDT)
+	s=arc-20240116; t=1727119762; c=relaxed/simple;
+	bh=e9lDkdpWy+qCLfVwcrxsfV8XgIXBr9xMhlhGoG12zwI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=JfRVX/XB53OwjR3T0jlEWEVWcb5LOhRx5u9PLlAOUZRLkuyzX7twDWJM//DEQC/khd/fHor41c8IVeFL8gH8jlXdbvm5P74JuOSA9ov/+fQBaqvsILpBbhA7UxBfpHN/WuNkfAO8fPjkQ8fuQQO5goIHAp7atXqNDEMKs1H82N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lzQRuxGV; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727119708; x=1727724508; i=markus.elfring@web.de;
+	bh=djbkrGXRtHq7orMC8Q8l8m1TWgw6GsJVQydsMLaFwc8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=lzQRuxGVprEOZcwfDsVMIynvys+4FfyL3XTOSrVRMsOwJtmcSqEK76QVwrttUD6A
+	 n6lrbaR3amC3BWVN7oerHBdMohrRuPMMMOd1mgXoYGjeaUmXd1Ae9fx/hKAlfpTRb
+	 XOm/8UMZBKUHKj1rCbpkmLLTWbS0hekWDPp3TLRG7qII5vEobMN0iO/NizqsAxuvk
+	 gf1qb55bLwUn3Uhb2U6LegMv3//Ymaxqw8OvvjfPklosbcumjBlsYdc4Do6f4Bn2I
+	 7J/+GN3D3NnnfQBddLZljEr7jjcmYI1gXACn0ADa5uO4UGXvxVyu4b6LIhVCeeWNp
+	 fA6GKSVY3Y8gt7nJ/Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mx0Mr-1rzutD2pPH-00ytzp; Mon, 23
+ Sep 2024 21:28:28 +0200
+Message-ID: <2f84f558-3f65-4c09-89b8-485830b98654@web.de>
+Date: Mon, 23 Sep 2024 21:28:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911072751.365361-1-wenst@chromium.org> <20240911072751.365361-9-wenst@chromium.org>
- <CAD=FV=XvPA0UC87fQ+RvFzPv9qRSEP6eQhT79JOx9Arj87i9Mg@mail.gmail.com> <CAGXv+5EcxGfdzvarg8hmk1zR9X0s8KUzayQdxfWTrasEGpj=1g@mail.gmail.com>
-In-Reply-To: <CAGXv+5EcxGfdzvarg8hmk1zR9X0s8KUzayQdxfWTrasEGpj=1g@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 23 Sep 2024 12:11:49 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Wv1uFmxFsaxT9tY=-fwnPsXDjnabNxQ-cK3hm2a9Wo7A@mail.gmail.com>
-Message-ID: <CAD=FV=Wv1uFmxFsaxT9tY=-fwnPsXDjnabNxQ-cK3hm2a9Wo7A@mail.gmail.com>
-Subject: Re: [PATCH v7 08/10] i2c: of-prober: Add GPIO support to simple helpers
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>, 
-	Jiri Kosina <jikos@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org,
+ John Garry <john.garry@huawei.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Mark Rutland <mark.rutland@arm.com>, Qi Liu <liuqi115@huawei.com>,
+ Shaokun Zhang <zhangshaokun@hisilicon.com>, Will Deacon <will@kernel.org>,
+ Yicong Yang <yangyicong@hisilicon.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] perf: hisi_pcie: Call pci_dev_put(pdev) only once in
+ hisi_pcie_pmu_valid_requester_id()
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8duds6sd5ZmSPqOeRJ4uuEaJhMIYGVj1GgAfwEil8eQ74MyJXfh
+ MC6aBHbnX/dGzeLx9nblCjnSYQgWJSgBXhzGPl/WUXcEujJFDi5sVG6eW5C1yyNMhK8Z/ak
+ aIMqM7Ae2nyw2tHM9nTQROA3hydHPbvcaDXHBwgoIRJiT8s81rKeEDV5GXPzXyc+ESQp4rP
+ 74AKEvbpWTiirItL+FLhQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:irXljewrlso=;jJb4CF2hUg2EL37RJH0k8OceEBq
+ dPDz0WsyioqT8Y9KZgl0GxFuhw3FSaYbkLM8oLzbo0g6EwcfaELASDTpdFkruMdkt3VTnwc8E
+ 2wIJneo4C54t4wl0k+//R7HcC2dtfHWEuPasUNxKp/wFhgTf524eGG6Sw1oggTmk8/WWI3Wz+
+ AeqIFb6BXy3sz4TWnP4OCR155A5mxnFz7u3hjGoM/lbQBu07nUTcoSj7eHORa4i9yO2J4CDIl
+ JQZnR7y/masgPFbZQ4Tp0vGnEAEFCmhRqLNg8OnutHPvLQYvMlK0VNIWrgXT1BZpkuov/i9B5
+ D1tbSc96dAM0NLPC6UazhltrNC0YIe9dG5TLpxGlZireG2Rd6qI7lL3Yqp+7uNozlPjHf0vsg
+ TN5ryWI0qa1ZjpCS1ODAcdXZ9LLICOXsIwlm9678YnuIubtjdZ13h0VQvwznzQFFmluzHnxiM
+ LnaQ2vy3AT+NpiTP/uT62xX87oW5oMjaHW1HYOS5xAmJGg//XJ5kAKbykbgYFvGFKEydEaKi9
+ 8dxiOzjFceQU33eBj3OUFmWie4RG1ArR3sVuhQOZhYgHgN+eXU340yril4WOmkyVrTz+CkSyk
+ C2qWn8eVjLZFsRStAbCFZ9ngOJZym7mVT/o6asaOHnjt0qoyc0wUiAbo6GlOBsH5euEO8xz3V
+ ysMp96rdpdWoYaVso1w7n49B4l7F/c/Or2O9kliDgPpZeUm8Hz0e0lvO/J2u4FDpyrD0jAppR
+ JCVA7tRgNUV8w0IbC2pvs4fKR7nLX+AY64YuhVyl9mlBgY3wWah3u1+UVuLDXaycfcv5nb9eW
+ TWs3m7v3CskgHq1AlWsjZ0/g==
 
-Hi,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 23 Sep 2024 21:17:45 +0200
 
-On Tue, Sep 17, 2024 at 5:41=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.org> w=
-rote:
->
-> > > +static void i2c_of_probe_simple_disable_gpio(struct device *dev, str=
-uct i2c_of_probe_simple_ctx *ctx)
-> > > +{
-> > > +       if (!ctx->gpiod)
-> > > +               return;
-> > > +
-> > > +       dev_dbg(dev, "Setting GPIO to input\n");
-> > > +
-> > > +       gpiod_direction_input(ctx->gpiod);
-> >
-> > This is weird. Why set it to input?
->
-> It seemed to me this would be more like the initial state, without knowin=
-g
-> the actual initial state.
+A pci_dev_put(pdev) call was immediately used after a pointer check
+for a pcie_find_root_port() call in this function implementation.
+Thus call such a function only once instead directly before the check.
 
-In this case, though, you're trying to turn off the resource, not
-trying to get back to the initial state. IMO deasserting the GPIO is
-the way to do this. If the output needs to make it an input in this
-case then it can use some type of open drain mode.
+This issue was transformed by using the Coccinelle software.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/perf/hisilicon/hisi_pcie_pmu.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> > I would also say: given that you're providing a parameter anyway and
-> > you're giving the GPIO name, can you please move away from the "raw"
-> > values and move to "logical" values?
->
-> I disagree. When hardware engineers design for swappable components, they
-> likely look at the electrical compatibility of them. In this case, an
-> active-high "enable" pin is electrically compatible with an active-low
-> "reset" pin. If we use the logical value here, then we would need more
-> logic to know when the logical polarity has to be reversed.
->
-> Note that this doesn't work for components that are electrically
-> incompatible. But in that case a lot more board dependent code would be
-> needed anyway.
+diff --git a/drivers/perf/hisilicon/hisi_pcie_pmu.c b/drivers/perf/hisilic=
+on/hisi_pcie_pmu.c
+index c5394d007b61..5ff1c47d68ad 100644
+=2D-- a/drivers/perf/hisilicon/hisi_pcie_pmu.c
++++ b/drivers/perf/hisilicon/hisi_pcie_pmu.c
+@@ -290,12 +290,10 @@ static bool hisi_pcie_pmu_valid_requester_id(struct =
+hisi_pcie_pmu *pcie_pmu, u32
+ 		return false;
 
-As we talked about in person, that made sense in the previous version
-of the patch where you were looking for all GPIOs willy-nilly. Now
-you'll be specifically asking for a GPIO by name and we should honor
-the "active high" or "active low" nature of it.
+ 	root_port =3D pcie_find_root_port(pdev);
+-	if (!root_port) {
+-		pci_dev_put(pdev);
++	pci_dev_put(pdev);
++	if (!root_port)
+ 		return false;
+-	}
 
--Doug
+-	pci_dev_put(pdev);
+ 	rp_bdf =3D pci_dev_id(root_port);
+ 	return rp_bdf >=3D pcie_pmu->bdf_min && rp_bdf <=3D pcie_pmu->bdf_max;
+ }
+=2D-
+2.46.1
+
 
