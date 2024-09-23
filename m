@@ -1,203 +1,121 @@
-Return-Path: <linux-kernel+bounces-335839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D92197EB5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:10:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B1B097EB61
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 806071C215C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:10:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEF56280ECE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33822197A9B;
-	Mon, 23 Sep 2024 12:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B923198E63;
+	Mon, 23 Sep 2024 12:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="0nCn1ttq"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="szWKbCKc"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1F28002A
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 12:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76018002A;
+	Mon, 23 Sep 2024 12:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727093451; cv=none; b=jgyBmVKZVTIuU0bptny3MQnPUVY6Kt470IKHjboYXFuwvR3pCnmZXLgsxup8NxQxtsifa7CJV8sUZ5tm9NMM9DoNETwLwUebNfk6uaOfg1dbc7kr/RGEYEVqbzG+qiz2uUn0kU8SVsaZ28fp79/XvHR4M4N+3vP+tkWgVH2F+mI=
+	t=1727093583; cv=none; b=ro65iHbDjL2b2Ixdvn+oBeqSPuDMaYCcawBxDHfC/qH9TOtW/l3SKGyCvbcWPao3m3Ow7d7+a4ZXCr0xD2j3l1kfGpMrWoCmLLH1+LNHjWbtEJX28v98j1Yobryh3o8CSi6XvvYHv644GoFALivhKntO4afQ6ibawfl8bxWqfQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727093451; c=relaxed/simple;
-	bh=sKw4RpY/kNpY5eSc9/qtLDCJMPcC2OkmwvZa/qK45fQ=;
+	s=arc-20240116; t=1727093583; c=relaxed/simple;
+	bh=mtUlxP0PeHJOjX6toxYU5t+iAgcA2Ki1i79is5A/tzo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dp1xug1In9wGay+MGRygBn8J+wbEI8JJT/3GaLrhijeVUEoyzLMpwFzxGInV/xKge75Xky6eS5M9LKHVmSui4qjS98HnSN4aUSZDixQPErnLJbXcOmAywZ/8fRLwbFBebxvxsAfIHJ1baqQxw/tVg+OUHEJqJ79xHmK4SNMZv2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=0nCn1ttq; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7a9a23fc16fso479807285a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 05:10:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1727093447; x=1727698247; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rRfOQ0tS9cN4A6dE8SfP42PhT4ARLrBFORewUNU1yeg=;
-        b=0nCn1ttq0UMHWnngkOZSxQ5rUajEAcpwMGGBZBT3QCvSxDX1/Z8hf1Q7hljhvSSViU
-         Hy21LeSVuB41hoxuaCMtAr0tT08FWaa9mPwC7pehm+cdyb9XrO4zSk3l8IIyYmcHknmG
-         F/Ne7eGQGWkzftIF1xRz4d3NvBE45LphnoNG5T6wLHYXyEDerI7OvLZaNWDCdn/17Jr6
-         qH6PfF3UzoLmMcTXVkbTHD4QWWIArRcG1qf8IB0cO0O3eh/WXAWIIpAQrkEmo8rKXQ2S
-         0SSPm45l9vNL59HT45TZmem0mQc1hCNiUABLWFo5UWskf9DTQw3RCPdTE9J2K0ub7UDQ
-         +Z7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727093447; x=1727698247;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rRfOQ0tS9cN4A6dE8SfP42PhT4ARLrBFORewUNU1yeg=;
-        b=Ssrc2GG28h+5YjL4OHCDrOg/1dqngCEqFJPzuGD07HkIRt5PrBte6c8xVKZQNcY9oK
-         sfG0RW7pwbsmMb7wh+O8SXPeHnadHUafswZawdYfi+RYzw969idws4PRuZSuAQeTQym+
-         N6pUnoe5+HAfX51DdNR2+cTV6LOyMUb7XdMSqXngZnl+o3w2+jZmA+QWzPHbXtzvWcd7
-         U9p1ZW4Bml6Umcv1cOtsv2QIJPliibSmnfrL7NN67vpNO4Dy8MHkzrSmHaL0bNKrk499
-         wh9REnqeBt/MPBeUwjKJxCaceWrxVrG7AqPb/hySMoszJgVAeBk8Sxd1jmh6S21UEeeY
-         hPeg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCRt2pE6i3z/qR/3RiN91SOVT4OEm9Eg7CllBRPxo8WFkBtohRVrqX0Hkb5JpKsRMvAB5uK1YRI0tgrAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxT6BK7LopGMVQxvnBwRmOvolZX7JAo6BvzbbyaMvMTM74Qe0l+
-	YOB+dezJtkj9qk/1jkhik5fRSq3/kPBtSIlQzRQ/aB5fIoUjybYyn7F9/3gQw5M=
-X-Google-Smtp-Source: AGHT+IElg8qVKPTj4Pd2rDhN1S71xp00EUK4UYGmT5pMHGR/us3IeiPIoyDuGeqQZi3Ydh6nJDM7Aw==
-X-Received: by 2002:a05:620a:450a:b0:7a6:5a80:7ee7 with SMTP id af79cd13be357-7acb8209cd4mr2158460385a.46.1727093447388;
-        Mon, 23 Sep 2024 05:10:47 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7acb08ed0bdsm470264885a.130.2024.09.23.05.10.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 05:10:46 -0700 (PDT)
-Date: Mon, 23 Sep 2024 08:10:41 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Barry Song <21cnbao@gmail.com>, Yosry Ahmed <yosryahmed@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kairui Song <ryncsn@gmail.com>, hanchuanhua@oppo.com,
-	linux-mm@kvack.org, baolin.wang@linux.alibaba.com,
-	chrisl@kernel.org, david@redhat.com, hughd@google.com,
-	kaleshsingh@google.com, linux-kernel@vger.kernel.org,
-	mhocko@suse.com, minchan@kernel.org, nphamcs@gmail.com,
-	ryan.roberts@arm.com, senozhatsky@chromium.org,
-	shakeel.butt@linux.dev, shy828301@gmail.com, surenb@google.com,
-	v-songbaohua@oppo.com, willy@infradead.org, xiang@kernel.org,
-	ying.huang@intel.com, hch@infradead.org,
-	Hailong Liu <hailong.liu@oppo.com>
-Subject: Re: [PATCH v7 2/2] mm: support large folios swap-in for sync io
- devices
-Message-ID: <20240923121041.GB437832@cmpxchg.org>
-References: <CAJD7tka+ZONNFKw=1FM22b-JTPkiKZaKuM3Upyu6pf4=vN_CRg@mail.gmail.com>
- <20240903130757.f584c73f356c03617a2c8804@linux-foundation.org>
- <CAGsJ_4wjgPS1Pj_RbLcpXH3dx2StCdSiUo5AL7vQFPZGyzESAQ@mail.gmail.com>
- <CAJD7tkaXvm95mRH04OX0KJtiBuTaaDyyJQirbAjUV0B+DjaWJA@mail.gmail.com>
- <94eb70cd-b508-42ef-b5d2-acc29e22eb0e@gmail.com>
- <CAGsJ_4yX7xmyDokYgc_H7MaxcOptcLeQs-SB1O22bSRHFdvVhQ@mail.gmail.com>
- <bf232555-3653-40c7-bbdc-a8fe58a93a9e@gmail.com>
- <CAJD7tkYu2v2VnMizVeOTHTNXXbdnd+UqaKhTRfrTC7THUiPPdA@mail.gmail.com>
- <CAGsJ_4wd=6kuwg7v=_ARb+Ay15M8SU776Vjb4rmtiVp8vQg-qA@mail.gmail.com>
- <2c418b81-8f67-4a45-b4d2-d158fa4f05d9@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VrR6IR+v46RESeqpR6YaFm05IWWF+iWp6syz0uvDcBGEU/N/bs7wXWItBrFsSY3jDuTjXtuXF//G8Ba3A7KxlGh7zI4abHHY0Al2kHfhvBLUyVPNNF6rFeA3K3Tv2bttv49amfUHCAgIEp207s7lXJAcvShV1Xe85McKGmVL4ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=szWKbCKc; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Eq1Kj2dvKOSMfRsPuAE8w645hcxyoP4nvyUZ3L3dadU=; b=szWKbCKcaTKaRdtijfzBwrt+0g
+	nzZYalFp99LmsUhBcVHcE368+GrOSM7Pu5kpVlK+LttedoxNLPMLv6udFAkPD0vOqhNNhTJ+Y2qN+
+	oRfGZE5NsaLP2yGEZgxOHEEXuABvcyN2CVi3lqJiKW1O78IAiz3wmyYYCkw102QSS6PA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sshvj-0087dk-SM; Mon, 23 Sep 2024 14:12:39 +0200
+Date: Mon, 23 Sep 2024 14:12:39 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Hal Feng <hal.feng@starfivetech.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	William Qiu <william.qiu@starfivetech.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] can: Add driver for CAST CAN Bus Controller
+Message-ID: <9cf40a68-a07f-46d5-bc2c-302ae0e99ab0@lunn.ch>
+References: <20240922145151.130999-1-hal.feng@starfivetech.com>
+ <20240922145151.130999-4-hal.feng@starfivetech.com>
+ <cf17f15b-cbd7-4692-b3b2-065e549cb21e@lunn.ch>
+ <ZQ2PR01MB13071A093EB33F48340F753EE66F2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2c418b81-8f67-4a45-b4d2-d158fa4f05d9@gmail.com>
+In-Reply-To: <ZQ2PR01MB13071A093EB33F48340F753EE66F2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
 
-On Mon, Sep 23, 2024 at 11:22:30AM +0100, Usama Arif wrote:
-> On 23/09/2024 00:57, Barry Song wrote:
-> > On Thu, Sep 5, 2024 at 7:36 AM Yosry Ahmed <yosryahmed@google.com> wrote:
-> >>>> On the other hand, if you read the code of zRAM, you will find zRAM has
-> >>>> exactly the same mechanism as zeromap but zRAM can even do more
-> >>>> by same_pages filled. since zRAM does the job in swapfile layer, there
-> >>>> is no this kind of consistency issue like zeromap.
-> >>>>
-> >>>> So I feel for zRAM case, we don't need zeromap at all as there are duplicated
-> >>>> efforts while I really appreciate your job which can benefit all swapfiles.
-> >>>> i mean, zRAM has the ability to check "zero"(and also non-zero but same
-> >>>> content). after zeromap checks zeromap, zRAM will check again:
-> >>>>
-> >>>
-> >>> Yes, so there is a reason for having the zeromap patches, which I have outlined
-> >>> in the coverletter.
-> >>>
-> >>> https://lore.kernel.org/all/20240627105730.3110705-1-usamaarif642@gmail.com/
-> >>>
-> >>> There are usecases where zswap/zram might not be used in production.
-> >>> We can reduce I/O and flash wear in those cases by a large amount.
-> >>>
-> >>> Also running in Meta production, we found that the number of non-zero filled
-> >>> complete pages were less than 1%, so essentially its only the zero-filled pages
-> >>> that matter.
-> >>>
-> >>> I believe after zeromap, it might be a good idea to remove the page_same_filled
-> >>> check from zram code? Its not really a problem if its kept as well as I dont
-> >>> believe any zero-filled pages should reach zram_write_page?
-> >>
-> >> I brought this up before and Sergey pointed out that zram is sometimes
-> >> used as a block device without swap, and that use case would benefit
-> >> from having this handling in zram. That being said, I have no idea how
-> >> many people care about this specific scenario.
+> > > +	reset_test = ccan_read_reg_8bit(priv, CCAN_CFG_STAT);
+> > > +
+> > > +	if (!(reset_test & CCAN_RST_MASK)) {
+> > > +		netdev_alert(ndev, "Not in reset mode, cannot set bit
+> > timing\n");
+> > > +		return -EPERM;
+> > > +	}
 > > 
-> > Hi Usama/Yosry,
 > > 
-> > We successfully gathered page_same_filled data for zram on Android.
-> > Interestingly,
-> > our findings differ from yours on zswap.
+> > You don't see nedev_alert() used very often. If this is fatal then netdev_err().
 > > 
-> > Hailong discovered that around 85-86% of the page_same_filled data
-> > consists of zeros,
-> > while about 15% are non-zero. We suspect that on Android or similar
-> > systems, some
-> > graphics or media data might be duplicated at times, such as a red
-> > block displayed
-> > on the screen.
+> > Also, EPERM? man 3 errno say:
 > > 
-> > Does this suggest that page_same_filled could still provide some
-> > benefits in zram
-> > cases?
+> >        EPERM           Operation not permitted (POSIX.1-2001).
+> > 
+> > Why is this a permission issue?
 > 
-> Hi Barry,
+> Will use netdev_err() and return -EWOULDBLOCK instead.
+
+I'm not sure that is any better.
+
+       EAGAIN          Resource  temporarily unavailable (may be the same value
+                       as EWOULDBLOCK) (POSIX.1-2001).
+
+This is generally used when the kernel expects user space to try a
+system call again, and it might then work. Is that what you expect
+here?
+
+> > > +static irqreturn_t ccan_interrupt(int irq, void *dev_id) {
+> > > +	struct net_device *ndev = (struct net_device *)dev_id;
+> > 
+> > dev_id is a void *, so you don't need the cast.
 > 
-> Thanks for the data, its very interesting to know this from mobile side.
-> Eventhough its not 99% that I observed, I do feel 85% is still quite high.
+> OK, drop it.
 
-Would it be possible to benchmark Android with zram only optimizing
-zero pages?
+Please look at the whole patch. There might be other instances where a
+void * is used with a cast, which can be removed. This was just the
+first i spotted.
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index c3d245617083..f6ded491fd00 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -211,6 +211,9 @@ static bool page_same_filled(void *ptr, unsigned long *element)
- 	page = (unsigned long *)ptr;
- 	val = page[0];
- 
-+	if (val)
-+		return false;
-+
- 	if (val != page[last_pos])
- 		return false;
- 
-My take is that, if this is worth optimizing for, then it's probably
-worth optimizing for in the generic swap layer too. It makes sense to
-maintain feature parity if we one day want Android to work with zswap.
-
-> The 2 main reasons for the patcheset to store zero pages to be
-> swapped out in a bitmap were for applications that use swap but
-> not zswap/zram (reducing I/O and flash wear), and simplifying zswap
-> code. It also meant fewer zswap_entry structs in memory which would
-> offset the memory usage by bitmap.
-> 
-> Yosry mentioned that Sergey pointed out that zram is sometimes
-> used as a block device without swap, and that use case would benefit
-> from having this handling in zram. Will that case also not go through
-> swap_writepage and therefore be takencare of by swap_info_struct->zeromap?
-
-No, it won't.
-
-However, the write bios sent from swap have REQ_SWAP set. Zram could
-make its same-filled optimization conditional on that flag if it wants
-to maintain it for the raw block device use case.
+	Andrew
 
