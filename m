@@ -1,89 +1,87 @@
-Return-Path: <linux-kernel+bounces-336324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE33D98392F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:44:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E326E983930
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 23:46:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE551B21127
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:44:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A23C1F20F0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 21:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A3784E0A;
-	Mon, 23 Sep 2024 21:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Xnlo3TkP"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B1C82877;
+	Mon, 23 Sep 2024 21:46:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1D483A09
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 21:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1F961674
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 21:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727127858; cv=none; b=IbPPu3gpwbrMccdPHkHok1PcuVZIOHJ2Lt8M8kPX79jxyytDGCsaMY/0fmO/8RvZ4iVytUAVF4T1VmIS9RGu409iVXrih+S/GnNPsb5bx6yBr3oLjao4r8IolpdMkGROqvKtxBMcLIF+q6wvfDuct521WXGsU7wdeHqqYmnlrdg=
+	t=1727127965; cv=none; b=hAbxsuXpyZUnGHlpy+geqG6WeIn1uSwMLT9MmaFyJ/YwA7qBfe/QoyZCdy37K6TkBr274Do2YBr7B4MG0VahprAXyRp501kPyls/VeUHyPvLTsuekWnPx6GRFWuWwiudM3TT7S4qBJLImxm6onKGIBk0MchBGpgE1eeKzsbEZik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727127858; c=relaxed/simple;
-	bh=3Jpn/X5KBq6gi+lv98QCZ9YS55FSIrlWsuwDXyfN3Kg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iMWQnDIKutDePY6qEhPTmC/rK5K652fU1vseh9zeU7Rn67o27IvhDtHo4OYZEUEW2FKF7/TAW43s6sstn8IQgUm1lnt0Wqs+VzxU4Q8bzNrSq5WF7rNqHdMq7vx+RwuGuKOf/HCYhpVVXs3+rmIlhlBobgBRZDexh0eEmitI3P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Xnlo3TkP; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 23 Sep 2024 17:44:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727127854;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rb0xYVxxQiA42gtCtHSH89wzqw5/G1A/qKd+mtPVpas=;
-	b=Xnlo3TkPrKxUmeATil2Z9BfcAexpTECzW8KLMbrgpcRDtAnAm+AQ86OKabHJCS9EdLX5SD
-	MiTKbLjPsygBEFq7bM5k1GNtb1tX+8jL1Cs1+V2qZXCDiOuqRHwQFfp5+B5nRQSgyvStpe
-	jtdO7Zh8HZNIvXEpAnKFQrWRp5fjzWY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, syzbot+6f655a60d3244d0c6718@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2] bcachefs: memset bounce buffer portion to 0 after
- key_sort_fix_overlapping
-Message-ID: <b4ajhopcv477r3ot6rz4lvhjpunuggoysdksn3aqbl5x4ivjjw@6opkd6jmr2ch>
-References: <20240922151618.737458-2-pZ010001011111@proton.me>
+	s=arc-20240116; t=1727127965; c=relaxed/simple;
+	bh=84UDYr69D/DY8Gi0l217OzdgJ3nZcmn7Pr7NgQvfDfs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qc5Munv9cLGDRXXh7irttb21lgOV/4w8SP/Qncthu8o2rOLMG0i3f4Ws/YQJQThqI7SIVeCnzlCEEUFhvZgM3tBJ0T3LkvVCZn4XnvOH1IUglkWkDu2rbq6OEiiYJi1iASBFBA0wNtZwAuYpnw8bYfW5tA+kc1ylSdSlLtP6e14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82aa499f938so448128939f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 14:46:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727127963; x=1727732763;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7aWRRpKliHGP+iwoPzTDGzWLuysGQIPqAppoC3pFlsU=;
+        b=PatgRCr8Ah3ghgWzX1Mb4GvnZ74JingII7+uLyNoe+akvHfHkSEiW6dZASw5j4eRIW
+         5iqYYNekY/vsoOGWJqSC5vv2ATiVRg6GAEyUqjRbfuycmOHseaF0Pe+8FZwB1SQd3Fgw
+         G9VWSU71D3Uu8zHgNamtUaG2RrjHNs5J4jd1B0AyITX2kYjvoahDU1/vJJhMQDgdfohW
+         1VHfAjLi8M2DdiFR8FtNefrd231QfTrEgLje48z0FT3l9p5OwVvozcfoMyEVj/snXcX1
+         cR7FgHjBcN7QRc8a/SPM83ez+M3ObseCk5pv4OkGfphiBPW9Vj1SgIeclpFsgmo4V0Qk
+         OPXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjpl1XiYzVyjvpALNobKbS3YfUhvjyJunRd3ZjLtxXx5mP642khukL2W8VBRR/RA13Nsybo6nMIkeBQgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW+cfA8Ju+GsrGFsDi0tLnHERYtnZlCHyEExnfqQ6UgBtxs9LA
+	T1r4vQP/SIMYHrSyhJ37t7HQAf75zQbws3qNXN3+Tb+XXtCaLg2zR583J3ZwbpkTIftjMNVwOwK
+	IJTR7egb9AERW90srVqTviCW3vVtwMqhkEAOvMdtqvtD8JhfNQkwiQYA=
+X-Google-Smtp-Source: AGHT+IHUq9/0EN2J28/DNHxgvmd3jaR0lJrVQ587OSrC/0NGt/lmX3VZ5WMZLQhzIQfXSo5OrCFpnGiOzG2ein7wTZ0vMLVdImch
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240922151618.737458-2-pZ010001011111@proton.me>
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:1d07:b0:39f:325f:78e6 with SMTP id
+ e9e14a558f8ab-3a1a2f5b4a2mr7323975ab.0.1727127962840; Mon, 23 Sep 2024
+ 14:46:02 -0700 (PDT)
+Date: Mon, 23 Sep 2024 14:46:02 -0700
+In-Reply-To: <20240923210638.121088-1-djahchankoike@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f1e19a.050a0220.3eed3.0019.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] general protection fault in __copy_super
+From: syzbot <syzbot+18a5c5e8a9c856944876@syzkaller.appspotmail.com>
+To: djahchankoike@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Sep 22, 2024 at 03:18:01PM GMT, Piotr Zalewski wrote:
-> Zero-initialize part of allocated bounce buffer which wasn't touched by
-> subsequent bch2_key_sort_fix_overlapping to mitigate later uinit-value
-> use KMSAN bug[1].
-> 
-> After applying the patch reproducer still triggers stack overflow[2] but
-> it seems unrelated to the uninit-value use warning. After further
-> investigation it was found that stack overflow occurs because KMSAN adds
-> too many function calls[3]. Backtrace of where the stack magic number gets
-> smashed was added as a reply to syzkaller thread[3].
-> 
-> It was confirmed that task's stack magic number gets smashed after the code
-> path where KSMAN detects uninit-value use is executed, so it can be assumed
-> that it doesn't contribute in any way to uninit-value use detection.
-> 
-> [1] https://syzkaller.appspot.com/bug?extid=6f655a60d3244d0c6718
-> [2] https://lore.kernel.org/lkml/66e57e46.050a0220.115905.0002.GAE@google.com
-> [3] https://lore.kernel.org/all/rVaWgPULej8K7HqMPNIu8kVNyXNjjCiTB-QBtItLFBmk0alH6fV2tk4joVPk97Evnuv4ZRDd8HB5uDCkiFG6u81xKdzDj-KrtIMJSlF6Kt8=@proton.me
-> 
-> Reported-by: syzbot+6f655a60d3244d0c6718@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=6f655a60d3244d0c6718
-> Fixes: ec4edd7b9d20 ("bcachefs: Prep work for variable size btree node buffers")
-> Suggested-by: Kent Overstreet <kent.overstreet@linux.dev>
-> Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
+Hello,
 
-Thanks! Applied.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-by: syzbot+18a5c5e8a9c856944876@syzkaller.appspotmail.com
+Tested-by: syzbot+18a5c5e8a9c856944876@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         18ba6034 Merge tag 'nfsd-6.12' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=110d0c80580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a89411f53c579df0
+dashboard link: https://syzkaller.appspot.com/bug?extid=18a5c5e8a9c856944876
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=166aca27980000
+
+Note: testing is done by a robot and is best-effort only.
 
