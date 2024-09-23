@@ -1,173 +1,167 @@
-Return-Path: <linux-kernel+bounces-335845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC7297EB6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:19:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4D497EB70
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 14:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF1061C2157D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:19:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D816BB20F15
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E10198E6C;
-	Mon, 23 Sep 2024 12:18:24 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FABF198826;
+	Mon, 23 Sep 2024 12:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsB9jDOe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4312940B
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 12:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C0045003;
+	Mon, 23 Sep 2024 12:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727093904; cv=none; b=bOVqU15yGPKrVyVxwQ42pviYWvWa2F20+oJAlEFUbzhZ5vdv91HEXMx0dvy32k0O0mXvMr7TZjHPm0Prj271LZ7PQI3OTOsZRzxuNOSPHEh/bLtZZKELH960C9/4fh4KZTr7OpJ48zHT493+IIQxDgj2mVcEt2zTPWs8VvbBJrM=
+	t=1727094119; cv=none; b=RqPnK7iij6vq4f7npy98YJpVuKio+iwKfwNDiX491I1B023ibBtQlXdGFDITDeUFNzDn7/aiQr0oqniiIeCgv+KGATPjnDW4g65k9aqv2aWm8gy9JdpIp0Hptf5zp3FFq8PjL8RmeOGBwhStoF3PIKCbX1c237k65xoNPklZkPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727093904; c=relaxed/simple;
-	bh=9qyiqxr+PjRRwDv4hMepi7uxrW+IGWLO+QEuml6RknI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sasxRikGGw402+FRyQ5sJFxP8CynTrpwEJ3MAC60XAK6sXvCDoKtqbvWDceSDvhW3533FKYEeuVZM3gE+0QCA6W99hmVwpU/vMsVLPSgpSBQi6ocnH/13/13aKcPVj1/UUB9V0D+Mn2i4XksfbQuJaAc0n/YGbwQiR0ZQpRQFwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0a4db9807so72657685ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 05:18:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727093902; x=1727698702;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+UjINTKHvnLU/HrUQBNckQJuurMHjgVJt71SinSfQPU=;
-        b=sbGNuqE031gjgVGR3B7qPqiWjhBIydxLxcWEnyeL7Hz1mQbNqDRICwwgoOEJIk/YAE
-         siHpXn0OJUF7fhqVK/+yMAKtwGkBofm4WWDfqch8Tr5zTILE+ngMHvMsDhoHue9LB4dA
-         iytTWQ91uejz5lwGLzKz/7BOYJM2EUht8EkLRjSiy7wuOG1acbu7sZONEQO+2FFv7R6j
-         BBl+tqT9mnI/pi8tdwrws3/y8VmEtSbdhzR1puHk9IiLFxXuoEPd+sHOhcvmrrhIK4kZ
-         THK5Vo+YIK87iqZgYYqfnac5PRw13xYssSLj1vb9ZtqSmCGTsbSGWq63RSqDaWgr55lc
-         1sIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEcogeNLIb3kwC6Bke+W33TFyo4FyctbKNaup1IKMTBdR8Dy/Q38zpSl30CMPV8gzFFu1OQY4UN+b/aDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNV8/e+WHVo52DVmnI3BCjbfIiSmevZCZtclPk3LrONUjoZYk8
-	v55QoZsBqINstwgRNiUA/70cbbfVbNn2pMIUvJ2xY9Uqt9IUTWP2T1ZQtwUJkdB18dmAow9wW7K
-	/ddqkL4sOUzLoDG1uvWDzq0EdvmsHP6gNBl9Uy+YBnFw6M0+wk8bXU4c=
-X-Google-Smtp-Source: AGHT+IFuCaGV9H15O3p7ezOnDCmac0nkjy6fOZ9ZLkTTdQBbnS5cf7801HYimbadhSHWA7N80FumIcGauH1ud6fIxNYsPCxr0/jE
+	s=arc-20240116; t=1727094119; c=relaxed/simple;
+	bh=floE/8UHUdfb+dwdVVqVEXFDYokMKQ/W7jzFCBfbfJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sGxpxrnAnJOnBGmyafoeFkCoPCIZKKrzWgiHRvG3VUP63Oj5xt5qXYwy5NUiRT0Dz3Lt3mBlX5QI71QMUfyW5s7HH7YK9tAS1g6iQPefl0H1xoTUsJNJtYYRXjk1cZWlxCkvcMQE9Fqi9Mw21Mb4OjBhg8mCgJp9pJDaCt4xWP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsB9jDOe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D2CCC4CEC4;
+	Mon, 23 Sep 2024 12:21:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727094119;
+	bh=floE/8UHUdfb+dwdVVqVEXFDYokMKQ/W7jzFCBfbfJw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jsB9jDOe5l+tIVVsWUALwcSetONkdfVsz+VITIG60vgQy8/EGM6z0d1LIu2U2E3YU
+	 PG3tG2wsOb8I37bOKzVmECSnWuPbmehyjNh1cAvm3rgJsiof4qx4kkvcBLDrezkT1y
+	 1bfqjiuGO7cCgVZK3E5ANoROl4gPBfVN8kNlTyxoP+L8d5raahwUKqNI41qgcTBHxg
+	 HJxSKz/ePobD5QXI1xySagI1ZzBBnDuFXx3m63zK9LQae4YjkjZx/7m/9iAtBGj0Dq
+	 ZwUSQcKRxYe0U9mMFbwnTbf2eKmOYiVQke2RApnzxMD05Jr9O8yqCcIBmhGq65oowL
+	 mEvuBVnsY/kMQ==
+Date: Mon, 23 Sep 2024 14:21:54 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Liam Girdwood <lgirdwood@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 4/5] hwmon: (pmbus/core) improve handling of write
+ protected regulators
+Message-ID: <ZvFdYtwlqsr4mLym@finisterre.sirena.org.uk>
+References: <20240920-pmbus-wp-v1-0-d679ef31c483@baylibre.com>
+ <20240920-pmbus-wp-v1-4-d679ef31c483@baylibre.com>
+ <4052294e-7b7f-4238-9b47-92727de4d516@roeck-us.net>
+ <1jsettz1hh.fsf@starbuckisacylon.baylibre.com>
+ <2f3cec6e-7b05-4510-8c62-244ed114ad17@roeck-us.net>
+ <1jo74hymsh.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c01:b0:3a0:c7f9:29e2 with SMTP id
- e9e14a558f8ab-3a0c9d6ff9bmr101979975ab.19.1727093901761; Mon, 23 Sep 2024
- 05:18:21 -0700 (PDT)
-Date: Mon, 23 Sep 2024 05:18:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f15c8d.050a0220.c23dd.000f.GAE@google.com>
-Subject: [syzbot] [mm?] WARNING in copy_huge_pmd
-From: syzbot <syzbot+bf2c35fa302ebe3c7471@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com, 
-	hpa@zytor.com, jgg@ziepe.ca, leitao@debian.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, mingo@redhat.com, peterx@redhat.com, rppt@kernel.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    88264981f208 Merge tag 'sched_ext-for-6.12' of git://git.k..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=16c36c27980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e851828834875d6f
-dashboard link: https://syzkaller.appspot.com/bug?extid=bf2c35fa302ebe3c7471
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12773080580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ed5e9f980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/0e011ac37c93/disk-88264981.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f5c65577e19e/vmlinux-88264981.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/984d963c8ea1/bzImage-88264981.xz
-
-The issue was bisected to:
-
-commit 75182022a0439788415b2dd1db3086e07aa506f7
-Author: Peter Xu <peterx@redhat.com>
-Date:   Mon Aug 26 20:43:51 2024 +0000
-
-    mm/x86: support large pfn mappings
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17df9c27980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=143f9c27980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=103f9c27980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bf2c35fa302ebe3c7471@syzkaller.appspotmail.com
-Fixes: 75182022a043 ("mm/x86: support large pfn mappings")
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5508 at mm/huge_memory.c:1602 copy_huge_pmd+0x102c/0x1c60 mm/huge_memory.c:1602
-Modules linked in:
-CPU: 1 UID: 0 PID: 5508 Comm: syz-executor274 Not tainted 6.11.0-syzkaller-08481-g88264981f208 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:copy_huge_pmd+0x102c/0x1c60 mm/huge_memory.c:1602
-Code: ff 90 0f 0b 90 e9 2e f5 ff ff e8 8f fc 92 ff 48 ff cb e9 0f f7 ff ff e8 82 fc 92 ff 48 ff cb e9 8a f7 ff ff e8 75 fc 92 ff 90 <0f> 0b 90 e9 11 fd ff ff 4c 8d ac 24 00 01 00 00 48 b8 06 fe ff ff
-RSP: 0018:ffffc90003cdf0c0 EFLAGS: 00010293
-RAX: ffffffff8201bd3b RBX: ffff88803090c118 RCX: ffff8880317a9e00
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-RBP: ffffc90003cdf248 R08: ffffffff8201bc06 R09: 1ffffffff2038ef5
-R10: dffffc0000000000 R11: fffffbfff2038ef6 R12: ffff88802fab89c0
-R13: d7ffe7fff1cbfe02 R14: 0000000000000020 R15: ffff888031e5b780
-FS:  00007f38182a06c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f381831d9f0 CR3: 000000007b18c000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- copy_pmd_range+0x425/0x85f0 mm/memory.c:1245
- copy_pud_range mm/memory.c:1292 [inline]
- copy_p4d_range mm/memory.c:1316 [inline]
- copy_page_range+0x99f/0xe90 mm/memory.c:1414
- dup_mmap kernel/fork.c:750 [inline]
- dup_mm kernel/fork.c:1674 [inline]
- copy_mm+0x11fb/0x1f40 kernel/fork.c:1723
- copy_process+0x1845/0x3d50 kernel/fork.c:2375
- kernel_clone+0x226/0x8f0 kernel/fork.c:2787
- __do_sys_clone3 kernel/fork.c:3091 [inline]
- __se_sys_clone3+0x2cb/0x350 kernel/fork.c:3070
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3818306429
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f38182a0118 EFLAGS: 00000202 ORIG_RAX: 00000000000001b3
-RAX: ffffffffffffffda RBX: 00007f3818390318 RCX: 00007f3818306429
-RDX: 00007f38182e2ab6 RSI: 0000000000000058 RDI: 00007f38182a0120
-RBP: 00007f3818390310 R08: 00007fffb191b837 R09: 0000000000000080
-R10: 0000000000000000 R11: 0000000000000202 R12: 00007f381835d074
-R13: 00007f381839031c R14: 00007f38182a0120 R15: 000000080000000e
- </TASK>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="N9BzeYMWoWKB7STk"
+Content-Disposition: inline
+In-Reply-To: <1jo74hymsh.fsf@starbuckisacylon.baylibre.com>
+X-Cookie: Editing is a rewording activity.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+--N9BzeYMWoWKB7STk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On Sat, Sep 21, 2024 at 06:49:34PM +0200, Jerome Brunet wrote:
+> On Sat 21 Sep 2024 at 08:22, Guenter Roeck <linux@roeck-us.net> wrote:
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> > In other words, if always-on is _not_ set in
+> > regulator constraints, I'd see that as request to override write-protect
+> > in the driver if there is a change request from regulator code.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> That's very much different from what we initially discussed. It can
+> certainly be done, what is proposed here already does 90% of the job in
+> that direction. However, I'm not sure that is what people intended when
+> they did not put anything. A chip that was previously locked, would be
+> unlocked following such change. It's an important behaviour change.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+The general approach we take for regulators is to not touch the hardware
+state unless we were explicitly asked to do something by firmware
+configuration.  The theory is that this avoids us doing anything that
+causes physical damage by mistake.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+> >> This is something that might get fix with this change [1]. Even with that
+> >> fixed, passing init_data systematically would be convenient only if you
+> >> plan on skipping DT provided constraints (there are lot of those), or
+> >> redo the parsing in PMBus.
 
-If you want to undo deduplication, reply with:
-#syz undup
+> > I disagree. I am perfectly fine with DT overriding constraints provided
+> > by the driver. The driver can provide its own constraints, and if dt
+> > overrides them, so be it.
+
+> That's not what the regulator framework does. At the moment, it is DT
+> and nothing else. After the linked change, it would be DT if no
+> init_data is passed - otherwise, the init_data.
+
+> If a something in between, whichever the one you want to give priority
+> to, that will have to re-implemented on the caller side.
+> This is what I meant by redo the parsing on pmbus side.
+
+Right, and I've got a feeling that any attempt to combine constraints is
+going to need to be done in a case by case manner since what's tasteful
+is going to vary depending on how much we trust the various sources of
+information.
+
+> It goes way beyond what I'm proposing.
+> The only thing done here is something you simply cannot put in DT
+> because DT is static. Following init, if the chip write protected,
+> REGULATOR_CHANGE_STATUS should not be set, regardless of what is in DT.
+> If it is not set, I'm not adding it.
+
+> Also, what I'm proposing does not get in the way of DT, or anything
+> else, providing constraints. What I propose allow to make adjustement in
+> the HW based on the constraint, if this is what you want to do. It also
+> allows to update the constaints based on what the HW actually is.
+> If the chip cannot be written, regulator needs to know.
+
+So, I know we talked about this a bit on IRC but I didn't register the
+specific use case.  Now I see that it's coming down to the fact that the
+chip is simply write protected I'm wondering if it might not be simpler
+to handle this at the ops level rather than the constraints level.  When
+registering the driver could check for write protection and then instead
+of registering the normal operations register an alternative set with
+the relevant write operations removed.  That would have the same effect
+that you're going for AFAICT.  Sorry for not thinking of it earlier.
+
+> > We should not try to override devicetree constraints.
+
+> I don't think I am. I'm just reading the chip state and adjusting the
+> constraint. Even after implementing what is suggested above, it will
+> still be necessary to readback and adjust the constraint based the
+> read protection. Unlock is not guranteed to succeed, the chip may be
+> permanently lock. Some provide the option to do that.
+
+I'm not familiar with this hardware so I'll defer to the two of you on
+what's tasteful with regard to handling this, based on the above it
+might be a per device thing depending on how reversable the write
+protection is.  It looks like currently we don't change this at runtime
+but I might not be looking properly?
+
+--N9BzeYMWoWKB7STk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbxXV8ACgkQJNaLcl1U
+h9AjRgf/V9ssyfMy6QiENK3CEflcbkcO+3HSF7vnVJJ5yHZct6RX5SpTKnAGcj4p
+P3FDDzS6mv2Z5z6h09DsMIxgB/KLEhv8bHyrFaKrH9LcQYwVcwtHc7lUMX34vZB/
+FW/+bZm1yOGlJcBY3qjkd8tFAvsFuvMdA2P0jWODOShz1gasneA0lhzxJ8t9bnsG
+FhhiyxqXinMOV8NuCsWK9m/vE750bnJPPUxgodCUgm1DQa/gsiwht2gw23t+DQxa
+bzSM1wmlvTAxANTxcUGoVx1f6vPX6MX2bc7j/LXzjWnUu2yETNIXqpwKt/dvSd8K
+Et8PGSc4AXslHNB8OsgKk6g1+j6paA==
+=rte1
+-----END PGP SIGNATURE-----
+
+--N9BzeYMWoWKB7STk--
 
