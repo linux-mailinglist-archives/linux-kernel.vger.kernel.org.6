@@ -1,155 +1,154 @@
-Return-Path: <linux-kernel+bounces-335427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C000C97E59F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1325597E5A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0F261C20FBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:26:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44A831C20D54
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F73913FEE;
-	Mon, 23 Sep 2024 05:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B860E10A1E;
+	Mon, 23 Sep 2024 05:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JqSzKPXe"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="DugNqPJF"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5541C28EB;
-	Mon, 23 Sep 2024 05:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727069213; cv=none; b=VFW9h5WtZjeu7CiMqAGa8TeKNB30RoLQ5PaQR+90LUKYAJw/ULfFYwWZdIS+bWaw8RVv7f7GCCnVrdozDRqxY8jXexT/6aN23Kogv/N/c2IMbGaX7pUOspMJbklIqGfPkp9kI4IC4fxggDDUtDJHn698Uz+8DwglYpqeMwxNwag=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727069213; c=relaxed/simple;
-	bh=Mm0xlIlIFywQxWRVlrtM9+P05d5rdtF8j07zuxtwgJM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FTKWBr6iSVhyzMf4tOZYfFr576F1jhpudV0EHYwGtTOINzEHmDnpW3u46wscpmerqh+AKrjGSfRn6eVoLCgcxuDxKEX8FVBgtrNrNnK+e4olSpJVGBvSYor5nnZeSxkcTEyL/kbsCHanTrMXKp1AmPPk+VrYb4kVccrmlgVoGvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JqSzKPXe; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-374c1e5fe79so2780524f8f.1;
-        Sun, 22 Sep 2024 22:26:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727069209; x=1727674009; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nptK88eLRGfhziZAyDg/BN+0AF91ctgPhAKjtMLU5QE=;
-        b=JqSzKPXewBJIaTtiHQk+VTGONyg43CAp9g5AfSUTBjxH5bDHCd6e/SG+TsrCuoi/8F
-         s5RPW3O73qRvXs87iFYIingh5USOsVXMlrFk4bI+iE89K+ungYs/awybFYUvf5IzkZQp
-         JM4JE6qq02DmMserhyKMMyKWiUFK5eKy3BaWkDs9v95JUlVuXsT+HUs2IphG+mi4us/o
-         4H0HPczIi0bhxkJdipBt/MQIzeF0cJgsh1sy6Ix4s2b59p8dvp73fiwTTNO6skxU/+nB
-         nwpLjKU4Nbjd4lDh0qowreJyzuL9vBK8bJ5FiVvc5XiuyNd2QKKBcKc5o2mKnUE95NMw
-         F7nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727069209; x=1727674009;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nptK88eLRGfhziZAyDg/BN+0AF91ctgPhAKjtMLU5QE=;
-        b=qEu7cAYHNs74VPuqQnOBBcqOgsEz7N0aRxo9ro5ADRxUD0P4x9OIVSierbNlJQIBP3
-         R6YKbkY156JqsxywCBK7D/vpf15Wj3ilE2ZLYzx5XRH//0QqemscTP1rDWiz3VYM+slN
-         YdSRkUdMarV7Clr9lZYegp2AASYHBKkJ8NFw0F+Xg7nj5AHGIStw6DWLsRt1gJW2BfvG
-         bANiyupW/w4tmD9ZD+NVTzXNeHYD1MscIknTYq3aT6qMtcbCKyEItYZ2sE9YKGkaPYzt
-         LC3W0G2jn05r+9/LaI9iUA7q5h5xJLjkRqXP5UQSX2DjHzqOGdqX7XHDRQOZ41D5wA/z
-         D2hg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsBPriQutjVk0IXrHeVbaVoXIb90pd4NMNw17J1bzCDXHu8o6UvWeuKjB5Qs5EgNeXODHtd2gd+bsJcTV9U6VjnFMPSfDW@vger.kernel.org, AJvYcCUvYtJICGt5GF2YF+7u/DTy/PtMQotbIXSlJVfHziCKV5Fm29slyoqfH78uT50gcSv+F76Jzmx54a0CSXsI@vger.kernel.org, AJvYcCXIu9q4pnIYropFsBMp7OYF3ZsXINwibDgxLCgU6wUMJ43eRSuhQjwzMuZdfJtr5U2n9M1UxOMBVAWLmQGeNW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDuWyKs17uOl6vd0DohexJRyo73lxk69nOEBBEYF676DCxYSMI
-	TIXg8EWQ0uerLxFJx+f7tzXiBBSdCeRU/IOcf7IZcup1rCUwAZPfWZIyCN4FzI54/HvHl5f5pjY
-	EWIycezG/QyhWhjb5OSlwOuustHw=
-X-Google-Smtp-Source: AGHT+IGN1Y1wYq62d3/z2azaE1/F6NaWqyN8z33ualFzloo4skejV5DkABiH2mZew0fz798urjCTZkGySs/DKXGrlbw=
-X-Received: by 2002:adf:f98f:0:b0:378:7e74:cc25 with SMTP id
- ffacd0b85a97d-37a431ad519mr5364258f8f.39.1727069209381; Sun, 22 Sep 2024
- 22:26:49 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746D0184;
+	Mon, 23 Sep 2024 05:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727069785; cv=pass; b=Rxn1HeXMNBlZOuOwq51t4eeIWmaEA4i5H8ZHpM8F3tGQSrltmgcy061ar4EjctUg7RZTyQXTSf6jyRmXGxCtgClp8MwEtjH1f66Wa9MtxVkTYt/rsecy17j/8AG2nbN3vRA8GxBYXnpWJfM3E0KZtDVGkBgD0OOmqqhRoJl1v5k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727069785; c=relaxed/simple;
+	bh=jc+AGoERV8fZGu3MweyUXEhR2dgLmZVHJwtV+FA0khk=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qt8c7wRr9CLlwgLEe4/ZG8NiyGr/oezl9PrnAm7ZTvb8MGri2Af/cXezIHcxji5qpOuTZ7FdR8PRfhfCAoIH9U3jTC4pDvvFz6LKFQXcX6YUXbbZ0OKIS08WRVTxyUyVo8Z/FJsjlz5t9y3wCjPFL2SyLA4god8E0+QvyhWJU/U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=DugNqPJF; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1727069763; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=GMaTpHGd0LWwpouQsRRcq6ruFf2xuHXgrb5Aq3er28AbUbR3KkMO+hvdccv/AnDfpBwRikdHPrxMRlQPDVDYD+QbsZl6BKzqI7nyRLDb5ds9iXr69eSIuG9MHVuSSph3ozKRZgeCE+xjeOQhComZk5WgvyKNp2O/etrdQfB4e5U=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1727069763; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=EfD6aWYTSxhMi80whxI+ZCh5yYgjEVQIiD1705p5+tA=; 
+	b=PDGOCnq0SOm3SnXNffLMJSQr3EWnt33/kGST3fM5zb7URfbMhJ9RbdOtJ38bek1TByDXOPT/Z2MuatWXI15qm0A/BiLCbEj/WLU4T87mLKQb0v77FJjANqyJ/8wZTjJ2YAjIwDZp3P5+OVlyo9nCIxuSf0G7Xjd3+uDG1ibbm3Y=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727069763;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=EfD6aWYTSxhMi80whxI+ZCh5yYgjEVQIiD1705p5+tA=;
+	b=DugNqPJFZqJ8WvbhZaql4mqylKjdjIDbLYg1rKky83Ab/6UgidWkQkO3u1qNXivt
+	6XfH66m8WQMZSIQFGZ5jmSArIWyC8w4nGiS3xdAJi5ghG/vhFgHx3dtQLso0bGHx4Xr
+	cVle50xK9ZXbI0XPVkvrqSy6vgrhso1CBDDI/r7U=
+Received: by mx.zohomail.com with SMTPS id 1727069761276507.686379545268;
+	Sun, 22 Sep 2024 22:36:01 -0700 (PDT)
+Message-ID: <e4e2095e-3280-4bfc-8129-80b8d00d146d@collabora.com>
+Date: Mon, 23 Sep 2024 10:35:52 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240806133607.869394-1-mjguzik@gmail.com> <3cd8019f03dae99c4e43b7613df869499ec72e66.camel@huaweicloud.com>
-In-Reply-To: <3cd8019f03dae99c4e43b7613df869499ec72e66.camel@huaweicloud.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 23 Sep 2024 07:26:37 +0200
-Message-ID: <CAGudoHGBTRJqKAE6Db3PyVne6rrJR4vsF2MNH2qKMy-44XReZw@mail.gmail.com>
-Subject: Re: [PATCH] evm: stop avoidably reading i_writecount in evm_file_release
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-kernel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, kernel@collabora.com, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 1/2] kselftests: mm: Fix wrong __NR_userfaultfd value
+To: Shuah Khan <skhan@linuxfoundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
+ David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>,
+ "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+ Andrea Arcangeli <aarcange@redhat.com>, Kim Phillips <kim.phillips@arm.com>
+References: <20240912103151.1520254-1-usama.anjum@collabora.com>
+ <a9ae7dc4-275d-43c3-bf4c-b0090cb6bb12@linuxfoundation.org>
+ <3cb9d266-4d4b-4031-8603-da7fd9e3ad47@collabora.com>
+ <b3caeb96-2f48-4efd-a56c-e91dae891b48@linuxfoundation.org>
+ <0b847784-a95f-4ed5-a0fb-1b7b4023df13@collabora.com>
+ <e2a4d2b4-ca3f-4d21-82d5-b87bc9de9358@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <e2a4d2b4-ca3f-4d21-82d5-b87bc9de9358@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Fri, Aug 16, 2024 at 1:53=E2=80=AFPM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
->
-> On Tue, 2024-08-06 at 15:36 +0200, Mateusz Guzik wrote:
-> > The EVM_NEW_FILE flag is unset if the file already existed at the time
-> > of open and this can be checked without looking at i_writecount.
->
-> Agreed. EVM_NEW_FILE is not going to be set during the open(), only
-> before, in evm_post_path_mknod().
->
-> Looks good to me.
->
-> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
->
-> Thanks
+...
 
-thanks for the review
+>> grep -rnIF "#define __NR_userfaultfd"
+>> tools/include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
+>> arch/x86/include/generated/uapi/asm/unistd_32.h:374:#define
+>> __NR_userfaultfd 374
+>> arch/x86/include/generated/uapi/asm/unistd_64.h:327:#define
+>> __NR_userfaultfd 323
+>> arch/x86/include/generated/uapi/asm/unistd_x32.h:282:#define
+>> __NR_userfaultfd (__X32_SYSCALL_BIT + 323)
+>> arch/arm/include/generated/uapi/asm/unistd-eabi.h:347:#define
+>> __NR_userfaultfd (__NR_SYSCALL_BASE + 388)
+>> arch/arm/include/generated/uapi/asm/unistd-oabi.h:359:#define
+>> __NR_userfaultfd (__NR_SYSCALL_BASE + 388)
+>> include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
+>>
+>> The number is dependent on the architecture. The above data shows that:
+>> x86    374
+>> x86_64    323
+> 
+> Correct and the generated header files do the right thing and it is good to
+> include them as this patch does.
+> 
+> This is a good find and fix. I wish you explained this in your changelog.
+> Please add more details when you send v2.
+I'm sending v2
 
-are there plans to pick this up for this merge window?
+> 
+> There could be other issues lurking based on what I found.
+> 
+> The other two files are the problem where they hard code it to 282 without
+> taking the __NR_SYSCALL_BASE for the arch into consideration:
+> 
+> tools/include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
+> include/uapi/asm-generic/unistd.h:681:#define __NR_userfaultfd 282
+> 
+>>
+>> I'm unable to find the history of why it is set to 282 in unistd.h and
+>> when this problem happened.
+> 
+> According to git history it is added in the following commit to
+> include/uapi/asm-generic/unistd.h:
+> 
+> 09f7298100ea9767324298ab0c7979f6d7463183
+> Subject: [PATCH] userfaultfd: register uapi generic syscall (aarch64)
+> 
+> and it is added in the following commit to
+> tools/include/uapi/asm-generic/unistd.h
+> 34b009cfde2b8ce20a69c7bfd6bad4ce0e7cd970
+> Subject: [PATCH] tools include: Grab copies of arm64 dependent unistd.h
+> files
+> 
+> I think, the above defines from include/uapi/asm-generic/unistd.h and
+> tools/include/uapi/asm-generic/unistd.h should be removed.
+> 
+> Maybe others familiar with userfaultfd can determine the best course of
+> action.
+> We might have other NR_ defines in these two files that are causing
+> problems
+> for tests and tools that we haven't uncovered yet.
+Added authors of these patches.
 
->
-> Roberto
->
-> > Not accessing it reduces traffic on the cacheline during parallel open
-> > of the same file and drop the evm_file_release routine from second plac=
-e
-> > to bottom of the profile.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > ---
-> >
-> > The context is that I'm writing a patch which removes one lockref
-> > get/put cycle on parallel open. An operational WIP reduces ping-pong in
-> > that area and made do_dentry_open skyrocket along with evm_file_release=
-,
-> > due to i_writecount access. With the patch they go down again and
-> > apparmor takes the rightful first place.
-> >
-> > The patch accounts for about 5% speed up at 20 cores running open3 from
-> > will-it-scale on top of the above wip. (the apparmor + lockref thing
-> > really don't scale, that's next)
-> >
-> > I would provide better measurements, but the wip is not ready (as the
-> > description suggests) and I need evm out of the way for the actual
-> > patch.
-> >
-> >  security/integrity/evm/evm_main.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm=
-/evm_main.c
-> > index 62fe66dd53ce..309630f319e2 100644
-> > --- a/security/integrity/evm/evm_main.c
-> > +++ b/security/integrity/evm/evm_main.c
-> > @@ -1084,7 +1084,8 @@ static void evm_file_release(struct file *file)
-> >       if (!S_ISREG(inode->i_mode) || !(mode & FMODE_WRITE))
-> >               return;
-> >
-> > -     if (iint && atomic_read(&inode->i_writecount) =3D=3D 1)
-> > +     if (iint && iint->flags & EVM_NEW_FILE &&
-> > +         atomic_read(&inode->i_writecount) =3D=3D 1)
-> >               iint->flags &=3D ~EVM_NEW_FILE;
-> >  }
-> >
->
+> 
+> thanks,
+> -- Shuah
 
+-- 
+BR,
+Muhammad Usama Anjum
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
