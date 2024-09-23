@@ -1,149 +1,234 @@
-Return-Path: <linux-kernel+bounces-335429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD4597E5A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:37:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D2D97E5AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CF711C208FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:37:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E81F31F20FB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 05:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D464B101DE;
-	Mon, 23 Sep 2024 05:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D6410A3E;
+	Mon, 23 Sep 2024 05:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZLPSa//g"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=deepcomputing-io.20200927.dkim.feishu.cn header.i=@deepcomputing-io.20200927.dkim.feishu.cn header.b="WvK9Ywam"
+Received: from va-1-15.ptr.blmpb.com (va-1-15.ptr.blmpb.com [209.127.230.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5647184
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 05:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADBB79E1
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 05:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.127.230.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727069826; cv=none; b=aW0e5N3Af6JGb6hWyg8cuq+E3wfIpc2b33LSxpqMPPTPmBtOZu1aHlbNYCbd11FrtZI20CQKa4kcIPCL8OjOGvbobxWEVv8CAhjD61MvDWEQma54Q6lVg9kRHllrTZs9A4zqkgIPAZi63SRbadrU8rZR/5fiyII8b23dJ2ofpsU=
+	t=1727070066; cv=none; b=FActh5mj7M0xgsDNMXiCDT3h8zjSqWtHKSJk8753yQTN0xABZzzcxfHAhIRRxUexqj+aWZ6vglwbNmcrSdJTXPbMk8hT6agHW1dh4kjF+tJSrxUvzXyQcaWo9dqCrPDk3r8ul3HIicYwHYws/iVyy09LUXsR3fSZmtuSPsJbgSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727069826; c=relaxed/simple;
-	bh=e6xPyTGaCARr9kHdRBWXY1Z266siIPfCD8X32fMOBgk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LcDmKxg/Eo7kBPFTmETIid4uGCuvHs0wxYckXgVLMd53Ro29FzS19RZoYyGCIyeUayOIFho7DAlH8wBNa/17m7C/ol9iVd58P4TlrNGc0yQVW55RY3hYUDcTJxlGJQReZDQd8Ef+F+mHbSyGqxQi3w3+aru3DMSc0i6sdNEBhDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZLPSa//g; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48N2dGBT001531;
-	Mon, 23 Sep 2024 05:36:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	e6xPyTGaCARr9kHdRBWXY1Z266siIPfCD8X32fMOBgk=; b=ZLPSa//gxK6eokjQ
-	2VIbkMX+k5zxZ1SDEpg1+f2AVpNKjPx1bXlbKlYZgu5UAuEb+AQRACfVHalQvcEx
-	3bd+ol2VC7FE+P2FwO6LiTvNl2Aur4ZmthqyDTVYG980lx08IlTsMn2Yk0zFTqbG
-	72u6VfxZwhUzzQzbSuF+Zq+M5NJeCiVAMjwX2/WM2u1npnmSM27Bs9hg6dZSL1uI
-	FXCJn/NhnWwexIlMGja4eFhCLI0Fx3d74XMzRGqfdnpR3nsB1Y2XHxWPY1AVOXcs
-	rnU+7Z5zvavmRKSUDhyG0vHOEyxYU0G8R6hT3d2l+aMHFXe1G/eD0YIxjxcnoFT9
-	1D4WKg==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41snna1qwy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 05:36:49 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48N0daXU020846;
-	Mon, 23 Sep 2024 05:36:48 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 41tb62vb6w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Sep 2024 05:36:48 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48N5alGB28508748
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 23 Sep 2024 05:36:47 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6583858052;
-	Mon, 23 Sep 2024 05:36:47 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 28EF358065;
-	Mon, 23 Sep 2024 05:36:45 +0000 (GMT)
-Received: from [9.61.252.168] (unknown [9.61.252.168])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 23 Sep 2024 05:36:44 +0000 (GMT)
-Message-ID: <03a55b4b-eb45-4187-9de6-ef06f8176d05@linux.vnet.ibm.com>
-Date: Mon, 23 Sep 2024 11:06:43 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Bug][Git-Bisect][6.11.0-next-20240917]BUG: Unable to handle
- kernel data access on read at 0xc00c020000013d88
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        akpm@linux-foundation.org, minchan@kernel.org, terrelln@fb.com,
-        sfr@canb.auug.org.au
-References: <57130e48-dbb6-4047-a8c7-ebf5aaea93f4@linux.vnet.ibm.com>
- <20240923021557.GA38742@google.com>
-Content-Language: en-GB
-From: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-In-Reply-To: <20240923021557.GA38742@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: j_6Ip9-DdyJmOeFLwhwqwk8BF74tf54h
-X-Proofpoint-ORIG-GUID: j_6Ip9-DdyJmOeFLwhwqwk8BF74tf54h
+	s=arc-20240116; t=1727070066; c=relaxed/simple;
+	bh=UNthkAUAakjUT9JXNYi0I6Kji5qAv3FhL1pkmNEuvzw=;
+	h=To:Cc:Content-Type:Subject:Message-Id:From:Date:Mime-Version; b=ppUH3EZmC6SQR7i5d0nfGElB+qxgkfN9bsYF5UcrsEIW8s8IhLlv31nwpk//yN9Pn/lazl2PVVfz5NpWru47hCqP+KfOB2/Kb6sBp+tWDbMM9vR5M0vTzYq99Td/btQJ6d7g6rDPsriLxpdDl+/2xRk/0f1nbpcAxcrSI2fWAKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepcomputing.io; spf=pass smtp.mailfrom=deepcomputing.io; dkim=pass (2048-bit key) header.d=deepcomputing-io.20200927.dkim.feishu.cn header.i=@deepcomputing-io.20200927.dkim.feishu.cn header.b=WvK9Ywam; arc=none smtp.client-ip=209.127.230.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepcomputing.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deepcomputing.io
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=deepcomputing-io.20200927.dkim.feishu.cn; t=1727069921;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=rm+jLD7LmwpSNEJzIkH2zPuhNPjw332z9klR4q5Peis=;
+ b=WvK9YwamhENJOAv9wEI12+iDQ1UgArwnp5CO04Qt9o6UJsqUi/sNh1nhiKiJ3kN2EpCfgI
+ PacPtqloPnQThRSjkRefpPt/p0FeBrU51WNR7fU89GjH9r1flDheeWITpLW6VfK83Ug0DX
+ 9ruw1Z63Thp8sOb3Na6u1bCgYWMV7ABR//pT765TfIHmwiQNj4K3qkjvH57emWiANeM0q/
+ U2lLJAj2D+zHGil8HBHnrH3UfPRz4A6UU5YZPnv4AElxEU671YEzedpa3U3gWu3XgIZavG
+ 35iouyzQfPMD7FU4l/287gVG1wP4N3kPseFBzwe5zOBXWYgWEL6YorAtMNrKLA==
+To: "Emil Renner Berthing" <kernel@esmil.dk>
+Cc: "Conor Dooley" <conor@kernel.org>, "Rob Herring" <robh@kernel.org>, 
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
+	"Paul Walmsley" <paul.walmsley@sifive.com>, 
+	"Palmer Dabbelt" <palmer@dabbelt.com>, 
+	"Albert Ou" <aou@eecs.berkeley.edu>, <linux-riscv@lists.infradead.org>, 
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	"Sandie Cao" <sandie.cao@deepcomputing.io>
+X-Original-From: Sandie Cao <sandie.cao@deepcomputing.io>
+X-Mailer: git-send-email 2.34.1
+Received: from roma-MacBookPro.. ([61.141.249.188]) by smtp.feishu.cn with ESMTPS; Mon, 23 Sep 2024 13:38:39 +0800
+Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH 2/2] riscv:configs:starfive:add framework config
+Message-Id: <20240923053806.1586080-1-sandie.cao@deepcomputing.io>
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+From: "Sandie Cao" <sandie.cao@deepcomputing.io>
+Date: Mon, 23 Sep 2024 13:38:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-23_02,2024-09-19_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- mlxscore=0 mlxlogscore=858 spamscore=0 impostorscore=0 priorityscore=1501
- phishscore=0 bulkscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409230037
+Mime-Version: 1.0
+X-Lms-Return-Path: <lba+266f0fee0+da99ca+vger.kernel.org+sandie.cao@deepcomputing.io>
 
-Hello,
+Add config to support RISC-V Framework Laptop 13 Mainboard. 
 
+Signed-off-by: Sandie Cao <sandie.cao@deepcomputing.io>
+---
+ .../starfive_jh7110_framework_defconfig       | 151 ++++++++++++++++++
+ 1 file changed, 151 insertions(+)
+ create mode 100644 arch/riscv/configs/starfive_jh7110_framework_defconfig
 
-Below is the TC, I was running.
-
-
-https://github.com/avocado-framework-tests/avocado-misc-tests/blob/master/generic/ltp.py
-
-Regards,
-
-Venkat.
-
-On 23/09/24 7:45 am, Sergey Senozhatsky wrote:
-> Hi,
->
-> On (24/09/22 22:23), Venkat Rao Bagalkote wrote:
->> Greetings!!!
->>
->> I am observing Kernel OOPs on PowerPC system, while running LTP Test case.
->>
->> [11472.962838] BUG: Unable to handle kernel data access on read at
->> 0xc00c020000013d88
->> [11472.962846] Faulting instruction address: 0xc00000000055e2c0
-> [..]
->> [11472.963005] NIP [c00000000055e2c0] kfree+0x60/0x468
->> [11472.963013] LR [c008000004e02838] zram_destroy_comps+0x5c/0xa4 [zram]
->> [11472.963020] Call Trace:
->> [11472.963023] [c0000005da817b30] [c00000051f580440] 0xc00000051f580440
->> (unreliable)
->> [11472.963028] [c0000005da817ba0] [c008000004e02838]
->> zram_destroy_comps+0x5c/0xa4 [zram]
->> [11472.963034] [c0000005da817bd0] [c008000004e02d24]
->> zram_reset_device+0x178/0x250 [zram]
->> [11472.963040] [c0000005da817c20] [c008000004e031e0] reset_store+0xd0/0x174
->> [zram]
->> [11472.963046] [c0000005da817c80] [c000000000a85874]
->> dev_attr_store+0x34/0x50
->> [11472.963052] [c0000005da817ca0] [c00000000070e7a4]
->> sysfs_kf_write+0x64/0x78
->> [11472.963060] [c0000005da817cc0] [c00000000070d2a8]
->> kernfs_fop_write_iter+0x1b0/0x290
->> [11472.963066] [c0000005da817d10] [c000000000604868] vfs_write+0x38c/0x488
->> [11472.963071] [c0000005da817dc0] [c000000000604c98] ksys_write+0x84/0x140
-> Can you post the script that you run?
+diff --git a/arch/riscv/configs/starfive_jh7110_framework_defconfig b/arch/riscv/configs/starfive_jh7110_framework_defconfig
+new file mode 100644
+index 000000000000..512ac09184b7
+--- /dev/null
++++ b/arch/riscv/configs/starfive_jh7110_framework_defconfig
+@@ -0,0 +1,151 @@
++CONFIG_SYSVIPC=y
++CONFIG_POSIX_MQUEUE=y
++CONFIG_NO_HZ_IDLE=y
++CONFIG_HIGH_RES_TIMERS=y
++CONFIG_BPF_SYSCALL=y
++CONFIG_IKCONFIG=y
++CONFIG_IKCONFIG_PROC=y
++CONFIG_CGROUPS=y
++CONFIG_CGROUP_SCHED=y
++CONFIG_CFS_BANDWIDTH=y
++CONFIG_CGROUP_BPF=y
++CONFIG_NAMESPACES=y
++CONFIG_USER_NS=y
++CONFIG_CHECKPOINT_RESTORE=y
++CONFIG_BLK_DEV_INITRD=y
++CONFIG_EXPERT=y
++# CONFIG_SYSFS_SYSCALL is not set
++CONFIG_ARCH_STARFIVE=y
++CONFIG_SOC_STARFIVE=y
++CONFIG_SOC_STARFIVE_JH7110=y
++CONFIG_SMP=y
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++CONFIG_NET=y
++CONFIG_PACKET=y
++CONFIG_IP_MULTICAST=y
++CONFIG_IP_ADVANCED_ROUTER=y
++CONFIG_IP_PNP=y
++CONFIG_IP_PNP_DHCP=y
++CONFIG_IP_PNP_BOOTP=y
++CONFIG_IP_PNP_RARP=y
++CONFIG_NETFILTER=y
++CONFIG_NET_9P=y
++CONFIG_NET_9P_VIRTIO=y
++CONFIG_PCI=y
++CONFIG_PCIE_STARFIVE_HOST=y
++CONFIG_DEVTMPFS=y
++CONFIG_DEVTMPFS_MOUNT=y
++CONFIG_MTD=y
++CONFIG_MTD_BLOCK=y
++CONFIG_MTD_SPI_NOR=y
++CONFIG_BLK_DEV_LOOP=y
++CONFIG_VIRTIO_BLK=y
++CONFIG_BLK_DEV_SD=y
++CONFIG_BLK_DEV_SR=y
++CONFIG_SCSI_VIRTIO=y
++CONFIG_ATA=y
++CONFIG_SATA_AHCI=y
++CONFIG_MD=y
++CONFIG_BLK_DEV_DM=m
++CONFIG_NETDEVICES=y
++CONFIG_VIRTIO_NET=y
++CONFIG_R8169=y
++CONFIG_STMMAC_ETH=y
++CONFIG_DWMAC_DWC_QOS_ETH=y
++CONFIG_DWMAC_STARFIVE=y
++CONFIG_MICREL_PHY=y
++CONFIG_MOTORCOMM_PHY=y
++CONFIG_INPUT_MOUSEDEV=y
++CONFIG_SERIAL_8250=y
++CONFIG_SERIAL_8250_CONSOLE=y
++CONFIG_SERIAL_8250_DW=y
++CONFIG_SERIAL_OF_PLATFORM=y
++CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
++CONFIG_VIRTIO_CONSOLE=y
++CONFIG_HW_RANDOM=y
++CONFIG_HW_RANDOM_JH7110=y
++CONFIG_I2C=y
++CONFIG_I2C_CHARDEV=y
++CONFIG_I2C_DESIGNWARE_PLATFORM=y
++CONFIG_SPI=y
++CONFIG_SPI_PL022=m
++CONFIG_POWER_RESET_GPIO_RESTART=y
++CONFIG_CPU_THERMAL=y
++CONFIG_WATCHDOG=y
++CONFIG_REGULATOR=y
++CONFIG_REGULATOR_FIXED_VOLTAGE=y
++CONFIG_REGULATOR_AXP20X=y
++CONFIG_REGULATOR_GPIO=y
++CONFIG_FB=y
++CONFIG_SOUND=y
++CONFIG_SND=y
++CONFIG_SND_SOC=y
++CONFIG_SND_DESIGNWARE_I2S=m
++CONFIG_SND_SOC_STARFIVE=m
++CONFIG_SND_SOC_JH7110_PWMDAC=m
++CONFIG_SND_SOC_JH7110_TDM=m
++CONFIG_SND_SIMPLE_CARD=m
++CONFIG_I2C_HID_OF=y
++CONFIG_USB=y
++CONFIG_USB_XHCI_HCD=y
++CONFIG_USB_STORAGE=y
++CONFIG_USB_UAS=y
++CONFIG_USB_CDNS_SUPPORT=y
++CONFIG_USB_CDNS3=y
++CONFIG_USB_CDNS3_GADGET=y
++CONFIG_USB_CDNS3_HOST=y
++CONFIG_USB_CDNS3_STARFIVE=y
++CONFIG_USB_CONFIGFS=y
++CONFIG_USB_CONFIGFS_MASS_STORAGE=y
++CONFIG_USB_CONFIGFS_F_FS=y
++CONFIG_MMC=y
++CONFIG_MMC_SDHCI=y
++CONFIG_MMC_SDHCI_PLTFM=y
++CONFIG_MMC_SDHCI_OF_DWCMSHC=y
++CONFIG_MMC_SPI=y
++CONFIG_MMC_SDHI=y
++CONFIG_MMC_DW=y
++CONFIG_MMC_DW_STARFIVE=y
++CONFIG_RTC_CLASS=y
++CONFIG_DMADEVICES=y
++CONFIG_DW_AXI_DMAC=y
++CONFIG_RPMSG_CHAR=y
++CONFIG_RPMSG_VIRTIO=y
++CONFIG_JH71XX_PMU=y
++CONFIG_CLK_STARFIVE_JH7110_PLL=y
++CONFIG_CLK_STARFIVE_JH7110_SYS=y
++CONFIG_CLK_STARFIVE_JH7110_AON=y
++CONFIG_CLK_STARFIVE_JH7110_STG=y
++CONFIG_CLK_STARFIVE_JH7110_ISP=y
++CONFIG_CLK_STARFIVE_JH7110_VOUT=y
++CONFIG_PINCTRL_STARFIVE_JH7110_SYS=y
++CONFIG_STARFIVE_WATCHDOG=y
++CONFIG_RESET_STARFIVE_JH7110=y
++CONFIG_STARFIVE_STARLINK_PMU=y
++CONFIG_DWC_PCIE_PMU=y
++CONFIG_IIO=y
++CONFIG_PHY_STARFIVE_JH7110_DPHY_RX=y
++CONFIG_PHY_STARFIVE_JH7110_PCIE=y
++CONFIG_PHY_STARFIVE_JH7110_USB=y
++CONFIG_EXT4_FS=y
++CONFIG_EXT4_FS_POSIX_ACL=y
++CONFIG_AUTOFS_FS=y
++CONFIG_MSDOS_FS=y
++CONFIG_VFAT_FS=y
++CONFIG_TMPFS=y
++CONFIG_TMPFS_POSIX_ACL=y
++CONFIG_HUGETLBFS=y
++CONFIG_NFS_FS=y
++CONFIG_NFS_V4=y
++CONFIG_NFS_V4_1=y
++CONFIG_NFS_V4_2=y
++CONFIG_ROOT_NFS=y
++CONFIG_NLS_CODEPAGE_437=y
++CONFIG_CRYPTO_USER_API_HASH=y
++CONFIG_CRYPTO_DEV_VIRTIO=y
++CONFIG_PRINTK_TIME=y
++CONFIG_DEBUG_FS=y
++# CONFIG_RCU_TRACE is not set
++# CONFIG_FTRACE is not set
++# CONFIG_RUNTIME_TESTING_MENU is not set
+-- 
+2.34.1
 
