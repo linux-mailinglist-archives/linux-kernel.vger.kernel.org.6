@@ -1,80 +1,51 @@
-Return-Path: <linux-kernel+bounces-335921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D078B97EC98
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:52:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C89F97EC9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 15:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8708E1F21F8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:52:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04389282BC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 13:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDB319CC0F;
-	Mon, 23 Sep 2024 13:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KrRB8jfF"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA5A19CC1E;
+	Mon, 23 Sep 2024 13:58:55 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F21A1953A9;
-	Mon, 23 Sep 2024 13:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEF119C571
+	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 13:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727099561; cv=none; b=Tz9XAJYC3/Hi6ojBNg9x1vbLtebjZVK1Cs/AJ6LrXAUfLBQxDoNsByXVflAT5Zy6ibOIOzBbVd33jMp2GRheJI+57kppWiksyDEyFytvG3jlqbbwaUqtT31td8VLsrev2uRlzQum3eoGBavuqmj8SooIdHxZUy1Hij82GYsF7oM=
+	t=1727099935; cv=none; b=ftvLAqqPrJ+9wyR4PqqBOiJdtKNv9JnRNiF5Cx70gPB+u7n7VAOCgxOToJtOX9veFOM5fl0/syl1s8WQkPmGWLiQYhqV9BXJa8K3wH+NBhBMmBzoIbk6II0UgXnlfdNRjLW+PyEkAAcGoFv5LsnwJvkTN4JrEGh4TjIFbQLhE6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727099561; c=relaxed/simple;
-	bh=qkP2UH+/9fa1nxEHJHixUFqfgsCJZAlJU5fn2V3oh7Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CMhQZBMoyPPO19BzpAvtOXYdJDUSQRJo/vFmNvVZAlFr+jR85127x3PGOddYOsGv0l/hfGORx03sjZRcXg/8su4RG8UsVRlJW4wunlfvRN8GhHzLRPNR+bfAyI0MTRKWLI41cnMLcehCahgr7aei3hsFRU5KeXjyqpcOdFSKUXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KrRB8jfF; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-718816be6cbso3261033b3a.1;
-        Mon, 23 Sep 2024 06:52:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727099560; x=1727704360; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=rxx15U318d5m06Ojgqj0DzpCwDVhOZTk+ahf/TNfxMI=;
-        b=KrRB8jfFp6yy6DDYgn70liVo6bJkouQ1IvJlYUR6UDQyjf7ttT8Kd1rk5mH+StxFus
-         ActM+X7h8Tfl09JUxq0f+UYUBYo25fDMGjHan62YMYgiVms/9R2nW2Rk4+hE2pVdjs1w
-         /rq27lnKNmU3ysj56re0roanpbnMgMtFn4bK0gzPGtiL2D3/z0m2TFjwv3wwolRo56lw
-         HXU5HyhsMNVBur82bEyEE6g1T9hDjEp/p3c1scwWG6UqV+uDM5We3b5Da6bhXJJMqbYF
-         XVYVS6sYEutSjfa7zySeM/0UWBPTJAlJUlOV6m30qvJfsT/8TbL3p8oyeIfcoaLKpfrB
-         GfwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727099560; x=1727704360;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rxx15U318d5m06Ojgqj0DzpCwDVhOZTk+ahf/TNfxMI=;
-        b=ckfIfJHVEIkKxJbzpbXaNKRy+JshVeHXNHUGtwSVwjGFQ6roeahlg5726uNPbPPKSX
-         urSRPJDhMLo6S8TFFNG7KspiGEhPaMsTiCHEP7nzUkgZSw5uNZPxrkANNiDZUkmkZku9
-         obIDfO5n7l1j8uToH4exPQEaf9wVAlWEYXEDFuw93YQJHWJFalcN3iCXpZXnvjhWapQ+
-         Y8TlYiUuYfkNWIblddBe/vdZLLoabxMXUShRmimZTJXZkynxOIA3RoovxCHKokvvthKP
-         w9z2vnNkpd18JAw32BiHvbFnEUyLeytpJ5ezP5eLpA2jx8qP6epgJ6HZcIqechx18DbP
-         3q9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVlXteG/8BEnGvESqEYpyQvAZOa7wa4f0hmvSLIxfE9galAcBNmJxAC2pG11dMLVKzAZNU/I1tKKxWae48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMyRkeXyX4yH2Z16nKURhuMfsAcjVtJUp/3HrS1/rMT+Kp1UJ/
-	QF/jhO/DJIpXV4TKY4Uv4NS9ScCGkJtoPJMI/pHFLgC9q09ba+do
-X-Google-Smtp-Source: AGHT+IFe8X0SbpSgKNuRyPiWx0QdObs6094mLsIqKsTi48MdfFgTfPlZc1tyUwDZcu51HvcImHFXvQ==
-X-Received: by 2002:a05:6a00:1a90:b0:717:86ea:d010 with SMTP id d2e1a72fcca58-7199ca4d239mr15385128b3a.21.1727099559617;
-        Mon, 23 Sep 2024 06:52:39 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71944a9ac0esm14347709b3a.14.2024.09.23.06.52.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 06:52:37 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-To: Brian Cain <bcain@quicinc.com>
-Cc: linux-hexagon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH] hexagon: vdso: Fix build failure
-Date: Mon, 23 Sep 2024 06:52:35 -0700
-Message-ID: <20240923135235.1159314-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1727099935; c=relaxed/simple;
+	bh=5rJBtXQYandVuhHQ4Ou5kmkoNt1W+v7m6bS+0hOc7sA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DBkEtqWnpJZhPhMvvlDvRpJ88SrFsG8EHVMX4/0LvScpSET42Hb9VSB+oY/GvbCGQMxwrFusT/PfwCtQZuoRl4YUd/jJWdJ2UlE8ACmTdtJpz/2zmXCc+DFiN/lCnk9bxG/QeUYQMajjmvDcHP4p4GA1QgIRV0BlZIqS6MIza/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XC4Mq2593z20pLB;
+	Mon, 23 Sep 2024 21:58:31 +0800 (CST)
+Received: from dggpeml500003.china.huawei.com (unknown [7.185.36.200])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7CFF5140138;
+	Mon, 23 Sep 2024 21:58:50 +0800 (CST)
+Received: from huawei.com (10.44.142.84) by dggpeml500003.china.huawei.com
+ (7.185.36.200) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 23 Sep
+ 2024 21:58:50 +0800
+From: Yu Liao <liaoyu15@huawei.com>
+To: <tj@kernel.org>
+CC: <liaoyu15@huawei.com>, <xiexiuqi@huawei.com>, <peterz@infradead.org>,
+	<mingo@redhat.com>, <linux-kernel@vger.kernel.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>
+Subject: [RFC PATCH 0/2] sched: Fix compilation error 
+Date: Mon, 23 Sep 2024 21:54:29 +0800
+Message-ID: <20240923135431.2440320-1-liaoyu15@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,36 +53,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500003.china.huawei.com (7.185.36.200)
 
-Hexagon images fail to build with the following error.
+This series fix the compilation issues when building with
+CONFIG_CGROUP_SCHED_WEIGHT && !CONFIG_FAIR_GROUP_SCHED.
 
-arch/hexagon/kernel/vdso.c:57:3: error: use of undeclared identifier 'name'
-                name = "[vdso]",
-                ^
+Yu Liao (2):
+  sched: Add dummy version of sched_group_set_idle()
+  sched: Put sched_group::idle under CONFIG_GROUP_SCHED_WEIGHT
 
-Add the missing '.' to fix the problem.
+ kernel/sched/sched.h | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Fixes: 497258dfafcc ("mm: remove legacy install_special_mapping() code")
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- arch/hexagon/kernel/vdso.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/hexagon/kernel/vdso.c b/arch/hexagon/kernel/vdso.c
-index 6fd27ff1df73..8119084dc519 100644
---- a/arch/hexagon/kernel/vdso.c
-+++ b/arch/hexagon/kernel/vdso.c
-@@ -54,7 +54,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
- 	struct vm_area_struct *vma;
- 	struct mm_struct *mm = current->mm;
- 	static struct vm_special_mapping vdso_mapping = {
--		name = "[vdso]",
-+		.name = "[vdso]",
- 	};
- 
- 	if (mmap_write_lock_killable(mm))
 -- 
-2.45.2
+2.33.0
 
 
