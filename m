@@ -1,117 +1,109 @@
-Return-Path: <linux-kernel+bounces-335499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A97097E69A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:29:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2361297E6A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 09:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C0D28175C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:29:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D92932815F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 07:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B11E768FD;
-	Mon, 23 Sep 2024 07:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C288C44C8C;
+	Mon, 23 Sep 2024 07:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJase340"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="cRbvpk+F"
+Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142153E49E;
-	Mon, 23 Sep 2024 07:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2442B17741;
+	Mon, 23 Sep 2024 07:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727076548; cv=none; b=GqCw2zUVZ0KMMMYk39UesxCkRX0asBn4hU7x7jsyN+ILCyVcueuoqi8NAypufDlGxbbGSrq21SOY8Trrdl3SbEdK+UHx7DPakNSQNHF8p9o+TLJJsw09ldMynFZw7jtSc62sQ6Cv1iIuC314HG59cVkZKiuY5uKbUUKiX2gCync=
+	t=1727076692; cv=none; b=oplQwxXieN6n4SvL92xtUd4C54XnhsdZNWN+H3ig+XtnFVCpQZ+HrsLt0VDHA9s3spf2kX9TfA0XEf5XdMOp1RrB1XMwf5G5zqgy55JtyawMIkX4KJqcSgpJ0SNNHCp5G/rDZAftaZa8bhxEo9mmsVtiFCu6AlszRtihgk3lssM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727076548; c=relaxed/simple;
-	bh=lPM7uFSqCfEGSIf6vjbIKhNCRwm0OmTJEE2lN8Nt18g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YNAgg5TA77VPaXoGGirfr1DOVzvU6g/xizDbyBBFnAC2uBAWO8O0JEKH/zPyTAtPkeSOCXeP1lIJR62TAyYbdUpcNu/GrwlfKccZL7ONsstGysHRo0ZZdDM6lS6dxUxYPfkhobMBNfpkI0IYhfwK4KjiftiFKa2+ZugZlobWcJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DJase340; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3e04801bb65so2114267b6e.0;
-        Mon, 23 Sep 2024 00:29:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727076545; x=1727681345; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EIVIVYYQShi+AHq5DrHJj2/+M6JZof4RPiuCjUXL9z4=;
-        b=DJase340Sr+SKM4uC16/cqFG2k7ZY4kWW3TvnWdcO/MCF6gSnLIaUnYM7J7xkO2Hed
-         6iuwHCZ7WjxK40/+XwvdKYRlSSFtsM1saL+K3s4alZkMbd91Y9uJvzr5TeeI6jwzOfGG
-         LY40Hyo2ESZu+6Vlb1pM2DoAVJF4xmYRcdHV6CNLCHZLnVrxEFje2vtz0H3b0NfHBlfc
-         kczYL5TaQm4oFqqzgtFE1sPfBly5tIA5dETBAYbCIf/kw6Rglm+V3S6mU5fa9B39ete/
-         46Qe08oRtwL6upE48uhuSGkXhqZLkeTMKtIDxLuNSfAn2+qfk1E38dV+6XQssG8QCsBO
-         udfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727076545; x=1727681345;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EIVIVYYQShi+AHq5DrHJj2/+M6JZof4RPiuCjUXL9z4=;
-        b=Ri5WftdLSkGxCA1QWu9CbLXz4zrMZITsZT5LXXhea9kwL8SaF5lXEDKQdRaHPCQZJW
-         6bg0Ia8kBjfbUDazE/BTTeXRNXx/iQbhMy/TwGkArX5+K9gpptymiG5el9Ibil9QvhMy
-         SmJMoPBlSVsWKKZPIw+WUsBVEhcD8A82hL73CjEbYO1rVeTBIf27r86mMFs5WTi0z2js
-         Z/rQr4+2v+tzfXkoBD8Z2s0BsGSnU+UGZImRRjUAB/tXoaYTF+nmY5zh//t5IUBZ8292
-         8wWtjgbme/bUY5hCC74dh6EOsu1AHKarSU9Oeoo3gBtNveAlaNlNY/st7d0EYlv7Hi4H
-         uyEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsJVGZXamGg0uA5+hLvR9Rle0gJ6OUX0/M5OyRXil+rI3fdmI6AHkUAkFQo7O6pSUK6E+vrDnqaiSK/Nc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGg706qri+jGRQK8akh7AAYb7Zvl14Cg2Wha62KNebgTA6aNR6
-	KBsZprdpIOIFnk9PZwFkps4xBZzfDudK3D2DFylbksYcAB23DVEjIrBRFNrIZ1QSXA==
-X-Google-Smtp-Source: AGHT+IFuFGjlw5DVtSMYKHnnMheMVvD3mWuLUcPM3nV0ZsA1tUfJ85vuKWAS7kN58lA5Bl2C01d53w==
-X-Received: by 2002:a05:6808:2111:b0:3d9:36ba:2c9 with SMTP id 5614622812f47-3e271cedbe8mr6114231b6e.41.1727076545357;
-        Mon, 23 Sep 2024 00:29:05 -0700 (PDT)
-Received: from fedora.dns.podman ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db4992cafasm14821382a12.54.2024.09.23.00.29.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2024 00:29:04 -0700 (PDT)
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Jay Vosburgh <jv@jvosburgh.net>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Simon Horman <horms@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Hangbin Liu <liuhangbin@gmail.com>
-Subject: [PATCH net] bonding: show slave priority in proc info
-Date: Mon, 23 Sep 2024 07:28:43 +0000
-Message-ID: <20240923072843.46809-1-liuhangbin@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1727076692; c=relaxed/simple;
+	bh=YOPrK/LQFNu1yTd7p8XEMFxAWFKnMsmN7u5aRla9zS0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fhJ07luihzImF1e6eW32HWlXhY9wI0kJbT3FUhm65VDpNDs69VURDB0HSS4QsuTOmvSC36S60XXA6Y6pnIbypfdq3wjsqXt/f4XP7y0FClRHl2eCK3+RxBet2I94mgNFDdAQOaWlhGNynwifjpTQghJp97MgcxOi3N0acP4MZQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=cRbvpk+F; arc=none smtp.client-ip=49.12.199.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D7B1BDB324;
+	Mon, 23 Sep 2024 09:31:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
+	t=1727076680; h=from:subject:date:message-id:to:mime-version:content-type;
+	bh=k4fe+L1YliAWTSVKJAMtXdF3NNuBlfyNCAN7rxxKt1I=;
+	b=cRbvpk+FmASae5dX8/+3P80iX7vlauYLYeK5Me0QikOUc2OBXxp/AS9i44p2cTeqx5sYLa
+	qvKAvkwDqK3luGrQgrLjsQfnCg+G4vMQGNz7+Pca85URM1hHXwmhUdpGSl6Q7iNNbfEMjH
+	fD2olnuhuTZEe9L4fKRbJGe7tDGW6yGOjQq8BHABkzttdMxVHI+T/lVY6UqMnsmh0TpaAb
+	PZF3j/BFpJYYS96YsJM5dFTuJe4m+suLoOv1KIqQn8Urnz6IMeUlQIWKz9XHV/Jht3rQE4
+	t5wv3o7I+WVjbIKJY2wdLzEU66/4GOG1CmMYEWuFSoXmXzWWmjjBZJ6RvbNHBA==
+Date: Mon, 23 Sep 2024 09:31:15 +0200
+From: Daniel Wagner <wagi@monom.org>
+To: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org, 
+	stable-rt@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Tom Zanussi <tom.zanussi@linux.intel.com>, Clark Williams <williams@redhat.com>
+Subject: [ANNOUNCE] 4.19.322-rt138
+Message-ID: <172707659553.17516.8509354000862390767@beryllium.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Last-TLS-Session-Version: TLSv1.3
 
-The slave priority is currently not shown in the proc filesystem, which
-prevents users from retrieving this information via proc. This patch fixes
-the issue by printing the slave priority in the proc filesystem, making it
-accessible to users.
+Hello RT-list!
 
-Fixes: 0a2ff7cc8ad4 ("Bonding: add per-port priority for failover re-selection")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+I'm pleased to announce the 4.19.322-rt138 stable release. This is just
+an update to the 4.19.322 stable release. No RT specific changes.
+
+You can get this release via the git tree at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+  branch: v4.19-rt
+  Head SHA1: 27022b8669f4531defab96b62fddc6e2db7f04a9
+
+Or to build 4.19.322-rt138 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.19.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v4.x/patch-4.19.322.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/4.19/older/patch-4.19.322-rt138.patch.xz
+
+Signing key fingerprint:
+
+  5BF6 7BC5 0826 72CA BB45  ACAE 587C 5ECA 5D0A 306C
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Daniel
+
+Changes from v4.19.317-rt137:
 ---
- drivers/net/bonding/bond_procfs.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/bonding/bond_procfs.c b/drivers/net/bonding/bond_procfs.c
-index 7edf72ec816a..8b8580956edd 100644
---- a/drivers/net/bonding/bond_procfs.c
-+++ b/drivers/net/bonding/bond_procfs.c
-@@ -210,6 +210,7 @@ static void bond_info_show_slave(struct seq_file *seq,
- 	seq_printf(seq, "Permanent HW addr: %*phC\n",
- 		   slave->dev->addr_len, slave->perm_hwaddr);
- 	seq_printf(seq, "Slave queue ID: %d\n", READ_ONCE(slave->queue_id));
-+	seq_printf(seq, "Slave prio: %d\n", READ_ONCE(slave->prio));
- 
- 	if (BOND_MODE(bond) == BOND_MODE_8023AD) {
- 		const struct port *port = &SLAVE_AD_INFO(slave)->port;
--- 
-2.46.0
-
+Daniel Wagner (1):
+      Linux 4.19.322-rt138
+---
+localversion-rt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+---
+diff --git a/localversion-rt b/localversion-rt
+index 41b444e910ef..9f63718d5731 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt137
++-rt138
 
