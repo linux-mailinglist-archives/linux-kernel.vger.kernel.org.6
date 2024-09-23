@@ -1,596 +1,248 @@
-Return-Path: <linux-kernel+bounces-335742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5414B97E9FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:39:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE1397EA04
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4AEE1F21134
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:39:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F1F11F21B25
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DA5194C83;
-	Mon, 23 Sep 2024 10:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE179197549;
+	Mon, 23 Sep 2024 10:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NxBaIGhl"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RL9a5oM2";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="FntJl2Ii"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7007A195385
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727087957; cv=none; b=oy2uW82cz3YN04qGrn1c6tL9xQVWHhBMsRa2WS97guxSVh9Wj2dSwikD8jVot4Jote+fJMbShRneCe33fP796kuAxTq3ZyRQbctbws/ak7GPAdXWPHZw/2NLuJsyqfD1lrxpviKEL50u6Hr/CimShEG8dar2AKh32tlY/MRmzU4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727087957; c=relaxed/simple;
-	bh=CH65LImeA31V2gjQos723kYI2pAomGpkq/i+T/O62kQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=W1PdKPYCqvQRp1kA5oO1SOskIHapDjvQGDGpsvcHWBWuPlYGpIyTyYDrnLapHwfuvrbDQAWOljpm8cXPipBcfvjAvuhALhWbL2ZP7aUYjE2hWEAFo0RAlhiPnSoyYPsVYR//2D0UGZaZfNgIIYyCWjOCn7GsOe65HopNaBRBDxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NxBaIGhl; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-42cb374f0cdso21543735e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 03:39:15 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961EE26AC3;
+	Mon, 23 Sep 2024 10:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727088073; cv=fail; b=slugQdmzQVjMl0fifuA+Q2ycM3WKqz95rgEyeQwbH9ym2BgHnwTmpx2ky53s1Y0qfwYEDDTO/QWmlRpwNkUmww6khgrMyIJx5+78MsXf2wRIHRbAVNGjD5b1IJvBqEXtuzu4W1SMu/jNVPW3ArHl6DMgbNMXxBrziA9CD0ypdu8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727088073; c=relaxed/simple;
+	bh=vgx9PYuhtd75DDdIcY++AzzEnMJdokbes03awWCOtVw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=SY/F+noCA29o4gsB/XpihQHTMATX2yEKNO8DI/9ySiLAHS1DaU8VGaYz6LlDlMX7ebjXHbHn2BU38o1qjtkSKK9paFwGdva7kUQLmdPfoqYcEwpc1Z630UN0yYos1vPTbS9v/uIF5OyfqbsO17uUEcGgFyB/PtkF0fzgG6f7SmM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RL9a5oM2; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=FntJl2Ii; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48NABkxC010226;
+	Mon, 23 Sep 2024 10:40:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=sXntBT5Ei+RnDQfty6TCbCsKdT5s3rGvClNBF5ZHchc=; b=
+	RL9a5oM22q/k3iFgp4lxz9U4z+pY1cx7XBh8GbG7QRIAXSaKlSD4KIwvJT0EpY4L
+	UGorK2BknD+I1KuYQoaDyR57xptbmaYbzlnCLYLHYl7tz2d+AjYZ1PkAiCUTbEnd
+	tyNlQABQSUvTeV/s82W2Vu9jOIOoXhJkjU6WmKKkbFucbugJGtnPjbr5UqQXoDHE
+	g1TpsNN7IVWMQPnNXgcl5rbRBxBGOecWBMHowYQ7crrax+OhkRMuAokQVPHBy4wj
+	LzOgIsGw4vEvBDemR5gbZpGTJuDeKq8l1kZ5x9X5aCuHme6QHVlbYUB61yllfeqn
+	K2G/LRiOEjh99dJ1p/dkjw==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41smjd1vqd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 23 Sep 2024 10:40:56 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48N9uAp7024940;
+	Mon, 23 Sep 2024 10:40:55 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2042.outbound.protection.outlook.com [104.47.55.42])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41smk7m1e5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 23 Sep 2024 10:40:55 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rMLv048tCYTJ8q6YyVyzWeR5uTirefWartZ0DiPjMEw3GMQ5XRmyQhT+cNQJP+3awA/XhUvhdOcr4xFKcB5T/8bX5bicVodZBVyilZvf9jYQlpoy0ALNtRdrZCb9nUQ01UdsjKipf1pfIHhjCrUrH5Dzttme2WYlXUUBvT4XZjNs50UiG2qtYgOhdeD4ph4aiamE6qe6t3EEL/aCeg1/3S+lNg/W1kEyLVXxs1a828FIA4wt3RHEcE0WIZGAG390waeSoOdb2s1w32YfhfmCUBTmMSlMeiU4HAdqT6UxA/tMTeusTSAJAdJfSDVHioMWL5qQjb8o3H/VdB86gcHceA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sXntBT5Ei+RnDQfty6TCbCsKdT5s3rGvClNBF5ZHchc=;
+ b=nztpO/wbUTIKxQ7ls4oJF5HYRiv9XCoBkXeV56XCiC+VR+SGpO2b9KI6QHtk7hGCV2GyAzVDtzQEdH5DxRQcn96yNomHLiGKNlgg7T1PT3Dc2V3LfWd/lKVKaBLjw41xKflC/OUi6JL5Qs2jPOaFCZQAHCQMJCZZnMUkiw/2ErdgsqOouIA3yVJOOUVCUffIMuPVNIKdtOaXq0DFOYJ1a8zKF9qbbaI46g6z3Pq8vdboPWJydM4MckhPVhGHhquRQLxnNZoY2auAMJUprw+TZXzmZaqGDDQx4OVyIrUXsSWeitjHlradsCEwMw7qcVHyVSacD8rO5qR1iGlBRjxkSw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727087954; x=1727692754; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+7IA8B4S/OjOJloT0o9UpFRo091wD5m6NGMGUoTT03Y=;
-        b=NxBaIGhlYGAwrGWZnWhT7rrsakAQeqNvx+7V3t05icEMuqPDubpzPeW3fr2hP+Rxy1
-         piN5s5pAS4crRCZmBsiB/txvbIhrfTrZhkQI1/+jtbSSnqOMxyEVRQZqe/EqCrddJfpz
-         oM1xDdj95yk3Gn87ra2vFb1Id1epmt8q39rUYhB7uCplJlHl0TxygzadVy4Q7rBu+8En
-         Lq1fXL//+vQn31xVyAgu0zZv/ehFX2U49coxuty1+cHYkqr3+WsX46PUSeK5ItXjkI/Y
-         7dySRew9N/cfz0CqdOY7lpVeB8jzUfhSFcbOZ1+ChclIhSlb9Z9O58MqqJWPTMrX02D/
-         JSIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727087954; x=1727692754;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+7IA8B4S/OjOJloT0o9UpFRo091wD5m6NGMGUoTT03Y=;
-        b=aPIFQh+93MmGQg8F7GJhdzmyPfQnHRXHw85gboJA8pLJSBnQZ1pedv+ccBcc95t/bZ
-         0Ee/DcqxkwSnqAgR4nRVJdGcA0+r3PhKJxWW6QYsoD9KwaDg1XHBT2JY82LM4UcMjDIg
-         M6pROXZIwJ9nIEX9IOk3XdpE5ksjDexMZHsY/Hrv8UPcFakRFZWCnUkBTy/OmJlrCZHe
-         h9mltqZTag5YkVS6/ALSeXd/qcxKMNDW1FM0zQVDejkhwy0XJrtQ8VYKxPw3MVeZW7Mn
-         v1mQBme5yNdFNsothhx8UTvc3IIH2qeunWBS9lINnGMy6gsgP3uDhPAfE3a6JzcDedOb
-         BKTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIo3bl8tPvEUJoD15eyqpaYmNOVvzbZKcdDLa021qLSRVclTv8IGbie8aEShxJBknUH9Ku8Rttq+i0Kew=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3SgTFN/iaWXT82d56cILZLtbGVoCg+5JfGQKERxbDPp7y6PXp
-	5LO7fdsHhS9ai3GT6ZhEB7NOU8MbvwwEGAIHTIaN6dGsrvZAfN42MIT+AMhO7VcZiH9hJ81U/xK
-	+wGCHhf3BY9YsJg==
-X-Google-Smtp-Source: AGHT+IGnmDgpLMMur7aPg5uBT28jOb2AJr+cKC1CN46Ca0eTDLuzHjLPHmc/6gPU+glijQp5LkiefARc8INsayI=
-X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
- (user=aliceryhl job=sendgmr) by 2002:a7b:cb43:0:b0:42c:a8d4:2554 with SMTP id
- 5b1f17b1804b1-42e7a9e4172mr1703825e9.4.1727087953720; Mon, 23 Sep 2024
- 03:39:13 -0700 (PDT)
-Date: Mon, 23 Sep 2024 10:38:48 +0000
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sXntBT5Ei+RnDQfty6TCbCsKdT5s3rGvClNBF5ZHchc=;
+ b=FntJl2IikbI0vZQs5KGzSCjQHxNTFED4BUa4Bq33UkoIp8eUsOf2MhfHDHnfnhRFe16fyY/Ex+IjUjbLEaXhwSjeBMmnFsofNhiqnUJtoFhchoGAO+z/AOQ/gcfkHzeNuvt6PWuXHLe+CudaveZ76jWFCuwT8wFCDH1bz0oc27w=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by SN7PR10MB6497.namprd10.prod.outlook.com (2603:10b6:806:2a4::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.12; Mon, 23 Sep
+ 2024 10:40:52 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%3]) with mapi id 15.20.8005.010; Mon, 23 Sep 2024
+ 10:40:52 +0000
+Message-ID: <e14a87cb-6f83-4725-a556-0819bcff8a98@oracle.com>
+Date: Mon, 23 Sep 2024 11:40:48 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 5/6] md/raid1: Handle bio_split() errors
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, hch@lst.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org, martin.petersen@oracle.com,
+        "yangerkun@huawei.com" <yangerkun@huawei.com>,
+        "yukuai (C)" <yukuai3@huawei.com>
+References: <20240919092302.3094725-1-john.g.garry@oracle.com>
+ <20240919092302.3094725-6-john.g.garry@oracle.com>
+ <bc4c414c-a7aa-358b-71c1-598af05f005f@huaweicloud.com>
+ <0161641d-daef-4804-b4d2-4a83f625bc77@oracle.com>
+ <c03de5c7-20b8-3973-a843-fc010f121631@huaweicloud.com>
+ <44806c6f-d96a-498c-83e1-e3853ee79d5a@oracle.com>
+ <59a46919-6c6d-46cb-1fe4-5ded849617e1@huaweicloud.com>
+ <6148a744-e62c-45f6-b273-772aaf51a2df@oracle.com>
+ <be465913-80c7-762a-51f1-56021aa323dd@huaweicloud.com>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <be465913-80c7-762a-51f1-56021aa323dd@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0201.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9e::21) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=18252; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=CH65LImeA31V2gjQos723kYI2pAomGpkq/i+T/O62kQ=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBm8UTB8rWceIYWmnvhfTXkX7Pd8EPJFuXbYmj3L
- E2wLzwHIYWJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZvFEwQAKCRAEWL7uWMY5
- RuwtD/9tnxW/3xlZLDnRrvcc4Nm0nRM9oZTussFIJ5PxfauSgqZm+2N3C7B/gVRSc6T1sBQ1w4x
- wxJs1K5mzOjhddFirMucA5lmCB5Kg89B2SkJzeILQQisReRw+hsIWqmSHaCwt7NQv+JtQq7grBg
- Y9nElhLRXniIQEV8HBURYltKn7im7Z+TNdt38hUeOurXeYJTZ1zD6KxG9VtiVfJfUB1Bv7ptGGj
- vSGZQPZGBjO+j179VyeXNw0jxEUDZGR444nlbzVONxpTPnljnCGhxnPkbAnJRlZ3WLQAOyNUksP
- MEUOC+f4BHkJvNKnurW8P0d0S6HkVPo2elJwOEzlAMrEGZpHLk403LdvOGoxO0zFhahDYMR+DuA
- UqhKYJTTVvrIOsB5MKj1Q/lBf0O/P+b/rRwtGdL9D3r1uPgxjhRT/njeqdUj/CJNmXU/AH6L2J+
- JDSpE2XUA1PhFOP0Wt2lgJm2jdW+Gh8tOiPRJRaEmIPDuMJxx7wNndxqftA+Vj8X27YfwbhXxLh
- E101ca/SKOAbQk4N+c/SHaGGZCdTt7faDly1vxPEl1nWu0UzYFW2gT9Lewlt/x04kROABrVuVLl
- Aqi0WZYdjRrHf0uvHJLi1KrZC4swvMxE5k/UpuDCHM4me5OdgUmJpHwKebkD1PDqoDbrGxkA8G1 7Qs7bAuUjJvXViA==
-X-Mailer: git-send-email 2.46.0.792.g87dc391469-goog
-Message-ID: <20240923-xa_enter_leave-v1-1-6ff365e8520a@google.com>
-Subject: [PATCH] xarray: rename xa_lock/xa_unlock to xa_enter/xa_leave
-From: Alice Ryhl <aliceryhl@google.com>
-To: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SN7PR10MB6497:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a3895a6-f61a-4d6a-657b-08dcdbbc325b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SWR4K1l1WTZ3RU1ETDQ2d2RQRkRFMW9BbXFYRyt2SUUzVTNHb1NGQTFMQXZI?=
+ =?utf-8?B?VFNQY042bmU2SUh1QUNWL25NR001eFZqRHMvdTRyV1k5eFVFR01tRkxKV2g2?=
+ =?utf-8?B?ZFZ1WnFUTGROS2tSTHJPMFl4Mm5tZHVGQnQyc3dpYTROQkE5c3dpNDNrT2Ix?=
+ =?utf-8?B?Mk1zeFhRRG9JcEF4cGphb3BFK3lZL2dBOUlkSWlDeTNkTzRtSk9iaUliT0xC?=
+ =?utf-8?B?c2hib0pOQ0pIVHJQdjJ1cG8xTkJZRDcwbWNBTDgxSVJodnYwcTNLYVoxREY4?=
+ =?utf-8?B?d3p5WXhOVmlHcFQ0UmZtS085cVVxdWxBUUhLWjI1Vkxic2FjN3ZWWDZhU09E?=
+ =?utf-8?B?Y1lSMFlKVEg2djJxZHpvR3UxYnVLTklDbENuazExaFpjeXdSQ00rcUtYQmhH?=
+ =?utf-8?B?SkVRb0NiYUJqT2diejlmWmFIZU8razNYRm5lR2lWQ1VvbklYL0VuMXVwSWpV?=
+ =?utf-8?B?Z3A2M1czTEV5TEp3ckVZay9PaE51OW1IZ0pvT0hHMnU4WmV6R1ZQcnd5ZmY3?=
+ =?utf-8?B?WXB3Nis0S1ZmWDU3T2ZjMWpKTDREdFoxSVpkRFJaV1p5VFJ6S3Y4S0REcndo?=
+ =?utf-8?B?R2MwZjdkKzhiVnlLYm9Yb0paMVYzbi9jR0dBOTJrSGgydmtlZnplYm16dkUx?=
+ =?utf-8?B?VXlVSVM1c1hDNUdFU1RFcHFtS25EN1EvV1VtSHBsM05Rdk04alNDSHpFYk01?=
+ =?utf-8?B?bU5IajNmRDF6V1RJNjdZQ3N0NjBkVFBwQTZGS3FaNzJzSmVKZXBmYXpHQmpp?=
+ =?utf-8?B?cVoxRjJ1WG1tU0xWNER3N1BnUHFPcXlMcFpaTkpaRzAyRy9SdXdiUTBqMkxU?=
+ =?utf-8?B?R0pSZ1dFZUxZb0FZSHhJOS9pb2wweG1HckxPUDZwY2YvZGloTFBWYWxjektN?=
+ =?utf-8?B?bDNocnZXTjU1N2M4N251Nm15SUl6UUFXSFJGTUszSFl5UzNBakR3TnBDQzBt?=
+ =?utf-8?B?NWQ3SDIrdS9MUDRYcURNR2pPWGZORFFDVHRtem5SL21nd0RZK3ZaM2hiSmJl?=
+ =?utf-8?B?TjRGQjE4a01STWNQdDF2SjBqaElJb3VnUkx4eEpFWHVnUTRkM21ydnkxeXhu?=
+ =?utf-8?B?QjlkMmFNSDNEWFlMREViUUZsbWdhRW92TUM2VWdiYXYvRlh4WnJvSC8xSmpH?=
+ =?utf-8?B?aGkwQ0pPTTdxNE94bmNtZ1R5MmY3MlY4WG43KzE4L1liaUI0dXVaN2RxWUUw?=
+ =?utf-8?B?K2l1aEgvSVd2YVBQcUk4YnlzYXcxTndNcEFJbU5uR3NJMWl5SHZIZmJSWllD?=
+ =?utf-8?B?allPQnFVc2lWQ0U0VVl2NFdQcWF3dDZtU3JuZnRVczVQUlF3V09NbDJDdHV6?=
+ =?utf-8?B?MzNIWmN0UDdvckM2cUhpVlhGSDZqdXo4TDlDSENRRGJRYStXVlAvRnZyLzlH?=
+ =?utf-8?B?alJtS2lNcC8wNXNyY2Q3Z3hJL2M5dmYrTEF2ODA3NlQ4dHp5UFhrSUhvN0Zj?=
+ =?utf-8?B?Z0Y3K0ZYZUNIK0hRUWYxcml2N1ZsY1l4Y3B3bUdEUVZNNnV5Qm11TjFsSWht?=
+ =?utf-8?B?ZUgzNDVsbVg3UCtLWWZySHVlSFdoa0JnOFNHR3ArbzhnUDIvWTk1b1dtZ2hi?=
+ =?utf-8?B?enl6RW9zdlhuVHJGQk55Z0JEc3pRK2xOb2dnNk03R3d0dEdKRWZ2bFBSMEgx?=
+ =?utf-8?B?anIrT2FJWnVnR1dmM1NURC8veDVYVzQ2Y2JVY2FWUEtXUEFXc3Q3ZlVxSDEv?=
+ =?utf-8?B?ekJ0WUd5bnA0bkYyb0Z3clFTa0d3bU54OXdDZ2RKY0tBTXZtMXRUczlaSklv?=
+ =?utf-8?B?cWZyNGVXVTc0WGc4cU5sQXV3R1pEYUVBaUM2MHhuSlRxQnRhYkxHUVdaRDRO?=
+ =?utf-8?B?SlliamJ1V2tSaHJHK2JDQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TWphdzg4REROa3crekZvT3Z2OWF3RDRjcWlaVnl1eDNKOHR4a1ZncFBHdEhF?=
+ =?utf-8?B?N0MwZStsbmtXck4va3JyVHk3WUxEdkJtdFNSekhtRFpNQzFTa1hvalBRNTVl?=
+ =?utf-8?B?VS8zZ1lIVisrOXgvaVZNYUYrOTYvQmszdEZyWWoxaXhiSWYwV0dvMlFCVnpm?=
+ =?utf-8?B?bENZZmpEV1BoSzhna0g4dTB1MzBVL2JoN2hDNzdjYmhEN3Q5ekphZTRwQmZC?=
+ =?utf-8?B?bXFPVE9JV2RBLzEvRFM4WDlNazFURGxSRjIrSmJwVFpzZmpiais3YjVNZFN0?=
+ =?utf-8?B?aEg4ZDVTRWkwS1EzUkx5a3lzU2NWa3duN2RVUmZURUZVZVVYeFE0L1JGVEpx?=
+ =?utf-8?B?dU9DaGM3VWZZb0Rvd2tPUS9abklmbnVzcEY0WWYrWkZuRVVITjR2Nkw1MWRN?=
+ =?utf-8?B?Tlc3NVBVNUlLL1REY0FzRnRoNkhGUkQyMkdJb1JpV1FWYmU3VWxYS2xuelp2?=
+ =?utf-8?B?UjZBNHljOHdVYkdIK3dxOHJUaHo1dWVKOTlrR2hpYzZDWlVKZXRjZ08xc3By?=
+ =?utf-8?B?YjJLMm9ZR3B1RDEvcW1YZHZjTUFZOEwwcHRpVkRhNkltSHd0L1FnaW8vYSt3?=
+ =?utf-8?B?R29jZWhWY0FBQU1OWUwrK29ja2h0VW8rdVdFNDE4cFFvYW9HdFR2Nm9TeENz?=
+ =?utf-8?B?MkJTbStOSGduWUV3VkVyNXcwM2ZFMDJabERlMXM1ckVvREtlUHc4RWxNQm15?=
+ =?utf-8?B?amFnVmlzNGora2R4S3U3VytJSytuUFU4dWY3aEFZTnAzYk5GN09DUFdKV0I2?=
+ =?utf-8?B?RDZ5MCtpUGV3czdTV1hQdC9GcE5idEJlU1hhNDNpak1GZm5MK2VGTUN4S0xo?=
+ =?utf-8?B?NjQvN0t2OUZmdG0wczRaYTd2NlJrQmdZd2lxUDhXTEptU2JLRFNyY3BPbFVX?=
+ =?utf-8?B?UUVrS1BpNFU5RFA1bUIvVHhaZDhnOHZCamJGMVlpTDRoOU9wL3hIRDNsV1hI?=
+ =?utf-8?B?MU1sbXpJV1VUZ3U3aWlaV1ZXUGdrNXIvaW9MNXZpWjBzMnlvSEllYmRvRDFa?=
+ =?utf-8?B?bGx2b045bkc0eUFYenNSeExnUC8rNUcyN0Z0NlYzbWMxS0ptOTgvZ01kN2gx?=
+ =?utf-8?B?MW1zeTBudDNza0pXa1Q1WUVZK3piMUdCOURHVmEyR2pXdzJxYWRvV0U3QVov?=
+ =?utf-8?B?TjRoRlFGUVBhNXp6WjR4L2dpS2piYzNRdXFZdW93bXNrcWVZSU9oR0RXNUdB?=
+ =?utf-8?B?MmUrSzQ0UUI5NnRkYlV3RkN4OW5kZEhmL3pNcDkxV25MRGJHak1icEZ5M2VG?=
+ =?utf-8?B?eit3S2luNEd3ZDZxV2NsOUhOU1VadjVabUpORjRZcXB2eHg3c3NVVVFqUzg1?=
+ =?utf-8?B?cm44cWxJTHBma2pWL2h6dXBucXdFK0pQblQ5VlRqNXgwa0pVcGMrM0huRStK?=
+ =?utf-8?B?b1NWNDZaSGdsL1lzK1MwVnoyQ0tCWis4cUp6TUFVL0xoaVM0S1dHZUIrV3hn?=
+ =?utf-8?B?d08yWUNMcldtRkFJdDdsckVmR05aWlp5VnBjVTVsQW5Fc0VodllBTHlLcjhv?=
+ =?utf-8?B?Yi9MN1F5bHUzdWx6VjhUQTRsQ29scVp4NUhzdEplS1FXM2gzWkgrQThWaXE4?=
+ =?utf-8?B?TW5mMXBYbzVvS3gzeTlZRysySk95aS9hVVA4ekkyUkJaQjEzZXdoYVRMVjRE?=
+ =?utf-8?B?UWtVdXNiVmF1MmFKSXFMQS9PZUxzRVhLTzFiOUR6NmtqYVM2NEh6aWkvSUV5?=
+ =?utf-8?B?eWJXeDNPcWZyQTdJN0hGTGtaWmpoMUNpeE9zSUtCQytEa2pnOGp2Q0c5djhJ?=
+ =?utf-8?B?SXo4UmxVMzFZVmh3emlWNGtualBGSjRUd2hjemtLdkZBWjVhSGtWUDNrSno3?=
+ =?utf-8?B?Z2Z1MFpnMHhpc0hydjVZWmZWOFQ5UzdxYm1Zdk51THh3d1ovMnJDRjlFcTd6?=
+ =?utf-8?B?eS92MjVxZVk0SHNlak8yVjlvK3Z1dWZQWElTeklUalFBUXk5dkduKytXdjlF?=
+ =?utf-8?B?cUQvVStFdEUvNFczZVFsamo4cnJPYlVENk9CNE1YaHM3WkxnWkZhSGRpTE0x?=
+ =?utf-8?B?WWRhRThrUVgzdVlvRURCTjJUTHdEK0o4WHV3S3RrS1MwckFldXlOejdBR3VE?=
+ =?utf-8?B?Yk94SFVvOUNvZG4vaWZBT1ZRZzZwSnBQdGFTcElMbEpSOTZSQk1GNVNQWmFk?=
+ =?utf-8?Q?l0z6SheIAOw0qVKyw/01SWC8a?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	0sfg8bKsvMMYQqyy0btLNxK1dhAEP+CyyhQPtQxDEiDW3VIeWUwGh06iQtjGiKHH7SvO9sYDBBvo6at88ktN8VphGVgwEXJsdDv4HxH5HYDOtkwhAovZYRBtxLdVmdmtTXbmvZe/r1wbecDJaGhvuceRu+LvPZr53UJ1aQDtzwq8wE5EqpAe7BdBJVTULeaxrY8zwCXlGnBN6FOChii1C8yw/M9EqE2k6VlfyWrprcis7NIqN6hXQreMUpQagH/iBVqJsncEzq7BvZDQdYlrZ793WWirqyzrKRPJzosGW1aTpAaYBMDud5U/4UC7+plvTzrBNuJKOObnFVwJjG5UEAXidZveESiF8E8k4TztUhqSvTY6vLF3D1SceesaHHGeBx7EUM6V/l59lktcjIekxXyfdmBfH0DPlB2E6773C3t8u4b+lrDTRwCvW9QnpRZgn2Is1+SgXuDEGyn4I7r6cyhDrlqPMKstjXiGBCeS1B6r6HfLOz8ui2306q0LD/SkkzYxSIf/W+lXjEJJBkPW1yNExwpIEBGN9FuZQSg44Kcrefum9z/qo2guo0PvGHbH2iHYOAptMFsjWeyTatjHWxeRa6A99DhoQk4182qVYtU=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a3895a6-f61a-4d6a-657b-08dcdbbc325b
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Sep 2024 10:40:52.6814
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U4WY4sES7JSSCxW0kNc3W+Ybu+Kf9szKGE6nxjjcJZX3eSVnIjsyhTXIVO369q4wZIWBv3HhZ3F3Fu1Hj3TdrA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB6497
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-23_05,2024-09-19_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ mlxlogscore=997 adultscore=0 mlxscore=0 bulkscore=0 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2408220000 definitions=main-2409230079
+X-Proofpoint-ORIG-GUID: xHWcrRT4VTM47bCkbArHdE0hGYFue0km
+X-Proofpoint-GUID: xHWcrRT4VTM47bCkbArHdE0hGYFue0km
 
-Functions such as __xa_store() may temporarily unlock the internal
-spinlock if allocation is necessary. This means that code such as
+On 23/09/2024 10:38, Yu Kuai wrote:
+>>
+>> Are you saying that some improvement needs to be made to the current 
+>> code for badblocks handling, like initially try to skip bio_split()?
+>>
+>> Apart from that, what about the change in raid10_write_request(), 
+>> w.r.t error handling?
+>>
+>> There, for an error in bio_split(), I think that we need to do some 
+>> tidy-up if bio_split() fails, i.e. undo increase in rdev->nr_pending 
+>> when looping conf->copies
+>>
+>> BTW, feel free to comment in patch 6/6 for that.
+> 
+> Yes, raid1/raid10 write are the same. If you want to enable atomic write
+> for raid1/raid10, you must add a new branch to handle badblocks now,
+> otherwise, as long as one copy contain any badblocks, atomic write will
+> fail while theoretically I think it can work.
 
-	xa_lock(xa);
-	__xa_store(xa, idx1, ptr1, GFP_KERNEL);
-	__xa_store(xa, idx2, ptr2, GFP_KERNEL);
-	xa_unlock(xa);
+ok, I'll check the badblocks code further to understand this.
 
-does not prevent the situation where another thread sees the first store
-without seeing the second store. Even if GFP_ATOMIC is used, this can
-still happen if the reader uses xa_load without taking the xa_lock. This
-is not the behavior that you would expect from a lock. We should not
-subvert the expectations of the reader.
+The point really for atomic writes support is that we should just not be 
+attempting to split a bio, and handle an attempt to split an atomic 
+write bio like any other bio split failure, e.g. if it does happen we 
+either have a software bug or out-of-resources (-ENOMEM). Properly 
+stacked atomic write queue limits should ensure that we are not in the 
+situation where we do need to split, and the new checking in bio_split() 
+is just an insurance policy.
 
-Thus, rename xa_lock/xa_unlock to xa_enter/xa_leave. Users of the XArray
-will have fewer implicit expectations about how functions with these
-names will behave, which encourages users to check the documentation.
-The documentation is amended with additional notes about these caveats.
-
-The previous example becomes:
-
-	xa_enter(xa);
-	__xa_store(xa, idx1, ptr1, GFP_KERNEL);
-	__xa_store(xa, idx2, ptr2, GFP_KERNEL);
-	xa_leave(xa);
-
-Existing users of the function will be updated to use the new name in
-follow-up patches. The old names will be deleted later to avoid
-conflicts with new code using xa_lock().
-
-The idea to rename these functions came up during a discussion at
-the Linux Plumbers conference 2024. I was working on a Rust API for
-using the XArray from Rust code, but I was dissatisfied with the Rust
-API being too confusing for the same reasons as outlined above.
-
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- Documentation/core-api/xarray.rst |  75 ++++++++++++-------
- include/linux/xarray.h            | 148 +++++++++++++++++++++++---------------
- 2 files changed, 141 insertions(+), 82 deletions(-)
-
-diff --git a/Documentation/core-api/xarray.rst b/Documentation/core-api/xarray.rst
-index 77e0ece2b1d6..2f3546cc2db2 100644
---- a/Documentation/core-api/xarray.rst
-+++ b/Documentation/core-api/xarray.rst
-@@ -200,7 +200,7 @@ Takes RCU read lock:
-  * xa_extract()
-  * xa_get_mark()
- 
--Takes xa_lock internally:
-+Internally calls xa_enter to lock spinlock:
-  * xa_store()
-  * xa_store_bh()
-  * xa_store_irq()
-@@ -224,7 +224,7 @@ Takes xa_lock internally:
-  * xa_set_mark()
-  * xa_clear_mark()
- 
--Assumes xa_lock held on entry:
-+Caller must use xa_enter:
-  * __xa_store()
-  * __xa_insert()
-  * __xa_erase()
-@@ -233,14 +233,41 @@ Assumes xa_lock held on entry:
-  * __xa_set_mark()
-  * __xa_clear_mark()
- 
-+Variants of xa_enter and xa_leave:
-+ * xa_enter()
-+ * xa_tryenter()
-+ * xa_enter_bh()
-+ * xa_enter_irq()
-+ * xa_enter_irqsave()
-+ * xa_enter_nested()
-+ * xa_enter_bh_nested()
-+ * xa_enter_irq_nested()
-+ * xa_enter_irqsave_nested()
-+ * xa_leave()
-+ * xa_leave_bh()
-+ * xa_leave_irq()
-+ * xa_leave_irqrestore()
-+
-+The xa_enter() and xa_leave() functions correspond to spin_lock() and
-+spin_unlock() on the internal spinlock.  Be aware that functions such as
-+__xa_store() may temporarily unlock the internal spinlock to allocate memory.
-+Because of that, if you have several calls to __xa_store() between a single
-+xa_enter()/xa_leave() pair, other users of the XArray may see the first store
-+without seeing the second store.  The xa_enter() function is not called xa_lock()
-+to emphasize this distinction.
-+
--If you want to take advantage of the lock to protect the data structures
--that you are storing in the XArray, you can call xa_lock()
--before calling xa_load(), then take a reference count on the
--object you have found before calling xa_unlock().  This will
--prevent stores from removing the object from the array between looking
--up the object and incrementing the refcount.  You can also use RCU to
--avoid dereferencing freed memory, but an explanation of that is beyond
--the scope of this document.
-+If you want to take advantage of the lock to protect the data stored in the
-+XArray, then you can use xa_enter() and xa_leave() to enter and leave the
-+critical region of the internal spinlock. For example, you can enter the critcal
-+region with xa_enter(), look up a value with xa_load(), increment the refcount,
-+and then call xa_leave().  This will prevent stores from removing the object
-+from the array between looking up the object and incrementing the refcount.
-+
-+Instead of xa_enter(), you can also use RCU to increment the refcount, but an
-+explanation of that is beyond the scope of this document.
-+
-+Interrupts
-+----------
- 
- The XArray does not disable interrupts or softirqs while modifying
- the array.  It is safe to read the XArray from interrupt or softirq
-@@ -258,21 +285,21 @@ context and then erase them in softirq context, you can do that this way::
-     {
-         int err;
- 
--        xa_lock_bh(&foo->array);
-+        xa_enter_bh(&foo->array);
-         err = xa_err(__xa_store(&foo->array, index, entry, GFP_KERNEL));
-         if (!err)
-             foo->count++;
--        xa_unlock_bh(&foo->array);
-+        xa_leave_bh(&foo->array);
-         return err;
-     }
- 
-     /* foo_erase() is only called from softirq context */
-     void foo_erase(struct foo *foo, unsigned long index)
-     {
--        xa_lock(&foo->array);
-+        xa_enter(&foo->array);
-         __xa_erase(&foo->array, index);
-         foo->count--;
--        xa_unlock(&foo->array);
-+        xa_leave(&foo->array);
-     }
- 
- If you are going to modify the XArray from interrupt or softirq context,
-@@ -280,12 +307,12 @@ you need to initialise the array using xa_init_flags(), passing
- ``XA_FLAGS_LOCK_IRQ`` or ``XA_FLAGS_LOCK_BH``.
- 
- The above example also shows a common pattern of wanting to extend the
--coverage of the xa_lock on the store side to protect some statistics
--associated with the array.
-+coverage of the internal spinlock on the store side to protect some
-+statistics associated with the array.
- 
- Sharing the XArray with interrupt context is also possible, either
--using xa_lock_irqsave() in both the interrupt handler and process
--context, or xa_lock_irq() in process context and xa_lock()
-+using xa_enter_irqsave() in both the interrupt handler and process
-+context, or xa_enter_irq() in process context and xa_enter()
- in the interrupt handler.  Some of the more common patterns have helper
- functions such as xa_store_bh(), xa_store_irq(),
- xa_erase_bh(), xa_erase_irq(), xa_cmpxchg_bh()
-@@ -293,8 +320,8 @@ and xa_cmpxchg_irq().
- 
- Sometimes you need to protect access to the XArray with a mutex because
- that lock sits above another mutex in the locking hierarchy.  That does
--not entitle you to use functions like __xa_erase() without taking
--the xa_lock; the xa_lock is used for lockdep validation and will be used
-+not entitle you to use functions like __xa_erase() without calling
-+xa_enter; the XArray lock is used for lockdep validation and will be used
- for other purposes in the future.
- 
- The __xa_set_mark() and __xa_clear_mark() functions are also
-@@ -308,8 +335,8 @@ Advanced API
- The advanced API offers more flexibility and better performance at the
- cost of an interface which can be harder to use and has fewer safeguards.
- No locking is done for you by the advanced API, and you are required
--to use the xa_lock while modifying the array.  You can choose whether
--to use the xa_lock or the RCU lock while doing read-only operations on
-+to use xa_enter while modifying the array.  You can choose whether
-+to use xa_enter or the RCU lock while doing read-only operations on
- the array.  You can mix advanced and normal operations on the same array;
- indeed the normal API is implemented in terms of the advanced API.  The
- advanced API is only available to modules with a GPL-compatible license.
-@@ -320,8 +347,8 @@ This macro initialises the xa_state ready to start walking around the
- XArray.  It is used as a cursor to maintain the position in the XArray
- and let you compose various operations together without having to restart
- from the top every time.  The contents of the xa_state are protected by
--the rcu_read_lock() or the xas_lock().  If you need to drop whichever of
--those locks is protecting your state and tree, you must call xas_pause()
-+the rcu_read_lock() or the xas_enter() lock.  If you need to drop whichever
-+of those locks is protecting your state and tree, you must call xas_pause()
- so that future calls do not rely on the parts of the state which were
- left unprotected.
- 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 0b618ec04115..dde10de4e6bf 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -532,29 +532,48 @@ static inline bool xa_marked(const struct xarray *xa, xa_mark_t mark)
- 	for (index = 0, entry = xa_find(xa, &index, ULONG_MAX, filter); \
- 	     entry; entry = xa_find_after(xa, &index, ULONG_MAX, filter))
- 
--#define xa_trylock(xa)		spin_trylock(&(xa)->xa_lock)
--#define xa_lock(xa)		spin_lock(&(xa)->xa_lock)
--#define xa_unlock(xa)		spin_unlock(&(xa)->xa_lock)
--#define xa_lock_bh(xa)		spin_lock_bh(&(xa)->xa_lock)
--#define xa_unlock_bh(xa)	spin_unlock_bh(&(xa)->xa_lock)
--#define xa_lock_irq(xa)		spin_lock_irq(&(xa)->xa_lock)
--#define xa_unlock_irq(xa)	spin_unlock_irq(&(xa)->xa_lock)
--#define xa_lock_irqsave(xa, flags) \
-+#define xa_tryenter(xa)		spin_trylock(&(xa)->xa_lock)
-+#define xa_enter(xa)		spin_lock(&(xa)->xa_lock)
-+#define xa_leave(xa)		spin_unlock(&(xa)->xa_lock)
-+#define xa_enter_bh(xa)		spin_lock_bh(&(xa)->xa_lock)
-+#define xa_leave_bh(xa)		spin_unlock_bh(&(xa)->xa_lock)
-+#define xa_enter_irq(xa)	spin_lock_irq(&(xa)->xa_lock)
-+#define xa_leave_irq(xa)	spin_unlock_irq(&(xa)->xa_lock)
-+#define xa_enter_irqsave(xa, flags) \
- 				spin_lock_irqsave(&(xa)->xa_lock, flags)
--#define xa_unlock_irqrestore(xa, flags) \
-+#define xa_leave_irqrestore(xa, flags) \
- 				spin_unlock_irqrestore(&(xa)->xa_lock, flags)
--#define xa_lock_nested(xa, subclass) \
-+#define xa_enter_nested(xa, subclass) \
- 				spin_lock_nested(&(xa)->xa_lock, subclass)
--#define xa_lock_bh_nested(xa, subclass) \
-+#define xa_enter_bh_nested(xa, subclass) \
- 				spin_lock_bh_nested(&(xa)->xa_lock, subclass)
--#define xa_lock_irq_nested(xa, subclass) \
-+#define xa_enter_irq_nested(xa, subclass) \
- 				spin_lock_irq_nested(&(xa)->xa_lock, subclass)
--#define xa_lock_irqsave_nested(xa, flags, subclass) \
-+#define xa_enter_irqsave_nested(xa, flags, subclass) \
- 		spin_lock_irqsave_nested(&(xa)->xa_lock, flags, subclass)
- 
-+/*
-+ * These names are deprecated. Please use xa_enter instead of xa_lock, and
-+ * xa_leave instead of xa_unlock.
-+ */
-+#define xa_trylock(xa)			xa_tryenter(xa)
-+#define xa_lock(xa)			xa_enter(xa)
-+#define xa_unlock(xa)			xa_leave(xa)
-+#define xa_lock_bh(xa)			xa_enter_bh(xa)
-+#define xa_unlock_bh(xa)		xa_leave_bh(xa)
-+#define xa_lock_irq(xa)			xa_enter_irq(xa)
-+#define xa_unlock_irq(xa)		xa_leave_irq(xa)
-+#define xa_lock_irqsave(xa, flags)	xa_enter_irqsave(xa, flags)
-+#define xa_unlock_irqrestore(xa, flags) xa_leave_irqsave(xa, flags)
-+#define xa_lock_nested(xa, subclass)	xa_enter_nested(xa, subclass)
-+#define xa_lock_bh_nested(xa, subclass) xa_enter_bh_nested(xa, subclass)
-+#define xa_lock_irq_nested(xa, subclass) xa_enter_irq_nested(xa, subclass)
-+#define xa_lock_irqsave_nested(xa, flags, subclass) \
-+		xa_enter_irqsave_nested(xa, flags, subclass)
-+
- /*
-- * Versions of the normal API which require the caller to hold the
-- * xa_lock.  If the GFP flags allow it, they will drop the lock to
-+ * Versions of the normal API which require the caller to use
-+ * xa_enter.  If the GFP flags allow it, they will drop the lock to
-  * allocate memory, then reacquire it afterwards.  These functions
-  * may also re-enable interrupts if the XArray flags indicate the
-  * locking should be interrupt safe.
-@@ -592,9 +611,9 @@ static inline void *xa_store_bh(struct xarray *xa, unsigned long index,
- 	void *curr;
- 
- 	might_alloc(gfp);
--	xa_lock_bh(xa);
-+	xa_enter_bh(xa);
- 	curr = __xa_store(xa, index, entry, gfp);
--	xa_unlock_bh(xa);
-+	xa_leave_bh(xa);
- 
- 	return curr;
- }
-@@ -619,9 +638,9 @@ static inline void *xa_store_irq(struct xarray *xa, unsigned long index,
- 	void *curr;
- 
- 	might_alloc(gfp);
--	xa_lock_irq(xa);
-+	xa_enter_irq(xa);
- 	curr = __xa_store(xa, index, entry, gfp);
--	xa_unlock_irq(xa);
-+	xa_leave_irq(xa);
- 
- 	return curr;
- }
-@@ -643,9 +662,9 @@ static inline void *xa_erase_bh(struct xarray *xa, unsigned long index)
- {
- 	void *entry;
- 
--	xa_lock_bh(xa);
-+	xa_enter_bh(xa);
- 	entry = __xa_erase(xa, index);
--	xa_unlock_bh(xa);
-+	xa_leave_bh(xa);
- 
- 	return entry;
- }
-@@ -667,9 +686,9 @@ static inline void *xa_erase_irq(struct xarray *xa, unsigned long index)
- {
- 	void *entry;
- 
--	xa_lock_irq(xa);
-+	xa_enter_irq(xa);
- 	entry = __xa_erase(xa, index);
--	xa_unlock_irq(xa);
-+	xa_leave_irq(xa);
- 
- 	return entry;
- }
-@@ -695,9 +714,9 @@ static inline void *xa_cmpxchg(struct xarray *xa, unsigned long index,
- 	void *curr;
- 
- 	might_alloc(gfp);
--	xa_lock(xa);
-+	xa_enter(xa);
- 	curr = __xa_cmpxchg(xa, index, old, entry, gfp);
--	xa_unlock(xa);
-+	xa_leave(xa);
- 
- 	return curr;
- }
-@@ -723,9 +742,9 @@ static inline void *xa_cmpxchg_bh(struct xarray *xa, unsigned long index,
- 	void *curr;
- 
- 	might_alloc(gfp);
--	xa_lock_bh(xa);
-+	xa_enter_bh(xa);
- 	curr = __xa_cmpxchg(xa, index, old, entry, gfp);
--	xa_unlock_bh(xa);
-+	xa_leave_bh(xa);
- 
- 	return curr;
- }
-@@ -751,9 +770,9 @@ static inline void *xa_cmpxchg_irq(struct xarray *xa, unsigned long index,
- 	void *curr;
- 
- 	might_alloc(gfp);
--	xa_lock_irq(xa);
-+	xa_enter_irq(xa);
- 	curr = __xa_cmpxchg(xa, index, old, entry, gfp);
--	xa_unlock_irq(xa);
-+	xa_leave_irq(xa);
- 
- 	return curr;
- }
-@@ -781,9 +800,9 @@ static inline int __must_check xa_insert(struct xarray *xa,
- 	int err;
- 
- 	might_alloc(gfp);
--	xa_lock(xa);
-+	xa_enter(xa);
- 	err = __xa_insert(xa, index, entry, gfp);
--	xa_unlock(xa);
-+	xa_leave(xa);
- 
- 	return err;
- }
-@@ -811,9 +830,9 @@ static inline int __must_check xa_insert_bh(struct xarray *xa,
- 	int err;
- 
- 	might_alloc(gfp);
--	xa_lock_bh(xa);
-+	xa_enter_bh(xa);
- 	err = __xa_insert(xa, index, entry, gfp);
--	xa_unlock_bh(xa);
-+	xa_leave_bh(xa);
- 
- 	return err;
- }
-@@ -841,9 +860,9 @@ static inline int __must_check xa_insert_irq(struct xarray *xa,
- 	int err;
- 
- 	might_alloc(gfp);
--	xa_lock_irq(xa);
-+	xa_enter_irq(xa);
- 	err = __xa_insert(xa, index, entry, gfp);
--	xa_unlock_irq(xa);
-+	xa_leave_irq(xa);
- 
- 	return err;
- }
-@@ -874,9 +893,9 @@ static inline __must_check int xa_alloc(struct xarray *xa, u32 *id,
- 	int err;
- 
- 	might_alloc(gfp);
--	xa_lock(xa);
-+	xa_enter(xa);
- 	err = __xa_alloc(xa, id, entry, limit, gfp);
--	xa_unlock(xa);
-+	xa_leave(xa);
- 
- 	return err;
- }
-@@ -907,9 +926,9 @@ static inline int __must_check xa_alloc_bh(struct xarray *xa, u32 *id,
- 	int err;
- 
- 	might_alloc(gfp);
--	xa_lock_bh(xa);
-+	xa_enter_bh(xa);
- 	err = __xa_alloc(xa, id, entry, limit, gfp);
--	xa_unlock_bh(xa);
-+	xa_leave_bh(xa);
- 
- 	return err;
- }
-@@ -940,9 +959,9 @@ static inline int __must_check xa_alloc_irq(struct xarray *xa, u32 *id,
- 	int err;
- 
- 	might_alloc(gfp);
--	xa_lock_irq(xa);
-+	xa_enter_irq(xa);
- 	err = __xa_alloc(xa, id, entry, limit, gfp);
--	xa_unlock_irq(xa);
-+	xa_leave_irq(xa);
- 
- 	return err;
- }
-@@ -977,9 +996,9 @@ static inline int xa_alloc_cyclic(struct xarray *xa, u32 *id, void *entry,
- 	int err;
- 
- 	might_alloc(gfp);
--	xa_lock(xa);
-+	xa_enter(xa);
- 	err = __xa_alloc_cyclic(xa, id, entry, limit, next, gfp);
--	xa_unlock(xa);
-+	xa_leave(xa);
- 
- 	return err;
- }
-@@ -1014,9 +1033,9 @@ static inline int xa_alloc_cyclic_bh(struct xarray *xa, u32 *id, void *entry,
- 	int err;
- 
- 	might_alloc(gfp);
--	xa_lock_bh(xa);
-+	xa_enter_bh(xa);
- 	err = __xa_alloc_cyclic(xa, id, entry, limit, next, gfp);
--	xa_unlock_bh(xa);
-+	xa_leave_bh(xa);
- 
- 	return err;
- }
-@@ -1051,9 +1070,9 @@ static inline int xa_alloc_cyclic_irq(struct xarray *xa, u32 *id, void *entry,
- 	int err;
- 
- 	might_alloc(gfp);
--	xa_lock_irq(xa);
-+	xa_enter_irq(xa);
- 	err = __xa_alloc_cyclic(xa, id, entry, limit, next, gfp);
--	xa_unlock_irq(xa);
-+	xa_leave_irq(xa);
- 
- 	return err;
- }
-@@ -1408,17 +1427,30 @@ struct xa_state {
- 			(1U << (order % XA_CHUNK_SHIFT)) - 1)
- 
- #define xas_marked(xas, mark)	xa_marked((xas)->xa, (mark))
--#define xas_trylock(xas)	xa_trylock((xas)->xa)
--#define xas_lock(xas)		xa_lock((xas)->xa)
--#define xas_unlock(xas)		xa_unlock((xas)->xa)
--#define xas_lock_bh(xas)	xa_lock_bh((xas)->xa)
--#define xas_unlock_bh(xas)	xa_unlock_bh((xas)->xa)
--#define xas_lock_irq(xas)	xa_lock_irq((xas)->xa)
--#define xas_unlock_irq(xas)	xa_unlock_irq((xas)->xa)
--#define xas_lock_irqsave(xas, flags) \
--				xa_lock_irqsave((xas)->xa, flags)
--#define xas_unlock_irqrestore(xas, flags) \
--				xa_unlock_irqrestore((xas)->xa, flags)
-+#define xas_tryenter(xas)	xa_tryenter((xas)->xa)
-+#define xas_enter(xas)		xa_enter((xas)->xa)
-+#define xas_leave(xas)		xa_leave((xas)->xa)
-+#define xas_enter_bh(xas)	xa_enter_bh((xas)->xa)
-+#define xas_leave_bh(xas)	xa_leave_bh((xas)->xa)
-+#define xas_enter_irq(xas)	xa_enter_irq((xas)->xa)
-+#define xas_leave_irq(xas)	xa_leave_irq((xas)->xa)
-+#define xas_enter_irqsave(xas, flags) xa_enter_irqsave((xas)->xa, flags)
-+#define xas_leave_irqrestore(xas, flags) xa_leave_irqrestore((xas)->xa, flags)
-+
-+
-+/*
-+ * These names are deprecated. Please use xas_enter instead of xas_lock, and
-+ * xas_leave instead of xas_unlock.
-+ */
-+#define xas_trylock(xas)			xas_tryenter(xas)
-+#define xas_lock(xas)				xas_enter(xas)
-+#define xas_unlock(xas)				xas_leave(xas)
-+#define xas_lock_bh(xas)			xas_enter_bh(xas)
-+#define xas_unlock_bh(xas)			xas_leave_bh(xas)
-+#define xas_lock_irq(xas)			xas_enter_irq(xas)
-+#define xas_unlock_irq(xas)			xas_leave_irq(xas)
-+#define xas_lock_irqsave(xas, flags)		xas_enter_irqsave(xas, flags)
-+#define xas_unlock_irqrestore(xas, flags)	xas_leave_irqsave(xas, flags)
- 
- /**
-  * xas_error() - Return an errno stored in the xa_state.
-
----
-base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
-change-id: 20240921-xa_enter_leave-b11552c3caa2
-
-Best regards,
--- 
-Alice Ryhl <aliceryhl@google.com>
-
+Thanks,
+John
 
