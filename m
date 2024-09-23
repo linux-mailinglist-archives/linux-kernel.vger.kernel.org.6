@@ -1,111 +1,94 @@
-Return-Path: <linux-kernel+bounces-335717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-335718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C5F97E994
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3769097E997
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 12:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71FE51C217F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:10:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68C051C217E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 10:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DAC19938D;
-	Mon, 23 Sep 2024 10:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B5A196DA4;
+	Mon, 23 Sep 2024 10:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S4KwL17W"
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="XslPyD/2"
+Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B4F199391
-	for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 10:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215AC19580F;
+	Mon, 23 Sep 2024 10:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727086136; cv=none; b=sbR+6P1uuTg7KeJrmA40ukWEf6BlulNHK1x1lOKcOZg81lUJ+jugF1o+zMsYCWYJUe2i2xM5/2vfYH9VxCrMt36OGURP2ynvym6X6IyqOChqL79fnsNQQN/UURSzFB6u4QNegLwL6mFKp7N1psNqprSPHngIlxWga4OJ3IpKwx8=
+	t=1727086175; cv=none; b=Id25fmIQsRTPTt/tT947Jx1vOqP8lMRz814P3865pYhEv5qs6SzryNiLv3L/w7U64om9FepsvFwJK0ydIiY8Z8hrEUzHSp1v4AZahz5laG/yKrrRXKh8HUdmngMG2LcURcAEZPKHniwW3GQ1nEGzQ5haKHIAmWFYN7/qXFXLnCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727086136; c=relaxed/simple;
-	bh=U5GXWrxFCux5MYHjtn40XJVN/g1vrOfIlhTBREhsD1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KecQa4aR8uXb4CRAA8yKNW2mkiFvAn0hZLRHB21jYfjJUZ9RAigaKEf8kVz5haDFT2q7Ry9m66YPyl2M76qpif0NQdYVdbKXeDIhfeNTUYxdunJNDPOVZ1xmoZuxTDHgUDyqJoU1jO67YG9jTQ/vpOel6Jy+AZOnzB2HUYxWOUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=S4KwL17W; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-502aeeb791eso2456077e0c.1
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 03:08:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727086133; x=1727690933; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U5GXWrxFCux5MYHjtn40XJVN/g1vrOfIlhTBREhsD1o=;
-        b=S4KwL17WOjAAKSYuEyPrVGoBsvtJUf2GtkTLGKxMzdxjjcauI+RZ2lmyedNCEaNBxL
-         5bIAOWx6KHaOgHCF7FbsN93tOy6tw3OCyCNNfXGVnLT92ghT2AEyvpNpHl35cv7IRwdB
-         xWRox2oFM+r2Yu1zAQnBjTtE2gZrEDsxOu+pQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727086133; x=1727690933;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U5GXWrxFCux5MYHjtn40XJVN/g1vrOfIlhTBREhsD1o=;
-        b=NY+Yvu8m00cvNH8yFPKLBqsYZpq9lBTm+TgZnm6IZA/SdaNhEfnB9ehkZax/80sTFg
-         tn4sX+ZRh8Mfer1Y6FzSh9xPtr9Y47mGGJeuRwZNGjua8+dnDv4yATqA6Uivi2l5UKmS
-         l28ZJjCVxGNsHbUGsoYpeo1/lbwLwjYd9tPRXvZcz7jY0rdGWD1S3sizFbFTaAki3Syi
-         8BF1PxlHu0LugqbiPrl4gzFGl16udRVRIzQ+dZvCMlRZEV2pZiwHzH44cq/QvTTkP82T
-         wOCEcCeWgTu6YOqWtRDJbuPhK29ON8phBh7REc46I8/Aiqthys5/tASFliKOshlYgcz7
-         Bfgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUryKmu3DGFoahie0pChUgGvKsPqEc/qqhzuWoJD3xnAmhUeatFlGek67p6z7Scly9TKkf8wQSh4cbnOwY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu0DWFpyYDIALbLRXOZmtnhnEJBt1ZoMiA5FC644kPn+RdrPt2
-	IQ+lIfowhY0+0I8go943xgRfKcXWu1VGB1ZKWsQXOnYn+K4cco8VzVL9/R6yNw0I4oUJ6KX649w
-	=
-X-Google-Smtp-Source: AGHT+IGFT0YgvBMpfoS/E8O1ZQD95fTzFA1j3+WI+YKYw26Fg0MTgydapui2IMvjkUWU3BetJwXOEQ==
-X-Received: by 2002:a05:6122:3710:b0:501:13b1:d2e0 with SMTP id 71dfb90a1353d-503c9b824f5mr10537764e0c.1.1727086132714;
-        Mon, 23 Sep 2024 03:08:52 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5035b92a2e3sm2624342e0c.10.2024.09.23.03.08.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Sep 2024 03:08:51 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-49bd76face1so2512795137.0
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Sep 2024 03:08:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUVdXwOxc0+0dqrMFUtdzMnfEKIy96Fm3aTAgnJEbnM/3hM5zfBgN1n5BJbfRw/Vwuv30r8HFn8mxE99Kg=@vger.kernel.org
-X-Received: by 2002:a05:6102:5087:b0:49b:dca1:15c1 with SMTP id
- ada2fe7eead31-49fc72407c5mr5952529137.9.1727086130667; Mon, 23 Sep 2024
- 03:08:50 -0700 (PDT)
+	s=arc-20240116; t=1727086175; c=relaxed/simple;
+	bh=QZ3pAoHrGvUQCCcPlsz7aLXmCdd7EUz+OWY1xzniUFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gz0ElC8JBWI6y2jVjKBjMwRWjiJinekO52owHADPpyD49d/yqHXScy04mPXjcbaWa5oTLPTcv3a/VII3imiWF4Obq1R5YCdGaPSn0J4N5lZ/BXBOj9h9wfMbcLGLGk0pt6i3WpFvQS9wJ2tNEJ0BfRwryTmmDrnJrC6tH5Sum2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=XslPyD/2; arc=none smtp.client-ip=81.19.3.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+	s=20160406-ysoft-com; t=1727086166;
+	bh=mqxC8Twz5bhAEBeZd64fyOAa9Ptp6JX1NANnvh+5f6A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XslPyD/262cs7tuq3XgQDQY8bwCA9znDEFndO0lWbD9VqVxHisyHuW8PPfJU0b5Hw
+	 OKLM8+WRdFGhPhD74YYn5UqnDY+ZdFNMkEgpN1eyl188K2EwVNacF9ciYbFgI52gJQ
+	 z7xa8sJNQ6AU05DTunnmJI4rJEgxPM5knOff4WsE=
+Received: from [10.1.8.111] (unknown [10.1.8.111])
+	by uho.ysoft.cz (Postfix) with ESMTP id F1063A025E;
+	Mon, 23 Sep 2024 12:09:25 +0200 (CEST)
+Message-ID: <8f054dbe-6f58-4c93-b5db-1c67cb310a5f@ysoft.com>
+Date: Mon, 23 Sep 2024 12:09:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240918081307.51264-1-angelogioacchino.delregno@collabora.com> <20240918081307.51264-3-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20240918081307.51264-3-angelogioacchino.delregno@collabora.com>
-From: Fei Shao <fshao@chromium.org>
-Date: Mon, 23 Sep 2024 18:08:14 +0800
-X-Gmail-Original-Message-ID: <CAC=S1niSEG_9kFDBGL+i=MjqvfiuQBmAhv+7He9A3_7PXUi8Gg@mail.gmail.com>
-Message-ID: <CAC=S1niSEG_9kFDBGL+i=MjqvfiuQBmAhv+7He9A3_7PXUi8Gg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] PCI: mediatek-gen3: Add support for restricting
- link width
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-pci@vger.kernel.org, ryder.lee@mediatek.com, 
-	jianjun.wang@mediatek.com, lpieralisi@kernel.org, kw@linux.com, 
-	robh@kernel.org, bhelgaas@google.com, matthias.bgg@gmail.com, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] arm64: dts: imx: Add imx8mp-iota2-lumpy board
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Shawn Guo <shawnguo@kernel.org>, Petr Benes <petr.benes@ysoft.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Herburger <gregor.herburger@ew.tq-group.com>,
+ Hiago De Franco <hiago.franco@toradex.com>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+ Michael Walle <mwalle@kernel.org>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Mathieu Othacehe <m.othacehe@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20240920080154.1595808-1-michal.vokac@ysoft.com>
+ <20240920080154.1595808-3-michal.vokac@ysoft.com>
+ <CAOMZO5BrmuWdiEo6xi8ChT01jfLMaLAb88iUhS1kt6qqr_h7pQ@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
+In-Reply-To: <CAOMZO5BrmuWdiEo6xi8ChT01jfLMaLAb88iUhS1kt6qqr_h7pQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 18, 2024 at 4:13=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Add support for restricting the port's link width by specifying
-> the num-lanes devicetree property in the PCIe node.
->
-> The setting is done in the GEN_SETTINGS register (in the driver
-> named as PCIE_SETTING_REG), where each set bit in [11:8] activates
-> a set of lanes (from bits 11 to 8 respectively, x16/x8/x4/x2).
->
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
+On 21. 09. 24 14:24, Fabio Estevam wrote:
+> Hi Michal,
+> 
+> On Fri, Sep 20, 2024 at 5:02 AM Michal Vokáč <michal.vokac@ysoft.com> wrote:
+> 
+>> +&usb_dwc3_1 {
+>> +       dr_mode = "host";
+>> +       pinctrl-names = "default";
+> 
+> Per Rob's robot message, this pinctrl-names entry should be removed.
 
-Reviewed-by: Fei Shao <fshao@chromium.org>
+Thanks a lot Fabio. I could not really figure out what is wrong and
+thought that all the three warnings are issues of the imx8mp.dtsi.
+Will be fixed in v3.
+
+Michal
 
