@@ -1,114 +1,108 @@
-Return-Path: <linux-kernel+bounces-336110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-336111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 367EC97EF54
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:35:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F15197EF56
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 18:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC9D31F21FB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:35:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 373C228235B
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Sep 2024 16:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AE019F10A;
-	Mon, 23 Sep 2024 16:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E32519F10A;
+	Mon, 23 Sep 2024 16:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g5AXNdgR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFpQbNg7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C0528E7;
-	Mon, 23 Sep 2024 16:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AFB28E7;
+	Mon, 23 Sep 2024 16:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727109345; cv=none; b=ovlnx0fmi/kZ32VqvnqabFreJHBCuXhAw4DjO6TeuUjC6MhctfXoG+WGjtZJSCfaqUdG03iWDDPk7Kv5q1CvFK05A8c0nfwc5NmBZb+FdgikQ/uasKlAusEvT1hdkuUKX+YavB8/+rWD5OJ0G3ml06rbbPcy+q3AT4VuKlSHFXE=
+	t=1727109372; cv=none; b=eGuerSNee0cO+48vx9bKm1cDnKc5jBpFqid4XfwZp8ILw/ekO2ye2zluuSNbFcd6+pAcEOyYctCo5HT21Fj0nDsVm2lBeAYYvYXn70AD9MNg3LopjJpdyrJA/qjlspfIT90qUiPFdMsSAzb1U36Us1tuk/DTlJlvlwxRYTqRJlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727109345; c=relaxed/simple;
-	bh=iTOG7Xc5sHlK8i4dyCJeLYXSja/Mymt6V/Va+xmyvYE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=J6rO4M2FkDnimny6pxadF6RVFBz5vaUscN0OJ3mYRanEZjfgQyKTa7YBDH4CgwgPHNd0LxyjcJx0+gVb1UaN9RjZ+u0HgNiM9IWzmCD1EizoIWVuqC3uKiFrt8Cbh89eND8Z6TH0f8fn0JHqlmnWNgI5P39R7ZBndmPd0D3Hbe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g5AXNdgR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F559C4CEC4;
-	Mon, 23 Sep 2024 16:35:42 +0000 (UTC)
+	s=arc-20240116; t=1727109372; c=relaxed/simple;
+	bh=1XU4JWrWMckwknKVBBKhzkqovdaB9PtL+kY6TeZaKKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=apiONFK9Bot0Lt1e83mQLcikiUZzAaALa+/CL9CrvFS8A1ki3h0tpiY9SB7URsTfTb+8RL21HMTa0p2p4g6n5oFRuXLl0VEU5rL6MxLLQxGoeWiAXyNv4w9xlXTyFVUPM5gyL4gSxtNCnUXi8kTgorKKYX/yeOUCY/4t4zwGamw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFpQbNg7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA204C4CEC4;
+	Mon, 23 Sep 2024 16:36:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727109345;
-	bh=iTOG7Xc5sHlK8i4dyCJeLYXSja/Mymt6V/Va+xmyvYE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=g5AXNdgRhTN00Flf73ERmDDQt0yuXB0tKlf9uA219Ahy/hPC2678QNnurPzCaZ5Hq
-	 nwcQ0VwgxkYH82Ax8rO7qeqXeOf3ei9+0WVV7GjGspQGpr2lD3nyeLy6TN1dO+wrqI
-	 OObaT4cOBn7/uxXhd+G6RsRUf1wPEtrkhSl/DX76cwrl7qFU1/O73MYWeuGaxrJA//
-	 a/mhynNWoJoA0LRhbL8w2n536Xmy5XJYCdDMbT9VBMgBxoYAZ7wDo2GzdJV374CQqi
-	 jMrMDwQoAVPj7lNIqK65aFyGr3G4GaKszrl1oMO5+lxVbuO2v6DmDEXQhFoO7QoLcu
-	 L+ioQ6VHgkZ+A==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
-  "Frederic Weisbecker" <frederic@kernel.org>,  "Thomas Gleixner"
- <tglx@linutronix.de>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 02/14] rust: hrtimer: introduce hrtimer support
-In-Reply-To: <33c65715-3af5-44f9-93c5-149d07a4c503@proton.me> (Benno Lossin's
-	message of "Thu, 19 Sep 2024 14:09:58 +0000")
-References: <20240917222739.1298275-1-a.hindborg@kernel.org>
-	<20240917222739.1298275-3-a.hindborg@kernel.org>
-	<Wohby8PLjQeZ47sXKGeWKOxdA2ShTjjvqOM6xWzhJY1aZ-SYk9TCDAnZN2EqiWuJUKwPKoFCsCofDHjtfeG--w==@protonmail.internalid>
-	<f502f6c6-40b7-4ec4-8d0c-09adb0df1a30@proton.me>
- <878qvojj0o.fsf@kernel.org>
-	<pvhILkKRTj8T2Ks3off5HLMqewNM_X192WV4J5-nnC4Uu0o9G8-Qk5Tl9bQxsqVCw4QHmeJii7mCK2VorN-xcw==@protonmail.internalid>
-	<33c65715-3af5-44f9-93c5-149d07a4c503@proton.me>
-Date: Mon, 23 Sep 2024 18:35:27 +0200
-Message-ID: <87ldziqqeo.fsf@kernel.org>
+	s=k20201202; t=1727109372;
+	bh=1XU4JWrWMckwknKVBBKhzkqovdaB9PtL+kY6TeZaKKY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OFpQbNg7smZpnzLGjeV8w9DSE4xMPILouyTi7L540cGP/iKWjZUzwvwYg2yRKfJsr
+	 /Dc2jBLu7HNMK2YpeWahGi4FeB4NGrS8lndRHrIYPmNHABgWO6WENKQRUzpAdcD9us
+	 w2fyym4zmDIwQTiJMGd24yWpIis7CxeAJmvDVjoMjRtbchQ0rajm7u/KVZs0AAKK5U
+	 GREfYS0MUNRl0MS+c88j0geea68zzr2uOrCiNml7ywk44PqVzuSZKQ4oPsmWtgbfxN
+	 bOYvaNl/lzO/eA6mQyBEQx8vQwmRT6gSyIl2GhyxXGe2M4wUNNQc+n1K3AJWDf5CoP
+	 2JSVdg4h/FeuA==
+From: SeongJae Park <sj@kernel.org>
+To: Ba Jing <bajing@cmss.chinamobile.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	shuah@kernel.org,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] damon: access_memory_even: remove unused variables
+Date: Mon, 23 Sep 2024 09:36:07 -0700
+Message-ID: <20240923163608.552593-1-sj@kernel.org>
+X-Mailer: git-send-email 2.46.1
+In-Reply-To: <20240903034300.10443-1-bajing@cmss.chinamobile.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
+Hi Ba,
 
-> On 19.09.24 07:43, Andreas Hindborg wrote:
->> Hi Benno,
->>
->> Thanks for the feedback. I will incorporate all the whitespace
->> suggestions you have =F0=9F=91=8D
->
-> There seems to be something wrong with the encoding in this email, is
-> that an issue on my side or yours?
+On Tue,  3 Sep 2024 11:43:00 +0800 Ba Jing <bajing@cmss.chinamobile.com> wrote:
 
-It seems to be on my end. It also showed up on lore with errors. I will
-check my tools.
+> These variables are never referenced in the code, just remove it.
 
-[...]
+Nice finding, thank you!
 
->>>> +    /// until the timer is unarmed and the callback has completed.
->>>> +    ///
->>>> +    /// Note: It must be safe to leak the handle.
->>>> +    type TimerHandle: TimerHandle;
->>>
->>> Why does this need to be an associated type? Couldn't we have a
->>> `TimerHandle<T>` struct? The schedule function below could then return
->>> `TimerHandle<Self>`.
->>
->> At one point, I had some cycles in trait resolution. Moving generics to
->> associated types solved that issue. Maybe this can be changed to a
->> generic. But are generics preferred over associated types for some
->> reason?
->
-> The associated type is more complicated IMO, because then every
-> implementer of the trait needs to create one. If we can avoid that, I
-> would prefer a generic type.
+I'd prefer having 'selftests/damon/access_memory_even: ' as the commit subject
+prefix.
 
-When you say create, you mean specify? Users would not invent their own
-type to put here, they would use the types defined by the `hrtimer`
-module in later patches.
+> 
+> Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
 
-BR Andreas
+Other than the above trivial nitpick,
+
+Reviewed-by: SeongJae Park <sj@kernel.org>
 
 
+Thanks,
+SJ
+
+> ---
+>  tools/testing/selftests/damon/access_memory_even.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/damon/access_memory_even.c b/tools/testing/selftests/damon/access_memory_even.c
+> index 3be121487432..a9f4e9aaf3a9 100644
+> --- a/tools/testing/selftests/damon/access_memory_even.c
+> +++ b/tools/testing/selftests/damon/access_memory_even.c
+> @@ -14,10 +14,8 @@
+>  int main(int argc, char *argv[])
+>  {
+>  	char **regions;
+> -	clock_t start_clock;
+>  	int nr_regions;
+>  	int sz_region;
+> -	int access_time_ms;
+>  	int i;
+>  
+>  	if (argc != 3) {
+> -- 
+> 2.33.0
 
